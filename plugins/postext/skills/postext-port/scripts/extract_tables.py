@@ -280,11 +280,64 @@ def nearest_rules(rules: list[tuple], ys: list[float], xs: list[float], header_r
 # the model
 
 
-def table_model(table, header_rows: int, page=None, cache: dict | None = None) -> dict:
+def page_chars(page) -> list[tuple]:
+    """Every character of the page as (x0, x1, baseline, size, c), from rawdict."""
+    out = []
+    for block in page.get_text("rawdict").get("blocks", []):
+        for line in block.get("lines", []):
+            for span in line.get("spans", []):
+                for ch in span.get("chars", []):
+                    b = ch["bbox"]
+                    out.append((b[0], b[2], ch["origin"][1], span.get("size", 10.0), ch["c"], (b[1] + b[3]) / 2))
+    return out
+
+
+def cell_text(box: tuple, chars: list[tuple]) -> str | None:
+    """The text of a cell from the characters whose centre lies in it: lines
+    by baseline, characters by x, a space where the gap between two is over
+    a quarter of the type size. None when no character lies in it. The
+    text `find_tables` gives changed between PyMuPDF releases (2.0 drops
+    and moves spaces: `1007km`, `420 .`), so the cells are read here."""
+    mine = [c for c in chars if box[0] <= (c[0] + c[1]) / 2 <= box[2] and box[1] <= c[5] <= box[3]]
+    if not mine:
+        return None
+    rows: list[list[tuple]] = []
+    for c in sorted(mine, key=lambda c: (c[2], c[0])):
+        if rows and abs(rows[-1][0][2] - c[2]) <= 0.4 * c[3]:
+            rows[-1].append(c)
+        else:
+            rows.append([c])
+    lines = []
+    for row in rows:
+        row.sort(key=lambda c: c[0])
+        text, last = "", None
+        for c in row:
+            if last is not None and c[4].strip() and c[0] - last[1] > 0.25 * c[3] and not text.endswith(" "):
+                text += " "
+            text += c[4]
+            last = c
+        lines.append(text)
+    return " ".join(lines)
+
+
+def table_model(table, header_rows: int, page=None, cache: dict | None = None, dress: bool = True) -> dict:
     """The TableModel of a table PyMuPDF found. With `page`, the cells carry
-    the source's look (`dress_cells`) and the model the keys `_style` (a
-    table style hint) and `_notes`, for the caller to pop."""
+    the source's look (`dress_cells`, unless `dress` is false) and the model
+    the keys `_style` (a table style hint) and `_notes`, for the caller to pop. The cells' text
+    is read from the page's characters when there is a page (`cell_text`),
+    else from `find_tables`."""
     grid = table.extract()
+    if page is not None:
+        cache = cache if cache is not None else {}
+        if "chars" not in cache:
+            cache["chars"] = page_chars(page)
+        for i, r in enumerate(table.rows):
+            for j, c in enumerate(r.cells):
+                if c is None or i >= len(grid) or j >= len(grid[i]):
+                    continue
+                text = cell_text(tuple(c), cache["chars"])
+                if text is not None:
+                    grid[i][j] = text
     rows = []
     for row_index, row in enumerate(grid):
         cells = []
@@ -296,7 +349,7 @@ def table_model(table, header_rows: int, page=None, cache: dict | None = None) -
         rows.append(cells)
     style: dict = {}
     notes: list[str] = []
-    if page is not None:
+    if page is not None and dress:
         cache = cache if cache is not None else {}
         if "lines" not in cache:
             cache["lines"] = page_lines(page)
@@ -306,7 +359,7 @@ def table_model(table, header_rows: int, page=None, cache: dict | None = None) -
     while rows and all(not c["content"] for c in rows[-1]):
         rows.pop()
     model: dict = {"rows": rows, "headerRowCount": header_rows}
-    if page is not None:
+    if page is not None and dress:
         model["_style"], model["_notes"] = style, notes
     return model
 
@@ -436,7 +489,7 @@ def main(argv: list[str] | None = None) -> int:
                 tables = page.find_tables(strategy=args.strategy)
             cache: dict = {}
             for table_index, table in enumerate(tables.tables):
-                model = table_model(table, args.header_rows, None if args.plain else page, cache)
+                model = table_model(table, args.header_rows, page, cache, dress=not args.plain)
                 style, notes = model.pop("_style", {}), model.pop("_notes", [])
                 if not model["rows"]:
                     continue
