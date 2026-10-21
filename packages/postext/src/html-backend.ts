@@ -1942,7 +1942,7 @@ function designTextDotsHtml(block: VDTDesignTextBlock, dots: VDTTextDots): strin
     let x = line.xOffset;
     for (const i of order) {
       const run = runs[i]! as VDTDesignTextRun;
-      if (!run.leader) {
+      if (!run.leader && !run.chip) {
         const svg = textDotsSvg(run.text, run.fontString, dots, block.color, x + (run.inkOffset ?? 0), baseline + (run.baselineShift ?? 0), block.letterSpacingPx ?? 0, run.rtl === true);
         if (svg === null) return null;
         out.push(svg);
@@ -2232,10 +2232,12 @@ function turnedCellHtml(run: VerticalRun, advance: number | undefined, tracking:
  * `content` is placed inside that one with physical `top` (along the line)
  * and `right` (from the box's physical right edge, the flow's top).
  */
-function uprightBox(left: number, top: number, width: number, height: number, decl: string, content: string, attrs = ''): string {
+function uprightBox(left: number, top: number, width: number, height: number, decl: string, content: string, attrs = '', sideways = ''): string {
   return (
     `<div${attrs ? ` ${attrs}` : ''} style="position:absolute;left:${left.toFixed(3)}px;top:${top.toFixed(3)}px;width:${Math.max(0, width).toFixed(3)}px;height:${height.toFixed(3)}px;">` +
     uprightInner(width, height, decl, content) +
+    // What is set in the turned flow itself (a chip, #1162): sideways.
+    sideways +
     `</div>`
   );
 }
@@ -2502,7 +2504,20 @@ function verticalDesignLines(block: VDTDesignTextBlock, v: VerticalHtml, originX
     const runs = line.runs ?? [{ text: line.text, fontString: block.fontString, width: line.width }];
     let x = 0;
     const inner: string[] = [];
+    const sideways: string[] = [];
     for (const run of runs) {
+      // A heading title's chip (#1162): turned with the column, as the
+      // canvas and the PDF paint it, its baseline the line's (0.8 of the
+      // size under the top of a box one line high).
+      if (run.chip) {
+        sideways.push(
+          `<span style="position:absolute;left:0;top:${(line.baselineY - top - size * 0.8).toFixed(3)}px;font:${font};line-height:1;color:${block.color};">`
+          + renderChip(run.chip, x + (run.inkOffset ?? 0), size * 0.8, font, block.color, () => block.color)
+          + '</span>',
+        );
+        x += run.width;
+        continue;
+      }
       const runFont = quoteFontString(run.fontString);
       // A dash of a 破折号 (`inkScale`, #652): turned with the flow and
       // stretched down the column, as a body segment's is.
@@ -2517,7 +2532,7 @@ function verticalDesignLines(block: VDTDesignTextBlock, v: VerticalHtml, originX
     const width = Math.max(line.width, x);
     const decl = `font:${font};color:${block.color};${hasCJK(line.text) ? cjkTextDecl(tracked) : tracked ? ligaturesDecl() : ''}`
       + (line.wordSpacingPx ? `word-spacing:${line.wordSpacingPx.toFixed(3)}px;` : '');
-    parts.push(uprightBox(originX + line.xOffset, originY + top, width, h, decl, inner.join('')));
+    parts.push(uprightBox(originX + line.xOffset, originY + top, width, h, decl, inner.join(''), '', sideways.join('')));
   }
   return parts.join('');
 }
@@ -3121,7 +3136,7 @@ function renderBoxAt(bbox: BoundingBox, style: VDTDesignBoxStyle): string {
 function isPlainRun(line: VDTDesignTextBlock['lines'][number], block: VDTDesignTextBlock): boolean {
   const run = line.runs?.length === 1 ? line.runs[0]! : undefined;
   return run !== undefined && line.order === undefined && run.text === line.text && run.fontString === block.fontString && !hasCJK(run.text)
-    && !run.baselineShift && !run.stacked && !run.tcy && !run.orientation && !run.rtl && run.inkOffset === undefined && run.inkScale === undefined;
+    && !run.baselineShift && !run.stacked && !run.tcy && !run.orientation && !run.rtl && run.inkOffset === undefined && run.inkScale === undefined && !run.chip;
 }
 
 function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): string {
@@ -3156,6 +3171,16 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
     const inner = words !== undefined ? words
       : line.runs
       ? line.runs.map((run, i) => {
+          // A heading title's chip (#1162): a box as wide as its advance
+          // at the top of the line, holding the chip's box and words where
+          // the line's baseline is (0.8 of the size down, as the line is
+          // placed).
+          if (run.chip) {
+            const indent = run.inkOffset ? run.inkOffset : 0;
+            return `<span style="display:inline-block;vertical-align:top;position:relative;width:${run.width.toFixed(3)}px;height:1em;">`
+              + renderChip(run.chip, indent, fontSize * 0.8, font, block.color, () => block.color, options?.dir ?? 'ltr')
+              + '</span>';
+          }
           const runFont = quoteFontString(run.fontString);
           const cjkDecl = hasCJK(run.text) ? cjkTextDecl(tracked) : '';
           // The `font` shorthand resets `line-height` to `normal`: a run in
@@ -3199,7 +3224,7 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
     // than as its text at its advance (a stacked script, a box of the CJK
     // composer).
     const apartable = line.runs !== undefined
-      && line.runs.every((run) => !run.stacked && run.inkOffset === undefined && run.inkScale === undefined && !run.tcy && !run.orientation);
+      && line.runs.every((run) => !run.stacked && run.inkOffset === undefined && run.inkScale === undefined && !run.tcy && !run.orientation && !run.chip);
     // So is a line of several runs with no CJK text, in a document shaped
     // in its own language: the canvas starts each run where the widths
     // before it end, and inline every run, every space in its box and

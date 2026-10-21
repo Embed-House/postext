@@ -2327,6 +2327,13 @@ export interface VDTDesignTextRun {
    *  Down a vertical line it is set (even when 1) and the dash is painted
    *  turned with the column. Absent on every other run. */
   inkScale?: number;
+  /** An inline chip of the text (`:chip[…]`, #1162): a heading title's
+   *  chip printed by its opener or design. `text` is the chip's one
+   *  placeholder character and `width` its advance; renderers paint the
+   *  box and the chip's own runs from the run's start (`chip.marginLeft`
+   *  in), on the line's baseline, as on {@link VDTLineSegment.chip}.
+   *  Absent on every other run. */
+  chip?: VDTChip;
 }
 
 /** Line of wrapped text inside a `VDTDesignTextBlock`. */

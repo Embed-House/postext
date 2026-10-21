@@ -73,7 +73,7 @@ A heading's inline content is read like a paragraph's while `headings.inlineMark
 - `` `code` `` becomes its text. Images are removed.
 - Escapes `\* \_ \^ \~ \`` produce the literal character.
 - **Kept as live spans:** `:ref{…}`, the `@sec:id` / `[@fig:id]` / `\ref{…}` / `\eqref{…}` cross-references, `:swatch{…}` and inline `$math$`. `:mark`, the CJK marks, ruby and `:tcy`/`:upright`/`:sideways` are read with the other inline marks. **Printed as written** in a heading: footnote markers `[^id]`, citations `[@key]` / `@key`, and `:tab`.
-- **`:chip[…]` in a heading** (postext ≥ 1.52.0): set as in a paragraph (`## :chip[///]{style="mark"} Title`, a coloured chip or a symbol run before the title); the contents, running heads, PDF bookmarks and EPUB navigation read the title without it, and a heading drawn by a design prints the title without the chip. An older engine prints it literally.
+- **`:chip[…]` in a heading** (postext ≥ 1.52.0): set as in a paragraph (`## :chip[///]{style="mark"} Title`, a coloured chip or a symbol run before the title); the contents, running heads, PDF bookmarks and EPUB navigation read the title without it. The default opener sets the chip, and so does a design text element with `inlineMarks: true` that prints `{titleText}` (in the document's `chipStyles`, at the element's size); an element without `inlineMarks` prints the plain title. An older engine prints it literally.
 
 ### 2.2 Heading attributes: trailing `{…}`
 

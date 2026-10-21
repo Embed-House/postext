@@ -884,7 +884,8 @@ bottom folio only there). Parity/pages are ignored inside heading slots.
     overflow; default size = text size + (lines−1) × leading / 0.72, top level with the first line's
     capitals; a preset without configVersion 6 gets its 1.4 size written out as fontSize),
   paragraphIndent?: Dimension     ('\n' in content separates paragraphs)
-  inlineMarks?: boolean   (read **b** *i* ^sup^ ~sub~ in the resolved text, values included)
+  inlineMarks?: boolean   (read **b** *i* ^sup^ ~sub~ in the resolved text, values included; ≥ 1.52: a
+    heading's :chip[…] in {titleText} is set too, in the document's chipStyles at the element's size)
   stroke?: { width: Dimension, color?: ColorValue (= text colour), hollow?: boolean }
   dotted?: { spacing = 0.1em, size = 0.05em }   (≥ 1.46: letters painted as rows of dots along their strokes, to
     trace; layout unchanged, text colour, replaces fill and stroke; the thinnest weight gives the evenest rows;

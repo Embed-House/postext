@@ -26,6 +26,27 @@ export function paintChip(
   if (elem) tagArtifact(ctx, { type: 'Layout' });
   drawChipBoxPx(ctx, chip, xPx, baselinePx);
   tagContent(ctx, elem);
+  paintChipRuns(ctx, chip, xPx, baselinePx, fontCache, fallbackFont, fallbackSize, colorFor);
+}
+
+/**
+ * The words of a chip (its runs, in paint order), from the segment's left
+ * edge `xPx` on the baseline, joining whatever sequence is open. Text
+ * extraction reads `actualText` over each run when it is given (`''` for a
+ * silent block). Used by {@link paintChip} and by the design text painter,
+ * which tags the box itself (#1162).
+ */
+export function paintChipRuns(
+  ctx: PageCtx,
+  chip: VDTChip,
+  xPx: number,
+  baselinePx: number,
+  fontCache: FontCache,
+  fallbackFont: PDFFont,
+  fallbackSize: number,
+  colorFor: (run: VDTChipRun) => Color,
+  actualText?: string,
+): void {
   let tx = xPx + chip.marginLeft + chip.borderWidth + chip.paddingX;
   // The runs in the chip's paint order (`VDTChip.order`), a right-to-left
   // one shaped so.
@@ -38,8 +59,9 @@ export function paintChip(
     const color = colorFor(run);
     // Letters to trace (#1017): the dots, the text invisible under them.
     const outline = chip.dotted && drawTextDotsPx(ctx, run.text, tx, y, run.fontString, chip.dotted, color, run.rtl === true) ? invisibleText(color) : undefined;
-    if (run.rtl) drawRightToLeftRun(ctx, run.text, tx, y, font, size, color, outline);
-    else drawTextPx(ctx, run.text, tx, y, font, size, color, outline);
+    if (run.rtl && actualText !== undefined) drawTextPx(ctx, run.text, tx, y, font, size, color, outline, actualText, undefined, 'rtl');
+    else if (run.rtl) drawRightToLeftRun(ctx, run.text, tx, y, font, size, color, outline);
+    else drawTextPx(ctx, run.text, tx, y, font, size, color, outline, actualText);
     tx += run.width;
   }
 }

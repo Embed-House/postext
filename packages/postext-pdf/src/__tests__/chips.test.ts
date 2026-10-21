@@ -162,4 +162,36 @@ describe('inline chips in the PDF', () => {
       expect(text).not.toContain(':chip');
     }
   });
+
+  // #1162: a chapter opener drawn by a design prints the heading's chip
+  // (an element that reads inline marks), tagged as the body's is.
+  it('paints a heading chip in a designed opener', async () => {
+    const title = {
+      kind: 'text', id: 'title', content: '{titleText}', fontSize: pt(20), inlineMarks: true,
+      placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'fill', height: 'auto' } },
+    };
+    const cfg = {
+      ...config,
+      headings: { balancing: { enabled: false }, levels: [{ level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' }, advancedDesign: { enabled: true, slot: { elements: [title] } } }] },
+      chipStyles: [{ id: 'mark', background: hex('#cc3300'), borderWidth: pt(0) }],
+    } as PostextConfig;
+    const doc = buildDocument({ markdown: '# :chip[///]{style=mark} Title\n\nText.' }, cfg);
+    expect(doc.pages[0]!.openerBand?.blocks.some((b) => b.kind === 'text' && b.lines.some((l) => l.runs?.some((r) => r.chip)))).toBe(true);
+    const openerBytes = await renderToPdf(doc, { fontProvider });
+    if (process.env.POSTEXT_OPENER_PDF_OUT) fs.writeFileSync(process.env.POSTEXT_OPENER_PDF_OUT, openerBytes);
+    const out = await PDFDocument.load(openerBytes);
+    const content = pageContent(0, out);
+    expect(content).toMatch(/0\.8 0\.2 0 rg/);
+    expect(content).toMatch(/\/Artifact <<\n\/Type \/Layout\n>> BDC/);
+    expect((content.match(/\b(BDC|BMC)\n/g) ?? []).length).toBe((content.match(/\bEMC\n/g) ?? []).length);
+    if (hasPdftotext) {
+      const file = path.join(os.tmpdir(), `postext-opener-chip-${process.pid}.pdf`);
+      fs.writeFileSync(file, await out.save());
+      const text = execFileSync('pdftotext', ['-raw', file, '-'], { encoding: 'utf8' }).replace(/\s+/g, ' ');
+      fs.unlinkSync(file);
+      expect(text).toMatch(/\/ ?\/ ?\/ Title/);
+      expect(text).not.toContain(':chip');
+      expect(text).not.toContain('\uE1A0');
+    }
+  });
 });
