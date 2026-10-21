@@ -2177,6 +2177,8 @@ export interface SandboxLabels {
   warningsWrapUnsupportedDetail: string;
   warningsUnclosedCodeBlockTitle: string;
   warningsUnclosedCodeBlockDetail: string;
+  warningsStrayFenceTitle: string;
+  warningsStrayFenceDetail: string;
   warningsLineNumbersUnsupportedTitle: string;
   warningsLineNumbersUnsupportedDetail: string;
   warningsUnknownConfigKeyTitle: string;

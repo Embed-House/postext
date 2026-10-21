@@ -2388,7 +2388,11 @@ templates += [{"id": "aviso", "role": "module", "width": mm(110), "frames": [...
   left out goes with it. Front matter with no folio, the closing page of a
   block that prints its running head on an even page too, a cover with no
   page colour: one shell and a word on the fence, not a template each. `postext
-  check` notes a condition no fence sets (`conditionNeverMet`).
+  check` notes a condition no fence sets (`conditionNeverMet`), and from
+  1.52 an `{attr.x}` that no heading or fence sets (it always reads empty:
+  a folio or running foot that prints nothing). An element of
+  `variants.recto` with `parity: "even"` (or of `variants.verso` with
+  `"odd"`) is never drawn, since a recto is an odd page: `unknownConfigValue`.
 
 ### 6.18 Frames that lie over each other (1.48)
 

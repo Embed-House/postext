@@ -2661,6 +2661,8 @@
     "warningsWrapUnsupportedDetail": "o texto só contorna na escrita horizontal; as figuras mantêm a faixa inteira.",
     "warningsUnclosedCodeBlockTitle": "Bloco de código não fechado",
     "warningsUnclosedCodeBlockDetail": "falta a linha de fechamento do bloco de código; por isso, o resto do texto é composto como código.",
+    "warningsStrayFenceTitle": "Fechamento depois de uma diretiva de uma linha",
+    "warningsStrayFenceDetail": "a diretiva não tem linha de fechamento; por isso, este ::: não fecha nada e é descartado. Apague-o.",
     "warningsLineNumbersUnsupportedTitle": "Sem numeração de linhas em texto vertical",
     "warningsLineNumbersUnsupportedDetail": "documentos verticais não recebem números de linha; a configuração é ignorada.",
     "warningsUnknownConfigKeyTitle": "Configuração desconhecida",

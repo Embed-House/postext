@@ -687,6 +687,8 @@ Un modello con `extends` parte dal modello che indica (che a sua volta può este
 
 `variants.recto` e `variants.verso` si scrivono come un modello e si uniscono allo stesso modo, su una pagina di destra o di sinistra. Si applicano dopo tutta la catena di `extends`, prima la variante della radice. Una doppia pagina ha entrambi i lati, quindi nessuna variante vale per essa.
 
+Un elemento di `variants.recto` con `parity: 'even'`, o di `variants.verso` con `'odd'`, non viene mai disegnato: `unknownConfigValue`.
+
 ```ts
 pageTemplates: [
   { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
@@ -717,7 +719,7 @@ decoration: { elements: [
 - Un elemento ancorato a un elemento tolto, o con la misura che arriva fino a esso, viene tolto anche lui.
 - Con entrambe le chiavi, l’elemento si disegna dove il blocco imposta l’attributo di `when` e non quello di `unless`.
 - Le testatine del documento e quelle di una sezione le leggono anch’esse. Una pagina che non è composta non ha blocco e non imposta nulla. I disegni di titolo, di parte e di riquadro le ignorano.
-- Un valore che non è un testo non vuoto, o uno scritto in un disegno di titolo, di parte o di riquadro, viene segnalato come `unknownConfigValue`, e l’elemento si disegna come se non lo avesse. `postext check` aggiunge una nota, `conditionNeverMet`, per un `when` o un `unless` su un attributo che nessuna pagina del libro imposta: quell’elemento non si disegna mai, oppure sempre.
+- Un valore che non è un testo non vuoto, o uno scritto in un disegno di titolo, di parte o di riquadro, viene segnalato come `unknownConfigValue`, e l’elemento si disegna come se non lo avesse. `postext check` aggiunge una nota, `conditionNeverMet`, per un `when` o un `unless` su un attributo che nessuna pagina del libro imposta: quell’elemento non si disegna mai, oppure sempre. Lo stesso per un `{attr.x}` che nulla imposta: resta vuoto.
 - Nel Sandbox, ogni scheda di elemento di una testatina e della decorazione di un modello ha i campi **Disegnato quando la pagina lo dice** e **Non disegnato quando la pagina lo dice**, che offrono gli attributi usati dai blocchi di pagina del libro.
 
 ### Che cosa applica l’impaginazione

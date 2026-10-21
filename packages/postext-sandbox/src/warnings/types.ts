@@ -39,6 +39,7 @@ export type WarningKind =
   | 'tabInVerticalText'
   | 'unclosedContainer'
   | 'unclosedCodeBlock'
+  | 'strayFence'
   | 'unknownParagraphStyle'
   | 'unknownCalloutType'
   | 'columnsFlowUnknown'
@@ -259,6 +260,8 @@ export type WarningPayload =
    *  the parser auto-closed it. Points at the opening fence. */
   | { kind: 'unclosedContainer'; name: string }
   | { kind: 'unclosedCodeBlock'; delimiter: '```' | '~~~'; lang?: string }
+  /** A bare `:::` after a one-line directive, with nothing to close (#1125): dropped. */
+  | { kind: 'strayFence'; directive: string }
   /** A `:::paragraphs{style="…"}` container names a style id that is not in
    *  `config.paragraphStyles`; the paragraphs render as body text. */
   | { kind: 'unknownParagraphStyle'; style: string }

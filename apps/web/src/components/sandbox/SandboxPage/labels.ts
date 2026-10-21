@@ -2046,6 +2046,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     warningsWrapUnsupportedDetail: t("warningsWrapUnsupportedDetail"),
     warningsUnclosedCodeBlockTitle: t("warningsUnclosedCodeBlockTitle"),
     warningsUnclosedCodeBlockDetail: t("warningsUnclosedCodeBlockDetail"),
+    warningsStrayFenceTitle: t("warningsStrayFenceTitle"),
+    warningsStrayFenceDetail: t("warningsStrayFenceDetail"),
     warningsLineNumbersUnsupportedTitle: t("warningsLineNumbersUnsupportedTitle"),
     warningsLineNumbersUnsupportedDetail: t("warningsLineNumbersUnsupportedDetail"),
     warningsUnknownConfigKeyTitle: t("warningsUnknownConfigKeyTitle"),

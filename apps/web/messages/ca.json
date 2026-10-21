@@ -2664,6 +2664,8 @@
     "warningsWrapUnsupportedDetail": "el text només envolta en escriptura horitzontal; les figures conserven la banda sencera.",
     "warningsUnclosedCodeBlockTitle": "Bloc de codi sense tancar",
     "warningsUnclosedCodeBlockDetail": "el bloc de codi no té línia de tancament, de manera que la resta del text es compon com a codi.",
+    "warningsStrayFenceTitle": "Tancament després d'una directiva d'una línia",
+    "warningsStrayFenceDetail": "la directiva no porta línia de tancament, de manera que aquest ::: no tanca res i es descarta: esborra'l.",
     "warningsLineNumbersUnsupportedTitle": "Sense numeració de línies en text vertical",
     "warningsLineNumbersUnsupportedDetail": "els documents verticals no porten números de línia; el paràmetre s'ignora.",
     "warningsUnknownConfigKeyTitle": "Paràmetre desconegut",

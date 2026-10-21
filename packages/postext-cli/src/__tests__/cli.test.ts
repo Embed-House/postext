@@ -403,6 +403,20 @@ describe('postext cli', () => {
     expect(run(['check', 'ch', '--config', 'config.json', '--strict', '--offline', '-q'], dir).code).toBe(0);
   }, 60_000);
 
+  // #1152: an {attr.x} no heading or fence sets always reads ''.
+  it('check notes an {attr.x} that no heading or fence sets', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'ch'));
+    const text = (id: string, content: string) => ({ kind: 'text', id, content, placement: { anchor: { to: 'page', edge: 'bottom' }, offset: { x: { value: 0, unit: 'mm' }, y: { value: -8, unit: 'mm' } } }, size: { width: { value: 40, unit: 'mm' }, height: 'auto' } });
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({
+      footer: { elements: [text('foot', '{attr.foot}'), text('unit', '{attr.unit}')] },
+    }));
+    writeFileSync(join(dir, 'ch', '01.md'), '# One {unit="Unit 1"}\n\nText.\n');
+    const r = run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir);
+    const notes = (JSON.parse(r.stdout).warnings as { kind: string; data?: Record<string, unknown> }[]).filter((x) => x.kind === 'conditionNeverMet');
+    expect(notes.map((n) => n.data)).toEqual([{ path: 'footer.elements[0].content', condition: 'attr', attribute: 'foot' }]);
+  }, 60_000);
+
   // #858: a frame whose text still does not fit names the steps tried and
   // the proposals, in words and, with their values, in --json.
   it('check prints frameOverflow with its proposals', () => {

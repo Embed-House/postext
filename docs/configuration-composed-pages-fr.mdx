@@ -687,6 +687,8 @@ Un gabarit doté d’`extends` part du gabarit qu’il désigne (qui peut lui-m�
 
 `variants.recto` et `variants.verso` s’écrivent comme un gabarit et se fusionnent de la même façon, sur une page de droite ou de gauche. Elles s’appliquent après toute la chaîne d’`extends`, la variante de la racine en premier. Une double page a les deux côtés : aucune variante ne s’y applique.
 
+Un élément de `variants.recto` avec `parity: 'even'`, ou de `variants.verso` avec `'odd'`, n’est jamais dessiné : `unknownConfigValue`.
+
 ```ts
 pageTemplates: [
   { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
@@ -717,7 +719,7 @@ decoration: { elements: [
 - Un élément ancré à un élément retiré, ou dont la taille va jusqu’à lui, est retiré aussi.
 - Avec les deux clés, l’élément est dessiné là où le délimiteur pose l’attribut de `when` et pas celui de `unless`.
 - Les titres courants du document et ceux d’une section les lisent aussi. Une page qui n’est pas composée n’a pas de délimiteur et ne pose rien. Les dessins de titre, de partie et d’encadré les ignorent.
-- Une valeur qui n’est pas un texte non vide, ou une valeur écrite dans un dessin de titre, de partie ou d’encadré, est signalée par `unknownConfigValue`, et l’élément est dessiné comme s’il n’en avait pas. `postext check` ajoute une note, `conditionNeverMet`, pour un `when` ou un `unless` sur un attribut qu’aucune page du livre ne pose : cet élément n’est jamais dessiné, ou toujours.
+- Une valeur qui n’est pas un texte non vide, ou une valeur écrite dans un dessin de titre, de partie ou d’encadré, est signalée par `unknownConfigValue`, et l’élément est dessiné comme s’il n’en avait pas. `postext check` ajoute une note, `conditionNeverMet`, pour un `when` ou un `unless` sur un attribut qu’aucune page du livre ne pose : cet élément n’est jamais dessiné, ou toujours. De même pour un `{attr.x}` que rien ne définit : il reste vide.
 - Dans le Sandbox, chaque fiche d’élément d’un titre courant et de la décoration d’un gabarit a les champs **Dessiné quand la page le dit** et **Pas dessiné quand la page le dit**, dont les choix sont les attributs des délimiteurs du livre.
 
 ### Ce que la mise en page applique

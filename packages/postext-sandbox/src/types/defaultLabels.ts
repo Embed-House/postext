@@ -2063,6 +2063,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   warningsWrapUnsupportedDetail: "text wraps in horizontal text only; the figures keep their bands whole.",
   warningsUnclosedCodeBlockTitle: 'Unclosed code fence',
   warningsUnclosedCodeBlockDetail: 'the fence has no closing fence, so the rest of the text is set as code.',
+  warningsStrayFenceTitle: 'Closing fence after a one-line directive',
+  warningsStrayFenceDetail: 'the directive takes no closing fence, so this ::: closes nothing and is dropped: delete it.',
   warningsLineNumbersUnsupportedTitle: 'No line numbers in vertical text',
   warningsLineNumbersUnsupportedDetail: 'vertical documents get no line numbers; the setting is ignored.',
   warningsUnknownConfigKeyTitle: 'Unknown setting',

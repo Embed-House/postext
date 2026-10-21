@@ -19,6 +19,15 @@ cells are matched to the nearest `rules` preset (`grid`, `horizontal`,
 width, the header's bold and the fills a whole header or body shares, as a
 style hint for the table's style (`tableStyles` + `table.styleId`).
 
+The structure follows the source too (#1145): a merge comes back as
+`colSpan` / `rowSpan` with `hiddenBy` on the cells it covers; a first row
+over every column that starts with a caption label ("Tabla 2. …") is
+printed as the table's `label` and `caption` instead of a row; any other
+row over every column is a group band, centred, its fill its background;
+the header rows are counted from the look (wholly bold, or a fill of their
+own) unless --header-rows says; a body row whose cells all hold the same
+number of lines (two rows with no rule between them) is split again.
+
 Paste the model into a `preset.json` resource of kind "table":
     { "id": "...", "typeId": "table", "kind": "table", "caption": "...",
       "table": { "model": <output> } }
@@ -280,20 +289,154 @@ def nearest_rules(rules: list[tuple], ys: list[float], xs: list[float], header_r
 # the model
 
 
-def table_model(table, header_rows: int, page=None, cache: dict | None = None) -> dict:
+def merged_cells(grid: list[list], boxes: list[list]) -> tuple[dict, dict]:
+    """The merges PyMuPDF reports as `None` cells: {(row, col): (rowSpan,
+    colSpan)} for each merge's top-left cell and {(row, col): (row, col)}
+    for each cell it covers."""
+    ncols = max((len(r) for r in grid), default=0)
+    col_x = [min((b[j][0] for b in boxes if j < len(b) and b[j]), default=None) for j in range(ncols)]
+    row_y = [min((c[1] for c in b if c), default=None) for b in boxes]
+    spans: dict[tuple[int, int], tuple[int, int]] = {}
+    hidden: dict[tuple[int, int], tuple[int, int]] = {}
+    for i, row in enumerate(boxes):
+        for j, box in enumerate(row):
+            if box is None or (i, j) in hidden:
+                continue
+            cs = 1
+            while j + cs < ncols and j + cs < len(row) and row[j + cs] is None and \
+                    (col_x[j + cs] is None or col_x[j + cs] < box[2] - EDGE):
+                cs += 1
+            rs = 1
+            while i + rs < len(boxes) and j < len(boxes[i + rs]) and boxes[i + rs][j] is None and \
+                    row_y[i + rs] is not None and row_y[i + rs] < box[3] - EDGE:
+                rs += 1
+            if rs > 1 or cs > 1:
+                spans[(i, j)] = (rs, cs)
+                for r in range(i, i + rs):
+                    for c in range(j, j + cs):
+                        if (r, c) != (i, j):
+                            hidden[(r, c)] = (i, j)
+    return spans, hidden
+
+
+def full_width(row: list[dict], ncols: int) -> bool:
+    """A row that is one cell spanning every column."""
+    return ncols > 1 and bool(row) and row[0].get("colSpan") == ncols and not row[0].get("hiddenBy")
+
+
+def caption_of(text: str) -> tuple[str, str] | None:
+    """(label, caption) of a title row that starts with a caption label
+    ("Tabla 2." + "Valores normales")."""
+    from postext_md import CAPTION_LABEL_RE  # noqa: PLC0415
+
+    m = CAPTION_LABEL_RE.match(text)
+    if not m:
+        return None
+    return m.group(0).strip(), text[m.end():].strip()
+
+
+def header_rows_of(rows: list[list[dict]], boxes: list[list], start: int, cache: dict | None) -> int:
+    """How many rows from `start` are the header: rows whose words are all
+    bold, or that share one fill the row under them does not have."""
+    if cache is None:
+        return 1
+    lines, fills = cache["lines"], cache["fills"]
+
+    def look(i: int) -> tuple[bool, str | None]:
+        bold, cols = [], set()
+        for j, box in enumerate(boxes[i] if i < len(boxes) else []):
+            if box is None:
+                continue
+            cols.add(cell_fill(box, fills))
+            mine = [l for l in lines if box[0] - 0.5 <= (l["bbox"][0] + l["bbox"][2]) / 2 <= box[2] + 0.5
+                    and box[1] - 0.5 <= (l["bbox"][1] + l["bbox"][3]) / 2 <= box[3] + 0.5]
+            if mine:
+                bold.append(all(span_bold(sp) for l in mine for sp in l["spans"]))
+        return bool(bold) and all(bold), (next(iter(cols)) if len(cols) == 1 else None)
+
+    ncols = max((len(r) for r in rows), default=0)
+    n = 0
+    for i in range(start, len(rows) - 1):
+        if full_width(rows[i], ncols):
+            break
+        bold, fill = look(i)
+        _, below = look(i + 1)
+        if bold or (fill and fill != below):
+            n += 1
+        else:
+            break
+    return n
+
+
+def split_merged_rows(rows: list[list[dict]], raw: list[list[str]], header_rows: int) -> list[list[dict]]:
+    """Two source rows PyMuPDF read as one (no rule between them): a body
+    row whose non-empty cells all hold the same number of lines, more than
+    one, becomes that many rows. Rows in a merge are left alone."""
+    if any(c.get("rowSpan", 1) > 1 for r in rows for c in r):
+        return rows
+    out: list[list[dict]] = []
+    for i, row in enumerate(rows):
+        texts = raw[i] if i < len(raw) else []
+        filled = [k for k, c in enumerate(row) if c.get("content")]
+        counts = {len([t for t in (texts[k] or "").split("\n") if t.strip()]) for k in filled if k < len(texts)}
+        if i < header_rows or len(filled) < 2 or len(counts) != 1 or min(counts) < 2 \
+                or any(c.get("colSpan", 1) > 1 or c.get("hiddenBy") for c in row):
+            out.append(row)
+            continue
+        n = counts.pop()
+        for k in range(n):
+            new_row = []
+            for j, c in enumerate(row):
+                parts = [t for t in (texts[j] or "").split("\n") if t.strip()] if j < len(texts) else []
+                cell = {key: v for key, v in c.items() if key not in ("content", "verticalAlign")}
+                text = clean(parts[k]) if k < len(parts) else ""
+                bold = c.get("content", "").startswith("**") and c.get("content", "").endswith("**")
+                cell["content"] = f"**{text}**" if bold and text else text
+                new_row.append(cell)
+            out.append(new_row)
+    return out
+
+
+def table_model(table, header_rows: int | None, page=None, cache: dict | None = None, title: bool = False) -> dict:
     """The TableModel of a table PyMuPDF found. With `page`, the cells carry
     the source's look (`dress_cells`) and the model the keys `_style` (a
-    table style hint) and `_notes`, for the caller to pop."""
+    table style hint) and `_notes`, for the caller to pop.
+
+    A merge PyMuPDF reports as `None` cells is kept (`colSpan` / `rowSpan`
+    on its first cell, `hiddenBy` on the ones it covers). With `title`, a
+    first row spanning every column that starts with a caption label is
+    taken out as the caption (`_caption`, `_label`). Any other row spanning
+    every column is a group band: centred, its fill its background.
+    `header_rows` None counts the header from the rows' look (bold or a
+    fill of their own). A body row whose cells all hold the same number of
+    lines is split into that many rows."""
     grid = table.extract()
+    boxes = [[tuple(c) if c is not None else None for c in r.cells] for r in table.rows]
+    ncols = max((len(r) for r in grid), default=0)
+    spans, hidden = merged_cells(grid, boxes)
     rows = []
-    for row_index, row in enumerate(grid):
+    for i, row in enumerate(grid):
         cells = []
-        for value in row:
+        for j, value in enumerate(row):
+            if (i, j) in hidden:
+                pi, pj = hidden[(i, j)]
+                cells.append({"content": "", "hiddenBy": {"row": pi, "col": pj}})
+                continue
             cell: dict = {"content": clean(value)}
-            if row_index < header_rows:
-                cell["isHeader"] = True
+            rs, cs = spans.get((i, j), (1, 1))
+            if cs > 1:
+                cell["colSpan"] = cs
+            if rs > 1:
+                cell["rowSpan"] = rs
             cells.append(cell)
         rows.append(cells)
+    raw = [[v if isinstance(v, str) else "" for v in row] for row in grid]
+    start = 0
+    caption = None
+    if title and rows and full_width(rows[0], ncols):
+        caption = caption_of(rows[0][0]["content"])
+        if caption:
+            start = 1
     style: dict = {}
     notes: list[str] = []
     if page is not None:
@@ -301,19 +444,41 @@ def table_model(table, header_rows: int, page=None, cache: dict | None = None) -
         if "lines" not in cache:
             cache["lines"] = page_lines(page)
             cache["fills"], cache["rules"] = page_paint(page)
-        style, notes = dress_cells(table, rows, header_rows, cache)
+    if header_rows is None:
+        header_rows = header_rows_of(rows, boxes, start, cache if page is not None else None)
+    for i in range(start, min(start + header_rows, len(rows))):
+        for c in rows[i]:
+            if not c.get("hiddenBy"):
+                c["isHeader"] = True
+    if page is not None:
+        style, notes = dress_cells(table, rows, header_rows, cache, start)
+    for i in range(start + header_rows, len(rows)):
+        if full_width(rows[i], ncols):
+            rows[i][0]["align"] = "center"       # a group band
+            rows[i][0].pop("verticalAlign", None)
+    if start:
+        rows, raw = rows[start:], raw[start:]
+        for r in rows:
+            for c in r:
+                if c.get("hiddenBy"):
+                    c["hiddenBy"] = {"row": c["hiddenBy"]["row"] - start, "col": c["hiddenBy"]["col"]}
+    rows = split_merged_rows(rows, raw, header_rows)
     # drop fully empty trailing rows that some detectors produce
-    while rows and all(not c["content"] for c in rows[-1]):
+    while rows and all(not c["content"] and not c.get("hiddenBy") for c in rows[-1]):
         rows.pop()
     model: dict = {"rows": rows, "headerRowCount": header_rows}
     if page is not None:
         model["_style"], model["_notes"] = style, notes
+    if caption:
+        model["_label"], model["_caption"] = caption
     return model
 
 
-def dress_cells(table, rows: list[list[dict]], header_rows: int, cache: dict) -> tuple[dict, list[str]]:
+def dress_cells(table, rows: list[list[dict]], header_rows: int, cache: dict, start: int = 0) -> tuple[dict, list[str]]:
     """Write each cell's align, verticalAlign, bold and background; return
-    the style hint (header bold, shared fills, nearest rules) and notes."""
+    the style hint (header bold, shared fills, nearest rules) and notes.
+    Rows before `start` (a title row taken out as the caption) are left out;
+    the header is the `header_rows` rows from `start`."""
     lines, fills, rules = cache["lines"], cache["fills"], cache["rules"]
     boxes = [[tuple(c) if c is not None else None for c in r.cells] for r in table.rows]
 
@@ -323,9 +488,11 @@ def dress_cells(table, rows: list[list[dict]], header_rows: int, cache: dict) ->
     fill_of: dict[tuple[int, int], str] = {}
     header_bold: list[bool] = []
     for i, row in enumerate(rows):
+        if i < start:
+            continue
         for j, cell in enumerate(row):
             box = box_of(i, j)
-            if box is None:
+            if box is None or cell.get("hiddenBy"):
                 continue
             col = cell_fill(box, fills)
             if col:
@@ -343,20 +510,20 @@ def dress_cells(table, rows: list[list[dict]], header_rows: int, cache: dict) ->
             if v:
                 cell["verticalAlign"] = v
             bold = all(span_bold(s) for l in mine for s in l["spans"])
-            if i < header_rows:
+            if i < start + header_rows:
                 header_bold.append(bold)     # the header's weight is the style's (headerBold)
             elif bold and "**" not in cell["content"]:
                 cell["content"] = f"**{cell['content']}**"
     style: dict = {}
     notes: list[str] = []
     # a fill the whole header, or every body row, shares is the style's; the rest is the cells'
-    head = [(i, j) for i in range(min(header_rows, len(rows))) for j in range(len(rows[i])) if box_of(i, j)]
+    head = [(i, j) for i in range(start, min(start + header_rows, len(rows))) for j in range(len(rows[i])) if box_of(i, j)]
     if head and len({fill_of.get(k) for k in head}) == 1 and fill_of.get(head[0]):
         style["headerBackgroundEnabled"] = True
         style["headerBackground"] = colour(fill_of[head[0]])
         for k in head:
             fill_of.pop(k, None)
-    body = [i for i in range(header_rows, len(rows)) if any(c["content"] for c in rows[i])]
+    body = [i for i in range(start + header_rows, len(rows)) if any(c["content"] for c in rows[i])]
 
     def row_fill(i: int) -> str | None:
         cols = {fill_of.get((i, j)) for j in range(len(rows[i])) if box_of(i, j)}
@@ -382,7 +549,7 @@ def dress_cells(table, rows: list[list[dict]], header_rows: int, cache: dict) ->
     if header_rows and header_bold:
         style["headerBold"] = all(header_bold)
     # rules: the cells' row and column edges, matched to a preset
-    flat = [b for r in boxes for b in r if b]
+    flat = [b for r in boxes[start:] for b in r if b]
     ys = edges([b[1] for b in flat] + [b[3] for b in flat])
     xs = edges([b[0] for b in flat] + [b[2] for b in flat])
     if len(ys) >= 2 and len(xs) >= 2:
@@ -400,13 +567,35 @@ def dress_cells(table, rows: list[list[dict]], header_rows: int, cache: dict) ->
     return style, notes
 
 
+def page_tables(page, strategy: str = "lines_strict") -> list[dict]:
+    """The ruled tables of one page, as `pdf_extract.py markdown` takes
+    them: {bbox, model, style, notes, label, caption} (label and caption
+    from a title row, else None)."""
+    with contextlib.redirect_stdout(sys.stderr):
+        found = page.find_tables(strategy=strategy)
+    cache: dict = {}
+    out: list[dict] = []
+    for table in found.tables:
+        if table.row_count < 2 or table.col_count < 2:
+            continue
+        model = table_model(table, None, page, cache, title=True)
+        style, notes = model.pop("_style", {}), model.pop("_notes", [])
+        label, caption = model.pop("_label", None), model.pop("_caption", None)
+        if not model["rows"]:
+            continue
+        out.append({"bbox": tuple(table.bbox), "model": model, "style": style, "notes": notes,
+                    "label": label, "caption": caption})
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("pdf", help="reference PDF")
     parser.add_argument("--pages", metavar="SPEC", help="1-based page selection, e.g. 12 or 3-5 (default: all)")
-    parser.add_argument("--header-rows", type=int, default=1, help="rows to mark as header (default: 1)")
+    parser.add_argument("--header-rows", type=int, default=None,
+                        help="rows to mark as header (default: counted from the rows' look, bold or a fill of their own)")
     parser.add_argument(
         "--strategy", default="lines_strict", choices=["lines", "lines_strict", "text"],
         help="PyMuPDF find_tables strategy (default: lines_strict; use `text` for ruleless tables)",
@@ -436,8 +625,10 @@ def main(argv: list[str] | None = None) -> int:
                 tables = page.find_tables(strategy=args.strategy)
             cache: dict = {}
             for table_index, table in enumerate(tables.tables):
-                model = table_model(table, args.header_rows, None if args.plain else page, cache)
+                model = table_model(table, 1 if args.plain and args.header_rows is None else args.header_rows,
+                                    None if args.plain else page, cache, title=True)
                 style, notes = model.pop("_style", {}), model.pop("_notes", [])
+                label, caption = model.pop("_label", None), model.pop("_caption", None)
                 if not model["rows"]:
                     continue
                 found.append({
@@ -447,6 +638,7 @@ def main(argv: list[str] | None = None) -> int:
                     "model": model,
                     "style": style,
                     "notes": notes,
+                    **({"label": label, "caption": caption} if label else {}),
                 })
     finally:
         doc.close()

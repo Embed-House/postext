@@ -2664,6 +2664,8 @@
     "warningsWrapUnsupportedDetail": "文字绕排只用于横排，图片保持整条。",
     "warningsUnclosedCodeBlockTitle": "代码围栏未闭合",
     "warningsUnclosedCodeBlockDetail": "开头的围栏没有对应的结束围栏，其后的全部文字都按代码排版。",
+    "warningsStrayFenceTitle": "单行指令后的结束行",
+    "warningsStrayFenceDetail": "这个指令没有结束行，所以这行:::什么也不结束，会被丢弃。请删掉它。",
     "warningsLineNumbersUnsupportedTitle": "竖排文字不标行号",
     "warningsLineNumbersUnsupportedDetail": "竖排文档不标行号，此设置不起作用。",
     "warningsUnknownConfigKeyTitle": "未知设置",

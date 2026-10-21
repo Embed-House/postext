@@ -2665,6 +2665,8 @@
     "warningsWrapUnsupportedDetail": "Textumfluss gibt es nur in horizontalem Text; die Abbildungen belegen die volle Breite.",
     "warningsUnclosedCodeBlockTitle": "Nicht geschlossener Codeblock",
     "warningsUnclosedCodeBlockDetail": "dem Codeblock fehlt die schließende Zeile, daher wird der restliche Text als Code gesetzt.",
+    "warningsStrayFenceTitle": "Schließende Zeile nach einer einzeiligen Direktive",
+    "warningsStrayFenceDetail": "die Direktive hat keine schließende Zeile, dieses ::: schließt also nichts und wird verworfen: Löschen Sie es.",
     "warningsLineNumbersUnsupportedTitle": "Keine Zeilennummern in vertikalem Text",
     "warningsLineNumbersUnsupportedDetail": "vertikale Dokumente erhalten keine Zeilennummern; die Einstellung wird ignoriert.",
     "warningsUnknownConfigKeyTitle": "Unbekannte Einstellung",

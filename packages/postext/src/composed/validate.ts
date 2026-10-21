@@ -346,7 +346,10 @@ function checkTemplates(
     checkPatch(t, path, push, TEMPLATE_KEYS);
     unknownKeys(t.variants, VARIANTS_KEYS, `${path}/variants`, push);
     if (isRecord(t.variants)) {
-      for (const side of ['recto', 'verso'] as const) checkPatch(t.variants[side], `${path}/variants/${side}`, push, PATCH_KEYS);
+      for (const side of ['recto', 'verso'] as const) {
+        checkPatch(t.variants[side], `${path}/variants/${side}`, push, PATCH_KEYS);
+        checkVariantParity(t.variants[side], side, `${path}/variants/${side}`, push);
+      }
     }
   });
   const toPx = pxConverter(options);
@@ -378,6 +381,24 @@ function checkTemplates(
       if (parity === undefined && resolved.template.role === MODULE_ROLE) checkModule(t, path, push);
       if (parity === undefined && resolved.template.role !== MODULE_ROLE) checkPageModules(t, resolved.template.groups, path, push);
     }
+  }
+}
+
+/** An element of a variant whose `parity` is the other side's (#1152): a
+ *  recto is an odd page and a verso an even one, so an `even` element in
+ *  `variants.recto` (or `odd` in `variants.verso`) is never drawn
+ *  (`unknownConfigValue`; the folio or running foot it holds is lost). */
+function checkVariantParity(patch: unknown, side: 'recto' | 'verso', path: string, push: Push): void {
+  if (!isRecord(patch)) return;
+  const never = side === 'recto' ? 'even' : 'odd';
+  for (const key of ['header', 'footer', 'decoration'] as const) {
+    const slot = patch[key];
+    if (!isRecord(slot) || !Array.isArray(slot.elements)) continue;
+    slot.elements.forEach((el: unknown, i: number) => {
+      if (isRecord(el) && el.parity === never) {
+        push({ kind: 'unknownConfigValue', path: `${path}/${key}/elements/${i}/parity`, value: never, used: '' });
+      }
+    });
   }
 }
 
