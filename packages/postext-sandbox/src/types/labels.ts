@@ -3283,6 +3283,10 @@ export interface SandboxLabels {
   markStyleColorTooltip: string;
   markStylePaddingXTooltip: string;
   markStylePaddingYTooltip: string;
+  markStyleDecorationBreak: string;
+  markStyleDecorationBreakSlice: string;
+  markStyleDecorationBreakClone: string;
+  markStyleDecorationBreakTooltip: string;
   warningsUnknownMarkStyleTitle: string;
   warningsUnknownMarkStyleDetail: string;
   calloutStyleAdd: string;

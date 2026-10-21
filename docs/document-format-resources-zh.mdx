@@ -61,6 +61,8 @@ The keeper's quarters occupy the eastern wing.
 
 单元格可以有自己的填充色。`TableCell.background`是一个颜色值（`{ "hex": "#c1dfd6", "model": "hex" }`，可以用`paletteId`关联到文档调色板中的某一项），用它代替样式中的表头或表体背景色；兼容性矩阵就是这样把单元格涂成绿、红、黄三色的。沙盒的表格编辑器通过工具栏的填充控件设置它。为了给这些填充色加图例，题注、附注和任何文本块都接受行内**色块**：`:swatch{color="#c1dfd6"}`（一个十六进制值，或调色板某一项的id，如`:swatch{color="table-compatible"}`）会在基线上排一个小方块，边长为字号的四分之三，用该颜色填充，并以文字颜色描边，所以附注可以写成`:swatch{color="ok"}: compatible; :swatch{color="no"}: incompatible`。颜色解析不出任何值时，只画一个空的边框。十六进制值可以带alpha通道（`#rrggbbaa`、`#rgba`），`rgb()` / `rgba()`颜色也可以用，所以半透明的单元格填充色可以有同样半透明的图例（见[配置 › 透明度](/zh/docs/configuration-fonts-colors-viewers#透明度)）。
 
+地图图例的色块可以有自己的尺寸、边框和圆角，并在图例文字前留出空隙：`:swatch{color="farmland" size=10pt border="0.75pt ink" radius=2pt gap=3pt}Farmland`。`size` 是方块的边长（默认 0.75 em）；`border` 为 `none`，或以任意顺序写出的宽度和颜色（`1pt #333`、`ink 0.5pt`），`borderWidth` 和 `borderColor` 单独设置其中一项，优先于 `border`（默认是边长 6% 宽、文字颜色的边框）；`radius` 设置圆角，最大为圆形；`gap` 在方块之后加入空隙，计入色块本身，图例文字可以紧接其后不留空格（从右到左的文字中位于方块左侧）。长度可用 `pt`、`px`、`mm`、`cm`、`in`、`em` 和 `rem`（只写数字时以点为单位；em 为周围文字的字号），边框颜色与 `color` 一样可写十六进制值或调色板 id。行高不变。画布、HTML 查看器、PDF 和 EPUB 绘出相同的方块（postext 1.52 起）。
+
 SVG资源还可以通过`diagramStyle.singleInk`（默认为`false`）重新着色，以便用单一专色印刷。启用后，SVG示意图中的每一种颜色都会按亮度映射为`diagramStyle.inkColor`（默认为主调色板颜色`#295AA3`）的某个色调：白色对应纸色，黑色对应满版油墨。这样文档用单一专色印刷时，图仍能如实再现。见[配置 › 图示样式](/zh/docs/configuration-resources#图示样式)。
 
 格式错误的嵌入（缺少`id`或`id`为空、`id`没有加引号或用了单引号、带有多余的属性，模板页的`slot`除外）不会被提升为资源块；它会退回到普通的段落解析，在输出中仍然可见。格式正确、但紧贴在某个段落行下方、中间没有空行的嵌入行也是如此：它会被当作那个段落的一部分。两种情况都会发出`malformedEmbed`警告，即沙盒“检查”面板中的一条**嵌入行被排成了文字**。

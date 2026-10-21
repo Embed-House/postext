@@ -4044,7 +4044,18 @@ export interface MarkStyleConfig {
   paddingTop?: Dimension;
   /** Room below the text band, in place of {@link paddingY}. */
   paddingBottom?: Dimension;
+  /** How the band of a phrase that wraps onto another line is cut (CSS
+   *  `box-decoration-break`). `'slice'` (the default): one band cut where
+   *  the line breaks, square at the cut, with the padding and the rounded
+   *  corners only at the phrase's true start and end. `'clone'`: each line
+   *  piece gets a whole band of its own, with `paddingX` and the rounded
+   *  corners on both of its ends, as a heading set on a colour band cut per
+   *  line. The layout is the same either way. */
+  decorationBreak?: MarkDecorationBreak;
 }
+
+/** `markStyles[].decorationBreak`. */
+export type MarkDecorationBreak = 'slice' | 'clone';
 
 export interface ResolvedMarkStyleConfig {
   id: string;
@@ -4059,6 +4070,7 @@ export interface ResolvedMarkStyleConfig {
   paddingTop?: Dimension;
   /** Unset: `paddingY`. */
   paddingBottom?: Dimension;
+  decorationBreak: MarkDecorationBreak;
 }
 
 export interface ResolvedChipStyleConfig {

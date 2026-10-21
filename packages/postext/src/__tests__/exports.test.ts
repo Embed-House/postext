@@ -707,6 +707,8 @@ describe("package exports", () => {
       "inlineIconBox",
       "measureInlineIcon",
       "resourceBlockIcons",
+      "hasSwatchShape",
+      "swatchGeometry",
       "figureLabelBounds",
       "figureLabelLeaderPath",
       "figureLabelLeaderPaths",

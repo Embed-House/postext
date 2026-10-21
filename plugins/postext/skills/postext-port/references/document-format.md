@@ -72,8 +72,8 @@ A heading's inline content is read like a paragraph's while `headings.inlineMark
 - With `headings.inlineMarks: false` (and in a preset without `configVersion` 6 whose headings carry marks) they are **reduced to plain text**: the markers are removed and the heading's look comes only from the level/style config.
 - `` `code` `` becomes its text. Images are removed.
 - Escapes `\* \_ \^ \~ \`` produce the literal character.
-- **Kept as live spans:** `:ref{…}`, the `@sec:id` / `[@fig:id]` / `\ref{…}` / `\eqref{…}` cross-references, `:swatch{…}` and inline `$math$`. `:mark`, the CJK marks, ruby and `:tcy`/`:upright`/`:sideways` are read with the other inline marks. **Printed as written** in a heading: `:chip[…]`, footnote markers `[^id]`, citations `[@key]` / `@key`, and `:tab`.
-- **`:chip[…]` is NOT processed in headings.** It stays literal text.
+- **Kept as live spans:** `:ref{…}`, the `@sec:id` / `[@fig:id]` / `\ref{…}` / `\eqref{…}` cross-references, `:swatch{…}` and inline `$math$`. `:mark`, the CJK marks, ruby and `:tcy`/`:upright`/`:sideways` are read with the other inline marks. **Printed as written** in a heading: footnote markers `[^id]`, citations `[@key]` / `@key`, and `:tab`.
+- **`:chip[…]` in a heading** (postext ≥ 1.52.0): set as in a paragraph (`## :chip[///]{style="mark"} Title`, a coloured chip or a symbol run before the title); the contents, running heads, PDF bookmarks and EPUB navigation read the title without it, and a heading drawn by a design prints the title without the chip. An older engine prints it literally.
 
 ### 2.2 Heading attributes: trailing `{…}`
 
@@ -571,9 +571,15 @@ The sun warms the sea and :mark[water rises into the air as vapour].
 **Regex:** `:swatch\{([^}]*)\}`.
 - `color` is required (no colour: literal text). Values: `#rgb` or `#rrggbb`, **or a palette entry id** (e.g. `color="table-compatible"`). An unresolved value draws an empty outline.
 - Allowed in every text block including headings, and in snippets.
+- Shape (postext ≥ 1.52.0): `size` (side, default 0.75em), `border` (`none`, or a width and a colour in either
+  order), `borderWidth` / `borderColor` (each alone, over `border`; default a 6 % outline in the text colour),
+  `radius` (corners, clamped to a circle), `gap` (room after the square, part of its advance, so the label follows
+  with no space). Lengths `pt|px|mm|cm|in|em|rem`, a bare number is pt, em of the surrounding text; the outline
+  colour is a hex or a palette id. Port a map legend's keys this way, never as chips or pictures.
 
 ```md
 :swatch{color="ok"}: compatible; :swatch{color="#e5adb8"}: incompatible
+:swatch{color="farmland" size=10pt border="0.75pt ink" radius=2pt gap=3pt}Farmland
 ```
 
 ### 10.3 `:smallcaps[text]` (small capitals)
@@ -1104,7 +1110,7 @@ styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings`
 5. Attribute values contain no `}`. Quotes don't clash. `::resource` uses exactly `{id="…"}`.
 6. Every `type=`, `style=` and `:chip{style}` id exists in the config. Every `:ref` / `::resource` id exists in `resources`.
 7. Every opened `:::callout|paragraphs|part|columns` has its closing `:::`. A `:::columns` outside a callout needs postext ≥ 1.25 (`layout.flowColumns`; below `configVersion` 11 it is ignored).
-8. No headings end in brace text unless it is meant as attributes. No `:chip` in headings.
+8. No headings end in brace text unless it is meant as attributes. No `:chip` in headings on an engine older than 1.52.0.
 9. Frontmatter appears only in the book's first chapter.
 10. No GFM tables, HTML, or `---` rules remain. A code listing is a ```` ``` ```` / `~~~` fence (postext ≥ 1.23, §3.4), never one paragraph per line. Every `[^id]` marker has one `[^id]:` definition in its chapter, and none sits in a heading, caption or cell.
 11. Index marks sit in running text (not captions or cells), never right after a colon; ranges are paired; every `see`/`seealso` target is an entry; each index that has marks has its `:::index`.

@@ -1,12 +1,12 @@
 import { FORCED_BREAK, measureForcedBreaks } from './hardBreaks';
 import { placeTab, type TabLeaderPlacement, type TabRun, type TabStopPx } from './tabs';
 import type { TabStopAlign } from '../types';
-import type { VDTAnnotationRun, VDTChip, VDTChipRun, VDTInlineIcon, VDTLine, VDTLineSegment, VDTSegmentMarks } from '../vdt';
+import type { VDTAnnotationRun, VDTChip, VDTChipRun, VDTLine, VDTLineSegment, VDTSegmentMarks, VDTSwatch } from '../vdt';
 import { measureInlineIcon } from './inlineIcon';
 import { uprightArabicSpans, uprightFace } from '../uprightArabic';
 import { createBoundingBox } from '../vdt';
 import type { MathRender } from '../math/types';
-import type { InlineSpan } from '../parse';
+import type { InlineSpan, SwatchBox } from '../parse';
 import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, softHyphenBreaks, withoutSlashJoints } from '../hyphenate';
 import {
   richTokensToItems,
@@ -144,8 +144,9 @@ export interface RichToken {
    *  sets. */
   labelTab?: 'lead' | 'gap';
   /** When present, this token is an inline colour swatch (`:swatch{…}`): an
-   *  atomic square of `width` px, filled with `color` (hex) when resolved. */
-  swatch?: { color?: string; icon?: VDTInlineIcon };
+   *  atomic square of `width` px, filled with `color` (hex) when resolved,
+   *  with the shape its attributes give it (#1104). */
+  swatch?: VDTSwatch;
   /** When present, this token is an inline chip (`:chip[…]`): an atomic box
    *  of `width` px (margins included) with its own text runs. */
   chip?: VDTChip;
@@ -222,6 +223,17 @@ export interface RichToken {
  *  colour. Anything else leaves the swatch an empty outline. */
 export function isSwatchFill(color: string): boolean {
   return /^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(color) || /^rgba?\([^()]*\)$/i.test(color);
+}
+
+/** The shape fields of a swatch segment (#1104, see `VDTSwatch`): only
+ *  those its attributes set, so a plain swatch keeps today's segment. */
+function swatchShapeOf(box: SwatchBox, side: number, width: number): Omit<VDTSwatch, 'color' | 'icon'> {
+  return {
+    ...(box.sidePx !== undefined || width !== side ? { side } : {}),
+    ...(box.borderWidthPx !== undefined ? { borderWidth: box.borderWidthPx } : {}),
+    ...(box.borderColor !== undefined ? { borderColor: box.borderColor } : {}),
+    ...(box.radiusPx !== undefined ? { radius: Math.min(box.radiusPx, side / 2) } : {}),
+  };
 }
 
 /** Side of an inline colour swatch: three quarters of the font size (the
@@ -1248,14 +1260,18 @@ export function atomicSpanToken(
       const icon = measureInlineIcon(span.swatch.icon, span.swatch.color, normalFont);
       return { text: span.text, bold: span.bold, italic: span.italic, captionLabel: span.captionLabel, kind: 'text', width: icon.widthPx, swatch: { icon } };
     }
+    const fill = isSwatchFill(span.swatch.color) ? { color: span.swatch.color } : {};
+    const box = span.swatch.box;
+    const side = box?.sidePx ?? swatchSidePx(swatchFont);
+    const width = side + (box?.gapPx ?? 0);
     return {
       text: span.text,
       bold: span.bold,
       italic: span.italic,
       captionLabel: span.captionLabel,
       kind: 'text',
-      width: swatchSidePx(swatchFont),
-      swatch: isSwatchFill(span.swatch.color) ? { color: span.swatch.color } : {},
+      width,
+      swatch: box ? { ...fill, ...swatchShapeOf(box, side, width) } : fill,
     };
   }
   if (span.math && span.mathRender) {

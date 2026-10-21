@@ -552,6 +552,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>paddingY</code></td>
       <td>المسافة فوق وتحت، كلٌّ منهما بدل <code>paddingY</code>.</td>
     </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>كيف يُقطع شريط العبارة التي تمتد إلى سطر آخر، مثل <code>box-decoration-break</code> في CSS. <code>'slice'</code>: شريط واحد يُقطع مستقيمًا عند انكسار السطر، والحشوة والزوايا المستديرة في بداية العبارة ونهايتها الحقيقيتين فقط. <code>'clone'</code>: لكل جزء من السطر شريط كامل، بـ<code>paddingX</code> والزوايا في طرفيه، لعنوان على شريط ملوّن مقطوع سطرًا سطرًا. التنضيد واحد في الحالتين.</td>
+    </tr>
   </tbody>
 </table>
 
