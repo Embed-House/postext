@@ -124,3 +124,32 @@ describe('a composed frame\'s overlap', () => {
     expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
   });
 });
+
+// #1088: a modules group's kind (row, grid), the modules a group inside the
+// stack takes, and a module's width, which the group editor and the
+// template editor write, are settings like any other.
+describe('modules side by side', () => {
+  const composed = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="shell"}\n:::module{template="box"}\n:::frame{slot="text"}\nWords.\n:::\n:::\n::::\n')];
+    const config = {
+      pageTemplates: [
+        { id: 'shell', frames: [], groups: [{ name: 'body', modules: true }, { name: 'pair', modules: true, within: 'body' }] },
+        { id: 'box', role: 'module', frames: [{ name: 'text' }] },
+      ],
+    };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it.each([
+    ['pageTemplates[id=shell].groups[name=pair].kind', 'row', 'pageTemplates[id=shell].groups[1].kind', 'row'],
+    ['pageTemplates[id=shell].groups[name=pair].templates', ['box'], 'pageTemplates[id=shell].groups[1].templates[0]', 'box'],
+    ['pageTemplates[id=box].width', { percent: 40 }, 'pageTemplates[id=box].width.percent', 40],
+  ] as const)('writes %s and nothing else moves', async (path, value, read, want) => {
+    const { call } = harness(composed() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const done = await call('sandbox_set_config', { changes: [{ path, value }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(after.get(read)).toBe(want);
+    expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
+  });
+});

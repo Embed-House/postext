@@ -38,6 +38,7 @@ import { SlotEditor } from '../HeaderFooterSection/SlotEditor';
 import { templateFrameInputs } from '../../../templates/connectorEdits';
 import { FrameProperties } from './FrameProperties';
 import { GroupsEditor } from './GroupsEditor';
+import { ModuleWidthField } from './ModuleWidthField';
 import { TemplateSheetSvg } from './TemplateSheetSvg';
 import { laidHeights, resolveAt, usePageTemplates } from './model';
 
@@ -322,9 +323,10 @@ export function TemplateEditor({ id, scope, pages, heights, frame, pageIndex = n
             label={labels.pageTemplatesModuleRole}
             tooltip={labels.pageTemplatesModuleRoleTooltip}
             checked={isMod}
-            onChange={(v) => set(v ? { role: 'module', spread: undefined, gutter: undefined, area: undefined, header: undefined, footer: undefined, overflowTemplate: undefined, variants: undefined } : { role: undefined })}
+            onChange={(v) => set(v ? { role: 'module', spread: undefined, gutter: undefined, area: undefined, header: undefined, footer: undefined, overflowTemplate: undefined, variants: undefined } : { role: undefined, width: undefined })}
             isDefault={!has('role')}
           />
+          {isMod && <ModuleWidthField value={resolved.width} isDefault={!has('width')} onChange={(w) => set({ width: w })} />}
           {!isMod && (
           <>
           <ToggleSwitch label={labels.pageTemplatesSpread} tooltip={labels.pageTemplatesSpreadTooltip} checked={spread} onChange={(v) => set({ spread: v || undefined })} isDefault={!has('spread')} onReset={() => set({ spread: undefined })} />
