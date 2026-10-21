@@ -574,7 +574,11 @@ What the extraction decides, so you know what to check:
   colour, a ground from a fence attribute) always stays on the page shell;
   when the source paints it over art that moves into a module, the fold's
   report lists it under `furnitureUnder` (on the shell it lies under that
-  art).
+  art). A child template's new decoration paints after all it inherits, so
+  when a page's extra element meets an inherited text element or furniture
+  (a band over the folio), the patch takes that element out and writes it
+  again after the extras (`{"id": …, "remove": true}`, then the whole
+  element): it stays on top, as on the source.
 - **Illustrations on white** (skill 1.61). A cut standing on white whose
   border is at least 80 % white has the white joined to its edge made
   transparent (`images.py cutout` does the same by hand): a PNG with a
