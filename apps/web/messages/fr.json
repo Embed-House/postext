@@ -924,6 +924,8 @@
     "warningsFitStepShrinkText": "texte réduit à __pct__",
     "warningsFitStepContinue": "continuer sur une autre page (où son bloc n’en reçoit rien)",
     "warningsFitFixAllowShrink": "autorisez la réduction du texte jusqu’à __pct__ (fit.minScale)",
+    "warningsFitFixAllowShrinkWhole": "autorisez la réduction du texte jusqu’à __pct__, où le mot long tient entier (fit.minScale)",
+    "warningsFitFixAllowShrinkDivided": "autorisez la réduction du texte jusqu’à __pct__, un mot long coupé (fit.minScale)",
     "warningsFitFixRaiseMax": "portez maxHeight à __mm__ mm",
     "warningsFitFixLowerMin": "baissez le minHeight de __frame__ à __mm__ mm",
     "warningsFitFixContinue": "faites-le continuer sur la page suivante (overflow.continueIn)",

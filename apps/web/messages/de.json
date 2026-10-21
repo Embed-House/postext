@@ -925,6 +925,8 @@
     "warningsFitStepShrinkText": "Text auf __pct__ verkleinert",
     "warningsFitStepContinue": "Fortsetzung auf einer anderen Seite (dort nimmt sein Rahmen nichts davon auf)",
     "warningsFitFixAllowShrink": "den Text auf __pct__ verkleinern lassen (fit.minScale)",
+    "warningsFitFixAllowShrinkWhole": "den Text auf __pct__ verkleinern lassen, wo das lange Wort ganz bleibt (fit.minScale)",
+    "warningsFitFixAllowShrinkDivided": "den Text auf __pct__ verkleinern lassen, ein langes Wort getrennt (fit.minScale)",
     "warningsFitFixRaiseMax": "maxHeight auf __mm__ mm anheben",
     "warningsFitFixLowerMin": "minHeight von __frame__ auf __mm__ mm senken",
     "warningsFitFixContinue": "auf der nächsten Seite fortsetzen (overflow.continueIn)",

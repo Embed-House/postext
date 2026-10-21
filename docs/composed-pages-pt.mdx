@@ -463,7 +463,7 @@ O `frameOverflow` indica a página, o modelo, o bloco e o idioma do documento, d
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> do bloco: a maior escala de texto, em passos de 2,5 % até 50 %, com que o conteúdo cabe, testada na página. Com <code>fit.shrinkText: false</code>, <code>also</code> o ativa.</td>
+      <td><code>fit.minScale</code> do bloco: a maior escala de texto, em passos de 2,5 % até 50 %, com que o conteúdo cabe, testada na página. Se essa escala divide uma palavra mais larga que o bloco, a proposta indica a maior escala menor com que o conteúdo cabe e todas as palavras ficam inteiras, com <code>word: 'whole'</code>; se nenhuma até 50 % a deixa inteira, fica a maior que cabe, com <code>word: 'divided'</code>. Com <code>fit.shrinkText: false</code>, <code>also</code> o ativa.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

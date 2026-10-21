@@ -463,7 +463,7 @@ Si ningún paso consigue que el contenido quepa, el marco se corta al pie, conse
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> del marco: la mayor escala de texto, en pasos del 2,5 % hasta el 50 %, con la que el contenido cabe, probada sobre la página. Con <code>fit.shrinkText: false</code>, <code>also</code> lo activa.</td>
+      <td><code>fit.minScale</code> del marco: la mayor escala de texto, en pasos del 2,5 % hasta el 50 %, con la que el contenido cabe, probada sobre la página. Si esa escala parte una palabra más ancha que el marco, la propuesta da la mayor escala menor con la que cabe y todas las palabras van enteras, con <code>word: 'whole'</code>; si ninguna hasta el 50 % la deja entera, se queda con la mayor que cabe y lleva <code>word: 'divided'</code>. Con <code>fit.shrinkText: false</code>, <code>also</code> lo activa.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

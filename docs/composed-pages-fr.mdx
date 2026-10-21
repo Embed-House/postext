@@ -463,7 +463,7 @@ Quand aucune étape ne fait tenir le contenu, le bloc est coupé à son pied, ga
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> du bloc : la plus grande échelle de texte, par paliers de 2,5 % jusqu’à 50 %, à laquelle le contenu tient, essayée sur la page. Avec <code>fit.shrinkText: false</code>, <code>also</code> l’active.</td>
+      <td><code>fit.minScale</code> du bloc : la plus grande échelle de texte, par paliers de 2,5 % jusqu’à 50 %, à laquelle le contenu tient, essayée sur la page. Si cette échelle coupe un mot plus large que le bloc, la proposition donne la plus grande échelle inférieure à laquelle le contenu tient avec tous les mots entiers, avec <code>word: 'whole'</code> ; si aucune jusqu’à 50 % ne le garde entier, elle garde la plus grande qui tient et porte <code>word: 'divided'</code>. Avec <code>fit.shrinkText: false</code>, <code>also</code> l’active.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

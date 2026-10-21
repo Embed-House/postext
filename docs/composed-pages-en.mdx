@@ -463,7 +463,7 @@ When no step makes the content fit, the frame is cut at its foot, keeps the scal
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> of the frame: the largest text scale, in steps of 2.5 % down to 50 %, at which the content fits, tried on the page. With <code>fit.shrinkText: false</code>, <code>also</code> turns it on.</td>
+      <td><code>fit.minScale</code> of the frame: the largest text scale, in steps of 2.5 % down to 50 %, at which the content fits, tried on the page. When that scale divides a word wider than the frame, the proposal names the largest smaller scale that fits with every word whole and carries <code>word: 'whole'</code>; when no scale down to 50 % sets it whole, it keeps the largest that fits and carries <code>word: 'divided'</code>. With <code>fit.shrinkText: false</code>, <code>also</code> turns it on.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

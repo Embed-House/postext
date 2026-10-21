@@ -342,6 +342,12 @@ export interface SandboxLabels {
   warningsFitStepShrinkText: string;
   warningsFitStepContinue: string;
   warningsFitFixAllowShrink: string;
+  /** `allowShrink` at a scale smaller than the largest that fits, where
+   *  a word wider than the frame's measure is set whole (#1090). */
+  warningsFitFixAllowShrinkWhole: string;
+  /** `allowShrink` at the largest scale that fits, where no allowed scale
+   *  sets a word wider than the measure whole (#1090). */
+  warningsFitFixAllowShrinkDivided: string;
   warningsFitFixRaiseMax: string;
   warningsFitFixLowerMin: string;
   warningsFitFixContinue: string;

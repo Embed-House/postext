@@ -463,7 +463,7 @@ Si necesitas o quieres comprar algo muy caro…
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td>枠の<code>fit.minScale</code>です。中身が収まるもっとも大きなテキストの縮小率を、2.5%刻みで50%まで、そのページで試して求めます。<code>fit.shrinkText: false</code>のときは、<code>also</code>でそれも有効にします。</td>
+      <td>枠の<code>fit.minScale</code>です。中身が収まるもっとも大きなテキストの縮小率を、2.5%刻みで50%まで、そのページで試して求めます。その率で枠より幅の広い語が分割される場合は、収まってすべての語が分割されない、より小さな率のうち最大のものを示し、<code>word: 'whole'</code>を付けます。50%まで下げてもその語が分割される場合は、収まる最大の率のまま<code>word: 'divided'</code>を付けます。<code>fit.shrinkText: false</code>のときは、<code>also</code>でそれも有効にします。</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

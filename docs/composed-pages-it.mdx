@@ -463,7 +463,7 @@ Quando nessun passo fa entrare il contenuto, la cornice viene tagliata al piede,
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> della cornice: la scala del testo più grande, a passi del 2,5 % fino al 50 %, con cui il contenuto entra, provata sulla pagina. Con <code>fit.shrinkText: false</code>, <code>also</code> la attiva.</td>
+      <td><code>fit.minScale</code> della cornice: la scala del testo più grande, a passi del 2,5 % fino al 50 %, con cui il contenuto entra, provata sulla pagina. Se quella scala divide una parola più larga della cornice, la proposta indica la scala minore più grande con cui il contenuto entra e ogni parola resta intera, con <code>word: 'whole'</code>; se nessuna fino al 50 % la tiene intera, resta la più grande che entra, con <code>word: 'divided'</code>. Con <code>fit.shrinkText: false</code>, <code>also</code> la attiva.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

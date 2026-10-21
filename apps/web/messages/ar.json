@@ -924,6 +924,8 @@
     "warningsFitStepShrinkText": "تصغير النص إلى __pct__",
     "warningsFitStepContinue": "المتابعة في صفحة أخرى (لا يتّسع إطارها هناك لشيء منه)",
     "warningsFitFixAllowShrink": "اسمح بتصغير النص إلى __pct__ ‏(⁦fit.minScale⁩)",
+    "warningsFitFixAllowShrinkWhole": "اسمح بتصغير النص إلى __pct__، حيث تبقى الكلمة الطويلة كاملة ‏(⁦fit.minScale⁩)",
+    "warningsFitFixAllowShrinkDivided": "اسمح بتصغير النص إلى __pct__، مع تقسيم كلمة طويلة ‏(⁦fit.minScale⁩)",
     "warningsFitFixRaiseMax": "ارفع ⁦maxHeight⁩ إلى __mm__ مم",
     "warningsFitFixLowerMin": "خفّض ⁦minHeight⁩ للإطار ⁦__frame__⁩ إلى __mm__ مم",
     "warningsFitFixContinue": "اجعله يتابع في الصفحة التالية (⁦overflow.continueIn⁩)",

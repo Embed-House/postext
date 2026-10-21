@@ -924,6 +924,8 @@
     "warningsFitStepShrinkText": "文字缩到__pct__",
     "warningsFitStepContinue": "在另一页接续（那里的框一点也放不下）",
     "warningsFitFixAllowShrink": "允许文字缩到__pct__（fit.minScale）",
+    "warningsFitFixAllowShrinkWhole": "允许文字缩到__pct__，长词在此完整不断（fit.minScale）",
+    "warningsFitFixAllowShrinkDivided": "允许文字缩到__pct__，有一个长词会被断开（fit.minScale）",
     "warningsFitFixRaiseMax": "把maxHeight提高到__mm__ mm",
     "warningsFitFixLowerMin": "把__frame__的minHeight降到__mm__ mm",
     "warningsFitFixContinue": "在下一页接续（overflow.continueIn）",

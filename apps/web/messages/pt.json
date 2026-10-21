@@ -921,6 +921,8 @@
     "warningsFitStepShrinkText": "texto reduzido a __pct__",
     "warningsFitStepContinue": "continuar em outra página (lá o bloco não recebe nada)",
     "warningsFitFixAllowShrink": "deixe o texto encolher até __pct__ (fit.minScale)",
+    "warningsFitFixAllowShrinkWhole": "deixe o texto encolher até __pct__, onde a palavra longa fica inteira (fit.minScale)",
+    "warningsFitFixAllowShrinkDivided": "deixe o texto encolher até __pct__, com uma palavra longa dividida (fit.minScale)",
     "warningsFitFixRaiseMax": "aumente maxHeight para __mm__ mm",
     "warningsFitFixLowerMin": "reduza o minHeight de __frame__ para __mm__ mm",
     "warningsFitFixContinue": "faça-o continuar na página seguinte (overflow.continueIn)",

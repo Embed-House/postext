@@ -463,7 +463,7 @@ Si cap pas no aconsegueix que el contingut hi càpiga, el marc es talla al peu, 
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> del marc: l'escala de text més gran, en passos del 2,5 % fins al 50 %, amb què el contingut hi cap, provada sobre la pàgina. Amb <code>fit.shrinkText: false</code>, <code>also</code> l'activa.</td>
+      <td><code>fit.minScale</code> del marc: l'escala de text més gran, en passos del 2,5 % fins al 50 %, amb què el contingut hi cap, provada sobre la pàgina. Si aquesta escala parteix una paraula més ampla que el marc, la proposta dona l'escala menor més gran amb què hi cap i totes les paraules van senceres, amb <code>word: 'whole'</code>; si cap fins al 50 % no la deixa sencera, es queda amb la més gran que hi cap i porta <code>word: 'divided'</code>. Amb <code>fit.shrinkText: false</code>, <code>also</code> l'activa.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

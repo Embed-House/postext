@@ -463,7 +463,7 @@ Si necesitas o quieres comprar algo muy caro…
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td>框的<code>fit.minScale</code>：在这一页上试出的、能让内容放下的最大文字比例，每级2.5%，最低到50%。设了<code>fit.shrinkText: false</code>时，<code>also</code>会把它打开。</td>
+      <td>框的<code>fit.minScale</code>：在这一页上试出的、能让内容放下的最大文字比例，每级2.5%，最低到50%。如果这个比例会把一个比框还宽的词断开，提议改给能放下且每个词都完整的、更小比例中最大的那个，并带<code>word: 'whole'</code>；直到50%都无法让它完整时，仍给能放下的最大比例，并带<code>word: 'divided'</code>。设了<code>fit.shrinkText: false</code>时，<code>also</code>会把它打开。</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

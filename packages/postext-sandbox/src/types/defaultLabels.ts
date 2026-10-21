@@ -294,6 +294,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   warningsFitStepShrinkText: 'text down to __pct__',
   warningsFitStepContinue: 'continuing on another page (its frame there takes none of it)',
   warningsFitFixAllowShrink: 'let the text shrink to __pct__ (fit.minScale)',
+  warningsFitFixAllowShrinkWhole: 'let the text shrink to __pct__, where the long word is whole (fit.minScale)',
+  warningsFitFixAllowShrinkDivided: 'let the text shrink to __pct__, a long word divided (fit.minScale)',
   warningsFitFixRaiseMax: 'raise maxHeight to __mm__ mm',
   warningsFitFixLowerMin: 'lower the minHeight of __frame__ to __mm__ mm',
   warningsFitFixContinue: 'continue it on the next page (overflow.continueIn)',

@@ -316,6 +316,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     warningsFitStepShrinkText: t("warningsFitStepShrinkText"),
     warningsFitStepContinue: t("warningsFitStepContinue"),
     warningsFitFixAllowShrink: t("warningsFitFixAllowShrink"),
+    warningsFitFixAllowShrinkWhole: t("warningsFitFixAllowShrinkWhole"),
+    warningsFitFixAllowShrinkDivided: t("warningsFitFixAllowShrinkDivided"),
     warningsFitFixRaiseMax: t("warningsFitFixRaiseMax"),
     warningsFitFixLowerMin: t("warningsFitFixLowerMin"),
     warningsFitFixContinue: t("warningsFitFixContinue"),

@@ -924,6 +924,8 @@
     "warningsFitStepShrinkText": "文字を__pct__まで縮小",
     "warningsFitStepContinue": "別のページへ続ける（その先の枠には何も入りません）",
     "warningsFitFixAllowShrink": "文字を__pct__まで縮められるようにする（fit.minScale）",
+    "warningsFitFixAllowShrinkWhole": "文字を__pct__まで縮められるようにする。この大きさなら長い語を分割しない（fit.minScale）",
+    "warningsFitFixAllowShrinkDivided": "文字を__pct__まで縮められるようにする。長い語は分割される（fit.minScale）",
     "warningsFitFixRaiseMax": "maxHeightを__mm__mmに上げる",
     "warningsFitFixLowerMin": "__frame__のminHeightを__mm__mmに下げる",
     "warningsFitFixContinue": "次のページへ続ける（overflow.continueIn）",

@@ -925,6 +925,8 @@
     "warningsFitStepShrinkText": "testo ridotto a una scala di __pct__",
     "warningsFitStepContinue": "il seguito su un’altra pagina (lì la sua cornice non ne accoglie nulla)",
     "warningsFitFixAllowShrink": "consenti al testo di ridursi fino a una scala di __pct__ (fit.minScale)",
+    "warningsFitFixAllowShrinkWhole": "consenti al testo di ridursi fino a una scala di __pct__, dove la parola lunga resta intera (fit.minScale)",
+    "warningsFitFixAllowShrinkDivided": "consenti al testo di ridursi fino a una scala di __pct__, con una parola lunga divisa (fit.minScale)",
     "warningsFitFixRaiseMax": "porta maxHeight a __mm__ mm",
     "warningsFitFixLowerMin": "abbassa il minHeight di __frame__ a __mm__ mm",
     "warningsFitFixContinue": "fallo proseguire nella pagina seguente (overflow.continueIn)",
