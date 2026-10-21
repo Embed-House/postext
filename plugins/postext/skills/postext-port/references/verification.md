@@ -428,6 +428,22 @@ python3 scripts/compare_pages.py source.pdf /tmp/my-book.pdf \
     --source-pages 23-40 --render-pages 1-18 --out /tmp/cmp --sheet
 ```
 
+While you work, keep the pairs current with `--watch`: it runs beside the
+watcher of the work loop and, each time a page image changes, writes that
+page's pair and score again (only the pages whose images changed), and
+prints one line per refresh:
+
+```bash
+postext build my-book --locale es --images /tmp/pages --pages '#12-#15' -f png --dpi 60 --watch > /tmp/watch.log 2>&1 &
+python3 scripts/compare_pages.py source.pdf --watch /tmp/pages --source-pages 23-26 --render-pages 12-15 \
+    --out /tmp/cmp --score /tmp/score.json > /tmp/cmp.log 2>&1 &
+```
+
+Edit a chapter, wait for the next `refreshed` line in `/tmp/cmp.log`, open
+`/tmp/cmp/pair-NN.png`. `--render-pages` takes the numbers in the file
+names (positions in the layout, hence `'#12-#15'` for the build). Stop both watchers when the
+pages are right (by their PIDs: `kill %1 %2`).
+
 Look at the sheet, then at single pairs:
 
 - chapter opener: band, number, title wrap, lead, first text line height;
