@@ -38,7 +38,7 @@ describe('pinLegacyMarkRadius (#1149)', () => {
   });
 
   it('pins every version before 18 whose text may set a mark, and none from 18', () => {
-    expect(CONFIG_VERSION).toBe(18);
+    expect(CONFIG_VERSION).toBe(19);
     for (const v of [undefined, 1, 8, 12, 15, 16, 17]) {
       expect(radii(migrateConfig({}, v)), String(v)).toEqual([em(0.2)]);
       expect(radii(migrateConfig({}, v, { content: MARKED })), String(v)).toEqual([em(0.2)]);
@@ -49,8 +49,8 @@ describe('pinLegacyMarkRadius (#1149)', () => {
       expect(radii(migrateConfig(designed, v, { content: 'Words.' })), String(v)).toEqual([em(0.2)]);
     }
     for (const v of [18, CONFIG_VERSION, 99]) {
-      const config: PostextConfig = {};
-      expect(migrateConfig(config, v, { content: MARKED }), String(v)).toBe(config);
+      // (one stamped 18 still gets the breaks at a slash of 1.51, #1164)
+      expect(migrateConfig<PostextConfig>({}, v, { content: MARKED }).markStyles, String(v)).toBeUndefined();
       expect(radii(migrateConfig({}, v)), String(v)).toEqual([em(0)]);
     }
   });

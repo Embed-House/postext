@@ -1,4 +1,4 @@
-import type { Dimension, DigitSystem, DocumentMetadata, PostextConfig } from '../types.js';
+import type { Dimension, DigitSystem, DocumentMetadata, PostextConfig, ResolvedChipStyleConfig } from '../types.js';
 import { withDigits } from '../arabicNumerals.js';
 import type { VDTPage } from '../vdt.js';
 import { formatCounter, formatNumeral, hanInformalStyle } from '../numbering.js';
@@ -33,6 +33,11 @@ export interface HeadingPlaceholderInfo {
    *  (`inlineMarks: true`), so the element sets the heading's runs (#539).
    *  Elements that do not read marks print {@link titleText}. */
   titleMarked?: string;
+  /** The document's chip styles, given with a {@link titleMarked} that
+   *  holds a heading's chips (`:chip[…]`, #1162): a design text that reads
+   *  inline marks sets them as the heading does. Absent otherwise, and a
+   *  design text then reads `:chip[…]` as written. */
+  chipStyles?: readonly ResolvedChipStyleConfig[];
   /** Formatted number per the level's `numberingTemplate`, or empty string. */
   formattedNumber: string;
   /** Raw numeric counter for the heading level, if available. */

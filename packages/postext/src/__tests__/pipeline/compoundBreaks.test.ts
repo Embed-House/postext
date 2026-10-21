@@ -4,7 +4,7 @@ import { computeChapterTitles } from '../../pipeline/placeholders.js';
 import { renderToHtml } from '../../html-backend.js';
 import { setHyphenationLocale } from '../../hyphenate.js';
 import { createMeasurementCache, measureBlock, measureRichBlock } from '../../measure/index.js';
-import { migrateConfig, migrateBundleConfig, pinLegacyHyphenBreaks, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import { migrateConfig, migrateBundleConfig, pinLegacyHyphenBreaks, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage, pinLegacySlashBreaks } from '../../bundle/configVersion.js';
 import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText.js';
 import type { PostextConfig } from '../../types.js';
 import type { VDTLine } from '../../vdt.js';
@@ -132,7 +132,7 @@ describe('a break after a compound’s hyphen on both paths (EF-186)', () => {
   });
 
   it('is pinned off for configurations stored before rules 8 whose text sets a compound', () => {
-    expect(CONFIG_VERSION).toBe(18);
+    expect(CONFIG_VERSION).toBe(19);
     const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     for (const version of [undefined, 3, 6, 7]) {
       expect(migrateConfig(stored, version, { content: EN }).bodyText?.breakAfterHyphens, `${version}`).toBe(false);
@@ -141,17 +141,17 @@ describe('a break after a compound’s hyphen on both paths (EF-186)', () => {
     expect(migrateConfig(stored, 7).bodyText?.breakAfterHyphens).toBe(false);
     // Text with no compound, today's rules, a named value, or no Knuth–Plass: as it is.
     for (const content of ['No compound here.', 'From 1914-1918, COVID-19 and -5 °C.', ['Plain.', 'Also plain.']]) {
-      expect(migrateConfig(stored, 7, { content }), JSON.stringify(content)).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(stored)));
+      expect(migrateConfig(stored, 7, { content }), JSON.stringify(content)).toEqual(pinLegacySlashBreaks(pinLegacyShapingLanguage(pinLegacyScriptContext(stored))));
     }
     expect(migrateConfig(stored, CONFIG_VERSION, { content: EN })).toBe(stored);
     const named: PostextConfig = { bodyText: { breakAfterHyphens: true } };
     expect(pinLegacyHyphenBreaks(named)).toBe(named);
-    expect(migrateConfig(named, undefined, { content: EN })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(named)));
+    expect(migrateConfig(named, undefined, { content: EN })).toEqual(pinLegacySlashBreaks(pinLegacyShapingLanguage(pinLegacyScriptContext(named))));
     const firstFit: PostextConfig = { bodyText: { optimalLineBreaking: false } };
-    expect(migrateConfig(firstFit, 7, { content: EN })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(firstFit)));
+    expect(migrateConfig(firstFit, 7, { content: EN })).toEqual(pinLegacySlashBreaks(pinLegacyShapingLanguage(pinLegacyScriptContext(firstFit))));
     // A bundle pins the `bodyText` the layers leave in force.
     const merged = migrateBundleConfig({}, [{ bodyText: { fontFamily: 'Georgia' } }], 7, { content: [EN] });
-    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', breakAfterHyphens: false, scriptContext: false, shapingLanguage: 'host' });
+    expect(merged.bodyText).toEqual({ fontFamily: 'Georgia', breakAfterHyphens: false, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     // The pin lays the book out as 1.4 did.
     for (const width of [40, 56, 72]) {
       const pinned = migrateConfig(config(width), 7, { content: EN });

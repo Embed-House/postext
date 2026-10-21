@@ -350,6 +350,17 @@ export const BodyTextSection = memo(function BodyTextSection() {
           isDefault={bodyText.breakAfterHyphens === D.breakAfterHyphens}
           onReset={() => resetField('breakAfterHyphens')}
         />
+        {/* A line may end after a slash between two words (#1164): on
+            unless the configuration says no (a stored one from before the
+            rule is read with it off). */}
+        <ToggleSwitch
+          label={labels.bodyBreakAfterSlashes}
+          checked={bodyText.breakAfterSlashes !== false}
+          onChange={(checked) => updateBodyText({ breakAfterSlashes: checked })}
+          tooltip={labels.bodyBreakAfterSlashesTooltip}
+          isDefault={bodyText.breakAfterSlashes !== false}
+          onReset={() => resetField('breakAfterSlashes')}
+        />
         <ToggleSwitch
           label={labels.bodyHardLineBreaks}
           checked={bodyText.hardLineBreaks}

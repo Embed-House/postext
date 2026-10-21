@@ -720,6 +720,7 @@ decoration: { elements: [
 - Amb les dues claus, l'element es dibuixa on el bloc fixa l'atribut de `when` i no el d'`unless`.
 - Els encapçalaments del document i els d'una secció també les llegeixen. Una pàgina que no és composta no té bloc de pàgina i no fixa res. Els dissenys de títol, de part i de caixa no les tenen en compte.
 - Un valor que no és un text no buit, o un d'escrit en un disseny de títol, de part o de caixa, s'avisa com a `unknownConfigValue` i l'element es dibuixa com si no en tingués. `postext check` afegeix una nota, `conditionNeverMet`, per cada `when` o `unless` amb un atribut que cap pàgina del llibre no fixa: aquell element no es dibuixa mai, o sempre. També un `{attr.x}` que res defineix: queda buit.
+- Amb el llibre maquetat, una pàgina que no dibuixa res d'un foli o un titolet (un text de `header` o `footer`, un text de la decoració que llegeix `{pageNumber}`, un nom corregut o `{attr.x}`) que sí que dibuixen la majoria de les pàgines de la seva plantilla i del seu costat s'avisa com a `folioMissing`, amb la pàgina, la plantilla i l'element. No compta una pàgina el bloc de la qual apaga l'element, ni una la plantilla de la qual no el té. Des de postext 1.53.
 - Al Sandbox, cada targeta d'element d'un encapçalament i de la decoració d'una plantilla té els camps **Es dibuixa si la pàgina ho diu** i **No es dibuixa si la pàgina ho diu**, que ofereixen els atributs que fan servir les pàgines del llibre.
 
 ### El que aplica la maquetació

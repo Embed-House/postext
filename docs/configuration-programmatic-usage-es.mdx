@@ -180,6 +180,11 @@ console.log(`El documento tiene ${vdt.pages.length} páginas`);
       <td>El marco se pinta donde está; lo que pasa del corte se recorta.</td>
     </tr>
     <tr>
+      <td><code>folioMissing</code></td>
+      <td>Una página compuesta no dibuja nada de un folio o un titulillo (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>) que sí dibujan <code>drawnOn</code> de las <code>siblings</code> otras páginas de su plantilla y de su lado: un texto de <code>header</code> o <code>footer</code>, o un texto de la decoración que lee <code>&#123;pageNumber&#125;</code>, un nombre corrido o <code>&#123;attr.x&#125;</code>. No cuenta una página cuya línea de apertura apaga el elemento (<code>when</code> / <code>unless</code>) ni una cuyo hueco no lo tiene; hacen falta dos páginas que lo dibujen. Lo da la maquetación, con el <code>pageIndex</code>, y señala la línea de apertura de la página. Desde postext 1.53.</td>
+      <td>La página se imprime sin él. Pon en esa página el atributo que lee el elemento, o apágalo ahí a propósito con <code>when</code> o <code>unless</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Una rejilla que se repite en una página compuesta admite <code>max</code> elementos y la página le da más (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Uno por cada elemento de más. Desde postext 1.48.</td>
       <td>El elemento va al marco de flujo, o detrás de la página.</td>

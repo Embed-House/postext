@@ -702,7 +702,7 @@ From code, `resolvePageTemplate(config, id, { parity })` returns a template with
 
 ### Drawn when the page says
 
-A decoration element, and an element of the template's `header` or `footer`, may carry `when` or `unless`, each naming an attribute of the page fence. `when: 'folio'` draws the element only on pages whose fence sets `folio`; `unless: 'frontmatter'` leaves it off pages whose fence sets `frontmatter`. A fence sets an attribute when it writes it alone (`::::page{template="pagina" frontmatter}`) or with any value but `false`. One template then serves the front matter, which prints no folio and no band, and the body pages, which print both: the Markdown says what the page is and the template keeps the drawing. Since postext 1.50.
+A decoration element, and an element of the template's `header` or `footer`, may carry `when` or `unless`, each naming an attribute of the page fence. `when: 'folio'` draws the element only on pages whose fence sets `folio`; `unless: 'frontmatter'` leaves it off pages whose fence sets `frontmatter`. A fence sets an attribute when it writes it alone (`::::page{template="pagina" frontmatter}`) or with any value but `false`. One template then serves the front matter (no folio, no band) and the body pages: the Markdown says what the page is. Since postext 1.50.
 
 ```ts
 decoration: { elements: [
@@ -718,7 +718,8 @@ decoration: { elements: [
 - With both keys, the element is drawn where the fence sets the `when` attribute and not the `unless` one.
 - The document's and a section's running heads read them as well. A page that is not composed has no fence and sets nothing. Heading, part and box designs ignore them.
 - A value that is not a non-empty string, or one written in a heading, part or box design, is reported as `unknownConfigValue` and ignored. `postext check` notes (`conditionNeverMet`) a `when` or `unless` on an attribute no page fence sets, and an `{attr.x}` nothing sets.
-- In the Sandbox, each element card of a running head and of a template's decoration has the fields **Drawn when the page says** and **Not drawn when the page says**, whose choices are the attributes the book's page fences use.
+- After layout, `folioMissing` names a page lacking a folio or running head that most pages of its template and side draw; one whose fence turns it off does not count. Since postext 1.53.
+- In the Sandbox, the element cards of running heads and decoration have **Drawn when the page says** and **Not drawn when the page says**, listing the attributes the book's fences use.
 
 ### What the layout applies
 

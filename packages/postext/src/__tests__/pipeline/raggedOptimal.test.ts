@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/index.js';
 import { measureBlock, measureRichBlock, type MeasureBlockOptions } from '../../measure/index.js';
-import { migrateConfig, migrateBundleConfig, pinLegacyRaggedBreaking, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage, pinLegacyBoxParagraphStyles } from '../../bundle/configVersion.js';
+import { migrateConfig, migrateBundleConfig, pinLegacyRaggedBreaking, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage, pinLegacyBoxParagraphStyles, pinLegacySlashBreaks } from '../../bundle/configVersion.js';
 import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText.js';
 import type { PostextConfig } from '../../types.js';
 import type { VDTBlock, VDTLine } from '../../vdt.js';
@@ -183,10 +183,10 @@ describe('optimalRagged in the configuration', () => {
   });
 
   it('is pinned off for configurations stored before rules 7 that set running text ragged', () => {
-    expect(CONFIG_VERSION).toBe(18);
+    expect(CONFIG_VERSION).toBe(19);
     const ragged: PostextConfig = { bodyText: { textAlign: 'left' } };
     for (const version of [undefined, 3, 5, 6]) {
-      expect(migrateConfig(ragged, version, { content: 'Text.' }).bodyText, `${version}`).toEqual({ textAlign: 'left', optimalRagged: false, scriptContext: false, shapingLanguage: 'host' });
+      expect(migrateConfig(ragged, version, { content: 'Text.' }).bodyText, `${version}`).toEqual({ textAlign: 'left', optimalRagged: false, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     }
     // A ragged paragraph style, box body, part body or HTML viewer override.
     for (const cfg of [
@@ -208,15 +208,15 @@ describe('optimalRagged in the configuration', () => {
       headings: { textAlign: 'left' },
       headingStyles: [{ id: 's', bodyStyle: { textAlign: 'justify' } }],
     };
-    expect(migrateConfig(justified, 6, { content: 'Text.' })).toEqual(pinLegacyBoxParagraphStyles(pinLegacyShapingLanguage(pinLegacyScriptContext(justified))));
+    expect(migrateConfig(justified, 6, { content: 'Text.' })).toEqual(pinLegacyBoxParagraphStyles(pinLegacySlashBreaks(pinLegacyShapingLanguage(pinLegacyScriptContext(justified)))));
     expect(migrateConfig(ragged, CONFIG_VERSION, { content: 'Text.' })).toBe(ragged);
     const greedy: PostextConfig = { bodyText: { textAlign: 'left', optimalLineBreaking: false } };
-    expect(migrateConfig(greedy, undefined, { content: 'Text.' })).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(greedy)));
+    expect(migrateConfig(greedy, undefined, { content: 'Text.' })).toEqual(pinLegacySlashBreaks(pinLegacyShapingLanguage(pinLegacyScriptContext(greedy))));
     const named: PostextConfig = { bodyText: { textAlign: 'left', optimalRagged: true } };
     expect(pinLegacyRaggedBreaking(named)).toBe(named);
     // The bundle reader pins the `bodyText` the layers leave in force.
     expect(migrateBundleConfig({ bodyText: { fontFamily: 'Base' } }, [{ paragraphStyles: [{ id: 'p', name: 'P', textAlign: 'left' }] }], undefined, { content: ['Text.'] }).bodyText)
-      .toEqual({ fontFamily: 'Base', optimalRagged: false, scriptContext: false, shapingLanguage: 'host', paragraphStylesInBoxes: 'document' });
+      .toEqual({ fontFamily: 'Base', optimalRagged: false, scriptContext: false, shapingLanguage: 'host', paragraphStylesInBoxes: 'document', breakAfterSlashes: false });
   });
 
   it('keeps a section style’s ragged body as 1.4 set it once pinned', () => {
@@ -242,7 +242,7 @@ describe('optimalRagged in the configuration', () => {
       const stored = config(width);
       const pinned = migrateConfig(stored, undefined, { content: COMPOST });
       // 1.4 measured in the host's language, which the pin writes out (#770).
-      expect(texts(linesOf(COMPOST, pinned))).toEqual(texts(linesOf(COMPOST, config(width, { optimalLineBreaking: false, shapingLanguage: 'host' }))));
+      expect(texts(linesOf(COMPOST, pinned))).toEqual(texts(linesOf(COMPOST, config(width, { optimalLineBreaking: false, shapingLanguage: 'host', breakAfterSlashes: false }))));
     }
   });
 });

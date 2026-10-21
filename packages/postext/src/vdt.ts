@@ -2327,6 +2327,13 @@ export interface VDTDesignTextRun {
    *  Down a vertical line it is set (even when 1) and the dash is painted
    *  turned with the column. Absent on every other run. */
   inkScale?: number;
+  /** An inline chip of the text (`:chip[…]`, #1162): a heading title's
+   *  chip printed by its opener or design. `text` is the chip's one
+   *  placeholder character and `width` its advance; renderers paint the
+   *  box and the chip's own runs from the run's start (`chip.marginLeft`
+   *  in), on the line's baseline, as on {@link VDTLineSegment.chip}.
+   *  Absent on every other run. */
+  chip?: VDTChip;
 }
 
 /** Line of wrapped text inside a `VDTDesignTextBlock`. */
@@ -3982,6 +3989,16 @@ export type ContentWarning = ContentWarningBase & (
    *  two lines of the body grid; a wrapped picture says it with
    *  `textWrap` `'moved'`. Found by the layout. */
   | { kind: 'resourceMoved'; resourceId: string; emptyPx: number; emptyMm: number }
+  /** `folioMissing` (#1163): a composed page whose running head, running
+   *  foot or folio element (`elementId`, of the template's `slot`:
+   *  `header`, `footer` or a decoration text reading `{pageNumber}`, a
+   *  running name or `{attr.x}`) draws nothing, while `drawnOn` of the
+   *  `siblings` other pages of the same `template` and `side` that mean to
+   *  draw it do. `folio`: the element writes `{pageNumber}`. A page whose
+   *  fence switches the element off (`when` / `unless`) or whose slot has
+   *  no such element is no sibling. Found after the running heads are
+   *  laid; reported once per page and element. */
+  | { kind: 'folioMissing'; template: string; elementId: string; slot: 'header' | 'footer' | 'decoration'; folio: boolean; side: 'recto' | 'verso'; drawnOn: number; siblings: number }
   /** `textWrap` (#627): a resource or a box set to wrap text round it
    *  (`placement.wrap`, a box's `wrap`) that does not as asked.
    *  `'tooNarrow'`: the text beside it would be narrower than

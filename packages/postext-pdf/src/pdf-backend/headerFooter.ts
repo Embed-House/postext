@@ -9,6 +9,7 @@ import type {
 import { boxNeedsShape, boxStylePathBlocks, segmentOrientation } from 'postext';
 import { drawRightToLeftRun } from './rtlRun.js';
 import { inkScaleOperators } from './inkScale.js';
+import { paintChipRuns } from './chip.js';
 import { drawEmbeddedResource, figureLayout, type ResourceImageMap } from './renderResourceBlock.js';
 import { tagArtifact, tagContent, type ArtifactSpec, type StructAttrs, type StructElem } from './tagging.js';
 import { renderPathBlock } from './pathBlock.js';
@@ -48,6 +49,7 @@ import {
   colorFromHex,
   drawTextDotsPx,
   drawTextPx,
+  drawChipBoxPx,
   invisibleText,
   setTrackingPx,
   pushFrame,
@@ -241,6 +243,19 @@ export function renderTextBlock(
     const order = line.order && line.order.length === line.runs.length ? line.order : undefined;
     for (let k = 0; k < line.runs.length; k++) {
       const run = line.runs[order ? order[k]! : k]!;
+      if (run.chip) {
+        // A heading title's chip (#1162): the box a layout artifact, the
+        // words text of the slot, in the block's colour where the chip
+        // style sets none.
+        const cx = x + (run.inkOffset ?? 0);
+        if (mark) tagArtifact(ctx, { type: 'Layout' });
+        drawChipBoxPx(ctx, run.chip, cx, line.baselineY);
+        if (mark) tagSlotText(ctx, mark, block);
+        const chipColor = run.chip.color ? colorFromHex(run.chip.color, ctx.colorSpace) : color;
+        paintChipRuns(ctx, run.chip, cx, line.baselineY, fontCache, font, size, () => chipColor, actualText);
+        x += run.width;
+        continue;
+      }
       const runFont = fontCache.get(run.fontString) ?? font;
       const runSize = parseFontString(run.fontString)?.sizePx ?? size;
       const y = line.baselineY + (run.baselineShift ?? 0);

@@ -103,6 +103,11 @@ export function designLineOf(line: VDTLine, fonts: CjkDesignFonts, measureIn: (t
     // A dash of a 破折号: its offset is where the stretched glyph starts
     // (`dashRule`), so the run keeps the stretch too (#652).
     if (seg.inkScale !== undefined) run.inkScale = seg.inkScale;
+    // A heading title's chip (#1162): its box, as wide as the segment.
+    if (seg.chip) {
+      run.chip = seg.chip;
+      delete run.inkOffset;
+    }
     if (lead > 0) {
       run.width += lead;
       run.inkOffset = (run.inkOffset ?? 0) + lead;
@@ -113,6 +118,6 @@ export function designLineOf(line: VDTLine, fonts: CjkDesignFonts, measureIn: (t
   const text = runs.map((r) => r.text).join('');
   const width = line.bbox.width;
   const plain = runs.length === 1 && runs[0]!.fontString === fonts.normal && runs[0]!.inkOffset === undefined && runs[0]!.inkScale === undefined
-    && !runs[0]!.baselineShift && !runs[0]!.tcy && !runs[0]!.orientation;
+    && !runs[0]!.baselineShift && !runs[0]!.tcy && !runs[0]!.orientation && !runs[0]!.chip;
   return { text, width, ...(plain || runs.length === 0 ? {} : { runs }), xOffset: line.bbox.x };
 }

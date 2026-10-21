@@ -180,6 +180,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>La cornice si disegna dove si trova; ciò che supera il rifilo viene tagliato.</td>
     </tr>
     <tr>
+      <td><code>folioMissing</code></td>
+      <td>Una pagina composta non disegna nulla di un folio o di una testatina (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>) che <code>drawnOn</code> delle <code>siblings</code> altre pagine del suo modello e del suo lato disegnano: un testo di <code>header</code> o <code>footer</code>, o un testo della decorazione che legge <code>&#123;pageNumber&#125;</code>, un nome corrente o <code>&#123;attr.x&#125;</code>. Non conta una pagina il cui blocco spegne l’elemento (<code>when</code> / <code>unless</code>), né una il cui slot non ha quell’elemento; servono due pagine che lo disegnino. Lo dà l’impaginazione, con il <code>pageIndex</code>, e punta al blocco della pagina. Da postext 1.53.</td>
+      <td>La pagina si stampa senza. Imposta su quel blocco l’attributo che l’elemento legge, oppure spegnilo lì di proposito con <code>when</code> o <code>unless</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Una griglia che si ripete in una pagina composta contiene <code>max</code> elementi e la pagina gliene dà di più (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Uno per ogni elemento in più. Da postext 1.48.</td>
       <td>L’elemento va alla cornice di flusso, o dopo la pagina.</td>

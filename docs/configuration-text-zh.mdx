@@ -214,6 +214,12 @@ export const metadata = {
       <td>在Knuth-Plass断行的每个段落里，允许在复合词的连字符（夹在两个字母之间的连字符）之后断行（<code>well-</code> · <code>known</code>、<code>vencer-</code> · <code>se</code>）。行在连字符处结束，不添加任何字符；这个断点的代价与音节断点相同。与数字或符号相邻的连字符之后从不断行（<code>COVID-19</code>、<code>-5 °C</code>）。没有行内格式的两端对齐段落，只有连字符两侧各有两个字母时才在此断行，所以不会有一行结束在<code>e-mail</code>的<code>e-</code>上。设为<code>false</code>时保留1.4的断行方式：没有行内格式的两端对齐段落从不在此断行，而同一个段落只要任意位置有一个斜体词，以及非两端对齐的段落和逐行排的段落，都会在此断行；早先保存、正文中含有复合词的配置读取时采用这个值（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。它作用于连续正文、标题、列表、引用块和框。见<a href="/zh/docs/justification#复合词">复合词</a>。</td>
     </tr>
     <tr>
+      <td><code>breakAfterSlashes</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>允许带格式的文字在两个词之间的斜杠后断行（<code>input/</code> · <code>output</code>、<code>ACC/</code> · <code>AHA</code>）：斜杠两边各须至少三个连续的字母或数字，且不能两边都是数字，所以<code>km/h</code>、<code>kg/m³</code>、<code>and/or</code>、<code>1/2</code>和<code>10/03/2026</code>保持完整。行在斜杠处结束，不添加任何字符。比行宽还宽的词先在斜杠后拆开。适用于所有带格式文字的排版：正文、图注、表格单元格、注释和参考文献；没有行内格式的段落无论如何都会在任何斜杠后断行。<code>false</code>保留postext 1.51的断行，只在网址里的斜杠后断开；<code>configVersion</code> 19之前保存的配置以此值读取（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。见<a href="/zh/docs/justification#断词如何与knuth-plass结合">断词如何与Knuth-Plass结合</a>。</td>
+    </tr>
+    <tr>
       <td><code>repeatHyphen</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>

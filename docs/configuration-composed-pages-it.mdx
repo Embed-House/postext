@@ -720,6 +720,7 @@ decoration: { elements: [
 - Con entrambe le chiavi, l’elemento si disegna dove il blocco imposta l’attributo di `when` e non quello di `unless`.
 - Le testatine del documento e quelle di una sezione le leggono anch’esse. Una pagina che non è composta non ha blocco e non imposta nulla. I disegni di titolo, di parte e di riquadro le ignorano.
 - Un valore che non è un testo non vuoto, o uno scritto in un disegno di titolo, di parte o di riquadro, viene segnalato come `unknownConfigValue`, e l’elemento si disegna come se non lo avesse. `postext check` aggiunge una nota, `conditionNeverMet`, per un `when` o un `unless` su un attributo che nessuna pagina del libro imposta: quell’elemento non si disegna mai, oppure sempre. Lo stesso per un `{attr.x}` che nulla imposta: resta vuoto.
+- A libro impaginato, una pagina che non disegna nulla di un folio o di una testatina (un testo di `header` o `footer`, un testo della decorazione che legge `{pageNumber}`, un nome corrente o `{attr.x}`) che la maggior parte delle pagine del suo modello e del suo lato disegna viene segnalata come `folioMissing`, con la pagina, il modello e l’elemento. Non conta una pagina il cui blocco spegne l’elemento, né una il cui modello non ha quell’elemento. Da postext 1.53.
 - Nel Sandbox, ogni scheda di elemento di una testatina e della decorazione di un modello ha i campi **Disegnato quando la pagina lo dice** e **Non disegnato quando la pagina lo dice**, che offrono gli attributi usati dai blocchi di pagina del libro.
 
 ### Che cosa applica l’impaginazione

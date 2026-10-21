@@ -112,11 +112,11 @@ from typing import Any
 # 16 and older read with the document's (bodyText.paragraphStylesInBoxes).
 # 18 (1.52) gives a mark style that names no borderRadius square ends; 17 and
 # older keep 0.2em when the text has a :mark.
-# A book ported today is stamped 18 and is shaped in its own language. An
+# A book ported today is stamped 19 and is shaped in its own language. An
 # engine older than 1.23 reads 9 as 8, one older than 1.24 reads 10 as 9,
 # one older than 1.25 reads 11 as 10, one older than 1.28 reads 12 as 11,
 # one older than 1.30 reads 14 as 13, one older than 1.34 reads 15 as 14.
-CONFIG_VERSION = 18
+CONFIG_VERSION = 19
 
 # ---------------------------------------------------------------------------
 # primitives
@@ -846,7 +846,7 @@ def resources() -> list:
 def main() -> None:
     primary = LANGS[0]
     manifest = {{
-        "version": 2, "configVersion": 18, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
+        "version": 2, "configVersion": 19, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
         "view": {{"canvasScope": "book"}},
         "chapters": {{lang: chapters_from_dir(HERE, lang) for lang in LANGS}},
         "config": config(primary),

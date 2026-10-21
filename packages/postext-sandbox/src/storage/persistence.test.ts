@@ -114,13 +114,13 @@ describe('working configuration', () => {
     expect(config.headings?.levels).toEqual([{ level: 1, breakBefore: { enabled: false } }]);
     // A save stamps the copy, so the next load reads it as it is.
     saveConfig(config);
-    expect(map.get('postext-sandbox-config-version')).toBe('18');
+    expect(map.get('postext-sandbox-config-version')).toBe('19');
     expect(loadConfig()).toEqual(config);
   });
   it('reads a stamped copy as it is', async () => {
     installStorage({
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
-      'postext-sandbox-config-version': '18',
+      'postext-sandbox-config-version': '19',
     });
     const { loadConfig } = await import('./persistence.js');
     expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' } });
@@ -130,7 +130,7 @@ describe('working configuration', () => {
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
       'postext-sandbox-config-version': '14',
     });
-    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     // Today's stamp is 14: a copy stamped 13 (postext 1.29) that names no
     // language for its text keeps the host's (#770), and one that names its
     // own keeps that.
@@ -138,12 +138,12 @@ describe('working configuration', () => {
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
       'postext-sandbox-config-version': '13',
     });
-    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     installStorage({
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'document' } }),
       'postext-sandbox-config-version': '13',
     });
-    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'document' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'document', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     // A copy stamped 12 gets the pins of rules 13 and 14, its text shaped
     // in the language of the host (#764, #770) and, with no saved book to
     // read, the box of its task items kept as a character (#765).
@@ -151,7 +151,7 @@ describe('working configuration', () => {
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
       'postext-sandbox-config-version': '12',
     });
-    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
   });
   // EF-93: a copy saved before the stamp reached 5 keeps the space 1.4 left
   // under an inline figure, when the saved book embeds one.
@@ -169,14 +169,14 @@ describe('working configuration', () => {
       // (every copy stamped before 12 shapes its words with no letter alone,
       // #725, and every copy stamped before 14 its text in the language of
       // the host, #764 and #770)
-      bodyText: { scriptContext: false, shapingLanguage: 'host' },
+      bodyText: { scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false },
     });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('Prose only.') });
-    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host' } });
+    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false } });
     // A book that only mentions the directive (the guide's chapter 9) embeds
     // nothing, and shows no changed spacing setting.
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('`::resource{id="…"}` on a line of its own embeds a resource.') });
-    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host' } });
+    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false } });
   });
   // EF-75: a copy saved before the stamp reached 4 keeps the maths size it
   // was laid out at, when the saved book sets maths.
@@ -189,15 +189,15 @@ describe('working configuration', () => {
     expect(loadConfig()).toEqual({
       headings: { fontFamily: 'Georgia' },
       math: { fontSizeScale: 1.2 * LEGACY_MATH_SIZE, marginTop: { value: 0.8 / LEGACY_MATH_SIZE, unit: 'em' }, marginBottom: { value: 0.8 / LEGACY_MATH_SIZE, unit: 'em' } },
-      bodyText: { scriptContext: false, shapingLanguage: 'host' },
+      bodyText: { scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false },
     });
     // A book without a formula keeps its configuration as it was saved
     // (but for the pins every copy stamped before 12 takes, #725, and
     // before 14, #764 and #770).
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3', 'postext-sandbox-book': book('Prose only.') });
-    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host' } });
+    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false } });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3', 'postext-sandbox-markdown': 'Prose only.' });
-    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host' } });
+    expect(loadConfig()).toEqual({ ...saved, bodyText: { scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false } });
     // No saved book: the maths may be anywhere, so the size is pinned.
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3' });
     expect(loadConfig()!.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
@@ -231,7 +231,7 @@ describe('working configuration', () => {
     expect(configFromExport({ ...legacy, configVersion: 4 })).toEqual({
       headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } },
       layout: { inlineResourceGap: 'above', inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1, flowColumns: false },
-      bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' },
+      bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false },
       codeStyle: { blocks: false },
       tableStyle: { splitInline: false },
       // (it may print an index: a column may end between any two entries of a group, #712)
@@ -253,7 +253,7 @@ describe('working configuration', () => {
     expect(configFromExport({ ...legacy, configVersion: 5 })).toEqual({ comics: { lettering: { strictPlacement: false } },
       headings: { fontFamily: 'Georgia', inlineMarks: false, keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } },
       layout: { inlineResourceGapInBoxes: false, boxChildSplitMinLines: 1, flowColumns: false },
-      bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' },
+      bodyText: { colonListRoom: 'line', breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false },
       codeStyle: { blocks: false },
       tableStyle: { splitInline: false },
       index: { groups: { splitMinEntries: 1 } },
@@ -266,25 +266,25 @@ describe('working configuration', () => {
     // breaks, the ragged breaking when it sets text ragged (EF-141,
     // EF-147), the split under a heading (EF-185) and the compound breaks
     // (EF-186).
-    expect(configFromExport({ ...legacy, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...legacy, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterDashes: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     const ragged = { ...legacy, config: { bodyText: { textAlign: 'left' as const } } };
-    expect(configFromExport({ ...ragged, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...ragged, configVersion: 6 })).toEqual({ comics: { lettering: { strictPlacement: false } }, bodyText: { textAlign: 'left', breakAfterDashes: false, optimalRagged: false, breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false }, headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     // One stamped 7 gets the version-8 pins only: the split under a
     // heading, the compound breaks, and the space under containers when it
     // declares a paragraph style (EF-159, EF-181).
-    expect(configFromExport({ ...legacy, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...legacy, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     const styled = { ...legacy, config: { paragraphStyles: [{ id: 'verse' }] } };
-    expect(configFromExport({ ...styled, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'verse' }], headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, paragraphContainerSpacing: 'add', verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', paragraphStylesInBoxes: 'document' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...styled, configVersion: 7 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'verse' }], headings: { keepWithNextSplit: 'fill', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { breakAfterHyphens: false, paragraphContainerSpacing: 'add', verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', paragraphStylesInBoxes: 'document', breakAfterSlashes: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     // One stamped 8 (postext 1.5 to 1.22) gets the version-9 and version-10
     // pins only: the verse layout, a first-line indent dropped from a style
     // that hangs, the printed backslashes (#620), fences read as Markdown
     // (#624) and the 1.23 verse turnovers.
     const hanging = { ...legacy, config: { paragraphStyles: [{ id: 'bib', firstLineIndent: { value: 1, unit: 'em' as const }, hangingIndent: { value: 2, unit: 'em' as const } }] } };
-    expect(configFromExport({ ...legacy, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...hanging, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'bib', hangingIndent: { value: 2, unit: 'em' } }], headings: { balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', paragraphStylesInBoxes: 'document' }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...legacy, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...hanging, configVersion: 8 })).toEqual({ comics: { lettering: { strictPlacement: false } }, paragraphStyles: [{ id: 'bib', hangingIndent: { value: 2, unit: 'em' } }], headings: { balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { layout: 'bayt', tighten: false }, hardLineBreaks: false, scriptContext: false, shapingLanguage: 'host', paragraphStylesInBoxes: 'document', breakAfterSlashes: false }, codeStyle: { blocks: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     // One stamped 9 (postext 1.23) gets the version-10 pin only: its lines
     // of verse turn over at their natural spacing (#620).
-    expect(configFromExport({ ...legacy, configVersion: 9 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { tighten: false }, scriptContext: false, shapingLanguage: 'host' }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...legacy, configVersion: 9 })).toEqual({ comics: { lettering: { strictPlacement: false } }, headings: { fontFamily: 'Georgia', balancing: { maxLinesBeforeLoose: 4, stretchAfterWideFloats: 'always', trailingStep: 'grid' } }, bodyText: { verse: { tighten: false }, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false }, tableStyle: { splitInline: false }, index: { groups: { splitMinEntries: 1 } }, layout: { flowColumns: false }, cjk: { titleMinChars: 1, circledNumbers: 'western', composeDesignText: false, warichu: { minChars: 1 } }, crossRefs: { breakLabels: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     // One stamped 10 (postext 1.24) gets the version-11 pins: its inline
     // tables move whole and its :::columns fences are read as 1.24 read
     // them (#634).
@@ -297,37 +297,44 @@ describe('working configuration', () => {
     // pins alone: its text is shaped in the language of the host, #764 and
     // #770, and the box of a task item it may hold stays a character, #765.
     // One stamped 13, postext 1.29, gets the language alone. Every one
-    // stamped before 18 keeps the rounded ends of a mark it may set, #1149.)
-    expect(configFromExport({ ...opener, configVersion: 12 })).toEqual({ ...opener.config, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...opener, configVersion: 13 })).toEqual({ ...opener.config, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...opener, configVersion: 14 })).toEqual({ ...opener.config, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...opener, configVersion: 18 })).toEqual(opener.config);
+    // stamped before 18 keeps the rounded ends of a mark it may set, #1149,
+    // and every one stamped before 19 its breaks at a slash, #1164.)
+    expect(configFromExport({ ...opener, configVersion: 12 })).toEqual({ ...opener.config, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...opener, configVersion: 13 })).toEqual({ ...opener.config, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...opener, configVersion: 14 })).toEqual({ ...opener.config, bodyText: { breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...opener, configVersion: 18 })).toEqual({ ...opener.config, bodyText: { breakAfterSlashes: false } });
+    expect(configFromExport({ ...opener, configVersion: 19 })).toEqual(opener.config);
     // Exports carry the version since 1.5, and read back as they are.
     // One stamped 11 (postext 1.25 to 1.27) gets the version-12 pins: a
     // two-row note it may hold breaks where 1.27 broke it (#720).
     expect(configFromExport({ ...legacy, configVersion: 11 })).toMatchObject({ headings: { fontFamily: 'Georgia' }, cjk: { warichu: { minChars: 1 } } });
-    expect(configFromExport({ ...legacy, configVersion: 12 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...legacy, configVersion: 13 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...legacy, configVersion: 14 })).toEqual({ headings: { fontFamily: 'Georgia' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...legacy, configVersion: 18 })).toEqual({ headings: { fontFamily: 'Georgia' } });
+    expect(configFromExport({ ...legacy, configVersion: 12 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...legacy, configVersion: 13 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...legacy, configVersion: 14 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...legacy, configVersion: 18 })).toEqual({ headings: { fontFamily: 'Georgia' }, bodyText: { breakAfterSlashes: false } });
+    expect(configFromExport({ ...legacy, configVersion: 19 })).toEqual({ headings: { fontFamily: 'Georgia' } });
     // And a column-and-a-half layout keeps the caption of a resource set in
     // the text under it, where 1.27 set it (#729); other layouts take no pin.
     const sided = { ...legacy, config: { layout: { layoutType: 'oneAndHalf' as const, sideColumnRole: 'floats' as const } } };
     expect(configFromExport({ ...sided, configVersion: 11 })).toMatchObject({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats', inlineCaptionSide: false } });
-    expect(configFromExport({ ...sided, configVersion: 12 })).toEqual({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats' }, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...sided, configVersion: 13 })).toEqual({ ...sided.config, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...sided, configVersion: 14 })).toEqual({ ...sided.config, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...sided, configVersion: 18 })).toEqual(sided.config);
+    expect(configFromExport({ ...sided, configVersion: 12 })).toEqual({ layout: { layoutType: 'oneAndHalf', sideColumnRole: 'floats' }, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...sided, configVersion: 13 })).toEqual({ ...sided.config, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...sided, configVersion: 14 })).toEqual({ ...sided.config, bodyText: { breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...sided, configVersion: 18 })).toEqual({ ...sided.config, bodyText: { breakAfterSlashes: false } });
+    expect(configFromExport({ ...sided, configVersion: 19 })).toEqual(sided.config);
     expect(configFromExport({ ...legacy, configVersion: 11 }).layout?.inlineCaptionSide).toBeUndefined();
-    expect(configFromExport({ ...styled, configVersion: 12 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { shapingLanguage: 'host', paragraphStylesInBoxes: 'document' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...styled, configVersion: 13 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { shapingLanguage: 'host', paragraphStylesInBoxes: 'document' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...styled, configVersion: 14 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { paragraphStylesInBoxes: 'document' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...styled, configVersion: 12 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { shapingLanguage: 'host', paragraphStylesInBoxes: 'document', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...styled, configVersion: 13 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { shapingLanguage: 'host', paragraphStylesInBoxes: 'document', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...styled, configVersion: 14 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { paragraphStylesInBoxes: 'document', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
     // A copy stamped 16 that declares a paragraph style keeps the type of
     // its styles inside a box (#1119); one stamped 17 only the ends of its
-    // highlights (#1149); one stamped 18 is read as it is.
-    expect(configFromExport({ ...styled, configVersion: 16 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { paragraphStylesInBoxes: 'document' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...styled, configVersion: 17 })).toEqual({ paragraphStyles: [{ id: 'verse' }], markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(configFromExport({ ...styled, configVersion: 18 })).toEqual({ paragraphStyles: [{ id: 'verse' }] });
+    // highlights (#1149) and, as every one stamped before 19, its breaks at
+    // a slash (#1164); one stamped 18 the breaks at a slash alone; one
+    // stamped 19 is read as it is.
+    expect(configFromExport({ ...styled, configVersion: 16 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { paragraphStylesInBoxes: 'document', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...styled, configVersion: 17 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(configFromExport({ ...styled, configVersion: 18 })).toEqual({ paragraphStyles: [{ id: 'verse' }], bodyText: { breakAfterSlashes: false } });
+    expect(configFromExport({ ...styled, configVersion: 19 })).toEqual({ paragraphStyles: [{ id: 'verse' }] });
   });
   // The applied preset's snapshot hashed the copy as it was stored; once the
   // copy is migrated on load, an untouched book must still read untouched

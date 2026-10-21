@@ -180,6 +180,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>The frame is painted where it is; what runs past the trim is cut.</td>
     </tr>
     <tr>
+      <td><code>folioMissing</code></td>
+      <td>A composed page draws nothing of a folio or running head (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>) that <code>drawnOn</code> of the <code>siblings</code> other pages of its template and side draw: a <code>header</code> or <code>footer</code> text, or a decoration text reading <code>&#123;pageNumber&#125;</code>, a running name or <code>&#123;attr.x&#125;</code>. A page whose fence turns the element off (<code>when</code> / <code>unless</code>), or whose slot has no such element, is not counted; it takes two pages that draw it. Raised by the layout, with the <code>pageIndex</code>, pointing at the page fence. Since postext 1.53.</td>
+      <td>The page is printed without it. Set the attribute the element reads on that fence, or turn the element off there on purpose with <code>when</code> or <code>unless</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>A repeating grid of a composed page holds <code>max</code> items and the page gives it more (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). One per item over. Since postext 1.48.</td>
       <td>The item goes to the flow frame, or after the page.</td>

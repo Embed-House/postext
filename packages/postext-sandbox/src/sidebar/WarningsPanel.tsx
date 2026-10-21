@@ -107,6 +107,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'continueTargetMissing':
     case 'frameCovered':
     case 'frameOutsideArea':
+    case 'folioMissing':
     case 'repeatOverflow':
     case 'lookUnknown':
     case 'moduleUnknown':
@@ -326,6 +327,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameCoveredTitle;
     case 'frameOutsideArea':
       return labels.warningsFrameOutsideTitle;
+    case 'folioMissing':
+      return labels.warningsFolioMissingTitle;
     case 'repeatOverflow':
       return labels.warningsRepeatOverflowTitle;
     case 'lookUnknown':
@@ -704,6 +707,13 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameCoveredDetail(payload, labels, locale)}`;
     case 'frameOutsideArea':
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOutsideDetail(payload, labels, locale)}`;
+    case 'folioMissing':
+      // A folio or running head a page lost that its siblings draw (#1163).
+      return `${payload.elementId} (${payload.slot}) — ${labels.warningsFolioMissingDetail
+        .replace('__page__', String(payload.page))
+        .replace('__template__', payload.template)
+        .replace('__drawn__', String(payload.drawnOn))
+        .replace('__siblings__', String(payload.siblings))}`;
     case 'repeatOverflow':
       return `${payload.frame}[${payload.item}] — ${repeatOverflowDetail(payload, labels)}`;
     case 'lookUnknown':

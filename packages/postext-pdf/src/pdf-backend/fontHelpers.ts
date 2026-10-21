@@ -205,7 +205,14 @@ function addSlotFonts(slot: Pick<VDTDesignSlot, 'blocks'> | undefined, out: Font
     for (const line of b.lines) {
       add(out, b.fontString, line.text, vertical);
       // Inline-mark runs: bold, italic, a script at the reduced size.
-      for (const run of line.runs ?? []) if (run.text) add(out, run.fontString, run.text, vertical);
+      for (const run of line.runs ?? []) {
+        // A heading title's chip (#1162): its own runs carry their faces.
+        if (run.chip) {
+          for (const r of run.chip.runs) if (r.text) add(out, r.fontString, r.text);
+          continue;
+        }
+        if (run.text) add(out, run.fontString, run.text, vertical);
+      }
     }
   }
 }

@@ -369,6 +369,8 @@ export interface SandboxLabels {
   warningsFrameCoveredPictureDetail: string;
   warningsFrameCoveredDetail: string;
   warningsFrameOutsideTitle: string;
+  warningsFolioMissingTitle: string;
+  warningsFolioMissingDetail: string;
   warningsFrameOutsideTrimDetail: string;
   warningsFrameOutsideBleedDetail: string;
   warningsFrameOutsideFrameDetail: string;
@@ -1169,6 +1171,8 @@ export interface SandboxLabels {
   bodyBreakAfterDashesTooltip: string;
   bodyBreakAfterHyphens: string;
   bodyBreakAfterHyphensTooltip: string;
+  bodyBreakAfterSlashes: string;
+  bodyBreakAfterSlashesTooltip: string;
   bodyHardLineBreaks: string;
   bodyHardLineBreaksTooltip: string;
   bodyScriptContext: string;
