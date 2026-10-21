@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
   "slug": "ai-preprint-prompt-exemplars",
-  "sourceHash": "b5a30acd6d44e4f848ca78c2575cc9a26631c0ae0c11726ae0fcb911c06968b8",
+  "sourceHash": "30b33da8b27221c08e98d4ed5b3f7ac68353ef8f17d5ed018393941220a9e4bc",
   "engine": {
     "postext": "1.34.0",
     "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.650Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-21T18:29:20.439Z",
   "variants": {
     "en": {
-      "hash8": "8f8409ad",
+      "hash8": "1282c0c2",
       "vdtHash": "2c74b1a0b3e09208cb79243121a098ea29159c0f",
       "timings": {
-        "importMs": 1340,
-        "fontsMs": 173,
-        "buildMs": 717,
-        "totalMs": 3279,
+        "importMs": 727,
+        "fontsMs": 92,
+        "buildMs": 581,
+        "totalMs": 2135,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
           215.9,
-          279.40000000000003
+          279.4
         ],
         "dpi": 150,
         "layoutType": "double",
@@ -31,7 +31,7 @@
         "mirror": true,
         "body": {
           "family": "Newsreader",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 12.8
         },
         "families": [
@@ -158,7 +158,7 @@
       },
       "sandbox": {
         "file": "ai-preprint-prompt-exemplars.postext",
-        "bytes": 153397,
+        "bytes": 153386,
         "folio": "055119a2",
         "chapters": [
           {
@@ -426,7 +426,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 485,
+        "configLeaves": 484,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -543,12 +543,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 7 pages)"
+            "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 7 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

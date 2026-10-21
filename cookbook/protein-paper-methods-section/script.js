@@ -68,7 +68,7 @@ const titleBlock = { enabled: true,
       placement: at('#title', 'below', 0, 4, MEASURE) }),
     { kind: 'rule', id: 'rule', thickness: pt(0.5), color: col('rule'),
       placement: at('#authors', 'below', 0, 3, MEASURE) },
-    text('source', '{attr.source}', SANS, 7, { fontStyle: 'italic', color: col('muted'),
+    text('source', '{attr.source}', SANS, 7, { color: col('muted'),
       placement: at('#rule', 'below', 0, 1.6, MEASURE) }),
   ] },
 };

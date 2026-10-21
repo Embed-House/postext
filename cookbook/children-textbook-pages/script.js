@@ -89,10 +89,10 @@ const calloutStyles = [
 // #region answer: one base template and a family of topics that extend it
 // Ground, tab and number are decoration anchored to the title frame; the number,
 // `{headingNumber}`, stands over the padding before its words. A topic extends the base.
-const ground = () => ({ kind: 'box', id: 'ground', decorative: true,
+const ground = () => ({ kind: 'box', id: 'ground',
   placement: { ...at('bleed', 'top-left'), size: { width: 'fill', height: 'fill' } },
   style: { backgroundColor: col('tema-ground') } });
-const titleTab = () => ({ kind: 'box', id: 'tab', decorative: true, placement: { ...at('#titulo',
+const titleTab = () => ({ kind: 'box', id: 'tab', placement: { ...at('#titulo',
   'top-left'), size: { width: { to: '#titulo', edge: 'right' }, height: { to: '#titulo',
     edge: 'bottom' } } }, style: { backgroundColor: col('tema'), borderRadius: mm(4) } });
 const badge = () => ({ kind: 'text', id: 'number', content: '{headingNumber}',
@@ -233,7 +233,7 @@ const toc = {
   pageNumber: { fontFamily: DISPLAY, fontWeight: fw(500), width: mm(9), color: col('agua') },
   leader: { char: CJK ? '…' : '.', gap: mm(1.5) },
   parts: { height: pt(34), marginTop: pt(12), marginBottom: pt(4), design: { elements: [
-    { kind: 'box', id: 'band', decorative: true,
+    { kind: 'box', id: 'band',
       placement: { ...at('container', 'top-left'), size: { width: 'fill', height: 'fill' } },
       style: { backgroundColor: col('paper'), borderRadius: mm(3) } },
     { kind: 'text', id: 'letter', content: '{number}', fontFamily: DISPLAY, fontSize: pt(16),

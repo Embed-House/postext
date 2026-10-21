@@ -84,7 +84,7 @@ const gallery = {
     rowAlign: 'start', repeat: { frames: ['foto', 'pie'] },
     placement: { ...at('#cabecera', 'below', 0, 3), size: { width: mm(W - 8), height: 'fill' } } }],
   // The module's own ground: a tint as large as the module, whatever its rows.
-  decoration: { elements: [{ kind: 'box', id: 'suelo', decorative: true,
+  decoration: { elements: [{ kind: 'box', id: 'suelo',
     placement: { ...at('container', 'top-left'), size: { width: 'fill', height: 'fill' } },
     style: { backgroundColor: col('tint'), borderRadius: mm(3) } }] },
 };

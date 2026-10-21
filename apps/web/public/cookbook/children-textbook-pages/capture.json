@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "036dda827cdaf01eeb8fee145b76d8c667a51d77fa6514122828ec9148b93e15",
+  "sourceHash": "54b5144b4ec95ac95c599ee788343ed96654392d0b407fe73a326ef279e3c5a2",
   "engine": {
     "postext": "1.48.0",
     "postextPdf": "1.48.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-21T17:29:23.675Z",
+  "capturedAt": "2026-10-21T18:29:32.290Z",
   "variants": {
     "en": {
-      "hash8": "bca209a7",
+      "hash8": "3704107c",
       "vdtHash": "fae03d32b06e40bc17dad1fdd761184265e74696",
       "timings": {
-        "importMs": 1184,
-        "fontsMs": 217,
-        "buildMs": 39,
-        "totalMs": 2248,
+        "importMs": 751,
+        "fontsMs": 169,
+        "buildMs": 32,
+        "totalMs": 1719,
         "builds": 2
       },
       "specimen": {
@@ -469,7 +469,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 726,
+        "configLeaves": 720,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -570,13 +570,13 @@
       }
     },
     "es": {
-      "hash8": "b83f9d7a",
+      "hash8": "2b647b49",
       "vdtHash": "91bec0362f1d6d7e1f289c28d9fe106ca096e678",
       "timings": {
-        "importMs": 1179,
-        "fontsMs": 211,
-        "buildMs": 43,
-        "totalMs": 2259,
+        "importMs": 754,
+        "fontsMs": 164,
+        "buildMs": 33,
+        "totalMs": 1719,
         "builds": 2
       },
       "specimen": {
@@ -741,7 +741,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100210,
+        "bytes": 2100212,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1028,7 +1028,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 726,
+        "configLeaves": 720,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -1129,13 +1129,13 @@
       }
     },
     "ca": {
-      "hash8": "5c7f3b93",
+      "hash8": "fb4c7a38",
       "vdtHash": "b5aa30b769fbba04a10ef6eea708937e3559d8d3",
       "timings": {
-        "importMs": 1195,
-        "fontsMs": 201,
-        "buildMs": 39,
-        "totalMs": 2316,
+        "importMs": 751,
+        "fontsMs": 166,
+        "buildMs": 32,
+        "totalMs": 1721,
         "builds": 2
       },
       "specimen": {
@@ -1300,7 +1300,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100303,
+        "bytes": 2100302,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1587,7 +1587,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 726,
+        "configLeaves": 720,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -1678,13 +1678,13 @@
       }
     },
     "zh": {
-      "hash8": "08eafa24",
+      "hash8": "902d143e",
       "vdtHash": "a184f481f8f19bd942ca30f6c6901746789866cb",
       "timings": {
-        "importMs": 692,
-        "fontsMs": 480,
-        "buildMs": 106,
-        "totalMs": 1940,
+        "importMs": 549,
+        "fontsMs": 342,
+        "buildMs": 96,
+        "totalMs": 1653,
         "builds": 1
       },
       "specimen": {
@@ -1850,7 +1850,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2106734,
+        "bytes": 2106728,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -2138,7 +2138,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 754,
+        "configLeaves": 748,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -2227,13 +2227,13 @@
       }
     },
     "ar": {
-      "hash8": "c3a63bab",
+      "hash8": "4335b60f",
       "vdtHash": "337d795aabdf191d67b1b6b317304f3c5b44f89e",
       "timings": {
-        "importMs": 679,
-        "fontsMs": 227,
-        "buildMs": 152,
-        "totalMs": 1727,
+        "importMs": 601,
+        "fontsMs": 169,
+        "buildMs": 123,
+        "totalMs": 1613,
         "builds": 1
       },
       "specimen": {
@@ -2399,7 +2399,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2107975,
+        "bytes": 2107974,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -2686,7 +2686,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 726,
+        "configLeaves": 720,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -2780,13 +2780,13 @@
       }
     },
     "ja": {
-      "hash8": "5b677eba",
+      "hash8": "c1d9ddd7",
       "vdtHash": "17c52dad070b64a6fa01af9d62884bfcf175a0fb",
       "timings": {
-        "importMs": 270,
-        "fontsMs": 268,
-        "buildMs": 109,
-        "totalMs": 1253,
+        "importMs": 300,
+        "fontsMs": 325,
+        "buildMs": 108,
+        "totalMs": 1344,
         "builds": 1
       },
       "specimen": {
@@ -2952,7 +2952,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2107551,
+        "bytes": 2107543,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -3243,7 +3243,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 754,
+        "configLeaves": 748,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -3339,13 +3339,13 @@
       }
     },
     "pt": {
-      "hash8": "adcd98ef",
+      "hash8": "bced1da8",
       "vdtHash": "8ec86d48414bc40a36359763872e81163075375e",
       "timings": {
-        "importMs": 743,
-        "fontsMs": 191,
-        "buildMs": 42,
-        "totalMs": 1854,
+        "importMs": 373,
+        "fontsMs": 373,
+        "buildMs": 31,
+        "totalMs": 1518,
         "builds": 2
       },
       "specimen": {
@@ -3510,7 +3510,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100333,
+        "bytes": 2100335,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -3797,7 +3797,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 726,
+        "configLeaves": 720,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -3898,13 +3898,13 @@
       }
     },
     "fr": {
-      "hash8": "fb592be7",
+      "hash8": "ec310f2e",
       "vdtHash": "14504815c39a41dda92794b93618057079c54ce3",
       "timings": {
-        "importMs": 745,
-        "fontsMs": 178,
-        "buildMs": 48,
-        "totalMs": 1774,
+        "importMs": 597,
+        "fontsMs": 125,
+        "buildMs": 34,
+        "totalMs": 1542,
         "builds": 2
       },
       "specimen": {
@@ -4069,7 +4069,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2101170,
+        "bytes": 2101171,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -4356,7 +4356,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 726,
+        "configLeaves": 720,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -4462,13 +4462,13 @@
       }
     },
     "de": {
-      "hash8": "aa54fbd8",
+      "hash8": "185af102",
       "vdtHash": "8a91fd6d3cd0731750545bba60e30c3b71b7e27f",
       "timings": {
-        "importMs": 763,
-        "fontsMs": 170,
-        "buildMs": 39,
-        "totalMs": 1760,
+        "importMs": 598,
+        "fontsMs": 124,
+        "buildMs": 31,
+        "totalMs": 1458,
         "builds": 2
       },
       "specimen": {
@@ -4920,7 +4920,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 726,
+        "configLeaves": 720,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -5026,13 +5026,13 @@
       }
     },
     "it": {
-      "hash8": "511532c4",
+      "hash8": "31d4427a",
       "vdtHash": "37172b606872ee63c6875fcb61be6a378d3b4a7f",
       "timings": {
-        "importMs": 684,
-        "fontsMs": 204,
-        "buildMs": 59,
-        "totalMs": 1864,
+        "importMs": 472,
+        "fontsMs": 360,
+        "buildMs": 35,
+        "totalMs": 1616,
         "builds": 2
       },
       "specimen": {
@@ -5197,7 +5197,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100416,
+        "bytes": 2100417,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -5484,7 +5484,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 726,
+        "configLeaves": 720,
         "designElements": 15,
         "directives": [
           "::::page",
