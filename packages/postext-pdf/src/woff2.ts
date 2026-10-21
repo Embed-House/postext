@@ -1,35 +1,28 @@
-type DecompressFn = (input: Uint8Array) => Uint8Array | Promise<Uint8Array>;
+type DecompressFn = (input: Uint8Array) => Uint8Array | false;
 
-let wawoff2Promise: Promise<DecompressFn> | null = null;
+let decoderPromise: Promise<DecompressFn> | null = null;
 
-function loadWawoff2(): Promise<DecompressFn> {
-  if (!wawoff2Promise) {
-    wawoff2Promise = (async () => {
-      const mod = await import('wawoff2');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const anyMod = mod as any;
-      const fn: DecompressFn | undefined =
-        typeof anyMod === 'function'
-          ? anyMod
-          : typeof anyMod.decompress === 'function'
-            ? anyMod.decompress
-            : typeof anyMod.default === 'function'
-              ? anyMod.default
-              : typeof anyMod.default?.decompress === 'function'
-                ? anyMod.default.decompress
-                : undefined;
-      if (!fn) throw new Error('wawoff2: no decompress export');
-      return fn;
-    })();
+/** The WOFF2 decoder, imported and built once, on first use. It is
+ *  wawoff2's emscripten decoder written as a module of this package
+ *  (scripts/woff2-binding.mjs), not wawoff2 itself: wawoff2 waits on an export its glue assigns only when
+ *  it believes it runs in Node, so a CDN or bundler that builds it as a web
+ *  module (esm.sh does) gets a decoder that never answers. */
+function loadDecoder(): Promise<DecompressFn> {
+  if (!decoderPromise) {
+    decoderPromise = import('./woff2Binding.js').then((binding) => binding.default()).then((mod) => {
+      if (typeof mod.decompress !== 'function') throw new Error('WOFF2 decoder: no decompress export');
+      return (input: Uint8Array) => mod.decompress(input);
+    });
+    decoderPromise.catch(() => { decoderPromise = null; });
   }
-  return wawoff2Promise;
+  return decoderPromise;
 }
 
 let queue: Promise<unknown> = Promise.resolve();
 
 /**
  * Decompress a WOFF2 (RFC 8844) binary to raw TTF/OTF bytes. The WASM
- * decoder weighs ~200 KB and is loaded lazily on first use.
+ * decoder weighs ~300 KB and is loaded lazily on first use.
  *
  * Calls are serialized and the output is copied out of WASM memory: the
  * emscripten-generated module keeps a single shared heap, so concurrent
@@ -38,8 +31,9 @@ let queue: Promise<unknown> = Promise.resolve();
  */
 export async function decompressWoff2(input: Uint8Array): Promise<Uint8Array> {
   const run = async (): Promise<Uint8Array> => {
-    const decompress = await loadWawoff2();
-    const out = await decompress(input);
+    const decompress = await loadDecoder();
+    const out = decompress(input);
+    if (out === false) throw new Error('WOFF2 decoder: ConvertWOFF2ToTTF failed');
     const view = out instanceof Uint8Array ? out : new Uint8Array(out);
     const copy = new Uint8Array(view.byteLength);
     copy.set(view);

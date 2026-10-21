@@ -525,9 +525,6 @@ importers:
       pdf-lib:
         specifier: ^1.17.1
         version: 1.17.1
-      wawoff2:
-        specifier: ^2.0.1
-        version: 2.0.1(patch_hash=4464a351270771a5804bde96859b403462c3a9ec2b1fcff9a200cb7c3fda6e0d)
     devDependencies:
       '@postext/typescript-config':
         specifier: workspace:*
@@ -553,6 +550,9 @@ importers:
       vitest:
         specifier: ^5.0.0
         version: 5.0.0(@types/node@26.5.0)(msw@2.13.0(@types/node@26.5.0)(typescript@6.0.3))(vite@8.0.6(@types/node@26.5.0)(jiti@2.7.0)(yaml@2.9.0))
+      wawoff2:
+        specifier: ^2.0.1
+        version: 2.0.1(patch_hash=4464a351270771a5804bde96859b403462c3a9ec2b1fcff9a200cb7c3fda6e0d)
 
   packages/postext-sandbox:
     dependencies:
