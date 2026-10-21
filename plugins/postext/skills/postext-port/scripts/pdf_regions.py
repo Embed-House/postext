@@ -108,6 +108,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import anchors as anc  # noqa: E402
 import images as imgs  # noqa: E402
 import line_art as la  # noqa: E402
+import pdf_extract as pex  # noqa: E402
 import postext_md as pmd  # noqa: E402
 import template_dedupe as td  # noqa: E402
 
@@ -264,6 +265,8 @@ class Fonts:
         self.table = font_table(fonts_dir) if fonts_dir and fonts_dir.exists() else {}
         self.cache: dict[tuple[str, int], tuple[str, int, bool]] = {}
         self.seen: dict[str, tuple[str, int, bool]] = {}
+        #: PDF font name -> spans of an upright face the source slanted (read as italic)
+        self.slanted: dict[str, int] = {}
 
     def face(self, pdf_name: str, flags: int = 0) -> tuple[str, int, bool]:
         key = (pdf_name, flags)
@@ -652,17 +655,73 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
                     hidden.append(text.strip())
                     continue
                 fam, weight, italic = fonts.face(span["font"], span["flags"])
+                # an upright face obliqued by the text matrix is the source's italic
+                slant = pex.slant_mask(span["chars"], italic) if abs(rot) < 1 else [False] * len(span["chars"])
+                runs = sum(1 for k, m in enumerate(slant) if m and (k == 0 or not slant[k - 1]))
+                if runs:
+                    base = span["font"].split("+")[-1]
+                    fonts.slanted[base] = fonts.slanted.get(base, 0) + runs
                 col = hexc(span["color"]) or "#000000"
-                for ch in span["chars"]:
+                for ch, sl in zip(span["chars"], slant):
                     b = to_mm(ch["bbox"], origin)
                     chars.append(Char(ch["c"], b[0], b[1], b[2], b[3], (ch["origin"][1] - oy) * PT_MM, fam, weight,
-                                      italic, span["size"], col))
+                                      italic or sl, span["size"], col))
             if any(c.c.strip() for c in chars):
                 for c in chars:
                     if not c.family:   # spaces take the face of the text before them
                         c.family = next((d.family for d in chars if d.family), "")
                 pieces.append(Line(chars, rot if abs(rot) >= 1 else 0.0))
-    return merge_pieces(pieces), hidden
+    merged = merge_pieces(pieces)
+    for l in merged:
+        l.chars = thin_gaps(l.chars)
+    return merged, hidden
+
+
+#: what may follow a number across a thin space: digits, signs and unit letters
+_NUMBER_TAIL = set("0123456789%‰‱°º℃℉′″€$£¥")
+
+
+def thin_gaps(chars: list[Char]) -> list[Char]:
+    """Thin spaces set by position: a number's groups (`1 000`) or a number
+    and its sign or unit (`21 %`, `5 mm`) printed with a narrow gap and no
+    space character (MuPDF writes none under about a quarter em), or with a
+    space clearly narrower than the run's word spaces. The gap less the
+    letter spacing is measured, so spaced capitals and figures (`2 0 2 6`)
+    stay as they are. The gap becomes U+2009, which `postext_md.clean_text`
+    turns into a narrow no-break space."""
+    out: list[Char] = []
+    track = tracking(chars)
+    word_gaps = [b.x0 - a.x1 for a, s, b in zip(chars, chars[1:], chars[2:])
+                 if a.c.strip() and s.c == " " and b.c.strip()]
+    word = statistics.median(word_gaps) if word_gaps else None
+    i = 0
+    n = len(chars)
+    while i < n:
+        c = chars[i]
+        out.append(c)
+        if not c.c.isdigit():
+            i += 1
+            continue
+        j = i + 1
+        while j < n and not chars[j].c.strip():
+            j += 1
+        if j >= n:
+            i += 1
+            continue
+        nxt = chars[j]
+        tail = nxt.c in _NUMBER_TAIL or nxt.c.isalpha()
+        em = max(c.size, nxt.size) * PT_MM
+        gap = nxt.x0 - c.x1 - track
+        own = chars[i + 1:j]
+        if tail and em > 0 and ((not own and 0.1 * em <= gap < 0.3 * em)
+                                or (own and all(o.c == " " for o in own) and gap < 0.2 * em
+                                    and (word is None or nxt.x0 - c.x1 < 0.6 * word))):
+            out.append(Char(" ", c.x1, c.y0, nxt.x0, c.y1, c.oy, c.family, c.weight, c.italic, c.size,
+                            c.color, c.mark if c.mark == nxt.mark else None))
+            i = j
+            continue
+        i += 1
+    return out
 
 
 def merge_pieces(pieces: list[Line]) -> list[Line]:
@@ -1194,6 +1253,86 @@ def bullet_of(line: Line) -> Char | None:
     return None
 
 
+def list_levels(lines: list[Line], tol: float = 1.5) -> list[float]:
+    """The x0 (mm) of each list level in a run of lines: the bullets' left
+    edges clustered within `tol` mm, left to right."""
+    xs = sorted(b.x0 for b in (bullet_of(l) for l in lines) if b is not None)
+    levels: list[float] = []
+    for x in xs:
+        if not levels or x - levels[-1] > tol:
+            levels.append(x)
+    return levels
+
+
+def level_of_bullet(b: Char, levels: list[float]) -> int:
+    """The depth (0 = top) of a bullet among `list_levels`, at most 4."""
+    if not levels:
+        return 0
+    return min(4, min(range(len(levels)), key=lambda i: abs(levels[i] - b.x0)))
+
+
+def item_size(line: Line) -> float:
+    """The text size (pt) of a list item's line, its bullet left out."""
+    b = bullet_of(line)
+    sizes = [c.size for c in line.chars if c.c.strip() and c is not b]
+    return statistics.median(sizes) if sizes else line.size
+
+
+def bullet_look(items: list[Line]) -> dict:
+    """bulletChar, size (em of the item text) and weight of the bullets of
+    one list level: the most common of each."""
+    bs = [(bullet_of(l), item_size(l)) for l in items]
+    chars: dict[str, int] = {}
+    weights: dict[int, int] = {}
+    for b, _ in bs:
+        chars[b.c] = chars.get(b.c, 0) + 1
+        weights[b.weight] = weights.get(b.weight, 0) + 1
+    ratio = statistics.median(b.size / s for b, s in bs if s > 0) if bs else 1.0
+    return {"bulletChar": max(chars, key=lambda k: (chars[k], k)),
+            "bulletFontSize": {"value": round(ratio * 20) / 20, "unit": "em"},
+            "bulletFontWeight": max(weights, key=lambda k: (weights[k], -k))}
+
+
+def list_style(lines: list[Line], left_edge: float) -> dict | None:
+    """A frame's `lists` style from its top-level bullets: the character,
+    its colour, size and weight measured against the item text, the indent
+    from the frame's text edge and the gap from the bullet to the text."""
+    bl = [l for l in lines if bullet_of(l)]
+    if not bl:
+        return None
+    levels = list_levels(bl)
+    top = [l for l in bl if level_of_bullet(bullet_of(l), levels) == 0]
+    b = bullet_of(top[0])
+    look = bullet_look(top)
+    return {"bulletChar": look["bulletChar"], "color": colour(b.color),
+            "indent": mmv(max(0.0, b.x0 - left_edge)), "gap": mmv(max(0.5, text_x0(top[0]) - b.x1)),
+            "bulletFontSize": look["bulletFontSize"], "bulletFontWeight": look["bulletFontWeight"]}
+
+
+def unordered_lists(found: dict[int, list[dict]]) -> dict | None:
+    """`unorderedLists` for the suggested config from every list level read
+    (`describe_frame` fills `found`, depth -> bullet looks): level 1 sets the
+    list's own bullet, each level its `levels[]` entry, so a box style that
+    keeps the level-1 bullet leaves the nested ones alone."""
+    if not found:
+        return None
+
+    def most(depth: int) -> dict:
+        looks = found[depth]
+        keys = [json.dumps(x, sort_keys=True) for x in looks]
+        best = max(set(keys), key=lambda k: (keys.count(k), k))
+        return json.loads(best)
+
+    first = most(min(found))
+    out: dict[str, Any] = {"bulletChar": first["bulletChar"], "bulletFontSize": first["bulletFontSize"],
+                           "fontWeight": first["bulletFontWeight"], "levels": []}
+    for depth in sorted(found):
+        lk = most(depth)
+        out["levels"].append({"level": depth + 1, "bulletChar": lk["bulletChar"], "fontSize": lk["bulletFontSize"],
+                              "fontWeight": lk["bulletFontWeight"]})
+    return out
+
+
 def paragraphs(lines: list[Line]) -> list[list[Line]]:
     """Chain lines into paragraphs: same look, one leading apart, flush left
     or centred on each other; a bullet or a bold head line starts a new one."""
@@ -1264,11 +1403,131 @@ def para_chars(p: list[Line]) -> list[Char]:
     return out
 
 
+def _space_char(c: Char, s: str) -> Char:
+    return Char(s, c.x0, c.y0, c.x1, c.y1, c.oy, c.family, c.weight, c.italic, c.size, c.color, None)
+
+
+def tracking(chars: list[Char]) -> float:
+    """The letter spacing (mm) of a run of characters: the median gap
+    between two touching letters (MuPDF's boxes are the advances, so 0 for
+    text set solid). Spaced capitals in a running head have a few tenths
+    of an em between every two letters, which no gap rule should read as a
+    space."""
+    gaps = [b.x0 - a.x1 for a, b in zip(chars, chars[1:]) if a.c.strip() and b.c.strip()]
+    return max(0.0, statistics.median(gaps)) if gaps else 0.0
+
+
+def spaced_chars(chars: list[Char], em: float, only_lead: bool = False) -> list[Char]:
+    """The characters with each run of spaces between two words replaced by
+    the space its measured width stands for (`postext_md.fixed_space`): a
+    plain space, an en space or an em space; a fixed or no-break space the
+    source set itself is kept. `em` in mm. A gap is fixed only when, less
+    the letter spacing, it is over half an em and at least 1.6 times the
+    narrowest other word space of the run: spaced capitals and justified lines stay
+    plain. With `only_lead`, only the gap after a highlighted run (a chip, a
+    number on a band) that opens the text is measured."""
+    # the runs of spaces between two words: (first space index, next ink index, gap)
+    gaps: list[tuple[int, int, float]] = []
+    prev_ink = None
+    i = 0
+    n = len(chars)
+    while i < n:
+        if chars[i].c.strip():
+            prev_ink = i
+            i += 1
+            continue
+        j = i
+        while j < n and not chars[j].c.strip():
+            j += 1
+        if prev_ink is not None and j < n:
+            gaps.append((i, j, chars[j].x0 - chars[prev_ink].x1))
+        i = j
+    track = tracking(chars)
+    first_ink = next((c for c in chars if c.c.strip()), None)
+    lead_mark = first_ink.mark if first_ink is not None else None
+    # with only_lead, the one gap measured ends at the first word past the opening highlight
+    lead_end = next((x for x, c in enumerate(chars) if c.c.strip() and c.mark != lead_mark), None) \
+        if lead_mark is not None else None
+    replace: dict[int, tuple[int, str]] = {}
+    for k, (i, j, gap) in enumerate(gaps):
+        run = chars[i:j]
+        own = next((g.c for g in run if g.c in pmd.FIXED_SPACES + pmd.NO_BREAK_SPACES), None)
+        if own is not None:
+            replace[i] = (j, own)
+            continue
+        if only_lead and (lead_end is None or j != lead_end):
+            continue
+        others = [g - track for kk, (_, _, g) in enumerate(gaps) if kk != k]
+        g = gap - track
+        sp = pmd.fixed_space(g, em)
+        if sp != " " and others and g < 1.6 * min(others):
+            sp = " "
+        if sp != " ":
+            replace[i] = (j, sp)
+    out: list[Char] = []
+    i = 0
+    while i < n:
+        if i in replace:
+            j, sp = replace[i]
+            out.append(_space_char(chars[i], sp))
+            i = j
+            continue
+        out.append(chars[i])
+        i += 1
+    return out
+
+
+def text_em(chars: list[Char]) -> float:
+    """The em (mm) of a run of characters: its most common size."""
+    sizes = [round(c.size * 4) / 4 for c in chars if c.c.strip() and not c.mark] or \
+        [round(c.size * 4) / 4 for c in chars if c.c.strip()]
+    return (statistics.mode(sizes) if sizes else 10.0) * PT_MM
+
+
+def spaced_text(line: Line) -> str:
+    """A heading, running head or tab line's text with its measured spaces:
+    the room between a chip or a number and the title (an en or em space)
+    survives as a fixed space."""
+    return "".join(c.c for c in spaced_chars(line.chars, text_em(line.chars))).strip()
+
+
+def lead_chip_gaps(lines: list[Line], bands: list[dict], out: dict[str, list[float]]) -> None:
+    """For each highlight colour, the room (em of the text after it) between
+    a band that opens a line and the next word's ink: what a chip style's
+    `gap` keeps (`--highlights chip`)."""
+    for l in lines:
+        ink = [c for c in l.chars if c.c.strip()]
+        if len(ink) < 2 or ink[0].mark is None:
+            continue
+        col = ink[0].mark
+        k = next((i for i, c in enumerate(ink) if c.mark != col), None)
+        if k is None:
+            continue
+        last, nxt = ink[k - 1], ink[k]
+        band = next((b["box"] for b in bands if b["color"] == col and centre_in((last.x0, last.y0, last.x1, last.y1), b["box"])), None)
+        edge = band[2] if band else last.x1
+        em = nxt.size * PT_MM
+        if em > 0 and nxt.x0 > edge:
+            out.setdefault(col, []).append((nxt.x0 - edge) / em)
+
+
+def chip_gap(gaps: list[float]) -> dict | None:
+    """The chip style's `gap` from the measured rooms after opening chips,
+    when it is wider than a word space (the engine's default is 0.25 em)."""
+    if not gaps:
+        return None
+    g = statistics.median(gaps)
+    return {"value": round(g, 2), "unit": "em"} if g >= 0.4 else None
+
+
 def para_markdown(p: list[Line], mark_ids: dict, mode: str) -> str:
     chars = para_chars(p)
     ink = [c for c in chars if c.c.strip()]
     if not ink:
         return ""
+    if mode == "mark":
+        # a chip set as a mark (a number on a band) before the words keeps its measured room
+        chars = spaced_chars(chars, text_em(chars), only_lead=True)
     base_w = min(c.weight for c in ink)
     base_it = all(c.italic for c in ink)
     return runs_markdown(chars, base_w, base_it, mark_ids, mode)
@@ -1362,7 +1621,8 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             before = [j for j in ink if j < i]
             after = [j for j in ink if j > i]
             c.mark = l.chars[before[-1]].mark if before and after and l.chars[before[-1]].mark == l.chars[after[0]].mark else None
-    cards = sorted(sh["cards"], key=lambda s: (round(s.box[1], 1), s.box[0]))
+    lead_chip_gaps(lines, sh["bands"], ctx.setdefault("chip_gaps", {}))
+    cards =sorted(sh["cards"], key=lambda s: (round(s.box[1], 1), s.box[0]))
     boxes = sh["boxes"]
     tabs = sh["tabs"]
     pictures = sh["pictures"]
@@ -1873,6 +2133,10 @@ def text_blocks(lines: list[Line], frames: list[Frame]) -> list[list[Line]]:
             gap = p[0].base - last.base
             same_left = abs(text_x0(p[0]) - text_x0(q[0])) < 3.5 or abs(p[0].x0 - q[0].x0) < 3.5 \
                 or (bullet_of(q[0]) and abs(p[0].x0 - text_x0(q[0])) < 1.5)
+            if not same_left and bullet_of(p[0]):
+                # an item of a nested list: its bullet within 12 mm right of the list's first bullet
+                outer = min((r[0].x0 for r in blk if bullet_of(r[0])), default=None)
+                same_left = outer is not None and outer - 1.5 <= p[0].x0 <= outer + 12.0
             same_mid = abs((p[0].x0 + p[0].x1) / 2 - (q[0].x0 + q[0].x1) / 2) < 3.0
             if not (same_left or same_mid) or not (0 < gap < 2.6 * max(lead, 4.0)):
                 continue
@@ -1932,21 +2196,24 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
     if f.kind in ("picture", "figure"):
         return
     paras = paragraphs(f.lines)
+    levels = list_levels(f.lines)
     blocks = []
-    in_list = False
     centred = f.kind == "text" and (len(f.lines) > 1 and is_centred(f.lines) or getattr(f, "caption_centred", False))
     for p in paras:
         size = p[0].size
         if size >= ctx["heading_min"] and f.kind in ("box", "tab", "title"):
             level = ctx["level_of"](size)
-            text = " ".join(l.plain for l in p)
+            text = " ".join(spaced_text(l) for l in p)
             blocks.append(("h", level, text))
             continue
         md = para_markdown(p, mark_ids, mode)
         if not md:
             continue
-        if bullet_of(p[0]):
-            blocks.append(("li", 0, md))
+        b = bullet_of(p[0])
+        if b:
+            depth = level_of_bullet(b, levels)
+            blocks.append(("li", depth, md))
+            ctx.setdefault("list_levels", {}).setdefault(depth, []).append(bullet_look([p[0]]))
         else:
             blocks.append(("p", 0, md))
     f.blocks = blocks
@@ -1984,8 +2251,12 @@ def body_of(look: dict) -> dict:
 
 def text_style(lines: list[Line], centred: bool) -> dict:
     look = dominant(lines)
-    return {"id": "text", "backgroundEnabled": False, "border": {"enabled": False},
-            "padding": {"top": mmv(0), "right": mmv(0), "bottom": mmv(0), "left": mmv(0)}, "body": body_of(look)}
+    st = {"id": "text", "backgroundEnabled": False, "border": {"enabled": False},
+          "padding": {"top": mmv(0), "right": mmv(0), "bottom": mmv(0), "left": mmv(0)}, "body": body_of(look)}
+    ls = list_style(lines, min(min(l.x0, text_x0(l)) for l in lines)) if lines else None
+    if ls:
+        st["lists"] = ls
+    return st
 
 
 def give_slack(right: float, inner: float, ctx: dict) -> float:
@@ -2075,11 +2346,9 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
         bottom = max(0.0, min(by1 - (last.base + 0.2 * lead), 8.0))
         st["padding"] = {"top": mmv(top), "right": mmv(right), "bottom": mmv(bottom), "left": mmv(left)}
         st["body"] = body_of(look)
-        bl = [l for l in f.lines if bullet_of(l)]
-        if bl:
-            b = bullet_of(bl[0])
-            st["lists"] = {"bulletChar": b.c, "color": colour(b.color),
-                           "indent": mmv(max(0.0, b.x0 - (bx0 + left))), "gap": mmv(max(0.5, text_x0(bl[0]) - b.x0))}
+        ls = list_style(f.lines, bx0 + left)
+        if ls:
+            st["lists"] = ls
     else:
         st["padding"] = {"top": mmv(0), "right": mmv(0), "bottom": mmv(0), "left": mmv(0)}
     t: Shape | None = f.tab
@@ -3375,7 +3644,7 @@ def furniture_decoration(lines: list[Line], pno: int, origin: tuple, ctx: dict, 
         for l in folios[:1]:
             els.append(text_element(f"folio-{parity}", "{pageNumber}", l, W, parity))
         if words:
-            text = " ".join(l.plain for l in words)
+            text = " ".join(spaced_text(l) for l in words)
             key = band
             attrs[key] = text
             els.append(text_element(f"{key}-{parity}", "{attr.%s}" % key, words[0], W, parity))
@@ -3477,11 +3746,13 @@ def blocks_markdown(blocks: list[tuple]) -> list[str]:
         if kind == "h":
             out.append(pmd.heading(level, text))
         elif kind == "li":
+            # a nested item indents to the text of the item above (two spaces under `- `)
+            item = "  " * level + "- " + text
             if prev == "li" and out:
-                out[-1] += "\n- " + text
+                out[-1] += "\n" + item
                 prev = "li"
                 continue
-            out.append("- " + text)
+            out.append(item)
         else:
             out.append(pmd.guard_line_start(text))
         prev = kind
@@ -3500,7 +3771,7 @@ def page_markdown(page: dict, ctx: dict) -> str:
 
     for f in frames:
         if f.kind == "title":
-            text = " ".join(l.plain for l in f.lines)
+            text = " ".join(spaced_text(l) for l in f.lines)
             add(pmd.heading(f.level or 1, text, slot=None if getattr(f, "takes", False) else f.name))
             continue
         if f.kind in ("picture", "figure"):
@@ -3525,7 +3796,7 @@ def page_markdown(page: dict, ctx: dict) -> str:
             continue
         attrs_f: dict[str, str] = {"slot": f.name}
         if f.kind == "box" and f.tab is not None and getattr(f.tab, "line", None) is not None:
-            attrs_f["label"] = f.tab.line.plain
+            attrs_f["label"] = spaced_text(f.tab.line)
         head = ":::frame" + pmd.attrs(**attrs_f)
         add(head + "\n" + "\n\n".join(body) + ("\n" if body else "") + ":::")
     lines.append("")
@@ -3695,9 +3966,17 @@ def cmd_extract(args: argparse.Namespace) -> int:
             st = {"id": m["id"], "background": colour(m["_hex"])}
             if args.highlights == "chip":
                 st.update({"borderWidth": ptv(0), "paddingX": mmv(0.3)})
+                gaps = [g for col, gs in ctx.get("chip_gaps", {}).items() if ctx["mark_ids"].get(col) == m["id"]
+                        for g in gs]
+                gap = chip_gap(gaps)
+                if gap:
+                    st["gap"] = gap
             ms.append(st)
         library["markStyles" if args.highlights == "mark" else "chipStyles"] = ms
     library["suggested"] = suggested_config(caches, pages, body, head_sizes, level_of, doc)
+    ul = unordered_lists(ctx.get("list_levels", {}))
+    if ul:
+        library["suggested"]["unorderedLists"] = ul
     library = {k: v for k, v in library.items() if v}
     # frame names by role: by request, and for a run of one page, which dedupe has nothing to merge in
     frame_names: list[dict] = []
@@ -3724,6 +4003,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
         "hiddenTexts": {p["report"]["page"]: p["report"]["hidden"] for p in built if p["report"]["hidden"]},
         "notes": {p["report"]["page"]: p["report"]["notes"] for p in built if p["report"]["notes"]},
         "fonts": {k: list(v) for k, v in sorted(fonts.seen.items())},
+        "syntheticItalic": dict(sorted(fonts.slanted.items())),
         "bodySize": body, "headingSizes": head_sizes,
         "frameNames": frame_names,
     }
@@ -3738,6 +4018,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
         hid = sum(len(v) for v in summary["hiddenTexts"].values())
         if hid:
             print(f"hidden text left out: {hid} spans on pages {', '.join(str(k) for k in summary['hiddenTexts'])}")
+        if fonts.slanted:
+            print("slanted upright faces read as italic: " + "; ".join(f"{k} ({v} spans)" for k, v in sorted(fonts.slanted.items())))
         print("fonts: " + "; ".join(f"{k} -> {v[0]} {v[1]}{' italic' if v[2] else ''}" for k, v in summary["fonts"].items()))
         print("next: template_dedupe.py " + str(out) + ", then pdf_regions.py manifest " + str(out))
     return 0
@@ -3826,6 +4108,8 @@ def cmd_manifest(args: argparse.Namespace) -> int:
         "footer": {"elements": []},
         "resourceTypes": sug.get("resourceTypes", []),
     }
+    if sug.get("unorderedLists"):
+        config["unorderedLists"] = sug["unorderedLists"]
     for k in ("calloutStyles", "markStyles", "chipStyles", "labelStyles", "paragraphStyles", "frameLooks",
               "pageTemplates"):
         if library.get(k):

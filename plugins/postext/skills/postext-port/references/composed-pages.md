@@ -410,6 +410,34 @@ What the extraction decides, so you know what to check:
   span is compared with a render of the page without text: a copy drawn
   under a picture or a fill, clipped away or off the page is left out and
   listed under `hiddenTexts` in the report.
+- **Slanted romans** (skill 1.61). A source that obliques an upright face
+  (a sheared text matrix) instead of setting its italic is read from each
+  character's box: a shear of 0.15 or more is italic, written `*…*`, and
+  `report.json` counts the runs per face under `syntheticItalic`. The
+  project then needs that family's italic among its fonts.
+- **Spaces** (skill 1.61). En (U+2002) and em (U+2003) spaces the source
+  sets are kept. In headings, running heads and tab labels each gap
+  between words is measured, less the line's letter spacing: over half an
+  em and 1.6 times the narrowest other word space of the line is an en
+  space, over 0.8 em an em space (the room between a number and its
+  title, a chip and its words); spaced capitals stay plain. A paragraph opened by a highlight keeps the measured room after
+  it the same way; with `--highlights chip` that room is the chip style's
+  `gap` instead (in em, when wider than 0.4 em). A narrow gap inside a
+  number or before its sign or unit (`1 000`, `21 %`, `5 mm`, often set by
+  position with no space character) becomes a narrow no-break space
+  (U+202F), so the number never breaks; thin spaces before `; : ! ?` and
+  inside `« »` do too. A plain space beside a fixed one is dropped.
+- **Lists** (skill 1.61). A line opened by a bullet (`•·▪■●◦‣►▸◆`) is a
+  list item; the bullets' left edges in a frame, grouped within 1.5 mm,
+  are the levels, so an item whose bullet sits further in is nested
+  (`  - ` under the item above). The frame's style gets `lists` from its
+  top-level bullets: `bulletChar`, `color`, `indent`, `gap` (from the
+  bullet's advance to the words), `bulletFontSize` (em of the item text)
+  and `bulletFontWeight`. Each level's bullet goes to
+  `suggested.unorderedLists` (`bulletChar`, `levels[]` with `bulletChar`,
+  `fontSize`, `fontWeight`), which `manifest` writes into the config: keep
+  it, since a box whose `lists.bulletChar` differs from the document's
+  replaces every level's bullet with its own.
 - **Shapes.** Large white fills are cards; filled or
   stroked rectangles and rounded rectangles that hold text or pictures are
   boxes; a shape 4–13 mm high holding one line of up to ten words is a tab
