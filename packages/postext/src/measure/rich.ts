@@ -34,7 +34,7 @@ import { latinReader, uprightDigitCandidates } from '../writingMode.js';
 import { sliceSpan } from '../parse/links.js';
 import type { CjkRegion } from '../types.js';
 import { NO_BREAK_SPACES, WORDS_AND_SPACES_RE, isBlankText, isBreakingSpace, isBreakingSpaceRun, refLabelPieces } from './spaces.js';
-import { breaksAfterDash, breaksAfterHardHyphen, hasCompound, isDash, raggedStretchPx } from './breakRules.js';
+import { ZERO_WIDTH_SPACE, breaksAfterDash, breaksAfterHardHyphen, getSlashBreaks, hasCompound, isDash, raggedStretchPx, slashBreakIndices, withoutZeroWidthSpaces } from './breakRules.js';
 import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate.js';
 import { insideJoiningWord, joiningScriptIn, wordLetterSpacing } from './joining.js';
 import { applyLineDirections, applySegmentLanguages, getMeasureArabicNumbers, getMeasureDirection, spanLanguages } from './bidiLines.js';
@@ -53,7 +53,8 @@ export interface RichBreakPoint {
    *  hyphenation zone of ragged text or its two-line cap. */
   author?: boolean;
   /** A break inside a run with no spaces that is no hyphenation point:
-   *  between two ideographs, or after a dash between two words. The line
+   *  between two ideographs, after a dash or a slash between two words, or
+   *  at a zero-width space the author typed. The line
    *  ends as it is, nothing is added, and no hyphenation penalty applies. */
   free?: boolean;
   /** Taken only by the greedy breaker (ragged lines, and justified ones
@@ -862,6 +863,25 @@ function syllabify(word: string, hyphenate: boolean, byDictionary = false): { cl
   return { clean, soft };
 }
 
+/** {@link withoutZeroWidthSpaces} of a syllabified word: its soft breaks
+ *  moved to the text left. */
+function dropZeroWidthSpaces(clean: string, soft: SoftBreak[]): { clean: string; soft: SoftBreak[]; zeroWidth: number[] } {
+  const dropped = withoutZeroWidthSpaces(clean);
+  if (dropped.text === clean) return { clean, soft, zeroWidth: [] };
+  // How many zero-width spaces stand before each offset of `clean`.
+  const before: number[] = [];
+  let n = 0;
+  for (let i = 0; i <= clean.length; i++) {
+    before.push(n);
+    if (clean[i] === ZERO_WIDTH_SPACE) n++;
+  }
+  return {
+    clean: dropped.text,
+    soft: soft.map((s) => ({ ...s, index: s.index - before[s.index]! })),
+    zeroWidth: dropped.breaks,
+  };
+}
+
 /** Break opportunities inside a word (`clean`, the text as laid out):
  *  - after each soft hyphen, the dictionary's or the author's (`soft`); a
  *    hyphen is added when the line ends there;
@@ -876,7 +896,12 @@ function syllabify(word: string, hyphenate: boolean, byDictionary = false): { cl
  *    plain paragraph there;
  *  - next to CJK characters, under the line-break rules of the document's
  *    `cjk.lineBreak` (`cjk`: the word's units, measured once each, whose
- *    running sums give the widths before its breaks). */
+ *    running sums give the widths before its breaks);
+ *  - in a word with no CJK character, after a slash between two words
+ *    ("and/or", "ACC/AHA", see `slashBreakIndices`) and where the author
+ *    typed a zero-width space (`zeroWidthBreaks`, offsets into `clean`,
+ *    which no longer holds the character), #1164: the line ends as it is
+ *    and nothing is added. */
 function wordBreakPoints(
   clean: string,
   soft: SoftBreak[],
@@ -896,6 +921,7 @@ function wordBreakPoints(
    *  narrower than painted at 20 px (36.14 px for 37.46); Fira Sans,
    *  0.2 px. */
   ownHeads = false,
+  zeroWidthBreaks: readonly number[] = [],
 ): RichBreakPoint[] {
   const widthBefore = cjk
     ? cjk.widthBefore
@@ -927,6 +953,10 @@ function wordBreakPoints(
     add(s.author ? { charIndex: s.index, author: true, ...geminate } : { charIndex: s.index, ...geminate });
   }
   if (cjk) for (const idx of cjk.breaks) add({ charIndex: idx, free: true, cjk: true });
+  else {
+    for (const idx of slashBreakIndices(clean)) add({ charIndex: idx, free: true });
+    for (const idx of zeroWidthBreaks) add({ charIndex: idx, free: true });
+  }
   return [...byIndex.values()].sort((a, b) => a.charIndex - b.charIndex);
 }
 
@@ -946,9 +976,12 @@ function wordBreakPoints(
  * when no such place fits: the word then runs past the measure, and the
  * line says so (`VDTLine.wordOverflow`).
  *
+ * Before a syllable, it is divided after a slash or at a zero-width space
+ * the author typed, nothing added (#1164).
+ *
  * `divided` says how a word was cut (#1150): at a syllable (`'syllable'`)
  * or between two characters (`'character'`); absent for a cut at a
- * no-break space, at the edge of a run of another script, or next to an
+ * no-break space, after a slash, at a zero-width space, at the edge of a run of another script, or next to an
  * ideograph, which divide no word.
  */
 export function emergencySplit(
@@ -986,6 +1019,28 @@ export function emergencySplit(
       head: { ...flags, ...pieceScriptFields(token, 0, idx), text: text.slice(0, idx), kind: 'text', width: headWidth },
       tail: { ...restFrom(idx + 1), ...flags, ...pieceScriptFields(token, idx + 1, text.length) },
     };
+  }
+  // After a slash ("ACC/" | "AHA/AAPA"), any slash but the `//` of an
+  // address (with `bodyText.breakAfterSlashes`), or at a free break of the
+  // token's (a zero-width space the author typed, a dash): no word is
+  // divided and nothing is added (#1164). The
+  // last one that leaves a head that fits wins over a syllable and over a
+  // cut between letters.
+  const joints = new Set<number>();
+  if (getSlashBreaks()) for (let idx = 2; idx < text.length; idx++) {
+    if (text[idx - 1] === '/' && text[idx] !== '/' && text[idx - 2] !== '/') joints.add(idx);
+  }
+  for (const bp of token.breakPoints ?? []) if (bp.free && !bp.cjk && !token.bareBreaks) joints.add(bp.charIndex);
+  if (joints.size > 0 && !hasCJK(text)) {
+    const sorted = [...joints].filter((idx) => idx > 0 && idx < text.length).sort((a, b) => b - a);
+    for (const idx of sorted) {
+      const headWidth = widthBefore(idx);
+      if (headWidth > lineMaxWidth) continue;
+      return {
+        head: { ...flags, ...pieceScriptFields(token, 0, idx), text: text.slice(0, idx), kind: 'text', width: headWidth },
+        tail: { ...restFrom(idx), ...flags, ...pieceScriptFields(token, idx, text.length) },
+      };
+    }
   }
   // No hyphen where the cut falls next to an ideograph, or right after a
   // hyphen of the text.
@@ -1655,7 +1710,9 @@ function tokenizeSpans(
         });
         continue;
       }
-      const { clean, soft } = isSpace ? { clean: part, soft: [] } : syllabify(part, shouldHyphenate && inCompound?.[partAt] !== true);
+      const syllabified = isSpace ? { clean: part, soft: [] } : syllabify(part, shouldHyphenate && inCompound?.[partAt] !== true);
+      // The author's zero-width spaces: breaks, out of the text (#1164).
+      const { clean, soft, zeroWidth } = isSpace || !syllabified.clean.includes(ZERO_WIDTH_SPACE) || hasCJK(syllabified.clean) ? { ...syllabified, zeroWidth: [] } : dropZeroWidthSpaces(syllabified.clean, syllabified.soft);
       // The characters this word touches, for a dash that opens it
       // ("**riddles.**—I", "*\"no\"*—and"): the end of a word run just
       // before, no space in between.
@@ -1677,7 +1734,7 @@ function tokenizeSpans(
       const wordSpacing = isSpace ? letterSpacingPx : untracked ? 0 : wordLetterSpacing(clean, letterSpacingPx);
       const inScript = measured.whole;
       const contextFields = measured.fields;
-      const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, measured.upTo, ownPieces && !cjk);
+      const breakPoints = isSpace ? [] : wordBreakPoints(clean, soft, font, wordSpacing, sc, dashBreaks, touching, cjk, measured.upTo, ownPieces && !cjk, zeroWidth);
       if (breakPoints.length > 0) {
         tokens.push({
           text: clean,

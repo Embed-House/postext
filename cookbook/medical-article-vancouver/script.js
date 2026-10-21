@@ -41,7 +41,8 @@ const citations = {
   style: 'custom', customStyle: vancouver,
   marker: 'superscript', collapseRanges: true, // raised 1 and 6–8, not [1] and [6–8]
   link: true, // each number jumps to its reference, in the PDF and on screen
-  bibliography: { fontSize: em(0.86), lineHeight: pt(10.4), entrySpacing: pt(1.6),
+  // 7.8 pt: the eleven societies of reference 5, ACC/AHA/…/PCNA, fit one line whole
+  bibliography: { fontSize: em(0.84), lineHeight: pt(10.4), entrySpacing: pt(1.6),
     labelWidth: mm(5.5), labelAlign: 'right', // a column for the numbers: 9. and 10. end
     // together, and every entry's text starts at one x, first line and turnovers alike
     doi: 'link' }, // https://doi.org/… printed whole and clickable

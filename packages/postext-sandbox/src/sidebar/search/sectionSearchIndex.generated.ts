@@ -1437,6 +1437,8 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
       'bodyBreakAfterDashesTooltip',
       'bodyBreakAfterHyphens',
       'bodyBreakAfterHyphensTooltip',
+      'bodyBreakAfterSlashes',
+      'bodyBreakAfterSlashesTooltip',
       'bodyColonListRoom',
       'bodyColonListRoomItem',
       'bodyColonListRoomLine',

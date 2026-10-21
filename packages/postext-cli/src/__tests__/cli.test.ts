@@ -417,6 +417,29 @@ describe('postext cli', () => {
     expect(notes.map((n) => n.data)).toEqual([{ path: 'footer.elements[0].content', condition: 'attr', attribute: 'foot' }]);
   }, 60_000);
 
+  // #1163: a composed page whose running foot reads an attribute its fence
+  // leaves unset, while its siblings of the template set it.
+  it('check reports folioMissing with the template and the element', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'ch'));
+    const mm = (value: number) => ({ value, unit: 'mm' });
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({
+      pageTemplates: [{
+        id: 'shell',
+        frames: [{ name: 'texto', flow: true }],
+        footer: { elements: [{ kind: 'text', id: 'foot', content: '{attr.foot}', placement: { anchor: { to: 'page', edge: 'bottom-left' }, offset: { y: mm(-8) } } }] },
+      }],
+    }));
+    const pages = ['foot="A"', 'foot="A"', 'foot="A"', 'foot="A"', 'foot="A"', '', 'foot="A"'].map((a) => `::::page{template="shell"${a ? ` ${a}` : ''}}\n\nWords.\n\n::::`);
+    writeFileSync(join(dir, 'ch', '01.md'), pages.join('\n\n') + '\n');
+    const r = run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir);
+    const rows = (JSON.parse(r.stdout).warnings as { kind: string; severity: string; page?: string; data?: Record<string, unknown> }[]).filter((x) => x.kind === 'folioMissing');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.severity).toBe('warning');
+    expect(rows[0]!.page).toBe('6');
+    expect(rows[0]!.data).toEqual({ template: 'shell', elementId: 'foot', slot: 'footer', folio: false, side: 'verso', drawnOn: 2, siblings: 2 });
+  }, 60_000);
+
   // #858: a frame whose text still does not fit names the steps tried and
   // the proposals, in words and, with their values, in --json.
   it('check prints frameOverflow with its proposals', () => {

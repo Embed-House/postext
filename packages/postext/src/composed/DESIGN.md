@@ -3681,3 +3681,21 @@ drops them, so a cached layout stays valid. Sandbox: `fitMarksFor` takes `mode` 
 { fitMarks }` sets it (`book` forgets the choice). The frame a check just reached is outlined in every
 mode. Only the Sandbox canvas and its side-by-side view draw these marks; the Folio, the HTML viewer,
 the PDF and the EPUB never did.
+
+### 14.6 A page that lost its folio (#1163)
+
+`folioMissing` is a content warning found after the running heads are laid. While `headerFooter.ts` lays
+each composed page it records what the page's slots mean to draw there (`composed/furniture.ts`,
+`expectedFurniture`): the text elements of its `header` and `footer` slot (the template's own, or the
+section's or document's it inherits) and the decoration texts that read `{pageNumber}`, a running name or
+`{attr.x}`, after the parity filter, the page-role filter and the fence's `when` / `unless` (with what hangs
+from an element left out, `fenceDroppedIds`, shared with `drawnOnFence`). `folioMissingWarnings` groups
+the pages by template and side (recto or verso by book page) and, for each element, reports the pages that
+meant to draw it and drew no visible text when at least two pages draw it and more than half of the other
+pages that meant to draw it do. A page switched off on purpose never meant to draw the element, so it is
+neither reported nor counted; neither is a page whose slot lacks the element (`footer: false`, a styled
+opener's running heads). The decoration of a spread is laid on its sheet of two pages, so only its running
+heads are compared. Each warning names the template, the element, its slot, the side, `drawnOn` and
+`siblings`, with the page fence's source range. Pages are compared within one laid document (a chapter);
+a template used across chapters is judged chapter by chapter. Nothing is drawn differently: the VDT is
+unchanged and the record lives beside the document, not in it.

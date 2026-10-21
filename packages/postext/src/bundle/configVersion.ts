@@ -18,7 +18,7 @@ import { codeFenceOpen } from '../parse/codeFence.js';
 import { hasCJK } from '../measure/cjk.js';
 
 /**
- * The configuration rules this engine writes: 18 since #1149 (17 from #1119, 16 from #1056, 15 from #853, 14 from
+ * The configuration rules this engine writes: 19 since #1164 (18 from #1149, 17 from #1119, 16 from #1056, 15 from #853, 14 from
  * postext 1.30, 13 from 1.29, 12 from 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
@@ -211,6 +211,11 @@ import { hasCJK } from '../measure/cjk.js';
  *   ends (`markStyles[].borderRadius` defaults to 0, the print norm),
  *   where up to 1.51 its band's ends were rounded at 0.2 em ({@link
  *   pinLegacyMarkRadius}).
+ * - 19 (#1164): a line of formatted text (captions, cells, notes and
+ *   bibliographies too) may end after a slash between two words
+ *   (`bodyText.breakAfterSlashes`), and a word wider than its line is
+ *   divided after a slash first, where up to 1.51 the rich breaker broke
+ *   after a slash only inside a web address ({@link pinLegacySlashBreaks}).
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -231,10 +236,12 @@ import { hasCJK } from '../measure/cjk.js';
  * older one gets too); one stored under 14 was written by postext 1.30 to
  * 1.33 and gets nothing; one stored under 15 was written by postext 1.34 to
  * 1.47 and gets nothing either; one stored under 16 was written by postext
- * 1.48 to 1.51 and gets the version-17 and version-18 pins (which every
- * older one gets too).
+ * 1.48 to 1.51 and gets the version-17, version-18 and version-19 pins
+ * (which every older one gets too); one stored as 17 was written by a
+ * development build and gets the version-18 and version-19 pins; one stored
+ * as 18 was written by postext 1.52 and gets the version-19 pin.
  */
-export const CONFIG_VERSION = 18;
+export const CONFIG_VERSION = 19;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -351,6 +358,9 @@ export const CONNECTOR_RULES = 16;
 const BOX_PARAGRAPH_STYLE_RULES = 17;
 /** The rules that give a highlight style square ends by default (#1149). */
 const MARK_RADIUS_RULES = 18;
+/** The rules that let formatted text break after a slash between two
+ *  words (#1164). */
+const SLASH_BREAK_RULES = 19;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1678,6 +1688,23 @@ export function pinLegacyMarkRadius<T extends Partial<PostextConfig>>(config: T)
   return { ...config, markStyles: styles.map((st) => (isRecord(st) && st.borderRadius === undefined ? { ...st, borderRadius: { ...LEGACY_MARK_RADIUS } } : st)) };
 }
 
+/**
+ * A configuration written for postext 1.51 or earlier, pinned to the line
+ * breaks its formatted text made at a slash (#1164):
+ * `bodyText.breakAfterSlashes: false`, where the rich breaker ended a line
+ * after a slash only inside a web address and divided a word wider than
+ * its line at a syllable or between two letters. Every such configuration
+ * gets it: a slash between two words may stand in a caption, a table cell
+ * or a bibliography as well as in the chapters, and only the chapters are
+ * read here. A configuration that names the setting already is returned as
+ * it is (the same object).
+ */
+export function pinLegacySlashBreaks<T extends Partial<PostextConfig>>(config: T): T {
+  const bodyText: BodyTextConfig = isRecord(config.bodyText) ? config.bodyText : {};
+  if (bodyText.breakAfterSlashes !== undefined) return config;
+  return { ...config, bodyText: { ...bodyText, breakAfterSlashes: false } };
+}
+
 /** A highlight mark typed in the text. */
 const MARK_RE = /:mark\[/;
 
@@ -1838,7 +1865,8 @@ export interface MigrateConfigOptions {
  * pinLegacyBoxParagraphStyles}, when it declares a paragraph style; one
  * older than 18 has the rounded ends of its highlight bands pinned by
  * {@link pinLegacyMarkRadius}, unless neither `options.content` nor the
- * configuration shows a `:mark[…]`.
+ * configuration shows a `:mark[…]`; one older than 19 has its breaks at a
+ * slash pinned by {@link pinLegacySlashBreaks}.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1894,6 +1922,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
   // keys only, nothing to pin.
   if (rules < MARK_RADIUS_RULES && mayHaveMarks(content, out)) out = pinLegacyMarkRadius(out);
+  if (rules < SLASH_BREAK_RULES) out = pinLegacySlashBreaks(out);
   return out;
 }
 
@@ -1934,8 +1963,9 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * shaped in on the `bodyText` in force, and the box of a task item on the
  * `unorderedLists` in force, the type of paragraph styles inside a box
  * on the `bodyText` in force (when the merged configuration declares a
- * paragraph style), and the ends of the highlight bands on the
- * `markStyles` in force.
+ * paragraph style), the ends of the highlight bands on the
+ * `markStyles` in force, and the breaks at a slash on the `bodyText` in
+ * force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1992,5 +2022,6 @@ export function migrateBundleConfig(
   // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
   // keys only, nothing to pin.
   if (rules < MARK_RADIUS_RULES && mayHaveMarks(content, merged)) merged = pinLegacyMarkRadius(merged);
+  if (rules < SLASH_BREAK_RULES) merged = pinLegacySlashBreaks(merged);
   return merged;
 }

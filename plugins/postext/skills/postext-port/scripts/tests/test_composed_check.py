@@ -284,6 +284,12 @@ class Judge(unittest.TestCase):
         self.assertEqual([w["kind"] for w in v["fail"]], ["wordDividedByCharacter"])
         self.assertEqual([w["kind"] for w in v["notes"]], ["wordDividedBySyllable"])
 
+    def test_lost_folio_fails(self):
+        v = cc.judge({"warnings": [{"kind": "folioMissing", "severity": "warning", "message": "no folio", "page": "6",
+                                    "data": {"template": "shell", "elementId": "folio", "slot": "footer"}}]})
+        self.assertEqual([w["kind"] for w in v["fail"]], ["folioMissing"])
+        self.assertEqual(v["overlaps"], 0)
+
     def test_label_checks_and_style_extends(self):
         v = cc.judge({"warnings": [
             {"kind": "labelOverflow", "severity": "warning", "message": "too wide", "page": "3"},

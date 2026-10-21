@@ -19,6 +19,7 @@ import { hasCJK } from '../measure/cjk.js';
 import { markCuts } from '../measure/markCuts.js';
 import { restoreContext, saveContext, setLetterSpacing } from './contextState.js';
 import { fillCellRuns } from './cellText.js';
+import { paintChip } from './chip.js';
 
 /** Adds a rounded rectangle to the current path, as a closed subpath. */
 function traceRoundedRect(
@@ -176,6 +177,15 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
     let x = originX + line.xOffset;
     for (const i of runPaintOrder(line.order, line.runs.length)) {
       const run = line.runs[i]!;
+      if (run.chip) {
+        // A heading title's chip (#1162): its box and its own runs, in
+        // the block's colour where the chip style sets none.
+        paintChip(ctx, run.chip, x + (run.inkOffset ?? 0), line.baselineY, () => block.color);
+        ctx.font = block.fontString;
+        ctx.fillStyle = block.color;
+        x += run.width;
+        continue;
+      }
       ctx.font = run.fontString;
       // A run in a colour of its own (a part row's leader, #1121).
       if (run.color) ctx.fillStyle = run.color;

@@ -180,6 +180,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Le bloc est peint là où il se trouve ; ce qui dépasse le bord de coupe est coupé.</td>
     </tr>
     <tr>
+      <td><code>folioMissing</code></td>
+      <td>Une page composée ne dessine rien d’un folio ou d’un titre courant (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>) que dessinent <code>drawnOn</code> des <code>siblings</code> autres pages de son gabarit et de son côté : un texte de <code>header</code> ou de <code>footer</code>, ou un texte du décor qui lit <code>&#123;pageNumber&#125;</code>, un nom courant ou <code>&#123;attr.x&#125;</code>. Une page dont le délimiteur coupe l’élément (<code>when</code> / <code>unless</code>), ou dont l’emplacement n’a pas cet élément, n’entre pas dans le compte ; il faut deux pages qui le dessinent. Émis par la mise en page, avec le <code>pageIndex</code>, et pointé sur le délimiteur de la page. Depuis postext 1.53.</td>
+      <td>La page est imprimée sans lui. Posez sur ce délimiteur l’attribut que lit l’élément, ou coupez-le là exprès avec <code>when</code> ou <code>unless</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Une grille répétée d’une page composée contient <code>max</code> éléments et la page lui en donne davantage (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Un avertissement par élément en trop. Depuis postext 1.48.</td>
       <td>L’élément va dans le bloc de flux, ou après la page.</td>

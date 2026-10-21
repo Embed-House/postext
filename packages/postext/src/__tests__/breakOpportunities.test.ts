@@ -71,9 +71,11 @@ describe('the joint after a slash', () => {
     }
   });
 
-  it('a zero-width space typed in the text stays', () => {
-    const lines = measureRichBlock([run('a', true), run(`b long${ZWSP}word`)], FONT, FONT, FONT, FONT, 140, 20, { textAlign: 'left', hyphenate: true }).lines;
-    expect(lines.map((l) => l.text).join('')).toContain(ZWSP);
+  it('a zero-width space typed in the text is a break, and leaves the line text (#1164)', () => {
+    // 10 characters per line: "ab longword" does not fit, "ab long" does.
+    const lines = measureRichBlock([run('a', true), run(`b long${ZWSP}word`)], FONT, FONT, FONT, FONT, 70, 20, { textAlign: 'left', hyphenate: true }).lines;
+    expect(texts(lines)).toEqual(['ab long', 'word']);
+    for (const line of lines) for (const seg of line.segments!) expect(seg.text).not.toContain(ZWSP);
   });
 
   it('never reaches design text either', () => {
@@ -100,12 +102,13 @@ describe('the joint after a slash', () => {
 
 describe('an overlong word divided at its syllables', () => {
   it('finds the syllables after a slash where the dictionary puts them', () => {
-    // 8 characters per line. Spanish "ex-tra-or-di-na-ria-men-te": the first
-    // line ends "x:y/ex-". The U+200B the dictionary put after the slash used
-    // to shift every syllable after it by one character ("x:y/ext-").
+    // 8 characters per line. Spanish "ex-tra-or-di-na-ria-men-te": the word
+    // is divided after the slash first (#1164), then "extraor-". The U+200B
+    // the dictionary put after the slash used to shift every syllable after
+    // it by one character ("x:y/ext-").
     setHyphenationLocale('es');
     const lines = texts(measureRichBlock(span('x:y/extraordinariamente'), FONT, FONT, FONT, FONT, 56, 20, { textAlign: 'left' }).lines);
-    expect(lines[0]).toBe('x:y/ex-');
+    expect(lines.slice(0, 2)).toEqual(['x:y/', 'extraor-']);
     expect(lines.join('').replace(/-/g, '')).toBe('x:y/extraordinariamente');
   });
 });

@@ -90,6 +90,8 @@ interface Run {
   stacked?: boolean;
   tcy?: true;
   orientation?: 'upright' | 'sideways';
+  /** An inline chip of a design text (#1162): one box, never cut. */
+  chip?: unknown;
 }
 
 /** The direction of the first strong letter of `text` (UAX #9 P2, isolates
@@ -175,7 +177,7 @@ export function directRuns<R extends Run>(
     const end = at + run.text.length;
     at = end;
     if (run.text.length === 0) continue;
-    const whole = run.stacked || run.tcy || run.orientation;
+    const whole = run.stacked || run.tcy || run.orientation || run.chip !== undefined;
     // The cut points: every change of level inside the run.
     const cuts: number[] = [start];
     if (!whole) for (let i = start + 1; i < end; i++) if (levels[i] !== levels[i - 1]) cuts.push(i);

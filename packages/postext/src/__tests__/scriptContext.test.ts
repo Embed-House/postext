@@ -13,6 +13,7 @@ import { spanIsolates } from '../bidi.js';
 import { parseInlineFormatting } from '../parse/inlineFormatting.js';
 import type { PostextConfig } from '../types.js';
 import type { VDTBlock, VDTDocument, VDTLineSegment } from '../vdt.js';
+import { setSlashBreaks } from '../measure/breakRules.js';
 
 // #725: a word with no letter (`46.`, `1367)`) has no script of its own. A
 // face may draw its punctuation by script (Amiri: a Latin full stop and
@@ -865,7 +866,14 @@ describe('the pieces of a word that has a letter (#725)', () => {
       expect(lines('see COVID-19 there', 50).map((l) => l.text.trim())).toEqual(['see', 'COVID-19', 'there']);
       // A word wider than its line is cut where the line ends: what is
       // left of it, seven digits and a stop, in the word's Latin forms.
-      expect(marked('DOI:10.1006/ijhc.2001.0458 end', 90)).toEqual([['001.0458', 'Latn', 41.5]]);
+      // Divided as up to 1.51, between two characters: the slash is no
+      // break here (#1164 would part the word after it).
+      setSlashBreaks(false);
+      try {
+        expect(marked('DOI:10.1006/ijhc.2001.0458 end', 90)).toEqual([['001.0458', 'Latn', 41.5]]);
+      } finally {
+        setSlashBreaks(true);
+      }
     }
     // With the rule off the paragraph stays with pretext, as in postext
     // 1.27: the number alone on the next line, 9.4 px wide on Chrome 131

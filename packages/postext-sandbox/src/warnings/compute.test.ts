@@ -647,6 +647,28 @@ describe('engine content warnings', () => {
     expect(warningCategory('resourceMoved')).toBe('figures');
   });
 
+  it('lists a composed page that draws no running foot its siblings draw (#1163)', () => {
+    const g = globalThis as unknown as { OffscreenCanvas?: unknown };
+    g.OffscreenCanvas ??= class { getContext() { return { font: '', measureText: (t: string) => ({ width: t.length * 7 }) }; } };
+    const mm = (value: number) => ({ value, unit: 'mm' as const });
+    const config = {
+      pageTemplates: [{
+        id: 'shell',
+        frames: [{ name: 'texto', flow: true }],
+        footer: { elements: [{ kind: 'text', id: 'foot', content: '{attr.foot}', placement: { anchor: { to: 'page', edge: 'bottom-left' }, offset: { y: mm(-8) } } }] },
+      }],
+    } as unknown as PostextConfig;
+    const md = ['foot="A"', 'foot="A"', 'foot="A"', 'foot="A"', 'foot="A"', '', 'foot="A"']
+      .map((a) => `::::page{template="shell"${a ? ` ${a}` : ''}}\n\nWords.\n\n::::`).join('\n\n');
+    const doc = buildDocument({ markdown: md }, config);
+    const all = computeWarnings({ markdown: md, config, doc });
+    const lost = all.filter((w): w is typeof w & { payload: Extract<WarningPayload, { kind: 'folioMissing' }> } => w.payload.kind === 'folioMissing');
+    expect(lost.map((w) => [w.payload.template, w.payload.elementId, w.payload.slot, w.payload.page])).toEqual([['shell', 'foot', 'footer', 6]]);
+    // Pointed at the sixth page fence.
+    expect(lost[0]!.line).toBe(31);
+    expect(warningCategory('folioMissing')).toBe('typesetting');
+  });
+
   it('lists a code listing wider than its box, and a code fence left open (#624)', () => {
     const g = globalThis as unknown as { OffscreenCanvas?: unknown };
     g.OffscreenCanvas ??= class { getContext() { return { font: '', measureText: (t: string) => ({ width: t.length * 7 }) }; } };

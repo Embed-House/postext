@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { unzipSync } from 'fflate';
-import { createBundle, openBundle } from '../../bundle/index.js';
+import { createBundle, openBundle, pinLegacySlashBreaks } from '../../bundle/index.js';
 import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyGridBreakRules } from '../../bundle/configVersion.js';
 import { stripConfigDefaults } from '../../defaults/index.js';
 import { resolveAllConfig } from '../../pipeline/config.js';
@@ -25,17 +25,17 @@ describe('pinLegacyGridBreakRules (#717)', () => {
     for (const [locale, written] of Object.entries(pinned)) {
       const config = grid(locale, { bodyText: { fontFamily: 'Noto Serif JP' } });
       const out = migrateConfig(config, 11);
-      expect(out.bodyText, locale).toEqual({ fontFamily: 'Noto Serif JP', ...written, scriptContext: false, shapingLanguage: 'host' });
+      expect(out.bodyText, locale).toEqual({ fontFamily: 'Noto Serif JP', ...written, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
       expect(rules(out), locale).toEqual(ON);
       // No body text section at all.
-      expect(migrateConfig(grid(locale), 11).bodyText, locale).toEqual({ ...written, scriptContext: false, shapingLanguage: 'host' });
+      expect(migrateConfig(grid(locale), 11).bodyText, locale).toEqual({ ...written, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
       expect(migrateConfig(grid(locale), 8).bodyText, locale).toMatchObject(written);
       // The stored configuration is not touched.
       expect(config.bodyText).toEqual({ fontFamily: 'Noto Serif JP' });
     }
     // The region the configuration names decides, as it does the default.
-    expect(migrateConfig<PostextConfig>({ cjk: { region: 'japan', grid: GRID } }, 11).bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
-    expect(migrateConfig(grid('ja', { cjk: { region: 'mainland', grid: GRID } }), 11).bodyText).toEqual({ avoidWidows: true, scriptContext: false, shapingLanguage: 'host' });
+    expect(migrateConfig<PostextConfig>({ cjk: { region: 'japan', grid: GRID } }, 11).bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
+    expect(migrateConfig(grid('ja', { cjk: { region: 'mainland', grid: GRID } }), 11).bodyText).toEqual({ avoidWidows: true, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     // Under today's rules the same configuration lays out with them off.
     expect(rules(grid('ja'))).toEqual({ avoidWidows: false, avoidOrphans: false });
     expect(rules(grid('zh-Hans'))).toEqual({ avoidWidows: false, avoidOrphans: true });
@@ -62,27 +62,29 @@ describe('pinLegacyGridBreakRules (#717)', () => {
   });
 
   it('pins every version before 12, none from 12', () => {
-    expect(CONFIG_VERSION).toBe(18);
+    expect(CONFIG_VERSION).toBe(19);
     for (const v of [undefined, 1, 5, 8, 10, 11]) {
       expect(rules(migrateConfig(grid('ja'), v)), String(v)).toEqual(ON);
     }
     const current = grid('ja');
-    // One stamped 12 takes the pins of rules 13, 14 and 18 alone: the
+    // One stamped 12 takes the pins of rules 13, 14, 18 and 19 alone: the
     // language (#764, #770) and, its text not being known, the task box
-    // (#765) and the rounded mark ends (#1149). One stamped 13 takes the
-    // language and the mark ends; one stamped 14 the mark ends alone; one
-    // stamped 18 is read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 14)).toEqual({ ...current, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 18)).toBe(current);
+    // (#765) and the rounded mark ends (#1149), and the breaks at a slash
+    // (#1164). One stamped 13 takes the language, the mark ends and the
+    // slash breaks; one stamped 14 the mark ends and the slash breaks; one
+    // stamped 18 the slash breaks alone; one stamped 19 is read as it is.
+    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 14)).toEqual({ ...pinLegacySlashBreaks(current), markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 18)).toEqual(pinLegacySlashBreaks(current));
+    expect(migrateConfig(current, 19)).toBe(current);
   });
 
   it('survives a save: the stripped configuration keeps the rules it was pinned to', () => {
     // Japan: both are no default on the grid, so both stay written.
     const ja = stripConfigDefaults(migrateConfig(grid('ja'), 11));
     // With the pins every configuration before 12 takes (#725, #764).
-    expect(ja.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
+    expect(ja.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     expect(migrateConfig(ja, 12)).toBe(ja);
     expect(rules(ja)).toEqual(ON);
     // China: the head rule is the default there, so only the foot rule
@@ -90,26 +92,26 @@ describe('pinLegacyGridBreakRules (#717)', () => {
     const pinned = migrateConfig(grid('zh-Hans'), 11);
     const zh = stripConfigDefaults(pinned);
     expect(zh).toEqual(pinned);
-    expect(zh.bodyText).toEqual({ avoidWidows: true, scriptContext: false, shapingLanguage: 'host' });
+    expect(zh.bodyText).toEqual({ avoidWidows: true, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     expect(rules(zh)).toEqual(ON);
     // Saved again and again, they stay.
-    expect(stripConfigDefaults(stripConfigDefaults(ja)).bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
+    expect(stripConfigDefaults(stripConfigDefaults(ja)).bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
   });
 
   it('pins a bundle on its merged layers', () => {
     const base: PostextConfig = { bodyText: { fontFamily: 'Noto Serif SC' } };
     const merged = migrateBundleConfig(base, [grid('zh-Hans'), { layout: { layoutType: 'double' } }], 11);
-    expect(merged.bodyText).toEqual({ fontFamily: 'Noto Serif SC', avoidWidows: true, scriptContext: false, shapingLanguage: 'host' });
-    expect(migrateBundleConfig(base, [grid('zh-Hans'), { locale: 'ja' }], 11).bodyText).toEqual({ fontFamily: 'Noto Serif SC', ...ON, scriptContext: false, shapingLanguage: 'host' });
+    expect(merged.bodyText).toEqual({ fontFamily: 'Noto Serif SC', avoidWidows: true, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
+    expect(migrateBundleConfig(base, [grid('zh-Hans'), { locale: 'ja' }], 11).bodyText).toEqual({ fontFamily: 'Noto Serif SC', ...ON, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     // A layer that takes the grid away leaves nothing to pin.
     const plain = migrateBundleConfig(base, [grid('zh-Hans'), { cjk: { grid: { enabled: false } } }], 11);
-    expect(plain.bodyText).toEqual({ ...base.bodyText, scriptContext: false, shapingLanguage: 'host' });
+    expect(plain.bodyText).toEqual({ ...base.bodyText, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     // One stored under 12 or 13 takes the pin of the language alone (#764,
     // #770); one stored under 14 is read as written.
     for (const v of [12, 13]) {
-      expect(migrateBundleConfig(base, [grid('zh-Hans')], v).bodyText, String(v)).toEqual({ fontFamily: 'Noto Serif SC', shapingLanguage: 'host' });
+      expect(migrateBundleConfig(base, [grid('zh-Hans')], v).bodyText, String(v)).toEqual({ fontFamily: 'Noto Serif SC', shapingLanguage: 'host', breakAfterSlashes: false });
     }
-    expect(migrateBundleConfig(base, [grid('zh-Hans')], 14).bodyText).toBe(base.bodyText);
+    expect(migrateBundleConfig(base, [grid('zh-Hans')], 14).bodyText).toEqual({ ...base.bodyText, breakAfterSlashes: false });
   });
 });
 
@@ -130,8 +132,8 @@ describe('a bundle keeps the break rules of its grid (#717)', () => {
     expect(rules(opened.config)).toEqual(ON);
     // Written again from what was read: stamped 14, the rules spelled out.
     const again = await createBundle({ name: 'Old', locale: 'ja', markdown: MD, config: opened.config });
-    expect(again.manifest.configVersion).toBe(18);
-    expect(again.manifest.config!.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
+    expect(again.manifest.configVersion).toBe(19);
+    expect(again.manifest.config!.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     expect(rules((await openBundle(again.bytes)).config)).toEqual(ON);
   });
 

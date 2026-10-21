@@ -87,7 +87,7 @@ describe('paragraph styles inside a box (#1119)', () => {
 
 describe('rules 17: pinLegacyBoxParagraphStyles (#1119)', () => {
   it('comes before the current rule set', () => {
-    expect(CONFIG_VERSION).toBe(18);
+    expect(CONFIG_VERSION).toBe(19);
   });
 
   it('pins a configuration stored under 16 that declares paragraph styles', () => {
@@ -97,7 +97,7 @@ describe('rules 17: pinLegacyBoxParagraphStyles (#1119)', () => {
     // A current one, one without styles, and one that names the setting
     // are left as they are.
     expect(migrateConfig(CONFIG, 17).bodyText?.paragraphStylesInBoxes).toBeUndefined();
-    expect(migrateConfig(CONFIG, 18)).toBe(CONFIG);
+    expect(migrateConfig(CONFIG, 19)).toBe(CONFIG);
     const plain: PostextConfig = { bodyText: { fontSize: pt(10) } };
     expect(pinLegacyBoxParagraphStyles(plain)).toBe(plain);
     const named: PostextConfig = { ...CONFIG, bodyText: { paragraphStylesInBoxes: 'box' } };

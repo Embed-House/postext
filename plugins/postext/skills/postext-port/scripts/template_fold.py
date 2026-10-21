@@ -362,14 +362,19 @@ def _look(f: dict, kind: str, classes: dict[str, str] | None = None) -> tuple:
 
 
 def find_lattices(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: float = 1.0,
-                  reach: float = 8.0, min_cells: int = 3, classes: dict[str, str] | None = None) -> list[dict]:
+                  reach: float = 8.0, min_cells: int = 3, classes: dict[str, str] | None = None,
+                  partial: list[dict] | None = None) -> list[dict]:
     """The lattices of template `t`: [{cells: [(main, {member kind: name})],
     columns, rows, colGap, rowGap, memberRule: {kind: rule}}], largest
     first, no frame in two. `min_cells` is the least number of cards
     without members (cards with members: 2). `reach` is how far (mm) a
     member may stand off its card. With `classes` (style id -> class),
     frames whose styles differ only in colours are of one look; the grid
-    then gives each card that differs a named look (#1089)."""
+    then gives each card that differs a named look (#1089). A lattice with
+    a frame of its cards' kind left out on one of its rows or columns, within
+    a pitch of its edge (`stray_cards`), is part of a larger set the fold
+    could not read whole: it stays unfolded and, with `partial`, is listed
+    there (#1133)."""
     frames = [f for f in t.get("frames", []) if f["name"] in rects and not f.get("flow") and not f.get("takes")
               and not f.get("grid") and not f.get("remove")]
     in_grid = {n for g in t.get("groups", []) if g.get("kind") == "grid" for n in _group_members(g)}
@@ -396,6 +401,15 @@ def find_lattices(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: fl
             got = _lattice(mains, by, rects, kinds, tol, reach, classes)
             if got and (len(got["cells"]) >= min_cells or (got["memberRule"] and len(got["cells"]) >= 2)):
                 found.append(got)
+    kept = []
+    for g in found:
+        strays = stray_cards(g, frames, rects, kinds, tol)
+        if not strays:
+            kept.append(g)
+        elif partial is not None:
+            partial.append({"frames": [c[0] for c in g["cells"]], "columns": g["columns"], "rows": g["rows"],
+                            "strays": strays})
+    found = kept
     found.sort(key=lambda g: -len(g["cells"]) * (1 + len(g["memberRule"])))
     used: set[str] = set()
     out = []
@@ -406,6 +420,43 @@ def find_lattices(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: fl
         used |= names
         out.append(g)
     return out
+
+
+def stray_cards(g: dict, frames: list[dict], rects: dict[str, Box], kinds: dict[str, str],
+                tol: float) -> list[str]:
+    """The frames of lattice `g`'s card kind and layer it did not take that
+    stand on one of its rows (top on a row's top) or columns (start on a
+    column's start) no further than one pitch (card plus gap) off its edge:
+    the rest of a larger set, a 3 x 3 wall whose first column alone was
+    read as a lattice (#1133)."""
+    cells = [c[0] for c in g["cells"]]
+    taken = set(cells) | {m for c in g["cells"] for m in c[1].values()}
+    kind = kinds.get(cells[0], "box")
+    by = {f["name"]: f for f in frames}
+    layer = by[cells[0]].get("layer", 1) if cells[0] in by else 1
+    cols = g["columns"]
+    xs = [rects[c][0] for c in cells[:cols]]
+    tops = [rects[cells[r * cols]][1] for r in range(g["rows"])]
+    x0 = min(rects[c][0] for c in cells)
+    x1 = max(rects[c][2] for c in cells)
+    y0 = min(rects[c][1] for c in cells)
+    y1 = max(rects[c][3] for c in cells)
+    height = sum(rects[c][3] - rects[c][1] for c in cells) / len(cells)
+    pitch_x = g["width"] + g["colGap"]
+    pitch_y = tops[1] - tops[0] if len(tops) > 1 else height + g["rowGap"]
+    out = []
+    for f in frames:
+        n = f["name"]
+        if n in taken or kinds.get(n, "box") != kind or f.get("layer", 1) != layer:
+            continue
+        b = rects[n]
+        on_row = any(abs(b[1] - top) <= tol for top in tops) and (
+            -tol <= b[0] - x1 <= pitch_x or -tol <= x0 - b[2] <= pitch_x)
+        on_col = any(abs(b[0] - x) <= tol for x in xs) and (
+            -tol <= b[1] - y1 <= pitch_y or -tol <= y0 - b[3] <= pitch_y)
+        if on_row or on_col:
+            out.append(n)
+    return sorted(out)
 
 
 def _lattice(mains: list[str], by: dict[str, dict], rects: dict[str, Box], kinds: dict[str, str],
@@ -767,11 +818,11 @@ class LookBook:
 
 
 def fold_grids(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: float, min_cells: int = 3,
-               looks: LookBook | None = None, reach: float = 8.0) -> list[dict]:
+               looks: LookBook | None = None, reach: float = 8.0, partial: list[dict] | None = None) -> list[dict]:
     taken = {f["name"] for f in t.get("frames", [])} | {g["name"] for g in t.get("groups", [])}
     plans = []
     for lat in find_lattices(t, rects, kinds, tol, reach=reach, min_cells=min_cells,
-                             classes=looks.classes if looks else None):
+                             classes=looks.classes if looks else None, partial=partial):
         plan = apply_grid(t, lat, rects, kinds, taken, looks)
         # the set's boxes, by instance, for the module pass after this
         for old, inst in plan["instances"].items():
@@ -1589,8 +1640,10 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
     the measured ones: the folded page then lays as the draft did. `rows`
     lays the clusters of a band that stand side by side as a row (or grid)
     of modules (#1088); `looks` lets the cards of a grid differ in colours,
-    each card that differs naming a look (#1089, `looks.entries`)."""
-    report: dict[str, Any] = {"grids": [], "modules": [], "names": {}}
+    each card that differs naming a look (#1089, `looks.entries`).
+    `gridsLeft` lists the lattices left unfolded because cards of their set
+    stood outside them (#1133)."""
+    report: dict[str, Any] = {"grids": [], "gridsLeft": [], "modules": [], "names": {}}
     if len(templates) != len(regions) or any(t.get("extends") or t.get("role") == "module" for t in templates):
         report["skipped"] = "the templates are not one per measured page (run the fold on the output of extract)"
         return report
@@ -1610,8 +1663,14 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
         parents = {f["name"]: f.get("parent") for f in reg.get("frames", [])}
         names = {f["name"]: f["name"] for f in t.get("frames", [])}
         if grids:
-            for plan in fold_grids(t, rects, kinds, lt, int(tol.get("grid_min", 3)), looks,
-                                   float(tol.get("reach", 8.0))):
+            left: list[dict] = []
+            plans = fold_grids(t, rects, kinds, lt, int(tol.get("grid_min", 3)), looks,
+                               float(tol.get("reach", 8.0)), partial=left)
+            for p in left:
+                report["gridsLeft"].append({"template": t["id"], **p,
+                                            "note": "frames of the cards' kind on its rows or columns were left out: "
+                                                    "part of a larger set, left unfolded"})
+            for plan in plans:
                 for o, cur in names.items():
                     if cur in plan["instances"]:
                         names[o] = plan["instances"][cur]

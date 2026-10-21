@@ -1230,6 +1230,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'emptyCaption':
       text = `The resource "${w.resourceId}" has no caption, so its caption line prints "${w.label}" alone — write its caption, or leave it as a numbered label if that is meant`;
       break;
+    case 'folioMissing':
+      text = `This page of the template "${w.template}" draws no ${w.folio ? 'folio' : w.slot === 'header' ? 'running head' : w.slot === 'footer' ? 'running foot' : 'running text'} "${w.elementId}" (${w.slot}), which ${w.drawnOn} of the other ${w.siblings} ${w.side} pages of the template draw — check what the element reads on this page (an {attr.x} the page fence leaves unset, a name empty here), or switch it off on purpose with when / unless on the element and an attribute on the page fence`;
+      break;
     case 'resourceMoved':
       text = `The resource "${w.resourceId}" set in the text is too tall for the room left in its column and moved on to the next, leaving ${w.emptyMm} mm of the column empty — make it smaller, move its ::resource line, or float it (placement.position: 'auto')`;
       break;
