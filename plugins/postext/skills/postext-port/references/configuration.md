@@ -121,7 +121,7 @@ Conversion at `page.dpi` (default 300):
 | `canvasViewer` | `{ pageGap?, rowGap? }` | `24` / `24` | §21 Sandbox Canvas page spacing (≥ 1.43); `pageGap: 0` for art across the spine |
 | `pdfGeneration` | PdfGenerationConfig | §21 | outlines, tagging, colour space |
 | `print` | PrintConfig | §21 | PDF/X standard, ICC output profile, black (K-only, overprint, rich black), preflight (≥ 1.22) |
-| `contrast` | ContrastConfig | §21 | contrast check of text on its ground (≥ 1.28): `level` AA/AAA, `mode` auto/screen/print/both, `reversedText` sizes; layout ignores it |
+| `contrast` | ContrastConfig | §21 | contrast check of text on its ground (≥ 1.28): `level` AA/AAA, `mode` auto/screen/print/both, `reversedText` sizes, `allow` accepted pairs (>= 1.52); layout ignores it |
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
@@ -284,7 +284,7 @@ bodyText
 ├─ emphasis          'auto'|'italic'|'bold'|'color'|'overline'   'auto'   how *…* is set; auto = bold for Arabic-script locales, else italic; Arabic letters are never slanted
 ├─ tashkil           'keep'|'strip'|'strip-vowels'   'keep'      Arabic vowel marks out of the set text (strip-vowels keeps shadda)
 ├─ textAlign         'left'|'justify'|'center'|'right'|'start'|'end'   'justify'   left = the side a line STARTS on (the right of an Arabic paragraph); start/end are synonyms
-├─ paragraphSpacing  boolean         false           true = one full grid line between paragraphs (no fractional option)
+├─ paragraphSpacing  boolean|Dimension  false        true = one full grid line between paragraphs; a length (≥ 1.52, #1115: {2,'mm'}, {0.33,'em'}) = exactly that, in the flow, boxes and frames; off-grid until the next heading/list tail snaps back. Same slot as paragraphStyles[].spaceBetween (which wins inside :::paragraphs); boxes: calloutStyles[].body.paragraphSpacing
 ├─ firstLineIndent   Dimension       1.5 em          set {0,'mm'} for block paragraphs
 ├─ hangingIndent     boolean         false           indent all lines but the first
 ├─ indentAfterHeading boolean        true            false = first paragraph after a heading unindented (classic book style)
@@ -1015,8 +1015,10 @@ toc
 ├─ unnumbered   TocEntryStyleConfig partial — for headings of a style with numbered:false
 ├─ pageNumber   { fontFamily, fontSize (= level-1), fontWeight (= body weight), italic=false, color, width=2em }
 ├─ leader       { enabled=true, char='.', gap=0.5em }      ('. ' spaces the dots; the leader code body tab stops use, §4a; an artifact in tagged PDF ≥ 1.23)
+│                 + face ≥ 1.52 (#1121): color, fontFamily, fontSize (em of the page number's), fontWeight; unset = the page number's
 ├─ subtitle     { enabled=false, attr='author', fontFamily, fontSize, fontWeight, italic=true, color, indent=0 }
 ├─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}, {leader} ≥ 1.34.1),
+│                 leader ≥ 1.52: { color, fontFamily, fontSize (em of the element's), fontWeight } over toc.leader's face; unset = the element's own,
 │                 height = 2em (twice the body size, not two body lines), marginTop=0, marginBottom=0 }
 └─ groups       ≥ 1.34 blocks of the contents kept on one column/page
    ├─ keepTogether   false     a head row + every entry under it moves whole when it does not fit
@@ -1031,6 +1033,18 @@ A part row that needs dots up to its page number is ONE text element: `content: 
 `toc.leader` (char, gap, enabled), the same as the entry rows, so the dots line up with them; a title too long is
 cut, never the number. Never a literal run of dots in `content` (clipped, `designTextTruncated`). `{leader}` prints
 nothing outside a part row and on a vertical page (postext ≥ 1.34.1).
+Dots in their own colour, face or size (small coloured dots, a page number in bold): `toc.leader.color` / `fontFamily` /
+`fontSize` / `fontWeight` (entry rows, and part rows unless `toc.parts.leader` sets its own), ≥ 1.52.
+A page number in an element of its own (another face, a box around it) makes the part row THREE elements (≥ 1.52):
+```jsonc
+"elements": [
+  { "kind": "text", "id": "title", "content": "{number} {titleText}", "placement": { "anchor": { "to": "container", "edge": "left" } } },
+  { "kind": "text", "id": "page", "content": "{pageNumber}", "fontWeight": 700, "placement": { "anchor": { "to": "container", "edge": "right" } } },
+  { "kind": "text", "id": "dots", "content": "{leader}",
+    "placement": { "anchor": { "to": "#title", "edge": "right-of" }, "size": { "width": { "to": "#page", "edge": "left" } } } }
+]
+```
+The leader element holds `{leader}` alone; its dots end `toc.leader.gap` before the page number element.
 `:::toc{keep="part"}` / `keep="1"`…`"6"` / `keep="none"` and `:::toc{levels="1-2"}` override `groups` and
 `levels` for one contents (≥ 1.34, document-format.md). A block that still runs over columns raises
 `tocGroupSplit`.
@@ -1318,7 +1332,7 @@ style declares (`unknownMarkStyle`), takes the first style; declaring `markStyle
 ```
 { id (REQUIRED), name?,
   background: ColorValue = #fff0a0 (palette-linkable), color?: ColorValue (the text's; reaches the whole word that
-  holds glued punctuation), borderRadius = 0.2em (the phrase's two ends, clamped), paddingX = 0.15em (past the
+  holds glued punctuation), borderRadius = 0 (square ends, the print norm; 0.2em up to postext 1.51, which a config stored then keeps through the configVersion 18 pin when its text has a mark; write it to round a band's ends), paddingX = 0.15em (past the
   first and last letter, into the word spaces), paddingY = 0.05em, paddingTop?, paddingBottom? (each in place
   of paddingY), decorationBreak = 'slice' | 'clone' (postext ≥ 1.52.0; 'clone' gives every line piece of a wrapped
   phrase a whole band, paddingX and corners on both ends: a heading on a colour band cut per line) }
@@ -2379,7 +2393,11 @@ as a change. Left out, the file is stamped with the time of the call.
     "minSize": { "value": 8, "unit": "pt" },       // reversed text under this is reported
     "minFineSize": { "value": 12, "unit": "pt" },  // the same for italics and light weights
     "lightWeight": 300                             // a weight at or under this counts as light
-  }
+  },
+  "allow": [                     // (>= 1.52, #1124) the source's own pairs, accepted with a reason
+    { "fg": "#b7820f", "bg": "#ffffff", "reason": "publisher's ochre" },   // by colours (as written or painted)
+    { "style": "margin-note", "reason": "source sets margin notes in light grey" }  // by style id: box (or frame
+  ]                              // style), paragraph, heading, chip or label style; fg/bg narrow a style entry
 }
 ```
 - Screen = WCAG 2 ratio of the sRGB colours. Print = the same formula over the colours as separated through
@@ -2395,6 +2413,9 @@ as a change. Left out, the file is stamped with the time of the call.
   warning (exit 3 only with `--strict`). With `--preflight` a `mode: 'auto'` book is checked for print too.
   The Sandbox lists them in Checks.
 - A port keeps the source's colours. Report a low ratio the source has as a finding; do not recolour.
+  When the source sets the pair on purpose (its palette), add a `contrast.allow` entry with the reason
+  instead of turning the check off: the pair stays listed as accepted (`accepted` on the finding, a note
+  in `postext check`, its own group in the Sandbox Checks) and no longer counts as a warning.
   Turn the check off (`enabled: false`) only when the user asks.
 
 `htmlViewer`: `{ maxCharsPerLine = 70, columnGap = 50 (CSS px number), optimalLineBreaking = false, overrides?: Omit<PostextConfig,'htmlViewer'> }`.

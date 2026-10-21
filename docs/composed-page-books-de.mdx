@@ -164,6 +164,8 @@ Eine Schaltfläche, die die Vorlage ändert (und damit jede Seite, die nach ihr 
 
 <Screenshot src="/docs-shots/de/checks.webp" alt="Das Bedienfeld Prüfungen mit dem Eintrag Text passt nicht in seinen Rahmen und drei Schaltflächen mit Lösungen; daneben die Seite, deren erster Kasten rot umrandet ist, mit einem Band und der Angabe 26 mm zu kurz." caption="Ein Rahmen, der nicht passt, und die Lösungen, die der Satz für ihn errechnet hat." />
 
+Ein Kasten mit Fotos und ihren Bildunterschriften (Rahmen, die in ihm verankert sind, je eine Unterschrift `below` ihrem Foto) wächst nicht von selbst, wenn eine Übersetzung die Unterschriften länger macht: Sie laufen aus dem Kasten und über das, was darunter liegt. Öffnen Sie den Rahmen des Kastens im Vorlagen-Editor und stellen Sie **Wächst mit den Rahmen darin** auf *Die darin verankerten Rahmen* (`growWith: "children"` in der Vorlage). Der Kasten reicht dann bis zum Fuß der untersten Unterschrift plus seinem unteren Innenabstand, Fläche, Rand und Reiter folgen, und die Rahmen darunter rücken nach unten. *Die gewählten Rahmen* nimmt stattdessen eine Liste von Namen. Es zählen die Rahmen, die an einem Punkt der Oberkante des Kastens verankert sind, und die an diesen verankerten; ein Rahmen, der am Fuß oder an der Mitte des Kastens verankert ist, zählt nicht, und ein gedrehter Kasten wächst nicht. Seit postext 1.52.
+
 ## 7. Auf der Seite und im Text auswählen
 
 Die Seite und ihr Markdown folgen einander.

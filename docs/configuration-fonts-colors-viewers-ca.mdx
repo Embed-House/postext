@@ -792,6 +792,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -812,10 +813,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>S'avisa del text calat per sota d'aquest cos.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>El mateix per a cursives i pesos fins, de traç més prim.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Un pes igual o inferior a aquest compta com a fi.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Parells de colors que la comprovació accepta, cadascun amb la seva <code>reason</code>: pel color del text (<code>fg</code>) i el del fons (<code>bg</code>), per l'<code>style</code> amb què va el text, o per tots dos. Vegeu [Parells acceptats](#parells-acceptats).</td></tr>
   </tbody>
 </table>
 
 Un `level` o un `mode` escrit de qualsevol altra manera es llegeix com el valor per defecte i genera un avís de valor de paràmetre desconegut (vegeu [Avisos de configuració](#avisos-de-configuració)).
+
+### Parells acceptats
+
+Una adaptació conserva la paleta de l'original, i alguns dels seus parells queden sota el llindar: una tinta clara darrere del text d'un requadre, un color de marca en un titolet. `allow` els accepta sense apagar la comprovació (des de postext 1.52). Una entrada anomena el color del text `fg` i el del fons `bg` (en hexadecimal, tal com els escriu la configuració o com es pinten), o un `style`: l'id d'un estil de requadre (`calloutStyles`, o l'`style` d'un marc de pàgina composta), de paràgraf, de títol, d'etiqueta en línia o de rètol de figura. Tots els camps que dona una entrada han de coincidir, així que `{ style: 'note', fg: '#7a8a99' }` accepta aquest gris només dins dels requadres `note`. Una entrada que no dona cap dels tres no coincideix amb res.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: "L'ocre de l'editorial per als titolets" },
+    { style: 'nota-marge', reason: "L'original compon les notes al marge en un gris clar" },
+  ],
+}
+```
+
+Un parell acceptat es continua assenyalant: cada troballa que hi coincideix porta `accepted` (la `reason` de l'entrada, amb el seu `fg`, el seu `bg` i el seu `style`), i les troballes acceptades van després de les altres. El Sandbox les mostra a Comprovacions, sota Parells de contrast acceptats, amb el motiu, i no les compta; `postext check` les imprimeix com a notes, que no fan fallar `--strict`. Els mateixos colors fora del que anomena l'entrada continuen sent un avís.
 
 ### Llindars
 

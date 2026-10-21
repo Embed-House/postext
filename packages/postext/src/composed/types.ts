@@ -146,6 +146,16 @@ export interface FrameConfig {
   shrink?: number;
   /** Lower yields first. Default 0. */
   priority?: number;
+  /** The frame grows with the frames laid inside it (#1117): its height is
+   *  at least down to the foot of those frames and its bottom padding, so
+   *  its fill, border and tab follow captions that run longer, and the
+   *  frames under it move down as under any growing box. `'children'`:
+   *  the frames and groups anchored to a point of its top side
+   *  (`top-left`, `top`, `top-right`, `top-start`, `top-end`) and,
+   *  through them, those anchored to these; a list of frame and group
+   *  names takes those instead. A frame turned (`rotate`) does not grow.
+   *  Unset: the frame's height is its own content's. */
+  growWith?: 'children' | string[];
   fit?: FrameFitConfig;
   overflow?: FrameOverflowConfig;
   /** No `slotEmpty` warning when nothing is poured in. */
@@ -516,6 +526,8 @@ export interface ResolvedFrame {
   grow: number;
   shrink: number;
   priority: number;
+  /** Grows with the frames laid inside it (#1117). Absent: it does not. */
+  growWith?: 'children' | string[];
   fit: ResolvedFrameFit;
   overflow: FrameOverflowConfig;
   optional: boolean;

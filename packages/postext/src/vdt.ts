@@ -847,6 +847,13 @@ export interface VDTLine {
    *  measure, and the build reports an `unbreakableWordOverflow` content
    *  warning. Absent otherwise. */
   wordOverflow?: true;
+  /** The line ends in a piece of a word wider than its whole measure,
+   *  which the breaker cut to fit (#1150): at one of its syllables, a
+   *  hyphen added (`'syllable'`), or, where none fits, between two of its
+   *  characters (`'character'`). The build reports a
+   *  `wordDividedBySyllable` note or a `wordDividedByCharacter` warning.
+   *  Absent otherwise (and for a cut at a no-break space). */
+  wordDivided?: 'syllable' | 'character';
   /** Set by the CJK composer (a paragraph set as Chinese, Japanese or
    *  Korean text, `composesAsCjk`): its characters were measured one by
    *  one, so a renderer paints two CJK marks that meet apart — the marks
@@ -2282,6 +2289,10 @@ export interface VDTDesignTextRun {
    *  the blank room around them. Read by no assistive technology: an
    *  artifact in a tagged PDF, hidden in HTML. */
   leader?: true;
+  /** The run's own colour, over the block's (`#rrggbb`): a part row's
+   *  leader set in a colour of its own (`toc.leader.color`, #1121). Absent
+   *  on every other run. */
+  color?: string;
   /** Advance of the run, tracking included. */
   width: number;
   /** Superscript / subscript offset off the baseline (px, positive down). */
@@ -2352,6 +2363,10 @@ export interface VDTDesignTextLine {
    *  box, and the build reports an `unbreakableWordOverflow` warning, as
    *  for {@link VDTLine.wordOverflow}. Absent otherwise. */
   wordOverflow?: true;
+  /** The line of a wrapping text ends in a piece of a word wider than the
+   *  room, cut at a syllable or between two characters, as for
+   *  {@link VDTLine.wordDivided} (#1150). Absent otherwise. */
+  wordDivided?: 'syllable' | 'character';
 }
 
 /** Outline of the glyphs of a design text block, resolved to px / hex. */
@@ -3795,6 +3810,16 @@ export type ContentWarning = ContentWarningBase & (
    *  (`VDTLine.wordOverflow`). `text` is the line's text. Found by the
    *  layout, so `collectContentWarnings` never returns it. */
   | { kind: 'unbreakableWordOverflow'; text: string }
+  /** A word wider than its whole line (a narrow frame, a running head, a
+   *  table cell), cut to fit between two of its characters, with no
+   *  hyphen (`VDTLine.wordDivided`, #1150): "CL" | "IMA". `text` is the
+   *  line's text. A warning: give the text more room or a smaller size.
+   *  Found by the layout, so `collectContentWarnings` never returns it. */
+  | { kind: 'wordDividedByCharacter'; text: string }
+  /** A word wider than its whole line, cut at one of its syllables with a
+   *  hyphen (`VDTLine.wordDivided`, #1150). A note: the cut is a
+   *  dictionary one, but the word was too long for the measure. */
+  | { kind: 'wordDividedBySyllable'; text: string }
   /** A paragraph or heading whose style sets letter-spacing
    *  (`letterSpacing`) on words of a joining script: they are set without
    *  it, since spacing their letters apart breaks the joins, and only the
@@ -3940,6 +3965,19 @@ export type ContentWarning = ContentWarningBase & (
    *  than its column, and the default page has two (`layout.layoutType:
    *  'double'`). Found by the layout; reported once per picture. */
   | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printWidthPx: number; widthPx: number; pageWidthPx: number }
+  /** `emptyCaption` (#1151): a resource of a type with a caption prefix
+   *  whose own caption is empty, so its caption line prints the label and
+   *  number alone ("Figure 1.2."). Often meant (a numbered plate), often a
+   *  caption left out; information. Reported once per resource, where it
+   *  is first placed. Found by the layout. */
+  | { kind: 'emptyCaption'; resourceId: string; label: string }
+  /** `resourceMoved` (#1151): a resource set where its `::resource` line
+   *  stands (`position: 'here'`) was too tall for the room left in its
+   *  column and moved on to the next, leaving `emptyPx` (`emptyMm`) of
+   *  that column empty on page `pageIndex`. Reported when the room left is at least
+   *  two lines of the body grid; a wrapped picture says it with
+   *  `textWrap` `'moved'`. Found by the layout. */
+  | { kind: 'resourceMoved'; resourceId: string; emptyPx: number; emptyMm: number }
   /** `textWrap` (#627): a resource or a box set to wrap text round it
    *  (`placement.wrap`, a box's `wrap`) that does not as asked.
    *  `'tooNarrow'`: the text beside it would be narrower than

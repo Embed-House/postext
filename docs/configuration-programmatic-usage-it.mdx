@@ -280,6 +280,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>L'immagine si stampa alla larghezza della sua colonna. Un'immagine nel flusso non è mai più larga della sua colonna e la pagina predefinita ne ha due (<code>layout.layoutType: 'double'</code>): componi la pagina su una colonna, fai flottare l'immagine su tutta la pagina (<code>placement.span: 'page'</code>) o alzane la risoluzione se quella è la dimensione voluta.</td>
     </tr>
     <tr>
+      <td><code>emptyCaption</code></td>
+      <td>Una risorsa di un tipo con prefisso di didascalia non ha una didascalia propria, quindi la sua riga di didascalia stampa solo etichetta e numero. <code>resourceId</code> la nomina, <code>label</code> è la riga stampata. Informativo: segnalato una volta per risorsa, al paragrafo che la cita o al suo inserimento. Da postext 1.52.</td>
+      <td>L’etichetta viene stampata. Scrivi la didascalia, o lascia l’etichetta da sola se si vuole una tavola numerata.</td>
+    </tr>
+    <tr>
+      <td><code>resourceMoved</code></td>
+      <td>Una risorsa collocata nel testo (<code>position: 'here'</code>) era più alta dello spazio rimasto nella sua colonna ed è passata intera alla successiva. <code>resourceId</code> la nomina, <code>emptyPx</code> ed <code>emptyMm</code> danno lo spazio lasciato vuoto, <code>pageIndex</code> la pagina. Segnalato quando quello spazio è di due righe della griglia del testo o più; un’immagine con testo intorno lo dice con <code>textWrap</code> <code>'moved'</code>. Punta all’inserimento. Da postext 1.52.</td>
+      <td>La risorsa sta in cima alla colonna successiva. Riducila, sposta la sua riga <code>::resource</code> o falla flottare (<code>placement.position: 'auto'</code>).</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>Una risorsa o un riquadro impostato per far scorrere il testo attorno (<code>placement.wrap</code>, il <code>wrap</code> di un riquadro) che non lo fa come richiesto. <code>reason</code>: <code>'tooNarrow'</code> (il testo accanto sarebbe più stretto di <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (è più corto di <code>layout.wrap.minLinesBeside</code> righe), <code>'moved'</code> (uno nel testo troppo alto per lo spazio rimasto nella sua colonna è passato alla successiva, insieme alla sua ancora), <code>'verticalText'</code> o <code>'noContour'</code> (uno scorrimento lungo il contorno di un’immagine di cui non si conosce la forma: un SVG senza <code>contour.points</code>, una bitmap senza trasparenza o un canale alfa che l’host non ha tracciato). <code>resourceId</code> indica una risorsa, <code>box</code> lo stile di un riquadro. Punta all’inserimento o al riquadro.</td>
       <td>L’elemento occupa la sua fascia per intero, o si colloca nella colonna successiva, come dice il motivo; con <code>'noContour'</code> il testo gira attorno al riquadro dell’immagine. Dai all’immagine un poligono, usa un PNG con trasparenza, oppure leggila con <code>readBundle</code> o nella Sandbox, che la tracciano.</td>
@@ -332,7 +342,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
-La tabella elenca i tipi che qualsiasi documento può segnalare. I tipi di una singola funzionalità sono descritti insieme a essa: i fumetti (`comicPanelCount`, `comicBalloonOverflow`…) nella pagina [Fumetti](/it/docs/comics), i video (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) in [Risorse](/it/docs/document-format-resources), le citazioni e l’indice analitico (`unknownCitationKey`, `referencesUnreadable`, `indexMark`…) in [Note e riferimenti](/it/docs/document-format-notes-references), il testo cinese, giapponese e arabo (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading`…) nelle pagine di queste scritture, e quelli della divisione in righe (`raggedLine`, `unbreakableWordOverflow`) in [Giustificazione](/it/docs/justification).
+La tabella elenca i tipi che qualsiasi documento può segnalare. I tipi di una singola funzionalità sono descritti insieme a essa: i fumetti (`comicPanelCount`, `comicBalloonOverflow`…) nella pagina [Fumetti](/it/docs/comics), i video (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) in [Risorse](/it/docs/document-format-resources), le citazioni e l’indice analitico (`unknownCitationKey`, `referencesUnreadable`, `indexMark`…) in [Note e riferimenti](/it/docs/document-format-notes-references), il testo cinese, giapponese e arabo (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading`…) nelle pagine di queste scritture, e quelli della divisione in righe (`raggedLine`, `unbreakableWordOverflow`, `wordDividedByCharacter`, `wordDividedBySyllable`) in [Giustificazione](/it/docs/justification).
 
 Gli avvisi su una risorsa (il suo stile di tabella, la sua griglia, un rimando dentro la sua didascalia, nota o celle) puntano al primo inserimento o al primo rimando della risorsa nel testo, e ciascuno viene elencato una volta per risorsa. Si controllano solo le risorse che il documento usa: un capitolo di un libro segnala le tabelle che cita, non tutte le tabelle del libro.
 

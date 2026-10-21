@@ -113,7 +113,7 @@ function collectLooseLineWarnings(
 const LAYOUT_CONTENT_KINDS: ReadonlySet<string> = new Set([
   'indexSeeUnknown', 'indexRangeUnclosed', 'indexReadingMissing', 'cjkLooseLine', 'raggedLine',
   'cjkMarksExceedLeading', 'rubyExceedsLeading', 'kuntenExceedsLeading', 'arabicMarksExceedLeading',
-  'unbreakableWordOverflow', 'joiningScriptLetterSpacing',
+  'unbreakableWordOverflow', 'wordDividedByCharacter', 'wordDividedBySyllable', 'joiningScriptLetterSpacing',
   'comicPanelLetterbox', 'comicBalloonOverflow', 'lineNumberOverlap', 'dropCap', 'codeOverflow', 'textWrap',
   'columnsTooNarrow',
 ]);
@@ -134,6 +134,20 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
     // wider than their line and the styles whose letter-spacing such words
     // do not take, and the comic panels and balloons the layout had to
     // force (a letterboxed picture, a balloon that does not fit).
+    if (w.kind === 'emptyCaption' || w.kind === 'resourceMoved') {
+      // A caption line with the label alone, and a resource set in the
+      // text that moved on and left its column's foot empty (#1151).
+      out.push({
+        id: `layout-${w.kind}-${w.resourceId}-${i}`,
+        payload: w.kind === 'emptyCaption'
+          ? { kind: 'emptyCaption', resourceId: w.resourceId, label: w.label }
+          : { kind: 'resourceMoved', resourceId: w.resourceId, page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0), emptyMm: w.emptyMm },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'pictureBelowPrintSize') {
       // A picture its column holds under half its print size (#901), in mm.
       const mm = (v: number) => Math.round((v * 254) / doc.config.page.dpi) / 10;
@@ -529,6 +543,17 @@ function collectContainerWarnings(markdown: string, issues: ParseIssue[]): Warni
       out.push({
         id: `code-unclosed-${idx++}-${issue.sourceStart}`,
         payload: { kind: 'unclosedCodeBlock', delimiter: issue.delimiter, ...(issue.lang ? { lang: issue.lang } : {}) },
+        sourceStart: issue.sourceStart,
+        sourceEnd: issue.sourceEnd,
+        line: lineNumberForOffset(markdown, issue.sourceStart),
+      });
+      continue;
+    }
+    if (issue.kind === 'strayFence') {
+      // A closing fence after a one-line directive (#1125): dropped.
+      out.push({
+        id: `stray-fence-${idx++}-${issue.sourceStart}`,
+        payload: { kind: 'strayFence', directive: issue.directiveName },
         sourceStart: issue.sourceStart,
         sourceEnd: issue.sourceEnd,
         line: lineNumberForOffset(markdown, issue.sourceStart),

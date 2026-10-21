@@ -685,6 +685,12 @@ const config: PostextConfig = {
       <td><code>char</code>をタイトルとページ番号のあいだに繰り返して並べます。続く項目の点が縦にそろうよう右そろえで並べます（<code>'. '</code>とすると点の間隔が空きます）。<code>gap</code>はタイトルとリーダーのあいだに最低限残す間隔です。リーダーの文字数は、その書体でひと続きの文字列として測り、入るだけの数になります。そのため、連続するピリオドをカーニングで離す書体では、点がページ番号まで届くことはなく、点の数が少なくなります（postext 1.4までは点1つの幅から数を求めていたため、そうした書体ではリーダーがタイトルから番号に食い込んでいました）。ラベルの入る余地がなくなるタイトルは、少し手前で折り返します。リーダーは3文字以上で組みます。1文字か2文字しか入らない行にはリーダーを入れません。ページ番号の前に点が1つだけあると、ピリオドに見えるからです。タグ付きPDFでは点はアーティファクトになり、抽出したテキストには含まれません。本文も<a href="/ja/docs/configuration-text#タブ位置">タブ位置</a>で同じリーダーを組みます。</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>ページ番号のもの</td>
+      <td>リーダーの点に独自の色、書体、サイズ、ウェイトを与えます（postext 1.52 から）。原本の目次で、ページ番号とは別に小さな色付きの点を組むような場合です。省略した項目は、それがないときのまま、つまりエントリー行ではページ番号のものになります。<code>em</code>で指定した<code>fontSize</code>はそのサイズに対する比です。<code>parts.leader</code>が独自に設定しない限り、部の行の<code>{'{leader}'}</code>もこれを使います。</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>object</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -707,6 +713,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>空</td>
       <td>行のデザインです。コンテナーは行そのもの（段の幅 × <code>height</code>）です。プレースホルダーは<code>{'{number}'}</code>、<code>{'{numberDecimal}'}</code>、<code>{'{numberRoman}'}</code>…、<code>{'{titleText}'}</code>、<code>{'{pageNumber}'}</code>です（最後のものは部扉のページラベルです。部扉を作らない<code>parts.page: false</code>のときは、部の内容が始まるページ、つまり柱がその部に切り替わるページのラベルになります。章ごとにレイアウトする本では、章の末尾に置いた部のブロックは、次の章の最初の内容ページを指します）。パレットに連動した色は部自身の<code>palette</code>を使うため、各部の行はその部の色で表示されます。空のときは、<code>{'{number} {titleText}'}</code>（あいだにH1の<code>numberSeparator</code>）とページ番号を、レベル1の項目の文字組みで組みます。<code>{'{leader}'}</code>は、同じテキスト要素のなかで、前後の文字列のあいだに目次の<code>leader</code>を置きます。<code>{'{number} {titleText}{leader}{pageNumber}'}</code>と書くと、行頭に題名、行末にページ番号が来て、そのあいだにリーダーが入ります。リーダーはページ番号側にそろい、両側の文字列とは<code>gap</code>だけ離れます。項目行と同じ組み方です。このとき要素は行の幅いっぱいを占め（幅<code>auto</code>はコンテナーの端まで伸びます）、題名が収まらなければ題名を切り詰め、ページ番号は切りません。リーダーを無効にすると（<code>leader.enabled: false</code>）あいだは空白になります。部の行以外や縦組みのページでは、<code>{'{leader}'}</code>は何も出力しません。タグ付きPDFとHTMLでは、リーダーは読み上げるテキストに含まれません。</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>部の行の<code>{'{leader}'}</code>の書体です。<code>color</code>、<code>fontFamily</code>、<code>fontSize</code>（要素のサイズに対する<code>em</code>）、<code>fontWeight</code>を、項目ごとに<code>leader</code>の書体より優先して使います。どちらにも設定のない項目は、テキスト要素自身のものです。postext 1.52 から。ページ番号を独自の要素（別の書体や囲み）に組むには、行を3つの要素にします。タイトルを行の左に、ページ番号を右に固定し、その間に内容が<code>{'{leader}'}</code>だけの要素を置いて、<code>{"{ to: '#title', edge: 'right-of' }"}</code>に固定し、<code>{"width: { to: '#page', edge: 'left' }"}</code>とします。ページ番号の要素がどこに置かれても、点はそこから<code>gap</code>手前で止まります。</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Estils de ressaltat
 
-La propietat `markStyles` declara els estils amb nom de l'element en línia `:mark[text]{style="…"}`: la franja de color darrere d'una frase, com quan un llibre de text ressalta les paraules clau (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems una mica arrodonits i el text amb el color habitual), de manera que `:mark[…]` funciona sense configurar res; si declares `markStyles`, substitueixes aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, agafa el primer estil (el Sandbox assenyala l'id desconegut).
+La propietat `markStyles` declara els estils amb nom de l'element en línia `:mark[text]{style="…"}`: la franja de color darrere d'una frase, com quan un llibre de text ressalta les paraules clau (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems rectes i el text amb el color habitual), de manera que `:mark[…]` funciona sense configurar res; si declares `markStyles`, substitueixes aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, agafa el primer estil (el Sandbox assenyala l'id desconegut).
 
 ```ts
 const config: PostextConfig = {
@@ -531,8 +531,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Radi dels dos extrems de la franja, limitat a la meitat de l'alçada de la franja.</td>
+      <td><code>0</code></td>
+      <td>Radi dels dos extrems de la franja, limitat a la meitat de l'alçada de la franja. Els extrems rectes són la norma a la impremta. Fins a postext 1.51 el valor per defecte era <code>0.2em</code>; una configuració desada aleshores amb alguna marca al text es llegeix amb <code>0.2em</code> escrit a cada estil que no indiqui radi.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>

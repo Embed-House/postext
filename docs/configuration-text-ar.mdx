@@ -53,9 +53,9 @@ export const metadata = {
     </tr>
     <tr>
       <td><code>paragraphSpacing</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | Dimension</code></td>
       <td><code>false</code></td>
-      <td>عند التفعيل، يُدرج سطرًا فارغًا (يساوي <code>lineHeight</code>) بين الفقرات المتتالية، للفصل بينها على طريقة دور النشر.</td>
+      <td>المسافة بين فقرتين. تُدرج <code>true</code> سطرًا فارغًا (يساوي <code>lineHeight</code>) للفصل بين الفقرات على طريقة دور النشر، ويضع الطول مثل <code>&#123; value: 2, unit: 'mm' &#125;</code> أو <code>0.33em</code> من حجم النص هذا المقدار بالضبط، في النص الجاري وفي الصناديق وفي أطر الصفحات المركّبة. الطول الذي لا يساوي عددًا صحيحًا من الأسطر يُخرج الفقرات عن شبكة الأسطر، وتعيد الكتلة التالية التي تلتزم الشبكة (عنوان، آخر بند في قائمة، معادلة مستقلة) النص إليها. هي المسافة نفسها التي يضعها <code>paragraphStyles[].spaceBetween</code>، وهو الذي يحل محلها داخل حاوية <code>:::paragraphs</code>. ويضبط الصندوق مسافته في <code>calloutStyles[].body.paragraphSpacing</code>.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

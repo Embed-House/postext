@@ -793,6 +793,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -813,10 +814,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Se avisa del texto calado por debajo de este cuerpo.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>Lo mismo para cursivas y pesos finos, de trazo más delgado.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Un peso igual o menor que este cuenta como fino.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Pares de colores que la comprobación acepta, cada uno con su <code>reason</code>: por el color del texto (<code>fg</code>) y el del fondo (<code>bg</code>), por el <code>style</code> en que va el texto, o por ambos. Véase [Pares aceptados](#pares-aceptados).</td></tr>
   </tbody>
 </table>
 
 Un `level` o un `mode` escrito de cualquier otra forma se lee como el valor por defecto y se notifica como valor de ajuste desconocido (véase [Avisos de configuración](#avisos-de-configuración)).
+
+### Pares aceptados
+
+Una adaptación conserva la paleta del original, y algunos de sus pares quedan bajo el umbral: un tinte claro detrás del texto de un recuadro, un color de marca en un titulillo. `allow` los acepta sin apagar la comprobación (desde postext 1.52). Una entrada nombra el color del texto `fg` y el del fondo `bg` (en hexadecimal, tal como los escribe la configuración o como se pintan), o un `style`: el id de un estilo de recuadro (`calloutStyles`, o el `style` de un marco de página compuesta), de párrafo, de título, de etiqueta en línea o de rótulo de figura. Todos los campos que da una entrada tienen que coincidir, así que `{ style: 'note', fg: '#7a8a99' }` acepta ese gris solo dentro de los recuadros `note`. Una entrada que no da ninguno de los tres no coincide con nada.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: 'El ocre de la editorial para los titulillos' },
+    { style: 'nota-margen', reason: 'El original compone sus notas al margen en un gris claro' },
+  ],
+}
+```
+
+Un par aceptado se sigue señalando: cada hallazgo que coincide lleva `accepted` (el `reason` de la entrada, con su `fg`, su `bg` y su `style`), y los hallazgos aceptados van después de los demás. El Sandbox los muestra en Comprobaciones, bajo Pares de contraste aceptados, con el motivo, y no los cuenta; `postext check` los imprime como notas, que no hacen fallar `--strict`. Los mismos colores fuera de lo que nombra la entrada siguen siendo un aviso.
 
 ### Umbrales
 

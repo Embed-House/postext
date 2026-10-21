@@ -793,6 +793,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -813,10 +814,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Negativer Text unter dieser Größe wird gemeldet.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>Dasselbe für Kursive und leichte Schnitte, deren Striche dünner sind.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Eine Schriftstärke bis einschließlich dieser gilt als leicht.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Farbpaare, die die Prüfung akzeptiert, jedes mit seinem <code>reason</code>: nach Textfarbe (<code>fg</code>) und Grund (<code>bg</code>), nach dem <code>style</code>, in dem der Text gesetzt ist, oder nach beidem. Siehe [Akzeptierte Paare](#akzeptierte-paare).</td></tr>
   </tbody>
 </table>
 
 Ein `level` oder ein `mode`, das anders geschrieben ist, wird als Standardwert gelesen und als unbekannter Einstellungswert gemeldet (siehe [Konfigurationswarnungen](#konfigurationswarnungen)).
+
+### Akzeptierte Paare
+
+Eine Portierung behält die Palette der Vorlage, und manche ihrer Paare liegen unter der Schwelle: ein heller Ton hinter dem Text eines Kastens, eine Markenfarbe im Kolumnentitel. `allow` akzeptiert sie, ohne die Prüfung abzuschalten (seit postext 1.52). Ein Eintrag nennt die Textfarbe `fg` und den Grund `bg` (hexadezimal, wie die Konfiguration sie schreibt oder wie sie gemalt werden) oder einen `style`: die Id eines Kastenstils (`calloutStyles` oder der `style` eines Rahmens einer komponierten Seite), eines Absatz-, Überschriften-, Chip- oder Bildbeschriftungsstils. Jedes Feld, das ein Eintrag angibt, muss passen, also akzeptiert `{ style: 'note', fg: '#7a8a99' }` dieses Grau nur in `note`-Kästen. Ein Eintrag ohne eines der drei Felder passt auf nichts.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: 'Der Ocker des Verlags für die Kolumnentitel' },
+    { style: 'randnotiz', reason: 'Die Vorlage setzt ihre Randnotizen in hellem Grau' },
+  ],
+}
+```
+
+Ein akzeptiertes Paar wird weiter gemeldet: Jeder Befund, auf den es passt, trägt `accepted` (den `reason` des Eintrags mit seinem `fg`, `bg` und `style`), und die akzeptierten Befunde stehen hinter den anderen. Der Sandbox führt sie in den Prüfungen unter Akzeptierte Kontrastpaare mit dem Grund auf und zählt sie nicht mit; `postext check` gibt sie als Hinweise aus, an denen `--strict` nicht scheitert. Dieselben Farben außerhalb dessen, was der Eintrag nennt, bleiben eine Warnung.
 
 ### Schwellenwerte
 

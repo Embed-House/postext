@@ -3586,3 +3586,71 @@ The engine and Sandbox items of #1095: the limits §13.1, §13.3 and §13.4 left
 - **Not done.** Transparent cuts (a PNG ground for a drawing's paper is 3–4× the JPEG); grids whose cards
   differ in height take the smallest height (a picture of a caption grid shrank 5.6 mm with
   `--lattice-tol 2`); role names from the source itself (spot colour names are not read).
+
+## 14. External port review, part II (#1097)
+
+Findings from a full port of a 28-page fixed-layout school textbook as composed pages.
+
+### 14.1 An empty styled fence reads in its place (#1116)
+
+The story of an empty styled fence (§12.37) has no blocks, so `regroupPage` (`wrap.ts`) sorted it by
+`Math.min()` of nothing (`Infinity`): its box came after every other story, and with it its tab's words
+in the HTML, the EPUB and the tagged PDF (all three follow the regrouped order, `composedReadingOrder`
+by content index). A story with no blocks now sorts by the index of the fence it was read from
+(`fenceAt`, kept with each slot's fence block). `composed_check.py` `expected_order` puts an empty
+fence of a styled frame in its place and leaves out what the frame's chain adds after it (nothing is
+there); an empty fence of a plain frame draws nothing and stays out.
+
+### 14.2 Unknown keys of design elements and placements (#1122)
+
+`design/elementKeys.ts` holds a key table per object, each `satisfies Record<keyof T, true>` so a key
+added to a type fails to compile until it is listed: every design element kind (text, rule, box, image,
+path, connector), a decoration removal `{ id, remove }`, a template's `decoration`, a connector's ends,
+a placement and its `anchor`, `offset`, `size` and `{ to, edge }` size, a text's `box`, `dropCap`,
+`stroke`, `dotted` and `repeat`, a box element's `style` (with its `padding`), and the top-level config.
+`configWarnings.ts` reports the element keys of every design slot (dotted paths, as the path element's
+check did; the path element's own key loop moved there) and the config's own keys (and those of
+`htmlViewer.overrides`); `validate.ts` reports a frame's and a group's `placement` keys and a
+decoration's own keys with JSON pointers (`/pageTemplates/0/groups/0/placement/sise`). A group's `size`
+written beside its placement was already `unknownConfigKey` (`GROUP_KEYS`). An element of an unknown
+`kind` is not checked (it draws nothing). Sections outside the composed objects keep the checks they
+had (`collectUnknownKeyWarnings`): `page`, `bodyText` and the rest are not walked key by key.
+
+### 14.3 A picture covers by its shape (#1123)
+
+`overlap.ts`: a covering bitmap or SVG whose shape is known (`contourRowsOf`: its polygon, or the
+alpha channel its host traced) carries the rows of that shape (`contourOnPage` with no margin, through
+its crop and scale; mirrored on a right-to-left page), each put through the frame's clip and matrix
+as its box is. `inkCuts` cuts the covered ink by the rows: the depth test (0.3 mm on both sides) runs
+on the bounds of the pieces under the rows taken together (a row of a 256-row trace is thinner than
+the depth), and the area counted is their union. A picture with no known shape, a turned one
+(`rotation`), a video, and every picture on a vertical page cover with their box as before; the
+covered side is unchanged (a picture under a frame is read by its box), and so are `frameOutsideArea`
+and the move proposals (they test the boxes). Decision: the glyph boxes are tested, not the glyphs'
+ink; a line whose box meets the shape by more than the depth is covered there.
+
+### 14.4 A frame that grows with the frames inside it (#1117)
+
+`FrameConfig.growWith: 'children' | string[]` (the name `grow` was taken: a frame's share of its
+group's spare room). `growMembers` (`grow.ts`): with `'children'`, the frames and groups anchored to
+a point of the box's top side (`top-left`, `top`, `top-right`, `top-start`, `top-end`, the `align-…`
+edges but `align-bottom`), then round after round those anchored (any edge) to a member, and the frames
+of a member group (a grid's instances too); a frame anchored to the box's foot or middle never (its
+place follows the box's height); with a list, the frames and groups named. `composePage`
+(`pipeline/composedLayout.ts`) lays the page; then, for each growing box that is laid and not turned,
+`grownHeight` takes the lowest foot among its members and its style's bottom padding, and when the
+box ends above it (by more than half a pixel) the page is laid again with that height as the box's
+`minHeight` (in mm), at most three times. The members stand where the box's top puts them, so one
+more lay settles it; what the box's foot places (a frame `below` it, the rest of its stack) moves down
+as under any growing box. Decisions: the grown height wins over a fixed `height` and a `maxHeight`
+(as `minHeight` does); the reflow log shows no motion for the box or the frames it moves, since the
+box's declared height is grown too (the template asked for it, as for `stretchAuto`, §13.6); a page
+with no `growWith` is laid once, as before. Modules scope a list's names (`modules.ts`), a grid's
+instances name their own item's frames (`repeat.ts`). Validation: a value other than `'children'` or
+a list is `unknownConfigValue` at `…/growWith`; a list's entry that is no string at `…/growWith/<k>`;
+a name that is no frame or group of the resolved template, or the frame itself, at `…/growWith`.
+Sandbox: the template editor's Size group has «Grows with the frames inside» (no, the frames
+anchored inside it, the frames chosen) and, for a list, a checkbox per frame and group (seeded with
+the frames anchored inside it). Fixture: `__tests__/composed/growWith.test.ts`, three photos and their
+captions in a labelled box under a 1.3 text stress; the skill's end-to-end test runs the same page
+through `composed_check --stress 1.3`.

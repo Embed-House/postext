@@ -727,6 +727,97 @@ def repair_ligature_gaps(text: str, vocab: Vocabulary) -> str:
 # ---------------------------------------------------------------------------
 
 
+# --- ruled tables (#1145) ------------------------------------------------------
+
+def find_tables(doc, pages: list[int], lines: list[Line]) -> list[dict]:
+    """The ruled tables of the pages (extract_tables.page_tables); each line
+    inside one gets the role `table:<k>`, so no paragraph takes it."""
+    import extract_tables as et  # noqa: PLC0415
+
+    tables: list[dict] = []
+    for pno in pages:
+        try:
+            found = et.page_tables(doc[pno])
+        except Exception:  # noqa: BLE001 - a page find_tables cannot read keeps its lines as text
+            continue
+        for e in found:
+            k = len(tables)
+            tables.append({**e, "page": pno})
+            x0, y0, x1, y1 = e["bbox"]
+            for ln in lines:
+                cx, cy = (ln.x0 + ln.x1) / 2, (ln.y0 + ln.y1) / 2
+                if ln.page == pno and ln.role != "skip" and x0 - 1 <= cx <= x1 + 1 and y0 - 1 <= cy <= y1 + 1:
+                    ln.role = f"table:{k}"
+    return tables
+
+
+def pair_tables(tables: list[dict], paras: list) -> dict[int, int]:
+    """A table with no title row of its own takes the nearest table caption
+    of its page (a `caption` paragraph labelled Table, Tabla…): {table:
+    paragraph index}."""
+    used: set[int] = set()
+    out: dict[int, int] = {}
+    for k, t in enumerate(tables):
+        if t.get("caption") is not None:
+            continue
+        best = None
+        for n, p in enumerate(paras):
+            if p.role != "caption" or n in used or p.page != t["page"]:
+                continue
+            m = CAPTION_LABEL_RE.match(clean_text("".join(ln.text for ln in p.lines[:1])))
+            if not m or caption_kind(m.group("label")) != "table":
+                continue
+            d = min(abs(p.lines[-1].y1 - t["bbox"][1]), abs(p.lines[0].y0 - t["bbox"][3]))
+            if best is None or d < best[0]:
+                best = (d, n)
+        if best is not None:
+            used.add(best[1])
+            out[k] = best[1]
+            t["captionBox"] = [round(min(ln.x0 for ln in paras[best[1]].lines), 1),
+                               round(min(ln.y0 for ln in paras[best[1]].lines), 1)]
+    return out
+
+
+def table_resource(t: dict, slug, resources: list[dict], label_to_id: dict) -> str:
+    """A table resource for a table whose caption is its own title row (or
+    that has none), with its model; returns its id."""
+    caption = t.get("caption") or ""
+    rid = slug(caption or f"p{t['page'] + 1}", "table")
+    label = t.get("label") or ""
+    m = CAPTION_LABEL_RE.match(label) if label else None
+    if m:
+        label_to_id[("table", m.group("num").replace("–", "-"))] = rid
+    resources.append({
+        "id": rid, "typeId": "table", "kind": "table", "caption": caption,
+        "altText": attr_value(caption), "placement": {"position": "auto", "span": "column"},
+        "table": {"model": t["model"]},
+        "source": {"page": t["page"] + 1, "tableBox": [round(v, 1) for v in t["bbox"]], "label": label,
+                   "tableStyle": t["style"], **({"notes": t["notes"]} if t["notes"] else {})},
+    })
+    return rid
+
+
+def attach_tables(tables: list[dict], table_to_caption: dict[int, int], resources: list[dict], report: Counter) -> None:
+    """Give each caption stub its table's model (paired by `pair_tables`)."""
+    for k, t in enumerate(tables):
+        if k not in table_to_caption:
+            report["tables read into resources from their own title row or with no caption"] += 1
+            continue
+        x0, y0 = t["captionBox"]
+        stub = next((r for r in resources if r.get("kind") == "table" and "table" not in r
+                     and (r.get("source") or {}).get("page") == t["page"] + 1
+                     and (r.get("source") or {}).get("captionBox", [None, None])[:2] == [x0, y0]), None)
+        if stub is None:
+            report["tables whose caption stub was not found (left out: read them with extract_tables.py)"] += 1
+            continue
+        stub["table"] = {"model": t["model"]}
+        stub["source"]["tableBox"] = [round(v, 1) for v in t["bbox"]]
+        stub["source"]["tableStyle"] = t["style"]
+        if t["notes"]:
+            stub["source"]["notes"] = t["notes"]
+        report["tables attached to their caption stub"] += 1
+
+
 def cmd_markdown(args) -> None:
     cfg = load_rules(args.roles)
     doc = fitz.open(args.pdf)
@@ -750,6 +841,7 @@ def cmd_markdown(args) -> None:
             if lines[i].role in ("body",) or lines[i].role.startswith("h"):
                 lines[i].role = "skip"
                 report["furniture lines dropped (running heads/folios)"] += 1
+    tables = find_tables(doc, pages, lines) if args.tables else []
     credits = [(ln.page + 1, clean_text(ln.text).strip()) for ln in lines if ln.role == "credit"]
     kept = [ln for ln in lines if ln.role not in ("skip", "credit")]
 
@@ -773,6 +865,8 @@ def cmd_markdown(args) -> None:
         base[role] = cnt.most_common(1)[0][0]
 
     paras = build_paragraphs(ordered, starts)
+    table_to_caption = pair_tables(tables, paras)
+    emitted: set[int] = set()
     out = Path(args.out)
     chap_dir = out / "chapters" / args.lang
     chap_dir.mkdir(parents=True, exist_ok=True)
@@ -840,6 +934,15 @@ def cmd_markdown(args) -> None:
             blocks.append(heading(level, text, id=hid))
             continue
         i += 1
+        if role.startswith("table:"):
+            # a ruled table (#1145): its lines are the model, set where the table stood
+            k = int(role.split(":", 1)[1])
+            if k not in emitted and k not in table_to_caption:
+                close_callout()
+                flush_list(blocks)
+                blocks.append(resource_embed(table_resource(tables[k], slug, resources, label_to_id)))
+            emitted.add(k)
+            continue
         text = repair_ligature_gaps(para_text(p, vocab, base), vocab)
         if not text:
             continue
@@ -907,6 +1010,7 @@ def cmd_markdown(args) -> None:
     if chapters:
         flush_list(chapters[-1][1])
 
+    attach_tables(tables, table_to_caption, resources, report)
     manifest = []
     left_out: Counter = Counter()
     for n, (title, blocks, notes) in enumerate(chapters, 1):
@@ -972,6 +1076,8 @@ def main() -> None:
                    help="leave mentions as text")
     m.add_argument("--refs-from", help="a resources.json whose captions (Figura 3…) mentions link to as well")
     m.add_argument("--no-auto-furniture", dest="auto_furniture", action="store_false")
+    m.add_argument("--no-tables", dest="tables", action="store_false",
+                   help="leave ruled tables as text (default: read them with find_tables into table resources)")
     args = ap.parse_args()
     if args.cmd == "roles":
         cmd_roles(args)

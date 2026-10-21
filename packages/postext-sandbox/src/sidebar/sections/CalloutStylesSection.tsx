@@ -79,6 +79,7 @@ import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
 import { hasSeveralColumns } from '../settings/multiColumnBook';
 import { MULTIPLE_COLUMNS_MAX } from '../settings/multipleColumns';
 import { TabStopsField } from '../settings/TabStopsField';
+import { ParagraphSpacingField } from '../settings/ParagraphSpacingField';
 import { useBookTexts } from '../../frameStyles/useBookTexts';
 import { planRename } from '../../frameStyles/styleMerge';
 import { applyStyleRewrite } from '../../frameStyles/applyRewrite';
@@ -1782,11 +1783,10 @@ export function CalloutStyleCard({
             onReset={() => resetGroupField('body', 'hyphenation')}
           />
         )}
-        <ToggleSwitch
-          label={labels.bodyParagraphSpacing}
-          checked={resolved.body.paragraphSpacing}
+        <ParagraphSpacingField
+          value={resolved.body.paragraphSpacing}
+          line={resolved.body.lineHeight}
           onChange={(v) => body({ paragraphSpacing: v })}
-          tooltip={labels.bodyParagraphSpacingTooltip}
           isDefault={groupUnset('body', 'paragraphSpacing')}
           onReset={() => resetGroupField('body', 'paragraphSpacing')}
         />

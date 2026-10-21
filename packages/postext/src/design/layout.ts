@@ -97,6 +97,10 @@ export interface WrappedLine {
   /** A word of a joining script wider than the room runs past it (see
    *  `VDTDesignTextLine.wordOverflow`). */
   wordOverflow?: true;
+  /** The line ends in a piece of a word wider than the room, cut at a
+   *  syllable or between two characters (`VDTDesignTextLine.wordDivided`,
+   *  #1150). */
+  wordDivided?: 'syllable' | 'character';
 }
 
 export interface ResolvedPadding {
@@ -742,9 +746,10 @@ function breakWordWithHyphenation(
   measure: TextMeasure,
   maxWidth: number,
   useHyphenation: boolean,
-): { head: string; tail: string } | undefined {
+): { head: string; tail: string; divided?: 'syllable' | 'character' } | undefined {
   // Returns a split of the word where head (with trailing hyphen if hyphenated)
-  // fits in maxWidth. Returns undefined if no split is possible.
+  // fits in maxWidth. Returns undefined if no split is possible. `divided`:
+  // how the word was cut (#1150), absent for a cut at a no-break space.
   // A group glued by no-break spaces ("Fig. 3") parts at the last of them
   // that leaves a head that fits, before any syllable or character (EF-66).
   for (let i = word.length - 2; i >= 1; i--) {
@@ -775,7 +780,7 @@ function breakWordWithHyphenation(
           break;
         }
       }
-      if (best) return best;
+      if (best) return { ...best, divided: 'syllable' };
     }
   }
   // Last-resort character break so text never overflows when it can't fit.
@@ -790,7 +795,7 @@ function breakWordWithHyphenation(
     }
   }
   if (lo < 1) return undefined;
-  return { head: word.slice(0, lo), tail: word.slice(lo) };
+  return { head: word.slice(0, lo), tail: word.slice(lo), ...(lo < word.length ? { divided: 'character' as const } : {}) };
 }
 
 function wrapToWidth(
@@ -798,6 +803,8 @@ function wrapToWidth(
   measure: TextMeasure,
   maxWidth: number,
   hyphenate: boolean,
+  /** Filled by line index: how the line's last word was cut (#1150). */
+  cuts?: ('syllable' | 'character' | undefined)[],
 ): string[] {
   // Greedy word wrap; preserves existing line breaks.
   const paragraphs = text.split('\n');
@@ -824,6 +831,7 @@ function wrapToWidth(
             break;
           }
           out.push(split.head);
+          if (cuts) cuts[out.length - 1] = split.divided;
           remaining = split.tail;
         }
       } else {
@@ -846,6 +854,7 @@ function wrapToWidth(
               break;
             }
             out.push(split.head);
+            if (cuts) cuts[out.length - 1] = split.divided;
             remaining = split.tail;
           }
         }
@@ -872,7 +881,7 @@ interface TextMeasurement {
 const CLIP_SLACK_PX = 0.5;
 
 /** Lines stacked from the top of the content box, `lineHeightPx` apart. */
-function stackLines(rows: { text: string; width: number; runs?: DesignTextRun[] }[], lineHeightPx: number): WrappedLine[] {
+function stackLines(rows: { text: string; width: number; runs?: DesignTextRun[]; wordDivided?: 'syllable' | 'character' }[], lineHeightPx: number): WrappedLine[] {
   return rows.map((r, i) => ({
     text: r.text,
     width: r.width,
@@ -880,6 +889,7 @@ function stackLines(rows: { text: string; width: number; runs?: DesignTextRun[] 
     baselineY: i * lineHeightPx + lineHeightPx * 0.8,
     height: lineHeightPx,
     ...(r.runs ? { runs: r.runs } : {}),
+    ...(r.wordDivided ? { wordDivided: r.wordDivided } : {}),
   }));
 }
 
@@ -897,8 +907,9 @@ function layoutText(
   hyphenate: boolean | undefined,
 ): TextMeasurement {
   if (maxContentWidth !== undefined && overflow === 'wrap') {
-    const lines = wrapToWidth(text, measure, maxContentWidth, hyphenate ?? false);
-    const wrapped = stackLines(lines.map((t) => ({ text: t, width: measure(t) })), lineHeightPx);
+    const cuts: Parameters<typeof wrapToWidth>[4] = [];
+    const lines = wrapToWidth(text, measure, maxContentWidth, hyphenate ?? false, cuts);
+    const wrapped = stackLines(lines.map((t, i) => ({ text: t, width: measure(t), ...(cuts[i] ? { wordDivided: cuts[i] } : {}) })), lineHeightPx);
     const w = wrapped.reduce((m, l) => Math.max(m, l.width), 0);
     return {
       lines: wrapped,
@@ -1007,7 +1018,7 @@ function layoutCjkRows(
   seamsOf: (a: number, b: number) => number[] = () => [],
 ): TextMeasurement | undefined {
   const wrap = overflow === 'wrap' && maxContentWidth !== undefined;
-  const rows: { text: string; width: number; runs?: DesignTextRun[]; xOffset?: number }[] = [];
+  const rows: { text: string; width: number; runs?: DesignTextRun[]; xOffset?: number; wordDivided?: 'syllable' | 'character' }[] = [];
   let truncated = false;
   // A line wider than the room of a text that does not wrap: clipped, or
   // left to the ellipsis of the plain path.
@@ -1025,7 +1036,10 @@ function layoutCjkRows(
       for (const l of lines) rows.push({ text: l.text, width: l.width, ...(l.runs ? { runs: l.runs } : {}), ...(l.xOffset ? { xOffset: l.xOffset } : {}) });
     } else if (wrap) {
       if (richM) rows.push(...wrapRich(richM, start, end, () => maxContentWidth, hyphenate ?? false));
-      else for (const t of wrapToWidth(row, measure, maxContentWidth, hyphenate ?? false)) rows.push({ text: t, width: measure(t) });
+      else {
+        const cuts: Parameters<typeof wrapToWidth>[4] = [];
+        wrapToWidth(row, measure, maxContentWidth, hyphenate ?? false, cuts).forEach((t, i) => rows.push({ text: t, width: measure(t), ...(cuts[i] ? { wordDivided: cuts[i] } : {}) }));
+      }
     } else {
       const line = richM ? richM.rangeLine(start, end) : { text: row, width: measure(row) };
       if (tooWide(line.width)) {
@@ -1539,7 +1553,7 @@ function syllableFill(line: string, word: string, measure: TextMeasure, maxWidth
  *  (`widthFor(lineIndex)`), preserving existing line breaks. With `fill`
  *  (a justified text that hyphenates), a word that does not fit the rest
  *  of a line is cut at its last syllable break that does. */
-function wrapWithWidths(text: string, measure: TextMeasure, widthFor: (i: number) => number, hyphenate: boolean, startLine = 0, fill = false): string[] {
+function wrapWithWidths(text: string, measure: TextMeasure, widthFor: (i: number) => number, hyphenate: boolean, startLine = 0, fill = false, cuts?: ('syllable' | 'character' | undefined)[]): string[] {
   const out: string[] = [];
   let i = startLine;
   for (const para of text.split('\n')) {
@@ -1559,6 +1573,7 @@ function wrapWithWidths(text: string, measure: TextMeasure, widthFor: (i: number
           const split = breakWordWithHyphenation(remaining, measure, maxWidth, hyphenate);
           if (!split || split.head.length === 0) { current = remaining; break; }
           current = split.head; flush();
+          if (cuts) cuts[out.length - 1] = split.divided;
           remaining = split.tail;
         }
       } else {
@@ -1579,6 +1594,7 @@ function wrapWithWidths(text: string, measure: TextMeasure, widthFor: (i: number
             const split = breakWordWithHyphenation(remaining, measure, maxWidth, hyphenate);
             if (!split || split.head.length === 0) { current = remaining; break; }
             current = split.head; flush();
+            if (cuts) cuts[out.length - 1] = split.divided;
             remaining = split.tail;
           }
         }
@@ -1846,9 +1862,10 @@ function layoutTextElement(
         }
         return;
       }
-      const lines: { text: string; width: number; runs?: DesignTextRun[]; wordSpacingPx?: number }[] = richM
+      const cuts: ('syllable' | 'character' | undefined)[] = [];
+      const lines: { text: string; width: number; runs?: DesignTextRun[]; wordSpacingPx?: number; wordDivided?: 'syllable' | 'character' }[] = richM
         ? wrapRich(richM, paraRanges[p]![0], paraRanges[p]![1], (i) => maxW - offsetOf(i), el.hyphenate ?? false, fill)
-        : wrapWithWidths(para, measure, (i) => maxW - offsetOf(i), el.hyphenate ?? false, 0, fill).map((t) => ({ text: t, width: measure(t) }));
+        : wrapWithWidths(para, measure, (i) => maxW - offsetOf(i), el.hyphenate ?? false, 0, fill, cuts).map((t, i) => ({ text: t, width: measure(t), ...(cuts[i] ? { wordDivided: cuts[i] } : {}) }));
       lines.forEach((l, i) => {
         // The last line of a paragraph is set flush left. The others are
         // stretched until their last glyph ends on the edge: the tracking
@@ -1865,6 +1882,7 @@ function layoutTextElement(
           height: lineHeightPx,
           ...(line.runs ? { runs: line.runs } : {}),
           ...(line.wordSpacingPx !== undefined ? { wordSpacingPx: line.wordSpacingPx } : {}),
+          ...(l.wordDivided ? { wordDivided: l.wordDivided } : {}),
         });
         lineNo++;
       });
@@ -2074,7 +2092,10 @@ function repeatLine(m: TextMeasurement, room: number, gap: number, count: number
  * rows line up, as an entry row's are (`pipeline/toc.ts`). The text before
  * the mark gives way when the line is short of room (cut by the element's
  * `overflow`, `'ellipsis-end'` for a wrapping one); fewer than three
- * repeats, or a leader turned off, leave the room blank.
+ * repeats, or a leader turned off, leave the room blank. A `{leader}`
+ * alone keeps `gap` at both ends (#1121): its element sits between a title
+ * and a page number set in elements of their own. The dots take the
+ * leader's own colour and face when the contents give it one.
  */
 function layoutLeaderTextElement(
   el: ResolvedDesignTextElement,
@@ -2109,13 +2130,29 @@ function layoutLeaderTextElement(
     : undefined);
   const tail = part(after, room);
   const tailW = tail?.lines[0]?.width ?? 0;
-  const gaps = (before ? gap : 0) + (after ? gap : 0);
+  // A `{leader}` alone in its element (#1121) stands between two other
+  // elements, a title and a page number set apart: `gap` from either.
+  const lone = !before && !after;
+  const gapBefore = before || lone ? gap : 0;
+  const gapAfter = after || lone ? gap : 0;
+  const gaps = gapBefore + gapAfter;
   const head = part(before, room - tailW - gaps);
   const headW = head?.lines[0]?.width ?? 0;
   const free = Math.max(0, room - headW - tailW - gaps);
   const tracking = row.letterSpacingPx;
+  // The dots in a face of their own (#1121): the element's, with the
+  // leader's family, size (`em` of the element's) and weight over it.
+  const ownFace = leader.fontFamily !== undefined || leader.fontSize !== undefined || leader.fontWeight !== undefined;
+  const dotsFont = ownFace
+    ? buildFontString(
+      leader.fontFamily ?? el.fontFamily,
+      leader.fontSize ? dimPx(leader.fontSize, dpi, fontSizePx) : fontSizePx,
+      (leader.fontWeight ?? el.fontWeight).toString(),
+      el.italic ? 'italic' : 'normal',
+    )
+    : row.fontString;
   const dots = leader.enabled
-    ? fitLeader(leader.char, free, (t) => Math.max(0, flowTextWidth(t, row.fontString) + tracking * graphemeCount(t)))
+    ? fitLeader(leader.char, free, (t) => Math.max(0, flowTextWidth(t, dotsFont) + tracking * graphemeCount(t)))
     : null;
   const runsOf = (p: ResolvedTextPrimitive | undefined): { runs: DesignTextRun[]; order?: number[] } => {
     const line = p?.lines[0];
@@ -2127,9 +2164,9 @@ function layoutLeaderTextElement(
   // The leader: blank room, the run, the gap before the text after it. A
   // blank run is a box as wide as its room (`inkOffset` 0).
   const blank = (width: number): DesignTextRun => ({ text: '', fontString: row.fontString, width, inkOffset: 0, leader: true });
-  const fill = blank((before ? gap : 0) + free - (dots?.width ?? 0));
+  const fill = blank(gapBefore + free - (dots?.width ?? 0));
   const middle: DesignTextRun[] = dots
-    ? [fill, { text: dots.text, fontString: row.fontString, width: dots.width, leader: true }, blank(after ? gap : 0)]
+    ? [fill, { text: dots.text, fontString: dotsFont, width: dots.width, leader: true, ...(leader.color ? { color: leader.color } : {}) }, blank(gapAfter)]
     : [blank(room - headW - tailW)];
   const runs = [...h.runs, ...middle, ...t.runs];
   // Paint order: the text before the mark at the line's start, which is on

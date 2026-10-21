@@ -91,9 +91,22 @@ geometry, media and scan pages, and names the next command.
    `bodyBackground`, `bodyAlternateBackground`), which go in the table's
    style, not in the cells. Postext has no per-cell borders: a rule pattern
    no preset draws gets a note naming the nearest one. `--full` prints all
-   of it as JSON, `--plain` the text only. Add merges (colSpan/rowSpan +
-   hiddenBy) and header rows by hand. Merge tables continued over pages
-   ("(cont.)"), dropping the repeated header.
+   of it as JSON, `--plain` the text only. Merged cells come back as
+   `colSpan` / `rowSpan` with `hiddenBy` on the cells they cover. A first
+   row over every column that starts with a caption label ("Tabla 2.
+   Valores normales") is taken out as the table's `label` and `caption`;
+   any other row over every column is a group band, centred, with its fill
+   as its `background`. The header rows are counted from the look (rows
+   set wholly in bold, or with a fill of their own; `--header-rows N`
+   overrides it), and a body row whose cells all hold the same number of
+   lines, two rows with no rule between them, is split again. Merge tables
+   continued over pages ("(cont.)"), dropping the repeated header.
+   `pdf_extract.py markdown` does this itself for ruled tables: their
+   lines leave the paragraphs, and each table becomes a `kind: "table"`
+   resource set where it stood (its title row as the caption), or the
+   model of the nearest table caption stub of its page; the style hint is
+   in `source.tableStyle`, for the table's entry in `tableStyles`.
+   `--no-tables` keeps them as text.
 6. Read every chapter against the page images and correct it. The extractor
    gives a draft; the curated Markdown is the product.
 7. A printed back-of-book index (`inventory.py` lists `index_pages`): once
@@ -111,8 +124,10 @@ Gotchas:
 - **Symbol fonts** (Symbol, Wingdings, Zapf Dingbats, private-use code
   points): map the characters to Unicode (⇌ ≤ α → •). Skip decorative
   bullets.
-- **Small caps** extract as lower case: restore roman numerals ("xix" → "XIX")
-  and acronyms.
+- **Small caps** extract as lower case: a numeral or an acronym the source
+  prints in small capitals goes back into `:smallcaps[…]` in lower case
+  (`siglo :smallcaps[xix]`, playbooks B8a); one printed in full capitals
+  is written in capitals ("xix" → "XIX").
 - **Tabbed lines** (a menu, a cast list, a price list, marks at the margin):
   the extractor joins the parts with a space and drops the dot leader, or
   keeps the dots as text. Delete typed leaders, write `:tab` between the

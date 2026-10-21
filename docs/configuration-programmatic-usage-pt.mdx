@@ -280,6 +280,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>A imagem é impressa na largura da coluna. Uma imagem no fluxo nunca é mais larga que a coluna e a página padrão tem duas (<code>layout.layoutType: 'double'</code>): componha a página numa coluna, faça a imagem flutuar sobre toda a página (<code>placement.span: 'page'</code>) ou aumente a resolução se esse for o tamanho desejado.</td>
     </tr>
     <tr>
+      <td><code>emptyCaption</code></td>
+      <td>Um recurso de um tipo com prefixo de legenda não tem legenda própria, então a linha da legenda imprime só o rótulo e o número. <code>resourceId</code> o nomeia, <code>label</code> é a linha impressa. Informativo: avisado uma vez por recurso, no parágrafo que o cita ou na sua inserção. Desde o postext 1.52.</td>
+      <td>O rótulo é impresso. Escreva a legenda, ou deixe o rótulo sozinho se a intenção é uma prancha numerada.</td>
+    </tr>
+    <tr>
+      <td><code>resourceMoved</code></td>
+      <td>Um recurso posto no texto (<code>position: 'here'</code>) era mais alto que o espaço que restava na coluna e passou inteiro para a seguinte. <code>resourceId</code> o nomeia, <code>emptyPx</code> e <code>emptyMm</code> dão o espaço que ficou vazio, <code>pageIndex</code> a página. Avisado quando esse espaço tem duas linhas da grade do texto ou mais; uma imagem com contorno de texto o diz com <code>textWrap</code> <code>'moved'</code>. Aponta para a inserção. Desde o postext 1.52.</td>
+      <td>O recurso fica no alto da coluna seguinte. Diminua-o, mova a linha <code>::resource</code> ou faça-o flutuar (<code>placement.position: 'auto'</code>).</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>Um recurso ou boxe com o texto contornando-o (<code>placement.wrap</code>, o <code>wrap</code> de um boxe) que não é composto como pedido. <code>reason</code>: <code>'tooNarrow'</code> (o texto ao lado ficaria mais estreito que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (é mais baixo que <code>layout.wrap.minLinesBeside</code> linhas), <code>'moved'</code> (um em linha alto demais para o espaço que resta na coluna passou para a seguinte, com a âncora), <code>'verticalText'</code> ou <code>'noContour'</code> (um contorno pela forma de uma imagem cuja forma é desconhecida: um SVG sem <code>contour.points</code>, um bitmap sem transparência ou um canal alfa que o hospedeiro não traçou). <code>resourceId</code> identifica um recurso, <code>box</code> o estilo de um boxe. Aponta para a inserção ou o boxe.</td>
       <td>O elemento ocupa a faixa inteira, ou fica na coluna seguinte, conforme o motivo; com <code>'noContour'</code> o texto contorna a caixa da imagem. Dê à imagem um polígono, use um PNG com transparência ou leia a imagem com <code>readBundle</code> ou com o Sandbox, que fazem o traçado.</td>
@@ -332,7 +342,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
   </tbody>
 </table>
 
-A tabela lista os tipos que qualquer documento pode gerar. Os tipos próprios de uma funcionalidade são descritos junto com ela: os de quadrinhos (`comicPanelCount`, `comicBalloonOverflow`…) na página [Quadrinhos](/pt/docs/comics), os de vídeos (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) em [Imagens, tabelas e vídeos](/pt/docs/document-format-resources), os de citações e do índice remissivo (`unknownCitationKey`, `referencesUnreadable`, `indexMark`…) em [Notas e referências](/pt/docs/document-format-notes-references), os de texto chinês, japonês e árabe (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading`…) nas páginas dessas escritas, e os do quebrador de linhas (`raggedLine`, `unbreakableWordOverflow`) em [Hifenização e justificação](/pt/docs/justification).
+A tabela lista os tipos que qualquer documento pode gerar. Os tipos próprios de uma funcionalidade são descritos junto com ela: os de quadrinhos (`comicPanelCount`, `comicBalloonOverflow`…) na página [Quadrinhos](/pt/docs/comics), os de vídeos (`videoWithoutUrl`, `videoUrlInvalid`, `videoWithoutPoster`) em [Imagens, tabelas e vídeos](/pt/docs/document-format-resources), os de citações e do índice remissivo (`unknownCitationKey`, `referencesUnreadable`, `indexMark`…) em [Notas e referências](/pt/docs/document-format-notes-references), os de texto chinês, japonês e árabe (`cjkLooseLine`, `rubyExceedsLeading`, `arabicMarksExceedLeading`…) nas páginas dessas escritas, e os do quebrador de linhas (`raggedLine`, `unbreakableWordOverflow`, `wordDividedByCharacter`, `wordDividedBySyllable`) em [Hifenização e justificação](/pt/docs/justification).
 
 Os avisos sobre um recurso (o estilo de tabela, a grade, uma referência dentro da legenda, da nota ou das células) apontam para a primeira inserção ou referência do recurso no texto, e cada um aparece uma vez por recurso. Só são verificados os recursos que o documento usa: um capítulo de um livro sinaliza as tabelas que cita, não todas as tabelas do livro.
 

@@ -697,7 +697,12 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
     frames its chain continues into right after it. A piece sent to a
     repeating grid's frame is an item whose frames are instances (`foto[2]`,
     `pie[2]`); the frames of a `:::module` are scoped by its instance
-    (`arbol[1].raiz`, `ramas.izq`). None when the template is unknown."""
+    (`arbol[1].raiz`, `ramas.izq`). An empty fence of a frame with a
+    `style` (a box whose words all went to frames of their own) reads where
+    the fence lies, as the engine reads it (postext#1116: its box and
+    tab are drawn there); the frames its chain continues into hold nothing
+    and are left out. An empty fence of a frame with no style draws
+    nothing, so it is left out too. None when the template is unknown."""
     tid = fence.get("template") or ""
     frames = resolve_frames(templates, tid)
     if frames is None:
@@ -706,15 +711,21 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
     page = _Level(frames, template_groups(templates, tid), "", None, order)
     has_modules = any(g.get("modules") is True for g in template_groups(templates, tid))
     instances = iter(module_instances(fence["items"]))
-    # an empty fence (a box whose words all went to frames of their own) has nothing to
-    # read: the HTML lays its frame where it likes, so it is left out of the order
     empty: set[str] = set()
+
+    def read_empty(level: _Level, it: dict, n: int) -> None:
+        # what an empty fence added past its styled head holds nothing
+        added = order[n:]
+        slot = it.get("slot")
+        styled = slot in level.names and bool(level.by_name[slot].get("style"))
+        empty.update(added[1:] if styled else added)
+
     for it in fence["items"]:
         if it.get("kind") != "module":
             n = len(order)
             page.piece(it)
             if it.get("empty"):
-                empty.update(order[n:])
+                read_empty(page, it, n)
             continue
         inst = next(instances)
         mt = it.get("template") or ""
@@ -728,7 +739,7 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
             n = len(order)
             mod.piece(sub)
             if sub.get("empty"):
-                empty.update(order[n:])
+                read_empty(mod, sub, n)
     return [x for x in order if x not in empty]
 
 
@@ -823,6 +834,9 @@ FAIL_KINDS = {
     "repeatOverflow", "moduleUnknown", "moduleAsPage", "moduleNested", "moduleNameRejected",
     # a misspelt setting or a value the engine does not take: the setting changes nothing on the page
     "unknownConfigKey", "unknownConfigValue",
+    # postext 1.52: a word wider than its whole line (a narrow frame), cut between two letters with no
+    # hyphen ("CL" | "IMA"). The cut at a syllable (wordDividedBySyllable) is a note (severity info).
+    "wordDividedByCharacter",
 }
 # postext 1.48: a frame under another frame, or past the trim, the bleed or the frame it is anchored
 # inside. Both fail unless the project records the pair as meant (composed-check.json, below); a frame

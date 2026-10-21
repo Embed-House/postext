@@ -37,7 +37,12 @@ Fix every ERROR. Common ones:
 - `postext check` reports `unknownConfigKey` (with `suggestion`) only in `headings` (its `balancing` and
   `levels[]`), `headingStyles[]`, `paragraphStyles[]` (and the same under `htmlViewer.overrides`), tab stops,
   drop caps (and `leadIn`), `lineNumbers`, `canvasViewer`, `checks` (and `contentInConfig`), `codeStyle` (its
-  `tokens` and `inline`), `comics`, `pageTemplates` and `labelStyles`.
+  `tokens` and `inline`), `comics`, `pageTemplates` and `labelStyles`. Since postext#1122 it also reports the
+  top-level keys of the config (and of `htmlViewer.overrides`), every design element's keys by its `kind`
+  (running heads, decorations, heading and part designs: text, rule, box, image, path, connector, a `remove`
+  entry), a connector's `from`/`to` ends, the `placement` of an element, a frame or a group (its `anchor`,
+  `offset`, `size` and a `{to, edge}` size) and a decoration's own keys: a group's `size` written beside its
+  `placement` is `/pageTemplates/0/groups/0/size`.
 - `lint_project.py` checks the top-level keys (`bodyTex`, `pageTemplate` are reported), and the keys of `folio`,
   `comics`, `lineNumbers`, `codeStyle`, tab stops and drop caps.
 - Nothing checks the keys inside `page`, `layout`, `bodyText`, `tableStyle(s)`, `captionStyle`, `diagramStyle`,
@@ -361,6 +366,12 @@ those lines, or run the script.
   `layout.layoutType: 'single'`, `placement: { position: 'top', span: 'page' }` or a composed-page frame
   (a picture in the flow is never wider than its column, and a config without `layout` has two). Treat it as a
   real finding when `resolution` came from the source's print size.
+- `note emptyCaption` (postext ≥ 1.52): a figure or table prints its label and number alone ("Figure 1.2.")
+  because its `caption` is empty. Right for a numbered plate; otherwise the port lost the caption: read it from
+  the source. `WARN resourceMoved` (≥ 1.52): a `position: 'here'` figure too tall for the room left in its
+  column moved on and left `emptyMm` mm empty on that page (`data.emptyMm` in `--json`); compare with the
+  source page, and float it (`position: 'auto'`), narrow it or move its `::resource` line when the source has
+  text there.
 - `WARN unknownMarkStyle` (postext ≥ 1.34.1): `:mark[…]{style}` names no `markStyles` id; the first style is
   used. `WARN comicPanelFrame` (postext ≥ 1.38): `unknownBox` (`box` names no callout style), `textOverflow`
   (a `::panel{text}` body is taller than its frame, `overflowMm`), `strip`/`spread` (raised
@@ -414,8 +425,9 @@ those lines, or run the script.
   laid out, as in the Sandbox, with the postext 1.4 rules the line names
   (heading breaks, formula size, space around inline resources, plain
   headings, drop-cap sizes, room under a colon line, box cuts, breaks at dashes, breaks at
-  compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers).
-  Set `"configVersion": 15` and check the pages again when the config is meant for today's rules.
+  compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers;
+  below 18, mark styles with no `borderRadius` rounded at 0.2em when the text has a `:mark`).
+  Set `"configVersion": 18` and check the pages again when the config is meant for today's rules.
 - Run each language (`--lang`).
 
 ## 3. Compare with the source, page by page

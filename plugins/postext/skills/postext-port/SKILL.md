@@ -183,7 +183,12 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   (`role: "module"`, `:::module`) stacked on a shell template, and a frame
   under another or past its box is reported (`frameCovered`,
   `frameOutsideArea`; `overlap: "allow"` when the source means it); from
-  1.49 lines end in rings or bars and can be translucent. Recipes 6.12–6.18
+  1.49 lines end in rings or bars and can be translucent; from 1.52 a tab
+  has corners of its own (`label.borderRadius`), a box holding pictures and
+  their captions grows with them (`growWith: "children"`) and a transparent
+  cut-out covers only where its shape is. Captions: Markdown in the frame by
+  default, the picture's resource caption when the source sets it small and
+  attached to the picture (composed-pages.md §6.5). Recipes 6.12–6.18
   of the reference say when to use each. Follow
   [references/composed-pages.md](references/composed-pages.md). The script
   lists what the installed version lacks and what to do instead. To a person
@@ -652,8 +657,10 @@ Pick the path per [sources.md](references/sources.md):
   Cut the figures with
   `scripts/pdf_figures.py stubs source.pdf draft/resources.json --out-dir my-book/resources`,
   and the tables with `scripts/extract_tables.py source.pdf --pages N` (cells
-  with their align, bold and fills; the rules as the nearest table-style
-  preset, never per cell).
+  with their align, bold and fills, merges, title row as caption, group
+  bands; the rules as the nearest table-style preset, never per cell).
+  `pdf_extract.py` already sets ruled tables as table resources with their
+  models (sources.md, PDF step 5).
 - **DOCX / PPTX / ODT / EPUB / HTML / LaTeX / Markdown / JATS / DocBook**:
   `scripts/pandoc_to_postext.py SOURCE --dump-styles`, then
   `scripts/pandoc_to_postext.py SOURCE --out draft --lang es --style-map map.json --link-refs`.
@@ -703,10 +710,17 @@ Pick the path per [sources.md](references/sources.md):
   `--raster-ground` for the round-1 JPEG; a one-page run names its frames by
   role itself, `--name-frames`; art no pixel of its colour shows is left out,
   a cut keeps only its picture, plates whose fill shows over a picture lie over
-  it, captions in columns under a box's pictures are a frame each, ornaments
+  it, captions in columns under a box's pictures are a frame each (the box
+  `growWith: "children"`), a small caption attached to its picture its
+  resource caption, ornaments
   by a running head are anchored to it; a box with art over its fill gets the
   fill as decoration under that art, bars under 1 mm are lines, a picture in
-  a rounded box is clipped to its corners),
+  a rounded box is clipped to its corners, a chart keeps its axes and its
+  lettering in its cut and lifts no labels, connector ends are measured on
+  the boxes the template lays and a slanted leader points into its picture,
+  art is read inside the clips it is painted in, hatching is one shape, and
+  a page whose loose art vectors would draw badly keeps it in its raster
+  ground unless `--vector-ground`),
   `scripts/template_dedupe.py work/regions --laid laid.json` (one template per kind
   of page, `extends` children, merged styles and grounds, frames on a lattice
   as a repeating grid (cards that differ only in colour too, each naming a look from
@@ -723,7 +737,10 @@ Pick the path per [sources.md](references/sources.md):
   editions' `::label` lines from a strings file (`--strings en=en.json`); it
   merges a label printed twice at one point and writes `overlap: "allow"`
   for names the source prints touching, and `scripts/pdf_figures.py symbols`
-  lists a map's dots as `avoid` zones. Close the draft with
+  lists a map's dots as `avoid` zones. A key of symbols and words (a map's
+  colours, a weather map's fronts) comes out as a `kind: "legend"` label on
+  its picture, or a key table in a frame when it stands alone
+  (`scripts/legends.py`, composed-pages.md §6.14). Close the draft with
   `scripts/composed_check.py check work/regions --json-out work/check.json`
   (0 overlaps) and `scripts/compare_pages.py … --score work/score.json
   --check work/check.json` (composed-pages.md §3.7, §6.18).

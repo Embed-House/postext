@@ -727,6 +727,17 @@ class CurationTest(unittest.TestCase):
         self.assertEqual(style["body"]["textAlign"], "center")
         self.assertNotIn('style="centred"', self.md.split(f'slot="{caps[0]["name"]}"', 1)[1].split(":::\n", 1)[0])
 
+    def test_a_box_holding_captions_grows_with_them(self):
+        # a longer caption in another edition makes the box taller (postext#1117)
+        holder = self.named("box", lambda f: f["box"][1] > 160)[0]
+        self.assertEqual(self.frames[holder["name"]].get("growWith"), "children")
+        # its photos hang from its top, so they and their captions are what it grows with
+        for p in self.named("picture", lambda f: f["box"][1] > 160):
+            self.assertEqual(self.frames[p["name"]]["placement"]["anchor"]["to"], f'#{holder["name"]}')
+        # a box with no captions of its own does not
+        note = self.named("box", lambda f: "short note" in f["text"])[0]
+        self.assertNotIn("growWith", self.frames[note["name"]])
+
     def test_the_chevrons_are_anchored_to_the_running_head(self):
         els = self.t["decoration"]["elements"]
         head = next(e for e in els if e.get("content") == "{attr.head}")

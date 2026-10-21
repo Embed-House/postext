@@ -166,6 +166,8 @@ export function expandRepeats(template: ResolvedPageTemplate, items: ReadonlyMap
           if (inSet.has(f.next)) out.next = repeatInstanceName(f.next, item);
           else delete out.next;
         }
+        // A box of the set grows with its own item's frames (#1117).
+        if (Array.isArray(f.growWith)) out.growWith = f.growWith.map((n) => (inSet.has(n) ? repeatInstanceName(n, item) : n));
         const to = f.overflow.continueIn;
         if (typeof to === 'string' && to.startsWith('#')) {
           const frame = to.slice(1);

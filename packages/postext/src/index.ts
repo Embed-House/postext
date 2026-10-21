@@ -34,7 +34,7 @@ export {
   printLuminance,
   printSeparation,
 } from './contrast';
-export type { ContrastIssue, ContrastKind, ContrastMedium, ContrastOptions, ContrastPair, ContrastRole, PrintContrastContext, ReversedTextReason } from './contrast';
+export type { ContrastAccepted, ContrastIssue, ContrastKind, ContrastMedium, ContrastOptions, ContrastPair, ContrastRole, PrintContrastContext, ReversedTextReason } from './contrast';
 export { bitmapResolutionFor, effectiveBitmapResolution, bitmapLayoutSize, isPlaceholderResolution } from './bitmapResolution';
 export { bitmapResolutionOf } from './defaults/layout';
 export { bitmapInfo, bitmapSize } from './bundle';
@@ -156,6 +156,7 @@ export type {
   ResolvedIndexConfig,
   OutlineIndexMark,
   TocLevelConfig,
+  TocLeaderFaceConfig,
   TocEntryStyleConfig,
   ResolvedTocConfig,
   ResolvedTocLevelConfig,
@@ -446,6 +447,7 @@ export type {
   ContrastReversedTextConfig,
   ResolvedContrastReversedTextConfig,
   ContrastConfig,
+  ContrastAllowEntry,
   ResolvedContrastConfig,
   ChecksConfig,
   ResolvedChecksConfig,
@@ -711,6 +713,8 @@ export type { ComposedPageReflow, FrameMotion } from './composed/reflowLog';
 // without laying a page out (the Sandbox's template thumbnails, #864).
 export { frameOrder, framePlaceable, groupPlaceable, placeBox as placeFrameBox, unionRect as frameUnionRect } from './composed/geometry';
 export type { FrameAreas, FrameGeometryContext, Rect as FrameRect } from './composed/geometry';
+export { growMembers } from './composed/grow';
+export type { GrowMembers } from './composed/grow';
 // The source map of a laid-out document and the stable ids of a composed
 // page's elements (#857).
 export { sourceAt, elementsForSource, findElement } from './composed/sourceMap';
@@ -730,7 +734,8 @@ export type { DesignTextVerdict } from './configWarnings';
 export type { ConfigWarningOptions } from './configWarnings';
 export { configDesignSlots } from './design/slots';
 // Decoration drawn when the page fence says so (#1087).
-export { fenceSetsAttribute, fenceConditionMet, fenceConditionUses, fenceConditionsNeverMet, fenceAttributesSet, FENCE_CONDITION_SLOTS } from './design/fenceCondition';
+export { fenceSetsAttribute, fenceConditionMet, fenceConditionUses, fenceConditionsNeverMet, fenceAttributesSet, FENCE_CONDITION_SLOTS, attrPlaceholderUses, attrPlaceholdersNeverSet, markdownAttributesSet } from './design/fenceCondition';
+export type { AttrPlaceholderUse } from './design/fenceCondition';
 export type { FenceConditionUse } from './design/fenceCondition';
 export { parseDirectiveAttrs } from './parse/attrs';
 // «Move the text to the Markdown» (#874): page designs held in heading

@@ -265,7 +265,9 @@ export function renderTextBlock(
         // empty `/ActualText`, as an entry row's is; the row's text goes on
         // after it.
         if (mark) tagArtifact(ctx, { type: 'Layout' });
-        if (run.text) drawTextPx(ctx, run.text, gx, y, runFont, runSize, color, outline, '');
+        // In a colour of its own when the contents give it one (#1121).
+        const runColor = run.color ? colorFromHex(run.color, ctx.colorSpace) : color;
+        if (run.text) drawTextPx(ctx, run.text, gx, y, runFont, runSize, runColor, outline, '');
         if (mark) tagSlotText(ctx, mark, block);
       } else drawTextPx(ctx, run.text, gx, y, runFont, runSize, color, outline, actualText, segmentOrientation(run));
       x += run.width;

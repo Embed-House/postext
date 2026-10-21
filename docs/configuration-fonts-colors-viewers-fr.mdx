@@ -793,6 +793,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -813,10 +814,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Le texte en défonce plus petit que cette taille est signalé.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>Même chose pour l’italique et les graisses maigres, dont les traits sont plus fins.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Une graisse égale ou inférieure à celle-ci compte comme maigre.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Les paires de couleurs que la vérification accepte, chacune avec sa <code>reason</code> : par la couleur du texte (<code>fg</code>) et celle du fond (<code>bg</code>), par le <code>style</code> dans lequel le texte est composé, ou les deux. Voir [Paires acceptées](#paires-acceptées).</td></tr>
   </tbody>
 </table>
 
 Un `level` ou un `mode` écrit autrement se lit comme la valeur par défaut et est signalé comme valeur de réglage inconnue (voir [Avertissements de configuration](#avertissements-de-configuration)).
+
+### Paires acceptées
+
+Un portage garde la palette de l’original, et certaines de ses paires passent sous le seuil : une teinte pâle derrière le texte d’un encadré, une couleur de marque dans un titre courant. `allow` les accepte sans couper la vérification (depuis postext 1.52). Une entrée nomme la couleur du texte `fg` et celle du fond `bg` (en hexadécimal, telles que la configuration les écrit ou telles qu’elles sont peintes), ou un `style` : l’id d’un style d’encadré (`calloutStyles`, ou le `style` d’un bloc de page composée), d’un style de paragraphe, de titre, de pastille ou d’étiquette de figure. Tous les champs que donne une entrée doivent correspondre : `{ style: 'note', fg: '#7a8a99' }` accepte ce gris dans les encadrés `note` seulement. Une entrée qui ne donne aucun des trois ne correspond à rien.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: "L'ocre de l'éditeur pour les titres courants" },
+    { style: 'note-marge', reason: "L'original compose ses notes marginales en gris clair" },
+  ],
+}
+```
+
+Une paire acceptée reste signalée : chaque résultat qui lui correspond porte `accepted` (la `reason` de l’entrée, avec son `fg`, son `bg` et son `style`), et les résultats acceptés viennent après les autres. Le Sandbox les liste dans Vérifications, sous Paires de contraste acceptées, avec la raison, et ne les compte pas ; `postext check` les imprime comme des notes, qui ne font pas échouer `--strict`. Les mêmes couleurs hors de ce que l’entrée nomme restent un avertissement.
 
 ### Seuils
 

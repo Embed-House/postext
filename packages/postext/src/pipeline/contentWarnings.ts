@@ -615,7 +615,16 @@ export function raggedLineWarnings(doc: VDTDocument): ContentWarning[] {
   return out;
 }
 
-/** An `unbreakableWordOverflow` warning for each line holding a word of a
+/** The warning of a word cut to fit its line (#1150), by how it was cut. */
+function dividedKind(cut: 'syllable' | 'character' | undefined): 'wordDividedByCharacter' | 'wordDividedBySyllable' | undefined {
+  return cut === 'character' ? 'wordDividedByCharacter' : cut === 'syllable' ? 'wordDividedBySyllable' : undefined;
+}
+
+/** A `wordDividedByCharacter` warning (a `wordDividedBySyllable` note) for
+ *  each line ending in a piece of a word wider than its whole measure that
+ *  the breaker cut to fit (`VDTLine.wordDivided`, #1150), in the flow, a
+ *  composed page's frames and design texts alike. And an
+ *  `unbreakableWordOverflow` warning for each line holding a word of a
  *  joining script wider than the line (`VDTLine.wordOverflow`), on the page
  *  it was placed on; and once per text for a design text line that does
  *  (`VDTDesignTextLine.wordOverflow`: a running head repeats it on every
@@ -627,10 +636,11 @@ export function wordOverflowWarnings(doc: VDTDocument): ContentWarning[] {
     for (const b of s?.blocks ?? []) {
       if (b.kind !== 'text') continue;
       for (const line of b.lines) {
-        if (!line.wordOverflow || seen.has(line.text)) continue;
-        seen.add(line.text);
+        const kind = line.wordOverflow ? 'unbreakableWordOverflow' : dividedKind(line.wordDivided);
+        if (!kind || seen.has(`${kind}\u0000${line.text}`)) continue;
+        seen.add(`${kind}\u0000${line.text}`);
         out.push({
-          kind: 'unbreakableWordOverflow',
+          kind,
           text: line.text,
           ...(b.sourceStart !== undefined ? { sourceStart: b.sourceStart } : {}),
           ...(b.sourceEnd !== undefined ? { sourceEnd: b.sourceEnd } : {}),
@@ -648,9 +658,10 @@ export function wordOverflowWarnings(doc: VDTDocument): ContentWarning[] {
   });
   for (const block of doc.blocks) {
     for (const line of block.lines) {
-      if (!line.wordOverflow) continue;
+      const kind = line.wordOverflow ? 'unbreakableWordOverflow' : dividedKind(line.wordDivided);
+      if (!kind) continue;
       out.push({
-        kind: 'unbreakableWordOverflow',
+        kind,
         text: line.text,
         ...(line.sourceStart !== undefined ? { sourceStart: line.sourceStart } : {}),
         ...(line.sourceEnd !== undefined ? { sourceEnd: line.sourceEnd } : {}),
@@ -817,6 +828,37 @@ export function pictureBelowPrintSizeWarnings(
         printWidthPx: Math.round(printWidthPx),
         widthPx: Math.round(widthPx),
         pageWidthPx: Math.round(pageWidthPx),
+        ...(range ? { sourceStart: range.start, sourceEnd: range.end } : {}),
+        pageIndex: page.index,
+      });
+    }
+  }
+  return out;
+}
+
+/** An `emptyCaption` warning (#1151) for each resource whose type gives a
+ *  caption prefix and whose own caption is empty: its caption line prints
+ *  the label and number alone. Once per resource, where it is first
+ *  placed (a page's columns, then its floats); `sourceRangeOf` gives the
+ *  range of the content block citing or embedding it. */
+export function emptyCaptionWarnings(
+  doc: VDTDocument,
+  sourceRangeOf?: (contentIndex: number) => { start: number; end: number } | undefined,
+): ContentWarning[] {
+  const out: ContentWarning[] = [];
+  const seen = new Set<string>();
+  for (const page of doc.pages) {
+    for (const block of [...page.columns.flatMap((c) => c.blocks), ...(page.floats ?? [])]) {
+      const rb = block.resourceBlock;
+      if (!rb || block.hidden || block.comic || seen.has(rb.resource.id)) continue;
+      if (rb.captionPrefix.trim().length === 0 || (rb.resource.caption ?? '').trim().length > 0) continue;
+      if (rb.captionLines.length === 0) continue;
+      seen.add(rb.resource.id);
+      const range = block.contentIndex !== undefined ? sourceRangeOf?.(block.contentIndex) : undefined;
+      out.push({
+        kind: 'emptyCaption',
+        resourceId: rb.resource.id,
+        label: rb.captionLines.map((l) => l.text).join(' ').replace(/\s+/g, ' ').trim(),
         ...(range ? { sourceStart: range.start, sourceEnd: range.end } : {}),
         pageIndex: page.index,
       });
@@ -1120,6 +1162,12 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     case 'unbreakableWordOverflow':
       text = `The line "${w.text}" holds an Arabic-script word wider than the line — such a word is never divided, so it runs past the measure`;
       break;
+    case 'wordDividedByCharacter':
+      text = `The line "${w.text}" ends in a word wider than the whole line, cut between two of its letters with no hyphen to fit — give the text more room or a smaller size`;
+      break;
+    case 'wordDividedBySyllable':
+      text = `The line "${w.text}" ends in a word wider than the whole line, divided at a syllable to fit`;
+      break;
     case 'joiningScriptLetterSpacing':
       text = `"${w.text}": its style sets letter-spacing, which Arabic-script words do not take (it breaks their joins) — they are set without it`;
       break;
@@ -1178,6 +1226,12 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     }
     case 'pictureBelowPrintSize':
       text = `The picture "${w.resourceId}" is set at ${Math.round(w.scale * 100)} % of its print size: its column is ${w.widthPx} px wide, the picture ${w.printWidthPx} px at its resolution, the text block ${w.pageWidthPx} px. A picture in the flow is never wider than its column, and the default page has two. Span the page (placement.span: 'page'), set the page in one column (layout.layoutType: 'single'), or give the picture a higher resolution if this size is the one you want`;
+      break;
+    case 'emptyCaption':
+      text = `The resource "${w.resourceId}" has no caption, so its caption line prints "${w.label}" alone — write its caption, or leave it as a numbered label if that is meant`;
+      break;
+    case 'resourceMoved':
+      text = `The resource "${w.resourceId}" set in the text is too tall for the room left in its column and moved on to the next, leaving ${w.emptyMm} mm of the column empty — make it smaller, move its ::resource line, or float it (placement.position: 'auto')`;
       break;
     case 'floatShrunk':
       text = w.overflowPx !== undefined
