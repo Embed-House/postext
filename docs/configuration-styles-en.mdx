@@ -552,6 +552,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>paddingY</code></td>
       <td>Room above and below, each in place of <code>paddingY</code>.</td>
     </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>How the band of a phrase that wraps onto another line is cut, as CSS <code>box-decoration-break</code>. <code>'slice'</code>: one band, square where the line breaks, with the padding and the rounded corners only at the phrase's true start and end. <code>'clone'</code>: each line piece gets a whole band, <code>paddingX</code> and the corners on both of its ends, for a heading set on a colour band cut per line. The layout is the same either way.</td>
+    </tr>
   </tbody>
 </table>
 

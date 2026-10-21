@@ -321,6 +321,7 @@ export type {
   ChipStyleConfig,
   ResolvedChipStyleConfig,
   MarkStyleConfig,
+  MarkDecorationBreak,
   ResolvedMarkStyleConfig,
   CalloutSpan,
   CalloutSideAtColumnEnd,

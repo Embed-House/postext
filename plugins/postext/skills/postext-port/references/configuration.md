@@ -1320,7 +1320,8 @@ style declares (`unknownMarkStyle`), takes the first style; declaring `markStyle
   background: ColorValue = #fff0a0 (palette-linkable), color?: ColorValue (the text's; reaches the whole word that
   holds glued punctuation), borderRadius = 0.2em (the phrase's two ends, clamped), paddingX = 0.15em (past the
   first and last letter, into the word spaces), paddingY = 0.05em, paddingTop?, paddingBottom? (each in place
-  of paddingY) }
+  of paddingY), decorationBreak = 'slice' | 'clone' (postext ≥ 1.52.0; 'clone' gives every line piece of a wrapped
+  phrase a whole band, paddingX and corners on both ends: a heading on a colour band cut per line) }
 ```
 The band takes no room: the lines break as they would without the mark, so marking a laid-out book moves no page.
 Port rule: one style per distinct highlight colour of the source, the highlight's text colour in the style's

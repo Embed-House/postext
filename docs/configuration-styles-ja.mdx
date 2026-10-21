@@ -552,6 +552,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>paddingY</code></td>
       <td>上と下の内側余白です。それぞれ<code>paddingY</code>の代わりになります。</td>
     </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>語句が次の行に送られたときの帯の切り方（CSS の <code>box-decoration-break</code> と同じ）。<code>'slice'</code>：一本の帯として改行位置で角を立てて切り、余白と丸い角は語句の本当の始まりと終わりにだけ付く。<code>'clone'</code>：各行の部分にそれぞれ完全な帯を付け、両端に <code>paddingX</code> と丸い角を付ける。行ごとに切った色帯の上に組む見出しに使う。どちらでも組版は変わらない。</td>
+    </tr>
   </tbody>
 </table>
 
