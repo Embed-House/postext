@@ -374,8 +374,15 @@ export function composedOrder(template: Pick<ResolvedPageTemplate, 'frames' | 'g
       const g = groupOf.get(name);
       return g ? `g:${g.name}` : `f:${name}`;
     }
-    const g = groups.get(name);
+    let g = groups.get(name);
     if (!g) return undefined;
+    // A modules group inside another (#1088) is laid with the one inside
+    // no other, which holds its modules' frames (#1095).
+    for (let hops = 0; g.modules && g.within !== undefined && hops < groups.size; hops++) {
+      const parent = groups.get(g.within);
+      if (!parent || !parent.modules) break;
+      g = parent;
+    }
     if (g.frames.some((m) => groupOf.get(m) === g)) return `g:${g.name}`;
     return undefined;
   };

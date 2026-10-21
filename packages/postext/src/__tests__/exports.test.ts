@@ -697,6 +697,7 @@ describe("package exports", () => {
       "isModuleTemplate",
       "expandModules",
       "moduleScoped",
+      "modulesGroupRoot",
       "validatePageTemplates",
       "altWithLabels",
       "labelPlainText",

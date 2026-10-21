@@ -89,10 +89,13 @@ export function expandModules(
 ): ResolvedPageTemplate {
   const group = page.groups.find((g) => g.modules && !g.within);
   if (!group || uses.length === 0) return page;
-  // The modules groups laid inside it (#1088): a module goes to the first
-  // that takes its template, else to the group itself.
-  const inner = page.groups.filter((g) => g.modules && g.within === group.name);
-  const nestedOf = (template: string): string | undefined => inner.find((g) => !g.templates || g.templates.includes(template))?.name;
+  // The modules groups laid inside it (#1088), at any depth (#1095): a
+  // module goes to the first that takes its template, else to the group
+  // itself. A group with groups inside it takes only the templates it
+  // names; one without, every template unless it names some.
+  const inner = page.groups.filter((g) => g.modules && g.within !== undefined && modulesGroupRoot(page.groups, g) === group.name);
+  const holds = new Set(inner.map((g) => g.within!));
+  const nestedOf = (template: string): string | undefined => inner.find((g) => (g.templates ? g.templates.includes(template) : !holds.has(g.name)))?.name;
   const taken = new Set<string>();
   const frames: ResolvedFrame[] = [];
   const groups: ResolvedFrameGroup[] = [];
@@ -158,6 +161,8 @@ export function expandModules(
       ...(flow ? { flow: scope(flow.name) } : {}),
       ...(Object.keys(takes).length > 0 ? { takes } : {}),
       ...(m.width !== undefined ? { width: m.width } : {}),
+      ...(m.grow !== undefined ? { grow: m.grow } : {}),
+      ...(m.shrink !== undefined ? { shrink: m.shrink } : {}),
       ...(nested !== undefined ? { nested } : {}),
     });
   }
@@ -177,6 +182,35 @@ export function expandModules(
     decorationPaths: [...page.decorationPaths, ...paths],
     modules,
   };
+}
+
+/** The modules group `g` lies in at the end of its `within` chain (#1088,
+ *  #1095): the one inside no other, `g` itself when it names none.
+ *  Undefined when the chain names a group that is no modules group of
+ *  `groups`, or comes back on itself. */
+export function modulesGroupRoot(groups: readonly Pick<ResolvedFrameGroup, 'name' | 'modules' | 'within'>[], g: Pick<ResolvedFrameGroup, 'name' | 'modules' | 'within'>): string | undefined {
+  const seen = new Set<string>([g.name]);
+  let at = g;
+  while (at.within !== undefined) {
+    const parent = groups.find((x) => x.name === at.within);
+    if (!parent || !parent.modules || seen.has(parent.name)) return undefined;
+    seen.add(parent.name);
+    at = parent;
+  }
+  return at.name;
+}
+/** The modules groups `nested` lies in (#1095), innermost first: `nested`
+ *  itself, then the group it lies `within`, and so on, the page's modules
+ *  group (the one inside no other) left out. */
+export function nestedChain(groups: readonly Pick<ResolvedFrameGroup, 'name' | 'within'>[], nested: string | undefined): string[] {
+  const out: string[] = [];
+  let at = nested !== undefined ? groups.find((g) => g.name === nested) : undefined;
+  while (at && at.within !== undefined && !out.includes(at.name)) {
+    out.push(at.name);
+    const parent = at.within;
+    at = groups.find((g) => g.name === parent);
+  }
+  return out;
 }
 
 /** The module a frame of an expanded template belongs to (#1062), with its

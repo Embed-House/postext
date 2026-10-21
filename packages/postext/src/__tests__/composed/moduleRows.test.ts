@@ -225,19 +225,25 @@ describe('modules groups configuration (#1088)', () => {
         { name: 'i', modules: true, templates: ['aviso'] },
         { name: 'j', frames: ['a'], within: 'g' },
         { name: 'k', modules: true, within: 'g', overflow: { continueIn: 'next-page' } },
+        // #1095: a loop of groups inside each other leads to no group.
+        { name: 'l', modules: true, within: 'm' },
+        { name: 'm', modules: true, within: 'l' },
       ],
     };
     const bad: PageTemplate = { ...NOTICE_MODULE, width: 'half' as never };
     const ws = validatePageTemplates({ ...ROWS_CONFIG, pageTemplates: [shell, bad] }).map((w) => [w.kind, w.path]);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/width']);
-    // Inside a row: only a stack holds groups.
-    expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/groups/1/within']);
+    // Inside a row (#1095): as inside a stack.
+    expect(ws).not.toContainEqual(['unknownConfigValue', '/pageTemplates/0/groups/1/within']);
+    expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/groups/5/within']);
+    expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/groups/6/within']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/groups/2/templates']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/groups/3/within']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/groups/4/overflow/continueIn']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/1/width']);
     const resolved = resolvePageTemplate({ pageTemplates: [shell, bad] }, 'shell')!;
-    expect(resolved.groups.find((g) => g.name === 'h')!.within).toBeUndefined();
+    expect(resolved.groups.find((g) => g.name === 'h')!.within).toBe('g');
+    expect(resolved.groups.find((g) => g.name === 'l')!.within).toBeUndefined();
     expect(resolvePageTemplate({ pageTemplates: [shell, bad] }, 'aviso')!.width).toBeUndefined();
   });
 

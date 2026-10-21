@@ -2,7 +2,7 @@
 // resolution, and the normalisation of frames, groups and label styles.
 // Pure; nothing here lays anything out (that is P4, #855).
 
-import { expandModules } from './modules';
+import { expandModules, modulesGroupRoot } from './modules';
 import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
 import type {
   FrameConfig,
@@ -236,7 +236,7 @@ interface Merged {
 
 /** The template-level keys a child or a variant inherits and overrides. */
 const SCALAR_KEYS = ['area', 'overflowTemplate', 'bodyStyle', 'palette', 'header', 'footer'] as const;
-const INHERITED_KEYS = ['spread', 'gutter', 'role', 'width'] as const;
+const INHERITED_KEYS = ['spread', 'gutter', 'role', 'width', 'grow', 'shrink'] as const;
 /** Frame fields merged key by key rather than replaced. */
 const MERGED_OBJECT_KEYS = new Set(['fit', 'overflow', 'padding', 'rules']);
 
@@ -411,6 +411,12 @@ export function moduleWidth(v: unknown): ModuleWidth | undefined {
   if (isRecord(v) && 'percent' in v) return finite(v.percent) && v.percent > 0 ? { percent: v.percent } : undefined;
   return dim(v);
 }
+/** A module's `grow` or `shrink` (#1095) the engine can use: a finite
+ *  number, 0 or more. */
+export function moduleFactor(v: unknown): number | undefined {
+  return finite(v) && v >= 0 ? v : undefined;
+}
+
 const nonNegative = (v: unknown, fallback: number): number => (finite(v) && v >= 0 ? v : fallback);
 
 /** A frame as the layout reads it: every default filled in, sizes read
@@ -959,6 +965,8 @@ export function resolveTemplateAt(
     role: typeof inherited.role === 'string' && inherited.role !== '' ? inherited.role : DEFAULT_PAGE_TEMPLATE.role,
     ...(variant ? { variant } : {}),
     ...(inherited.role === MODULE_ROLE && moduleWidth(inherited.width) ? { width: moduleWidth(inherited.width)! } : {}),
+    ...(inherited.role === MODULE_ROLE && moduleFactor(inherited.grow) !== undefined ? { grow: moduleFactor(inherited.grow)! } : {}),
+    ...(inherited.role === MODULE_ROLE && moduleFactor(inherited.shrink) !== undefined ? { shrink: moduleFactor(inherited.shrink)! } : {}),
     chain: chain.map((i) => templates[i]!.id),
     configPath: `${prefix}/${index}`,
   };
@@ -975,12 +983,13 @@ export function resolveTemplateAt(
       return out;
     });
   } else {
-    // A modules group inside another (#1088) names a modules stack of the
-    // template that is in no other; else it is a modules group of its own.
-    template.groups = template.groups.map((g) => {
+    // A modules group inside another (#1088) names a modules group of the
+    // template, from which `within` leads out to one inside no other
+    // (#1095: to any depth); else it is a modules group of its own.
+    const groups = template.groups;
+    template.groups = groups.map((g) => {
       if (!g.within) return g;
-      const parent = template.groups.find((x) => x.name === g.within);
-      if (parent && parent.modules && !parent.within && parent.kind === 'stack') return g;
+      if (modulesGroupRoot(groups, g) !== undefined) return g;
       // (Reported by the validator.)
       const out = { ...g };
       delete out.within;
