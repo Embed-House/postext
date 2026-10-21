@@ -7,7 +7,7 @@ import { useSandboxLabels } from '../../../context/SandboxContext';
 import { DimensionInput, FieldRow, ItemCard, ItemCardListActions, moveCardState, NumberInput, openCard, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../../ui';
 import { addGroup, moveMember, namesInUse, removeGroup, renameFrame, slugify, templateAt, uniqueName, updateGroup, type TemplateScope } from '../../../templates/templateEdits';
-import { moduleTemplates } from '../../../templates/moduleEdits';
+import { modulesGroupParents, moduleTemplates } from '../../../templates/moduleEdits';
 import { resolveAt, usePageTemplates } from './model';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
@@ -28,9 +28,9 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
   const entries = (scope === 'base' ? own?.groups : own?.variants?.[scope]?.groups) ?? [];
 
   const cardList = `templateGroups:${templateId}:${scope}`;
-  // A modules group may lie inside a modules stack of the template (#1088),
-  // and take some of the book's modules.
-  const stacks = template.groups.filter((o) => o.modules && !o.within && o.kind === 'stack').map((o) => o.name);
+  // A modules group may lie inside another modules group of the template
+  // (#1088; #1095: a row or a grid too, to any depth), and take some of the
+  // book's modules.
   const modules = moduleTemplates(templates).map((t) => t.id);
   const add = () => {
     const name = uniqueName(namesInUse(templates, templateId), 'group');
@@ -56,7 +56,7 @@ export function GroupsEditor({ templateId, scope }: GroupsEditorProps) {
             frames={template.frames.map((f) => f.name)}
             targets={[...template.frames.map((f) => ({ name: f.name, group: false })), ...template.groups.filter((o) => o.name !== g.name).map((o) => ({ name: o.name, group: true }))]}
             taken={inOther}
-            stacks={stacks.filter((n) => n !== g.name)}
+            parents={g.modules ? modulesGroupParents(template.groups, g.name) : []}
             modules={modules}
             onChange={(patch) => write(updateGroup(templates, templateId, scope, g.name, patch))}
             onRename={(next) => {
@@ -102,9 +102,9 @@ interface GroupCardProps {
   targets: { name: string; group: boolean }[];
   /** Frames that belong to another group (a frame is in one at most). */
   taken: Set<string>;
-  /** The template's other modules stacks a modules group may lie in
-   *  (#1088). */
-  stacks: string[];
+  /** The template's other modules groups a modules group may lie in
+   *  (#1088, #1095): none inside it. */
+  parents: string[];
   /** The book's module templates. */
   modules: string[];
   onChange: (patch: Partial<Record<keyof FrameGroupConfig, unknown>>) => void;
@@ -112,7 +112,7 @@ interface GroupCardProps {
   onRemove: () => void;
 }
 
-function GroupCard({ cardList, group, entry, frames, targets, taken, stacks, modules, onChange, onRename, onRemove }: GroupCardProps) {
+function GroupCard({ cardList, group, entry, frames, targets, taken, parents, modules, onChange, onRename, onRemove }: GroupCardProps) {
   const labels = useSandboxLabels();
   const [draft, setDraft] = useState(group.name);
   useEffect(() => setDraft(group.name), [group.name]);
@@ -157,12 +157,12 @@ function GroupCard({ cardList, group, entry, frames, targets, taken, stacks, mod
         onChange={(on) => onChange(on ? { modules: true, frames: undefined, repeat: undefined } : { modules: undefined, overflow: undefined, within: undefined, templates: undefined })}
         isDefault={!has('modules')}
       />
-      {group.modules && (stacks.length > 0 || group.within !== undefined) && (
+      {group.modules && (parents.length > 0 || group.within !== undefined) && (
         <SelectInput
           label={labels.pageTemplatesGroupWithin}
           tooltip={labels.pageTemplatesGroupWithinTooltip}
           value={group.within ?? ''}
-          options={[{ value: '', label: labels.pageTemplatesGroupWithinNone }, ...stacks.map((n) => ({ value: n, label: n })), ...(group.within && !stacks.includes(group.within) ? [{ value: group.within, label: group.within }] : [])]}
+          options={[{ value: '', label: labels.pageTemplatesGroupWithinNone }, ...parents.map((n) => ({ value: n, label: n })), ...(group.within && !parents.includes(group.within) ? [{ value: group.within, label: group.within }] : [])]}
           onChange={(v) => onChange(v ? { within: v, overflow: undefined } : { within: undefined, templates: undefined })}
           isDefault={!has('within')}
           onReset={() => onChange({ within: undefined, templates: undefined })}

@@ -47,6 +47,7 @@ On a composed page (`::::page{template="…"}`) the canvas links each frame to t
 - An empty frame shows a dashed outline, its name and **Write here**; a frame that only continues another says which. These marks are drawn over the canvas only: the PDF, the print and every export leave them out.
 - In Design mode every frame shows its outline and its name, and a click picks one for the template editor.
 - A frame whose content does not fit is outlined in red, with a band under its foot as tall as what was cut and the shortfall (*15 mm short*). A frame whose text the reflow ladder shrank shows the scale it was set at (*text at 85 %*, and *pictures at 80 %* when its pictures were scaled too). Like the other marks, these are drawn over the canvas only.
+- A frame whose `:::frame` piece names a look `frameLooks` does not have is outlined in violet dashes, with the name (*unknown look: azul*): it is drawn with its style alone until a look of that id exists.
 
 #### Editions of a book
 

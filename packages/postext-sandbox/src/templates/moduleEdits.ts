@@ -77,6 +77,25 @@ export function moduleTemplates(templates: Templates): PageTemplate[] {
   return templates.filter((t) => isModule(t));
 }
 
+/** The modules groups of a template the modules group `name` may lie in
+ *  (`within`, #1088): any other (#1095: a row or a grid too, to any
+ *  depth), but none that lies inside `name` itself, which would make a
+ *  loop. In the template's order. */
+export function modulesGroupParents(groups: readonly Pick<FrameGroupConfig, 'name' | 'modules' | 'within'>[], name: string): string[] {
+  const byName = new Map(groups.map((g) => [g.name, g]));
+  const liesIn = (g: Pick<FrameGroupConfig, 'name' | 'within'>): boolean => {
+    const seen = new Set<string>();
+    let at: Pick<FrameGroupConfig, 'name' | 'within'> | undefined = g;
+    while (at && !seen.has(at.name)) {
+      if (at.name === name) return true;
+      seen.add(at.name);
+      at = at.within !== undefined ? byName.get(at.within) : undefined;
+    }
+    return false;
+  };
+  return groups.filter((g) => g.modules === true && g.name !== name && !liesIn(g)).map((g) => g.name);
+}
+
 /** How the book uses each module template: blocks, pages, by chapter. */
 export function moduleUsage(templates: Templates, chapters: readonly { markdown: string }[]): Map<string, ModuleUsage> {
   const out = new Map<string, ModuleUsage>();

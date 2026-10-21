@@ -8,6 +8,8 @@
  *   and the shortfall in millimetres;
  * - a frame whose text the reflow ladder shrank (`scale < 1`): the scale
  *   it was set at, and its pictures' when they were scaled too;
+ * - a frame whose `:::frame` piece names a look `frameLooks` does not have
+ *   (`VDTFrame.lookUnknown`, #1095): a violet dashed outline and the name;
  * - the frame a check of the Checks panel just took the reader to,
  *   outlined for a moment.
  */
@@ -20,7 +22,7 @@ import { drawOverlapMarks } from './overlapMarks';
 
 export interface FitMark {
   frame: VDTFrame;
-  kind: 'overflow' | 'scaled' | 'target';
+  kind: 'overflow' | 'scaled' | 'look' | 'target';
   /** What the mark writes (`+3.4 mm`, `87.5 %`). */
   text: string;
 }
@@ -32,6 +34,8 @@ export interface FitMarkLabels {
   scaled: string;
   /** «Pictures at __percent__ %» */
   imageScaled: string;
+  /** «Unknown look: __look__» (#1095) */
+  lookUnknown?: string;
 }
 
 /** A percentage with at most one decimal, in the reader's numerals. */
@@ -68,6 +72,8 @@ export function fitMarksFor(
   const out: FitMark[] = [];
   for (const frame of composed.frames) {
     if (frame.facingBlocks && frame.blockIds.length === 0) continue;
+    // A look the config does not have (#1095): drawn with its style alone.
+    if (frame.lookUnknown !== undefined && labels.lookUnknown) out.push({ frame, kind: 'look', text: labels.lookUnknown.replace('__look__', frame.lookUnknown) });
     if (frame.overflowPx > 0) {
       out.push({ frame, kind: 'overflow', text: labels.overflow.replace('__mm__', millimetres(frame.overflowPx, dpi, options.locale)) });
       continue;
@@ -102,6 +108,8 @@ export function frameTurnMatrix(rect: { x: number; y: number; width: number; hei
 const RED = '#d0021b';
 const AMBER = '#9a5b00';
 const TARGET = '#1d6fd6';
+/** White on it: 8.6 : 1. */
+const LOOK = '#6a2c91';
 
 function groupOf(svg: SVGSVGElement): SVGGElement {
   let g = svg.querySelector<SVGGElement>('g[data-role="fit"]');
@@ -194,6 +202,12 @@ export function drawFitMarks(
       band.setAttribute('stroke-dasharray', `${unit * 3} ${unit * 2}`);
       item.appendChild(band);
       badge(item, rect.x + rect.width - unit * 2, rect.y + rect.height - fs * 0.75, mark.text, fs, RED, true);
+    } else if (mark.kind === 'look') {
+      box.setAttribute('stroke', LOOK);
+      box.setAttribute('stroke-width', String(unit * 1.6));
+      box.setAttribute('stroke-dasharray', `${unit * 4} ${unit * 2}`);
+      item.appendChild(box);
+      badge(item, rect.x + unit * 2, rect.y + unit * 2, mark.text, fs, LOOK, false);
     } else if (mark.kind === 'scaled') {
       box.setAttribute('stroke', AMBER);
       box.setAttribute('stroke-width', String(unit * 1.2));
@@ -217,7 +231,7 @@ export function drawPageFitMarks(
   svg: SVGSVGElement,
   doc: VDTDocument,
   pageIndex: number,
-  labels: { composedFitOverflow: string; composedFitScaled: string; composedFitImageScaled: string },
+  labels: { composedFitOverflow: string; composedFitScaled: string; composedFitImageScaled: string; composedFitLookUnknown?: string },
   locale?: string,
 ): void {
   const flash = jumpFlashNow();
@@ -225,6 +239,7 @@ export function drawPageFitMarks(
     overflow: labels.composedFitOverflow,
     scaled: labels.composedFitScaled,
     imageScaled: labels.composedFitImageScaled,
+    ...(labels.composedFitLookUnknown ? { lookUnknown: labels.composedFitLookUnknown } : {}),
   }, { targetFrameId: flash && flash.pageIndex === pageIndex ? flash.frameId : null, ...(locale ? { locale } : {}) });
   // The overlap check the reader selected (#1066), over the fit marks.
   drawOverlapMarks(svg, doc, pageIndex);

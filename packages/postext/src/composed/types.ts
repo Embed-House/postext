@@ -248,14 +248,18 @@ export interface FrameGroupConfig {
    *  module (`rowAlign`); a `'grid'` (#1088) in `columns` equal columns,
    *  row after row. */
   modules?: boolean;
-  /** A modules group laid inside the modules stack of this name (#1088):
+  /** A modules group laid inside the modules group of this name (#1088):
    *  each run of the page's modules it takes (`templates`), one after
-   *  another in Markdown order, is one item of that stack, a row or a grid
+   *  another in Markdown order, is one item of that group, a row or a grid
    *  of its own where the first of the run comes. Only on a modules group,
-   *  naming a modules `'stack'` of the template that is in no other. */
+   *  naming a modules group of the template; groups may lie inside each
+   *  other to any depth (#1095), the outermost being the page's modules
+   *  group. Inside a stack a run's rows are rows of the stack; inside a
+   *  row or a grid a run is one cell (a share of the row). */
   within?: string;
   /** A modules group inside another (`within`, #1088): the module
-   *  templates it takes. Unset: every module. */
+   *  templates it takes. Unset: every module, unless other groups lie
+   *  inside it (#1095): then only theirs. */
   templates?: string[];
   /** A modules group (#1062): where a module that does not fit goes on,
    *  whole (`'next-page'`, `'template:<id>'`). Unset: the module is laid
@@ -346,6 +350,15 @@ export interface PageTemplate extends PageTemplatePatch {
    *  the row's other modules leave). Unset: `'fill'`. A grid's cells are
    *  its columns. */
   width?: ModuleWidth;
+  /** A module (#1095): its share of the room a row of modules leaves past
+   *  the widths of its modules (`width`). Default 0 for a module with a
+   *  width, 1 for a `'fill'` one (which then grows by its share of what is
+   *  left, as before). Not read in a stack or a grid. */
+  grow?: number;
+  /** A module with a `width` (#1095): how much of the room a row of modules
+   *  is short by it gives back, in proportion to its width. Default 0
+   *  (the row runs past the group's end side). */
+  shrink?: number;
 }
 
 /** A module's width in its group (#1088). */
@@ -458,7 +471,11 @@ export interface ResolvedModule extends ComposedModuleUse {
   takes?: Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'toc', string>>;
   /** Its template's `width` (#1088). */
   width?: ModuleWidth;
-  /** The modules group inside `group` it is laid in (`within`, #1088). */
+  /** Its template's `grow` and `shrink` (#1095), when it writes them. */
+  grow?: number;
+  shrink?: number;
+  /** The modules group inside `group` it is laid in (`within`, #1088): the
+   *  innermost, when groups lie inside each other (#1095). */
   nested?: string;
 }
 
@@ -585,6 +602,10 @@ export interface ResolvedPageTemplate {
   /** A module's width in its group (#1088): set on a module that writes
    *  one. */
   width?: ModuleWidth;
+  /** A module's `grow` and `shrink` in a row (#1095): set on a module that
+   *  writes them. */
+  grow?: number;
+  shrink?: number;
   /** The template and its ancestors, nearest first. */
   chain: string[];
   /** `/pageTemplates/<i>`. */

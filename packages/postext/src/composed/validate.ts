@@ -48,18 +48,20 @@ import {
   DEFAULT_LABEL_STYLE,
   DEFAULT_PAGE_TEMPLATE,
   MODULE_ROLE,
+  moduleFactor,
   moduleWidth,
   resolveTemplateAt,
   templateChain,
   type TemplateIssue,
 } from './templates';
+import { modulesGroupRoot } from './modules';
 
 // The keys of each object, checked against its type: a key added to a type
 // fails to compile until it is listed here.
 const TEMPLATE_KEYS = {
   id: true, name: true, extends: true, spread: true, gutter: true, variants: true, role: true,
   area: true, grid: true, frames: true, groups: true, decoration: true, header: true, footer: true,
-  overflowTemplate: true, bodyStyle: true, palette: true, width: true,
+  overflowTemplate: true, bodyStyle: true, palette: true, width: true, grow: true, shrink: true,
 } satisfies Record<keyof PageTemplate, true>;
 const PATCH_KEYS = {
   area: true, grid: true, frames: true, groups: true, decoration: true, header: true, footer: true,
@@ -344,6 +346,11 @@ function checkModule(t: PageTemplate, path: string, push: Push): void {
   if (t.width !== undefined && !moduleWidth(t.width)) {
     push({ kind: 'unknownConfigValue', path: `${path}/width`, value: typeof t.width === 'object' ? JSON.stringify(t.width) : String(t.width), used: 'fill' });
   }
+  // Its share of a row's room, and what it gives back (#1095).
+  for (const key of ['grow', 'shrink'] as const) {
+    const v = t[key];
+    if (v !== undefined && moduleFactor(v) === undefined) push({ kind: 'unknownConfigValue', path: `${path}/${key}`, value: String(v), used: '' });
+  }
   for (const key of MODULE_PAGE_KEYS) {
     const value = (t as unknown as Record<string, unknown>)[key];
     if (value === undefined) continue;
@@ -360,11 +367,19 @@ function checkModule(t: PageTemplate, path: string, push: Push): void {
  *  no modules stack of the template in no other. Each is ignored. */
 function checkPageModules(t: PageTemplate, groups: readonly ResolvedFrameGroup[], path: string, push: Push): void {
   if (t.width !== undefined) push({ kind: 'unknownConfigValue', path: `${path}/width`, value: typeof t.width === 'object' ? JSON.stringify(t.width) : String(t.width), used: '' });
+  for (const key of ['grow', 'shrink'] as const) {
+    if (t[key] !== undefined) push({ kind: 'unknownConfigValue', path: `${path}/${key}`, value: String(t[key]), used: '' });
+  }
   if (!Array.isArray(t.groups)) return;
+  // The `within` chain as written (resolution drops a broken link).
+  const written = groups.map((x) => {
+    const entry = (t.groups as unknown[]).find((e) => isRecord(e) && e.name === x.name);
+    return isRecord(entry) && entry.modules === true && typeof entry.within === 'string' && entry.within !== '' && entry.within !== x.name ? { ...x, within: entry.within } : x;
+  });
   t.groups.forEach((g, j) => {
     if (!isRecord(g) || g.modules !== true || typeof g.within !== 'string' || g.within === '' || g.within === g.name) return;
-    const parent = groups.find((x) => x.name === g.within);
-    if (parent && parent.modules && !parent.within && parent.kind === 'stack') return;
+    const self = written.find((x) => x.name === g.name);
+    if (self && modulesGroupRoot(written, self) !== undefined) return;
     push({ kind: 'unknownConfigValue', path: `${path}/groups/${j}/within`, value: g.within, used: '' });
   });
 }

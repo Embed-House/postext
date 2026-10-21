@@ -1802,6 +1802,7 @@ export interface SandboxLabels {
   composedFitOverflow: string;
   composedFitScaled: string;
   composedFitImageScaled: string;
+  composedFitLookUnknown: string;
   reflowToggle: string;
   reflowToggleHint: string;
   reflowTitle: string;
@@ -2343,6 +2344,11 @@ export interface SandboxLabels {
   headerFooterElementUnless: string;
   headerFooterElementUnlessTooltip: string;
   headerFooterElementFenceAny: string;
+  headerFooterElementFenceOther: string;
+  headerFooterElementFenceName: string;
+  headerFooterElementFenceNameTooltip: string;
+  headerFooterElementFenceNameInvalid: string;
+  headerFooterElementFenceNameReserved: string;
   headerFooterElementPagesAll: string;
   headerFooterElementPagesBody: string;
   headerFooterElementPagesOpener: string;
@@ -4264,6 +4270,10 @@ export interface SandboxLabels {
   pageTemplatesModuleWidthLength: string;
   pageTemplatesModuleWidthPercent: string;
   pageTemplatesModuleWidthPercentValue: string;
+  pageTemplatesModuleGrow: string;
+  pageTemplatesModuleGrowTooltip: string;
+  pageTemplatesModuleShrink: string;
+  pageTemplatesModuleShrinkTooltip: string;
   modulesWidthText: string;
   modulesWidthShare: string;
   pageTemplatesModuleRole: string;

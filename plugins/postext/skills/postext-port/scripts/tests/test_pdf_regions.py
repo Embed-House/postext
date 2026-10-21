@@ -587,6 +587,160 @@ class VectorDecorationTest(unittest.TestCase):
             self.assertNotIn(bad, kinds, [w for w in data.get("warnings", []) if w.get("kind") == bad][:3])
 
 
+GREEN = (0.0, 0.6, 0.5)
+LETTERS = (0.5, 0.7, 0.52)
+
+
+def centred_text(page, mid, y, s, size=10):
+    w = fitz.get_text_length(s, fontname="helv", fontsize=size) / MM
+    text(page, mid - w / 2, y, s, size=size)
+
+
+def draw_curation_page(doc):
+    """What a round-3 port still curated by hand (#1095), on one invented
+    page: chevrons before the running head, a highlighted line over a drawn
+    map whose white mask reaches up to it, lettering hidden under a white
+    panel, a plate painted over the foot of its photo, a box whose words
+    stop far short of its edge, and captions set in columns under the two
+    photos of a box."""
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    text(page, 150, 10, "RIVERS AND HILLS", size=9)
+    for x0 in (141.0, 145.5):     # the chevrons, 1.5 mm before the head
+        page.draw_polyline([fitz.Point(x0 * MM, 7.3 * MM), fitz.Point((x0 + 3) * MM, 8.8 * MM),
+                            fitz.Point(x0 * MM, 10.3 * MM)], color=None, fill=GREEN, closePath=True)
+    text(page, 190, 290, "9", size=9)
+    # a line with a highlighted word, and the map under it: its white mask reaches up to the line
+    page.draw_rect(R(15, 31, 195, 80), color=None, fill=(1, 1, 1))
+    for i in range(12):
+        x, y = 20 + (i % 4) * 42, 40 + (i // 4) * 12
+        pts = [fitz.Point((x + dx) * MM, (y + dy) * MM) for dx, dy in ((0, 0), (36, 2), (38, 10), (6, 11), (-2, 5))]
+        page.draw_polyline(pts + [pts[0]], color=(0.2, 0.5, 0.2), fill=(0.6, 0.8, 0.5), closePath=True)
+    text(page, 20, 25, "The rivers of the country run from the hills to the sea over long plains.")
+    before = fitz.get_text_length("They are drawn on the ", fontname="helv", fontsize=11) / MM
+    word = fitz.get_text_length("map", fontname="helv", fontsize=11) / MM
+    page.draw_line(fitz.Point((20 + before - 0.3) * MM, 29.6 * MM), fitz.Point((20 + before + word + 0.3) * MM, 29.6 * MM),
+                   color=(1, 0.9, 0), width=12)
+    text(page, 20, 30.6, "They are drawn on the map below with their names.")
+    # lettering under a white panel painted after it
+    for i in range(6):
+        x = 20 + i * 15
+        pts = [fitz.Point((x + dx) * MM, (90 + dy) * MM) for dx, dy in ((0, 0), (8, 0), (9, 9), (1, 9))]
+        page.draw_polyline(pts + [pts[0]], color=None, fill=LETTERS, closePath=True)
+    page.draw_rect(R(15, 88, 120, 102), color=None, fill=(1, 1, 1))
+    # a photo, and the plate that names it painted over its foot
+    page.insert_image(R(20, 110, 90, 135), stream=png(70, 25))
+    page.draw_rect(R(25, 126, 85, 140), color=None, fill=(1, 0.95, 0.75))
+    text(page, 28, 131, "Cleaning of", size=10)
+    text(page, 28, 136.5, "the town square", size=10)
+    # a box whose one line stops far short of its edge
+    page.draw_rect(R(110, 110, 195, 135), color=None, fill=(0.85, 0.92, 0.98))
+    text(page, 114, 121, "A short note.", size=10)
+    # a box with two photos and a caption of two lines in a column under each
+    page.draw_rect(R(20, 165, 195, 235), color=None, fill=(0.88, 0.95, 0.86))
+    page.insert_image(R(30, 170, 95, 205), stream=png(65, 35))
+    page.insert_image(R(120, 170, 185, 205), stream=png(65, 35))
+    for mid, words in ((62.5, ("The left photo", "of the bridge.")), (152.5, ("The right photo", "of the mill."))):
+        centred_text(page, mid, 211, words[0])
+        centred_text(page, mid, 216, words[1])
+    return page
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class CurationTest(unittest.TestCase):
+    """#1095: the extract does what a real textbook's round-3 port curated."""
+
+    @classmethod
+    def setUpClass(cls):
+        import contextlib
+
+        cls.tmp = tempfile.TemporaryDirectory()
+        root = Path(cls.tmp.name)
+        doc = fitz.open()
+        draw_curation_page(doc)
+        cls.pdf = root / "curation.pdf"
+        doc.save(str(cls.pdf))
+        cls.out = root / "out"
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            pr.main(["extract", str(cls.pdf), "--out", str(cls.out), "--lang", "en", "--name-frames", "never"])
+        cls.lib = json.loads((cls.out / "library.json").read_text(encoding="utf-8"))
+        cls.regions = json.loads((cls.out / "regions.json").read_text(encoding="utf-8"))[0]
+        cls.res = {r["id"]: r for r in json.loads((cls.out / "resources.json").read_text(encoding="utf-8"))}
+        cls.md = (cls.out / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
+        cls.t = cls.lib["pageTemplates"][0]
+        cls.frames = {f["name"]: f for f in cls.t["frames"]}
+        cls.boxes = {f["name"]: f for f in cls.regions["frames"]}
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def named(self, kind, test):
+        return [f for f in self.regions["frames"] if f["kind"] == kind and test(f)]
+
+    def test_the_map_is_cut_to_its_art_without_the_highlight(self):
+        maps = self.named("picture", lambda f: f["box"][1] < 60 and f["box"][3] > 60)
+        self.assertEqual(len(maps), 1)
+        box = maps[0]["box"]
+        self.assertGreater(box[1], 38.5)       # the mask began at 31, the art at 40
+        self.assertLess(box[1], 40.0)
+        rid = next(r for r in self.res if r.endswith(maps[0]["name"]))
+        with Image.open(self.out / self.res[rid]["file"]) as im:
+            px = list(im.convert("RGB").getdata())
+        yellow = sum(1 for r, g, b in px if r > 230 and g > 200 and b < 80)
+        self.assertEqual(yellow, 0)
+
+    def test_hidden_lettering_is_no_picture_and_no_decoration(self):
+        self.assertEqual(self.named("picture", lambda f: 85 < f["box"][1] < 105), [])
+        for e in self.t["decoration"]["elements"]:
+            fill = (e.get("fill") or {}).get("hex", "#ffffff")
+            if e.get("kind") == "path" and e["placement"]["anchor"]["to"] == "page" and fill != "#ffffff":
+                y = e["placement"]["offset"]["y"]["value"]
+                self.assertFalse(88 < y < 100, e["id"])     # only the white panel stays
+
+    def test_the_plate_painted_over_its_photo_lies_over_it(self):
+        plate = self.named("box", lambda f: "Cleaning" in f["text"])[0]
+        photo = self.named("picture", lambda f: 105 < f["box"][1] < 115)[0]
+        self.assertEqual(plate["parent"], photo["name"])
+        self.assertIsNone(photo["parent"])
+        self.assertEqual(self.frames[plate["name"]]["placement"]["anchor"], {"to": f'#{photo["name"]}', "edge": "top-left"})
+        self.assertGreater(self.frames[plate["name"]].get("layer", 1), self.frames[photo["name"]].get("layer", 1))
+
+    def test_a_box_is_measured_to_its_box(self):
+        note = self.named("box", lambda f: "short note" in f["text"])[0]
+        st = next(s for s in self.lib["calloutStyles"] if s["id"] == self.frames[note["name"]]["style"])
+        self.assertLessEqual(st["padding"]["right"]["value"], st["padding"]["left"]["value"] + 0.01)
+
+    def test_captions_in_columns_are_one_frame_under_each_photo(self):
+        holder = self.named("box", lambda f: f["box"][1] > 160)[0]
+        caps = self.named("text", lambda f: f["parent"] == holder["name"])
+        self.assertEqual(sorted(c["text"] for c in caps), ["The left photo / of the bridge.", "The right photo / of the mill."])
+        self.assertEqual(holder["text"], "")
+        photos = {p["name"] for p in self.named("picture", lambda f: f["box"][1] > 160)}
+        for c in caps:
+            pl = self.frames[c["name"]]["placement"]
+            self.assertEqual(pl["anchor"]["edge"], "below")
+            self.assertIn(pl["anchor"]["to"][1:], photos)
+            self.assertGreater(self.frames[c["name"]]["layer"], 2)
+        page = self.md.split(f'slot="{holder["name"]}"}}', 1)[1]
+        self.assertTrue(page.startswith("\n:::"), page[:60])       # the box's fence holds nothing
+        style = next(s for s in self.lib["calloutStyles"] if s["id"] == self.frames[caps[0]["name"]]["style"])
+        self.assertEqual(style["body"]["textAlign"], "center")
+        self.assertNotIn('style="centred"', self.md.split(f'slot="{caps[0]["name"]}"', 1)[1].split(":::\n", 1)[0])
+
+    def test_the_chevrons_are_anchored_to_the_running_head(self):
+        els = self.t["decoration"]["elements"]
+        head = next(e for e in els if e.get("content") == "{attr.head}")
+        self.assertNotIn("size", head["placement"])
+        orns = [e for e in els if (e.get("placement") or {}).get("anchor", {}).get("to") == f'#{head["id"]}']
+        self.assertEqual(len(orns), 1)       # the two chevrons, of one look, are one path
+        o = orns[0]
+        self.assertEqual(o["id"], f'{head["id"]}-ornament-1')
+        self.assertEqual(o["placement"]["anchor"]["edge"], "left-of")
+        self.assertAlmostEqual(o["placement"]["offset"]["x"]["value"], -1.5, delta=0.3)
+        self.assertEqual((o.get("when"), o.get("parity")), ("head", head["parity"]))
+        self.assertGreater(els.index(o), els.index(head))
+
+
 @unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
 class HelpersTest(unittest.TestCase):
     def test_parse_pages(self):

@@ -692,7 +692,10 @@ Pick the path per [sources.md](references/sources.md):
   decoration: connectors between frames, pointers into pictures at new
   anchors, path elements; a raster ground only for art nothing else draws,
   `--raster-ground` for the round-1 JPEG; a one-page run names its frames by
-  role itself, `--name-frames`),
+  role itself, `--name-frames`; art no pixel of its colour shows is left out,
+  a cut keeps only its picture, plates whose fill shows over a picture lie over
+  it, captions in columns under a box's pictures are a frame each, ornaments
+  by a running head are anchored to it),
   `scripts/template_dedupe.py work/regions --laid laid.json` (one template per kind
   of page, `extends` children, merged styles and grounds, frames on a lattice
   as a repeating grid (cards that differ only in colour too, each naming a look from

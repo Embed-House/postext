@@ -199,11 +199,65 @@ export function rewriteBareImports(source: string, imports: Record<string, strin
     .replace(DYNAMIC, (_, head: string, quote: string, specifier: string, tail: string) => `${head}${quote}${to(specifier)}${quote}${tail}`);
 }
 
+/** The first postext-pdf that decodes WOFF2 with a binding of its own
+ *  (#1092) and no longer imports wawoff2. */
+export const OWN_WOFF2_SINCE = "1.50.0";
+
+/** postext-pdf's own WOFF2 decoder as published: a self-contained module
+ *  (the WebAssembly embedded, no environment branch) whose default export
+ *  builds the decoder. An immutable release, so every run gets the same. */
+export const WOFF2_BINDING_URL = `https://esm.sh/postext-pdf@${OWN_WOFF2_SINCE}/dist/woff2Binding.js`;
+
+/**
+ * The URLs at which esm.sh's builds of postext-pdf before 1.50 import
+ * wawoff2 (#1093). Every release a recipe pins, from 1.25.0 to 1.49.x, with
+ * and without `?deps=postext@…`, imports this one module (the browser
+ * resolves it with the caret percent-encoded; the import map's key is
+ * normalized the same way). wawoff2's emscripten glue takes its web branch
+ * since esm.sh's `process` polyfill stopped naming a Node version, and its
+ * `decompress()` never resolves, so a pen run on such a release waits for
+ * its PDF until C14 gives up. An import map applies to every module of the
+ * page, esm.sh's included: this entry sends wawoff2 to {@link WAWOFF2_SHIM},
+ * which answers with the decoder 1.50 ships, and the layout stays the
+ * pinned release's.
+ */
+export const WAWOFF2_IMPORTS: readonly string[] = ["https://esm.sh/wawoff2@^2.0.1?target=es2022"];
+
+/** The shim that answers {@link WAWOFF2_IMPORTS}. */
+export const WAWOFF2_SHIM = "/__shim/wawoff2.js";
+
+/** wawoff2's `decompress` (what postext-pdf up to 1.49 calls) over the
+ *  binding postext-pdf 1.50 ships, built once on the first font. The
+ *  caller copies the bytes out and serializes the calls. */
+export function wawoff2Shim(binding: string = WOFF2_BINDING_URL): string {
+  return `// wawoff2's API over postext-pdf's own WOFF2 decoder (#1093).
+import instantiateWoff2 from '${binding}';
+let runtime = null;
+export async function decompress(input) {
+  runtime ??= instantiateWoff2();
+  const out = (await runtime).decompress(input);
+  if (out === false) throw new Error('WOFF2 decoder: ConvertWOFF2ToTTF failed');
+  return out;
+}
+export async function compress() {
+  throw new Error('WOFF2 compression is not available on the capture page');
+}
+export default { decompress, compress };
+`;
+}
+
 /** The page's import map: the pen's own `https://esm.sh/…` imports to the
- *  shims, on either engine. The local engine's bare imports are resolved by
- *  the server instead (`rewriteBareImports`). */
+ *  shims, on either engine, and the wawoff2 module of postext-pdf before
+ *  1.50 to {@link WAWOFF2_SHIM}. The local engine's bare imports are
+ *  resolved by the server instead (`rewriteBareImports`). */
+export function importMap(): Record<string, string> {
+  const imports: Record<string, string> = { ...SHIM_PATHS };
+  for (const url of WAWOFF2_IMPORTS) imports[url] = WAWOFF2_SHIM;
+  return imports;
+}
+
 export function importMapTag(): string {
-  return `<script type="importmap">${JSON.stringify({ imports: SHIM_PATHS })}</script>`;
+  return `<script type="importmap">${JSON.stringify({ imports: importMap() })}</script>`;
 }
 
 /** Shared by every shim: the record in `window.__cb`. */
@@ -522,6 +576,8 @@ export function shimModules(engine: EngineSpec, { pdfDate = null, force = forced
     const local = (file: string) => `${LOCAL_PREFIX}${file}`;
     return {
       "/__shim/recorder.js": recorder,
+      // The working tree's postext-pdf decodes WOFF2 itself and never asks for this.
+      [WAWOFF2_SHIM]: wawoff2Shim(),
       "/__shim/postext.js": engineShim("postext", local("postext/index.js")),
       "/__shim/postext-bundle.js": engineShim("postext-bundle", local("postext/index.js")),
       "/__shim/postext-worker.js": workerShim(local("postext/worker/client.js")),
@@ -534,6 +590,7 @@ export function shimModules(engine: EngineSpec, { pdfDate = null, force = forced
   }
   return {
     "/__shim/recorder.js": recorder,
+    [WAWOFF2_SHIM]: wawoff2Shim(),
     "/__shim/postext.js": engineShim("postext", `https://esm.sh/postext@${V}`),
     "/__shim/postext-bundle.js": engineShim("postext-bundle", `https://esm.sh/postext@${V}?bundle`),
     "/__shim/postext-worker.js": workerShim(`https://esm.sh/postext@${V}/worker`),

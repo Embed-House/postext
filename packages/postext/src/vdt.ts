@@ -2871,6 +2871,10 @@ export interface VDTFrame {
   layer: number;
   /** The callout style the frame is drawn with; absent = frameless. */
   styleId?: string;
+  /** The look its story's `:::frame` piece names (`look="…"`, #1089) when
+   *  `frameLooks` has no entry of that id (#1095): the frame is drawn with
+   *  its style alone, and the Sandbox marks it. */
+  lookUnknown?: string;
   /** Text scale the reflow ladder applied (1 = none; #858): the frame's
    *  content is laid out `1 / scale` times as wide and tall as `rect` and
    *  painted scaled by `scale` about the top-left of `rect`, so its font

@@ -3447,3 +3447,130 @@ Named frame looks: one colour per item of a grid without leaving the grid.
 - **Not done.** Rows are rare on extracted pages: extract anchors most frames to the frame above, so a
   page's units chain into one cluster; a column of a page is a row module only when it is a unit of
   its own. No nested group inside a row (engine: one level).
+
+### 13.6 What #1095 changed (engine and Sandbox)
+
+The engine and Sandbox items of #1095: the limits §13.1, §13.3 and §13.4 left noted.
+
+- **Groups inside groups, to any depth.** `within` may name any modules group of the template (a row
+  or a grid too), as long as following `within` reaches a modules group inside no other without a
+  loop (`modulesGroupRoot`, `composed/modules.ts`; resolution drops a broken link and the validator
+  reports it at `…/within`, as before). Routing (`expandModules`): a module goes to the first group,
+  in template order, among those whose chain reaches the page's modules group, that takes its
+  template; a group with `templates` takes those, one without takes every template **unless other
+  groups lie inside it**, then none directly (decision: an intermediate row or grid would otherwise
+  swallow every module; its content comes from its inner groups and the templates it names).
+  `ResolvedModule.nested` is the innermost group; `nestedChain` gives the path out.
+- **Layout** (`placeModules`). The rows are built recursively: `cellsOf` splits a list of modules
+  into the cells of a group (a module the group lays itself, or a run of consecutive modules of the
+  group inside it on their path). Inside a stack a run's rows join the stack's rows (as in R3-2, so
+  continuation still goes by whole top-level rows); inside a row or a grid a run is one cell, laid as
+  its group's kind in the cell's box (`layRows`), measured as the sum of its rows (`measureCell`).
+  Decisions: such a cell takes a `'fill'` share of a row (grow 1; a group has no `width` key), is laid
+  at its own height (`'stretch'` does not stretch a group's cell; `'center'`/`'end'` move it), and a
+  module's percentage width is of the cell it is in. Every group on a module's path gets the union of
+  its modules' boxes (`#banda` reads the row, column included). A row of a nested group is never split
+  from its top-level row: the top-level row goes on whole.
+- **grow / shrink among a row's modules.** `PageTemplate.grow` / `shrink` on a module template
+  (inherited through `extends` like `width`; `moduleFactor`: a finite number ≥ 0, else
+  `unknownConfigValue`; on a page template, `unknownConfigValue` with `used: ''`). In a row (not a
+  stack, not a grid): the room the fixed widths and gaps leave goes by grow, a `'fill'` module (and a
+  group's cell) taking `max(1, grow)` and a sized one `grow ?? 0`; when the widths run past the end,
+  the sized modules give width back by `shrink × width` (CSS flex), down to 0. With every grow at its
+  default the arithmetic is the old equal share (`spare × 1 / n`), so rows lay byte for byte. No
+  `minWidth` for modules: a module shrinks to 0 at worst (not done).
+- **Ordering dependency.** `composedOrder`'s `stepKey` reads a modules group with `within` as the step
+  of the group it lies in, up to the one that holds the module frames: a page frame anchored to
+  `#banda` is placed after the modules group step, so it sees the row's box on the first pass.
+- **`rowAlign: 'stretch'` on `'auto'` boxes.** A stretched module (a row of several, `'stretch'`,
+  spare > 0.01 px) sets `stretchTo` while it is laid; `stretchAuto` (run before `clipAtFoot` for a
+  frame step, a group's members and a grid's cells) takes an `'auto'`-height frame of the module whose
+  foot is the module's own foot (within 0.5 px) down to the row's foot, and its declared box by as
+  much, so the reflow log shows no motion (the template asked for it). Left alone: a frame as wide as
+  its content (`width: 'auto'`, a pill or a tab), a pinned one and one held by the module's foot.
+  Decision: "the module's boxes" read as the frames that end where the module ends; a frame above
+  another keeps its height (stretching it would move what hangs below).
+- **Unknown look on the frame.** `VDTFrame.lookUnknown` (the id) is set on a frame that holds a story
+  whose `look` names no `frameLooks` entry (`unknownLookOf`, the story's look as for #1089). Optional,
+  absent on every existing book, so VDT hashes do not move.
+- **Sandbox.** `FenceConditionFields`: each select ends with «Another attribute…», which opens a box
+  (focus moves to it); Enter or leaving it takes the name when `fenceAttributeName`
+  (`templates/templateUsage.ts`) accepts it (the ASCII key grammar of `parse/attrs.ts`, at most 64
+  characters, not `template`/`spread`/`id`), else a `role="alert"` message tied to the box by
+  `aria-describedby` and `aria-invalid`; Escape or an empty box gives up. The name then shows in the
+  select as any value no fence sets. Canvas: `fitMarksFor` adds a `'look'` mark (violet dashed
+  outline, `#6a2c91`, white text 8.8 : 1, the look's name at the top-left corner) for each frame with
+  `lookUnknown`, beside its overflow or scale mark. Group editor: «Inside the group» lists
+  `modulesGroupParents` (every other modules group but those inside the edited one); the module's
+  template editor has «Share of the room left» (`grow`, shown at its default 1 or 0) and, once it has
+  a width, «Width given back when short» (`shrink`). 11 new labels and 3 changed, in the ten
+  languages; WebMCP `settings.test.ts` writes a group inside a row, `grow` and `shrink`.
+- **Parity.** bench-layout hashes unchanged on Don Quijote, Señales, Kokoro, Bioquímica and
+  Pepper&Carrot; the Cookbook bench (`--engine local --no-pixels --hash-warn`) and the composed
+  recipes (`capture --composed --check`) keep every approved layout: no recipe has a stretched row of
+  modules, a nested group or a module `grow`/`shrink` yet. A book whose row stretches a module ending
+  in an `'auto'` box moves, as the issue asks.
+- **Not done.** A `width` for a group's cell in a row (it is a `'fill'` share); `'stretch'` of a
+  group's cell; `minWidth`/`maxWidth` for modules; the porting skill's items of #1095 (another lane).
+- **Fixture.** `__tests__/composed/fixtures/moduleNesting.ts` (a box beside a column of two cards in a
+  row inside the page's stack, a note under the row, a row of two boxes sharing by grow);
+  `moduleNesting.test.ts`.
+
+### 13.7 What the skill lane built for #1095 (the round-3 curation list)
+
+`pdf_regions.py` / `template_fold.py` / `template_dedupe.py` (skill 1.60.0) do the seven steps §12.36 and
+§13.5 left to a port's generator. No engine change.
+
+- **Unseen art.** A drawn shape no pixel of its colour shows in the text-free render (a pixel counts on
+  the line from white to the colour, so a thin stroke blended with the paper does, another colour's grey
+  edge does not) is `unseen`: lettering under a white panel painted after it, a drawing in the bleed,
+  art clipped away. It joins no picture, no box's art, no decoration and no ground comparison; a speck
+  too small to judge goes with unseen shapes of its colour painted next to it. Decision: the test is
+  the render, not the paint order, because clipping is what hid the real textbook's lettering. A drawn
+  cluster with no paint of its own (white on white, a plate's corner) is no picture (`report.json`).
+- **Cuts keep only the picture.** Highlights, and the boxes and tabs the draft lays over the picture
+  (`drawn_over`: frames set on it, frames with `over`, a free tab over a free picture) are redacted
+  from the cut, one rectangle at a time (MuPDF kept a path one of several rectangles applied together
+  covered), a stroked one 6 widths wide (its miters). A box laid under the picture stays in the cut:
+  the cut is opaque and would hide it where it lies over it. Art of the picture painted over a
+  neighbour keeps that neighbour; its outline and fill are painted out of the cut in the picture's
+  ground (`paint_out`). Then every cut (not an alpha one) is trimmed to the paint it has of its own
+  (`trim_to_ink`: ground = the holder's or the card's colour, else the paper round it; neighbours'
+  colours and the page past the card's rounded corner are not ink; a side moves by 1 mm or more, keeps
+  0.3 mm, never past a label). `claim_of` keeps the untrimmed box as the picture's for the loose-shape
+  and ground checks, so a map's white masks become neither paths nor a ground.
+- **Over a picture** (`plates_over_pictures`, after containment). A box or tab with words that meets a
+  picture is over it when its fill is at least half of what shows where they meet (render); with no
+  fill, by the paint order weighed by area (`lies_over`). Such a frame is never the picture's overlay
+  holder: the picture leaves it, and the frame hangs from the picture when it lies on it by half or
+  more; else `make_template` gives it a layer above the picture's.
+- **Measure.** A box's right padding is its left one (less the wrap slack) when nothing stands in the
+  box beside its lines (`right_free`), whatever the source's longest line was.
+- **Running-head ornaments** (`anchor_ornaments`). Path elements on a running head's line, each within
+  8 mm of the next, are anchored `left-of` / `right-of` the head (ids `<head>-ornament-N`, so pages
+  agree), carry `when: "<attr>"` of the head's `{attr.x}` and follow it in the list; the head loses its
+  `size`. The fold: `mark_furniture` takes an element anchored to an element as furniture; the shell
+  keeps whatever is anchored to an element it keeps; `_text_box` reads a head with no size as half the
+  page; `merge_furniture_shells` keeps an extract `when` and refuses a merge that would need a second.
+- **Captions in columns** (`split_captions`, before reading order). Lines of a box starting within 8 mm
+  under (or 3 mm over) the foot of one of its pictures, middle over it, or on the baseline the row's
+  other captions start on; per picture, columns by x; two columns or more in the box. Each column, line
+  under line, is a text frame (child of the box, `caption_of`, `over` its pictures), placed `below` its
+  picture, as wide as its longest line with the free-text slack, no further than halfway to the next
+  caption; centred ones are centred by their style (`textAlign`), not a paragraph style, which would
+  set them in the running text's face. Not the flowing text. `composed_check` leaves an empty fence (a
+  box whose words all went to captions) out of the reading order: the HTML lays its frame anywhere.
+- **Looks by role.** `look_roles`: palette entries with an id that is no colour name, callout styles
+  whose id is not of a kind and its looks (`box-…`, `tab-…`), and the page colour; a look within
+  `--delta-e` of one takes its name. On the real textbook nothing names those colours, so its looks
+  stay named by colour.
+- **Rows.** `soft_links`: a frame or group placed `below` a frame wholly above it. `bands_of` reads the
+  bands without them, and a soft link stays apart only when one end lies in a band whose units stand
+  side by side; the module keeps the frame at its laid place. Elsewhere the units join as before.
+- **On the real textbook** (local acceptance): rows 1 → 7, one shell, 11 grids, 59 modules (43), two
+  raster grounds; 0 overlaps in the three editions; likeness es 1.60, ca 2.14, en 3.06 % (round 3: 1.60
+  / 2.14 / 3.08) with the curation of these seven steps removed from the generator. Still curated: a
+  picture cut opaque over its holder's last line (crop), captions set beside a picture.
+- **Not done.** Transparent cuts (a PNG ground for a drawing's paper is 3–4× the JPEG); grids whose cards
+  differ in height take the smallest height (a picture of a caption grid shrank 5.6 mm with
+  `--lattice-tol 2`); role names from the source itself (spot colour names are not read).

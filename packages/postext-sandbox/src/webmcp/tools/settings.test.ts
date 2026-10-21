@@ -214,3 +214,32 @@ describe('named frame looks', () => {
     expect(read.set).toEqual([{ id: 'teal', border: { color: hex('#008080') } }]);
   });
 });
+
+// #1095: a modules group inside a row of modules (two levels), and a
+// module's grow and shrink, which the group editor and the template editor
+// write, are settings like any other.
+describe('modules nested and sharing a row', () => {
+  const composed = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="shell"}\n:::module{template="box"}\n:::frame{slot="text"}\nWords.\n:::\n:::\n::::\n')];
+    const config = {
+      pageTemplates: [
+        { id: 'shell', frames: [], groups: [{ name: 'body', modules: true }, { name: 'band', modules: true, kind: 'row', within: 'body' }, { name: 'column', modules: true }] },
+        { id: 'box', role: 'module', width: { value: 40, unit: 'mm' }, frames: [{ name: 'text' }] },
+      ],
+    };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it.each([
+    ['pageTemplates[id=shell].groups[name=column].within', 'band', 'pageTemplates[id=shell].groups[2].within', 'band'],
+    ['pageTemplates[id=box].grow', 2, 'pageTemplates[id=box].grow', 2],
+    ['pageTemplates[id=box].shrink', 1, 'pageTemplates[id=box].shrink', 1],
+  ] as const)('writes %s and nothing else moves', async (path, value, read, want) => {
+    const { call } = harness(composed() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const done = await call('sandbox_set_config', { changes: [{ path, value }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(after.get(read)).toBe(want);
+    expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
+  });
+});

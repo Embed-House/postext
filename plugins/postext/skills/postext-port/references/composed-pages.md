@@ -333,7 +333,11 @@ it merges the styles and before it merges the templates:
   a pill read with even side padding counts as centred) are one look: the
   set keeps the style most cards have and every other card names a look
   in `frameLooks`, written as `look="look-light-green"` on its item's or
-  member's `:::frame` (6.16). Each page's pieces become one
+  member's `:::frame` (6.16). From skill 1.60 a look whose colour the book
+  already names is named after that role, not its colour: a `colorPalette`
+  entry with an id that is no colour name (`brand`), a callout style you
+  renamed by role before the fold (`tip`), the page's own colour
+  (`look-page-colour`). Each page's pieces become one
   `:::frame{slot="grid-picture"}` item per card in reading order with the
   members' pieces inside; anchors, groups, connector ends and decoration
   that named a card name its instance (`#grid-picture[3]`), and what hung
@@ -374,9 +378,13 @@ it merges the styles and before it merges the templates:
   (a 2 × 2 of cards) are a modules `grid` (`columns`); a row that would run
   into another of the same group stays one module, as before. Modules of a
   row are never shared with modules of the stack. `--no-rows` keeps one
-  module per band. Most bands of an extracted page are one cluster (frames
-  anchored to the ones above them join up), so expect rows where the page
-  has independent columns: a contents page's pictures, a pair of boxes.
+  module per band. Extract anchors a frame `below` the one over it on the
+  card; from skill 1.60 such an anchor no longer joins two units when it
+  keeps a band's units from standing side by side (the stack of modules
+  keeps the frame under the band above, as the anchor did), so a box and a
+  photo both hung under a text are a row. Rows still come where the page has
+  independent columns: a contents page's pictures, a pair of boxes, plates
+  under a row of bins.
 - **One shell (1.50).** Shells that differ only by their furniture (front
   matter without the folio, the page colour or the running head) become
   one: what the minority of pages leaves out gets `unless: "frontmatter"`
@@ -409,7 +417,10 @@ What the extraction decides, so you know what to check:
   a heading in it: the title frame that `takes` the level); a rectangle
   under many drawn shapes is a map's ground, not a box; wide coloured
   strokes or fills hugging words are highlights (`:mark`, or `:chip` with
-  `--highlights chip`). A shape a render does not show is not read.
+  `--highlights chip`). A shape a render does not show is not read, and
+  from skill 1.60 neither is art no pixel of its colour shows (lettering
+  under a white panel painted after it, a drawing in the bleed, art clipped
+  away): it makes no picture, no box's art and no decoration.
 - **Vector decoration** (round 2; `--raster-ground` keeps round 1's JPEG
   per page). The template's decoration draws, in paint order: the page's
   colour (a `box` to the bleed), each card (a `box` with its corner radii;
@@ -443,7 +454,26 @@ What the extraction decides, so you know what to check:
   keeps its `rotate`. Raster images with transparency keep their alpha;
   when a box's text runs into one on the source, the frame gets
   `exclude: "push"` and `wrap: "contour"`. Any other picture lies over the
-  text as drawn.
+  text as drawn. From skill 1.60 a cut keeps only the picture: the
+  highlights round it and the boxes and tabs the draft lays over it (a plate
+  on a photo, a key on a map) leave the cut, a box laid under it stays (the
+  cut is opaque), and the cut is trimmed to the paint it has of its own (a
+  map's white masks, a neighbour's strip, white paper round a drawing:
+  `regions.json` has the trimmed box). A cluster that paints nothing of its
+  own (white shapes, a plate's corner) is no picture (`report.json` notes).
+- **What lies over a picture** (skill 1.60). A box or tab whose fill shows
+  where it meets a picture (read off the render; the paint order where the
+  box has no fill) lies over it: it is never the picture's holder, it hangs
+  from the picture (`top-left`) when it lies mostly on it (a plate on a
+  photo's foot), and it gets a `layer` above the picture's (date boxes on
+  an illustrated band, a note on a tower's photo).
+- **Captions in columns** (skill 1.60). Lines of a box that start just under
+  one of its pictures (their middle over it), in two columns or more, are
+  captions: each column, line under line, is a text frame of its own, a
+  child of the box hung `below` its picture, centred in its own style when
+  the source centres it, and laid over the box's pictures (a longer
+  translation runs over the next row, not under it). The box keeps the rest
+  of its words; with none, its fence stays empty (it draws its box, 1.49.1).
 - **Label hygiene** (`anchors.py`, `pdf_regions.py`). The same text printed
   twice at one point (within 0.5 mm: two grids of degree figures laid one
   over the other, in two sizes) is one label, the larger size kept, with a
@@ -466,7 +496,11 @@ What the extraction decides, so you know what to check:
 - **Furniture.** Text outside the cards (or in the top and foot bands of a
   page without cards) is a running head (`{attr.head}`, the words on the
   page fence) or a folio (`{pageNumber}`), decoration kept to its page's
-  side (`parity`).
+  side (`parity`). From skill 1.60 the shapes beside a running head (chevrons
+  before it, a mark after it: on its line, each within 8 mm of the next)
+  are anchored to it (`left-of` / `right-of`, ids `head-odd-ornament-N`,
+  `when: "head"` so they go with the head on a page that sets none) and the
+  head is as wide as its words; the fold keeps them on the shell with it.
 - **Faces.** The PDF's font names are matched to the PostScript names of
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report
@@ -475,7 +509,9 @@ What the extraction decides, so you know what to check:
 Also decided by the drafting, checked on a real textbook in three languages:
 
 - **Measure slack** (`--wrap-slack`, default 3 %, at most 4 mm). A box's
-  text measure is the width of its longest source line, and the source's own
+  text measure is its box less the left padding on both sides when nothing
+  stands in it beside the words (skill 1.60), else the width of its longest
+  source line (a picture laid over the box's right side), and the source's own
   tracking (InDesign squeezes a line by a few per cent to fit it) is not in
   another face's widths: a line that just fits breaks one word earlier and
   the box grows a line. The right padding gives up that much, down to nothing.
@@ -515,9 +551,8 @@ Also decided by the drafting, checked on a real textbook in three languages:
 
 What the draft still gets wrong on such a book, and the curation that fixes
 it (each is a template change plus Markdown frames, never text in the
-config): captions set in columns under the pictures of one box are read as
-one text running across the pictures (one `:::frame{slot="pie-N"}` under each
-`::resource`, centred paragraphs); a box that holds only a tab and a picture
+config): captions set beside a picture rather than under it are still the
+box's text (a frame of their own placed off the picture); a box that holds only a tab and a picture
 draws no tab when empty (the tab is a frame of its own); two sentences side
 by side with a connector between them are one frame each; arrows typed in a
 worked example need a face that has the glyph (a `chipStyles` entry in the
@@ -528,26 +563,19 @@ so a translation that shortens a text moves everything under it up (frames the
 source fixes at the card's foot are held there with the foot-hold stack of
 section 5, not by anchoring them to the card's foot).
 
-Re-porting that textbook with round 2 (1.48.1, three editions) left this
-curation, each a template or Markdown change in the generator:
+Re-porting that textbook with round 2 (1.48.1, three editions) left
+curation that skill 1.60 does itself: picture cuts that took the highlight
+over a map, a note's foot over a plan, a plate's outline or a blank strip;
+plates and date boxes under the photos they name; a box measured to its
+longest source line; running-head ornaments at fixed points; captions in
+columns read as one text. What it still leaves, each a template or Markdown
+change in the generator:
 
-- **Picture cuts take what lies next to them.** A cut is the picture's box
-  with the text removed, so it keeps fills and art the page paints inside that
-  box: the highlight of the line above a map, the foot of a note and its
-  pointer above a plan, the white of a box's last line over a timeline's art,
-  a plate's outline or a blank strip cut as a picture of its own. Look at
-  every cut whose box touches another frame; crop it (and move its anchors and
-  the frames anchored to its top by as much) or drop it.
-- **Plates and date boxes under the photos they name.** The draft keeps the
-  source's paint order, and a plate painted before its photo lies under it:
-  give the pills and the boxes that stand on a picture a higher `layer`.
-- **A box's measure is its longest source line.** The rest of a wide box is
-  right padding (38 mm on one page), and a longer translation breaks far short
-  of the edge. Where nothing stands in the box on that side, give the padding
-  back (the box's left padding).
-- **Running-head ornaments stand at fixed points** of the page; a longer part
-  name runs over them. Anchor them to the head (`left-of`) and let the head be
-  as wide as its words.
+- **An opaque cut over its holder's text.** A picture the draft lays inside a
+  box keeps the box's border and paper in its cut where they lie under it,
+  so a drawing whose box starts above the box's last line hides that line
+  when the text runs a little longer: crop the cut's top (and move its
+  anchors and the frames anchored to its top by as much).
 - **A box whose words all went to frames of their own** (captions moved out
   to stand under their pictures) keeps its fence with nothing in it: since
   postext 1.49.1 an empty fence on a styled frame draws its box and its tab at
@@ -555,9 +583,8 @@ curation, each a template or Markdown change in the generator:
   `:::space{lines=1}` in it.
 - **Overlaps the source prints** (pills on photos, notes on an illustrated
   band, cut-outs past a box's edge) go to `composed-check.json`, one entry per
-  look with its reason; that book needed 21, and three real overlaps fixed in
-  the port (a plan over a note, a strip over the last line of a box, a map's
-  margin over the descenders above it).
+  look with its reason; that book needed 21 (27 with skill 1.60, the same
+  overlaps under the names of the modules its rows split them into).
 
 Curate after it: name the templates by role (`tema-cajas`), give pictures
 their `altText`, read the notes in `report.json` (a centred tab set at

@@ -665,7 +665,7 @@ export {
   stripPageTemplatesDefaults, stripLabelStylesDefaults, isModuleTemplate,
 } from './composed/templates';
 // Modules (#1062): templates a page stacks in its modules group.
-export { expandModules, moduleScoped } from './composed/modules';
+export { expandModules, moduleScoped, modulesGroupRoot } from './composed/modules';
 export type { PageTemplateSource } from './composed/templates';
 export { validatePageTemplates } from './composed/validate';
 export type { ValidatePageTemplatesOptions } from './composed/validate';

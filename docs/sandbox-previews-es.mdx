@@ -47,6 +47,7 @@ En una página compuesta (`::::page{template="…"}`), el canvas relaciona cada 
 - Un marco vacío muestra un contorno discontinuo, su nombre y **Escribe aquí**; un marco que solo continúa otro indica cuál. Estas marcas se dibujan solo en el canvas: el PDF, la impresión y todas las exportaciones las omiten.
 - En modo Diseño todos los marcos muestran su contorno y su nombre, y un clic selecciona uno para el editor de plantillas.
 - Un marco cuyo contenido no cabe aparece contorneado en rojo, con una franja bajo su pie tan alta como lo que se ha cortado y la cantidad que falta (*faltan 15 mm*). Un marco cuyo texto ha reducido la escalera de reajuste muestra la escala aplicada (*texto al 85 %*, e *imágenes al 80 %* si también se han reducido sus imágenes). Igual que las demás marcas, solo se dibujan en el canvas.
+- Un marco cuya pieza `:::frame` nombra un aspecto que `frameLooks` no tiene se rodea de trazos violeta, con el nombre (*aspecto desconocido: azul*): se dibuja solo con su estilo hasta que exista un aspecto con ese id.
 
 #### Ediciones de un libro
 

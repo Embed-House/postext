@@ -118,6 +118,23 @@ export function pageFenceAttributes(chapters: readonly { markdown: string }[]): 
   return out;
 }
 
+/** What a fence attribute typed for a `when` / `unless` condition is
+ *  (#1095): a key a `::::page` line can write (ASCII, as the attribute
+ *  grammar reads it), not one the page itself reads. */
+export type FenceAttributeName = { ok: true; name: string } | { ok: false; reason: 'empty' | 'syntax' | 'reserved' };
+
+const FENCE_KEY = /^[A-Za-z_][A-Za-z0-9_-]*$/;
+const PAGE_OWN = new Set(['template', 'spread', 'id']);
+
+/** `raw`, trimmed, as an attribute name a condition may test (#1095). */
+export function fenceAttributeName(raw: string): FenceAttributeName {
+  const name = raw.trim();
+  if (name === '') return { ok: false, reason: 'empty' };
+  if (name.length > 64 || !FENCE_KEY.test(name)) return { ok: false, reason: 'syntax' };
+  if (PAGE_OWN.has(name)) return { ok: false, reason: 'reserved' };
+  return { ok: true, name };
+}
+
 /** How many pages of the book each template lays out: one per fence, two
  *  for a spread (`spreadIds`, or a fence that says `spread`). */
 export function countTemplatePages(

@@ -194,7 +194,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 - `template`指定一个`role: 'module'`的模板。`name`可以不写：它给这个模块实例命名，于是它的框是`ramas.raiz`、`ramas.izq`。不写时，实例名是`<template>[n]`，即这个模块在本页同一模板的模块中的序号：`arbol[1].raiz`。本页已被占用的名称，或含有空格、`.`、`#`、`[`或`]`的名称，换成这个默认名称（`moduleNameRejected`）。
 - **槽位**：`:::module`里的槽位属于这个模块自己：`slot="raiz"`指向本模块的`raiz`框，所以一页上同一模板的两个模块，文字互不混淆。没有指明槽位的内容进入模块的流文框，标题进入模块中接收其级别（`takes`）的框；两者都没有时，进入页面的流文框。
 - **顺序。** 模块按Markdown的顺序叠放，所以另一页可以把同样的块换个顺序排，或者多放一棵树，而不需要新的模板。
-- **并排。** 模块组是行或网格，或者内部有自己的组（`within`）时，同样的块会并排：两个`:::module{template="aviso"}`后接四个`:::module{template="tarjeta"}`，排成一行两个方框，下面是2 × 2的卡片网格。Markdown仍然只说明有哪些模块、按什么顺序（见[配置 › 模块](/zh/docs/configuration-composed-pages#模块)）。
+- **并排。** 模块组是行或网格，或者内部有自己的组（`within`）时，同样的块会并排：两个`:::module{template="aviso"}`后接四个`:::module{template="tarjeta"}`，排成一行两个方框，下面是2 × 2的卡片网格。Markdown仍然只说明有哪些模块、按什么顺序（见[配置 › 模块](/zh/docs/configuration-composed-pages#模块)）。 自 postext 1.51 起，组也可以位于行内，于是方框可以放在一列卡片旁边，行中的模块按 `grow` 和 `shrink` 分享行的空间。
 - 写在页面块之外的`:::module`是一个装着其内容的普通方框。模块里面再套模块是不支持的（`moduleNested`）。
 
 ## 示例

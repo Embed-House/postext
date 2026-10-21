@@ -160,6 +160,18 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>'fill'</code></td>
       <td>Un module : sa largeur dans une rangée ou une pile de modules, en longueur, en pourcentage de la largeur du groupe, ou <code>'fill'</code>, une part égale de ce que laissent les autres modules de la rangée. Dans une grille, le module prend sa colonne. Depuis postext 1.50.</td>
     </tr>
+    <tr>
+      <td><code>grow</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code> · <code>'fill'</code>: <code>1</code></td>
+      <td>Un module : sa part de la place qu’une rangée de modules laisse au-delà des largeurs de ses modules ; un module <code>'fill'</code> en prend 1 au moins. Depuis postext 1.51.</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Un module avec <code>width</code> : la largeur qu’il cède, selon sa largeur, quand une rangée de modules dépasse la fin du groupe. Depuis postext 1.51.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -440,7 +452,7 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Une grille : la place d’une cellule moins haute que sa rangée. <code>'stretch'</code> rend son bloc principal aussi haut que la rangée (jusqu’à son <code>maxHeight</code>), quand la hauteur de ce bloc est <code>'auto'</code> ou <code>'fill'</code>. Une rangée ou une grille de modules : la place d’un module moins haut que sa rangée ; <code>'stretch'</code> le pose dans une boîte aussi haute que la rangée, si bien que son fond et ses blocs <code>'fill'</code> atteignent le pied de la rangée.</td>
+      <td>Une grille : la place d’une cellule moins haute que sa rangée. <code>'stretch'</code> rend son bloc principal aussi haut que la rangée (jusqu’à son <code>maxHeight</code>), quand la hauteur de ce bloc est <code>'auto'</code> ou <code>'fill'</code>. Une rangée ou une grille de modules : la place d’un module moins haut que sa rangée ; <code>'stretch'</code> le pose dans une boîte aussi haute que la rangée, si bien que son fond et ses blocs <code>'fill'</code> atteignent le pied de la rangée. Depuis postext 1.51 ses blocs <code>'auto'</code> qui finissent à son pied descendent aussi au pied de la rangée, mais pas un bloc aussi large que son contenu.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -464,13 +476,13 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>within</code></td>
       <td><code>string</code></td>
       <td>aucun</td>
-      <td>Un groupe de modules dans la pile de modules de ce nom : chaque suite de modules de la page qu’il reçoit, dans l’ordre du Markdown, est posée comme une rangée ou une grille de cette pile, là où vient le premier module de la suite. Depuis postext 1.50.</td>
+      <td>Un groupe de modules dans le groupe de modules de ce nom : chaque suite des modules de la page qu’il reçoit est posée là où vient son premier module, en rangées d’une pile ou en une cellule d’une rangée ou d’une grille. Depuis postext 1.50 ; n’importe quel groupe de modules, à n’importe quelle profondeur, depuis postext 1.51.</td>
     </tr>
     <tr>
       <td><code>templates</code></td>
       <td><code>string[]</code></td>
       <td>aucun</td>
-      <td>Un groupe de modules avec <code>within</code> : les gabarits de module qu’il reçoit. Non renseigné, tous les modules. Un module va au premier groupe de ce genre qui le reçoit, sinon à la pile.</td>
+      <td>Un groupe de modules <code>within</code> un autre : les gabarits de module qu’il reçoit. Non défini, tous les modules, ou seulement ceux de ses groupes intérieurs s’il en a. Un module va au premier groupe qui le reçoit, sinon au groupe de modules de la page.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -628,7 +640,9 @@ pageTemplates: [
 - **Quand les modules ne tiennent pas.** Un module qui dépasse le pied du groupe y est coupé et ses blocs passent par les étapes d’ajustement ; `frameOverflow` est déclenché une fois pour le groupe. Avec `overflow.continueIn` sur le groupe de modules (`'next-page'` ou `'template:<id>'`), le premier module qui ne tient pas et tous ceux qui le suivent se poursuivent **entiers** sur la page ajoutée, sous les mêmes noms, en haut du groupe de modules de cette page. Dans une rangée ou une grille de modules, une rangée continue entière : ses modules ne sont jamais partagés entre deux pages.
 - **Côte à côte.** Un groupe de modules avec `kind: 'row'` pose ses modules du début à la fin, chacun à la `width` de son gabarit (une longueur, `{ percent: 48 }`, ou `'fill'`, une part égale de ce qui reste), la rangée aussi haute que son module le plus haut ; `kind: 'grid'` les pose en `columns` colonnes égales, rangée après rangée. `rowAlign` place un module moins haut que sa rangée. Les rangées partent du côté où commence la ligne : une page de droite à gauche pose le premier module à droite. Depuis postext 1.50.
 - **Groupes dans la pile.** Un groupe de modules avec `within: '<pile>'` se place dans la pile de modules de la page, et `templates` dit quels modules il reçoit : chaque suite de ces modules dans le Markdown forme une rangée ou une grille de la pile, là où vient son premier module. Avec les groupes ci-dessous, deux blocs `aviso` suivis de quatre blocs `tarjeta` donnent une rangée de deux encadrés sur une grille de 2 × 2 cartes, et le Markdown ne contient que des blocs `:::module`.
-- **Pas encore.** Un module dans un module (`moduleNested`), des cellules `grid` de gabarit dans un module, et un groupe dans une rangée ou une grille de modules.
+- **Des groupes dans des groupes.** Depuis postext 1.51 `within` peut nommer n’importe quel groupe de modules, une rangée ou une grille aussi, à n’importe quelle profondeur. Avec `banda` une rangée dans `cuerpo` et `columna` une pile dans `banda`, un encadré suivi de deux cartes se pose à côté d’une colonne des deux cartes. Un bloc de la page ancré à `#banda` est posé après les modules.
+- **Partager une rangée.** Depuis postext 1.51 la place qu’une rangée de modules laisse se partage selon le `grow` de chaque module, et une rangée plus large que son groupe cède de la largeur selon `shrink`.
+- **Pas encore.** Un module dans un module (`moduleNested`) et des cellules `grid` de gabarit dans un module.
 
 ```ts
 groups: [

@@ -47,6 +47,7 @@ En una pàgina composta (`::::page{template="…"}`), el canvas relaciona cada m
 - Un marc buit mostra un contorn discontinu, el nom i **Escriu aquí**; un marc que només en continua un altre indica quin. Aquestes marques només es dibuixen sobre el canvas: el PDF, la impressió i qualsevol exportació les deixen fora.
 - En mode Disseny, tots els marcs mostren el contorn i el nom, i un clic en selecciona un per a l'editor de plantilles.
 - Si el contingut d'un marc no hi cap, el marc apareix contornejat en vermell, amb una franja sota el peu tan alta com la part tallada i el que hi falta (*falten 15 mm*). Si l'escala de reajustament ha reduït el text d'un marc, el marc mostra l'escala a què ha quedat (*text al 85 %*, i *imatges al 80 %* si també se n'han reduït les imatges). Com les altres marques, només es dibuixen sobre el canvas.
+- Un marc la peça `:::frame` del qual anomena un aspecte que `frameLooks` no té s'envolta de traços violeta, amb el nom (*aspecte desconegut: azul*): es dibuixa només amb el seu estil fins que existeixi un aspecte amb aquest id.
 
 #### Edicions d'un llibre
 
