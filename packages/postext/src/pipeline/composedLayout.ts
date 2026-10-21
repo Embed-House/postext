@@ -45,7 +45,7 @@ import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../co
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
 import { anchorTarget, repeatInstance, repeatedFrames, resolveContinueIn } from '../composed/templates';
 import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
-import type { FrameLook, ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from '../composed/types';
+import type { FrameLook, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from '../composed/types';
 import { isModuleTemplate, resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
 import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat';
@@ -1949,26 +1949,98 @@ function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplat
       }
     };
 
-    /** Lay a modules group (#1062): each module, in order, in a box as wide
-     *  as the group, from where the module before it ends (`gap` between
-     *  them), as tall as its frames. A module's frames are placed as its
-     *  template draws them in that box (`'container'` is the box) and its
-     *  groups laid in it: first in the room left, to find how tall it is
-     *  (the frames held by the box's foot or middle, or sized by its
-     *  height, left out), then in a box that tall. The group runs down its
-     *  own box, else the area. A module that does not fit is cut at the
-     *  group's foot (its frames clipped there), or, when the group goes on
-     *  to another page (`FitState.gridsOn`), it and every module after it
-     *  go on, whole. The modules' declared boxes follow each other at the
-     *  heights their frames declare, so the log tells a module moved by
-     *  the one before it. */
+    /** Lay a modules group (#1062): its modules in rows down the group's
+     *  box (its own, else the area). A stack gives each module a row of
+     *  its own, as wide as the group (or its template's `width`, #1088), a
+     *  `'row'` puts them all in one, start to end (each its `width`, else
+     *  an equal share of what is left), a `'grid'` `columns` to a row in
+     *  equal columns; a run of modules a group inside the stack takes
+     *  (`within`) is laid as that group says where its first module comes.
+     *  Rows run from the start side of the page's lines (the flow frame is
+     *  mirrored on a right-to-left page, so its left is the start). A
+     *  module is placed as its template draws its frames in its box
+     *  (`'container'` is the box) and its groups laid in it: first in the
+     *  room left, to find how tall it is (the frames held by the box's foot
+     *  or middle, or sized by its height, left out), then in a box that
+     *  tall, or (`rowAlign` `'stretch'`, a row of several) as tall as its
+     *  row. A row that does not fit is cut at the group's foot (its frames
+     *  clipped there), or, when the group goes on to another page
+     *  (`FitState.gridsOn`), it and every row after it go on, whole. The
+     *  modules' declared boxes follow each other at the heights their
+     *  frames declare, so the log tells a module moved by the one before
+     *  it. */
     const placeModules = (group: ResolvedFrameGroup, members: readonly ResolvedFrame[]): void => {
       const byMember = new Map(members.map((f) => [f.name, f]));
       const own = groupPlaceable(group);
       const ownBox = own ? placeBox(own, template, pageInput, refOf, () => 0) : undefined;
       const box = ownBox ?? pageInput.areas.area;
       const foot = box.y + box.height;
-      const gap = dimensionToPx(group.gap, dpi, pageInput.emPx);
+      const toPx = (d: Dimension): number => dimensionToPx(d, dpi, pageInput.emPx);
+      type Laid = { mod: ResolvedModule; names: string[] };
+      type Row = { mods: Laid[]; xs: number[]; widths: number[]; align: 'start' | 'center' | 'end' | 'stretch'; gapBefore: number; nested?: string };
+      const mods: Laid[] = [];
+      for (const item of group.items ?? []) {
+        const mod = template.modules?.find((m) => m.name === item.module);
+        const names = item.frames.filter((n) => byMember.has(n));
+        if (mod && names.length > 0) mods.push({ mod, names });
+      }
+      /** A module's width in the group by its template (`'fill'`: none). */
+      const fixedWidth = (l: Laid): number | undefined => {
+        const w = l.mod.width;
+        if (w === undefined || w === 'fill') return undefined;
+        return 'percent' in w ? (box.width * w.percent) / 100 : toPx(w);
+      };
+      /** `list` side by side across the group, `gap` between them: each as
+       *  wide as its template says, the others sharing what is left. */
+      const across = (list: readonly Laid[], gap: number): { xs: number[]; widths: number[] } => {
+        const fixed = list.map(fixedWidth);
+        const taken = fixed.reduce<number>((a, w) => a + (w ?? 0), 0) + gap * Math.max(0, list.length - 1);
+        const shares = fixed.filter((w) => w === undefined).length;
+        const share = shares > 0 ? Math.max(0, box.width - taken) / shares : 0;
+        const widths = fixed.map((w) => Math.max(0, w ?? share));
+        const xs: number[] = [];
+        let x = box.x;
+        for (const w of widths) {
+          xs.push(x);
+          x += w + gap;
+        }
+        return { xs, widths };
+      };
+      /** The rows `list` makes in a group of `g`'s kind, the first `first`
+       *  after the row before it. */
+      const rowsOf = (list: readonly Laid[], g: ResolvedFrameGroup, first: number, nested?: string): Row[] => {
+        const gap = toPx(g.gap);
+        const align = g.rowAlign ?? 'stretch';
+        const tag = nested !== undefined ? { nested } : {};
+        if (g.kind === 'row') return [{ mods: [...list], ...across(list, gap), align, gapBefore: first, ...tag }];
+        if (g.kind === 'grid') {
+          const columns = Math.max(1, g.columns ?? 1);
+          const colGap = toPx(g.columnGap ?? g.gap);
+          const rowGap = toPx(g.rowGap ?? g.gap);
+          const colW = Math.max(1, (box.width - colGap * (columns - 1)) / columns);
+          const out: Row[] = [];
+          for (let k = 0; k < list.length; k += columns) {
+            const chunk = list.slice(k, k + columns);
+            out.push({ mods: chunk, xs: chunk.map((_, c) => box.x + c * (colW + colGap)), widths: chunk.map(() => colW), align, gapBefore: k === 0 ? first : rowGap, ...tag });
+          }
+          return out;
+        }
+        // A stack: a row of its own per module, at its width from the start.
+        return list.map((l, k) => ({ mods: [l], xs: [box.x], widths: [fixedWidth(l) ?? box.width], align: 'start' as const, gapBefore: k === 0 ? first : gap, ...tag }));
+      };
+      const rows: Row[] = [];
+      if (group.kind !== 'stack') rows.push(...rowsOf(mods, group, 0));
+      else {
+        const stackGap = toPx(group.gap);
+        for (let k = 0; k < mods.length;) {
+          const nested = mods[k]!.mod.nested;
+          const inner = nested !== undefined ? template.groups.find((g) => g.name === nested) : undefined;
+          let end = k + 1;
+          if (inner) while (end < mods.length && mods[end]!.mod.nested === nested) end++;
+          rows.push(...rowsOf(mods.slice(k, end), inner ?? group, k === 0 ? 0 : stackGap, inner ? nested : undefined));
+          k = end;
+        }
+      }
       let cursor = box.y;
       let declCursor = box.y;
       let out = false;
@@ -1976,36 +2048,28 @@ function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplat
       let lastLaid: string | undefined;
       const boxes: Rect[] = [];
       const declBoxes: Rect[] = [];
+      const nestedBoxes = new Map<string, { laid: Rect[]; declared: Rect[] }>();
       const restore = <K, V>(to: Map<K, V>, from: ReadonlyMap<K, V>): void => {
         to.clear();
         for (const [k, v] of from) to.set(k, v);
       };
-      for (const item of group.items ?? []) {
-        const mod = template.modules?.find((m) => m.name === item.module);
-        const names = item.frames.filter((n) => byMember.has(n));
-        if (!mod || names.length === 0) continue;
-        if (out) {
-          spillWhole(names, laidAny, lastLaid);
-          continue;
+      const lay = (l: Laid, x: number, y: number, width: number, height: number, filling: boolean): void => {
+        const steps = composedOrder({ frames: l.names.map((n) => byMember.get(n)!), groups: template.groups.filter((g) => l.mod.groups.includes(g.name)) });
+        input = { ...pageInput, areas: { ...pageInput.areas, area: { x, y, width, height: Math.max(0, height) } } };
+        try {
+          for (const step of steps) runStep(step, filling);
+        } finally {
+          input = pageInput;
         }
-        const sub: Pick<ResolvedPageTemplate, 'frames' | 'groups'> = { frames: names.map((n) => byMember.get(n)!), groups: template.groups.filter((g) => mod.groups.includes(g.name)) };
-        const steps = composedOrder(sub);
-        const lay = (height: number, filling: boolean): void => {
-          input = { ...pageInput, areas: { ...pageInput.areas, area: { x: box.x, y: cursor, width: box.width, height: Math.max(0, height) } } };
-          try {
-            for (const step of steps) runStep(step, filling);
-          } finally {
-            input = pageInput;
-          }
-        };
-        // 1. How tall the module is: its frames placed in the room left,
-        //    then everything they set put back.
+      };
+      /** How tall a module is at `(x, y)`, `width` wide: its frames placed
+       *  in the room left, then everything they set put back. */
+      const measure = (l: Laid, x: number, y: number, width: number): number => {
         const kept = { rects: new Map(rects), declared: new Map(declared), groupRects: new Map(groupRects), groupDeclared: new Map(groupDeclared), pinned: pinned.length, boxShort: new Map(boxShort), fitted: new Map(fitted) };
-        lay(foot - cursor, false);
-        const placed = names.filter((n) => rects.has(n));
+        lay(l, x, y, width, foot - y, false);
+        const placed = l.names.filter((n) => rects.has(n));
         const measured = placed.filter((n) => !heldByFoot(byMember.get(n)!));
         const reach = unionRect((measured.length > 0 ? measured : placed).map((n) => rects.get(n)!));
-        const height = reach ? Math.max(0, reach.y + reach.height - cursor) : 0;
         restore(rects, kept.rects);
         restore(declared, kept.declared);
         restore(groupRects, kept.groupRects);
@@ -2013,39 +2077,79 @@ function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplat
         restore(boxShort, kept.boxShort);
         restore(fitted, kept.fitted);
         pinned.length = kept.pinned;
-        const fits = cursor + height <= foot + 0.5;
+        return reach ? Math.max(0, reach.y + reach.height - y) : 0;
+      };
+      rows.forEach((row, r) => {
+        const names = row.mods.flatMap((l) => l.names);
+        if (out) {
+          spillWhole(names, laidAny, lastLaid);
+          return;
+        }
+        if (r > 0) {
+          cursor += row.gapBefore;
+          declCursor += row.gapBefore;
+        }
+        const heights = row.mods.map((l, k) => measure(l, row.xs[k]!, cursor, row.widths[k]!));
+        const rowH = Math.max(0, ...heights);
+        const fits = cursor + rowH <= foot + 0.5;
         if (!fits && fit.gridsOn.has(group.name)) {
-          // This module and the ones after it go on, whole.
+          // This row and the ones after it go on, whole.
           out = true;
           spillWhole(names, laidAny, lastLaid);
-          continue;
+          return;
         }
-        // 2. The module laid in a box that tall (cut at the foot when it
-        //    does not fit).
-        clipFoot = fits ? undefined : foot;
-        try {
-          lay(fits ? height : foot - cursor, true);
-        } finally {
-          clipFoot = undefined;
-        }
-        const u = unionRect(names.flatMap((n) => (rects.has(n) ? [rects.get(n)!] : [])));
-        const bottom = u ? Math.max(cursor, u.y + u.height) : cursor;
-        const moduleBox = { x: box.x, y: cursor, width: box.width, height: bottom - cursor };
-        moduleRects.set(mod.name, moduleBox);
-        boxes.push(moduleBox);
-        // Declared: after the modules before it as they declare themselves.
-        const shift = declCursor - cursor;
-        for (const n of names) {
-          const d = declared.get(n);
-          if (d && Math.abs(shift) > 0.001) declared.set(n, { ...d, y: d.y + shift });
-        }
-        const du = unionRect(names.flatMap((n) => (declared.has(n) ? [declared.get(n)!] : [])));
-        const declBottom = du ? Math.max(declCursor, du.y + du.height) : declCursor;
-        declBoxes.push({ x: box.x, y: declCursor, width: box.width, height: declBottom - declCursor });
+        // Each module laid in a box that tall (cut at the foot when the row
+        // does not fit); a shorter one placed by `rowAlign`.
+        const several = row.mods.length > 1;
+        let rowBottom = cursor;
+        let rowDeclBottom = declCursor;
+        row.mods.forEach((l, k) => {
+          const x = row.xs[k]!;
+          const width = row.widths[k]!;
+          const spare = rowH - heights[k]!;
+          const stretched = fits && several && row.align === 'stretch';
+          const dy = fits && several && spare > 0.01 ? (row.align === 'end' ? spare : row.align === 'center' ? spare / 2 : 0) : 0;
+          const y = cursor + dy;
+          clipFoot = fits ? undefined : foot;
+          try {
+            lay(l, x, y, width, fits ? (stretched ? rowH : heights[k]!) : foot - cursor, true);
+          } finally {
+            clipFoot = undefined;
+          }
+          const u = unionRect(l.names.flatMap((n) => (rects.has(n) ? [rects.get(n)!] : [])));
+          const bottom = Math.max(stretched ? y + rowH : y, u ? u.y + u.height : y);
+          const moduleBox = { x, y, width, height: bottom - y };
+          moduleRects.set(l.mod.name, moduleBox);
+          boxes.push(moduleBox);
+          // Declared: after the rows before it as they declare themselves.
+          const shift = declCursor - cursor;
+          for (const n of l.names) {
+            const d = declared.get(n);
+            if (d && Math.abs(shift) > 0.001) declared.set(n, { ...d, y: d.y + shift });
+          }
+          const declY = declCursor + dy;
+          const du = unionRect(l.names.flatMap((n) => (declared.has(n) ? [declared.get(n)!] : [])));
+          const declBottom = du ? Math.max(declY, du.y + du.height) : declY;
+          const declBox = { x, y: declY, width, height: declBottom - declY };
+          declBoxes.push(declBox);
+          if (row.nested !== undefined) {
+            const n = nestedBoxes.get(row.nested) ?? { laid: [], declared: [] };
+            n.laid.push(moduleBox);
+            n.declared.push(declBox);
+            nestedBoxes.set(row.nested, n);
+          }
+          rowBottom = Math.max(rowBottom, bottom);
+          rowDeclBottom = Math.max(rowDeclBottom, declBottom);
+        });
         laidAny = true;
         lastLaid = frameIdOf(names[names.length - 1]!);
-        cursor = bottom + gap;
-        declCursor = declBottom + gap;
+        cursor = rowBottom;
+        declCursor = rowDeclBottom;
+      });
+      // A group inside the stack (#1088) is the box of its modules.
+      for (const [name, b] of nestedBoxes) {
+        groupRects.set(name, unionRect(b.laid)!);
+        groupDeclared.set(name, unionRect(b.declared)!);
       }
       groupRects.set(group.name, ownBox ?? unionRect(boxes) ?? { ...box, height: 0 });
       groupDeclared.set(group.name, ownBox ?? unionRect(declBoxes) ?? { ...box, height: 0 });

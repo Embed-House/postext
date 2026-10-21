@@ -346,13 +346,14 @@ describe('module configuration and checks (#1062)', () => {
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/header']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/spread']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/0/groups/0/modules']);
-    expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/1/groups/0/kind']);
+    // A modules row is a kind of its own since #1088.
+    expect(ws).not.toContainEqual(['unknownConfigValue', '/pageTemplates/1/groups/0/kind']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/1/groups/0/frames']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/1/groups/0/overflow/continueIn']);
     expect(ws).toContainEqual(['unknownConfigValue', '/pageTemplates/1/groups/1/overflow/continueIn']);
     // A module holds no modules group; a modules group no frames.
     expect(resolvePageTemplate({ pageTemplates: [bad] }, 'mala')!.groups[0]!.modules).toBeUndefined();
-    expect(resolvePageTemplate({ pageTemplates: [shell] }, 'shell')!.groups[0]).toMatchObject({ kind: 'stack', frames: [], modules: true });
+    expect(resolvePageTemplate({ pageTemplates: [shell] }, 'shell')!.groups[0]).toMatchObject({ kind: 'row', frames: [], modules: true });
   });
 
   it('reports a cycle of modules extending each other', () => {

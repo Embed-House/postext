@@ -13,8 +13,9 @@
  * the layout gives it (as wide as the group, as tall as its frames); a
  * decoration element anchored to `'container'` is anchored to `#<name>`,
  * the module's box. The modules group lists every module frame, in module
- * order, and its `items` say which belong to which module; the module's
- * own groups follow the page's. Everything after (the stories, the
+ * order, and its `items` say which belong to which module (and, #1088,
+ * which modules group inside it lays the module); the module's own groups
+ * follow the page's. Everything after (the stories, the
  * ladder, continuation, ids, the source map) sees plain frames.
  *
  * Pure. Run by `resolvePageTemplate` when it is given the page's modules.
@@ -86,8 +87,12 @@ export function expandModules(
   uses: readonly ComposedModuleUse[],
   moduleOf: (id: string) => ResolvedPageTemplate | undefined,
 ): ResolvedPageTemplate {
-  const group = page.groups.find((g) => g.modules);
+  const group = page.groups.find((g) => g.modules && !g.within);
   if (!group || uses.length === 0) return page;
+  // The modules groups laid inside it (#1088): a module goes to the first
+  // that takes its template, else to the group itself.
+  const inner = page.groups.filter((g) => g.modules && g.within === group.name);
+  const nestedOf = (template: string): string | undefined => inner.find((g) => !g.templates || g.templates.includes(template))?.name;
   const taken = new Set<string>();
   const frames: ResolvedFrame[] = [];
   const groups: ResolvedFrameGroup[] = [];
@@ -135,6 +140,7 @@ export function expandModules(
       return { ...e, ...id, placement: rewritePlacement(e.placement, rename, use.name)! };
     });
     const flow = m.frames.find((f) => f.flow);
+    const nested = nestedOf(use.template);
     const takes: ResolvedModule['takes'] = {};
     for (const f of m.frames) if (f.takes && takes[f.takes] === undefined) takes[f.takes] = scope(f.name);
     frames.push(...own);
@@ -151,13 +157,15 @@ export function expandModules(
       elements: ownElements.flatMap((e) => (typeof e.id === 'string' ? [e.id] : [])),
       ...(flow ? { flow: scope(flow.name) } : {}),
       ...(Object.keys(takes).length > 0 ? { takes } : {}),
+      ...(m.width !== undefined ? { width: m.width } : {}),
+      ...(nested !== undefined ? { nested } : {}),
     });
   }
   if (modules.length === 0) return page;
   const modulesGroup: ResolvedFrameGroup = {
     ...group,
     frames: frames.map((f) => f.name),
-    items: modules.map((m, k) => ({ item: k + 1, frames: [...m.frames], module: m.name })),
+    items: modules.map((m, k) => ({ item: k + 1, frames: [...m.frames], module: m.name, ...(m.nested !== undefined ? { nested: m.nested } : {}) })),
   };
   return {
     ...page,

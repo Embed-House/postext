@@ -20,6 +20,7 @@ import type {
   PageTemplateGrid,
   PageTemplatePatch,
   ResolvedFrame,
+  ResolvedFrameGroup,
 } from './types';
 import { closestKey } from '../util/closestKey';
 import { dimensionToPx } from '../units';
@@ -46,6 +47,7 @@ import {
   DEFAULT_LABEL_STYLE,
   DEFAULT_PAGE_TEMPLATE,
   MODULE_ROLE,
+  moduleWidth,
   resolveTemplateAt,
   templateChain,
   type TemplateIssue,
@@ -56,7 +58,7 @@ import {
 const TEMPLATE_KEYS = {
   id: true, name: true, extends: true, spread: true, gutter: true, variants: true, role: true,
   area: true, grid: true, frames: true, groups: true, decoration: true, header: true, footer: true,
-  overflowTemplate: true, bodyStyle: true, palette: true,
+  overflowTemplate: true, bodyStyle: true, palette: true, width: true,
 } satisfies Record<keyof PageTemplate, true>;
 const PATCH_KEYS = {
   area: true, grid: true, frames: true, groups: true, decoration: true, header: true, footer: true,
@@ -79,6 +81,7 @@ const PADDING_KEYS = { top: true, right: true, bottom: true, left: true } satisf
 const GROUP_KEYS = {
   name: true, kind: true, frames: true, gap: true, placement: true, grid: true, align: true, remove: true,
   columns: true, columnGap: true, rowGap: true, rowAlign: true, repeat: true, modules: true, overflow: true,
+  within: true, templates: true,
 } satisfies Record<keyof FrameGroupConfig, true>;
 const GROUP_OVERFLOW_KEYS = { continueIn: true } satisfies Record<keyof NonNullable<FrameGroupConfig['overflow']>, true>;
 /** What a module template (#1062) does not have: it is laid in a page's
@@ -236,15 +239,27 @@ function checkGroupEntry(group: unknown, path: string, push: Push): void {
     push({ kind: 'unknownConfigValue', path: `${path}/modules`, value: String(group.modules), used: 'false' });
   }
   const modules = group.modules === true;
-  if (modules && group.kind !== undefined && group.kind !== 'stack') {
-    push({ kind: 'unknownConfigValue', path: `${path}/kind`, value: String(group.kind), used: 'stack' });
-  }
   if (modules && Array.isArray(group.frames) && group.frames.length > 0) {
     push({ kind: 'unknownConfigValue', path: `${path}/frames`, value: group.frames.map(String).join(', '), used: '' });
   }
+  if (modules && isRecord(group.repeat)) {
+    push({ kind: 'unknownConfigValue', path: `${path}/repeat`, value: JSON.stringify(group.repeat), used: '' });
+  }
+  // A modules group inside a modules stack (#1088): `within` names it (the
+  // stack itself is checked with the template), `templates` the modules
+  // it takes; it goes on with the stack, not on its own.
+  const within = group.within;
+  if (within !== undefined && !(modules && typeof within === 'string' && within !== '' && within !== group.name)) {
+    push({ kind: 'unknownConfigValue', path: `${path}/within`, value: String(within), used: '' });
+  }
+  const nested = modules && typeof within === 'string' && within !== '' && within !== group.name;
+  const templates = group.templates;
+  if (templates !== undefined && !(nested && Array.isArray(templates) && templates.every((t) => typeof t === 'string'))) {
+    push({ kind: 'unknownConfigValue', path: `${path}/templates`, value: Array.isArray(templates) ? templates.map(String).join(', ') : String(templates), used: '' });
+  }
   const continueIn = isRecord(group.overflow) ? group.overflow.continueIn : undefined;
   if (continueIn !== undefined) {
-    const ok = modules && typeof continueIn === 'string' && (continueIn === 'next-page' || continueIn.startsWith('template:'));
+    const ok = modules && !nested && typeof continueIn === 'string' && (continueIn === 'next-page' || continueIn.startsWith('template:'));
     if (!ok) push({ kind: 'unknownConfigValue', path: `${path}/overflow/continueIn`, value: String(continueIn), used: '' });
   }
 }
@@ -311,6 +326,7 @@ function checkTemplates(
       for (const issue of resolved.issues) push(issueWarning(issue));
       for (const frame of resolved.template.frames) checkMinMax(frame, toPx, push);
       if (parity === undefined && resolved.template.role === MODULE_ROLE) checkModule(t, path, push);
+      if (parity === undefined && resolved.template.role !== MODULE_ROLE) checkPageModules(t, resolved.template.groups, path, push);
     }
   }
 }
@@ -320,6 +336,10 @@ function checkTemplates(
  *  modules group (a module inside a module, `moduleNested`, is not
  *  supported). Each is ignored. */
 function checkModule(t: PageTemplate, path: string, push: Push): void {
+  // A module's width in its group (#1088).
+  if (t.width !== undefined && !moduleWidth(t.width)) {
+    push({ kind: 'unknownConfigValue', path: `${path}/width`, value: typeof t.width === 'object' ? JSON.stringify(t.width) : String(t.width), used: 'fill' });
+  }
   for (const key of MODULE_PAGE_KEYS) {
     const value = (t as unknown as Record<string, unknown>)[key];
     if (value === undefined) continue;
@@ -328,6 +348,20 @@ function checkModule(t: PageTemplate, path: string, push: Push): void {
   if (!Array.isArray(t.groups)) return;
   t.groups.forEach((g, j) => {
     if (isRecord(g) && g.modules === true) push({ kind: 'unknownConfigValue', path: `${path}/groups/${j}/modules`, value: 'true', used: 'false' });
+  });
+}
+
+/** What a page template (no module) writes of modules (#1088): a `width`
+ *  (only a module has one), and a modules group `within` a group that is
+ *  no modules stack of the template in no other. Each is ignored. */
+function checkPageModules(t: PageTemplate, groups: readonly ResolvedFrameGroup[], path: string, push: Push): void {
+  if (t.width !== undefined) push({ kind: 'unknownConfigValue', path: `${path}/width`, value: typeof t.width === 'object' ? JSON.stringify(t.width) : String(t.width), used: '' });
+  if (!Array.isArray(t.groups)) return;
+  t.groups.forEach((g, j) => {
+    if (!isRecord(g) || g.modules !== true || typeof g.within !== 'string' || g.within === '' || g.within === g.name) return;
+    const parent = groups.find((x) => x.name === g.within);
+    if (parent && parent.modules && !parent.within && parent.kind === 'stack') return;
+    push({ kind: 'unknownConfigValue', path: `${path}/groups/${j}/within`, value: g.within, used: '' });
   });
 }
 
