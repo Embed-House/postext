@@ -43,6 +43,7 @@ import { getMeasureDirection, mirrorLineSpans, shiftLineX } from '../measure/bid
 import { startEndAsLeftRight } from '../defaults/shared';
 import { prepareTabs } from './tabs';
 import { resolveResourceWrap } from './textWrap';
+import { captionInsideShare } from './captionInside';
 import { dropCapRefusedInBox, fullPlainOffset, paragraphDropCap, prepareDropCap, type MeasuredDropCap, type PreparedDropCap } from './dropCap';
 import { lineIndentAt, lineInsetsAt, type LineInsetStep } from '../measure/types';
 import { measureCodeLines } from './codeLines';
@@ -401,9 +402,13 @@ export function measureContentBlock(
     // per `placement.align`.
     // A picture text wraps round (#627) takes its share of the column at
     // its side (horizontal text only).
+    // A picture with its caption beside it inside the column (#1106) keeps
+    // the column's width: the resource layout narrows the picture.
+    const inside = !measuringVertically() && opts?.uprightMaxLength === undefined
+      && captionInsideShare(kind.resource, kind.resourceType) !== undefined;
     const wrap = measuringVertically() ? undefined : resolveResourceWrap(kind.resource, kind.resourceType, resolved.layout.wrap);
     const rawFrac = kind.resource.placement?.width ?? kind.resourceType?.defaultPlacement?.width;
-    const frac = wrap ? wrap.width : typeof rawFrac === 'number' && rawFrac > 0 && rawFrac < 1 ? rawFrac : 1;
+    const frac = wrap ? wrap.width : !inside && typeof rawFrac === 'number' && rawFrac > 0 && rawFrac < 1 ? rawFrac : 1;
     const align = wrap ? wrap.side : startEndAsLeftRight(kind.resource.placement?.align ?? kind.resourceType?.defaultPlacement?.align ?? 'left');
     const embedWidth = columnWidth * frac;
     // Where a narrower embed starts in its column (`placement.align`).

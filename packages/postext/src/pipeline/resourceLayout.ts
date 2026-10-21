@@ -90,6 +90,7 @@ import { pickTableStyle } from '../defaults/tableStyle';
 import { resolveColorValue, startEndAsLeftRight } from '../defaults/shared';
 import { resolveBodyStyle } from './styles';
 import { FIT_EPS } from './placement';
+import { captionInsideShare } from './captionInside';
 import { uppercasePreservingLength } from './buildBlockKind';
 import { lineTrailingTracking } from '../lineInk';
 import type { ResourceNumberingMap } from './resourceNumbering';
@@ -1617,6 +1618,24 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // Inline `:ref` emphasis (bold/italic), applied to refs in captions + cells.
   const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels };
 
+  // A caption beside the picture inside its slot (`placement.captionSide:
+  // 'inside'`, #1106): the picture takes its share of the slot on its
+  // `align` side, the caption and note the rest after the gutter. A band
+  // too narrow to read goes back under the picture.
+  const inside = (() => {
+    const share = !rotate && !input.captionAside ? captionInsideShare(resource, resourceType) : undefined;
+    if (share === undefined) return undefined;
+    const gapPx = Math.max(0, dimensionToPx(resolved.layout.gutterWidth, dpi, bodyStyle.fontSizePx));
+    const bodyMax = columnWidth * share;
+    const captionWidth = columnWidth - bodyMax - gapPx;
+    if (!(captionWidth >= columnWidth * CAPTION_INSIDE_MIN_SHARE)) return undefined;
+    const right = startEndAsLeftRight(resource.placement?.align ?? resourceType?.defaultPlacement?.align ?? 'left') === 'right';
+    return { bodyMax, captionWidth, captionX: right ? 0 : bodyMax + gapPx, right };
+  })();
+  // Widest the picture is set: the caller's cap, and the share `inside`
+  // gives it.
+  const pictureMaxWidth = Math.min(columnWidth, input.maxBodyWidth ?? columnWidth, inside?.bodyMax ?? Infinity);
+
   // --- Figure body -------------------------------------------------------
   let bodyWidth = columnWidth;
   let bodyHeight = 0;
@@ -1631,7 +1650,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     // Its pixels at its own resolution (#631), else at `page.dpi`; the
     // column caps it, a smaller picture keeps its size.
     const natural = bitmapLayoutSize(resource.bitmap, dpi);
-    const fit = fitWidth(natural.width, natural.height, Math.min(columnWidth, input.maxBodyWidth ?? columnWidth));
+    const fit = fitWidth(natural.width, natural.height, pictureMaxWidth);
     bodyWidth = fit.width;
     bodyHeight = fit.height;
   } else if (resource.kind === 'svg' && resource.svg) {
@@ -1641,7 +1660,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     // only when no intrinsic size was captured.
     const iw = resource.svg.width ?? 0;
     const ih = resource.svg.height ?? 0;
-    bodyWidth = Math.min(columnWidth, input.maxBodyWidth ?? columnWidth);
+    bodyWidth = pictureMaxWidth;
     bodyHeight = iw > 0 && ih > 0 ? bodyWidth * (ih / iw) : bodyWidth * 0.75;
   } else if (resource.kind === 'video') {
     // A video is set as its poster (#454): the column's width, the poster's
@@ -1652,7 +1671,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     format = poster?.format;
     const iw = poster?.width ?? resource.video?.width ?? 0;
     const ih = poster?.height ?? resource.video?.height ?? 0;
-    bodyWidth = Math.min(columnWidth, input.maxBodyWidth ?? columnWidth);
+    bodyWidth = pictureMaxWidth;
     bodyHeight = iw > 0 && ih > 0 ? bodyWidth * (ih / iw) : bodyWidth * (9 / 16);
   } else if (resource.kind === 'table' && resource.table) {
     const ts = tableStyle;
@@ -1759,7 +1778,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     resourceType,
     number,
     resolved,
-    width: input.captionAside?.width ?? input.captionWidth ?? columnWidth,
+    width: input.captionAside?.width ?? inside?.captionWidth ?? input.captionWidth ?? columnWidth,
     resourceNumbering,
     resourceTypes,
     resources,
@@ -1810,7 +1829,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     measuredNote = measureSnippetLines(
       slanted,
       [noteFontString, noteBoldFontString, noteItalicFontString, noteBoldItalicFontString],
-      Math.max(1, input.captionAside?.width ?? input.captionWidth ?? columnWidth),
+      Math.max(1, input.captionAside?.width ?? inside?.captionWidth ?? input.captionWidth ?? columnWidth),
       noteLineHeightPx,
       { textAlign: cs.note.align },
     );
@@ -1885,7 +1904,8 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     const m = resolved.page.margins;
     const areaHeight = dimensionToPx(resolved.page.height, dpi)
       - dimensionToPx(m.top, dpi) - dimensionToPx(m.bottom, dpi);
-    const room = areaHeight - captionHeight - noteHeight - continuesHeight - bodyStyle.lineHeightPx;
+    // A caption set beside the picture (`inside`) takes none of its height.
+    const room = areaHeight - (inside ? 0 : captionHeight + noteHeight) - continuesHeight - bodyStyle.lineHeightPx;
     // A picture with a safe area is cropped first, keeping its width.
     if (bodyHeight > room + FIT_EPS && bodyHeight > 0 && room > 0 && flexRange) {
       bodyHeight = Math.max(room, flexRange(bodyWidth).min);
@@ -1938,7 +1958,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // rounds follow the width down.
   const captionMeasure = resource.placement?.captionMeasure ?? resourceType?.defaultPlacement?.captionMeasure;
   if (
-    captionMeasure === 'body' && picture && !rotate && !input.captionAside
+    captionMeasure === 'body' && picture && !rotate && !input.captionAside && !inside
     && input.captionWidth === undefined && bodyWidth < columnWidth - 0.5
   ) {
     let width = bodyWidth;
@@ -1953,17 +1973,21 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // --- Vertical stacking -------------------------------------------------
   // above: [caption band] gap [body] noteGap [note]
   // below: [body] gap [caption band] noteGap [note]
+  // beside (`inside`): [body] gutter [caption band, noteGap, note], the
+  // body and the caption band both from the block's top
   const aside = input.captionAside;
   const asideBand = aside ? captionBandHeight + noteHeight : 0;
-  const captionAbove = !aside && cs.position === 'above' && captionBandHeight > 0;
+  const besideBand = inside ? captionBandHeight + noteHeight : 0;
+  const captionAbove = !aside && !inside && cs.position === 'above' && captionBandHeight > 0;
   const captionBandY = aside
     ? (aside.alignBottom ? Math.max(0, bodyHeight - asideBand) : Math.max(0, aside.offsetY ?? 0))
+    : inside ? 0
     : captionAbove ? 0 : bodyHeight + (captionBandHeight > 0 ? captionGapPx : 0);
   const bodyY = captionAbove ? captionHeight : 0;
-  const asideDx = aside ? aside.dx : 0;
+  const asideDx = aside ? aside.dx : inside ? inside.captionX : 0;
   // A caption measured to the picture (`placement.captionMeasure: 'body'`)
   // sits under it per `placement.align`, as the picture sits in the slot.
-  const captionDx = !aside && input.captionWidth !== undefined && input.captionWidth < columnWidth
+  const captionDx = !aside && !inside && input.captionWidth !== undefined && input.captionWidth < columnWidth
     ? (columnWidth - input.captionWidth) * alignFactor(resource.placement?.align ?? resourceType?.defaultPlacement?.align)
     : asideDx;
   // A picture narrower than its slot — shrunk to fit the page or the room
@@ -1971,7 +1995,10 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // sits in the slot per `placement.align`, as a float narrowed by
   // `placement.width` does; the caption and note keep the slot's measure.
   // A turned figure and one with its caption beside it stay flush left.
-  const bodyX = !rotate && !aside && picture && bodyWidth < columnWidth
+  // A picture with its caption inside the slot keeps to its own side.
+  const bodyX = inside
+    ? (inside.right ? columnWidth - bodyWidth : 0)
+    : !rotate && !aside && picture && bodyWidth < columnWidth
     ? (columnWidth - bodyWidth) * alignFactor(resource.placement?.align ?? resourceType?.defaultPlacement?.align)
     : 0;
   const bodyRect = createBoundingBox(bodyX, bodyY, bodyWidth, bodyHeight);
@@ -1997,11 +2024,11 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   const barOverhang = table ? table.borderWidthPx / 2 : 0;
   const captionBar = cs.backgroundEnabled && captionBandHeight > 0
     ? {
-        rect: createBoundingBox(captionDx - barOverhang || 0, captionBandY, (aside?.width ?? input.captionWidth ?? columnWidth) + 2 * barOverhang, captionBandHeight),
+        rect: createBoundingBox(captionDx - barOverhang || 0, captionBandY, (aside?.width ?? inside?.captionWidth ?? input.captionWidth ?? columnWidth) + 2 * barOverhang, captionBandHeight),
         background: cs.background.hex,
       }
     : undefined;
-  const noteY = aside
+  const noteY = aside || inside
     ? captionBandY + captionBandHeight + noteGapPx
     : (captionAbove ? bodyY + bodyHeight : bodyHeight + captionHeight) + noteGapPx;
   const noteLines = shiftLines(measuredNote, captionDx, noteY);
@@ -2009,6 +2036,8 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   const continuesLines = shiftLines(measuredContinues, 0, aside ? bodyHeight + noteGapPx : noteY);
   const totalHeight = aside
     ? bodyHeight + continuesHeight
+    : inside
+    ? Math.max(bodyHeight, besideBand) + continuesHeight
     : bodyHeight + captionHeight + noteHeight + continuesHeight;
 
   const video = layoutVideo(resource, resolved, bodyWidth, bodyHeight);
@@ -2059,6 +2088,11 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   };
 }
 
+
+/** The narrowest caption band set beside a picture inside its slot
+ *  (`placement.captionSide: 'inside'`), as a share of the slot: a
+ *  narrower one goes back under the picture. */
+const CAPTION_INSIDE_MIN_SHARE = 0.2;
 
 /** The share of its first width an upright picture keeps when its frame
  *  narrows (see `layoutUprightResourceBlock`): it may give up a quarter,

@@ -119,8 +119,20 @@ export interface ResourcePlacement {
    *  'here'`, #729, `layout.inlineCaptionSide`): there the caption stands
    *  level with the body's top when the side column is free over its
    *  band, else under the body. Not for a page-span or rotated resource,
-   *  one inside a box, or one text wraps round. */
-  captionSide?: boolean;
+   *  one inside a box, or one text wraps round.
+   *
+   *  `'inside'` (#1106): the caption and note stand beside the picture
+   *  within its own slot, in any layout (one column, two, a page-span
+   *  float, a resource set in the text, a box, a composed page's frame).
+   *  The picture takes `width` of the slot (default 0.5) on its `align`
+   *  side (`'center'` reads as `'left'`); the caption takes the rest of
+   *  the slot after `layout.gutterWidth`, its first line level with the
+   *  picture's top. The block is as tall as the taller of the two, and
+   *  moves on whole like any float or embed. Pictures only (bitmap, SVG,
+   *  video); a table, a turned resource and one on a vertical page keep
+   *  the caption under them. A caption band narrower than a fifth of the
+   *  slot goes back under the picture. */
+  captionSide?: boolean | 'inside';
   /** Scale a floated picture (bitmap, SVG, a video's poster) down, keeping
    *  its proportions, to the room a slot has, instead of moving it on
    *  (#626). `'never'`: a float either fits a slot at its size or waits
