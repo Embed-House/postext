@@ -1,4 +1,4 @@
-import type { ColorValue, Dimension, MarkStyleConfig, ResolvedMarkStyleConfig } from '../types';
+import type { ColorValue, Dimension, MarkDecorationBreak, MarkStyleConfig, ResolvedMarkStyleConfig } from '../types';
 import { colorsEqual, dimensionsEqual } from './shared';
 
 const EM = (value: number): Dimension => ({ value, unit: 'em' });
@@ -11,6 +11,7 @@ export const DEFAULT_MARK_STYLE_STATIC = {
   borderRadius: EM(0.2),
   paddingX: EM(0.15),
   paddingY: EM(0.05),
+  decorationBreak: 'slice' as MarkDecorationBreak,
 };
 
 /** One style ships by default so `:mark[…]` works out of the box. */
@@ -28,6 +29,7 @@ function resolveMarkStyleConfig(partial: MarkStyleConfig): ResolvedMarkStyleConf
     paddingY: partial.paddingY ?? d.paddingY,
     ...(partial.paddingTop ? { paddingTop: partial.paddingTop } : {}),
     ...(partial.paddingBottom ? { paddingBottom: partial.paddingBottom } : {}),
+    decorationBreak: partial.decorationBreak === 'clone' ? 'clone' : d.decorationBreak,
   };
 }
 
@@ -67,6 +69,7 @@ export function stripMarkStylesDefaults(styles: MarkStyleConfig[] | undefined): 
     if (s.paddingY !== undefined && !dimensionsEqual(s.paddingY, d.paddingY)) r.paddingY = s.paddingY;
     if (s.paddingTop !== undefined) r.paddingTop = s.paddingTop;
     if (s.paddingBottom !== undefined) r.paddingBottom = s.paddingBottom;
+    if (s.decorationBreak !== undefined && s.decorationBreak !== d.decorationBreak) r.decorationBreak = s.decorationBreak;
     return r;
   });
   if (stripped.length === 1) {
