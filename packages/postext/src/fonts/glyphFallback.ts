@@ -27,7 +27,7 @@ import { quoteFamily } from '../measure/font';
 import { measureTextWidth } from '../measure/canvas';
 import { fontStringFamilies, parseFontString, type FontFaceRequest } from '../measure/fontString';
 import { parseUnicodeRange } from '../svg/fontRegistry';
-import { defaultFontSet, isGenericFamily, faceRequestKey, type FontFaceLike, type FontFaceSetLike } from './faces';
+import { defaultFontSet, isGenericFamily, faceRequestKey, GLYPH_PROBE_FAMILY, type FontFaceLike, type FontFaceSetLike } from './faces';
 import { intersectRanges, rangesHave, sfntCodePointRanges, unionRanges, type CodePointRanges } from './cmap';
 import { minimalFont } from './minimalFont';
 
@@ -50,7 +50,7 @@ export const GLYPH_FALLBACK_LISTED = 24;
 // --- The glyph probe -------------------------------------------------------
 
 /** The family of the glyph probe face. */
-export const GLYPH_PROBE_FAMILY = 'Postext Glyph Probe';
+export { GLYPH_PROBE_FAMILY };
 /** The probe's advance, in em: no text face has a glyph this wide. */
 const PROBE_ADVANCE_EM = 7.31;
 const PROBE_SIZE_PX = 100;
