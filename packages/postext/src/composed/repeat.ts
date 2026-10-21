@@ -21,11 +21,11 @@
  *
  * Pure.
  */
-import type { ElementPlacement } from '../types';
-import type { ParsedComposedPage, SlotPiece } from './document';
-import type { SourceRange } from './types';
-import { anchorTarget, repeatInstance, repeatInstanceName } from './templates';
-import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types';
+import type { ElementPlacement } from '../types.js';
+import type { ParsedComposedPage, SlotPiece } from './document.js';
+import type { SourceRange } from './types.js';
+import { anchorTarget, repeatInstance, repeatInstanceName } from './templates.js';
+import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types.js';
 
 /** One item of a grid on a page. */
 export interface RepeatItem {

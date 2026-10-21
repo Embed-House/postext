@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache } from 'postext';
 import type { Resource, VDTDocument } from 'postext';
-import type { ComposedBook } from '../../book/types';
-import { labelAt, labelsOnPage, sheetToPicture } from './labelAnchorGeometry';
-import { percentMoveEdit, percentPlace } from './labelAnchorEditor';
-import { labelKey, labelMarkShapes, paintShapesCanvas, paintShapesSvg } from './labelMarks';
+import type { ComposedBook } from '../../book/types.js';
+import { labelAt, labelsOnPage, sheetToPicture } from './labelAnchorGeometry.js';
+import { percentMoveEdit, percentPlace } from './labelAnchorEditor.js';
+import { labelKey, labelMarkShapes, paintShapesCanvas, paintShapesSvg } from './labelMarks.js';
 
 // #931: a label placed by percentages moves like an anchored one, and every
 // drawn label has its marks as shapes the canvas, the HTML overlay and the

@@ -1,10 +1,10 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { Select } from '../ui/select';
-import { SegmentedControl } from '../ui/segmented';
-import { FieldRow } from './FieldRow';
-import { useFieldIds } from './fieldContext';
+import { Select } from '../ui/select.js';
+import { SegmentedControl } from '../ui/segmented.js';
+import { FieldRow } from './FieldRow.js';
+import { useFieldIds } from './fieldContext.js';
 
 interface SelectOption {
   value: string;

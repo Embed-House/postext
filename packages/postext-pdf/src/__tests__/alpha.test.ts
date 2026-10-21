@@ -4,9 +4,9 @@ import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { colorAlpha, hexToRgb, parseCssColor } from '../colors';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { colorAlpha, hexToRgb, parseCssColor } from '../colors.js';
+import { parseFontString } from '../fontString.js';
 
 // EF-30: colour values with an alpha channel (`#rgba`, `#rrggbbaa`,
 // `rgb()` / `rgba()`, `transparent`) paint translucent in the PDF, as they

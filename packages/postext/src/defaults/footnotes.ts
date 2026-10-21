@@ -1,7 +1,7 @@
-import type { Dimension, FootnoteNumberFormat, FootnoteNumbering, FootnotePlacement, FootnotesConfig, ResolvedFootnotesConfig } from '../types';
-import { isJapaneseLanguage } from '../locale';
-import { parseNumberFormat } from '../numbering';
-import { dimensionsEqual, colorsEqual, startEndAsLeftRight } from './shared';
+import type { Dimension, FootnoteNumberFormat, FootnoteNumbering, FootnotePlacement, FootnotesConfig, ResolvedFootnotesConfig } from '../types.js';
+import { isJapaneseLanguage } from '../locale.js';
+import { parseNumberFormat } from '../numbering.js';
+import { dimensionsEqual, colorsEqual, startEndAsLeftRight } from './shared.js';
 
 export const DEFAULT_FOOTNOTES_CONFIG: ResolvedFootnotesConfig = {
   placement: 'column',

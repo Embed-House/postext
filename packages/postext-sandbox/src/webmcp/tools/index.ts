@@ -1,20 +1,20 @@
-import type { SandboxToolHost } from '../host';
-import type { WebMcpTool } from '../modelContext';
-import { bookTools } from './book';
-import { checkTools } from './checks';
-import { comicTools } from './comics';
-import { configTools } from './config';
-import { editionCheckTools } from './editionChecks';
-import { historyTools } from './history';
-import { frameStyleTools } from './frameStyles';
-import { moduleTools } from './modules';
-import { labelTools } from './labels';
-import { answerTools, libraryTools } from './library';
-import { pageTools } from './pages';
-import { resourceTools } from './resources';
-import { viewTools } from './view';
-import { viewerCommandTools } from './viewerCommands';
-import { wordTools } from './word';
+import type { SandboxToolHost } from '../host.js';
+import type { WebMcpTool } from '../modelContext.js';
+import { bookTools } from './book.js';
+import { checkTools } from './checks.js';
+import { comicTools } from './comics.js';
+import { configTools } from './config.js';
+import { editionCheckTools } from './editionChecks.js';
+import { historyTools } from './history.js';
+import { frameStyleTools } from './frameStyles.js';
+import { moduleTools } from './modules.js';
+import { labelTools } from './labels.js';
+import { answerTools, libraryTools } from './library.js';
+import { pageTools } from './pages.js';
+import { resourceTools } from './resources.js';
+import { viewTools } from './view.js';
+import { viewerCommandTools } from './viewerCommands.js';
+import { wordTools } from './word.js';
 
 /** Every tool the Sandbox hands an agent, in the order an agent meets
  *  them: what is open, the pages, the text, the design, how it is shown,

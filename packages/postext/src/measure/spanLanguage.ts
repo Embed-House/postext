@@ -1,6 +1,6 @@
-import type { InlineSpan } from '../parse';
-import { shapingTagOf } from '../locale';
-import { getMeasureLanguage } from './canvas';
+import type { InlineSpan } from '../parse/index.js';
+import { shapingTagOf } from '../locale.js';
+import { getMeasureLanguage } from './canvas.js';
 
 /**
  * The language a run is measured in when it names its own (#764): the

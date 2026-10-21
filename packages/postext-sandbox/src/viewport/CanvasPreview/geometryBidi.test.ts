@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { pixelToSourceOffset, placeLineSegments, plainRangeInLine, xForPlainInLine } from './geometry';
+import { pixelToSourceOffset, placeLineSegments, plainRangeInLine, xForPlainInLine } from './geometry.js';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTLine = VDTBlock['lines'][number];

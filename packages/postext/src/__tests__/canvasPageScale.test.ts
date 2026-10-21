@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../index';
+import { buildDocument, renderPageToCanvas } from '../index.js';
 
 class StubCtx {
   font = '';

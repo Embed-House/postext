@@ -39,16 +39,16 @@
  * as are comic lettering, ruby and formulas.
  */
 
-import type { CmykPercent, ContrastLevel, ResolvedContrastConfig } from './types';
-import type { BoundingBox, ResolvedConfig, VDTBlock, VDTDesignSlot, VDTDocument, VDTLine } from './vdt';
-import { flowRectToPage, tableCellFill } from './vdt';
-import { labToXyz, type OutputTransform } from './color/transform';
-import { authoredCmykColors } from './color/authored';
-import { resolveContrastConfig } from './defaults/contrast';
-import { findPxSize, parseFontString } from './measure/fontString';
-import { dimensionToPx } from './units';
-import { taskBoxText } from './taskBox';
-import { composedFrameBlockIds, composedPaintOrder, frameMatrix } from './composed/paint';
+import type { CmykPercent, ContrastLevel, ResolvedContrastConfig } from './types.js';
+import type { BoundingBox, ResolvedConfig, VDTBlock, VDTDesignSlot, VDTDocument, VDTLine } from './vdt.js';
+import { flowRectToPage, tableCellFill } from './vdt.js';
+import { labToXyz, type OutputTransform } from './color/transform.js';
+import { authoredCmykColors } from './color/authored.js';
+import { resolveContrastConfig } from './defaults/contrast.js';
+import { findPxSize, parseFontString } from './measure/fontString.js';
+import { dimensionToPx } from './units.js';
+import { taskBoxText } from './taskBox.js';
+import { composedFrameBlockIds, composedPaintOrder, frameMatrix } from './composed/paint.js';
 
 export type ContrastMedium = 'screen' | 'print';
 

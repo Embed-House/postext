@@ -2,14 +2,14 @@
 
 import { useState, useRef, useEffect, useCallback, useId, useSyncExternalStore, type RefObject } from 'react';
 import { chineseScriptOf, cjkRegionOf, isJapaneseLanguage, localeScript } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import { Popover, type PopoverCloseReason } from '../ui';
-import { FieldRow } from './FieldRow';
-import { useFieldIds } from './fieldContext';
-import { cn } from '../ui/cn';
+import { useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
+import { Popover, type PopoverCloseReason } from '../ui/index.js';
+import { FieldRow } from './FieldRow.js';
+import { useFieldIds } from './fieldContext.js';
+import { cn } from '../ui/cn.js';
 import { ChevronsUpDown } from 'lucide-react';
-import { listCustomFontFamilies, loadFont, onCustomFontsChanged } from './fontLoader';
-import { defaultDocumentLocale } from './hyphenation';
+import { listCustomFontFamilies, loadFont, onCustomFontsChanged } from './fontLoader.js';
+import { defaultDocumentLocale } from './hyphenation.js';
 
 interface FontPickerProps {
   label: string;

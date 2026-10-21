@@ -1,6 +1,6 @@
 import type { Completion, CompletionContext, CompletionResult } from '@codemirror/autocomplete';
 import type { Resource } from 'postext';
-import { figureOfLine } from '../panels/resources/figureLabels';
+import { figureOfLine } from '../panels/resources/figureLabels.js';
 
 /**
  * Completion for the labels of a figure (#866): inside a `:::figure{resource=…}`,

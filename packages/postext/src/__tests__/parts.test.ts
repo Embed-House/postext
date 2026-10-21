@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { buildBundle } from '../bundle';
-import { computePartValues } from '../pipeline/placeholders';
-import { derivePartResolvedConfig, parsePartNumber, parsePartPalette, planParts } from '../pipeline/parts';
-import { continuationAfter } from '../pipeline/continuation';
-import { parseMarkdown } from '../parse';
-import { resolveAllConfig } from '../pipeline/config';
-import { dimensionToPx } from '../units';
-import { stripConfigDefaults } from '../defaults';
-import { resolvePartsConfig, stripPartsDefaults } from '../defaults/parts';
-import type { DesignElement, PostextConfig } from '../types';
-import type { VDTDesignTextBlock, VDTPage } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { buildBundle } from '../bundle/index.js';
+import { computePartValues } from '../pipeline/placeholders.js';
+import { derivePartResolvedConfig, parsePartNumber, parsePartPalette, planParts } from '../pipeline/parts.js';
+import { continuationAfter } from '../pipeline/continuation.js';
+import { parseMarkdown } from '../parse/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { dimensionToPx } from '../units.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { resolvePartsConfig, stripPartsDefaults } from '../defaults/parts.js';
+import type { DesignElement, PostextConfig } from '../types.js';
+import type { VDTDesignTextBlock, VDTPage } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

@@ -6,7 +6,7 @@ import {
   renderLangOf,
   stringsFor,
   stringsKeyOf,
-} from '../locale';
+} from '../locale.js';
 import {
   defaultCjkBookTitleMark,
   defaultCjkCompression,
@@ -15,21 +15,21 @@ import {
   defaultCjkWarichuBrackets,
   resolveCjkConfig,
   stripCjkDefaults,
-} from '../defaults/cjk';
-import { defaultResourceTypes } from '../defaults/resourceTypes';
-import { defaultTableContinuationStrings } from '../defaults/tableStyle';
-import { defaultCrossRefStrings } from '../pipeline/crossRefs';
-import { defaultBibliographyTitle } from '../pipeline/citations';
-import { resolveAllConfig } from '../pipeline/config';
-import { expandIndexDirectives } from '../pipeline/indexDirective';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import { verticalCellEms, verticalOrientation } from '../writingMode';
-import { cjkClassOf } from '../measure/cjkClasses';
-import { mayHang, punctuationAdvance, punctuationSide, type CjkComposition } from '../measure/cjkPunctuation';
-import type { CjkRegion, OutlineEntry, PostextConfig } from '../types';
-import type { VDTDocument, VDTLine } from '../vdt';
-import { installSizedStub } from './vertical/stub';
+} from '../defaults/cjk.js';
+import { defaultResourceTypes } from '../defaults/resourceTypes.js';
+import { defaultTableContinuationStrings } from '../defaults/tableStyle.js';
+import { defaultCrossRefStrings } from '../pipeline/crossRefs.js';
+import { defaultBibliographyTitle } from '../pipeline/citations.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { expandIndexDirectives } from '../pipeline/indexDirective.js';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { verticalCellEms, verticalOrientation } from '../writingMode.js';
+import { cjkClassOf } from '../measure/cjkClasses.js';
+import { mayHang, punctuationAdvance, punctuationSide, type CjkComposition } from '../measure/cjkPunctuation.js';
+import type { CjkRegion, OutlineEntry, PostextConfig } from '../types.js';
+import type { VDTDocument, VDTLine } from '../vdt.js';
+import { installSizedStub } from './vertical/stub.js';
 
 // The document language `ja` and the `japan` CJK region (#416): Japanese
 // is no longer composed as mainland Chinese, and its built-in strings are

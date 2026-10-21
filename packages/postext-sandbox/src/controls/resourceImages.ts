@@ -19,9 +19,9 @@
 
 import type { Resource, SvgFontFaceReport } from 'postext';
 import { prepareSvgMarkup, registerResourceImage } from 'postext';
-import { getBlob, type BlobRecord } from '../storage/blobStore';
-import { dropSvgTextIndex, ensureSvgTextIndex } from './svgTextIndex';
-import { sandboxSvgFontProvider, svgFontGeneration } from './svgFontProvider';
+import { getBlob, type BlobRecord } from '../storage/blobStore.js';
+import { dropSvgTextIndex, ensureSvgTextIndex } from './svgTextIndex.js';
+import { sandboxSvgFontProvider, svgFontGeneration } from './svgFontProvider.js';
 
 /** Build the SVG text-glyph index for a blob (once per fileId) so the
  *  previews can hit-test and highlight the figure's text nodes. Indexed from

@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { collectColumnGaps } from '../../pipeline/columnBalancing';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { collectColumnGaps } from '../../pipeline/columnBalancing.js';
 import {
   normalizeSafeArea,
   safeAreaHeightRange,
   safeAreaSource,
   uncroppedPictureBox,
-} from '../../pipeline/safeArea';
-import { renderToHtml } from '../../index';
-import type { PostextConfig, Resource, ResourceSafeArea, VDTBlock, VDTDocument } from '../../index';
+} from '../../pipeline/safeArea.js';
+import { renderToHtml } from '../../index.js';
+import type { PostextConfig, Resource, ResourceSafeArea, VDTBlock, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

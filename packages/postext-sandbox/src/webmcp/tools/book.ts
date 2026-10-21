@@ -1,19 +1,19 @@
 // The book's text: what is open, its chapters, reading and editing them.
 
-import { newChapter, wordCount } from '../../book/chapterOps';
-import { chapterPageLabels } from '../../book/pagination';
-import type { SandboxAction, SandboxState } from '../../context/SandboxContext';
-import { importMarkdownFile } from '../../storage/persistence';
-import { generateChapterId } from '../../storage/projects';
-import { chapterText, editChapter, stateReaches, undoChapterEdit } from '../chapterEdits';
-import { bookPagesSummary, chapterOf, dispatchAndWait, isSettled, layOutChapter, whenSettled, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { pagesOfOffset } from '../pageText';
-import { applyFindReplace, findInText, numberedLines } from '../textEdits';
-import { describeRange, lineRange, occurrencesOf, positionOf } from '../textPositions';
-import { readFileInput, type FileInput } from './resources';
-import { viewState } from './view';
-import { historyState } from './history';
+import { newChapter, wordCount } from '../../book/chapterOps.js';
+import { chapterPageLabels } from '../../book/pagination.js';
+import type { SandboxAction, SandboxState } from '../../context/SandboxContext.js';
+import { importMarkdownFile } from '../../storage/persistence.js';
+import { generateChapterId } from '../../storage/projects.js';
+import { chapterText, editChapter, stateReaches, undoChapterEdit } from '../chapterEdits.js';
+import { bookPagesSummary, chapterOf, dispatchAndWait, isSettled, layOutChapter, whenSettled, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { pagesOfOffset } from '../pageText.js';
+import { applyFindReplace, findInText, numberedLines } from '../textEdits.js';
+import { describeRange, lineRange, occurrencesOf, positionOf } from '../textPositions.js';
+import { readFileInput, type FileInput } from './resources.js';
+import { viewState } from './view.js';
+import { historyState } from './history.js';
 
 export const CHAPTER_PARAM = {
   type: ['integer', 'string'],

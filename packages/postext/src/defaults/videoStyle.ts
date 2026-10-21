@@ -4,8 +4,8 @@ import type {
   ResolvedVideoStyleConfig,
   VideoPlayerOptions,
   VideoStyleConfig,
-} from '../types';
-import { DEFAULT_MAIN_COLOR, colorsEqual, dimensionsEqual } from './shared';
+} from '../types.js';
+import { DEFAULT_MAIN_COLOR, colorsEqual, dimensionsEqual } from './shared.js';
 
 const WHITE: ColorValue = { hex: '#ffffff', model: 'hex' };
 const BLACK: ColorValue = { hex: '#000000', model: 'hex' };

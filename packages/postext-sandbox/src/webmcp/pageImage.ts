@@ -14,10 +14,10 @@ import {
   resolvePrintConfig,
 } from 'postext';
 import type { BoundingBox, PostextConfig, PrintPreview, Resource, VDTDocument, VDTPage } from 'postext';
-import { declareStandIns, ensureConfigFontsLoaded, loadVerticalTwins } from '../controls/fontLoader';
-import { ensureResourceImages } from '../controls/resourceImages';
-import { preflightInputs } from '../print/preflightInputs';
-import { loadPrintProfile, previewFor, printTransform } from '../print/printSetup';
+import { declareStandIns, ensureConfigFontsLoaded, loadVerticalTwins } from '../controls/fontLoader.js';
+import { ensureResourceImages } from '../controls/resourceImages.js';
+import { preflightInputs } from '../print/preflightInputs.js';
+import { loadPrintProfile, previewFor, printTransform } from '../print/printSetup.js';
 
 /** Pixels the supersampled page may take before it is scaled down. */
 const MAX_PAINT_PIXELS = 24_000_000;

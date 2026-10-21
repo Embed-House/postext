@@ -1,8 +1,8 @@
-import type { BoundingBox, VDTBlock, VDTColumn } from './vdt';
-import { dimensionToPx } from './units';
-import { lineInkExtent } from './lineInk';
-import { markInkOverhang } from './arabicMarks';
-import { fontEm } from './measure/vertical';
+import type { BoundingBox, VDTBlock, VDTColumn } from './vdt.js';
+import { dimensionToPx } from './units.js';
+import { lineInkExtent } from './lineInk.js';
+import { markInkOverhang } from './arabicMarks.js';
+import { fontEm } from './measure/vertical.js';
 
 /** How far the design overlays of `blocks` reach past `x0` on the left and
  *  `x1` on the right, in px (0 when they stay inside). */

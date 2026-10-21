@@ -1,8 +1,8 @@
 'use client';
 
 import type { ModuleWidth } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { DimensionInput, NumberInput, SelectInput } from '../../../controls';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { DimensionInput, NumberInput, SelectInput } from '../../../controls/index.js';
 
 /** A module's width in its group (#1088): a share of what the row's other
  *  modules leave (unset, `'fill'`), a length, or a percentage of the

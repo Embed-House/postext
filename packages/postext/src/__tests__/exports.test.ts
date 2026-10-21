@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import * as postext from "../index";
+import * as postext from "../index.js";
 import type {
   Resource,
   ResourceType,
   ResourceKind,
   TableModel,
   TableCell,
-} from "../index";
+} from "../index.js";
 
 // Compile-time assertion that the resources/table public types are exported
 // from the package root (issue #49). These are type-only exports, so they do

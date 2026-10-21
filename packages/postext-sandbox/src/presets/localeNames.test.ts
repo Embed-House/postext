@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { localeDisplayName, localeShortTag } from './localeNames';
+import { localeDisplayName, localeShortTag } from './localeNames.js';
 
 describe('localeDisplayName', () => {
   it('names a content locale in the interface language', () => {

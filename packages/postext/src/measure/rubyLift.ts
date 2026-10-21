@@ -16,9 +16,9 @@
  * same lift moves it right. Readings under the base are left where they
  * are.
  */
-import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
-import { measureInkBox, onTextWidthCacheClear, measureLanguageKey } from './canvas';
-import { fontEm } from './vertical';
+import { DEFAULT_CENTRAL_BASELINE } from '../vdt.js';
+import { measureInkBox, onTextWidthCacheClear, measureLanguageKey } from './canvas.js';
+import { fontEm } from './vertical.js';
 
 /** The room between a Latin reading's descenders and its base's em box,
  *  in em of the text (the gap zhuyin keeps from its character). */

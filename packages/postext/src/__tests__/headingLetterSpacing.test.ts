@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings';
-import { stripHeadingStylesDefaults } from '../defaults/headingStyles';
-import { collectConfigWarnings } from '../configWarnings';
-import { formatWarning } from '../pipeline/contentWarnings';
-import { renderToHtml } from '../html-backend';
-import type { HeadingLevelConfig, PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings.js';
+import { stripHeadingStylesDefaults } from '../defaults/headingStyles.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import { renderToHtml } from '../html-backend.js';
+import type { HeadingLevelConfig, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character is 7px wide whatever the font, so widths read as char counts.

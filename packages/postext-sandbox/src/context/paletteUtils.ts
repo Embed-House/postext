@@ -1,5 +1,5 @@
 import type { ColorValue, PostextConfig } from 'postext';
-import type { SandboxLabels } from '../types';
+import type { SandboxLabels } from '../types/index.js';
 
 // Every `ColorValue` of a configuration can link to a palette entry
 // (`paletteId`) and follows it — design slots, callout labels, the

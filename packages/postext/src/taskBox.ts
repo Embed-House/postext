@@ -17,7 +17,7 @@
  * stroke, with round ends.
  */
 
-import { DEFAULT_TASK_CHECKBOX_CHAR, DEFAULT_TASK_CHECKED_CHAR } from './defaults/lists-shared';
+import { DEFAULT_TASK_CHECKBOX_CHAR, DEFAULT_TASK_CHECKED_CHAR } from './defaults/lists-shared.js';
 
 /** The side of the box, in ems of the marker's size. */
 export const TASK_BOX_SIDE_EM = 0.6;

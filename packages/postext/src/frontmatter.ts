@@ -1,6 +1,6 @@
 import matter from 'gray-matter';
-import type { DocumentMetadata } from './types';
-import { languageOf, localeScript } from './locale';
+import type { DocumentMetadata } from './types.js';
+import { languageOf, localeScript } from './locale.js';
 
 export interface ParsedFrontmatter {
   metadata: DocumentMetadata;

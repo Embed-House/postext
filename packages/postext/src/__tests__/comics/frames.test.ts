@@ -3,10 +3,10 @@
  * a callout style (`box`) and Markdown text (`::panel{text}`).
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml, collectContentWarnings, parseMarkdown, comicPaintsUnderText, composedFrameBlockIds, comicFramePaintOrder, pageComics, sourceAt, elementsForSource, findElement, flowRectToPage, flowToPage, pageRectToFlow } from '../../index';
-import type { PostextConfig, Resource } from '../../types';
-import { shrinkScale } from '../../comics/textPanels';
-import type { VDTDocument, VDTPage } from '../../vdt';
+import { buildDocument, renderPageToCanvas, renderToHtml, collectContentWarnings, parseMarkdown, comicPaintsUnderText, composedFrameBlockIds, comicFramePaintOrder, pageComics, sourceAt, elementsForSource, findElement, flowRectToPage, flowToPage, pageRectToFlow } from '../../index.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import { shrinkScale } from '../../comics/textPanels.js';
+import type { VDTDocument, VDTPage } from '../../vdt.js';
 
 class StubCtx {
   font = '';

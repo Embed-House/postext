@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Resource } from 'postext';
-import { applyTextChanges } from '../book/textChanges';
-import { configPathsNaming, renameResourceInResources, renameResourceInText, resourceIdRanges } from './resourceRefs';
+import { applyTextChanges } from '../book/textChanges.js';
+import { configPathsNaming, renameResourceInResources, renameResourceInText, resourceIdRanges } from './resourceRefs.js';
 
 const rename = (markdown: string, from: string, to: string): string => applyTextChanges(markdown, renameResourceInText(markdown, from, to));
 

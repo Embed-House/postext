@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderToHtml } from '../../index';
-import type { PostextConfig, Dimension } from '../../types';
-import { installSizedStub } from './stub';
+import { buildDocument, renderToHtml } from '../../index.js';
+import type { PostextConfig, Dimension } from '../../types.js';
+import { installSizedStub } from './stub.js';
 
 installSizedStub();
 

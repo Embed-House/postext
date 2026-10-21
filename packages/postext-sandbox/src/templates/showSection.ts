@@ -1,5 +1,5 @@
-import { requestSettingsGroup } from '../context/settingsNavigation';
-import { saveSectionState, saveSettingsGroup } from '../storage/persistence';
+import { requestSettingsGroup } from '../context/settingsNavigation.js';
+import { saveSectionState, saveSettingsGroup } from '../storage/persistence.js';
 
 /** Bring Design › Page & columns › Page templates into view (#863): a
  *  frame picked on the page opens its properties there. */

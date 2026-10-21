@@ -18,13 +18,13 @@
  * the next line's band starts square at the first.
  */
 
-import type { ResolvedMarkStyleConfig } from './types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineHighlight, VDTLineSegment } from './vdt';
-import { segmentFont, segmentPositions } from './cjkMarks';
-import { pickMarkStyle } from './defaults/markStyles';
-import { measureTextWidth } from './measure/canvas';
-import { fontEm } from './measure/vertical';
-import { dimensionToPx } from './units';
+import type { ResolvedMarkStyleConfig } from './types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineHighlight, VDTLineSegment } from './vdt.js';
+import { segmentFont, segmentPositions } from './cjkMarks.js';
+import { pickMarkStyle } from './defaults/markStyles.js';
+import { measureTextWidth } from './measure/canvas.js';
+import { fontEm } from './measure/vertical.js';
+import { dimensionToPx } from './units.js';
 
 type BlockLike = Parameters<typeof segmentPositions>[1];
 

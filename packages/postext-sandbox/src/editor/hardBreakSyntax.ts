@@ -2,8 +2,8 @@
 
 import { ViewPlugin, Decoration, EditorView, type DecorationSet, type ViewUpdate } from '@codemirror/view';
 import { Prec, RangeSetBuilder } from '@codemirror/state';
-import { verseLineKinds } from './verseSyntax';
-import { inFencedCode } from './codeFences';
+import { verseLineKinds } from './verseSyntax.js';
+import { inFencedCode } from './codeFences.js';
 
 /**
  * Editor support for forced line breaks (#620): marks the backslash that

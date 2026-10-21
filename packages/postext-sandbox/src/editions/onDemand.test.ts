@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { AUTO_EDITION_LAYOUTS, editionsOnDemand } from './onDemand';
-import { askEditions, editionsAsked, editionsVersion, resetEditions } from './editionStore';
-import { bookEditionsOf } from './bookLocales';
-import { state } from '../webmcp/tools/testHarness';
+import { AUTO_EDITION_LAYOUTS, editionsOnDemand } from './onDemand.js';
+import { askEditions, editionsAsked, editionsVersion, resetEditions } from './editionStore.js';
+import { bookEditionsOf } from './bookLocales.js';
+import { state } from '../webmcp/tools/testHarness.js';
 
 describe('the editions a big book lays out only when asked (#952)', () => {
   it('waits for a book that holds more chapter layouts than the limit, in several editions', () => {

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLineSegment } from '../../vdt';
-import { SizedStubCtx } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLineSegment } from '../../vdt.js';
+import { SizedStubCtx } from '../vertical/stub.js';
 
 // A Latin reading's descenders clear its base (#194, Nº 086). The reading's
 // em box stands on the base's, its baseline 0.12 em above the box's foot as

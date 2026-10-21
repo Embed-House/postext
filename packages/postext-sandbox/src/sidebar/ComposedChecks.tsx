@@ -11,21 +11,21 @@
 
 import { useMemo, useState, type ReactNode } from 'react';
 import { ChevronRight, LayoutTemplate, Loader2, MapPin } from 'lucide-react';
-import { useSandboxChapterDocsRef, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector } from '../context/SandboxContext';
-import { Button, Collapsible, IconButton, ListRow, RowTag, SegmentedControl, Select, cn } from '../ui';
-import type { SandboxLabels } from '../types';
-import type { Warning } from '../warnings/types';
+import { useSandboxChapterDocsRef, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector } from '../context/SandboxContext.js';
+import { Button, Collapsible, IconButton, ListRow, RowTag, SegmentedControl, Select, cn } from '../ui/index.js';
+import type { SandboxLabels } from '../types/index.js';
+import type { Warning } from '../warnings/types.js';
 import {
   composedChecksOf, filterComposedChecks, frameKeyOf, groupComposedChecks, isComposedCheckKind, jumpFor, pageKeyOf,
   type ComposedCheck, type ComposedGroup, type ComposedGroupBy, type EditionChapterChecks,
-} from '../warnings/composedChecks';
-import { useBookEditions, type BookEditions } from '../editions/useBookEditions';
-import { requestFrameJump } from '../editions/frameJump';
-import { localeDisplayName, localeShortTag } from '../presets/localeNames';
-import { sameLocaleTag } from '../presets/locale';
-import { ProposalActions } from '../warnings/ProposalButtons';
-import { isFrameFixPayload } from '../warnings/proposalActions';
-import { warningAnchor } from '../warnings/anchorTarget';
+} from '../warnings/composedChecks.js';
+import { useBookEditions, type BookEditions } from '../editions/useBookEditions.js';
+import { requestFrameJump } from '../editions/frameJump.js';
+import { localeDisplayName, localeShortTag } from '../presets/localeNames.js';
+import { sameLocaleTag } from '../presets/locale.js';
+import { ProposalActions } from '../warnings/ProposalButtons.js';
+import { isFrameFixPayload } from '../warnings/proposalActions.js';
+import { warningAnchor } from '../warnings/anchorTarget.js';
 
 const ALL = '*';
 

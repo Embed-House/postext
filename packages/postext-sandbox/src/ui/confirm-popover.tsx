@@ -2,10 +2,10 @@
 
 import { useCallback, useId, useRef, useState, type ReactNode, type SyntheticEvent } from 'react';
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from './surface';
-import { Button } from './button';
-import { usePortalContainer } from './portal';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from './surface.js';
+import { Button } from './button.js';
+import { usePortalContainer } from './portal.js';
 
 /** Argument accepted by `open`: the click event of the trigger (its
  *  `currentTarget` becomes the anchor) or an explicit element. */

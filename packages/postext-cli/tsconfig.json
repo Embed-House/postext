@@ -6,6 +6,9 @@
       "DOM"
     ],
     "noEmit": true,
+    // Bun bundles the CLI: its sources keep extensionless imports.
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "rootDir": "..",
     "types": [
       "bun"

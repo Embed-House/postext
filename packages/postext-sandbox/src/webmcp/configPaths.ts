@@ -4,7 +4,7 @@
 // Nothing here mutates: a write gives back a new configuration that shares
 // what it did not touch.
 
-import { ToolError } from './modelContext';
+import { ToolError } from './modelContext.js';
 
 /** One step of a path: a member, an item by position, or the item of a
  *  list whose `key` reads `value` (`[id=note]`, `[level=2]`). */

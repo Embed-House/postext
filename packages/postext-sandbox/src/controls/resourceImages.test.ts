@@ -5,12 +5,12 @@ import { applySingleInkToSvg } from 'postext';
 // The blob store, the font inliner and the text index are the Sandbox's own
 // IndexedDB and DOM plumbing: stood in for here.
 const blobs = new Map<string, { contentType: string; bytes: ArrayBuffer }>();
-vi.mock('../storage/blobStore', () => ({
+vi.mock('../storage/blobStore.js', () => ({
   getBlob: async (fileId: string) => blobs.get(fileId) ?? null,
 }));
 /** The faces the stand-in provider holds, by family (#630). */
 const heldFonts = new Map<string, Uint8Array>();
-vi.mock('./svgFontProvider', () => ({
+vi.mock('./svgFontProvider.js', () => ({
   sandboxSvgFontProvider: () => async (family: string) => {
     const bytes = heldFonts.get(family);
     if (!bytes) throw new Error('no such font in tests');
@@ -18,7 +18,7 @@ vi.mock('./svgFontProvider', () => ({
   },
   svgFontGeneration: () => 0,
 }));
-vi.mock('./svgTextIndex', () => ({ ensureSvgTextIndex: () => undefined, dropSvgTextIndex: () => undefined }));
+vi.mock('./svgTextIndex.js', () => ({ ensureSvgTextIndex: () => undefined, dropSvgTextIndex: () => undefined }));
 const registered: { fileId: string; options: unknown }[] = [];
 vi.mock('postext', async (importOriginal) => ({
   ...(await importOriginal<typeof import('postext')>()),
@@ -35,7 +35,7 @@ const {
   svgFontIssues,
   svgFontReport,
   unavailableResourceImages,
-} = await import('./resourceImages');
+} = await import('./resourceImages.js');
 
 const INK = '#295aa3';
 const RAW = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"><rect width="2" height="1" fill="#000000"/></svg>';

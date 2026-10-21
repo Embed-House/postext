@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
-import { createBundle, openBundle } from '../../bundle';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import { stripConfigDefaults } from '../../defaults';
-import { shapingLanguageOf } from '../../locale';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { createBundle, openBundle } from '../../bundle/index.js';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { shapingLanguageOf } from '../../locale.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #764, #770: a configuration stored before the text was measured,
 // painted and embedded in the document's own language by default

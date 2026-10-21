@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { measureRichBlock, urlBreakIndices } from '../measure/rich';
-import type { InlineSpan } from '../parse';
+import { measureRichBlock, urlBreakIndices } from '../measure/rich.js';
+import type { InlineSpan } from '../parse/index.js';
 
 class StubCtx {
   font = '';

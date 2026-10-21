@@ -3,25 +3,25 @@
 import { useCallback, useEffect, useRef, type MutableRefObject } from 'react';
 import { resolveDebugConfig, type VDTDocument } from 'postext';
 import type { FolioDocumentViewer, FolioInteraction } from 'postext-folio';
-import { useSandboxDispatch, useSandboxSelector, useLayoutSource, type EditorSelection } from '../context/SandboxContext';
-import { toBookSelection } from '../book/compose';
-import type { StitchedBook } from '../book/stitch';
-import type { ComposedBook } from '../book/types';
-import { findCaretBlockIdx } from './CanvasPreview/caret';
-import { createOverlaySvg } from './CanvasPreview/dom';
-import { findResourceLocation } from './CanvasPreview/geometry';
-import { attachPageInteraction, type PageInteraction } from './CanvasPreview/interaction';
-import { drawMarksCanvas, type ComicMark, type ComicSurface } from './comics/comicEditing';
-import { drawOverlay, multiplyAffine, type Affine } from './CanvasPreview/overlay';
-import { usePageNavigator } from './usePageNavigator';
-import { drawPickedMark } from '../selection/pickedOverlay';
-import { editModeNow, onEditModeChange } from '../editing/editMode';
-import { labelsOnPage } from './composed/labelAnchorGeometry';
-import { labelMarkShapes, paintShapesCanvas, type MarkShape } from './composed/labelMarks';
-import type { LabelSurface } from './composed/labelAnchorEditor';
-import { useTemplateEditorHost } from '../templates/useTemplateEditorHost';
-import { carriedPosition, onPageSelectionChange } from '../selection/selectionStore';
-import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../selection/viewerSelection';
+import { useSandboxDispatch, useSandboxSelector, useLayoutSource, type EditorSelection } from '../context/SandboxContext.js';
+import { toBookSelection } from '../book/compose.js';
+import type { StitchedBook } from '../book/stitch.js';
+import type { ComposedBook } from '../book/types.js';
+import { findCaretBlockIdx } from './CanvasPreview/caret.js';
+import { createOverlaySvg } from './CanvasPreview/dom.js';
+import { findResourceLocation } from './CanvasPreview/geometry.js';
+import { attachPageInteraction, type PageInteraction } from './CanvasPreview/interaction.js';
+import { drawMarksCanvas, type ComicMark, type ComicSurface } from './comics/comicEditing.js';
+import { drawOverlay, multiplyAffine, type Affine } from './CanvasPreview/overlay.js';
+import { usePageNavigator } from './usePageNavigator.js';
+import { drawPickedMark } from '../selection/pickedOverlay.js';
+import { editModeNow, onEditModeChange } from '../editing/editMode.js';
+import { labelsOnPage } from './composed/labelAnchorGeometry.js';
+import { labelMarkShapes, paintShapesCanvas, type MarkShape } from './composed/labelMarks.js';
+import type { LabelSurface } from './composed/labelAnchorEditor.js';
+import { useTemplateEditorHost } from '../templates/useTemplateEditorHost.js';
+import { carriedPosition, onPageSelectionChange } from '../selection/selectionStore.js';
+import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../selection/viewerSelection.js';
 
 /** A filled rectangle of a page's overlay, in the page's own pixels, with
  *  the transform of its group (a vertical page's flow frame). */

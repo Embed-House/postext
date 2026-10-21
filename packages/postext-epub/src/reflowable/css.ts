@@ -6,8 +6,8 @@
 
 import type { ColorValue, CornerRadius, Dimension, ResolvedConfig, ResolvedTableStyleConfig } from 'postext';
 import { dimensionToPx, isCornerRadii, primaryFontFamily, resolvedCodeStyle, uniformRadius } from 'postext';
-import { cssString } from '../shared/assets';
-import { idOf, round } from './inline';
+import { cssString } from '../shared/assets.js';
+import { idOf, round } from './inline.js';
 
 /** What the walk found that decides the writing mode of the book. */
 export interface StylesheetOptions {

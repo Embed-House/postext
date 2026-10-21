@@ -27,13 +27,13 @@
  * array), so text without them measures and caches as before.
  */
 
-import type { EmphasisMark, InlineKunten, InlineSpan, InlineWarichu } from '../parse';
-import type { ResolvedCjkConfig } from '../types';
-import { sliceSpan } from '../parse/links';
-import { withBookBrackets } from '../parse/annotations';
-import { graphemesOf } from '../measure/graphemes';
-import { buildFontString } from '../measure/font';
-import { dimensionToPx } from '../units';
+import type { EmphasisMark, InlineKunten, InlineSpan, InlineWarichu } from '../parse/index.js';
+import type { ResolvedCjkConfig } from '../types.js';
+import { sliceSpan } from '../parse/links.js';
+import { withBookBrackets } from '../parse/annotations.js';
+import { graphemesOf } from '../measure/graphemes.js';
+import { buildFontString } from '../measure/font.js';
+import { dimensionToPx } from '../units.js';
 
 /** What annotation resolution needs. */
 export interface AnnotationContext {

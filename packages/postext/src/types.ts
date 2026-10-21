@@ -1,6 +1,6 @@
-import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering';
-import type { FrameLookEntry, LabelStyle, PageTemplate } from './composed/types';
-import type { StoryJump } from './composed/carryTypes';
+import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering.js';
+import type { FrameLookEntry, LabelStyle, PageTemplate } from './composed/types.js';
+import type { StoryJump } from './composed/carryTypes.js';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {
@@ -8,7 +8,7 @@ export type {
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
-} from './composed/types';
+} from './composed/types.js';
 
 /** @deprecated Legacy content-model resource used by the VDT renderer
  *  (`VDTBlock.resource`). The Resources-panel feature uses the newer
@@ -738,7 +738,7 @@ export interface PostextContent {
    *  and citation of the book, and where this document's sit — what
    *  `bookCitationContexts` gives a host for each chapter. When absent the
    *  document is a book of its own. */
-  citations?: import('./citations/context').CitationContext;
+  citations?: import('./citations/context.js').CitationContext;
   /** The `id` of every page fence (`::::page{id="…"}`) of the chapters
    *  after this one in its book, with the position of the chapter that has
    *  it (#943). A frame whose `overflow.continueIn` is `'page:<id>'` for

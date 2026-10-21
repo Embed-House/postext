@@ -3,7 +3,7 @@
 // matrices and equation arrays. What it does not know it sets as its text,
 // so nothing is lost; the import report asks for a look at every equation.
 
-import { attr, child, children, localName, textOf, type XmlElement } from './xml';
+import { attr, child, children, localName, textOf, type XmlElement } from './xml.js';
 
 const ACCENTS: Record<string, string> = {
   '̂': '\\hat', '̃': '\\tilde', '̇': '\\dot', '̈': '\\ddot', '̄': '\\bar',

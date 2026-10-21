@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { createPaintedPages } from './pageReuse';
+import { createPaintedPages } from './pageReuse.js';
 
 class StubCtx {
   font = '';

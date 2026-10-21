@@ -8,7 +8,7 @@ import {
   presetCoverKey,
   thumbnailIfMissing,
   type CoverStateSlice,
-} from './autoCover';
+} from './autoCover.js';
 
 function state(over: Partial<CoverStateSlice> = {}): CoverStateSlice {
   return {

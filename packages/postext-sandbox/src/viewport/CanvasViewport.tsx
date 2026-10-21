@@ -1,18 +1,18 @@
 'use client';
 
 import { useCallback, useState, useEffect, useRef } from 'react';
-import { CanvasPreview, type CanvasPreviewHandle } from './CanvasPreview';
-import { CanvasToolbar } from './CanvasToolbar';
-import { useFloatingToolbarShell } from './useFloatingToolbarShell';
-import { useViewerControls } from './viewerControls';
-import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
-import { announce } from '../ui/announcer';
-import { useSandboxSelector } from '../context/SandboxContext';
-import { EditionRail } from './composed/EditionBar';
-import { EditionCompare } from './composed/EditionCompare';
-import { ReflowPanel } from './composed/ReflowPanel';
-import { useFrameJumpRunner } from '../editions/useFrameJumpRunner';
-import { loadCanvasViewMode, saveCanvasViewMode, loadCanvasFitMode, saveCanvasFitMode, loadCanvasZoom, saveCanvasZoom } from '../storage/persistence';
+import { CanvasPreview, type CanvasPreviewHandle } from './CanvasPreview/index.js';
+import { CanvasToolbar } from './CanvasToolbar.js';
+import { useFloatingToolbarShell } from './useFloatingToolbarShell.js';
+import { useViewerControls } from './viewerControls.js';
+import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync.js';
+import { announce } from '../ui/announcer.js';
+import { useSandboxSelector } from '../context/SandboxContext.js';
+import { EditionRail } from './composed/EditionBar.js';
+import { EditionCompare } from './composed/EditionCompare.js';
+import { ReflowPanel } from './composed/ReflowPanel.js';
+import { useFrameJumpRunner } from '../editions/useFrameJumpRunner.js';
+import { loadCanvasViewMode, saveCanvasViewMode, loadCanvasFitMode, saveCanvasFitMode, loadCanvasZoom, saveCanvasZoom } from '../storage/persistence.js';
 
 type ViewMode = 'single' | 'spread';
 type FitMode = 'none' | 'width' | 'height';

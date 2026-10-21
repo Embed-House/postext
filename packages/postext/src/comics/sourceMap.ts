@@ -12,12 +12,12 @@
  * Used by `composed/sourceMap.ts` (`sourceAt`, `elementsForSource`,
  * `findElement`); nothing here lays anything out.
  */
-import type { BoundingBox, VDTComicBalloon, VDTComicPage, VDTDesignTextBlock, VDTFrame, VDTPage, VDTPoint } from '../vdt';
-import type { SourceElement } from '../composed/sourceMap';
-import { pointInPolygon } from './geometry';
-import { comicPanelOfFrame } from './frames';
-import { comicPanelContinues } from './paint';
-import { pageComics } from './transform';
+import type { BoundingBox, VDTComicBalloon, VDTComicPage, VDTDesignTextBlock, VDTFrame, VDTPage, VDTPoint } from '../vdt.js';
+import type { SourceElement } from '../composed/sourceMap.js';
+import { pointInPolygon } from './geometry.js';
+import { comicPanelOfFrame } from './frames.js';
+import { comicPanelContinues } from './paint.js';
+import { pageComics } from './transform.js';
 
 type File = { file?: string };
 

@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { renderPageToCanvas } from '../canvas-backend';
-import { renderToHtml } from '../html-backend';
-import { tableCellFillRects } from '../vdt';
-import type { BoundingBox, VDTResourceTableCell } from '../vdt';
-import type { PostextConfig, Resource, TableCell } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { renderPageToCanvas } from '../canvas-backend/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { tableCellFillRects } from '../vdt.js';
+import type { BoundingBox, VDTResourceTableCell } from '../vdt.js';
+import type { PostextConfig, Resource, TableCell } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

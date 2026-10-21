@@ -7,10 +7,10 @@
  * names (`#banda`). The words are written for this fixture, in Spanish and
  * English; the pictures are the solid placeholders of `fixtures/page8`.
  */
-import type { PostextConfig } from '../../../types';
-import type { PageTemplate } from '../../../composed/types';
-import { MODULE_CONFIG, mm } from './modules';
-import { CARD_MODULE, NOTICE_MODULE, ROWS_WORDS, cardModule, noticeModule, type RowsLocale } from './moduleRows';
+import type { PostextConfig } from '../../../types.js';
+import type { PageTemplate } from '../../../composed/types.js';
+import { MODULE_CONFIG, mm } from './modules.js';
+import { CARD_MODULE, NOTICE_MODULE, ROWS_WORDS, cardModule, noticeModule, type RowsLocale } from './moduleRows.js';
 
 /** The page shell: a title, the modules, and a note under the row. */
 export const NESTED_TEMPLATE: PageTemplate = {

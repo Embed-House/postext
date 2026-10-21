@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applySingleInkToSvg, isSingleInkSvg, isSingleInkSvgUrl, SINGLE_INK_MARK } from '../svg/singleInk';
+import { applySingleInkToSvg, isSingleInkSvg, isSingleInkSvgUrl, SINGLE_INK_MARK } from '../svg/singleInk.js';
 
 const INK = '#295aa3';
 

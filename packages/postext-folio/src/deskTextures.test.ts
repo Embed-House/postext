@@ -18,7 +18,7 @@ vi.mock("three", async (importOriginal) => {
   return { ...three, TextureLoader };
 });
 
-const { loadDeskMaps } = await import("./deskTextures");
+const { loadDeskMaps } = await import("./deskTextures.js");
 
 const manifest = {
   version: 1,

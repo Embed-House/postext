@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import { PDFDocument, PDFDict, PDFName, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { coverAllGlyphUnicode, toUnicodeCmap } from '../fontCache';
+import { coverAllGlyphUnicode, toUnicodeCmap } from '../fontCache.js';
 
 // Cormorant Garamond shapes fi / fl / Th into glyphs its cmap never reaches
 // (GSUB-only), like the CFF body faces of print presets.

@@ -31,21 +31,21 @@
  * order, joined here in the order of that direction.
  */
 
-import type { ContentBlock, InlineSpan } from '../parse';
-import type { DirectiveAttrs } from '../parse/types';
-import type { VDTLine, VDTLineSegment } from '../vdt';
-import { createBoundingBox } from '../vdt';
-import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from '../measure';
-import { measureRichBlock } from '../measure';
-import { cachedMeasureRichBlock } from '../measure/cache';
-import { pickSpanFont, textWidth } from '../measure/rich';
-import { normalSpaceWidthFor } from '../measure/canvas';
-import { lineBaselineOffset } from '../measure/vertical';
-import { sliceSpan } from '../parse/links';
-import { distributeKashida, writtenText, type KashidaOptions } from '../measure/kashida';
-import { dimensionToPx } from '../units';
-import type { DimensionUnit } from '../types';
-import type { BlockStyle } from './styles';
+import type { ContentBlock, InlineSpan } from '../parse/index.js';
+import type { DirectiveAttrs } from '../parse/types.js';
+import type { VDTLine, VDTLineSegment } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from '../measure/index.js';
+import { measureRichBlock } from '../measure/index.js';
+import { cachedMeasureRichBlock } from '../measure/cache.js';
+import { pickSpanFont, textWidth } from '../measure/rich.js';
+import { normalSpaceWidthFor } from '../measure/canvas.js';
+import { lineBaselineOffset } from '../measure/vertical.js';
+import { sliceSpan } from '../parse/links.js';
+import { distributeKashida, writtenText, type KashidaOptions } from '../measure/kashida.js';
+import { dimensionToPx } from '../units.js';
+import type { DimensionUnit } from '../types.js';
+import type { BlockStyle } from './styles.js';
 
 /** How far a poem's verse elongates a join, against the body's
  *  `kashidaMaxLength`: classical prints stretch verse more than prose. */

@@ -10,8 +10,8 @@
  * simply not mapped to); the source itself is never touched.
  */
 
-import type { ContentBlock, InlineLink, InlineSpan } from '../parse';
-import type { TashkilMode } from '../types';
+import type { ContentBlock, InlineLink, InlineSpan } from '../parse/index.js';
+import type { TashkilMode } from '../types.js';
 
 /** The marks `'strip'` takes out: the ḥarakāt and tanwīn U+064B–U+0652,
  *  the other vowel signs U+0656–U+065F, the superscript (dagger) alef

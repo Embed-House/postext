@@ -4,8 +4,8 @@ import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { CalloutStyleConfig, PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // EF-99: the stripe of a rounded callout is clipped to the frame's rounded
 // rectangle in the PDF, as on canvas and in HTML.

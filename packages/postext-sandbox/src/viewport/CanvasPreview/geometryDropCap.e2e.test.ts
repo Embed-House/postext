@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { pixelToSourceOffset } from './geometry';
+import { pixelToSourceOffset } from './geometry.js';
 
 // Every glyph half an em wide, so the initial is wide enough to click.
 class StubCtx {

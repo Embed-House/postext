@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { resolvePageConfig, type PostextConfig } from 'postext';
-import { documentComicDirection, documentDirection } from './documentDirection';
+import { documentComicDirection, documentDirection } from './documentDirection.js';
 
 describe('documentComicDirection', () => {
   it('is undefined without a comics section', () => {

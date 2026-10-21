@@ -5,10 +5,10 @@
  * everything else in it (a caption, a line of text). The text of the
  * other frames runs round that, as `calloutLayout`'s exclusions.
  */
-import type { Dimension } from '../types';
-import type { ContentWarning, VDTBlock, VDTContourSpan, VDTExclusionContour } from '../vdt';
-import { contourOnPage } from '../contour';
-import { dimensionToPx } from '../units';
+import type { Dimension } from '../types.js';
+import type { ContentWarning, VDTBlock, VDTContourSpan, VDTExclusionContour } from '../vdt.js';
+import { contourOnPage } from '../contour/index.js';
+import { dimensionToPx } from '../units.js';
 
 export interface FrameContourOptions {
   /** The frame's gap from the text it pushes (px): the margin of a

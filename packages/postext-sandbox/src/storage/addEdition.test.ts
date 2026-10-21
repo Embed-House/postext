@@ -5,10 +5,10 @@
 import { describe, expect, it } from 'vitest';
 import { defaultResourceTypes } from 'postext';
 import type { Resource } from 'postext';
-import { newChapter } from '../book/chapterOps';
-import { PROJECT_RECORD_VERSION } from './projectMigration';
-import { editionTitleOf, renameEditionPatch, renamePatch, toSummary, withActiveEdition, type ProjectRecord } from './projects';
-import { recordEditionTags, recordHasEdition, recordLocaleOf, withNewEdition } from './projectEditions';
+import { newChapter } from '../book/chapterOps.js';
+import { PROJECT_RECORD_VERSION } from './projectMigration.js';
+import { editionTitleOf, renameEditionPatch, renamePatch, toSummary, withActiveEdition, type ProjectRecord } from './projects.js';
+import { recordEditionTags, recordHasEdition, recordLocaleOf, withNewEdition } from './projectEditions.js';
 
 const PICTURE: Resource = { id: 'fig', kind: 'bitmap', type: 'figure', bitmap: { fileId: 'blob-1' } } as unknown as Resource;
 

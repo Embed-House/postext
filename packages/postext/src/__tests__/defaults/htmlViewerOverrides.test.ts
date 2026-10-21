@@ -4,8 +4,8 @@ import {
   mergeConfigOverrides,
   resolveHtmlViewerConfig,
   stripHtmlViewerDefaults,
-} from '../../defaults/htmlViewer';
-import type { DesignElement, PostextConfig } from '../../types';
+} from '../../defaults/htmlViewer.js';
+import type { DesignElement, PostextConfig } from '../../types.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 

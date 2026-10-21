@@ -3,8 +3,8 @@
 import { useCallback, useRef, useState } from 'react';
 import { ImagePlus, Loader2 } from 'lucide-react';
 import { bitmapInfo } from 'postext';
-import { putBlob } from '../../storage/blobStore';
-import { useSandboxLabels } from '../../context/SandboxContext';
+import { putBlob } from '../../storage/blobStore.js';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
 
 /** Result of a successful bitmap upload, ready to fold into a Resource. */
 export interface BitmapUploadResult {

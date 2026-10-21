@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter';
-import type { VDTDesignBoxStyle, VDTDesignSlot } from '../../vdt';
+import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter.js';
+import type { VDTDesignBoxStyle, VDTDesignSlot } from '../../vdt.js';
 
 type Call = { op: string; args: number[]; lineWidth: number; fill: string; stroke: string };
 

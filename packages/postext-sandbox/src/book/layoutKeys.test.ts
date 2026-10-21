@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { configKeyOf, layoutCacheKey } from './layoutKeys';
+import { configKeyOf, layoutCacheKey } from './layoutKeys.js';
 
 const base = (): PostextConfig => ({ bodyText: { fontSize: { value: 11, unit: 'pt' } } as never });
 

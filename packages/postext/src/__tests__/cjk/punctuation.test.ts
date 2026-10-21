@@ -1,15 +1,15 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { cachedMeasureRichBlock } from '../../measure/cache';
-import { createMeasurementCache } from '../../measure/font';
-import { cjkCompositionKey, cjkCompositionOf, punctuationAdvance, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
-import { resolveCjkConfig } from '../../defaults/cjk';
-import { cjkClassOf } from '../../measure/cjkClasses';
-import type { CjkConfig } from '../../types';
-import type { InlineSpan } from '../../parse';
-import type { MeasureBlockOptions } from '../../measure/types';
-import type { VDTLine, VDTLineSegment } from '../../vdt';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { cachedMeasureRichBlock } from '../../measure/cache.js';
+import { createMeasurementCache } from '../../measure/font.js';
+import { cjkCompositionKey, cjkCompositionOf, punctuationAdvance, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation.js';
+import { resolveCjkConfig } from '../../defaults/cjk.js';
+import { cjkClassOf } from '../../measure/cjkClasses.js';
+import type { CjkConfig } from '../../types.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { MeasureBlockOptions } from '../../measure/types.js';
+import type { VDTLine, VDTLineSegment } from '../../vdt.js';
 
 // Stub: CJK characters and the marks Chinese sets full width (— … · “ ” ‘ ’)
 // are 16 px (one em of the 16 px font), a space 4 px, anything else 8 px.

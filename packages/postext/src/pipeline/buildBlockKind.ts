@@ -1,24 +1,24 @@
-import { flattenTitleBreaks, flattenTitleBreakSpans } from '../parse/inlineFormatting';
+import { flattenTitleBreaks, flattenTitleBreakSpans } from '../parse/inlineFormatting.js';
 /**
  * Resolve a parsed markdown block into its placement-ready metadata:
  * style, VDT type, heading/list attributes, and a `contentBlock` that may
  * differ from `rawBlock` when a heading numbering prefix has been prepended.
  */
 
-import type { ContentBlock, InlineSpan, ListKind } from '../parse';
-import type { Resource, ResourceType } from '../types';
-import type { ResolvedConfig, VDTBlock } from '../vdt';
-import { dimensionToPx } from '../units';
-import type { BlockStyle } from './styles';
-import { resolveHeadingStyle, resolveMathDisplayStyle, resolveParagraphStyle } from './styles';
-import type { ListBulletStyle, ListItemResolved, OrderedListMetrics } from './lists';
-import type { HeadingLevelResolver } from './headingStyles';
-import { lengthAttr } from './verse';
-import { verseLinesSettings, versesLineByLine } from './verseLines';
+import type { ContentBlock, InlineSpan, ListKind } from '../parse/index.js';
+import type { Resource, ResourceType } from '../types.js';
+import type { ResolvedConfig, VDTBlock } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import type { BlockStyle } from './styles.js';
+import { resolveHeadingStyle, resolveMathDisplayStyle, resolveParagraphStyle } from './styles.js';
+import type { ListBulletStyle, ListItemResolved, OrderedListMetrics } from './lists.js';
+import type { HeadingLevelResolver } from './headingStyles.js';
+import { lengthAttr } from './verse.js';
+import { verseLinesSettings, versesLineByLine } from './verseLines.js';
 import {
   resolveOrderedListItemStyle,
   resolveUnorderedListItemStyle,
-} from './lists';
+} from './lists.js';
 
 export interface BlockKind {
   style: BlockStyle;

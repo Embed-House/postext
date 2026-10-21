@@ -6,9 +6,9 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { HeadingStyleConfig } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { HeadingStylesSection } from './HeadingStylesSection';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { HeadingStylesSection } from './HeadingStylesSection.js';
 
 function render(headingStyles: HeadingStyleConfig[]): string {
   const state = { config: { headingStyles }, resources: [], labels: DEFAULT_LABELS, locale: 'en' };

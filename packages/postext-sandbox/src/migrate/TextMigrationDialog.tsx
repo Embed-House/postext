@@ -4,15 +4,15 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { AlertTriangle, CheckCircle2, X } from 'lucide-react';
 import { renderPageToCanvas, type PostextConfig, type Resource, type TextMigrationReport, type VDTDocument } from 'postext';
-import { useBookPlan, useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter, useSandboxStore } from '../context/SandboxContext';
-import { composeBookMemo } from '../book/compose';
-import type { Chapter } from '../book/types';
-import { withHyphenationLocale } from '../controls/hyphenation';
-import { useLayoutService } from '../worker/LayoutServiceContext';
-import { Button, IconButton, Switch, announce, usePortalContainer } from '../ui';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from '../ui/surface';
-import type { SandboxLabels } from '../types';
-import { closeTextMigration, useTextMigrationRequest, type TextMigrationReason } from './migrationRequest';
+import { useBookPlan, useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter, useSandboxStore } from '../context/SandboxContext.js';
+import { composeBookMemo } from '../book/compose.js';
+import type { Chapter } from '../book/types.js';
+import { withHyphenationLocale } from '../controls/hyphenation.js';
+import { useLayoutService } from '../worker/LayoutServiceContext.js';
+import { Button, IconButton, Switch, announce, usePortalContainer } from '../ui/index.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from '../ui/surface.js';
+import type { SandboxLabels } from '../types/index.js';
+import { closeTextMigration, useTextMigrationRequest, type TextMigrationReason } from './migrationRequest.js';
 import {
   PAGE_DIFFERENCE_THRESHOLD,
   bookKeyOf,
@@ -28,7 +28,7 @@ import {
   saveMigrationSnapshot,
   type MigrationRecord,
   type MigrationSnapshot,
-} from './textMigration';
+} from './textMigration.js';
 
 /** Width of the page pictures compared, in CSS px; they are drawn at
  *  twice that, so a screen of double density shows them sharp. */

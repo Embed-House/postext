@@ -8,46 +8,46 @@
  * placement decisions.
  */
 
-import type { ContentBlock } from '../parse';
-import type { Resource, ResourceType } from '../types';
-import type { ResolvedConfig, ResolvedResourceBlock, VDTLine } from '../vdt';
-import type { BreakTrace, MeasuredBlock, MeasurementCache } from '../measure';
-import type { renderMath } from '../math';
-import type { BlockStyle } from './styles';
+import type { ContentBlock } from '../parse/index.js';
+import type { Resource, ResourceType } from '../types.js';
+import type { ResolvedConfig, ResolvedResourceBlock, VDTLine } from '../vdt.js';
+import type { BreakTrace, MeasuredBlock, MeasurementCache } from '../measure/index.js';
+import type { renderMath } from '../math/index.js';
+import type { BlockStyle } from './styles.js';
 import {
   computeMeasureViewport,
   enrichMathSpans,
   isMarkerBlock,
   stampSourceRanges,
-} from './buildHelpers';
-import { resolveBlockKind, uppercasePreservingLength, type BlockKind, type BlockKindContext } from './buildBlockKind';
-import { runMeasurement } from './buildMeasurement';
-import { linkSegments } from '../measure/links';
-import { kashidaMeasureOptions } from '../measure/kashida';
-import { measureVerse } from './verse';
-import { measureVerseLines, verseLinesSettings, versesLineByLine } from './verseLines';
-import { composesAsCjk } from '../measure/cjkCompose';
-import { measuringVertically } from '../measure/vertical';
-import { resolveRefSpans, resolveSwatchSpans, shiftResourceBlockX, type AnchorRefContext, type TableRowMetrics, type TableSliceSpec } from './resourceLayout';
-import { chipContextOf, resolveChipSpans } from './chips';
-import { hasAnnotations, resolveAnnotationSpans } from './annotations';
-import type { ResourceNumberingMap } from './resourceNumbering';
-import type { CaptionCitations } from './citations';
-import { measureTocBlock } from './toc';
-import { measureIndexBlock } from './indexDirective';
-import { flushEndMark } from './statementNumbering';
-import { LINE_MAX_SPACE_RATIO } from './raggedLines';
-import { dimensionToPx } from '../units';
-import { joiningScriptIn, mostlyJoiningScript } from '../measure/joining';
-import { getMeasureDirection, mirrorLineSpans, shiftLineX } from '../measure/bidiLines';
-import { startEndAsLeftRight } from '../defaults/shared';
-import { prepareTabs } from './tabs';
-import { resolveResourceWrap } from './textWrap';
-import { dropCapRefusedInBox, fullPlainOffset, paragraphDropCap, prepareDropCap, type MeasuredDropCap, type PreparedDropCap } from './dropCap';
-import { lineIndentAt, lineInsetsAt, type LineInsetStep } from '../measure/types';
-import { measureCodeLines } from './codeLines';
-import { withInlineCode } from './codeInline';
-import type { VDTBlock } from '../vdt';
+} from './buildHelpers.js';
+import { resolveBlockKind, uppercasePreservingLength, type BlockKind, type BlockKindContext } from './buildBlockKind.js';
+import { runMeasurement } from './buildMeasurement.js';
+import { linkSegments } from '../measure/links.js';
+import { kashidaMeasureOptions } from '../measure/kashida.js';
+import { measureVerse } from './verse.js';
+import { measureVerseLines, verseLinesSettings, versesLineByLine } from './verseLines.js';
+import { composesAsCjk } from '../measure/cjkCompose.js';
+import { measuringVertically } from '../measure/vertical.js';
+import { resolveRefSpans, resolveSwatchSpans, shiftResourceBlockX, type AnchorRefContext, type TableRowMetrics, type TableSliceSpec } from './resourceLayout.js';
+import { chipContextOf, resolveChipSpans } from './chips.js';
+import { hasAnnotations, resolveAnnotationSpans } from './annotations.js';
+import type { ResourceNumberingMap } from './resourceNumbering.js';
+import type { CaptionCitations } from './citations.js';
+import { measureTocBlock } from './toc.js';
+import { measureIndexBlock } from './indexDirective.js';
+import { flushEndMark } from './statementNumbering.js';
+import { LINE_MAX_SPACE_RATIO } from './raggedLines.js';
+import { dimensionToPx } from '../units.js';
+import { joiningScriptIn, mostlyJoiningScript } from '../measure/joining.js';
+import { getMeasureDirection, mirrorLineSpans, shiftLineX } from '../measure/bidiLines.js';
+import { startEndAsLeftRight } from '../defaults/shared.js';
+import { prepareTabs } from './tabs.js';
+import { resolveResourceWrap } from './textWrap.js';
+import { dropCapRefusedInBox, fullPlainOffset, paragraphDropCap, prepareDropCap, type MeasuredDropCap, type PreparedDropCap } from './dropCap.js';
+import { lineIndentAt, lineInsetsAt, type LineInsetStep } from '../measure/types.js';
+import { measureCodeLines } from './codeLines.js';
+import { withInlineCode } from './codeInline.js';
+import type { VDTBlock } from '../vdt.js';
 
 /** Everything `measureContentBlock` needs that is constant across one
  *  placement pass. Built once before the loop; `blockIdx` and the paragraph

@@ -3,8 +3,8 @@ import {
   addChapter, cloneBook, deriveChapterTitle, h1Count, isPristineBook, mergeWithPrevious, moveChapter,
   newChapter, removeChapter, renameChapter, replaceChapterMarkdown, sampleBook, singleChapterBook, splitChapterAt,
   splitChapterAtHeadings, wordCount,
-} from './chapterOps';
-import type { BookContent } from './types';
+} from './chapterOps.js';
+import type { BookContent } from './types.js';
 
 function book(): BookContent {
   return {

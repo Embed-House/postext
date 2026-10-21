@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { modulesGroupParents } from './moduleEdits';
+import { modulesGroupParents } from './moduleEdits.js';
 
 // #1095: «Inside the group» offers every other modules group of the
 // template, a row or a grid too, but none that lies inside the group.

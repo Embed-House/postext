@@ -1,8 +1,8 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { clearTextWidthCache, setMeasureLanguage } from '../../../measure/canvas';
-import { prepareText, readLetteringText } from '../text';
-import { shapeText } from '../shape-text';
-import { presetLetteringStyles } from '../presets';
+import { clearTextWidthCache, setMeasureLanguage } from '../../../measure/canvas.js';
+import { prepareText, readLetteringText } from '../text.js';
+import { shapeText } from '../shape-text.js';
+import { presetLetteringStyles } from '../presets.js';
 
 // #770, round 2: the lines a shaping tries are measured as the layout sets
 // the ones it chooses. In a document shaped in its own language the layout

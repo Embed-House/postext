@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
 import { emptyTemplate, parseTemplate, postextToDocx, readDocx } from 'postext/word';
-import { DEFAULT_LABELS } from '../types';
-import { trackingText, wordImportActions, wordTrackingPlan } from './sandboxImport';
+import { DEFAULT_LABELS } from '../types/index.js';
+import { trackingText, wordImportActions, wordTrackingPlan } from './sandboxImport.js';
 
 const em = (value: number) => ({ value, unit: 'em' as const });
 

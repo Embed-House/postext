@@ -12,14 +12,14 @@
  */
 
 import { resolvePageTemplate, type DesignElement, type ElementPlacement, type FrameConfig, type FrameGroupConfig, type PageTemplate, type ResolvedPageTemplate } from 'postext';
-import type { TextChange } from '../book/textChanges';
-import { pageSites, type PageSites, type SlotSite } from '../viewport/composed/slotSource';
-import { mmDim, pxToMm, type Rect } from './frameGeometry';
-import { placementLike, type LaidTemplatePage } from './framesToGrid';
-import { pagesOfTemplates, rewritePage, siteText } from './pagePieces';
-import { retargetPatch } from './retarget';
-import { namesInUse, renameTemplate, slugify, templateAt, uniqueName } from './templateEdits';
-import { templateFences } from './templateUsage';
+import type { TextChange } from '../book/textChanges.js';
+import { pageSites, type PageSites, type SlotSite } from '../viewport/composed/slotSource.js';
+import { mmDim, pxToMm, type Rect } from './frameGeometry.js';
+import { placementLike, type LaidTemplatePage } from './framesToGrid.js';
+import { pagesOfTemplates, rewritePage, siteText } from './pagePieces.js';
+import { retargetPatch } from './retarget.js';
+import { namesInUse, renameTemplate, slugify, templateAt, uniqueName } from './templateEdits.js';
+import { templateFences } from './templateUsage.js';
 
 type Templates = readonly PageTemplate[];
 

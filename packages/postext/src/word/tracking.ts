@@ -5,11 +5,11 @@
 // styles in use say, and `applyStyleTracking` puts it on the book's styles
 // that set no tracking of their own.
 
-import type { Dimension, PostextConfig } from '../types';
-import type { WordBlock, WordDocument, WordStyle } from './model';
-import type { ParagraphTarget, WordTemplate } from './template';
-import { lookup } from './template';
-import { paragraphTargetOf } from './toMarkdown';
+import type { Dimension, PostextConfig } from '../types.js';
+import type { WordBlock, WordDocument, WordStyle } from './model.js';
+import type { ParagraphTarget, WordTemplate } from './template.js';
+import { lookup } from './template.js';
+import { paragraphTargetOf } from './toMarkdown.js';
 
 /** The tracking of one Word paragraph style, on the Postext style it becomes. */
 export interface StyleTracking {

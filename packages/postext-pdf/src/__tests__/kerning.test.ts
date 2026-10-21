@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { PDFArray, PDFDocument, PDFHexString, PDFNumber, type PDFFont } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { showTextShaped } from '../pdf-backend/primitives';
+import { showTextShaped } from '../pdf-backend/primitives.js';
 
 // A kerned TrueType face from the demo app's static fonts (OFL).
 const FONT_PATH = new URL('../../../../apps/web/public/fonts/Fraunces-Regular.ttf', import.meta.url);

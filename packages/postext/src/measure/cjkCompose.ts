@@ -33,14 +33,14 @@
  * and a Markdown link covers only its own.
  */
 
-import type { InlineKunten, InlineRuby, InlineSpan, InlineWarichu } from '../parse';
-import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineSegment, VDTSegmentMarks, VDTWarichu } from '../vdt';
-import { createBoundingBox } from '../vdt';
-import { isJapaneseLanguage } from '../locale';
-import { lineIndentAt, lineInsetsAt, lineMeasure, markInsetLines, type MeasuredBlock, type MeasureBlockOptions } from './types';
-import { getMeasureLanguage, measureInkBox, measureInkExtent, measureTextWidth, normalSpaceWidthFor, setMeasureLanguage } from './canvas';
-import { spanShapingLanguage } from './spanLanguage';
-import { findPxSize } from './fontString';
+import type { InlineKunten, InlineRuby, InlineSpan, InlineWarichu } from '../parse/index.js';
+import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineSegment, VDTSegmentMarks, VDTWarichu } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import { isJapaneseLanguage } from '../locale.js';
+import { lineIndentAt, lineInsetsAt, lineMeasure, markInsetLines, type MeasuredBlock, type MeasureBlockOptions } from './types.js';
+import { getMeasureLanguage, measureInkBox, measureInkExtent, measureTextWidth, normalSpaceWidthFor, setMeasureLanguage } from './canvas.js';
+import { spanShapingLanguage } from './spanLanguage.js';
+import { findPxSize } from './fontString.js';
 import {
   atomicSpanToken,
   refLabelTokens,
@@ -58,7 +58,7 @@ import {
   urlBreakIndices,
   type PendingSegment,
   type RichToken,
-} from './rich';
+} from './rich.js';
 import {
   cjkBreakAllowed,
   cjkClassOf,
@@ -75,16 +75,16 @@ import {
   setCjkCircledNumbers,
   type CjkClass,
   type CjkLineBreakLevel,
-} from './cjkClasses';
-import { hasCJK } from './cjk';
-import { graphemeCount, graphemesOf, lastGrapheme } from './graphemes';
-import { ratiosOf } from './spaceRatios';
-import { isBreakingSpace } from './spaces';
-import { trimChipLineEdges } from './chipEdges';
-import { cellAdvance, flowTextWidth, fontEm, fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measureCentralBaseline, verticalTrackCount, withMeasureWritingMode } from './vertical';
-import { isUprightMarkPair, verticalRuns } from '../writingMode';
-import { foldWidth, isZhuyin, kuntenGeometry, noteRowBaselines, readingAdvance, readingBaseline, rubyGeometry, splitNote, withFontSize, ZHUYIN_SIZE_RATIO, type RubyGeometry } from './cjkAnnotate';
-import { boxesWidth, fullSizeKana, layoutJisRuby, layoutJukugo, type JisRubyAlign, type JisRubyAllow, type JisRubyBase, type JisRubyBox } from './rubyJis';
+} from './cjkClasses.js';
+import { hasCJK } from './cjk.js';
+import { graphemeCount, graphemesOf, lastGrapheme } from './graphemes.js';
+import { ratiosOf } from './spaceRatios.js';
+import { isBreakingSpace } from './spaces.js';
+import { trimChipLineEdges } from './chipEdges.js';
+import { cellAdvance, flowTextWidth, fontEm, fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measureCentralBaseline, verticalTrackCount, withMeasureWritingMode } from './vertical.js';
+import { isUprightMarkPair, verticalRuns } from '../writingMode.js';
+import { foldWidth, isZhuyin, kuntenGeometry, noteRowBaselines, readingAdvance, readingBaseline, rubyGeometry, splitNote, withFontSize, ZHUYIN_SIZE_RATIO, type RubyGeometry } from './cjkAnnotate.js';
+import { boxesWidth, fullSizeKana, layoutJisRuby, layoutJukugo, type JisRubyAlign, type JisRubyAllow, type JisRubyBase, type JisRubyBox } from './rubyJis.js';
 import {
   applyLineEdges,
   blankEnd,
@@ -112,7 +112,7 @@ import {
   shrinkStep,
   type CjkComposition,
   type PunctuationBox,
-} from './cjkPunctuation';
+} from './cjkPunctuation.js';
 
 /** Fit tolerance of the breaker (px): running sums of many widths may
  *  land a hair past a measure they fill exactly. */

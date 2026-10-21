@@ -10,8 +10,8 @@
  * pure and reads any block array, so the layout (P4) can call it on its own
  * transformed `contentBlocks` and get indices into them.
  */
-import type { ComposedModuleFence, ContentBlock } from '../parse/types';
-import type { ComposedPageNode, SourceRange } from './types';
+import type { ComposedModuleFence, ContentBlock } from '../parse/types.js';
+import type { ComposedPageNode, SourceRange } from './types.js';
 
 /** Heading levels a template frame may `take`. */
 export type HeadingTake = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';

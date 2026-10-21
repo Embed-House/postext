@@ -1,7 +1,7 @@
 // Shared drawing kit of the guide's example figures (see `index.ts` for the
 // unit system and the design rules the figures follow).
 
-import type { GuideLang } from './lang';
+import type { GuideLang } from './lang.js';
 
 /** Canvas width (in SVG user units) for figures placed at column span. */
 export const COLUMN_VW = 300;

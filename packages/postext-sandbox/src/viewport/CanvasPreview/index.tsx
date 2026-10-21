@@ -1,42 +1,42 @@
 'use client';
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState, useDeferredValue, useMemo } from 'react';
-import { useBookPlan, useSandboxChapterDocsRef, useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector, useLayoutSource, type EditorSelection } from '../../context/SandboxContext';
-import { composeBookMemo, toBookSelection } from '../../book/compose';
-import { chapterLayoutFromDoc, leadingBlankPageCount } from '../../book/pagination';
-import { stitchDocuments, type StitchedBook } from '../../book/stitch';
-import type { ComposedBook } from '../../book/types';
-import { buildBookChapters, type HeldChapterDoc } from '../../book/buildBook';
+import { useBookPlan, useSandboxChapterDocsRef, useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector, useLayoutSource, type EditorSelection } from '../../context/SandboxContext.js';
+import { composeBookMemo, toBookSelection } from '../../book/compose.js';
+import { chapterLayoutFromDoc, leadingBlankPageCount } from '../../book/pagination.js';
+import { stitchDocuments, type StitchedBook } from '../../book/stitch.js';
+import type { ComposedBook } from '../../book/types.js';
+import { buildBookChapters, type HeldChapterDoc } from '../../book/buildBook.js';
 import { renderPageToCanvas, resolveCanvasViewerConfig, resolveDebugConfig, resolveDiagramStyleConfig, resolveColorValue, watchFonts, onFontsChanged } from 'postext';
 import type { PrintPreview } from 'postext';
-import { previewFor, printsGrayscale, usePrintSetup } from '../../print/printSetup';
-import { usePrintPreview } from '../../print/printPreviewToggle';
+import { previewFor, printsGrayscale, usePrintSetup } from '../../print/printSetup.js';
+import { usePrintPreview } from '../../print/printPreviewToggle.js';
 import type { VDTDocument, PostextConfig, RenderPageOptions } from 'postext';
-import { createPaintedPages, type PaintedPages } from './pageReuse';
-import { clearOverlay, drawOverlay } from './overlay';
-import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay';
-import { clearFitMarks, drawPageFitMarks } from '../composed/fitMarks';
-import { clearOverlapMarks } from '../composed/overlapMarks';
-import { clearReflowMarks, drawReflowMarks } from '../composed/reflowMarks';
-import { onReflowViewChange, reflowFocusNow, reflowShownNow } from '../composed/reflowView';
-import { onFrameJumpChange } from '../../editions/frameJump';
-import { onOverlapFocusChange } from '../../editions/overlapFocus';
-import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode';
-import { drawPickedMark } from '../../selection/pickedOverlay';
-import { carriedPosition, onPageSelectionChange } from '../../selection/selectionStore';
-import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
-import { syncComicEditors } from '../comics/comicEditing';
-import { syncFrameEditors } from '../composed/frameEditor';
-import { syncLabelAnchorEditors } from '../composed/labelAnchorEditor';
-import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost';
-import { findResourceLocation } from './geometry';
-import type { BookPageMap } from '../usePageHashSync';
-import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../../controls/fontLoader';
-import { ensureResourceImages } from '../../controls/resourceImages';
-import { useLayoutWorker } from '../../worker/useLayoutWorker';
-import { onLateFonts } from '../../worker/LayoutService';
-import { layoutCacheKey } from '../../book/layoutKeys';
-import { perfSpan, type PerfSpan } from '../../perf/marks';
+import { createPaintedPages, type PaintedPages } from './pageReuse.js';
+import { clearOverlay, drawOverlay } from './overlay.js';
+import { clearFrameMarks, drawFrameMarks } from '../composed/frameOverlay.js';
+import { clearFitMarks, drawPageFitMarks } from '../composed/fitMarks.js';
+import { clearOverlapMarks } from '../composed/overlapMarks.js';
+import { clearReflowMarks, drawReflowMarks } from '../composed/reflowMarks.js';
+import { onReflowViewChange, reflowFocusNow, reflowShownNow } from '../composed/reflowView.js';
+import { onFrameJumpChange } from '../../editions/frameJump.js';
+import { onOverlapFocusChange } from '../../editions/overlapFocus.js';
+import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode.js';
+import { drawPickedMark } from '../../selection/pickedOverlay.js';
+import { carriedPosition, onPageSelectionChange } from '../../selection/selectionStore.js';
+import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection.js';
+import { syncComicEditors } from '../comics/comicEditing.js';
+import { syncFrameEditors } from '../composed/frameEditor.js';
+import { syncLabelAnchorEditors } from '../composed/labelAnchorEditor.js';
+import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost.js';
+import { findResourceLocation } from './geometry.js';
+import type { BookPageMap } from '../usePageHashSync.js';
+import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../../controls/fontLoader.js';
+import { ensureResourceImages } from '../../controls/resourceImages.js';
+import { useLayoutWorker } from '../../worker/useLayoutWorker.js';
+import { onLateFonts } from '../../worker/LayoutService.js';
+import { layoutCacheKey } from '../../book/layoutKeys.js';
+import { perfSpan, type PerfSpan } from '../../perf/marks.js';
 import {
   defaultDocumentLocale,
   PAGE_PADDING,
@@ -48,9 +48,9 @@ import {
   sameStructure,
   type PageGaps,
   type ViewMode,
-} from './layoutUtils';
-import { findCaretBlockIdx, findCarriedCaretBlockIdx } from './caret';
-import { useAutoCover, type FirstChapterDoc } from '../../covers/useAutoCover';
+} from './layoutUtils.js';
+import { findCaretBlockIdx, findCarriedCaretBlockIdx } from './caret.js';
+import { useAutoCover, type FirstChapterDoc } from '../../covers/useAutoCover.js';
 
 const NO_SELECTION: EditorSelection = { from: -1, to: -1, head: -1 };
 /** Painted page bitmaps kept at once (~16 pages of 21×28 cm at 300 dpi);
@@ -65,9 +65,9 @@ const BITMAP_GROW_REPAINT = 1.15;
 const BITMAP_SHRINK_REPAINT = 0.5;
 /** Never trim below this many pages, whatever their size. */
 const MIN_PAINTED_PAGES = 6;
-import { buildPagesDom, joinPagesOfRow } from './pageDom';
-import { usePageNavigator } from '../usePageNavigator';
-import { planContent } from '../../book/jumps';
+import { buildPagesDom, joinPagesOfRow } from './pageDom.js';
+import { usePageNavigator } from '../usePageNavigator.js';
+import { planContent } from '../../book/jumps.js';
 
 interface CanvasPreviewProps {
   zoom: number;

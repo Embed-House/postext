@@ -7,21 +7,21 @@
 // `{bookTotalPages}` counts the whole book. With a `layoutCache`, a
 // chapter laid out before with the same inputs is not laid out again.
 
-import { bookCitationContexts, citationSourceOf, needsCitationContext } from '../citations/context';
-import type { CitationContext } from '../citations/context';
-import type { DocumentMetadata, LayoutContinuation, OutlineEntry, PostextConfig, Resource } from '../types';
-import type { VDTDocument } from '../vdt';
-import { buildDocument, resolveJumpMarks, continuationAfter, contentOutline, laterPageIdsOf, outlineFromDoc, outlineKey, pageFenceIds, carriedPlaces, mergeCarriedOutline } from '../pipeline';
-import type { StoryJump } from '../composed/carry';
-import type { BuildDocumentOptions } from '../pipeline';
-import { createMeasurementCache } from '../measure';
-import type { MeasurementCache } from '../measure';
-import { extractFrontmatter } from '../frontmatter';
-import { configUsesPlaceholder } from '../design/placeholders';
-import { bundleStart } from './manifest';
-import type { BundleChapter, BundleStart } from './types';
-import { beginLayoutBuild, createBundleLayoutCache, jsonKey } from './layoutCache';
-import type { BundleLayoutCache, ChapterRecord } from './layoutCache';
+import { bookCitationContexts, citationSourceOf, needsCitationContext } from '../citations/context.js';
+import type { CitationContext } from '../citations/context.js';
+import type { DocumentMetadata, LayoutContinuation, OutlineEntry, PostextConfig, Resource } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
+import { buildDocument, resolveJumpMarks, continuationAfter, contentOutline, laterPageIdsOf, outlineFromDoc, outlineKey, pageFenceIds, carriedPlaces, mergeCarriedOutline } from '../pipeline/index.js';
+import type { StoryJump } from '../composed/carry.js';
+import type { BuildDocumentOptions } from '../pipeline/index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import type { MeasurementCache } from '../measure/index.js';
+import { extractFrontmatter } from '../frontmatter.js';
+import { configUsesPlaceholder } from '../design/placeholders.js';
+import { bundleStart } from './manifest.js';
+import type { BundleChapter, BundleStart } from './types.js';
+import { beginLayoutBuild, createBundleLayoutCache, jsonKey } from './layoutCache.js';
+import type { BundleLayoutCache, ChapterRecord } from './layoutCache.js';
 
 export interface BuildBundleOptions extends BuildDocumentOptions {
   /** Configuration to lay out with instead of the bundle's own. */

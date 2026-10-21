@@ -2,9 +2,9 @@
 
 import { useId, useState, type RefObject } from 'react';
 import type { Resource } from 'postext';
-import type { SandboxLabels } from '../types/labels';
-import { Button, NumberField, Popover, SegmentedControl, Select } from '../ui';
-import { iconDirective, type IconSpec } from './labelAttrs';
+import type { SandboxLabels } from '../types/labels.js';
+import { Button, NumberField, Popover, SegmentedControl, Select } from '../ui/index.js';
+import { iconDirective, type IconSpec } from './labelAttrs.js';
 
 // ---------------------------------------------------------------------------
 // The editor's symbol picker (#1064): the `:icon[alt]{…}` of a map's key or a

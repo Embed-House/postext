@@ -10,33 +10,33 @@ export {
   comicSplitLeaves,
   comicSplitListAt,
   COMIC_MIN_CELL_PERCENT,
-} from './split';
-export type { ComicSplitAxis, ComicSplitSize, ComicSplitItem, ComicSplitList, ComicSplitToken, ComicSplitIssue, ComicSplitParse } from './split';
-export { parseComicScript, parseComicPoint, readBalloonText } from './script';
-export type { ComicScriptLine } from './script';
-export { parseComicFence, isComicFence, COMIC_FENCES } from './page';
-export { comicGeometry, pointInPolygon, polygonBBox, physicalSide } from './geometry';
-export type { ComicCell, ComicSplitLine, ComicGeometry, ComicGeometryInput, ComicFrameSide } from './geometry';
-export { comicArtCrop, comicCropFeasibleRange, comicArtPointToPage, comicArtRectToPage, anchorsOutsideSafeArea } from './art';
-export type { ComicCropInput, ComicCrop } from './art';
-export { layoutComicPage, comicViewerLeaf, letterPanels, comicLetteringStyle, comicLetteringLocale, comicLetteringVertical, comicPageDirection, comicPanelPadding, parseComicDimension, comicPageLayoutWarnings } from './layoutPage';
-export type { ComicPageContext, LetterPanelsInput } from './layoutPage';
-export { letterPanel, letterPanelDetailed, presetLetteringStyles } from './lettering';
-export type { LetteringItem, LetteringPanel, LetteringStyle, LetteringAnchor, LetteringDiagnostic, LetteringResult, LetteringEnv } from './lettering';
-export { comicSourceWarnings } from './warnings';
-export { layoutComicFrame, comicPageFrame } from './layoutPage';
-export type { ComicFrameContext } from './layoutPage';
-export { layoutComicStrip, comicStripPlacement, comicStripExtent, comicStripAspect, comicSplitGrid, parseComicAspect, parseComicStripWidth, parseComicStripAlign, comicStripWidth, comicStripOffset } from './strip';
-export type { ComicStripPlacement, ComicStripContext, ComicStripAlign } from './strip';
-export { layoutComicSpread, isComicSpread } from './spread';
-export type { ComicSpreadContext, ComicSpreadPage } from './spread';
-export { translateComicPage, translateComicPanel, translateComicSplitter, translateComicBalloon, translateComicFrame, translateSvgPath, comicBlockOnSheet, pageComics } from './transform';
-export { comicElementId, comicFrameElementId, comicBalloonElementId, comicFrameName, isComicTextPanel, comicBoxStyle, comicFrameSpecs } from './frames';
-export type { ComicFrameSpec } from './frames';
-export { comicTextPanelsSupported } from './textPanels';
-export { comicFontFamilies, markdownHasComics } from './fonts';
-export { COMIC_RESERVED_KEYS } from './types';
-export type { ComicPageSource, ComicPanelSource, ComicScriptItem, ComicScriptRole, ComicSourceRange, ComicTailSide } from './types';
+} from './split.js';
+export type { ComicSplitAxis, ComicSplitSize, ComicSplitItem, ComicSplitList, ComicSplitToken, ComicSplitIssue, ComicSplitParse } from './split.js';
+export { parseComicScript, parseComicPoint, readBalloonText } from './script.js';
+export type { ComicScriptLine } from './script.js';
+export { parseComicFence, isComicFence, COMIC_FENCES } from './page.js';
+export { comicGeometry, pointInPolygon, polygonBBox, physicalSide } from './geometry.js';
+export type { ComicCell, ComicSplitLine, ComicGeometry, ComicGeometryInput, ComicFrameSide } from './geometry.js';
+export { comicArtCrop, comicCropFeasibleRange, comicArtPointToPage, comicArtRectToPage, anchorsOutsideSafeArea } from './art.js';
+export type { ComicCropInput, ComicCrop } from './art.js';
+export { layoutComicPage, comicViewerLeaf, letterPanels, comicLetteringStyle, comicLetteringLocale, comicLetteringVertical, comicPageDirection, comicPanelPadding, parseComicDimension, comicPageLayoutWarnings } from './layoutPage.js';
+export type { ComicPageContext, LetterPanelsInput } from './layoutPage.js';
+export { letterPanel, letterPanelDetailed, presetLetteringStyles } from './lettering/index.js';
+export type { LetteringItem, LetteringPanel, LetteringStyle, LetteringAnchor, LetteringDiagnostic, LetteringResult, LetteringEnv } from './lettering/index.js';
+export { comicSourceWarnings } from './warnings.js';
+export { layoutComicFrame, comicPageFrame } from './layoutPage.js';
+export type { ComicFrameContext } from './layoutPage.js';
+export { layoutComicStrip, comicStripPlacement, comicStripExtent, comicStripAspect, comicSplitGrid, parseComicAspect, parseComicStripWidth, parseComicStripAlign, comicStripWidth, comicStripOffset } from './strip.js';
+export type { ComicStripPlacement, ComicStripContext, ComicStripAlign } from './strip.js';
+export { layoutComicSpread, isComicSpread } from './spread.js';
+export type { ComicSpreadContext, ComicSpreadPage } from './spread.js';
+export { translateComicPage, translateComicPanel, translateComicSplitter, translateComicBalloon, translateComicFrame, translateSvgPath, comicBlockOnSheet, pageComics } from './transform.js';
+export { comicElementId, comicFrameElementId, comicBalloonElementId, comicFrameName, isComicTextPanel, comicBoxStyle, comicFrameSpecs } from './frames.js';
+export type { ComicFrameSpec } from './frames.js';
+export { comicTextPanelsSupported } from './textPanels.js';
+export { comicFontFamilies, markdownHasComics } from './fonts.js';
+export { COMIC_RESERVED_KEYS } from './types.js';
+export type { ComicPageSource, ComicPanelSource, ComicScriptItem, ComicScriptRole, ComicSourceRange, ComicTailSide } from './types.js';
 export {
   comicBalloonKind,
   comicBalloonText,
@@ -50,5 +50,5 @@ export {
   isComicSpreadPartner,
   joinComicSpread,
   comicBalloonMatrix,
-} from './paint';
-export type { ComicBalloonKind } from './paint';
+} from './paint.js';
+export type { ComicBalloonKind } from './paint.js';

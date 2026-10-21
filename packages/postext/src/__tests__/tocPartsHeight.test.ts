@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { resolveTocConfig } from '../defaults/toc';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import type { PostextConfig } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveTocConfig } from '../defaults/toc.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import type { PostextConfig } from '../types.js';
 
 // EF-119 (decided: documented as it is): a contents part row is `2em` of the
 // body size tall by default, not two body lines. With a 9.5/13.5 pt body the

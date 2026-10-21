@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { unzipSync, zipSync } from 'fflate';
-import { createBundle, openBundle, readBundle, resolveBundleConfigLocale, zipBundle } from '../bundle';
-import { defaultResourceTypes } from '../defaults';
-import { buildDocument } from '../pipeline';
-import type { Resource } from '../types';
+import { createBundle, openBundle, readBundle, resolveBundleConfigLocale, zipBundle } from '../bundle/index.js';
+import { defaultResourceTypes } from '../defaults/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import type { Resource } from '../types.js';
 
 class StubCtx {
   font = '';

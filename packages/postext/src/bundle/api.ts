@@ -1,11 +1,11 @@
 // The high-level bundle API: open a `.postext` file into everything the
 // engine and its backends need, or write one from a document.
 
-import type { PostextConfig, Resource } from '../types';
-import { readBundle, planBundle, resolveBundleFiles } from './codec';
-import type { BundleCanvasScope, BundleChapter, BundleFontFile, BundleManifest, BundleManifestV2, BundleStart } from './types';
-import { mimeForFile, pickBundleMeta, pickBundleView, slugify } from './manifest';
-import { openBundleZip, zipBundle } from './zip';
+import type { PostextConfig, Resource } from '../types.js';
+import { readBundle, planBundle, resolveBundleFiles } from './codec.js';
+import type { BundleCanvasScope, BundleChapter, BundleFontFile, BundleManifest, BundleManifestV2, BundleStart } from './types.js';
+import { mimeForFile, pickBundleMeta, pickBundleView, slugify } from './manifest.js';
+import { openBundleZip, zipBundle } from './zip.js';
 
 /** A `.postext` file, opened. Every `fileId` it hands out (in `resources`
  *  and `config.customFonts`) is the file's path inside the bundle, so

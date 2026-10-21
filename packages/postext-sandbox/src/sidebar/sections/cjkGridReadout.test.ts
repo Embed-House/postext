@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { cjkGridGeometry, resolvePageConfig } from 'postext';
 import type { PostextConfig } from 'postext';
-import { gridMarginsText, mmText, pageDrawingConfig } from './cjkGridReadout';
+import { gridMarginsText, mmText, pageDrawingConfig } from './cjkGridReadout.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });

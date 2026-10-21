@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, defaultResourceTypes } from 'postext';
 import type { PostextConfig, Resource, VDTDocument } from 'postext';
-import { computeWarnings } from './compute';
-import { warningCategory } from './categories';
-import type { WarningPayload } from './types';
-import type { ComposedBook } from '../book/types';
+import { computeWarnings } from './compute.js';
+import { warningCategory } from './categories.js';
+import type { WarningPayload } from './types.js';
+import type { ComposedBook } from '../book/types.js';
 
 function kinds(markdown: string, config: PostextConfig = {}): WarningPayload['kind'][] {
   return computeWarnings({ markdown, config, doc: null }).map((w) => w.payload.kind);
@@ -448,8 +448,8 @@ describe('design slot placeholder warnings', () => {
 
 describe('chapter attribution', () => {
   it('maps located warnings to chapters and flags ignored front matter', async () => {
-    const { composeBook } = await import('../book/compose');
-    const { newChapter } = await import('../book/chapterOps');
+    const { composeBook } = await import('../book/compose.js');
+    const { newChapter } = await import('../book/chapterOps.js');
     const chapters = [
       newChapter('a', 'A', '# A\n\ntext', 1),
       newChapter('b', 'B', '---\ntitle: x\n---\n# B\n\n:::bogus\nunclosed', 1),

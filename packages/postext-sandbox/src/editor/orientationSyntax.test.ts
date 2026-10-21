@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { orientationRanges } from './orientationSyntax';
+import { orientationRanges } from './orientationSyntax.js';
 
 describe('orientation marks highlighting (#190)', () => {
   it('marks the directive and the text of :tcy, :upright and :sideways', () => {

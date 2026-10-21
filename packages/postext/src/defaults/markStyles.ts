@@ -1,5 +1,5 @@
-import type { ColorValue, Dimension, MarkStyleConfig, ResolvedMarkStyleConfig } from '../types';
-import { colorsEqual, dimensionsEqual } from './shared';
+import type { ColorValue, Dimension, MarkStyleConfig, ResolvedMarkStyleConfig } from '../types.js';
+import { colorsEqual, dimensionsEqual } from './shared.js';
 
 const EM = (value: number): Dimension => ({ value, unit: 'em' });
 

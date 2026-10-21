@@ -6,7 +6,7 @@
  */
 
 import type { FrameConfig, PageTemplate, VDTComposedPage, VDTFrame } from 'postext';
-import { templateAt, updateFrame, variantForPage, type TemplateScope } from './templateEdits';
+import { templateAt, updateFrame, variantForPage, type TemplateScope } from './templateEdits.js';
 
 const POINTER_RE = /^\/pageTemplates\/(\d+)(?:\/variants\/(recto|verso))?\/frames\/\d+$/;
 

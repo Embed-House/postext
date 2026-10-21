@@ -5,10 +5,10 @@
  * The one-click versions of the proposals: ./proposalActions.ts (#868).
  */
 import type { FrameFitStep, FrameOverflowProposal } from 'postext';
-import type { SandboxLabels } from '../types';
-import { fill } from '../print/fillTokens';
-import { localNumber } from '../viewport/composed/reflowText';
-import type { WarningPayload } from './types';
+import type { SandboxLabels } from '../types/index.js';
+import { fill } from '../print/fillTokens.js';
+import { localNumber } from '../viewport/composed/reflowText.js';
+import type { WarningPayload } from './types.js';
 
 type FrameOverflowPayload = Extract<WarningPayload, { kind: 'frameOverflow' }>;
 type FitLabels = Pick<

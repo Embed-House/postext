@@ -5,13 +5,13 @@
  * spreads (#861). Pure: read from the parsed pages and the
  * configuration, before any layout.
  */
-import type { ContentWarning } from '../vdt';
-import type { ContentBlock } from '../parse/types';
-import { closestKey } from '../util/closestKey';
-import { pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document';
-import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate, ResolvedPageTemplate } from './types';
-import { continueInPage, isModuleTemplate, resolveContinueIn, resolvePageTemplate } from './templates';
-import { pageRepeats } from './repeat';
+import type { ContentWarning } from '../vdt.js';
+import type { ContentBlock } from '../parse/types.js';
+import { closestKey } from '../util/closestKey.js';
+import { pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document.js';
+import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate, ResolvedPageTemplate } from './types.js';
+import { continueInPage, isModuleTemplate, resolveContinueIn, resolvePageTemplate } from './templates.js';
+import { pageRepeats } from './repeat.js';
 
 /** The composed-page warnings, as {@link checkComposedSlots} returns them
  *  (source offsets as in the pages it read). */

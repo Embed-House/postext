@@ -1,9 +1,9 @@
 import { createElement, useEffect, useRef, type CSSProperties, type FC } from 'react';
-import type { PostextContent, PostextConfig } from '../types';
-import { buildDocument } from '../pipeline';
-import { renderToCanvas } from '../canvas-backend';
-import { initMathEngine, isMathReady } from '../math';
-import { contentHasMath } from '../parse/inlineSnippet';
+import type { PostextContent, PostextConfig } from '../types.js';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToCanvas } from '../canvas-backend/index.js';
+import { initMathEngine, isMathReady } from '../math/index.js';
+import { contentHasMath } from '../parse/inlineSnippet.js';
 
 export interface PostextLayoutProps {
   /** Class of the container `<div>` the page canvases go into. */

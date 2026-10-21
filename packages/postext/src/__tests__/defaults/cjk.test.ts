@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk';
-import { cjkRegionOf } from '../../locale';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
+import { resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk.js';
+import { cjkRegionOf } from '../../locale.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
 
 describe('cjk config', () => {
   it('reads the region from the locale', () => {

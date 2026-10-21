@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import { describeFrameOverflowProposal } from '../../index';
-import type { ContentWarning, FrameOverflowProposal, PostextConfig, VDTDocument, VDTFrame, VDTLine } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import { describeFrameOverflowProposal } from '../../index.js';
+import type { ContentWarning, FrameOverflowProposal, PostextConfig, VDTDocument, VDTFrame, VDTLine } from '../../index.js';
 
 // #1084: a pill held to its height (`minHeight` = `maxHeight`) whose word is
 // wider than its measure. The ladder's text shrink used to stop at the

@@ -8,8 +8,8 @@
 
 import { bitmapInfo, resolvePrintConfig, type OutputTransform, type PrintConfig, type Resource } from 'postext';
 import type { PrintMasterReport } from 'postext-pdf';
-import { getBlob } from '../storage/blobStore';
-import { loadPrintProfile, printTransform, profileKey } from './printSetup';
+import { getBlob } from '../storage/blobStore.js';
+import { loadPrintProfile, printTransform, profileKey } from './printSetup.js';
 
 const listeners = new Set<() => void>();
 let version = 0;

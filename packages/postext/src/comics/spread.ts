@@ -11,14 +11,14 @@
  * the spine.
  */
 
-import type { BoundingBox, ResolvedConfig, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTPoint } from '../vdt';
-import type { Resource } from '../types';
-import { clipPolygon, polygonBBox } from './geometry';
-import { comicPageFrame, comicPageLayoutWarnings, comicViewerLeaf, copyComicPanelSources, layoutComicFrame, setComicLayoutWarnings, type ComicPageContext } from './layoutPage';
-import { resolvedComics } from '../defaults/comics';
-import { translateComicBalloon, translateComicPanel, translateComicSplitter } from './transform';
-import { comicFramesFor } from './frames';
-import type { ComicPageSource } from './types';
+import type { BoundingBox, ResolvedConfig, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTPoint } from '../vdt.js';
+import type { Resource } from '../types.js';
+import { clipPolygon, polygonBBox } from './geometry.js';
+import { comicPageFrame, comicPageLayoutWarnings, comicViewerLeaf, copyComicPanelSources, layoutComicFrame, setComicLayoutWarnings, type ComicPageContext } from './layoutPage.js';
+import { resolvedComics } from '../defaults/comics.js';
+import { translateComicBalloon, translateComicPanel, translateComicSplitter } from './transform.js';
+import { comicFramesFor } from './frames.js';
+import type { ComicPageSource } from './types.js';
 
 /** Whether a comic page asks for a spread (`:::page{spread}`). */
 export function isComicSpread(source: Pick<ComicPageSource, 'kind' | 'attrs'>): boolean {

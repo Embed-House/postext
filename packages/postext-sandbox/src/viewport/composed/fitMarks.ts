@@ -15,10 +15,10 @@
  */
 
 import type { VDTDocument, VDTFrame, VDTPage } from 'postext';
-import { SVG_NS } from '../CanvasPreview/dom';
-import { markFontPx } from './frameOverlay';
-import { jumpFlashNow } from '../../editions/frameJump';
-import { drawOverlapMarks } from './overlapMarks';
+import { SVG_NS } from '../CanvasPreview/dom.js';
+import { markFontPx } from './frameOverlay.js';
+import { jumpFlashNow } from '../../editions/frameJump.js';
+import { drawOverlapMarks } from './overlapMarks.js';
 
 export interface FitMark {
   frame: VDTFrame;

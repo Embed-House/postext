@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import { measureRichBlock, measureBlock } from '../measure';
-import { CONFIG_VERSION, migrateConfig, migrateBundleConfig, pinLegacyHardBreaks } from '../bundle/configVersion';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../defaults/bodyText';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { measureRichBlock, measureBlock } from '../measure/index.js';
+import { CONFIG_VERSION, migrateConfig, migrateBundleConfig, pinLegacyHardBreaks } from '../bundle/configVersion.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../defaults/bodyText.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../vdt.js';
 
 // #620: forced line breaks inside a paragraph — a backslash that ends a
 // source line, or `\\` — end the line there; the line before the break is

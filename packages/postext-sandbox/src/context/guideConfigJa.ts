@@ -9,11 +9,11 @@ import { defaultResourceTypes } from 'postext';
 import {
   GUIDE_FOLIO, M_BOTTOM, M_INNER, M_OUTER, M_TOP, PAGE_H, PAGE_W,
   at, box, col, colorPalette, em, guideCodeStyle, mm, pt, slot, text, type PaletteId,
-} from './guideKit';
+} from './guideKit.js';
 import {
   verticalBackCover, verticalCallouts, verticalChapterOpener, verticalContentsOpener, verticalCover, verticalPartDesign, verticalToc,
   type VerticalFaces,
-} from './guideVerticalKit';
+} from './guideVerticalKit.js';
 
 // The Japanese edition of the Postext guide: a vertical book bound on the
 // right (縦組み・右綴じ), set after the Requirements for Japanese Text Layout

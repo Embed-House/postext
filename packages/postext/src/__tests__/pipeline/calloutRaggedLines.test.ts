@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { LINE_MAX_SPACE_RATIO } from '../../pipeline/raggedLines';
-import type { VDTBlock } from '../../vdt';
-import type { PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { LINE_MAX_SPACE_RATIO } from '../../pipeline/raggedLines.js';
+import type { VDTBlock } from '../../vdt.js';
+import type { PostextConfig } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

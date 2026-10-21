@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { initMathEngine } from 'postext';
 import type { Resource, VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from 'postext';
-import { PNG, baseConfig, layOut, layOutBook, pt } from './__tests__/vdt';
-import { checkXml } from './__tests__/xml';
-import { buildReflowablePublication } from '.';
-import { buildOpf } from '../package/pack';
-import { appendLine, appendLines, type InlineContext, type TextSink } from './inline';
-import type { EpubPublication, RenderToEpubOptions } from '../types';
+import { PNG, baseConfig, layOut, layOutBook, pt } from './__tests__/vdt.js';
+import { checkXml } from './__tests__/xml.js';
+import { buildReflowablePublication } from './index.js';
+import { buildOpf } from '../package/pack.js';
+import { appendLine, appendLines, type InlineContext, type TextSink } from './inline.js';
+import type { EpubPublication, RenderToEpubOptions } from '../types.js';
 
 const para = 'Body text that runs on for a while so the page fills and the paragraph wraps over several lines. ';
 

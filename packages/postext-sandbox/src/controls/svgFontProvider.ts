@@ -9,8 +9,8 @@
 // characters the SVG sets — the files the PDF embeds, uncompressed there.
 
 import type { SvgFontProvider } from 'postext';
-import { createPdfFontProvider } from '../viewport/pdfFontProvider';
-import { getCustomFontFamily, onCustomFontsChanged } from './fontLoader';
+import { createPdfFontProvider } from '../viewport/pdfFontProvider.js';
+import { getCustomFontFamily, onCustomFontsChanged } from './fontLoader.js';
 
 let provider: SvgFontProvider | null = null;
 

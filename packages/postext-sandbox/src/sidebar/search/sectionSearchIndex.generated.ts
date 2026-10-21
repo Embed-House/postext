@@ -2,8 +2,8 @@
 // Run `node scripts/build-settings-search-index.mjs` after changing the
 // labels a settings section uses.
 
-import type { SandboxLabels } from '../../types/labels';
-import type { SettingsSectionId } from '../sections/registry';
+import type { SandboxLabels } from '../../types/labels.js';
+import type { SettingsSectionId } from '../sections/registry.js';
 
 export type SearchWordSource = 'color' | 'dimension' | 'font' | 'resources' | 'citationStyles' | 'outputProfiles';
 

@@ -19,8 +19,8 @@
 // the recoloured markup is marked on its root element and never recoloured
 // again: see SINGLE_INK_MARK.
 
-import type { ResolvedConfig } from '../vdt';
-import { resolveColorValue } from '../defaults/shared';
+import type { ResolvedConfig } from '../vdt.js';
+import { resolveColorValue } from '../defaults/shared.js';
 
 interface Rgb {
   r: number;

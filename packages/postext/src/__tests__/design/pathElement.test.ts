@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { layoutDesignSlot, type ResolvedPathPrimitive } from '../../design/layout';
-import { resolveHeadingsConfig } from '../../defaults';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import { measureHeadingAdvancedDesignHeight } from '../../pipeline/headerFooter';
-import { collectConfigWarnings } from '../../configWarnings';
-import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { sourceAt } from '../../composed/sourceMap';
-import { dimensionToPx } from '../../units';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { PageTemplate } from '../../composed/types';
-import type { DesignElement, DesignPathElement, PostextConfig, VDTDesignPathBlock, VDTDocument, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { layoutDesignSlot, type ResolvedPathPrimitive } from '../../design/layout.js';
+import { resolveHeadingsConfig } from '../../defaults/index.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import { measureHeadingAdvancedDesignHeight } from '../../pipeline/headerFooter.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { sourceAt } from '../../composed/sourceMap.js';
+import { dimensionToPx } from '../../units.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { DesignElement, DesignPathElement, PostextConfig, VDTDesignPathBlock, VDTDocument, VDTPage } from '../../index.js';
 
 // A path element (#1060): SVG path data in fractions of its own box, laid
 // into the vector design block in every design slot.

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { computePageMetrics, contentAreaForPage, mirrorContentArea } from '../pipeline/buildHelpers';
-import { resolveAllConfig } from '../pipeline/config';
-import type { PostextConfig, Resource } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { computePageMetrics, contentAreaForPage, mirrorContentArea } from '../pipeline/buildHelpers.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import type { PostextConfig, Resource } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

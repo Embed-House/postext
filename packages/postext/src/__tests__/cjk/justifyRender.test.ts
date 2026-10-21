@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, findLooseLines } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
+import { buildDocument, renderPageToCanvas, findLooseLines } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
 
 // CJK characters 16 px (1 em at 16 px), anything else 8 px.
 const adv = (s: string): number => {

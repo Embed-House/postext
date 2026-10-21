@@ -14,10 +14,10 @@
  * gets a rule on each.
  */
 
-import type { VDTDocument, VDTLine, VDTLineMark } from './vdt';
-import { segmentFont, segmentPositions } from './cjkMarks';
-import { fontEm } from './measure/vertical';
-import { inkBoxOf } from './arabicMarks';
+import type { VDTDocument, VDTLine, VDTLineMark } from './vdt.js';
+import { segmentFont, segmentPositions } from './cjkMarks.js';
+import { fontEm } from './measure/vertical.js';
+import { inkBoxOf } from './arabicMarks.js';
 
 /** Gap between the run's ink and the rule, and the rule's thickness, in
  *  em of the text. */

@@ -8,10 +8,10 @@ import {
   resolvePageConfig,
 } from 'postext';
 import type { Dimension, DesignSlot, LayoutType, PageMargins, PostextConfig, ResolvedHeadingsConfig } from 'postext';
-import { htmlViewerDpi, PADDING_PX, type ColumnMode } from './constants';
-import { viewerLayoutType } from './pageGeometry';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
-import { configShapingLanguage, measureInLanguage } from '../../controls/measureLanguage';
+import { htmlViewerDpi, PADDING_PX, type ColumnMode } from './constants.js';
+import { viewerLayoutType } from './pageGeometry.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
+import { configShapingLanguage, measureInLanguage } from '../../controls/measureLanguage.js';
 
 /** The leaf a heading design was drawn on: its size and the margins that
  *  place the design's container (the band under the text block's top-left

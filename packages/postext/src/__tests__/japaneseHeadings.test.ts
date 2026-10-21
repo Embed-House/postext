@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings';
-import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../defaults/paragraphStyles';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { resolveAllConfig } from '../pipeline/config';
-import type { HeadingLevelConfig, PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
-import { renderToHtml } from '../html-backend';
-import { installSizedStub } from './vertical/stub';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings.js';
+import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../defaults/paragraphStyles.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import type { HeadingLevelConfig, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../vdt.js';
+import { renderToHtml } from '../html-backend.js';
+import { installSizedStub } from './vertical/stub.js';
 
 // Japanese headings and blocks (#424): 行取り (`lineSpan`), 字下げ (a
 // heading's `indent` in body ems), 字取り (`jidori`), 地付き / 地からN字上げ

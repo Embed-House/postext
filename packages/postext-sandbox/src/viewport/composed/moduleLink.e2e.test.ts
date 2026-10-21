@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, resolvePageTemplate } from 'postext';
 import type { PostextConfig, VDTPage } from 'postext';
-import { frameByName } from './frameHit';
-import { frameAtCaret, frameClickTarget } from './frameLink';
-import { frameMarksFor } from './frameOverlay';
-import { emptyFrameInsertion, pageSites, sitesOf } from './slotSource';
+import { frameByName } from './frameHit.js';
+import { frameAtCaret, frameClickTarget } from './frameLink.js';
+import { frameMarksFor } from './frameOverlay.js';
+import { emptyFrameInsertion, pageSites, sitesOf } from './slotSource.js';
 
 // Modules (#1062): the frames of a `:::module` are named `<module>.<slot>`
 // on the page; a click on one finds its slot inside the module's block.

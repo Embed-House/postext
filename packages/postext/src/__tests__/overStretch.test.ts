@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { measureRichBlock, initHyphenator } from '../measure';
-import type { InlineSpan } from '../parse';
+import { measureRichBlock, initHyphenator } from '../measure/index.js';
+import type { InlineSpan } from '../parse/index.js';
 
 class StubCtx {
   font = '';

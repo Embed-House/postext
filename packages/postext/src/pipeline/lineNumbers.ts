@@ -21,8 +21,8 @@
 // a page, a poem), at a `:::numbering{lines=N}` directive, and at a poem
 // whose fence sets `lineStart=N`.
 
-import type { ContentBlock } from '../parse';
-import type { LayoutContinuation, ResolvedLineNumbersConfig } from '../types';
+import type { ContentBlock } from '../parse/index.js';
+import type { LayoutContinuation, ResolvedLineNumbersConfig } from '../types.js';
 import {
   type ResolvedConfig,
   createBoundingBox,
@@ -37,13 +37,13 @@ import {
   type VDTLine,
   type VDTLineNumberMark,
   type VDTPage,
-} from '../vdt';
-import { buildFontString } from '../measure';
-import { measureTextWidth } from '../measure/canvas';
-import { dimensionToPx } from '../units';
-import { formatNumeral, parseNumberFormat } from '../numbering';
-import { isRtlScriptChar } from '../bidi';
-import { resolvedLocale } from './config';
+} from '../vdt.js';
+import { buildFontString } from '../measure/index.js';
+import { measureTextWidth } from '../measure/canvas.js';
+import { dimensionToPx } from '../units.js';
+import { formatNumeral, parseNumberFormat } from '../numbering.js';
+import { isRtlScriptChar } from '../bidi.js';
+import { resolvedLocale } from './config.js';
 
 /** What changes the count at a point of the content. */
 type LineCountEvent =

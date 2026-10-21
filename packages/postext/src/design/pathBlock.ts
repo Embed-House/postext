@@ -5,7 +5,7 @@
  * box of the ink, a quadratic curve as a cubic (PDF has no quadratic), and
  * moving every point of a block.
  */
-import { createBoundingBox, type BoundingBox, type VDTDesignPathBlock, type VDTPathCommand, type VDTPathMarker } from '../vdt';
+import { createBoundingBox, type BoundingBox, type VDTDesignPathBlock, type VDTPathCommand, type VDTPathMarker } from '../vdt.js';
 
 /** How long an arrowhead's base is against its length: 0.7, a head a
  *  little narrower than it is long. */

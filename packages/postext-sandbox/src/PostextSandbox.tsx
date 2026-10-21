@@ -1,45 +1,45 @@
 'use client';
 
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { PostextSandboxProps } from './types';
-import { SandboxProvider, useSandboxSelector, useSandboxDispatch, useSandboxProjects } from './context/SandboxContext';
-import { LayoutServiceProvider } from './worker/LayoutServiceContext';
-import { preloadConfigFonts, getConfigFontFamilies } from './controls/fontLoader';
-import { ActivityBar, MobileNavBar } from './sidebar/ActivityBar';
-import { SidebarPanel } from './sidebar/SidebarPanel';
-import { ConfigPanel } from './sidebar/ConfigPanel';
-import { ResourcesPanel } from './sidebar/ResourcesPanel';
-import { MarkdownPanel } from './sidebar/MarkdownPanel';
-import { WarningsPanel } from './sidebar/WarningsPanel';
-import { FontsPanel } from './sidebar/FontsPanel';
-import { ProjectsPanel } from './sidebar/ProjectsPanel';
-import { ChaptersPanel } from './sidebar/ChaptersPanel';
-import { ResizableHandle } from './panels/ResizableHandle';
-import { ViewportTabs } from './viewport/ViewportTabs';
-import { CanvasViewport } from './viewport/CanvasViewport';
-import { SelectionBreadcrumb } from './selection/SelectionBreadcrumb';
-import { HtmlViewport } from './viewport/HtmlViewport';
-import { PdfViewport } from './viewport/PdfViewport';
-import { ChapterPaginator } from './viewport/ChapterPaginator';
-import { useChapterHashSync } from './viewport/useChapterHashSync';
-import { useContourTraces } from './panels/resources/contourTraces';
+import type { PostextSandboxProps } from './types/index.js';
+import { SandboxProvider, useSandboxSelector, useSandboxDispatch, useSandboxProjects } from './context/SandboxContext.js';
+import { LayoutServiceProvider } from './worker/LayoutServiceContext.js';
+import { preloadConfigFonts, getConfigFontFamilies } from './controls/fontLoader.js';
+import { ActivityBar, MobileNavBar } from './sidebar/ActivityBar.js';
+import { SidebarPanel } from './sidebar/SidebarPanel.js';
+import { ConfigPanel } from './sidebar/ConfigPanel.js';
+import { ResourcesPanel } from './sidebar/ResourcesPanel.js';
+import { MarkdownPanel } from './sidebar/MarkdownPanel.js';
+import { WarningsPanel } from './sidebar/WarningsPanel.js';
+import { FontsPanel } from './sidebar/FontsPanel.js';
+import { ProjectsPanel } from './sidebar/ProjectsPanel.js';
+import { ChaptersPanel } from './sidebar/ChaptersPanel.js';
+import { ResizableHandle } from './panels/ResizableHandle.js';
+import { ViewportTabs } from './viewport/ViewportTabs.js';
+import { CanvasViewport } from './viewport/CanvasViewport.js';
+import { SelectionBreadcrumb } from './selection/SelectionBreadcrumb.js';
+import { HtmlViewport } from './viewport/HtmlViewport.js';
+import { PdfViewport } from './viewport/PdfViewport.js';
+import { ChapterPaginator } from './viewport/ChapterPaginator.js';
+import { useChapterHashSync } from './viewport/useChapterHashSync.js';
+import { useContourTraces } from './panels/resources/contourTraces.js';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
-import { SandboxGlobalStyles, TooltipProvider, PortalProvider, PortalHost, uiDirectionOf, useUiRtl } from './ui';
-import { BundleReplaceDialog } from './BundleReplaceDialog';
-import { TextMigrationDialog } from './migrate/TextMigrationDialog';
-import { useCompactLayout } from './hooks/useCompactLayout';
-import { SandboxAnnouncer } from './ui/announcer';
-import { LargeTargetsProvider, useLargeTargets } from './ui/largeTargets';
-import { LargeTargetsToggle } from './ui/LargeTargetsToggle';
-import { FolioLoading } from './viewport/FolioLoading';
-import type { PanelId } from './types';
-import { setOutputProfileBaseUrl } from './print/printSetup';
-import { SandboxWebMcp } from './webmcp/SandboxWebMcp';
+import { SandboxGlobalStyles, TooltipProvider, PortalProvider, PortalHost, uiDirectionOf, useUiRtl } from './ui/index.js';
+import { BundleReplaceDialog } from './BundleReplaceDialog.js';
+import { TextMigrationDialog } from './migrate/TextMigrationDialog.js';
+import { useCompactLayout } from './hooks/useCompactLayout.js';
+import { SandboxAnnouncer } from './ui/announcer.js';
+import { LargeTargetsProvider, useLargeTargets } from './ui/largeTargets.js';
+import { LargeTargetsToggle } from './ui/LargeTargetsToggle.js';
+import { FolioLoading } from './viewport/FolioLoading.js';
+import type { PanelId } from './types/index.js';
+import { setOutputProfileBaseUrl } from './print/printSetup.js';
+import { SandboxWebMcp } from './webmcp/SandboxWebMcp.js';
 
 // three.js loads with the Folio tab, not with the sandbox.
-const FolioViewport = lazy(() => import('./viewport/FolioViewport').then((m) => ({ default: m.FolioViewport })));
+const FolioViewport = lazy(() => import('./viewport/FolioViewport.js').then((m) => ({ default: m.FolioViewport })));
 // So does the EPUB writer with the EPUB tab.
-const EpubViewport = lazy(() => import('./viewport/EpubViewport').then((m) => ({ default: m.EpubViewport })));
+const EpubViewport = lazy(() => import('./viewport/EpubViewport.js').then((m) => ({ default: m.EpubViewport })));
 
 const PANEL_LABEL_KEYS: Record<PanelId, 'navBooks' | 'navChapters' | 'navManuscript' | 'navResources' | 'navFonts' | 'navDesign' | 'navWarnings'> = {
   projects: 'navBooks',

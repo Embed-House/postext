@@ -5,11 +5,11 @@
 import { describe, expect, it } from 'vitest';
 import { parseMarkdown, type PostextConfig, type Resource } from 'postext';
 import { pickBundleView, type BundleManifest } from 'postext/bundle';
-import { computeWarnings } from '../warnings/compute';
-import { hasLatinEmphasis, missingUsedVariants } from '../controls/fontLoader';
-import { effectiveCanvasScope } from '../book/scope';
-import { fontsToCustomFonts } from './manifest';
-import type { PresetFontFamilySpec } from './types';
+import { computeWarnings } from '../warnings/compute.js';
+import { hasLatinEmphasis, missingUsedVariants } from '../controls/fontLoader.js';
+import { effectiveCanvasScope } from '../book/scope.js';
+import { fontsToCustomFonts } from './manifest.js';
+import type { PresetFontFamilySpec } from './types.js';
 
 // Loaded through a dynamic import (the package has no Node typings).
 const BUNDLE = '../../../../apps/web/public/presets/kokoro/';

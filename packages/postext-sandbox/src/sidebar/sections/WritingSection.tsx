@@ -3,17 +3,17 @@
 import { memo } from 'react';
 import type { DigitSystem, LayoutConfig, LocaleTag, NumeralsSetting, PageConfig } from 'postext';
 import { isJapaneseLanguage } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { relocalizedResourceTypes } from '../../context/defaultConfig';
-import { ChoiceInput, CollapsibleSection, SelectInput } from '../../controls';
-import { WritingModePicture } from '../settings/pictures';
-import { documentLocaleOptionsFor } from './BodyTextSection/constants';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
-import { ChineseDefaultsField } from './ChineseDefaultsField';
-import { ArabicDefaultsField } from './ArabicDefaultsField';
-import { JapaneseDefaultsField } from './JapaneseDefaultsField';
-import { isArabicScriptLanguage } from '../../context/arabicDefaults';
-import { documentComicDirection, documentDigits, documentDirection, documentLanguage } from '../../context/documentDirection';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { relocalizedResourceTypes } from '../../context/defaultConfig.js';
+import { ChoiceInput, CollapsibleSection, SelectInput } from '../../controls/index.js';
+import { WritingModePicture } from '../settings/pictures.js';
+import { documentLocaleOptionsFor } from './BodyTextSection/constants.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
+import { ChineseDefaultsField } from './ChineseDefaultsField.js';
+import { ArabicDefaultsField } from './ArabicDefaultsField.js';
+import { JapaneseDefaultsField } from './JapaneseDefaultsField.js';
+import { isArabicScriptLanguage } from '../../context/arabicDefaults.js';
+import { documentComicDirection, documentDigits, documentDirection, documentLanguage } from '../../context/documentDirection.js';
 
 /**
  * Language and direction: the document language (`locale`), the direction

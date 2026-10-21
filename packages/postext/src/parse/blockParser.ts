@@ -5,24 +5,24 @@
  * positions back into the original markdown.
  */
 
-import type { BlockSlot, CodeBlockInfo, ComposedModuleFence, ComposedPageFence, ContainerName, ContentBlock, DirectiveAttrs, DirectiveName, FigureLabel, FigureWord, FigureWordKind, ListKind, ParseIssue, ParseOptions, VerseLineInfo, VerseStanza } from './types';
-import type { SourceRange } from '../composed/types';
-import { attachEquationAnchors } from './equationLabels';
-import { parseAttrBlobStrict, parseDirectiveAttrs, scanDirectiveAttrs } from './attrs';
-import { extractInlineMath, fixMathSourceMap, injectMathSpans } from './inlineMath';
-import { BREAK_PLACEHOLDER, TITLE_BREAK_RE, extractInlineChips, extractInlineFootnotes, extractInlineRefs, injectFootnoteSpans, extractInlineSwatches, injectChipSpans, injectRefSpans, injectSwatchSpans, parseInlineFormatting, protectCodeSpans, replaceBodyBreaks, BODY_BREAK_MARK, bodyBreakSpans, titleBreakIndices, trimSpans, extractInlineTabs, injectTabSpans } from './inlineFormatting';
-import { buildBlockMapping } from './sourceMapping';
-import { labelElementId } from '../composed/ids';
-import { extractInlineCitations, injectCitationSpans } from './citations';
-import { attachIndexMarks, extractIndexMarks, remapParseOffsets } from './indexMarks';
-import { joinEastAsianLines } from './softBreaks';
-import { asciiDigits } from '../arabicNumerals';
-import { indentColumn, listDepth, nestListItem } from './listNesting';
-import { parseComicFence } from '../comics/page';
-import { closesCodeFence, codeFenceOpen } from './codeFence';
+import type { BlockSlot, CodeBlockInfo, ComposedModuleFence, ComposedPageFence, ContainerName, ContentBlock, DirectiveAttrs, DirectiveName, FigureLabel, FigureWord, FigureWordKind, ListKind, ParseIssue, ParseOptions, VerseLineInfo, VerseStanza } from './types.js';
+import type { SourceRange } from '../composed/types.js';
+import { attachEquationAnchors } from './equationLabels.js';
+import { parseAttrBlobStrict, parseDirectiveAttrs, scanDirectiveAttrs } from './attrs.js';
+import { extractInlineMath, fixMathSourceMap, injectMathSpans } from './inlineMath.js';
+import { BREAK_PLACEHOLDER, TITLE_BREAK_RE, extractInlineChips, extractInlineFootnotes, extractInlineRefs, injectFootnoteSpans, extractInlineSwatches, injectChipSpans, injectRefSpans, injectSwatchSpans, parseInlineFormatting, protectCodeSpans, replaceBodyBreaks, BODY_BREAK_MARK, bodyBreakSpans, titleBreakIndices, trimSpans, extractInlineTabs, injectTabSpans } from './inlineFormatting.js';
+import { buildBlockMapping } from './sourceMapping.js';
+import { labelElementId } from '../composed/ids.js';
+import { extractInlineCitations, injectCitationSpans } from './citations.js';
+import { attachIndexMarks, extractIndexMarks, remapParseOffsets } from './indexMarks.js';
+import { joinEastAsianLines } from './softBreaks.js';
+import { asciiDigits } from '../arabicNumerals.js';
+import { indentColumn, listDepth, nestListItem } from './listNesting.js';
+import { parseComicFence } from '../comics/page.js';
+import { closesCodeFence, codeFenceOpen } from './codeFence.js';
 
-export { parseDirectiveAttrs, spaceDirectiveLines, MAX_SPACE_LINES } from './attrs';
-export { codeFenceOpen } from './codeFence';
+export { parseDirectiveAttrs, spaceDirectiveLines, MAX_SPACE_LINES } from './attrs.js';
+export { codeFenceOpen } from './codeFence.js';
 
 const HEADING_RE = /^(#{1,6})\s+(.+)$/;
 /** `:::name` or `:::name{attrs}` on its own line. Shared by single-line

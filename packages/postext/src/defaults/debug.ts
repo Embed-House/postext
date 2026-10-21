@@ -1,5 +1,5 @@
-import type { DebugConfig, ResolvedDebugConfig, WarningsToggleConfig } from '../types';
-import { colorsEqual } from './shared';
+import type { DebugConfig, ResolvedDebugConfig, WarningsToggleConfig } from '../types.js';
+import { colorsEqual } from './shared.js';
 
 export const DEFAULT_DEBUG_CONFIG: ResolvedDebugConfig = {
   cursorSync: { enabled: true, color: { hex: '#2563eb', model: 'hex' } },

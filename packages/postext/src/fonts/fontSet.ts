@@ -13,8 +13,8 @@
 // at `status: 'loading'` meanwhile, which a look reads; whoever loaded the
 // faces itself (`prepareFonts`) asks for the walk (`force`).
 
-import { evictFontFamilies } from '../measure/font';
-import { defaultFontSet, forgetInstalledFamilies, type FontFaceLike, type FontFaceSetLike } from './faces';
+import { evictFontFamilies } from '../measure/font.js';
+import { defaultFontSet, forgetInstalledFamilies, type FontFaceLike, type FontFaceSetLike } from './faces.js';
 
 interface Tracked {
   /** `fontSet.size` when last read (-1: the set has none). */

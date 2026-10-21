@@ -1,6 +1,6 @@
-import type { TextChange } from '../../book/textChanges';
-import { setLabelAttr, setLabelLeader, type LabelLeaderChoice } from '../../editor/labelAttrs';
-import type { MarkdownLabel } from './figureLabels';
+import type { TextChange } from '../../book/textChanges.js';
+import { setLabelAttr, setLabelLeader, type LabelLeaderChoice } from '../../editor/labelAttrs.js';
+import type { MarkdownLabel } from './figureLabels.js';
 
 // ---------------------------------------------------------------------------
 // A label's own attribute written into its chapter (#1064): the anchor

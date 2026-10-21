@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { arcToCubics, mapPath, parseSvgPath, pathViewBox } from '../../design/svgPath';
-import type { VDTPathCommand } from '../../vdt';
+import { arcToCubics, mapPath, parseSvgPath, pathViewBox } from '../../design/svgPath.js';
+import type { VDTPathCommand } from '../../vdt.js';
 
 // SVG path data read into the vector block's commands (#1060).
 

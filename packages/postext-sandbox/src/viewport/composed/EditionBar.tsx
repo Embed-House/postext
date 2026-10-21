@@ -16,19 +16,19 @@
 
 import { Columns2, MoveDiagonal, Pin, PinOff } from 'lucide-react';
 import type { CSSProperties } from 'react';
-import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { selectedFrameNow } from '../../editing/editMode';
-import { requestFrameJump } from '../../editions/frameJump';
-import { useBookEditions } from '../../editions/useBookEditions';
-import { useCompactLayout } from '../../hooks/useCompactLayout';
-import { sameLocaleTag } from '../../presets/locale';
-import { localeDisplayName, localeShortTag } from '../../presets/localeNames';
-import { readViewHash } from '../../storage/viewHash';
-import { useUiRtl } from '../../ui';
-import { TOOLBAR_STYLE_BASE, ToolbarButton, ToolbarSeparator, toolbarHiddenStyle } from '../CanvasToolbar';
-import { useFloatingToolbarShell } from '../useFloatingToolbarShell';
-import { hasComposedPages } from './ReflowPanel';
-import { useReflowShown } from './reflowView';
+import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { selectedFrameNow } from '../../editing/editMode.js';
+import { requestFrameJump } from '../../editions/frameJump.js';
+import { useBookEditions } from '../../editions/useBookEditions.js';
+import { useCompactLayout } from '../../hooks/useCompactLayout.js';
+import { sameLocaleTag } from '../../presets/locale.js';
+import { localeDisplayName, localeShortTag } from '../../presets/localeNames.js';
+import { readViewHash } from '../../storage/viewHash.js';
+import { useUiRtl } from '../../ui/index.js';
+import { TOOLBAR_STYLE_BASE, ToolbarButton, ToolbarSeparator, toolbarHiddenStyle } from '../CanvasToolbar.js';
+import { useFloatingToolbarShell } from '../useFloatingToolbarShell.js';
+import { hasComposedPages } from './ReflowPanel.js';
+import { useReflowShown } from './reflowView.js';
 
 /** Over the side-by-side view (z-30), which it opens and closes. */
 const RAIL_Z = 35;

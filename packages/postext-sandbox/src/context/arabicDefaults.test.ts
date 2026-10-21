@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import type { DesignElement, DesignTextElement, PostextConfig } from 'postext';
 import { defaultResourceTypes, resolveBodyTextConfig, resolveFootnotesConfig, resolveOrderedListsConfig, resolvePageConfig } from 'postext';
-import { createDefaultConfig } from './defaultConfig';
+import { createDefaultConfig } from './defaultConfig.js';
 import {
   arabicDefaults, arabicFontsFor, designTextNeedsArabic, forgetArabicDefaults, isArabicScriptLanguage, recallArabicDefaults, rememberArabicDefaults,
   takeArabicDefaultsFocus, undoArabicDefaults,
   type ArabicDefaultId,
-} from './arabicDefaults';
-import { recallChineseDefaults, rememberChineseDefaults, forgetChineseDefaults } from './chineseDefaults';
-import { documentDigits, documentDirection, documentLanguage } from './documentDirection';
+} from './arabicDefaults.js';
+import { recallChineseDefaults, rememberChineseDefaults, forgetChineseDefaults } from './chineseDefaults.js';
+import { documentDigits, documentDirection, documentLanguage } from './documentDirection.js';
 
 const ids = (r: ReturnType<typeof arabicDefaults>) => r.changes.map((c) => c.id);
 const change = (r: ReturnType<typeof arabicDefaults>, id: ArabicDefaultId) => r.changes.find((c) => c.id === id);

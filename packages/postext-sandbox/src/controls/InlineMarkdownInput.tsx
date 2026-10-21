@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useMemo, useRef, type CSSProperties, useLayoutEffect } from 'react';
-import { wordRangeAt } from './wordRange';
+import { wordRangeAt } from './wordRange.js';
 
 // ---------------------------------------------------------------------------
 // InlineMarkdownInput — a lightweight text/textarea control that renders a live

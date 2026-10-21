@@ -1,19 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { renderPageToCanvas } from '../../index';
-import { parseMarkdown } from '../../parse';
-import { parseInlineSnippetSpans } from '../../parse/inlineSnippet';
-import { BREAK_PLACEHOLDER, SWATCH_PLACEHOLDER } from '../../parse/inlineFormatting';
-import { figureLabelReading, labelLayoutOnSheet, resolveLabelLook } from '../../composed/labels';
-import { altWithLabels } from '../../composed/labelText';
-import { resolveAllConfig } from '../../pipeline/config';
-import { validatePageTemplates } from '../../composed/validate';
-import { ICON_CAP_EM } from '../../measure/inlineIcon';
-import { collectFontUsage, configFontFamilies } from '../../fonts/usage';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTFigureLabel, VDTLine, VDTLineSegment } from '../../index';
-import { legendMapFixture, type LegendMapLocale } from './fixtures/legendMap';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { renderPageToCanvas } from '../../index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { parseInlineSnippetSpans } from '../../parse/inlineSnippet.js';
+import { BREAK_PLACEHOLDER, SWATCH_PLACEHOLDER } from '../../parse/inlineFormatting.js';
+import { figureLabelReading, labelLayoutOnSheet, resolveLabelLook } from '../../composed/labels.js';
+import { altWithLabels } from '../../composed/labelText.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { ICON_CAP_EM } from '../../measure/inlineIcon.js';
+import { collectFontUsage, configFontFamilies } from '../../fonts/usage.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTFigureLabel, VDTLine, VDTLineSegment } from '../../index.js';
+import { legendMapFixture, type LegendMapLocale } from './fixtures/legendMap.js';
 
 // #1058: a map's key and a scale bar's numbers set as labels: inline
 // symbols, lines kept as written, legend rows, plates with an outline.

@@ -11,12 +11,12 @@
 import { describe, it, expect } from 'vitest';
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { clearTextWidthCache } from '../../../measure/canvas';
-import { letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import { insetConvex } from '../geom';
-import type { ComicBalloonOut, LetteringItem, LetteringPanel, LetteringStyle, Point, Rect } from '../types';
-import type { VDTDesignTextBlock } from '../../../vdt';
+import { clearTextWidthCache } from '../../../measure/canvas.js';
+import { letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import { insetConvex } from '../geom.js';
+import type { ComicBalloonOut, LetteringItem, LetteringPanel, LetteringStyle, Point, Rect } from '../types.js';
+import type { VDTDesignTextBlock } from '../../../vdt.js';
 
 const OUT = (globalThis as unknown as { process?: { env: Record<string, string | undefined> } }).process?.env.LETTER_OUT;
 

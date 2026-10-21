@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { leafEntries } from '../configPaths';
-import { chapter, harness } from './testHarness';
+import { leafEntries } from '../configPaths.js';
+import { chapter, harness } from './testHarness.js';
 
 // #1063: what the template editor's connector, shape and box-shape fields
 // write is configuration the sandbox_* config tools read and write like any

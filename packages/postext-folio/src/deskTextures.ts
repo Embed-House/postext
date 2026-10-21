@@ -7,7 +7,7 @@ import {
   TextureLoader,
   type Texture,
 } from "three";
-import type { DeskKind } from "./procedural";
+import type { DeskKind } from "./procedural.js";
 
 export type { DeskKind };
 

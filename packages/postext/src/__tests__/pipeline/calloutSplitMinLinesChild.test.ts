@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults';
-import { CONFIG_VERSION, migrateConfig, pinLegacyBoxChildCut } from '../../bundle';
-import { migrateBundleConfig, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import type { VDTBlock, VDTDocument } from '../../vdt';
-import type { PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/index.js';
+import { CONFIG_VERSION, migrateConfig, pinLegacyBoxChildCut } from '../../bundle/index.js';
+import { migrateBundleConfig, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
+import type { PostextConfig } from '../../types.js';
 
 // EF-115: `splitMinLines` is the fewest text lines a split leaves on each
 // side of a cut, counting every line of the box on that side. A cut inside

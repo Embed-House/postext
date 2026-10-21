@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import type { CalloutStyleConfig, PageTemplate, PostextConfig } from 'postext';
-import { applyTextChanges } from '../book/textChanges';
-import { calloutFences, retypeCalloutChanges } from './calloutFences';
-import { frameStyleLibrary, resolveBookStyles } from './library';
-import { countFields, mergeSuggestions, parseHex, styleDiff, styleFields, stylesAfterMerging } from './styleCompare';
-import { placesToKeep, planMerge, planMerges, planRename, rewrittenTexts } from './styleMerge';
+import { applyTextChanges } from '../book/textChanges.js';
+import { calloutFences, retypeCalloutChanges } from './calloutFences.js';
+import { frameStyleLibrary, resolveBookStyles } from './library.js';
+import { countFields, mergeSuggestions, parseHex, styleDiff, styleFields, stylesAfterMerging } from './styleCompare.js';
+import { placesToKeep, planMerge, planMerges, planRename, rewrittenTexts } from './styleMerge.js';
 import { calloutStyleChain, inheritCalloutStyles } from 'postext';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
-import { groupsText, suggestionText } from '../sidebar/sections/FrameStylesSection/text';
-import { styleUsage } from './styleUsage';
-import { frameDress, inheritedStyle, previewConfig, previewMarkdown } from './stylePreview';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
+import { groupsText, suggestionText } from '../sidebar/sections/FrameStylesSection/text.js';
+import { styleUsage } from './styleUsage.js';
+import { frameDress, inheritedStyle, previewConfig, previewMarkdown } from './stylePreview.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pad = (v: number) => ({ top: mm(v), right: mm(v), bottom: mm(v), left: mm(v) });

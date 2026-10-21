@@ -8,9 +8,9 @@
  * a regression in either shows up here before it shows up in the sandbox.
  */
 import { describe, it } from 'vitest';
-import { buildDocument, type BuildPassInfo } from '../pipeline/build';
-import { createMeasurementCache } from '../measure';
-import type { PostextConfig } from '../types';
+import { buildDocument, type BuildPassInfo } from '../pipeline/build.js';
+import { createMeasurementCache } from '../measure/index.js';
+import type { PostextConfig } from '../types.js';
 
 class StubCtx {
   font = '';

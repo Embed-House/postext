@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLine } from '../../vdt';
-import { cjkClassOf, isCjkGrapheme, isLabelEndProhibited, setCjkCircledNumbers } from '../../measure/cjkClasses';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLine } from '../../vdt.js';
+import { cjkClassOf, isCjkGrapheme, isLabelEndProhibited, setCjkCircledNumbers } from '../../measure/cjkClasses.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // Circled numbers set as Chinese characters (#637, `cjk.circledNumbers`).
 // The stub measures a Han character 1 em (20 px) and ① half an em in

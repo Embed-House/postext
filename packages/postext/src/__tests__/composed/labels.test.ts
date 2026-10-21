@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { renderPageToCanvas } from '../../index';
-import { createMeasurementCache } from '../../measure';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { sourceAt } from '../../composed/sourceMap';
-import { frameMatrix } from '../../composed/paint';
-import { figureLabelBounds, figureLabelMatrix, labelPlace, pictureToBody, resolveLabelLook } from '../../composed/labels';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripLabelStylesDefaults } from '../../composed/templates';
-import type { ContentWarning, PostextConfig, Resource, VDTBlock, VDTDocument, VDTFigureLabel } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { renderPageToCanvas } from '../../index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { sourceAt } from '../../composed/sourceMap.js';
+import { frameMatrix } from '../../composed/paint.js';
+import { figureLabelBounds, figureLabelMatrix, labelPlace, pictureToBody, resolveLabelLook } from '../../composed/labels.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripLabelStylesDefaults } from '../../composed/templates.js';
+import type { ContentWarning, PostextConfig, Resource, VDTBlock, VDTDocument, VDTFigureLabel } from '../../index.js';
 
 // #860: the words of a map in the Markdown, their places in the resource.
 

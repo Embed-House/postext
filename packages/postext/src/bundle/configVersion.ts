@@ -3,18 +3,18 @@
 // the number as `configVersion` (every writer since postext 1.5 sets it);
 // the Sandbox numbers its stored projects the same way.
 
-import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig, UnorderedListsConfig } from '../types';
-import { DEFAULT_MATH_CONFIG } from '../defaults/math';
-import { avoidOrphansByDefault } from '../defaults/bodyText';
-import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings';
-import { cjkRegionOfConfig } from '../defaults/cjk';
-import { dimensionsEqual } from '../defaults/shared';
-import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter';
-import { DEFAULT_PAGE_CONFIG } from '../defaults/page';
-import { dimensionToPx } from '../units';
-import { KNOWN_CONTAINERS } from '../parse/blockParser';
-import { codeFenceOpen } from '../parse/codeFence';
-import { hasCJK } from '../measure/cjk';
+import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig, UnorderedListsConfig } from '../types.js';
+import { DEFAULT_MATH_CONFIG } from '../defaults/math.js';
+import { avoidOrphansByDefault } from '../defaults/bodyText.js';
+import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings.js';
+import { cjkRegionOfConfig } from '../defaults/cjk.js';
+import { dimensionsEqual } from '../defaults/shared.js';
+import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter.js';
+import { DEFAULT_PAGE_CONFIG } from '../defaults/page.js';
+import { dimensionToPx } from '../units.js';
+import { KNOWN_CONTAINERS } from '../parse/blockParser.js';
+import { codeFenceOpen } from '../parse/codeFence.js';
+import { hasCJK } from '../measure/cjk.js';
 
 /**
  * The configuration rules this engine writes: 16 since #1056 (15 from #853, 14 from

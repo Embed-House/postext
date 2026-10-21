@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CONFIG_VERSION } from 'postext/bundle';
-import { clearStorage, loadEpubLayout, loadPanel, loadProjectId, saveEpubLayout, saveProjectId } from './persistence';
+import { clearStorage, loadEpubLayout, loadPanel, loadProjectId, saveEpubLayout, saveProjectId } from './persistence.js';
 
 function installStorage(initial: Record<string, string> = {}) {
   const map = new Map(Object.entries(initial));
@@ -74,7 +74,7 @@ describe('working book', () => {
   const migration = { ids: () => 'gen', untitled: (n: number) => `Chapter ${n}` };
   it('falls back to the legacy markdown key as a one-chapter book', async () => {
     installStorage({ 'postext-sandbox-markdown': '# Old\n\ntext' });
-    const { loadBook } = await import('./persistence');
+    const { loadBook } = await import('./persistence.js');
     const book = loadBook(migration)!;
     expect(book.chapters).toHaveLength(1);
     expect(book.chapters[0]!.title).toBe('Old');
@@ -82,7 +82,7 @@ describe('working book', () => {
   });
   it('round-trips and removes the legacy key on save', async () => {
     const map = installStorage({ 'postext-sandbox-markdown': 'old' });
-    const { loadBook, saveBook } = await import('./persistence');
+    const { loadBook, saveBook } = await import('./persistence.js');
     const book = { chapters: [{ id: 'a', title: 'A', markdown: 'x', createdAt: 1, updatedAt: 1 }], activeChapterId: 'a' };
     saveBook(book);
     expect(map.has('postext-sandbox-markdown')).toBe(false);
@@ -90,7 +90,7 @@ describe('working book', () => {
   });
   it('returns null when nothing was saved', async () => {
     installStorage();
-    const { loadBook } = await import('./persistence');
+    const { loadBook } = await import('./persistence.js');
     expect(loadBook(migration)).toBeNull();
   });
 });
@@ -98,7 +98,7 @@ describe('working book', () => {
 describe('hidden presets', () => {
   it('round-trips and tolerates garbage', async () => {
     installStorage({ 'postext-sandbox-hidden-presets': '{"nope":1}' });
-    const { loadHiddenPresetIds, saveHiddenPresetIds } = await import('./persistence');
+    const { loadHiddenPresetIds, saveHiddenPresetIds } = await import('./persistence.js');
     expect(loadHiddenPresetIds()).toEqual([]);
     saveHiddenPresetIds(['a', 'b']);
     expect(loadHiddenPresetIds()).toEqual(['a', 'b']);
@@ -109,7 +109,7 @@ describe('working configuration', () => {
   it('pins the heading breaks of a copy saved by postext 1.4 or earlier', async () => {
     const legacy = JSON.stringify({ headings: { fontFamily: 'Georgia' } });
     const map = installStorage({ 'postext-sandbox-config': legacy });
-    const { loadConfig, saveConfig } = await import('./persistence');
+    const { loadConfig, saveConfig } = await import('./persistence.js');
     const config = loadConfig()!;
     expect(config.headings?.levels).toEqual([{ level: 1, breakBefore: { enabled: false } }]);
     // A save stamps the copy, so the next load reads it as it is.
@@ -122,7 +122,7 @@ describe('working configuration', () => {
       'postext-sandbox-config': JSON.stringify({ headings: { fontFamily: 'Georgia' } }),
       'postext-sandbox-config-version': '14',
     });
-    const { loadConfig } = await import('./persistence');
+    const { loadConfig } = await import('./persistence.js');
     expect(loadConfig()).toEqual({ headings: { fontFamily: 'Georgia' } });
     // Today's stamp is 14: a copy stamped 13 (postext 1.29) that names no
     // language for its text keeps the host's (#770), and one that names its
@@ -152,7 +152,7 @@ describe('working configuration', () => {
     const saved = { headings: { fontFamily: 'Georgia' } };
     const book = (markdown: string) => JSON.stringify({ version: 2, activeChapterId: 'a', chapters: [{ id: 'a', title: 'A', markdown, createdAt: 1, updatedAt: 1 }] });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '4', 'postext-sandbox-book': book('Text.\n\n::resource{id="fig"}\n\nMore.') });
-    const { loadConfig } = await import('./persistence');
+    const { loadConfig } = await import('./persistence.js');
     // (Its inline tables move whole, #634, and a column under a figure
     // across several columns stretches as under any figure, #708.)
     expect(loadConfig()).toEqual({
@@ -177,7 +177,7 @@ describe('working configuration', () => {
     const saved = { headings: { fontFamily: 'Georgia' }, math: { fontSizeScale: 1.2 } };
     const book = (markdown: string) => JSON.stringify({ version: 2, activeChapterId: 'a', chapters: [{ id: 'a', title: 'A', markdown, createdAt: 1, updatedAt: 1 }] });
     installStorage({ 'postext-sandbox-config': JSON.stringify(saved), 'postext-sandbox-config-version': '3', 'postext-sandbox-book': book('Area $\\pi r^2$.') });
-    const { loadConfig } = await import('./persistence');
+    const { loadConfig } = await import('./persistence.js');
     const { LEGACY_MATH_SIZE } = await import('postext/bundle');
     expect(loadConfig()).toEqual({
       headings: { fontFamily: 'Georgia' },
@@ -196,7 +196,7 @@ describe('working configuration', () => {
     expect(loadConfig()!.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
   });
   it('pins the heading breaks and maths size of a postext-config.json exported by postext 1.4 or earlier', async () => {
-    const { configFromExport } = await import('./persistence');
+    const { configFromExport } = await import('./persistence.js');
     const { LEGACY_MATH_SIZE } = await import('postext/bundle');
     const legacy = { type: 'postext-config' as const, version: 1 as const, config: { headings: { fontFamily: 'Georgia' } } };
     expect(configFromExport(legacy).headings?.levels).toEqual([{ level: 1, breakBefore: { enabled: false } }]);
@@ -314,11 +314,11 @@ describe('working configuration', () => {
   // (the built-in guide, saved by 1.4 without a stamp, has maths).
   it('re-keys the applied preset\'s snapshot to a copy migrated on load', async () => {
     const { stripConfigDefaults } = await import('postext');
-    const { createPostextGuideConfig } = await import('../context/guideConfig');
-    const { withDefaultResourceTypes } = await import('../context/defaultConfig');
-    const { DEFAULT_MARKDOWN_EN } = await import('../defaultMarkdown/en');
-    const { hashChapters, hashConfig, hashResources, isDocumentUntouched, rekeyMigratedConfig } = await import('../presets/hash');
-    const { loadStoredConfig } = await import('./persistence');
+    const { createPostextGuideConfig } = await import('../context/guideConfig.js');
+    const { withDefaultResourceTypes } = await import('../context/defaultConfig.js');
+    const { DEFAULT_MARKDOWN_EN } = await import('../defaultMarkdown/en.js');
+    const { hashChapters, hashConfig, hashResources, isDocumentUntouched, rekeyMigratedConfig } = await import('../presets/hash.js');
+    const { loadStoredConfig } = await import('./persistence.js');
     const guide = createPostextGuideConfig('en');
     const bookOf = (markdown: string) => [{ id: 'a', title: 'A', markdown, createdAt: 1, updatedAt: 1 }];
     const open = (saved: object, markdown: string, stamp?: number) => {
@@ -361,7 +361,7 @@ describe('working configuration', () => {
   });
   it('drops the stamp with the configuration', async () => {
     const map = installStorage();
-    const { clearStorage, saveConfig } = await import('./persistence');
+    const { clearStorage, saveConfig } = await import('./persistence.js');
     saveConfig({ headings: { fontFamily: 'Georgia' } });
     clearStorage();
     expect(map.has('postext-sandbox-config')).toBe(false);
@@ -375,7 +375,7 @@ describe('a full browser storage', () => {
     const full = { getItem: (k: string) => map.get(k) ?? null, removeItem: () => {}, setItem: () => { throw new DOMException('full', 'QuotaExceededError'); } };
     (globalThis as { window?: unknown }).window = { localStorage: full };
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { saveBook, saveConfig } = await import('./persistence');
+    const { saveBook, saveConfig } = await import('./persistence.js');
     expect(() => saveConfig({ headings: { fontFamily: 'Georgia' } })).not.toThrow();
     expect(() => saveBook({ chapters: [{ id: 'c1', title: 'One', markdown: '# One' }], activeChapterId: 'c1' } as never)).not.toThrow();
     expect(warn).toHaveBeenCalledTimes(2);
@@ -390,7 +390,7 @@ describe('a full browser storage', () => {
       localStorage: { getItem: (k: string) => map.get(k) ?? null, removeItem: () => {}, setItem: (k: string, v: string) => { if (++writes > 1) throw new Error('full'); map.set(k, v); } },
     };
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const { saveConfig } = await import('./persistence');
+    const { saveConfig } = await import('./persistence.js');
     expect(() => saveConfig({ headings: { fontFamily: 'Georgia' } })).not.toThrow();
     expect([...map.keys()]).toEqual(['postext-sandbox-config']);
     vi.restoreAllMocks();

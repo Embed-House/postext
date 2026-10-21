@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, resolvePageTemplate } from 'postext';
 import type { PostextConfig, VDTDocument, VDTPage } from 'postext';
-import { frameByName, frameHitAt, frameIsEmpty } from './frameHit';
-import { chainHeadOf, frameAtCaret, frameClickTarget } from './frameLink';
-import { frameMarksFor } from './frameOverlay';
+import { frameByName, frameHitAt, frameIsEmpty } from './frameHit.js';
+import { chainHeadOf, frameAtCaret, frameClickTarget } from './frameLink.js';
+import { frameMarksFor } from './frameOverlay.js';
 
 class StubCtx {
   font = '';

@@ -14,23 +14,23 @@
 
 import type { PostextConfig, PostextContent, VDTDocument } from 'postext';
 import { createLayoutWorker, type LayoutWorkerHandle } from 'postext/worker';
-import { composeBookMemo } from '../book/compose';
-import { layoutCacheKey } from '../book/layoutKeys';
-import { chapterLayoutFromDoc, createBookPlanner, sameChapterLayout } from '../book/pagination';
-import type { ChapterLayout } from '../book/types';
-import { withDefaultResourceTypes } from '../context/defaultConfig';
+import { composeBookMemo } from '../book/compose.js';
+import { layoutCacheKey } from '../book/layoutKeys.js';
+import { chapterLayoutFromDoc, createBookPlanner, sameChapterLayout } from '../book/pagination.js';
+import type { ChapterLayout } from '../book/types.js';
+import { withDefaultResourceTypes } from '../context/defaultConfig.js';
 import {
   declareStandIns, ensureConfigFontsLoaded, fontLoaderState, getConfigFontFamilies, loadVerticalTwins, preloadConfigFonts, setCustomFonts,
   unansweredFontRequests,
-} from '../controls/fontLoader';
-import { withHyphenationLocale } from '../controls/hyphenation';
-import { parseBundle } from '../presets/bundle';
-import { openBundleZip } from '../presets/zip';
-import { putFontFile } from '../storage/fontStorage';
-import { projectFileId, projectFontFileId } from '../storage/projectFiles';
-import { generateChapterId, generateProjectId } from '../storage/projects';
-import { createLayoutService } from '../worker/LayoutService';
-import { planContent } from '../book/jumps';
+} from '../controls/fontLoader.js';
+import { withHyphenationLocale } from '../controls/hyphenation.js';
+import { parseBundle } from '../presets/bundle.js';
+import { openBundleZip } from '../presets/zip.js';
+import { putFontFile } from '../storage/fontStorage.js';
+import { projectFileId, projectFontFileId } from '../storage/projectFiles.js';
+import { generateChapterId, generateProjectId } from '../storage/projects.js';
+import { createLayoutService } from '../worker/LayoutService.js';
+import { planContent } from '../book/jumps.js';
 
 export interface LayOutBundleOptions {
   /** The interface language the Sandbox would open the bundle in: the

@@ -10,9 +10,9 @@ vi.mock('postext', async (importOriginal) => ({
   loadVerticalAlternates,
   unregisterVerticalAlternates,
 }));
-vi.mock('../storage/fontStorage', () => ({ getFontFile: async () => null }));
+vi.mock('../storage/fontStorage.js', () => ({ getFontFile: async () => null }));
 
-const { loadVerticalTwins, verticalTwinsSettled, setCustomFonts } = await import('./fontLoader');
+const { loadVerticalTwins, verticalTwinsSettled, setCustomFonts } = await import('./fontLoader.js');
 
 const family = (fileId: string): CustomFontFamily => ({
   name: 'Book Serif TC',

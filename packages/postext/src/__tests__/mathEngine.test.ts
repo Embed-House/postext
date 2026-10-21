@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { mathjax } from 'mathjax-full/js/mathjax.js';
-import { buildDocument } from '../pipeline';
-import { initMathEngine, isMathReady } from '../math';
+import { buildDocument } from '../pipeline/index.js';
+import { initMathEngine, isMathReady } from '../math/index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

@@ -4,7 +4,7 @@ import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { BodyTextConfig, ColorValue, Dimension, DimensionUnit, ParagraphContainerSpacing, ParagraphStyleConfig, ResolvedParagraphStyleConfig } from 'postext';
 import { DEFAULT_BODY_TEXT_CONFIG, DEFAULT_CJK_CONFIG, isCjkLanguage, resolveBodyTextConfig, resolveParagraphStylesConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -17,14 +17,14 @@ import {
   NumberInput,
   SelectInput,
   ToggleSwitch,
-} from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { FieldRow } from '../../controls/FieldRow';
-import { SearchScope } from '../search/SearchScope';
-import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
-import { TabStopsField } from '../settings/TabStopsField';
-import { DropCapFields } from '../settings/DropCapFields';
+} from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { SearchScope } from '../search/SearchScope.js';
+import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
+import { TabStopsField } from '../settings/TabStopsField.js';
+import { DropCapFields } from '../settings/DropCapFields.js';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

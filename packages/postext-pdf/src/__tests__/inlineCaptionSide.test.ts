@@ -8,8 +8,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFRef, type PDF
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument, columnClipRect } from 'postext';
 import type { PostextConfig, Resource, VDTBlock, VDTColumn, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #729: a table set in the text with `placement.captionSide` has its
 // caption and note in the float-only side column. The block is painted in

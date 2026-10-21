@@ -2,15 +2,15 @@
 
 import { useId, useRef, useState } from 'react';
 import type { ColorValue } from 'postext';
-import { useSandbox } from '../context/SandboxContext';
-import { FieldRow } from './FieldRow';
-import { useFieldIds } from './fieldContext';
-import { cn } from '../ui/cn';
+import { useSandbox } from '../context/SandboxContext.js';
+import { FieldRow } from './FieldRow.js';
+import { useFieldIds } from './fieldContext.js';
+import { cn } from '../ui/cn.js';
 import { Link2 } from 'lucide-react';
-import { ColorPopover } from './ColorPopover';
-import { formatColor, hexAlpha, hexWithoutAlpha, type ColorMode } from './color-utils';
-import type { PopoverCloseReason } from '../ui';
-import { ContrastBadge, ContrastDetails, useFieldContrast } from '../contrast/ContrastBadge';
+import { ColorPopover } from './ColorPopover/index.js';
+import { formatColor, hexAlpha, hexWithoutAlpha, type ColorMode } from './color-utils.js';
+import type { PopoverCloseReason } from '../ui/index.js';
+import { ContrastBadge, ContrastDetails, useFieldContrast } from '../contrast/ContrastBadge.js';
 
 interface ColorPickerProps {
   label: string;

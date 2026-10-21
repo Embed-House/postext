@@ -1,4 +1,4 @@
-import type { EpubLayout } from '../types/props';
+import type { EpubLayout } from '../types/props.js';
 
 /** What the default rendition depends on, read from the browser. */
 export interface DeviceTraits {

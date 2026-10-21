@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, type Resource } from 'postext';
-import { computeWarnings } from './compute';
-import { stitchDocuments } from '../book/stitch';
+import { computeWarnings } from './compute.js';
+import { stitchDocuments } from '../book/stitch.js';
 
 // The comic warnings only the layout finds (a balloon that does not fit, a
 // picture letterboxed in its cell) reach the Checks panel from a document

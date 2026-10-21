@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { HashBundleError, isSameOriginUrl, openHashBundle, type OpenHashBundleDeps } from './hashBundle';
+import { HashBundleError, isSameOriginUrl, openHashBundle, type OpenHashBundleDeps } from './hashBundle.js';
 
 const ORIGIN = 'https://postext.dev';
 const ref = { key: 'recipe', id: 'magazine-feature-opener', lang: 'es' };

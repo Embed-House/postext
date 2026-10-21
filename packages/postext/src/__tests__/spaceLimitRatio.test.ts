@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { measureRichBlock } from '../measure/rich';
-import { measureBlock } from '../measure/plain';
-import { justifiedSpaceRatios } from '../measure/spaceRatios';
-import { raggedLooseLines } from '../pipeline/raggedLines';
-import { buildDocument } from '../pipeline/build';
-import { createMeasurementCache } from '../measure';
-import { findLooseLines, lineLooseness, lineWordSpacing } from '../looseLines';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig, VDTDocument, VDTLine } from '../index';
+import { measureRichBlock } from '../measure/rich.js';
+import { measureBlock } from '../measure/plain.js';
+import { justifiedSpaceRatios } from '../measure/spaceRatios.js';
+import { raggedLooseLines } from '../pipeline/raggedLines.js';
+import { buildDocument } from '../pipeline/build.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { findLooseLines, lineLooseness, lineWordSpacing } from '../looseLines.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig, VDTDocument, VDTLine } from '../index.js';
 
 // Every character is 7 px wide, but the space of the italic face is 5 px
 // (regular 7 px) and the space of the bold face 9 px: as with real faces,

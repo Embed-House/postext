@@ -1,13 +1,13 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useSandboxSelector, type useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxSelector, type useSandboxLabels } from '../../../context/SandboxContext.js';
 import { DEFAULT_HEADINGS_CONFIG, dimensionsEqual, colorsEqual, resolveBodyTextConfig, resolveDesignSlot } from 'postext';
-import { DropCapFields } from '../../settings/DropCapFields';
+import { DropCapFields } from '../../settings/DropCapFields.js';
 import type { HeadingLevelConfig, HeadingBreakBeforeConfig, HeadingBreakParity, HeadingSpan, HeadingTextTransform, HeadingAdvancedDesignConfig, ResolvedHeadingLevelConfig, ColorValue, Dimension, DimensionUnit, DesignSlot, ResolvedDesignSlot } from 'postext';
-import { SlotEditor } from '../HeaderFooterSection/SlotEditor';
-import { breakParityOptions } from './breakParityOptions';
-import { separatorFromOption, separatorOption, separatorOptions, type SeparatorChoice } from '../../settings/eastAsianOptions';
+import { SlotEditor } from '../HeaderFooterSection/SlotEditor.js';
+import { breakParityOptions } from './breakParityOptions.js';
+import { separatorFromOption, separatorOption, separatorOptions, type SeparatorChoice } from '../../settings/eastAsianOptions.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -18,7 +18,7 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../../controls';
+} from '../../../controls/index.js';
 
 const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

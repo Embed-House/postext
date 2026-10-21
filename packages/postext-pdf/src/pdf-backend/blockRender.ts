@@ -2,29 +2,29 @@ import { popGraphicsState, pushGraphicsState } from 'pdf-lib';
 import { isJapaneseLanguage, joinsLetters, leaderRuleGeometry, lineTextAlign, markerRuns, markerSetText, segmentOrientation } from 'postext';
 import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, MathRender } from 'postext';
-import { parseFontString } from '../fontString';
-import { FontCache } from '../fontCache';
-import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, cellPieces, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives';
-import { paintChip } from './chip';
-import { drawTaskBoxPx } from './taskBox';
-import { drawRightToLeftRun } from './rtlRun';
-import { pickSegmentColor, pickSegmentFont } from './fontHelpers';
-import { renderHeaderFooterSlot } from './headerFooter';
+import { parseFontString } from '../fontString.js';
+import { FontCache } from '../fontCache.js';
+import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, cellPieces, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives.js';
+import { paintChip } from './chip.js';
+import { drawTaskBoxPx } from './taskBox.js';
+import { drawRightToLeftRun } from './rtlRun.js';
+import { pickSegmentColor, pickSegmentFont } from './fontHelpers.js';
+import { renderHeaderFooterSlot } from './headerFooter.js';
 import {
   renderResourceBlock,
   type ResourceImageMap,
-} from './renderResourceBlock';
-import { LinkRegistry, RefRun, refTarget, UriRuns } from './links';
-import { tagArtifact, tagContent, type StructElem } from './tagging';
-import type { StructureFlow } from './structureFlow';
-import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations';
-import { inkScaleOperators } from './inkScale';
-import { paintSwatchSegmentPdf } from './inlineIcon';
-import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
-import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
-import { needsComplexShaping } from '../complexShaping';
-import { shapesAsCanvas, shapesSegmentLanguages, withinWideText, withSegmentLanguage } from '../shapingLanguage';
-import { wordSegments } from './wordPieces';
+} from './renderResourceBlock.js';
+import { LinkRegistry, RefRun, refTarget, UriRuns } from './links.js';
+import { tagArtifact, tagContent, type StructElem } from './tagging.js';
+import type { StructureFlow } from './structureFlow.js';
+import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintSideMarker, paintWarichu } from './annotations.js';
+import { inkScaleOperators } from './inkScale.js';
+import { paintSwatchSegmentPdf } from './inlineIcon.js';
+import { drawShapedTextPx, drawStyledWordPx } from './shapedText.js';
+import { segmentLanguages, segmentOffsets, wordParts } from './directedLine.js';
+import { needsComplexShaping } from '../complexShaping.js';
+import { shapesAsCanvas, shapesSegmentLanguages, withinWideText, withSegmentLanguage } from '../shapingLanguage.js';
+import { wordSegments } from './wordPieces.js';
 
 /** Per-document context for resource rendering, threaded through `renderBlock`. */
 export interface ResourceRenderContext {

@@ -3,15 +3,15 @@
 // `.docx` that carries the template for the round trip. Pure code (fflate
 // and a small XML reader): runs in the browser, a Worker and Node.
 
-export { readDocx, DocxReadError, TEMPLATE_XML_ROOT, TEMPLATE_XML_NS } from './docxRead';
-export { wordToPostext, pictureResolution, paragraphTargetOf, characterTargetOf, stripCaptionLabel, tableModel } from './toMarkdown';
-export type { ChapterMode, ImportedPicture, ImportedTable, ImportedChapter, ImportResult, ImportSettings } from './toMarkdown';
-export { postextToDocx, DEFAULT_STYLE_NAMES } from './toDocx';
-export type { ExportChapter, WordStyleNames, ExportSettings } from './toDocx';
-export { wordStyleTracking, applyStyleTracking } from './tracking';
-export type { StyleTracking } from './tracking';
-export { analyzeDocx } from './analyze';
-export type { StyleUse, FindingId, QualityFinding, QualityVerdict, QualityReport } from './analyze';
+export { readDocx, DocxReadError, TEMPLATE_XML_ROOT, TEMPLATE_XML_NS } from './docxRead.js';
+export { wordToPostext, pictureResolution, paragraphTargetOf, characterTargetOf, stripCaptionLabel, tableModel } from './toMarkdown.js';
+export type { ChapterMode, ImportedPicture, ImportedTable, ImportedChapter, ImportResult, ImportSettings } from './toMarkdown.js';
+export { postextToDocx, DEFAULT_STYLE_NAMES } from './toDocx.js';
+export type { ExportChapter, WordStyleNames, ExportSettings } from './toDocx.js';
+export { wordStyleTracking, applyStyleTracking } from './tracking.js';
+export type { StyleTracking } from './tracking.js';
+export { analyzeDocx } from './analyze.js';
+export type { StyleUse, FindingId, QualityFinding, QualityVerdict, QualityReport } from './analyze.js';
 export {
   DEFAULT_IMPORT_OPTIONS,
   MARKUP_STYLE,
@@ -27,11 +27,11 @@ export {
   parseTemplate,
   templateFile,
   newTemplateId,
-} from './template';
-export type { ParagraphTarget, CharacterTarget, ParagraphTargetKind, CharacterTargetKind, WordImportOptions, WordTemplate } from './template';
-export { parseInline, renderInline } from './inline';
-export type { InlineRun, ParseInlineOptions } from './inline';
-export { paragraphStyleName, paragraphText } from './model';
+} from './template.js';
+export type { ParagraphTarget, CharacterTarget, ParagraphTargetKind, CharacterTargetKind, WordImportOptions, WordTemplate } from './template.js';
+export { parseInline, renderInline } from './inline.js';
+export type { InlineRun, ParseInlineOptions } from './inline.js';
+export { paragraphStyleName, paragraphText } from './model.js';
 export type {
   WordStyleType,
   WordStyle,
@@ -45,4 +45,4 @@ export type {
   WordNumbering,
   WordMedia,
   WordDocument,
-} from './model';
+} from './model.js';

@@ -19,14 +19,14 @@
  * level and find the same element again after a relayout or in another
  * locale of the chapter.
  */
-import { labelGlyphAt } from './labels';
-import { pathHit } from '../design/pathBlock';
-import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
-import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt';
-import { resolvePageTemplate } from './templates';
-import { composedFrameBlockIds, composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock, paintsOverFrames } from './paint';
-import { composedPageElementId, designElementId, groupElementId } from './ids';
-import { comicChainAt, comicElementsForSource, comicTextAncestors, findComicElement } from '../comics/sourceMap';
+import { labelGlyphAt } from './labels.js';
+import { pathHit } from '../design/pathBlock.js';
+import type { BoundingBox, VDTBlock, VDTComposedPage, VDTDesignBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTFigureLabel, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from '../vdt.js';
+import { lineTextAlign, pageIsMirrored, pageToFlow } from '../vdt.js';
+import { resolvePageTemplate } from './templates.js';
+import { composedFrameBlockIds, composedPaintOrder, composedSheetClipOnSheet, frameContentRect, frameMatrix, frameOfBlock, paintsOverFrames } from './paint.js';
+import { composedPageElementId, designElementId, groupElementId } from './ids.js';
+import { comicChainAt, comicElementsForSource, comicTextAncestors, findComicElement } from '../comics/sourceMap.js';
 
 /** Where something painted comes from. Markdown offsets are absolute in
  *  the chapter file (front matter counted), as every `sourceStart` of the

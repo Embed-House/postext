@@ -26,11 +26,11 @@
  * text sets no line.
  */
 
-import type { InlineSpan } from '../parse/types';
-import { sliceSpan } from '../parse/links';
-import type { VDTLine } from '../vdt';
-import type { BreakTrace, LineWidthStep, MeasureBlockOptions, MeasuredBlock } from './types';
-import { lineIndentAt, lineMeasure, type LineInsetStep } from './types';
+import type { InlineSpan } from '../parse/types.js';
+import { sliceSpan } from '../parse/links.js';
+import type { VDTLine } from '../vdt.js';
+import type { BreakTrace, LineWidthStep, MeasureBlockOptions, MeasuredBlock } from './types.js';
+import { lineIndentAt, lineMeasure, type LineInsetStep } from './types.js';
 
 /** The forced line break in a paragraph's text (`BREAK_PLACEHOLDER`). */
 export const FORCED_BREAK = ' ';

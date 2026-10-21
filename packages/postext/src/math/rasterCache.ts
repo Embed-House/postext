@@ -1,4 +1,4 @@
-import type { MathRender } from './types';
+import type { MathRender } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Raster cache

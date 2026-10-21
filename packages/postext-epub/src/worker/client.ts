@@ -3,13 +3,13 @@
 // page itself left free while the book is written.
 
 import type { VDTDocument } from 'postext';
-import { placedFileIds, svgAssetPreparer } from '../shared/assets';
-import type { EpubResourceBytes, EpubSource, RenderToEpubOptions } from '../types';
-import type { EpubRequestMessage, EpubResourcePayload, EpubResponseMessage } from './protocol';
-import { cdnWorkerEntryUrl } from './entryUrl';
+import { placedFileIds, svgAssetPreparer } from '../shared/assets.js';
+import type { EpubResourceBytes, EpubSource, RenderToEpubOptions } from '../types.js';
+import type { EpubRequestMessage, EpubResourcePayload, EpubResponseMessage } from './protocol.js';
+import { cdnWorkerEntryUrl } from './entryUrl.js';
 
-export type { EpubResourcePayload } from './protocol';
-export type { EpubProgress, EpubWarning, EpubLayout, EpubMetadata, EpubFontFile, EpubSvgFontOptions, EpubCover } from '../types';
+export type { EpubResourcePayload } from './protocol.js';
+export type { EpubProgress, EpubWarning, EpubLayout, EpubMetadata, EpubFontFile, EpubSvgFontOptions, EpubCover } from '../types.js';
 
 export interface EpubWorkerRenderOptions extends Omit<RenderToEpubOptions, 'resourceBytes'> {
   /** Picture bytes: a map by `fileId`, or the provider `renderToEpub`

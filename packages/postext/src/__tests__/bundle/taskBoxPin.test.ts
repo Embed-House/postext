@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyTaskBox } from '../../bundle/configVersion';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyTaskBox } from '../../bundle/configVersion.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #765: a configuration stored before the engine drew the box of a task
 // item (configVersion 12 or older, postext 1.28 or earlier) keeps the

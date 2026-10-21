@@ -36,7 +36,7 @@ import {
   resolvePageConfig,
   resolveUnorderedListsConfig,
 } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   ItemCard,
@@ -52,17 +52,17 @@ import {
   TextInput,
   ToggleSwitch,
   ChoiceInput,
-} from '../../controls';
-import { ColumnsPicture } from '../settings/pictures';
-import { MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN } from '../settings/multipleColumns';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { FieldRow } from '../../controls/FieldRow';
-import { SearchScope } from '../search/SearchScope';
-import { SlotEditor } from './HeaderFooterSection/SlotEditor';
-import { PartsOrderedListsOverrides, PartsUnorderedListsOverrides } from './PartsListOverrides';
-import { breakParityOptions } from './HeadingsSection/breakParityOptions';
-import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
-import { DropCapFields } from '../settings/DropCapFields';
+} from '../../controls/index.js';
+import { ColumnsPicture } from '../settings/pictures.js';
+import { MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN } from '../settings/multipleColumns.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { SearchScope } from '../search/SearchScope.js';
+import { SlotEditor } from './HeaderFooterSection/SlotEditor.js';
+import { PartsOrderedListsOverrides, PartsUnorderedListsOverrides } from './PartsListOverrides.js';
+import { breakParityOptions } from './HeadingsSection/breakParityOptions.js';
+import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
+import { DropCapFields } from '../settings/DropCapFields.js';
 
 const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

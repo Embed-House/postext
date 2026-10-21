@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { layoutGroup, type GroupItem } from '../../composed/groups';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { layoutGroup, type GroupItem } from '../../composed/groups.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): seven
 // px per character, whatever the face.

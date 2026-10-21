@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { BUILTIN_PRESET_ID } from './builtin';
-import { hidePresetId, isPresetHideable, partitionPresets, unhidePresetId } from './hidden';
-import type { PresetSummary } from './types';
+import { BUILTIN_PRESET_ID } from './builtin.js';
+import { hidePresetId, isPresetHideable, partitionPresets, unhidePresetId } from './hidden.js';
+import type { PresetSummary } from './types.js';
 
 const sum = (id: string): PresetSummary => ({ id, name: id, source: 'private', available: true });
 

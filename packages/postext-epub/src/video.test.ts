@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { renderToEpub, readEpub } from './index';
-import type { ReadEpubResult, RenderToEpubOptions } from './types';
-import { MP4, PNG, sampleBook, videoSampleBook } from './__tests__/sampleBook';
-import { needsVideoScript, VIDEO_SCRIPT_HREF } from './shared/videoScript';
+import { renderToEpub, readEpub } from './index.js';
+import type { ReadEpubResult, RenderToEpubOptions } from './types.js';
+import { MP4, PNG, sampleBook, videoSampleBook } from './__tests__/sampleBook.js';
+import { needsVideoScript, VIDEO_SCRIPT_HREF } from './shared/videoScript.js';
 import { VIDEO_PLAYBACK_SCRIPT } from 'postext';
 
 // Videos in both renditions (#456): the book carries a self-hosted file

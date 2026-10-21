@@ -1,7 +1,7 @@
 // Accessibility metadata (EPUB Accessibility 1.1, schema.org vocabulary)
 // both renditions declare, from what the book holds.
 
-import type { EpubAccessibility, EpubLayout } from '../types';
+import type { EpubAccessibility, EpubLayout } from '../types.js';
 
 export interface AccessibilityFacts {
   layout: EpubLayout;

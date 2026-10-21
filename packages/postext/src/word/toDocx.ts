@@ -6,8 +6,8 @@
 // travels inside the file, so the re-import maps every style back.
 
 import { strToU8, zipSync } from 'fflate';
-import type { PostextConfig, Dimension, ColorValue, TabStop } from '../types';
-import { LINE_BREAK, parseInline, type InlineRun } from './inline';
+import type { PostextConfig, Dimension, ColorValue, TabStop } from '../types.js';
+import { LINE_BREAK, parseInline, type InlineRun } from './inline.js';
 import {
   calloutStylesOf,
   chipStylesOf,
@@ -17,10 +17,10 @@ import {
   type CharacterTarget,
   type ParagraphTarget,
   type WordTemplate,
-} from './template';
-import { TEMPLATE_XML_NS, TEMPLATE_XML_ROOT } from './docxRead';
-import { escapeAttr, escapeXml } from './xml';
-import { closesCodeFence, codeFenceOpen } from '../parse/codeFence';
+} from './template.js';
+import { TEMPLATE_XML_NS, TEMPLATE_XML_ROOT } from './docxRead.js';
+import { escapeAttr, escapeXml } from './xml.js';
+import { closesCodeFence, codeFenceOpen } from '../parse/codeFence.js';
 
 export interface ExportChapter {
   title: string;

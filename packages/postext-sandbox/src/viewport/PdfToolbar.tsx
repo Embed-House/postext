@@ -2,14 +2,14 @@
 
 import { memo, type FocusEventHandler } from 'react';
 import { ArrowRight, Download, Printer, RefreshCw } from 'lucide-react';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { useCompactLayout } from '../hooks/useCompactLayout';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { useCompactLayout } from '../hooks/useCompactLayout.js';
 import {
   PinToolbarButton,
   ToolbarButton,
   ToolbarSeparator,
   useToolbarRootProps,
-} from './CanvasToolbar';
+} from './CanvasToolbar.js';
 
 interface PdfToolbarProps {
   onRegenerate: () => void;

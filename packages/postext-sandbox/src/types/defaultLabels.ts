@@ -1,4 +1,4 @@
-import type { SandboxLabels } from './labels';
+import type { SandboxLabels } from './labels.js';
 
 export const DEFAULT_LABELS: SandboxLabels = {
   configuration: 'Design',

@@ -1,6 +1,6 @@
 import { resolveBodyTextConfig, shapingLanguageOf } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { withHyphenationLocale } from './hyphenation';
+import { withHyphenationLocale } from './hyphenation.js';
 
 /**
  * The language the Sandbox measures a document's text in (#770).

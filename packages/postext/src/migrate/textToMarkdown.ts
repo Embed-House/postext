@@ -25,14 +25,14 @@ import type {
   PostextConfig,
   Resource,
   ResourceAnchor,
-} from '../types';
-import type { FrameConfig, LabelStyle, PageSide, PageTemplate, PageTemplatePatch } from '../composed/types';
-import { collectConfigWarnings, contentInConfigRule } from '../configWarnings';
-import { resolveAllConfig } from '../pipeline/config';
-import { bitmapLayoutSize } from '../bitmapResolution';
-import { stableStringify } from '../util/stableHash';
-import { scanChapter, type DesignRun, type HeadingLine } from './markdownRuns';
-import { joinLines, planDesign, remapDecorationAnchors, toMm, type PlannedDesign, type PlannedFrame, type PlannedPicture, type TextLook, type TextPiece } from './pageDesign';
+} from '../types.js';
+import type { FrameConfig, LabelStyle, PageSide, PageTemplate, PageTemplatePatch } from '../composed/types.js';
+import { collectConfigWarnings, contentInConfigRule } from '../configWarnings.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { bitmapLayoutSize } from '../bitmapResolution.js';
+import { stableStringify } from '../util/stableHash.js';
+import { scanChapter, type DesignRun, type HeadingLine } from './markdownRuns.js';
+import { joinLines, planDesign, remapDecorationAnchors, toMm, type PlannedDesign, type PlannedFrame, type PlannedPicture, type TextLook, type TextPiece } from './pageDesign.js';
 
 export interface TextMigrationChapter {
   id: string;

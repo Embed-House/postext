@@ -1,4 +1,4 @@
-import type { AnchorMark, ContentBlock } from './types';
+import type { AnchorMark, ContentBlock } from './types.js';
 
 /** A `\label{…}` in TeX: the identifier a `\eqref`, `\ref` or `:ref`
  *  names (#530), trimmed; `tex.slice(start, end)` is the whole command. */

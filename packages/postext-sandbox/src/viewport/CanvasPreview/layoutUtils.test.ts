@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_PAGE_GAPS, PAGE_PADDING, fitRowPageWidth, groupPagesIntoRows, innerRowWidth, rowPadding, sameStructure, type GeomSnapshot } from './layoutUtils';
+import { DEFAULT_PAGE_GAPS, PAGE_PADDING, fitRowPageWidth, groupPagesIntoRows, innerRowWidth, rowPadding, sameStructure, type GeomSnapshot } from './layoutUtils.js';
 
 describe('groupPagesIntoRows', () => {
   it('lists every page on its own row in single mode', () => {

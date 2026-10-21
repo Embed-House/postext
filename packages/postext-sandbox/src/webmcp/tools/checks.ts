@@ -5,23 +5,23 @@
 
 import { describeFrameCoverProposal, describeFrameOutsideProposal, describeFrameOverflowProposal, resolvePdfGenerationConfig, resolvePrintConfig } from 'postext';
 import type { FrameCoverProposal, FrameOutsideProposal, FrameOverflowProposal, PostextConfig, Resource } from 'postext';
-import { composeBookMemo } from '../../book/compose';
-import { pdfFontChecksFor } from '../../controls/pdfFontWarnings';
-import { svgFontIssues, unavailableResourceImages } from '../../controls/resourceImages';
-import { onPreflightInputsChange, preflightInputs, type PreflightInputs } from '../../print/preflightInputs';
-import { detailFor, titleFor } from '../../sidebar/WarningsPanel';
-import { hasIndexedDB } from '../../storage/blobStore';
-import { WARNING_CATEGORY_ORDER, warningCategory } from '../../warnings/categories';
-import { computeComposedWarnings, computeWarnings } from '../../warnings/compute';
-import { FRAME_FIX_KINDS, fixesOfPayload, isFrameFixPayload, planIsAdvice, planProposal, proposalContextOf, valueInWords, type FrameFixPayload } from '../../warnings/proposalActions';
-import type { FrameProposal } from '../../warnings/frameOverlapText';
-import type { Warning } from '../../warnings/types';
-import { applyViewerEdit } from '../../editor/viewerEdits';
-import { chapterText, stateReaches } from '../chapterEdits';
-import { chapterOf, dispatchAndWait, layOutChapter, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { preparePainting } from '../pageImage';
-import { screenPosition } from './view';
+import { composeBookMemo } from '../../book/compose.js';
+import { pdfFontChecksFor } from '../../controls/pdfFontWarnings.js';
+import { svgFontIssues, unavailableResourceImages } from '../../controls/resourceImages.js';
+import { onPreflightInputsChange, preflightInputs, type PreflightInputs } from '../../print/preflightInputs.js';
+import { detailFor, titleFor } from '../../sidebar/WarningsPanel.js';
+import { hasIndexedDB } from '../../storage/blobStore.js';
+import { WARNING_CATEGORY_ORDER, warningCategory } from '../../warnings/categories.js';
+import { computeComposedWarnings, computeWarnings } from '../../warnings/compute.js';
+import { FRAME_FIX_KINDS, fixesOfPayload, isFrameFixPayload, planIsAdvice, planProposal, proposalContextOf, valueInWords, type FrameFixPayload } from '../../warnings/proposalActions.js';
+import type { FrameProposal } from '../../warnings/frameOverlapText.js';
+import type { Warning } from '../../warnings/types.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
+import { chapterText, stateReaches } from '../chapterEdits.js';
+import { chapterOf, dispatchAndWait, layOutChapter, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { preparePainting } from '../pageImage.js';
+import { screenPosition } from './view.js';
 
 /** How long the checks wait for the print profile of a book set up for
  *  print, in milliseconds. */

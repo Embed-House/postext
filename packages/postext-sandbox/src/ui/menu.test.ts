@@ -4,7 +4,7 @@
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { MenuBody, menuPopupRole } from './menu';
+import { MenuBody, menuPopupRole } from './menu.js';
 
 const items = [h('div', { key: 1, role: 'menuitem' }, 'Chapter one'), h('div', { key: 2, role: 'menuitem' }, 'Chapter two')];
 

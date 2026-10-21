@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EditorState, type TransactionSpec } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
 import { CompletionContext, type Completion } from '@codemirror/autocomplete';
-import { poemLayout, verseCompletionSource, verseLineKinds, verseLineMarks, verseSeparator } from './verseSyntax';
+import { poemLayout, verseCompletionSource, verseLineKinds, verseLineMarks, verseSeparator } from './verseSyntax.js';
 
 describe(':::verse highlighting (#378)', () => {
   it('marks the fences and the bayt lines of a poem, nothing outside it', () => {

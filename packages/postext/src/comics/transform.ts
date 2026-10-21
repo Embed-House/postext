@@ -5,8 +5,8 @@
  * returns a new comic and leaves its input as it was.
  */
 
-import type { BoundingBox, VDTBlock, VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTDesignTextBlock, VDTFrame, VDTPage, VDTPoint } from '../vdt';
-import { flowRectToPage } from '../vdt';
+import type { BoundingBox, VDTBlock, VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTDesignTextBlock, VDTFrame, VDTPage, VDTPoint } from '../vdt.js';
+import { flowRectToPage } from '../vdt.js';
 
 /** Numbers a command of an SVG path takes, and which of them are x (`x`) or
  *  y (`y`) coordinates. */

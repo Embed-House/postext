@@ -22,10 +22,10 @@ import {
   type VDTPage,
   type VDTPoint,
 } from 'postext';
-import { balloonGroup, balloonPanel, boxCentre, pageToPin } from '../viewport/comics/balloonDrag';
-import { splitterEndRanges } from '../viewport/comics/comicDrag';
-import { tailHandlePointOf } from '../viewport/comics/comicEdits';
-import { canMergeNext, canSplitPanel, comicPageSourceAt, comicPanelSlots, comicSplitValue } from '../viewport/comics/comicSource';
+import { balloonGroup, balloonPanel, boxCentre, pageToPin } from '../viewport/comics/balloonDrag.js';
+import { splitterEndRanges } from '../viewport/comics/comicDrag.js';
+import { tailHandlePointOf } from '../viewport/comics/comicEdits.js';
+import { canMergeNext, canSplitPanel, comicPageSourceAt, comicPanelSlots, comicSplitValue } from '../viewport/comics/comicSource.js';
 
 /** A comic on one page: a comic page, a strip, or one half of a spread. */
 export interface ComicPart {

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { mapInlineSnippet, parseInlineSnippetSpans, parseMarkdown } from '../../parse';
-import type { ContentBlock, InlineSpan } from '../../parse';
-import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting';
-import { invalidAttributeKeys, parseAttrBlobStrict, parseDirectiveAttrs } from '../../parse/attrs';
-import { collectContentWarnings } from '../../pipeline/contentWarnings';
-import { chapterFileName, slugify } from '../../bundle/manifest';
-import { createBundle, openBundle } from '../../bundle';
+import { mapInlineSnippet, parseInlineSnippetSpans, parseMarkdown } from '../../parse/index.js';
+import type { ContentBlock, InlineSpan } from '../../parse/index.js';
+import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting.js';
+import { invalidAttributeKeys, parseAttrBlobStrict, parseDirectiveAttrs } from '../../parse/attrs.js';
+import { collectContentWarnings } from '../../pipeline/contentWarnings.js';
+import { chapterFileName, slugify } from '../../bundle/manifest.js';
+import { createBundle, openBundle } from '../../bundle/index.js';
 
 // Parser fixes for Chinese text (#181), with passages of 红楼梦.
 

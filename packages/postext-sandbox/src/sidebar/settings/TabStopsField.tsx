@@ -2,12 +2,12 @@
 
 import { Ban, Plus, Trash2 } from 'lucide-react';
 import type { Dimension, DimensionUnit, TabStop, TabStopAlign, TabStopPosition } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { DimensionInput, NumberInput, SelectInput, TextInput } from '../../controls';
-import { FieldRow } from '../../controls/FieldRow';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
-import { Button, IconButton } from '../../ui';
-import { SearchScope } from '../search/SearchScope';
+import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { DimensionInput, NumberInput, SelectInput, TextInput } from '../../controls/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
+import { Button, IconButton } from '../../ui/index.js';
+import { SearchScope } from '../search/SearchScope.js';
 
 /**
  * The tab stops of body text, a paragraph style or a callout's body

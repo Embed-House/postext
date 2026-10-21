@@ -1,10 +1,10 @@
 import { createElement as h, type ComponentProps } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { LabelAnchorsPanel, LeaderFields } from './LabelAnchorsPanel';
-import type { PictureMarks } from './pictureMarks';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { LabelAnchorsPanel, LeaderFields } from './LabelAnchorsPanel.js';
+import type { PictureMarks } from './pictureMarks.js';
 
 // #931: the anchors list ticks anchors for a change together.
 

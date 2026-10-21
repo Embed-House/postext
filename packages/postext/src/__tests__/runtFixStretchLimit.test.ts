@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { measureBlock } from '../measure/plain';
-import { measureRichBlock } from '../measure/rich';
-import { setHyphenationLocale } from '../hyphenate';
-import { buildDocument } from '../pipeline';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTLine } from '../vdt';
+import { measureBlock } from '../measure/plain.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { setHyphenationLocale } from '../hyphenate.js';
+import { buildDocument } from '../pipeline/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTLine } from '../vdt.js';
 
 // EF-65 (addendum): a justified line could be set past `maxWordSpacing`
 // though the paragraph had a setting with every line within it. The runt

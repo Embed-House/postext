@@ -5,9 +5,9 @@ import type {
   ResolvedNamedTableStyleConfig,
   ResolvedBodyTextConfig,
   ColorValue,
-} from '../types';
-import { dimensionsEqual, colorsEqual } from './shared';
-import { presentTag, stringsFor } from '../locale';
+} from '../types.js';
+import { dimensionsEqual, colorsEqual } from './shared.js';
+import { presentTag, stringsFor } from '../locale.js';
 
 /** Default header fill — a neutral light grey. */
 const DEFAULT_HEADER_BACKGROUND: ColorValue = { hex: '#f0f0f0', model: 'hex' };

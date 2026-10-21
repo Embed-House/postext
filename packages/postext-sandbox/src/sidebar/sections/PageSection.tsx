@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolvePageConfig, PAGE_SIZE_PRESETS, DEFAULT_PAGE_CONFIG, DEFAULT_PAGE_NUMBERING, dimensionsEqual, colorsEqual } from 'postext';
 import type { PageConfig, PageNumberingConfig, PageSizePreset, PageNumberFormat, Dimension } from 'postext';
 import {
@@ -13,10 +13,10 @@ import {
   NumberInput,
   ToggleSwitch,
   NestedGroup,
-} from '../../controls';
-import { HighlightZone } from '../settings/previewHighlight';
-import { arabicNumberFormatOptions, eastAsianNumberFormatOptions } from '../settings/eastAsianOptions';
-import { gridMarginsText, useCjkGrid } from './cjkGridReadout';
+} from '../../controls/index.js';
+import { HighlightZone } from '../settings/previewHighlight.js';
+import { arabicNumberFormatOptions, eastAsianNumberFormatOptions } from '../settings/eastAsianOptions.js';
+import { gridMarginsText, useCjkGrid } from './cjkGridReadout.js';
 
 const PAGE_SIZE_OPTIONS = [
   { value: '11x17', label: '11 \u00d7 17 cm' },

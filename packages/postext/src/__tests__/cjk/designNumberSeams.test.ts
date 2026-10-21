@@ -1,14 +1,14 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { cachedMeasureBlock, createMeasurementCache } from '../../measure';
-import { cjkCompositionOf, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
-import { resolveCjkConfig } from '../../defaults/cjk';
-import { buildDocument } from '../../pipeline';
-import type { DesignElement, Dimension, PostextConfig } from '../../types';
-import type { MeasureBlockOptions } from '../../measure/types';
-import type { VDTDesignTextBlock, VDTDocument, VDTLine } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { cachedMeasureBlock, createMeasurementCache } from '../../measure/index.js';
+import { cjkCompositionOf, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation.js';
+import { resolveCjkConfig } from '../../defaults/cjk.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { DesignElement, Dimension, PostextConfig } from '../../types.js';
+import type { MeasureBlockOptions } from '../../measure/types.js';
+import type { VDTDesignTextBlock, VDTDocument, VDTLine } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // A number the layout wrote is not half of a number with the title a
 // design text prints after it (#724). In Japanese text a 、 or ・ between

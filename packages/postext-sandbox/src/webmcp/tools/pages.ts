@@ -1,20 +1,20 @@
 // The laid-out pages: as pictures, and in words.
 
-import { composeBookMemo } from '../../book/compose';
-import type { SandboxAction } from '../../context/SandboxContext';
-import { toChapterFocus } from '../../viewport/CanvasPreview/chapterFocus';
-import { chapterOf, dispatchAndWait, layOutChapter, layoutConfig, pageIndexOf, type SandboxToolHost } from '../host';
-import { ToolError, imageResult, type WebMcpTool } from '../modelContext';
-import { pageImage, preparePainting, printPreviewFor } from '../pageImage';
-import { balloonSummary, hitTestPage, linkDestination, sourcePlace } from '../pagePoint';
-import { outlinePages, summariseBlock, summarisePage } from '../pageText';
-import { screenPosition } from './view';
-import { breadcrumb, breadcrumbText, climbable, crumbText, type PageSelection } from '../../selection/pageSelection';
+import { composeBookMemo } from '../../book/compose.js';
+import type { SandboxAction } from '../../context/SandboxContext.js';
+import { toChapterFocus } from '../../viewport/CanvasPreview/chapterFocus.js';
+import { chapterOf, dispatchAndWait, layOutChapter, layoutConfig, pageIndexOf, type SandboxToolHost } from '../host.js';
+import { ToolError, imageResult, type WebMcpTool } from '../modelContext.js';
+import { pageImage, preparePainting, printPreviewFor } from '../pageImage.js';
+import { balloonSummary, hitTestPage, linkDestination, sourcePlace } from '../pagePoint.js';
+import { outlinePages, summariseBlock, summarisePage } from '../pageText.js';
+import { screenPosition } from './view.js';
+import { breadcrumb, breadcrumbText, climbable, crumbText, type PageSelection } from '../../selection/pageSelection.js';
 import { sourceAt } from 'postext';
-import { setPageSelection } from '../../selection/selectionStore';
-import { createSelectionApply } from '../../selection/applySelection';
-import { selectionTarget } from '../../selection/selectionTargets';
-import { editModeNow } from '../../editing/editMode';
+import { setPageSelection } from '../../selection/selectionStore.js';
+import { createSelectionApply } from '../../selection/applySelection.js';
+import { selectionTarget } from '../../selection/selectionTargets.js';
+import { editModeNow } from '../../editing/editMode.js';
 
 /** The levels of the source map an agent can pick at a point (#865). */
 const PICK_LEVELS = ['text', 'attr', 'label', 'resource', 'block', 'box', 'frame', 'group', 'design', 'slot', 'template'] as const;

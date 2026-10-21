@@ -6,14 +6,14 @@
 
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, VDTDocument, VDTLine, VDTLineSegment } from 'postext';
-import { baseConfig, layOut, pt } from './__tests__/vdt';
-import { checkXml } from './__tests__/xml';
-import { buildReflowablePublication } from '.';
-import { appendLine, type InlineContext, type TextSink } from './inline';
-import type { InlineItem } from './model';
-import { bidiLevels } from './xhtml';
-import { buildNav, buildOpf } from '../package/pack';
-import type { RenderToEpubOptions } from '../types';
+import { baseConfig, layOut, pt } from './__tests__/vdt.js';
+import { checkXml } from './__tests__/xml.js';
+import { buildReflowablePublication } from './index.js';
+import { appendLine, type InlineContext, type TextSink } from './inline.js';
+import type { InlineItem } from './model.js';
+import { bidiLevels } from './xhtml.js';
+import { buildNav, buildOpf } from '../package/pack.js';
+import type { RenderToEpubOptions } from '../types.js';
 
 const arabic: PostextConfig = { ...baseConfig, locale: 'ar' };
 

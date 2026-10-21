@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { pinLegacyScriptContext, pinLegacyShapingLanguage } from '../bundle/configVersion';
+import { pinLegacyScriptContext, pinLegacyShapingLanguage } from '../bundle/configVersion.js';
 import { zipSync } from 'fflate';
 import {
   bitmapSize,
@@ -17,12 +17,12 @@ import {
   pickLocaleOverrides,
   resolveBundleLocale,
   svgSize,
-} from '../bundle';
-import type { BundleManifestV2 } from '../bundle';
-import { buildDocument } from '../pipeline';
-import { resolveHeadingsConfig } from '../defaults';
-import type { PostextConfig, Resource } from '../types';
-import type { VDTDesignTextBlock, VDTPage } from '../vdt';
+} from '../bundle/index.js';
+import type { BundleManifestV2 } from '../bundle/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveHeadingsConfig } from '../defaults/index.js';
+import type { PostextConfig, Resource } from '../types.js';
+import type { VDTDesignTextBlock, VDTPage } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

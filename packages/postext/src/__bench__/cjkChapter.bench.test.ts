@@ -10,11 +10,11 @@
  * distinct character once per font, however long the paragraph.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline/build';
-import { createMeasurementCache } from '../measure';
-import { clearTextWidthCache } from '../measure/canvas';
-import type { PostextConfig } from '../types';
-import type { VDTBlock } from '../vdt';
+import { buildDocument } from '../pipeline/build.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { clearTextWidthCache } from '../measure/canvas.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock } from '../vdt.js';
 
 let chars = 0;
 class StubCtx {

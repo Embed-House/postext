@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { focusFromPercent, focusFromPointer, focusPercent } from './focusPoint';
+import { focusFromPercent, focusFromPointer, focusPercent } from './focusPoint.js';
 
 describe('cover focus point (#945)', () => {
   const rect = { left: 100, top: 50, width: 200, height: 100 };

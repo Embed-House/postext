@@ -3,9 +3,9 @@
  * suggestion names, in the panel's own names for them, and the counts.
  */
 
-import type { SandboxLabels } from '../../../types/labels';
-import type { MergeSuggestion, StyleKind } from '../../../frameStyles/styleCompare';
-import type { StyleUsage } from '../../../frameStyles/styleUsage';
+import type { SandboxLabels } from '../../../types/labels.js';
+import type { MergeSuggestion, StyleKind } from '../../../frameStyles/styleCompare.js';
+import type { StyleUsage } from '../../../frameStyles/styleUsage.js';
 
 /** The panel's name for each top-level setting of a callout style. */
 const GROUP_LABELS: Record<string, keyof SandboxLabels> = {

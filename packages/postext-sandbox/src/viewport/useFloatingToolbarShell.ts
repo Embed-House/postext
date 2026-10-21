@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, FocusEvent as ReactFocusEvent } from 'react';
-import { loadToolbarPinned, saveToolbarPinned } from '../storage/persistence';
-import { useCompactLayout } from '../hooks/useCompactLayout';
+import { loadToolbarPinned, saveToolbarPinned } from '../storage/persistence.js';
+import { useCompactLayout } from '../hooks/useCompactLayout.js';
 
 // Width of the invisible hover strip anchored to the end edge of the
 // viewport (the right, or the left in a right-to-left interface). Narrow enough to not steal meaningful interaction space (PDF

@@ -2,14 +2,14 @@
 
 import { useMemo, useState, useSyncExternalStore } from 'react';
 import { Grid3x3, PackagePlus, Undo2 } from 'lucide-react';
-import type { SandboxLabels } from '../../../types/labels';
-import { useSandboxDispatch, useSandboxDocRef, useSandboxLabels, useSandboxSelector, useSandboxStore } from '../../../context/SandboxContext';
-import { FieldRow, TextControl } from '../../../controls';
-import { Button } from '../../../ui';
-import { applyTemplateRewrite, bookChapters, canUndoTemplateRewrite, undoTemplateRewrite, type TemplateRewriteRecord } from '../../../templates/applyTemplateRewrite';
-import { planFramesToGrid, type GridRefusal } from '../../../templates/framesToGrid';
-import { planExtractModule, type ExtractRefusal } from '../../../templates/moduleEdits';
-import { laidTemplatePage } from '../../../templates/pagePieces';
+import type { SandboxLabels } from '../../../types/labels.js';
+import { useSandboxDispatch, useSandboxDocRef, useSandboxLabels, useSandboxSelector, useSandboxStore } from '../../../context/SandboxContext.js';
+import { FieldRow, TextControl } from '../../../controls/index.js';
+import { Button } from '../../../ui/index.js';
+import { applyTemplateRewrite, bookChapters, canUndoTemplateRewrite, undoTemplateRewrite, type TemplateRewriteRecord } from '../../../templates/applyTemplateRewrite.js';
+import { planFramesToGrid, type GridRefusal } from '../../../templates/framesToGrid.js';
+import { planExtractModule, type ExtractRefusal } from '../../../templates/moduleEdits.js';
+import { laidTemplatePage } from '../../../templates/pagePieces.js';
 
 const noSubscription = () => () => undefined;
 const noVersion = () => 0;

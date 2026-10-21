@@ -7,20 +7,20 @@ import {
   hanInformalStyle,
   parseNumberFormat,
   EAST_ASIAN_NUMERAL_STYLES,
-} from '../numbering';
-import { HIRAGANA, HIRAGANA_IROHA, KATAKANA, KATAKANA_IROHA, japaneseNumeral } from '../japaneseNumerals';
-import { parseChineseNumeral } from '../chineseNumerals';
-import { numberToWords } from '../numberWords';
-import { parsePartNumber } from '../pipeline/parts';
-import { formatListNumber } from '../pipeline/lists';
-import { computeHeadingContext, computeResourceNumbering } from '../pipeline/resourceNumbering';
-import { formatFootnoteNumber } from '../pipeline/footnotes';
-import { resolveFootnotesConfig } from '../defaults/footnotes';
-import { collectConfigWarnings } from '../configWarnings';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import type { PostextConfig, Resource, ResourceType } from '../types';
-import type { VDTDesignTextBlock, VDTDocument } from '../vdt';
+} from '../numbering.js';
+import { HIRAGANA, HIRAGANA_IROHA, KATAKANA, KATAKANA_IROHA, japaneseNumeral } from '../japaneseNumerals.js';
+import { parseChineseNumeral } from '../chineseNumerals.js';
+import { numberToWords } from '../numberWords.js';
+import { parsePartNumber } from '../pipeline/parts.js';
+import { formatListNumber } from '../pipeline/lists.js';
+import { computeHeadingContext, computeResourceNumbering } from '../pipeline/resourceNumbering.js';
+import { formatFootnoteNumber } from '../pipeline/footnotes.js';
+import { resolveFootnotesConfig } from '../defaults/footnotes.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import type { PostextConfig, Resource, ResourceType } from '../types.js';
+import type { VDTDesignTextBlock, VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

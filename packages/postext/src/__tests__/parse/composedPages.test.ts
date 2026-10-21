@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdownWithIssues } from '../../parse';
-import type { ContentBlock } from '../../parse';
-import { composedPages } from '../../composed/document';
+import { parseMarkdownWithIssues } from '../../parse/index.js';
+import type { ContentBlock } from '../../parse/index.js';
+import { composedPages } from '../../composed/document.js';
 
 /** The p. 8 example of DESIGN §3.4. */
 const P8 = `::::page{template="tema-cajas" fondo="banda-retos"}

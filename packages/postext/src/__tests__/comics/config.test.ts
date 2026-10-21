@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { defaultComicFont, defaultComicSfxFont, resolveComicsConfig, resolvedComics, stripComicsDefaults, pickBalloonStyle, pickPanelStyle, DEFAULT_BALLOON_STYLE_IDS } from '../../defaults/comics';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import { collectConfigWarnings } from '../../configWarnings';
-import type { ComicsConfig, PostextConfig } from '../../types';
+import { defaultComicFont, defaultComicSfxFont, resolveComicsConfig, resolvedComics, stripComicsDefaults, pickBalloonStyle, pickPanelStyle, DEFAULT_BALLOON_STYLE_IDS } from '../../defaults/comics.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import type { ComicsConfig, PostextConfig } from '../../types.js';
 
 describe('comics config', () => {
   it('resolves the defaults: gutters, panel, lettering, the nine balloon styles', () => {

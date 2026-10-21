@@ -20,17 +20,17 @@ import { Loader2, X } from 'lucide-react';
 import { renderPageToCanvas, type VDTDocument } from 'postext';
 import {
   useSandboxChapterDocsRef, useSandboxDocRef, useSandboxDocSourceRef, useSandboxLabels, useSandboxSelector,
-} from '../../context/SandboxContext';
-import { requestFrameJump } from '../../editions/frameJump';
-import { useBookEditions } from '../../editions/useBookEditions';
-import { stitchDocuments } from '../../book/stitch';
-import { sameLocaleTag } from '../../presets/locale';
-import { localeDisplayName } from '../../presets/localeNames';
-import { readViewHash } from '../../storage/viewHash';
-import { IconButton, Select, Switch, cn } from '../../ui';
-import { createOverlaySvg } from '../CanvasPreview/dom';
-import { drawPageFitMarks } from './fitMarks';
-import { syncedScrollTop } from './compareSync';
+} from '../../context/SandboxContext.js';
+import { requestFrameJump } from '../../editions/frameJump.js';
+import { useBookEditions } from '../../editions/useBookEditions.js';
+import { stitchDocuments } from '../../book/stitch.js';
+import { sameLocaleTag } from '../../presets/locale.js';
+import { localeDisplayName } from '../../presets/localeNames.js';
+import { readViewHash } from '../../storage/viewHash.js';
+import { IconButton, Select, Switch, cn } from '../../ui/index.js';
+import { createOverlaySvg } from '../CanvasPreview/dom.js';
+import { drawPageFitMarks } from './fitMarks.js';
+import { syncedScrollTop } from './compareSync.js';
 
 const GAP = 16;
 const PAD = 16;

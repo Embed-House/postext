@@ -7,17 +7,17 @@
  * frame at the default layer.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { renderPageToCanvas } from '../../index';
-import { collectConfigWarnings } from '../../configWarnings';
-import { sourceAt } from '../../composed/sourceMap';
-import { composedPaintOrder, composedReadingOrder, decorationOver, decorationUnder } from '../../composed/paint';
-import { flowRectToPage, type VDTDesignPathBlock, type VDTPathCommand } from '../../vdt';
-import type { PageTemplate } from '../../composed/types';
-import type { DesignConnectorElement, PostextConfig, VDTDocument, VDTPage } from '../../index';
-import { mapPartsFixture, type MapPartsLocale } from './fixtures/mapParts';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { renderPageToCanvas } from '../../index.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { sourceAt } from '../../composed/sourceMap.js';
+import { composedPaintOrder, composedReadingOrder, decorationOver, decorationUnder } from '../../composed/paint.js';
+import { flowRectToPage, type VDTDesignPathBlock, type VDTPathCommand } from '../../vdt.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { DesignConnectorElement, PostextConfig, VDTDocument, VDTPage } from '../../index.js';
+import { mapPartsFixture, type MapPartsLocale } from './fixtures/mapParts.js';
 
 class StubCtx {
   font = '';

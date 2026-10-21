@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { computePageMetrics, contentAreaForPage, pageMirrored } from '../../pipeline/buildHelpers';
-import { resolveAllConfig } from '../../pipeline/config';
-import { flowRectToPage, flowToPage, pageRectToFlow, pageToFlow, verticalFlowOf, type VDTDocument, type VDTPage } from '../../vdt';
-import type { PostextConfig, Dimension } from '../../types';
-import { installSizedStub } from './stub';
+import { buildDocument } from '../../pipeline/index.js';
+import { computePageMetrics, contentAreaForPage, pageMirrored } from '../../pipeline/buildHelpers.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { flowRectToPage, flowToPage, pageRectToFlow, pageToFlow, verticalFlowOf, type VDTDocument, type VDTPage } from '../../vdt.js';
+import type { PostextConfig, Dimension } from '../../types.js';
+import { installSizedStub } from './stub.js';
 
 installSizedStub();
 

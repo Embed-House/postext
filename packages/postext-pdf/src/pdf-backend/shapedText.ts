@@ -39,12 +39,12 @@
  */
 import { PDFArray, PDFHexString, PDFName, PDFNumber, PDFOperator, PDFOperatorNames, moveText, setCharacterSpacing, setCharacterSqueeze, setFillingColor, setTextRise, type Color, type PDFFont } from 'pdf-lib';
 import { lineRuns, resolveParagraph } from 'postext';
-import { complexShaperReady, joinsLetters, needsComplexShaping, shapeRun, clusterTexts, type ShapeFeatures, type ShapedRun } from '../complexShaping';
-import { fileRuns, noteMissingGlyphs } from '../faceFiles';
-import { shapesAsCanvas, shapingLanguage, shapingScriptOf, withBesideLetter, withinRightToLeftText } from '../shapingLanguage';
-import { canvasWords } from '../canvasWords';
-import { toUnicodeCmap } from '../fontCache';
-import { pushTextObject, registerComplexPainter, textAdvancePx, textShows, type PageCtx, type TextOutline, type TextShow } from './primitives';
+import { complexShaperReady, joinsLetters, needsComplexShaping, shapeRun, clusterTexts, type ShapeFeatures, type ShapedRun } from '../complexShaping.js';
+import { fileRuns, noteMissingGlyphs } from '../faceFiles.js';
+import { shapesAsCanvas, shapingLanguage, shapingScriptOf, withBesideLetter, withinRightToLeftText } from '../shapingLanguage.js';
+import { canvasWords } from '../canvasWords.js';
+import { toUnicodeCmap } from '../fontCache.js';
+import { pushTextObject, registerComplexPainter, textAdvancePx, textShows, type PageCtx, type TextOutline, type TextShow } from './primitives.js';
 
 /** A fontkit glyph, as far as registering it with a subset needs it. */
 interface FontkitGlyph {

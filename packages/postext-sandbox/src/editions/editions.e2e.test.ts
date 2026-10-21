@@ -1,20 +1,20 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { VDTDocument } from 'postext';
-import { layOutEdition, type EditionLayout } from './editionLayout';
-import { FIXTURE_LOCALES, threeEditionsBook, type FixtureLocale } from './threeEditions.fixture';
-import { frameJumpFragment } from './frameJump';
-import { selectFrameOnPage } from './useFrameJumpRunner';
-import { pageSelectionNow, resetPageSelection } from '../selection/selectionStore';
-import { selectedElement } from '../selection/pageSelection';
+import { layOutEdition, type EditionLayout } from './editionLayout.js';
+import { FIXTURE_LOCALES, threeEditionsBook, type FixtureLocale } from './threeEditions.fixture.js';
+import { frameJumpFragment } from './frameJump.js';
+import { selectFrameOnPage } from './useFrameJumpRunner.js';
+import { pageSelectionNow, resetPageSelection } from '../selection/selectionStore.js';
+import { selectedElement } from '../selection/pageSelection.js';
 import {
   composedChecksOf, composedPageIndex, filterComposedChecks, frameKeyOf, groupComposedChecks, jumpFor, pageKeyOf,
   resolveJump, sameComposedPage, type ComposedCheck,
-} from '../warnings/composedChecks';
-import { fitMarksFor } from '../viewport/composed/fitMarks';
-import { matchingPage, syncedScrollTop } from '../viewport/composed/compareSync';
-import { EMPTY_VIEW_HASH } from '../storage/viewHash';
-import type { Chapter } from '../book/types';
+} from '../warnings/composedChecks.js';
+import { fitMarksFor } from '../viewport/composed/fitMarks.js';
+import { matchingPage, syncedScrollTop } from '../viewport/composed/compareSync.js';
+import { EMPTY_VIEW_HASH } from '../storage/viewHash.js';
+import type { Chapter } from '../book/types.js';
 
 // Text measured at about the width of a book face (0.42 em a character).
 class StubCtx {

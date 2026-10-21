@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig, PostextContent, Resource, VDTDocument } from 'postext';
-import { pixelToSourceOffset, xForPlainInLine } from './geometry';
+import { pixelToSourceOffset, xForPlainInLine } from './geometry.js';
 
 // Font-aware width stub: bold glyphs wider than regular so justified space
 // widths are not uniform across a line (as with real fonts).

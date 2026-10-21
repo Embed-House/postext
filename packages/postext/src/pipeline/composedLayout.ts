@@ -30,37 +30,37 @@
  * (`ComposedPageLayout.continuations`) for `build.ts` to lay on pages it
  * adds after this one, with this function (`ComposedPageInput.continuing`).
  */
-import { isCornerRadii } from '../design/boxShape';
-import type { ComposedPageFence, ContentBlock } from '../parse/types';
-import type { Dimension, ResolvedCalloutStyleConfig } from '../types';
-import { pageIsMirrored, pageIsVertical, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
-import { contourBounds, scaleContourAbout, shiftContour } from '../contour';
-import { frameContour } from '../composed/contour';
-import { dimensionToPx } from '../units';
-import { frameBounds, frameModeTurn, quarterTurnedRect } from '../composed/paint';
-import { withMeasureWritingMode } from '../measure/vertical';
-import { chainHead, FRAME_ATTR } from '../composed/wrap';
-import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
-import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
-import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
-import { anchorTarget, lookOver, repeatInstance, repeatedFrames, resolveContinueIn } from '../composed/templates';
-import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
-import type { FrameLook, FrameLookEntry, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from '../composed/types';
-import { isModuleTemplate, resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
-import { frameElementId } from '../composed/ids';
-import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat';
-import { moduleOfFrame, nestedChain } from '../composed/modules';
-import { frameLinePx, frameRuleBlocks } from '../composed/rules';
-import { overlapChecks } from '../composed/overlap';
-import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
-import { isMarkerBlock } from './buildHelpers';
-import type { BlockMeasureContext } from './measureContentBlock';
-import { createLayoutMemo, layoutMemoSwitch } from './layoutMemo';
-import { createMeasureMemo } from './measureMemo';
-import { computeOrderedListRunMetrics } from './lists';
-import { planParagraphContainers } from './paragraphContainers';
-import type { CarriedNumber, ImportedJumps } from '../composed/carry';
-import { CUT_START, fragmentRange, frameCutRules, makeCalloutLayouter, partBreakCut, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout';
+import { isCornerRadii } from '../design/boxShape.js';
+import type { ComposedPageFence, ContentBlock } from '../parse/types.js';
+import type { Dimension, ResolvedCalloutStyleConfig } from '../types.js';
+import { pageIsMirrored, pageIsVertical, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt.js';
+import { contourBounds, scaleContourAbout, shiftContour } from '../contour/index.js';
+import { frameContour } from '../composed/contour.js';
+import { dimensionToPx } from '../units.js';
+import { frameBounds, frameModeTurn, quarterTurnedRect } from '../composed/paint.js';
+import { withMeasureWritingMode } from '../measure/vertical.js';
+import { chainHead, FRAME_ATTR } from '../composed/wrap.js';
+import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry.js';
+import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups.js';
+import { reflowEvents, type FrameMotion } from '../composed/reflowLog.js';
+import { anchorTarget, lookOver, repeatInstance, repeatedFrames, resolveContinueIn } from '../composed/templates.js';
+import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation.js';
+import type { FrameLook, FrameLookEntry, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from '../composed/types.js';
+import { isModuleTemplate, resolvePageTemplate, type PageTemplateSource } from '../composed/templates.js';
+import { frameElementId } from '../composed/ids.js';
+import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat.js';
+import { moduleOfFrame, nestedChain } from '../composed/modules.js';
+import { frameLinePx, frameRuleBlocks } from '../composed/rules.js';
+import { overlapChecks } from '../composed/overlap.js';
+import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout.js';
+import { isMarkerBlock } from './buildHelpers.js';
+import type { BlockMeasureContext } from './measureContentBlock.js';
+import { createLayoutMemo, layoutMemoSwitch } from './layoutMemo.js';
+import { createMeasureMemo } from './measureMemo.js';
+import { computeOrderedListRunMetrics } from './lists.js';
+import { planParagraphContainers } from './paragraphContainers.js';
+import type { CarriedNumber, ImportedJumps } from '../composed/carry.js';
+import { CUT_START, fragmentRange, frameCutRules, makeCalloutLayouter, partBreakCut, splitCalloutFragment, type CalloutCut, type CalloutLayouter, type FrameBoxOptions, type FrameLayoutPass } from './frameLayout.js';
 
 /** A story of the page: the box `composed/wrap.ts` made of a chain's
  *  content, by the name of the chain's first frame. */

@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import { layoutSlotToVdt } from '../../pipeline/headerFooter';
-import { resolveChipBox } from '../../pipeline/chips';
-import { resolveChipStylesConfig, stripChipStylesDefaults } from '../../defaults/chipStyles';
-import { dotsOnRaster, resolveTextDots, textDots, traceContours } from '../../textDots';
-import { renderTextBlock } from '../../canvas-backend/headerFooter';
-import { beginMirroredFlow } from '../../canvas-backend/mirrorFrame';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { DesignElement, DesignTextElement } from '../../types';
-import type { VDTDesignTextBlock, VDTPage } from '../../vdt';
+import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import { layoutSlotToVdt } from '../../pipeline/headerFooter.js';
+import { resolveChipBox } from '../../pipeline/chips.js';
+import { resolveChipStylesConfig, stripChipStylesDefaults } from '../../defaults/chipStyles.js';
+import { dotsOnRaster, resolveTextDots, textDots, traceContours } from '../../textDots.js';
+import { renderTextBlock } from '../../canvas-backend/headerFooter.js';
+import { beginMirroredFlow } from '../../canvas-backend/mirrorFrame.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { DesignElement, DesignTextElement } from '../../types.js';
+import type { VDTDesignTextBlock, VDTPage } from '../../vdt.js';
 
 // Every character 7px wide whatever the font (no DOM in the node test
 // env); the stub context cannot be read back, so no dots are drawn from it.
@@ -48,8 +48,8 @@ const blockOf = (el: DesignElement): VDTDesignTextBlock =>
 
 // The painters' dots, when a test sets them (`fake`); else the module's own.
 const fake = vi.hoisted(() => ({ dots: undefined as undefined | (() => { points: Float32Array; width: number } | null) }));
-vi.mock('../../textDots', async (original) => {
-  const actual = await original<typeof import('../../textDots')>();
+vi.mock('../../textDots.js', async (original) => {
+  const actual = await original<typeof import('../../textDots.js')>();
   return { ...actual, textDots: (req: Parameters<typeof actual.textDots>[0]) => (fake.dots ? fake.dots() : actual.textDots(req)) };
 });
 

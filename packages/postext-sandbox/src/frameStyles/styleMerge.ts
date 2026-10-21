@@ -12,10 +12,10 @@
  */
 
 import { calloutStyleChain, inheritCalloutStyles, type CalloutStyleConfig, type FrameConfig, type PageTemplate, type PageTemplatePatch, type PostextConfig, type ResolvedCalloutStyleConfig } from 'postext';
-import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges';
-import { retypeCalloutChanges } from './calloutFences';
-import { differingGroups, POSITION_FIELDS, type CompareOptions } from './styleCompare';
-import type { StyleUsage, UsageChapter } from './styleUsage';
+import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges.js';
+import { retypeCalloutChanges } from './calloutFences.js';
+import { differingGroups, POSITION_FIELDS, type CompareOptions } from './styleCompare.js';
+import type { StyleUsage, UsageChapter } from './styleUsage.js';
 
 export interface ChapterRewrite {
   chapterId: string;

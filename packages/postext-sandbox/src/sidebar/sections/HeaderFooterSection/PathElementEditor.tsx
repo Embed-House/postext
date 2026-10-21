@@ -8,16 +8,16 @@
  */
 
 import { DEFAULT_MAIN_COLOR, type DesignPathElement, type Dimension, type ElementSize, type PageParity, type ResolvedDesignPathElement } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { ColorPicker, DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
-import { FieldRow } from '../../../controls/FieldRow';
-import { useFieldIds } from '../../../controls/fieldContext';
-import { cn } from '../../../ui';
-import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
-import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo';
-import type { SlotKind } from './placementAdapter';
-import { CheckedTextField, DashField } from './shapeFields';
-import { PATH_PRESETS, PATH_PRESET_NAMES, checkPathData, presetOf, type PathPreset } from './shapeEdits';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { ColorPicker, DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../../controls/index.js';
+import { FieldRow } from '../../../controls/FieldRow.js';
+import { useFieldIds } from '../../../controls/fieldContext.js';
+import { cn } from '../../../ui/index.js';
+import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields.js';
+import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo.js';
+import type { SlotKind } from './placementAdapter.js';
+import { CheckedTextField, DashField } from './shapeFields.js';
+import { PATH_PRESETS, PATH_PRESET_NAMES, checkPathData, presetOf, type PathPreset } from './shapeEdits.js';
 
 const DEFAULT_SIZE_DIM: Dimension = { value: 20, unit: 'pt' };
 const DEFAULT_STROKE_WIDTH: Dimension = { value: 0.5, unit: 'pt' };

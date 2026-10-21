@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { WARNING_CATEGORY_ORDER, warningCategory } from './categories';
+import { WARNING_CATEGORY_ORDER, warningCategory } from './categories.js';
 
 describe('warningCategory', () => {
   it('sorts warnings into the panel groups', () => {

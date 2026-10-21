@@ -35,10 +35,10 @@
  * (Noto Serif SC for the mainland, TC for Taiwan, HK for Hong Kong).
  */
 
-import type { CjkHangingPunctuation, CjkParagraphStartBracket, CjkPunctuationWidth, CjkRegion, Dimension, ResolvedCjkConfig } from '../types';
-import { setCjkCircledNumbers, type CjkClass } from './cjkClasses';
-import { dimensionToPx } from '../units';
-import { languageOf } from '../locale';
+import type { CjkHangingPunctuation, CjkParagraphStartBracket, CjkPunctuationWidth, CjkRegion, Dimension, ResolvedCjkConfig } from '../types.js';
+import { setCjkCircledNumbers, type CjkClass } from './cjkClasses.js';
+import { dimensionToPx } from '../units.js';
+import { languageOf } from '../locale.js';
 
 /** How CJK text is composed: the resolved `cjk` settings, as the composer
  *  reads them. */

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { baseConfig, layOut, pt } from './__tests__/vdt';
-import { buildReflowablePublication } from '.';
+import { baseConfig, layOut, pt } from './__tests__/vdt.js';
+import { buildReflowablePublication } from './index.js';
 
 // #1059: a box style's corners of their own and border per side reflow as
 // CSS; a joined tab reflows as a plain tab.

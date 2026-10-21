@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EditorState } from '@codemirror/state';
 import { CompletionContext, type Completion } from '@codemirror/autocomplete';
-import { indexCompletionSource, indexRanges, indexTermsOf } from './indexSyntax';
+import { indexCompletionSource, indexRanges, indexTermsOf } from './indexSyntax.js';
 
 describe('index mark highlighting', () => {
   it('marks the syntax, the indexed words and the attributes', () => {

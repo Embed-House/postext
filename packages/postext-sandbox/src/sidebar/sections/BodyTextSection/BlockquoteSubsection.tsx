@@ -2,9 +2,9 @@
 
 import { DEFAULT_BLOCKQUOTE_CONFIG, colorsEqual, dimensionsEqual } from 'postext';
 import type { BlockquoteConfig, BodyTextConfig, ResolvedBodyTextConfig } from 'postext';
-import { CollapsibleSection, ColorPicker, DimensionInput, ToggleSwitch } from '../../../controls';
-import type { useSandboxLabels } from '../../../context/SandboxContext';
-import { INDENT_UNITS } from './constants';
+import { CollapsibleSection, ColorPicker, DimensionInput, ToggleSwitch } from '../../../controls/index.js';
+import type { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { INDENT_UNITS } from './constants.js';
 
 interface Props {
   bodyText: ResolvedBodyTextConfig;

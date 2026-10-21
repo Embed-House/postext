@@ -5,8 +5,8 @@
 
 import type { PostextConfig, Resource } from 'postext';
 import { stripConfigDefaults } from 'postext';
-import type { AppliedPresetSnapshot } from './types';
-import type { Chapter } from '../book/types';
+import type { AppliedPresetSnapshot } from './types.js';
+import type { Chapter } from '../book/types.js';
 
 /** FNV-1a (32-bit) of a string's UTF-16 code units, as 8 hex digits. */
 export function hashString(input: string): string {

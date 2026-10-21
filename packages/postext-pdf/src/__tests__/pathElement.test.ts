@@ -5,8 +5,8 @@ import { PDFArray, PDFDocument, PDFRawStream } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { DesignElement, PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #1060: a path element of a running head (chevrons beside the part's
 // title) and of a composed page's decoration, drawn as vector outlines in

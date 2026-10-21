@@ -5,22 +5,22 @@
 // speaker off the panel). The result is one `ComicBalloonOut` per item, in
 // reading order.
 
-import { pointInConvex, pathData, rectOf, boundsOf, add, insetConvex, type PathCmd } from './geom';
-import { hasCJK } from '../../measure/cjk';
-import { onTextWidthCacheClear, measureLanguageKey } from '../../measure/canvas';
-import { getCjkLineBreak } from '../../measure/cjkClasses';
-import { getCjkComposition } from '../../measure/cjkPunctuation';
-import { getMeasureArabicNumbers, getMeasureDirection } from '../../measure/bidiLines';
-import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from '../../measure/vertical';
-import { isCjkLanguage } from '../../locale';
-import { buildBody, buildNeck, buildTail, dashOf, translateBody, type Body } from './shapes';
-import { shapeTextCandidates, styleIsVertical, translateBlock, type ShapedText, type ShapeOptions } from './shape-text';
-import { isIsolateControl, prepareText, readLetteringText, type PreparedText } from './text';
-import { offPanelPoint, placeUnits, type PlaceUnit, type TargetSpec, type UnitVariant } from './placement';
+import { pointInConvex, pathData, rectOf, boundsOf, add, insetConvex, type PathCmd } from './geom.js';
+import { hasCJK } from '../../measure/cjk.js';
+import { onTextWidthCacheClear, measureLanguageKey } from '../../measure/canvas.js';
+import { getCjkLineBreak } from '../../measure/cjkClasses.js';
+import { getCjkComposition } from '../../measure/cjkPunctuation.js';
+import { getMeasureArabicNumbers, getMeasureDirection } from '../../measure/bidiLines.js';
+import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from '../../measure/vertical.js';
+import { isCjkLanguage } from '../../locale.js';
+import { buildBody, buildNeck, buildTail, dashOf, translateBody, type Body } from './shapes.js';
+import { shapeTextCandidates, styleIsVertical, translateBlock, type ShapedText, type ShapeOptions } from './shape-text.js';
+import { isIsolateControl, prepareText, readLetteringText, type PreparedText } from './text.js';
+import { offPanelPoint, placeUnits, type PlaceUnit, type TargetSpec, type UnitVariant } from './placement.js';
 import type {
   ComicBalloonOut, LetteringEnv, LetteringItem, LetteringPanel, LetteringResult, LetteringStyle, Point, Rect,
-} from './types';
-import type { VDTDesignTextBlock } from '../../vdt';
+} from './types.js';
+import type { VDTDesignTextBlock } from '../../vdt.js';
 
 /** One item ready to place: its effective style, its text, its shapes
  *  (the preferred one first, then the reshaped ones). */

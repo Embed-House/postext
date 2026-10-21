@@ -7,8 +7,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef, PDFString, PDFHexStrin
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #623: a drop cap in a body paragraph. The initial is drawn in its own face
 // (embedded), as part of the paragraph's `P`; with the rest of its word it is

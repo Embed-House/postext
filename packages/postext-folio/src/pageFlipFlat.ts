@@ -24,7 +24,7 @@ import {
   WebGLRenderTarget,
 } from "three";
 
-import { BLOCK_PAGES, type PageSource, type SpreadSrc } from "./pageFlip";
+import { BLOCK_PAGES, type PageSource, type SpreadSrc } from "./pageFlip.js";
 
 // The flat flipper: the page-turn of postext-folio before the 3D book, for
 // a host whose own DOM spread shows the pages at rest (the canvas is

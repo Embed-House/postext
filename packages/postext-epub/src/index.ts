@@ -1,8 +1,8 @@
-import { buildFixedPublication } from './fixed';
-import { buildReflowablePublication } from './reflowable';
-import { packEpub } from './package/pack';
+import { buildFixedPublication } from './fixed/index.js';
+import { buildReflowablePublication } from './reflowable/index.js';
+import { packEpub } from './package/pack.js';
 import type { VDTDocument } from 'postext';
-import type { EpubSource, RenderToEpubOptions } from './types';
+import type { EpubSource, RenderToEpubOptions } from './types.js';
 
 /**
  * Write a laid-out book as an EPUB 3 file, entirely in memory (browser or
@@ -25,12 +25,12 @@ export async function renderToEpub(input: EpubSource | VDTDocument, options: Ren
   return bytes;
 }
 
-export { packEpub } from './package/pack';
-export { readEpub, resolveHref, dirOf } from './package/read';
-export { bookIdentifier, epubFontProvider } from './shared/assets';
-export { uuidV5 } from './shared/uuid';
-export { buildFixedPublication } from './fixed';
-export { buildReflowablePublication } from './reflowable';
+export { packEpub } from './package/pack.js';
+export { readEpub, resolveHref, dirOf } from './package/read.js';
+export { bookIdentifier, epubFontProvider } from './shared/assets.js';
+export { uuidV5 } from './shared/uuid.js';
+export { buildFixedPublication } from './fixed/index.js';
+export { buildReflowablePublication } from './reflowable/index.js';
 export type {
   EpubLayout,
   EpubMetadata,
@@ -50,4 +50,4 @@ export type {
   EpubAccessibility,
   EpubPublication,
   ReadEpubResult,
-} from './types';
+} from './types.js';

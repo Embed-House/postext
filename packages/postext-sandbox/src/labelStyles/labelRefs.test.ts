@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Resource } from 'postext';
-import { applyTextChanges } from '../book/textChanges';
-import { labelStyleRefs, labelStyleUsage, renameAnchorStyle, renameLabelStyleChanges } from './labelRefs';
+import { applyTextChanges } from '../book/textChanges.js';
+import { labelStyleRefs, labelStyleUsage, renameAnchorStyle, renameLabelStyleChanges } from './labelRefs.js';
 
 const MD = [
   ':::figure{resource="map" slot="map"}',

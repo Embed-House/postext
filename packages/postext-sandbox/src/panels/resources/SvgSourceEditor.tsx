@@ -6,17 +6,17 @@ import { EditorView, lineNumbers, keymap } from '@codemirror/view';
 import { Compartment, EditorState, Transaction } from '@codemirror/state';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { xml } from '@codemirror/lang-xml';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { IconButton } from '../../ui';
-import { getEditorTheme } from '../../editor/postextTheme';
-import { getBlob, putBlob } from '../../storage/blobStore';
-import { invalidateResourceImage } from '../../controls/resourceImages';
-import { ensureSvgTextIndex } from '../../controls/svgTextIndex';
-import { wordRangeAt } from '../../controls/wordRange';
-import type { InlineFocusRequest, InlineSelection } from '../../controls/InlineMarkdownInput';
-import { isValidSvg, svgIntrinsicSize } from './svgIntrinsic';
-import { editableRangesField, setEditableRanges, setSourceLocked, svgEditableRanges } from './svgEditableRanges';
-import { scanSvgTextNodeRanges } from '../../controls/svgSource';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { IconButton } from '../../ui/index.js';
+import { getEditorTheme } from '../../editor/postextTheme.js';
+import { getBlob, putBlob } from '../../storage/blobStore.js';
+import { invalidateResourceImage } from '../../controls/resourceImages.js';
+import { ensureSvgTextIndex } from '../../controls/svgTextIndex.js';
+import { wordRangeAt } from '../../controls/wordRange.js';
+import type { InlineFocusRequest, InlineSelection } from '../../controls/InlineMarkdownInput.js';
+import { isValidSvg, svgIntrinsicSize } from './svgIntrinsic.js';
+import { editableRangesField, setEditableRanges, setSourceLocked, svgEditableRanges } from './svgEditableRanges.js';
+import { scanSvgTextNodeRanges } from '../../controls/svgSource.js';
 
 // ---------------------------------------------------------------------------
 // SvgSourceEditor — a CodeMirror view over an SVG resource's source where only

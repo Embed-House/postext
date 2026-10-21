@@ -1,11 +1,11 @@
-import { applyOrientationMarks, markOrientation, stripOrientationMarks } from './orientationMarks';
-import type { InlineIcon, InlineLink, InlineSpan, RefCase, RefStyle } from './types';
-import { injectPlaceholderSpans } from './injectSpans';
-import { sliceSpan } from './links';
-import { parseDirectiveAttrs } from './attrs';
-import { applyAnnotationMarks, markAnnotations, stripAnnotations, type QueuedAnnotation } from './annotations';
-import type { TabStop } from '../types';
-import { tabStopFromAttrs } from '../defaults/tabStops';
+import { applyOrientationMarks, markOrientation, stripOrientationMarks } from './orientationMarks.js';
+import type { InlineIcon, InlineLink, InlineSpan, RefCase, RefStyle } from './types.js';
+import { injectPlaceholderSpans } from './injectSpans.js';
+import { sliceSpan } from './links.js';
+import { parseDirectiveAttrs } from './attrs.js';
+import { applyAnnotationMarks, markAnnotations, stripAnnotations, type QueuedAnnotation } from './annotations.js';
+import type { TabStop } from '../types.js';
+import { tabStopFromAttrs } from '../defaults/tabStops.js';
 
 /** Atomic plain-text placeholder for an inline reference span. One code unit
  *  per `:ref{…}` so `sourceMap` stays 1-to-1 (mirroring the inline-math

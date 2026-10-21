@@ -1,4 +1,4 @@
-import type { WarningPayload } from './types';
+import type { WarningPayload } from './types.js';
 
 /** How the Checks panel groups warnings, in triage order: what breaks the
  *  output first (missing fonts, figures), then the markup, then the fine

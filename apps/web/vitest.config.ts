@@ -14,6 +14,9 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.test.ts"],
     exclude: ["**/node_modules/**", "**/dist/**", ...QUICK],
+    // The workspace packages' `dist` loads in plain Node (#1158): vitest
+    // imports it as is instead of transforming its modules in each file.
+    server: { deps: { external: [/\/packages\/postext[^/]*\/dist\//] } },
     // One test renders the Markdown of every docs and Cookbook page: about
     // a second on a workstation, close to 30 s on a small CI runner.
     testTimeout: process.env.CI ? 120_000 : 30_000,

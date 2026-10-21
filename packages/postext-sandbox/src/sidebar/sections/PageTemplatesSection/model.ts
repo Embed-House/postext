@@ -2,10 +2,10 @@
 
 import { useCallback, useMemo } from 'react';
 import { resolvePageTemplate, type PageTemplate, type PostextConfig, type ResolvedPageTemplate, type VDTDocument } from 'postext';
-import { useSandboxDispatch, useSandboxSelector } from '../../../context/SandboxContext';
-import { countTemplatePages } from '../../../templates/templateUsage';
-import { pxToMm } from '../../../templates/frameGeometry';
-import type { TemplateScope } from '../../../templates/templateEdits';
+import { useSandboxDispatch, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { countTemplatePages } from '../../../templates/templateUsage.js';
+import { pxToMm } from '../../../templates/frameGeometry.js';
+import type { TemplateScope } from '../../../templates/templateEdits.js';
 
 const EMPTY: PageTemplate[] = [];
 const EMPTY_CHAPTERS: { id: string; markdown: string }[] = [];

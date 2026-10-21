@@ -4,15 +4,15 @@
 // voices come with short tails, the spine of a spread stays clear.
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { letterPanel, letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import { prepareText, readLetteringText, breakPoints } from '../text';
-import { shapeText } from '../shape-text';
-import type { LetteringItem, LetteringPanel, Point, Rect } from '../types';
-import { buildDocument } from '../../../pipeline';
-import { parseComicScript } from '../../script';
-import { comicArtRectToPage } from '../../art';
+import { installStubMeasure } from './stubMeasure.js';
+import { letterPanel, letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import { prepareText, readLetteringText, breakPoints } from '../text.js';
+import { shapeText } from '../shape-text.js';
+import type { LetteringItem, LetteringPanel, Point, Rect } from '../types.js';
+import { buildDocument } from '../../../pipeline/index.js';
+import { parseComicScript } from '../../script.js';
+import { comicArtRectToPage } from '../../art.js';
 
 beforeAll(() => installStubMeasure());
 

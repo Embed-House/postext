@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { ColorValue, DesignElement, PostextConfig } from 'postext';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
-import { findPaletteUsages, unlinkPaletteRefs } from './paletteUtils';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
+import { findPaletteUsages, unlinkPaletteRefs } from './paletteUtils.js';
 
 // EF-71: every palette-linked colour follows the palette — design slots,
 // callout labels, `bodyText.referenceColor`… — so deleting an entry must

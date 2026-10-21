@@ -2,12 +2,12 @@ import { createElement as h, type ComponentProps } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { Resource } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { LabelAnchorsPanel } from './LabelAnchorsPanel';
-import { labelsInChapters } from './figureLabels';
-import { labelLeaderEdit } from './labelLeaderEdit';
-import { applyMarks, leaderDrawn, marksOf, normalizeMarks, nudge, removeMark, withLabelAway, withLeader, type PictureMarks } from './pictureMarks';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { LabelAnchorsPanel } from './LabelAnchorsPanel.js';
+import { labelsInChapters } from './figureLabels.js';
+import { labelLeaderEdit } from './labelLeaderEdit.js';
+import { applyMarks, leaderDrawn, marksOf, normalizeMarks, nudge, removeMark, withLabelAway, withLeader, type PictureMarks } from './pictureMarks.js';
 
 // #1064: a label set away from its point (labelAt) and its leader, in the
 // anchor editor.

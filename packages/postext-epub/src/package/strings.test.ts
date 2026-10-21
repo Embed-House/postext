@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { navStrings } from './strings';
+import { navStrings } from './strings.js';
 
 describe('navStrings', () => {
   it('names the navigation of a Japanese book in Japanese, never in Chinese', () => {

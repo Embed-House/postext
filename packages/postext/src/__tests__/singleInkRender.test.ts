@@ -10,9 +10,9 @@ import {
   renderPageToCanvas,
   renderToHtml,
   renderToHtmlIndexed,
-} from '../index';
-import { applySingleInkToPixels, singleInkColorMatrix } from '../svg/singleInk';
-import type { PostextConfig, RenderPageOptions, Resource } from '../index';
+} from '../index.js';
+import { applySingleInkToPixels, singleInkColorMatrix } from '../svg/singleInk.js';
+import type { PostextConfig, RenderPageOptions, Resource } from '../index.js';
 
 // EF-17: `diagramStyle.singleInk` can recolour SVG pictures on canvas and in
 // HTML too, not only in the PDF: the canvas tints the pixels of a raw SVG

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { onPdfFontChecksChange, pdfFontChecksFor, pdfFontChecksSource, setPdfFontChecks, type PdfFontCheck, type PdfFontCheckState } from './pdfFontWarnings';
-import { computeWarnings } from '../warnings/compute';
+import { onPdfFontChecksChange, pdfFontChecksFor, pdfFontChecksSource, setPdfFontChecks, type PdfFontCheck, type PdfFontCheckState } from './pdfFontWarnings.js';
+import { computeWarnings } from '../warnings/compute.js';
 
 // Issue #196 review: the Checks panel kept the last PDF's font warnings
 // after another book was opened, after the book was edited, and after a

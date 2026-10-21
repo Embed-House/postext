@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, Resource } from 'postext';
-import { createDefaultConfig } from '../context/defaultConfig';
-import { buildBundleFiles, parseBundle, planBundle } from './bundle';
-import { fontsToCustomFonts } from './manifest';
-import { newChapter } from '../book/chapterOps';
-import type { Chapter, ChapterLayout } from '../book/types';
-import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from '../book/layoutKeys';
-import { openBundleZip, zipBundle } from './zip';
-import type { PresetManifestV1, PresetSummary } from './types';
+import { createDefaultConfig } from '../context/defaultConfig.js';
+import { buildBundleFiles, parseBundle, planBundle } from './bundle.js';
+import { fontsToCustomFonts } from './manifest.js';
+import { newChapter } from '../book/chapterOps.js';
+import type { Chapter, ChapterLayout } from '../book/types.js';
+import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from '../book/layoutKeys.js';
+import { openBundleZip, zipBundle } from './zip.js';
+import type { PresetManifestV1, PresetSummary } from './types.js';
 
 const enc = new TextEncoder();
 const dec = new TextDecoder();

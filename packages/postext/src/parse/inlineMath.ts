@@ -1,5 +1,5 @@
-import type { InlineSpan, MathMeta, ParseIssue } from './types';
-import { injectPlaceholderSpans } from './injectSpans';
+import type { InlineSpan, MathMeta, ParseIssue } from './types.js';
+import { injectPlaceholderSpans } from './injectSpans.js';
 
 /** Object Replacement Character — atomic plain-text placeholder for a math
  *  span. One code unit per formula so `sourceMap` stays 1-to-1. */

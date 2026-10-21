@@ -36,10 +36,10 @@
  * otherwise under a language (no `fi` in Turkish).
  */
 
-import { needsBidi } from '../bidi';
-import { measureLanguageKey, measureSpacedWidth, measureTextWidth, onTextWidthCacheClear } from './canvas';
-import { graphemesOf } from './graphemes';
-import { joiningScriptIn } from './joining';
+import { needsBidi } from '../bidi.js';
+import { measureLanguageKey, measureSpacedWidth, measureTextWidth, onTextWidthCacheClear } from './canvas.js';
+import { graphemesOf } from './graphemes.js';
+import { joiningScriptIn } from './joining.js';
 
 /** One piece of a tracked text set apart from the rest. */
 export interface LigaturePiece {

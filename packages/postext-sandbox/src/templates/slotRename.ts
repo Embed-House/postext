@@ -9,9 +9,9 @@
  */
 
 import type { PageTemplate } from 'postext';
-import { applyTextChanges } from '../book/textChanges';
-import { ancestorsOf, frameFamily, namesInUse, renameFrame, templateAt } from './templateEdits';
-import { renameSlotChanges } from './templateUsage';
+import { applyTextChanges } from '../book/textChanges.js';
+import { ancestorsOf, frameFamily, namesInUse, renameFrame, templateAt } from './templateEdits.js';
+import { renameSlotChanges } from './templateUsage.js';
 
 /** What an edition holds that a frame rename touches. */
 export interface EditionText {

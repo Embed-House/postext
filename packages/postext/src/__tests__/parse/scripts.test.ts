@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting';
-import { measureRichBlock, scriptMetrics, SCRIPT_SIZE_RATIO } from '../../measure/rich';
+import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting.js';
+import { measureRichBlock, scriptMetrics, SCRIPT_SIZE_RATIO } from '../../measure/rich.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): the
 // width follows the font size so a script span measures narrower.
@@ -67,7 +67,7 @@ describe('inline superscript / subscript', () => {
 
 describe('script-only paragraphs take the rich measurer', () => {
   it('a paragraph whose only marks are scripts keeps them as segments', async () => {
-    const { buildDocument } = await import('../../pipeline');
+    const { buildDocument } = await import('../../pipeline/index.js');
     const doc = buildDocument({ markdown: 'subnivel: p~x~^1^, p~y~^1^.' }, { page: { width: { value: 400, unit: 'pt' }, height: { value: 400, unit: 'pt' } }, layout: { layoutType: 'single' } });
     const block = doc.blocks.find((b) => b.type === 'paragraph')!;
     const segs = block.lines[0]!.segments ?? [];

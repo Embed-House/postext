@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { parseMarkdown } from '../../parse';
-import { initMathEngine } from '../../math';
-import { resolveAllConfig } from '../../pipeline/config';
-import { computeHeadingContext, computeResourceNumbering, renderTemplateNumber } from '../../pipeline/resourceNumbering';
-import { numberStatements } from '../../pipeline/statementNumbering';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import type { CalloutStyleConfig, PostextConfig, Resource, ResourceType, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { initMathEngine } from '../../math/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { computeHeadingContext, computeResourceNumbering, renderTemplateNumber } from '../../pipeline/resourceNumbering.js';
+import { numberStatements } from '../../pipeline/statementNumbering.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import type { CalloutStyleConfig, PostextConfig, Resource, ResourceType, VDTDocument } from '../../index.js';
 
 // #730: the tokens of a resource numbering template take the style a
 // heading template's take after a colon. `{h1:A}.{n}` letters the

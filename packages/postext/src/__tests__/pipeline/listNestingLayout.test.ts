@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { layoutResourceBlock } from '../../pipeline/resourceLayout';
-import { resolveAllConfig } from '../../pipeline/config';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import type { PostextConfig, Resource, TableModel, VDTBlock } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { layoutResourceBlock } from '../../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import type { PostextConfig, Resource, TableModel, VDTBlock } from '../../index.js';
 
 // #465: a list nested at the content column of a `1.` item (three spaces a
 // level) gets each level's own numbering style, and a table cell nests its

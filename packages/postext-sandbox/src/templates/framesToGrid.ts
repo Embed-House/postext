@@ -17,12 +17,12 @@
  */
 
 import type { Dimension, ElementPlacement, FrameConfig, FrameGroupConfig, PageTemplate } from 'postext';
-import type { TextChange } from '../book/textChanges';
-import { dimensionToMm, mmDim, pxToMm, type Rect } from './frameGeometry';
-import { frameParts, pagesOfTemplates, rewritePage, siteText, siteWithoutSlot } from './pagePieces';
-import { retargetPatch } from './retarget';
-import { namesInUse, templateAt, uniqueName } from './templateEdits';
-import { sitesOf, type SlotSite } from '../viewport/composed/slotSource';
+import type { TextChange } from '../book/textChanges.js';
+import { dimensionToMm, mmDim, pxToMm, type Rect } from './frameGeometry.js';
+import { frameParts, pagesOfTemplates, rewritePage, siteText, siteWithoutSlot } from './pagePieces.js';
+import { retargetPatch } from './retarget.js';
+import { namesInUse, templateAt, uniqueName } from './templateEdits.js';
+import { sitesOf, type SlotSite } from '../viewport/composed/slotSource.js';
 
 /** Millimetres two laid edges may differ by and still be one line. */
 export const LATTICE_TOLERANCE_MM = 0.6;

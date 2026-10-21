@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { stripCalloutStylesDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import { renderToHtml } from '../../html-backend';
-import type { CalloutStyleConfig, PostextConfig } from '../../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { stripCalloutStylesDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { CalloutStyleConfig, PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

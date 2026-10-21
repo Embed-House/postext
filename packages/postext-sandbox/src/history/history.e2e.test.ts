@@ -7,11 +7,11 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache } from 'postext';
 import type { PostextConfig, Resource, VDTDocument, VDTFrame } from 'postext';
-import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext';
-import { applyViewerEdit, resetViewerEdits } from '../editor/viewerEdits';
-import { changeTemplateFrame } from '../templates/pageEdits';
-import { state as baseState } from '../webmcp/tools/testHarness';
-import { COALESCE_MS, createSandboxHistory, setActiveHistory } from './sandboxHistory';
+import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext.js';
+import { applyViewerEdit, resetViewerEdits } from '../editor/viewerEdits.js';
+import { changeTemplateFrame } from '../templates/pageEdits.js';
+import { state as baseState } from '../webmcp/tools/testHarness.js';
+import { COALESCE_MS, createSandboxHistory, setActiveHistory } from './sandboxHistory.js';
 
 type Fixture = (locale: 'es' | 'en') => { markdown: string; config: PostextConfig; resources: Resource[] };
 const FIXTURES = '../../../postext/src/__tests__/composed/fixtures/';

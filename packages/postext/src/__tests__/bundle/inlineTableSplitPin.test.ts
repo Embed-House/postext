@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyInlineTableSplit } from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { migrateBundleConfig, migrateConfig, pinLegacyInlineTableSplit } from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #634: a configuration stored before an inline table was cut between rows
 // (configVersion 10 or older, postext 1.24 or earlier) keeps such tables

@@ -9,7 +9,7 @@ import {
   isContainerAnchor,
   isElementAnchor,
   isPageFrameAnchor,
-} from './placementAdapter';
+} from './placementAdapter.js';
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
 

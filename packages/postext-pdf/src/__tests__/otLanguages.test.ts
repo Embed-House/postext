@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
-import { loadHarfBuzz } from '../harfbuzz';
-import { loadComplexShaper, shapeRun } from '../complexShaping';
-import { openTypeLanguagesOf } from '../otLanguages';
-import { OT_LANGUAGES_HARFBUZZ, OT_LANGUAGE_DATA } from '../otLanguageData';
+import { loadHarfBuzz } from '../harfbuzz.js';
+import { loadComplexShaper, shapeRun } from '../complexShaping.js';
+import { openTypeLanguagesOf } from '../otLanguages.js';
+import { OT_LANGUAGES_HARFBUZZ, OT_LANGUAGE_DATA } from '../otLanguageData.js';
 
 // #764: the OpenType language systems of a language are HarfBuzz's, read
 // out of the build this package ships (`scripts/make-ot-languages.mjs`).

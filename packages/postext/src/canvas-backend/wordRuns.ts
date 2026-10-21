@@ -1,12 +1,12 @@
-import { shapingTagOf } from '../locale';
-import type { VDTLineSegment } from '../vdt';
-import { joiningScriptIn } from '../measure/joining';
-import { mirroredPaintActive } from './mirrorFrame';
-import { fillTrackedWord, setLetterTracking } from './trackedText';
-import { fillScriptWord } from './scriptText';
-import { scriptContextUntracked } from '../measure/script';
-import { restoreContext, saveContext, setLetterSpacing } from './contextState';
-import { contextTextWidth } from './contextText';
+import { shapingTagOf } from '../locale.js';
+import type { VDTLineSegment } from '../vdt.js';
+import { joiningScriptIn } from '../measure/joining.js';
+import { mirroredPaintActive } from './mirrorFrame.js';
+import { fillTrackedWord, setLetterTracking } from './trackedText.js';
+import { fillScriptWord } from './scriptText.js';
+import { scriptContextUntracked } from '../measure/script.js';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState.js';
+import { contextTextWidth } from './contextText.js';
 
 /** One styled run of a word set as one shaped run (`VDTLineSegment.runs`). */
 export type WordRun = NonNullable<VDTLineSegment['runs']>[number];

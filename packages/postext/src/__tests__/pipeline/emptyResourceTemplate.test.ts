@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig, Resource, ResourceType } from '../../types';
-import type { ResolvedResourceBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig, Resource, ResourceType } from '../../types.js';
+import type { ResolvedResourceBlock, VDTDocument } from '../../vdt.js';
 
 // EF-149: a resource type whose `numberingTemplate` is empty prints no
 // number. Its caption used to read "Do .Lines…" (a no-break space and a

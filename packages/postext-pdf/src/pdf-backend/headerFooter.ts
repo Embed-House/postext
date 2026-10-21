@@ -7,11 +7,11 @@ import type {
   VDTDesignBoxStyle,
 } from 'postext';
 import { boxNeedsShape, boxStylePathBlocks, segmentOrientation } from 'postext';
-import { drawRightToLeftRun } from './rtlRun';
-import { inkScaleOperators } from './inkScale';
-import { drawEmbeddedResource, figureLayout, type ResourceImageMap } from './renderResourceBlock';
-import { tagArtifact, tagContent, type ArtifactSpec, type StructAttrs, type StructElem } from './tagging';
-import { renderPathBlock } from './pathBlock';
+import { drawRightToLeftRun } from './rtlRun.js';
+import { inkScaleOperators } from './inkScale.js';
+import { drawEmbeddedResource, figureLayout, type ResourceImageMap } from './renderResourceBlock.js';
+import { tagArtifact, tagContent, type ArtifactSpec, type StructAttrs, type StructElem } from './tagging.js';
+import { renderPathBlock } from './pathBlock.js';
 
 /** How an accessible render tags a design slot: its text goes to the
  *  element `text()` returns (created on first use), or counts as an
@@ -40,8 +40,8 @@ function tagSlotText(ctx: PageCtx, mark: SlotMark | undefined, block: VDTDesignT
   if (mark.text && !block.artifact) tagContent(ctx, mark.text());
   else tagArtifact(ctx, mark.artifact);
 }
-import { parseFontString } from '../fontString';
-import { FontCache } from '../fontCache';
+import { parseFontString } from '../fontString.js';
+import { FontCache } from '../fontCache.js';
 import {
   type PageCtx,
   alphaOf,
@@ -58,7 +58,7 @@ import {
   pushClipRect,
   popClip,
   type TextOutline,
-} from './primitives';
+} from './primitives.js';
 
 /** pdf-lib drawing options for a translucent fill / stroke (none when opaque). */
 const opacity = (alpha: number) => (alpha < 1 ? { opacity: alpha } : {});

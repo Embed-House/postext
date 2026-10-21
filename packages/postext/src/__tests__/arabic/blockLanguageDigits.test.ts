@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { parseMarkdown } from '../../parse';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
 
 // #401: a generated number inside a block in another language. A `:::`
 // container that names its language (`lang=en`) numbers its ordered lists

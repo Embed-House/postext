@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
 
 // #403: every word of a line is its own absolutely positioned box, so the
 // HTML carries the word spaces (and what separates one line from the next)

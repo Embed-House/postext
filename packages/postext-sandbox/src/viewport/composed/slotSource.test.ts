@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { emptyFrameInsertion, flowInsertion, pageSites, siteCaret, sitesOf, slotAtOffset } from './slotSource';
+import { emptyFrameInsertion, flowInsertion, pageSites, siteCaret, sitesOf, slotAtOffset } from './slotSource.js';
 
 const BEFORE = 'A paragraph before the page.\n\n';
 const PAGE = [

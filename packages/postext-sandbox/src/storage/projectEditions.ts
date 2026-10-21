@@ -3,17 +3,17 @@
 // what the record holds.
 
 import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
-import type { LoadedPreset } from '../presets';
-import { sameLocaleTag } from '../presets/locale';
+import type { LoadedPreset } from '../presets/index.js';
+import { sameLocaleTag } from '../presets/locale.js';
 import { chineseScriptOf, isJapaneseLanguage } from 'postext';
 import type { PostextConfig } from 'postext';
-import type { BookContent } from '../book/types';
-import { cloneBook } from '../book/chapterOps';
-import { relocalizedResourceTypes } from '../context/defaultConfig';
-import { arabicDefaults, isArabicScriptLanguage } from '../context/arabicDefaults';
-import { chineseDefaults } from '../context/chineseDefaults';
-import { japaneseDefaults } from '../context/japaneseDefaults';
-import type { ProjectContent, ProjectEditionTitle, ProjectRecord } from './projects';
+import type { BookContent } from '../book/types.js';
+import { cloneBook } from '../book/chapterOps.js';
+import { relocalizedResourceTypes } from '../context/defaultConfig.js';
+import { arabicDefaults, isArabicScriptLanguage } from '../context/arabicDefaults.js';
+import { chineseDefaults } from '../context/chineseDefaults.js';
+import { japaneseDefaults } from '../context/japaneseDefaults.js';
+import type { ProjectContent, ProjectEditionTitle, ProjectRecord } from './projects.js';
 
 /** What a loaded edition gives a record: its chapters (the first active),
  *  canvas scope and start, configuration and resources. */

@@ -4,7 +4,7 @@
  * All are CC0; see `icc/README.md` for provenance.
  */
 
-import { parseIccProfile, type IccProfile } from './icc';
+import { parseIccProfile, type IccProfile } from './icc.js';
 
 export interface OutputProfileInfo {
   id: string;

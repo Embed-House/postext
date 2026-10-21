@@ -12,7 +12,7 @@ import type {
   TocLevelConfig,
 } from 'postext';
 import { DEFAULT_TOC_CONFIG, resolveBodyTextConfig, resolveDesignSlot, resolveTocConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -26,11 +26,11 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { SearchScope } from '../search/SearchScope';
-import { ShowingDefaultsContext } from '../../controls/fieldContext';
-import { SlotEditor } from './HeaderFooterSection/SlotEditor';
+} from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { SearchScope } from '../search/SearchScope.js';
+import { ShowingDefaultsContext } from '../../controls/fieldContext.js';
+import { SlotEditor } from './HeaderFooterSection/SlotEditor.js';
 
 const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

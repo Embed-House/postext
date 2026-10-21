@@ -1,4 +1,4 @@
-export { renderToPdf, declaredFontFile } from './pdf-backend';
+export { renderToPdf, declaredFontFile } from './pdf-backend/index.js';
 export type {
   RenderToPdfOptions,
   RenderProgress,
@@ -16,9 +16,9 @@ export type {
   PdfComplexShapingWarning,
   PdfPrintWarning,
   ResourceBytesProvider,
-} from './pdf-backend';
-export { inspectPrintMaster, type PrintMasterReport } from './print/inspectMaster';
-export { decompressWoff2 } from './woff2';
-export type { HarfBuzzWasmSource } from './harfbuzz';
-export { svgToVectorDrawing, type VectorDrawing } from './pdf-backend/svgVector';
-export { sniffBytes, rasterizeSvgWithDom, type SvgRasterizer } from './pdf-backend/renderResourceBlock';
+} from './pdf-backend/index.js';
+export { inspectPrintMaster, type PrintMasterReport } from './print/inspectMaster.js';
+export { decompressWoff2 } from './woff2.js';
+export type { HarfBuzzWasmSource } from './harfbuzz.js';
+export { svgToVectorDrawing, type VectorDrawing } from './pdf-backend/svgVector.js';
+export { sniffBytes, rasterizeSvgWithDom, type SvgRasterizer } from './pdf-backend/renderResourceBlock.js';

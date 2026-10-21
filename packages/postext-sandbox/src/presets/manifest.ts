@@ -18,7 +18,7 @@ import type {
   PresetIndexEntry,
   PresetManifest,
   PresetResourceSpec,
-} from './types';
+} from './types.js';
 
 export {
   pickMarkdownFile,

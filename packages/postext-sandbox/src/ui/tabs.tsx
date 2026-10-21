@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
-import { cn } from './cn';
+import { cn } from './cn.js';
 
 interface ChipTabsProps<T extends string> {
   value: T;

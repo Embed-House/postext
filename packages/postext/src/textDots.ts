@@ -22,9 +22,9 @@
  * paint, not layout: the run keeps the width it was measured at.
  */
 
-import type { TextDotsStyle } from './types';
-import { dimensionToPx } from './units';
-import { fillContextText, measureContextText } from './canvas-backend/contextText';
+import type { TextDotsStyle } from './types.js';
+import { dimensionToPx } from './units.js';
+import { fillContextText, measureContextText } from './canvas-backend/contextText.js';
 
 /** Raster pixels to a dot spacing. */
 const RASTER_PITCH = 12;

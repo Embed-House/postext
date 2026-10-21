@@ -4,9 +4,9 @@
 
 import type { PostextConfig, Resource } from 'postext';
 import { CONFIG_VERSION, migrateConfig as migrateEngineConfig, pinLegacyBoxChildCut, pinLegacyBoxResourceGap, pinLegacyColonListRoom, pinLegacyDashBreaks, pinLegacyDropCapSize, pinLegacyHardBreaks, pinLegacyCodeBlocks, pinLegacyHeadingBreaks, pinLegacyHeadingMarks, pinLegacyHeadingSplit, pinLegacyHyphenBreaks, pinLegacyInlineGap, pinLegacyMathSize, pinLegacyPairedIndents, pinLegacyParagraphContainerSpacing, pinLegacyRaggedBreaking, pinLegacyVerseLayout, pinLegacyVerseTightening, pinLegacyDesignOverflow, pinLegacyGridBalancing, pinLegacyInlineTableSplit, pinLegacyFlowColumns, pinLegacyOpenerHeadFloats , bundleStart } from 'postext/bundle';
-import { deriveChapterTitle, newChapter } from '../book/chapterOps';
-import type { BookContent, Chapter } from '../book/types';
-import type { ProjectEditionContent, ProjectEditionTitle, ProjectThumbnail } from './projects';
+import { deriveChapterTitle, newChapter } from '../book/chapterOps.js';
+import type { BookContent, Chapter } from '../book/types.js';
+import type { ProjectEditionContent, ProjectEditionTitle, ProjectThumbnail } from './projects.js';
 
 /** Record shape: the engine's `CONFIG_VERSION` (`postext/bundle`) itself,
  *  so records, the working copy and `postext-config.json` exports are

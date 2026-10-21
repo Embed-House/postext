@@ -12,15 +12,15 @@ import { EditorView, keymap } from '@codemirror/view';
 import { Prec, StateEffect, StateField, type EditorState, type Extension } from '@codemirror/state';
 import type { Resource, ResourceKind, ResourceType } from 'postext';
 import { bookCitationContexts, citationSourceOf, parseMarkdown } from 'postext';
-import { chipCompletionSource, type ChipStyleOption } from './chipSyntax';
-import { markCompletionSource, type MarkStyleOption } from './markSyntax';
-import { smallCapsCompletionSource } from './smallCapsSyntax';
-import { annotationCompletionSource } from './annotationSyntax';
-import { indexCompletionSource } from './indexSyntax';
-import { directionCompletionSource } from './directionSyntax';
-import { verseCompletionSource } from './verseSyntax';
-import { tabCompletionSource } from './tabSyntax';
-import { labelCompletionSource, type LabelCompletionContext, type LabelStyleOption } from './labelCompletion';
+import { chipCompletionSource, type ChipStyleOption } from './chipSyntax.js';
+import { markCompletionSource, type MarkStyleOption } from './markSyntax.js';
+import { smallCapsCompletionSource } from './smallCapsSyntax.js';
+import { annotationCompletionSource } from './annotationSyntax.js';
+import { indexCompletionSource } from './indexSyntax.js';
+import { directionCompletionSource } from './directionSyntax.js';
+import { verseCompletionSource } from './verseSyntax.js';
+import { tabCompletionSource } from './tabSyntax.js';
+import { labelCompletionSource, type LabelCompletionContext, type LabelStyleOption } from './labelCompletion.js';
 
 /** What the `@` picker needs from the sandbox: the current resources and the
  *  resource types that name them (figure/table/…) in the document locale.

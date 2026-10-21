@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderPageToCanvas } from '../canvas-backend';
-import { renderToHtml } from '../html-backend';
-import { buildDocument } from '../pipeline';
-import { clearMeasurementCache } from '../measure';
-import { getMeasureLanguage, measureLanguageKey, measureTextWidth, setMeasureLanguage, withMeasureLanguage } from '../measure/canvas';
-import { pretextLanguageState } from '../measure/pretextLanguage';
-import { renderLangOf, shapingLanguageOf, shapingTagOf } from '../locale';
-import { resolveAllConfig } from '../pipeline/config';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLineSegment } from '../vdt';
+import { renderPageToCanvas } from '../canvas-backend/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { buildDocument } from '../pipeline/index.js';
+import { clearMeasurementCache } from '../measure/index.js';
+import { getMeasureLanguage, measureLanguageKey, measureTextWidth, setMeasureLanguage, withMeasureLanguage } from '../measure/canvas.js';
+import { pretextLanguageState } from '../measure/pretextLanguage.js';
+import { renderLangOf, shapingLanguageOf, shapingTagOf } from '../locale.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLineSegment } from '../vdt.js';
 
 const resolveConfig = (config: PostextConfig) => resolveAllConfig(config);
 

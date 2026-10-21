@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, buildDocumentPass } from '../../pipeline/build';
-import { bandCapLinesAroundZone, applyBandCap } from '../../pipeline/bandCaps';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, VDTColumn, VDTDocument, VDTPage } from '../../index';
-import { parseMarkdown } from '../../parse';
+import { buildDocument, buildDocumentPass } from '../../pipeline/build.js';
+import { bandCapLinesAroundZone, applyBandCap } from '../../pipeline/bandCaps.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, VDTColumn, VDTDocument, VDTPage } from '../../index.js';
+import { parseMarkdown } from '../../parse/index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

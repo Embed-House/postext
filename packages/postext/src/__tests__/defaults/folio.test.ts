@@ -7,10 +7,10 @@ import {
   isNewspaperSizePreset,
   resolveFolioConfig,
   stripFolioDefaults,
-} from '../../defaults/folio';
-import { applyPaletteToConfig, stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { ColorValue, FolioPaperType, PageSizePreset } from '../../types';
+} from '../../defaults/folio.js';
+import { applyPaletteToConfig, stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { ColorValue, FolioPaperType, PageSizePreset } from '../../types.js';
 
 const hex = (value: string): ColorValue => ({ hex: value, model: 'hex' });
 

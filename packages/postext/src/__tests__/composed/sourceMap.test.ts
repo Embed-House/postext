@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { parseMarkdown } from '../../parse';
-import { elementsForSource, findElement, sourceAt, type SourceElement } from '../../composed/sourceMap';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDocument, VDTPage } from '../../index';
-import { flowRectToPage, flowToPage } from '../../vdt';
-import { page8Fixture } from './fixtures/page8';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { elementsForSource, findElement, sourceAt, type SourceElement } from '../../composed/sourceMap.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDocument, VDTPage } from '../../index.js';
+import { flowRectToPage, flowToPage } from '../../vdt.js';
+import { page8Fixture } from './fixtures/page8.js';
 
 // Seven px per character, whatever the face (no DOM in node).
 class StubCtx {

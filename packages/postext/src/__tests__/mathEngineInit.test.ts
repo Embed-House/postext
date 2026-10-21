@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 
 // The MathJax module fails to load the first time, then works.
 const mathjaxModule = vi.hoisted(() => ({ fail: true, loads: 0 }));
-vi.mock('../math/mathjax', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../math/mathjax')>();
+vi.mock('../math/mathjax.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../math/mathjax.js')>();
   return {
     ...actual,
     createMathJaxConverter: () => {
@@ -14,7 +14,7 @@ vi.mock('../math/mathjax', async (importOriginal) => {
   };
 });
 
-import { initMathEngine, isMathReady, onMathReady } from '../math';
+import { initMathEngine, isMathReady, onMathReady } from '../math/index.js';
 
 describe('initMathEngine failure', () => {
   it('rejects with a clear message, and a later call starts the engine', async () => {

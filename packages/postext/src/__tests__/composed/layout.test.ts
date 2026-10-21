@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { anchorOn, frameOrder, gridCellRect, placeBox, framePlaceable, type FrameGeometryContext } from '../../composed/geometry';
-import { normalizeFrame, resolvePageTemplate } from '../../composed/templates';
-import { composedPaintOrder, frameBounds } from '../../composed/paint';
-import { wrapComposedPages, FRAME_ATTR } from '../../composed/wrap';
-import { parseMarkdownWithIssues } from '../../parse';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { page8Fixture } from './fixtures/page8';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { anchorOn, frameOrder, gridCellRect, placeBox, framePlaceable, type FrameGeometryContext } from '../../composed/geometry.js';
+import { normalizeFrame, resolvePageTemplate } from '../../composed/templates.js';
+import { composedPaintOrder, frameBounds } from '../../composed/paint.js';
+import { wrapComposedPages, FRAME_ATTR } from '../../composed/wrap.js';
+import { parseMarkdownWithIssues } from '../../parse/index.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { page8Fixture } from './fixtures/page8.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): seven
 // px per character, whatever the face.

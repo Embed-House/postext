@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { composedChecksOf, isComposedCheckKind } from './composedChecks';
-import type { Warning } from './types';
+import { composedChecksOf, isComposedCheckKind } from './composedChecks.js';
+import type { Warning } from './types.js';
 
 /** A document of two pages, the second a composed page (fence 0) whose
  *  frame `mapa` sets the figure `foto-mapa`. */

@@ -4,13 +4,13 @@ import {
   DEFAULT_CALLOUT_STYLE_STATIC,
   resolveCalloutStylesConfig,
   stripCalloutStylesDefaults,
-} from '../../defaults/calloutStyles';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import { resolveHeadingsConfig } from '../../defaults/headings';
-import { resolveUnorderedListsConfig } from '../../defaults/unorderedLists';
-import { stripConfigDefaults, applyPaletteToConfig, DEFAULT_MAIN_COLOR_HEX } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { CalloutStyleConfig, PostextConfig } from '../../types';
+} from '../../defaults/calloutStyles.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import { resolveHeadingsConfig } from '../../defaults/headings.js';
+import { resolveUnorderedListsConfig } from '../../defaults/unorderedLists.js';
+import { stripConfigDefaults, applyPaletteToConfig, DEFAULT_MAIN_COLOR_HEX } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { CalloutStyleConfig, PostextConfig } from '../../types.js';
 
 const body = resolveBodyTextConfig({
   fontFamily: 'Literata',

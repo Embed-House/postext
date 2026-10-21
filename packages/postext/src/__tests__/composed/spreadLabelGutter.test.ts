@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { elementsForSource } from '../../composed/sourceMap';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, Resource, VDTDocument, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { elementsForSource } from '../../composed/sourceMap.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, Resource, VDTDocument, VDTPage } from '../../index.js';
 
 // #990: a label near the spine of a spread stands at the binding band's edge,
 // on the side of its anchor point, instead of being cut by the fold.

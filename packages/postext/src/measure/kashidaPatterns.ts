@@ -33,8 +33,8 @@
  * A tatweel the author typed is a letter of its run like any other.
  */
 
-import { joiningTypeOf, type JoiningType } from '../bidi';
-import { JOINING_GROUP_NAMES, JOINING_GROUP_RANGES } from './joiningGroups';
+import { joiningTypeOf, type JoiningType } from '../bidi.js';
+import { JOINING_GROUP_NAMES, JOINING_GROUP_RANGES } from './joiningGroups.js';
 
 /** A place a kashida may go. */
 export interface KashidaPoint {

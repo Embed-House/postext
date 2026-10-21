@@ -1,10 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveDiagramStyleConfig } from 'postext';
 import type { DiagramStyleConfig } from 'postext';
-import { CollapsibleSection, ColorPicker, ToggleSwitch } from '../../controls';
+import { CollapsibleSection, ColorPicker, ToggleSwitch } from '../../controls/index.js';
 
 /** Config-panel section for SVG diagram reproduction: the single-ink toggle
  *  plus the ink colour, which defaults to the palette's main colour so

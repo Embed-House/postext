@@ -1,4 +1,4 @@
-import type { DesignSlot, PostextConfig } from '../types';
+import type { DesignSlot, PostextConfig } from '../types.js';
 
 /** What a design slot of the configuration draws: a running head
  *  (`header`, `footer`, a heading style's own, a page template's own), a

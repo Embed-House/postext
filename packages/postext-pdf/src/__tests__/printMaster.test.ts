@@ -4,9 +4,9 @@ import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { preloadResourceImages } from '../pdf-backend/renderResourceBlock';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { preloadResourceImages } from '../pdf-backend/renderResourceBlock.js';
+import { parseFontString } from '../fontString.js';
 
 // EF-06: a figure's vector print master (`svg.pdfFileId`) is what
 // `renderToPdf` embeds — the host hands over bytes by id, it does not have

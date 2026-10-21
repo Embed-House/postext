@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
 import {
   resolveOrderedListsConfig,
   resolveBodyTextConfig,
@@ -24,10 +24,10 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../../controls';
-import { OrderedListLevelSection } from './OrderedListLevelSection';
-import { numberFormatOptions } from './numberFormat';
-import { TEXT_SIZE_UNITS, INDENT_UNITS, MARGIN_UNITS, OFFSET_UNITS } from './units';
+} from '../../../controls/index.js';
+import { OrderedListLevelSection } from './OrderedListLevelSection.js';
+import { numberFormatOptions } from './numberFormat.js';
+import { TEXT_SIZE_UNITS, INDENT_UNITS, MARGIN_UNITS, OFFSET_UNITS } from './units.js';
 
 const D = DEFAULT_ORDERED_LISTS_STATIC;
 

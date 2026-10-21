@@ -4,8 +4,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFRawStream, PD
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument, verticalFlowOf } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // Issue #191: vertical text in the PDF. Upright characters are shown
 // through an Identity-V twin of their font (the same CIDFont, the same

@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { stripConfigDefaults } from '../defaults';
-import { defaultCaptionLabels, resolveCaptionStyleConfig, stripCaptionStyleDefaults } from '../defaults/captionStyle';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { defaultResourceTypes } from '../defaults/resourceTypes';
-import { resolveAllConfig } from '../pipeline/config';
-import type { PostextConfig, Resource } from '../types';
-import type { VDTDocument } from '../vdt';
-import { installSizedStub } from './vertical/stub';
+import { buildDocument } from '../pipeline/index.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { defaultCaptionLabels, resolveCaptionStyleConfig, stripCaptionStyleDefaults } from '../defaults/captionStyle.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { defaultResourceTypes } from '../defaults/resourceTypes.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import type { PostextConfig, Resource } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
+import { installSizedStub } from './vertical/stub.js';
 
 // #464: a Japanese caption reads 図1-1　キャプション (the label and the
 // number solid, an ideographic space before the text, no stop) unless the

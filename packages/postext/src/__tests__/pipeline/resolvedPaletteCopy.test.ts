@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 // EF-175: a configuration is resolved once per object and the result is
 // cached against it. The resolved configuration used to keep the caller's

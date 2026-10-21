@@ -31,14 +31,14 @@
  * (`writtenText`), and `VDTLine.kashida` counts them.
  */
 
-import type { VDTLine, VDTLineSegment } from '../vdt';
-import { findKashidaPoints, kashidaPatternSet, type KashidaPatternSetName } from './kashidaPatterns';
-import { joiningScriptIn } from './joining';
-import { justifiedSpaceRatios } from './spaceRatios';
-import { joiningTypeOf } from '../bidi';
-import { RAGGED_SPACE_RATIO } from '../knuthPlass/constants';
-import type { ResolvedBodyTextConfig } from '../types';
-import { resolvedKashida } from '../defaults/bodyText';
+import type { VDTLine, VDTLineSegment } from '../vdt.js';
+import { findKashidaPoints, kashidaPatternSet, type KashidaPatternSetName } from './kashidaPatterns.js';
+import { joiningScriptIn } from './joining.js';
+import { justifiedSpaceRatios } from './spaceRatios.js';
+import { joiningTypeOf } from '../bidi.js';
+import { RAGGED_SPACE_RATIO } from '../knuthPlass/constants.js';
+import type { ResolvedBodyTextConfig } from '../types.js';
+import { resolvedKashida } from '../defaults/bodyText.js';
 
 export const TATWEEL = 'ـ';
 

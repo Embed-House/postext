@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../index';
-import { parseMarkdown } from '../parse';
-import { computeOutlineFor } from '../pipeline/outline';
-import { migrateConfig, pinLegacyHeadingMarks, CONFIG_VERSION } from '../bundle';
-import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../index.js';
+import { parseMarkdown } from '../parse/index.js';
+import { computeOutlineFor } from '../pipeline/outline.js';
+import { migrateConfig, pinLegacyHeadingMarks, CONFIG_VERSION } from '../bundle/index.js';
+import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { defaultEpubLayout, isTablet, type DeviceTraits } from './defaultLayout';
+import { defaultEpubLayout, isTablet, type DeviceTraits } from './defaultLayout.js';
 
 const IPAD_OS = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15';
 const OLD_IPAD = 'Mozilla/5.0 (iPad; CPU OS 12_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1 Mobile/15E148 Safari/604.1';

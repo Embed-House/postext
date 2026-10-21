@@ -7,12 +7,12 @@ import fontkit from '@pdf-lib/fontkit';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream, type PDFFont } from 'pdf-lib';
 import { buildDocument, resolveParagraph } from 'postext';
 import type { PostextConfig, VDTDocument, VDTLineSegment } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { loadComplexShaper, shapeRun } from '../complexShaping';
-import { fileRuns, registerFaceFiles } from '../faceFiles';
-import { shapeInCurrentLanguage, shapingKey, shapingScript, withShapingScript } from '../shapingLanguage';
-import { textAdvancePx } from '../pdf-backend/primitives';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { loadComplexShaper, shapeRun } from '../complexShaping.js';
+import { fileRuns, registerFaceFiles } from '../faceFiles.js';
+import { shapeInCurrentLanguage, shapingKey, shapingScript, withShapingScript } from '../shapingLanguage.js';
+import { textAdvancePx } from '../pdf-backend/primitives.js';
 
 // #725: a word with no letter (`46.`, `1367)`) is shaped in the script the
 // layout measured it in (`VDTLineSegment.scriptContext`). fontkit reads no

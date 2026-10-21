@@ -1,10 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveCrossRefsConfig } from 'postext';
 import type { CrossRefsConfig } from 'postext';
-import { CollapsibleSection, SelectInput, TextInput, ToggleSwitch } from '../../controls';
+import { CollapsibleSection, SelectInput, TextInput, ToggleSwitch } from '../../controls/index.js';
 
 type Template = 'chapter' | 'section' | 'page';
 

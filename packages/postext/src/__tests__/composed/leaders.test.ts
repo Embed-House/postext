@@ -5,20 +5,20 @@
  * in a frame, three notes beside it joined to its title, key and scale.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { parseMarkdown } from '../../parse';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { renderPageToCanvas } from '../../index';
-import { collectConfigWarnings } from '../../configWarnings';
-import { validatePageTemplates } from '../../composed/validate';
-import { figureAnchorPointOnPage, figureLabelLeaderPath, labelLayoutOnSheet, overlappingLabels } from '../../composed/labels';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { flowRectToPage, pageIsMirrored, type VDTDesignPathBlock, type VDTPathCommand } from '../../vdt';
-import type { PageTemplate } from '../../composed/types';
-import type { ContentWarning, DesignConnectorElement, PostextConfig, Resource, VDTBlock, VDTDocument, VDTFigureLabel, VDTPage } from '../../index';
-import { MAP_PARTS_RESOURCES, MAP_PARTS_TEMPLATE, mapPartsFixture, type MapPartsLocale } from './fixtures/mapParts';
-import { GRID_CONFIG, GRID_RESOURCES, photoPage, PHOTO_TEMPLATE } from './fixtures/grid';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { renderPageToCanvas } from '../../index.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { figureAnchorPointOnPage, figureLabelLeaderPath, labelLayoutOnSheet, overlappingLabels } from '../../composed/labels.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { flowRectToPage, pageIsMirrored, type VDTDesignPathBlock, type VDTPathCommand } from '../../vdt.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, DesignConnectorElement, PostextConfig, Resource, VDTBlock, VDTDocument, VDTFigureLabel, VDTPage } from '../../index.js';
+import { MAP_PARTS_RESOURCES, MAP_PARTS_TEMPLATE, mapPartsFixture, type MapPartsLocale } from './fixtures/mapParts.js';
+import { GRID_CONFIG, GRID_RESOURCES, photoPage, PHOTO_TEMPLATE } from './fixtures/grid.js';
 
 class StubCtx {
   font = '';

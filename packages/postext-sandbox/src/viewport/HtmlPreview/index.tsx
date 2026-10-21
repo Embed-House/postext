@@ -18,29 +18,29 @@ import type {
   VDTDocument,
   HtmlRenderIndex,
 } from 'postext';
-import { useSandbox, useSandboxSelector, useSandboxDocSourceRef, useLayoutSource, type EditorSelection } from '../../context/SandboxContext';
-import { composeBookMemo, toBookSelection } from '../../book/compose';
-import { leadingBlankPageCount } from '../../book/pagination';
-import type { ComposedBook } from '../../book/types';
-import { useShadowDom } from '../../hooks/useShadowDom';
-import { ensureConfigFontsLoaded, missingConfigFontSpecs, standInsSettled } from '../../controls/fontLoader';
-import { ensureResourceImageUrls, ensureResourceVideoUrls, getResourceImageUrl, getResourceVideoUrl } from '../../controls/resourceImages';
-import { attachHlsPlayers } from '../../controls/hlsPlayers';
-import { useLayoutWorker } from '../../worker/useLayoutWorker';
-import { onLateFonts } from '../../worker/LayoutService';
-import { createOverlaySvg } from '../CanvasPreview/dom';
-import { drawOverlay, drawBaselines } from '../CanvasPreview/overlay';
-import { drawPickedMark } from '../../selection/pickedOverlay';
-import { attachLabelAnchorEditor, syncLabelAnchorEditors } from '../composed/labelAnchorEditor';
-import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost';
-import { onEditModeChange } from '../../editing/editMode';
-import { onPageSelectionChange } from '../../selection/selectionStore';
-import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection';
-import { attachSlotClickHandler } from '../CanvasPreview/interaction';
-import { syncComicEditors } from '../comics/comicEditing';
-import { usePageNavigator } from '../usePageNavigator';
-import type { BookPageMap } from '../usePageHashSync';
-import { composedBookPageMap } from '../../book/stitch';
+import { useSandbox, useSandboxSelector, useSandboxDocSourceRef, useLayoutSource, type EditorSelection } from '../../context/SandboxContext.js';
+import { composeBookMemo, toBookSelection } from '../../book/compose.js';
+import { leadingBlankPageCount } from '../../book/pagination.js';
+import type { ComposedBook } from '../../book/types.js';
+import { useShadowDom } from '../../hooks/useShadowDom.js';
+import { ensureConfigFontsLoaded, missingConfigFontSpecs, standInsSettled } from '../../controls/fontLoader.js';
+import { ensureResourceImageUrls, ensureResourceVideoUrls, getResourceImageUrl, getResourceVideoUrl } from '../../controls/resourceImages.js';
+import { attachHlsPlayers } from '../../controls/hlsPlayers.js';
+import { useLayoutWorker } from '../../worker/useLayoutWorker.js';
+import { onLateFonts } from '../../worker/LayoutService.js';
+import { createOverlaySvg } from '../CanvasPreview/dom.js';
+import { drawOverlay, drawBaselines } from '../CanvasPreview/overlay.js';
+import { drawPickedMark } from '../../selection/pickedOverlay.js';
+import { attachLabelAnchorEditor, syncLabelAnchorEditors } from '../composed/labelAnchorEditor.js';
+import { useTemplateEditorHost } from '../../templates/useTemplateEditorHost.js';
+import { onEditModeChange } from '../../editing/editMode.js';
+import { onPageSelectionChange } from '../../selection/selectionStore.js';
+import { chapterOfPages, followEditorCaret, followsCaret, selectionOn, type CaretFollow } from '../../selection/viewerSelection.js';
+import { attachSlotClickHandler } from '../CanvasPreview/interaction.js';
+import { syncComicEditors } from '../comics/comicEditing.js';
+import { usePageNavigator } from '../usePageNavigator.js';
+import type { BookPageMap } from '../usePageHashSync.js';
+import { composedBookPageMap } from '../../book/stitch.js';
 import {
   type ColumnMode,
   htmlViewerDpi,
@@ -49,15 +49,15 @@ import {
   SHADOW_CSS,
   buildColumnWidthSample,
   composePageBackground,
-} from './constants';
-import { buildHtmlConfigOverride, hasComicPages, hasComposedPages, measureColumnWidthPx, partTitlesOf } from './configOverride';
-import { fitComposedPages } from './composedFit';
-import { configShapingLanguage } from '../../controls/measureLanguage';
-import { fitPagesToContent, pickPageGeometry, singleScrollPageWidthPx, viewerLayoutType } from './pageGeometry';
-import { cssEscape, measureBodyBaselineOffset } from './baseline';
-import { htmlVideoPlayers, htmlVideoState, playHtmlVideo } from './videos';
-import { pickVideo, type PreviewVideo, type PreviewVideoResult, type VideoPick } from '../viewerVideos';
-import { planContent } from '../../book/jumps';
+} from './constants.js';
+import { buildHtmlConfigOverride, hasComicPages, hasComposedPages, measureColumnWidthPx, partTitlesOf } from './configOverride.js';
+import { fitComposedPages } from './composedFit.js';
+import { configShapingLanguage } from '../../controls/measureLanguage.js';
+import { fitPagesToContent, pickPageGeometry, singleScrollPageWidthPx, viewerLayoutType } from './pageGeometry.js';
+import { cssEscape, measureBodyBaselineOffset } from './baseline.js';
+import { htmlVideoPlayers, htmlVideoState, playHtmlVideo } from './videos.js';
+import { pickVideo, type PreviewVideo, type PreviewVideoResult, type VideoPick } from '../viewerVideos.js';
+import { planContent } from '../../book/jumps.js';
 
 interface HtmlPreviewProps {
   fontScale: number;

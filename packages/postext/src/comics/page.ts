@@ -15,11 +15,11 @@
  * ```
  */
 
-import { parseDirectiveAttrs } from '../parse/attrs';
-import { attrValueSources, parseComicScript, type ComicScriptLine } from './script';
-import { parseComicSplit } from './split';
-import { isComicTextPanel } from './frames';
-import type { ComicPageSource, ComicPanelSource, ComicSourceRange } from './types';
+import { parseDirectiveAttrs } from '../parse/attrs.js';
+import { attrValueSources, parseComicScript, type ComicScriptLine } from './script.js';
+import { parseComicSplit } from './split.js';
+import { isComicTextPanel } from './frames.js';
+import type { ComicPageSource, ComicPanelSource, ComicSourceRange } from './types.js';
 
 /** `:::page` / `:::strip` with an optional attribute block. */
 const COMIC_FENCE_RE = /^:::\s*(page|strip)(?:\s*\{([^}]*)\})?\s*$/;

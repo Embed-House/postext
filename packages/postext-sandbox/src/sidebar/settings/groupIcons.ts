@@ -1,5 +1,5 @@
 import { BookMarked, BookOpen, Columns2, FileDown, Heading, Image, Languages, List, MessageCircle, Palette, PanelTop, Pilcrow, SquareMenu, Wrench, type LucideIcon } from 'lucide-react';
-import type { SettingsGroupId } from '../sections/registry';
+import type { SettingsGroupId } from '../sections/registry.js';
 
 export const GROUP_ICONS: Record<SettingsGroupId, LucideIcon> = {
   page: Columns2,

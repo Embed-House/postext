@@ -3,7 +3,7 @@
 // with their references pointed at those URLs (./viewer.ts).
 
 import { dirOf, readEpub, type ReadEpubResult } from 'postext-epub';
-import { rewriteCssUrls, rewriteMarkupRefs } from './viewer';
+import { rewriteCssUrls, rewriteMarkupRefs } from './viewer.js';
 
 export interface ViewerBook {
   epub: ReadEpubResult;

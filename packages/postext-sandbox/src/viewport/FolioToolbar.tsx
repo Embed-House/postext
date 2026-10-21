@@ -3,8 +3,8 @@
 import type { FocusEventHandler } from 'react';
 import { ChevronLeft, ChevronRight, Hand, Orbit, RefreshCw, Rotate3d, Save, Search, TextCursor } from 'lucide-react';
 import type { FolioInteraction } from 'postext-folio';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { PrintPreviewButton } from '../print/PrintPreviewButton';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { PrintPreviewButton } from '../print/PrintPreviewButton.js';
 import {
   PageNumberInput,
   PinToolbarButton,
@@ -12,7 +12,7 @@ import {
   ToolbarSeparator,
   useToolbarRootProps,
   PageTurnButtons,
-} from './CanvasToolbar';
+} from './CanvasToolbar.js';
 
 interface FolioToolbarProps {
   generating: boolean;

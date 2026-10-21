@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { NumeralStyle, PostextConfig, Resource, VDTDocument } from 'postext';
-import { chapterLayoutFromDoc, chapterPageLabels, createBookPlanner, opensOnEvenPage, sameChapterLayout, sameLayoutInputs } from './pagination';
-import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys';
-import { newChapter } from './chapterOps';
-import { markBuiltWithoutFaces } from './withoutFaces';
-import type { Chapter, ChapterLayout, ChapterPlan } from './types';
+import { chapterLayoutFromDoc, chapterPageLabels, createBookPlanner, opensOnEvenPage, sameChapterLayout, sameLayoutInputs } from './pagination.js';
+import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys.js';
+import { newChapter } from './chapterOps.js';
+import { markBuiltWithoutFaces } from './withoutFaces.js';
+import type { Chapter, ChapterLayout, ChapterPlan } from './types.js';
 
 const figure = (id: string): Resource => ({
   id, typeId: 'figure', kind: 'bitmap', caption: `Figure ${id}.`, createdAt: 0, updatedAt: 0,

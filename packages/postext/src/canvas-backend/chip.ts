@@ -1,9 +1,9 @@
-import type { VDTChip, VDTChipRun } from '../vdt';
-import { joiningScriptIn } from '../measure/joining';
-import { paintRunInDirection, runPaintOrder } from './runDirection';
-import { letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState';
-import { fillContextText } from './contextText';
-import { fillTextDots } from './textDots';
+import type { VDTChip, VDTChipRun } from '../vdt.js';
+import { joiningScriptIn } from '../measure/joining.js';
+import { paintRunInDirection, runPaintOrder } from './runDirection.js';
+import { letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState.js';
+import { fillContextText } from './contextText.js';
+import { fillTextDots } from './textDots.js';
 
 /** Trace a rounded rect (radius already clamped to half the box). */
 function roundedRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {

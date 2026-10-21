@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { along, profiles } from "./bookGeometry";
+import { along, profiles } from "./bookGeometry.js";
 
 const W = 500;
 const k = 3.3;

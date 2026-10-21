@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { avoidOrphansByDefault, avoidWidowsByDefault, stripBodyTextDefaults, stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig } from '../../types';
+import { avoidOrphansByDefault, avoidWidowsByDefault, stripBodyTextDefaults, stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig } from '../../types.js';
 
 // #717: a page on a character grid is specified as a number of lines, so
 // the two rules that leave a column a line short are off by default there:

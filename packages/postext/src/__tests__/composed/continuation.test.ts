@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { defaultTableContinuationStrings } from '../../defaults';
-import { composedReflowLog, describeReflowEvent } from '../../composed/reflowLog';
-import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo';
-import { assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES } from '../../composed/continuation';
-import { findElement } from '../../composed/sourceMap';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { page8Fixture } from './fixtures/page8';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { defaultTableContinuationStrings } from '../../defaults/index.js';
+import { composedReflowLog, describeReflowEvent } from '../../composed/reflowLog.js';
+import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo.js';
+import { assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES } from '../../composed/continuation.js';
+import { findElement } from '../../composed/sourceMap.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { page8Fixture } from './fixtures/page8.js';
 
 // #859: content that no longer fits a frame goes on on pages added after
 // the composed page, built from the page's overflow template (or the same

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTDocument, VDTFrame } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTDocument, VDTFrame } from '../../index.js';
 
 // #982: a frame of `width: 'auto'` is as wide as its longest line plus its
 // padding, between `minWidth` and `maxWidth`, anchored at its start edge.

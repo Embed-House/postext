@@ -5,11 +5,11 @@
  * being typed, a search) keeps its own undo of what is typed in it.
  */
 
-import type { SandboxLabels } from '../types';
-import type { SandboxState } from '../context/SandboxContext';
-import { announce } from '../ui/announcer';
-import { SETTINGS_SECTIONS } from '../sidebar/sections/registry';
-import type { HistoryStepInfo, SandboxHistory } from './sandboxHistory';
+import type { SandboxLabels } from '../types/index.js';
+import type { SandboxState } from '../context/SandboxContext.js';
+import { announce } from '../ui/announcer.js';
+import { SETTINGS_SECTIONS } from '../sidebar/sections/registry.js';
+import type { HistoryStepInfo, SandboxHistory } from './sandboxHistory.js';
 
 /** Inputs that take no typing: the keys go to the history over them. */
 const KEYLESS_INPUTS = new Set(['button', 'checkbox', 'color', 'file', 'image', 'radio', 'range', 'reset', 'submit']);

@@ -81,7 +81,7 @@
  */
 import { isJapaneseLanguage, shapingTagOf } from 'postext';
 import type { PDFFont } from 'pdf-lib';
-import { openTypeLanguagesOf } from './otLanguages';
+import { openTypeLanguagesOf } from './otLanguages.js';
 
 /** A language text is shaped in. */
 interface Language {

@@ -1,4 +1,4 @@
-import type { HtmlViewerConfig, HtmlViewerOverrides, PostextConfig, ResolvedHtmlViewerConfig } from '../types';
+import type { HtmlViewerConfig, HtmlViewerOverrides, PostextConfig, ResolvedHtmlViewerConfig } from '../types.js';
 
 export const DEFAULT_HTML_VIEWER_CONFIG: ResolvedHtmlViewerConfig = {
   maxCharsPerLine: 70,

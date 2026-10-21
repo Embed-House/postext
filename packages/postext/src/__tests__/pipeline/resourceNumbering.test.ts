@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
+import { parseMarkdown } from '../../parse/index.js';
 import {
   computeHeadingContext,
   computeResourceNumbering,
   computeResourceNumberingState,
-} from '../../pipeline/resourceNumbering';
-import type { Resource, ResourceType, ResourceCounterFormat } from '../../types';
+} from '../../pipeline/resourceNumbering.js';
+import type { Resource, ResourceType, ResourceCounterFormat } from '../../types.js';
 
 const now = 0;
 

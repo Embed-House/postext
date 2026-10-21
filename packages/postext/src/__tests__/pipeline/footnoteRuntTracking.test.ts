@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { renderBlock } from '../../canvas-backend/blockRender';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { renderBlock } from '../../canvas-backend/blockRender.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
 
 // #662: a note at the foot of its column whose runt the engine takes up by
 // setting it one line shorter with a little negative tracking

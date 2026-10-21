@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { joinsWithNext } from '../bidi';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import { collectContentWarnings } from '../pipeline/contentWarnings';
-import { verseSettings } from '../pipeline/verse';
-import { writtenText } from '../measure/kashida';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
+import { joinsWithNext } from '../bidi.js';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { collectContentWarnings } from '../pipeline/contentWarnings.js';
+import { verseSettings } from '../pipeline/verse.js';
+import { writtenText } from '../measure/kashida.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt.js';
 
 // #378: classical verse, each bayt in two hemistichs on one line. Arabic
 // fixtures carry Latin marker words so order and placement can be checked.

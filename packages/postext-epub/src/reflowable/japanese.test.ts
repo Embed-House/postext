@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, VDTDocument, VDTLine, VDTLineSegment, VDTRuby } from 'postext';
-import { baseConfig, layOut } from './__tests__/vdt';
-import { checkXml } from './__tests__/xml';
-import { buildReflowablePublication } from '.';
-import { appendLine, type InlineContext, type TextSink } from './inline';
-import { buildOpf } from '../package/pack';
+import { baseConfig, layOut } from './__tests__/vdt.js';
+import { checkXml } from './__tests__/xml.js';
+import { buildReflowablePublication } from './index.js';
+import { appendLine, type InlineContext, type TextSink } from './inline.js';
+import { buildOpf } from '../package/pack.js';
 
 // #428: a Japanese book in reflowable EPUB keeps what the print shows in
 // CSS reading systems understand: kinsoku as `line-break`, burasagari as

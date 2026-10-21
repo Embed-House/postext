@@ -1,5 +1,5 @@
-import type { ResolvedVerseConfig, VerseConfig } from '../types';
-import { dimensionsEqual } from './shared';
+import type { ResolvedVerseConfig, VerseConfig } from '../types.js';
+import { dimensionsEqual } from './shared.js';
 
 /** Poems in the line layout (#620): two leading spaces indent a line one
  *  em, a turnover hangs two ems, a line of space between stanzas, a line

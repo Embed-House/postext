@@ -2,8 +2,8 @@
 // resolution, and the normalisation of frames, groups and label styles.
 // Pure; nothing here lays anything out (that is P4, #855).
 
-import { expandModules, modulesGroupRoot } from './modules';
-import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
+import { expandModules, modulesGroupRoot } from './modules.js';
+import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types.js';
 import type {
   FrameConfig,
   FrameGridCell,
@@ -25,7 +25,7 @@ import type {
   ResolvedLabelStyle,
   ResolvedPageTemplate,
   ResolvePageTemplateOptions,
-} from './types';
+} from './types.js';
 
 // ---------------------------------------------------------------------------
 // Defaults

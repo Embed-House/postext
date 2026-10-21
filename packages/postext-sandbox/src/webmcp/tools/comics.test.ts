@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { Resource } from 'postext';
-import { resetViewerEdits, undoViewerEdit } from '../../editor/viewerEdits';
-import { runTool } from '../modelContext';
-import { comicTools } from './comics';
-import { chapter, harness } from './testHarness';
+import { resetViewerEdits, undoViewerEdit } from '../../editor/viewerEdits.js';
+import { runTool } from '../modelContext.js';
+import { comicTools } from './comics.js';
+import { chapter, harness } from './testHarness.js';
 
 // A comic page of two tiers after a paragraph: the first panel shows a
 // picture (wider than its cell, so it is cropped), the second has none.

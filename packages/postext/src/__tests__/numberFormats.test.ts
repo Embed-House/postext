@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { parseMarkdown } from '../parse';
-import { computeHeadingContext, computeResourceNumbering } from '../pipeline/resourceNumbering';
-import { resolveOrderedListsConfig, stripOrderedListsDefaults } from '../defaults/orderedLists';
-import { resolvePageConfig, stripPageDefaults } from '../defaults/page';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { collectConfigWarnings } from '../configWarnings';
-import { stripConfigDefaults } from '../defaults';
-import { resolveAllConfig } from '../pipeline/config';
-import { formatNumeral, parseNumberFormat, parseTemplate, type NumeralStyle } from '../numbering';
-import type { PostextConfig, Resource, ResourceType } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { parseMarkdown } from '../parse/index.js';
+import { computeHeadingContext, computeResourceNumbering } from '../pipeline/resourceNumbering.js';
+import { resolveOrderedListsConfig, stripOrderedListsDefaults } from '../defaults/orderedLists.js';
+import { resolvePageConfig, stripPageDefaults } from '../defaults/page.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { formatNumeral, parseNumberFormat, parseTemplate, type NumeralStyle } from '../numbering.js';
+import type { PostextConfig, Resource, ResourceType } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

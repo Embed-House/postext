@@ -7,7 +7,7 @@
  */
 
 import type { Resource } from 'postext';
-import type { TextChange } from '../book/textChanges';
+import type { TextChange } from '../book/textChanges.js';
 
 /** A `style` attribute on a `::label` line. */
 export interface LabelStyleRef {

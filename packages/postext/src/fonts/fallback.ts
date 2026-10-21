@@ -7,8 +7,8 @@
 // that one under its own name, by every host that loads fonts: all of them
 // when it has no file, a slant it has no file of otherwise.
 
-import type { CustomFontFamily } from '../types';
-import { primaryFontFamily } from '../measure/font';
+import type { CustomFontFamily } from '../types.js';
+import { primaryFontFamily } from '../measure/font.js';
 
 /** The family that stands in for `family`'s faces without a file, by its
  *  name (case-insensitive), or undefined. A family never stands in for

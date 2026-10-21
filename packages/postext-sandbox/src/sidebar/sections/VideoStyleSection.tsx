@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveVideoStyleConfig } from 'postext';
 import type {
   DimensionUnit,
@@ -20,7 +20,7 @@ import {
   NumberInput,
   SelectInput,
   ToggleSwitch,
-} from '../../controls';
+} from '../../controls/index.js';
 
 const SIZE_UNITS: DimensionUnit[] = ['mm', 'cm', 'in', 'pt', 'px'];
 

@@ -27,12 +27,12 @@
  * out again.
  */
 
-import type { ResolvedCalloutStyleConfig } from '../types';
-import type { VDTBlock } from '../vdt';
-import { copyBlockEndIndent } from './buildHelpers';
-import { copyDesignedBoxHeading, type CalloutLayoutResult } from './calloutLayout';
-import type { BlockMeasureContext, DropCapNote } from './measureContentBlock';
-import { idOf, measureStateKey } from './measureMemo';
+import type { ResolvedCalloutStyleConfig } from '../types.js';
+import type { VDTBlock } from '../vdt.js';
+import { copyBlockEndIndent } from './buildHelpers.js';
+import { copyDesignedBoxHeading, type CalloutLayoutResult } from './calloutLayout.js';
+import type { BlockMeasureContext, DropCapNote } from './measureContentBlock.js';
+import { idOf, measureStateKey } from './measureMemo.js';
 
 type NoteWrite = readonly [kind: 'set', block: number, note: DropCapNote] | readonly [kind: 'delete', block: number];
 

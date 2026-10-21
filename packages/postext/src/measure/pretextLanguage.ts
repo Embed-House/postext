@@ -40,7 +40,7 @@
 // always did.
 
 import { prepareWithSegments, type PreparedTextWithSegments } from '@chenglou/pretext';
-import { getMeasureLanguage, measureUncachedWidth } from './canvas';
+import { getMeasureLanguage, measureUncachedWidth } from './canvas.js';
 
 const HOST_LANGUAGE = 'inherit';
 

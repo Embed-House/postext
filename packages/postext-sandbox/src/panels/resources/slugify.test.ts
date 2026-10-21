@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { slugify, slugifyFilename, uniqueSlug } from './slugify';
+import { slugify, slugifyFilename, uniqueSlug } from './slugify.js';
 
 describe('slugify', () => {
   it('strips accents and joins words with hyphens', () => {

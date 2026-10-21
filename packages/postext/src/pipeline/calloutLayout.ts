@@ -39,20 +39,20 @@
  * children.
  */
 
-import { flowTextWidth, lineBaselineOffset, measuringVertically } from '../measure/vertical';
-import { getMeasureLanguage, onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
-import { designLineOf } from '../design/cjkText';
-import type { ContentBlock, DirectiveAttrs } from '../parse';
-import { suffixJoiner } from '../parse/inlineFormatting';
-import { spaceDirectiveLines } from '../parse/attrs';
+import { flowTextWidth, lineBaselineOffset, measuringVertically } from '../measure/vertical.js';
+import { getMeasureLanguage, onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas.js';
+import { designLineOf } from '../design/cjkText.js';
+import type { ContentBlock, DirectiveAttrs } from '../parse/index.js';
+import { suffixJoiner } from '../parse/inlineFormatting.js';
+import { spaceDirectiveLines } from '../parse/attrs.js';
 import type {
   CalloutPlacement,
   CalloutSpan,
   Dimension,
   ResolvedCalloutDesignConfig,
   ResolvedCalloutStyleConfig,
-} from '../types';
-import { dimensionToPx } from '../units';
+} from '../types.js';
+import { dimensionToPx } from '../units.js';
 import {
   type BoundingBox,
   createBoundingBox,
@@ -67,35 +67,35 @@ import {
   type VDTDesignSlot,
   type VDTDesignTextBlock,
   type VDTExclusionContour,
-} from '../vdt';
-import { contourInsetSteps, shiftContour } from '../contour';
-import { buildFontString, measureBlock, measureRichBlock } from '../measure';
-import { graphemeCount } from '../measure/graphemes';
-import { applyStyleAttrs, isMarkerBlock, widthLessEndIndent } from './buildHelpers';
-import { resetLinePositions } from './placement';
-import { raggedLooseLines } from './raggedLines';
-import { resolveBodyStyle, resolveBlockquoteStyle } from './styles';
-import { computeLevelIndentsPx, computeOrderedLevelIndentsPx, directListMarker, listBulletPosition, listItemGapPx, mirrorListMarker } from './lists';
-import { measureContentBlock, type BlockMeasureContext, type MeasureContentBlockOptions } from './measureContentBlock';
-import { measureBlockMemo, type MeasureMemo } from './measureMemo';
-import { uppercasePreservingLength } from './buildBlockKind';
-import { headingIsHidden, headingStyleOf } from './headingStyles';
-import { tocBlockStamps } from './toc';
-import { directDesignTextBlock } from '../design/bidiText';
-import { arabicNumbersOf } from './config';
-import { containerStyle, paragraphStyleIdOf, type ParagraphContainerPlan } from './paragraphContainers';
-import { joiningScriptIn } from '../measure/joining';
-import { getMeasureArabicNumbers, getMeasureDirection, shiftLineX } from '../measure/bidiLines';
-import { resolvedCodeStyle } from '../defaults/codeStyle';
-import { parseLengthText } from '../defaults/tabStops';
-import { isFlowColumnsStyle } from './flowColumns';
-import { FRAME_STYLE_ID } from '../composed/wrap';
-import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from './columnsGroup';
-import type { LineInsetStep } from '../measure/types';
-import type { CalloutLineWidth, GroupPos } from './cutTypes';
-import { offsetPathBlock } from '../design/pathBlock';
-import { borderSidesPx, boxOutline, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, shapePathBlocks, SHAPE_SIDES, uniformRadius, type ShapeBorder } from '../design/boxShape';
-export type { CalloutLineWidth, GroupPos } from './cutTypes';
+} from '../vdt.js';
+import { contourInsetSteps, shiftContour } from '../contour/index.js';
+import { buildFontString, measureBlock, measureRichBlock } from '../measure/index.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { applyStyleAttrs, isMarkerBlock, widthLessEndIndent } from './buildHelpers.js';
+import { resetLinePositions } from './placement.js';
+import { raggedLooseLines } from './raggedLines.js';
+import { resolveBodyStyle, resolveBlockquoteStyle } from './styles.js';
+import { computeLevelIndentsPx, computeOrderedLevelIndentsPx, directListMarker, listBulletPosition, listItemGapPx, mirrorListMarker } from './lists.js';
+import { measureContentBlock, type BlockMeasureContext, type MeasureContentBlockOptions } from './measureContentBlock.js';
+import { measureBlockMemo, type MeasureMemo } from './measureMemo.js';
+import { uppercasePreservingLength } from './buildBlockKind.js';
+import { headingIsHidden, headingStyleOf } from './headingStyles.js';
+import { tocBlockStamps } from './toc.js';
+import { directDesignTextBlock } from '../design/bidiText.js';
+import { arabicNumbersOf } from './config.js';
+import { containerStyle, paragraphStyleIdOf, type ParagraphContainerPlan } from './paragraphContainers.js';
+import { joiningScriptIn } from '../measure/joining.js';
+import { getMeasureArabicNumbers, getMeasureDirection, shiftLineX } from '../measure/bidiLines.js';
+import { resolvedCodeStyle } from '../defaults/codeStyle.js';
+import { parseLengthText } from '../defaults/tabStops.js';
+import { isFlowColumnsStyle } from './flowColumns.js';
+import { FRAME_STYLE_ID } from '../composed/wrap.js';
+import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from './columnsGroup.js';
+import type { LineInsetStep } from '../measure/types.js';
+import type { CalloutLineWidth, GroupPos } from './cutTypes.js';
+import { offsetPathBlock } from '../design/pathBlock.js';
+import { borderSidesPx, boxOutline, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, shapePathBlocks, SHAPE_SIDES, uniformRadius, type ShapeBorder } from '../design/boxShape.js';
+export type { CalloutLineWidth, GroupPos } from './cutTypes.js';
 
 // ---------------------------------------------------------------------------
 // Pre-pass: callout ranges keyed by the start marker's content-block index.

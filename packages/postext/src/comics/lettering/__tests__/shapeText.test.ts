@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { prepareText, readLetteringText } from '../text';
-import { shapeText } from '../shape-text';
-import { presetLetteringStyles } from '../presets';
-import type { InlineSpan } from '../../../parse/types';
-import type { LetteringStyle } from '../types';
+import { installStubMeasure } from './stubMeasure.js';
+import { prepareText, readLetteringText } from '../text.js';
+import { shapeText } from '../shape-text.js';
+import { presetLetteringStyles } from '../presets.js';
+import type { InlineSpan } from '../../../parse/types.js';
+import type { LetteringStyle } from '../types.js';
 
 beforeAll(() => installStubMeasure());
 

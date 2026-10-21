@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse/blockParser';
-import { parseComicPoint } from '../../comics/script';
-import { BREAK_PLACEHOLDER } from '../../parse/inlineFormatting';
-import type { ComicPageSource } from '../../comics/types';
+import { parseMarkdown } from '../../parse/blockParser.js';
+import { parseComicPoint } from '../../comics/script.js';
+import { BREAK_PLACEHOLDER } from '../../parse/inlineFormatting.js';
+import type { ComicPageSource } from '../../comics/types.js';
 
 function comicOf(md: string): ComicPageSource {
   const block = parseMarkdown(md).find((b) => b.comic);

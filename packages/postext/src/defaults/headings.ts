@@ -1,7 +1,7 @@
-import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, StretchAfterWideFloats, TrailingStep, KeepWithNextSplit, ColumnHeadSpace, ColorValue, Dimension } from '../types';
-import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
-import { resolveDesignSlot } from './headerFooter';
-import { isDropCap } from './dropCap';
+import type { PostextConfig, HeadingsConfig, HeadingLevelConfig, HeadingBreakBeforeConfig, ResolvedHeadingsConfig, ResolvedHeadingLevelConfig, ResolvedHeadingBreakBeforeConfig, HeadingAdvancedDesignConfig, ResolvedHeadingAdvancedDesignConfig, ColumnBalancingConfig, ClosingBoxLever, StretchAfterWideFloats, TrailingStep, KeepWithNextSplit, ColumnHeadSpace, ColorValue, Dimension } from '../types.js';
+import { dimensionsEqual, colorsEqual, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared.js';
+import { resolveDesignSlot } from './headerFooter.js';
+import { isDropCap } from './dropCap.js';
 
 const DEFAULT_BREAK_BEFORE: ResolvedHeadingBreakBeforeConfig = { enabled: false, parity: 'any' };
 

@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import { renderPageToCanvas } from '../index';
-import { CONFIG_VERSION, migrateConfig, migrateBundleConfig, pinLegacyPairedIndents, pinLegacyVerseLayout, pinLegacyVerseTightening } from '../bundle/configVersion';
-import { resolveVerseConfig, stripVerseDefaults, DEFAULT_VERSE_CONFIG } from '../defaults/verse';
-import { stripBodyTextDefaults } from '../defaults/bodyText';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { renderPageToCanvas } from '../index.js';
+import { CONFIG_VERSION, migrateConfig, migrateBundleConfig, pinLegacyPairedIndents, pinLegacyVerseLayout, pinLegacyVerseTightening } from '../bundle/configVersion.js';
+import { resolveVerseConfig, stripVerseDefaults, DEFAULT_VERSE_CONFIG } from '../defaults/verse.js';
+import { stripBodyTextDefaults } from '../defaults/bodyText.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../vdt.js';
 
 // #620: verse line by line — kept line breaks, indents, stanzas and
 // hanging turnovers. The stub font: 7 px a character, a space 4 px.

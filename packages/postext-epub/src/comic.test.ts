@@ -4,12 +4,12 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { renderToEpub, readEpub } from './index';
-import type { ReadEpubResult, RenderToEpubOptions } from './types';
-import { buildOpf } from './package/pack';
-import { buildFixedPublication } from './fixed/index';
-import { percentRect } from './fixed/regions';
-import { PNG, comicSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook } from './__tests__/sampleBook';
+import { renderToEpub, readEpub } from './index.js';
+import type { ReadEpubResult, RenderToEpubOptions } from './types.js';
+import { buildOpf } from './package/pack.js';
+import { buildFixedPublication } from './fixed/index.js';
+import { percentRect } from './fixed/regions.js';
+import { PNG, comicSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook } from './__tests__/sampleBook.js';
 
 const options = (layout: RenderToEpubOptions['layout'], extra: Partial<RenderToEpubOptions> = {}): RenderToEpubOptions => ({
   layout,

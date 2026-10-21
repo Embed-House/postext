@@ -3,7 +3,7 @@
 import { AlignCenter, AlignJustify, AlignLeft, AlignRight } from 'lucide-react';
 
 import { useState } from 'react';
-import { useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
 import { DEFAULT_TEXT_ELEMENT, dimensionsEqual, colorsEqual, uniformRadius } from 'postext';
 import type {
   DesignTextElement,
@@ -25,16 +25,16 @@ import {
   NumberInput,
   ToggleSwitch,
   ColorPicker,
-} from '../../../controls';
-import { NestedGroup } from '../../../controls';
-import { lineHeightFieldValue, lineHeightFromField } from './lineHeight';
-import { PlaceholderPicker } from './PlaceholderPicker';
-import { DropCapFields } from '../../settings/DropCapFields';
-import { TextDotsFields } from '../../settings/TextDotsFields';
-import { useRightToLeftFlow } from '../../settings/flowSides';
-import { SizeToFields, defaultSizeTo, isSizeTo, type FrameTarget } from './sizeTo';
-import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
-import { BorderSidesFields, CornerRadiusFields } from './shapeFields';
+} from '../../../controls/index.js';
+import { NestedGroup } from '../../../controls/index.js';
+import { lineHeightFieldValue, lineHeightFromField } from './lineHeight.js';
+import { PlaceholderPicker } from './PlaceholderPicker.js';
+import { DropCapFields } from '../../settings/DropCapFields.js';
+import { TextDotsFields } from '../../settings/TextDotsFields.js';
+import { useRightToLeftFlow } from '../../settings/flowSides.js';
+import { SizeToFields, defaultSizeTo, isSizeTo, type FrameTarget } from './sizeTo.js';
+import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields.js';
+import { BorderSidesFields, CornerRadiusFields } from './shapeFields.js';
 import {
   type SlotKind,
   alignFromPlacement,
@@ -43,7 +43,7 @@ import {
   marginFromBody,
   marginFromEdge,
   isContainerAnchor,
-} from './placementAdapter';
+} from './placementAdapter.js';
 
 const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const TRACKING_UNITS: DimensionUnit[] = ['pt', 'em', 'px'];

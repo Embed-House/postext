@@ -52,7 +52,7 @@ import {
   useSandboxLabels,
   useSandboxResources,
   useSandboxSelector,
-} from '../../context/SandboxContext';
+} from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   ItemCard,
@@ -67,21 +67,21 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
-import { Button, ConfirmPopover, IconButton, cn } from '../../ui';
-import { useFieldIds } from '../../controls/fieldContext';
-import { FieldRow } from '../../controls/FieldRow';
-import { SearchScope } from '../search/SearchScope';
-import { CONTAINER_EDGES } from './HeaderFooterSection/placementAdapter';
-import { BorderSidesFields, CornerRadiusFields } from './HeaderFooterSection/shapeFields';
-import { SlotEditor } from './HeaderFooterSection/SlotEditor';
-import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
-import { hasSeveralColumns } from '../settings/multiColumnBook';
-import { MULTIPLE_COLUMNS_MAX } from '../settings/multipleColumns';
-import { TabStopsField } from '../settings/TabStopsField';
-import { useBookTexts } from '../../frameStyles/useBookTexts';
-import { planRename } from '../../frameStyles/styleMerge';
-import { applyStyleRewrite } from '../../frameStyles/applyRewrite';
+} from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton, cn } from '../../ui/index.js';
+import { useFieldIds } from '../../controls/fieldContext.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { SearchScope } from '../search/SearchScope.js';
+import { CONTAINER_EDGES } from './HeaderFooterSection/placementAdapter.js';
+import { BorderSidesFields, CornerRadiusFields } from './HeaderFooterSection/shapeFields.js';
+import { SlotEditor } from './HeaderFooterSection/SlotEditor.js';
+import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
+import { hasSeveralColumns } from '../settings/multiColumnBook.js';
+import { MULTIPLE_COLUMNS_MAX } from '../settings/multipleColumns.js';
+import { TabStopsField } from '../settings/TabStopsField.js';
+import { useBookTexts } from '../../frameStyles/useBookTexts.js';
+import { planRename } from '../../frameStyles/styleMerge.js';
+import { applyStyleRewrite } from '../../frameStyles/applyRewrite.js';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

@@ -2,9 +2,9 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { FileCode, Loader2 } from 'lucide-react';
-import { putBlob } from '../../storage/blobStore';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { isValidSvg, svgIntrinsicSize } from './svgIntrinsic';
+import { putBlob } from '../../storage/blobStore.js';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { isValidSvg, svgIntrinsicSize } from './svgIntrinsic.js';
 
 /** Result of a successful SVG upload, ready to fold into a Resource. */
 export interface SvgUploadResult {

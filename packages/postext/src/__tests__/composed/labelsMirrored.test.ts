@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { renderPageToCanvas } from '../../index';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { labelLayoutOnSheet } from '../../composed/labels';
-import type { PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderPageToCanvas } from '../../index.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { labelLayoutOnSheet } from '../../composed/labels.js';
+import type { PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 // #955: a vertical label on the mirrored page of a right-to-left book.
 

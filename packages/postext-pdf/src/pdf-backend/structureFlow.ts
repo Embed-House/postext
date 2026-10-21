@@ -25,7 +25,7 @@
 
 import { taskBoxText } from 'postext';
 import type { VDTBlock } from 'postext';
-import type { StructAttrs, StructElem, StructTree, StructType } from './tagging';
+import type { StructAttrs, StructElem, StructTree, StructType } from './tagging.js';
 
 interface OpenList {
   depth: number;

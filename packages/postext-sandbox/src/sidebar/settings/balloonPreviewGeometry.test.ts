@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ComicBalloonShape, ComicBalloonTail } from 'postext';
-import { balloonPreviewGeometry, dimensionToPx, estimateTextWidth, type BalloonPreviewInput } from './balloonPreviewGeometry';
+import { balloonPreviewGeometry, dimensionToPx, estimateTextWidth, type BalloonPreviewInput } from './balloonPreviewGeometry.js';
 
 const base: BalloonPreviewInput = {
   shape: 'oval',

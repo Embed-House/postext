@@ -2,15 +2,15 @@
 
 import { memo, useRef, useState, type FocusEventHandler, type Ref } from 'react';
 import { AArrowDown, AArrowUp, ArrowRight, ChevronLeft, ChevronRight, Download, ListTree, RefreshCw, TriangleAlert } from 'lucide-react';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { useCompactLayout } from '../hooks/useCompactLayout';
-import { useLargeTargets } from '../ui/largeTargets';
-import { Popover } from '../ui';
-import { formatBytes } from '../epub/viewer';
-import type { SandboxLabels } from '../types';
-import type { EpubNotice } from './EpubViewport';
-import type { EpubReaderPosition } from './EpubReader';
-import { PageNumberInput, PageTurnButtons, PinToolbarButton, ToolbarButton, ToolbarSeparator, useToolbarRootProps } from './CanvasToolbar';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { useCompactLayout } from '../hooks/useCompactLayout.js';
+import { useLargeTargets } from '../ui/largeTargets.js';
+import { Popover } from '../ui/index.js';
+import { formatBytes } from '../epub/viewer.js';
+import type { SandboxLabels } from '../types/index.js';
+import type { EpubNotice } from './EpubViewport.js';
+import type { EpubReaderPosition } from './EpubReader.js';
+import { PageNumberInput, PageTurnButtons, PinToolbarButton, ToolbarButton, ToolbarSeparator, useToolbarRootProps } from './CanvasToolbar.js';
 
 const MIN_FONT_SCALE = 0.6;
 const MAX_FONT_SCALE = 2.5;

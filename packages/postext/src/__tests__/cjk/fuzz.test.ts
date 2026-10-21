@@ -1,9 +1,9 @@
 import { it, expect } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import type { InlineSpan } from '../../parse';
-import type { CjkLineBreakLevel } from '../../measure/cjkClasses';
-import type { CjkComposition } from '../../measure/cjkPunctuation';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { CjkLineBreakLevel } from '../../measure/cjkClasses.js';
+import type { CjkComposition } from '../../measure/cjkPunctuation.js';
 
 // The composer on random mixes of Chinese, punctuation, Latin runs, numbers,
 // spaces, U+3000, zero-width spaces, soft hyphens, supplementary-plane and

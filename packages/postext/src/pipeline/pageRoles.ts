@@ -17,9 +17,9 @@
  *  - `'body'`   — everything else.
  */
 
-import type { PageRole } from '../types';
-import type { ResolvedConfig, VDTBlock, VDTDocument, VDTPage } from '../vdt';
-import { createHeadingLevelResolver, type HeadingLevelResolver } from './headingStyles';
+import type { PageRole } from '../types.js';
+import type { ResolvedConfig, VDTBlock, VDTDocument, VDTPage } from '../vdt.js';
+import { createHeadingLevelResolver, type HeadingLevelResolver } from './headingStyles.js';
 
 /** First block of the page in reading order (columns in index order), or
  *  `undefined` when the page holds no column content. */

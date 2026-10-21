@@ -10,26 +10,26 @@
 // text (one forced break per line), so bidi ordering, vertical cells, tcy
 // and JLReq orientation come from the engine's design-text layout.
 
-import { flowTextWidth, withMeasureWritingMode } from '../../measure/vertical';
-import { graphemeCount } from '../../measure/graphemes';
-import { buildFontString } from '../../measure';
-import { joiningScriptIn } from '../../measure/joining';
-import { hasJoiningScript } from '../../bidi';
-import { hasCJK } from '../../measure/cjk';
-import { parseRichDesignText, richDesignSpans, richFontSet, RichMeasurer } from '../../design/richText';
-import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from '../../design/cjkText';
-import { cjkCompositionKey, getCjkComposition, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
-import { layoutTextElementAt } from '../../design/layout';
-import { designBaseDirection, directedTextWidth, measuresRunsAsPainted } from '../../design/bidiText';
-import { primitiveToBlock } from '../../pipeline/headerFooter';
-import { cjkRegionOf, directionOf, isJapaneseLanguage, languageOf } from '../../locale';
-import type { CjkLineBreakLevel } from '../../measure/cjkClasses';
-import type { CjkRegion, ResolvedDesignTextElement } from '../../types';
-import type { InlineSpan } from '../../parse/types';
-import type { VDTDesignTextBlock } from '../../vdt';
-import { breakPoints, hasMarks, isIsolateControl, markupOf, type BreakPoint, type PreparedText } from './text';
-import { boundsOf } from './geom';
-import type { LetteringStyle, Rect } from './types';
+import { flowTextWidth, withMeasureWritingMode } from '../../measure/vertical.js';
+import { graphemeCount } from '../../measure/graphemes.js';
+import { buildFontString } from '../../measure/index.js';
+import { joiningScriptIn } from '../../measure/joining.js';
+import { hasJoiningScript } from '../../bidi.js';
+import { hasCJK } from '../../measure/cjk.js';
+import { parseRichDesignText, richDesignSpans, richFontSet, RichMeasurer } from '../../design/richText.js';
+import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from '../../design/cjkText.js';
+import { cjkCompositionKey, getCjkComposition, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation.js';
+import { layoutTextElementAt } from '../../design/layout.js';
+import { designBaseDirection, directedTextWidth, measuresRunsAsPainted } from '../../design/bidiText.js';
+import { primitiveToBlock } from '../../pipeline/headerFooter.js';
+import { cjkRegionOf, directionOf, isJapaneseLanguage, languageOf } from '../../locale.js';
+import type { CjkLineBreakLevel } from '../../measure/cjkClasses.js';
+import type { CjkRegion, ResolvedDesignTextElement } from '../../types.js';
+import type { InlineSpan } from '../../parse/types.js';
+import type { VDTDesignTextBlock } from '../../vdt.js';
+import { breakPoints, hasMarks, isIsolateControl, markupOf, type BreakPoint, type PreparedText } from './text.js';
+import { boundsOf } from './geom.js';
+import type { LetteringStyle, Rect } from './types.js';
 
 /** Settings of one shaping. */
 export interface ShapeOptions {

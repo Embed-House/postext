@@ -3,7 +3,7 @@
  * page a reader is sent to (the QR code, the PDF link) and the player a
  * screen output embeds.
  */
-import type { Resource, ResolvedVideoPlayerOptions, VideoSource } from '../types';
+import type { Resource, ResolvedVideoPlayerOptions, VideoSource } from '../types.js';
 
 /** A YouTube or Vimeo video recognised from a link. */
 export interface ParsedVideoUrl {

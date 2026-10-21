@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { cjkCompositionKey, cjkCompositionOf } from '../../measure/cjkPunctuation';
-import { cjkRegionOfConfig, defaultCjkLatinSpacingEdge, resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { CjkConfig, PostextConfig } from '../../types';
-import type { VDTDocument, VDTLine } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { cjkCompositionKey, cjkCompositionOf } from '../../measure/cjkPunctuation.js';
+import { cjkRegionOfConfig, defaultCjkLatinSpacingEdge, resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { CjkConfig, PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLine } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // #721: in the Japan region a Western word takes the quarter em (四分アキ,
 // JLReq §3.2.6) on a side that ends in a bracket or a sign, as on a side

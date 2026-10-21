@@ -29,7 +29,7 @@ import {
   type VDTDocument,
   type VDTFigureLabel,
 } from 'postext';
-import { blockFrameMatrix } from './frameHit';
+import { blockFrameMatrix } from './frameHit.js';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTPage = VDTDocument['pages'][number];

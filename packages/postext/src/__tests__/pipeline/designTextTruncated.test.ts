@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import type { DesignElement, DesignTextElement, PostextConfig } from '../../types';
-import type { ContentWarning, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import type { DesignElement, DesignTextElement, PostextConfig } from '../../types.js';
+import type { ContentWarning, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
 
 // #628: heading and part titles that set no `overflow` wrap, and every
 // design text cut to fit its width is reported as a `designTextTruncated`

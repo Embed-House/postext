@@ -15,7 +15,7 @@
  * yields an error and no outline: a design draws nothing rather than half
  * a shape.
  */
-import type { VDTPathCommand } from '../vdt';
+import type { VDTPathCommand } from '../vdt.js';
 
 /** The longest path data read (characters): a design's shape is a few
  *  hundred; anything far longer is no decoration. */

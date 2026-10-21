@@ -12,7 +12,7 @@ import { fontFallbacks, type FontFaceLike, type PostextConfig } from 'postext';
 // Google's style sheet, as it did for every family before #757; the static
 // cuts of a family whose package is there are in fontCuts.test.ts.
 
-type Loader = typeof import('./fontLoader');
+type Loader = typeof import('./fontLoader.js');
 
 const LATIN = 'U+0000-00FF, U+0131, U+0152-0153';
 const LATIN_EXT = 'U+0100-02BA, U+1E00-1E9F';
@@ -137,7 +137,7 @@ beforeEach(async () => {
   globals.document = { fonts };
   globals.FontFace = FakeFace;
   vi.resetModules();
-  loader = await import('./fontLoader');
+  loader = await import('./fontLoader.js');
 });
 
 afterEach(() => {
@@ -427,10 +427,10 @@ describe('the system fonts of a font stack (#753)', () => {
     };
   }
 
-  const provider = async () => (await import('../viewport/pdfFontProvider')).createPdfFontProvider({ raw: true });
+  const provider = async () => (await import('../viewport/pdfFontProvider.js')).createPdfFontProvider({ raw: true });
 
   it('tells them by name, whatever the quotes and the case', async () => {
-    const { isSystemFontFamily, isGenericFontFamily } = await import('./systemFonts');
+    const { isSystemFontFamily, isGenericFontFamily } = await import('./systemFonts.js');
     for (const name of [...STACK, ...GENERIC, "'Segoe UI'", '"helvetica neue"', 'ARIAL', 'Times New Roman', 'PingFang SC', 'Hiragino Mincho ProN', 'Yu Gothic', 'Geeza Pro', 'Tahoma', 'Source Han Sans SC']) {
       expect(isSystemFontFamily(name), name).toBe(true);
     }
@@ -482,7 +482,7 @@ describe('the system fonts of a font stack (#753)', () => {
       expect(loader.isKnownUnavailableGoogleFont(family)).toBe(true);
       expect(loader.isUncataloguedFontFamily(family)).toBe(true);
     }
-    const { computeWarnings } = await import('../warnings/compute');
+    const { computeWarnings } = await import('../warnings/compute.js');
     const config: PostextConfig = { bodyText: { fontFamily: 'Arial' }, headings: { fontFamily: 'Lora, Helvetica Neue, sans-serif' } };
     const payloads = computeWarnings({ markdown: 'Text.', config, doc: null }).map((w) => w.payload);
     expect(payloads.filter((p) => p.kind === 'missingFontFamily')).toEqual([{ kind: 'missingFontFamily', family: 'Arial' }]);

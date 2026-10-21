@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { resolveFootnotesConfig, stripFootnotesDefaults } from '../../defaults';
-import { numberFootnotesByPlacement, formatFootnoteNumber } from '../../pipeline/footnotes';
-import type { PostextConfig, VDTBlock, VDTDocument, VDTLineSegment } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveFootnotesConfig, stripFootnotesDefaults } from '../../defaults/index.js';
+import { numberFootnotesByPlacement, formatFootnoteNumber } from '../../pipeline/footnotes.js';
+import type { PostextConfig, VDTBlock, VDTDocument, VDTLineSegment } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): wide
 // characters an em of a 14 px font, the rest 7 px.

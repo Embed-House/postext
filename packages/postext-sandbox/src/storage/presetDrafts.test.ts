@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { Resource } from 'postext';
-import type { AppliedPresetSnapshot } from '../presets/types';
-import { snapshotForApply } from '../presets/apply';
-import type { LoadedPreset } from '../presets/types';
-import type { BlobRecord } from './blobStore';
+import type { AppliedPresetSnapshot } from '../presets/types.js';
+import { snapshotForApply } from '../presets/apply.js';
+import type { LoadedPreset } from '../presets/types.js';
+import type { BlobRecord } from './blobStore.js';
 import {
   decideDraftSave,
   draftFileId,
@@ -12,8 +12,8 @@ import {
   readDraftRecord,
   remapDraftBlobs,
   type PresetDraftRecord,
-} from './presetDrafts';
-import { PROJECT_RECORD_VERSION } from './projectMigration';
+} from './presetDrafts.js';
+import { PROJECT_RECORD_VERSION } from './projectMigration.js';
 
 const chapter = (id: string, markdown: string) => ({ id, title: id, markdown, createdAt: 0, updatedAt: 0 });
 const fig = (id: string, fileId: string): Resource => ({ id, typeId: 'figure', kind: 'svg', createdAt: 0, updatedAt: 0, svg: { fileId } });

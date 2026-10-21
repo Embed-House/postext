@@ -4,12 +4,12 @@
 // (../../viewport/comics), on the layout the chapter has now.
 
 import type { VDTComicBalloon, VDTPoint } from 'postext';
-import { composeBookMemo, segmentForChapter } from '../../book/compose';
-import { applyTextChanges, invertTextChanges, type TextChange } from '../../book/textChanges';
-import { applyViewerEdit } from '../../editor/viewerEdits';
-import { balloonGroup, boxCentre, dragBalloon, pageToTailTarget, pinAfterMove, pinToPage } from '../../viewport/comics/balloonDrag';
-import { formatRotate } from '../../viewport/comics/balloonSource';
-import { letterboxedPanels, movedPanels, nudgeSplitter, type SplitterPosition } from '../../viewport/comics/comicDrag';
+import { composeBookMemo, segmentForChapter } from '../../book/compose.js';
+import { applyTextChanges, invertTextChanges, type TextChange } from '../../book/textChanges.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
+import { balloonGroup, boxCentre, dragBalloon, pageToTailTarget, pinAfterMove, pinToPage } from '../../viewport/comics/balloonDrag.js';
+import { formatRotate } from '../../viewport/comics/balloonSource.js';
+import { letterboxedPanels, movedPanels, nudgeSplitter, type SplitterPosition } from '../../viewport/comics/comicDrag.js';
 import {
   balloonMoveChanges,
   balloonMoveOf,
@@ -24,13 +24,13 @@ import {
   tailTargetAt,
   unpinGroupChanges,
   untailChanges,
-} from '../../viewport/comics/comicEdits';
-import { canMergeNext, canSplitPanel } from '../../viewport/comics/comicSource';
-import { chapterComics, describeComic, lineAt, outlineComic, partOf, pointOfPage, scriptItemOf, splitterRange, toPercent, type ChapterComic, type ComicPart } from '../comicModel';
-import { chapterOf, dispatchAndWait, layOutChapter, pageIndexOf, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { layoutAnswer } from './book';
-import { screenPosition } from './view';
+} from '../../viewport/comics/comicEdits.js';
+import { canMergeNext, canSplitPanel } from '../../viewport/comics/comicSource.js';
+import { chapterComics, describeComic, lineAt, outlineComic, partOf, pointOfPage, scriptItemOf, splitterRange, toPercent, type ChapterComic, type ComicPart } from '../comicModel.js';
+import { chapterOf, dispatchAndWait, layOutChapter, pageIndexOf, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { layoutAnswer } from './book.js';
+import { screenPosition } from './view.js';
 
 const CHAPTER_PARAM = {
   type: ['integer', 'string'],

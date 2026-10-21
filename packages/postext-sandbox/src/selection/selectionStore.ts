@@ -17,12 +17,12 @@
 
 import { useSyncExternalStore } from 'react';
 import { findElement, sourceAt, type PageTemplate, type SourceMapOptions, type VDTDocument } from 'postext';
-import type { Chapter } from '../book/types';
-import type { FrameEditorEvent } from '../templates/frameEvents';
-import { onFrameDragChange, setFrameDrag } from './frameDrag';
+import type { Chapter } from '../book/types.js';
+import type { FrameEditorEvent } from '../templates/frameEvents.js';
+import { onFrameDragChange, setFrameDrag } from './frameDrag.js';
 
-export { frameDragNow, type FrameDrag } from './frameDrag';
-import { climb, climbable, atLevel, elementRectOnSheet, resolveSelection, type ChapterOfPage, type PageSelection } from './pageSelection';
+export { frameDragNow, type FrameDrag } from './frameDrag.js';
+import { climb, climbable, atLevel, elementRectOnSheet, resolveSelection, type ChapterOfPage, type PageSelection } from './pageSelection.js';
 
 /** What carries a selection out (opens the editor or a panel at it): the
  *  viewer that made it. */

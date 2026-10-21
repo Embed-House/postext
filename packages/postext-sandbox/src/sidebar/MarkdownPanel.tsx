@@ -2,15 +2,15 @@
 
 import { useRef, useState } from 'react';
 import { Download, FileInput, FileOutput, Upload, RotateCcw } from 'lucide-react';
-import { MarkdownEditor } from '../editor/MarkdownEditor';
-import { ChapterSwitcher } from '../editor/ChapterSwitcher';
-import { useSandbox, useSandboxPresets, useSandboxProjects } from '../context/SandboxContext';
-import { exportMarkdownFile, importMarkdownFile } from '../storage/persistence';
-import { slugify } from '../panels/resources/slugify';
-import { ConfirmPopover, IconButton, PanelHeader, announce } from '../ui';
+import { MarkdownEditor } from '../editor/MarkdownEditor.js';
+import { ChapterSwitcher } from '../editor/ChapterSwitcher.js';
+import { useSandbox, useSandboxPresets, useSandboxProjects } from '../context/SandboxContext.js';
+import { exportMarkdownFile, importMarkdownFile } from '../storage/persistence.js';
+import { slugify } from '../panels/resources/slugify.js';
+import { ConfirmPopover, IconButton, PanelHeader, announce } from '../ui/index.js';
 import { DocxReadError, readDocx } from 'postext/word';
-import { WordImportDialog, isolate, type WordImportFile } from '../word/WordImportDialog';
-import { WordExportDialog } from '../word/WordExportDialog';
+import { WordImportDialog, isolate, type WordImportFile } from '../word/WordImportDialog.js';
+import { WordExportDialog } from '../word/WordExportDialog.js';
 
 interface MarkdownPanelProps {
   isDark?: boolean;

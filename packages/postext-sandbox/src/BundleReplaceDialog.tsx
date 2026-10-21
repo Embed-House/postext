@@ -2,9 +2,9 @@
 
 import { useRef } from 'react';
 import { AlertDialog } from '@base-ui/react/alert-dialog';
-import { useSandboxBundleReplacePrompt, useSandboxLabels } from './context/SandboxContext';
-import { Button, usePortalContainer } from './ui';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from './ui/surface';
+import { useSandboxBundleReplacePrompt, useSandboxLabels } from './context/SandboxContext.js';
+import { Button, usePortalContainer } from './ui/index.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from './ui/surface.js';
 
 /** Asks, when a link names a book the reader has their own version of — a
  *  host bundle link (`#recipe=…`) to a book imported before, or a homepage

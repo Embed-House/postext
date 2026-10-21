@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, Resource, VDTBlock, VDTDocument } from 'postext';
-import { baseConfig, layOut } from './__tests__/vdt';
-import { figureLabelsOverlay } from './labels';
+import { baseConfig, layOut } from './__tests__/vdt.js';
+import { figureLabelsOverlay } from './labels.js';
 
 // #955: the labels of a figure that the print draws as text, drawn over the
 // picture of a reflowable book as one SVG in the picture's coordinates.

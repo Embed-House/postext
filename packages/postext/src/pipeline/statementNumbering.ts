@@ -15,16 +15,16 @@
  * formulas — and sets a style's end mark (a proof's ∎).
  */
 
-import type { ContentBlock, InlineSpan } from '../parse';
-import { MATH_PLACEHOLDER } from '../parse';
-import { isMathReady } from '../math/engine';
-import { texLabelMatches } from '../parse/equationLabels';
-import type { HeadingCounters, ResolvedCalloutNumberingConfig, ResolvedCalloutStyleConfig } from '../types';
-import type { ResolvedConfig, VDTLine, VDTLineSegment } from '../vdt';
-import type { MeasuredBlock } from '../measure';
-import { computeHeadingContext, counterResets, renderTemplateNumber } from './resourceNumbering';
-import { headingIsNumbered } from './headingStyles';
-import { resolvedLocale } from './config';
+import type { ContentBlock, InlineSpan } from '../parse/index.js';
+import { MATH_PLACEHOLDER } from '../parse/index.js';
+import { isMathReady } from '../math/engine.js';
+import { texLabelMatches } from '../parse/equationLabels.js';
+import type { HeadingCounters, ResolvedCalloutNumberingConfig, ResolvedCalloutStyleConfig } from '../types.js';
+import type { ResolvedConfig, VDTLine, VDTLineSegment } from '../vdt.js';
+import type { MeasuredBlock } from '../measure/index.js';
+import { computeHeadingContext, counterResets, renderTemplateNumber } from './resourceNumbering.js';
+import { headingIsNumbered } from './headingStyles.js';
+import { resolvedLocale } from './config.js';
 
 const NBSP = ' ';
 

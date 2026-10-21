@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { createHash } from 'node:crypto';
 import type { VDTDocument } from 'postext';
-import { bookIdentifier, fontAssets, imageAssets, pageProgressionOf, placedFileIds } from './assets';
-import { sniffFontFormat, sniffImageType } from './media';
-import { sha1, uuidV5 } from './uuid';
-import type { EpubWarning } from '../types';
+import { bookIdentifier, fontAssets, imageAssets, pageProgressionOf, placedFileIds } from './assets.js';
+import { sniffFontFormat, sniffImageType } from './media.js';
+import { sha1, uuidV5 } from './uuid.js';
+import type { EpubWarning } from '../types.js';
 
 const PNG = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
 const SVG = new TextEncoder().encode('<?xml version="1.0"?>\n<svg xmlns="http://www.w3.org/2000/svg"/>');

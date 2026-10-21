@@ -2,9 +2,9 @@
 
 import { useState, type ReactNode } from 'react';
 import { Trash2 } from 'lucide-react';
-import { FieldRow } from '../../../controls/FieldRow';
-import { ConfirmPopover, IconButton } from '../../../ui';
-import { inputClass, inputStyle } from './comicsShared';
+import { FieldRow } from '../../../controls/FieldRow.js';
+import { ConfirmPopover, IconButton } from '../../../ui/index.js';
+import { inputClass, inputStyle } from './comicsShared.js';
 
 interface ComicsCardHeaderProps {
   /** Shown as the card's title. */

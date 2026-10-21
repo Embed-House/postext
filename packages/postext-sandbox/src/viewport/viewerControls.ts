@@ -7,7 +7,7 @@
 // what calls them, so an agent works the viewers the reader sees.
 
 import { useEffect, useRef } from 'react';
-import type { ViewportTab } from '../types';
+import type { ViewportTab } from '../types/index.js';
 
 /** The settings a viewer keeps for itself. Each tab takes its own and
  *  ignores the rest. */

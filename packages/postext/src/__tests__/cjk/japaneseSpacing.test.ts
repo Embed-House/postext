@@ -1,14 +1,14 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { cjkCompositionKey, cjkCompositionOf, isJlreqSpacing, punctuationSide, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
-import { resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk';
-import { cjkClassOf } from '../../measure/cjkClasses';
-import { buildDocument } from '../../pipeline';
-import type { CjkConfig, PostextConfig } from '../../types';
-import type { MeasureBlockOptions } from '../../measure/types';
-import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { cjkCompositionKey, cjkCompositionOf, isJlreqSpacing, punctuationSide, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation.js';
+import { resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk.js';
+import { cjkClassOf } from '../../measure/cjkClasses.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { CjkConfig, PostextConfig } from '../../types.js';
+import type { MeasureBlockOptions } from '../../measure/types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // Yakumono spacing in Japanese text (#418, JLReq §3.1 and §3.8): full-width
 // marks with JLReq's pair compression, the half em at a line end kept and

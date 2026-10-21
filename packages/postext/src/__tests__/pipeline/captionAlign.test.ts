@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { layoutResourceBlock } from '../../pipeline/resourceLayout';
-import { resolveAllConfig } from '../../pipeline/config';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { buildDocument } from '../../pipeline';
-import { dimensionToPx } from '../../units';
-import type { CaptionStyleConfig, PostextConfig, Resource, ResourceType, TextAlign } from '../../types';
+import { layoutResourceBlock } from '../../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { buildDocument } from '../../pipeline/index.js';
+import { dimensionToPx } from '../../units.js';
+import type { CaptionStyleConfig, PostextConfig, Resource, ResourceType, TextAlign } from '../../types.js';
 
 // EF-166: `captionStyle.align` and `captionStyle.note.align` set to
 // 'center' or 'right' were ignored: the measurer only acts on 'justify',

@@ -3,14 +3,14 @@
 import { describe, expect, it } from 'vitest';
 import type { PlacedDesignElement } from 'postext';
 import { dimensionToPx, parseMarkdown, type Dimension, type PostextConfig } from 'postext';
-import { computeWarnings } from '../warnings/compute';
-import { buildHtmlConfigOverride } from '../viewport/HtmlPreview/configOverride';
-import { hasLatinEmphasis, missingUsedVariants } from '../controls/fontLoader';
+import { computeWarnings } from '../warnings/compute.js';
+import { buildHtmlConfigOverride } from '../viewport/HtmlPreview/configOverride.js';
+import { hasLatinEmphasis, missingUsedVariants } from '../controls/fontLoader.js';
 import { pickBundleView, type BundleManifest } from 'postext/bundle';
-import { effectiveCanvasScope } from '../book/scope';
-import { fontsToCustomFonts } from './manifest';
-import { localeLayoutsFile, type BundleLayoutsFile } from './bundle';
-import type { PresetFontFamilySpec } from './types';
+import { effectiveCanvasScope } from '../book/scope.js';
+import { fontsToCustomFonts } from './manifest.js';
+import { localeLayoutsFile, type BundleLayoutsFile } from './bundle.js';
+import type { PresetFontFamilySpec } from './types.js';
 
 // Loaded through a dynamic import (the package has no Node typings).
 const BUNDLE = '../../../../apps/web/public/presets/hongloumeng/';

@@ -3,9 +3,9 @@
 import { Fragment, useEffect, type CSSProperties } from 'react';
 import { chineseScriptOf, defaultCjkEmphasis, isJapaneseLanguage, resolveCjkConfig, resolveColorValue, resolveLayoutConfig, resolvePageConfig } from 'postext';
 import type { ResolvedBodyTextConfig } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { loadFont } from '../../controls/fontLoader';
-import { toPt } from '../../controls/units';
+import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { loadFont } from '../../controls/fontLoader.js';
+import { toPt } from '../../controls/units.js';
 
 interface TypeSampleProps {
   body: ResolvedBodyTextConfig;

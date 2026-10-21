@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { expandIndexDirectives } from '../pipeline/indexDirective';
+import { expandIndexDirectives } from '../pipeline/indexDirective.js';
 import {
   PINYIN_BOUNDARIES,
   PINYIN_INITIALS,
@@ -13,13 +13,13 @@ import {
   strokeGroup,
   strokeLabel,
   strokeMarker,
-} from '../pipeline/indexGroups';
-import { parseMarkdown } from '../parse';
-import { resolveAllConfig } from '../pipeline/config';
-import { resolveIndexConfig, stripIndexDefaults } from '../defaults/indexConfig';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import type { ContentBlock } from '../parse';
-import type { OutlineEntry, PostextConfig } from '../types';
+} from '../pipeline/indexGroups.js';
+import { parseMarkdown } from '../parse/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { resolveIndexConfig, stripIndexDefaults } from '../defaults/indexConfig.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import type { ContentBlock } from '../parse/index.js';
+import type { OutlineEntry, PostextConfig } from '../types.js';
 
 // Chinese group heads of the back-of-book index (#182), with the names of
 // 红楼梦.

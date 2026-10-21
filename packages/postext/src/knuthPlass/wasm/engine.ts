@@ -9,8 +9,8 @@
  * WebAssembly is missing or refused, the TypeScript breaker answers.
  */
 
-import { wasmBreaker, type Breaker } from './abi';
-import { LINEBREAK_WASM_BASE64 } from './bytes.generated';
+import { wasmBreaker, type Breaker } from './abi.js';
+import { LINEBREAK_WASM_BASE64 } from './bytes.generated.js';
 
 let breaker: Breaker | null = null;
 let pending: Promise<boolean> | null = null;

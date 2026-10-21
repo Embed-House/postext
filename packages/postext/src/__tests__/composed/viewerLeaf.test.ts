@@ -4,11 +4,11 @@
 // geometry instead of anchoring to a page 200,000 px tall.
 
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PageTemplate } from '../../composed/types';
-import type { DesignElement, PostextConfig, VDTDocument, VDTPage } from '../../index';
-import { altWithLabels, labelPlainText } from '../../composed/labelText';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { DesignElement, PostextConfig, VDTDocument, VDTPage } from '../../index.js';
+import { altWithLabels, labelPlainText } from '../../composed/labelText.js';
 
 class StubCtx {
   font = '';

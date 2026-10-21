@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { measureBlock, measureRichBlock, createMeasurementCache } from '../measure';
-import { cachedMeasureBlock } from '../measure/index';
-import { mirrorLineSpans } from '../measure/bidiLines';
-import { lineInsetsAt, lineWidthAt, uniformMeasureFrom, type LineInsetStep, type MeasureBlockOptions } from '../measure/types';
-import { lineTextAlign, type VDTLine } from '../vdt';
+import { measureBlock, measureRichBlock, createMeasurementCache } from '../measure/index.js';
+import { cachedMeasureBlock } from '../measure/index.js';
+import { mirrorLineSpans } from '../measure/bidiLines.js';
+import { lineInsetsAt, lineWidthAt, uniformMeasureFrom, type LineInsetStep, type MeasureBlockOptions } from '../measure/types.js';
+import { lineTextAlign, type VDTLine } from '../vdt.js';
 
 // #627 Phase 1: lines set short on either side (`lineInsets`), the lines
 // of a paragraph beside a picture that text wraps round.

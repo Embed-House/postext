@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PostextConfig, Resource } from 'postext';
-import { chapter, harness } from './testHarness';
+import { chapter, harness } from './testHarness.js';
 
 // The blob and font stores are IndexedDB; here they are maps.
 const { blobs, fonts } = vi.hoisted(() => ({
   blobs: new Map<string, { fileId: string; contentType: string; bytes: ArrayBuffer }>(),
   fonts: new Map<string, { fileId: string; fileName: string }>(),
 }));
-vi.mock('../../storage/blobStore', async (original) => {
+vi.mock('../../storage/blobStore.js', async (original) => {
   let made = 0;
   return {
-    ...(await original<typeof import('../../storage/blobStore')>()),
+    ...(await original<typeof import('../../storage/blobStore.js')>()),
     putBlob: async (bytes: ArrayBuffer, contentType: string) => {
       const fileId = `blob-${++made}`;
       blobs.set(fileId, { fileId, contentType, bytes });
@@ -20,8 +20,8 @@ vi.mock('../../storage/blobStore', async (original) => {
     deleteBlob: async (fileId: string) => { blobs.delete(fileId); },
   };
 });
-vi.mock('../../storage/fontStorage', async (original) => ({
-  ...(await original<typeof import('../../storage/fontStorage')>()),
+vi.mock('../../storage/fontStorage.js', async (original) => ({
+  ...(await original<typeof import('../../storage/fontStorage.js')>()),
   putFontFile: async (file: { fileId: string; fileName: string }) => { fonts.set(file.fileId, file); },
   deleteFontFile: async (fileId: string) => { fonts.delete(fileId); },
 }));

@@ -7,13 +7,13 @@
 
 import { describe, expect, it } from 'vitest';
 import { buildDocument, resolveCjkConfig, type CjkRegion, type PostextConfig } from 'postext';
-import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_IT, DEFAULT_MARKDOWN_ZH_HANS } from '.';
-import { createPostextGuideConfig } from '../context/guideConfig';
-import { GUIDE_FOLIO } from '../context/guideKit';
-import { SETTINGS_GROUPS, type SettingsGroupId } from '../sidebar/sections/registry';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
-import { VIEWPORT_TABS } from '../storage/viewHash';
-import { buildHtmlConfigOverride } from '../viewport/HtmlPreview/configOverride';
+import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_IT, DEFAULT_MARKDOWN_ZH_HANS } from './index.js';
+import { createPostextGuideConfig } from '../context/guideConfig.js';
+import { GUIDE_FOLIO } from '../context/guideKit.js';
+import { SETTINGS_GROUPS, type SettingsGroupId } from '../sidebar/sections/registry.js';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
+import { VIEWPORT_TABS } from '../storage/viewHash.js';
+import { buildHtmlConfigOverride } from '../viewport/HtmlPreview/configOverride.js';
 
 const spanish = (await import(/* @vite-ignore */ new URL('../../../../apps/web/messages/es.json', import.meta.url).href)) as {
   default: { Sandbox: Record<string, string> };

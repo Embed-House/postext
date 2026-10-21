@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../index';
-import type { PostextConfig, VDTLineSegment } from '../index';
+import { buildDocument, renderPageToCanvas, renderToHtml } from '../index.js';
+import type { PostextConfig, VDTLineSegment } from '../index.js';
 
 // EF-30: colour values may carry an alpha channel (`#rgba`, `#rrggbbaa`,
 // `rgb()` / `rgba()`). Canvas and HTML paint them as CSS colours; the

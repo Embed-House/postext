@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { resolveAllConfig } from '../pipeline/config';
-import { applyHtmlViewerOverrides, applyPaletteToConfig, applyPaletteToResolvedConfig } from '../defaults';
-import type { ColorValue, DesignElement, PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { applyHtmlViewerOverrides, applyPaletteToConfig, applyPaletteToResolvedConfig } from '../defaults/index.js';
+import type { ColorValue, DesignElement, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock } from '../vdt.js';
 
 // EF-71: every colour linked to a palette entry (`paletteId`) follows the
 // palette, not only the ones the palette pass listed by hand — the design

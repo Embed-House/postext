@@ -1,14 +1,14 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../measure/rich';
-import { measureBlock } from '../measure/plain';
-import { setHyphenationLocale } from '../hyphenate';
-import { buildDocument } from '../pipeline';
-import { layoutSlotToVdt } from '../pipeline/headerFooter';
-import { computeChapterTitles } from '../pipeline/placeholders';
-import { resolveDesignSlot } from '../defaults/headerFooter';
-import type { InlineSpan } from '../parse';
-import type { DesignElement, PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTLine, VDTPage } from '../vdt';
+import { measureRichBlock } from '../measure/rich.js';
+import { measureBlock } from '../measure/plain.js';
+import { setHyphenationLocale } from '../hyphenate.js';
+import { buildDocument } from '../pipeline/index.js';
+import { layoutSlotToVdt } from '../pipeline/headerFooter.js';
+import { computeChapterTitles } from '../pipeline/placeholders.js';
+import { resolveDesignSlot } from '../defaults/headerFooter.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { DesignElement, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTLine, VDTPage } from '../vdt.js';
 
 // EF-66: a no-break space (U+00A0), a narrow no-break space (U+202F), a
 // figure space (U+2007) and a zero-width no-break space (U+FEFF) glue their

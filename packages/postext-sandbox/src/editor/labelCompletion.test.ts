@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EditorState } from '@codemirror/state';
 import { CompletionContext, type CompletionResult } from '@codemirror/autocomplete';
 import type { Resource } from 'postext';
-import { labelCompletionSource, type LabelCompletionContext } from './labelCompletion';
+import { labelCompletionSource, type LabelCompletionContext } from './labelCompletion.js';
 
 // #866: inside a figure, `at="…"` of a ::label offers the picture's anchors
 // with the label style each one gives.

@@ -5,7 +5,7 @@
  * names when two styles are merged or one is renamed.
  */
 
-import type { TextChange } from '../book/textChanges';
+import type { TextChange } from '../book/textChanges.js';
 
 /** A `:::callout` opening fence in a text. */
 export interface CalloutFence {

@@ -9,9 +9,9 @@
  * the frontmatter, as every `ContentBlock` offset is).
  */
 
-import type { DirectiveAttrs, InlineSpan } from '../parse/types';
-import type { ComicBalloonPosition } from '../types';
-import type { ComicSplitParse } from './split';
+import type { DirectiveAttrs, InlineSpan } from '../parse/types.js';
+import type { ComicBalloonPosition } from '../types.js';
+import type { ComicSplitParse } from './split.js';
 
 /** A source range. */
 export interface ComicSourceRange {

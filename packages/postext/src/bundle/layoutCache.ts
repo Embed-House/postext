@@ -15,10 +15,10 @@
 // cross-references is keyed by the outline too, so an edit that moves a
 // heading lays it out again wherever it is in the book.
 
-import type { OutlineEntry } from '../types';
-import type { StoryJump } from '../composed/carry';
-import type { CarriedPlace } from '../pipeline/carriedOutline';
-import type { VDTDocument } from '../vdt';
+import type { OutlineEntry } from '../types.js';
+import type { StoryJump } from '../composed/carry.js';
+import type { CarriedPlace } from '../pipeline/carriedOutline.js';
+import type { VDTDocument } from '../vdt.js';
 
 /** What a build needs of a chapter laid out, besides its document: what
  *  the next chapter continues from, and what the book's outline reads. */

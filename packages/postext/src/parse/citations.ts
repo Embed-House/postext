@@ -12,10 +12,10 @@
  * reference for it, prints it back as written.
  */
 
-import type { CitationClusterInput, CitationItemInput } from '../citations/types';
-import type { InlineSpan } from './types';
-import { injectPlaceholderSpans } from './injectSpans';
-import { parseInlineFormatting, restoreEscapes } from './inlineFormatting';
+import type { CitationClusterInput, CitationItemInput } from '../citations/types.js';
+import type { InlineSpan } from './types.js';
+import { injectPlaceholderSpans } from './injectSpans.js';
+import { parseInlineFormatting, restoreEscapes } from './inlineFormatting.js';
 
 /** Stands for a citation in the plain text until it is formatted. */
 export const CITATION_PLACEHOLDER = '';

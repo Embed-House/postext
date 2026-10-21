@@ -14,8 +14,8 @@
 
 import type { ResolvedResourceBlock, VDTDesignPathBlock, VDTFigureLabelLayout, VDTLine, VDTLineSegment } from 'postext';
 import { figureLabelLeaderPath, figureLabelMatrix, labelLayoutOnSheet, markerSvgElement, parseFontString, pathSvgData, uncroppedPictureBox } from 'postext';
-import { familyStack } from './css';
-import { fontPx, xmlAttr, xmlText } from './inline';
+import { familyStack } from './css.js';
+import { fontPx, xmlAttr, xmlText } from './inline.js';
 
 const n = (v: number): string => String(+v.toFixed(3));
 

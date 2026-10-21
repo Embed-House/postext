@@ -1,21 +1,21 @@
 import type { VDTBlock, VDTDocument, ResolvedDebugConfig } from 'postext';
 import { comicBalloonMatrix, findLooseLines, pageComics, resourceBlockRectToPage } from 'postext';
-import type { ResourceSelection } from '../../context/SandboxContext';
-import { getSvgTextIndex } from '../../controls/svgTextIndex';
-import { svgSourceOffsetToCaret, svgSourceRangeToBoxes, type SvgCharBox } from '../../controls/svgSource';
-import { SVG_NS } from './dom';
-import { plainRangeInLine, sourceToPlainIndex, xForPlainInLine } from './geometry';
-import { bandLineBoxes, bandPrefixX, bandSourceToPlain, bandTitleBlocks, bandTitleOwner, isHiddenUnderBand } from './bandTitle';
-import { blockFrameMatrix, type FrameAffine } from '../composed/frameHit';
-import { documentShapingLanguage } from '../../controls/measureLanguage';
-import { balloonTextRangeRects } from '../comics/balloonText';
+import type { ResourceSelection } from '../../context/SandboxContext.js';
+import { getSvgTextIndex } from '../../controls/svgTextIndex.js';
+import { svgSourceOffsetToCaret, svgSourceRangeToBoxes, type SvgCharBox } from '../../controls/svgSource.js';
+import { SVG_NS } from './dom.js';
+import { plainRangeInLine, sourceToPlainIndex, xForPlainInLine } from './geometry.js';
+import { bandLineBoxes, bandPrefixX, bandSourceToPlain, bandTitleBlocks, bandTitleOwner, isHiddenUnderBand } from './bandTitle.js';
+import { blockFrameMatrix, type FrameAffine } from '../composed/frameHit.js';
+import { documentShapingLanguage } from '../../controls/measureLanguage.js';
+import { balloonTextRangeRects } from '../comics/balloonText.js';
 import {
   contentOffsetToPlain,
   resolveResourceRun,
   resourceBlockOnPage,
   svgBodyRectFor,
   xForPlainInResourceLine,
-} from './resourceHit';
+} from './resourceHit.js';
 
 function appendRect(group: SVGGElement, x: number, y: number, width: number, height: number, fill: string, matrix: FrameAffine | null = null): SVGRectElement {
   const rect = document.createElementNS(SVG_NS, 'rect');

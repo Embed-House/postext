@@ -1,13 +1,13 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout';
-import { resolveDesignSlot, type DesignSlotKind } from '../../defaults/headerFooter';
-import { resolveCjkConfig } from '../../defaults/cjk';
-import { cjkCompositionOf, setCjkComposition } from '../../measure/cjkPunctuation';
-import { setCjkLineBreak } from '../../measure/cjkClasses';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { CjkConfig, DesignElement, DesignTextElement } from '../../types';
-import type { VDTPage } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout.js';
+import { resolveDesignSlot, type DesignSlotKind } from '../../defaults/headerFooter.js';
+import { resolveCjkConfig } from '../../defaults/cjk.js';
+import { cjkCompositionOf, setCjkComposition } from '../../measure/cjkPunctuation.js';
+import { setCjkLineBreak } from '../../measure/cjkClasses.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { CjkConfig, DesignElement, DesignTextElement } from '../../types.js';
+import type { VDTPage } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // #637: design text in Chinese takes the body's CJK rules: line-start and
 // line-end prohibitions, mark widths, the Han–Latin space. The stub sets a

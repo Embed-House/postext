@@ -1,5 +1,5 @@
-import type { CaptionStyleConfig, ColorValue, ColorPaletteEntry, CompositionRule, Dimension, OrderedListsConfig, PartsBodyStyleConfig, PostextConfig, ResolvedTableStyleConfig, TableStyleConfig, UnorderedListsConfig } from '../types';
-import type { ResolvedConfig } from '../vdt';
+import type { CaptionStyleConfig, ColorValue, ColorPaletteEntry, CompositionRule, Dimension, OrderedListsConfig, PartsBodyStyleConfig, PostextConfig, ResolvedTableStyleConfig, TableStyleConfig, UnorderedListsConfig } from '../types.js';
+import type { ResolvedConfig } from '../vdt.js';
 
 export const DEFAULT_MAIN_COLOR_ID = 'main-color';
 export const DEFAULT_MAIN_COLOR_NAME = 'Main Color';

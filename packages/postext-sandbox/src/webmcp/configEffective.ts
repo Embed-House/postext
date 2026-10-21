@@ -20,8 +20,8 @@ import {
   resolvePrintConfig,
 } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { withHyphenationLocale } from '../controls/hyphenation';
-import { ToolError } from './modelContext';
+import { withHyphenationLocale } from '../controls/hyphenation.js';
+import { ToolError } from './modelContext.js';
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 

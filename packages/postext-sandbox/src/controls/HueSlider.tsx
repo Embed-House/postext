@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useCallback } from 'react';
-import { clamp } from './color-utils';
+import { clamp } from './color-utils.js';
 
 interface HueSliderProps {
   hue: number;

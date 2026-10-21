@@ -11,9 +11,9 @@
 // reads "Ragged left" for the alignment an Arabic paragraph starts flush
 // right with.
 
-import { useSandboxSelector } from '../../context/SandboxContext';
-import { documentDirection, documentLanguage } from '../../context/documentDirection';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
+import { useSandboxSelector } from '../../context/SandboxContext.js';
+import { documentDirection, documentLanguage } from '../../context/documentDirection.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
 
 /** Whether the book's body runs right to left in a mirrored frame: a
  *  right-to-left direction (set, or the language's) on horizontal pages.

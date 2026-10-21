@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../../context/SandboxContext.js';
 import { resolveLayoutConfig, resolveBodyTextConfig, DEFAULT_LAYOUT_CONFIG, DEFAULT_COLUMN_RULE, dimensionsEqual, colorsEqual } from 'postext';
 import type { LayoutConfig, Dimension, ColorValue, FloatShrinkMode, TextWrapConfig } from 'postext';
 import {
@@ -13,12 +13,12 @@ import {
   NestedGroup,
   ToggleSwitch,
   ColorPicker,
-} from '../../controls';
-import { HighlightZone } from '../settings/previewHighlight';
-import { ColumnsPicture } from '../settings/pictures';
-import { MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN } from '../settings/multipleColumns';
-import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
-import { applyFileResolutions, readFileResolutions } from '../../panels/resources/fileResolutions';
+} from '../../controls/index.js';
+import { HighlightZone } from '../settings/previewHighlight.js';
+import { ColumnsPicture } from '../settings/pictures.js';
+import { MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN } from '../settings/multipleColumns.js';
+import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
+import { applyFileResolutions, readFileResolutions } from '../../panels/resources/fileResolutions.js';
 
 const D = DEFAULT_LAYOUT_CONFIG;
 

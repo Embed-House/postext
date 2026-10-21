@@ -1,4 +1,4 @@
-import { floatColumnCount } from './shared';
+import { floatColumnCount } from './shared.js';
 import type {
   BorderSide,
   CalloutDesignConfig,
@@ -16,12 +16,12 @@ import type {
   ResolvedCalloutStyleConfig,
   ResolvedHeadingsConfig,
   ResolvedUnorderedListsConfig,
-} from '../types';
-import { colorsEqual, dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared';
-import { defaultTableContinuationStrings } from './tableStyle';
-import { presentTag } from '../locale';
-import { resolveDesignSlot } from './headerFooter';
-import { isCornerRadii } from '../design/boxShape';
+} from '../types.js';
+import { colorsEqual, dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared.js';
+import { defaultTableContinuationStrings } from './tableStyle.js';
+import { presentTag } from '../locale.js';
+import { resolveDesignSlot } from './headerFooter.js';
+import { isCornerRadii } from '../design/boxShape.js';
 
 const EM = (value: number): Dimension => ({ value, unit: 'em' });
 const PT0: Dimension = { value: 0, unit: 'pt' };

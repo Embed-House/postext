@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { parseMarkdown } from '../../parse';
-import { defaultCjkRubyAlign, defaultCjkRubyOverhang, resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk';
-import { layoutJisRuby, layoutJukugo, overhangs, fullSizeKana } from '../../measure/rubyJis';
-import { createMeasurementCache } from '../../measure';
-import type { InlineSpan } from '../../parse';
-import type { CjkRegion, PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub, stubCharWidth } from '../vertical/stub';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { defaultCjkRubyAlign, defaultCjkRubyOverhang, resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk.js';
+import { layoutJisRuby, layoutJukugo, overhangs, fullSizeKana } from '../../measure/rubyJis.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { CjkRegion, PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from '../vertical/stub.js';
 
 // Furigana (#422): jukugo ruby, kana-aware overhang, JIS 1:2:1 alignment,
 // full-size small kana and the VDT ruby id. The stub measures kana and

@@ -1,8 +1,8 @@
 import { renderPageToCanvas, type PrintPreview, type VDTDocument, type VDTPage } from "postext";
 import { folioForTrim, resolveFolioConfig, type FolioPaperConfig } from "postext";
-import { BLOCK_PAGES, type PageSource } from "./pageFlip";
-import { createFolio, type FolioAppearance, type FolioOptions, type FolioPagePoint, type FolioPageSize, type FolioState, type FolioViewer } from "./viewer";
-import { attachVideoSource, autoKey, autoplayPlan, isHlsVideo, makeWay, pageVideoSpots, spotContains, type PageVideoSpot } from "./videos";
+import { BLOCK_PAGES, type PageSource } from "./pageFlip.js";
+import { createFolio, type FolioAppearance, type FolioOptions, type FolioPagePoint, type FolioPageSize, type FolioState, type FolioViewer } from "./viewer.js";
+import { attachVideoSource, autoKey, autoplayPlan, isHlsVideo, makeWay, pageVideoSpots, spotContains, type PageVideoSpot } from "./videos.js";
 
 export interface FolioDocumentOptions extends Omit<FolioOptions, "pages" | "firstPageRecto" | "binding" | "at" | "aspect"> {
   /** The page to open on (0-based). Default 0. */

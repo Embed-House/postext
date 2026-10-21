@@ -19,7 +19,7 @@ import {
   type ResolvedContrastConfig,
   type VDTDocument,
 } from 'postext';
-import type { ContrastSnapshot } from './fieldContrast';
+import type { ContrastSnapshot } from './fieldContrast.js';
 
 const EMPTY: ContrastSnapshot = { pairs: [], level: 'AA', media: ['screen'], enabled: true };
 

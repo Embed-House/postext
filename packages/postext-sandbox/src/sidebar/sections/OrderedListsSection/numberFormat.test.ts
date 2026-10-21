@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { listNumberFormatValue } from './numberFormat';
+import { listNumberFormatValue } from './numberFormat.js';
 
 // EF-12: a part's list override is shown raw, so the select must read the
 // spellings the engine reads, or it matches no option.

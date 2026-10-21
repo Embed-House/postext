@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { parseInlineFormatting, stripInlineFormatting } from '../parse/inlineFormatting';
-import { renderToHtml } from '../html-backend';
-import { computeSourceMap } from '../parse/sourceMapping';
-import { resolveMarkStylesConfig, stripMarkStylesDefaults } from '../defaults/markStyles';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { parseInlineFormatting, stripInlineFormatting } from '../parse/inlineFormatting.js';
+import { renderToHtml } from '../html-backend.js';
+import { computeSourceMap } from '../parse/sourceMapping.js';
+import { resolveMarkStylesConfig, stripMarkStylesDefaults } from '../defaults/markStyles.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../vdt.js';
 
 // #888: an inline highlight mark, `:mark[text]{style="…"}`: ordinary text
 // with a band behind it that follows each piece of the phrase on its line.

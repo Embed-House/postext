@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { validatePageTemplates } from '../../composed/validate';
-import { renderToHtml } from '../../html-backend';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDesignRuleBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDesignRuleBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

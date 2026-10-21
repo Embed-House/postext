@@ -20,14 +20,14 @@
  * (the facing copies do not exist yet). Every box is put on the sheet by
  * its frame's matrix (scale, turn) and compared as the box holding it.
  */
-import type { ContentWarning, FrameCoverProposal, FrameOutsideProposal, ReflowEvent, VDTBlock, VDTDesignBlock, VDTFrame } from '../vdt';
-import type { Dimension } from '../types';
-import { physicalEdge } from '../design/logicalEdges';
-import { dimensionToPx } from '../units';
-import { anchorOn, type FrameAreas, type Rect } from './geometry';
-import { frameClips, frameContentRect, frameMatrix } from './paint';
-import { anchorTarget } from './templates';
-import type { ResolvedFrame, ResolvedPageTemplate } from './types';
+import type { ContentWarning, FrameCoverProposal, FrameOutsideProposal, ReflowEvent, VDTBlock, VDTDesignBlock, VDTFrame } from '../vdt.js';
+import type { Dimension } from '../types.js';
+import { physicalEdge } from '../design/logicalEdges.js';
+import { dimensionToPx } from '../units.js';
+import { anchorOn, type FrameAreas, type Rect } from './geometry.js';
+import { frameClips, frameContentRect, frameMatrix } from './paint.js';
+import { anchorTarget } from './templates.js';
+import type { ResolvedFrame, ResolvedPageTemplate } from './types.js';
 
 const MM_PER_IN = 25.4;
 /** Overlaps thinner than this (mm) are a touch, not a cover: a line box

@@ -6,8 +6,8 @@
 // never goes back to it; a project cloned from the preset, or an export of
 // it, takes it as its own cover.
 
-import { PRESET_COVERS_STORE, hasIndexedDB, runInStore, withTransaction } from './blobStore';
-import { presetCoverKey } from '../covers/autoCover';
+import { PRESET_COVERS_STORE, hasIndexedDB, runInStore, withTransaction } from './blobStore.js';
+import { presetCoverKey } from '../covers/autoCover.js';
 
 export interface PresetCoverRecord {
   /** {@link presetCoverKey} of the preset and locale. */

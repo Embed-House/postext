@@ -6,9 +6,9 @@
  * label of the page the target landed on in the previous layout round.
  */
 
-import type { ContentBlock, InlineSpan, RefCase } from '../parse';
-import type { OutlineEntry } from '../types';
-import { stringsFor } from '../locale';
+import type { ContentBlock, InlineSpan, RefCase } from '../parse/index.js';
+import type { OutlineEntry } from '../types.js';
+import { stringsFor } from '../locale.js';
 
 const NBSP = ' ';
 

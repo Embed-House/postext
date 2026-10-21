@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { FileCode, Table as TableIcon, ImageOff, Play } from 'lucide-react';
 import type { Resource, ResourceType } from 'postext';
 import { defaultCaptionLabels, inlineSvgFonts } from 'postext';
-import { documentLanguage } from '../../context/documentDirection';
-import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { getBlob } from '../../storage/blobStore';
-import { sandboxSvgFontProvider } from '../../controls/svgFontProvider';
-import { parseInlinePreview } from '../../controls/InlineMarkdownInput';
-import { captionPreviewLabel } from './captionLabel';
-import { useRightToLeftFlow } from '../../sidebar/settings/flowSides';
+import { documentLanguage } from '../../context/documentDirection.js';
+import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { getBlob } from '../../storage/blobStore.js';
+import { sandboxSvgFontProvider } from '../../controls/svgFontProvider.js';
+import { parseInlinePreview } from '../../controls/InlineMarkdownInput.js';
+import { captionPreviewLabel } from './captionLabel.js';
+import { useRightToLeftFlow } from '../../sidebar/settings/flowSides.js';
 
 // ---------------------------------------------------------------------------
 // ResourcePreview — a mock embed of how a resource will appear in the document:

@@ -7,18 +7,18 @@
 
 import type { Dispatch } from 'react';
 import type { VDTDocument, VDTFrame } from 'postext';
-import type { SandboxAction } from '../context/SandboxContext';
-import type { Chapter, ComposedBook } from '../book/types';
-import type { PanelId } from '../types';
-import { toChapterFocus } from '../viewport/CanvasPreview/chapterFocus';
-import { editModeNow, selectFrame } from '../editing/editMode';
-import { requestSettingsSection, type SettingsFocus } from '../context/settingsNavigation';
-import { saveSectionState, saveSettingsGroup } from '../storage/persistence';
-import { showPageTemplatesSection } from '../templates/showSection';
-import { templateEditor } from '../templates/editorStore';
-import { headingInChapters, selectionTarget, type SelectionTarget } from './selectionTargets';
-import type { PageSelection } from './pageSelection';
-import { selectionChapters, selectionTemplates, type SelectionApply } from './selectionStore';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import type { Chapter, ComposedBook } from '../book/types.js';
+import type { PanelId } from '../types/index.js';
+import { toChapterFocus } from '../viewport/CanvasPreview/chapterFocus.js';
+import { editModeNow, selectFrame } from '../editing/editMode.js';
+import { requestSettingsSection, type SettingsFocus } from '../context/settingsNavigation.js';
+import { saveSectionState, saveSettingsGroup } from '../storage/persistence.js';
+import { showPageTemplatesSection } from '../templates/showSection.js';
+import { templateEditor } from '../templates/editorStore.js';
+import { headingInChapters, selectionTarget, type SelectionTarget } from './selectionTargets.js';
+import type { PageSelection } from './pageSelection.js';
+import { selectionChapters, selectionTemplates, type SelectionApply } from './selectionStore.js';
 
 export interface SelectionApplyDeps {
   dispatch: () => Dispatch<SandboxAction>;

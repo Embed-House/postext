@@ -13,7 +13,7 @@ import {
   splitterCursor,
   splitterEndRanges,
   splitterLine,
-} from './comicDrag';
+} from './comicDrag.js';
 
 class StubCtx {
   font = '';

@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { resolveCalloutStylesConfig } from '../../defaults/calloutStyles';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import { resolveHeadingsConfig } from '../../defaults/headings';
-import { resolveUnorderedListsConfig } from '../../defaults/unorderedLists';
-import { collectConfigWarnings } from '../../configWarnings';
-import { configFontFamilies } from '../../fonts/usage';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { PostextConfig, Resource, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignTextBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveCalloutStylesConfig } from '../../defaults/calloutStyles.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import { resolveHeadingsConfig } from '../../defaults/headings.js';
+import { resolveUnorderedListsConfig } from '../../defaults/unorderedLists.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { configFontFamilies } from '../../fonts/usage.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignTextBlock, VDTDocument } from '../../index.js';
 
 // #1054: a label tab's icon can be a glyph of a font (a ◉) in the tab's
 // colour, beside the tab or inside it, as a picture icon is.

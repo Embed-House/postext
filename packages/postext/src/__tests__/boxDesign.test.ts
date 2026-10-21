@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { resolveCalloutStylesConfig, stripCalloutStylesDefaults } from '../defaults/calloutStyles';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { resolveHeadingsConfig } from '../defaults/headings';
-import { resolveUnorderedListsConfig } from '../defaults/unorderedLists';
-import { configDesignSlots } from '../design/slots';
-import type { CalloutStyleConfig, PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveCalloutStylesConfig, stripCalloutStylesDefaults } from '../defaults/calloutStyles.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { resolveHeadingsConfig } from '../defaults/headings.js';
+import { resolveUnorderedListsConfig } from '../defaults/unorderedLists.js';
+import { configDesignSlots } from '../design/slots.js';
+import type { CalloutStyleConfig, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../vdt.js';
 
 // #1014: a box style's design, laid out in a band under the box title, and
 // a heading style whose section ends at the next heading of any level.

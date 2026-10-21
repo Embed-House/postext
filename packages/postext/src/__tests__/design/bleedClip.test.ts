@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index';
-import { dimensionToPx } from '../../units';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
+import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index.js';
+import { dimensionToPx } from '../../units.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
 
 class StubCtx {
   font = '';

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { arabicCardinal, arabicOrdinal } from '../arabicNumberWords';
-import { numberToWords } from '../numberWords';
-import { computeHeadingNumbers, formatCounter } from '../numbering';
-import { parseMarkdown } from '../parse';
+import { arabicCardinal, arabicOrdinal } from '../arabicNumberWords.js';
+import { numberToWords } from '../numberWords.js';
+import { computeHeadingNumbers, formatCounter } from '../numbering.js';
+import { parseMarkdown } from '../parse/index.js';
 
 // ---------------------------------------------------------------------------
 // An independent reading of the generation rules of the typography brief

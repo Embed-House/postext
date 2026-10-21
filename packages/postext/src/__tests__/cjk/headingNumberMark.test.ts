@@ -1,13 +1,13 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { cjkCompositionOf, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
-import { resolveCjkConfig } from '../../defaults/cjk';
-import { buildDocument } from '../../pipeline';
-import type { Dimension, PostextConfig } from '../../types';
-import type { MeasureBlockOptions } from '../../measure/types';
-import type { VDTDocument, VDTLine } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { cjkCompositionOf, setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation.js';
+import { resolveCjkConfig } from '../../defaults/cjk.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { Dimension, PostextConfig } from '../../types.js';
+import type { MeasureBlockOptions } from '../../measure/types.js';
+import type { VDTDocument, VDTLine } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // A heading's number is not half of a number with its title (#679). In
 // Japanese text a 、 or ・ between two kanji numerals is set solid (二、三日,

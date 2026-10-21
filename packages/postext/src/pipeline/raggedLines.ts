@@ -1,6 +1,6 @@
-import type { VDTLine } from '../vdt';
-import { trackSegments } from '../knuthPlass/tracking';
-import { RAGGED_SPACE_RATIO } from '../knuthPlass/constants';
+import type { VDTLine } from '../vdt.js';
+import { trackSegments } from '../knuthPlass/tracking.js';
+import { RAGGED_SPACE_RATIO } from '../knuthPlass/constants.js';
 
 /** Word-space ratio (justified over natural) past which a justified line
  *  is set ragged instead of stretched. */

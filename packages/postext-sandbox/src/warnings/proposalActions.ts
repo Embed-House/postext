@@ -34,13 +34,13 @@
 
 import type { Dispatch } from 'react';
 import type { Dimension, PostextConfig } from 'postext';
-import type { AllowOverlapProposal, FrameProposal } from './frameOverlapText';
-import type { SandboxAction } from '../context/SandboxContext';
-import type { TextChange } from '../book/textChanges';
-import { fenceTemplateChange, templateFences } from '../templates/templateUsage';
-import { applyViewerEdit } from '../editor/viewerEdits';
-import type { Warning, WarningPayload } from './types';
-import { localNumber } from '../viewport/composed/reflowText';
+import type { AllowOverlapProposal, FrameProposal } from './frameOverlapText.js';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import type { TextChange } from '../book/textChanges.js';
+import { fenceTemplateChange, templateFences } from '../templates/templateUsage.js';
+import { applyViewerEdit } from '../editor/viewerEdits.js';
+import type { Warning, WarningPayload } from './types.js';
+import { localNumber } from '../viewport/composed/reflowText.js';
 
 type FrameOverflowPayload = Extract<WarningPayload, { kind: 'frameOverflow' }>;
 

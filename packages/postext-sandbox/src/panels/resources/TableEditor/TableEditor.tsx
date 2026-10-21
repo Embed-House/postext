@@ -22,12 +22,12 @@ import {
   setCellImage,
   unmergeCell,
 } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import type { InlineFocusRequest, InlineSelection } from '../../../controls/InlineMarkdownInput';
-import { TableEditorCell, type CellNav } from './TableEditorCell';
-import { TableEditorToolbar, type TableEditorImageOption } from './TableEditorToolbar';
-import { ColumnWidthsEditor } from './ColumnWidthsEditor';
-import { setHeaderRows, toggleHeaderColumn } from './headerCells';
+import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import type { InlineFocusRequest, InlineSelection } from '../../../controls/InlineMarkdownInput.js';
+import { TableEditorCell, type CellNav } from './TableEditorCell.js';
+import { TableEditorToolbar, type TableEditorImageOption } from './TableEditorToolbar.js';
+import { ColumnWidthsEditor } from './ColumnWidthsEditor.js';
+import { setHeaderRows, toggleHeaderColumn } from './headerCells.js';
 
 // ---------------------------------------------------------------------------
 // TableEditor — interactive grid editor for table resources. All model edits

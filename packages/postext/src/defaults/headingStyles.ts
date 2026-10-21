@@ -7,11 +7,11 @@ import type {
   ResolvedOrderedListsConfig,
   ResolvedPageConfig,
   ResolvedUnorderedListsConfig,
-} from '../types';
-import { migrateDesignSlot, resolveDesignSlot } from './headerFooter';
-import { resolveLayoutConfig } from './layout';
-import { resolveHeadingLevelOverrides } from './headings';
-import { startEndAsLeftRight } from './shared';
+} from '../types.js';
+import { migrateDesignSlot, resolveDesignSlot } from './headerFooter.js';
+import { resolveLayoutConfig } from './layout.js';
+import { resolveHeadingLevelOverrides } from './headings.js';
+import { startEndAsLeftRight } from './shared.js';
 
 /** No heading styles ship by default — a document declares its own. */
 export const DEFAULT_HEADING_STYLES: HeadingStyleConfig[] = [];

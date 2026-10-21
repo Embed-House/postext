@@ -7,11 +7,11 @@
  * {@link paintInlineIcon}.
  */
 
-import type { VDTInlineIcon } from '../vdt';
-import { iconLineDash, inlineIconBox } from '../measure/inlineIcon';
-import { drawResourceImage } from './renderResourceBlock';
-import { restoreContext, saveContext } from './contextState';
-import { fillContextText } from './contextText';
+import type { VDTInlineIcon } from '../vdt.js';
+import { iconLineDash, inlineIconBox } from '../measure/inlineIcon.js';
+import { drawResourceImage } from './renderResourceBlock.js';
+import { restoreContext, saveContext } from './contextState.js';
+import { fillContextText } from './contextText.js';
 
 export function paintSwatch(
   ctx: CanvasRenderingContext2D,

@@ -7,10 +7,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { buildDocument, documentFontFaces } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { renderToEpub, readEpub } from './index';
-import type { EpubWarning, ReadEpubResult, RenderToEpubOptions } from './types';
-import { checkXml } from './reflowable/__tests__/xml';
-import { PAGE8_LABELS, page8Book, page8Bytes, type Page8Locale } from './__tests__/page8';
+import { renderToEpub, readEpub } from './index.js';
+import type { EpubWarning, ReadEpubResult, RenderToEpubOptions } from './types.js';
+import { checkXml } from './reflowable/__tests__/xml.js';
+import { PAGE8_LABELS, page8Book, page8Bytes, type Page8Locale } from './__tests__/page8.js';
 
 const options = (layout: RenderToEpubOptions['layout'], locale: Page8Locale, warnings: EpubWarning[] = []): RenderToEpubOptions => ({
   layout,

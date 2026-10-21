@@ -17,12 +17,12 @@
  * A bend is rounded by `radius` (a quarter circle as a cubic), held to what
  * the segments beside it leave.
  */
-import type { ConnectorEnd, Dimension, LineCap, ResolvedDesignConnectorElement } from '../types';
-import type { VDTPathCommand, VDTPathMarker } from '../vdt';
-import { dimensionToPx } from '../units';
-import { sideFraction } from './logicalEdges';
-import { colorWithOpacity, pathInkBox } from './pathBlock';
-import type { ResolvedPathPrimitive } from './layout';
+import type { ConnectorEnd, Dimension, LineCap, ResolvedDesignConnectorElement } from '../types.js';
+import type { VDTPathCommand, VDTPathMarker } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import { sideFraction } from './logicalEdges.js';
+import { colorWithOpacity, pathInkBox } from './pathBlock.js';
+import type { ResolvedPathPrimitive } from './layout.js';
 
 export interface ConnectorRect {
   x: number;

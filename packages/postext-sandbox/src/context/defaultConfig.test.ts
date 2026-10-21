@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { defaultResourceTypes } from 'postext';
-import { createBlankBookConfig, createDefaultConfig, relocalizedResourceTypes, withDefaultResourceTypes } from './defaultConfig';
+import { createBlankBookConfig, createDefaultConfig, relocalizedResourceTypes, withDefaultResourceTypes } from './defaultConfig.js';
 
 describe('createBlankBookConfig', () => {
   it('is the pristine config in English and Spanish', () => {

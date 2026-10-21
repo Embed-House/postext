@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
 import { defaultResourceTypes, resolveBodyTextConfig, resolveHeadingsConfig, resolveLayoutConfig, resolveOrderedListsConfig, resolvePageConfig } from 'postext';
-import { createDefaultConfig } from './defaultConfig';
+import { createDefaultConfig } from './defaultConfig.js';
 import {
   chineseDefaults, chineseFontsFor, forgetChineseDefaults, keepChineseDefaultsFocus, recallChineseDefaults, rememberChineseDefaults,
   takeChineseDefaultsFocus, undoChineseDefaults,
   type ChineseDefaultId,
-} from './chineseDefaults';
+} from './chineseDefaults.js';
 
 const ids = (r: ReturnType<typeof chineseDefaults>) => r.changes.map((c) => c.id);
 const change = (r: ReturnType<typeof chineseDefaults>, id: ChineseDefaultId) => r.changes.find((c) => c.id === id);

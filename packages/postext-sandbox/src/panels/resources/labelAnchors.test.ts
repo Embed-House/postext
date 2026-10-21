@@ -1,14 +1,14 @@
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { SafeAreaField } from './SafeAreaEditor';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { SafeAreaField } from './SafeAreaEditor.js';
 import type { Resource } from 'postext';
-import { anchorLabelState, figureFenceResource, figureOfLine, labelsInChapters } from './figureLabels';
-import { addAnchor, applyMarks, labelFieldsOf, marksOf, nextAnchorId, normalizeMarks, withLabelFields } from './pictureMarks';
-import { takeAnchorEditorRequest, requestAnchorEditor, onAnchorEditorRequest } from './anchorEditorRequest';
-import type { SandboxAction } from '../../context/SandboxContext';
+import { anchorLabelState, figureFenceResource, figureOfLine, labelsInChapters } from './figureLabels.js';
+import { addAnchor, applyMarks, labelFieldsOf, marksOf, nextAnchorId, normalizeMarks, withLabelFields } from './pictureMarks.js';
+import { takeAnchorEditorRequest, requestAnchorEditor, onAnchorEditorRequest } from './anchorEditorRequest.js';
+import type { SandboxAction } from '../../context/SandboxContext.js';
 
 // #866: anchors made by clicking on a picture, named after the text's
 // `::label` lines.

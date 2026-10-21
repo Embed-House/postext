@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   resolvePageConfig,
   resolveDebugConfig,
@@ -18,7 +18,7 @@ import {
   NumberInput,
   ToggleSwitch,
   NestedGroup,
-} from '../../controls';
+} from '../../controls/index.js';
 
 export const DebugSection = memo(function DebugSection() {
   const dispatch = useSandboxDispatch();

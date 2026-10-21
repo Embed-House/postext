@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { framePieceAt, framePieces, frameLookChange, lookUsage, renameLookChanges } from './frameLooks';
-import type { TextChange } from '../book/textChanges';
+import { framePieceAt, framePieces, frameLookChange, lookUsage, renameLookChanges } from './frameLooks.js';
+import type { TextChange } from '../book/textChanges.js';
 
 // #1089: the look picker writes `look="…"` on the `:::frame` piece the
 // caret is in; the looks library counts and renames.

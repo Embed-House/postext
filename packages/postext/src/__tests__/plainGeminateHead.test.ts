@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { clearMeasurementCache, measureBlock } from '../measure';
-import { setMeasureLanguage } from '../measure/canvas';
-import { setHyphenationLocale } from '../hyphenate';
-import type { MeasureBlockOptions } from '../measure/types';
-import type { VDTLine } from '../vdt';
+import { clearMeasurementCache, measureBlock } from '../measure/index.js';
+import { setMeasureLanguage } from '../measure/canvas.js';
+import { setHyphenationLocale } from '../hyphenate.js';
+import type { MeasureBlockOptions } from '../measure/types.js';
+import type { VDTLine } from '../vdt.js';
 
 // #770: the head of a break inside a Catalan `l·l`, in a plain paragraph.
 // The line ends on the piece `col·` and prints a hyphen in the dot's

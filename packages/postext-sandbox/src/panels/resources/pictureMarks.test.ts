@@ -6,13 +6,13 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { Resource } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { SafeAreaField } from './SafeAreaEditor';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { SafeAreaField } from './SafeAreaEditor.js';
 import {
   addAnchor, addFace, addHead, anchorIdProblem, anchorOutsideSafeArea, applyDrag, applyMarks, firstAnchorIdProblem,
   addBystanderFace, marksOf, nextAnchorId, normalizeMarks, nudge, rectOf, removeMark, switchZone, withRect, zoneAround, type PictureMarks,
-} from './pictureMarks';
+} from './pictureMarks.js';
 
 const empty: PictureMarks = { anchors: [], avoid: [], faces: [] };
 const close = (a: number, b: number) => expect(a).toBeCloseTo(b, 6);

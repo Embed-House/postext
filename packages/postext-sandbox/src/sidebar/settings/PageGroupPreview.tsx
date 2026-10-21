@@ -2,13 +2,13 @@
 
 import { resolveBodyTextConfig, resolveColorValue, resolveLayoutConfig, resolvePageConfig } from 'postext';
 import { useMemo } from 'react';
-import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { toPt } from '../../controls/units';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
-import { documentComicDirection, documentDirection, documentLanguage } from '../../context/documentDirection';
-import { pageDrawingConfig } from '../sections/cjkGridReadout';
-import { PagePreview } from './PagePreview';
-import { usePreviewHighlight } from './previewHighlight';
+import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { toPt } from '../../controls/units.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
+import { documentComicDirection, documentDirection, documentLanguage } from '../../context/documentDirection.js';
+import { pageDrawingConfig } from '../sections/cjkGridReadout.js';
+import { PagePreview } from './PagePreview.js';
+import { usePreviewHighlight } from './previewHighlight.js';
 
 /** The page drawing at the top of the "Page & columns" and "Writing
  *  system" settings pages. It follows every edit, tints the margin or

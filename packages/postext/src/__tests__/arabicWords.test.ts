@@ -1,18 +1,18 @@
 import { describe, it, expect, vi } from 'vitest';
-import { measureBlock } from '../measure/plain';
-import { measureRichBlock, emergencySplit } from '../measure/rich';
-import { hyphenateText } from '../hyphenate';
-import { joinsWithNext } from '../bidi';
-import { insideJoiningWord, joiningScriptIn, mostlyJoiningScript, wordLetterSpacing } from '../measure/joining';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { buildDocument } from '../pipeline';
-import { formatWarning } from '../pipeline/contentWarnings';
-import { renderBlock } from '../canvas-backend/blockRender';
-import { paintWordRuns } from '../canvas-backend/wordRuns';
-import { beginMirroredFlow } from '../canvas-backend/mirrorFrame';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTLine } from '../vdt';
+import { measureBlock } from '../measure/plain.js';
+import { measureRichBlock, emergencySplit } from '../measure/rich.js';
+import { hyphenateText } from '../hyphenate.js';
+import { joinsWithNext } from '../bidi.js';
+import { insideJoiningWord, joiningScriptIn, mostlyJoiningScript, wordLetterSpacing } from '../measure/joining.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { buildDocument } from '../pipeline/index.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import { paintWordRuns } from '../canvas-backend/wordRuns.js';
+import { beginMirroredFlow } from '../canvas-backend/mirrorFrame.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTLine } from '../vdt.js';
 
 // #368: an Arabic word is an atomic unit. It is never hyphenated, never cut
 // between its letters, never measured in pieces and never tracked.

@@ -7,8 +7,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #624: code listings in the PDF. Each listing is a `P` holding one `Code`
 // element; its spaces are real space glyphs, so a copy keeps the

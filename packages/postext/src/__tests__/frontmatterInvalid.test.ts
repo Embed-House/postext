@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { extractFrontmatter } from '../frontmatter';
-import { buildDocument } from '../pipeline';
-import { collectContentWarnings, formatWarning } from '../pipeline/contentWarnings';
-import { contentOutline, continuationAfter } from '../pipeline/continuation';
+import { extractFrontmatter } from '../frontmatter.js';
+import { buildDocument } from '../pipeline/index.js';
+import { collectContentWarnings, formatWarning } from '../pipeline/contentWarnings.js';
+import { contentOutline, continuationAfter } from '../pipeline/continuation.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

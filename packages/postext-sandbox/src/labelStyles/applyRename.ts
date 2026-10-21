@@ -9,10 +9,10 @@
 
 import type { Dispatch } from 'react';
 import type { LabelStyle, Resource } from 'postext';
-import type { SandboxAction } from '../context/SandboxContext';
-import { applyViewerEdit } from '../editor/viewerEdits';
-import type { UsageChapter } from '../frameStyles/styleUsage';
-import { renameAnchorStyle, renameLabelStyleChanges } from './labelRefs';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import { applyViewerEdit } from '../editor/viewerEdits.js';
+import type { UsageChapter } from '../frameStyles/styleUsage.js';
+import { renameAnchorStyle, renameLabelStyleChanges } from './labelRefs.js';
 
 /** What a rename rewrote. */
 export interface LabelStyleRenameResult {

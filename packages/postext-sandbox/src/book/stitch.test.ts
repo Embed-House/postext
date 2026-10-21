@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { composeBook } from './compose';
-import { composedBookPageMap, stitchDocuments } from './stitch';
+import { composeBook } from './compose.js';
+import { composedBookPageMap, stitchDocuments } from './stitch.js';
 
 const chapters = [
   { id: 'a', title: 'A', markdown: '# A\n\nOne.', createdAt: 0, updatedAt: 0 },

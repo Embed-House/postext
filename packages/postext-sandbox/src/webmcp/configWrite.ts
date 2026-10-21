@@ -14,9 +14,9 @@
 
 import { DEFAULT_CALLOUT_STYLES, DEFAULT_CHIP_STYLES, DEFAULT_MARK_STYLES } from 'postext';
 import type { PostextConfig } from 'postext';
-import { coerceSetting, isWholeValue } from './configEffective';
-import { canonicalSteps, formatPath, getAtSteps, leafEntries, parsePath, setAtSteps, type Step } from './configPaths';
-import { ToolError } from './modelContext';
+import { coerceSetting, isWholeValue } from './configEffective.js';
+import { canonicalSteps, formatPath, getAtSteps, leafEntries, parsePath, setAtSteps, type Step } from './configPaths.js';
+import { ToolError } from './modelContext.js';
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 

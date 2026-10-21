@@ -3,8 +3,8 @@
 // Loading fetches everything into memory; nothing is written to storage here
 // (see apply.ts).
 
-import { parseBundle } from './bundle';
-import { isPresetIndex } from './manifest';
+import { parseBundle } from './bundle.js';
+import { isPresetIndex } from './manifest.js';
 import type {
   LoadedPreset,
   PresetIndexEntry,
@@ -12,7 +12,7 @@ import type {
   PresetShowcaseMeta,
   PresetSource,
   PresetSummary,
-} from './types';
+} from './types.js';
 
 /** Virtual file whose GET yields `{ fingerprint }` for a preset directory. */
 export const FINGERPRINT_FILE = 'fingerprint.json';

@@ -4,11 +4,11 @@ import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { DimensionUnit, MarkStyleConfig, ResolvedBodyTextConfig, ResolvedMarkStyleConfig } from 'postext';
 import { DEFAULT_MARK_STYLES, resolveBodyTextConfig, resolveMarkStylesConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput } from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { FieldRow } from '../../controls/FieldRow';
-import { SearchScope } from '../search/SearchScope';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput } from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { SearchScope } from '../search/SearchScope.js';
 
 const BOX_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 

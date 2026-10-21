@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { buildBundle } from '../../bundle';
-import { hasComposedPage } from '../../bundle/book';
-import { resolveJumpMarks } from '../../index';
-import { createMeasurementCache } from '../../measure';
-import type { PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { page8Fixture } from './fixtures/page8';
-import { elementsForSource, sourceAt } from '../../composed/sourceMap';
+import { buildDocument } from '../../pipeline/build.js';
+import { buildBundle } from '../../bundle/index.js';
+import { hasComposedPage } from '../../bundle/book.js';
+import { resolveJumpMarks } from '../../index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { page8Fixture } from './fixtures/page8.js';
+import { elementsForSource, sourceAt } from '../../composed/sourceMap.js';
 
 // A story that jumps from one chapter file into a page fence of a later one
 // (#943): a magazine kept as one chapter file per article. The rest of the

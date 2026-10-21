@@ -2,10 +2,10 @@
 // navigation document and the legacy NCX.
 
 import { zipSync, type Zippable } from 'fflate';
-import type { EpubItem, EpubNavPoint, EpubPublication } from '../types';
-import { bookIdentifier } from '../shared/assets';
-import { escapeAttr, escapeXml, stripInvalidXmlChars, xhtmlDocument } from '../shared/xml';
-import { isRtlLanguage, navStrings } from './strings';
+import type { EpubItem, EpubNavPoint, EpubPublication } from '../types.js';
+import { bookIdentifier } from '../shared/assets.js';
+import { escapeAttr, escapeXml, stripInvalidXmlChars, xhtmlDocument } from '../shared/xml.js';
+import { isRtlLanguage, navStrings } from './strings.js';
 
 /** Where the package document lives; every item href is relative to it. */
 export const PACKAGE_DIR = 'OEBPS/';

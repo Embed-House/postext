@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { computeOutlineFor } from '../pipeline/outline';
-import { parseMarkdown } from '../parse';
-import { collectConfigWarnings } from '../configWarnings';
-import { stripConfigDefaults } from '../defaults';
-import type { PostextConfig } from '../types';
-import type { VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { computeOutlineFor } from '../pipeline/outline.js';
+import { parseMarkdown } from '../parse/index.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
 
 // #401: `numberPosition: 'replace'` — the generated number is the whole
 // title (Arabic nights: `# Night` under `الليلة {1:ordinal-feminine}`

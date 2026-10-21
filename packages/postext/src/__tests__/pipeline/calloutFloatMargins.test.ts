@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, VDTBlock, VDTColumn, VDTDocument, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, VDTBlock, VDTColumn, VDTDocument, VDTPage } from '../../index.js';
 
 // EF-144: `calloutStyles[].marginBottom` had no effect on a floated box: the
 // band under a `placement="top"` box kept one body line (the float gap)

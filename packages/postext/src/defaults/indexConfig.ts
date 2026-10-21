@@ -1,5 +1,5 @@
-import type { Dimension, IndexConfig, IndexGroupBy, ResolvedBodyTextConfig, ResolvedIndexConfig } from '../types';
-import { isJapaneseLanguage, languageOf, localeScript, presentTag } from '../locale';
+import type { Dimension, IndexConfig, IndexGroupBy, ResolvedBodyTextConfig, ResolvedIndexConfig } from '../types.js';
+import { isJapaneseLanguage, languageOf, localeScript, presentTag } from '../locale.js';
 
 const ONE_EM: Dimension = { value: 1, unit: 'em' };
 const TWO_EM: Dimension = { value: 2, unit: 'em' };

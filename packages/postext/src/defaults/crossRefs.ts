@@ -1,5 +1,5 @@
-import type { CrossRefsConfig, ResolvedCrossRefsConfig } from '../types';
-import { defaultCrossRefStrings } from '../pipeline/crossRefs';
+import type { CrossRefsConfig, ResolvedCrossRefsConfig } from '../types.js';
+import { defaultCrossRefStrings } from '../pipeline/crossRefs.js';
 
 const STYLES: ReadonlySet<string> = new Set(['default', 'number', 'title', 'page']);
 

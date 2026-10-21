@@ -16,12 +16,12 @@
 import type { Resource } from 'postext';
 import { stripConfigDefaults } from 'postext';
 import type { PostextConfig } from 'postext';
-import type { AppliedPresetSnapshot } from '../presets/types';
-import { isDocumentUntouched, type DocumentHashSource } from '../presets/hash';
-import { PRESET_DRAFTS_STORE, hasIndexedDB, runInStore, type BlobRecord } from './blobStore';
-import { remapContentFileIds } from './projectFiles';
-import { PROJECT_RECORD_VERSION, migrateConfig } from './projectMigration';
-import { referencedFileIds, type ProjectContent } from './projects';
+import type { AppliedPresetSnapshot } from '../presets/types.js';
+import { isDocumentUntouched, type DocumentHashSource } from '../presets/hash.js';
+import { PRESET_DRAFTS_STORE, hasIndexedDB, runInStore, type BlobRecord } from './blobStore.js';
+import { remapContentFileIds } from './projectFiles.js';
+import { PROJECT_RECORD_VERSION, migrateConfig } from './projectMigration.js';
+import { referencedFileIds, type ProjectContent } from './projects.js';
 
 export interface PresetDraftRecord extends ProjectContent {
   /** Numbered as project records are (the engine's configuration rules),

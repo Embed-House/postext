@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildBundle, findLooseLines, initMathEngine, type VDTDocument } from 'postext';
-import { DEFAULT_MARKDOWN_ZH_HANS } from '.';
-import { sampleChapterTexts } from '../book/chapterOps';
-import { createPostextGuideConfig } from '../context/guideConfig';
-import { buildDefaultResources } from '../defaultResources';
+import { DEFAULT_MARKDOWN_ZH_HANS } from './index.js';
+import { sampleChapterTexts } from '../book/chapterOps.js';
+import { createPostextGuideConfig } from '../context/guideConfig.js';
+import { buildDefaultResources } from '../defaultResources/index.js';
 
 // Advances of the characters the Chinese guide sets outside the CJK blocks,
 // in thousandths of an em, read with fontkit from the Google Fonts static

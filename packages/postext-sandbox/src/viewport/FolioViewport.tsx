@@ -3,14 +3,14 @@
 import { useCallback, useRef, useState, type KeyboardEvent } from 'react';
 import { DEFAULT_FOLIO_CONFIG } from 'postext';
 import type { FolioInteraction } from 'postext-folio';
-import { useSandboxDispatch, useSandboxStateGetter } from '../context/SandboxContext';
-import { FolioPreview, type FolioPreviewHandle } from './FolioPreview';
-import { FolioToolbar } from './FolioToolbar';
-import { useFloatingToolbarShell } from './useFloatingToolbarShell';
-import { useViewerControls } from './viewerControls';
-import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
-import { useCompactLayout } from '../hooks/useCompactLayout';
-import { useLargeTargets } from '../ui/largeTargets';
+import { useSandboxDispatch, useSandboxStateGetter } from '../context/SandboxContext.js';
+import { FolioPreview, type FolioPreviewHandle } from './FolioPreview.js';
+import { FolioToolbar } from './FolioToolbar.js';
+import { useFloatingToolbarShell } from './useFloatingToolbarShell.js';
+import { useViewerControls } from './viewerControls.js';
+import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync.js';
+import { useCompactLayout } from '../hooks/useCompactLayout.js';
+import { useLargeTargets } from '../ui/largeTargets.js';
 
 const INTERACTION_KEYS: Record<string, FolioInteraction> = { h: 'hand', o: 'orbit', s: 'select', m: 'magnify' };
 

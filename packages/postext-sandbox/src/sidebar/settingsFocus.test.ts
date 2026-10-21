@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { takeSettingsFocus, takeSettingsSection } from '../context/settingsNavigation';
-import { applyTarget } from '../selection/applySelection';
-import { setSelectionTemplates } from '../selection/selectionStore';
-import { templateEditor } from '../templates/editorStore';
-import { bestConfigPath } from './settingsFocus';
+import { takeSettingsFocus, takeSettingsSection } from '../context/settingsNavigation.js';
+import { applyTarget } from '../selection/applySelection.js';
+import { setSelectionTemplates } from '../selection/selectionStore.js';
+import { templateEditor } from '../templates/editorStore.js';
+import { bestConfigPath } from './settingsFocus.js';
 
 afterEach(() => {
   setSelectionTemplates(null);

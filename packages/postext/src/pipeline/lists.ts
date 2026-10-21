@@ -1,20 +1,20 @@
-import { flowTextWidth, measuringVertically } from '../measure/vertical';
-import { getMeasureArabicNumbers, getMeasureDirection } from '../measure/bidiLines';
-import { rtlTextWidth } from '../measure/script';
-import { markerSetText } from '../bidi';
-import { measuresRunsAsPainted } from '../design/bidiText';
-import type { ResolvedUnorderedListLevelConfig, ResolvedOrderedListLevelConfig, OrderedListNumberFormat, Dimension, DigitSystem } from '../types';
-import type { ContentBlock, ListKind } from '../parse';
-import { dimensionToPx } from '../units';
-import type { ResolvedConfig, VDTBlock } from '../vdt';
-import { buildFontString } from '../measure';
-import { formatNumeral, parseNumberFormat } from '../numbering';
-import { withDigits } from '../arabicNumerals';
-import { defaultNumeralsFor, languageOf } from '../locale';
-import { resolvedLocale } from './config';
-import type { BlockStyle } from './styles';
-import { resolveBodyStyle } from './styles';
-import { isDrawnTaskBox, taskBoxSize } from '../taskBox';
+import { flowTextWidth, measuringVertically } from '../measure/vertical.js';
+import { getMeasureArabicNumbers, getMeasureDirection } from '../measure/bidiLines.js';
+import { rtlTextWidth } from '../measure/script.js';
+import { markerSetText } from '../bidi.js';
+import { measuresRunsAsPainted } from '../design/bidiText.js';
+import type { ResolvedUnorderedListLevelConfig, ResolvedOrderedListLevelConfig, OrderedListNumberFormat, Dimension, DigitSystem } from '../types.js';
+import type { ContentBlock, ListKind } from '../parse/index.js';
+import { dimensionToPx } from '../units.js';
+import type { ResolvedConfig, VDTBlock } from '../vdt.js';
+import { buildFontString } from '../measure/index.js';
+import { formatNumeral, parseNumberFormat } from '../numbering.js';
+import { withDigits } from '../arabicNumerals.js';
+import { defaultNumeralsFor, languageOf } from '../locale.js';
+import { resolvedLocale } from './config.js';
+import type { BlockStyle } from './styles.js';
+import { resolveBodyStyle } from './styles.js';
+import { isDrawnTaskBox, taskBoxSize } from '../taskBox.js';
 
 export interface ListBulletStyle {
   indentPx: number;

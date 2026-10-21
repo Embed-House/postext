@@ -1,12 +1,12 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { MessageChannel, type MessagePort } from 'node:worker_threads';
 import type { VDTDocument } from 'postext';
-import { renderToEpub, readEpub } from '../index';
-import type { EpubProgress, EpubWarning } from '../types';
-import { LORA, PNG, sampleBook } from '../__tests__/sampleBook';
-import { createEpubWorker, gatherResourceBytes, transferablesOf, EpubWorkerError } from './client';
-import { serveEpubRequests, type EpubWorkerPort } from './serve';
-import { cdnWorkerEntryUrl } from './entryUrl';
+import { renderToEpub, readEpub } from '../index.js';
+import type { EpubProgress, EpubWarning } from '../types.js';
+import { LORA, PNG, sampleBook } from '../__tests__/sampleBook.js';
+import { createEpubWorker, gatherResourceBytes, transferablesOf, EpubWorkerError } from './client.js';
+import { serveEpubRequests, type EpubWorkerPort } from './serve.js';
+import { cdnWorkerEntryUrl } from './entryUrl.js';
 
 const MODIFIED = new Date(Date.UTC(2026, 9, 4));
 const metadata = { title: 'Sample book', creators: ['Ada Lovelace'], language: 'en-US', modified: MODIFIED };

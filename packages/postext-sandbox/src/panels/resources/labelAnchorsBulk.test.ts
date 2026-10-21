@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { ResourceAnchor } from 'postext';
-import { DENSE_ANCHORS, sharedField, withTickedFields } from './LabelAnchorsPanel';
-import { normalizeMarks, withLabelFields, type PictureMarks } from './pictureMarks';
-import { withMarks } from '../../webmcp/resourceMarks';
+import { DENSE_ANCHORS, sharedField, withTickedFields } from './LabelAnchorsPanel.js';
+import { normalizeMarks, withLabelFields, type PictureMarks } from './pictureMarks.js';
+import { withMarks } from '../../webmcp/resourceMarks.js';
 
 // #931: the anchors ticked in the editor take a style, an alignment or a
 // writing mode together; #902: writing mode is a label field of an anchor.

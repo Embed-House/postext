@@ -4,12 +4,12 @@ import {
   DEFAULT_CANVAS_VIEWER_CONFIG,
   resolveCanvasViewerConfig,
   stripCanvasViewerDefaults,
-} from '../../defaults/canvasViewer';
-import { stripConfigDefaults } from '../../defaults';
-import { collectConfigWarnings } from '../../configWarnings';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig } from '../../types';
+} from '../../defaults/canvasViewer.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig } from '../../types.js';
 
 class StubCtx {
   font = '';

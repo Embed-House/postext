@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { stampSourceRanges } from '../../pipeline/buildHelpers';
-import { computeSourceMap, parseMarkdown } from '../../parse';
-import { createBoundingBox } from '../../vdt';
-import type { VDTLine } from '../../vdt';
-import type { ContentBlock } from '../../parse';
+import { buildDocument } from '../../pipeline/index.js';
+import { stampSourceRanges } from '../../pipeline/buildHelpers.js';
+import { computeSourceMap, parseMarkdown } from '../../parse/index.js';
+import { createBoundingBox } from '../../vdt.js';
+import type { VDTLine } from '../../vdt.js';
+import type { ContentBlock } from '../../parse/index.js';
 
 // Deterministic stub: every character, the space included, is 7 px wide;
 // bold ones 8 px.

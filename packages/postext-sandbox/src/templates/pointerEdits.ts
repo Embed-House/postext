@@ -1,5 +1,5 @@
 import type { ConnectorEnd, DesignConnectorElement, DesignElement, PageTemplate } from 'postext';
-import { inheritedDecoration, isRemoval, joinDecoration, splitDecoration, templateAt, uniqueName } from './templateEdits';
+import { inheritedDecoration, isRemoval, joinDecoration, splitDecoration, templateAt, uniqueName } from './templateEdits.js';
 
 // ---------------------------------------------------------------------------
 // Pointers (#1064): a line from a frame of a composed page (a note) to an

@@ -1,10 +1,10 @@
-import { resolvedComics } from '../defaults/comics';
-import { fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measureCentralBaseline, setMeasureWritingMode, withMeasureWritingMode } from '../measure/vertical';
-import type { PartPageInfo } from './placeholders';
-import { applyPartPalettesToFlow, type FlowColorValues } from './partPalette';
-import { recolorLineNumbers } from './lineNumbers';
-import { applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting';
-import type { ColorPaletteEntry, ColorValue, DesignSlot, DesignTextAlign, Dimension, DocumentMetadata, Resource, ResolvedCalloutDesignConfig, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types';
+import { resolvedComics } from '../defaults/comics.js';
+import { fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measureCentralBaseline, setMeasureWritingMode, withMeasureWritingMode } from '../measure/vertical.js';
+import type { PartPageInfo } from './placeholders.js';
+import { applyPartPalettesToFlow, type FlowColorValues } from './partPalette.js';
+import { recolorLineNumbers } from './lineNumbers.js';
+import { applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting.js';
+import type { ColorPaletteEntry, ColorValue, DesignSlot, DesignTextAlign, Dimension, DocumentMetadata, Resource, ResolvedCalloutDesignConfig, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types.js';
 import {
   createBoundingBox,
   flowRectToPage,
@@ -25,22 +25,22 @@ import {
   type VDTColumn,
   type VDTFrame,
   type VDTPage,
-} from '../vdt';
-import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders';
-import { parsePartNumber, parsePartPalette, partMarkPages } from './parts';
-import { composedLeafConfig, computePageMetrics, onComposedLeaf, sheetRectToFlow } from './buildHelpers';
-import { arabicNumbersOf, resolvedLocale } from './config';
-import { classifyPages } from './pageRoles';
-import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles';
-import { dimensionToPx } from '../units';
-import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
-import { repeatInstance, resolvePageTemplate } from '../composed/templates';
-import { splitSpreadDecoration } from '../composed/spread';
-import { pathInkBox } from '../design/pathBlock';
-import { frameOfBlock, framePageRect } from '../composed/paint';
-import { figureAnchorPointOnPage } from '../composed/labels';
-import type { ResolvedConfig } from '../vdt';
-import type { PageRole } from '../types';
+} from '../vdt.js';
+import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders.js';
+import { parsePartNumber, parsePartPalette, partMarkPages } from './parts.js';
+import { composedLeafConfig, computePageMetrics, onComposedLeaf, sheetRectToFlow } from './buildHelpers.js';
+import { arabicNumbersOf, resolvedLocale } from './config.js';
+import { classifyPages } from './pageRoles.js';
+import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles.js';
+import { dimensionToPx } from '../units.js';
+import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter.js';
+import { repeatInstance, resolvePageTemplate } from '../composed/templates.js';
+import { splitSpreadDecoration } from '../composed/spread.js';
+import { pathInkBox } from '../design/pathBlock.js';
+import { frameOfBlock, framePageRect } from '../composed/paint.js';
+import { figureAnchorPointOnPage } from '../composed/labels.js';
+import type { ResolvedConfig } from '../vdt.js';
+import type { PageRole } from '../types.js';
 import {
   layoutDesignSlot,
   textVerticalOffset,
@@ -52,10 +52,10 @@ import {
   type ResolvedBoxPrimitive,
   type ResolvedImagePrimitive,
   type ResolvedPathPrimitive,
-} from '../design/layout';
-import { resolveDesignText, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders';
-import { plainDesignText } from '../design/richText';
-import { withDigits } from '../arabicNumerals';
+} from '../design/layout.js';
+import { resolveDesignText, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders.js';
+import { plainDesignText } from '../design/richText.js';
+import { withDigits } from '../arabicNumerals.js';
 
 /** Slots live in the page margin area between the body edge and the trim
  *  edge. Header slot container: from the trim top down to body top.

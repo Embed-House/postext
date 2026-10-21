@@ -4,11 +4,11 @@
 // The PDF tab's book scope and the EPUB tab share it.
 
 import { configUsesPlaceholder, type PostextConfig, type PostextContent, type Resource, type VDTDocument } from 'postext';
-import { layOutBookChain } from './chain';
-import { composeBookMemo } from './compose';
-import { layoutCacheKey } from './layoutKeys';
-import type { BookPlan, Chapter } from './types';
-import { jumpsKeyOf, planContent } from './jumps';
+import { layOutBookChain } from './chain.js';
+import { composeBookMemo } from './compose.js';
+import { layoutCacheKey } from './layoutKeys.js';
+import type { BookPlan, Chapter } from './types.js';
+import { jumpsKeyOf, planContent } from './jumps.js';
 
 export interface BookPrintChainInput {
   plan: BookPlan;

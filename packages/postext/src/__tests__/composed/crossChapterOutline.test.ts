@@ -5,13 +5,13 @@
  * puts it into the sending chapter's entries.
  */
 import { describe, it, expect } from 'vitest';
-import { buildBundle } from '../../bundle';
-import { buildDocument } from '../../pipeline/build';
-import { contentOutline, outlineFromDoc, mergeCarriedOutline, carriedPlaces } from '../../index';
-import { createMeasurementCache } from '../../measure';
-import type { PageTemplate } from '../../composed/types';
-import type { OutlineEntry, PostextConfig, VDTBlock, VDTDocument } from '../../index';
-import { page8Fixture } from './fixtures/page8';
+import { buildBundle } from '../../bundle/index.js';
+import { buildDocument } from '../../pipeline/build.js';
+import { contentOutline, outlineFromDoc, mergeCarriedOutline, carriedPlaces } from '../../index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { OutlineEntry, PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
+import { page8Fixture } from './fixtures/page8.js';
 
 class StubCtx {
   font = '';

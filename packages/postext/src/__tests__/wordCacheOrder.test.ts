@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { clearMeasurementCache } from '../measure';
-import { canvasText, measureMarkedWidth, measureRunWidth, measureTextWidth, measureUncachedWidth, scriptSensitive, setMeasureLanguage } from '../measure/canvas';
-import { measureBlock } from '../measure/plain';
-import { pretextLanguageState } from '../measure/pretextLanguage';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { clearMeasurementCache } from '../measure/index.js';
+import { canvasText, measureMarkedWidth, measureRunWidth, measureTextWidth, measureUncachedWidth, scriptSensitive, setMeasureLanguage } from '../measure/canvas.js';
+import { measureBlock } from '../measure/plain.js';
+import { pretextLanguageState } from '../measure/pretextLanguage.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
 
 // #770: Chrome's canvas keeps the words it shaped, by context, font and
 // language, under the word's text alone, and a word with no letter has two

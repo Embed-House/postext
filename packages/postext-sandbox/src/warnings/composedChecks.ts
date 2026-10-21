@@ -12,8 +12,8 @@
  */
 
 import type { PostextConfig, VDTDocument, VDTFrame, VDTPage } from 'postext';
-import type { Warning, WarningPayload } from './types';
-import { overlapFocusOf, type OverlapFocusOf } from '../editions/overlapFocus';
+import type { Warning, WarningPayload } from './types.js';
+import { overlapFocusOf, type OverlapFocusOf } from '../editions/overlapFocus.js';
 
 /** The page-template kinds of the engine's configuration warnings (#853). */
 export const PAGE_TEMPLATE_KINDS = [

@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../defaults/paragraphStyles';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import type { ParagraphStyleConfig, PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../defaults/paragraphStyles.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import type { ParagraphStyleConfig, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
 
 // EF-128: a paragraph style can indent every line of its paragraphs
 // (`indent`), and the first-line or hanging indent is measured from there,

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { resolvePrintConfig, stripPrintDefaults, DEFAULT_PRINT_CONFIG } from '../defaults/print';
-import { stripConfigDefaults } from '../defaults';
-import { collectConfigWarnings } from '../configWarnings';
-import { resolveAllConfig } from '../pipeline/config';
+import { resolvePrintConfig, stripPrintDefaults, DEFAULT_PRINT_CONFIG } from '../defaults/print.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { resolveAllConfig } from '../pipeline/config.js';
 
 describe('print config', () => {
   it('resolves to the defaults: no PDF/X, FOGRA39, relative with BPC', () => {

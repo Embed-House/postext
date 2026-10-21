@@ -11,8 +11,8 @@ import {
   presetFileId,
   presetFontFileId,
   resourceFromSpec,
-} from './manifest';
-import type { PresetManifestV1, PresetManifestV2 } from './types';
+} from './manifest.js';
+import type { PresetManifestV1, PresetManifestV2 } from './types.js';
 
 const manifest = (over: Partial<PresetManifestV1> = {}): PresetManifestV1 => ({
   version: 1,

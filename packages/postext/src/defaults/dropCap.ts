@@ -7,7 +7,7 @@
  * it cannot use (`collectConfigWarnings` names them).
  */
 
-import type { Dimension, DropCapPunctuation, DropCapShortParagraph, ParagraphDropCap } from '../types';
+import type { Dimension, DropCapPunctuation, DropCapShortParagraph, ParagraphDropCap } from '../types.js';
 
 export const DROP_CAP_PUNCTUATION: readonly DropCapPunctuation[] = ['with-cap', 'hang', 'text'];
 export const DROP_CAP_SHORT_PARAGRAPH: readonly DropCapShortParagraph[] = ['reserve', 'shrink', 'skip'];

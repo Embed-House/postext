@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { measureBlock } from '../measure/plain';
-import { measureRichBlock } from '../measure/rich';
-import { adjustLine } from '../knuthPlass/breakpoints';
-import { KP_INFINITY } from '../knuthPlass/constants';
-import { buildDocument } from '../pipeline';
-import { createMeasurementCache } from '../measure/font';
-import { renderBlock } from '../canvas-backend/blockRender';
-import { renderToHtmlIndexed } from '../html-backend';
-import { resolveBodyTextConfig, stripBodyTextDefaults, DEFAULT_BODY_TEXT_CONFIG } from '../defaults/bodyText';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTLine } from '../vdt';
+import { measureBlock } from '../measure/plain.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { adjustLine } from '../knuthPlass/breakpoints.js';
+import { KP_INFINITY } from '../knuthPlass/constants.js';
+import { buildDocument } from '../pipeline/index.js';
+import { createMeasurementCache } from '../measure/font.js';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import { renderToHtmlIndexed } from '../html-backend.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults, DEFAULT_BODY_TEXT_CONFIG } from '../defaults/bodyText.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTLine } from '../vdt.js';
 
 // EF-65: a justified line Knuth–Plass can only set by stretching its word
 // spaces past `maxWordSpacing` (or shrinking them past `minWordSpacing`) may

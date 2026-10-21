@@ -11,28 +11,28 @@ import {
   type Resource,
   type VDTDocument,
 } from 'postext';
-import { loadPrintProfile, outputProfileBaseUrl } from '../print/printSetup';
+import { loadPrintProfile, outputProfileBaseUrl } from '../print/printSetup.js';
 import { createPdfWorker, type PdfWorkerHandle, type RenderProgress } from 'postext-pdf/worker';
-import { useBookPages, useBookPlan, useChapterPlan, useSandboxDispatch, useSandboxSelector, useLayoutSource } from '../context/SandboxContext';
-import { composeBookMemo } from '../book/compose';
-import { chapterLayoutFromDoc } from '../book/pagination';
-import { layOutBookPrint } from '../book/printChain';
-import { layoutCacheKey } from '../book/layoutKeys';
-import type { ComposedBook } from '../book/types';
-import { ensureConfigFontsLoaded, onCustomFontsChanged } from '../controls/fontLoader';
-import { readViewHash } from '../storage/viewHash';
-import { withHyphenationLocale } from '../controls/hyphenation';
-import { useLayoutWorker, type BuildProgress } from '../worker/useLayoutWorker';
-import { onLateFonts } from '../worker/LayoutService';
-import { perfMark, perfSpan } from '../perf/marks';
-import { buildPdfResourceBytes } from './pdfResourceBytes';
-import { PdfPreview, generationFraction } from './PdfPreview';
-import { PdfToolbar } from './PdfToolbar';
-import { createPdfFontProvider } from './pdfFontProvider';
-import { isPdfFontCheck, pdfFontChecksSource, setPdfFontChecks, type PdfFontCheck } from '../controls/pdfFontWarnings';
-import { useFloatingToolbarShell } from './useFloatingToolbarShell';
-import { useViewerControls } from './viewerControls';
-import { announce } from '../ui/announcer';
+import { useBookPages, useBookPlan, useChapterPlan, useSandboxDispatch, useSandboxSelector, useLayoutSource } from '../context/SandboxContext.js';
+import { composeBookMemo } from '../book/compose.js';
+import { chapterLayoutFromDoc } from '../book/pagination.js';
+import { layOutBookPrint } from '../book/printChain.js';
+import { layoutCacheKey } from '../book/layoutKeys.js';
+import type { ComposedBook } from '../book/types.js';
+import { ensureConfigFontsLoaded, onCustomFontsChanged } from '../controls/fontLoader.js';
+import { readViewHash } from '../storage/viewHash.js';
+import { withHyphenationLocale } from '../controls/hyphenation.js';
+import { useLayoutWorker, type BuildProgress } from '../worker/useLayoutWorker.js';
+import { onLateFonts } from '../worker/LayoutService.js';
+import { perfMark, perfSpan } from '../perf/marks.js';
+import { buildPdfResourceBytes } from './pdfResourceBytes.js';
+import { PdfPreview, generationFraction } from './PdfPreview.js';
+import { PdfToolbar } from './PdfToolbar.js';
+import { createPdfFontProvider } from './pdfFontProvider.js';
+import { isPdfFontCheck, pdfFontChecksSource, setPdfFontChecks, type PdfFontCheck } from '../controls/pdfFontWarnings.js';
+import { useFloatingToolbarShell } from './useFloatingToolbarShell.js';
+import { useViewerControls } from './viewerControls.js';
+import { announce } from '../ui/announcer.js';
 
 /** The PDF tab is the one place the whole book can be rendered as one
  *  continuous document; by default it shows the active chapter continued

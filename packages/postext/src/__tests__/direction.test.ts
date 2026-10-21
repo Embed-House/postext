@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { directionOf } from '../locale';
-import { resolveAllConfig, resolvedDirection } from '../pipeline/config';
-import { resolvePageBinding, resolvePageConfig } from '../defaults/page';
-import { collectConfigWarnings } from '../configWarnings';
-import { parseMarkdown } from '../parse';
-import { stripConfigDefaults } from '../defaults';
-import { createBundle, migrateConfig, openBundle } from '../bundle';
-import type { PostextConfig } from '../types';
+import { directionOf } from '../locale.js';
+import { resolveAllConfig, resolvedDirection } from '../pipeline/config.js';
+import { resolvePageBinding, resolvePageConfig } from '../defaults/page.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { parseMarkdown } from '../parse/index.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { createBundle, migrateConfig, openBundle } from '../bundle/index.js';
+import type { PostextConfig } from '../types.js';
 
 describe('directionOf', () => {
   it('reads right-to-left scripts from the language', () => {

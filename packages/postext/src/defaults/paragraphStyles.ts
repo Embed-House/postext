@@ -3,9 +3,9 @@ import type {
   ParagraphStyleConfig,
   ResolvedParagraphStyleConfig,
   ResolvedBodyTextConfig,
-} from '../types';
-import { dimensionsEqual, startEndAsLeftRight } from './shared';
-import { isDropCap } from './dropCap';
+} from '../types.js';
+import { dimensionsEqual, startEndAsLeftRight } from './shared.js';
+import { isDropCap } from './dropCap.js';
 
 /** No paragraph styles ship by default — a document declares its own. */
 export const DEFAULT_PARAGRAPH_STYLES: ParagraphStyleConfig[] = [];

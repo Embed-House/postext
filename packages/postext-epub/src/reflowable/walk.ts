@@ -45,9 +45,9 @@ import type {
   VerseLineNode,
   VerseNode,
   WrapFloat,
-} from './model';
-import { figureLabelsOverlay } from './labels';
-import { appendLine, appendLines, fontPx, idOf, mathSvg, plainText, xmlText, type InlineContext, type TextSink } from './inline';
+} from './model.js';
+import { figureLabelsOverlay } from './labels.js';
+import { appendLine, appendLines, fontPx, idOf, mathSvg, plainText, xmlText, type InlineContext, type TextSink } from './inline.js';
 
 /** Where an id landed: its content document and element id. */
 export interface Loc {

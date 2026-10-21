@@ -17,10 +17,10 @@
  * joining script's tracking) or whose content goes on on pages it adds
  * (#859) is always laid out afresh.
  */
-import type { ContentBlock, InlineSpan } from '../parse/types';
-import type { VDTPage } from '../vdt';
-import { measurementGeneration } from '../measure/canvas';
-import { layoutComposedPage, type ComposedPageInput, type ComposedPageLayout } from '../pipeline/composedLayout';
+import type { ContentBlock, InlineSpan } from '../parse/types.js';
+import type { VDTPage } from '../vdt.js';
+import { measurementGeneration } from '../measure/canvas.js';
+import { layoutComposedPage, type ComposedPageInput, type ComposedPageLayout } from '../pipeline/composedLayout.js';
 
 /** What the memo reads of the pass that lays the page out. */
 export interface ComposedMemoContext {

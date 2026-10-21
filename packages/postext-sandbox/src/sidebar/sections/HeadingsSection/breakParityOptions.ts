@@ -1,5 +1,5 @@
 import type { HeadingBreakParity } from 'postext';
-import type { useSandboxLabels } from '../../../context/SandboxContext';
+import type { useSandboxLabels } from '../../../context/SandboxContext.js';
 
 type Labels = ReturnType<typeof useSandboxLabels>;
 

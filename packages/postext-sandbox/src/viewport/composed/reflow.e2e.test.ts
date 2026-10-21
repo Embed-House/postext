@@ -7,10 +7,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache } from 'postext';
 import type { PostextConfig, Resource, VDTDocument, VDTFrame, VDTPage } from 'postext';
-import { DEFAULT_LABELS, type SandboxLabels } from '../../types';
-import { documentReflow, reflowEntries, reflowSentence, reflowShort } from './reflowText';
-import { reflowMarksFor, turnAbout } from './reflowMarks';
-import { designBadgesFor } from './designBadges';
+import { DEFAULT_LABELS, type SandboxLabels } from '../../types/index.js';
+import { documentReflow, reflowEntries, reflowSentence, reflowShort } from './reflowText.js';
+import { reflowMarksFor, turnAbout } from './reflowMarks.js';
+import { designBadgesFor } from './designBadges.js';
 
 // Every glyph the same width: the layout is the same on every machine.
 (globalThis as unknown as { OffscreenCanvas: unknown }).OffscreenCanvas = class {

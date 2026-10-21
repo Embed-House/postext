@@ -1,8 +1,8 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { cjkJoinBreaks } from '../../measure/cjk';
-import { cjkWordBreaks } from '../../measure/cjkCompose';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { cjkJoinBreaks } from '../../measure/cjk.js';
+import { cjkWordBreaks } from '../../measure/cjkCompose.js';
 import {
   breakClassOf,
   cjkClassOf,
@@ -11,12 +11,12 @@ import {
   isLineStartProhibited,
   setCjkLineBreak,
   type CjkLineBreakLevel,
-} from '../../measure/cjkClasses';
-import { setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation';
-import { resolveCjkConfig } from '../../defaults/cjk';
-import type { InlineSpan } from '../../parse';
-import type { MeasureBlockOptions } from '../../measure/types';
-import type { VDTLine } from '../../vdt';
+} from '../../measure/cjkClasses.js';
+import { setCjkComposition, type CjkComposition } from '../../measure/cjkPunctuation.js';
+import { resolveCjkConfig } from '../../defaults/cjk.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { MeasureBlockOptions } from '../../measure/types.js';
+import type { VDTLine } from '../../vdt.js';
 
 // Japanese kinsoku shori (#417): the JLReq line-break levels. Stub: CJK
 // characters, kana and the marks Chinese sets full width (— … “ ” ‘ ’) are

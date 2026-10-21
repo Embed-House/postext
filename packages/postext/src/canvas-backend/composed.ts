@@ -5,14 +5,14 @@
  * decoration at layer 0 (`composedPaintOrder`). On a page of a spread
  * (#861) all of it is clipped to the page's share of the sheet.
  */
-import type { VDTBlock, VDTComicPage, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
-import { comicFramePaintOrder, composedPaintOrder, decorationOver, decorationUnder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint';
-import { renderBlock } from './blockRender';
-import { setVerticalPaint } from './verticalText';
-import { withoutMirroredPaint } from './mirrorFrame';
-import type { CjkRegion } from '../types';
-import { renderHeaderFooterSlot } from './headerFooter';
-import { restoreContext, saveContext } from './contextState';
+import type { VDTBlock, VDTComicPage, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt.js';
+import { comicFramePaintOrder, composedPaintOrder, decorationOver, decorationUnder, composedSheetClip, composedSheetClipOnSheet, frameClips, frameContentRect, frameMatrix, type ComposedPaintPart } from '../composed/paint.js';
+import { renderBlock } from './blockRender.js';
+import { setVerticalPaint } from './verticalText.js';
+import { withoutMirroredPaint } from './mirrorFrame.js';
+import type { CjkRegion } from '../types.js';
+import { renderHeaderFooterSlot } from './headerFooter.js';
+import { restoreContext, saveContext } from './contextState.js';
 
 /**
  * Paint the frames of `page.composed` in their paint order. With

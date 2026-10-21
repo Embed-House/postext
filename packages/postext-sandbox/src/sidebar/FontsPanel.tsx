@@ -1,6 +1,6 @@
 'use client';
 
-import { BookFonts } from './BookFonts';
+import { BookFonts } from './BookFonts.js';
 import { useCallback, useRef, useState } from 'react';
 import { ChevronRight, Pencil, Plus, RotateCcw, Trash2, Type, Upload } from 'lucide-react';
 import type { CustomFontFamily, CustomFontVariant, CustomFontStyle } from 'postext';
@@ -8,15 +8,15 @@ import {
   useSandboxDispatch,
   useSandboxLabels,
   useSandboxSelector,
-} from '../context/SandboxContext';
-import { Button, ConfirmPopover, EmptyState, IconButton, PanelBody, PanelHeader, cn } from '../ui';
-import type { SandboxLabels } from '../types';
+} from '../context/SandboxContext.js';
+import { Button, ConfirmPopover, EmptyState, IconButton, PanelBody, PanelHeader, cn } from '../ui/index.js';
+import type { SandboxLabels } from '../types/index.js';
 import {
   deleteFontFile,
   formatFromFilename,
   generateFontFileId,
   putFontFile,
-} from '../storage/fontStorage';
+} from '../storage/fontStorage.js';
 
 function newFamilyName(existing: CustomFontFamily[], base: string): string {
   if (!existing.some((f) => f.name === base)) return base;

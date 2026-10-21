@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { initMathEngine } from '../../math';
-import { buildDocument } from '../../pipeline';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripConfigDefaults } from '../../defaults';
-import { renderBlock } from '../../canvas-backend/blockRender';
-import type { PostextConfig, Resource } from '../../types';
-import type { VDTBlock, VDTDesignBlock, VDTDocument, VDTLine } from '../../vdt';
+import { initMathEngine } from '../../math/index.js';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { renderBlock } from '../../canvas-backend/blockRender.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import type { VDTBlock, VDTDesignBlock, VDTDocument, VDTLine } from '../../vdt.js';
 
 // #371: blocks set against their frame's direction (an English quotation,
 // list or table in an Arabic book; an Arabic one in an English book) align

@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
-import { createMeasurementCache } from '../../measure';
-import { splitNote } from '../../measure/cjkAnnotate';
+import { buildDocument } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { splitNote } from '../../measure/cjkAnnotate.js';
 
 // Emphasis dots and the proper-name and book-title marks (#193), ruby
 // (#194) and warichu notes (#195), laid out with passages of 红楼梦. The stub
@@ -544,8 +544,8 @@ describe('warichu: two characters on either side of a line break (#720)', () => 
   });
 
   it('resolves, strips and keys the setting', async () => {
-    const { resolveCjkConfig, stripCjkDefaults } = await import('../../defaults/cjk');
-    const { cjkCompositionKey, cjkCompositionOf } = await import('../../measure/cjkPunctuation');
+    const { resolveCjkConfig, stripCjkDefaults } = await import('../../defaults/cjk.js');
+    const { cjkCompositionKey, cjkCompositionOf } = await import('../../measure/cjkPunctuation.js');
     const resolved = (minChars: unknown): number => resolveCjkConfig({ warichu: { minChars: minChars as number } }, 'zh-Hant').warichu.minChars;
     expect(resolveCjkConfig({}, 'zh-Hant').warichu.minChars).toBe(2);
     expect(resolveCjkConfig({}, 'ja').warichu.minChars).toBe(2);

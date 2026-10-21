@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { DocumentMetadata, PostextConfig, VDTDocument } from 'postext';
-import { documentCodePoints, facesForText, fontFormatOf, parseUnicodeRange } from './fontSubsets';
-import { bookLanguageOf, epubFileName, epubMetadataOf, isoDateOf, sandboxBookIdentifier } from './metadata';
-import { createSwipeTracker, dockedToolbarReserve, fillLabel, firstIndexOf, fixedScreens, flattenToc, keepReaderFocus, linkTarget, prefersSpreads, rewriteCssUrls, rewriteMarkupRefs, screenOf, SWIPE_MAX_DURATION, type SwipePoint } from './viewer';
+import { documentCodePoints, facesForText, fontFormatOf, parseUnicodeRange } from './fontSubsets.js';
+import { bookLanguageOf, epubFileName, epubMetadataOf, isoDateOf, sandboxBookIdentifier } from './metadata.js';
+import { createSwipeTracker, dockedToolbarReserve, fillLabel, firstIndexOf, fixedScreens, flattenToc, keepReaderFocus, linkTarget, prefersSpreads, rewriteCssUrls, rewriteMarkupRefs, screenOf, SWIPE_MAX_DURATION, type SwipePoint } from './viewer.js';
 
 describe('font subsets', () => {
   it('reads unicode-range values, wildcards included', () => {

@@ -5,12 +5,12 @@
 // Renderless; mounted inside the providers it reads.
 
 import { useEffect, useRef } from 'react';
-import { useSandboxStore } from '../context/SandboxContext';
-import { useLargeTargets } from '../ui/largeTargets';
-import { useLayoutService } from '../worker/LayoutServiceContext';
-import type { SandboxToolHost } from './host';
-import { registerWebMcpTools } from './modelContext';
-import { createSandboxTools } from './tools';
+import { useSandboxStore } from '../context/SandboxContext.js';
+import { useLargeTargets } from '../ui/largeTargets.js';
+import { useLayoutService } from '../worker/LayoutServiceContext.js';
+import type { SandboxToolHost } from './host.js';
+import { registerWebMcpTools } from './modelContext.js';
+import { createSandboxTools } from './tools/index.js';
 
 export function SandboxWebMcp() {
   const store = useSandboxStore();

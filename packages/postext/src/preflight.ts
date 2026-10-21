@@ -20,14 +20,14 @@
  *   stop short of the trim by less than `bleedSnap` without bleeding.
  */
 
-import type { CmykPercent, ResolvedPrintConfig, Resource } from './types';
-import type { BoundingBox, VDTComicPage, VDTDesignSlot, VDTDocument, VDTLine } from './vdt';
-import type { OutputTransform } from './color/transform';
-import { authoredCmykColors } from './color/authored';
-import { resolvePrintConfig } from './defaults/print';
-import { dimensionToPx } from './units';
-import { findPxSize } from './measure/fontString';
-import { figureLabelLeaderPath } from './composed/labels';
+import type { CmykPercent, ResolvedPrintConfig, Resource } from './types.js';
+import type { BoundingBox, VDTComicPage, VDTDesignSlot, VDTDocument, VDTLine } from './vdt.js';
+import type { OutputTransform } from './color/transform.js';
+import { authoredCmykColors } from './color/authored.js';
+import { resolvePrintConfig } from './defaults/print.js';
+import { dimensionToPx } from './units.js';
+import { findPxSize } from './measure/fontString.js';
+import { figureLabelLeaderPath } from './composed/labels.js';
 
 export type PreflightSeverity = 'critical' | 'warning' | 'info';
 

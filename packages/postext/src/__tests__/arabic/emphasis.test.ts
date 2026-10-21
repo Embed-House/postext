@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { resolveAllConfig } from '../../pipeline/config';
-import { collectConfigWarnings } from '../../configWarnings';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import { uprightArabicSpans, uprightFace } from '../../uprightArabic';
-import type { InlineSpan } from '../../parse';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument, VDTLineSegment } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import { uprightArabicSpans, uprightFace } from '../../uprightArabic.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument, VDTLineSegment } from '../../vdt.js';
 
 // Issue #376: `bodyText.emphasis` says how `*…*` is set; Arabic letters are
 // never slanted.

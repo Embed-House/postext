@@ -5,7 +5,7 @@
 
 import { hashString, hashStringWide, stableStringify as engineStableStringify, stripConfigDefaults } from 'postext';
 import type { LayoutContinuation, PostextConfig, Resource } from 'postext';
-import { version as ENGINE_VERSION } from 'postext/package.json';
+import enginePackage from 'postext/package.json' with { type: 'json' };
 
 /** Bumped by hand when the record shape or the layout semantics change
  *  between engine releases (development builds share a version). */
@@ -13,7 +13,7 @@ const RECORD_FORMAT = 3;
 
 /** The layout engine a record was built with (the `postext` version and
  *  the record format). A record from another is recomputed. */
-export const ENGINE_KEY = `${ENGINE_VERSION}/${RECORD_FORMAT}`;
+export const ENGINE_KEY = `${enginePackage.version}/${RECORD_FORMAT}`;
 
 /** Storage-local fields that do not shape a layout: the ids of stored files
  *  (remapped when a bundle is imported), timestamps, and the custom font

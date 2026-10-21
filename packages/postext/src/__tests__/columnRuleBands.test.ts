@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../index';
-import { columnRuleSegments } from '../columnRule';
-import { createMeasurementCache } from '../measure';
-import type { DesignElement, LayoutConfig, PostextConfig } from '../types';
-import type { VDTDocument, VDTPage } from '../vdt';
+import { buildDocument, renderPageToCanvas } from '../index.js';
+import { columnRuleSegments } from '../columnRule.js';
+import { createMeasurementCache } from '../measure/index.js';
+import type { DesignElement, LayoutConfig, PostextConfig } from '../types.js';
+import type { VDTDocument, VDTPage } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

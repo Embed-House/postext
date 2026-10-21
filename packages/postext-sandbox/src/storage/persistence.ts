@@ -1,9 +1,9 @@
 import type { PostextConfig } from 'postext';
 import { stripConfigDefaults } from 'postext';
-import type { AppliedPresetSnapshot } from '../presets/types';
-import type { BookContent } from '../book/types';
-import type { EpubLayout, PanelId } from '../types/props';
-import { PROJECT_RECORD_VERSION, migrateConfig, normalizeBookContent, type MigrationDeps } from './projectMigration';
+import type { AppliedPresetSnapshot } from '../presets/types.js';
+import type { BookContent } from '../book/types.js';
+import type { EpubLayout, PanelId } from '../types/props.js';
+import { PROJECT_RECORD_VERSION, migrateConfig, normalizeBookContent, type MigrationDeps } from './projectMigration.js';
 
 const CONFIG_KEY = 'postext-sandbox-config';
 /** Shape of the saved configuration, numbered as project records are

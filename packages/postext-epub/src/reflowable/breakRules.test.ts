@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { baseConfig, layOut } from './__tests__/vdt';
-import { buildReflowablePublication } from '.';
+import { baseConfig, layOut } from './__tests__/vdt.js';
+import { buildReflowablePublication } from './index.js';
 
 // #717: CSS names the two break rules the other way round. `orphans` is
 // the lines a paragraph keeps at the foot of a page (the engine's

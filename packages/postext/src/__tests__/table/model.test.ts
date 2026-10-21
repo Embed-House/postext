@@ -10,8 +10,8 @@ import {
   setAlignment,
   parseTSV,
   tableGridIssues,
-} from '../../table/model';
-import type { TableModel, TableCell } from '../../types';
+} from '../../table/model.js';
+import type { TableModel, TableCell } from '../../types.js';
 
 /** Build a rectangular model whose cell contents are "r,c". */
 const grid = (rows: number, cols: number): TableModel => ({

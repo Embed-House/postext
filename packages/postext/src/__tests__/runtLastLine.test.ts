@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { measureBlock } from '../measure/plain';
-import { isRuntLastLine } from '../measure/runts';
-import type { VDTLine } from '../vdt';
+import { measureBlock } from '../measure/plain.js';
+import { isRuntLastLine } from '../measure/runts.js';
+import type { VDTLine } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

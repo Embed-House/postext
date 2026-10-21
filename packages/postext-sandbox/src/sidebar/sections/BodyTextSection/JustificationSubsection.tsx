@@ -2,9 +2,9 @@
 
 import { DEFAULT_BODY_TEXT_CONFIG } from 'postext';
 import type { BodyTextConfig, HyphenationConfig, KashidaPatterns, ResolvedBodyTextConfig } from 'postext';
-import { NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
-import type { useSandboxLabels } from '../../../context/SandboxContext';
-import { HyphenateCapitalizedField, HyphenateCompoundsField, HyphenationExceptionsField, HyphenationLocaleField, RaggedHyphenationFields } from './HyphenationFields';
+import { NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../../controls/index.js';
+import type { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { HyphenateCapitalizedField, HyphenateCompoundsField, HyphenationExceptionsField, HyphenationLocaleField, RaggedHyphenationFields } from './HyphenationFields.js';
 
 interface Props {
   bodyText: ResolvedBodyTextConfig;

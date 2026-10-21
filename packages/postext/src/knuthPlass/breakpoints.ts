@@ -2,9 +2,9 @@
  * Core Knuth-Plass dynamic-programming breakpoint selection.
  */
 
-import type { KPItem, KPOptions, KPPenalty } from './types';
-import type { Breaker } from './wasm/abi';
-import { readyWasmBreaker } from './wasm/engine';
+import type { KPItem, KPOptions, KPPenalty } from './types.js';
+import type { Breaker } from './wasm/abi.js';
+import { readyWasmBreaker } from './wasm/engine.js';
 import {
   BADNESS_CAP,
   COLUMN_END_HYPHEN_BADNESS,
@@ -14,7 +14,7 @@ import {
   OVER_STRETCH_BADNESS,
   RAGGED_SPACE_RATIO,
   TRACKING_BADNESS,
-} from './constants';
+} from './constants.js';
 
 /** A line's adjustment ratio and the tracking it takes (see
  *  {@link adjustLine}). */

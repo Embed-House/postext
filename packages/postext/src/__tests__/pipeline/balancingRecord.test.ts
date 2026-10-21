@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, buildDocumentPass } from '../../pipeline/build';
-import { balanceKey } from '../../pipeline/columnBalancing';
-import { createMeasurementCache } from '../../measure';
-import type { VDTBlock, VDTDocument } from '../../vdt';
-import type { PostextConfig, Resource } from '../../types';
+import { buildDocument, buildDocumentPass } from '../../pipeline/build.js';
+import { balanceKey } from '../../pipeline/columnBalancing.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
+import type { PostextConfig, Resource } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

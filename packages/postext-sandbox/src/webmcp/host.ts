@@ -3,15 +3,15 @@
 // whatever tab is on screen. The tools themselves are in ./tools.
 
 import type { PostextConfig, VDTDocument } from 'postext';
-import type { SandboxAction, SandboxState, SandboxStore } from '../context/SandboxContext';
-import type { BookPlan, Chapter } from '../book/types';
-import { composeBookMemo } from '../book/compose';
-import { layoutCacheKey } from '../book/layoutKeys';
-import { chapterPageLabels } from '../book/pagination';
-import { withHyphenationLocale } from '../controls/hyphenation';
-import type { LayoutService } from '../worker/LayoutService';
-import { ToolError } from './modelContext';
-import { planContent } from '../book/jumps';
+import type { SandboxAction, SandboxState, SandboxStore } from '../context/SandboxContext.js';
+import type { BookPlan, Chapter } from '../book/types.js';
+import { composeBookMemo } from '../book/compose.js';
+import { layoutCacheKey } from '../book/layoutKeys.js';
+import { chapterPageLabels } from '../book/pagination.js';
+import { withHyphenationLocale } from '../controls/hyphenation.js';
+import type { LayoutService } from '../worker/LayoutService.js';
+import { ToolError } from './modelContext.js';
+import { planContent } from '../book/jumps.js';
 
 export interface SandboxToolHost {
   store: SandboxStore;

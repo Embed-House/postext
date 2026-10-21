@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import type { PostextConfig, VDTFrame } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import type { PostextConfig, VDTFrame } from '../../index.js';
 
 class StubCtx {
   font = '';

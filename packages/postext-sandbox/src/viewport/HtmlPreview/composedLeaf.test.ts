@@ -3,8 +3,8 @@
 
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, VDTDocument, VDTPage } from 'postext';
-import { composedPageScale, fitPagesToContent, isComposedLeaf } from './pageGeometry';
-import { buildHtmlConfigOverride, hasComposedPages } from './configOverride';
+import { composedPageScale, fitPagesToContent, isComposedLeaf } from './pageGeometry.js';
+import { buildHtmlConfigOverride, hasComposedPages } from './configOverride.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 

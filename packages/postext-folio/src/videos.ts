@@ -1,5 +1,5 @@
 import { flowToPage, isHlsMimeType, resourceBlockToPage, videosToPause, type VDTBlock, type VDTDocument, type VDTPage, type VDTResourceVideo } from "postext";
-import type { PageVideoFrame } from "./pageFlip";
+import type { PageVideoFrame } from "./pageFlip.js";
 
 /**
  * Videos on Folio's pages (#477): where each video resource's picture lies

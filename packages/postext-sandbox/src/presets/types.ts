@@ -16,7 +16,7 @@ import type {
   BundleShowcaseMeta,
   BundleViewSpec,
 } from 'postext/bundle';
-import type { BookStart, ChapterLayout, Chapter, LayoutScope } from '../book/types';
+import type { BookStart, ChapterLayout, Chapter, LayoutScope } from '../book/types.js';
 
 export type PresetSource = 'builtin' | 'public' | 'private';
 

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { balancingOnByDefault, stripConfigDefaults, stripHeadingsDefaults, stripIndexDefaults, stripPageDefaults } from '../../defaults';
-import * as configVersion from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stableStringify } from '../../util/stableHash';
-import type { DesignElement, DesignSlot, PostextConfig } from '../../types';
+import { balancingOnByDefault, stripConfigDefaults, stripHeadingsDefaults, stripIndexDefaults, stripPageDefaults } from '../../defaults/index.js';
+import * as configVersion from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stableStringify } from '../../util/stableHash.js';
+import type { DesignElement, DesignSlot, PostextConfig } from '../../types.js';
 
 // #651: a default that depends on the rest of the configuration is the
 // default of that configuration. `stripConfigDefaults` dropped every value

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile } from 'node:fs';
-import { buildDocument } from '../pipeline';
+import { buildDocument } from '../pipeline/index.js';
 import {
   blendColors,
   contrastDocument,
@@ -14,12 +14,12 @@ import {
   printLuminance,
   relativeLuminance,
   type ContrastIssue,
-} from '../contrast';
-import { resolveContrastConfig, stripContrastDefaults } from '../defaults/contrast';
-import { collectConfigWarnings } from '../configWarnings';
-import { resolveAllConfig } from '../pipeline/config';
-import { outputTransform, parseIccProfile } from '../color';
-import type { PostextConfig } from '../types';
+} from '../contrast.js';
+import { resolveContrastConfig, stripContrastDefaults } from '../defaults/contrast.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { outputTransform, parseIccProfile } from '../color/index.js';
+import type { PostextConfig } from '../types.js';
 
 class StubCtx {
   font = '';

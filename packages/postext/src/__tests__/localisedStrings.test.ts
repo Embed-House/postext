@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { defaultResourceTypes } from '../defaults/resourceTypes';
-import { defaultTableContinuationStrings, resolveTableStyleConfig } from '../defaults/tableStyle';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { buildDocument } from '../pipeline';
-import type { PostextConfig, Resource } from '../types';
+import { defaultResourceTypes } from '../defaults/resourceTypes.js';
+import { defaultTableContinuationStrings, resolveTableStyleConfig } from '../defaults/tableStyle.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { buildDocument } from '../pipeline/index.js';
+import type { PostextConfig, Resource } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

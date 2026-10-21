@@ -13,12 +13,12 @@
  * ({@link contourOnPage}), and every line beside it is set short by the
  * shape's width at its height ({@link contourInsetSteps}).
  */
-import type { ContourTrace, Resource, ResourceContour } from '../types';
-import type { BoundingBox, ResolvedResourceBlock, VDTContourSpan, VDTExclusionContour } from '../vdt';
-import type { LineInsetStep } from '../measure/types';
-import { decodePngAlpha, isPng, type AlphaRaster } from './png';
+import type { ContourTrace, Resource, ResourceContour } from '../types.js';
+import type { BoundingBox, ResolvedResourceBlock, VDTContourSpan, VDTExclusionContour } from '../vdt.js';
+import type { LineInsetStep } from '../measure/types.js';
+import { decodePngAlpha, isPng, type AlphaRaster } from './png.js';
 
-export { decodePngAlpha, isPng, type AlphaRaster } from './png';
+export { decodePngAlpha, isPng, type AlphaRaster } from './png.js';
 
 /** `ResourceContour.threshold` when unset. */
 export const DEFAULT_CONTOUR_THRESHOLD = 0.5;

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument, flowRectToPage } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // A right-bound book (#189) tells PDF viewers to lay its spreads out right
 // to left, page 1 alone; a vertical page (#188) paints its flow through the

@@ -1,14 +1,14 @@
 // The buttons of the viewers' toolbars and what a click does on their
 // pages: lay out or write again, print, download, play a video.
 
-import { VIEWPORT_TABS } from '../../storage/viewHash';
-import type { ViewportTab } from '../../types';
-import { folioSupported } from '../../viewport/folioSupport';
-import type { ViewerControls, ViewerVideo } from '../../viewport/viewerControls';
-import { SETTLE_TIMEOUT_MS, dispatchAndWait, whenSettled, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { MAX_STATUS_ENTRIES, compactStatus, whenViewerIdle } from '../viewerStatus';
-import { controlsOf } from './view';
+import { VIEWPORT_TABS } from '../../storage/viewHash.js';
+import type { ViewportTab } from '../../types/index.js';
+import { folioSupported } from '../../viewport/folioSupport.js';
+import type { ViewerControls, ViewerVideo } from '../../viewport/viewerControls.js';
+import { SETTLE_TIMEOUT_MS, dispatchAndWait, whenSettled, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { MAX_STATUS_ENTRIES, compactStatus, whenViewerIdle } from '../viewerStatus.js';
+import { controlsOf } from './view.js';
 
 const ACTIONS = ['regenerate', 'print', 'download', 'play_video', 'stop_video'] as const;
 type ViewerAction = (typeof ACTIONS)[number];

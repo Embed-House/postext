@@ -3,17 +3,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { DEFAULT_CALLOUT_STYLES, type AnchorEdge, type ColorValue, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
-import { useSandboxActiveProjectId, useSandboxDocRef, useSandboxEditionActions, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { applyViewerEdit } from '../../../editor/viewerEdits';
-import { useFrameDrag } from '../../../selection/frameDrag';
-import { ColorPicker, DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
-import { Button, ConfirmPopover } from '../../../ui';
-import { frameEntry, frameFamily, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits';
-import { resolveAt, usePageTemplates } from './model';
-import { useBookTexts } from '../../../frameStyles/useBookTexts';
-import { pageFenceIds, renameSlotChanges } from '../../../templates/templateUsage';
-import { resolveBookStyles } from '../../../frameStyles/library';
-import { FramePointers } from './FramePointers';
+import { useSandboxActiveProjectId, useSandboxDocRef, useSandboxEditionActions, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { applyViewerEdit } from '../../../editor/viewerEdits.js';
+import { useFrameDrag } from '../../../selection/frameDrag.js';
+import { ColorPicker, DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls/index.js';
+import { Button, ConfirmPopover } from '../../../ui/index.js';
+import { frameEntry, frameFamily, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits.js';
+import { resolveAt, usePageTemplates } from './model.js';
+import { useBookTexts } from '../../../frameStyles/useBookTexts.js';
+import { pageFenceIds, renameSlotChanges } from '../../../templates/templateUsage.js';
+import { resolveBookStyles } from '../../../frameStyles/library.js';
+import { FramePointers } from './FramePointers.js';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
 const NINE_POINT: AnchorEdge[] = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];

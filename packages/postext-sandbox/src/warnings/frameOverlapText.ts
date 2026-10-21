@@ -10,11 +10,11 @@
  * {@link FrameProposal}; {@link frameProposalText} words any of them.
  */
 import type { FrameCoverProposal, FrameOutsideProposal, FrameOverflowProposal } from 'postext';
-import type { SandboxLabels } from '../types';
-import { fill } from '../print/fillTokens';
-import { localNumber } from '../viewport/composed/reflowText';
-import { fitProposalText } from './frameOverflowText';
-import type { WarningPayload } from './types';
+import type { SandboxLabels } from '../types/index.js';
+import { fill } from '../print/fillTokens.js';
+import { localNumber } from '../viewport/composed/reflowText.js';
+import { fitProposalText } from './frameOverflowText.js';
+import type { WarningPayload } from './types.js';
 
 /** The way out of an overlap check the Sandbox adds to the layout's fixes
  *  (#1081): `overlap: 'allow'` on the frame placed so on purpose (a

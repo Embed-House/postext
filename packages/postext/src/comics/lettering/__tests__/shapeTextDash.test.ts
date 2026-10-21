@@ -1,11 +1,11 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { clearTextWidthCache } from '../../../measure/canvas';
-import { cjkCompositionOf, getCjkComposition, PLAIN_CJK_COMPOSITION, setCjkComposition } from '../../../measure/cjkPunctuation';
-import { resolveCjkConfig } from '../../../defaults/cjk';
-import { prepareText, readLetteringText } from '../text';
-import { shapeText } from '../shape-text';
-import { presetLetteringStyles } from '../presets';
-import type { InlineSpan } from '../../../parse/types';
+import { clearTextWidthCache } from '../../../measure/canvas.js';
+import { cjkCompositionOf, getCjkComposition, PLAIN_CJK_COMPOSITION, setCjkComposition } from '../../../measure/cjkPunctuation.js';
+import { resolveCjkConfig } from '../../../defaults/cjk.js';
+import { prepareText, readLetteringText } from '../text.js';
+import { shapeText } from '../shape-text.js';
+import { presetLetteringStyles } from '../presets.js';
+import type { InlineSpan } from '../../../parse/types.js';
 
 // #723: the lines of a balloon are chosen with the widths they are set
 // at. A line the design-text layout sets with the CJK composer (#637) is

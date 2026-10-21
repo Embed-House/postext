@@ -1,7 +1,7 @@
 // Break opportunities and costs shared by the plain and the rich line
 // breakers.
 
-import { findPxSize } from './fontString';
+import { findPxSize } from './fontString.js';
 
 const EM_DASH = '—';
 const EN_DASH = '–';

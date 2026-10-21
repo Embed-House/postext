@@ -1,10 +1,10 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../measure/rich';
-import { setHyphenationLocale } from '../hyphenate';
-import { buildDocument } from '../pipeline';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig, Resource } from '../types';
-import type { VDTBlock } from '../vdt';
+import { measureRichBlock } from '../measure/rich.js';
+import { setHyphenationLocale } from '../hyphenate.js';
+import { buildDocument } from '../pipeline/index.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig, Resource } from '../types.js';
+import type { VDTBlock } from '../vdt.js';
 
 // EF-73 and EF-62: punctuation touching a bold or italic run, or an inline
 // :ref, travels with it. postext 1.4.1 set ragged lines word by word and

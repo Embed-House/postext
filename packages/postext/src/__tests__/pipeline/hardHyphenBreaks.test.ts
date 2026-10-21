@@ -1,9 +1,9 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { computeChapterTitles } from '../../pipeline/placeholders';
-import { setHyphenationLocale } from '../../hyphenate';
-import { uppercasePreservingLength } from '../../pipeline/buildBlockKind';
-import type { VDTBlock, VDTLine } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { computeChapterTitles } from '../../pipeline/placeholders.js';
+import { setHyphenationLocale } from '../../hyphenate.js';
+import { uppercasePreservingLength } from '../../pipeline/buildBlockKind.js';
+import type { VDTBlock, VDTLine } from '../../vdt.js';
 
 // EF-140: a line broken after a hard hyphen ("meta-" | "analyses") is flagged
 // `hyphenated` like a syllable break, although the hyphen is the text's own.

@@ -1,15 +1,15 @@
-import type { PostextContent, PostextConfig } from '../types';
-import type { VDTDocument } from '../vdt';
-import type { BuildProgress } from '../pipeline/build';
+import type { PostextContent, PostextConfig } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
+import type { BuildProgress } from '../pipeline/build.js';
 
-export type { BuildProgress } from '../pipeline/build';
-import type { BuildStats, FontPayload, RequestMessage, ResponseMessage } from './protocol';
-import { cdnWorkerEntryUrl } from './entryUrl';
-import { fontSampleText, prepareFonts, type FontReport, type PrepareFontsOptions } from '../fonts/prepare';
-import { registeredFontFiles } from '../svg/fontRegistry';
+export type { BuildProgress } from '../pipeline/build.js';
+import type { BuildStats, FontPayload, RequestMessage, ResponseMessage } from './protocol.js';
+import { cdnWorkerEntryUrl } from './entryUrl.js';
+import { fontSampleText, prepareFonts, type FontReport, type PrepareFontsOptions } from '../fonts/prepare.js';
+import { registeredFontFiles } from '../svg/fontRegistry.js';
 
-export type { BuildStats, FontPayload } from './protocol';
-export type { BuildPassInfo } from '../pipeline/build';
+export type { BuildStats, FontPayload } from './protocol.js';
+export type { BuildPassInfo } from '../pipeline/build.js';
 
 /** A face for `registerFonts`: a `FontPayload` whose CSS weight may also be
  *  a number (`700` as well as `'700'` or `'bold'`). */

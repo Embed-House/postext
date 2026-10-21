@@ -9,21 +9,21 @@
  * `comics.readingDirection` (or the page's `direction`).
  */
 
-import { cornerRadiiPx, isCornerRadii, uniformRadius } from '../design/boxShape';
-import type { ColorPaletteEntry, ComicCastMember, Dimension, Resource, ResolvedBalloonStyleConfig, ResolvedComicsConfig, ResolvedPanelStyleConfig } from '../types';
-import type { BoundingBox, ContentWarning, ResolvedConfig, VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTPage, VDTPoint } from '../vdt';
-import { flowRectToPage } from '../vdt';
-import { resolvedDirection, resolvedLocale } from '../pipeline/config';
-import { dimensionToPx } from '../units';
-import { chineseScriptOf, directionOf, isCjkLanguage, isJapaneseLanguage, presentTag } from '../locale';
-import { comicReadingDirection, DEFAULT_LETTERING_STATIC, pickBalloonStyle, pickPanelStyle, resolvedComics } from '../defaults/comics';
-import { comicArtCrop, comicArtPointToPage, comicArtRectToPage } from './art';
-import { comicGeometry, physicalSide, pointInPolygon, type ComicFrameSide } from './geometry';
-import { comicBalloonElementId, comicBoxStyle, comicElementId, comicFrameElementId, comicFrameSpecs, comicPanelFrame, isComicTextPanel, type ComicFrameSpec } from './frames';
-import { parseComicPoint } from './script';
-import { letterPanelDetailed } from './lettering/letter';
-import type { LetteringAnchor, LetteringForeignArt, LetteringItem, LetteringPanel, LetteringStyle } from './lettering/types';
-import type { ComicPageSource, ComicPanelSource, ComicScriptItem } from './types';
+import { cornerRadiiPx, isCornerRadii, uniformRadius } from '../design/boxShape.js';
+import type { ColorPaletteEntry, ComicCastMember, Dimension, Resource, ResolvedBalloonStyleConfig, ResolvedComicsConfig, ResolvedPanelStyleConfig } from '../types.js';
+import type { BoundingBox, ContentWarning, ResolvedConfig, VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTPage, VDTPoint } from '../vdt.js';
+import { flowRectToPage } from '../vdt.js';
+import { resolvedDirection, resolvedLocale } from '../pipeline/config.js';
+import { dimensionToPx } from '../units.js';
+import { chineseScriptOf, directionOf, isCjkLanguage, isJapaneseLanguage, presentTag } from '../locale.js';
+import { comicReadingDirection, DEFAULT_LETTERING_STATIC, pickBalloonStyle, pickPanelStyle, resolvedComics } from '../defaults/comics.js';
+import { comicArtCrop, comicArtPointToPage, comicArtRectToPage } from './art.js';
+import { comicGeometry, physicalSide, pointInPolygon, type ComicFrameSide } from './geometry.js';
+import { comicBalloonElementId, comicBoxStyle, comicElementId, comicFrameElementId, comicFrameSpecs, comicPanelFrame, isComicTextPanel, type ComicFrameSpec } from './frames.js';
+import { parseComicPoint } from './script.js';
+import { letterPanelDetailed } from './lettering/letter.js';
+import type { LetteringAnchor, LetteringForeignArt, LetteringItem, LetteringPanel, LetteringStyle } from './lettering/types.js';
+import type { ComicPageSource, ComicPanelSource, ComicScriptItem } from './types.js';
 
 /** What the build hands the comic page layout. */
 export interface ComicPageContext {

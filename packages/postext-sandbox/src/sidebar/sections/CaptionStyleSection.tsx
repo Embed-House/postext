@@ -1,12 +1,12 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveBodyTextConfig, resolveCaptionStyleConfig } from 'postext';
 import type { CaptionStyleConfig } from 'postext';
-import { CollapsibleSection } from '../../controls';
-import { CaptionStyleFields } from './CaptionStyleFields';
-import { documentLanguage } from '../../context/documentDirection';
+import { CollapsibleSection } from '../../controls/index.js';
+import { CaptionStyleFields } from './CaptionStyleFields.js';
+import { documentLanguage } from '../../context/documentDirection.js';
 
 /** Config-panel section for styling resource captions: the shared caption
  *  typography, placement (above/below the body), an optional background bar,

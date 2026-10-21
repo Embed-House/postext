@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { layoutResourceBlock } from '../../pipeline/resourceLayout';
-import type { TableSliceSpec } from '../../pipeline/resourceLayout';
-import { resolveAllConfig } from '../../pipeline/config';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { resolveTableStyleConfig, stripTableStyleDefaults } from '../../defaults/tableStyle';
-import { resolveBodyTextConfig } from '../../defaults';
-import { buildDocument } from '../../pipeline/build';
-import { renderToHtml } from '../../html-backend';
-import { renderResourceBlock } from '../../canvas-backend/renderResourceBlock';
-import type { PostextConfig, Resource, TableCell, TableModel, TableStyleConfig } from '../../types';
-import type { VDTBlock, VDTTableStroke } from '../../vdt';
+import { layoutResourceBlock } from '../../pipeline/resourceLayout.js';
+import type { TableSliceSpec } from '../../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { resolveTableStyleConfig, stripTableStyleDefaults } from '../../defaults/tableStyle.js';
+import { resolveBodyTextConfig } from '../../defaults/index.js';
+import { buildDocument } from '../../pipeline/build.js';
+import { renderToHtml } from '../../html-backend.js';
+import { renderResourceBlock } from '../../canvas-backend/renderResourceBlock.js';
+import type { PostextConfig, Resource, TableCell, TableModel, TableStyleConfig } from '../../types.js';
+import type { VDTBlock, VDTTableStroke } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderToHtml, flowRectToPage } from '../../index';
-import type { PostextConfig, Dimension } from '../../types';
-import { installSizedStub } from './stub';
-import { verticalSpans } from './verticalSpans';
+import { buildDocument, renderToHtml, flowRectToPage } from '../../index.js';
+import type { PostextConfig, Dimension } from '../../types.js';
+import { installSizedStub } from './stub.js';
+import { verticalSpans } from './verticalSpans.js';
 
 installSizedStub();
 
@@ -128,7 +128,7 @@ describe('vertical pages in the HTML (#191)', () => {
       },
     });
     const doc = buildDocument({ markdown: '# 甄士隱\n\n此開卷第一回也。' }, cfg);
-    const block = doc.pages[0]!.openerBand!.blocks.find((b) => b.kind === 'text')! as import('../../vdt').VDTDesignTextBlock;
+    const block = doc.pages[0]!.openerBand!.blocks.find((b) => b.kind === 'text')! as import('../../vdt.js').VDTDesignTextBlock;
     expect(block.bbox.x).toBeGreaterThan(20);
     const html = renderToHtml(doc, { mode: 'single' });
     const m = new RegExp(`left:${block.bbox.x}px;top:${block.bbox.y}px;[^"]*"><div style="position:absolute;left:(-?[\\d.]+)px;top:(-?[\\d.]+)px;`).exec(html)!;

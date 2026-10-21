@@ -1,4 +1,4 @@
-import type { PanelId } from '../types';
+import type { PanelId } from '../types/index.js';
 
 /** Open a book picked in the Books panel, then show its chapters: the
  *  sidebar moves to the Chapters panel once the book is on screen — not

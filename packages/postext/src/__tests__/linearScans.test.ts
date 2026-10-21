@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { findPxSize, splitAtFontSize, withPxSize, fontStringFamily } from '../measure/fontString';
-import { quoteFamily } from '../measure/font';
-import { directiveAttrRanges, replaceTitleBreaks } from '../parse/inlineFormatting';
-import { texLabelMatches } from '../parse/equationLabels';
-import { extractFrontmatter } from '../frontmatter';
+import { findPxSize, splitAtFontSize, withPxSize, fontStringFamily } from '../measure/fontString.js';
+import { quoteFamily } from '../measure/font.js';
+import { directiveAttrRanges, replaceTitleBreaks } from '../parse/inlineFormatting.js';
+import { texLabelMatches } from '../parse/equationLabels.js';
+import { extractFrontmatter } from '../frontmatter.js';
 
 // The scans that replace regular expressions CodeQL found slow on long
 // runs (#808) read what the expressions read: checked against them on

@@ -1,8 +1,8 @@
 'use client';
 
 import type { Dimension, DimensionUnit, TextDotsStyle } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { DimensionInput, NestedGroup, ToggleSwitch } from '../../controls';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { DimensionInput, NestedGroup, ToggleSwitch } from '../../controls/index.js';
 
 const DOT_UNITS: DimensionUnit[] = ['em', 'pt', 'mm', 'px'];
 /** The engine's defaults (`resolveTextDots`): 0.1 em apart, 0.05 em across. */

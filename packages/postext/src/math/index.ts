@@ -1,4 +1,4 @@
-export type { MathRender, MathPath, MathViewBox } from './types';
+export type { MathRender, MathPath, MathViewBox } from './types.js';
 export {
   initMathEngine,
   isMathReady,
@@ -8,4 +8,4 @@ export {
   clearMathCache,
   noteMathWithoutEngine,
   type RenderOptions,
-} from './engine';
+} from './engine.js';

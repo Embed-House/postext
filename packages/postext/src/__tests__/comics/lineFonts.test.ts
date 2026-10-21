@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { comicFontFamilies, comicLineFontFamilies } from '../../comics/fonts';
-import { configFontFaces } from '../../fonts/prepare';
-import { configFontFamilies } from '../../fonts/usage';
+import { comicFontFamilies, comicLineFontFamilies } from '../../comics/fonts.js';
+import { configFontFaces } from '../../fonts/prepare.js';
+import { configFontFamilies } from '../../fonts/usage.js';
 
 // #696: a comic line may set its own face (`sfx{font="Dela Gothic One"}`).
 // The family is named in the text alone, so the list of the families a

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, type PostextConfig, type VDTBlock, type VDTDocument, type VDTLine } from 'postext';
-import '../register';
+import '../register.js';
 
 // postext #667: a citation set against the direction of the text it joins
 // is a bidi isolate of its own first strong letter's direction, so its

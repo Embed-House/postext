@@ -3,8 +3,8 @@
 import { DEFAULT_BODY_TEXT_CONFIG } from 'postext';
 
 import type { BodyTextConfig, ResolvedBodyTextConfig } from 'postext';
-import { NestedGroup, NumberInput, ToggleSwitch } from '../../../controls';
-import type { useSandboxLabels } from '../../../context/SandboxContext';
+import { NestedGroup, NumberInput, ToggleSwitch } from '../../../controls/index.js';
+import type { useSandboxLabels } from '../../../context/SandboxContext.js';
 
 interface OrphansProps {
   bodyText: ResolvedBodyTextConfig;

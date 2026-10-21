@@ -13,14 +13,14 @@
  */
 
 import { MoveRight, Wand2 } from 'lucide-react';
-import { useSandbox } from '../context/SandboxContext';
-import { Button, ConfirmPopover, announce } from '../ui';
-import { fill } from '../print/fillTokens';
-import type { SandboxLabels } from '../types';
-import { setOverlapFocus } from '../editions/overlapFocus';
-import { frameProposalText, outsideProposalText, type FrameProposal } from './frameOverlapText';
-import { applyProposalPlan, fixesOf, isFrameFixPayload, planIsAdvice, planProposal, proposalChangesForm, proposalContextOf, valueInWords, type ProposalPlan } from './proposalActions';
-import type { Warning } from './types';
+import { useSandbox } from '../context/SandboxContext.js';
+import { Button, ConfirmPopover, announce } from '../ui/index.js';
+import { fill } from '../print/fillTokens.js';
+import type { SandboxLabels } from '../types/index.js';
+import { setOverlapFocus } from '../editions/overlapFocus.js';
+import { frameProposalText, outsideProposalText, type FrameProposal } from './frameOverlapText.js';
+import { applyProposalPlan, fixesOf, isFrameFixPayload, planIsAdvice, planProposal, proposalChangesForm, proposalContextOf, valueInWords, type ProposalPlan } from './proposalActions.js';
+import type { Warning } from './types.js';
 
 /** The covering frame a fix of `warning` changes (a `frameCovered`'s). */
 function coveringFrame(warning: Warning): string {

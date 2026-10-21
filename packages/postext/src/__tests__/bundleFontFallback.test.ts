@@ -2,10 +2,10 @@
 // of about the same width for it (#978).
 import { describe, it, expect } from 'vitest';
 import { zipSync } from 'fflate';
-import { bundleFontProvider, createBundle, isBundleManifest, openBundle } from '../bundle';
-import type { BundleManifestV2 } from '../bundle';
-import { exportStandInOf, fontFallbackFamilies, fontFallbackOf, hasOwnStyle } from '../fonts/fallback';
-import type { PostextConfig } from '../types';
+import { bundleFontProvider, createBundle, isBundleManifest, openBundle } from '../bundle/index.js';
+import type { BundleManifestV2 } from '../bundle/index.js';
+import { exportStandInOf, fontFallbackFamilies, fontFallbackOf, hasOwnStyle } from '../fonts/fallback.js';
+import type { PostextConfig } from '../types.js';
 
 const enc = new TextEncoder();
 const OPEN = new Uint8Array([0, 1, 0, 0, 9, 9]);

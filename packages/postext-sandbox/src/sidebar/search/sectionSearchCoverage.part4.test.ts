@@ -1,11 +1,11 @@
 // Part 4 of the settings search coverage (sectionSearchCoverage.harness.ts, #1118).
 
 import { vi } from 'vitest';
-import { registerCoverage } from './sectionSearchCoverage.harness';
+import { registerCoverage } from './sectionSearchCoverage.harness.js';
 
-vi.mock('./MatchScope', async (importOriginal) => {
-  const orig = await importOriginal<typeof import('./MatchScope')>();
-  const { harvest } = await import('./searchHarvest');
+vi.mock('./MatchScope.js', async (importOriginal) => {
+  const orig = await importOriginal<typeof import('./MatchScope.js')>();
+  const { harvest } = await import('./searchHarvest.js');
   return {
     ...orig,
     useFieldMatch: (haystack: string, overridden: boolean) => {

@@ -3,10 +3,10 @@
 import { memo } from 'react';
 import type { ComicsConfig, Dimension, PageMargins } from 'postext';
 import { resolvePageConfig } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { CollapsibleSection, DimensionInput, FieldGroup, SelectInput, ToggleSwitch } from '../../../controls';
-import { setComicsField, setNestedField } from './comicsConfig';
-import { GUTTER_UNITS, PanelStyleFields, useComics } from './comicsShared';
+import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { CollapsibleSection, DimensionInput, FieldGroup, SelectInput, ToggleSwitch } from '../../../controls/index.js';
+import { setComicsField, setNestedField } from './comicsConfig.js';
+import { GUTTER_UNITS, PanelStyleFields, useComics } from './comicsShared.js';
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 

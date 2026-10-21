@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveBodyTextConfig, stripBodyTextDefaults, resolveParagraphStylesConfig, stripParagraphStylesDefaults, stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import { collectConfigWarnings } from '../../configWarnings';
-import type { BodyTextConfig, ParagraphStyleConfig, PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
-import { CONFIG_VERSION, migrateConfig, pinLegacyParagraphContainerSpacing } from '../../bundle';
-import { migrateBundleConfig, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults, resolveParagraphStylesConfig, stripParagraphStylesDefaults, stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import type { BodyTextConfig, ParagraphStyleConfig, PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
+import { CONFIG_VERSION, migrateConfig, pinLegacyParagraphContainerSpacing } from '../../bundle/index.js';
+import { migrateBundleConfig, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

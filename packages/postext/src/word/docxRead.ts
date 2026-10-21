@@ -15,9 +15,9 @@ import type {
   WordTable,
   WordTabStop,
   WordTextRun,
-} from './model';
-import { ommlToTex } from './omml';
-import { attr, child, children, descendants, localName, onOff, parseXml, textOf, type XmlElement } from './xml';
+} from './model.js';
+import { ommlToTex } from './omml.js';
+import { attr, child, children, descendants, localName, onOff, parseXml, textOf, type XmlElement } from './xml.js';
 
 /** customXml item holding the template of a Postext export. */
 export const TEMPLATE_XML_ROOT = 'postextWordTemplate';

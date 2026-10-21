@@ -1,10 +1,10 @@
 // Pure operations on a book's chapter list. Ids are supplied by callers so
 // these stay deterministic and testable.
 
-import { frontmatterRange } from './frontmatter';
-import { CHAPTER_SEPARATOR } from './compose';
-import { blankFrontmatter } from './frontmatter';
-import type { BookContent, Chapter } from './types';
+import { frontmatterRange } from './frontmatter.js';
+import { CHAPTER_SEPARATOR } from './compose.js';
+import { blankFrontmatter } from './frontmatter.js';
+import type { BookContent, Chapter } from './types.js';
 
 export function newChapter(id: string, title: string, markdown = '', now = Date.now()): Chapter {
   return { id, title, markdown, createdAt: now, updatedAt: now };

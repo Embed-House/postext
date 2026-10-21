@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { BUILTIN_PRESET_LOCALES, GUIDE_SAMPLE_DOCUMENTS, createPostextGuidePreset, isPristineArabicGuide, isPristineChineseGuide, isPristineJapaneseGuide, pristineGuideFollowsViewer } from './builtin';
-import { localeShortTag } from './localeNames';
-import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_ZH_HANS } from '../defaultMarkdown';
-import { isPristineBook, sampleBook } from '../book/chapterOps';
-import { createPostextGuideConfig } from '../context/guideConfig';
+import { BUILTIN_PRESET_LOCALES, GUIDE_SAMPLE_DOCUMENTS, createPostextGuidePreset, isPristineArabicGuide, isPristineChineseGuide, isPristineJapaneseGuide, pristineGuideFollowsViewer } from './builtin.js';
+import { localeShortTag } from './localeNames.js';
+import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_ZH_HANS } from '../defaultMarkdown/index.js';
+import { isPristineBook, sampleBook } from '../book/chapterOps.js';
+import { createPostextGuideConfig } from '../context/guideConfig.js';
 
 const preset = (extra: Partial<Parameters<typeof createPostextGuidePreset>[0]> = {}) =>
   createPostextGuidePreset({ name: 'The Postext guide', ...extra });

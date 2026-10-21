@@ -6,7 +6,7 @@
  * centred across that band (`HeadingLevelConfig.lineSpan`).
  */
 
-import { fontFamilyOf, lineBaselineOffset, measureCentralBaseline } from '../measure/vertical';
+import { fontFamilyOf, lineBaselineOffset, measureCentralBaseline } from '../measure/vertical.js';
 
 /** The band a heading of `lineCount` lines takes (px along the block
  *  axis), and how far below the band's top its first line box goes. */

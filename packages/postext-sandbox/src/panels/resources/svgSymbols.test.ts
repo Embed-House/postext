@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addZones, symbolZones, type SvgNode } from './svgSymbols';
+import { addZones, symbolZones, type SvgNode } from './svgSymbols.js';
 
 const node = (id: string, parent: number, box: SvgNode['box'], extra: Partial<SvgNode> = {}): SvgNode => ({ id, classes: [], parent, hidden: false, box, ...extra });
 const PICTURE = { width: 1000, height: 500 };

@@ -17,9 +17,9 @@ import type {
   FolioSurfaceConfig,
   FolioSurfaceType,
 } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import type { SandboxLabels } from '../../types/labels';
-import { CollapsibleSection, ColorPicker, FieldGroup, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { CollapsibleSection, ColorPicker, FieldGroup, NumberInput, SelectInput, ToggleSwitch } from '../../controls/index.js';
 
 const PAPER_TYPES: readonly [FolioPaperType, keyof SandboxLabels][] = [
   ['uncoated', 'folioPaperUncoated'],

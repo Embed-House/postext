@@ -4,8 +4,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { buildBundle } from 'postext/bundle';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #943: a story that jumps from one chapter to a page of a later one. The
 // tagged PDF reads the rest where it stands, on its page, after what the

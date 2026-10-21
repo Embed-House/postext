@@ -5,12 +5,12 @@
  * per content-block index instead of being pushed/popped inside the loop.
  */
 
-import type { ContentBlock, DirectiveAttrs } from '../parse';
-import type { ParagraphContainerSpacing, TextAlign } from '../types';
-import { dimensionToPx } from '../units';
-import type { ResolvedConfig } from '../vdt';
-import { resolveBodyStyle, resolveParagraphStyle, type BlockStyle } from './styles';
-import { lengthAttr } from './verse';
+import type { ContentBlock, DirectiveAttrs } from '../parse/index.js';
+import type { ParagraphContainerSpacing, TextAlign } from '../types.js';
+import { dimensionToPx } from '../units.js';
+import type { ResolvedConfig } from '../vdt.js';
+import { resolveBodyStyle, resolveParagraphStyle, type BlockStyle } from './styles.js';
+import { lengthAttr } from './verse.js';
 
 export interface ParagraphContainer {
   /** `containerId` of the start/end marker pair. */

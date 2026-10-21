@@ -12,8 +12,8 @@
  */
 
 import type { ComicScriptItem, VDTComicPage } from 'postext';
-import { minimalChange, type TextChange } from '../../book/textChanges';
-import { comicPageSourceAt } from './comicSource';
+import { minimalChange, type TextChange } from '../../book/textChanges.js';
+import { comicPageSourceAt } from './comicSource.js';
 
 /** The quotes an attribute value may sit between, opening → closing. */
 const QUOTES: Readonly<Record<string, string>> = { '"': '"', "'": "'", '“': '”', '「': '」' };

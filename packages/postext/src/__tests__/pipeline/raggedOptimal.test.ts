@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { measureBlock, measureRichBlock, type MeasureBlockOptions } from '../../measure';
-import { migrateConfig, migrateBundleConfig, pinLegacyRaggedBreaking, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTLine } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { measureBlock, measureRichBlock, type MeasureBlockOptions } from '../../measure/index.js';
+import { migrateConfig, migrateBundleConfig, pinLegacyRaggedBreaking, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTLine } from '../../vdt.js';
 
 // EF-147: ragged text was always set line by line, so `avoidRunts`,
 // `runtPenalty`, `tightenRunts` and `optimalLineBreaking` did nothing for it.

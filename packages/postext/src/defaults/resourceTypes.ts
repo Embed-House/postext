@@ -1,5 +1,5 @@
-import type { PostextConfig, ResourceType } from '../types';
-import { presentTag, stringsFor } from '../locale';
+import type { PostextConfig, ResourceType } from '../types.js';
+import { presentTag, stringsFor } from '../locale.js';
 
 /** Localised display strings for a built-in resource type. The numbering
  *  behaviour (template, reset, counter format) is language-independent and

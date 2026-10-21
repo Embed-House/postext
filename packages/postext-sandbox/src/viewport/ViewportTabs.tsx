@@ -2,15 +2,15 @@
 
 import { useRef, useState, useEffect, useLayoutEffect, useCallback, type ReactNode, type RefObject } from 'react';
 import { BookOpen, FileText, LayoutTemplate, TextWrap } from 'lucide-react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import type { LayoutScope } from '../book/types';
-import { WHOLE_BOOK_MAX_CHAPTERS, wholeBookAllowed } from '../book/scope';
-import type { EpubLayout, SandboxLabels, ViewportTab } from '../types';
-import { SegmentedControl, cn, useUiRtl } from '../ui';
-import { VIEWPORT_TABS as ALL_TABS } from '../storage/viewHash';
-import { folioSupported } from './folioSupport';
-import { EditModeSwitch } from '../editing/EditModeSwitch';
-import { HistoryButtons } from '../history/HistoryButtons';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
+import type { LayoutScope } from '../book/types.js';
+import { WHOLE_BOOK_MAX_CHAPTERS, wholeBookAllowed } from '../book/scope.js';
+import type { EpubLayout, SandboxLabels, ViewportTab } from '../types/index.js';
+import { SegmentedControl, cn, useUiRtl } from '../ui/index.js';
+import { VIEWPORT_TABS as ALL_TABS } from '../storage/viewHash.js';
+import { folioSupported } from './folioSupport.js';
+import { EditModeSwitch } from '../editing/EditModeSwitch.js';
+import { HistoryButtons } from '../history/HistoryButtons.js';
 
 /** The expansion of each tab label that is an abbreviation. */
 const TAB_ABBR: Partial<Record<ViewportTab, keyof SandboxLabels>> = { pdf: 'abbrPdf', html: 'abbrHtml', epub: 'abbrEpub' };

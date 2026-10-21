@@ -1,8 +1,8 @@
 'use client';
 
-import { FieldRow } from './FieldRow';
-import { useFieldIds } from './fieldContext';
-import { cn } from '../ui/cn';
+import { FieldRow } from './FieldRow.js';
+import { useFieldIds } from './fieldContext.js';
+import { cn } from '../ui/cn.js';
 
 interface TextInputProps {
   label: string;

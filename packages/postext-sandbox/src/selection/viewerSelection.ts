@@ -6,10 +6,10 @@
  */
 
 import type { VDTDocument } from 'postext';
-import type { ComposedBook } from '../book/types';
-import { selectionAtSource, selectedElement, type ChapterOfPage, type PageSelection } from './pageSelection';
-import { clearPageSelection, pageSelectionNow, setPageSelection, syncPageSelection } from './selectionStore';
-import { createSelectionApply, type SelectionApplyDeps } from './applySelection';
+import type { ComposedBook } from '../book/types.js';
+import { selectionAtSource, selectedElement, type ChapterOfPage, type PageSelection } from './pageSelection.js';
+import { clearPageSelection, pageSelectionNow, setPageSelection, syncPageSelection } from './selectionStore.js';
+import { createSelectionApply, type SelectionApplyDeps } from './applySelection.js';
 
 /** The selection on `doc` (found again there if it was made on another
  *  layout), or null. */

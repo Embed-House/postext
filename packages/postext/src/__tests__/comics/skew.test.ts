@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, comicBalloonMatrix, parseComicScript, renderToHtmlIndexed } from '../../index';
-import type { Resource } from '../../types';
+import { buildDocument, comicBalloonMatrix, parseComicScript, renderToHtmlIndexed } from '../../index.js';
+import type { Resource } from '../../types.js';
 
 class StubCtx {
   font = '';

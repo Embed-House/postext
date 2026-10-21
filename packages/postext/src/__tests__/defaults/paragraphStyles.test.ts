@@ -3,11 +3,11 @@ import {
   DEFAULT_PARAGRAPH_STYLES,
   resolveParagraphStylesConfig,
   stripParagraphStylesDefaults,
-} from '../../defaults/paragraphStyles';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import { stripConfigDefaults, applyPaletteToConfig } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { ParagraphStyleConfig, PostextConfig } from '../../types';
+} from '../../defaults/paragraphStyles.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import { stripConfigDefaults, applyPaletteToConfig } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { ParagraphStyleConfig, PostextConfig } from '../../types.js';
 
 const body = resolveBodyTextConfig({
   fontFamily: 'Literata',

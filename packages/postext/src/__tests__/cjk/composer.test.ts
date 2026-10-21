@@ -1,11 +1,11 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { setCjkLineBreak, type CjkLineBreakLevel } from '../../measure/cjkClasses';
-import { setCjkComposition } from '../../measure/cjkPunctuation';
-import type { InlineSpan } from '../../parse';
-import type { MeasureBlockOptions } from '../../measure/types';
-import type { VDTLine } from '../../vdt';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { setCjkLineBreak, type CjkLineBreakLevel } from '../../measure/cjkClasses.js';
+import { setCjkComposition } from '../../measure/cjkPunctuation.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { MeasureBlockOptions } from '../../measure/types.js';
+import type { VDTLine } from '../../vdt.js';
 
 // Stub: CJK characters and the marks Chinese sets full width (— … · “ ” ‘ ’)
 // are 16 px, a space 4 px, everything else 8 px; `chars` counts what

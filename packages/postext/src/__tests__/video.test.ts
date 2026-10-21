@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
+import { buildDocument } from '../pipeline/index.js';
 import {
   createBundle,
   defaultResourceTypes,
@@ -19,11 +19,11 @@ import {
   videoEmbedUrl,
   videoWatchUrl,
   DEFAULT_VIDEO_PLAYER_OPTIONS,
-} from '../index';
-import { collectContentWarnings } from '../pipeline/contentWarnings';
-import { layoutResourceBlock } from '../pipeline/resourceLayout';
-import { resolveAllConfig } from '../pipeline/config';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../index';
+} from '../index.js';
+import { collectContentWarnings } from '../pipeline/contentWarnings.js';
+import { layoutResourceBlock } from '../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

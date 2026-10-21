@@ -1,17 +1,17 @@
 /// <reference lib="webworker" />
 
-import { buildDocumentAsync, BuildCancelledError } from '../pipeline';
-import type { BuildPassInfo } from '../pipeline/build';
-import { initMathEngine, isMathReady } from '../math';
-import { contentHasMath } from '../parse/inlineSnippet';
-import { citationEngine, ensureCitationEngine, mayNeedCitations } from '../citations/registry';
-import { createMeasurementCache, evictFontFamilies } from '../measure';
-import type { MeasurementCache } from '../measure';
-import type { RequestMessage, ResponseMessage, FontPayload } from './protocol';
-import { documentFontFamilies, fontFaceDescriptors, unavailableFontFamilies } from './fonts';
-import { createFontGenerations, installFontGenerations } from './fontGenerations';
-import type { PostextContent, Resource } from '../types';
-import type { VDTDocument } from '../vdt';
+import { buildDocumentAsync, BuildCancelledError } from '../pipeline/index.js';
+import type { BuildPassInfo } from '../pipeline/build.js';
+import { initMathEngine, isMathReady } from '../math/index.js';
+import { contentHasMath } from '../parse/inlineSnippet.js';
+import { citationEngine, ensureCitationEngine, mayNeedCitations } from '../citations/registry.js';
+import { createMeasurementCache, evictFontFamilies } from '../measure/index.js';
+import type { MeasurementCache } from '../measure/index.js';
+import type { RequestMessage, ResponseMessage, FontPayload } from './protocol.js';
+import { documentFontFamilies, fontFaceDescriptors, unavailableFontFamilies } from './fonts.js';
+import { createFontGenerations, installFontGenerations } from './fontGenerations.js';
+import type { PostextContent, Resource } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
 
 const ctx: DedicatedWorkerGlobalScope = self as unknown as DedicatedWorkerGlobalScope;
 

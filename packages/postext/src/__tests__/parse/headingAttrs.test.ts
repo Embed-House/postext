@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
-import type { ContentBlock } from '../../parse';
+import { parseMarkdown } from '../../parse/index.js';
+import type { ContentBlock } from '../../parse/index.js';
 
 /** Every plain-text char must map back to the same char in the markdown. */
 const expectSourceMapAligned = (markdown: string, block: ContentBlock): void => {

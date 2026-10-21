@@ -4,11 +4,11 @@
 
 import type { CustomFontFamily, CustomFontVariant, PostextConfig, Resource, ResourcePlacement, ResourceType, TableModel } from 'postext';
 import { DEFAULT_COLOR_PALETTE, bitmapInfo, defaultResourceTypes, primaryFontFamily } from 'postext';
-import type { SandboxAction, SandboxState } from '../../context/SandboxContext';
-import { fontFamilySource, loadFont } from '../../controls/fontLoader';
-import { fetchGoogleFonts } from '../../controls/FontPicker';
-import { invalidateResourceImage } from '../../controls/resourceImages';
-import { ensureSvgTextIndex } from '../../controls/svgTextIndex';
+import type { SandboxAction, SandboxState } from '../../context/SandboxContext.js';
+import { fontFamilySource, loadFont } from '../../controls/fontLoader.js';
+import { fetchGoogleFonts } from '../../controls/FontPicker.js';
+import { invalidateResourceImage } from '../../controls/resourceImages.js';
+import { ensureSvgTextIndex } from '../../controls/svgTextIndex.js';
 import {
   bitmapAtFileResolution,
   bitmapReplaced,
@@ -21,28 +21,28 @@ import {
   svgSourceSaved,
   svgWithInlineFonts,
   typesWithVideo,
-} from '../../panels/resources/resourceEdits';
-import { slugify, uniqueSlug } from '../../panels/resources/slugify';
-import { readSvgFaces } from '../../panels/resources/svgFaces';
-import { isValidSvg, svgIntrinsicSize } from '../../panels/resources/svgIntrinsic';
-import { resourceFromFile } from '../../panels/resources/uploadFiles';
-import { videoFormatOf } from '../../panels/resources/videoMedia';
-import { bookFontFamilies } from '../../sidebar/BookFonts';
-import { familiesRenamed, familiesWithFace, familiesWithoutFace } from '../../sidebar/FontsPanel';
-import { deleteBlob, getBlob, putBlob } from '../../storage/blobStore';
-import { deleteFontFile, formatFromFilename, generateFontFileId, putFontFile } from '../../storage/fontStorage';
-import { mergePatch } from '../configPaths';
-import { FILE_PARAM, readFileInput, type FileInput } from '../fileInput';
-import { dispatchAndWait, type SandboxToolHost } from '../host';
-import { ToolError, type JsonSchema, type WebMcpTool } from '../modelContext';
-import { MARKS_SCHEMA, withMarks, type MarksInput } from '../resourceMarks';
-import { addZones, readSvgSymbols } from '../../panels/resources/svgSymbols';
-import { configPathsNaming, renameResourceInResources, renameResourceInText } from '../resourceRefs';
-import { TABLE_SCHEMA, buildTable, hasTableContent, type TableInput } from '../resourceTable';
-import { VIDEO_SCHEMA, withVideoEdits, type VideoInput } from '../resourceVideo';
-import { layoutAnswer } from './book';
+} from '../../panels/resources/resourceEdits.js';
+import { slugify, uniqueSlug } from '../../panels/resources/slugify.js';
+import { readSvgFaces } from '../../panels/resources/svgFaces.js';
+import { isValidSvg, svgIntrinsicSize } from '../../panels/resources/svgIntrinsic.js';
+import { resourceFromFile } from '../../panels/resources/uploadFiles.js';
+import { videoFormatOf } from '../../panels/resources/videoMedia.js';
+import { bookFontFamilies } from '../../sidebar/BookFonts.js';
+import { familiesRenamed, familiesWithFace, familiesWithoutFace } from '../../sidebar/FontsPanel.js';
+import { deleteBlob, getBlob, putBlob } from '../../storage/blobStore.js';
+import { deleteFontFile, formatFromFilename, generateFontFileId, putFontFile } from '../../storage/fontStorage.js';
+import { mergePatch } from '../configPaths.js';
+import { FILE_PARAM, readFileInput, type FileInput } from '../fileInput.js';
+import { dispatchAndWait, type SandboxToolHost } from '../host.js';
+import { ToolError, type JsonSchema, type WebMcpTool } from '../modelContext.js';
+import { MARKS_SCHEMA, withMarks, type MarksInput } from '../resourceMarks.js';
+import { addZones, readSvgSymbols } from '../../panels/resources/svgSymbols.js';
+import { configPathsNaming, renameResourceInResources, renameResourceInText } from '../resourceRefs.js';
+import { TABLE_SCHEMA, buildTable, hasTableContent, type TableInput } from '../resourceTable.js';
+import { VIDEO_SCHEMA, withVideoEdits, type VideoInput } from '../resourceVideo.js';
+import { layoutAnswer } from './book.js';
 
-export { readFileInput, type FileInput } from '../fileInput';
+export { readFileInput, type FileInput } from '../fileInput.js';
 
 const sizeOf = (r: Resource): { width: number; height: number } | null => {
   const from = r.bitmap ?? r.svg ?? r.video;

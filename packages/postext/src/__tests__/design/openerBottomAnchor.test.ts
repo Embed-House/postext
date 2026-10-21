@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { DesignElement, DesignTextElement, HeadingStyleConfig, PostextConfig } from '../../types';
-import type { VDTBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import type { DesignElement, DesignTextElement, HeadingStyleConfig, PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): each
 // character is half the font size wide.

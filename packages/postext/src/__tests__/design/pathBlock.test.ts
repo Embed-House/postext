@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter';
-import { renderToHtml } from '../../html-backend';
-import { buildDocument } from '../../pipeline';
-import { offsetDesignBlock } from '../../pipeline/calloutLayout';
-import { applyPartPalettesToFlow } from '../../pipeline/partPalette';
-import { preflightDocument } from '../../preflight';
-import { markerSvgData, pathHit, pathInkBox, pathMarkerOutline, pathSvgData, quadToCubic } from '../../design/pathBlock';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDesignPathBlock, VDTDesignSlot, VDTDocument } from '../../vdt';
+import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter.js';
+import { renderToHtml } from '../../html-backend.js';
+import { buildDocument } from '../../pipeline/index.js';
+import { offsetDesignBlock } from '../../pipeline/calloutLayout.js';
+import { applyPartPalettesToFlow } from '../../pipeline/partPalette.js';
+import { preflightDocument } from '../../preflight.js';
+import { markerSvgData, pathHit, pathInkBox, pathMarkerOutline, pathSvgData, quadToCubic } from '../../design/pathBlock.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDesignPathBlock, VDTDesignSlot, VDTDocument } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

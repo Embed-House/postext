@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isCardOpen, moveCardState, openCard, setCardsOpen } from './ItemCard';
+import { isCardOpen, moveCardState, openCard, setCardsOpen } from './ItemCard.js';
 
 describe('the fold of a Design panel card (#1031)', () => {
   it('starts folded and opens on its own', () => {

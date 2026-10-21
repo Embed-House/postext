@@ -7,7 +7,7 @@ vi.mock('react', () => {
 
 describe('postext main entry', () => {
   it('does not load React: only `postext/react` (and the deprecated createLayout, lazily) needs it', async () => {
-    const postext = await import('../index');
+    const postext = await import('../index.js');
     expect(typeof postext.buildDocument).toBe('function');
     expect(typeof postext.createLayout).toBe('function');
   });

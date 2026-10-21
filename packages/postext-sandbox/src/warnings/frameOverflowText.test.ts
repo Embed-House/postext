@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
-import { valueInWords } from './proposalActions';
-import { fitProposalText, fitStepText, frameOverflowDetail } from './frameOverflowText';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
+import { valueInWords } from './proposalActions.js';
+import { fitProposalText, fitStepText, frameOverflowDetail } from './frameOverflowText.js';
 
 describe('frameOverflow in the Checks panel (#858)', () => {
   it('says where, the steps tried and the fixes with their values', () => {

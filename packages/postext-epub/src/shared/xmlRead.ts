@@ -4,7 +4,7 @@
 // tests and in workers alike. Not a validating parser: it reads what this
 // package and ordinary EPUB writers produce.
 
-import { decodeEntities } from './xml';
+import { decodeEntities } from './xml.js';
 
 export interface XmlElement {
   /** Qualified name as written (`dc:title`, `opf:meta`, `nav`). */

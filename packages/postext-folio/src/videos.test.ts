@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { VDTDocument, VDTPage } from "postext";
-import { autoKey, autoplayPlan, corsTagged, hlsLevelCap, isHlsVideo, makeWay, pageVideoSpots, spotContains, type PageVideoSpot, type PlayState } from "./videos";
+import { autoKey, autoplayPlan, corsTagged, hlsLevelCap, isHlsVideo, makeWay, pageVideoSpots, spotContains, type PageVideoSpot, type PlayState } from "./videos.js";
 
 // A 200 × 300 px sheet with a 10 px bleed (trimmed: 180 × 280) and one
 // video whose body is 100 × 50 px.

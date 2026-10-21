@@ -5,8 +5,8 @@
  * template declares it (its fixed size, or its `minHeight` when its height
  * follows its content) is compared with the box the layout gave it.
  */
-import type { FrameCoverProposal, FrameFitStep, FrameOutsideProposal, FrameOverflowProposal, ReflowEvent, VDTDocument } from '../vdt';
-import type { Rect } from './geometry';
+import type { FrameCoverProposal, FrameFitStep, FrameOutsideProposal, FrameOverflowProposal, ReflowEvent, VDTDocument } from '../vdt.js';
+import type { Rect } from './geometry.js';
 
 /** A frame's declared and final boxes, and the names whose change moves
  *  it (what it anchors to, the frames before it in its group), nearest

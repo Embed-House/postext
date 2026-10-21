@@ -4,13 +4,13 @@ import {
   clearResourceImages,
   registerResourceImage,
   renderPageToCanvas,
-} from '../index';
-import type { PostextConfig, Resource, VDTDocument } from '../index';
-import { deviceScaleOf, rasterScaleOf } from '../canvas-backend/deviceScale';
-import { drawResourceImage, resourceRasterCacheBytes } from '../canvas-backend/renderResourceBlock';
-import { initMathEngine, clearMathCache } from '../math';
-import { getMathRaster } from '../math/rasterCache';
-import type { MathRender } from '../math/types';
+} from '../index.js';
+import type { PostextConfig, Resource, VDTDocument } from '../index.js';
+import { deviceScaleOf, rasterScaleOf } from '../canvas-backend/deviceScale.js';
+import { drawResourceImage, resourceRasterCacheBytes } from '../canvas-backend/renderResourceBlock.js';
+import { initMathEngine, clearMathCache } from '../math/index.js';
+import { getMathRaster } from '../math/rasterCache.js';
+import type { MathRender } from '../math/types.js';
 
 // A vector picture (an SVG `<img>`, a formula) is rasterised once into an
 // offscreen bitmap and blitted on later paints. The bitmap must have the

@@ -1,6 +1,6 @@
-import type { PostextConfig } from '../types';
-import type { DesignContextKind } from './placeholders';
-import { configDesignSlots, type ConfigDesignSlotKind } from './slots';
+import type { PostextConfig } from '../types.js';
+import type { DesignContextKind } from './placeholders.js';
+import { configDesignSlots, type ConfigDesignSlotKind } from './slots.js';
 
 /**
  * Decoration drawn when the page fence says so (#1087). A design element of

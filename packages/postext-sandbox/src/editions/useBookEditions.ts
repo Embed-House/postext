@@ -11,15 +11,15 @@
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { onFontsChanged } from 'postext';
-import { useSandboxLinkedBundles, useSandboxPresetProvider, useSandboxSelector } from '../context/SandboxContext';
-import { parseHashBundleOrigin, type HashBundleRef } from '../storage/viewHash';
-import { linkedEditionLocales, loadLinkedEdition } from './linkedEditions';
-import { sameLocaleTag } from '../presets/locale';
-import { activeEditionLocale, bookEditionLocales } from './bookLocales';
-import { editionsOnDemand } from './onDemand';
-import { useLayoutService } from '../worker/LayoutServiceContext';
-import { onLateFonts } from '../worker/LayoutService';
-import { askEditions, editionEntry, editionsAsked, editionsVersion, ensureEdition, loadPresetEdition, loadProjectEdition, subscribeEditions, type EditionEntry } from './editionStore';
+import { useSandboxLinkedBundles, useSandboxPresetProvider, useSandboxSelector } from '../context/SandboxContext.js';
+import { parseHashBundleOrigin, type HashBundleRef } from '../storage/viewHash.js';
+import { linkedEditionLocales, loadLinkedEdition } from './linkedEditions.js';
+import { sameLocaleTag } from '../presets/locale.js';
+import { activeEditionLocale, bookEditionLocales } from './bookLocales.js';
+import { editionsOnDemand } from './onDemand.js';
+import { useLayoutService } from '../worker/LayoutServiceContext.js';
+import { onLateFonts } from '../worker/LayoutService.js';
+import { askEditions, editionEntry, editionsAsked, editionsVersion, ensureEdition, loadPresetEdition, loadProjectEdition, subscribeEditions, type EditionEntry } from './editionStore.js';
 
 export interface BookEditions {
   /** `preset:<id>` or `project:<id>`. */

@@ -5,21 +5,21 @@
  * keep-with-next rollbacks and replays the markers in between).
  */
 
-import type { ContentBlock } from '../parse';
-import type { ColorValue, Dimension, OrderedListsConfig } from '../types';
-import { listNumberFormat } from '../defaults/orderedLists';
-import { resolvedLocale } from './config';
-import type { ResolvedConfig, VDTDocument } from '../vdt';
-import { dimensionsEqual } from '../defaults/shared';
-import { parseChineseNumeral } from '../chineseNumerals';
-import { asciiDigits } from '../arabicNumerals';
-import { resolveBodyStyle, resolveBlockquoteStyle } from './styles';
+import type { ContentBlock } from '../parse/index.js';
+import type { ColorValue, Dimension, OrderedListsConfig } from '../types.js';
+import { listNumberFormat } from '../defaults/orderedLists.js';
+import { resolvedLocale } from './config.js';
+import type { ResolvedConfig, VDTDocument } from '../vdt.js';
+import { dimensionsEqual } from '../defaults/shared.js';
+import { parseChineseNumeral } from '../chineseNumerals.js';
+import { asciiDigits } from '../arabicNumerals.js';
+import { resolveBodyStyle, resolveBlockquoteStyle } from './styles.js';
 import {
   computeLevelIndentsPx,
   computeOrderedLevelIndentsPx,
   computeOrderedListRunMetrics,
-} from './lists';
-import type { BlockMeasureContext } from './measureContentBlock';
+} from './lists.js';
+import type { BlockMeasureContext } from './measureContentBlock.js';
 
 export interface PlannedPart {
   /** Content-block index of the `containerStart` marker. */

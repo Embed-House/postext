@@ -1,4 +1,4 @@
-import type { WarningPayload } from './types';
+import type { WarningPayload } from './types.js';
 
 /** The anchor a warning of a figure's labels leads to in the picture's
  *  anchor editor (#866, #902): a name still to place, or an anchor to

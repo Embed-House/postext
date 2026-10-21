@@ -10,25 +10,25 @@
  * design `buildHeadersAndFooters` lays out from `toc.parts.design`.
  */
 
-import { flowTextWidth, measuringVertically } from '../measure/vertical';
-import { getMeasureArabicNumbers } from '../measure/bidiLines';
-import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
-import { fitLeader } from '../measure/leader';
-import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script';
-import { measuresRunsAsPainted } from '../design/bidiText';
-import type { ContentBlock, InlineSpan, TocBlockInfo, TocGroupInfo } from '../parse';
-import { suffixJoiner } from '../parse/inlineFormatting';
-import { parseTocGroupHead } from '../defaults/toc';
-import type { OutlineEntry, ResolvedTocEntryStyleConfig, TocGroupHead } from '../types';
-import type { VDTBlock, VDTLine, VDTLineSegment } from '../vdt';
-import { dimensionToPx } from '../units';
-import { buildFontString, measureRichBlock } from '../measure';
-import type { ResolvedConfig } from '../vdt';
-import type { BlockStyle } from './styles';
-import type { BlockMeasureContext, MeasuredContentBlock } from './measureContentBlock';
-import { markerTextWidth, type ListBulletStyle } from './lists';
-import { stampSourceRanges } from './buildHelpers';
-import { resolvedDirection } from './config';
+import { flowTextWidth, measuringVertically } from '../measure/vertical.js';
+import { getMeasureArabicNumbers } from '../measure/bidiLines.js';
+import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas.js';
+import { fitLeader } from '../measure/leader.js';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script.js';
+import { measuresRunsAsPainted } from '../design/bidiText.js';
+import type { ContentBlock, InlineSpan, TocBlockInfo, TocGroupInfo } from '../parse/index.js';
+import { suffixJoiner } from '../parse/inlineFormatting.js';
+import { parseTocGroupHead } from '../defaults/toc.js';
+import type { OutlineEntry, ResolvedTocEntryStyleConfig, TocGroupHead } from '../types.js';
+import type { VDTBlock, VDTLine, VDTLineSegment } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import { buildFontString, measureRichBlock } from '../measure/index.js';
+import type { ResolvedConfig } from '../vdt.js';
+import type { BlockStyle } from './styles.js';
+import type { BlockMeasureContext, MeasuredContentBlock } from './measureContentBlock.js';
+import { markerTextWidth, type ListBulletStyle } from './lists.js';
+import { stampSourceRanges } from './buildHelpers.js';
+import { resolvedDirection } from './config.js';
 
 /** The content blocks with every `:::toc` directive replaced by the blocks
  *  of the contents it prints. Without an outline (no directive) the input

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { spreadOfPage, spreadsOf } from "./spreads";
+import { spreadOfPage, spreadsOf } from "./spreads.js";
 
 describe("spreadsOf", () => {
   it("opens a book on its first recto, alone", () => {

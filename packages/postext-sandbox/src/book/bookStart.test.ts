@@ -1,22 +1,22 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LayoutContinuation, PostextConfig, VDTDocument } from 'postext';
 import { createBundle } from 'postext/bundle';
-import { layOutBookChain } from './chain';
-import { addChapter, cloneBook, newChapter, renameChapter } from './chapterOps';
-import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys';
-import { createBookPlanner } from './pagination';
-import { stitchDocuments } from './stitch';
-import type { BookContent, BookStart, Chapter, ChapterLayout, ChapterPlan } from './types';
-import { sandboxReducer, type SandboxState } from '../context/SandboxContext';
-import { buildBundleFiles, parseBundle, planBundle } from '../presets/bundle';
-import { openBundleZip, zipBundle } from '../presets/zip';
-import type { PresetSummary } from '../presets/types';
-import { loadBook, saveBook } from '../storage/persistence';
-import { getPresetDraft, presetDraftKey, putPresetDraft, type PresetDraftRecord } from '../storage/presetDrafts';
-import { getProject, putProject, updateProject, type ProjectRecord } from '../storage/projects';
-import { PROJECT_RECORD_VERSION, normalizeBookContent } from '../storage/projectMigration';
-import { snapshotForApply } from '../presets/apply';
-import type { LoadedPreset } from '../presets/types';
+import { layOutBookChain } from './chain.js';
+import { addChapter, cloneBook, newChapter, renameChapter } from './chapterOps.js';
+import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys.js';
+import { createBookPlanner } from './pagination.js';
+import { stitchDocuments } from './stitch.js';
+import type { BookContent, BookStart, Chapter, ChapterLayout, ChapterPlan } from './types.js';
+import { sandboxReducer, type SandboxState } from '../context/SandboxContext.js';
+import { buildBundleFiles, parseBundle, planBundle } from '../presets/bundle.js';
+import { openBundleZip, zipBundle } from '../presets/zip.js';
+import type { PresetSummary } from '../presets/types.js';
+import { loadBook, saveBook } from '../storage/persistence.js';
+import { getPresetDraft, presetDraftKey, putPresetDraft, type PresetDraftRecord } from '../storage/presetDrafts.js';
+import { getProject, putProject, updateProject, type ProjectRecord } from '../storage/projects.js';
+import { PROJECT_RECORD_VERSION, normalizeBookContent } from '../storage/projectMigration.js';
+import { snapshotForApply } from '../presets/apply.js';
+import type { LoadedPreset } from '../presets/types.js';
 
 // #695: a bundle that holds part of a longer book says where it starts
 // (`preset.json`'s `start`). The Sandbox lays its first chapter out from
@@ -24,8 +24,8 @@ import type { LoadedPreset } from '../presets/types';
 
 // The object stores, in memory: what `put` wrote is what `get` reads.
 const rows = vi.hoisted(() => new Map<string, Map<string, unknown>>());
-vi.mock('../storage/blobStore', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../storage/blobStore')>();
+vi.mock('../storage/blobStore.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../storage/blobStore.js')>();
   const request = <T,>(result: T) => {
     const req = { result, error: null, onsuccess: null as null | (() => void), onerror: null as null | (() => void) };
     queueMicrotask(() => req.onsuccess?.());
