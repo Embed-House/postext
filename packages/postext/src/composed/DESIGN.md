@@ -3417,3 +3417,33 @@ Named frame looks: one colour per item of a grid without leaving the grid.
 - **Not done.** The skill's fold into one grid with a look per colour is the skill lane's. The Canvas does
   not draw an unknown look's piece any differently (the Checks panel lists it). A look on a `:::frame`
   outside a page fence does nothing and is not reported.
+
+### 13.5 What the skill lane built for R3-1, R3-2 and R3-3 (#1087, #1088, #1089)
+
+`template_dedupe.py` / `template_fold.py` (skill 1.59.0) write what round 3 lets a port say.
+
+- **One shell** (`merge_furniture_shells`, after the templates are merged). Root page templates equal
+  but for decoration elements present on some and absent on others (shared elements must agree, none
+  already conditioned) become the most used one. For each set of templates an element is on, the side
+  with fewer pages gets the attribute: `unless` on what the minority leaves out, `when` on what only
+  the minority draws. Name: `frontmatter` when those pages are the book's first fences, `backmatter`
+  when its last, else `variant-N`; the fences get it as a flag. Parity-bound elements get the
+  condition too (an odd front-matter page would otherwise print the odd folio).
+- **Rows of modules** (`row_columns`, `nested_groups`). A band's units are clustered by their span
+  across the page (a shape painted inside the band that spans two clusters joins them). Clusters
+  inside equal columns of the trim are laid at `k × W / n` with `width: W / n`; else each module
+  starts where its cluster starts, the last `fill`. Rows that share a module template are one nested
+  group (all shells get every group, so they stay alike); two rows of one group in a row on a page
+  make it a `grid` when all its rows are equal columns of one count, else the later band is folded as
+  one module again and the book re-planned. Modules of a row carry `width` and are never alike with
+  stack modules. Decision: gaps are 0 and each module keeps the band's lead in its frames' offsets,
+  so rows and grids lay byte for byte as the stack did.
+- **Looks** (`LookBook`). Lattices compare a style class (the style with the look-mappable colours
+  left out; a one-line style set left with even side padding counts as centred). The set frame takes
+  the style most cards have; each other card's colour difference (`colour_look`, CIEDE2000 within
+  `--delta-e`) is a `frameLooks` entry, deduplicated, named by colour, and `look=` goes on the item's
+  or member's `:::frame` (a leaf piece is wrapped). Also: a member's way of hanging (above/below) is
+  the one most frames of its look have, and a picture is never a centred auto-width member.
+- **Not done.** Rows are rare on extracted pages: extract anchors most frames to the frame above, so a
+  page's units chain into one cluster; a column of a page is a row module only when it is a unit of
+  its own. No nested group inside a row (engine: one level).
