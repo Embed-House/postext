@@ -642,5 +642,55 @@ class HatchHelpersTest(unittest.TestCase):
         self.assertEqual(pr.find_hatches(drops, [(23.5, 52, 25.5, 56)]), [])
 
 
+# ---------------------------------------------------------------------------
+# #1155: a box and the picture it lies on never become each other's parent
+# ---------------------------------------------------------------------------
+
+
+def draw_plate_on_photo(doc):
+    """A photo with a lettered plate on half of it: the plate lies inside the
+    photo, and the photo over the plate."""
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    body(page, 20, 3)
+    page.insert_image(R(30, 60, 150, 140), stream=png_rgb(120, 80))
+    page.draw_rect(R(40, 70, 130, 125), color=None, fill=NOTE)
+    text(page, 44, 80, "A plate set on the photo,", size=11)
+    text(page, 44, 86, "half as large as the photo.", size=11)
+    body(page, 200, 3)
+    return page
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class ParentCycleTest(unittest.TestCase):
+    def test_the_extraction_finishes(self):
+        import subprocess
+
+        doc = fitz.open()
+        draw_plate_on_photo(doc)
+        with tempfile.TemporaryDirectory() as tmp:
+            pdf = Path(tmp) / "plate.pdf"
+            doc.save(str(pdf))
+            run = subprocess.run([sys.executable, str(SCRIPTS / "pdf_regions.py"), "extract", str(pdf), "--out",
+                                  str(Path(tmp) / "out"), "--lang", "en"], capture_output=True, text=True, timeout=120)
+            self.assertEqual(run.returncode, 0, run.stderr[-2000:])
+            regions = json.loads((Path(tmp) / "out" / "regions.json").read_text(encoding="utf-8"))
+        frames = {f["name"]: f for f in regions[0]["frames"]}
+        for f in frames.values():       # no frame is its own ancestor
+            seen, q = set(), f
+            while q.get("parent"):
+                self.assertNotIn(q["name"], seen)
+                seen.add(q["name"])
+                q = frames[q["parent"]]
+
+    def test_ancestors_stops_on_a_cycle(self):
+        class F:
+            parent = None
+
+        a, b = F(), F()
+        a.parent, b.parent = b, a
+        self.assertEqual(pr.ancestors(a), [b])
+        self.assertEqual(pr.ancestors(None), [])
+
+
 if __name__ == "__main__":
     unittest.main()

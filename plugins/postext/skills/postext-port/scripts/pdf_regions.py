@@ -2471,6 +2471,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             if ov >= 0.3 * max(area(f.box), 1e-6) and (best is None or ov > best[0]):
                 best = (ov, k)
         f.zone = best[1] if best else -1
+    loose_pics = []
     for f in frames:
         cands = [g for g in frames if g is not f and g.kind in ("box", "text", "figure", "picture")
                  and area(g.box) > area(f.box) and inter(f.box, g.box) >= 0.8 * area(f.box)]
@@ -2481,11 +2482,15 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         if cands:
             f.parent = min(cands, key=lambda g: area(g.box))
         elif f.kind in ("picture", "figure"):
-            # a picture laid over a text frame or a box: it pushes that text
-            over = [g for g in frames if g is not f and g.kind in ("text", "box") and inter(f.box, g.box) >= 0.2 * area(f.box)]
-            if over:
-                f.parent = max(over, key=lambda g: inter(f.box, g.box))
-                f.overlay = True
+            loose_pics.append(f)
+    for f in loose_pics:
+        # a picture laid over a text frame or a box: it pushes that text (never a frame that
+        # already hangs from the picture: the two would be each other's parent)
+        over = [g for g in frames if g is not f and g.kind in ("text", "box") and inter(f.box, g.box) >= 0.2 * area(f.box)
+                and f not in ancestors(g)]
+        if over:
+            f.parent = max(over, key=lambda g: inter(f.box, g.box))
+            f.overlay = True
     plates_over_pictures(page, frames, sh, origin, renders)
 
     # a border with no words of its own is no frame (an empty `:::frame`): it is drawn by the
@@ -2507,7 +2512,8 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             held = [g for g in frames if g.parent is f or (g.parent is None and inside_mm(g.box, f.box, 0.5))]
             for g in frames:
                 if g.parent is f:
-                    g.parent = f.parent if f.parent is not None and f.parent in frames else None
+                    up = f.parent if f.parent is not None and f.parent in frames else None
+                    g.parent = up if up is not g and g not in ancestors(up) else None
                     g.overlay = False
             if f.parent is not None and f.parent.kind in ("picture", "figure"):
                 f.shape.picture_art = True
@@ -2522,11 +2528,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             continue
         x1 = max(l.x1 for l in f.lines)
         side = (x1 + 0.5, min(l.y0 for l in f.lines), f.shape.box[2], max(l.y1 for l in f.lines))
-        anc_ = set()
-        q = f.parent
-        while q is not None:
-            anc_.add(id(q))
-            q = q.parent
+        anc_ = {id(q) for q in ancestors(f)}
         f.right_free = side[2] - side[0] > 1.0 and not any(
             g is not f and id(g) not in anc_ and inter(g.box, side) > 1.0 for g in frames)
 
@@ -2879,6 +2881,19 @@ def drawn_over(p: Frame, frames: list) -> set[int]:
     return out
 
 
+def ancestors(f: Any) -> list:
+    """The frames `f` hangs from, its parent first; a walk that meets a frame
+    twice (two frames each other's parent) stops there."""
+    out: list = []
+    seen = {id(f)} if f is not None else set()
+    q = getattr(f, "parent", None)
+    while q is not None and id(q) not in seen:
+        out.append(q)
+        seen.add(id(q))
+        q = q.parent
+    return out
+
+
 def plates_over_pictures(page: fitz.Page, frames: list, sh: dict, origin: tuple, renders: Any = None) -> None:
     """A box or a tab with words that the page paints over a picture (a
     plate naming a photo, a note on a drawing, the date boxes on an
@@ -2897,15 +2912,9 @@ def plates_over_pictures(page: fitz.Page, frames: list, sh: dict, origin: tuple,
         for p in pics:
             if inter(b.box, p.box) <= 0.05 * area(b.box):
                 continue
-            q, holder = p, False
-            while q is not None:       # a picture laid inside the box (not over it) is its content
-                if q.parent is b and not q.overlay:
-                    holder = True
-                q = q.parent
-            q = b.parent
-            while q is not None and not holder:   # the box is already set on the picture
-                holder = q is p
-                q = q.parent
+            # a picture laid inside the box (not over it) is its content
+            holder = any(q.parent is b and not q.overlay for q in [p] + ancestors(p))
+            holder = holder or p in ancestors(b)      # the box is already set on the picture
             if holder:
                 continue
             if b.shape.fill and renders is not None:
@@ -2921,8 +2930,9 @@ def plates_over_pictures(page: fitz.Page, frames: list, sh: dict, origin: tuple,
             elif not lies_over(log, at_log.get(b.shape.seq), b.shape.box, p.box, origin):
                 continue
             if p.parent is b and p.overlay:
-                p.parent, p.overlay = b.parent, False
-                if inter(b.box, p.box) >= 0.5 * area(b.box) and b.parent is p.parent:
+                up = b.parent
+                p.parent, p.overlay = (up if up is not p and p not in ancestors(up) else None), False
+                if inter(b.box, p.box) >= 0.5 * area(b.box) and b.parent is p.parent and b not in ancestors(p):
                     b.parent = p
                     continue
             b.over.append(p)
@@ -4735,10 +4745,7 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
         if f.parent is not None:
             p = f.parent
             c["placement"] = placement_rel(p.name, "top-left", f.box[0] - p.box[0], f.box[1] - p.box[1])
-            depth, q = 1, p
-            while q is not None:
-                depth, q = depth + 1, q.parent
-            c["layer"] = depth
+            c["layer"] = len(ancestors(f)) + 1
             # the parent's lines run into this picture's box on the source: the
             # art has a shape. With its outline (alpha) the text runs round it;
             # a rectangle would push the text further than the source does, so
