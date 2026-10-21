@@ -2709,6 +2709,8 @@
     "bodyLineHeightTooltip": "Espaciado vertical entre líneas de texto",
     "bodyParagraphSpacing": "Separación entre párrafos",
     "bodyParagraphSpacingTooltip": "Cuando está activado, inserta una línea en blanco (igual al interlineado) entre párrafos consecutivos",
+    "bodyParagraphSpacingSize": "Espacio entre párrafos",
+    "bodyParagraphSpacingSizeTooltip": "Cuánto espacio queda entre párrafos, aplicado exacto. Restablecer deja una línea entera. Una medida que no sea un número entero de líneas saca los párrafos de la rejilla base; el siguiente título o lista devuelve el texto a ella",
     "bodyColor": "Color del texto",
     "bodyColorTooltip": "Color del texto base",
     "bodyBoldColor": "Color de negritas",

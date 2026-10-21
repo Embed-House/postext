@@ -89,6 +89,11 @@ const SWITCH_KEYWORDS: Record<string, readonly string[]> = {
   dropFinalStop: ['auto'],
 };
 
+/** The switches that also take a length (#1115), by the setting's name:
+ *  a length given to one of them is read as a length (in mm when it names
+ *  no unit), and `true` or `false` given to one set as a length passes. */
+const SWITCH_LENGTHS: readonly string[] = ['paragraphSpacing'];
+
 const kindOf = (v: unknown): string => (v === null ? 'null' : Array.isArray(v) ? 'a list' : isRecord(v) ? 'an object' : `a ${typeof v}`);
 
 /**
@@ -100,6 +105,13 @@ const kindOf = (v: unknown): string => (v === null ? 'null' : Array.isArray(v) ?
  */
 export function coerceSetting(path: string, value: unknown, current: unknown): unknown {
   if (current === undefined || current === null) return value;
+  if (SWITCH_LENGTHS.includes(path.slice(path.lastIndexOf('.') + 1))) {
+    if (typeof value === 'boolean') return value;
+    if (typeof current === 'boolean') {
+      if (typeof value === 'number') return { value, unit: 'mm' };
+      return coerceSetting(path, value, { value: 1, unit: 'mm' });
+    }
+  }
   if (isDimension(current)) {
     if (typeof value === 'number') return { value, unit: current.unit };
     if (typeof value === 'string') {

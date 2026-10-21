@@ -1057,6 +1057,8 @@ export interface SandboxLabels {
   bodyLineHeightTooltip: string;
   bodyParagraphSpacing: string;
   bodyParagraphSpacingTooltip: string;
+  bodyParagraphSpacingSize: string;
+  bodyParagraphSpacingSizeTooltip: string;
   bodyColor: string;
   bodyColorTooltip: string;
   bodyBoldColor: string;

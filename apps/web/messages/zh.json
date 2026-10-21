@@ -1589,6 +1589,8 @@
     "bodyLineHeightTooltip": "文字行与行之间的垂直距离",
     "bodyParagraphSpacing": "段间距",
     "bodyParagraphSpacingTooltip": "开启后，在相邻段落之间插入一个空行（等于行距）",
+    "bodyParagraphSpacingSize": "段落间距大小",
+    "bodyParagraphSpacingSizeTooltip": "段落之间留多少空白，按原值排。重置后恢复为整一行。不是整行数的值会让段落离开基线网格，下一个标题或列表会把文字带回网格上",
     "bodyColor": "文字颜色",
     "bodyColorTooltip": "正文的颜色",
     "bodyBoldColor": "粗体颜色",

@@ -1590,6 +1590,8 @@
     "bodyLineHeightTooltip": "Vertical spacing between lines of text",
     "bodyParagraphSpacing": "Paragraph spacing",
     "bodyParagraphSpacingTooltip": "When enabled, insert a blank line (equal to line height) between consecutive paragraphs",
+    "bodyParagraphSpacingSize": "Space between paragraphs",
+    "bodyParagraphSpacingSizeTooltip": "How much space goes between paragraphs, set exactly. Reset leaves one full line. A length that is not a whole number of lines takes the paragraphs off the baseline grid; the next heading or list brings the text back onto it",
     "bodyColor": "Text color",
     "bodyColorTooltip": "Color of the body text",
     "bodyBoldColor": "Bold color",

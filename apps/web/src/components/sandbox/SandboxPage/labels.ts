@@ -971,6 +971,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     bodyLineHeightTooltip: t("bodyLineHeightTooltip"),
     bodyParagraphSpacing: t("bodyParagraphSpacing"),
     bodyParagraphSpacingTooltip: t("bodyParagraphSpacingTooltip"),
+    bodyParagraphSpacingSize: t("bodyParagraphSpacingSize"),
+    bodyParagraphSpacingSizeTooltip: t("bodyParagraphSpacingSizeTooltip"),
     bodyColor: t("bodyColor"),
     bodyColorTooltip: t("bodyColorTooltip"),
     bodyBoldColor: t("bodyBoldColor"),

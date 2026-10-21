@@ -443,6 +443,20 @@ describe('buildReflowablePublication', () => {
     // heading kept for navigation alone).
     expect(css).not.toMatch(/(?<![-\w])(width|font-size|margin|padding)[^;{]*:\s*(?!1px)[\d.]+(px|pt|mm|cm|in)\b/);
   });
+
+  it('sets a paragraph spacing given as a length in ems of the text (#1115)', async () => {
+    const spaced = (paragraphSpacing: boolean | { value: number; unit: 'pt' }) => ({
+      ...baseConfig,
+      bodyText: { fontSize: pt(10), lineHeight: pt(14), firstLineIndent: { value: 1, unit: 'em' as const }, paragraphSpacing },
+    });
+    const cssOf = async (config: ReturnType<typeof spaced>) => {
+      const { pub } = await render([layOut('Text.\n\nMore.', config)]);
+      return pub.items.find((i) => i.href === 'styles/book.css')!.data as string;
+    };
+    expect(await cssOf(spaced(pt(4)))).toMatch(/p \{\n {2}margin: 0;\n {2}margin-block-end: 0\.4em;\n\}/);
+    expect(await cssOf(spaced(true))).toMatch(/p \{\n {2}margin: 0;\n {2}margin-block-end: 1\.4em;\n\}/);
+    expect(await cssOf(spaced(false))).toMatch(/p \{\n {2}margin: 0;\n {2}text-indent: 1em;\n\}/);
+  });
 });
 
 /** A document as an older engine wrote it: no paragraph style ids,

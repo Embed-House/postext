@@ -1590,6 +1590,8 @@
     "bodyLineHeightTooltip": "Vertikaler Abstand zwischen den Textzeilen",
     "bodyParagraphSpacing": "Absatzabstand",
     "bodyParagraphSpacingTooltip": "Wenn aktiviert, zwischen aufeinanderfolgenden Absätzen eine Leerzeile (in Höhe des Zeilenabstands) einfügen",
+    "bodyParagraphSpacingSize": "Abstand zwischen Absätzen",
+    "bodyParagraphSpacingSizeTooltip": "Wie viel Raum zwischen den Absätzen bleibt, genau so gesetzt. Zurücksetzen stellt eine ganze Zeile ein. Ein Wert, der keine ganze Zahl von Zeilen ist, nimmt die Absätze aus dem Grundlinienraster; die nächste Überschrift oder Liste bringt den Text wieder darauf",
     "bodyColor": "Textfarbe",
     "bodyColorTooltip": "Farbe des Grundtextes",
     "bodyBoldColor": "Farbe für Fett",

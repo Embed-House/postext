@@ -1490,7 +1490,18 @@ export interface BodyTextConfig {
   fontFamily?: string;
   fontSize?: Dimension;
   lineHeight?: Dimension;
-  paragraphSpacing?: boolean;
+  /** The space between two paragraphs (#1115). `true` adds one
+   *  baseline-grid line (the body's line height), `false` (default) none,
+   *  and a length (`2mm`, `0.33em` of the font size, `4pt`) exactly that
+   *  much, in the main flow, in boxes and in composed frames. A length that
+   *  is not a whole number of lines takes the paragraphs off the baseline
+   *  grid, as `paragraphStyles[].spaceBetween` does in a `:::paragraphs`
+   *  container (the same slot of the paragraph's style): the next block
+   *  that snaps (a heading, the last item of a list, display maths, the
+   *  last paragraph of a container) brings the flow back onto the grid.
+   *  Inside a `:::paragraphs` container the style's `spaceBetween` sets
+   *  the space instead. */
+  paragraphSpacing?: boolean | Dimension;
   color?: ColorValue;
   boldColor?: ColorValue;
   italicColor?: ColorValue;
@@ -2347,7 +2358,7 @@ export interface ResolvedBodyTextConfig {
   fontFamily: string;
   fontSize: Dimension;
   lineHeight: Dimension;
-  paragraphSpacing: boolean;
+  paragraphSpacing: boolean | Dimension;
   color: ColorValue;
   boldColor?: ColorValue;
   italicColor?: ColorValue;
@@ -3498,7 +3509,9 @@ export interface CalloutBodyStyleConfig {
   /** Hyphenate when justified — and, when `bodyText.hyphenation.ragged` is
    *  on, when ragged too. Defaults to the body hyphenation setting. */
   hyphenation?: boolean;
-  paragraphSpacing?: boolean;
+  /** As `bodyText.paragraphSpacing`: `true` is one line of the box's body,
+   *  a length is set exactly. Unset: the body's. */
+  paragraphSpacing?: boolean | Dimension;
   firstLineIndent?: Dimension;
   /** Tab stops of the box's paragraphs and list items (#622). Unset: the
    *  body's (`bodyText.tabStops`). */
@@ -3879,7 +3892,7 @@ export interface ResolvedCalloutStyleConfig {
     letterSpacing?: Dimension;
     textAlign: 'left' | 'justify';
     hyphenation: boolean;
-    paragraphSpacing: boolean;
+    paragraphSpacing: boolean | Dimension;
     firstLineIndent: Dimension;
     /** Absent when the style sets none. */
     tabStops?: TabStop[];

@@ -1589,6 +1589,8 @@
     "bodyLineHeightTooltip": "テキストの行と行の間隔（行送り）です。",
     "bodyParagraphSpacing": "段落間のアキ",
     "bodyParagraphSpacingTooltip": "オンにすると、連続する段落の間に空行（行送りと同じ高さ）を入れます。",
+    "bodyParagraphSpacingSize": "段落間のアキの量",
+    "bodyParagraphSpacingSizeTooltip": "段落と段落の間に入れるアキの量で、指定どおりに入ります。リセットすると1行分に戻ります。行の整数倍でない値では段落がベースライングリッドから外れ、次の見出しや箇条書きで本文はグリッドに戻ります",
     "bodyColor": "文字色",
     "bodyColorTooltip": "本文の色です。",
     "bodyBoldColor": "太字の色",

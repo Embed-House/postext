@@ -1589,6 +1589,8 @@
     "bodyLineHeightTooltip": "Espacement vertical entre les lignes de texte",
     "bodyParagraphSpacing": "Espacement des paragraphes",
     "bodyParagraphSpacingTooltip": "Activé : insère une ligne blanche (égale à la hauteur de ligne) entre les paragraphes consécutifs",
+    "bodyParagraphSpacingSize": "Valeur de l’espace entre paragraphes",
+    "bodyParagraphSpacingSizeTooltip": "L’espace mis entre les paragraphes, appliqué tel quel. Réinitialiser revient à une ligne entière. Une valeur qui n’est pas un nombre entier de lignes fait sortir les paragraphes de la grille de lignes ; le titre ou la liste suivante y ramène le texte",
     "bodyColor": "Couleur du texte",
     "bodyColorTooltip": "Couleur du texte courant",
     "bodyBoldColor": "Couleur du gras",

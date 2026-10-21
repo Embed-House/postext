@@ -1589,6 +1589,8 @@
     "bodyLineHeightTooltip": "Espaiat vertical entre línies de text",
     "bodyParagraphSpacing": "Separació entre paràgrafs",
     "bodyParagraphSpacingTooltip": "Quan està activat, insereix una línia en blanc (igual a l'interlineat) entre paràgrafs consecutius",
+    "bodyParagraphSpacingSize": "Espai entre paràgrafs",
+    "bodyParagraphSpacingSizeTooltip": "Quant d'espai queda entre paràgrafs, aplicat exacte. Restablir deixa una línia sencera. Una mida que no sigui un nombre enter de línies treu els paràgrafs de la retícula base; el títol o la llista següent hi torna el text",
     "bodyColor": "Color del text",
     "bodyColorTooltip": "Color del text de cos",
     "bodyBoldColor": "Color de les negretes",

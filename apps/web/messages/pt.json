@@ -1586,6 +1586,8 @@
     "bodyLineHeightTooltip": "Espaço vertical entre as linhas de texto",
     "bodyParagraphSpacing": "Espaço entre parágrafos",
     "bodyParagraphSpacingTooltip": "Quando ativado, insere uma linha em branco (igual à entrelinha) entre parágrafos consecutivos",
+    "bodyParagraphSpacingSize": "Tamanho do espaço entre parágrafos",
+    "bodyParagraphSpacingSizeTooltip": "Quanto espaço fica entre os parágrafos, aplicado exatamente. Redefinir volta a uma linha inteira. Uma medida que não seja um número inteiro de linhas tira os parágrafos da grade de linhas; o próximo título ou lista devolve o texto a ela",
     "bodyColor": "Cor do texto",
     "bodyColorTooltip": "Cor do texto do corpo",
     "bodyBoldColor": "Cor do negrito",

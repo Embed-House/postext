@@ -1590,6 +1590,8 @@
     "bodyLineHeightTooltip": "Spazio verticale tra le righe di testo",
     "bodyParagraphSpacing": "Spazio tra paragrafi",
     "bodyParagraphSpacingTooltip": "Se attivato, inserisce una riga vuota (pari all’interlinea) tra paragrafi consecutivi",
+    "bodyParagraphSpacingSize": "Misura dello spazio tra paragrafi",
+    "bodyParagraphSpacingSizeTooltip": "Quanto spazio resta tra i paragrafi, applicato esatto. Il ripristino torna a una riga intera. Una misura che non sia un numero intero di righe porta i paragrafi fuori dalla griglia di base; il titolo o l’elenco successivo riporta il testo sulla griglia",
     "bodyColor": "Colore del testo",
     "bodyColorTooltip": "Colore del testo corrente",
     "bodyBoldColor": "Colore del grassetto",
