@@ -1365,6 +1365,43 @@ def paragraphs(lines: list[Line]) -> list[list[Line]]:
     return sorted(paras, key=lambda p: (round(p[0].base, 1), p[0].x0))
 
 
+def is_folio(line: Line) -> bool:
+    return bool(re.fullmatch(r"\d{1,4}", line.plain))
+
+
+def look_key(line: Line) -> tuple:
+    """Where and how a line is set, for telling running heads: its top to
+    the mm, its face and size."""
+    return (round(line.y0), line.family, round(line.size * 2) / 2)
+
+
+def repeated_looks(caches: dict, pages: list[int]) -> dict[tuple, set[int]]:
+    """look_key -> the pages a line of that place and look is printed on."""
+    out: dict[tuple, set[int]] = {}
+    for p in pages:
+        for l in caches[p]["lines"]:
+            out.setdefault(look_key(l), set()).add(p)
+    return out
+
+
+def furniture_line(l: Line, lines: list[Line], ctx: dict) -> bool:
+    """A line outside the cards is a running head or a folio only when it is
+    set below heading size and either the page prints a folio (a running
+    head at the top of a page numbered at the foot counts) or the line
+    stands at the same place in the same look on two pages or more. A
+    section heading near the foot stays in the text."""
+    if l.size >= ctx["heading_min"]:
+        return False
+    if is_folio(l) or any(o is not l and is_folio(o) for o in lines):
+        return True
+    rep = ctx.get("repeated") or {}
+    y, fam, size = look_key(l)
+    seen: set[int] = set()
+    for dy in (-1, 0, 1):
+        seen |= rep.get((y + dy, fam, size), set())
+    return len(seen) >= 2
+
+
 def text_x0(line: Line) -> float:
     b = bullet_of(line)
     if b is None:
@@ -1519,7 +1556,10 @@ def chip_gap(gaps: list[float]) -> dict | None:
     return {"value": round(g, 2), "unit": "em"} if g >= 0.4 else None
 
 
-def para_markdown(p: list[Line], mark_ids: dict, mode: str) -> str:
+def para_markdown(p: list[Line], mark_ids: dict, mode: str, base: tuple[int, bool] | None = None) -> str:
+    """A paragraph's inline Markdown. `base` is the (weight, italic) of the
+    frame's body: a paragraph set wholly in bold in a regular frame keeps its
+    `**`. Without it the paragraph's own lightest weight is the base."""
     chars = para_chars(p)
     ink = [c for c in chars if c.c.strip()]
     if not ink:
@@ -1527,8 +1567,11 @@ def para_markdown(p: list[Line], mark_ids: dict, mode: str) -> str:
     if mode == "mark":
         # a chip set as a mark (a number on a band) before the words keeps its measured room
         chars = spaced_chars(chars, text_em(chars), only_lead=True)
-    base_w = min(c.weight for c in ink)
-    base_it = all(c.italic for c in ink)
+    if base is not None:
+        base_w, base_it = base
+    else:
+        base_w = min(c.weight for c in ink)
+        base_it = all(c.italic for c in ink)
     return runs_markdown(chars, base_w, base_it, mark_ids, mode)
 
 
@@ -1564,10 +1607,11 @@ def dominant(lines: list[Line]) -> dict:
                 counts[k] = counts.get(k, 0) + 1
     fam, size, col = max(counts, key=lambda k: (counts[k], k))
     weights = [c.weight for l in lines for c in l.chars if c.c.strip() and c.family == fam]
+    italic = all(c.italic for l in lines for c in l.chars if c.c.strip() and c.family == fam)
     leads = [s for p in paragraphs(lines) for s in [para_lead(p)] if s]
     lead = statistics.median(leads) if leads else LEADS.get((fam, size), size * PT_MM * 1.25)
     return {"family": fam, "size": size, "color": col, "weight": min(weights) if weights else 400,
-            "lead": round(lead, 3)}
+            "lead": round(lead, 3), "italic": italic}
 
 
 # ---------------------------------------------------------------------------
@@ -1721,7 +1765,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             owners[id(l)] = ("free", None)
         elif not cards and opts.margin_band < l.y0 and l.y1 < H - opts.margin_band:
             owners[id(l)] = ("free", None)
-        elif len(l.plain.split()) > 8:
+        elif len(l.plain.split()) > 8 or not furniture_line(l, lines, ctx):
             owners[id(l)] = ("free", None)
         else:
             owners[id(l)] = ("furniture", None)
@@ -2194,6 +2238,10 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
     levels = list_levels(f.lines)
     blocks = []
     centred = f.kind == "text" and (len(f.lines) > 1 and is_centred(f.lines) or getattr(f, "caption_centred", False))
+    # the frame body's weight and slant are the base of every paragraph's marks
+    body_lines = [l for l in f.lines if l.size < ctx["heading_min"]] or f.lines
+    look = dominant(body_lines) if body_lines else None
+    base = (int(look["weight"]), bool(look["italic"])) if look else None
     for p in paras:
         size = p[0].size
         if size >= ctx["heading_min"] and f.kind in ("box", "tab", "title"):
@@ -2201,7 +2249,7 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
             text = " ".join(spaced_text(l) for l in p)
             blocks.append(("h", level, text))
             continue
-        md = para_markdown(p, mark_ids, mode)
+        md = para_markdown(p, mark_ids, mode, base)
         if not md:
             continue
         b = bullet_of(p[0])
@@ -2239,9 +2287,13 @@ def is_centred(lines: list[Line]) -> bool:
 
 
 def body_of(look: dict) -> dict:
-    return {"fontFamily": look["family"], "fontSize": ptv(look["size"]), "lineHeight": mmv(look["lead"]),
+    body = {"fontFamily": look["family"], "fontSize": ptv(look["size"]), "lineHeight": mmv(look["lead"]),
             "color": colour(look["color"]), "fontWeight": int(look["weight"]), "boldFontWeight": 700,
             "textAlign": "left", "hyphenation": False, "firstLineIndent": mmv(0)}
+    if look.get("italic"):
+        # a frame set wholly in italic: its paragraphs carry no `*` (para_markdown's base)
+        body["italic"] = True
+    return body
 
 
 def text_style(lines: list[Line], centred: bool) -> dict:
@@ -3814,7 +3866,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
         return min(3, len(head_sizes)) or 1
 
     ctx: dict[str, Any] = {"heading_min": heading_min, "level_of": level_of, "mark_ids": {}, "label_groups": [],
-                           "wrap_slack": args.wrap_slack}
+                           "wrap_slack": args.wrap_slack, "repeated": repeated_looks(caches, pages)}
     # highlight colours -> mark (or chip) styles
     band_cols: dict[str, list] = {}
     built = []
