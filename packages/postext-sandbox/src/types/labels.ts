@@ -236,6 +236,10 @@ export interface SandboxLabels {
   warningsCjkLooseLineDetail: string;
   warningsUnbreakableWordOverflowTitle: string;
   warningsUnbreakableWordOverflowDetail: string;
+  warningsWordDividedByCharacterTitle: string;
+  warningsWordDividedByCharacterDetail: string;
+  warningsWordDividedBySyllableTitle: string;
+  warningsWordDividedBySyllableDetail: string;
   warningsJoiningScriptLetterSpacingTitle: string;
   warningsJoiningScriptLetterSpacingDetail: string;
   warningsCjkMarksLeadingTitle: string;

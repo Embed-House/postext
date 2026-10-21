@@ -615,7 +615,16 @@ export function raggedLineWarnings(doc: VDTDocument): ContentWarning[] {
   return out;
 }
 
-/** An `unbreakableWordOverflow` warning for each line holding a word of a
+/** The warning of a word cut to fit its line (#1150), by how it was cut. */
+function dividedKind(cut: 'syllable' | 'character' | undefined): 'wordDividedByCharacter' | 'wordDividedBySyllable' | undefined {
+  return cut === 'character' ? 'wordDividedByCharacter' : cut === 'syllable' ? 'wordDividedBySyllable' : undefined;
+}
+
+/** A `wordDividedByCharacter` warning (a `wordDividedBySyllable` note) for
+ *  each line ending in a piece of a word wider than its whole measure that
+ *  the breaker cut to fit (`VDTLine.wordDivided`, #1150), in the flow, a
+ *  composed page's frames and design texts alike. And an
+ *  `unbreakableWordOverflow` warning for each line holding a word of a
  *  joining script wider than the line (`VDTLine.wordOverflow`), on the page
  *  it was placed on; and once per text for a design text line that does
  *  (`VDTDesignTextLine.wordOverflow`: a running head repeats it on every
@@ -627,10 +636,11 @@ export function wordOverflowWarnings(doc: VDTDocument): ContentWarning[] {
     for (const b of s?.blocks ?? []) {
       if (b.kind !== 'text') continue;
       for (const line of b.lines) {
-        if (!line.wordOverflow || seen.has(line.text)) continue;
-        seen.add(line.text);
+        const kind = line.wordOverflow ? 'unbreakableWordOverflow' : dividedKind(line.wordDivided);
+        if (!kind || seen.has(`${kind}\u0000${line.text}`)) continue;
+        seen.add(`${kind}\u0000${line.text}`);
         out.push({
-          kind: 'unbreakableWordOverflow',
+          kind,
           text: line.text,
           ...(b.sourceStart !== undefined ? { sourceStart: b.sourceStart } : {}),
           ...(b.sourceEnd !== undefined ? { sourceEnd: b.sourceEnd } : {}),
@@ -648,9 +658,10 @@ export function wordOverflowWarnings(doc: VDTDocument): ContentWarning[] {
   });
   for (const block of doc.blocks) {
     for (const line of block.lines) {
-      if (!line.wordOverflow) continue;
+      const kind = line.wordOverflow ? 'unbreakableWordOverflow' : dividedKind(line.wordDivided);
+      if (!kind) continue;
       out.push({
-        kind: 'unbreakableWordOverflow',
+        kind,
         text: line.text,
         ...(line.sourceStart !== undefined ? { sourceStart: line.sourceStart } : {}),
         ...(line.sourceEnd !== undefined ? { sourceEnd: line.sourceEnd } : {}),
@@ -1119,6 +1130,12 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'unbreakableWordOverflow':
       text = `The line "${w.text}" holds an Arabic-script word wider than the line — such a word is never divided, so it runs past the measure`;
+      break;
+    case 'wordDividedByCharacter':
+      text = `The line "${w.text}" ends in a word wider than the whole line, cut between two of its letters with no hyphen to fit — give the text more room or a smaller size`;
+      break;
+    case 'wordDividedBySyllable':
+      text = `The line "${w.text}" ends in a word wider than the whole line, divided at a syllable to fit`;
       break;
     case 'joiningScriptLetterSpacing':
       text = `"${w.text}": its style sets letter-spacing, which Arabic-script words do not take (it breaks their joins) — they are set without it`;

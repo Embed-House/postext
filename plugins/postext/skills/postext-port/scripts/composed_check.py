@@ -834,6 +834,9 @@ FAIL_KINDS = {
     "repeatOverflow", "moduleUnknown", "moduleAsPage", "moduleNested", "moduleNameRejected",
     # a misspelt setting or a value the engine does not take: the setting changes nothing on the page
     "unknownConfigKey", "unknownConfigValue",
+    # postext 1.52: a word wider than its whole line (a narrow frame), cut between two letters with no
+    # hyphen ("CL" | "IMA"). The cut at a syllable (wordDividedBySyllable) is a note (severity info).
+    "wordDividedByCharacter",
 }
 # postext 1.48: a frame under another frame, or past the trim, the bleed or the frame it is anchored
 # inside. Both fail unless the project records the pair as meant (composed-check.json, below); a frame

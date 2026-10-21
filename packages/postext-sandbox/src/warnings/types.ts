@@ -17,6 +17,8 @@ export type WarningKind =
   | 'cjkLooseLine'
   | 'raggedLine'
   | 'unbreakableWordOverflow'
+  | 'wordDividedByCharacter'
+  | 'wordDividedBySyllable'
   | 'joiningScriptLetterSpacing'
   | 'cjkMarksExceedLeading'
   | 'rubyExceedsLeading'
@@ -195,6 +197,11 @@ export type WarningPayload =
    *  `ratio` times their width (#732). */
   | { kind: 'raggedLine'; text: string; ratio: number }
   | { kind: 'unbreakableWordOverflow'; text: string }
+  /** The engine's `wordDividedByCharacter` / `wordDividedBySyllable`
+   *  (#1150): a word wider than its whole line, cut between two letters
+   *  or at a syllable to fit. `text` is the line's text. */
+  | { kind: 'wordDividedByCharacter'; text: string }
+  | { kind: 'wordDividedBySyllable'; text: string }
   | { kind: 'joiningScriptLetterSpacing'; text: string }
   | { kind: 'cjkMarksExceedLeading'; text: string; gapEm: number; neededEm: number }
   | { kind: 'rubyExceedsLeading'; text: string; gapEm: number; neededEm: number }

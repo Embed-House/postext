@@ -3,6 +3,8 @@ import { buildDocument } from '../pipeline/build';
 import { GLYPH_PROBE_FAMILY, installGlyphProbe } from '../fonts/glyphFallback';
 import { sfntCodePointRanges, rangesHave } from '../fonts/cmap';
 import { fontStringFamilies } from '../measure/fontString';
+import { syncFontSet } from '../fonts/fontSet';
+import { measurementGeneration } from '../measure/canvas';
 import type { ContentWarning } from '../vdt';
 
 // #1105, the glyph probe: in a browser the engine cannot read a loaded
@@ -83,6 +85,26 @@ beforeAll(async () => {
 });
 
 describe('#1105: the glyph probe', () => {
+  // The probe arriving in a set the engine has already looked at (the
+  // Sandbox watches `document.fonts` before `prepareFonts` declares it) is
+  // no change of its faces: no eviction, no new generation, no relayout.
+  it('changes nothing when it lands in a set the engine already tracks', async () => {
+    const own: FakeFace[] = [Object.assign(new FakeFace('Body Face', new Uint8Array(0)), { status: 'loaded' })];
+    const set = {
+      status: 'loaded',
+      get size() { return own.length; },
+      [Symbol.iterator]: () => own[Symbol.iterator](),
+      add: (f: FakeFace) => { own.push(f); },
+      load: async () => [],
+    };
+    expect(syncFontSet(set)).toEqual([]);
+    const generation = measurementGeneration();
+    expect(await installGlyphProbe(set)).toBe(true);
+    expect(own.some((f) => f.family === GLYPH_PROBE_FAMILY)).toBe(true);
+    expect(syncFontSet(set, { force: true })).toEqual([]);
+    expect(measurementGeneration()).toBe(generation);
+  });
+
   it('finds the characters a loaded face lacks and the generic family that drew them', () => {
     const doc = buildDocument({ markdown: 'An arrow → and ← here.' }, { bodyText: { fontFamily: 'Subset Sans' }, headings: { fontFamily: 'Subset Sans' } });
     const found = (doc.contentWarnings ?? []).filter((w): w is Extract<ContentWarning, { kind: 'glyphFallback' }> => w.kind === 'glyphFallback');

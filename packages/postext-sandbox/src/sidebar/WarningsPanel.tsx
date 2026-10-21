@@ -58,6 +58,8 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'cjkLooseLine':
     case 'raggedLine':
     case 'unbreakableWordOverflow':
+    case 'wordDividedByCharacter':
+    case 'wordDividedBySyllable':
     case 'joiningScriptLetterSpacing':
     case 'cjkMarksExceedLeading':
     case 'rubyExceedsLeading':
@@ -251,6 +253,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsRaggedLineTitle;
     case 'unbreakableWordOverflow':
       return labels.warningsUnbreakableWordOverflowTitle;
+    case 'wordDividedByCharacter':
+      return labels.warningsWordDividedByCharacterTitle;
+    case 'wordDividedBySyllable':
+      return labels.warningsWordDividedBySyllableTitle;
     case 'joiningScriptLetterSpacing':
       return labels.warningsJoiningScriptLetterSpacingTitle;
     case 'cjkMarksExceedLeading':
@@ -607,6 +613,10 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return labels.warningsRaggedLineDetail.replace('__text__', payload.text.trim()).replace('__ratio__', payload.ratio.toFixed(1));
     case 'unbreakableWordOverflow':
       return labels.warningsUnbreakableWordOverflowDetail.replace('__text__', payload.text);
+    case 'wordDividedByCharacter':
+      return labels.warningsWordDividedByCharacterDetail.replace('__text__', payload.text);
+    case 'wordDividedBySyllable':
+      return labels.warningsWordDividedBySyllableDetail.replace('__text__', payload.text);
     case 'joiningScriptLetterSpacing':
       return labels.warningsJoiningScriptLetterSpacingDetail.replace('__text__', payload.text);
     case 'cjkMarksExceedLeading':
