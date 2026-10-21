@@ -194,6 +194,9 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
       // A resource set in the text that moved on (#1151): which, and the
       // room it left.
       ...(w.kind === 'resourceMoved' ? { data: { resourceId: w.resourceId, emptyMm: w.emptyMm } } : {}),
+      // A composed page that draws no folio or running head its siblings
+      // draw (#1163): the template, the element and how many draw it.
+      ...(w.kind === 'folioMissing' ? { data: { template: w.template, elementId: w.elementId, slot: w.slot, folio: w.folio, side: w.side, drawnOn: w.drawnOn, siblings: w.siblings } } : {}),
       message: formatWarning(w),
       at: sourceAt(chapter, w.sourceStart),
       ...(local ? { page: String(local.pageLabel ?? local.pageNumberValue) } : {}),

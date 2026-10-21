@@ -39,6 +39,7 @@ import { splitSpreadDecoration } from '../composed/spread.js';
 import { pathInkBox } from '../design/pathBlock.js';
 import { frameOfBlock, framePageRect } from '../composed/paint.js';
 import { figureAnchorPointOnPage } from '../composed/labels.js';
+import { expectedFurniture, folioMissingWarnings, type PageFurniture } from '../composed/furniture.js';
 import type { ResolvedConfig } from '../vdt.js';
 import type { PageRole } from '../types.js';
 import {
@@ -1272,6 +1273,17 @@ export function framesInFrame(frames: DesignFrames | undefined, frame: Pick<VDTF
  *  connector's id (read by {@link connectorAnchorUnknownWarnings}). */
 const connectorAnchorWarnings = new WeakMap<VDTDocument, ContentWarning[]>();
 
+/** Per document, the furniture each composed page's running heads and
+ *  decoration meant to draw (#1163), read by {@link pageFurnitureWarnings}. */
+const pageFurnitureByDoc = new WeakMap<VDTDocument, PageFurniture[]>();
+
+/** The `folioMissing` warnings of `doc` (#1163): a composed page that draws
+ *  no folio or running head most pages of its template and side draw. */
+export function pageFurnitureWarnings(doc: VDTDocument): ContentWarning[] {
+  const records = pageFurnitureByDoc.get(doc);
+  return records && records.length > 0 ? folioMissingWarnings(doc.pages, records) : [];
+}
+
 /** The `labelAnchorUnknown` warnings of the connectors of `doc`'s composed
  *  pages (#1057): an end set at an anchor no picture of its frame has. */
 export function connectorAnchorUnknownWarnings(doc: VDTDocument): ContentWarning[] {
@@ -1357,6 +1369,9 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
   // Parity (odd/even elements) counts the pages before a continued document.
   const pageIndexOffset = doc.pageIndexOffset ?? 0;
   const chapterAttrsByPageIndex = computeChapterAttrs(doc.blocks, doc.pages.length, doc.pages);
+  /** Per composed page, the furniture its slots mean to draw (#1163). */
+  const furnitureRecords: PageFurniture[] = [];
+  pageFurnitureByDoc.set(doc, furnitureRecords);
   // `{bookTotalPages}`: the host's count of the whole book, else the pages
   // up to the end of this document.
   const bookTotalPages = doc.bookPageCount ?? pageIndexOffset + doc.pages.length;
@@ -1835,6 +1850,21 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         dpi,
         { ...headExtras, slot: 'footer', ...withPath(slotPath('footer')) },
       )));
+    }
+    // What the page's running heads and decoration mean to draw on it, for
+    // `folioMissing` (#1163). A spread's decoration is laid on its sheet of
+    // two pages, so only its running heads are compared.
+    if (page.composed && template) {
+      const role = (page.composed.role as PageRole | undefined) ?? page.role;
+      const at = page.index + pageIndexOffset;
+      const expected = [
+        ...(furniture ? expectedFurniture(headerSlot.elements, 'header', at, role, pageAttrs) : []),
+        ...(furniture ? expectedFurniture(footerSlot.elements, 'footer', at, role, pageAttrs) : []),
+        ...(page.composed.spread === undefined && template.decoration.elements.some((el) => el.kind === 'text')
+          ? expectedFurniture(resolveDesignSlot(template.decoration, 'header').elements, 'decoration', at, role, pageAttrs)
+          : []),
+      ];
+      furnitureRecords.push({ pageIndex: page.index, template: page.composed.template, side: recto ? 'recto' : 'verso', expected });
     }
     // The template's decoration, laid with the frames' final boxes (its
     // elements may anchor to `'#frame'`), on the sheet like the running
