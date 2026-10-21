@@ -2445,6 +2445,44 @@ def xy_order(frames: list[Frame]) -> list[Frame]:
     return out
 
 
+def frame_lead_title(f: Frame, paras: list[list[Line]]) -> list[Line] | None:
+    """A frame's first paragraph when it is the frame's title: at most two
+    lines and fifteen words, not a list item, with text after it, and set
+    apart from that text by being wholly bold (150 over its weight and at
+    least 500), 1.12 times its size or more, or in another colour. Panel
+    titles set at body size in bold are titles too, in text frames as in
+    boxes. A caption frame has none."""
+    if len(paras) < 2 or getattr(f, "caption_of", None) is not None:
+        return None
+    p = paras[0]
+    if len(p) > 2 or bullet_of(p[0]) or len(" ".join(l.plain for l in p).split()) > 15:
+        return None
+    if any(l.base > q.base for l in p for q in paras[1][:1]):
+        return None     # the first paragraph must stand above the rest
+    rest = [l for q in paras[1:] for l in q]
+    ink = [c for l in p for c in l.chars if c.c.strip()]
+    rest_ink = [c for l in rest for c in l.chars if c.c.strip()]
+    if not ink or not rest_ink:
+        return None
+    body = dominant(rest)
+    bold = all(c.weight >= max(500, body["weight"] + 150) for c in ink)
+    big = statistics.median(c.size for c in ink) >= 1.12 * statistics.median(c.size for c in rest_ink)
+    colour_ = dominant(p)["color"] != body["color"]
+    return p if (bold or big or colour_) else None
+
+
+def title_level(p: list[Line], ctx: dict) -> int:
+    """The level of a title paragraph: by size among the book's heading
+    sizes; one set below heading size goes under the smallest of them, a
+    level further down when it is not bold either."""
+    size = statistics.median(c.size for l in p for c in l.chars if c.c.strip())
+    if size >= ctx["heading_min"]:
+        return ctx["level_of"](size)
+    deepest = ctx["level_of"](0.0)
+    bold = min(c.weight for l in p for c in l.chars if c.c.strip()) >= 500
+    return min(6, deepest + (1 if bold else 2))
+
+
 def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) -> None:
     """Style and Markdown of one frame."""
     mark_ids = ctx["mark_ids"]
@@ -2459,10 +2497,11 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
     body_lines = [l for l in f.lines if l.size < ctx["heading_min"]] or f.lines
     look = dominant(body_lines) if body_lines else None
     base = (int(look["weight"]), bool(look["italic"])) if look else None
+    lead_title = frame_lead_title(f, paras) if f.kind in ("box", "text") else None
     for p in paras:
         size = p[0].size
-        if size >= ctx["heading_min"] and f.kind in ("box", "tab", "title"):
-            level = ctx["level_of"](size)
+        if (size >= ctx["heading_min"] and f.kind in ("box", "tab", "title")) or p is lead_title:
+            level = title_level(p, ctx)
             text = " ".join(spaced_text(l) for l in p)
             blocks.append(("h", level, text))
             continue

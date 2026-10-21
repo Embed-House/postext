@@ -78,6 +78,48 @@ class WholeBoldParagraph(unittest.TestCase):
 
 
 @unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class LeadTitle(unittest.TestCase):
+    def test_bold_first_paragraph_of_a_box_and_coloured_one_of_a_text_frame(self):
+        doc = fitz.open()
+        page = new_page(doc)
+        x, y = 25 * MM, 40 * MM
+        page.draw_rect(fitz.Rect(x - 10, y - 20, 175 * MM, y + 50), color=(0.2, 0.4, 0.7), fill=(0.93, 0.96, 1),
+                       width=1)
+        put(page, x, y, "Las raíces", size=11, font="hebo")
+        put(page, x, y + 16, PARA[0], size=11)
+        put(page, x, y + 30, PARA[1], size=11)
+        y2 = 150 * MM
+        put(page, x, y2, "El tallo", size=11, color=(0.8, 0.3, 0.1))
+        for k in range(4):
+            put(page, x, y2 + 16 + k * 14, BODY, size=11)
+        tmp, md, _, _ = extract(doc)
+        try:
+            self.assertRegex(md, r':::frame\{slot="box[^"]*"\}\n## Las raíces\n\nLos ríos nacen')
+            self.assertIn("## El tallo\n\nTexto corrido", md)
+            self.assertNotIn("**Las raíces**", md)
+        finally:
+            tmp.cleanup()
+
+    def test_a_bold_sentence_is_no_title(self):
+        doc = fitz.open()
+        page = new_page(doc)
+        x, y = 25 * MM, 40 * MM
+        page.draw_rect(fitz.Rect(x - 10, y - 20, 175 * MM, y + 50), color=(0.2, 0.4, 0.7), fill=(0.93, 0.96, 1),
+                       width=1)
+        put(page, x, y, "Las raíces sujetan la planta al suelo y toman de él el agua y las sales", size=11,
+            font="hebo")
+        put(page, x, y + 14, "minerales que necesita para crecer sana y fuerte cada día del año.", size=11,
+            font="hebo")
+        put(page, x, y + 30, PARA[0], size=11)
+        tmp, md, _, _ = extract(doc)
+        try:
+            self.assertNotIn("## Las raíces", md)
+            self.assertIn("**Las raíces sujetan", md)
+        finally:
+            tmp.cleanup()
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
 class Furniture(unittest.TestCase):
     def test_a_heading_at_the_foot_stays_in_the_text(self):
         doc = fitz.open()

@@ -419,6 +419,12 @@ What the extraction decides, so you know what to check:
   against its frame's body (the weight and slant most of the frame's text
   has): a paragraph set wholly in bold in a regular box comes out as
   `**…**`, and a frame set wholly in italic gets `body.italic` with no `*`.
+- **Frame titles** (skill 1.61). The first paragraph of a box or text
+  frame is its title (a heading in the frame) when it has at most two lines
+  and fifteen words, text follows it, and it is wholly bold, 1.12 times the
+  size of that text or more, or in another colour. A title at heading size
+  takes that size's level; one at body size goes a level under the
+  smallest heading size (two when it is not bold).
 - **Spaces** (skill 1.61). En (U+2002) and em (U+2003) spaces the source
   sets are kept. In headings, running heads and tab labels each gap
   between words is measured, less the line's letter spacing: over half an
