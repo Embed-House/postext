@@ -62,7 +62,11 @@ geometry, media and scan pages, and names the next command.
    - builds lists from bullet markers;
    - collects footnotes as endnotes;
    - drops repeated running heads and folios;
-   - writes caption stubs with page and box for the figure cutter.
+   - writes caption stubs with page and box for the figure cutter; the
+     label (`Fig. 1.`) is taken off the caption with the marks round it,
+     never with the mark that opens the words after it (`*tako-tsubo* es`);
+   - takes each role's base style (bold, italic) from the characters of
+     all its spans, so an italic word in a roman caption keeps its `*`.
 4. `pdf_figures.py stubs book.pdf draft/resources.json --out-dir project/resources`
    cuts the artwork next to each caption. Photos come out at native
    resolution in sRGB; vector art comes out as SVG (plus a PDF print master

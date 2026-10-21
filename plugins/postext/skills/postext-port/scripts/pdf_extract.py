@@ -654,6 +654,27 @@ def para_text(p: Para, vocab: Vocabulary, base: dict[str, tuple[bool, bool]], pl
     return render_runs(runs)
 
 
+def strip_caption_label(text: str, label: str) -> str:
+    """The caption's Markdown without its label (`Fig. 1.`). A label wrapped
+    in marks (`**Figura 1.** El corazón`) goes with them; one that opens a
+    longer marked run (`**Figura 1. El corazón**`) leaves the run's marks on
+    the rest; a mark that opens the words after the label (`Fig. 1.
+    *tako-tsubo* es`) stays: a closing marker is stripped only when it
+    matches an opening one."""
+    lab = re.escape(label).replace("\\ ", "\\s*")
+    m = re.match(rf"^(\*{{1,3}})?\s*{lab}\s*", text)
+    if not m:
+        return text
+    opening = m.group(1) or ""
+    rest = text[m.end():]
+    if opening:
+        if rest.startswith(opening):
+            rest = rest[len(opening):].lstrip()
+        else:
+            rest = opening + rest
+    return rest
+
+
 def repair_ligature_gaps(text: str, vocab: Vocabulary) -> str:
     """'Clasifi cación' -> 'Clasificación' when the joined word is known."""
 
@@ -710,7 +731,9 @@ def cmd_markdown(args) -> None:
     base: dict[str, tuple[bool, bool]] = {}
     per_role: dict[str, Counter] = defaultdict(Counter)
     for ln in kept:
-        per_role[ln.role][(ln.bold, ln.italic)] += len(ln.text)
+        # by characters across the spans: a line's longest span is not its style
+        for sp in ln.spans:
+            per_role[ln.role][(sp.bold, sp.italic)] += len(sp.text.strip())
     for role, cnt in per_role.items():
         base[role] = cnt.most_common(1)[0][0]
 
@@ -781,10 +804,7 @@ def cmd_markdown(args) -> None:
             rid = slug(CAPTION_LABEL_RE.sub("", plain) or f"p{p.page + 1}", "table" if kind == "table" else "fig")
             if m:
                 label_to_id[(kind, m.group("num").replace("–", "-"))] = rid
-                # the label may be wrapped in marks (**Figure 1.**): strip it with them
-                label = re.escape(m.group(0).strip()).replace("\\ ", "\\s*")
-                text = re.sub(rf"^(\*{{1,3}})?\s*{label}\s*(\*{{1,3}})?\s*", "", text, count=1)
-                text = re.sub(r"^\*{1,3}\s+", "", text)
+                text = strip_caption_label(text, m.group(0).strip())
             bbox = [min(l.x0 for l in p.lines), min(l.y0 for l in p.lines), max(l.x1 for l in p.lines), max(l.y1 for l in p.lines)]
             resources.append({
                 "id": rid,
