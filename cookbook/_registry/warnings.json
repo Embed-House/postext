@@ -6543,6 +6543,60 @@
       }
     }
   },
+  "lookUnknown": {
+    "source": "engine",
+    "label": {
+      "en": "A look the book does not have",
+      "es": "Un aspecto que el libro no tiene",
+      "ca": "Un aspecte que el llibre no té",
+      "zh": "书中没有的外观",
+      "ar": "مظهر لا يحويه الكتاب",
+      "ja": "本にない見た目",
+      "pt": "Uma aparência que o livro não tem",
+      "fr": "Une apparence que le livre n’a pas",
+      "de": "Ein Aussehen, das das Buch nicht hat",
+      "it": "Un aspetto che il libro non ha"
+    },
+    "cause": {
+      "en": "A :::frame piece of a composed page writes look=\"…\" with an id that no frameLooks entry has: the frame wears its callout style and its template look, without the named colours.",
+      "es": "Una pieza :::frame de una página compuesta escribe look=\"…\" con un id que ninguna entrada de frameLooks tiene: el marco lleva su estilo de recuadro y el aspecto de su plantilla, sin los colores del aspecto nombrado.",
+      "ca": "Una peça :::frame d'una pàgina composta escriu look=\"…\" amb un id que cap entrada de frameLooks no té: el marc porta el seu estil de requadre i l'aspecte de la seva plantilla, sense els colors de l'aspecte anomenat.",
+      "zh": "模板页中的 :::frame 片段写了 look=\"…\"，但没有任何 frameLooks 条目使用这个 id：该框沿用它的框样式和模板外观，不带所命名外观的颜色。",
+      "ar": "تكتب قطعة :::frame في صفحة مركّبة look=\"…\" بمعرّف لا يحمله أي مدخل في frameLooks: يأخذ الإطار نمطه ومظهر قالبه، دون ألوان المظهر المسمّى.",
+      "ja": "組版ページの :::frame 片が look=\"…\" と書いていますが、その id の frameLooks 項目がありません。枠は囲みスタイルとテンプレートの見た目のままで、名前を付けた色にはなりません。",
+      "pt": "Um trecho :::frame de uma página composta escreve look=\"…\" com um id que nenhuma entrada de frameLooks tem: o bloco usa o seu estilo de boxe e a aparência do modelo, sem as cores da aparência nomeada.",
+      "fr": "Un morceau :::frame d'une page composée écrit look=\"…\" avec un id qu'aucune entrée de frameLooks n'a : le bloc porte son style d'encadré et l'apparence de son gabarit, sans les couleurs de l'apparence nommée.",
+      "de": "Ein :::frame-Stück einer gestalteten Seite schreibt look=\"…\" mit einer ID, die kein Eintrag von frameLooks hat: Der Rahmen trägt seinen Kastenstil und das Aussehen seiner Vorlage, ohne die Farben des genannten Aussehens.",
+      "it": "Un pezzo :::frame di una pagina composta scrive look=\"…\" con un id che nessuna voce di frameLooks ha: la cornice porta il suo stile di riquadro e l'aspetto del suo modello, senza i colori dell'aspetto nominato."
+    },
+    "fix": {
+      "en": "Correct the id on the piece (the warning names the nearest one), or add a frameLooks entry with that id.",
+      "es": "Corrige el id en la pieza (el aviso nombra el más cercano) o añade a frameLooks una entrada con ese id.",
+      "ca": "Corregeix l'id a la peça (l'avís anomena el més proper) o afegeix a frameLooks una entrada amb aquell id.",
+      "zh": "改正片段上的 id（警告会给出最接近的一个），或在 frameLooks 中添加使用该 id 的条目。",
+      "ar": "صحّح المعرّف في القطعة (يذكر التحذير أقرب معرّف)، أو أضف إلى frameLooks مدخلًا بذلك المعرّف.",
+      "ja": "片の id を直す（警告がいちばん近い id を示します）か、その id の項目を frameLooks に追加します。",
+      "pt": "Corrija o id no trecho (o aviso cita o mais próximo) ou adicione a frameLooks uma entrada com esse id.",
+      "fr": "Corrigez l'id sur le morceau (l'avertissement nomme le plus proche), ou ajoutez à frameLooks une entrée de cet id.",
+      "de": "Korrigieren Sie die ID am Stück (die Warnung nennt die nächstliegende) oder fügen Sie frameLooks einen Eintrag mit dieser ID hinzu.",
+      "it": "Correggi l'id sul pezzo (l'avviso nomina il più vicino) o aggiungi a frameLooks una voce con quell'id."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Frame looks",
+        "es": "Aspectos de marco",
+        "ca": "Aspectes de marc",
+        "zh": "框的外观",
+        "ar": "مظاهر الإطارات",
+        "ja": "枠の見た目",
+        "pt": "Aparências de bloco",
+        "fr": "Apparences de bloc",
+        "de": "Rahmenaussehen",
+        "it": "Aspetti delle cornici"
+      }
+    }
+  },
   "moduleUnknown": {
     "source": "engine",
     "label": {

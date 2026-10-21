@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Intestazioni e piè di pagina',
   description: 'Che cosa si stampa in cima e in fondo a ogni pagina: testi con segnaposto, filetti, riquadri, immagini e tracciati vettoriali, diversi per le pagine pari e dispari; e dove si colloca ogni elemento',
   lang: 'it',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '32 min',
   order: 6,
   parent: 'configuration',
@@ -108,6 +108,12 @@ I valori predefiniti della tabella qui sotto sono quelli di un elemento di testo
       <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Su quali <em>ruoli</em> di pagina compare l’elemento, in combinazione con <code>parity</code>. Dopo la collocazione ogni pagina viene classificata come <code>'blank'</code> (riempimento di parità o di separazione, o nessun contenuto), <code>'part'</code> (una pagina di parte), <code>'opener'</code> (il suo primo blocco è un titolo il cui livello occupa tutta la pagina o forza un’interruzione di pagina prima di sé: la prima pagina di un capitolo), <code>'comic'</code> (una pagina di fumetto, <code>:::page</code>), <code>'composed'</code> (una pagina composta, o il <code>role</code> indicato dal suo modello) o <code>'body'</code> (tutto il resto). <code>pages: 'body'</code> nasconde una testatina sulle aperture di capitolo; <code>pages: 'opener'</code> mostra un numero di pagina solo lì.</td>
+    </tr>
+    <tr>
+      <td><code>when</code>, <code>unless</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Testatine e decorazione di un modello di pagina: disegna l’elemento solo in una pagina composta il cui blocco imposta quell’attributo (<code>when</code>), o lo toglie da quella pagina (<code>unless</code>). Li accettano tutti i tipi di elemento. Vedi <a href="/it/docs/configuration-composed-pages#disegnato-quando-la-pagina-lo-dice">Disegnato quando la pagina lo dice</a>. Da postext 1.50.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>

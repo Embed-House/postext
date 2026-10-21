@@ -30,6 +30,7 @@ import { applyAlign, type SlotKind } from './placementAdapter';
 import { foreEdgeElements } from './foreEdge';
 import { newTextElement } from './elementTemplates';
 import type { FrameTarget } from './sizeTo';
+import { FenceConditionFields, useFenceAttributes } from './FenceConditionFields';
 
 interface SlotEditorProps {
   slotKey: SlotKind;
@@ -60,6 +61,10 @@ function generateId(kind: 'text' | 'rule' | 'box' | 'image' | 'path' | 'connecto
 export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders, configPath, frames, connectorHost }: SlotEditorProps) {
   const labels = useSandboxLabels();
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
+  // Running heads and a page template's decoration read the page fence's
+  // attributes (#1087): an element drawn only where the page says so.
+  const fenceConditions = slotKey === 'header' || slotKey === 'footer' || connectorHost !== undefined;
+  const fenceAttributes = useFenceAttributes();
 
   // When there's no override, show the resolved (library-default) elements
   // so the list is never mysteriously empty. Any edit then materialises the
@@ -276,6 +281,9 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   onChange={(next) => updateAt(idx, next)}
                 />
               ) : null}
+              {fenceConditions && (
+                <FenceConditionFields raw={rawEl} attributes={fenceAttributes} onChange={(next) => updateAt(idx, next)} />
+              )}
               {(slotKey === 'heading' || slotKey === 'box') && rawEl.kind !== 'connector' && (
                 <ToggleSwitch
                   label={labels.headerFooterElementReserve}

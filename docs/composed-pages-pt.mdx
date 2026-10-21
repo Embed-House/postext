@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compostas',
   description: 'Como se escreve uma página composta em Markdown: o contêiner ::::page, aberto com quatro sinais de dois-pontos, que indica o modelo; os blocos e o atributo slot, que distribuem o conteúdo pelos blocos do modelo; os slots repetidos e os módulos; e os avisos que aparecem quando o conteúdo não corresponde ao modelo ou cobre outro bloco',
   lang: 'pt',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '44 min',
   order: 34,
   plainSummary: "Algumas páginas não são uma coluna de texto corrido, e sim um conjunto de caixas, como a página de um livro didático com uma faixa para o título, um texto e três caixas coloridas com fotos. O Postext chama essas páginas de páginas compostas. A forma da página é um modelo que fica na configuração, e o Markdown só diz qual trecho de texto vai em cada caixa. Esta página mostra como escrever esse Markdown: o contêiner de página, os blocos, os nomes de slot, os cartões repetidos numa grade e os conjuntos empilhados como módulos. Ela também lista os avisos que o Postext mostra quando o texto e o modelo não combinam.",
@@ -43,6 +43,7 @@ Uma página composta se escreve como um *contêiner de página*: abre com uma li
     <tr><td><code>spread</code></td><td>A página é uma página dupla, que ocupa duas páginas lado a lado (veja <a href="#páginas-duplas">Páginas duplas</a>). Ela precisa concordar com o <code>spread</code> do modelo; caso contrário, vale o modelo e <code>spreadMismatch</code> avisa.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Uma âncora: um <code>:ref</code> que aponta para ela imprime o número da página composta.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Cores das entradas da paleta desta página, como pares <code>entrada=#hex</code> separados por vírgulas: <code>palette="tom=#f6c3d0"</code> para uma página cujas caixas recebem a cor do tema. Toda cor dos blocos e da decoração dela ligada à paleta recebe esses valores, por cima da <code>palette</code> do modelo. Desde o postext 1.42.</td></tr>
+    <tr><td>uma marca como <code>frontmatter</code></td><td>Um atributo que um elemento do modelo nomeia em <code>when</code> ou <code>unless</code>: <code>frontmatter</code> numa falsa folha de rosto tira o fólio e a faixa que o modelo desenha nas páginas do miolo. Escrito sozinho fica definido, e também com qualquer valor exceto <code>false</code>. Veja <a href="/pt/docs/configuration-composed-pages#desenhado-quando-a-página-diz">Desenhado quando a página diz</a>. Desde o postext 1.50.</td></tr>
     <tr><td>qualquer outro</td><td>Um valor que o modelo lê como <code>&#123;attr.name&#125;</code>, por exemplo uma imagem de fundo escolhida página a página: <code>fondo="banda-retos"</code> com <code>resourceId: "&#123;attr.fondo&#125;"</code> na decoração.</td></tr>
   </tbody>
 </table>
@@ -68,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Um **slot** indica o bloco para onde vai um trecho de conteúdo: é o nome de um bloco do modelo. `:::frame{slot="…"}` manda para esse bloco tudo o que está dentro dele. O corpo dele é Markdown completo: parágrafos, listas, títulos, chips, inserções `::resource`, referências `:ref`, notas de rodapé, `:::columns` e boxes aninhados. `label` e `title` dão as palavras da aba ou do título do bloco, como num `:::callout`; a aparência do bloco vem do estilo de boxe que o modelo atribui a ele.
+Um **slot** indica o bloco para onde vai um trecho de conteúdo: é o nome de um bloco do modelo. `:::frame{slot="…"}` manda para esse bloco tudo o que está dentro dele. O corpo dele é Markdown completo: parágrafos, listas, títulos, chips, inserções `::resource`, referências `:ref`, notas de rodapé, `:::columns` e boxes aninhados. `label` e `title` dão as palavras da aba ou do título do bloco, como num `:::callout`; a aparência do bloco vem do estilo de boxe que o modelo atribui a ele, e um trecho pode indicar uma aparência própria (veja [Aparências de bloco](#aparências-de-bloco)).
 
 Um elemento avulso também pode indicar o próprio slot:
 
@@ -131,6 +132,36 @@ A lontra
 
 Um bloco do conjunto só é apontado como `slotEmpty` quando nenhum cartão da página o preenche. Um bloco repetido nunca recebe um título e nunca é o bloco de fluxo.
 
+### Aparências de bloco
+
+Um trecho pode usar uma aparência com nome: um conjunto de cores que a configuração define em `frameLooks` (veja [Configuração › Aparências de bloco](/pt/docs/configuration-composed-pages#aparências-de-bloco)). O Markdown diz qual aparência o trecho usa e a configuração diz como ela é. Numa grade, assim cada cartão tem a sua cor e todos compartilham um modelo e um estilo:
+
+```md
+::::page{template="fotos"}
+# Animais do rio
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+A garça
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+A lontra
+:::
+:::
+::::
+```
+
+- **Onde.** `look` vai na linha de abertura de qualquer trecho `:::frame{slot="…"}`. O trecho principal de um cartão (aqui o bloco da segunda foto) e um membro aninhado nele (cada pílula) indicam a sua.
+- **O que muda.** A aparência é aplicada sobre o estilo do bloco e as cores próprias do modelo, só para esse trecho: os outros cartões mantêm as suas. O texto que continua em outro bloco (uma cadeia, uma página de continuação) mantém a aparência.
+- **Um id desconhecido.** Um id que `frameLooks` não tem gera o aviso `lookUnknown` no atributo, com o id mais parecido, e o bloco mantém as suas cores.
+
 ### Módulos numa página
 
 Um modelo de página com um grupo de módulos (`modules: true`, veja [Configuração › Módulos](/pt/docs/configuration-composed-pages#módulos)) recebe seus conjuntos de contêineres `:::module`, dispostos um embaixo do outro na ordem em que foram escritos. O modelo do módulo desenha o conjunto; o contêiner guarda as palavras dele:
@@ -163,6 +194,7 @@ A vida nas margens
 - **`template`** indica um modelo com `role: 'module'`. **`name`** é opcional: dá nome à instância do módulo, de modo que os blocos dela são `ramas.raiz`, `ramas.izq`. Sem ele, a instância é `<template>[n]`, a posição do módulo entre os módulos da página com esse modelo: `arbol[1].raiz`. Um nome já usado na página, ou um que tenha espaço, `.`, `#`, `[` ou `]`, é trocado por esse padrão (`moduleNameRejected`).
 - **Os slots** dentro de um `:::module` são os do próprio módulo: `slot="raiz"` chega ao bloco `raiz` deste módulo, e dois módulos do mesmo modelo numa página mantêm as palavras separadas. O conteúdo que não indica slot vai para o bloco de fluxo do módulo, e um título, para o bloco do módulo que recebe o nível dele; sem nenhum dos dois, para o bloco de fluxo da página.
 - **Ordem.** Os módulos se empilham na ordem do Markdown; assim, outra página compõe os mesmos conjuntos em outra ordem, ou com uma árvore a mais, sem modelo novo.
+- **Lado a lado.** Quando o grupo de módulos é uma fileira ou uma grade, ou tem grupos próprios dentro (`within`), os mesmos blocos ficam lado a lado: dois `:::module{template="aviso"}` seguidos de quatro `:::module{template="tarjeta"}` formam uma fileira de dois quadros sobre uma grade de 2 × 2 cartões. O Markdown continua dizendo só quais módulos vêm e em que ordem (veja [Configuração › Módulos](/pt/docs/configuration-composed-pages#módulos)).
 - Um `:::module` fora de um contêiner de página é um boxe simples com o conteúdo dele. Um módulo dentro de um módulo não é suportado (`moduleNested`).
 
 ## Exemplo
@@ -329,6 +361,11 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
       <td>Aumente ou retire o <code>max</code> no modelo, ou passe os cartões a mais para outra página.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Um trecho <code>:::frame</code> escreve <code>look="…"</code> com um id que nenhuma entrada de <code>frameLooks</code> tem (veja <a href="#aparências-de-bloco">Aparências de bloco</a>). O bloco mantém o seu estilo e as cores do modelo. O aviso indica o id mais parecido (<code>suggestion</code>).</td>
+      <td>Corrija o id, ou acrescente a aparência a <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Um <code>:::module</code> não indica nenhum modelo, indica um modelo que não é módulo, ou o modelo da página não tem grupo de módulos (<code>reason</code>). O conteúdo dele vai para o bloco de fluxo.</td>
       <td>Corrija o <code>template</code> do módulo, ou dê ao modelo da página um grupo com <code>modules: true</code>.</td>
@@ -351,7 +388,7 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
   </tbody>
 </table>
 
-Os avisos de módulo e o `repeatOverflow` existem desde o postext 1.48; o lado do modelo de cada um está descrito em [Configuração › Avisos de sobreposição, repetição e módulos](/pt/docs/configuration-composed-pages#avisos-de-sobreposição-repetição-e-módulos).
+Os avisos de módulo e o `repeatOverflow` existem desde o postext 1.48, e o `lookUnknown` desde o postext 1.50; o lado do modelo de cada um está descrito em [Configuração › Avisos de sobreposição, repetição e módulos](/pt/docs/configuration-composed-pages#avisos-de-sobreposição-repetição-e-módulos).
 
 Depois que o livro é diagramado, cada um desses avisos traz também a página a que se refere (`pageIndex`); por isso, o painel Verificações e o `postext check` mostram o número da página ao lado do modelo, do bloco ou do slot e do intervalo de origem.
 
@@ -462,7 +499,7 @@ O `frameOverflow` indica a página, o modelo, o bloco e o idioma do documento, d
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> do bloco: a maior escala de texto, em passos de 2,5 % até 50 %, com que o conteúdo cabe, testada na página. Com <code>fit.shrinkText: false</code>, <code>also</code> o ativa.</td>
+      <td><code>fit.minScale</code> do bloco: a maior escala de texto, em passos de 2,5 % até 50 %, com que o conteúdo cabe, testada na página. Se essa escala divide uma palavra mais larga que o bloco, a proposta indica a maior escala menor com que o conteúdo cabe e todas as palavras ficam inteiras, com <code>word: 'whole'</code>; se nenhuma até 50 % a deixa inteira, fica a maior que cabe, com <code>word: 'divided'</code>. Com <code>fit.shrinkText: false</code>, <code>also</code> o ativa.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Headers and footers',
   description: 'What prints at the top and the foot of every page: text with placeholders, rules, boxes, images and vector paths, by page parity, and where each element sits',
   lang: 'en',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '29 min',
   order: 6,
   parent: 'configuration',
@@ -108,6 +108,12 @@ The defaults in the table below are those of a text element you add yourself. Th
       <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Which page <em>roles</em> the element appears on, combined with <code>parity</code>. After placement every page is classified as <code>'blank'</code> (parity / separator padding, or no content), <code>'part'</code> (a part-divider page), <code>'opener'</code> (its first block is a heading whose level spans the page or forces a page break before it — the first page of a chapter), <code>'comic'</code> (a comic page, <code>:::page</code>), <code>'composed'</code> (a composed page, or the <code>role</code> its template names) or <code>'body'</code> (everything else). <code>pages: 'body'</code> hides a running head on chapter openers; <code>pages: 'opener'</code> shows a folio only there.</td>
+    </tr>
+    <tr>
+      <td><code>when</code>, <code>unless</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Running heads and a page template’s decoration: draw the element only on a composed page whose fence sets that attribute (<code>when</code>), or leave it off there (<code>unless</code>). Every element kind takes them. See <a href="/en/docs/configuration-composed-pages#drawn-when-the-page-says">Drawn when the page says</a>. Since postext 1.50.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>

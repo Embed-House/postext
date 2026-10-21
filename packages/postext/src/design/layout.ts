@@ -50,6 +50,7 @@ import {
 } from './placeholders';
 import { fitLeader } from '../measure/leader';
 import { layoutConnector, type ConnectorEndBox } from './connector';
+import { FENCE_CONDITION_CONTEXTS, fenceConditionMet } from './fenceCondition';
 import { repeatInstance } from '../composed/templates';
 import { hasJoiningScript, joinsWithNext } from '../bidi';
 import { designBaseDirection, directRuns, directedTextWidth, measuresRunsAsPainted, paintedRunWidth } from './bidiText';
@@ -1296,6 +1297,32 @@ function layoutConnectorElement(
   return layoutConnector(el, from, ends, { dpi, startRight });
 }
 
+/** The elements a page's fence lets draw (#1087): a running head's or a
+ *  composed page's decoration leaves out an element whose `when` the fence
+ *  does not set or whose `unless` it does, and with it every element placed
+ *  on it or sized to it (as a frame that takes no room drops what hangs
+ *  from it). Other slots (heading, part and box designs) ignore the
+ *  condition. The same array when nothing is left out. */
+function drawnOnFence<E extends ResolvedDesignElement>(elements: readonly E[], placeholders: DesignPlaceholderContext): readonly E[] {
+  if (!FENCE_CONDITION_CONTEXTS.has(placeholders.kind)) return elements;
+  if (!elements.some((el) => el.when !== undefined || el.unless !== undefined)) return elements;
+  const dropped = new Set<string>();
+  for (const el of elements) if (!fenceConditionMet(el, placeholders.pageAttrs)) dropped.add(el.id);
+  if (dropped.size === 0) return elements;
+  for (let changed = true; changed; ) {
+    changed = false;
+    for (const el of elements) {
+      if (dropped.has(el.id) || el.kind === 'connector') continue;
+      const target = anchorTargetId(el.placement);
+      if ((target !== undefined && dropped.has(target)) || sizeTargetIds(el.placement).some((id) => dropped.has(id))) {
+        dropped.add(el.id);
+        changed = true;
+      }
+    }
+  }
+  return elements.filter((el) => !dropped.has(el.id));
+}
+
 /** Layout one design slot against its container. */
 export function layoutDesignSlot(
   slot: ResolvedDesignSlot,
@@ -1313,7 +1340,7 @@ export function layoutDesignSlot(
   // Filter by parity and page role first; then let the current part's
   // palette overrides recolour the palette-linked colours.
   const overrides = context.placeholders.partPaletteByPageIndex?.[context.placeholders.page.index];
-  const candidates = slot.elements
+  const candidates = drawnOnFence(slot.elements, context.placeholders)
     .filter((el) => pageMatchesParity(pageIndex, el.parity) && pageMatchesRole(el.pages, context.pageRole))
     .map((el) => (overrides && Object.keys(overrides).length > 0 ? applyPaletteOverrides(el, overrides) : el))
     // Start and end edges read as the physical ones of this page (#936).

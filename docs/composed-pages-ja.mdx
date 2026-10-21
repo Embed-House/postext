@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'テンプレートページ',
   description: 'テンプレートページをMarkdownで書く方法：コロン4つで始めて使うテンプレートを指定するページブロック、内容をテンプレートの各枠に振り分ける枠とslot属性、繰り返すスロットとモジュール、そして内容がテンプレートに合わないときやほかの枠を覆うときに出る警告',
   lang: 'ja',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '41分',
   order: 34,
   plainSummary: "ページの中には、1段の本文ではなく、いくつもの枠を組み合わせてできているものがあります。たとえば教科書のページで、題名の帯と本文があり、写真の付いた色付きの囲みが3つ並んでいるようなものです。Postextはこうしたページをテンプレートページと呼びます。ページの形は設定の中のテンプレートが決め、Markdownにはどの文章をどの枠に入れるかだけを書きます。このページでは、ページブロック、枠、スロットの名前、グリッドに繰り返し並ぶカード、モジュールとして積み重ねるブロックという、そのMarkdownの書き方を説明します。文章とテンプレートが合わないときにPostextが出す警告も挙げます。",
@@ -43,6 +43,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
     <tr><td><code>spread</code></td><td>ページを向かい合う2ページの見開きにします（<a href="#見開き">見開き</a>を参照）。テンプレートの<code>spread</code>と一致している必要があり、食い違うとテンプレートに従って組まれ、<code>spreadMismatch</code>が出ます。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>アンカーです。これを指す<code>:ref</code>は、テンプレートページが入ったページの番号を印字します。</td></tr>
     <tr><td><code>palette="…"</code></td><td>このページのパレットの項目の色を、<code>エントリ=#hex</code>の組をカンマで区切って指定します。<code>palette="tint=#f6c3d0"</code>は、囲みがその単元の色合いになるページに使います。枠と装飾のうちパレットにリンクした色はすべてこれに従い、テンプレートの<code>palette</code>より優先されます。postext 1.42以降。</td></tr>
+    <tr><td><code>frontmatter</code>などのフラグ</td><td>テンプレートの要素が<code>when</code>や<code>unless</code>で指す属性です。扉ページの<code>frontmatter</code>は、テンプレートが本文ページに描くノンブルと帯を外します。単独で書けば指定したことになり、<code>false</code>以外の値でも同じです。<a href="/ja/docs/configuration-composed-pages#ページが指定したときに描く">ページが指定したときに描く</a>を参照。postext 1.50以降。</td></tr>
     <tr><td>その他の属性</td><td>テンプレートから<code>&#123;attr.name&#125;</code>で参照できる値です。たとえばページごとに選ぶ背景の画像なら、ページに<code>fondo="banda-retos"</code>、装飾に<code>resourceId: "&#123;attr.fondo&#125;"</code>と書きます。</td></tr>
   </tbody>
 </table>
@@ -68,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-**スロット**は、内容の行き先となる枠を示す名前で、テンプレートの枠の名前と対応します。`:::frame{slot="…"}`は、中のものをすべてその枠に送ります。中身には、段落、リスト、見出し、チップ、`::resource`の埋め込み、`:ref`の参照、脚注、`:::columns`、入れ子の囲みなど、どんなMarkdownでも書けます。`label`と`title`は、`:::callout`と同じく、枠のタブやタイトルの文字を指定します。枠の見た目は、テンプレートがその枠に割り当てた囲みスタイルで決まります。
+**スロット**は、内容の行き先となる枠を示す名前で、テンプレートの枠の名前と対応します。`:::frame{slot="…"}`は、中のものをすべてその枠に送ります。中身には、段落、リスト、見出し、チップ、`::resource`の埋め込み、`:ref`の参照、脚注、`:::columns`、入れ子の囲みなど、どんなMarkdownでも書けます。`label`と`title`は、`:::callout`と同じく、枠のタブやタイトルの文字を指定します。枠の見た目は、テンプレートがその枠に割り当てた囲みスタイルで決まり、内容ごとに独自の見た目を指定することもできます（[枠の見た目](#枠の見た目)を参照）。
 
 1つのブロックに、それ自身のスロットを指定することもできます。
 
@@ -131,6 +132,36 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 
 セットの枠が`slotEmpty`として報告されるのは、ページのどのカードもその枠を埋めないときだけです。繰り返す枠は見出しを受け取らず、流し込み枠になることもありません。
 
+### 枠の見た目
+
+内容には、名前の付いた見た目を指定できます。見た目は色の組み合わせで、設定の`frameLooks`で定義します（[設定 › 枠の見た目](/ja/docs/configuration-composed-pages#枠の見た目)を参照）。Markdownは見た目の名前を示し、設定はその中身を決めます。グリッドでは、どのカードも同じテンプレートと同じスタイルのまま、カードごとに色を変えられます。
+
+```md
+::::page{template="fotos"}
+# 川の動物
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+サギ
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+カワウソ
+:::
+:::
+::::
+```
+
+- **書く場所**：`look`は、どの`:::frame{slot="…"}`でも開始行に書きます。カードの主な内容（ここでは2枚目の写真の枠）と、その中に入れ子にした構成要素（それぞれのキャプションの札）が、それぞれ自分の見た目を指定します。
+- **変わるもの**：見た目は枠のスタイルとテンプレート自身の色の上に重ねられ、その内容だけに効きます。ほかのカードは自分の色のままです。別の枠に続くテキスト（枠のつながりや追加ページ）も、同じ見た目を保ちます。
+- **不明なid**：`frameLooks`にないidは、その属性の位置で`lookUnknown`を出し、いちばん近いidを示します。枠は元の色のままです。
+
 ### ページの中のモジュール
 
 モジュールのグループ（`modules: true`。[設定 › モジュール](/ja/docs/configuration-composed-pages#モジュール)を参照）を持つページテンプレートは、ブロックを`:::module`コンテナーから受け取り、書いた順に上から積み重ねます。ブロックを描くのはモジュールのテンプレートで、コンテナーにはその言葉を入れます。
@@ -163,6 +194,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 - `template`は`role: 'module'`のテンプレートを指定します。`name`は省略できます。モジュールのインスタンスに名前を付けるもので、その枠は`ramas.raiz`、`ramas.izq`になります。省略するとインスタンスは`<template>[n]`で、nはページの中でそのテンプレートを使うモジュールの何番目かを示します（`arbol[1].raiz`）。ページの中ですでに使われている名前や、スペース、`.`、`#`、`[`、`]`を含む名前は、この既定の名前に置き換わります（`moduleNameRejected`）。
 - `:::module`の中の**スロット**はそのモジュール自身のものです。`slot="raiz"`はこのモジュールの`raiz`の枠に届き、同じテンプレートのモジュールが1ページに2つあっても、言葉が混ざりません。スロットを指定しない内容はモジュールの流し込み枠に、見出しはそのレベルを`takes`で受け取るモジュールの枠に入ります。どちらもなければ、ページの流し込み枠に入ります。
 - **順序**：モジュールはMarkdownの順に積み重なります。ですから別のページでは、新しいテンプレートを作らずに、同じブロックを別の順に並べたり、木をもう1つ加えたりできます。
+- **横に並べる**：モジュールグループが行かグリッドのとき、または中に自分のグループ（`within`）を持つとき、同じブロックが横に並びます。`:::module{template="aviso"}`2つに続けて`:::module{template="tarjeta"}`4つを書くと、2つの囲みを並べた行の下に2 × 2のカードが並びます。Markdownが決めるのは、どのモジュールをどの順に置くかだけです（[設定 › モジュール](/ja/docs/configuration-composed-pages#モジュール)を参照）。
 - ページブロックの外にある`:::module`は、その内容を入れたただの囲みです。モジュールの中のモジュールは使えません（`moduleNested`）。
 
 ## 作例
@@ -329,6 +361,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>テンプレートの<code>max</code>を上げるか外すか、余ったカードを別のページへ移します。</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td><code>:::frame</code>が<code>look="…"</code>に、どの<code>frameLooks</code>の項目にもないidを書いています（<a href="#枠の見た目">枠の見た目</a>を参照）。枠は自分のスタイルとテンプレートの色を保ちます。警告はいちばん近いid（<code>suggestion</code>）を示します。</td>
+      <td>idを直すか、その見た目を<code>frameLooks</code>に加えます。</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td><code>:::module</code>がテンプレートを指定していないか、モジュールでないテンプレートを指定しているか、ページのテンプレートにモジュールのグループがありません（<code>reason</code>）。その内容は流し込み枠に入ります。</td>
       <td>モジュールの<code>template</code>を直すか、ページのテンプレートに<code>modules: true</code>のグループを加えます。</td>
@@ -351,7 +388,7 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
-モジュールの警告と`repeatOverflow`はpostext 1.48以降です。それぞれのテンプレート側の説明は[設定 › 重なり、繰り返し、モジュールの警告](/ja/docs/configuration-composed-pages#重なり繰り返しモジュールの警告)にあります。
+モジュールの警告と`repeatOverflow`はpostext 1.48以降、`lookUnknown`はpostext 1.50以降です。それぞれのテンプレート側の説明は[設定 › 重なり、繰り返し、モジュールの警告](/ja/docs/configuration-composed-pages#重なり繰り返しモジュールの警告)にあります。
 
 本の割り付けが済むと、これらの警告には対象のページ（`pageIndex`）も付きます。検査パネルと`postext check`は、テンプレート、枠またはスロット、ソース範囲と並べてページ番号を示します。
 
@@ -462,7 +499,7 @@ Si necesitas o quieres comprar algo muy caro…
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td>枠の<code>fit.minScale</code>です。中身が収まるもっとも大きなテキストの縮小率を、2.5%刻みで50%まで、そのページで試して求めます。<code>fit.shrinkText: false</code>のときは、<code>also</code>でそれも有効にします。</td>
+      <td>枠の<code>fit.minScale</code>です。中身が収まるもっとも大きなテキストの縮小率を、2.5%刻みで50%まで、そのページで試して求めます。その率で枠より幅の広い語が分割される場合は、収まってすべての語が分割されない、より小さな率のうち最大のものを示し、<code>word: 'whole'</code>を付けます。50%まで下げてもその語が分割される場合は、収まる最大の率のまま<code>word: 'divided'</code>を付けます。<code>fit.shrinkText: false</code>のときは、<code>also</code>でそれも有効にします。</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

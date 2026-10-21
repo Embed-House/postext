@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '柱とノンブル',
   description: '各ページの上下に印刷するものの設定。プレースホルダーを含むテキスト、罫線、ボックス、画像、ベクターのパス、奇偶ページごとの指定、そして各要素の配置',
   lang: 'ja',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '31分',
   order: 6,
   parent: 'configuration',
@@ -108,6 +108,12 @@ export const metadata = {
       <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>要素を表示するページの<em>役割</em>。<code>parity</code>と組み合わせて使います。配置が終わると、各ページは<code>'blank'</code>（奇偶合わせや区切りのための埋め、または内容なし）、<code>'part'</code>（部扉のページ）、<code>'opener'</code>（最初のブロックが、ページ全幅にわたる、または直前で改ページを強制するレベルの見出しであるページ。章の最初のページ）、<code>'comic'</code>（漫画のページ、<code>:::page</code>）、<code>'composed'</code>（テンプレートページ、またはそのテンプレートの<code>role</code>が示す役割）、<code>'body'</code>（それ以外すべて）のいずれかに分類されます。<code>pages: 'body'</code>は章扉で柱を隠し、<code>pages: 'opener'</code>はそこにだけノンブルを表示します。</td>
+    </tr>
+    <tr>
+      <td><code>when</code>, <code>unless</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>柱とノンブル、ページテンプレートの装飾で使います。ページブロックにその属性があるテンプレートページにだけ要素を描くか（<code>when</code>）、そのページでは描きません（<code>unless</code>）。どの種類の要素にも付けられます。<a href="/ja/docs/configuration-composed-pages#ページが指定したときに描く">ページが指定したときに描く</a>を参照。postext 1.50以降。</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>

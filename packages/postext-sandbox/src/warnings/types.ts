@@ -49,6 +49,7 @@ export type WarningKind =
   | 'frameCovered'
   | 'frameOutsideArea'
   | 'repeatOverflow'
+  | 'lookUnknown'
   | 'moduleUnknown'
   | 'moduleAsPage'
   | 'moduleNested'
@@ -327,6 +328,9 @@ export type WarningPayload =
    *  more: item `item` goes to the flow frame (`flowFrame`), or after the
    *  page. */
   | { kind: 'repeatOverflow'; template: string; group: string; frame: string; item: number; max: number; flowFrame?: string; fenceIndex: number }
+  /** A :::frame piece (#1089) names a look `frameLooks` lacks: the frame
+   *  wears its style and template look. */
+  | { kind: 'lookUnknown'; template: string; frame: string; look: string; suggestion?: string; fenceIndex: number }
   /** A `:::module` block (#1062) whose template is unknown, no module, or
    *  that the page's template has no modules group for: not laid, its
    *  content in the flow frame. */

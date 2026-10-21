@@ -6,6 +6,8 @@
  * configuration, before any layout.
  */
 import type { ContentWarning } from '../vdt';
+import type { ContentBlock } from '../parse/types';
+import { closestKey } from '../util/closestKey';
 import { pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document';
 import type { ComposedPagesConfigKeys, FrameConfig, PageTemplate, ResolvedPageTemplate } from './types';
 import { continueInPage, isModuleTemplate, resolveContinueIn, resolvePageTemplate } from './templates';
@@ -230,6 +232,46 @@ export function checkComposedSlots(
         out.push({ kind: 'slotEmpty', template: template.id, frame: f.name, fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd });
       }
     }
+  }
+  return out;
+}
+
+/**
+ * `lookUnknown` (#1089): each `:::frame` piece of a composed page whose
+ * `look="…"` names no `frameLooks` entry (an empty value names none), at
+ * the attribute's value, with the nearest id. `blocks` is the parsed
+ * stream (source offsets as there).
+ */
+export function checkFrameLookNames(
+  blocks: readonly ContentBlock[],
+  config: Pick<ComposedPagesConfigKeys, 'frameLooks'> | undefined,
+): Extract<ContentWarning, { kind: 'lookUnknown' }>[] {
+  const out: Extract<ContentWarning, { kind: 'lookUnknown' }>[] = [];
+  const ids = (Array.isArray(config?.frameLooks) ? config!.frameLooks : [])
+    .map((l) => (l && typeof l.id === 'string' && l.id !== '' ? l.id : undefined))
+    .filter((id): id is string => id !== undefined);
+  const known = new Set(ids);
+  /** The open page fences, innermost last (a page holds no page). */
+  const pages: { id: number; template: string; fenceIndex: number }[] = [];
+  for (const b of blocks) {
+    if (b.type === 'containerStart' && b.containerName === 'composedPage' && b.composedPage) {
+      pages.push({ id: b.containerId ?? -1, template: b.composedPage.template, fenceIndex: b.composedPage.fenceIndex });
+      continue;
+    }
+    if (b.type === 'containerEnd' && pages.length > 0 && b.containerId === pages[pages.length - 1]!.id) {
+      pages.pop();
+      continue;
+    }
+    if (b.type !== 'containerStart' || b.containerName !== 'frame' || pages.length === 0) continue;
+    const look = b.containerAttrs?.look?.trim();
+    if (!look || known.has(look)) continue;
+    const page = pages[pages.length - 1]!;
+    const at = b.containerAttrSources?.look ?? b;
+    const suggestion = closestKey(look, ids);
+    out.push({
+      kind: 'lookUnknown', template: page.template, frame: b.slot?.name ?? '', look, ...(suggestion ? { suggestion } : {}),
+      fenceIndex: page.fenceIndex, sourceStart: at.sourceStart, sourceEnd: at.sourceEnd,
+    });
   }
   return out;
 }

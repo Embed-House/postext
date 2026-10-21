@@ -55,12 +55,7 @@ In the browser, load the web fonts (`document.fonts.load(...)`) before calling `
 
 ## WOFF2 decoding and bundlers
 
-`decompressWoff2` loads [`wawoff2`](https://www.npmjs.com/package/wawoff2) lazily, a CommonJS package wrapping an emscripten WASM decoder. It works as published:
-
-- in Node (the emscripten glue assigns `module.exports` when it detects Node), and
-- from esm.sh, whose CommonJS → ESM conversion exposes `decompress`.
-
-Some bundlers (Vite, webpack, Turbopack) evaluate the emscripten glue as a web module, where it never assigns `module.exports`, and `decompressWoff2` then fails with `wawoff2: no decompress export`. The fix is a one-line patch to `wawoff2/build/decompress_binding.js` and `compress_binding.js` appending `module.exports = Module;` — the [postext monorepo](https://github.com/drnachio/postext/blob/main/patches/wawoff2.patch) applies it through pnpm's `patchedDependencies`. Alternatively, supply TTF/OTF bytes to your font provider directly and never call `decompressWoff2`.
+`decompressWoff2` runs [`wawoff2`](https://www.npmjs.com/package/wawoff2)'s emscripten WebAssembly decoder (about 320 KB, loaded on first use), shipped inside postext-pdf as `dist/woff2Binding.js`. postext-pdf does not import wawoff2 itself: wawoff2's glue hands its decoder over only when it detects Node, so a bundler or a CDN that builds it as a web module (Vite, webpack, Turbopack, esm.sh) got a decoder that never answered. The module postext-pdf ships hides the host's globals from the glue, decodes the embedded WebAssembly itself and needs no patch, in Node, a page, a worker or from a CDN.
 
 ## Arabic, Hebrew and other right-to-left scripts
 

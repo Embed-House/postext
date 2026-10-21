@@ -377,12 +377,23 @@ export function resolveDesignLineHeight(
   return { lineHeight: equivalent, lineHeightLength: length };
 }
 
+/** An element's page-fence condition (#1087) as it is read: `when` and
+ *  `unless` kept when they name an attribute (a non-empty string, trimmed),
+ *  left out otherwise (the validation reports a value that is not one). */
+export function fenceConditionOf(el: { when?: unknown; unless?: unknown }): { when?: string; unless?: string } {
+  const out: { when?: string; unless?: string } = {};
+  if (typeof el.when === 'string' && el.when.trim() !== '') out.when = el.when.trim();
+  if (typeof el.unless === 'string' && el.unless.trim() !== '') out.unless = el.unless.trim();
+  return out;
+}
+
 function resolveTextElement(el: DesignTextElement, idx: number, kind: DesignSlotKind): ResolvedDesignTextElement {
   return {
     kind: 'text',
     id: el.id ?? `text-${idx + 1}`,
     parity: el.parity ?? 'all',
     pages: el.pages ?? 'all',
+    ...fenceConditionOf(el),
     placement: {
       anchor: el.placement.anchor,
       offset: el.placement.offset ?? {},
@@ -423,6 +434,7 @@ function resolveRuleElement(el: DesignRuleElement, idx: number): ResolvedDesignR
     id: el.id ?? `rule-${idx + 1}`,
     parity: el.parity ?? 'all',
     pages: el.pages ?? 'all',
+    ...fenceConditionOf(el),
     placement: {
       anchor: el.placement.anchor,
       offset: el.placement.offset ?? {},
@@ -444,6 +456,7 @@ function resolveBoxElement(el: DesignBoxElement, idx: number): ResolvedDesignBox
     id: el.id ?? `box-${idx + 1}`,
     parity: el.parity ?? 'all',
     pages: el.pages ?? 'all',
+    ...fenceConditionOf(el),
     placement: {
       anchor: el.placement.anchor,
       offset: el.placement.offset ?? {},
@@ -461,6 +474,7 @@ function resolveImageElement(el: DesignImageElement, idx: number): ResolvedDesig
     id: el.id ?? `image-${idx + 1}`,
     parity: el.parity ?? 'all',
     pages: el.pages ?? 'all',
+    ...fenceConditionOf(el),
     placement: {
       anchor: el.placement.anchor,
       offset: el.placement.offset ?? {},
@@ -483,6 +497,7 @@ function resolvePathElement(el: DesignPathElement, idx: number): ResolvedDesignP
     id: el.id ?? `path-${idx + 1}`,
     parity: el.parity ?? 'all',
     pages: el.pages ?? 'all',
+    ...fenceConditionOf(el),
     placement: {
       anchor: el.placement.anchor,
       offset: el.placement.offset ?? {},
@@ -504,11 +519,15 @@ function resolvePathElement(el: DesignPathElement, idx: number): ResolvedDesignP
  *  filled in (the main colour, palette-linked, so a part recolours it);
  *  the geometry's defaults are read where it is laid (`design/connector.ts`). */
 function resolveConnectorElement(el: DesignConnectorElement, idx: number): ResolvedDesignConnectorElement {
+  const rest: DesignConnectorElement = { ...el };
+  delete rest.when;
+  delete rest.unless;
   return {
-    ...el,
+    ...rest,
     id: el.id ?? `connector-${idx + 1}`,
     parity: el.parity ?? 'all',
     pages: el.pages ?? 'all',
+    ...fenceConditionOf(el),
     color: el.color ?? { ...DEFAULT_MAIN_COLOR },
   };
 }

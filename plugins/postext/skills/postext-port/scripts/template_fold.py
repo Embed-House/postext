@@ -37,7 +37,13 @@ the trim, the coordinates the templates' placements use).
   `:::module{template="…"}` blocks with the bands' pieces inside (the
   flowing text's module with the pieces that name no slot), so the content
   stays in the Markdown. «Extract a module» (`templates/moduleEdits.ts`) is
-  the model.
+  the model. A band whose clusters stand side by side (`row_columns`) is a
+  row of modules instead, laid by a modules group inside the stack
+  (`nested_groups`: `within`, `templates`; a grid when rows in equal
+  columns follow each other).
+- **Looks** (`LookBook`). With style classes, cards whose styles differ
+  only in colours stand on one lattice; each card that differs from the
+  set's style names a look (`frameLooks`, `look=` on its piece).
 
 Both keep a map of every frame's old name to the name the engine gives it
 (`grid-picture[3]`, `box-picture[1].picture-2`), per page fence, for the
@@ -278,6 +284,19 @@ def _set_slot(line: str, name: str | None) -> str:
     return SLOT_RE.sub(f'slot="{name}"', line, count=1)
 
 
+def set_attr(line: str, key: str, value: str) -> str:
+    """The directive line with `key="value"` in its first `{…}` (replaced
+    when it is there already)."""
+    pat = re.compile(r'(?<=[\s{])' + re.escape(key) + r'="[^"]*"')
+    if pat.search(line):
+        return pat.sub(f'{key}="{value}"', line, count=1)
+    i = line.find("}")
+    if i < 0:
+        return line
+    sep = "" if line[i - 1] == "{" else " "
+    return line[:i] + f'{sep}{key}="{value}"' + line[i:]
+
+
 def _rename_slots(lines: list[str], names: dict[str, str]) -> list[str]:
     out = []
     for line in lines:
@@ -333,16 +352,24 @@ def _hangs(g: Box, m: Box, tol: float, reach: float) -> str | None:
     return None
 
 
-def _look(f: dict, kind: str) -> tuple:
-    return (kind, f.get("style"), f.get("layer", 1), f.get("rotate", 0), bool(f.get("optional")))
+def _look(f: dict, kind: str, classes: dict[str, str] | None = None) -> tuple:
+    """What makes two frames the same card: kind, style (or the style's
+    class, colours left out, when `classes` maps it: #1089), layer, turn."""
+    st = f.get("style")
+    if classes and isinstance(st, str):
+        st = classes.get(st, st)
+    return (kind, st, f.get("layer", 1), f.get("rotate", 0), bool(f.get("optional")))
 
 
 def find_lattices(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: float = 1.0,
-                  reach: float = 5.0, min_cells: int = 3) -> list[dict]:
+                  reach: float = 8.0, min_cells: int = 3, classes: dict[str, str] | None = None) -> list[dict]:
     """The lattices of template `t`: [{cells: [(main, {member kind: name})],
     columns, rows, colGap, rowGap, memberRule: {kind: rule}}], largest
     first, no frame in two. `min_cells` is the least number of cards
-    without members (cards with members: 2)."""
+    without members (cards with members: 2). `reach` is how far (mm) a
+    member may stand off its card. With `classes` (style id -> class),
+    frames whose styles differ only in colours are of one look; the grid
+    then gives each card that differs a named look (#1089)."""
     frames = [f for f in t.get("frames", []) if f["name"] in rects and not f.get("flow") and not f.get("takes")
               and not f.get("grid") and not f.get("remove")]
     in_grid = {n for g in t.get("groups", []) if g.get("kind") == "grid" for n in _group_members(g)}
@@ -350,7 +377,7 @@ def find_lattices(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: fl
     by = {f["name"]: f for f in frames}
     looks: dict[tuple, list[str]] = {}
     for f in frames:
-        looks.setdefault(_look(f, kinds.get(f["name"], "box")), []).append(f["name"])
+        looks.setdefault(_look(f, kinds.get(f["name"], "box"), classes), []).append(f["name"])
     found: list[dict] = []
     for names in sorted(looks.values(), key=len, reverse=True):
         if len(names) < 2:
@@ -366,7 +393,7 @@ def find_lattices(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: fl
                 run = [n]
         runs.append(run)
         for mains in runs:
-            got = _lattice(mains, by, rects, kinds, tol, reach)
+            got = _lattice(mains, by, rects, kinds, tol, reach, classes)
             if got and (len(got["cells"]) >= min_cells or (got["memberRule"] and len(got["cells"]) >= 2)):
                 found.append(got)
     found.sort(key=lambda g: -len(g["cells"]) * (1 + len(g["memberRule"])))
@@ -382,7 +409,7 @@ def find_lattices(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: fl
 
 
 def _lattice(mains: list[str], by: dict[str, dict], rects: dict[str, Box], kinds: dict[str, str],
-             tol: float, reach: float) -> dict | None:
+             tol: float, reach: float, classes: dict[str, str] | None = None) -> dict | None:
     mset = set(mains)
     # rows by tops, columns by starts
     order = sorted(mains, key=lambda n: (rects[n][1], rects[n][0]))
@@ -411,19 +438,28 @@ def _lattice(mains: list[str], by: dict[str, dict], rects: dict[str, Box], kinds
     # members: frames hanging from a card, one per kind in every card
     hang: dict[str, dict[tuple, str]] = {n: {} for n in cells}
     hanging: set[str] = set()
+    # a frame between two rows of cards hangs under one and over the next:
+    # it takes the way most frames of its look hang (a pill over every photo)
+    cands: dict[str, list[tuple[float, str, str]]] = {}
+    ways: dict[tuple, int] = {}
     for name, f in by.items():
         if name in mset:
             continue
-        best = None
         for m in cells:
             how = _hangs(rects[name], rects[m], tol, reach)
             if how:
-                d = abs(_cx(rects[name]) - _cx(rects[m]))
-                if best is None or d < best[0]:
-                    best = (d, m, how)
+                cands.setdefault(name, []).append((abs(_cx(rects[name]) - _cx(rects[m])), m, how))
+        for how in {c[2] for c in cands.get(name, [])}:
+            k = (how,) + _look(f, kinds.get(name, "box"), classes)
+            ways[k] = ways.get(k, 0) + 1
+    for name, f in by.items():
+        if name not in cands:
+            continue
+        look = _look(f, kinds.get(name, "box"), classes)
+        best = min(cands[name], key=lambda c: (-ways.get((c[2],) + look, 0), c[0]))
         if best:
             hanging.add(name)
-            key = (best[2],) + _look(f, kinds.get(name, "box"))
+            key = (best[2],) + _look(f, kinds.get(name, "box"), classes)
             if key in hang[best[1]]:
                 hang[best[1]][key] = ""          # two of a kind: not a member
             else:
@@ -444,7 +480,8 @@ def _lattice(mains: list[str], by: dict[str, dict], rects: dict[str, Box], kinds
             continue
         if max(ws) - min(ws) <= tol and max(dx) - min(dx) <= tol:
             rules[key] = {"how": how, "centred": False, "dx": dx[0], "dy": dy[0], "minWidth": None}
-        elif max(dcx) - min(dcx) <= tol:
+        elif max(dcx) - min(dcx) <= tol and kinds.get(mem[0], "box") not in ("picture", "figure"):
+            # (words as wide as they are: a picture has no such width)
             rules[key] = {"how": how, "centred": True, "dx": sum(dcx) / len(dcx), "dy": dy[0],
                           "minWidth": min(ws), "maxWidth": max(ws)}
     # row extents as the engine measures a row: reach above the card, below its top
@@ -518,9 +555,13 @@ def _set_name(kind: str, taken: set[str], prefix: str) -> str:
     return _unique(f"{prefix}-{kind}", taken)
 
 
-def apply_grid(t: dict, lat: dict, rects: dict[str, Box], kinds: dict[str, str], taken: set[str]) -> dict:
+def apply_grid(t: dict, lat: dict, rects: dict[str, Box], kinds: dict[str, str], taken: set[str],
+               looks: "LookBook | None" = None) -> dict:
     """Turn lattice `lat` of template `t` into a grid (in place). Returns
-    {group, main, members: {key: name}, instances: {old: instance}, order}."""
+    {group, main, members: {key: name}, instances: {old: instance}, order,
+    looks: [{set frame: look id}] per card}. With `looks`, a set frame
+    takes the style most cards have, and each card whose style differs from
+    it in colours only names a look (`looks.id_for`)."""
     cells = lat["cells"]
     by = {f["name"]: f for f in t["frames"]}
     first, first_members = cells[0]
@@ -529,9 +570,30 @@ def apply_grid(t: dict, lat: dict, rects: dict[str, Box], kinds: dict[str, str],
     members: dict[tuple, str] = {}
     for key, rule in lat["memberRule"].items():
         members[key] = _set_name(kinds.get(first_members[key], "box"), taken, group)
+    # one style per set frame, a named look for each card that differs
+    card_looks: list[dict[str, str]] = [{} for _ in cells]
+    shared: dict[str, Any] = {}
+    slots = [(main, [c for c, _ in cells])] + [(members[k], [ms[k] for _, ms in cells]) for k in members]
+    for set_name, names in slots:
+        styles = [by[n].get("style") for n in names]
+        counts: dict[Any, int] = {}
+        for st in styles:
+            counts[st] = counts.get(st, 0) + 1
+        common = max(counts, key=lambda st: (counts[st], -styles.index(st)))
+        shared[set_name] = common
+        if looks is None or len(counts) == 1:
+            continue
+        for k, st in enumerate(styles):
+            if st == common:
+                continue
+            look = looks.look_between(common, st)
+            if look:
+                card_looks[k][set_name] = looks.id_for(look)
     # the set's frames
     mf = copy.deepcopy(by[first])
     mf["name"] = main
+    if shared.get(main):
+        mf["style"] = shared[main]
     for k in ("placement", "width", "grid"):
         mf.pop(k, None)
     mins = [_mm_of(by[c].get("minHeight")) for c, _ in cells]
@@ -548,6 +610,8 @@ def apply_grid(t: dict, lat: dict, rects: dict[str, Box], kinds: dict[str, str],
         g = copy.deepcopy(by[first_members[key]])
         g["name"] = name
         g.pop("grid", None)
+        if shared.get(name):
+            g["style"] = shared[name]
         if rule["centred"]:
             edge = "bottom" if rule["how"] == "below" else "top"
             dy = rule["dy"]
@@ -608,7 +672,7 @@ def apply_grid(t: dict, lat: dict, rects: dict[str, Box], kinds: dict[str, str],
     return {"group": group, "main": main, "members": list(members.values()),
             "memberOf": {key: members[key] for key in members}, "instances": instances,
             "cells": [(c, dict(ms)) for c, ms in cells], "columns": lat["columns"], "rows": lat["rows"],
-            "columnGap": round(lat["colGap"], 2), "rowGap": round(lat["rowGap"], 2)}
+            "columnGap": round(lat["colGap"], 2), "rowGap": round(lat["rowGap"], 2), "looks": card_looks}
 
 
 def grid_items_markdown(lines: list[str], fence: dict, plan: dict) -> list[str]:
@@ -622,29 +686,44 @@ def grid_items_markdown(lines: list[str], fence: dict, plan: dict) -> list[str]:
     used: list[Piece] = []
     items: list[str] = []
     last = -1
+    card_looks = plan.get("looks") or [{} for _ in plan["cells"]]
     for k, (card, ms) in enumerate(plan["cells"]):
         own = by_slot.get(card)
+        looked = card_looks[k] if k < len(card_looks) else {}
+        main_look = looked.get(plan["main"])
         inner: list[str] = []
         for key, name in ms.items():
             p = by_slot.get(name)
             if p:
                 used.append(p)
-                inner += _rename_slots(p.lines[:1], {name: plan["memberOf"][key]}) + p.lines[1:] + [""]
+                member = plan["memberOf"][key]
+                look = looked.get(member)
+                if look and not (p.kind == "frame" and p.container):
+                    # a block that names the member: wrapped, so the look has a piece to sit on
+                    inner += ([f':::frame{{slot="{member}" look="{look}"}}', _set_slot(p.head, None)]
+                              + p.lines[1:] + [":::", ""])
+                    continue
+                head = _rename_slots(p.lines[:1], {name: member})
+                if look:
+                    head = [set_attr(head[0], "look", look)]
+                inner += head + p.lines[1:] + [""]
         if own:
             used.append(own)
         if own or inner:
             last = k
         if own and own.kind == "frame" and own.container:
-            body = [_set_slot(own.head, plan["main"])] + own.lines[1:-1]
+            head = _set_slot(own.head, plan["main"])
+            body = [set_attr(head, "look", main_look) if main_look else head] + own.lines[1:-1]
             if inner:
                 if body[-1].strip():
                     body.append("")
                 body += inner[:-1]
             items.append("\n".join(body + [own.lines[-1]]))
-        elif own and not inner and own.kind is None and LEAF_RE.match(own.head):
+        elif own and not inner and not main_look and own.kind is None and LEAF_RE.match(own.head):
             items.append("\n".join([_set_slot(own.head, plan["main"])] + own.lines[1:]))
         else:
-            body = [f':::frame{{slot="{plan["main"]}"}}']
+            look_attr = f' look="{main_look}"' if main_look else ""
+            body = [f':::frame{{slot="{plan["main"]}"{look_attr}}}']
             if own:
                 body += [_set_slot(own.head, None)] + own.lines[1:] + [""]
             body += inner
@@ -658,11 +737,42 @@ def grid_items_markdown(lines: list[str], fence: dict, plan: dict) -> list[str]:
     return _replace(lines, fence, used, at, text)
 
 
-def fold_grids(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: float, min_cells: int = 3) -> list[dict]:
+class LookBook:
+    """The named looks (`frameLooks`, #1089) a fold gives the cards of a
+    grid whose styles differ from the set's only in colours. `classes` maps
+    a style id to its class (its colour-free form): frames of one class are
+    one look for the lattice. `between(a, b)` is the look that dresses style
+    `a` as style `b` ({} when alike, None when they differ in more than
+    colours); `name(look)` a readable base for its id."""
+
+    def __init__(self, classes: dict[str, str], between, name, taken: set[str] | None = None):
+        self.classes = classes
+        self.between = between
+        self.name = name
+        self.entries: list[dict] = []
+        self.taken = set(taken or ())
+
+    def look_between(self, a: Any, b: Any) -> dict | None:
+        if not isinstance(a, str) or not isinstance(b, str):
+            return None
+        return self.between(a, b) or None
+
+    def id_for(self, look: dict) -> str:
+        for e in self.entries:
+            if {k: v for k, v in e.items() if k != "id"} == look:
+                return e["id"]
+        lid = _unique(f"look-{self.name(look)}", self.taken)
+        self.entries.append({"id": lid, **look})
+        return lid
+
+
+def fold_grids(t: dict, rects: dict[str, Box], kinds: dict[str, str], tol: float, min_cells: int = 3,
+               looks: LookBook | None = None, reach: float = 8.0) -> list[dict]:
     taken = {f["name"] for f in t.get("frames", [])} | {g["name"] for g in t.get("groups", [])}
     plans = []
-    for lat in find_lattices(t, rects, kinds, tol, min_cells=min_cells):
-        plan = apply_grid(t, lat, rects, kinds, taken)
+    for lat in find_lattices(t, rects, kinds, tol, reach=reach, min_cells=min_cells,
+                             classes=looks.classes if looks else None):
+        plan = apply_grid(t, lat, rects, kinds, taken, looks)
         # the set's boxes, by instance, for the module pass after this
         for old, inst in plan["instances"].items():
             rects[inst] = rects[old]
@@ -778,10 +888,11 @@ def bands_of(t: dict, rects: dict[str, Box], parents: dict[str, str | None]) -> 
         if bands and b[1] < bands[-1]["box"][3] - 0.5:
             last = bands[-1]
             last["frames"] += ms
+            last["units"].append((list(ms), b))
             lb = last["box"]
             last["box"] = (min(lb[0], b[0]), min(lb[1], b[1]), max(lb[2], b[2]), max(lb[3], b[3]))
         else:
-            bands.append({"frames": list(ms), "box": b})
+            bands.append({"frames": list(ms), "box": b, "units": [(list(ms), b)]})
     order = {n: i for i, n in enumerate(names)}
     by = {f["name"]: f for f in frames}
     for band in bands:
@@ -894,7 +1005,7 @@ def module_of_band(t: dict, band: dict, rects: dict[str, Box], kinds: dict[str, 
     # what the page paints at a fixed place inside the band (a shape, a
     # line under its frames) goes with it, so it keeps its place among the
     # band's own decoration in paint order
-    bx = band["box"]
+    bx = band.get("capture") or band["box"]
     fixed: dict[str, tuple[float, float]] = {}
     for el in els:
         eid = str(el.get("id"))
@@ -967,6 +1078,12 @@ def _grid_origin(t: dict, g: dict, rects: dict[str, Box]) -> tuple[float, float]
 
 
 def modules_alike(a: dict, b: dict, tol: float, frame_diff, element_diff, group_equal) -> bool:
+    # a module of a row (it has a width) is never one with a module of the stack
+    wa, wb = a.get("width"), b.get("width")
+    if (wa is None) != (wb is None) or (isinstance(wa, str) or isinstance(wb, str)) and wa != wb:
+        return False
+    if isinstance(wa, dict) and isinstance(wb, dict) and abs((_mm_of(wa) or 0) - (_mm_of(wb) or 0)) > tol:
+        return False
     fa, fb = a.get("frames", []), b.get("frames", [])
     if len(fa) != len(fb) or any(x["name"] != y["name"] for x, y in zip(fa, fb)):
         return False
@@ -1107,8 +1224,11 @@ def _clear_of(box: Box | None, others: list[Box | None]) -> bool:
 
 def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
                       parents: dict[str, str | None], page: tuple[float, float] = (210.0, 297.0),
-                      measured: dict[str, Box] | None = None) -> dict | None:
-    """Every band of one page template as a module (nothing changed yet).
+                      measured: dict[str, Box] | None = None, rows: bool = True,
+                      no_rows: set[int] | None = None) -> dict | None:
+    """Every band of one page template as a module, or, when its clusters
+    stand side by side (`row_columns`, not for the band indices in
+    `no_rows`), as a row of modules (nothing changed yet).
     The modules group fills the page from its top-left, with no gap: each
     module's frames stand where the band stood, offset by how far the band
     stands from the foot of the one before it (the first from the page's
@@ -1141,7 +1261,19 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
         return bands[i]["box"][1] - bands[i - 1]["box"][3]
 
     leads = [bands[0]["box"][1]] + [lead(i) for i in range(1, len(bands))]
-    first = [module_of_band(t, band, rects, kinds, 0.0, band["box"][1], lead) for band, lead in zip(bands, leads)]
+    # every module of the page, top to bottom and, in a row, start to end
+    slots: list[dict] = []
+    for i, (band, ld) in enumerate(zip(bands, leads)):
+        cols = None
+        if rows and (i not in (no_rows or ())) and t.get("area") == "trim":
+            cols = row_columns(t, band, page[0])
+        if not cols:
+            slots.append({"band": band, "lead": ld, "gx": 0.0, "row": None, "box": band["box"]})
+            continue
+        for k, col in enumerate(cols):
+            slots.append({"band": col, "lead": ld, "gx": col["gx"], "row": i, "col": k, "n": len(cols),
+                          "equal": col["equal"], "width": col["width"], "box": col["box"]})
+    first = [module_of_band(t, s["band"], rects, kinds, s["gx"], band_top(s), s["lead"]) for s in slots]
     owner: dict[str, int] = {}
     for k, (_, _, ids) in enumerate(first):
         for e in ids:
@@ -1154,7 +1286,7 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
         eid = str(el.get("id"))
         if eid in owner:
             clean = False
-            painted.append(_fixed_box(el) or bands[owner[eid]]["box"])
+            painted.append(_fixed_box(el) or slots[owner[eid]]["box"])
             continue
         box = _text_box(el, page) if el.get("kind") == "text" else _fixed_box(el)
         if is_furniture(el) and (clean or _clear_of(box, painted)):
@@ -1164,18 +1296,101 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
         painted.append(_fixed_box(el))
         clean = False
     mods = []
-    for k, (band, lead) in enumerate(zip(bands, leads)):
+    for k, s in enumerate(slots):
         others = frozenset(e for e, o in owner.items() if o != k)
-        m, names, ids = module_of_band(t, band, rects, kinds, 0.0, band["box"][1], lead, taken=others,
+        m, names, ids = module_of_band(t, s["band"], rects, kinds, s["gx"], band_top(s), s["lead"], taken=others,
                                        extra=frozenset(extra) if k == 0 else frozenset())
-        mods.append({"module": m, "names": names, "ids": ids, "band": band})
+        if s["row"] is not None:
+            m["width"] = mm(s["width"]) if s["width"] is not None else "fill"
+        mods.append({"module": m, "names": names, "ids": ids, "band": s["band"], "row": s["row"],
+                     "col": s.get("col"), "n": s.get("n"), "equal": s.get("equal")})
     return {"bands": bands, "modules": mods, "keep": keep}
 
 
-def apply_page_modules(t: dict, plan: dict, ids: list[str], rects: dict[str, Box]) -> dict[str, str]:
+def band_top(slot: dict) -> float:
+    """The top of the band a module's frames are measured from: the row's
+    for a module of a row (its modules share the lead), else its own."""
+    return slot["band"].get("top", slot["band"]["box"][1])
+
+
+def row_columns(t: dict, band: dict, page_w: float, tol: float = 0.5) -> list[dict] | None:
+    """The clusters of a band that stand side by side (#1088), start to end,
+    each a sub-band laid as one module of a modules row, or None when the
+    band is one block. Units whose spans across the page overlap are one
+    cluster, and so are the clusters a shape painted inside the band spans.
+    Each: {frames, groups, flow, box, capture, top, gx, width, equal}: the
+    module's box starts at `gx` (mm from the area's start) and is `width`
+    wide (None: what the others leave, `fill`). When every cluster stands
+    inside its share of `page_w` cut in equal columns, the columns are those
+    (`equal`, so rows of them can be a modules grid), else each module
+    starts where its cluster starts."""
+    units = sorted(band.get("units") or [], key=lambda u: u[1][0])
+    if len(units) < 2:
+        return None
+    clusters: list[dict] = []
+    for ms, b in units:
+        if clusters and b[0] < clusters[-1]["box"][2] - tol:
+            c = clusters[-1]
+            c["frames"] += ms
+            cb = c["box"]
+            c["box"] = (min(cb[0], b[0]), min(cb[1], b[1]), max(cb[2], b[2]), max(cb[3], b[3]))
+        else:
+            clusters.append({"frames": list(ms), "box": b})
+    by = band["box"]
+    shapes = []
+    for el in _decoration(t):
+        fb = _fixed_box(el)
+        if fb and fb[1] >= by[1] - tol and fb[3] <= by[3] + tol:
+            shapes.append(fb)
+    changed = True
+    while changed and len(clusters) > 1:
+        changed = False
+        for fb in shapes:
+            hit = [k for k, c in enumerate(clusters) if fb[0] < c["box"][2] - tol and c["box"][0] < fb[2] - tol]
+            if len(hit) > 1:
+                a, z = hit[0], hit[-1]
+                merged = {"frames": [n for c in clusters[a:z + 1] for n in c["frames"]],
+                          "box": (min(c["box"][0] for c in clusters[a:z + 1]), min(c["box"][1] for c in clusters[a:z + 1]),
+                                  max(c["box"][2] for c in clusters[a:z + 1]), max(c["box"][3] for c in clusters[a:z + 1]))}
+                clusters[a:z + 1] = [merged]
+                changed = True
+                break
+    n = len(clusters)
+    if n < 2:
+        return None
+    share = page_w / n
+    equal = all(c["box"][0] >= k * share - tol and c["box"][2] <= (k + 1) * share + tol for k, c in enumerate(clusters))
+    starts = [k * share for k in range(n)] if equal else [0.0] + [round(c["box"][0], 2) for c in clusters[1:]]
+    order = {nm: i for i, nm in enumerate(band["frames"])}
+    out = []
+    for k, c in enumerate(clusters):
+        fs = sorted(c["frames"], key=lambda nm: order.get(nm, 0))
+        sub = {k2: v for k2, v in band.items() if k2 not in ("frames", "groups", "units", "box", "flow")}
+        end = starts[k + 1] if k + 1 < n else page_w
+        sub.update({"frames": fs, "groups": [g for g in band.get("groups", []) if g in _groups_within(t, set(fs))],
+                    "flow": any(_flowing(t, nm) for nm in fs), "box": c["box"], "top": by[1],
+                    "capture": (starts[k], by[1], end, by[3]), "gx": starts[k],
+                    "width": round(share, 2) if equal else (round(end - starts[k], 2) if k + 1 < n else None),
+                    "equal": equal})
+        out.append(sub)
+    return out
+
+
+def _groups_within(t: dict, frames: set[str]) -> set[str]:
+    return {g["name"] for g in t.get("groups", []) if _group_members(g) and set(_group_members(g)) <= frames}
+
+
+def _flowing(t: dict, name: str) -> bool:
+    f = next((f for f in t.get("frames", []) if f["name"] == name), {})
+    return bool(f.get("flow") or f.get("takes"))
+
+
+def apply_page_modules(t: dict, plan: dict, ids: list[str], rects: dict[str, Box],
+                       nested: list[dict] | None = None) -> dict[str, str]:
     """Replace every frame of page template `t` by one modules group that
-    fills the page; `ids` the module template of each band. Returns {page
-    name: instance name} for every frame, group and element moved."""
+    fills the page (and the `nested` row and grid groups inside it, the
+    same on every shell); `ids` the module template of each band. Returns
+    {page name: instance name} for every frame, group and element moved."""
     seen: dict[str, int] = {}
     rename: dict[str, str] = {}
     for m, mid in zip(plan["modules"], ids):
@@ -1189,7 +1404,7 @@ def apply_page_modules(t: dict, plan: dict, ids: list[str], rects: dict[str, Box
                                            "offset": {"x": mm(0), "y": mm(0)},
                                            "size": {"width": "fill", "height": "fill"}}}
     t["frames"] = []
-    t["groups"] = [group]
+    t["groups"] = [group] + copy.deepcopy(nested or [])
     keep = set(plan["keep"])
     if t.get("decoration"):
         t["decoration"]["elements"] = [e for e in _decoration(t) if str(e.get("id")) in keep]
@@ -1197,6 +1412,64 @@ def apply_page_modules(t: dict, plan: dict, ids: list[str], rects: dict[str, Box
             del t["decoration"]
     retarget(t, rename)
     return rename
+
+
+def nested_groups(pages: list[dict | None], stack: str = "modules") -> tuple[list[dict], list[tuple[int, int]]]:
+    """The modules groups inside the stack (`within`, #1088) that lay the
+    book's rows of modules, and the rows that cannot be laid by them.
+
+    The engine gives a module to the first nested group whose `templates`
+    hold its template and lays each run of them as one row (or grid): rows
+    that share a module template are one group, and two rows of one group
+    one after the other on a page would run together. Those become a grid
+    when every row of the group has the same number of modules in equal
+    columns (each row one grid row); else the second of the two is returned
+    (page index, band index) to be laid as one module instead. Every shell
+    gets every group, so the shells stay alike."""
+    rows: list[dict] = []
+    for pg in pages:
+        if not pg or "plan" not in pg:
+            continue
+        by_row: dict[int, list[int]] = {}
+        for k, m in enumerate(pg["plan"]["modules"]):
+            if m.get("row") is not None:
+                by_row.setdefault(m["row"], []).append(k)
+        for r, ks in sorted(by_row.items()):
+            rows.append({"pg": pg, "band": r, "ids": [pg["ids"][k] for k in ks], "first": ks[0], "last": ks[-1],
+                         "equal": bool(pg["plan"]["modules"][ks[0]].get("equal")), "n": len(ks)})
+    if not rows:
+        return [], []
+    u = _Union({i for r in rows for i in r["ids"]})
+    for r in rows:
+        for i in r["ids"][1:]:
+            u.join(r["ids"][0], i)
+    comps: dict[str, list[dict]] = {}
+    for r in rows:
+        comps.setdefault(u.find(r["ids"][0]), []).append(r)
+    groups: list[dict] = []
+    clash: list[tuple[int, int]] = []
+    count = {"row": 0, "grid": 0}
+    for comp in comps.values():
+        consec = [(a, b) for a in comp for b in comp if a["pg"] is b["pg"] and b["first"] == a["last"] + 1]
+        kind = "row"
+        if consec:
+            if all(r["equal"] for r in comp) and len({r["n"] for r in comp}) == 1:
+                kind = "grid"
+            else:
+                clash += [(b["pg"]["index"], b["band"]) for _, b in consec]
+                continue
+        count[kind] += 1
+        templates = list(dict.fromkeys(i for r in comp for i in r["ids"]))
+        g: dict[str, Any] = {"name": f"{kind}-{count[kind]}", "modules": True, "within": stack, "kind": kind,
+                             "templates": templates}
+        if kind == "grid":
+            g.update({"columns": comp[0]["n"], "columnGap": mm(0), "rowGap": mm(0)})
+        else:
+            g["gap"] = mm(0)
+        g["rowAlign"] = "start"
+        g["_uses"] = list(dict.fromkeys(r["pg"]["t"]["id"] for r in comp))
+        groups.append(g)
+    return groups, clash
 
 
 def modules_markdown(lines: list[str], fence: dict, plan: dict, ids: list[str]) -> list[str]:
@@ -1223,14 +1496,18 @@ def modules_markdown(lines: list[str], fence: dict, plan: dict, ids: list[str]) 
 
 def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], tol: dict,
               frame_diff, element_diff, group_equal, grids: bool = True, modules: bool = True,
-              laid: dict[str, dict[str, Box]] | None = None) -> dict:
+              laid: dict[str, dict[str, Box]] | None = None, rows: bool = True,
+              looks: LookBook | None = None) -> dict:
     """Grids then modules over every page template `extract` wrote (one per
     page, in `regions` order). Rewrites `templates` (and appends the module
     templates) and `markdowns` in place. Returns the report: grids,
     modules, and per template {old frame name: name on the laid page}.
     `laid` (template id -> frame boxes, from `render.mjs --frames` of the
     draft) gives the boxes the engine lays, which groups may have moved off
-    the measured ones: the folded page then lays as the draft did."""
+    the measured ones: the folded page then lays as the draft did. `rows`
+    lays the clusters of a band that stand side by side as a row (or grid)
+    of modules (#1088); `looks` lets the cards of a grid differ in colours,
+    each card that differs naming a look (#1089, `looks.entries`)."""
     report: dict[str, Any] = {"grids": [], "modules": [], "names": {}}
     if len(templates) != len(regions) or any(t.get("extends") or t.get("role") == "module" for t in templates):
         report["skipped"] = "the templates are not one per measured page (run the fold on the output of extract)"
@@ -1251,7 +1528,8 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
         parents = {f["name"]: f.get("parent") for f in reg.get("frames", [])}
         names = {f["name"]: f["name"] for f in t.get("frames", [])}
         if grids:
-            for plan in fold_grids(t, rects, kinds, lt, int(tol.get("grid_min", 3))):
+            for plan in fold_grids(t, rects, kinds, lt, int(tol.get("grid_min", 3)), looks,
+                                   float(tol.get("reach", 8.0))):
                 for o, cur in names.items():
                     if cur in plan["instances"]:
                         names[o] = plan["instances"][cur]
@@ -1262,39 +1540,55 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
                                         "frames": [plan["main"], *plan["members"]],
                                         "columns": plan["columns"], "rows": plan["rows"],
                                         "columnGap": plan["columnGap"], "rowGap": plan["rowGap"],
-                                        "items": len(plan["cells"])})
+                                        "items": len(plan["cells"]),
+                                        "looks": sorted({v for c in plan["looks"] for v in c.values()})})
         trim = reg.get("trim") or [210.0, 297.0]
         pages.append({"t": t, "rects": rects, "kinds": kinds, "parents": parents, "names": names,
                       "page": (float(trim[0]), float(trim[1])), "measured": measured})
     if modules:
         report["furniture"] = mark_furniture([pg["t"] for pg in pages if pg is not None], element_diff)
-        cands = []
-        for pg in pages:
-            if pg is None:
-                continue
-            plan = plan_page_modules(pg["t"], pg["rects"], pg["kinds"], pg["parents"], pg["page"], pg["measured"])
-            if plan:
-                pg["plan"] = plan
-                cands += [(pg, k) for k in range(len(plan["modules"]))]
-        lib: list[dict] = []
-        for pg, k in cands:
-            m = pg["plan"]["modules"][k]["module"]
-            hit = next((e for e in lib if modules_alike(e["module"], m, tol.get("module", 0.5), frame_diff, element_diff,
-                                                        group_equal)), None)
-            if hit:
-                hit["uses"].append((pg, k))
-            else:
-                lib.append({"module": m, "uses": [(pg, k)]})
-        taken = {t["id"] for t in templates}
-        for e in lib:
-            e["id"] = _unique(module_name(e["module"]), taken)
-            for pg, k in e["uses"]:
-                pg.setdefault("ids", {})[k] = e["id"]
+        no_rows: dict[int, set[int]] = {}
+        taken0 = {t["id"] for t in templates}
+        for _attempt in range(64):
+            cands = []
+            for p_i, pg in enumerate(pages):
+                if pg is None:
+                    continue
+                pg.pop("ids", None)
+                plan = plan_page_modules(pg["t"], pg["rects"], pg["kinds"], pg["parents"], pg["page"], pg["measured"],
+                                         rows=rows, no_rows=no_rows.get(p_i))
+                pg.pop("plan", None)
+                if plan:
+                    pg["plan"] = plan
+                    pg["index"] = p_i
+                    cands += [(pg, k) for k in range(len(plan["modules"]))]
+            lib: list[dict] = []
+            for pg, k in cands:
+                m = pg["plan"]["modules"][k]["module"]
+                hit = next((e for e in lib if modules_alike(e["module"], m, tol.get("module", 0.5), frame_diff,
+                                                            element_diff, group_equal)), None)
+                if hit:
+                    hit["uses"].append((pg, k))
+                else:
+                    lib.append({"module": m, "uses": [(pg, k)]})
+            taken = set(taken0)
+            for e in lib:
+                e["id"] = _unique(module_name(e["module"]), taken)
+                for pg, k in e["uses"]:
+                    pg.setdefault("ids", {})[k] = e["id"]
+            nested, clash = nested_groups(pages)
+            if not clash:
+                break
+            for p_i, band in clash:
+                no_rows.setdefault(p_i, set()).add(band)
+        report["rows"] = [{"group": g["name"], "kind": g["kind"], "templates": list(g["templates"]),
+                           **({"columns": g["columns"]} if g["kind"] == "grid" else {}), "uses": g.pop("_uses")}
+                          for g in nested]
         for pg in pages:
             if pg is None or "plan" not in pg:
                 continue
             ids = [pg["ids"][k] for k in range(len(pg["plan"]["modules"]))]
-            rename = apply_page_modules(pg["t"], pg["plan"], ids, pg["rects"])
+            rename = apply_page_modules(pg["t"], pg["plan"], ids, pg["rects"], nested)
             for o, cur in pg["names"].items():
                 b = _base(cur)
                 if cur in rename:
@@ -1311,5 +1605,7 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
     for pg in pages:
         if pg is not None:
             report["names"][pg["t"]["id"]] = pg["names"]
+    if looks is not None:
+        report["frameLooks"] = looks.entries
     markdowns[:] = ["\n".join(d) for d in docs]
     return report

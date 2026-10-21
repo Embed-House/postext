@@ -188,6 +188,19 @@ export interface FrameLook {
   label?: { color?: ColorValue; background?: ColorValue; rule?: { color?: ColorValue } };
 }
 
+/** A named look (#1089, `PostextConfig.frameLooks`): the fields of a
+ *  {@link FrameLook} under an id a `:::frame{slot="…" look="<id>"}` piece
+ *  names. The Markdown names the look, the config defines it; it is laid
+ *  over the frame's style and the template frame's own `look`, for that
+ *  piece only, so the items of a repeating grid can each wear a colour of
+ *  their own. */
+export interface FrameLookEntry extends FrameLook {
+  /** Required, unique among `frameLooks`. */
+  id: string;
+  /** Shown in the Sandbox only. */
+  name?: string;
+}
+
 /** The frame set a grid group lays once per content item (#1061, DESIGN
  *  §12.6). */
 export interface FrameRepeatConfig {
@@ -220,15 +233,30 @@ export interface FrameGroupConfig {
   columnGap?: Dimension;
   rowGap?: Dimension;
   /** Grid: where a cell shorter than its row sits: `'stretch'` (the
-   *  default) makes its main frame as tall as the row. */
+   *  default) makes its main frame as tall as the row. A modules row or
+   *  grid (#1088): where a module shorter than its row sits; `'stretch'`
+   *  lays it in a box as tall as the row (its `'fill'` frames grow). */
   rowAlign?: 'start' | 'center' | 'end' | 'stretch';
   /** Grid: the frame set laid once per item of the page's content. */
   repeat?: FrameRepeatConfig;
   /** The group takes the page's `:::module` blocks (#1062, DESIGN §12.7),
-   *  in Markdown order, one under another, `gap` between them: each module
-   *  is as wide as the group and as tall as its frames. Its `frames` are
-   *  not read; the group is laid as a stack whatever its `kind`. */
+   *  in Markdown order, `gap` between them. Its `frames` are not read. A
+   *  `'stack'` lays them one under another, each as wide as the group (or
+   *  its template's `width`) and as tall as its frames; a `'row'` (#1088)
+   *  side by side, start to end, each as wide as its template's `width`
+   *  or an equal share of what is left, the row as tall as its tallest
+   *  module (`rowAlign`); a `'grid'` (#1088) in `columns` equal columns,
+   *  row after row. */
   modules?: boolean;
+  /** A modules group laid inside the modules stack of this name (#1088):
+   *  each run of the page's modules it takes (`templates`), one after
+   *  another in Markdown order, is one item of that stack, a row or a grid
+   *  of its own where the first of the run comes. Only on a modules group,
+   *  naming a modules `'stack'` of the template that is in no other. */
+  within?: string;
+  /** A modules group inside another (`within`, #1088): the module
+   *  templates it takes. Unset: every module. */
+  templates?: string[];
   /** A modules group (#1062): where a module that does not fit goes on,
    *  whole (`'next-page'`, `'template:<id>'`). Unset: the module is laid
    *  cut at the group's foot and its frames run the reflow ladder. */
@@ -313,7 +341,15 @@ export interface PageTemplate extends PageTemplatePatch {
    *  (`:::module{template="…"}`); it has no `area`, header, footer,
    *  variants, spread or overflow template, and no page fence lays it. */
   role?: string;
+  /** A module (#1088): its width in a modules row or stack: a length, a
+   *  percentage of the group's width, or `'fill'` (an equal share of what
+   *  the row's other modules leave). Unset: `'fill'`. A grid's cells are
+   *  its columns. */
+  width?: ModuleWidth;
 }
+
+/** A module's width in its group (#1088). */
+export type ModuleWidth = Dimension | { percent: number } | 'fill';
 
 export interface LabelStyle {
   id: string;
@@ -370,6 +406,8 @@ export interface LabelStyle {
 export interface ComposedPagesConfigKeys {
   pageTemplates?: PageTemplate[];
   labelStyles?: LabelStyle[];
+  /** Named frame looks (#1089). */
+  frameLooks?: FrameLookEntry[];
 }
 
 // ---------------------------------------------------------------------------
@@ -418,6 +456,10 @@ export interface ResolvedModule extends ComposedModuleUse {
   /** The module's frames that take the first heading of a level (or the
    *  contents) inside its `:::module`. */
   takes?: Partial<Record<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'toc', string>>;
+  /** Its template's `width` (#1088). */
+  width?: ModuleWidth;
+  /** The modules group inside `group` it is laid in (`within`, #1088). */
+  nested?: string;
 }
 
 export interface ResolvedFrameFit {
@@ -495,9 +537,14 @@ export interface ResolvedFrameGroup {
    *  instances (the main frame's first), in cell order. For a modules group
    *  after `expandModules` (#1062): each module, its frames, `module` its
    *  instance name. */
-  items?: { item: number; frames: string[]; module?: string }[];
+  items?: { item: number; frames: string[]; module?: string; nested?: string }[];
   /** The group takes the page's modules (#1062). */
   modules?: true;
+  /** A modules group inside the modules stack of this name (#1088). */
+  within?: string;
+  /** A modules group inside another (#1088): the module templates it
+   *  takes; unset, every one. */
+  templates?: string[];
   /** A modules group's `overflow.continueIn` (#1062). */
   overflow?: { continueIn?: string };
   placement?: ElementPlacement;
@@ -535,6 +582,9 @@ export interface ResolvedPageTemplate {
   /** The modules laid in the template's modules group (#1062), in order:
    *  set by `expandModules`. */
   modules?: ResolvedModule[];
+  /** A module's width in its group (#1088): set on a module that writes
+   *  one. */
+  width?: ModuleWidth;
   /** The template and its ancestors, nearest first. */
   chain: string[];
   /** `/pageTemplates/<i>`. */

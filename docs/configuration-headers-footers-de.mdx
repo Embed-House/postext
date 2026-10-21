@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Kopf- und Fußzeilen',
   description: 'Was oben und unten auf jeder Seite steht – Text mit Platzhaltern, Linien, Kästen, Bilder und Vektorpfade, getrennt für gerade und ungerade Seiten – und wie jedes Element platziert wird',
   lang: 'de',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '29 min',
   order: 6,
   parent: 'configuration',
@@ -108,6 +108,12 @@ Die Standardwerte in der folgenden Tabelle sind die eines Textelements, das Sie 
       <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>Auf welchen <em>Seitenrollen</em> das Element erscheint, kombiniert mit <code>parity</code>. Nach der Platzierung wird jede Seite eingeordnet als <code>'blank'</code> (Vakatseite für die Parität oder als Trennseite oder ohne Inhalt), <code>'part'</code> (eine Teiltitelseite), <code>'opener'</code> (ihr erster Block ist eine Überschrift, deren Ebene über die ganze Seite reicht oder einen Seitenumbruch davor erzwingt – die erste Seite eines Kapitels), <code>'comic'</code> (eine Comicseite, <code>:::page</code>), <code>'composed'</code> (eine zusammengesetzte Seite, oder die <code>role</code>, die ihre Vorlage nennt) oder <code>'body'</code> (alles andere). <code>pages: 'body'</code> blendet einen Kolumnentitel auf Kapitelauftakten aus; <code>pages: 'opener'</code> zeigt eine Pagina nur dort.</td>
+    </tr>
+    <tr>
+      <td><code>when</code>, <code>unless</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Kopf- und Fußzeilen und die Dekoration einer Seitenvorlage: zeichnet das Element nur auf einer zusammengesetzten Seite, deren Seitenblock dieses Attribut setzt (<code>when</code>), oder lässt es dort weg (<code>unless</code>). Jede Elementart nimmt sie an. Siehe <a href="/de/docs/configuration-composed-pages#gezeichnet-wenn-die-seite-es-sagt">Gezeichnet, wenn die Seite es sagt</a>. Seit postext 1.50.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>

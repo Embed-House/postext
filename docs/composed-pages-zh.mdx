@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '模板页',
   description: '怎样用Markdown写模板页：以四个冒号开头的页面块指明所用的模板；框和slot属性把内容分到模板的各个框；重复的槽位与模块；内容与模板对不上或盖住另一个框时会给出警告',
   lang: 'zh',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '28分钟',
   order: 34,
   plainSummary: "有些页面不是一栏连续的正文，而是由一组框拼成，比如课本里的一页：顶上一条标题色带，下面一段课文，再加三个配有照片的彩色方框。Postext把这样的页面叫作模板页。页面的样子由配置中的模板决定，Markdown只说明哪段文字放进哪个框。本页介绍这种Markdown的写法：页面块、框、槽位名、在网格中重复排列的卡片，以及作为模块叠放的块。本页还列出文字与模板对不上时Postext给出的警告。",
@@ -43,6 +43,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
     <tr><td><code>spread</code></td><td>这一页是跨页，由左右相对的两页组成（见<a href="#跨页">跨页</a>）。它必须与模板的<code>spread</code>一致；不一致时以模板为准，并给出<code>spreadMismatch</code>警告。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>锚点：指向它的<code>:ref</code>印出模板页所在的页码。</td></tr>
     <tr><td><code>palette="…"</code></td><td>本页调色板条目的颜色，写成以逗号分隔的<code>条目=#hex</code>对。例如某页的框要用这一课的主题色调，就写<code>palette="tint=#f6c3d0"</code>。框和装饰中所有与调色板关联的颜色都改用这些值，优先于模板的<code>palette</code>。自postext 1.42起。</td></tr>
+    <tr><td>标记，如<code>frontmatter</code></td><td>模板元素在<code>when</code>或<code>unless</code>中指名的属性：书名页上的<code>frontmatter</code>去掉模板在正文页上绘制的页码和色带。单独写出即算设有，带除<code>false</code>以外的任意值也算。见<a href="/zh/docs/configuration-composed-pages#页面标明时才绘制">页面标明时才绘制</a>。自postext 1.50起。</td></tr>
     <tr><td>其他任何属性</td><td>模板以<code>&#123;attr.name&#125;</code>读取的值，例如逐页选择的背景图：页面上写<code>fondo="banda-retos"</code>，装饰中写<code>resourceId: "&#123;attr.fondo&#125;"</code>。</td></tr>
   </tbody>
 </table>
@@ -68,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-**槽位**指明一段内容进哪个框：它与模板中某个框的名称对应。`:::frame{slot="…"}`把其中的全部内容送进那个框。框里可以写任何Markdown：段落、列表、标题、行内标签、`::resource`嵌入、`:ref`引用、脚注、`:::columns`和嵌套的标注框。`label`和`title`为框的页签或标题提供文字，与`:::callout`相同；框的外观来自模板给它指定的标注框样式。
+**槽位**指明一段内容进哪个框：它与模板中某个框的名称对应。`:::frame{slot="…"}`把其中的全部内容送进那个框。框里可以写任何Markdown：段落、列表、标题、行内标签、`::resource`嵌入、`:ref`引用、脚注、`:::columns`和嵌套的标注框。`label`和`title`为框的页签或标题提供文字，与`:::callout`相同；框的外观来自模板给它指定的标注框样式，一段内容也可以指定自己的外观（见[框的外观](#框的外观)）。
 
 单个块也可以自己写明槽位：
 
@@ -131,6 +132,36 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 
 这组框中的某个框，只有在本页没有任何卡片填它时，才报告为`slotEmpty`。重复的框从不接收标题，也从不是流文框。
 
+### 框的外观
+
+一段内容可以采用一种有名称的外观：一组颜色，由配置在`frameLooks`中定义（见[配置 › 框的外观](/zh/docs/configuration-composed-pages#框的外观)）。Markdown指明用哪种外观，配置说明这种外观是什么样子。在网格中，这样每张卡片可以有自己的颜色，而所有卡片仍用同一个模板和同一种样式：
+
+```md
+::::page{template="fotos"}
+# 河边的动物
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+苍鹭
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+水獭
+:::
+:::
+::::
+```
+
+- **写在哪里。** `look`写在任何`:::frame{slot="…"}`的开始行上。卡片的主内容（这里是第二张照片的框）和嵌在其中的成员（每个题注小签）各自指定自己的外观。
+- **改变什么。** 外观叠加在框的样式和模板自身的颜色之上，只作用于这一段内容：其他卡片保持各自的颜色。接续到另一个框里的文字（串接框、追加页）仍保持这种外观。
+- **未知的id。** `frameLooks`中没有的id会在该属性处给出`lookUnknown`，并附上最接近的id，框保持原来的颜色。
+
 ### 页面中的模块
 
 带模块组（`modules: true`，见[配置 › 模块](/zh/docs/configuration-composed-pages#模块)）的页面模板，从`:::module`容器中取得它的各块，按书写顺序上下叠放。块由模块的模板画出，容器里放的是它的文字：
@@ -163,6 +194,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 - `template`指定一个`role: 'module'`的模板。`name`可以不写：它给这个模块实例命名，于是它的框是`ramas.raiz`、`ramas.izq`。不写时，实例名是`<template>[n]`，即这个模块在本页同一模板的模块中的序号：`arbol[1].raiz`。本页已被占用的名称，或含有空格、`.`、`#`、`[`或`]`的名称，换成这个默认名称（`moduleNameRejected`）。
 - **槽位**：`:::module`里的槽位属于这个模块自己：`slot="raiz"`指向本模块的`raiz`框，所以一页上同一模板的两个模块，文字互不混淆。没有指明槽位的内容进入模块的流文框，标题进入模块中接收其级别（`takes`）的框；两者都没有时，进入页面的流文框。
 - **顺序。** 模块按Markdown的顺序叠放，所以另一页可以把同样的块换个顺序排，或者多放一棵树，而不需要新的模板。
+- **并排。** 模块组是行或网格，或者内部有自己的组（`within`）时，同样的块会并排：两个`:::module{template="aviso"}`后接四个`:::module{template="tarjeta"}`，排成一行两个方框，下面是2 × 2的卡片网格。Markdown仍然只说明有哪些模块、按什么顺序（见[配置 › 模块](/zh/docs/configuration-composed-pages#模块)）。
 - 写在页面块之外的`:::module`是一个装着其内容的普通方框。模块里面再套模块是不支持的（`moduleNested`）。
 
 ## 示例
@@ -329,6 +361,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>在模板中调高或去掉<code>max</code>，或者把多出的卡片移到另一页。</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td><code>:::frame</code>写了<code>look="…"</code>，而没有哪一项<code>frameLooks</code>有这个id（见<a href="#框的外观">框的外观</a>）。框保持它的样式和模板的颜色。警告给出最接近的id（<code>suggestion</code>）。</td>
+      <td>改正id，或者把这种外观加进<code>frameLooks</code>。</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td><code>:::module</code>没有指定模板，指定的模板不是模块，或者这一页的模板没有模块组（<code>reason</code>）。它的内容进入流文框。</td>
       <td>改正模块的<code>template</code>，或者给这一页的模板加一个<code>modules: true</code>的组。</td>
@@ -351,7 +388,7 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
-模块的各条警告和`repeatOverflow`自postext 1.48起提供；每条警告在模板一侧的情况见[配置 › 重叠、重复与模块的警告](/zh/docs/configuration-composed-pages#重叠重复与模块的警告)。
+模块的各条警告和`repeatOverflow`自postext 1.48起提供，`lookUnknown`自postext 1.50起提供；每条警告在模板一侧的情况见[配置 › 重叠、重复与模块的警告](/zh/docs/configuration-composed-pages#重叠重复与模块的警告)。
 
 全书排好之后，这些警告还会带上所涉及的页（`pageIndex`），检查面板和`postext check`在模板、框或槽位以及源码范围旁边给出页码。
 
@@ -462,7 +499,7 @@ Si necesitas o quieres comprar algo muy caro…
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td>框的<code>fit.minScale</code>：在这一页上试出的、能让内容放下的最大文字比例，每级2.5%，最低到50%。设了<code>fit.shrinkText: false</code>时，<code>also</code>会把它打开。</td>
+      <td>框的<code>fit.minScale</code>：在这一页上试出的、能让内容放下的最大文字比例，每级2.5%，最低到50%。如果这个比例会把一个比框还宽的词断开，提议改给能放下且每个词都完整的、更小比例中最大的那个，并带<code>word: 'whole'</code>；直到50%都无法让它完整时，仍给能放下的最大比例，并带<code>word: 'divided'</code>。设了<code>fit.shrinkText: false</code>时，<code>also</code>会把它打开。</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

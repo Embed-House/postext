@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'テンプレートページの設定',
   description: 'テンプレートページのためのページテンプレート：枠、グループ、枠のセットを繰り返すグリッド、モジュール、装飾とコネクター、継承と左右ページのバリアント、画像のアンカーに付けるラベルスタイル、テンプレートが出す警告',
   lang: 'ja',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10分',
   order: 18,
   parent: 'configuration',
@@ -153,6 +153,12 @@ const config: PostextConfig = {
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
       <td><code>pages</code>フィルターを指定したデザイン要素から見たページの役割です。<code>'module'</code>はテンプレートをモジュールにします。モジュールは独立したページではなく、ページがグループの中に積み重ねる枠のまとまりです（<a href="#モジュール">モジュール</a>を参照）。postext 1.48以降。</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>モジュール：モジュールの行やスタックの中での幅です。長さ、グループ幅に対する割合、または<code>'fill'</code>（行のほかのモジュールが残した幅の等分）で指定します。グリッドでは、モジュールは自分の列を占めます。postext 1.50から。</td>
     </tr>
   </tbody>
 </table>
@@ -345,7 +351,7 @@ const config: PostextConfig = {
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>この枠が、囲みスタイルの見た目のうち変えるものです。名前と入れ子はスタイルのものと同じで、色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>と<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）と、文字の字間（<code>body.letterSpacing</code>）を指定できます。<code>background</code>を書くとスタイルの塗りもオンになります。タブの色は、タブのあるスタイルにだけ働きます。子テンプレートでは、上書きする枠とキーごとに統合されます。同じ形の囲みを何色も使う本では、スタイルは1つにしてここに色合いを書くか、<code>palette</code>でパレットにリンクした塗りの色を替えます（postext 1.42以降）。</td>
+      <td>この枠が、囲みスタイルの見た目のうち変えるものです。名前と入れ子はスタイルのものと同じで、色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>と<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）と、文字の字間（<code>body.letterSpacing</code>）を指定できます。<code>background</code>を書くとスタイルの塗りもオンになります。タブの色は、タブのあるスタイルにだけ働きます。子テンプレートでは、上書きする枠とキーごとに統合されます。同じ形の囲みを何色も使う本では、スタイルは1つにしてここに色合いを書くか、<code>palette</code>でパレットにリンクした塗りの色を替えます。ページの内容は、その上に名前の付いた見た目を重ねられます（<a href="#枠の見た目">枠の見た目</a>を参照）。postext 1.42以降。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -434,7 +440,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>グリッドで、行より低いセルをどこに置くかです。<code>'stretch'</code>は、主枠の高さが<code>'auto'</code>か<code>'fill'</code>のとき、その枠を行と同じ高さ（<code>maxHeight</code>まで）にします。</td>
+      <td>グリッドで、行より低いセルをどこに置くかです。<code>'stretch'</code>は、主枠の高さが<code>'auto'</code>か<code>'fill'</code>のとき、その枠を行と同じ高さ（<code>maxHeight</code>まで）にします。 モジュールの行やグリッドでは、行より低いモジュールをどこに置くかです。<code>'stretch'</code>は行と同じ高さのボックスに置くので、その地色や<code>'fill'</code>の枠が行の下端まで届きます。</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>グループがページの<code>:::module</code>ブロックを受け取り、Markdownの順に上から積み重ね、その間に<code>gap</code>を空けます。<code>kind</code>にかかわらず積み重ねとして配置し、<code>frames</code>は読みません。<a href="#モジュール">モジュール</a>を参照してください。postext 1.48以降。</td>
+      <td>グループがページの<code>:::module</code>ブロックをMarkdownの順に受け取り、その間に<code>gap</code>を空けます。上から積み重ねる（<code>'stack'</code>）、横に並べる（<code>'row'</code>）、<code>columns</code>列に並べる（<code>'grid'</code>、postext 1.50から）のいずれかです。<code>frames</code>は読まれません。<a href="#モジュール">モジュール</a>を参照してください。postext 1.48から。</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>なし</td>
       <td>モジュールのグループで、収まらないモジュールを丸ごと続ける先です。指定しなければ、モジュールはグループの下端で切れ、その枠が収めるための手順を順に試します。</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>この名前のモジュールスタックの中に置くモジュールグループです。受け取るページのモジュールのうち、Markdownで続けて書かれたひとまとまりごとに、そのスタックの1行または1つのグリッドとして、まとまりの最初のモジュールの位置に置かれます。postext 1.50から。</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>なし</td>
+      <td><code>within</code>を持つモジュールグループが受け取るモジュールテンプレートです。指定しなければ、すべてのモジュールを受け取ります。モジュールは、それを受け取る最初のこのようなグループに入り、なければスタックに入ります。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **モジュールが持つもの**：枠、グループ（繰り返すグリッドを含む）、装飾、コネクターです。`area`、`header`、`footer`、`variants`、`spread`、`gutter`、`overflowTemplate`は持たず、書くとそれぞれ`unknownConfigValue`として報告され、無視されます。`extends`はモジュールどうしで使えます（モジュールを拡張したテンプレートはモジュールです）。
 - **ボックス**：モジュールの幅はそのグループと同じで、高さは枠が届くところまでです。グループはモジュールを上から積み重ね、その間に`gap`を空けます。モジュールの中では、`'container'`はモジュールのボックスを指し、枠（`'fill'`とパーセントも）と装飾はそれを基準にします。`{ to: 'container', edge: 'bottom' }`まで広げた地は、言葉の量でモジュールの高さがどう変わっても、モジュール全体を覆います。
 - **名前**：モジュールの枠、グループ、要素は、モジュールのインスタンス名のもとにまとまります。`<name>.<frame>`で、名前はMarkdownが与えるもの（`name="ramas"`）、なければ`<template>[n]`です。nはページの中でそのテンプレートを使うモジュールの何番目かを示します（`arbol[2].raiz`）。モジュールの中のアンカー、`next`、`continueIn: '#x'`、コネクターはそのモジュール自身の枠に書き換えられるので、1ページに木が2つあっても互いにつながりません。枠のidは`cp0:arbol[2].raiz`です。
-- **モジュールが収まらないとき**：グループの下端を越えたモジュールはそこで切れ、その枠が収めるための手順を試します。`frameOverflow`はグループにつき1回出ます。モジュールのグループに`overflow.continueIn`（`'next-page'`または`'template:<id>'`）があれば、収まらない最初のモジュールとそれ以降のすべてのモジュールが、同じ名前のまま**丸ごと**追加ページへ移り、そのページのモジュールのグループの先頭に入ります。
-- **まだできないこと**：モジュールを横に並べること（モジュールのグループはいつも積み重ねです）、モジュールの中のモジュール（`moduleNested`）、モジュールの中でのテンプレートの`grid`のセルです。
+- **モジュールが収まらないとき**：グループの下端を越えたモジュールはそこで切れ、その枠が収めるための手順を試します。`frameOverflow`はグループにつき1回出ます。モジュールのグループに`overflow.continueIn`（`'next-page'`または`'template:<id>'`）があれば、収まらない最初のモジュールとそれ以降のすべてのモジュールが、同じ名前のまま**丸ごと**追加ページへ移り、そのページのモジュールのグループの先頭に入ります。 モジュールの行やグリッドでは、行がまるごと続きます。1つの行のモジュールが2ページに分かれることはありません。
+- **横に並べる**：`kind: 'row'`のモジュールグループは、モジュールを行頭から行末へ並べます。各モジュールの幅はテンプレートの`width`（長さ、`{ percent: 48 }`、または`'fill'`で残りの等分）で、行の高さは最も高いモジュールに合わせます。`kind: 'grid'`は`columns`個の等しい列に、行ごとに並べます。`rowAlign`は行より低いモジュールの位置を決めます。行は文字の行が始まる側から並ぶので、右から左のページでは最初のモジュールが右に来ます。postext 1.50から。
+- **スタックの中のグループ**：`within: '<スタック>'`を持つモジュールグループはページのモジュールスタックの中に置かれ、`templates`で受け取るモジュールを決めます。Markdownでそれらが続けて書かれたひとまとまりごとに、最初のモジュールの位置でスタックの1行または1つのグリッドになります。下のグループでは、`aviso`ブロック2つに続けて`tarjeta`ブロック4つを書くと、2つの囲みを横に並べた行の下に2 × 2のカードが並び、Markdownには`:::module`ブロックしかありません。
+- **まだできないこと**：モジュールの中のモジュール（`moduleNested`）、モジュールの中でのテンプレートの`grid`のセル、モジュールの行やグリッドの中のグループです。
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### 内容が収まらないとき
 
@@ -651,6 +679,26 @@ pageTemplates: [
 Sandboxがテンプレートを保存するとき、既定値と同じ値も捨てずに残します。ほかのテンプレートを拡張するテンプレートやバリアントの中では、その値が親の値を上書きするからです。
 
 コードからは、`resolvePageTemplate(config, id, { parity })`が、連鎖を統合し、その側のバリアントを適用し、すべての既定値を埋め、下の警告で説明するとおりにすべての参照を解決したテンプレートを返します。`validatePageTemplates(config)`は警告を返します。
+
+### ページが指定したときに描く
+
+装飾の要素と、テンプレートの`header`・`footer`の要素には、`when`または`unless`を付けられます。どちらもページブロックの属性名を書きます。`when: 'folio'`はブロックに`folio`があるページにだけ要素を描き、`unless: 'frontmatter'`はブロックに`frontmatter`があるページでは要素を描きません。属性は単独で書くか（`::::page{template="pagina" frontmatter}`）、`false`以外の値を付ければ指定したことになります。これでひとつのテンプレートが、ノンブルも帯も入れない前付と、両方を入れる本文ページの両方をまかなえます。ページが何であるかはMarkdownが示し、図柄はテンプレートが持ちます。postext 1.50以降。
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- 描かない要素にアンカーした要素や、その要素までの寸法をとる要素も描きません。
+- 両方のキーがあるときは、ブロックに`when`の属性があり、`unless`の属性がないページで描きます。
+- 文書の柱とノンブル、セクションの柱とノンブルもこのキーを読みます。テンプレートページでないページにはページブロックがなく、どの属性もありません。見出し・部扉・ボックスのデザインはこのキーを無視します。
+- 空でない文字列でない値や、見出し・部扉・ボックスのデザインに書いた値は`unknownConfigValue`として報告し、要素はキーがないものとして描きます。`postext check`は、本のどのページブロックにもない属性を`when`や`unless`が指していると、注記`conditionNeverMet`を出します。その要素は一度も描かれないか、常に描かれます。
+- Sandboxでは、柱とノンブルやテンプレートの装飾の要素カードごとに**ページが指定したときに描く**と**ページが指定したときは描かない**の欄があり、本のページブロックが使う属性から選べます。
 
 ### 割り付けに反映される設定
 
@@ -787,7 +835,7 @@ decoration: {
       <td>内容が枠に与えたボックスではなく、テンプレートが宣言したボックスを結びます。</td>
     </tr>
     <tr>
-      <td><code>parity</code>、<code>pages</code></td>
+      <td><code>parity</code>、<code>pages</code>、<code>when</code>、<code>unless</code></td>
       <td>ほかの要素と同じ</td>
       <td><code>'all'</code></td>
       <td>どのページに描くかです。</td>
@@ -856,6 +904,48 @@ decoration: { elements: [
 ```
 
 **検査**：`to`が何も指さない端は`frameAnchorUnknown`（`…/from/to`または`…/to/<k>/to`）になり、省かれます。`[*]`は`to`の中で、繰り返す枠に対してだけ使えます。枠のどの画像にもない`anchor`は、コネクターのidを添えて`labelAnchorUnknown`になります。`routing`、`startCap`、`endCap`、`side`の選択肢にない語と、0から1の範囲外の`at`は`unknownConfigValue`です。0から1の数でない`opacity`も`unknownConfigValue`です（範囲外の数は範囲内に収められます）。
+
+## 枠の見た目
+
+写真カードのグリッドで札の色だけが違う場合や、1ページの囲みが十数色に分かれる場合でも、囲みスタイルとテンプレートは1つで済みます。色は名前の付いた見た目のリスト`frameLooks`に書き、Markdownはその見た目を使う内容ごとに名前を指定します。postext 1.50以降。
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>項目</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>必須。内容が<code>look="…"</code>に書く語です。2つの見た目が同じidを持つときは、最初のものを使います。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Sandboxでだけ表示します。</td>
+    </tr>
+    <tr>
+      <td>枠の<code>look</code>の項目</td>
+      <td><code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>、<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>body.letterSpacing</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>。名前と入れ子は枠の<code>look</code>と同じです（<a href="#枠">枠</a>を参照）。<code>background</code>を書くとスタイルの塗りもオンになります。タブの色は、タブのあるスタイルにだけ働きます。</td>
+    </tr>
+  </tbody>
+</table>
+
+- **効く場所**：`:::frame{slot="…" look="<id>"}`の内容がその見た目になります。グリッドでは、項目の主な内容と、構成要素の入れ子の`:::frame`が、それぞれ自分の見た目を指定します（[テンプレートページ › 枠の見た目](/ja/docs/composed-pages#枠の見た目)を参照）。
+- **重ねる順**：見た目は、枠の囲みスタイルと、テンプレートの枠自身の`look`の上に、キーごとに重ねられます。塗りだけを指定した見た目では、文字の色はテンプレートのものが残ります。効くのはその内容だけです。そのテキストが続く枠（枠のつながりや、継続で加わるページ）も同じ見た目になります。
+- **パレット**：パレットの項目にリンクした色は、設定のほかの色と同じくパレットに従います。部のパレットやページの`palette`で色が替わります。
+- **検査**：`id`のない項目は無視され（`unknownConfigValue`）、見た目にないキーはどの深さでも`unknownConfigKey`になり、いちばん近い名前が示されます。どの項目にもないidを指定した内容は、枠の色のままで、`lookUnknown`を出します。
+
+Sandboxでは、見た目は**デザイン › 囲み › 枠の見た目**で編集します。そこでは見た目ごとに、それを指定している内容の数も数えます。エディターの**枠の見た目**ボタンは、カーソルのある内容に`look="…"`を書き込みます。
 
 ## ラベルスタイル
 
@@ -1078,7 +1168,7 @@ anchors: [
 
 ほかの設定では、エンジンは知らないキーを無視します。ページテンプレートとラベルスタイルはそうではなく検査され、問題はすべて設定の警告として`postext check`とSandboxの**検査**パネルに出ます。これらの警告の`path`は、問題のある項目を指すJSONポインターです。たとえば`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`です。項目が継承されたものなら、ポインターはそれを書いたテンプレートを指します。存在しないidや名前を指す警告は、存在するもののうち最も近いものも示します。
 
-テンプレート、枠、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`、コネクターの`routing`、端の印と`side`、引き出し線の端の印と`routing`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のない枠とグループは無視され、その項目に`unknownConfigValue`が出ます。
+テンプレート、枠、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`、コネクターの`routing`、端の印と`side`、引き出し線の端の印と`routing`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のない枠とグループは無視され、その項目に`unknownConfigValue`が出ます。枠の見た目（`frameLooks`）も同じように検査します。`id`のない見た目は無視され、枠の`look`にないキーは`unknownConfigKey`になります。
 
 <table>
   <thead>
@@ -1156,7 +1246,7 @@ anchors: [
 
 ### 重なり、繰り返し、モジュールの警告
 
-これらの警告はテンプレートだけでなく、割り付けやページのMarkdownから出るので、ページを示します。`postext check`（`--json`ではその項目が`data`に入ります）、Sandboxの検査パネル、文書の`contentWarnings`に挙がります。postext 1.48以降。
+これらの警告はテンプレートだけでなく、割り付けやページのMarkdownから出るので、ページを示します。`postext check`（`--json`ではその項目が`data`に入ります）、Sandboxの検査パネル、文書の`contentWarnings`に挙がります。postext 1.48以降、`lookUnknown`はpostext 1.50以降です。
 
 <table>
   <thead>
@@ -1181,6 +1271,11 @@ anchors: [
       <td><code>repeatOverflow</code></td>
       <td>枠のセットを繰り返すグリッドが受け取る項目は<code>repeat.max</code>までなのに、ページがそれより多く渡しています。超えた項目1つごとに、その<code>slot="…"</code>の位置で出ます。項目は流し込み枠（<code>flowFrame</code>）か、ページの後に入ります。</td>
       <td><code>max</code>を上げるか外すか、余った項目を別のページへ移します。</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td><code>:::frame</code>が<code>look="…"</code>に、どの<code>frameLooks</code>の項目にもないidを書いています（<a href="#枠の見た目">枠の見た目</a>を参照）。枠は自分のスタイルとテンプレートの色を保ちます。属性の値の位置を指し、いちばん近いid（<code>suggestion</code>）を示します。</td>
+      <td>内容のidを直すか、そのidの見た目を<code>frameLooks</code>に加えます。</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

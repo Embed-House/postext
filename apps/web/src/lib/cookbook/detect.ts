@@ -17,7 +17,7 @@ export const CONFIG_KEYS: readonly string[] = [
   "diagramStyle", "videoStyle", "paragraphStyles", "calloutStyles", "chipStyles", "markStyles", "parts", "headingStyles", "toc",
   "index", "unorderedLists", "orderedLists", "math", "footnotes", "crossRefs", "citations", "cjk", "header", "footer", "locale", "direction", "numerals", "debug",
   "htmlViewer", "canvasViewer", "pdfGeneration", "folio", "colorPalette", "customFonts", "resourceTypes", "comics", "print", "lineNumbers", "codeStyle", "contrast", "checks",
-  "pageTemplates", "labelStyles", "composedViewerLeaf",
+  "pageTemplates", "labelStyles", "frameLooks", "composedViewerLeaf",
 ];
 
 /** The parser's single-line directives and fenced containers

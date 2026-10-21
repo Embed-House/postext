@@ -3237,10 +3237,213 @@ words taken from the round-1 port (the owner's corrected Spanish and his transla
     height held the two pieces at full size, so the ladder never ran. A frame free to grow keeps its
     size: growing does not widen the measure, and shrinking every narrow auto box would move existing
     pages.
-- **Not done.** The `allowShrink` proposal still names the largest scale that fits, which may be one
+- **Not done** (done since #1090, §13.4). The `allowShrink` proposal still names the largest scale that fits, which may be one
   that divides a word (the pill of `minScale: 1` proposes 0.925, where the word is divided over two
   lines); once applied, the ladder sets the word whole only if `minScale` reaches that far. The skill's
   `:::space{lines=1}` workaround (composed-pages.md) is no longer needed; its text is the skill's issue.
 - **Parity.** bench-layout hashes unchanged on Señales, Pepper&Carrot, Bioquímica, Kokoro, Don
   Quijote and a composed textbook port; the composed recipes pass `--check`.
 
+## 13. Round 3 (#1086)
+
+Round 3 of composed pages: what the round 2 ports still could not say (tracker #1086).
+
+### 13.1 What R3-2 built (#1088)
+
+Modules side by side (§12.7, §12.19 left them always stacked).
+
+- **Config.** A modules group's `kind` is read: `'stack'` (the default, as before), `'row'` or `'grid'`
+  (`columns`, `columnGap`, `rowGap`, `rowAlign`; `repeat` is not read on a modules grid and is reported
+  as `unknownConfigValue`). `rowAlign` is also read on a modules row (default `'stretch'`). A module
+  template has a new optional `width: ModuleWidth` (`Dimension | { percent } | 'fill'`, inherited through
+  `extends` like `role`; `ResolvedPageTemplate.width`, `ResolvedModule.width`). Two new group keys:
+  `within: '<stack>'` (a modules group inside the page's modules stack) and `templates: string[]` (the
+  module templates such a group takes; unset, every one). `normalizeGroup` adds the modules fields only to
+  a modules group, so a modules stack with neither resolves to the same object as before.
+- **Decision: how a nested group is written and filled.** §12.7 left open how "a row inside a stack" is
+  spelled. A modules group with `within` names the page's modules stack (the first modules group without
+  `within`); `expandModules` gives each module, in Markdown order, to the first such group whose
+  `templates` holds its template, else to the stack (`ResolvedModule.nested`, `items[].nested`). Each run of
+  consecutive modules of one nested group is one item of the stack, laid as that group's kind where the
+  run's first module comes; so a page of boxes and card rows interleaved needs no geometry in the Markdown,
+  only the module templates it names. Nested groups have no frames and no `items`; `#<nested>` reads the
+  union of its modules' boxes (all its runs) once the stack is laid. Only one level: `within` must name a
+  modules stack that is in no other (else `unknownConfigValue` at `…/within`, and the group is a
+  modules group of its own, which takes nothing since the page uses its first modules group);
+  `templates` without `within`, and `overflow.continueIn` on a nested group, are `unknownConfigValue`.
+- **Layout** (`placeModules`, rewritten as rows). The group's modules become a list of rows: a stack gives
+  each module a row of its own, at its template's `width` from the start side (`'fill'`/unset: the group's
+  width, as before); a row group one row, widths by template (`'fill'`/unset share what the fixed ones and
+  the gaps leave, equally); a grid `columns` equal columns, `rowGap` between rows (the template width is
+  not read). Each module of a row is measured as before (its frames placed in the room left, held-by-foot
+  frames left out), the row is as tall as the tallest, and each is laid in a box that tall when the row has
+  several modules and `rowAlign` is `'stretch'` (its `'container'` ground and `'fill'` frames reach the
+  row's foot), else at its own height, moved by `'center'`/`'end'`. `placeGrid` is not reused: its cells
+  are frame sets placed by the template's drawing, a module is a sub-layout of steps; the column and
+  row-gap arithmetic is the same. Rows run left to right in flow coordinates: start to end on a
+  right-to-left page (mirrored flow), as grids do. A stack row of one full-width module goes through the
+  same arithmetic as the old per-module loop (cursor, declared shift, clip), so stacks lay out byte for byte.
+- **Continuation.** By whole rows: the first row that does not fit, when the stack's (or the row/grid
+  group's) `overflow.continueIn` goes off the page, and every row after it spill whole (`FitState.gridsOn`
+  keyed by the top modules group, as before). A row of a nested group never splits; a nested grid keeps its
+  rows that fit. The receiving page resolves its template with the modules it receives and routes them
+  again, so a run cut by the page is one run on the next.
+- **Ids, source map.** Unchanged: module frames keep `<name>.<frame>` ids; `moduleOfFrame` still returns
+  the top modules group (the one with `items`), so cut warnings stay one per group.
+- **Sandbox.** The group editor offers stack / row / grid for a modules group (grid: columns, gaps,
+  `rowAlign`, no repeat; row: `rowAlign`), «Inside the group» (the template's other modules stacks) and
+  «Modules it takes» (checkboxes of the book's module templates); the template editor of a module has
+  «Width in its group» (share / length / percentage); the module library shows each module's width. 14
+  new labels in ten languages; WebMCP `settings.test.ts` writes a nested group's kind and templates and a
+  module's width.
+- **Not done.** A group inside a row or grid of modules (one level only); a module wider than its
+  group is not clipped; `grow`/`shrink` among a row's modules; anchoring a page frame to a nested group is
+  read only after the stack is laid (no ordering dependency is recorded for it); the skill's
+  `template_fold.py` side (a later lane).
+- **Fixture.** `__tests__/composed/fixtures/moduleRows.ts` (a page shell whose stack holds a row of boxes
+  and a 2 × 2 grid of cards, words in Spanish and English); `moduleRows.test.ts`.
+
+### 13.2 What R3-4 built (#1090)
+
+- **The shrink proposal keeps words whole.** `allowShrink` of a `frameOverflow` still starts from the
+  largest scale (2.5 % steps down to `PROPOSAL_MIN_SCALE`, 50 %) at which the frame fits. When the
+  frame laid at that scale divides a word wider than its measure (`dividesWord`, §12.37, now passed
+  to `overflowProposals` through `ProposalContext`), the proposal looks below it for the largest
+  scale at which the frame fits and no word is divided (lowest step first, then bisection, as the
+  ladder's `wordWhole`) and names that one with `word: 'whole'`. None down to 50 %: the largest
+  fitting scale stays and the proposal carries `word: 'divided'`. A frame whose largest fitting
+  scale divides nothing gets no `word`, so proposals of existing books are unchanged.
+- **Applied, it holds.** Setting `fit.minScale` to the proposed value lets the ladder's step 5 find
+  the larger divided scale first and then `wordWhole` go down to `minScale`, which is the whole-word
+  scale: the warning is gone and the word whole (the `minScale: 1` pill of #1084 proposes 0.825, not
+  0.925; tested in the engine and through `sandbox_apply_proposal`).
+- **Decided where the issue was open.** The floor of the whole-word search is the proposal's own
+  floor (50 %), not the frame's current `minScale`: the proposal is about lowering it. The note is a
+  field of the proposal (`word`), not a new kind, so the one-click fix path (`proposalActions.ts`,
+  which reads `path`/`value`/`also`) needed no change. Words: the engine's English
+  (`describeFrameOverflowProposal`: "…, where its long word is whole" / "…, a long word divided") and
+  two Sandbox labels (`warningsFitFixAllowShrinkWhole`, `warningsFitFixAllowShrinkDivided`) in the
+  ten locales; the docs' `frameOverflow` proposals table says the same.
+- **Not done.** `dividesWord` sees a word divided because it is wider than the measure (a hyphenated
+  line with no space); an ordinary hyphenation at a line end is not counted, as in §12.37.
+
+Round 3 lets ports keep fewer templates and the Markdown say more about each page.
+
+### 13.3 What R3-1 built (#1087)
+
+- **Keys.** Every design element kind (`text`, `rule`, `box`, `image`, `path`, `connector`) gains
+  `when?: string` and `unless?: string` in `types.ts`. Resolution (`resolveDesignSlot`, through
+  `fenceConditionOf`) keeps a non-empty string, trimmed, and drops anything else, so the resolved element
+  carries only a name it can test. Pure helpers in `design/fenceCondition.ts` (exported):
+  `fenceSetsAttribute`, `fenceConditionMet`, `fenceConditionUses`, `fenceConditionsNeverMet`,
+  `fenceAttributesSet`, `FENCE_CONDITION_SLOTS`.
+- **What "sets" means.** Departure from the issue's wording ("any non-empty value"): the parser gives a
+  flag (`::::page{template="pagina" folio}`) the value `''`, and the flag is the form the issue's own
+  examples use, so a fence sets an attribute when it writes the key, as a flag or with any value but
+  `false` (case-insensitive, as `spread` reads it). `folio=""` cannot be told from the flag and counts as
+  set. `hasOwnProperty`, so `when: 'toString'` is never met through the prototype.
+- **Where it is read.** In `layoutDesignSlot`, before the parity and role filters (`drawnOnFence`), for
+  the contexts `header`, `footer` and `composed`: the document's and a styled section's running heads, a
+  template's own `header`/`footer`, its decoration (and a module's, laid with the page's). The page's
+  attributes are `DesignPlaceholderContext.pageAttrs`, already there for `{attr.x}` (#855): the fence's own
+  attributes, never the chapter heading's. A page that is not composed has none: `when` is not met there,
+  `unless` always is. Heading, part, contents-row and box designs ignore the keys (their contexts carry no
+  page fence), and the validation says so.
+- **What goes with an element left out.** Every element anchored to it (`anchor.to: '#id'`) or sized to
+  one of its edges (`size.*.to`), transitively, as `withoutAnchoredTo` drops what hangs from a frame that
+  takes no room: a label on the band goes with the band. A connector with an end on it drops that end
+  through the existing path (`connectorDropped` in the reflow log); give the connector the same condition
+  to avoid the log line.
+- **Source map.** Unchanged in kind: undrawn elements emit no block, and every drawn block keeps the
+  element's own config path (`elementPaths` is keyed by id), so indices do not shift. Tested.
+- **Spreads, continuation.** The decoration of a spread is laid once with the first page's attributes
+  (the fence is the same); pages added by continuation carry the fence's attributes as for `{attr.x}`.
+- **Validation.** `collectFenceConditionWarnings`: `unknownConfigValue` (`used: ''`, the element drawn as
+  if unconditioned) for a value that is not a non-empty string and for a condition in a slot that does not
+  read it. `DESIGN_PATH_KEYS` lists the two keys. No new warning kind in the engine: the never-met check
+  needs the whole book's fences, so it is `postext check`'s, an `info` note `conditionNeverMet` (`data`:
+  `path`, `condition`, `attribute`) computed with `fenceConditionsNeverMet` over the laid pages'
+  `composed.attrs`, only when every chapter is laid (a `--chapters` selection could leave out the page that
+  sets it). Not a `ContentWarning`, so the Sandbox's warning panel and the Cookbook's `WARNING_SINCE` are
+  untouched.
+- **Sandbox.** `FenceConditionFields` under each element card of a slot that reads the keys (`slotKey`
+  `header`/`footer`, or a decoration: `connectorHost` set): two selects, «Drawn when the page says» and «Not
+  drawn when the page says», whose choices are `pageFenceAttributes` of the book (the open chapter as typed;
+  `template`, `spread`, `id` left out) plus the current value when no fence sets it. `TemplateFence.attrs`
+  reads a fence through `parseDirectiveAttrs` (now exported from postext). No free-text entry: the
+  attribute is written in the Markdown first.
+- **Parity.** Elements without the keys take the early return in `drawnOnFence` (the same array):
+  bench-layout hashes unchanged, composed recipes pass `--check` (see the lane report for numbers).
+- **Not done here.** The skill's fold (`template_fold.py` / `template_dedupe.py` merging shells that differ
+  by furniture and writing the attribute on the fences) is the skill lane's.
+
+### 13.4 What R3-3 built (#1089)
+
+Named frame looks: one colour per item of a grid without leaving the grid.
+
+- **Config.** `PostextConfig.frameLooks: FrameLookEntry[]` (`composed/types.ts`): `{ id, name?, …FrameLook }`,
+  the fields of `FrameConfig.look` (#976) under an id. `normalizeFrameLooks` (`templates.ts`) keeps the
+  entries with an id (the first of an id wins) and of each what `normalizeLook` keeps; `resolveAllConfig`
+  carries `frameLooks` only when one survives, so a config without looks resolves (and hashes, and keys the
+  page memo) as before. Palette-linked colours are relinked by `applyPaletteToResolvedConfig` like every
+  colour of the config, so part and page palettes recolour them by value (`partPalette.ts` needs no kind
+  for them, as for a template look).
+- **Markdown.** `look="<id>"` on any `:::frame{slot}` piece: a page's frame, a grid item's main piece, a
+  member's nested `:::frame`. The parser already kept every fence attribute (`containerAttrs`,
+  `containerAttrSources`); `wrap.ts` already dressed each story (and each instance, by its own item's
+  fence) with its fence's attributes, so the story box carries `look` like `label` and `title`. No parser
+  change.
+- **Resolution.** `layoutComposedPage`'s `styleOf` lays the story's named look over the frame
+  (`withNamedLook`, memoised per look and frame so `styleWithLook` keeps its per-look styles) before
+  `frameStyleOf`: style, then the template frame's `look`, then the named look, key by key (`lookOver` =
+  `mergeLook`). Decision: the look is the **story's** (read from the head's fence), so every frame of a
+  chain and the frames a story goes on in on later pages (`continueIn`) wear it; a later link's own fence
+  is not read (as for `label` and `title`). Paint needs nothing: the look lives in the style the box is
+  laid and drawn with.
+- **Validation.** `validatePageTemplates` checks `frameLooks` (and `htmlViewer.overrides.frameLooks`): an
+  entry with no id is `unknownConfigValue` at `…/id`, keys at any depth as a frame's look
+  (`unknownConfigKey` with the nearest name); no new config kind. Content warning `lookUnknown`
+  (`template`, `frame`, `look`, `suggestion?`, `fenceIndex`; WARNING_SINCE 1.50.0) from
+  `checkFrameLookNames` (`slotChecks.ts`): each `:::frame` inside a page fence whose `look` names no entry,
+  at the value; a `:::frame` outside a page is not checked. An empty `look=""` names none.
+- **Sandbox.** Design › Boxes › Frame looks (`FrameLooksSection`): id (renamed on blur; the pieces that
+  name it are rewritten in every chapter), name, the fourteen fields in three groups, a sample swatch and
+  the count of pieces naming it. The editor's Frame look button (`LookPicker`) lists the looks for the
+  `:::frame` piece at the caret (`framePieceAt`, a member before its item) and writes, replaces or removes
+  `look="…"` on its opening line (`frameLookChange`; `SlotSite.look` and `attrsEnd` from `pageSites`).
+  `lookUnknown` is a composed check; WebMCP reads and writes `frameLooks` and lists `lookUnknown`.
+- **Parity.** bench-layout hashes unchanged on Don Quijote, Señales, Kokoro, Bioquímica and
+  Pepper&Carrot (base and head); composed recipes `--check` (see the lane's report).
+- **Not done.** The skill's fold into one grid with a look per colour is the skill lane's. The Canvas does
+  not draw an unknown look's piece any differently (the Checks panel lists it). A look on a `:::frame`
+  outside a page fence does nothing and is not reported.
+
+### 13.5 What the skill lane built for R3-1, R3-2 and R3-3 (#1087, #1088, #1089)
+
+`template_dedupe.py` / `template_fold.py` (skill 1.59.0) write what round 3 lets a port say.
+
+- **One shell** (`merge_furniture_shells`, after the templates are merged). Root page templates equal
+  but for decoration elements present on some and absent on others (shared elements must agree, none
+  already conditioned) become the most used one. For each set of templates an element is on, the side
+  with fewer pages gets the attribute: `unless` on what the minority leaves out, `when` on what only
+  the minority draws. Name: `frontmatter` when those pages are the book's first fences, `backmatter`
+  when its last, else `variant-N`; the fences get it as a flag. Parity-bound elements get the
+  condition too (an odd front-matter page would otherwise print the odd folio).
+- **Rows of modules** (`row_columns`, `nested_groups`). A band's units are clustered by their span
+  across the page (a shape painted inside the band that spans two clusters joins them). Clusters
+  inside equal columns of the trim are laid at `k × W / n` with `width: W / n`; else each module
+  starts where its cluster starts, the last `fill`. Rows that share a module template are one nested
+  group (all shells get every group, so they stay alike); two rows of one group in a row on a page
+  make it a `grid` when all its rows are equal columns of one count, else the later band is folded as
+  one module again and the book re-planned. Modules of a row carry `width` and are never alike with
+  stack modules. Decision: gaps are 0 and each module keeps the band's lead in its frames' offsets,
+  so rows and grids lay byte for byte as the stack did.
+- **Looks** (`LookBook`). Lattices compare a style class (the style with the look-mappable colours
+  left out; a one-line style set left with even side padding counts as centred). The set frame takes
+  the style most cards have; each other card's colour difference (`colour_look`, CIEDE2000 within
+  `--delta-e`) is a `frameLooks` entry, deduplicated, named by colour, and `look=` goes on the item's
+  or member's `:::frame` (a leaf piece is wrapped). Also: a member's way of hanging (above/below) is
+  the one most frames of its look have, and a picture is never a centred auto-width member.
+- **Not done.** Rows are rare on extracted pages: extract anchors most frames to the frame above, so a
+  page's units chain into one cluster; a column of a page is a row module only when it is a unit of
+  its own. No nested group inside a row (engine: one level).

@@ -1,10 +1,10 @@
 import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering';
-import type { LabelStyle, PageTemplate } from './composed/types';
+import type { FrameLookEntry, LabelStyle, PageTemplate } from './composed/types';
 import type { StoryJump } from './composed/carryTypes';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameLookEntry, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule,
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
@@ -6602,6 +6602,16 @@ export interface DesignTextElement {
    *  `false`: the element moves with the frame. Ignored elsewhere. */
   pin?: boolean;
   pages?: PageRoleFilter;
+  /** Running heads and a page template's decoration (#1087): drawn only on
+   *  a composed page whose fence sets this attribute (`::::page{template=…
+   *  folio}`: a flag, or any value but `false`). A page with no fence sets
+   *  none. Ignored in heading, part and box designs. */
+  when?: string;
+  /** Running heads and a page template's decoration (#1087): not drawn on
+   *  a composed page whose fence sets this attribute
+   *  (`::::page{template=… frontmatter}`). Ignored in heading, part and box
+   *  designs. */
+  unless?: string;
   /** Heading designs only: whether the element counts toward the height
    *  the heading reserves in the text flow. Default `true`. Set `false` on
    *  decoration anchored to the page or the bleed — a seal at the foot, a
@@ -6738,6 +6748,16 @@ export interface DesignRuleElement {
    *  `false`: the element moves with the frame. Ignored elsewhere. */
   pin?: boolean;
   pages?: PageRoleFilter;
+  /** Running heads and a page template's decoration (#1087): drawn only on
+   *  a composed page whose fence sets this attribute (`::::page{template=…
+   *  folio}`: a flag, or any value but `false`). A page with no fence sets
+   *  none. Ignored in heading, part and box designs. */
+  when?: string;
+  /** Running heads and a page template's decoration (#1087): not drawn on
+   *  a composed page whose fence sets this attribute
+   *  (`::::page{template=… frontmatter}`). Ignored in heading, part and box
+   *  designs. */
+  unless?: string;
   /** Heading designs only: whether the element counts toward the height
    *  the heading reserves (see `DesignTextElement.reserve`). Default
    *  `true`. */
@@ -6766,6 +6786,16 @@ export interface DesignBoxElement {
    *  `false`: the element moves with the frame. Ignored elsewhere. */
   pin?: boolean;
   pages?: PageRoleFilter;
+  /** Running heads and a page template's decoration (#1087): drawn only on
+   *  a composed page whose fence sets this attribute (`::::page{template=…
+   *  folio}`: a flag, or any value but `false`). A page with no fence sets
+   *  none. Ignored in heading, part and box designs. */
+  when?: string;
+  /** Running heads and a page template's decoration (#1087): not drawn on
+   *  a composed page whose fence sets this attribute
+   *  (`::::page{template=… frontmatter}`). Ignored in heading, part and box
+   *  designs. */
+  unless?: string;
   /** Heading designs only: whether the element counts toward the height
    *  the heading reserves (see `DesignTextElement.reserve`). Default
    *  `true`. */
@@ -6790,6 +6820,16 @@ export interface DesignImageElement {
    *  `false`: the element moves with the frame. Ignored elsewhere. */
   pin?: boolean;
   pages?: PageRoleFilter;
+  /** Running heads and a page template's decoration (#1087): drawn only on
+   *  a composed page whose fence sets this attribute (`::::page{template=…
+   *  folio}`: a flag, or any value but `false`). A page with no fence sets
+   *  none. Ignored in heading, part and box designs. */
+  when?: string;
+  /** Running heads and a page template's decoration (#1087): not drawn on
+   *  a composed page whose fence sets this attribute
+   *  (`::::page{template=… frontmatter}`). Ignored in heading, part and box
+   *  designs. */
+  unless?: string;
   /** Heading designs only: whether the element counts toward the height
    *  the heading reserves (see `DesignTextElement.reserve`). Default
    *  `true`. */
@@ -6838,6 +6878,16 @@ export interface DesignPathElement {
   parity?: PageParity;
   /** Page roles this element renders on. Default `'all'`. */
   pages?: PageRoleFilter;
+  /** Running heads and a page template's decoration (#1087): drawn only on
+   *  a composed page whose fence sets this attribute (`::::page{template=…
+   *  folio}`: a flag, or any value but `false`). A page with no fence sets
+   *  none. Ignored in heading, part and box designs. */
+  when?: string;
+  /** Running heads and a page template's decoration (#1087): not drawn on
+   *  a composed page whose fence sets this attribute
+   *  (`::::page{template=… frontmatter}`). Ignored in heading, part and box
+   *  designs. */
+  unless?: string;
   /** On a composed page's decoration: anchored to a frame, stay where the
    *  template puts that frame (see `DesignBoxElement.pin`). */
   pin?: boolean;
@@ -6940,6 +6990,16 @@ export interface DesignConnectorElement {
   id: string;
   parity?: PageParity;
   pages?: PageRoleFilter;
+  /** Running heads and a page template's decoration (#1087): drawn only on
+   *  a composed page whose fence sets this attribute (`::::page{template=…
+   *  folio}`: a flag, or any value but `false`). A page with no fence sets
+   *  none. Ignored in heading, part and box designs. */
+  when?: string;
+  /** Running heads and a page template's decoration (#1087): not drawn on
+   *  a composed page whose fence sets this attribute
+   *  (`::::page{template=… frontmatter}`). Ignored in heading, part and box
+   *  designs. */
+  unless?: string;
   /** Read the frames' boxes as the template declares them (before groups
    *  and content move them). Default `false`. */
   pin?: boolean;
@@ -8202,6 +8262,12 @@ export interface PostextConfig {
   /** Named styles of the labels set at a picture's anchors (`::label`,
    *  `ResourceAnchor.style`). */
   labelStyles?: LabelStyle[];
+  /** Named frame looks (#1089): colours (and the body's tracking) a
+   *  `:::frame{slot="…" look="<id>"}` piece lays over its frame's style
+   *  and template look, so each item of a repeating grid can wear its own.
+   *  Validated as a frame's `look`; an id no entry has is the content
+   *  warning `lookUnknown`. */
+  frameLooks?: FrameLookEntry[];
   /** For hosts whose page is not a leaf (the Sandbox's HTML viewer lays
    *  the book out on pages a screen wide and a scroll tall, #1045): a
    *  composed page (`::::page{template}`) is laid out on this leaf instead

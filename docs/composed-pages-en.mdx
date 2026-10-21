@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed pages',
   description: 'How to write a composed page in Markdown: the page fence, opened with four colons, that chooses the template; frames and the slot attribute, which share content out among its frames; repeated slots and modules; and warnings for content that does not match the template or covers another frame',
   lang: 'en',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '41 min',
   order: 34,
   plainSummary: "Some pages are not one column of running text but a set of boxes, like a page of a school textbook with a title band, a text and three coloured boxes with photos. Postext calls them composed pages. The shape of the page is a template in the configuration, and the Markdown only says which piece of text goes into which box. This page shows how to write that Markdown: the page fence, the frames, the slot names, cards repeated in a grid and blocks stacked as modules. It also lists the warnings Postext gives when the text and the template do not match.",
@@ -43,6 +43,7 @@ A composed page is written as a *page fence*: it opens with a line of **four col
     <tr><td><code>spread</code></td><td>The page is a spread of two facing pages (see <a href="#spreads">Spreads</a>). It must agree with the template's <code>spread</code>; otherwise the template wins and <code>spreadMismatch</code> reports it.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>An anchor: a <code>:ref</code> to it prints the page number of the composed page.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Colours of this page's palette entries, as <code>entry=#hex</code> pairs separated by commas: <code>palette="tint=#f6c3d0"</code> for a page whose boxes take the topic's tint. Every palette-linked colour of its frames and decoration takes them, overriding the template's <code>palette</code>. Since postext 1.42.</td></tr>
+    <tr><td>a flag such as <code>frontmatter</code></td><td>An attribute a template element names in <code>when</code> or <code>unless</code>: <code>frontmatter</code> on a title page leaves off the folio and the band the template draws on body pages. Written alone it is set; so it is with any value but <code>false</code>. See <a href="/en/docs/configuration-composed-pages#drawn-when-the-page-says">Drawn when the page says</a>. Since postext 1.50.</td></tr>
     <tr><td>any other</td><td>A value the template reads as <code>&#123;attr.name&#125;</code>, such as a background picture chosen page by page: <code>fondo="banda-retos"</code> with <code>resourceId: "&#123;attr.fondo&#125;"</code> in the decoration.</td></tr>
   </tbody>
 </table>
@@ -68,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-A **slot** names the frame a piece of content goes to: it matches the name of a frame in the template. `:::frame{slot="…"}` sends everything inside it to that frame. Its body is full Markdown: paragraphs, lists, headings, chips, `::resource` embeds, `:ref` references, footnotes, `:::columns` and nested callouts. `label` and `title` set the text of the frame's tab or title, as they do for a `:::callout`; the frame's look comes from the callout style the template gives it.
+A **slot** names the frame a piece of content goes to: it matches the name of a frame in the template. `:::frame{slot="…"}` sends everything inside it to that frame. Its body is full Markdown: paragraphs, lists, headings, chips, `::resource` embeds, `:ref` references, footnotes, `:::columns` and nested callouts. `label` and `title` set the text of the frame's tab or title, as they do for a `:::callout`; the frame's look comes from the callout style the template gives it, and a piece can name a look of its own (see [Frame looks](#frame-looks)).
 
 A single block can name its own slot:
 
@@ -131,6 +132,36 @@ The otter
 
 A frame of the set is reported as `slotEmpty` only when no card of the page fills it. A repeated frame never takes a heading, and it is never the flow frame.
 
+### Frame looks
+
+A piece can wear a named look: a set of colours the configuration defines in `frameLooks` (see [Configuration › Frame looks](/en/docs/configuration-composed-pages#frame-looks)). The Markdown names the look and the configuration says what it is. On a grid this gives each card its own colour, while every card keeps one template and one style:
+
+```md
+::::page{template="fotos"}
+# Animals of the river
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+The heron
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+The otter
+:::
+:::
+::::
+```
+
+- **Where.** `look` goes on the opening line of any `:::frame{slot="…"}` piece. A card's main piece (here the second photo's frame) and a member nested in it (each pill) name their own.
+- **What it changes.** The look is laid over the frame's style and the template's own colours, for that piece only: the other cards keep theirs. Text that goes on in another frame (a chain, a continuation page) keeps the look.
+- **An unknown id.** An id that `frameLooks` does not have raises `lookUnknown` at the attribute, with the nearest id, and the frame keeps its colours.
+
 ### Modules in a page
 
 A page template with a modules group (`modules: true`, see [Configuration › Modules](/en/docs/configuration-composed-pages#modules)) takes its blocks from `:::module` containers, laid one under another in the order written. The module's template draws the block; the container holds its words:
@@ -163,6 +194,7 @@ Life on its banks
 - **`template`** names a template with `role: 'module'`. **`name`** is optional: it names the module's instance, so its frames are `ramas.raiz`, `ramas.izq`. Without it the instance is `<template>[n]`, the module's count among the page's modules of that template: `arbol[1].raiz`. A name already taken on the page, or one with a space, `.`, `#`, `[` or `]`, is replaced by that default (`moduleNameRejected`).
 - **Slots** inside a `:::module` are the module's own: `slot="raiz"` reaches the `raiz` frame of this module, and two modules of one template on a page keep their words apart. Content that names no slot goes to the module's flow frame, and a heading to the module frame that `takes` its level; with neither, to the page's flow frame.
 - **Order.** The modules stack in Markdown order, so another page sets the same blocks in another order, or with one more tree, with no new template.
+- **Side by side.** When the modules group is a row or a grid, or holds groups of its own (`within`), the same blocks stand side by side: two `:::module{template="aviso"}` followed by four `:::module{template="tarjeta"}` make a row of two boxes over a 2 × 2 of cards. The Markdown still says only which modules come and in what order (see [Configuration › Modules](/en/docs/configuration-composed-pages#modules)).
 - A `:::module` outside a page fence is a plain box of its content. A module inside a module is not supported (`moduleNested`).
 
 ## Example
@@ -329,6 +361,11 @@ The checks read the Markdown and the configuration before any layout, so they sh
       <td>Raise or remove <code>max</code> in the template, or move the extra cards to another page.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>A <code>:::frame</code> piece writes <code>look="…"</code> with an id that no <code>frameLooks</code> entry has (see <a href="#frame-looks">Frame looks</a>). The frame keeps its style and its template colours. The warning names the nearest id (<code>suggestion</code>).</td>
+      <td>Correct the id, or add the look to <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>A <code>:::module</code> names no template, a template that is no module, or the page's template has no modules group (<code>reason</code>). Its content goes to the flow frame.</td>
       <td>Correct the <code>template</code> of the module, or give the page's template a group with <code>modules: true</code>.</td>
@@ -351,7 +388,7 @@ The checks read the Markdown and the configuration before any layout, so they sh
   </tbody>
 </table>
 
-The module warnings and `repeatOverflow` are since postext 1.48; the template side of each is described in [Configuration › Overlap, repeat and module warnings](/en/docs/configuration-composed-pages#overlap-repeat-and-module-warnings).
+The module warnings and `repeatOverflow` are since postext 1.48, `lookUnknown` since postext 1.50; the template side of each is described in [Configuration › Overlap, repeat and module warnings](/en/docs/configuration-composed-pages#overlap-repeat-and-module-warnings).
 
 Once the book is laid out, each of these warnings also carries the page it concerns (`pageIndex`), so the Checks panel and `postext check` give the page number next to the template, the frame or slot, and the source range.
 
@@ -462,7 +499,7 @@ When no step makes the content fit, the frame is cut at its foot, keeps the scal
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> of the frame: the largest text scale, in steps of 2.5 % down to 50 %, at which the content fits, tried on the page. With <code>fit.shrinkText: false</code>, <code>also</code> turns it on.</td>
+      <td><code>fit.minScale</code> of the frame: the largest text scale, in steps of 2.5 % down to 50 %, at which the content fits, tried on the page. When that scale divides a word wider than the frame, the proposal names the largest smaller scale that fits with every word whole and carries <code>word: 'whole'</code>; when no scale down to 50 % sets it whole, it keeps the largest that fits and carries <code>word: 'divided'</code>. With <code>fit.shrinkText: false</code>, <code>also</code> turns it on.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'إعدادات الصفحات المركّبة',
   description: 'قوالب الصفحات المركّبة: الإطارات والمجموعات والشبكات التي تكرّر مجموعة إطارات والوحدات والزخرفة والموصلات والوراثة ونسختا الصفحة الفردية والزوجية؛ وأنماط التسميات التي تُكتب عند نقاط محددة من الصورة؛ والتحذيرات التي قد يصدرها القالب',
   lang: 'ar',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10 دقائق',
   order: 18,
   parent: 'configuration',
@@ -153,6 +153,12 @@ const config: PostextConfig = {
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
       <td>دور الصفحة الذي تراه عناصر التصميم التي لها مرشّح <code>pages</code>. والقيمة <code>'module'</code> تجعل القالب وحدةً: صندوقًا من الإطارات تصفّه الصفحات في مجموعة بدل أن يكون صفحة مستقلة (انظر <a href="#الوحدات">الوحدات</a>). منذ postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>الوحدة: عرضها في صف من الوحدات أو في كومة، طولًا، أو نسبةً مئوية من عرض المجموعة، أو <code>'fill'</code>، أي حصة متساوية مما تتركه وحدات الصف الأخرى. وفي الشبكة تأخذ الوحدة عمودها. منذ postext 1.50.</td>
     </tr>
   </tbody>
 </table>
@@ -345,7 +351,7 @@ const config: PostextConfig = {
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>ما يغيّره هذا الإطار في مظهر نمطه، بأسماء النمط نفسه وبنيته المتداخلة: الألوان (<code>background</code> و<code>border.color</code> و<code>stripe.color</code> و<code>icon.color</code> و<code>marker.color</code> و<code>marker.rule.color</code> و<code>titleStyle.color</code> و<code>body.color</code> و<code>body.boldColor</code> و<code>body.italicColor</code> و<code>label.color</code> و<code>label.background</code> و<code>label.rule.color</code>) وتباعد حروف النص (<code>body.letterSpacing</code>). كتابة <code>background</code> تُشغّل تعبئة النمط أيضًا؛ ولون اللسان لا يسري إلا على نمط له لسان. وفي القالب المبني على غيره يُدمج خاصيةً خاصيةً مع الإطار الذي يغيّره. الكتاب الذي له شكل صندوق واحد بعدة ألوان يحتفظ بنمط واحد ويكتب اللون هنا، أو يدع <code>palette</code> يعيد تلوين تعبئة مرتبطة باللوحة. منذ postext 1.42.</td>
+      <td>ما يغيّره هذا الإطار في مظهر نمطه، بأسماء النمط نفسه وبنيته المتداخلة: الألوان (<code>background</code> و<code>border.color</code> و<code>stripe.color</code> و<code>icon.color</code> و<code>marker.color</code> و<code>marker.rule.color</code> و<code>titleStyle.color</code> و<code>body.color</code> و<code>body.boldColor</code> و<code>body.italicColor</code> و<code>label.color</code> و<code>label.background</code> و<code>label.rule.color</code>) وتباعد حروف النص (<code>body.letterSpacing</code>). كتابة <code>background</code> تُشغّل تعبئة النمط أيضًا؛ ولون اللسان لا يسري إلا على نمط له لسان. وفي القالب المبني على غيره يُدمج خاصيةً خاصيةً مع الإطار الذي يغيّره. الكتاب الذي له شكل صندوق واحد بعدة ألوان يحتفظ بنمط واحد ويكتب اللون هنا، أو يدع <code>palette</code> يعيد تلوين تعبئة مرتبطة باللوحة. ويمكن لقطعة من الصفحة أن تضع فوقه مظهرًا مسمّى (انظر <a href="#مظاهر-الإطارات">مظاهر الإطارات</a>). منذ postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code> و<code>direction</code></td>
@@ -434,7 +440,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>في الشبكة: موضع الخلية الأقصر من صفّها. ويجعل <code>'stretch'</code> إطارها الرئيسي بارتفاع الصف (حتى <code>maxHeight</code> الخاص به)، حين يكون ارتفاع ذلك الإطار <code>'auto'</code> أو <code>'fill'</code>.</td>
+      <td>في الشبكة: موضع الخلية الأقصر من صفّها. ويجعل <code>'stretch'</code> إطارها الرئيسي بارتفاع الصف (حتى <code>maxHeight</code> الخاص به)، حين يكون ارتفاع ذلك الإطار <code>'auto'</code> أو <code>'fill'</code>. في صف الوحدات أو شبكتها: موضع الوحدة الأقصر من صفّها؛ و<code>'stretch'</code> يضعها في مستطيل بارتفاع الصف، فتبلغ أرضيتها وإطاراتها ذات <code>'fill'</code> أسفل الصف.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>تأخذ المجموعة كتل <code>:::module</code> في الصفحة، واحدةً تحت أخرى بترتيب Markdown، وبينها <code>gap</code>. وتُصفّ مجموعةً عمودية أيًّا كان <code>kind</code> الخاص بها، ولا تُقرأ <code>frames</code> الخاصة بها. انظر <a href="#الوحدات">الوحدات</a>. منذ postext 1.48.</td>
+      <td>تأخذ المجموعة كتل <code>:::module</code> في الصفحة بترتيب Markdown، وبينها <code>gap</code>: واحدةً تحت أخرى (<code>'stack'</code>)، أو متجاورة (<code>'row'</code>)، أو في <code>columns</code> (<code>'grid'</code>، منذ postext 1.50). ولا تُقرأ <code>frames</code> فيها. انظر <a href="#الوحدات">الوحدات</a>. منذ postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>لا شيء</td>
       <td>في مجموعة الوحدات: حيث تستمر الوحدة التي لا تتّسع، كاملةً. وإن لم يُعيَّن، قُصّت الوحدة عند أسفل المجموعة، وجرّبت إطاراتها خطوات الملاءمة.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>لا شيء</td>
+      <td>مجموعة وحدات داخل كومة الوحدات التي تحمل هذا الاسم: كل سلسلة متتالية من وحدات الصفحة التي تأخذها، بترتيب Markdown، تُصفّ صفًّا أو شبكة في تلك الكومة، حيث تأتي أول وحدة في السلسلة. منذ postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>لا شيء</td>
+      <td>مجموعة وحدات لها <code>within</code>: قوالب الوحدات التي تأخذها. وإن لم تُحدَّد فكل الوحدات. وتذهب الوحدة إلى أول مجموعة من هذا النوع تأخذها، وإلا فإلى الكومة.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **ما في الوحدة.** إطارات، ومجموعات (والشبكة التي تكرّر منها)، وزخرفة، وموصلات. وليس فيها `area` ولا `header` ولا `footer` ولا `variants` ولا `spread` ولا `gutter` ولا `overflowTemplate`: وكل منها يُذكر بالتحذير `unknownConfigValue` ويُهمَل. ويعمل `extends` بين الوحدات (والقالب المبني على وحدة وحدةٌ).
 - **مستطيلها.** عرض الوحدة عرض مجموعتها، وارتفاعها إلى حيث تبلغ إطاراتها؛ وترصّ المجموعة الوحدات من أعلاها، وبينها `gap`. وداخل الوحدة يكون `'container'` مستطيلَ الوحدة، لإطاراتها (و`'fill'` والنسب المئوية أيضًا) ولزخرفتها: فالأرضية المضبوط حجمها على `{ to: 'container', edge: 'bottom' }` تغطّي الوحدة أيًّا كان الارتفاع الذي تعطيها إياه كلماتها.
 - **الأسماء.** تُقيَّد إطارات الوحدة ومجموعاتها وعناصرها باسم نسخة الوحدة: `<name>.<frame>`، بالاسم الذي يعطيه Markdown (`name="ramas"`)، وإلا فـ`<template>[n]`، أي ترتيب الوحدة بين وحدات الصفحة من ذلك القالب (`arbol[2].raiz`). وتُعاد كتابة المراسي و`next` و`continueIn: '#x'` والموصلات داخل الوحدة إلى إطاراتها هي، فلا تتّصل شجرتان في صفحة واحدة إحداهما بالأخرى أبدًا. ومعرّف الإطار `cp0:arbol[2].raiz`.
-- **حين لا تتّسع الوحدات.** الوحدة التي تتجاوز أسفل المجموعة تُقصّ هناك وتجرّب إطاراتها خطوات الملاءمة؛ ويصدر `frameOverflow` مرة واحدة للمجموعة. ومع `overflow.continueIn` على مجموعة الوحدات (`'next-page'` أو `'template:<id>'`) تنتقل أول وحدة لا تتّسع وكل وحدة بعدها **كاملةً** إلى الصفحة المضافة، بالأسماء نفسها، في أعلى مجموعة الوحدات في تلك الصفحة.
-- **ليس بعد.** الوحدات المتجاورة (فمجموعة الوحدات عمودية دائمًا)، والوحدة داخل وحدة (`moduleNested`)، وخلايا `grid` القالب داخل وحدة.
+- **حين لا تتّسع الوحدات.** الوحدة التي تتجاوز أسفل المجموعة تُقصّ هناك وتجرّب إطاراتها خطوات الملاءمة؛ ويصدر `frameOverflow` مرة واحدة للمجموعة. ومع `overflow.continueIn` على مجموعة الوحدات (`'next-page'` أو `'template:<id>'`) تنتقل أول وحدة لا تتّسع وكل وحدة بعدها **كاملةً** إلى الصفحة المضافة، بالأسماء نفسها، في أعلى مجموعة الوحدات في تلك الصفحة. وفي صف الوحدات أو شبكتها ينتقل الصف كاملًا: لا تتوزّع وحداته أبدًا على صفحتين.
+- **متجاورة.** مجموعة الوحدات ذات `kind: 'row'` تصفّ وحداتها من البداية إلى النهاية، لكلٍّ منها `width` قالبها (طول، أو `{ percent: 48 }`، أو `'fill'`، أي حصة متساوية مما يبقى)، والصف بارتفاع أطول وحداته؛ و`kind: 'grid'` تصفّها في `columns` أعمدة متساوية، صفًّا بعد صف. ويحدّد `rowAlign` موضع الوحدة الأقصر من صفّها. وتبدأ الصفوف من جهة بداية السطر، فالصفحة من اليمين إلى اليسار تضع الوحدة الأولى على اليمين. منذ postext 1.50.
+- **مجموعات داخل الكومة.** مجموعة الوحدات ذات `within: '<الكومة>'` تقع داخل كومة وحدات الصفحة، ويقول `templates` أيّ الوحدات تأخذ: كل سلسلة متتالية منها في Markdown تصير صفًّا أو شبكة في الكومة، حيث تأتي أولى وحداتها. وبالمجموعات أدناه، تصنع كتلتا `aviso` تليهما أربع كتل `tarjeta` صفًّا من صندوقين فوق شبكة من 2 × 2 بطاقات، ولا يحوي Markdown إلا كتل `:::module`.
+- **ليس بعد.** الوحدة داخل وحدة (`moduleNested`)، وخلايا `grid` القالب داخل الوحدة، والمجموعة داخل صف وحدات أو شبكتها.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### حين لا يتسع المحتوى
 
@@ -651,6 +679,26 @@ pageTemplates: [
 حين يحفظ Sandbox قالبًا لا يُسقط أبدًا قيمةً تساوي القيمة الافتراضية: ففي قالب مبني على قالب آخر، أو في نسخة صفحة فردية أو زوجية، تحلّ تلك القيمة محل قيمة الأصل.
 
 ومن الشيفرة، تعيد `resolvePageTemplate(config, id, { parity })` قالبًا دُمجت سلسلته، وطُبّقت عليه نسخة الجهة، ومُلئت فيه كل القيم الافتراضية، وعولجت فيه كل إحالة كما تصف التحذيرات أدناه؛ وتعيد `validatePageTemplates(config)` التحذيرات.
+
+### يُرسم حين تنصّ الصفحة
+
+يجوز لعنصر من الزخرفة، ولعنصر من `header` القالب أو `footer`ه، أن يحمل `when` أو `unless`، وكلّ منهما يسمّي سمةً من سمات كتلة الصفحة. فالقيمة `when: 'folio'` ترسم العنصر في الصفحات التي تضبط كتلتها `folio` فقط، والقيمة `unless: 'frontmatter'` تتركه في الصفحات التي تضبط كتلتها `frontmatter`. وتضبط الكتلة السمة حين تكتبها وحدها (`::::page{template="pagina" frontmatter}`) أو بأي قيمة غير `false`. وبهذا يخدم قالب واحد الصفحات التمهيدية، التي لا رقم فيها ولا شريط، وصفحات المتن التي فيها الاثنان: فالـMarkdown يقول ما الصفحة، والقالب يحفظ الرسم. منذ postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- العنصر المثبّت على عنصر تُرك، أو الذي يُقاس حجمه حتى ذلك العنصر، يُترك هو أيضًا.
+- إذا وُجد المفتاحان رُسم العنصر حيث تضبط الكتلة سمة `when` ولا تضبط سمة `unless`.
+- وتقرؤهما كذلك ترويسات المستند وتذييلاته وترويسات القسم وتذييلاته. والصفحة غير المركّبة لا كتلة لها فلا تضبط شيئًا. أما تصاميم العناوين والأجزاء والصناديق فتتجاهلهما.
+- القيمة التي ليست نصًّا غير فارغ، أو المكتوبة في تصميم عنوان أو جزء أو صندوق، يُبلَّغ عنها بـ`unknownConfigValue` ويُرسم العنصر كأنه بلا مفتاح. ويضيف `postext check` ملاحظةً `conditionNeverMet` لكل `when` أو `unless` على سمة لا تضبطها أي كتلة صفحة في الكتاب: فذلك العنصر لا يُرسم أبدًا، أو يُرسم دائمًا.
+- في Sandbox، لكل بطاقة عنصر في الترويسة والتذييل وفي زخرفة القالب الحقلان **يُرسم حين تنصّ الصفحة** و**لا يُرسم حين تنصّ الصفحة**، وخياراتهما السمات التي تستعملها كتل الصفحات في الكتاب.
 
 ### ما يطبّقه التنضيد
 
@@ -787,7 +835,7 @@ decoration: {
       <td>يصل بين المستطيلات التي يصرّح بها القالب، لا المستطيلات التي أعطاها المحتوى للإطارات.</td>
     </tr>
     <tr>
-      <td><code>parity</code>، <code>pages</code></td>
+      <td><code>parity</code>، <code>pages</code>، <code>when</code>، <code>unless</code></td>
       <td>كما في العناصر الأخرى</td>
       <td><code>'all'</code></td>
       <td>الصفحات التي ترسمه.</td>
@@ -856,6 +904,48 @@ decoration: { elements: [
 ```
 
 **الفحوص.** الطرف الذي لا يذكر `to` فيه شيئًا موجودًا يُذكر بالتحذير `frameAnchorUnknown` (عند `…/from/to` أو `…/to/<k>/to`) ويُترك؛ ولا يصح `[*]` إلا في `to` وعلى إطار متكرّر. والـ`anchor` الذي ليس في أي صورة من صور الإطار يُذكر بالتحذير `labelAnchorUnknown`، مع معرّف الموصل. والكلمة الخارجة عن خيارات `routing` أو `startCap` أو `endCap` أو `side`، و`at` الخارج عن المجال من 0 إلى 1، تُذكر بالتحذير `unknownConfigValue`. والـ`opacity` الذي ليس عددًا من 0 إلى 1 يُذكر كذلك بالتحذير `unknownConfigValue` (والعدد الخارج عن المجال يُردّ إليه).
+
+## مظاهر الإطارات
+
+شبكة بطاقات صور لا تختلف أشرطتها إلا في اللون، أو صفحة صناديق بدزينة من الألوان، تحتفظ بنمط إطار واحد وقالب واحد: تُكتب الألوان في `frameLooks`، وهي قائمة مظاهر مسمّاة، ويذكر Markdown مظهرًا على كل قطعة تأخذه. منذ postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>الحقل</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>مطلوب. الكلمة التي تكتبها القطعة في <code>look="…"</code>. وحين يشترك مظهران في معرّف واحد، يُستعمل الأول.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>يظهر في Sandbox وحده.</td>
+    </tr>
+    <tr>
+      <td>حقول <code>look</code> الإطار</td>
+      <td><code>background</code> و<code>border.color</code> و<code>stripe.color</code> و<code>icon.color</code> و<code>marker.color</code> و<code>marker.rule.color</code> و<code>titleStyle.color</code> و<code>body.color</code> و<code>body.boldColor</code> و<code>body.italicColor</code> و<code>body.letterSpacing</code> و<code>label.color</code> و<code>label.background</code> و<code>label.rule.color</code>، بالأسماء والبنية المتداخلة نفسها التي في <code>look</code> الإطار (انظر <a href="#الإطارات">الإطارات</a>). كتابة <code>background</code> تُشغّل تعبئة النمط أيضًا؛ ولون اللسان لا يسري إلا على نمط له لسان.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **أين يسري.** تأخذ القطعة `:::frame{slot="…" look="<id>"}` المظهر. وفي الشبكة، تذكر القطعة الرئيسية للعنصر و`:::frame` المتداخل لكل عضو مظهرَه الخاص (انظر [الصفحات المركّبة › مظاهر الإطارات](/ar/docs/composed-pages#مظاهر-الإطارات)).
+- **الترتيب.** يوضع المظهر فوق نمط إطار الإطار وفوق `look` إطار القالب نفسه، خاصيةً خاصيةً: فالمظهر الذي لا يضبط إلا التعبئة يُبقي لون نص القالب. ولا يسري إلا على تلك القطعة. والإطارات التي يستمر فيها نصها (سلسلة، أو صفحة تضيفها المتابعة) تأخذه أيضًا.
+- **اللوحات.** اللون المرتبط بمدخل في اللوحة يتبع اللوحة كما يتبعها كل لون في الإعدادات، فتعيد لوحة القسم أو `palette` الصفحة تلوينه.
+- **الفحوص.** المدخل الذي لا `id` له يُتجاهل (`unknownConfigValue`)، والخاصية التي ليست للمظهر هي `unknownConfigKey` على أي عمق، مع أقرب اسم. والقطعة التي تذكر معرّفًا لا يملكه أي مدخل تحتفظ بألوان إطارها وتُصدر `lookUnknown`.
+
+وتُحرَّر المظاهر في Sandbox ضمن **التصميم › الإطارات › مظاهر الإطارات**، وهناك يُعدّ أيضًا القطع التي تذكر كل مظهر، ويكتب زر **مظاهر الإطارات** في المحرر `look="…"` على القطعة التي فيها المؤشر.
 
 ## أنماط التسميات
 
@@ -1078,7 +1168,7 @@ anchors: [
 
 في غير هذا الموضع يتجاهل المحرّك الخاصية التي لا يعرفها. أما قوالب الصفحات وأنماط التسميات فتُفحص، وكل مشكلة فيها تحذير إعدادات يظهر في `postext check` وفي لوحة **الفحوص** في Sandbox. والحقل `path` في هذه التحذيرات مؤشر JSON إلى الحقل المخطئ: `/pageTemplates/3/frames/2/style`، و`/pageTemplates/0/variants/recto/frames/1/next`، و`/resources/4/anchors/0/style`. وحين يكون الحقل موروثًا يشير المؤشر إلى القالب الذي كتبه. والتحذير الذي يذكر معرّفًا أو اسمًا غير موجود يقترح أيضًا أقرب معرّف أو اسم موجود.
 
-الخاصية المكتوبة خطأً في قالب أو إطار أو مجموعة أو شبكة أو `fit` أو `overflow` أو نسخة صفحة أو نمط تسمية تُصدر `unknownConfigKey`؛ والكلمة الخارجة عن خيارات إعداد ما (`area` و`verticalAlign` و`exclude` و`wrap` و`takes` و`kind` و`align` و`writingMode` و`direction` و`fontStyle` و`textTransform` و`overlap` و`rowAlign`، و`routing` الموصل وعلامتا طرفيه و`side`، وعلامتا طرفي خط الإشارة و`routing` الخاص به) هي `unknownConfigValue`، ويحتفظ الإعداد بقيمته الافتراضية. ويُتجاهل القالب الذي لا `id` له، والإطار أو المجموعة بلا `name`، مع `unknownConfigValue` عند ذلك الحقل.
+الخاصية المكتوبة خطأً في قالب أو إطار أو مجموعة أو شبكة أو `fit` أو `overflow` أو نسخة صفحة أو نمط تسمية تُصدر `unknownConfigKey`؛ والكلمة الخارجة عن خيارات إعداد ما (`area` و`verticalAlign` و`exclude` و`wrap` و`takes` و`kind` و`align` و`writingMode` و`direction` و`fontStyle` و`textTransform` و`overlap` و`rowAlign`، و`routing` الموصل وعلامتا طرفيه و`side`، وعلامتا طرفي خط الإشارة و`routing` الخاص به) هي `unknownConfigValue`، ويحتفظ الإعداد بقيمته الافتراضية. ويُتجاهل القالب الذي لا `id` له، والإطار أو المجموعة بلا `name`، مع `unknownConfigValue` عند ذلك الحقل. وتُفحص مظاهر الإطارات (`frameLooks`) بالطريقة نفسها: يُتجاهل المظهر الذي لا `id` له، والخاصية التي ليست في `look` الإطار هي `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1156,7 +1246,7 @@ anchors: [
 
 ### تحذيرات التداخل والتكرار والوحدات
 
-تأتي هذه التحذيرات من التنضيد أو من Markdown الصفحة، لا من القالب وحده، فهي تذكر صفحة. ويسردها `postext check` (وتحمل `--json` حقولها في `data`)، ولوحة **الفحوص** في Sandbox، و`contentWarnings` الخاصة بالمستند. منذ postext 1.48.
+تأتي هذه التحذيرات من التنضيد أو من Markdown الصفحة، لا من القالب وحده، فهي تذكر صفحة. ويسردها `postext check` (وتحمل `--json` حقولها في `data`)، ولوحة **الفحوص** في Sandbox، و`contentWarnings` الخاصة بالمستند. منذ postext 1.48، و`lookUnknown` منذ postext 1.50.
 
 <table>
   <thead>
@@ -1181,6 +1271,11 @@ anchors: [
       <td><code>repeatOverflow</code></td>
       <td>شبكة تكرّر مجموعة إطارات تتّسع لـ<code>repeat.max</code> من العناصر، والصفحة تعطيها أكثر. تحذير لكل عنصر زائد، عند <code>slot="…"</code> الخاص به: يذهب العنصر إلى إطار التدفق (<code>flowFrame</code>)، أو إلى ما بعد الصفحة.</td>
       <td>ارفع <code>max</code>، أو احذفه، أو انقل العناصر الزائدة إلى صفحة أخرى.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>قطعة <code>:::frame</code> تكتب <code>look="…"</code> بمعرّف لا يملكه أي مدخل من <code>frameLooks</code> (انظر <a href="#مظاهر-الإطارات">مظاهر الإطارات</a>). ويحتفظ الإطار بنمطه وبألوان قالبه. ويشير إلى قيمة السمة، ويذكر أقرب معرّف (<code>suggestion</code>).</td>
+      <td>صحّح المعرّف على القطعة، أو أضف إلى <code>frameLooks</code> مظهرًا بهذا المعرّف.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

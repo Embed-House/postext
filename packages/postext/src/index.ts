@@ -648,7 +648,7 @@ export { parseMarkdownWithIssues, MATH_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLA
 // slot, and the slot checks the content warnings run.
 export { composedPages } from './composed/document';
 export type { ParsedComposedPage, HeadingTake } from './composed/document';
-export { checkComposedSlots } from './composed/slotChecks';
+export { checkComposedSlots, checkFrameLookNames } from './composed/slotChecks';
 export type { ComposedSlotWarning } from './composed/slotChecks';
 export type { ComposedPageFence, BlockSlot, FigureInfo, FigureLabel, FigureWord, FigureWordKind } from './parse';
 export { computeSourceMap, parseInlineSnippetSpans, mapInlineSnippet, orientationMarkAt, contentHasMath, resourceHasMath } from './parse';
@@ -717,7 +717,7 @@ export { composedPagePaintKey } from './composed/pageMemo';
 // A story that jumps into a page of a later chapter (#943).
 export type { StoryJump, CarriedNumber, CarriedNote } from './composed/carryTypes';
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameLookEntry, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule, ModuleWidth,
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
@@ -726,6 +726,10 @@ export { collectConfigWarnings, contentInConfigRule, designTextLiteral } from '.
 export type { DesignTextVerdict } from './configWarnings';
 export type { ConfigWarningOptions } from './configWarnings';
 export { configDesignSlots } from './design/slots';
+// Decoration drawn when the page fence says so (#1087).
+export { fenceSetsAttribute, fenceConditionMet, fenceConditionUses, fenceConditionsNeverMet, fenceAttributesSet, FENCE_CONDITION_SLOTS } from './design/fenceCondition';
+export type { FenceConditionUse } from './design/fenceCondition';
+export { parseDirectiveAttrs } from './parse/attrs';
 // «Move the text to the Markdown» (#874): page designs held in heading
 // styles become page templates, their text `::::page` fences.
 export { moveTextToMarkdown } from './migrate/textToMarkdown';

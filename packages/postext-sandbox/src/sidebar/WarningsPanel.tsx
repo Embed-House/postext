@@ -104,6 +104,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'frameCovered':
     case 'frameOutsideArea':
     case 'repeatOverflow':
+    case 'lookUnknown':
     case 'moduleUnknown':
     case 'moduleAsPage':
     case 'moduleNested':
@@ -313,6 +314,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFrameOutsideTitle;
     case 'repeatOverflow':
       return labels.warningsRepeatOverflowTitle;
+    case 'lookUnknown':
+      return labels.warningsLookUnknownTitle;
     case 'moduleUnknown':
       return labels.warningsModuleUnknownTitle;
     case 'moduleAsPage':
@@ -670,6 +673,9 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return `${payload.frame}${payload.locale ? ` (${payload.locale})` : ''} — ${frameOutsideDetail(payload, labels, locale)}`;
     case 'repeatOverflow':
       return `${payload.frame}[${payload.item}] — ${repeatOverflowDetail(payload, labels)}`;
+    case 'lookUnknown':
+      // A named look (#1089) frameLooks lacks.
+      return `look="${payload.look}" — ${labels.warningsLookUnknownDetail.replace('__frame__', payload.frame)}${payload.suggestion ? ` ${labels.warningsUnknownConfigKeySuggestion.replace('__suggestion__', payload.suggestion)}` : ''}`;
     case 'moduleUnknown':
       // A :::module block that is not laid (#1062, #1065).
       if (payload.reason === 'noGroup') return labels.warningsModuleNoGroupDetail.replace('__template__', payload.template).replace('__name__', payload.name);

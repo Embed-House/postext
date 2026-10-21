@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyTextChanges } from '../book/textChanges';
-import { countTemplatePages, fenceTemplateChange, pageFenceIds, renameSlotChanges, renameTemplateChanges, templateFences } from './templateUsage';
+import { countTemplatePages, fenceTemplateChange, pageFenceAttributes, pageFenceIds, renameSlotChanges, renameTemplateChanges, templateFences } from './templateUsage';
 
 const BOOK = [
   '# One',
@@ -70,6 +70,15 @@ describe('pageFenceIds (#943)', () => {
     ]);
     expect(templateFences(two)[0]!.id).toBe('p47');
     expect(templateFences(two)[2]!.id).toBeUndefined();
+  });
+});
+
+describe('pageFenceAttributes (#1087)', () => {
+  it('lists the attributes the fences set, once, in book order, outside code', () => {
+    const one = ['::::page{template="shell" frontmatter}', '::::', '```', '::::page{template="shell" hidden}', '```', '::::page{template="shell" folio fondo=banda}', '::::'].join('\n');
+    const two = ['::::page{template="shell" folio draft=false id=p2 spread}', '::::'].join('\n');
+    expect(pageFenceAttributes([{ markdown: one }, { markdown: two }])).toEqual(['frontmatter', 'folio', 'fondo']);
+    expect(templateFences(two)[0]!.attrs).toEqual(['template', 'folio', 'id', 'spread']);
   });
 });
 

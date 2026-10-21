@@ -13,6 +13,7 @@ import { templateSheet } from '../../../templates/templateSheet';
 import { applyViewerEdit } from '../../../editor/viewerEdits';
 import { TemplateSheetSvg } from '../PageTemplatesSection/TemplateSheetSvg';
 import { TemplateEditor } from '../PageTemplatesSection';
+import { moduleWidthText } from '../PageTemplatesSection/ModuleWidthField';
 
 /** «2 blocks on 1 page», «Not used yet». */
 export function moduleUsageText(labels: SandboxLabels, u: ModuleUsage | undefined): string {
@@ -113,6 +114,10 @@ export const ModulesSection = memo(function ModulesSection() {
                       <span dir="ltr">{t.id}</span>
                       {' · '}
                       {moduleUsageText(labels, usage.get(t.id))}
+                    </span>
+                    {/* Its width in a row of modules (#1088). */}
+                    <span className="truncate text-[0.7rem]" style={{ color: 'var(--slate)' }}>
+                      {labels.modulesWidthText.replace('__width__', moduleWidthText(resolved?.width, labels.modulesWidthShare))}
                     </span>
                   </span>
                   <IconButton

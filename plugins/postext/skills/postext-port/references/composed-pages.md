@@ -34,7 +34,8 @@ text round an illustration, a box that continues, a magazine thread with
 jumps, an activity sheet with answer lines, a photo and its ground, a
 contents page; from 1.48: lines between frames, notes that point into a
 picture, a map's key and symbols, cards and shapes, cards the Markdown
-repeats, modules, frames that lie over each other) ·
+repeats, modules, frames that lie over each other; from 1.50: a colour per
+card, modules side by side, one shell for every page) ·
 7 verification · 8 one bundle for every edition · 9 ports made with round 1
 or postext 1.33 · 10 limits.
 
@@ -64,6 +65,7 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.48.0</td><td>lines, shapes, repeats and modules (§6.12–6.18): decoration <code>connector</code>s between frames (<code>straight</code>, <code>elbow</code>, <code>tree</code>, ends on <code>#card[*]</code> and on a picture's anchor, painted over the frames with <code>over</code>); a label away from its point with a leader (<code>labelAt</code>, <code>leader</code>); keys (<code>kind: "legend"</code>, <code>:::label</code> of several lines) and <code>:icon</code> symbols in labels, captions and cells; per-corner radii, per-side borders, a tab joined to its box, foot tabs, <code>path</code> elements and a glyph as a tab's icon; <code>anchor.at</code> and the <code>center</code> size edge; <code>kind: "grid"</code> groups that <code>repeat</code> a frame set per item of the Markdown; <code>role: "module"</code> templates stacked by a <code>modules</code> group from <code>:::module</code> blocks; the overlap checks <code>frameCovered</code> and <code>frameOutsideArea</code> with <code>overlap: "allow"</code>; <code>configVersion</code> 16; Sandbox: connectors, shapes, leaders, keys, grids and the module library edited without JSON, «Turn into a grid» and «Extract a module»</td><td>2</td></tr>
 <tr><td>1.48.1</td><td>a module's connector may end on a frame of the page that stacks it</td><td>2</td></tr>
 <tr><td>1.49.0</td><td><code>ring</code> and <code>bar</code> caps on connectors and leaders, <code>opacity</code> on their lines; a picture in an <code>auto</code> frame of a vertical page fills the room the frame measured; Sandbox: <code>overlap</code> in the frame editor and an «allow overlap» fix in the Checks panel</td><td>2</td></tr>
+<tr><td>1.50.0</td><td>decoration drawn when the page fence says so (<code>when</code> / <code>unless</code> on a design element: one shell for front matter and body pages); modules side by side (a modules group of <code>kind: "row"</code> or <code>"grid"</code> <code>within</code> the stack, its <code>templates</code>, a module's <code>width</code>); named frame looks (<code>frameLooks</code>, <code>look="…"</code> on a <code>:::frame</code> piece, <code>lookUnknown</code>); the shrink proposal keeps a long word whole</td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -323,7 +325,15 @@ it merges the styles and before it merges the templates:
   members as wide as their words, off its middle (`top` / `bottom`, width
   `auto`, the narrowest as `minWidth`). Cards held to heights of their own
   that differ are no grid. Cards with nothing hanging from them need
-  `--grid-min` (3) of them. Each page's pieces become one
+  `--grid-min` (3) of them. A member hangs at most `--member-reach` (8 mm)
+  off its card; a pill between two rows that hangs under one photo and over
+  the next takes the way most pills of its look hang. A picture is never a
+  centred member (it has no width of its words). From 1.50, cards and
+  members whose styles differ only in colours (fill, border, tab, words;
+  a pill read with even side padding counts as centred) are one look: the
+  set keeps the style most cards have and every other card names a look
+  in `frameLooks`, written as `look="look-light-green"` on its item's or
+  member's `:::frame` (6.16). Each page's pieces become one
   `:::frame{slot="grid-picture"}` item per card in reading order with the
   members' pieces inside; anchors, groups, connector ends and decoration
   that named a card name its instance (`#grid-picture[3]`), and what hung
@@ -352,8 +362,30 @@ it merges the styles and before it merges the templates:
   `--module-tol`, 0.5 mm) are one module template (`module-box-picture2`); a
   module used once is fine. A text frame that stood in no group gets
   `fit.scaleImages: false` in its module: a module frame's ladder scales the
-  pictures of the whole module, the page's scaled only its own. Pages whose
-  furniture differs (front matter without a folio) get a shell of their own.
+  pictures of the whole module, the page's scaled only its own.
+- **Rows of modules (1.50).** A band whose clusters stand side by side (a
+  box beside a photo, two cards in a row: units whose spans across the page
+  do not overlap and that no shape painted in the band joins) is a row of
+  modules, one per cluster, start to end, each as wide as from its start to
+  the next one's (`width`, the last `fill`). The shell's stack holds them in
+  a modules group `within` it (`kind: "row"`, `templates` the modules it
+  takes, no gap): the Markdown stays `:::module` blocks, in order. Rows whose
+  clusters stand in the page's equal columns and that follow each other
+  (a 2 × 2 of cards) are a modules `grid` (`columns`); a row that would run
+  into another of the same group stays one module, as before. Modules of a
+  row are never shared with modules of the stack. `--no-rows` keeps one
+  module per band. Most bands of an extracted page are one cluster (frames
+  anchored to the ones above them join up), so expect rows where the page
+  has independent columns: a contents page's pictures, a pair of boxes.
+- **One shell (1.50).** Shells that differ only by their furniture (front
+  matter without the folio, the page colour or the running head) become
+  one: what the minority of pages leaves out gets `unless: "frontmatter"`
+  (`backmatter` for the last pages, else `variant-N`), what only some pages
+  draw `when: "…"`, and those pages' fences carry the word as a flag
+  (`::::page{template="page" frontmatter}`). The report's `shells` lists
+  each condition. Rename the word in the fences and the elements together
+  if a better one fits (`cover`, `contents`). `--no-shell-merge` keeps a
+  shell each. Before 1.50 every furniture got a shell of its own.
 - **Looking the same.** The boxes are read off the draft as the engine lays it
   (`--laid`, from `render.mjs --frames`: groups move frames off the measured
   boxes), else off `regions.json`. Lay the result out again and compare:
@@ -1903,6 +1935,34 @@ La nutria
   Sandbox's «Turn into a grid» does it for frames picked by hand.
 - Not on grid rows: `grow`, `shrink`, `redistribute`. A caption pill laid over
   its photo on purpose takes `overlap: "allow"` (6.18).
+- **A colour per card (1.50).** Pills of one style in a different colour
+  each stay one grid: one callout style, a named look per colour, and the
+  Markdown names the look on the piece that wears it. The look carries
+  colours only (fill, border, stripe, icon, marker, title, words, tab);
+  anything else that differs (padding, type) is another style and no grid.
+
+```python
+config["frameLooks"] = [
+    {"id": "verde", "background": color("#e7efc1")},
+    {"id": "azul", "background": color("#d4e8f8"), "label": {"background": color("#0885bf")}},
+]
+```
+
+```md
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+La nutria
+:::
+:::
+```
+
+  A look the config does not define is `lookUnknown` (the piece keeps its
+  style's colours). `template_dedupe.py` writes the looks itself (6.16 above,
+  §3.7) and names them by colour (`look-light-green`): rename them by what
+  they mean (`ocio`, `salud`) in the config and the pieces together. Before
+  1.50: a style per colour and the cards left as frames of their own.
 
 ### 6.17 Blocks that recur in another order: modules (1.48)
 
@@ -1969,6 +2029,38 @@ para regar
   modules group), `moduleAsPage` (a page fence names a module) and
   `moduleNested` (a module inside a module) fail `composed_check.py`;
   `lint_project.py` raises them before the build.
+- **Side by side (1.50).** A modules group with `within: "<stack>"` lies
+  inside the page's modules stack and lays the modules its `templates` name
+  as a `row` (each as wide as its template's `width`: a length, a
+  percentage or `fill`) or a `grid` (`columns`, rows as tall as their
+  tallest module). Each run of them in the Markdown is one row or grid,
+  where its first module comes; whole rows go on to the next page. Still no
+  geometry in the Markdown:
+
+```python
+groups = [
+    {"name": "cuerpo", "modules": True, "gap": mm(6)},
+    {"name": "par", "modules": True, "within": "cuerpo", "kind": "row", "templates": ["aviso", "foto"],
+     "gap": mm(6)},
+    {"name": "tarjetas", "modules": True, "within": "cuerpo", "kind": "grid", "columns": 2,
+     "templates": ["tarjeta"], "gap": mm(6)},
+]
+templates += [{"id": "aviso", "role": "module", "width": mm(110), "frames": [...]},
+              {"id": "foto", "role": "module", "width": "fill", "frames": [...]}]
+```
+
+  Two runs of one group that follow each other are one run (a row of four,
+  not two rows of two): give the second its own group, or make the group a
+  grid. One level only (no group inside a row). A module template belongs to
+  one group: a template named in a row's `templates` is laid in that row on
+  every page. `template_dedupe.py` writes these groups (§3.7).
+- **One shell for every page (1.50).** A design element with `when: "x"` is
+  drawn only on pages whose fence sets `x` (`::::page{template="page" x}`),
+  one with `unless: "x"` everywhere else; what is anchored to an element
+  left out goes with it. Front matter with no folio, the closing page of a
+  block that prints its running head on an even page too, a cover with no
+  page colour: one shell and a word on the fence, not a template each. `postext
+  check` notes a condition no fence sets (`conditionNeverMet`).
 
 ### 6.18 Frames that lie over each other (1.48)
 

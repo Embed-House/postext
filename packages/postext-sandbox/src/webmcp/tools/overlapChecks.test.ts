@@ -139,3 +139,19 @@ describe('sandbox_get_warnings on a grid given more items than it holds', () => 
     expect(listed).toMatchObject({ frame: 'card', group: 'grid', item: 3, max: 2, title: 'More items than the grid holds' });
   });
 });
+
+// #1089: a frame piece naming a look `frameLooks` lacks.
+describe('sandbox_get_warnings on a frame piece naming an unknown look', () => {
+  it('lists lookUnknown with the frame, the look and the nearest id', async () => {
+    const config: PostextConfig = {
+      ...structuredClone(CONFIG),
+      frameLooks: [{ id: 'pill-1', background: { hex: '#e63946', model: 'hex' } }],
+    };
+    const markdown = '::::page{template="overlaps"}\n:::frame{slot="note" look="pill-01"}\nA note.\n:::\n::::\n';
+    const { call } = harness(book(markdown, config));
+    const found = await call('sandbox_get_warnings');
+    const listed = (found.warnings as Listed[]).find((w) => w.kind === 'lookUnknown');
+    expect(listed).toMatchObject({ frame: 'note', look: 'pill-01', suggestion: 'pill-1', title: 'A look the book does not have' });
+    expect(listed!.detail).toMatch(/Did you mean pill-1\?/);
+  });
+});

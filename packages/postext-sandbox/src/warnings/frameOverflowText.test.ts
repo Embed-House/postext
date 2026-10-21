@@ -28,6 +28,13 @@ describe('frameOverflow in the Checks panel (#858)', () => {
     expect(fitProposalText({ kind: 'shortenText', value: 9 }, DEFAULT_LABELS)).toBe('cut about 9 characters');
   });
 
+  it('says whether the shrink keeps a long word whole (#1090)', () => {
+    expect(fitProposalText({ kind: 'allowShrink', path: '/x', value: 0.825, word: 'whole' }, DEFAULT_LABELS, 'en'))
+      .toBe('let the text shrink to 82.5 %, where the long word is whole (fit.minScale)');
+    expect(fitProposalText({ kind: 'allowShrink', path: '/x', value: 0.75, word: 'divided' }, DEFAULT_LABELS, 'en'))
+      .toBe('let the text shrink to 75 %, a long word divided (fit.minScale)');
+  });
+
   it('writes numbers in the interface language, not with a dot (#938)', () => {
     expect(fitStepText('shrinkText', { scale: 0.725 }, DEFAULT_LABELS, 'es')).toBe('text down to 72,5 %');
     expect(fitStepText('scaleImages', { scale: 1, imageScale: 0.825 }, DEFAULT_LABELS, 'de')).toContain('82,5 %');

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Impostazioni delle pagine composte',
   description: 'I modelli delle pagine composte: cornici, gruppi, griglie che ripetono un insieme di cornici, moduli, decorazione e connettori, ereditarietà e varianti per pagina dispari e pari (recto/verso); gli stili delle etichette poste sulle ancore delle immagini, e gli avvisi che un modello può dare',
   lang: 'it',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10 min',
   order: 18,
   parent: 'configuration',
@@ -153,6 +153,12 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
       <td>Il ruolo di pagina che vedono gli elementi grafici con un filtro <code>pages</code>. <code>'module'</code> fa del modello un modulo: un blocco di cornici che le pagine impilano in un gruppo invece di una pagina a sé (vedi <a href="#moduli">Moduli</a>). Da postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Un modulo: la sua larghezza in una fila o in una pila di moduli, come lunghezza, come percentuale della larghezza del gruppo o come <code>'fill'</code>, una parte uguale di ciò che lasciano gli altri moduli della fila. In una griglia il modulo prende la sua colonna. Da postext 1.50.</td>
     </tr>
   </tbody>
 </table>
@@ -345,7 +351,7 @@ Una cornice si colloca nella cella indicata da `grid`, se il modello ha una grig
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Ciò che questa cornice cambia dell’aspetto del suo stile di riquadro, con i nomi e l’annidamento dello stile stesso: colori (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e spaziatura tra le lettere del testo (<code>body.letterSpacing</code>). Un <code>background</code> attiva anche il riempimento dello stile; il colore di una linguetta conta solo se lo stile ha una linguetta. In un modello figlio si fonde chiave per chiave con la cornice che sostituisce. Un libro che usa la stessa forma di riquadro in più tinte mantiene un solo stile e indica qui la tinta, oppure lascia che <code>palette</code> ricolori un riempimento legato alla tavolozza. Da postext 1.42.</td>
+      <td>Ciò che questa cornice cambia dell’aspetto del suo stile di riquadro, con i nomi e l’annidamento dello stile stesso: colori (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e spaziatura tra le lettere del testo (<code>body.letterSpacing</code>). Un <code>background</code> attiva anche il riempimento dello stile; il colore di una linguetta conta solo se lo stile ha una linguetta. In un modello figlio si fonde chiave per chiave con la cornice che sostituisce. Un libro che usa la stessa forma di riquadro in più tinte mantiene un solo stile e indica qui la tinta, oppure lascia che <code>palette</code> ricolori un riempimento legato alla tavolozza. Un pezzo della pagina può posarci sopra un aspetto con nome (vedi <a href="#aspetti-delle-cornici">Aspetti delle cornici</a>). Da postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -434,7 +440,7 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Una griglia: dove sta una cella più bassa della sua riga. <code>'stretch'</code> rende la sua cornice principale alta quanto la riga (fino al suo <code>maxHeight</code>), quando l’altezza di quella cornice è <code>'auto'</code> o <code>'fill'</code>.</td>
+      <td>Una griglia: dove sta una cella più bassa della sua riga. <code>'stretch'</code> rende la sua cornice principale alta quanto la riga (fino al suo <code>maxHeight</code>), quando l’altezza di quella cornice è <code>'auto'</code> o <code>'fill'</code>. Una fila o una griglia di moduli: dove sta un modulo più basso della sua fila; <code>'stretch'</code> lo mette in un riquadro alto quanto la fila, così il suo fondo e le sue cornici <code>'fill'</code> arrivano al piede della fila.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Il gruppo prende i blocchi <code>:::module</code> della pagina, uno sotto l’altro nell’ordine del Markdown, con <code>gap</code> fra l’uno e l’altro. Si dispone come una pila qualunque sia il suo <code>kind</code>, e le sue <code>frames</code> non vengono lette. Vedi <a href="#moduli">Moduli</a>. Da postext 1.48.</td>
+      <td>Il gruppo prende i blocchi <code>:::module</code> della pagina nell’ordine del Markdown, con <code>gap</code> tra loro: uno sotto l’altro (<code>'stack'</code>), uno accanto all’altro (<code>'row'</code>) o in <code>columns</code> (<code>'grid'</code>, da postext 1.50). I suoi <code>frames</code> non vengono letti. Vedi <a href="#moduli">Moduli</a>. Da postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>nessuno</td>
       <td>Un gruppo di moduli: dove prosegue, intero, un modulo che non entra. Se non è impostato, il modulo viene tagliato al piede del gruppo e le sue cornici percorrono la scala di reimpaginazione.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Un gruppo di moduli dentro la pila di moduli con questo nome: ogni serie consecutiva di moduli della pagina che riceve, nell’ordine del Markdown, viene messa come una fila o una griglia di quella pila, dove viene il primo modulo della serie. Da postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>nessuno</td>
+      <td>Un gruppo di moduli con <code>within</code>: i modelli di modulo che riceve. Se non è indicato, tutti i moduli. Un modulo va al primo gruppo di questo tipo che lo riceve, altrimenti alla pila.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **Che cosa ha un modulo.** Cornici, gruppi (compresa una griglia che si ripete), decorazione e connettori. Non ha `area`, `header`, `footer`, `variants`, `spread`, `gutter` né `overflowTemplate`: ciascuno di questi viene segnalato come `unknownConfigValue` e ignorato. `extends` funziona fra moduli (un modello che estende un modulo è un modulo).
 - **Il suo riquadro.** Un modulo è largo quanto il suo gruppo e alto fin dove arrivano le sue cornici; il gruppo impila i moduli dalla sua cima, con `gap` fra l’uno e l’altro. Dentro un modulo, `'container'` è il riquadro del modulo, per le sue cornici (anche `'fill'` e le percentuali) e per la sua decorazione: un fondo dimensionato a `{ to: 'container', edge: 'bottom' }` copre il modulo qualunque altezza gli diano le sue parole.
 - **Nomi.** Le cornici, i gruppi e gli elementi di un modulo prendono come prefisso il nome dell’istanza del modulo: `<name>.<frame>`, con il nome che dà il Markdown (`name="ramas"`) oppure `<template>[n]`, il numero d’ordine del modulo tra i moduli della pagina con quel modello (`arbol[2].raiz`). Gli ancoraggi, `next`, `continueIn: '#x'` e i connettori dentro un modulo vengono riscritti verso le sue cornici, così due alberi sulla stessa pagina non si uniscono mai fra loro. L’id di una cornice è `cp0:arbol[2].raiz`.
-- **Quando i moduli non entrano.** Un modulo che supera il piede del gruppo viene tagliato lì e le sue cornici percorrono la scala di reimpaginazione; `frameOverflow` viene segnalato una volta per il gruppo. Con `overflow.continueIn` sul gruppo di moduli (`'next-page'` o `'template:<id>'`), il primo modulo che non entra e tutti quelli che lo seguono proseguono **interi** nella pagina aggiunta, con gli stessi nomi, in cima al gruppo di moduli di quella pagina.
-- **Non ancora.** Moduli affiancati (un gruppo di moduli è sempre una pila), un modulo dentro un modulo (`moduleNested`) e celle `grid` del modello dentro un modulo.
+- **Quando i moduli non entrano.** Un modulo che supera il piede del gruppo viene tagliato lì e le sue cornici percorrono la scala di reimpaginazione; `frameOverflow` viene segnalato una volta per il gruppo. Con `overflow.continueIn` sul gruppo di moduli (`'next-page'` o `'template:<id>'`), il primo modulo che non entra e tutti quelli che lo seguono proseguono **interi** nella pagina aggiunta, con gli stessi nomi, in cima al gruppo di moduli di quella pagina. In una fila o in una griglia di moduli una fila prosegue intera: i suoi moduli non vengono mai divisi tra due pagine.
+- **Affiancati.** Un gruppo di moduli con `kind: 'row'` mette i suoi moduli dall’inizio alla fine, ciascuno largo quanto la `width` del suo modello (una lunghezza, `{ percent: 48 }` o `'fill'`, una parte uguale di ciò che resta), con la fila alta quanto il suo modulo più alto; `kind: 'grid'` li mette in `columns` colonne uguali, fila dopo fila. `rowAlign` colloca un modulo più basso della sua fila. Le file partono dal lato in cui inizia la riga, quindi una pagina da destra a sinistra mette il primo modulo a destra. Da postext 1.50.
+- **Gruppi dentro la pila.** Un gruppo di moduli con `within: '<pila>'` sta dentro la pila di moduli della pagina, e `templates` dice quali moduli riceve: ogni serie consecutiva di questi nel Markdown forma una fila o una griglia della pila, dove viene il suo primo modulo. Con i gruppi qui sotto, due blocchi `aviso` seguiti da quattro blocchi `tarjeta` danno una fila di due riquadri sopra una griglia di 2 × 2 schede, e il Markdown contiene solo blocchi `:::module`.
+- **Non ancora.** Un modulo dentro un modulo (`moduleNested`), celle `grid` del modello dentro un modulo e un gruppo dentro una fila o una griglia di moduli.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Quando il contenuto non entra
 
@@ -651,6 +679,26 @@ pageTemplates: [
 Un valore uguale a un predefinito non viene mai scartato quando la Sandbox salva un modello: in un modello che ne estende un altro, o in una variante, sostituisce il valore del genitore.
 
 Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello con la catena unita, la variante del lato applicata, ogni valore predefinito compilato e ogni riferimento risolto come descrivono gli avvisi più sotto; `validatePageTemplates(config)` restituisce gli avvisi.
+
+### Disegnato quando la pagina lo dice
+
+Un elemento della decorazione, e uno dell’`header` o del `footer` del modello, può avere `when` o `unless`, ciascuno con il nome di un attributo del blocco della pagina. `when: 'folio'` disegna l’elemento solo nelle pagine il cui blocco imposta `folio`; `unless: 'frontmatter'` lo toglie dalle pagine il cui blocco imposta `frontmatter`. Un blocco imposta un attributo quando lo scrive da solo (`::::page{template="pagina" frontmatter}`) o con un valore diverso da `false`. Così un solo modello serve alle pagine preliminari, senza folio né banda, e alle pagine del testo, che hanno entrambi: il Markdown dice che cosa è la pagina e il modello tiene il disegno. Da postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Un elemento ancorato a un elemento tolto, o con la misura che arriva fino a esso, viene tolto anche lui.
+- Con entrambe le chiavi, l’elemento si disegna dove il blocco imposta l’attributo di `when` e non quello di `unless`.
+- Le testatine del documento e quelle di una sezione le leggono anch’esse. Una pagina che non è composta non ha blocco e non imposta nulla. I disegni di titolo, di parte e di riquadro le ignorano.
+- Un valore che non è un testo non vuoto, o uno scritto in un disegno di titolo, di parte o di riquadro, viene segnalato come `unknownConfigValue`, e l’elemento si disegna come se non lo avesse. `postext check` aggiunge una nota, `conditionNeverMet`, per un `when` o un `unless` su un attributo che nessuna pagina del libro imposta: quell’elemento non si disegna mai, oppure sempre.
+- Nel Sandbox, ogni scheda di elemento di una testatina e della decorazione di un modello ha i campi **Disegnato quando la pagina lo dice** e **Non disegnato quando la pagina lo dice**, che offrono gli attributi usati dai blocchi di pagina del libro.
 
 ### Che cosa applica l’impaginazione
 
@@ -787,7 +835,7 @@ decoration: {
       <td>Unisce i riquadri che dichiara il modello, non quelli che il contenuto ha dato alle cornici.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>come gli altri elementi</td>
       <td><code>'all'</code></td>
       <td>Quali pagine lo disegnano.</td>
@@ -856,6 +904,48 @@ decoration: { elements: [
 ```
 
 **Controlli.** Un’estremità il cui `to` non indica nulla è `frameAnchorUnknown` (in `…/from/to` o `…/to/<k>/to`) e viene tralasciata; `[*]` vale solo in `to` e su una cornice ripetuta. Un’`anchor` che nessuna immagine della cornice ha è `labelAnchorUnknown`, con l’id del connettore. Una parola fuori dalle scelte di `routing`, `startCap`, `endCap` o `side`, e un `at` fuori dall’intervallo da 0 a 1, sono `unknownConfigValue`. Un’`opacity` che non è un numero da 0 a 1 è anch’essa `unknownConfigValue` (un numero fuori dall’intervallo viene riportato al suo interno).
+
+## Aspetti delle cornici
+
+Una griglia di schede con foto le cui pastiglie differiscono solo per il colore, o una pagina di riquadri in una dozzina di tinte, tiene un solo stile di riquadro e un solo modello: i colori vanno in `frameLooks`, un elenco di aspetti con nome, e il Markdown ne indica uno su ogni pezzo che lo porta. Da postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th>Descrizione</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Obbligatorio. La parola che un pezzo scrive in <code>look="…"</code>. Quando due aspetti hanno lo stesso id, si usa il primo.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Mostrato solo nella Sandbox.</td>
+    </tr>
+    <tr>
+      <td>I campi del <code>look</code> di una cornice</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, con i nomi e l’annidamento del <code>look</code> della cornice (vedi <a href="#cornici">Cornici</a>). Un <code>background</code> attiva anche il riempimento dello stile; il colore di una linguetta vale solo per uno stile che ha una linguetta.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Dove si applica.** Un pezzo `:::frame{slot="…" look="<id>"}` porta l’aspetto. In una griglia, il pezzo principale dell’elemento e il `:::frame` annidato di un membro indicano ciascuno il proprio (vedi [Pagine composte › Aspetti delle cornici](/it/docs/composed-pages#aspetti-delle-cornici)).
+- **Ordine.** L’aspetto si posa sullo stile di riquadro della cornice e sul `look` proprio della cornice del modello, chiave per chiave: un aspetto che imposta solo il riempimento tiene il colore del testo del modello. Vale solo per quel pezzo. Lo portano anche le cornici in cui prosegue il suo testo (una catena, una pagina aggiunta per continuazione).
+- **Tavolozze.** Un colore legato a una voce della tavolozza segue la tavolozza come ogni colore della configurazione, quindi una tavolozza di parte o la `palette` di una pagina lo ricolora.
+- **Verifiche.** Una voce senza `id` viene ignorata (`unknownConfigValue`), e una chiave che un aspetto non ha è un `unknownConfigKey` a qualsiasi profondità, con il nome più vicino. Un pezzo che indica un id che nessuna voce ha tiene i colori della sua cornice e produce `lookUnknown`.
+
+Nella Sandbox gli aspetti si modificano in **Grafica › Riquadri › Aspetti delle cornici**, che conta anche i pezzi che indicano ciascuno di essi, e il pulsante **Aspetto della cornice** dell’editor scrive `look="…"` sul pezzo in cui si trova il cursore.
 
 ## Stili delle etichette
 
@@ -1078,7 +1168,7 @@ anchors: [
 
 Altrove il motore ignora una chiave che non conosce. I modelli di pagina e gli stili delle etichette invece vengono verificati, e ogni problema diventa un avviso di configurazione in `postext check` e nel pannello Verifiche della Sandbox. Il `path` di questi avvisi è un puntatore JSON al campo in errore: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando il campo è stato ereditato, il puntatore indica il modello che l’ha scritto. Un avviso che cita un id o un nome inesistente suggerisce anche quello esistente più vicino.
 
-Una chiave scritta male di un modello, di una cornice, di un gruppo, di una griglia, di `fit`, di `overflow`, di una variante o di uno stile di etichetta è un `unknownConfigKey`; una parola fuori dalle scelte di un’impostazione (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, il `routing`, le estremità e il `side` di un connettore, le estremità e il `routing` di una linea di richiamo) è un `unknownConfigValue`, e l’impostazione tiene il suo valore predefinito. Un modello senza `id`, o una cornice o un gruppo senza `name`, viene ignorato con un `unknownConfigValue` su quel campo.
+Una chiave scritta male di un modello, di una cornice, di un gruppo, di una griglia, di `fit`, di `overflow`, di una variante o di uno stile di etichetta è un `unknownConfigKey`; una parola fuori dalle scelte di un’impostazione (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, il `routing`, le estremità e il `side` di un connettore, le estremità e il `routing` di una linea di richiamo) è un `unknownConfigValue`, e l’impostazione tiene il suo valore predefinito. Un modello senza `id`, o una cornice o un gruppo senza `name`, viene ignorato con un `unknownConfigValue` su quel campo. Gli aspetti delle cornici (`frameLooks`) si verificano allo stesso modo: un aspetto senza `id` viene ignorato, e una chiave che il `look` di una cornice non ha è un `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1156,7 +1246,7 @@ Dai connettori in poi (postext 1.48) la versione della configurazione è la 16; 
 
 ### Avvisi di sovrapposizione, ripetizione e moduli
 
-Questi avvisi vengono dall’impaginazione o dal Markdown della pagina, non dal solo modello, quindi indicano una pagina. Li elencano `postext check` (`--json` ne riporta i campi come `data`), il pannello Verifiche della Sandbox e i `contentWarnings` del documento. Da postext 1.48.
+Questi avvisi vengono dall’impaginazione o dal Markdown della pagina, non dal solo modello, quindi indicano una pagina. Li elencano `postext check` (`--json` ne riporta i campi come `data`), il pannello Verifiche della Sandbox e i `contentWarnings` del documento. Da postext 1.48, `lookUnknown` da postext 1.50.
 
 <table>
   <thead>
@@ -1181,6 +1271,11 @@ Questi avvisi vengono dall’impaginazione o dal Markdown della pagina, non dal 
       <td><code>repeatOverflow</code></td>
       <td>Una griglia che ripete un insieme di cornici contiene <code>repeat.max</code> elementi e la pagina gliene dà di più. Uno per ogni elemento in più, sul suo <code>slot="…"</code>: l’elemento va alla cornice di flusso (<code>flowFrame</code>), o dopo la pagina.</td>
       <td>Alza <code>max</code>, toglilo, o sposta gli elementi in più su un’altra pagina.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un pezzo <code>:::frame</code> scrive <code>look="…"</code> con un id che nessuna voce di <code>frameLooks</code> ha (vedi <a href="#aspetti-delle-cornici">Aspetti delle cornici</a>). La cornice tiene il suo stile e i colori del modello. Punta al valore dell’attributo e indica l’id più vicino (<code>suggestion</code>).</td>
+      <td>Correggi l’id sul pezzo, oppure aggiungi a <code>frameLooks</code> un aspetto con quell’id.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

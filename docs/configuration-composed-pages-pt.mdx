@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ajustes de páginas compostas',
   description: 'Os modelos das páginas compostas (blocos, grupos, grades que repetem um conjunto de blocos, módulos, decoração e conectores, herança e variantes de página ímpar e par), os estilos dos rótulos colocados nas âncoras de uma imagem e os avisos que um modelo pode gerar',
   lang: 'pt',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '11 min',
   order: 18,
   parent: 'configuration',
@@ -153,6 +153,12 @@ Um modelo que define só o `id` e um bloco é uma página inteira, com esse bloc
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
       <td>O papel de página que os elementos de design com um filtro <code>pages</code> enxergam. <code>'module'</code> faz do modelo um módulo: uma caixa de blocos que as páginas empilham num grupo, em vez de uma página própria (veja <a href="#módulos">Módulos</a>). Desde o postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Um módulo: a largura dele numa fileira ou numa pilha de módulos, como comprimento, como porcentagem da largura do grupo ou como <code>'fill'</code>, uma parte igual do que os outros módulos da fileira deixam. Numa grade, o módulo ocupa a coluna dele. Desde o postext 1.50.</td>
     </tr>
   </tbody>
 </table>
@@ -345,7 +351,7 @@ Um bloco é posicionado pela célula de `grid` quando o modelo tem grade e, sen�
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>O que este bloco muda na aparência do estilo de boxe dele, com os nomes e o aninhamento do próprio estilo: cores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e o espaçamento entre letras do texto (<code>body.letterSpacing</code>). Um <code>background</code> liga também o preenchimento do estilo; a cor de uma aba só conta se o estilo tiver aba. Num modelo filho, mescla-se chave a chave com o bloco que ele substitui. Um livro com uma forma de caixa em várias cores mantém um estilo e escreve aqui a cor, ou deixa que <code>palette</code> recolora um preenchimento ligado à paleta. Desde o postext 1.42.</td>
+      <td>O que este bloco muda na aparência do estilo de boxe dele, com os nomes e o aninhamento do próprio estilo: cores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e o espaçamento entre letras do texto (<code>body.letterSpacing</code>). Um <code>background</code> liga também o preenchimento do estilo; a cor de uma aba só conta se o estilo tiver aba. Num modelo filho, mescla-se chave a chave com o bloco que ele substitui. Um livro com uma forma de caixa em várias cores mantém um estilo e escreve aqui a cor, ou deixa que <code>palette</code> recolora um preenchimento ligado à paleta. Um trecho da página pode aplicar uma aparência com nome por cima (veja <a href="#aparências-de-bloco">Aparências de bloco</a>). Desde o postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -434,7 +440,7 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Uma grade: onde fica uma célula mais baixa que a fila. <code>'stretch'</code> dá ao bloco principal dela a altura da fila (até o <code>maxHeight</code> dele), quando a altura desse bloco é <code>'auto'</code> ou <code>'fill'</code>.</td>
+      <td>Uma grade: onde fica uma célula mais baixa que a fila. <code>'stretch'</code> dá ao bloco principal dela a altura da fila (até o <code>maxHeight</code> dele), quando a altura desse bloco é <code>'auto'</code> ou <code>'fill'</code>. Numa fileira ou numa grade de módulos: onde fica um módulo mais baixo que a fileira; <code>'stretch'</code> o põe numa caixa da altura da fileira, de modo que o fundo e os blocos <code>'fill'</code> dele chegam ao pé da fileira.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>O grupo recebe os blocos <code>:::module</code> da página, um embaixo do outro na ordem do Markdown, com <code>gap</code> entre eles. É disposto como uma pilha qualquer que seja o <code>kind</code>, e os <code>frames</code> dele não são lidos. Veja <a href="#módulos">Módulos</a>. Desde o postext 1.48.</td>
+      <td>O grupo recebe os blocos <code>:::module</code> da página na ordem do Markdown, com <code>gap</code> entre eles: um embaixo do outro (<code>'stack'</code>), um ao lado do outro (<code>'row'</code>) ou em <code>columns</code> (<code>'grid'</code>, desde o postext 1.50). Os <code>frames</code> dele não são lidos. Veja <a href="#módulos">Módulos</a>. Desde o postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>nenhum</td>
       <td>Um grupo de módulos: onde continua, inteiro, um módulo que não cabe. Sem valor, o módulo é cortado no pé do grupo e os blocos dele sobem a escada de ajuste.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>nenhum</td>
+      <td>Um grupo de módulos dentro da pilha de módulos com esse nome: cada sequência de módulos da página que ele recebe, na ordem do Markdown, é posta como uma fileira ou uma grade dessa pilha, onde vem o primeiro módulo da sequência. Desde o postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>nenhum</td>
+      <td>Um grupo de módulos com <code>within</code>: os modelos de módulo que ele recebe. Sem valor, todos os módulos. Um módulo vai para o primeiro grupo desse tipo que o recebe; senão, para a pilha.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **O que um módulo tem.** Blocos, grupos (inclusive uma grade que se repete), decoração e conectores. Não tem `area`, `header`, `footer`, `variants`, `spread`, `gutter` nem `overflowTemplate`: cada um deles é apontado como `unknownConfigValue` e ignorado. `extends` funciona entre módulos (um modelo que estende um módulo é um módulo).
 - **A caixa dele.** Um módulo tem a largura do grupo e a altura até onde chegam os blocos dele; o grupo empilha os módulos a partir do alto, com `gap` entre eles. Dentro de um módulo, `'container'` é a caixa do módulo, para os blocos dele (`'fill'` e porcentagens também) e para a decoração: um fundo dimensionado até `{ to: 'container', edge: 'bottom' }` cobre o módulo, qualquer que seja a altura que as palavras lhe deem.
 - **Nomes.** Os blocos, grupos e elementos de um módulo ficam no escopo do nome da instância do módulo: `<name>.<frame>`, com o nome que o Markdown dá (`name="ramas"`) ou então `<template>[n]`, a posição do módulo entre os módulos da página com esse modelo (`arbol[2].raiz`). As âncoras, `next`, `continueIn: '#x'` e os conectores dentro de um módulo são reescritos para os blocos do próprio módulo; assim, duas árvores numa mesma página nunca se ligam uma à outra. Um id de bloco fica `cp0:arbol[2].raiz`.
-- **Quando os módulos não cabem.** Um módulo que passa do pé do grupo é cortado ali e os blocos dele sobem a escada de ajuste; `frameOverflow` é gerado uma vez para o grupo. Com `overflow.continueIn` no grupo de módulos (`'next-page'` ou `'template:<id>'`), o primeiro módulo que não cabe e todos os seguintes continuam **inteiros** na página acrescentada, com os mesmos nomes, no alto do grupo de módulos dessa página.
-- **Ainda não.** Módulos lado a lado (um grupo de módulos é sempre uma pilha), um módulo dentro de um módulo (`moduleNested`) e células `grid` do modelo dentro de um módulo.
+- **Quando os módulos não cabem.** Um módulo que passa do pé do grupo é cortado ali e os blocos dele sobem a escada de ajuste; `frameOverflow` é gerado uma vez para o grupo. Com `overflow.continueIn` no grupo de módulos (`'next-page'` ou `'template:<id>'`), o primeiro módulo que não cabe e todos os seguintes continuam **inteiros** na página acrescentada, com os mesmos nomes, no alto do grupo de módulos dessa página. Numa fileira ou numa grade de módulos, a fileira continua inteira: os módulos dela nunca se dividem entre duas páginas.
+- **Lado a lado.** Um grupo de módulos com `kind: 'row'` põe os módulos do início ao fim, cada um com a `width` do seu modelo (um comprimento, `{ percent: 48 }` ou `'fill'`, uma parte igual do que sobra), e a fileira com a altura do módulo mais alto; `kind: 'grid'` os põe em `columns` colunas iguais, fileira após fileira. `rowAlign` posiciona um módulo mais baixo que a fileira. As fileiras começam pelo lado onde a linha começa, então uma página da direita para a esquerda põe o primeiro módulo à direita. Desde o postext 1.50.
+- **Grupos dentro da pilha.** Um grupo de módulos com `within: '<pilha>'` fica dentro da pilha de módulos da página, e `templates` diz quais módulos ele recebe: cada sequência deles no Markdown forma uma fileira ou uma grade da pilha, onde vem o seu primeiro módulo. Com os grupos abaixo, dois blocos `aviso` seguidos de quatro blocos `tarjeta` formam uma fileira de dois quadros sobre uma grade de 2 × 2 cartões, e o Markdown só tem blocos `:::module`.
+- **Ainda não.** Um módulo dentro de um módulo (`moduleNested`), células `grid` do modelo dentro de um módulo e um grupo dentro de uma fileira ou de uma grade de módulos.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Quando o conteúdo não cabe
 
@@ -651,6 +679,26 @@ pageTemplates: [
 Quando o Sandbox salva um modelo, um valor igual ao padrão nunca é descartado: num modelo que estende outro, ou numa variante, esse valor substitui o do pai.
 
 No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com a cadeia mesclada, a variante do lado aplicada, todos os padrões preenchidos e cada referência resolvida como os avisos abaixo descrevem; `validatePageTemplates(config)` devolve os avisos.
+
+### Desenhado quando a página diz
+
+Um elemento da decoração, e um do `header` ou do `footer` do modelo, pode ter `when` ou `unless`, cada um com o nome de um atributo do contêiner de página. `when: 'folio'` desenha o elemento só nas páginas cujo contêiner define `folio`; `unless: 'frontmatter'` o tira das páginas cujo contêiner define `frontmatter`. Um contêiner define um atributo quando o escreve sozinho (`::::page{template="pagina" frontmatter}`) ou com qualquer valor exceto `false`. Assim um só modelo serve às páginas pré-textuais, sem fólio nem faixa, e às páginas do miolo, que têm os dois: o Markdown diz o que a página é e o modelo guarda o desenho. Desde o postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Um elemento ancorado a um elemento deixado de fora, ou com o tamanho medido até ele, também fica de fora.
+- Com as duas chaves, o elemento é desenhado onde o contêiner define o atributo de `when` e não o de `unless`.
+- Os cabeçalhos do documento e os de uma seção também as leem. Uma página que não é composta não tem contêiner e não define nada. Os desenhos de título, de parte e de caixa as ignoram.
+- Um valor que não é um texto não vazio, ou um escrito num desenho de título, de parte ou de caixa, é avisado como `unknownConfigValue`, e o elemento é desenhado como se não o tivesse. O `postext check` acrescenta uma nota, `conditionNeverMet`, para um `when` ou `unless` com um atributo que nenhuma página do livro define: esse elemento nunca é desenhado, ou sempre.
+- No Sandbox, cada cartão de elemento de um cabeçalho e da decoração de um modelo tem os campos **Desenhado quando a página diz** e **Não desenhado quando a página diz**, cujas opções são os atributos que os contêineres de página do livro usam.
 
 ### O que a diagramação aplica
 
@@ -787,7 +835,7 @@ decoration: {
       <td>Liga as caixas que o modelo declara, e não as caixas que o conteúdo deu aos blocos.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>como nos outros elementos</td>
       <td><code>'all'</code></td>
       <td>Em que páginas é desenhado.</td>
@@ -856,6 +904,48 @@ decoration: { elements: [
 ```
 
 **Verificações.** Uma ponta cujo `to` não indica nada é `frameAnchorUnknown` (em `…/from/to` ou `…/to/<k>/to`) e fica de fora; `[*]` só é válido em `to` e num bloco repetido. Um `anchor` que nenhuma imagem do bloco tem é `labelAnchorUnknown`, com o id do conector. Uma palavra fora das opções de `routing`, `startCap`, `endCap` ou `side`, e um `at` fora de 0 a 1, são `unknownConfigValue`. Um `opacity` que não é um número de 0 a 1 também é `unknownConfigValue` (um número fora do intervalo é ajustado a ele).
+
+## Aparências de bloco
+
+Uma grade de cartões com foto cujas pílulas só mudam de cor, ou uma página de boxes em uma dúzia de tons, mantém um só estilo de boxe e um só modelo: as cores vão em `frameLooks`, uma lista de aparências com nome, e o Markdown indica uma em cada trecho que a usa. Desde o postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th>Significado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Obrigatório. A palavra que um trecho escreve em <code>look="…"</code>. Quando duas aparências têm o mesmo id, vale a primeira.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Mostrado só no Sandbox.</td>
+    </tr>
+    <tr>
+      <td>Os campos do <code>look</code> de um bloco</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, com os nomes e o aninhamento do <code>look</code> do bloco (veja <a href="#blocos">Blocos</a>). Um <code>background</code> também liga o preenchimento do estilo; a cor de uma aba só vale para um estilo que tem aba.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Onde vale.** Um trecho `:::frame{slot="…" look="<id>"}` usa a aparência. Numa grade, o trecho principal do item e o `:::frame` aninhado de um membro indicam cada um a sua (veja [Páginas compostas › Aparências de bloco](/pt/docs/composed-pages#aparências-de-bloco)).
+- **Ordem.** A aparência é aplicada sobre o estilo de boxe do bloco e sobre o `look` próprio do bloco do modelo, chave a chave: uma aparência que só define o preenchimento mantém a cor do texto do modelo. Vale só para esse trecho. Os blocos em que o texto dele continua (uma cadeia, uma página acrescentada por continuação) também a usam.
+- **Paletas.** Uma cor ligada a uma entrada da paleta acompanha a paleta como toda cor da configuração, então uma paleta de parte ou o `palette` de uma página a recolorem.
+- **Verificações.** Uma entrada sem `id` é ignorada (`unknownConfigValue`), e uma chave que uma aparência não tem é um `unknownConfigKey` em qualquer nível, com o nome mais parecido. Um trecho que indica um id que nenhuma entrada tem mantém as cores do bloco e gera o aviso `lookUnknown`.
+
+No Sandbox as aparências são editadas em **Design › Boxes › Aparências de bloco**, que também conta os trechos que indicam cada uma, e o botão **Aparência do bloco** do editor escreve `look="…"` no trecho em que está o cursor.
 
 ## Estilos de rótulo
 
@@ -1078,7 +1168,7 @@ anchors: [
 
 No resto da configuração, o motor ignora uma chave que não conhece. Os modelos de página e os estilos de rótulo, por outro lado, são verificados, e cada problema é um aviso de configuração no `postext check` e no painel Verificações do Sandbox. O campo `path` desses avisos é um ponteiro JSON para o campo com problema: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando o campo foi herdado, o ponteiro indica o modelo que o escreveu. Um aviso que cita um id ou um nome inexistente também sugere o existente mais parecido.
 
-Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, o `routing`, as pontas e o `side` de um conector, as pontas e o `routing` de uma linha de chamada) é um `unknownConfigValue`, e o ajuste mantém o valor padrão. Um modelo sem `id`, ou um bloco ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
+Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, o `routing`, as pontas e o `side` de um conector, as pontas e o `routing` de uma linha de chamada) é um `unknownConfigValue`, e o ajuste mantém o valor padrão. Um modelo sem `id`, ou um bloco ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo. As aparências de bloco (`frameLooks`) são verificadas do mesmo jeito: uma aparência sem `id` é ignorada, e uma chave que o `look` de um bloco não tem é um `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1156,7 +1246,7 @@ Desde os conectores (postext 1.48), a versão da configuração é a 16; os mode
 
 ### Avisos de sobreposição, repetição e módulos
 
-Estes avisos vêm da diagramação ou do Markdown da página, não só do modelo; por isso, indicam uma página. São listados pelo `postext check` (o `--json` traz os campos deles como `data`), no painel Verificações do Sandbox e nos `contentWarnings` do documento. Desde o postext 1.48.
+Estes avisos vêm da diagramação ou do Markdown da página, não só do modelo; por isso, indicam uma página. São listados pelo `postext check` (o `--json` traz os campos deles como `data`), no painel Verificações do Sandbox e nos `contentWarnings` do documento. Desde o postext 1.48, e o `lookUnknown` desde o postext 1.50.
 
 <table>
   <thead>
@@ -1181,6 +1271,11 @@ Estes avisos vêm da diagramação ou do Markdown da página, não só do modelo
       <td><code>repeatOverflow</code></td>
       <td>Uma grade que repete um conjunto de blocos comporta <code>repeat.max</code> itens e a página lhe dá mais. Um aviso por item a mais, no <code>slot="…"</code> dele: o item vai para o bloco de fluxo (<code>flowFrame</code>), ou para depois da página.</td>
       <td>Aumente o <code>max</code>, retire-o, ou passe os itens a mais para outra página.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Um trecho <code>:::frame</code> escreve <code>look="…"</code> com um id que nenhuma entrada de <code>frameLooks</code> tem (veja <a href="#aparências-de-bloco">Aparências de bloco</a>). O bloco mantém o seu estilo e as cores do modelo. Aponta para o valor do atributo e indica o id mais parecido (<code>suggestion</code>).</td>
+      <td>Corrija o id no trecho, ou acrescente a <code>frameLooks</code> uma aparência com esse id.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Réglages des pages composées',
   description: 'Les gabarits des pages composées (blocs, groupes, grilles qui répètent un jeu de blocs, modules, décor et connecteurs, héritage, variantes recto et verso), les styles des étiquettes placées sur les ancres d’une image, et les avertissements qu’un gabarit peut déclencher',
   lang: 'fr',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10 min',
   order: 18,
   parent: 'configuration',
@@ -153,6 +153,12 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
       <td>Le rôle de page que voient les éléments de maquette dotés d’un filtre <code>pages</code>. <code>'module'</code> fait du gabarit un module : une boîte de blocs que les pages empilent dans un groupe, au lieu d’une page à part entière (voir <a href="#modules">Modules</a>). Depuis postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Un module : sa largeur dans une rangée ou une pile de modules, en longueur, en pourcentage de la largeur du groupe, ou <code>'fill'</code>, une part égale de ce que laissent les autres modules de la rangée. Dans une grille, le module prend sa colonne. Depuis postext 1.50.</td>
     </tr>
   </tbody>
 </table>
@@ -345,7 +351,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Ce que ce bloc change de l’apparence de son style d’encadré, avec les noms et l’imbrication du style lui-même : couleurs (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> et <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) et interlettrage du texte (<code>body.letterSpacing</code>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet. Dans un gabarit enfant, il se fusionne clé par clé avec le bloc qu’il remplace. Un livre dont l’encadré existe en plusieurs teintes garde un seul style et écrit la teinte ici, ou laisse <code>palette</code> recolorer un fond lié à la palette. Depuis postext 1.42.</td>
+      <td>Ce que ce bloc change de l’apparence de son style d’encadré, avec les noms et l’imbrication du style lui-même : couleurs (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> et <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) et interlettrage du texte (<code>body.letterSpacing</code>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet. Dans un gabarit enfant, il se fusionne clé par clé avec le bloc qu’il remplace. Un livre dont l’encadré existe en plusieurs teintes garde un seul style et écrit la teinte ici, ou laisse <code>palette</code> recolorer un fond lié à la palette. Un morceau de la page peut y poser une apparence nommée (voir <a href="#apparences-de-bloc">Apparences de bloc</a>). Depuis postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -434,7 +440,7 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Une grille : la place d’une cellule moins haute que sa rangée. <code>'stretch'</code> rend son bloc principal aussi haut que la rangée (jusqu’à son <code>maxHeight</code>), quand la hauteur de ce bloc est <code>'auto'</code> ou <code>'fill'</code>.</td>
+      <td>Une grille : la place d’une cellule moins haute que sa rangée. <code>'stretch'</code> rend son bloc principal aussi haut que la rangée (jusqu’à son <code>maxHeight</code>), quand la hauteur de ce bloc est <code>'auto'</code> ou <code>'fill'</code>. Une rangée ou une grille de modules : la place d’un module moins haut que sa rangée ; <code>'stretch'</code> le pose dans une boîte aussi haute que la rangée, si bien que son fond et ses blocs <code>'fill'</code> atteignent le pied de la rangée.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Le groupe prend les blocs <code>:::module</code> de la page, l’un sous l’autre dans l’ordre du Markdown, avec <code>gap</code> entre eux. Il est posé en pile quel que soit son <code>kind</code>, et ses <code>frames</code> ne sont pas lus. Voir <a href="#modules">Modules</a>. Depuis postext 1.48.</td>
+      <td>Le groupe prend les blocs <code>:::module</code> de la page dans l’ordre du Markdown, avec <code>gap</code> entre eux : l’un sous l’autre (<code>'stack'</code>), côte à côte (<code>'row'</code>) ou en <code>columns</code> (<code>'grid'</code>, depuis postext 1.50). Ses <code>frames</code> ne sont pas lus. Voir <a href="#modules">Modules</a>. Depuis postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>aucun</td>
       <td>Un groupe de modules : l’endroit où se poursuit, entier, un module qui ne tient pas. Sans lui, le module est coupé au pied du groupe et ses blocs passent par les étapes d’ajustement.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>Un groupe de modules dans la pile de modules de ce nom : chaque suite de modules de la page qu’il reçoit, dans l’ordre du Markdown, est posée comme une rangée ou une grille de cette pile, là où vient le premier module de la suite. Depuis postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>aucun</td>
+      <td>Un groupe de modules avec <code>within</code> : les gabarits de module qu’il reçoit. Non renseigné, tous les modules. Un module va au premier groupe de ce genre qui le reçoit, sinon à la pile.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **Ce que contient un module.** Des blocs, des groupes (y compris une grille qui répète), un décor et des connecteurs. Il n’a ni `area`, ni `header`, ni `footer`, ni `variants`, ni `spread`, ni `gutter`, ni `overflowTemplate` : chacun d’eux est signalé comme `unknownConfigValue` et ignoré. `extends` fonctionne entre modules (un gabarit qui étend un module est un module).
 - **Sa boîte.** Un module est aussi large que son groupe et aussi haut que ses blocs vont loin ; le groupe empile les modules depuis son haut, avec `gap` entre eux. Dans un module, `'container'` est la boîte du module, pour ses blocs (`'fill'` et les pourcentages aussi) et pour son décor : un fond dimensionné à `{ to: 'container', edge: 'bottom' }` couvre le module, quelle que soit la hauteur que lui donnent ses mots.
 - **Noms.** Les blocs, groupes et éléments d’un module sont rangés sous le nom de l’instance du module : `<name>.<frame>`, avec le nom que donne le Markdown (`name="ramas"`) ou, à défaut, `<template>[n]`, le rang du module parmi les modules de ce gabarit sur la page (`arbol[2].raiz`). Les ancrages, `next`, `continueIn: '#x'` et les connecteurs d’un module sont réécrits vers ses propres blocs : deux arbres sur une même page ne se relient donc jamais l’un à l’autre. L’identifiant d’un bloc s’écrit `cp0:arbol[2].raiz`.
-- **Quand les modules ne tiennent pas.** Un module qui dépasse le pied du groupe y est coupé et ses blocs passent par les étapes d’ajustement ; `frameOverflow` est déclenché une fois pour le groupe. Avec `overflow.continueIn` sur le groupe de modules (`'next-page'` ou `'template:<id>'`), le premier module qui ne tient pas et tous ceux qui le suivent se poursuivent **entiers** sur la page ajoutée, sous les mêmes noms, en haut du groupe de modules de cette page.
-- **Pas encore.** Des modules côte à côte (un groupe de modules est toujours une pile), un module dans un module (`moduleNested`) et des cellules de `grid` du gabarit dans un module.
+- **Quand les modules ne tiennent pas.** Un module qui dépasse le pied du groupe y est coupé et ses blocs passent par les étapes d’ajustement ; `frameOverflow` est déclenché une fois pour le groupe. Avec `overflow.continueIn` sur le groupe de modules (`'next-page'` ou `'template:<id>'`), le premier module qui ne tient pas et tous ceux qui le suivent se poursuivent **entiers** sur la page ajoutée, sous les mêmes noms, en haut du groupe de modules de cette page. Dans une rangée ou une grille de modules, une rangée continue entière : ses modules ne sont jamais partagés entre deux pages.
+- **Côte à côte.** Un groupe de modules avec `kind: 'row'` pose ses modules du début à la fin, chacun à la `width` de son gabarit (une longueur, `{ percent: 48 }`, ou `'fill'`, une part égale de ce qui reste), la rangée aussi haute que son module le plus haut ; `kind: 'grid'` les pose en `columns` colonnes égales, rangée après rangée. `rowAlign` place un module moins haut que sa rangée. Les rangées partent du côté où commence la ligne : une page de droite à gauche pose le premier module à droite. Depuis postext 1.50.
+- **Groupes dans la pile.** Un groupe de modules avec `within: '<pile>'` se place dans la pile de modules de la page, et `templates` dit quels modules il reçoit : chaque suite de ces modules dans le Markdown forme une rangée ou une grille de la pile, là où vient son premier module. Avec les groupes ci-dessous, deux blocs `aviso` suivis de quatre blocs `tarjeta` donnent une rangée de deux encadrés sur une grille de 2 × 2 cartes, et le Markdown ne contient que des blocs `:::module`.
+- **Pas encore.** Un module dans un module (`moduleNested`), des cellules `grid` de gabarit dans un module, et un groupe dans une rangée ou une grille de modules.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Quand le contenu ne tient pas
 
@@ -651,6 +679,26 @@ pageTemplates: [
 Une valeur égale à une valeur par défaut n’est jamais abandonnée quand le Sandbox enregistre un gabarit : dans un gabarit qui en étend un autre, ou dans une variante, elle remplace la valeur du parent.
 
 Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit avec sa chaîne fusionnée, la variante du côté appliquée, toutes les valeurs par défaut remplies et chaque référence réglée comme le décrivent les avertissements ci-dessous ; `validatePageTemplates(config)` renvoie les avertissements.
+
+### Dessiné quand la page le dit
+
+Un élément de la décoration, et un élément du `header` ou du `footer` du gabarit, peut porter `when` ou `unless`, chacun nommant un attribut du délimiteur de la page. `when: 'folio'` ne dessine l’élément que sur les pages dont le délimiteur pose `folio` ; `unless: 'frontmatter'` le retire des pages dont le délimiteur pose `frontmatter`. Un délimiteur pose un attribut quand il l’écrit seul (`::::page{template="pagina" frontmatter}`) ou avec une valeur autre que `false`. Un même gabarit sert alors aux pages liminaires, sans folio ni bandeau, et aux pages du corps, qui portent les deux : le Markdown dit ce qu’est la page, le gabarit garde le dessin. Depuis postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Un élément ancré à un élément retiré, ou dont la taille va jusqu’à lui, est retiré aussi.
+- Avec les deux clés, l’élément est dessiné là où le délimiteur pose l’attribut de `when` et pas celui de `unless`.
+- Les titres courants du document et ceux d’une section les lisent aussi. Une page qui n’est pas composée n’a pas de délimiteur et ne pose rien. Les dessins de titre, de partie et d’encadré les ignorent.
+- Une valeur qui n’est pas un texte non vide, ou une valeur écrite dans un dessin de titre, de partie ou d’encadré, est signalée par `unknownConfigValue`, et l’élément est dessiné comme s’il n’en avait pas. `postext check` ajoute une note, `conditionNeverMet`, pour un `when` ou un `unless` sur un attribut qu’aucune page du livre ne pose : cet élément n’est jamais dessiné, ou toujours.
+- Dans le Sandbox, chaque fiche d’élément d’un titre courant et de la décoration d’un gabarit a les champs **Dessiné quand la page le dit** et **Pas dessiné quand la page le dit**, dont les choix sont les attributs des délimiteurs du livre.
 
 ### Ce que la mise en page applique
 
@@ -787,7 +835,7 @@ decoration: {
       <td>Relie les boîtes que déclare le gabarit, et non celles que le contenu a données aux blocs.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>comme les autres éléments</td>
       <td><code>'all'</code></td>
       <td>Les pages qui le dessinent.</td>
@@ -856,6 +904,48 @@ decoration: { elements: [
 ```
 
 **Vérifications.** Une extrémité dont le `to` ne désigne rien est un `frameAnchorUnknown` (sur `…/from/to` ou `…/to/<k>/to`) et est laissée de côté ; `[*]` n’est valable que dans `to` et sur un bloc répété. Une `anchor` qu’aucune image du bloc n’a est un `labelAnchorUnknown`, avec l’identifiant du connecteur. Un mot hors des choix de `routing`, `startCap`, `endCap` ou `side`, et un `at` hors de l’intervalle 0 à 1, sont des `unknownConfigValue`. Une `opacity` qui n’est pas un nombre de 0 à 1 est aussi un `unknownConfigValue` (un nombre hors de l’intervalle y est ramené).
+
+## Apparences de bloc
+
+Une grille de cartes photo dont les pastilles ne diffèrent que par la couleur, ou une page d’encadrés en une douzaine de teintes, garde un seul style d’encadré et un seul gabarit : les couleurs vont dans `frameLooks`, une liste d’apparences nommées, et le Markdown en désigne une sur chaque morceau qui la porte. Depuis postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Champ</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Obligatoire. Le mot qu’un morceau écrit dans <code>look="…"</code>. Quand deux apparences ont le même identifiant, la première est utilisée.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Affiché seulement dans le Sandbox.</td>
+    </tr>
+    <tr>
+      <td>Les champs du <code>look</code> d’un bloc</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, nommés et imbriqués comme dans le <code>look</code> du bloc (voir <a href="#blocs">Blocs</a>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Où elle s’applique.** Un morceau `:::frame{slot="…" look="<id>"}` porte l’apparence. Dans une grille, le morceau principal de l’élément et le `:::frame` imbriqué d’un membre désignent chacun la leur (voir [Pages composées › Apparences de bloc](/fr/docs/composed-pages#apparences-de-bloc)).
+- **Ordre.** L’apparence se pose sur le style d’encadré du bloc et sur le `look` propre du bloc du gabarit, clé par clé : une apparence qui ne fixe que le fond garde la couleur du texte du gabarit. Elle ne s’applique qu’à ce morceau. Les blocs où son texte se poursuit (une chaîne, une page ajoutée par la suite) la portent aussi.
+- **Palettes.** Une couleur liée à une entrée de palette suit la palette comme toutes les couleurs de la configuration : une palette de partie ou la `palette` d’une page la recolore.
+- **Vérifications.** Une entrée sans `id` est ignorée (`unknownConfigValue`), et une clé qu’une apparence n’a pas est un `unknownConfigKey` à toute profondeur, avec le nom le plus proche. Un morceau qui désigne un identifiant qu’aucune entrée ne porte garde les couleurs de son bloc et déclenche `lookUnknown`.
+
+Dans le Sandbox, les apparences se modifient dans **Maquette › Encadrés › Apparences de bloc**, qui compte aussi les morceaux qui désignent chacune d’elles, et le bouton **Apparence du bloc** de l’éditeur écrit `look="…"` sur le morceau où se trouve le curseur.
 
 ## Styles d’étiquette
 
@@ -1078,7 +1168,7 @@ anchors: [
 
 Ailleurs, le moteur ignore une clé qu’il ne connaît pas. Les gabarits de page et les styles d’étiquette sont au contraire vérifiés, et chaque problème devient un avertissement de configuration dans `postext check` et dans le panneau Vérifications du Sandbox. Le `path` de ces avertissements est un pointeur JSON vers le champ en cause : `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quand le champ a été hérité, le pointeur désigne le gabarit qui l’a défini. Un avertissement qui cite un identifiant ou un nom inexistant propose aussi le plus proche qui existe.
 
-Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, le `routing`, les extrémités et le `side` d’un connecteur, les extrémités et le `routing` d’un trait de rappel) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
+Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, le `routing`, les extrémités et le `side` d’un connecteur, les extrémités et le `routing` d’un trait de rappel) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ. Les apparences de bloc (`frameLooks`) sont vérifiées de la même façon : une apparence sans `id` est ignorée, et une clé que le `look` d’un bloc n’a pas est un `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1156,7 +1246,7 @@ Depuis les connecteurs (postext 1.48), la version de la configuration est 16 ;
 
 ### Avertissements de chevauchement, de répétition et de modules
 
-Ces avertissements viennent de la mise en page ou du Markdown de la page, et non du gabarit seul : ils indiquent donc une page. Ils sont listés par `postext check` (`--json` fournit leurs champs dans `data`), dans le panneau Vérifications du Sandbox et dans les `contentWarnings` du document. Depuis postext 1.48.
+Ces avertissements viennent de la mise en page ou du Markdown de la page, et non du gabarit seul : ils indiquent donc une page. Ils sont listés par `postext check` (`--json` fournit leurs champs dans `data`), dans le panneau Vérifications du Sandbox et dans les `contentWarnings` du document. Depuis postext 1.48, `lookUnknown` depuis postext 1.50.
 
 <table>
   <thead>
@@ -1181,6 +1271,11 @@ Ces avertissements viennent de la mise en page ou du Markdown de la page, et non
       <td><code>repeatOverflow</code></td>
       <td>Une grille qui répète un jeu de blocs contient <code>repeat.max</code> éléments et la page lui en donne davantage. Un avertissement par élément en trop, sur son <code>slot="…"</code> : l’élément va dans le bloc de flux (<code>flowFrame</code>), ou après la page.</td>
       <td>Relever <code>max</code>, le retirer, ou déplacer les éléments en trop sur une autre page.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un morceau <code>:::frame</code> écrit <code>look="…"</code> avec un identifiant qu’aucune entrée de <code>frameLooks</code> ne porte (voir <a href="#apparences-de-bloc">Apparences de bloc</a>). Le bloc garde son style et les couleurs de son gabarit. Pointe vers la valeur de l’attribut et indique l’identifiant le plus proche (<code>suggestion</code>).</td>
+      <td>Corriger l’identifiant sur le morceau, ou ajouter à <code>frameLooks</code> une apparence qui porte cet identifiant.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

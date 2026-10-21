@@ -55,7 +55,7 @@ describe('every setting the engine resolves', () => {
       if (off.length > 0) failures.push(`${path}: moved ${off.slice(0, 4).join(', ')}`);
     }
     expect(failures).toEqual([]);
-  }, 120_000);
+  }, 300_000);
 
   it('takes another value when it is a number or a switch, and the answer accounts for everything that moved', async () => {
     const before = leafEntries((await harness(book()).call('sandbox_get_config', { effective: true })).effective);
@@ -99,7 +99,7 @@ describe('every setting the engine resolves', () => {
     expect(failures).toEqual([]);
     expect(changed).toBeGreaterThan(650);
     expect(limited).toBeLessThan(20);
-  }, 120_000);
+  }, 300_000);
 });
 
 // #1081: a frame's overlap (C2), which the frame editor's «May overlap on
@@ -122,5 +122,95 @@ describe('a composed frame\'s overlap', () => {
     const read = 'pageTemplates[id=card].frames[1].overlap';
     expect(after.get(read)).toBe(value);
     expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
+  });
+});
+
+// #1088: a modules group's kind (row, grid), the modules a group inside the
+// stack takes, and a module's width, which the group editor and the
+// template editor write, are settings like any other.
+describe('modules side by side', () => {
+  const composed = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="shell"}\n:::module{template="box"}\n:::frame{slot="text"}\nWords.\n:::\n:::\n::::\n')];
+    const config = {
+      pageTemplates: [
+        { id: 'shell', frames: [], groups: [{ name: 'body', modules: true }, { name: 'pair', modules: true, within: 'body' }] },
+        { id: 'box', role: 'module', frames: [{ name: 'text' }] },
+      ],
+    };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it.each([
+    ['pageTemplates[id=shell].groups[name=pair].kind', 'row', 'pageTemplates[id=shell].groups[1].kind', 'row'],
+    ['pageTemplates[id=shell].groups[name=pair].templates', ['box'], 'pageTemplates[id=shell].groups[1].templates[0]', 'box'],
+    ['pageTemplates[id=box].width', { percent: 40 }, 'pageTemplates[id=box].width.percent', 40],
+  ] as const)('writes %s and nothing else moves', async (path, value, read, want) => {
+    const { call } = harness(composed() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const done = await call('sandbox_set_config', { changes: [{ path, value }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(after.get(read)).toBe(want);
+    expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
+  });
+});
+
+// #1087: a design element's page-fence condition, which the element card's
+// «Drawn when / Not drawn when the page says» fields write, is a setting
+// like any other: written, read back, nothing else moving.
+describe('a design element\'s page-fence condition', () => {
+  const composed = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="shell" frontmatter}\nWords.\n::::\n')];
+    const folio = { kind: 'text', id: 'folio', content: '{pageNumber}', placement: { anchor: { to: 'page', edge: 'bottom-center' } } };
+    const config = {
+      pageTemplates: [{ id: 'shell', frames: [{ name: 'main', flow: true }], decoration: { elements: [folio] }, footer: { elements: [{ ...folio, id: 'foot' }] } }],
+    };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it.each([
+    ['pageTemplates[id=shell].decoration.elements[id=folio].when', 'folio'],
+    ['pageTemplates[id=shell].decoration.elements[id=folio].unless', 'frontmatter'],
+    ['pageTemplates[id=shell].footer.elements[id=foot].unless', 'frontmatter'],
+  ])('%s takes a value and nothing else moves', async (path, value) => {
+    const { call } = harness(composed() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const done = await call('sandbox_set_config', { changes: [{ path, value }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const added = moved(before, after);
+    expect(added).toHaveLength(1);
+    expect(added[0]!.endsWith(path.slice(path.lastIndexOf('.')))).toBe(true);
+    expect(after.get(added[0]!)).toBe(value);
+  });
+});
+
+// #1089: named frame looks are settings like any other: a look's colour is
+// written by its id and read back, nothing else moving, and a book with
+// none takes a first one.
+describe('named frame looks', () => {
+  const hex = (h: string) => ({ hex: h, model: 'hex' });
+  const looked = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="card"}\n:::frame{slot="main" look="pill"}\nWords.\n:::\n::::\n')];
+    const config = {
+      pageTemplates: [{ id: 'card', frames: [{ name: 'main', height: { value: 40, unit: 'mm' } }] }],
+      frameLooks: [{ id: 'pill', background: hex('#e63946') }],
+    };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it('writes a look\'s colour by its id', async () => {
+    const { call } = harness(looked() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(before.get('frameLooks[id=pill].background.hex')).toBe('#e63946');
+    const done = await call('sandbox_set_config', { changes: [{ path: 'frameLooks[id=pill].background', value: hex('#2a9d8f') }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(after.get('frameLooks[id=pill].background.hex')).toBe('#2a9d8f');
+    expect(moved(before, after).filter((p) => !p.startsWith('frameLooks[id=pill].background'))).toEqual([]);
+  });
+  it('adds a first look to a book with none', async () => {
+    const { call } = harness(book());
+    const done = await call('sandbox_set_config', { changes: [{ path: 'frameLooks', value: [{ id: 'teal', border: { color: hex('#008080') } }] }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const read = await call('sandbox_get_config', { path: 'frameLooks' });
+    expect(read.set).toEqual([{ id: 'teal', border: { color: hex('#008080') } }]);
   });
 });

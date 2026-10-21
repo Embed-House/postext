@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Zusammengesetzte Seiten',
   description: 'Wie Sie eine zusammengesetzte Seite in Markdown schreiben: der Seitenblock, eingeleitet mit vier Doppelpunkten, der die Vorlage angibt; Rahmen und das Attribut slot, die den Inhalt auf die Rahmen der Vorlage verteilen; wiederholte Slots und Module; und die Warnungen, wenn Inhalt und Vorlage nicht zusammenpassen oder ein Rahmen einen anderen verdeckt',
   lang: 'de',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '41 min',
   order: 34,
   plainSummary: "Manche Seiten bestehen nicht aus einer Spalte Fließtext, sondern aus mehreren Feldern, so wie eine Schulbuchseite mit einem Titelband, einem Text und drei farbigen Kästen mit Fotos. Postext nennt sie zusammengesetzte Seiten. Die Form der Seite ist eine Vorlage in der Konfiguration, und das Markdown sagt nur, welcher Teil des Textes in welches Feld gehört. Diese Seite zeigt, wie Sie dieses Markdown schreiben: den Seitenblock, die Rahmen, die Slot-Namen, Karten, die sich in einem Raster wiederholen, und Blöcke, die als Module übereinanderstehen. Sie führt außerdem die Warnungen auf, die Postext ausgibt, wenn Text und Vorlage nicht zusammenpassen.",
@@ -43,6 +43,7 @@ Eine zusammengesetzte Seite wird als *Seitenblock* geschrieben: Er beginnt mit e
     <tr><td><code>spread</code></td><td>Die Seite ist eine Doppelseite aus zwei gegenüberliegenden Seiten (siehe <a href="#doppelseiten">Doppelseiten</a>). Sie muss zum <code>spread</code> der Vorlage passen; sonst entscheidet die Vorlage, und <code>spreadMismatch</code> meldet es.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Ein Verweisziel: Ein <code>:ref</code> darauf gibt die Seitenzahl aus, auf der die zusammengesetzte Seite steht.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Farben der Paletteneinträge dieser Seite, als Paare <code>Eintrag=#hex</code>, durch Kommas getrennt: <code>palette="farbton=#f6c3d0"</code> für eine Seite, deren Kästen den Farbton des Themas annehmen. Alle an die Palette gebundenen Farben ihrer Rahmen und ihrer Dekoration übernehmen sie; die <code>palette</code> der Vorlage wird dabei überschrieben. Seit postext 1.42.</td></tr>
+    <tr><td>ein Schalter wie <code>frontmatter</code></td><td>Ein Attribut, das ein Element der Vorlage in <code>when</code> oder <code>unless</code> nennt: <code>frontmatter</code> auf einer Titelseite lässt die Seitenzahl und das Band weg, die die Vorlage auf Textseiten zeichnet. Allein geschrieben ist es gesetzt, ebenso mit jedem Wert außer <code>false</code>. Siehe <a href="/de/docs/configuration-composed-pages#gezeichnet-wenn-die-seite-es-sagt">Gezeichnet, wenn die Seite es sagt</a>. Seit postext 1.50.</td></tr>
     <tr><td>jedes andere</td><td>Ein Wert, den die Vorlage als <code>&#123;attr.name&#125;</code> liest, etwa ein Hintergrundbild, das Seite für Seite gewählt wird: <code>fondo="banda-retos"</code> mit <code>resourceId: "&#123;attr.fondo&#125;"</code> in der Dekoration.</td></tr>
   </tbody>
 </table>
@@ -68,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Ein **Slot** gibt an, in welchen Rahmen ein Teil des Inhalts kommt: Er entspricht dem Namen eines Rahmens der Vorlage. `:::frame{slot="…"}` leitet alles, was darin steht, in diesen Rahmen. Der Inhalt ist vollständiges Markdown: Absätze, Listen, Überschriften, Chips, `::resource`-Einbettungen, `:ref`-Verweise, Fußnoten, `:::columns` und verschachtelte Kästen. `label` und `title` legen den Text des Etiketts bzw. des Titels des Rahmens fest, wie bei einem `:::callout`; das Aussehen des Rahmens bestimmt der Kastenstil, den die Vorlage ihm zuweist.
+Ein **Slot** gibt an, in welchen Rahmen ein Teil des Inhalts kommt: Er entspricht dem Namen eines Rahmens der Vorlage. `:::frame{slot="…"}` leitet alles, was darin steht, in diesen Rahmen. Der Inhalt ist vollständiges Markdown: Absätze, Listen, Überschriften, Chips, `::resource`-Einbettungen, `:ref`-Verweise, Fußnoten, `:::columns` und verschachtelte Kästen. `label` und `title` legen den Text des Etiketts bzw. des Titels des Rahmens fest, wie bei einem `:::callout`; das Aussehen des Rahmens bestimmt der Kastenstil, den die Vorlage ihm zuweist, und ein Teil kann ein eigenes Aussehen nennen (siehe [Rahmenaussehen](#rahmenaussehen)).
 
 Ein einzelner Block kann seinen Slot selbst angeben:
 
@@ -131,6 +132,36 @@ Der Fischotter
 
 Ein Rahmen des Satzes wird nur dann als `slotEmpty` gemeldet, wenn keine Karte der Seite ihn füllt. Ein wiederholter Rahmen übernimmt nie eine Überschrift und ist nie der Flussrahmen.
 
+### Rahmenaussehen
+
+Ein Teil kann ein benanntes Aussehen tragen: einen Satz Farben, den die Konfiguration in `frameLooks` festlegt (siehe [Konfiguration › Rahmenaussehen](/de/docs/configuration-composed-pages#rahmenaussehen)). Das Markdown nennt das Aussehen, die Konfiguration sagt, wie es ist. In einem Raster bekommt so jede Karte ihre eigene Farbe, während alle Karten bei einer Vorlage und einem Stil bleiben:
+
+```md
+::::page{template="fotos"}
+# Tiere am Fluss
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+Der Reiher
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+Der Fischotter
+:::
+:::
+::::
+```
+
+- **Wo.** `look` steht in der Eröffnungszeile eines beliebigen Teils `:::frame{slot="…"}`. Der Hauptteil einer Karte (hier der Rahmen des zweiten Fotos) und ein darin verschachteltes Mitglied (jedes Etikett) nennen jeweils ihr eigenes.
+- **Was es ändert.** Das Aussehen legt sich über den Stil des Rahmens und die eigenen Farben der Vorlage, nur für diesen Teil: Die anderen Karten behalten ihre. Text, der in einem anderen Rahmen weiterläuft (eine Kette, eine Fortsetzungsseite), behält das Aussehen.
+- **Eine unbekannte ID.** Eine ID, die `frameLooks` nicht hat, löst `lookUnknown` am Attribut aus, mit der nächstliegenden ID, und der Rahmen behält seine Farben.
+
 ### Module auf einer Seite
 
 Eine Seitenvorlage mit einer Modulgruppe (`modules: true`, siehe [Konfiguration › Module](/de/docs/configuration-composed-pages#module)) nimmt ihre Blöcke aus `:::module`-Containern, untereinander in der geschriebenen Reihenfolge. Die Vorlage des Moduls zeichnet den Block, der Container enthält seine Wörter:
@@ -163,6 +194,7 @@ Das Leben an seinen Ufern
 - **`template`** nennt eine Vorlage mit `role: 'module'`. **`name`** ist optional: Es benennt die Instanz des Moduls, sodass seine Rahmen `ramas.raiz` und `ramas.izq` heißen. Ohne Namen ist die Instanz `<template>[n]`, die laufende Nummer des Moduls unter den Modulen dieser Vorlage auf der Seite: `arbol[1].raiz`. Ein Name, der auf der Seite schon vergeben ist, oder einer mit Leerzeichen, `.`, `#`, `[` oder `]`, wird durch diesen Standardnamen ersetzt (`moduleNameRejected`).
 - **Slots** innerhalb eines `:::module` gehören dem Modul: `slot="raiz"` erreicht den Rahmen `raiz` dieses Moduls, und zwei Module derselben Vorlage auf einer Seite halten ihre Wörter auseinander. Inhalt ohne Slot kommt in den Flussrahmen des Moduls, eine Überschrift in den Rahmen des Moduls, der ihre Ebene übernimmt (`takes`); fehlt beides, in den Flussrahmen der Seite.
 - **Reihenfolge.** Die Module stapeln sich in der Reihenfolge des Markdowns; eine andere Seite setzt dieselben Blöcke also in anderer Reihenfolge oder mit einem Baum mehr, ohne neue Vorlage.
+- **Nebeneinander.** Ist die Modulgruppe eine Reihe oder ein Raster oder enthält sie eigene Gruppen (`within`), stehen dieselben Blöcke nebeneinander: Zwei `:::module{template="aviso"}`, gefolgt von vier `:::module{template="tarjeta"}`, ergeben eine Reihe aus zwei Kästen über einem Raster aus 2 × 2 Karten. Das Markdown sagt weiterhin nur, welche Module kommen und in welcher Reihenfolge (siehe [Konfiguration › Module](/de/docs/configuration-composed-pages#module)).
 - Ein `:::module` außerhalb eines Seitenblocks ist ein einfacher Kasten mit seinem Inhalt. Ein Modul in einem Modul wird nicht unterstützt (`moduleNested`).
 
 ## Beispiel
@@ -329,6 +361,11 @@ Die Prüfungen werten Markdown und Konfiguration aus, noch bevor das Buch gesetz
       <td>Erhöhen oder entfernen Sie <code>max</code> in der Vorlage, oder setzen Sie die überzähligen Karten auf eine andere Seite.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Ein Teil <code>:::frame</code> schreibt <code>look="…"</code> mit einer ID, die kein Eintrag von <code>frameLooks</code> hat (siehe <a href="#rahmenaussehen">Rahmenaussehen</a>). Der Rahmen behält seinen Stil und die Farben seiner Vorlage. Die Warnung nennt die nächstliegende ID (<code>suggestion</code>).</td>
+      <td>Korrigieren Sie die ID, oder fügen Sie das Aussehen zu <code>frameLooks</code> hinzu.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Ein <code>:::module</code> nennt keine Vorlage, eine Vorlage, die kein Modul ist, oder die Vorlage der Seite hat keine Modulgruppe (<code>reason</code>). Sein Inhalt kommt in den Flussrahmen.</td>
       <td>Korrigieren Sie das <code>template</code> des Moduls, oder geben Sie der Vorlage der Seite eine Gruppe mit <code>modules: true</code>.</td>
@@ -351,7 +388,7 @@ Die Prüfungen werten Markdown und Konfiguration aus, noch bevor das Buch gesetz
   </tbody>
 </table>
 
-Die Modulwarnungen und `repeatOverflow` gibt es seit postext 1.48; die Seite der Vorlage beschreibt jeweils [Konfiguration › Warnungen zu Überlappung, Wiederholung und Modulen](/de/docs/configuration-composed-pages#warnungen-zu-überlappung-wiederholung-und-modulen).
+Die Modulwarnungen und `repeatOverflow` gibt es seit postext 1.48, `lookUnknown` seit postext 1.50; die Seite der Vorlage beschreibt jeweils [Konfiguration › Warnungen zu Überlappung, Wiederholung und Modulen](/de/docs/configuration-composed-pages#warnungen-zu-überlappung-wiederholung-und-modulen).
 
 Sobald das Buch gesetzt ist, enthält jede dieser Warnungen auch die Seite, die sie betrifft (`pageIndex`), sodass das Bedienfeld Prüfungen und `postext check` die Seitenzahl neben der Vorlage, dem Rahmen oder Slot und dem Quellbereich angeben.
 
@@ -462,7 +499,7 @@ Bringt keine Stufe den Inhalt unter, wird der Rahmen an seinem Fuß abgeschnitte
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> des Rahmens: die größte Textskalierung, in Schritten von 2,5 % bis hinunter auf 50 %, bei der der Inhalt passt, auf der Seite ausprobiert. Mit <code>fit.shrinkText: false</code> schaltet <code>also</code> es ein.</td>
+      <td><code>fit.minScale</code> des Rahmens: die größte Textskalierung, in Schritten von 2,5 % bis hinunter auf 50 %, bei der der Inhalt passt, auf der Seite ausprobiert. Trennt diese Skalierung ein Wort, das breiter ist als der Rahmen, nennt der Vorschlag die größte kleinere Skalierung, bei der der Inhalt passt und jedes Wort ganz bleibt, mit <code>word: 'whole'</code>; hält keine bis 50 % es ganz, bleibt es bei der größten, die passt, mit <code>word: 'divided'</code>. Mit <code>fit.shrinkText: false</code> schaltet <code>also</code> es ein.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

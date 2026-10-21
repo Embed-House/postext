@@ -4,6 +4,7 @@
 // out again and says whether the frame fits; sandbox_undo takes it back.
 
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { buildDocument, createMeasurementCache } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
 import { setActiveHistory } from '../../history/sandboxHistory';
 import { resetViewerEdits } from '../../editor/viewerEdits';
@@ -94,5 +95,45 @@ describe('sandbox_apply_proposal', () => {
     expect((await call('sandbox_apply_proposal', { frame: 'gasto', proposal: 1 })).error).toMatch(/"gasto" has no such check in chapter 1\. The frames with fixes: dinero \(frameOverflow, page 1\)/);
     expect((await call('sandbox_apply_proposal', { frame: 'dinero', proposal: 'lowerMin' })).error).toMatch(/No such fix for "dinero"\. Its fixes: 1\. /);
     expect((await call('sandbox_apply_proposal', { frame: 'dinero', proposal: 99 })).error).toMatch(/No such fix/);
+  });
+});
+
+describe('sandbox_apply_proposal on a held pill (#1090)', () => {
+  const pt = (value: number) => ({ value, unit: 'pt' as const });
+  const WORD = 'Administrationalism';
+  const MARKDOWN = `::::page{template="t"}\n\n:::frame{slot="pill"}\n${WORD}\n:::\n\n::::`;
+  /** A pill held to 10.5 mm whose one word is wider than its measure, its
+   *  text not allowed to shrink (`minScale: 1`): the word is divided. */
+  function pillBook() {
+    const config = {
+      page: { width: mm(200), height: mm(260), dpi: 300, margins: { top: mm(20), bottom: mm(20), left: mm(20), right: mm(20) } },
+      headings: { balancing: { enabled: false }, levels: [{ level: 1, breakBefore: { enabled: false } }] },
+      bodyText: { fontSize: pt(11), lineHeight: pt(16), firstLineIndent: pt(0) },
+      calloutStyles: [{ id: 'pill', backgroundEnabled: true, background: { hex: '#cfe3f5', model: 'hex' }, padding: { top: mm(0), right: mm(1), bottom: mm(0), left: mm(1) } }],
+      pageTemplates: [{ id: 't', frames: [{ name: 'pill', style: 'pill', placement: { anchor: { to: 'container', edge: 'top-left' } }, width: mm(10), minHeight: mm(10.5), maxHeight: mm(10.5), verticalAlign: 'middle', fit: { minScale: 1 } }] }],
+    } as unknown as PostextConfig;
+    return { chapters: [chapter('c', 'Pill', MARKDOWN)], activeChapterId: 'c', markdown: MARKDOWN, config, resources: [] };
+  }
+  /** The pill's lines as the book lays them out with `config`. */
+  const pillLines = (config: PostextConfig): string[] => {
+    const doc = buildDocument({ markdown: MARKDOWN }, config, createMeasurementCache());
+    const page = doc.pages.find((p) => p.composed)!;
+    const ids = page.composed!.frames.find((f) => f.name === 'pill')!.blockIds;
+    return (page.floats ?? []).filter((b) => ids.includes(b.id)).flatMap((b) => (b.lines ?? []).map((l) => l.text));
+  };
+
+  it('the shrink proposal names the scale that keeps the word whole; applied, the check is gone and the word whole', async () => {
+    const { call, get } = harness(pillBook());
+    expect(pillLines(get().config).length).toBe(2);
+    const found = await call('sandbox_get_warnings');
+    const overflow = (found.warnings as Listed[]).find((w) => w.kind === 'frameOverflow')!;
+    const shrink = overflow.proposals!.find((p) => p.kind === 'allowShrink')!;
+    expect(shrink.words).toBe('let its text shrink to 75 %, where its long word is whole (fit.minScale: 0.75)');
+    const done = await call('sandbox_apply_proposal', { frame: 'pill', proposal: 'allowShrink' });
+    expect(done).toMatchObject({ ok: true, changed: true, fits: true, fix: { kind: 'allowShrink' } });
+    expect(get().config.pageTemplates![0]!.frames![0]!.fit?.minScale).toBe(0.75);
+    const again = await call('sandbox_get_warnings');
+    expect((again.warnings as Listed[]).some((w) => w.kind === 'frameOverflow')).toBe(false);
+    expect(pillLines(get().config)).toEqual([WORD]);
   });
 });

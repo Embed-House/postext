@@ -58,6 +58,7 @@ import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
 import { resolveContentInConfigCheck } from './defaults/checks';
 import { stripPlaceholders } from './pipeline/placeholders';
 import { configDesignSlots } from './design/slots';
+import { FENCE_CONDITION_SLOTS } from './design/fenceCondition';
 import { parseSvgPath, pathViewBox } from './design/svgPath';
 import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES, connectorPaintsOver } from './design/connector';
 import { metadataText } from './frontmatter';
@@ -123,7 +124,9 @@ function percentText(n: number): string {
  * - a path element's keys, path data, `viewBox` and
  *   `preserveAspectRatio` (#1060);
  * - box shapes (#1059): corner and side keys a box does not have, a label
- *   tab's `position` outside its choices, a joined tab with an `offset`.
+ *   tab's `position` outside its choices, a joined tab with an `offset`;
+ * - a design element's `when` / `unless` that names no attribute, or that
+ *   a heading, part or box design would ignore (#1087).
  * Pure.
  */
 export function collectConfigWarnings(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): ConfigWarning[] {
@@ -135,8 +138,31 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectContentInConfigWarnings(config, options),
     ...collectDesignAnchorWarnings(config),
     ...collectDesignPathWarnings(config), ...collectBoxShapeWarnings(config),
-    ...collectConnectorWarnings(config),
+    ...collectConnectorWarnings(config), ...collectFenceConditionWarnings(config),
   ];
+}
+
+/** A design element's page-fence condition (#1087): a `when` / `unless`
+ *  that names no attribute (not a string, or empty), or one written in a
+ *  slot that does not read it (a heading, part, contents row or box design),
+ *  is `unknownConfigValue` with `used: ''`: the element is drawn as if it
+ *  had none. */
+function collectFenceConditionWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  for (const slot of configDesignSlots(config)) {
+    slot.slot.elements.forEach((el, i) => {
+      const e = el as unknown as Record<string, unknown> | null;
+      if (!e || typeof e !== 'object') return;
+      for (const key of ['when', 'unless'] as const) {
+        const v = e[key];
+        if (v === undefined) continue;
+        const named = typeof v === 'string' && v.trim() !== '';
+        if (named && FENCE_CONDITION_SLOTS.has(slot.kind)) continue;
+        out.push({ kind: 'unknownConfigValue', path: `${slot.path}.elements[${i}].${key}`, value: typeof v === 'string' ? v : JSON.stringify(v) ?? String(v), used: '' });
+      }
+    });
+  }
+  return out;
 }
 
 /** Connectors (#1056): one outside a page template's decoration (a
@@ -195,7 +221,7 @@ function collectConnectorWarnings(config: PostextConfig): ConfigWarning[] {
 }
 
 const DESIGN_PATH_KEYS = {
-  kind: true, id: true, parity: true, pages: true, pin: true, reserve: true, placement: true,
+  kind: true, id: true, parity: true, pages: true, when: true, unless: true, pin: true, reserve: true, placement: true,
   d: true, viewBox: true, fill: true, stroke: true, width: true, dash: true, preserveAspectRatio: true,
 } satisfies Record<keyof DesignPathElement, true>;
 
@@ -432,6 +458,7 @@ function collectPageTemplateWarnings(config: PostextConfig, options: ConfigWarni
   const overrides = config.htmlViewer?.overrides;
   const any = config.pageTemplates !== undefined || config.labelStyles !== undefined
     || overrides?.pageTemplates !== undefined || overrides?.labelStyles !== undefined
+    || config.frameLooks !== undefined || overrides?.frameLooks !== undefined
     || (options.resources ?? []).some((r) => r.anchors?.some((a) => a.style !== undefined || a.labelAt !== undefined || a.leader !== undefined));
   if (!any) return [];
   const resolved = resolveAllConfig(config);

@@ -695,7 +695,10 @@ Pick the path per [sources.md](references/sources.md):
   role itself, `--name-frames`),
   `scripts/template_dedupe.py work/regions --laid laid.json` (one template per kind
   of page, `extends` children, merged styles and grounds, frames on a lattice
-  as a repeating grid, every band of a page as a module (the page template a shell) with
+  as a repeating grid (cards that differ only in colour too, each naming a look from
+  `frameLooks`), every band of a page as a module or, when its blocks stand side by
+  side, a row of modules (the page template a shell; shells that differ only by
+  furniture are one, drawn `when`/`unless` the fence says `frontmatter`) with
   `:::module` blocks in the Markdown, frames named by role with their
   `slot="…"` rewritten in every language; `laid.json` is the draft's frames
   from `scripts/render.mjs --frames`, and `--compare-boxes` checks the folded

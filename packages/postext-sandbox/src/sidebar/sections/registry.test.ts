@@ -6,7 +6,7 @@ describe('settings registry', () => {
   it('lists every section exactly once', () => {
     const ids = SETTINGS_SECTIONS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toHaveLength(48);
+    expect(ids).toHaveLength(49);
     expect(SETTINGS_GROUPS).toHaveLength(14);
   });
   it('puts the writing system right after the page, with its two sections', () => {
@@ -56,7 +56,8 @@ describe('settings registry', () => {
   });
 
   it('puts the frame-style library with the box styles it reads (#873)', () => {
-    expect(sectionsInGroup('callouts').map((s) => s.id)).toEqual(['calloutStyles', 'frameStyles']);
+    expect(sectionsInGroup('callouts').map((s) => s.id)).toEqual(['calloutStyles', 'frameStyles', 'frameLooks']);
+    expect(SETTINGS_SECTIONS.find((s) => s.id === 'frameLooks')!.configKeys).toEqual(['frameLooks']);
     expect(SETTINGS_SECTIONS.find((s) => s.id === 'frameStyles')!.configKeys).toEqual(['calloutStyles']);
   });
 

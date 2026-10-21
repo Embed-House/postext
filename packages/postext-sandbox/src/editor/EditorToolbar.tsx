@@ -23,6 +23,7 @@ import {
   ArrowLeftRight,
   LayoutTemplate,
   Shapes,
+  Palette,
 } from 'lucide-react';
 import { isCjkLanguage } from 'postext';
 import type { EditorView } from '@codemirror/view';
@@ -33,6 +34,8 @@ import { IconButton } from '../ui';
 import { composedPageInsertion } from './composedInsert';
 import { TemplatePicker } from './TemplatePicker';
 import { IconPicker } from './IconPicker';
+import { LookPicker } from './LookPicker';
+import { framePieceAt, frameLookChange, type FramePiece } from '../templates/frameLooks';
 
 /** Write `text` over the selection and put the caret after it (#1064: a
  *  label's symbol). */
@@ -147,6 +150,19 @@ export function EditorToolbar({ viewRef, lang, readOnly = false }: EditorToolbar
   const [pickerOpen, setPickerOpen] = useState(false);
   const iconRef = useRef<HTMLButtonElement>(null);
   const [iconOpen, setIconOpen] = useState(false);
+  const lookRef = useRef<HTMLButtonElement>(null);
+  // The look picker (#1089) and the :::frame piece the caret was in when it
+  // opened.
+  const [lookPiece, setLookPiece] = useState<FramePiece | null | undefined>(undefined);
+  const openLookPicker = () => {
+    const v = getView();
+    if (!v) return;
+    if (lookPiece !== undefined) {
+      setLookPiece(undefined);
+      return;
+    }
+    setLookPiece(framePieceAt(v.state.doc.toString(), v.state.selection.main.head));
+  };
 
   const getView = () => viewRef.current;
 
@@ -319,6 +335,35 @@ export function EditorToolbar({ viewRef, lang, readOnly = false }: EditorToolbar
         onClick={() => setIconOpen((o) => !o)}
         disabled={readOnly}
         data-action="label-icon"
+      />
+      {/* A named look for the :::frame piece the caret is in (#1089). */}
+      <IconButton
+        ref={lookRef}
+        label={labels.frameLookPickerOpen}
+        icon={<Palette size={16} aria-hidden="true" />}
+        tooltipSide="bottom"
+        aria-haspopup="dialog"
+        aria-expanded={lookPiece !== undefined}
+        onClick={openLookPicker}
+        disabled={readOnly}
+        data-action="frame-look"
+      />
+      <LookPicker
+        open={lookPiece !== undefined && !readOnly}
+        onOpenChange={(o) => { if (!o) setLookPiece(undefined); }}
+        anchor={lookRef}
+        looks={state.config.frameLooks ?? []}
+        piece={lookPiece ?? null}
+        labels={labels}
+        onPick={(id) => {
+          const v = getView();
+          if (!v || !lookPiece) return;
+          // Read again: the text may have moved since the picker opened.
+          const piece = framePieceAt(v.state.doc.toString(), v.state.selection.main.head) ?? lookPiece;
+          const change = frameLookChange(v.state.doc.toString(), piece, id);
+          if (change) v.dispatch({ changes: change });
+          v.focus();
+        }}
       />
       <IconPicker
         open={iconOpen && !readOnly}

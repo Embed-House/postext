@@ -56,6 +56,7 @@ export function resolveEffectiveConfig(config: PostextConfig, locale: string, re
     // Composed pages (#853): lists the engine resolves only when set.
     pageTemplates: resolved.pageTemplates ?? [],
     labelStyles: resolved.labelStyles ?? [],
+    frameLooks: resolved.frameLooks ?? [],
     ...(config.customFonts ? { customFonts: config.customFonts } : {}),
   };
 }

@@ -342,6 +342,12 @@ export interface SandboxLabels {
   warningsFitStepShrinkText: string;
   warningsFitStepContinue: string;
   warningsFitFixAllowShrink: string;
+  /** `allowShrink` at a scale smaller than the largest that fits, where
+   *  a word wider than the frame's measure is set whole (#1090). */
+  warningsFitFixAllowShrinkWhole: string;
+  /** `allowShrink` at the largest scale that fits, where no allowed scale
+   *  sets a word wider than the measure whole (#1090). */
+  warningsFitFixAllowShrinkDivided: string;
   warningsFitFixRaiseMax: string;
   warningsFitFixLowerMin: string;
   warningsFitFixContinue: string;
@@ -2332,6 +2338,11 @@ export interface SandboxLabels {
   headerFooterElementMarginFromEdgeTooltip: string;
   headerFooterElementPages: string;
   headerFooterElementPagesTooltip: string;
+  headerFooterElementWhen: string;
+  headerFooterElementWhenTooltip: string;
+  headerFooterElementUnless: string;
+  headerFooterElementUnlessTooltip: string;
+  headerFooterElementFenceAny: string;
   headerFooterElementPagesAll: string;
   headerFooterElementPagesBody: string;
   headerFooterElementPagesOpener: string;
@@ -4241,6 +4252,20 @@ export interface SandboxLabels {
   pageTemplatesGroupModulesTooltip: string;
   pageTemplatesGroupModulesContinue: string;
   pageTemplatesGroupModulesContinueTooltip: string;
+  pageTemplatesGroupModulesKindTooltip: string;
+  pageTemplatesGroupWithin: string;
+  pageTemplatesGroupWithinTooltip: string;
+  pageTemplatesGroupWithinNone: string;
+  pageTemplatesGroupTemplates: string;
+  pageTemplatesGroupTemplatesHint: string;
+  pageTemplatesModuleWidth: string;
+  pageTemplatesModuleWidthTooltip: string;
+  pageTemplatesModuleWidthFill: string;
+  pageTemplatesModuleWidthLength: string;
+  pageTemplatesModuleWidthPercent: string;
+  pageTemplatesModuleWidthPercentValue: string;
+  modulesWidthText: string;
+  modulesWidthShare: string;
   pageTemplatesModuleRole: string;
   pageTemplatesModuleRoleTooltip: string;
   pageTemplatesModuleTag: string;
@@ -4953,4 +4978,38 @@ export interface SandboxLabels {
   wordStyleCallout: string;
   wordStyleCalloutTitle: string;
   wordStyleChip: string;
+  // Named frame looks (#1089).
+  frameLooksSection: string;
+  frameLooksEmpty: string;
+  frameLooksHint: string;
+  frameLooksResetConfirm: string;
+  frameLookAdd: string;
+  frameLookNewName: string;
+  frameLookDelete: string;
+  frameLookDeleteConfirm: string;
+  frameLookIdHelp: string;
+  frameLookIdTaken: string;
+  frameLookIdAria: string;
+  frameLookNameLabel: string;
+  frameLookNameAria: string;
+  frameLookUses: string;
+  frameLookGroupBox: string;
+  frameLookGroupText: string;
+  frameLookGroupTab: string;
+  frameLookStripe: string;
+  frameLookBold: string;
+  frameLookItalic: string;
+  frameLookTitle: string;
+  frameLookTabRule: string;
+  frameLookIcon: string;
+  frameLookMarker: string;
+  frameLookMarkerRule: string;
+  frameLookPicker: string;
+  frameLookPickerOpen: string;
+  frameLookPickerNoPiece: string;
+  frameLookPickerHint: string;
+  frameLookPickerEmpty: string;
+  frameLookNone: string;
+  warningsLookUnknownTitle: string;
+  warningsLookUnknownDetail: string;
 }

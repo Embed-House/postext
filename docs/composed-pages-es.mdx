@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compuestas',
   description: 'Cómo se escribe una página compuesta en Markdown: el bloque de página, delimitado por cuatro signos de dos puntos, que indica la plantilla; los marcos y el atributo slot, que reparten el contenido entre los marcos de la plantilla; las ranuras repetidas y los módulos, y los avisos que saltan cuando el contenido no encaja con la plantilla o tapa otro marco',
   lang: 'es',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '47 min',
   order: 34,
   plainSummary: "Algunas páginas no son una columna de texto corrido, sino un conjunto de cajas, como la página de un libro de texto escolar con una banda para el título, un texto y tres cajas de colores con fotos. Postext las llama páginas compuestas. La forma de la página está en una plantilla de la configuración, y el Markdown solo dice qué trozo de texto va en cada caja. Esta página enseña a escribir ese Markdown: el bloque de página, los marcos, los nombres de ranura, las tarjetas repetidas en una rejilla y los bloques apilados como módulos. También recoge los avisos que da Postext cuando el texto y la plantilla no encajan.",
@@ -43,6 +43,7 @@ Una página compuesta se escribe como un *bloque de página*: se abre con una l�
     <tr><td><code>spread</code></td><td>La página es una doble página, formada por dos páginas enfrentadas (véase <a href="#dobles-páginas">Dobles páginas</a>). Tiene que coincidir con el <code>spread</code> de la plantilla; si no, manda la plantilla y salta el aviso <code>spreadMismatch</code>.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un ancla: un <code>:ref</code> que remita a ella imprime el número de página de la página compuesta.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Colores de las entradas de la paleta para esta página, como pares <code>entrada=#hex</code> separados por comas: <code>palette="tinte=#f6c3d0"</code> para una página cuyas cajas toman el tono del tema. Todos los colores de sus marcos y de su decoración vinculados a la paleta los toman, por encima de la <code>palette</code> de la plantilla. Desde postext 1.42.</td></tr>
+    <tr><td>una marca como <code>frontmatter</code></td><td>Un atributo que un elemento de la plantilla nombra en <code>when</code> o <code>unless</code>: <code>frontmatter</code> en una portadilla quita el folio y la banda que la plantilla dibuja en las páginas del cuerpo. Escrito solo queda fijado, y también con cualquier valor salvo <code>false</code>. Véase <a href="/es/docs/configuration-composed-pages#se-dibuja-si-la-página-lo-dice">Se dibuja si la página lo dice</a>. Desde postext 1.50.</td></tr>
     <tr><td>cualquier otro</td><td>Un valor que la plantilla lee como <code>&#123;attr.name&#125;</code>, por ejemplo una imagen de fondo elegida página a página: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> en la decoración.</td></tr>
   </tbody>
 </table>
@@ -68,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Una **ranura** (el atributo `slot`) indica a qué marco va un trozo de contenido: coincide con el nombre de un marco de la plantilla. `:::frame{slot="…"}` envía a ese marco todo lo que contiene. Su contenido es Markdown completo: párrafos, listas, encabezados, chips, inserciones `::resource`, referencias `:ref`, notas al pie, `:::columns` y recuadros anidados. `label` y `title` fijan el texto de la pestaña o del título del marco, igual que en un `:::callout`; el aspecto del marco lo da el estilo de recuadro que le asigna la plantilla.
+Una **ranura** (el atributo `slot`) indica a qué marco va un trozo de contenido: coincide con el nombre de un marco de la plantilla. `:::frame{slot="…"}` envía a ese marco todo lo que contiene. Su contenido es Markdown completo: párrafos, listas, encabezados, chips, inserciones `::resource`, referencias `:ref`, notas al pie, `:::columns` y recuadros anidados. `label` y `title` fijan el texto de la pestaña o del título del marco, igual que en un `:::callout`; el aspecto del marco lo da el estilo de recuadro que le asigna la plantilla, y un trozo puede indicar un aspecto propio (véase [Aspectos de marco](#aspectos-de-marco)).
 
 Un bloque suelto también puede indicar su propia ranura:
 
@@ -131,6 +132,36 @@ La nutria
 
 Un marco del juego solo se notifica como `slotEmpty` cuando ninguna tarjeta de la página lo rellena. Un marco repetido nunca recibe un encabezado, y nunca es el marco de flujo.
 
+### Aspectos de marco
+
+Un trozo puede llevar un aspecto con nombre: un juego de colores que la configuración define en `frameLooks` (véase [Configuración › Aspectos de marco](/es/docs/configuration-composed-pages#aspectos-de-marco)). El Markdown dice qué aspecto lleva y la configuración dice cómo es. En una rejilla, así cada tarjeta tiene su color y todas comparten una plantilla y un estilo:
+
+```md
+::::page{template="fotos"}
+# Animales del río
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+La garza
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+La nutria
+:::
+:::
+::::
+```
+
+- **Dónde.** `look` va en la línea de apertura de cualquier trozo `:::frame{slot="…"}`. El trozo principal de una tarjeta (aquí el marco de la segunda foto) y un miembro anidado en él (cada pastilla) indican el suyo.
+- **Qué cambia.** El aspecto se pone sobre el estilo del marco y los colores propios de la plantilla, solo para ese trozo: las demás tarjetas conservan los suyos. El texto que sigue en otro marco (una cadena, una página de continuación) mantiene el aspecto.
+- **Un id desconocido.** Un id que `frameLooks` no tiene da el aviso `lookUnknown` en el atributo, con el id más parecido, y el marco conserva sus colores.
+
 ### Módulos en una página
 
 Una plantilla de página con un grupo de módulos (`modules: true`; véase [Configuración › Módulos](/es/docs/configuration-composed-pages#módulos)) toma sus bloques de los contenedores `:::module`, colocados uno debajo de otro en el orden en que se escriben. La plantilla del módulo dibuja el bloque; el contenedor guarda sus palabras:
@@ -163,6 +194,7 @@ La vida en sus orillas
 - **`template`** indica una plantilla con `role: 'module'`. **`name`** es opcional: da nombre a la instancia del módulo, de modo que sus marcos son `ramas.raiz` y `ramas.izq`. Sin él, la instancia es `<template>[n]`, el número del módulo entre los módulos de esa plantilla en la página: `arbol[1].raiz`. Un nombre que ya está ocupado en la página, o que contiene un espacio, `.`, `#`, `[` o `]`, se sustituye por ese nombre por defecto (`moduleNameRejected`).
 - **Las ranuras** de dentro de un `:::module` son las del propio módulo: `slot="raiz"` llega al marco `raiz` de este módulo, y dos módulos de una misma plantilla en una página no mezclan sus palabras. El contenido sin ranura va al marco de flujo del módulo, y un encabezado, al marco del módulo que recibe su nivel; si no hay ninguno de los dos, al marco de flujo de la página.
 - **Orden.** Los módulos se apilan en el orden del Markdown, así que otra página puede poner los mismos bloques en otro orden, o con un árbol más, sin plantilla nueva.
+- **Uno al lado de otro.** Si el grupo de módulos es una fila o una rejilla, o tiene grupos propios dentro (`within`), los mismos bloques quedan uno al lado de otro: dos `:::module{template="aviso"}` seguidos de cuatro `:::module{template="tarjeta"}` forman una fila de dos recuadros sobre una rejilla de 2 × 2 tarjetas. El Markdown sigue diciendo solo qué módulos van y en qué orden (consulta [Configuración › Módulos](/es/docs/configuration-composed-pages#módulos)).
 - Un `:::module` fuera de un bloque de página es una caja normal con su contenido. Un módulo dentro de otro no está admitido (`moduleNested`).
 
 ## Ejemplo
@@ -329,6 +361,11 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
       <td>Sube o quita el <code>max</code> de la plantilla, o pasa las tarjetas sobrantes a otra página.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un trozo <code>:::frame</code> escribe <code>look="…"</code> con un id que ninguna entrada de <code>frameLooks</code> tiene (véase <a href="#aspectos-de-marco">Aspectos de marco</a>). El marco conserva su estilo y los colores de su plantilla. El aviso indica el id más parecido (<code>suggestion</code>).</td>
+      <td>Corrige el id, o añade el aspecto a <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Un <code>:::module</code> no indica ninguna plantilla, indica una plantilla que no es un módulo, o la plantilla de la página no tiene grupo de módulos (<code>reason</code>). Su contenido va al marco de flujo.</td>
       <td>Corrige el <code>template</code> del módulo, o da a la plantilla de la página un grupo con <code>modules: true</code>.</td>
@@ -351,7 +388,7 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
   </tbody>
 </table>
 
-Los avisos de módulos y `repeatOverflow` existen desde postext 1.48; la parte de cada uno que toca a la plantilla se describe en [Configuración › Avisos de solapamiento, repetición y módulos](/es/docs/configuration-composed-pages#avisos-de-solapamiento-repetición-y-módulos).
+Los avisos de módulos y `repeatOverflow` existen desde postext 1.48, y `lookUnknown` desde postext 1.50; la parte de cada uno que toca a la plantilla se describe en [Configuración › Avisos de solapamiento, repetición y módulos](/es/docs/configuration-composed-pages#avisos-de-solapamiento-repetición-y-módulos).
 
 Una vez maquetado el libro, cada uno de estos avisos indica además la página a la que se refiere (`pageIndex`), así que el panel **Revisión** y `postext check` dan el número de página junto a la plantilla, el marco o la ranura y el rango de origen.
 
@@ -462,7 +499,7 @@ Si ningún paso consigue que el contenido quepa, el marco se corta al pie, conse
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> del marco: la mayor escala de texto, en pasos del 2,5 % hasta el 50 %, con la que el contenido cabe, probada sobre la página. Con <code>fit.shrinkText: false</code>, <code>also</code> lo activa.</td>
+      <td><code>fit.minScale</code> del marco: la mayor escala de texto, en pasos del 2,5 % hasta el 50 %, con la que el contenido cabe, probada sobre la página. Si esa escala parte una palabra más ancha que el marco, la propuesta da la mayor escala menor con la que cabe y todas las palabras van enteras, con <code>word: 'whole'</code>; si ninguna hasta el 50 % la deja entera, se queda con la mayor que cabe y lleva <code>word: 'divided'</code>. Con <code>fit.shrinkText: false</code>, <code>also</code> lo activa.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

@@ -26,6 +26,8 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
       return (config.headingStyles ?? []).length > 0;
     case 'tableStyles':
       return (config.tableStyles ?? []).length > 0;
+    case 'frameLooks':
+      return (config.frameLooks ?? []).length > 0;
     case 'pageTemplates':
       return (config.pageTemplates ?? []).length > 0;
     // The libraries edit in place; Box styles and Page templates carry the dot.

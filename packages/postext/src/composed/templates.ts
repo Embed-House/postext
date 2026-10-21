@@ -9,10 +9,12 @@ import type {
   FrameGridCell,
   FrameGroupConfig,
   FrameLook,
+  FrameLookEntry,
   FrameOverflowConfig,
   FrameRulesConfig,
   FrameSize,
   LabelStyle,
+  ModuleWidth,
   PageSide,
   PageTemplate,
   PageTemplateGrid,
@@ -234,7 +236,7 @@ interface Merged {
 
 /** The template-level keys a child or a variant inherits and overrides. */
 const SCALAR_KEYS = ['area', 'overflowTemplate', 'bodyStyle', 'palette', 'header', 'footer'] as const;
-const INHERITED_KEYS = ['spread', 'gutter', 'role'] as const;
+const INHERITED_KEYS = ['spread', 'gutter', 'role', 'width'] as const;
 /** Frame fields merged key by key rather than replaced. */
 const MERGED_OBJECT_KEYS = new Set(['fit', 'overflow', 'padding', 'rules']);
 
@@ -401,6 +403,14 @@ function normalizeOverflow(raw: unknown): FrameOverflowConfig {
 }
 
 const dim = (v: unknown): Dimension | undefined => (isFrameDimension(v) ? v : undefined);
+
+/** A module's `width` (#1088) the engine can use: a length, a percentage
+ *  above 0, or `'fill'`. */
+export function moduleWidth(v: unknown): ModuleWidth | undefined {
+  if (v === 'fill') return v;
+  if (isRecord(v) && 'percent' in v) return finite(v.percent) && v.percent > 0 ? { percent: v.percent } : undefined;
+  return dim(v);
+}
 const nonNegative = (v: unknown, fallback: number): number => (finite(v) && v >= 0 ? v : fallback);
 
 /** A frame as the layout reads it: every default filled in, sizes read
@@ -483,6 +493,33 @@ function normalizeLook(raw: unknown, tree: LookTree): Record<string, unknown> | 
   return Object.keys(out).length > 0 ? out : undefined;
 }
 
+/** The named looks of `frameLooks` (#1089) the engine can use: entries
+ *  with an id (the first of each id wins), each with what a frame's
+ *  `look` could not use left out (`normalizeLook`); an entry that keeps no
+ *  field still names a look (it changes nothing). None when the list
+ *  holds no entry with an id. */
+export function normalizeFrameLooks(raw: unknown): FrameLookEntry[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const out: FrameLookEntry[] = [];
+  const seen = new Set<string>();
+  for (const e of raw) {
+    if (!isRecord(e) || typeof e.id !== 'string' || e.id === '' || seen.has(e.id)) continue;
+    seen.add(e.id);
+    out.push({ id: e.id, ...(typeof e.name === 'string' ? { name: e.name } : {}), ...(normalizeLook(e, LOOK_TREE) ?? {}) });
+  }
+  return out.length > 0 ? out : undefined;
+}
+
+/** The look a frame wears with a named look laid over its own (#1089):
+ *  `over`'s fields (an entry's `id` and `name` left out) over `below`'s,
+ *  key by key at every level. */
+export function lookOver(below: FrameLook | undefined, over: FrameLook): FrameLook {
+  const fields: Record<string, unknown> = { ...over };
+  delete fields.id;
+  delete fields.name;
+  return mergeLook(below, fields) as FrameLook;
+}
+
 /** `look` over `below`, key by key at every level (colours and lengths
  *  replaced whole). */
 function mergeLook(below: unknown, look: Record<string, unknown>): Record<string, unknown> {
@@ -536,15 +573,27 @@ function normalizeGroup(entry: NamedEntry<FrameGroupConfig>, grid: Required<Page
     }
     : {};
   // A modules group (#1062), only when it says so: it takes the page's
-  // modules, not frames of its own, and is laid as a stack.
+  // modules, not frames of its own: a stack, or (#1088) a row or a grid of
+  // them, or a group of them inside the modules stack it names (`within`).
   const modules = g.modules === true;
   const continueIn = modules && isRecord(g.overflow) && typeof g.overflow.continueIn === 'string' && g.overflow.continueIn !== '' ? g.overflow.continueIn : undefined;
+  const within = modules && typeof g.within === 'string' && g.within !== '' && g.within !== g.name ? g.within : undefined;
+  const templates = within !== undefined && Array.isArray(g.templates) ? [...new Set(names(g.templates))] : undefined;
   const moduleFields: Partial<ResolvedFrameGroup> = modules
-    ? { modules: true, ...(continueIn !== undefined ? { overflow: { continueIn } } : {}) }
+    ? {
+      modules: true,
+      ...(continueIn !== undefined && within === undefined ? { overflow: { continueIn } } : {}),
+      ...(within !== undefined ? { within } : {}),
+      ...(templates ? { templates } : {}),
+      // A grid of modules has no repeat; a row of them aligns its modules.
+      ...(kind === 'grid' ? { ...gridFields, repeat: undefined } : {}),
+      ...(kind === 'row' ? { rowAlign: oneOf(FRAME_GRID_ROW_ALIGNS, g.rowAlign) ? g.rowAlign : 'stretch' } : {}),
+    }
     : {};
+  if (moduleFields.repeat === undefined) delete moduleFields.repeat;
   return {
     name: g.name,
-    kind: modules ? 'stack' : kind,
+    kind,
     // A grid that repeats holds its set's frames.
     frames: modules ? [] : gridFields.repeat ? repeatFrames : names(g.frames),
     gap,
@@ -909,17 +958,33 @@ export function resolveTemplateAt(
     gutter: dim(inherited.gutter) ?? DEFAULT_PAGE_TEMPLATE.gutter,
     role: typeof inherited.role === 'string' && inherited.role !== '' ? inherited.role : DEFAULT_PAGE_TEMPLATE.role,
     ...(variant ? { variant } : {}),
+    ...(inherited.role === MODULE_ROLE && moduleWidth(inherited.width) ? { width: moduleWidth(inherited.width)! } : {}),
     chain: chain.map((i) => templates[i]!.id),
     configPath: `${prefix}/${index}`,
   };
   // A module (#1062) holds no modules of its own (`moduleNested`): its
-  // modules groups are plain stacks.
+  // modules groups are plain groups.
   if (template.role === MODULE_ROLE) {
     template.groups = template.groups.map((g) => {
       if (!g.modules) return g;
       const out = { ...g };
       delete out.modules;
       delete out.overflow;
+      delete out.within;
+      delete out.templates;
+      return out;
+    });
+  } else {
+    // A modules group inside another (#1088) names a modules stack of the
+    // template that is in no other; else it is a modules group of its own.
+    template.groups = template.groups.map((g) => {
+      if (!g.within) return g;
+      const parent = template.groups.find((x) => x.name === g.within);
+      if (parent && parent.modules && !parent.within && parent.kind === 'stack') return g;
+      // (Reported by the validator.)
+      const out = { ...g };
+      delete out.within;
+      delete out.templates;
       return out;
     });
   }

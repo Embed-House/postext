@@ -23,6 +23,8 @@ type FitLabels = Pick<
   | 'warningsFitStepShrinkText'
   | 'warningsFitStepContinue'
   | 'warningsFitFixAllowShrink'
+  | 'warningsFitFixAllowShrinkWhole'
+  | 'warningsFitFixAllowShrinkDivided'
   | 'warningsFitFixRaiseMax'
   | 'warningsFitFixLowerMin'
   | 'warningsFitFixContinue'
@@ -59,7 +61,9 @@ export function fitStepText(step: FrameFitStep, at: { scale: number; imageScale?
 export function fitProposalText(p: FrameOverflowProposal, labels: FitLabels, locale?: string): string {
   switch (p.kind) {
     case 'allowShrink':
-      return fill(labels.warningsFitFixAllowShrink, { pct: pct(p.value, locale) });
+      // The word note (#1090): the scale keeps a long word whole, or none
+      // allowed does and the word is divided.
+      return fill(p.word === 'whole' ? labels.warningsFitFixAllowShrinkWhole : p.word === 'divided' ? labels.warningsFitFixAllowShrinkDivided : labels.warningsFitFixAllowShrink, { pct: pct(p.value, locale) });
     case 'raiseMax':
       return fill(labels.warningsFitFixRaiseMax, { mm: mm(p.value, locale) });
     case 'lowerMin':

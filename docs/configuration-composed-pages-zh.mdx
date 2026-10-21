@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '模板页设置',
   description: '模板页所用的页面模板：框、组、重复一组框的网格、模块、装饰与连接线、继承与奇偶页变体、图片锚点上的标注样式，以及模板可能给出的警告',
   lang: 'zh',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10分钟',
   order: 18,
   parent: 'configuration',
@@ -153,6 +153,12 @@ const config: PostextConfig = {
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
       <td>带<code>pages</code>筛选条件的设计元素所看到的页面角色。<code>'module'</code>让模板成为模块：一个由框组成、在页面的组中叠放的方框，而不是单独的一页（见<a href="#模块">模块</a>）。自postext 1.48起。</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>模块：它在模块行或模块堆叠中的宽度，可以是一个长度、组宽度的百分比，或<code>'fill'</code>，即平分这一行其他模块留下的宽度。在网格中，模块占据它所在的栏。从postext 1.50开始。</td>
     </tr>
   </tbody>
 </table>
@@ -345,7 +351,7 @@ const config: PostextConfig = {
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>此框对其框样式外观所做的修改，使用样式自身的名称和嵌套结构：颜色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>和<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）以及文字的字距（<code>body.letterSpacing</code>）。设置<code>background</code>时同时打开样式的填充；标签颜色只对带标签的样式有效。在子模板中，它与所覆盖的框逐键合并。同一种框形有多种色调的书只保留一个样式，在这里写色调，或者让<code>palette</code>重新着色与调色板关联的填充。自postext 1.42起。</td>
+      <td>此框对其框样式外观所做的修改，使用样式自身的名称和嵌套结构：颜色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>和<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）以及文字的字距（<code>body.letterSpacing</code>）。设置<code>background</code>时同时打开样式的填充；标签颜色只对带标签的样式有效。在子模板中，它与所覆盖的框逐键合并。同一种框形有多种色调的书只保留一个样式，在这里写色调，或者让<code>palette</code>重新着色与调色板关联的填充。页面上的一段内容可以在它上面叠加一种有名称的外观（见<a href="#框的外观">框的外观</a>）。自postext 1.42起。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -434,7 +440,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>网格：比所在行矮的单元格放在哪里。主框的高度为<code>'auto'</code>或<code>'fill'</code>时，<code>'stretch'</code>让它与这一行一样高（最多到它的<code>maxHeight</code>）。</td>
+      <td>网格：比所在行矮的单元格放在哪里。主框的高度为<code>'auto'</code>或<code>'fill'</code>时，<code>'stretch'</code>让它与这一行一样高（最多到它的<code>maxHeight</code>）。 模块行或模块网格：比所在行矮的模块放在哪里；<code>'stretch'</code>把它放进与这一行一样高的方框，它的底色和<code>'fill'</code>框因此延伸到行的底边。</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>组接收页面的<code>:::module</code>块，按Markdown的顺序上下叠放，彼此之间留出<code>gap</code>。不论它的<code>kind</code>是什么，都按纵向组排，它的<code>frames</code>不读取。见<a href="#模块">模块</a>。自postext 1.48起。</td>
+      <td>组按Markdown的顺序接收页面的<code>:::module</code>块，彼此之间留出<code>gap</code>：上下叠放（<code>'stack'</code>）、左右并排（<code>'row'</code>）或排成<code>columns</code>栏（<code>'grid'</code>，从postext 1.50开始）。它的<code>frames</code>不会被读取。见<a href="#模块">模块</a>。从postext 1.48开始。</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>无</td>
       <td>模块组：放不下的模块整个转到哪里接着排。未设置时，模块在组的底边截断，它的框按逐级重排的步骤尝试。</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>位于这个名称的模块堆叠内的模块组：它接收的页面模块中，按Markdown顺序连续的每一段，都作为该堆叠的一行或一个网格排出，位置在这一段第一个模块处。从postext 1.50开始。</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>无</td>
+      <td>设了<code>within</code>的模块组：它接收的模块模板。不设时接收所有模块。模块进入第一个接收它的此类组，否则进入堆叠。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **模块里有什么。** 框、组（包括重复的网格）、装饰和连接线。它没有`area`、`header`、`footer`、`variants`、`spread`、`gutter`或`overflowTemplate`：写了这些中的任何一个，都报告为`unknownConfigValue`并被忽略。`extends`可以用在模块之间（继承模块的模板也是模块）。
 - **它的方框。** 模块与所在的组一样宽，高度到它的框伸到的地方为止；组从顶端开始叠放各个模块，彼此之间留出`gap`。在模块内部，`'container'`是模块的方框，它的框（还有`'fill'`和百分比）以及它的装饰都以此为准：尺寸设为`{ to: 'container', edge: 'bottom' }`的底色，不论文字让模块有多高，都铺满整个模块。
 - **名称。** 模块的框、组和元素以模块的实例名为范围：`<name>.<frame>`，名称取Markdown给出的（`name="ramas"`），否则是`<template>[n]`，即这个模块在本页同一模板的模块中的序号（`arbol[2].raiz`）。模块内部的锚点、`next`、`continueIn: '#x'`和连接线都改写为指向它自己的框，所以同一页上的两棵树绝不会互相连起来。框的id写作`cp0:arbol[2].raiz`。
-- **模块放不下时。** 超出组底边的模块在那里截断，它的框按逐级重排的步骤尝试；整个组只报告一次`frameOverflow`。模块组设了`overflow.continueIn`（`'next-page'`或`'template:<id>'`）时，第一个放不下的模块及其后的每个模块都**整个**转到追加的页上，名称不变，排在那一页模块组的顶端。
-- **暂不支持。** 模块并排（模块组总是纵向组）、模块里面再套模块（`moduleNested`），以及模块内的模板`grid`单元格。
+- **模块放不下时。** 超出组底边的模块在那里截断，它的框按逐级重排的步骤尝试；整个组只报告一次`frameOverflow`。模块组设了`overflow.continueIn`（`'next-page'`或`'template:<id>'`）时，第一个放不下的模块及其后的每个模块都**整个**转到追加的页上，名称不变，排在那一页模块组的顶端。 在模块行或模块网格中，一行整体接续：一行的模块不会分到两页上。
+- **并排。** `kind: 'row'`的模块组把模块从行首排到行尾，每个的宽度取其模板的`width`（一个长度、`{ percent: 48 }`，或`'fill'`，即平分剩余宽度），行高等于其中最高的模块；`kind: 'grid'`把模块排成`columns`个等宽的栏，逐行排列。`rowAlign`决定比所在行矮的模块放在哪里。行从文字行的起始一侧开始，所以从右到左的页面把第一个模块放在右边。从postext 1.50开始。
+- **堆叠里的组。** 设了`within: '<堆叠>'`的模块组位于页面的模块堆叠内，`templates`说明它接收哪些模块：Markdown中这些模块每连续的一段，在第一个模块的位置组成堆叠的一行或一个网格。用下面的组，两个`aviso`块后接四个`tarjeta`块，排成一行两个方框，下面是2 × 2的卡片网格，而Markdown里只有`:::module`块。
+- **暂不支持。** 模块里面再套模块（`moduleNested`）、模块内的模板`grid`单元格，以及模块行或模块网格里面的组。
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### 内容放不下时
 
@@ -651,6 +679,26 @@ pageTemplates: [
 沙盒保存模板时，从不丢掉等于默认值的值：在继承另一个模板的模板中，或在变体中，这个值会覆盖父模板的值。
 
 在代码中，`resolvePageTemplate(config, id, { parity })`返回一个模板：继承链已合并，所在一面的变体已应用，所有默认值已填好，所有引用都已按下文警告所述处理；`validatePageTemplates(config)`返回这些警告。
+
+### 页面标明时才绘制
+
+装饰中的元素，以及模板`header`或`footer`中的元素，可以带`when`或`unless`，各自写出页面块的一个属性名。`when: 'folio'`只在页面块设有`folio`的页面上绘制该元素；`unless: 'frontmatter'`在页面块设有`frontmatter`的页面上不绘制它。页面块单独写出某个属性（`::::page{template="pagina" frontmatter}`），或给它除`false`以外的任意值，就算设有该属性。这样一个模板既能用于不印页码和色带的前置页，也能用于两者都印的正文页：页面是什么由Markdown说明，图样留在模板里。自postext 1.50起。
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- 锚定在未绘制元素上的元素，或尺寸量到该元素的元素，也不绘制。
+- 两个键都写时，元素只在页面块设有`when`的属性、且未设`unless`的属性的页面上绘制。
+- 文档和章节的页眉页脚同样读取这两个键。非模板页没有页面块，不设任何属性。标题、篇和方框的设计忽略它们。
+- 值不是非空字符串，或写在标题、篇或方框的设计中，会报告为`unknownConfigValue`，元素照常绘制，如同没有写。`postext check`会对书中没有任何页面块设置的属性上的`when`或`unless`给出提示`conditionNeverMet`：这样的元素永远不绘制，或总是绘制。
+- 在Sandbox中，页眉页脚和模板装饰的每张元素卡片都有**页面标明时才绘制**和**页面标明时不绘制**两个字段，可选项是本书页面块用到的属性。
 
 ### 排版实际应用的设置
 
@@ -787,7 +835,7 @@ decoration: {
       <td>连接模板声明的方框，而不是内容给各框定下的方框。</td>
     </tr>
     <tr>
-      <td><code>parity</code>、<code>pages</code></td>
+      <td><code>parity</code>、<code>pages</code>、<code>when</code>、<code>unless</code></td>
       <td>与其他元素相同</td>
       <td><code>'all'</code></td>
       <td>哪些页上画出它。</td>
@@ -856,6 +904,48 @@ decoration: { elements: [
 ```
 
 **检查。** `to`什么也没指到的一端是`frameAnchorUnknown`（位于`…/from/to`或`…/to/<k>/to`），这一端被略去；`[*]`只能用在`to`中，而且只能用于重复的框。框中没有任何图片带有的`anchor`是`labelAnchorUnknown`，附有连接线的id。`routing`、`startCap`、`endCap`或`side`取值范围以外的词，以及0到1以外的`at`，是`unknownConfigValue`。不在0到1之间的数字或不是数字的`opacity`也是`unknownConfigValue`（超出范围的数字会被限制在范围内）。
+
+## 框的外观
+
+一个照片卡片的网格，各个小签只有颜色不同；或者一页上的方框有十几种色调：这样的书只保留一种标注框样式和一个模板。颜色写在`frameLooks`里，它是一个有名称的外观列表，Markdown在每段采用某种外观的内容上写出它的名称。自postext 1.50起。
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>字段</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>必填。内容在<code>look="…"</code>中写的词。两种外观的id相同时，用第一种。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>只在沙盒中显示。</td>
+    </tr>
+    <tr>
+      <td>框的<code>look</code>中的各字段</td>
+      <td><code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>、<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>body.letterSpacing</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>，名称和嵌套结构与框的<code>look</code>相同（见<a href="#框">框</a>）。设置<code>background</code>时同时打开样式的填充；标签颜色只对带标签的样式有效。</td>
+    </tr>
+  </tbody>
+</table>
+
+- **用在哪里。** `:::frame{slot="…" look="<id>"}`这段内容采用该外观。在网格中，条目的主内容和成员嵌套的`:::frame`各自指定自己的外观（见[模板页 › 框的外观](/zh/docs/composed-pages#框的外观)）。
+- **顺序。** 外观逐键叠加在框的标注框样式和模板中该框自己的`look`之上：只设填充的外观保留模板的文字颜色。它只作用于这一段内容。这段文字接续进去的框（串接框、因接续而追加的页面）也采用它。
+- **调色板。** 与调色板条目关联的颜色跟随调色板，与配置中的其他颜色一样，所以分部调色板或页面的`palette`会给它重新着色。
+- **检查。** 没有`id`的条目会被忽略（`unknownConfigValue`），外观没有的键在任何层级都是`unknownConfigKey`，并附上最接近的名称。内容指定的id若没有对应的条目，框保持原来的颜色，并给出`lookUnknown`。
+
+在沙盒中，外观在**版面设计 › 标注框 › 框的外观**里编辑，那里还会统计指定每种外观的内容有多少段；编辑器的**框的外观**按钮在光标所在的那段内容上写入`look="…"`。
 
 ## 标注样式
 
@@ -1078,7 +1168,7 @@ anchors: [
 
 在其他地方，引擎会忽略它不认识的键。页面模板和标注样式则会被检查，每个问题都是一条配置警告，出现在`postext check`和沙盒的检查面板中。这些警告的`path`是指向出错字段的JSON指针：`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`。字段是继承来的时，指针指向写出它的模板。指出不存在的id或名称的警告，还会给出最接近的现有名称。
 
-模板、框、组、网格、`fit`、`overflow`、变体或标注样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`，连接线的`routing`、端点标记和`side`，引线的端点标记和`routing`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框或组，会被忽略，并在该字段上报告`unknownConfigValue`。
+模板、框、组、网格、`fit`、`overflow`、变体或标注样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`，连接线的`routing`、端点标记和`side`，引线的端点标记和`routing`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框或组，会被忽略，并在该字段上报告`unknownConfigValue`。框的外观（`frameLooks`）按同样的方式检查：没有`id`的外观会被忽略，框的`look`没有的键是`unknownConfigKey`。
 
 <table>
   <thead>
@@ -1156,7 +1246,7 @@ anchors: [
 
 ### 重叠、重复与模块的警告
 
-这些警告来自排版或页面的Markdown，而不只是来自模板，所以它们会写明页码。它们列在`postext check`中（`--json`把它们的字段放在`data`里），也出现在沙盒的检查面板和文档的`contentWarnings`中。自postext 1.48起。
+这些警告来自排版或页面的Markdown，而不只是来自模板，所以它们会写明页码。它们列在`postext check`中（`--json`把它们的字段放在`data`里），也出现在沙盒的检查面板和文档的`contentWarnings`中。自postext 1.48起，`lookUnknown`自postext 1.50起。
 
 <table>
   <thead>
@@ -1181,6 +1271,11 @@ anchors: [
       <td><code>repeatOverflow</code></td>
       <td>重复一组框的网格最多容纳<code>repeat.max</code>个条目，而这一页给了它更多。每多出一个条目一条，位于它的<code>slot="…"</code>处：这个条目进入流文框（<code>flowFrame</code>），或排在这一页之后。</td>
       <td>调高<code>max</code>，去掉它，或者把多出的条目移到另一页。</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td><code>:::frame</code>写了<code>look="…"</code>，而没有哪一项<code>frameLooks</code>有这个id（见<a href="#框的外观">框的外观</a>）。框保持它的样式和模板的颜色。警告指向该属性的值，并给出最接近的id（<code>suggestion</code>）。</td>
+      <td>改正这段内容上的id，或者在<code>frameLooks</code>中加一种有这个id的外观。</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

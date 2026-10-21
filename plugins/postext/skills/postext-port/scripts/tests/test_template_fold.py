@@ -348,7 +348,8 @@ def write_project(root: Path, pages) -> None:
                 res.append({"id": rid, "typeId": "picture", "kind": "bitmap", "file": f"resources/{rid}.png",
                             "width": 160, "height": 100, "resolution": 72.0, "caption": "", "altText": ""})
     styles = [style("text-1", "#ffffff"), style("box-1", "#f5e6a0"), style("box-blue", "#cfe3f5", tab=True),
-              style("box-white", "#ffffff")]
+              style("box-white", "#ffffff"), style("box-pink", "#f6c4d4"), style("box-sky", "#bfe0f7"),
+              style("box-mint", "#c4ecd4")]
     styles[0]["backgroundEnabled"] = False
     lib = {"pageTemplates": [t for t, _, _ in pages], "calloutStyles": styles,
            "suggested": {"page": {"sizePreset": "custom", "width": mm(210), "height": mm(297)}}}
@@ -445,6 +446,314 @@ class FoldDirTest(unittest.TestCase):
         kinds = {w.get("kind") for w in data.get("warnings", [])}
         for bad in ("unknownConfigValue", "unknownConfigKey", "frameAnchorUnknown", "templateUnknown", "slotUnknown",
                     "moduleUnknown", "moduleAsPage", "slotEmpty", "repeatOverflow"):
+            self.assertNotIn(bad, kinds, [w for w in data.get("warnings", []) if w.get("kind") == bad][:3])
+
+
+# --- round 3: a page of modules side by side (#1088), cards in colours of
+#     their own (#1089), front matter without the furniture (#1087) ---------
+
+def page_colour() -> dict:
+    return {"kind": "box", "id": "page-colour", "style": {"backgroundColor": {"hex": "#eef6f2", "model": "hex"}},
+            "placement": {"anchor": {"to": "bleed", "edge": "top-left"}, "size": {"width": "fill", "height": "fill"}}}
+
+
+def front_page(tid: str, words: str = "A plain page"):
+    """A page of front matter: its text, no folio, no page colour."""
+    t = {"id": tid, "area": "trim", "header": False, "footer": False,
+         "frames": [frame("text", 15, 15, 180, flow=True, minHeight=mm(60), style="text-1")]}
+    reg = {"page": 1, "frames": [{"name": "text", "kind": "text", "box": [15, 15, 195, 75], "parent": None}]}
+    md = "\n".join([f'::::page{{template="{tid}"}}', "", f"{words}, before the first chapter.", "", "::::", ""])
+    return t, reg, md
+
+
+def row_page(tid: str, words: str):
+    """Under the text, a box beside a photo (not in equal halves of the
+    page), then two rows of two cards standing in the halves."""
+    frames = [frame("text", 15, 15, 180, flow=True, minHeight=mm(40), style="text-1"),
+              frame("box-1", 15, 65, 110, minHeight=mm(45), style="box-white"),
+              frame("picture-1", 135, 65, 60)]
+    regions = [{"name": "text", "kind": "text", "box": [15, 15, 195, 55], "parent": None},
+               {"name": "box-1", "kind": "box", "box": [15, 65, 125, 110], "parent": None},
+               {"name": "picture-1", "kind": "picture", "box": [135, 65, 195, 102.5], "parent": None}]
+    md = [f'::::page{{template="{tid}"}}', "", f"{words} at the head of the page.", "",
+          ':::frame{slot="box-1"}', f"{words} in the box beside the photo.", ":::", "",
+          f'::resource{{id="{tid}-picture-1" slot="picture-1"}}', ""]
+    k = 1
+    for y in (120, 160):
+        for x, st in ((15, "box-white"), (115, "box-blue")):
+            k += 1
+            frames.append(frame(f"box-{k}", x, y, 80, minHeight=mm(30), style=st))
+            regions.append({"name": f"box-{k}", "kind": "box", "box": [x, y, x + 80, y + 30], "parent": None})
+            md += [f':::frame{{slot="box-{k}"}}', f"{words}, card {k - 1}.", ":::", ""]
+    md += ["::::", ""]
+    t = {"id": tid, "area": "trim", "header": False, "footer": False, "frames": frames,
+         "decoration": {"elements": [page_colour(), folio()]}}
+    return t, {"page": 1, "frames": regions}, "\n".join(md)
+
+
+PILLS = ["box-pink", "box-sky", "box-pink", "box-mint", "box-pink", "box-sky"]
+
+
+def look_grid_page(tid: str = "p01"):
+    """The photo wall of `grid_page`, each pill in a colour of its own."""
+    t, reg, md = grid_page(tid)
+    for k, st in enumerate(PILLS, start=1):
+        next(f for f in t["frames"] if f["name"] == f"box-{k}")["style"] = st
+    t["decoration"]["elements"].insert(0, page_colour())
+    return t, reg, md
+
+
+def style_lib() -> list[dict]:
+    return [style("box-1", "#f5e6a0"), style("box-pink", "#f6c4d4"), style("box-sky", "#bfe0f7"),
+            style("box-mint", "#c4ecd4"), style("box-blue", "#cfe3f5", tab=True), style("box-white", "#ffffff")]
+
+
+class RowTest(unittest.TestCase):
+    def test_clusters_side_by_side_are_a_row_and_halves_a_grid(self):
+        templates, md, rep = fold([row_page("p01", "Rivers"), row_page("p02", "Hills")])
+        self.assertEqual(rep["grids"], [])
+        mods = {t["id"]: t for t in templates if t.get("role") == "module"}
+        self.assertEqual(sorted(len(m["uses"]) for m in rep["modules"]), [2, 2, 2, 4, 4])
+        rows = {r["kind"]: r for r in rep["rows"]}
+        self.assertEqual(set(rows), {"row", "grid"})
+        # the box and the photo: a row, the box as wide as from the page's start to the photo
+        box_mod, pic_mod = (mods[i] for i in rows["row"]["templates"])
+        self.assertEqual(box_mod["width"], mm(135))
+        self.assertEqual(pic_mod["width"], "fill")
+        self.assertEqual(box_mod["frames"][0]["placement"], at(15, 10))
+        self.assertEqual(pic_mod["frames"][0]["placement"], at(0, 10))
+        # the cards: two rows of the same two modules in the page's halves, one grid
+        self.assertEqual(rows["grid"]["columns"], 2)
+        white, blue = (mods[i] for i in rows["grid"]["templates"])
+        self.assertEqual((white["width"], blue["width"]), (mm(105), mm(105)))
+        self.assertEqual(white["frames"][0]["placement"], at(15, 10))
+        self.assertEqual(blue["frames"][0]["placement"], at(10, 10))
+        for page in templates[:2]:
+            self.assertEqual(page["frames"], [])
+            stack, row, grid = page["groups"]
+            self.assertEqual(stack["name"], "modules")
+            self.assertEqual({k: row[k] for k in ("modules", "within", "kind", "templates")},
+                             {"modules": True, "within": "modules", "kind": "row",
+                              "templates": rows["row"]["templates"]})
+            self.assertEqual((grid["kind"], grid["columns"], grid["within"], grid["templates"]),
+                             ("grid", 2, "modules", rows["grid"]["templates"]))
+        # the Markdown: the modules in order, the cards row by row
+        order = [line.split('"')[1] for line in md.split("\n") if line.startswith(":::module{")]
+        text = next(i for i in mods if any(f.get("flow") for f in mods[i]["frames"]))
+        w, b = rows["grid"]["templates"]
+        self.assertEqual(order[:7], [text, *rows["row"]["templates"], w, b, w, b])
+        self.assertIn("Hills, card 4.", md)
+        self.assertEqual(rep["names"]["p02"]["box-5"], f"{b}[2].box-1")
+
+    def test_rows_that_would_run_together_are_laid_as_one_module(self):
+        # the box beside the photo twice, one under the other: the second row
+        # of the same modules would join the first in one run, so it stays a band
+        t, reg, md = row_page("p01", "Rivers")
+        t["frames"] = t["frames"][:3] + [frame("box-6", 15, 120, 110, minHeight=mm(45), style="box-white"),
+                                         frame("picture-2", 135, 120, 60)]
+        reg["frames"] = reg["frames"][:3] + [
+            {"name": "box-6", "kind": "box", "box": [15, 120, 125, 165], "parent": None},
+            {"name": "picture-2", "kind": "picture", "box": [135, 120, 195, 157.5], "parent": None}]
+        templates, _, rep = fold([(t, reg, md)])
+        self.assertEqual([(r["kind"], len(r["templates"])) for r in rep["rows"]], [("row", 2)])
+        whole = [m for m in rep["modules"] if m["frames"] == 2]
+        self.assertEqual(len(whole), 1)
+
+    def test_no_rows_keeps_one_module_per_band(self):
+        _, _, rep = fold([row_page("p01", "Rivers")], rows=False)
+        self.assertEqual(rep["rows"], [])
+        # the text, the box with its photo, the pair of cards (both rows alike)
+        self.assertEqual(sorted((m["frames"], len(m["uses"])) for m in rep["modules"]), [(1, 1), (2, 1), (2, 2)])
+
+
+class LookTest(unittest.TestCase):
+    def test_pills_in_colours_of_their_own_are_one_grid_with_looks(self):
+        book = td.look_book(style_lib(), TOL)
+        templates, md, rep = fold([look_grid_page()], modules=False, looks=book)
+        self.assertEqual(len(rep["grids"]), 1)
+        g = rep["grids"][0]
+        self.assertEqual((g["columns"], g["rows"], g["items"]), (3, 2, 6))
+        pill = next(f for f in templates[0]["frames"] if f["name"] == "grid-box")
+        self.assertEqual(pill["style"], "box-pink")
+        looks = {e["id"]: e for e in rep["frameLooks"]}
+        self.assertEqual(len(looks), 2)
+        self.assertEqual(sorted(e["background"]["hex"] for e in looks.values()), ["#bfe0f7", "#c4ecd4"])
+        for e in looks.values():
+            self.assertEqual(set(e), {"id", "background"})
+        sky = next(i for i, e in looks.items() if e["background"]["hex"] == "#bfe0f7")
+        mint = next(i for i, e in looks.items() if e["background"]["hex"] == "#c4ecd4")
+        items = md.split(':::frame{slot="grid-picture"}')[1:]
+        self.assertEqual(len(items), 6)
+        want = [None, sky, None, mint, None, sky]
+        for k, (item, look) in enumerate(zip(items, want), start=1):
+            self.assertIn(f"Caption number {k}", item)
+            if look:
+                self.assertIn(f':::frame{{slot="grid-box" look="{look}"}}', item)
+            else:
+                self.assertIn(':::frame{slot="grid-box"}', item)
+
+    def test_a_pill_between_two_rows_hangs_over_its_own_photo(self):
+        # pills 6.1 mm over each photo; the second row's pills stand 6.2 mm
+        # under the first row's photos, so they hang from both
+        t, reg, md = grid_page()
+        tops = {1: 55.0, 2: 110.3}
+        for k in range(1, 7):
+            row = 1 if k <= 3 else 2
+            p = next(f for f in reg["frames"] if f["name"] == f"picture-{k}")
+            p["box"] = [p["box"][0], tops[row], p["box"][2], tops[row] + 35]
+            next(f for f in t["frames"] if f["name"] == f"picture-{k}")["placement"] = at(p["box"][0], tops[row])
+            b = next(f for f in reg["frames"] if f["name"] == f"box-{k}")
+            b["box"] = [p["box"][0] + 8, tops[row] - 14.1, p["box"][0] + 48, tops[row] - 6.1]
+            next(f for f in t["frames"] if f["name"] == f"box-{k}")["placement"] = at(b["box"][0], b["box"][1])
+        templates, _, rep = fold([(t, reg, md)], modules=False)
+        self.assertEqual([(g["columns"], g["rows"], g["frames"]) for g in rep["grids"]],
+                         [(3, 2, ["grid-picture", "grid-box"])])
+        pill = next(f for f in templates[0]["frames"] if f["name"] == "grid-box")
+        self.assertEqual(pill["placement"]["anchor"], {"to": "#grid-picture", "edge": "top-left"})
+
+    def test_photos_of_their_own_widths_are_no_centred_members(self):
+        # tabs on a lattice, a photo under each, centred but of other widths:
+        # a picture has no width of its words, so the photos are no members
+        t, reg, md = grid_page()
+        for k, w in enumerate([56, 40, 56, 48, 56, 36], start=1):
+            p = next(f for f in reg["frames"] if f["name"] == f"picture-{k}")
+            cx = (p["box"][0] + p["box"][2]) / 2
+            p["box"] = [cx - w / 2, p["box"][1], cx + w / 2, p["box"][3]]
+        _, _, rep = fold([(t, reg, md)], modules=False)
+        self.assertFalse(any("grid-picture" in g["frames"][1:] for g in rep["grids"]))
+
+    def test_without_looks_the_pills_are_no_grid(self):
+        _, _, rep = fold([look_grid_page()], modules=False)
+        self.assertEqual([g["frames"] for g in rep["grids"]], [["grid-picture"]])
+
+    def test_a_look_carries_colours_only(self):
+        a, b = style("box-pink", "#f6c4d4"), style("box-sky", "#bfe0f7")
+        b["body"]["color"] = {"hex": "#003366", "model": "hex"}
+        self.assertEqual(td.colour_look(a, b, TOL), {"background": {"hex": "#bfe0f7", "model": "hex"},
+                                                    "body": {"color": {"hex": "#003366", "model": "hex"}}})
+        self.assertEqual(td.colour_look(a, a, TOL), {})
+        c = style("box-wide", "#bfe0f7")
+        c["padding"]["left"] = mm(6)
+        self.assertIsNone(td.colour_look(a, c, TOL))
+        self.assertEqual(td.style_class(a), td.style_class(b))
+        self.assertNotEqual(td.style_class(a), td.style_class(c))
+
+
+class ShellTest(unittest.TestCase):
+    def shell(self, tid, deco):
+        return {"id": tid, "area": "trim", "header": False, "footer": False, "frames": [],
+                "groups": [{"name": "modules", "modules": True}], **({"decoration": {"elements": deco}} if deco else {})}
+
+    def test_front_matter_without_the_furniture_is_the_same_shell(self):
+        body = self.shell("page-2", [page_colour(), folio()])
+        front = self.shell("page", [])
+        out, mapping, flags, rep = td.merge_furniture_shells([front, body], ["page"] * 3 + ["page-2"] * 5, 3)
+        self.assertEqual([t["id"] for t in out], ["page-2"])
+        self.assertEqual(mapping, {"page": "page-2"})
+        self.assertEqual(flags, {"page": ["frontmatter"]})
+        self.assertEqual([e.get("unless") for e in out[0]["decoration"]["elements"]], ["frontmatter", "frontmatter"])
+
+    def test_a_band_only_some_pages_draw_is_drawn_when_they_say(self):
+        band = {"kind": "path", "id": "band", "placement": {**at(0, 0, "page"), "size": {"width": mm(210), "height": mm(20)}},
+                "d": "M0 0 L10 0 L10 2 L0 2 Z", "viewBox": [10, 2], "fill": {"hex": "#cc3333", "model": "hex"}}
+        plain = self.shell("page", [folio()])
+        banded = self.shell("page-2", [band, folio()])
+        out, mapping, flags, _ = td.merge_furniture_shells([plain, banded], ["page", "page", "page-2", "page", "page"], 3)
+        self.assertEqual(mapping, {"page-2": "page"})
+        self.assertEqual(flags, {"page-2": ["variant-1"]})
+        els = out[0]["decoration"]["elements"]
+        self.assertEqual([(e["id"], e.get("when")) for e in els], [("band", "variant-1"), ("folio", None)])
+
+    def test_shells_that_differ_in_a_shared_element_stay_apart(self):
+        moved = folio()
+        moved["placement"]["offset"]["x"] = mm(150)
+        out, mapping, _, _ = td.merge_furniture_shells([self.shell("a", [folio()]), self.shell("b", [moved])],
+                                                       ["a", "b"], 3)
+        self.assertEqual((len(out), mapping), (2, {}))
+
+    def test_fences_carry_the_attribute(self):
+        text = '::::page{template="p01"}\nWords\n::::\n::::page{template="p02" ground="g"}\nMore\n::::'
+        out = td.rewrite_markdown(text, {"p01": "page", "p02": "page"}, {}, {}, None, {"p01": ["frontmatter"]})
+        self.assertIn('::::page{template="page" frontmatter}', out)
+        self.assertIn('::::page{template="page" ground="g"}', out)
+        # run again: written once
+        line = '::::page{template="page" frontmatter}'
+        self.assertEqual(td.rewrite_markdown(line, {}, {}, {}, None, {"page": ["frontmatter"]}), line)
+
+
+class Round3DirTest(unittest.TestCase):
+    """dedupe_dir end to end: front matter, two pages of rows, a photo wall in colours."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.root = Path(cls.tmp.name)
+        cls.pages = [front_page("p01"), row_page("p02", "Rivers"), row_page("p03", "Hills"), look_grid_page("p04")]
+        cls.before = cls.root / "before"
+        write_project(cls.before, cls.pages)
+        cls.after = cls.root / "after"
+        write_project(cls.after, cls.pages)
+        with contextlib.redirect_stdout(io.StringIO()):
+            cls.report = td.dedupe_dir(cls.after, TOL, 2, 2.0)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_one_shell_rows_and_looks(self):
+        lib = json.loads((self.after / "library.json").read_text(encoding="utf-8"))
+        shells = [t for t in lib["pageTemplates"] if t.get("role") != "module"]
+        self.assertEqual(len(shells), 1)
+        els = shells[0]["decoration"]["elements"]
+        self.assertEqual({e.get("unless") for e in els}, {"frontmatter"})
+        md = (self.after / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
+        fences = [line for line in md.split("\n") if line.startswith("::::page")]
+        self.assertEqual(fences[0], f'::::page{{template="{shells[0]["id"]}" frontmatter}}')
+        self.assertEqual(set(fences[1:]), {f'::::page{{template="{shells[0]["id"]}"}}'})
+        self.assertEqual(sorted(r["kind"] for r in self.report["rows"]), ["grid", "row"])
+        self.assertEqual(len(lib["frameLooks"]), 2)
+        for look in lib["frameLooks"]:
+            self.assertEqual(md.count(f'look="{look["id"]}"'), 2 if "#bfe0f7" in json.dumps(look) else 1)
+
+    def test_the_folded_draft_lays_out_as_before(self):
+        repo = os.environ.get("POSTEXT_REPO")
+        if not repo:
+            self.skipTest("POSTEXT_REPO not set")
+        import pdf_regions as pr
+
+        frames = {}
+        for name, d in (("before", self.before), ("after", self.after)):
+            with contextlib.redirect_stdout(io.StringIO()):
+                pr.main(["manifest", str(d)])
+            out = self.root / f"{name}-frames.json"
+            run = subprocess.run(["node", str(HERE / "render.mjs"), str(d), "--repo", repo, "--frames", str(out)],
+                                 capture_output=True, text=True)
+            self.assertTrue(out.exists(), run.stdout[-2000:] + run.stderr[-2000:])
+            self.assertNotIn("CONFIG", run.stdout)
+            self.assertNotIn("WARN slot", run.stdout)
+            frames[name] = json.loads(out.read_text(encoding="utf-8"))
+        got = td.compare_boxes(frames["before"], frames["after"], self.report["pages"], 0.5)
+        self.assertEqual(got["missing"], 0, got)
+        self.assertEqual(got["over"], 0, [r["over"] for r in got["pages"]])
+        self.assertGreater(got["frames"], 25)
+
+    def test_the_folded_draft_checks_clean(self):
+        cli = os.environ.get("POSTEXT_CLI")
+        if not cli:
+            self.skipTest("POSTEXT_CLI not set")
+        import shutil
+
+        import pdf_regions as pr
+
+        work = self.root / "checked"
+        shutil.copytree(self.after, work)
+        with contextlib.redirect_stdout(io.StringIO()):
+            pr.main(["manifest", str(work)])
+        run = subprocess.run(shlex.split(cli) + ["check", str(work), "--offline", "--json"], capture_output=True, text=True)
+        data = json.loads(run.stdout)
+        kinds = {w.get("kind") for w in data.get("warnings", [])}
+        for bad in ("unknownConfigValue", "unknownConfigKey", "frameAnchorUnknown", "templateUnknown", "slotUnknown",
+                    "moduleUnknown", "moduleAsPage", "slotEmpty", "repeatOverflow", "lookUnknown", "conditionNeverMet"):
             self.assertNotIn(bad, kinds, [w for w in data.get("warnings", []) if w.get("kind") == bad][:3])
 
 

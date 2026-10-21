@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pagine composte',
   description: 'Come si scrive una pagina composta in Markdown: il blocco di pagina, delimitato da quattro segni di due punti, che indica il modello; le cornici e l’attributo slot, che distribuiscono il contenuto tra le cornici del modello; gli slot ripetuti e i moduli, e gli avvisi che compaiono quando il contenuto non si adatta al modello o copre un’altra cornice',
   lang: 'it',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '43 min',
   order: 34,
   plainSummary: "Alcune pagine non sono una sola colonna di testo corrente ma un insieme di riquadri, come la pagina di un libro di scuola con una fascia per il titolo, un testo e tre riquadri colorati con le loro foto. Postext le chiama pagine composte. La forma della pagina è un modello nella configurazione, e il Markdown dice soltanto quale pezzo di testo va in quale riquadro. Questa pagina spiega come scrivere quel Markdown: il blocco della pagina, le cornici, i nomi degli slot, le schede ripetute in una griglia e i blocchi impilati come moduli. Elenca anche gli avvisi che Postext dà quando il testo e il modello non combaciano.",
@@ -43,6 +43,7 @@ Una pagina composta si scrive come *blocco di pagina*: si apre con una riga di *
     <tr><td><code>spread</code></td><td>La pagina è una doppia pagina su due pagine affiancate (vedi <a href="#doppie-pagine">Doppie pagine</a>). Deve concordare con lo <code>spread</code> del modello; altrimenti decide il modello e <code>spreadMismatch</code> lo segnala.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un’ancora: un <code>:ref</code> che la cita stampa il numero della pagina composta.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Colori delle voci della tavolozza di questa pagina, come coppie <code>voce=#hex</code> separate da virgole: <code>palette="tinta=#f6c3d0"</code> per una pagina i cui riquadri prendono la tinta dell’argomento. Questi valori si applicano a tutti i colori delle cornici e della decorazione legati alla tavolozza, e prevalgono sulla <code>palette</code> del modello. Da postext 1.42.</td></tr>
+    <tr><td>un segnale come <code>frontmatter</code></td><td>Un attributo che un elemento del modello nomina in <code>when</code> o <code>unless</code>: <code>frontmatter</code> su un occhiello toglie il folio e la banda che il modello disegna nelle pagine del testo. Scritto da solo è impostato, e così con un valore diverso da <code>false</code>. Vedi <a href="/it/docs/configuration-composed-pages#disegnato-quando-la-pagina-lo-dice">Disegnato quando la pagina lo dice</a>. Da postext 1.50.</td></tr>
     <tr><td>qualsiasi altro</td><td>Un valore che il modello legge come <code>&#123;attr.name&#125;</code>, per esempio un’immagine di sfondo scelta pagina per pagina: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> nella decorazione.</td></tr>
   </tbody>
 </table>
@@ -68,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Lo **slot** è il nome della cornice a cui va un pezzo di contenuto, e corrisponde al nome di una cornice del modello. `:::frame{slot="…"}` manda in quella cornice tutto ciò che contiene. Al suo interno vale tutto il Markdown: paragrafi, elenchi, titoli, chip, inserimenti `::resource`, rimandi `:ref`, note a piè di pagina, `:::columns` e riquadri annidati. `label` e `title` impostano il testo della linguetta o del titolo della cornice, come per un `:::callout`; l’aspetto della cornice viene dallo stile di riquadro che le assegna il modello.
+Lo **slot** è il nome della cornice a cui va un pezzo di contenuto, e corrisponde al nome di una cornice del modello. `:::frame{slot="…"}` manda in quella cornice tutto ciò che contiene. Al suo interno vale tutto il Markdown: paragrafi, elenchi, titoli, chip, inserimenti `::resource`, rimandi `:ref`, note a piè di pagina, `:::columns` e riquadri annidati. `label` e `title` impostano il testo della linguetta o del titolo della cornice, come per un `:::callout`; l’aspetto della cornice viene dallo stile di riquadro che le assegna il modello, e un pezzo può indicare un aspetto suo (vedi [Aspetti delle cornici](#aspetti-delle-cornici)).
 
 Un singolo blocco può indicare da sé il suo slot:
 
@@ -131,6 +132,36 @@ La lontra
 
 Una cornice dell’insieme viene segnalata come `slotEmpty` solo quando nessuna scheda della pagina la riempie. Una cornice ripetuta non riceve mai un titolo e non è mai la cornice di flusso.
 
+### Aspetti delle cornici
+
+Un pezzo può portare un aspetto con nome: un insieme di colori che la configurazione definisce in `frameLooks` (vedi [Configurazione › Aspetti delle cornici](/it/docs/configuration-composed-pages#aspetti-delle-cornici)). Il Markdown nomina l’aspetto e la configurazione dice com’è. In una griglia questo dà a ogni scheda il suo colore, mentre tutte le schede tengono un solo modello e un solo stile:
+
+```md
+::::page{template="fotos"}
+# Gli animali del fiume
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+L’airone
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+La lontra
+:::
+:::
+::::
+```
+
+- **Dove.** `look` va sulla riga di apertura di qualsiasi pezzo `:::frame{slot="…"}`. Il pezzo principale di una scheda (qui la cornice della seconda foto) e un membro annidato in esso (ogni pastiglia) indicano ciascuno il proprio.
+- **Che cosa cambia.** L’aspetto si posa sullo stile della cornice e sui colori propri del modello, solo per quel pezzo: le altre schede tengono i loro. Il testo che prosegue in un’altra cornice (una catena, una pagina di continuazione) mantiene l’aspetto.
+- **Un id sconosciuto.** Un id che `frameLooks` non ha produce `lookUnknown` sull’attributo, con l’id più vicino, e la cornice tiene i suoi colori.
+
 ### Moduli in una pagina
 
 Un modello di pagina con un gruppo di moduli (`modules: true`, vedi [Configurazione › Moduli](/it/docs/configuration-composed-pages#moduli)) prende i suoi blocchi da contenitori `:::module`, disposti uno sotto l’altro nell’ordine in cui sono scritti. Il modello del modulo disegna il blocco; il contenitore ne contiene le parole:
@@ -163,6 +194,7 @@ La vita sulle sue rive
 - **`template`** indica un modello con `role: 'module'`. **`name`** è facoltativo: dà un nome all’istanza del modulo, così le sue cornici sono `ramas.raiz`, `ramas.izq`. Senza di esso l’istanza è `<template>[n]`, il numero d’ordine del modulo tra i moduli della pagina con quel modello: `arbol[1].raiz`. Un nome già usato nella pagina, o uno che contiene uno spazio, `.`, `#`, `[` o `]`, viene sostituito da quello predefinito (`moduleNameRejected`).
 - **Gli slot** dentro un `:::module` sono quelli del modulo: `slot="raiz"` raggiunge la cornice `raiz` di questo modulo, e due moduli dello stesso modello in una pagina tengono separate le loro parole. Il contenuto che non indica uno slot va alla cornice di flusso del modulo, e un titolo alla cornice del modulo che riceve il suo livello (`takes`); se non c’è né l’una né l’altra, alla cornice di flusso della pagina.
 - **Ordine.** I moduli si impilano nell’ordine del Markdown, così un’altra pagina compone gli stessi blocchi in un altro ordine, o con un albero in più, senza un nuovo modello.
+- **Affiancati.** Quando il gruppo di moduli è una fila o una griglia, o contiene gruppi propri (`within`), gli stessi blocchi si mettono uno accanto all’altro: due `:::module{template="aviso"}` seguiti da quattro `:::module{template="tarjeta"}` danno una fila di due riquadri sopra una griglia di 2 × 2 schede. Il Markdown continua a dire solo quali moduli vengono e in che ordine (vedi [Configurazione › Moduli](/it/docs/configuration-composed-pages#moduli)).
 - Un `:::module` fuori da un blocco di pagina è un semplice riquadro con il suo contenuto. Un modulo dentro un modulo non è supportato (`moduleNested`).
 
 ## Esempio
@@ -329,6 +361,11 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
       <td>Alza o togli <code>max</code> nel modello, oppure sposta le schede in più su un’altra pagina.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un pezzo <code>:::frame</code> scrive <code>look="…"</code> con un id che nessuna voce di <code>frameLooks</code> ha (vedi <a href="#aspetti-delle-cornici">Aspetti delle cornici</a>). La cornice tiene il suo stile e i colori del modello. L’avviso indica l’id più vicino (<code>suggestion</code>).</td>
+      <td>Correggi l’id, oppure aggiungi l’aspetto a <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Un <code>:::module</code> non indica alcun modello, ne indica uno che non è un modulo, oppure il modello della pagina non ha un gruppo di moduli (<code>reason</code>). Il suo contenuto va alla cornice di flusso.</td>
       <td>Correggi il <code>template</code> del modulo, oppure dai al modello della pagina un gruppo con <code>modules: true</code>.</td>
@@ -351,7 +388,7 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
   </tbody>
 </table>
 
-Gli avvisi dei moduli e `repeatOverflow` esistono da postext 1.48; il lato del modello di ciascuno è descritto in [Configurazione › Avvisi di sovrapposizione, ripetizione e moduli](/it/docs/configuration-composed-pages#avvisi-di-sovrapposizione-ripetizione-e-moduli).
+Gli avvisi dei moduli e `repeatOverflow` esistono da postext 1.48, `lookUnknown` da postext 1.50; il lato del modello di ciascuno è descritto in [Configurazione › Avvisi di sovrapposizione, ripetizione e moduli](/it/docs/configuration-composed-pages#avvisi-di-sovrapposizione-ripetizione-e-moduli).
 
 Una volta impaginato il libro, ciascuno di questi avvisi riporta anche la pagina a cui si riferisce (`pageIndex`), così il pannello **Verifiche** e `postext check` danno il numero di pagina accanto al modello, alla cornice o allo slot e all’intervallo del sorgente.
 
@@ -462,7 +499,7 @@ Quando nessun passo fa entrare il contenuto, la cornice viene tagliata al piede,
   <tbody>
     <tr>
       <td><code>allowShrink</code></td>
-      <td><code>fit.minScale</code> della cornice: la scala del testo più grande, a passi del 2,5 % fino al 50 %, con cui il contenuto entra, provata sulla pagina. Con <code>fit.shrinkText: false</code>, <code>also</code> la attiva.</td>
+      <td><code>fit.minScale</code> della cornice: la scala del testo più grande, a passi del 2,5 % fino al 50 %, con cui il contenuto entra, provata sulla pagina. Se quella scala divide una parola più larga della cornice, la proposta indica la scala minore più grande con cui il contenuto entra e ogni parola resta intera, con <code>word: 'whole'</code>; se nessuna fino al 50 % la tiene intera, resta la più grande che entra, con <code>word: 'divided'</code>. Con <code>fit.shrinkText: false</code>, <code>also</code> la attiva.</td>
     </tr>
     <tr>
       <td><code>raiseMax</code></td>

@@ -167,7 +167,7 @@ const dim = (d: { value: number; unit: string }): string => `${Math.round(d.valu
 export function describeFrameOverflowProposal(p: FrameOverflowProposal): string {
   switch (p.kind) {
     case 'allowShrink':
-      return `let its text shrink to ${pct(p.value)} (fit.minScale: ${p.value}${p.also?.length ? ', fit.shrinkText: true' : ''})`;
+      return `let its text shrink to ${pct(p.value)}${p.word === 'whole' ? ', where its long word is whole' : p.word === 'divided' ? ', a long word divided' : ''} (fit.minScale: ${p.value}${p.also?.length ? ', fit.shrinkText: true' : ''})`;
     case 'raiseMax':
       return `raise maxHeight to ${dim(p.value)}`;
     case 'lowerMin':

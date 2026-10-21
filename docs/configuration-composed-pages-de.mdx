@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Einstellungen für zusammengesetzte Seiten',
   description: 'Seitenvorlagen für zusammengesetzte Seiten: Rahmen, Gruppen, Raster, die einen Rahmensatz wiederholen, Module, Dekoration und Verbinder, Vererbung und Varianten für rechte und linke Seiten, die Beschriftungsstile der Bildanker und die Warnungen, die eine Vorlage auslösen kann',
   lang: 'de',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10 min',
   order: 18,
   parent: 'configuration',
@@ -153,6 +153,12 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>string</code></td>
       <td><code>'composed'</code></td>
       <td>Die Seitenrolle, die Gestaltungselemente mit einem Filter <code>pages</code> sehen. <code>'module'</code> macht die Vorlage zu einem Modul: einem Kasten aus Rahmen, den Seiten in einer Gruppe stapeln, statt einer eigenen Seite (siehe <a href="#module">Module</a>). Seit postext 1.48.</td>
+    </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Ein Modul: seine Breite in einer Modulreihe oder einem Modulstapel, als Länge, als Prozentsatz der Gruppenbreite oder als <code>'fill'</code>, ein gleicher Teil dessen, was die anderen Module der Reihe übrig lassen. Im Raster nimmt das Modul seine Spalte. Seit postext 1.50.</td>
     </tr>
   </tbody>
 </table>
@@ -345,7 +351,7 @@ Ein Rahmen wird über seine Rasterzelle (`grid`) platziert, wenn die Vorlage ein
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Was dieser Rahmen am Aussehen seines Kastenstils ändert, mit den Namen und der Verschachtelung des Stils selbst: Farben (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> und <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) und die Laufweite des Textes (<code>body.letterSpacing</code>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; die Farbe eines Etiketts gilt nur für einen Stil mit Etikett. In einer Kindvorlage wird der Wert Schlüssel für Schlüssel mit dem Rahmen zusammengeführt, den er überschreibt. Ein Buch mit einer Kastenform in mehreren Farbtönen behält einen Stil und schreibt den Farbton hier, oder lässt <code>palette</code> eine an die Palette gebundene Füllung umfärben. Seit postext 1.42.</td>
+      <td>Was dieser Rahmen am Aussehen seines Kastenstils ändert, mit den Namen und der Verschachtelung des Stils selbst: Farben (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> und <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) und die Laufweite des Textes (<code>body.letterSpacing</code>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; die Farbe eines Etiketts gilt nur für einen Stil mit Etikett. In einer Kindvorlage wird der Wert Schlüssel für Schlüssel mit dem Rahmen zusammengeführt, den er überschreibt. Ein Buch mit einer Kastenform in mehreren Farbtönen behält einen Stil und schreibt den Farbton hier, oder lässt <code>palette</code> eine an die Palette gebundene Füllung umfärben. Ein Teil der Seite kann ein benanntes Aussehen darüberlegen (siehe <a href="#rahmenaussehen">Rahmenaussehen</a>). Seit postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -434,7 +440,7 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Ein Raster: wo eine Zelle steht, die niedriger als ihre Reihe ist. <code>'stretch'</code> macht ihren Hauptrahmen so hoch wie die Reihe (bis zu seiner <code>maxHeight</code>), wenn die Höhe dieses Rahmens <code>'auto'</code> oder <code>'fill'</code> ist.</td>
+      <td>Ein Raster: wo eine Zelle steht, die niedriger als ihre Reihe ist. <code>'stretch'</code> macht ihren Hauptrahmen so hoch wie die Reihe (bis zu seiner <code>maxHeight</code>), wenn die Höhe dieses Rahmens <code>'auto'</code> oder <code>'fill'</code> ist. Eine Modulreihe oder ein Modulraster: wo ein Modul steht, das niedriger als seine Reihe ist; <code>'stretch'</code> setzt es in ein Rechteck so hoch wie die Reihe, sodass sein Grund und seine <code>'fill'</code>-Rahmen bis zum Fuß der Reihe reichen.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Die Gruppe nimmt die <code>:::module</code>-Blöcke der Seite auf, untereinander in der Reihenfolge des Markdowns, mit <code>gap</code> dazwischen. Sie wird unabhängig von ihrem <code>kind</code> als Stapel gesetzt, und ihre <code>frames</code> werden nicht gelesen. Siehe <a href="#module">Module</a>. Seit postext 1.48.</td>
+      <td>Die Gruppe nimmt die <code>:::module</code>-Blöcke der Seite in der Reihenfolge des Markdowns auf, mit <code>gap</code> dazwischen: untereinander (<code>'stack'</code>), nebeneinander (<code>'row'</code>) oder in <code>columns</code> (<code>'grid'</code>, seit postext 1.50). Ihre <code>frames</code> werden nicht gelesen. Siehe <a href="#module">Module</a>. Seit postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>keine</td>
       <td>Eine Modulgruppe: wo ein Modul, das nicht passt, als Ganzes weiterläuft. Ohne Angabe wird das Modul am Fuß der Gruppe abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>keine</td>
+      <td>Eine Modulgruppe im Modulstapel dieses Namens: Jede Folge von Modulen der Seite, die sie aufnimmt, wird in der Reihenfolge des Markdowns als eine Reihe oder ein Raster dieses Stapels gesetzt, dort, wo das erste Modul der Folge steht. Seit postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>keine</td>
+      <td>Eine Modulgruppe mit <code>within</code>: die Modulvorlagen, die sie aufnimmt. Nicht gesetzt: alle Module. Ein Modul kommt in die erste solche Gruppe, die es aufnimmt, sonst in den Stapel.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **Was ein Modul hat.** Rahmen, Gruppen (auch ein Raster, das sich wiederholt), Dekoration und Verbinder. Es hat kein `area`, `header`, `footer`, `variants`, `spread`, `gutter` oder `overflowTemplate`: Jedes davon wird als `unknownConfigValue` gemeldet und ignoriert. `extends` funktioniert zwischen Modulen (eine Vorlage, die ein Modul erweitert, ist ein Modul).
 - **Sein Rechteck.** Ein Modul ist so breit wie seine Gruppe und so hoch, wie seine Rahmen reichen; die Gruppe stapelt die Module von ihrer Oberkante an, mit `gap` dazwischen. Innerhalb eines Moduls ist `'container'` das Rechteck des Moduls, für seine Rahmen (auch `'fill'` und Prozentangaben) und für seine Dekoration: Ein Grund mit der Größe `{ to: 'container', edge: 'bottom' }` bedeckt das Modul, welche Höhe ihm seine Wörter auch geben.
 - **Namen.** Die Rahmen, Gruppen und Elemente eines Moduls gelten im Bereich des Instanznamens des Moduls: `<name>.<frame>`, mit dem Namen, den das Markdown gibt (`name="ramas"`), sonst `<template>[n]`, die laufende Nummer des Moduls unter den Modulen dieser Vorlage auf der Seite (`arbol[2].raiz`). Anker, `next`, `continueIn: '#x'` und Verbinder innerhalb eines Moduls werden auf seine eigenen Rahmen umgeschrieben, sodass zwei Bäume auf einer Seite nie ineinanderlaufen. Eine Rahmen-ID lautet `cp0:arbol[2].raiz`.
-- **Wenn Module nicht passen.** Ein Modul jenseits des Fußes der Gruppe wird dort abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen; `frameOverflow` wird einmal für die Gruppe ausgelöst. Mit `overflow.continueIn` an der Modulgruppe (`'next-page'` oder `'template:<id>'`) laufen das erste Modul, das nicht passt, und jedes Modul danach **als Ganzes** auf der hinzugefügten Seite weiter, unter denselben Namen, oben in der Modulgruppe dieser Seite.
-- **Noch nicht.** Module nebeneinander (eine Modulgruppe ist immer ein Stapel), ein Modul in einem Modul (`moduleNested`) und `grid`-Zellen der Vorlage innerhalb eines Moduls.
+- **Wenn Module nicht passen.** Ein Modul jenseits des Fußes der Gruppe wird dort abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen; `frameOverflow` wird einmal für die Gruppe ausgelöst. Mit `overflow.continueIn` an der Modulgruppe (`'next-page'` oder `'template:<id>'`) laufen das erste Modul, das nicht passt, und jedes Modul danach **als Ganzes** auf der hinzugefügten Seite weiter, unter denselben Namen, oben in der Modulgruppe dieser Seite. In einer Modulreihe oder einem Modulraster geht eine Reihe ganz weiter: Ihre Module werden nie auf zwei Seiten verteilt.
+- **Nebeneinander.** Eine Modulgruppe mit `kind: 'row'` setzt ihre Module vom Anfang zum Ende, jedes so breit wie die `width` seiner Vorlage (eine Länge, `{ percent: 48 }` oder `'fill'`, ein gleicher Teil des Rests), die Reihe so hoch wie ihr höchstes Modul; `kind: 'grid'` setzt sie in `columns` gleiche Spalten, Reihe für Reihe. `rowAlign` platziert ein Modul, das niedriger als seine Reihe ist. Reihen beginnen auf der Seite, auf der die Zeile beginnt: Eine Seite von rechts nach links setzt das erste Modul rechts. Seit postext 1.50.
+- **Gruppen im Stapel.** Eine Modulgruppe mit `within: '<Stapel>'` liegt im Modulstapel der Seite, und `templates` sagt, welche Module sie aufnimmt: Jede Folge davon im Markdown bildet eine Reihe oder ein Raster des Stapels, dort, wo ihr erstes Modul steht. Mit den Gruppen unten ergeben zwei `aviso`-Blöcke, gefolgt von vier `tarjeta`-Blöcken, eine Reihe aus zwei Kästen über einem Raster aus 2 × 2 Karten, und das Markdown enthält nur `:::module`-Blöcke.
+- **Noch nicht.** Ein Modul in einem Modul (`moduleNested`), `grid`-Zellen der Vorlage in einem Modul und eine Gruppe in einer Modulreihe oder einem Modulraster.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Wenn der Inhalt nicht passt
 
@@ -651,6 +679,26 @@ pageTemplates: [
 Ein Wert, der einem Standardwert gleicht, wird beim Speichern einer Vorlage in der Sandbox nie verworfen: In einer Vorlage, die eine andere erweitert, oder in einer Variante überschreibt er den Wert der Elternvorlage.
 
 Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit zusammengeführter Kette, angewandter Variante der jeweiligen Seite, allen eingesetzten Standardwerten und jedem Verweis so aufgelöst, wie es die Warnungen unten beschreiben; `validatePageTemplates(config)` liefert die Warnungen.
+
+### Gezeichnet, wenn die Seite es sagt
+
+Ein Element der Dekoration und ein Element von `header` oder `footer` der Vorlage kann `when` oder `unless` tragen, jeweils mit dem Namen eines Attributs des Seitenblocks. `when: 'folio'` zeichnet das Element nur auf Seiten, deren Block `folio` setzt; `unless: 'frontmatter'` lässt es auf Seiten weg, deren Block `frontmatter` setzt. Ein Block setzt ein Attribut, wenn er es allein schreibt (`::::page{template="pagina" frontmatter}`) oder mit einem Wert außer `false`. So dient eine Vorlage der Titelei, die weder Seitenzahl noch Band druckt, und den Textseiten, die beides drucken: Das Markdown sagt, was die Seite ist, die Vorlage behält die Zeichnung. Seit postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Ein Element, das an einem weggelassenen Element verankert ist oder dessen Größe bis zu ihm reicht, fällt ebenfalls weg.
+- Mit beiden Schlüsseln wird das Element dort gezeichnet, wo der Block das Attribut von `when` setzt und das von `unless` nicht.
+- Die Kopf- und Fußzeilen des Dokuments und die eines Abschnitts lesen sie ebenso. Eine Seite, die nicht zusammengesetzt ist, hat keinen Seitenblock und setzt nichts. Überschriften-, Teil- und Kastengestaltungen beachten sie nicht.
+- Ein Wert, der kein nicht leerer Text ist, oder einer in einer Überschriften-, Teil- oder Kastengestaltung, wird als `unknownConfigValue` gemeldet, und das Element wird gezeichnet, als hätte es keinen. `postext check` fügt einen Hinweis hinzu, `conditionNeverMet`, für ein `when` oder `unless` mit einem Attribut, das keine Seite des Buchs setzt: Dieses Element wird nie gezeichnet, oder immer.
+- In der Sandbox hat jede Elementkarte einer Kopf- oder Fußzeile und der Dekoration einer Vorlage die Felder **Gezeichnet, wenn die Seite es sagt** und **Nicht gezeichnet, wenn die Seite es sagt**; zur Wahl stehen die Attribute, die die Seitenblöcke des Buchs verwenden.
 
 ### Was der Umbruch umsetzt
 
@@ -787,7 +835,7 @@ decoration: {
       <td>Verbindet die Rechtecke, die die Vorlage angibt, nicht die Rechtecke, die der Inhalt den Rahmen gegeben hat.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>wie bei anderen Elementen</td>
       <td><code>'all'</code></td>
       <td>Welche Seiten ihn zeichnen.</td>
@@ -856,6 +904,48 @@ decoration: { elements: [
 ```
 
 **Prüfungen.** Ein Ende, dessen `to` nichts nennt, ist `frameAnchorUnknown` (an `…/from/to` oder `…/to/<k>/to`) und wird weggelassen; `[*]` gilt nur in `to` und an einem wiederholten Rahmen. Ein `anchor`, den kein Bild des Rahmens hat, ist `labelAnchorUnknown`, mit der ID des Verbinders. Ein Wort außerhalb der Auswahl von `routing`, `startCap`, `endCap` oder `side` und ein `at` außerhalb von 0 bis 1 sind `unknownConfigValue`. Ein `opacity`, das keine Zahl von 0 bis 1 ist, ist ebenfalls `unknownConfigValue` (eine Zahl außerhalb wird auf den Bereich begrenzt).
+
+## Rahmenaussehen
+
+Ein Raster aus Fotokarten, deren Etiketten sich nur in der Farbe unterscheiden, oder eine Seite mit Kästen in einem Dutzend Tönen behält einen Kastenstil und eine Vorlage: Die Farben kommen in `frameLooks`, eine Liste benannter Aussehen, und das Markdown nennt eines an jedem Teil, der es trägt. Seit postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Feld</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Pflichtfeld. Das Wort, das ein Teil in <code>look="…"</code> schreibt. Haben zwei Aussehen dieselbe ID, gilt das erste.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Wird nur in der Sandbox angezeigt.</td>
+    </tr>
+    <tr>
+      <td>Die Felder des <code>look</code> eines Rahmens</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, benannt und verschachtelt wie im <code>look</code> des Rahmens (siehe <a href="#rahmen">Rahmen</a>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; eine Etikettfarbe gilt nur für einen Stil mit Etikett.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Wo es gilt.** Ein Teil `:::frame{slot="…" look="<id>"}` trägt das Aussehen. In einem Raster nennen der Hauptteil des Eintrags und das verschachtelte `:::frame` eines Mitglieds jeweils ihr eigenes (siehe [Zusammengesetzte Seiten › Rahmenaussehen](/de/docs/composed-pages#rahmenaussehen)).
+- **Reihenfolge.** Das Aussehen legt sich Schlüssel für Schlüssel über den Kastenstil des Rahmens und über das eigene `look` des Vorlagenrahmens: Ein Aussehen, das nur die Füllung setzt, behält die Textfarbe der Vorlage. Es gilt nur für diesen Teil. Die Rahmen, in denen sein Text weiterläuft (eine Kette, eine durch Fortsetzung hinzugefügte Seite), tragen es ebenfalls.
+- **Paletten.** Eine an einen Paletteneintrag gebundene Farbe folgt der Palette wie jede Farbe der Konfiguration, also färbt eine Teilpalette oder die `palette` einer Seite sie um.
+- **Prüfungen.** Ein Eintrag ohne `id` wird ignoriert (`unknownConfigValue`), und ein Schlüssel, den ein Aussehen nicht hat, ist in jeder Tiefe ein `unknownConfigKey`, mit dem nächstliegenden Namen. Ein Teil, der eine ID nennt, die kein Eintrag hat, behält die Farben seines Rahmens und löst `lookUnknown` aus.
+
+In der Sandbox werden die Aussehen unter **Gestaltung › Kästen › Rahmenaussehen** bearbeitet; dort steht auch, wie viele Teile jedes nennen. Die Schaltfläche **Rahmenaussehen** des Editors schreibt `look="…"` an den Teil, in dem der Cursor steht.
 
 ## Beschriftungsstile
 
@@ -1078,7 +1168,7 @@ anchors: [
 
 Anderswo ignoriert die Engine einen Schlüssel, den sie nicht kennt. Seitenvorlagen und Beschriftungsstile werden dagegen geprüft, und jedes Problem ist eine Konfigurationswarnung in `postext check` und im Bedienfeld Prüfungen der Sandbox. Der `path` dieser Warnungen ist ein JSON-Pointer auf das fehlerhafte Feld: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Wurde das Feld geerbt, verweist der Pointer auf die Vorlage, in der es steht. Eine Warnung, die eine nicht vorhandene ID oder einen nicht vorhandenen Namen nennt, schlägt außerdem den nächstliegenden vorhandenen vor.
 
-Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, `routing`, Endmarken und `side` eines Verbinders, Endmarken und `routing` einer Hinweislinie) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert.
+Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, `routing`, Endmarken und `side` eines Verbinders, Endmarken und `routing` einer Hinweislinie) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert. Rahmenaussehen (`frameLooks`) werden genauso geprüft: Ein Aussehen ohne `id` wird ignoriert, und ein Schlüssel, den das `look` eines Rahmens nicht hat, ist ein `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1156,7 +1246,7 @@ Seit es Verbinder gibt (postext 1.48), ist die Konfigurationsversion 16; die Sei
 
 ### Warnungen zu Überlappung, Wiederholung und Modulen
 
-Diese Warnungen entstehen beim Setzen oder aus dem Markdown der Seite, nicht aus der Vorlage allein; sie nennen deshalb eine Seite. Sie stehen in `postext check` (`--json` liefert ihre Felder als `data`), im Bedienfeld Prüfungen der Sandbox und in den `contentWarnings` des Dokuments. Seit postext 1.48.
+Diese Warnungen entstehen beim Setzen oder aus dem Markdown der Seite, nicht aus der Vorlage allein; sie nennen deshalb eine Seite. Sie stehen in `postext check` (`--json` liefert ihre Felder als `data`), im Bedienfeld Prüfungen der Sandbox und in den `contentWarnings` des Dokuments. Seit postext 1.48, `lookUnknown` seit postext 1.50.
 
 <table>
   <thead>
@@ -1181,6 +1271,11 @@ Diese Warnungen entstehen beim Setzen oder aus dem Markdown der Seite, nicht aus
       <td><code>repeatOverflow</code></td>
       <td>Ein Raster, das einen Rahmensatz wiederholt, fasst <code>repeat.max</code> Einträge, und die Seite gibt ihm mehr. Eine Warnung je überzähligen Eintrag, an seinem <code>slot="…"</code>: Der Eintrag kommt in den Flussrahmen (<code>flowFrame</code>) oder hinter die Seite.</td>
       <td>Erhöhen Sie <code>max</code>, entfernen Sie es, oder setzen Sie die überzähligen Einträge auf eine andere Seite.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Ein Teil <code>:::frame</code> schreibt <code>look="…"</code> mit einer ID, die kein Eintrag von <code>frameLooks</code> hat (siehe <a href="#rahmenaussehen">Rahmenaussehen</a>). Der Rahmen behält seinen Stil und die Farben seiner Vorlage. Zeigt auf den Wert des Attributs und nennt die nächstliegende ID (<code>suggestion</code>).</td>
+      <td>Korrigieren Sie die ID am Teil, oder fügen Sie <code>frameLooks</code> ein Aussehen mit dieser ID hinzu.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>
