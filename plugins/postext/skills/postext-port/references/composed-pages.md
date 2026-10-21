@@ -490,8 +490,9 @@ What the extraction decides, so you know what to check:
   the image itself). A page sends its loose shapes, its hatching and its
   stray line pieces to the raster ground (`report.json` says why) when it
   has more loose shapes than `--max-paths`, clipped art outside its
-  pictures, six stray line pieces or more and more of them than connector
-  pieces, or a full-page image; connectors, cards, borders and the page
+  pictures, six stray line pieces under 5 mm or more and more of them than
+  connector pieces (fragments; a page's long rules stay paths), or a
+  full-page image; connectors, cards, borders and the page
   colour stay vectors. `--vector-ground` keeps the vectors.
 - **Clip paths** (skill 1.61). Paths are read with the clips they are
   painted in (`get_drawings(extended=True)`): each path's box is what shows

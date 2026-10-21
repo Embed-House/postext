@@ -55,7 +55,7 @@ What `extract` reads on every page:
   loose shapes are decoration too (evenly spaced parallel strokes are one
   hatch path). The raster ground keeps only what none of these paints (a
   transparent PNG); a page with nothing left has none. A page with too many
-  loose shapes, clipped art off its pictures, mostly stray line pieces or a
+  loose shapes, clipped art off its pictures, mostly line fragments or a
   full-page image keeps its loose art in the ground (--vector-ground: not).
 - **Running heads and folios**: text outside the cards (or in the top and
   bottom bands of a page without cards). A folio becomes `{pageNumber}`,
@@ -3798,8 +3798,9 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
             reasons.append(f"{len(residual) + len(hatches)} loose shapes (over --max-paths {opts.max_paths})")
         if any(s.clipped and not s.rect_like() for s in residual):
             reasons.append("clipped art outside the pictures")
-        if len(stray) >= 6 and len(stray) > conn_segs:
-            reasons.append(f"{len(stray)} stray line pieces, {conn_segs} connector pieces")
+        bits = [g for g in stray if g.length < 5.0]      # fragments, not a page's rules
+        if len(bits) >= 6 and len(bits) > conn_segs:
+            reasons.append(f"{len(bits)} stray line pieces under 5 mm, {conn_segs} connector pieces")
         if big_image:
             reasons.append("a full-page image")
     if reasons:
@@ -4732,8 +4733,8 @@ def main(argv: list[str] | None = None) -> int:
                    help="a page with more loose shapes than this keeps them in its raster ground (default 150)")
     p.add_argument("--vector-ground", action="store_true",
                    help="keep a page's loose art as vectors even when it would go to the raster ground (more "
-                        "loose shapes than --max-paths, clipped art outside the pictures, more stray line pieces "
-                        "than connector pieces, a full-page image)")
+                        "loose shapes than --max-paths, clipped art outside the pictures, more short stray line "
+                        "pieces than connector pieces, a full-page image)")
     p.add_argument("--ground-min-px", type=int, default=60,
                    help="a page whose raster ground would hold fewer pixels than this (at --ground-dpi) gets none "
                         "(default 60)")
