@@ -76,6 +76,25 @@ describe('a one-line pill sets a long word smaller before it divides it (#1084)'
     expect(overflows(doc)).toEqual([]);
   });
 
+  it('also when the divided word fits the height at full size: a pill tall enough for its two pieces', () => {
+    // 12 mm holds two lines of 16 pt: the frame is not short, the word
+    // used to stay divided at full size.
+    const doc = build([pill({ minScale: 0.7 }, { minHeight: mm(12), maxHeight: mm(12) })]);
+    expect(lines(doc).map((l) => l.text)).toEqual([WORD]);
+    expect(frame(doc).scale).toBe(0.825);
+    // A fixed height holds it the same way.
+    const fixed = build([pill({ minScale: 0.7 }, { height: mm(12), minHeight: undefined, maxHeight: undefined })]);
+    expect(frame(fixed).scale).toBe(0.825);
+    // A frame free to grow (no maxHeight, no fixed height) keeps its size.
+    const free = build([pill({ minScale: 0.7 }, { minHeight: undefined, maxHeight: undefined })]);
+    expect(lines(free).length).toBe(2);
+    expect(frame(free).scale).toBe(1);
+    // As does one whose text may not shrink.
+    const kept = build([pill({ minScale: 0.7, shrinkText: false }, { minHeight: mm(12), maxHeight: mm(12) })]);
+    expect(lines(kept).length).toBe(2);
+    expect(frame(kept).scale).toBe(1);
+  });
+
   it('a pill whose words wrap at spaces is not set smaller for it', () => {
     // Two short words on two lines fit at full size: no division, no shrink.
     const doc = build([pill({ minScale: 0.7 }, { minHeight: mm(12), maxHeight: mm(12) })], 'Public office');

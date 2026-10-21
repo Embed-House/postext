@@ -485,9 +485,45 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
     return { height: 'auto', minHeight: min };
   };
 
+  /** The frame's text may be set smaller (`fit.shrinkText`, a
+   *  `minScale` under 1) and it holds text. */
+  const textShrinks = (frame: ResolvedFrame): boolean => frame.fit.shrinkText && frame.fit.minScale < 1 && holdsText(frame);
+  /** The frame divides a word wider than its measure (#1084): a smaller
+   *  scale than the one its text has, down to `minScale`, that sets the
+   *  word whole and still fits wins; the largest such. When none does the
+   *  word stays divided: dividing is the last resort. */
+  const wordWhole = (frame: ResolvedFrame): void => {
+    const name = frame.name;
+    if (runs >= COMPOSE_BUDGET || !dividesWord(cur, name)) return;
+    const head = headOf(name);
+    const now = fit.text.get(head) ?? 1;
+    const scales = scaleSteps(frame.fit.minScale, now);
+    if (scales.length === 0) return;
+    const make = (s: number): FitState => withText(fit, head, s);
+    const whole = (c: Composition): boolean => !short(c, name) && !dividesWord(c, name);
+    if (!whole(compose(make(scales[scales.length - 1]!)))) return;
+    let lo = 0;
+    let hi = scales.length - 1; // whole at hi
+    while (lo < hi && runs < COMPOSE_BUDGET) {
+      const mid = Math.floor((lo + hi) / 2);
+      if (whole(compose(make(scales[mid]!)))) hi = mid;
+      else lo = mid + 1;
+    }
+    fit = make(scales[hi]!);
+    cur = compose(fit);
+  };
+
   for (const frame of template.frames) {
     const name = frame.name;
-    if (!short(cur, name) || runs >= COMPOSE_BUDGET) continue;
+    if (runs >= COMPOSE_BUDGET) continue;
+    if (!short(cur, name)) {
+      // A frame that fits, held to its height (a fixed one, or a
+      // `maxHeight`), may still divide a word wider than its measure
+      // (#1084): a one-line pill whose word went over two lines that its
+      // height holds. Its text is set smaller first.
+      if ((fixedHeight(frame) || frame.maxHeight) && textShrinks(frame)) wordWhole(frame);
+      continue;
+    }
     const steps: FrameFitStep[] = [];
     tried.set(name, steps);
     // 1. Free space: a fixed height grows to its maximum ('auto' heights
@@ -516,32 +552,13 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
     };
     // 5. The frame's text (its whole story), down to fit.minScale.
     const shrinkText = (): boolean => {
-      if (!frame.fit.shrinkText || frame.fit.minScale >= 1 || !holdsText(frame)) return false;
+      if (!textShrinks(frame)) return false;
       steps.push('shrinkText');
       const scales = scaleSteps(frame.fit.minScale);
       const make = (s: number): FitState => withText(fit, headOf(name), s);
       if (!searchScale(scales, make, name)) return false;
-      wordWhole(scales, make, name);
+      wordWhole(frame);
       return true;
-    };
-    /** The text fits but divides a word wider than its measure (#1084): a
-     *  smaller scale, down to `minScale`, that sets the word whole and still
-     *  fits wins; the largest such. Dividing stays the last resort. */
-    const wordWhole = (scales: readonly number[], make: (s: number) => FitState, name: string): void => {
-      if (!dividesWord(cur, name)) return;
-      const at = scales.indexOf(fit.text.get(headOf(name)) ?? 1);
-      if (at < 0 || at === scales.length - 1) return;
-      const whole = (c: Composition): boolean => !short(c, name) && !dividesWord(c, name);
-      if (runs >= COMPOSE_BUDGET || !whole(compose(make(scales[scales.length - 1]!)))) return;
-      let lo = at + 1;
-      let hi = scales.length - 1; // whole at hi
-      while (lo < hi && runs < COMPOSE_BUDGET) {
-        const mid = Math.floor((lo + hi) / 2);
-        if (whole(compose(make(scales[mid]!)))) hi = mid;
-        else lo = mid + 1;
-      }
-      fit = make(scales[hi]!);
-      cur = compose(fit);
     };
     // 6. Continuation on another page (`overflow.continueIn: 'next-page'`,
     //    `'template:<id>'` or `'page:<id>'`, #859). On a page added by
