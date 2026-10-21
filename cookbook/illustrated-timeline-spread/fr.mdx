@@ -9,7 +9,7 @@ aliases: ["frise chronologique", "chronologie", "double page", "gabarit de page"
 
 ## Ce que vous allez composer
 
-Les pages 48 et 49 d’un manuel d’histoire de collège : *La route du papier*, mille ans de métier, de l’atelier de Cai Lun à la meule de Keller. La page de gauche s’ouvre sur le titre et deux paragraphes, celle de droite sur un encadré qui raconte comment on fabriquait une feuille à la main. Au milieu court la frise : un bandeau indigo pour l’Asie, un bandeau terre cuite pour l’Europe, qui part de la page de gauche et passe le dos. Dessous, six fiches avec leur dessin, suspendues au bandeau par un point et un trait. Le gabarit dessine une fiche asiatique, une fiche européenne et un connecteur par bandeau : une grille pose une fiche pour chaque date du Markdown, et le connecteur retrouve toutes les fiches que la grille a posées. Tous les mots sont dans le Markdown, en espagnol, en anglais et en japonais ; cette page montre l’édition anglaise.
+Les pages 48 et 49 d’un manuel d’histoire de collège : *La route du papier*, mille ans de métier, de l’atelier de Cai Lun à la meule de Keller. La page de gauche s’ouvre sur le titre et deux paragraphes, celle de droite sur un encadré qui raconte comment on fabriquait une feuille à la main. Au milieu court la frise : un bandeau indigo pour l’Asie, un bandeau terre cuite pour l’Europe, qui part de la page de gauche et passe le dos. Dessous, six fiches avec leur dessin, suspendues au bandeau par un anneau et un trait. Le gabarit dessine une fiche asiatique, une fiche européenne et un connecteur par bandeau : une grille pose une fiche pour chaque date du Markdown, et le connecteur retrouve toutes les fiches que la grille a posées. Tous les mots sont dans le Markdown, en espagnol, en anglais et en japonais ; cette page montre l’édition anglaise.
 
 ## Préparation
 
@@ -29,7 +29,7 @@ Un groupe `kind: 'grid'` avec `repeat: { frames: ['asia'] }` pose le bloc `asia`
 
 <Excerpt region="ticks" />
 
-Les traits sont un `connector` par bandeau dans le décor (`decoration`) du gabarit. `routing: 'tree'` relie un parent à plusieurs enfants ; avec `trunk: 0`, il ne dessine aucune barre à lui, seulement un trait droit du pied du bandeau au milieu du bord supérieur de chaque fiche, et `startCap: 'dot'` place le point en tête de chaque trait, 2,4 mm sous le bandeau (`gap`). `#asia[*]` désigne toutes les fiches que la grille a posées sur la page : une date ajoutée ou retirée dans le Markdown ajoute ou retire son trait. Les connecteurs sont placés après les blocs : quand une rangée grandit, les traits rejoignent toujours les fiches. Le fond crème est lui aussi du décor, une boîte ancrée au pied du fond perdu dont la hauteur monte jusqu’au pied de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`) : elle suit le bandeau.
+Les traits sont un `connector` par bandeau dans le décor (`decoration`) du gabarit. `routing: 'tree'` relie un parent à plusieurs enfants ; avec `trunk: 0`, il ne dessine aucune barre à lui, seulement un trait droit du pied du bandeau au milieu du bord supérieur de chaque fiche, et `startCap: 'ring'` place un anneau en tête de chaque trait, 2,4 mm sous le bandeau (`gap`). L’anneau est un point creux tracé dans l’épaisseur du trait, de 3,6 mm d’un bord à l’autre (`capSize`), et le trait s’arrête à son bord : le fond crème se voit dans le creux. `#asia[*]` désigne toutes les fiches que la grille a posées sur la page : une date ajoutée ou retirée dans le Markdown ajoute ou retire son trait. Les connecteurs sont placés après les blocs : quand une rangée grandit, les traits rejoignent toujours les fiches. Le fond crème est lui aussi du décor, une boîte ancrée au pied du fond perdu dont la hauteur monte jusqu’au pied de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`) : elle suit le bandeau.
 
 ### 4 · Des dessins à leur taille d’impression
 
@@ -48,9 +48,9 @@ Avec `columns: 4`, chaque bandeau aligne quatre dates côte à côte ; les fiche
 +const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
 
-### Des flèches au lieu des points
+### Des flèches au lieu des anneaux
 
-`endCap: 'arrow'` met une pointe de flèche là où chaque trait rejoint sa fiche, et `startCap: 'none'` retire les points.
+`endCap: 'arrow'` met une pointe de flèche là où chaque trait rejoint sa fiche, et `startCap: 'none'` retire les anneaux.
 
 ## Erreurs fréquentes
 

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 158 · An illustrated timeline across a double page ═══════
 // https://postext.dev/en/cookbook/illustrated-timeline-spread
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Literata, Archivo, Noto Serif JP, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.48.0
+// Fonts: Literata, Archivo, Noto Serif JP, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.49.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -81,13 +81,13 @@ const pageTemplates = [{
 }];
 // #endregion
 
-// #region ticks: one connector per band, a drop with a dot down to every card of its row
+// #region ticks: one connector per band, a drop with a ring down to every card of its row
 // `routing: 'tree'` with `trunk: 0` draws no bar of its own: each drop hangs from the band's
 // foot straight down to the middle of a card's top, and `#asia[*]` names every card laid.
 function ticks(band, cards) {
   return { kind: 'connector', id: `${cards}-ticks`, routing: 'tree', trunk: 0,
     from: { to: `#${band}`, side: 'bottom', gap: mm(2.4) }, to: { to: `#${cards}[*]`, side: 'top' },
-    color: col(cards), width: pt(1), startCap: 'dot', capSize: mm(3.6) };
+    color: col(cards), width: pt(1), startCap: 'ring', capSize: mm(3.6) };
 }
 // #endregion
 

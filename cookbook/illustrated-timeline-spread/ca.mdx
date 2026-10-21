@@ -9,7 +9,7 @@ aliases: ["cronologia", "línia del temps", "doble pàgina", "plantilla de pàgi
 
 ## Què compondràs
 
-Les pàgines 48 i 49 d’un llibre de Geografia i Història de 2n d’ESO: *La ruta del paper*, mil anys d’ofici des del taller de Cai Lun fins a la mola de Keller. La pàgina parella obre amb el títol i dos paràgrafs; la senar, amb un requadre que explica com es feia un full a mà. Pel centre corre la cronologia: una banda anyil per a Àsia i una de terracota per a Europa, que comença a la pàgina parella i travessa el llom. A sota, sis fitxes amb el seu dibuix, penjades de la banda per un punt i un traç. La plantilla dibuixa una fitxa asiàtica, una d’europea i un connector per banda: una retícula col·loca una fitxa per cada data del Markdown i el connector troba totes les fitxes que ha col·locat. Totes les paraules són al Markdown, en castellà, anglès i japonès; aquesta pàgina mostra l’edició castellana.
+Les pàgines 48 i 49 d’un llibre de Geografia i Història de 2n d’ESO: *La ruta del paper*, mil anys d’ofici des del taller de Cai Lun fins a la mola de Keller. La pàgina parella obre amb el títol i dos paràgrafs; la senar, amb un requadre que explica com es feia un full a mà. Pel centre corre la cronologia: una banda anyil per a Àsia i una de terracota per a Europa, que comença a la pàgina parella i travessa el llom. A sota, sis fitxes amb el seu dibuix, penjades de la banda per una anella i un traç. La plantilla dibuixa una fitxa asiàtica, una d’europea i un connector per banda: una retícula col·loca una fitxa per cada data del Markdown i el connector troba totes les fitxes que ha col·locat. Totes les paraules són al Markdown, en castellà, anglès i japonès; aquesta pàgina mostra l’edició castellana.
 
 ## Elaboració
 
@@ -29,7 +29,7 @@ Un grup `kind: 'grid'` amb `repeat: { frames: ['asia'] }` col·loca el marc `asi
 
 <Excerpt region="ticks" />
 
-Els traços són un `connector` per banda a la decoració (`decoration`) de la plantilla. `routing: 'tree'` uneix un pare amb molts fills; amb `trunk: 0` no dibuixa cap barra pròpia, només un traç recte des del peu de la banda fins al centre del cantó superior de cada fitxa, i `startCap: 'dot'` posa el punt al cap de cada traç, 2,4 mm per sota de la banda (`gap`). `#asia[*]` anomena totes les fitxes que la retícula ha col·locat a la pàgina, així que una data que s’afegeix o es treu al Markdown afegeix o treu el seu traç. Els connectors es col·loquen després dels marcs: quan una fila creix, els traços continuen arribant a les fitxes. El fons crema també és decoració: una caixa ancorada al peu de la sang, amb una alçada que arriba fins al peu de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), de manera que segueix la banda.
+Els traços són un `connector` per banda a la decoració (`decoration`) de la plantilla. `routing: 'tree'` uneix un pare amb molts fills; amb `trunk: 0` no dibuixa cap barra pròpia, només un traç recte des del peu de la banda fins al centre del cantó superior de cada fitxa, i `startCap: 'ring'` posa una anella al cap de cada traç, 2,4 mm per sota de la banda (`gap`). L’anella és un punt buit traçat amb el gruix de la línia, de 3,6 mm de vora a vora (`capSize`), i el traç s’atura a la seva vora, de manera que al forat es veu el fons crema. `#asia[*]` anomena totes les fitxes que la retícula ha col·locat a la pàgina, així que una data que s’afegeix o es treu al Markdown afegeix o treu el seu traç. Els connectors es col·loquen després dels marcs: quan una fila creix, els traços continuen arribant a les fitxes. El fons crema també és decoració: una caixa ancorada al peu de la sang, amb una alçada que arriba fins al peu de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), de manera que segueix la banda.
 
 ### 4 · Dibuixos a la mida d’impressió
 
@@ -48,9 +48,9 @@ Amb `columns: 4` cada banda porta quatre dates l’una al costat de l’altra; l
 +const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
 
-### Fletxes en lloc de punts
+### Fletxes en lloc d’anelles
 
-`endCap: 'arrow'` posa una punta de fletxa on cada traç arriba a la seva fitxa, i `startCap: 'none'` treu els punts.
+`endCap: 'arrow'` posa una punta de fletxa on cada traç arriba a la seva fitxa, i `startCap: 'none'` treu les anelles.
 
 ## Errors freqüents
 
