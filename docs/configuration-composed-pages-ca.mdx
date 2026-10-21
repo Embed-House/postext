@@ -154,6 +154,12 @@ Una plantilla que només fixa l'`id` i un marc és una pàgina sencera en què a
       <td><code>'composed'</code></td>
       <td>El paper de pàgina que veuen els elements de disseny amb un filtre <code>pages</code>. <code>'module'</code> converteix la plantilla en un mòdul: una caixa de marcs que les pàgines apilen en un grup en lloc d'ocupar una pàgina pròpia (vegeu <a href="#mòduls">Mòduls</a>). Des de postext 1.48.</td>
     </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Un mòdul: la seva amplada en una filera o una pila de mòduls, com una longitud, un percentatge de l'amplada del grup o <code>'fill'</code>, una part igual del que deixen els altres mòduls de la filera. En una graella el mòdul ocupa la seva columna. Des de postext 1.50.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -434,7 +440,7 @@ Un grup és una pila (de dalt a baix) o una filera (del principi al final) de ma
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Una graella: on queda una cel·la més baixa que la seva filera. <code>'stretch'</code> fa el marc principal tan alt com la filera (fins al seu <code>maxHeight</code>), quan l'alçada d'aquest marc és <code>'auto'</code> o <code>'fill'</code>.</td>
+      <td>Una graella: on queda una cel·la més baixa que la seva filera. <code>'stretch'</code> fa el marc principal tan alt com la filera (fins al seu <code>maxHeight</code>), quan l'alçada d'aquest marc és <code>'auto'</code> o <code>'fill'</code>. En una filera o una graella de mòduls: on queda un mòdul més baix que la seva filera; <code>'stretch'</code> el col·loca en una caixa tan alta com la filera, de manera que el seu fons i els seus marcs <code>'fill'</code> arriben al peu de la filera.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Un grup és una pila (de dalt a baix) o una filera (del principi al final) de ma
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>El grup pren els blocs <code>:::module</code> de la pàgina, l'un sota l'altre en l'ordre del Markdown, amb <code>gap</code> entremig. Es compon com una pila sigui quin sigui el seu <code>kind</code>, i els seus <code>frames</code> no es llegeixen. Vegeu <a href="#mòduls">Mòduls</a>. Des de postext 1.48.</td>
+      <td>El grup pren els blocs <code>:::module</code> de la pàgina en l'ordre del Markdown, amb <code>gap</code> entre ells: l'un sota l'altre (<code>'stack'</code>), l'un al costat de l'altre (<code>'row'</code>) o en <code>columns</code> (<code>'grid'</code>, des de postext 1.50). Els seus <code>frames</code> no es llegeixen. Vegeu <a href="#mòduls">Mòduls</a>. Des de postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>cap</td>
       <td>Un grup de mòduls: on continua, sencer, un mòdul que no hi cap. Si no s'indica, el mòdul es talla al peu del grup i els seus marcs recorren l'escala de reajustament.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>cap</td>
+      <td>Un grup de mòduls dins de la pila de mòduls d'aquest nom: cada tanda seguida de mòduls de la pàgina que rep, en l'ordre del Markdown, es col·loca com una filera o una graella d'aquesta pila, on va el primer mòdul de la tanda. Des de postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>cap</td>
+      <td>Un grup de mòduls amb <code>within</code>: les plantilles de mòdul que rep. Sense indicar, tots els mòduls. Un mòdul va al primer grup així que el rep; si no, a la pila.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **Què té un mòdul.** Marcs, grups (també una graella que es repeteix), decoració i connectors. No té `area`, `header`, `footer`, `variants`, `spread`, `gutter` ni `overflowTemplate`: cadascun d'aquests camps es dona com a `unknownConfigValue` i s'ignora. `extends` funciona entre mòduls (una plantilla que estén un mòdul és un mòdul).
 - **La seva caixa.** Un mòdul fa l'amplada del seu grup i l'alçada fins on arriben els seus marcs; el grup apila els mòduls des de dalt, amb `gap` entremig. Dins d'un mòdul, `'container'` és la caixa del mòdul, per als seus marcs (també `'fill'` i els percentatges) i per a la seva decoració: un fons amb la mida `{ to: 'container', edge: 'bottom' }` cobreix el mòdul sigui quina sigui l'alçada que li donin les paraules.
 - **Noms.** Els marcs, els grups i els elements d'un mòdul porten com a prefix el nom de la instància del mòdul: `<name>.<frame>`, amb el nom que dona el Markdown (`name="ramas"`) o, si no, `<template>[n]`, el número d'ordre del mòdul entre els mòduls d'aquella plantilla a la pàgina (`arbol[2].raiz`). Els ancoratges, `next`, `continueIn: '#x'` i els connectors de dins d'un mòdul es reescriuen cap als seus propis marcs, de manera que dos arbres en una pàgina no s'uneixen mai entre si. L'id d'un marc és `cp0:arbol[2].raiz`.
-- **Quan els mòduls no hi caben.** Un mòdul que passa del peu del grup es talla allà i els seus marcs recorren l'escala de reajustament; `frameOverflow` es dona una sola vegada per al grup. Amb `overflow.continueIn` al grup de mòduls (`'next-page'` o `'template:<id>'`), el primer mòdul que no hi cap i tots els que el segueixen continuen **sencers** a la pàgina afegida, amb els mateixos noms, al capdamunt del grup de mòduls d'aquella pàgina.
-- **Encara no.** Mòduls l'un al costat de l'altre (un grup de mòduls és sempre una pila), un mòdul dins d'un altre mòdul (`moduleNested`) i cel·les de la `grid` de la plantilla dins d'un mòdul.
+- **Quan els mòduls no hi caben.** Un mòdul que passa del peu del grup es talla allà i els seus marcs recorren l'escala de reajustament; `frameOverflow` es dona una sola vegada per al grup. Amb `overflow.continueIn` al grup de mòduls (`'next-page'` o `'template:<id>'`), el primer mòdul que no hi cap i tots els que el segueixen continuen **sencers** a la pàgina afegida, amb els mateixos noms, al capdamunt del grup de mòduls d'aquella pàgina. En una filera o una graella de mòduls, la filera continua sencera: els seus mòduls no es reparteixen mai entre dues pàgines.
+- **L'un al costat de l'altre.** Un grup de mòduls amb `kind: 'row'` col·loca els seus mòduls de l'inici al final, cadascun amb el `width` de la seva plantilla (una longitud, `{ percent: 48 }` o `'fill'`, una part igual del que queda), i la filera tan alta com el seu mòdul més alt; `kind: 'grid'` els col·loca en `columns` columnes iguals, filera rere filera. `rowAlign` situa un mòdul més baix que la seva filera. Les fileres comencen pel costat d'inici de la línia, de manera que una pàgina de dreta a esquerra posa el primer mòdul a la dreta. Des de postext 1.50.
+- **Grups dins de la pila.** Un grup de mòduls amb `within: '<pila>'` queda dins de la pila de mòduls de la pàgina, i `templates` diu quins mòduls rep: cada tanda seguida d'aquests mòduls al Markdown forma una filera o una graella de la pila, on va el seu primer mòdul. Amb els grups de sota, dos blocs `aviso` seguits de quatre blocs `tarjeta` formen una filera de dos requadres sobre una graella de 2 × 2 targetes, i el Markdown només porta blocs `:::module`.
+- **Encara no.** Un mòdul dins d'un altre mòdul (`moduleNested`), cel·les `grid` de plantilla dins d'un mòdul i un grup dins d'una filera o una graella de mòduls.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Quan el contingut no hi cap
 

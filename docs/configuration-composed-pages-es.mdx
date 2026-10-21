@@ -154,6 +154,12 @@ Una plantilla que solo fija su `id` y un marco es una página entera con ese mar
       <td><code>'composed'</code></td>
       <td>El tipo de página que ven los elementos de diseño con un filtro <code>pages</code>. <code>'module'</code> convierte la plantilla en un módulo: una caja de marcos que las páginas apilan en un grupo, en lugar de una página propia (véase <a href="#módulos">Módulos</a>). Desde postext 1.48.</td>
     </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Un módulo: su ancho en una fila o una pila de módulos, como una longitud, un porcentaje del ancho del grupo o <code>'fill'</code>, una parte igual de lo que dejan los demás módulos de la fila. En una rejilla el módulo ocupa su columna. Desde postext 1.50.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -434,7 +440,7 @@ Un grupo es una pila (de arriba abajo) o una fila (del principio al final) de ma
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>En una rejilla: dónde se sitúa una celda más baja que su fila. <code>'stretch'</code> hace que su marco principal sea tan alto como la fila (hasta su <code>maxHeight</code>) cuando la altura de ese marco es <code>'auto'</code> o <code>'fill'</code>.</td>
+      <td>En una rejilla: dónde se sitúa una celda más baja que su fila. <code>'stretch'</code> hace que su marco principal sea tan alto como la fila (hasta su <code>maxHeight</code>) cuando la altura de ese marco es <code>'auto'</code> o <code>'fill'</code>. En una fila o rejilla de módulos: dónde se sitúa un módulo más bajo que su fila; <code>'stretch'</code> lo coloca en una caja tan alta como la fila, así que su fondo y sus marcos <code>'fill'</code> llegan al pie de la fila.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Un grupo es una pila (de arriba abajo) o una fila (del principio al final) de ma
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>El grupo recibe los bloques <code>:::module</code> de la página, uno debajo de otro en el orden del Markdown, con <code>gap</code> entre ellos. Se coloca como una pila sea cual sea su <code>kind</code>, y sus <code>frames</code> no se leen. Véase <a href="#módulos">Módulos</a>. Desde postext 1.48.</td>
+      <td>El grupo recibe los bloques <code>:::module</code> de la página en el orden del Markdown, con <code>gap</code> entre ellos: uno debajo de otro (<code>'stack'</code>), uno al lado de otro (<code>'row'</code>) o en <code>columns</code> (<code>'grid'</code>, desde postext 1.50). Sus <code>frames</code> no se leen. Consulta <a href="#módulos">Módulos</a>. Desde postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>ninguno</td>
       <td>En un grupo de módulos: dónde continúa, entero, un módulo que no cabe. Sin fijar, el módulo se corta al pie del grupo y sus marcos suben por la escalera de reajuste.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>ninguno</td>
+      <td>Un grupo de módulos dentro de la pila de módulos de este nombre: cada tanda seguida de módulos de la página que recibe, en el orden del Markdown, se coloca como una fila o una rejilla de esa pila, donde va el primer módulo de la tanda. Desde postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>ninguno</td>
+      <td>Un grupo de módulos con <code>within</code>: las plantillas de módulo que recibe. Sin indicar, todos los módulos. Un módulo va al primer grupo así que lo recibe; si no, a la pila.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **Qué tiene un módulo.** Marcos, grupos (incluida una rejilla que se repite), decoración y conectores. No tiene `area`, `header`, `footer`, `variants`, `spread`, `gutter` ni `overflowTemplate`: cada uno de ellos se notifica como `unknownConfigValue` y se ignora. `extends` funciona entre módulos (una plantilla que extiende un módulo es un módulo).
 - **Su caja.** Un módulo es tan ancho como su grupo y tan alto como llegan sus marcos; el grupo apila los módulos desde arriba, con `gap` entre ellos. Dentro de un módulo, `'container'` es la caja del módulo, para sus marcos (también `'fill'` y los porcentajes) y para su decoración: un fondo con el tamaño `{ to: 'container', edge: 'bottom' }` cubre el módulo sea cual sea la altura que le den sus palabras.
 - **Nombres.** Los marcos, grupos y elementos de un módulo llevan delante el nombre de su instancia: `<name>.<frame>`, con el nombre que da el Markdown (`name="ramas"`) o, si no, `<template>[n]`, el número del módulo entre los módulos de esa plantilla en la página (`arbol[2].raiz`). Los anclajes, `next`, `continueIn: '#x'` y los conectores de dentro de un módulo se reescriben hacia sus propios marcos, así que dos árboles de una misma página nunca se unen entre sí. El id de un marco es `cp0:arbol[2].raiz`.
-- **Cuando los módulos no caben.** Un módulo que pasa del pie del grupo se corta ahí y sus marcos suben por la escalera de reajuste; `frameOverflow` se da una sola vez para el grupo. Con `overflow.continueIn` en el grupo de módulos (`'next-page'` o `'template:<id>'`), el primer módulo que no cabe y todos los que lo siguen continúan **enteros** en la página añadida, con los mismos nombres, al principio del grupo de módulos de esa página.
-- **Todavía no.** Módulos uno al lado de otro (un grupo de módulos siempre es una pila), un módulo dentro de otro (`moduleNested`) y celdas `grid` de la plantilla dentro de un módulo.
+- **Cuando los módulos no caben.** Un módulo que pasa del pie del grupo se corta ahí y sus marcos suben por la escalera de reajuste; `frameOverflow` se da una sola vez para el grupo. Con `overflow.continueIn` en el grupo de módulos (`'next-page'` o `'template:<id>'`), el primer módulo que no cabe y todos los que lo siguen continúan **enteros** en la página añadida, con los mismos nombres, al principio del grupo de módulos de esa página. En una fila o una rejilla de módulos, la fila sigue entera: sus módulos nunca se reparten entre dos páginas.
+- **Uno al lado de otro.** Un grupo de módulos con `kind: 'row'` coloca sus módulos de inicio a fin, cada uno con el `width` de su plantilla (una longitud, `{ percent: 48 }` o `'fill'`, una parte igual de lo que queda), y la fila tan alta como su módulo más alto; `kind: 'grid'` los coloca en `columns` columnas iguales, fila tras fila. `rowAlign` sitúa un módulo más bajo que su fila. Las filas empiezan por el lado de inicio de la línea, así que una página de derecha a izquierda pone el primer módulo a la derecha. Desde postext 1.50.
+- **Grupos dentro de la pila.** Un grupo de módulos con `within: '<pila>'` queda dentro de la pila de módulos de la página, y `templates` dice qué módulos recibe: cada tanda seguida de ellos en el Markdown forma una fila o una rejilla de la pila, donde va su primer módulo. Con los grupos de abajo, dos bloques `aviso` seguidos de cuatro bloques `tarjeta` forman una fila de dos recuadros sobre una rejilla de 2 × 2 tarjetas, y el Markdown solo lleva bloques `:::module`.
+- **Todavía no.** Un módulo dentro de otro módulo (`moduleNested`), celdas `grid` de plantilla dentro de un módulo y un grupo dentro de una fila o una rejilla de módulos.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Cuando el contenido no cabe
 

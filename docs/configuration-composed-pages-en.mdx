@@ -154,6 +154,12 @@ A template that sets nothing but its `id` and one frame is a whole page with tha
       <td><code>'composed'</code></td>
       <td>The page role that design elements with a <code>pages</code> filter see. <code>'module'</code> makes the template a module: a box of frames that pages stack in a group instead of a page of its own (see <a href="#modules">Modules</a>). Since postext 1.48.</td>
     </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>A module: its width in a modules row or stack, as a length, a percentage of the group's width, or <code>'fill'</code>, an equal share of what the row's other modules leave. In a grid the module takes its column. Since postext 1.50.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -434,7 +440,7 @@ A group is a stack (top to bottom) or a row (start to end) of frames that share 
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>A grid: where a cell shorter than its row sits. <code>'stretch'</code> makes its main frame as tall as the row (up to its <code>maxHeight</code>), when that frame's height is <code>'auto'</code> or <code>'fill'</code>.</td>
+      <td>A grid: where a cell shorter than its row sits. <code>'stretch'</code> makes its main frame as tall as the row (up to its <code>maxHeight</code>), when that frame's height is <code>'auto'</code> or <code>'fill'</code>. A modules row or grid: where a shorter module sits; <code>'stretch'</code> lays it in a box as tall as the row, so its ground and its <code>'fill'</code> frames reach the row's foot.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ A group is a stack (top to bottom) or a row (start to end) of frames that share 
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>The group takes the page's <code>:::module</code> blocks, one under another in Markdown order, <code>gap</code> between them. It is laid as a stack whatever its <code>kind</code>, and its <code>frames</code> are not read. See <a href="#modules">Modules</a>. Since postext 1.48.</td>
+      <td>The group takes the page's <code>:::module</code> blocks in Markdown order, <code>gap</code> between them: one under another (<code>'stack'</code>), side by side (<code>'row'</code>) or in <code>columns</code> (<code>'grid'</code>, since postext 1.50). Its <code>frames</code> are not read. See <a href="#modules">Modules</a>. Since postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>none</td>
       <td>A modules group: where a module that does not fit goes on, whole. Unset, the module is cut at the group's foot and its frames climb the reflow ladder.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>none</td>
+      <td>A modules group inside the modules stack of this name: each run of the page's modules it takes, in Markdown order, is laid as one row or grid of that stack, where the first module of the run comes. Since postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>none</td>
+      <td>A modules group <code>within</code> a stack: the module templates it takes. Unset, every module. A module goes to the first such group that takes it, else to the stack.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **What a module has.** Frames, groups (a grid that repeats included), decoration and connectors. It has no `area`, `header`, `footer`, `variants`, `spread`, `gutter` or `overflowTemplate`: each of those is reported as `unknownConfigValue` and ignored. `extends` works between modules (a template that extends a module is a module).
 - **Its box.** A module is as wide as its group and as tall as its frames reach; the group stacks the modules from its top, `gap` between them. Inside a module, `'container'` is the module's box, for its frames (`'fill'` and percentages too) and for its decoration: a ground sized to `{ to: 'container', edge: 'bottom' }` covers the module whatever height its words give it.
 - **Names.** A module's frames, groups and elements are scoped by the module's instance name: `<name>.<frame>`, with the name the Markdown gives (`name="ramas"`) or else `<template>[n]`, the module's count among the page's modules of that template (`arbol[2].raiz`). Anchors, `next`, `continueIn: '#x'` and connectors inside a module are rewritten to its own frames, so two trees on one page never join each other. A frame id reads `cp0:arbol[2].raiz`.
-- **When modules do not fit.** A module past the group's foot is cut there and its frames climb the reflow ladder; `frameOverflow` is raised once for the group. With `overflow.continueIn` on the modules group (`'next-page'` or `'template:<id>'`), the first module that does not fit and every module after it go on **whole** to the added page, under the same names, at the top of that page's modules group.
-- **Not yet.** Modules side by side (a modules group is always a stack), a module inside a module (`moduleNested`) and template `grid` cells inside a module.
+- **When modules do not fit.** A module past the group's foot is cut there and its frames climb the reflow ladder; `frameOverflow` is raised once for the group. With `overflow.continueIn` on the modules group (`'next-page'` or `'template:<id>'`), the first module that does not fit and every module after it go on **whole** to the added page, under the same names, at the top of that page's modules group. In a row or a grid of modules a row goes on whole: its modules are never split between two pages.
+- **Side by side.** A modules group with `kind: 'row'` sets its modules start to end, each as wide as its template's `width` (a length, `{ percent: 48 }`, or `'fill'`, an equal share of what is left) and the row as tall as its tallest module; `kind: 'grid'` sets them in `columns` equal columns, row after row. `rowAlign` places a module shorter than its row. Rows run from the start side of the line, so a right-to-left page sets the first module on the right. Since postext 1.50.
+- **Groups inside the stack.** A modules group with `within: '<stack>'` lies inside the page's modules stack, and `templates` says which modules it takes: each run of them in the Markdown becomes one row or grid of the stack, where its first module comes. With the groups below, two `aviso` blocks followed by four `tarjeta` blocks make a row of two boxes over a 2 × 2 of cards, and the Markdown holds `:::module` blocks alone.
+- **Not yet.** A module inside a module (`moduleNested`), template `grid` cells inside a module, and a group inside a modules row or grid.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### When content does not fit
 

@@ -154,6 +154,12 @@ Un gabarit qui ne fixe que son `id` et un bloc est une page entière dont ce blo
       <td><code>'composed'</code></td>
       <td>Le rôle de page que voient les éléments de maquette dotés d’un filtre <code>pages</code>. <code>'module'</code> fait du gabarit un module : une boîte de blocs que les pages empilent dans un groupe, au lieu d’une page à part entière (voir <a href="#modules">Modules</a>). Depuis postext 1.48.</td>
     </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Un module : sa largeur dans une rangée ou une pile de modules, en longueur, en pourcentage de la largeur du groupe, ou <code>'fill'</code>, une part égale de ce que laissent les autres modules de la rangée. Dans une grille, le module prend sa colonne. Depuis postext 1.50.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -434,7 +440,7 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Une grille : la place d’une cellule moins haute que sa rangée. <code>'stretch'</code> rend son bloc principal aussi haut que la rangée (jusqu’à son <code>maxHeight</code>), quand la hauteur de ce bloc est <code>'auto'</code> ou <code>'fill'</code>.</td>
+      <td>Une grille : la place d’une cellule moins haute que sa rangée. <code>'stretch'</code> rend son bloc principal aussi haut que la rangée (jusqu’à son <code>maxHeight</code>), quand la hauteur de ce bloc est <code>'auto'</code> ou <code>'fill'</code>. Une rangée ou une grille de modules : la place d’un module moins haut que sa rangée ; <code>'stretch'</code> le pose dans une boîte aussi haute que la rangée, si bien que son fond et ses blocs <code>'fill'</code> atteignent le pied de la rangée.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Un groupe est une pile (de haut en bas) ou une rangée (du début à la fin) de 
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Le groupe prend les blocs <code>:::module</code> de la page, l’un sous l’autre dans l’ordre du Markdown, avec <code>gap</code> entre eux. Il est posé en pile quel que soit son <code>kind</code>, et ses <code>frames</code> ne sont pas lus. Voir <a href="#modules">Modules</a>. Depuis postext 1.48.</td>
+      <td>Le groupe prend les blocs <code>:::module</code> de la page dans l’ordre du Markdown, avec <code>gap</code> entre eux : l’un sous l’autre (<code>'stack'</code>), côte à côte (<code>'row'</code>) ou en <code>columns</code> (<code>'grid'</code>, depuis postext 1.50). Ses <code>frames</code> ne sont pas lus. Voir <a href="#modules">Modules</a>. Depuis postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>aucun</td>
       <td>Un groupe de modules : l’endroit où se poursuit, entier, un module qui ne tient pas. Sans lui, le module est coupé au pied du groupe et ses blocs passent par les étapes d’ajustement.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>aucun</td>
+      <td>Un groupe de modules dans la pile de modules de ce nom : chaque suite de modules de la page qu’il reçoit, dans l’ordre du Markdown, est posée comme une rangée ou une grille de cette pile, là où vient le premier module de la suite. Depuis postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>aucun</td>
+      <td>Un groupe de modules avec <code>within</code> : les gabarits de module qu’il reçoit. Non renseigné, tous les modules. Un module va au premier groupe de ce genre qui le reçoit, sinon à la pile.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **Ce que contient un module.** Des blocs, des groupes (y compris une grille qui répète), un décor et des connecteurs. Il n’a ni `area`, ni `header`, ni `footer`, ni `variants`, ni `spread`, ni `gutter`, ni `overflowTemplate` : chacun d’eux est signalé comme `unknownConfigValue` et ignoré. `extends` fonctionne entre modules (un gabarit qui étend un module est un module).
 - **Sa boîte.** Un module est aussi large que son groupe et aussi haut que ses blocs vont loin ; le groupe empile les modules depuis son haut, avec `gap` entre eux. Dans un module, `'container'` est la boîte du module, pour ses blocs (`'fill'` et les pourcentages aussi) et pour son décor : un fond dimensionné à `{ to: 'container', edge: 'bottom' }` couvre le module, quelle que soit la hauteur que lui donnent ses mots.
 - **Noms.** Les blocs, groupes et éléments d’un module sont rangés sous le nom de l’instance du module : `<name>.<frame>`, avec le nom que donne le Markdown (`name="ramas"`) ou, à défaut, `<template>[n]`, le rang du module parmi les modules de ce gabarit sur la page (`arbol[2].raiz`). Les ancrages, `next`, `continueIn: '#x'` et les connecteurs d’un module sont réécrits vers ses propres blocs : deux arbres sur une même page ne se relient donc jamais l’un à l’autre. L’identifiant d’un bloc s’écrit `cp0:arbol[2].raiz`.
-- **Quand les modules ne tiennent pas.** Un module qui dépasse le pied du groupe y est coupé et ses blocs passent par les étapes d’ajustement ; `frameOverflow` est déclenché une fois pour le groupe. Avec `overflow.continueIn` sur le groupe de modules (`'next-page'` ou `'template:<id>'`), le premier module qui ne tient pas et tous ceux qui le suivent se poursuivent **entiers** sur la page ajoutée, sous les mêmes noms, en haut du groupe de modules de cette page.
-- **Pas encore.** Des modules côte à côte (un groupe de modules est toujours une pile), un module dans un module (`moduleNested`) et des cellules de `grid` du gabarit dans un module.
+- **Quand les modules ne tiennent pas.** Un module qui dépasse le pied du groupe y est coupé et ses blocs passent par les étapes d’ajustement ; `frameOverflow` est déclenché une fois pour le groupe. Avec `overflow.continueIn` sur le groupe de modules (`'next-page'` ou `'template:<id>'`), le premier module qui ne tient pas et tous ceux qui le suivent se poursuivent **entiers** sur la page ajoutée, sous les mêmes noms, en haut du groupe de modules de cette page. Dans une rangée ou une grille de modules, une rangée continue entière : ses modules ne sont jamais partagés entre deux pages.
+- **Côte à côte.** Un groupe de modules avec `kind: 'row'` pose ses modules du début à la fin, chacun à la `width` de son gabarit (une longueur, `{ percent: 48 }`, ou `'fill'`, une part égale de ce qui reste), la rangée aussi haute que son module le plus haut ; `kind: 'grid'` les pose en `columns` colonnes égales, rangée après rangée. `rowAlign` place un module moins haut que sa rangée. Les rangées partent du côté où commence la ligne : une page de droite à gauche pose le premier module à droite. Depuis postext 1.50.
+- **Groupes dans la pile.** Un groupe de modules avec `within: '<pile>'` se place dans la pile de modules de la page, et `templates` dit quels modules il reçoit : chaque suite de ces modules dans le Markdown forme une rangée ou une grille de la pile, là où vient son premier module. Avec les groupes ci-dessous, deux blocs `aviso` suivis de quatre blocs `tarjeta` donnent une rangée de deux encadrés sur une grille de 2 × 2 cartes, et le Markdown ne contient que des blocs `:::module`.
+- **Pas encore.** Un module dans un module (`moduleNested`), des cellules `grid` de gabarit dans un module, et un groupe dans une rangée ou une grille de modules.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Quand le contenu ne tient pas
 

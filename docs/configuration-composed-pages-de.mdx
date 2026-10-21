@@ -154,6 +154,12 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>'composed'</code></td>
       <td>Die Seitenrolle, die Gestaltungselemente mit einem Filter <code>pages</code> sehen. <code>'module'</code> macht die Vorlage zu einem Modul: einem Kasten aus Rahmen, den Seiten in einer Gruppe stapeln, statt einer eigenen Seite (siehe <a href="#module">Module</a>). Seit postext 1.48.</td>
     </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Ein Modul: seine Breite in einer Modulreihe oder einem Modulstapel, als Länge, als Prozentsatz der Gruppenbreite oder als <code>'fill'</code>, ein gleicher Teil dessen, was die anderen Module der Reihe übrig lassen. Im Raster nimmt das Modul seine Spalte. Seit postext 1.50.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -434,7 +440,7 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Ein Raster: wo eine Zelle steht, die niedriger als ihre Reihe ist. <code>'stretch'</code> macht ihren Hauptrahmen so hoch wie die Reihe (bis zu seiner <code>maxHeight</code>), wenn die Höhe dieses Rahmens <code>'auto'</code> oder <code>'fill'</code> ist.</td>
+      <td>Ein Raster: wo eine Zelle steht, die niedriger als ihre Reihe ist. <code>'stretch'</code> macht ihren Hauptrahmen so hoch wie die Reihe (bis zu seiner <code>maxHeight</code>), wenn die Höhe dieses Rahmens <code>'auto'</code> oder <code>'fill'</code> ist. Eine Modulreihe oder ein Modulraster: wo ein Modul steht, das niedriger als seine Reihe ist; <code>'stretch'</code> setzt es in ein Rechteck so hoch wie die Reihe, sodass sein Grund und seine <code>'fill'</code>-Rahmen bis zum Fuß der Reihe reichen.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Die Gruppe nimmt die <code>:::module</code>-Blöcke der Seite auf, untereinander in der Reihenfolge des Markdowns, mit <code>gap</code> dazwischen. Sie wird unabhängig von ihrem <code>kind</code> als Stapel gesetzt, und ihre <code>frames</code> werden nicht gelesen. Siehe <a href="#module">Module</a>. Seit postext 1.48.</td>
+      <td>Die Gruppe nimmt die <code>:::module</code>-Blöcke der Seite in der Reihenfolge des Markdowns auf, mit <code>gap</code> dazwischen: untereinander (<code>'stack'</code>), nebeneinander (<code>'row'</code>) oder in <code>columns</code> (<code>'grid'</code>, seit postext 1.50). Ihre <code>frames</code> werden nicht gelesen. Siehe <a href="#module">Module</a>. Seit postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>keine</td>
       <td>Eine Modulgruppe: wo ein Modul, das nicht passt, als Ganzes weiterläuft. Ohne Angabe wird das Modul am Fuß der Gruppe abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>keine</td>
+      <td>Eine Modulgruppe im Modulstapel dieses Namens: Jede Folge von Modulen der Seite, die sie aufnimmt, wird in der Reihenfolge des Markdowns als eine Reihe oder ein Raster dieses Stapels gesetzt, dort, wo das erste Modul der Folge steht. Seit postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>keine</td>
+      <td>Eine Modulgruppe mit <code>within</code>: die Modulvorlagen, die sie aufnimmt. Nicht gesetzt: alle Module. Ein Modul kommt in die erste solche Gruppe, die es aufnimmt, sonst in den Stapel.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **Was ein Modul hat.** Rahmen, Gruppen (auch ein Raster, das sich wiederholt), Dekoration und Verbinder. Es hat kein `area`, `header`, `footer`, `variants`, `spread`, `gutter` oder `overflowTemplate`: Jedes davon wird als `unknownConfigValue` gemeldet und ignoriert. `extends` funktioniert zwischen Modulen (eine Vorlage, die ein Modul erweitert, ist ein Modul).
 - **Sein Rechteck.** Ein Modul ist so breit wie seine Gruppe und so hoch, wie seine Rahmen reichen; die Gruppe stapelt die Module von ihrer Oberkante an, mit `gap` dazwischen. Innerhalb eines Moduls ist `'container'` das Rechteck des Moduls, für seine Rahmen (auch `'fill'` und Prozentangaben) und für seine Dekoration: Ein Grund mit der Größe `{ to: 'container', edge: 'bottom' }` bedeckt das Modul, welche Höhe ihm seine Wörter auch geben.
 - **Namen.** Die Rahmen, Gruppen und Elemente eines Moduls gelten im Bereich des Instanznamens des Moduls: `<name>.<frame>`, mit dem Namen, den das Markdown gibt (`name="ramas"`), sonst `<template>[n]`, die laufende Nummer des Moduls unter den Modulen dieser Vorlage auf der Seite (`arbol[2].raiz`). Anker, `next`, `continueIn: '#x'` und Verbinder innerhalb eines Moduls werden auf seine eigenen Rahmen umgeschrieben, sodass zwei Bäume auf einer Seite nie ineinanderlaufen. Eine Rahmen-ID lautet `cp0:arbol[2].raiz`.
-- **Wenn Module nicht passen.** Ein Modul jenseits des Fußes der Gruppe wird dort abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen; `frameOverflow` wird einmal für die Gruppe ausgelöst. Mit `overflow.continueIn` an der Modulgruppe (`'next-page'` oder `'template:<id>'`) laufen das erste Modul, das nicht passt, und jedes Modul danach **als Ganzes** auf der hinzugefügten Seite weiter, unter denselben Namen, oben in der Modulgruppe dieser Seite.
-- **Noch nicht.** Module nebeneinander (eine Modulgruppe ist immer ein Stapel), ein Modul in einem Modul (`moduleNested`) und `grid`-Zellen der Vorlage innerhalb eines Moduls.
+- **Wenn Module nicht passen.** Ein Modul jenseits des Fußes der Gruppe wird dort abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen; `frameOverflow` wird einmal für die Gruppe ausgelöst. Mit `overflow.continueIn` an der Modulgruppe (`'next-page'` oder `'template:<id>'`) laufen das erste Modul, das nicht passt, und jedes Modul danach **als Ganzes** auf der hinzugefügten Seite weiter, unter denselben Namen, oben in der Modulgruppe dieser Seite. In einer Modulreihe oder einem Modulraster geht eine Reihe ganz weiter: Ihre Module werden nie auf zwei Seiten verteilt.
+- **Nebeneinander.** Eine Modulgruppe mit `kind: 'row'` setzt ihre Module vom Anfang zum Ende, jedes so breit wie die `width` seiner Vorlage (eine Länge, `{ percent: 48 }` oder `'fill'`, ein gleicher Teil des Rests), die Reihe so hoch wie ihr höchstes Modul; `kind: 'grid'` setzt sie in `columns` gleiche Spalten, Reihe für Reihe. `rowAlign` platziert ein Modul, das niedriger als seine Reihe ist. Reihen beginnen auf der Seite, auf der die Zeile beginnt: Eine Seite von rechts nach links setzt das erste Modul rechts. Seit postext 1.50.
+- **Gruppen im Stapel.** Eine Modulgruppe mit `within: '<Stapel>'` liegt im Modulstapel der Seite, und `templates` sagt, welche Module sie aufnimmt: Jede Folge davon im Markdown bildet eine Reihe oder ein Raster des Stapels, dort, wo ihr erstes Modul steht. Mit den Gruppen unten ergeben zwei `aviso`-Blöcke, gefolgt von vier `tarjeta`-Blöcken, eine Reihe aus zwei Kästen über einem Raster aus 2 × 2 Karten, und das Markdown enthält nur `:::module`-Blöcke.
+- **Noch nicht.** Ein Modul in einem Modul (`moduleNested`), `grid`-Zellen der Vorlage in einem Modul und eine Gruppe in einer Modulreihe oder einem Modulraster.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Wenn der Inhalt nicht passt
 

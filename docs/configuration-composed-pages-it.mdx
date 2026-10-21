@@ -154,6 +154,12 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>'composed'</code></td>
       <td>Il ruolo di pagina che vedono gli elementi grafici con un filtro <code>pages</code>. <code>'module'</code> fa del modello un modulo: un blocco di cornici che le pagine impilano in un gruppo invece di una pagina a sé (vedi <a href="#moduli">Moduli</a>). Da postext 1.48.</td>
     </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>Un modulo: la sua larghezza in una fila o in una pila di moduli, come lunghezza, come percentuale della larghezza del gruppo o come <code>'fill'</code>, una parte uguale di ciò che lasciano gli altri moduli della fila. In una griglia il modulo prende la sua colonna. Da postext 1.50.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -434,7 +440,7 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Una griglia: dove sta una cella più bassa della sua riga. <code>'stretch'</code> rende la sua cornice principale alta quanto la riga (fino al suo <code>maxHeight</code>), quando l’altezza di quella cornice è <code>'auto'</code> o <code>'fill'</code>.</td>
+      <td>Una griglia: dove sta una cella più bassa della sua riga. <code>'stretch'</code> rende la sua cornice principale alta quanto la riga (fino al suo <code>maxHeight</code>), quando l’altezza di quella cornice è <code>'auto'</code> o <code>'fill'</code>. Una fila o una griglia di moduli: dove sta un modulo più basso della sua fila; <code>'stretch'</code> lo mette in un riquadro alto quanto la fila, così il suo fondo e le sue cornici <code>'fill'</code> arrivano al piede della fila.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>Il gruppo prende i blocchi <code>:::module</code> della pagina, uno sotto l’altro nell’ordine del Markdown, con <code>gap</code> fra l’uno e l’altro. Si dispone come una pila qualunque sia il suo <code>kind</code>, e le sue <code>frames</code> non vengono lette. Vedi <a href="#moduli">Moduli</a>. Da postext 1.48.</td>
+      <td>Il gruppo prende i blocchi <code>:::module</code> della pagina nell’ordine del Markdown, con <code>gap</code> tra loro: uno sotto l’altro (<code>'stack'</code>), uno accanto all’altro (<code>'row'</code>) o in <code>columns</code> (<code>'grid'</code>, da postext 1.50). I suoi <code>frames</code> non vengono letti. Vedi <a href="#moduli">Moduli</a>. Da postext 1.48.</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>nessuno</td>
       <td>Un gruppo di moduli: dove prosegue, intero, un modulo che non entra. Se non è impostato, il modulo viene tagliato al piede del gruppo e le sue cornici percorrono la scala di reimpaginazione.</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>nessuno</td>
+      <td>Un gruppo di moduli dentro la pila di moduli con questo nome: ogni serie consecutiva di moduli della pagina che riceve, nell’ordine del Markdown, viene messa come una fila o una griglia di quella pila, dove viene il primo modulo della serie. Da postext 1.50.</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>nessuno</td>
+      <td>Un gruppo di moduli con <code>within</code>: i modelli di modulo che riceve. Se non è indicato, tutti i moduli. Un modulo va al primo gruppo di questo tipo che lo riceve, altrimenti alla pila.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **Che cosa ha un modulo.** Cornici, gruppi (compresa una griglia che si ripete), decorazione e connettori. Non ha `area`, `header`, `footer`, `variants`, `spread`, `gutter` né `overflowTemplate`: ciascuno di questi viene segnalato come `unknownConfigValue` e ignorato. `extends` funziona fra moduli (un modello che estende un modulo è un modulo).
 - **Il suo riquadro.** Un modulo è largo quanto il suo gruppo e alto fin dove arrivano le sue cornici; il gruppo impila i moduli dalla sua cima, con `gap` fra l’uno e l’altro. Dentro un modulo, `'container'` è il riquadro del modulo, per le sue cornici (anche `'fill'` e le percentuali) e per la sua decorazione: un fondo dimensionato a `{ to: 'container', edge: 'bottom' }` copre il modulo qualunque altezza gli diano le sue parole.
 - **Nomi.** Le cornici, i gruppi e gli elementi di un modulo prendono come prefisso il nome dell’istanza del modulo: `<name>.<frame>`, con il nome che dà il Markdown (`name="ramas"`) oppure `<template>[n]`, il numero d’ordine del modulo tra i moduli della pagina con quel modello (`arbol[2].raiz`). Gli ancoraggi, `next`, `continueIn: '#x'` e i connettori dentro un modulo vengono riscritti verso le sue cornici, così due alberi sulla stessa pagina non si uniscono mai fra loro. L’id di una cornice è `cp0:arbol[2].raiz`.
-- **Quando i moduli non entrano.** Un modulo che supera il piede del gruppo viene tagliato lì e le sue cornici percorrono la scala di reimpaginazione; `frameOverflow` viene segnalato una volta per il gruppo. Con `overflow.continueIn` sul gruppo di moduli (`'next-page'` o `'template:<id>'`), il primo modulo che non entra e tutti quelli che lo seguono proseguono **interi** nella pagina aggiunta, con gli stessi nomi, in cima al gruppo di moduli di quella pagina.
-- **Non ancora.** Moduli affiancati (un gruppo di moduli è sempre una pila), un modulo dentro un modulo (`moduleNested`) e celle `grid` del modello dentro un modulo.
+- **Quando i moduli non entrano.** Un modulo che supera il piede del gruppo viene tagliato lì e le sue cornici percorrono la scala di reimpaginazione; `frameOverflow` viene segnalato una volta per il gruppo. Con `overflow.continueIn` sul gruppo di moduli (`'next-page'` o `'template:<id>'`), il primo modulo che non entra e tutti quelli che lo seguono proseguono **interi** nella pagina aggiunta, con gli stessi nomi, in cima al gruppo di moduli di quella pagina. In una fila o in una griglia di moduli una fila prosegue intera: i suoi moduli non vengono mai divisi tra due pagine.
+- **Affiancati.** Un gruppo di moduli con `kind: 'row'` mette i suoi moduli dall’inizio alla fine, ciascuno largo quanto la `width` del suo modello (una lunghezza, `{ percent: 48 }` o `'fill'`, una parte uguale di ciò che resta), con la fila alta quanto il suo modulo più alto; `kind: 'grid'` li mette in `columns` colonne uguali, fila dopo fila. `rowAlign` colloca un modulo più basso della sua fila. Le file partono dal lato in cui inizia la riga, quindi una pagina da destra a sinistra mette il primo modulo a destra. Da postext 1.50.
+- **Gruppi dentro la pila.** Un gruppo di moduli con `within: '<pila>'` sta dentro la pila di moduli della pagina, e `templates` dice quali moduli riceve: ogni serie consecutiva di questi nel Markdown forma una fila o una griglia della pila, dove viene il suo primo modulo. Con i gruppi qui sotto, due blocchi `aviso` seguiti da quattro blocchi `tarjeta` danno una fila di due riquadri sopra una griglia di 2 × 2 schede, e il Markdown contiene solo blocchi `:::module`.
+- **Non ancora.** Un modulo dentro un modulo (`moduleNested`), celle `grid` del modello dentro un modulo e un gruppo dentro una fila o una griglia di moduli.
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### Quando il contenuto non entra
 

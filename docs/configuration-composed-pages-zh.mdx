@@ -154,6 +154,12 @@ const config: PostextConfig = {
       <td><code>'composed'</code></td>
       <td>带<code>pages</code>筛选条件的设计元素所看到的页面角色。<code>'module'</code>让模板成为模块：一个由框组成、在页面的组中叠放的方框，而不是单独的一页（见<a href="#模块">模块</a>）。自postext 1.48起。</td>
     </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>模块：它在模块行或模块堆叠中的宽度，可以是一个长度、组宽度的百分比，或<code>'fill'</code>，即平分这一行其他模块留下的宽度。在网格中，模块占据它所在的栏。从postext 1.50开始。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -434,7 +440,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>网格：比所在行矮的单元格放在哪里。主框的高度为<code>'auto'</code>或<code>'fill'</code>时，<code>'stretch'</code>让它与这一行一样高（最多到它的<code>maxHeight</code>）。</td>
+      <td>网格：比所在行矮的单元格放在哪里。主框的高度为<code>'auto'</code>或<code>'fill'</code>时，<code>'stretch'</code>让它与这一行一样高（最多到它的<code>maxHeight</code>）。 模块行或模块网格：比所在行矮的模块放在哪里；<code>'stretch'</code>把它放进与这一行一样高的方框，它的底色和<code>'fill'</code>框因此延伸到行的底边。</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>组接收页面的<code>:::module</code>块，按Markdown的顺序上下叠放，彼此之间留出<code>gap</code>。不论它的<code>kind</code>是什么，都按纵向组排，它的<code>frames</code>不读取。见<a href="#模块">模块</a>。自postext 1.48起。</td>
+      <td>组按Markdown的顺序接收页面的<code>:::module</code>块，彼此之间留出<code>gap</code>：上下叠放（<code>'stack'</code>）、左右并排（<code>'row'</code>）或排成<code>columns</code>栏（<code>'grid'</code>，从postext 1.50开始）。它的<code>frames</code>不会被读取。见<a href="#模块">模块</a>。从postext 1.48开始。</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>无</td>
       <td>模块组：放不下的模块整个转到哪里接着排。未设置时，模块在组的底边截断，它的框按逐级重排的步骤尝试。</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>无</td>
+      <td>位于这个名称的模块堆叠内的模块组：它接收的页面模块中，按Markdown顺序连续的每一段，都作为该堆叠的一行或一个网格排出，位置在这一段第一个模块处。从postext 1.50开始。</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>无</td>
+      <td>设了<code>within</code>的模块组：它接收的模块模板。不设时接收所有模块。模块进入第一个接收它的此类组，否则进入堆叠。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **模块里有什么。** 框、组（包括重复的网格）、装饰和连接线。它没有`area`、`header`、`footer`、`variants`、`spread`、`gutter`或`overflowTemplate`：写了这些中的任何一个，都报告为`unknownConfigValue`并被忽略。`extends`可以用在模块之间（继承模块的模板也是模块）。
 - **它的方框。** 模块与所在的组一样宽，高度到它的框伸到的地方为止；组从顶端开始叠放各个模块，彼此之间留出`gap`。在模块内部，`'container'`是模块的方框，它的框（还有`'fill'`和百分比）以及它的装饰都以此为准：尺寸设为`{ to: 'container', edge: 'bottom' }`的底色，不论文字让模块有多高，都铺满整个模块。
 - **名称。** 模块的框、组和元素以模块的实例名为范围：`<name>.<frame>`，名称取Markdown给出的（`name="ramas"`），否则是`<template>[n]`，即这个模块在本页同一模板的模块中的序号（`arbol[2].raiz`）。模块内部的锚点、`next`、`continueIn: '#x'`和连接线都改写为指向它自己的框，所以同一页上的两棵树绝不会互相连起来。框的id写作`cp0:arbol[2].raiz`。
-- **模块放不下时。** 超出组底边的模块在那里截断，它的框按逐级重排的步骤尝试；整个组只报告一次`frameOverflow`。模块组设了`overflow.continueIn`（`'next-page'`或`'template:<id>'`）时，第一个放不下的模块及其后的每个模块都**整个**转到追加的页上，名称不变，排在那一页模块组的顶端。
-- **暂不支持。** 模块并排（模块组总是纵向组）、模块里面再套模块（`moduleNested`），以及模块内的模板`grid`单元格。
+- **模块放不下时。** 超出组底边的模块在那里截断，它的框按逐级重排的步骤尝试；整个组只报告一次`frameOverflow`。模块组设了`overflow.continueIn`（`'next-page'`或`'template:<id>'`）时，第一个放不下的模块及其后的每个模块都**整个**转到追加的页上，名称不变，排在那一页模块组的顶端。 在模块行或模块网格中，一行整体接续：一行的模块不会分到两页上。
+- **并排。** `kind: 'row'`的模块组把模块从行首排到行尾，每个的宽度取其模板的`width`（一个长度、`{ percent: 48 }`，或`'fill'`，即平分剩余宽度），行高等于其中最高的模块；`kind: 'grid'`把模块排成`columns`个等宽的栏，逐行排列。`rowAlign`决定比所在行矮的模块放在哪里。行从文字行的起始一侧开始，所以从右到左的页面把第一个模块放在右边。从postext 1.50开始。
+- **堆叠里的组。** 设了`within: '<堆叠>'`的模块组位于页面的模块堆叠内，`templates`说明它接收哪些模块：Markdown中这些模块每连续的一段，在第一个模块的位置组成堆叠的一行或一个网格。用下面的组，两个`aviso`块后接四个`tarjeta`块，排成一行两个方框，下面是2 × 2的卡片网格，而Markdown里只有`:::module`块。
+- **暂不支持。** 模块里面再套模块（`moduleNested`）、模块内的模板`grid`单元格，以及模块行或模块网格里面的组。
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### 内容放不下时
 

@@ -154,6 +154,12 @@ const config: PostextConfig = {
       <td><code>'composed'</code></td>
       <td><code>pages</code>フィルターを指定したデザイン要素から見たページの役割です。<code>'module'</code>はテンプレートをモジュールにします。モジュールは独立したページではなく、ページがグループの中に積み重ねる枠のまとまりです（<a href="#モジュール">モジュール</a>を参照）。postext 1.48以降。</td>
     </tr>
+    <tr>
+      <td><code>width</code></td>
+      <td><code>Dimension | &#123; percent &#125; | 'fill'</code></td>
+      <td><code>'fill'</code></td>
+      <td>モジュール：モジュールの行やスタックの中での幅です。長さ、グループ幅に対する割合、または<code>'fill'</code>（行のほかのモジュールが残した幅の等分）で指定します。グリッドでは、モジュールは自分の列を占めます。postext 1.50から。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -434,7 +440,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>グリッドで、行より低いセルをどこに置くかです。<code>'stretch'</code>は、主枠の高さが<code>'auto'</code>か<code>'fill'</code>のとき、その枠を行と同じ高さ（<code>maxHeight</code>まで）にします。</td>
+      <td>グリッドで、行より低いセルをどこに置くかです。<code>'stretch'</code>は、主枠の高さが<code>'auto'</code>か<code>'fill'</code>のとき、その枠を行と同じ高さ（<code>maxHeight</code>まで）にします。 モジュールの行やグリッドでは、行より低いモジュールをどこに置くかです。<code>'stretch'</code>は行と同じ高さのボックスに置くので、その地色や<code>'fill'</code>の枠が行の下端まで届きます。</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -446,13 +452,25 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>modules</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
-      <td>グループがページの<code>:::module</code>ブロックを受け取り、Markdownの順に上から積み重ね、その間に<code>gap</code>を空けます。<code>kind</code>にかかわらず積み重ねとして配置し、<code>frames</code>は読みません。<a href="#モジュール">モジュール</a>を参照してください。postext 1.48以降。</td>
+      <td>グループがページの<code>:::module</code>ブロックをMarkdownの順に受け取り、その間に<code>gap</code>を空けます。上から積み重ねる（<code>'stack'</code>）、横に並べる（<code>'row'</code>）、<code>columns</code>列に並べる（<code>'grid'</code>、postext 1.50から）のいずれかです。<code>frames</code>は読まれません。<a href="#モジュール">モジュール</a>を参照してください。postext 1.48から。</td>
     </tr>
     <tr>
       <td><code>overflow.continueIn</code></td>
       <td><code>'next-page' | 'template:&lt;id&gt;'</code></td>
       <td>なし</td>
       <td>モジュールのグループで、収まらないモジュールを丸ごと続ける先です。指定しなければ、モジュールはグループの下端で切れ、その枠が収めるための手順を順に試します。</td>
+    </tr>
+    <tr>
+      <td><code>within</code></td>
+      <td><code>string</code></td>
+      <td>なし</td>
+      <td>この名前のモジュールスタックの中に置くモジュールグループです。受け取るページのモジュールのうち、Markdownで続けて書かれたひとまとまりごとに、そのスタックの1行または1つのグリッドとして、まとまりの最初のモジュールの位置に置かれます。postext 1.50から。</td>
+    </tr>
+    <tr>
+      <td><code>templates</code></td>
+      <td><code>string[]</code></td>
+      <td>なし</td>
+      <td><code>within</code>を持つモジュールグループが受け取るモジュールテンプレートです。指定しなければ、すべてのモジュールを受け取ります。モジュールは、それを受け取る最初のこのようなグループに入り、なければスタックに入ります。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -607,8 +625,18 @@ pageTemplates: [
 - **モジュールが持つもの**：枠、グループ（繰り返すグリッドを含む）、装飾、コネクターです。`area`、`header`、`footer`、`variants`、`spread`、`gutter`、`overflowTemplate`は持たず、書くとそれぞれ`unknownConfigValue`として報告され、無視されます。`extends`はモジュールどうしで使えます（モジュールを拡張したテンプレートはモジュールです）。
 - **ボックス**：モジュールの幅はそのグループと同じで、高さは枠が届くところまでです。グループはモジュールを上から積み重ね、その間に`gap`を空けます。モジュールの中では、`'container'`はモジュールのボックスを指し、枠（`'fill'`とパーセントも）と装飾はそれを基準にします。`{ to: 'container', edge: 'bottom' }`まで広げた地は、言葉の量でモジュールの高さがどう変わっても、モジュール全体を覆います。
 - **名前**：モジュールの枠、グループ、要素は、モジュールのインスタンス名のもとにまとまります。`<name>.<frame>`で、名前はMarkdownが与えるもの（`name="ramas"`）、なければ`<template>[n]`です。nはページの中でそのテンプレートを使うモジュールの何番目かを示します（`arbol[2].raiz`）。モジュールの中のアンカー、`next`、`continueIn: '#x'`、コネクターはそのモジュール自身の枠に書き換えられるので、1ページに木が2つあっても互いにつながりません。枠のidは`cp0:arbol[2].raiz`です。
-- **モジュールが収まらないとき**：グループの下端を越えたモジュールはそこで切れ、その枠が収めるための手順を試します。`frameOverflow`はグループにつき1回出ます。モジュールのグループに`overflow.continueIn`（`'next-page'`または`'template:<id>'`）があれば、収まらない最初のモジュールとそれ以降のすべてのモジュールが、同じ名前のまま**丸ごと**追加ページへ移り、そのページのモジュールのグループの先頭に入ります。
-- **まだできないこと**：モジュールを横に並べること（モジュールのグループはいつも積み重ねです）、モジュールの中のモジュール（`moduleNested`）、モジュールの中でのテンプレートの`grid`のセルです。
+- **モジュールが収まらないとき**：グループの下端を越えたモジュールはそこで切れ、その枠が収めるための手順を試します。`frameOverflow`はグループにつき1回出ます。モジュールのグループに`overflow.continueIn`（`'next-page'`または`'template:<id>'`）があれば、収まらない最初のモジュールとそれ以降のすべてのモジュールが、同じ名前のまま**丸ごと**追加ページへ移り、そのページのモジュールのグループの先頭に入ります。 モジュールの行やグリッドでは、行がまるごと続きます。1つの行のモジュールが2ページに分かれることはありません。
+- **横に並べる**：`kind: 'row'`のモジュールグループは、モジュールを行頭から行末へ並べます。各モジュールの幅はテンプレートの`width`（長さ、`{ percent: 48 }`、または`'fill'`で残りの等分）で、行の高さは最も高いモジュールに合わせます。`kind: 'grid'`は`columns`個の等しい列に、行ごとに並べます。`rowAlign`は行より低いモジュールの位置を決めます。行は文字の行が始まる側から並ぶので、右から左のページでは最初のモジュールが右に来ます。postext 1.50から。
+- **スタックの中のグループ**：`within: '<スタック>'`を持つモジュールグループはページのモジュールスタックの中に置かれ、`templates`で受け取るモジュールを決めます。Markdownでそれらが続けて書かれたひとまとまりごとに、最初のモジュールの位置でスタックの1行または1つのグリッドになります。下のグループでは、`aviso`ブロック2つに続けて`tarjeta`ブロック4つを書くと、2つの囲みを横に並べた行の下に2 × 2のカードが並び、Markdownには`:::module`ブロックしかありません。
+- **まだできないこと**：モジュールの中のモジュール（`moduleNested`）、モジュールの中でのテンプレートの`grid`のセル、モジュールの行やグリッドの中のグループです。
+
+```ts
+groups: [
+  { name: 'cuerpo', modules: true, gap: { value: 8, unit: 'mm' } },
+  { name: 'par', modules: true, within: 'cuerpo', kind: 'row', templates: ['aviso'], gap: { value: 6, unit: 'mm' } },
+  { name: 'tarjetas', modules: true, within: 'cuerpo', kind: 'grid', columns: 2, templates: ['tarjeta'], gap: { value: 6, unit: 'mm' } },
+],
+```
 
 ### 内容が収まらないとき
 

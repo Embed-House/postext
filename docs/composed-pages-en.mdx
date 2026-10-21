@@ -163,6 +163,7 @@ Life on its banks
 - **`template`** names a template with `role: 'module'`. **`name`** is optional: it names the module's instance, so its frames are `ramas.raiz`, `ramas.izq`. Without it the instance is `<template>[n]`, the module's count among the page's modules of that template: `arbol[1].raiz`. A name already taken on the page, or one with a space, `.`, `#`, `[` or `]`, is replaced by that default (`moduleNameRejected`).
 - **Slots** inside a `:::module` are the module's own: `slot="raiz"` reaches the `raiz` frame of this module, and two modules of one template on a page keep their words apart. Content that names no slot goes to the module's flow frame, and a heading to the module frame that `takes` its level; with neither, to the page's flow frame.
 - **Order.** The modules stack in Markdown order, so another page sets the same blocks in another order, or with one more tree, with no new template.
+- **Side by side.** When the modules group is a row or a grid, or holds groups of its own (`within`), the same blocks stand side by side: two `:::module{template="aviso"}` followed by four `:::module{template="tarjeta"}` make a row of two boxes over a 2 × 2 of cards. The Markdown still says only which modules come and in what order (see [Configuration › Modules](/en/docs/configuration-composed-pages#modules)).
 - A `:::module` outside a page fence is a plain box of its content. A module inside a module is not supported (`moduleNested`).
 
 ## Example
