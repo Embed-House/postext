@@ -45,7 +45,7 @@ geometry, media and scan pages, and names the next command.
    (they come back from `config.lineNumbers`, configuration.md §19f) and
    label text inside artwork. Split a style with position conditions
    (`top_mm`, `x_mm`) when the same face serves two roles.
-3. `pdf_extract.py markdown book.pdf --roles roles.json --out draft --lang es --link-refs`.
+3. `pdf_extract.py markdown book.pdf --roles roles.json --out draft --lang es`.
    The extractor:
    - reads column by column, with page-wide bands between;
    - builds paragraphs from indents, gaps and short last lines;
@@ -61,6 +61,16 @@ geometry, media and scan pages, and names the next command.
    - sets raised small digits as `^n^` and lowered ones as `~n~`;
    - builds lists from bullet markers;
    - collects footnotes as endnotes;
+   - links mentions (on by default, `--no-link-refs` to leave them):
+     `Figura 3` / `Table 2` to the caption stub of that number (or to a
+     resource of `--refs-from resources.json`), `capítulo 4` / `section
+     3.2` (chapter and section words in es, en, ca, fr, pt, it, de, and
+     `§`) to the heading numbered so, or the fourth chapter heading, kept
+     in the source's words (`:ref{id="…" text="capítulo 4"}`). Every heading
+     gets an `id`. A mention set in a bold or italic run of its own loses
+     those marks (the reference style sets it: `referenceBold`), and
+     `report.md` lists the mentions left as text and suggests
+     `bodyText.referenceColor` when the source colours its mentions;
    - drops repeated running heads and folios;
    - writes caption stubs with page and box for the figure cutter; the
      label (`Fig. 1.`) is taken off the caption with the marks round it,

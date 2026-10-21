@@ -641,7 +641,12 @@ single-use templates only for pages like no other, named by role
 Pick the path per [sources.md](references/sources.md):
 
 - **PDF**: edit `roles.json` (the role of each font/size/colour), then run
-  `scripts/pdf_extract.py markdown source.pdf --roles roles.json --out draft --lang es --link-refs`.
+  `scripts/pdf_extract.py markdown source.pdf --roles roles.json --out draft --lang es`.
+  Mentions of figures, tables, chapters and sections become `:ref` by
+  default (`--no-link-refs` leaves them as text, `--refs-from
+  resources.json` links them to resources cut by another script too);
+  `report.md` lists the ones left as text and the colour the source sets
+  them in, for `bodyText.referenceColor`.
   A roman the source slants by shearing comes out as italic, and
   `report.md` counts those runs: check them against the page.
   Cut the figures with

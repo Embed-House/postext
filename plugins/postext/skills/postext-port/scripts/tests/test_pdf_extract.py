@@ -68,5 +68,59 @@ class CaptionLabel(unittest.TestCase):
         self.assertEqual(res[0]["caption"], "Imagen: *tako-tsubo cardiomyopathy* es una enfermedad.")
 
 
+def refs_page():
+    """Body text with coloured bold figure mentions, a numbered section
+    heading, a caption, and chapter and section mentions."""
+    doc = fitz.open()
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    x, y = 25 * MM, 40 * MM
+    put(page, x, y, "2. Los ríos", size=16, font="hebo")
+    orange = (0.9, 0.45, 0.1)
+    for k, (before, after) in enumerate((("Como muestra la ", " el agua baja."), ("Vuelve a la ", " y compárala."))):
+        yy = y + 20 + k * 14
+        xx = put(page, x, yy, before)
+        page.insert_text((xx, yy), "Figura 1", fontsize=11, fontname="hebo", color=orange)
+        xx += fitz.get_text_length("Figura 1", fontname="hebo", fontsize=11)
+        put(page, xx, yy, after)
+    put(page, x, y + 48, "Lee otra vez el capítulo 2 y la sección 9 del libro. También la Figura 5.")
+    for k in range(5):
+        put(page, x, y + 62 + k * 14, BODY)
+    put(page, x, y + 150, "Figura 1. El río baja de la montaña.", size=9)
+    return doc
+
+
+RULES = [{"size": 16, "role": "h2"}, {"size": 9, "role": "caption"}]
+
+
+@unittest.skipUnless(HAVE_FITZ, "needs PyMuPDF")
+class LinkRefs(unittest.TestCase):
+    def test_mentions_link_by_default(self):
+        md, res, rep = run_draft(refs_page(), RULES)
+        fig = res[0]["id"]
+        self.assertIn(f'Como muestra la :ref{{id="{fig}" style="full"}} el agua baja.', md)
+        self.assertNotIn("**:ref", md)
+        self.assertRegex(md, r"## (2\. )?Los ríos \{id=\"sec-[^\"]+\"\}")
+        hid = __import__("re").search(r'\{id="(sec-[^"]+)"\}', md).group(1)
+        self.assertIn(f':ref{{id="{hid}" text="capítulo 2"}}', md)
+        self.assertIn("la sección 9 del", md)
+        self.assertIn("## Mentions left as text", rep)
+        self.assertIn("- sección 9: 1", rep)
+        self.assertIn("- Figura 5: 1", rep)
+        self.assertIn("`bodyText.referenceColor` to #e6731a", rep)
+
+    def test_no_link_refs(self):
+        md, _, _ = run_draft(refs_page(), RULES, "--no-link-refs")
+        self.assertNotIn(":ref{", md)
+        self.assertIn("**Figura 1**", md)
+
+    def test_refs_from_resources(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "resources.json"
+            path.write_text(json.dumps([{"id": "mapa", "caption": "Figura 5. Mapa del río."}]), encoding="utf-8")
+            md, _, rep = run_draft(refs_page(), RULES, "--refs-from", str(path))
+        self.assertIn(':ref{id="mapa" style="full"}', md)
+        self.assertNotIn("- Figura 5:", rep)
+
+
 if __name__ == "__main__":
     unittest.main()

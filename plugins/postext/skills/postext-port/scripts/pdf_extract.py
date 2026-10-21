@@ -12,7 +12,7 @@ writes Postext Markdown.
      Prints a table of font/size/colour styles (most used first) with samples
      and writes a roles.json skeleton to stdout: edit each "role".
   2. pdf_extract.py markdown book.pdf --roles roles.json --out draft/ [--pages 5-40]
-        [--lang es] [--columns 2] [--split-role h1] [--link-refs]
+        [--lang es] [--columns 2] [--split-role h1] [--no-link-refs] [--refs-from resources.json]
 
 Roles (value of "role" in roles.json):
   body                    running text
@@ -56,6 +56,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from postext_md import (  # noqa: E402
     CAPTION_LABEL_RE,
+    MENTION_RE,
     Run,
     Slugger,
     attr_value,
@@ -65,6 +66,7 @@ from postext_md import (  # noqa: E402
     fence,
     guard_line_start,
     heading,
+    heading_number,
     join_blocks,
     link_mentions,
     render_runs,
@@ -654,6 +656,39 @@ def para_text(p: Para, vocab: Vocabulary, base: dict[str, tuple[bool, bool]], pl
     return render_runs(runs)
 
 
+def load_refs(path: str | None) -> list[tuple[tuple[str, str], str]]:
+    """((kind, number), id) for every resource of a resources.json whose
+    caption, label or source label starts with one (`Figura 3. …`), for
+    `--refs-from`: mentions link to resources another script cut."""
+    if not path:
+        return []
+    out = []
+    for r in json.loads(Path(path).read_text(encoding="utf-8")):
+        if not isinstance(r, dict) or not r.get("id"):
+            continue
+        for t in (r.get("label"), (r.get("source") or {}).get("label"), r.get("caption")):
+            m = CAPTION_LABEL_RE.match(t or "")
+            if m:
+                out.append(((caption_kind(m.group("label")), m.group("num").replace("–", "-")), r["id"]))
+                break
+    return out
+
+
+def mention_colours(lines: list[Line]) -> tuple[str, int] | None:
+    """The colour mentions (`Figura 3`, `capítulo 2`) are set in when it is
+    not their line's: the source colours its references, which Postext
+    does with `bodyText.referenceColor`. (colour, count) or None."""
+    found: Counter = Counter()
+    for ln in lines:
+        for sp in ln.spans:
+            if sp.color != ln.color and MENTION_RE.search(sp.text):
+                found[sp.color] += len(MENTION_RE.findall(sp.text))
+    if not found:
+        return None
+    col, n = found.most_common(1)[0]
+    return (col, n) if n >= 2 else None
+
+
 def strip_caption_label(text: str, label: str) -> str:
     """The caption's Markdown without its label (`Fig. 1.`). A label wrapped
     in marks (`**Figura 1.** El corazón`) goes with them; one that opens a
@@ -750,6 +785,9 @@ def cmd_markdown(args) -> None:
         chapters.append((title, [], []))
 
     split_role = args.split_role
+    chapter_n = 0
+    for r in load_refs(getattr(args, "refs_from", None)):
+        label_to_id.setdefault(r[0], r[1])
     i = 0
     callout: tuple[str, str | None, list[str]] | None = None
 
@@ -789,7 +827,17 @@ def cmd_markdown(args) -> None:
             level = int(role[1:])
             if not chapters[-1][0] and role == split_role:
                 chapters[-1] = (text, blocks, chapters[-1][2])
-            blocks.append(heading(level, text))
+            # every heading gets an id; a numbered one (`3.2 Los ríos`, `Capítulo 4`) is what
+            # `sección 3.2` / `capítulo 4` mentions link to, a chapter without one its place
+            hid = slug(text, "sec")
+            num = heading_number(clean_text(p.lines[0].text))   # the list-marker strip may take "2. " off
+            if role == split_role:
+                chapter_n += 1
+            if num:
+                label_to_id[("section", num)] = hid
+            elif role == split_role:
+                label_to_id.setdefault(("section", str(chapter_n)), hid)
+            blocks.append(heading(level, text, id=hid))
             continue
         i += 1
         text = repair_ligature_gaps(para_text(p, vocab, base), vocab)
@@ -860,14 +908,15 @@ def cmd_markdown(args) -> None:
         flush_list(chapters[-1][1])
 
     manifest = []
+    left_out: Counter = Counter()
     for n, (title, blocks, notes) in enumerate(chapters, 1):
         if notes:
             blocks.append(fence("paragraphs", notes, style="notes"))
         body = join_blocks(blocks)
         if args.link_refs:
-            def float_it(rid: str) -> None:
-                pass
-            body = link_mentions(body, label_to_id, float_it)
+            def unresolved(words: str) -> None:
+                left_out[words] += 1
+            body = link_mentions(body, label_to_id, on_unresolved=unresolved)
         name = f"{n:02d}-{slugify(title or f'chapter {n}')}.md"
         (chap_dir / name).write_text(body, encoding="utf-8")
         manifest.append({"title": title or f"Chapter {n}", "file": f"chapters/{args.lang}/{name}"})
@@ -881,6 +930,15 @@ def cmd_markdown(args) -> None:
     if unmatched:
         rep += ["## Styles no rule matched (set as body)", ""]
         rep += [f"- {k[0]} {k[1]}pt {k[2]}: {n} lines" for k, n in unmatched.most_common(20)] + [""]
+    if left_out:
+        rep += ["## Mentions left as text (nothing to link them to)", ""]
+        rep += [f"- {k}: {v}" for k, v in left_out.most_common(40)] + [""]
+    ref_col = mention_colours(kept)
+    if ref_col:
+        col, n = ref_col
+        rep += ["## Reference colour", "",
+                f"- {n} mentions are set in {col} where their text is not: set `bodyText.referenceColor` "
+                f"to {col} (the :ref links take it)", ""]
     if report:
         rep += ["## Decisions to review", ""] + [f"- {k}: {v}" for k, v in report.most_common()] + [""]
     if heavy:
@@ -908,7 +966,11 @@ def main() -> None:
     m.add_argument("--lang", default="en")
     m.add_argument("--columns", help="number of body columns (default: roles.json 'columns' or auto)")
     m.add_argument("--split-role", default="h1", help="role that starts a new chapter file (default h1; 'none' = one file)")
-    m.add_argument("--link-refs", action="store_true", help="turn 'Figure 1.2' mentions into :ref for captioned stubs")
+    m.add_argument("--link-refs", dest="link_refs", action="store_true", default=True,
+                   help="turn 'Figure 1.2' / 'capítulo 3' mentions into :ref (default)")
+    m.add_argument("--no-link-refs", dest="link_refs", action="store_false",
+                   help="leave mentions as text")
+    m.add_argument("--refs-from", help="a resources.json whose captions (Figura 3…) mentions link to as well")
     m.add_argument("--no-auto-furniture", dest="auto_furniture", action="store_false")
     args = ap.parse_args()
     if args.cmd == "roles":
