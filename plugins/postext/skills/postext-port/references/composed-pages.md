@@ -441,10 +441,11 @@ What the extraction decides, so you know what to check:
   list item; the bullets' left edges in a frame, grouped within 1.5 mm,
   are the levels, so an item whose bullet sits further in is nested
   (`  - ` under the item above). The frame's style gets `lists` from its
-  top-level bullets: `bulletChar`, `color`, `indent`, `gap` (from the
-  bullet's advance to the words), `bulletFontSize` (em of the item text)
-  and `bulletFontWeight`. Each level's bullet goes to
-  `suggested.unorderedLists` (`bulletChar`, `levels[]` with `bulletChar`,
+  top-level bullets: `bulletChar`, `color` (the bullets' most common),
+  `indent`, `gap` (from the bullet's advance to the words),
+  `bulletFontSize` (em of the item text), `bulletFontWeight` and
+  `itemSpacing` (the room between two items over their leading). Each level's bullet goes to
+  `suggested.unorderedLists` (`bulletChar`, `color`, `levels[]` with `bulletChar`,
   `fontSize`, `fontWeight`), which `manifest` writes into the config: keep
   it, since a box whose `lists.bulletChar` differs from the document's
   replaces every level's bullet with its own.

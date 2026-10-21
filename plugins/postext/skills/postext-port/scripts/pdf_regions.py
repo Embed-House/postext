@@ -1391,13 +1391,38 @@ def bullet_look(items: list[Line]) -> dict:
     bs = [(bullet_of(l), item_size(l)) for l in items]
     chars: dict[str, int] = {}
     weights: dict[int, int] = {}
+    colours: dict[str, int] = {}
     for b, _ in bs:
         chars[b.c] = chars.get(b.c, 0) + 1
         weights[b.weight] = weights.get(b.weight, 0) + 1
+        colours[b.color] = colours.get(b.color, 0) + 1
     ratio = statistics.median(b.size / s for b, s in bs if s > 0) if bs else 1.0
     return {"bulletChar": max(chars, key=lambda k: (chars[k], k)),
             "bulletFontSize": {"value": round(ratio * 20) / 20, "unit": "em"},
-            "bulletFontWeight": max(weights, key=lambda k: (weights[k], -k))}
+            "bulletFontWeight": max(weights, key=lambda k: (weights[k], -k)),
+            "color": max(colours, key=lambda k: (colours[k], k))}
+
+
+def item_spacing(lines: list[Line]) -> float | None:
+    """The room (mm) between two list items over the leading of their
+    lines: the median of what each item's first baseline stands below the
+    last baseline of the item before, less the leading. None without two
+    items one under the other."""
+    paras = [p for p in paragraphs(lines) if bullet_of(p[0])]
+    leads = [s for p in paragraphs(lines) for s in [para_lead(p)] if s]
+    if len(paras) < 2:
+        return None
+    size = statistics.median(l.size_mm for p in paras for l in p)
+    lead = statistics.median(leads) if leads else LEADS.get((paras[0][0].family, round(paras[0][0].size * 4) / 4),
+                                                           size * 1.25)
+    steps = []
+    for a, b in zip(paras, paras[1:]):
+        step = b[0].base - a[-1].base
+        if 0 < step < 3 * lead:
+            steps.append(step - lead)
+    if not steps:
+        return None
+    return max(0.0, statistics.median(steps))
 
 
 def list_style(lines: list[Line], left_edge: float) -> dict | None:
@@ -1411,9 +1436,13 @@ def list_style(lines: list[Line], left_edge: float) -> dict | None:
     top = [l for l in bl if level_of_bullet(bullet_of(l), levels) == 0]
     b = bullet_of(top[0])
     look = bullet_look(top)
-    return {"bulletChar": look["bulletChar"], "color": colour(b.color),
-            "indent": mmv(max(0.0, b.x0 - left_edge)), "gap": mmv(max(0.5, text_x0(top[0]) - b.x1)),
-            "bulletFontSize": look["bulletFontSize"], "bulletFontWeight": look["bulletFontWeight"]}
+    st = {"bulletChar": look["bulletChar"], "color": colour(look["color"]),
+          "indent": mmv(max(0.0, b.x0 - left_edge)), "gap": mmv(max(0.5, text_x0(top[0]) - b.x1)),
+          "bulletFontSize": look["bulletFontSize"], "bulletFontWeight": look["bulletFontWeight"]}
+    sp = item_spacing(lines)
+    if sp is not None:
+        st["itemSpacing"] = mmv(sp)
+    return st
 
 
 def unordered_lists(found: dict[int, list[dict]]) -> dict | None:
@@ -1433,6 +1462,8 @@ def unordered_lists(found: dict[int, list[dict]]) -> dict | None:
     first = most(min(found))
     out: dict[str, Any] = {"bulletChar": first["bulletChar"], "bulletFontSize": first["bulletFontSize"],
                            "fontWeight": first["bulletFontWeight"], "levels": []}
+    if first.get("color"):
+        out["color"] = colour(first["color"])
     for depth in sorted(found):
         lk = most(depth)
         out["levels"].append({"level": depth + 1, "bulletChar": lk["bulletChar"], "fontSize": lk["bulletFontSize"],
