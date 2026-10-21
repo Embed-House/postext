@@ -634,6 +634,7 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
       templateSource: templateAttr ? { sourceStart: templateAttr.sourceStart + input.bodyOffset, sourceEnd: templateAttr.sourceEnd + input.bodyOffset } : undefined,
       budgetLeft: () => runs < COMPOSE_BUDGET,
       holdsText: holdsText(frame),
+      dividesWord,
     });
     warnings.push({
       kind: 'frameOverflow',
@@ -947,6 +948,9 @@ interface ProposalContext {
   budgetLeft(): boolean;
   /** The frame sets text, which a smaller scale would shrink. */
   holdsText: boolean;
+  /** A line of the frame holds nothing but the head of a word wider than
+   *  its measure (#1084). */
+  dividesWord(c: Composition, name: string): boolean;
 }
 
 const mmDim = (value: number): Dimension => ({ value, unit: 'mm' });
@@ -961,22 +965,46 @@ function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
   const fits = (next: FitState, tpl?: ResolvedPageTemplate): boolean => c.budgetLeft() && !c.overflows(c.compose(next, tpl), name);
 
   // More shrink: the largest text scale, in 2.5 % steps, at which it fits.
+  // When that scale divides a word wider than the frame's measure, the
+  // largest smaller one that fits with every word whole, as the ladder
+  // prefers (#1084, #1090); none, and the largest that fits, saying the
+  // word will be divided.
   const head = c.headOf(name);
   const from = frame.fit.shrinkText ? Math.min(frame.fit.minScale, vdt.scale) : 1;
   const steps = scaleSteps(PROPOSAL_MIN_SCALE, from);
-  if (c.holdsText && steps.length > 0 && fits(c.withText(fit, head, steps[steps.length - 1]!))) {
-    let lo = 0;
-    let hi = steps.length - 1;
-    while (lo < hi && c.budgetLeft()) {
-      const mid = Math.floor((lo + hi) / 2);
-      if (fits(c.withText(fit, head, steps[mid]!))) hi = mid;
-      else lo = mid + 1;
+  const shrunk = (i: number): FitState => c.withText(fit, head, steps[i]!);
+  if (c.holdsText && steps.length > 0 && fits(shrunk(steps.length - 1))) {
+    const last = steps.length - 1;
+    /** The largest step from `lo` down at which `ok` holds, given it holds
+     *  at the last one: by bisection. */
+    const largest = (lo: number, ok: (i: number) => boolean): number => {
+      let hi = last;
+      while (lo < hi && c.budgetLeft()) {
+        const mid = Math.floor((lo + hi) / 2);
+        if (ok(mid)) hi = mid;
+        else lo = mid + 1;
+      }
+      return hi;
+    };
+    let at = largest(0, (i) => fits(shrunk(i)));
+    let word: 'whole' | 'divided' | undefined;
+    if (c.budgetLeft() && c.dividesWord(c.compose(shrunk(at)), name)) {
+      const whole = (i: number): boolean => {
+        if (!c.budgetLeft()) return false;
+        const comp = c.compose(shrunk(i));
+        return !c.overflows(comp, name) && !c.dividesWord(comp, name);
+      };
+      if (at < last && whole(last)) {
+        at = largest(at + 1, whole);
+        word = 'whole';
+      } else word = 'divided';
     }
     out.push({
       kind: 'allowShrink',
       path: path('fit/minScale'),
-      value: steps[hi]!,
+      value: steps[at]!,
       ...(frame.fit.shrinkText ? {} : { also: [{ path: path('fit/shrinkText'), value: true }] }),
+      ...(word ? { word } : {}),
     });
   }
 

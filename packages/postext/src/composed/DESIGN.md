@@ -3237,7 +3237,7 @@ words taken from the round-1 port (the owner's corrected Spanish and his transla
     height held the two pieces at full size, so the ladder never ran. A frame free to grow keeps its
     size: growing does not widen the measure, and shrinking every narrow auto box would move existing
     pages.
-- **Not done.** The `allowShrink` proposal still names the largest scale that fits, which may be one
+- **Not done** (done since #1090, §13.4). The `allowShrink` proposal still names the largest scale that fits, which may be one
   that divides a word (the pill of `minScale: 1` proposes 0.925, where the word is divided over two
   lines); once applied, the ladder sets the word whole only if `minScale` reaches that far. The skill's
   `:::space{lines=1}` workaround (composed-pages.md) is no longer needed; its text is the skill's issue.
@@ -3303,3 +3303,27 @@ Modules side by side (§12.7, §12.19 left them always stacked).
   `template_fold.py` side (a later lane).
 - **Fixture.** `__tests__/composed/fixtures/moduleRows.ts` (a page shell whose stack holds a row of boxes
   and a 2 × 2 grid of cards, words in Spanish and English); `moduleRows.test.ts`.
+
+### 13.4 What R3-4 built (#1090)
+
+- **The shrink proposal keeps words whole.** `allowShrink` of a `frameOverflow` still starts from the
+  largest scale (2.5 % steps down to `PROPOSAL_MIN_SCALE`, 50 %) at which the frame fits. When the
+  frame laid at that scale divides a word wider than its measure (`dividesWord`, §12.37, now passed
+  to `overflowProposals` through `ProposalContext`), the proposal looks below it for the largest
+  scale at which the frame fits and no word is divided (lowest step first, then bisection, as the
+  ladder's `wordWhole`) and names that one with `word: 'whole'`. None down to 50 %: the largest
+  fitting scale stays and the proposal carries `word: 'divided'`. A frame whose largest fitting
+  scale divides nothing gets no `word`, so proposals of existing books are unchanged.
+- **Applied, it holds.** Setting `fit.minScale` to the proposed value lets the ladder's step 5 find
+  the larger divided scale first and then `wordWhole` go down to `minScale`, which is the whole-word
+  scale: the warning is gone and the word whole (the `minScale: 1` pill of #1084 proposes 0.825, not
+  0.925; tested in the engine and through `sandbox_apply_proposal`).
+- **Decided where the issue was open.** The floor of the whole-word search is the proposal's own
+  floor (50 %), not the frame's current `minScale`: the proposal is about lowering it. The note is a
+  field of the proposal (`word`), not a new kind, so the one-click fix path (`proposalActions.ts`,
+  which reads `path`/`value`/`also`) needed no change. Words: the engine's English
+  (`describeFrameOverflowProposal`: "…, where its long word is whole" / "…, a long word divided") and
+  two Sandbox labels (`warningsFitFixAllowShrinkWhole`, `warningsFitFixAllowShrinkDivided`) in the
+  ten locales; the docs' `frameOverflow` proposals table says the same.
+- **Not done.** `dividesWord` sees a word divided because it is wider than the measure (a hyphenated
+  line with no space); an ordinary hyphenation at a line end is not counted, as in §12.37.

@@ -3371,12 +3371,15 @@ export type FrameFitStep = 'free' | 'push' | 'scaleImages' | 'redistribute' | 's
  *  the config value to set to `value`; a Markdown change carries the
  *  source range it is about instead. Values are worked out from the
  *  shortfall: `allowShrink` the largest text scale (in 2.5 % steps) at
- *  which the content fits (`also`: the switch to turn on with it),
+ *  which the content fits (`also`: the switch to turn on with it; when
+ *  that scale divides a word wider than the frame's measure, the largest
+ *  smaller one that sets every word whole, `word: 'whole'`, or, none
+ *  doing so, `word: 'divided'`, #1090),
  *  `raiseMax` / `lowerMin` the height in whole millimetres, `useTemplate`
  *  another template of the book with a frame of this name in which the
  *  content fits, `shortenText` about how many characters to cut. */
 export type FrameOverflowProposal =
-  | { kind: 'allowShrink'; path: string; value: number; also?: { path: string; value: boolean }[] }
+  | { kind: 'allowShrink'; path: string; value: number; also?: { path: string; value: boolean }[]; word?: 'whole' | 'divided' }
   | { kind: 'raiseMax'; path: string; value: Dimension }
   | { kind: 'lowerMin'; path: string; value: Dimension; frame: string }
   | { kind: 'continueNextPage'; path: string; value: 'next-page' }

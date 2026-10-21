@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build';
 import { createMeasurementCache } from '../../measure';
 import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, VDTDocument, VDTFrame, VDTLine } from '../../index';
+import { describeFrameOverflowProposal } from '../../index';
+import type { ContentWarning, FrameOverflowProposal, PostextConfig, VDTDocument, VDTFrame, VDTLine } from '../../index';
 
 // #1084: a pill held to its height (`minHeight` = `maxHeight`) whose word is
 // wider than its measure. The ladder's text shrink used to stop at the
@@ -101,3 +102,42 @@ describe('a one-line pill sets a long word smaller before it divides it (#1084)'
     expect(frame(doc).scale).toBe(1);
   });
 });
+
+describe('the allowShrink proposal of a held pill keeps the word whole (#1090)', () => {
+  const shrinkOf = (doc: VDTDocument) => overflows(doc)[0]?.proposals?.find((p) => p.kind === 'allowShrink') as Extract<FrameOverflowProposal, { kind: 'allowShrink' }> | undefined;
+
+  it('minScale 1: proposes the largest scale that sets the word whole, not the largest that fits divided', () => {
+    const doc = build([pill({ minScale: 1 })]);
+    const p = shrinkOf(doc)!;
+    // 0.925 fits with the word over two lines; 0.825 is the largest whole.
+    expect(p.value).toBe(0.825);
+    expect(p.word).toBe('whole');
+    expect(p.path).toBe('/pageTemplates/0/frames/0/fit/minScale');
+    expect(describeFrameOverflowProposal(p)).toBe('let its text shrink to 82.5 %, where its long word is whole (fit.minScale: 0.825)');
+    // Applied, the warning is gone and the word is set whole.
+    const fixed = build([pill({ minScale: p.value })]);
+    expect(overflows(fixed)).toEqual([]);
+    expect(lines(fixed).map((l) => l.text)).toEqual([WORD]);
+    expect(frame(fixed).scale).toBe(0.825);
+  });
+
+  it('a word no allowed scale sets whole: the largest scale that fits, saying the word is divided', () => {
+    const long = 'Administrationalismadministrationalism';
+    const doc = build([pill({ minScale: 1 })], long);
+    const p = shrinkOf(doc)!;
+    expect(p.word).toBe('divided');
+    expect(p.value).toBeLessThan(1);
+    expect(describeFrameOverflowProposal(p)).toContain(', a long word divided');
+    const fixed = build([pill({ minScale: p.value })], long);
+    expect(overflows(fixed)).toEqual([]);
+    expect(lines(fixed).length).toBe(2);
+  });
+
+  it('text that wraps at spaces: no word note', () => {
+    const doc = build([pill({ minScale: 1 }, { minHeight: mm(6), maxHeight: mm(6) })], 'Public office hours');
+    const p = shrinkOf(doc)!;
+    expect(p.value).toBeLessThan(1);
+    expect(p.word).toBeUndefined();
+  });
+});
+
