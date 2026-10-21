@@ -192,6 +192,10 @@ class ChartHelpersTest(unittest.TestCase):
         self.assertEqual(len(out), 1)
         self.assertEqual(out[0]["n"], 5)
         self.assertLess(out[0]["box"][2], 90)
+        # a row of drawings (pictures on their own) standing on one rule stays a row
+        row = [{"box": (20 + 40 * i, 100, 50 + 40 * i, 140), "n": 12, "images": []} for i in range(3)]
+        ground = S((20, 140, 130, 140), 3)
+        self.assertEqual(len(pr.join_lines(row, [ground], 1.0)), 3)
 
 
 @unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")

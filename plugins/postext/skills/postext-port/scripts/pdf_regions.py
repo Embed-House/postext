@@ -991,10 +991,11 @@ class Shape:
         return radii
 
     def rect_like(self) -> bool:
-        """A rectangle (corners rounded or not): a filled one a plain
-        rectangular clip cuts is one too (its box is what shows); a clipped
-        outline is not (what shows of it is no rectangle's outline)."""
-        if not self.items or len(self.items) > 16 or (self.clipped and (not self.clip_exact or self.stroke)):
+        """A rectangle (corners rounded or not): a filled one a clip cuts is
+        one too, its box what shows inside the clip's box (exact for a plain
+        rectangular clip); a clipped outline is not (what shows of it is no
+        rectangle's outline)."""
+        if not self.items or len(self.items) > 16 or (self.clipped and self.stroke):
             return False
         if all(it[0] == "re" for it in self.items):
             return True
@@ -1247,7 +1248,7 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
             big.append(im)
     clusters = join_lines(cluster_boxes(items, opts.art_gap),
                           [s for s in out["lines"] if not in_tab(s.box)], opts.art_gap,
-                          [s.box for s in out["boxes"]] + [t.box for t in tabs])
+                          [s.box for s in out["boxes"]] + [t.box for t in tabs], opts.min_picture)
     # evenly spaced parallel strokes that join nothing (a cover's hatching): one shape, never lines
     loose = [s for s in out["lines"] + out.get("leaders", []) if not getattr(s, "in_cluster", False)]
     out["hatches"] = find_hatches(loose, [l.box for l in lines])
@@ -1384,7 +1385,8 @@ def cluster_boxes(items: list[dict], gap: float) -> list[dict]:
     return out
 
 
-def join_lines(clusters: list[dict], lines: list, gap: float, stops: list | None = None) -> list[dict]:
+def join_lines(clusters: list[dict], lines: list, gap: float, stops: list | None = None,
+               alone: float = 8.0) -> list[dict]:
     """Clusters of art with the thin lines that belong to them (a chart's
     axes, grid and ticks, a map's scale bar): a line joins the clusters it
     touches (within `gap` mm) when it lies inside their joint box grown by
@@ -1394,8 +1396,16 @@ def join_lines(clusters: list[dict], lines: list, gap: float, stops: list | None
     held a chart together no more, so its bars came out as pictures of
     their own. A line that runs on out of the art to a box (a pointer to a
     note) or far past it (a rule past an icon) joins nothing. Each line
-    joined counts as a shape of the cluster; lines alone make no cluster."""
+    joined counts as a shape of the cluster; lines alone make no cluster.
+    A line never joins two clusters that are pictures on their own (at least
+    `alone` mm both ways, three shapes or an image): a row of drawings
+    standing on one rule stays a row of pictures."""
     stops = list(stops or [])
+
+    def picture_alone(c: dict) -> bool:
+        b = c["box"]
+        return min(b[2] - b[0], b[3] - b[1]) >= alone and (c["n"] >= 3 or bool(c["images"]))
+
     clusters = [dict(c, lines=c.get("lines", 0)) for c in clusters]
     pending = sorted(lines, key=lambda s: s.seq)
     changed = True
@@ -1407,6 +1417,8 @@ def join_lines(clusters: list[dict], lines: list, gap: float, stops: list | None
             touched = [c for c in clusters if near[0] <= c["box"][2] and c["box"][0] <= near[2]
                        and near[1] <= c["box"][3] and c["box"][1] <= near[3]]
             if not touched:
+                continue
+            if sum(1 for c in touched if picture_alone(c)) > 1:
                 continue
             joint = union([c["box"] for c in touched])
             r = max(2.5, 0.1 * max(s.w, s.h))
@@ -3485,7 +3497,7 @@ def shape_path(eid: str, s: Shape) -> dict | None:
     if s.clipped:
         # a path element has no clip: a rectangle cut by a rectangle is the part that shows, any
         # other clipped shape stays in the raster ground
-        if not (s.rect_like() and all(it[0] in ("re", "l") for it in s.items)):
+        if not (s.clip_exact and s.rect_like() and all(it[0] in ("re", "l") for it in s.items)):
             return None
         return path_element(eid, s.box, la.items_path([("re", 0.0, 0.0, s.w, s.h)], (0.0, 0.0), close=True),
                             s.fill, s.stroke, s.width, s.dash)
@@ -3690,7 +3702,7 @@ def drawn_raw(s: Shape) -> dict:
     pieces = s.mm_lines() if s.kind in ("line", "leader", "hatch") else None
     if pieces is not None:
         return dict(s.raw, items=[("l", pt(a), pt(b)) for a, b in pieces])
-    if s.rect_like():
+    if s.clip_exact and s.rect_like():
         return dict(s.raw, items=[("re", fitz.Rect(pt(s.box[:2]), pt(s.box[2:])), 1)])
     return s.raw
 
@@ -3797,7 +3809,7 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
     if not getattr(opts, "vector_ground", False):
         if len(residual) + len(hatches) > opts.max_paths:
             reasons.append(f"{len(residual) + len(hatches)} loose shapes (over --max-paths {opts.max_paths})")
-        if any(s.clipped and not s.rect_like() for s in residual):
+        if any(s.clipped and not (s.clip_exact and s.rect_like()) for s in residual):
             reasons.append("clipped art outside the pictures")
         bits = [g for g in stray if g.length < 5.0]      # fragments, not a page's rules
         if len(bits) >= 6 and len(bits) > conn_segs:

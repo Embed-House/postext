@@ -499,7 +499,8 @@ What the extraction decides, so you know what to check:
   inside its innermost clip, and straight lines are cut to it before they
   are read as lines. A map's graticule and coastline drawn past the window
   that shows them stay in the map's cut, inside its box. A rectangle cut
-  by a rectangular clip is the part that shows; any other clipped shape
+  by a clip is the part that shows inside the clip's box (a stroked one is
+  not: what shows of its outline is no rectangle); any other clipped shape
   stays art inside a picture and goes to the raster ground outside one,
   never to a `path` element (paths carry no clip).
 - **Connector ends on the laid box** (skill 1.61). A line is read against
@@ -563,8 +564,9 @@ What the extraction decides, so you know what to check:
 - **Charts keep their lettering** (skill 1.61). Thin lines join the
   clusters of art they touch when they lie inside them (a tenth of their
   length past them at most) or half inside with the rest reaching no box: a
-  chart's axes, grid and ticks hold its bars together again, and a pointer
-  that runs out to a note joins nothing. A picture with six numbers or
+  chart's axes, grid and ticks hold its bars together again, a pointer
+  that runs out to a note joins nothing, and a rule under a row of drawings
+  that are pictures on their own leaves them a row. A picture with six numbers or
   single letters or more in regular rows or columns (ticks, a month's
   initials; a map's `20°N` is no tick) and an axis across half its width or
   down half its height, or a turned axis title, is a chart: its box takes in
