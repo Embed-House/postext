@@ -1104,6 +1104,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   bodyBreakAfterDashesTooltip: 'Let a line end after an em or en dash set between two words (say—that’s), in optimal line breaking too. Never after a dash that opens an aside or a line of dialogue, nor inside a range of numbers (1914–1918). Off: as up to postext 1.4. Books saved before postext 1.5 that set such a dash open with it off.',
   bodyBreakAfterHyphens: 'Break After Hyphens',
   bodyBreakAfterHyphensTooltip: 'Let a line end after the hyphen of a compound (well- | known) in every paragraph set with optimal line breaking. Off: as up to postext 1.4, where a justified paragraph without bold, italics or other formatting never broke there. Books saved before postext 1.5 that set a compound open with it off.',
+  bodyBreakAfterSlashes: 'Break After Slashes',
+  bodyBreakAfterSlashesTooltip: 'Let a line of formatted text, a caption, a cell or a note end after a slash between two words (ACC/ | AHA, input/ | output), and divide a word too wide for its line there first. Units, short pairs, fractions and dates (km/h, and/or, 1/2) stay whole. Off: as up to postext 1.51, which broke after a slash only inside a web address. Books saved with postext 1.51 or earlier open with it off.',
   bodyHardLineBreaks: 'Forced Line Breaks',
   bodyHardLineBreaksTooltip: 'Read a backslash at the end of a line of Markdown, or \\\\ before a space, as a line break inside the paragraph, quotation or list item: the next words start a new line, and the line before it is set at its natural width. Off: the backslashes print, as up to postext 1.22. Books saved before postext 1.23 that have such a backslash open with it off.',
   bodyScriptContext: 'Script of Words With No Letter',
