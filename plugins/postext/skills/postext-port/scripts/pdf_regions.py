@@ -1160,7 +1160,7 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
             # one that shows next to nothing (a few pixels at an edge) is debris
             share = renders.share_of(s.rect_pt, s.fill)
             if share is not None and share < HIDDEN_SHOWS:
-                s.kind = "unseen"
+                s.debris = True     # no decoration; still redrawn when the ground is compared
     # a speck too small to tell (the dot of an i) goes with the unseen shapes of its colour
     # painted next to it
     by_seq = {s.seq: s for s in shapes}
@@ -1796,7 +1796,11 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                                      rounds=sh["boxes"] + cards, holders=sh["boxes"])
             res.append(f.resource)
             frame_of = {id(g.shape): g.name for g in ordered if g.shape is not None}
-            for s in crossed_rules(f.box, sh["boxes"] + sh["tabs"]):
+            laid_over = drawn_over(f, ordered)
+            # a box laid over the picture or held in it is drawn over the cut; a cut-out with alpha
+            # may stand over its box's edge on purpose
+            ruled = [s for s in sh["boxes"] + sh["tabs"] if id(s) not in laid_over and not inside_mm(s.box, f.box, 0.5)]
+            for s in ([] if f.alpha else crossed_rules(f.box, ruled)):
                 report["notes"].append(f"{f.name}: the cut crosses the rule of {frame_of.get(id(s), 'a box')} "
                                        f"at {r2(s.box)} mm; check the cut")
             if f.kind == "figure":
@@ -2350,12 +2354,14 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
                 f.box = clipped
         # likewise no further than the inside of the box that holds it (its rule is the frame's),
         # and no further than a filled rectangle the art is drawn on (its own ground)
+        # (the box the shapes took stays the picture's claim: what lies there is its, `claim_of`)
         holder = holder_of(f.box, holders or [], over)
         for edge in ([inner_round(holder)[0]] if holder is not None else []) + [art_ground(f.box, art or [])]:
             if edge is None:
                 continue
             clipped = meet_box(f.box, edge)
             if clipped != tuple(f.box) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
+                f.claim = claim_of(f)
                 f.box = clipped
         one = fitz.open(str(pdf_path))
         page = one[pno]
@@ -2480,18 +2486,22 @@ def holder_of(box: tuple, boxes: list, over: set | None = None) -> Shape | None:
     return min(cands, key=lambda s: area(s.box)) if cands else None
 
 
-def art_ground(box: tuple, art: list, share: float = 0.9) -> tuple | None:
+def art_ground(box: tuple, art: list) -> tuple | None:
     """A filled rectangle the picture's art is drawn on (a map's sea, a
     diagram's panel): the first one painted inside the picture's box that
-    covers half of it and has `share` of the other art inside it. The cut
-    goes no further (a white mask or the page's colour past it is not the
-    picture's). None when there is none."""
-    inside = [s for s in art if inside_mm(s.box, box, 0.5)]
-    cands = sorted((s for s in inside if s.fill and s.rect_like() and area(s.box) >= 0.5 * area(box)),
-                   key=lambda s: s.seq)
+    covers half of it and holds all the art painted after it but white
+    masks. The cut goes no further (a mask or the page's colour past it is
+    not the picture's). None when there is none, or when any coloured art
+    of the picture lies past it (cut there, it would be lost)."""
+    inside = [s for s in art if inter(s.box, box) > 0]
+    cands = sorted((s for s in inside if s.fill and s.rect_like() and inside_mm(s.box, box, 0.5)
+                    and area(s.box) >= 0.5 * area(box)), key=lambda s: s.seq)
     for g in cands:
-        rest = [s for s in inside if s is not g and s.seq > g.seq]
-        if rest and sum(1 for s in rest if inside_mm(s.box, g.box, 0.3)) >= share * len(rest):
+        rest = [s for s in inside if s is not g and s.seq > g.seq
+                and not (s.fill and not s.stroke and whiteish(s.fill))]
+        if rest and all(inside_mm(s.box, g.box, 0.3) for s in rest) \
+                and not any(s.seq < g.seq and not inside_mm(s.box, g.box, 0.3) and not whiteish(s.fill or s.stroke)
+                            for s in inside if s is not g):
             return g.box
     return None
 
@@ -2654,7 +2664,7 @@ def trim_to_ink(page: fitz.Page, f: Frame, origin: tuple, background: str | None
         if box[i] - ink[i] >= least:
             box[i] = ink[i]
     if box[2] - box[0] > 4 and box[3] - box[1] > 4 and tuple(box) != tuple(f.box):
-        f.claim = tuple(f.box)
+        f.claim = getattr(f, "claim", None) or tuple(f.box)
         f.box = tuple(box)
 
 
@@ -2794,6 +2804,12 @@ def line_shows(page: fitz.Page, origin: tuple, shapes: list):
     return shows
 
 
+def mostly_in(a: tuple, b: tuple) -> bool:
+    """Is box `a` 80 % inside `b`, or (a speck or a hairline with no area)
+    inside it?"""
+    return inter(a, b) >= 0.8 * max(area(a), 1e-6) or inside_mm(a, b, 0.3)
+
+
 def fill_seq(s: Shape) -> int:
     """Where a box's fill comes in the page's paint order."""
     return getattr(s, "fill_seq", s.seq)
@@ -2814,7 +2830,7 @@ def mark_art_over_fills(frames: list[Frame], sh: dict) -> None:
         nested = [g.box for g in frames if g is not f and g.kind in ("box", "tab") and inside_mm(g.box, f.box, 0.5)]
         over = [a for a in sh.get("shapes", []) if a.kind in ("art", "line") and a.seq > fill_seq(s)
                 and inside_mm(a.box, f.box, 0.3)
-                and not any(inter(a.box, g.box) >= 0.8 * max(area(a.box), 1e-6) for g in pics)
+                and not any(inter(a.box, g.box) > 0 or inside_mm(a.box, g.box, 0.3) for g in pics)   # touching a picture: its art
                 and not any(inside_mm(a.box, b, 0.3) for b in nested)]
         if over:
             f.art_over = over
@@ -2838,9 +2854,13 @@ def drawn_before_fill(s: Any, frames: list[Frame]) -> bool:
 
 def ground_under(s: Shape, sh: dict, cards: list) -> str:
     """The colour painted under a shape: the last fill painted before it
-    that holds it (a box, a card, the page's colour), else the paper."""
+    that holds its centre (a box, a card, the page's colour), else the
+    paper. A mask the source clips at a card's edge stands mostly on the
+    card."""
+    cx, cy = (s.box[0] + s.box[2]) / 2, (s.box[1] + s.box[3]) / 2
     under = [g for g in list(sh.get("ground", [])) + list(cards) + list(sh.get("boxes", [])) + list(sh.get("tabs", []))
-             if isinstance(g, Shape) and g is not s and g.fill and g.seq < s.seq and inside_mm(s.box, g.box, 0.3)]
+             if isinstance(g, Shape) and g is not s and g.fill and g.seq < s.seq
+             and g.box[0] <= cx <= g.box[2] and g.box[1] <= cy <= g.box[3]]
     return max(under, key=lambda g: g.seq).fill if under else "#ffffff"
 
 
@@ -2853,7 +2873,7 @@ def paints_its_ground(s: Shape, sh: dict, cards: list, claims: list = ()) -> boo
     if not s.fill or s.stroke or td.delta_e(s.fill, ground_under(s, sh, cards)) > 2.0:
         return False
     return not any(o is not s and o.kind in ("art", "hidden", "line") and o.seq < s.seq and inter(o.box, s.box) > 0
-                   and not any(inter(o.box, c) >= 0.8 * max(area(o.box), 1e-6) for c in claims)
+                   and not any(mostly_in(o.box, c) for c in claims)
                    for o in sh.get("shapes", []))
 
 
@@ -3241,9 +3261,9 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
             stats["fills"] = stats.get("fills", 0) + 1
     # shapes left on the page (icons, chevrons, ornaments): paths, unless there are too many
     residual = [s for s in sh["shapes"] if s.kind in ("art", "hidden")
-                and not any(inter(s.box, claim_of(f)) >= 0.8 * max(area(s.box), 1e-6) for f in pics)
+                and not any(mostly_in(s.box, claim_of(f)) for f in pics)
                 and not any(inside_mm(s.box, f.box, 0.3) for f in covering)
-                and not drawn_before_fill(s, frames)
+                and not drawn_before_fill(s, frames) and not getattr(s, "debris", False)
                 and not paints_its_ground(s, sh, cards, [claim_of(f) for f in pics])]
     caps = art["caps"]
     residual = [s for s in residual if id(s) not in art["cap_shapes"]]
