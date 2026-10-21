@@ -447,6 +447,23 @@ What the extraction decides, so you know what to check:
   `template_dedupe.py` renames connector ends and size targets with the
   frames and keeps a connector or border in a shared base only when the
   base has its frames.
+- **Line art in boxes, rules as bars, white strokes** (skill 1.61). A box
+  with art painted over its fill (an icon, writing guides, a rule, a
+  connector inside it) would hide that art, since frames paint over the
+  decoration: its fill becomes a decoration `box` laid on the frame
+  (`<frame>-fill`, anchored to `#<frame>` and sized to its right and bottom
+  edges, so it follows the frame), painted before the art, and the box's
+  style has no fill (`report.json` notes it). Art painted before the fill
+  stays hidden. A filled rectangle under 1 mm thick is a line of that
+  thickness (guides and rules from layout programs), read as a stroked line
+  is. Colours are those MuPDF renders (Separation, DeviceN, ICC and Lab
+  through their alternate space); a white that colour management leaves a
+  shade off is written `#ffffff`. With `--raster-ground` a box's fill still
+  covers the art under it in the ground.
+- **Pictures in rounded boxes** (skill 1.61). A picture that runs into a
+  corner of a rounded box or card it sits in is cut as a PNG clipped to the
+  box's inner rectangle and corner radii (the outline less half its stroke),
+  transparent past the curve.
 - **Pictures and labels.** Images and clusters of line art are pictures,
   cut at `--dpi` with all text removed. Words on a picture's ink, short
   words on it or just off its edge (a globe's degrees) are its labels:
