@@ -380,8 +380,10 @@ those lines, or run the script.
   report.
 - **Composed pages, all at once**: `python3 scripts/composed_check.py check my-book [--stress 1.3]` runs
   `postext check --json` and `postext html` for every edition and fails on the warnings above, on
-  `contentInConfig`, `tocGroupSplit` and template warnings, and on a page whose frames the HTML reads in
-  another order than the Markdown; it warns when editions read a page differently and lists the scaled
+  `contentInConfig`, `tocGroupSplit`, template warnings, `unknownConfigKey` and `unknownConfigValue`, and
+  on a page whose frames the HTML reads in another order than the Markdown; every other warning prints as
+  WARN. `--json-out work/check.json` saves the result and keeps the report and the exit code, and
+  `preset_kit.py pack` refuses while that result failed (SKILL.md §8). It warns when editions read a page differently and lists the scaled
   frames. `--stress 1.3` repeats each edition with the text 30 % longer (the Cookbook bench's C38): a
   page must rearrange or go on; a `frameOverflow` with valued proposals warns, any other new warning
   fails (composed-pages.md §7). From postext 1.48 it also fails on `frameCovered` (a frame's lines,
@@ -425,6 +427,22 @@ those lines, or run the script.
 python3 scripts/compare_pages.py source.pdf /tmp/my-book.pdf \
     --source-pages 23-40 --render-pages 1-18 --out /tmp/cmp --sheet
 ```
+
+While you work, keep the pairs current with `--watch`: it runs beside the
+watcher of the work loop and, each time a page image changes, writes that
+page's pair and score again (only the pages whose images changed), and
+prints one line per refresh:
+
+```bash
+postext build my-book --locale es --images /tmp/pages --pages '#12-#15' -f png --dpi 60 --watch > /tmp/watch.log 2>&1 &
+python3 scripts/compare_pages.py source.pdf --watch /tmp/pages --source-pages 23-26 --render-pages 12-15 \
+    --out /tmp/cmp --score /tmp/score.json > /tmp/cmp.log 2>&1 &
+```
+
+Edit a chapter, wait for the next `refreshed` line in `/tmp/cmp.log`, open
+`/tmp/cmp/pair-NN.png`. `--render-pages` takes the numbers in the file
+names (positions in the layout, hence `'#12-#15'` for the build). Stop both watchers when the
+pages are right (by their PIDs: `kill %1 %2`).
 
 Look at the sheet, then at single pairs:
 

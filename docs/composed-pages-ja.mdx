@@ -356,6 +356,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>終了行を加えます。テンプレートページには開始行と同じ数のコロン、枠や図には<code>:::</code>です。</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>1行で完結する指示（<code>:::toc</code>、<code>:::index</code>、<code>:::pagebreak</code>、<code>:::space</code>など）の直後に、閉じる枠も囲みもないのに<code>:::</code>だけの行があります。これらの指示に終了行はないため、その行は印刷されずに捨てられます。</td>
+      <td>その<code>:::</code>を消します。</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>繰り返しのグリッドが受け取るカードは<code>repeat.max</code>枚までなのに、ページがそれより多く渡しています（<a href="#繰り返すスロット">繰り返すスロット</a>を参照）。超えたカード1枚ごとに、その<code>slot="…"</code>の位置で出ます。カードは流し込み枠か、ページの後に入ります。</td>
       <td>テンプレートの<code>max</code>を上げるか外すか、余ったカードを別のページへ移します。</td>

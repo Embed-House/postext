@@ -208,16 +208,11 @@ def walk_values(node, path=""):
         yield path, node
 
 
-# PostextConfig's top-level keys (postext 1.46, packages/postext/src/types.ts). The engine drops an unknown
-# one in silence, so a typo (`bodyTex`, `pageTemplate`) changes nothing on the page.
-CONFIG_TOP_KEYS = {
-    "page", "layout", "bodyText", "headings", "tableStyle", "tableStyles", "captionStyle", "diagramStyle",
-    "videoStyle", "paragraphStyles", "calloutStyles", "chipStyles", "markStyles", "parts", "headingStyles", "toc",
-    "index", "unorderedLists", "orderedLists", "math", "footnotes", "crossRefs", "citations", "cjk", "lineNumbers",
-    "codeStyle", "header", "footer", "locale", "direction", "numerals", "debug", "htmlViewer", "canvasViewer",
-    "folio", "comics", "pageTemplates", "labelStyles", "pdfGeneration", "print", "contrast", "checks",
-    "colorPalette", "customFonts", "resourceTypes",
-}
+# PostextConfig's top-level keys, generated from the engine's types.ts by
+# `config_keys.py --write` (config_keys.json; tests/test_config_keys.py fails
+# while the engine has a key the list lacks). The engine drops an unknown one
+# in silence, so a typo (`bodyTex`, `pageTemplate`) changes nothing on the page.
+CONFIG_TOP_KEYS = set(json.loads((Path(__file__).resolve().parent / "config_keys.json").read_text(encoding="utf-8"))["keys"])
 
 
 def check_config(cfg: dict, where: str, fonts: set[str], rep: Report, partial: bool = False) -> None:
@@ -1806,8 +1801,10 @@ def check_comic_block(name: str, kind: str, attrs: dict[str, str], body: list[tu
         w = f"{name}:{ln}"
         if not line or (line.startswith("<!--") and line.endswith("-->")):
             continue
-        if line.startswith("::label") and figure is None:
-            rep.warn(where, "::label outside a :::figure prints as text")
+        if line.startswith("::label"):
+            # a comic block holds no :::figure, so a label line there is never one's
+            rep.warn(w, "::label outside a :::figure prints as text")
+            continue
         if line.startswith("::panel"):
             m = COMIC_PANEL_RE.match(line)
             if not m:
@@ -1993,6 +1990,19 @@ def style_ids(cfg: dict) -> dict[str, set[str]]:
         "tables": ids("tableStyles", set()),
         "smallChip": small_cap_chip_styles(cfg),
     }
+
+
+# Directives that are one line, with no body and no closing fence (parse/blockParser.ts ONE_LINE_DIRECTIVES).
+ONE_LINE_DIRECTIVES = {"pagebreak", "numbering", "columnbreak", "space", "toc", "index", "bibliography"}
+
+
+def one_line_directive_before(lines: list[str], i: int) -> str | None:
+    """The one-line directive on the last non-blank line before line i."""
+    j = i - 1
+    while j >= 0 and not lines[j].strip():
+        j -= 1
+    m = FENCE_RE.match(lines[j].strip()) if j >= 0 else None
+    return m.group(1) if m and m.group(1) in ONE_LINE_DIRECTIVES else None
 
 
 def _fence_closes(lines: list[str], i: int) -> bool:
@@ -2409,8 +2419,14 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
         # fences
         if line.startswith(":::"):
             if line == ":::":
-                if not stack:
-                    rep.warn(where, "stray ::: with no open container prints literally")
+                # A bare ::: never closes a ::::page nor a container opened before it.
+                if not stack or (page is not None and len(stack) <= page["depth"]):
+                    directive = one_line_directive_before(lines, i)
+                    if directive:
+                        rep.warn(where, f"strayFence: :::{directive} is one line and takes no closing fence: delete "
+                                        "this ::: (postext drops it and reports strayFence)")
+                    else:
+                        rep.warn(where, "stray ::: with no open container prints literally")
                 else:
                     stack.pop()
                     if page is not None and page.get("module") is not None and len(stack) <= page["module"]["depth"]:

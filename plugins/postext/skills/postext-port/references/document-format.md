@@ -953,6 +953,7 @@ draws its design (1.37), and a `{style="…"}` heading attribute works in it. Wa
 label styles before any layout.
 
 **Directives inside a `:::callout` are ignored** (except `:::space`). An unknown `:::word` is literal text (`unknownDirective`).
+**`:::toc`, `:::index`, `:::pagebreak`, `:::columnbreak`, `:::space`, `:::numbering` and `:::bibliography` are one line: never close them.** A bare `:::` after one closes the frame or box it sits in; with none open, postext (1.52) drops it and reports `strayFence`, and `lint_project.py` warns (older engines print it).
 
 ```md
 # Contents {style="front-matter" toc="false"}

@@ -356,6 +356,11 @@ Las comprobaciones leen el Markdown y la configuración antes de maquetar nada, 
       <td>Añade la línea de cierre: tantos signos de dos puntos como en la línea de apertura de la página, o <code>:::</code> para un marco o una figura.</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>Un <code>:::</code> suelto justo después de una directiva de una línea (<code>:::toc</code>, <code>:::index</code>, <code>:::pagebreak</code>, <code>:::space</code>…) sin marco ni caja abiertos que cerrar. Esas directivas no llevan línea de cierre, así que la línea se descarta en vez de imprimirse.</td>
+      <td>Borra el <code>:::</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Una rejilla que se repite admite <code>repeat.max</code> tarjetas y la página le da más (véase <a href="#ranuras-repetidas">Ranuras repetidas</a>). Uno por cada tarjeta de más, en su <code>slot="…"</code>: la tarjeta va al marco de flujo, o detrás de la página.</td>
       <td>Sube o quita el <code>max</code> de la plantilla, o pasa las tarjetas sobrantes a otra página.</td>

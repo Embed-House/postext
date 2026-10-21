@@ -253,7 +253,7 @@ node scripts/render.mjs work/regions --frames work/laid.json                   #
 python3 scripts/template_dedupe.py work/regions --laid work/laid.json          # kinds of page, styles, grounds, grids, modules
 python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts
 python3 scripts/lint_project.py work/regions --quiet
-python3 scripts/composed_check.py check work/regions --json > work/check.json  # overlaps: 0 to pass
+python3 scripts/composed_check.py check work/regions --json-out work/check.json  # overlaps: 0 to pass; report and exit code kept
 node scripts/render.mjs work/regions --frames work/folded.json --jpeg work/pages
 python3 scripts/template_dedupe.py work/regions --compare-boxes work/laid.json work/folded.json
 python3 scripts/compare_pages.py source.pdf work/pages --source-pages 4-28 --render-pages 1-25 \
@@ -271,11 +271,39 @@ source on average can still hide a caption under a photo. Fix each overlap
 as §6.18 says before curating anything else: a frame that lies over another
 is usually a group or an anchor the draft read wrongly.
 
+**The curation loop.** `manifest` writes `preset.json` again from
+`library.json` on every run, so a fix typed into `preset.json` is lost at
+the next build, and the skill never edits `preset.json` by hand. Each fix
+goes into `curation.json` in the extract folder instead (`extract` writes
+it empty; `manifest --patch FILE` names another), and `manifest` applies it
+after the build, every time. Its tables, each a list of entries with a
+`reason`:
+
+| Table | Entry | Does |
+|---|---|---|
+| `framePatch` | `{template, frame, set, reason}` | merges `set` into the frame (`null` removes a key) |
+| `frameDrop` | `{template, frame, reason}` | removes the frame and its name from the template's groups |
+| `frameAdd` | `{template, frame: {name, …}, after?, reason}` | adds a frame after `after`, or at the end |
+| `decorationDrop` | `{template, element, reason}` | removes a decoration element by id |
+| `overlapAllow` | `{template, frame, reason}` | sets `overlap: "allow"` on a frame the source prints over or past another (§6.18) |
+| `styles` | `{table, id, set, reason}` | merges `set` into a style of a config list (`calloutStyles`, `labelStyles`, `frameLooks`, `paragraphStyles`…) |
+| `resources` | `{resource: {id, typeId, …}, reason}` | adds a resource the extract did not write |
+
+An entry whose template, frame, element, style or table does not exist, an
+entry without a reason, a frame added twice or a resource id taken already
+fails the run with the list of them, and nothing is written. Write the
+entries against the names `template_dedupe.py` gives (the role names), and
+run `manifest` after dedupe; a rename that breaks an entry fails loudly
+rather than dropping the fix. The `reason`s are the curation's record: the
+port's report lists them. A fix that belongs to the extraction (a frame
+every page reads wrongly) goes into an issue for the scripts, not into a
+long curation file.
+
 <table>
 <tr><th>Script</th><th>Run it</th><th>It writes</th></tr>
-<tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, with <code>--overlay</code> the source pages with every frame drawn</td></tr>
+<tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, an empty <code>curation.json</code> (kept when it exists), with <code>--overlay</code> the source pages with every frame drawn</td></tr>
 <tr><td><code>template_dedupe.py</code></td><td>right after <code>extract</code>, and again after merging the output of several runs</td><td>the same files in place: shared templates named by what they hold, <code>extends</code> children, a <code>page-base</code> with the decoration most pages share, styles merged by look, alike grounds merged, frames on a lattice as grid groups, every band of a page as a module and the page template as a shell (below), frames named by role (below); <code>dedupe-report.json</code> with every merge and its largest difference, every grid and module, every frame renamed and (<code>pages</code>) every frame's name on the laid page</td></tr>
-<tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits</td></tr>
+<tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits, with the tables of <code>curation.json</code> (or <code>--patch FILE</code>) applied and listed</td></tr>
 <tr><td><code>anchors.py</code></td><td>for one map or diagram, or for another edition's labels</td><td><code>anchors.json</code> (the resource's <code>anchors</code>, <code>labelStyles</code>, the labels) and <code>figure.&lt;lang&gt;.md</code>; <code>anchors.py relabel work/regions/figures.json --strings en=en.json</code> writes other editions from a strings file keyed by the source text or the anchor id</td></tr>
 </table>
 
@@ -1756,7 +1784,6 @@ with their entries and page numbers.
 # Contenido {toc="false"}
 
 :::toc
-:::
 
 ::resource{id="mapa-contenido" slot="mapa"}
 ::::
