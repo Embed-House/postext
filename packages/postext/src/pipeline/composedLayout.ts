@@ -666,6 +666,9 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
     fenceIndex: fi,
     pageIndex: input.page.index,
     ...(input.locale ? { locale: input.locale } : {}),
+    // Pictures cover by their shapes (#1123), set as the page lays them.
+    mirrored: pageIsMirrored(input.page),
+    verticalFlow: pageIsVertical(input.page),
   });
   warnings.push(...overlaps.warnings);
   const { frames, blocks, laid, fitted } = cur;
