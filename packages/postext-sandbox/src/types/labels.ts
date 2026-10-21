@@ -582,6 +582,20 @@ export interface SandboxLabels {
   contrastReversedMinFineSizeTooltip: string;
   contrastReversedLightWeight: string;
   contrastReversedLightWeightTooltip: string;
+  contrastAllowGroup: string;
+  contrastAllow: string;
+  contrastAllowTooltip: string;
+  contrastAllowAdd: string;
+  contrastAllowItem: string;
+  contrastAllowRemove: string;
+  contrastAllowFg: string;
+  contrastAllowFgTooltip: string;
+  contrastAllowBg: string;
+  contrastAllowBgTooltip: string;
+  contrastAllowStyle: string;
+  contrastAllowStyleTooltip: string;
+  contrastAllowReason: string;
+  contrastAllowReasonTooltip: string;
   contrastLowTitle: string;
   contrastLowDetail: string;
   contrastOnScreen: string;
@@ -590,6 +604,9 @@ export interface SandboxLabels {
   contrastReversedDetail: string;
   contrastItalic: string;
   contrastOccurrences: string;
+  contrastAcceptedSection: string;
+  contrastAcceptedDetail: string;
+  contrastAcceptedNoReason: string;
   contrastBadgeFail: string;
   contrastBadgePass: string;
   contrastAsText: string;
@@ -1060,6 +1077,8 @@ export interface SandboxLabels {
   bodyLineHeightTooltip: string;
   bodyParagraphSpacing: string;
   bodyParagraphSpacingTooltip: string;
+  bodyParagraphSpacingSize: string;
+  bodyParagraphSpacingSizeTooltip: string;
   bodyColor: string;
   bodyColorTooltip: string;
   bodyBoldColor: string;
@@ -3955,6 +3974,8 @@ export interface SandboxLabels {
   tocLeaderCharTooltip: string;
   tocLeaderGap: string;
   tocLeaderGapTooltip: string;
+  tocLeaderFace: string;
+  tocLeaderFaceInfo: string;
   tocSubtitle: string;
   tocSubtitleInfo: string;
   tocSubtitleEnabled: string;
@@ -3970,6 +3991,8 @@ export interface SandboxLabels {
   tocPartsHeight: string;
   tocPartsHeightTooltip: string;
   tocPartsDesignInfo: string;
+  tocPartsLeaderFace: string;
+  tocPartsLeaderFaceInfo: string;
   tocGroups: string;
   tocGroupsInfo: string;
   tocGroupsKeepTogether: string;

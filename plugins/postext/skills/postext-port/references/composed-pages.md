@@ -1828,6 +1828,13 @@ with their entries and page numbers.
   a band or a picture are the template's decoration. Before 1.42 this was a
   flow page whose heading design carried the ground: leave such ports
   alone only when the installed Postext is older.
+- Dots in the source's own colour, face or size are `toc.leader.color`,
+  `fontFamily`, `fontSize`, `fontWeight` (part rows: `toc.parts.leader`
+  over them), 1.52. A part row whose page number sits in an element of its
+  own is three elements: the title, the page number anchored to the row's
+  right, and an element holding `{leader}` alone anchored `right-of`
+  `#title` with `width: { to: "#page", edge: "left" }` (configuration.md
+  §9); its dots stop the leader's `gap` before the number.
 - The title heading is not an entry of itself: `toc: false` in its heading
   style, or `{toc="false"}`.
 - A small copy of a picture on the page (the map) is a second resource on the

@@ -149,6 +149,22 @@ function hyphenationFor(
   return { hyphenate: true, hyphenationZonePx: Math.max(0, dimensionToPx(h.zone, resolved.page.dpi, fontSizePx)) };
 }
 
+/** The space under a paragraph that `paragraphSpacing` asks for (#1115):
+ *  `true` is one line (`lineHeightPx`, the baseline grid in the flow, the
+ *  box's leading in a box), `false` none, a length that length (`em` of
+ *  the text's size). A negative or unreadable length gives none. */
+export function paragraphSpacingPx(
+  spacing: boolean | Dimension | undefined,
+  lineHeightPx: number,
+  dpi: number,
+  fontSizePx: number,
+): number {
+  if (spacing === true) return lineHeightPx;
+  if (!spacing || typeof spacing !== 'object') return 0;
+  const px = dimensionToPx(spacing, dpi, fontSizePx);
+  return Number.isFinite(px) && px > 0 ? px : 0;
+}
+
 export function resolveBodyStyle(resolved: ResolvedConfig): BlockStyle {
   const dpi = resolved.page.dpi;
   const fontSizePx = dimensionToPx(resolved.bodyText.fontSize, dpi);
@@ -160,7 +176,7 @@ export function resolveBodyStyle(resolved: ResolvedConfig): BlockStyle {
   const hyphenation = hyphenationFor(body.hyphenation.enabled, textAlign, resolved, fontSizePx);
   const firstLineIndentPx = dimensionToPx(body.firstLineIndent, dpi, fontSizePx);
   const hangingIndent = body.hangingIndent;
-  const marginBottomPx = body.paragraphSpacing ? lineHeightPx : 0;
+  const marginBottomPx = paragraphSpacingPx(body.paragraphSpacing, lineHeightPx, dpi, fontSizePx);
   // Tracking (#974): only a callout's derived config carries one.
   const trackingPx = body.letterSpacing ? dimensionToPx(body.letterSpacing, dpi, fontSizePx) : 0;
   return { ...faces, fontSizePx, lineHeightPx, color: body.color.hex, boldColor: body.boldColor?.hex, italicColor: body.italicColor?.hex, ...(body.emphasis ? emphasisFields(body.emphasis, { boldColor: body.boldColor?.hex, italicColor: body.italicColor?.hex }) : {}), referenceColor: body.referenceColor.hex, referenceBold: body.referenceBold, referenceItalic: body.referenceItalic, textAlign, ...hyphenation, marginTopPx: 0, marginBottomPx, firstLineIndentPx, hangingIndent, ...(body.smallCaps ? { smallCaps: true } : {}), ...(Number.isFinite(trackingPx) && trackingPx !== 0 ? { letterSpacingPx: trackingPx } : {}), ...tabFields(body.tabStops, body.tabInterval) };

@@ -52,9 +52,9 @@ Die Eigenschaft `bodyText` steuert die Typografie aller Absätze.
     </tr>
     <tr>
       <td><code>paragraphSpacing</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | Dimension</code></td>
       <td><code>false</code></td>
-      <td>Fügt, wenn aktiviert, zwischen aufeinanderfolgenden Absätzen eine Leerzeile (so hoch wie <code>lineHeight</code>) ein, wie es Verlage zur Trennung von Absätzen tun.</td>
+      <td>Der Abstand zwischen zwei Absätzen. <code>true</code> fügt eine Leerzeile (so hoch wie <code>lineHeight</code>) ein, wie es Verlage zur Trennung von Absätzen tun; eine Länge wie <code>&#123; value: 2, unit: 'mm' &#125;</code> oder <code>0.33em</code> der Schriftgröße setzt genau diesen Abstand, im Fließtext, in Kästen und in den Rahmen komponierter Seiten. Eine Länge, die keine ganze Zahl von Zeilen ist, nimmt die Absätze aus dem Grundlinienraster; der nächste Block, der sich daran ausrichtet (eine Überschrift, der letzte Punkt einer Liste, eine abgesetzte Formel), bringt den Text zurück. Es ist derselbe Abstand wie <code>paragraphStyles[].spaceBetween</code>, das ihn in einem Container <code>:::paragraphs</code> ersetzt. Ein Kasten setzt seinen eigenen in <code>calloutStyles[].body.paragraphSpacing</code>.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

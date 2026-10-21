@@ -53,9 +53,9 @@ A propriedade `bodyText` controla a tipografia de todo o texto dos parágrafos.
     </tr>
     <tr>
       <td><code>paragraphSpacing</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | Dimension</code></td>
       <td><code>false</code></td>
-      <td>Quando ativado, insere uma linha em branco (igual a <code>lineHeight</code>) entre parágrafos consecutivos, para uma separação no estilo editorial.</td>
+      <td>O espaço entre dois parágrafos. <code>true</code> insere uma linha em branco (igual a <code>lineHeight</code>), para uma separação no estilo editorial; uma medida como <code>&#123; value: 2, unit: 'mm' &#125;</code> ou <code>0.33em</code> do corpo do texto deixa exatamente esse espaço, no texto corrido, nas caixas e nos quadros das páginas compostas. Uma medida que não seja um número inteiro de linhas tira os parágrafos da grade de linhas; o bloco seguinte que se alinha a ela (um título, o último item de uma lista, uma fórmula em destaque) devolve o texto à grade. É o mesmo espaço de <code>paragraphStyles[].spaceBetween</code>, que o substitui dentro de um contêiner <code>:::paragraphs</code>. Uma caixa define o seu em <code>calloutStyles[].body.paragraphSpacing</code>.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

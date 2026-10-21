@@ -34,7 +34,7 @@ export {
   printLuminance,
   printSeparation,
 } from './contrast';
-export type { ContrastIssue, ContrastKind, ContrastMedium, ContrastOptions, ContrastPair, ContrastRole, PrintContrastContext, ReversedTextReason } from './contrast';
+export type { ContrastAccepted, ContrastIssue, ContrastKind, ContrastMedium, ContrastOptions, ContrastPair, ContrastRole, PrintContrastContext, ReversedTextReason } from './contrast';
 export { bitmapResolutionFor, effectiveBitmapResolution, bitmapLayoutSize, isPlaceholderResolution } from './bitmapResolution';
 export { bitmapResolutionOf } from './defaults/layout';
 export { bitmapInfo, bitmapSize } from './bundle';
@@ -156,6 +156,7 @@ export type {
   ResolvedIndexConfig,
   OutlineIndexMark,
   TocLevelConfig,
+  TocLeaderFaceConfig,
   TocEntryStyleConfig,
   ResolvedTocConfig,
   ResolvedTocLevelConfig,
@@ -446,6 +447,7 @@ export type {
   ContrastReversedTextConfig,
   ResolvedContrastReversedTextConfig,
   ContrastConfig,
+  ContrastAllowEntry,
   ResolvedContrastConfig,
   ChecksConfig,
   ResolvedChecksConfig,

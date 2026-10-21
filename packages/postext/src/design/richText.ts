@@ -25,6 +25,8 @@ export interface DesignTextRun {
   fontString: string;
   /** A contents part row's leader (see `VDTDesignTextRun.leader`). */
   leader?: true;
+  /** The run's own colour (see `VDTDesignTextRun.color`). */
+  color?: string;
   /** Advance of the run, tracking included. */
   width: number;
   /** Script offset off the baseline (px, positive down). */

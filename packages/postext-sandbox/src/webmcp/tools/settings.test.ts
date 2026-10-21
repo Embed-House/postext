@@ -220,3 +220,23 @@ describe('a box that grows with the frames inside it', () => {
     expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
   });
 });
+
+// #1115: paragraph spacing takes a length as well as a switch, in the body
+// text and in a box's body, and reads back as written.
+describe('paragraph spacing as a length', () => {
+  it.each([
+    'bodyText.paragraphSpacing',
+    'calloutStyles[id=note].body.paragraphSpacing',
+  ])('%s takes 2 mm and nothing else moves', async (path) => {
+    const { call } = harness(book());
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const done = await call('sandbox_set_config', { changes: [{ path, value: { value: 2, unit: 'mm' } }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(after.get(`${path}.value`)).toBe(2);
+    expect(after.get(`${path}.unit`)).toBe('mm');
+    // The switch's leaf gives way to the length's two, and boxes that
+    // leave their body's spacing unset follow the body text's.
+    expect(moved(before, after).filter((p) => !p.startsWith(path) && !/\.body\.paragraphSpacing(\.value|\.unit)?$/.test(p))).toEqual([]);
+  });
+});

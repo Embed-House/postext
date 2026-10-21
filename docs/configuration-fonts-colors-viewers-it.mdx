@@ -793,6 +793,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -813,10 +814,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Il testo in negativo sotto questo corpo viene segnalato.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>Lo stesso per il corsivo e i pesi leggeri, i cui tratti sono più sottili.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Un peso pari o inferiore a questo conta come leggero.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Le coppie di colori che il controllo accetta, ognuna con il suo <code>reason</code>: per colore del testo (<code>fg</code>) e del fondo (<code>bg</code>), per lo <code>style</code> in cui il testo è composto, o per entrambi. Vedi [Coppie accettate](#coppie-accettate).</td></tr>
   </tbody>
 </table>
 
 Un `level` o un `mode` scritto in qualsiasi altro modo viene letto come il predefinito e segnalato come valore di impostazione sconosciuto (vedi [Avvisi di configurazione](#avvisi-di-configurazione)).
+
+### Coppie accettate
+
+Un porting conserva la tavolozza dell’originale, e alcune sue coppie restano sotto la soglia: una tinta chiara dietro il testo di un riquadro, un colore del marchio in una testatina. `allow` le accetta senza spegnere il controllo (da postext 1.52). Una voce indica il colore del testo `fg` e quello del fondo `bg` (in esadecimale, come li scrive la configurazione o come sono dipinti), oppure uno `style`: l’id di uno stile di riquadro (`calloutStyles`, o lo `style` di una cornice di pagina composta), di paragrafo, di titolo, di etichetta in linea o di etichetta di figura. Ogni campo che una voce dà deve corrispondere, quindi `{ style: 'note', fg: '#7a8a99' }` accetta quel grigio solo dentro i riquadri `note`. Una voce che non dà nessuno dei tre non corrisponde a nulla.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: "L'ocra dell'editore per le testatine" },
+    { style: 'nota-margine', reason: "L'originale compone le note a margine in un grigio chiaro" },
+  ],
+}
+```
+
+Una coppia accettata viene ancora segnalata: ogni risultato che vi corrisponde porta `accepted` (il `reason` della voce, con il suo `fg`, `bg` e `style`), e i risultati accettati vengono dopo gli altri. Il Sandbox li elenca nei Controlli, sotto Coppie di contrasto accettate, con il motivo, e non li conta; `postext check` li stampa come note, che non fanno fallire `--strict`. Gli stessi colori fuori da ciò che la voce indica restano un avviso.
 
 ### Soglie
 

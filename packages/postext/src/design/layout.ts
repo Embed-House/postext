@@ -2074,7 +2074,10 @@ function repeatLine(m: TextMeasurement, room: number, gap: number, count: number
  * rows line up, as an entry row's are (`pipeline/toc.ts`). The text before
  * the mark gives way when the line is short of room (cut by the element's
  * `overflow`, `'ellipsis-end'` for a wrapping one); fewer than three
- * repeats, or a leader turned off, leave the room blank.
+ * repeats, or a leader turned off, leave the room blank. A `{leader}`
+ * alone keeps `gap` at both ends (#1121): its element sits between a title
+ * and a page number set in elements of their own. The dots take the
+ * leader's own colour and face when the contents give it one.
  */
 function layoutLeaderTextElement(
   el: ResolvedDesignTextElement,
@@ -2109,13 +2112,29 @@ function layoutLeaderTextElement(
     : undefined);
   const tail = part(after, room);
   const tailW = tail?.lines[0]?.width ?? 0;
-  const gaps = (before ? gap : 0) + (after ? gap : 0);
+  // A `{leader}` alone in its element (#1121) stands between two other
+  // elements, a title and a page number set apart: `gap` from either.
+  const lone = !before && !after;
+  const gapBefore = before || lone ? gap : 0;
+  const gapAfter = after || lone ? gap : 0;
+  const gaps = gapBefore + gapAfter;
   const head = part(before, room - tailW - gaps);
   const headW = head?.lines[0]?.width ?? 0;
   const free = Math.max(0, room - headW - tailW - gaps);
   const tracking = row.letterSpacingPx;
+  // The dots in a face of their own (#1121): the element's, with the
+  // leader's family, size (`em` of the element's) and weight over it.
+  const ownFace = leader.fontFamily !== undefined || leader.fontSize !== undefined || leader.fontWeight !== undefined;
+  const dotsFont = ownFace
+    ? buildFontString(
+      leader.fontFamily ?? el.fontFamily,
+      leader.fontSize ? dimPx(leader.fontSize, dpi, fontSizePx) : fontSizePx,
+      (leader.fontWeight ?? el.fontWeight).toString(),
+      el.italic ? 'italic' : 'normal',
+    )
+    : row.fontString;
   const dots = leader.enabled
-    ? fitLeader(leader.char, free, (t) => Math.max(0, flowTextWidth(t, row.fontString) + tracking * graphemeCount(t)))
+    ? fitLeader(leader.char, free, (t) => Math.max(0, flowTextWidth(t, dotsFont) + tracking * graphemeCount(t)))
     : null;
   const runsOf = (p: ResolvedTextPrimitive | undefined): { runs: DesignTextRun[]; order?: number[] } => {
     const line = p?.lines[0];
@@ -2127,9 +2146,9 @@ function layoutLeaderTextElement(
   // The leader: blank room, the run, the gap before the text after it. A
   // blank run is a box as wide as its room (`inkOffset` 0).
   const blank = (width: number): DesignTextRun => ({ text: '', fontString: row.fontString, width, inkOffset: 0, leader: true });
-  const fill = blank((before ? gap : 0) + free - (dots?.width ?? 0));
+  const fill = blank(gapBefore + free - (dots?.width ?? 0));
   const middle: DesignTextRun[] = dots
-    ? [fill, { text: dots.text, fontString: row.fontString, width: dots.width, leader: true }, blank(after ? gap : 0)]
+    ? [fill, { text: dots.text, fontString: dotsFont, width: dots.width, leader: true, ...(leader.color ? { color: leader.color } : {}) }, blank(gapAfter)]
     : [blank(room - headW - tailW)];
   const runs = [...h.runs, ...middle, ...t.runs];
   // Paint order: the text before the mark at the line's start, which is on

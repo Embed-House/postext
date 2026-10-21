@@ -1502,7 +1502,18 @@ export interface BodyTextConfig {
   fontFamily?: string;
   fontSize?: Dimension;
   lineHeight?: Dimension;
-  paragraphSpacing?: boolean;
+  /** The space between two paragraphs (#1115). `true` adds one
+   *  baseline-grid line (the body's line height), `false` (default) none,
+   *  and a length (`2mm`, `0.33em` of the font size, `4pt`) exactly that
+   *  much, in the main flow, in boxes and in composed frames. A length that
+   *  is not a whole number of lines takes the paragraphs off the baseline
+   *  grid, as `paragraphStyles[].spaceBetween` does in a `:::paragraphs`
+   *  container (the same slot of the paragraph's style): the next block
+   *  that snaps (a heading, the last item of a list, display maths, the
+   *  last paragraph of a container) brings the flow back onto the grid.
+   *  Inside a `:::paragraphs` container the style's `spaceBetween` sets
+   *  the space instead. */
+  paragraphSpacing?: boolean | Dimension;
   color?: ColorValue;
   boldColor?: ColorValue;
   italicColor?: ColorValue;
@@ -2359,7 +2370,7 @@ export interface ResolvedBodyTextConfig {
   fontFamily: string;
   fontSize: Dimension;
   lineHeight: Dimension;
-  paragraphSpacing: boolean;
+  paragraphSpacing: boolean | Dimension;
   color: ColorValue;
   boldColor?: ColorValue;
   italicColor?: ColorValue;
@@ -3517,7 +3528,9 @@ export interface CalloutBodyStyleConfig {
   /** Hyphenate when justified — and, when `bodyText.hyphenation.ragged` is
    *  on, when ragged too. Defaults to the body hyphenation setting. */
   hyphenation?: boolean;
-  paragraphSpacing?: boolean;
+  /** As `bodyText.paragraphSpacing`: `true` is one line of the box's body,
+   *  a length is set exactly. Unset: the body's. */
+  paragraphSpacing?: boolean | Dimension;
   firstLineIndent?: Dimension;
   /** Tab stops of the box's paragraphs and list items (#622). Unset: the
    *  body's (`bodyText.tabStops`). */
@@ -3906,7 +3919,7 @@ export interface ResolvedCalloutStyleConfig {
     letterSpacing?: Dimension;
     textAlign: 'left' | 'justify';
     hyphenation: boolean;
-    paragraphSpacing: boolean;
+    paragraphSpacing: boolean | Dimension;
     firstLineIndent: Dimension;
     /** Absent when the style sets none. */
     tabStops?: TabStop[];
@@ -6260,6 +6273,28 @@ export interface ResolvedContrastReversedTextConfig {
   lightWeight: number;
 }
 
+/** A text and ground pair the contrast check accepts (#1124): the
+ *  colours a publisher's palette sets on purpose, which a port cannot
+ *  change. Text that matches is still reported, as accepted with its
+ *  reason, and no longer counts as a warning. An entry matches the text
+ *  whose every field it gives matches; one that gives none of `fg`, `bg`
+ *  and `style` matches nothing. */
+export interface ContrastAllowEntry {
+  /** The text colour (`#rrggbb`, or `#rgb`), as the configuration writes
+   *  it or as it is painted (a translucent colour blended with its
+   *  ground). */
+  fg?: string;
+  /** The ground the text is set on, the same way. */
+  bg?: string;
+  /** A style the text is set in: a box style (`calloutStyles[].id`, the
+   *  `style` of a composed page's frame too), a paragraph style, a heading
+   *  style, a chip style or a figure label style. Every colour pair of the
+   *  text set in it is accepted, unless `fg` or `bg` narrow it. */
+  style?: string;
+  /** Why the pair stays: listed beside the accepted finding. */
+  reason: string;
+}
+
 /** The contrast check (`contrastDocument`): the text of the laid-out pages
  *  against the ground it is set on. Layout ignores it. */
 export interface ContrastConfig {
@@ -6270,6 +6305,9 @@ export interface ContrastConfig {
   /** Defaults to `'auto'`. */
   mode?: ContrastMode;
   reversedText?: ContrastReversedTextConfig;
+  /** Pairs the check accepts (#1124), each with its reason. Defaults to
+   *  none. */
+  allow?: ContrastAllowEntry[];
 }
 
 export interface ResolvedContrastConfig {
@@ -6277,6 +6315,9 @@ export interface ResolvedContrastConfig {
   level: ContrastLevel;
   mode: ContrastMode;
   reversedText: ResolvedContrastReversedTextConfig;
+  /** The entries that match something, their colours written
+   *  `#rrggbb` in lower case. */
+  allow: ContrastAllowEntry[];
 }
 
 /** The content check (`checks.contentInConfig`, #849): a design text
@@ -7461,6 +7502,19 @@ export interface ResolvedHeadingStyleConfig {
 // Table of contents — what `:::toc` prints.
 // ---------------------------------------------------------------------------
 
+/** The face of a contents leader (#1121): the dots set in a colour, face,
+ *  size and weight of their own, as a source's contents set small coloured
+ *  dots in a face apart from the page numbers. Each field unset keeps what
+ *  the leader is set in without it: the page number's on an entry row, the
+ *  text element's own in a part row (`{leader}`). */
+export interface TocLeaderFaceConfig {
+  color?: ColorValue;
+  fontFamily?: string;
+  /** `em` is the size the leader would have without it. */
+  fontSize?: Dimension;
+  fontWeight?: number;
+}
+
 /** Typography of one kind of contents entry. Every field inherits the body
  *  text (or the `toc`-wide value) when unset. */
 export interface TocEntryStyleConfig {
@@ -7514,8 +7568,11 @@ export interface TocConfig {
     /** Width reserved for the number at the right edge. Default `2em`. */
     width?: Dimension;
   };
-  /** Leader between the title and the page number. */
-  leader?: {
+  /** Leader between the title and the page number. Its face fields
+   *  (`color`, `fontFamily`, `fontSize`, `fontWeight`, #1121) set the dots
+   *  of the entry rows and, unless `parts.leader` sets its own, of the part
+   *  rows' `{leader}`. */
+  leader?: TocLeaderFaceConfig & {
     /** Default `true`. */
     enabled?: boolean;
     /** Repeated across the gap, right-aligned so dots line up. Default `'.'`;
@@ -7555,6 +7612,9 @@ export interface TocConfig {
      *  with the H1's `numberSeparator`) and the page number are set in the
      *  level-1 entry typography. */
     design?: DesignSlot;
+    /** The face of the part rows' `{leader}` (#1121), field by field over
+     *  `toc.leader`'s; unset fields keep the text element's own. */
+    leader?: TocLeaderFaceConfig;
     /** Row height; `em` is the body text size. Default `2em`, twice the
      *  body size (a row one or two body lines tall, depending on the
      *  leading). */
@@ -7637,7 +7697,8 @@ export interface ResolvedTocConfig {
     color: ColorValue;
     width: Dimension;
   };
-  leader: { enabled: boolean; char: string; gap: Dimension };
+  /** The face fields are present only when set (#1121). */
+  leader: TocLeaderFaceConfig & { enabled: boolean; char: string; gap: Dimension };
   subtitle: {
     enabled: boolean;
     attr: string;
@@ -7652,6 +7713,8 @@ export interface ResolvedTocConfig {
     enabled: boolean;
     breakBefore: boolean;
     design: ResolvedDesignSlot;
+    /** Present only when set (#1121). */
+    leader?: TocLeaderFaceConfig;
     height: Dimension;
     marginTop: Dimension;
     marginBottom: Dimension;
