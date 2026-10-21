@@ -661,7 +661,50 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
                     if not c.family:   # spaces take the face of the text before them
                         c.family = next((d.family for d in chars if d.family), "")
                 pieces.append(Line(chars, rot if abs(rot) >= 1 else 0.0))
-    return merge_pieces(pieces), hidden
+    merged = merge_pieces(pieces)
+    for l in merged:
+        l.chars = thin_gaps(l.chars)
+    return merged, hidden
+
+
+#: what may follow a number across a thin space: digits, signs and unit letters
+_NUMBER_TAIL = set("0123456789%‰‱°º℃℉′″€$£¥")
+
+
+def thin_gaps(chars: list[Char]) -> list[Char]:
+    """Thin spaces set by position: a number's groups (`1 000`) or a number
+    and its sign or unit (`21 %`, `5 mm`) printed with a narrow gap and no
+    space character (MuPDF writes none under about a quarter em), or with a
+    space narrower than a word space. The gap becomes U+2009, which
+    `postext_md.clean_text` turns into a narrow no-break space."""
+    out: list[Char] = []
+    i = 0
+    n = len(chars)
+    while i < n:
+        c = chars[i]
+        out.append(c)
+        if not c.c.isdigit():
+            i += 1
+            continue
+        j = i + 1
+        while j < n and not chars[j].c.strip():
+            j += 1
+        if j >= n:
+            i += 1
+            continue
+        nxt = chars[j]
+        tail = nxt.c in _NUMBER_TAIL or nxt.c.isalpha()
+        em = max(c.size, nxt.size) * PT_MM
+        gap = nxt.x0 - c.x1
+        own = chars[i + 1:j]
+        if tail and em > 0 and ((not own and 0.1 * em <= gap < 0.3 * em)
+                                or (own and all(o.c == " " for o in own) and gap < 0.2 * em)):
+            out.append(Char(" ", c.x1, c.y0, nxt.x0, c.y1, c.oy, c.family, c.weight, c.italic, c.size,
+                            c.color, c.mark if c.mark == nxt.mark else None))
+            i = j
+            continue
+        i += 1
+    return out
 
 
 def merge_pieces(pieces: list[Line]) -> list[Line]:
@@ -1263,11 +1306,98 @@ def para_chars(p: list[Line]) -> list[Char]:
     return out
 
 
+def _space_char(c: Char, s: str) -> Char:
+    return Char(s, c.x0, c.y0, c.x1, c.y1, c.oy, c.family, c.weight, c.italic, c.size, c.color, None)
+
+
+def spaced_chars(chars: list[Char], em: float, only_lead: bool = False) -> list[Char]:
+    """The characters with each run of spaces between two words replaced by
+    the space its measured width stands for (`postext_md.fixed_space`): a
+    plain space, an en space or an em space; a fixed or no-break space the
+    source set itself is kept. `em` in mm. With `only_lead`, only the gap
+    after a highlighted run (a chip, a number on a band) that opens the text
+    is measured: a justified line's spaces are stretched, not set."""
+    out: list[Char] = []
+    prev_ink: Char | None = None
+    gap_run: list[Char] = []
+    first_ink = next((c for c in chars if c.c.strip()), None)
+    lead_mark = first_ink.mark if first_ink is not None else None
+    in_lead = only_lead and lead_mark is not None
+    for c in chars:
+        if not c.c.strip():
+            gap_run.append(c)
+            continue
+        if only_lead and in_lead and c.mark != lead_mark:
+            in_lead = False
+            measure = True          # the gap where the opening chip ends
+        else:
+            measure = not only_lead
+        if gap_run:
+            own = next((g.c for g in gap_run if g.c in pmd.FIXED_SPACES + pmd.NO_BREAK_SPACES), None)
+            if own is not None:
+                out.append(_space_char(gap_run[0], own))
+            elif measure and prev_ink is not None:
+                out.append(_space_char(gap_run[0], pmd.fixed_space(c.x0 - prev_ink.x1, em)))
+            else:
+                out.extend(gap_run)
+            gap_run = []
+        out.append(c)
+        prev_ink = c
+    out.extend(gap_run)
+    return out
+
+
+def text_em(chars: list[Char]) -> float:
+    """The em (mm) of a run of characters: its most common size."""
+    sizes = [round(c.size * 4) / 4 for c in chars if c.c.strip() and not c.mark] or \
+        [round(c.size * 4) / 4 for c in chars if c.c.strip()]
+    return (statistics.mode(sizes) if sizes else 10.0) * PT_MM
+
+
+def spaced_text(line: Line) -> str:
+    """A heading, running head or tab line's text with its measured spaces:
+    the room between a chip or a number and the title (an en or em space)
+    survives as a fixed space."""
+    return "".join(c.c for c in spaced_chars(line.chars, text_em(line.chars))).strip()
+
+
+def lead_chip_gaps(lines: list[Line], bands: list[dict], out: dict[str, list[float]]) -> None:
+    """For each highlight colour, the room (em of the text after it) between
+    a band that opens a line and the next word's ink: what a chip style's
+    `gap` keeps (`--highlights chip`)."""
+    for l in lines:
+        ink = [c for c in l.chars if c.c.strip()]
+        if len(ink) < 2 or ink[0].mark is None:
+            continue
+        col = ink[0].mark
+        k = next((i for i, c in enumerate(ink) if c.mark != col), None)
+        if k is None:
+            continue
+        last, nxt = ink[k - 1], ink[k]
+        band = next((b["box"] for b in bands if b["color"] == col and centre_in((last.x0, last.y0, last.x1, last.y1), b["box"])), None)
+        edge = band[2] if band else last.x1
+        em = nxt.size * PT_MM
+        if em > 0 and nxt.x0 > edge:
+            out.setdefault(col, []).append((nxt.x0 - edge) / em)
+
+
+def chip_gap(gaps: list[float]) -> dict | None:
+    """The chip style's `gap` from the measured rooms after opening chips,
+    when it is wider than a word space (the engine's default is 0.25 em)."""
+    if not gaps:
+        return None
+    g = statistics.median(gaps)
+    return {"value": round(g, 2), "unit": "em"} if g >= 0.4 else None
+
+
 def para_markdown(p: list[Line], mark_ids: dict, mode: str) -> str:
     chars = para_chars(p)
     ink = [c for c in chars if c.c.strip()]
     if not ink:
         return ""
+    if mode == "mark":
+        # a chip set as a mark (a number on a band) before the words keeps its measured room
+        chars = spaced_chars(chars, text_em(chars), only_lead=True)
     base_w = min(c.weight for c in ink)
     base_it = all(c.italic for c in ink)
     return runs_markdown(chars, base_w, base_it, mark_ids, mode)
@@ -1361,7 +1491,8 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             before = [j for j in ink if j < i]
             after = [j for j in ink if j > i]
             c.mark = l.chars[before[-1]].mark if before and after and l.chars[before[-1]].mark == l.chars[after[0]].mark else None
-    cards = sorted(sh["cards"], key=lambda s: (round(s.box[1], 1), s.box[0]))
+    lead_chip_gaps(lines, sh["bands"], ctx.setdefault("chip_gaps", {}))
+    cards =sorted(sh["cards"], key=lambda s: (round(s.box[1], 1), s.box[0]))
     boxes = sh["boxes"]
     tabs = sh["tabs"]
     pictures = sh["pictures"]
@@ -1934,7 +2065,7 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
         size = p[0].size
         if size >= ctx["heading_min"] and f.kind in ("box", "tab", "title"):
             level = ctx["level_of"](size)
-            text = " ".join(l.plain for l in p)
+            text = " ".join(spaced_text(l) for l in p)
             blocks.append(("h", level, text))
             continue
         md = para_markdown(p, mark_ids, mode)
@@ -3298,7 +3429,7 @@ def furniture_decoration(lines: list[Line], pno: int, origin: tuple, ctx: dict, 
         for l in folios[:1]:
             els.append(text_element(f"folio-{parity}", "{pageNumber}", l, W, parity))
         if words:
-            text = " ".join(l.plain for l in words)
+            text = " ".join(spaced_text(l) for l in words)
             key = band
             attrs[key] = text
             els.append(text_element(f"{key}-{parity}", "{attr.%s}" % key, words[0], W, parity))
@@ -3423,7 +3554,7 @@ def page_markdown(page: dict, ctx: dict) -> str:
 
     for f in frames:
         if f.kind == "title":
-            text = " ".join(l.plain for l in f.lines)
+            text = " ".join(spaced_text(l) for l in f.lines)
             add(pmd.heading(f.level or 1, text, slot=None if getattr(f, "takes", False) else f.name))
             continue
         if f.kind in ("picture", "figure"):
@@ -3448,7 +3579,7 @@ def page_markdown(page: dict, ctx: dict) -> str:
             continue
         attrs_f: dict[str, str] = {"slot": f.name}
         if f.kind == "box" and f.tab is not None and getattr(f.tab, "line", None) is not None:
-            attrs_f["label"] = f.tab.line.plain
+            attrs_f["label"] = spaced_text(f.tab.line)
         head = ":::frame" + pmd.attrs(**attrs_f)
         add(head + "\n" + "\n\n".join(body) + ("\n" if body else "") + ":::")
     lines.append("")
@@ -3618,6 +3749,11 @@ def cmd_extract(args: argparse.Namespace) -> int:
             st = {"id": m["id"], "background": colour(m["_hex"])}
             if args.highlights == "chip":
                 st.update({"borderWidth": ptv(0), "paddingX": mmv(0.3)})
+                gaps = [g for col, gs in ctx.get("chip_gaps", {}).items() if ctx["mark_ids"].get(col) == m["id"]
+                        for g in gs]
+                gap = chip_gap(gaps)
+                if gap:
+                    st["gap"] = gap
             ms.append(st)
         library["markStyles" if args.highlights == "mark" else "chipStyles"] = ms
     library["suggested"] = suggested_config(caches, pages, body, head_sizes, level_of, doc)
