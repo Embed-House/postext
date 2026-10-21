@@ -304,6 +304,8 @@ paragraphStyles: [
 
 داخل `:::callout` تأخذ الحاوية هوامش نمطها على النحو نفسه: تندمج `marginTop` و`marginBottom` مع تباعد الكتل المحيطة بها (والقيمة السالبة تقرّبها)، والحاوية التي يبدأ بها الإطار لا تأخذ هامشًا علويًا، كما في رأس العمود. ولا شبكة خطوط أساس في الإطار يُعاد إليها، فالمسافة تحت الفقرة الأخيرة هي الأكبر بين `marginBottom` و`spaceBetween` وتباعد الفقرات الخاص بالإطار (`body.paragraphSpacing` الخاص به، أي سطر من نصه؛ ويُهمَل مع `paragraphContainerSpacing: 'add'`)، أو الهامش العلوي للكتلة التالية حين يكون أكبر منها كلها؛ والقيمة السالبة لـ`marginBottom` ترفع الكتلة التالية بدلًا من ذلك. (حتى postext 1.4 كانت الحاوية داخل الإطار تتجاهل الهامشين.)
 
+داخل الإطار تأتي حقول الطباعة التي يتركها النمط دون تحديد من الإطار (منذ postext 1.52): فالخط والحجم والتباعد بين الأسطر والأوزان واللون التي يتركها النمط للنص هي نص الإطار، فيُجمع `:::paragraphs{style="centred"}` بنمط لا يضبط إلا `textAlign: 'center'` بالخط بلا زوائد في إطار وبالخط ذي الزوائد في آخر. وتبقى الحقول التي يضبطها النمط كما هي. ويُبقي `bodyText.paragraphStylesInBoxes: 'document'` نص المستند بدلًا من ذلك، كما حتى postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => every unset field filled from the resolved body text

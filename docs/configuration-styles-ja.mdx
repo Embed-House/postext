@@ -304,6 +304,8 @@ paragraphStyles: [
 
 `:::callout`の中でも、コンテナーはスタイルの上下のアキを同じように取ります。`marginTop`と`marginBottom`は前後のブロックのアキと相殺され（負の値は前後を近づけます）、囲みの先頭にあるコンテナーは、段の頭と同じく上のアキを取りません。囲みには戻る先のベースライングリッドがないため、最後の段落の下のアキは、`marginBottom`、`spaceBetween`、囲み自身の段落間のアキ（その`body.paragraphSpacing`、つまり囲みのテキスト1行分。`paragraphContainerSpacing: 'add'`では含まれません）のうち最も大きいもの、または次のブロック自身の上のアキのほうがさらに大きければそれになります。負の`marginBottom`は、代わりに次のブロックを引き上げます（postext 1.4までは、囲みの中のコンテナーはどちらのアキも無視していました）。
 
+囲みの中では、スタイルが指定していない文字組みの項目を囲みから取ります（postext 1.52 から）。スタイルが本文に任せた書体・サイズ・行送り・ウェイト・色は囲みの本文のものになるので、`textAlign: 'center'`だけを指定したスタイルの`:::paragraphs{style="centred"}`は、ある囲みではゴシックで、別の囲みでは明朝で組まれます。スタイルが指定した項目はそのままです。`bodyText.paragraphStylesInBoxes: 'document'`にすると、postext 1.51 までと同じく文書の本文から取ります。
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => every unset field filled from the resolved body text

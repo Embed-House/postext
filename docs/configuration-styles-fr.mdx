@@ -304,6 +304,8 @@ Un style peut fixer la règle de ses propres conteneurs avec `containerSpacing`�
 
 À l’intérieur d’un `:::callout`, le conteneur prend les marges de son style de la même façon : `marginTop` et `marginBottom` fusionnent avec l’espacement des blocs qui l’entourent (une valeur négative les rapproche), et un conteneur qui ouvre l’encadré ne prend pas de marge supérieure, comme en haut d’une colonne. Un encadré n’a pas de grille de ligne de base sur laquelle se recaler : l’espace sous le dernier paragraphe est donc le plus grand de `marginBottom`, de `spaceBetween` et de l’espacement de paragraphe propre à l’encadré (son `body.paragraphSpacing`, une ligne de son texte ; non pris en compte avec `paragraphContainerSpacing: 'add'`), ou la marge supérieure propre au bloc suivant, si elle est plus grande encore ; un `marginBottom` négatif remonte au contraire le bloc suivant. (Jusqu’à postext 1.4, un conteneur à l’intérieur d’un encadré ignorait les deux marges.)
 
+Dans un encadré, les champs typographiques qu’un style laisse sans valeur viennent de l’encadré (depuis postext 1.52) : la police, la taille, l’interligne, les graisses et la couleur que le style laisse au texte sont ceux du texte de l’encadré, si bien que `:::paragraphs{style="centred"}` avec un style qui ne fixe que `textAlign: 'center'` se compose dans la linéale d’un encadré et dans le romain d’un autre. Les champs que le style fixe restent. `bodyText.paragraphStylesInBoxes: 'document'` garde plutôt le texte du document, comme jusqu’à postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => every unset field filled from the resolved body text

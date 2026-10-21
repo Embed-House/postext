@@ -24,6 +24,7 @@ export { pinLegacyInlineCaptionSide } from './configVersion';
 export { pinLegacyRefLabelBreaks } from './configVersion';
 export { pinLegacyScriptContext, pinLegacyShapingLanguage } from './configVersion';
 export { pinLegacyTaskBox } from './configVersion';
+export { pinLegacyBoxParagraphStyles } from './configVersion';
 export { pinLegacyBalloonPlacement } from './configVersion';
 export type { MigrateConfigOptions } from './configVersion';
 export {

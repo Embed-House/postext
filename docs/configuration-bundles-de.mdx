@@ -120,6 +120,8 @@ Die Regeln 13 zeichnen außerdem den Kasten eines Aufgabenpunkts (`- [ ]`, `- [x
 
 Ein Manifest mit dem Stempel `14` wurde von postext 1.30 bis 1.33 geschrieben. Die Regeln 15 (postext 1.34, #853) fügen Seitenvorlagen (`pageTemplates`) und Beschriftungsstile (`labelStyles`) für [zusammengesetzte Seiten](/de/docs/composed-pages) hinzu. Sie ändern nichts an dem, was eine ältere Konfiguration angibt, sodass ein Manifest mit dem Stempel `14` so gelesen wird, wie es ist, ohne Fixierung. Die Nummer kennzeichnet eine Konfiguration, die Vorlagen enthalten kann; ein Leser, der nur die Regeln bis 14 kennt, übergeht sie.
 
+Ein Manifest mit `15` oder `16` wurde von postext 1.34 bis 1.51 geschrieben (die Regeln von 16, #1056, fügen der Dekoration einer Vorlage Verbinder hinzu und halten nichts fest). Die Regeln von 17 (#1119) nehmen Schrift, Größe, Zeilenabstand, Stärken und Farbe, die ein Absatzstil offen lässt, aus dem Text des Kastens, in dem er steht; bis 1.51 kamen sie aus dem Text des Dokuments. Ein Manifest mit `16` oder älter erhält `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) auf dem geltenden `bodyText`, wenn die zusammengeführte Konfiguration einen Absatzstil erklärt und die Einstellung nicht nennt.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

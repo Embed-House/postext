@@ -3008,6 +3008,10 @@ export interface SandboxLabels {
   paragraphContainerSpacingTooltip: string;
   paragraphContainerSpacingCollapse: string;
   paragraphContainerSpacingAdd: string;
+  paragraphStylesInBoxes: string;
+  paragraphStylesInBoxesTooltip: string;
+  paragraphStylesInBoxesBox: string;
+  paragraphStylesInBoxesDocument: string;
   paragraphStyleAdd: string;
   paragraphStyleNewName: string;
   paragraphStyleDelete: string;

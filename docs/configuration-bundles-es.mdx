@@ -120,6 +120,8 @@ Las reglas 13 también dibujan la casilla de un elemento de tarea (`- [ ]`, `- [
 
 Un manifiesto marcado con `14` lo escribió postext 1.30 a 1.33. Las reglas 15 (postext 1.34, #853) añaden las plantillas de página (`pageTemplates`) y los estilos de etiqueta (`labelStyles`) de las [páginas compuestas](/es/docs/composed-pages). No cambian nada de lo que dice una configuración anterior, así que un manifiesto marcado con `14` se lee tal cual, sin fijaciones. El número señala una configuración que puede contener plantillas, que un lector de las reglas 14 o anteriores no tiene en cuenta.
 
+Un manifiesto con `15` o `16` lo escribió postext 1.34 a 1.51 (las reglas de 16, #1056, añaden conectores a la decoración de una plantilla y no fijan nada). Las reglas de 17 (#1119) toman del texto del recuadro donde está el estilo de párrafo la fuente, el tamaño, el interlineado, los pesos y el color que el estilo deja sin fijar, donde hasta 1.51 eran los del texto del documento. Un manifiesto con `16` o anterior recibe `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) en el `bodyText` vigente, cuando la configuración combinada declara un estilo de párrafo y no nombra el ajuste.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

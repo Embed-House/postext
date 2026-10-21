@@ -2746,8 +2746,9 @@ def main() -> None:
                  "the brackets and signs of a Western word; below 13: the box of a task item set as a character "
                  "of the list's face instead of drawn; below 14: the text measured in the language of the "
                  "page that hosts the layout, and in none in a worker, instead of the document's own, unless "
-                 "the config names bodyText.shapingLanguage); "
-                 "set \"configVersion\": 16 for today's rules (14 and 15 read the same)")
+                 "the config names bodyText.shapingLanguage; below 17: a paragraph style's unset face, size, "
+                 "leading, weights and colour inside a box taken from the document's body text instead of the box's); "
+                 "set \"configVersion\": 17 for today's rules")
     for k in ("id", "name"):
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")

@@ -304,6 +304,8 @@ Un estil pot fixar la regla dels seus contenidors amb `containerSpacing`: `'add'
 
 Dins d'un `:::callout`, el contenidor aplica els marges del seu estil de la mateixa manera: `marginTop` i `marginBottom` es fusionen amb l'espaiat dels blocs del voltant (un valor negatiu els acosta), i un contenidor que obre el requadre no té marge superior, igual que al capdamunt d'una columna. El requadre no té retícula de base on tornar, així que l'espai sota l'últim paràgraf és el més gran entre `marginBottom`, `spaceBetween` i la separació entre paràgrafs del mateix requadre (el seu `body.paragraphSpacing`, una línia del text; no compta amb `paragraphContainerSpacing: 'add'`), o el marge superior del bloc següent, si és encara més gran; en canvi, un `marginBottom` negatiu acosta el bloc següent. (Fins a postext 1.4, un contenidor dins d'un requadre no aplicava cap dels dos marges.)
 
+Dins d'una caixa, els camps tipogràfics que un estil deixa sense fixar venen de la caixa (des de postext 1.52): la lletra, la mida, l'interlineat, els gruixos i el color que l'estil deixa al text són els del text de la caixa, així `:::paragraphs{style="centred"}` amb un estil que només fixa `textAlign: 'center'` es compon en la de pal sec d'una caixa i en la romana d'una altra. Els camps que l'estil fixa es mantenen. `bodyText.paragraphStylesInBoxes: 'document'` manté en canvi el text del document, com fins a postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => cada camp no indicat s'omple des del text de cos resolt

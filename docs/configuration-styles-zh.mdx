@@ -304,6 +304,8 @@ paragraphStyles: [
 
 在`:::callout`内，容器以同样的方式采用样式的外边距：`marginTop`和`marginBottom`与周围块的间距合并（负值会让它们靠得更近）；位于框开头的容器不取上外边距，与栏顶一样。框内没有可以重新对齐的基线网格，所以最后一段下方的空白取`marginBottom`、`spaceBetween`和框自身段落间距（即框的`body.paragraphSpacing`，框内文字的一行；使用`paragraphContainerSpacing: 'add'`时不计）中的最大值；如果下一个块自身的上外边距更大，就取后者。负的`marginBottom`则把下一个块往上拉。（在postext 1.4及以前，标注框内的容器忽略这两个外边距。）
 
+在框内，样式未设置的排版字段取自框（postext 1.52 起）：样式留给正文的字体、字号、行距、字重和颜色都取框的正文，所以一个只设`textAlign: 'center'`的样式用在`:::paragraphs{style="centred"}`里，在一个框中排成无衬线体，在另一个框中排成衬线体。样式自己设定的字段保持不变。设`bodyText.paragraphStylesInBoxes: 'document'`则改取文档正文，与 postext 1.51 及以前相同。
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => 每个未设置的字段都从解析后的正文填入

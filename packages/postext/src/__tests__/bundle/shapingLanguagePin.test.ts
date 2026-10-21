@@ -42,7 +42,7 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
   });
 
   it('pins every version before 14, whatever its content, and none from 14', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(17);
     for (const v of [undefined, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]) {
       expect(kept(migrateConfig({}, v)), String(v)).toBe('host');
       // A face may answer with other glyphs to any text: the content alone
@@ -165,7 +165,7 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
 
   it('a bundle written by postext 1.29 keeps its lines, and one written today is shaped in its language', async () => {
     const written = await createBundle({ name: 'Llibre', locale: 'ca', markdown: 'El col\u00B7legi.', config: { locale: 'ca', bodyText: { fontFamily: 'Literata' } } });
-    expect(written.manifest.configVersion).toBe(16);
+    expect(written.manifest.configVersion).toBe(17);
     expect(written.manifest.config?.bodyText).toEqual({ fontFamily: 'Literata' });
     /** The language the chapters of an opened bundle are laid out in. */
     const laidOutIn = (bundle: Awaited<ReturnType<typeof openBundle>>): string | undefined => shapingLanguageOf(resolveAllConfig(bundle.config));
@@ -193,7 +193,7 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
     // goes with it under today's number.
     const old = await openBundle(restamped(13, { fontFamily: 'Literata' }));
     const again = await createBundle({ name: 'Llibre', locale: 'ca', markdown: 'El col\u00B7legi.', config: stripConfigDefaults(old.config) });
-    expect(again.manifest.configVersion).toBe(16);
+    expect(again.manifest.configVersion).toBe(17);
     expect(again.manifest.config?.bodyText).toEqual({ fontFamily: 'Literata', shapingLanguage: 'host' });
     expect(kept((await openBundle(again.bytes)).config)).toBe('host');
   });

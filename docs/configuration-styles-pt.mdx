@@ -304,6 +304,8 @@ Um estilo pode definir a regra dos próprios contêineres com `containerSpacing`
 
 Dentro de um `:::callout`, o contêiner aplica as margens do estilo dele da mesma maneira: `marginTop` e `marginBottom` se fundem com o espaçamento dos blocos em volta (uma margem negativa os aproxima), e um contêiner que abre o boxe não recebe margem superior, como no topo de uma coluna. Um boxe não tem grade de linhas de base à qual voltar; por isso, o espaço abaixo do último parágrafo é o maior entre `marginBottom`, `spaceBetween` e o espaçamento entre parágrafos do próprio boxe (o `body.paragraphSpacing` dele, uma linha do texto; fica de fora com `paragraphContainerSpacing: 'add'`), ou a margem superior do bloco seguinte, quando esta é maior ainda; um `marginBottom` negativo puxa o bloco seguinte para cima. (Até o postext 1.4, um contêiner dentro de um boxe ignorava as duas margens.)
 
+Dentro de um boxe, os campos tipográficos que um estilo deixa sem definir vêm do boxe (desde o postext 1.52): a fonte, o tamanho, a entrelinha, os pesos e a cor que o estilo deixa para o texto são os do texto do boxe, assim `:::paragraphs{style="centred"}` com um estilo que só define `textAlign: 'center'` é composto na sem serifa de um boxe e na serifada de outro. Os campos que o estilo define permanecem. `bodyText.paragraphStylesInBoxes: 'document'` mantém o texto do documento, como até o postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => todo campo não definido é preenchido a partir do texto corrido resolvido

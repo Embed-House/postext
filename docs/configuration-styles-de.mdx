@@ -304,6 +304,8 @@ Ein Stil kann die Regel für seine eigenen Container mit `containerSpacing` fest
 
 In einem `:::callout` übernimmt der Container die Außenabstände seines Stils auf dieselbe Weise: `marginTop` und `marginBottom` fallen mit dem Abstand der umgebenden Blöcke zusammen (ein negativer Wert zieht sie näher heran), und ein Container, der den Kasten eröffnet, erhält keinen oberen Außenabstand, wie am Kopf einer Spalte. Ein Kasten hat kein Grundlinienraster zum Einrasten, daher ist der Abstand unter dem letzten Absatz der größte von `marginBottom`, `spaceBetween` und dem eigenen Absatzabstand des Kastens (sein `body.paragraphSpacing`, eine Zeile seines Texts; entfällt mit `paragraphContainerSpacing: 'add'`), oder der eigene obere Außenabstand des nächsten Blocks, wenn dieser noch größer ist; ein negatives `marginBottom` zieht stattdessen den nächsten Block nach oben. (Bis postext 1.4 ignorierte ein Container in einem Kasten beide Außenabstände.)
 
+Im Kasten kommen die Satzfelder, die ein Stil offen lässt, aus dem Kasten (seit postext 1.52): Schrift, Größe, Zeilenabstand, Stärken und Farbe, die der Stil dem Text überlässt, sind die des Kastentexts, sodass `:::paragraphs{style="centred"}` mit einem Stil, der nur `textAlign: 'center'` setzt, im einen Kasten in der Grotesk und im anderen in der Antiqua steht. Felder, die der Stil setzt, bleiben. `bodyText.paragraphStylesInBoxes: 'document'` behält stattdessen den Text des Dokuments, wie bis postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => every unset field filled from the resolved body text

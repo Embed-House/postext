@@ -1,5 +1,6 @@
 import type {
   Dimension,
+  ParagraphBodyField,
   ParagraphStyleConfig,
   ResolvedParagraphStyleConfig,
   ResolvedBodyTextConfig,
@@ -11,6 +12,9 @@ import { isDropCap } from './dropCap';
 export const DEFAULT_PARAGRAPH_STYLES: ParagraphStyleConfig[] = [];
 
 const ZERO: Dimension = { value: 0, unit: 'em' };
+
+/** The type fields a style takes from the body text when unset (#1119). */
+const BODY_FIELDS: readonly ParagraphBodyField[] = ['fontFamily', 'fontSize', 'lineHeight', 'fontWeight', 'boldFontWeight', 'color'];
 
 /** Resolve one paragraph style against the resolved body text: every unset
  *  typographic field inherits the body value, so a style with just an `id`
@@ -42,6 +46,8 @@ function resolveParagraphStyleConfig(
     // Set or inherited: a first-line indent pairs with a hanging one only
     // when the style sets it (#620).
     ...(partial.firstLineIndent !== undefined ? { ownFirstLineIndent: true as const } : {}),
+    // The type fields left to the body, which a box sets in its own (#1119).
+    ...inheritsBodyOf(partial),
     hangingIndent: partial.hangingIndent ?? ZERO,
     spaceBetween: partial.spaceBetween ?? ZERO,
     marginTop: partial.marginTop ?? ZERO,
@@ -62,6 +68,11 @@ function resolveParagraphStyleConfig(
     // Absent unless set: no drop cap (#623).
     ...(isDropCap(partial.dropCap) ? { dropCap: partial.dropCap } : {}),
   };
+}
+
+function inheritsBodyOf(partial: ParagraphStyleConfig): { inheritsBody?: ParagraphBodyField[] } {
+  const inherited = BODY_FIELDS.filter((f) => partial[f] === undefined);
+  return inherited.length > 0 ? { inheritsBody: inherited } : {};
 }
 
 export function resolveParagraphStylesConfig(

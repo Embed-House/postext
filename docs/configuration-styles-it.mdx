@@ -304,6 +304,8 @@ Uno stile può impostare la regola per i propri contenitori con `containerSpacin
 
 Dentro un `:::callout` il contenitore prende i margini del suo stile allo stesso modo: `marginTop` e `marginBottom` si fondono con la spaziatura dei blocchi attorno (uno negativo li avvicina), e un contenitore che apre il riquadro non prende margine superiore, come in cima a una colonna. Un riquadro non ha una griglia della linea di base su cui riallinearsi, quindi lo spazio sotto l’ultimo paragrafo è il maggiore tra `marginBottom`, `spaceBetween` e la spaziatura tra paragrafi propria del riquadro (il suo `body.paragraphSpacing`, una riga del suo testo; tralasciata con `paragraphContainerSpacing: 'add'`), oppure il margine superiore proprio del blocco successivo, quando è ancora maggiore; un `marginBottom` negativo tira invece su il blocco successivo. (Fino a postext 1.4 un contenitore dentro un riquadro ignorava entrambi i margini.)
 
+Dentro un riquadro i campi tipografici che uno stile lascia non impostati vengono dal riquadro (da postext 1.52): il carattere, il corpo, l’interlinea, i pesi e il colore che lo stile lascia al testo sono quelli del testo del riquadro, così `:::paragraphs{style="centred"}` con uno stile che imposta solo `textAlign: 'center'` si compone nel bastoni di un riquadro e nel romano di un altro. I campi che lo stile imposta restano. `bodyText.paragraphStylesInBoxes: 'document'` mantiene invece il testo del documento, come fino a postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => every unset field filled from the resolved body text

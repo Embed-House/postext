@@ -115,6 +115,7 @@ export const DEFAULT_BODY_TEXT_CONFIG: ResolvedBodyTextConfig = {
   colonListRoom: 'item',
   hyphenateAcrossColumns: true,
   paragraphContainerSpacing: 'collapse',
+  paragraphStylesInBoxes: 'box',
 };
 
 export function hyphenationEqual(a: HyphenationConfig | undefined, b: HyphenationConfig | undefined): boolean {
@@ -382,6 +383,7 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     paragraphContainerSpacing: partial.paragraphContainerSpacing === 'add' || partial.paragraphContainerSpacing === 'collapse'
       ? partial.paragraphContainerSpacing
       : DEFAULT_BODY_TEXT_CONFIG.paragraphContainerSpacing,
+    paragraphStylesInBoxes: partial.paragraphStylesInBoxes === 'document' ? 'document' : DEFAULT_BODY_TEXT_CONFIG.paragraphStylesInBoxes,
     ...emphasisAndTashkil(partial, documentLocale),
   };
 }
@@ -665,6 +667,10 @@ export function stripBodyTextDefaults(
   }
   if (bodyText.paragraphContainerSpacing !== undefined && bodyText.paragraphContainerSpacing !== DEFAULT_BODY_TEXT_CONFIG.paragraphContainerSpacing) {
     result.paragraphContainerSpacing = bodyText.paragraphContainerSpacing;
+    hasOverride = true;
+  }
+  if (bodyText.paragraphStylesInBoxes === 'document') {
+    result.paragraphStylesInBoxes = 'document';
     hasOverride = true;
   }
   // Its default follows the language: a set value other than `'auto'` is

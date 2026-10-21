@@ -1894,6 +1894,14 @@ export interface BodyTextConfig {
    *  container that closes on a list is set as in 1.4 under both rules: the
    *  list keeps its own space in its snap, and `marginBottom` follows. */
   paragraphContainerSpacing?: ParagraphContainerSpacing;
+  /** What the fields a paragraph style leaves unset (face, size, leading,
+   *  weights, colour) inherit inside a box (#1119):
+   *  - `'box'` (default): the box's body, so one style that sets only
+   *    `textAlign` serves a serif box and a sans one alike;
+   *  - `'document'`: the document's body text, as up to postext 1.51.
+   *    Configurations stored before `configVersion` 17 read with it (see
+   *    `pinLegacyBoxParagraphStyles` in `postext/bundle`). */
+  paragraphStylesInBoxes?: ParagraphStylesInBoxes;
   /** How Markdown emphasis (`*…*`) is set (see {@link EmphasisStyle}).
    *  `'auto'` (the default): `'bold'` in a document whose language is
    *  written in Arabic script (`ar`, `fa`, `ur`…), whose type has no
@@ -1949,6 +1957,14 @@ export type CompositionRule = 'allow' | 'warn' | 'avoid';
 /** How the space under a `:::paragraphs` container is worked out
  *  (`BodyTextConfig.paragraphContainerSpacing`). */
 export type ParagraphContainerSpacing = 'collapse' | 'add';
+
+/** What a paragraph style's unset type fields inherit inside a box
+ *  (`BodyTextConfig.paragraphStylesInBoxes`, #1119). */
+export type ParagraphStylesInBoxes = 'box' | 'document';
+
+/** The type fields a paragraph style inherits from the body text when it
+ *  leaves them unset (`ResolvedParagraphStyleConfig.inheritsBody`). */
+export type ParagraphBodyField = 'fontFamily' | 'fontSize' | 'lineHeight' | 'fontWeight' | 'boldFontWeight' | 'color';
 
 /** How Markdown blockquotes (`> …`) are set (`BodyTextConfig.blockquote`).
  *  They take the body's family, size, leading, weights, alignment and
@@ -2415,6 +2431,7 @@ export interface ResolvedBodyTextConfig {
   colonListRoom: ColonListRoom;
   hyphenateAcrossColumns: boolean | 'withinPage';
   paragraphContainerSpacing: ParagraphContainerSpacing;
+  paragraphStylesInBoxes: ParagraphStylesInBoxes;
   /** `emphasis` resolved; absent when `*…*` is set in italics. */
   emphasis?: Exclude<EmphasisStyle, 'italic'>;
   /** `tashkil`; absent when the marks are kept. */
@@ -3149,6 +3166,11 @@ export interface ResolvedParagraphStyleConfig {
    *  with a non-zero {@link hangingIndent} the two pair up (#620). Absent
    *  when inherited. */
   ownFirstLineIndent?: true;
+  /** The type fields the style leaves unset and takes from the body text
+   *  (#1119), so a box can set them in its own body instead. Absent when
+   *  the style sets them all, and on the styles the engine makes itself
+   *  (footnotes, bibliography). */
+  inheritsBody?: ParagraphBodyField[];
   hangingIndent: Dimension;
   spaceBetween: Dimension;
   marginTop: Dimension;

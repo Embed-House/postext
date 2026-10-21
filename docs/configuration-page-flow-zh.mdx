@@ -163,6 +163,12 @@ export const metadata = {
       <td><code>'collapse'</code></td>
       <td>以段落收尾的<code>:::paragraphs</code>容器下方、即该段落与其后块之间的间距（见<a href="/zh/docs/configuration-styles#paragraphs容器"><code>:::paragraphs</code>容器</a>）。<code>'collapse'</code>：取样式的<code>spaceBetween</code>和<code>marginBottom</code>以及容器周围文字的段间距（开启<code>paragraphSpacing</code>时为一行；在框内则取框的段间距）中的较大者，再与下一个块自己在上方保留的间距合并，与连续正文中两个段落之间的处理相同：参考文献下面的标题与它相距自己的<code>marginTop</code>，而不是这个外边距再加上条目的间距。<code>'add'</code>：与postext 1.4及更早版本相同，在网格对齐前只在最后一行下面放样式自身的间距，再加上下一个块自己的上方间距，不计段间距，所以容器之后的段落可能比其他任何段落都更贴近它。在<code>configVersion</code> 8之前保存、声明了段落样式、且书中含有这种容器的配置，读取时采用<code>'add'</code>（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。无论哪种方式，负的<code>marginBottom</code>都会把下一个块往上拉。段落样式可以为自己的容器另定规则（<code>containerSpacing</code>，自postext 1.28起）。</td>
     </tr>
+    <tr>
+      <td><code>paragraphStylesInBoxes</code></td>
+      <td><code>'box' | 'document'</code></td>
+      <td><code>'box'</code></td>
+      <td>段落样式未设置的字体、字号、行距、字重和颜色在框内取自何处（postext 1.52 起，#1119）。<code>'box'</code>：取框的正文，因此只设<code>textAlign</code>的样式既可用于衬线体的框，也可用于无衬线体的框；样式自己设定的字段保持不变。<code>'document'</code>：取文档的正文，与 postext 1.51 及以前相同。在<code>configVersion</code> 17 之前保存且声明了段落样式的配置按<code>'document'</code>读取（见<a href="/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包">postext 1.4及更早版本写出的文件包</a>）。</td>
+    </tr>
   </tbody>
 </table>
 

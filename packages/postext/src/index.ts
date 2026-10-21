@@ -242,6 +242,8 @@ export type {
   ColonListRoom,
   CompositionRule,
   ParagraphContainerSpacing,
+  ParagraphStylesInBoxes,
+  ParagraphBodyField,
   EmphasisStyle,
   TashkilMode,
   LayoutConfig,

@@ -2,7 +2,7 @@
 
 import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import type { BodyTextConfig, ColorValue, Dimension, DimensionUnit, ParagraphContainerSpacing, ParagraphStyleConfig, ResolvedParagraphStyleConfig } from 'postext';
+import type { BodyTextConfig, ColorValue, Dimension, DimensionUnit, ParagraphContainerSpacing, ParagraphStyleConfig, ParagraphStylesInBoxes, ResolvedParagraphStyleConfig } from 'postext';
 import { DEFAULT_BODY_TEXT_CONFIG, DEFAULT_CJK_CONFIG, isCjkLanguage, resolveBodyTextConfig, resolveParagraphStylesConfig } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
 import {
@@ -547,6 +547,21 @@ export const ParagraphStylesSection = memo(function ParagraphStylesSection() {
       payload: { bodyText: Object.keys(next).length > 0 ? next : undefined },
     });
   };
+  /** What a style's unset type fields take inside a box (#1119), kept in
+   *  `bodyText`. */
+  const writeInBoxes = (value: ParagraphStylesInBoxes | undefined) => {
+    const next: BodyTextConfig = { ...bodyTextRaw };
+    if (value === undefined) delete next.paragraphStylesInBoxes;
+    else next.paragraphStylesInBoxes = value;
+    dispatch({
+      type: 'UPDATE_CONFIG',
+      payload: { bodyText: Object.keys(next).length > 0 ? next : undefined },
+    });
+  };
+  const inBoxesOptions = [
+    { value: 'box', label: labels.paragraphStylesInBoxesBox },
+    { value: 'document', label: labels.paragraphStylesInBoxesDocument },
+  ];
   const containerSpacingOptions = [
     { value: 'collapse', label: labels.paragraphContainerSpacingCollapse },
     { value: 'add', label: labels.paragraphContainerSpacingAdd },
@@ -575,6 +590,17 @@ export const ParagraphStylesSection = memo(function ParagraphStylesSection() {
           tooltip={labels.paragraphContainerSpacingTooltip}
           isDefault={bodyText.paragraphContainerSpacing === DEFAULT_BODY_TEXT_CONFIG.paragraphContainerSpacing}
           onReset={() => writeContainerSpacing(undefined)}
+        />
+      )}
+      {styles.length > 0 && (
+        <SelectInput
+          label={labels.paragraphStylesInBoxes}
+          value={bodyText.paragraphStylesInBoxes}
+          options={inBoxesOptions}
+          onChange={(v) => writeInBoxes(v as ParagraphStylesInBoxes)}
+          tooltip={labels.paragraphStylesInBoxesTooltip}
+          isDefault={bodyText.paragraphStylesInBoxes === DEFAULT_BODY_TEXT_CONFIG.paragraphStylesInBoxes}
+          onReset={() => writeInBoxes(undefined)}
         />
       )}
       <ItemCardListActions list="paragraphStyles" ids={styles.map((s) => s.id)} />

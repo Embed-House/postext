@@ -17,7 +17,7 @@ import { codeFenceOpen } from '../parse/codeFence';
 import { hasCJK } from '../measure/cjk';
 
 /**
- * The configuration rules this engine writes: 16 since #1056 (15 from #853, 14 from
+ * The configuration rules this engine writes: 17 since #1119 (16 from #1056, 15 from #853, 14 from
  * postext 1.30, 13 from 1.29, 12 from 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
@@ -201,6 +201,11 @@ import { hasCJK } from '../measure/cjk';
  *   not placed by an anchor. An engine that reads 15 or less leaves them
  *   out (`unknownConfigValue`). Nothing older changes meaning: one stored
  *   under 15 is read as it is (no pin).
+ * - 17 (#1119), the rule of postext 1.52: a paragraph style's unset type
+ *   fields (face, size, leading, weights, colour) take the box's body
+ *   inside a box (`bodyText.paragraphStylesInBoxes: 'box'`), where up to
+ *   1.51 they took the document's body text ({@link
+ *   pinLegacyBoxParagraphStyles}).
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -220,9 +225,11 @@ import { hasCJK } from '../measure/cjk';
  * was written by postext 1.29 and gets the version-14 pin (which every
  * older one gets too); one stored under 14 was written by postext 1.30 to
  * 1.33 and gets nothing; one stored under 15 was written by postext 1.34 to
- * 1.47 and gets nothing either.
+ * 1.47 and gets nothing either; one stored under 16 was written by postext
+ * 1.48 to 1.51 and gets the version-17 pin (which every older one gets
+ * too).
  */
-export const CONFIG_VERSION = 16;
+export const CONFIG_VERSION = 17;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -334,6 +341,9 @@ export const COMPOSED_PAGES_RULES = 15;
 /** The rules that draw connectors in a template's decoration (#1056): new
  *  keys only, nothing to pin. */
 export const CONNECTOR_RULES = 16;
+/** The rules that set a paragraph style's unset type fields in a box's
+ *  body (#1119). */
+const BOX_PARAGRAPH_STYLE_RULES = 17;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1582,6 +1592,22 @@ export function pinLegacyShapingLanguage<T extends Partial<PostextConfig>>(confi
 }
 
 /**
+ * A configuration written before #1119 (postext 1.51 or earlier), pinned to
+ * the type its paragraph styles took inside a box:
+ * `bodyText.paragraphStylesInBoxes: 'document'`, the face, size, leading,
+ * weights and colour a style leaves unset taken from the document's body
+ * text, where today they are the box's. A configuration that names the
+ * setting already, or declares no paragraph style (in the configuration or
+ * in its HTML viewer's overrides), is returned as it is (the same object).
+ */
+export function pinLegacyBoxParagraphStyles<T extends Partial<PostextConfig>>(config: T): T {
+  const bodyText: BodyTextConfig = isRecord(config.bodyText) ? config.bodyText : {};
+  if (bodyText.paragraphStylesInBoxes !== undefined) return config;
+  if (!declaresParagraphStyles(config)) return config;
+  return { ...config, bodyText: { ...bodyText, paragraphStylesInBoxes: 'document' } };
+}
+
+/**
  * A configuration written before #765 (postext 1.28 or earlier), pinned to
  * the box it set before a task item: `unorderedLists.taskBox: 'character'`,
  * the character ☐ (☑ when the item is done) set as text in the list's
@@ -1770,7 +1796,9 @@ export interface MigrateConfigOptions {
  * set as a character by {@link pinLegacyTaskBox}, unless `options.content`
  * shows no task item; one older than 14 has its text shaped in the host's
  * language by {@link pinLegacyShapingLanguage}, unless it names the
- * language its text is shaped in.
+ * language its text is shaped in; one older than 17 has the type of its
+ * paragraph styles inside a box pinned by {@link
+ * pinLegacyBoxParagraphStyles}, when it declares a paragraph style.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1822,6 +1850,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < SCRIPT_CONTEXT_RULES) out = pinLegacyScriptContext(out);
   if (rules < SHAPING_LANGUAGE_RULES) out = pinLegacyShapingLanguage(out);
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) out = pinLegacyTaskBox(out);
+  if (rules < BOX_PARAGRAPH_STYLE_RULES) out = pinLegacyBoxParagraphStyles(out);
   // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
   // keys only, nothing to pin.
   return out;
@@ -1862,7 +1891,9 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * force, and the labels of cross-references on the `crossRefs` in force,
  * and the shaping of words with no letter and the language the text is
  * shaped in on the `bodyText` in force, and the box of a task item on the
- * `unorderedLists` in force.
+ * `unorderedLists` in force, and the type of paragraph styles inside a box
+ * on the `bodyText` in force (when the merged configuration declares a
+ * paragraph style).
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1915,6 +1946,7 @@ export function migrateBundleConfig(
   if (rules < SCRIPT_CONTEXT_RULES) merged = pinLegacyScriptContext(merged);
   if (rules < SHAPING_LANGUAGE_RULES) merged = pinLegacyShapingLanguage(merged);
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) merged = pinLegacyTaskBox(merged);
+  if (rules < BOX_PARAGRAPH_STYLE_RULES) merged = pinLegacyBoxParagraphStyles(merged);
   // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
   // keys only, nothing to pin.
   return merged;

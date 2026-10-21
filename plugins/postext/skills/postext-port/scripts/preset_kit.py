@@ -108,11 +108,13 @@ from typing import Any
 # Rules 15 (postext 1.34) mark a config that may hold pageTemplates and
 # labelStyles and pin nothing, so 14 reads the same. Rules 16 (postext 1.48)
 # mark a config whose templates may hold connectors and pin nothing either.
-# A book ported today is stamped 16 and is shaped in its own language. An
+# 17 (1.52) sets a paragraph style's unset type fields in a box's body;
+# 16 and older read with the document's (bodyText.paragraphStylesInBoxes).
+# A book ported today is stamped 17 and is shaped in its own language. An
 # engine older than 1.23 reads 9 as 8, one older than 1.24 reads 10 as 9,
 # one older than 1.25 reads 11 as 10, one older than 1.28 reads 12 as 11,
 # one older than 1.30 reads 14 as 13, one older than 1.34 reads 15 as 14.
-CONFIG_VERSION = 16
+CONFIG_VERSION = 17
 
 # ---------------------------------------------------------------------------
 # primitives
@@ -649,7 +651,7 @@ def resources() -> list:
 def main() -> None:
     primary = LANGS[0]
     manifest = {{
-        "version": 2, "configVersion": 16, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
+        "version": 2, "configVersion": 17, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
         "view": {{"canvasScope": "book"}},
         "chapters": {{lang: chapters_from_dir(HERE, lang) for lang in LANGS}},
         "config": config(primary),

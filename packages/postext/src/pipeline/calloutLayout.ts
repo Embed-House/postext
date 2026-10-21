@@ -83,7 +83,7 @@ import { headingIsHidden, headingStyleOf } from './headingStyles';
 import { tocBlockStamps } from './toc';
 import { directDesignTextBlock } from '../design/bidiText';
 import { arabicNumbersOf } from './config';
-import { containerStyle, paragraphStyleIdOf, type ParagraphContainerPlan } from './paragraphContainers';
+import { containerStyle, paragraphStyleIdOf, restyleContainerFor, type ParagraphContainerPlan } from './paragraphContainers';
 import { joiningScriptIn } from '../measure/joining';
 import { getMeasureArabicNumbers, getMeasureDirection, shiftLineX } from '../measure/bidiLines';
 import { resolvedCodeStyle } from '../defaults/codeStyle';
@@ -195,8 +195,28 @@ export function deriveCalloutResolvedConfig(
     ...(lists.marginTop ? { marginTop: lists.marginTop } : {}),
     ...(lists.marginBottom ? { marginBottom: lists.marginBottom } : {}),
   };
+  // A paragraph style's unset type fields take the box's body (#1119):
+  // the face, size, leading, weights and colour the style leaves to the
+  // body text are the box's here. A configuration that pins the rule of
+  // postext 1.51 (`paragraphStylesInBoxes: 'document'`) keeps the
+  // document's.
+  const boxBody = {
+    fontFamily: body.fontFamily,
+    fontSize: body.fontSize,
+    lineHeight: body.lineHeight,
+    fontWeight: body.fontWeight,
+    boldFontWeight: body.boldFontWeight,
+    color: body.color,
+  };
+  const paragraphStyles = resolved.bodyText.paragraphStylesInBoxes === 'document'
+    || !resolved.paragraphStyles.some((s) => s.inheritsBody)
+    ? resolved.paragraphStyles
+    : resolved.paragraphStyles.map((s) => (s.inheritsBody
+      ? { ...s, ...Object.fromEntries(s.inheritsBody.map((f) => [f, boxBody[f]])) }
+      : s));
   return {
     ...resolved,
+    paragraphStyles,
     bodyText: {
       ...resolved.bodyText,
       fontFamily: body.fontFamily,
@@ -737,6 +757,9 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   const dpi = input.resolved.page.dpi;
   const derivedCtx = deriveCalloutMeasureContext(ctx, style);
   const bodyStyle = derivedCtx.bodyStyle;
+  // The document's `:::paragraphs` containers as this box sets them: a
+  // style's unset type fields in the box's body (#1119).
+  const restyleContainer = restyleContainerFor(derivedCtx.resolved, input.resolved.paragraphStyles);
   const em = bodyStyle.fontSizePx;
   const px = (d: Dimension): number => dimensionToPx(d, dpi, em);
 
@@ -1171,7 +1194,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const blockIdx = childStartIdx + k;
     // Inside a `:::paragraphs` container: its style, and for the block that
     // closes it the tail style, which carries the container's bottom margin.
-    const container = input.paragraphContainers?.byBlock[blockIdx];
+    const container = restyleContainer(input.paragraphContainers?.byBlock[blockIdx]);
     const next = children[k + 1];
     const isContainerTail = container !== undefined && next?.type === 'containerEnd' && next.containerId === container.id;
     const styleOverride = container ? containerStyle(container, isContainerTail, bodyStyle, derivedCtx.resolved.page.dpi) : undefined;
@@ -1454,7 +1477,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
    *  'collapse'`, EF-181). */
   const containerMargin = (raw: ContentBlock, k: number, st: Stack): void => {
     if ((raw.type !== 'containerStart' && raw.type !== 'containerEnd') || raw.containerId === undefined) return;
-    const pc = input.paragraphContainers?.byId.get(raw.containerId);
+    const pc = restyleContainer(input.paragraphContainers?.byId.get(raw.containerId));
     if (!pc || st.first) return;
     if (raw.type === 'containerEnd' && children[k - 1]?.type === 'paragraph') {
       // (The container's style may set the rule itself, #715.)

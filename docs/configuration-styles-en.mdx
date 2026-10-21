@@ -304,6 +304,8 @@ A style can set the rule for its own containers with `containerSpacing`: `'add'`
 
 Inside a `:::callout` the container takes its style's margins the same way: `marginTop` and `marginBottom` collapse with the spacing of the blocks around it (a negative one pulls them closer), and a container that opens the box takes no top margin, as at the top of a column. A box has no baseline grid to snap back to, so the space below the last paragraph is the larger of `marginBottom`, `spaceBetween` and the box's own paragraph spacing (its `body.paragraphSpacing`, a line of its text; left out with `paragraphContainerSpacing: 'add'`), or the next block's own top margin, when that is larger still; a negative `marginBottom` pulls the next block up instead. (Up to postext 1.4 a container inside a callout ignored both margins.)
 
+Inside a box a style's unset type fields come from the box (since postext 1.52): the face, size, leading, weights and colour the style leaves to the body text are the box's body, so `:::paragraphs{style="centred"}` with a style that sets only `textAlign: 'center'` is set in the sans of one box and the serif of another. Fields the style sets stay as they are. `bodyText.paragraphStylesInBoxes: 'document'` keeps the document's body text instead, as up to postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => every unset field filled from the resolved body text

@@ -2011,7 +2011,10 @@ not yet template bodyStyle; modules side by side; a module inside a module
 ```
 
 Both keys are in the layout key; `configVersion` 15 marks a config that may hold templates, 16 (1.48)
-one whose decoration may hold connectors (14 and older load unchanged; nothing is pinned).
+one whose decoration may hold connectors (14 and older load unchanged; nothing is pinned). 17 (1.52, #1119): a
+paragraph style's unset type fields (face, size, leading, weights, colour) inside a box or frame take the box's
+body, so one align-only style serves serif and sans boxes; 16 and older read with
+`bodyText.paragraphStylesInBoxes: 'document'` (the document's body). Stamp new ports 17.
 composed-pages.md §6.12–6.18 says when to use each 1.48 feature. With an engine older than 1.35.0 port composed pages with the round-1
 ladder (playbooks J) and write templates only when the brief asks to prepare for them.
 
