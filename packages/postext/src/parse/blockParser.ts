@@ -27,7 +27,7 @@ export { codeFenceOpen } from './codeFence.js';
 const HEADING_RE = /^(#{1,6})\s+(.+)$/;
 /** `:::name` or `:::name{attrs}` on its own line. Shared by single-line
  *  directives and container opening fences. */
-const DIRECTIVE_RE = /^:::\s*([a-z][a-z0-9-]*)\s*(?:\{([^}]*)\})?\s*$/;
+const DIRECTIVE_RE = /^:::\s*([a-z][a-z0-9-]*)\s*(?:\{([^}]*)\}\s*)?$/;
 /** A bare `:::` line: closes the innermost open container. */
 const CONTAINER_CLOSE_RE = /^:::\s*$/;
 /** A composed page's opening fence (#854): four or more colons, `page`,

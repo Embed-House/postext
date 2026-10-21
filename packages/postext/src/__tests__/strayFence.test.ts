@@ -36,3 +36,14 @@ describe('a stray fence after a one-line directive', () => {
     expect(blocks.some((b) => b.text.includes(':::'))).toBe(true);
   });
 });
+
+// #1166: the directive pattern runs in linear time on a fence line with a
+// long run of spaces before another character (CodeQL js/polynomial-redos).
+describe('the directive pattern', () => {
+  it('reads a fence line of many tabs without slowing down', () => {
+    const md = [':::a' + '\t'.repeat(50_000) + 'X', ':::', '', 'Text.'].join('\n');
+    const t = performance.now();
+    parseMarkdownWithIssues(md);
+    expect(performance.now() - t).toBeLessThan(500);
+  });
+});
