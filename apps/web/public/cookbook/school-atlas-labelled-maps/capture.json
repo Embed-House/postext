@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "school-atlas-labelled-maps",
-  "sourceHash": "91245616cd617d841331df5ad3d582bc8136444f83d2037d6dbb2096ff65f911",
+  "sourceHash": "cc3130150863c127cb322c03b43f434c3c69ec42008a63016e09f69fd242de85",
   "engine": {
-    "postext": "1.48.0",
+    "postext": "1.49.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-20T20:39:00.197Z",
+  "capturedAt": "2026-10-21T05:22:09.309Z",
   "variants": {
     "en": {
-      "hash8": "eed37b5f",
+      "hash8": "4945a3cf",
       "vdtHash": "52a3713b1470b7aab64e037595d6c5d10e8311b1",
       "timings": {
-        "importMs": 4484,
-        "fontsMs": 1298,
-        "buildMs": 103,
-        "totalMs": 8769,
+        "importMs": 6089,
+        "fontsMs": 355,
+        "buildMs": 124,
+        "totalMs": 7979,
         "builds": 1
       },
       "specimen": {
@@ -59,7 +59,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 87898,
+          "bytes": 87434,
           "alt": "Page 2: The relief and rivers of Varenia."
         },
         {
@@ -113,7 +113,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 611363,
+        "bytes": 611339,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -314,7 +314,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 475,
+        "configLeaves": 476,
         "designElements": 10,
         "directives": [
           "::::page",
@@ -377,28 +377,18 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 28 block, 15 frame, 32 label, 62 line, 3 text"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "1c1f3f5c",
+      "hash8": "30cd1322",
       "vdtHash": "687e606264bcaff2840dbbb5a8b8ae9852f74096",
       "timings": {
-        "importMs": 4723,
-        "fontsMs": 1049,
-        "buildMs": 112,
-        "totalMs": 9470,
+        "importMs": 6187,
+        "fontsMs": 353,
+        "buildMs": 134,
+        "totalMs": 7972,
         "builds": 1
       },
       "specimen": {
@@ -441,7 +431,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 87066,
+          "bytes": 86640,
           "alt": "Página 2: El relieve y los ríos de Varenia."
         },
         {
@@ -495,7 +485,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 611160,
+        "bytes": 611107,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -696,7 +686,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 475,
+        "configLeaves": 476,
         "designElements": 10,
         "directives": [
           "::::page",
@@ -759,28 +749,18 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 28 block, 15 frame, 32 label, 62 line, 3 text"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "84654906",
+      "hash8": "17a51b01",
       "vdtHash": "2e3bf119aa11cf455b28d20e20227f850999b038",
       "timings": {
-        "importMs": 4830,
-        "fontsMs": 1486,
-        "buildMs": 104,
-        "totalMs": 9487,
+        "importMs": 2491,
+        "fontsMs": 576,
+        "buildMs": 98,
+        "totalMs": 4701,
         "builds": 1
       },
       "specimen": {
@@ -834,7 +814,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 66590,
+          "bytes": 66176,
           "alt": "الصفحة ٣."
         },
         {
@@ -878,7 +858,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 612368,
+        "bytes": 612357,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -1074,7 +1054,7 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 470,
+        "configLeaves": 471,
         "designElements": 10,
         "directives": [
           "::::page",
@@ -1145,16 +1125,6 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 28 block, 15 frame, 28 label, 60 line, 3 text"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -211,7 +211,10 @@ function regroupPage(
   // `title`): the frame's tab and title.
   const fenceAttrs = new Map<string, Record<string, string>>();
   const fenceAttrSources = new Map<string, Record<string, { sourceStart: number; sourceEnd: number }>>();
+  /** The fence block each slot's attributes came from. */
+  const fenceBlocks = new Map<string, ContentBlock>();
   const readFence = (key: string, b: ContentBlock): void => {
+    fenceBlocks.set(key, b);
     fenceAttrs.set(key, Object.fromEntries(Object.entries(b.containerAttrs ?? {}).filter(([k]) => k !== 'slot')));
     if (b.containerAttrSources) fenceAttrSources.set(key, Object.fromEntries(Object.entries(b.containerAttrSources).filter(([k]) => k !== 'slot')));
   };
@@ -226,8 +229,18 @@ function regroupPage(
   // Each instance is dressed by its own item's fence (#1061).
   for (const [name, at] of instanceFences) readFence(name, blocks[at]!);
   // Stories: each chain's frames' pieces, head first.
-  const stories: { head: string; indices: number[]; attrs: Record<string, string>; attrSources?: Record<string, { sourceStart: number; sourceEnd: number }> }[] = [];
+  const stories: { head: string; indices: number[]; attrs: Record<string, string>; attrSources?: Record<string, { sourceStart: number; sourceEnd: number }>; fence?: ContentBlock }[] = [];
   const done = new Set<string>();
+  /** The fence of an empty story whose frames are all empty and whose head
+   *  frame is styled (#1084): the author asked for the box, though it
+   *  holds nothing. */
+  const emptyStyledFence = (head: string, chain: readonly string[]): ContentBlock | undefined => {
+    const fence = fenceBlocks.get(head);
+    if (!fence || chain.some((f) => (pieces.get(f)?.length ?? 0) > 0)) return undefined;
+    const base = names.has(head) ? head : repeatInstance(head)?.frame;
+    const frame = base !== undefined ? template.frames.find((f) => f.name === base) : undefined;
+    return frame?.style ? fence : undefined;
+  };
   /** An instance's story (#1061): the instance of its chain's head, the
    *  chain's frames of the set as the same item's instances. */
   const instanceStory = (name: string): { head: string; chain: string[] } | undefined => {
@@ -251,9 +264,12 @@ function regroupPage(
     const chain = names.has(head) ? frameChain(template, head).map((f) => f.name) : inst?.chain ?? [head];
     const indices: number[] = [];
     for (const f of chain) indices.push(...(pieces.get(f) ?? []).slice().sort((a, b) => a - b));
-    if (indices.length === 0) continue;
+    // A fenced frame with a style and no content (#1084): its story is the
+    // empty box, so the frame draws its style's fill, border and tab.
+    const fence = indices.length === 0 ? emptyStyledFence(head, chain) : undefined;
+    if (indices.length === 0 && !fence) continue;
     const attrSources = fenceAttrSources.get(head);
-    stories.push({ head, indices, attrs: fenceAttrs.get(head) ?? {}, ...(attrSources ? { attrSources } : {}) });
+    stories.push({ head, indices, attrs: fenceAttrs.get(head) ?? {}, ...(attrSources ? { attrSources } : {}), ...(fence ? { fence } : {}) });
   }
   stories.sort((a, b) => Math.min(...a.indices) - Math.min(...b.indices));
   /** The heading another story took that the flow story's first block
@@ -272,9 +288,9 @@ function regroupPage(
   const out: ContentBlock[] = [];
   for (const s of stories) {
     const id = nextId();
-    const first = blocks[s.indices[0]!]!;
-    const last = blocks[s.indices[s.indices.length - 1]!]!;
-    const capHeading = capHeadingOf(s.indices, s.head);
+    const first = s.fence ?? blocks[s.indices[0]!]!;
+    const last = s.fence ?? blocks[s.indices[s.indices.length - 1]!]!;
+    const capHeading = s.indices.length > 0 ? capHeadingOf(s.indices, s.head) : undefined;
     // A frame's own `direction` (#944): its story is set in it, as a box
     // fenced `{dir=…}` is; a block or a box inside that writes its own
     // `dir` keeps it.

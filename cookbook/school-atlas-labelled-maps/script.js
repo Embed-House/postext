@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 157 · A school atlas labelled from the Markdown ═══════
 // https://postext.dev/en/cookbook/school-atlas-labelled-maps
 // Code: MIT · Text: original (CC BY 4.0) · Maps: painted with diffusion models, symbols set in code
-// Fonts: Source Sans 3, Source Serif 4, Noto Naskh and Kufi Arabic (OFL) · Needs postext ≥ 1.48.0
+// Fonts: Source Sans 3, Source Serif 4, Noto Naskh and Kufi Arabic (OFL) · Needs postext ≥ 1.49.0
 //
 // Three pages of a school atlas of Varenia, an invented country: a locator map, the relief map
 // across a double page and a section through the mountains. The maps are painted without a letter.
@@ -96,12 +96,12 @@ const sheet = {
 const locator = { id: 'locator', extends: 'sheet', frames: [{ name: 'key', remove: true },
   { name: 'tasks', placement: at('#map', 'below', 0, 6) }],
   groups: [{ name: 'column', frames: ['text', 'map'] }] };
-// Line A–B: two connectors between two anchors of the map's picture, cased in paper, dotted ends.
+// Line A–B: two connectors between two anchors of the map, dotted ends, a see-through paper casing.
 const section = (id, color, width, more) => ({ kind: 'connector', id, routing: 'straight',
   from: { to: '#map', anchor: 'a-end' }, to: { to: '#map', anchor: 'b-end' }, color: col(color),
   width: mm(width), ...more });
-const sectionLine = [section('section-casing', 'paper', 0.9), section('section-line', 'ink', 0.5,
-  { dash: [mm(1), mm(1)], startCap: 'dot', endCap: 'dot', capSize: mm(2) })];
+const sectionLine = [section('ab-casing', 'paper', 0.9, { opacity: 0.55 }), section('ab-line',
+  'ink', 0.5, { dash: [mm(1), mm(1)], startCap: 'dot', endCap: 'dot', capSize: mm(2) })];
 // The double sheet: one band and one map across both pages, the boxes under the map.
 const spread = {
   id: 'spread', spread: true, header: false,

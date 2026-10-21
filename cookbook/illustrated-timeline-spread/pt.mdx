@@ -9,7 +9,7 @@ aliases: ["linha do tempo", "cronologia", "página dupla", "modelo de página", 
 
 ## O que você vai compor
 
-As páginas 48 e 49 de um livro de História do ensino fundamental: *O caminho do papel*, mil anos de ofício, da oficina de Cai Lun à mó de Keller. A página da esquerda abre com o título e dois parágrafos; a da direita, com um boxe que conta como se fazia uma folha à mão. Pelo meio corre a linha do tempo: uma faixa anil para a Ásia e uma terracota para a Europa, que começa na página da esquerda e atravessa a lombada. Embaixo, seis fichas com seu desenho, presas à faixa por um ponto e um traço. O modelo desenha uma ficha asiática, uma europeia e um conector por faixa: uma grade põe uma ficha para cada data do Markdown, e o conector encontra todas as fichas que a grade pôs. Todas as palavras estão no Markdown, em espanhol, inglês e japonês; esta página mostra a edição em inglês.
+As páginas 48 e 49 de um livro de História do ensino fundamental: *O caminho do papel*, mil anos de ofício, da oficina de Cai Lun à mó de Keller. A página da esquerda abre com o título e dois parágrafos; a da direita, com um boxe que conta como se fazia uma folha à mão. Pelo meio corre a linha do tempo: uma faixa anil para a Ásia e uma terracota para a Europa, que começa na página da esquerda e atravessa a lombada. Embaixo, seis fichas com seu desenho, presas à faixa por um anel e um traço. O modelo desenha uma ficha asiática, uma europeia e um conector por faixa: uma grade põe uma ficha para cada data do Markdown, e o conector encontra todas as fichas que a grade pôs. Todas as palavras estão no Markdown, em espanhol, inglês e japonês; esta página mostra a edição em inglês.
 
 ## Preparo
 
@@ -29,7 +29,7 @@ Um grupo `kind: 'grid'` com `repeat: { frames: ['asia'] }` põe o bloco `asia` u
 
 <Excerpt region="ticks" />
 
-Os traços são um `connector` por faixa na decoração (`decoration`) do modelo. `routing: 'tree'` liga um pai a muitos filhos; com `trunk: 0` ele não desenha barra própria, só um traço reto do pé da faixa até o meio da borda de cima de cada ficha, e `startCap: 'dot'` põe o ponto na cabeça de cada traço, 2,4 mm abaixo da faixa (`gap`). `#asia[*]` nomeia todas as fichas que a grade pôs na página, então uma data acrescentada ou tirada no Markdown acrescenta ou tira o seu traço. Os conectores são postos depois dos blocos: quando uma fileira cresce, os traços continuam chegando às fichas. O fundo creme também é decoração, uma caixa ancorada ao pé da sangria cuja altura sobe até o pé de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`): ela acompanha a faixa.
+Os traços são um `connector` por faixa na decoração (`decoration`) do modelo. `routing: 'tree'` liga um pai a muitos filhos; com `trunk: 0` ele não desenha barra própria, só um traço reto do pé da faixa até o meio da borda de cima de cada ficha, e `startCap: 'ring'` põe um anel na cabeça de cada traço, 2,4 mm abaixo da faixa (`gap`). O anel é um ponto vazado traçado na espessura da linha, com 3,6 mm de borda a borda (`capSize`), e o traço para na borda dele, então o fundo creme aparece no furo. `#asia[*]` nomeia todas as fichas que a grade pôs na página, então uma data acrescentada ou tirada no Markdown acrescenta ou tira o seu traço. Os conectores são postos depois dos blocos: quando uma fileira cresce, os traços continuam chegando às fichas. O fundo creme também é decoração, uma caixa ancorada ao pé da sangria cuja altura sobe até o pé de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`): ela acompanha a faixa.
 
 ### 4 · Desenhos no tamanho de impressão
 
@@ -48,9 +48,9 @@ Com `columns: 4`, cada faixa leva quatro datas lado a lado; as fichas ficam mais
 +const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
 
-### Setas no lugar dos pontos
+### Setas no lugar dos anéis
 
-`endCap: 'arrow'` põe uma ponta de seta onde cada traço chega à sua ficha, e `startCap: 'none'` tira os pontos.
+`endCap: 'arrow'` põe uma ponta de seta onde cada traço chega à sua ficha, e `startCap: 'none'` tira os anéis.
 
 ## Erros comuns
 

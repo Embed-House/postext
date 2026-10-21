@@ -9,7 +9,7 @@ aliases: ["timeline", "double page", "spread", "frise", "cronología", "年表",
 
 ## What you'll build
 
-Pages 48 and 49 of a lower-secondary history book: *The paper road*, a thousand years of papermaking from Cai Lun's workshop to Keller's grindstone. The left page opens with the title and two paragraphs, the right page with a box on how a sheet was made by hand. Across the middle runs the timeline: an indigo band for Asia, a terracotta band for Europe that starts on the left page and crosses the spine. Under it, six cards with a picture each, hung from the band by a dot and a drop. The template draws one Asian card, one European card and one connector per band: a grid lays a card for every date the Markdown gives, and the connector finds every card the grid laid. Every word is in the Markdown, in Spanish, English and Japanese.
+Pages 48 and 49 of a lower-secondary history book: *The paper road*, a thousand years of papermaking from Cai Lun's workshop to Keller's grindstone. The left page opens with the title and two paragraphs, the right page with a box on how a sheet was made by hand. Across the middle runs the timeline: an indigo band for Asia, a terracotta band for Europe that starts on the left page and crosses the spine. Under it, six cards with a picture each, hung from the band by a ring and a drop. The template draws one Asian card, one European card and one connector per band: a grid lays a card for every date the Markdown gives, and the connector finds every card the grid laid. Every word is in the Markdown, in Spanish, English and Japanese.
 
 ## Method
 
@@ -29,7 +29,7 @@ A group of `kind: 'grid'` with `repeat: { frames: ['asia'] }` lays the `asia` fr
 
 <Excerpt region="ticks" />
 
-The ticks are one `connector` per band in the template's `decoration`. `routing: 'tree'` joins one parent to many children; with `trunk: 0` it draws no bar of its own, only a straight drop from the band's foot to the middle of each card's top, and `startCap: 'dot'` puts the dot at the head of each drop, 2.4 mm under the band (`gap`). `#asia[*]` names every card the grid laid on the page, so a date added or removed in the Markdown adds or removes its drop. Connectors are laid after the frames, so when a row grows the drops still meet the cards. The cream ground is decoration too, a box anchored to the bleed's foot whose height runs up to the foot of `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), so it follows the band.
+The ticks are one `connector` per band in the template's `decoration`. `routing: 'tree'` joins one parent to many children; with `trunk: 0` it draws no bar of its own, only a straight drop from the band's foot to the middle of each card's top, and `startCap: 'ring'` puts a ring at the head of each drop, 2.4 mm under the band (`gap`). A ring is a hollow dot drawn in the line's width, 3.6 mm across its outer edge (`capSize`), and the drop stops at that edge, so the cream ground shows in the hole. `#asia[*]` names every card the grid laid on the page, so a date added or removed in the Markdown adds or removes its drop. Connectors are laid after the frames, so when a row grows the drops still meet the cards. The cream ground is decoration too, a box anchored to the bleed's foot whose height runs up to the foot of `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), so it follows the band.
 
 ### 4 · Pictures at the size they print
 
@@ -48,9 +48,9 @@ With `columns: 4` each band takes four dates side by side; the cards are narrowe
 +const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
 
-### Arrows instead of dots
+### Arrows instead of rings
 
-`endCap: 'arrow'` puts an arrowhead where each drop meets its card, and `startCap: 'none'` takes the dots away.
+`endCap: 'arrow'` puts an arrowhead where each drop meets its card, and `startCap: 'none'` takes the rings away.
 
 ## Pitfalls
 

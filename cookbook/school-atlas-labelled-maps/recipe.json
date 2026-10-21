@@ -53,7 +53,7 @@
     "bilingual-arabic-english-report"
   ],
   "engine": {
-    "postext": "1.48.0"
+    "postext": "1.49.0"
   },
   "kit": [
     "core",
@@ -164,5 +164,5 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-10-17",
-  "updated": "2026-10-20"
+  "updated": "2026-10-21"
 }

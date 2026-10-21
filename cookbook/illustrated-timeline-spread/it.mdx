@@ -9,7 +9,7 @@ aliases: ["linea del tempo", "cronologia", "doppia pagina", "modello di pagina",
 
 ## Che cosa comporrai
 
-Le pagine 48 e 49 di un libro di storia per la scuola media: *La via della carta*, mille anni di mestiere dalla bottega di Cai Lun alla mola di Keller. La pagina di sinistra apre con il titolo e due paragrafi, quella di destra con un riquadro che racconta come si faceva un foglio a mano. Al centro corre la linea del tempo: una fascia indaco per l’Asia e una color terracotta per l’Europa, che parte dalla pagina di sinistra e attraversa il dorso. Sotto, sei schede con il loro disegno, appese alla fascia con un punto e un tratto. Il modello disegna una scheda asiatica, una europea e un connettore per fascia: una griglia colloca una scheda per ogni data del Markdown e il connettore trova tutte le schede che la griglia ha collocato. Tutte le parole sono nel Markdown, in spagnolo, inglese e giapponese; questa pagina mostra l’edizione inglese.
+Le pagine 48 e 49 di un libro di storia per la scuola media: *La via della carta*, mille anni di mestiere dalla bottega di Cai Lun alla mola di Keller. La pagina di sinistra apre con il titolo e due paragrafi, quella di destra con un riquadro che racconta come si faceva un foglio a mano. Al centro corre la linea del tempo: una fascia indaco per l’Asia e una color terracotta per l’Europa, che parte dalla pagina di sinistra e attraversa il dorso. Sotto, sei schede con il loro disegno, appese alla fascia con un anello e un tratto. Il modello disegna una scheda asiatica, una europea e un connettore per fascia: una griglia colloca una scheda per ogni data del Markdown e il connettore trova tutte le schede che la griglia ha collocato. Tutte le parole sono nel Markdown, in spagnolo, inglese e giapponese; questa pagina mostra l’edizione inglese.
 
 ## Preparazione
 
@@ -29,7 +29,7 @@ Un gruppo `kind: 'grid'` con `repeat: { frames: ['asia'] }` colloca la cornice `
 
 <Excerpt region="ticks" />
 
-I tratti sono un `connector` per fascia nella decorazione (`decoration`) del modello. `routing: 'tree'` unisce un genitore a molti figli; con `trunk: 0` non disegna una barra propria, solo un tratto dritto dal piede della fascia al centro del bordo superiore di ogni scheda, e `startCap: 'dot'` mette il punto in testa a ogni tratto, 2,4 mm sotto la fascia (`gap`). `#asia[*]` indica tutte le schede che la griglia ha collocato sulla pagina, quindi una data aggiunta o tolta nel Markdown aggiunge o toglie il suo tratto. I connettori si collocano dopo le cornici: quando una fila cresce, i tratti arrivano comunque alle schede. Anche il fondo crema è decorazione, un riquadro ancorato al piede dell’abbondanza la cui altezza arriva fino al piede di `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`): segue la fascia.
+I tratti sono un `connector` per fascia nella decorazione (`decoration`) del modello. `routing: 'tree'` unisce un genitore a molti figli; con `trunk: 0` non disegna una barra propria, solo un tratto dritto dal piede della fascia al centro del bordo superiore di ogni scheda, e `startCap: 'ring'` mette un anello in testa a ogni tratto, 2,4 mm sotto la fascia (`gap`). L’anello è un punto vuoto tracciato nello spessore della linea, largo 3,6 mm da bordo a bordo (`capSize`), e il tratto si ferma al suo bordo: nel foro si vede il fondo crema. `#asia[*]` indica tutte le schede che la griglia ha collocato sulla pagina, quindi una data aggiunta o tolta nel Markdown aggiunge o toglie il suo tratto. I connettori si collocano dopo le cornici: quando una fila cresce, i tratti arrivano comunque alle schede. Anche il fondo crema è decorazione, un riquadro ancorato al piede dell’abbondanza la cui altezza arriva fino al piede di `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`): segue la fascia.
 
 ### 4 · Disegni alla misura di stampa
 
@@ -48,9 +48,9 @@ Con `columns: 4` ogni fascia porta quattro date una accanto all’altra; le sche
 +const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
 
-### Frecce al posto dei punti
+### Frecce al posto degli anelli
 
-`endCap: 'arrow'` mette una punta di freccia dove ogni tratto arriva alla sua scheda, e `startCap: 'none'` toglie i punti.
+`endCap: 'arrow'` mette una punta di freccia dove ogni tratto arriva alla sua scheda, e `startCap: 'none'` toglie gli anelli.
 
 ## Errori frequenti
 

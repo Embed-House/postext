@@ -370,6 +370,17 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
   };
   /** The frame's content does not fit, or it squeezes the frames after it. */
   const short = (c: Composition, name: string): boolean => overflows(c, name) || squeezes(c, name);
+  /** A line of the frame holds nothing but the head of a word divided
+   *  because it was wider than the measure (#1084): a hyphenated line with
+   *  no space in it. */
+  const dividesWord = (c: Composition, name: string): boolean => {
+    const ids = new Set(frameIn(c, name)?.blockIds ?? []);
+    for (const b of c.blocks) {
+      if (!ids.has(b.id)) continue;
+      for (const l of b.lines ?? []) if (l.hyphenated && !/\s/.test(l.text.trim())) return true;
+    }
+    return false;
+  };
   /** The ladder's last step (#859): the frame is cut at its foot and the
    *  rest goes on on another page, its text and pictures back at full
    *  size (they go on anyway). */
@@ -474,9 +485,45 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
     return { height: 'auto', minHeight: min };
   };
 
+  /** The frame's text may be set smaller (`fit.shrinkText`, a
+   *  `minScale` under 1) and it holds text. */
+  const textShrinks = (frame: ResolvedFrame): boolean => frame.fit.shrinkText && frame.fit.minScale < 1 && holdsText(frame);
+  /** The frame divides a word wider than its measure (#1084): a smaller
+   *  scale than the one its text has, down to `minScale`, that sets the
+   *  word whole and still fits wins; the largest such. When none does the
+   *  word stays divided: dividing is the last resort. */
+  const wordWhole = (frame: ResolvedFrame): void => {
+    const name = frame.name;
+    if (runs >= COMPOSE_BUDGET || !dividesWord(cur, name)) return;
+    const head = headOf(name);
+    const now = fit.text.get(head) ?? 1;
+    const scales = scaleSteps(frame.fit.minScale, now);
+    if (scales.length === 0) return;
+    const make = (s: number): FitState => withText(fit, head, s);
+    const whole = (c: Composition): boolean => !short(c, name) && !dividesWord(c, name);
+    if (!whole(compose(make(scales[scales.length - 1]!)))) return;
+    let lo = 0;
+    let hi = scales.length - 1; // whole at hi
+    while (lo < hi && runs < COMPOSE_BUDGET) {
+      const mid = Math.floor((lo + hi) / 2);
+      if (whole(compose(make(scales[mid]!)))) hi = mid;
+      else lo = mid + 1;
+    }
+    fit = make(scales[hi]!);
+    cur = compose(fit);
+  };
+
   for (const frame of template.frames) {
     const name = frame.name;
-    if (!short(cur, name) || runs >= COMPOSE_BUDGET) continue;
+    if (runs >= COMPOSE_BUDGET) continue;
+    if (!short(cur, name)) {
+      // A frame that fits, held to its height (a fixed one, or a
+      // `maxHeight`), may still divide a word wider than its measure
+      // (#1084): a one-line pill whose word went over two lines that its
+      // height holds. Its text is set smaller first.
+      if ((fixedHeight(frame) || frame.maxHeight) && textShrinks(frame)) wordWhole(frame);
+      continue;
+    }
     const steps: FrameFitStep[] = [];
     tried.set(name, steps);
     // 1. Free space: a fixed height grows to its maximum ('auto' heights
@@ -505,9 +552,13 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
     };
     // 5. The frame's text (its whole story), down to fit.minScale.
     const shrinkText = (): boolean => {
-      if (!frame.fit.shrinkText || frame.fit.minScale >= 1 || !holdsText(frame)) return false;
+      if (!textShrinks(frame)) return false;
       steps.push('shrinkText');
-      return searchScale(scaleSteps(frame.fit.minScale), (s) => withText(fit, headOf(name), s), name);
+      const scales = scaleSteps(frame.fit.minScale);
+      const make = (s: number): FitState => withText(fit, headOf(name), s);
+      if (!searchScale(scales, make, name)) return false;
+      wordWhole(frame);
+      return true;
     };
     // 6. Continuation on another page (`overflow.continueIn: 'next-page'`,
     //    `'template:<id>'` or `'page:<id>'`, #859). On a page added by
@@ -1731,8 +1782,9 @@ function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplat
           st!.cut = st!.L.end;
         }
       } else if (st && frame.style) {
-        // A styled frame with nothing (left) to hold still draws its box.
-        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, mirroredIn(frame), { boxHeight: laidH }));
+        // A styled frame with nothing (left) to hold still draws its box;
+        // an empty story's own frame (#1084) its tab and title too.
+        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, continuation, mirroredIn(frame), { boxHeight: laidH }));
       }
       // A frame cut below its least height overflows by the cut, holding
       // content or not (#911).

@@ -9,7 +9,7 @@ aliases: ["Zeitleiste", "Zeitstrahl", "Doppelseite", "Seitenvorlage", "Raster", 
 
 ## Was Sie setzen
 
-Die Seiten 48 und 49 eines Geschichtsbuchs für die Mittelstufe: *Der Weg des Papiers*, tausend Jahre Handwerk von Cai Luns Werkstatt bis zu Kellers Schleifstein. Die linke Seite beginnt mit dem Titel und zwei Absätzen, die rechte mit einem Kasten darüber, wie ein Bogen von Hand geschöpft wurde. Durch die Mitte läuft die Zeitleiste: ein indigoblaues Band für Asien und ein terrakottafarbenes für Europa, das auf der linken Seite beginnt und über den Bund läuft. Darunter hängen sechs Karten mit je einem Bild an einem Punkt und einem Strich vom Band. Die Vorlage zeichnet eine asiatische Karte, eine europäische und einen Verbinder je Band: Ein Raster legt für jedes Datum im Markdown eine Karte an, und der Verbinder findet jede Karte, die das Raster gelegt hat. Jedes Wort steht im Markdown, auf Spanisch, Englisch und Japanisch; diese Seite zeigt die englische Ausgabe.
+Die Seiten 48 und 49 eines Geschichtsbuchs für die Mittelstufe: *Der Weg des Papiers*, tausend Jahre Handwerk von Cai Luns Werkstatt bis zu Kellers Schleifstein. Die linke Seite beginnt mit dem Titel und zwei Absätzen, die rechte mit einem Kasten darüber, wie ein Bogen von Hand geschöpft wurde. Durch die Mitte läuft die Zeitleiste: ein indigoblaues Band für Asien und ein terrakottafarbenes für Europa, das auf der linken Seite beginnt und über den Bund läuft. Darunter hängen sechs Karten mit je einem Bild an einem Ring und einem Strich vom Band. Die Vorlage zeichnet eine asiatische Karte, eine europäische und einen Verbinder je Band: Ein Raster legt für jedes Datum im Markdown eine Karte an, und der Verbinder findet jede Karte, die das Raster gelegt hat. Jedes Wort steht im Markdown, auf Spanisch, Englisch und Japanisch; diese Seite zeigt die englische Ausgabe.
 
 ## Zubereitung
 
@@ -29,7 +29,7 @@ Eine Gruppe mit `kind: 'grid'` und `repeat: { frames: ['asia'] }` legt den Rahme
 
 <Excerpt region="ticks" />
 
-Die Striche sind ein `connector` je Band in der Dekoration (`decoration`) der Vorlage. `routing: 'tree'` verbindet ein Elternelement mit vielen Kindern; mit `trunk: 0` zeichnet er keinen eigenen Balken, nur einen geraden Strich vom Fuß des Bands zur Mitte der Oberkante jeder Karte, und `startCap: 'dot'` setzt den Punkt an den Kopf jedes Strichs, 2,4 mm unter dem Band (`gap`). `#asia[*]` meint jede Karte, die das Raster auf der Seite gelegt hat: Ein Datum, das im Markdown hinzukommt oder wegfällt, bringt seinen Strich mit oder nimmt ihn mit. Verbinder werden nach den Rahmen gesetzt, sodass die Striche die Karten auch dann treffen, wenn eine Reihe wächst. Auch der cremefarbene Grund ist Dekoration, ein Rechteck, das am Fuß des Anschnitts verankert ist und dessen Höhe bis zum Fuß von `#band-1` reicht (`size: { height: { to: '#band-1', edge: 'bottom' } }`): Er folgt dem Band.
+Die Striche sind ein `connector` je Band in der Dekoration (`decoration`) der Vorlage. `routing: 'tree'` verbindet ein Elternelement mit vielen Kindern; mit `trunk: 0` zeichnet er keinen eigenen Balken, nur einen geraden Strich vom Fuß des Bands zur Mitte der Oberkante jeder Karte, und `startCap: 'ring'` setzt einen Ring an den Kopf jedes Strichs, 2,4 mm unter dem Band (`gap`). Der Ring ist ein hohler Punkt in der Stärke der Linie, außen 3,6 mm breit (`capSize`), und der Strich endet an seinem Rand, sodass im Loch der cremefarbene Grund zu sehen ist. `#asia[*]` meint jede Karte, die das Raster auf der Seite gelegt hat: Ein Datum, das im Markdown hinzukommt oder wegfällt, bringt seinen Strich mit oder nimmt ihn mit. Verbinder werden nach den Rahmen gesetzt, sodass die Striche die Karten auch dann treffen, wenn eine Reihe wächst. Auch der cremefarbene Grund ist Dekoration, ein Rechteck, das am Fuß des Anschnitts verankert ist und dessen Höhe bis zum Fuß von `#band-1` reicht (`size: { height: { to: '#band-1', edge: 'bottom' } }`): Er folgt dem Band.
 
 ### 4 · Bilder in ihrer Druckgröße
 
@@ -48,9 +48,9 @@ Mit `columns: 4` trägt jedes Band vier Daten nebeneinander; die Karten werden s
 +const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
 
-### Pfeile statt Punkte
+### Pfeile statt Ringe
 
-`endCap: 'arrow'` setzt eine Pfeilspitze dorthin, wo jeder Strich seine Karte trifft, und `startCap: 'none'` nimmt die Punkte weg.
+`endCap: 'arrow'` setzt eine Pfeilspitze dorthin, wo jeder Strich seine Karte trifft, und `startCap: 'none'` nimmt die Ringe weg.
 
 ## Häufige Fehler
 

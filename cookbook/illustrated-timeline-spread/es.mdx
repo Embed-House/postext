@@ -9,7 +9,7 @@ aliases: ["cronología", "línea del tiempo", "doble página", "plantilla de pá
 
 ## Lo que vas a componer
 
-Las páginas 48 y 49 de un libro de Geografía e Historia de 2.º de ESO: *La ruta del papel*, mil años de oficio desde el taller de Cai Lun hasta la muela de Keller. La página par abre con el título y dos párrafos; la impar, con un recuadro que cuenta cómo se hacía una hoja a mano. Por el centro corre la cronología: una banda añil para Asia y otra terracota para Europa, que empieza en la página par y cruza el lomo. Debajo, seis fichas con su dibujo, colgadas de la banda por un punto y un trazo. La plantilla dibuja una ficha asiática, una europea y un conector por banda: una rejilla coloca una ficha por cada fecha del Markdown y el conector encuentra todas las fichas que ha colocado. Todas las palabras están en el Markdown, en castellano, inglés y japonés.
+Las páginas 48 y 49 de un libro de Geografía e Historia de 2.º de ESO: *La ruta del papel*, mil años de oficio desde el taller de Cai Lun hasta la muela de Keller. La página par abre con el título y dos párrafos; la impar, con un recuadro que cuenta cómo se hacía una hoja a mano. Por el centro corre la cronología: una banda añil para Asia y otra terracota para Europa, que empieza en la página par y cruza el lomo. Debajo, seis fichas con su dibujo, colgadas de la banda por un anillo y un trazo. La plantilla dibuja una ficha asiática, una europea y un conector por banda: una rejilla coloca una ficha por cada fecha del Markdown y el conector encuentra todas las fichas que ha colocado. Todas las palabras están en el Markdown, en castellano, inglés y japonés.
 
 ## Elaboración
 
@@ -29,7 +29,7 @@ Un grupo `kind: 'grid'` con `repeat: { frames: ['asia'] }` coloca el marco `asia
 
 <Excerpt region="ticks" />
 
-Los trazos son un `connector` por banda en la decoración (`decoration`) de la plantilla. `routing: 'tree'` une un padre con muchos hijos; con `trunk: 0` no dibuja barra propia, solo un trazo recto desde el pie de la banda hasta el centro del borde superior de cada ficha, y `startCap: 'dot'` pone el punto en la cabeza de cada trazo, 2,4 mm por debajo de la banda (`gap`). `#asia[*]` nombra todas las fichas que la rejilla ha colocado en la página, así que una fecha que se añade o se quita en el Markdown añade o quita su trazo. Los conectores se colocan después de los marcos: cuando una fila crece, los trazos siguen llegando a las fichas. El fondo crema también es decoración: una caja anclada al pie del sangrado cuya altura llega hasta el pie de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), de modo que sigue a la banda.
+Los trazos son un `connector` por banda en la decoración (`decoration`) de la plantilla. `routing: 'tree'` une un padre con muchos hijos; con `trunk: 0` no dibuja barra propia, solo un trazo recto desde el pie de la banda hasta el centro del borde superior de cada ficha, y `startCap: 'ring'` pone un anillo en la cabeza de cada trazo, 2,4 mm por debajo de la banda (`gap`). El anillo es un punto hueco trazado con el grosor de la línea, de 3,6 mm de borde a borde (`capSize`), y el trazo se para en su borde, así que en el hueco se ve el fondo crema. `#asia[*]` nombra todas las fichas que la rejilla ha colocado en la página, así que una fecha que se añade o se quita en el Markdown añade o quita su trazo. Los conectores se colocan después de los marcos: cuando una fila crece, los trazos siguen llegando a las fichas. El fondo crema también es decoración: una caja anclada al pie del sangrado cuya altura llega hasta el pie de `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), de modo que sigue a la banda.
 
 ### 4 · Dibujos al tamaño de impresión
 
@@ -48,9 +48,9 @@ Con `columns: 4` cada banda lleva cuatro fechas una al lado de otra; las fichas 
 +const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
 
-### Flechas en lugar de puntos
+### Flechas en lugar de anillos
 
-`endCap: 'arrow'` pone una punta de flecha donde cada trazo llega a su ficha, y `startCap: 'none'` quita los puntos.
+`endCap: 'arrow'` pone una punta de flecha donde cada trazo llega a su ficha, y `startCap: 'none'` quita los anillos.
 
 ## Errores frecuentes
 
