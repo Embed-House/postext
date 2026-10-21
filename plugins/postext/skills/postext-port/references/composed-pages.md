@@ -410,6 +410,45 @@ What the extraction decides, so you know what to check:
   span is compared with a render of the page without text: a copy drawn
   under a picture or a fill, clipped away or off the page is left out and
   listed under `hiddenTexts` in the report.
+- **Slanted romans** (skill 1.61). A source that obliques an upright face
+  (a sheared text matrix) instead of setting its italic is read from each
+  character's box: a shear of 0.15 or more is italic, written `*…*`, and
+  `report.json` counts the runs per face under `syntheticItalic`. The
+  project then needs that family's italic among its fonts.
+- **Bold and italic** (skill 1.61). The marks of a paragraph are measured
+  against its frame's body (the weight and slant most of the frame's text
+  has): a paragraph set wholly in bold in a regular box comes out as
+  `**…**`, and a frame set wholly in italic gets `body.italic` with no `*`.
+- **Frame titles** (skill 1.61). The first paragraph of a box or text
+  frame is its title (a heading in the frame) when it has at most two lines
+  and fifteen words, text follows it, and it is wholly bold, 1.12 times the
+  size of that text or more, or in another colour. A title at heading size
+  takes that size's level; one at body size goes a level under the
+  smallest heading size (two when it is not bold).
+- **Spaces** (skill 1.61). En (U+2002) and em (U+2003) spaces the source
+  sets are kept. In headings, running heads and tab labels each gap
+  between words is measured, less the line's letter spacing: over half an
+  em and 1.6 times the narrowest other word space of the line is an en
+  space, over 0.8 em an em space (the room between a number and its
+  title, a chip and its words); spaced capitals stay plain. A paragraph opened by a highlight keeps the measured room after
+  it the same way; with `--highlights chip` that room is the chip style's
+  `gap` instead (in em, when wider than 0.4 em). A narrow gap inside a
+  number or before its sign or unit (`1 000`, `21 %`, `5 mm`, often set by
+  position with no space character) becomes a narrow no-break space
+  (U+202F), so the number never breaks; thin spaces before `; : ! ?` and
+  inside `« »` do too. A plain space beside a fixed one is dropped.
+- **Lists** (skill 1.61). A line opened by a bullet (`•·▪■●◦‣►▸◆`) is a
+  list item; the bullets' left edges in a frame, grouped within 1.5 mm,
+  are the levels, so an item whose bullet sits further in is nested
+  (`  - ` under the item above). The frame's style gets `lists` from its
+  top-level bullets: `bulletChar`, `color` (the bullets' most common),
+  `indent`, `gap` (from the bullet's advance to the words),
+  `bulletFontSize` (em of the item text), `bulletFontWeight` and
+  `itemSpacing` (the room between two items over their leading). Each level's bullet goes to
+  `suggested.unorderedLists` (`bulletChar`, `color`, `levels[]` with `bulletChar`,
+  `fontSize`, `fontWeight`), which `manifest` writes into the config: keep
+  it, since a box whose `lists.bulletChar` differs from the document's
+  replaces every level's bullet with its own.
 - **Shapes.** Large white fills are cards; filled or
   stroked rectangles and rounded rectangles that hold text or pictures are
   boxes; a shape 4–13 mm high holding one line of up to ten words is a tab
@@ -417,7 +456,14 @@ What the extraction decides, so you know what to check:
   a heading in it: the title frame that `takes` the level); a rectangle
   under many drawn shapes is a map's ground, not a box; wide coloured
   strokes or fills hugging words are highlights (`:mark`, or `:chip` with
-  `--highlights chip`). A shape a render does not show is not read, and
+  `--highlights chip`). From skill 1.61 a fill over words of one line that
+  runs on past it is a highlight too, never a box (a band with room round
+  its words marks whole words only), the highlighted words do not count in
+  the line's look, so a mark that ends mid-paragraph does not part it, and
+  a borderless fill of the colour behind it under one or two lines is a
+  mask: no frame, no decoration. A last pass joins text frames one under
+  the other in the same look and leading with nothing between them.
+  A shape a render does not show is not read, and
   from skill 1.60 neither is art no pixel of its colour shows (lettering
   under a white panel painted after it, a drawing in the bleed, art clipped
   away): it makes no picture, no box's art and no decoration.
@@ -532,6 +578,13 @@ What the extraction decides, so you know what to check:
   the source centres it, and laid over the box's pictures (a longer
   translation runs over the next row, not under it). The box keeps the rest
   of its words; with none, its fence stays empty (it draws its box, 1.49.1).
+  From skill 1.61 a single caption under a single picture is read the same
+  way when it is set unlike the box's text (size, slant or colour) or
+  centred on the picture; its frame comes right after the picture in
+  reading order. A caption set smaller than the box's text, at most 3 mm
+  under its picture and no wider than it, is the picture's own resource
+  `caption` instead, with no frame (Markdown in a frame by
+  default, a resource caption when small and attached to the picture).
 - **Label hygiene** (`anchors.py`, `pdf_regions.py`). The same text printed
   twice at one point (within 0.5 mm: two grids of degree figures laid one
   over the other, in two sizes) is one label, the larger size kept, with a
@@ -559,10 +612,22 @@ What the extraction decides, so you know what to check:
   are anchored to it (`left-of` / `right-of`, ids `head-odd-ornament-N`,
   `when: "head"` so they go with the head on a page that sets none) and the
   head is as wide as its words; the fold keeps them on the shell with it.
+  From skill 1.61 a line is furniture only when the same place and look
+  come back on another page of the run (a running head set large too), or,
+  set below heading size, when the page prints a folio: a section heading
+  near the foot, or a lone source line in the margin, stays in the text.
 - **Faces.** The PDF's font names are matched to the PostScript names of
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report
   lists every match.
+  From skill 1.61 the style part is read from every form producers write
+  (`Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`, `ArialBold`); a face
+  takes the heavier of the file's weight and the one its name or bold flag
+  says, and either slant; a file with no OS/2 weight takes its name's; a
+  prefix match only joins faces whose names say the same weight and slant.
+  A run is bold at 150 over its paragraph's base and at least 500. When
+  every face comes out at one weight although the names say several, the
+  run prints a `WARNING` and `report.json` lists it under `warnings`.
 
 Also decided by the drafting, checked on a real textbook in three languages:
 
