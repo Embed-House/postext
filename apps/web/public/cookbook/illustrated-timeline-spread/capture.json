@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "illustrated-timeline-spread",
-  "sourceHash": "02c95cdca06fa44247908b36e4c3d135b87915d56790eed725e302a654fd7bbe",
+  "sourceHash": "e1b5903d46bba2db6125eb8e9dd46946be231b3a81131411040f070e42882ce3",
   "engine": {
-    "postext": "1.48.0",
-    "postextPdf": "1.48.0",
+    "postext": "1.49.0",
+    "postextPdf": "1.49.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-20T20:39:00.223Z",
+  "capturedAt": "2026-10-21T05:22:09.334Z",
   "variants": {
     "en": {
-      "hash8": "db520a14",
+      "hash8": "0268326f",
       "vdtHash": "fb3a73b64e2b429f88af05d004d869bbe1ac483a",
       "timings": {
-        "importMs": 4779,
-        "fontsMs": 3332,
-        "buildMs": 79,
-        "totalMs": 10521,
+        "importMs": 1980,
+        "fontsMs": 494,
+        "buildMs": 90,
+        "totalMs": 3826,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 107198,
+          "bytes": 107364,
           "alt": "Page 48: The paper road."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117490,
+          "bytes": 117488,
           "alt": "Page 49."
         }
       ],
@@ -84,12 +84,12 @@
       },
       "pdf": {
         "file": "illustrated-timeline-spread.pdf",
-        "bytes": 987252,
+        "bytes": 987283,
         "pages": 2
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 977505,
+        "bytes": 977462,
         "folio": "c666e036",
         "chapters": [
           {
@@ -372,11 +372,6 @@
             "detail": "every element came back to its source: 24 block, 14 frame, 86 line, 2 text"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -385,13 +380,13 @@
       }
     },
     "es": {
-      "hash8": "74c380ed",
+      "hash8": "dc7d0644",
       "vdtHash": "e8daf4ae63733680e981ccc1ccde383ae4891c3b",
       "timings": {
-        "importMs": 5042,
-        "fontsMs": 1240,
-        "buildMs": 104,
-        "totalMs": 8143,
+        "importMs": 5300,
+        "fontsMs": 1948,
+        "buildMs": 86,
+        "totalMs": 8902,
         "builds": 1
       },
       "specimen": {
@@ -423,7 +418,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 109344,
+          "bytes": 109488,
           "alt": "Página 48: La ruta del papel."
         },
         {
@@ -434,7 +429,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118704,
+          "bytes": 118814,
           "alt": "Página 49."
         }
       ],
@@ -458,12 +453,12 @@
       },
       "pdf": {
         "file": "illustrated-timeline-spread.pdf",
-        "bytes": 988123,
+        "bytes": 988161,
         "pages": 2
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 978004,
+        "bytes": 977875,
         "folio": "c666e036",
         "chapters": [
           {
@@ -756,16 +751,6 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La hoja se prensa entre fieltros y se cuelga par…”"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -774,13 +759,13 @@
       }
     },
     "ja": {
-      "hash8": "e403924a",
+      "hash8": "671d6ece",
       "vdtHash": "c9b661e94c2d2a33ed046a29bb2ac52e3d8b4ca8",
       "timings": {
-        "importMs": 5691,
-        "fontsMs": 5046,
-        "buildMs": 97,
-        "totalMs": 12591,
+        "importMs": 2144,
+        "fontsMs": 1889,
+        "buildMs": 81,
+        "totalMs": 5566,
         "builds": 1
       },
       "specimen": {
@@ -812,7 +797,7 @@
           "h": 1224,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85242,
+          "bytes": 85406,
           "alt": "48ページ：紙がたどった道。"
         },
         {
@@ -823,7 +808,7 @@
           "h": 1224,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 95874,
+          "bytes": 95938,
           "alt": "49ページ。"
         }
       ],
@@ -847,12 +832,12 @@
       },
       "pdf": {
         "file": "illustrated-timeline-spread.pdf",
-        "bytes": 1115662,
+        "bytes": 1115711,
         "pages": 2
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 976177,
+        "bytes": 976041,
         "folio": "c666e036",
         "chapters": [
           {
@@ -1136,16 +1121,6 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 24 block, 14 frame, 64 line, 2 text"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",
