@@ -37,7 +37,9 @@ What `extract` reads on every page:
   picture's lettering: the picture is cut at --dpi with all text removed
   and its words become anchors and `::label` lines (anchors.py). A picture
   with transparency is taken from the PDF with its alpha, so text can run
-  round its outline (`wrap: "contour"`).
+  round its outline (`wrap: "contour"`). Thin lines inside a cluster of art
+  are its own (a chart's axes and grid); a chart (regular ticks with an
+  axis or a turned title) keeps all its words in its cut and lifts no labels.
 - **Lines and furniture as vectors** (round 2; `--raster-ground` keeps the
   round-1 JPEG ground): thin straight strokes are lines (line_art.py): a
   tree's bar, trunk and drops become a `tree` connector, two or three
@@ -724,8 +726,26 @@ def thin_gaps(chars: list[Char]) -> list[Char]:
     return out
 
 
+def _edge_char(line: Line, last: bool) -> Char:
+    ink = [c for c in line.chars if c.c.strip()] or line.chars
+    return ink[-1] if last else ink[0]
+
+
+def same_run(a: Char, b: Char) -> bool:
+    """Two characters of one run of type: the same face, size (within
+    0.25 pt) and colour."""
+    return a.family == b.family and abs(a.size - b.size) <= 0.25 and a.color == b.color
+
+
 def merge_pieces(pieces: list[Line]) -> list[Line]:
-    """Join the pieces MuPDF splits one printed line into."""
+    """Join the pieces MuPDF splits one printed line into, on one baseline
+    and upright. Two numbers or single letters (`tick_text`) join only in
+    one face, size (within 0.25 pt) and colour, less than 0.3 em apart: a
+    chart's ticks stay apart, a number set in pieces (`1` `000`) is one.
+    Words join less than an em apart (a heading's en and em gaps, a chip's
+    number before its words) when their sizes match where they meet. Two
+    digits are never joined by a space (`5 0` was the 5 and the 0 of two
+    ticks)."""
     pieces = sorted(pieces, key=lambda l: (round(l.base, 1), l.x0))
     out: list[Line] = []
     for p in pieces:
@@ -736,13 +756,21 @@ def merge_pieces(pieces: list[Line]) -> list[Line]:
                     continue
                 gap = p.x0 - q.x1
                 tol = max(p.size_mm, q.size_mm)
-                if abs(p.base - q.base) < 0.3 * tol and -0.3 * tol < gap < 1.0 * tol:
+                if abs(p.base - q.base) >= 0.3 * tol or gap <= -0.3 * tol:
+                    continue
+                a, b = _edge_char(q, True), _edge_char(p, False)
+                if tick_text(q.plain) and tick_text(p.plain):
+                    joins = same_run(a, b) and gap < 0.3 * tol      # two ticks of a chart stay apart
+                else:      # words: an en or em gap set by position, a chip's number before its words
+                    joins = gap < 1.0 * tol and (abs(a.size - b.size) <= 0.25 or gap < 0.12 * tol)
+                if joins:
                     host = q
                     break
         if host is None:
             out.append(p)
             continue
-        if p.x0 - host.x1 > 0.12 * host.size_mm and host.chars[-1].c != " " and p.chars[0].c != " ":
+        digits = _edge_char(host, True).c.isdigit() and _edge_char(p, False).c.isdigit()
+        if not digits and p.x0 - host.x1 > 0.12 * host.size_mm and host.chars[-1].c != " " and p.chars[0].c != " ":
             last = host.chars[-1]
             host.chars.append(Char(" ", last.x1, last.y0, p.x0, last.y1, last.oy, last.family, last.weight,
                                    last.italic, last.size, last.color))
@@ -1100,7 +1128,9 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
             items.append({"box": im["box"], "n": 1, "images": [im]})
         else:
             big.append(im)
-    clusters = cluster_boxes(items, opts.art_gap)
+    clusters = join_lines(cluster_boxes(items, opts.art_gap),
+                          [s for s in out["lines"] if not in_tab(s.box)], opts.art_gap,
+                          [s.box for s in out["boxes"]] + [t.box for t in tabs])
     pictures = []
     for im in big:
         pictures.append({"box": im["box"], "images": [im], "vector": 0})
@@ -1219,6 +1249,48 @@ def cluster_boxes(items: list[dict], gap: float) -> list[dict]:
         out.append({"box": union([x["box"] for x in g]), "n": sum(x["n"] for x in g),
                     "images": [im for x in g for im in x["images"]]})
     return out
+
+
+def join_lines(clusters: list[dict], lines: list, gap: float, stops: list | None = None) -> list[dict]:
+    """Clusters of art with the thin lines that belong to them (a chart's
+    axes, grid and ticks, a map's scale bar): a line joins the clusters it
+    touches (within `gap` mm) when it lies inside their joint box grown by
+    a tenth of its own length (2.5 mm at least), or when half of it lies in
+    that box and the rest reaches none of the `stops` (the boxes and tabs
+    of the page, as mm boxes) outside it. Lines read as lines since round 2
+    held a chart together no more, so its bars came out as pictures of
+    their own. A line that runs on out of the art to a box (a pointer to a
+    note) or far past it (a rule past an icon) joins nothing. Each line
+    joined counts as a shape of the cluster; lines alone make no cluster."""
+    stops = list(stops or [])
+    clusters = [dict(c, lines=c.get("lines", 0)) for c in clusters]
+    pending = sorted(lines, key=lambda s: s.seq)
+    changed = True
+    while changed and pending:
+        changed = False
+        for s in list(pending):
+            b = s.box
+            near = (b[0] - gap, b[1] - gap, b[2] + gap, b[3] + gap)
+            touched = [c for c in clusters if near[0] <= c["box"][2] and c["box"][0] <= near[2]
+                       and near[1] <= c["box"][3] and c["box"][1] <= near[3]]
+            if not touched:
+                continue
+            joint = union([c["box"] for c in touched])
+            r = max(2.5, 0.1 * max(s.w, s.h))
+            if not inside_mm(b, joint, r):
+                thick = (b[0] - 0.1, b[1] - 0.1, b[2] + 0.1, b[3] + 0.1)
+                if inter(thick, grow(joint, gap)) < 0.5 * area(thick):
+                    continue
+                reach = grow(b, 2.5)
+                if any(inter(reach, t) > 0 and not inside_mm(t, joint, gap) for t in stops):
+                    continue
+            merged = {"box": union([joint, b]), "n": sum(c["n"] for c in touched) + 1,
+                      "images": [im for c in touched for im in c["images"]],
+                      "lines": sum(c["lines"] for c in touched) + 1}
+            clusters = [c for c in clusters if not any(c is t for t in touched)] + [merged]
+            pending.remove(s)
+            changed = True
+    return sorted(clusters, key=lambda c: (round(c["box"][1], 2), round(c["box"][0], 2)))
 
 
 def merge_pictures(pics: list[dict]) -> list[dict]:
@@ -1700,6 +1772,10 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             if not extra:
                 break
             p["box"] = union([p["box"]] + extra)
+    # a chart keeps its lettering: ticks, month letters and axis titles stay in its cut
+    for p in pictures:
+        if chart_guard(p, lines, sh.get("lines", []), opts.label_reach, tabs):
+            report["notes"].append(f"a chart at {r2(p['box'])}: its lettering stays in the cut, no labels")
     # every line to its owner
     owners: dict[int, Any] = {}
     for l in lines:
@@ -1713,8 +1789,9 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         for p in pictures:
             if inside_mm(l.box, p["box"], 1.0):
                 bg = container_bg(p["box"])
-                # a word on the art, or a short one set on the picture's margin (a map's degrees)
-                if few_words(l.plain) or renders.ink_fraction(to_pt(l.box, origin), bg) >= opts.label_ink:
+                # a word on the art, or a short one set on the picture's margin (a map's degrees);
+                # every word of a chart
+                if p.get("chart") or few_words(l.plain) or renders.ink_fraction(to_pt(l.box, origin), bg) >= opts.label_ink:
                     cands.append((area(p["box"]), "picture", p))
         if cands:
             owners[id(l)] = min(cands, key=lambda c: c[0])[1:]
@@ -1744,6 +1821,8 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     for p in pictures:
         f = Frame("picture", p["box"], picture=p)
         f.lines = [l for l in lines if owners[id(l)] == ("picture", p)]
+        if p.get("chart"):
+            f.chart_lines, f.lines = f.lines, []     # in the cut, not labels
         if f.lines:
             f.kind = "figure"
         frames.append(f)
@@ -2119,6 +2198,87 @@ def few_words(text: str) -> bool:
     return len(text.split()) <= 3 or sum(ch.isalpha() for ch in text) <= 6
 
 
+_TICK_NUMBER = re.compile(r"[-+−–]?\d[\d.,   ]*%?")
+
+
+def tick_text(text: str) -> bool:
+    """A chart's tick: a number (`10`, `-2,5`, `40 %`) or one letter (a
+    month's initial). Degrees (`20°N`) are a map's, not a tick."""
+    t = text.strip()
+    if len(t) == 1:
+        return t.isalpha() or t.isdigit()
+    return bool(t) and len(t) <= 12 and _TICK_NUMBER.fullmatch(t) is not None
+
+
+def regular_ticks(lines: list[Line], least: int = 3) -> int:
+    """How many tick lines (`tick_text`) stand in regular rows or columns: a
+    row of `least` or more on one baseline, or a column on one right edge or
+    centre, at an even step (each within 30 % of the median)."""
+    ticks = [l for l in lines if not l.rotate and tick_text(l.plain)]
+    taken: set[int] = set()
+    keys = ((lambda l: l.base, lambda l: (l.x0 + l.x1) / 2),       # a row: one baseline, along x
+            (lambda l: l.x1, lambda l: l.base),                    # a column set flush right
+            (lambda l: (l.x0 + l.x1) / 2, lambda l: l.base))        # a column centred
+    for key, along in keys:
+        run: list[Line] = []
+        for l in sorted(ticks, key=key) + [None]:
+            if l is not None and run and abs(key(l) - key(run[-1])) <= 0.6:
+                run.append(l)
+                continue
+            if len(run) >= least:
+                pos = sorted(along(m) for m in run)
+                steps = [b - a for a, b in zip(pos, pos[1:])]
+                med = statistics.median(steps)
+                if med > 0.5 and all(abs(s - med) <= 0.3 * med for s in steps):
+                    taken |= {id(m) for m in run}
+            run = [l] if l is not None else []
+    return len(taken)
+
+
+def chart_guard(p: dict, lines: list[Line], line_shapes: list, reach: float, tabs: list) -> bool:
+    """Is picture `p` a chart? Six tick lines or more in regular rows or
+    columns (`regular_ticks`), with an axis (a line across half its width
+    or down half its height) or a turned axis title. A chart keeps its
+    lettering in its cut (`p["chart"]`): its box takes in the ticks, the
+    turned titles within 8 mm of its edge and the short words within 6 mm
+    (`reach` when larger), and it lifts no
+    labels. A map's degrees (`20°N`) are no ticks."""
+    box = p["box"]
+    held = [l for l in lines if inside_mm(l.box, box, 1.0)]
+    if regular_ticks(held) < 6:
+        return False
+    w, h = box[2] - box[0], box[3] - box[1]
+    axis = False
+    for s in line_shapes:
+        if not inside_mm(s.box, box, 1.0):
+            continue
+        for g in s.segs:
+            if (g.axis == "h" and g.length >= 0.5 * w) or (g.axis == "v" and g.length >= 0.5 * h):
+                axis = True
+    near = (box[0] - reach, box[1] - reach, box[2] + reach, box[3] + reach)
+    turned = any(l.rotate and inter(l.box, near) > 0 for l in lines)
+    if not (axis or turned):
+        return False
+    for _ in range(8):
+        wide = grow(p["box"], max(reach, 6.0))      # an axis title stands off the figures
+        wider = grow(p["box"], max(reach, 8.0))     # a turned one off the figures up the side
+        extra = [l.box for l in lines if not inside_mm(l.box, p["box"], 1.0)
+                 and ((l.rotate and inter(l.box, wider) > 0)
+                      or (inter(l.box, wide) > 0 and (tick_text(l.plain) or few_words(l.plain))))
+                 and not any(inside_mm(l.box, t.box, 1.0) for t in tabs)]
+        if not extra:
+            break
+        p["box"] = union([p["box"]] + extra)
+    p["chart"] = True
+    return True
+
+
+def own_lines(f: Any) -> list:
+    """The lines a picture's cut must hold whole: its labels, and the
+    lettering a chart keeps in its cut."""
+    return list(f.lines) + list(getattr(f, "chart_lines", None) or [])
+
+
 def text_blocks(lines: list[Line], frames: list[Frame]) -> list[list[Line]]:
     """Paragraphs of free text grouped into blocks: one under another, the
     same left edge (or centre), no frame between them."""
@@ -2435,6 +2595,7 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
         if cards and f.zone >= 0:
             cb = cards[f.zone].box
             clipped = (max(f.box[0], cb[0]), max(f.box[1], cb[1]), min(f.box[2], cb[2]), min(f.box[3], cb[3]))
+            clipped = keep_lines(clipped, f)
             if clipped != tuple(f.box) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
                 f.box = clipped
         # likewise no further than the inside of the box that holds it (its rule is the frame's),
@@ -2443,12 +2604,14 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
         for edge in ([inner_round(holder)[0]] if holder is not None else []) + [art_ground(f.box, art or [])]:
             if edge is None:
                 continue
-            clipped = meet_box(f.box, edge)
+            clipped = keep_lines(meet_box(f.box, edge), f)
             if clipped != tuple(f.box) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
                 f.box = clipped
         one = fitz.open(str(pdf_path))
         page = one[pno]
-        page.add_redact_annot(page.rect, fill=False)
+        # all the text leaves the cut; a chart keeps the lettering inside its box
+        for r in (outside_rects(page.rect, to_pt(grow(f.box, 0.3), origin)) if getattr(f, "chart_lines", None) else [page.rect]):
+            page.add_redact_annot(r, fill=False)
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE, graphics=fitz.PDF_REDACT_LINE_ART_NONE,
                               text=fitz.PDF_REDACT_TEXT_REMOVE)
         remove = list(remove or [])
@@ -2517,6 +2680,29 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
     if alpha:
         res["contour"] = {"threshold": 0.5, "margin": mmv(1.5)}
     return res
+
+
+def keep_lines(clipped: tuple, f: Frame) -> tuple:
+    """A cut's box clipped to its card, holder or art ground, grown back over
+    the picture's own lines (`own_lines`) inside its first box: a clip never
+    cuts a label off (the anchors would then be pinned to the edge)."""
+    ls = [l.box for l in own_lines(f) if inter(l.box, f.box) > 0]
+    if not ls:
+        return clipped
+    return meet_box(union([clipped] + ls), f.box)
+
+
+def grow(b: tuple, d: float) -> tuple:
+    return (b[0] - d, b[1] - d, b[2] + d, b[3] + d)
+
+
+def outside_rects(page_rect: Any, box: Any) -> list:
+    """The page round `box` (pt) as up to four rectangles: above, below,
+    left and right of it."""
+    P = fitz.Rect(page_rect)
+    out = [fitz.Rect(P.x0, P.y0, P.x1, box.y0), fitz.Rect(P.x0, box.y1, P.x1, P.y1),
+           fitz.Rect(P.x0, box.y0, box.x0, box.y1), fitz.Rect(box.x1, box.y0, P.x1, box.y1)]
+    return [r for r in out if r.width > 0 and r.height > 0]
 
 
 def holder_of(box: tuple, boxes: list, over: set | None = None) -> Shape | None:
@@ -2691,8 +2877,8 @@ def trim_to_ink(page: fitz.Page, f: Frame, origin: tuple, background: str | None
     px = PT_MM / k
     ink = (f.box[0] + got[0] * px - margin, f.box[1] + got[1] * px - margin,
            f.box[0] + got[2] * px + margin, f.box[1] + got[3] * px + margin)
-    if f.lines:
-        ink = union([ink] + [l.box for l in f.lines])
+    if own_lines(f):
+        ink = union([ink] + [l.box for l in own_lines(f)])
     box = list(f.box)
     for i in (0, 1):
         if ink[i] - box[i] >= least:

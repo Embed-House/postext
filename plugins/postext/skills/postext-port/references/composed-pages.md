@@ -458,7 +458,8 @@ What the extraction decides, so you know what to check:
   size off the last one's foot, so it grows with them: never an empty
   `:::frame`), loose shapes (icons, chevrons: `path` elements), lines that
   join nothing (`path`), and `connector`s. Thin strokes (`--line-width`,
-  2 pt) straight across or down are lines, never boxes or a picture's art:
+  2 pt) straight across or down are lines, never boxes (inside a cluster of
+  art they are the picture's: a chart's axes, a scale bar):
   a bar with one trunk to a frame and drops to two or more is a `tree`
   (each end found by walking the line to the first frame it reaches, the
   bar's place as `trunk`, a drop's place as `at`); two or three segments
@@ -520,6 +521,26 @@ What the extraction decides, so you know what to check:
   map's white masks, a neighbour's strip, white paper round a drawing:
   `regions.json` has the trimmed box). A cluster that paints nothing of its
   own (white shapes, a plate's corner) is no picture (`report.json` notes).
+- **Charts keep their lettering** (skill 1.61). Thin lines join the
+  clusters of art they touch when they lie inside them (a tenth of their
+  length past them at most) or half inside with the rest reaching no box: a
+  chart's axes, grid and ticks hold its bars together again, and a pointer
+  that runs out to a note joins nothing. A picture with six numbers or
+  single letters or more in regular rows or columns (ticks, a month's
+  initials; a map's `20°N` is no tick) and an axis across half its width or
+  down half its height, or a turned axis title, is a chart: its box takes in
+  the ticks, the axis titles (turned ones within 8 mm) and the short words
+  within 6 mm, all its words stay printed in its cut (the text outside its
+  box is removed), and it lifts no labels (`report.json` notes each chart).
+  Redraw a chart for other editions by hand, or cut it per edition.
+- **Pieces of a line** (skill 1.61). The pieces MuPDF splits a line into
+  join when two numbers or single letters are of one face, size and colour
+  less than 0.3 em apart (`1` `000` is one number), and words when they are
+  less than an em apart and of one size where they meet (a heading's en and
+  em gaps, a chip's number before its words). Two digits are never joined
+  by a space, so a chart's ticks stay apart. A cut clipped to its card, its
+  holder or its art's ground is grown back over its labels, so no anchor is
+  pinned to the cut's edge.
 - **What lies over a picture** (skill 1.60). A box or tab whose fill shows
   where it meets a picture (read off the render; the paint order where the
   box has no fill) lies over it: it is never the picture's holder, it hangs
@@ -537,7 +558,10 @@ What the extraction decides, so you know what to check:
   twice at one point (within 0.5 mm: two grids of degree figures laid one
   over the other, in two sizes) is one label, the larger size kept, with a
   `# merged` note in the report (`report.json` `notes`, the `anchors.py`
-  output), not a second anchor. Names the source prints touching (a
+  output), not a second anchor. Lines stack into one name only when centred
+  within a fifth of the wider line or flush left within 1 mm, and a number
+  or a single letter never stacks (skill 1.61: `10` over `0`, a month's `E`
+  over an axis title). Names the source prints touching (a
   continent with a hundred country and capital names) get `overlap:
   "allow"` on their anchors (from 1.42), so `labelOverlap` stops listing what
   the source itself prints; `anchors.py` writes it once on the map's label

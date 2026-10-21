@@ -94,10 +94,21 @@ def merge_duplicates(lines: list[dict], tol: float = SAME_POINT_MM, notes: list[
     return kept
 
 
+def single_token(text: str) -> bool:
+    """A number or one letter alone (a tick, a degree, a month's initial):
+    never one line of a name set on several."""
+    t = text.strip()
+    if len(t) <= 1:
+        return True
+    return not any(ch.isalpha() for ch in t) and any(ch.isdigit() for ch in t)
+
+
 def merge_lines(lines: list[dict], merge: bool = True, notes: list[str] | None = None) -> list[list[dict]]:
     """Group the lines of one name set on several lines (same look, one
-    leading under the other, centred on each other or flush left). Turned
-    lines stay alone. The same text twice at one point is one line
+    leading under the other, centred on each other within a fifth of the
+    wider line or flush left within 1 mm). Turned lines, numbers and single
+    letters (`single_token`: a chart's `10` over its `0`, a month's `E`
+    over a title) stay alone. The same text twice at one point is one line
     (`merge_duplicates`, a `# merged` note in `notes`). Deterministic: lines
     are taken top to bottom."""
     lines = merge_duplicates(lines, notes=notes)
@@ -105,12 +116,13 @@ def merge_lines(lines: list[dict], merge: bool = True, notes: list[str] | None =
     groups: list[list[dict]] = []
     for line in order:
         host = None
-        if merge and abs(line.get("rotate", 0)) < 1:
+        if merge and abs(line.get("rotate", 0)) < 1 and not single_token(line["plain"]):
             size_mm = float(line["size"]) * PT_MM
             best = None
             for g in groups:
                 last = g[-1]
-                if abs(last.get("rotate", 0)) >= 1 or style_key(last) != style_key(line):
+                if abs(last.get("rotate", 0)) >= 1 or style_key(last) != style_key(line) \
+                        or single_token(last["plain"]):
                     continue
                 step = line["base"] - last["base"]
                 if not (0.6 * size_mm < step <= 1.6 * size_mm):
@@ -119,7 +131,7 @@ def merge_lines(lines: list[dict], merge: bool = True, notes: list[str] | None =
                     continue
                 width = max(last["x1"] - last["x0"], line["x1"] - line["x0"])
                 overlap = min(last["x1"], line["x1"]) - max(last["x0"], line["x0"])
-                same_mid = abs(_centre(last) - _centre(line)) <= max(1.0, 0.2 * width)
+                same_mid = abs(_centre(last) - _centre(line)) <= 0.2 * width
                 same_left = abs(last["x0"] - line["x0"]) <= 1.0
                 if overlap > 0 and (same_mid or same_left):
                     if best is None or step < best[0]:
