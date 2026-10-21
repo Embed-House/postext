@@ -713,7 +713,7 @@ Pick the path per [sources.md](references/sources.md):
   merges a label printed twice at one point and writes `overlap: "allow"`
   for names the source prints touching, and `scripts/pdf_figures.py symbols`
   lists a map's dots as `avoid` zones. Close the draft with
-  `scripts/composed_check.py check work/regions --json > work/check.json`
+  `scripts/composed_check.py check work/regions --json-out work/check.json`
   (0 overlaps) and `scripts/compare_pages.py … --score work/score.json
   --check work/check.json` (composed-pages.md §3.7, §6.18).
 
@@ -904,7 +904,20 @@ A right-bound book reads its spreads right to left: compare page by page,
 and when you look at spreads, the source's odd page is the left one.
 
 ### 8. Deliver
+
+**Hard rule for composed pages: no `pack` while `composed_check.py check`
+exits non-zero.** Run it on the book with `--json-out work/check.json`
+(never `--json > file`, which hides the report and the exit code). Each
+failure is fixed; each overlap is fixed with a move the check lists, set to
+`overlap: "allow"` when the source prints it so, or recorded with its
+reason in `composed-check.json` and raised with the user in the report.
+`unknownConfigKey` and `unknownConfigValue` fail too: a misspelt setting
+changes nothing on the page. Read every WARN line it prints. `preset_kit.py
+pack` refuses while `work/check.json` (or `--check FILE`) says the check
+failed; `--ignore-check` is for the user to choose, not for you.
+
 ```bash
+python3 scripts/composed_check.py check my-book --stress 1.3 --json-out work/check.json   # exit 0 before packing
 python3 scripts/preset_kit.py pack my-book --manifest-only   # my-book.postext: preset.json and the files it names
 python3 scripts/preset_kit.py lint my-book.postext --max-size 1   # no content in the config, config under 1 MB
 ```

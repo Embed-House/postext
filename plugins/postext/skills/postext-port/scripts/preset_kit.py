@@ -770,9 +770,57 @@ def parse_fallbacks(specs: list[str] | None) -> dict[str, str]:
     return out
 
 
+CHECK_RESULT = "work/check.json"  # where `composed_check.py check --json-out` writes the result
+
+
+def _checked_project(res: dict) -> Path | None:
+    """The project folder a saved check result was written for (None for a
+    bundle or an unreadable target)."""
+    target = str(res.get("target") or "").split("!", 1)[0]
+    if not target or target.endswith(".postext"):
+        return None
+    p = Path(target).resolve()
+    return p.parent if p.name == "preset.json" else p
+
+
+def check_refusal(project: Path, check: str | None = None) -> str | None:
+    """Why the book must not be packed: the saved result of `composed_check.py
+    check` says it failed: --check FILE, else work/check.json in the project
+    or in the current folder when it was written for this project. None when
+    it passed or no result is saved."""
+    project = project.resolve()
+    if check:
+        path = Path(check)
+        if not path.is_file():
+            return f"--check {check}: no such file"
+        candidates = [path]
+    else:
+        candidates = [p for p in dict.fromkeys([project / CHECK_RESULT, Path.cwd() / CHECK_RESULT]) if p.is_file()]
+    for path in candidates:
+        try:
+            res = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError:
+            return f"{path}: not the JSON of `composed_check.py check --json-out`"
+        if check or _checked_project(res) in (None, project):
+            break
+    else:
+        return None
+    if res.get("passed") is not False:
+        return None
+    fails = sum(len(e.get("fail") or []) for e in (res.get("editions") or {}).values())
+    return (f"{path} says the composed-page check failed ({fails} failing warning(s), "
+            f"{res.get('overlaps', 0)} overlap(s)). Fix each failure (an overlap: a fix the check lists, "
+            "overlap: \"allow\" when the source prints it so, or an entry with its reason in composed-check.json, "
+            "raised with the user), run `composed_check.py check … --json-out work/check.json` again, then pack. "
+            "--ignore-check packs anyway")
+
+
 def cmd_pack(args) -> None:
     project = Path(args.project).resolve()
     manifest = json.loads((project / "preset.json").read_text(encoding="utf-8"))
+    refusal = None if getattr(args, "ignore_check", False) else check_refusal(project, getattr(args, "check", None))
+    if refusal:
+        raise SystemExit(refusal)
     out = Path(args.out or f"{manifest['id']}.postext").resolve()
     skip_fonts = {v["file"] for f in manifest.get("fonts", []) if f.get("redistributable") is False for v in f["variants"]}
     files = pack_files(project, manifest, args.manifest_only, args.exclude or [])
@@ -1421,6 +1469,10 @@ def main() -> None:
                    help="leave out the paths (or folders) this glob matches; repeat")
     p.add_argument("--fallback", action="append", metavar="FAMILY=OPEN FAMILY",
                    help="the open family that stands in for a licensed family the pack leaves out (postext >= 1.42); repeat")
+    p.add_argument("--check", metavar="FILE",
+                   help=f"the saved result of `composed_check.py check --json-out` (default: {CHECK_RESULT} in the "
+                        "project, when it exists): refuse to pack while it says the check failed")
+    p.add_argument("--ignore-check", action="store_true", help="pack even when the saved check failed")
     p = sub.add_parser("index")
     p.add_argument("root")
     p = sub.add_parser("fonts")

@@ -253,7 +253,7 @@ node scripts/render.mjs work/regions --frames work/laid.json                   #
 python3 scripts/template_dedupe.py work/regions --laid work/laid.json          # kinds of page, styles, grounds, grids, modules
 python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts
 python3 scripts/lint_project.py work/regions --quiet
-python3 scripts/composed_check.py check work/regions --json > work/check.json  # overlaps: 0 to pass
+python3 scripts/composed_check.py check work/regions --json-out work/check.json  # overlaps: 0 to pass; report and exit code kept
 node scripts/render.mjs work/regions --frames work/folded.json --jpeg work/pages
 python3 scripts/template_dedupe.py work/regions --compare-boxes work/laid.json work/folded.json
 python3 scripts/compare_pages.py source.pdf work/pages --source-pages 4-28 --render-pages 1-25 \

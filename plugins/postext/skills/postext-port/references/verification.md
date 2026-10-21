@@ -380,8 +380,10 @@ those lines, or run the script.
   report.
 - **Composed pages, all at once**: `python3 scripts/composed_check.py check my-book [--stress 1.3]` runs
   `postext check --json` and `postext html` for every edition and fails on the warnings above, on
-  `contentInConfig`, `tocGroupSplit` and template warnings, and on a page whose frames the HTML reads in
-  another order than the Markdown; it warns when editions read a page differently and lists the scaled
+  `contentInConfig`, `tocGroupSplit`, template warnings, `unknownConfigKey` and `unknownConfigValue`, and
+  on a page whose frames the HTML reads in another order than the Markdown; every other warning prints as
+  WARN. `--json-out work/check.json` saves the result and keeps the report and the exit code, and
+  `preset_kit.py pack` refuses while that result failed (SKILL.md §8). It warns when editions read a page differently and lists the scaled
   frames. `--stress 1.3` repeats each edition with the text 30 % longer (the Cookbook bench's C38): a
   page must rearrange or go on; a `frameOverflow` with valued proposals warns, any other new warning
   fails (composed-pages.md §7). From postext 1.48 it also fails on `frameCovered` (a frame's lines,
