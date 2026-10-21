@@ -35,7 +35,7 @@ import { bitmapLayoutSize } from '../bitmapResolution';
 import { anchorRefLabel, findAnchorTarget, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs';
 import { measuringVertically, withMeasureWritingMode } from '../measure/vertical';
 import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
-import type { InlineIcon, InlineSpan, RefCase } from '../parse';
+import type { InlineIcon, InlineSpan, RefCase, SwatchBox, SwatchShape } from '../parse';
 import { suffixJoiner } from '../parse/inlineFormatting';
 import { resourceSafeArea, safeAreaHeightRange, safeAreaSource } from './safeArea';
 import { layoutVideo } from './videoOverlay';
@@ -230,7 +230,7 @@ export interface TableRowMetrics {
  *  value is looked up as a document palette entry id. An unresolved colour
  *  is left as written (the measurer then draws an empty outline). Spans
  *  without a swatch pass through. */
-export function resolveSwatchSpans(spans: InlineSpan[], palette: ColorPaletteEntry[] | undefined, resources?: readonly Resource[]): InlineSpan[] {
+export function resolveSwatchSpans(spans: InlineSpan[], palette: ColorPaletteEntry[] | undefined, resources?: readonly Resource[], metrics?: SwatchMetrics): InlineSpan[] {
   return spans.map((span) => {
     if (!span.swatch) return span;
     const icon = span.swatch.icon;
@@ -243,8 +243,36 @@ export function resolveSwatchSpans(spans: InlineSpan[], palette: ColorPaletteEnt
       return { ...span, swatch: { color, icon: picture ? { ...icon, picture } : icon } };
     }
     const color = resolveSwatchColor(span.swatch.color, palette);
-    return color !== undefined ? { ...span, swatch: { color } } : span;
+    // The size, outline, corners and gap written on it (#1104), in px for
+    // the text it sits in.
+    const shape = span.swatch.shape;
+    const box = shape && metrics ? resolveSwatchBox(shape, palette, metrics) : undefined;
+    if (color === undefined && !box) return span;
+    return { ...span, swatch: { color: color ?? span.swatch.color, ...(shape ? { shape } : {}), ...(box ? { box } : {}) } };
   });
+}
+
+/** What a swatch's lengths are read against (#1104): the document's DPI
+ *  and the font size of the text the swatch sits in (its em). */
+export interface SwatchMetrics {
+  dpi: number;
+  fontSizePx: number;
+}
+
+/** A swatch's shape in px and hex (#1104): an outline colour that names
+ *  no palette entry is left out (the text colour outlines it). */
+export function resolveSwatchBox(shape: SwatchShape, palette: ColorPaletteEntry[] | undefined, metrics: SwatchMetrics): SwatchBox {
+  const px = (d: Dimension): number => Math.max(0, dimensionToPx(d, metrics.dpi, metrics.fontSizePx));
+  const box: SwatchBox = {};
+  if (shape.size) box.sidePx = Math.max(1, px(shape.size));
+  if (shape.borderWidth) box.borderWidthPx = px(shape.borderWidth);
+  if (shape.borderColor) {
+    const hex = resolveSwatchColor(shape.borderColor, palette);
+    if (hex !== undefined) box.borderColor = hex;
+  }
+  if (shape.radius) box.radiusPx = px(shape.radius);
+  if (shape.gap) box.gapPx = px(shape.gap);
+  return box;
 }
 
 /** A swatch's colour as a fill (see {@link resolveSwatchSpans}), or
@@ -1105,7 +1133,7 @@ function layoutTableIn(
         resourceTypes,
         resources,
         refStyle,
-      ), style.palette, resources), style.chips, set), style.annotations, set.fontString);
+      ), style.palette, resources, { dpi: style.dpi, fontSizePx: fontSizePxOf(set.fontString) }), style.chips, set), style.annotations, set.fontString);
       const align = cellAlignOf(cell.align, opposite);
       const m = measureCellContent(
         spans,
@@ -1397,7 +1425,7 @@ function layoutCaptionTextIn(input: CaptionTextInput): CaptionTextLayout {
       resourceTypes,
       resources,
       refStyle,
-    ), resolved.colorPalette, resources), chipContextOf(resolved), captionFontPx), { cjk: resolved.cjk, dpi }, captionFontString);
+    ), resolved.colorPalette, resources, { dpi, fontSizePx: captionFontPx }), chipContextOf(resolved), captionFontPx), { cjk: resolved.cjk, dpi }, captionFontString);
     // Description spans pick up the configured slant on top of their own markup.
     const descSpans: InlineSpan[] = cs.descriptionItalic
       ? resolvedSpans.map((s) => ({ ...s, italic: s.italic || true }))
@@ -1469,7 +1497,7 @@ export function layoutLabelLines(input: LabelLinesInput): VDTLine[] {
       input.resourceTypes ?? [],
       input.resources ?? [],
       refStyle,
-    ), resolved.colorPalette, input.resources), chipContextOf(resolved), fontPx), { cjk: resolved.cjk, dpi: resolved.page.dpi }, input.fonts[0]);
+    ), resolved.colorPalette, input.resources, { dpi: resolved.page.dpi, fontSizePx: fontPx }), chipContextOf(resolved), fontPx), { cjk: resolved.cjk, dpi: resolved.page.dpi }, input.fonts[0]);
     const tracking = input.letterSpacingPx ?? 0;
     // A name on a map breaks between words only.
     const lines = measureSnippetLines(spans, input.fonts, Math.max(1, input.maxWidthPx), lineHeightPx, {
@@ -1732,7 +1760,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
       resourceTypes,
       resources,
       refStyle,
-    ), palette, resources), chipContextOf(resolved), noteFontPx), { cjk: resolved.cjk, dpi }, noteFontString);
+    ), palette, resources, { dpi, fontSizePx: noteFontPx }), chipContextOf(resolved), noteFontPx), { cjk: resolved.cjk, dpi }, noteFontString);
     const slanted: InlineSpan[] = cs.note.italic
       ? noteSpans.map((s) => ({ ...s, italic: s.italic || true }))
       : noteSpans;

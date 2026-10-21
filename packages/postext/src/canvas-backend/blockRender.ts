@@ -186,7 +186,7 @@ function renderSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      paintSwatchSegment(ctx, seg.swatch, x, baseline, seg.width, style.color);
+      paintSwatchSegment(ctx, seg.swatch, x, baseline, seg.width, style.color, seg.rtl === true);
       x += seg.width;
       continue;
     }
@@ -289,7 +289,7 @@ function renderComposedSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      paintSwatchSegment(ctx, seg.swatch, x, baseline, seg.width, style.color);
+      paintSwatchSegment(ctx, seg.swatch, x, baseline, seg.width, style.color, seg.rtl === true);
       x += seg.width;
       continue;
     }

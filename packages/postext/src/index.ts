@@ -540,6 +540,7 @@ export type {
   VDTLineHighlight,
   VDTSegmentMark,
   VDTChip,
+  VDTSwatch,
   VDTChipRun,
   VDTLine,
   VDTAnchor,
@@ -643,7 +644,7 @@ export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiOptions,
 export { computeColumnEdges } from './pipeline/resourceLayout';
 export { findAnnotations } from './parse/annotations';
 export type { FoundAnnotation, AnnotationName } from './parse/annotations';
-export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
+export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, SwatchShape, SwatchBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
 export { parseMarkdownWithIssues, MATH_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, KNOWN_DIRECTIVES, KNOWN_CONTAINERS, spaceDirectiveLines, MAX_SPACE_LINES } from './parse';
 // Composed pages in the document (#854): each `::::page` fence's content by
 // slot, and the slot checks the content warnings run.
@@ -674,6 +675,7 @@ export type { ValidatePageTemplatesOptions } from './composed/validate';
 export { altWithLabels, labelPlainText, withIconAlts } from './composed/labelText';
 // Inline symbols in labels and captions (#1058): their boxes and what the painters need.
 export { ICON_CAP_EM, iconLineDash, inlineIconBox, measureInlineIcon, resourceBlockIcons } from './measure/inlineIcon';
+export { hasSwatchShape, swatchGeometry, type SwatchGeometry } from './swatchShape';
 export {
   figureLabelBounds,
   figureLabelLeaderPath,
