@@ -29,7 +29,8 @@ jobs:
           repository: drnachio/postext-discord
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # this repository's .nvmrc is not in that checkout
+          node-version: 22.23.4
       - name: Post the summaries
         continue-on-error: true
         env:
