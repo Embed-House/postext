@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "handwriting-workbook",
-  "sourceHash": "e93b446198fcd31b48d0e0dd7a63334ce30c3f38b64e5e63e0c476f1e3654d69",
+  "sourceHash": "171cd22778df098ef0321dcd0549ca99db89a44b20a35c4ba54a08903ffdb0b7",
   "engine": {
     "postext": "1.46.0",
     "postextPdf": "1.46.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-19T09:07:15.910Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-21T18:29:43.904Z",
   "variants": {
     "en": {
-      "hash8": "5c971a38",
+      "hash8": "84575611",
       "vdtHash": "e4da08b466b45848fe6f61a8639605fb5a371359",
       "timings": {
-        "importMs": 1157,
-        "fontsMs": 202,
-        "buildMs": 118,
-        "totalMs": 2283,
+        "importMs": 759,
+        "fontsMs": 162,
+        "buildMs": 75,
+        "totalMs": 1654,
         "builds": 1
       },
       "specimen": {
@@ -224,7 +224,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 918790,
+        "bytes": 918779,
         "chapters": [
           {
             "pages": 12,
@@ -395,7 +395,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 781,
+        "configLeaves": 778,
         "designElements": 46,
         "directives": [
           ":::callout"
@@ -467,17 +467,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "8a98b3e4",
+      "hash8": "377c777f",
       "vdtHash": "64880385fc5c39e8e6db9e303adc27a403b7481f",
       "timings": {
-        "importMs": 1154,
-        "fontsMs": 322,
-        "buildMs": 132,
-        "totalMs": 2433,
+        "importMs": 757,
+        "fontsMs": 169,
+        "buildMs": 74,
+        "totalMs": 1674,
         "builds": 1
       },
       "specimen": {
@@ -684,7 +690,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 944612,
+        "bytes": 944603,
         "chapters": [
           {
             "pages": 12,
@@ -855,7 +861,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 781,
+        "configLeaves": 778,
         "designElements": 46,
         "directives": [
           ":::callout"
@@ -927,17 +933,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "caf3141e",
+      "hash8": "5c700c4d",
       "vdtHash": "1e6380b815e57609aabd99d284e9775e294867c1",
       "timings": {
-        "importMs": 1181,
-        "fontsMs": 229,
-        "buildMs": 142,
-        "totalMs": 2356,
+        "importMs": 759,
+        "fontsMs": 125,
+        "buildMs": 75,
+        "totalMs": 1596,
         "builds": 1
       },
       "specimen": {
@@ -1144,7 +1156,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 940060,
+        "bytes": 940051,
         "chapters": [
           {
             "pages": 12,
@@ -1315,7 +1327,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 781,
+        "configLeaves": 778,
         "designElements": 46,
         "directives": [
           ":::callout"
@@ -1387,17 +1399,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "2786a34b",
+      "hash8": "60df2ac5",
       "vdtHash": "36599b3f63f98d33721a4df5579939ac3c04cbde",
       "timings": {
-        "importMs": 658,
-        "fontsMs": 512,
-        "buildMs": 87,
-        "totalMs": 2070,
+        "importMs": 462,
+        "fontsMs": 604,
+        "buildMs": 78,
+        "totalMs": 1733,
         "builds": 1
       },
       "specimen": {
@@ -1605,7 +1623,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 811756,
+        "bytes": 811747,
         "chapters": [
           {
             "pages": 12,
@@ -1772,7 +1790,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 878,
+        "configLeaves": 875,
         "designElements": 53,
         "directives": [
           ":::callout"
@@ -1848,17 +1866,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
-      "hash8": "648f9836",
+      "hash8": "eea8c733",
       "vdtHash": "c7f4ceec58c3e049e14fac43559b093245c2721c",
       "timings": {
-        "importMs": 497,
-        "fontsMs": 172,
-        "buildMs": 91,
-        "totalMs": 1448,
+        "importMs": 252,
+        "fontsMs": 117,
+        "buildMs": 78,
+        "totalMs": 1040,
         "builds": 1
       },
       "specimen": {
@@ -2066,7 +2090,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 856353,
+        "bytes": 856346,
         "chapters": [
           {
             "pages": 12,
@@ -2233,7 +2257,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 763,
+        "configLeaves": 760,
         "designElements": 46,
         "directives": [
           ":::callout"
@@ -2308,21 +2332,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "15608295",
+      "hash8": "789425aa",
       "vdtHash": "3dec642d767e314ff20b3d66a9fdb10979a29069",
       "timings": {
-        "importMs": 574,
-        "fontsMs": 366,
-        "buildMs": 73,
-        "totalMs": 1852,
+        "importMs": 319,
+        "fontsMs": 235,
+        "buildMs": 64,
+        "totalMs": 1506,
         "builds": 1
       },
       "specimen": {
@@ -2528,7 +2552,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 987059,
+        "bytes": 987052,
         "chapters": [
           {
             "pages": 12,
@@ -2695,7 +2719,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 795,
+        "configLeaves": 792,
         "designElements": 48,
         "directives": [
           ":::callout"
@@ -2756,17 +2780,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "5bd5ad14",
+      "hash8": "ec99dea6",
       "vdtHash": "55306373789fb4809478b0e0ca841bed2c7f1d77",
       "timings": {
-        "importMs": 563,
-        "fontsMs": 573,
-        "buildMs": 79,
-        "totalMs": 1866,
+        "importMs": 383,
+        "fontsMs": 177,
+        "buildMs": 71,
+        "totalMs": 1310,
         "builds": 1
       },
       "specimen": {
@@ -2973,7 +3003,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 976448,
+        "bytes": 976438,
         "chapters": [
           {
             "pages": 12,
@@ -3144,7 +3174,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 781,
+        "configLeaves": 778,
         "designElements": 46,
         "directives": [
           ":::callout"
@@ -3218,21 +3248,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "fr": {
-      "hash8": "4750d144",
+      "hash8": "c8cbfcbc",
       "vdtHash": "33dca3c904d95ad503f10eb8ac176e9a4667d3fb",
       "timings": {
-        "importMs": 887,
-        "fontsMs": 170,
-        "buildMs": 106,
-        "totalMs": 2227,
+        "importMs": 526,
+        "fontsMs": 124,
+        "buildMs": 74,
+        "totalMs": 1484,
         "builds": 1
       },
       "specimen": {
@@ -3439,7 +3469,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 893661,
+        "bytes": 893651,
         "chapters": [
           {
             "pages": 12,
@@ -3610,7 +3640,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 781,
+        "configLeaves": 778,
         "designElements": 46,
         "directives": [
           ":::callout"
@@ -3684,21 +3714,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "de": {
-      "hash8": "04536b43",
+      "hash8": "bfdcd039",
       "vdtHash": "6a71e86b360848c394580ea0560991047d209c04",
       "timings": {
-        "importMs": 908,
-        "fontsMs": 232,
-        "buildMs": 118,
-        "totalMs": 2286,
+        "importMs": 549,
+        "fontsMs": 125,
+        "buildMs": 71,
+        "totalMs": 1425,
         "builds": 1
       },
       "specimen": {
@@ -3905,7 +3935,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 888567,
+        "bytes": 888556,
         "chapters": [
           {
             "pages": 12,
@@ -4076,7 +4106,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 781,
+        "configLeaves": 778,
         "designElements": 46,
         "directives": [
           ":::callout"
@@ -4150,21 +4180,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "it": {
-      "hash8": "c2de5854",
+      "hash8": "4ee14a9a",
       "vdtHash": "8d78f234c494408b36d3fbcc54776df388d36b8b",
       "timings": {
-        "importMs": 885,
-        "fontsMs": 206,
-        "buildMs": 97,
-        "totalMs": 2094,
+        "importMs": 562,
+        "fontsMs": 141,
+        "buildMs": 76,
+        "totalMs": 1407,
         "builds": 1
       },
       "specimen": {
@@ -4371,7 +4401,7 @@
       },
       "sandbox": {
         "file": "handwriting-workbook.postext",
-        "bytes": 891046,
+        "bytes": 891038,
         "chapters": [
           {
             "pages": 12,
@@ -4542,7 +4572,7 @@
           "page",
           "resourceTypes"
         ],
-        "configLeaves": 781,
+        "configLeaves": 778,
         "designElements": 46,
         "directives": [
           ":::callout"
@@ -4616,9 +4646,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

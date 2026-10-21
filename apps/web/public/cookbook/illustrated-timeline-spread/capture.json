@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "illustrated-timeline-spread",
-  "sourceHash": "e1b5903d46bba2db6125eb8e9dd46946be231b3a81131411040f070e42882ce3",
+  "sourceHash": "0208d51928d7b45981b9523b02fecfd1bed05696f29eec91641a1361f456209f",
   "engine": {
     "postext": "1.49.0",
     "postextPdf": "1.49.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-21T05:22:09.334Z",
+  "capturedAt": "2026-10-21T18:29:47.952Z",
   "variants": {
     "en": {
-      "hash8": "0268326f",
+      "hash8": "2e3f2475",
       "vdtHash": "fb3a73b64e2b429f88af05d004d869bbe1ac483a",
       "timings": {
-        "importMs": 1980,
-        "fontsMs": 494,
-        "buildMs": 90,
-        "totalMs": 3826,
+        "importMs": 782,
+        "fontsMs": 242,
+        "buildMs": 74,
+        "totalMs": 1775,
         "builds": 1
       },
       "specimen": {
@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 977462,
+        "bytes": 977455,
         "folio": "c666e036",
         "chapters": [
           {
@@ -290,7 +290,7 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 380,
+        "configLeaves": 379,
         "designElements": 7,
         "directives": [
           "::::page",
@@ -380,13 +380,13 @@
       }
     },
     "es": {
-      "hash8": "dc7d0644",
+      "hash8": "c2230d69",
       "vdtHash": "e8daf4ae63733680e981ccc1ccde383ae4891c3b",
       "timings": {
-        "importMs": 5300,
-        "fontsMs": 1948,
-        "buildMs": 86,
-        "totalMs": 8902,
+        "importMs": 779,
+        "fontsMs": 245,
+        "buildMs": 72,
+        "totalMs": 1773,
         "builds": 1
       },
       "specimen": {
@@ -458,7 +458,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 977875,
+        "bytes": 977868,
         "folio": "c666e036",
         "chapters": [
           {
@@ -659,7 +659,7 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 380,
+        "configLeaves": 379,
         "designElements": 7,
         "directives": [
           "::::page",
@@ -759,13 +759,13 @@
       }
     },
     "ja": {
-      "hash8": "671d6ece",
+      "hash8": "8e758313",
       "vdtHash": "c9b661e94c2d2a33ed046a29bb2ac52e3d8b4ca8",
       "timings": {
-        "importMs": 2144,
-        "fontsMs": 1889,
-        "buildMs": 81,
-        "totalMs": 5566,
+        "importMs": 783,
+        "fontsMs": 582,
+        "buildMs": 66,
+        "totalMs": 2079,
         "builds": 1
       },
       "specimen": {
@@ -837,7 +837,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 976041,
+        "bytes": 976034,
         "folio": "c666e036",
         "chapters": [
           {
@@ -1038,7 +1038,7 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 380,
+        "configLeaves": 379,
         "designElements": 7,
         "directives": [
           "::::page",

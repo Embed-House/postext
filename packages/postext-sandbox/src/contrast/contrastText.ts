@@ -31,5 +31,9 @@ export function contrastDetail(check: ContrastCheck, labels: SandboxLabels): str
         weight: `${check.weight}${check.italic ? ` ${labels.contrastItalic}` : ''}`,
         min: check.minimumPt,
       });
-  return check.count > 1 ? `${detail} ${fill(labels.contrastOccurrences, { count: check.count })}` : detail;
+  const counted = check.count > 1 ? `${detail} ${fill(labels.contrastOccurrences, { count: check.count })}` : detail;
+  // A pair `contrast.allow` accepts (#1124): the reason it stays.
+  const accepted = check.accepted;
+  if (!accepted) return counted;
+  return `${counted} ${accepted.reason.trim() ? fill(labels.contrastAcceptedDetail, { reason: accepted.reason.trim() }) : labels.contrastAcceptedNoReason}`;
 }

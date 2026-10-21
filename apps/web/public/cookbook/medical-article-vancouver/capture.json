@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "medical-article-vancouver",
-  "sourceHash": "ef2f9126eb68eb917c655b1c2a189abb5b168c0542e1813999d9a6e7de02148b",
+  "sourceHash": "eb047a07c639fc1de68d006eeb823cc9bfc6604815c4f09ba40fada9196bf5e0",
   "engine": {
     "postext": "1.34.0",
     "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.879Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-21T18:29:20.444Z",
   "variants": {
     "en": {
-      "hash8": "89871e1b",
+      "hash8": "84d3e945",
       "vdtHash": "b5a88b75988b0357901a1282d307f9902af9b1d7",
       "timings": {
-        "importMs": 963,
-        "fontsMs": 642,
-        "buildMs": 137,
-        "totalMs": 2456,
+        "importMs": 726,
+        "fontsMs": 87,
+        "buildMs": 123,
+        "totalMs": 3888,
         "builds": 1
       },
       "specimen": {
@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 53358,
+        "bytes": 53348,
         "folio": "b245c39c",
         "chapters": [
           {
@@ -327,7 +327,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 402,
+        "configLeaves": 401,
         "designElements": 14,
         "directives": [
           ":::callout",
@@ -428,19 +428,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "33e3122d",
+      "hash8": "e05cf1b2",
       "vdtHash": "81cf1725dfd96bd2ca1e99f7b3b87c7579fa19f8",
       "timings": {
-        "importMs": 1319,
-        "fontsMs": 90,
-        "buildMs": 133,
-        "totalMs": 2609,
+        "importMs": 727,
+        "fontsMs": 85,
+        "buildMs": 118,
+        "totalMs": 3875,
         "builds": 1
       },
       "specimen": {
@@ -529,7 +529,7 @@
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 54605,
+        "bytes": 54595,
         "folio": "b245c39c",
         "chapters": [
           {
@@ -750,7 +750,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 402,
+        "configLeaves": 401,
         "designElements": 14,
         "directives": [
           ":::callout",
@@ -841,7 +841,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

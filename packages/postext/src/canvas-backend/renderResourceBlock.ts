@@ -455,7 +455,7 @@ function paintLineRuns(
         continue;
       }
       if (seg.kind === 'swatch') {
-        paintSwatchSegment(ctx, seg.swatch, x, line.baseline, seg.width, color);
+        paintSwatchSegment(ctx, seg.swatch, x, line.baseline, seg.width, color, seg.rtl === true);
         x += seg.width;
         continue;
       }

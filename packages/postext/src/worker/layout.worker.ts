@@ -10,6 +10,7 @@ import type { MeasurementCache } from '../measure/index.js';
 import type { RequestMessage, ResponseMessage, FontPayload } from './protocol.js';
 import { documentFontFamilies, fontFaceDescriptors, unavailableFontFamilies } from './fonts.js';
 import { createFontGenerations, installFontGenerations } from './fontGenerations.js';
+import { forgetFontCoverage, installGlyphProbe, registerFontCoverage } from '../fonts/glyphFallback.js';
 import type { PostextContent, Resource } from '../types.js';
 import type { VDTDocument } from '../vdt.js';
 
@@ -100,9 +101,14 @@ function missingFonts(doc: VDTDocument): string[] | undefined {
   return out.length > 0 ? out : undefined;
 }
 
+// The glyph probe (#1105): declared before the first build measures, so
+// the builds report the characters a face lacks (`glyphFallback`).
+const glyphProbe = installGlyphProbe().catch(() => false);
+
 async function registerFonts(faces: FontPayload[]): Promise<void> {
   const fontSet = (ctx as unknown as { fonts?: FontFaceSet }).fonts;
   if (!fontSet) return;
+  await glyphProbe;
   const added = new Set<string>();
   // Loaded side by side, added in the order they were sent (#629): a
   // family's slices overlap at a few code points, where the order decides.
@@ -110,6 +116,9 @@ async function registerFonts(faces: FontPayload[]): Promise<void> {
     faces.map(async (face) => {
       const key = faceKey(face);
       if (registeredFaces.has(key)) return null;
+      // What the file covers, from its `cmap` when it is a TrueType or
+      // OpenType file (a WOFF2 one is left to the probe).
+      registerFontCoverage(face.family, face.weight, face.style, new Uint8Array(face.buffer), face.unicodeRange);
       try {
         const ff = new FontFace(face.family, face.buffer, fontFaceDescriptors(face));
         await ff.load();
@@ -150,6 +159,7 @@ function unregisterFonts(families: string[]): void {
   for (const ff of toRemove) {
     try { fontSet.delete(ff); } catch { /* ignore */ }
   }
+  forgetFontCoverage(families);
   for (const key of Array.from(registeredFaces)) {
     const family = key.split('|', 1)[0]!;
     if (targets.has(family)) registeredFaces.delete(key);
@@ -204,6 +214,7 @@ async function runBuild(msg: BuildRequest): Promise<void> {
       post({ kind: 'built', id: msg.id, doc: msg.wantDoc === false ? null : cached, stats: { passes: [], totalMs: 0, cached: true } });
       return;
     }
+    await glyphProbe;
     // Bring MathJax up before the build path calls renderMath — otherwise
     // the VDT receives placeholder MathRenders and inline formulas paint as
     // grey boxes instead of glyphs. Skipped for docs that contain no `$…$`,

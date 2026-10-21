@@ -164,6 +164,35 @@ Um botão que muda o modelo (e, com ele, todas as páginas diagramadas com esse 
 
 <Screenshot src="/docs-shots/pt/checks.webp" alt="O painel Verificações com a entrada O texto não cabe no bloco e três botões com soluções, e a página com a primeira caixa contornada em vermelho e uma faixa com a mensagem faltam 26 mm." caption="Um bloco que não cabe e as correções que a diagramação preparou para ele." />
 
+Nem toda marca do canvas é um erro. Um bloco cujo texto ou cujas imagens a diagramação reduziu, dentro do que o modelo permite, tem um contorno âmbar tracejado e um selo como *texto a 90%*: é informação. Os problemas aparecem em vermelho (um bloco em que o conteúdo não cabe) e em violeta (uma aparência que o design não tem). **Marcas de ajuste**, na mesma barra que **Rearranjo**, alterna entre três opções:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '30%' }}>Opção</th>
+      <th>O que o canvas desenha</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Todas</td>
+      <td>Todas as marcas: blocos em que o conteúdo não cabe, aparências desconhecidas, texto e imagens reduzidos</td>
+    </tr>
+    <tr>
+      <td>Só problemas</td>
+      <td>Os blocos em que o conteúdo não cabe e as aparências desconhecidas</td>
+    </tr>
+    <tr>
+      <td>Nenhuma</td>
+      <td>Nenhuma marca de ajuste</td>
+    </tr>
+  </tbody>
+</table>
+
+O Sandbox guarda sua escolha neste navegador. O livro pode defini-la para quem ainda não escolheu: `debug.fitMarks` (`"all"`, `"problems"` ou `"none"`) e `debug.fitMarksMinScale`, que tira o selo de um bloco composto nessa escala ou maior (com `0.95`, só o que fica abaixo de 95% é marcado). Essas marcas são do canvas: o PDF, o visualizador HTML, o EPUB e o Folio nunca as desenham. Desde o postext 1.52.
+
+Uma caixa com fotos e suas legendas (blocos ancorados dentro dela, uma legenda `below` cada foto) não cresce sozinha quando uma tradução deixa as legendas mais longas: elas saem da caixa e caem sobre o que está embaixo. Abra o bloco da caixa no editor de modelos e ponha **Cresce com os blocos de dentro** em *Os blocos ancorados dentro dele* (`growWith: "children"` no modelo). A caixa passa a chegar ao pé da legenda mais baixa mais o seu espaçamento inferior, o fundo, a borda e a aba acompanham, e os blocos de baixo descem. *Os blocos escolhidos* usa uma lista de nomes no lugar disso. Contam os blocos ancorados a um ponto do lado de cima da caixa e os ancorados a eles; um bloco ancorado ao pé ou ao centro da caixa não conta, e uma caixa girada não cresce. Desde o postext 1.52.
+
 ## 7. Selecionar na página e no texto
 
 A página e o Markdown dela andam juntos.

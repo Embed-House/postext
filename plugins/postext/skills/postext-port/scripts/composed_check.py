@@ -11,7 +11,7 @@ the round-2 checks of a ported book, edition by edition.
       and the version in the port's report.
 
   composed_check.py check my-book [--locale es]... [--stress 1.3] [--postext CMD]
-                        [--offline] [--keep DIR] [--json]
+                        [--offline] [--keep DIR] [--json] [--json-out FILE]
       For every edition (or the --locale ones): runs `postext check --json`
       and `postext html`, then fails on
         - frameOverflow, frameContinuationLimit, continueTargetMissing,
@@ -25,7 +25,8 @@ the round-2 checks of a ported book, edition by edition.
           figure's), headingClaimsColumn (1.43: an in-column heading whose
           design reserves the whole column) and a labelOverlap that runs onto a symbol of the picture
           (1.42: the label meets one of its `avoid` zones), repeatOverflow, moduleUnknown,
-          moduleAsPage, moduleNested and moduleNameRejected (1.48);
+          moduleAsPage, moduleNested and moduleNameRejected (1.48), and unknownConfigKey /
+          unknownConfigValue (a misspelt setting or a value the engine does not take);
         - frameCovered and frameOutsideArea (1.48: a frame under another frame, or past the
           trim, the bleed or the frame it is anchored inside), each with the fixes the engine
           proposes, unless the project records the pair as meant in composed-check.json
@@ -49,8 +50,14 @@ the round-2 checks of a ported book, edition by edition.
       as the Cookbook bench does (C38): a warning the longer text raises
       fails, except a frameOverflow whose proposals carry values (a warning:
       the copy-fitter's next move).
+      Every other warning of `postext check` is printed as WARN (it does not
+      fail the check: read each one).
       The report ends with the number of overlaps that fail (0 to pass) and
-      lists the exceptions that matched nothing.
+      lists the exceptions that matched nothing. --json prints the result
+      as JSON instead; --json-out FILE writes it to FILE and keeps the
+      report and the exit code (`--json > FILE` hides both). Write it to
+      work/check.json: `preset_kit.py pack` refuses to pack while that file
+      says the check failed.
 
 The postext command defaults to `postext`; pass another one with --postext
 (`--postext "npx postext-cli"`, `--postext "bun ~/src/postext/packages/postext-cli/src/main.ts"`).
@@ -690,7 +697,12 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
     frames its chain continues into right after it. A piece sent to a
     repeating grid's frame is an item whose frames are instances (`foto[2]`,
     `pie[2]`); the frames of a `:::module` are scoped by its instance
-    (`arbol[1].raiz`, `ramas.izq`). None when the template is unknown."""
+    (`arbol[1].raiz`, `ramas.izq`). An empty fence of a frame with a
+    `style` (a box whose words all went to frames of their own) reads where
+    the fence lies, as the engine reads it (postext#1116: its box and
+    tab are drawn there); the frames its chain continues into hold nothing
+    and are left out. An empty fence of a frame with no style draws
+    nothing, so it is left out too. None when the template is unknown."""
     tid = fence.get("template") or ""
     frames = resolve_frames(templates, tid)
     if frames is None:
@@ -699,15 +711,21 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
     page = _Level(frames, template_groups(templates, tid), "", None, order)
     has_modules = any(g.get("modules") is True for g in template_groups(templates, tid))
     instances = iter(module_instances(fence["items"]))
-    # an empty fence (a box whose words all went to frames of their own) has nothing to
-    # read: the HTML lays its frame where it likes, so it is left out of the order
     empty: set[str] = set()
+
+    def read_empty(level: _Level, it: dict, n: int) -> None:
+        # what an empty fence added past its styled head holds nothing
+        added = order[n:]
+        slot = it.get("slot")
+        styled = slot in level.names and bool(level.by_name[slot].get("style"))
+        empty.update(added[1:] if styled else added)
+
     for it in fence["items"]:
         if it.get("kind") != "module":
             n = len(order)
             page.piece(it)
             if it.get("empty"):
-                empty.update(order[n:])
+                read_empty(page, it, n)
             continue
         inst = next(instances)
         mt = it.get("template") or ""
@@ -721,7 +739,7 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
             n = len(order)
             mod.piece(sub)
             if sub.get("empty"):
-                empty.update(order[n:])
+                read_empty(mod, sub, n)
     return [x for x in order if x not in empty]
 
 
@@ -814,6 +832,11 @@ FAIL_KINDS = {
     "headingClaimsColumn",
     # postext 1.48: a grid given more items than its `repeat.max`, and modules the page cannot lay
     "repeatOverflow", "moduleUnknown", "moduleAsPage", "moduleNested", "moduleNameRejected",
+    # a misspelt setting or a value the engine does not take: the setting changes nothing on the page
+    "unknownConfigKey", "unknownConfigValue",
+    # postext 1.52: a word wider than its whole line (a narrow frame), cut between two letters with no
+    # hyphen ("CL" | "IMA"). The cut at a syllable (wordDividedBySyllable) is a note (severity info).
+    "wordDividedByCharacter",
 }
 # postext 1.48: a frame under another frame, or past the trim, the bleed or the frame it is anchored
 # inside. Both fail unless the project records the pair as meant (composed-check.json, below); a frame
@@ -973,6 +996,8 @@ def judge(report: dict, stressed: bool = False, base: dict | None = None,
             fails.append(entry)
         elif stressed and kind not in had:
             fails.append(entry)
+        elif not stressed:
+            warns.append(entry)  # listed in the report: neither a failure nor a note
     scaled = []
     for r in report.get("reflow") or []:
         kinds = {e.get("kind") for e in r.get("events") or []}
@@ -1310,6 +1335,9 @@ def cmd_check(args) -> int:
         if not args.keep:
             shutil.rmtree(work, ignore_errors=True)
     result["passed"] = not failed
+    if args.json_out:
+        Path(args.json_out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.json_out).write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
@@ -1332,6 +1360,8 @@ def print_check(res: dict) -> None:
             print(f"    FAIL {w['kind']} ({w.get('at') or '?'}, page {w.get('page') or '?'}): {w['message']}")
             if w.get("hint"):
                 print(f"         {w['hint']}")
+        for w in e.get("warn") or []:
+            print(f"    WARN {w['kind']} ({w.get('at') or '?'}, page {w.get('page') or '?'}): {w['message'][:200]}")
         for w in e.get("allowed") or []:
             print(f"    allowed {w['kind']} (page {w.get('page') or '?'}): {w['message'][:120]} [{w['reason']}]")
         if e.get("allowedFrames"):
@@ -1386,7 +1416,10 @@ def main() -> None:
     p.add_argument("--keep", metavar="DIR", help="keep the HTML and stretched copies in DIR")
     p.add_argument("--exceptions", metavar="FILE",
                    help=f"overlaps recorded as meant (default: {EXCEPTIONS_FILE} next to preset.json or the bundle)")
-    p.add_argument("--json", action="store_true")
+    p.add_argument("--json", action="store_true", help="print the result as JSON instead of the report")
+    p.add_argument("--json-out", metavar="FILE",
+                   help="also write the result as JSON to FILE (the report and the exit code stay); "
+                        "`preset_kit.py pack` reads work/check.json and refuses to pack while it failed")
     args = ap.parse_args()
     sys.exit(cmd_round(args) if args.cmd == "round" else cmd_check(args))
 

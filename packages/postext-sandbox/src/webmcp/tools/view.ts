@@ -14,6 +14,7 @@ import { loadSettingsHelpMode, saveSettingsGroup, saveSettingsHelpMode } from '.
 import { VIEWPORT_TABS, readViewHash, viewHashFragment } from '../../storage/viewHash.js';
 import type { PanelId, ViewportTab } from '../../types/index.js';
 import { folioSupported } from '../../viewport/folioSupport.js';
+import { FIT_MARKS_MODES, fitMarksViewOf, setFitMarksChoice, type FitMarksMode } from '../../viewport/composed/fitMarksView.js';
 import { viewerControls, type ViewerContentsEntry, type ViewerControls, type ViewerSettings } from '../../viewport/viewerControls.js';
 import { SETTLE_TIMEOUT_MS, chapterOf, dispatchAndWait, layOutChapter, pageIndexOf, whenSettled, type SandboxToolHost } from '../host.js';
 import { ToolError, type WebMcpTool } from '../modelContext.js';
@@ -110,6 +111,7 @@ export function viewState(host: SandboxToolHost): Record<string, unknown> {
     chapter: at.chapterIndex + 1,
     ...(at.page !== null ? { page: at.page } : {}),
     printPreview: printPreviewOn(),
+    fitMarks: fitMarksViewOf(s.config.debug),
     largeTargets: host.largeTargets.get(),
     guides: guidesOf(s.config),
     ...(status ? { [s.activeViewport]: compactStatus(status) } : {}),
@@ -139,7 +141,7 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
   const setView: WebMcpTool = {
     name: 'sandbox_set_view',
     title: 'Sandbox: change how the book is shown',
-    description: 'Change what the reader sees of the Sandbox, any number of settings at once: the viewer tab (canvas, pdf, folio, html, epub), the Content or Design mode, the side panel and the resource open in it, the Design panel\'s group, explanations and changed-only filter, whether a viewer shows the chapter or the whole book, the EPUB rendition, the Canvas magnification, fit and facing pages, the type size and columns of the HTML and EPUB readers, the Folio pointer mode, view and magnifying glass, the print preview, pinned toolbars, large touch targets, and the guides drawn on the pages (baseline grid, character grid, loose-line highlight, pages in negative). Answers with the view as it stands afterwards, the status of the viewer on screen included (its page, what it is writing, an EPUB\'s contents and warnings, the videos of its pages). sandbox_go_to_page turns the pages; sandbox_run_viewer presses a viewer\'s buttons (regenerate, print, download, play a video).',
+    description: 'Change what the reader sees of the Sandbox, any number of settings at once: the viewer tab (canvas, pdf, folio, html, epub), the Content or Design mode, the side panel and the resource open in it, the Design panel\'s group, explanations and changed-only filter, whether a viewer shows the chapter or the whole book, the EPUB rendition, the Canvas magnification, fit and facing pages, the type size and columns of the HTML and EPUB readers, the Folio pointer mode, view and magnifying glass, the print preview, the fit marks drawn over composed pages, pinned toolbars, large touch targets, and the guides drawn on the pages (baseline grid, character grid, loose-line highlight, pages in negative). Answers with the view as it stands afterwards, the status of the viewer on screen included (its page, what it is writing, an EPUB\'s contents and warnings, the videos of its pages). sandbox_go_to_page turns the pages; sandbox_run_viewer presses a viewer\'s buttons (regenerate, print, download, play a video).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -163,6 +165,7 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
         magnification: { type: ['number', 'null'], minimum: 1.5, maximum: 10, description: 'Folio: hold the magnifying glass over the middle of the open spread, magnifying this many times; null puts it away. The glass belongs to the magnify pointer mode, which the viewer is switched to.' },
         toolbarPinned: { type: 'boolean', description: 'Keep the viewer\'s floating toolbar on screen.' },
         printPreview: { type: 'boolean', description: 'Canvas and Folio: the soft proof of the output profile with trim, bleed and safe-zone guides.' },
+        fitMarks: { type: 'string', enum: [...FIT_MARKS_MODES, 'book'], description: 'Canvas: the marks of how composed frames fit — all (scaled text and pictures too), problems (frames that do not fit, unknown looks) or none. Kept as the reader\'s choice in this browser, over the book\'s debug.fitMarks; book forgets the choice and follows the book again. Never drawn in the PDF, HTML, EPUB or Folio.' },
         largeTargets: { type: 'boolean', description: 'Controls at least 44 px, for touch.' },
         guides: {
           type: 'object',
@@ -245,6 +248,7 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
       }
 
       if (args.printPreview !== undefined) setPrintPreview(args.printPreview as boolean);
+      if (args.fitMarks !== undefined) setFitMarksChoice(args.fitMarks === 'book' ? null : (args.fitMarks as FitMarksMode));
       if (args.largeTargets !== undefined) host.largeTargets.set(args.largeTargets as boolean);
 
       const settings: ViewerSettings = {};

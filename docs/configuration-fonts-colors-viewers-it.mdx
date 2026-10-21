@@ -148,6 +148,8 @@ Un clic su uno qualsiasi di questi avvisi apre il pannello Font, così puoi cari
 
 Quando esiste un’impaginazione, il pannello elenca anche il **Font di ripiego nell’impaginazione** del motore (`fontFallback`): un carattere senza il quale sono state misurate le pagine, mancante oppure disegnato dal browser a partire da un altro peso o da un’altra inclinazione. Una famiglia già indicata come sconosciuta o priva di una variante non viene elencata due volte. Prima della prima impaginazione, la sostituisce un controllo su `document.fonts`.
 
+Il pannello elenca anche i **Caratteri presi da un altro font** (`glyphFallback`): caratteri che il testo compone in un font privo di glifi per loro, una volta per font, con la famiglia generica che li ha disegnati (`serif`, `sans-serif`, `monospace`) quando il controllo può dirlo.
+
 ## Tavolozza dei colori
 
 La proprietà `colorPalette` di `PostextConfig` ti permette di definire un insieme riutilizzabile di colori con nome e di richiamarli da qualsiasi `ColorValue` della configurazione. È l’equivalente in Postext delle proprietà personalizzate CSS o del pannello Campioni di InDesign: modifichi una volta la voce della tavolozza, e ogni colore che vi punta si aggiorna in tutto il documento.
@@ -791,6 +793,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -811,10 +814,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Il testo in negativo sotto questo corpo viene segnalato.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>Lo stesso per il corsivo e i pesi leggeri, i cui tratti sono più sottili.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Un peso pari o inferiore a questo conta come leggero.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Le coppie di colori che il controllo accetta, ognuna con il suo <code>reason</code>: per colore del testo (<code>fg</code>) e del fondo (<code>bg</code>), per lo <code>style</code> in cui il testo è composto, o per entrambi. Vedi [Coppie accettate](#coppie-accettate).</td></tr>
   </tbody>
 </table>
 
 Un `level` o un `mode` scritto in qualsiasi altro modo viene letto come il predefinito e segnalato come valore di impostazione sconosciuto (vedi [Avvisi di configurazione](#avvisi-di-configurazione)).
+
+### Coppie accettate
+
+Un porting conserva la tavolozza dell’originale, e alcune sue coppie restano sotto la soglia: una tinta chiara dietro il testo di un riquadro, un colore del marchio in una testatina. `allow` le accetta senza spegnere il controllo (da postext 1.52). Una voce indica il colore del testo `fg` e quello del fondo `bg` (in esadecimale, come li scrive la configurazione o come sono dipinti), oppure uno `style`: l’id di uno stile di riquadro (`calloutStyles`, o lo `style` di una cornice di pagina composta), di paragrafo, di titolo, di etichetta in linea o di etichetta di figura. Ogni campo che una voce dà deve corrispondere, quindi `{ style: 'note', fg: '#7a8a99' }` accetta quel grigio solo dentro i riquadri `note`. Una voce che non dà nessuno dei tre non corrisponde a nulla.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: "L'ocra dell'editore per le testatine" },
+    { style: 'nota-margine', reason: "L'originale compone le note a margine in un grigio chiaro" },
+  ],
+}
+```
+
+Una coppia accettata viene ancora segnalata: ogni risultato che vi corrisponde porta `accepted` (il `reason` della voce, con il suo `fg`, `bg` e `style`), e i risultati accettati vengono dopo gli altri. Il Sandbox li elenca nei Controlli, sotto Coppie di contrasto accettate, con il motivo, e non li conta; `postext check` li stampa come note, che non fanno fallire `--strict`. Gli stessi colori fuori da ciò che la voce indica restano un avviso.
 
 ### Soglie
 
@@ -1281,6 +1300,18 @@ La proprietà `debug` raccoglie due tipi di aiuti alla composizione: sovrapposiz
       <td><code>boolean</code></td>
       <td><code>false</code></td>
       <td>Disegna sopra la pagina una sovrapposizione in negativo ad alto contrasto: utile per controllare a colpo d’occhio la forma complessiva di una doppia pagina (densità del testo, equilibrio delle colonne, bianchi) senza farsi distrarre dal dettaglio dei glifi.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Quali segni di adattamento il canvas del Sandbox disegna sulle pagine composte per chi non ha scelto nella barra del canvas: tutti, solo le cornici in cui il contenuto non entra e gli aspetti sconosciuti, oppure nessuno. Vale la scelta del lettore. Da postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Una cornice composta a questa scala o più grande non ha etichetta di scala (con <code>0.95</code> solo quelle sotto il 95 %). Testo e immagini si valutano a parte.</td>
     </tr>
   </tbody>
 </table>

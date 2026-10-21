@@ -304,6 +304,8 @@ Ein Stil kann die Regel für seine eigenen Container mit `containerSpacing` fest
 
 In einem `:::callout` übernimmt der Container die Außenabstände seines Stils auf dieselbe Weise: `marginTop` und `marginBottom` fallen mit dem Abstand der umgebenden Blöcke zusammen (ein negativer Wert zieht sie näher heran), und ein Container, der den Kasten eröffnet, erhält keinen oberen Außenabstand, wie am Kopf einer Spalte. Ein Kasten hat kein Grundlinienraster zum Einrasten, daher ist der Abstand unter dem letzten Absatz der größte von `marginBottom`, `spaceBetween` und dem eigenen Absatzabstand des Kastens (sein `body.paragraphSpacing`, eine Zeile seines Texts; entfällt mit `paragraphContainerSpacing: 'add'`), oder der eigene obere Außenabstand des nächsten Blocks, wenn dieser noch größer ist; ein negatives `marginBottom` zieht stattdessen den nächsten Block nach oben. (Bis postext 1.4 ignorierte ein Container in einem Kasten beide Außenabstände.)
 
+Im Kasten kommen die Satzfelder, die ein Stil offen lässt, aus dem Kasten (seit postext 1.52): Schrift, Größe, Zeilenabstand, Stärken und Farbe, die der Stil dem Text überlässt, sind die des Kastentexts, sodass `:::paragraphs{style="centred"}` mit einem Stil, der nur `textAlign: 'center'` setzt, im einen Kasten in der Grotesk und im anderen in der Antiqua steht. Felder, die der Stil setzt, bleiben. `bodyText.paragraphStylesInBoxes: 'document'` behält stattdessen den Text des Dokuments, wie bis postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => every unset field filled from the resolved body text
@@ -472,7 +474,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Hervorhebungsstile
 
-Die Eigenschaft `markStyles` deklariert die benannten Stile des Inline-`:mark[Text]{style="…"}`: das farbige Band hinter einer Wendung, so wie ein Schulbuch seine Schlüsselwörter hervorhebt (die Syntax und ihre Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `mark`, ist vorgegeben (ein blassgelbes Band, das ein wenig über die Wendung hinausreicht, mit leicht abgerundeten Enden, der Text in seiner eigenen Farbe), sodass `:mark[…]` ohne jede Konfiguration funktioniert; wer `markStyles` deklariert, ersetzt diese Liste. Eine Markierung ohne `style` oder mit einer ID, die kein Stil deklariert, nimmt den ersten Stil (die Sandbox meldet die unbekannte ID).
+Die Eigenschaft `markStyles` deklariert die benannten Stile des Inline-`:mark[Text]{style="…"}`: das farbige Band hinter einer Wendung, so wie ein Schulbuch seine Schlüsselwörter hervorhebt (die Syntax und ihre Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `mark`, ist vorgegeben (ein blassgelbes Band, das ein wenig über die Wendung hinausreicht, mit geraden Enden, der Text in seiner eigenen Farbe), sodass `:mark[…]` ohne jede Konfiguration funktioniert; wer `markStyles` deklariert, ersetzt diese Liste. Eine Markierung ohne `style` oder mit einer ID, die kein Stil deklariert, nimmt den ersten Stil (die Sandbox meldet die unbekannte ID).
 
 ```ts
 const config: PostextConfig = {
@@ -531,8 +533,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Radius der beiden Enden des Bandes, begrenzt auf seine halbe Höhe.</td>
+      <td><code>0</code></td>
+      <td>Radius der beiden Enden des Bandes, begrenzt auf seine halbe Höhe. Gerade Enden sind im Druck die Regel. Bis postext 1.51 war der Standard <code>0.2em</code>; eine damals gespeicherte Konfiguration, deren Text eine Markierung setzt, wird mit <code>0.2em</code> in jedem Stil ohne eigenen Radius gelesen.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -551,6 +553,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>Raum oben und unten, jeweils anstelle von <code>paddingY</code>.</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>Wie das Band einer Wendung, die in die nächste Zeile läuft, geteilt wird, wie <code>box-decoration-break</code> in CSS. <code>'slice'</code>: ein Band, am Zeilenumbruch gerade abgeschnitten, Innenabstand und runde Ecken nur am echten Anfang und Ende der Wendung. <code>'clone'</code>: Jedes Zeilenstück bekommt ein ganzes Band, mit <code>paddingX</code> und den Ecken an beiden Enden, für eine Überschrift auf einem zeilenweise geteilten Farbband. Der Satz ist in beiden Fällen derselbe.</td>
     </tr>
   </tbody>
 </table>

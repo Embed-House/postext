@@ -34,7 +34,7 @@ export {
   printLuminance,
   printSeparation,
 } from './contrast.js';
-export type { ContrastIssue, ContrastKind, ContrastMedium, ContrastOptions, ContrastPair, ContrastRole, PrintContrastContext, ReversedTextReason } from './contrast.js';
+export type { ContrastAccepted, ContrastIssue, ContrastKind, ContrastMedium, ContrastOptions, ContrastPair, ContrastRole, PrintContrastContext, ReversedTextReason } from './contrast.js';
 export { bitmapResolutionFor, effectiveBitmapResolution, bitmapLayoutSize, isPlaceholderResolution } from './bitmapResolution.js';
 export { bitmapResolutionOf } from './defaults/layout.js';
 export { bitmapInfo, bitmapSize } from './bundle/index.js';
@@ -116,7 +116,7 @@ export type { ParsedVideoUrl } from './video/url.js';
 export type { HeadingDesignCut } from './pipeline/headingDesignCuts.js';
 export { extractFrontmatter, metadataText } from './frontmatter.js';
 export type { FrontmatterError, ParsedFrontmatter } from './frontmatter.js';
-export { DEFAULT_PAGE_CONFIG, DEFAULT_CUT_LINES, DEFAULT_PAGE_NUMBERING, PAGE_SIZE_PRESETS, resolvePageConfig, DEFAULT_LAYOUT_CONFIG, DEFAULT_FLOAT_MIN_SCALE, DEFAULT_MAX_TOP_FRACTION, DEFAULT_TEXT_WRAP, DEFAULT_COLUMN_RULE, DEFAULT_COLUMN_BALANCING, resolveLayoutConfig, stripLayoutDefaults, DEFAULT_BODY_TEXT_CONFIG, DEFAULT_HYPHENATION_CONFIG, DEFAULT_BLOCKQUOTE_CONFIG, DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults, resolveBodyTextConfig, stripBodyTextDefaults, hyphenationEqual, DEFAULT_HEADINGS_CONFIG, resolveHeadingsConfig, stripHeadingsDefaults, resolveTableStyleConfig, stripTableStyleDefaults, resolveTableStylesConfig, stripTableStylesDefaults, pickTableStyle, defaultTableContinuationStrings, resolveCaptionStyleConfig, stripCaptionStyleDefaults, mergeCaptionStyle, defaultCaptionLabels, DEFAULT_DIAGRAM_STYLE_CONFIG, resolveDiagramStyleConfig, stripDiagramStyleDefaults, DEFAULT_VIDEO_STYLE_CONFIG, DEFAULT_VIDEO_PLAYER_OPTIONS, resolveVideoStyleConfig, resolveVideoPlayerOptions, stripVideoStyleDefaults, DEFAULT_PARAGRAPH_STYLES, resolveParagraphStylesConfig, stripParagraphStylesDefaults, DEFAULT_CALLOUT_STYLES, DEFAULT_CALLOUT_STYLE_STATIC, resolveCalloutStylesConfig, stripCalloutStylesDefaults, inheritCalloutStyles, calloutStyleChain, DEFAULT_CHIP_STYLES, DEFAULT_CHIP_STYLE_STATIC, resolveChipStylesConfig, stripChipStylesDefaults, pickChipStyle, DEFAULT_MARK_STYLES, DEFAULT_MARK_STYLE_STATIC, resolveMarkStylesConfig, stripMarkStylesDefaults, pickMarkStyle, DEFAULT_UNORDERED_LISTS_STATIC, resolveUnorderedListsConfig, stripUnorderedListsDefaults, DEFAULT_ORDERED_LISTS_STATIC, resolveOrderedListsConfig, stripOrderedListsDefaults, DEFAULT_MATH_CONFIG, resolveMathConfig, stripMathDefaults, dimensionsEqual, colorsEqual, resolveColorValue, applyPaletteToConfig, applyPaletteToResolvedConfig, DEFAULT_COLOR_PALETTE, DEFAULT_MAIN_COLOR, DEFAULT_MAIN_COLOR_ID, DEFAULT_MAIN_COLOR_NAME, DEFAULT_MAIN_COLOR_HEX, cloneDefaultColorPalette, isDefaultColorPalette, stripPageDefaults, stripConfigDefaults, DEFAULT_DEBUG_CONFIG, resolveDebugConfig, stripDebugDefaults, DEFAULT_CANVAS_VIEWER_CONFIG, CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig, stripCanvasViewerDefaults, DEFAULT_HTML_VIEWER_CONFIG, resolveHtmlViewerConfig, stripHtmlViewerDefaults, mergeConfigOverrides, applyHtmlViewerOverrides, DEFAULT_PDF_GENERATION_CONFIG, resolvePdfGenerationConfig, stripPdfGenerationDefaults, FOLIO_PAPER_STOCKS, FOLIO_MAX_TILT, DEFAULT_FOLIO_CONFIG, isNewspaperSizePreset, folioDefaultsFor, folioForTrim, resolveFolioConfig, stripFolioDefaults, wrapFolioYaw, DEFAULT_HEADER_FOOTER_SLOT, DEFAULT_HEADER_SLOT, DEFAULT_FOOTER_SLOT, DEFAULT_TEXT_ELEMENT, DEFAULT_RULE_ELEMENT, resolveHeaderFooterConfig, stripHeaderFooterDefaults, defaultResourceTypes, defaultVideoResourceType, effectiveResourceTypes, DEFAULT_PARTS_CONFIG, resolvePartsConfig, stripPartsDefaults, DEFAULT_HEADING_STYLES, resolveHeadingStylesConfig, stripHeadingStylesDefaults, DEFAULT_TOC_CONFIG, resolveTocConfig, stripTocDefaults, DEFAULT_FOOTNOTES_CONFIG, resolveFootnotesConfig, stripFootnotesDefaults, parseFootnoteNumberFormat, DEFAULT_LINE_NUMBERS_CONFIG, resolveLineNumbersConfig, stripLineNumbersDefaults, defaultLineNumbersRestart, DEFAULT_CODE_STYLE, DEFAULT_CODE_TOKENS, CODE_TOKEN_KINDS, CODE_OVERFLOWS, resolveCodeStyleConfig, resolvedCodeStyle, stripCodeStyleDefaults, resolveCrossRefsConfig, stripCrossRefsDefaults, DEFAULT_CITATIONS_CONFIG, resolveCitationsConfig, stripCitationsDefaults, DEFAULT_INDEX_CONFIG, resolveIndexConfig, stripIndexDefaults, DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, defaultCjkLineBreak, defaultCjkPunctuationWidth, defaultCjkCompression, defaultCjkEmphasis, defaultCjkBookTitleMark, defaultCjkBookTitleBrackets, defaultCjkEmphasisMark, defaultCjkWarichuBrackets, defaultCjkHangingPunctuation, defaultCjkSpaceAfterQuestion, defaultCjkParagraphStartBracket, defaultCjkRubyOverhang, defaultCjkRubyAlign } from './defaults/index.js';
+export { DEFAULT_PAGE_CONFIG, DEFAULT_CUT_LINES, DEFAULT_PAGE_NUMBERING, PAGE_SIZE_PRESETS, resolvePageConfig, DEFAULT_LAYOUT_CONFIG, DEFAULT_FLOAT_MIN_SCALE, DEFAULT_MAX_TOP_FRACTION, DEFAULT_TEXT_WRAP, DEFAULT_COLUMN_RULE, DEFAULT_COLUMN_BALANCING, resolveLayoutConfig, stripLayoutDefaults, DEFAULT_BODY_TEXT_CONFIG, DEFAULT_HYPHENATION_CONFIG, DEFAULT_BLOCKQUOTE_CONFIG, DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults, resolveBodyTextConfig, stripBodyTextDefaults, hyphenationEqual, DEFAULT_HEADINGS_CONFIG, resolveHeadingsConfig, stripHeadingsDefaults, resolveTableStyleConfig, stripTableStyleDefaults, resolveTableStylesConfig, stripTableStylesDefaults, pickTableStyle, defaultTableContinuationStrings, resolveCaptionStyleConfig, stripCaptionStyleDefaults, mergeCaptionStyle, defaultCaptionLabels, DEFAULT_DIAGRAM_STYLE_CONFIG, resolveDiagramStyleConfig, stripDiagramStyleDefaults, DEFAULT_VIDEO_STYLE_CONFIG, DEFAULT_VIDEO_PLAYER_OPTIONS, resolveVideoStyleConfig, resolveVideoPlayerOptions, stripVideoStyleDefaults, DEFAULT_PARAGRAPH_STYLES, resolveParagraphStylesConfig, stripParagraphStylesDefaults, DEFAULT_CALLOUT_STYLES, DEFAULT_CALLOUT_STYLE_STATIC, resolveCalloutStylesConfig, stripCalloutStylesDefaults, inheritCalloutStyles, calloutStyleChain, DEFAULT_CHIP_STYLES, DEFAULT_CHIP_STYLE_STATIC, resolveChipStylesConfig, stripChipStylesDefaults, pickChipStyle, DEFAULT_MARK_STYLES, DEFAULT_MARK_STYLE_STATIC, resolveMarkStylesConfig, stripMarkStylesDefaults, pickMarkStyle, DEFAULT_UNORDERED_LISTS_STATIC, resolveUnorderedListsConfig, stripUnorderedListsDefaults, DEFAULT_ORDERED_LISTS_STATIC, resolveOrderedListsConfig, stripOrderedListsDefaults, DEFAULT_MATH_CONFIG, resolveMathConfig, stripMathDefaults, dimensionsEqual, colorsEqual, resolveColorValue, applyPaletteToConfig, applyPaletteToResolvedConfig, DEFAULT_COLOR_PALETTE, DEFAULT_MAIN_COLOR, DEFAULT_MAIN_COLOR_ID, DEFAULT_MAIN_COLOR_NAME, DEFAULT_MAIN_COLOR_HEX, cloneDefaultColorPalette, isDefaultColorPalette, stripPageDefaults, stripConfigDefaults, DEFAULT_DEBUG_CONFIG, FIT_MARKS_MODES, resolveDebugConfig, stripDebugDefaults, DEFAULT_CANVAS_VIEWER_CONFIG, CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig, stripCanvasViewerDefaults, DEFAULT_HTML_VIEWER_CONFIG, resolveHtmlViewerConfig, stripHtmlViewerDefaults, mergeConfigOverrides, applyHtmlViewerOverrides, DEFAULT_PDF_GENERATION_CONFIG, resolvePdfGenerationConfig, stripPdfGenerationDefaults, FOLIO_PAPER_STOCKS, FOLIO_MAX_TILT, DEFAULT_FOLIO_CONFIG, isNewspaperSizePreset, folioDefaultsFor, folioForTrim, resolveFolioConfig, stripFolioDefaults, wrapFolioYaw, DEFAULT_HEADER_FOOTER_SLOT, DEFAULT_HEADER_SLOT, DEFAULT_FOOTER_SLOT, DEFAULT_TEXT_ELEMENT, DEFAULT_RULE_ELEMENT, resolveHeaderFooterConfig, stripHeaderFooterDefaults, defaultResourceTypes, defaultVideoResourceType, effectiveResourceTypes, DEFAULT_PARTS_CONFIG, resolvePartsConfig, stripPartsDefaults, DEFAULT_HEADING_STYLES, resolveHeadingStylesConfig, stripHeadingStylesDefaults, DEFAULT_TOC_CONFIG, resolveTocConfig, stripTocDefaults, DEFAULT_FOOTNOTES_CONFIG, resolveFootnotesConfig, stripFootnotesDefaults, parseFootnoteNumberFormat, DEFAULT_LINE_NUMBERS_CONFIG, resolveLineNumbersConfig, stripLineNumbersDefaults, defaultLineNumbersRestart, DEFAULT_CODE_STYLE, DEFAULT_CODE_TOKENS, CODE_TOKEN_KINDS, CODE_OVERFLOWS, resolveCodeStyleConfig, resolvedCodeStyle, stripCodeStyleDefaults, resolveCrossRefsConfig, stripCrossRefsDefaults, DEFAULT_CITATIONS_CONFIG, resolveCitationsConfig, stripCitationsDefaults, DEFAULT_INDEX_CONFIG, resolveIndexConfig, stripIndexDefaults, DEFAULT_CJK_CONFIG, resolveCjkConfig, stripCjkDefaults, defaultCjkLineBreak, defaultCjkPunctuationWidth, defaultCjkCompression, defaultCjkEmphasis, defaultCjkBookTitleMark, defaultCjkBookTitleBrackets, defaultCjkEmphasisMark, defaultCjkWarichuBrackets, defaultCjkHangingPunctuation, defaultCjkSpaceAfterQuestion, defaultCjkParagraphStartBracket, defaultCjkRubyOverhang, defaultCjkRubyAlign } from './defaults/index.js';
 export { defaultCjkLatinSpacingEdge } from './defaults/index.js';
 export { DEFAULT_PRINT_CONFIG, DEFAULT_PRINT_BLACK_CONFIG, DEFAULT_PRINT_PREFLIGHT_CONFIG, DEFAULT_RICH_BLACK, resolvePrintConfig, resolvePrintBlackConfig, resolvePrintPreflightConfig, stripPrintDefaults, profileInkLimit } from './defaults/index.js';
 export { DEFAULT_CHECKS_CONFIG, DEFAULT_CONTENT_IN_CONFIG_CHECK, resolveChecksConfig, resolveContentInConfigCheck, stripChecksDefaults } from './defaults/index.js';
@@ -156,6 +156,7 @@ export type {
   ResolvedIndexConfig,
   OutlineIndexMark,
   TocLevelConfig,
+  TocLeaderFaceConfig,
   TocEntryStyleConfig,
   ResolvedTocConfig,
   ResolvedTocLevelConfig,
@@ -242,6 +243,8 @@ export type {
   ColonListRoom,
   CompositionRule,
   ParagraphContainerSpacing,
+  ParagraphStylesInBoxes,
+  ParagraphBodyField,
   EmphasisStyle,
   TashkilMode,
   LayoutConfig,
@@ -321,6 +324,7 @@ export type {
   ChipStyleConfig,
   ResolvedChipStyleConfig,
   MarkStyleConfig,
+  MarkDecorationBreak,
   ResolvedMarkStyleConfig,
   CalloutSpan,
   CalloutSideAtColumnEnd,
@@ -334,6 +338,8 @@ export type {
   CalloutLabelConfig,
   CalloutLabelIconConfig,
   CalloutLabelIconKind,
+  CalloutIconShape,
+  IconTint,
   CalloutTextTransform,
   CalloutMarkerTextAlign,
   CalloutBorderConfig,
@@ -368,6 +374,7 @@ export type {
   SyncIndicatorConfig,
   DebugConfig,
   ResolvedDebugConfig,
+  FitMarksMode,
   WarningsToggleConfig,
   ResolvedWarningsToggleConfig,
   CanvasViewerConfig,
@@ -445,6 +452,7 @@ export type {
   ContrastReversedTextConfig,
   ResolvedContrastReversedTextConfig,
   ContrastConfig,
+  ContrastAllowEntry,
   ResolvedContrastConfig,
   ChecksConfig,
   ResolvedChecksConfig,
@@ -539,6 +547,7 @@ export type {
   VDTLineHighlight,
   VDTSegmentMark,
   VDTChip,
+  VDTSwatch,
   VDTChipRun,
   VDTLine,
   VDTAnchor,
@@ -642,7 +651,7 @@ export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiOptions,
 export { computeColumnEdges } from './pipeline/resourceLayout.js';
 export { findAnnotations } from './parse/annotations.js';
 export type { FoundAnnotation, AnnotationName } from './parse/annotations.js';
-export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse/index.js';
+export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, SwatchShape, SwatchBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse/index.js';
 export { parseMarkdownWithIssues, MATH_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, KNOWN_DIRECTIVES, KNOWN_CONTAINERS, spaceDirectiveLines, MAX_SPACE_LINES } from './parse/index.js';
 // Composed pages in the document (#854): each `::::page` fence's content by
 // slot, and the slot checks the content warnings run.
@@ -673,6 +682,7 @@ export type { ValidatePageTemplatesOptions } from './composed/validate.js';
 export { altWithLabels, labelPlainText, withIconAlts } from './composed/labelText.js';
 // Inline symbols in labels and captions (#1058): their boxes and what the painters need.
 export { ICON_CAP_EM, iconLineDash, inlineIconBox, measureInlineIcon, resourceBlockIcons } from './measure/inlineIcon.js';
+export { hasSwatchShape, swatchGeometry, type SwatchGeometry } from './swatchShape.js';
 export {
   figureLabelBounds,
   figureLabelLeaderPath,
@@ -708,6 +718,8 @@ export type { ComposedPageReflow, FrameMotion } from './composed/reflowLog.js';
 // without laying a page out (the Sandbox's template thumbnails, #864).
 export { frameOrder, framePlaceable, groupPlaceable, placeBox as placeFrameBox, unionRect as frameUnionRect } from './composed/geometry.js';
 export type { FrameAreas, FrameGeometryContext, Rect as FrameRect } from './composed/geometry.js';
+export { growMembers } from './composed/grow.js';
+export type { GrowMembers } from './composed/grow.js';
 // The source map of a laid-out document and the stable ids of a composed
 // page's elements (#857).
 export { sourceAt, elementsForSource, findElement } from './composed/sourceMap.js';
@@ -727,7 +739,8 @@ export type { DesignTextVerdict } from './configWarnings.js';
 export type { ConfigWarningOptions } from './configWarnings.js';
 export { configDesignSlots } from './design/slots.js';
 // Decoration drawn when the page fence says so (#1087).
-export { fenceSetsAttribute, fenceConditionMet, fenceConditionUses, fenceConditionsNeverMet, fenceAttributesSet, FENCE_CONDITION_SLOTS } from './design/fenceCondition.js';
+export { fenceSetsAttribute, fenceConditionMet, fenceConditionUses, fenceConditionsNeverMet, fenceAttributesSet, FENCE_CONDITION_SLOTS, attrPlaceholderUses, attrPlaceholdersNeverSet, markdownAttributesSet } from './design/fenceCondition.js';
+export type { AttrPlaceholderUse } from './design/fenceCondition.js';
 export type { FenceConditionUse } from './design/fenceCondition.js';
 export { parseDirectiveAttrs } from './parse/attrs.js';
 // «Move the text to the Markdown» (#874): page designs held in heading
@@ -758,6 +771,11 @@ export type { FontsChangedListener } from './fonts/fontSet.js';
 export { documentFontFaces, documentFontFamilies, fontFallbacks, defaultFontSet, cssWeightOrder, cssWeightOrderOf } from './fonts/faces.js';
 export type { FontFaceLike, FontFaceSetLike, FontFallback, FontFallbackReason, FontFallbackOptions, FontFaceRequest } from './fonts/faces.js';
 export { exportStandInOf, fontFallbackOf, fontFallbackFamilies, hasOwnStyle } from './fonts/fallback.js';
+// Characters a face lacks, drawn from another face (#1105).
+export { glyphFallbacks, documentFontTexts, registerFontCoverage, forgetFontCoverage, installGlyphProbe, GLYPH_PROBE_FAMILY, GLYPH_FALLBACK_LISTED } from './fonts/glyphFallback.js';
+export type { GlyphFallback, GlyphFallbackOptions } from './fonts/glyphFallback.js';
+export { sfntCodePointRanges } from './fonts/cmap.js';
+export type { CodePointRanges } from './fonts/cmap.js';
 export { evictFontFamilies } from './measure/font.js';
 export { measurementGeneration } from './measure/canvas.js';
 export { parseFontString } from './measure/fontString.js';

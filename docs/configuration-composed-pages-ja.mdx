@@ -342,6 +342,12 @@ const config: PostextConfig = {
       <td>枠がグループの空間をどう分け合うかです。<code>grow</code>は余った空間の取り分、<code>shrink</code>は枠が空間を返せるかどうかを決め、<code>priority</code>の低い枠から先に返します。</td>
     </tr>
     <tr>
+      <td><code>growWith</code></td>
+      <td><code>'children' | string[]</code></td>
+      <td>—</td>
+      <td>内側の枠に合わせて伸びます（<a href="/ja/docs/composed-page-books">テンプレートページで作る本</a>の手順 6 を参照）。</td>
+    </tr>
+    <tr>
       <td><code>optional</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -681,6 +687,8 @@ groups: [
 
 `variants.recto`と`variants.verso`はテンプレートと同じように書き、同じように統合して、右ページと左ページに適用します。適用は`extends`の連鎖全体の後で、根のテンプレートのバリアントが先です。見開きには両方の側があるので、どちらのバリアントも適用しません。
 
+`variants.recto`の要素に`parity: 'even'`、`variants.verso`の要素に`'odd'`を書くと、その要素は描かれません（`unknownConfigValue`）。
+
 ```ts
 pageTemplates: [
   { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
@@ -711,7 +719,7 @@ decoration: { elements: [
 - 描かない要素にアンカーした要素や、その要素までの寸法をとる要素も描きません。
 - 両方のキーがあるときは、ブロックに`when`の属性があり、`unless`の属性がないページで描きます。
 - 文書の柱とノンブル、セクションの柱とノンブルもこのキーを読みます。テンプレートページでないページにはページブロックがなく、どの属性もありません。見出し・部扉・ボックスのデザインはこのキーを無視します。
-- 空でない文字列でない値や、見出し・部扉・ボックスのデザインに書いた値は`unknownConfigValue`として報告し、要素はキーがないものとして描きます。`postext check`は、本のどのページブロックにもない属性を`when`や`unless`が指していると、注記`conditionNeverMet`を出します。その要素は一度も描かれないか、常に描かれます。
+- 空でない文字列でない値や、見出し・部扉・ボックスのデザインに書いた値は`unknownConfigValue`として報告し、要素はキーがないものとして描きます。`postext check`は、本のどのページブロックにもない属性を`when`や`unless`が指していると、注記`conditionNeverMet`を出します。その要素は一度も描かれないか、常に描かれます。何も設定しない`{attr.x}`も同様で、常に空になります。
 - Sandboxでは、柱とノンブルやテンプレートの装飾の要素カードごとに**ページが指定したときに描く**と**ページが指定したときは描かない**の欄があり、本のページブロックが使う属性から選べます。
 
 ### 割り付けに反映される設定

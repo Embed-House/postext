@@ -32,7 +32,7 @@
  */
 import { isCornerRadii } from '../design/boxShape.js';
 import type { ComposedPageFence, ContentBlock } from '../parse/types.js';
-import type { Dimension, ResolvedCalloutStyleConfig } from '../types.js';
+import type { CornerRadius, Dimension, ResolvedCalloutStyleConfig } from '../types.js';
 import { pageIsMirrored, pageIsVertical, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt.js';
 import { contourBounds, scaleContourAbout, shiftContour } from '../contour/index.js';
 import { frameContour } from '../composed/contour.js';
@@ -52,6 +52,7 @@ import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat.js'
 import { moduleOfFrame, nestedChain } from '../composed/modules.js';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules.js';
 import { overlapChecks } from '../composed/overlap.js';
+import { growMembers, grownHeight } from '../composed/grow.js';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout.js';
 import { isMarkerBlock } from './buildHelpers.js';
 import type { BlockMeasureContext } from './measureContentBlock.js';
@@ -666,6 +667,9 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
     fenceIndex: fi,
     pageIndex: input.page.index,
     ...(input.locale ? { locale: input.locale } : {}),
+    // Pictures cover by their shapes (#1123), set as the page lays them.
+    mirrored: pageIsMirrored(input.page),
+    verticalFlow: pageIsVertical(input.page),
   });
   warnings.push(...overlaps.warnings);
   const { frames, blocks, laid, fitted } = cur;
@@ -1092,6 +1096,9 @@ function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
 export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): ResolvedCalloutStyleConfig {
   if (scale === 1) return style;
   const d = (v: Dimension): Dimension => ({ ...v, value: v.value / scale });
+  const radiusAt = (r: CornerRadius): CornerRadius => (isCornerRadii(r)
+    ? Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v ? d(v) : v]))
+    : d(r));
   const p = style.padding;
   return {
     ...style,
@@ -1103,18 +1110,55 @@ export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): 
         ? { sides: Object.fromEntries(Object.entries(style.border.sides).map(([k, v]) => [k, { ...v, width: d(v.width) }])) as NonNullable<ResolvedCalloutStyleConfig['border']['sides']> }
         : {}),
     },
-    borderRadius: isCornerRadii(style.borderRadius)
-      ? Object.fromEntries(Object.entries(style.borderRadius).map(([k, v]) => [k, v ? d(v) : v]))
-      : d(style.borderRadius),
+    borderRadius: radiusAt(style.borderRadius),
     stripe: { ...style.stripe, width: d(style.stripe.width) },
     ...(style.label
-      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) }, ...(style.label.fillet ? { fillet: d(style.label.fillet) } : {}) } }
+      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) }, ...(style.label.fillet ? { fillet: d(style.label.fillet) } : {}), ...(style.label.borderRadius !== undefined ? { borderRadius: radiusAt(style.label.borderRadius) } : {}) } }
       : {}),
   };
 }
 
 /** Lay out every frame of the page once, with the reflow ladder's `fit`. */
+/** Most times a page is laid again for its growing boxes (#1117): a box's
+ *  members stand where its top puts them, so one more lay is enough
+ *  unless a member hangs from a box that grows in turn. */
+const GROW_ROUNDS = 3;
+
+/**
+ * Lay the page; then, while a box that grows with the frames laid inside
+ * it (`growWith`, #1117) ends above the foot of one of them and its bottom
+ * padding, lay it again with that height as the box's least height. What
+ * the box's foot places (a frame `below` it, the rest of its stack) moves
+ * down as under any growing box.
+ */
 function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState, collapsed: ReadonlySet<string>): Composition {
+  let c = composePageOnce(pageInput, template, fit, collapsed);
+  if (!template.frames.some((f) => f.growWith)) return c;
+  const mmPx = pageInput.dpi / MM_PER_IN;
+  let tpl = template;
+  for (let round = 0; round < GROW_ROUNDS; round++) {
+    const grown = new Map<string, number>();
+    const laid = new Map(c.frames.filter((f) => !f.collapsed).map((f) => [f.name, f]));
+    for (const box of tpl.frames) {
+      const v = box.growWith && box.rotate === 0 && !collapsed.has(box.name) ? laid.get(box.name) : undefined;
+      if (!v) continue;
+      const members = growMembers(tpl, box);
+      const rects = [
+        ...members.frames.flatMap((n) => (laid.has(n) ? [laid.get(n)!.rect] : [])),
+        ...members.groups.flatMap((n) => (c.groupRects.has(n) ? [c.groupRects.get(n)!] : [])),
+      ];
+      const pad = lengthPx(pageInput.styleOf(box).padding.bottom, pageInput.dpi, pageInput.emPx);
+      const need = grownHeight(v.rect, rects, pad);
+      if (need !== undefined) grown.set(box.name, need);
+    }
+    if (grown.size === 0) break;
+    tpl = { ...tpl, frames: tpl.frames.map((f) => (grown.has(f.name) ? { ...f, minHeight: { value: grown.get(f.name)! / mmPx, unit: 'mm' as const } } : f)) };
+    c = composePageOnce(pageInput, tpl, fit, collapsed);
+  }
+  return c;
+}
+
+function composePageOnce(pageInput: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState, collapsed: ReadonlySet<string>): Composition {
   /** What the frames are placed in: the page, or, while a module's frames
    *  are placed (#1062), the page with the module's box as its area. */
   let input = pageInput;

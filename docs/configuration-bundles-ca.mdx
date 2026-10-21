@@ -120,6 +120,8 @@ Les regles 13 també dibuixen la casella d'un element de tasca (`- [ ]`, `- [x]`
 
 Un manifest marcat `14` l'ha escrit postext 1.30 a 1.33. Les regles 15 (postext 1.34, #853) afegeixen les plantilles de pàgina (`pageTemplates`) i els estils d'etiqueta (`labelStyles`) de les [pàgines compostes](/ca/docs/composed-pages). No canvien res del que diu una configuració anterior, així que un manifest marcat `14` es llegeix tal com és, sense cap fixació. El número marca una configuració que pot contenir plantilles, que un lector de la versió 14 o anterior ignora.
 
+Un manifest amb `15` o `16` el va escriure postext 1.34 a 1.51 (les regles de 16, #1056, afegeixen connectors a la decoració d'una plantilla i no fixen res). Les regles de 17 (#1119) prenen del text de la caixa on és l'estil de paràgraf la lletra, la mida, l'interlineat, els gruixos i el color que l'estil deixa sense fixar, on fins a 1.51 eren els del text del document. Un manifest amb `16` o anterior rep `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) al `bodyText` vigent, quan la configuració combinada declara un estil de paràgraf i no anomena l'ajust.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

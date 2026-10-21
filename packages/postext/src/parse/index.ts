@@ -29,6 +29,8 @@ export type {
   IndexMark,
   AnchorMark,
   ChipBox,
+  SwatchShape,
+  SwatchBox,
   EmphasisMark,
   InlineRuby,
   InlineWarichu,

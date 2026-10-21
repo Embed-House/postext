@@ -1305,8 +1305,10 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
     module's frames stand where the band stood, offset by how far the band
     stands from the foot of the one before it (the first from the page's
     top), so the page lays as it did and text that grows pushes what
-    follows. The page keeps its furniture (`is_furniture`) while nothing
-    the page paints earlier moved; every other element goes with the band
+    follows. The page keeps its furniture (`is_furniture`) always (in a
+    module the shell would draw it twice); furniture painted after something
+    that moves and over it is listed in `conflicts`, since on the shell it
+    lies under that. Every other element goes with the band
     whose frames it reads or inside which it is painted, else with the first
     module, as it is.
 
@@ -1353,6 +1355,7 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
     # The page shell's decoration paints under every module's: what the page
     # painted after something that moves stays only when it covers none of it
     keep, extra, clean = [], set(), True
+    conflicts: list[str] = []
     painted: list[Box | None] = []
     for el in _decoration(t):
         eid = str(el.get("id"))
@@ -1364,8 +1367,12 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
         # an ornament anchored to a running head the shell keeps stays with it (in a module
         # its anchor would name an element the module does not have)
         by_head = _target(el.get("placement")) in keep
-        if by_head or is_furniture(el) and (clean or _clear_of(box, painted)):
+        if by_head or is_furniture(el):
+            # furniture always stays on the shell: copied into a module, the shell would draw it
+            # too. Painted over something that moves, it now lies under it: reported
             keep.append(eid)
+            if not by_head and not (clean or _clear_of(box, painted)):
+                conflicts.append(eid)
             continue
         extra.add(eid)
         painted.append(_fixed_box(el))
@@ -1379,7 +1386,7 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
             m["width"] = mm(s["width"]) if s["width"] is not None else "fill"
         mods.append({"module": m, "names": names, "ids": ids, "band": s["band"], "row": s["row"],
                      "col": s.get("col"), "n": s.get("n"), "equal": s.get("equal")})
-    return {"bands": bands, "modules": mods, "keep": keep}
+    return {"bands": bands, "modules": mods, "keep": keep, "conflicts": conflicts}
 
 
 def band_top(slot: dict) -> float:
@@ -1662,6 +1669,10 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
         for pg in pages:
             if pg is None or "plan" not in pg:
                 continue
+            if pg["plan"].get("conflicts"):
+                report.setdefault("furnitureUnder", []).append(
+                    {"template": pg["t"]["id"], "elements": list(pg["plan"]["conflicts"]),
+                     "note": "furniture the source paints over a module's art stays on the shell, under it"})
             ids = [pg["ids"][k] for k in range(len(pg["plan"]["modules"]))]
             rename = apply_page_modules(pg["t"], pg["plan"], ids, pg["rects"], nested)
             for o, cur in pg["names"].items():

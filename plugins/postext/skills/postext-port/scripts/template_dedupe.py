@@ -703,7 +703,33 @@ def patch_of(child: dict, base: dict, tol: float) -> dict:
     db = {element_key(e) for e in decoration_of(base)}
     extra = [e for e in decoration_of(child) if element_key(e) not in db]
     if extra:
-        out["decoration"] = {"elements": extra}
+        out["decoration"] = {"elements": extra + repaint_over(extra, decoration_of(base))}
+    return out
+
+
+def repaint_over(extra: list[dict], inherited: list[dict], page: tuple[float, float] = (210.0, 297.0)) -> list[dict]:
+    """A child's new decoration paints after everything it inherits (the
+    engine appends a patch's new elements after the base's), so a band or a
+    shape a page adds would cover the base's folio or running head. Each
+    inherited text or furniture element (`is_furniture`) that an extra
+    element meets is taken out and written again after the extras
+    (`{"id": …, "remove": true}`, then the whole element), so it stays on
+    top as on the source page. Elements whose box cannot be read (anchored
+    to a frame) are left in place."""
+    import template_fold as tf
+
+    def box(el: dict):
+        return tf._text_box(el, page) if el.get("kind") == "text" else tf._fixed_box(el)
+
+    boxes = [b for b in (box(e) for e in extra) if b is not None]
+    out: list[dict] = []
+    for el in inherited:
+        if not el.get("id") or not (el.get("kind") == "text" or tf.is_furniture(el)):
+            continue
+        b = box(el)
+        if b is None or not any(b[0] < o[2] and o[0] < b[2] and b[1] < o[3] and o[1] < b[3] for o in boxes):
+            continue
+        out += [{"id": el["id"], "remove": True}, json.loads(json.dumps(el))]
     return out
 
 

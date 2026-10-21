@@ -48,6 +48,7 @@ import { spaceDirectiveLines } from '../parse/attrs.js';
 import type {
   CalloutPlacement,
   CalloutSpan,
+  ColorValue,
   Dimension,
   ResolvedCalloutDesignConfig,
   ResolvedCalloutStyleConfig,
@@ -83,7 +84,7 @@ import { headingIsHidden, headingStyleOf } from './headingStyles.js';
 import { tocBlockStamps } from './toc.js';
 import { directDesignTextBlock } from '../design/bidiText.js';
 import { arabicNumbersOf } from './config.js';
-import { containerStyle, paragraphStyleIdOf, type ParagraphContainerPlan } from './paragraphContainers.js';
+import { containerStyle, paragraphStyleIdOf, restyleContainerFor, type ParagraphContainerPlan } from './paragraphContainers.js';
 import { joiningScriptIn } from '../measure/joining.js';
 import { getMeasureArabicNumbers, getMeasureDirection, shiftLineX } from '../measure/bidiLines.js';
 import { resolvedCodeStyle } from '../defaults/codeStyle.js';
@@ -94,7 +95,8 @@ import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from './colu
 import type { LineInsetStep } from '../measure/types.js';
 import type { CalloutLineWidth, GroupPos } from './cutTypes.js';
 import { offsetPathBlock } from '../design/pathBlock.js';
-import { borderSidesPx, boxOutline, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, shapePathBlocks, SHAPE_SIDES, uniformRadius, type ShapeBorder } from '../design/boxShape.js';
+import { iconShapeBlock } from '../design/iconShape.js';
+import { borderSidesPx, boxOutline, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, shapePathBlocks, SHAPE_SIDES, tabRegionOutline, uniformRadius, type ShapeBorder, type ShapeTab } from '../design/boxShape.js';
 export type { CalloutLineWidth, GroupPos } from './cutTypes.js';
 
 // ---------------------------------------------------------------------------
@@ -182,8 +184,41 @@ export function deriveCalloutResolvedConfig(
   // have a colour of their own, which an unset `lists.color` leaves alone.
   // A resolved style without the flag (built by hand) keeps the old rule.
   const numberColorOverride = lists.colorSet === true || colorOverride;
+  // The bullet's face (#1103): the style's own, else the level's. A bullet
+  // size of its own sets a level whose face was only the body's in the
+  // box's body face, as before; a list or level face of its own (a symbol
+  // face) is kept.
+  const bulletFamily = (levelFamily: string): string | undefined =>
+    lists.bulletFontFamily
+      ?? (lists.bulletFontSize && levelFamily === resolved.bodyText.fontFamily ? body.fontFamily : undefined);
+  // List margins of the box's own (#1103), on ordered lists too; unset,
+  // the document's.
+  const listMargins = {
+    ...(lists.marginTop ? { marginTop: lists.marginTop } : {}),
+    ...(lists.marginBottom ? { marginBottom: lists.marginBottom } : {}),
+  };
+  // A paragraph style's unset type fields take the box's body (#1119):
+  // the face, size, leading, weights and colour the style leaves to the
+  // body text are the box's here. A configuration that pins the rule of
+  // postext 1.51 (`paragraphStylesInBoxes: 'document'`) keeps the
+  // document's.
+  const boxBody = {
+    fontFamily: body.fontFamily,
+    fontSize: body.fontSize,
+    lineHeight: body.lineHeight,
+    fontWeight: body.fontWeight,
+    boldFontWeight: body.boldFontWeight,
+    color: body.color,
+  };
+  const paragraphStyles = resolved.bodyText.paragraphStylesInBoxes === 'document'
+    || !resolved.paragraphStyles.some((s) => s.inheritsBody)
+    ? resolved.paragraphStyles
+    : resolved.paragraphStyles.map((s) => (s.inheritsBody
+      ? { ...s, ...Object.fromEntries(s.inheritsBody.map((f) => [f, boxBody[f]])) }
+      : s));
   return {
     ...resolved,
+    paragraphStyles,
     bodyText: {
       ...resolved.bodyText,
       fontFamily: body.fontFamily,
@@ -212,15 +247,18 @@ export function deriveCalloutResolvedConfig(
       indent: lists.indent,
       gap: lists.gap,
       itemSpacing: lists.itemSpacing,
-      levels: ul.levels.map((l) => ({
-        ...l,
-        bulletChar: bulletOverride ? lists.bulletChar : l.bulletChar,
-        color: colorOverride ? lists.color : l.color,
-        // A bullet size / weight of its own sets the glyph in the box's body
-        // face at that size (the document's list face otherwise).
-        ...(lists.bulletFontSize ? { fontSize: lists.bulletFontSize, fontFamily: body.fontFamily } : {}),
-        ...(lists.bulletFontWeight !== undefined ? { fontWeight: lists.bulletFontWeight } : {}),
-      })),
+      ...listMargins,
+      levels: ul.levels.map((l) => {
+        const fontFamily = bulletFamily(l.fontFamily);
+        return {
+          ...l,
+          bulletChar: bulletOverride ? lists.bulletChar : l.bulletChar,
+          color: colorOverride ? lists.color : l.color,
+          ...(lists.bulletFontSize ? { fontSize: lists.bulletFontSize } : {}),
+          ...(fontFamily ? { fontFamily } : {}),
+          ...(lists.bulletFontWeight !== undefined ? { fontWeight: lists.bulletFontWeight } : {}),
+        };
+      }),
     },
     orderedLists: {
       ...ol,
@@ -228,6 +266,7 @@ export function deriveCalloutResolvedConfig(
       indent: lists.indent,
       gap: lists.gap,
       itemSpacing: lists.itemSpacing,
+      ...listMargins,
       levels: ol.levels.map((l) => ({ ...l, color: numberColorOverride ? lists.color : l.color })),
     },
   };
@@ -720,6 +759,9 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   const dpi = input.resolved.page.dpi;
   const derivedCtx = deriveCalloutMeasureContext(ctx, style);
   const bodyStyle = derivedCtx.bodyStyle;
+  // The document's `:::paragraphs` containers as this box sets them: a
+  // style's unset type fields in the box's body (#1119).
+  const restyleContainer = restyleContainerFor(derivedCtx.resolved, input.resolved.paragraphStyles);
   const em = bodyStyle.fontSizePx;
   const px = (d: Dimension): number => dimensionToPx(d, dpi, em);
 
@@ -833,8 +875,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     ? titleFontPx * titleLh.value
     : dimensionToPx(titleLh, dpi, titleFontPx);
   // A title in a joining script (Arabic…) is set untracked: spacing its
-  // letters apart breaks the joins (`measure/joining.ts`).
-  const titleTrackingPx = joiningScriptIn(titleText) ? 0 : Math.max(0, dimensionToPx(style.titleStyle.letterSpacing, dpi, titleFontPx));
+  // letters apart breaks the joins (`measure/joining.ts`). A negative
+  // tracking tightens the title (#1098), as it does a heading.
+  const titleTrackingRaw = dimensionToPx(style.titleStyle.letterSpacing, dpi, titleFontPx);
+  const titleTrackingPx = joiningScriptIn(titleText) || !Number.isFinite(titleTrackingRaw) ? 0 : titleTrackingRaw;
   // A corner badge on the left hangs half over the title's side: the title
   // starts past it (its inner half plus the icon gap), at least — a
   // configured `indent` only adds beyond that room.
@@ -860,9 +904,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   let titleBlock: VDTDesignTextBlock | undefined;
   if (hasTitle) {
     const titleW = Math.max(1, innerWidth - titleIndentPx);
-    // Tracking only widens lines on the rich path: the plain breaker would
-    // fit an untracked line and the tracked title would overrun the box.
-    const measured = titleTrackingPx > 0
+    // Tracking only changes line widths on the rich path: the plain breaker
+    // would fit an untracked line and a tracked title would overrun the box
+    // (or, tightened, break earlier than it needs to).
+    const measured = titleTrackingPx !== 0
       ? measureRichBlock(
         [{ text: titleText, bold: false, italic: false }],
         titleFont, titleFont, titleFont, titleFont, titleW, titleLineHeight,
@@ -903,7 +948,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         };
       }),
       clip: false,
-      ...(titleTrackingPx > 0 ? { letterSpacingPx: titleTrackingPx } : {}),
+      ...(titleTrackingPx !== 0 ? { letterSpacingPx: titleTrackingPx } : {}),
       ...(repeatedTitle ? { artifact: true } : {}),
     }, titleTrackingPx);
     cursorY += titleHeight;
@@ -1151,7 +1196,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const blockIdx = childStartIdx + k;
     // Inside a `:::paragraphs` container: its style, and for the block that
     // closes it the tail style, which carries the container's bottom margin.
-    const container = input.paragraphContainers?.byBlock[blockIdx];
+    const container = restyleContainer(input.paragraphContainers?.byBlock[blockIdx]);
     const next = children[k + 1];
     const isContainerTail = container !== undefined && next?.type === 'containerEnd' && next.containerId === container.id;
     const styleOverride = container ? containerStyle(container, isContainerTail, bodyStyle, derivedCtx.resolved.page.dpi) : undefined;
@@ -1434,7 +1479,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
    *  'collapse'`, EF-181). */
   const containerMargin = (raw: ContentBlock, k: number, st: Stack): void => {
     if ((raw.type !== 'containerStart' && raw.type !== 'containerEnd') || raw.containerId === undefined) return;
-    const pc = input.paragraphContainers?.byId.get(raw.containerId);
+    const pc = restyleContainer(input.paragraphContainers?.byId.get(raw.containerId));
     if (!pc || st.first) return;
     if (raw.type === 'containerEnd' && children[k - 1]?.type === 'paragraph') {
       // (The container's style may set the rule itself, #715.)
@@ -2063,7 +2108,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       : style.icon.align === 'center'
         ? innerTop + (contentBottom - innerTop - iconSize) / 2
         : innerTop;
-    const built = buildIconBlock(style.icon, iconX, iconY, iconSize, ctx, iconBoxW);
+    const built = buildIconBlock(style.icon, iconX, iconY, iconSize, ctx, iconBoxW, px);
     if (built) {
       overlayBlocks.push(built.block);
       iconFileId = built.fileId;
@@ -2094,14 +2139,17 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const textW = flowTextWidth(labelText, lbFont);
     // A picture inside the tab (#981) sits at its start, before the words:
     // the tab is as wide as the picture, the gap, the words and the padding.
-    const glyphIcon = lb.icon.kind === 'glyph' && lb.icon.glyph.length > 0;
+    // A drawn ring or dot (#1120) stands where a glyph would, as large as
+    // one at `scale` of the words' size.
+    const shapeIcon = lb.icon.kind === 'shape';
+    const glyphIcon = shapeIcon || (lb.icon.kind === 'glyph' && lb.icon.glyph.length > 0);
     const iconResource = !glyphIcon && lb.icon.resourceId ? ctx.resourceById.get(lb.icon.resourceId) : undefined;
     const iconFileId = iconResource?.bitmap?.fileId ?? iconResource?.svg?.fileId;
     // A glyph (#1054): a character of a font at `scale` of the words' size,
     // as wide as its advance, centred on the tab's middle as the words are.
     const glyphPx = glyphIcon ? lbFontPx * lb.icon.scale : 0;
-    const glyphFont = glyphIcon ? buildFontString(lb.icon.fontFamily, glyphPx, lb.icon.fontWeight.toString()) : '';
-    const glyphW = glyphIcon ? flowTextWidth(lb.icon.glyph, glyphFont) : 0;
+    const glyphFont = glyphIcon && !shapeIcon ? buildFontString(lb.icon.fontFamily, glyphPx, lb.icon.fontWeight.toString()) : '';
+    const glyphW = shapeIcon ? glyphPx : glyphIcon ? flowTextWidth(lb.icon.glyph, glyphFont) : 0;
     const inside = lb.icon.placement === 'inside' && (!!iconFileId || glyphIcon);
     let iconFit = { w: glyphW, h: 0 };
     if (iconFileId) {
@@ -2113,12 +2161,14 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         iconFit = { w: dims.width * k, h: dims.height * k };
       }
     }
-    // The picture painted in the colour of the words (#995): a print master
-    // (a PDF page) cannot be recoloured, so the PDF draws the SVG itself.
-    const tintOf = lb.icon.tint ? { tint: lb.color.hex } : {};
+    // The picture painted in the colour of the words (#995), or in a colour
+    // of its own (#1120): a print master (a PDF page) cannot be recoloured,
+    // so the PDF draws the SVG itself.
+    const tint = tintHex(lb.icon.tint, lb.color);
+    const tintOf = tint ? { tint } : {};
     const traitsOf = (resource: Parameters<typeof pictureTraits>[0], fileId: string) => {
       const traits = pictureTraits(resource, fileId);
-      if (lb.icon.tint) delete traits.pdfFileId;
+      if (tint) delete traits.pdfFileId;
       return traits;
     };
     const iconRoom = inside ? iconFit.w + px(lb.icon.gap) : 0;
@@ -2142,17 +2192,34 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       // with the side goes on.
       const cornerIndex = labelAtFoot ? (onRight ? 2 : 3) : (onRight ? 1 : 0);
       const tabRadius = radii[cornerIndex]!;
-      const outline = boxOutline(createBoundingBox(0, 0, boxWidth, boxHeight), radii, {
+      // A radius of the tab's own (#1102) rounds its outer corners, the
+      // left one and the right one; the fillets keep the box's corner.
+      const own = lb.borderRadius !== undefined ? cornerRadiiPx(lb.borderRadius, px) : undefined;
+      const outer: number | [number, number] = own
+        ? (labelAtFoot ? [own[3], own[2]] : [own[0], own[1]])
+        : tabRadius;
+      const shapeTab: ShapeTab = {
         edge: labelAtFoot ? 'bottom' : 'top',
         x0: tabX,
         x1: tabX + tabW,
         height: tabH,
-        radius: tabRadius,
+        radius: outer,
         fillet: lb.fillet ? Math.max(0, px(lb.fillet)) : tabRadius,
-      });
+      };
+      const boxRect = createBoundingBox(0, 0, boxWidth, boxHeight);
+      const outline = boxOutline(boxRect, radii, shapeTab);
       const whole = borderOn && px(style.border.width) > 0 ? { color: style.border.color.hex, widthPx: px(style.border.width) } : null;
       const border: ShapeBorder = sides ?? { top: whole, right: whole, bottom: whole, left: whole };
       const shapes = shapePathBlocks(outline, style.backgroundEnabled ? style.background.hex : undefined, border);
+      // A tab in its own fill (#1102): the tab's part of the outline in the
+      // label's background, over the box's fill and under the border.
+      if (lb.ownBackground) {
+        const [tabFill] = shapePathBlocks(tabRegionOutline(boxRect, radii, shapeTab), lb.background.hex, undefined);
+        if (tabFill) {
+          const at = shapes.findIndex((b) => b.boxPart !== 'fill');
+          shapes.splice(at < 0 ? shapes.length : at, 0, tabFill);
+        }
+      }
       overlayBlocks.splice(boxShapeAt, boxPainted ? 1 : 0, ...shapes);
       if (stripeBlock) {
         const at = (cx: number, cy: number) => outline.vertices.find((v) => v.x === cx && v.y === cy)?.r ?? 0;
@@ -2161,10 +2228,17 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         else delete stripeBlock.clip;
       }
     } else {
+      // A tab apart from the box is square unless it sets corners of its
+      // own (#1102): a box style with radii, which every backend draws
+      // through `boxOutline` (one radius on every corner stays a plain
+      // rounded box).
+      const tabRadii = lb.borderRadius !== undefined ? cornerRadiiPx(lb.borderRadius, px) : undefined;
       overlayBlocks.push({
         kind: 'box',
         bbox: createBoundingBox(tabX, tabY, tabW, tabH),
-        box: { backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0 },
+        box: tabRadii && tabRadii.some((r) => r > 0)
+          ? normalizeBoxStyle({ backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0, borderRadiiPx: tabRadii })
+          : { backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0 },
       });
     }
     // The words follow the picture: to its right in a left-to-right box,
@@ -2181,7 +2255,11 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     let edgeX = onRight ? tabX : tabX + tabW;
     // The glyph block at `x`: pagination furniture to a reader (a tagged
     // PDF's artifact, hidden in HTML), so the tab reads only its words.
-    const glyphBlock = (x: number): VDTDesignTextBlock => ({
+    const glyphBlock = (x: number): VDTDesignBlock => (shapeIcon
+      ? iconShapeBlock(lb.icon.shape ?? 'ring', x + glyphW / 2, tabY + tabH / 2, glyphW, (lb.icon.color ?? lb.color).hex,
+        lb.icon.strokeWidth ? Math.max(0, dimensionToPx(lb.icon.strokeWidth, dpi, lbFontPx)) : undefined)
+      : glyphTextBlock(x));
+    const glyphTextBlock = (x: number): VDTDesignTextBlock => ({
       kind: 'text',
       bbox: createBoundingBox(x, tabY, glyphW, tabH),
       fontString: glyphFont,
@@ -2245,7 +2323,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   let markerFormat: string | undefined;
   if (hasMarker) {
     const markerY = centerMarker ? (totalHeight - markerSize) / 2 : 0;
-    const built = buildIconBlock(style.marker, 0, markerY, markerSize, ctx);
+    const built = buildIconBlock(style.marker, 0, markerY, markerSize, ctx, markerSize, px);
     if (built) {
       markerBlocks.push(built.block);
       markerFileId = built.fileId;
@@ -2326,7 +2404,15 @@ type IconSpec = Omit<ResolvedCalloutStyleConfig['icon'], 'position' | 'cornerSid
 function iconPresent(spec: IconSpec): boolean {
   if (spec.kind === 'glyph') return spec.glyph.length > 0;
   if (spec.kind === 'resource') return spec.resourceId.length > 0;
-  return false;
+  return spec.kind === 'shape';
+}
+
+/** The colour a picture icon is painted in (#995, #1120): `tint: true`
+ *  in `own` (the icon's colour, a label tab's words'), a colour of its own,
+ *  none for `false` or unset. */
+function tintHex(tint: boolean | ColorValue | undefined, own: ColorValue): string | undefined {
+  if (tint === true) return own.hex;
+  return tint && typeof tint === 'object' ? tint.hex : undefined;
 }
 
 /** Fit a `w × h` image inside the square `(x, y, size)`, centred, keeping
@@ -2368,7 +2454,13 @@ function buildIconBlock(
   size: number,
   ctx: BlockMeasureContext,
   boxWidth = size,
+  px: (d: Dimension) => number = () => 0,
 ): BuiltIcon | undefined {
+  if (spec.kind === 'shape') {
+    // A drawn ring or dot (#1120), `size` across in the slot's middle.
+    const stroke = spec.strokeWidth ? Math.max(0, px(spec.strokeWidth)) : undefined;
+    return { block: iconShapeBlock(spec.shape ?? 'ring', x + size / 2, y + size / 2, size, spec.color.hex, stroke) };
+  }
   if (spec.kind === 'resource') {
     const resource = ctx.resourceById.get(spec.resourceId);
     const fileId = resource?.bitmap?.fileId ?? resource?.svg?.fileId;
@@ -2381,8 +2473,14 @@ function buildIconBlock(
       const fh = dims.height * k;
       bbox = createBoundingBox(x, y + (size - fh) / 2, fw, fh);
     }
+    // Painted in one colour (#1120): one ring picture serves every tint.
+    // A print master (a PDF page) cannot be recoloured, so the PDF draws
+    // the SVG itself.
+    const tint = tintHex(spec.tint, spec.color);
+    const traits = pictureTraits(resource, fileId);
+    if (tint) delete traits.pdfFileId;
     return {
-      block: { kind: 'image', bbox, fileId, ...pictureTraits(resource, fileId) },
+      block: { kind: 'image', bbox, fileId, ...traits, ...(tint ? { tint } : {}) },
       fileId,
       format: resource?.bitmap?.format,
     };

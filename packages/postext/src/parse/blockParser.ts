@@ -51,6 +51,9 @@ const HEMISTICH_WIKI_RE = /\s\\\\\s/;
 /** Set of directive names recognized today. Unknown names fall through to
  *  paragraph-parsing and downstream warnings flag them. */
 export const KNOWN_DIRECTIVES: ReadonlySet<DirectiveName> = new Set(['pagebreak', 'numbering', 'columnbreak', 'space', 'toc', 'index', 'bibliography', 'references', 'verse', 'page', 'strip', 'figure']);
+/** The directives that are one line, with no body and no closing fence
+ *  (a bare `:::` after one is a stray fence, #1125). */
+const ONE_LINE_DIRECTIVES: ReadonlySet<DirectiveName> = new Set(['pagebreak', 'numbering', 'columnbreak', 'space', 'toc', 'index', 'bibliography']);
 /** Trailing `{key="value" …}` attribute block on a heading line, e.g.
  *  `# Title {author="I. Zango"}`. The braces must be balanced (no nested
  *  braces) and be the last thing on the line, after a space — or right
@@ -726,6 +729,14 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       });
     }
   };
+  /** The one-line directive on the last non-blank line before line `at`,
+   *  if that line is one. */
+  const oneLineDirectiveBefore = (at: number): DirectiveName | undefined => {
+    let j = at - 1;
+    while (j >= 0 && rawLines[j]!.trim() === '') j--;
+    const m = j >= 0 ? rawLines[j]!.trim().match(DIRECTIVE_RE) : null;
+    return m && ONE_LINE_DIRECTIVES.has(m[1] as DirectiveName) ? m[1] as DirectiveName : undefined;
+  };
   /** Index in `containerStack` of the open composed page, or -1. */
   const openPageAt = (): number => {
     for (let k = containerStack.length - 1; k >= 0; k--) if (containerStack[k]!.colons !== undefined) return k;
@@ -1310,6 +1321,17 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       i++;
       continue;
     }
+    // A bare `:::` with nothing to close right after a one-line directive
+    // (`:::toc` then `:::`, #1125): a closing fence written for a directive
+    // that takes none. Dropped and reported instead of printed.
+    if (CONTAINER_CLOSE_RE.test(trimmed)) {
+      const directive = oneLineDirectiveBefore(i);
+      if (directive) {
+        issues.push({ kind: 'strayFence', delimiter: ':::', directiveName: directive, sourceStart: lineOffsets[i]!, sourceEnd: lineEndOffset(i) });
+        i++;
+        continue;
+      }
+    }
 
     // A comic page (#555) or strip (#566): `:::page{split=…}` … `:::`, its
     // panels and script read whole (`parseComicFence`).
@@ -1495,7 +1517,10 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       headingRawContent = headingRawContent.replace(TITLE_BREAK_RE, BREAK_PLACEHOLDER);
       // Inline pre-passes run refs -> math -> formatting so a ref's `text="…"`
       // attribute is shielded from the later math/formatting scanners.
-      const refExtract = extractInlineRefs(protectCodeSpans(headingRawContent), contentAbsStart);
+      // Chips run first, as in a paragraph (#1100): their words are shielded
+      // from the later passes.
+      const chipExtract = extractInlineChips(protectCodeSpans(headingRawContent), contentAbsStart);
+      const refExtract = extractInlineRefs(chipExtract.cleaned, contentAbsStart);
       const swExtract = extractInlineSwatches(refExtract.cleaned, contentAbsStart);
       const { cleaned, maths, issues: mathIssues } = extractInlineMath(
         swExtract.cleaned,
@@ -1508,11 +1533,11 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       // the title with its markers dropped, trimmed. A configuration with
       // `headings.inlineMarks: false` sets them plain again
       // (`plainHeadingBlocks`).
-      const rawSpans = injectRefSpans(injectSwatchSpans(
+      const rawSpans = injectChipSpans(injectRefSpans(injectSwatchSpans(
         injectMathSpans(trimSpans(parseInlineFormatting(cleaned)), maths), swExtract.swatches),
         refExtract.refs,
-      );
-      const mapping = buildBlockMapping(markdown, srcStart, srcEnd, rawSpans);
+      ), chipExtract.chips);
+      const mapping = withChipSources(markdown, buildBlockMapping(markdown, srcStart, srcEnd, rawSpans));
       fixMathSourceMap(mapping.text, mapping.spans, mapping.sourceMap);
       const titleBreaks = titleBreakIndices(mapping.text);
       blocks.push({

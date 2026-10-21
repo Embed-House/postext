@@ -81,6 +81,13 @@ export function configKeyOf(config: PostextConfig): string {
     delete layout.contrast;
     delete layout.checks;
     delete layout.canvasViewer;
+    // Nor which fit marks the Canvas draws over composed pages (#1160).
+    if (layout.debug && ('fitMarks' in layout.debug || 'fitMarksMinScale' in layout.debug)) {
+      const debug = { ...layout.debug };
+      delete debug.fitMarks;
+      delete debug.fitMarksMinScale;
+      layout.debug = debug;
+    }
     key = hash(stableStringify(stripConfigDefaults(layout)));
     configKeys.set(config, key);
   }

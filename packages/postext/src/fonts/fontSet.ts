@@ -14,7 +14,7 @@
 // faces itself (`prepareFonts`) asks for the walk (`force`).
 
 import { evictFontFamilies } from '../measure/font.js';
-import { defaultFontSet, forgetInstalledFamilies, type FontFaceLike, type FontFaceSetLike } from './faces.js';
+import { defaultFontSet, forgetInstalledFamilies, GLYPH_PROBE_FAMILY, type FontFaceLike, type FontFaceSetLike } from './faces.js';
 
 interface Tracked {
   /** `fontSet.size` when last read (-1: the set has none). */
@@ -33,12 +33,18 @@ function unquote(family: string): string {
   return /^(["']).*\1$/.test(f) ? f.slice(1, -1) : f;
 }
 
-/** The loaded faces of every family of `fontSet`. */
+const PROBE = GLYPH_PROBE_FAMILY.toLowerCase();
+
+/** The loaded faces of every family of `fontSet`. The glyph probe (#1105)
+ *  is left out: no text is measured in it, so its arrival in a set the
+ *  engine has looked at changes nothing (no eviction, no generation, no
+ *  relayout). */
 function signatureOf(fontSet: FontFaceSetLike): Map<string, string> {
   const parts = new Map<string, string[]>();
   for (const face of fontSet) {
     if (face.status !== 'loaded') continue;
     const family = unquote(face.family).toLowerCase();
+    if (family === PROBE) continue;
     let list = parts.get(family);
     if (!list) parts.set(family, (list = []));
     list.push(`${face.weight}/${face.style}/${face.unicodeRange ?? ''}`);

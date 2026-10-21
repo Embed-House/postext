@@ -318,11 +318,14 @@ export function chineseDefaults(config: PostextConfig, options: ChineseDefaultsO
     });
   }
   const flag = (id: 'indentAfterHeading' | 'paragraphSpacing', target: boolean) => {
-    if (fromBody[id] === target) return;
+    // A paragraph spacing set as a length (#1115) reads as on.
+    const current = fromBody[id];
+    const on = typeof current === 'object' ? current.value > 0 : current;
+    if (on === target) return;
     const raw = body?.[id];
     rows.push({
       id,
-      from: { kind: 'switch', on: fromBody[id] },
+      from: { kind: 'switch', on },
       to: { kind: 'switch', on: target },
       customised: raw !== undefined && raw !== D[id],
       apply: (c) => (target === D[id] ? set(c, 'bodyText', without(c.bodyText, id)) : { ...c, bodyText: { ...c.bodyText, [id]: target } }),

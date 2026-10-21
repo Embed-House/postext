@@ -3,6 +3,7 @@ import type {
   BorderSide,
   CalloutDesignConfig,
   CalloutFixedConfig,
+  CalloutIconShape,
   CalloutLabelIconConfig,
   CalloutLabelIconKind,
   CalloutNumberingConfig,
@@ -136,8 +137,21 @@ function resolveBorder(border: CalloutStyleConfig['border']): ResolvedCalloutSty
  *  Any other word reads as the default (reported, `unknownConfigValue`). */
 export function labelIconKind(icon: CalloutLabelIconConfig | undefined): CalloutLabelIconKind {
   const kind = icon?.kind as unknown;
-  if (kind === 'glyph' || kind === 'resource') return kind;
+  if (kind === 'glyph' || kind === 'resource' || kind === 'shape') return kind;
   return !icon?.resourceId && typeof icon?.glyph === 'string' && icon.glyph.length > 0 ? 'glyph' : 'resource';
+}
+
+/** A picture's tint as it resolves (#1120): `true` or a colour, absent
+ *  for `false` and anything else. */
+export function iconTint(tint: unknown): true | ColorValue | undefined {
+  if (tint === true) return true;
+  return tint !== null && typeof tint === 'object' && typeof (tint as ColorValue).hex === 'string' ? tint as ColorValue : undefined;
+}
+
+/** The drawn icon's fields (#1120), present for `kind: 'shape'` only. */
+function shapeFields(icon: { kind?: unknown; shape?: unknown; strokeWidth?: Dimension } | undefined, kind: unknown): { shape?: CalloutIconShape; strokeWidth?: Dimension } {
+  if (kind !== 'shape') return {};
+  return { shape: icon?.shape === 'dot' ? 'dot' : 'ring', ...(icon?.strokeWidth ? { strokeWidth: icon.strokeWidth } : {}) };
 }
 
 /** The size of a label tab's glyph against the tab's words (#1054): a
@@ -207,6 +221,8 @@ function resolveCalloutStyleConfig(
       position: partial.icon?.position ?? d.icon.position,
       cornerSide: partial.icon?.cornerSide ?? d.icon.cornerSide,
       ...(partial.icon?.width ? { width: partial.icon.width } : {}),
+      ...shapeFields(partial.icon, partial.icon?.kind ?? d.icon.kind),
+      ...(iconTint(partial.icon?.tint) ? { tint: iconTint(partial.icon?.tint)! } : {}),
     },
     ...(partial.label
       ? {
@@ -227,7 +243,8 @@ function resolveCalloutStyleConfig(
               width: partial.label.icon?.width ?? d.label.icon.width,
               gap: partial.label.icon?.gap ?? d.label.icon.gap,
               placement: partial.label.icon?.placement === 'inside' ? 'inside' : d.label.icon.placement,
-              tint: partial.label.icon?.tint === true ? true : d.label.icon.tint,
+              tint: iconTint(partial.label.icon?.tint) ?? d.label.icon.tint,
+              ...shapeFields(partial.label.icon, labelIconKind(partial.label.icon)),
               // The glyph (#1054): in the label's face and weight unless
               // set, its colour the label's when the tab is laid out.
               glyph: typeof partial.label.icon?.glyph === 'string' ? partial.label.icon.glyph : d.label.icon.glyph,
@@ -243,6 +260,8 @@ function resolveCalloutStyleConfig(
             },
             joined: partial.label.joined === true,
             ...(partial.label.fillet ? { fillet: partial.label.fillet } : {}),
+            ...(partial.label.borderRadius !== undefined ? { borderRadius: partial.label.borderRadius } : {}),
+            ...(partial.label.ownBackground === true ? { ownBackground: true as const } : {}),
           },
         }
       : {}),
@@ -263,6 +282,8 @@ function resolveCalloutStyleConfig(
         width: partial.marker?.rule?.width ?? d.marker.rule.width,
         length: partial.marker?.rule?.length ?? d.marker.rule.length,
       },
+      ...shapeFields(partial.marker, partial.marker?.kind ?? d.marker.kind),
+      ...(iconTint(partial.marker?.tint) ? { tint: iconTint(partial.marker?.tint)! } : {}),
     },
     titleStyle: {
       fontFamily: partial.titleStyle?.fontFamily ?? headings.fontFamily,
@@ -305,6 +326,9 @@ function resolveCalloutStyleConfig(
       itemSpacing: partial.lists?.itemSpacing ?? unorderedLists.itemSpacing,
       ...(partial.lists?.bulletFontSize ? { bulletFontSize: partial.lists.bulletFontSize } : {}),
       ...(partial.lists?.bulletFontWeight !== undefined ? { bulletFontWeight: partial.lists.bulletFontWeight } : {}),
+      ...(partial.lists?.bulletFontFamily ? { bulletFontFamily: partial.lists.bulletFontFamily } : {}),
+      ...(partial.lists?.marginTop ? { marginTop: partial.lists.marginTop } : {}),
+      ...(partial.lists?.marginBottom ? { marginBottom: partial.lists.marginBottom } : {}),
       // Set, not merely equal to the inherited value: the box's colour then
       // reaches its ordered-list numbers (EF-92).
       ...(partial.lists?.color ? { colorSet: true } : {}),
@@ -524,6 +548,9 @@ export function stripCalloutStylesDefaults(
       if (s.icon.position !== undefined && s.icon.position !== d.icon.position) ic.position = s.icon.position;
       if (s.icon.cornerSide !== undefined && s.icon.cornerSide !== d.icon.cornerSide) ic.cornerSide = s.icon.cornerSide;
       if (s.icon.width !== undefined) ic.width = s.icon.width;
+      if (s.icon.shape !== undefined) ic.shape = s.icon.shape;
+      if (s.icon.strokeWidth !== undefined) ic.strokeWidth = s.icon.strokeWidth;
+      if (s.icon.tint !== undefined && s.icon.tint !== false) ic.tint = s.icon.tint;
       const kept = stripObject(ic);
       if (kept) r.icon = kept;
     }
@@ -539,6 +566,9 @@ export function stripCalloutStylesDefaults(
       if (s.marker.color !== undefined && !colorsEqual(s.marker.color, dm.color)) m.color = s.marker.color;
       if (s.marker.align !== undefined && s.marker.align !== dm.align) m.align = s.marker.align;
       if (s.marker.gap !== undefined && !dimensionsEqual(s.marker.gap, dm.gap)) m.gap = s.marker.gap;
+      if (s.marker.shape !== undefined) m.shape = s.marker.shape;
+      if (s.marker.strokeWidth !== undefined) m.strokeWidth = s.marker.strokeWidth;
+      if (s.marker.tint !== undefined && s.marker.tint !== false) m.tint = s.marker.tint;
       if (s.marker.rule) {
         const ru: NonNullable<CalloutStyleConfig['marker']>['rule'] = {};
         const r0 = s.marker.rule;
@@ -598,6 +628,9 @@ export function stripCalloutStylesDefaults(
       if (s.lists.itemSpacing !== undefined) l.itemSpacing = s.lists.itemSpacing;
       if (s.lists.bulletFontSize !== undefined) l.bulletFontSize = s.lists.bulletFontSize;
       if (s.lists.bulletFontWeight !== undefined) l.bulletFontWeight = s.lists.bulletFontWeight;
+      if (s.lists.bulletFontFamily) l.bulletFontFamily = s.lists.bulletFontFamily;
+      if (s.lists.marginTop !== undefined) l.marginTop = s.lists.marginTop;
+      if (s.lists.marginBottom !== undefined) l.marginBottom = s.lists.marginBottom;
       const kept = stripObject(l);
       if (kept) r.lists = kept;
     }

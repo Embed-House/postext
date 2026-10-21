@@ -19,6 +19,7 @@ import { clearFitMarks, drawPageFitMarks } from '../composed/fitMarks.js';
 import { clearOverlapMarks } from '../composed/overlapMarks.js';
 import { clearReflowMarks, drawReflowMarks } from '../composed/reflowMarks.js';
 import { onReflowViewChange, reflowFocusNow, reflowShownNow } from '../composed/reflowView.js';
+import { fitMarksViewOf, onFitMarksChange } from '../composed/fitMarksView.js';
 import { onFrameJumpChange } from '../../editions/frameJump.js';
 import { onOverlapFocusChange } from '../../editions/overlapFocus.js';
 import { editModeNow, onEditModeChange, selectedFrameNow } from '../../editing/editMode.js';
@@ -949,6 +950,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
   useEffect(() => onOverlapFocusChange(() => setEditModeTick((t) => t + 1)), []);
   // …and the Reflow marks, with the frame the Reflow panel points at (#868).
   useEffect(() => onReflowViewChange(() => setEditModeTick((t) => t + 1)), []);
+  // …and the fit marks the reader chose to see (#1160).
+  useEffect(() => onFitMarksChange(() => setEditModeTick((t) => t + 1)), []);
   useEffect(() => {
     const doc = docRef.current;
     if (!doc) return;
@@ -1001,6 +1004,8 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
     const drawn = drawnOverlaysRef.current;
     // What the layout moved on composed pages (#868): in the overlay only.
     const reflowShown = reflowShownNow();
+    // Which fit marks: the reader's choice over the book's (#1160).
+    const fitView = fitMarksViewOf(config.debug);
     const reflowFocus = reflowFocusNow();
     const drawReflow = (overlay: SVGSVGElement, pageIndex: number) => drawReflowMarks(overlay, doc, pageIndex, {
       shown: reflowShown,
@@ -1029,7 +1034,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
         drawPickedMark(overlay, doc, pageIndex, picked && picked.pageIndex === pageIndex && picked.chain.some((e) => e.chapter !== undefined || (e.source.kind === 'markdown' && e.source.chapter !== undefined)) ? picked : null);
         // A frame that does not fit is marked on every page (#867).
         if (page.composed) {
-          drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
+          drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current, fitView);
           drawReflow(overlay, pageIndex);
         }
         continue;
@@ -1056,7 +1061,7 @@ function CanvasPreview({ zoom, viewMode, fitMode, onGeneratingChange, onPageCoun
           locale: uiLocaleRef.current,
         });
         // Overflow and scale (#867): in the overlay, never on the page.
-        drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current);
+        drawPageFitMarks(overlay, doc, pageIndex, labelsRef.current, uiLocaleRef.current, fitView);
         drawReflow(overlay, pageIndex);
       } else {
         clearFitMarks(overlay);

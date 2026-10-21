@@ -48,6 +48,7 @@ describe('paragraph style defaults', () => {
       marginBottom: { value: 0, unit: 'em' },
       snapToGrid: true,
       textTransform: 'none',
+      inheritsBody: ['fontFamily', 'fontSize', 'lineHeight', 'fontWeight', 'boldFontWeight', 'color'],
     });
   });
 

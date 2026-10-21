@@ -164,6 +164,35 @@ Eine Schaltfläche, die die Vorlage ändert (und damit jede Seite, die nach ihr 
 
 <Screenshot src="/docs-shots/de/checks.webp" alt="Das Bedienfeld Prüfungen mit dem Eintrag Text passt nicht in seinen Rahmen und drei Schaltflächen mit Lösungen; daneben die Seite, deren erster Kasten rot umrandet ist, mit einem Band und der Angabe 26 mm zu kurz." caption="Ein Rahmen, der nicht passt, und die Lösungen, die der Satz für ihn errechnet hat." />
 
+Nicht jede Marke auf der Leinwand ist ein Fehler. Ein Rahmen, dessen Text oder Bilder der Satz verkleinert hat, im Rahmen dessen, was seine Vorlage erlaubt, hat einen gestrichelten bernsteinfarbenen Umriss und eine Plakette wie *Text auf 90 %*: Das ist eine Auskunft. Probleme erscheinen rot (ein Rahmen, in den sein Inhalt nicht passt) und violett (ein Aussehen, das das Design nicht kennt). **Passmarken** in derselben Werkzeugleiste wie **Verschiebungen** schaltet durch drei Stufen:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '30%' }}>Stufe</th>
+      <th>Was die Leinwand zeigt</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Alle</td>
+      <td>Alle Marken: Rahmen, die nicht passen, unbekannte Aussehen, verkleinerter Text und verkleinerte Bilder</td>
+    </tr>
+    <tr>
+      <td>Nur Probleme</td>
+      <td>Rahmen, die nicht passen, und unbekannte Aussehen</td>
+    </tr>
+    <tr>
+      <td>Keine</td>
+      <td>Keine Passmarken</td>
+    </tr>
+  </tbody>
+</table>
+
+Die Sandbox merkt sich Ihre Wahl in diesem Browser. Das Buch kann sie für alle festlegen, die nicht gewählt haben: `debug.fitMarks` (`"all"`, `"problems"` oder `"none"`) und `debug.fitMarksMinScale`, das die Plakette bei einem Rahmen weglässt, der in diesem Maßstab oder größer gesetzt ist (mit `0.95` wird nur markiert, was unter 95 % liegt). Diese Marken gehören zur Leinwand: PDF, HTML-Ansicht, EPUB und Folio zeichnen sie nie. Seit postext 1.52.
+
+Ein Kasten mit Fotos und ihren Bildunterschriften (Rahmen, die in ihm verankert sind, je eine Unterschrift `below` ihrem Foto) wächst nicht von selbst, wenn eine Übersetzung die Unterschriften länger macht: Sie laufen aus dem Kasten und über das, was darunter liegt. Öffnen Sie den Rahmen des Kastens im Vorlagen-Editor und stellen Sie **Wächst mit den Rahmen darin** auf *Die darin verankerten Rahmen* (`growWith: "children"` in der Vorlage). Der Kasten reicht dann bis zum Fuß der untersten Unterschrift plus seinem unteren Innenabstand, Fläche, Rand und Reiter folgen, und die Rahmen darunter rücken nach unten. *Die gewählten Rahmen* nimmt stattdessen eine Liste von Namen. Es zählen die Rahmen, die an einem Punkt der Oberkante des Kastens verankert sind, und die an diesen verankerten; ein Rahmen, der am Fuß oder an der Mitte des Kastens verankert ist, zählt nicht, und ein gedrehter Kasten wächst nicht. Seit postext 1.52.
+
 ## 7. Auf der Seite und im Text auswählen
 
 Die Seite und ihr Markdown folgen einander.

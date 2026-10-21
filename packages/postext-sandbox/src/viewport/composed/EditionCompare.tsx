@@ -30,6 +30,7 @@ import { readViewHash } from '../../storage/viewHash.js';
 import { IconButton, Select, Switch, cn } from '../../ui/index.js';
 import { createOverlaySvg } from '../CanvasPreview/dom.js';
 import { drawPageFitMarks } from './fitMarks.js';
+import { fitMarksViewOf, useFitMarksChoice } from './fitMarksView.js';
 import { syncedScrollTop } from './compareSync.js';
 
 const GAP = 16;
@@ -79,6 +80,10 @@ function PageColumn({
   const ref = useRef<HTMLDivElement | null>(null);
   const doc = column?.doc ?? null;
   const pageChapters = column?.chapters;
+  // The fit marks the reader chose to see, as on the canvas (#1160).
+  const [fitChoice] = useFitMarksChoice();
+  const debug = useSandboxSelector((s) => s.config.debug);
+  const fitView = useMemo(() => fitMarksViewOf(debug, fitChoice), [debug, fitChoice]);
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
     const el = ref.current;
@@ -123,12 +128,12 @@ function PageColumn({
         renderPageToCanvas(page, doc, canvas, { scale: Math.min(1, (pageWidth * dpr) / page.width) });
         canvas.style.width = `${pageWidth}px`;
         canvas.style.height = `${(pageWidth * page.height) / page.width}px`;
-        if (svg) drawPageFitMarks(svg as SVGSVGElement, doc, i, labels, uiLocale);
+        if (svg) drawPageFitMarks(svg as SVGSVGElement, doc, i, labels, uiLocale, fitView);
       }
     }, { root: el, rootMargin: '600px 0px' });
     el.querySelectorAll('[data-compare-page]').forEach((s) => io.observe(s));
     return () => io.disconnect();
-  }, [doc, width, pageWidth, labels, uiLocale]);
+  }, [doc, width, pageWidth, labels, uiLocale, fitView]);
 
   // Each slot's overlay, sized with the page.
   useLayoutEffect(() => {

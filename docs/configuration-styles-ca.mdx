@@ -304,6 +304,8 @@ Un estil pot fixar la regla dels seus contenidors amb `containerSpacing`: `'add'
 
 Dins d'un `:::callout`, el contenidor aplica els marges del seu estil de la mateixa manera: `marginTop` i `marginBottom` es fusionen amb l'espaiat dels blocs del voltant (un valor negatiu els acosta), i un contenidor que obre el requadre no té marge superior, igual que al capdamunt d'una columna. El requadre no té retícula de base on tornar, així que l'espai sota l'últim paràgraf és el més gran entre `marginBottom`, `spaceBetween` i la separació entre paràgrafs del mateix requadre (el seu `body.paragraphSpacing`, una línia del text; no compta amb `paragraphContainerSpacing: 'add'`), o el marge superior del bloc següent, si és encara més gran; en canvi, un `marginBottom` negatiu acosta el bloc següent. (Fins a postext 1.4, un contenidor dins d'un requadre no aplicava cap dels dos marges.)
 
+Dins d'una caixa, els camps tipogràfics que un estil deixa sense fixar venen de la caixa (des de postext 1.52): la lletra, la mida, l'interlineat, els gruixos i el color que l'estil deixa al text són els del text de la caixa, així `:::paragraphs{style="centred"}` amb un estil que només fixa `textAlign: 'center'` es compon en la de pal sec d'una caixa i en la romana d'una altra. Els camps que l'estil fixa es mantenen. `bodyText.paragraphStylesInBoxes: 'document'` manté en canvi el text del document, com fins a postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => cada camp no indicat s'omple des del text de cos resolt
@@ -472,7 +474,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Estils de ressaltat
 
-La propietat `markStyles` declara els estils amb nom de l'element en línia `:mark[text]{style="…"}`: la franja de color darrere d'una frase, com quan un llibre de text ressalta les paraules clau (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems una mica arrodonits i el text amb el color habitual), de manera que `:mark[…]` funciona sense configurar res; si declares `markStyles`, substitueixes aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, agafa el primer estil (el Sandbox assenyala l'id desconegut).
+La propietat `markStyles` declara els estils amb nom de l'element en línia `:mark[text]{style="…"}`: la franja de color darrere d'una frase, com quan un llibre de text ressalta les paraules clau (la sintaxi i les regles de tall de línia són a la referència del format de document). Inclou un estil per defecte, `mark` (una franja groc pàl·lid que sobresurt una mica de la frase, amb els extrems rectes i el text amb el color habitual), de manera que `:mark[…]` funciona sense configurar res; si declares `markStyles`, substitueixes aquesta llista. Una marca sense `style`, o amb un id que cap estil no declara, agafa el primer estil (el Sandbox assenyala l'id desconegut).
 
 ```ts
 const config: PostextConfig = {
@@ -531,8 +533,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Radi dels dos extrems de la franja, limitat a la meitat de l'alçada de la franja.</td>
+      <td><code>0</code></td>
+      <td>Radi dels dos extrems de la franja, limitat a la meitat de l'alçada de la franja. Els extrems rectes són la norma a la impremta. Fins a postext 1.51 el valor per defecte era <code>0.2em</code>; una configuració desada aleshores amb alguna marca al text es llegeix amb <code>0.2em</code> escrit a cada estil que no indiqui radi.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -551,6 +553,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>Espai per sobre i per sota, cadascun en lloc de <code>paddingY</code>.</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>Com es talla la franja d'una frase que passa a una altra línia, com <code>box-decoration-break</code> en CSS. <code>'slice'</code>: una sola franja, recta on es parteix la línia, amb el farciment i les cantonades arrodonides només al principi i al final de la frase. <code>'clone'</code>: cada tros de línia porta una franja completa, amb <code>paddingX</code> i les cantonades als dos extrems, per a un títol compost sobre una banda de color tallada per línies. La composició és la mateixa en els dos casos.</td>
     </tr>
   </tbody>
 </table>

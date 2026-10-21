@@ -52,9 +52,9 @@ La proprietà `bodyText` controlla la tipografia di tutto il testo dei paragrafi
     </tr>
     <tr>
       <td><code>paragraphSpacing</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | Dimension</code></td>
       <td><code>false</code></td>
-      <td>Se attivo, inserisce una riga vuota (pari a <code>lineHeight</code>) tra paragrafi consecutivi, per una separazione di tipo editoriale.</td>
+      <td>Lo spazio tra due paragrafi. <code>true</code> inserisce una riga vuota (pari a <code>lineHeight</code>), per una separazione di tipo editoriale; una misura come <code>&#123; value: 2, unit: 'mm' &#125;</code> o <code>0.33em</code> del corpo del testo lascia esattamente quello spazio, nel testo corrente, nei riquadri e nelle cornici delle pagine composte. Una misura che non sia un numero intero di righe porta i paragrafi fuori dalla griglia di base; il blocco successivo che vi si allinea (un titolo, l’ultima voce di un elenco, una formula in display) riporta il testo sulla griglia. È lo stesso spazio di <code>paragraphStyles[].spaceBetween</code>, che lo sostituisce dentro un contenitore <code>:::paragraphs</code>. Un riquadro fissa il proprio in <code>calloutStyles[].body.paragraphSpacing</code>.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

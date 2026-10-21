@@ -384,6 +384,8 @@ o texto é composto com a face da família que a mesma regra escolhe no lugar
 dele, e o `postext check` o lista como aviso `fontFallback`: as linhas podem
 quebrar de modo diferente do Sandbox.
 
+Um caractere para o qual uma fonte não tem glifo é desenhado com outra fonte. `postext check` lê a tabela `cmap` de cada fonte que carrega e lista esses caracteres uma vez por fonte para o livro todo como aviso `glyphFallback`; com `--json`, o `data` traz os caracteres e quantos são.
+
 O cache fica em `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` no
 Windows); `POSTEXT_CACHE_DIR` ou `--cache-dir` o mudam de lugar. `--offline`
 pula o download. Uma família que não se encontra em lugar nenhum é composta em

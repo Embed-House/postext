@@ -9,10 +9,10 @@
 
 import { LineCapStyle, type Color, type PDFFont } from 'pdf-lib';
 import type { VDTLineSegment } from 'postext';
-import { iconLineDash, inlineIconBox } from 'postext';
+import { hasSwatchShape, iconLineDash, inlineIconBox, swatchGeometry } from 'postext';
 import { parseFontString } from '../fontString.js';
 import type { FontCache } from '../fontCache.js';
-import { type PageCtx, alphaOf, colorFromHex, counterFlipPx, drawSwatchPx, drawTextPx } from './primitives.js';
+import { type PageCtx, alphaOf, colorFromHex, counterFlipPx, drawShapedSwatchPx, drawSwatchPx, drawTextPx } from './primitives.js';
 import { drawEmbeddedResource } from './renderResourceBlock.js';
 import { tagArtifact, tagContent, type StructElem } from './tagging.js';
 
@@ -21,7 +21,7 @@ import { tagArtifact, tagContent, type StructElem } from './tagging.js';
  *  text's colour; `fallbackFont` sets a glyph whose face is not embedded. */
 export function paintSwatchSegmentPdf(
   ctx: PageCtx,
-  seg: Pick<VDTLineSegment, 'swatch' | 'width'>,
+  seg: Pick<VDTLineSegment, 'swatch' | 'width' | 'rtl'>,
   x: number,
   baseline: number,
   ink: Color,
@@ -32,7 +32,10 @@ export function paintSwatchSegmentPdf(
   const icon = seg.swatch?.icon;
   if (!icon) {
     tagContent(ctx, elem);
-    drawSwatchPx(ctx, x, baseline, seg.width, seg.swatch?.color, ink);
+    const swatch = seg.swatch;
+    // A swatch with a shape of its own (#1104): the canvas's square.
+    if (swatch && hasSwatchShape(swatch)) drawShapedSwatchPx(ctx, swatchGeometry(swatch, x, baseline, seg.width, seg.rtl === true), swatch.color, swatch.borderColor ? colorFromHex(swatch.borderColor, ctx.colorSpace) : ink);
+    else drawSwatchPx(ctx, x, baseline, seg.width, swatch?.color, ink);
     return;
   }
   if (ctx.tags) {

@@ -166,21 +166,21 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>icon</code></td>
-      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide &#125;</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, width, color, align, position, cornerSide, shape, strokeWidth, tint &#125;</code></td>
       <td><code>'none'</code>、标题字体、<code>400</code>、<code>1.5em</code>、主色、<code>'top'</code>、<code>'inline'</code>、<code>'right'</code></td>
-      <td>内容旁边的一个文字字形（<code>kind: 'glyph'</code>）或一个位图 / SVG资源（<code>kind: 'resource'</code> + <code>resourceId</code>）。有侧边色条时，图标在色条上居中；否则它占用自己的一栏（<code>size</code> + <code>titleStyle.gap</code>）。<code>align: 'center'</code>让它相对内容垂直居中。资源图片按原有宽高比适配到一个正方形内；设了<code>width</code>时则适配到<code>width</code> × <code>size</code>的框内（一长条图标）。比内容高的图标会把框撑高以容纳它（配合<code>align: 'center'</code>时，内容相对图标居中）。<code>position: 'corner'</code>把图标作为徽标挂在上方的一个角上，一半伸出边框，不占内容的空间；宽图标（<code>width</code>）按绘制宽度在角上居中，挂在左角时，标题从它的内侧一半之后开始（postext 1.4及以前按高度定位，宽条会伸出框外并压住标题）；<code>cornerSide</code>选择哪个角：<code>'right'</code> / <code>'left'</code>；<code>'outer'</code> / <code>'inner'</code>，在对称页边距下随奇偶页变化（外侧在奇数页上是右边，在偶数页上是左边）；或<code>'start'</code> / <code>'end'</code>，随框自身的书写方向而定，与色条的这两个值相同。</td>
+      <td>内容旁边的一个文字字形（<code>kind: 'glyph'</code>）或一个位图 / SVG资源（<code>kind: 'resource'</code> + <code>resourceId</code>）。有侧边色条时，图标在色条上居中；否则它占用自己的一栏（<code>size</code> + <code>titleStyle.gap</code>）。<code>align: 'center'</code>让它相对内容垂直居中。资源图片按原有宽高比适配到一个正方形内；设了<code>width</code>时则适配到<code>width</code> × <code>size</code>的框内（一长条图标）。比内容高的图标会把框撑高以容纳它（配合<code>align: 'center'</code>时，内容相对图标居中）。<code>position: 'corner'</code>把图标作为徽标挂在上方的一个角上，一半伸出边框，不占内容的空间；宽图标（<code>width</code>）按绘制宽度在角上居中，挂在左角时，标题从它的内侧一半之后开始（postext 1.4及以前按高度定位，宽条会伸出框外并压住标题）；<code>cornerSide</code>选择哪个角：<code>'right'</code> / <code>'left'</code>；<code>'outer'</code> / <code>'inner'</code>，在对称页边距下随奇偶页变化（外侧在奇数页上是右边，在偶数页上是左边）；或<code>'start'</code> / <code>'end'</code>，随框自身的书写方向而定，与色条的这两个值相同。postext 1.52 起，<code>kind: 'shape'</code>改为由引擎绘制图标：直径为<code>size</code>、颜色为<code>color</code>的<code>shape: 'ring'</code>（圆环，默认）或<code>'dot'</code>（圆点），圆环线宽为<code>strokeWidth</code>（默认<code>size</code>的八分之一），不需要字体或图片，在每种输出中都一样。<code>tint</code>把资源图片涂成一种颜色：<code>true</code>取<code>color</code>，也可另给一种颜色（调色板颜色随调色板变化），这样一张圆环图片可用于书中的每种颜色。图标不需要标签或标题：设了<code>icon</code>而没有<code>label</code>的框，会把图标放在自己的栏里，或在<code>position: 'corner'</code>时作为角标放在角上。</td>
     </tr>
     <tr>
       <td><code>marker</code></td>
-      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, color, align, gap, rule &#125;</code></td>
+      <td><code>&#123; kind, glyph, resourceId, fontFamily, fontWeight, size, color, align, gap, rule, shape, strokeWidth, tint &#125;</code></td>
       <td><code>'none'</code>、标题字体、<code>400</code>、<code>1.5em</code>、主色、<code>'center'</code>、<code>0.5em</code>、不画线（<code>0.5pt</code>、主色、长度<code>0</code>）</td>
-      <td>画在框<em>外</em>左侧一栏中的第二个图标，它与框之间可以有一条竖线<code>rule</code>，例如自测徽标旁边那只“点这里”的手。整体结构变为<code>[marker][rule][gap][box]</code>，高度取三者中最高的一个；<code>align</code>让它们彼此居中或顶端对齐。<code>rule.length</code>是最小值：竖线至少与框一样高。</td>
+      <td>画在框<em>外</em>左侧一栏中的第二个图标，它与框之间可以有一条竖线<code>rule</code>，例如自测徽标旁边那只“点这里”的手。整体结构变为<code>[marker][rule][gap][box]</code>，高度取三者中最高的一个；<code>align</code>让它们彼此居中或顶端对齐。<code>rule.length</code>是最小值：竖线至少与框一样高。标记与图标一样接受<code>kind: 'shape'</code>、<code>shape</code>、<code>strokeWidth</code>和<code>tint</code>。</td>
     </tr>
     <tr>
       <td><code>titleStyle</code></td>
       <td><code>&#123; fontFamily, fontSize, fontWeight, italic, color, textTransform, gap, letterSpacing, indent, lineHeight &#125;</code></td>
       <td>标题字体、正文字号、<code>700</code>、<code>false</code>、主色、<code>'none'</code>、<code>0.5em</code>、<code>0</code>、<code>0</code>、<code>1.2em</code></td>
-      <td>标题的排版。<code>gap</code>是标题与第一个子块之间的距离（也是图标栏的间距）。<code>lineHeight</code>是标题各行的行距，<code>em</code>按标题自身的字号计；与正文一样，基线位于每行顶端往下0.8倍行距处。所以标题采用正文行距（12 pt网格上设<code>lineHeight: 12pt</code>）时，框的高度保持整数行、标题落在网格上；默认的1.2 em则会给每个框多出零点几行。<code>textTransform: 'uppercase'</code>不改变文字长度。<code>letterSpacing</code>调整标题的字距（canvas的<code>letterSpacing</code> / PDF的<code>Tc</code>）；<code>indent</code>把标题从框的内侧边缘往右推。挂在标题一侧（左角）的角徽标先留出自己的空间，即徽标内侧一半加上<code>gap</code>，这样无论落在哪一页，标题都能避开它；<code>indent</code>只在此基础上再加。</td>
+      <td>标题的排版。<code>gap</code>是标题与第一个子块之间的距离（也是图标栏的间距）。<code>lineHeight</code>是标题各行的行距，<code>em</code>按标题自身的字号计；与正文一样，基线位于每行顶端往下0.8倍行距处。所以标题采用正文行距（12 pt网格上设<code>lineHeight: 12pt</code>）时，框的高度保持整数行、标题落在网格上；默认的1.2 em则会给每个框多出零点几行。<code>textTransform: 'uppercase'</code>不改变文字长度。<code>letterSpacing</code>调整标题的字距（canvas的<code>letterSpacing</code> / PDF的<code>Tc</code>）；<code>indent</code>把标题从框的内侧边缘往右推。挂在标题一侧（左角）的角徽标先留出自己的空间，即徽标内侧一半加上<code>gap</code>，这样无论落在哪一页，标题都能避开它；<code>indent</code>只在此基础上再加。<code>letterSpacing</code>为负值时标题排得更紧，框也按收紧后的宽度测量；连写文字（阿拉伯文）的标题不加字距。</td>
     </tr>
     <tr>
       <td><code>body</code></td>
@@ -190,15 +190,15 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>lists</code></td>
-      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight &#125;</code></td>
+      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight, bulletFontFamily, marginTop, marginBottom &#125;</code></td>
       <td>继承<code>unorderedLists</code></td>
-      <td>框内列表的排版（<code>color</code>、<code>indent</code>、<code>gap</code>和<code>itemSpacing</code>也作用于编号列表）。<code>bulletFontSize</code> / <code>bulletFontWeight</code>让项目符号字形以框的正文字体、按这个字号和字重排出（例如粗重的彩色项目符号）。</td>
+      <td>框内列表的排版（<code>color</code>、<code>indent</code>、<code>gap</code>和<code>itemSpacing</code>也作用于编号列表）。<code>bulletFontSize</code> / <code>bulletFontWeight</code>让项目符号字形以框的正文字体、按这个字号和字重排出（例如粗重的彩色项目符号）。<code>bulletFontFamily</code>让项目符号使用单独的字体，例如符号字体。未设置时，自带字体的列表（<code>unorderedLists.fontFamily</code>或某一级的<code>fontFamily</code>）在框内也用该字体排项目符号。<code>marginTop</code> / <code>marginBottom</code>设定框内列表（包括编号列表）上方和下方的间距；未设置时沿用文档的列表间距。</td>
     </tr>
     <tr>
       <td><code>label</code></td>
-      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet, borderRadius, ownBackground &#125;</code></td>
       <td>未设置（无页签）</td>
-      <td>框顶边上的一个小页签，印出块的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>，或按框自身书写方向的<code>'top-start'</code> / <code>'top-end'</code>，与色条的<code>'start'</code> / <code>'end'</code>相同），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以页签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到页签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>，不上移也不内缩，图片宽<code>1em</code>、与文字相距<code>0.3em</code>。页签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角；设了<code>joined: true</code>（自postext 1.48起）时，页签和框则是同一道轮廓，<code>fillet</code>把两者相接处的内角倒圆。<code>bottom-right</code>、<code>bottom-left</code>、<code>bottom-start</code>和<code>bottom-end</code>这几个位置（自postext 1.48起）把页签挂在框的底边上，它的<code>rule</code>沿底边画。自postext 1.48起，图标也可以是某种字体的一个字符，即<code>icon.kind: 'glyph'</code>（见<a href="#页签上的字形">页签上的字形</a>）。自postext 1.42起，<code>icon.placement: 'inside'</code>把图片放进页签内部、文字之前的起始处（从右向左排的框里则在右端），与文字相隔<code>gap</code>：页签的宽度等于图片、间距、文字和内边距之和，图片按<code>icon.width</code>和页签的高度缩放，并在页签中居中。图片保留自己的颜色，所以彩色页签上的白色圆环与白色页签上的彩色圆环是两个资源，各放在一种样式里。默认的<code>'beside'</code>则把图片放在页签边缘之外。自postext 1.43起，<code>icon.tint: true</code>用页签的<code>color</code>代替图片自身的颜色来绘制：图片所覆盖的轮廓以文字的颜色呈现，一个圆环即可用于全书的各种色调。没有透明度的图片会变成一个纯色矩形。在PDF中，SVG保留边缘，位图则在半透明处裁切；印刷母版（<code>svg.pdfFileId</code>）不会被使用，因为PDF页面无法重新着色。</td>
+      <td>框顶边上的一个小页签，印出块的<code>label</code>属性，即编号框的编号（“BOX 1-1”）。它贴着<code>position</code>指定的角（<code>'top-right'</code> / <code>'top-left'</code>，或按框自身书写方向的<code>'top-start'</code> / <code>'top-end'</code>，与色条的<code>'start'</code> / <code>'end'</code>相同），内缩<code>inset</code>，高出框顶<code>offset</code>（这段空间属于整个块，加在<code>marginTop</code>之上，所以页签在栏顶也能保住它），高度为<code>height</code>，文字两侧各留<code>paddingX</code>；旁边可以带一个<code>icon</code>资源（<code>&#123; resourceId, width, gap &#125;</code>，放在背离那个角的一侧），顶边上还可以有一条<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>），从远端的角一直画到页签。默认值：标题字体、正文字号、<code>700</code>、主色底白字、高<code>1.4em</code>、内边距<code>0.6em</code>，不上移也不内缩，图片宽<code>1em</code>、与文字相距<code>0.3em</code>。页签是立在框形上的独立形状，所以无论框的<code>borderRadius</code>如何，它都保持直角；设了<code>joined: true</code>（自postext 1.48起）时，页签和框则是同一道轮廓，<code>fillet</code>把两者相接处的内角倒圆。<code>bottom-right</code>、<code>bottom-left</code>、<code>bottom-start</code>和<code>bottom-end</code>这几个位置（自postext 1.48起）把页签挂在框的底边上，它的<code>rule</code>沿底边画。自postext 1.48起，图标也可以是某种字体的一个字符，即<code>icon.kind: 'glyph'</code>（见<a href="#页签上的字形">页签上的字形</a>）。自postext 1.42起，<code>icon.placement: 'inside'</code>把图片放进页签内部、文字之前的起始处（从右向左排的框里则在右端），与文字相隔<code>gap</code>：页签的宽度等于图片、间距、文字和内边距之和，图片按<code>icon.width</code>和页签的高度缩放，并在页签中居中。图片保留自己的颜色，所以彩色页签上的白色圆环与白色页签上的彩色圆环是两个资源，各放在一种样式里。默认的<code>'beside'</code>则把图片放在页签边缘之外。自postext 1.43起，<code>icon.tint: true</code>用页签的<code>color</code>代替图片自身的颜色来绘制：图片所覆盖的轮廓以文字的颜色呈现，一个圆环即可用于全书的各种色调。没有透明度的图片会变成一个纯色矩形。在PDF中，SVG保留边缘，位图则在半透明处裁切；印刷母版（<code>svg.pdfFileId</code>）不会被使用，因为PDF页面无法重新着色。postext 1.52 起，标签的图标也可以由引擎绘制：<code>icon: &#123; kind: 'shape', shape: 'ring' &#125;</code>（或<code>'dot'</code>），大小与按文字字号<code>scale</code>倍排出的字形相同，颜色为其<code>color</code>（默认取文字颜色），放在标签旁或标签内；<code>icon.tint</code>除了<code>true</code>也可以是一种颜色，因此彩色圆环可以排在黑色文字之前。</td>
     </tr>
     <tr>
       <td><code>columnGap</code></td>
@@ -308,7 +308,8 @@ calloutStyles: [
 
 - **角。** `borderRadius`是四个角共用的一个长度，或者写成`{ topLeft, topRight, bottomRight, bottomLeft }`。对象中没写的角是直角。这里的角指纸面上的角。相邻两个角的半径之和不会超过它们之间那条边的长度；超出时两个角按比例缩小。
 - **边。** `border.sides.top`、`right`、`bottom`和`left`接受`enabled`、`color`和`width`，没写的字段取整道边框的值。只在顶边有边框的框写成`border: { enabled: false, sides: { top: { enabled: true } } }`，或者写`enabled: true`再关掉另外三条边。每条边的内缘随它的宽度而定，所以细边和粗边之间的圆角会像CSS画的那样弯过去。
-- **相连的页签。** 设`label.joined: true`时，页签和框是同一道轮廓、同一个底色（框的`background`；页签自己的`background`不绘制），一道边框绕过页签。页签立在框边上，在框外伸出它的高度：它的`offset`必须是`0`（其他值报告为`unknownConfigValue`，并按`0`处理）。页签外侧的角采用它所贴近的那个框角的半径，它与框相接处的内角由`fillet`倒圆（默认取那个半径）。与框的侧边齐平的页签（`inset`小于半个像素）从那条侧边直接向上伸出。文字要用在框的底色上看得清的颜色（`label.color`），因为页签不再有自己的底色。
+- **相连的页签。** 设`label.joined: true`时，页签和框是同一道轮廓、同一个底色（框的`background`；页签自己的`background`不绘制），一道边框绕过页签。页签立在框边上，在框外伸出它的高度：它的`offset`必须是`0`（其他值报告为`unknownConfigValue`，并按`0`处理）。页签外侧的角采用它所贴近的那个框角的半径，它与框相接处的内角由`fillet`倒圆（默认取那个半径）。与框的侧边齐平的页签（`inset`小于半个像素）从那条侧边直接向上伸出。文字要用在框的底色上看得清的颜色（`label.color`），因为页签不再有自己的底色。设`label.ownBackground: true`时，相连的页签用标签自己的`background`绘制，画在框的底色之上、边框之下，因此白色页签可以接在有底色的框上，彩色页签也可以接在没有底色的框上。
+- **页签的角。** `label.borderRadius`给页签单独的圆角：一个长度，或按页面四角写的`{ topLeft, topRight, bottomRight, bottomLeft }`，与框的`borderRadius`相同。与框分开的页签不设时是直角。相连的页签用它给两个外角做圆角（顶部页签用`topLeft`和`topRight`，底部页签用`bottomLeft`和`bottomRight`）；不设时沿用框角的半径。两种情况下内凹圆角都仍由`fillet`决定。
 - **底部页签。** `position: 'bottom-right'`、`'bottom-left'`、`'bottom-start'`或`'bottom-end'`把页签挂在框的底边上，可以是普通页签，也可以是相连的页签：它就是把顶部页签翻过来，在底边下方`offset`处，`rule`沿底边画。没有侧边页签：页签的文字是横排的。
 
 每种输出都会画出这些形状：画布和PDF画成矢量轮廓，HTML阅读器和固定版式EPUB用逐角、逐边的CSS。流式EPUB把角和边写进CSS，把相连的页签排成普通页签。框的`look.border.color`给每条边重新着色，篇的调色板也会给每条边重新着色。各个角和各条边都一样的样式，排出来与以前相同。
@@ -492,7 +493,7 @@ calloutStyles: [
 框用自己的`body`和`lists`排版设置内容，其余一切沿用文档的样式：
 
 - **段落**采用框的`body`：字体、字号、行距、颜色、强调颜色、字重、`italic`、`smallCaps`、对齐、断词、缩进和段间距。未设置的字段继承`bodyText`。继承来的强调颜色保留与调色板的关联，所以框内的粗体、斜体和`:ref`标签与框外一样随`colorPalette`变化。（postext 1.4及以前，无论主色是什么，框内的粗体都保持`#295AA3`。）
-- **无序列表**以框的`lists`（项目符号字符、颜色、字形大小和字重、缩进、间隔、条目间距）覆盖`unorderedLists`，文字是框的正文。`lists.bulletChar`或`lists.color`与文档的设置（`unorderedLists`）不同时，替换每一层的项目符号或颜色；与之相同或未设置时，每一层保留各自的设置（`unorderedLists.levels`），所以嵌套的破折号在框内依然保留。
+- **无序列表**以框的`lists`（项目符号字符、颜色、字形大小、字重和字体、缩进、间隔、条目间距、列表上下间距）覆盖`unorderedLists`，文字是框的正文。`lists.bulletChar`或`lists.color`与文档的设置（`unorderedLists`）不同时，替换每一层的项目符号或颜色；与之相同或未设置时，每一层保留各自的设置（`unorderedLists.levels`），所以嵌套的破折号在框内依然保留。
 - **有序列表**采用`lists.indent`、`gap`和`itemSpacing`；只要样式设置了`lists.color`，也采用它，即使它就是文档的项目符号颜色；未设置时，编号保持`orderedLists.color`。（postext 1.4及以前，只有当颜色与`unorderedLists.color`不同时才会作用到编号上，所以设成同一种颜色不起作用。）编号本身的字体、字号和分隔符来自全局的`orderedLists`，因为`lists`只有项目符号字段：框内编号的样式请在那里设置。
 - <strong>框内的`:::paragraphs`</strong>使用它们的段落样式，嵌套框中也是如此。段落样式未设置的字段继承文档的`bodyText`，而不是框的`body`（也不继承框的斜体或小型大写字母）。
 - **`:::columns`组**没有自己的样式：每一栏都共用框的正文和列表排版，`columnGap`设置栏间距。

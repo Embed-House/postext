@@ -1,12 +1,12 @@
 import { FORCED_BREAK, measureForcedBreaks } from './hardBreaks.js';
 import { placeTab, type TabLeaderPlacement, type TabRun, type TabStopPx } from './tabs.js';
 import type { TabStopAlign } from '../types.js';
-import type { VDTAnnotationRun, VDTChip, VDTChipRun, VDTInlineIcon, VDTLine, VDTLineSegment, VDTSegmentMarks } from '../vdt.js';
+import type { VDTAnnotationRun, VDTChip, VDTChipRun, VDTLine, VDTLineSegment, VDTSegmentMarks, VDTSwatch } from '../vdt.js';
 import { measureInlineIcon } from './inlineIcon.js';
 import { uprightArabicSpans, uprightFace } from '../uprightArabic.js';
 import { createBoundingBox } from '../vdt.js';
 import type { MathRender } from '../math/types.js';
-import type { InlineSpan } from '../parse/index.js';
+import type { InlineSpan, SwatchBox } from '../parse/index.js';
 import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, softHyphenBreaks, withoutSlashJoints } from '../hyphenate.js';
 import {
   richTokensToItems,
@@ -144,8 +144,9 @@ export interface RichToken {
    *  sets. */
   labelTab?: 'lead' | 'gap';
   /** When present, this token is an inline colour swatch (`:swatch{…}`): an
-   *  atomic square of `width` px, filled with `color` (hex) when resolved. */
-  swatch?: { color?: string; icon?: VDTInlineIcon };
+   *  atomic square of `width` px, filled with `color` (hex) when resolved,
+   *  with the shape its attributes give it (#1104). */
+  swatch?: VDTSwatch;
   /** When present, this token is an inline chip (`:chip[…]`): an atomic box
    *  of `width` px (margins included) with its own text runs. */
   chip?: VDTChip;
@@ -222,6 +223,17 @@ export interface RichToken {
  *  colour. Anything else leaves the swatch an empty outline. */
 export function isSwatchFill(color: string): boolean {
   return /^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(color) || /^rgba?\([^()]*\)$/i.test(color);
+}
+
+/** The shape fields of a swatch segment (#1104, see `VDTSwatch`): only
+ *  those its attributes set, so a plain swatch keeps today's segment. */
+function swatchShapeOf(box: SwatchBox, side: number, width: number): Omit<VDTSwatch, 'color' | 'icon'> {
+  return {
+    ...(box.sidePx !== undefined || width !== side ? { side } : {}),
+    ...(box.borderWidthPx !== undefined ? { borderWidth: box.borderWidthPx } : {}),
+    ...(box.borderColor !== undefined ? { borderColor: box.borderColor } : {}),
+    ...(box.radiusPx !== undefined ? { radius: Math.min(box.radiusPx, side / 2) } : {}),
+  };
 }
 
 /** Side of an inline colour swatch: three quarters of the font size (the
@@ -933,6 +945,11 @@ function wordBreakPoints(
  * touches a run of another script (`ABCكتاب`), with nothing added. Null
  * when no such place fits: the word then runs past the measure, and the
  * line says so (`VDTLine.wordOverflow`).
+ *
+ * `divided` says how a word was cut (#1150): at a syllable (`'syllable'`)
+ * or between two characters (`'character'`); absent for a cut at a
+ * no-break space, at the edge of a run of another script, or next to an
+ * ideograph, which divide no word.
  */
 export function emergencySplit(
   token: RichToken,
@@ -940,7 +957,7 @@ export function emergencySplit(
   letterSpacingPx: number,
   lineMaxWidth: number,
   syllablesOnly = false,
-): { head: RichToken; tail: RichToken; hard?: boolean } | null {
+): { head: RichToken; tail: RichToken; hard?: boolean; divided?: 'syllable' | 'character' } | null {
   const text = token.text;
   if (text.length < 2) return null;
   // Styled runs of one Arabic word (`RichToken.runs`) are one shaped word.
@@ -994,6 +1011,7 @@ export function emergencySplit(
     else over = mid;
   }
   let at = 0;
+  let divided: 'syllable' | 'character' | undefined;
   // The dictionary's syllables, as offsets into the text: `syllabify` maps
   // them past anything else the dictionary might put in.
   const { clean, soft } = syllabify(text, true);
@@ -1002,6 +1020,7 @@ export function emergencySplit(
       if (s.index > 0 && s.index <= reach && fits(s.index)) at = s.index;
     }
   }
+  if (at > 0) divided = 'syllable';
   // A word the document keeps whole (`hyphenation.exceptions`, capitalised
   // words, cited names) is still divided when it is wider than its measure:
   // at its entry's points above, else at the dictionary's syllables (#699).
@@ -1012,6 +1031,7 @@ export function emergencySplit(
         if (s.index > 0 && s.index <= reach && fits(s.index)) at = s.index;
       }
     }
+    if (at > 0) divided = 'syllable';
   }
   if (at === 0 && !syllablesOnly) {
     for (let idx = reach; idx >= 1; idx--) {
@@ -1022,6 +1042,9 @@ export function emergencySplit(
       if (joining && insideJoiningWord(text, idx)) continue;
       if (fits(idx)) { at = idx; break; }
     }
+    // Between two letters of one word: not where a word of a joining script
+    // meets another run, nor beside an ideograph, nor after a hyphen.
+    if (at > 0 && !joining && !afterHyphen(at) && !hasCJK(text.slice(at - 1, at + 1))) divided = 'character';
   }
   if (at === 0) return null;
   const mark = markW(at) > 0 ? '-' : '';
@@ -1033,6 +1056,7 @@ export function emergencySplit(
       : { ...flags, ...pieceScriptFields(token, 0, at), text: text.slice(0, at) + mark, kind: 'text', width: widthBefore(at) + markW(at) },
     tail: { ...restFrom(at), ...flags, ...pieceScriptFields(token, at, text.length) },
     ...(afterHyphen(at) ? { hard: true } : {}),
+    ...(divided && !afterHyphen(at) ? { divided } : {}),
   };
 }
 
@@ -1248,14 +1272,18 @@ export function atomicSpanToken(
       const icon = measureInlineIcon(span.swatch.icon, span.swatch.color, normalFont);
       return { text: span.text, bold: span.bold, italic: span.italic, captionLabel: span.captionLabel, kind: 'text', width: icon.widthPx, swatch: { icon } };
     }
+    const fill = isSwatchFill(span.swatch.color) ? { color: span.swatch.color } : {};
+    const box = span.swatch.box;
+    const side = box?.sidePx ?? swatchSidePx(swatchFont);
+    const width = side + (box?.gapPx ?? 0);
     return {
       text: span.text,
       bold: span.bold,
       italic: span.italic,
       captionLabel: span.captionLabel,
       kind: 'text',
-      width: swatchSidePx(swatchFont),
-      swatch: isSwatchFill(span.swatch.color) ? { color: span.swatch.color } : {},
+      width,
+      swatch: box ? { ...fill, ...swatchShapeOf(box, side, width) } : fill,
     };
   }
   if (span.math && span.mathRender) {
@@ -2235,6 +2263,7 @@ function measureRichText(
     let lineHardHyphen = false;
     // A word of a joining script wider than the line runs past it.
     let lineWordOverflow = false;
+    let lineWordDivided: 'syllable' | 'character' | undefined;
     // The line holds a tab placed at a stop (#622).
     let lineTabbed = false;
 
@@ -2363,6 +2392,7 @@ function measureRichText(
         const font = tokenFont(token, normalFont, boldFont, italicFont, boldItalicFont);
         const split = emergencySplit(token, font, letterSpacingPx, lineMaxWidth);
         if (split) {
+          lineWordDivided = split.divided;
           lineTokens.push(split.head);
           lineWidth += split.head.width;
           lineHyphenated = true;
@@ -2421,6 +2451,7 @@ function measureRichText(
         if (isDivisible(token)) {
           const split = emergencySplit(token, font, letterSpacingPx, lineMaxWidth - lineWidth, true);
           if (split) {
+            lineWordDivided = split.divided;
             lineTokens.push(split.head);
             lineWidth += split.head.width;
             lineHyphenated = true;
@@ -2515,6 +2546,7 @@ function measureRichText(
       isLastLine,
       ...spaceRatios,
       ...(lineWordOverflow ? { wordOverflow: true as const } : {}),
+      ...(lineWordDivided ? { wordDivided: lineWordDivided } : {}),
       ...(lineTabbed ? { tabbed: true as const, ...(textAlign === 'justify' ? { ragged: true } : {}) } : {}),
     });
 

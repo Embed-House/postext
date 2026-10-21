@@ -132,7 +132,7 @@ const pinyinBlock = P && { setsContent: true, minHeight: mm(P.height(3)),
 // #region opener: a tinted band with the lesson's letters in a disc and its picture
 const BAND = 40; // mm
 const opener = { enabled: true, minHeight: mm(BAND + 7), slot: { elements: [
-  { kind: 'box', id: 'band', decorative: true, style: { backgroundColor: col('tint'),
+  { kind: 'box', id: 'band', style: { backgroundColor: col('tint'),
     borderRadius: mm(5) }, placement: at('container', 'top-left', 0, 0, box(W, BAND)) },
   text('letters', '{attr.letras}', HAND, CJK ? 30 : 26, at('container', 'top-left', 5, 5,
     box(40, 30)),
@@ -142,7 +142,7 @@ const opener = { enabled: true, minHeight: mm(BAND + 7), slot: { elements: [
     { fontWeight: LW, color: col('accent'), ...caps(1.2) }),
   text('title', '{titleText}', HAND, CJK ? 26 : 24, at('container', 'top-left', 52,
     15 + ED.rise, { width: mm(80) }), { lineHeight: 1.25 }),
-  { kind: 'box', id: 'card', decorative: true, style: { backgroundColor: col('paper'),
+  { kind: 'box', id: 'card', style: { backgroundColor: col('paper'),
     borderRadius: mm(4) }, placement: at('container', 'top-right', -4, 3, box(34, 34)) },
   image('picture', '{attr.pic}', at('container', 'top-right', -5, 4, box(32, 32))),
 ] } };
@@ -169,7 +169,7 @@ const cover = { id: 'portada', header: { elements: [] }, footer: { elements: [] 
 // The last page: the same frame as a certificate, the child's name and the date to fill in.
 const diploma = { id: 'diploma', header: { elements: [] }, footer: { elements: [] },
   advancedDesign: { enabled: true, minHeight: mm(250), slot: { elements: [
-    { kind: 'box', id: 'frame', decorative: true, style: { borderColor: col('sun'),
+    { kind: 'box', id: 'frame', style: { borderColor: col('sun'),
       borderWidth: pt(5), borderRadius: mm(8), backgroundColor: col('paper') },
     placement: at('container', 'top-left', 0, 4, box(W, 244)) },
     image('picture', 'medal', at('container', 'top', 0, 22, box(70, 70))),

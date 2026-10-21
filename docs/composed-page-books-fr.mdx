@@ -164,6 +164,35 @@ Un bouton qui modifie le gabarit (et donc toutes les pages composées avec lui) 
 
 <Screenshot src="/docs-shots/fr/checks.webp" alt="Le panneau Vérifications avec l’entrée Le texte déborde de son bloc et trois boutons de solution, et la page dont la première boîte est entourée de rouge avec une bande qui indique 26 mm de trop." caption="Un bloc qui ne tient pas, et les corrections que la mise en page a calculées pour lui." />
 
+Tous les repères du canvas ne sont pas des erreurs. Un bloc dont la mise en page a réduit le texte ou les images, dans les limites de son gabarit, porte un contour ambre en tirets et une pastille comme *texte à 90 %* : c’est une information. Les problèmes sont tracés en rouge (un bloc dont le contenu ne tient pas) et en violet (une apparence que la maquette n’a pas). **Repères d’ajustement**, dans la même barre que **Recomposition**, passe par trois réglages :
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '30%' }}>Réglage</th>
+      <th>Ce que trace le canvas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Tous</td>
+      <td>Tous les repères : blocs trop pleins, apparences inconnues, texte et images réduits</td>
+    </tr>
+    <tr>
+      <td>Problèmes seulement</td>
+      <td>Les blocs trop pleins et les apparences inconnues</td>
+    </tr>
+    <tr>
+      <td>Aucun</td>
+      <td>Aucun repère d’ajustement</td>
+    </tr>
+  </tbody>
+</table>
+
+Le Sandbox garde votre choix dans ce navigateur. Le livre peut le fixer pour qui n’a pas choisi : `debug.fitMarks` (`"all"`, `"problems"` ou `"none"`) et `debug.fitMarksMinScale`, qui retire la pastille d’un bloc composé à cette échelle ou plus (avec `0.95`, seul ce qui passe sous 95 % est signalé). Ces repères appartiennent au canvas : le PDF, la visionneuse HTML, l’EPUB et le Folio ne les tracent jamais. Depuis postext 1.52.
+
+Une boîte avec des photos et leurs légendes (des blocs ancrés à l’intérieur, une légende `below` chaque photo) ne s’agrandit pas d’elle-même quand une traduction allonge les légendes : elles sortent de la boîte et passent sur ce qui se trouve dessous. Ouvrez le bloc de la boîte dans l’éditeur de gabarits et réglez **S’agrandit avec les blocs intérieurs** sur *Les blocs ancrés à l’intérieur* (`growWith: "children"` dans le gabarit). La boîte descend alors jusqu’au pied de la légende la plus basse plus sa marge intérieure du bas, son fond, sa bordure et son onglet suivent, et les blocs du dessous descendent. *Les blocs choisis* prend à la place une liste de noms. Comptent les blocs ancrés à un point du bord supérieur de la boîte et ceux qui sont ancrés à eux ; un bloc ancré au pied ou au milieu de la boîte ne compte pas, et une boîte tournée ne s’agrandit pas. Depuis postext 1.52.
+
 ## 7. Sélectionner sur la page et dans le texte
 
 La page et son Markdown restent synchronisés.

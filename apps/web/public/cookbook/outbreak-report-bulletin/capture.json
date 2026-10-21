@@ -1,33 +1,33 @@
 {
   "schemaVersion": 1,
   "slug": "outbreak-report-bulletin",
-  "sourceHash": "79bd8d8c33e2f8ae6ba71ac8332d5719b5b03b12a2020d432eddfdc86754767e",
+  "sourceHash": "72bf751c62cfbb5044c0fe01ad856e4225929df98f4c48d6b339c1867bab817e",
   "engine": {
     "postext": "1.34.0",
     "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.939Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-21T18:29:20.452Z",
   "variants": {
     "en": {
-      "hash8": "de421029",
+      "hash8": "30d177b4",
       "vdtHash": "4765a064c79d1bfe8c38ee93c73aeef4b143fc19",
       "timings": {
-        "importMs": 1042,
-        "fontsMs": 75,
-        "buildMs": 213,
-        "totalMs": 3073,
+        "importMs": 214,
+        "fontsMs": 54,
+        "buildMs": 176,
+        "totalMs": 1078,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
           215.9,
-          279.40000000000003
+          279.4
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "IBM Plex Serif",
@@ -147,7 +147,7 @@
       },
       "sandbox": {
         "file": "outbreak-report-bulletin.postext",
-        "bytes": 95660,
+        "bytes": 95643,
         "folio": "0cf5d184",
         "chapters": [
           {
@@ -356,7 +356,7 @@
           "tableStyle",
           "tableStyles"
         ],
-        "configLeaves": 572,
+        "configLeaves": 567,
         "designElements": 26,
         "directives": [
           ":::paragraphs",
@@ -457,12 +457,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.07 MB (warning at 0.9 MB for 6 pages)"
+            "detail": "the edition's images weigh 1.07 MB (warning at 0.9 MB for 6 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

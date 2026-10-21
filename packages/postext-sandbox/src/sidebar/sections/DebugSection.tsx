@@ -10,12 +10,13 @@ import {
   dimensionsEqual,
   colorsEqual,
 } from 'postext';
-import type { PageConfig, DebugConfig, PostextConfig } from 'postext';
+import type { PageConfig, DebugConfig, FitMarksMode, PostextConfig } from 'postext';
 import {
   CollapsibleSection,
   ColorPicker,
   DimensionInput,
   NumberInput,
+  SelectInput,
   ToggleSwitch,
   NestedGroup,
 } from '../../controls/index.js';
@@ -120,6 +121,16 @@ export const DebugSection = memo(function DebugSection() {
     });
   };
 
+  const resetDebugKey = (key: 'fitMarks' | 'fitMarksMinScale') => {
+    if (rawDebug?.[key] === undefined) return;
+    const nextDebug: DebugConfig = { ...rawDebug };
+    delete nextDebug[key];
+    dispatch({
+      type: 'UPDATE_CONFIG',
+      payload: { debug: Object.keys(nextDebug).length > 0 ? nextDebug : undefined },
+    });
+  };
+
   const resetDebugSection = () => {
     const patch: Partial<PostextConfig> = {};
     if (rawPage?.baselineGrid) {
@@ -160,7 +171,9 @@ export const DebugSection = memo(function DebugSection() {
     rawDebug?.cursorSync !== undefined ||
     rawDebug?.selectionSync !== undefined ||
     rawDebug?.looseLineHighlight !== undefined ||
-    rawDebug?.pageNegative !== undefined;
+    rawDebug?.pageNegative !== undefined ||
+    rawDebug?.fitMarks !== undefined ||
+    rawDebug?.fitMarksMinScale !== undefined;
 
   return (
     <CollapsibleSection
@@ -314,6 +327,36 @@ export const DebugSection = memo(function DebugSection() {
         isDefault={isPageNegativeEnabledDefault}
         onReset={() => resetPageNegativeField('enabled')}
       />
+
+      {/* What the canvas marks of how composed frames fit (#1160). */}
+      <SelectInput
+        label={labels.debugFitMarks}
+        value={debug.fitMarks}
+        options={[
+          { value: 'all', label: labels.fitMarksAll },
+          { value: 'problems', label: labels.fitMarksProblems },
+          { value: 'none', label: labels.fitMarksNone },
+        ]}
+        onChange={(v) => updateDebug({ fitMarks: v as FitMarksMode })}
+        tooltip={labels.debugFitMarksTooltip}
+        isDefault={debug.fitMarks === DD.fitMarks}
+        onReset={() => resetDebugKey('fitMarks')}
+      />
+      {debug.fitMarks === 'all' && (
+        <NestedGroup>
+          <NumberInput
+            label={labels.debugFitMarksMinScale}
+            value={debug.fitMarksMinScale}
+            onChange={(v) => updateDebug({ fitMarksMinScale: v })}
+            min={0}
+            max={1}
+            step={0.01}
+            tooltip={labels.debugFitMarksMinScaleTooltip}
+            isDefault={debug.fitMarksMinScale === DD.fitMarksMinScale}
+            onReset={() => resetDebugKey('fitMarksMinScale')}
+          />
+        </NestedGroup>
+      )}
     </CollapsibleSection>
   );
 });

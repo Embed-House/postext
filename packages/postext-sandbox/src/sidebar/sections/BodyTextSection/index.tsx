@@ -30,6 +30,7 @@ import { OrphansSubsection, WidowsSubsection, RuntsSubsection } from './OrphansW
 import { isArabicScriptLanguage } from '../../../context/arabicDefaults.js';
 import { flowSideLabels, useRightToLeftFlow } from '../../settings/flowSides.js';
 import { TabStopsField } from '../../settings/TabStopsField.js';
+import { ParagraphSpacingField } from '../../settings/ParagraphSpacingField.js';
 
 const D = DEFAULT_BODY_TEXT_CONFIG;
 
@@ -403,11 +404,10 @@ export const BodyTextSection = memo(function BodyTextSection() {
           isDefault={isHangingIndentDefault}
           onReset={() => resetField('hangingIndent')}
         />
-        <ToggleSwitch
-          label={labels.bodyParagraphSpacing}
-          checked={bodyText.paragraphSpacing}
-          onChange={(checked) => updateBodyText({ paragraphSpacing: checked })}
-          tooltip={labels.bodyParagraphSpacingTooltip}
+        <ParagraphSpacingField
+          value={bodyText.paragraphSpacing}
+          line={bodyText.lineHeight}
+          onChange={(paragraphSpacing) => updateBodyText({ paragraphSpacing })}
           isDefault={isParagraphSpacingDefault}
           onReset={() => resetField('paragraphSpacing')}
         />

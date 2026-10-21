@@ -148,6 +148,8 @@ Al hacer clic en cualquiera de estos avisos se abre el panel **Fuentes**, para q
 
 Cuando ya hay una maquetación, el panel muestra también el aviso del motor **Fuente sustituida en la composición** (`fontFallback`): un estilo con el que no se han podido medir las páginas, bien porque falta, bien porque el navegador lo dibuja a partir de otro peso o de otra inclinación. Una familia que ya aparece como desconocida o con un estilo que falta no se muestra dos veces. Antes de la primera maquetación, se hace en su lugar una comprobación con `document.fonts`.
 
+El panel también muestra **Caracteres tomados de otra fuente** (`glyphFallback`): caracteres que el texto pone en una fuente que no tiene glifo para ellos, una vez por fuente, con la familia genérica que los dibujó (`serif`, `sans-serif`, `monospace`) cuando la comprobación puede saberlo.
+
 ## Paleta de colores
 
 La propiedad `colorPalette` de `PostextConfig` permite definir un conjunto reutilizable de colores con nombre y remitir a ellos desde cualquier `ColorValue` de la configuración. Es el equivalente en Postext de las propiedades personalizadas de CSS o del panel de muestras de InDesign: si cambias una entrada de la paleta, se actualizan en todo el documento todos los colores que remiten a ella.
@@ -791,6 +793,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -811,10 +814,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Se avisa del texto calado por debajo de este cuerpo.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>Lo mismo para cursivas y pesos finos, de trazo más delgado.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Un peso igual o menor que este cuenta como fino.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Pares de colores que la comprobación acepta, cada uno con su <code>reason</code>: por el color del texto (<code>fg</code>) y el del fondo (<code>bg</code>), por el <code>style</code> en que va el texto, o por ambos. Véase [Pares aceptados](#pares-aceptados).</td></tr>
   </tbody>
 </table>
 
 Un `level` o un `mode` escrito de cualquier otra forma se lee como el valor por defecto y se notifica como valor de ajuste desconocido (véase [Avisos de configuración](#avisos-de-configuración)).
+
+### Pares aceptados
+
+Una adaptación conserva la paleta del original, y algunos de sus pares quedan bajo el umbral: un tinte claro detrás del texto de un recuadro, un color de marca en un titulillo. `allow` los acepta sin apagar la comprobación (desde postext 1.52). Una entrada nombra el color del texto `fg` y el del fondo `bg` (en hexadecimal, tal como los escribe la configuración o como se pintan), o un `style`: el id de un estilo de recuadro (`calloutStyles`, o el `style` de un marco de página compuesta), de párrafo, de título, de etiqueta en línea o de rótulo de figura. Todos los campos que da una entrada tienen que coincidir, así que `{ style: 'note', fg: '#7a8a99' }` acepta ese gris solo dentro de los recuadros `note`. Una entrada que no da ninguno de los tres no coincide con nada.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: 'El ocre de la editorial para los titulillos' },
+    { style: 'nota-margen', reason: 'El original compone sus notas al margen en un gris claro' },
+  ],
+}
+```
+
+Un par aceptado se sigue señalando: cada hallazgo que coincide lleva `accepted` (el `reason` de la entrada, con su `fg`, su `bg` y su `style`), y los hallazgos aceptados van después de los demás. El Sandbox los muestra en Comprobaciones, bajo Pares de contraste aceptados, con el motivo, y no los cuenta; `postext check` los imprime como notas, que no hacen fallar `--strict`. Los mismos colores fuera de lo que nombra la entrada siguen siendo un aviso.
 
 ### Umbrales
 
@@ -1282,6 +1301,18 @@ La propiedad `debug` agrupa dos tipos de ayudas para la edición: superposicione
       <td><code>boolean</code></td>
       <td><code>false</code></td>
       <td>Dibuja sobre la página una superposición en negativo de alto contraste: sirve para revisar de un vistazo la forma general de una doble página (densidad del texto, equilibrio de las columnas, espacio en blanco) sin que distraiga el detalle de los glifos.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Qué marcas de ajuste dibuja el canvas del Sandbox sobre las páginas compuestas para quien no haya elegido en la barra del canvas: todas, solo los marcos que no caben y los aspectos desconocidos, o ninguna. Manda la elección del lector. Desde postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Un marco compuesto a esta escala o mayor no lleva distintivo de escala (con <code>0.95</code> solo se marcan los que quedan por debajo del 95 %). Texto e imágenes se miran por separado.</td>
     </tr>
   </tbody>
 </table>

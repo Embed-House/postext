@@ -88,7 +88,7 @@ const header = { elements: [
     { ...folio, align: 'left' }),
   head('verso-title', '{title}', 'even', 'top-left', MARGIN.outer + 9, { align: 'left' }),
   head('recto-title', '{chapterTitle}', 'odd', 'top-right', -(MARGIN.outer + 9),
-    { align: 'right', overflow: 'ellipsis', size: { width: mm(120) } }),
+    { align: 'right', overflow: 'ellipsis' }),
   head('recto-folio', '{pageNumber}', 'odd', 'top-right', -MARGIN.outer,
     { ...folio, align: 'right' }),
 ] };

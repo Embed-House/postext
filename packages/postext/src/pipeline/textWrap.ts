@@ -30,6 +30,7 @@ import { dimensionToPx } from '../units.js';
 import { wrapWidthOf } from '../defaults/layout.js';
 import { parseLengthText } from '../defaults/tabStops.js';
 import { contourInsetSteps } from '../contour/index.js';
+import { captionInsideShare } from './captionInside.js';
 
 /** A `wrap` value as a side of the flow: `'start'` is `'left'`, `'end'` is
  *  `'right'`; `'none'` and anything else are no wrap. */
@@ -56,6 +57,9 @@ export function resolveResourceWrap(
   type: ResourceType | undefined,
   settings: ResolvedTextWrapConfig,
 ): ResolvedWrap | undefined {
+  // A picture with its caption beside it inside its slot (#1106) keeps
+  // its slot whole.
+  if (captionInsideShare(resource, type) !== undefined) return undefined;
   const wrap = resource.placement?.wrap ?? type?.defaultPlacement?.wrap;
   // A contour wrap (#883) of a picture stands at the side its `align`
   // names; a table has no shape and keeps no contour.

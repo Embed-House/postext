@@ -134,6 +134,9 @@ function frameRoles(rest: string): FrameColorRole[] {
     case 'marker.color':
     case 'label.color':
     case 'label.icon.color':
+    case 'icon.tint':
+    case 'marker.tint':
+    case 'label.icon.tint':
       return ['text'];
     default:
       return ['fill', 'border', 'rule', 'text'];
@@ -402,6 +405,12 @@ function recolorFrame(blocks: readonly VDTDesignBlock[], styleId: string | undef
           left: sides.left && { ...sides.left, color: remap(sides.left.color) ?? sides.left.color },
         };
       }
+    } else if (b.kind === 'path' && b.drawnIcon) {
+      // A drawn icon (#1120): in the icon's colour, a text role.
+      if (b.fill) b.fill = part('text')(b.fill) ?? b.fill;
+    } else if (b.kind === 'image' && b.tint) {
+      // A picture painted in one colour (#995, #1120), as its icon's.
+      b.tint = part('text')(b.tint) ?? b.tint;
     } else if (b.kind === 'path' && b.boxPart) {
       // A card joined to its tab (#1059): its fill as the box's fill, its
       // border pieces as the box's border.

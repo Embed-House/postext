@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "novel-footnotes-column-foot",
-  "sourceHash": "355d35ec4312c55d75abe2616bd7e4d97f5882b245245973c1ccca00a07907d3",
+  "sourceHash": "0139068902c757af24068b11f0895cee6dc8b085c3579e11384c63f2945ba942",
   "engine": {
     "postext": "1.31.0",
     "postextPdf": "1.31.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:02:23.917Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-21T18:28:51.271Z",
   "variants": {
     "en": {
-      "hash8": "a115cc5f",
+      "hash8": "044a1d99",
       "vdtHash": "4c3ec8000e4cf4a2c9bb61da4aac0508a455884e",
       "timings": {
-        "importMs": 676,
-        "fontsMs": 25,
-        "buildMs": 80,
-        "totalMs": 1687,
+        "importMs": 591,
+        "fontsMs": 26,
+        "buildMs": 71,
+        "totalMs": 1560,
         "builds": 1
       },
       "specimen": {
@@ -101,12 +101,12 @@
       },
       "pdf": {
         "file": "novel-footnotes-column-foot.pdf",
-        "bytes": 104732,
+        "bytes": 104723,
         "pages": 3
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
-        "bytes": 40323,
+        "bytes": 40306,
         "folio": "5dc5724f",
         "chapters": [
           {
@@ -187,7 +187,6 @@
           "header.elements[].pages",
           "header.elements[].parity",
           "header.elements[].placement",
-          "header.elements[].size",
           "header.elements[].textTransform",
           "headings",
           "headings.color",
@@ -244,7 +243,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 8,
         "directives": [
           ":::paragraphs"
@@ -311,21 +310,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "83bce81c",
+      "hash8": "27917df8",
       "vdtHash": "11e8daa80867058ec9fa0fb580a9730f915d12c5",
       "timings": {
-        "importMs": 912,
-        "fontsMs": 32,
-        "buildMs": 280,
-        "totalMs": 2710,
+        "importMs": 589,
+        "fontsMs": 25,
+        "buildMs": 223,
+        "totalMs": 1912,
         "builds": 1
       },
       "specimen": {
@@ -414,7 +413,7 @@
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
-        "bytes": 38447,
+        "bytes": 38430,
         "folio": "5dc5724f",
         "chapters": [
           {
@@ -495,7 +494,6 @@
           "header.elements[].pages",
           "header.elements[].parity",
           "header.elements[].placement",
-          "header.elements[].size",
           "header.elements[].textTransform",
           "headings",
           "headings.color",
@@ -552,7 +550,7 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 204,
+        "configLeaves": 203,
         "designElements": 8,
         "directives": [
           ":::paragraphs"
@@ -619,9 +617,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

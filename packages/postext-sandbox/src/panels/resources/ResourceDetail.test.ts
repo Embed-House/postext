@@ -78,6 +78,15 @@ describe('ResourceDetail placement: width and align', () => {
     expect(captionSide(render(bitmap({ position: 'auto', rotate: 'ccw' })))).toBe(false);
   });
 
+  it('offers the caption beside a picture inside its column for pictures only (#1106)', () => {
+    const inside = (html: string) => html.includes('>' + L.resourceCaptionSideInside + '<');
+    expect(inside(render(bitmap({ position: 'here' })))).toBe(true);
+    expect(inside(render(bitmap({ position: 'auto', captionSide: 'inside' })))).toBe(true);
+    const tableHtml = render(table({ position: 'auto' }));
+    expect(captionSide(tableHtml)).toBe(true);
+    expect(inside(tableHtml)).toBe(false);
+  });
+
   it('hides Width and Align for a turned resource (a page of its own)', () => {
     const html = render(bitmap({ position: 'auto', rotate: 'ccw' }));
     expect(width(html)).toBe(false);

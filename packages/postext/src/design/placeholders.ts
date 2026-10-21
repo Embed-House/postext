@@ -70,6 +70,12 @@ export interface DesignLeader {
   char: string;
   /** Room kept on either side of the run. */
   gap: Dimension;
+  /** The run's own colour, face, size (`em` of the element's) and weight
+   *  (#1121); each unset keeps the element's. */
+  color?: string;
+  fontFamily?: string;
+  fontSize?: Dimension;
+  fontWeight?: number;
 }
 
 export interface DesignPlaceholderContext {

@@ -42,7 +42,7 @@ const reportHead = (y, size) => [
     placement: at('container', 'top-left', 0, y, MEASURE) }),
   text('title', '{titleText}', DISPLAY, size, { fontWeight: 800, lineHeight: 1.08,
     inlineMarks: true, placement: at('#kicker', 'below', 0, 2.2, MEASURE) }),
-  text('dateline', '{attr.dateline}', LABEL, 9, { fontStyle: 'italic', color: col('muted'),
+  text('dateline', '{attr.dateline}', LABEL, 9, { color: col('muted'),
     placement: at('#title', 'below', 0, 2, MEASURE) }),
 ];
 const masthead = { enabled: true, minHeight: mm(72), slot: { elements: [
@@ -56,9 +56,9 @@ const masthead = { enabled: true, minHeight: mm(72), slot: { elements: [
   text('wordmark', 'Surveillance Notes', DISPLAY, 50, { fontWeight: 800, color: col('paper'),
     letterSpacing: pt(-1), lineHeight: 1, placement: at('page', 'top-left', SIDE - 1, 18) }),
   text('issue', '{attr.issue}', TEXT, 9.5,
-  { fontStyle: 'italic', lineHeight: 1.3, placement: at('container', 'top-left', 0, 29, 92) }),
+  { lineHeight: 1.3, placement: at('container', 'top-left', 0, 29, 92) }),
   text('contents', '{attr.contents}', LABEL, 8, { inlineMarks: true, lineHeight: 1.3,
-    boldColor: col('accent'), placement: at('container', 'top-right', 0, 29, 76), align: 'left' }),
+    placement: at('container', 'top-right', 0, 29, 76), align: 'left' }),
   rule('rule-a', 46.5, 2), rule('rule-b', 48, 0.5), ...reportHead(52, 23),
 ] } };
 const opener = { enabled: true, minHeight: mm(26), slot: { elements: [rule('rule-a', 0, 2),

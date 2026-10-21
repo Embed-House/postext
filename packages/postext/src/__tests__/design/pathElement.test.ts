@@ -290,8 +290,8 @@ describe('path elements in the config warnings (#1060)', () => {
       ['unknownConfigValue', 'header.elements[0].d', 'M0 0 L1', ''],
       ['unknownConfigValue', 'header.elements[1].viewBox', '[0,1]', ''],
       ['unknownConfigValue', 'header.elements[1].preserveAspectRatio', 'slice', 'none'],
-      ['unknownConfigKey', 'header.elements[2].colour', 'colour', ''],
       ['unknownConfigValue', 'pageTemplates[0].decoration.elements[0].d', 'Q1 1 2 2', ''],
+      ['unknownConfigKey', 'header.elements[2].colour', 'colour', ''],
     ]);
   });
 });

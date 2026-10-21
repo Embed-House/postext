@@ -120,6 +120,8 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 
 `14`が付いたマニフェストは、postext 1.30〜1.33が書き出したものです。規則15（postext 1.34、#853）は、[テンプレートページ](/ja/docs/composed-pages)のためのページテンプレート（`pageTemplates`）とラベルスタイル（`labelStyles`）を加えます。古い設定の内容は何も変えないので、`14`が付いたマニフェストは固定なしでそのまま読まれます。この番号は、テンプレートを含みうる設定であることを示します。14以下を読む側は、テンプレートを無視します。
 
+`15`または`16`の付いたマニフェストは postext 1.34〜1.51 が書いたものです（規則16、#1056 はテンプレートの装飾にコネクターを加えるだけで、何も固定しません）。規則17（#1119）では、段落スタイルが指定していない書体・サイズ・行送り・ウェイト・色を、そのスタイルが置かれた囲みの本文から取ります。1.51 までは文書の本文から取っていました。`16`以前のマニフェストは、統合した設定が段落スタイルを宣言し、この設定を書いていなければ、有効な`bodyText`に`bodyText.paragraphStylesInBoxes: 'document'`（`pinLegacyBoxParagraphStyles`）を受け取ります。
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

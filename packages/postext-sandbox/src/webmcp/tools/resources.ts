@@ -78,7 +78,7 @@ const PLACEMENT_SCHEMA: JsonSchema = {
     align: nullable({ type: 'string', enum: ['left', 'center', 'right', 'start', 'end'], description: 'Where a resource narrower than its slot sits.' }),
     columns: nullable({ type: 'integer', minimum: 1, description: 'How many adjacent columns a column float takes.' }),
     citingPage: nullable({ type: 'boolean', description: 'Head the page or column where the line that first cites it lands.' }),
-    captionSide: nullable({ type: 'boolean', description: 'Set the caption beside it, in the side column.' }),
+    captionSide: nullable({ type: ['boolean', 'string'], enum: [true, false, 'inside'], description: 'Set the caption beside it: true puts it in the side column of a column-and-a-half layout; "inside" sets it beside a picture within the picture\'s own slot, the picture taking width of the slot (0.5 by default).' }),
     wrap: nullable({ type: 'string', enum: ['none', 'left', 'right', 'start', 'end', 'contour'], description: 'Run the text beside it, at this side of its column; "contour" runs it round the picture\'s own shape (its alpha channel, or a polygon in the record\'s contour.points, set through fields), at the side its align names.' }),
     wrapGap: nullable({ type: 'object', description: 'The space between it and the text beside it, as { value, unit }.' }),
     shrink: nullable({ type: 'string', enum: ['never', 'page', 'slot'], description: 'Scale a floated picture down to the room of its slot instead of moving it on.' }),

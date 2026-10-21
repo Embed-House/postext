@@ -39,14 +39,15 @@ export interface ShapeOutline {
 
 /** A label tab grown out of a box (`label.joined`): it stands on the
  *  `edge` side, from `x0` to `x1` across, `height` out from the edge, its
- *  outer corners rounded `radius`, its sides meeting the box in fillets of
+ *  outer corners rounded `radius` (one for both, or the corner at `x0`
+ *  and the one at `x1`, #1102), its sides meeting the box in fillets of
  *  `fillet`. */
 export interface ShapeTab {
   edge: 'top' | 'bottom';
   x0: number;
   x1: number;
   height: number;
-  radius: number;
+  radius: number | readonly [number, number];
   fillet: number;
 }
 
@@ -74,6 +75,53 @@ export function boxOutline(box: BoundingBox, radii: readonly [number, number, nu
       sides: ['top', 'right', 'bottom', 'left'],
     });
   }
+  const { a, b, flushL, flushR, th, top, rL, rR, ra, rb, fl, fr } = tabGeometry(box, [tl, tr, br, bl], tab);
+  const vertices: ShapeVertex[] = [];
+  const sides: ShapeSide[] = [];
+  const push = (v: ShapeVertex, side: ShapeSide) => {
+    vertices.push(v);
+    sides.push(side);
+  };
+  if (top) {
+    const ty = y - th;
+    // Clockwise from the top-left: along the top, up round the tab.
+    if (!flushL) {
+      push({ x, y, r: rL }, 'top');
+      push({ x: a, y, r: fl, concave: true }, 'top');
+    }
+    push({ x: a, y: ty, r: ra }, 'top');
+    push({ x: b, y: ty, r: rb }, flushR ? 'right' : 'top');
+    if (!flushR) {
+      push({ x: b, y, r: fr, concave: true }, 'top');
+      push({ x: right, y, r: rR }, 'right');
+    }
+    push({ x: right, y: foot, r: br }, 'bottom');
+    push({ x, y: foot, r: bl }, 'left');
+  } else {
+    const ty = foot + th;
+    push({ x, y, r: tl }, 'top');
+    push({ x: right, y, r: tr }, 'right');
+    if (!flushR) {
+      push({ x: right, y: foot, r: rR }, 'bottom');
+      push({ x: b, y: foot, r: fr, concave: true }, 'bottom');
+    }
+    push({ x: b, y: ty, r: rb }, 'bottom');
+    push({ x: a, y: ty, r: ra }, flushL ? 'left' : 'bottom');
+    if (!flushL) {
+      push({ x: a, y: foot, r: fl, concave: true }, 'bottom');
+      push({ x, y: foot, r: rL }, 'left');
+    }
+  }
+  return clampOutline({ vertices, sides });
+}
+
+/** Where a joined tab stands on a box and the radii of its corners,
+ *  clamped as {@link boxOutline} draws them: the box outline and the tab's
+ *  own fill ({@link tabRegionOutline}) share them. */
+function tabGeometry(box: BoundingBox, radii: readonly [number, number, number, number], tab: ShapeTab) {
+  const { x, width: w } = box;
+  const [tl, tr, br, bl] = radii;
+  const right = x + w;
   const a = Math.max(x, Math.min(tab.x0, right));
   const b = Math.max(a, Math.min(tab.x1, right));
   const flushL = a - x <= FLUSH_EPS;
@@ -90,9 +138,22 @@ export function boxOutline(box: BoundingBox, radii: readonly [number, number, nu
   const rL = flushL ? 0 : Math.min(cornerL, gapL - fL);
   const rR = flushR ? 0 : Math.min(cornerR, gapR - fR);
   const f = Math.max(0, Math.min(Math.max(fL, fR), th));
-  const rt = Math.max(0, Math.min(tab.radius, (b - a) / 2, th - f));
+  const [radiusA, radiusB] = typeof tab.radius === 'number' ? [tab.radius, tab.radius] : tab.radius;
+  const outer = (r: number) => Math.max(0, Math.min(r, (b - a) / 2, th - f));
+  const ra = outer(radiusA);
+  const rb = outer(radiusB);
   const fl = Math.min(fL, f);
   const fr = Math.min(fR, f);
+  return { a, b, flushL, flushR, th, top, rL, rR, ra, rb, fl, fr };
+}
+
+/** The part of a joined box-and-tab outline that is the tab (#1102): the
+ *  tab out of the box's edge with its outer corners and the fillets that
+ *  flare into the edge, closed along the edge. Painted over the box's
+ *  fill in the tab's own colour, under the border. */
+export function tabRegionOutline(box: BoundingBox, radii: readonly [number, number, number, number], tab: ShapeTab): ShapeOutline {
+  const { a, b, flushL, flushR, th, top, ra, rb, fl, fr } = tabGeometry(box, radii.map((r) => Math.max(0, r)) as [number, number, number, number], tab);
+  const edgeY = top ? box.y : box.y + box.height;
   const vertices: ShapeVertex[] = [];
   const sides: ShapeSide[] = [];
   const push = (v: ShapeVertex, side: ShapeSide) => {
@@ -100,34 +161,29 @@ export function boxOutline(box: BoundingBox, radii: readonly [number, number, nu
     sides.push(side);
   };
   if (top) {
-    const ty = y - th;
-    // Clockwise from the top-left: along the top, up round the tab.
-    if (!flushL) {
-      push({ x, y, r: rL }, 'top');
-      push({ x: a, y, r: fl, concave: true }, 'top');
-    }
-    push({ x: a, y: ty, r: rt }, 'top');
-    push({ x: b, y: ty, r: rt }, flushR ? 'right' : 'top');
-    if (!flushR) {
-      push({ x: b, y, r: fr, concave: true }, 'top');
-      push({ x: right, y, r: rR }, 'right');
-    }
-    push({ x: right, y: foot, r: br }, 'bottom');
-    push({ x, y: foot, r: bl }, 'left');
+    const ty = edgeY - th;
+    if (!flushL && fl > 0) {
+      push({ x: a - fl, y: edgeY, r: 0 }, 'top');
+      push({ x: a, y: edgeY, r: fl, concave: true }, 'left');
+    } else push({ x: a, y: edgeY, r: 0 }, 'left');
+    push({ x: a, y: ty, r: ra }, 'top');
+    push({ x: b, y: ty, r: rb }, 'right');
+    if (!flushR && fr > 0) {
+      push({ x: b, y: edgeY, r: fr, concave: true }, 'top');
+      push({ x: b + fr, y: edgeY, r: 0 }, 'bottom');
+    } else push({ x: b, y: edgeY, r: 0 }, 'bottom');
   } else {
-    const ty = foot + th;
-    push({ x, y, r: tl }, 'top');
-    push({ x: right, y, r: tr }, 'right');
-    if (!flushR) {
-      push({ x: right, y: foot, r: rR }, 'bottom');
-      push({ x: b, y: foot, r: fr, concave: true }, 'bottom');
-    }
-    push({ x: b, y: ty, r: rt }, 'bottom');
-    push({ x: a, y: ty, r: rt }, flushL ? 'left' : 'bottom');
-    if (!flushL) {
-      push({ x: a, y: foot, r: fl, concave: true }, 'bottom');
-      push({ x, y: foot, r: rL }, 'left');
-    }
+    const ty = edgeY + th;
+    if (!flushR && fr > 0) {
+      push({ x: b + fr, y: edgeY, r: 0 }, 'bottom');
+      push({ x: b, y: edgeY, r: fr, concave: true }, 'right');
+    } else push({ x: b, y: edgeY, r: 0 }, 'right');
+    push({ x: b, y: ty, r: rb }, 'bottom');
+    push({ x: a, y: ty, r: ra }, 'left');
+    if (!flushL && fl > 0) {
+      push({ x: a, y: edgeY, r: fl, concave: true }, 'bottom');
+      push({ x: a - fl, y: edgeY, r: 0 }, 'top');
+    } else push({ x: a, y: edgeY, r: 0 }, 'top');
   }
   return clampOutline({ vertices, sides });
 }

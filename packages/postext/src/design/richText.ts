@@ -25,6 +25,8 @@ export interface DesignTextRun {
   fontString: string;
   /** A contents part row's leader (see `VDTDesignTextRun.leader`). */
   leader?: true;
+  /** The run's own colour (see `VDTDesignTextRun.color`). */
+  color?: string;
   /** Advance of the run, tracking included. */
   width: number;
   /** Script offset off the baseline (px, positive down). */
@@ -199,6 +201,9 @@ export interface RichLine {
   text: string;
   width: number;
   runs: DesignTextRun[];
+  /** The line ends in a piece of a word wider than the line, cut at a
+   *  syllable or between two characters (#1150). */
+  wordDivided?: 'syllable' | 'character';
 }
 
 /** `pieces` with the empty ones dropped and adjacent ones of one style
@@ -360,7 +365,7 @@ const isSpace = isBreakingSpace;
  *  subscript and a superscript set over each other are never parted, as in
  *  the body (EF-80): the cut falls before the pair, or after it when the
  *  pair opens the word. */
-function breakWord(m: RichMeasurer, a: number, b: number, maxWidth: number, hyphenate: boolean): { end: number; hyphen: boolean; next?: number } {
+function breakWord(m: RichMeasurer, a: number, b: number, maxWidth: number, hyphenate: boolean): { end: number; hyphen: boolean; next?: number; divided?: 'syllable' | 'character' } {
   const text = m.rt.text;
   const pairs = m.stackedRanges(a, b);
   const pairAround = (k: number): [number, number] | undefined => pairs.find(([s, e]) => k > s && k < e);
@@ -385,7 +390,7 @@ function breakWord(m: RichMeasurer, a: number, b: number, maxWidth: number, hyph
         if (m.measure(a, hyphenEnd(text, a + k), { text: '-', style: m.styleNear(a + k - 1) }) > maxWidth) break;
         if (!pairAround(a + k)) best = k;
       }
-      if (best > 0) return { end: a + best, hyphen: true };
+      if (best > 0) return { end: a + best, hyphen: true, divided: 'syllable' };
     }
   }
   let lo = 1;
@@ -396,8 +401,8 @@ function breakWord(m: RichMeasurer, a: number, b: number, maxWidth: number, hyph
     else hi = mid - 1;
   }
   const pair = pairAround(a + lo);
-  if (pair) return { end: pair[0] > a ? pair[0] : pair[1], hyphen: false };
-  return { end: a + lo, hyphen: false };
+  if (pair) return { end: pair[0] > a ? pair[0] : pair[1], hyphen: false, divided: 'character' };
+  return { end: a + lo, hyphen: false, divided: 'character' };
 }
 
 /** How many characters of the word `[a, b)` the line opened at `lineStart`
@@ -443,8 +448,9 @@ export function wrapRich(
     while (b > a && isSpace(text[b - 1])) b--;
     return b;
   };
-  const flush = (a: number, b: number, hyphen = false) => {
-    out.push(m.rangeLine(a, hyphen ? b : trimmedEnd(a, b), hyphen));
+  const flush = (a: number, b: number, hyphen = false, divided?: 'syllable' | 'character') => {
+    const line = m.rangeLine(a, hyphen ? b : trimmedEnd(a, b), hyphen);
+    out.push(divided ? { ...line, wordDivided: divided } : line);
     maxW = Math.max(1, widthFor(out.length));
   };
   // A space inside a run the author oriented is not a place to break.
@@ -489,7 +495,7 @@ export function wrapRich(
     while (m.measure(a, j) > maxW) {
       const cut = breakWord(m, a, j, maxW, hyphenate);
       if (cut.end >= j) break;
-      flush(a, cut.end, cut.hyphen);
+      flush(a, cut.end, cut.hyphen, cut.divided);
       a = cut.next ?? cut.end;
     }
     lineStart = a;

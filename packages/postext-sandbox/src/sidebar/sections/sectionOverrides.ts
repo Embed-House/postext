@@ -69,7 +69,9 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
         config.debug?.cursorSync !== undefined ||
         config.debug?.selectionSync !== undefined ||
         config.debug?.looseLineHighlight !== undefined ||
-        config.debug?.pageNegative !== undefined
+        config.debug?.pageNegative !== undefined ||
+        config.debug?.fitMarks !== undefined ||
+        config.debug?.fitMarksMinScale !== undefined
       );
     case 'warnings':
       return hasKeys(config.debug?.warnings);

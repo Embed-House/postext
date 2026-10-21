@@ -5,8 +5,8 @@
 // (which goes) or one the text carries (which stays), and with nothing
 // between Chinese, Japanese or Thai characters, which break without spaces.
 
-import type { CjkRegion, MathRender, VDTLine, VDTLineSegment, VDTRuby } from 'postext';
-import { graphemesOf, verticalRuns } from 'postext';
+import type { CjkRegion, MathRender, VDTLine, VDTLineSegment, VDTRuby, VDTSwatch } from 'postext';
+import { graphemesOf, hasSwatchShape, verticalRuns } from 'postext';
 import type { Format, InlineItem, LinkTarget } from './model.js';
 import { escapeAttr, escapeXml, stripInvalidXmlChars } from '../shared/xml.js';
 
@@ -160,6 +160,20 @@ export function round(n: number): number {
   return Math.round(n * 1000) / 1000;
 }
 
+/** The declarations a swatch with a shape of its own adds (#1104), each
+ *  after a `;`, in ems of the text (`basePx`): its side, outline, corners
+ *  and the gap after it. */
+function swatchShapeCss(swatch: VDTSwatch, width: number, basePx: number): string {
+  const em = (px: number): string => `${round(px / Math.max(1, basePx))}em`;
+  const side = Math.min(swatch.side ?? width, width);
+  const out: string[] = [`width:${em(side)}`, `height:${em(side)}`, 'box-sizing:border-box'];
+  if (swatch.borderWidth !== undefined) out.push(swatch.borderWidth > 0 ? `border-width:${em(swatch.borderWidth)}` : 'border:none');
+  if (swatch.borderColor) out.push(`border-color:${xmlAttr(swatch.borderColor)}`);
+  if (swatch.radius) out.push(`border-radius:${em(swatch.radius)}`);
+  if (width - side > 0.01) out.push(`margin-inline-end:${em(width - side)}`);
+  return out.map((d) => `;${d}`).join('');
+}
+
 /** The markup of a segment that is no plain text run, or undefined. */
 function rawOf(seg: VDTLineSegment, ctx: InlineContext): string | undefined {
   if (seg.kind === 'math' && seg.mathRender) {
@@ -183,9 +197,10 @@ function rawOf(seg: VDTLineSegment, ctx: InlineContext): string | undefined {
   }
   if (seg.kind === 'swatch') {
     const color = seg.swatch?.color;
+    const shape = seg.swatch && hasSwatchShape(seg.swatch) ? swatchShapeCss(seg.swatch, seg.width, ctx.basePx) : '';
     return color
-      ? `<span class="pt-swatch" role="img" aria-label="${xmlAttr(color)}" style="background-color:${xmlAttr(color)}"></span>`
-      : '<span class="pt-swatch" role="img" aria-label="?"></span>';
+      ? `<span class="pt-swatch" role="img" aria-label="${xmlAttr(color)}" style="background-color:${xmlAttr(color)}${shape}"></span>`
+      : `<span class="pt-swatch" role="img" aria-label="?"${shape ? ` style="${shape.slice(1)}"` : ''}></span>`;
   }
   if (seg.chip) {
     const runs = seg.chip.runs.map((r) => wrapFormat(xmlText(r.text), formatOf(r))).join('');

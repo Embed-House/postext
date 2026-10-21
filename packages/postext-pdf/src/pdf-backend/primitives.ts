@@ -41,7 +41,7 @@ import {
 } from 'pdf-lib';
 import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors.js';
 import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode.js';
-import { graphemesOf, joinsLetters, scriptContextUntracked, textDots, type VDTTextDots, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type VDTChip } from 'postext';
+import { graphemesOf, joinsLetters, scriptContextUntracked, textDots, type VDTTextDots, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type SwatchGeometry, type VDTChip } from 'postext';
 import type { PageTagger } from './tagging.js';
 import type { ResourceImageMap } from './renderResourceBlock.js';
 import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces.js';
@@ -309,6 +309,19 @@ export function drawSwatchPx(
     ...(fillColor && fillAlpha < 1 ? { opacity: fillAlpha } : {}),
     ...(inkAlpha < 1 ? { borderOpacity: inkAlpha } : {}),
   });
+}
+
+/** A swatch with a shape of its own (#1104, see `swatchGeometry`): the
+ *  fill, then the outline stroked inside the square's edge, both with
+ *  rounded corners. */
+export function drawShapedSwatchPx(ctx: PageCtx, g: SwatchGeometry, fill: string | undefined, ink: Color): void {
+  const r = g.radius;
+  if (fill) fillOutlinePx(ctx, { x: g.x, y: g.y, width: g.side, height: g.side, radii: [r, r, r, r] }, colorFromHex(fill, ctx.colorSpace));
+  if (g.stroke > 0) {
+    const half = g.stroke / 2;
+    const ri = Math.max(0, r - half);
+    strokeOutlinePx(ctx, { x: g.x + half, y: g.y + half, width: g.side - g.stroke, height: g.side - g.stroke, radii: [ri, ri, ri, ri] }, ink, g.stroke);
+  }
 }
 
 export function makeScale(dpi: number): number {

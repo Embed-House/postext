@@ -7,6 +7,7 @@ import type {
   TocConfig,
   TocEntryStyleConfig,
   TocGroupHead,
+  TocLeaderFaceConfig,
   TocLevelConfig,
 } from '../types.js';
 import { presentTag } from '../locale.js';
@@ -43,6 +44,17 @@ export function parseTocGroupHead(value: unknown): TocGroupHead | undefined {
  *  "（续）"…). */
 export function defaultTocContinuationMark(locale?: string): string {
   return defaultTableContinuationStrings(locale).continuedSuffix;
+}
+
+/** The face fields of a leader that are set (#1121); undefined when none. */
+function leaderFace(partial: TocLeaderFaceConfig | undefined): TocLeaderFaceConfig | undefined {
+  if (!partial) return undefined;
+  const out: TocLeaderFaceConfig = {};
+  if (partial.color !== undefined) out.color = partial.color;
+  if (typeof partial.fontFamily === 'string' && partial.fontFamily) out.fontFamily = partial.fontFamily;
+  if (partial.fontSize !== undefined) out.fontSize = partial.fontSize;
+  if (typeof partial.fontWeight === 'number' && Number.isFinite(partial.fontWeight)) out.fontWeight = partial.fontWeight;
+  return Object.keys(out).length > 0 ? out : undefined;
 }
 
 function resolveEntryStyle(
@@ -111,6 +123,7 @@ export function resolveTocConfig(
       enabled: partial?.leader?.enabled ?? d.leader.enabled,
       char: partial?.leader?.char ?? d.leader.char,
       gap: partial?.leader?.gap ?? d.leader.gap,
+      ...leaderFace(partial?.leader),
     },
     subtitle: {
       enabled: sub?.enabled ?? d.subtitle.enabled,
@@ -126,6 +139,7 @@ export function resolveTocConfig(
       enabled: parts?.enabled ?? d.parts.enabled,
       breakBefore: parts?.breakBefore ?? d.parts.breakBefore,
       design: parts?.design ? resolveDesignSlot(parts.design, 'tocRow') : { elements: [] },
+      ...(leaderFace(parts?.leader) ? { leader: leaderFace(parts?.leader) } : {}),
       height: parts?.height ?? PART_HEIGHT,
       marginTop: parts?.marginTop ?? ZERO,
       marginBottom: parts?.marginBottom ?? ZERO,
@@ -174,6 +188,7 @@ export function stripTocDefaults(toc: TocConfig | undefined): TocConfig | undefi
     if (toc.leader.enabled !== undefined && toc.leader.enabled !== d.leader.enabled) l.enabled = toc.leader.enabled;
     if (toc.leader.char !== undefined && toc.leader.char !== d.leader.char) l.char = toc.leader.char;
     if (toc.leader.gap !== undefined) l.gap = toc.leader.gap;
+    Object.assign(l, leaderFace(toc.leader));
     const kept = stripObject(l);
     if (kept) r.leader = kept;
   }
@@ -192,6 +207,8 @@ export function stripTocDefaults(toc: TocConfig | undefined): TocConfig | undefi
       const slot = stripDesignSlotDefaults(toc.parts.design, 'tocRow');
       if (slot && slot.elements && slot.elements.length > 0) p.design = slot;
     }
+    const partLeader = leaderFace(toc.parts.leader);
+    if (partLeader) p.leader = partLeader;
     if (toc.parts.height !== undefined) p.height = toc.parts.height;
     if (toc.parts.marginTop !== undefined) p.marginTop = toc.parts.marginTop;
     if (toc.parts.marginBottom !== undefined) p.marginBottom = toc.parts.marginBottom;

@@ -6,6 +6,7 @@
 import {
   createMeasurementCache,
   formatWarning,
+  glyphFallbacks,
   initMathEngine,
   parseMarkdownWithIssues,
   type ContentWarning,
@@ -112,13 +113,28 @@ export async function layOut(
   docs.forEach((doc, i) => reportDocWarnings(doc, chapters[i]!, reporter));
   // A weight the family ships, set in another face (#741).
   if (fonts) for (const warning of fontFallbackWarnings(docs, fonts)) reporter.warn(warning);
+  // Characters a face lacks (#1105): each chapter's build found its own,
+  // reported once per face for the book.
+  if (docs.some((doc) => doc.contentWarnings?.some((w) => w.kind === 'glyphFallback'))) {
+    for (const g of glyphFallbacks(docs)) {
+      reporter.warn({
+        kind: 'glyphFallback',
+        severity: 'warning',
+        message: formatWarning({ kind: 'glyphFallback', ...g }),
+        data: { family: g.family, weight: g.weight, style: g.style, characters: g.characters, count: g.count, ...(g.supplier ? { supplier: g.supplier } : {}) },
+      });
+    }
+  }
   const pageCount = docs.reduce((n, d) => n + d.pages.length, 0);
   reporter.data.pages = pageCount;
   return { docs, chapters, pageCount, laidOut };
 }
 
-function describeIssue(issue: { kind: string; containerName?: string }): string {
+function describeIssue(issue: { kind: string; containerName?: string; directiveName?: string }): string {
   switch (issue.kind) {
+    case 'strayFence':
+      // #1125: one-line directives take no closing fence.
+      return `a bare ::: after :::${issue.directiveName ?? 'directive'} closes nothing (the directive is one line): the fence is dropped, delete it`;
     case 'unclosedMath':
       return 'a $ opens maths that never closes';
     case 'unclosedContainer':
@@ -163,15 +179,21 @@ function overlapData(w: Extract<ContentWarning, { kind: 'frameCovered' | 'frameO
 
 function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Reporter): void {
   type Any = Parameters<typeof formatWarning>[0] & { sourceStart?: number; pageIndex?: number };
-  const all: Any[] = [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []), ...(doc.configWarnings ?? [])] as Any[];
+  // A face's missing characters are reported once for the book (see layOut).
+  const all: Any[] = [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []).filter((w) => w.kind !== 'glyphFallback'), ...(doc.configWarnings ?? [])] as Any[];
   for (const w of all) {
     const local = w.pageIndex !== undefined ? doc.pages[w.pageIndex] : undefined;
     reporter.warn({
       kind: w.kind,
       // A template frame left empty is a note (#854): a page may leave a
       // frame unused on purpose; so is an anchor this edition leaves
-      // without a word (#860).
-      severity: w.kind === 'slotEmpty' || w.kind === 'anchorUnlabelled' ? 'info' : 'warning',
+      // without a word (#860), a word too long for its line divided at a
+      // syllable (#1150), and a caption that prints its label alone (#1151):
+      // a numbered plate may want no more.
+      severity: w.kind === 'slotEmpty' || w.kind === 'anchorUnlabelled' || w.kind === 'wordDividedBySyllable' || w.kind === 'emptyCaption' ? 'info' : 'warning',
+      // A resource set in the text that moved on (#1151): which, and the
+      // room it left.
+      ...(w.kind === 'resourceMoved' ? { data: { resourceId: w.resourceId, emptyMm: w.emptyMm } } : {}),
       message: formatWarning(w),
       at: sourceAt(chapter, w.sourceStart),
       ...(local ? { page: String(local.pageLabel ?? local.pageNumberValue) } : {}),

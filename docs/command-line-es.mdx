@@ -376,6 +376,8 @@ sin el archivo), el texto se compone con la variante de la familia que elige la 
 lugar, y `postext check` lo muestra como aviso `fontFallback`: sus líneas pueden cortarse de otra
 manera que en el Sandbox.
 
+Un carácter para el que una fuente no tiene glifo se dibuja con otra fuente. `postext check` lee la tabla `cmap` de cada fuente que carga y muestra esos caracteres una vez por fuente para todo el libro como aviso `glyphFallback`; con `--json`, su `data` lleva los caracteres y cuántos son.
+
 La caché está en `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` en Windows); `POSTEXT_CACHE_DIR`
 o `--cache-dir` la cambian de sitio. `--offline` se salta la descarga. Una familia que no se
 encuentra en ningún sitio se compone en EB Garamond con su propio nombre, para que la maquetación y

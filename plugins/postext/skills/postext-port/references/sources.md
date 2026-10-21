@@ -45,7 +45,7 @@ geometry, media and scan pages, and names the next command.
    (they come back from `config.lineNumbers`, configuration.md §19f) and
    label text inside artwork. Split a style with position conditions
    (`top_mm`, `x_mm`) when the same face serves two roles.
-3. `pdf_extract.py markdown book.pdf --roles roles.json --out draft --lang es --link-refs`.
+3. `pdf_extract.py markdown book.pdf --roles roles.json --out draft --lang es`.
    The extractor:
    - reads column by column, with page-wide bands between;
    - builds paragraphs from indents, gaps and short last lines;
@@ -53,19 +53,63 @@ geometry, media and scan pages, and names the next command.
    - joins end-of-line hyphens using the book's own vocabulary, keeping real
      compounds and names;
    - expands ligatures and repairs dropped-ligature gaps ("Clasifi cación");
-   - keeps bold and italic runs;
+   - keeps bold and italic runs, and reads a roman the source slanted by
+     its text matrix (a shear of 0.15 or more, measured on every
+     character's box) as italic: `*…*`, counted in `report.md` per face;
+   - keeps en and em spaces, and turns a thin space inside a number or
+     before its unit (`1 000`, `21 %`) into a narrow no-break space;
    - sets raised small digits as `^n^` and lowered ones as `~n~`;
    - builds lists from bullet markers;
    - collects footnotes as endnotes;
+   - links mentions (on by default, `--no-link-refs` to leave them):
+     `Figura 3` / `Table 2` to the caption stub of that number (or to a
+     resource of `--refs-from resources.json`), `capítulo 4` / `section
+     3.2` (chapter and section words in es, en, ca, fr, pt, it, de, and
+     `§`) to the heading numbered so, or the fourth chapter heading, kept
+     in the source's words (`:ref{id="…" text="capítulo 4"}`). Every heading
+     gets an `id`. A mention set in a bold or italic run of its own loses
+     those marks (the reference style sets it: `referenceBold`), and
+     `report.md` lists the mentions left as text and suggests
+     `bodyText.referenceColor` when the source colours its mentions;
    - drops repeated running heads and folios;
-   - writes caption stubs with page and box for the figure cutter.
+   - writes caption stubs with page and box for the figure cutter; the
+     label (`Fig. 1.`) is taken off the caption with the marks round it,
+     never with the mark that opens the words after it (`*tako-tsubo* es`);
+   - takes each role's base style (bold, italic) from the characters of
+     all its spans, so an italic word in a roman caption keeps its `*`.
 4. `pdf_figures.py stubs book.pdf draft/resources.json --out-dir project/resources`
    cuts the artwork next to each caption. Photos come out at native
    resolution in sRGB; vector art comes out as SVG (plus a PDF print master
    with `--format both`). Fix regions by hand with `pdf_figures.py crop`.
-5. Tables: `extract_tables.py book.pdf --pages N` gives a TableModel. Add
-   merges (colSpan/rowSpan + hiddenBy) and header rows by hand. Merge tables
+5. Tables: `extract_tables.py book.pdf --pages N` gives a TableModel whose
+   cells carry the source's `align` (`center`, `right`), `verticalAlign`
+   (`middle`, `bottom`, only where a cell is clearly taller than its
+   text), `**…**` for a body cell set wholly in bold and `background` from
+   the cell's fill. It prints a style hint beside the model: the nearest
+   `rules` preset with the border colour and width, `headerBold`, and the
+   fills a whole header or body shares (`headerBackground`,
+   `bodyBackground`, `bodyAlternateBackground`), which go in the table's
+   style, not in the cells. Postext has no per-cell borders: a rule pattern
+   no preset draws gets a note naming the nearest one. `--full` prints all
+   of it as JSON, `--plain` the text only. Merged cells come back as
+   `colSpan` / `rowSpan` with `hiddenBy` on the cells they cover. With
+   PyMuPDF 2.0, two ruled tables set close together (about 40 pt apart) can
+   come back as one: count the tables against the page and cut the missing
+   one with `--pages` and a clip if needed. A first
+   row over every column that starts with a caption label ("Tabla 2.
+   Valores normales") is taken out as the table's `label` and `caption`;
+   any other row over every column is a group band, centred, with its fill
+   as its `background`. The header rows are counted from the look (rows
+   set wholly in bold, or with a fill of their own; `--header-rows N`
+   overrides it), and a body row whose cells all hold the same number of
+   lines, two rows with no rule between them, is split again. Merge tables
    continued over pages ("(cont.)"), dropping the repeated header.
+   `pdf_extract.py markdown` does this itself for ruled tables: their
+   lines leave the paragraphs, and each table becomes a `kind: "table"`
+   resource set where it stood (its title row as the caption), or the
+   model of the nearest table caption stub of its page; the style hint is
+   in `source.tableStyle`, for the table's entry in `tableStyles`.
+   `--no-tables` keeps them as text.
 6. Read every chapter against the page images and correct it. The extractor
    gives a draft; the curated Markdown is the product.
 7. A printed back-of-book index (`inventory.py` lists `index_pages`): once
@@ -83,8 +127,10 @@ Gotchas:
 - **Symbol fonts** (Symbol, Wingdings, Zapf Dingbats, private-use code
   points): map the characters to Unicode (⇌ ≤ α → •). Skip decorative
   bullets.
-- **Small caps** extract as lower case: restore roman numerals ("xix" → "XIX")
-  and acronyms.
+- **Small caps** extract as lower case: a numeral or an acronym the source
+  prints in small capitals goes back into `:smallcaps[…]` in lower case
+  (`siglo :smallcaps[xix]`, playbooks B8a); one printed in full capitals
+  is written in capitals ("xix" → "XIX").
 - **Tabbed lines** (a menu, a cast list, a price list, marks at the margin):
   the extractor joins the parts with a space and drops the dot leader, or
   keeps the dots as text. Delete typed leaders, write `:tab` between the

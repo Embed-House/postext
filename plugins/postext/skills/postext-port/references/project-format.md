@@ -26,7 +26,7 @@ my-book/
 ```jsonc
 {
   "version": 2,                        // 2 = book with chapters (1 = single "markdown" file, legacy)
-  "configVersion": 15,                 // the config rules `config` is written for (postext ≥ 1.5). Without it the
+  "configVersion": 18,                 // the config rules `config` is written for (postext ≥ 1.5). Without it the
                                        // bundle reads as 1.4: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
                                        // layout.inlineResourceGap 'above' when a chapter embeds a ::resource,
                                        // layout.inlineResourceGapInBoxes false when one sits inside a :::callout,
