@@ -476,6 +476,14 @@ What the extraction decides, so you know what to check:
   `template_dedupe.py` renames connector ends and size targets with the
   frames and keeps a connector or border in a shared base only when the
   base has its frames.
+- **Clip paths** (skill 1.61). Paths are read with the clips they are
+  painted in (`get_drawings(extended=True)`): each path's box is what shows
+  inside its innermost clip, and straight lines are cut to it before they
+  are read as lines. A map's graticule and coastline drawn past the window
+  that shows them stay in the map's cut, inside its box. A rectangle cut
+  by a rectangular clip is the part that shows; any other clipped shape
+  stays art inside a picture and goes to the raster ground outside one,
+  never to a `path` element (paths carry no clip).
 - **Connector ends on the laid box** (skill 1.61). A line is read against
   the frames before the pictures are cut and the text frames get their
   measure, so each end keeps the point where the source's line meets its

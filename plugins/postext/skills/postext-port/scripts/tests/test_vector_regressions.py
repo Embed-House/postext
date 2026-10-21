@@ -363,5 +363,90 @@ class RefitTest(unittest.TestCase):
         self.assertEqual(la.End("a", "left", 0.5, span=20.0).config(always_at=True)["at"], 0.5)
 
 
+# ---------------------------------------------------------------------------
+# III-3: clip paths (#1140)
+# ---------------------------------------------------------------------------
+
+GRATICULE = (0.1, 0.3, 0.8)
+SWOOSH = (0.8, 0.2, 0.5)
+
+
+def map_source() -> "fitz.Document":
+    """A page-wide drawing: land, a coastline and a graticule that run past
+    the part a page shows of it."""
+    src = fitz.open()
+    page = src.new_page(width=210 * MM, height=297 * MM)
+    blobs(page, 0, 60, cols=12, rows=8, w=17, h=12)
+    for k in range(9):
+        y = 50 + k * 13
+        page.draw_line(P(0, y), P(210, y), color=GRATICULE, width=0.4)
+    for k in range(12):
+        x = 5 + k * 18
+        page.draw_line(P(x, 40), P(x, 170), color=GRATICULE, width=0.4)
+    page.draw_bezier(P(0, 100), P(70, 40), P(140, 160), P(210, 90), color=(0.1, 0.1, 0.1), width=1.0)
+    return src
+
+
+def draw_clipped_map_page(doc):
+    """Running text, the map shown through a 100 x 70 mm window, and a
+    curve clipped by a narrow strip at the page's foot, on its own."""
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    body(page, 20, 3)
+    page.show_pdf_page(R(40, 60, 140, 130), map_source(), 0, clip=R(50, 70, 150, 140))
+    body(page, 160, 3)
+    swoosh = fitz.open()
+    sp = swoosh.new_page(width=210 * MM, height=297 * MM)
+    sp.draw_bezier(P(0, 250), P(60, 200), P(150, 300), P(210, 240), color=SWOOSH, width=2.5)
+    page.show_pdf_page(R(0, 240, 210, 260), swoosh, 0, clip=R(0, 240, 210, 260))
+    return page
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class ClipTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        doc = fitz.open()
+        draw_clipped_map_page(doc)
+        cls.tmp, cls.out = run_extract(doc)
+        cls.lib, cls.res, cls.md, cls.regions = load(cls.out)
+        cls.frames = cls.regions[0]["frames"]
+        cls.els = cls.lib["pageTemplates"][0]["decoration"]["elements"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_the_map_is_one_picture_inside_its_window(self):
+        pics = [f for f in self.frames if f["kind"] in ("picture", "figure")]
+        self.assertEqual(len(pics), 1, self.frames)
+        x0, y0, x1, y1 = pics[0]["box"]
+        self.assertGreaterEqual(x0, 39.5)
+        self.assertLessEqual(x1, 140.5)
+        self.assertGreaterEqual(y0, 59.5)
+        self.assertLessEqual(y1, 130.5)
+
+    def test_the_graticule_stays_in_the_cut_and_nowhere_else(self):
+        self.assertFalse([e for e in self.els if e["kind"] == "connector"])
+        self.assertFalse([e for e in self.els if e["kind"] == "path" and e.get("stroke")
+                          and abs(pr.td.hex_rgb(e["stroke"]["hex"])[2] - GRATICULE[2]) < 0.05])
+        res = next(r for r in self.res if r["typeId"] == "picture")
+        with Image.open(self.out / res["file"]) as im:
+            px = list(im.convert("RGB").getdata())
+        blue = sum(1 for p in px if p[2] > 150 and p[0] < 90 and p[1] < 140)
+        self.assertGreater(blue, 200)
+
+    def test_a_clipped_curve_off_any_picture_goes_to_the_ground(self):
+        pink = [e for e in self.els if e["kind"] == "path" and any(
+            abs(pr.td.hex_rgb((e.get(k) or {}).get("hex", "#000000"))[0] - SWOOSH[0]) < 0.05
+            and abs(pr.td.hex_rgb((e.get(k) or {}).get("hex", "#000000"))[2] - SWOOSH[2]) < 0.05
+            for k in ("stroke", "fill"))]
+        self.assertFalse(pink, pink)
+        self.assertTrue(any(r["typeId"] == "ground" for r in self.res))
+
+    def test_clip_helpers(self):
+        self.assertEqual(pr.clip_segment((0, 5), (10, 5), (2, 0, 6, 10)), ((2.0, 5.0), (6.0, 5.0)))
+        self.assertIsNone(pr.clip_segment((0, 20), (10, 20), (2, 0, 6, 10)))
+
+
 if __name__ == "__main__":
     unittest.main()

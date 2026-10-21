@@ -23,8 +23,9 @@ What `extract` reads on every page:
   span is compared with a render of the page without text, so text drawn
   under a picture or a fill, clipped away or outside the page is dropped
   (and listed as hidden).
-- **Shapes**: the page ground (fills over most of the page), white cards
-  (large white fills: the page's paper, kept in the ground), boxes (filled
+- **Shapes**, each cut to the clip it is painted in: the page ground
+  (fills over most of the page), white cards (large white fills: the
+  page's paper, kept in the ground), boxes (filled
   or stroked rectangles and rounded rectangles holding text or pictures),
   tabs (a shape 4–13 mm high holding one line: on a box's top edge it is
   the box's tab, alone it is a frame of its own, with a heading in it a
@@ -818,10 +819,83 @@ def runs_markdown(chars: list[Char], base_weight: int, base_italic: bool, mark_i
 # ---------------------------------------------------------------------------
 
 
+def _rect_path(items: Any) -> bool:
+    """Is a clip path a plain rectangle (one `re`, or four lines straight
+    across and down)?"""
+    items = list(items or [])
+    if len(items) == 1 and items[0][0] in ("re", "qu"):
+        if items[0][0] == "re":
+            return True
+        q = items[0][1]
+        return abs(q.ul.y - q.ur.y) < 0.01 and abs(q.ul.x - q.ll.x) < 0.01
+    if items and len(items) <= 4 and all(it[0] == "l" for it in items):
+        return all(abs(it[1][0] - it[2][0]) < 0.01 or abs(it[1][1] - it[2][1]) < 0.01 for it in items)
+    return False
+
+
+def drawings_with_clips(page: fitz.Page) -> list[tuple[dict, Any, bool]]:
+    """The page's paths (`get_drawings(extended=True)`), each with the clip
+    it is painted in: (path, the clip's box in pt or None, whether that clip
+    is a plain rectangle). Clips nest by level; a path at level L is inside
+    every clip above it at a lower level, and their boxes are intersected."""
+    out: list[tuple[dict, Any, bool]] = []
+    stack: list[tuple[int, Any, bool]] = []
+    for d in page.get_drawings(extended=True):
+        kind = d.get("type")
+        level = int(d.get("level") or 0)
+        while stack and stack[-1][0] >= level:
+            stack.pop()
+        if kind == "clip":
+            r = fitz.Rect(d.get("scissor") or d.get("rect") or page.rect)
+            exact = _rect_path(d.get("items"))
+            if stack:
+                r = r & stack[-1][1]
+                exact = exact and stack[-1][2]
+            stack.append((level, r, exact))
+            continue
+        if kind == "group" or not d.get("items"):
+            continue
+        out.append((d, stack[-1][1] if stack else None, stack[-1][2] if stack else True))
+    return out
+
+
+def clip_segment(p: tuple, q: tuple, box: tuple) -> tuple | None:
+    """The part of the segment p-q inside `box` (Liang-Barsky), or None."""
+    t0, t1 = 0.0, 1.0
+    dx, dy = q[0] - p[0], q[1] - p[1]
+    for num, den in ((p[0] - box[0], -dx), (box[2] - p[0], dx), (p[1] - box[1], -dy), (box[3] - p[1], dy)):
+        if abs(den) < 1e-12:
+            if num < 0:
+                return None
+            continue
+        t = num / den
+        if den < 0:
+            t0 = max(t0, t)
+        else:
+            t1 = min(t1, t)
+        if t0 > t1:
+            return None
+    return ((p[0] + t0 * dx, p[1] + t0 * dy), (p[0] + t1 * dx, p[1] + t1 * dy))
+
+
 class Shape:
-    def __init__(self, d: dict, origin: tuple):
+    def __init__(self, d: dict, origin: tuple, clip: Any = None, clip_exact: bool = True):
         self.rect_pt = tuple(d["rect"])
         self.box = to_mm(d["rect"], origin)
+        self.raw_box = self.box
+        #: the clip the path is painted in (mm), when it cuts the path: `box` is then what shows of it
+        self.clip: tuple | None = None
+        self.clip_exact = clip_exact
+        self.clipped = False
+        if clip is not None:
+            c = to_mm(clip, origin)
+            half = float(d.get("width") or 0) * PT_MM / 2 if d.get("color") is not None else 0.0
+            if not inside_mm(self.box, c, 0.1 + half):
+                self.clip, self.clipped = c, True
+                b = self.box
+                self.box = (max(b[0], c[0]), max(b[1], c[1]), min(b[2], c[2]), min(b[3], c[3]))
+                if self.box[2] < self.box[0] or self.box[3] < self.box[1]:      # clipped away whole
+                    self.box = (c[0], c[1], c[0], c[1])
         self.fill = hexc(d.get("fill")) if d.get("fill") is not None and (d.get("fill_opacity") or 1) > 0.2 else None
         self.stroke = hexc(d.get("color")) if d.get("color") is not None and (d.get("stroke_opacity") or 1) > 0.2 else None
         self.width = float(d.get("width") or 0)
@@ -857,13 +931,20 @@ class Shape:
         return [((p[0] - self.origin[0]) * PT_MM, (p[1] - self.origin[1]) * PT_MM) for p in pts]
 
     def mm_lines(self) -> list[tuple] | None:
-        """The path's pieces in mm when it is made of straight lines only."""
+        """The path's pieces in mm when it is made of straight lines only,
+        cut to the clip the path is painted in (what lies outside it does
+        not print)."""
         out = []
         for it in self.items:
             if it[0] != "l":
                 return None
-            out.append((((it[1][0] - self.origin[0]) * PT_MM, (it[1][1] - self.origin[1]) * PT_MM),
-                        ((it[2][0] - self.origin[0]) * PT_MM, (it[2][1] - self.origin[1]) * PT_MM)))
+            piece = (((it[1][0] - self.origin[0]) * PT_MM, (it[1][1] - self.origin[1]) * PT_MM),
+                     ((it[2][0] - self.origin[0]) * PT_MM, (it[2][1] - self.origin[1]) * PT_MM))
+            if self.clip is not None:
+                piece = clip_segment(piece[0], piece[1], self.clip)
+                if piece is None:
+                    continue
+            out.append(piece)
         return out
 
     def mm_items(self) -> list[tuple]:
@@ -907,11 +988,13 @@ class Shape:
         return radii
 
     def rect_like(self) -> bool:
-        if not self.items or len(self.items) > 16:
+        """A rectangle (corners rounded or not): a rectangle a plain
+        rectangular clip cuts is one too (its box is what shows)."""
+        if not self.items or len(self.items) > 16 or (self.clipped and not self.clip_exact):
             return False
         if all(it[0] == "re" for it in self.items):
             return True
-        x0, y0, x1, y1 = self.box
+        x0, y0, x1, y1 = self.raw_box
         for x, y in self.points():
             if min(abs(x - x0), abs(x - x1), abs(y - y0), abs(y - y1)) > 1.0:
                 return False
@@ -982,7 +1065,7 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
     tabs, boxes and pictures."""
     w_mm, h_mm = origin[2], origin[3]
     page_area = w_mm * h_mm
-    shapes = [Shape(d, origin) for d in page.get_drawings()]
+    shapes = [Shape(d, origin, clip, exact) for d, clip, exact in drawings_with_clips(page)]
     out: dict[str, list] = {"ground": [], "cards": [], "bands": [], "tabs": [], "boxes": [], "art": []}
     # highlight bands: wide strokes or fills hugging words on a line
     for s in shapes:
@@ -1114,8 +1197,9 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
     for s in shapes:
         if s.kind not in ("art", "hidden"):    # (a fill the box check calls hidden may show a ring)
             continue
-        if s.box[2] <= 0 or s.box[0] >= w_mm or s.box[3] <= 0 or s.box[1] >= h_mm:
-            s.kind = "unseen"       # wholly off the trim
+        if s.box[2] <= 0 or s.box[0] >= w_mm or s.box[3] <= 0 or s.box[1] >= h_mm \
+                or (s.clipped and s.w <= 0 and s.h <= 0):
+            s.kind = "unseen"       # wholly off the trim, or clipped away
             continue
         if s.w < 0.6 or s.h < 0.6:
             continue
@@ -3289,6 +3373,13 @@ def shape_path(eid: str, s: Shape) -> dict | None:
     raw = s.raw
     if (raw.get("fill_opacity") or 1) < 0.98 or (raw.get("stroke_opacity") or 1) < 0.98:
         return None
+    if s.clipped:
+        # a path element has no clip: a rectangle cut by a rectangle is the part that shows, any
+        # other clipped shape stays in the raster ground
+        if not (s.rect_like() and all(it[0] in ("re", "l") for it in s.items)):
+            return None
+        return path_element(eid, s.box, la.items_path([("re", 0.0, 0.0, s.w, s.h)], (0.0, 0.0), close=True),
+                            s.fill, s.stroke, s.width, s.dash)
     items = s.mm_items()
     if not items or len(items) > 400:
         return None
@@ -3471,6 +3562,25 @@ def residual_ground(pdf_path: str, pno: int, origin: tuple, painted: list[dict],
     return {"file": f"resources/{file.name}", "width": w, "height": h, "pixels": int(core.sum())}
 
 
+def drawn_raw(s: Shape) -> dict:
+    """The path as the decoration paints it, for `residual_ground` to redraw:
+    a clipped line by the pieces that show, a clipped rectangle by its part
+    that shows; any other path as the PDF has it."""
+    if not s.clipped:
+        return s.raw
+    ox, oy = s.origin[0], s.origin[1]
+
+    def pt(p: tuple) -> fitz.Point:
+        return fitz.Point(p[0] * MM + ox, p[1] * MM + oy)
+
+    pieces = s.mm_lines() if s.kind in ("line", "leader") else None
+    if pieces is not None:
+        return dict(s.raw, items=[("l", pt(a), pt(b)) for a, b in pieces])
+    if s.rect_like():
+        return dict(s.raw, items=[("re", fitz.Rect(pt(s.box[:2]), pt(s.box[2:])), 1)])
+    return s.raw
+
+
 def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: list[Frame], cards: list[Shape],
                       borders: list[dict], art: dict, opts: argparse.Namespace, ground_id: str,
                       report: dict, template: dict | None = None) -> tuple[list[dict], dict | None]:
@@ -3634,7 +3744,7 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
     # what lies under a mask is not compared: a map's thousands of paths are not redrawn, nor a
     # picture's art that the source clips at the card's edge (redrawn unclipped, it would paint
     # past the card and make a ground of nothing)
-    painted = [s.raw for s in sh["shapes"] if id(s) not in left_ids and s.kind != "unseen"
+    painted = [drawn_raw(s) for s in sh["shapes"] if id(s) not in left_ids and s.kind != "unseen"
                and not any(inside_mm(s.box, m, 0.0) for m in masks)
                and not (s.kind == "art" and any(inter(s.box, m) >= 0.5 * max(area(s.box), 1e-6) for m in masks))]
     g = residual_ground(pdf_path, pno, origin, painted, masks, opts, ground_id)
