@@ -52,6 +52,11 @@ def style(sid: str, fill: str, tab: bool = False) -> dict:
     return st
 
 
+def folio() -> dict:
+    return {"kind": "text", "id": "folio", "content": "{pageNumber}",
+            "placement": {**at(100, 285, "page"), "size": {"width": mm(10)}}, "fontSize": {"value": 9, "unit": "pt"}}
+
+
 def frame(name, x, y, w, kind="box", **more):
     f = {"name": name, "placement": at(x, y), "width": mm(w)}
     f.update(more)
@@ -76,7 +81,8 @@ def grid_page(tid: str = "p01"):
         md += [f'::resource{{id="{tid}-picture-{k}" slot="picture-{k}"}}', "",
                f':::frame{{slot="box-{k}"}}', f"Caption number {k}", ":::", ""]
     md += ["::::", ""]
-    t = {"id": tid, "area": "trim", "header": False, "footer": False, "frames": frames}
+    t = {"id": tid, "area": "trim", "header": False, "footer": False, "frames": frames,
+         "decoration": {"elements": [folio()]}}
     return t, {"page": 1, "frames": regions}, "\n".join(md)
 
 
@@ -107,8 +113,7 @@ def band_page(tid: str, words: str, shift: float = 0.0):
         # a mark painted at a fixed place inside the second band
         {"kind": "path", "id": "shape-1", "placement": {**at(100, 140 + shift, "page"), "size": {"width": mm(10), "height": mm(10)}},
          "d": "M0 0 L10 0 L10 10 Z", "viewBox": [10, 10], "fill": {"hex": "#cc3333", "model": "hex"}},
-        {"kind": "text", "id": "folio", "content": "{pageNumber}", "placement": at(100, 285, "page"),
-         "fontSize": {"value": 9, "unit": "pt"}},
+        folio(),
     ]
     md = "\n".join([
         f'::::page{{template="{tid}"}}', "", f"{words} at the head of the page.", "",
@@ -214,54 +219,76 @@ class GridTest(unittest.TestCase):
 
 
 class ModuleTest(unittest.TestCase):
-    def test_bands_alike_on_two_pages_are_two_modules_used_twice(self):
+    def test_every_band_is_a_module_and_the_page_a_bare_shell(self):
         pages = [band_page("p01", "Rivers"), band_page("p02", "Mountains", shift=4.0)]
         templates, md, rep = fold(pages, grids=False)
-        mods = [t for t in templates if t.get("role") == "module"]
-        self.assertEqual(len(mods), 2)
-        self.assertEqual(sorted(len(m["uses"]) for m in rep["modules"]), [2, 2])
-        page = templates[0]
-        self.assertEqual([f["name"] for f in page["frames"]], ["text"])
-        group = page["groups"][-1]
-        self.assertTrue(group["modules"])
-        self.assertEqual(group["gap"]["value"], 10)
-        self.assertEqual(group["placement"]["offset"]["y"]["value"], 70)
-        self.assertEqual(group["placement"]["size"]["width"]["value"], 180)
-        # the second page's band stands 4 mm lower: its group does, its modules do not change
-        self.assertEqual(templates[1]["groups"][-1]["placement"]["offset"]["y"]["value"], 74)
-        box = next(m for m in mods if any(f["name"] == "picture-1" for f in m["frames"]))
+        mods = {t["id"]: t for t in templates if t.get("role") == "module"}
+        uses = {m["id"]: len(m["uses"]) for m in rep["modules"]}
+        # the text and the pair of boxes stand alike on both pages; the box
+        # stands 4 mm lower on the second: a module of its own
+        self.assertEqual(sorted(uses.values()), [1, 1, 2, 2])
+        for page in templates[:2]:
+            self.assertEqual(page["frames"], [])
+            self.assertEqual(page["groups"], [{"name": "modules", "modules": True, "gap": mm(0),
+                                               "placement": {**at(0, 0), "size": {"width": "fill", "height": "fill"}}}])
+            # the folio stays on the page
+            self.assertEqual([e["id"] for e in page["decoration"]["elements"]], ["folio"])
+        text = next(m for m in mods.values() if any(f.get("flow") for f in m["frames"]))
+        self.assertEqual(uses[text["id"]], 2)
+        self.assertEqual(text["frames"][0]["placement"], at(15, 15))
+        boxes = [m for m in mods.values() if any(f["name"] == "picture-1" for f in m["frames"])]
+        self.assertEqual(len(boxes), 2)
+        box = next(m for m in boxes if m["id"] in rep["names"]["p01"]["box-1"])
         self.assertEqual([f["name"] for f in box["frames"]], ["box-1", "picture-1", "box-2"])
-        self.assertEqual(box["frames"][0]["placement"], at(0, 0))
+        # its frames stand where the band stood, from the foot of the text
+        self.assertEqual(box["frames"][0]["placement"], at(15, 15))
         self.assertEqual(box["frames"][1]["placement"]["anchor"]["to"], "#box-1")
         # a text frame beside a picture keeps the page's ladder (its own pictures only)
         self.assertEqual(box["frames"][0]["fit"], {"scaleImages": False})
-        pair = next(m for m in mods if m is not box)
+        pair = next(m for m in mods.values() if any(e["kind"] == "connector" for e in (m.get("decoration") or {}).get("elements", [])))
+        self.assertEqual(uses[pair["id"]], 2)
         conn = next(e for e in pair["decoration"]["elements"] if e["kind"] == "connector")
         self.assertEqual((conn["from"]["to"], conn["to"]["to"]), ("#box-1", "#box-2"))
         # the shape painted inside the band goes with it, placed in the module
         shape = next(e for e in pair["decoration"]["elements"] if e["kind"] == "path")
         self.assertEqual(shape["placement"]["anchor"], {"to": "container", "edge": "top-left"})
-        self.assertEqual((shape["placement"]["offset"]["x"]["value"], shape["placement"]["offset"]["y"]["value"]), (85, 10))
-        # the folio stays on the page
-        self.assertEqual([e["id"] for e in page["decoration"]["elements"]], ["folio"])
-        # the Markdown asks for the modules with the pieces inside
-        self.assertEqual(md.count(':::module{template="'), 4)
+        self.assertEqual((shape["placement"]["offset"]["x"]["value"], shape["placement"]["offset"]["y"]["value"]), (100, 20))
+        # the Markdown is the modules, the text's module with the words that name no slot
+        self.assertEqual(md.count(':::module{template="'), 6)
+        self.assertIn(f':::module{{template="{text["id"]}"}}\nRivers at the head of the page.\n:::', md)
         self.assertIn(f':::module{{template="{box["id"]}"}}\n:::frame{{slot="box-1"}}\nRivers in the blue box.', md)
         self.assertIn('::resource{id="p02-picture-1" slot="picture-1"}', md)
         self.assertIn('Mountains: the effect.', md)
         self.assertEqual(rep["names"]["p02"]["box-4"], f"{pair['id']}[1].box-2")
 
-    def test_bands_tied_to_the_flowing_text_stay_on_the_page(self):
+    def test_a_connector_from_the_text_joins_its_box_to_the_text(self):
         t, reg, md = band_page("p01", "Lakes")
         t["decoration"]["elements"].append({"kind": "connector", "id": "connector-2", "routing": "straight",
                                             "from": {"to": "#text", "side": "bottom"}, "to": {"to": "#box-1", "side": "top"}})
         templates, _, rep = fold([(t, reg, md)], grids=False)
-        # the first band hangs from the text and stays; the one below it is a module
-        self.assertEqual([m["frames"] for m in rep["modules"]], [2])
-        names = [f["name"] for f in templates[0]["frames"]]
-        self.assertEqual(names, ["text", "box-1", "picture-1", "box-2"])
-        conn = next(e for e in templates[0]["decoration"]["elements"] if e["id"] == "connector-2")
-        self.assertEqual(conn["to"]["to"], "#box-1")
+        self.assertEqual([m["frames"] for m in rep["modules"]], [4, 2])
+        first = next(m for m in templates if m["id"] == rep["modules"][0]["id"])
+        conn = next(e for e in first["decoration"]["elements"] if e["kind"] == "connector")
+        self.assertEqual((conn["from"]["to"], conn["to"]["to"]), ("#text-1", "#box-1"))
+
+    def test_furniture_alike_on_every_page_of_a_side_stays_on_the_shell(self):
+        def mark(k):
+            return {"kind": "path", "id": f"shape-{k}", "placement": {**at(195, 280, "page"), "size": {"width": mm(4), "height": mm(4)}},
+                    "d": "M0 0 L4 0 L4 4 Z", "viewBox": [4, 4], "fill": {"hex": "#00aa88", "model": "hex"}}
+        pages = []
+        for k, tid in enumerate(("p01", "p02", "p03", "p04"), start=1):
+            t, reg, md = band_page(tid, "Words")
+            folio = next(e for e in t["decoration"]["elements"] if e["id"] == "folio")
+            folio["parity"] = "odd" if k % 2 else "even"
+            if k % 2:
+                t["decoration"]["elements"].insert(0, mark(k))
+            pages.append((t, reg, md))
+        templates, _, rep = fold(pages, grids=False)
+        self.assertGreaterEqual(rep["furniture"], 2)
+        odd = templates[0]["decoration"]["elements"]
+        self.assertEqual([(e["id"].startswith("furniture-"), e.get("parity")) for e in odd if e["kind"] == "path"],
+                         [(True, "odd")])
+        self.assertFalse(any(e["kind"] == "path" for e in templates[1]["decoration"]["elements"]))
 
     def test_markdown_rewrite_renames_slots_inside_a_module(self):
         text = "\n".join(['::::page{template="a"}', ':::module{template="m"}', ':::frame{slot="box-1"}', "x", ":::",
@@ -325,21 +352,20 @@ class FoldDirTest(unittest.TestCase):
     def tearDownClass(cls):
         cls.tmp.cleanup()
 
-    def test_shells_merge_and_modules_are_kept_apart(self):
+    def test_one_shell_and_the_modules(self):
         lib = json.loads((self.after / "library.json").read_text(encoding="utf-8"))
-        ids = [t["id"] for t in lib["pageTemplates"]]
         mods = [t for t in lib["pageTemplates"] if t.get("role") == "module"]
-        # the grid under the first page's text, the box and the pair of the others
-        self.assertEqual(len(mods), 3)
-        self.assertEqual(self.report["after"]["modules"], 3)
-        self.assertEqual(sorted(len(m["uses"]) for m in self.report["modules"]), [1, 2, 2])
+        shells = [t for t in lib["pageTemplates"] if t.get("role") != "module"]
+        self.assertEqual(len(shells), 1)
+        self.assertEqual(self.report["after"]["pageTemplates"], 1)
+        self.assertEqual(shells[0]["frames"], [])
+        # the first page: its text and its grid; the others: text, box and pair, alike
+        self.assertEqual(sorted(len(m["uses"]) for m in self.report["modules"]), [1, 1, 2, 2, 2])
+        self.assertEqual(self.report["after"]["modules"], len(mods))
         self.assertEqual(self.report["after"]["grids"], 1)
-        # the two band pages are one shell now (text + modules group)
         md = (self.after / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
         fences = [line for line in md.split("\n") if line.startswith("::::page")]
-        self.assertEqual(len(fences), 3)
-        self.assertEqual(fences[1], fences[2])
-        self.assertEqual(self.report["after"]["pageTemplates"], len(ids) - 3)
+        self.assertEqual(len(set(fences)), 1)
         for m in mods:
             self.assertFalse(m.get("extends"))
         # module frames are named by role in the module, and the Markdown follows

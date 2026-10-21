@@ -3067,30 +3067,44 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   and what hung from it hangs from the lowest card of the last row (a frame `below` a row of photos). Names:
   `grid` (`grid-2`), the set `grid-<kind>` (`grid-picture`, `grid-box`), never positional, so the role naming
   after it leaves them.
-- **Modules** (C11, after U12's «Extract a module»). Departure from U12: the whole page is read, not a picked set,
-  and modules are shared across pages. Units: union of a containment parent (`regions.json`), anchors to another
-  frame or group, a group's members, a connector's ends. The shell: flow frames, `takes` frames, frames in a
-  `next` / `continueIn: '#x'` chain, and every unit holding one of them. The bands: the other units, side by side
-  joined, top to bottom; only the bands below the shell's lowest frame are folded, into one modules group (C11
-  allows one per page, stacked). A page where a frame or group left on it anchors to a band frame is left as it is.
-  Group: from the first band's top-left, as wide as the bands, `height: 'fill'`, anchored as the first band's
-  topmost frame was when that hung from the shell by its top-left (`below` the text), else at the area's
-  top-left; `gap` the median gap between bands; a band further off keeps the difference as its frames' offset
-  (`lead`), so its module carries it. A module: the band's frames anchored inside it as they were, the rest at
-  their laid offset in the module's box (percent sizes and `'fill'` heights fixed); the band's groups; the
-  decoration whose targets are all in the band (iterated, so a border and its size helper go together; never
-  one anchored to the page) plus every element the page paints at a fixed place inside the band's box
-  (re-anchored to the module), so its paint order among the band's own decoration holds (the engine paints a
-  module's decoration after the page's). Frames named `<kind>-<n>` in the module (role names follow), elements
+- **Modules: the page is a shell** (C11, after U12's «Extract a module»). Departure from U12: the whole page is
+  read, not a picked set, every frame goes into a module and modules are shared across pages, so a page template
+  is a shell (no frames, one modules group, the furniture) and pages differ only by their Markdown and their
+  `:::module` blocks. Units: union of a containment parent (`regions.json`), anchors to another frame or group, a
+  group's members, the frames an element reads (through the elements it reads: a border and its size helper), a
+  `next` / `continueIn: '#x'` chain, and all flow and `takes` frames together (one module takes the pieces that
+  name no slot). Bands: units side by side joined, top to bottom. The group: `modules: true`, `gap: 0`, at the
+  area's top-left, `size: fill × fill`. A module: the band's frames anchored inside it as they were, the rest at
+  their laid place with `x` from the area's left and `y` from the module's top plus its `lead` (the band's distance
+  from the laid foot of the band before, the first band's from the area's top), so each frame lays where it laid
+  and a band that grows pushes the ones after it (percent sizes and `'fill'` heights fixed); the band's groups; the
+  decoration whose targets are all in the band (iterated) and every element the page paints at a fixed place inside
+  the band's box (re-anchored to the module), so paint order holds (the engine paints a module's decoration after
+  the page's). The rest of the page's own decoration (its card, a band of colour) goes with the first module as it
+  is, anchored to the page. Frames named `<kind>-<n>` in the module (role names follow), elements
   `deco-<kind>-<n>` (an element id like `box-1` would be taken for a frame by the role naming). Modules alike
-  (same frames by name, `frame_diff`, `_group_equal` and `element_diff` within `--geom-tol`) are one template,
-  `module-<what it holds>` (`module-box-picture2`). Page: `:::module{template}` blocks, one per band in band order,
-  holding the band's pieces (container, leaf and `{slot}` heading pieces) with their slots renamed, where the
-  first moved piece stood; instance names `<template>[n]` as C11 numbers them. Page references left into a module
-  frame become `#<template>[n].<frame>`. Parity rule found on the way: a module frame outside a group of its own
-  runs the ladder with its whole module as peers (it scales the module's pictures; on the page it scaled only its
-  own), so a box or text frame that stood in no group gets `fit.scaleImages: false` in its module when the module
-  holds pictures.
+  (same frames by name, `frame_diff`, `_group_equal` and `element_diff` within `--module-tol`, 0.5 mm, tighter
+  than the 3 mm of page templates, since a module's offsets are where its frames lay) are one template,
+  `module-<what it holds>`. Page: one `:::module{template}` block per band, holding the band's pieces (container,
+  leaf and `{slot}` heading pieces, and for the flowing text's module every piece that names no slot) with their
+  slots renamed, where the first moved piece stood; instance names `<template>[n]` as C11 numbers them. Parity rule
+  found on the way: a module frame outside a group of its own runs the ladder with its whole module as peers (it
+  scales the module's pictures; on the page it scaled only its own), so a box or text frame that stood in no group
+  gets `fit.scaleImages: false` in its module when the module holds pictures.
+- **Furniture** (what the shell keeps). `mark_furniture`: an element (no frame anchor, no plain words) painted
+  alike within 0.5 mm on every page of a side (by the folio's `parity`), or on every page with a folio, is renamed
+  `furniture-N` on each page and kept to its side (`parity`), or to every page when it is alike on both. With it,
+  `is_furniture` keeps the page colour (a box to the bleed), running heads and folios (`{pageNumber}`,
+  `{attr.x}`) and a ground read from a fence attribute. A furniture element stays on the shell while nothing the
+  page painted before it moved, or when its box meets nothing that did (marks under 25 mm² do not count): the shell
+  paints under every module, so a running head painted over the page's card stays only off the card, and an
+  attribute ground painted over the cards goes with the first module. In dedupe, an element reading `{attr.x}` is
+  joinable like a parity one (it draws nothing where the fence sets no such attribute), and a one-line text set
+  flush to the side it is anchored by is one element whatever its width (`text_width_free`; the widest is kept).
+  Departure from the coordinator's plan (title tab as an `auto`-width frame drawing its own tab, card as a box,
+  `'auto'` heights on the shell's text): with every frame and the card in the page's modules, nothing per-page is
+  left in the shell, so the card keeps its outline with the tab grown out of it (the concave fillet at the join
+  included) and the text keeps its measured height; nothing moves.
 - **The rest of dedupe.** Module templates are kept out of the template merge and the shared base;
   `rewrite_markdown` follows `:::module` blocks (their slots by the module's renames) and nested containers;
   `rename_in_template` also renames group anchors and grid sets; `rename_module_refs` keeps page references into a
@@ -3100,23 +3114,24 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
 - **Checking.** `template_dedupe.py DIR --compare-boxes BEFORE AFTER [--box-tol 0.5]` reads two `--frames` files and
   `pages`, and lists every frame that moved or is missing; `compare_pages.py --score [FILE]` gives round 1's
   likeness (grey, blurred 2 px, mean difference, share over 40) per page, and reads `postext images` PNGs too.
-- **A real textbook** (28 pages, round-1 port 27 templates for 28 pages). After the fold: 28 page templates and a
-  `page-base` (unchanged), 23 modules (each used once: no two bands of the book are alike within 3 mm), 6 grids
-  (3 × 1 photos, 3 × 2 figures, a 3 × 1 photo row, a row of three boxes, two boxes with a tab each, 2 × 2 photos).
-  Laid frames: 367 compared, 1 off by more than 0.5 mm (a centred tab set `auto`, 1.55 mm narrower than the
-  measured width); `postext check` warnings the same kinds and counts as before; likeness 6.04 / 2.79 % before,
-  6.05 / 2.79 % after. The shells do not merge: each page's title tab is as wide as its words and drawn into the
-  page's card outline, and the flowing text keeps its measured height, so no two shells are alike.
-- **Not done.** Shells merged across pages (they need the title tab and the card outline to follow the title's
-  width, an engine or extract change); modules side by side (C11 stacks them); per-item looks in a grid (a pill of
+- **A real textbook** (28 pages, round-1 port 27 templates for 28 pages). After the fold: 2 page templates, one
+  shell for the 25 body pages (page colour, folios and running heads kept to their side, the marks by the folio)
+  and one bare shell for the 3 front-matter pages, which print no page colour and no folio; 36 modules (each used
+  once: no two bands of the book are alike within 0.5 mm); 6 grids (3 × 1 photos, 3 × 2 figures, a 3 × 1 photo
+  row, a row of three boxes, two boxes with a tab each, 2 × 2 photos). Laid frames: 367 compared, 1 off by more
+  than 0.5 mm (a centred tab set `auto`, 1.55 mm narrower than the measured width); `postext check` warnings the
+  same kinds and counts as before; likeness 6.04 / 2.79 % before, 6.05 / 2.79 % after. The folio stands where most
+  pages print it (the source's drifts by up to 1.8 mm page to page, as dedupe merged it before).
+- **Not done.** One shell for the front matter and the body (it needs a page to drop the shell's furniture, e.g.
+  a fence attribute switching it off); modules side by side (C11 stacks them); per-item looks in a grid (a pill of
   another colour per card is no member); a lattice with one card off by more than the tolerance (a row of photos
-  pushed 1.1 mm by the draft's own groups); bands above a shell frame and bands tied to the shell by a connector
-  stay on the page. Sandbox, docs (D3/D4) and the release (S8) are other lanes.
+  pushed 1.1 mm by the draft's own groups). Sandbox, docs (D3/D4) and the release (S8) are other lanes.
 - **Tests.** `tests/test_template_fold.py` on invented pages: a 3 × 2 photo wall with pills (grid, items, reading
   order, names), tabs as wide as their words (centred `auto` members), a badge among the cards and a card off the
-  lattice (no grid / a grid of the pills only), what hung from a row group, two pages with two bands each (two
-  modules used twice, the group's gap and anchor, the connector and the shape moved, the folio left), a band tied
-  to the flowing text, `:::module` slot renames, `compare_boxes`; `dedupe_dir` end to end (shells merge, modules
-  kept apart, role names in the module and its Markdown, `pages`), with `POSTEXT_REPO` the draft laid out before
+  lattice (no grid / a grid of the pills only), what hung from a row group, two pages of three bands (a bare
+  shell, the text and the pair shared, the box 4 mm lower a module of its own, the connector and the shape moved,
+  the folio left), a connector from the text joining its box to it, furniture kept to its side, `:::module` slot
+  renames, `compare_boxes`; `dedupe_dir` end to end (one shell, modules kept apart, role names in the module and
+  its Markdown, `pages`), with `POSTEXT_REPO` the draft laid out before
   and after with no frame off by 0.5 mm, with `POSTEXT_CLI` `postext check` without unknown anchors, slots,
   templates or module warnings.

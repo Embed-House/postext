@@ -22,19 +22,22 @@ the trim, the coordinates the templates' placements use).
   card, in reading order, with the members' pieces inside it; every other
   reference (anchors, groups, connector ends, decoration) to a card or a
   member points at its instance (`#grid-picture[3]`).
-- **Modules** (`fold_modules`). The frames of a page are joined into units
-  (a box and what it holds, frames anchored to one another, the members of
-  a group, the ends of a connector); units side by side are one band, and
-  the bands below the page's flowing text and title frames (the shell)
-  become modules stacked in one modules group (`modules: true`) as wide as
-  they are, with the gap most of them keep (a band that stands further off
-  keeps the difference as its frames' offset). The decoration that only
-  reads a band's frames (a card, a border, a connector between them) goes
-  with it. Modules alike across the book (the same frames, styles, groups
-  and decoration within --geom-tol mm) are one module template; the page
-  writes `:::module{template="…"}` blocks with the band's pieces inside,
-  where the first of them stood, so the content stays in the Markdown.
-  «Extract a module» (`templates/moduleEdits.ts`) is the model.
+- **Modules** (`plan_page_modules`). Every frame of a page goes into a
+  module, so the page template is a shell: no frames, one modules group
+  filling the page, the furniture (`mark_furniture`, `is_furniture`). The
+  frames are joined into units (a box and what it holds, frames anchored to
+  one another, a group's members, what a connector or a border reads, a
+  chain, the flowing text with the frames taking its headings); units side
+  by side are one band, and each band, top to bottom, is a module whose
+  frames stand where the band stood, offset by its distance from the foot
+  of the band before. The decoration that reads only a band's frames and
+  what the page paints inside it go with it, the rest of the page's own
+  decoration with the first module. Modules alike across the book (within
+  --module-tol) are one module template; the page writes
+  `:::module{template="…"}` blocks with the bands' pieces inside (the
+  flowing text's module with the pieces that name no slot), so the content
+  stays in the Markdown. «Extract a module» (`templates/moduleEdits.ts`) is
+  the model.
 
 Both keep a map of every frame's old name to the name the engine gives it
 (`grid-picture[3]`, `box-picture[1].picture-2`), per page fence, for the
@@ -688,71 +691,76 @@ def _frame_box(t: dict, rects: dict[str, Box], name: str) -> Box | None:
     return (min(r[0] for r in insts), min(r[1] for r in insts), max(r[2] for r in insts), max(r[3] for r in insts))
 
 
-def bands_of(t: dict, rects: dict[str, Box], parents: dict[str, str | None]) -> tuple[list[dict], set[str]] | None:
-    """The bands of template `t` that can be modules: [{frames, groups,
-    box}] top to bottom, and the shell's frame names. None when no band
-    stands below the shell."""
+def bands_of(t: dict, rects: dict[str, Box], parents: dict[str, str | None]) -> list[dict] | None:
+    """Every frame of template `t` in bands, top to bottom: [{frames,
+    groups, box}]. Frames are joined into units (containment, anchors to a
+    frame or a group, a group's members, a connector's ends, a `next` or
+    `continueIn: '#x'` chain); units whose boxes overlap down the page are
+    one band. None when a frame has no box."""
     frames = [f for f in t.get("frames", []) if not f.get("remove")]
     names = [f["name"] for f in frames]
-    shell = {f["name"] for f in frames if f.get("flow") or f.get("takes") or f.get("next")}
-    shell |= {f["next"] for f in frames if isinstance(f.get("next"), str)}
-    # a frame that is the target of a chain or overflow is the shell's too
-    for f in frames:
-        ov = f.get("overflow") or {}
-        ci = ov.get("continueIn") if isinstance(ov, dict) else None
-        if isinstance(ci, str) and ci.startswith("#"):
-            shell |= {f["name"], ci[1:]}
     u = _Union(names)
     groups = t.get("groups", [])
     gnames = {g["name"]: _group_members(g) for g in groups}
+
+    def first_of(n: str | None) -> str | None:
+        if n in gnames:
+            ms = [m for m in gnames[n] if m in u.p]
+            return ms[0] if ms else None
+        return n if n in u.p else None
+
     for g in groups:
         ms = [m for m in _group_members(g) if m in u.p]
         for m in ms[1:]:
             u.join(ms[0], m)
+        tgt = first_of(_target(g.get("placement")))
+        if ms and tgt:
+            u.join(ms[0], tgt)
     for f in frames:
-        tgt = _target(f.get("placement"))
-        if tgt in gnames:
-            ms = [m for m in gnames[tgt] if m in u.p]
-            if ms and f["name"] not in shell and ms[0] not in shell:
-                u.join(f["name"], ms[0])
-        elif tgt in u.p and tgt not in shell and f["name"] not in shell:
+        tgt = first_of(_target(f.get("placement")))
+        if tgt:
             u.join(f["name"], tgt)
         par = parents.get(f["name"])
         if par in u.p:
             u.join(f["name"], par)
-    for g in groups:
-        tgt = _target(g.get("placement"))
-        ms = [m for m in _group_members(g) if m in u.p]
-        if ms and tgt in u.p and tgt not in shell:
-            u.join(ms[0], tgt)
-    tied: set[str] = set()
-    for el in _decoration(t):
-        if el.get("kind") != "connector":
-            continue
-        ends = [e for e in _el_targets(el) if e in u.p or e in gnames]
-        ends = [gnames[e][0] if e in gnames and gnames[e] else e for e in ends]
-        ends = [e for e in ends if e in u.p]
+        if isinstance(f.get("next"), str) and f["next"] in u.p:
+            u.join(f["name"], f["next"])
+        ov = f.get("overflow") or {}
+        ci = ov.get("continueIn") if isinstance(ov, dict) else None
+        if isinstance(ci, str) and ci.startswith("#") and ci[1:] in u.p:
+            u.join(f["name"], ci[1:])
+    # what an element reads (through the elements it reads: a border sized
+    # to a helper anchored to another frame) is one unit
+    els = {str(e.get("id")): e for e in _decoration(t)}
+
+    def frames_read(el: dict, seen: set[str]) -> set[str]:
+        out = set()
+        for n in _el_targets(el):
+            if n in els and n not in seen:
+                seen.add(n)
+                out |= frames_read(els[n], seen)
+            elif first_of(n):
+                out.add(first_of(n))  # type: ignore[arg-type]
+        return out
+
+    for el in els.values():
+        ends = sorted(frames_read(el, {str(el.get("id"))}))
         for e in ends[1:]:
             u.join(ends[0], e)
-    # units holding a shell frame are the shell's
+    # the flowing text and the frames that take its headings: one module
+    # takes the page's pieces that name no slot
+    opener = [f["name"] for f in frames if f.get("flow") or f.get("takes")]
+    for n in opener[1:]:
+        u.join(opener[0], n)
     units: dict[str, list[str]] = {}
     for n in names:
         units.setdefault(u.find(n), []).append(n)
-    shell_units = [ms for ms in units.values() if any(m in shell for m in ms)]
-    for ms in shell_units:
-        tied |= set(ms)
-    free = [ms for ms in units.values() if not any(m in tied for m in ms)]
     boxed = []
-    for ms in free:
+    for ms in units.values():
         bs = [b for b in (_frame_box(t, rects, m) for m in ms) if b]
         if len(bs) != len(ms):
             return None
         boxed.append((ms, (min(b[0] for b in bs), min(b[1] for b in bs), max(b[2] for b in bs), max(b[3] for b in bs))))
-    if not boxed:
-        return None
-    shell_boxes = [b for b in (_frame_box(t, rects, m) for m in tied) if b]
-    floor = max((b[3] for b in shell_boxes), default=-1e9)
-    boxed = [x for x in boxed if x[1][1] >= floor - 0.5]
     if not boxed:
         return None
     # side by side: one band
@@ -767,24 +775,18 @@ def bands_of(t: dict, rects: dict[str, Box], parents: dict[str, str | None]) -> 
         else:
             bands.append({"frames": list(ms), "box": b})
     order = {n: i for i, n in enumerate(names)}
+    by = {f["name"]: f for f in frames}
     for band in bands:
         band["frames"].sort(key=lambda n: order[n])
         fs = set(band["frames"])
         band["groups"] = [g["name"] for g in groups if _group_members(g) and set(_group_members(g)) <= fs]
-    # anything left on the page that hangs from a band's frame: no modules
-    moved = {n for b in bands for n in b["frames"]} | {g for b in bands for g in b["groups"]}
-    for f in frames:
-        if f["name"] not in moved and _target(f.get("placement")) in moved:
-            return None
-    for g in groups:
-        if g["name"] not in moved and (_target(g.get("placement")) in moved
-                                       or any(m in moved for m in _group_members(g))):
-            return None
-    return bands, shell | tied
+        band["flow"] = any(by[n].get("flow") or by[n].get("takes") for n in band["frames"])
+    return bands
 
 
 def module_of_band(t: dict, band: dict, rects: dict[str, Box], kinds: dict[str, str], gx: float, top: float,
-                   lead: float) -> tuple[dict, dict[str, str], dict[str, str]]:
+                   lead: float, taken: frozenset[str] = frozenset(),
+                   extra: frozenset[str] = frozenset()) -> tuple[dict, dict[str, str], dict[str, str]]:
     """(module template without id, frame name on the page -> name in the
     module, element id -> id in the module). Frames are named by kind and
     order in the module (`box-1`, `picture-2`); a grid's set and groups by
@@ -865,13 +867,15 @@ def module_of_band(t: dict, band: dict, rects: dict[str, Box], kinds: dict[str, 
         groups.append(g)
     # decoration that reads only the band's frames (and elements that do)
     els = _decoration(t)
-    moved_ids: set[str] = set()
+    # `taken`: elements an earlier band took; `extra`: the page's own
+    # decoration this module takes as it is (anchored to the page)
+    moved_ids: set[str] = set(extra)
     changed = True
     while changed:
         changed = False
         for el in els:
             eid = str(el.get("id"))
-            if eid in moved_ids or el.get("remove"):
+            if eid in moved_ids or eid in taken or el.get("remove"):
                 continue
             tg = _el_targets(el)
             anchor_to = ((el.get("placement") or {}).get("anchor") or {}).get("to")
@@ -886,7 +890,7 @@ def module_of_band(t: dict, band: dict, rects: dict[str, Box], kinds: dict[str, 
     fixed: dict[str, tuple[float, float]] = {}
     for el in els:
         eid = str(el.get("id"))
-        if eid in moved_ids or el.get("remove"):
+        if eid in moved_ids or eid in taken or el.get("remove"):
             continue
         box = _fixed_box(el)
         if box and box[0] >= bx[0] - 0.5 and box[1] >= bx[1] - 0.5 and box[2] <= bx[2] + 0.5 and box[3] <= bx[3] + 0.5:
@@ -986,35 +990,163 @@ def module_name(m: dict) -> str:
     return "module-" + ("-".join(parts) or "empty")
 
 
-def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
-                      parents: dict[str, str | None]) -> dict | None:
-    """The bands of one page template as module candidates (nothing
-    changed yet)."""
-    got = bands_of(t, rects, parents)
-    if not got:
+FURNITURE = "furniture-"
+
+
+def page_parity(t: dict) -> str | None:
+    """'odd' / 'even': the side the page's folio is kept to, if any."""
+    for el in _decoration(t):
+        if el.get("kind") == "text" and "{pageNumber}" in str(el.get("content", "")) \
+                and el.get("parity") in ("odd", "even"):
+            return el["parity"]
+    return None
+
+
+def mark_furniture(templates: list[dict], element_diff, tol: float = 0.5) -> int:
+    """Elements the page paints alike (within `tol` mm) on every page of a
+    side (every odd page, every even page, or every page with a folio):
+    marks by a margin, a rule by the folio. They are renamed `furniture-N`
+    on every page that has them and kept to the side they are on
+    (`parity`), so the pages' shells are one. Returns the classes found."""
+    sides = [page_parity(t) for t in templates]
+    known = [k for k, sd in enumerate(sides) if sd]
+    classes: list[dict] = []
+    for k in known:
+        for el in _decoration(templates[k]):
+            if el.get("remove") or el.get("kind") == "connector" or _target(el.get("placement")):
+                continue
+            if el.get("kind") == "text" and "{" not in str(el.get("content", "")):
+                continue
+            plain = {kk: v for kk, v in el.items() if kk not in ("id", "parity")}
+            hit = None
+            for c in classes:
+                ref = c["el"]
+                if k not in c["pages"] and element_diff({**ref, "id": ""}, {**plain, "id": ""}, tol) is not None:
+                    hit = c
+                    break
+            if hit:
+                hit["pages"][k] = el
+            else:
+                classes.append({"el": plain, "pages": {k: el}})
+    n = 0
+    for c in classes:
+        pages = set(c["pages"])
+        on = {sides[k] for k in pages}
+        need = {k for k in known if sides[k] in on}
+        if len(pages) < 2 or not need <= pages:
+            continue
+        n += 1
+        for k, el in c["pages"].items():
+            old = str(el.get("id"))
+            el["id"] = f"{FURNITURE}{n}"
+            if len(on) == 1:
+                el["parity"] = next(iter(on))
+            else:
+                el.pop("parity", None)   # alike on both sides: every page
+            retarget(templates[k], {old: el["id"]})
+    return n
+
+
+def is_furniture(el: dict) -> bool:
+    """What a page shell keeps: what every page of a side paints alike
+    (`mark_furniture`), the page colour, running heads and folios
+    (`{pageNumber}`, `{attr.x}`) and a ground read from a fence attribute."""
+    if str(el.get("id", "")).startswith(FURNITURE):
+        return True
+    if el.get("kind") == "text":
+        c = str(el.get("content", ""))
+        return "{pageNumber}" in c or "{attr." in c
+    if el.get("kind") == "image":
+        return str(el.get("resourceId", "")).startswith("{attr.")
+    a = ((el.get("placement") or {}).get("anchor") or {}).get("to")
+    return el.get("kind") == "box" and a == "bleed" and str(el.get("id")) == "page-colour"
+
+
+def _text_box(el: dict, page: tuple[float, float]) -> Box | None:
+    """The page box (mm) a one-line text element anchored to a page corner
+    takes, from its offset, width and font size; None when unknown."""
+    p = el.get("placement") or {}
+    a = p.get("anchor") or {}
+    if a.get("to") != "page" or a.get("edge") not in ("top-left", "top-right", "bottom-left", "bottom-right"):
         return None
-    bands, shell = got
-    gx = min(b["box"][0] for b in bands)
-    gx1 = max(b["box"][2] for b in bands)
-    gaps = [bands[i]["box"][1] - bands[i - 1]["box"][3] for i in range(1, len(bands))]
-    gap = sorted(gaps)[len(gaps) // 2] if gaps else 0.0
-    gap = max(0.0, gap)
-    leads = [0.0] + [g - gap if abs(g - gap) > 0.3 else 0.0 for g in gaps]
+    off = p.get("offset") or {}
+    ox, oy = _mm_of(off.get("x")) or 0.0, _mm_of(off.get("y")) or 0.0
+    w = _mm_of((p.get("size") or {}).get("width"))
+    fs = _mm_of(el.get("fontSize"))
+    if w is None or fs is None:
+        return None
+    h = fs * float(el.get("lineHeight") or 1.2)
+    edge = a["edge"]
+    x0 = page[0] + ox - w if edge.endswith("right") else ox
+    y0 = page[1] + oy - h if edge.startswith("bottom") else oy
+    return (x0, y0, x0 + w, y0 + h)
+
+
+def _clear_of(box: Box | None, others: list[Box | None]) -> bool:
+    """`box` meets none of `others` (an unknown box meets everything; a mark
+    under 25 mm², an arrow by a running head, covers nothing that matters)."""
+    if box is None:
+        return False
+    for o in others:
+        if o is None:
+            return False
+        if (o[2] - o[0]) * (o[3] - o[1]) < 25:
+            continue
+        if box[0] < o[2] and o[0] < box[2] and box[1] < o[3] and o[1] < box[3]:
+            return False
+    return True
+
+
+def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
+                      parents: dict[str, str | None], page: tuple[float, float] = (210.0, 297.0)) -> dict | None:
+    """Every band of one page template as a module (nothing changed yet).
+    The modules group fills the page from its top-left, with no gap: each
+    module's frames stand where the band stood, offset by how far the band
+    stands from the foot of the one before it (the first from the page's
+    top), so the page lays as it did and text that grows pushes what
+    follows. The page keeps its furniture (`is_furniture`) while nothing
+    the page paints earlier moved; every other element goes with the band
+    whose frames it reads or inside which it is painted, else with the first
+    module, as it is."""
+    bands = bands_of(t, rects, parents)
+    if not bands:
+        return None
+    leads = [bands[0]["box"][1]] + [bands[i]["box"][1] - bands[i - 1]["box"][3] for i in range(1, len(bands))]
+    first = [module_of_band(t, band, rects, kinds, 0.0, band["box"][1], lead) for band, lead in zip(bands, leads)]
+    owner: dict[str, int] = {}
+    for k, (_, _, ids) in enumerate(first):
+        for e in ids:
+            owner.setdefault(e, k)
+    # The page shell's decoration paints under every module's: what the page
+    # painted after something that moves stays only when it covers none of it
+    keep, extra, clean = [], set(), True
+    painted: list[Box | None] = []
+    for el in _decoration(t):
+        eid = str(el.get("id"))
+        if eid in owner:
+            clean = False
+            painted.append(_fixed_box(el) or bands[owner[eid]]["box"])
+            continue
+        box = _text_box(el, page) if el.get("kind") == "text" else _fixed_box(el)
+        if is_furniture(el) and (clean or _clear_of(box, painted)):
+            keep.append(eid)
+            continue
+        extra.add(eid)
+        painted.append(_fixed_box(el))
+        clean = False
     mods = []
-    for band, lead in zip(bands, leads):
-        m, names, ids = module_of_band(t, band, rects, kinds, gx, band["box"][1], lead)
+    for k, (band, lead) in enumerate(zip(bands, leads)):
+        others = frozenset(e for e, o in owner.items() if o != k)
+        m, names, ids = module_of_band(t, band, rects, kinds, 0.0, band["box"][1], lead, taken=others,
+                                       extra=frozenset(extra) if k == 0 else frozenset())
         mods.append({"module": m, "names": names, "ids": ids, "band": band})
-    return {"bands": bands, "gap": gap, "x": gx, "width": gx1 - gx, "top": bands[0]["box"][1],
-            "modules": mods, "shell": shell}
+    return {"bands": bands, "modules": mods, "keep": keep}
 
 
 def apply_page_modules(t: dict, plan: dict, ids: list[str], rects: dict[str, Box]) -> dict[str, str]:
-    """Replace the bands of page template `t` by a modules group; `ids` the
-    module template of each band. Returns {page name: instance name} for
-    every frame, group and element moved."""
-    moved_frames = {n for m in plan["modules"] for n in m["band"]["frames"]}
-    moved_groups = {g for m in plan["modules"] for g in m["band"]["groups"]}
-    moved_els = {e for m in plan["modules"] for e in m["ids"]}
+    """Replace every frame of page template `t` by one modules group that
+    fills the page; `ids` the module template of each band. Returns {page
+    name: instance name} for every frame, group and element moved."""
     seen: dict[str, int] = {}
     rename: dict[str, str] = {}
     for m, mid in zip(plan["modules"], ids):
@@ -1023,39 +1155,32 @@ def apply_page_modules(t: dict, plan: dict, ids: list[str], rects: dict[str, Box
         m["instance"] = inst
         for old, new in {**m["names"], **m["ids"]}.items():
             rename[old] = f"{inst}.{new}"
-    by = {f["name"]: f for f in t["frames"]}
-    band0 = plan["bands"][0]
-    placed = [n for n in band0["frames"] if (by[n].get("placement") or {}).get("anchor") and n in rects]
-    taken = {f["name"] for f in t["frames"]} | {g["name"] for g in t.get("groups", [])}
-    name = _unique("modules", taken)
-    at = (plan["x"], plan["top"])
-    if placed:
-        top = min(placed, key=lambda n: (rects[n][1], rects[n][0]))
-        placement = placement_like(by[top], at, rects[top], moved_frames | moved_groups)
-    else:
-        placement = {"anchor": {"to": "container", "edge": "top-left"}, "offset": {"x": mm(at[0]), "y": mm(at[1])}}
-    placement["size"] = {"width": mm(plan["width"]), "height": "fill"}
-    group: dict[str, Any] = {"name": name, "modules": True}
-    if len(plan["modules"]) > 1:
-        group["gap"] = mm(plan["gap"])
-    group["placement"] = placement
-    t["frames"] = [f for f in t["frames"] if f["name"] not in moved_frames]
-    t["groups"] = [g for g in t.get("groups", []) if g["name"] not in moved_groups] + [group]
+    group: dict[str, Any] = {"name": "modules", "modules": True, "gap": mm(0),
+                             "placement": {"anchor": {"to": "container", "edge": "top-left"},
+                                           "offset": {"x": mm(0), "y": mm(0)},
+                                           "size": {"width": "fill", "height": "fill"}}}
+    t["frames"] = []
+    t["groups"] = [group]
+    keep = set(plan["keep"])
     if t.get("decoration"):
-        t["decoration"]["elements"] = [e for e in _decoration(t) if str(e.get("id")) not in moved_els]
+        t["decoration"]["elements"] = [e for e in _decoration(t) if str(e.get("id")) in keep]
+        if not t["decoration"]["elements"]:
+            del t["decoration"]
     retarget(t, rename)
     return rename
 
 
 def modules_markdown(lines: list[str], fence: dict, plan: dict, ids: list[str]) -> list[str]:
-    """The fence with the pieces of each band in a `:::module` block, the
-    blocks where the first moved piece stood."""
+    """The fence as `:::module` blocks, one per band in order, each with the
+    band's pieces; the band that holds the flowing text (or the frame that
+    takes the headings) also takes every piece that names no slot."""
     pieces = pieces_of(lines, fence)
     blocks: list[str] = []
     used: list[Piece] = []
-    for m, mid in zip(plan["modules"], ids):
+    flow_band = next((k for k, m in enumerate(plan["modules"]) if m["band"].get("flow")), None)
+    for k, (m, mid) in enumerate(zip(plan["modules"], ids)):
         slots = set(m["band"]["frames"])
-        mine = [p for p in pieces if p.slot is not None and p.slot in slots]
+        mine = [p for p in pieces if (p.slot is not None and p.slot in slots) or (p.slot is None and k == flow_band)]
         used += mine
         body = [f':::module{{template="{mid}"}}']
         for p in mine:
@@ -1108,20 +1233,23 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
                                         "columns": plan["columns"], "rows": plan["rows"],
                                         "columnGap": plan["columnGap"], "rowGap": plan["rowGap"],
                                         "items": len(plan["cells"])})
-        pages.append({"t": t, "rects": rects, "kinds": kinds, "parents": parents, "names": names})
+        trim = reg.get("trim") or [210.0, 297.0]
+        pages.append({"t": t, "rects": rects, "kinds": kinds, "parents": parents, "names": names,
+                      "page": (float(trim[0]), float(trim[1]))})
     if modules:
+        report["furniture"] = mark_furniture([pg["t"] for pg in pages if pg is not None], element_diff)
         cands = []
         for pg in pages:
             if pg is None:
                 continue
-            plan = plan_page_modules(pg["t"], pg["rects"], pg["kinds"], pg["parents"])
+            plan = plan_page_modules(pg["t"], pg["rects"], pg["kinds"], pg["parents"], pg["page"])
             if plan:
                 pg["plan"] = plan
                 cands += [(pg, k) for k in range(len(plan["modules"]))]
         lib: list[dict] = []
         for pg, k in cands:
             m = pg["plan"]["modules"][k]["module"]
-            hit = next((e for e in lib if modules_alike(e["module"], m, tol["geom"], frame_diff, element_diff,
+            hit = next((e for e in lib if modules_alike(e["module"], m, tol.get("module", 0.5), frame_diff, element_diff,
                                                         group_equal)), None)
             if hit:
                 hit["uses"].append((pg, k))

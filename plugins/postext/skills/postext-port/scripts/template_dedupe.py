@@ -9,7 +9,7 @@ same page ground on every page) become one resource.
                          [--delta-e 3] [--max-diff 2] [--image-tol 2]
                          [--keep-frame-names] [--dry-run] [--json]
                          [--laid FRAMES] [--no-grids] [--no-modules]
-                         [--lattice-tol 1] [--grid-min 3]
+                         [--lattice-tol 1] [--grid-min 3] [--module-tol 0.5]
   template_dedupe.py DIR --compare-boxes BEFORE AFTER [--box-tol 0.5]
 
 DIR is what `pdf_regions.py extract` wrote: library.json (pageTemplates,
@@ -28,9 +28,11 @@ chapters/<lang>/*.md. The script rewrites the three in place (with
 - **Grids and modules** (template_fold.py, before the templates are
   merged; it needs regions.json). Frames of one look on a lattice become a
   repeating grid group, with what hangs from each card as its members, and
-  the page's pieces one `:::frame{slot}` item per card; the bands of frames
-  under the page's flowing text and title become modules in one modules
-  group, alike ones across the book one module template, and the page
+  the page's pieces one `:::frame{slot}` item per card; every band of
+  frames becomes a module in one modules group filling the page, so the
+  page template is a shell (the furniture every page of a side paints
+  alike, folios, running heads), alike modules across the book one module
+  template, and the page
   writes `:::module{template}` blocks holding the bands' pieces. --laid
   reads the boxes off the draft as laid (`render.mjs --frames`) rather
   than as measured; --no-grids / --no-modules skip either. The report's
@@ -375,6 +377,16 @@ def frame_diff(a: dict, b: dict, tol: float) -> float | None:
     return worst
 
 
+def joinable(el: dict) -> bool:
+    """An element two templates may differ by and still be one: one kept
+    to one side (`parity`), or one that reads a page attribute
+    (`{attr.ground}`, `{attr.head}`), which draws nothing on a page whose
+    fence does not set it."""
+    if el.get("parity") not in (None, "all"):
+        return True
+    return "{attr." in str(el.get("content", "")) or str(el.get("resourceId", "")).startswith("{attr.")
+
+
 def element_key(el: dict) -> str:
     return str(el.get("id") or json.dumps(el, sort_keys=True))
 
@@ -393,12 +405,39 @@ def element_diff(a: dict, b: dict, tol: float) -> float | None:
         for k in sa:
             if is_dim(sa[k]) and is_dim(sb[k]):
                 d = abs((dim_mm(sa[k]) or 0) - (dim_mm(sb[k]) or 0))
+                if sect == "size" and k == "width" and text_width_free(a):
+                    continue
                 if d > tol:
                     return None
                 worst = max(worst, d)
             elif sa[k] != sb[k]:
                 return None
     return worst
+
+
+def text_width_free(el: dict) -> bool:
+    """A one-line text element (a running head) set flush to the side it is
+    anchored by: its box's width only says how long the words were, so two
+    such elements are one whatever their widths (the widest is kept)."""
+    if el.get("kind") != "text" or "\n" in str(el.get("content", "")):
+        return False
+    edge = str(((el.get("placement") or {}).get("anchor") or {}).get("edge", ""))
+    align = el.get("align", "left")
+    return (align == "right" and edge.endswith("right")) or (align == "left" and edge.endswith("left"))
+
+
+def widen_texts(keep: dict, other: dict) -> None:
+    """Give `keep`'s width-free text elements the widest width `other` has
+    for the same element."""
+    theirs = {element_key(e): e for e in decoration_of(other)}
+    for e in decoration_of(keep):
+        o = theirs.get(element_key(e))
+        if not o or not text_width_free(e):
+            continue
+        we = ((e.get("placement") or {}).get("size") or {}).get("width")
+        wo = ((o.get("placement") or {}).get("size") or {}).get("width")
+        if is_dim(we) and is_dim(wo) and (dim_mm(wo) or 0) > (dim_mm(we) or 0):
+            e["placement"]["size"]["width"] = dict(wo)
 
 
 def decoration_of(t: dict) -> list[dict]:
@@ -439,7 +478,7 @@ def compare_templates(a: dict, b: dict, tol: float) -> dict:
                 deco_worst = max(deco_worst, d)
         else:
             e = ea or eb
-            if e.get("parity") in (None, "all"):
+            if not joinable(e):
                 deco_ok = False
     return {"onlyA": sorted(set(fa) - set(fb)), "onlyB": sorted(set(fb) - set(fa)), "changed": sorted(changed),
             "groups": groups, "top": top, "decoration": deco_ok, "mm": round(max(worst, deco_worst), 2)}
@@ -553,6 +592,7 @@ def dedupe_templates(templates: list[dict], usage: dict[str, int], tol: float, m
         if hit:
             hit[0]["members"].append((t["id"], hit[1]["mm"]))
             join_decoration(hit[0]["template"], t)
+            widen_texts(hit[0]["template"], t)
         else:
             shared.append({"template": json.loads(json.dumps(t)), "members": []})
     # single templates close to a shared one become children
@@ -668,7 +708,7 @@ def common_base(templates: list[dict], tol: float, max_diff: int, used: set[str]
             n = sum(1 for d in cands if element_diff(c, d, tol) is not None)
             if best is None or n > best[0]:
                 best = (n, c)
-        if best and (best[0] >= need or best[1].get("parity") not in (None, "all")):
+        if best and (best[0] >= need or joinable(best[1])):
             elements.append(best[1])
     # only elements whose frames (and elements) the base has: a connector or a border
     # between frames of some pages stays with those pages
@@ -721,7 +761,7 @@ def _decoration_extends(base: dict, child: dict, tol: float) -> bool:
     for e in decoration_of(base):
         k = element_key(e)
         if k not in dc:
-            if e.get("parity") in (None, "all"):
+            if not joinable(e):
                 return False
             continue
         if element_diff(e, dc[k], tol) is None:
@@ -1386,6 +1426,7 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--no-grids", action="store_true", help="leave frames on a lattice as they are")
     ap.add_argument("--no-modules", action="store_true", help="leave the bands of a page on the page")
     ap.add_argument("--lattice-tol", type=float, default=1.0, help="cards whose edges and widths agree within this many mm stand on one lattice (default 1)")
+    ap.add_argument("--module-tol", type=float, default=0.5, help="bands whose frames and decoration agree within this many mm are one module (default 0.5)")
     ap.add_argument("--grid-min", type=int, default=3, help="the fewest cards with nothing hanging from them a grid takes (default 3; cards with a tab or caption: 2)")
     ap.add_argument("--laid", metavar="FRAMES", help="the draft's laid frame boxes (render.mjs --frames): grids and modules are measured on them")
     ap.add_argument("--compare-boxes", nargs=2, metavar=("BEFORE", "AFTER"), help="compare the frame boxes of two render.mjs --frames files (DIR's dedupe-report.json gives the new names) and exit")
@@ -1395,7 +1436,8 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
     tol = {"geom": args.geom_tol, "dim": args.style_tol, "padding": args.padding_tol, "font": args.font_tol,
-           "delta_e": args.delta_e, "lattice": args.lattice_tol, "grid_min": args.grid_min}
+           "delta_e": args.delta_e, "lattice": args.lattice_tol, "grid_min": args.grid_min,
+           "module": args.module_tol}
     if args.compare_boxes:
         rep_path = Path(args.dir) / "dedupe-report.json"
         names = json.loads(rep_path.read_text(encoding="utf-8")).get("pages", {}) if rep_path.exists() else {}
