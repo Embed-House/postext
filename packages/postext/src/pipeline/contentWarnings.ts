@@ -824,6 +824,37 @@ export function pictureBelowPrintSizeWarnings(
   return out;
 }
 
+/** An `emptyCaption` warning (#1151) for each resource whose type gives a
+ *  caption prefix and whose own caption is empty: its caption line prints
+ *  the label and number alone. Once per resource, where it is first
+ *  placed (a page's columns, then its floats); `sourceRangeOf` gives the
+ *  range of the content block citing or embedding it. */
+export function emptyCaptionWarnings(
+  doc: VDTDocument,
+  sourceRangeOf?: (contentIndex: number) => { start: number; end: number } | undefined,
+): ContentWarning[] {
+  const out: ContentWarning[] = [];
+  const seen = new Set<string>();
+  for (const page of doc.pages) {
+    for (const block of [...page.columns.flatMap((c) => c.blocks), ...(page.floats ?? [])]) {
+      const rb = block.resourceBlock;
+      if (!rb || block.hidden || block.comic || seen.has(rb.resource.id)) continue;
+      if (rb.captionPrefix.trim().length === 0 || (rb.resource.caption ?? '').trim().length > 0) continue;
+      if (rb.captionLines.length === 0) continue;
+      seen.add(rb.resource.id);
+      const range = block.contentIndex !== undefined ? sourceRangeOf?.(block.contentIndex) : undefined;
+      out.push({
+        kind: 'emptyCaption',
+        resourceId: rb.resource.id,
+        label: rb.captionLines.map((l) => l.text).join(' ').replace(/\s+/g, ' ').trim(),
+        ...(range ? { sourceStart: range.start, sourceEnd: range.end } : {}),
+        pageIndex: page.index,
+      });
+    }
+  }
+  return out;
+}
+
 /** A `dropCap` warning for the first placed part of each paragraph (by
  *  content index) whose drop cap could not be set as configured (#623). */
 export function dropCapWarnings(
@@ -1170,6 +1201,12 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
     }
     case 'pictureBelowPrintSize':
       text = `The picture "${w.resourceId}" is set at ${Math.round(w.scale * 100)} % of its print size: its column is ${w.widthPx} px wide, the picture ${w.printWidthPx} px at its resolution, the text block ${w.pageWidthPx} px. A picture in the flow is never wider than its column, and the default page has two. Span the page (placement.span: 'page'), set the page in one column (layout.layoutType: 'single'), or give the picture a higher resolution if this size is the one you want`;
+      break;
+    case 'emptyCaption':
+      text = `The resource "${w.resourceId}" has no caption, so its caption line prints "${w.label}" alone — write its caption, or leave it as a numbered label if that is meant`;
+      break;
+    case 'resourceMoved':
+      text = `The resource "${w.resourceId}" set in the text is too tall for the room left in its column and moved on to the next, leaving ${w.emptyMm} mm of the column empty — make it smaller, move its ::resource line, or float it (placement.position: 'auto')`;
       break;
     case 'floatShrunk':
       text = w.overflowPx !== undefined
