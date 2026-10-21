@@ -788,7 +788,8 @@ list deliberate deviations.
 - Arabic faces: `fonts.py subset Amiri-Regular.ttf --out fonts/ --text-from . --ranges latin,punct,arabic`
   (keeps the joining tables and the tatweel); cut static weights of variable
   faces such as Noto Naskh Arabic (playbooks E7).
-- Images: `scripts/images.py prep|join|size`.
+- Images: `scripts/images.py prep|join|size|crop|cutout` (`crop` and
+  `cutout` take a resource id and keep its anchors and contour in place).
 - Print set-up: `inventory.py` reports a source PDF's PDF/X version, output condition and bleed
   with a `suggested_config` (`print`, `page.cutLines`); `render.mjs` prints PREFLIGHT lines for a
   book set up for print (`--preflight` forces them). See configuration.md §21.

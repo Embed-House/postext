@@ -106,6 +106,7 @@ import fitz  # PyMuPDF
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import anchors as anc  # noqa: E402
+import images as imgs  # noqa: E402
 import line_art as la  # noqa: E402
 import postext_md as pmd  # noqa: E402
 import template_dedupe as td  # noqa: E402
@@ -2225,6 +2226,16 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
             pm.save(str(file), jpg_quality=90)
     from PIL import Image
 
+    if not alpha and (background is None or whiteish(background)):
+        # an illustration on white: its outer white is cut out, so it covers no text round it
+        with Image.open(file) as im:
+            cut = imgs.cutout_white(im)
+        if cut is not None:
+            png = file.with_suffix(".png")
+            cut.save(png, optimize=True)
+            if png != file:
+                file.unlink(missing_ok=True)
+            file, alpha = png, True
     if not alpha:
         clipped = round_clip(file, f, rounds or [])
         if clipped is not None:

@@ -472,6 +472,12 @@ What the extraction decides, so you know what to check:
   ground, never redacted (that would take the box's fill too); the frame
   draws the rule. `report.json` notes every cut whose box still crosses a
   box's rule. A cut-out with alpha keeps its overhang.
+- **Illustrations on white** (skill 1.61). A cut standing on white whose
+  border is at least 80 % white has the white joined to its edge made
+  transparent (`images.py cutout` does the same by hand): a PNG with a
+  `contour`, so it covers no text round it and a box's text can run round
+  it. A white plate the art closes stays. To trim a cut afterwards use
+  `images.py crop <resource-id>`, which moves its anchors with it.
 - **Pictures and labels.** Images and clusters of line art are pictures,
   cut at `--dpi` with all text removed. Words on a picture's ink, short
   words on it or just off its edge (a globe's degrees) are its labels:

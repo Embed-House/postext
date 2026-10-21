@@ -766,6 +766,12 @@ move when a crop is tuned).
   sources whose files state their resolution, `layout.bitmapResolution: 'file'`.
 - A multi-part figure sent as separate files: join them side by side
   (`images.py join`).
+- An illustration on white that should let the text run round it:
+  `images.py cutout <resource-id>` makes the white joined to its edge
+  transparent (a white plate inside the art stays) and adds a `contour`.
+  To trim a cut: `images.py crop <resource-id> --left 3mm --bottom 40`
+  (px or mm per side); anchors, `avoid`, `faces`, `safeArea` and contour
+  points move with the crop, so labels stay on their points.
 - Pulling a raster out of the book PDF: `pdf_figures.py image --xref`.
 - Always declare `width` and `height`.
 
