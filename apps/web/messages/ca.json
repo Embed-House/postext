@@ -3925,6 +3925,8 @@
     "calloutStyleLabelJoinedTooltip": "La pestanya i la caixa formen un sol contorn: un emplenament, la vora envolta la pestanya i hi ha corbes còncaves on s'uneixen. Una pestanya unida es recolza a la vora, així que no sobresurt per sobre.",
     "calloutStyleLabelFillet": "Radi de l'acord",
     "calloutStyleLabelFilletTooltip": "Radi de les corbes còncaves on una pestanya unida es troba amb la caixa. Per defecte, el radi de la cantonada de la caixa al costat de la qual és.",
+    "calloutStyleLabelBorderRadius": "Radi de les cantonades de la pestanya",
+    "calloutStyleLabelBorderRadiusTooltip": "Arrodoneix les cantonades pròpies de la pestanya. Una pestanya separada de la caixa és recta per defecte; una pestanya unida només arrodoneix les dues cantonades exteriors, que si no prenen el radi de la cantonada de la caixa on s’arrecera.",
     "calloutStyleLabelPositionBottomRight": "A baix a la dreta",
     "calloutStyleLabelPositionBottomLeft": "A baix a l'esquerra",
     "calloutStyleLabelPositionBottomStart": "A baix, on comença el text",

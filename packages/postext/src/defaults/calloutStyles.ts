@@ -243,6 +243,7 @@ function resolveCalloutStyleConfig(
             },
             joined: partial.label.joined === true,
             ...(partial.label.fillet ? { fillet: partial.label.fillet } : {}),
+            ...(partial.label.borderRadius !== undefined ? { borderRadius: partial.label.borderRadius } : {}),
           },
         }
       : {}),

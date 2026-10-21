@@ -1195,6 +1195,19 @@ export function CalloutStyleCard({
                 onReset={() => resetGroupField('label', 'fillet')}
               />
             )}
+            {/* The tab's own corners (#1102): square apart from the box,
+                the box's corner on a joined tab, unless set. */}
+            <CornerRadiusFields
+              label={labels.calloutStyleLabelBorderRadius}
+              tooltip={labels.calloutStyleLabelBorderRadiusTooltip}
+              value={resolved.label.borderRadius}
+              fallback={(resolved.label.joined ? uniformRadius(resolved.borderRadius) : undefined) ?? { value: 0, unit: 'pt' }}
+              step={0.05}
+              units={SPACING_UNITS}
+              isDefault={groupUnset('label', 'borderRadius')}
+              onReset={() => resetGroupField('label', 'borderRadius')}
+              onChange={(v) => label({ borderRadius: v })}
+            />
             <DimensionInput
               label={labels.calloutStyleLabelHeight}
               value={resolved.label.height}

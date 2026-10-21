@@ -1886,6 +1886,10 @@ decoration["elements"].append(
   also stand at the foot (`bottom-left`, `bottom-right`, `bottom-start`,
   `bottom-end`), joined or not. No side tabs. `pdf_regions.py` writes a card
   and its tab of one colour as one path outline.
+- **Tab corners.** `label.borderRadius` (one length or per corner) rounds the
+  tab itself: a plain tab is square without it; a joined tab rounds its two
+  outer corners with it instead of copying the box corner (the fillets keep
+  `fillet`).
 - **Path element** (`kind: "path"`, every design slot): SVG path data `d` in
   a `viewBox` (default `[1, 1]`: fractions of the box), stretched to the
   element's box (`preserveAspectRatio: "none"`) or fitted (`"meet"`); `fill`,

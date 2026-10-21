@@ -32,7 +32,7 @@
  */
 import { isCornerRadii } from '../design/boxShape';
 import type { ComposedPageFence, ContentBlock } from '../parse/types';
-import type { Dimension, ResolvedCalloutStyleConfig } from '../types';
+import type { CornerRadius, Dimension, ResolvedCalloutStyleConfig } from '../types';
 import { pageIsMirrored, pageIsVertical, type ContentWarning, type FrameFitStep, type FrameOverflowProposal, type ReflowEvent, type VDTBlock, type VDTComposedPage, type VDTDesignRuleBlock, type VDTExclusionContour, type VDTFrame, type VDTPage } from '../vdt';
 import { contourBounds, scaleContourAbout, shiftContour } from '../contour';
 import { frameContour } from '../composed/contour';
@@ -1092,6 +1092,9 @@ function overflowProposals(c: ProposalContext): FrameOverflowProposal[] {
 export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): ResolvedCalloutStyleConfig {
   if (scale === 1) return style;
   const d = (v: Dimension): Dimension => ({ ...v, value: v.value / scale });
+  const radiusAt = (r: CornerRadius): CornerRadius => (isCornerRadii(r)
+    ? Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v ? d(v) : v]))
+    : d(r));
   const p = style.padding;
   return {
     ...style,
@@ -1103,12 +1106,10 @@ export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): 
         ? { sides: Object.fromEntries(Object.entries(style.border.sides).map(([k, v]) => [k, { ...v, width: d(v.width) }])) as NonNullable<ResolvedCalloutStyleConfig['border']['sides']> }
         : {}),
     },
-    borderRadius: isCornerRadii(style.borderRadius)
-      ? Object.fromEntries(Object.entries(style.borderRadius).map(([k, v]) => [k, v ? d(v) : v]))
-      : d(style.borderRadius),
+    borderRadius: radiusAt(style.borderRadius),
     stripe: { ...style.stripe, width: d(style.stripe.width) },
     ...(style.label
-      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) }, ...(style.label.fillet ? { fillet: d(style.label.fillet) } : {}) } }
+      ? { label: { ...style.label, height: d(style.label.height), paddingX: d(style.label.paddingX), offset: d(style.label.offset), inset: d(style.label.inset), rule: { ...style.label.rule, width: d(style.label.rule.width) }, ...(style.label.fillet ? { fillet: d(style.label.fillet) } : {}), ...(style.label.borderRadius !== undefined ? { borderRadius: radiusAt(style.label.borderRadius) } : {}) } }
       : {}),
   };
 }

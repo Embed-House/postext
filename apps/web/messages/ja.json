@@ -3925,6 +3925,8 @@
     "calloutStyleLabelJoinedTooltip": "タブとボックスを 1 つの輪郭にします。塗りは 1 つ、枠線がタブを回り込み、接する所はへこんだ曲線になります。つなげたタブは縁の上に立つので、縁より上にははみ出しません。",
     "calloutStyleLabelFillet": "へこみの半径",
     "calloutStyleLabelFilletTooltip": "つなげたタブがボックスと接する所のへこんだ曲線の半径。既定は、タブが寄り添うボックスの角の半径です。",
+    "calloutStyleLabelBorderRadius": "タブの角の半径",
+    "calloutStyleLabelBorderRadiusTooltip": "タブそのものの角を丸めます。ボックスから離れたタブは既定で角が直角です。つなげたタブは外側の二つの角だけを丸め、指定がなければ寄り添うボックスの角と同じ半径になります。",
     "calloutStyleLabelPositionBottomRight": "右下",
     "calloutStyleLabelPositionBottomLeft": "左下",
     "calloutStyleLabelPositionBottomStart": "下、文字の始まる側",

@@ -2097,6 +2097,8 @@ Decoration elements (≥ 1.48, besides text, image, rule, box):
 Callout styles as frame dress (≥ 1.48): borderRadius per corner as above, border.sides per side, label.joined +
   label.fillet (one outline with the box; offset 0), label.position 'bottom-left'|'bottom-right'|'bottom-start'|
   'bottom-end', label.icon { kind: 'glyph', glyph, fontFamily?, fontWeight?, scale? (1), color?, placement?, gap? }
+  label.borderRadius (#1102): CornerRadius of the tab itself. Plain tab: square unless set. Joined tab: its two
+  outer corners (topLeft/topRight at the head, bottomLeft/bottomRight at the foot), default the box corner; fillets keep fillet.
 
 ResourceAnchor (≥ 1.48): labelAt?: { x, y } (fractions: the label away from its point), leader?: boolean | LeaderStyle
 LeaderStyle  { color? (the label's), opacity? (≥ 1.49), width? (0.75pt), dash?, startCap? ('none'), endCap? ('dot'),

@@ -3312,6 +3312,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     calloutStyleLabelJoinedTooltip: t("calloutStyleLabelJoinedTooltip"),
     calloutStyleLabelFillet: t("calloutStyleLabelFillet"),
     calloutStyleLabelFilletTooltip: t("calloutStyleLabelFilletTooltip"),
+    calloutStyleLabelBorderRadius: t("calloutStyleLabelBorderRadius"),
+    calloutStyleLabelBorderRadiusTooltip: t("calloutStyleLabelBorderRadiusTooltip"),
     calloutStyleLabelPositionBottomRight: t("calloutStyleLabelPositionBottomRight"),
     calloutStyleLabelPositionBottomLeft: t("calloutStyleLabelPositionBottomLeft"),
     calloutStyleLabelPositionBottomStart: t("calloutStyleLabelPositionBottomStart"),

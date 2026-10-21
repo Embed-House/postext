@@ -3925,6 +3925,8 @@
     "calloutStyleLabelJoinedTooltip": "标签与方框构成一个整体轮廓：同一填充，边框绕过标签，相接处为内凹圆角。相连的标签立在边上，不会高出边缘。",
     "calloutStyleLabelFillet": "内凹圆角半径",
     "calloutStyleLabelFilletTooltip": "相连标签与方框相接处内凹曲线的半径。默认：标签所靠的方框角的半径。",
+    "calloutStyleLabelBorderRadius": "标签圆角半径",
+    "calloutStyleLabelBorderRadiusTooltip": "为标签本身的角加圆角。与方框分开的标签默认是直角；相连的标签只把两个外角做成圆角，未设置时沿用它所靠的方框角的半径。",
     "calloutStyleLabelPositionBottomRight": "右下",
     "calloutStyleLabelPositionBottomLeft": "左下",
     "calloutStyleLabelPositionBottomStart": "底部，文字起始一侧",

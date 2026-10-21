@@ -3533,6 +3533,8 @@ export interface SandboxLabels {
   calloutStyleLabelJoinedTooltip: string;
   calloutStyleLabelFillet: string;
   calloutStyleLabelFilletTooltip: string;
+  calloutStyleLabelBorderRadius: string;
+  calloutStyleLabelBorderRadiusTooltip: string;
   calloutStyleLabelPositionBottomRight: string;
   calloutStyleLabelPositionBottomLeft: string;
   calloutStyleLabelPositionBottomStart: string;

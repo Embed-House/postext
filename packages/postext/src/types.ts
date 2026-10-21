@@ -3408,6 +3408,13 @@ export interface CalloutLabelConfig {
   /** The radius of the concave fillets of a joined tab. Default: the
    *  radius of the box's corner the tab hugs. */
   fillet?: Dimension;
+  /** The tab's own corners (#1102): one radius, or one per corner, on the
+   *  sheet's corners as the box's `borderRadius`. A tab apart from the box
+   *  rounds the corners it names (square by default); a joined tab rounds
+   *  its two outer corners (`topLeft` / `topRight` for a tab at the head,
+   *  `bottomLeft` / `bottomRight` at the foot), which otherwise copy the
+   *  box's corner it hugs. The fillets keep their own radius. */
+  borderRadius?: CornerRadius;
 }
 
 /** Vertical rule drawn between a callout marker and its box. */
@@ -3844,6 +3851,8 @@ export interface ResolvedCalloutStyleConfig {
     joined: boolean;
     /** Absent: the radius of the box's corner the tab hugs. */
     fillet?: Dimension;
+    /** Absent: a square tab, or a joined one with the box's corner. */
+    borderRadius?: CornerRadius;
   };
   columnGap: Dimension;
   marker: {

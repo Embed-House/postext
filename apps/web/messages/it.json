@@ -3926,6 +3926,8 @@
     "calloutStyleLabelJoinedTooltip": "La linguetta e il riquadro sono un solo contorno: un riempimento, il bordo che gira attorno alla linguetta, curve concave dove si incontrano. Una linguetta unita poggia sul bordo, quindi non sporge sopra.",
     "calloutStyleLabelFillet": "Raggio del raccordo",
     "calloutStyleLabelFilletTooltip": "Raggio delle curve concave dove una linguetta unita incontra il riquadro. Predefinito: il raggio dell'angolo del riquadro accanto a cui sta.",
+    "calloutStyleLabelBorderRadius": "Raggio degli angoli della linguetta",
+    "calloutStyleLabelBorderRadiusTooltip": "Arrotonda gli angoli propri della linguetta. Una linguetta separata dal riquadro ha angoli retti per impostazione predefinita; una linguetta unita arrotonda solo i due angoli esterni, che altrimenti prendono il raggio dell’angolo del riquadro a cui si appoggia.",
     "calloutStyleLabelPositionBottomRight": "In basso a destra",
     "calloutStyleLabelPositionBottomLeft": "In basso a sinistra",
     "calloutStyleLabelPositionBottomStart": "In basso, dove inizia il testo",

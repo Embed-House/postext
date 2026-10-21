@@ -2154,12 +2154,18 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       // with the side goes on.
       const cornerIndex = labelAtFoot ? (onRight ? 2 : 3) : (onRight ? 1 : 0);
       const tabRadius = radii[cornerIndex]!;
+      // A radius of the tab's own (#1102) rounds its outer corners, the
+      // left one and the right one; the fillets keep the box's corner.
+      const own = lb.borderRadius !== undefined ? cornerRadiiPx(lb.borderRadius, px) : undefined;
+      const outer: number | [number, number] = own
+        ? (labelAtFoot ? [own[3], own[2]] : [own[0], own[1]])
+        : tabRadius;
       const outline = boxOutline(createBoundingBox(0, 0, boxWidth, boxHeight), radii, {
         edge: labelAtFoot ? 'bottom' : 'top',
         x0: tabX,
         x1: tabX + tabW,
         height: tabH,
-        radius: tabRadius,
+        radius: outer,
         fillet: lb.fillet ? Math.max(0, px(lb.fillet)) : tabRadius,
       });
       const whole = borderOn && px(style.border.width) > 0 ? { color: style.border.color.hex, widthPx: px(style.border.width) } : null;
@@ -2173,10 +2179,17 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         else delete stripeBlock.clip;
       }
     } else {
+      // A tab apart from the box is square unless it sets corners of its
+      // own (#1102): a box style with radii, which every backend draws
+      // through `boxOutline` (one radius on every corner stays a plain
+      // rounded box).
+      const tabRadii = lb.borderRadius !== undefined ? cornerRadiiPx(lb.borderRadius, px) : undefined;
       overlayBlocks.push({
         kind: 'box',
         bbox: createBoundingBox(tabX, tabY, tabW, tabH),
-        box: { backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0 },
+        box: tabRadii && tabRadii.some((r) => r > 0)
+          ? normalizeBoxStyle({ backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0, borderRadiiPx: tabRadii })
+          : { backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0 },
       });
     }
     // The words follow the picture: to its right in a left-to-right box,

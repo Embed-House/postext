@@ -3926,6 +3926,8 @@
     "calloutStyleLabelJoinedTooltip": "Reiter und Kasten bilden einen Umriss: eine Füllung, der Rahmen läuft um den Reiter, konkave Rundungen, wo sie sich treffen. Ein verbundener Reiter steht auf der Kante und ragt daher nicht darüber hinaus.",
     "calloutStyleLabelFillet": "Radius der Hohlkehle",
     "calloutStyleLabelFilletTooltip": "Radius der konkaven Rundungen, wo ein verbundener Reiter auf den Kasten trifft. Standard: der Radius der Kastenecke, an der er liegt.",
+    "calloutStyleLabelBorderRadius": "Eckenradius des Reiters",
+    "calloutStyleLabelBorderRadiusTooltip": "Rundet die eigenen Ecken des Reiters. Ein Reiter abseits des Kastens ist standardmäßig eckig; ein verbundener Reiter rundet nur seine beiden äußeren Ecken, die sonst den Radius der Kastenecke übernehmen, an der er sitzt.",
     "calloutStyleLabelPositionBottomRight": "Unten rechts",
     "calloutStyleLabelPositionBottomLeft": "Unten links",
     "calloutStyleLabelPositionBottomStart": "Unten, wo sein Text beginnt",

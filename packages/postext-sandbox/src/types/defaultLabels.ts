@@ -3333,6 +3333,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   calloutStyleLabelJoinedTooltip: "The tab and the box are one outline: one fill, the border running round the tab, concave curves where they meet. A joined tab stands on the edge, so it does not rise above it.",
   calloutStyleLabelFillet: "Fillet radius",
   calloutStyleLabelFilletTooltip: "Radius of the concave curves where a joined tab meets the box. By default, the radius of the box's corner it hugs.",
+  calloutStyleLabelBorderRadius: "Tab corner radius",
+  calloutStyleLabelBorderRadiusTooltip: "Rounds the tab's own corners. A tab apart from the box is square by default; a joined tab rounds only its two outer corners, which otherwise take the radius of the box's corner it hugs.",
   calloutStyleLabelPositionBottomRight: "Bottom right",
   calloutStyleLabelPositionBottomLeft: "Bottom left",
   calloutStyleLabelPositionBottomStart: "Bottom, where its text starts",
