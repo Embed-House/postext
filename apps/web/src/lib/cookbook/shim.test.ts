@@ -2,10 +2,16 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { runCapture, runSandboxOnly } from "../../../scripts/cookbook/capture.ts";
-import { SHIM_PATHS, forcedConfig, importMapTag, localImports, resolveBare, resolveEngine, rewriteBareImports, shimModules } from "../../../scripts/cookbook/shim.ts";
+import os from "node:os";
+import { pathToFileURL } from "node:url";
+import {
+  OWN_WOFF2_SINCE, SHIM_PATHS, WAWOFF2_IMPORTS, WAWOFF2_SHIM, WOFF2_BINDING_URL, forcedConfig, importMap, importMapTag, localImports,
+  releasedVersion, resolveBare, resolveEngine, rewriteBareImports, shimModules, wawoff2Shim,
+} from "../../../scripts/cookbook/shim.ts";
 import { POSTEXT_EPUB_URL, POSTEXT_EPUB_WORKER_URL, POSTEXT_FOLIO_URL, isEngineUrl } from "./detect.ts";
 import { ALLOWED_IMPORTS } from "./lint.ts";
-import { REPO_DIR } from "./paths.ts";
+import { REPO_DIR, WEB_DIR } from "./paths.ts";
+import { compareSemVer } from "./validate.ts";
 
 // The capture page's import map: every module a pen may import has a shim.
 
@@ -186,9 +192,115 @@ describe("the local engine's bare imports (#742)", () => {
 
   it("are no longer the page's business: the import map holds the pen's own imports only", () => {
     const map = JSON.parse(/<script type="importmap">(.+)<\/script>/.exec(importMapTag())![1]!) as { imports: Record<string, string> };
-    expect(map.imports).toEqual(SHIM_PATHS);
+    // The pen's imports, and wawoff2 as esm.sh's postext-pdf before 1.50 imports it (#1093).
+    expect(map.imports).toEqual({ ...SHIM_PATHS, ...Object.fromEntries(WAWOFF2_IMPORTS.map((url) => [url, WAWOFF2_SHIM])) });
     // Left over from #384: postext-pdf loads harfbuzz.wasm with its own binding.
     expect(localImports().harfbuzzjs).toBeUndefined();
     expect(importMapTag()).not.toContain("harfbuzzjs");
   });
+});
+
+// postext-pdf up to 1.49 decodes WOFF2 through esm.sh's wawoff2, whose
+// decoder never answers in a page since esm.sh's `process` polyfill
+// stopped naming a Node version (#1092): a pen run on such a release
+// waited for its PDF until C14 gave up. The capture page's import map
+// sends that module to a shim over the decoder postext-pdf 1.50 ships
+// (#1093), so a recipe keeps its pinned engine and its layout.
+
+/** Every postext-pdf a recipe pins or was captured with, oldest first. */
+function postextPdfVersionsInUse(): string[] {
+  const versions = new Set<string>();
+  for (const slug of fs.readdirSync(path.join(REPO_DIR, "cookbook"))) {
+    const recipe = path.join(REPO_DIR, "cookbook", slug, "recipe.json");
+    if (fs.existsSync(recipe)) {
+      const pinned = (JSON.parse(fs.readFileSync(recipe, "utf-8")) as { engine?: { postextPdf?: string } }).engine?.postextPdf;
+      if (pinned) versions.add(pinned);
+    }
+    const capture = path.join(WEB_DIR, "public", "cookbook", slug, "capture.json");
+    if (fs.existsSync(capture)) {
+      const captured = (JSON.parse(fs.readFileSync(capture, "utf-8")) as { engine?: { postextPdf?: string } }).engine?.postextPdf;
+      if (captured) versions.add(captured);
+    }
+  }
+  return [...versions].sort(compareSemVer);
+}
+
+describe("WOFF2 for a postext-pdf before 1.50 (#1093)", () => {
+  it("maps esm.sh's wawoff2 module, as the browser resolves it from a postext-pdf module, to the shim", () => {
+    const map = importMap();
+    for (const url of WAWOFF2_IMPORTS) expect(map[url]).toBe(WAWOFF2_SHIM);
+    // esm.sh writes the import as a root-relative path; the browser resolves
+    // it with the caret percent-encoded and parses the map's key the same way.
+    const resolved = new URL("/wawoff2@^2.0.1?target=es2022", "https://esm.sh/postext-pdf@1.49.0/es2022/dist/pdf-backend/fonts.mjs").href;
+    expect(WAWOFF2_IMPORTS.map((url) => new URL(url).href)).toContain(resolved);
+  });
+
+  it("serves the shim on every engine, over the binding of the first release that has one", () => {
+    for (const spec of ["npm", "npm@1.34.0", "npm@1.49.0", "local"]) {
+      const shim = shimModules(resolveEngine(spec))[WAWOFF2_SHIM];
+      expect(shim, spec).toBe(wawoff2Shim());
+    }
+    expect(wawoff2Shim()).toContain(`import instantiateWoff2 from '${WOFF2_BINDING_URL}'`);
+    expect(WOFF2_BINDING_URL).toBe(`https://esm.sh/postext-pdf@${OWN_WOFF2_SINCE}/dist/woff2Binding.js`);
+    // The released postext-pdf decodes WOFF2 itself: a default run never needs the shim.
+    expect(compareSemVer(releasedVersion("postext-pdf"), OWN_WOFF2_SINCE)).toBeGreaterThanOrEqual(0);
+  });
+
+  it("is needed: recipes pin or were captured with postext-pdf before 1.50", () => {
+    const older = postextPdfVersionsInUse().filter((v) => compareSemVer(v, OWN_WOFF2_SINCE) < 0);
+    expect(older.length).toBeGreaterThan(0);
+  });
+
+  // The shim's module, run as postext-pdf up to 1.49 calls wawoff2, over the
+  // binding the workspace builds (the same file 1.50 published).
+  const binding = path.join(REPO_DIR, "packages", "postext-pdf", "dist", "woff2Binding.js");
+  it.runIf(fs.existsSync(binding))("decodes a WOFF2 face as wawoff2's decompress did", async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "cb-wawoff2-"));
+    try {
+      const file = path.join(dir, "wawoff2.mjs");
+      fs.writeFileSync(file, wawoff2Shim(pathToFileURL(binding).href));
+      const mod = (await import(/* @vite-ignore */ pathToFileURL(file).href)) as { decompress: (b: Uint8Array) => Promise<Uint8Array> };
+      const woff2 = new Uint8Array(fs.readFileSync(path.join(WEB_DIR, "public", "fonts", "inter-bold.woff2")));
+      expect(String.fromCharCode(...woff2.slice(0, 4))).toBe("wOF2");
+      const sfnt = await mod.decompress(woff2);
+      expect([[0, 1, 0, 0].join(), "79,84,84,79"]).toContain(Array.from(sfnt.slice(0, 4)).join());
+      expect(sfnt.length).toBeGreaterThan(woff2.length);
+      await expect(mod.decompress(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(/WOFF2 decoder/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }, 30_000);
+
+  // On the network (COOKBOOK_ESM_CHECK=1): every postext-pdf in use, as
+  // esm.sh builds it for the capture page, imports wawoff2 only at a URL
+  // the import map sends to the shim. A new esm.sh build that imported it
+  // otherwise would hang the PDFs again; this says so before a capture does.
+  it.runIf(process.env.COOKBOOK_ESM_CHECK === "1")("covers every wawoff2 import of esm.sh's builds of the versions in use", async () => {
+    const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
+    const IMPORT = /\bfrom\s*["']([^"']+)["']|\bimport\s*["']([^"']+)["']|\bimport\(\s*["']([^"']+)["']\s*\)/g;
+    const mapped = WAWOFF2_IMPORTS.map((url) => new URL(url).href);
+    const older = postextPdfVersionsInUse().filter((v) => compareSemVer(v, OWN_WOFF2_SINCE) < 0);
+    for (const v of older) {
+      const seen = new Set<string>();
+      const found: string[] = [];
+      const queue = [`https://esm.sh/postext-pdf@${v}?deps=postext@${v}`];
+      while (queue.length) {
+        const url = queue.shift()!;
+        if (seen.has(url)) continue;
+        seen.add(url);
+        if (url.includes("wawoff2")) {
+          found.push(url);
+          continue;
+        }
+        if (!url.includes("postext-pdf")) continue;
+        const text = await (await fetch(url, { headers: { "user-agent": UA } })).text();
+        for (const m of text.matchAll(IMPORT)) {
+          const specifier = m[1] ?? m[2] ?? m[3]!;
+          if (/^[./]|^https?:/.test(specifier)) queue.push(new URL(specifier, url).href);
+        }
+      }
+      expect(found.length, v).toBeGreaterThan(0);
+      for (const url of found) expect(mapped, `${v}: ${url}`).toContain(url);
+    }
+  }, 600_000);
 });

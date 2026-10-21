@@ -818,6 +818,14 @@ engine's own renderer and writes the files atomically. A failure writes nothing 
 browser window of its own, and every step of the run is named: one that never answers fails
 within the recipe's timeout as `harness step <name> of <slug> <lang>`.
 
+**WOFF2 on an older engine.** postext-pdf up to 1.49 decodes WOFF2 through esm.sh's wawoff2,
+whose decoder no longer answers in a page (#1092). The import map also sends that module to a
+shim over the decoder postext-pdf 1.50 ships (`WAWOFF2_IMPORTS` in `scripts/cookbook/shim.ts`,
+#1093), so `--engine npm@x.y.z` and `--sandbox-only` (which runs each recipe on the release its
+capture records) finish their PDFs on any release a recipe uses. `COOKBOOK_ESM_CHECK=1 npx vitest
+run src/lib/cookbook/shim.test.ts` asks esm.sh how each of those releases imports wawoff2 and
+fails when the map misses one.
+
 **The Chrome of a capture.** The pages are what a reader's browser lays out, so the capture and
 the Sandbox check run on a current Chrome: `COOKBOOK_CHROME` when set, else the newest Chrome for
 Testing in Puppeteer's cache when it is 152 or newer, else the Chrome installed on the machine
