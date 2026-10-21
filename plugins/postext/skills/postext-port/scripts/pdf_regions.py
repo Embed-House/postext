@@ -2192,6 +2192,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             borders.append({"shape": f.shape, "tab": f.tab, "box": f.box, "held": held})
 
     frames += split_captions(frames)
+    beside_captions(frames)
     # a box's measure is its box unless something stands in it beside the words
     for f in frames:
         if f.kind != "box" or not f.lines or f.shape is None:
@@ -2289,6 +2290,11 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             cap = getattr(f, "resource_caption", None)
             if cap:
                 f.resource["caption"] = para_markdown(cap, ctx["mark_ids"], opts.highlights)
+                side = getattr(f, "caption_side", None)
+                if side:
+                    # beside the picture, inside the frame (the cut is made, the frame now holds both)
+                    pl, f.box = beside_placement(f.box, f.caption_box, side)
+                    f.resource["placement"] = {**(f.resource.get("placement") or {}), **pl}
             res.append(f.resource)
             frame_of = {id(g.shape): g.name for g in ordered if g.shape is not None}
             laid_over = drawn_over(f, ordered)
@@ -2381,6 +2387,61 @@ def attached_caption(pic: Any, col: list, body: dict) -> bool:
     gap = min(l.y0 for l in col) - pic.box[3]
     width = max(l.x1 for l in col) - min(l.x0 for l in col)
     return look["size"] <= 0.92 * body["size"] and gap <= 3.0 and width <= (pic.box[2] - pic.box[0]) + 2.0
+
+
+def beside_caption(pic: Any, lines: list, body: dict, gap: float = 3.0) -> tuple[str, list] | None:
+    """A small caption set beside its picture (#1114): lines of the box to
+    its left or right, no more than `gap` mm from its side, the column's top
+    level with the picture's top or its foot level with the picture's foot
+    (within `gap`), no taller than the picture and a line, and set smaller
+    than the box's text. Returns the side the caption stands on and its
+    lines, else None."""
+    px0, py0, px1, py1 = pic.box
+    for side in ("right", "left"):
+        col = [l for l in lines if py0 - gap <= l.y0 and l.y1 <= py1 + gap and
+               ((side == "right" and 0 <= l.x0 - px1 <= gap) or (side == "left" and 0 <= px0 - l.x1 <= gap))]
+        if not col:
+            continue
+        col.sort(key=lambda l: l.base)
+        top, foot = min(l.y0 for l in col), max(l.y1 for l in col)
+        line = max(l.size_mm for l in col) * 1.25
+        if not (abs(top - py0) <= gap or abs(foot - py1) <= gap) or foot - top > (py1 - py0) + line:
+            continue
+        if dominant(col)["size"] > 0.92 * body["size"]:
+            continue
+        return side, col
+    return None
+
+
+def beside_captions(frames: list) -> None:
+    """Small captions beside the pictures of a box become the pictures'
+    resource captions (`resource_caption`), with the side they stand on
+    (`caption_side`): the picture's resource is set `captionSide: "inside"`
+    and its frame takes the caption's room. The box keeps its other lines."""
+    for c in [f for f in frames if f.kind == "box" and f.lines]:
+        pics = [g for g in frames if g.parent is c and g.kind == "picture" and getattr(g, "resource_caption", None) is None]
+        for p in pics:
+            rest = c.lines
+            found = beside_caption(p, rest, dominant(rest))
+            if found is None:
+                continue
+            side, col = found
+            others = [l for l in rest if l not in col]
+            if not others or dominant(others)["size"] < dominant(col)["size"] + 0.25:
+                continue      # the box has no text of its own set larger: no caption to tell apart
+            p.resource_caption, p.caption_side = col, side
+            p.caption_box = set_box(col, None)
+            c.lines = others
+
+
+def beside_placement(pic_box: tuple, cap_box: tuple, side: str) -> tuple[dict, tuple]:
+    """The resource placement of a picture with its caption beside it inside
+    its own slot (`captionSide: "inside"`, postext 1.52), and the frame's box,
+    which now holds both: the picture takes its share of the width at its
+    side, the caption the rest after the book's gutter."""
+    box = (min(pic_box[0], cap_box[0]), min(pic_box[1], cap_box[1]), max(pic_box[2], cap_box[2]), max(pic_box[3], cap_box[3]))
+    share = round((pic_box[2] - pic_box[0]) / max(0.1, box[2] - box[0]), 3)
+    return {"captionSide": "inside", "width": share, "align": "left" if side == "right" else "right"}, box
 
 
 def split_captions(frames: list, reach: float = 8.0) -> list:
