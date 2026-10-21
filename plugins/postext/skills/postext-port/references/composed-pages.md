@@ -517,8 +517,10 @@ curation, each a template or Markdown change in the generator:
   name runs over them. Anchor them to the head (`left-of`) and let the head be
   as wide as its words.
 - **A box whose words all went to frames of their own** (captions moved out
-  to stand under their pictures) draws nothing, its tab and border with it:
-  leave `:::space{lines=1}` in it.
+  to stand under their pictures) keeps its fence with nothing in it: since
+  postext 1.49.1 an empty fence on a styled frame draws its box and its tab at
+  the frame's size (#1084). Before, it drew nothing, and a port left
+  `:::space{lines=1}` in it.
 - **Overlaps the source prints** (pills on photos, notes on an illustrated
   band, cut-outs past a box's edge) go to `composed-check.json`, one entry per
   look with its reason; that book needed 21, and three real overlaps fixed in
