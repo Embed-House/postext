@@ -224,8 +224,22 @@ class Ctx {
     const v = pickVariant(family, m[2] === 'bold' ? 700 : m[2] ? Number(m[2]) : 400, m[1] ? 'italic' : 'normal');
     if (!v) return { width: s.length * Number(m[3]) * 0.5 };
     const { face } = faces.get(v.file);
-    return { width: (face.layout(s).advanceWidth / face.unitsPerEm) * Number(m[3]) };
+    return { width: (advanceOf(face, s) / face.unitsPerEm) * Number(m[3]) };
   }
+}
+// A face whose glyf data is cut short for one glyph (a shipped Saira has an
+// empty no-break space) makes fontkit throw while it reads that glyph's box:
+// measure such a string a character at a time, the bad glyph by its hmtx
+// advance (what a browser uses), instead of stopping the whole layout.
+function advanceOf(face, s) {
+  try { return face.layout(s).advanceWidth; } catch { /* a glyph fontkit cannot read */ }
+  let w = 0;
+  for (const ch of s) {
+    try { w += face.layout(ch).advanceWidth; continue; } catch { /* below */ }
+    const g = face.glyphForCodePoint(ch.codePointAt(0));
+    w += face.hmtx?.metrics?.get?.(g.id)?.advance ?? face.unitsPerEm / 4;
+  }
+  return w;
 }
 globalThis.OffscreenCanvas = class { getContext() { return new Ctx(); } };
 
