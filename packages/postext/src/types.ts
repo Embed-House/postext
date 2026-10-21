@@ -6232,6 +6232,28 @@ export interface ResolvedContrastReversedTextConfig {
   lightWeight: number;
 }
 
+/** A text and ground pair the contrast check accepts (#1124): the
+ *  colours a publisher's palette sets on purpose, which a port cannot
+ *  change. Text that matches is still reported, as accepted with its
+ *  reason, and no longer counts as a warning. An entry matches the text
+ *  whose every field it gives matches; one that gives none of `fg`, `bg`
+ *  and `style` matches nothing. */
+export interface ContrastAllowEntry {
+  /** The text colour (`#rrggbb`, or `#rgb`), as the configuration writes
+   *  it or as it is painted (a translucent colour blended with its
+   *  ground). */
+  fg?: string;
+  /** The ground the text is set on, the same way. */
+  bg?: string;
+  /** A style the text is set in: a box style (`calloutStyles[].id`, the
+   *  `style` of a composed page's frame too), a paragraph style, a heading
+   *  style, a chip style or a figure label style. Every colour pair of the
+   *  text set in it is accepted, unless `fg` or `bg` narrow it. */
+  style?: string;
+  /** Why the pair stays: listed beside the accepted finding. */
+  reason: string;
+}
+
 /** The contrast check (`contrastDocument`): the text of the laid-out pages
  *  against the ground it is set on. Layout ignores it. */
 export interface ContrastConfig {
@@ -6242,6 +6264,9 @@ export interface ContrastConfig {
   /** Defaults to `'auto'`. */
   mode?: ContrastMode;
   reversedText?: ContrastReversedTextConfig;
+  /** Pairs the check accepts (#1124), each with its reason. Defaults to
+   *  none. */
+  allow?: ContrastAllowEntry[];
 }
 
 export interface ResolvedContrastConfig {
@@ -6249,6 +6274,9 @@ export interface ResolvedContrastConfig {
   level: ContrastLevel;
   mode: ContrastMode;
   reversedText: ResolvedContrastReversedTextConfig;
+  /** The entries that match something, their colours written
+   *  `#rrggbb` in lower case. */
+  allow: ContrastAllowEntry[];
 }
 
 /** The content check (`checks.contentInConfig`, #849): a design text

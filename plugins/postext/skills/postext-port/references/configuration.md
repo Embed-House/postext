@@ -121,7 +121,7 @@ Conversion at `page.dpi` (default 300):
 | `canvasViewer` | `{ pageGap?, rowGap? }` | `24` / `24` | §21 Sandbox Canvas page spacing (≥ 1.43); `pageGap: 0` for art across the spine |
 | `pdfGeneration` | PdfGenerationConfig | §21 | outlines, tagging, colour space |
 | `print` | PrintConfig | §21 | PDF/X standard, ICC output profile, black (K-only, overprint, rich black), preflight (≥ 1.22) |
-| `contrast` | ContrastConfig | §21 | contrast check of text on its ground (≥ 1.28): `level` AA/AAA, `mode` auto/screen/print/both, `reversedText` sizes; layout ignores it |
+| `contrast` | ContrastConfig | §21 | contrast check of text on its ground (≥ 1.28): `level` AA/AAA, `mode` auto/screen/print/both, `reversedText` sizes, `allow` accepted pairs (>= 1.52); layout ignores it |
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
@@ -2372,7 +2372,11 @@ as a change. Left out, the file is stamped with the time of the call.
     "minSize": { "value": 8, "unit": "pt" },       // reversed text under this is reported
     "minFineSize": { "value": 12, "unit": "pt" },  // the same for italics and light weights
     "lightWeight": 300                             // a weight at or under this counts as light
-  }
+  },
+  "allow": [                     // (>= 1.52, #1124) the source's own pairs, accepted with a reason
+    { "fg": "#b7820f", "bg": "#ffffff", "reason": "publisher's ochre" },   // by colours (as written or painted)
+    { "style": "margin-note", "reason": "source sets margin notes in light grey" }  // by style id: box (or frame
+  ]                              // style), paragraph, heading, chip or label style; fg/bg narrow a style entry
 }
 ```
 - Screen = WCAG 2 ratio of the sRGB colours. Print = the same formula over the colours as separated through
@@ -2388,6 +2392,9 @@ as a change. Left out, the file is stamped with the time of the call.
   warning (exit 3 only with `--strict`). With `--preflight` a `mode: 'auto'` book is checked for print too.
   The Sandbox lists them in Checks.
 - A port keeps the source's colours. Report a low ratio the source has as a finding; do not recolour.
+  When the source sets the pair on purpose (its palette), add a `contrast.allow` entry with the reason
+  instead of turning the check off: the pair stays listed as accepted (`accepted` on the finding, a note
+  in `postext check`, its own group in the Sandbox Checks) and no longer counts as a warning.
   Turn the check off (`enabled: false`) only when the user asks.
 
 `htmlViewer`: `{ maxCharsPerLine = 70, columnGap = 50 (CSS px number), optimalLineBreaking = false, overrides?: Omit<PostextConfig,'htmlViewer'> }`.

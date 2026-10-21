@@ -791,6 +791,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -811,10 +812,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>O texto vazado abaixo deste corpo é informado.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>O mesmo para itálicos e pesos finos, de traço mais delgado.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Um peso igual ou menor que este conta como fino.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Pares de cores que a verificação aceita, cada um com seu <code>reason</code>: pela cor do texto (<code>fg</code>) e a do fundo (<code>bg</code>), pelo <code>style</code> em que o texto está, ou por ambos. Veja [Pares aceitos](#pares-aceitos).</td></tr>
   </tbody>
 </table>
 
 Um `level` ou um `mode` escrito de qualquer outra forma é lido como o padrão e gera um aviso de valor de configuração desconhecido (veja [Avisos de configuração](#avisos-de-configuração)).
+
+### Pares aceitos
+
+Uma adaptação mantém a paleta do original, e alguns dos seus pares ficam abaixo do limite: um tom claro atrás do texto de uma caixa, uma cor da marca num cabeço. `allow` os aceita sem desligar a verificação (desde o postext 1.52). Uma entrada nomeia a cor do texto `fg` e a do fundo `bg` (em hexadecimal, como a configuração as escreve ou como são pintadas), ou um `style`: o id de um estilo de caixa (`calloutStyles`, ou o `style` de um quadro de página composta), de parágrafo, de título, de etiqueta em linha ou de rótulo de figura. Todos os campos que a entrada dá precisam coincidir, então `{ style: 'note', fg: '#7a8a99' }` aceita esse cinza só dentro das caixas `note`. Uma entrada que não dá nenhum dos três não coincide com nada.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: 'O ocre da editora para os cabeços' },
+    { style: 'nota-margem', reason: 'O original compõe as notas de margem num cinza claro' },
+  ],
+}
+```
+
+Um par aceito continua sendo apontado: cada achado que coincide traz `accepted` (o `reason` da entrada, com seu `fg`, seu `bg` e seu `style`), e os achados aceitos vêm depois dos outros. O Sandbox os lista em Verificações, sob Pares de contraste aceitos, com o motivo, e não os conta; `postext check` os imprime como notas, que não fazem `--strict` falhar. As mesmas cores fora do que a entrada nomeia continuam sendo um aviso.
 
 ### Limiares
 

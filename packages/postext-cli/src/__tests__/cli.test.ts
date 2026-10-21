@@ -352,6 +352,30 @@ describe('postext cli', () => {
     expect(notes[0]!.data).toEqual({ path: 'pageTemplates[0].decoration.elements[1].unless', condition: 'unless', attribute: 'appendix' });
   }, 60_000);
 
+  // #1124: a colour pair `contrast.allow` accepts is listed as accepted,
+  // as a note, and is no warning for --strict.
+  it('check lists an allowed contrast pair as accepted', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'ch'));
+    const ochre = { hex: '#b7820f', model: 'hex' };
+    const write = (allow: unknown[] | undefined) => writeFileSync(join(dir, 'config.json'), JSON.stringify({ bodyText: { color: ochre }, ...(allow ? { contrast: { allow } } : {}) }));
+    writeFileSync(join(dir, 'ch', '01.md'), 'Ochre text on paper.\n');
+    type Row = { kind: string; severity: string; message: string; data?: Record<string, unknown> };
+    const contrastRows = () => {
+      const r = run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir);
+      return (JSON.parse(r.stdout).warnings as Row[]).filter((x) => x.kind === 'contrast.lowContrast');
+    };
+    write(undefined);
+    expect(contrastRows().map((x) => x.severity)).toEqual(['warning']);
+    write([{ fg: '#b7820f', bg: '#ffffff', reason: 'The publisher\'s ochre' }]);
+    const rows = contrastRows();
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.severity).toBe('info');
+    expect(rows[0]!.message).toMatch(/^accepted \(The publisher's ochre\): #b7820f on #ffffff/);
+    expect(rows[0]!.data).toEqual({ accepted: { reason: 'The publisher\'s ochre', fg: '#b7820f', bg: '#ffffff' } });
+    expect(run(['check', 'ch', '--config', 'config.json', '--strict', '--offline', '-q'], dir).code).toBe(0);
+  }, 60_000);
+
   // #858: a frame whose text still does not fit names the steps tried and
   // the proposals, in words and, with their values, in --json.
   it('check prints frameOverflow with its proposals', () => {

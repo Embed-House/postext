@@ -7,6 +7,12 @@ export type WarningCategory = 'fonts' | 'figures' | 'markup' | 'design' | 'contr
 
 export const WARNING_CATEGORY_ORDER: readonly WarningCategory[] = ['fonts', 'figures', 'markup', 'design', 'contrast', 'typesetting', 'preflight', 'system'];
 
+/** A contrast finding `contrast.allow` accepts (#1124): the Checks panel
+ *  lists it apart and does not count it. */
+export function isAcceptedWarning(w: { payload: WarningPayload }): boolean {
+  return w.payload.kind === 'contrast' && w.payload.check.accepted !== undefined;
+}
+
 export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
   switch (kind) {
     case 'preflight':

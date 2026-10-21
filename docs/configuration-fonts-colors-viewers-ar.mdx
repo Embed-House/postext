@@ -791,6 +791,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -811,10 +812,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>يصدر تحذير عن النص المفرَّغ الأصغر من هذا الحجم.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>الأمر نفسه للمائل والأوزان الرفيعة، وخطوطها أدقّ.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>الوزن المساوي لهذا أو الأقل منه يُعدّ رفيعًا.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>أزواج الألوان التي يقبلها الفحص، لكل منها <code>reason</code>: بلون النص (<code>fg</code>) ولون الخلفية (<code>bg</code>)، أو بالنمط <code>style</code> الذي يُنضَّد به النص، أو بهما معًا. انظر [الأزواج المقبولة](#الأزواج-المقبولة).</td></tr>
   </tbody>
 </table>
 
 وقيمة `level` أو `mode` المكتوبة بأي صيغة أخرى يستعمل Postext مكانها القيمة الافتراضية، ويُصدر عنها تحذير «قيمة إعداد غير معروفة» (انظر [تحذيرات الإعدادات](#تحذيرات-الإعدادات)).
+
+### الأزواج المقبولة
+
+يحافظ النقل على لوحة ألوان الأصل، وبعض أزواجها يقع تحت العتبة: تدرّج فاتح خلف نص صندوق، أو لون العلامة في ترويسة الصفحة. يقبلها `allow` دون إيقاف الفحص (منذ postext 1.52). يسمّي كل بند لون النص `fg` ولون الخلفية `bg` (بالنظام السداسي العشري، كما تكتبهما الإعدادات أو كما يُرسمان)، أو نمطًا `style`: معرّف نمط صندوق (`calloutStyles`، أو `style` إطار في صفحة مركّبة)، أو نمط فقرة، أو نمط عنوان، أو نمط شارة، أو نمط وسم على شكل. يجب أن تتطابق كل الحقول التي يذكرها البند، فيقبل `{ style: 'note', fg: '#7a8a99' }` هذا الرمادي داخل صناديق `note` وحدها. والبند الذي لا يذكر أيًّا من الثلاثة لا يطابق شيئًا.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: 'المغرة التي تستعملها دار النشر في الترويسات' },
+    { style: 'margin-note', reason: 'ينضّد الأصل حواشيه الجانبية برمادي فاتح' },
+  ],
+}
+```
+
+يبقى الزوج المقبول مذكورًا في التقرير: تحمل كل نتيجة تطابقه `accepted` (سبب البند `reason` مع `fg` و`bg` و`style`)، وتأتي النتائج المقبولة بعد غيرها. يعرضها Sandbox في الفحوص تحت «أزواج التباين المقبولة» مع السبب، ولا يعدّها؛ ويطبعها `postext check` ملاحظاتٍ لا يفشل بسببها `--strict`. أما الألوان نفسها خارج ما يسمّيه البند فتبقى تحذيرًا.
 
 ### العتبات
 

@@ -791,6 +791,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -811,10 +812,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>Reversed text under this size is reported.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>The same for italics and light weights, whose strokes are thinner.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>A weight at or under this one counts as light.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Colour pairs the check accepts, each with its <code>reason</code>: by the text colour (<code>fg</code>) and the ground (<code>bg</code>), by the <code>style</code> the text is set in, or both. See [Accepted pairs](#accepted-pairs).</td></tr>
   </tbody>
 </table>
 
 A `level` or a `mode` written any other way reads as the default and is reported as an unknown setting value (see [Configuration warnings](#configuration-warnings)).
+
+### Accepted pairs
+
+A port keeps the palette of its source, and some of its pairs fall under the threshold: a pale tint behind a box's text, a brand colour in a running head. `allow` accepts them without turning the check off (since postext 1.52). An entry names the text colour `fg` and the ground `bg` (hex, as the configuration writes them or as they are painted), or a `style`: the id of a box style (`calloutStyles`, or the `style` of a composed page's frame), a paragraph style, a heading style, a chip style or a figure label style. Every field an entry gives has to match, so `{ style: 'note', fg: '#7a8a99' }` accepts that grey only inside `note` boxes. An entry that gives none of the three matches nothing.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: "The publisher's ochre for running heads" },
+    { style: 'margin-note', reason: 'The source sets its margin notes in a light grey' },
+  ],
+}
+```
+
+An accepted pair is still reported: each finding it matches carries `accepted` (the entry's `reason`, with its `fg`, `bg` and `style`), and the accepted findings come after the others. The Sandbox lists them under Accepted contrast pairs in Checks, with the reason, and does not count them; `postext check` prints them as notes, which `--strict` does not fail on. The same colours set outside what the entry names stay a warning.
 
 ### Thresholds
 

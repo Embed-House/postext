@@ -7,7 +7,7 @@ import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
 import { Collapsible, EmptyState, IconButton, ListRow, PanelBody, PanelHeader, cn } from '../ui';
 import { warningAnchor } from '../warnings/anchorTarget';
 import { requestAnchorEditor } from '../panels/resources/anchorEditorRequest';
-import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '../warnings/categories';
+import { WARNING_CATEGORY_ORDER, isAcceptedWarning, warningCategory, type WarningCategory } from '../warnings/categories';
 import type { Warning, WarningPayload } from '../warnings/types';
 import type { SandboxLabels } from '../types';
 import { preflightDetail, preflightTitle } from '../print/preflightText';
@@ -1133,7 +1133,11 @@ export function WarningsPanel() {
     requestAnchorEditor(dispatch, target.place ? { resourceId, place: target.anchor } : { resourceId, anchor: target.anchor });
   };
 
-  const listed = composedBook ? warnings.filter((w) => !isComposedCheckKind(w.payload.kind)) : warnings;
+  // The contrast pairs `contrast.allow` accepts (#1124) are listed after
+  // the rest, in a group of their own, and not counted.
+  const accepted = warnings.filter(isAcceptedWarning);
+  const open = accepted.length > 0 ? warnings.filter((w) => !isAcceptedWarning(w)) : warnings;
+  const listed = composedBook ? open.filter((w) => !isComposedCheckKind(w.payload.kind)) : open;
   const groups = WARNING_CATEGORY_ORDER
     .map((category) => ({ category, items: listed.filter((w) => warningCategory(w.payload.kind) === category) }))
     .filter((g) => g.items.length > 0);
@@ -1166,6 +1170,15 @@ export function WarningsPanel() {
               ))}
             </WarningGroup>
           ))
+        )}
+        {accepted.length > 0 && (
+          <WarningGroup title={labels.contrastAcceptedSection} count={accepted.length}>
+            {accepted.map((w) => (
+              <li key={w.id}>
+                <WarningItem warning={w} labels={labels} locale={state.locale} multiChapter={multiChapter} onClick={handleClick} onAnchor={handleAnchor} />
+              </li>
+            ))}
+          </WarningGroup>
         )}
       </PanelBody>
     </div>
