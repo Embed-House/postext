@@ -191,6 +191,36 @@ export function parseFontString(font: string): FontFaceRequest | null {
   return { family, weight, style };
 }
 
+/** Every family a canvas font shorthand lists, in order, unquoted
+ *  (`'700 16px "Lora", "Noto Serif", serif'` → Lora, Noto Serif, serif);
+ *  empty when the string has no `px` size. */
+export function fontStringFamilies(font: string): string[] {
+  const m = familyAfterSize(font.trim());
+  if (!m) return [];
+  const out: string[] = [];
+  let quote: string | undefined;
+  let from = 0;
+  const list = m.family;
+  const push = (end: number): void => {
+    const f = firstFamily(list.slice(from, end));
+    if (f) out.push(f);
+    from = end + 1;
+  };
+  for (let i = 0; i < list.length; i++) {
+    const c = list[i]!;
+    if (quote) {
+      if (c === '\\') i++;
+      else if (c === quote) quote = undefined;
+    } else if (c === '"' || c === "'") {
+      quote = c;
+    } else if (c === ',') {
+      push(i);
+    }
+  }
+  push(list.length);
+  return out;
+}
+
 /** The family of a canvas font shorthand, or null. */
 export function fontStringFamily(font: string): string | null {
   const m = familyAfterSize(font.trim());

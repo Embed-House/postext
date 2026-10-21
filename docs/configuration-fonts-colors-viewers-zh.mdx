@@ -148,6 +148,8 @@ interface PostextConfig {
 
 有了排版结果之后，面板还会列出引擎报告的**排版时使用了后备字体**（`fontFallback`）：页面测量时没有用上的字体，要么根本没有，要么是浏览器借同一字体族的另一个字重或倾斜画出来的。已经作为未知字体族或缺少变体列出的字体族不会重复列出。在第一次排版之前，由针对`document.fonts`的检查代替它。
 
+面板还会列出**字符取自其他字体**（`glyphFallback`）：文本用某字体排、而该字体没有字形的字符，每个字体一条；检查能判断时，还会给出绘制它们的通用字体族（`serif`、`sans-serif`、`monospace`）。
+
 ## 调色板
 
 `PostextConfig`上的`colorPalette`属性让你定义一组可复用的命名颜色，并在配置中任何`ColorValue`里引用它们。它相当于Postext中的CSS自定义属性，或InDesign的色板面板：改一次调色板条目，所有指向它的颜色都会在整个文档中随之更新。
@@ -791,6 +793,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -811,10 +814,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>小于此字号的反白字会被报告。</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>斜体和细体笔画更细，改用此字号。</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>不大于此值的字重视为细体。</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>检查接受的配色，每组附上<code>reason</code>：按文字颜色（<code>fg</code>）和底色（<code>bg</code>），按文字所用的<code>style</code>，或两者兼用。见[接受的配色](#接受的配色)。</td></tr>
   </tbody>
 </table>
 
 `level`或`mode`写成其他值时按默认值读取，并报告为未知设置值（见[配置警告](#配置警告)）。
+
+### 接受的配色
+
+移植会保留原书的色板，其中有些配色低于阈值：框内文字后面的浅色底，书眉上的品牌色。`allow`可以接受它们，而不必关闭检查（自 postext 1.52 起）。每一项写出文字颜色`fg`和底色`bg`（十六进制，按配置中的写法或实际绘制的颜色），或者一个`style`：框样式（`calloutStyles`，或组版页面中版框的`style`）、段落样式、标题样式、行内标签样式或图注标签样式的 id。一项中写出的每个字段都必须吻合，所以`{ style: 'note', fg: '#7a8a99' }`只在`note`框内接受这种灰色。三者都没写的项不匹配任何文字。
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: '出版社书眉用的赭色' },
+    { style: 'margin-note', reason: '原书的边注用浅灰色排' },
+  ],
+}
+```
+
+被接受的配色仍会报告：与之匹配的每条结果都带有`accepted`（该项的`reason`，以及它的`fg`、`bg`和`style`），被接受的结果排在其他结果之后。Sandbox 在“检查”中把它们列在“已接受的对比度配色”下，附上理由，但不计数；`postext check`把它们作为提示输出，`--strict`不会因此失败。在该项所指范围之外使用相同颜色的文字仍是警告。
 
 ### 阈值
 

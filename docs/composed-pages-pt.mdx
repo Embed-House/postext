@@ -356,6 +356,11 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
       <td>Acrescente a linha de fechamento: tantos sinais de dois-pontos quanto a linha de abertura da página, ou <code>:::</code> para um bloco ou uma figura.</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>Um <code>:::</code> solto logo depois de uma diretiva de uma linha (<code>:::toc</code>, <code>:::index</code>, <code>:::pagebreak</code>, <code>:::space</code>…), sem bloco nem caixa abertos para fechar. Essas diretivas não têm linha de fechamento, então a linha é descartada em vez de impressa.</td>
+      <td>Apague o <code>:::</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Uma grade que se repete comporta <code>repeat.max</code> cartões e a página lhe dá mais (veja <a href="#slots-repetidos">Slots repetidos</a>). Um aviso por cartão a mais, no <code>slot="…"</code> dele: o cartão vai para o bloco de fluxo, ou para depois da página.</td>
       <td>Aumente ou retire o <code>max</code> no modelo, ou passe os cartões a mais para outra página.</td>

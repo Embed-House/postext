@@ -113,7 +113,7 @@ function collectLooseLineWarnings(
 const LAYOUT_CONTENT_KINDS: ReadonlySet<string> = new Set([
   'indexSeeUnknown', 'indexRangeUnclosed', 'indexReadingMissing', 'cjkLooseLine', 'raggedLine',
   'cjkMarksExceedLeading', 'rubyExceedsLeading', 'kuntenExceedsLeading', 'arabicMarksExceedLeading',
-  'unbreakableWordOverflow', 'joiningScriptLetterSpacing',
+  'unbreakableWordOverflow', 'wordDividedByCharacter', 'wordDividedBySyllable', 'joiningScriptLetterSpacing',
   'comicPanelLetterbox', 'comicBalloonOverflow', 'lineNumberOverlap', 'dropCap', 'codeOverflow', 'textWrap',
   'columnsTooNarrow',
 ]);
@@ -134,6 +134,20 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
     // wider than their line and the styles whose letter-spacing such words
     // do not take, and the comic panels and balloons the layout had to
     // force (a letterboxed picture, a balloon that does not fit).
+    if (w.kind === 'emptyCaption' || w.kind === 'resourceMoved') {
+      // A caption line with the label alone, and a resource set in the
+      // text that moved on and left its column's foot empty (#1151).
+      out.push({
+        id: `layout-${w.kind}-${w.resourceId}-${i}`,
+        payload: w.kind === 'emptyCaption'
+          ? { kind: 'emptyCaption', resourceId: w.resourceId, label: w.label }
+          : { kind: 'resourceMoved', resourceId: w.resourceId, page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0), emptyMm: w.emptyMm },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'pictureBelowPrintSize') {
       // A picture its column holds under half its print size (#901), in mm.
       const mm = (v: number) => Math.round((v * 254) / doc.config.page.dpi) / 10;
@@ -325,6 +339,15 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       out.push({
         id: `font-fallback-${w.family}-${w.weight}-${w.style}`,
         payload: { kind: 'fontFallback', family: w.family, weight: w.weight, style: w.style, reason: w.reason },
+      });
+      return;
+    }
+    if (w.kind === 'glyphFallback') {
+      // Characters a face lacks, drawn from another face (#1105): one per
+      // face, no place in the text.
+      out.push({
+        id: `glyph-fallback-${w.family}-${w.weight}-${w.style}`,
+        payload: { kind: 'glyphFallback', family: w.family, weight: w.weight, style: w.style, characters: [...w.characters], count: w.count, ...(w.supplier ? { supplier: w.supplier } : {}) },
       });
       return;
     }
@@ -1585,8 +1608,10 @@ function computeDocumentWarnings(params: {
     // A family the Sandbox already names as unknown or short of files is
     // not reported again as a fallback.
     const named = new Set(warnings.flatMap((w) => (w.payload.kind === 'missingFontFamily' || w.payload.kind === 'missingFontVariant' ? [w.payload.family.toLowerCase()] : [])));
-    warnings.push(...collectLayoutWarnings(doc, markdown).filter((w) => w.payload.kind !== 'fontFallback'
-      || (toggles.missingFont && !(w.payload.reason === 'missing' && named.has(w.payload.family.toLowerCase())))));
+    warnings.push(...collectLayoutWarnings(doc, markdown).filter((w) => (w.payload.kind === 'glyphFallback'
+      ? toggles.missingFont && !named.has(w.payload.family.toLowerCase())
+      : w.payload.kind !== 'fontFallback'
+        || (toggles.missingFont && !(w.payload.reason === 'missing' && named.has(w.payload.family.toLowerCase()))))));
   }
   if (doc) warnings.push(...collectHeadingDesignCutWarnings(doc, markdown));
 

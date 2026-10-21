@@ -11,11 +11,14 @@ export type WarningKind =
   | 'missingFontFamily'
   | 'missingFontVariant'
   | 'fontFallback'
+  | 'glyphFallback'
   | 'duplicateFontVariant'
   | 'looseLine'
   | 'cjkLooseLine'
   | 'raggedLine'
   | 'unbreakableWordOverflow'
+  | 'wordDividedByCharacter'
+  | 'wordDividedBySyllable'
   | 'joiningScriptLetterSpacing'
   | 'cjkMarksExceedLeading'
   | 'rubyExceedsLeading'
@@ -125,6 +128,8 @@ export type WarningKind =
   | 'codeOverflow'
   | 'floatShrunk'
   | 'pictureBelowPrintSize'
+  | 'emptyCaption'
+  | 'resourceMoved'
   | 'unknownConfigKey'
   | 'unknownConfigValue'
   | 'calloutStyleExtendsUnknown'
@@ -164,6 +169,11 @@ export type WarningPayload =
    *  in that the font set could not give when it was built — missing, or
    *  drawn by the browser from another weight or slant. */
   | { kind: 'fontFallback'; family: string; weight: number; style: 'normal' | 'italic'; reason: 'missing' | 'synthesized' }
+  /** The engine's `glyphFallback` (#1105): characters the text sets in a
+   *  face that has no glyph for them, drawn from `supplier` (a family of
+   *  the font list or a generic one) or, without it, from a face the
+   *  system picks. `characters` are the first of them, `count` all. */
+  | { kind: 'glyphFallback'; family: string; weight: number; style: 'normal' | 'italic'; characters: string[]; count: number; supplier?: string }
   /** Referenced family is neither a loaded Google Font nor a custom
    *  family in `customFonts`. Silently falls back to a system font at
    *  render time; this warning makes the fall-through visible. */
@@ -189,6 +199,11 @@ export type WarningPayload =
    *  `ratio` times their width (#732). */
   | { kind: 'raggedLine'; text: string; ratio: number }
   | { kind: 'unbreakableWordOverflow'; text: string }
+  /** The engine's `wordDividedByCharacter` / `wordDividedBySyllable`
+   *  (#1150): a word wider than its whole line, cut between two letters
+   *  or at a syllable to fit. `text` is the line's text. */
+  | { kind: 'wordDividedByCharacter'; text: string }
+  | { kind: 'wordDividedBySyllable'; text: string }
   | { kind: 'joiningScriptLetterSpacing'; text: string }
   | { kind: 'cjkMarksExceedLeading'; text: string; gapEm: number; neededEm: number }
   | { kind: 'rubyExceedsLeading'; text: string; gapEm: number; neededEm: number }
@@ -580,6 +595,13 @@ export type WarningPayload =
    *  a page whose text block is wider (#901): `scale` of its print width;
    *  the print, column and text block widths in mm. */
   | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printMm: number; columnMm: number; pageMm: number }
+  /** A resource of a type with a caption prefix and no caption of its
+   *  own: its caption line prints `label` alone (#1151). */
+  | { kind: 'emptyCaption'; resourceId: string; label: string }
+  /** A resource set in the text that moved on to the next column, too
+   *  tall for the room left, leaving `emptyMm` empty on book page `page`
+   *  (#1151). */
+  | { kind: 'resourceMoved'; resourceId: string; page: number; emptyMm: number }
   | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter' | 'inBox'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
   /** A key the heading settings do not have (`headings`, its `balancing`
    *  and `levels`, `headingStyles`): the engine ignores it. `value` is the

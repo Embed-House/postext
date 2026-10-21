@@ -164,6 +164,8 @@ Un pulsante che modifica il modello (e quindi ogni pagina impaginata con esso) c
 
 <Screenshot src="/docs-shots/it/checks.webp" alt="Il pannello Verifiche con la voce «Il testo non entra nella cornice» e tre pulsanti con le possibili soluzioni, e la pagina con il primo riquadro contornato di rosso e una fascia con la scritta «mancano 26 mm»." caption="Una cornice in cui il testo non entra, e le correzioni che l’impaginazione ha calcolato." />
 
+Un riquadro con foto e didascalie (cornici ancorate al suo interno, una didascalia `below` ogni foto) non cresce da solo quando una traduzione allunga le didascalie: escono dal riquadro e finiscono su ciò che sta sotto. Apri la cornice del riquadro nell’editor dei modelli e imposta **Cresce con le cornici interne** su *Le cornici ancorate all’interno* (`growWith: "children"` nel modello). Il riquadro arriva allora al piede della didascalia più bassa più il suo margine interno inferiore, sfondo, bordo e linguetta seguono, e le cornici sotto scendono. *Le cornici scelte* prende invece un elenco di nomi. Contano le cornici ancorate a un punto del lato superiore del riquadro e quelle ancorate a esse; una cornice ancorata al piede o al centro del riquadro no, e un riquadro ruotato non cresce. Da postext 1.52.
+
 ## 7. Selezionare sulla pagina e nel testo
 
 La pagina e il suo Markdown restano collegati: quello che selezioni nell’una si ritrova nell’altro.

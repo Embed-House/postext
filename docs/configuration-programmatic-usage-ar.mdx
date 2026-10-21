@@ -280,6 +280,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>تُطبع الصورة بعرض عمودها. الصورة في المتن لا تكون أعرض من عمودها أبدًا، وللصفحة الافتراضية عمودان (<code>layout.layoutType: 'double'</code>): نضّد الصفحة في عمود واحد، أو اجعل الصورة تطفو على عرض الصفحة (<code>placement.span: 'page'</code>)، أو ارفع دقّتها إن كان هذا المقاس هو المراد.</td>
     </tr>
     <tr>
+      <td><code>emptyCaption</code></td>
+      <td>لمورد من نوع له بادئة تعليق لا تعليق خاص به، فيطبع سطر تعليقه الوسم والرقم وحدهما. يسمّيه <code>resourceId</code>، و<code>label</code> هو السطر المطبوع. للعلم: يُبلَّغ عنه مرة لكل مورد، عند الفقرة التي تحيل إليه أو عند تضمينه. منذ postext 1.52.</td>
+      <td>يُطبع الوسم. اكتب التعليق، أو أبقِ الوسم وحده إن كان المقصود لوحة مرقَّمة.</td>
+    </tr>
+    <tr>
+      <td><code>resourceMoved</code></td>
+      <td>مورد موضوع في النص (<code>position: 'here'</code>) كان أطول من المساحة الباقية في عموده فانتقل كاملًا إلى العمود التالي. يسمّيه <code>resourceId</code>، ويذكر <code>emptyPx</code> و<code>emptyMm</code> المساحة التي تركها فارغة، و<code>pageIndex</code> الصفحة. يُبلَّغ عنه حين تبلغ تلك المساحة سطرين من شبكة النص أو أكثر؛ أما الصورة التي يلتف حولها النص فتقول ذلك بـ<code>textWrap</code> <code>'moved'</code>. يشير إلى التضمين. منذ postext 1.52.</td>
+      <td>يقف المورد في أعلى العمود التالي. صغِّره، أو انقل سطر <code>::resource</code> الخاص به، أو اجعله عائمًا (<code>placement.position: 'auto'</code>).</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>مورد أو إطار ضُبط ليلتف النص حوله (<code>placement.wrap</code>، و<code>wrap</code> في الإطار) لم يُنضَّد كما طُلب. <code>reason</code>: <code>'tooNarrow'</code> (سيكون النص المجاور أضيق من <code>layout.wrap.minTextWidth</code>)، أو <code>'fewLines'</code> (أقصر من <code>layout.wrap.minLinesBeside</code> سطرًا)، أو <code>'moved'</code> (عنصر داخل النص أطول من المساحة المتبقية في عموده انتقل إلى العمود التالي مع مرساته)، أو <code>'verticalText'</code>، أو <code>'noContour'</code> (التفاف حول محيط صورة لا يُعرف شكلها: SVG بلا <code>contour.points</code>، أو صورة نقطية بلا شفافية، أو قناة ألفا لم يتتبّعها المضيف). <code>resourceId</code> يحدّد المورد، و<code>box</code> نمط الصندوق. يشير إلى موضع المورد أو الإطار.</td>
       <td>يأخذ العنصر الشريط كله، أو يوضع في العمود التالي، كما يقول السبب؛ ومع <code>'noContour'</code> يلتف النص حول إطار الصورة. أعطِ الصورة مضلّعًا، أو استعمل PNG فيه شفافية، أو اقرأها عبر <code>readBundle</code> أو Sandbox، فكلاهما يتتبّع شكلها.</td>
@@ -324,10 +334,15 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>شكل خط نُضّد به النص (<code>family</code>، <code>weight</code>، <code>style</code>) ولم تستطع مجموعة الخطوط توفيره حين جرى البناء: <code>reason: 'missing'</code>، لم يكن أي شكل من العائلة محمَّلًا ولا مثبّتًا، أو لم يكن الشكل الموافق لهذا الوزن والميل قد اكتمل تحميله؛ و<code>'synthesized'</code>، ليس في العائلة شكل بهذا الوزن أو الميل فيأخذه المتصفح من شكل آخر فيها، كما هو أو مغلَّظًا أو مُمالًا (وزن 600 يُنضَّد بشكل 700، أو وزن 700 مائل يُطلب من عائلة ليس فيها إلا 400 عادي). يُفحص حيث توجد مجموعة خطوط (<code>document.fonts</code>، أو <code>self.fonts</code> في عامل، أو <code>BuildDocumentOptions.fontSet</code>)، ويخضع لـ<code>debug.warnings.missingFont</code>. بلا صفحة ولا نطاق في المصدر.</td>
       <td>يُقاس النص ويُرسم بالخط البديل، أو بشكل آخر من العائلة، كما هو أو مغلَّظًا أو مُمالًا؛ وتتغيّر مواضع تقسيم أسطره حين يصل الشكل. انظر <a href="#تحميل-الخطوط-قبل-الإخراج">تحميل الخطوط قبل الإخراج</a>.</td>
     </tr>
+    <tr>
+      <td><code>glyphFallback</code></td>
+      <td>محارف يجعلها النص في خط (<code>family</code> و<code>weight</code> و<code>style</code>) ليس فيه شكل لها: يذكر <code>characters</code> أول 24 منها، كلًّا مرة واحدة، ويذكر <code>count</code> عددها كله، ويسمّي <code>supplier</code> العائلة التي رسمتها (عائلة عامة مثل <code>serif</code>)، ويغيب حين يرسمها خط يختاره النظام. تحذير واحد لكل خط. في المتصفح أو في worker يسأل المحرك خطًّا مسبارًا يعلنه في مجموعة الخطوط (<code>installGlyphProbe</code>، وتستدعيه <code>prepareFonts</code> وworker التخطيط)؛ وفي غيرهما يقرأ جدول <code>cmap</code> من الملفات المسجلة بـ<code>registerFontCoverage</code>، كما يفعل سطر الأوامر. يخضع لـ<code>debug.warnings.missingFont</code>. بلا صفحة ولا نطاق في المصدر. منذ postext 1.52.</td>
+      <td>تُرسم المحارف بخط آخر قد لا يوافق تصميمه وعروضه خط النص. اختر عائلة تغطيها.</td>
+    </tr>
   </tbody>
 </table>
 
-يسرد الجدول الأنواع التي يمكن أن يُصدرها أي مستند. أما أنواع الميزة الواحدة فتُوصف معها: القصص المصورة (`comicPanelCount`، `comicBalloonOverflow`…) في صفحة [القصص المصورة](/ar/docs/comics)، ومقاطع الفيديو (`videoWithoutUrl`، `videoUrlInvalid`، `videoWithoutPoster`) في [الصور والجداول ومقاطع الفيديو](/ar/docs/document-format-resources)، والاستشهادات والفهرس (`unknownCitationKey`، `referencesUnreadable`، `indexMark`…) في [الحواشي والإحالات](/ar/docs/document-format-notes-references)، والنص الصيني والياباني والعربي (`cjkLooseLine`، `rubyExceedsLeading`، `arabicMarksExceedLeading`…) في صفحات هذه الكتابات، وأنواع مقسِّم الأسطر (`raggedLine`، `unbreakableWordOverflow`) في [تقسيم الكلمات وضبط الأسطر](/ar/docs/justification).
+يسرد الجدول الأنواع التي يمكن أن يُصدرها أي مستند. أما أنواع الميزة الواحدة فتُوصف معها: القصص المصورة (`comicPanelCount`، `comicBalloonOverflow`…) في صفحة [القصص المصورة](/ar/docs/comics)، ومقاطع الفيديو (`videoWithoutUrl`، `videoUrlInvalid`، `videoWithoutPoster`) في [الصور والجداول ومقاطع الفيديو](/ar/docs/document-format-resources)، والاستشهادات والفهرس (`unknownCitationKey`، `referencesUnreadable`، `indexMark`…) في [الحواشي والإحالات](/ar/docs/document-format-notes-references)، والنص الصيني والياباني والعربي (`cjkLooseLine`، `rubyExceedsLeading`، `arabicMarksExceedLeading`…) في صفحات هذه الكتابات، وأنواع مقسِّم الأسطر (`raggedLine`، `unbreakableWordOverflow`، `wordDividedByCharacter`، `wordDividedBySyllable`) في [تقسيم الكلمات وضبط الأسطر](/ar/docs/justification).
 
 التحذيرات المتعلقة بمورد ما، سواء نمط جدوله أو شبكته أو مرجع داخل تعليقه أو ملاحظته أو خلاياه، تشير إلى أول تضمين لذلك المورد أو أول مرجع إليه في النص، ويُسجَّل كل منها مرة واحدة لكل مورد. ولا تُفحص إلا الموارد التي يستخدمها المستند: ففصل من كتاب يُصدر تحذيرات عن الجداول التي يستشهد بها، لا عن كل جدول في الكتاب.
 

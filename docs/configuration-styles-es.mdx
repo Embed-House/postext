@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Estilos de resaltado
 
-La propiedad `markStyles` declara los estilos con nombre del `:mark[texto]{style="…"}` en línea: la franja de color detrás de una frase, como cuando un libro de texto resalta sus palabras clave (la sintaxis y sus reglas de corte de línea se explican en la referencia del formato del documento). Hay un estilo predeterminado, `mark` (una franja amarillo pálido que sobresale un poco de la frase, con los extremos ligeramente redondeados y el texto en su propio color), así que `:mark[…]` funciona sin configurar nada; declarar `markStyles` sustituye esa lista predeterminada. Una marca sin `style`, o con un id que ningún estilo declara, usa el primer estilo (el Sandbox señala el id desconocido).
+La propiedad `markStyles` declara los estilos con nombre del `:mark[texto]{style="…"}` en línea: la franja de color detrás de una frase, como cuando un libro de texto resalta sus palabras clave (la sintaxis y sus reglas de corte de línea se explican en la referencia del formato del documento). Hay un estilo predeterminado, `mark` (una franja amarillo pálido que sobresale un poco de la frase, con los extremos rectos y el texto en su propio color), así que `:mark[…]` funciona sin configurar nada; declarar `markStyles` sustituye esa lista predeterminada. Una marca sin `style`, o con un id que ningún estilo declara, usa el primer estilo (el Sandbox señala el id desconocido).
 
 ```ts
 const config: PostextConfig = {
@@ -531,8 +531,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Radio de los dos extremos de la franja, limitado a la mitad de su altura.</td>
+      <td><code>0</code></td>
+      <td>Radio de los dos extremos de la franja, limitado a la mitad de su altura. Los extremos rectos son la norma en la imprenta. Hasta postext 1.51 el valor predeterminado era <code>0.2em</code>; una configuración guardada entonces cuyo texto tenga alguna marca se lee con <code>0.2em</code> escrito en cada estilo que no indique radio.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -551,6 +551,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>Espacio por encima y por debajo; cada uno sustituye a <code>paddingY</code> en su lado.</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>Cómo se corta la franja de una frase que pasa a otra línea, como <code>box-decoration-break</code> en CSS. <code>'slice'</code>: una sola franja, recta donde se parte la línea, con el relleno y las esquinas redondeadas solo en el principio y el final de la frase. <code>'clone'</code>: cada trozo de línea lleva una franja completa, con <code>paddingX</code> y las esquinas en sus dos extremos, para un título compuesto sobre una banda de color cortada por líneas. La composición es la misma en los dos casos.</td>
     </tr>
   </tbody>
 </table>

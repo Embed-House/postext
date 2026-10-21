@@ -53,9 +53,9 @@ The `bodyText` property controls the typography of all paragraph text.
     </tr>
     <tr>
       <td><code>paragraphSpacing</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | Dimension</code></td>
       <td><code>false</code></td>
-      <td>When enabled, inserts a blank line (equal to <code>lineHeight</code>) between consecutive paragraphs for publisher-style separation.</td>
+      <td>The space between two paragraphs. <code>true</code> inserts a blank line (equal to <code>lineHeight</code>), as some publishers separate paragraphs; a length such as <code>&#123; value: 2, unit: 'mm' &#125;</code> or <code>0.33em</code> of the text size sets exactly that much, in the running text, in boxes and in composed frames. A length that is not a whole number of lines takes the paragraphs off the baseline grid; the next block that snaps to it (a heading, the last item of a list, display maths) brings the text back. It is the same space as <code>paragraphStyles[].spaceBetween</code>, which takes its place inside a <code>:::paragraphs</code> container. A box sets its own in <code>calloutStyles[].body.paragraphSpacing</code>.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

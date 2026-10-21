@@ -112,6 +112,7 @@ describe('contrast config', () => {
     expect(resolveContrastConfig()).toEqual({
       enabled: true, level: 'AA', mode: 'auto',
       reversedText: { enabled: true, minSize: pt(8), minFineSize: pt(12), lightWeight: 300 },
+      allow: [],
     });
     expect(resolveContrastConfig({ level: 'AAA', mode: 'both' }).level).toBe('AAA');
     expect(stripContrastDefaults({ level: 'AA', mode: 'auto', reversedText: { minSize: pt(8) } })).toBeUndefined();

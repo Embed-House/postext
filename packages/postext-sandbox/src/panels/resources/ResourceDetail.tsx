@@ -18,6 +18,7 @@ import { ConfirmPopover, IconButton, PanelBody, PanelHeader } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
 import { wrapChoiceOf, wrapSideOf } from '../../sidebar/settings/textWrap';
+import { captionSideOf, captionSideValue } from '../../sidebar/settings/captionSide';
 import { ContourFields } from './ContourFields';
 import { ResourcePreview } from './ResourcePreview';
 import { BitmapUploader, type BitmapUploadResult } from './BitmapUploader';
@@ -484,11 +485,20 @@ export function ResourceDetail({
           {/* A column float, and a resource set in the text (#729,
               `layout.inlineCaptionSide`). */}
           {!placementRotated && placementSpan === 'column' && (
-            <ToggleSwitch
+            <SelectInput
+              variant="segmented"
               label={labels.resourceTypePlacementCaptionSide}
               tooltip={labels.resourceTypePlacementCaptionSideTooltip}
-              checked={currentPlacement.captionSide ?? typePlacement.captionSide ?? false}
-              onChange={(v) => setPlacementKey('captionSide', v)}
+              value={captionSideValue(currentPlacement.captionSide ?? typePlacement.captionSide)}
+              options={[
+                { value: 'off', label: labels.resourceCaptionSideOff },
+                { value: 'margin', label: labels.resourceCaptionSideMargin },
+                // Beside the picture inside its slot (#1106): pictures only.
+                ...(isPicture || (currentPlacement.captionSide ?? typePlacement.captionSide) === 'inside'
+                  ? [{ value: 'inside', label: labels.resourceCaptionSideInside }]
+                  : []),
+              ]}
+              onChange={(v) => setPlacementKey('captionSide', captionSideOf(v))}
               isDefault={currentPlacement.captionSide === undefined}
               onReset={() => setPlacementKey('captionSide', undefined)}
             />

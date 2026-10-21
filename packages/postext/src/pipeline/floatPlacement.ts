@@ -31,6 +31,7 @@ import type {
 import { floatColumnCount, startEndAsLeftRight } from '../defaults/shared';
 import { DEFAULT_FLOAT_MIN_SCALE, floatMinScaleOf, floatShrinkModeOf } from '../defaults/layout';
 import { resolveResourceWrap } from './textWrap';
+import { captionInsideShare } from './captionInside';
 
 export { floatColumnCount };
 
@@ -43,6 +44,10 @@ export interface ResolvedPlacement {
   /** Fraction of the slot width the float takes (`1` = the whole width). */
   widthFraction: number;
   align: 'left' | 'center' | 'right';
+  /** The caption in the side column (`placement.captionSide: true`). A
+   *  caption beside the picture inside its slot (`'inside'`, #1106) is not
+   *  this: the slot keeps its whole width (`widthFraction` 1) and the
+   *  resource layout narrows the picture (see `captionInsideShare`). */
   captionSide: boolean;
   /** Adjacent columns a column float takes (1 = its own column). */
   columns: number;
@@ -149,9 +154,12 @@ export function resolveResourcePlacement(
     : (resource.placement?.rotate ?? type?.defaultPlacement?.rotate);
   const span = rotate ? 'page' : (resource.placement?.span ?? type?.defaultPlacement?.span ?? 'column');
   const rawWidth = resource.placement?.width ?? type?.defaultPlacement?.width;
-  const widthFraction = typeof rawWidth === 'number' && rawWidth > 0 && rawWidth < 1 ? rawWidth : 1;
+  // A caption inside the slot beside an upright picture (#1106): the slot
+  // keeps its width, the picture takes its share of it.
+  const inside = !rotate && !noRotation && captionInsideShare(resource, type) !== undefined;
+  const widthFraction = !inside && typeof rawWidth === 'number' && rawWidth > 0 && rawWidth < 1 ? rawWidth : 1;
   const align = startEndAsLeftRight(resource.placement?.align ?? type?.defaultPlacement?.align ?? 'left');
-  const captionSide = resource.placement?.captionSide ?? type?.defaultPlacement?.captionSide ?? false;
+  const captionSide = (resource.placement?.captionSide ?? type?.defaultPlacement?.captionSide) === true;
   const columns = floatColumnCount(resource.placement?.columns ?? type?.defaultPlacement?.columns);
   const picture = resource.kind === 'bitmap' || resource.kind === 'svg' || resource.kind === 'video';
   const shrink = picture && !rotate && position !== 'here'

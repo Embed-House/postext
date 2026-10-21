@@ -27,7 +27,16 @@ for composed pages (`::::page{template}`, `:::frame{slot}`, `:::figure` +
 `::label`, `slot=`; postext >= 1.34), the template, slot, spread, anchor and
 label-style ids against the page templates and resources;
 and the book's text typed into design text elements of the config
-(contentInConfig, the rule of `preset_kit.py lint`) and a config past 3 MB.
+(contentInConfig, the rule of `preset_kit.py lint`) and a config past 3 MB;
+and the faults an agent leaves in a port (#1112): inline marks typed in a
+design text element, or brought into it by `{attr.key}`, while the element
+has no `inlineMarks: true` (designMarksLiteral); a plain space typed beside
+a fixed or no-break space (fixedSpacePlusSpace); `:chip` in a heading when
+the book is pinned to a postext older than 1.52.0, which reads heading
+chips (headingChip; the pin is --engine, else the project's package.json or
+recipe.json, else none: the Sandbox's latest release); and capitals typed
+in a bare chip at small-capital size instead of `:smallcaps[…]`
+(smallCapsByHand).
 Pure Python otherwise.
 
 Exit code 1 when there are errors (or warnings with --strict).
@@ -199,16 +208,11 @@ def walk_values(node, path=""):
         yield path, node
 
 
-# PostextConfig's top-level keys (postext 1.46, packages/postext/src/types.ts). The engine drops an unknown
-# one in silence, so a typo (`bodyTex`, `pageTemplate`) changes nothing on the page.
-CONFIG_TOP_KEYS = {
-    "page", "layout", "bodyText", "headings", "tableStyle", "tableStyles", "captionStyle", "diagramStyle",
-    "videoStyle", "paragraphStyles", "calloutStyles", "chipStyles", "markStyles", "parts", "headingStyles", "toc",
-    "index", "unorderedLists", "orderedLists", "math", "footnotes", "crossRefs", "citations", "cjk", "lineNumbers",
-    "codeStyle", "header", "footer", "locale", "direction", "numerals", "debug", "htmlViewer", "canvasViewer",
-    "folio", "comics", "pageTemplates", "labelStyles", "pdfGeneration", "print", "contrast", "checks",
-    "colorPalette", "customFonts", "resourceTypes",
-}
+# PostextConfig's top-level keys, generated from the engine's types.ts by
+# `config_keys.py --write` (config_keys.json; tests/test_config_keys.py fails
+# while the engine has a key the list lacks). The engine drops an unknown one
+# in silence, so a typo (`bodyTex`, `pageTemplate`) changes nothing on the page.
+CONFIG_TOP_KEYS = set(json.loads((Path(__file__).resolve().parent / "config_keys.json").read_text(encoding="utf-8"))["keys"])
 
 
 def check_config(cfg: dict, where: str, fonts: set[str], rep: Report, partial: bool = False) -> None:
@@ -1797,8 +1801,10 @@ def check_comic_block(name: str, kind: str, attrs: dict[str, str], body: list[tu
         w = f"{name}:{ln}"
         if not line or (line.startswith("<!--") and line.endswith("-->")):
             continue
-        if line.startswith("::label") and figure is None:
-            rep.warn(where, "::label outside a :::figure prints as text")
+        if line.startswith("::label"):
+            # a comic block holds no :::figure, so a label line there is never one's
+            rep.warn(w, "::label outside a :::figure prints as text")
+            continue
         if line.startswith("::panel"):
             m = COMIC_PANEL_RE.match(line)
             if not m:
@@ -1982,7 +1988,21 @@ def style_ids(cfg: dict) -> dict[str, set[str]]:
         "palette": ids("colorPalette", {"main-color"}),
         "types": ids("resourceTypes", {"figure", "table"}),
         "tables": ids("tableStyles", set()),
+        "smallChip": small_cap_chip_styles(cfg),
     }
+
+
+# Directives that are one line, with no body and no closing fence (parse/blockParser.ts ONE_LINE_DIRECTIVES).
+ONE_LINE_DIRECTIVES = {"pagebreak", "numbering", "columnbreak", "space", "toc", "index", "bibliography"}
+
+
+def one_line_directive_before(lines: list[str], i: int) -> str | None:
+    """The one-line directive on the last non-blank line before line i."""
+    j = i - 1
+    while j >= 0 and not lines[j].strip():
+        j -= 1
+    m = FENCE_RE.match(lines[j].strip()) if j >= 0 else None
+    return m.group(1) if m and m.group(1) in ONE_LINE_DIRECTIVES else None
 
 
 def _fence_closes(lines: list[str], i: int) -> bool:
@@ -2110,7 +2130,10 @@ def check_index(index: dict, rep: Report, lang: str, japanese: bool = False) -> 
 
 def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res_ids: set[str], rep: Report,
                    embedded: set[str], referenced: set[str], index: dict | None = None,
-                   anchors: set[str] | None = None, comic_ctx: dict | None = None) -> None:
+                   anchors: set[str] | None = None, comic_ctx: dict | None = None,
+                   engine: tuple[int, int, int] | None = None) -> None:
+    """`engine`: the postext version the book is pinned to (None: unpinned,
+    the Sandbox's latest release)."""
     anchors = anchors or set()
     if comic_ctx is None:
         comic_ctx = new_comic_ctx({}, [], ids)
@@ -2396,8 +2419,14 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
         # fences
         if line.startswith(":::"):
             if line == ":::":
-                if not stack:
-                    rep.warn(where, "stray ::: with no open container prints literally")
+                # A bare ::: never closes a ::::page nor a container opened before it.
+                if not stack or (page is not None and len(stack) <= page["depth"]):
+                    directive = one_line_directive_before(lines, i)
+                    if directive:
+                        rep.warn(where, f"strayFence: :::{directive} is one line and takes no closing fence: delete "
+                                        "this ::: (postext drops it and reports strayFence)")
+                    else:
+                        rep.warn(where, "stray ::: with no open container prints literally")
                 else:
                     stack.pop()
                     if page is not None and page.get("module") is not None and len(stack) <= page["module"]["depth"]:
@@ -2564,7 +2593,21 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
             if FOOTNOTE_MARK_RE.search(title):
                 rep.warn(where, "[^id] in a heading prints as written: cite the note from the text")
             if ":chip[" in title:
-                rep.warn(where, ":chip is not processed in headings (prints literally)")
+                if engine is not None and engine < HEADING_CHIPS_SINCE:
+                    rep.warn(where, f"headingChip: :chip in a heading prints literally on postext {fmt_version(engine)} "
+                                    f"(headings read chips from {fmt_version(HEADING_CHIPS_SINCE)}): update the pin, "
+                                    "or set the chip's words in the heading style's design")
+                else:
+                    if engine is None and "heading chip" not in rep.once:
+                        rep.once.add("heading chip")
+                        rep.info(where, f"headingChip: headings read :chip from postext "
+                                        f"{fmt_version(HEADING_CHIPS_SINCE)}; an older engine prints it literally "
+                                        "(pass --engine <version> when a program pins one)")
+                    for cm in CHIP_RE.finditer(title):
+                        st = parse_attrs((cm.group(2) or "{}")[1:-1]).get("style")
+                        if st and st not in ids["chip"]:
+                            rep.error(where, f"chip style {st!r} is not in chipStyles {sorted(ids['chip'])}")
+                    check_small_cap_chips(where, title, ids, rep)
             if re.search(r"\*\*|(?<!\\)\*\w|(?<!\\)_\w", re.sub(r"\{[^{}]*\}\s*$", "", title)):
                 rep.info(where, "inline marks in headings are stripped (headings are plain text)")
             prev_nonblank, prev_kind = True, "heading"
@@ -2614,6 +2657,7 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
             st = parse_attrs((m.group(1) or "{}")[1:-1]).get("style")
             if st and st not in ids["chip"]:
                 rep.error(where, f"chip style {st!r} is not in chipStyles {sorted(ids['chip'])}")
+        check_small_cap_chips(where, line, ids, rep)
         for m in re.finditer(r":swatch\{([^}]*)\}", line):
             col = parse_attrs(m.group(1)).get("color", "")
             if not col:
@@ -2674,6 +2718,232 @@ def check_snippet(where: str, text: str, res_ids: set[str], rep: Report) -> None
     for m in re.finditer(r":ref\{[^}]*id=\"([^\"]+)\"", text or ""):
         if m.group(1) not in res_ids:
             rep.error(where, f":ref to unknown resource {m.group(1)!r}")
+    check_fixed_spaces(where, text or "", rep, per_line=False)
+
+
+# --- agent faults before delivery (#1112) ------------------------------------
+
+# Fixed-width and no-break spaces: each sets its own width (or glues two
+# words), so a plain space typed beside one adds a word space to the gap.
+FIXED_SPACES = {
+    " ": "no-break space", " ": "en space", " ": "em space", " ": "three-per-em space",
+    " ": "four-per-em space", " ": "six-per-em space", " ": "figure space",
+    " ": "punctuation space", " ": "thin space", " ": "hair space",
+    " ": "narrow no-break space", " ": "medium mathematical space",
+}
+_FIXED_CLASS = "[" + "".join(FIXED_SPACES) + "]"
+FIXED_PLUS_SPACE_RE = re.compile(_FIXED_CLASS + r" +(?=\S)|(?<=\S) +" + _FIXED_CLASS)
+SWATCH_END_RE = re.compile(r":swatch\{[^}\n]*\}$")
+
+# Inline marks a design text element reads only with `inlineMarks: true`
+# (and that print as written without it). Placeholders are taken out first.
+DESIGN_MARK_RES = [
+    (re.compile(r"(?<![\\*])\*\*(?=\S)[^*\n]*?[^\s\\]\*\*"), "**bold**"),
+    (re.compile(r"(?<![\\*\w])\*(?=[^\s*])[^*\n]*?[^\s*\\]\*(?![*\w])"), "*italic*"),
+    (re.compile(r"(?<![\\\w])__?(?=[^\s_])[^_\n]*?[^\s_\\]__?(?!\w)"), "_italic_"),
+    (re.compile(r"(?<![\\^\w])\^[^\s^]{1,24}\^"), "^sup^"),
+    (re.compile(r"(?<![\\~])~[^\s~]{1,24}~(?!~)"), "~sub~"),
+]
+DESIGN_DIRECTIVE_RE = re.compile(r":(mark|smallcaps|chip)\[")
+CHIP_RE = re.compile(r":chip\[((?:\\.|[^\]\\\n])+)\](\{[^}\n]*\})?")
+PLACEHOLDER_RE = re.compile(r"\{[^{}\n]*\}")
+ATTR_PLACEHOLDER_RE = re.compile(r"\{attr\.([A-Za-z0-9_-]+)\}")
+# Chips are read in headings from postext 1.52.0 (#1100).
+HEADING_CHIPS_SINCE = (1, 52, 0)
+
+
+def parse_version(s) -> tuple[int, int, int] | None:
+    """(major, minor, patch) of a version or a range's floor (`^1.46.2`,
+    `>=1.50`), None for `latest`, `*` or nothing."""
+    m = re.search(r"(\d+)\.(\d+)(?:\.(\d+))?", s or "") if isinstance(s, str) else None
+    return (int(m.group(1)), int(m.group(2)), int(m.group(3) or 0)) if m else None
+
+
+def pinned_engine(root: Path, cli: str | None = None) -> tuple[tuple[int, int, int] | None, str]:
+    """The postext version the book will open in, and where it was read:
+    --engine, else the project's package.json (a program that pins
+    `postext`), else a Cookbook recipe.json (`engine.postext`). None when
+    nothing pins it (the Sandbox runs the latest release)."""
+    if cli:
+        return parse_version(cli), "--engine"
+    pkg = root / "package.json"
+    if pkg.is_file():
+        try:
+            data = json.loads(pkg.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            data = {}
+        for k in ("dependencies", "devDependencies", "peerDependencies"):
+            v = (data.get(k) or {}).get("postext") if isinstance(data.get(k), dict) else None
+            if v and parse_version(v):
+                return parse_version(v), f"package.json {k}"
+    rec = root / "recipe.json"
+    if rec.is_file():
+        try:
+            v = ((json.loads(rec.read_text(encoding="utf-8")).get("engine") or {}).get("postext"))
+        except (ValueError, OSError, AttributeError):
+            v = None
+        if parse_version(v):
+            return parse_version(v), "recipe.json engine.postext"
+    return None, ""
+
+
+def fmt_version(v: tuple[int, int, int]) -> str:
+    return ".".join(str(x) for x in v)
+
+
+def _dim_ratio(d, body_pt: float | None) -> float | None:
+    """A font size as a share of the surrounding text: em directly, pt (or
+    px) against the body size."""
+    if not isinstance(d, dict) or not isinstance(d.get("value"), (int, float)):
+        return None
+    unit, v = d.get("unit"), float(d["value"])
+    if unit == "em":
+        return v
+    if unit in ("pt", "px") and body_pt:
+        return (v * 0.75 if unit == "px" else v) / body_pt
+    return None
+
+
+def small_cap_chip_styles(cfg: dict) -> set[str]:
+    """Chip styles that only shrink the text: no fill, no outline and a size
+    between 55 and 85 % of the text round them, the size small capitals
+    are set at. Capitals typed in such a chip imitate small capitals."""
+    body = (cfg.get("bodyText") or {}).get("fontSize") if isinstance(cfg.get("bodyText"), dict) else None
+    body_pt = float(body["value"]) if isinstance(body, dict) and body.get("unit") == "pt" and \
+        isinstance(body.get("value"), (int, float)) else None
+    out: set[str] = set()
+    for s in cfg.get("chipStyles") or []:
+        if not isinstance(s, dict) or not s.get("id"):
+            continue
+        r = _dim_ratio(s.get("fontSize"), body_pt)
+        bw = s.get("borderWidth")
+        no_outline = isinstance(bw, dict) and bw.get("value") == 0
+        if r is not None and 0.55 <= r <= 0.85 and s.get("backgroundEnabled") is False and no_outline \
+                and not s.get("dotted"):
+            out.add(s["id"])
+    return out
+
+
+def capitals_run(text: str) -> bool:
+    """Two or more letters, every cased one a capital."""
+    letters = [c for c in text if c.isalpha()]
+    cased = [c for c in letters if c.upper() != c.lower()]
+    return len(cased) >= 2 and all(c.isupper() for c in cased)
+
+
+def check_small_cap_chips(where: str, line: str, ids: dict, rep: Report) -> None:
+    small = ids.get("smallChip") or set()
+    if not small:
+        return
+    for m in CHIP_RE.finditer(line):
+        st = parse_attrs((m.group(2) or "{}")[1:-1]).get("style")
+        if st in small and capitals_run(m.group(1)):
+            rep.warn(where, f"smallCapsByHand: :chip[{m.group(1)}] sets capitals at small-capital size "
+                            f"(chip style {st!r}): type the word in lowercase in :smallcaps[…] (capitals keep "
+                            "the full size, as in the source) or give the style smallCaps")
+
+
+def fixed_space_hits(text: str) -> list[tuple[int, str, str]]:
+    """(1-based line, space name, excerpt) of each plain space typed beside
+    a fixed or no-break space, code listings left out."""
+    out: list[tuple[int, str, str]] = []
+    fence: str | None = None
+    for i, line in enumerate((text or "").split("\n"), 1):
+        cm = CODE_FENCE_OPEN_RE.match(line)
+        if fence is None and cm:
+            fence = cm.group(2)[0]
+            continue
+        if fence is not None:
+            if CODE_FENCE_CLOSE_RE.match(line) and line.strip()[0] == fence:
+                fence = None
+            continue
+        for m in FIXED_PLUS_SPACE_RE.finditer(line):
+            if SWATCH_END_RE.search(line[:m.start()]):
+                continue  # room after a swatch, which has no gap of its own to set
+            ch = next(c for c in m.group(0) if c in FIXED_SPACES)
+            a, b = max(0, m.start() - 12), min(len(line), m.end() + 12)
+            excerpt = line[a:b].translate({ord(c): "␣" for c in FIXED_SPACES})
+            out.append((i, f"U+{ord(ch):04X} {FIXED_SPACES[ch]}", excerpt))
+    return out
+
+
+def check_fixed_spaces(where: str, text: str, rep: Report, per_line: bool = True) -> None:
+    """One warning per text: how many places, the first with its excerpt."""
+    hits = fixed_space_hits(text)
+    if not hits:
+        return
+    ln, name, excerpt = hits[0]
+    lines = sorted({h[0] for h in hits})
+    at = f"{where}:{ln}" if per_line else where
+    more = f" (lines {', '.join(map(str, lines[:8]))}{'…' if len(lines) > 8 else ''})" if per_line and len(lines) > 1 else ""
+    rep.warn(at, f"fixedSpacePlusSpace: {len(hits)} plain space(s) typed beside a fixed space ({name}: "
+                 f"\"{excerpt}\", ␣ = the fixed space){more}: the line sets both, a gap wider than the "
+                 "source's. Keep the fixed space alone")
+
+
+def marked_attr_values(texts: list[tuple[str, str]]) -> dict[str, tuple[str, str]]:
+    """Attribute values in the Markdown that carry inline marks, by key
+    (heading blocks, container and page fences): {key: (where, value)}."""
+    out: dict[str, tuple[str, str]] = {}
+    for name, text in texts:
+        for i, line in enumerate(text.split("\n"), 1):
+            attrs: dict[str, str] | None = None
+            hm = HEADING_RE.match(line)
+            if hm:
+                attrs = split_heading_attrs(hm.group(2))[1]
+            else:
+                fm = FENCE_RE.match(line) or PAGE_FENCE_RE.match(line)
+                if fm and fm.group(2):
+                    attrs = parse_attrs(fm.group(2))
+            for k, v in (attrs or {}).items():
+                if k not in out and design_marks(v):
+                    out[k] = (f"{name}:{i}", v)
+    return out
+
+
+def design_marks(text: str) -> list[str]:
+    """The inline marks a text holds, placeholders and escapes left out."""
+    s = PLACEHOLDER_RE.sub(" ", text or "")
+    found = [label for rx, label in DESIGN_MARK_RES if rx.search(s)]
+    found += [f":{m.group(1)}[…]" for m in DESIGN_DIRECTIVE_RE.finditer(s)]
+    return found
+
+
+def check_design_text(cfg: dict, where: str, marked_attrs: dict[str, tuple[str, str]], rep: Report) -> None:
+    """Design text elements: marks typed (or brought in by `{attr.key}`)
+    without `inlineMarks`, and fixed spaces with a plain space beside them."""
+    for path, el in design_elements(cfg):
+        content = el.get("content")
+        if el.get("kind") != "text" or not isinstance(content, str):
+            continue
+        at = f"{where} {path}" + (f" ({el['id']})" if el.get("id") else "")
+
+        def once(key: str) -> bool:
+            k = f"design {path} {key}"
+            if k in rep.once:
+                return False
+            rep.once.add(k)
+            return True
+
+        if FIXED_PLUS_SPACE_RE.search(content) and once("space"):
+            check_fixed_spaces(at, content, rep, per_line=False)
+        marks = design_marks(content)
+        if el.get("inlineMarks") is True:
+            directives = [x for x in marks if x.startswith(":")]
+            if directives and once("directive"):
+                rep.info(at, f"design text reads bold, italic and scripts only: {', '.join(directives)} sets its "
+                             "words plain (the markup is dropped)")
+            continue
+        if marks and once("marks"):
+            rep.warn(at, f"designMarksLiteral: the text holds {', '.join(marks)} but the element has no "
+                         "inlineMarks: true, so the markers print as written. Set inlineMarks: true (or take "
+                         "the marks out)")
+        for m in ATTR_PLACEHOLDER_RE.finditer(content):
+            hit = marked_attrs.get(m.group(1))
+            if hit and once(f"attr {m.group(1)}"):
+                rep.warn(at, f"designMarksLiteral: {{attr.{m.group(1)}}} brings \"{hit[1][:40]}\" ({hit[0]}) with "
+                             f"{', '.join(design_marks(hit[1]))}, and the element has no inlineMarks: true, so the "
+                             "markers print as written. Set inlineMarks: true on the element")
 
 
 def check_content_in_config(m: dict, root: Path, rep: Report) -> None:
@@ -2717,9 +2987,12 @@ def main() -> None:
     ap.add_argument("--lang", help="check only this locale (default: every locale in chapters)")
     ap.add_argument("--strict", action="store_true", help="exit 1 on warnings too")
     ap.add_argument("--quiet", action="store_true", help="hide INFO lines")
+    ap.add_argument("--engine", help="the postext version the book will open in (default: the project's "
+                                     "package.json or recipe.json pin; unpinned = the Sandbox's latest release)")
     args = ap.parse_args()
     root = Path(args.project)
     rep = Report()
+    engine, _ = pinned_engine(root, args.engine)
     mf = root / "preset.json"
     if not mf.exists():
         sys.exit(f"{mf} not found")
@@ -2746,8 +3019,9 @@ def main() -> None:
                  "the brackets and signs of a Western word; below 13: the box of a task item set as a character "
                  "of the list's face instead of drawn; below 14: the text measured in the language of the "
                  "page that hosts the layout, and in none in a worker, instead of the document's own, unless "
-                 "the config names bodyText.shapingLanguage); "
-                 "set \"configVersion\": 16 for today's rules (14 and 15 read the same)")
+                 "the config names bodyText.shapingLanguage; below 18: a mark style that names no borderRadius "
+                 "rounded at 0.2em when the text has a :mark); "
+                 "set \"configVersion\": 18 for today's rules")
     for k in ("id", "name"):
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")
@@ -2872,11 +3146,14 @@ def main() -> None:
                 continue
             chapter = p.read_text(encoding="utf-8")
             texts.append((c["file"], chapter))
-            check_markdown(c["file"], chapter, i, ids, res_ids, rep, embedded, referenced, index, book_anchors, comic_ctx)
+            check_markdown(c["file"], chapter, i, ids, res_ids, rep, embedded, referenced, index, book_anchors, comic_ctx,
+                           engine=engine)
+            check_fixed_spaces(c["file"], chapter, rep)
             if CJK_RE.search(chapter):
                 check_cjk_lines(c["file"], chapter, rep, japanese_book or is_japanese_text(
                     len(KANA_RE.findall(chapter)), len(HAN_RE.findall(chapter))))
         check_index(index, rep, lang, japanese_book)
+        check_design_text(cfg, f"config ({lang})", marked_attr_values(texts), rep)
         check_tab_stops(cfg, f"config ({lang})", texts, rep)
         check_drop_caps(cfg, f"config ({lang})", texts, rep)
         embedded |= comic_ctx["arts"]  # panel pictures are placed by art=, not cited

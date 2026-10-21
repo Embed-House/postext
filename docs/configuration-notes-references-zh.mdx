@@ -685,6 +685,12 @@ const config: PostextConfig = {
       <td><code>char</code>在标题和页码之间的空当里重复排出，并且右对齐，使相邻条目的点上下对齐（<code>'. '</code>会把点拉开）；<code>gap</code>是标题和前导符之间至少保留的距离。前导符排入能放下的全部字符，按它所用字体把整串字符作为一个整体来测量，所以如果某种字体会把相邻句点的字偶距拉开，得到的是更少的点，而不是一直顶到页码的点。（postext 1.4及以前按单个点计数，在这类字体中前导符会从标题一直延伸进页码。）标题长到不给页码标签留位置时，会稍早一点换行。前导符至少排三个字符：只放得下一两个时，这一行不排前导符，因为页码前孤零零的一个点读起来像句号。在带标签的PDF中，这些点是版面工件，不出现在提取的文字中。正文在其<a href="/zh/docs/configuration-text#制表位">制表位</a>处排出同样的前导符。</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>页码的</td>
+      <td>引导点自己的颜色、字体、字号和字重（自 postext 1.52 起），就像原书目录中与页码分开、用彩色小点排的引导线。省略的项保持没有它时的样子：条目行中为页码的设置。以<code>em</code>为单位的<code>fontSize</code>按该字号计算。除非<code>parts.leader</code>另行设置，篇名行的<code>{'{leader}'}</code>也沿用这些设置。</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>object</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -707,6 +713,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>空</td>
       <td>篇行的设计；它的容器就是这一行（栏宽×<code>height</code>）。占位符有<code>{'{number}'}</code>、<code>{'{numberDecimal}'}</code>、<code>{'{numberRoman}'}</code>…、<code>{'{titleText}'}</code>和<code>{'{pageNumber}'}</code>（篇名页的页码标签；使用<code>parts.page: false</code>时不另设篇名页，取这一篇的内容开始的那一页，即书眉切换到这一篇的那一页；在逐章排版的书中，位于章末的篇块指向下一章的第一个内容页）。链接到调色板的颜色采用这一篇自己的<code>palette</code>，所以每个篇名行都用各自的颜色。为空时，以一级条目的字体样式排出<code>{'{number} {titleText}'}</code>（中间是一级标题的<code>numberSeparator</code>）和页码。<code>{'{leader}'}</code>在同一个文本元素中，把目录的<code>leader</code>放在它前后两段文字之间：<code>{'{number} {titleText}{leader}{pageNumber}'}</code>让标题位于行首、页码位于行尾，前导点排在两者之间，紧贴页码，并与两侧文字各隔<code>gap</code>，和条目行的做法一致。此时该元素占满整行宽度（<code>auto</code>宽度会延伸到容器边缘）；标题放不下时截断标题，不截断页码；关闭前导符（<code>leader.enabled: false</code>）时中间留空。在篇行之外以及竖排页面上，<code>{'{leader}'}</code>不输出任何内容。在带标签的PDF和HTML中，前导点不计入读出的文字。</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>篇名行<code>{'{leader}'}</code>的外观：<code>color</code>、<code>fontFamily</code>、<code>fontSize</code>（以元素字号为基准的<code>em</code>）和<code>fontWeight</code>，逐项覆盖<code>leader</code>的外观；两者都未设置的项沿用文本元素自身的。自 postext 1.52 起。要把页码放进单独的元素（换一种字体，或加一个框），就把这一行做成三个元素：标题锚定在行的左边，页码锚定在右边，两者之间是只含<code>{'{leader}'}</code>的引导线元素，锚定为<code>{"{ to: '#title', edge: 'right-of' }"}</code>，宽度为<code>{"width: { to: '#page', edge: 'left' }"}</code>。无论页码元素落在哪里，引导点都在距它<code>gap</code>处停下。</td>
     </tr>
     <tr>
       <td><code>parts.height</code>、<code>marginTop</code>、<code>marginBottom</code></td>

@@ -2,10 +2,10 @@
 
 import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import type { DimensionUnit, MarkStyleConfig, ResolvedBodyTextConfig, ResolvedMarkStyleConfig } from 'postext';
+import type { DimensionUnit, MarkDecorationBreak, MarkStyleConfig, ResolvedBodyTextConfig, ResolvedMarkStyleConfig } from 'postext';
 import { DEFAULT_MARK_STYLES, resolveBodyTextConfig, resolveMarkStylesConfig } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput } from '../../controls';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput, SelectInput } from '../../controls';
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
@@ -148,6 +148,19 @@ function MarkStyleCard({ style, resolved, bodyText, otherIds, stored, onChange, 
         units={BOX_UNITS}
         isDefault={unset('borderRadius')}
         onReset={() => onResetField('borderRadius')}
+      />
+      <SelectInput
+        label={labels.markStyleDecorationBreak}
+        value={resolved.decorationBreak}
+        options={[
+          { value: 'slice', label: labels.markStyleDecorationBreakSlice },
+          { value: 'clone', label: labels.markStyleDecorationBreakClone },
+        ]}
+        onChange={(v) => onChange({ decorationBreak: v as MarkDecorationBreak })}
+        tooltip={labels.markStyleDecorationBreakTooltip}
+        variant="segmented"
+        isDefault={unset('decorationBreak')}
+        onReset={() => onResetField('decorationBreak')}
       />
       <DimensionInput
         label={labels.chipStylePaddingX}

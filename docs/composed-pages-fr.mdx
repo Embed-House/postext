@@ -356,6 +356,11 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
       <td>Ajouter le délimiteur de fermeture : autant de deux-points que sur la ligne d’ouverture de la page, ou <code>:::</code> pour un bloc ou une figure.</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>Un <code>:::</code> isolé juste après une directive d’une ligne (<code>:::toc</code>, <code>:::index</code>, <code>:::pagebreak</code>, <code>:::space</code>…), sans bloc ni encadré ouvert à fermer. Ces directives n’ont pas de délimiteur de fermeture : la ligne est écartée au lieu d’être imprimée.</td>
+      <td>Supprimer le <code>:::</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Une grille répétée contient <code>repeat.max</code> cartes et la page lui en donne davantage (voir <a href="#emplacements-répétés">Emplacements répétés</a>). Un avertissement par carte en trop, sur son <code>slot="…"</code> : la carte va dans le bloc de flux, ou après la page.</td>
       <td>Relever ou retirer <code>max</code> dans le gabarit, ou déplacer les cartes en trop sur une autre page.</td>

@@ -471,7 +471,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## 高亮样式
 
-`markStyles`属性为行内的`:mark[文字]{style="…"}`声明命名样式。高亮是铺在短语底下的色带，就像课本给关键词划重点（语法和断行规则见文档格式参考）。默认自带一个样式`mark`（浅黄色色带，略超出短语，两端稍圆，文字保持自身颜色），所以`:mark[…]`不做任何配置也能用；声明`markStyles`会替换这份默认列表。没有写`style`、或者写的id没有任何样式声明的高亮，套用第一个样式（Sandbox会标出未知的id）。
+`markStyles`属性为行内的`:mark[文字]{style="…"}`声明命名样式。高亮是铺在短语底下的色带，就像课本给关键词划重点（语法和断行规则见文档格式参考）。默认自带一个样式`mark`（浅黄色色带，略超出短语，两端为直角，文字保持自身颜色），所以`:mark[…]`不做任何配置也能用；声明`markStyles`会替换这份默认列表。没有写`style`、或者写的id没有任何样式声明的高亮，套用第一个样式（Sandbox会标出未知的id）。
 
 ```ts
 const config: PostextConfig = {
@@ -530,8 +530,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>色带两端的圆角半径，最大为其高度的一半。</td>
+      <td><code>0</code></td>
+      <td>色带两端的圆角半径，最大为其高度的一半。 直角两端是印刷的常规。postext 1.51 及更早版本的默认值是 <code>0.2em</code>；当时保存的配置，只要文本中有高亮，读取时会在每个未设半径的样式里写入 <code>0.2em</code>。</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -550,6 +550,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>上方或下方的留白，分别取代<code>paddingY</code>。</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>短语跨到下一行时色带的切法，同 CSS 的 <code>box-decoration-break</code>。<code>'slice'</code>：一条色带，在换行处直接截断，只有短语真正的开头和结尾才有内边距和圆角。<code>'clone'</code>：每一行的片段各有一段完整的色带，两端都有 <code>paddingX</code> 和圆角，用于逐行切开的色带标题。两种方式的排版完全相同。</td>
     </tr>
   </tbody>
 </table>

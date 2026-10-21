@@ -213,6 +213,23 @@ describe('postext cli', () => {
     expect(check().warnings.filter((w) => w.kind === 'fontFallback')).toEqual([]);
   }, 60_000);
 
+  // #1105: a character the text sets in a face that has no glyph for it is
+  // reported once per face for the book, with the characters.
+  it('reports the characters a face lacks once per face', async () => {
+    const { minimalFont } = await import('../../../postext/src/fonts/minimalFont');
+    const dir = book();
+    writeFileSync(join(dir, 'ch', '01.md'), '# One\n\nAn arrow → here and ← there.\n');
+    writeFileSync(join(dir, 'ch', '02.md'), '# Two\n\nAnother → arrow.\n');
+    mkdirSync(join(dir, 'fd'));
+    writeFileSync(join(dir, 'fd', 'SubsetSans.ttf'), minimalFont({ family: 'Subset Sans', ranges: [[0x20, 0x7e]], advanceEm: 0.5 }));
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({ bodyText: { fontFamily: 'Subset Sans' }, headings: { fontFamily: 'Subset Sans', fontWeight: 400 } }));
+    const report = JSON.parse(run(['check', 'ch', '--config', 'config.json', '--font-dir', 'fd', '--offline', '--json'], dir).stdout) as { warnings: { kind: string; message: string; data?: { characters: string[]; count: number } }[] };
+    const glyphs = report.warnings.filter((w) => w.kind === 'glyphFallback');
+    expect(glyphs).toHaveLength(1);
+    expect(glyphs[0]!.message).toContain('"Subset Sans" 400 has no glyph for 2 characters (→ ←)');
+    expect(glyphs[0]!.data).toMatchObject({ characters: ['→', '←'], count: 2 });
+  }, 60_000);
+
   it('raises no fallback for a bold a one-weight family does not ship', () => {
     const dir = book();
     mkdirSync(join(dir, 'fd'));
@@ -296,6 +313,16 @@ describe('postext cli', () => {
     expect(report.exitCode).toBe(0);
   }, 60_000);
 
+  // #1125: a closing fence after a one-line directive is reported, not printed.
+  it('check reports a stray ::: after :::toc', () => {
+    const dir = book();
+    writeFileSync(join(dir, 'ch', '03.md'), '# Contents\n\n:::toc\n:::\n');
+    const report = JSON.parse(run(['check', 'ch', '--offline', '--json'], dir).stdout) as { warnings: { kind: string; message: string; at?: string }[] };
+    const stray = report.warnings.filter((w) => w.kind === 'strayFence');
+    expect(stray).toHaveLength(1);
+    expect(stray[0]!.message).toContain(':::toc');
+  }, 60_000);
+
   it('check --strict fails on warnings with exit code 3', () => {
     const dir = book();
     writeFileSync(join(dir, 'ch', '03.md'), '# Three\n\n::resource{id="nowhere"}\n');
@@ -350,6 +377,30 @@ describe('postext cli', () => {
     expect(notes).toHaveLength(1);
     expect(notes[0]!.severity).toBe('info');
     expect(notes[0]!.data).toEqual({ path: 'pageTemplates[0].decoration.elements[1].unless', condition: 'unless', attribute: 'appendix' });
+  }, 60_000);
+
+  // #1124: a colour pair `contrast.allow` accepts is listed as accepted,
+  // as a note, and is no warning for --strict.
+  it('check lists an allowed contrast pair as accepted', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'ch'));
+    const ochre = { hex: '#b7820f', model: 'hex' };
+    const write = (allow: unknown[] | undefined) => writeFileSync(join(dir, 'config.json'), JSON.stringify({ bodyText: { color: ochre }, ...(allow ? { contrast: { allow } } : {}) }));
+    writeFileSync(join(dir, 'ch', '01.md'), 'Ochre text on paper.\n');
+    type Row = { kind: string; severity: string; message: string; data?: Record<string, unknown> };
+    const contrastRows = () => {
+      const r = run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir);
+      return (JSON.parse(r.stdout).warnings as Row[]).filter((x) => x.kind === 'contrast.lowContrast');
+    };
+    write(undefined);
+    expect(contrastRows().map((x) => x.severity)).toEqual(['warning']);
+    write([{ fg: '#b7820f', bg: '#ffffff', reason: 'The publisher\'s ochre' }]);
+    const rows = contrastRows();
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.severity).toBe('info');
+    expect(rows[0]!.message).toMatch(/^accepted \(The publisher's ochre\): #b7820f on #ffffff/);
+    expect(rows[0]!.data).toEqual({ accepted: { reason: 'The publisher\'s ochre', fg: '#b7820f', bg: '#ffffff' } });
+    expect(run(['check', 'ch', '--config', 'config.json', '--strict', '--offline', '-q'], dir).code).toBe(0);
   }, 60_000);
 
   // #858: a frame whose text still does not fit names the steps tried and

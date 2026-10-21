@@ -121,7 +121,7 @@ Conversion at `page.dpi` (default 300):
 | `canvasViewer` | `{ pageGap?, rowGap? }` | `24` / `24` | §21 Sandbox Canvas page spacing (≥ 1.43); `pageGap: 0` for art across the spine |
 | `pdfGeneration` | PdfGenerationConfig | §21 | outlines, tagging, colour space |
 | `print` | PrintConfig | §21 | PDF/X standard, ICC output profile, black (K-only, overprint, rich black), preflight (≥ 1.22) |
-| `contrast` | ContrastConfig | §21 | contrast check of text on its ground (≥ 1.28): `level` AA/AAA, `mode` auto/screen/print/both, `reversedText` sizes; layout ignores it |
+| `contrast` | ContrastConfig | §21 | contrast check of text on its ground (≥ 1.28): `level` AA/AAA, `mode` auto/screen/print/both, `reversedText` sizes, `allow` accepted pairs (>= 1.52); layout ignores it |
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
@@ -284,7 +284,7 @@ bodyText
 ├─ emphasis          'auto'|'italic'|'bold'|'color'|'overline'   'auto'   how *…* is set; auto = bold for Arabic-script locales, else italic; Arabic letters are never slanted
 ├─ tashkil           'keep'|'strip'|'strip-vowels'   'keep'      Arabic vowel marks out of the set text (strip-vowels keeps shadda)
 ├─ textAlign         'left'|'justify'|'center'|'right'|'start'|'end'   'justify'   left = the side a line STARTS on (the right of an Arabic paragraph); start/end are synonyms
-├─ paragraphSpacing  boolean         false           true = one full grid line between paragraphs (no fractional option)
+├─ paragraphSpacing  boolean|Dimension  false        true = one full grid line between paragraphs; a length (≥ 1.52, #1115: {2,'mm'}, {0.33,'em'}) = exactly that, in the flow, boxes and frames; off-grid until the next heading/list tail snaps back. Same slot as paragraphStyles[].spaceBetween (which wins inside :::paragraphs); boxes: calloutStyles[].body.paragraphSpacing
 ├─ firstLineIndent   Dimension       1.5 em          set {0,'mm'} for block paragraphs
 ├─ hangingIndent     boolean         false           indent all lines but the first
 ├─ indentAfterHeading boolean        true            false = first paragraph after a heading unindented (classic book style)
@@ -1015,8 +1015,10 @@ toc
 ├─ unnumbered   TocEntryStyleConfig partial — for headings of a style with numbered:false
 ├─ pageNumber   { fontFamily, fontSize (= level-1), fontWeight (= body weight), italic=false, color, width=2em }
 ├─ leader       { enabled=true, char='.', gap=0.5em }      ('. ' spaces the dots; the leader code body tab stops use, §4a; an artifact in tagged PDF ≥ 1.23)
+│                 + face ≥ 1.52 (#1121): color, fontFamily, fontSize (em of the page number's), fontWeight; unset = the page number's
 ├─ subtitle     { enabled=false, attr='author', fontFamily, fontSize, fontWeight, italic=true, color, indent=0 }
 ├─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}, {leader} ≥ 1.34.1),
+│                 leader ≥ 1.52: { color, fontFamily, fontSize (em of the element's), fontWeight } over toc.leader's face; unset = the element's own,
 │                 height = 2em (twice the body size, not two body lines), marginTop=0, marginBottom=0 }
 └─ groups       ≥ 1.34 blocks of the contents kept on one column/page
    ├─ keepTogether   false     a head row + every entry under it moves whole when it does not fit
@@ -1031,6 +1033,18 @@ A part row that needs dots up to its page number is ONE text element: `content: 
 `toc.leader` (char, gap, enabled), the same as the entry rows, so the dots line up with them; a title too long is
 cut, never the number. Never a literal run of dots in `content` (clipped, `designTextTruncated`). `{leader}` prints
 nothing outside a part row and on a vertical page (postext ≥ 1.34.1).
+Dots in their own colour, face or size (small coloured dots, a page number in bold): `toc.leader.color` / `fontFamily` /
+`fontSize` / `fontWeight` (entry rows, and part rows unless `toc.parts.leader` sets its own), ≥ 1.52.
+A page number in an element of its own (another face, a box around it) makes the part row THREE elements (≥ 1.52):
+```jsonc
+"elements": [
+  { "kind": "text", "id": "title", "content": "{number} {titleText}", "placement": { "anchor": { "to": "container", "edge": "left" } } },
+  { "kind": "text", "id": "page", "content": "{pageNumber}", "fontWeight": 700, "placement": { "anchor": { "to": "container", "edge": "right" } } },
+  { "kind": "text", "id": "dots", "content": "{leader}",
+    "placement": { "anchor": { "to": "#title", "edge": "right-of" }, "size": { "width": { "to": "#page", "edge": "left" } } } }
+]
+```
+The leader element holds `{leader}` alone; its dots end `toc.leader.gap` before the page number element.
 `:::toc{keep="part"}` / `keep="1"`…`"6"` / `keep="none"` and `:::toc{levels="1-2"}` override `groups` and
 `levels` for one contents (≥ 1.34, document-format.md). A block that still runs over columns raises
 `tocGroupSplit`.
@@ -1207,7 +1221,7 @@ All em values = the callout body font size.
            letterSpacing (≥ 1.42: em of the body size, negative tightens; tracks the box's paragraphs and
            list items, measured into the lines) }   → inherit bodyText
          + italic = false, smallCaps = false   (paragraphs, list items and blockquotes of the box)
-  lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight? }  → inherit unorderedLists
+  lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight?, bulletFontFamily? }  → inherit unorderedLists (bulletFontFamily unset: the list level keeps its own face)
            (a set `color` also colours ordered-list numbers, even when equal to unorderedLists.color)
   columnGap = 1.5em                  for :::columns{count=N} groups inside the box (a fence `gap=` overrides it)
   marginTop = 0.75em, marginBottom = 0.75em (minimum; grid-snapped after)
@@ -1318,9 +1332,10 @@ style declares (`unknownMarkStyle`), takes the first style; declaring `markStyle
 ```
 { id (REQUIRED), name?,
   background: ColorValue = #fff0a0 (palette-linkable), color?: ColorValue (the text's; reaches the whole word that
-  holds glued punctuation), borderRadius = 0.2em (the phrase's two ends, clamped), paddingX = 0.15em (past the
+  holds glued punctuation), borderRadius = 0 (square ends, the print norm; 0.2em up to postext 1.51, which a config stored then keeps through the configVersion 18 pin when its text has a mark; write it to round a band's ends), paddingX = 0.15em (past the
   first and last letter, into the word spaces), paddingY = 0.05em, paddingTop?, paddingBottom? (each in place
-  of paddingY) }
+  of paddingY), decorationBreak = 'slice' | 'clone' (postext ≥ 1.52.0; 'clone' gives every line piece of a wrapped
+  phrase a whole band, paddingX and corners on both ends: a heading on a colour band cut per line) }
 ```
 The band takes no room: the lines break as they would without the mark, so marking a laid-out book moves no page.
 Port rule: one style per distinct highlight colour of the source, the highlight's text colour in the style's
@@ -1372,6 +1387,10 @@ align?:   'left' (default) | 'center' | 'right' | 'start' | 'end'   (start/end �
                          flow sides, so in an RTL book 'left' is the sheet's right)
 captionSide?: boolean    caption in the float-only side column, level with the figure (oneAndHalf+floats): column floats and,
                          ≥ 1.28, a 'here' embed one column wide (layout.inlineCaptionSide; not in a box, a vertical page or with wrap)
+              | 'inside' ≥ 1.52: caption + note beside a picture inside its own slot, any layout (1 or 2 columns,
+                         page span, 'here', box, frame): picture = `width` of the slot (default 0.5) at `align`'s side,
+                         caption = the rest after layout.gutterWidth, top-aligned; block = the taller of the two;
+                         band < 1/5 of the slot -> caption under. Pictures only; no wrap, rotate or vertical page
 columns?: number         ≥ 1.18: a span:'column' float across this many adjacent columns (picture across 2 of 5);
                          ≥ the page's column count = page-wide; ignored for page/side spans, rotate, here;
                          captionSide only on 1-column floats
@@ -2097,6 +2116,8 @@ Decoration elements (≥ 1.48, besides text, image, rule, box):
 Callout styles as frame dress (≥ 1.48): borderRadius per corner as above, border.sides per side, label.joined +
   label.fillet (one outline with the box; offset 0), label.position 'bottom-left'|'bottom-right'|'bottom-start'|
   'bottom-end', label.icon { kind: 'glyph', glyph, fontFamily?, fontWeight?, scale? (1), color?, placement?, gap? }
+  label.borderRadius (#1102): CornerRadius of the tab itself. Plain tab: square unless set. Joined tab: its two
+  outer corners (topLeft/topRight at the head, bottomLeft/bottomRight at the foot), default the box corner; fillets keep fillet.
 
 ResourceAnchor (≥ 1.48): labelAt?: { x, y } (fractions: the label away from its point), leader?: boolean | LeaderStyle
 LeaderStyle  { color? (the label's), opacity? (≥ 1.49), width? (0.75pt), dash?, startCap? ('none'), endCap? ('dot'),
@@ -2372,7 +2393,11 @@ as a change. Left out, the file is stamped with the time of the call.
     "minSize": { "value": 8, "unit": "pt" },       // reversed text under this is reported
     "minFineSize": { "value": 12, "unit": "pt" },  // the same for italics and light weights
     "lightWeight": 300                             // a weight at or under this counts as light
-  }
+  },
+  "allow": [                     // (>= 1.52, #1124) the source's own pairs, accepted with a reason
+    { "fg": "#b7820f", "bg": "#ffffff", "reason": "publisher's ochre" },   // by colours (as written or painted)
+    { "style": "margin-note", "reason": "source sets margin notes in light grey" }  // by style id: box (or frame
+  ]                              // style), paragraph, heading, chip or label style; fg/bg narrow a style entry
 }
 ```
 - Screen = WCAG 2 ratio of the sRGB colours. Print = the same formula over the colours as separated through
@@ -2388,6 +2413,9 @@ as a change. Left out, the file is stamped with the time of the call.
   warning (exit 3 only with `--strict`). With `--preflight` a `mode: 'auto'` book is checked for print too.
   The Sandbox lists them in Checks.
 - A port keeps the source's colours. Report a low ratio the source has as a finding; do not recolour.
+  When the source sets the pair on purpose (its palette), add a `contrast.allow` entry with the reason
+  instead of turning the check off: the pair stays listed as accepted (`accepted` on the finding, a note
+  in `postext check`, its own group in the Sandbox Checks) and no longer counts as a warning.
   Turn the check off (`enabled: false`) only when the user asks.
 
 `htmlViewer`: `{ maxCharsPerLine = 70, columnGap = 50 (CSS px number), optimalLineBreaking = false, overrides?: Omit<PostextConfig,'htmlViewer'> }`.
@@ -2536,6 +2564,10 @@ much as a bold made from the regular). Builds with a font set check it (the brow
 the `postext` command line (≥ 1.28): it warns `fontFallback` when a face the family ships could not be loaded
 (offline with nothing cached, a failed download, a `--font-dir` without the file) and another face of the family
 stood in. A weight or slant the family does not ship stays silent there. `render.mjs` does not check it.
+It gates `glyphFallback` too (≥ 1.52): characters the text sets in a face with no glyph for them, which
+another face drew (an arrow or a Greek letter from a fallback serif beside a sans text face), one warning per
+face with the characters. The command line reads the `cmap` of every face it loads; browser and worker builds
+ask a probe face that `prepareFonts` and the layout worker declare (`installGlyphProbe`).
 
 **Fonts and caches in browser code (≥ 1.25).** Build with `buildDocumentWithFonts(content, config,
 { resolve })`, or call `prepareFonts(content, config, { resolve })` before `buildDocument`: it loads

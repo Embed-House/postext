@@ -36,12 +36,15 @@ describe('pinLegacyScriptContext (#725)', () => {
       expect(kept(migrateConfig({ bodyText: { scriptContext: true } }, v)), String(v)).toBe(true);
     }
     const current: PostextConfig = {};
-    // One stamped 12 takes the pins of rules 13 and 14 alone: the language
-    // (#764, #770) and, its text not being known, the task box (#765). One
-    // stamped 13 takes the language alone; one stamped 14 is read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
-    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
-    expect(migrateConfig(current, 14)).toBe(current);
+    // One stamped 12 takes the pins of rules 13, 14 and 18 alone: the
+    // language (#764, #770) and, its text not being known, the task box
+    // (#765) and the rounded mark ends (#1149). One stamped 13 takes the
+    // language and the mark ends; one stamped 14 the mark ends alone; one
+    // stamped 18 is read as it is.
+    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 14)).toEqual({ ...current, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 18)).toBe(current);
     // A new document has the rule; one read from before keeps the old way.
     expect(resolveAllConfig(current).bodyText.scriptContext).toBeUndefined();
     expect(resolveAllConfig(migrateConfig({}, 11)).bodyText.scriptContext).toBe(false);

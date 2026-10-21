@@ -182,6 +182,13 @@ export function deriveCalloutResolvedConfig(
   // have a colour of their own, which an unset `lists.color` leaves alone.
   // A resolved style without the flag (built by hand) keeps the old rule.
   const numberColorOverride = lists.colorSet === true || colorOverride;
+  // The bullet's face (#1103): the style's own, else the level's. A bullet
+  // size of its own sets a level whose face was only the body's in the
+  // box's body face, as before; a list or level face of its own (a symbol
+  // face) is kept.
+  const bulletFamily = (levelFamily: string): string | undefined =>
+    lists.bulletFontFamily
+      ?? (lists.bulletFontSize && levelFamily === resolved.bodyText.fontFamily ? body.fontFamily : undefined);
   return {
     ...resolved,
     bodyText: {
@@ -212,15 +219,17 @@ export function deriveCalloutResolvedConfig(
       indent: lists.indent,
       gap: lists.gap,
       itemSpacing: lists.itemSpacing,
-      levels: ul.levels.map((l) => ({
-        ...l,
-        bulletChar: bulletOverride ? lists.bulletChar : l.bulletChar,
-        color: colorOverride ? lists.color : l.color,
-        // A bullet size / weight of its own sets the glyph in the box's body
-        // face at that size (the document's list face otherwise).
-        ...(lists.bulletFontSize ? { fontSize: lists.bulletFontSize, fontFamily: body.fontFamily } : {}),
-        ...(lists.bulletFontWeight !== undefined ? { fontWeight: lists.bulletFontWeight } : {}),
-      })),
+      levels: ul.levels.map((l) => {
+        const fontFamily = bulletFamily(l.fontFamily);
+        return {
+          ...l,
+          bulletChar: bulletOverride ? lists.bulletChar : l.bulletChar,
+          color: colorOverride ? lists.color : l.color,
+          ...(lists.bulletFontSize ? { fontSize: lists.bulletFontSize } : {}),
+          ...(fontFamily ? { fontFamily } : {}),
+          ...(lists.bulletFontWeight !== undefined ? { fontWeight: lists.bulletFontWeight } : {}),
+        };
+      }),
     },
     orderedLists: {
       ...ol,
@@ -833,8 +842,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     ? titleFontPx * titleLh.value
     : dimensionToPx(titleLh, dpi, titleFontPx);
   // A title in a joining script (Arabic…) is set untracked: spacing its
-  // letters apart breaks the joins (`measure/joining.ts`).
-  const titleTrackingPx = joiningScriptIn(titleText) ? 0 : Math.max(0, dimensionToPx(style.titleStyle.letterSpacing, dpi, titleFontPx));
+  // letters apart breaks the joins (`measure/joining.ts`). A negative
+  // tracking tightens the title (#1098), as it does a heading.
+  const titleTrackingRaw = dimensionToPx(style.titleStyle.letterSpacing, dpi, titleFontPx);
+  const titleTrackingPx = joiningScriptIn(titleText) || !Number.isFinite(titleTrackingRaw) ? 0 : titleTrackingRaw;
   // A corner badge on the left hangs half over the title's side: the title
   // starts past it (its inner half plus the icon gap), at least — a
   // configured `indent` only adds beyond that room.
@@ -860,9 +871,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   let titleBlock: VDTDesignTextBlock | undefined;
   if (hasTitle) {
     const titleW = Math.max(1, innerWidth - titleIndentPx);
-    // Tracking only widens lines on the rich path: the plain breaker would
-    // fit an untracked line and the tracked title would overrun the box.
-    const measured = titleTrackingPx > 0
+    // Tracking only changes line widths on the rich path: the plain breaker
+    // would fit an untracked line and a tracked title would overrun the box
+    // (or, tightened, break earlier than it needs to).
+    const measured = titleTrackingPx !== 0
       ? measureRichBlock(
         [{ text: titleText, bold: false, italic: false }],
         titleFont, titleFont, titleFont, titleFont, titleW, titleLineHeight,
@@ -903,7 +915,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         };
       }),
       clip: false,
-      ...(titleTrackingPx > 0 ? { letterSpacingPx: titleTrackingPx } : {}),
+      ...(titleTrackingPx !== 0 ? { letterSpacingPx: titleTrackingPx } : {}),
       ...(repeatedTitle ? { artifact: true } : {}),
     }, titleTrackingPx);
     cursorY += titleHeight;
@@ -2142,12 +2154,18 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       // with the side goes on.
       const cornerIndex = labelAtFoot ? (onRight ? 2 : 3) : (onRight ? 1 : 0);
       const tabRadius = radii[cornerIndex]!;
+      // A radius of the tab's own (#1102) rounds its outer corners, the
+      // left one and the right one; the fillets keep the box's corner.
+      const own = lb.borderRadius !== undefined ? cornerRadiiPx(lb.borderRadius, px) : undefined;
+      const outer: number | [number, number] = own
+        ? (labelAtFoot ? [own[3], own[2]] : [own[0], own[1]])
+        : tabRadius;
       const outline = boxOutline(createBoundingBox(0, 0, boxWidth, boxHeight), radii, {
         edge: labelAtFoot ? 'bottom' : 'top',
         x0: tabX,
         x1: tabX + tabW,
         height: tabH,
-        radius: tabRadius,
+        radius: outer,
         fillet: lb.fillet ? Math.max(0, px(lb.fillet)) : tabRadius,
       });
       const whole = borderOn && px(style.border.width) > 0 ? { color: style.border.color.hex, widthPx: px(style.border.width) } : null;
@@ -2161,10 +2179,17 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         else delete stripeBlock.clip;
       }
     } else {
+      // A tab apart from the box is square unless it sets corners of its
+      // own (#1102): a box style with radii, which every backend draws
+      // through `boxOutline` (one radius on every corner stays a plain
+      // rounded box).
+      const tabRadii = lb.borderRadius !== undefined ? cornerRadiiPx(lb.borderRadius, px) : undefined;
       overlayBlocks.push({
         kind: 'box',
         bbox: createBoundingBox(tabX, tabY, tabW, tabH),
-        box: { backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0 },
+        box: tabRadii && tabRadii.some((r) => r > 0)
+          ? normalizeBoxStyle({ backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0, borderRadiiPx: tabRadii })
+          : { backgroundColor: lb.background.hex, borderWidthPx: 0, borderRadiusPx: 0 },
       });
     }
     // The words follow the picture: to its right in a left-to-right box,

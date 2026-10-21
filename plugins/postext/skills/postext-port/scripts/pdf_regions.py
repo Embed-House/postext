@@ -114,7 +114,9 @@ import fitz  # PyMuPDF
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import anchors as anc  # noqa: E402
+import extract_tables as et  # noqa: E402
 import images as imgs  # noqa: E402
+import legends as lgd  # noqa: E402
 import line_art as la  # noqa: E402
 import pdf_extract as pex  # noqa: E402
 import postext_md as pmd  # noqa: E402
@@ -226,6 +228,33 @@ def weight_italic_of(style: str) -> tuple[int, bool, list[str]]:
     return weight, italic, widths
 
 
+_STYLE_WORDS = set(WEIGHTS) | set(WIDTH_TOKENS) | {"italic", "oblique", "it", "ita", "kursiv", "slanted"}
+
+
+def split_face_name(name: str) -> tuple[str, str]:
+    """(family part, style part) of a PDF font name in any of the forms
+    producers write: `Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`,
+    `ArialBold`. The subset prefix (`ABCDEF+`) is dropped first."""
+    base = name.split("+")[-1]
+    m = re.match(r"^([^-,]+)[-,](.*)$", base)
+    if m:
+        return m.group(1).strip(), m.group(2).strip()
+    words = base.split(" ")
+    k = len(words)
+    while k > 1 and all(t in _STYLE_WORDS for t in style_tokens(words[k - 1])) and style_tokens(words[k - 1]):
+        k -= 1
+    if k < len(words):
+        return " ".join(words[:k]), "".join(words[k:])
+    # glued: the family's last capitalised words that are style words (`ArialBold`)
+    parts = re.findall(r"[A-Z][a-z]+|[A-Z]+(?![a-z])|[a-z]+|\d+", base)
+    k = len(parts)
+    while k > 1 and parts[k - 1].lower() in _STYLE_WORDS:
+        k -= 1
+    if 0 < k < len(parts):
+        return "".join(parts[:k]), "".join(parts[k:])
+    return base, ""
+
+
 def font_table(fonts_dir: Path) -> dict[str, tuple[str, int, str, str]]:
     """PostScript name -> (family, weight, style, file) for the faces in
     fonts_dir. A width the family name does not say (`-BoldCn`) is added to
@@ -245,10 +274,12 @@ def font_table(fonts_dir: Path) -> dict[str, tuple[str, int, str, str]]:
             ps = TTFont(str(f), lazy=True, fontNumber=0)["name"].getDebugName(6) or f.stem
         except Exception:
             pass
-        sub = ps.partition("-")[2]
+        sub = split_face_name(ps)[1]
         w2, it2, widths = weight_italic_of(sub)
         if it2:
             style = "italic"
+        if int(weight) == 400 and w2 != 400:
+            weight = w2      # a file without OS/2 weight: its name says it
         for wd in widths:
             if wd not in fam.lower().replace(" ", ""):
                 fam = f"{fam} {wd.capitalize()}"
@@ -281,10 +312,14 @@ class Fonts:
         if key in self.cache:
             return self.cache[key]
         base = pdf_name.split("+")[-1]
-        fam_part, _, style = base.partition("-")
+        fam_part, style = split_face_name(base)
         weight, italic, _ = weight_italic_of(style)
+        name_w, name_it = weight, italic
+        toks = style_tokens(style)
+        said = any(t in WEIGHTS for t in toks) or any("".join(toks[i:i + 2]) in WEIGHTS for i in range(len(toks)))
         if flags & 16 and weight < 600:
             weight = 700
+            said = True
         if flags & 2:
             italic = True
         out = None
@@ -299,18 +334,38 @@ class Fonts:
         if out is None and self.table:
             ps = base if base in self.table else None
             if ps is None:
-                cands = [p for p in self.table if p.startswith(base) or base.startswith(p)]
-                cands += [p for p in self.table if p.lower() == base.lower()]
+                cands = [p for p in self.table if p.lower() == base.lower()]
+                if not cands:
+                    # a prefix match only between faces whose names say the same weight and slant:
+                    # `Font-Bold` never maps to the regular `Font`
+                    cands = [p for p in self.table if (p.startswith(base) or base.startswith(p))
+                             and weight_italic_of(split_face_name(p)[1])[:2] == (name_w, name_it)]
                 if cands:
                     ps = sorted(cands, key=lambda p: (-len(p), p))[0]
             if ps:
                 fam, w, st, _ = self.table[ps]
-                out = (fam, w, st == "italic")
+                # the heavier of the file's weight and the name's (or the bold flag), either slant
+                out = (fam, max(int(w), weight) if said else int(w), st == "italic" or italic)
         if out is None:
             out = (_split_camel(fam_part) or base, weight, italic)
         self.cache[key] = out
         self.seen[base] = out
         return out
+
+
+def font_warnings(fonts: Fonts) -> list[str]:
+    """A loud note when every face came out at one weight although the PDF's
+    font names say several: the draft then has no bold, and the fonts
+    folder or the font map needs a look."""
+    if len(fonts.seen) < 2:
+        return []
+    out_w = {v[1] for v in fonts.seen.values()}
+    named = {weight_italic_of(split_face_name(k)[1])[0] for k in fonts.seen}
+    if len(out_w) == 1 and len(named) > 1:
+        return [f"every face reads as weight {next(iter(out_w))} but the PDF names "
+                f"{len(fonts.seen)} faces of weights {sorted(named)}: no bold will be marked; "
+                "check --fonts and --font-map"]
+    return []
 
 
 # ---------------------------------------------------------------------------
@@ -402,6 +457,8 @@ class Renders:
         p3.apply_redactions(images=fitz.PDF_REDACT_IMAGE_REMOVE, graphics=fitz.PDF_REDACT_LINE_ART_REMOVE_IF_TOUCHED,
                             text=fitz.PDF_REDACT_TEXT_NONE)
         self.ink = self._pix(p3, rgb=False)
+        self._docs = (doc, doc2, doc3)          # kept open for `span_shows` (renders of one clip)
+        self._pages = (page, p2, p3)
 
     def _pix(self, page: fitz.Page, rgb: bool):
         np = self.np
@@ -419,10 +476,61 @@ class Renders:
         h, w = self.ink.shape
         return max(0, x0), max(0, y0), min(w, x1), min(h, y1)
 
-    def text_visible(self, bbox_pt: tuple) -> bool:
+    def span_shows(self, span: dict, dpi: int = 600) -> bool | None:
+        """Do one span's own glyphs show, read on renders of its box alone at
+        `dpi`: its characters drawn by themselves at their origins and size
+        (a stand-in face, grown by a pixel) mark its glyphs in the page's
+        text ink, and those pixels must differ between the page and the page
+        without text. None when too few pixels are its own to tell."""
+        np = self.np
+        chars = [c for c in span.get("chars", []) if c["c"].strip()]
+        if not chars:
+            return None
+        b = span["bbox"]
+        clip = fitz.Rect(b[0] - 1, b[1] - 1, b[2] + 1, b[3] + 1)
+
+        def grab(page: fitz.Page, rgb: bool):
+            pm = page.get_pixmap(dpi=dpi, clip=clip, colorspace=fitz.csRGB if rgb else fitz.csGRAY, alpha=False)
+            a = np.frombuffer(pm.samples, dtype=np.uint8).reshape(pm.height, pm.stride)[:, :pm.width * pm.n]
+            return a.reshape(pm.height, pm.width, pm.n).astype(int) if rgb else a.astype(int)
+
+        page, bare, ink = self._pages
+        alone = fitz.open()
+        ap = alone.new_page(width=self.rect.width, height=self.rect.height)
+        if self.rect.x0 or self.rect.y0:
+            ap.set_mediabox(self.rect)
+        tw = fitz.TextWriter(ap.rect)
+        font = fitz.Font("helv")
+        for c in chars:
+            tw.append(fitz.Point(c["origin"]), c["c"], font=font, fontsize=span["size"])
+        tw.write_text(ap)
+        m = grab(ap, False) < 128
+        grown = m.copy()
+        grown[1:, :] |= m[:-1, :]
+        grown[:-1, :] |= m[1:, :]
+        grown[:, 1:] |= m[:, :-1]
+        grown[:, :-1] |= m[:, 1:]
+        a, z, k = grab(page, True), grab(bare, True), grab(ink, False)
+        h = min(a.shape[0], z.shape[0], k.shape[0], grown.shape[0])
+        w = min(a.shape[1], z.shape[1], k.shape[1], grown.shape[1])
+        own = grown[:h, :w] & (k[:h, :w] < 128)
+        if own.sum() < 12:
+            return None
+        d = np.abs(a[:h, :w] - z[:h, :w]).sum(axis=2)
+        return float((d[own] > 45).mean()) > 0.5
+
+    def text_visible(self, bbox_pt: tuple, span: dict | None = None) -> bool:
+        """Do the span's glyphs show on the printed page? With `span` (a
+        rawdict span another one's box covers in part), only its own glyphs
+        are read (`span_shows`): a hidden copy of a label set just off a
+        visible one saw the visible one's ink as its own (#1135)."""
         x0, y0, x1, y1 = self._win(bbox_pt)
         if x1 <= x0 or y1 <= y0:
             return False
+        if span is not None:
+            got = self.span_shows(span)
+            if got is not None:
+                return got
         d = abs(self.rgb[y0:y1, x0:x1] - self.bare[y0:y1, x0:x1]).sum(axis=2)
         glyphs = self.ink[y0:y1, x0:x1] < 128
         if glyphs.sum() >= 6:
@@ -584,11 +692,13 @@ def ink_box(win: Any, background: str | None, holes: list[tuple] = (), outside: 
 
 
 class Char:
-    __slots__ = ("c", "x0", "y0", "x1", "y1", "oy", "family", "weight", "italic", "size", "color", "mark")
+    __slots__ = ("c", "x0", "y0", "x1", "y1", "oy", "family", "weight", "italic", "size", "color", "mark", "font")
 
-    def __init__(self, c, x0, y0, x1, y1, oy, family, weight, italic, size, color, mark=None):
+    def __init__(self, c, x0, y0, x1, y1, oy, family, weight, italic, size, color, mark=None, font=None):
         self.c, self.x0, self.y0, self.x1, self.y1, self.oy = c, x0, y0, x1, y1, oy
         self.family, self.weight, self.italic, self.size, self.color, self.mark = family, weight, italic, size, color, mark
+        #: the PDF font the character is set in (None for spaces made up by the reader)
+        self.font = font
 
 
 class Line:
@@ -607,7 +717,10 @@ class Line:
         self.y1 = max(c.y1 for c in ink)
         self.base = statistics.median(c.oy for c in ink)
         counts: dict[tuple, int] = {}
-        for c in ink:
+        # highlighted words (a chip's white letters on its band) are not the line's look:
+        # a mark ending mid-paragraph must not part the lines on either side of it
+        plain_ink = [c for c in ink if not c.mark] or ink
+        for c in plain_ink:
             k = (c.family, round(c.size * 2) / 2, c.color)
             counts[k] = counts.get(k, 0) + 1
         self.family, self.size, self.color = max(counts, key=lambda k: (counts[k], k))
@@ -643,6 +756,16 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
     pieces: list[Line] = []
     hidden: list[str] = []
     raw = page.get_text("rawdict", flags=FLAGS)
+    inked = [tuple(s["bbox"]) for b in raw["blocks"] if b.get("type", 0) == 0 for l in b["lines"] for s in l["spans"]
+             if any(ch["c"].strip() for ch in s["chars"])]
+
+    def near(bb: tuple) -> bool:
+        """Another span's box covers a fifth of this one's, or more (a copy
+        set just off it; spans side by side on a line barely meet)."""
+        own = max((bb[2] - bb[0]) * (bb[3] - bb[1]), 1e-6)
+        return any(o != tuple(bb) and inter(o, bb) >= 0.2 * min(own, max((o[2] - o[0]) * (o[3] - o[1]), 1e-6))
+                   for o in inked)
+
     for block in raw["blocks"]:
         if block.get("type", 0) != 0:
             continue
@@ -659,7 +782,8 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
                                           False, span["size"], "#000000"))
                     continue
                 sb = to_mm(span["bbox"], origin)
-                if not centre_in(sb, trim) or not renders.text_visible(span["bbox"]):
+                if not centre_in(sb, trim) or not renders.text_visible(
+                        span["bbox"], span if abs(rot) < 1 and near(span["bbox"]) else None):
                     hidden.append(text.strip())
                     continue
                 fam, weight, italic = fonts.face(span["font"], span["flags"])
@@ -673,7 +797,7 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
                 for ch, sl in zip(span["chars"], slant):
                     b = to_mm(ch["bbox"], origin)
                     chars.append(Char(ch["c"], b[0], b[1], b[2], b[3], (ch["origin"][1] - oy) * PT_MM, fam, weight,
-                                      italic or sl, span["size"], col))
+                                      italic or sl, span["size"], col, font=span["font"].split("+")[-1]))
             if any(c.c.strip() for c in chars):
                 for c in chars:
                     if not c.family:   # spaces take the face of the text before them
@@ -788,8 +912,17 @@ def merge_pieces(pieces: list[Line]) -> list[Line]:
 def runs_markdown(chars: list[Char], base_weight: int, base_italic: bool, mark_ids: dict, mode: str) -> str:
     """Inline Markdown of a run of characters: bold, italic, highlight marks."""
     segs: list[tuple[Any, list[pmd.Run]]] = []
+    # the base face: the font most of the base-weight letters are set in. A run in another
+    # font (a Medium file beside the Book) is bold at 100 over the base; within one font,
+    # whose reported weight alone varies, at 150
+    fonts: dict[Any, int] = {}
     for c in chars:
-        bold = c.weight >= max(600, base_weight + 200) if c.c.strip() else False
+        if c.c.strip() and c.weight <= base_weight and c.font:
+            fonts[c.font] = fonts.get(c.font, 0) + 1
+    base_font = max(fonts, key=lambda k: (fonts[k], k)) if fonts else None
+    for c in chars:
+        other = base_font is not None and c.font is not None and c.font != base_font
+        bold = c.weight >= max(500, base_weight + (100 if other else 150)) if c.c.strip() else False
         italic = c.italic and not base_italic if c.c.strip() else False
         mk = mark_ids.get(c.mark) if c.mark else None
         if not segs or segs[-1][0] != mk:
@@ -1024,6 +1157,7 @@ class Shape:
 
 
 RULE_FILL_MM = 1.0        # a filled rectangle thinner than this is a rule
+HIDDEN_SHOWS = 0.03       # share of its box a hidden fill must show to be drawn (its ring)
 
 
 def box_dist(p: tuple, b: tuple) -> float:
@@ -1065,34 +1199,166 @@ def dash_mm(dashes: Any) -> list[float]:
     return out if any(v > 0 for v in out) else []
 
 
-def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders, opts: argparse.Namespace) -> dict:
+GRID_TEXT = 0.6           # share of a ruled grid's cells that must hold text for it to be a table
+
+
+def crosses_cells(l: Any, table: Any, origin: tuple, tol: float = 1.0) -> bool:
+    """Does a text line run across the edge between two cells of its row
+    (more than `tol` mm on both sides)? Words of a table stay in their cells."""
+    for row in table.rows:
+        cells = [to_mm(c, origin) for c in row.cells if c is not None]
+        if not cells:
+            continue
+        rb = to_mm(row.bbox, origin)
+        if not rb[1] <= (l.y0 + l.y1) / 2 <= rb[3]:
+            continue
+        edges = sorted({c[2] for c in cells} - {max(c[2] for c in cells)})
+        return any(l.x0 + tol < x < l.x1 - tol for x in edges)
+    return False
+
+
+def grid_tables(page: fitz.Page, origin: tuple, lines: list, opts: argparse.Namespace) -> list[dict]:
+    """The page's ruled grids that are tables (PyMuPDF `find_tables`,
+    `lines_strict`: at least 2 × 2 cells, text in most of them), each as
+    {box (mm), model, style, notes} through `extract_tables` (the cells'
+    align, bold and fills, the nearest rules preset). The header row is the
+    first when it is filled or bold. `lines`: the page's text lines, for the
+    table's face."""
+    if getattr(opts, "no_tables", False) or not hasattr(page, "find_tables"):
+        return []
+    import contextlib
+
+    try:
+        with contextlib.redirect_stdout(sys.stderr):
+            found = page.find_tables(strategy="lines_strict")
+    except Exception:
+        return []
+    page_area = origin[2] * origin[3]
+    out: list[dict] = []
+    cache: dict = {}
+    for t in found.tables:
+        if t.row_count < 2 or t.col_count < 2:
+            continue
+        cells = [c for r in t.extract() for c in r if c is not None]
+        if not cells or sum(1 for c in cells if et.clean(c)) < GRID_TEXT * len(cells):
+            continue
+        box = to_mm(t.bbox, origin)
+        if area(box) > 0.8 * page_area:
+            continue
+        mine = [l for l in lines if centre_in(l.box, box)]
+        if any(crosses_cells(l, t, origin) for l in mine):
+            continue        # words run across its rules: a drawing on a grid, not a table
+        model = et.table_model(t, 1, page, cache)
+        style, notes = model.pop("_style"), model.pop("_notes")
+        if not (style.get("headerBackgroundEnabled") or style.get("headerBold")):
+            model = et.table_model(t, 0, page, cache)
+            style, notes = model.pop("_style"), model.pop("_notes")
+        rows = [r for r in model["rows"] if any(c["content"] for c in r)]
+        if len(rows) < 2 or max(len(r) for r in rows) < 2:
+            continue
+        if mine:
+            look = dominant(mine)
+            face = {"bodyFontFamily": look["family"], "bodyFontSize": ptv(look["size"]),
+                    "bodyColor": colour(look["color"]), "headerFontFamily": look["family"],
+                    "headerFontSize": ptv(look["size"])}
+            if model["headerRowCount"] and t.rows:
+                y1 = to_mm(t.rows[0].bbox, origin)[3]
+                head = [l for l in mine if (l.box[1] + l.box[3]) / 2 < y1]
+                if head:
+                    face["headerColor"] = colour(dominant(head)["color"])
+            # the padding: half what a row has over its line, the tightest row's
+            slack = [(to_mm(r.bbox, origin)[3] - to_mm(r.bbox, origin)[1]) * MM - look["size"] * 1.2 for r in t.rows]
+            if slack and min(slack) > 0:
+                face["cellPadding"] = ptv(min(slack) / 2)
+            style = {**face, **style}
+        out.append({"box": box, "model": model, "style": style, "notes": notes})
+    return out
+
+
+def cuts_word(l: Line, box: tuple) -> bool:
+    """A band edge falls inside a word of the line: the band's padding takes
+    in the edge letters of the words beside its own, by less than half a
+    word. A band hugging part of a long word (a syllable) covers most of it
+    or a run of letters away from the band's edge."""
+    word: list[Char] = []
+    for c in l.chars + [None]:
+        if c is not None and c.c.strip():
+            word.append(c)
+            continue
+        if word:
+            ins = [centre_in((w.x0, w.y0, w.x1, w.y1), box) for w in word]
+            if any(ins) and not all(ins) and sum(ins) <= 2 and sum(ins) < len(word) / 2:
+                return True
+        word = []
+    return False
+
+
+def is_mask(s: Any, shapes: list, lines: list[Line]) -> bool:
+    """A borderless fill of the colour behind it (the filled shape painted
+    before it that holds it, else the white paper) under one or two lines:
+    a mask that blanks out a picture or a rule under the words. It is no
+    box: a frame of its own would split the paragraph it sits under."""
+    if not s.fill or s.stroke:
+        return False
+    held = [l for l in lines if not l.rotate and centre_in(l.box, s.box)]
+    if not 1 <= len(held) <= 2:
+        return False
+    # every fill painted before it that it overlaps must be its colour (a white tab half
+    # over a blue box shows as a tab), and so must the paper where nothing holds it
+    over = [o for o in shapes if o is not s and o.fill and o.seq < s.seq and inter(o.box, s.box) > 0.02 * area(s.box)]
+    if any(td.delta_e(s.fill, o.fill) > 3 for o in over):
+        return False
+    held_by = [o for o in over if inside_mm(s.box, o.box, 0.5)]
+    return bool(held_by) or td.delta_e(s.fill, "#ffffff") <= 3
+
+
+def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders, opts: argparse.Namespace,
+             claims: list = ()) -> dict:
     """Sort the page's shapes and images into ground, cards, highlight bands,
-    tabs, boxes and pictures."""
+    tabs, boxes and pictures. `claims`: boxes (mm) of the page's tables
+    (`grid_tables`): the shapes inside one are the table's (kind `table`)."""
     w_mm, h_mm = origin[2], origin[3]
     page_area = w_mm * h_mm
     shapes = [Shape(d, origin, clip, exact) for d, clip, exact in drawings_with_clips(page)]
+    tabled = [s for s in shapes if any(inside_mm(s.box, b, 0.6) for b in claims)]
+    for s in tabled:
+        s.kind = "table"
+    if tabled:     # read apart from the rest; back in `shapes` at the end
+        shapes = [s for s in shapes if s.kind != "table"]
     out: dict[str, list] = {"ground": [], "cards": [], "bands": [], "tabs": [], "boxes": [], "art": []}
     # highlight bands: wide strokes or fills hugging words on a line
     for s in shapes:
         b = s.band()
         col = s.stroke
-        if b is None and s.fill and s.rect_like() and s.h < 9:
+        if b is None and s.fill and s.rect_like() and s.h < 13:
             b, col = s.box, s.fill
         if b is None or whiteish(col):
             continue
-        over = [c for l in lines for c in l.chars if c.c.strip() and centre_in((c.x0, c.y0, c.x1, c.y1), b)]
+        over_lines = [(l, [c for c in l.chars if c.c.strip() and centre_in((c.x0, c.y0, c.x1, c.y1), b)])
+                      for l in lines]
+        over_lines = [(l, cs) for l, cs in over_lines if cs]
+        over = [c for _, cs in over_lines for c in cs]
         if not over:
             continue
         size = statistics.median(c.size for c in over) * PT_MM
         bh = b[3] - b[1]
         if not (0.6 * size <= bh <= 2.4 * size):
             continue
-        if s.band() is None:   # a filled band must hug its words
+        if s.band() is None:
+            # a filled band hugs its words, or covers words of one line that runs on past it
+            # (a highlight with room round it): never a box that would cut the line in two
             x0, x1 = min(c.x0 for c in over), max(c.x1 for c in over)
-            if x0 - b[0] > 1.5 or b[2] - x1 > 1.5:
+            hugs = x0 - b[0] <= 1.5 and b[2] - x1 <= 1.5 and s.h < 9 and not any(
+                cuts_word(l, b) for l, _ in over_lines)
+            in_line = len(over_lines) == 1 and len(over) < sum(1 for c in over_lines[0][0].chars if c.c.strip())
+            if not (hugs or in_line):
                 continue
+        else:
+            hugs = True
         s.kind = "band"
-        out["bands"].append({"box": b, "color": col, "shape": s})
+        # a loose band (room round its words) marks whole words only: its padding covers
+        # the edge letters of the words beside it
+        out["bands"].append({"box": b, "color": col, "shape": s, "loose": not hugs})
     # thin straight lines across and down (a diagram's connectors, a pointer, a rule): read as
     # lines, never as boxes or as a picture's art (round-1 grounds kept them in a raster)
     out["lines"] = []
@@ -1147,6 +1413,9 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
         elif s.fill and a >= 0.6 * page_area:
             s.kind = "ground"
         elif s.rect_like() and (s.fill or s.stroke) and s.w >= 6 and s.h >= 4 and a < 0.6 * page_area:
+            if is_mask(s, shapes, lines):
+                s.kind = "mask"     # owns no lines and is not drawn
+                continue
             if not renders.shape_visible(s.rect_pt, s.fill, None) and not (s.stroke and renders.shape_visible(s.rect_pt, None, s.stroke)):
                 s.kind = "hidden"
                 continue
@@ -1211,6 +1480,12 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
         cols = [c for c in (s.fill, s.stroke) if c and not whiteish(c)]
         if cols and not any(renders.paints(s.rect_pt, c) for c in cols):
             s.kind = "unseen"
+        elif s.kind == "hidden" and s.fill and not s.stroke:
+            # a fill the box check calls hidden is drawn for the ring it shows round what covers it;
+            # one that shows next to nothing (a few pixels at an edge) is debris
+            share = renders.share_of(s.rect_pt, s.fill)
+            if share is not None and share < HIDDEN_SHOWS:
+                s.debris = True     # no decoration; still redrawn when the ground is compared
     # a speck too small to tell (the dot of an i) goes with the unseen shapes of its colour
     # painted next to it
     by_seq = {s.seq: s for s in shapes}
@@ -1269,8 +1544,15 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
     # pictures that overlap become one (a photo on a drawn map)
     pictures = merge_pictures(pictures)
     out["pictures"] = [p for p in pictures if area(p["box"]) < 0.6 * page_area]
+    # a box with no words that lies wholly under a picture is the picture's art (a map's
+    # frame, a panel of a drawing): it goes with the cut, not as a frame or a decoration fill
+    for s in list(out["boxes"]):
+        if any(inside_mm(s.box, p["box"], 0.3) for p in out["pictures"]) \
+                and not any(centre_in(l.box, s.box) for l in lines):
+            s.kind = "art"
+            out["boxes"].remove(s)
     out["art"] = art
-    out["shapes"] = shapes
+    out["shapes"] = sorted(shapes + tabled, key=lambda s: s.seq) if tabled else shapes
     return out
 
 
@@ -1596,13 +1878,38 @@ def bullet_look(items: list[Line]) -> dict:
     bs = [(bullet_of(l), item_size(l)) for l in items]
     chars: dict[str, int] = {}
     weights: dict[int, int] = {}
+    colours: dict[str, int] = {}
     for b, _ in bs:
         chars[b.c] = chars.get(b.c, 0) + 1
         weights[b.weight] = weights.get(b.weight, 0) + 1
+        colours[b.color] = colours.get(b.color, 0) + 1
     ratio = statistics.median(b.size / s for b, s in bs if s > 0) if bs else 1.0
     return {"bulletChar": max(chars, key=lambda k: (chars[k], k)),
             "bulletFontSize": {"value": round(ratio * 20) / 20, "unit": "em"},
-            "bulletFontWeight": max(weights, key=lambda k: (weights[k], -k))}
+            "bulletFontWeight": max(weights, key=lambda k: (weights[k], -k)),
+            "color": max(colours, key=lambda k: (colours[k], k))}
+
+
+def item_spacing(lines: list[Line]) -> float | None:
+    """The room (mm) between two list items over the leading of their
+    lines: the median of what each item's first baseline stands below the
+    last baseline of the item before, less the leading. None without two
+    items one under the other."""
+    paras = [p for p in paragraphs(lines) if bullet_of(p[0])]
+    leads = [s for p in paragraphs(lines) for s in [para_lead(p)] if s]
+    if len(paras) < 2:
+        return None
+    size = statistics.median(l.size_mm for p in paras for l in p)
+    lead = statistics.median(leads) if leads else LEADS.get((paras[0][0].family, round(paras[0][0].size * 4) / 4),
+                                                           size * 1.25)
+    steps = []
+    for a, b in zip(paras, paras[1:]):
+        step = b[0].base - a[-1].base
+        if 0 < step < 3 * lead:
+            steps.append(step - lead)
+    if not steps:
+        return None
+    return max(0.0, statistics.median(steps))
 
 
 def list_style(lines: list[Line], left_edge: float) -> dict | None:
@@ -1616,9 +1923,13 @@ def list_style(lines: list[Line], left_edge: float) -> dict | None:
     top = [l for l in bl if level_of_bullet(bullet_of(l), levels) == 0]
     b = bullet_of(top[0])
     look = bullet_look(top)
-    return {"bulletChar": look["bulletChar"], "color": colour(b.color),
-            "indent": mmv(max(0.0, b.x0 - left_edge)), "gap": mmv(max(0.5, text_x0(top[0]) - b.x1)),
-            "bulletFontSize": look["bulletFontSize"], "bulletFontWeight": look["bulletFontWeight"]}
+    st = {"bulletChar": look["bulletChar"], "color": colour(look["color"]),
+          "indent": mmv(max(0.0, b.x0 - left_edge)), "gap": mmv(max(0.5, text_x0(top[0]) - b.x1)),
+          "bulletFontSize": look["bulletFontSize"], "bulletFontWeight": look["bulletFontWeight"]}
+    sp = item_spacing(lines)
+    if sp is not None:
+        st["itemSpacing"] = mmv(sp)
+    return st
 
 
 def unordered_lists(found: dict[int, list[dict]]) -> dict | None:
@@ -1638,6 +1949,8 @@ def unordered_lists(found: dict[int, list[dict]]) -> dict | None:
     first = most(min(found))
     out: dict[str, Any] = {"bulletChar": first["bulletChar"], "bulletFontSize": first["bulletFontSize"],
                            "fontWeight": first["bulletFontWeight"], "levels": []}
+    if first.get("color"):
+        out["color"] = colour(first["color"])
     for depth in sorted(found):
         lk = most(depth)
         out["levels"].append({"level": depth + 1, "bulletChar": lk["bulletChar"], "fontSize": lk["bulletFontSize"],
@@ -1676,6 +1989,44 @@ def paragraphs(lines: list[Line]) -> list[list[Line]]:
         else:
             paras.append([line])
     return sorted(paras, key=lambda p: (round(p[0].base, 1), p[0].x0))
+
+
+def is_folio(line: Line) -> bool:
+    return bool(re.fullmatch(r"\d{1,4}", line.plain))
+
+
+def look_key(line: Line) -> tuple:
+    """Where and how a line is set, for telling running heads: its top to
+    the mm, its face and size."""
+    return (round(line.y0), line.family, round(line.size * 2) / 2)
+
+
+def repeated_looks(caches: dict, pages: list[int]) -> dict[tuple, set[int]]:
+    """look_key -> the pages a line of that place and look is printed on."""
+    out: dict[tuple, set[int]] = {}
+    for p in pages:
+        for l in caches[p]["lines"]:
+            out.setdefault(look_key(l), set()).add(p)
+    return out
+
+
+def furniture_line(l: Line, lines: list[Line], ctx: dict) -> bool:
+    """A line outside the cards is a running head or a folio when it stands
+    at the same place in the same look on two pages or more of the run, or,
+    set below heading size, when the page prints a folio (a running head at
+    the top of a page numbered at the foot counts). A heading-size line
+    seen on one page only (a section heading near the foot) stays in the
+    text; a running head set large comes back on the other pages."""
+    rep = ctx.get("repeated") or {}
+    y, fam, size = look_key(l)
+    seen: set[int] = set()
+    for dy in (-1, 0, 1):
+        seen |= rep.get((y + dy, fam, size), set())
+    if len(seen) >= 2:
+        return True
+    if l.size >= ctx["heading_min"]:
+        return False
+    return is_folio(l) or any(o is not l and is_folio(o) for o in lines)
 
 
 def text_x0(line: Line) -> float:
@@ -1832,7 +2183,10 @@ def chip_gap(gaps: list[float]) -> dict | None:
     return {"value": round(g, 2), "unit": "em"} if g >= 0.4 else None
 
 
-def para_markdown(p: list[Line], mark_ids: dict, mode: str) -> str:
+def para_markdown(p: list[Line], mark_ids: dict, mode: str, base: tuple[int, bool] | None = None) -> str:
+    """A paragraph's inline Markdown. `base` is the (weight, italic) of the
+    frame's body: a paragraph set wholly in bold in a regular frame keeps its
+    `**`. Without it the paragraph's own lightest weight is the base."""
     chars = para_chars(p)
     ink = [c for c in chars if c.c.strip()]
     if not ink:
@@ -1840,8 +2194,11 @@ def para_markdown(p: list[Line], mark_ids: dict, mode: str) -> str:
     if mode == "mark":
         # a chip set as a mark (a number on a band) before the words keeps its measured room
         chars = spaced_chars(chars, text_em(chars), only_lead=True)
-    base_w = min(c.weight for c in ink)
-    base_it = all(c.italic for c in ink)
+    if base is not None:
+        base_w, base_it = base
+    else:
+        base_w = min(c.weight for c in ink)
+        base_it = all(c.italic for c in ink)
     return runs_markdown(chars, base_w, base_it, mark_ids, mode)
 
 
@@ -1877,10 +2234,11 @@ def dominant(lines: list[Line]) -> dict:
                 counts[k] = counts.get(k, 0) + 1
     fam, size, col = max(counts, key=lambda k: (counts[k], k))
     weights = [c.weight for l in lines for c in l.chars if c.c.strip() and c.family == fam]
+    italic = all(c.italic for l in lines for c in l.chars if c.c.strip() and c.family == fam)
     leads = [s for p in paragraphs(lines) for s in [para_lead(p)] if s]
     lead = statistics.median(leads) if leads else LEADS.get((fam, size), size * PT_MM * 1.25)
     return {"family": fam, "size": size, "color": col, "weight": min(weights) if weights else 400,
-            "lead": round(lead, 3)}
+            "lead": round(lead, 3), "italic": italic}
 
 
 # ---------------------------------------------------------------------------
@@ -1922,8 +2280,22 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     report: dict[str, Any] = {"page": pno + 1, "hidden": hidden, "notes": []}
     for b in sh["bands"]:
         for l in lines:
-            for c in l.chars:
-                if c.c.strip() and centre_in((c.x0, c.y0, c.x1, c.y1), b["box"]):
+            inside = [c.c.strip() != "" and centre_in((c.x0, c.y0, c.x1, c.y1), b["box"]) for c in l.chars]
+            if b.get("loose"):
+                k = 0
+                while k < len(l.chars):     # a word is marked when all of it is inside
+                    if not l.chars[k].c.strip():
+                        k += 1
+                        continue
+                    e = k
+                    while e < len(l.chars) and l.chars[e].c.strip():
+                        e += 1
+                    whole = all(inside[k:e])
+                    for q in range(k, e):
+                        inside[q] = whole
+                    k = e
+            for c, ins in zip(l.chars, inside):
+                if ins:
                     c.mark = b["color"]
     for l in lines:   # a space between two marked words is marked too
         ink = [i for i, c in enumerate(l.chars) if c.c.strip()]
@@ -1933,6 +2305,9 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             before = [j for j in ink if j < i]
             after = [j for j in ink if j > i]
             c.mark = l.chars[before[-1]].mark if before and after and l.chars[before[-1]].mark == l.chars[after[0]].mark else None
+    for l in lines:
+        if any(c.mark for c in l.chars):
+            l.refresh()
     lead_chip_gaps(lines, sh["bands"], ctx.setdefault("chip_gaps", {}))
     cards =sorted(sh["cards"], key=lambda s: (round(s.box[1], 1), s.box[0]))
     boxes = sh["boxes"]
@@ -1998,6 +2373,9 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                 continue
         kept.append(p)
     pictures = sh["pictures"] = kept
+    # a key of symbol rows (legends.py, #1144): a line printed twice is one, the key's rows leave the flow
+    key_text = lambda l: l.label_dict(ctx["mark_ids"], opts.highlights)["text"]  # noqa: E731
+    lines = lgd.take_legends(lines, page, origin, pictures, cache, report, key_text)
 
     # small words just off a picture's edge (a globe's degrees) are its lettering:
     # the picture's box takes them in
@@ -2039,7 +2417,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             owners[id(l)] = ("free", None)
         elif not cards and opts.margin_band < l.y0 and l.y1 < H - opts.margin_band:
             owners[id(l)] = ("free", None)
-        elif len(l.plain.split()) > 8:
+        elif len(l.plain.split()) > 8 or not furniture_line(l, lines, ctx):
             owners[id(l)] = ("free", None)
         else:
             owners[id(l)] = ("furniture", None)
@@ -2066,6 +2444,12 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         if f.lines:
             f.kind = "figure"
         frames.append(f)
+    # tables (`grid_tables`): a frame each, filled with the table resource (laid like a picture)
+    for tb in cache.get("tables", []):
+        f = Frame("picture", tb["box"], picture={"box": tb["box"], "images": [], "vector": 0})
+        f.table = tb
+        f.lines = []
+        frames.append(f)
     # free text: headings alone, rotated lines alone, the rest in blocks
     free = [l for l in lines if owners[id(l)][0] == "free"]
     heads = [l for l in free if l.size >= ctx["heading_min"] and not l.rotate]
@@ -2076,6 +2460,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         frames.append(Frame("title", set_box(hp, 1.0), lines=hp))
     for blk in text_blocks(body, frames):
         frames.append(Frame("text", set_box(blk, None), lines=blk))
+    frames = merge_text_frames(frames)
     furniture = [l for l in lines if owners[id(l)][0] == "furniture"]
 
     # zones (cards) and containment
@@ -2156,16 +2541,28 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
 
     for f in xy_order(top):
         emit(f)
+    # a caption frame comes right after its picture in reading order
+    for f in [g for g in ordered if getattr(g, "caption_of", None) is not None]:
+        p = f.caption_of
+        if p not in ordered:
+            continue
+        ordered.remove(f)
+        k = ordered.index(p) + 1
+        while k < len(ordered) and getattr(ordered[k], "caption_of", None) is p:
+            k += 1
+        ordered.insert(k, f)
 
     # names
     counters: dict[str, int] = {}
     for f in ordered:
-        role = {"title": "title", "text": "text", "box": "box", "tab": "tab", "picture": "picture",
-                "figure": "figure"}[f.kind]
+        role = "table" if getattr(f, "table", None) else {
+            "title": "title", "text": "text", "box": "box", "tab": "tab", "picture": "picture", "figure": "figure"}[f.kind]
         counters[role] = counters.get(role, 0) + 1
         n = counters[role]
         if role in ("title", "text"):
             f.name = role if n == 1 else f"{role}-{n}"
+            if f.name == "text" and getattr(f, "caption_of", None) is not None:
+                f.name = "text-1"   # a caption is never the page's flow (`text` is written bare)
         else:
             f.name = f"{role}-{n}"
     free_text = [f for f in ordered if f.kind == "text" and not f.rotate and getattr(f, "caption_of", None) is None]
@@ -2188,6 +2585,21 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     art = None if opts.raster_ground else read_line_art(sh, ordered, line_shows(page, origin, sh.get("shapes", [])))
     pic_n = 0
     for f in ordered:
+        if getattr(f, "table", None):
+            rid = f"{rid_base}-{f.name}"
+            f.alpha = False
+            f.resource = {"id": rid, "typeId": "table", "kind": "table", "caption": "",
+                          "table": {"model": f.table["model"], "styleId": rid}, "_style": f.table["style"]}
+            report["notes"] += [f"{f.name}: {n}" for n in f.table["notes"]]
+            res.append(f.resource)
+            p = f.parent
+            if p is not None and p.kind == "box" and p.lines:
+                # set in a box's text: the table goes in that text where it stood, not in a frame
+                # over it (the box's text, set anew, would run under it)
+                k = sum(1 for para in paragraphs(p.lines) if para[0].y0 < f.box[1])
+                p.blocks.insert(min(k, len(p.blocks)), ("raw", 0, f'::resource{{id="{rid}"}}'))
+                f.inline = True
+            continue
         if f.kind in ("picture", "figure"):
             pic_n += 1
             rid = f"{rid_base}-{f.name}"
@@ -2197,12 +2609,23 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                                      art=[s for s in sh.get("shapes", []) if s.kind == "art"],
                                      background=ground_round(f.box), over=drawn_over(f, ordered),
                                      rounds=sh["boxes"] + cards, holders=sh["boxes"])
+            cap = getattr(f, "resource_caption", None)
+            if cap:
+                f.resource["caption"] = para_markdown(cap, ctx["mark_ids"], opts.highlights)
             res.append(f.resource)
             frame_of = {id(g.shape): g.name for g in ordered if g.shape is not None}
-            for s in crossed_rules(f.box, sh["boxes"] + sh["tabs"]):
+            laid_over = drawn_over(f, ordered)
+            # a box laid over the picture or held in it is drawn over the cut; a cut-out with alpha
+            # may stand over its box's edge on purpose
+            ruled = [s for s in sh["boxes"] + sh["tabs"] if id(s) not in laid_over and not inside_mm(s.box, f.box, 0.5)]
+            for s in ([] if f.alpha else crossed_rules(f.box, ruled)):
                 report["notes"].append(f"{f.name}: the cut crosses the rule of {frame_of.get(id(s), 'a box')} "
                                        f"at {r2(s.box)} mm; check the cut")
             if f.kind == "figure":
+                twin = label_series(f.lines)
+                if twin:
+                    report["notes"].append(f"{f.name}: labels of {twin[0]} pt and {twin[1]} pt form two evenly "
+                                           "spaced series over each other; one may be a hidden copy, check the source")
                 items = [l.label_dict(ctx["mark_ids"], opts.highlights) for l in f.lines]
                 notes: list[str] = []
                 groups = anc.merge_lines(items, merge=not opts.no_merge_labels, notes=notes)
@@ -2210,7 +2633,9 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                     report["notes"].extend(notes)
                 ctx["label_groups"].append(groups)
                 f.labels = groups
+    res += lgd.place_legends(ordered, cache, Path(opts.out), ctx, key_text)
 
+    ordered = [f for f in ordered if not getattr(f, "inline", False)]     # tables set in a box's text
     # geometry and the template
     template = make_template(rid_base, ordered, cards, origin, opts, report)
     heads: dict = {}
@@ -2256,6 +2681,32 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             "regions": regions}
 
 
+def single_caption(box: Any, pic: Any, col: list) -> bool:
+    """One column of lines under one picture is its caption when it is set
+    unlike the box's other text (size, slant or colour) or centred on the
+    picture; otherwise it is the box's last paragraph."""
+    rest = [l for l in box.lines if l not in col]
+    if not rest:
+        return False
+    body = dominant(rest)
+    look = dominant(col)
+    differs = abs(look["size"] - body["size"]) > 0.25 or look["color"] != body["color"] or \
+        all(c.italic for l in col for c in l.chars if c.c.strip()) != bool(body.get("italic"))
+    mid = (min(l.x0 for l in col) + max(l.x1 for l in col)) / 2
+    width = max(l.x1 for l in col) - min(l.x0 for l in col)
+    centred = abs(mid - (pic.box[0] + pic.box[2]) / 2) <= 2.0 and width < (pic.box[2] - pic.box[0]) - 4.0
+    return differs or centred
+
+
+def attached_caption(pic: Any, col: list, body: dict) -> bool:
+    """A caption set smaller than the box's text, at most 3 mm under its
+    picture and no wider than it: the picture's resource caption (#1114)."""
+    look = dominant(col)
+    gap = min(l.y0 for l in col) - pic.box[3]
+    width = max(l.x1 for l in col) - min(l.x0 for l in col)
+    return look["size"] <= 0.92 * body["size"] and gap <= 3.0 and width <= (pic.box[2] - pic.box[0]) + 2.0
+
+
 def split_captions(frames: list, reach: float = 8.0) -> list:
     """Captions set in columns under the pictures of a box: the box's lines
     read row by row ran across the columns as one text (a sentence of the
@@ -2263,10 +2714,15 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
     just under a picture (within `reach` mm below its foot or 3 mm above
     it, its middle over the picture)
     and goes on line by line under itself becomes a text frame of its own,
-    a child of the box hung under its picture (`caption_of`). Only when a
-    box has two such columns or more: one caption under one picture may be
-    the box's own last paragraph. Returns the new frames; the box keeps the
-    rest of its lines."""
+    a child of the box hung under its picture (`caption_of`). A box with
+    two such columns or more always; a single one only when its look differs
+    from the box's text (size, slant or colour) or it is centred on the
+    picture, else it is the box's own last paragraph. A caption set smaller
+    than the box's text and attached to the picture (at most 3 mm under it)
+    becomes the picture's resource caption instead (`resource_caption`, no
+    frame). A box that gets caption frames grows with them (`grow_with`:
+    `growWith: "children"` in its template). Returns the new frames; the
+    box keeps the rest of its lines."""
     out = []
     for c in [f for f in frames if f.kind == "box" and f.lines]:
         pics = [g for g in frames if g.parent is c and g.kind in ("picture", "figure")]
@@ -2304,7 +2760,7 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
                 else:
                     cols.append([l])
             groups += [(p, col) for col in cols]
-        if len(groups) < 2:
+        if not groups or (len(groups) < 2 and not single_caption(c, *groups[0])):
             continue
         taken = {id(l) for _, col in groups for l in col}
         # each column goes on down, line under line
@@ -2322,14 +2778,20 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
                 n = min(nxt, key=lambda l: l.base)
                 col.append(n)
                 taken.add(id(n))
+        rest = [l for l in c.lines if id(l) not in taken]
+        body = dominant(rest) if rest else None
         for p, col in groups:
             col.sort(key=lambda l: (l.base, l.x0))
+            if body is not None and attached_caption(p, col, body) and getattr(p, "resource_caption", None) is None:
+                p.resource_caption = col     # the picture's own caption (cmd: resource `caption`)
+                continue
             f = Frame("text", set_box(col, None), lines=col)
             f.parent, f.zone, f.caption_of = c, c.zone, p
             f.over = list(pics)       # a longer caption in another edition runs over, not under, a picture
             mid = (min(l.x0 for l in col) + max(l.x1 for l in col)) / 2
             f.caption_centred = len(col) > 1 and is_centred(col) or abs(mid - (p.box[0] + p.box[2]) / 2) <= 2.0
             out.append(f)
+            c.grow_with = True       # the box grows with the captions hung in it (postext 1.52)
         c.lines = [l for l in c.lines if id(l) not in taken]
     return out
 
@@ -2553,6 +3015,47 @@ def text_blocks(lines: list[Line], frames: list[Frame]) -> list[list[Line]]:
     return [[l for p in blk for l in p] for blk in blocks]
 
 
+def merge_text_frames(frames: list[Frame]) -> list[Frame]:
+    """The last pass over free text: two text frames one under the other,
+    flush left, in the same face, size, colour and leading, with nothing
+    between them and at most a paragraph's gap apart, are one frame (what a
+    mask, a highlight or a stray shape left in two)."""
+    def key(f: Frame) -> tuple:
+        look = dominant(f.lines)
+        return (look["family"], look["size"], look["color"]), look["lead"]
+
+    out = list(frames)
+    changed = True
+    while changed:
+        changed = False
+        texts = [f for f in out if f.kind == "text" and f.lines and not getattr(f, "rotate", 0)]
+        for a in texts:
+            for b in texts:
+                if a is b:
+                    continue
+                last = max(a.lines, key=lambda l: l.base)
+                first = min(b.lines, key=lambda l: l.base)
+                step = first.base - last.base
+                if step <= 0:
+                    continue
+                (ka, lead_a), (kb, lead_b) = key(a), key(b)
+                if ka != kb or (len(a.lines) > 1 and len(b.lines) > 1 and abs(lead_a - lead_b) > 0.3):
+                    continue
+                if step > 2.2 * lead_a or abs(a.box[0] - b.box[0]) > 3.5 or hoverlap(a.box, b.box) <= 0:
+                    continue
+                between = (min(a.box[0], b.box[0]), last.y1, max(a.box[2], b.box[2]), first.y0)
+                if any(f is not a and f is not b and inter(between, f.box) > 1.0 for f in out):
+                    continue
+                a.lines = sorted(a.lines + b.lines, key=lambda l: (round(l.base, 1), l.x0))
+                a.box = set_box(a.lines, None)
+                out.remove(b)
+                changed = True
+                break
+            if changed:
+                break
+    return out
+
+
 def xy_order(frames: list[Frame]) -> list[Frame]:
     """Reading order by recursive XY cut: bands top to bottom, columns left
     to right inside a band."""
@@ -2589,6 +3092,46 @@ def xy_order(frames: list[Frame]) -> list[Frame]:
     return out
 
 
+def frame_lead_title(f: Frame, paras: list[list[Line]]) -> list[Line] | None:
+    """A frame's first paragraph when it is the frame's title: at most two
+    lines and fifteen words, not a list item, with text after it, and set
+    apart from that text by being wholly bold (150 over its weight and at
+    least 500), 1.12 times its size or more, or in another colour. Panel
+    titles set at body size in bold are titles too, in text frames as in
+    boxes. A caption frame has none."""
+    if len(paras) < 2 or getattr(f, "caption_of", None) is not None:
+        return None
+    p = paras[0]
+    if len(p) > 2 or bullet_of(p[0]) or len(" ".join(l.plain for l in p).split()) > 15:
+        return None
+    if any(l.base > q.base for l in p for q in paras[1][:1]):
+        return None     # the first paragraph must stand above the rest
+    rest = [l for q in paras[1:] for l in q]
+    ink = [c for l in p for c in l.chars if c.c.strip()]
+    rest_ink = [c for l in rest for c in l.chars if c.c.strip()]
+    if not ink or not rest_ink or any(c.mark for c in ink):
+        return None     # (a highlighted lead keeps its mark: headings set none)
+    if sum(1 for c in ink if c.c.isalpha()) < 2:
+        return None     # a single letter or a number (a box's "I", "2") is no title
+    body = dominant(rest)
+    bold = all(c.weight >= max(500, body["weight"] + 150) for c in ink)
+    big = statistics.median(c.size for c in ink) >= 1.12 * statistics.median(c.size for c in rest_ink)
+    colour_ = dominant(p)["color"] != body["color"]
+    return p if (bold or big or colour_) else None
+
+
+def title_level(p: list[Line], ctx: dict) -> int:
+    """The level of a title paragraph: by size among the book's heading
+    sizes; one set below heading size goes under the smallest of them, a
+    level further down when it is not bold either."""
+    size = statistics.median(c.size for l in p for c in l.chars if c.c.strip())
+    if size >= ctx["heading_min"]:
+        return ctx["level_of"](size)
+    deepest = ctx["level_of"](0.0)
+    bold = min(c.weight for l in p for c in l.chars if c.c.strip()) >= 500
+    return min(6, deepest + (1 if bold else 2))
+
+
 def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) -> None:
     """Style and Markdown of one frame."""
     mark_ids = ctx["mark_ids"]
@@ -2599,14 +3142,19 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
     levels = list_levels(f.lines)
     blocks = []
     centred = f.kind == "text" and (len(f.lines) > 1 and is_centred(f.lines) or getattr(f, "caption_centred", False))
+    # the frame body's weight and slant are the base of every paragraph's marks
+    body_lines = [l for l in f.lines if l.size < ctx["heading_min"]] or f.lines
+    look = dominant(body_lines) if body_lines else None
+    base = (int(look["weight"]), bool(look["italic"])) if look else None
+    lead_title = frame_lead_title(f, paras) if f.kind in ("box", "text") else None
     for p in paras:
         size = p[0].size
-        if size >= ctx["heading_min"] and f.kind in ("box", "tab", "title"):
-            level = ctx["level_of"](size)
+        if (size >= ctx["heading_min"] and f.kind in ("box", "tab", "title")) or p is lead_title:
+            level = title_level(p, ctx)
             text = " ".join(spaced_text(l) for l in p)
             blocks.append(("h", level, text))
             continue
-        md = para_markdown(p, mark_ids, mode)
+        md = para_markdown(p, mark_ids, mode, base)
         if not md:
             continue
         b = bullet_of(p[0])
@@ -2644,9 +3192,13 @@ def is_centred(lines: list[Line]) -> bool:
 
 
 def body_of(look: dict) -> dict:
-    return {"fontFamily": look["family"], "fontSize": ptv(look["size"]), "lineHeight": mmv(look["lead"]),
+    body = {"fontFamily": look["family"], "fontSize": ptv(look["size"]), "lineHeight": mmv(look["lead"]),
             "color": colour(look["color"]), "fontWeight": int(look["weight"]), "boldFontWeight": 700,
             "textAlign": "left", "hyphenation": False, "firstLineIndent": mmv(0)}
+    if look.get("italic"):
+        # a frame set wholly in italic: its paragraphs carry no `*` (para_markdown's base)
+        body["italic"] = True
+    return body
 
 
 def text_style(lines: list[Line], centred: bool) -> dict:
@@ -2841,12 +3393,14 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
                 f.box = clipped
         # likewise no further than the inside of the box that holds it (its rule is the frame's),
         # and no further than a filled rectangle the art is drawn on (its own ground)
+        # (the box the shapes took stays the picture's claim: what lies there is its, `claim_of`)
         holder = holder_of(f.box, holders or [], over)
         for edge in ([inner_round(holder)[0]] if holder is not None else []) + [art_ground(f.box, art or [])]:
             if edge is None:
                 continue
             clipped = keep_lines(meet_box(f.box, edge), f)
             if clipped != tuple(f.box) and clipped[2] - clipped[0] > 8 and clipped[3] - clipped[1] > 8:
+                f.claim = claim_of(f)
                 f.box = clipped
         one = fitz.open(str(pdf_path))
         page = one[pno]
@@ -2855,7 +3409,7 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
             page.add_redact_annot(r, fill=False)
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE, graphics=fitz.PDF_REDACT_LINE_ART_NONE,
                               text=fitz.PDF_REDACT_TEXT_REMOVE)
-        remove = list(remove or [])
+        remove = list(remove or []) + lgd.key_rects(p)     # a key the label draws (#1144)
         holes = []
         under = []
         for s, rect, cols in neighbours or []:
@@ -2948,6 +3502,48 @@ def outside_rects(page_rect: Any, box: Any) -> list:
     return [r for r in out if r.width > 0 and r.height > 0]
 
 
+def even_rows(lines: list, min_n: int = 4, cv: float = 0.2) -> list[tuple]:
+    """Rows (one baseline, within 1 mm) of `min_n` or more labels evenly
+    spaced across (the gaps between their centres vary by under `cv` of
+    their mean), as (baseline, x0, x1)."""
+    rows: list[list] = []
+    for l in sorted(lines, key=lambda l: l.base):
+        if rows and abs(rows[-1][-1].base - l.base) <= 1.0:
+            rows[-1].append(l)
+        else:
+            rows.append([l])
+    out = []
+    for row in rows:
+        if len(row) < min_n:
+            continue
+        xs = sorted((l.x0 + l.x1) / 2 for l in row)
+        gaps = [b - a for a, b in zip(xs, xs[1:])]
+        mean = sum(gaps) / len(gaps)
+        if mean > 0 and statistics.pstdev(gaps) <= cv * mean:
+            out.append((row[0].base, xs[0], xs[-1]))
+    return out
+
+
+def label_series(lines: list, reach: float = 5.0) -> tuple[float, float] | None:
+    """Two label sizes of a figure that each set an evenly spaced row, the
+    rows within `reach` mm of each other and across the same stretch: a
+    hidden second set of a map's degrees under the visible one (#1135).
+    Returns the two sizes (pt), or None."""
+    by_size: dict[float, list] = {}
+    for l in lines:
+        if not l.rotate and l.plain.strip():
+            by_size.setdefault(round(l.size, 1), []).append(l)
+    sizes = sorted(by_size)
+    rows = {s: even_rows(by_size[s]) for s in sizes}
+    for i, a in enumerate(sizes):
+        for b in sizes[i + 1:]:
+            for ra in rows[a]:
+                for rb in rows[b]:
+                    if abs(ra[0] - rb[0]) <= reach and min(ra[2], rb[2]) - max(ra[1], rb[1]) > 0:
+                        return (a, b)
+    return None
+
+
 def holder_of(box: tuple, boxes: list, over: set | None = None) -> Shape | None:
     """The smallest box that holds most of a picture (a box laid over the
     picture, `over`, holds nothing)."""
@@ -2956,18 +3552,22 @@ def holder_of(box: tuple, boxes: list, over: set | None = None) -> Shape | None:
     return min(cands, key=lambda s: area(s.box)) if cands else None
 
 
-def art_ground(box: tuple, art: list, share: float = 0.9) -> tuple | None:
+def art_ground(box: tuple, art: list) -> tuple | None:
     """A filled rectangle the picture's art is drawn on (a map's sea, a
     diagram's panel): the first one painted inside the picture's box that
-    covers half of it and has `share` of the other art inside it. The cut
-    goes no further (a white mask or the page's colour past it is not the
-    picture's). None when there is none."""
-    inside = [s for s in art if inside_mm(s.box, box, 0.5)]
-    cands = sorted((s for s in inside if s.fill and s.rect_like() and area(s.box) >= 0.5 * area(box)),
-                   key=lambda s: s.seq)
+    covers half of it and holds all the art painted after it but white
+    masks. The cut goes no further (a mask or the page's colour past it is
+    not the picture's). None when there is none, or when any coloured art
+    of the picture lies past it (cut there, it would be lost)."""
+    inside = [s for s in art if inter(s.box, box) > 0]
+    cands = sorted((s for s in inside if s.fill and s.rect_like() and inside_mm(s.box, box, 0.5)
+                    and area(s.box) >= 0.5 * area(box)), key=lambda s: s.seq)
     for g in cands:
-        rest = [s for s in inside if s is not g and s.seq > g.seq]
-        if rest and sum(1 for s in rest if inside_mm(s.box, g.box, 0.3)) >= share * len(rest):
+        rest = [s for s in inside if s is not g and s.seq > g.seq
+                and not (s.fill and not s.stroke and whiteish(s.fill))]
+        if rest and all(inside_mm(s.box, g.box, 0.3) for s in rest) \
+                and not any(s.seq < g.seq and not inside_mm(s.box, g.box, 0.3) and not whiteish(s.fill or s.stroke)
+                            for s in inside if s is not g):
             return g.box
     return None
 
@@ -3130,7 +3730,7 @@ def trim_to_ink(page: fitz.Page, f: Frame, origin: tuple, background: str | None
         if box[i] - ink[i] >= least:
             box[i] = ink[i]
     if box[2] - box[0] > 4 and box[3] - box[1] > 4 and tuple(box) != tuple(f.box):
-        f.claim = tuple(f.box)
+        f.claim = getattr(f, "claim", None) or tuple(f.box)
         f.box = tuple(box)
 
 
@@ -3273,6 +3873,12 @@ def line_shows(page: fitz.Page, origin: tuple, shapes: list):
     return shows
 
 
+def mostly_in(a: tuple, b: tuple) -> bool:
+    """Is box `a` 80 % inside `b`, or (a speck or a hairline with no area)
+    inside it?"""
+    return inter(a, b) >= 0.8 * max(area(a), 1e-6) or inside_mm(a, b, 0.3)
+
+
 def fill_seq(s: Shape) -> int:
     """Where a box's fill comes in the page's paint order."""
     return getattr(s, "fill_seq", s.seq)
@@ -3293,7 +3899,7 @@ def mark_art_over_fills(frames: list[Frame], sh: dict) -> None:
         nested = [g.box for g in frames if g is not f and g.kind in ("box", "tab") and inside_mm(g.box, f.box, 0.5)]
         over = [a for a in sh.get("shapes", []) if a.kind in ("art", "line") and a.seq > fill_seq(s)
                 and inside_mm(a.box, f.box, 0.3)
-                and not any(inter(a.box, g.box) >= 0.8 * max(area(a.box), 1e-6) for g in pics)
+                and not any(inter(a.box, g.box) > 0 or inside_mm(a.box, g.box, 0.3) for g in pics)   # touching a picture: its art
                 and not any(inside_mm(a.box, b, 0.3) for b in nested)]
         if over:
             f.art_over = over
@@ -3313,6 +3919,31 @@ def drawn_before_fill(s: Any, frames: list[Frame]) -> bool:
     if not seqs:
         return False
     return any(art_over(f) and inside_mm(box, f.box, 0.3) and max(seqs) < fill_seq(f.shape) for f in frames)
+
+
+def ground_under(s: Shape, sh: dict, cards: list) -> str:
+    """The colour painted under a shape: the last fill painted before it
+    that holds its centre (a box, a card, the page's colour), else the
+    paper. A mask the source clips at a card's edge stands mostly on the
+    card."""
+    cx, cy = (s.box[0] + s.box[2]) / 2, (s.box[1] + s.box[3]) / 2
+    under = [g for g in list(sh.get("ground", [])) + list(cards) + list(sh.get("boxes", [])) + list(sh.get("tabs", []))
+             if isinstance(g, Shape) and g is not s and g.fill and g.seq < s.seq
+             and g.box[0] <= cx <= g.box[2] and g.box[1] <= cy <= g.box[3]]
+    return max(under, key=lambda g: g.seq).fill if under else "#ffffff"
+
+
+def paints_its_ground(s: Shape, sh: dict, cards: list, claims: list = ()) -> bool:
+    """A fill of the colour already under it (a white mask on white paper or
+    on a white card) that hides no decoration painted before it: it paints
+    nothing, and as decoration it is debris. Art a picture's cut takes
+    (`claims`, the pictures' boxes) is the cut's: a mask over it goes too.
+    A mask over loose art stays (dropped, what it hides would show)."""
+    if not s.fill or s.stroke or td.delta_e(s.fill, ground_under(s, sh, cards)) > 2.0:
+        return False
+    return not any(o is not s and o.kind in ("art", "hidden", "line") and o.seq < s.seq and inter(o.box, s.box) > 0
+                   and not any(mostly_in(o.box, c) for c in claims)
+                   for o in sh.get("shapes", []))
 
 
 def fill_element(f: Frame) -> dict:
@@ -3795,9 +4426,10 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
             stats["fills"] = stats.get("fills", 0) + 1
     # shapes left on the page (icons, chevrons, ornaments): paths, unless there are too many
     residual = [s for s in loose
-                if not any(inter(s.box, claim_of(f)) >= 0.8 * max(area(s.box), 1e-6) for f in pics_cut)
+                if not any(mostly_in(s.box, claim_of(f)) for f in pics_cut)
                 and not any(inside_mm(s.box, f.box, 0.3) for f in covering)
-                and not drawn_before_fill(s, frames)]
+                and not drawn_before_fill(s, frames) and not getattr(s, "debris", False)
+                and not paints_its_ground(s, sh, cards, [claim_of(f) for f in pics])]
     caps = art["caps"]
     residual = [s for s in residual if id(s) not in art["cap_shapes"]]
     hatches = sh.get("hatches", [])
@@ -4054,6 +4686,8 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
             if hits and getattr(f, "alpha", False):
                 c["exclude"] = "push"
                 c["wrap"] = "contour"
+            elif getattr(f, "table", None) is not None:
+                c["exclude"] = "push"       # a table set in a box's text keeps that text off it
         elif f.name in member and f.name not in group_first:
             c["placement"] = placement_abs(f.box)   # a group member: its x counts, the group sets y
         else:
@@ -4069,6 +4703,8 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
         h = f.box[3] - f.box[1]
         if f.kind in ("box", "tab"):
             c["minHeight"] = mmv(h)
+        if getattr(f, "grow_with", False):
+            c["growWith"] = "children"   # a longer caption makes the box taller (#1117)
         elif f.kind == "text" and f.lines:
             c["minHeight"] = mmv(max(0.0, h - 0.5))
         if f.kind == "tab":
@@ -4323,6 +4959,8 @@ def blocks_markdown(blocks: list[tuple]) -> list[str]:
                 prev = "li"
                 continue
             out.append(item)
+        elif kind == "raw":       # a directive written as is (a table's ::resource)
+            out.append(text)
         else:
             out.append(pmd.guard_line_start(text))
         prev = kind
@@ -4346,11 +4984,9 @@ def page_markdown(page: dict, ctx: dict) -> str:
             continue
         if f.kind in ("picture", "figure"):
             rid = f.resource["id"]
-            if f.kind == "figure" and f.labels:
-                labels = f.figure_labels
-                add(anc.figure_block(rid, f.name, labels))
-            else:
-                add(f'::resource{{id="{rid}" slot="{f.name}"}}')
+            block = anc.figure_block(rid, f.name, f.figure_labels) if f.kind == "figure" and f.labels else None
+            block = lgd.figure_markdown(block, f, rid, f.name)     # a key on it (#1144)
+            add(block if block is not None else f'::resource{{id="{rid}" slot="{f.name}"}}')
             continue
         body = blocks_markdown(f.blocks)
         if getattr(f, "centred", False) and getattr(f, "caption_of", None) is None:
@@ -4438,8 +5074,12 @@ def cmd_extract(args: argparse.Namespace) -> int:
         origin = trim_origin(page)
         renders = Renders(args.source, p - 1)
         lines, hidden = read_lines(args.source, page, fonts, origin, renders)
-        sh = classify(page, lines, origin, renders, args)
-        caches[p] = {"renders": renders, "lines": lines, "hidden": hidden, "shapes": sh}
+        # ruled grids with text are tables: their words, rules and fills are the table's
+        tables = grid_tables(page, origin, lines, args)
+        if tables:
+            lines = [l for l in lines if not any(centre_in(l.box, t["box"]) for t in tables)]
+        sh = classify(page, lines, origin, renders, args, claims=[t["box"] for t in tables])
+        caches[p] = {"renders": renders, "lines": lines, "hidden": hidden, "shapes": sh, "tables": tables}
         holders = [s.box for s in sh["cards"] + sh["boxes"] + sh["tabs"]]
         for l in lines:
             if holders and not any(centre_in(l.box, b) for b in holders):
@@ -4461,7 +5101,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
         return min(3, len(head_sizes)) or 1
 
     ctx: dict[str, Any] = {"heading_min": heading_min, "level_of": level_of, "mark_ids": {}, "label_groups": [],
-                           "wrap_slack": args.wrap_slack}
+                           "wrap_slack": args.wrap_slack, "repeated": repeated_looks(caches, pages)}
     # highlight colours -> mark (or chip) styles
     band_cols: dict[str, list] = {}
     built = []
@@ -4502,7 +5142,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
     figures: list[dict] = []
     all_groups = [g for gs in ctx["label_groups"] for g in gs]
     lstyles, lids = anc.label_styles(all_groups)
-    library["labelStyles"] = lstyles
+    library["labelStyles"] = lstyles + lgd.label_styles(ctx)
     for page in built:
         tpl = page["template"]
         frames: list[Frame] = page["frames"]
@@ -4526,6 +5166,10 @@ def cmd_extract(args: argparse.Namespace) -> int:
                 figures.append({"resource": f.resource["id"], "slot": f.name, "labels": labels})
         # a heading the template takes must be the first of its level
         resources += page["resources"]
+        for r in page["resources"]:
+            if "_style" in r:     # a table's style: one tableStyles entry per table, named by its resource
+                library.setdefault("tableStyles", []).append({**r.pop("_style"), "id": r["table"]["styleId"],
+                                                              "name": r["id"]})
         library["pageTemplates"].append(tpl)
         page["md"] = page_markdown({"frames": frames, "attrs": page["attrs"], "template": tpl}, ctx)
     if centred_used:
@@ -4574,10 +5218,15 @@ def cmd_extract(args: argparse.Namespace) -> int:
         "notes": {p["report"]["page"]: p["report"]["notes"] for p in built if p["report"]["notes"]},
         "fonts": {k: list(v) for k, v in sorted(fonts.seen.items())},
         "syntheticItalic": dict(sorted(fonts.slanted.items())),
+        "warnings": font_warnings(fonts),
         "bodySize": body, "headingSizes": head_sizes,
         "frameNames": frame_names,
     }
     (out / "report.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    import preset_kit  # noqa: PLC0415
+    preset_kit.write_empty_curation(out)  # the hand fixes `manifest` applies (#1136)
+    for w in summary["warnings"]:
+        print("WARNING: " + w, file=sys.stderr)
     if args.json:
         print(json.dumps(summary, ensure_ascii=False, indent=1))
     else:
@@ -4621,6 +5270,9 @@ def suggested_config(caches: dict, pages: list[int], body: float, head_sizes: li
              "numberingTemplate": "", "resetOn": "never", "counterFormat": "decimal",
              "defaultPlacement": {"position": "here", "span": "column"}},
             {"id": "ground", "name": "Ground", "namePlural": "Grounds", "shortLabel": "", "captionPrefix": "",
+             "numberingTemplate": "", "resetOn": "never", "counterFormat": "decimal",
+             "defaultPlacement": {"position": "here", "span": "column"}},
+            {"id": "table", "name": "Table", "namePlural": "Tables", "shortLabel": "", "captionPrefix": "",
              "numberingTemplate": "", "resetOn": "never", "counterFormat": "decimal",
              "defaultPlacement": {"position": "here", "span": "column"}}],
     }
@@ -4681,7 +5333,7 @@ def cmd_manifest(args: argparse.Namespace) -> int:
     if sug.get("unorderedLists"):
         config["unorderedLists"] = sug["unorderedLists"]
     for k in ("calloutStyles", "markStyles", "chipStyles", "labelStyles", "paragraphStyles", "frameLooks",
-              "pageTemplates"):
+              "tableStyles", "pageTemplates"):
         if library.get(k):
             config[k] = library[k]
     chapters = {lang: kit.chapters_from_dir(root, lang) for lang in langs}
@@ -4690,9 +5342,16 @@ def cmd_manifest(args: argparse.Namespace) -> int:
                 "config": config, "resources": resources, "fonts": fonts}
     if len(langs) > 1:
         manifest["locales"] = langs
+    patch = Path(args.patch) if args.patch else root / kit.CURATION_FILE
+    if args.patch and not patch.is_file():
+        raise SystemExit(f"--patch {args.patch}: no such file")
+    applied = kit.apply_curation(manifest, json.loads(patch.read_text(encoding="utf-8"))) if patch.is_file() else []
     path = kit.write_manifest(root, manifest)
-    print(f"{path}: {sum(len(v) for v in chapters.values())} chapter file(s), {len(resources)} resources, "
-          f"{len(config.get('pageTemplates', []))} page templates, {len(fonts)} font families")
+    print(f"{path}: {sum(len(v) for v in chapters.values())} chapter file(s), {len(manifest['resources'])} resources, "
+          f"{len(config.get('pageTemplates', []))} page templates, {len(fonts)} font families"
+          + (f", {len(applied)} curation(s) from {patch.name}" if applied else ""))
+    for line in applied:
+        print(f"  {line}")
     return 0
 
 
@@ -4739,6 +5398,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--raster-ground", action="store_true",
                    help="round 1: keep the page band, the cards, the lines and the shapes in a JPEG ground per page "
                         "(no connectors, no path elements, empty boxes stay frames)")
+    p.add_argument("--no-tables", action="store_true",
+                   help="leave ruled grids as frames and decoration (default: a grid with text in most cells is a "
+                        "table resource)")
     p.add_argument("--line-width", type=float, default=2.0,
                    help="strokes this thin (pt) or thinner, straight across or down, are read as lines: connectors "
                         "between frames, pointers into pictures, paths (default 2)")
@@ -4757,6 +5419,9 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("--fonts", help="copy these font files into DIR/fonts and list them")
     m.add_argument("--id")
     m.add_argument("--name")
+    m.add_argument("--patch", metavar="FILE",
+                   help="the curation tables applied after the build (default: DIR/curation.json when it exists; "
+                        "composed-pages.md §3.7)")
     args = ap.parse_args(argv)
     if args.cmd == "extract":
         return cmd_extract(args)

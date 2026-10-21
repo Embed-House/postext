@@ -62,7 +62,8 @@ import { verseLinesSettings, versesLineByLine } from './verseLines';
 import type { MeasurementCache } from '../measure';
 import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config';
 import { resolveDebugConfig } from '../defaults/debug';
-import { defaultFontSet, documentFontFaces, fontFallbacks, type FontFaceSetLike } from '../fonts/faces';
+import { defaultFontSet, documentFontFaces, faceRequestKey, fontFallbacks, type FontFaceSetLike } from '../fonts/faces';
+import { glyphFallbacks } from '../fonts/glyphFallback';
 import { syncFontSet } from '../fonts/fontSet';
 import { asciiDigits } from '../arabicNumerals';
 import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
@@ -256,7 +257,7 @@ import {
   capRetryLimit,
 } from './bandCaps';
 import { raggedLooseLines } from './raggedLines';
-import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, pictureBelowPrintSizeWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
+import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, emptyCaptionWarnings, joiningLetterSpacingWarnings, pictureBelowPrintSizeWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
 import { dropCapSinkAfter } from './dropCap';
 import { mostlyJoiningScript } from '../measure/joining';
 import { composesAsCjk } from '../measure/cjkCompose';
@@ -1804,6 +1805,9 @@ function placeDocumentPass(
   };
   /** The `textWrap` warnings of this pass (#627). */
   const textWrapNotes: ContentWarning[] = [];
+  /** `resourceMoved` (#1151): resources set in the text that moved on and
+   *  left their column's foot empty. */
+  const movedNotes: ContentWarning[] = [];
   /** Resources whose contour wrap fell back to the box this pass (#883):
    *  said once each. */
   const contourFallbacks = new Set<string>();
@@ -7515,6 +7519,9 @@ function placeDocumentPass(
         continue;
       }
       const columnBefore = col;
+      // The room the embed leaves when it moves on (#1151).
+      const roomBefore = col.availableHeight;
+      const pageBefore = cursor.pageIndex;
       if (sliced === 'whole') {
         enterBand(blockIdx, 0);
         // A side caption is decided where the block is placed (#729): an
@@ -7562,6 +7569,14 @@ function placeDocumentPass(
           textWrapNotes.push({
             kind: 'textWrap', reason: 'moved', resourceId: kind.resource!.id,
             sourceStart: rawBlock.sourceStart + bodyOffset, sourceEnd: rawBlock.sourceEnd + bodyOffset, pageIndex: cursor.pageIndex,
+          });
+        } else if (!wraps && currentColumn(doc, cursor) !== columnBefore && columnBefore.blocks.length > 0 && roomBefore >= 2 * baselineGrid - FIT_EPS) {
+          // Too tall for the room left, an embed moved on and left the
+          // foot of its column empty (#1151): say how much.
+          movedNotes.push({
+            kind: 'resourceMoved', resourceId: kind.resource!.id,
+            emptyPx: Math.round(roomBefore), emptyMm: Math.round((roomBefore * 254) / geomResolved.page.dpi) / 10,
+            sourceStart: rawBlock.sourceStart + bodyOffset, sourceEnd: rawBlock.sourceEnd + bodyOffset, pageIndex: pageBefore,
           });
         }
         // `placeBlockInColumn` (inside placeAtomicBlock) shifts `blk.lines`; the
@@ -9163,8 +9178,13 @@ function placeDocumentPass(
     const b = contentBlocks[idx];
     return b ? { start: b.sourceStart + bodyOffset, end: b.sourceEnd + bodyOffset } : undefined;
   });
-  if (shrunk.length > 0 || belowPrint.length > 0) floatShrinkWarningsByDoc.set(doc, [...shrunk, ...belowPrint]);
-  if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
+  // Resources whose caption prints the label alone (#1151).
+  const lonely = emptyCaptionWarnings(doc, (idx) => {
+    const b = contentBlocks[idx];
+    return b ? { start: b.sourceStart + bodyOffset, end: b.sourceEnd + bodyOffset } : undefined;
+  });
+  if (shrunk.length > 0 || belowPrint.length > 0 || lonely.length > 0) floatShrinkWarningsByDoc.set(doc, [...shrunk, ...belowPrint, ...lonely]);
+  if (textWrapNotes.length > 0 || columnsNotes.length > 0 || movedNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes, ...movedNotes]);
   // Composed pages (#855): frames whose content does not fit.
   if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
   if (pendingJumps.length > 0) doc.pendingJumps = pendingJumps;
@@ -9303,9 +9323,16 @@ export function* buildDocumentGen(
   // The bands of the highlight marks (`:mark[…]`, #888).
   highlightDocument(doc);
   // Faces the text was set in that the font set could not give (#629).
-  const fallbacks: ContentWarning[] = fontSet && resolveDebugConfig(config?.debug).warnings.missingFont
+  const checkFonts = resolveDebugConfig(config?.debug).warnings.missingFont;
+  const fallbacks: ContentWarning[] = fontSet && checkFonts
     ? fontFallbacks(documentFontFaces(doc), fontSet).map((f) => ({ kind: 'fontFallback', family: f.family, weight: f.weight, style: f.style, reason: f.reason }))
     : [];
+  // Characters a face lacks, which another face drew (#1105). A face
+  // missing altogether is a `fontFallback` above, not one per character.
+  if (checkFonts) {
+    const skip = new Set(fallbacks.flatMap((f) => (f.kind === 'fontFallback' && f.reason === 'missing' ? [faceRequestKey(f)] : [])));
+    for (const g of glyphFallbacks(doc, { skip })) fallbacks.push({ kind: 'glyphFallback', ...g });
+  }
   if (located.length > 0 || loose.length > 0 || annotations.length > 0 || harakat.length > 0 || fallbacks.length > 0) {
     doc.contentWarnings = [...located, ...loose, ...annotations, ...harakat, ...fallbacks];
   }

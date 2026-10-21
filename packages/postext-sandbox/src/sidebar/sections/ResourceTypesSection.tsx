@@ -27,6 +27,7 @@ import type { SandboxLabels } from '../../types/labels';
 import { arabicNumberFormatOptions, eastAsianNumberFormatOptions } from '../settings/eastAsianOptions';
 import { CollapsibleSection, DimensionInput, ItemCard, ItemCardListActions, openCard, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
 import { wrapChoiceOf } from '../settings/textWrap';
+import { captionSideOf, captionSideValue } from '../settings/captionSide';
 import { Button, ConfirmPopover, IconButton } from '../../ui';
 import { FieldRow } from '../../controls/FieldRow';
 import { SearchScope } from '../search/SearchScope';
@@ -409,10 +410,16 @@ export const ResourceTypesSection = memo(function ResourceTypesSection() {
                     isDefault={type.defaultPlacement?.align === undefined}
                     onReset={() => updateTypePlacement(type, { align: undefined })}
                   />
-                  <ToggleSwitch
+                  <SelectInput
+                    variant="segmented"
                     label={labels.resourceTypePlacementCaptionSide}
-                    checked={type.defaultPlacement?.captionSide ?? false}
-                    onChange={(v) => updateTypePlacement(type, { captionSide: v || undefined })}
+                    value={captionSideValue(type.defaultPlacement?.captionSide)}
+                    options={[
+                      { value: 'off', label: labels.resourceCaptionSideOff },
+                      { value: 'margin', label: labels.resourceCaptionSideMargin },
+                      { value: 'inside', label: labels.resourceCaptionSideInside },
+                    ]}
+                    onChange={(v) => updateTypePlacement(type, { captionSide: captionSideOf(v) || undefined })}
                     tooltip={labels.resourceTypePlacementCaptionSideTooltip}
                     isDefault={type.defaultPlacement?.captionSide === undefined}
                     onReset={() => updateTypePlacement(type, { captionSide: undefined })}

@@ -5,6 +5,7 @@
 
 import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig, UnorderedListsConfig } from '../types';
 import { DEFAULT_MATH_CONFIG } from '../defaults/math';
+import { DEFAULT_MARK_STYLES } from '../defaults/markStyles';
 import { avoidOrphansByDefault } from '../defaults/bodyText';
 import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings';
 import { cjkRegionOfConfig } from '../defaults/cjk';
@@ -201,6 +202,10 @@ import { hasCJK } from '../measure/cjk';
  *   not placed by an anchor. An engine that reads 15 or less leaves them
  *   out (`unknownConfigValue`). Nothing older changes meaning: one stored
  *   under 15 is read as it is (no pin).
+ * - 18 (#1149): a highlight style that names no `borderRadius` has square
+ *   ends (`markStyles[].borderRadius` defaults to 0, the print norm),
+ *   where up to 1.51 its band's ends were rounded at 0.2 em ({@link
+ *   pinLegacyMarkRadius}).
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -220,9 +225,11 @@ import { hasCJK } from '../measure/cjk';
  * was written by postext 1.29 and gets the version-14 pin (which every
  * older one gets too); one stored under 14 was written by postext 1.30 to
  * 1.33 and gets nothing; one stored under 15 was written by postext 1.34 to
- * 1.47 and gets nothing either.
+ * 1.47 and gets nothing either; one stored under 16 or 17 was written by
+ * postext 1.48 to 1.51 and gets the version-18 pin (which every older one
+ * gets too).
  */
-export const CONFIG_VERSION = 16;
+export const CONFIG_VERSION = 18;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -334,6 +341,8 @@ export const COMPOSED_PAGES_RULES = 15;
 /** The rules that draw connectors in a template's decoration (#1056): new
  *  keys only, nothing to pin. */
 export const CONNECTOR_RULES = 16;
+/** The rules that give a highlight style square ends by default (#1149). */
+const MARK_RADIUS_RULES = 18;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1627,6 +1636,36 @@ function mayHaveCjkText(content: string | readonly string[] | undefined): boolea
   return typeof content === 'string' ? hasCJK(content) : content.some(hasCJK);
 }
 
+/** The corner radius every highlight style had by default up to
+ *  postext 1.51. */
+const LEGACY_MARK_RADIUS: Dimension = { value: 0.2, unit: 'em' };
+
+/**
+ * A configuration written for postext 1.51 or earlier, pinned to the
+ * rounded ends its highlight bands had then (#1149): every mark style that
+ * names no `borderRadius` gets the old default, 0.2 em, and a
+ * configuration with no `markStyles` gets the built-in `mark` style with
+ * it. An empty list, or one where every style names its radius, is
+ * returned as it is (the same object).
+ */
+export function pinLegacyMarkRadius<T extends Partial<PostextConfig>>(config: T): T {
+  const styles = Array.isArray(config.markStyles) ? config.markStyles : config.markStyles === undefined ? DEFAULT_MARK_STYLES : [];
+  if (!styles.some((st) => isRecord(st) && st.borderRadius === undefined)) return config;
+  return { ...config, markStyles: styles.map((st) => (isRecord(st) && st.borderRadius === undefined ? { ...st, borderRadius: { ...LEGACY_MARK_RADIUS } } : st)) };
+}
+
+/** A highlight mark typed in the text. */
+const MARK_RE = /:mark\[/;
+
+/** Whether a document may set a highlight mark: a `:mark[…]` in its
+ *  markdown or in the configuration's own text (a design text that reads
+ *  inline marks). Unknown content (undefined) may. */
+function mayHaveMarks(content: string | readonly string[] | undefined, config: Partial<PostextConfig>): boolean {
+  if (content === undefined) return true;
+  if (typeof content === 'string' ? MARK_RE.test(content) : content.some((text) => MARK_RE.test(text))) return true;
+  return MARK_RE.test(JSON.stringify(config));
+}
+
 /** A two-row note typed in the text. */
 const NOTE_RE = /:warichu\[/;
 
@@ -1770,7 +1809,9 @@ export interface MigrateConfigOptions {
  * set as a character by {@link pinLegacyTaskBox}, unless `options.content`
  * shows no task item; one older than 14 has its text shaped in the host's
  * language by {@link pinLegacyShapingLanguage}, unless it names the
- * language its text is shaped in.
+ * language its text is shaped in; one older than 18 has the rounded ends
+ * of its highlight bands pinned by {@link pinLegacyMarkRadius}, unless
+ * neither `options.content` nor the configuration shows a `:mark[…]`.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1824,6 +1865,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) out = pinLegacyTaskBox(out);
   // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
   // keys only, nothing to pin.
+  if (rules < MARK_RADIUS_RULES && mayHaveMarks(content, out)) out = pinLegacyMarkRadius(out);
   return out;
 }
 
@@ -1862,7 +1904,8 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * force, and the labels of cross-references on the `crossRefs` in force,
  * and the shaping of words with no letter and the language the text is
  * shaped in on the `bodyText` in force, and the box of a task item on the
- * `unorderedLists` in force.
+ * `unorderedLists` in force, and the ends of the highlight bands on the
+ * `markStyles` in force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1917,5 +1960,6 @@ export function migrateBundleConfig(
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) merged = pinLegacyTaskBox(merged);
   // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
   // keys only, nothing to pin.
+  if (rules < MARK_RADIUS_RULES && mayHaveMarks(content, merged)) merged = pinLegacyMarkRadius(merged);
   return merged;
 }

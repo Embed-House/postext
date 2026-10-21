@@ -356,6 +356,11 @@ Les revisions llegeixen el Markdown i la configuració abans de maquetar res, ai
       <td>Afegeix la línia de tancament: tants signes de dos punts com la línia d'obertura de la pàgina, o <code>:::</code> per a un marc o una figura.</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>Un <code>:::</code> solt just després d'una directiva d'una línia (<code>:::toc</code>, <code>:::index</code>, <code>:::pagebreak</code>, <code>:::space</code>…) sense cap marc ni caixa oberts per tancar. Aquestes directives no porten línia de tancament, de manera que la línia es descarta en lloc d'imprimir-se.</td>
+      <td>Esborra el <code>:::</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Una graella que es repeteix admet <code>repeat.max</code> targetes i la pàgina n'hi dona més (vegeu <a href="#ranures-repetides">Ranures repetides</a>). Un avís per cada targeta de més, al seu <code>slot="…"</code>: la targeta va al marc de flux, o després de la pàgina.</td>
       <td>Augmenta o treu el <code>max</code> de la plantilla, o passa les targetes de més a una altra pàgina.</td>

@@ -7,7 +7,8 @@
  * {@link paintInlineIcon}.
  */
 
-import type { VDTInlineIcon } from '../vdt';
+import type { VDTInlineIcon, VDTSwatch } from '../vdt';
+import { hasSwatchShape, swatchGeometry, type SwatchGeometry } from '../swatchShape';
 import { iconLineDash, inlineIconBox } from '../measure/inlineIcon';
 import { drawResourceImage } from './renderResourceBlock';
 import { restoreContext, saveContext } from './contextState';
@@ -71,15 +72,53 @@ export function paintInlineIcon(ctx: CanvasRenderingContext2D, icon: VDTInlineIc
 }
 
 /** A `'swatch'` segment of `width` at `x`: its symbol when it carries one
- *  (#1058), else the colour swatch. */
+ *  (#1058), else the colour swatch, with its own shape when it has one
+ *  (#1104). `rtl`: the segment is set right to left (the gap after the
+ *  square is on its left). */
 export function paintSwatchSegment(
   ctx: CanvasRenderingContext2D,
-  swatch: { color?: string; icon?: VDTInlineIcon } | undefined,
+  swatch: VDTSwatch | undefined,
   x: number,
   baseline: number,
   width: number,
   ink: string,
+  rtl = false,
 ): void {
   if (swatch?.icon) paintInlineIcon(ctx, swatch.icon, x, baseline, ink);
+  else if (swatch && hasSwatchShape(swatch)) paintShapedSwatch(ctx, swatchGeometry(swatch, x, baseline, width, rtl), swatch.color, swatch.borderColor ?? ink);
   else paintSwatch(ctx, x, baseline, width, swatch?.color, ink);
+}
+
+/** A swatch with a shape of its own (#1104): the fill, then the outline
+ *  stroked inside the square's edge, both with rounded corners. */
+function paintShapedSwatch(ctx: CanvasRenderingContext2D, g: SwatchGeometry, fill: string | undefined, ink: string): void {
+  saveContext(ctx);
+  if (fill) {
+    ctx.fillStyle = fill;
+    ctx.beginPath();
+    roundedSquare(ctx, g.x, g.y, g.side, g.radius);
+    ctx.fill();
+  }
+  if (g.stroke > 0) {
+    const half = g.stroke / 2;
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = g.stroke;
+    ctx.beginPath();
+    roundedSquare(ctx, g.x + half, g.y + half, g.side - g.stroke, Math.max(0, g.radius - half));
+    ctx.stroke();
+  }
+  restoreContext(ctx);
+}
+
+function roundedSquare(ctx: CanvasRenderingContext2D, x: number, y: number, side: number, r: number): void {
+  if (r <= 0) {
+    ctx.rect(x, y, side, side);
+    return;
+  }
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + side, y, x + side, y + side, r);
+  ctx.arcTo(x + side, y + side, x, y + side, r);
+  ctx.arcTo(x, y + side, x, y, r);
+  ctx.arcTo(x, y, x + side, y, r);
+  ctx.closePath();
 }

@@ -164,6 +164,8 @@ A button that changes the template (and so every page set with it) asks first an
 
 <Screenshot src="/docs-shots/en/checks.webp" alt="The Checks panel with the entry Text does not fit its frame and three buttons offering fixes, and the page with its first box outlined in red and a band saying 26 mm short." caption="A frame that does not fit, and the fixes the layout worked out for it." />
 
+A box with photos and their captions (frames anchored inside it, a caption `below` each photo) does not grow by itself when a translation makes the captions longer: they run out of the box and onto what lies under it. Open the box's frame in the template editor and set **Grows with the frames inside** to *The frames anchored inside it* (`growWith: "children"` in the template). The box then reaches the foot of the lowest caption and its bottom padding, its fill, border and tab follow, and the frames under it move down. *The frames chosen* takes a list of names instead. The frames anchored to a point of the box's top side count, and those anchored to them; a frame anchored to the box's foot or middle does not, and a turned box does not grow. Since postext 1.52.
+
 ## 7. Select on the page and in the text
 
 The page and its Markdown follow each other.

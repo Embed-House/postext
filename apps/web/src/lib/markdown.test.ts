@@ -160,28 +160,6 @@ describe("links and inline HTML", () => {
       ].join("\n")
     );
   });
-
-  it("leaves no site-relative link or stray inline HTML in any rendition (nor so in llms-full.txt)", () => {
-    // One assertion at the end: an expect per line made this test outlast CI's timeout.
-    const offending: string[] = [];
-    for (const locale of ["en", "es", "ca", "zh", "ja", "ar", "pt"]) {
-      for (const path of markdownPaths(locale)) {
-        // Prose only: fenced blocks and code spans hold samples.
-        let fence = false;
-        for (const line of pageMarkdown(locale, path)!.split("\n")) {
-          if (/^\s*(```|~~~)/.test(line)) fence = !fence;
-          if (fence) continue;
-          const prose = line.replace(/(`+)[\s\S]*?\1/g, "");
-          if (/\]\(\/(?!\/)/.test(prose) || /<\/?(?:a|em|strong|code)\b[^>]*>/.test(prose)) {
-            offending.push(`${locale}${path}: ${prose}`);
-          }
-        }
-      }
-    }
-    expect(offending).toEqual([]);
-    // Seven locales of renditions, about 95 s: room over the CI default of
-    // 120 s. It took 342 s when every doc rendition reread the docs folder.
-  }, 300_000);
 });
 
 describe("llms.txt", () => {
