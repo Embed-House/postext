@@ -571,9 +571,15 @@ The sun warms the sea and :mark[water rises into the air as vapour].
 **Regex:** `:swatch\{([^}]*)\}`.
 - `color` is required (no colour: literal text). Values: `#rgb` or `#rrggbb`, **or a palette entry id** (e.g. `color="table-compatible"`). An unresolved value draws an empty outline.
 - Allowed in every text block including headings, and in snippets.
+- Shape (postext ≥ 1.52.0): `size` (side, default 0.75em), `border` (`none`, or a width and a colour in either
+  order), `borderWidth` / `borderColor` (each alone, over `border`; default a 6 % outline in the text colour),
+  `radius` (corners, clamped to a circle), `gap` (room after the square, part of its advance, so the label follows
+  with no space). Lengths `pt|px|mm|cm|in|em|rem`, a bare number is pt, em of the surrounding text; the outline
+  colour is a hex or a palette id. Port a map legend's keys this way, never as chips or pictures.
 
 ```md
 :swatch{color="ok"}: compatible; :swatch{color="#e5adb8"}: incompatible
+:swatch{color="farmland" size=10pt border="0.75pt ink" radius=2pt gap=3pt}Farmland
 ```
 
 ### 10.3 `:smallcaps[text]` (small capitals)

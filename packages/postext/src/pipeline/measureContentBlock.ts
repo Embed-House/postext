@@ -298,7 +298,7 @@ function resolveInlineSpans(block: ContentBlock, style: BlockStyle, ctx: BlockMe
 
   // Inline colour swatches: a palette id resolves to its hex here.
   if (contentBlock.spans.some((s) => s.swatch)) {
-    contentBlock = { ...contentBlock, spans: resolveSwatchSpans(contentBlock.spans, resolved.colorPalette) };
+    contentBlock = { ...contentBlock, spans: resolveSwatchSpans(contentBlock.spans, resolved.colorPalette, undefined, { dpi: resolved.page.dpi, fontSizePx: style.fontSizePx }) };
   }
 
   // Inline chips: the style resolves to a box sized against this text.

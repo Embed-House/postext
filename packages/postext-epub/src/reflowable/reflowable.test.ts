@@ -113,6 +113,15 @@ describe('chips in headings (#1100)', () => {
   });
 });
 
+describe('swatch shapes (#1104)', () => {
+  it('writes the size, outline, corners and gap of a swatch in ems', async () => {
+    const doc = layOut('Key :swatch{color="#e8b04a" size=1em border="0.1em #334455" radius=0.2em gap=0.3em}Farmland and :swatch{color="#7fb2d9"} water.', baseConfig);
+    const { all } = await render([doc]);
+    expect(all).toMatch(/<span class="pt-swatch" role="img" aria-label="#e8b04a" style="background-color:#e8b04a;width:1em;height:1em;box-sizing:border-box;border-width:0\.1em;border-color:#334455;border-radius:0\.2em;margin-inline-end:0\.3em"><\/span>/);
+    expect(all).toContain('<span class="pt-swatch" role="img" aria-label="#7fb2d9" style="background-color:#7fb2d9"></span>');
+  });
+});
+
 describe('joining lines', () => {
   it('joins lines with a space and drops the hyphen a break added', () => {
     expect(joined([
