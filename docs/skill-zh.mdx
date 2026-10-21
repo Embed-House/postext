@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '技能',
   description: '在Claude Code、Codex或任意智能体中安装postext-port技能，让它把PDF、Word、PowerPoint、EPUB、InDesign或HTML源文件转换成沿用原版面的Postext项目',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-21',
   readingTime: '7分钟',
   order: 45,
   plainSummary: "本页写给手里已有一本书或一份文档（比如PDF、Word或InDesign文件）、想把它转成Postext的人。只要给AI助手（也叫智能体）装上一个叫“技能”的小插件，它就能完成大部分工作。这个技能教智能体怎样复制文字，并按原样重建原书的设计。本页说明怎样安装它、怎样提要求，以及怎样检查结果。一段大约五分钟的视频演示了每一步。",
@@ -72,7 +72,7 @@ YouTube上也有：[在那里观看](https://www.youtube.com/watch?v=MQrBUB7QbL0
     <tr><td><code>measure_layout.py</code></td><td>PDF的页边距、栏、栏间距和行距（即基线网格）</td></tr>
     <tr><td><code>pdf_extract.py</code></td><td>PDF → 按<em>字体角色</em>（字体/字号/颜色）生成的章节草稿：阅读顺序、段落、去除断词连字符、粗体/斜体、上标/下标、列表、题注</td></tr>
     <tr><td><code>pdf_figures.py</code></td><td>从PDF中裁出图：原始分辨率的照片、SVG预览图、矢量PDF印刷原稿</td></tr>
-    <tr><td><code>pdf_regions.py</code>、<code>template_dedupe.py</code>、<code>anchors.py</code></td><td>把PDF的固定版面页（课本、练习册、杂志）转成模板页：以毫米为单位定位框的页面模板；方框、页签和高亮的样式；不含文字的页面底图；去掉文字后裁出的图片；以及按阅读顺序排列的Markdown，每页一个页面块（<code>::::page</code>块），每个方框一个槽位。压在其他图形下面、看不见的文字会被剔除。<code>template_dedupe.py</code>把同类页面的模板和样式合并成一套样式库，按角色（<code>box-light-blue</code>、<code>caption-of-picture</code>）而不是按种类和顺序给框命名，并相应改写页面块。<code>anchors.py</code>把地图上的文字变成资源锚点和各版本的<code>::label</code>行。只处理一页时没有可合并的内容，<code>pdf_regions.py extract</code>会自己按角色给框命名（<code>--name-frames</code>，自postext 1.43起）。</td></tr>
+    <tr><td><code>pdf_regions.py</code>、<code>template_dedupe.py</code>、<code>anchors.py</code></td><td>把PDF的固定版面页（课本、练习册、杂志）转成模板页：以毫米为单位定位框的页面模板；方框、页签和高亮的样式；不含文字的页面底图；去掉文字后裁出的图片；以及按阅读顺序排列的Markdown，每页一个页面块（<code>::::page</code>块），每个方框一个槽位。压在其他图形下面、看不见的文字会被剔除。<code>template_dedupe.py</code>把同类页面的模板和样式合并成一套样式库，按角色（<code>box-light-blue</code>、<code>caption-of-picture</code>）而不是按种类和顺序给框命名，并相应改写页面块。<code>anchors.py</code>把地图上的文字变成资源锚点和各版本的<code>::label</code>行。只处理一页时没有可合并的内容，<code>pdf_regions.py extract</code>会自己按角色给框命名（<code>--name-frames</code>，自postext 1.43起）。从postext 1.48起，它把页面上的线条、卡片和图形画成矢量（框与框之间的连接线、指向图片某一点的线、路径元素），不再每页用一张图；<code>template_dedupe.py</code>把排成行列的卡片合并为重复的网格，把页面上的每一条带合并为模块。</td></tr>
     <tr><td><code>extract_tables.py</code></td><td>PDF表格 → Postext的<code>TableModel</code></td></tr>
     <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX、PPTX、ODT、EPUB、HTML、LaTeX、Markdown、JATS、DocBook → 章节草稿，Word样式映射为标注框和段落样式</td></tr>
     <tr><td><code>idml_extract.py</code></td><td>InDesign IDML → 按段落样式生成的章节草稿、表和锚定图片；注音、纵中横、着重号和双行夹注转换为<code>:ruby</code>、<code>:tcy</code>、<code>:dots</code>和<code>:warichu</code>，并报告竖排文章和从右到左的装订</td></tr>
@@ -83,8 +83,8 @@ YouTube上也有：[在那里观看](https://www.youtube.com/watch?v=MQrBUB7QbL0
     <tr><td><code>preset_kit.py</code></td><td>搭建项目及其生成脚本，构建<code>preset.json</code>，打包<code>.postext</code>文件，并检查配置：配置里只应放版式设计，脚本会找出写进设计元素的书中文字，以及大到沙盒放不下的配置</td></tr>
     <tr><td><code>lint_project.py</code></td><td>找出解析器和加载器会悄悄弄错的所有问题；对中文、日文和韩文文本，还会找出项目自带字体排不出的字符；对日文文本，会指出设成中文语言的假名文本、中文字体或中文设置、章节里残留的青空文库标记，以及没有读音的汉字索引条目；对阿拉伯文文本，会指出缺少阿拉伯语的语言设置、只有拉丁字母或没有连写表的字体、字母间距、强制断词和斜体强调；对漫画，会指出无法读取的<code>split</code>表达式、与分割单元数不符的分格、未知的图片、对白框样式或分格样式、格式错误的说话人锚点、项目没有附带的嵌字字体，以及各语言版本之间不一致的页面</td></tr>
     <tr><td><code>render.mjs</code></td><td>用真实引擎在无浏览器环境中排版项目（一个文件夹或一个<code>.postext</code>文件），像沙盒一样读取其配置，并输出警告。加上<code>--jpeg</code>时，它用引擎自己的Canvas渲染器把指定的页面（<code>--pages 12-15</code>）画成JPEG文件，只需一两秒，智能体不必生成PDF就能查看页面；<code>--out</code>写出PDF。为印刷设置的书会输出PREFLIGHT行（低分辨率图片、过细线条、多色小字、超出上限的墨量、靠近裁切线的文字），其PDF按ICC输出特性文件分色。</td></tr>
-    <tr><td><code>compare_pages.py</code></td><td>把源文件页面和Postext页面并排放置，Postext页面取自渲染出的PDF或JPEG文件夹</td></tr>
-    <tr><td><code>composed_check.py</code></td><td>模板页：<code>round</code>读取已安装引擎的版本，说明它支持哪一轮移植、缺少哪些模板页功能；<code>check</code>对每个版本运行<code>postext check</code>和<code>postext html</code>，遇到以下情况就失败：框溢出、未知的模板或槽位、放不进锚点的标签、写进配置里的文字，以及HTML读取框的顺序与Markdown填充框的顺序不一致</td></tr>
+    <tr><td><code>compare_pages.py</code></td><td>把源文件页面和Postext页面并排放置，Postext页面取自渲染出的PDF或JPEG文件夹；加<code>--score</code>时衡量两者有多相似，再加<code>--check</code>时，只要检查仍报告框与框重叠，评分就失败</td></tr>
+    <tr><td><code>composed_check.py</code></td><td>模板页：<code>round</code>读取已安装引擎的版本，说明它支持哪一轮移植、缺少哪些模板页功能；<code>check</code>对每个版本运行<code>postext check</code>和<code>postext html</code>，遇到以下情况就失败：框溢出、未知的模板或槽位、放不进锚点的标签、写进配置里的文字，以及HTML读取框的顺序与Markdown填充框的顺序不一致。从postext 1.48起，框被另一个框盖住或超出自己的盒子时（<code>frameCovered</code>、<code>frameOutsideArea</code>）也会失败，并在最后给出重叠的数目；源文件有意重叠的地方，连同理由记入项目的<code>composed-check.json</code></td></tr>
     <tr><td><code>postext_md.py</code></td><td>其他脚本导入的辅助模块，用于以Postext的Markdown方言写出文字：行内标记写成平铺的片段，转义有特殊含义的字符，把会被读成列表、标题或块的段落保留为文字</td></tr>
   </tbody>
 </table>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'スキル',
   description: 'Claude Code、Codexなどのエージェントにpostext-portスキルを入れ、PDF、Word、PowerPoint、EPUB、InDesign、HTMLの原稿を、元のレイアウトに沿ったPostextプロジェクトに変換させる方法',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-21',
   readingTime: '10分',
   order: 45,
   plainSummary: "このページは、PDF、Word、InDesignなど別の形式の本や文書をすでに持っていて、それをPostextに移したい人のためのものです。エージェントと呼ばれるAIアシスタントに、スキルという小さな追加機能を渡せば、作業の大部分を任せられます。スキルは、元の文章を移し、元のデザインを作り直す方法をエージェントに教えます。このページでは、スキルの入れ方、頼み方、結果の確かめ方を説明します。約5分の動画で、すべての手順を見られます。",
@@ -86,7 +86,7 @@ YouTubeでも見られます。[YouTubeで見る](https://www.youtube.com/watch?
     <tr><td><code>measure_layout.py</code></td><td>PDFの余白、段、段間、行送り（ベースライングリッド）</td></tr>
     <tr><td><code>pdf_extract.py</code></td><td>PDF → <em>書体の役割</em>（フォント、サイズ、色）ごとの章の下書き：読む順序、段落、ハイフネーションの解除、太字とイタリック、上付きと下付き、リスト、キャプション</td></tr>
     <tr><td><code>pdf_figures.py</code></td><td>PDFから図を切り出す：元の解像度の写真、SVGのプレビュー、印刷用のベクターPDF原稿</td></tr>
-    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>PDFの固定ページ（教科書、ワークブック、雑誌）をテンプレートページに変換します。作られるのは、ミリ単位の枠からなるページテンプレート、囲み・タブ・ハイライトのスタイル、文字のないページの地、文字を除いて切り出した画像、そしてページごとに1つのページブロック（<code>::::page</code>）と囲みごとに1つのスロットを読む順に並べたMarkdownです。ほかの描画の下に隠れた文字は取り込みません。<code>template_dedupe.py</code>は、同じ種類のページのテンプレートとスタイルを1つのライブラリにまとめ、枠に種類と順番ではなく役割による名前（<code>box-light-blue</code>、<code>caption-of-picture</code>）を付け、それに合わせてページブロックも書き換えます。<code>anchors.py</code>は、地図の文字をリソースのアンカーと、版ごとの<code>::label</code>の行に変えます。1ページだけの実行では統合するものがないため、<code>pdf_regions.py extract</code>自身が枠に役割で名前を付けます（<code>--name-frames</code>、postext 1.43以降）。</td></tr>
+    <tr><td><code>pdf_regions.py</code>, <code>template_dedupe.py</code>, <code>anchors.py</code></td><td>PDFの固定ページ（教科書、ワークブック、雑誌）をテンプレートページに変換します。作られるのは、ミリ単位の枠からなるページテンプレート、囲み・タブ・ハイライトのスタイル、文字のないページの地、文字を除いて切り出した画像、そしてページごとに1つのページブロック（<code>::::page</code>）と囲みごとに1つのスロットを読む順に並べたMarkdownです。ほかの描画の下に隠れた文字は取り込みません。<code>template_dedupe.py</code>は、同じ種類のページのテンプレートとスタイルを1つのライブラリにまとめ、枠に種類と順番ではなく役割による名前（<code>box-light-blue</code>、<code>caption-of-picture</code>）を付け、それに合わせてページブロックも書き換えます。<code>anchors.py</code>は、地図の文字をリソースのアンカーと、版ごとの<code>::label</code>の行に変えます。1ページだけの実行では統合するものがないため、<code>pdf_regions.py extract</code>自身が枠に役割で名前を付けます（<code>--name-frames</code>、postext 1.43以降）。postext 1.48以降は、ページの線・カード・図形をページごとの画像ではなくベクターで描きます（枠どうしをつなぐコネクター、画像の一点を指す線、パス要素）。<code>template_dedupe.py</code>は、行と列に並んだカードを繰り返しのグリッドに、ページの帯の一つひとつをモジュールにまとめます。</td></tr>
     <tr><td><code>extract_tables.py</code></td><td>PDFの表 → Postextの<code>TableModel</code></td></tr>
     <tr><td><code>pandoc_to_postext.py</code></td><td>DOCX、PPTX、ODT、EPUB、HTML、LaTeX、Markdown、JATS、DocBook → 章の下書き。Wordのスタイルは囲みと段落スタイルに対応づけます</td></tr>
     <tr><td><code>idml_extract.py</code></td><td>InDesignのIDML → 段落スタイルごとの章の下書き、表、アンカー付きの画像。ルビ、縦中横、圏点、割注は<code>:ruby</code>、<code>:tcy</code>、<code>:dots</code>、<code>:warichu</code>になり、縦組みのストーリーと右から左の綴じは報告されます</td></tr>
@@ -97,8 +97,8 @@ YouTubeでも見られます。[YouTubeで見る](https://www.youtube.com/watch?
     <tr><td><code>preset_kit.py</code></td><td>プロジェクトとその生成スクリプトのひな形を作り、<code>preset.json</code>を組み立て、<code>.postext</code>ファイルにまとめます。設定も点検し、デザイン要素に書き込まれた本文（設定に置くのはデザインだけです）と、Sandboxに収まらない大きさの設定を見つけます</td></tr>
     <tr><td><code>lint_project.py</code></td><td>パーサーとローダーがエラーを出さずに誤って処理してしまうものを、すべて検出します。中国語、日本語、韓国語のテキストでは、同梱フォントで組めない文字。日本語のテキストでは、中国語ロケールの下のかな、中国語の書体や設定、章に残った青空文庫の注記、読みのない漢字の索引項目。アラビア語のテキストでは、アラビア語ロケールの欠落、ラテン文字専用または連結しない書体、字間、強制的なハイフネーション、イタリックによる強調。漫画では、解析できない<code>split</code>の式、分割のセルと合わないコマ、見つからない画像や吹き出し・コマのスタイル、不正な話者のアンカー、同梱されていない写植用フォント、版ごとに異なるページ</td></tr>
     <tr><td><code>render.mjs</code></td><td>プロジェクト（フォルダーまたは<code>.postext</code>ファイル）を、本物のエンジンでヘッドレスにレイアウトします。設定はSandboxと同じように読み込み、警告を出力します。<code>--jpeg</code>を付けると、指定したページ（<code>--pages 12-15</code>）をエンジン自身のcanvasレンダラーでJPEGファイルに描画します。1、2秒で済むので、エージェントはPDFを作らずに自分のページを見られます。<code>--out</code>はPDFを書き出します。印刷用に設定した本ではPREFLIGHT行（解像度不足の画像、細すぎる罫、複数インキの小さな文字、上限を超えるインキ量、仕上がり線に近い文字）を出力し、PDFはICC出力プロファイルで分版します。</td></tr>
-    <tr><td><code>compare_pages.py</code></td><td>原本のページとPostextのページを並べて表示します。描画結果のPDFからでも、JPEGのフォルダーからでも使えます</td></tr>
-    <tr><td><code>composed_check.py</code></td><td>テンプレートページ：<code>round</code>はインストール済みエンジンのバージョンを読み、どの移植ラウンドに対応し、どのテンプレートページ機能が欠けているかを示します。<code>check</code>は各版で<code>postext check</code>と<code>postext html</code>を実行し、枠のあふれ、未知のテンプレートやスロット、アンカーに収まらないラベル、設定に書かれたテキスト、Markdownが埋める順序とは異なる順序でHTMLが読む枠があれば失敗します</td></tr>
+    <tr><td><code>compare_pages.py</code></td><td>原本のページとPostextのページを並べて表示します。描画結果のPDFからでも、JPEGのフォルダーからでも使えます。<code>--score</code>で似ている度合いを測り、<code>--check</code>を付けると、チェックが枠の重なりを報告しているあいだは評価が失敗します</td></tr>
+    <tr><td><code>composed_check.py</code></td><td>テンプレートページ：<code>round</code>はインストール済みエンジンのバージョンを読み、どの移植ラウンドに対応し、どのテンプレートページ機能が欠けているかを示します。<code>check</code>は各版で<code>postext check</code>と<code>postext html</code>を実行し、枠のあふれ、未知のテンプレートやスロット、アンカーに収まらないラベル、設定に書かれたテキスト、Markdownが埋める順序とは異なる順序でHTMLが読む枠があれば失敗します。postext 1.48以降は、枠が別の枠の下に隠れたり自分の箱からはみ出したりした場合（<code>frameCovered</code>、<code>frameOutsideArea</code>）にも失敗し、最後に重なりの数を示します。原本が意図して重ねている箇所は、理由を添えてプロジェクトの<code>composed-check.json</code>に記録します</td></tr>
     <tr><td><code>postext_md.py</code></td><td>ほかのスクリプトが読み込む補助モジュールで、PostextのMarkdownの方言でテキストを書き出します。インラインの記号は平たい区間に分け、意味を持つ文字はエスケープし、リスト、見出し、ブロックとして読まれてしまう段落はテキストのまま保ちます</td></tr>
   </tbody>
 </table>
