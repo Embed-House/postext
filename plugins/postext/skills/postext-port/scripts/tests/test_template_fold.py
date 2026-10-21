@@ -872,5 +872,81 @@ class LimitsTest(unittest.TestCase):
         self.assertEqual(md.count('look="look-tip"'), 2)
 
 
+# --- a wall of nine cards (#1133): read whole it is a 3 x 3 grid; read in
+#     part (the first column narrower, the rest of widths of their own) the
+#     part is left unfolded and reported -----------------------------------
+
+CARD_STYLES = ["box-1", "box-pink", "box-sky", "box-mint", "box-1", "box-pink", "box-sky", "box-mint", "box-1"]
+
+
+def card_wall(tid: str = "p01", widths=None, xs=(15, 77, 139), styles=None):
+    widths = widths or [56] * 9
+    styles = styles or ["box-1"] * 9
+    frames = [frame("text", 15, 15, 180, flow=True, minHeight=mm(30), style="text-1")]
+    regions = [{"name": "text", "kind": "text", "box": [15, 15, 195, 45], "parent": None}]
+    md = [f'::::page{{template="{tid}"}}', "", "Nine cards under these words.", ""]
+    k = 0
+    for y in (55, 100, 145):
+        for x in xs:
+            w, st = widths[k], styles[k]
+            k += 1
+            frames.append(frame(f"box-{k}", x, y, w, minHeight=mm(35), style=st))
+            regions.append({"name": f"box-{k}", "kind": "box", "box": [x, y, x + w, y + 35], "parent": None})
+            md += [f':::frame{{slot="box-{k}"}}', f"Card number {k}", ":::", ""]
+    md += ["::::", ""]
+    t = {"id": tid, "area": "trim", "header": False, "footer": False, "frames": frames,
+         "decoration": {"elements": [folio()]}}
+    return t, {"page": 1, "frames": regions}, "\n".join(md)
+
+
+class PartialLatticeTest(unittest.TestCase):
+    def test_a_whole_wall_of_cards_is_one_grid(self):
+        templates, md, rep = fold([card_wall()], modules=False)
+        self.assertEqual([(g["columns"], g["rows"], g["items"]) for g in rep["grids"]], [(3, 3, 9)])
+        self.assertEqual(rep["gridsLeft"], [])
+        self.assertEqual(md.count(':::frame{slot="grid-box"}'), 9)
+        self.assertEqual([f["name"] for f in templates[0]["frames"]], ["text", "grid-box"])
+
+    def test_one_column_of_a_wall_is_left_unfolded_and_reported(self):
+        # the first column narrower than the rest, which differ among
+        # themselves: the column alone stands on a lattice, the other six
+        # cards on none
+        widths = [48, 50, 51.5, 48, 53, 54.5, 48, 56, 57.5]
+        templates, md, rep = fold([card_wall(widths=widths, xs=(15, 70, 135))], modules=False)
+        self.assertEqual(rep["grids"], [])
+        self.assertEqual(len(rep["gridsLeft"]), 1)
+        left = rep["gridsLeft"][0]
+        self.assertEqual((left["template"], left["frames"], left["columns"], left["rows"]),
+                         ("p01", ["box-1", "box-4", "box-7"], 1, 3))
+        self.assertEqual(left["strays"], ["box-2", "box-5", "box-8"])
+        self.assertFalse(any(g.get("kind") == "grid" for g in templates[0].get("groups", [])))
+        self.assertIn(':::frame{slot="box-1"}', md)
+        self.assertNotIn("grid-box", md)
+
+    def test_two_lattices_of_one_wall_are_both_left_unfolded(self):
+        # the first column narrower, the other two alike: a column and a
+        # 2 x 3 lattice, each with cards of the other on its rows
+        widths = [48, 56, 56] * 3
+        _, _, rep = fold([card_wall(widths=widths, xs=(15, 70, 132))], modules=False)
+        self.assertEqual(rep["grids"], [])
+        self.assertEqual(sorted((g["columns"], g["rows"]) for g in rep["gridsLeft"]), [(1, 3), (2, 3)])
+
+    def test_a_box_of_another_kind_beside_the_wall_leaves_it_whole(self):
+        t, reg, md = card_wall()
+        t["frames"].append(frame("picture-1", 15, 190, 56))
+        reg["frames"].append({"name": "picture-1", "kind": "picture", "box": [15, 190, 71, 220], "parent": None})
+        _, _, rep = fold([(t, reg, md)], modules=False)
+        self.assertEqual([(g["columns"], g["rows"]) for g in rep["grids"]], [(3, 3)])
+        self.assertEqual(rep["gridsLeft"], [])
+
+    def test_cards_in_colours_of_their_own_are_one_grid_with_looks(self):
+        book = td.look_book(style_lib(), TOL)
+        _, md, rep = fold([card_wall(styles=CARD_STYLES)], modules=False, looks=book)
+        self.assertEqual([(g["columns"], g["rows"], g["items"]) for g in rep["grids"]], [(3, 3, 9)])
+        self.assertEqual(rep["gridsLeft"], [])
+        self.assertEqual(len(rep["frameLooks"]), 3)
+        self.assertEqual(md.count(':::frame{slot="grid-box" look="'), 6)
+
+
 if __name__ == "__main__":
     unittest.main()

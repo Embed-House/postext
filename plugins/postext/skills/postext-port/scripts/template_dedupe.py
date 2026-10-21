@@ -1582,6 +1582,8 @@ def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: 
                                    grids=fold_grids, modules=fold_modules, laid=laid_boxes, rows=fold_rows,
                                    looks=looks)
         report["grids"] = fold_report["grids"]
+        if fold_report.get("gridsLeft"):
+            report["gridsLeft"] = fold_report["gridsLeft"]
         report["modules"] = fold_report["modules"]
         report["rows"] = fold_report.get("rows") or []
         if fold_report.get("frameLooks"):
@@ -1628,7 +1630,7 @@ def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: 
     # the laid page gives it (instances, modules, role names)
     for m in report.get("modules") or []:
         m["uses"] = [tmap.get(u, u) for u in m["uses"]]
-    for g in report.get("grids") or []:
+    for g in (report.get("grids") or []) + (report.get("gridsLeft") or []):
         g["template"] = tmap.get(g["template"], g["template"])
     if fold_report.get("names"):
         report["pages"] = {}
@@ -1733,6 +1735,9 @@ def print_report(rep: dict) -> None:
     for g in rep.get("grids") or []:
         print(f"  grid {g['template']}/{g['group']}: {g['items']} items, {g['columns']} column(s) x {g['rows']} row(s), "
               f"repeats {', '.join(g['frames'])}")
+    for g in rep.get("gridsLeft") or []:
+        print(f"  grid left unfolded on {g['template']}: {', '.join(g['frames'])} ({g['columns']} x {g['rows']}), "
+              f"cards of the set outside it: {', '.join(g['strays'])}")
     if rep.get("modules"):
         uses = sum(len(m["uses"]) for m in rep["modules"])
         print(f"modules {len(rep['modules'])} ({uses} uses, "
