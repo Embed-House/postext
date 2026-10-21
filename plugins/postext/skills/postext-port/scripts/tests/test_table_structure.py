@@ -146,8 +146,10 @@ class PdfExtract(unittest.TestCase):
             page = doc.new_page(width=420, height=700)
             page.insert_text((40, 40), "Body text before the tables.", fontsize=10)
             foot = draw(page, 60, "Tabla 2. Valores normales")
-            page.insert_text((40, foot + 30), "Tabla 3. Electrolitos", fontsize=8, fontname="hebo")
-            foot2 = draw(page, foot + 40, None)
+            # 80 pt between the tables: PyMuPDF 2.0's lines_strict reads two ruled tables 40 pt apart
+            # as one candidate and returns only the second (1.27 finds both).
+            page.insert_text((40, foot + 70), "Tabla 3. Electrolitos", fontsize=8, fontname="hebo")
+            foot2 = draw(page, foot + 80, None)
             page.insert_text((40, foot2 + 24), "Body text after the tables.", fontsize=10)
             doc.save(str(root / "s.pdf"))
             roles = {"rules": [{"size": 8, "role": "caption"}, {"size": 10, "role": "body"}, {"role": "body"}]}

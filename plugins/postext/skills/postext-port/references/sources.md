@@ -92,7 +92,10 @@ geometry, media and scan pages, and names the next command.
    style, not in the cells. Postext has no per-cell borders: a rule pattern
    no preset draws gets a note naming the nearest one. `--full` prints all
    of it as JSON, `--plain` the text only. Merged cells come back as
-   `colSpan` / `rowSpan` with `hiddenBy` on the cells they cover. A first
+   `colSpan` / `rowSpan` with `hiddenBy` on the cells they cover. With
+   PyMuPDF 2.0, two ruled tables set close together (about 40 pt apart) can
+   come back as one: count the tables against the page and cut the missing
+   one with `--pages` and a clip if needed. A first
    row over every column that starts with a caption label ("Tabla 2.
    Valores normales") is taken out as the table's `label` and `caption`;
    any other row over every column is a group band, centred, with its fill
