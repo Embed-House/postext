@@ -25,6 +25,12 @@ export interface SlotSite {
   /** A `:::frame` fence's `label="…"` value (the box's label tab), when it
    *  has one. */
   label?: { start: number; end: number; text: string };
+  /** A `:::frame` fence's `look="…"` value (a named frame look, #1089),
+   *  when it has one. */
+  look?: { start: number; end: number; text: string };
+  /** A `:::frame` fence: where the closing `}` of its attributes stands,
+   *  where a new attribute is written. */
+  attrsEnd?: number;
   /** The `slot` value as written (inside the quotes). */
   slotRange?: { start: number; end: number };
   /** A site written inside another one (#1065): a member of a grid's item,
@@ -76,7 +82,11 @@ function containerSite(text: string, b: ContentBlock, endBlock: ContentBlock, ab
   const after = text.indexOf('\n', b.sourceEnd);
   const contentStart = isFrame ? (after < 0 ? b.sourceEnd : after + 1) : b.sourceStart;
   const contentEnd = isFrame ? Math.max(contentStart, endBlock.sourceStart) : endBlock.sourceEnd;
+  const lookAt = isFrame ? b.containerAttrSources?.look : undefined;
+  const brace = isFrame ? opener.lastIndexOf('}') : -1;
   return {
+    ...(lookAt ? { look: { start: abs(lookAt.sourceStart), end: abs(lookAt.sourceEnd), text: text.slice(lookAt.sourceStart, lookAt.sourceEnd) } } : {}),
+    ...(brace >= 0 ? { attrsEnd: abs(b.sourceStart + brace) } : {}),
     slot: b.slot!.name,
     kind: isFrame ? 'frame' : 'block',
     start: abs(b.sourceStart),

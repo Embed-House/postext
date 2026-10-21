@@ -182,3 +182,35 @@ describe('a design element\'s page-fence condition', () => {
     expect(after.get(added[0]!)).toBe(value);
   });
 });
+
+// #1089: named frame looks are settings like any other: a look's colour is
+// written by its id and read back, nothing else moving, and a book with
+// none takes a first one.
+describe('named frame looks', () => {
+  const hex = (h: string) => ({ hex: h, model: 'hex' });
+  const looked = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="card"}\n:::frame{slot="main" look="pill"}\nWords.\n:::\n::::\n')];
+    const config = {
+      pageTemplates: [{ id: 'card', frames: [{ name: 'main', height: { value: 40, unit: 'mm' } }] }],
+      frameLooks: [{ id: 'pill', background: hex('#e63946') }],
+    };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it('writes a look\'s colour by its id', async () => {
+    const { call } = harness(looked() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(before.get('frameLooks[id=pill].background.hex')).toBe('#e63946');
+    const done = await call('sandbox_set_config', { changes: [{ path: 'frameLooks[id=pill].background', value: hex('#2a9d8f') }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(after.get('frameLooks[id=pill].background.hex')).toBe('#2a9d8f');
+    expect(moved(before, after).filter((p) => !p.startsWith('frameLooks[id=pill].background'))).toEqual([]);
+  });
+  it('adds a first look to a book with none', async () => {
+    const { call } = harness(book());
+    const done = await call('sandbox_set_config', { changes: [{ path: 'frameLooks', value: [{ id: 'teal', border: { color: hex('#008080') } }] }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const read = await call('sandbox_get_config', { path: 'frameLooks' });
+    expect(read.set).toEqual([{ id: 'teal', border: { color: hex('#008080') } }]);
+  });
+});

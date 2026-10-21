@@ -56,6 +56,7 @@ export type SettingsSectionId =
   | 'videoStyle'
   | 'calloutStyles'
   | 'frameStyles'
+  | 'frameLooks'
   | 'comicsPanels'
   | 'comicsPanelStyles'
   | 'comicsLettering'
@@ -148,6 +149,8 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'calloutStyles', group: 'callouts', labelKey: 'calloutStylesSection', configKeys: ['calloutStyles'] },
   // The same styles as a library (#873): where each is used, merges.
   { id: 'frameStyles', group: 'callouts', labelKey: 'frameStylesSection', configKeys: ['calloutStyles'] },
+  // Named frame looks (#1089): colours a :::frame piece wears with look="…".
+  { id: 'frameLooks', group: 'callouts', labelKey: 'frameLooksSection', configKeys: ['frameLooks'] },
   // Comic pages (`:::page`): every section edits a part of `comics` (see
   // `sectionHasOverrides`).
   { id: 'comicsPanels', group: 'comics', labelKey: 'comicsPanelsSection', configKeys: ['comics'] },

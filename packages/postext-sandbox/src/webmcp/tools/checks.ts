@@ -187,6 +187,13 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
               max: w.payload.max,
               ...(w.payload.flowFrame !== undefined ? { flowFrame: w.payload.flowFrame } : {}),
             } : {}),
+            // A :::frame piece naming a look frameLooks lacks (#1089).
+            ...(w.payload.kind === 'lookUnknown' ? {
+              frame: w.payload.frame,
+              template: w.payload.template,
+              look: w.payload.look,
+              ...(w.payload.suggestion !== undefined ? { suggestion: w.payload.suggestion } : {}),
+            } : {}),
           };
         }),
         ...(wanted.length > limit ? { more: wanted.length - limit } : {}),
