@@ -3971,6 +3971,8 @@
     "calloutStyleListsHint": "Nicht gesetzte Felder übernehmen die Einstellungen der ungeordneten Listen",
     "calloutStyleListsBulletSize": "Größe des Aufzählungszeichens",
     "calloutStyleListsBulletWeight": "Stärke des Aufzählungszeichens",
+    "calloutStyleListsBulletFont": "Schrift des Aufzählungszeichens",
+    "calloutStyleListsBulletFontTooltip": "Schrift der Aufzählungszeichen in den Listen des Kastens, für ein Zeichen aus einer Symbol- oder Auszeichnungsschrift. Ohne Wert behält jede Listenebene ihre eigene Schrift.",
     "calloutStyleMarginTopTooltip": "Raum über dem Kasten",
     "calloutStyleMarginBottomTooltip": "Mindestraum unter dem Kasten; der Text danach rastet wieder im Grundlinienraster ein",
     "calloutStyleSnapToGrid": "Am Raster ausrichten",

@@ -190,9 +190,9 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>lists</code></td>
-      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight &#125;</code></td>
+      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight, bulletFontFamily &#125;</code></td>
       <td>继承<code>unorderedLists</code></td>
-      <td>框内列表的排版（<code>color</code>、<code>indent</code>、<code>gap</code>和<code>itemSpacing</code>也作用于编号列表）。<code>bulletFontSize</code> / <code>bulletFontWeight</code>让项目符号字形以框的正文字体、按这个字号和字重排出（例如粗重的彩色项目符号）。</td>
+      <td>框内列表的排版（<code>color</code>、<code>indent</code>、<code>gap</code>和<code>itemSpacing</code>也作用于编号列表）。<code>bulletFontSize</code> / <code>bulletFontWeight</code>让项目符号字形以框的正文字体、按这个字号和字重排出（例如粗重的彩色项目符号）。<code>bulletFontFamily</code>让项目符号使用单独的字体，例如符号字体。未设置时，自带字体的列表（<code>unorderedLists.fontFamily</code>或某一级的<code>fontFamily</code>）在框内也用该字体排项目符号。</td>
     </tr>
     <tr>
       <td><code>label</code></td>

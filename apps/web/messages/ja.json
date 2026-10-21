@@ -3970,6 +3970,8 @@
     "calloutStyleListsHint": "未設定の項目は箇条書きリストの設定を引き継ぎます。",
     "calloutStyleListsBulletSize": "行頭記号のサイズ",
     "calloutStyleListsBulletWeight": "行頭記号のウェイト",
+    "calloutStyleListsBulletFont": "行頭記号の書体",
+    "calloutStyleListsBulletFontTooltip": "囲みの中のリストの行頭記号に使う書体です。記号フォントや見出し用の書体で組む場合に指定します。未指定のときは各リスト階層の書体のままです。",
     "calloutStyleMarginTopTooltip": "囲みの上のアキです。",
     "calloutStyleMarginBottomTooltip": "囲みの下の最小のアキです。囲みの後のテキストはベースライングリッドに戻ります。",
     "calloutStyleSnapToGrid": "グリッドに合わせる",

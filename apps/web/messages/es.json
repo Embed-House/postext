@@ -1737,6 +1737,8 @@
     "calloutStyleListsHint": "Los campos sin definir heredan los ajustes de las listas no ordenadas",
     "calloutStyleListsBulletSize": "Tamaño de la viñeta",
     "calloutStyleListsBulletWeight": "Peso de la viñeta",
+    "calloutStyleListsBulletFont": "Fuente de la viñeta",
+    "calloutStyleListsBulletFontTooltip": "Fuente de las viñetas de las listas del recuadro, para una viñeta compuesta en una fuente de símbolos o de rótulo. Sin valor, cada nivel de lista conserva su propia fuente.",
     "calloutStyleMarginTopTooltip": "Espacio sobre el recuadro",
     "calloutStyleMarginBottomTooltip": "Espacio mínimo bajo el recuadro; el texto vuelve a la rejilla base tras él",
     "calloutStyleSnapToGrid": "Ajustar a la rejilla",

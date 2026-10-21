@@ -3970,6 +3970,8 @@
     "calloutStyleListsHint": "الحقول الفارغة ترث إعدادات القائمة غير المرقّمة",
     "calloutStyleListsBulletSize": "حجم النقطة",
     "calloutStyleListsBulletWeight": "وزن النقطة",
+    "calloutStyleListsBulletFont": "خط النقطة",
+    "calloutStyleListsBulletFontTooltip": "خط نقاط القوائم داخل الإطار، لنقطة تُجمع بخط رموز أو بخط عناوين. إن لم يُحدَّد، يحتفظ كل مستوى من القائمة بخطه.",
     "calloutStyleMarginTopTooltip": "المسافة فوق الإطار",
     "calloutStyleMarginBottomTooltip": "أدنى مسافة تحت الإطار؛ يعود النص بعده إلى شبكة خطوط الأساس",
     "calloutStyleSnapToGrid": "المحاذاة إلى الشبكة",

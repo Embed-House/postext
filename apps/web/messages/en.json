@@ -3971,6 +3971,8 @@
     "calloutStyleListsHint": "Unset fields inherit the unordered list settings",
     "calloutStyleListsBulletSize": "Bullet size",
     "calloutStyleListsBulletWeight": "Bullet weight",
+    "calloutStyleListsBulletFont": "Bullet face",
+    "calloutStyleListsBulletFontTooltip": "Typeface of the bullets of the box's lists, for a bullet set in a symbol or display face. Unset, each list level keeps its own face.",
     "calloutStyleMarginTopTooltip": "Space above the box",
     "calloutStyleMarginBottomTooltip": "Minimum space below the box; the text snaps back to the baseline grid after it",
     "calloutStyleSnapToGrid": "Snap to grid",

@@ -3578,6 +3578,8 @@ export interface SandboxLabels {
   calloutStyleListsHint: string;
   calloutStyleListsBulletSize: string;
   calloutStyleListsBulletWeight: string;
+  calloutStyleListsBulletFont: string;
+  calloutStyleListsBulletFontTooltip: string;
   calloutStyleMarginTopTooltip: string;
   calloutStyleMarginBottomTooltip: string;
   calloutStyleSnapToGrid: string;

@@ -3970,6 +3970,8 @@
     "calloutStyleListsHint": "未设置的字段继承无序列表设置",
     "calloutStyleListsBulletSize": "项目符号大小",
     "calloutStyleListsBulletWeight": "项目符号字重",
+    "calloutStyleListsBulletFont": "项目符号字体",
+    "calloutStyleListsBulletFontTooltip": "框内列表项目符号所用的字体，用于以符号字体或标题字体排出的项目符号。未设置时，每级列表沿用各自的字体。",
     "calloutStyleMarginTopTooltip": "框上方的间距",
     "calloutStyleMarginBottomTooltip": "框下方的最小间距；其后的文字重新对齐基线网格",
     "calloutStyleSnapToGrid": "对齐网格",

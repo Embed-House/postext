@@ -1207,7 +1207,7 @@ All em values = the callout body font size.
            letterSpacing (≥ 1.42: em of the body size, negative tightens; tracks the box's paragraphs and
            list items, measured into the lines) }   → inherit bodyText
          + italic = false, smallCaps = false   (paragraphs, list items and blockquotes of the box)
-  lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight? }  → inherit unorderedLists
+  lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight?, bulletFontFamily? }  → inherit unorderedLists (bulletFontFamily unset: the list level keeps its own face)
            (a set `color` also colours ordered-list numbers, even when equal to unorderedLists.color)
   columnGap = 1.5em                  for :::columns{count=N} groups inside the box (a fence `gap=` overrides it)
   marginTop = 0.75em, marginBottom = 0.75em (minimum; grid-snapped after)

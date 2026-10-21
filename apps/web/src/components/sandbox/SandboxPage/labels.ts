@@ -3357,6 +3357,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     calloutStyleListsHint: t("calloutStyleListsHint"),
     calloutStyleListsBulletSize: t("calloutStyleListsBulletSize"),
     calloutStyleListsBulletWeight: t("calloutStyleListsBulletWeight"),
+    calloutStyleListsBulletFont: t("calloutStyleListsBulletFont"),
+    calloutStyleListsBulletFontTooltip: t("calloutStyleListsBulletFontTooltip"),
     calloutStyleMarginTopTooltip: t("calloutStyleMarginTopTooltip"),
     calloutStyleMarginBottomTooltip: t("calloutStyleMarginBottomTooltip"),
     calloutStyleSnapToGrid: t("calloutStyleSnapToGrid"),

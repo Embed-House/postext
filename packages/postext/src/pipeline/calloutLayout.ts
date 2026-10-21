@@ -182,6 +182,13 @@ export function deriveCalloutResolvedConfig(
   // have a colour of their own, which an unset `lists.color` leaves alone.
   // A resolved style without the flag (built by hand) keeps the old rule.
   const numberColorOverride = lists.colorSet === true || colorOverride;
+  // The bullet's face (#1103): the style's own, else the level's. A bullet
+  // size of its own sets a level whose face was only the body's in the
+  // box's body face, as before; a list or level face of its own (a symbol
+  // face) is kept.
+  const bulletFamily = (levelFamily: string): string | undefined =>
+    lists.bulletFontFamily
+      ?? (lists.bulletFontSize && levelFamily === resolved.bodyText.fontFamily ? body.fontFamily : undefined);
   return {
     ...resolved,
     bodyText: {
@@ -212,15 +219,17 @@ export function deriveCalloutResolvedConfig(
       indent: lists.indent,
       gap: lists.gap,
       itemSpacing: lists.itemSpacing,
-      levels: ul.levels.map((l) => ({
-        ...l,
-        bulletChar: bulletOverride ? lists.bulletChar : l.bulletChar,
-        color: colorOverride ? lists.color : l.color,
-        // A bullet size / weight of its own sets the glyph in the box's body
-        // face at that size (the document's list face otherwise).
-        ...(lists.bulletFontSize ? { fontSize: lists.bulletFontSize, fontFamily: body.fontFamily } : {}),
-        ...(lists.bulletFontWeight !== undefined ? { fontWeight: lists.bulletFontWeight } : {}),
-      })),
+      levels: ul.levels.map((l) => {
+        const fontFamily = bulletFamily(l.fontFamily);
+        return {
+          ...l,
+          bulletChar: bulletOverride ? lists.bulletChar : l.bulletChar,
+          color: colorOverride ? lists.color : l.color,
+          ...(lists.bulletFontSize ? { fontSize: lists.bulletFontSize } : {}),
+          ...(fontFamily ? { fontFamily } : {}),
+          ...(lists.bulletFontWeight !== undefined ? { fontWeight: lists.bulletFontWeight } : {}),
+        };
+      }),
     },
     orderedLists: {
       ...ol,

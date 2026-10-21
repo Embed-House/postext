@@ -305,6 +305,7 @@ function resolveCalloutStyleConfig(
       itemSpacing: partial.lists?.itemSpacing ?? unorderedLists.itemSpacing,
       ...(partial.lists?.bulletFontSize ? { bulletFontSize: partial.lists.bulletFontSize } : {}),
       ...(partial.lists?.bulletFontWeight !== undefined ? { bulletFontWeight: partial.lists.bulletFontWeight } : {}),
+      ...(partial.lists?.bulletFontFamily ? { bulletFontFamily: partial.lists.bulletFontFamily } : {}),
       // Set, not merely equal to the inherited value: the box's colour then
       // reaches its ordered-list numbers (EF-92).
       ...(partial.lists?.color ? { colorSet: true } : {}),
@@ -598,6 +599,7 @@ export function stripCalloutStylesDefaults(
       if (s.lists.itemSpacing !== undefined) l.itemSpacing = s.lists.itemSpacing;
       if (s.lists.bulletFontSize !== undefined) l.bulletFontSize = s.lists.bulletFontSize;
       if (s.lists.bulletFontWeight !== undefined) l.bulletFontWeight = s.lists.bulletFontWeight;
+      if (s.lists.bulletFontFamily) l.bulletFontFamily = s.lists.bulletFontFamily;
       const kept = stripObject(l);
       if (kept) r.lists = kept;
     }

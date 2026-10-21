@@ -3519,6 +3519,12 @@ export interface CalloutListStyleConfig {
   /** Size and weight of the bullet glyph (inherit `unorderedLists`). */
   bulletFontSize?: Dimension;
   bulletFontWeight?: number;
+  /** Face of the bullet glyph (#1103), for a bullet set in a symbol or
+   *  display face. Unset, each list level keeps its own face
+   *  (`unorderedLists.fontFamily` or the level's); a style that sets
+   *  {@link bulletFontSize} and inherits the list face from the body sets
+   *  its bullets in the box's body face. */
+  bulletFontFamily?: string;
 }
 
 /** A named callout style, selected by `:::callout{type="<id>"}`. */
@@ -3893,6 +3899,8 @@ export interface ResolvedCalloutStyleConfig {
     itemSpacing: Dimension;
     bulletFontSize?: Dimension;
     bulletFontWeight?: number;
+    /** Absent when the style sets none. */
+    bulletFontFamily?: string;
     /** `true` when the style sets `lists.color` itself. The colour then
      *  reaches the numbers of the box's ordered lists even when it equals
      *  `unorderedLists.color` (the value an unset field inherits). Absent

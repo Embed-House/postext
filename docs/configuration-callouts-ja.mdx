@@ -190,9 +190,9 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>lists</code></td>
-      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight &#125;</code></td>
+      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight, bulletFontFamily &#125;</code></td>
       <td><code>unorderedLists</code>を継承</td>
-      <td>囲みの中のリストの文字組みです（<code>color</code>、<code>indent</code>、<code>gap</code>、<code>itemSpacing</code>は番号付きリストにも適用されます）。<code>bulletFontSize</code>/<code>bulletFontWeight</code>は、行頭記号のグリフを囲みの本文の書体でそのサイズとウェイトにします（太い色付きの行頭記号など）。</td>
+      <td>囲みの中のリストの文字組みです（<code>color</code>、<code>indent</code>、<code>gap</code>、<code>itemSpacing</code>は番号付きリストにも適用されます）。<code>bulletFontSize</code>/<code>bulletFontWeight</code>は、行頭記号のグリフを囲みの本文の書体でそのサイズとウェイトにします（太い色付きの行頭記号など）。<code>bulletFontFamily</code>は行頭記号を専用の書体（記号フォントなど）で組みます。未指定のとき、独自の書体を持つリスト（<code>unorderedLists.fontFamily</code>や階層ごとの<code>fontFamily</code>）は、囲みの中でもその書体で行頭記号を組みます。</td>
     </tr>
     <tr>
       <td><code>label</code></td>

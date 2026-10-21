@@ -3970,6 +3970,8 @@
     "calloutStyleListsHint": "Les champs non définis héritent des réglages des listes à puces",
     "calloutStyleListsBulletSize": "Taille de la puce",
     "calloutStyleListsBulletWeight": "Graisse de la puce",
+    "calloutStyleListsBulletFont": "Police de la puce",
+    "calloutStyleListsBulletFontTooltip": "Police des puces des listes de l’encadré, pour une puce composée dans une police de symboles ou de titrage. Sans valeur, chaque niveau de liste garde sa propre police.",
     "calloutStyleMarginTopTooltip": "Espace au-dessus de l’encadré",
     "calloutStyleMarginBottomTooltip": "Espace minimal sous l’encadré ; après lui, le texte revient sur la grille de ligne de base",
     "calloutStyleSnapToGrid": "Caler sur la grille",

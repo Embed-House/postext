@@ -3970,6 +3970,8 @@
     "calloutStyleListsHint": "Els camps sense definir hereten la configuració de les llistes no ordenades",
     "calloutStyleListsBulletSize": "Mida del pic",
     "calloutStyleListsBulletWeight": "Gruix del pic",
+    "calloutStyleListsBulletFont": "Lletra del pic",
+    "calloutStyleListsBulletFontTooltip": "Lletra dels pics de les llistes de la caixa, per a un pic compost en una lletra de símbols o de rètol. Sense valor, cada nivell de llista manté la seva pròpia lletra.",
     "calloutStyleMarginTopTooltip": "Espai sobre la caixa",
     "calloutStyleMarginBottomTooltip": "Espai mínim sota la caixa; després, el text torna a la retícula de base",
     "calloutStyleSnapToGrid": "Ajustar a la retícula",
