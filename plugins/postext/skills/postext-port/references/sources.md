@@ -63,9 +63,19 @@ geometry, media and scan pages, and names the next command.
    cuts the artwork next to each caption. Photos come out at native
    resolution in sRGB; vector art comes out as SVG (plus a PDF print master
    with `--format both`). Fix regions by hand with `pdf_figures.py crop`.
-5. Tables: `extract_tables.py book.pdf --pages N` gives a TableModel. Add
-   merges (colSpan/rowSpan + hiddenBy) and header rows by hand. Merge tables
-   continued over pages ("(cont.)"), dropping the repeated header.
+5. Tables: `extract_tables.py book.pdf --pages N` gives a TableModel whose
+   cells carry the source's `align` (`center`, `right`), `verticalAlign`
+   (`middle`, `bottom`, only where a cell is clearly taller than its
+   text), `**…**` for a body cell set wholly in bold and `background` from
+   the cell's fill. It prints a style hint beside the model: the nearest
+   `rules` preset with the border colour and width, `headerBold`, and the
+   fills a whole header or body shares (`headerBackground`,
+   `bodyBackground`, `bodyAlternateBackground`), which go in the table's
+   style, not in the cells. Postext has no per-cell borders: a rule pattern
+   no preset draws gets a note naming the nearest one. `--full` prints all
+   of it as JSON, `--plain` the text only. Add merges (colSpan/rowSpan +
+   hiddenBy) and header rows by hand. Merge tables continued over pages
+   ("(cont.)"), dropping the repeated header.
 6. Read every chapter against the page images and correct it. The extractor
    gives a draft; the curated Markdown is the product.
 7. A printed back-of-book index (`inventory.py` lists `index_pages`): once

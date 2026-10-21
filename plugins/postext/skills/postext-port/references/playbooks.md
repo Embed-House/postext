@@ -777,7 +777,12 @@ recoloured to tints of `main-color`). This disables print masters.
 - A table becomes a resource with a TableModel (`extract_tables.py`, pandoc
   and IDML give drafts). Set header rows (on the header fill, or a bold first
   row), merges (colSpan/rowSpan + hiddenBy), `columnWidths` from the printed
-  columns and the per-cell `align`.
+  columns and the per-cell `align`. From a PDF, `extract_tables.py` writes
+  the cells' `align`, `verticalAlign`, bold (`**…**`) and `background`,
+  and a style hint (nearest `rules` preset, border colour and width,
+  header bold, shared fills) for the table style. Rules belong to the
+  table style (`rules`, `borders`), never to a cell: a source with a rule
+  under one cell gets the nearest preset.
 - Notes under the table go in `note`. A table continued on the next page is
   one table: merge it and drop the repeated header.
 - "Tables" that are really framed text boxes: one row per paragraph, or a
