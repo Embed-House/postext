@@ -447,6 +447,64 @@ What the extraction decides, so you know what to check:
   `template_dedupe.py` renames connector ends and size targets with the
   frames and keeps a connector or border in a shared base only when the
   base has its frames.
+- **Line art in boxes, rules as bars, white strokes** (skill 1.61). A box
+  with art painted over its fill (an icon, writing guides, a rule, a
+  connector inside it) would hide that art, since frames paint over the
+  decoration: its fill becomes a decoration `box` laid on the frame
+  (`<frame>-fill`, anchored to `#<frame>` and sized to its right and bottom
+  edges, so it follows the frame), painted before the art, and the box's
+  style has no fill (`report.json` notes it). Art painted before the fill
+  stays hidden. A filled rectangle under 1 mm thick is a line of that
+  thickness (guides and rules from layout programs), read as a stroked line
+  is. Colours are those MuPDF renders (Separation, DeviceN, ICC and Lab
+  through their alternate space); a white that colour management leaves a
+  shade off is written `#ffffff`. With `--raster-ground` a box's fill still
+  covers the art under it in the ground.
+- **Pictures in rounded boxes** (skill 1.61). A picture that runs into a
+  corner of a rounded box or card it sits in is cut as a PNG clipped to the
+  box's inner rectangle and corner radii (the outline less half its stroke),
+  transparent past the curve.
+- **Cuts inside their box** (skill 1.61). A cut without its own alpha goes
+  no further than the inside of the box that holds it (the box less half
+  its rule) and no further than a filled rectangle its art is drawn on (a
+  map's sea: masks and page colour past it are not the picture's). What is
+  left of the holder's rule in the cut is painted out in the picture's
+  ground, never redacted (that would take the box's fill too); the frame
+  draws the rule. `report.json` notes every cut whose box still crosses a
+  box's rule. A cut-out with alpha keeps its overhang.
+- **Ruled grids are tables** (skill 1.61). A ruled grid of at least 2 × 2
+  cells with text in most of them (PyMuPDF `find_tables`, `lines_strict`)
+  becomes a `kind: "table"` resource built by `extract_tables.py` (cell
+  align, bold and fills) in a `table-N` frame where it stood, filled with
+  `::resource`, and a `tableStyles` entry of the same id (the nearest
+  `rules` preset, border, header fill and bold, face, colours and padding;
+  the resource's `table.styleId` names it). Its words, rules and fills are
+  the table's: no text frames, no decoration. The first row is the header
+  when it is filled or bold. A grid whose words run across its rules (a
+  drawing on squared paper) is no table. `--no-tables` keeps the old
+  reading.
+- **A hidden second set of labels** (skill 1.61). A span that another
+  span's box covers in part (a smaller copy of a map's degrees set just
+  off the visible ones, under the map's paint) is read on renders of its
+  own glyphs alone, so the visible copy's ink no longer makes it visible.
+  A figure where two label sizes each set an evenly spaced row over each
+  other gets a `report.json` note: check the source for a hidden copy.
+- **No debris in the decoration** (skill 1.61). A fill of the colour already
+  under it (a white mask on white paper or a white card) is left out unless
+  it hides loose art painted before it; a fill a later box hides is drawn
+  only when it shows a ring of at least 3 % of its box round what covers it;
+  a box with no words wholly under a picture is the picture's art. In
+  `template_dedupe.py`'s modules, furniture (running heads, folios, the page
+  colour, a ground from a fence attribute) always stays on the page shell;
+  when the source paints it over art that moves into a module, the fold's
+  report lists it under `furnitureUnder` (on the shell it lies under that
+  art).
+- **Illustrations on white** (skill 1.61). A cut standing on white whose
+  border is at least 80 % white has the white joined to its edge made
+  transparent (`images.py cutout` does the same by hand): a PNG with a
+  `contour`, so it covers no text round it and a box's text can run round
+  it. A white plate the art closes stays. To trim a cut afterwards use
+  `images.py crop <resource-id>`, which moves its anchors with it.
 - **Pictures and labels.** Images and clusters of line art are pictures,
   cut at `--dpi` with all text removed. Words on a picture's ink, short
   words on it or just off its edge (a globe's degrees) are its labels:
