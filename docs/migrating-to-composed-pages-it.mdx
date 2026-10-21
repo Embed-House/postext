@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Spostare un libro nelle pagine composte',
   sidebarTitle: 'Passare alle pagine composte',
-  description: 'Come portare nei modelli di pagina e nel Markdown un libro che conserva il testo delle pagine negli stili dei titoli, con l’assistente «Spostare il testo nel Markdown» della Sandbox oppure a mano, e che cosa controllare dopo',
+  description: 'Come portare nei modelli di pagina e nel Markdown un libro che conserva il testo delle pagine negli stili dei titoli, con l’assistente «Spostare il testo nel Markdown» della Sandbox oppure a mano, che cosa controllare dopo, e come sostituire le linee dipinte in un’immagine con i connettori e le cornici fatte una per una con griglie e moduli',
   lang: 'it',
-  lastUpdated: '2026-10-19',
-  readingTime: '8 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '13 min',
   order: 44,
-  plainSummary: "Alcuni libri fatti con Postext prima delle pagine composte tengono le parole di ogni pagina nelle impostazioni di grafica invece che nel testo. Per questo sono difficili da correggere e impossibili da tradurre. Questa pagina mostra come spostare quelle parole nel Markdown, dove ogni pagina diventa un blocco con il suo modello. La Sandbox fa quasi tutto il lavoro con un solo pulsante, e tu controlli il risultato pagina per pagina. Spiega anche come fare lo stesso a mano per una pagina sola.",
+  plainSummary: "Alcuni libri fatti con Postext prima delle pagine composte tengono le parole di ogni pagina nelle impostazioni di grafica invece che nel testo. Per questo sono difficili da correggere e impossibili da tradurre. Questa pagina mostra come spostare quelle parole nel Markdown, dove ogni pagina diventa un blocco con il suo modello. La Sandbox fa quasi tutto il lavoro con un solo pulsante, e tu controlli il risultato pagina per pagina. Spiega anche come fare lo stesso a mano per una pagina sola. L’ultima parte sostituisce le linee dipinte in un’immagine con linee che disegna l’impaginazione, e le cornici disegnate una per una con una griglia o un modulo.",
 };
 
 # Spostare un libro nelle pagine composte
@@ -77,3 +77,61 @@ Un libro di poche pagine si può spostare senza l’assistente, una pagina alla 
 4. Confronta la pagina con la vecchia e apri **Verifiche**.
 
 Lo stesso spostamento è disponibile dal codice come `moveTextToMarkdown`, che restituisce la nuova configurazione, i capitoli e il resoconto mostrato nella finestra; vedi [Pagine composte › Migrare un libro con il testo negli stili](/it/docs/composed-pages#migrare-un-libro-con-il-testo-negli-stili). Tutto ciò che fa la finestra è descritto in [Sandbox: le pagine composte › Spostare il testo nel Markdown](/it/docs/sandbox-composed-pages#spostare-il-testo-nel-markdown).
+
+## Dalle linee di un’immagine ai connettori
+
+Un vecchio porting tiene spesso le linee dei suoi diagrammi in un’immagine: i rami di un albero, i riquadri di un organigramma, le linee di richiamo da una nota a una mappa, dipinti in uno sfondo su cui poggiano i riquadri. Le parole combaciano allora con le linee solo nella lingua e nella misura per cui l’immagine è stata disegnata: una parola più lunga in una traduzione finisce sopra una linea, e un riquadro che cresce si lascia dietro la sua linea. I connettori disegnano le stesse linee a partire dai riquadri delle cornici, una volta impaginata la pagina, quindi seguono il testo.
+
+1. **Disegna i riquadri come cornici.** Ogni riquadro del diagramma diventa una cornice del modello, con lo stile di riquadro di quello vecchio. Un insieme di riquadri uguali funziona meglio come una griglia che ripete una cornice (sezione seguente).
+2. **Togli le linee dall’immagine.** Usa l’immagine senza le sue linee, o eliminala se non conteneva altro; uno sfondo che resta (la carta, un campo di colore) diventa un riquadro della decorazione o l’attributo `background` della pagina.
+3. **Aggiungi un connettore** per ogni insieme di linee nella decorazione del modello (**Decorazione › Aggiungi connettore**). **Parte da** è il riquadro genitore; sotto **Va a** premi ogni figlio, oppure *Ogni …* per tutte le schede di una griglia. Un albero di rami vuole il **Percorso** *Albero*; una linea tra due riquadri, *Gomito* o *Dritta*; frecce e punti sono il **Segno finale**. I passi sono in [Libri di pagine composte › Disegnare un albero con i connettori](/it/docs/composed-page-books#8-disegnare-un-albero-con-i-connettori).
+4. **Fai puntare le note all’immagine.** Una linea da una nota a un luogo di una mappa diventa un richiamo: metti un’ancora sull’immagine in quel luogo (la finestra Ancore), scegli la nota in modalità Grafica e trascina la sua maniglia rotonda sull’ancora. La linea termina in quel punto dell’immagine, qualunque siano il ritaglio e la scala; vedi [Libri di pagine composte › Note su una mappa, con richiami e legenda](/it/docs/composed-page-books#9-note-su-una-mappa-con-richiami-e-legenda).
+5. **Confronta la pagina** con quella vecchia, in ogni lingua, e apri **Verifiche**: un connettore che ha un’estremità su una cornice che la pagina non mostra viene tralasciato in quella pagina, e il registro di impaginazione lo annota.
+
+## Da un modello per pagina alle griglie e ai moduli
+
+Un porting fatto una cornice alla volta ha un modello per ogni grafica di pagina, e la stessa scheda o lo stesso riquadro disegnati di nuovo in ciascuno: sei cornici di foto con sei cornici di didascalia, un riquadro con la sua immagine copiato in tre modelli. **Riorganizza le cornici**, nell’editor dei modelli, le trasforma in una griglia che ripete una scheda e in un modulo che qualsiasi pagina può contenere, e riscrive ogni pagina impaginata con il modello perché abbia l’aspetto di prima.
+
+Il libro per questi passi è *Places of the river, before grids*: una pagina il cui modello disegna sei schede con foto una cornice alla volta (da `photo1` a `photo6`, ciascuna con una pastiglia di didascalia, da `caption1` a `caption6`) e un riquadro `fact` con un’immagine `fact-picture` accanto al testo. Le parole sono inventate. [Scarica il libro](/docs-examples/river-places-before.postext) e, nella Sandbox, apri **Libri**, premi **Nuovo** e scegli **Apri un file .postext…**.
+
+1. Passa a **Grafica** e apri **Grafica › Pagina e colonne › Modelli di pagina**. Il modello *Places of the river* è aperto.
+2. Sotto **Riorganizza le cornici** seleziona da `photo1` a `photo6` e da `caption1` a `caption6`, e premi **Trasforma in griglia**. La Sandbox ricava le schede dalla pagina: tre colonne a 8 mm l’una dall’altra, due righe. Scrive un gruppo `grid` che ripete `photo` e `caption`, e dice *Griglia grid creata: 3 colonne, 6 schede. Pagine riscritte: 1.* La pagina ha lo stesso aspetto.
+3. Seleziona `fact` e `fact-picture`, scrivi `fact` in **Nome del modulo** e premi **Estrai un modulo**. Il riquadro e la sua immagine passano in un modulo `fact`; il modello riceve, dove stavano, un gruppo che riceve i moduli.
+
+<Screenshot src="/docs-shots/it/reshape.webp" alt="L’editor dei modelli sulla sezione Riorganizza le cornici, con le dodici cornici di foto e di didascalia selezionate, e la pagina con sei schede con foto e un riquadro disegnati con un contorno tratteggiato." caption="Le cornici scelte per la griglia: sei schede, ciascuna una foto con la sua didascalia." />
+
+Il Markdown cambia insieme al modello. Prima, ogni pezzo indicava la propria cornice:
+
+```md
+:::frame{slot="photo1"}
+::resource{id="spring"}
+:::
+
+:::frame{slot="caption1"}
+The spring
+:::
+```
+
+Dopo, ogni scheda è un pezzo `photo` con dentro la sua didascalia, e il riquadro è un modulo:
+
+```md
+:::frame{slot="photo"}
+::resource{id="spring"}
+
+:::frame{slot="caption"}
+The spring
+:::
+:::
+
+:::module{template="fact"}
+:::frame{slot="fact" label="Did you know?"}
+Volunteers clean the banks of the river every spring.
+:::
+
+:::frame{slot="fact-picture"}
+::resource{id="banks"}
+:::
+:::
+```
+
+Una settima scheda ora è un pezzo `photo` in più nel Markdown, e un’altra pagina può contenere il riquadro `fact` senza cornici proprie: inseriscilo da **Grafica › Pagina e colonne › Moduli**. Le due riorganizzazioni sono passi della cronologia (uno per ogni capitolo riscritto e uno per la grafica), e **Annulla** sotto **Riorganizza le cornici** le toglie finché sono le ultime. Quando una riorganizzazione non si può fare, dice perché: schede di larghezze diverse, schede che non stanno su un’unica griglia, cornici ereditate da un altro modello, un modello che ha già un gruppo dei moduli. Ogni campo che la riorganizzazione scrive è descritto in [Sandbox: le pagine composte › Griglie e moduli](/it/docs/sandbox-composed-pages#griglie-e-moduli).

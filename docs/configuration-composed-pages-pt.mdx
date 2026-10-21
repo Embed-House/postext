@@ -825,16 +825,22 @@ Cada ponta (`ConnectorEnd`) indica uma caixa e um ponto num dos lados dela:
       <td>nenhuma</td>
       <td>Uma âncora da imagem que o bloco contém: a ponta é esse ponto da imagem, passando pelo recorte, pela área segura e pela escala, como a de um rótulo, em vez de um ponto do lado do bloco. <code>at</code> não é lido; <code>side</code> diz por onde a linha chega (por padrão, vindo da outra ponta).</td>
     </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>um conector com uma extremidade <code>anchor</code> é pintado sobre os blocos, os outros sob eles</td>
+      <td>Pinta a linha depois de todos os blocos da página (<code>true</code>) ou com a decoração, sob os blocos (<code>false</code>). Sem valor, um conector com uma extremidade <code>anchor</code> é pintado por cima, de modo que uma linha que aponta para dentro de uma imagem aparece sobre o bloco da imagem; uma linha entre blocos fica por baixo.</td>
+    </tr>
   </tbody>
 </table>
 
 **Pontas que não estão lá.** Uma ponta num bloco que a página não mostra (recolhido, opcional e vazio, um cartão além dos itens da página, um ponto da imagem que o bloco dela corta) fica de fora: uma árvore mantém os outros filhos, e o registro de reajustes da página informa isso (`connectorDropped`). Sem nenhum `from` ou nenhum `to` restante, nada é desenhado.
 
-**Pintura.** Os conectores são pintados com a decoração, sob os blocos, como caminhos vetoriais: no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo, e como artefato de layout num PDF marcado; o EPUB refluível os deixa de fora junto com o resto da decoração. Uma linha que aponta para dentro de uma imagem precisa do bloco da imagem sob a decoração: dê a esse bloco `layer: -1`. Numa página dupla, um conector entre blocos das duas páginas atravessa a lombada e é cortado ali, como o resto da decoração; numa página da direita para a esquerda, `start` e `end` seguem o fluxo espelhado.
+**Pintura.** Os conectores são pintados como caminhos vetoriais: no canvas, no PDF, no visualizador HTML e no EPUB de layout fixo, e como artefato de layout num PDF marcado; o EPUB refluível os deixa de fora junto com o resto da decoração. Um conector com uma extremidade `anchor` é pintado sobre todos os blocos da página, de modo que uma linha que aponta para dentro de uma imagem aparece sobre o bloco da imagem sem `layer`; os outros conectores ficam com a decoração, sob os blocos. `over: true` leva uma linha entre blocos para cima, `over: false` mantém uma linha que aponta por baixo. Numa página dupla, um conector entre blocos das duas páginas atravessa a lombada e é cortado ali, como o resto da decoração; numa página da direita para a esquerda, `start` e `end` seguem o fluxo espelhado.
 
 ```ts
 frames: [
-  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'mapa', width: { value: 118, unit: 'mm' } },
   { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
 ],
 decoration: { elements: [

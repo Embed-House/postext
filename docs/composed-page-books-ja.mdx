@@ -3,17 +3,17 @@
 export const metadata = {
   title: 'テンプレートページで作る本',
   sidebarTitle: 'テンプレートページで作る本',
-  description: 'テンプレートページでできた小学校の教科書を、Sandboxで作る手順。ページテンプレートの作成、Markdownからの流し込み、地図のラベル、ページの翻訳、収まらない文章の直し方、そしてページと本文の行き来',
+  description: 'テンプレートページでできた小学校の教科書を、Sandboxで作る手順。ページテンプレートの作成、Markdownからの流し込み、地図のラベル、ページの翻訳、収まらない文章の直し方、ページと本文の行き来、さらにコネクターで結ぶ木、指示線と凡例を付けた地図の注記、写真カードのグリッド、シリーズで使うモジュールライブラリー',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
-  readingTime: '12分',
+  lastUpdated: '2026-10-20',
+  readingTime: '22分',
   order: 43,
-  plainSummary: "このページでは、Sandboxで小学校の教科書の1ページを作る手順を、順を追って説明します。作るのは、見出しの帯、本文、色付きの囲みでできたページです。出来上がっている例の本を開き、そこへ1ページ足していきます。最初にページをテンプレートとして描き、次にMarkdownから文章を流し込み、そのあと地図に地名を書き入れ、ページを別の言語に翻訳します。最後に、文章が囲みに入りきらないときの直し方と、ページとその文章を行き来する方法を確かめます。",
+  plainSummary: "このページでは、Sandboxで小学校の教科書の1ページを作る手順を、順を追って説明します。作るのは、見出しの帯、本文、色付きの囲みでできたページです。出来上がっている例の本を開き、そこへ1ページ足していきます。最初にページをテンプレートとして描き、次にMarkdownから文章を流し込み、そのあと地図に地名を書き入れ、ページを別の言語に翻訳します。次に、文章が囲みに入りきらないときの直し方と、ページとその文章を行き来する方法を確かめます。最後の手順では、線で結んだ箱の木、地図の場所を指す注記、写真カードのページ、シリーズの本どうしで共有できるブロックのまとまりを作ります。",
 };
 
 # テンプレートページで作る本
 
-<strong>教科書の1ページをテンプレートから作り、Markdownで中身を入れ、地図にラベルを付け、ページを翻訳し、収まらない枠を直します。</strong>
+<strong>教科書の1ページをテンプレートから作り、Markdownで中身を入れ、地図にラベルを付け、ページを翻訳し、収まらない枠を直します。続いて、木、地図の注記、写真カードのページ、モジュールライブラリーを加えます。</strong>
 
 小学校の教科書のページは、いくつかの箱の集まりです。見出しの帯、本文、定義の箱、活動の箱、地図などです。Postextは、こうしたページを、箱（枠）を並べた<strong>ページテンプレート</strong>から組みます。Markdownには、どの言葉をどの枠に入れるかだけを書きます。このページでは、すでにある本を使って、1ページを足すまでの作業をSandboxで通して行います。各フィールドやMarkdownの各行が何をするかは、リファレンスのページにあります。ここでは、それぞれの操作を順に1回ずつ行い、何が変わるかを見ていきます。Markdownについては[テンプレートページ](/ja/docs/composed-pages)、テンプレートについては[設定：テンプレートページ](/ja/docs/configuration-composed-pages)、画面については[Sandbox：テンプレートページ](/ja/docs/sandbox-composed-pages)を参照してください。
 
@@ -38,8 +38,8 @@ export const metadata = {
 2. <strong>新規</strong>を押します。新しいテンプレートが開くので、<strong>ID</strong>を`review`（Markdownがこの名前で指定します）、<strong>名前</strong>を`Review page`（このパネルに表示される名前です）にします。IDには、小文字、数字、ハイフンが使えます。
 3. テンプレートには、<strong>ページの本文を受け取る</strong>枠`text`が最初から1つあります。これを見出しの帯にします。<strong>名前（スロット）</strong>を`title`、<strong>囲みスタイル</strong>を`portada`（この本が見出しに使っている青い帯）にし、<strong>ページの本文を受け取る</strong>をオフにして、<strong>受け取る</strong>を*レベル 1*にします。これで、ページの最初の`#`見出しがこの枠に入ります。
 4. <strong>枠を追加</strong>を押します。新しい枠が、枠の一覧の下に開きます。<strong>名前（スロット）</strong>を`text`にして、<strong>ページの本文を受け取る</strong>をオンにします。ページの中で枠の外に書いたものは、ここに入ります。
-5. 枠をもう1つ追加します。<strong>名前（スロット）</strong>は`remember`、<strong>囲みスタイル</strong>は`dato-campo`（タブの付いた緑の箱）にします。<strong>最小の高さ</strong>は30 mmにします。こうすると、文章が短くても箱が十分な大きさを保ちます。
-6. 最後の枠を追加します。<strong>名前（スロット）</strong>は`try`、<strong>囲みスタイル</strong>は`actividad-sol`、<strong>最小の高さ</strong>は30 mmにします。
+5. 枠をもう1つ追加します。<strong>名前（スロット）</strong>は`remember`、<strong>囲みスタイル</strong>は`dato`（タブの付いた淡い色の箱）にします。<strong>最小の高さ</strong>は30 mmにします。こうすると、文章が短くても箱が十分な大きさを保ちます。
+6. 最後の枠を追加します。<strong>名前（スロット）</strong>は`try`、<strong>囲みスタイル</strong>は`actividad`（片側に縦の帯が付いた箱）、<strong>最小の高さ</strong>は30 mmにします。
 7. `text`、`remember`、`try`の3つで、<strong>幅</strong>を*端まで*、<strong>高さ</strong>を*内容に合わせる*にします。これで、枠はページの幅いっぱいに広がり、高さは中の文章に合わせて決まります。
 8. <strong>グループ</strong>の下の<strong>グループを追加</strong>を押します。名前を`column`とし、<em>縦に積む</em>のままにして、<strong>枠の間隔</strong>を6 mmにします。<strong>グループの枠（ページ順）</strong>で4つの枠すべてにチェックを入れます。チェックは並べたい順に、見出しから入れていきます。一覧には順番が数字で出て、矢印で1つずつ上げ下げできます。グループは枠を上から下へ並べ、枠が大きくなると下の枠を押し下げます。そのため、最初の箱の文章が長くなっても、2つ目の箱に重なることはなく、下へずれます。
 
@@ -173,6 +173,175 @@ Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre d
 - <strong>検査から。</strong>検査パネルのエントリーをクリックすると、Sandboxがそのページへ移り、枠を選んで、その文章にカーソルを置きます。複数の版がある本では、問題のある版に切り替わります。
 
 <Screenshot src="/docs-shots/ja/select.webp" alt="2つ目の箱がオレンジで囲まれたページと、選択した枠のMarkdownを表示した本文パネル。" caption="ページをクリックすると、そのMarkdownにカーソルが移り、プレビューの下のパスがどの枠かを示します。" />
+
+## 8. コネクターで木を描く
+
+考えの木、組織図、年表は、線で結んだ箱でできています。Postextでは、箱は枠で、線は<strong>コネクター</strong>です。コネクターはテンプレートの装飾に含まれる線で、枠と枠を結びます。枠のボックスが確定してから描くので、文章が長くなったり別の言語の言葉が入ったりして箱が大きくなっても線はついていき、テンプレートに線の画像を用意する必要はありません。木は<strong>モジュール</strong>（どのテンプレートページにも入れられる枠のまとまり）として一度だけ描き、枝の数はMarkdownで決めます。
+
+1. <strong>デザイン</strong>で<strong>ページと段組み › モジュール</strong>を開き、<strong>新しいモジュール</strong>を押します。*モジュール*という名前のモジュールが一覧に加わります。持っている枠は`text`の1つだけです。その鉛筆のボタン（<em>モジュールモジュールを編集</em>）を押すと、テンプレートエディターがその場に開き、<strong>モジュール</strong>のスイッチがオンになっています。
+2. <strong>ID</strong>を`tree`、<strong>名前</strong>を`Tree of ideas`にします。枠`text`を選び、木のいちばん上の箱にします。<strong>名前（スロット）</strong>は`root`、<strong>囲みスタイル</strong>は`dato`、<strong>幅</strong>は*端まで*、<strong>高さ</strong>は*内容に合わせる*にして、<strong>ページの本文を受け取る</strong>をオフにします。
+3. <strong>枠を追加</strong>を押します。<strong>名前（スロット）</strong>は`branch`、<strong>囲みスタイル</strong>は`dato`、<strong>最小の高さ</strong>は20 mmにします。
+4. <strong>グループ</strong>の下の<strong>グループを追加</strong>を押します。名前を`branches`にして<strong>グリッド</strong>を選び、<strong>列数</strong>を3、<strong>列の間隔</strong>と<strong>行の間隔</strong>を6 mmにします。<strong>枠のセットを繰り返す</strong>で、<strong>メイン枠</strong>に`branch`を選びます。グリッドは、ページが渡す項目ごとに`branch`を1つずつ並べます。<strong>グループ自身のボックス</strong>を*枠「root」*、<strong>相対位置</strong>を*下*、<strong>オフセットY</strong>を12 mmにします。こうすると、rootの高さがどうなっても、グリッドはその下から始まります。
+5. <strong>装飾</strong>の下の<strong>コネクタを追加</strong>を押します。開いたカードで<strong>始点</strong>を*枠「root」*にし、<strong>終点</strong>の下で*すべての branch*を押します（押した状態のボタンが線の端です）。<strong>経路</strong>を*ツリー*、<strong>曲がり角の半径</strong>を2 mm、<strong>線の太さ</strong>を1.5 pt、<strong>終点の記号</strong>を*矢印*にします。<strong>ページ上で選ぶ</strong>を使うと、デザインモードで同じことをマウスで行えます。線が出る枠をクリックし、続けて線が向かう枠を1つずつクリックします。もう一度クリックした端は外れ、Escで選ぶのを終えます。
+
+次は言葉です。<strong>内容</strong>に切り替え、<strong>本文</strong>パネルで3節の復習のページにカーソルを置きます。<strong>モジュール</strong>に戻ると、<strong>挿入先のページ</strong>の一覧にそのページが出ています。*Tree of ideas*の挿入ボタンを押します。Sandboxは、ページを閉じるコロンの行の前に`:::module{template="tree"}`ブロックを書き込み、スロットごとに空の枠を1つずつ置きます。テンプレート`review`にはモジュールを受け取るグループがなかったので、最後の枠の下にそのグループも足します。空の枠に言葉を書き入れます。
+
+```md
+:::module{template="tree"}
+:::frame{slot="root"}
+**A river** gives us
+:::
+:::frame{slot="branch"}
+Water to drink and to water the fields
+:::
+:::frame{slot="branch"}
+Power to turn a mill
+:::
+:::frame{slot="branch"}
+A place to play and to paddle
+:::
+:::
+```
+
+`:::frame{slot="branch"}`の1つ1つが1本の枝です。1つコピーすればページの箱は4つ、線は4本になり、1つ消せば2つになります。コネクターは`branch[*]`、つまりページにあるすべての枝を指すので、モジュールを変えなくても、線はMarkdownに合わせて増減します。
+
+<Screenshot src="/docs-shots/ja/tree.webp" alt="デザインパネルでモジュール「Tree of ideas」のコネクターのカードが開いている。復習のページでは、上の箱から矢印の付いた線が下の3つの箱へ延びている。" caption="木です。1つのroot、branchを繰り返すグリッド、そしてすべてのbranchへ向かう1つのコネクターでできています。" />
+
+組織図も同じ作りのモジュールで、枠が違うだけです。チームの長のカード、写真と名前を繰り返すグリッド、すべてのカードへ向かうツリーのコネクターを置きます。年表では<strong>横棒の位置</strong>を0にします。横棒は描かれず、日付の帯から各カードへ線が下ります。
+
+## 9. 地図の注記、指示線と凡例
+
+地図のまわりに注記を並べたページを作ります。どの注記にも、話題にしている場所へ向かう線があり、地図には記号の凡例があり、名前の1つは点から離れた所に置かれて、線で点とつながっています。これらの線は、どれも絵の一部ではありません。
+
+この本には同じ絵が2つあります。`mapa`には6ページと7ページの名前が付いていて、`rio`はアンカーのない同じ絵で、目次のページに小さく置かれています。このページでは`rio`を使うので、点を足しても見開きの名前は動きません。
+
+1. 2節と同じようにページテンプレートを作ります。<strong>ID</strong>は`map-notes`、<strong>名前</strong>は`Map with notes`です。枠は、`title`（<strong>囲みスタイル</strong>`portada`、<strong>受け取る</strong>*レベル1*）、`text`（<strong>ページの本文を受け取る</strong>）、`map`（<strong>幅</strong>*端まで*）、そして`note-1`、`note-2`、`note-3`（<strong>囲みスタイル</strong>`dato`、<strong>幅</strong>56 mm、<strong>最小の高さ</strong>26 mm）です。`title`、`text`、`map`は、枠の間隔が6 mmのグループ`column`に積み、注記は、間隔が8 mmの*横に並べる*グループ`notes`に並べます。`note-1`は*枠「map」*から*下*へ14 mm下げて置きます。
+2. 章の末尾にページを書きます。
+
+```md
+::::page{template="map-notes"}
+# Along the river
+
+The map shows the valley of the Aldara. Each note tells you about one place on it: follow its line to find the place.
+
+:::figure{resource="rio" slot="map"}
+::label[Spring]{at="spring" style="agua"}
+:::label{at="key" style="key"}
+:icon[]{glyph="●" color="ink"} Town
+:icon[]{line="solid" color="agua"} River
+:icon[]{line="dashed" color="ink"} Path
+:::
+:::
+
+:::frame{slot="note-1" label="The dam"}
+The dam holds the water back in a lake. In dry months it lets some out, so the river never runs empty.
+:::
+
+:::frame{slot="note-2" label="Molinar"}
+Molinar grew round its bridge and its mill. The mill wheel turned with the water of the river.
+:::
+
+:::frame{slot="note-3" label="Aldamar"}
+At Aldamar the river meets the sea. Fishing boats leave the harbour every morning.
+:::
+::::
+```
+
+`:::label{at="key" style="key"}`は複数行のラベルで、各行が凡例の1項目になります。`:icon[…]{…}`は行の中の記号で、グリフ、線の見本、本の画像のいずれかです。本文パネルのツールバーにある<strong>ラベル用の記号</strong>ボタンを押すと、カーソルの位置に記号が、色と大きさを付けて書き込まれます。角括弧の中はスクリーンリーダーが読み上げる言葉で、角括弧が空なら、横の言葉だけで意味が伝わるということです。
+3. 凡例の見た目を決めます。<strong>デザイン › 図と表 › ラベルスタイル</strong>で<strong>ラベルスタイルを追加</strong>を押し、idを`key`、書体をFredokaの10.5 ptにします。白い<strong>下地</strong>を付け、<strong>下地の内側余白</strong>を2.5 mmにし、<strong>枠線</strong>を付けて<strong>角の丸み</strong>を1.5 mmにします。<strong>行と凡例</strong>の下で<strong>凡例</strong>をオンにします。これで記号は専用の列に並び、どの項目の言葉も同じ位置から始まります。
+4. 点を置きます。<strong>検査</strong>に、`spring`と`key`について*存在しないアンカーのラベル*が出ています。どちらかのピンのボタンを押すと、`rio`のアンカーのダイアログが開き、*アンカーのないラベル*の下に両方の名前が並びます。`spring`には絵の左上の滝を、`key`には左下の隅をクリックします。凡例の<strong>そろえ</strong>を*先頭*、<strong>縦方向のそろえ</strong>を*下*にすると、凡例は点から右上へ広がります。続けてダム、水車小屋、港をクリックし、3つの新しいアンカーに、それぞれの行で`dam`、`mill`、`harbour`と名前を付けます。
+5. 水源の名前を点から離して置きます。`spring`を選び、<strong>ラベルと引き出し線</strong>で<strong>点から離す</strong>をオンにします。ラベルのハンドルを空のほうへドラッグし、<strong>引き出し線</strong>を*あり*にします。ドラッグしているあいだ、ラベルから滝への線が描かれます。<strong>保存</strong>を押します。
+6. 指示線を引きます。<strong>デザイン</strong>モードで、ページの上の`note-1`を選ぶと、右辺の中央の横に丸いつまみが出ます。それをダムの上までドラッグします。ドラッグ中は地図のアンカーが表示され、ドロップすると、注記からアンカー`dam`へ向かう、端に点の付いたコネクターが書き込まれます。`note-2`から`mill`へ、`note-3`から`harbour`へも同じようにします。枠の<strong>指示線</strong>グループにそれらが並びます。キーボードで指示線を足したり変えたりするときは、このグループを使います。
+
+<Screenshot src="/docs-shots/ja/map-notes.webp" alt="デザインモードのページ「Along the river」。左下の隅に凡例のある地図と、その下の3つの注記があり、各注記から地図の場所へ線が延びている。デザインパネルには2つ目の注記の「指示線」グループが出ている。" caption="注記はそれぞれ絵のアンカーを指します。凡例と地名は、Markdownの行です。" />
+
+指示線は、絵のトリミングと縮尺を通して求めた、アンカーの点で終わります。そのため、地図を小さく置いても、セーフエリアまで切り抜いても、線は水車小屋を指したままです。指示線は枠の上に描かれるので、絵の上に見えます。一方、自分の場所を持たない注記を地図の上に重ねて置くと、検査はそれを*枠が別の枠に隠れています*として挙げ、直し方を示します（[Sandbox：テンプレートページ](/ja/docs/sandbox-composed-pages#重なりとタブのグリフ)を参照）。
+
+## 10. 写真カードのページ
+
+カードのページ（下にキャプションを添えた写真や、名前を添えた肖像のページ）は、1枚のカードを何度も描いたものです。<strong>枠のセットを繰り返すグリッド</strong>はカードを一度だけ描き、ページにはMarkdownに書いた枚数のカードが並びます。
+
+1. テンプレート`photos`（<strong>名前</strong>`Photo cards`）を作り、`title`（`portada`、*レベル1*）と`text`（ページの本文）を、間隔6 mmのグループ`column`に積みます。
+2. 枠`photo`を足します。<strong>囲みスタイル</strong>は`foto`で、*枠「text」*から*下*へ6 mm下げて置きます。さらに枠`caption`を足します。<strong>囲みスタイル</strong>は`dato`、<strong>幅</strong>は*内容に合わせる*で、*枠「photo」*から*下*へ2 mm下げて置きます。
+3. グループ`cards`を足します。<strong>グリッド</strong>にして、<strong>列数</strong>を3、<strong>列の間隔</strong>を6 mm、<strong>行の間隔</strong>を12 mmにします。<strong>枠のセットを繰り返す</strong>で<strong>メイン枠</strong>を`photo`にし、<strong>一緒に付く枠</strong>で`caption`にチェックを入れます。メイン枠はセルの幅を取り、キャプションはテンプレートが描くとおりにメイン枠から下がります。
+4. ページを書きます。
+
+```md
+::::page{template="photos"}
+# People and the river
+
+People use the river in many ways. Look at the photos and say what each person is doing.
+
+:::frame{slot="photo"}
+::resource{id="riego"}
+
+:::frame{slot="caption"}
+Watering the fields
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="molino"}
+
+:::frame{slot="caption"}
+Grinding wheat
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="piraguas"}
+
+:::frame{slot="caption"}
+Paddling a canoe
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="limpieza"}
+
+:::frame{slot="caption"}
+Cleaning the banks
+:::
+:::
+::::
+```
+
+`:::frame{slot="photo"}`の1つ1つが1枚のカードで、その中の`:::frame{slot="caption"}`は、同じカードのキャプションに入ります。カードは行の始まる側から行を埋めていくので、4枚目は2行目の先頭に来ます。デザインモードでは、枠はカードの番号で呼ばれます。`photo[2]`と`caption[2]`が2枚目のカードです。
+
+<Screenshot src="/docs-shots/ja/grid.webp" alt="ページ「People and the river」。4枚の写真が3列のグリッドに並び、それぞれの下にキャプションがある。デザインパネルには、「グリッド」、3列、「枠のセットを繰り返す」を設定したグループcardsが出ている。" caption="カードは一度だけ描かれます。Markdownが4枚を書き、グリッドが4枚を並べます。" />
+
+5枚目の写真は次のセルに入り、7枚目で3行目が始まります。別の言語の版では、同じテンプレートのままカードを増やすことも減らすこともできます。<strong>最大項目数</strong>はグリッドの上限で、超えた分はページの本文の枠に回り、検査には*グリッドに入りきらない項目があります*が出ます。メイン枠の<strong>入りきらない内容の行き先</strong>を*このページの後に追加するページ*にすると、収まらない行は丸ごと追加ページへ移ります。
+
+## 11. シリーズのためのモジュールライブラリー
+
+<strong>ページと段組み › モジュール</strong>は、本のモジュールライブラリーです。各モジュールは枠の図とidで示され、Markdownの何ブロックが何ページで使っているか（木なら*1ページに1ブロック*）、テンプレートエディターで開く鉛筆のボタン、<strong>挿入先のページ</strong>で選んだページに挿入するボタンが付いています。<strong>新しいモジュール</strong>で別のモジュールを作り始めます。モジュールの名前を変えると、それを指定するすべての`:::module`ブロックが書き換わります。
+
+<Screenshot src="/docs-shots/ja/modules.webp" alt="デザインパネルの「モジュール」の節。「挿入先のページ」の一覧、「1ページに1ブロック」と書かれたモジュールTree of ideas、「新しいモジュール」のボタンがある。" caption="ライブラリーです。モジュールごとに、本のどこで使われているかと、ページへの挿入ボタンが並びます。" />
+
+ページは、<strong>ページのモジュールを受け取る</strong>をオンにしたグループでモジュールを受け取り、Markdownの順に上から積みます。そのため次のページには、新しいテンプレートを作らなくても、箱の下に木を入れたり、木を2つ入れたりできます。どのブロックをどの順で入れるかはMarkdownが決め、それを描くのはモジュールです。
+
+シリーズの本（3年生の*Our river*、4年生の*Our coast*）は、デザインを共有することで、モジュールを共有します。
+
+- <strong>Sandboxで。</strong>次の本をこの本のコピーとして始め（<strong>本</strong>で本の<strong>⋯</strong>を押し、<strong>複製</strong>）、その章を書きます。テンプレート、モジュール、スタイルはコピーに含まれます。すでにある本の場合は、デザインパネルのヘッダーにある<strong>書き出し</strong>でデザインを保存し、もう一方の本で<strong>読み込み</strong>を使うと、その本のデザインが置き換わります。
+- <strong>コードから。</strong>モジュールのテンプレートを1つのファイルにまとめ、シリーズのすべての本の`pageTemplates`に加えます。
+
+```ts
+// series/modules.js: the tree and the other modules of the series
+export const seriesModules = [
+  { id: 'tree', name: 'Tree of ideas', role: 'module', frames: [/* root, branch */], groups: [/* branches */],
+    decoration: { elements: [{ kind: 'connector', id: 'connector-1', routing: 'tree', from: { to: '#root' }, to: [{ to: '#branch[*]' }] }] } },
+];
+
+// our-coast/config.js
+import { seriesModules } from '../series/modules.js';
+export const config = { /* … */ pageTemplates: [...seriesModules, ...pagesOfThisBook] };
+```
+
+こうしておけば、モジュールへの変更（線を太くする、囲みスタイルを替える）は、次に本を組んだとき、それを使うすべての本のすべてのページに届きます。言葉は、それぞれの本のMarkdownに残ります。
+
+## Markdownが書くこと、デザインが描くこと
+
+8節から11節のページは、1つの決まりに従っています。Markdownは、ページに<strong>何</strong>を<strong>いくつ</strong>入れるかを書きます。各箱の言葉、枝や注記やカードや凡例の項目の数、どのモジュールが先に来るかです。デザインは、それぞれを<strong>一度だけ</strong>描きます。箱、その位置、箱を結ぶ線、凡例の見た目、セルの大きさです。だから翻訳に専用のテンプレートはいらず、写真が5枚のページも4枚のページのテンプレートで組め、シリーズの本はモジュールを共有できます。テンプレートがページの言葉を持つことはなく、Markdownが位置や色を持つこともありません。
 
 ## 次に読むもの
 

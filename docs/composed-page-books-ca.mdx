@@ -3,17 +3,17 @@
 export const metadata = {
   title: 'Llibres de pàgines compostes',
   sidebarTitle: 'Llibres de pàgines compostes',
-  description: 'Un recorregut pel Sandbox amb un llibre de text escolar fet de pàgines compostes: crees una plantilla de pàgina, l’omples des del Markdown, retoles un mapa, tradueixes la pàgina, arregles el text que no hi cap i aprens a seleccionar tant a la pàgina com al text',
+  description: 'Un recorregut pel Sandbox amb un llibre de text escolar fet de pàgines compostes: crees una plantilla de pàgina, l’omples des del Markdown, retoles un mapa, tradueixes la pàgina, arregles el text que no hi cap i aprens a seleccionar tant a la pàgina com al text; després dibuixes un arbre amb connectors, notes sobre un mapa amb assenyaladors i una llegenda, una graella de targetes de fotos i una biblioteca de mòduls per a una col·lecció',
   lang: 'ca',
-  lastUpdated: '2026-10-19',
-  readingTime: '12 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '22 min',
   order: 43,
-  plainSummary: "Aquesta pàgina ensenya, pas a pas, com es fa al Sandbox una pàgina d'un llibre de text escolar, d'aquelles que tenen una banda de títol, una mica de text i caixes de colors. Parteixes d'un llibre d'exemple ja acabat i hi afegeixes una pàgina més. Primer dibuixes la pàgina com a plantilla, després hi aboques el text des del Markdown, i tot seguit poses nom als llocs d'un mapa i tradueixes la pàgina a una altra llengua. Al final veus què pots fer quan un text no cap a la caixa i com pots saltar de la pàgina al text i del text a la pàgina.",
+  plainSummary: "Aquesta pàgina ensenya, pas a pas, com es fa al Sandbox una pàgina d'un llibre de text escolar, d'aquelles que tenen una banda de títol, una mica de text i caixes de colors. Parteixes d'un llibre d'exemple ja acabat i hi afegeixes una pàgina més. Primer dibuixes la pàgina com a plantilla, després hi aboques el text des del Markdown, i tot seguit poses nom als llocs d'un mapa i tradueixes la pàgina a una altra llengua. Després veus què pots fer quan un text no cap a la caixa i com pots saltar de la pàgina al text i del text a la pàgina. Els últims passos dibuixen un arbre de caixes unides per línies, unes notes que assenyalen llocs d'un mapa, una pàgina de targetes de fotos i un joc de blocs que poden compartir els llibres d'una col·lecció.",
 };
 
 # Llibres de pàgines compostes
 
-**Fas una pàgina d'un llibre de text a partir d'una plantilla, l'omples amb text del Markdown, retoles un mapa, tradueixes la pàgina i arregles el que no hi cap.**
+**Fas una pàgina d'un llibre de text a partir d'una plantilla, l'omples amb text del Markdown, retoles un mapa, tradueixes la pàgina i arregles el que no hi cap; després hi afegeixes un arbre, notes sobre un mapa, una pàgina de targetes de fotos i una biblioteca de mòduls.**
 
 La pàgina d'un llibre de text escolar és un conjunt de caixes: una banda de títol, un text, una caixa per a una definició, una altra per a una activitat, un mapa. Postext maqueta una pàgina així a partir d'una **plantilla de pàgina** que conté les caixes (els marcs), i el Markdown només diu quines paraules van a cada marc. Aquí es fa tota la feina al Sandbox, sobre un llibre que ja existeix, i s'hi afegeix una pàgina. Les pàgines de referència expliquen què fa cada camp i cada línia de Markdown; aquí fas cada cosa una vegada, per ordre, i veus què canvia: [Pàgines compostes](/ca/docs/composed-pages) per al Markdown, [Configuració › Pàgines compostes](/ca/docs/configuration-composed-pages) per a la plantilla i [Sandbox: les pàgines compostes](/ca/docs/sandbox-composed-pages) per a les pantalles.
 
@@ -38,8 +38,8 @@ La pàgina nova serà una pàgina de repàs: una banda de títol, un text breu a
 2. Prem **Nova**. S'obre una plantilla anomenada *Plantilla nova*. Dona-li l'**ID** `review` (el nom que farà servir el Markdown) i el **Nom** `Pàgina de repàs` (el que mostra aquest tauler). L'ID admet lletres minúscules, xifres i guions.
 3. La plantilla comença amb un marc, `text`, que té activat **Rep el text solt de la pàgina**. Converteix-lo en la banda de títol: **Nom (ranura)**: `title`; **Estil de caixa**: `portada`, la banda blava que el llibre ja fa servir per als títols; desactiva **Rep el text solt de la pàgina**; **Rep**: *Nivell 1*, perquè aquest marc rebi el primer encapçalament `#` de la pàgina.
 4. Prem **Afegir un marc**. El marc nou s'obre sota la llista de marcs. **Nom (ranura)**: `text`, i activa **Rep el text solt de la pàgina**: tot el que la pàgina escrigui fora d'un marc va aquí.
-5. Afegeix un marc. **Nom (ranura)**: `remember`. **Estil de caixa**: `dato-campo`, una caixa verda amb solapa. **Alçada mínima**: 30 mm, perquè la caixa conservi una bona mida quan el text és curt.
-6. Afegeix un últim marc. **Nom (ranura)**: `try`. **Estil de caixa**: `actividad-sol`. **Alçada mínima**: 30 mm.
+5. Afegeix un marc. **Nom (ranura)**: `remember`. **Estil de caixa**: `dato`, una caixa tenyida amb solapa. **Alçada mínima**: 30 mm, perquè la caixa conservi una bona mida quan el text és curt.
+6. Afegeix un últim marc. **Nom (ranura)**: `try`. **Estil de caixa**: `actividad`, una caixa amb una franja al costat. **Alçada mínima**: 30 mm.
 7. A `text`, `remember` i `try` posa **Amplada** a *Fins a la vora* i **Alçada** a *El contingut*: així ocupen tota l'amplada de la pàgina i són tan alts com el text que contenen.
 8. A **Grups** prem **Afegir un grup**. Posa-li de **Nom** `column`, deixa'l *Apilats* i fixa **Espai entre marcs** en 6 mm. A **Marcs del grup, en l'ordre de la pàgina** marca els quatre marcs, en l'ordre en què van i amb el títol primer: la llista numera els membres, i les fletxes pugen o baixen un lloc el marc. Un grup col·loca els marcs l'un sota l'altre i, quan un creix, desplaça els de sota; així, si el text de la primera caixa s'allarga, empeny la segona cap avall en lloc de passar-li per sobre.
 
@@ -173,6 +173,175 @@ La pàgina i el Markdown se segueixen l'un a l'altre.
 - **Des d'una revisió.** Fes clic en una entrada del tauler Revisió i el Sandbox et porta a la pàgina, selecciona el marc i posa el cursor al text. En un llibre amb diverses edicions, passa a l'edició que té el problema.
 
 <Screenshot src="/docs-shots/ca/select.webp" alt="La pàgina amb la segona caixa amb un contorn taronja, i el tauler Text amb el marc seleccionat al Markdown." caption="Un clic a la pàgina posa el cursor al punt corresponent del Markdown, i la ruta sota la previsualització indica de quin marc es tracta." />
+
+## 8. Dibuixa un arbre amb connectors
+
+Un arbre d'idees, un organigrama i una línia del temps són caixes unides per línies. A Postext les caixes són marcs i les línies són **connectors**: línies de la decoració de la plantilla que uneixen marcs. Un connector es dibuixa quan els marcs ja tenen la caixa definitiva, de manera que segueix una caixa que creix amb un text més llarg o amb les paraules d'una altra llengua, i la plantilla no necessita cap imatge de les línies. L'arbre es dibuixa una sola vegada, com a **mòdul** (un bloc de marcs que pot contenir qualsevol pàgina composta), i el Markdown diu quantes branques té.
+
+1. A **Disseny**, obre **Pàgina i columnes › Mòduls** i prem **Mòdul nou**. A la llista apareix un mòdul anomenat *Mòdul* amb un marc, `text`. Prem-ne el llapis (*Editar el mòdul Mòdul*): l'editor de plantilles s'obre allà mateix, amb l'interruptor **Mòdul** activat.
+2. Dona-li l'**ID** `tree` i el **Nom** `Arbre d'idees`. Tria el marc `text` i converteix-lo en el capdamunt de l'arbre: **Nom (ranura)** `root`, **Estil de caixa** `dato`, **Amplada** *Fins a la vora*, **Alçada** *El contingut*, i desactiva **Rep el text solt de la pàgina**.
+3. Prem **Afegir un marc**. **Nom (ranura)**: `branch`; **Estil de caixa**: `dato`; **Alçada mínima**: 20 mm.
+4. A **Grups** prem **Afegir un grup**. Posa-li de nom `branches` i tria **Graella**: **Columnes** 3, **Espai entre columnes** i **Espai entre files** 6 mm. A **Repetir un conjunt de marcs** tria `branch` com a **Marc principal**: la graella col·loca un `branch` per cada element que li dona la pàgina. Posa **Caixa pròpia** a *Marc root*, **Posició relativa** a *A sota de* i **Desplaçament Y** a 12 mm, perquè la graella comenci sota l'arrel tingui l'alçada que tingui.
+5. A **Decoració** prem **Afegeix un connector**. A la fitxa del connector posa **Comença a** a *Marc root* i, a **Va a**, prem *Cada branch* (els extrems de la línia són els botons premuts). Posa **Traçat** a *Arbre*, **Radi dels colzes** a 2 mm, **Gruix de la línia** a 1,5 pt i **Marca final** a *Fletxa*. **Tria a la pàgina** fa el mateix amb el ratolí, en mode Disseny: fes clic al marc d'on surt la línia i després a cada marc on va; un segon clic treu un extrem, i Escapada acaba la tria.
+
+Ara, les paraules. Passa a **Contingut** i posa el cursor a la pàgina de repàs de la secció 3, al tauler **Text**. De tornada a **Mòduls**, la llista **Pàgina on inserir-lo** indica aquesta pàgina; prem el botó d'inserir d'*Arbre d'idees*. El Sandbox escriu un bloc `:::module{template="tree"}` abans de la línia que tanca la pàgina, amb un marc buit per a cada ranura, i com que la plantilla `review` no tenia cap grup que rebés mòduls, n'hi afegeix un sota l'últim marc. Escriu les paraules als marcs buits:
+
+```md
+:::module{template="tree"}
+:::frame{slot="root"}
+**Un riu** ens dona
+:::
+:::frame{slot="branch"}
+Aigua per beure i per regar els camps
+:::
+:::frame{slot="branch"}
+Força per moure un molí
+:::
+:::frame{slot="branch"}
+Un lloc per jugar i remar
+:::
+:::
+```
+
+Cada `:::frame{slot="branch"}` és una branca. Si en copies una, la pàgina té quatre caixes i quatre línies; si en treus una, en té dues. El connector indica `branch[*]`, totes les branques que tingui la pàgina, així que les línies segueixen el Markdown sense que calgui tocar el mòdul.
+
+<Screenshot src="/docs-shots/ca/tree.webp" alt="El tauler Disseny amb el mòdul Arbre d'idees obert a la fitxa del connector, i la pàgina de repàs amb una caixa a dalt unida amb línies i fletxes a tres caixes de sota." caption="L'arbre: una arrel, una graella que repeteix la branca i un connector a cada branca." />
+
+Un organigrama és el mateix mòdul amb altres marcs: una targeta per a la persona que dirigeix l'equip, una graella que repeteix una foto i un nom, i un connector en arbre fins a cada targeta. Una línia del temps posa **Posició de la barra** a 0: sense barra, una baixada des de la franja de les dates fins a cada targeta.
+
+## 9. Notes sobre un mapa, amb assenyaladors i una llegenda
+
+Una pàgina de notes al voltant d'un mapa: cada nota té una línia fins al lloc de què parla, el mapa té una llegenda dels seus signes i un nom queda apartat del seu punt, amb una línia que hi torna. Cap d'aquestes línies forma part de la pintura.
+
+El llibre té la pintura dues vegades: `mapa`, amb els noms de les pàgines 6 i 7, i `rio`, la mateixa imatge sense àncores, en petit a la pàgina de l'índex. Aquesta pàgina fa servir `rio`, de manera que els punts que hi afegeixis no mouen cap nom de la doble pàgina.
+
+1. Fes una plantilla de pàgina com a la secció 2. **ID** `map-notes`, **Nom** `Mapa amb notes`. Els marcs: `title` (**Estil de caixa** `portada`, **Rep** *Nivell 1*), `text` (**Rep el text solt de la pàgina**), `map` (**Amplada** *Fins a la vora*) i `note-1`, `note-2` i `note-3` (**Estil de caixa** `dato`, **Amplada** 56 mm, **Alçada mínima** 26 mm). Apila `title`, `text` i `map` en un grup `column` amb 6 mm entre marcs, i posa les notes en un grup `notes` *En filera* amb 8 mm entre l'una i l'altra. Penja `note-1` de *Marc map*, *A sota de*, 14 mm més avall.
+2. Escriu la pàgina al final del capítol:
+
+```md
+::::page{template="map-notes"}
+# Al llarg del riu
+
+El mapa mostra la vall de l'Aldara. Cada nota parla d'un lloc del mapa: segueix-ne la línia per trobar-lo.
+
+:::figure{resource="rio" slot="map"}
+::label[Font]{at="spring" style="agua"}
+:::label{at="key" style="key"}
+:icon[]{glyph="●" color="ink"} Poble
+:icon[]{line="solid" color="agua"} Riu
+:icon[]{line="dashed" color="ink"} Camí
+:::
+:::
+
+:::frame{slot="note-1" label="La presa"}
+La presa reté l'aigua en un llac. Els mesos secs en deixa anar una mica, i així el riu no es queda mai buit.
+:::
+
+:::frame{slot="note-2" label="Molinar"}
+Molinar va créixer al voltant del pont i del molí. La roda del molí girava amb l'aigua del riu.
+:::
+
+:::frame{slot="note-3" label="Aldamar"}
+A Aldamar el riu arriba al mar. Les barques de pesca surten del port cada matí.
+:::
+::::
+```
+
+`:::label{at="key" style="key"}` és un rètol de diverses línies: cada línia és una fila de la llegenda. `:icon[…]{…}` és un símbol de la línia: un glif, una mostra de línia o una imatge del llibre. El botó **Símbol per a un rètol** de la barra d'eines del tauler Text n'escriu un al cursor, amb el color i la mida; entre els claudàtors va el que en diu un lector de pantalla, i uns claudàtors buits volen dir que les paraules del costat ja ho diuen tot.
+3. Dona aspecte a la llegenda. A **Disseny › Figures i taules › Estils de rètol** prem **Afegir un estil de rètol**, posa-li l'id `key`, la font Fredoka a 10,5 pt, un **Fons** blanc amb un **Marge interior del fons** de 2,5 mm, un **Contorn** i un **Radi de les cantonades** d'1,5 mm, i a **Línies i llegenda** activa **Llegenda**. Així els símbols queden en una columna pròpia i les paraules de cada fila comencen a la mateixa vora.
+4. Col·loca els punts. **Revisió** mostra *Rètol en una àncora que no existeix* per a `spring` i `key`. Prem el botó de la xinxeta d'una de les dues: s'obre el diàleg Àncores de `rio`, amb els dos noms a *Rètols sense àncora*. Fes clic a la cascada de la part superior esquerra de la pintura per a `spring`, i al cantó inferior esquerre per a `key`; posa l'**Alineació** de la llegenda a *Inici* i l'**Alineació vertical** a *A baix*, perquè creixi cap amunt i cap a la dreta del seu punt. Després fes clic a la presa, al molí i al port, i posa a les tres àncores noves els noms `dam`, `mill` i `harbour`, a les seves files.
+5. Aparta el nom de la font del seu punt. Tria `spring` i, a **Rètol i línia guia**, activa **Lluny del seu punt**. Arrossega la nansa del rètol cap amunt, fins al cel, i posa **Línia guia** a *Sí*: la línia del rètol a la cascada es dibuixa mentre arrossegues. Prem **Desar**.
+6. Dibuixa els assenyaladors. En mode **Disseny**, tria `note-1` a la pàgina: apareix una nansa rodona al costat del centre del seu costat dret. Arrossega-la fins a la presa; mentre arrossegues es veuen les àncores del mapa, i en deixar-la anar s'escriu un connector de la nota a l'àncora `dam`, amb un punt a l'extrem. Fes el mateix de `note-2` a `mill` i de `note-3` a `harbour`. El grup **Assenyaladors** del marc els llista, i és el camí per afegir-ne o canviar-ne un amb el teclat.
+
+<Screenshot src="/docs-shots/ca/map-notes.webp" alt="La pàgina Al llarg del riu en mode Disseny: el mapa amb una llegenda al cantó inferior esquerre, tres notes a sota amb una línia de cadascuna a un lloc del mapa, i el grup Assenyaladors de la segona nota al tauler Disseny." caption="Cada nota assenyala una àncora de la imatge; la llegenda i els noms són línies del Markdown." />
+
+Un assenyalador acaba al punt de l'àncora a la imatge, tenint en compte el retall i l'escala, de manera que continua trobant el molí quan el mapa es posa més petit o es retalla a la zona segura. Es pinta sobre els marcs, així que es veu per damunt de la imatge. Si en canvi poses una nota a sobre del mapa, sense espai propi, Revisió la mostra com a *Marc tapat per un altre marc*, amb les solucions (vegeu [Sandbox: les pàgines compostes](/ca/docs/sandbox-composed-pages#superposicions-i-glifs-a-la-pestanya)).
+
+## 10. Una pàgina de targetes de fotos
+
+Una pàgina de targetes (fotos amb un peu sota cadascuna, retrats amb un nom) és una sola targeta dibuixada moltes vegades. Una **graella que repeteix un conjunt de marcs** dibuixa la targeta una vegada, i la pàgina té tantes targetes com n'escriu el Markdown.
+
+1. Fes una plantilla `photos` (**Nom** `Targetes de fotos`) amb `title` (`portada`, *Nivell 1*) i `text` (el text solt) apilats en un grup `column`, a 6 mm l'un de l'altre.
+2. Afegeix un marc `photo`: **Estil de caixa** `foto`, penjat de *Marc text*, *A sota de*, 6 mm més avall. Afegeix un marc `caption`: **Estil de caixa** `dato`, **Amplada** *El contingut*, penjat de *Marc photo*, *A sota de*, 2 mm més avall.
+3. Afegeix un grup `cards`: **Graella**, **Columnes** 3, **Espai entre columnes** 6 mm, **Espai entre files** 12 mm. A **Repetir un conjunt de marcs**, **Marc principal** `photo`, i marca `caption` a **Marcs que l'acompanyen**. El marc principal agafa l'amplada d'una cel·la; el peu en penja tal com el dibuixa la plantilla.
+4. Escriu la pàgina:
+
+```md
+::::page{template="photos"}
+# La gent i el riu
+
+La gent fa servir el riu de moltes maneres. Mira les fotos i digues què fa cada persona.
+
+:::frame{slot="photo"}
+::resource{id="riego"}
+
+:::frame{slot="caption"}
+Regar els camps
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="molino"}
+
+:::frame{slot="caption"}
+Moldre el blat
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="piraguas"}
+
+:::frame{slot="caption"}
+Remar amb piragua
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="limpieza"}
+
+:::frame{slot="caption"}
+Netejar les ribes
+:::
+:::
+::::
+```
+
+Cada `:::frame{slot="photo"}` és una targeta, i el `:::frame{slot="caption"}` que conté va al peu d'aquella targeta. Les targetes omplen les files des del costat on comença una línia, de manera que la quarta obre una segona fila. En mode Disseny, els marcs porten el número de la seva targeta: `photo[2]` i `caption[2]` són la segona.
+
+<Screenshot src="/docs-shots/ca/grid.webp" alt="La pàgina La gent i el riu amb quatre fotos en una graella de tres columnes i un peu sota cadascuna, i el tauler Disseny amb el grup cards a Graella, tres columnes i Repetir un conjunt de marcs." caption="La targeta es dibuixa una vegada; el Markdown en dona quatre, i la graella en col·loca quatre." />
+
+Una cinquena foto ocupa la cel·la següent; una setena comença una tercera fila. Una edició en una altra llengua pot tenir més targetes o menys amb la mateixa plantilla. **Màxim d'elements** posa un límit a la graella (el que passa del límit va al text solt, i Revisió mostra *Més elements dels que caben a la graella*), i amb **El contingut que no hi cap va a** *Una pàgina afegida després d'aquesta* al marc principal, les files que no hi caben passen senceres a una pàgina afegida.
+
+## 11. Una biblioteca de mòduls per a una col·lecció
+
+**Pàgina i columnes › Mòduls** és la biblioteca de mòduls del llibre. Cada mòdul hi apareix dibuixat amb els seus marcs i amb el seu id, amb quants blocs del Markdown el fan servir i en quantes pàgines (*1 bloc a 1 pàgina* per a l'arbre), un llapis que l'obre a l'editor de plantilles i el botó que l'insereix a la pàgina triada a **Pàgina on inserir-lo**. **Mòdul nou** en comença un altre. Si canvies el nom d'un mòdul, es reescriuen tots els blocs `:::module` que l'anomenen.
+
+<Screenshot src="/docs-shots/ca/modules.webp" alt="La secció Mòduls del tauler Disseny: la llista Pàgina on inserir-lo, el mòdul Arbre d'idees amb les paraules 1 bloc a 1 pàgina, i el botó Mòdul nou." caption="La biblioteca: cada mòdul, on el fa servir el llibre i com s'insereix en una pàgina." />
+
+Una pàgina rep els mòduls en un grup que té activat **Rep els mòduls de la pàgina**, l'un sota l'altre en l'ordre del Markdown. Així, la pàgina següent pot tenir un arbre sota una caixa, o dos arbres, sense cap plantilla nova: el Markdown diu quins blocs hi van i en quin ordre, i els mòduls els dibuixen.
+
+Els llibres d'una col·lecció (*El nostre riu* per a 3r, *La nostra costa* per a 4t) comparteixen els mòduls compartint el disseny:
+
+- **Al Sandbox.** Comença el llibre següent com una còpia d'aquest (**Llibres**, **⋯** al llibre, **Duplicar**) i escriu-ne els capítols; les plantilles, els mòduls i els estils passen a la còpia. Per a un llibre que ja existeix, **Exportar**, a la capçalera del tauler Disseny, desa el disseny, i **Importar**, a l'altre llibre, el posa en lloc del disseny d'aquell llibre.
+- **Des del codi.** Desa les plantilles dels mòduls en un fitxer i afegeix-les als `pageTemplates` de cada llibre de la col·lecció:
+
+```ts
+// series/modules.js: the tree and the other modules of the series
+export const seriesModules = [
+  { id: 'tree', name: 'Tree of ideas', role: 'module', frames: [/* root, branch */], groups: [/* branches */],
+    decoration: { elements: [{ kind: 'connector', id: 'connector-1', routing: 'tree', from: { to: '#root' }, to: [{ to: '#branch[*]' }] }] } },
+];
+
+// our-coast/config.js
+import { seriesModules } from '../series/modules.js';
+export const config = { /* … */ pageTemplates: [...seriesModules, ...pagesOfThisBook] };
+```
+
+Aleshores, un canvi en un mòdul (una línia més gruixuda, un altre estil de caixa) arriba a totes les pàgines de tots els llibres que el fan servir la propera vegada que es maqueta el llibre, i les paraules continuen al Markdown de cada llibre.
+
+## Què diu el Markdown i què dibuixa el disseny
+
+Les pàgines de les seccions 8 a 11 segueixen una sola regla. El Markdown diu **què** va a la pàgina i **quantes vegades**: les paraules de cada caixa, quantes branques, notes, targetes i files de la llegenda hi ha, quin mòdul va primer. El disseny dibuixa cada cosa **una vegada**: les caixes, el seu lloc, les línies entre elles, l'aspecte de la llegenda, la mida d'una cel·la. Per això una traducció no necessita una plantilla pròpia, una pàgina amb cinc fotos fa servir la plantilla d'una pàgina amb quatre i una col·lecció pot compartir els mòduls. Una plantilla no conté mai les paraules d'una pàgina, i el Markdown no conté mai una posició ni un color.
 
 ## On anar després
 

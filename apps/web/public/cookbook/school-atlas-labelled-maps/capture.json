@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "school-atlas-labelled-maps",
-  "sourceHash": "aa0ef19ab17333e5574c10595a044dc3dce81f0d4e0db353a1bb323354a9dc94",
+  "sourceHash": "91245616cd617d841331df5ad3d582bc8136444f83d2037d6dbb2096ff65f911",
   "engine": {
-    "postext": "1.42.1",
+    "postext": "1.48.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-18T09:23:27.281Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-20T20:39:00.197Z",
   "variants": {
     "en": {
-      "hash8": "7ac2057e",
-      "vdtHash": "e12cf6ef75e722005563fb44e2b7c70647afe28c",
+      "hash8": "eed37b5f",
+      "vdtHash": "52a3713b1470b7aab64e037595d6c5d10e8311b1",
       "timings": {
-        "importMs": 422,
-        "fontsMs": 769,
-        "buildMs": 93,
-        "totalMs": 1932,
+        "importMs": 4484,
+        "fontsMs": 1298,
+        "buildMs": 103,
+        "totalMs": 8769,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +37,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 235
+        "ownLines": 250
       },
       "pages": [
         {
@@ -48,7 +48,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 79644,
+          "bytes": 80828,
           "alt": "Page 1: Varenia on the map."
         },
         {
@@ -59,7 +59,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 87532,
+          "bytes": 87898,
           "alt": "Page 2: The relief and rivers of Varenia."
         },
         {
@@ -81,7 +81,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 80976,
+          "bytes": 81142,
           "alt": "Page 4: A section through the Albar Range."
         }
       ],
@@ -113,13 +113,13 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 610749,
+        "bytes": 611363,
         "folio": "a6af2fd7",
         "chapters": [
           {
             "pages": 4,
-            "hash": "723b0f498c84a165",
-            "lines": "8bc9f24366db9f01"
+            "hash": "5a86b3f62c3c7c98",
+            "lines": "dc817e4c5f3ed14a"
           }
         ]
       },
@@ -212,6 +212,10 @@
           "headings.levels[].marginBottom",
           "headings.levels[].marginTop",
           "labelStyles",
+          "labelStyles[].background",
+          "labelStyles[].border",
+          "labelStyles[].border.color",
+          "labelStyles[].border.width",
           "labelStyles[].color",
           "labelStyles[].fontFamily",
           "labelStyles[].fontSize",
@@ -221,7 +225,15 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].kind",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.color",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
+          "labelStyles[].padding",
+          "labelStyles[].radius",
           "labelStyles[].textTransform",
           "layout",
           "layout.layoutType",
@@ -246,6 +258,7 @@
           "pageTemplates",
           "pageTemplates[].decoration",
           "pageTemplates[].decoration.elements",
+          "pageTemplates[].extends",
           "pageTemplates[].frames",
           "pageTemplates[].frames[].columnGap",
           "pageTemplates[].frames[].columns",
@@ -253,6 +266,7 @@
           "pageTemplates[].frames[].flow",
           "pageTemplates[].frames[].name",
           "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].remove",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
@@ -300,11 +314,12 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 426,
-        "designElements": 8,
+        "configLeaves": 475,
+        "designElements": 10,
         "directives": [
           "::::page",
           ":::figure",
+          ":::label",
           ":::frame",
           ":::paragraphs"
         ],
@@ -312,7 +327,7 @@
           ":swatch"
         ],
         "resources": {
-          "svg": 3,
+          "svg": 4,
           "bitmap": 0,
           "table": 0
         },
@@ -361,19 +376,29 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 67 line, 3 text"
+            "detail": "every element came back to its source: 28 block, 15 frame, 32 label, 62 line, 3 text"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "37a79f43",
-      "vdtHash": "41c601af07a6e6d1af7aeee330511d38d0f9d44f",
+      "hash8": "1c1f3f5c",
+      "vdtHash": "687e606264bcaff2840dbbb5a8b8ae9852f74096",
       "timings": {
-        "importMs": 429,
-        "fontsMs": 763,
-        "buildMs": 91,
-        "totalMs": 1930,
+        "importMs": 4723,
+        "fontsMs": 1049,
+        "buildMs": 112,
+        "totalMs": 9470,
         "builds": 1
       },
       "specimen": {
@@ -394,7 +419,7 @@
           "Source Serif 4"
         ],
         "pages": 4,
-        "ownLines": 235
+        "ownLines": 250
       },
       "pages": [
         {
@@ -405,7 +430,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 81522,
+          "bytes": 81070,
           "alt": "Página 1: Varenia en el mapa."
         },
         {
@@ -416,7 +441,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 86742,
+          "bytes": 87066,
           "alt": "Página 2: El relieve y los ríos de Varenia."
         },
         {
@@ -438,7 +463,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 81632,
+          "bytes": 81812,
           "alt": "Página 4: Un corte de la sierra Albar."
         }
       ],
@@ -470,13 +495,13 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 610563,
+        "bytes": 611160,
         "folio": "a6af2fd7",
         "chapters": [
           {
             "pages": 4,
-            "hash": "65b930f607f7c928",
-            "lines": "ccb29a08a33e6c04"
+            "hash": "a7c807ed4116a115",
+            "lines": "9994d2eb7edb99a3"
           }
         ]
       },
@@ -569,6 +594,10 @@
           "headings.levels[].marginBottom",
           "headings.levels[].marginTop",
           "labelStyles",
+          "labelStyles[].background",
+          "labelStyles[].border",
+          "labelStyles[].border.color",
+          "labelStyles[].border.width",
           "labelStyles[].color",
           "labelStyles[].fontFamily",
           "labelStyles[].fontSize",
@@ -578,7 +607,15 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].kind",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.color",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
+          "labelStyles[].padding",
+          "labelStyles[].radius",
           "labelStyles[].textTransform",
           "layout",
           "layout.layoutType",
@@ -603,6 +640,7 @@
           "pageTemplates",
           "pageTemplates[].decoration",
           "pageTemplates[].decoration.elements",
+          "pageTemplates[].extends",
           "pageTemplates[].frames",
           "pageTemplates[].frames[].columnGap",
           "pageTemplates[].frames[].columns",
@@ -610,6 +648,7 @@
           "pageTemplates[].frames[].flow",
           "pageTemplates[].frames[].name",
           "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].remove",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
@@ -657,11 +696,12 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 426,
-        "designElements": 8,
+        "configLeaves": 475,
+        "designElements": 10,
         "directives": [
           "::::page",
           ":::figure",
+          ":::label",
           ":::frame",
           ":::paragraphs"
         ],
@@ -669,7 +709,7 @@
           ":swatch"
         ],
         "resources": {
-          "svg": 3,
+          "svg": 4,
           "bitmap": 0,
           "table": 0
         },
@@ -718,19 +758,29 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 29 block, 16 frame, 31 label, 67 line, 3 text"
+            "detail": "every element came back to its source: 28 block, 15 frame, 32 label, 62 line, 3 text"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "5a01e8c4",
-      "vdtHash": "f52cb4e21b1c634b1a7e23bfcf6c6639789c38b6",
+      "hash8": "84654906",
+      "vdtHash": "2e3bf119aa11cf455b28d20e20227f850999b038",
       "timings": {
-        "importMs": 436,
-        "fontsMs": 755,
-        "buildMs": 86,
-        "totalMs": 1935,
+        "importMs": 4830,
+        "fontsMs": 1486,
+        "buildMs": 104,
+        "totalMs": 9487,
         "builds": 1
       },
       "specimen": {
@@ -751,7 +801,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 4,
-        "ownLines": 235
+        "ownLines": 250
       },
       "pages": [
         {
@@ -762,7 +812,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 81956,
+          "bytes": 81560,
           "alt": "الصفحة ١: فارينيا على الخريطة."
         },
         {
@@ -784,7 +834,7 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 66268,
+          "bytes": 66590,
           "alt": "الصفحة ٣."
         },
         {
@@ -795,7 +845,7 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 78458,
+          "bytes": 78448,
           "alt": "الصفحة ٤: مقطع في سلسلة ألبار."
         }
       ],
@@ -828,13 +878,13 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 611808,
+        "bytes": 612368,
         "folio": "a6af2fd7",
         "chapters": [
           {
             "pages": 4,
-            "hash": "ccc8d5469b048130",
-            "lines": "eea24eafbe3549c9"
+            "hash": "8aee6cbbc2239149",
+            "lines": "16a56d161e4473c8"
           }
         ]
       },
@@ -922,6 +972,10 @@
           "headings.levels[].marginBottom",
           "headings.levels[].marginTop",
           "labelStyles",
+          "labelStyles[].background",
+          "labelStyles[].border",
+          "labelStyles[].border.color",
+          "labelStyles[].border.width",
           "labelStyles[].color",
           "labelStyles[].fontFamily",
           "labelStyles[].fontSize",
@@ -931,7 +985,15 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].kind",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.color",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
+          "labelStyles[].padding",
+          "labelStyles[].radius",
           "labelStyles[].textTransform",
           "layout",
           "layout.layoutType",
@@ -956,6 +1018,7 @@
           "pageTemplates",
           "pageTemplates[].decoration",
           "pageTemplates[].decoration.elements",
+          "pageTemplates[].extends",
           "pageTemplates[].frames",
           "pageTemplates[].frames[].columnGap",
           "pageTemplates[].frames[].columns",
@@ -963,6 +1026,7 @@
           "pageTemplates[].frames[].flow",
           "pageTemplates[].frames[].name",
           "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].remove",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
@@ -1010,11 +1074,12 @@
           "paragraphStyles",
           "resourceTypes"
         ],
-        "configLeaves": 421,
-        "designElements": 8,
+        "configLeaves": 470,
+        "designElements": 10,
         "directives": [
           "::::page",
           ":::figure",
+          ":::label",
           ":::frame",
           ":::paragraphs"
         ],
@@ -1022,7 +1087,7 @@
           ":swatch"
         ],
         "resources": {
-          "svg": 3,
+          "svg": 4,
           "bitmap": 0,
           "table": 0
         },
@@ -1079,7 +1144,17 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 29 block, 16 frame, 27 label, 65 line, 3 text"
+            "detail": "every element came back to its source: 28 block, 15 frame, 28 label, 60 line, 3 text"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

@@ -629,7 +629,7 @@ function settleReferences(
   frames: ResolvedFrame[],
   groups: ResolvedFrameGroup[],
   decoration: { value: DesignElement; configPath: string }[],
-  context: { templateIds: ReadonlySet<string>; calloutStyleIds?: ReadonlySet<string> },
+  context: { templateIds: ReadonlySet<string>; calloutStyleIds?: ReadonlySet<string>; module?: boolean },
   overflowTemplate: { value: unknown; path: string } | undefined,
   issues: TemplateIssue[],
 ): { overflowTemplate?: string } {
@@ -733,7 +733,12 @@ function settleReferences(
         if (typeof to !== 'string' || !to.startsWith('#')) return false;
         const name = to.slice(1);
         if (elementIds.has(name) || boxSet.has(name) || isInstance(name)) return true;
-        return many && name.endsWith('[*]') && repeated.has(name.slice(0, -3));
+        if (many && name.endsWith('[*]') && repeated.has(name.slice(0, -3))) return true;
+        // A module's connector may end on a frame of the page that stacks
+        // it (an org chart's head, #1069): the module does not know the
+        // page, so the end is kept and laid when the page has that frame,
+        // else dropped there (`connectorDropped`).
+        return context.module === true && name !== '';
       };
       const report = (to: unknown, path: string) => issues.push({ kind: 'frameAnchorUnknown', path, value: String(to), used: '', known: [...boxNames, ...elementIds].map((n) => `#${n}`) });
       const c = e.value;
@@ -879,7 +884,7 @@ export function resolveTemplateAt(
     frames,
     groups,
     merged.elements,
-    { templateIds: usableIds(templates), calloutStyleIds: options.calloutStyleIds },
+    { templateIds: usableIds(templates), calloutStyleIds: options.calloutStyleIds, module: inherited.role === MODULE_ROLE },
     merged.fields.overflowTemplate !== undefined ? { value: merged.fields.overflowTemplate, path: merged.fieldPaths.overflowTemplate! } : undefined,
     issues,
   );

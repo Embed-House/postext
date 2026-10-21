@@ -2,7 +2,7 @@
 title: "A School Atlas of Varenia"
 ---
 
-::::page{template="sheet" unit="Plate 1 · Location"}
+::::page{template="locator" unit="Plate 1 · Location"}
 # Varenia on the map
 
 Varenia is a country in the south of the continent, with Ostelia to the north and Brunavia to the east. The Lira Sea washes its west coast and the Misty Ocean its south coast, which the Gulf of Sora cuts into. It covers about 40,000 km² and has nearly four million people.
@@ -17,14 +17,14 @@ The capital, Almaren, stands on the River Merel a few kilometres from Lake Ormo.
 ::label[Lira Sea]{at="lira"}
 ::label[Misty Ocean]{at="ocean"}
 ::label[Almaren]{at="almaren"}
+:::label{at="key" style="legend"}
+**Key**
+:icon[]{resource="key-mark" color="country"} Varenia
+:icon[]{resource="key-mark" color="land"} Other countries
+:icon[]{resource="key-mark" color="sea"} Sea and ocean
+:icon[]{line="dashed" color="border"} Border
+:icon[]{resource="key-mark" color="ink"} Capital
 :::
-
-:::frame{slot="key" title="Key"}
-:swatch{color="country"} Varenia \\
-:swatch{color="land"} Other countries \\
-:swatch{color="sea"} Sea and ocean \\
-:swatch{color="border"} Border \\
-:swatch{color="ink"} Capital
 :::
 
 :::frame{slot="tasks" title="Activities"}

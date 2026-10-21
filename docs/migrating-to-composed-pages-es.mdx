@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Pasar un libro a páginas compuestas',
   sidebarTitle: 'Pasar a páginas compuestas',
-  description: 'Cómo pasar a plantillas de página y Markdown un libro que guarda el texto de sus páginas en estilos de encabezado, con el asistente Pasar el texto al Markdown del Sandbox o a mano, y qué comprobar después',
+  description: 'Cómo pasar a plantillas de página y Markdown un libro que guarda el texto de sus páginas en estilos de encabezado, con el asistente Pasar el texto al Markdown del Sandbox o a mano, qué comprobar después y cómo sustituir las líneas pintadas en una imagen por conectores, y los marcos sueltos por rejillas y módulos',
   lang: 'es',
-  lastUpdated: '2026-10-19',
-  readingTime: '8 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '13 min',
   order: 44,
-  plainSummary: "Algunos libros hechos con Postext antes de que existieran las páginas compuestas guardan las palabras de cada página en los ajustes de diseño, y no en el texto. Por eso son difíciles de editar e imposibles de traducir. Esta página muestra cómo pasar esas palabras al Markdown, donde cada página se convierte en un bloque con su propia plantilla. El Sandbox hace casi todo el trabajo con un botón, y tú revisas el resultado página por página. También explica cómo hacer lo mismo a mano con una sola página.",
+  plainSummary: "Algunos libros hechos con Postext antes de que existieran las páginas compuestas guardan las palabras de cada página en los ajustes de diseño, y no en el texto. Por eso son difíciles de editar e imposibles de traducir. Esta página muestra cómo pasar esas palabras al Markdown, donde cada página se convierte en un bloque con su propia plantilla. El Sandbox hace casi todo el trabajo con un botón, y tú revisas el resultado página por página. También explica cómo hacer lo mismo a mano con una sola página. La última parte sustituye las líneas pintadas en una imagen por líneas que dibuja la maquetación, y los marcos dibujados uno a uno por una rejilla o un módulo.",
 };
 
 # Pasar un libro a páginas compuestas
@@ -77,3 +77,61 @@ Un libro de pocas páginas se puede pasar sin el asistente, página a página.
 4. Compara la página con la antigua y abre **Revisión**.
 
 La misma migración está disponible desde el código con `moveTextToMarkdown`, que devuelve la configuración nueva, los capítulos y el informe que muestra el cuadro (véase [Páginas compuestas › Migrar un libro con el texto en sus estilos](/es/docs/composed-pages#migrar-un-libro-con-el-texto-en-sus-estilos)). Todo lo que hace el cuadro se describe en [Sandbox: las páginas compuestas › Pasar el texto al Markdown](/es/docs/sandbox-composed-pages#pasar-el-texto-al-markdown).
+
+## De las líneas de una imagen a los conectores
+
+Un libro pasado a Postext hace tiempo suele guardar en una imagen las líneas de sus diagramas: las ramas de un árbol, las cajas de un organigrama, las líneas que van de una nota a un mapa, pintadas en un fondo sobre el que se colocan las cajas. Así, las palabras solo encajan con las líneas en el idioma y con el tamaño para los que se dibujó la imagen: en una traducción, una palabra más larga se monta sobre una línea, y una caja que crece deja atrás su línea. Los conectores dibujan esas mismas líneas a partir de las cajas de los marcos, una vez maquetada la página, de modo que siguen al texto.
+
+1. **Dibuja las cajas como marcos.** Cada caja del diagrama pasa a ser un marco de la plantilla, con el estilo de caja de la caja antigua. Un conjunto de cajas iguales queda mejor como rejilla que repite un marco (sección siguiente).
+2. **Quita las líneas de la imagen.** Usa la imagen sin sus líneas, o quítala si no tenía nada más; un fondo que se queda (papel, un campo de color) pasa a ser una caja de decoración o el atributo `background` de la página.
+3. **Añade un conector** por cada conjunto de líneas en la decoración de la plantilla (**Decoración › Añadir conector**). **Empieza en** es la caja madre; en **Va a**, pulsa cada caja hija, o *Cada …* para todas las tarjetas de una rejilla. Un árbol de ramas usa el **Trazado** *Árbol*; una línea entre dos cajas, *Codo* o *Recto*; las flechas y los puntos son la **Marca final**. Los pasos están en [Libros de páginas compuestas › Dibuja un árbol con conectores](/es/docs/composed-page-books#8-dibuja-un-árbol-con-conectores).
+4. **Haz que las notas señalen la imagen.** Una línea que va de una nota a un lugar de un mapa pasa a ser un señalador: pon un ancla en la imagen, en ese lugar (el cuadro Anclas), elige la nota en el modo Diseño y arrastra su asa redonda hasta el ancla. La línea termina en ese punto de la imagen sean cuales sean su recorte y su escala; véase [Libros de páginas compuestas › Notas sobre un mapa, con señaladores y leyenda](/es/docs/composed-page-books#9-notas-sobre-un-mapa-con-señaladores-y-leyenda).
+5. **Compara la página** con la antigua, en cada idioma, y abre **Revisión**: un conector cuyo extremo está en un marco que la página no muestra queda fuera de esa página, y el registro de recomposición lo indica.
+
+## De una plantilla por página a rejillas y módulos
+
+Un libro pasado marco a marco tiene una plantilla por cada diseño de página, y la misma tarjeta o la misma caja dibujada otra vez en cada una: seis marcos de foto con seis marcos de pie, una caja con su imagen copiada en tres plantillas. **Reorganizar marcos**, en el editor de plantillas, los convierte en una rejilla que repite una tarjeta y en un módulo que puede llevar cualquier página, y reescribe cada página que usa la plantilla para que se vea como antes.
+
+El libro de estos pasos es *Places of the river, before grids*: una página cuya plantilla dibuja seis tarjetas con fotos marco a marco (de `photo1` a `photo6`, cada una con una pastilla de pie, de `caption1` a `caption6`) y una caja `fact` con una imagen `fact-picture` junto a su texto. Las palabras son inventadas. [Descarga el libro](/docs-examples/river-places-before.postext) y, en el Sandbox, abre **Libros**, pulsa **Nuevo** y elige **Abrir un archivo .postext…**.
+
+1. Pasa a **Diseño** y abre **Diseño › Página y columnas › Plantillas de página**. La plantilla *Places of the river* está abierta.
+2. En **Reorganizar marcos**, marca de `photo1` a `photo6` y de `caption1` a `caption6`, y pulsa **Convertir en rejilla**. El Sandbox lee las tarjetas en la página: tres columnas separadas 8 mm, dos filas. Escribe un grupo `grid` que repite `photo` y `caption`, e indica *Rejilla grid creada: 3 columnas, 6 tarjetas. Páginas reescritas: 1.* La página se ve igual.
+3. Marca `fact` y `fact-picture`, escribe `fact` en **Nombre del módulo** y pulsa **Extraer un módulo**. La caja y su imagen pasan a un módulo `fact`, y en su lugar la plantilla tiene ahora un grupo que recibe módulos.
+
+<Screenshot src="/docs-shots/es/reshape.webp" alt="El editor de plantillas en Reorganizar marcos con los doce marcos de foto y de pie marcados, y la página de seis tarjetas con fotos y una caja dibujadas con contorno discontinuo." caption="Los marcos elegidos para la rejilla: seis tarjetas, cada una una foto con su pie." />
+
+El Markdown cambia con la plantilla. Antes, cada pieza nombraba su propio marco:
+
+```md
+:::frame{slot="photo1"}
+::resource{id="spring"}
+:::
+
+:::frame{slot="caption1"}
+The spring
+:::
+```
+
+Después, cada tarjeta es una pieza `photo` con su pie dentro, y la caja es un módulo:
+
+```md
+:::frame{slot="photo"}
+::resource{id="spring"}
+
+:::frame{slot="caption"}
+The spring
+:::
+:::
+
+:::module{template="fact"}
+:::frame{slot="fact" label="Did you know?"}
+Volunteers clean the banks of the river every spring.
+:::
+
+:::frame{slot="fact-picture"}
+::resource{id="banks"}
+:::
+:::
+```
+
+Ahora una séptima tarjeta es una pieza `photo` más en el Markdown, y otra página puede llevar la caja `fact` sin marcos propios: insértala desde **Diseño › Página y columnas › Módulos**. Las dos reorganizaciones son pasos del historial (uno por cada capítulo reescrito y otro para el diseño), y **Deshacer**, en **Reorganizar marcos**, las revierte mientras sean los últimos cambios. Cuando una reorganización no se puede hacer, explica por qué: tarjetas de otros anchos, tarjetas que no están en una misma rejilla, marcos heredados de otra plantilla, una plantilla que ya tiene un grupo de módulos. Todos los campos que escribe la reorganización se describen en [Sandbox: las páginas compuestas › Rejillas y módulos](/es/docs/sandbox-composed-pages#rejillas-y-módulos).

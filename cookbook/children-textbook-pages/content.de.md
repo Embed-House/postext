@@ -35,16 +35,22 @@ Gesetzt in Nunito und Fredoka (SIL OFL) · Originaltext (CC BY 4.0) · Illustrat
 
 Bevor du anfängst, denk an die Flüsse, die du schon gesehen hast. Schreib deine Ideen auf die Linien. Lies sie am Ende des Kapitels noch einmal und schau, was sich verändert hat.
 
-:::frame{slot="pregunta-1" label="Überlege 1"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Überlege 1"}
 Wo beginnt deiner Meinung nach ein Fluss?
 :::
-
-:::frame{slot="pregunta-2" label="Überlege 2"}
-Wofür nutzen Menschen einen Fluss?
 :::
 
-:::frame{slot="pregunta-3" label="Überlege 3"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Überlege 2"}
+Wofür nutzen Menschen einen Fluss?
+:::
+:::
+
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Überlege 3"}
 Welche Tiere und Pflanzen leben im Fluss oder an seinem Ufer?
+:::
 :::
 ::::
 
@@ -60,17 +66,17 @@ In den Bergen regnet und schneit es. Ein Teil des Wassers fließt die Hänge hin
 
 Eine Quelle gibt nur ein dünnes Rinnsal. Es fließt den Hang hinunter, trifft andere Rinnsale, und zusammen bilden sie einen **Bach**. Wo es steil ist, fließt der Bach schnell. Er nimmt Kiesel mit und rollt sie so lange, bis sie ganz glatt sind. Wenn mehrere Bäche zusammenfließen, wird daraus ein größerer. So beginnt die Aldara, im Schnee der Sierra Blanca, 1850 Meter über dem Meer.
 
-:::figure{resource="nacimiento" slot="foto-1"}
+:::figure{resource="nacimiento" slot="foto"}
 ::alt[Klares Wasser kommt zwischen moosigen Steinen hervor.]
 ::caption[Eine Quelle. Das Wasser war monatelang unter der Erde.]
 :::
 
-:::figure{resource="arroyo" slot="foto-2"}
+:::figure{resource="arroyo" slot="foto"}
 ::alt[Ein Bach springt über runde Steine.]
 ::caption[Ein Bach, steil und schnell, mit glatten Kieseln.]
 :::
 
-:::figure{resource="cascada" slot="foto-3"}
+:::figure{resource="cascada" slot="foto"}
 ::alt[Ein kleiner Wasserfall stürzt in ein grünes Becken.]
 ::caption[Ein Wasserfall. Hier fällt der Bach über eine Felsstufe.]
 :::
@@ -124,15 +130,15 @@ Die Aldara ist 94 Kilometer lang. Sie entspringt in der Sierra Blanca, fließt d
 Fahre mit dem Finger am Fluss entlang, von der Quelle bis zum Meer. Welcher Ort liegt am nächsten am Meer?
 :::
 
-:::frame{slot="curso-1" label="Oberlauf"}
+:::frame{slot="curso" label="Oberlauf"}
 Hier ist es steil. Das Wasser ist kalt, klar und schnell und gräbt sich in den Fels. Hier liegt Fontalba.
 :::
 
-:::frame{slot="curso-2" label="Mittellauf"}
+:::frame{slot="curso" label="Mittellauf"}
 Das Tal ist breiter, und der Fluss fließt langsamer. Die Bauern bewässern ihre Felder. Molinar ist an einer Brücke und einer Mühle gewachsen.
 :::
 
-:::frame{slot="curso-3" label="Unterlauf"}
+:::frame{slot="curso" label="Unterlauf"}
 Das Land ist fast flach. Der Fluss ist breit und langsam und macht große Bögen. Bei Aldamar mündet er ins Meer.
 :::
 ::::
@@ -165,27 +171,27 @@ Ein Fluss bleibt nur sauber, wenn wir auf ihn achten. Müll, Öl und schmutziges
 ::alt[Kinder mit Handschuhen und Papiertüten sammeln Müll am Ufer eines Flusses.]
 :::
 
-:::frame{slot="uso-1" label="1 · Wasser für die Felder"}
+:::frame{slot="uso" label="1 · Wasser für die Felder"}
 Am Mittellauf legen die Bauern kleine Bewässerungsgräben an, damit das Flusswasser zwischen den Furchen fließt. Ohne dieses Wasser würden Tomaten und Salat im Sommer nicht wachsen. Ein einziger Graben kann Wasser viele Kilometer weit bringen.
-:::
 
-:::figure{resource="riego" slot="uso-1-foto"}
+:::figure{resource="riego" slot="uso-foto"}
 ::alt[Ein Bauer öffnet die kleine Schleuse eines Bewässerungsgrabens in einem Gemüsefeld.]
 :::
-
-:::frame{slot="uso-2" label="2 · Mühlen"}
-Vor langer Zeit drehte das fallende Wasser das Rad der Mühle von Molinar. Das Rad bewegte die Mühlsteine, die den Weizen zu Mehl für das ganze Tal mahlten. Heute ist die alte Mühle ein kleines Museum.
 :::
 
-:::figure{resource="molino" slot="uso-2-foto"}
+:::frame{slot="uso" label="2 · Mühlen"}
+Vor langer Zeit drehte das fallende Wasser das Rad der Mühle von Molinar. Das Rad bewegte die Mühlsteine, die den Weizen zu Mehl für das ganze Tal mahlten. Heute ist die alte Mühle ein kleines Museum.
+
+:::figure{resource="molino" slot="uso-foto"}
 ::alt[Eine alte Steinmühle mit einem großen Holzrad an einem Fluss.]
 :::
-
-:::frame{slot="uso-3" label="3 · Sport und Spiel"}
-Jetzt ist der ruhige Unterlauf ein Ort für Kanus. An Sommermorgen lernen die Kinder aus Aldamar mit einem Trainer paddeln, und alle tragen eine Schwimmweste.
 :::
 
-:::figure{resource="piraguas" slot="uso-3-foto"}
+:::frame{slot="uso" label="3 · Sport und Spiel"}
+Jetzt ist der ruhige Unterlauf ein Ort für Kanus. An Sommermorgen lernen die Kinder aus Aldamar mit einem Trainer paddeln, und alle tragen eine Schwimmweste.
+
+:::figure{resource="piraguas" slot="uso-foto"}
 ::alt[Kinder mit Schwimmwesten paddeln in zwei Kanus auf einem ruhigen Fluss.]
+:::
 :::
 ::::

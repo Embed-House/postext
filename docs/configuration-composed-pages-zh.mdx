@@ -825,16 +825,22 @@ decoration: {
       <td>无</td>
       <td>框中图片的一个锚点：这一端就是图片上的那个点，与标注的点一样经过图片的裁切、安全区和缩放换算，而不是框边上的一点。不读取<code>at</code>；<code>side</code>说明线从哪个方向到达（默认从另一端过来）。</td>
     </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>带<code>anchor</code>端的连接线画在各框之上，其余的在框之下</td>
+      <td>把线画在页面所有框之后（<code>true</code>），或与装饰一起画在框之下（<code>false</code>）。不设时，带<code>anchor</code>端的连接线画在上面，所以指进图片的线显示在图片的框之上；两个框之间的线仍在下面。</td>
+    </tr>
   </tbody>
 </table>
 
 **不在页面上的端点。** 落在页面没有显示的框上的一端（框收拢了、是可选的且为空、是超出本页条目数的卡片，或者是被所在框裁掉的图上的点）会被略去：树保留它的其他子节点，页面的重排记录会写明这一点（`connectorDropped`）。没有剩下`from`或`to`时，什么也不画。
 
-**绘制。** 连接线与装饰一起画在各框下面，是矢量路径：在画布、PDF、HTML阅读器和固定版式EPUB中都是如此，在带标签的PDF中是版面工件；流式EPUB与其他装饰一起略去它们。指进图片里的线，需要图片所在的框位于装饰之下：给那个框设`layer: -1`。在跨页上，连接两页上框的连接线跨过书脊，并与其他装饰一样在那里切开；在从右到左的页面上，`start`和`end`跟随镜像后的文字流。
+**绘制。** 连接线是矢量路径：在画布、PDF、HTML阅读器和固定版式EPUB中都是如此，在带标签的PDF中是版面工件；流式EPUB与其他装饰一起略去它们。带`anchor`端的连接线画在页面所有框之上，所以指进图片里的线无需给框设`layer`，就显示在图片的框之上；其余连接线与装饰一起留在框之下。`over: true`把框与框之间的线提到上面，`over: false`让指向图片的线留在下面。在跨页上，连接两页上框的连接线跨过书脊，并与其他装饰一样在那里切开；在从右到左的页面上，`start`和`end`跟随镜像后的文字流。
 
 ```ts
 frames: [
-  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'mapa', width: { value: 118, unit: 'mm' } },
   { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
 ],
 decoration: { elements: [

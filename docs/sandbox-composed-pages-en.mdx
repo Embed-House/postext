@@ -3,13 +3,13 @@
 export const metadata = {
   title: 'Sandbox: composed pages',
   sidebarTitle: 'Composed pages',
-  description: "Editing page templates and frames on the page, the library of frame styles, checking composed pages in every edition, moving a book's text to the Markdown, and fixing a frame in one click",
+  description: "Editing page templates and frames on the page, connectors and shapes, leaders, pointers and keys, grids, modules and their library, reshaping frames, overlap checks and glyph tabs, the library of frame styles, checking composed pages in every edition, moving a book's text to the Markdown, and fixing a frame in one click",
   lang: 'en',
   lastUpdated: '2026-10-20',
-  readingTime: '13 min',
+  readingTime: '21 min',
   order: 39,
   parent: 'sandbox',
-  plainSummary: "This page covers what the Sandbox offers for composed pages, the pages whose text is poured into frames laid out by a template. You draw and move the frames of a template right on the page, and you tidy the frame styles in a library. The Checks panel tells you, in every language of the book, which composed pages have text that does not fit, and it offers buttons that fix a frame. A book made before composed pages can have the text of its pages moved into the Markdown in one step.",
+  plainSummary: "This page covers what the Sandbox offers for composed pages, the pages whose text is poured into frames laid out by a template. You draw and move the frames of a template right on the page, join them with lines, repeat a card in a grid, keep blocks in a module library, and tidy the frame styles in a library. The Checks panel tells you, in every language of the book, which composed pages have text that does not fit, and it offers buttons that fix a frame. A book made before composed pages can have the text of its pages moved into the Markdown in one step.",
 };
 
 # Sandbox: composed pages
@@ -34,6 +34,79 @@ This page gathers the parts of the Design and Checks panels that deal with compo
 **A story that jumps to another chapter.** In a book with one chapter file per article, a story whose frame sends it to `page:<id>` goes on in the chapter that has that page (since postext 1.41; see [Composed pages › Jumping to a later page](/en/docs/composed-pages#jumping-to-a-later-page)). The canvas, the Folio and the PDF and EPUB tabs set the rest on that chapter's page, with the book's page numbers in the marks. A chapter's layout record keeps the stories it sends, so the chapter that has the page is laid out again when the article changes and not when a chapter in between does. A click on the carried words puts the caret in the article's Markdown, and the path under the preview names the later page when the caret is in the carried text. The preview of one chapter shows only what its own pages hold: the rest appears with the chapter that has the page.
 
 **A figure's own words.** A click on a caption or a note that a figure writes itself puts the caret in its `::caption[…]` or `::note[…]` line, or in the attribute of the opening line, at the letter clicked (see [Composed pages › A figure's own words](/en/docs/composed-pages-figures#a-figures-own-words)).
+
+
+## Connectors and shapes
+
+The decoration of a page template or a module (**Decoration**, at the foot of the template editor) adds two kinds of element since postext 1.48: connectors, the lines that join frames, and shapes. Both are written into the configuration as you edit them; nothing needs JSON. See [Configuration › Connectors](/en/docs/configuration-composed-pages#connectors) for what each field does.
+
+**A connector, step by step.**
+
+1. Press **Add connector**. The new connector runs from the template's first frame to its second, as an elbow, and its card opens.
+2. **Starts at** lists the template's frames, groups and placed elements: the start of the line, the parent of a tree.
+3. **Goes to** is a row of buttons, one per frame and group; the pressed ones are ends of the line. A repeated frame offers *Every …* (`#card[*]`), every card the page has. An end the list lacks (a card by its number, `#card[2]`, or a frame taken out of the template) stays listed so it can be taken out.
+4. Each end, the start included, has a **Side** (*Facing*, the side that faces the other end, when unset), a **Point on the side** (start, middle, end or a fraction from its start) and a **Gap** between the box and the line. **Anchor of the picture** ends the line at an anchor of the picture the frame holds instead of a side of its box; the point on the side is then hidden.
+5. **Route** is *Straight*, *Elbow* or *Tree*; an elbow and a tree also take a **Bend radius** and a **Bar position**. Then **Line color** (the main colour by default, palette-linked), **Line width**, **Dash**, **Start mark** and **End mark** (*Dot* or *Arrow*, with a **Mark size**), **Over the frames** (under the switch, a line says what it does when unset: over when an end stops at an anchor of a picture), and the pages that draw it.
+
+**Picking on the page.** **Pick on the page** turns the Design mode on and waits for clicks on a page set with the template (or one based on it). The first click sets the start and clears the ends; each later click adds an end or takes it out again; Shift-click adds or takes out an end at any time; Escape, or the button again, ends the picking. A line under the button says what the next click does. While a connector's card is open, its ends show on the page: a filled dot at the start, a ring at each end, and while picking, the frames joined outlined (solid the start, dashed the ends). The ends are moved by picking or by their fields, not by dragging.
+
+<Screenshot src="/docs-shots/en/tree.webp" alt="The Design panel with the module Tree of ideas open at its connector card, and the review page with a box on top joined by lines with arrows to three boxes below." caption="A connector's card, and its line from the root to every branch." />
+
+**Shapes.** **Add shape** (in every design slot: templates, running heads, heading and part designs) writes a bar filled with the main colour. Its card offers five presets, each drawn on its button (*bar*, *ribbon*, *arrow*, *chevron*, *wave*); a **Path** field that takes SVG path data and is written only when it parses (otherwise it says at which character it goes wrong); the view box, the fit (stretch or keep proportions), fill and outline with their colours, outline width and dash; and the size and place of any box of the decoration.
+
+**Corners and sides.** Box styles, frame styles, decoration boxes and the box of a text element share two switches. **Same radius on every corner**, off, gives four corner lengths. **Same border on every side**, off, gives each side its own switch, colour and width over the whole border's, each with its reset: a border on the top only is the whole border off and the top on. A tab can be **Joined to the box**, with its fillet radius (the corner radius by default), and stand at one of four foot positions as well as the top ones.
+
+**Placement on a side point.** A decoration element anchored to a frame, a group or another element has a **Point on the side** field: the point along the edge it hangs from (start, middle, end or a fraction), and a size to an edge can stop at its middle.
+
+## Leaders, pointers and keys
+
+**A label away from its point.** In the Anchors dialog of a picture (the resource's **Anchors** button, or the pin button of a label check), each anchor has a **Label and leader** group:
+
+1. Switch **Away from its point** on. The label moves one step up and to the right of the point (turned back inside the picture near an edge); its place shows in % of the picture as **Label across** and **down**.
+2. Drag the label's handle on the picture (a tag with its words) or focus it and use the arrow keys (Shift for larger steps); Delete puts the label back at its point. The line from the handle to the point is drawn as you move it: solid in the style's colour when a leader will be drawn, dashed white when not.
+3. **Leader** is *As the style*, *On* or *Off*. With *On*, **Route** (*Straight*, *Elbow*) and **Mark at the point** (*Dot*, *Arrow*, *None*) set the anchor's own look; colour, width and dash are the label style's.
+4. **The labels set at this anchor** lists every `::label` and `:::label` line of the text at that anchor with *As the anchor*, *On* or *Off*. The choice is written into the chapter's Markdown at once (`leader`, `leader="none"`) and wins over the anchor's; as text, it is not part of the dialog's Cancel or Undo.
+
+On the canvas, in Design mode, a label set away shows a line back to its point; dragging the label moves its place, not the anchor, and Alt held while dragging a label at its point sets it away.
+
+<Screenshot src="/docs-shots/en/leader.webp" alt="The Anchors dialog of the map: the anchor spring picked, with Away from its point on, the label's handle in the sky and a line down to the waterfall, and the Leader set to On." caption="A name set away from its point, and the leader drawn back to it." />
+
+**Pointers.** A pointer is a line from a frame to an anchor of the picture another frame holds, as a map's notes point at its places. On a composed page in Design mode, the frame picked has a round grip beside the middle of its right side (its end side). Drag it: the anchors of the pictures in the page's other frames show, and a drop near one writes a straight connector with a dot at the anchor (`pointer-<frame>-<anchor>`), or keeps the one that already joins the two. The frame's **Pointers** group lists each pointer's frame and anchor (the anchors of the pages laid with the template, or typed), with **Add pointer** and a remove button: the way for the keyboard and for a finger. A pointer is written into the page's template, so every page it lays draws it; on a template based on another, an inherited pointer is changed under its id and removed by hiding it.
+
+**Keys and symbols.** **Design › Figures & tables › Label styles** has three groups for them. **Halo and plate** gains an **Outline** and a **Corner radius**. **Lines and key** sets how the lines of a label line up (**Lines aligned**) and **Key (legend)**: each line is a row, and the symbol that opens it stands in a column as wide as the widest. **Leader** sets the look of the leaders of labels in this style: colour (the text's while unset), width, line (*Solid*, *Dashed*, *Dotted*; another pattern shows as *Custom* and is kept), the marks at the label and at the point, their size and the route. The **Symbol for a label** button of the Text panel's toolbar writes a symbol at the caret: a picture of the book, a glyph (ten common map symbols, or any typed, with a face), or a line sample (*Solid*, *Dashed*, *Dotted*), with its colour, size in ems and the words a screen reader says. The engine reads symbols in figure labels and in the captions, notes and cells of resources.
+
+## Grids and modules
+
+**Grid groups.** A group of a template is *Stacked*, *In a row* or a **Grid**. A grid has **Columns**, **Gap between columns** and **Gap between rows** (the group's space between frames when unset) and **Cells in a row** (*At the top*, *In the middle*, *At the foot*, *Stretched*). **Repeat a set of frames** makes it lay one card per item of the page: the **Main frame** (one no other group holds), the **Frames that go with it** and **Most items** (0: no limit). A repeating grid hides the plain list of members.
+
+<Screenshot src="/docs-shots/en/grid.webp" alt="The page People and the river with four photos in a grid of three columns and a caption under each, and the Design panel showing the group cards with Grid, three columns and Repeat a set of frames." caption="A grid that repeats the photo and its caption once per card the page writes." />
+
+On the canvas the cards are named by their number (`photo[3]`). A click on `photo[3]` puts the caret in the third card of the Markdown, a click on `caption[3]` in the caption written inside it (or writes an empty `:::frame{slot="caption"}` there), and the caret in a card marks its frames. A pick opens the frame of the template that draws it. The drag handles are not drawn on a card or a module's frame, since a drag would move every copy: edit them in the panel.
+
+**Modules.** The **Module** switch of the template editor makes a template a module (`role: 'module'`): the fields a module has no use for (area, spread, gutter, running heads, added pages, variants, the template grid) go and are hidden. The list of page templates tags modules. A group switched to **Takes the page's modules** stacks the page's `:::module` blocks, with **A module that does not fit goes on to the next page**.
+
+**The module library.** **Design › Page & columns › Modules** lists every module, drawn by its frames, with its id and *N blocks on M pages* (read from the Markdown of every chapter). **New module** adds one with a `text` frame; the pencil opens the template editor in place; the insert button writes `:::module{template="…"}` with an empty `:::frame{slot}` for each frame (none for a frame that takes a heading; a grid's set as one empty card) before the closing fence of the page chosen in **Page to insert into** (the page at the caret first), puts the caret in its first slot, and adds a modules group to the page's template when it has none. Renaming a module's id rewrites every `:::module` block that names it.
+
+<Screenshot src="/docs-shots/en/modules.webp" alt="The Modules section of the Design panel: the list Page to insert into, the module Tree of ideas with the words 1 block on 1 page, and the New module button." caption="The module library of the book." />
+
+**Reshape frames.** A port often draws one frame per card (`photo1`, `caption1`, `photo2`…) or the same box on every template. **Reshape frames**, in the template editor, ticks frames and turns them into a grid or into a module, and rewrites every page set with the template so it keeps its look and its text:
+
+- **Turn into a grid** splits the frames ticked into cards and what hangs from each by their names without the number (`photo1`, `photo2` one kind, `caption1`, `caption2` another), reads the rows and columns off the first page laid with the template, and writes one grid that repeats the first card's frames. Each page gets one item per card, in reading order, and anchors that named a card point at its instance (`#photo2` becomes `#photo[2]`). It says why when it cannot: too few cards, inherited frames, cards of other widths, cards off one lattice, members that differ.
+- **Extract a module** moves the frames ticked, a group all of whose frames are ticked and the decoration hung from them into a new module (named in **Module name**), and puts a modules group where they stood. Each page gets the pieces of those frames wrapped in one `:::module` block where the first stood.
+
+Both reshapes enter the history as one step per chapter rewritten and one for the design, and **Undo** in the section takes them back while they are the latest. See [Moving a book to composed pages](/en/docs/migrating-to-composed-pages#from-one-template-per-page-to-grids-and-modules).
+
+## Overlaps and glyph tabs
+
+**Overlap checks.** The Checks panel lists *Frame under another frame* (`frameCovered`) and *Frame runs past its edge* (`frameOutsideArea`) with the composed pages, by page, frame and edition (see [Composed pages in every edition](#composed-pages-in-every-edition)). Each entry says what is covered (the first words, or the picture), the area hidden, or what the frame runs past and by how much. Selecting one draws it on the canvas until another check is selected or a fix is made: for a covered frame, its box (blue, dashed), the covering frame's (red) and the rectangle where they meet; for a frame that runs past its edge, the frame, the box it runs past and a band on each side it crosses.
+
+<Screenshot src="/docs-shots/en/overlap.webp" alt="The Checks panel with the entry Frame under another frame for a note placed over the map, and the page with the note outlined in red, the map in blue and the area where they meet." caption="A note set on the map covers part of the picture: the check, its fixes and its marks." />
+
+The fixes are buttons, each one step of the history: put the covering frame's **Layer** under the covered one, let the other frames' text run round it (**Other frames' text runs round it**), a **Smallest height** for the frame it is anchored inside or a **Largest height**, *continue it on the next page* with the height that brings it in, or move the frame (its offset gets the shift, in millimetres). When the overlap is meant (art over a text, a badge that hangs off its card), the entry says how: `overlap: 'allow'` on either frame. The **Reflow** panel names the same events in words («map lies under note-3 (1957.7 mm²)») with the fixes under each frame.
+
+**Glyph tab icons.** The label group of a box style has **Tab icon kind**: *Picture* (a resource) or *Glyph*, a character set in a font. A glyph shows its **Tab glyph** field, a row of common symbols (◉ ● ○ ■ □ ▲ ★ ✓ ✎ ➜, each a button *Use …*), its face, weight, size, colour (the words' when unset, so one style serves every tint of a book), placement and gap. Switching to a glyph with none set writes ◉. See [Configuration › A glyph on the tab](/en/docs/configuration-callouts#a-glyph-on-the-tab).
+
+<Screenshot src="/docs-shots/en/glyph-tab.webp" alt="The Box styles editor of the style actividad at its tab group, with Glyph chosen as the tab icon kind and the pencil symbol picked, and the Try it box on the page with a pencil before the word on its tab." caption="A glyph on the tab: no picture resource, and the colour of the tab's words." />
 
 
 ## Frame styles

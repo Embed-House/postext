@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Levar um livro para páginas compostas',
   sidebarTitle: 'Levar para páginas compostas',
-  description: 'Como passar para modelos de página e Markdown um livro que guarda o texto das páginas em estilos de título, com o assistente Levar o texto para o Markdown do Sandbox ou à mão, e o que conferir depois',
+  description: 'Como passar para modelos de página e Markdown um livro que guarda o texto das páginas em estilos de título, com o assistente Levar o texto para o Markdown do Sandbox ou à mão, o que conferir depois, e como trocar as linhas pintadas numa imagem por conectores e os blocos avulsos por grades e módulos',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
-  readingTime: '8 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '13 min',
   order: 44,
-  plainSummary: "Alguns livros feitos com o Postext antes das páginas compostas guardam as palavras de cada página dentro das configurações de design, e não no texto. Isso os torna difíceis de editar e impossíveis de traduzir. Esta página mostra como levar essas palavras para o Markdown, onde cada página vira um trecho com modelo próprio. O Sandbox faz a maior parte do trabalho com um botão, e você confere o resultado página por página. A página explica também como fazer o mesmo à mão para uma única página.",
+  plainSummary: "Alguns livros feitos com o Postext antes das páginas compostas guardam as palavras de cada página dentro das configurações de design, e não no texto. Isso os torna difíceis de editar e impossíveis de traduzir. Esta página mostra como levar essas palavras para o Markdown, onde cada página vira um trecho com modelo próprio. O Sandbox faz a maior parte do trabalho com um botão, e você confere o resultado página por página. A página explica também como fazer o mesmo à mão para uma única página. A última parte troca as linhas pintadas numa imagem por linhas que a diagramação desenha, e os blocos desenhados um a um por uma grade ou um módulo.",
 };
 
 # Levar um livro para páginas compostas
@@ -77,3 +77,61 @@ Um livro de poucas páginas pode ser levado sem o assistente, uma página de cad
 4. Compare a página com a antiga e abra **Verificações**.
 
 A mesma migração pode ser feita por código com `moveTextToMarkdown`, que devolve a configuração nova, os capítulos e o relatório que a janela mostra; veja [Páginas compostas › Migrar um livro com o texto nos estilos](/pt/docs/composed-pages#migrar-um-livro-com-o-texto-nos-estilos). Tudo o que a janela faz está descrito em [Sandbox: as páginas compostas › Levar o texto para o Markdown](/pt/docs/sandbox-composed-pages#levar-o-texto-para-o-markdown).
+
+## Das linhas numa imagem aos conectores
+
+Um livro levado antigamente para o Postext costuma guardar as linhas dos diagramas numa imagem: os ramos de uma árvore, as caixas de um organograma, as linhas de chamada de uma nota até um mapa, pintados num fundo sobre o qual as caixas ficam. As palavras só se ajustam às linhas no idioma e no tamanho para os quais a imagem foi desenhada: uma palavra mais longa numa tradução passa por cima de uma linha, e uma caixa que cresce deixa a linha para trás. Os conectores desenham as mesmas linhas a partir das caixas dos blocos depois que a página é diagramada; por isso, acompanham o texto.
+
+1. **Desenhe as caixas como blocos.** Cada caixa do diagrama vira um bloco do modelo, com o estilo de boxe da caixa antiga. Um conjunto de caixas iguais fica melhor como uma grade que repete um bloco (próxima seção).
+2. **Tire as linhas da imagem.** Use a imagem sem as linhas, ou descarte-a quando ela não tinha mais nada; um fundo que fica (papel, um campo de cor) vira uma caixa da decoração ou o atributo `background` da página.
+3. **Acrescente um conector** para cada conjunto de linhas na decoração do modelo (**Decoração › Adicionar conector**). **Começa em** é a caixa-mãe; em **Vai para**, pressione cada filha, ou *Cada …* para todos os cartões de uma grade. Uma árvore de ramos usa **Traçado** *Árvore*; uma linha entre duas caixas, *Cotovelo* ou *Reta*; as setas e os pontos são a **Marca final**. Os passos estão em [Livros de páginas compostas › Desenhar uma árvore com conectores](/pt/docs/composed-page-books#8-desenhar-uma-árvore-com-conectores).
+4. **Faça as notas apontarem para a imagem.** Uma linha de uma nota até um lugar de um mapa vira um indicador: ponha uma âncora na imagem, nesse lugar (a janela Âncoras), escolha a nota no modo Design e arraste a alça redonda dela até a âncora. A linha termina nesse ponto da imagem, sejam quais forem o corte e a escala; veja [Livros de páginas compostas › Notas num mapa, com indicadores e legenda](/pt/docs/composed-page-books#9-notas-num-mapa-com-indicadores-e-legenda).
+5. **Compare a página** com a antiga, em cada idioma, e abra **Verificações**: um conector com uma ponta num bloco que a página não mostra fica de fora dessa página, e o registro de reajustes diz isso.
+
+## De um modelo por página a grades e módulos
+
+Um livro levado bloco a bloco tem um modelo para cada desenho de página, e o mesmo cartão ou a mesma caixa desenhados de novo em cada um: seis blocos de foto com seis blocos de legenda, uma caixa com a sua imagem copiada em três modelos. **Reorganizar blocos**, no editor de modelos, transforma esses blocos numa grade que repete um cartão e num módulo que qualquer página pode conter, e reescreve cada página diagramada com o modelo para que ela fique como estava.
+
+O livro para estes passos é *Places of the river, before grids*: uma página cujo modelo desenha seis cartões de foto, um bloco de cada vez (`photo1` a `photo6`, cada um com uma pílula de legenda, `caption1` a `caption6`), e uma caixa `fact` com uma imagem `fact-picture` ao lado do texto. As palavras são inventadas. [Baixe o livro](/docs-examples/river-places-before.postext) e, no Sandbox, abra **Livros**, clique em **Novo** e escolha **Abrir um arquivo .postext…**.
+
+1. Passe para **Design** e abra **Design › Página e colunas › Modelos de página**. O modelo *Places of the river* fica aberto.
+2. Em **Reorganizar blocos**, marque `photo1` a `photo6` e `caption1` a `caption6` e clique em **Transformar em grade**. O Sandbox lê os cartões na página: três colunas a 8 mm uma da outra, duas linhas. Ele escreve um grupo `grid` que repete `photo` e `caption`, e informa *Grade grid criada: 3 colunas, 6 cartões. Páginas reescritas: 1.* A página continua igual.
+3. Marque `fact` e `fact-picture`, digite `fact` em **Nome do módulo** e clique em **Extrair um módulo**. A caixa e a imagem dela passam para um módulo `fact`; o modelo ganha, no lugar onde elas estavam, um grupo que recebe módulos.
+
+<Screenshot src="/docs-shots/pt/reshape.webp" alt="O editor de modelos em Reorganizar blocos, com os doze blocos de foto e de legenda marcados, e a página de seis cartões de foto e uma caixa desenhados com contornos tracejados." caption="Os blocos escolhidos para a grade: seis cartões, cada um uma foto com a sua legenda." />
+
+O Markdown muda junto com o modelo. Antes, cada trecho indicava o próprio bloco:
+
+```md
+:::frame{slot="photo1"}
+::resource{id="spring"}
+:::
+
+:::frame{slot="caption1"}
+The spring
+:::
+```
+
+Depois, cada cartão é um trecho `photo` com a legenda dentro, e a caixa é um módulo:
+
+```md
+:::frame{slot="photo"}
+::resource{id="spring"}
+
+:::frame{slot="caption"}
+The spring
+:::
+:::
+
+:::module{template="fact"}
+:::frame{slot="fact" label="Did you know?"}
+Volunteers clean the banks of the river every spring.
+:::
+
+:::frame{slot="fact-picture"}
+::resource{id="banks"}
+:::
+:::
+```
+
+Um sétimo cartão passa a ser só mais um trecho `photo` no Markdown, e outra página pode conter a caixa `fact` sem blocos próprios: insira-a a partir de **Design › Página e colunas › Módulos**. As duas reorganizações são passos do histórico (um por capítulo reescrito e um para o design), e **Desfazer**, em **Reorganizar blocos**, as desfaz enquanto forem as últimas. Quando uma reorganização não pode ser feita, ela diz por quê: cartões de larguras diferentes, cartões que não ficam numa mesma grade, blocos herdados de outro modelo, um modelo que já tem um grupo de módulos. Cada campo que a reorganização escreve está descrito em [Sandbox: as páginas compostas › Grades e módulos](/pt/docs/sandbox-composed-pages#grades-e-módulos).

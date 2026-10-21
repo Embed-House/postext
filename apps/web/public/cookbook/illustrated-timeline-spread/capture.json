@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "illustrated-timeline-spread",
-  "sourceHash": "8f37078b34e0285846a19eab4ea62c9878033de65a673d5e37223d88755bc8f3",
+  "sourceHash": "02c95cdca06fa44247908b36e4c3d135b87915d56790eed725e302a654fd7bbe",
   "engine": {
-    "postext": "1.42.1",
-    "postextPdf": "1.42.1",
+    "postext": "1.48.0",
+    "postextPdf": "1.48.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-18T09:21:29.202Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-20T20:39:00.223Z",
   "variants": {
     "en": {
-      "hash8": "9a71c194",
+      "hash8": "db520a14",
       "vdtHash": "fb3a73b64e2b429f88af05d004d869bbe1ac483a",
       "timings": {
-        "importMs": 1155,
-        "fontsMs": 618,
-        "buildMs": 80,
-        "totalMs": 2538,
+        "importMs": 4779,
+        "fontsMs": 3332,
+        "buildMs": 79,
+        "totalMs": 10521,
         "builds": 1
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Literata"
         ],
         "pages": 2,
-        "ownLines": 196
+        "ownLines": 187
       },
       "pages": [
         {
@@ -49,7 +49,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 107580,
+          "bytes": 107198,
           "alt": "Page 48: The paper road."
         },
         {
@@ -60,7 +60,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 117890,
+          "bytes": 117490,
           "alt": "Page 49."
         }
       ],
@@ -84,12 +84,12 @@
       },
       "pdf": {
         "file": "illustrated-timeline-spread.pdf",
-        "bytes": 988057,
+        "bytes": 987252,
         "pages": 2
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 977909,
+        "bytes": 977505,
         "folio": "c666e036",
         "chapters": [
           {
@@ -240,12 +240,10 @@
           "pageTemplates[].frames[].height",
           "pageTemplates[].frames[].layer",
           "pageTemplates[].frames[].minHeight",
-          "pageTemplates[].frames[].minWidth",
           "pageTemplates[].frames[].name",
           "pageTemplates[].frames[].optional",
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
@@ -255,11 +253,14 @@
           "pageTemplates[].grid.rowGap",
           "pageTemplates[].grid.rows",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].grid",
           "pageTemplates[].groups[].kind",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].repeat",
           "pageTemplates[].gutter",
           "pageTemplates[].id",
           "pageTemplates[].spread",
@@ -289,8 +290,8 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 516,
-        "designElements": 17,
+        "configLeaves": 380,
+        "designElements": 7,
         "directives": [
           "::::page",
           ":::frame",
@@ -371,6 +372,11 @@
             "detail": "every element came back to its source: 24 block, 14 frame, 86 line, 2 text"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -379,13 +385,13 @@
       }
     },
     "es": {
-      "hash8": "90503bcb",
-      "vdtHash": "834a27fa2582bfd511301f56ade476d44326f435",
+      "hash8": "74c380ed",
+      "vdtHash": "e8daf4ae63733680e981ccc1ccde383ae4891c3b",
       "timings": {
-        "importMs": 1153,
-        "fontsMs": 619,
-        "buildMs": 83,
-        "totalMs": 2535,
+        "importMs": 5042,
+        "fontsMs": 1240,
+        "buildMs": 104,
+        "totalMs": 8143,
         "builds": 1
       },
       "specimen": {
@@ -406,7 +412,7 @@
           "Literata"
         ],
         "pages": 2,
-        "ownLines": 196
+        "ownLines": 187
       },
       "pages": [
         {
@@ -417,7 +423,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 109820,
+          "bytes": 109344,
           "alt": "Página 48: La ruta del papel."
         },
         {
@@ -428,7 +434,7 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 119152,
+          "bytes": 118704,
           "alt": "Página 49."
         }
       ],
@@ -452,18 +458,18 @@
       },
       "pdf": {
         "file": "illustrated-timeline-spread.pdf",
-        "bytes": 988964,
+        "bytes": 988123,
         "pages": 2
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 978162,
+        "bytes": 978004,
         "folio": "c666e036",
         "chapters": [
           {
             "pages": 2,
-            "hash": "32b7ddc30ad6f63b",
-            "lines": "c7f7acc92d9739f7"
+            "hash": "9ca66f392b41dcbf",
+            "lines": "84faec2ff2f47055"
           }
         ]
       },
@@ -608,12 +614,10 @@
           "pageTemplates[].frames[].height",
           "pageTemplates[].frames[].layer",
           "pageTemplates[].frames[].minHeight",
-          "pageTemplates[].frames[].minWidth",
           "pageTemplates[].frames[].name",
           "pageTemplates[].frames[].optional",
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
@@ -623,11 +627,14 @@
           "pageTemplates[].grid.rowGap",
           "pageTemplates[].grid.rows",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].grid",
           "pageTemplates[].groups[].kind",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].repeat",
           "pageTemplates[].gutter",
           "pageTemplates[].id",
           "pageTemplates[].spread",
@@ -657,8 +664,8 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 516,
-        "designElements": 17,
+        "configLeaves": 380,
+        "designElements": 7,
         "directives": [
           "::::page",
           ":::frame",
@@ -741,12 +748,22 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 24 block, 14 frame, 88 line, 2 text"
+            "detail": "every element came back to its source: 24 block, 14 frame, 89 line, 2 text"
           },
           {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La hoja se prensa entre fieltros y se cuelga par…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",
@@ -757,13 +774,13 @@
       }
     },
     "ja": {
-      "hash8": "2840ae2f",
-      "vdtHash": "2b526de5c932e9bb3be6e0094343b851233d308f",
+      "hash8": "e403924a",
+      "vdtHash": "c9b661e94c2d2a33ed046a29bb2ac52e3d8b4ca8",
       "timings": {
-        "importMs": 1153,
-        "fontsMs": 1178,
-        "buildMs": 72,
-        "totalMs": 3058,
+        "importMs": 5691,
+        "fontsMs": 5046,
+        "buildMs": 97,
+        "totalMs": 12591,
         "builds": 1
       },
       "specimen": {
@@ -784,7 +801,7 @@
           "Noto Serif JP"
         ],
         "pages": 2,
-        "ownLines": 196
+        "ownLines": 187
       },
       "pages": [
         {
@@ -795,7 +812,7 @@
           "h": 1224,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85580,
+          "bytes": 85242,
           "alt": "48ページ：紙がたどった道。"
         },
         {
@@ -806,7 +823,7 @@
           "h": 1224,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 96146,
+          "bytes": 95874,
           "alt": "49ページ。"
         }
       ],
@@ -830,18 +847,18 @@
       },
       "pdf": {
         "file": "illustrated-timeline-spread.pdf",
-        "bytes": 1116589,
+        "bytes": 1115662,
         "pages": 2
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 976340,
+        "bytes": 976177,
         "folio": "c666e036",
         "chapters": [
           {
             "pages": 2,
-            "hash": "1ee5c6dcc88cfc6e",
-            "lines": "28742c2035cb6ae0"
+            "hash": "33393cd83274f86e",
+            "lines": "2b3d7834c19d1b86"
           }
         ]
       },
@@ -986,12 +1003,10 @@
           "pageTemplates[].frames[].height",
           "pageTemplates[].frames[].layer",
           "pageTemplates[].frames[].minHeight",
-          "pageTemplates[].frames[].minWidth",
           "pageTemplates[].frames[].name",
           "pageTemplates[].frames[].optional",
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
@@ -1001,11 +1016,14 @@
           "pageTemplates[].grid.rowGap",
           "pageTemplates[].grid.rows",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].grid",
           "pageTemplates[].groups[].kind",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].repeat",
           "pageTemplates[].gutter",
           "pageTemplates[].id",
           "pageTemplates[].spread",
@@ -1035,8 +1053,8 @@
           "pageTemplates",
           "resourceTypes"
         ],
-        "configLeaves": 516,
-        "designElements": 17,
+        "configLeaves": 380,
+        "designElements": 7,
         "directives": [
           "::::page",
           ":::frame",
@@ -1108,7 +1126,7 @@
         "cjkLooseLines": {
           "count": 0,
           "share": 0,
-          "worst": 0.12
+          "worst": 0.21
         },
         "raggedLines": {
           "count": 0
@@ -1117,7 +1135,17 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 24 block, 14 frame, 63 line, 2 text"
+            "detail": "every element came back to its source: 24 block, 14 frame, 64 line, 2 text"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           },
           {
             "check": "sandbox",

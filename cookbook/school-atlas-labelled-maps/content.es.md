@@ -2,7 +2,7 @@
 title: "Atlas escolar de Varenia"
 ---
 
-::::page{template="sheet" unit="Lámina 1 · Situación"}
+::::page{template="locator" unit="Lámina 1 · Situación"}
 # Varenia en el mapa
 
 Varenia es un país del sur del continente. Al norte limita con Ostelia y al este con Brunavia. Al oeste la baña el mar de Lira, y al sur, el océano Brumoso, que entra en la costa por el golfo de Sora. Tiene unos 40 000 km² y cerca de cuatro millones de habitantes.
@@ -17,14 +17,14 @@ La capital, Almaren, está junto al río Merel, a pocos kilómetros del lago Orm
 ::label[Mar de Lira]{at="lira"}
 ::label[Océano Brumoso]{at="ocean"}
 ::label[Almaren]{at="almaren"}
+:::label{at="key" style="legend"}
+**Leyenda**
+:icon[]{resource="key-mark" color="country"} Varenia
+:icon[]{resource="key-mark" color="land"} Otros países
+:icon[]{resource="key-mark" color="sea"} Mar y océano
+:icon[]{line="dashed" color="border"} Frontera
+:icon[]{resource="key-mark" color="ink"} Capital
 :::
-
-:::frame{slot="key" title="Leyenda"}
-:swatch{color="country"} Varenia \\
-:swatch{color="land"} Otros países \\
-:swatch{color="sea"} Mar y océano \\
-:swatch{color="border"} Frontera \\
-:swatch{color="ink"} Capital
 :::
 
 :::frame{slot="tasks" title="Actividades"}

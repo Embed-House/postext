@@ -10,7 +10,12 @@
  *   it;
  * - a drag on the page off every frame draws a new frame;
  * - the box snaps to the margins, the template grid and the other frames
- *   (Alt held: no snapping); Escape cancels.
+ *   (Alt held: no snapping); Escape cancels;
+ * - the round grip beside the selected frame's side draws a pointer
+ *   (#1064): dragged onto an anchor of the picture another frame holds, it
+ *   writes a connector from the frame to that anchor into the template's
+ *   decoration (`setPointer`), or keeps the one already there. The frame's
+ *   properties list the pointers for the keyboard.
  *
  * On release the box is written back into the template in millimetres
  * (`frameBoxPatch`). When other pages use the template too, a question on
@@ -25,7 +30,7 @@
  */
 
 import type { Dispatch, MutableRefObject } from 'react';
-import { resolvePageTemplate, type PostextConfig, type ResolvedPageTemplate, type VDTComposedPage, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
+import { flowToPage, resolvePageTemplate, type PostextConfig, type ResolvedPageTemplate, type VDTComposedPage, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
 import type { SandboxAction } from '../../context/SandboxContext';
 import type { ComposedBook } from '../../book/types';
 import { segmentAtOffset } from '../../book/compose';
@@ -62,6 +67,8 @@ import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage, templateDisp
 import { countTemplatePages, fenceTemplateChange, templateFences } from '../../templates/templateUsage';
 import { nextFrameName } from '../../templates/frameChain';
 import { flowBoxOnSheet, frameHitAt, sheetToFlow } from './frameHit';
+import { setPointer } from '../../templates/pointerEdits';
+import { frameAnchorAt, frameAnchorsOnPage, type FrameAnchorPoint } from './labelAnchorGeometry';
 import { selectFrame as pickFrame } from '../../editing/editMode';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -86,7 +93,19 @@ const COLORS = {
   label: '#ffffff',
   // A connector's ends (#1063): its start filled, the ends it goes to open.
   connector: '#b3127a',
+  pointer: '#0f766e',
 };
+/** CSS px from the selected frame's side to its pointer grip, its radius,
+ *  and how near an anchor the pointer must be dropped. */
+const GRIP_GAP_CSS_PX = 12;
+const GRIP_CSS_PX = 6;
+const ANCHOR_DROP_CSS_PX = 14;
+
+/** Where the pointer grip of a frame stands (flow px): beside the middle of
+ *  its end side, `gap` out. */
+export function pointerGripOf(rect: Rect, gap: number): { x: number; y: number } {
+  return { x: rect.x + rect.width + gap, y: rect.y + rect.height / 2 };
+}
 
 export interface FrameEditorRefs {
   docRef: MutableRefObject<VDTDocument | null>;
@@ -98,7 +117,7 @@ export interface FrameEditorRefs {
 
 interface Drag {
   pointerId: number;
-  kind: 'frame' | 'draw';
+  kind: 'frame' | 'draw' | 'pointer';
   handle: Handle;
   frame?: VDTFrame;
   startX: number;
@@ -109,6 +128,10 @@ interface Drag {
   rect: Rect;
   guideX?: number;
   guideY?: number;
+  /** A pointer being drawn (#1064): the pointer on the sheet and the anchor
+   *  under it. */
+  sheet?: { x: number; y: number };
+  target?: FrameAnchorPoint | null;
 }
 
 interface Instance {
@@ -139,7 +162,7 @@ function pageTemplate(config: PostextConfig, composed: VDTComposedPage): Resolve
   return resolvePageTemplate(config, composed.template, { ...(composed.variant ? { parity: composed.variant } : {}), ...(composed.modules ? { modules: composed.modules } : {}) });
 }
 
-const dragKind = (d: { kind: 'frame' | 'draw'; handle: Handle }): FrameDragKind => (d.kind === 'draw' ? 'draw' : d.handle === 'move' ? 'move' : 'resize');
+const dragKind = (d: { kind: 'frame' | 'draw' | 'pointer'; handle: Handle }): FrameDragKind => (d.kind === 'draw' ? 'draw' : d.handle === 'move' ? 'move' : 'resize');
 
 export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidthPx: number, pageHeightPx: number, refs: FrameEditorRefs): void {
   const svg = svgEl('svg', { viewBox: `0 0 ${pageWidthPx} ${pageHeightPx}`, preserveAspectRatio: 'none', 'aria-hidden': 'true' });
@@ -236,7 +259,14 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     if (!found || !c) return;
     const g = geometry();
     const frames = new Map(c.frames.map((f) => [f.name, f.rect]));
-    const handles = connectorHandles(found.el, { frames, ...(g ? { groups: g.template.groups } : {}) }, (end) => (end.gap ? mmToPx(dimensionToMm(end.gap), dpi()) : 0));
+    // An end at a picture's anchor (#1064) is drawn at the anchor's point,
+    // read on the sheet and taken into the flow frame the marks are drawn in.
+    const anchors = anchorsHere();
+    const anchorPoint = (frame: string, anchor: string) => {
+      const a = anchors.find((p) => p.frame === frame && p.anchorId === anchor);
+      return a ? sheetToFlow(page(), a.point.x, a.point.y) : undefined;
+    };
+    const handles = connectorHandles(found.el, { frames, anchorPoint, ...(g ? { groups: g.template.groups } : {}) }, (end) => (end.gap ? mmToPx(dimensionToMm(end.gap), dpi()) : 0));
     if (found.focus.phase) {
       for (const h of handles) {
         const r = frames.get(h.name);
@@ -249,6 +279,25 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       dot.dataset.connectorEnd = String(h.end);
       root.appendChild(dot);
     }
+  };
+
+  /** The anchors of the pictures in this page's frames, on the sheet. */
+  const anchorsHere = (): FrameAnchorPoint[] => {
+    const doc = refs.docRef.current;
+    if (!doc) return [];
+    const resources = templateEditorHost()?.getState().resources ?? [];
+    return frameAnchorsOnPage(doc, pageIndex, (id) => resources.find((r) => r.id === id)?.anchors);
+  };
+  /** A frame's pointer grip on the sheet. */
+  const gripOnSheet = (f: VDTFrame): { x: number; y: number } => {
+    const grip = pointerGripOf(f.rect, GRIP_GAP_CSS_PX * sheetPerCss());
+    const p = page();
+    return p?.flow ? flowToPage(p, grip.x, grip.y) : grip;
+  };
+  const sheetAt = (ev: MouseEvent): { x: number; y: number } | null => {
+    const r = slot.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return null;
+    return { x: (ev.clientX - r.left) * (pageWidthPx / r.width), y: (ev.clientY - r.top) * (pageHeightPx / r.height) };
   };
 
   const paint = (): void => {
@@ -317,7 +366,29 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
       }
     }
     paintConnector(root, k, lw);
-    const ghost = drag?.started ? drag.rect : pending;
+    // The pointer grip of the selected frame, and the pointer being drawn
+    // with the anchors it may end at (#1064).
+    if (selected && !selected.rotate && !pending && !(drag?.started && drag.kind !== 'pointer')) {
+      const grip = pointerGripOf(selected.rect, GRIP_GAP_CSS_PX * k);
+      root.appendChild(svgEl('line', { x1: selected.rect.x + selected.rect.width, y1: grip.y, x2: grip.x, y2: grip.y, stroke: COLORS.pointer, 'stroke-width': lw }));
+      root.appendChild(svgEl('circle', { cx: grip.x, cy: grip.y, r: GRIP_CSS_PX * k, fill: COLORS.pointer, stroke: '#ffffff', 'stroke-width': lw }));
+    }
+    if (drag?.kind === 'pointer' && drag.started && drag.sheet && drag.frame) {
+      const from = gripOnSheet(drag.frame);
+      for (const a of anchorsHere()) {
+        if (a.frame === drag.frame.name) continue;
+        const on = drag.target?.frame === a.frame && drag.target.anchorId === a.anchorId;
+        svg.appendChild(svgEl('circle', { cx: a.point.x, cy: a.point.y, r: (on ? 7 : 4.5) * k, fill: on ? COLORS.pointer : 'rgba(255,255,255,0.85)', stroke: COLORS.pointer, 'stroke-width': 1.5 * lw }));
+      }
+      const end = drag.target?.point ?? drag.sheet;
+      svg.appendChild(svgEl('line', { x1: from.x, y1: from.y, x2: end.x, y2: end.y, stroke: COLORS.pointer, 'stroke-width': 1.5 * lw, 'stroke-dasharray': drag.target ? '' : `${4 * k} ${3 * k}` }));
+      if (drag.target) {
+        const tag = svgEl('text', { x: end.x + 9 * k, y: end.y - 7 * k, 'font-size': 11 * k, fill: COLORS.pointer, 'font-family': 'system-ui, sans-serif', 'paint-order': 'stroke', stroke: '#ffffff', 'stroke-width': 3 * k });
+        tag.textContent = `${drag.target.frame} · ${drag.target.anchorId}`;
+        svg.appendChild(tag);
+      }
+    }
+    const ghost = drag?.started && drag.kind !== 'pointer' ? drag.rect : pending;
     if (ghost) {
       root.appendChild(svgEl('rect', { x: ghost.x, y: ghost.y, width: ghost.width, height: ghost.height, fill: COLORS.ghost, stroke: COLORS.frame, 'stroke-width': 1.5 * lw }));
       if (drag?.guideX !== undefined) root.appendChild(svgEl('line', { x1: drag.guideX, y1: 0, x2: drag.guideX, y2: flowH, stroke: COLORS.guide, 'stroke-width': lw }));
@@ -438,6 +509,15 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     const g = geometry();
     if (!g) return;
     const templates = g.config.pageTemplates ?? [];
+    if (d.kind === 'pointer') {
+      // A pointer dropped on an anchor of another frame's picture: written
+      // into the page's template (every page it lays draws it).
+      const target = d.target;
+      if (!target || !d.frame) return;
+      const out = setPointer(templates, g.c.template, { from: d.frame.name, toFrame: target.frame, anchor: target.anchorId });
+      if (out) writeTemplates(out.templates);
+      return;
+    }
     if (d.kind === 'draw') {
       const min = MIN_DRAW_CSS_PX * sheetPerCss();
       if (d.rect.width < min || d.rect.height < min) return;
@@ -529,6 +609,19 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     }
     const tol = HANDLE_CSS_PX * sheetPerCss();
     const selected = selectedHere();
+    if (selected && !selected.rotate) {
+      const grip = pointerGripOf(selected.rect, GRIP_GAP_CSS_PX * sheetPerCss());
+      if (Math.hypot(at.x - grip.x, at.y - grip.y) <= Math.max(tol, GRIP_CSS_PX * sheetPerCss() * 1.5)) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        handledPress = true;
+        try { slot.setPointerCapture(ev.pointerId); } catch { /* not capturable */ }
+        window.addEventListener('keydown', onEscape, true);
+        drag = { pointerId: ev.pointerId, kind: 'pointer', handle: 'move', frame: selected, startX: at.x, startY: at.y, startClientX: ev.clientX, startClientY: ev.clientY, started: false, rect: { ...selected.rect }, sheet: sheetAt(ev) ?? undefined, target: null };
+        paint();
+        return;
+      }
+    }
     const onSelected = selected && !selected.rotate ? handleAt(selected.rect, at.x, at.y, tol) : null;
     const hit = onSelected ? selected! : frameHitAt(page(), at.x, at.y);
     ev.preventDefault();
@@ -556,7 +649,15 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
         const dy = ev.clientY - drag.startClientY;
         if (dx * dx + dy * dy < DRAG_START_CSS_PX * DRAG_START_CSS_PX) return;
         drag.started = true;
-        emitFrameEditorEvent({ type: 'dragStart', pageIndex, kind: dragKind(drag), handle: drag.handle, ...(drag.frame ? { frame: drag.frame.name } : {}), rect: { ...drag.rect } });
+        if (drag.kind !== 'pointer') emitFrameEditorEvent({ type: 'dragStart', pageIndex, kind: dragKind(drag), handle: drag.handle, ...(drag.frame ? { frame: drag.frame.name } : {}), rect: { ...drag.rect } });
+      }
+      if (drag.kind === 'pointer') {
+        const sheet = sheetAt(ev);
+        if (!sheet) return;
+        drag.sheet = sheet;
+        drag.target = frameAnchorAt(anchorsHere(), sheet.x, sheet.y, ANCHOR_DROP_CSS_PX * sheetPerCss(), drag.frame?.name);
+        paint();
+        return;
       }
       const g = geometry();
       const raw = drag.kind === 'draw'
@@ -589,6 +690,11 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     }
     const selected = selectedHere();
     const handle = selected && !selected.rotate ? handleAt(selected.rect, at.x, at.y, HANDLE_CSS_PX * sheetPerCss()) : null;
+    const grip = selected && !selected.rotate ? pointerGripOf(selected.rect, GRIP_GAP_CSS_PX * sheetPerCss()) : null;
+    if (grip && Math.hypot(at.x - grip.x, at.y - grip.y) <= GRIP_CSS_PX * sheetPerCss() * 1.5) {
+      slot.style.cursor = 'crosshair';
+      return;
+    }
     slot.style.cursor = cursorFor(handle, !!frameHitAt(page(), at.x, at.y));
   }, true);
 
@@ -598,7 +704,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     ev.stopPropagation();
     ev.preventDefault();
     const pointerId = drag.pointerId;
-    emitFrameEditorEvent({ type: 'cancel', pageIndex, ...(drag.frame ? { frame: drag.frame.name } : {}) });
+    if (drag.kind !== 'pointer') emitFrameEditorEvent({ type: 'cancel', pageIndex, ...(drag.frame ? { frame: drag.frame.name } : {}) });
     drag = null;
     window.removeEventListener('keydown', onEscape, true);
     try { slot.releasePointerCapture(pointerId); } catch { /* not captured */ }
@@ -613,7 +719,7 @@ export function attachFrameEditor(slot: HTMLElement, pageIndex: number, pageWidt
     window.removeEventListener('keydown', onEscape, true);
     try { slot.releasePointerCapture(ev.pointerId); } catch { /* not captured */ }
     if (ev.type === 'pointerup' && d.started) commit(d);
-    else if (d.started) emitFrameEditorEvent({ type: 'cancel', pageIndex, ...(d.frame ? { frame: d.frame.name } : {}) });
+    else if (d.started && d.kind !== 'pointer') emitFrameEditorEvent({ type: 'cancel', pageIndex, ...(d.frame ? { frame: d.frame.name } : {}) });
     paint();
   };
   slot.addEventListener('pointerup', end, true);

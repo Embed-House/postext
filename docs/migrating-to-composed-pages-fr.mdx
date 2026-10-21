@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Passer un livre aux pages composées',
   sidebarTitle: 'Passer aux pages composées',
-  description: 'Comment convertir un livre qui range le texte de ses pages dans des styles de titre en gabarits de page et en Markdown, avec l’assistant Déplacer le texte dans le Markdown du Sandbox ou à la main, et ce qu’il faut vérifier ensuite',
+  description: 'Comment convertir un livre qui range le texte de ses pages dans des styles de titre en gabarits de page et en Markdown, avec l’assistant Déplacer le texte dans le Markdown du Sandbox ou à la main, ce qu’il faut vérifier ensuite, et comment remplacer les lignes peintes dans une image par des connecteurs et les blocs dessinés un par un par des grilles et des modules',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
-  readingTime: '8 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '13 min',
   order: 44,
-  plainSummary: "Certains livres faits avec Postext avant les pages composées gardent les mots de chaque page dans les réglages de maquette, et non dans le texte. Ils sont alors difficiles à corriger et impossibles à traduire. Cette page montre comment faire passer ces mots dans le Markdown, où chaque page devient un bloc avec son propre gabarit. Le Sandbox fait presque tout le travail avec un seul bouton, et vous vérifiez le résultat page par page. Elle explique aussi comment faire la même chose à la main, page par page.",
+  plainSummary: "Certains livres faits avec Postext avant les pages composées gardent les mots de chaque page dans les réglages de maquette, et non dans le texte. Ils sont alors difficiles à corriger et impossibles à traduire. Cette page montre comment faire passer ces mots dans le Markdown, où chaque page devient un bloc avec son propre gabarit. Le Sandbox fait presque tout le travail avec un seul bouton, et vous vérifiez le résultat page par page. Elle explique aussi comment faire la même chose à la main, page par page. La dernière partie remplace les lignes peintes dans une image par des lignes que trace la mise en page, et les blocs dessinés un par un par une grille ou un module.",
 };
 
 # Passer un livre aux pages composées
@@ -77,3 +77,61 @@ Un livre de quelques pages peut être converti sans l’assistant, une page à l
 4. Comparez la page avec l’ancienne et ouvrez **Vérifications**.
 
 La même migration existe dans le code : `moveTextToMarkdown` renvoie la nouvelle configuration, les chapitres et le rapport qu’affiche la fenêtre ; voir [Pages composées › Migrer un livre dont le texte est dans ses styles](/fr/docs/composed-pages#migrer-un-livre-dont-le-texte-est-dans-ses-styles). Tout ce que fait la fenêtre est décrit dans [Sandbox : les pages composées › Déplacer le texte dans le Markdown](/fr/docs/sandbox-composed-pages#déplacer-le-texte-dans-le-markdown).
+
+## Des lignes d’une image aux connecteurs
+
+Une ancienne adaptation garde souvent les lignes de ses schémas dans une image : les branches d’un arbre, les boîtes d’un organigramme, les lignes de rappel d’une note vers une carte, peintes dans un fond sur lequel les boîtes sont posées. Les mots ne s’accordent alors aux lignes que dans la langue et à la taille pour lesquelles l’image a été dessinée : dans une traduction, un mot plus long passe sur une ligne, et une boîte qui grandit laisse sa ligne derrière elle. Les connecteurs dessinent les mêmes lignes à partir des boîtes des blocs une fois la page composée : ils suivent donc le texte.
+
+1. **Dessinez les boîtes comme des blocs.** Chaque boîte du schéma devient un bloc du gabarit, avec le style de boîte de l’ancienne boîte. Pour une série de boîtes identiques, une grille qui répète un bloc convient mieux (section suivante).
+2. **Retirez les lignes de l’image.** Utilisez l’image sans ses lignes, ou supprimez-la si elle ne contenait rien d’autre ; un fond qui reste (un papier, un aplat de couleur) devient une boîte du décor ou l’attribut `background` de la page.
+3. **Ajoutez un connecteur** pour chaque ensemble de lignes, dans le décor du gabarit (**Décor › Ajouter un connecteur**). **Part de** est la boîte parente ; sous **Va vers**, appuyez sur chaque enfant, ou sur *Chaque …* pour toutes les cartes d’une grille. Un arbre de branches prend le **Tracé** *Arbre* ; une ligne entre deux boîtes, *Coude* ou *Droit* ; les flèches et les points sont la **Marque d'arrivée**. Les étapes sont dans [Livres de pages composées › Dessiner un arbre avec des connecteurs](/fr/docs/composed-page-books#8-dessiner-un-arbre-avec-des-connecteurs).
+4. **Faites pointer les notes vers l’image.** Une ligne qui va d’une note à un endroit d’une carte devient un renvoi : posez une ancre sur l’image à cet endroit (la fenêtre Ancres), choisissez la note en mode Maquette et faites glisser sa poignée ronde sur l’ancre. La ligne aboutit à ce point de l’image, quels que soient son recadrage et son échelle ; voir [Livres de pages composées › Des notes sur une carte, avec des renvois et une légende](/fr/docs/composed-page-books#9-des-notes-sur-une-carte-avec-des-renvois-et-une-légende).
+5. **Comparez la page** avec l’ancienne, dans chaque langue, et ouvrez **Vérifications** : un connecteur dont une extrémité est sur un bloc que la page ne montre pas est omis de cette page, et le journal de recomposition le signale.
+
+## D’un gabarit par page aux grilles et aux modules
+
+Une adaptation faite bloc par bloc a un gabarit par mise en page, et la même carte ou la même boîte redessinée dans chacun : six blocs de photo avec six blocs de légende, une boîte et son image copiées dans trois gabarits. **Réorganiser les blocs**, dans l’éditeur de gabarits, les transforme en une grille qui répète une carte et en un module que n’importe quelle page peut contenir, et réécrit chaque page composée avec le gabarit pour qu’elle garde son aspect.
+
+Le livre de ces étapes est *Places of the river, before grids* : une page dont le gabarit dessine six cartes avec photo, bloc par bloc (`photo1` à `photo6`, chacune avec une pastille de légende, `caption1` à `caption6`), et une boîte `fact` avec une image `fact-picture` à côté de son texte. Les mots sont inventés. [Téléchargez le livre](/docs-examples/river-places-before.postext) et, dans le Sandbox, ouvrez **Livres**, appuyez sur **Nouveau** et choisissez **Ouvrir un fichier .postext…**.
+
+1. Passez en **Maquette** et ouvrez **Maquette › Page et colonnes › Gabarits de page**. Le gabarit *Places of the river* est ouvert.
+2. Sous **Réorganiser les blocs**, cochez `photo1` à `photo6` et `caption1` à `caption6`, et appuyez sur **Transformer en grille**. Le Sandbox lit les cartes sur la page : trois colonnes espacées de 8 mm, deux rangées. Il écrit un groupe `grid` qui répète `photo` et `caption`, et affiche *Grille grid créée : 3 colonnes, 6 cartes. Pages réécrites : 1.* La page garde le même aspect.
+3. Cochez `fact` et `fact-picture`, tapez `fact` dans **Nom du module** et appuyez sur **Extraire un module**. La boîte et son image passent dans un module `fact` ; là où elles se trouvaient, le gabarit a maintenant un groupe qui reçoit les modules.
+
+<Screenshot src="/docs-shots/fr/reshape.webp" alt="L’éditeur de gabarits sur Réorganiser les blocs, avec les douze blocs de photo et de légende cochés, et la page de six cartes avec photo et une boîte, tracées en pointillés." caption="Les blocs choisis pour la grille : six cartes, chacune une photo avec sa légende." />
+
+Le Markdown change avec le gabarit. Avant, chaque morceau désignait son propre bloc :
+
+```md
+:::frame{slot="photo1"}
+::resource{id="spring"}
+:::
+
+:::frame{slot="caption1"}
+The spring
+:::
+```
+
+Après, chaque carte est un seul morceau `photo` qui contient sa légende, et la boîte est un module :
+
+```md
+:::frame{slot="photo"}
+::resource{id="spring"}
+
+:::frame{slot="caption"}
+The spring
+:::
+:::
+
+:::module{template="fact"}
+:::frame{slot="fact" label="Did you know?"}
+Volunteers clean the banks of the river every spring.
+:::
+
+:::frame{slot="fact-picture"}
+::resource{id="banks"}
+:::
+:::
+```
+
+Une septième carte n’est plus qu’un morceau `photo` de plus dans le Markdown, et une autre page peut contenir la boîte `fact` sans avoir de blocs à elle : insérez-la depuis **Maquette › Page et colonnes › Modules**. Les deux réorganisations sont des étapes de l’historique (une par chapitre réécrit et une pour la maquette), et **Annuler**, sous **Réorganiser les blocs**, les défait tant qu’elles sont les dernières. Quand une réorganisation est impossible, elle dit pourquoi : des cartes de largeurs différentes, des cartes qui ne sont pas sur une même grille, des blocs hérités d’un autre gabarit, un gabarit qui a déjà un groupe de modules. Chaque champ qu’écrit une réorganisation est décrit dans [Sandbox : les pages composées › Grilles et modules](/fr/docs/sandbox-composed-pages#grilles-et-modules).

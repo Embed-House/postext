@@ -280,7 +280,7 @@ What the extraction decides, so you know what to check:
   span is compared with a render of the page without text: a copy drawn
   under a picture or a fill, clipped away or off the page is left out and
   listed under `hiddenTexts` in the report.
-- **Shapes.** Large white fills are cards (kept in the ground); filled or
+- **Shapes.** Large white fills are cards; filled or
   stroked rectangles and rounded rectangles that hold text or pictures are
   boxes; a shape 4–13 mm high holding one line of up to ten words is a tab
   (on a box's top edge: the box's `label`; alone: a frame of its own; with
@@ -288,6 +288,32 @@ What the extraction decides, so you know what to check:
   under many drawn shapes is a map's ground, not a box; wide coloured
   strokes or fills hugging words are highlights (`:mark`, or `:chip` with
   `--highlights chip`). A shape a render does not show is not read.
+- **Vector decoration** (round 2; `--raster-ground` keeps round 1's JPEG
+  per page). The template's decoration draws, in paint order: the page's
+  colour (a `box` to the bleed), each card (a `box` with its corner radii;
+  a card with a title tab of its own colour grown out of its top edge is one
+  `path` outline, and the tab frame keeps only its words), borders with no
+  words of their own (a `box` from the first frame it holds to a box of no
+  size off the last one's foot, so it grows with them: never an empty
+  `:::frame`), loose shapes (icons, chevrons: `path` elements), lines that
+  join nothing (`path`), and `connector`s. Thin strokes (`--line-width`,
+  2 pt) straight across or down are lines, never boxes or a picture's art:
+  a bar with one trunk to a frame and drops to two or more is a `tree`
+  (each end found by walking the line to the first frame it reaches, the
+  bar's place as `trunk`, a drop's place as `at`); two or three segments
+  end to end between two frames an `elbow`; a single segment a `straight`
+  connector for each run between two frames it passes (under a pill and a
+  photo alike, as the source draws it). A line that ends deep inside a
+  picture and was painted after it (the page's paint order) points into it:
+  the end is a new anchor `pointer-N` of that picture's resource and the
+  line leaves the picture's cut; one painted under a photo ends at the
+  photo's side. Whatever the vectors and the frames do not paint (a photo
+  behind the page, art clipped by a card) is the only raster ground left:
+  a transparent PNG, and a page with nothing left gets no ground and no
+  `ground=` attribute (`regions.json` `decoration` counts each kind).
+  `template_dedupe.py` renames connector ends and size targets with the
+  frames and keeps a connector or border in a shared base only when the
+  base has its frames.
 - **Pictures and labels.** Images and clusters of line art are pictures,
   cut at `--dpi` with all text removed. Words on a picture's ink, short
   words on it or just off its edge (a globe's degrees) are its labels:
@@ -354,7 +380,7 @@ Also decided by the drafting, checked on a real textbook in three languages:
   carried a strip of the page's colour, which covered the ground when a
   shorter translation moved the picture up. A cut-out with an alpha channel
   (a photo standing over the card's edge) keeps its overhang.
-- **The ground is checked against the render**: a band or box fill the
+- **The ground is checked against the render** (`--raster-ground`): a band or box fill the
   redaction left (MuPDF removes line art only when a rectangle covers the
   whole path, and misses wide strokes under a transform) is painted out with
   the colour round it, so highlights are not printed twice.
@@ -797,9 +823,10 @@ resources.append(svg(PROJECT, "arbol-sectores", "resources/arbol-sectores.svg",
   `background` + `padding`.
 - Sentences in the nodes (a paragraph each): make each node a frame (a
   `row` group of category frames anchored `below` the root frame, each with
-  a callout style), and draw the connectors as decoration `rule` elements
-  anchored to the frames (`#raiz`, `#primario`), which follow them when a
-  box grows.
+  a callout style), and draw the connectors as one decoration `connector`
+  (`routing: "tree"`, `from: { to: "#raiz" }`, `to: [{ to: "#primario" }, …]`),
+  which follows the frames when a box grows (`pdf_regions.py` writes it from
+  the source's lines).
 - Before labels are drawn (postext < 1.37): the round-1 live-text SVG
   (playbooks J4) and say in the report where the words are.
 

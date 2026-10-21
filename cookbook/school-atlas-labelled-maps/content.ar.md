@@ -2,7 +2,7 @@
 title: "أطلس فارينيا المدرسي"
 ---
 
-::::page{template="sheet" unit="اللوحة ١ · الموقع"}
+::::page{template="locator" unit="اللوحة ١ · الموقع"}
 # فارينيا على الخريطة
 
 فارينيا بلدٌ في جنوب القارة، تحدّها أوستيليا من الشمال وبرونافيا من الشرق. يطلّ ساحلها الغربي على بحر ليرا، وساحلها الجنوبي على المحيط الضبابي الذي يتوغّل في البرّ عند خليج سورا. تبلغ مساحتها نحو ٤٠ ألف كيلومتر مربع، ويسكنها قرابة أربعة ملايين نسمة.
@@ -17,14 +17,14 @@ title: "أطلس فارينيا المدرسي"
 ::label[بحر ليرا]{at="lira"}
 ::label[المحيط الضبابي]{at="ocean"}
 ::label[ألمارين]{at="almaren"}
+:::label{at="key" style="legend"}
+**مفتاح الخريطة**
+:icon[]{resource="key-mark" color="country"} فارينيا
+:icon[]{resource="key-mark" color="land"} بلدان أخرى
+:icon[]{resource="key-mark" color="sea"} بحر ومحيط
+:icon[]{line="dashed" color="border"} حدود
+:icon[]{resource="key-mark" color="ink"} العاصمة
 :::
-
-:::frame{slot="key" title="مفتاح الخريطة"}
-:swatch{color="country"} فارينيا \\
-:swatch{color="land"} بلدان أخرى \\
-:swatch{color="sea"} بحر ومحيط \\
-:swatch{color="border"} حدود \\
-:swatch{color="ink"} العاصمة
 :::
 
 :::frame{slot="tasks" title="أنشطة"}

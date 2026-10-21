@@ -825,16 +825,22 @@ Cada extremo (`ConnectorEnd`) indica una caja y un punto de uno de sus lados:
       <td>ninguno</td>
       <td>Un ancla de la imagen que contiene el marco: el extremo es ese punto de la imagen, a través de su recorte, su zona segura y su escala, como el de un rótulo, en lugar de un punto del lado del marco. <code>at</code> no se lee; <code>side</code> indica por dónde llega la línea (por defecto, desde el otro extremo).</td>
     </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un conector con un extremo <code>anchor</code> se pinta sobre los marcos, los demás bajo ellos</td>
+      <td>Pinta la línea después de todos los marcos de la página (<code>true</code>) o con la decoración, bajo los marcos (<code>false</code>). Sin valor, un conector con un extremo <code>anchor</code> se pinta encima, de modo que una línea que apunta dentro de una imagen se ve sobre el marco de la imagen; una línea entre marcos queda debajo.</td>
+    </tr>
   </tbody>
 </table>
 
 **Extremos que no están.** Un extremo en un marco que la página no muestra (plegado, opcional y vacío, una tarjeta más allá de los elementos de la página, un punto de la imagen que su marco recorta) se deja fuera: un árbol conserva sus demás hijos, y el registro de recomposición de la página lo anota (`connectorDropped`). Si no queda ningún `from` o ningún `to`, no se dibuja nada.
 
-**Pintado.** Los conectores se pintan con la decoración, bajo los marcos, como trazados vectoriales: en el canvas, en el PDF, en el visor HTML y en el EPUB de maquetación fija, y como artefacto de maquetación en un PDF etiquetado; el EPUB de maquetación fluida los deja fuera con el resto de la decoración. Una línea que apunta dentro de una imagen necesita que el marco de la imagen quede bajo la decoración: pon a ese marco `layer: -1`. En una doble página, un conector entre marcos de las dos páginas cruza el lomo y se corta allí como el resto de la decoración; en una página de derecha a izquierda, `start` y `end` siguen el flujo en espejo.
+**Pintado.** Los conectores se pintan como trazados vectoriales: en el canvas, en el PDF, en el visor HTML y en el EPUB de maquetación fija, y como artefacto de maquetación en un PDF etiquetado; el EPUB de maquetación fluida los deja fuera con el resto de la decoración. Un conector con un extremo `anchor` se pinta sobre todos los marcos de la página, así que una línea que apunta dentro de una imagen se ve sobre el marco de la imagen sin ponerle `layer`; los demás conectores quedan con la decoración, bajo los marcos. `over: true` sube una línea entre marcos, `over: false` mantiene una línea que apunta bajo ellos. En una doble página, un conector entre marcos de las dos páginas cruza el lomo y se corta allí como el resto de la decoración; en una página de derecha a izquierda, `start` y `end` siguen el flujo en espejo.
 
 ```ts
 frames: [
-  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'mapa', width: { value: 118, unit: 'mm' } },
   { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
 ],
 decoration: { elements: [

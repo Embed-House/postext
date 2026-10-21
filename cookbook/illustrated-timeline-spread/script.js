@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 158 · An illustrated timeline across a double page ═══════
 // https://postext.dev/en/cookbook/illustrated-timeline-spread
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated with diffusion models
-// Fonts: Literata, Archivo, Noto Serif JP, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.38.0
+// Fonts: Literata, Archivo, Noto Serif JP, Noto Sans JP (SIL OFL 1.1) · Needs postext ≥ 1.48.0
 import {
   buildDocument, withLoadedFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -36,21 +36,18 @@ const PAGE = { w: 210, h: JA ? 257 : 280, top: 22, bottom: 20, inner: 16, outer:
 const ROWS = 12;
 const ROW_GAP = 3;
 const ROW = (PAGE.h - PAGE.top - PAGE.bottom - (ROWS - 1) * ROW_GAP) / ROWS; // one grid row, mm
-const HALF = PAGE.w - PAGE.inner - PAGE.outer; // the width of one page's half of the sheet
 const BAND = 9; // the timeline band, in grid row 5
-const DROP = ROW - BAND + ROW_GAP; // from the band's foot to the cards' heads
 const CARD_TOP = 5 * (ROW + ROW_GAP); // grid row 6
 // The drawn height of a card; 16 mm of the area stay free for a longer text.
 const CARD = PAGE.h - PAGE.top - PAGE.bottom - CARD_TOP - 16;
 const at = (to, edge, x = 0, y = 0) => ({ anchor: { to, edge }, offset: { x: mm(x), y: mm(y) } });
 
-// #region cards: six cards at least one height tall that trade width with their neighbours
-const cards = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
-const card = (name, i) => ({ name, style: i < 3 ? 'card-asia' : 'card-europe',
-  width: mm((HALF - 10) / 3), minWidth: mm(40), minHeight: mm(CARD),
-  shrink: 1, // a card gives width to a neighbour whose text runs past the row
-  ...(i % 3 === 0 && { placement: at('container', 'top-left', i ? HALF + 2 * PAGE.inner : 0,
-    CARD_TOP) }) }); // where each row starts
+// #region cards: one card frame per row, repeated by a grid once for each card of the Markdown
+// Each `:::frame{slot="asia"}` of the page is an item of the `asia` grid: the grid lays the
+// card frame once per item, three to a row, and names the copies `#asia[1]`, `#asia[2]`…
+const card = (name, style) => ({ name, style, minHeight: mm(CARD) }); // auto above that height
+const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 3, columnGap: mm(5),
+  grid: { col, row: 6, rows: ROWS - 5 }, repeat: { frames: [name] } });
 // #endregion
 
 // #region answer: one sheet for two pages, a band across the spine, two rows of cards
@@ -69,34 +66,28 @@ const pageTemplates = [{
     { name: 'band-2', style: 'band-europe', crossGutter: true, width: 'fill', height: mm(BAND),
       padding: { left: mm(2 * PAGE.inner + 4) }, // the colour crosses the fold, the words do not
       placement: at('#band-1', 'right-of') },
-    ...cards.map(card),
+    card('asia', 'card-asia'), card('europe', 'card-europe'),
     { name: 'colophon', style: 'colophon', optional: true, width: mm(170),
       placement: at('page', 'bottom-right', -PAGE.outer, -7) },
   ],
   groups: [
     { name: 'opening', kind: 'stack', grid: { col: 1, row: 1, rows: 4 }, gap: mm(4),
       frames: ['title', 'lead'] },
-    // A card whose text runs past its drawn height takes width from its neighbours first;
-    // only when they have none to give does the row grow taller.
-    { name: 'asia', kind: 'row', gap: mm(5), frames: ['c1', 'c2', 'c3'] },
-    { name: 'europe', kind: 'row', gap: mm(5), frames: ['c4', 'c5', 'c6'] },
+    // A row of cards under each band, as many as the Markdown has: a longer text makes its
+    // row taller, and the other cards of the row stretch to the same height.
+    row('asia', 1), row('europe', 2),
   ],
-  decoration: { elements: [ground(), ...cards.flatMap(marks)] },
+  decoration: { elements: [ground(), ticks('band-1', 'asia'), ticks('band-2', 'europe')] },
 }];
 // #endregion
 
-// #region marks: a dot under the band and a tick down to each card, anchored to the card
-function marks(name, i) {
-  const ink = col(i < 3 ? 'asia' : 'europe');
-  return [
-    { kind: 'rule', id: `${name}-tick`, direction: 'vertical', thickness: pt(1), color: ink,
-      placement: { ...at(`#${name}`, 'top', 0, -DROP), size: { height: mm(DROP) } } },
-    { kind: 'box', id: `${name}-dot`,
-      placement: { ...at(`#${name}`, 'top', 0, -DROP + 0.6), size: { width: mm(4.4),
-        height: mm(4.4) } },
-      style: { backgroundColor: col('paper'), borderColor: ink, borderWidth: pt(1.6),
-        borderRadius: mm(2.2) } },
-  ];
+// #region ticks: one connector per band, a drop with a dot down to every card of its row
+// `routing: 'tree'` with `trunk: 0` draws no bar of its own: each drop hangs from the band's
+// foot straight down to the middle of a card's top, and `#asia[*]` names every card laid.
+function ticks(band, cards) {
+  return { kind: 'connector', id: `${cards}-ticks`, routing: 'tree', trunk: 0,
+    from: { to: `#${band}`, side: 'bottom', gap: mm(2.4) }, to: { to: `#${cards}[*]`, side: 'top' },
+    color: col(cards), width: pt(1), startCap: 'dot', capSize: mm(3.6) };
 }
 // #endregion
 

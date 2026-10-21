@@ -518,7 +518,8 @@ export function markdownConstructs(markdown: string): MarkdownConstructs {
     const fence = DIRECTIVE_LINE.exec(line);
     if (fence) {
       const name = fence[1];
-      if (KNOWN_DIRECTIVES.includes(name) || KNOWN_CONTAINERS.includes(name)) directives.add(`:::${name}`);
+      // `:::label` is a figure's label written line by line (#1058), read inside a `:::figure`.
+      if (KNOWN_DIRECTIVES.includes(name) || KNOWN_CONTAINERS.includes(name) || name === "label") directives.add(`:::${name}`);
       else unknown.add(name);
       continue;
     }

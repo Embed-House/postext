@@ -1,15 +1,15 @@
 ---
 title: "Una linea del tempo illustrata su una doppia pagina"
-summary: "Un modello su doppia pagina per la linea del tempo di un manuale: una fascia attraversa il dorso e due file di schede si dividono la larghezza."
-plain: "Due pagine affiancate di un libro di storia fatte come una sola: una fascia colorata attraversa il centro del libro e sotto sei schede illustrate si dividono la larghezza, così la storia più lunga prende la scheda più larga."
-description: "Una linea del tempo su doppia pagina con Postext: un modello, una fascia sul dorso, schede che si dividono la larghezza e punti che seguono ogni scheda."
+summary: "Un modello su doppia pagina per una linea del tempo: una fascia attraversa il dorso, una griglia ripete una scheda per data e un connettore arriva a ognuna."
+plain: "Due pagine affiancate di un libro di storia fatte come una sola: una fascia colorata attraversa il centro del libro, sei schede illustrate vi sono appese, e il modello disegna una sola scheda e una sola linea, quante che siano le date."
+description: "Una linea del tempo su doppia pagina con Postext: un modello, una fascia sul dorso, una griglia che ripete una scheda per data e un connettore a ogni scheda."
 question: "Come impagino una linea del tempo su una doppia pagina, con schede su entrambe le pagine?"
-aliases: ["linea del tempo", "cronologia", "doppia pagina", "modello di pagina", "fila di cornici", "timeline", "cronología", "年表", "見開き", "crossGutter"]
+aliases: ["linea del tempo", "cronologia", "doppia pagina", "modello di pagina", "griglia", "connettore", "timeline", "cronología", "年表", "見開き", "crossGutter"]
 ---
 
 ## Che cosa comporrai
 
-Le pagine 48 e 49 di un libro di storia per la scuola media: *La via della carta*, mille anni di mestiere dalla bottega di Cai Lun alla mola di Keller. La pagina di sinistra apre con il titolo e due paragrafi, quella di destra con un riquadro che racconta come si faceva un foglio a mano. Al centro corre la linea del tempo: una fascia indaco per l’Asia e una color terracotta per l’Europa, che parte dalla pagina di sinistra e attraversa il dorso. Sotto, sei schede con il loro disegno, appese alla fascia con un punto e un tratto. Le schede si dividono la larghezza: quella del 1844, con la storia più lunga, prende larghezza alle due vicine (1 mm in spagnolo, 7 mm in giapponese) e il suo punto si sposta con lei. Tutte le parole sono nel Markdown, in spagnolo, inglese e giapponese; questa pagina mostra l’edizione inglese.
+Le pagine 48 e 49 di un libro di storia per la scuola media: *La via della carta*, mille anni di mestiere dalla bottega di Cai Lun alla mola di Keller. La pagina di sinistra apre con il titolo e due paragrafi, quella di destra con un riquadro che racconta come si faceva un foglio a mano. Al centro corre la linea del tempo: una fascia indaco per l’Asia e una color terracotta per l’Europa, che parte dalla pagina di sinistra e attraversa il dorso. Sotto, sei schede con il loro disegno, appese alla fascia con un punto e un tratto. Il modello disegna una scheda asiatica, una europea e un connettore per fascia: una griglia colloca una scheda per ogni data del Markdown e il connettore trova tutte le schede che la griglia ha collocato. Tutte le parole sono nel Markdown, in spagnolo, inglese e giapponese; questa pagina mostra l’edizione inglese.
 
 ## Preparazione
 
@@ -19,36 +19,41 @@ Le pagine 48 e 49 di un libro di storia per la scuola media: *La via della carta
 
 `spread: true` fa del modello un solo foglio largo come le due pagine, e il blocco di pagina lo indica con `spread`. Una doppia pagina comincia su una pagina pari, perciò la composizione riceve `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`: la pagina 1 di questo estratto è la 48 del libro, una pagina di sinistra, e non serve una pagina bianca davanti. La griglia ha una colonna per pagina, separate dal doppio del margine interno, così solo la fascia arriva vicino alla piega. La seconda fascia ha `crossGutter` e 36 mm di spaziatura a sinistra: il suo colore parte dalla fine della prima e attraversa il dorso, le sue parole cominciano sulla pagina di destra, dove l’impaginazione le legge.
 
-### 2 · Schede che si dividono la larghezza
+### 2 · Una scheda, ripetuta da una griglia
 
 <Excerpt region="cards" />
 
-Ogni fila di tre schede è un gruppo `row`, e ogni scheda ha un `minHeight`, l’altezza a cui è disegnata, e sopra quella un’altezza `auto`. Quando il testo di una scheda supera l’altezza della fila, prende dalle vicine con `shrink` i millimetri interi che le servono, e ogni vicina tiene la larghezza in cui il suo testo entra ancora. Solo quando non hanno più nulla da dare la fila cresce verso il basso. Nell’edizione spagnola la scheda del 1844 prende 1 mm a quella del 1282; in quella giapponese ne prende 7, 3 a quella del 1150 e 4 a quella del 1282; con tutti i testi più lunghi del 30 %, la prova del banco, quella spagnola ne prende 15, e il riquadro e l’attacco riducono il testo al 92,5 % e all’85 %.
+Un gruppo `kind: 'grid'` con `repeat: { frames: ['asia'] }` colloca la cornice `asia` una volta per ogni `:::frame{slot="asia"}` della pagina, tre per fila, nella cella `col: 1` della griglia del modello, righe da 6 a 12. Le copie si chiamano `#asia[1]`, `#asia[2]` e `#asia[3]`, e ognuna prende il `label` del proprio blocco, la data della sua linguetta. Una scheda è alta almeno `minHeight` e sopra quella è `auto`: quando un testo si allunga, come quello del 1844 in spagnolo e in giapponese, la sua fila cresce e le altre schede della fila si allungano fino alla stessa altezza (`rowAlign` vale `'stretch'` se non si indica altro). Una quarta data nel Markdown apre una seconda fila sotto la prima, senza toccare il modello.
 
-### 3 · Punti che seguono le schede
+### 3 · Un connettore per fascia
 
-<Excerpt region="marks" />
+<Excerpt region="ticks" />
 
-I punti e i tratti sono la decorazione (`decoration`) del modello, ancorati a `#c1` … `#c6` sul bordo superiore (`top`) e alzati della distanza dalla fascia. La decorazione si colloca dopo le cornici: quando una scheda si sposta o si allarga, il suo punto resta sopra il suo centro. Anche il fondo crema è decorazione, un riquadro ancorato al piede dell’abbondanza la cui altezza arriva fino al piede di `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`): segue la fascia.
+I tratti sono un `connector` per fascia nella decorazione (`decoration`) del modello. `routing: 'tree'` unisce un genitore a molti figli; con `trunk: 0` non disegna una barra propria, solo un tratto dritto dal piede della fascia al centro del bordo superiore di ogni scheda, e `startCap: 'dot'` mette il punto in testa a ogni tratto, 2,4 mm sotto la fascia (`gap`). `#asia[*]` indica tutte le schede che la griglia ha collocato sulla pagina, quindi una data aggiunta o tolta nel Markdown aggiunge o toglie il suo tratto. I connettori si collocano dopo le cornici: quando una fila cresce, i tratti arrivano comunque alle schede. Anche il fondo crema è decorazione, un riquadro ancorato al piede dell’abbondanza la cui altezza arriva fino al piede di `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`): segue la fascia.
 
 ### 4 · Disegni alla misura di stampa
 
 <Excerpt region="art" />
 
-Le vignette sono larghe 1.000 px a 550 ppi, 46 mm sulla pagina, e un’immagine non viene mai ingrandita: la scheda che si allarga tiene il suo disegno e lascia lo spazio al testo. Una scheda più stretta di 53 mm (il disegno più 3,5 mm di margine per lato) rimpicciolisce il disegno, come mostra la prova del banco nell’edizione giapponese: i disegni del 1150 e del 1282 all’85 %.
+Le vignette sono larghe 1.000 px a 550 ppi, 46 mm sulla pagina, e un’immagine non viene mai ingrandita. Le tre colonne uguali della griglia sono larghe 56,3 mm su ogni pagina, così ogni disegno entra alla sua misura nei 3,5 mm di spaziatura interna della sua scheda e il resto della scheda è testo.
 
 ## Varianti
 
-### Schede tutte della stessa larghezza
+### Quattro schede per fila
 
-Con `shrink: 0` nessuna scheda cede larghezza: la fila cresce verso il basso, le tre schede insieme, e il suo piede scende nella pagina.
+Con `columns: 4` ogni fascia porta quattro date una accanto all’altra; le schede sono più strette, i loro testi occupano più righe e le file crescono verso il basso.
 
 ```diff
--  shrink: 1, // a card gives width to a neighbour whose text runs past the row
-+  shrink: 0,
+-const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 3, columnGap: mm(5),
++const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
+
+### Frecce al posto dei punti
+
+`endCap: 'arrow'` mette una punta di freccia dove ogni tratto arriva alla sua scheda, e `startCap: 'none'` toglie i punti.
 
 ## Errori frequenti
 
-- Una scheda con `height` fissa non partecipa alla divisione della larghezza, perché non esce mai dalla fila: dai alle schede un `minHeight`, come qui, e lascia l’altezza `auto`.
+- Una griglia colloca una cella per elemento, e un elemento è un blocco `:::frame{slot="asia"}` a sé: i testi di due schede dentro lo stesso blocco fanno una sola scheda.
+- `#asia` senza `[*]` è il riquadro della griglia, non le sue schede: un connettore verso di esso disegna un solo tratto fino al centro della fila.
 - Una misura che arriva fino al bordo di un altro riquadro si conta dal punto di ancoraggio dell’elemento: il fondo è ancorato al piede dell’abbondanza e cresce verso l’alto fino a `#band-1`. Un bordo dietro il punto di ancoraggio dà un’altezza di 0.

@@ -35,16 +35,22 @@ Set in Nunito and Fredoka (SIL OFL) · Original text (CC BY 4.0) · Illustration
 
 Before you start, think about the rivers you have seen. Write your ideas on the lines. At the end of the unit, come back to them and see what has changed.
 
-:::frame{slot="pregunta-1" label="Think 1"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Think 1"}
 Where do you think a river starts?
 :::
-
-:::frame{slot="pregunta-2" label="Think 2"}
-What do people use a river for?
 :::
 
-:::frame{slot="pregunta-3" label="Think 3"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Think 2"}
+What do people use a river for?
+:::
+:::
+
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Think 3"}
 Which animals and plants live in or beside a river?
+:::
 :::
 ::::
 
@@ -60,17 +66,17 @@ Rain and snow fall on the mountains. Some of the water runs down the slopes and 
 
 A spring gives only a trickle. The trickle runs downhill and meets other trickles, and together they make a **stream**. On a steep slope a stream runs fast. It rolls pebbles along and wears them smooth. When streams meet, they make a bigger one. The River Aldara begins like this, in the snow of the White Range, 1,850 metres above the sea.
 
-:::figure{resource="nacimiento" slot="foto-1"}
+:::figure{resource="nacimiento" slot="foto"}
 ::alt[Clear water trickling out between mossy rocks.]
 ::caption[A spring. The water has been underground for months.]
 :::
 
-:::figure{resource="arroyo" slot="foto-2"}
+:::figure{resource="arroyo" slot="foto"}
 ::alt[A stream tumbling over round stones.]
 ::caption[A stream, steep and fast, with pebbles worn smooth.]
 :::
 
-:::figure{resource="cascada" slot="foto-3"}
+:::figure{resource="cascada" slot="foto"}
 ::alt[A small waterfall falling into a green pool.]
 ::caption[A waterfall, where the stream drops over a step of rock.]
 :::
@@ -124,15 +130,15 @@ The River Aldara is 94 kilometres long. It starts in the White Range, crosses a 
 Follow the river with your finger from the spring to the sea. Which town is nearest to the sea?
 :::
 
-:::frame{slot="curso-1" label="Upper course"}
+:::frame{slot="curso" label="Upper course"}
 The slope is steep. The water is cold, clear and fast, and it cuts into the rock. Fontalba stands here.
 :::
 
-:::frame{slot="curso-2" label="Middle course"}
+:::frame{slot="curso" label="Middle course"}
 The valley is wider and the river slows down. Farmers water their fields, and Molinar grew around a bridge and a mill.
 :::
 
-:::frame{slot="curso-3" label="Lower course"}
+:::frame{slot="curso" label="Lower course"}
 The land is almost flat. The river is wide and slow, and it bends in great loops. At Aldamar it flows into the sea.
 :::
 ::::
@@ -165,27 +171,27 @@ A river stays clean only if we keep it clean. Rubbish, oil and dirty water make 
 ::alt[Children with gloves and paper bags picking up litter on a river bank.]
 :::
 
-:::frame{slot="uso-1" label="1 · Water for the fields"}
+:::frame{slot="uso" label="1 · Water for the fields"}
 In the middle course, farmers open small canals so the river water runs between the rows. Without it, tomatoes and lettuces would not grow in summer. A single canal can carry water for many kilometres.
-:::
 
-:::figure{resource="riego" slot="uso-1-foto"}
+:::figure{resource="riego" slot="uso-foto"}
 ::alt[A farmer lifting a gate in an irrigation canal in a field of vegetables.]
 :::
-
-:::frame{slot="uso-2" label="2 · Mills"}
-Long ago the falling water turned the wheel of the mill at Molinar. The wheel moved the stones that ground wheat into flour for the whole valley. Today the old mill is a small museum.
 :::
 
-:::figure{resource="molino" slot="uso-2-foto"}
+:::frame{slot="uso" label="2 · Mills"}
+Long ago the falling water turned the wheel of the mill at Molinar. The wheel moved the stones that ground wheat into flour for the whole valley. Today the old mill is a small museum.
+
+:::figure{resource="molino" slot="uso-foto"}
 ::alt[An old stone mill with a big wooden wheel beside a river.]
 :::
-
-:::frame{slot="uso-3" label="3 · Sport and play"}
-Now the calm lower course is a place for canoes. On summer mornings children from Aldamar learn to paddle with a monitor, and everyone wears a life jacket.
 :::
 
-:::figure{resource="piraguas" slot="uso-3-foto"}
+:::frame{slot="uso" label="3 · Sport and play"}
+Now the calm lower course is a place for canoes. On summer mornings children from Aldamar learn to paddle with a monitor, and everyone wears a life jacket.
+
+:::figure{resource="piraguas" slot="uso-foto"}
 ::alt[Children in life jackets paddling two canoes on a calm river.]
+:::
 :::
 ::::

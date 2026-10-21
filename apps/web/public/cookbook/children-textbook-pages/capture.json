@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "781e568c46ad768ad56f201037a2a1fb99d25908ec709e2bbaca09facf966054",
+  "sourceHash": "29cb39d4faab3b408e850c18040c3f784c95cac02a5e47a7fc9fb473daa8c0d4",
   "engine": {
-    "postext": "1.46.3",
-    "postextPdf": "1.46.3",
+    "postext": "1.48.0",
+    "postextPdf": "1.48.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-19T19:23:02.127Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-20T20:38:59.816Z",
   "variants": {
     "en": {
-      "hash8": "c12c5327",
-      "vdtHash": "395f0907f0aca5df321febad16d07d480f1a41c0",
+      "hash8": "24ab87f5",
+      "vdtHash": "fae03d32b06e40bc17dad1fdd761184265e74696",
       "timings": {
-        "importMs": 1423,
-        "fontsMs": 226,
-        "buildMs": 44,
-        "totalMs": 2613,
+        "importMs": 36972,
+        "fontsMs": 942,
+        "buildMs": 43,
+        "totalMs": 40763,
         "builds": 2
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -104,7 +104,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 208530,
+          "bytes": 208710,
           "alt": "Page 6: From the mountains to the sea."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 163716,
+          "bytes": 164022,
           "alt": "Page 7."
         },
         {
@@ -177,18 +177,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1731006,
+        "bytes": 1732870,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100286,
+        "bytes": 2100863,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "012ebbad1244ffaf",
-            "lines": "40ba681cf34e7a94"
+            "hash": "35870321b7a9c771",
+            "lines": "14cb39e228779036"
           }
         ]
       },
@@ -336,6 +336,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -379,19 +383,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -458,13 +469,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 773,
-        "designElements": 15,
+        "configLeaves": 768,
+        "designElements": 18,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -539,32 +551,52 @@
           "count": 0
         },
         "runtFixes": {
-          "count": 3,
-          "tracked": 3,
+          "count": 1,
+          "tracked": 1,
           "worst": 10
         },
         "findings": [
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 103 line, 1 text"
+            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 104 line, 1 text"
+          },
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 40.8 s to finish (warning at 30 s)"
           },
           {
             "check": "C35",
             "severity": "info",
-            "detail": "3 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “The valley is wider and the river slows down. Fa…”, p. 7 −10‰ “The land is almost flat. The river is wide and s…”, p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
+            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "56ae92de",
-      "vdtHash": "04417c030281d911bab0f05c33f13aad0ee37e55",
+      "hash8": "36eafb2e",
+      "vdtHash": "91bec0362f1d6d7e1f289c28d9fe106ca096e678",
       "timings": {
-        "importMs": 1411,
-        "fontsMs": 231,
-        "buildMs": 46,
-        "totalMs": 2610,
+        "importMs": 36975,
+        "fontsMs": 926,
+        "buildMs": 48,
+        "totalMs": 40764,
         "builds": 2
       },
       "specimen": {
@@ -585,7 +617,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -651,7 +683,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 206916,
+          "bytes": 206868,
           "alt": "Página 6: De la montaña al mar."
         },
         {
@@ -662,7 +694,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 163110,
+          "bytes": 163206,
           "alt": "Página 7."
         },
         {
@@ -724,18 +756,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732059,
+        "bytes": 1733916,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100146,
+        "bytes": 2100767,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "e28b5d2bf10cc327",
-            "lines": "da593694d2a09cea"
+            "hash": "fab03225d3e4ef77",
+            "lines": "d82cb5dc7fcd35fa"
           }
         ]
       },
@@ -883,6 +915,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -926,19 +962,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -1005,13 +1048,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 773,
-        "designElements": 15,
+        "configLeaves": 768,
+        "designElements": 18,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -1086,8 +1130,8 @@
           "count": 0
         },
         "runtFixes": {
-          "count": 6,
-          "tracked": 6,
+          "count": 4,
+          "tracked": 4,
           "worst": 10
         },
         "findings": [
@@ -1097,21 +1141,36 @@
             "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 106 line, 1 text"
           },
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 40.8 s to finish (warning at 30 s)"
+          },
+          {
             "check": "C35",
             "severity": "info",
-            "detail": "6 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “El valle es más ancho y el río va más despacio. …”, p. 8 −10‰ “Ayudamos a limpiar la orilla cuando lo organiza …”, p. 9 −10‰ “Ahora el curso bajo, tranquilo, es un lugar para…”, p. 4 −5‰ “Llueve y nieva en las montañas. Parte del agua b…”, p. 6 −5‰ “El río Aldara mide 94 kilómetros. Nace en la sie…”"
+            "detail": "4 paragraphs set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “Ayudamos a limpiar la orilla cuando lo organiza …”, p. 9 −10‰ “Ahora el curso bajo, tranquilo, es un lugar para…”, p. 4 −5‰ “Llueve y nieva en las montañas. Parte del agua b…”, p. 6 −5‰ “El río Aldara mide 94 kilómetros. Nace en la sie…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "5e8e617f",
-      "vdtHash": "c28f779ba57cbb879de30f931f9821acc92f6bbf",
+      "hash8": "9986a88f",
+      "vdtHash": "b5aa30b769fbba04a10ef6eea708937e3559d8d3",
       "timings": {
-        "importMs": 1266,
-        "fontsMs": 364,
-        "buildMs": 45,
-        "totalMs": 2623,
+        "importMs": 5404,
+        "fontsMs": 968,
+        "buildMs": 33,
+        "totalMs": 9284,
         "builds": 2
       },
       "specimen": {
@@ -1132,7 +1191,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -1198,7 +1257,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 206298,
+          "bytes": 206388,
           "alt": "Pàgina 6: De la muntanya al mar."
         },
         {
@@ -1209,7 +1268,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 162278,
+          "bytes": 162672,
           "alt": "Pàgina 7."
         },
         {
@@ -1271,18 +1330,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1731697,
+        "bytes": 1733580,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100232,
+        "bytes": 2100772,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "4e9eb6d37cbba1f7",
-            "lines": "2440f49dddf177ff"
+            "hash": "42ed4fb7b4a167f7",
+            "lines": "a6f9f2ab4bd17dfd"
           }
         ]
       },
@@ -1430,6 +1489,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -1473,19 +1536,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -1552,13 +1622,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 773,
-        "designElements": 15,
+        "configLeaves": 768,
+        "designElements": 18,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -1632,33 +1703,33 @@
         "raggedLines": {
           "count": 0
         },
-        "runtFixes": {
-          "count": 2,
-          "tracked": 2,
-          "worst": 10
-        },
         "findings": [
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 104 line, 1 text"
+            "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 105 line, 1 text"
           },
           {
-            "check": "C35",
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
             "severity": "info",
-            "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “El pendent és fort. L’aigua és freda, clara i rà…”, p. 7 −5‰ “La vall és més ampla i el riu va més a poc a poc…”"
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "e7bf0750",
-      "vdtHash": "30874eb2b9a16dff9d12ef18acd5d5ac12345659",
+      "hash8": "3a6a4059",
+      "vdtHash": "d428e9b499327614d6ece5718a424a060cac9f02",
       "timings": {
-        "importMs": 1371,
-        "fontsMs": 509,
-        "buildMs": 112,
-        "totalMs": 2675,
+        "importMs": 6965,
+        "fontsMs": 3169,
+        "buildMs": 134,
+        "totalMs": 13505,
         "builds": 1
       },
       "specimen": {
@@ -1679,7 +1750,7 @@
           "ZCOOL KuaiLe"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -1745,7 +1816,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 197448,
+          "bytes": 197648,
           "alt": "第 6 页：从高山到大海。"
         },
         {
@@ -1778,7 +1849,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 74010,
+          "bytes": 70036,
           "alt": "第 9 页。"
         }
       ],
@@ -1819,18 +1890,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1863770,
+        "bytes": 1864328,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2106694,
+        "bytes": 2106737,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "4c7b4e66680042b6",
-            "lines": "a87406feae6380b2"
+            "hash": "b082c066a1d76980",
+            "lines": "88f0fd505abd0d3e"
           }
         ]
       },
@@ -1978,6 +2049,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -2022,20 +2097,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
           "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -2102,13 +2183,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 793,
+        "configLeaves": 754,
         "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -2185,18 +2267,28 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.12 MB: state 1.15 MB"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "315d6745",
-      "vdtHash": "743451482ba7d34043af04e9f40ccc3615510221",
+      "hash8": "fb5a9ff2",
+      "vdtHash": "337d795aabdf191d67b1b6b317304f3c5b44f89e",
       "timings": {
-        "importMs": 1101,
-        "fontsMs": 624,
-        "buildMs": 171,
-        "totalMs": 2687,
+        "importMs": 5677,
+        "fontsMs": 813,
+        "buildMs": 142,
+        "totalMs": 9255,
         "builds": 1
       },
       "specimen": {
@@ -2217,7 +2309,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -2283,7 +2375,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 198026,
+          "bytes": 198318,
           "alt": "الصفحة ٦: من الجبل إلى البحر."
         },
         {
@@ -2294,7 +2386,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 157578,
+          "bytes": 157812,
           "alt": "الصفحة ٧."
         },
         {
@@ -2357,17 +2449,17 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1768650,
+        "bytes": 1770684,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2107868,
+        "bytes": 2108297,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "1eed4eacc3ff96ee",
+            "hash": "6ade1aa7755210b1",
             "lines": "4295a8bd8800a013"
           }
         ]
@@ -2516,6 +2608,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -2559,19 +2655,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -2638,13 +2741,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 773,
-        "designElements": 15,
+        "configLeaves": 768,
+        "designElements": 18,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -2726,18 +2830,28 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.19 MB: state 1.2 MB"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "b791d946",
-      "vdtHash": "4a0b3ba35b9ee88d24d9259d1f907eb0cb314949",
+      "hash8": "ed01d35d",
+      "vdtHash": "94568057bc9585066e8f5eb37eb5711c6a608a64",
       "timings": {
-        "importMs": 567,
-        "fontsMs": 550,
-        "buildMs": 118,
-        "totalMs": 1931,
+        "importMs": 6944,
+        "fontsMs": 3687,
+        "buildMs": 135,
+        "totalMs": 12652,
         "builds": 1
       },
       "specimen": {
@@ -2758,7 +2872,7 @@
           "Zen Maru Gothic"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -2824,7 +2938,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 202434,
+          "bytes": 202514,
           "alt": "6ページ：山から海へ。"
         },
         {
@@ -2857,7 +2971,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 76426,
+          "bytes": 73194,
           "alt": "9ページ。"
         }
       ],
@@ -2898,18 +3012,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1881414,
+        "bytes": 1881815,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2107532,
+        "bytes": 2107554,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "c72060e674c366c8",
-            "lines": "10968f0fda39ef43"
+            "hash": "e07eefc7010a7643",
+            "lines": "975b7adb637eb86b"
           }
         ],
         "warnings": [
@@ -3060,6 +3174,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -3104,20 +3222,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
           "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -3184,13 +3308,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 793,
+        "configLeaves": 754,
         "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -3273,19 +3398,29 @@
           {
             "check": "C20",
             "severity": "info",
-            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.15 MB: state 1.15 MB"
+            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.14 MB: state 1.15 MB"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "47dfce33",
-      "vdtHash": "119c5ef953d0cff45219222b1c5cd555ca726f56",
+      "hash8": "77ed110d",
+      "vdtHash": "8ec86d48414bc40a36359763872e81163075375e",
       "timings": {
-        "importMs": 1381,
-        "fontsMs": 288,
-        "buildMs": 38,
-        "totalMs": 2851,
+        "importMs": 5514,
+        "fontsMs": 859,
+        "buildMs": 34,
+        "totalMs": 8540,
         "builds": 2
       },
       "specimen": {
@@ -3306,7 +3441,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -3372,7 +3507,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 207230,
+          "bytes": 207106,
           "alt": "Página 6: Da montanha ao mar."
         },
         {
@@ -3383,7 +3518,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 164530,
+          "bytes": 166264,
           "alt": "Página 7."
         },
         {
@@ -3445,18 +3580,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1731408,
+        "bytes": 1733278,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100284,
+        "bytes": 2100840,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "d7f23b9a55bf62a8",
-            "lines": "b9a115b1ad9278f7"
+            "hash": "99f0f4af3b34c4f5",
+            "lines": "c73f0275402d129f"
           }
         ]
       },
@@ -3604,6 +3739,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -3647,19 +3786,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -3726,13 +3872,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 773,
-        "designElements": 15,
+        "configLeaves": 768,
+        "designElements": 18,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -3815,24 +3962,34 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 106 line, 1 text"
+            "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 108 line, 1 text"
           },
           {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ “No médio curso, os agricultores abrem pequenos c…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "fr": {
-      "hash8": "e41f4cf0",
-      "vdtHash": "8e79ad3e3df2fb141901de26153039caefbd876f",
+      "hash8": "1c2d5099",
+      "vdtHash": "14504815c39a41dda92794b93618057079c54ce3",
       "timings": {
-        "importMs": 1383,
-        "fontsMs": 256,
-        "buildMs": 47,
-        "totalMs": 2827,
+        "importMs": 4877,
+        "fontsMs": 1302,
+        "buildMs": 50,
+        "totalMs": 9756,
         "builds": 2
       },
       "specimen": {
@@ -3853,7 +4010,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -3919,7 +4076,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 208692,
+          "bytes": 208752,
           "alt": "Page 6 : De la montagne à la mer."
         },
         {
@@ -3930,7 +4087,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 167320,
+          "bytes": 169798,
           "alt": "Page 7."
         },
         {
@@ -3992,17 +4149,17 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732735,
+        "bytes": 1734590,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2101229,
+        "bytes": 2101651,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "a278a34a3aba631c",
+            "hash": "5a5ec91fa408eaff",
             "lines": "831115d175db7c93"
           }
         ]
@@ -4151,6 +4308,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -4194,19 +4355,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -4273,565 +4441,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 773,
-        "designElements": 15,
+        "configLeaves": 768,
+        "designElements": 18,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
-          ":::part"
-        ],
-        "inline": [
-          "{attrs}"
-        ],
-        "resources": {
-          "svg": 0,
-          "bitmap": 10,
-          "table": 0
-        },
-        "fonts": [
-          {
-            "family": "Fredoka",
-            "weight": 500,
-            "style": "normal"
-          },
-          {
-            "family": "Fredoka",
-            "weight": 600,
-            "style": "normal"
-          },
-          {
-            "family": "Fredoka",
-            "weight": 700,
-            "style": "normal"
-          },
-          {
-            "family": "Nunito",
-            "weight": 400,
-            "style": "italic"
-          },
-          {
-            "family": "Nunito",
-            "weight": 400,
-            "style": "normal"
-          },
-          {
-            "family": "Nunito",
-            "weight": 700,
-            "style": "normal"
-          }
-        ],
-        "features": [
-          "callout-label-tabs",
-          "composed-pages",
-          "composed-spreads",
-          "figure-labels",
-          "frame-decoration",
-          "frame-groups",
-          "frame-text-push",
-          "heading-attributes",
-          "heading-styles",
-          "part-dividers",
-          "pdf-export",
-          "pdf-fonts",
-          "resource-types",
-          "resources",
-          "toc",
-          "unnumbered-headings"
-        ],
-        "suggestedLevel": 3
-      },
-      "diagnostics": {
-        "converged": true,
-        "iterationCount": 1,
-        "looseLines": {
-          "count": 0,
-          "share": 0,
-          "worst": 0
-        },
-        "raggedLines": {
-          "count": 0
-        },
-        "runtFixes": {
-          "count": 3,
-          "tracked": 3,
-          "worst": 10
-        },
-        "findings": [
-          {
-            "check": "C40",
-            "severity": "info",
-            "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 112 line, 1 text"
-          },
-          {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
-          },
-          {
-            "check": "C35",
-            "severity": "info",
-            "detail": "3 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Tiens une éponge mouillée au-dessus d’un plateau…”, p. 8 −10‰ “Les gens se sont toujours installés près des riv…”, p. 7 −5‰ “La vallée est plus large et le fleuve ralentit. …”"
-          }
-        ]
-      }
-    },
-    "de": {
-      "hash8": "ee971e15",
-      "vdtHash": "694dd071505f0d9b8e3e6e92794eb0405ac8cea6",
-      "timings": {
-        "importMs": 1445,
-        "fontsMs": 269,
-        "buildMs": 40,
-        "totalMs": 2666,
-        "builds": 2
-      },
-      "specimen": {
-        "trimMm": [
-          210,
-          280
-        ],
-        "dpi": 150,
-        "layoutType": "single",
-        "mirror": true,
-        "body": {
-          "family": "Nunito",
-          "sizePt": 12,
-          "leadingPt": 17.5
-        },
-        "families": [
-          "Fredoka",
-          "Nunito"
-        ],
-        "pages": 9,
-        "ownLines": 300
-      },
-      "pages": [
-        {
-          "n": 1,
-          "label": "1",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p01.webp",
-          "strip": "p01.s.webp",
-          "bytes": 210218,
-          "alt": "Seite 1: Unser Fluss."
-        },
-        {
-          "n": 2,
-          "label": "2",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p02.webp",
-          "strip": "p02.s.webp",
-          "bytes": 121340,
-          "alt": "Seite 2: In diesem Kapitel. Die Aldara von der Quelle bis zum Meer. Die Karte findest du auf den Seiten 6 und 7."
-        },
-        {
-          "n": 3,
-          "label": "3",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p03.webp",
-          "strip": "p03.s.webp",
-          "bytes": 33272,
-          "alt": "Seite 3: Was weißt du über Flüsse?"
-        },
-        {
-          "n": 4,
-          "label": "4",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p04.webp",
-          "strip": "p04.s.webp",
-          "bytes": 126794,
-          "alt": "Seite 4: Wo ein Fluss entspringt. Eine Quelle. Das Wasser war monatelang unter der Erde. · Ein Bach, steil und schnell, mit glatten Kieseln. · Ein Wasserfall. Hier fällt der Bach über eine Felsstufe."
-        },
-        {
-          "n": 5,
-          "label": "5",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p05.webp",
-          "strip": "p05.s.webp",
-          "bytes": 42932,
-          "alt": "Seite 5."
-        },
-        {
-          "n": 6,
-          "label": "6",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p06.webp",
-          "strip": "p06.s.webp",
-          "bytes": 209656,
-          "alt": "Seite 6: Von den Bergen bis zum Meer."
-        },
-        {
-          "n": 7,
-          "label": "7",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p07.webp",
-          "strip": "p07.s.webp",
-          "bytes": 164766,
-          "alt": "Seite 7."
-        },
-        {
-          "n": 8,
-          "label": "8",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p08.webp",
-          "strip": "p08.s.webp",
-          "bytes": 93248,
-          "alt": "Seite 8: Die Menschen und der Fluss."
-        },
-        {
-          "n": 9,
-          "label": "9",
-          "role": "composed",
-          "w": 1000,
-          "h": 1333,
-          "file": "p09.webp",
-          "strip": "p09.s.webp",
-          "bytes": 104882,
-          "alt": "Seite 9."
-        }
-      ],
-      "spreads": [
-        [
-          null,
-          0
-        ],
-        [
-          1,
-          2
-        ],
-        [
-          3,
-          4
-        ],
-        [
-          5,
-          6
-        ],
-        [
-          7,
-          8
-        ]
-      ],
-      "card": {
-        "file": "card.webp",
-        "file480": "card.480.webp",
-        "w": 960,
-        "h": 720,
-        "mode": "spread"
-      },
-      "og": {
-        "file": "og.jpg",
-        "w": 580,
-        "h": 622
-      },
-      "pdf": {
-        "file": "children-textbook-pages.pdf",
-        "bytes": 1733314,
-        "pages": 9
-      },
-      "sandbox": {
-        "file": "children-textbook-pages.postext",
-        "bytes": 2100856,
-        "folio": "207b7a99",
-        "chapters": [
-          {
-            "pages": 9,
-            "hash": "ec9d7d31eba361e7",
-            "lines": "687db833afda039f"
-          }
-        ]
-      },
-      "detected": {
-        "apis": [
-          "buildDocument",
-          "decompressWoff2",
-          "loadVerticalAlternates",
-          "registerResourceImage",
-          "renderPageToCanvas",
-          "renderToPdf",
-          "withLoadedFonts"
-        ],
-        "configKeys": [
-          "bodyText",
-          "bodyText.avoidOrphans",
-          "bodyText.avoidRunts",
-          "bodyText.avoidWidows",
-          "bodyText.boldColor",
-          "bodyText.boldFontWeight",
-          "bodyText.color",
-          "bodyText.firstLineIndent",
-          "bodyText.fontFamily",
-          "bodyText.fontSize",
-          "bodyText.hyphenation",
-          "bodyText.hyphenation.enabled",
-          "bodyText.italicColor",
-          "bodyText.lineHeight",
-          "bodyText.optimalLineBreaking",
-          "bodyText.paragraphSpacing",
-          "bodyText.referenceColor",
-          "bodyText.textAlign",
-          "calloutStyles",
-          "calloutStyles[].background",
-          "calloutStyles[].backgroundEnabled",
-          "calloutStyles[].body",
-          "calloutStyles[].body.boldColor",
-          "calloutStyles[].body.boldFontWeight",
-          "calloutStyles[].body.color",
-          "calloutStyles[].body.firstLineIndent",
-          "calloutStyles[].body.fontFamily",
-          "calloutStyles[].body.fontSize",
-          "calloutStyles[].body.italicColor",
-          "calloutStyles[].body.lineHeight",
-          "calloutStyles[].body.paragraphSpacing",
-          "calloutStyles[].body.textAlign",
-          "calloutStyles[].border",
-          "calloutStyles[].border.color",
-          "calloutStyles[].border.enabled",
-          "calloutStyles[].border.width",
-          "calloutStyles[].borderRadius",
-          "calloutStyles[].extends",
-          "calloutStyles[].id",
-          "calloutStyles[].label",
-          "calloutStyles[].label.background",
-          "calloutStyles[].label.color",
-          "calloutStyles[].label.fontFamily",
-          "calloutStyles[].label.fontSize",
-          "calloutStyles[].label.fontWeight",
-          "calloutStyles[].label.height",
-          "calloutStyles[].label.inset",
-          "calloutStyles[].label.offset",
-          "calloutStyles[].label.paddingX",
-          "calloutStyles[].label.position",
-          "calloutStyles[].label.rule",
-          "calloutStyles[].lists",
-          "calloutStyles[].lists.color",
-          "calloutStyles[].lists.gap",
-          "calloutStyles[].lists.itemSpacing",
-          "calloutStyles[].padding",
-          "calloutStyles[].padding.bottom",
-          "calloutStyles[].padding.left",
-          "calloutStyles[].padding.right",
-          "calloutStyles[].padding.top",
-          "calloutStyles[].stripe",
-          "calloutStyles[].stripe.color",
-          "calloutStyles[].stripe.enabled",
-          "calloutStyles[].stripe.side",
-          "calloutStyles[].stripe.width",
-          "canvasViewer",
-          "canvasViewer.pageGap",
-          "captionStyle",
-          "captionStyle.color",
-          "captionStyle.descriptionItalic",
-          "captionStyle.fontFamily",
-          "captionStyle.fontSize",
-          "captionStyle.gap",
-          "colorPalette",
-          "colorPalette[].id",
-          "colorPalette[].name",
-          "colorPalette[].value",
-          "footer",
-          "footer.elements",
-          "footer.elements[].align",
-          "footer.elements[].box",
-          "footer.elements[].color",
-          "footer.elements[].content",
-          "footer.elements[].fontFamily",
-          "footer.elements[].fontSize",
-          "footer.elements[].fontWeight",
-          "footer.elements[].id",
-          "footer.elements[].kind",
-          "footer.elements[].parity",
-          "footer.elements[].placement",
-          "header",
-          "header.elements",
-          "header.elements[].align",
-          "header.elements[].color",
-          "header.elements[].content",
-          "header.elements[].fontFamily",
-          "header.elements[].fontSize",
-          "header.elements[].fontWeight",
-          "header.elements[].id",
-          "header.elements[].kind",
-          "header.elements[].letterSpacing",
-          "header.elements[].parity",
-          "header.elements[].placement",
-          "header.elements[].textTransform",
-          "headingStyles",
-          "headingStyles[].fontSize",
-          "headingStyles[].id",
-          "headingStyles[].lineHeight",
-          "headingStyles[].numbered",
-          "headingStyles[].toc",
-          "headings",
-          "headings.color",
-          "headings.fontFamily",
-          "headings.fontWeight",
-          "headings.levels",
-          "headings.levels[].breakBefore",
-          "headings.levels[].color",
-          "headings.levels[].fontSize",
-          "headings.levels[].level",
-          "headings.levels[].lineHeight",
-          "headings.levels[].marginBottom",
-          "headings.levels[].marginTop",
-          "labelStyles",
-          "labelStyles[].background",
-          "labelStyles[].color",
-          "labelStyles[].fontFamily",
-          "labelStyles[].fontSize",
-          "labelStyles[].fontStyle",
-          "labelStyles[].fontWeight",
-          "labelStyles[].halo",
-          "labelStyles[].halo.color",
-          "labelStyles[].halo.width",
-          "labelStyles[].id",
-          "labelStyles[].letterSpacing",
-          "labelStyles[].padding",
-          "labelStyles[].textTransform",
-          "layout",
-          "layout.layoutType",
-          "locale",
-          "orderedLists",
-          "orderedLists.color",
-          "orderedLists.fontFamily",
-          "orderedLists.fontWeight",
-          "orderedLists.itemSpacing",
-          "orderedLists.numberFormat",
-          "page",
-          "page.dpi",
-          "page.height",
-          "page.margins",
-          "page.margins.bottom",
-          "page.margins.left",
-          "page.margins.mirror",
-          "page.margins.right",
-          "page.margins.top",
-          "page.sizePreset",
-          "page.width",
-          "pageTemplates",
-          "pageTemplates[].decoration",
-          "pageTemplates[].decoration.elements",
-          "pageTemplates[].extends",
-          "pageTemplates[].footer",
-          "pageTemplates[].frames",
-          "pageTemplates[].frames[].columnGap",
-          "pageTemplates[].frames[].columns",
-          "pageTemplates[].frames[].crossGutter",
-          "pageTemplates[].frames[].exclude",
-          "pageTemplates[].frames[].fit",
-          "pageTemplates[].frames[].flow",
-          "pageTemplates[].frames[].height",
-          "pageTemplates[].frames[].layer",
-          "pageTemplates[].frames[].minHeight",
-          "pageTemplates[].frames[].name",
-          "pageTemplates[].frames[].optional",
-          "pageTemplates[].frames[].padding",
-          "pageTemplates[].frames[].placement",
-          "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
-          "pageTemplates[].frames[].style",
-          "pageTemplates[].frames[].takes",
-          "pageTemplates[].frames[].width",
-          "pageTemplates[].groups",
-          "pageTemplates[].groups[].frames",
-          "pageTemplates[].groups[].gap",
-          "pageTemplates[].groups[].kind",
-          "pageTemplates[].groups[].name",
-          "pageTemplates[].gutter",
-          "pageTemplates[].header",
-          "pageTemplates[].id",
-          "pageTemplates[].palette",
-          "pageTemplates[].spread",
-          "parts",
-          "parts.page",
-          "resourceTypes",
-          "resourceTypes[].captionPrefix",
-          "resourceTypes[].counterFormat",
-          "resourceTypes[].defaultPlacement",
-          "resourceTypes[].defaultPlacement.position",
-          "resourceTypes[].id",
-          "resourceTypes[].name",
-          "resourceTypes[].numberingTemplate",
-          "resourceTypes[].resetOn",
-          "resourceTypes[].shortLabel",
-          "toc",
-          "toc.leader",
-          "toc.leader.char",
-          "toc.leader.gap",
-          "toc.levels",
-          "toc.levels[].color",
-          "toc.levels[].fontFamily",
-          "toc.levels[].fontSize",
-          "toc.levels[].fontWeight",
-          "toc.levels[].indent",
-          "toc.levels[].level",
-          "toc.levels[].lineHeight",
-          "toc.levels[].marginTop",
-          "toc.levels[].numberColor",
-          "toc.levels[].numberFontWeight",
-          "toc.levels[].numberWidth",
-          "toc.pageNumber",
-          "toc.pageNumber.color",
-          "toc.pageNumber.fontFamily",
-          "toc.pageNumber.fontWeight",
-          "toc.pageNumber.width",
-          "toc.parts",
-          "toc.parts.design",
-          "toc.parts.height",
-          "toc.parts.marginBottom",
-          "toc.parts.marginTop",
-          "unorderedLists",
-          "unorderedLists.bulletChar",
-          "unorderedLists.color",
-          "unorderedLists.fontWeight",
-          "unorderedLists.itemSpacing"
-        ],
-        "configSections": [
-          "bodyText",
-          "calloutStyles",
-          "canvasViewer",
-          "captionStyle",
-          "colorPalette",
-          "footer",
-          "header",
-          "headingStyles",
-          "headings",
-          "labelStyles",
-          "layout",
-          "locale",
-          "orderedLists",
-          "page",
-          "pageTemplates",
-          "parts",
-          "resourceTypes",
-          "toc",
-          "unorderedLists"
-        ],
-        "configLeaves": 773,
-        "designElements": 15,
-        "directives": [
-          "::::page",
-          ":::frame",
-          ":::toc",
-          ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -4914,24 +4531,39 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 116 line, 1 text"
+            "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 112 line, 1 text"
+          },
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
             "check": "C35",
             "severity": "info",
-            "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 7 −10‰ “Das Land ist fast flach. Der Fluss ist breit und…”, p. 8 −5‰ “Menschen haben sich schon immer gern an Flüssen …”"
+            "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Tiens une éponge mouillée au-dessus d’un plateau…”, p. 8 −10‰ “Les gens se sont toujours installés près des riv…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
-    "it": {
-      "hash8": "b13f39c6",
-      "vdtHash": "e5dc46f2b3deced3d1783c3e93b89ec6040c23c3",
+    "de": {
+      "hash8": "c1765db0",
+      "vdtHash": "8a91fd6d3cd0731750545bba60e30c3b71b7e27f",
       "timings": {
-        "importMs": 1100,
-        "fontsMs": 429,
-        "buildMs": 51,
-        "totalMs": 2660,
+        "importMs": 5253,
+        "fontsMs": 1119,
+        "buildMs": 36,
+        "totalMs": 8320,
         "builds": 2
       },
       "specimen": {
@@ -4952,7 +4584,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 300
+        "ownLines": 299
       },
       "pages": [
         {
@@ -4963,8 +4595,8 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 207242,
-          "alt": "Pagina 1: Il nostro fiume."
+          "bytes": 210218,
+          "alt": "Seite 1: Unser Fluss."
         },
         {
           "n": 2,
@@ -4974,8 +4606,8 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 118478,
-          "alt": "Pagina 2: In questa unità. Il fiume Aldara dalla sorgente al mare. La mappa è alle pagine 6 e 7."
+          "bytes": 121340,
+          "alt": "Seite 2: In diesem Kapitel. Die Aldara von der Quelle bis zum Meer. Die Karte findest du auf den Seiten 6 und 7."
         },
         {
           "n": 3,
@@ -4985,8 +4617,8 @@
           "h": 1333,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 27454,
-          "alt": "Pagina 3: Che cosa sai dei fiumi?"
+          "bytes": 33272,
+          "alt": "Seite 3: Was weißt du über Flüsse?"
         },
         {
           "n": 4,
@@ -4996,8 +4628,8 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 119338,
-          "alt": "Pagina 4: Dove nasce un fiume. Una sorgente. L’acqua è rimasta sottoterra per mesi. · Un ruscello, ripido e veloce, con sassi levigati. · Una cascata, dove il ruscello scende da un gradino di roccia."
+          "bytes": 126794,
+          "alt": "Seite 4: Wo ein Fluss entspringt. Eine Quelle. Das Wasser war monatelang unter der Erde. · Ein Bach, steil und schnell, mit glatten Kieseln. · Ein Wasserfall. Hier fällt der Bach über eine Felsstufe."
         },
         {
           "n": 5,
@@ -5007,8 +4639,8 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 39344,
-          "alt": "Pagina 5."
+          "bytes": 42932,
+          "alt": "Seite 5."
         },
         {
           "n": 6,
@@ -5018,8 +4650,8 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 206762,
-          "alt": "Pagina 6: Dalla montagna al mare."
+          "bytes": 209854,
+          "alt": "Seite 6: Von den Bergen bis zum Meer."
         },
         {
           "n": 7,
@@ -5029,8 +4661,8 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 165002,
-          "alt": "Pagina 7."
+          "bytes": 167290,
+          "alt": "Seite 7."
         },
         {
           "n": 8,
@@ -5040,8 +4672,8 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 84782,
-          "alt": "Pagina 8: Le persone e il fiume."
+          "bytes": 93248,
+          "alt": "Seite 8: Die Menschen und der Fluss."
         },
         {
           "n": 9,
@@ -5051,8 +4683,8 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 103352,
-          "alt": "Pagina 9."
+          "bytes": 104882,
+          "alt": "Seite 9."
         }
       ],
       "spreads": [
@@ -5091,18 +4723,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1730721,
+        "bytes": 1735190,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100373,
+        "bytes": 2101483,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "7d8fabaf77bdba5d",
-            "lines": "28818f39573374a9"
+            "hash": "7812a86a9874869c",
+            "lines": "43261aa175b9abe5"
           }
         ]
       },
@@ -5250,6 +4882,10 @@
           "labelStyles[].halo.color",
           "labelStyles[].halo.width",
           "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
           "labelStyles[].letterSpacing",
           "labelStyles[].padding",
           "labelStyles[].textTransform",
@@ -5293,19 +4929,26 @@
           "pageTemplates[].frames[].padding",
           "pageTemplates[].frames[].placement",
           "pageTemplates[].frames[].rules",
-          "pageTemplates[].frames[].shrink",
           "pageTemplates[].frames[].style",
           "pageTemplates[].frames[].takes",
           "pageTemplates[].frames[].width",
           "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
           "pageTemplates[].groups[].frames",
           "pageTemplates[].groups[].gap",
           "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
           "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
           "pageTemplates[].gutter",
           "pageTemplates[].header",
           "pageTemplates[].id",
           "pageTemplates[].palette",
+          "pageTemplates[].role",
           "pageTemplates[].spread",
           "parts",
           "parts.page",
@@ -5372,13 +5015,14 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 773,
-        "designElements": 15,
+        "configLeaves": 768,
+        "designElements": 18,
         "directives": [
           "::::page",
           ":::frame",
           ":::toc",
           ":::figure",
+          ":::module",
           ":::part"
         ],
         "inline": [
@@ -5461,12 +5105,596 @@
           {
             "check": "C40",
             "severity": "info",
+            "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 117 line, 1 text"
+          },
+          {
+            "check": "C20",
+            "severity": "warn",
+            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 8 −5‰ “Menschen haben sich schon immer gern an Flüssen …”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
+          }
+        ]
+      }
+    },
+    "it": {
+      "hash8": "f4edc502",
+      "vdtHash": "37172b606872ee63c6875fcb61be6a378d3b4a7f",
+      "timings": {
+        "importMs": 5392,
+        "fontsMs": 1051,
+        "buildMs": 39,
+        "totalMs": 10328,
+        "builds": 2
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 12,
+          "leadingPt": 17.5
+        },
+        "families": [
+          "Fredoka",
+          "Nunito"
+        ],
+        "pages": 9,
+        "ownLines": 299
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 207242,
+          "alt": "Pagina 1: Il nostro fiume."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 118478,
+          "alt": "Pagina 2: In questa unità. Il fiume Aldara dalla sorgente al mare. La mappa è alle pagine 6 e 7."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 27454,
+          "alt": "Pagina 3: Che cosa sai dei fiumi?"
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 119338,
+          "alt": "Pagina 4: Dove nasce un fiume. Una sorgente. L’acqua è rimasta sottoterra per mesi. · Un ruscello, ripido e veloce, con sassi levigati. · Una cascata, dove il ruscello scende da un gradino di roccia."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 39344,
+          "alt": "Pagina 5."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 206896,
+          "alt": "Pagina 6: Dalla montagna al mare."
+        },
+        {
+          "n": 7,
+          "label": "7",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 164900,
+          "alt": "Pagina 7."
+        },
+        {
+          "n": 8,
+          "label": "8",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 84782,
+          "alt": "Pagina 8: Le persone e il fiume."
+        },
+        {
+          "n": 9,
+          "label": "9",
+          "role": "composed",
+          "w": 1000,
+          "h": 1333,
+          "file": "p09.webp",
+          "strip": "p09.s.webp",
+          "bytes": 103352,
+          "alt": "Pagina 9."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          8
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "children-textbook-pages.pdf",
+        "bytes": 1732597,
+        "pages": 9
+      },
+      "sandbox": {
+        "file": "children-textbook-pages.postext",
+        "bytes": 2100891,
+        "folio": "207b7a99",
+        "chapters": [
+          {
+            "pages": 9,
+            "hash": "2cf4ab35cee0d7a5",
+            "lines": "d4d95ec16c8b0bc9"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "loadVerticalAlternates",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.boldFontWeight",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.paragraphSpacing",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].border",
+          "calloutStyles[].border.color",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].border.width",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].extends",
+          "calloutStyles[].id",
+          "calloutStyles[].label",
+          "calloutStyles[].label.background",
+          "calloutStyles[].label.color",
+          "calloutStyles[].label.fontFamily",
+          "calloutStyles[].label.fontSize",
+          "calloutStyles[].label.fontWeight",
+          "calloutStyles[].label.height",
+          "calloutStyles[].label.inset",
+          "calloutStyles[].label.offset",
+          "calloutStyles[].label.paddingX",
+          "calloutStyles[].label.position",
+          "calloutStyles[].label.rule",
+          "calloutStyles[].lists",
+          "calloutStyles[].lists.color",
+          "calloutStyles[].lists.gap",
+          "calloutStyles[].lists.itemSpacing",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "canvasViewer",
+          "canvasViewer.pageGap",
+          "captionStyle",
+          "captionStyle.color",
+          "captionStyle.descriptionItalic",
+          "captionStyle.fontFamily",
+          "captionStyle.fontSize",
+          "captionStyle.gap",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].box",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "header.elements[].align",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "headingStyles",
+          "headingStyles[].fontSize",
+          "headingStyles[].id",
+          "headingStyles[].lineHeight",
+          "headingStyles[].numbered",
+          "headingStyles[].toc",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "labelStyles",
+          "labelStyles[].background",
+          "labelStyles[].color",
+          "labelStyles[].fontFamily",
+          "labelStyles[].fontSize",
+          "labelStyles[].fontStyle",
+          "labelStyles[].fontWeight",
+          "labelStyles[].halo",
+          "labelStyles[].halo.color",
+          "labelStyles[].halo.width",
+          "labelStyles[].id",
+          "labelStyles[].leader",
+          "labelStyles[].leader.capSize",
+          "labelStyles[].leader.endCap",
+          "labelStyles[].leader.width",
+          "labelStyles[].letterSpacing",
+          "labelStyles[].padding",
+          "labelStyles[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.itemSpacing",
+          "orderedLists.numberFormat",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "pageTemplates",
+          "pageTemplates[].decoration",
+          "pageTemplates[].decoration.elements",
+          "pageTemplates[].extends",
+          "pageTemplates[].footer",
+          "pageTemplates[].frames",
+          "pageTemplates[].frames[].columnGap",
+          "pageTemplates[].frames[].columns",
+          "pageTemplates[].frames[].crossGutter",
+          "pageTemplates[].frames[].exclude",
+          "pageTemplates[].frames[].fit",
+          "pageTemplates[].frames[].flow",
+          "pageTemplates[].frames[].height",
+          "pageTemplates[].frames[].layer",
+          "pageTemplates[].frames[].minHeight",
+          "pageTemplates[].frames[].name",
+          "pageTemplates[].frames[].optional",
+          "pageTemplates[].frames[].padding",
+          "pageTemplates[].frames[].placement",
+          "pageTemplates[].frames[].rules",
+          "pageTemplates[].frames[].style",
+          "pageTemplates[].frames[].takes",
+          "pageTemplates[].frames[].width",
+          "pageTemplates[].groups",
+          "pageTemplates[].groups[].columnGap",
+          "pageTemplates[].groups[].columns",
+          "pageTemplates[].groups[].frames",
+          "pageTemplates[].groups[].gap",
+          "pageTemplates[].groups[].kind",
+          "pageTemplates[].groups[].modules",
+          "pageTemplates[].groups[].name",
+          "pageTemplates[].groups[].placement",
+          "pageTemplates[].groups[].repeat",
+          "pageTemplates[].groups[].rowAlign",
+          "pageTemplates[].groups[].rowGap",
+          "pageTemplates[].gutter",
+          "pageTemplates[].header",
+          "pageTemplates[].id",
+          "pageTemplates[].palette",
+          "pageTemplates[].role",
+          "pageTemplates[].spread",
+          "parts",
+          "parts.page",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel",
+          "toc",
+          "toc.leader",
+          "toc.leader.char",
+          "toc.leader.gap",
+          "toc.levels",
+          "toc.levels[].color",
+          "toc.levels[].fontFamily",
+          "toc.levels[].fontSize",
+          "toc.levels[].fontWeight",
+          "toc.levels[].indent",
+          "toc.levels[].level",
+          "toc.levels[].lineHeight",
+          "toc.levels[].marginTop",
+          "toc.levels[].numberColor",
+          "toc.levels[].numberFontWeight",
+          "toc.levels[].numberWidth",
+          "toc.pageNumber",
+          "toc.pageNumber.color",
+          "toc.pageNumber.fontFamily",
+          "toc.pageNumber.fontWeight",
+          "toc.pageNumber.width",
+          "toc.parts",
+          "toc.parts.design",
+          "toc.parts.height",
+          "toc.parts.marginBottom",
+          "toc.parts.marginTop",
+          "unorderedLists",
+          "unorderedLists.bulletChar",
+          "unorderedLists.color",
+          "unorderedLists.fontWeight",
+          "unorderedLists.itemSpacing"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "canvasViewer",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "labelStyles",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "pageTemplates",
+          "parts",
+          "resourceTypes",
+          "toc",
+          "unorderedLists"
+        ],
+        "configLeaves": 768,
+        "designElements": 18,
+        "directives": [
+          "::::page",
+          ":::frame",
+          ":::toc",
+          ":::figure",
+          ":::module",
+          ":::part"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 10,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Fredoka",
+            "weight": 500,
+            "style": "normal"
+          },
+          {
+            "family": "Fredoka",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Fredoka",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-label-tabs",
+          "composed-pages",
+          "composed-spreads",
+          "figure-labels",
+          "frame-decoration",
+          "frame-groups",
+          "frame-text-push",
+          "heading-attributes",
+          "heading-styles",
+          "part-dividers",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources",
+          "toc",
+          "unnumbered-headings"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 2,
+          "tracked": 2,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C40",
+            "severity": "info",
             "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 107 line, 1 text"
           },
           {
             "check": "C35",
             "severity": "info",
-            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 8 −5‰ “Un fiume resta pulito solo se ce ne prendiamo cu…”"
+            "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 7 −5‰ “Il pendio è ripido. L’acqua è fredda, limpida e …”, p. 8 −5‰ “Un fiume resta pulito solo se ce ne prendiamo cu…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

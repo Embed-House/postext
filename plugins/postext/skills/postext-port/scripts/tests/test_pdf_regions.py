@@ -123,8 +123,10 @@ class ExtractTest(unittest.TestCase):
         cls.out = cls.root / "out"
         import contextlib
 
+        cls.raster = cls.root / "raster"
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
             extract(cls.pdf, cls.out)
+            extract(cls.pdf, cls.raster, "--raster-ground")
         cls.md = (cls.out / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
         cls.lib = json.loads((cls.out / "library.json").read_text(encoding="utf-8"))
         cls.res = json.loads((cls.out / "resources.json").read_text(encoding="utf-8"))
@@ -204,8 +206,13 @@ class ExtractTest(unittest.TestCase):
         self.assertIn("{pageNumber}", contents)
         self.assertIn("{attr.head}", contents)
         self.assertIn('head="RUNNING HEAD WORDS"', self.md)
-        self.assertEqual(next(e for e in els if e["kind"] == "image")["resourceId"], "{attr.ground}")
+        # nothing on the white page is left for a raster ground: the page has none
+        self.assertFalse([e for e in els if e["kind"] == "image"])
+        self.assertNotIn('ground="', self.md)
         self.assertNotIn("RUNNING", json.dumps(self.lib))
+        raster = json.loads((self.raster / "library.json").read_text(encoding="utf-8"))
+        rels = raster["pageTemplates"][0]["decoration"]["elements"]
+        self.assertEqual(next(e for e in rels if e["kind"] == "image")["resourceId"], "{attr.ground}")
 
     def test_frames_anchor_and_measure(self):
         tpl = self.lib["pageTemplates"][0]
@@ -236,10 +243,7 @@ class ExtractTest(unittest.TestCase):
         self.assertNotRegex(tid, r"^p\d")
         md = (work / "chapters/en/01-pages.md").read_text()
         self.assertEqual(md.count(f'template="{tid}"'), 2)
-        # the two grounds are alike: one kept, its file the only one left
-        grounds = [r for r in json.loads((work / "resources.json").read_text()) if r["typeId"] == "ground"]
-        self.assertEqual(len(grounds), 1)
-        self.assertEqual(md.count(f'ground="{grounds[0]["id"]}"'), 2)
+        self.assertFalse([r for r in json.loads((work / "resources.json").read_text()) if r["typeId"] == "ground"])
         # parity-bound decoration of both pages joined
         ids = {e["id"] for e in lib["pageTemplates"][0]["decoration"]["elements"]}
         self.assertTrue({"folio-odd", "folio-even"} <= ids)
@@ -257,6 +261,18 @@ class ExtractTest(unittest.TestCase):
             for bad in ("templateUnknown", "slotUnknown", "frameOverflow", "frameStyleUnknown", "frameAnchorUnknown",
                         "labelAnchorUnknown", "contentInConfig", "unclosedContainer"):
                 self.assertNotIn(bad, kinds)
+
+    def test_dedupe_merges_alike_raster_grounds(self):
+        import shutil
+
+        work = self.root / "dd-raster"
+        shutil.copytree(self.raster, work)
+        td.dedupe_dir(work, {"geom": 3, "dim": 0.5, "padding": 1.5, "font": 0.25, "delta_e": 3}, 2, 2.0)
+        md = (work / "chapters/en/01-pages.md").read_text()
+        # the two grounds are alike: one kept, its file the only one left
+        grounds = [r for r in json.loads((work / "resources.json").read_text()) if r["typeId"] == "ground"]
+        self.assertEqual(len(grounds), 1)
+        self.assertEqual(md.count(f'ground="{grounds[0]["id"]}"'), 2)
 
 
 @unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
@@ -381,6 +397,191 @@ class CardClipTest(unittest.TestCase):
             self.assertTrue(pics)
             for f in pics:
                 self.assertLessEqual(f["box"][3], card[3] + 0.05, f)
+
+
+GREY = (0.4, 0.4, 0.4)
+LINE = (1.0, 0.75, 0.35)
+
+
+def draw_diagram_page(doc):
+    """A diagram page: a coloured page with a white card and its title tab
+    grown out of it, a tree (a trunk, a bar, three drops) from a sentence to
+    three boxes, a drawn map with a note whose pointer runs into it, two pills
+    joined by a line, a border round two boxes, a loose rule and a folio."""
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    page.draw_rect(R(-5, -5, 215, 302), color=None, fill=(0.05, 0.6, 0.55))
+    page.draw_rect(R(10, 20, 200, 282), color=None, fill=(1, 1, 1), radius=0.016)
+    page.draw_rect(R(10, 14, 106, 26), color=None, fill=(1, 1, 1), radius=0.08)
+    text(page, 14, 23.5, "PLANTS AND ANIMALS", size=22, font="hebo")
+    text(page, 40, 40, "Living things are sorted into three large groups:")
+    # the tree
+    page.draw_line(fitz.Point(105 * MM, 42 * MM), fitz.Point(105 * MM, 60 * MM), color=LINE, width=1)
+    page.draw_polyline([fitz.Point(40 * MM, 60 * MM), fitz.Point(40 * MM, 55 * MM),
+                        fitz.Point(170 * MM, 55 * MM), fitz.Point(170 * MM, 60 * MM)], color=LINE, width=1)
+    for x0, words in ((20, "Trees grow tall"), (85, "Birds can fly"), (150, "Fish swim in water")):
+        page.draw_rect(R(x0, 60, x0 + 40, 78), color=None, fill=(0.9, 0.95, 0.85))
+        text(page, x0 + 3, 67, words, size=10)
+        text(page, x0 + 3, 72, "and live long.", size=10)
+    # a drawn map and a note that points into it
+    for i in range(16):
+        x, y = 22 + (i % 4) * 26, 110 + (i // 4) * 14
+        pts = [fitz.Point((x + dx) * MM, (y + dy) * MM) for dx, dy in ((0, 0), (26, 2), (28, 13), (6, 14), (-2, 6))]
+        page.draw_polyline(pts + [pts[0]], color=(0.2, 0.5, 0.2), fill=(0.6, 0.8, 0.5), closePath=True)
+    page.draw_rect(R(145, 120, 195, 140), color=None, fill=(0.85, 0.92, 0.98))
+    text(page, 148, 127, "The river runs", size=10)
+    text(page, 148, 132, "down to the sea.", size=10)
+    page.draw_polyline([fitz.Point(145 * MM, 130 * MM), fitz.Point(80 * MM, 130 * MM),
+                        fitz.Point(80 * MM, 145 * MM)], color=GREY, width=0.5)
+    page.draw_circle(fitz.Point(80 * MM, 145 * MM), 0.6 * MM, color=None, fill=GREY)   # its dot
+    # two pills and the line between them
+    page.draw_line(fitz.Point(60 * MM, 194 * MM), fitz.Point(140 * MM, 194 * MM), color=LINE, width=1)
+    for x0, w in ((20, "Spring"), (140, "Autumn")):
+        page.draw_rect(R(x0, 189.5, x0 + 40, 198.5), color=None, fill=(0.95, 0.85, 0.9), radius=0.3)
+        text(page, x0 + 12, 195.5, w, size=10)
+    # a border with no words round two boxes
+    page.draw_rect(R(18, 208, 192, 262), color=(0.2, 0.3, 0.6), width=1, radius=0.05)
+    for x0, words in ((24, "Seeds need water"), (110, "Leaves need light")):
+        page.draw_rect(R(x0, 214, x0 + 76, 256), color=None, fill=(0.98, 0.94, 0.8))
+        text(page, x0 + 3, 222, words, size=10)
+        text(page, x0 + 3, 227, "to grow strong.", size=10)
+    # a rule that joins nothing
+    page.draw_line(fitz.Point(20 * MM, 270 * MM), fitz.Point(190 * MM, 270 * MM), color=GREY, width=0.5)
+    text(page, 190, 291, "7", size=9, color=(1, 1, 1))
+    return page
+
+
+def decoration_of(lib: dict) -> list[dict]:
+    return lib["pageTemplates"][0]["decoration"]["elements"]
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class VectorDecorationTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import contextlib
+
+        cls.tmp = tempfile.TemporaryDirectory()
+        root = Path(cls.tmp.name)
+        doc = fitz.open()
+        draw_diagram_page(doc)
+        cls.pdf = root / "diagram.pdf"
+        doc.save(str(cls.pdf))
+        cls.out = root / "out"
+        cls.raster = root / "raster"
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            extract(cls.pdf, cls.out, "--name-frames", "never")
+            extract(cls.pdf, cls.raster, "--name-frames", "never", "--raster-ground")
+        cls.lib = json.loads((cls.out / "library.json").read_text(encoding="utf-8"))
+        cls.res = json.loads((cls.out / "resources.json").read_text(encoding="utf-8"))
+        cls.md = (cls.out / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
+        cls.els = decoration_of(cls.lib)
+        cls.conns = [e for e in cls.els if e["kind"] == "connector"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_page_colour_and_card_with_its_tab(self):
+        band = next(e for e in self.els if e["id"] == "page-colour")
+        self.assertEqual(band["placement"]["anchor"]["to"], "bleed")
+        self.assertEqual(band["placement"]["size"], {"width": "fill", "height": "fill"})
+        card = next(e for e in self.els if e["id"] == "card")
+        self.assertEqual(card["kind"], "path")       # the card and its tab: one outline
+        self.assertEqual(card["fill"]["hex"], "#ffffff")
+        self.assertEqual(card["viewBox"], [190.0, 268.0])
+        # the tab frame keeps its words, the card paints its ground
+        tpl = self.lib["pageTemplates"][0]
+        title = next(f for f in tpl["frames"] if f.get("takes") == "h1")
+        st = next(s for s in self.lib["calloutStyles"] if s["id"] == title["style"])
+        self.assertFalse(st["backgroundEnabled"])
+
+    def test_the_tree_is_one_connector(self):
+        trees = [c for c in self.conns if c["routing"] == "tree"]
+        self.assertEqual(len(trees), 1)
+        t = trees[0]
+        self.assertEqual(t["from"]["side"], "bottom")
+        self.assertEqual(len(t["to"]), 3)
+        self.assertTrue(all(e["side"] == "top" for e in t["to"]))
+        frames = {f["name"]: f for f in self.lib["pageTemplates"][0]["frames"]}
+        self.assertTrue(all(e["to"][1:] in frames for e in [t["from"]] + t["to"]))
+        self.assertAlmostEqual(t["trunk"], 0.72, delta=0.08)
+
+    def test_the_note_points_into_the_map_at_a_new_anchor(self):
+        ptr = [c for c in self.conns if isinstance(c["to"], dict) and c["to"].get("anchor")]
+        self.assertEqual(len(ptr), 1)
+        c = ptr[0]
+        self.assertEqual(c["routing"], "elbow")
+        self.assertEqual(c["from"]["side"], "left")
+        self.assertEqual(c["to"]["side"], "top")        # the last run comes down onto the point
+        self.assertEqual(c.get("endCap"), "dot")        # the dot drawn at the point
+        self.assertAlmostEqual(c["capSize"]["value"], 1.2, delta=0.15)
+        rid = next(r for r in self.res if any(a.get("id") == c["to"]["anchor"] for a in r.get("anchors", [])))
+        a = next(a for a in rid["anchors"] if a["id"] == c["to"]["anchor"])
+        self.assertTrue(0.4 < a["x"] < 0.8 and 0.5 < a["y"] < 0.9, a)
+        # the pointer is no longer in the picture's cut
+        with Image.open(self.out / rid["file"]) as im:
+            w, h = im.size
+            px = im.convert("RGB").getpixel((int(a["x"] * w), int((a["y"] - 0.1) * h)))
+        self.assertGreater(abs(px[1] - px[0]), 20, px)    # the map's green, not the grey line
+
+    def test_the_pills_are_joined_by_a_straight_connector(self):
+        st = [c for c in self.conns if c["routing"] == "straight"]
+        self.assertEqual(len(st), 1)
+        self.assertEqual((st[0]["from"]["side"], st[0]["to"]["side"]), ("right", "left"))
+
+    def test_a_border_without_words_is_decoration_round_its_boxes(self):
+        self.assertNotRegex(self.md, r':::frame\{[^}]*\}\n:::')
+        main = next(e for e in self.els if e["id"] == "border-1")
+        end = next(e for e in self.els if e["id"] == "border-1-end")
+        self.assertEqual(main["style"]["borderWidth"]["unit"], "pt")
+        self.assertEqual(main["placement"]["size"]["width"], {"to": "#border-1-end", "edge": "left"})
+        self.assertTrue(main["placement"]["anchor"]["to"].startswith("#box"))
+        self.assertTrue(end["placement"]["anchor"]["to"].startswith("#box"))
+
+    def test_the_loose_rule_is_a_path_and_the_page_needs_no_ground(self):
+        lines = [e for e in self.els if e["kind"] == "path" and e["id"].startswith("lines-")]
+        self.assertEqual(len(lines), 1)
+        self.assertEqual(lines[0]["stroke"]["hex"], "#666666")
+        self.assertFalse([r for r in self.res if r["typeId"] == "ground"])
+        self.assertNotIn('ground="', self.md)
+        self.assertFalse(any(e["kind"] == "image" for e in self.els))
+
+    def test_raster_ground_keeps_round_one(self):
+        lib = json.loads((self.raster / "library.json").read_text(encoding="utf-8"))
+        res = json.loads((self.raster / "resources.json").read_text(encoding="utf-8"))
+        els = decoration_of(lib)
+        self.assertEqual([e["kind"] for e in els if e["kind"] in ("connector", "path")], [])
+        self.assertEqual(sum(1 for r in res if r["typeId"] == "ground"), 1)
+
+    def test_dedupe_renames_connector_ends_and_border_anchors(self):
+        t = json.loads(json.dumps(self.lib["pageTemplates"][0]))
+        names = {f["name"]: f"role-{i}" for i, f in enumerate(t["frames"])}
+        td.rename_in_template(t, names)
+        new = set(names.values())
+        for e in t["decoration"]["elements"]:
+            for h in td.element_refs(e):
+                to = h["to"]
+                if to.startswith("#") and not to.startswith("#border"):
+                    self.assertIn(to[1:], new, e["id"])
+
+    def test_the_draft_builds(self):
+        cli = os.environ.get("POSTEXT_CLI")
+        if not cli:
+            self.skipTest("POSTEXT_CLI not set")
+        import contextlib
+        import shutil
+
+        work = Path(self.tmp.name) / "built"
+        shutil.copytree(self.out, work)
+        with contextlib.redirect_stdout(io.StringIO()):
+            pr.main(["manifest", str(work)])
+        run = subprocess.run(shlex.split(cli) + ["check", str(work), "--offline", "--json"],
+                             capture_output=True, text=True)
+        data = json.loads(run.stdout)
+        kinds = {w.get("kind") for w in data.get("warnings", [])}
+        for bad in ("unknownConfigValue", "unknownConfigKey", "frameAnchorUnknown", "labelAnchorUnknown",
+                    "templateUnknown", "slotUnknown"):
+            self.assertNotIn(bad, kinds, [w for w in data.get("warnings", []) if w.get("kind") == bad][:3])
 
 
 @unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")

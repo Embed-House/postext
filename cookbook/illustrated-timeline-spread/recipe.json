@@ -16,11 +16,13 @@
   "features": {
     "primary": [
       "composed-spreads",
-      "frame-groups",
-      "frame-decoration"
+      "frame-grids",
+      "frame-connectors"
     ],
     "also": [
       "composed-pages",
+      "frame-groups",
+      "frame-decoration",
       "callout-label-tabs",
       "callout-styles",
       "design-anchoring",
@@ -39,8 +41,8 @@
   ],
   "gotchas": [],
   "engine": {
-    "postext": "1.38.0",
-    "postextPdf": "1.38.0"
+    "postext": "1.48.0",
+    "postextPdf": "1.48.0"
   },
   "kit": [
     "core",
@@ -177,7 +179,7 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-10-17",
-  "updated": "2026-10-17",
+  "updated": "2026-10-20",
   "downloads": {
     "pdf": true
   },

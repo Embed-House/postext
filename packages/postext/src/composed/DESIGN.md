@@ -2703,3 +2703,225 @@ C8's box shapes (§12.20): all of them are edited in the Design panel and on the
 - **Not done.** Other decoration elements over the frames (a rule or box that should sit over a photo
   still needs the photo's frame at a negative layer); an over connector between frames of different
   layers is painted over both, never between them. Sandbox (U10/U11), docs (D3), skill (S6).
+
+### 12.27 What U11 built (#1064)
+
+The Sandbox side of C6 (§12.4, §12.23) and C7 (§12.5, §12.13): leaders and pointers, legends and inline
+symbols, edited without writing JSON.
+
+- **Label away from its point** (anchor editor, the picture marks dialog's Anchors mode). Each anchor has a
+  «Label and leader» group: a switch sets the label away (`labelAt`, one step up and right of the point,
+  turned back inside the picture near an edge) and its place in % of the picture. On the picture, a label set
+  away has a handle where it stands (a tag with its words), the anchor picked a dashed grip beside its point;
+  either is dragged, or focused and nudged with the arrow keys (Shift: five steps), and Delete sets the label
+  back at its point (`MarkTarget` kind `label`, `pictureMarks.ts`). The line from the handle to the point is
+  drawn live, solid in the style's colour when a leader will be drawn (`leaderDrawn`, the engine's rule:
+  label attribute, else anchor, else away with a style look), dashed white when not. Decision: the dialog
+  keeps `labelAt` inside the picture (0..1) like the points; the engine reads any number, and a value set
+  outside it by hand or by a tool is kept.
+- **Leader per anchor.** «As the style / On / Off» writes `leader` unset / `true` (an object kept) / `false`;
+  with On, routing (straight, elbow) and the mark at the point (dot, arrow, none) write the anchor's own look.
+  Colour, width, dash and caps of a look are the label style's (below); the anchor offers only these two.
+- **Leader per label.** Every `::label` / `:::label` set at the anchor is listed with «As the anchor / On / Off»,
+  which writes `leader` / `leader="none"` into the chapter's Markdown at once (`editor/labelAttrs.ts`
+  `setLabelAttr`: the other attributes kept as written, scanned by hand), one step of the history; it is the
+  text's, so it is not part of the dialog's Cancel or Undo. The dialog's lists now read the container form
+  too (`figureLabels.ts`; its lines shown joined by « / », symbols left out).
+- **Canvas.** A label set away from its point shows a line to the anchor's point and the point (Design
+  mode); dragging it moves `labelAt`, no longer the anchor (before this, the drop wrote the label's place
+  into the anchor's point). Alt held while dragging a label at its point sets it away the same way. The point
+  of an anchor whose label is away is moved in the dialog.
+- **Pointers** (`templates/pointerEdits.ts`). A pointer is a connector of the template's own decoration with
+  one `to` end that names an anchor. On a composed page in Design mode the selected frame has a round grip
+  beside the middle of its end side; dragging it shows every anchor of the pictures in the page's other
+  frames (`frameAnchorsOnPage`, through crop, safe area, scale and turn as labels are) and a drop near one
+  writes `{ kind: 'connector', from: { to: '#note' }, to: { to: '#map', anchor }, routing: 'straight',
+  endCap: 'dot' }` (id `pointer-<frame>-<anchor>`), or keeps the one already joining the two. The frame's
+  properties have a «Pointers» group, the keyboard's way: each pointer's frame and anchor (anchors of the laid
+  pages, else typed), remove, add. Decisions: a pointer leaves the picture's frame at its layer: since #1076
+  (§12.26) a connector with an anchor end paints over the frames by default (the first version of this
+  lane set the frame to `layer: -1`, as §12.23 needed then); pointers are written on the page's template (every page it lays draws them; a page whose picture
+  lacks the anchor gets `labelAnchorUnknown`), never on a variant; an inherited pointer is edited on the child
+  under its id and removed by hiding it (`{ id, remove: true }`). The grip is not offered on a turned frame.
+- **Connector card (U10's, #1063).** Each end has «Anchor of the picture»: the anchors of the picture the
+  end's frame holds on the pages laid with the template (an anchor the pages lack is kept and named as such),
+  or «None: a side of the box»; with an anchor the point-along-the-side field is hidden (the engine does not
+  read `at` then). The canvas handle of such an end is drawn at the anchor's point (`connectorHandles`
+  takes an `anchorPoint` reader; the frame editor gives it the page's anchors taken into the flow frame),
+  where the engine ends the line. Instances (`#card[2]`) and groups offer no anchors.
+  An «Over the frames» switch writes `over` (#1076); unset, it shows the default `connectorPaintsOver`
+  gives (on when an end stops at an anchor) and says why under it.
+- **Label style editor.** Plate group: outline (`border`, starting as a 0.5 pt line in the text colour),
+  corner radius. New «Lines and key» group: `align` (as the anchor places it / start / centre / end) and
+  `kind: 'legend'`. New «Leader» group: on (`leader: {}`), colour (shown as the text's while unset), width,
+  dash (solid, dashed 3/2 pt, dotted 0.75/1.5 pt; another pattern shows as «Custom» and is kept), start and
+  end caps, cap size, routing.
+- **Symbol picker** (text editor toolbar, `editor/IconPicker.tsx`). A picture of the book (bitmap or SVG
+  resource), a glyph (a row of ten common map symbols, or any typed, with an optional face) or a line sample
+  (solid, dashed, dotted); colour (a swatch or a hex / palette id typed), size in ems (0: the default),
+  the words a reader hears; the directive is shown and written at the caret (`iconDirective`). It is offered
+  everywhere in the text; the engine reads it in labels and resource snippets only (§12.13).
+- **WebMCP.** `sandbox_edit_labels` (new, not consequential): `leader` (a label's own attribute, by
+  resource and anchor or text), `icon` (a symbol at the start or end of those labels), `pointer` (add,
+  change by id, remove). `sandbox_save_resource` takes `labelAt` and `leader` on anchors (checked). The
+  label style keys go through `sandbox_set_config` as before.
+- **i18n, search, AAA.** 84 strings in all ten languages; settings search index regenerated. Every new
+  control is labelled; the dialog's label handles and grips are 44 px targets that the arrow keys and Delete
+  work on; the leader's state is said in words under the choice. The canvas grip of a pointer is a mouse
+  target, as the frame editor's handles are (it takes no touch); the frame's «Pointers» group is the way
+  for the keyboard and for a finger.
+- **Tests.** `mapNotes.e2e.test.ts` builds a parts-of-a-map page with these edits only (three pointers, a key
+  style, two names away with leaders, a label's own `leader="none"`) and checks on the laid page that each
+  pointer ends on the anchor's point as the Sandbox locates it, the leaders and the legend; `labelAttrs`,
+  `pointerEdits`, `labelLeaders` (marks, panel render), `webmcp/tools/labels.test.ts`.
+- **Not done.** Leaders and pointers in the Folio's label editor (its pages take the canvas editor's drop,
+  but the grip of a pointer is the frame editor's, which the Folio does not have); a pointer's look (colour,
+  width, routing) has no fields of its own yet beyond what the design JSON says; the anchor's leader colour,
+  width and dash are the style's only; the picker does not check that the caret is in a label.
+
+### 12.28 What R8 built (#1069)
+
+The Cookbook side of round 2: three recipes reworked and one new, each in all its editions.
+
+- **Nº 158 (timeline).** The six one-off cards (`c1`…`c6`) and the twelve decoration elements that drew a
+  dot and a tick per card are one card frame per band, repeated by a `grid` (three columns, placed in the
+  template grid's cell), and one `tree` connector per band with `trunk: 0`, a `gap` under the band and a
+  `dot` start cap, whose `to` is `#asia[*]`. Departure from the recipe's old teaching: the cards no longer
+  trade width (`shrink` in a `row`); a longer text grows its row and `rowAlign: 'stretch'` levels the row.
+  The hollow dot became a filled cap (connectors have no outlined marker).
+- **Nº 157 (atlas).** The dashed line of section left the painted SVG: two `straight` connectors (a paper
+  casing under a dashed ink line, no alpha on connector colours) between two unlabelled anchors of the
+  map's picture; since #1076 no `layer: -1`. The locator sheet `extends` the sheet, removes the key frame
+  and carries its key as a `kind: 'legend'` label (`:::label` container, `:icon` rows: a tinted square SVG
+  resource and a dashed line sample). The section names its valley and plain with `labelAt` and a style
+  `leader`. Borders, towns, peaks, the scale and the north arrow stay in the map's SVG (map data; scale
+  bars stay artwork, §12.5).
+- **Nº 156 (children's unit).** Photos, course boxes and the boxes with a picture are grids (the picture
+  of a box written inside its `:::frame` as a member of the set); the three questions with their answer
+  lines are a module stacked by the page's modules group; each course box points at its stretch of the
+  river with an `elbow` connector to a map anchor, the three runs kept apart by their `trunk`; the spring
+  and the dam are named away from their places with leaders (`flipped` mirrors `labelAt` too). The
+  pointers are left out of the vertical editions.
+- **Nº 162 (new, `org-chart-from-modules`).** An org chart stacked from a department module (a box, a
+  grid of services, a `tree` to `#servicio[*]`, an `elbow` from the page's mayor box) and a page of photo
+  galleries (module: heading + grid repeating photo and caption, a module-sized ground) with a notice
+  module whose tab is `joined`. Spanish and English.
+- **Engine fix found on the way.** A module's connector naming a frame of the page that stacks it was
+  `frameAnchorUnknown` (validation reads the module alone) and lost its end before layout; such ends are
+  now kept for module templates and dropped at layout with `connectorDropped` when the page lacks the
+  frame (`settleReferences`, `moduleConnectorPage.test.ts`).
+- **Cookbook tooling.** The lint (`detect.ts`) and the capture probe (`lib/probe.js`, C8) read a figure's
+  `:::label` container.
+- **Findings, not fixed.** In a vertical (`vertical-rl`) grid whose set has a picture anchored to the
+  box's corner, rows came out wider than the boxes and the last cell's picture was scaled by the ladder;
+  Nº 156 sets `rowGap: 0` for those editions. A connector has no colour alpha (a cased line needs an
+  opaque casing). The recipes pin postext 1.48.0: until the release, the published ones fail the
+  repository's engine-pin and stale-capture tests, and are captured from npm after it.
+
+### 12.29 What D4 built (#1068)
+
+The guides of round 2, in the ten site languages, with screenshots of each interface language.
+
+- **Composed-page books** gains steps 8–11 on the textbook recipe's book, after the review page of
+  step 3: a module `tree` (a root, a grid repeating `branch`, one tree connector to `#branch[*]`)
+  inserted into the review page from the module library; a page `map-notes` whose notes point at
+  anchors of `rio` (the copy of the map with no anchors, so the spread's names do not move), with a key
+  (`:::label` in a `kind: 'legend'` style, `:icon` rows) and one name set away with a leader; a page
+  `photos` with a grid repeating `photo` + `caption`; the library and how a series shares it (Duplicate,
+  design Export/Import, or a shared module file in code); and a closing section on the rule that the
+  Markdown says what and how many, the design draws each thing once. Section 2 now names the box styles
+  the recipe has (`dato`, `actividad`).
+- **Moving a book to composed pages** gains lines in a picture → connectors and pointers, and one-off
+  frames → **Turn into a grid** / **Extract a module**, on a sample bundle
+  (`apps/web/public/docs-examples/river-places-before.postext`, built by
+  `apps/web/scripts/docs/cards-sample.mjs` from the recipe's paintings at 360 px).
+- **Sandbox: composed pages** gains Connectors and shapes, Leaders, pointers and keys, Grids and modules
+  (the library and both reshapes), Overlaps and glyph tabs.
+- **Screenshots.** `apps/web/scripts/docs/capture-composed-shots.mjs` (puppeteer-core, a running
+  `next dev`, one `<locale>-d4.localhost` origin per language) builds each step's state through the page
+  tools and opens the panels by their labels in that language: tree, modules, map-notes, leader, grid,
+  overlap, glyph-tab, reshape under `public/docs-shots/<locale>/`. The book is the English edition except
+  for es and ca, as the guides' links open it. The older shots of steps 2–7 were taken on an earlier
+  version of the recipe (green `dato-campo`) and were not retaken.
+- **Gaps found (Sandbox, not fixed here).** The frame editor has no `overlap` field, so `overlap: 'allow'`
+  (a caption pill hung over its photo, a badge off its card) cannot be set without JSON; the guide's grid
+  hangs its caption below the photo instead. The module library's drawing of a module with a repeating
+  grid draws the grid's main frame at the module's top-left, over the root.
+
+### 12.30 What S6 built (#1070)
+
+- **Where.** The porting skill only (`plugins/postext/skills/postext-port/scripts`): `pdf_regions.py extract`
+  writes a page's line art and furniture as vector decoration of its template, with the geometry in a new
+  module `line_art.py` (pure functions over millimetres, tested without a PDF). No engine change.
+  `--raster-ground` keeps round 1's output (one JPEG ground per page, no connectors, no path elements,
+  empty boxes as frames); the CLI, the file layout and every other output stay as they were.
+- **Lines.** A stroke-only path of `l` items, at most `--line-width` (2 pt) wide, each piece straight across
+  or down (pieces under 0.5 mm dropped: rounded corners drawn as short lines), not closing a rectangle, is a
+  *line*: it is taken out of box candidates and picture clusters before either is read. A three-sided
+  bracket (a tree's bar and drops) was read as an empty box frame holding the children, and its strokes went
+  into the ground; both stopped. Pieces of one look on one line merge; pieces that meet form nets.
+- **Reading a net** (`read_net`), in this order:
+  - *Trees.* A segment with two or more perpendicular segments running off one side (drops) and exactly one
+    off the other (the trunk) is a bar. The parent is the first frame the trunk reaches walking away from the
+    bar (through other bars: two bars on one trunk, as a two-level diagram draws them, are two trees of one
+    parent); each child the first frame its drop reaches (a walk stops at another bar, so the upper tree does
+    not take the lower one's children). A trunk drawn under a frame on its way (a box of the middle row) makes
+    that frame the parent of the bar below, which paints the same. `trunk` is the bar's place between the
+    parent's point and the nearest child's; `at` is written when a point is off the side's middle by more
+    than 0.3 mm, `gap` when a line stops short of its frame. A drop that reaches no frame and the bar beyond
+    the outermost child are left as lines.
+  - *Elbows.* Two or three segments end to end between two frames; the sides are the ones the line leaves
+    and meets by, so two segments give the engine's L; `trunk` places the middle run of three.
+  - *Straight runs.* Any other segment is cut at the frames it passes: one `straight` connector per run
+    between two frames (a line through a row of pills behind a photo becomes pill to photo to pill, which
+    paints what the source shows), the stubs that reach no frame left as lines.
+  - *Pointers.* An end more than 2 mm inside a picture or figure frame whose line was painted after the
+    picture there (the page's paint order, `get_bboxlog`; a photo placed after the line covers it) is an
+    anchor end: `{ to: '#picture', anchor: 'pointer-N', side }`, the side the last run arrives from, and the
+    point becomes an anchor `pointer-N` (fractions of the cut picture's box) of that picture's resource,
+    after its label anchors. Such lines (and every line drawn as decoration that crosses a picture cut from
+    the page) are redacted from the picture's cut. A line under a photo ends at the photo's side.
+  - A drop is taken as far as its child's far edge; what runs on past it (a pill's line down to the photo
+    under it) is read again as a straight run. A frame-to-frame run drawn over a picture it crosses (paint
+    order, as for pointers) gets `over: true`. Lines inside a picture that touch only it and frames set on it
+    (a map's scale bar, its key's samples) stay the picture's art.
+  - Left lines covered whole by an opaque frame (a filled box or tab, a picture) are dropped; the rest are
+    one `path` element per look (`lines-N`).
+- **Furniture.** In paint order: the page's colour (`page-colour`, a box anchored to the bleed with `fill`
+  sizes when the fill covers the trim; a box or path otherwise), the cards (`card`: a box with per-corner
+  radii read from the corner curves, C8; a card with one tab of its colour standing on its top edge is one
+  C9 path outline, flush sides straight, and that tab's frame style loses its background), borders, loose
+  shapes (`shape-N` paths, consecutive paths of one look joined), lines, connectors, then the running heads
+  and folios as before. Translucent shapes, even-odd fills with holes and pages with more than
+  `--max-paths` loose shapes keep those shapes in the raster ground.
+- **Borders with no words.** A box frame with no lines of its own and no tab words is no frame: its holder's
+  children move to the holder's parent, and a decoration box (`border-N`) is anchored to the top-left of
+  the first frame it holds and sized to a box of no size (`border-N-end`) anchored off the foot of the last
+  one, so the border grows with what it holds (the engine's `{ to, edge }` sizes have no margin of their
+  own: the helper carries the far padding). One inside a picture is the picture's art (the cut has it).
+  A box whose only words are its tab becomes such a border plus a tab frame with the words (unless it lies
+  on a picture: an inset keeps its labelled frame). A fill the render check calls hidden (a tinted folder
+  mostly covered by its photo and white panel, only a ring showing) is still drawn: as a shape under the
+  frames, and in the comparison.
+- **The raster ground.** The page without its text is compared at `--ground-dpi` with the same page's paths
+  redrawn on a blank page (every drawn path but the ones left to the raster), outside picture frames and
+  opaque frames; what differs after a one-pixel opening (photos behind the page, art a card clips off a
+  picture, shadings) is the ground: a transparent PNG (`{rid}-ground.png`), under the cards when the page
+  has a page-size image, over them otherwise. Fewer than `--ground-min-px` pixels (60): no ground, no
+  `ground=` attribute and no image element. `regions.json` gains `decoration` (counts per kind, ground or
+  not).
+- **template_dedupe.py.** `rename_in_template` renames every reference of a decoration element
+  (`element_refs`: the anchor, `{ to, edge }` sizes, connector ends); a shared base keeps a decoration
+  element only when the base has every frame and element it names (`element_targets`).
+- **Departures.** §12.4's leader of a *label* (`labelAt`, `::label{leader}`) is not written: a source's
+  pointer from a note box is a frame-to-anchor connector; labels on the picture stay at their points.
+  Arrowheads are not read (a dot at a line's end is: a filled round path under 3 mm centred within 0.8 mm
+  of the end becomes `startCap` / `endCap: 'dot'` with its diameter as `capSize`, and leaves the picture's
+  cut). Diagonal lines and curves stay shapes or art. A drop that leaves the page (a spread's bar) is kept as a line on this page only.
+- **Tests.** `tests/test_line_art.py` (segments, trees, two-level trees, elbows into a picture, a line under
+  a photo, runs through pills, gaps, path data, the card outline) and `VectorDecorationTest` in
+  `tests/test_pdf_regions.py`: an invented diagram page (page colour, card with its title tab, a tree, a
+  drawn map with a note pointing into it, two pills and their line, a border round two boxes, a loose rule)
+  checked element by element, the pointer gone from the map's cut, no ground, `--raster-ground` unchanged,
+  dedupe renames, and with `POSTEXT_CLI` the draft passes `postext check` without unknown keys, values or
+  anchors.

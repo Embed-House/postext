@@ -8,8 +8,9 @@
  */
 
 import { useEffect } from 'react';
-import { DEFAULT_CONNECTOR_WIDTH, DEFAULT_MAIN_COLOR, type ConnectorEnd, type DesignConnectorElement, type Dimension, type LineCap, type PageParity } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
+import { DEFAULT_CONNECTOR_WIDTH, DEFAULT_MAIN_COLOR, connectorPaintsOver, type ConnectorEnd, type DesignConnectorElement, type Dimension, type LineCap, type PageParity } from 'postext';
+import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
+import { anchorsOfTemplateFrame } from '../../../viewport/composed/labelAnchorGeometry';
 import { ColorPicker, DimensionInput, NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
 import { FieldRow } from '../../../controls/FieldRow';
 import { useFieldIds } from '../../../controls/fieldContext';
@@ -47,6 +48,14 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
   const focus = editor.connector;
   const focused = !!host && focus?.templateId === host.templateId && focus.scope === host.scope && focus.elementId === raw.id;
   const picking = focused ? focus!.phase : null;
+  // The anchors of the picture an end's frame holds on the laid pages
+  // (#1064): an end may stop at one of them (`ConnectorEnd.anchor`).
+  const docRef = useSandboxDocRef();
+  const resources = useSandboxSelector((s) => s.resources);
+  const anchorsOf = (ref: string | undefined): string[] => {
+    if (!host || !ref?.startsWith('#') || ref.includes('[')) return [];
+    return anchorsOfTemplateFrame(docRef?.current ?? null, host.templateId, ref.slice(1), (id) => resources?.find((r) => r.id === id)?.anchors).map((a) => a.anchorId);
+  };
 
   // The canvas shows the ends of the connector being worked on: the one
   // whose fields were last touched (a card's fields stay mounted while it
@@ -139,6 +148,7 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
       <EndFields
         title={labels.connectorEndFrom.replace('__name__', endLabel(raw.from?.to ?? '#'))}
         end={raw.from}
+        anchors={anchorsOf(raw.from?.to)}
         onChange={(patch) => onChange(updateConnectorEnd(raw, 'from', patch))}
       />
       {ends.map((e, i) => (
@@ -146,6 +156,7 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
           key={`${e.to}-${i}`}
           title={labels.connectorEndTo.replace('__n__', String(i + 1)).replace('__name__', endLabel(e.to))}
           end={e}
+          anchors={anchorsOf(e.to)}
           onChange={(patch) => onChange(updateConnectorEnd(raw, i, patch))}
         />
       ))}
@@ -239,6 +250,21 @@ export function ConnectorElementEditor({ raw, siblings = [], frames = [], host, 
           onReset={() => update({ capSize: undefined })}
         />
       ) : null}
+      {/* Over the frames (#1076): by default a line with an end at a
+          picture's anchor paints over the frames, any other under them. */}
+      <ToggleSwitch
+        label={labels.connectorOver}
+        tooltip={labels.connectorOverTooltip}
+        checked={raw.over ?? connectorPaintsOver(raw)}
+        onChange={(v) => update({ over: v })}
+        isDefault={raw.over === undefined}
+        onReset={() => update({ over: undefined })}
+      />
+      {raw.over === undefined && (
+        <p className="mb-2 text-[0.7rem] text-(--slate)" data-connector-over-default="">
+          {connectorPaintsOver(raw) ? labels.connectorOverDefaultOn : labels.connectorOverDefaultOff}
+        </p>
+      )}
       <ToggleSwitch
         label={labels.connectorPin}
         tooltip={labels.connectorPinTooltip}
@@ -299,9 +325,16 @@ function EndToggles({ label, options, extra, selected, onToggle }: { label: stri
 }
 
 /** The side, point and gap of one end. */
-function EndFields({ title, end, onChange }: { title: string; end: ConnectorEnd | undefined; onChange: (patch: Partial<Omit<ConnectorEnd, 'to'>>) => void }) {
+function EndFields({ title, end, anchors = [], onChange }: { title: string; end: ConnectorEnd | undefined; anchors?: readonly string[]; onChange: (patch: Partial<Omit<ConnectorEnd, 'to'>>) => void }) {
   const labels = useSandboxLabels();
   if (!end) return null;
+  // An end at an anchor of the frame's picture (#1064): offered when the
+  // frame holds a picture with anchors, or when the end names one already.
+  const anchorOptions = [
+    { value: '', label: labels.connectorAnchorNone },
+    ...anchors.map((a) => ({ value: a, label: a })),
+    ...(end.anchor && !anchors.includes(end.anchor) ? [{ value: end.anchor, label: labels.pointersAnchorMissing.replace('__anchor__', end.anchor) }] : []),
+  ];
   return (
     <>
       <p className="mt-2 mb-1 text-[0.75rem] font-medium" dir="auto">{title}</p>
@@ -323,12 +356,23 @@ function EndFields({ title, end, onChange }: { title: string; end: ConnectorEnd 
           isDefault={end.side === undefined}
           onReset={() => onChange({ side: undefined })}
         />
-        <SidePointFields
+        {anchorOptions.length > 1 && (
+          <SelectInput
+            label={labels.connectorAnchor}
+            tooltip={labels.connectorAnchorTooltip}
+            value={end.anchor ?? ''}
+            options={anchorOptions}
+            onChange={(v) => onChange({ anchor: v === '' ? undefined : v })}
+            isDefault={end.anchor === undefined}
+            onReset={() => onChange({ anchor: undefined })}
+          />
+        )}
+        {!end.anchor && <SidePointFields
           label={labels.connectorAt}
           tooltip={labels.connectorAtTooltip}
           value={end.at}
           onChange={(at) => onChange({ at })}
-        />
+        />}
         <DimensionInput
           label={labels.connectorGap}
           tooltip={labels.connectorGapTooltip}

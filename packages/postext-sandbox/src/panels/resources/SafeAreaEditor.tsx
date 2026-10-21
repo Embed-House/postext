@@ -2,10 +2,13 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
-import { Crop, Hand, MapPin, Maximize2, MessageCircle, Plus, Smile, Trash2, TriangleAlert, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { Crop, Hand, MapPin, Maximize2, MessageCircle, Plus, Smile, Trash2, TriangleAlert, Type, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import type { LabelStyle, Resource, ResourceSafeArea } from 'postext';
 import { safeAreaHeightRange, safeAreaSource } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStore } from '../../context/SandboxContext';
+import { applyViewerEdit } from '../../editor/viewerEdits';
+import type { LabelLeaderChoice } from '../../editor/labelAttrs';
+import { labelLeaderEdit } from './labelLeaderEdit';
 import { NumberInput } from '../../controls';
 import { FieldRow } from '../../controls/FieldRow';
 import { Button, IconButton, SegmentedControl, Switch, usePortalContainer } from '../../ui';
@@ -16,7 +19,7 @@ import { addZones } from './svgSymbols';
 import {
   HANDLES, INITIAL_SAFE_AREA, MIN_SIDE,
   addAnchor, addBystanderFace, addFace, addHead, anchorIdProblem, anchorOutsideSafeArea, applyDrag, clamp, firstAnchorIdProblem,
-  labelFieldsOf, marksOf, normalizeMarks, nudge, removeMark, sameMarks, switchZone, withAnchor, zoneAround,
+  labelFieldsOf, leaderDrawn, marksOf, normalizeMarks, nudge, removeMark, sameMarks, switchZone, withAnchor, withPoint, zoneAround,
   type AnchorIdProblem, type Handle, type MarkDrag, type MarkTarget, type PictureMarks, type Point, type ZoneTarget,
 } from './pictureMarks';
 import { anchorLabelState, labelsInChapters, type MarkdownLabel } from './figureLabels';
@@ -272,6 +275,16 @@ interface PictureMarksDialogProps {
 
 function PictureMarksDialog({ open, initialMode, url, resource, withLettering, labelStyles, figureLabels, request, onClose, onSave }: PictureMarksDialogProps) {
   const labels = useSandboxLabels();
+  const store = useSandboxStore();
+  const dispatch = useSandboxDispatch();
+  /** A label's own `leader` attribute written into its chapter (#1064):
+   *  the text's, so it is not part of the dialog's marks nor of its Undo. */
+  const setLabelLeader = (label: MarkdownLabel, choice: LabelLeaderChoice) => {
+    const s = store.getSnapshot();
+    const edit = labelLeaderEdit({ chapters: s.chapters, activeChapterId: s.activeChapterId, markdown: s.markdown }, label, choice);
+    if (edit) applyViewerEdit(dispatch, edit.chapterId, [edit.change], edit.baseLength);
+  };
+  const styleHasLeader = (id: string | undefined) => !!id && labelStyles.some((st) => st.id === id && st.leader !== undefined);
   const container = usePortalContainer();
   const [mode, setMode] = useState<Mode>(initialMode);
   const [marks, setMarksState] = useState<PictureMarks>(() => marksOf(resource));
@@ -313,7 +326,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
   const labelState = useMemo(() => anchorLabelState(marks.anchors, figureLabels), [marks.anchors, figureLabels]);
   const [loaded, setLoaded] = useState<{ width: number; height: number } | undefined>(undefined);
   const stageRef = useRef<HTMLDivElement>(null);
-  const drag = useRef<(MarkDrag & { before: PictureMarks; client: Point; moved: boolean; created?: 'anchor' | 'placed' | 'avoid' }) | null>(null);
+  const drag = useRef<(MarkDrag & { before: PictureMarks; client: Point; moved: boolean; created?: 'anchor' | 'placed' | 'avoid' | 'label' }) | null>(null);
   const lastNudge = useRef<{ key: string; at: number } | null>(null);
   const markEls = useRef(new Map<string, HTMLElement>());
   const idInputs = useRef(new Map<number, HTMLInputElement>());
@@ -450,7 +463,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
     if (!host) return null;
     const kind = host.dataset.mark as MarkTarget['kind'];
     const editable = mode === 'safe' ? kind === 'safe'
-      : mode === 'labels' ? kind === 'mouth'
+      : mode === 'labels' ? kind === 'mouth' || kind === 'label'
         : mode === 'speakers' ? kind === 'mouth' || kind === 'head' || kind === 'face'
           : kind === 'avoid' || kind === 'bystander';
     if (!editable) return null;
@@ -460,7 +473,7 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
   };
 
   const select = (t: MarkTarget) => {
-    if (t.kind === 'mouth' || t.kind === 'head' || t.kind === 'face') setSelAnchor(t.index);
+    if (t.kind === 'mouth' || t.kind === 'head' || t.kind === 'face' || t.kind === 'label') setSelAnchor(t.index);
     if (t.kind === 'avoid' || t.kind === 'bystander') setSelZone(t);
   };
 
@@ -563,7 +576,13 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
       e.preventDefault();
       return;
     }
-    if (hit) {
+    if (hit && hit.target.kind === 'label' && !before.anchors[hit.target.index]?.labelAt) {
+      // The grip of a label still at its point (#1064): the label follows
+      // the pointer from here, away from its point.
+      select(hit.target);
+      const start = withPoint(before, hit.target, p);
+      drag.current = { ...base, ...hit, start, created: 'label' };
+    } else if (hit) {
       select(hit.target);
       drag.current = { ...base, ...hit, start: before };
     } else if (mode === 'safe') {
@@ -643,6 +662,13 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
       const zone = zoneAround(d.origin);
       setMarks({ ...marksRef.current, avoid: marksRef.current.avoid.map((r, i) => (i === index ? zone : r)) });
     }
+    if (d.created === 'label' && !d.moved) {
+      // A press on a label's grip without a drag leaves it at its point and
+      // gives it the keyboard (the arrows set it away).
+      setMarks(d.before);
+      markEls.current.get(targetKey(d.target))?.focus({ preventScroll: true });
+      return;
+    }
     if (!sameMarks(d.before, marksRef.current)) record(d.before);
     if (d.created === 'anchor' && d.target.kind === 'mouth') {
       // Type the speaker id right away.
@@ -667,9 +693,10 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
       e.preventDefault();
       commit(removeMark(marksRef.current, target));
       if (target.kind === 'mouth') setSelAnchor(null);
+      if (target.kind === 'label') setSelAnchor(target.index);
       if (target.kind === 'avoid' || target.kind === 'bystander') setSelZone(null);
       focusNext.current = () =>
-        target.kind === 'head' || target.kind === 'face'
+        target.kind === 'head' || target.kind === 'face' || target.kind === 'label'
           ? markEls.current.get(targetKey({ kind: 'mouth', index: target.index }))?.focus()
           : addButton.current?.focus();
       setMarksState({ ...marksRef.current });
@@ -989,6 +1016,50 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
                 );
               })}
 
+              {/* Labels away from their points (#1064): the line to the point
+                  as the leader runs (dashed when no leader is drawn) and the
+                  label's handle; the anchor picked has a grip by its point
+                  to set its label away. */}
+              {withLettering && mode === 'labels' && (
+                <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  {marks.anchors.map((a, i) => {
+                    if (!a.labelAt) return null;
+                    const first = labelState.byAnchor.get(a.id)?.[0];
+                    const drawn = leaderDrawn(a, styleHasLeader(first?.style ?? a.style), first?.leader);
+                    return (
+                      <line
+                        key={`leader-${i}`}
+                        data-leader={drawn ? 'drawn' : 'none'}
+                        x1={a.labelAt.x * 100} y1={a.labelAt.y * 100} x2={a.x * 100} y2={a.y * 100}
+                        stroke={drawn ? labelStyleColor(a.style, labelStyles) : 'rgba(255, 255, 255, 0.8)'}
+                        strokeWidth={drawn ? 2 : 1.5}
+                        strokeDasharray={drawn ? undefined : '4 3'}
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    );
+                  })}
+                </svg>
+              )}
+              {withLettering && mode === 'labels' && marks.anchors.map((a, i) => {
+                if (!a.labelAt && selAnchor !== i) return null;
+                const target: MarkTarget = { kind: 'label', index: i };
+                const text = labelState.byAnchor.get(a.id)?.[0]?.text;
+                return (
+                  <LabelHandle
+                    key={`label-${i}`}
+                    markRef={register(targetKey(target))}
+                    index={i}
+                    point={a.labelAt ?? a}
+                    away={!!a.labelAt}
+                    color={labelStyleColor(a.style, labelStyles)}
+                    text={text ?? (a.id || '…')}
+                    label={(a.labelAt ? labels.labelAwayHandleAria : labels.labelAwayGripAria).replace('__id__', nameOf(i))}
+                    onKeyDown={onMarkKeyDown(target)}
+                    onFocus={() => setSelAnchor(i)}
+                  />
+                );
+              })}
+
               {/* Speakers: face rectangle, head–mouth line, head and mouth.
                   Anchors (#866): the point alone, coloured by its label
                   style and named by its label's text. */}
@@ -1114,6 +1185,8 @@ function PictureMarksDialog({ open, initialMode, url, resource, withLettering, l
                   showNames={namesOnDense}
                   onShowNames={setNamesOnDense}
                   denseMap={denseMap}
+                  onLabelLeader={setLabelLeader}
+                  styleHasLeader={styleHasLeader}
                 />
               )}
 
@@ -1411,6 +1484,58 @@ function PointMark({ markRef, kind, index, point, color, active, selected, ticke
           {tag}
         </span>
       )}
+    </div>
+  );
+}
+
+interface LabelHandleProps {
+  markRef?: (el: HTMLElement | null) => void;
+  index: number;
+  point: Point;
+  /** The label stands away from its point; else this is the grip by the
+   *  point that sets it away. */
+  away: boolean;
+  color: string;
+  text: string;
+  label: string;
+  onKeyDown: (e: KeyboardEvent<HTMLElement>) => void;
+  onFocus: () => void;
+}
+
+/** The handle of a label set away from its point (#1064): a tag with the
+ *  label's words where it stands, or, for the anchor picked, a grip beside
+ *  its point. Dragged or nudged with the arrows it moves `labelAt`; Delete
+ *  sets the label back at its point. A 44 px target. */
+function LabelHandle({ markRef, index, point, away, color, text, label, onKeyDown, onFocus }: LabelHandleProps) {
+  return (
+    <div
+      ref={markRef}
+      data-mark="label"
+      data-index={index}
+      role="group"
+      tabIndex={0}
+      aria-label={label}
+      onKeyDown={onKeyDown}
+      onFocus={onFocus}
+      className="group absolute flex items-center justify-center outline-none"
+      style={{
+        left: `${point.x * 100}%`,
+        top: `${point.y * 100}%`,
+        minWidth: 44,
+        height: 44,
+        // The grip stands up and to the right of the point it leaves.
+        transform: away ? 'translate(-50%, -50%)' : 'translate(4px, calc(-100% - 4px))',
+        cursor: 'grab',
+      }}
+    >
+      <span
+        aria-hidden="true"
+        className="inline-flex max-w-[11rem] items-center gap-1 whitespace-nowrap rounded px-1.5 text-[10px] font-semibold leading-[18px] text-white group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-white"
+        style={{ background: 'rgba(0, 0, 0, 0.78)', border: `2px ${away ? 'solid' : 'dashed'} ${color}` }}
+      >
+        <Type size={10} aria-hidden="true" />
+        {away && <span dir="auto" className="truncate">{text}</span>}
+      </span>
     </div>
   );
 }

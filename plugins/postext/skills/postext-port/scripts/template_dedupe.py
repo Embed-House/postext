@@ -645,6 +645,16 @@ def common_base(templates: list[dict], tol: float, max_diff: int, used: set[str]
                 best = (n, c)
         if best and (best[0] >= need or best[1].get("parity") not in (None, "all")):
             elements.append(best[1])
+    # only elements whose frames (and elements) the base has: a connector or a border
+    # between frames of some pages stays with those pages
+    changed = True
+    while changed:
+        changed = False
+        have = {f["name"] for f in frames} | {str(e.get("id")) for e in elements}
+        for e in list(elements):
+            if not element_targets(e) <= have:
+                elements.remove(e)
+                changed = True
     if not frames and not elements:
         return templates, None
     top = {k: roots[0][k] for k in ("area", "header", "footer") if k in roots[0]
@@ -852,9 +862,35 @@ def rename_in_template(t: dict, names: dict[str, str]) -> None:
         if isinstance(g.get("frames"), list):
             g["frames"] = [names.get(n, n) for n in g["frames"]]
     for el in decoration_of(t):
-        anchor = (el.get("placement") or {}).get("anchor")
-        if isinstance(anchor, dict) and "to" in anchor:
-            anchor["to"] = ref(anchor["to"])
+        for holder in element_refs(el):
+            holder["to"] = ref(holder["to"])
+
+
+def element_refs(el: dict) -> list[dict]:
+    """The objects of a decoration element that name a frame or another
+    element in their `to`: the anchor, sizes run to an edge (`{to, edge}`),
+    a connector's ends."""
+    out: list[dict] = []
+    pl = el.get("placement") or {}
+    if isinstance(pl.get("anchor"), dict) and "to" in pl["anchor"]:
+        out.append(pl["anchor"])
+    for v in (pl.get("size") or {}).values():
+        if isinstance(v, dict) and "to" in v and "edge" in v:
+            out.append(v)
+    if el.get("kind") == "connector":
+        ends = [el.get("from")] + (el["to"] if isinstance(el.get("to"), list) else [el.get("to")])
+        out += [e for e in ends if isinstance(e, dict) and isinstance(e.get("to"), str)]
+    return out
+
+
+def element_targets(el: dict) -> set[str]:
+    """Frame or element names (without `#` and `[…]`) an element reads."""
+    out = set()
+    for h in element_refs(el):
+        to = h.get("to")
+        if isinstance(to, str) and to.startswith("#"):
+            out.add(to[1:].split("[", 1)[0])
+    return out
 
 
 SLOT_LINE_RE = re.compile(r"^\s*(?::{2,}[A-Za-z]|#{1,6}\s)")

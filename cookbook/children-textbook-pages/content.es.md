@@ -35,16 +35,22 @@ Compuesto en Nunito y Fredoka (SIL OFL) · Texto original (CC BY 4.0) · Ilustra
 
 Antes de empezar, piensa en los ríos que has visto. Escribe tus ideas en las líneas. Al final de la unidad vuelve a leerlas y mira qué ha cambiado.
 
-:::frame{slot="pregunta-1" label="Piensa 1"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Piensa 1"}
 ¿Dónde crees que empieza un río?
 :::
-
-:::frame{slot="pregunta-2" label="Piensa 2"}
-¿Para qué usan las personas un río?
 :::
 
-:::frame{slot="pregunta-3" label="Piensa 3"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Piensa 2"}
+¿Para qué usan las personas un río?
+:::
+:::
+
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Piensa 3"}
 ¿Qué animales y plantas viven en un río o junto a él?
+:::
 :::
 ::::
 
@@ -60,17 +66,17 @@ Llueve y nieva en las montañas. Parte del agua baja por las laderas y parte se 
 
 Un manantial da solo un hilo de agua. El hilo baja por la ladera, se encuentra con otros hilos y entre todos forman un **arroyo**. En una pendiente fuerte, el arroyo corre deprisa. Arrastra guijarros y los deja lisos de tanto rodarlos. Cuando se juntan varios arroyos, forman uno mayor. El río Aldara empieza así, entre la nieve de la sierra Blanca, a 1850 metros sobre el nivel del mar.
 
-:::figure{resource="nacimiento" slot="foto-1"}
+:::figure{resource="nacimiento" slot="foto"}
 ::alt[Agua clara que brota entre rocas cubiertas de musgo.]
 ::caption[Un manantial. El agua ha pasado meses bajo tierra.]
 :::
 
-:::figure{resource="arroyo" slot="foto-2"}
+:::figure{resource="arroyo" slot="foto"}
 ::alt[Un arroyo que salta sobre piedras redondas.]
 ::caption[Un arroyo, empinado y rápido, con guijarros pulidos.]
 :::
 
-:::figure{resource="cascada" slot="foto-3"}
+:::figure{resource="cascada" slot="foto"}
 ::alt[Una pequeña cascada que cae en una poza verde.]
 ::caption[Una cascada, donde el arroyo cae por un escalón de roca.]
 :::
@@ -124,15 +130,15 @@ El río Aldara mide 94 kilómetros. Nace en la sierra Blanca, cruza un valle y u
 Sigue el río con el dedo desde el nacimiento hasta el mar. ¿Qué población está más cerca del mar?
 :::
 
-:::frame{slot="curso-1" label="Curso alto"}
+:::frame{slot="curso" label="Curso alto"}
 La pendiente es fuerte. El agua es fría, clara y rápida, y excava la roca. Aquí está Fontalba.
 :::
 
-:::frame{slot="curso-2" label="Curso medio"}
+:::frame{slot="curso" label="Curso medio"}
 El valle es más ancho y el río va más despacio. Los agricultores riegan sus campos, y Molinar creció junto a un puente y un molino.
 :::
 
-:::frame{slot="curso-3" label="Curso bajo"}
+:::frame{slot="curso" label="Curso bajo"}
 La tierra es casi llana. El río es ancho y lento, y dibuja grandes curvas. En Aldamar desemboca en el mar.
 :::
 ::::
@@ -165,27 +171,27 @@ Un río solo se mantiene limpio si lo cuidamos. La basura, el aceite y el agua s
 ::alt[Niños con guantes y bolsas de papel recogiendo basura en la orilla de un río.]
 :::
 
-:::frame{slot="uso-1" label="1 · Agua para los campos"}
+:::frame{slot="uso" label="1 · Agua para los campos"}
 En el curso medio, los agricultores abren pequeñas acequias para que el agua del río corra entre los surcos. Sin ella, los tomates y las lechugas no crecerían en verano. Una sola acequia puede llevar agua a muchos kilómetros de distancia.
-:::
 
-:::figure{resource="riego" slot="uso-1-foto"}
+:::figure{resource="riego" slot="uso-foto"}
 ::alt[Un agricultor levanta una compuerta de una acequia en un campo de hortalizas.]
 :::
-
-:::frame{slot="uso-2" label="2 · Molinos"}
-Hace mucho tiempo, el agua al caer movía la rueda del molino de Molinar. La rueda hacía girar las piedras que molían el trigo para hacer harina para todo el valle. Hoy el viejo molino es un pequeño museo.
 :::
 
-:::figure{resource="molino" slot="uso-2-foto"}
+:::frame{slot="uso" label="2 · Molinos"}
+Hace mucho tiempo, el agua al caer movía la rueda del molino de Molinar. La rueda hacía girar las piedras que molían el trigo para hacer harina para todo el valle. Hoy el viejo molino es un pequeño museo.
+
+:::figure{resource="molino" slot="uso-foto"}
 ::alt[Un viejo molino de piedra con una gran rueda de madera junto a un río.]
 :::
-
-:::frame{slot="uso-3" label="3 · Deporte y juegos"}
-Ahora el curso bajo, tranquilo, es un lugar para las piraguas. En las mañanas de verano, los niños de Aldamar aprenden a remar con un monitor, y todos llevan chaleco salvavidas.
 :::
 
-:::figure{resource="piraguas" slot="uso-3-foto"}
+:::frame{slot="uso" label="3 · Deporte y juegos"}
+Ahora el curso bajo, tranquilo, es un lugar para las piraguas. En las mañanas de verano, los niños de Aldamar aprenden a remar con un monitor, y todos llevan chaleco salvavidas.
+
+:::figure{resource="piraguas" slot="uso-foto"}
 ::alt[Niños con chalecos salvavidas reman en dos piraguas por un río tranquilo.]
+:::
 :::
 ::::

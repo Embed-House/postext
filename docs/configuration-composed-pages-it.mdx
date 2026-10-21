@@ -825,16 +825,22 @@ Ogni estremità (`ConnectorEnd`) indica un riquadro e un punto su uno dei suoi l
       <td>nessuna</td>
       <td>Un’ancora dell’immagine contenuta nella cornice: l’estremità è quel punto dell’immagine, attraverso il suo ritaglio, la sua zona sicura e la sua scala, come per un’etichetta, invece di un punto del lato della cornice. <code>at</code> non viene letto; <code>side</code> dice da che parte arriva la linea (per impostazione predefinita, dall’altra estremità).</td>
     </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connettore con un’estremità <code>anchor</code> si disegna sopra le cornici, gli altri sotto</td>
+      <td>Disegna la linea dopo tutte le cornici della pagina (<code>true</code>) o con la decorazione, sotto le cornici (<code>false</code>). Senza valore, un connettore con un’estremità <code>anchor</code> si disegna sopra, così una linea che punta dentro un’immagine si vede sopra la cornice dell’immagine; una linea fra cornici resta sotto.</td>
+    </tr>
   </tbody>
 </table>
 
 **Estremità che non ci sono.** Un’estremità su una cornice che la pagina non mostra (ridotta a zero, facoltativa e vuota, una scheda oltre gli elementi della pagina, un punto dell’immagine che la sua cornice taglia fuori) viene tralasciata: un albero tiene gli altri figli, e il registro di reimpaginazione della pagina lo annota (`connectorDropped`). Se non resta un `from` o un `to`, non si disegna nulla.
 
-**Disegno.** I connettori si disegnano con la decorazione, sotto le cornici, come tracciati vettoriali: nel canvas, nel PDF, nel visualizzatore HTML e nell’EPUB a layout fisso, e come artefatto di impaginazione in un PDF taggato; l’EPUB a layout fluido li lascia fuori insieme al resto della decorazione. Una linea che punta dentro un’immagine ha bisogno che la cornice dell’immagine stia sotto la decorazione: dai a quella cornice `layer: -1`. In una doppia pagina un connettore fra cornici delle due pagine attraversa il dorso e viene tagliato lì come il resto della decorazione; in una pagina da destra a sinistra `start` ed `end` seguono il flusso specchiato.
+**Disegno.** I connettori si disegnano come tracciati vettoriali: nel canvas, nel PDF, nel visualizzatore HTML e nell’EPUB a layout fisso, e come artefatto di impaginazione in un PDF taggato; l’EPUB a layout fluido li lascia fuori insieme al resto della decorazione. Un connettore con un’estremità `anchor` si disegna sopra tutte le cornici della pagina, così una linea che punta dentro un’immagine si vede sopra la cornice dell’immagine senza un `layer`; gli altri connettori restano con la decorazione, sotto le cornici. `over: true` porta sopra una linea fra cornici, `over: false` tiene sotto una linea che punta. In una doppia pagina un connettore fra cornici delle due pagine attraversa il dorso e viene tagliato lì come il resto della decorazione; in una pagina da destra a sinistra `start` ed `end` seguono il flusso specchiato.
 
 ```ts
 frames: [
-  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'mapa', width: { value: 118, unit: 'mm' } },
   { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
 ],
 decoration: { elements: [

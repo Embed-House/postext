@@ -16,10 +16,13 @@ export interface MarkdownLabel {
   anchor?: string;
   /** Its point, for a label placed by percentages (fractions). */
   point?: { x: number; y: number };
-  /** The plain text of the label. */
+  /** The plain text of the label (see `plainLabelText`). */
   text: string;
   /** Its own `style="…"`, when it names one. */
   style?: string;
+  /** Its own `leader` attribute (#1057): true for `leader`, false for
+   *  `leader="none"`; unset when it has none. */
+  leader?: boolean;
   /** The label line in the chapter's Markdown. */
   start: number;
   end: number;
@@ -35,11 +38,19 @@ export interface ChapterText {
   markdown: string;
 }
 
+/** A label's text as the lists show it (#1064): the lines of a container
+ *  label joined by « / », its inline symbols left out (their placeholders
+ *  mean nothing on screen). */
+export function plainLabelText(text: string): string {
+  return text.replace(/\u2028/g, ' / ').replace(/\u2064/g, '').replace(/\s+/g, ' ').trim();
+}
+
 const cache = new Map<string, Omit<MarkdownLabel, 'chapterId'>[]>();
 const CACHE_SIZE = 32;
 
 function labelsOfText(markdown: string): Omit<MarkdownLabel, 'chapterId'>[] {
-  if (!markdown.includes('::label[')) return [];
+  // A one-line `::label[…]` and the container form `:::label{…}` (#1058).
+  if (!markdown.includes('::label')) return [];
   const hit = cache.get(markdown);
   if (hit) return hit;
   const out: Omit<MarkdownLabel, 'chapterId'>[] = [];
@@ -49,8 +60,9 @@ function labelsOfText(markdown: string): Omit<MarkdownLabel, 'chapterId'>[] {
       out.push({
         resourceId: b.resourceId,
         ...('anchor' in l.at ? (l.at.anchor ? { anchor: l.at.anchor } : {}) : { point: { x: l.at.x, y: l.at.y } }),
-        text: l.text,
+        text: plainLabelText(l.text),
         ...(l.style ? { style: l.style } : {}),
+        ...(l.leader !== undefined ? { leader: l.leader } : {}),
         start: l.sourceStart,
         end: l.sourceEnd,
         textStart: l.textStart,

@@ -83,6 +83,10 @@ export interface PageLabel {
   source: { x: number; y: number; width: number; height: number };
   /** The label's layout is mirrored about the body (a right-to-left page). */
   mirrored: boolean;
+  /** The anchor's own point on the sheet when the label stands away from it
+   *  (`ResourceAnchor.labelAt`, #1064): `point` is then where the label is
+   *  set, and a drag of the label moves that place, not the anchor. */
+  anchorPoint?: { x: number; y: number };
 }
 
 /** The block frame of a resource block's body and the quarter turn that
@@ -159,6 +163,8 @@ export function labelsOnPage(doc: VDTDocument, pageIndex: number): PageLabel[] {
         applyAffine(toSheet, r.x, r.y + r.height),
       ];
       const anchorId = 'anchor' in label.at ? label.at.anchor : undefined;
+      const anchor = anchorId ? rb.resource.anchors?.find((a) => a.id === anchorId) : undefined;
+      const pic = { matrix, body: { x: bx, y: by, width: rb.bodyRect.width, height: rb.bodyRect.height }, source, mirrored };
       out.push({
         block,
         label,
@@ -173,6 +179,7 @@ export function labelsOnPage(doc: VDTDocument, pageIndex: number): PageLabel[] {
         body: { x: bx, y: by, width: rb.bodyRect.width, height: rb.bodyRect.height },
         source: { ...source },
         mirrored,
+        ...(anchor?.labelAt ? { anchorPoint: pictureToSheet(pic, anchor.x, anchor.y) } : {}),
       });
     }
   }
@@ -250,4 +257,91 @@ export function cornersBounds(corners: ReadonlyArray<{ x: number; y: number }>):
   const x = Math.min(...xs);
   const y = Math.min(...ys);
   return { x, y, width: Math.max(...xs) - x, height: Math.max(...ys) - y };
+}
+
+/** An anchor of a picture a frame of a composed page holds (#1064): where a
+ *  pointer from another frame ends (`ConnectorEnd.anchor`, #1057). */
+export interface FrameAnchorPoint {
+  /** The frame holding the picture. */
+  frame: string;
+  resourceId: string;
+  anchorId: string;
+  /** On the sheet (page px). */
+  point: { x: number; y: number };
+}
+
+/** Every anchor of the pictures (bitmaps and SVGs) in the frames of page
+ *  `pageIndex`, on the sheet, through each picture's crop, safe area, scale
+ *  and turn as its labels are. `anchorsOf` gives the anchors of a resource
+ *  (the Sandbox's resources, newer than the laid page's copy). A frame's
+ *  first picture with an anchor is the one a pointer reaches (as the engine
+ *  reads it); later pictures with the same anchor are left out. */
+export function frameAnchorsOnPage(doc: VDTDocument, pageIndex: number, anchorsOf: (resourceId: string) => readonly { id: string; x: number; y: number }[] | undefined): FrameAnchorPoint[] {
+  const page = doc.pages[pageIndex];
+  const composed = page?.composed;
+  if (!page || !composed) return [];
+  const out: FrameAnchorPoint[] = [];
+  const seen = new Set<string>();
+  // A composed frame's blocks are the document's or the page's floats.
+  const byId = new Map([...doc.blocks, ...(page.floats ?? [])].map((b) => [b.id, b]));
+  for (const frame of composed.frames) {
+    for (const id of frame.blockIds) {
+      const block = byId.get(id);
+      const rb = block?.resourceBlock;
+      if (!block || !rb || block.hidden) continue;
+      const kind = rb.resource.kind;
+      if (kind !== 'bitmap' && kind !== 'svg') continue;
+      const anchors = anchorsOf(rb.resource.id) ?? rb.resource.anchors ?? [];
+      if (anchors.length === 0) continue;
+      const outer: Affine = blockFrameMatrix(page, block.id) ?? IDENTITY;
+      const { bx, by, turn } = bodyFrame(block);
+      const pic = {
+        matrix: composeAffine(outer, turn),
+        body: { x: bx, y: by, width: rb.bodyRect.width, height: rb.bodyRect.height },
+        source: rb.bodySource ?? { x: 0, y: 0, width: 1, height: 1 },
+        mirrored: pageIsMirrored(page),
+      };
+      for (const a of anchors) {
+        const key = `${frame.name}\u0000${a.id}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({ frame: frame.name, resourceId: rb.resource.id, anchorId: a.id, point: pictureToSheet(pic, a.x, a.y) });
+      }
+    }
+  }
+  return out;
+}
+
+/** The anchor of `points` nearest `(x, y)` within `tolerance` sheet px, a
+ *  frame's own anchors left out (a frame does not point at itself). */
+export function frameAnchorAt(points: readonly FrameAnchorPoint[], x: number, y: number, tolerance: number, notFrame?: string): FrameAnchorPoint | null {
+  let best: FrameAnchorPoint | null = null;
+  let bestD = tolerance;
+  for (const p of points) {
+    if (p.frame === notFrame) continue;
+    const d = Math.hypot(p.point.x - x, p.point.y - y);
+    if (d <= bestD) {
+      best = p;
+      bestD = d;
+    }
+  }
+  return best;
+}
+
+/** The anchors a pointer from a frame of template `templateId` may end at
+ *  in frame `frame`: those of the pictures the frame holds on the laid
+ *  pages set with the template, each once, in the order met. */
+export function anchorsOfTemplateFrame(doc: VDTDocument | null, templateId: string, frame: string, anchorsOf: (resourceId: string) => readonly { id: string; x: number; y: number }[] | undefined): { anchorId: string; resourceId: string }[] {
+  if (!doc) return [];
+  const out: { anchorId: string; resourceId: string }[] = [];
+  const seen = new Set<string>();
+  doc.pages.forEach((page, i) => {
+    if (page.composed?.template !== templateId) return;
+    for (const p of frameAnchorsOnPage(doc, i, anchorsOf)) {
+      if (p.frame !== frame || seen.has(p.anchorId)) continue;
+      seen.add(p.anchorId);
+      out.push({ anchorId: p.anchorId, resourceId: p.resourceId });
+    }
+  });
+  return out;
 }

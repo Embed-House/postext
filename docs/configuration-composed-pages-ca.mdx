@@ -825,16 +825,22 @@ Cada extrem (`ConnectorEnd`) indica una caixa i un punt d'un dels seus costats:
       <td>cap</td>
       <td>Una àncora de la imatge que conté el marc: l'extrem és aquest punt de la imatge, tenint en compte el retall, la zona segura i l'escala, com el d'un rètol, en lloc d'un punt del costat del marc. <code>at</code> no es llegeix; <code>side</code> diu per on arriba la línia (per defecte, des de l'altre extrem).</td>
     </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connector amb un extrem <code>anchor</code> es pinta sobre els marcs, els altres sota</td>
+      <td>Pinta la línia després de tots els marcs de la pàgina (<code>true</code>) o amb la decoració, sota els marcs (<code>false</code>). Sense valor, un connector amb un extrem <code>anchor</code> es pinta a sobre, de manera que una línia que assenyala dins d'una imatge es veu sobre el marc de la imatge; una línia entre marcs queda a sota.</td>
+    </tr>
   </tbody>
 </table>
 
 **Extrems que no hi són.** Un extrem en un marc que la pàgina no mostra (plegat, opcional i buit, una targeta més enllà dels elements de la pàgina, un punt de la imatge que el seu marc retalla) es deixa fora: un arbre conserva els altres fills, i el registre de reajustament de la pàgina ho anota (`connectorDropped`). Si no queda cap `from` o cap `to`, no es dibuixa res.
 
-**Pintura.** Els connectors es pinten amb la decoració, sota els marcs, com a traçats vectorials: al canvas, al PDF, al visor HTML i a l'EPUB de maquetació fixa, i com a artefacte de maquetació en un PDF etiquetat; l'EPUB de maquetació fluida els deixa fora amb la resta de la decoració. Una línia que entra dins d'una imatge necessita el marc de la imatge sota la decoració: dona a aquest marc `layer: -1`. En una doble pàgina, un connector entre marcs de les dues pàgines travessa el llom i s'hi talla com la resta de la decoració; en una pàgina de dreta a esquerra, `start` i `end` segueixen el flux en mirall.
+**Pintura.** Els connectors es pinten com a traçats vectorials: al canvas, al PDF, al visor HTML i a l'EPUB de maquetació fixa, i com a artefacte de maquetació en un PDF etiquetat; l'EPUB de maquetació fluida els deixa fora amb la resta de la decoració. Un connector amb un extrem `anchor` es pinta sobre tots els marcs de la pàgina, de manera que una línia que entra dins d'una imatge es veu sobre el marc de la imatge sense posar-hi `layer`; els altres connectors queden amb la decoració, sota els marcs. `over: true` puja una línia entre marcs, `over: false` manté sota els marcs una línia que assenyala. En una doble pàgina, un connector entre marcs de les dues pàgines travessa el llom i s'hi talla com la resta de la decoració; en una pàgina de dreta a esquerra, `start` i `end` segueixen el flux en mirall.
 
 ```ts
 frames: [
-  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'mapa', width: { value: 118, unit: 'mm' } },
   { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
 ],
 decoration: { elements: [

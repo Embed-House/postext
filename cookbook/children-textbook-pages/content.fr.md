@@ -35,16 +35,22 @@ Composé en Nunito et Fredoka (SIL OFL) · Texte original (CC BY 4.0) · Illustr
 
 Avant de commencer, pense aux rivières que tu as vues. Écris tes idées sur les lignes. À la fin de l’unité, relis-les et regarde ce qui a changé.
 
-:::frame{slot="pregunta-1" label="Réfléchis 1"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Réfléchis 1"}
 D’après toi, où commence une rivière ?
 :::
-
-:::frame{slot="pregunta-2" label="Réfléchis 2"}
-À quoi une rivière sert-elle aux gens ?
 :::
 
-:::frame{slot="pregunta-3" label="Réfléchis 3"}
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Réfléchis 2"}
+À quoi une rivière sert-elle aux gens ?
+:::
+:::
+
+:::module{template="pregunta"}
+:::frame{slot="caja" label="Réfléchis 3"}
 Quels animaux et quelles plantes vivent dans une rivière ou sur ses bords ?
+:::
 :::
 ::::
 
@@ -60,17 +66,17 @@ Il pleut et il neige sur les montagnes. Une partie de l’eau descend le long de
 
 Une source ne donne qu’un filet d’eau. Le filet descend la pente, rejoint d’autres filets et, ensemble, ils forment un **ruisseau**. Sur une pente forte, le ruisseau coule vite. Il emporte des cailloux et les rend lisses à force de les rouler. Quand plusieurs ruisseaux se rejoignent, ils en forment un plus grand. Le fleuve Aldara commence ainsi, dans la neige de la Sierra Blanca, à 1 850 mètres au-dessus du niveau de la mer.
 
-:::figure{resource="nacimiento" slot="foto-1"}
+:::figure{resource="nacimiento" slot="foto"}
 ::alt[De l’eau claire qui sort entre des rochers couverts de mousse.]
 ::caption[Une source. L’eau a passé des mois sous terre.]
 :::
 
-:::figure{resource="arroyo" slot="foto-2"}
+:::figure{resource="arroyo" slot="foto"}
 ::alt[Un ruisseau qui saute sur des pierres rondes.]
 ::caption[Un ruisseau, en pente et rapide, avec des cailloux polis.]
 :::
 
-:::figure{resource="cascada" slot="foto-3"}
+:::figure{resource="cascada" slot="foto"}
 ::alt[Une petite cascade qui tombe dans un bassin vert.]
 ::caption[Une cascade, là où le ruisseau tombe d’une marche de rocher.]
 :::
@@ -124,15 +130,15 @@ Le fleuve Aldara mesure 94 kilomètres. Il naît dans la Sierra Blanca, traverse
 Suis le fleuve avec ton doigt, de la source jusqu’à la mer. Quelle ville est la plus proche de la mer ?
 :::
 
-:::frame{slot="curso-1" label="Cours supérieur"}
+:::frame{slot="curso" label="Cours supérieur"}
 La pente est forte. L’eau est froide, claire et rapide, et elle creuse la roche. C’est ici que se trouve Fontalba.
 :::
 
-:::frame{slot="curso-2" label="Cours moyen"}
+:::frame{slot="curso" label="Cours moyen"}
 La vallée est plus large et le fleuve ralentit. Les agriculteurs arrosent leurs champs, et Molinar s’est construit près d’un pont et d’un moulin.
 :::
 
-:::frame{slot="curso-3" label="Cours inférieur"}
+:::frame{slot="curso" label="Cours inférieur"}
 Le terrain est presque plat. Le fleuve est large et lent, et il dessine de grandes courbes. Son embouchure est à Aldamar, sur la mer.
 :::
 ::::
@@ -165,27 +171,27 @@ Un fleuve ne reste propre que si nous en prenons soin. Les déchets, l’huile e
 ::alt[Des enfants avec des gants et des sacs en papier ramassent des déchets sur la rive d’une rivière.]
 :::
 
-:::frame{slot="uso-1" label="1 · De l’eau pour les champs"}
+:::frame{slot="uso" label="1 · De l’eau pour les champs"}
 Dans le cours moyen, les agriculteurs ouvrent de petits canaux d’irrigation pour que l’eau du fleuve coule entre les sillons. Sans elle, les tomates et les salades ne pousseraient pas en été. Un seul canal peut porter l’eau à de nombreux kilomètres.
-:::
 
-:::figure{resource="riego" slot="uso-1-foto"}
+:::figure{resource="riego" slot="uso-foto"}
 ::alt[Un agriculteur lève la vanne d’un canal d’irrigation dans un champ de légumes.]
 :::
-
-:::frame{slot="uso-2" label="2 · Les moulins"}
-Il y a très longtemps, l’eau qui tombait faisait tourner la roue du moulin de Molinar. La roue entraînait les meules qui écrasaient le blé pour faire la farine de toute la vallée. Aujourd’hui, le vieux moulin est un petit musée.
 :::
 
-:::figure{resource="molino" slot="uso-2-foto"}
+:::frame{slot="uso" label="2 · Les moulins"}
+Il y a très longtemps, l’eau qui tombait faisait tourner la roue du moulin de Molinar. La roue entraînait les meules qui écrasaient le blé pour faire la farine de toute la vallée. Aujourd’hui, le vieux moulin est un petit musée.
+
+:::figure{resource="molino" slot="uso-foto"}
 ::alt[Un vieux moulin en pierre avec une grande roue en bois au bord d’une rivière.]
 :::
-
-:::frame{slot="uso-3" label="3 · Sport et jeux"}
-Maintenant, le cours inférieur, calme, accueille les canoës. Les matins d’été, les enfants d’Aldamar apprennent à pagayer avec un moniteur, et tous portent un gilet de sauvetage.
 :::
 
-:::figure{resource="piraguas" slot="uso-3-foto"}
+:::frame{slot="uso" label="3 · Sport et jeux"}
+Maintenant, le cours inférieur, calme, accueille les canoës. Les matins d’été, les enfants d’Aldamar apprennent à pagayer avec un moniteur, et tous portent un gilet de sauvetage.
+
+:::figure{resource="piraguas" slot="uso-foto"}
 ::alt[Des enfants en gilet de sauvetage pagaient dans deux canoës sur une rivière calme.]
+:::
 :::
 ::::

@@ -825,16 +825,22 @@ Chaque extrémité (`ConnectorEnd`) désigne une boîte et un point sur l’un d
       <td>aucun</td>
       <td>Une ancre de l’image que contient le bloc : l’extrémité est ce point de l’image, à travers son recadrage, sa zone de sécurité et son échelle, comme pour une étiquette, au lieu d’un point du côté du bloc. <code>at</code> n’est pas lu ; <code>side</code> indique par où arrive la ligne (par défaut, depuis l’autre extrémité).</td>
     </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connecteur avec une extrémité <code>anchor</code> est peint sur les blocs, les autres dessous</td>
+      <td>Peint la ligne après tous les blocs de la page (<code>true</code>) ou avec le décor, sous les blocs (<code>false</code>). Sans valeur, un connecteur qui a une extrémité <code>anchor</code> est peint dessus, si bien qu’une ligne qui pointe dans une image se voit sur le bloc de l’image ; une ligne entre blocs reste dessous.</td>
+    </tr>
   </tbody>
 </table>
 
 **Extrémités absentes.** Une extrémité sur un bloc que la page ne montre pas (replié, facultatif et vide, une carte au-delà des éléments de la page, un point de l’image que son bloc coupe) est laissée de côté : un arbre garde ses autres enfants, et le journal de recomposition de la page le note (`connectorDropped`). S’il ne reste ni `from` ni `to`, rien n’est dessiné.
 
-**Peinture.** Les connecteurs sont peints avec le décor, sous les blocs, comme des tracés vectoriels : sur le canvas, dans le PDF, dans la visionneuse HTML et l’EPUB à mise en page fixe, et comme un artefact de mise en page dans un PDF balisé ; l’EPUB recomposable les omet avec le reste du décor. Une ligne qui pointe dans une image demande que le bloc de l’image soit sous le décor : donnez à ce bloc `layer: -1`. Sur une double page, un connecteur entre des blocs des deux pages traverse le dos et y est coupé comme le reste du décor ; sur une page de droite à gauche, `start` et `end` suivent le flux en miroir.
+**Peinture.** Les connecteurs sont peints comme des tracés vectoriels : sur le canvas, dans le PDF, dans la visionneuse HTML et l’EPUB à mise en page fixe, et comme un artefact de mise en page dans un PDF balisé ; l’EPUB recomposable les omet avec le reste du décor. Un connecteur avec une extrémité `anchor` est peint sur tous les blocs de la page, si bien qu’une ligne qui pointe dans une image se voit sur le bloc de l’image sans `layer` ; les autres connecteurs restent avec le décor, sous les blocs. `over: true` fait passer une ligne entre blocs au-dessus, `over: false` garde dessous une ligne qui pointe. Sur une double page, un connecteur entre des blocs des deux pages traverse le dos et y est coupé comme le reste du décor ; sur une page de droite à gauche, `start` et `end` suivent le flux en miroir.
 
 ```ts
 frames: [
-  { name: 'mapa', layer: -1, width: { value: 118, unit: 'mm' } },
+  { name: 'mapa', width: { value: 118, unit: 'mm' } },
   { name: 'nota', style: 'nota', width: { value: 44, unit: 'mm' } },
 ],
 decoration: { elements: [

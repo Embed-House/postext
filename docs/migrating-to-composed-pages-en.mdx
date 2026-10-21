@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Moving a book to composed pages',
   sidebarTitle: 'Moving to composed pages',
-  description: 'How to move a book that keeps the text of its pages in heading styles to page templates and Markdown, either with the Sandbox assistant Move the text to the Markdown or by hand, and what to check afterwards',
+  description: 'How to move a book that keeps the text of its pages in heading styles to page templates and Markdown, either with the Sandbox assistant Move the text to the Markdown or by hand, what to check afterwards, and how to replace lines baked into a picture with connectors and one-off frames with grids and modules',
   lang: 'en',
-  lastUpdated: '2026-10-19',
-  readingTime: '8 min',
+  lastUpdated: '2026-10-20',
+  readingTime: '13 min',
   order: 44,
-  plainSummary: "Some books made with Postext before composed pages keep the words of every page inside the design settings instead of in the text. That makes them hard to edit and impossible to translate. This page shows how to move those words into the Markdown, where each page becomes a block with its own template. The Sandbox does most of the work with one button, and you check the result page by page. It also explains how to do the same by hand for a single page.",
+  plainSummary: "Some books made with Postext before composed pages keep the words of every page inside the design settings instead of in the text. That makes them hard to edit and impossible to translate. This page shows how to move those words into the Markdown, where each page becomes a block with its own template. The Sandbox does most of the work with one button, and you check the result page by page. It also explains how to do the same by hand for a single page. The last part replaces lines painted into a picture with lines the layout draws, and frames drawn one by one with a grid or a module.",
 };
 
 # Moving a book to composed pages
@@ -77,3 +77,61 @@ A book with a few pages can be moved without the assistant, one page at a time.
 4. Compare the page with the old one and open **Checks**.
 
 The same migration is available from code as `moveTextToMarkdown`, which returns the new configuration, the chapters and the report the dialog shows; see [Composed pages › Migrating a book with text in its styles](/en/docs/composed-pages#migrating-a-book-with-text-in-its-styles). Everything the dialog does is described in [Sandbox: composed pages › Moving the text to the Markdown](/en/docs/sandbox-composed-pages#moving-the-text-to-the-markdown).
+
+## From lines in a picture to connectors
+
+An old port often keeps the lines of its diagrams in a picture: the branches of a tree, the boxes of an org chart, the leaders from a note to a map, painted into a background that the boxes sit on. The words then fit the lines only in the language and at the size the picture was drawn for: a longer word in a translation runs over a line, and a box that grows leaves its line behind. Connectors draw the same lines from the frames' boxes once the page is laid, so they follow the text.
+
+1. **Draw the boxes as frames.** Each box of the diagram becomes a frame of the template, with the box style of the old box. A set of equal boxes is better as a grid that repeats one frame (next section).
+2. **Take the lines out of the picture.** Use the picture without its lines, or drop it when it held nothing else; a background that stays (paper, a colour field) becomes a decoration box or the page's `background` attribute.
+3. **Add a connector** for each set of lines in the decoration of the template (**Decoration › Add connector**). **Starts at** is the parent box; under **Goes to** press each child, or *Every …* for every card of a grid. A tree of branches takes **Route** *Tree*; a line between two boxes, *Elbow* or *Straight*; arrows and dots are the **End mark**. The steps are in [Composed-page books › Draw a tree with connectors](/en/docs/composed-page-books#8-draw-a-tree-with-connectors).
+4. **Point notes at the picture.** A line from a note to a place on a map becomes a pointer: put an anchor on the picture at the place (the Anchors dialog), pick the note in Design mode and drag its round grip onto the anchor. The line ends at that point of the picture whatever its crop and scale; see [Composed-page books › Notes on a map, with pointers and a key](/en/docs/composed-page-books#9-notes-on-a-map-with-pointers-and-a-key).
+5. **Compare the page** with the old one, in each language, and open **Checks**: a connector whose end is on a frame the page does not show is left out of that page, and the reflow log says so.
+
+## From one template per page to grids and modules
+
+A port made one frame at a time has a template per page design, and the same card or box drawn again in each: six photo frames with six caption frames, a box with its picture copied into three templates. **Reshape frames**, in the template editor, turns them into a grid that repeats one card and into a module that any page can hold, and rewrites every page set with the template so it looks as it did.
+
+The book for these steps is *Places of the river, before grids*: one page whose template draws six photo cards one frame at a time (`photo1` to `photo6`, each with a caption pill `caption1` to `caption6`) and a box `fact` with a picture `fact-picture` beside its text. The words are invented. [Download the book](/docs-examples/river-places-before.postext) and, in the Sandbox, open **Books**, press **New** and choose **Open a .postext file…**.
+
+1. Switch to **Design** and open **Design › Page & columns › Page templates**. The template *Places of the river* is open.
+2. Under **Reshape frames** tick `photo1` to `photo6` and `caption1` to `caption6`, and press **Turn into a grid**. The Sandbox reads the cards off the page: three columns 8 mm apart, two rows. It writes a group `grid` that repeats `photo` and `caption`, and says *Grid grid made: 3 columns, 6 cards. Pages rewritten: 1.* The page looks the same.
+3. Tick `fact` and `fact-picture`, type `fact` in **Module name** and press **Extract a module**. The box and its picture move into a module `fact`; the template gets a group that takes modules where they stood.
+
+<Screenshot src="/docs-shots/en/reshape.webp" alt="The template editor at Reshape frames with the twelve photo and caption frames ticked, and the page of six photo cards and a box drawn with dashed outlines." caption="The frames picked for the grid: six cards, each a photo with its caption." />
+
+The Markdown changes with the template. Before, each piece named its own frame:
+
+```md
+:::frame{slot="photo1"}
+::resource{id="spring"}
+:::
+
+:::frame{slot="caption1"}
+The spring
+:::
+```
+
+After, each card is one `photo` piece with its caption inside, and the box is a module:
+
+```md
+:::frame{slot="photo"}
+::resource{id="spring"}
+
+:::frame{slot="caption"}
+The spring
+:::
+:::
+
+:::module{template="fact"}
+:::frame{slot="fact" label="Did you know?"}
+Volunteers clean the banks of the river every spring.
+:::
+
+:::frame{slot="fact-picture"}
+::resource{id="banks"}
+:::
+:::
+```
+
+A seventh card is now one more `photo` piece in the Markdown, and another page can hold the `fact` box with no frames of its own: insert it from **Design › Page & columns › Modules**. Both reshapes are steps of the history (one per chapter rewritten and one for the design), and **Undo** under **Reshape frames** takes them back while they are the latest. When a reshape cannot be made it says why: cards of other widths, cards that do not stand on one grid, frames inherited from another template, a template that has a modules group already. Every field the reshape writes is described in [Sandbox: composed pages › Grids and modules](/en/docs/sandbox-composed-pages#grids-and-modules).

@@ -1,15 +1,15 @@
 ---
 title: "An illustrated timeline across a double page"
-summary: "A spread page template lays a textbook timeline over two facing pages: a band runs across the spine, and two rows of cards trade width when one text runs long."
-plain: "Two facing pages of a history textbook made as one: a coloured band crosses the middle of the book, and six picture cards under it share their width so the longest story gets the widest card."
-description: "A double-page timeline in Postext: one spread template, a band across the spine, rows of cards that share their width and dots that follow each card."
+summary: "A spread template lays a textbook timeline over two pages: a band across the spine, a grid that repeats a card per date, a connector to every card."
+plain: "Two facing pages of a history textbook made as one: a coloured band crosses the middle of the book, six picture cards hang from it, and the template draws one card and one line, whatever the number of dates."
+description: "A double-page timeline in Postext: a spread template, a band across the spine, a grid that repeats a card per date and a connector down to each card."
 question: "How do I lay out a timeline across a double page, with cards on both pages?"
-aliases: ["timeline", "double page", "spread", "frise", "cronología", "年表", "見開き", "page template", "row group", "crossGutter"]
+aliases: ["timeline", "double page", "spread", "frise", "cronología", "年表", "見開き", "page template", "grid", "connector", "crossGutter"]
 ---
 
 ## What you'll build
 
-Pages 48 and 49 of a lower-secondary history book: *The paper road*, a thousand years of papermaking from Cai Lun's workshop to Keller's grindstone. The left page opens with the title and two paragraphs, the right page with a box on how a sheet was made by hand. Across the middle runs the timeline: an indigo band for Asia, a terracotta band for Europe that starts on the left page and crosses the spine. Under it, six cards with a picture each, hung from the band by a dot and a tick. The cards share their width: the 1844 card, with the longest story, takes width from its two neighbours (1 mm in Spanish, 7 mm in Japanese), and its dot moves with it. Every word is in the Markdown, in Spanish, English and Japanese.
+Pages 48 and 49 of a lower-secondary history book: *The paper road*, a thousand years of papermaking from Cai Lun's workshop to Keller's grindstone. The left page opens with the title and two paragraphs, the right page with a box on how a sheet was made by hand. Across the middle runs the timeline: an indigo band for Asia, a terracotta band for Europe that starts on the left page and crosses the spine. Under it, six cards with a picture each, hung from the band by a dot and a drop. The template draws one Asian card, one European card and one connector per band: a grid lays a card for every date the Markdown gives, and the connector finds every card the grid laid. Every word is in the Markdown, in Spanish, English and Japanese.
 
 ## Method
 
@@ -19,36 +19,41 @@ Pages 48 and 49 of a lower-secondary history book: *The paper road*, a thousand 
 
 `spread: true` makes the template one sheet as wide as both pages, and the page fence says the same with `spread`. A spread opens on a verso, so the build passes `continuation: { pageIndexOffset: 1, pageNumbering: { startAt: 48 } }`: page 1 of this excerpt is the book's page 48, a left page, and no blank page comes first. The grid has one column per page, with a gap of twice the inner margin, so nothing but the band comes near the fold. The second band sets `crossGutter` and a left padding of 36 mm: its colour runs from the end of the first band across the spine, and its words start on the right page, where the layout reads them.
 
-### 2 · Cards that trade width
+### 2 · One card, repeated by a grid
 
 <Excerpt region="cards" />
 
-Each row of three cards is a `row` group, and each card has a `minHeight`, the height it is drawn at, and an `auto` height above that. When a card's text runs past the row's height, it takes the fewest whole millimetres it needs from the neighbours with `shrink`, each of which keeps the width its own text still fits in. Only when they have nothing more to give does the row grow taller. In the Spanish edition the 1844 card takes 1 mm from 1282; in Japanese it takes 7 mm, 3 from 1150 and 4 from 1282; with every text 30 % longer, the bench test, the Spanish card takes 15 mm and the box and the lead set their text at 92.5 % and 85 %.
+A group of `kind: 'grid'` with `repeat: { frames: ['asia'] }` lays the `asia` frame once for every `:::frame{slot="asia"}` of the page, three to a row, in the template grid's cell `col: 1`, rows 6 to 12. The copies are named `#asia[1]`, `#asia[2]` and `#asia[3]`, and each takes its own fence's `label`, the date on its tab. A card is at least `minHeight` tall and `auto` above that: when one text runs long, as the 1844 card does in Spanish and Japanese, its row grows and the other cards of the row stretch to the same height (`rowAlign` is `'stretch'` by default). A fourth date in the Markdown starts a second row under the first; the template does not change.
 
-### 3 · Dots that follow the cards
+### 3 · A connector for every band
 
-<Excerpt region="marks" />
+<Excerpt region="ticks" />
 
-The dots and ticks are the template's `decoration`, anchored to `#c1` … `#c6` at their `top` and raised by the distance to the band. Decoration is laid after the frames, so when a card moves or widens, its dot stays over its centre. The cream ground is decoration too, a box anchored to the bleed's foot whose height runs up to the foot of `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), so it follows the band.
+The ticks are one `connector` per band in the template's `decoration`. `routing: 'tree'` joins one parent to many children; with `trunk: 0` it draws no bar of its own, only a straight drop from the band's foot to the middle of each card's top, and `startCap: 'dot'` puts the dot at the head of each drop, 2.4 mm under the band (`gap`). `#asia[*]` names every card the grid laid on the page, so a date added or removed in the Markdown adds or removes its drop. Connectors are laid after the frames, so when a row grows the drops still meet the cards. The cream ground is decoration too, a box anchored to the bleed's foot whose height runs up to the foot of `#band-1` (`size: { height: { to: '#band-1', edge: 'bottom' } }`), so it follows the band.
 
 ### 4 · Pictures at the size they print
 
 <Excerpt region="art" />
 
-The vignettes are 1,000 px wide at 550 ppi, 46 mm on the page, and a picture is never enlarged: a card that widens keeps its picture and gives the room to its text. A card narrower than 53 mm (the picture plus 3.5 mm of padding on each side) sets its picture smaller, which the stress test shows in the Japanese edition: the 1150 and 1282 pictures at 85 %.
+The vignettes are 1,000 px wide at 550 ppi, 46 mm on the page, and a picture is never enlarged. The grid's three equal columns are 56.3 mm wide on each page, so each picture sits inside its card's 3.5 mm padding at its own size and the rest of the card is text.
 
 ## Variations
 
-### Keep the cards the same width
+### Four cards to a row
 
-With `shrink: 0` no card gives width: the row grows taller instead, all three cards together, and its foot moves down the page.
+With `columns: 4` each band takes four dates side by side; the cards are narrower and their texts run longer, so the rows grow taller.
 
 ```diff
--  shrink: 1, // a card gives width to a neighbour whose text runs past the row
-+  shrink: 0,
+-const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 3, columnGap: mm(5),
++const row = (name, col) => ({ name: `${name}-row`, kind: 'grid', columns: 4, columnGap: mm(5),
 ```
+
+### Arrows instead of dots
+
+`endCap: 'arrow'` puts an arrowhead where each drop meets its card, and `startCap: 'none'` takes the dots away.
 
 ## Pitfalls
 
-- A card with a fixed `height` takes no part in the width trade, since it never runs past the row: give the cards a `minHeight`, as here, and leave the height `auto`.
+- A grid lays one cell per item, and an item is a `:::frame{slot="asia"}` fence of its own: two cards' texts inside one fence make one card.
+- `#asia` without `[*]` is the grid's box, not its cards: a connector to it draws one drop to the middle of the row.
 - A size that runs to an edge of another box counts from the element's own anchor point: the ground is anchored to the bleed's foot and grows up to `#band-1`. An edge behind the anchor gives a height of 0.

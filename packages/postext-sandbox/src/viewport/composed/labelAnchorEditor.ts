@@ -9,6 +9,11 @@
  * opens the picture in the Resources panel; a double click opens its anchor
  * editor on that anchor.
  *
+ * A label set away from its point (`ResourceAnchor.labelAt`, #1064) shows a
+ * line to its point; dragging it moves where it stands (`labelAt`), not the
+ * anchor. Alt held while dragging a label at its point sets it away the
+ * same way.
+ *
  * A label placed by percentages (`at="x% y%"`) moves the same way, and
  * its drop rewrites the `at` value in the Markdown of the edition on
  * screen (#931): the percentages are the edition's own words. Outside
@@ -149,6 +154,8 @@ export interface LabelPointer {
   pointerType?: string;
   clientX: number;
   clientY: number;
+  /** Alt held: the drag sets the label away from its point (#1064). */
+  altKey?: boolean;
 }
 
 export interface LabelEditor {
@@ -187,6 +194,8 @@ interface Drag {
   started: boolean;
   dx: number;
   dy: number;
+  /** The drop writes `labelAt` (#1064). */
+  away: boolean;
 }
 
 const live = new Set<LabelEditor>();
@@ -219,6 +228,20 @@ export function withAnchorMoved(resource: Resource, id: string, x: number, y: nu
   return { ...resource, anchors: anchors.map((a, k) => (k === i ? { ...a, x: nx, y: ny } : a)), updatedAt: now };
 }
 
+/** `resource` with the label of anchor `id` set at `(x, y)` away from its
+ *  point (`labelAt`, #1064; fractions of the whole picture, four decimals,
+ *  not kept inside it: a label may stand off the picture). */
+export function withLabelAtMoved(resource: Resource, id: string, x: number, y: number, now = Date.now()): Resource | null {
+  const anchors = resource.anchors ?? [];
+  const i = anchors.findIndex((a) => a.id === id);
+  if (i < 0 || !Number.isFinite(x) || !Number.isFinite(y)) return null;
+  const round = (v: number) => Math.round(v * 10000) / 10000;
+  const at = { x: round(x), y: round(y) };
+  const before = anchors[i]!.labelAt;
+  if (before && before.x === at.x && before.y === at.y) return null;
+  return { ...resource, anchors: anchors.map((a, k) => (k === i ? { ...a, labelAt: at } : a)), updatedAt: now };
+}
+
 /** `x% y%` as `at="…"` writes a place: fractions of the whole picture,
  *  kept inside it, to a tenth of a percent. */
 export function percentPlace(x: number, y: number): string {
@@ -243,7 +266,7 @@ export function percentMoveEdit(pl: Pick<PageLabel, 'label'>, x: number, y: numb
 /** Write the label dragged by `(dx, dy)` sheet px where it was dropped: its
  *  anchor on the resource (one step of the history), or the percentages in
  *  the text of the edition on screen. The drop of every surface (#970). */
-export function dropLabel(pl: PageLabel, dx: number, dy: number, refs: Pick<LabelAnchorEditorRefs, 'dispatchRef' | 'sourceOfPage'>, pageIndex: number): void {
+export function dropLabel(pl: PageLabel, dx: number, dy: number, refs: Pick<LabelAnchorEditorRefs, 'dispatchRef' | 'sourceOfPage'>, pageIndex: number, away = false): void {
   const p = sheetToPicture(pl, pl.point.x + dx, pl.point.y + dy);
   if (!p) return;
   const id = pl.anchorId;
@@ -251,7 +274,8 @@ export function dropLabel(pl: PageLabel, dx: number, dy: number, refs: Pick<Labe
     const host = templateEditorHost();
     if (!host) return;
     const resource = host.getState().resources.find((r) => r.id === pl.resourceId);
-    const next = resource ? withAnchorMoved(resource, id, p.x, p.y) : null;
+    // A label away from its point moves where it stands (#1064).
+    const next = !resource ? null : away || pl.anchorPoint ? withLabelAtMoved(resource, id, p.x, p.y) : withAnchorMoved(resource, id, p.x, p.y);
     // One step of the history (#899) per drop.
     if (next) refs.dispatchRef.current({ type: 'UPSERT_RESOURCE', payload: next, history: { merge: false } });
     return;
@@ -323,7 +347,7 @@ export function createLabelEditor(opts: LabelEditorOptions): LabelEditor {
     surface.paint(pageIndex, labelMarkShapes(labelsOn(pageIndex), surface.markScale?.(pageIndex) ?? surface.sheetPxPerCssPx(pageIndex), {
       hover,
       active: opts.keepActive ? activeKey : null,
-      drag: drag?.started && drag.pageIndex === pageIndex ? { key: keyOf(drag.label), dx: drag.dx, dy: drag.dy } : null,
+      drag: drag?.started && drag.pageIndex === pageIndex ? { key: keyOf(drag.label), dx: drag.dx, dy: drag.dy, away: drag.away } : null,
     }, words ? { placedByPercent: words.labelAnchorsPlacedByPercent, overflow: words.labelAnchorsOverflow } : undefined));
   };
   const paintAll = (): void => {
@@ -343,7 +367,7 @@ export function createLabelEditor(opts: LabelEditorOptions): LabelEditor {
       const hit = labelAt(labelsOn(at.pageIndex), at.x, at.y, tolerance(at.pageIndex, ev.pointerType));
       if (!hit) return false;
       activeKey = keyOf(hit);
-      drag = { pointerId: ev.pointerId, pointerType: ev.pointerType, label: hit, pageIndex: at.pageIndex, startX: at.x, startY: at.y, startClientX: ev.clientX, startClientY: ev.clientY, started: false, dx: 0, dy: 0 };
+      drag = { pointerId: ev.pointerId, pointerType: ev.pointerType, label: hit, pageIndex: at.pageIndex, startX: at.x, startY: at.y, startClientX: ev.clientX, startClientY: ev.clientY, started: false, dx: 0, dy: 0, away: !!hit.anchorPoint || (!!ev.altKey && !!hit.anchorId) };
       repaintLabelEditors();
       return true;
     },
@@ -377,6 +401,7 @@ export function createLabelEditor(opts: LabelEditorOptions): LabelEditor {
       }
       d.dx = at.x - d.startX;
       d.dy = at.y - d.startY;
+      d.away = !!d.label.anchorPoint || (!!ev.altKey && !!d.label.anchorId);
       paintPage(d.pageIndex);
     },
     pointerUp(ev, cancelled) {
@@ -384,7 +409,7 @@ export function createLabelEditor(opts: LabelEditorOptions): LabelEditor {
       if (!d || ev.pointerId !== d.pointerId) return;
       finish(ev.pointerId);
       if (!cancelled) {
-        if (d.started) dropLabel(d.label, d.dx, d.dy, opts, d.pageIndex);
+        if (d.started) dropLabel(d.label, d.dx, d.dy, opts, d.pageIndex, d.away);
         else openLabelPicture(d.label, opts.dispatchRef);
       }
       paintPage(d.pageIndex);

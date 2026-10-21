@@ -24165,6 +24165,362 @@
       ]
     }
   },
+  "frame-connectors": {
+    "label": {
+      "en": "Connectors between frames",
+      "es": "Conectores entre marcos",
+      "ca": "Connectors entre marcs",
+      "zh": "框之间的连接线",
+      "ar": "موصلات بين الإطارات",
+      "ja": "枠をつなぐコネクター",
+      "pt": "Conectores entre blocos",
+      "fr": "Connecteurs entre blocs",
+      "de": "Verbinder zwischen Rahmen",
+      "it": "Connettori tra cornici"
+    },
+    "definition": {
+      "en": "A connector of a template's decoration draws a line from one frame to one or more others, straight, square-cornered or as a tree, with dots or arrows at its ends; it is laid after the frames, so it follows them when a text grows.",
+      "es": "Un conector de la decoración de una plantilla traza una línea de un marco a uno o varios, recta, en ángulo o en árbol, con puntos o flechas en los extremos; se coloca después de los marcos, así que los sigue cuando un texto crece.",
+      "ca": "Un connector de la decoració d’una plantilla traça una línia d’un marc a un o més, recta, en angle o en arbre, amb punts o fletxes als extrems; es col·loca després dels marcs, així que els segueix quan un text creix.",
+      "zh": "模板装饰里的连接线从一个框画到一个或几个框，可以是直线、直角折线或树形，两端可加圆点或箭头；它在框排好之后才画，文字变长时会跟着框走。",
+      "ar": "يرسم الموصل في زخرفة القالب خطًا من إطار إلى إطار أو أكثر، مستقيمًا أو بزوايا قائمة أو على هيئة شجرة، بنقاط أو أسهم في طرفيه؛ ويُرسم بعد الإطارات فيتبعها حين يطول النص.",
+      "ja": "テンプレートの飾りに置くコネクターは、枠から一つ以上の枠へ線を引きます。直線、直角の折れ線、ツリーの形があり、端に点や矢印を付けられます。枠を置いたあとに引くので、文章が増えても枠に付いていきます。",
+      "pt": "Um conector da decoração de um modelo traça uma linha de um bloco a um ou mais, reta, em ângulo ou em árvore, com pontos ou setas nas pontas; é posto depois dos blocos, então os acompanha quando um texto cresce.",
+      "fr": "Un connecteur du décor d’un modèle trace un trait d’un bloc vers un ou plusieurs autres, droit, à angles droits ou en arbre, avec des points ou des flèches aux extrémités ; il est posé après les blocs et les suit quand un texte s’allonge.",
+      "de": "Ein Verbinder im Dekor einer Vorlage zieht eine Linie von einem Rahmen zu einem oder mehreren anderen, gerade, rechtwinklig oder als Baum, mit Punkten oder Pfeilen an den Enden; er wird nach den Rahmen gesetzt und folgt ihnen, wenn ein Text wächst.",
+      "it": "Un connettore della decorazione di un modello traccia una linea da una cornice a una o più altre, dritta, ad angolo retto o ad albero, con punti o frecce alle estremità; si colloca dopo le cornici e le segue quando un testo cresce."
+    },
+    "aliases": {
+      "en": [
+        "connector",
+        "org chart lines",
+        "tree diagram",
+        "timeline ticks"
+      ],
+      "es": [
+        "conector",
+        "organigrama",
+        "diagrama de árbol",
+        "línea del tiempo"
+      ],
+      "ca": [
+        "connector",
+        "organigrama"
+      ],
+      "zh": [
+        "连接线",
+        "组织结构图"
+      ],
+      "ar": [
+        "موصل",
+        "مخطط تنظيمي"
+      ],
+      "ja": [
+        "コネクター",
+        "組織図"
+      ],
+      "pt": [
+        "conector",
+        "organograma"
+      ],
+      "fr": [
+        "connecteur",
+        "organigramme"
+      ],
+      "de": [
+        "Verbinder",
+        "Organigramm"
+      ],
+      "it": [
+        "connettore",
+        "organigramma"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Connectors",
+        "es": "Conectores",
+        "ca": "Connectors",
+        "zh": "连接线",
+        "ar": "الموصلات",
+        "ja": "コネクター",
+        "pt": "Conectores",
+        "fr": "Connecteurs",
+        "de": "Verbinder",
+        "it": "Connettori"
+      }
+    },
+    "since": "1.48.0"
+  },
+  "figure-leaders": {
+    "label": {
+      "en": "Leaders and legends on figures",
+      "es": "Líneas de referencia y leyendas en figuras",
+      "ca": "Línies de referència i llegendes en figures",
+      "zh": "插图上的引线与图例",
+      "ar": "خطوط الإشارة ومفاتيح الأشكال",
+      "ja": "図の引き出し線と凡例",
+      "pt": "Linhas de chamada e legendas em figuras",
+      "fr": "Traits de rappel et légendes sur les figures",
+      "de": "Hinweislinien und Legenden an Abbildungen",
+      "it": "Linee di richiamo e legende sulle figure"
+    },
+    "definition": {
+      "en": "A label set away from its anchor draws a leader to the point; a connector can end at an anchor of the picture its frame holds; a legend label lines up rows of symbols (:icon) and words.",
+      "es": "Un rótulo apartado de su anclaje traza una línea de referencia hasta el punto; un conector puede acabar en un anclaje de la imagen de su marco; un rótulo de leyenda alinea filas de símbolos (:icon) y palabras.",
+      "ca": "Un rètol apartat del seu ancoratge traça una línia de referència fins al punt; un connector pot acabar en un ancoratge de la imatge del seu marc; un rètol de llegenda alinea files de símbols (:icon) i paraules.",
+      "zh": "离开锚点摆放的标注会画一条引线指回那个点；连接线可以停在框内图片的某个锚点上；图例标注把一行行符号（:icon）和文字对齐。",
+      "ar": "التسمية الموضوعة بعيدًا عن نقطة تثبيتها ترسم خط إشارة إلى النقطة؛ ويمكن أن ينتهي الموصل عند نقطة تثبيت في صورة إطاره؛ وتسمية المفتاح تصفّ أسطرًا من الرموز (:icon) والكلمات.",
+      "ja": "アンカーから離して置いたラベルは、その点まで引き出し線を引きます。コネクターは枠の中の画像のアンカーで終わることができ、凡例ラベルは記号（:icon）と言葉の行をそろえます。",
+      "pt": "Um rótulo afastado da sua âncora traça uma linha de chamada até o ponto; um conector pode terminar numa âncora da imagem do seu bloco; um rótulo de legenda alinha linhas de símbolos (:icon) e palavras.",
+      "fr": "Une étiquette posée loin de son ancre trace un trait de rappel jusqu’au point ; un connecteur peut s’arrêter sur une ancre de l’image de son bloc ; une étiquette de légende aligne des lignes de symboles (:icon) et de mots.",
+      "de": "Eine Beschriftung abseits ihres Ankers zieht eine Hinweislinie zum Punkt; ein Verbinder kann an einem Anker des Bildes seines Rahmens enden; eine Legende reiht Zeilen aus Symbolen (:icon) und Wörtern auf.",
+      "it": "Un’etichetta posta lontano dal suo ancoraggio traccia una linea di richiamo fino al punto; un connettore può finire su un ancoraggio dell’immagine della sua cornice; un’etichetta di legenda allinea righe di simboli (:icon) e parole."
+    },
+    "aliases": {
+      "en": [
+        "leader line",
+        "callout line",
+        "map key",
+        "legend",
+        "pointer"
+      ],
+      "es": [
+        "línea de referencia",
+        "leyenda",
+        "llamada",
+        "puntero"
+      ],
+      "ca": [
+        "línia de referència",
+        "llegenda"
+      ],
+      "zh": [
+        "引线",
+        "图例"
+      ],
+      "ar": [
+        "خط إشارة",
+        "مفتاح الخريطة"
+      ],
+      "ja": [
+        "引き出し線",
+        "凡例"
+      ],
+      "pt": [
+        "linha de chamada",
+        "legenda de mapa"
+      ],
+      "fr": [
+        "trait de rappel",
+        "légende"
+      ],
+      "de": [
+        "Hinweislinie",
+        "Legende"
+      ],
+      "it": [
+        "linea di richiamo",
+        "legenda"
+      ]
+    },
+    "group": "figures",
+    "docs": {
+      "slug": "composed-pages-figures",
+      "heading": {
+        "en": "Leaders, legends and symbols",
+        "es": "Líneas de referencia, leyendas y símbolos",
+        "ca": "Línies de referència, llegendes i símbols",
+        "zh": "引线、图例与符号",
+        "ar": "خطوط الإشارة ومفاتيح الخرائط والرموز",
+        "ja": "引き出し線、凡例、記号",
+        "pt": "Linhas de chamada, legendas de mapa e símbolos",
+        "fr": "Traits de rappel, légendes de carte et symboles",
+        "de": "Hinweislinien, Legenden und Symbole",
+        "it": "Linee di richiamo, legende e simboli"
+      }
+    },
+    "since": "1.48.0"
+  },
+  "frame-grids": {
+    "label": {
+      "en": "Grids that repeat a frame set",
+      "es": "Rejillas que repiten marcos",
+      "ca": "Graelles que repeteixen marcs",
+      "zh": "重复一组框的网格",
+      "ar": "شبكات تكرّر الإطارات",
+      "ja": "枠を繰り返すグリッド",
+      "pt": "Grades que repetem blocos",
+      "fr": "Grilles qui répètent des blocs",
+      "de": "Raster, die Rahmen wiederholen",
+      "it": "Griglie che ripetono cornici"
+    },
+    "definition": {
+      "en": "A grid group declares a set of frames once, a card and its caption, and lays it again for every item the page's Markdown gives it, in rows of equal columns, naming the copies #card[1], #card[2]…",
+      "es": "Un grupo en rejilla declara una vez un juego de marcos, una ficha y su pie, y lo repite por cada elemento que le da el Markdown de la página, en filas de columnas iguales, con las copias llamadas #ficha[1], #ficha[2]…",
+      "ca": "Un grup en graella declara una vegada un joc de marcs, una fitxa i el seu peu, i el repeteix per cada element que li dona el Markdown de la pàgina, en files de columnes iguals, amb les còpies anomenades #fitxa[1], #fitxa[2]…",
+      "zh": "网格组只声明一次一组框（比如一张卡片和它的图注），页面的 Markdown 给出几项就排几份，按等宽的列成行排列，副本叫作 #卡片[1]、#卡片[2]……",
+      "ar": "تعلن مجموعة الشبكة مجموعة إطارات مرة واحدة، بطاقة وتعليقها، وتكرّرها لكل عنصر يعطيه Markdown الصفحة، في صفوف من أعمدة متساوية، وتسمّي النسخ ‎#card[1]‎ و‎#card[2]‎…",
+      "ja": "グリッドのグループは、カードとそのキャプションのような枠のセットを一度だけ宣言し、ページの Markdown にある項目の数だけ、同じ幅の列に並べて繰り返します。複製は #card[1]、#card[2]… と呼ばれます。",
+      "pt": "Um grupo em grade declara uma vez um conjunto de blocos, um cartão e a sua legenda, e o repete para cada item que o Markdown da página lhe dá, em linhas de colunas iguais, com as cópias chamadas #cartao[1], #cartao[2]…",
+      "fr": "Un groupe en grille déclare une fois un jeu de blocs, une carte et sa légende, et le répète pour chaque élément que lui donne le Markdown de la page, en rangées de colonnes égales ; les copies s’appellent #carte[1], #carte[2]…",
+      "de": "Eine Rastergruppe legt einen Rahmensatz einmal an, eine Karte und ihre Unterschrift, und setzt ihn für jedes Element, das der Markdown der Seite liefert, in Zeilen gleich breiter Spalten; die Kopien heißen #karte[1], #karte[2] …",
+      "it": "Un gruppo a griglia dichiara una volta un insieme di cornici, una scheda e la sua didascalia, e lo ripete per ogni elemento che il Markdown della pagina gli dà, in righe di colonne uguali; le copie si chiamano #scheda[1], #scheda[2]…"
+    },
+    "aliases": {
+      "en": [
+        "grid",
+        "repeat",
+        "photo grid",
+        "card grid"
+      ],
+      "es": [
+        "rejilla",
+        "repetir",
+        "rejilla de fotos",
+        "fichas"
+      ],
+      "ca": [
+        "graella",
+        "repetir"
+      ],
+      "zh": [
+        "网格",
+        "重复"
+      ],
+      "ar": [
+        "شبكة",
+        "تكرار"
+      ],
+      "ja": [
+        "グリッド",
+        "繰り返し"
+      ],
+      "pt": [
+        "grade",
+        "repetir"
+      ],
+      "fr": [
+        "grille",
+        "répéter"
+      ],
+      "de": [
+        "Raster",
+        "wiederholen"
+      ],
+      "it": [
+        "griglia",
+        "ripetere"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Grids that repeat a frame set",
+        "es": "Rejillas que repiten un juego de marcos",
+        "ca": "Graelles que repeteixen un joc de marcs",
+        "zh": "重复一组框的网格",
+        "ar": "شبكات تكرّر مجموعة إطارات",
+        "ja": "枠のセットを繰り返すグリッド",
+        "pt": "Grades que repetem um conjunto de blocos",
+        "fr": "Grilles qui répètent un jeu de blocs",
+        "de": "Raster, die einen Rahmensatz wiederholen",
+        "it": "Griglie che ripetono un insieme di cornici"
+      }
+    },
+    "since": "1.48.0"
+  },
+  "page-modules": {
+    "label": {
+      "en": "Modules stacked in a page",
+      "es": "Módulos apilados en una página",
+      "ca": "Mòduls apilats en una pàgina",
+      "zh": "在页面里叠放模块",
+      "ar": "وحدات مكدّسة في صفحة",
+      "ja": "ページに積むモジュール",
+      "pt": "Módulos empilhados numa página",
+      "fr": "Modules empilés dans une page",
+      "de": "Module, auf einer Seite gestapelt",
+      "it": "Moduli impilati in una pagina"
+    },
+    "definition": {
+      "en": "A module is a template of a few frames, groups and decoration meant to be reused; a page template's modules group takes the :::module blocks of the page in Markdown order and stacks one under another.",
+      "es": "Un módulo es una plantilla de unos pocos marcos, grupos y decoración pensada para reutilizarse; el grupo de módulos de una plantilla de página toma los bloques :::module de la página en el orden del Markdown y los apila uno bajo otro.",
+      "ca": "Un mòdul és una plantilla d’uns quants marcs, grups i decoració pensada per reutilitzar-se; el grup de mòduls d’una plantilla de pàgina pren els blocs :::module de la pàgina en l’ordre del Markdown i els apila l’un sota l’altre.",
+      "zh": "模块是由几个框、组和装饰组成、可以反复使用的模板；页面模板的模块组按 Markdown 的顺序取出页面里的 :::module 块，一个接一个往下叠放。",
+      "ar": "الوحدة قالب من بضعة إطارات ومجموعات وزخرفة يُراد إعادة استعماله؛ وتأخذ مجموعة الوحدات في قالب الصفحة كتل ‎:::module‎ في الصفحة بترتيب Markdown وتكدّسها واحدة تحت الأخرى.",
+      "ja": "モジュールは、いくつかの枠とグループと飾りからなる使い回し用のテンプレートです。ページテンプレートのモジュールのグループが、ページの :::module ブロックを Markdown の順に取り、上から順に積みます。",
+      "pt": "Um módulo é um modelo de poucos blocos, grupos e decoração feito para ser reutilizado; o grupo de módulos de um modelo de página toma os blocos :::module da página na ordem do Markdown e os empilha um sob o outro.",
+      "fr": "Un module est un modèle de quelques blocs, groupes et décors fait pour resservir ; le groupe de modules d’un modèle de page prend les blocs :::module de la page dans l’ordre du Markdown et les empile l’un sous l’autre.",
+      "de": "Ein Modul ist eine Vorlage aus wenigen Rahmen, Gruppen und Dekor zum Wiederverwenden; die Modulgruppe einer Seitenvorlage nimmt die :::module-Blöcke der Seite in Markdown-Reihenfolge und stapelt sie untereinander.",
+      "it": "Un modulo è un modello di poche cornici, gruppi e decorazioni pensato per essere riusato; il gruppo di moduli di un modello di pagina prende i blocchi :::module della pagina nell’ordine del Markdown e li impila uno sotto l’altro."
+    },
+    "aliases": {
+      "en": [
+        "module",
+        "reusable block",
+        "component",
+        "stack of boxes"
+      ],
+      "es": [
+        "módulo",
+        "bloque reutilizable",
+        "componente"
+      ],
+      "ca": [
+        "mòdul",
+        "bloc reutilitzable"
+      ],
+      "zh": [
+        "模块",
+        "可复用的块"
+      ],
+      "ar": [
+        "وحدة",
+        "كتلة قابلة لإعادة الاستعمال"
+      ],
+      "ja": [
+        "モジュール",
+        "再利用できるブロック"
+      ],
+      "pt": [
+        "módulo",
+        "bloco reutilizável"
+      ],
+      "fr": [
+        "module",
+        "bloc réutilisable"
+      ],
+      "de": [
+        "Modul",
+        "wiederverwendbarer Block"
+      ],
+      "it": [
+        "modulo",
+        "blocco riutilizzabile"
+      ]
+    },
+    "group": "page",
+    "docs": {
+      "slug": "configuration-composed-pages",
+      "heading": {
+        "en": "Modules",
+        "es": "Módulos",
+        "ca": "Mòduls",
+        "zh": "模块",
+        "ar": "الوحدات",
+        "ja": "モジュール",
+        "pt": "Módulos",
+        "fr": "Modules",
+        "de": "Module",
+        "it": "Moduli"
+      }
+    },
+    "since": "1.48.0"
+  },
   "threaded-frames": {
     "label": {
       "en": "Threaded text frames",

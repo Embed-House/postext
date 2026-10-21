@@ -3,17 +3,17 @@
 export const metadata = {
   title: '模板页做的书',
   sidebarTitle: '模板页做的书',
-  description: '以一本由模板页组成的小学课本为例，在沙盒里走一遍全过程：做页面模板，用Markdown填入文字，给地图加标注，翻译这一页，处理放不下的文字，以及在页面上和正文里选择内容',
+  description: '以一本由模板页组成的小学课本为例，在沙盒里走一遍全过程：做页面模板，用Markdown填入文字，给地图加标注，翻译这一页，处理放不下的文字，在页面上和正文里选择内容，再用连接线画一棵树，在地图上加带指示线和图例的注释，排一页照片卡片，并为一套书建一个模块库',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
-  readingTime: '10分钟',
+  lastUpdated: '2026-10-20',
+  readingTime: '18分钟',
   order: 43,
-  plainSummary: "本页一步一步教你在沙盒里做课本的一页：顶上一条标题色带，下面一段课文，再加几个彩色方框。你从一本做好的示例书出发，给它再加一页。先把这一页画成模板，再用Markdown把文字填进去，然后给地图上的地点写上名字，并把这一页翻译成另一种语言。最后讲文字太长、框里放不下时怎么办，以及怎样在页面和它的文字之间来回跳转。",
+  plainSummary: "本页一步一步教你在沙盒里做课本的一页：顶上一条标题色带，下面一段课文，再加几个彩色方框。你从一本做好的示例书出发，给它再加一页。先把这一页画成模板，再用Markdown把文字填进去，然后给地图上的地点写上名字，并把这一页翻译成另一种语言。然后讲文字太长、框里放不下时怎么办，以及怎样在页面和它的文字之间来回跳转。最后几步画一棵用线连起来的方框树，写几条指向地图上各个地方的注释，排一页照片卡片，再做一组同一套书都能共用的块。",
 };
 
 # 模板页做的书
 
-**你要用模板做出课本的一页，用Markdown填入文字，给地图加标注，翻译这一页，再处理放不下的地方。**
+**你要用模板做出课本的一页，用Markdown填入文字，给地图加标注，翻译这一页，再处理放不下的地方；然后再加一棵树、地图上的注释、一页照片卡片和一个模块库。**
 
 小学课本的一页由一组方框构成：标题色带、一段课文、定义框、活动框、一幅地图。Postext按**页面模板**排这样的页面：模板里存放各个框，Markdown只说明哪些文字放进哪个框。本页在沙盒里把整个流程走一遍，在一本现成的书上增加一页。参考页面讲的是每个字段、每一行Markdown起什么作用；这里每件事按顺序只做一次，看看它带来什么变化。Markdown的写法见[模板页](/zh/docs/composed-pages)，模板见[配置：模板页](/zh/docs/configuration-composed-pages)，各个界面见[沙盒：模板页](/zh/docs/sandbox-composed-pages)。
 
@@ -38,8 +38,8 @@ export const metadata = {
 2. 点**新建**，会打开一个名为*新模板*的模板。把**ID**填成`review`（Markdown用这个名字指定模板），把**名称**填成`Review page`（这个面板里显示的名字）。ID只能用小写字母、数字和短横线。
 3. 模板一开始只有一个框`text`，它**接收未指定槽位的正文**。把它改成标题色带：<strong>名称（槽位）</strong>填`title`；**框样式**选`portada`，也就是书里标题已经在用的蓝色色带；关掉**接收未指定槽位的正文**；**接收**选*1 级*，这样页面上的第一个`#`标题就会进入这个框。
 4. 点**添加框**。新框会在框列表下面展开。<strong>名称（槽位）</strong>填`text`，并打开**接收未指定槽位的正文**：页面上写在框外的文字都进这里。
-5. 再添加一个框。<strong>名称（槽位）</strong>填`remember`。**框样式**选`dato-campo`，这是带页签的绿色方框。**最小高度**设为30毫米，这样文字很短时，方框也能保持合适的大小。
-6. 最后再添加一个框。<strong>名称（槽位）</strong>填`try`。**框样式**选`actividad-sol`。**最小高度**设为30毫米。
+5. 再添加一个框。<strong>名称（槽位）</strong>填`remember`。**框样式**选`dato`，这是带页签的浅色底方框。**最小高度**设为30毫米，这样文字很短时，方框也能保持合适的大小。
+6. 最后再添加一个框。<strong>名称（槽位）</strong>填`try`。**框样式**选`actividad`，这是侧边带一条竖条的方框。**最小高度**设为30毫米。
 7. 把`text`、`remember`和`try`的**宽度**设为*延伸到边缘*，**高度**设为*随内容*：这样它们占满页面的宽度，高度随文字而定。
 8. 在**分组**下点**添加分组**。把它命名为`column`，保持*上下堆叠*，把**框间距**设为6毫米。在<strong>组内的框（按页面顺序）</strong>下勾选这四个框。按它们在页面上的先后顺序勾选，标题在最前：列表会给成员编号，用箭头可以把某个成员上移或下移。组把其中的框上下依次排列，某个框变高时，下面的框随之下移；因此第一个方框里的文字变长时，会把第二个方框往下推，而不会压到它上面。
 
@@ -173,6 +173,175 @@ Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre d
 - **从检查项出发**。点检查面板里的一条，沙盒就带你到那一页，选中那个框，并把光标放到它的文字上。书有多个版本时，沙盒会切换到出问题的那个版本。
 
 <Screenshot src="/docs-shots/zh/select.webp" alt="页面上第二个方框带着橙色轮廓，正文面板里显示选中的框对应的Markdown。" caption="在页面上点一下，光标就落在对应的Markdown里，预览下方的路径说明这是哪个框。" />
+
+## 8. 用连接线画一棵树
+
+概念图、组织结构图和时间线，都是用线连起来的一组方框。在Postext里，方框是框，线是**连接线**：模板装饰中连接框的线。连接线在各框的外框确定之后才画，所以框因文字变长、或换成另一种语言的词而变大时，线会跟着它走，模板也不需要一张画着这些线的图片。树只画一次，做成一个**模块**（任何模板页都能放进去的一组框），分支有几条由Markdown决定。
+
+1. 在**版面设计**中打开**页面与分栏 › 模块**，点**新建模块**。列表里多了一个名为*模块*的模块，带一个框`text`。点它的铅笔按钮（*编辑模块模块*）：模板编辑器就地打开，**模块**开关已经打开。
+2. 把**ID**填成`tree`，**名称**填成`Tree of ideas`。选中框`text`，把它做成树的顶端：<strong>名称（槽位）</strong>填`root`，**框样式**选`dato`，**宽度**设为*延伸到边缘*，**高度**设为*随内容*，并关掉**接收未指定槽位的正文**。
+3. 点**添加框**。<strong>名称（槽位）</strong>填`branch`；**框样式**选`dato`；**最小高度**设为20毫米。
+4. 在**分组**下点**添加分组**。把它命名为`branches`，选**网格**：**列数**设为3，**列间距**和**行间距**都设为6毫米。在**重复一组框**下把**主框**设为`branch`：页面给网格几个条目，网格就排几个`branch`。把**自身的框**设为*框root*，**相对位置**设为*下方*，**Y偏移**设为12毫米，这样不论根有多高，网格都从它下面开始。
+5. 在**装饰**下点**添加连接线**。在它的卡片里把**起点**设为*框root*，在**终点**下按*每个 branch*（线有哪些终点，就按下哪些按钮）。把**走线**设为*树形*，**转角半径**设为2毫米，**线条粗细**设为1.5磅，**终点标记**设为*箭头*。**在页面上选取**用鼠标做同样的事，在版面设计模式下进行：先点线出发的框，再逐一点它要连到的框；对同一个框再点一次就把这一端去掉，按Esc结束选取。
+
+接下来写文字。切换到**内容**，在**正文**面板里把光标放在第3节的复习页上。回到**模块**，**插入到哪一页**列表里写着这一页；点*Tree of ideas*的插入按钮。沙盒在这一页的结束行之前写出一个`:::module{template="tree"}`块，每个槽位一个空框；模板`review`还没有接收模块的组，所以沙盒还在它最后一个框下面加了一个。把文字写进这些空框：
+
+```md
+:::module{template="tree"}
+:::frame{slot="root"}
+**A river** gives us
+:::
+:::frame{slot="branch"}
+Water to drink and to water the fields
+:::
+:::frame{slot="branch"}
+Power to turn a mill
+:::
+:::frame{slot="branch"}
+A place to play and to paddle
+:::
+:::
+```
+
+每个`:::frame{slot="branch"}`是一条分支。复制一个，页面上就有四个方框、四条线；删掉一个，就只剩两个。连接线指向`branch[*]`，即页面上的每一条分支，所以线随Markdown变化，模块不用改。
+
+<Screenshot src="/docs-shots/zh/tree.webp" alt="版面设计面板打开了模块Tree of ideas的连接线卡片；复习页上，顶上一个方框用带箭头的线连到下面的三个方框。" caption="这棵树：一个根，一个重复分支的网格，一条连到每个分支的连接线。" />
+
+组织结构图是同样的模块，只是框不同：团队负责人一张卡片，一个重复照片和姓名的网格，再用一条树形连接线连到每张卡片。时间线把**横杆位置**设为0：不画横杆，从日期条向每张卡片各垂下一条短线。
+
+## 9. 地图上的注释：指示线和图例
+
+这一页围着一幅地图写注释：每条注释有一条线连到它说的地方，地图有一个说明各种符号的图例，还有一个地名离开它的点放置，用一条线连回去。这些线都不属于这幅画。
+
+书里这幅画有两份：`mapa`，带着第6页和第7页上的地名；`rio`，是同一张图，但没有锚点，缩小排在目录页上。这一页用`rio`，所以你在上面加的点不会挪动跨页上的任何地名。
+
+1. 像第2节那样做一个页面模板。**ID**填`map-notes`，**名称**填`Map with notes`。它的框有：`title`（**框样式**为`portada`，**接收**为*1级*），`text`（**接收未指定槽位的正文**），`map`（**宽度**为*延伸到边缘*），以及`note-1`、`note-2`和`note-3`（**框样式**为`dato`，**宽度**56毫米，**最小高度**26毫米）。把`title`、`text`和`map`上下堆叠在组`column`里，框间距6毫米；把三条注释放进组`notes`，*横排一行*，间距8毫米。把`note-1`挂在*框map*上，*下方*，向下14毫米。
+2. 在本章末尾写出这一页：
+
+```md
+::::page{template="map-notes"}
+# Along the river
+
+The map shows the valley of the Aldara. Each note tells you about one place on it: follow its line to find the place.
+
+:::figure{resource="rio" slot="map"}
+::label[Spring]{at="spring" style="agua"}
+:::label{at="key" style="key"}
+:icon[]{glyph="●" color="ink"} Town
+:icon[]{line="solid" color="agua"} River
+:icon[]{line="dashed" color="ink"} Path
+:::
+:::
+
+:::frame{slot="note-1" label="The dam"}
+The dam holds the water back in a lake. In dry months it lets some out, so the river never runs empty.
+:::
+
+:::frame{slot="note-2" label="Molinar"}
+Molinar grew round its bridge and its mill. The mill wheel turned with the water of the river.
+:::
+
+:::frame{slot="note-3" label="Aldamar"}
+At Aldamar the river meets the sea. Fishing boats leave the harbour every morning.
+:::
+::::
+```
+
+`:::label{at="key" style="key"}`是一个多行标注：每一行是图例的一行。`:icon[…]{…}`是行里的一个符号：一个字形、一段线条样例，或书里的一张图片。**正文**面板工具栏里的**标注用符号**按钮在光标处写出一个符号，连同它的颜色和大小；方括号里是屏幕阅读器为它读出的文字，方括号为空，表示旁边的文字已经说清楚了。
+3. 设定图例的外观。在**版面设计 › 图与表 › 标注样式**中点**添加标注样式**，把它的id设为`key`，字体用Fredoka，10.5磅，加白色的**底板**，**底板内边距**2.5毫米，加上**轮廓线**，**圆角半径**1.5毫米；再在**行与图例**下打开**图例**。这样各个符号自成一列，每一行的文字都从同一条边开始。
+4. 放置各个点。**检查**列出`spring`和`key`的*标注指向不存在的锚点*。点其中一条的图钉按钮：`rio`的锚点对话框打开，两个名称都在*缺少锚点的标注*下。在画的左上方点一下瀑布，作为`spring`；在左下角点一下，作为`key`；把图例的**对齐**设为*起始*，**垂直对齐**设为*底部*，让它从点向上、向右展开。然后点一下水坝、磨坊和港口，在各自那一行里把这三个新锚点命名为`dam`、`mill`和`harbour`。
+5. 把泉源的名称放到离开它的点的地方。选中`spring`，在**标注与引线**下打开**离开锚点**。把标注的手柄向上拖到天空里，把**引线**设为*开*：拖动时，从标注到瀑布的线随之画出。点**保存**。
+6. 画指示线。在**版面设计**模式下，在页面上选中`note-1`：它右边中点旁边出现一个圆形手柄。把它拖到水坝上；拖动时地图上的锚点会显示出来，松开时写出一条从这条注释连到锚点`dam`的连接线，末端是一个圆点。用同样的办法从`note-2`拖到`mill`，从`note-3`拖到`harbour`。框的**指示线**一组列出这几条线，用键盘添加或修改指示线也在这里。
+
+<Screenshot src="/docs-shots/zh/map-notes.webp" alt="版面设计模式下的Along the river一页：地图左下角有图例，下面三条注释各有一条线连到地图上的一个地方，版面设计面板中是第二条注释的“指示线”一组。" caption="每条注释指向图片的一个锚点；图例和地名都是Markdown里的行。" />
+
+指示线止于图片上锚点所在的那一点，裁切和缩放都考虑在内，所以地图缩小排、或裁到安全区时，它仍然找得到磨坊。它画在各框之上，所以显示在图片上面。如果把一条注释直接放在地图上面，不给它自己的位置，检查面板会把它列为*框被另一个框盖住*，并给出修正办法（见[沙盒：模板页](/zh/docs/sandbox-composed-pages#重叠与字形页签)）。
+
+## 10. 一页照片卡片
+
+一页卡片（每张照片下面一行说明，或者肖像配姓名）就是把同一张卡片画很多次。**重复一组框的网格**把卡片画一次，Markdown写了几张，页面上就有几张。
+
+1. 做一个模板`photos`（**名称**为`Photo cards`），其中`title`（`portada`，*1级*）和`text`（未指定槽位的正文）上下堆叠在组`column`里，间距6毫米。
+2. 添加框`photo`：**框样式**为`foto`，挂在*框text*上，*下方*，向下6毫米。添加框`caption`：**框样式**为`dato`，**宽度**为*随内容*，挂在*框photo*上，*下方*，向下2毫米。
+3. 添加组`cards`：**网格**，**列数**3，**列间距**6毫米，**行间距**12毫米。在**重复一组框**下，**主框**选`photo`，并在**随它一起的框**下勾选`caption`。主框取一个单元格的宽度；题注照模板里画的样子挂在它上面。
+4. 写出这一页：
+
+```md
+::::page{template="photos"}
+# People and the river
+
+People use the river in many ways. Look at the photos and say what each person is doing.
+
+:::frame{slot="photo"}
+::resource{id="riego"}
+
+:::frame{slot="caption"}
+Watering the fields
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="molino"}
+
+:::frame{slot="caption"}
+Grinding wheat
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="piraguas"}
+
+:::frame{slot="caption"}
+Paddling a canoe
+:::
+:::
+
+:::frame{slot="photo"}
+::resource{id="limpieza"}
+
+:::frame{slot="caption"}
+Cleaning the banks
+:::
+:::
+::::
+```
+
+每个`:::frame{slot="photo"}`是一张卡片，写在它里面的`:::frame{slot="caption"}`进入这张卡片的题注。卡片从行首那一侧开始填满各行，所以第四张另起第二行。在版面设计模式下，各框以所属的卡片命名：`photo[2]`和`caption[2]`是第二张卡片。
+
+<Screenshot src="/docs-shots/zh/grid.webp" alt="People and the river一页：四张照片排成三列的网格，每张下面一行说明；版面设计面板显示组cards，设为网格、三列，并打开了“重复一组框”。" caption="卡片只画一次；Markdown给出四张，网格就排四张。" />
+
+第五张照片占下一个单元格；第七张开始第三行。另一种语言的版本可以用同一个模板，放更多或更少的卡片。**最多条目数**限定网格的容量（超出的部分进入未指定槽位的正文，检查面板列出*条目多于网格的容量*）；在主框上把**放不下的内容转到**设为*本页之后新增的一页*，放不下的行会整行转到追加的一页上。
+
+## 11. 一套书的模块库
+
+**页面与分栏 › 模块**是这本书的模块库。每个模块都画出它的框，标出id，写明Markdown里有多少个块用到它、分布在几页上（这棵树是*1页共1个块*），并有一个在模板编辑器中打开它的铅笔按钮，以及把它插入**插入到哪一页**所选页面的按钮。**新建模块**再开一个。给模块改名时，每个指定它的`:::module`块都会一并改写。
+
+<Screenshot src="/docs-shots/zh/modules.webp" alt="版面设计面板的“模块”一节：“插入到哪一页”列表，写着“1页共1个块”的模块Tree of ideas，以及“新建模块”按钮。" caption="模块库：每个模块、书中用到它的地方，以及把它插入页面的方法。" />
+
+页面在打开了**接收页面的模块**的组里接收模块，按Markdown的顺序上下排列。所以下一页可以在一个方框下面放一棵树，或者放两棵树，不用新模板：Markdown说明有哪些块、按什么顺序，模块负责把它们画出来。
+
+一套书（三年级的*Our river*，四年级的*Our coast*）通过共用设计来共用模块：
+
+- **在沙盒里。** 把下一本书做成这一本的副本（**书库**，书上的<strong>⋯</strong>，**复制**），再写它的各章；模板、模块和样式都随副本带过去。对于已经有的书，版面设计面板顶部的**导出**保存设计，在另一本书里点**导入**，就用它替换那本书的设计。
+- **在代码里。** 把模块模板放在一个文件里，加进这套书每一本的`pageTemplates`：
+
+```ts
+// series/modules.js: the tree and the other modules of the series
+export const seriesModules = [
+  { id: 'tree', name: 'Tree of ideas', role: 'module', frames: [/* root, branch */], groups: [/* branches */],
+    decoration: { elements: [{ kind: 'connector', id: 'connector-1', routing: 'tree', from: { to: '#root' }, to: [{ to: '#branch[*]' }] }] } },
+];
+
+// our-coast/config.js
+import { seriesModules } from '../series/modules.js';
+export const config = { /* … */ pageTemplates: [...seriesModules, ...pagesOfThisBook] };
+```
+
+此后修改一个模块（线加粗，换一种框样式），下次排版时，每一本用到它的书的每一页都会随之改变，而文字仍留在各本书自己的Markdown里。
+
+## Markdown写什么，设计画什么
+
+第8到11节的页面遵循同一条规则。Markdown说明页面上放**什么**、放**多少**：每个方框里的文字，几条分支、几条注释、几张卡片、图例有几行，哪个模块在前。设计把每样东西只画**一次**：方框、它们的位置、它们之间的线、图例的样子、单元格的大小。所以译文不需要自己的模板，五张照片的一页可以用四张照片那一页的模板，一套书也可以共用模块。模板从不存放页面上的文字，Markdown也从不写位置或颜色。
 
 ## 接下来读什么
 
