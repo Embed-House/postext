@@ -43,9 +43,9 @@ import { chainHead, FRAME_ATTR } from '../composed/wrap';
 import { framePlaceable, nextFrameOf, groupPlaceable, placeBox, unionRect, type FrameAreas, type Rect } from '../composed/geometry';
 import { composedOrder, groupOfFrames, layoutGroup, type GroupItem } from '../composed/groups';
 import { reflowEvents, type FrameMotion } from '../composed/reflowLog';
-import { anchorTarget, repeatInstance, repeatedFrames, resolveContinueIn } from '../composed/templates';
+import { anchorTarget, lookOver, repeatInstance, repeatedFrames, resolveContinueIn } from '../composed/templates';
 import { collapsedOnAddedPage, collapseFrames, continuationTemplate, continuesCollapsed, continuesOffPage, trailingFrames, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
-import type { FrameLook, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from '../composed/types';
+import type { FrameLook, FrameLookEntry, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from '../composed/types';
 import { isModuleTemplate, resolvePageTemplate, type PageTemplateSource } from '../composed/templates';
 import { frameElementId } from '../composed/ids';
 import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat';
@@ -1147,9 +1147,18 @@ function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplat
    *  numbered (`VDTDesignTextBlock.pageMark`). */
   const toGuess = String(input.page.index + 2);
   const fromGuess = String(Math.max(1, input.page.index));
+  /** The named look (#1089) the `:::frame` fence of a frame's story names
+   *  (`look="<id>"`), when `frameLooks` has it: the story's, so every
+   *  frame of a chain and the frames it goes on in on later pages wear it. */
+  const frameLooks = pass.resolved.frameLooks;
+  const namedLookOf = (frame: ResolvedFrame): FrameLookEntry | undefined => {
+    if (!frameLooks) return undefined;
+    const id = input.stories.get(headOf(frame.name))?.plan.attrs.look?.trim();
+    return id ? frameLooks.find((l) => l.id === id) : undefined;
+  };
   /** The style a frame is laid out in: its box as drawn at any text scale. */
   const styleOf = (frame: ResolvedFrame): ResolvedCalloutStyleConfig => {
-    const style = keepChromeAt(input.styleOf(frame), textScale(frame));
+    const style = keepChromeAt(input.styleOf(withNamedLook(frame, namedLookOf(frame))), textScale(frame));
     if (!fit.goOn.has(frame.name)) return style;
     // A frame cut for another page (#859) ends with its mark: its own
     // words, none (`false`), or its style's localized ones.
@@ -2347,6 +2356,23 @@ export function frameStyleOf(base: ResolvedCalloutStyleConfig, frame: ResolvedFr
 }
 
 const lookedStyles = new WeakMap<object, WeakMap<object, ResolvedCalloutStyleConfig>>();
+/** Frames with a named look laid over theirs (#1089), per look and frame:
+ *  the same look object each time, so `styleWithLook` keeps its styles. */
+const namedLookFrames = new WeakMap<FrameLookEntry, WeakMap<ResolvedFrame, ResolvedFrame>>();
+
+/** `frame` with the named look `named` (#1089) laid over its own `look`
+ *  (`lookOver`): the order is the style, the template frame's look, then
+ *  the named look. `frame` itself when there is none. */
+export function withNamedLook(frame: ResolvedFrame, named: FrameLookEntry | undefined): ResolvedFrame {
+  if (!named) return frame;
+  let byFrame = namedLookFrames.get(named);
+  if (!byFrame) namedLookFrames.set(named, (byFrame = new WeakMap()));
+  const known = byFrame.get(frame);
+  if (known) return known;
+  const out: ResolvedFrame = { ...frame, look: lookOver(frame.look, named) };
+  byFrame.set(frame, out);
+  return out;
+}
 
 /** `base` with what a frame's `look` sets (#976) written over it: colours
  *  of the fill, border, stripe, icon, marker, title, text and label tab,

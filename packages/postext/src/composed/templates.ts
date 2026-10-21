@@ -9,6 +9,7 @@ import type {
   FrameGridCell,
   FrameGroupConfig,
   FrameLook,
+  FrameLookEntry,
   FrameOverflowConfig,
   FrameRulesConfig,
   FrameSize,
@@ -490,6 +491,33 @@ function normalizeLook(raw: unknown, tree: LookTree): Record<string, unknown> | 
     }
   }
   return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/** The named looks of `frameLooks` (#1089) the engine can use: entries
+ *  with an id (the first of each id wins), each with what a frame's
+ *  `look` could not use left out (`normalizeLook`); an entry that keeps no
+ *  field still names a look (it changes nothing). None when the list
+ *  holds no entry with an id. */
+export function normalizeFrameLooks(raw: unknown): FrameLookEntry[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const out: FrameLookEntry[] = [];
+  const seen = new Set<string>();
+  for (const e of raw) {
+    if (!isRecord(e) || typeof e.id !== 'string' || e.id === '' || seen.has(e.id)) continue;
+    seen.add(e.id);
+    out.push({ id: e.id, ...(typeof e.name === 'string' ? { name: e.name } : {}), ...(normalizeLook(e, LOOK_TREE) ?? {}) });
+  }
+  return out.length > 0 ? out : undefined;
+}
+
+/** The look a frame wears with a named look laid over its own (#1089):
+ *  `over`'s fields (an entry's `id` and `name` left out) over `below`'s,
+ *  key by key at every level. */
+export function lookOver(below: FrameLook | undefined, over: FrameLook): FrameLook {
+  const fields: Record<string, unknown> = { ...over };
+  delete fields.id;
+  delete fields.name;
+  return mergeLook(below, fields) as FrameLook;
 }
 
 /** `look` over `below`, key by key at every level (colours and lengths

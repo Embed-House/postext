@@ -12,6 +12,7 @@ import type {
   FrameGridCell,
   FrameGroupConfig,
   FrameLook,
+  FrameLookEntry,
   FrameRepeatConfig,
   FrameOverflowConfig,
   FrameRulesConfig,
@@ -74,6 +75,7 @@ const FRAME_KEYS = {
   overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, look: true, overlap: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
 const LOOK_KEYS = { background: true, border: true, stripe: true, icon: true, marker: true, titleStyle: true, body: true, label: true } satisfies Record<keyof FrameLook, true>;
+const FRAME_LOOK_ENTRY_KEYS = { ...LOOK_KEYS, id: true, name: true } satisfies Record<keyof FrameLookEntry, true>;
 const RULES_KEYS = { every: true, color: true, width: true, inset: true } satisfies Record<keyof FrameRulesConfig, true>;
 const FIT_KEYS = { shrinkText: true, minScale: true, scaleImages: true, imageMinScale: true, preferContinue: true } satisfies Record<keyof FrameFitConfig, true>;
 const OVERFLOW_KEYS = { continueIn: true, mark: true, fromMark: true } satisfies Record<keyof FrameOverflowConfig, true>;
@@ -138,10 +140,12 @@ export function validatePageTemplates(config: PostextConfig | undefined, options
   );
   checkTemplates(config.pageTemplates, '/pageTemplates', calloutIds(config.calloutStyles), options, push);
   checkLabelStyles(config.labelStyles, '/labelStyles', push);
+  checkFrameLooks(config.frameLooks, '/frameLooks', push);
   const overrides = config.htmlViewer?.overrides;
   if (isRecord(overrides)) {
     checkTemplates(overrides.pageTemplates, '/htmlViewer/overrides/pageTemplates', calloutIds(overrides.calloutStyles ?? config.calloutStyles), options, push);
     checkLabelStyles(overrides.labelStyles, '/htmlViewer/overrides/labelStyles', push);
+    checkFrameLooks(overrides.frameLooks, '/htmlViewer/overrides/frameLooks', push);
   }
   checkAnchorStyles(config.labelStyles, options.resources, push);
   return out;
@@ -414,6 +418,23 @@ function checkMinMax(frame: ResolvedFrame, toPx: (d: Dimension) => number, push:
       push({ kind: 'frameMinMax', path: sizePath, value: `${key} ${text(size)} > max${axis} ${text(max)}`, used: text(hi) });
     }
   }
+}
+
+/** Named frame looks (#1089): an entry with no id is not read
+ *  (`unknownConfigValue`); its keys are checked as a frame's `look`, at
+ *  any depth, plus `id` and `name`. */
+function checkFrameLooks(raw: unknown, prefix: string, push: Push): void {
+  if (!Array.isArray(raw)) return;
+  raw.forEach((e, i) => {
+    const path = `${prefix}/${i}`;
+    if (!isRecord(e)) return;
+    if (typeof e.id !== 'string' || e.id === '') {
+      push({ kind: 'unknownConfigValue', path: `${path}/id`, value: String(e.id ?? ''), used: '' });
+      return;
+    }
+    unknownKeys(e, FRAME_LOOK_ENTRY_KEYS, path, push);
+    checkLook(e, LOOK_TREE, path, push);
+  });
 }
 
 function checkLabelStyles(raw: unknown, prefix: string, push: Push): void {

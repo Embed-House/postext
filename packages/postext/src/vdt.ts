@@ -51,6 +51,7 @@ import type {
   ResolvedCodeStyleConfig,
   PageTemplate,
   ResolvedLabelStyle,
+  FrameLookEntry,
   Dimension,
   PageMargins,
 } from './types';
@@ -192,6 +193,9 @@ export interface ResolvedConfig {
   /** Label styles (`PostextConfig.labelStyles`, #853), resolved, when the
    *  config sets any. */
   labelStyles?: ResolvedLabelStyle[];
+  /** Named frame looks (`PostextConfig.frameLooks`, #1089), with what the
+   *  engine cannot use left out, when the config sets any. */
+  frameLooks?: FrameLookEntry[];
   /** The leaf composed pages are laid out on (`PostextConfig.composedViewerLeaf`,
    *  #1045), when a host sets one. */
   composedViewerLeaf?: { width: Dimension; height: Dimension; margins: Required<PageMargins> };
@@ -3501,6 +3505,11 @@ export type ContentWarning = ContentWarningBase & (
    *  flow frame (`flowFrame`, when the template has one), or after the
    *  page. Points at the item's `slot="…"`. */
   | { kind: 'repeatOverflow'; template: string; group: string; frame: string; item: number; max: number; flowFrame?: string; fenceIndex: number }
+  /** A `:::frame{slot="…" look="…"}` piece of a composed page names a look
+   *  (#1089) that no `frameLooks` entry has: the frame wears its style and
+   *  its template look. `suggestion`: the nearest id. Points at the
+   *  `look="…"` value. */
+  | { kind: 'lookUnknown'; template: string; frame: string; look: string; suggestion?: string; fenceIndex: number }
   /** A `:::module{template="…"}` of a composed page (#1062) that the page
    *  does not lay: `module` names no template (`'unknown'`), a template
    *  whose `role` is not `'module'` (`'notModule'`), or the page's template

@@ -40,7 +40,7 @@ import { effectiveResourceTypes } from '../defaults/resourceTypes';
 import { composedPages } from '../composed/document';
 import { composedFrameBlockIds } from '../composed/paint';
 import { bitmapLayoutSize, bitmapResolutionFor } from '../bitmapResolution';
-import { checkComposedSlots } from '../composed/slotChecks';
+import { checkComposedSlots, checkFrameLookNames } from '../composed/slotChecks';
 import { describeFitStep, describeFrameCoverProposal, describeFrameOutsideProposal, describeFrameOverflowProposal } from '../composed/reflowLog';
 import type { ComposedPagesConfigKeys } from '../composed/types';
 
@@ -375,6 +375,10 @@ export function collectContentWarnings(
   // Composed pages (#854): templates, slots and frames left empty, and a
   // fence that disagrees with its template about spreads (#861).
   for (const w of checkComposedSlots(composedPages(blocks), config as ComposedPagesConfigKeys | undefined)) {
+    out.push({ ...w, ...abs({ start: w.sourceStart ?? 0, end: w.sourceEnd ?? 0 }) });
+  }
+  // Frame pieces that name a look `frameLooks` lacks (#1089).
+  for (const w of checkFrameLookNames(blocks, config as ComposedPagesConfigKeys | undefined)) {
     out.push({ ...w, ...abs({ start: w.sourceStart ?? 0, end: w.sourceEnd ?? 0 }) });
   }
 
@@ -929,6 +933,9 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'repeatOverflow':
       text = `Grid "${w.group}" of template "${w.template}" holds ${w.max} item${w.max === 1 ? '' : 's'} — item ${w.item} of "${w.frame}" goes to ${w.flowFrame ? `the flow frame "${w.flowFrame}"` : 'the flow after the page'}; raise repeat.max or move the item to another page`;
+      break;
+    case 'lookUnknown':
+      text = `Frame "${w.frame}" of template "${w.template}" names the look "${w.look}", which frameLooks does not have${w.suggestion ? ` (did you mean "${w.suggestion}"?)` : ''} — the frame wears its style and its template look`;
       break;
     case 'moduleUnknown':
       text = w.reason === 'unknown'

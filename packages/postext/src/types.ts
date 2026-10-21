@@ -1,10 +1,10 @@
 import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering';
-import type { LabelStyle, PageTemplate } from './composed/types';
+import type { FrameLookEntry, LabelStyle, PageTemplate } from './composed/types';
 import type { StoryJump } from './composed/carryTypes';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {
-  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule,
+  FrameSize, FrameGridCell, FrameFitConfig, FrameOverflowConfig, FrameRulesConfig, FrameLook, FrameLookEntry, FrameConfig, FrameGroupConfig, FrameRepeatConfig, ComposedModuleUse, ResolvedModule,
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
@@ -8262,6 +8262,12 @@ export interface PostextConfig {
   /** Named styles of the labels set at a picture's anchors (`::label`,
    *  `ResourceAnchor.style`). */
   labelStyles?: LabelStyle[];
+  /** Named frame looks (#1089): colours (and the body's tracking) a
+   *  `:::frame{slot="…" look="<id>"}` piece lays over its frame's style
+   *  and template look, so each item of a repeating grid can wear its own.
+   *  Validated as a frame's `look`; an id no entry has is the content
+   *  warning `lookUnknown`. */
+  frameLooks?: FrameLookEntry[];
   /** For hosts whose page is not a leaf (the Sandbox's HTML viewer lays
    *  the book out on pages a screen wide and a scroll tall, #1045): a
    *  composed page (`::::page{template}`) is laid out on this leaf instead

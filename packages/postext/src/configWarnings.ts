@@ -458,6 +458,7 @@ function collectPageTemplateWarnings(config: PostextConfig, options: ConfigWarni
   const overrides = config.htmlViewer?.overrides;
   const any = config.pageTemplates !== undefined || config.labelStyles !== undefined
     || overrides?.pageTemplates !== undefined || overrides?.labelStyles !== undefined
+    || config.frameLooks !== undefined || overrides?.frameLooks !== undefined
     || (options.resources ?? []).some((r) => r.anchors?.some((a) => a.style !== undefined || a.labelAt !== undefined || a.leader !== undefined));
   if (!any) return [];
   const resolved = resolveAllConfig(config);

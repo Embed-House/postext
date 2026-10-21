@@ -51,7 +51,8 @@ import { directionOf, localeScript, presentTag, resolveNumerals } from '../local
 import { configFingerprint } from '../util/stableHash';
 import { forgetFlowColorValues } from './partPalette';
 import { createBoundingBox, type BoundingBox, type ResolvedConfig } from '../vdt';
-import { resolveLabelStyles, stripPageTemplatesDefaults } from '../composed/templates';
+import { normalizeFrameLooks, resolveLabelStyles, stripPageTemplatesDefaults } from '../composed/templates';
+import type { FrameLookEntry } from '../composed/types';
 
 // Resolved configs are never mutated (derived variants spread them), so
 // one resolution per config object serves every pass of a build and every
@@ -212,10 +213,18 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     ...(Array.isArray(config?.labelStyles) && config.labelStyles.length > 0
       ? { labelStyles: resolveLabelStyles(config.labelStyles) }
       : {}),
+    // Named frame looks (#1089): only a config that sets some carries them.
+    ...frameLooksOf(config?.frameLooks),
     // A host's leaf for composed pages (#1045): only a host that sets it.
     ...(config?.composedViewerLeaf ? { composedViewerLeaf: resolveComposedViewerLeaf(config.composedViewerLeaf) } : {}),
   };
   return applyPaletteToResolvedConfig(resolved, rawConfig?.colorPalette);
+}
+
+/** `{ frameLooks }` when the config names a look the engine can use. */
+function frameLooksOf(raw: unknown): { frameLooks?: FrameLookEntry[] } {
+  const frameLooks = normalizeFrameLooks(raw);
+  return frameLooks ? { frameLooks } : {};
 }
 
 /** `composedViewerLeaf` with its unset margins at zero. */

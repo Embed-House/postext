@@ -188,6 +188,19 @@ export interface FrameLook {
   label?: { color?: ColorValue; background?: ColorValue; rule?: { color?: ColorValue } };
 }
 
+/** A named look (#1089, `PostextConfig.frameLooks`): the fields of a
+ *  {@link FrameLook} under an id a `:::frame{slot="…" look="<id>"}` piece
+ *  names. The Markdown names the look, the config defines it; it is laid
+ *  over the frame's style and the template frame's own `look`, for that
+ *  piece only, so the items of a repeating grid can each wear a colour of
+ *  their own. */
+export interface FrameLookEntry extends FrameLook {
+  /** Required, unique among `frameLooks`. */
+  id: string;
+  /** Shown in the Sandbox only. */
+  name?: string;
+}
+
 /** The frame set a grid group lays once per content item (#1061, DESIGN
  *  §12.6). */
 export interface FrameRepeatConfig {
@@ -393,6 +406,8 @@ export interface LabelStyle {
 export interface ComposedPagesConfigKeys {
   pageTemplates?: PageTemplate[];
   labelStyles?: LabelStyle[];
+  /** Named frame looks (#1089). */
+  frameLooks?: FrameLookEntry[];
 }
 
 // ---------------------------------------------------------------------------
