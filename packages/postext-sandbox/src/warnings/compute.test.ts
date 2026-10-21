@@ -619,6 +619,34 @@ describe('engine content warnings', () => {
     expect(warningCategory('floatShrunk')).toBe('figures');
   });
 
+  it('lists a caption that prints its label alone, and a figure in the text that moved on (#1151)', () => {
+    const g = globalThis as unknown as { OffscreenCanvas?: unknown };
+    g.OffscreenCanvas ??= class { getContext() { return { font: '', measureText: (t: string) => ({ width: t.length * 7 }) }; } };
+    const px = (value: number) => ({ value, unit: 'px' as const });
+    const config: PostextConfig = {
+      page: { dpi: 144, width: px(600), height: px(400), margins: { top: px(0), bottom: px(0), left: px(0), right: px(0) } },
+      layout: { layoutType: 'single' },
+    };
+    const pic = (id: string, caption: string, height: number): Resource => ({
+      id, typeId: 'figure', kind: 'bitmap', caption, createdAt: 0, updatedAt: 0,
+      bitmap: { fileId: `${id}.jpg`, format: 'jpeg', width: 600, height },
+      placement: { position: 'here' },
+    });
+    const lines = Array.from({ length: 6 }, (_, i) => `Line ${i} of the text.`).join('\n\n');
+    const md = `::resource{id="lone"}\n\n${lines}\n\n::resource{id="tall"}\n\nAfter.`;
+    const resources = [pic('lone', '', 40), pic('tall', 'A tall one.', 300)];
+    const doc = buildDocument({ markdown: md, resources }, config);
+    const all = computeWarnings({ markdown: md, config, doc, resources });
+    const lone = all.filter((w): w is typeof w & { payload: Extract<WarningPayload, { kind: 'emptyCaption' }> } => w.payload.kind === 'emptyCaption');
+    expect(lone.map((w) => [w.payload.resourceId, w.line])).toEqual([['lone', 1]]);
+    expect(lone[0]!.payload.label.length).toBeGreaterThan(0);
+    const moved = all.filter((w): w is typeof w & { payload: Extract<WarningPayload, { kind: 'resourceMoved' }> } => w.payload.kind === 'resourceMoved');
+    expect(moved.map((w) => [w.payload.resourceId, w.payload.page])).toEqual([['tall', 1]]);
+    expect(moved[0]!.payload.emptyMm).toBeGreaterThan(0);
+    expect(warningCategory('emptyCaption')).toBe('figures');
+    expect(warningCategory('resourceMoved')).toBe('figures');
+  });
+
   it('lists a code listing wider than its box, and a code fence left open (#624)', () => {
     const g = globalThis as unknown as { OffscreenCanvas?: unknown };
     g.OffscreenCanvas ??= class { getContext() { return { font: '', measureText: (t: string) => ({ width: t.length * 7 }) }; } };

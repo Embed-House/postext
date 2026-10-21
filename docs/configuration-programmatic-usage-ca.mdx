@@ -280,6 +280,16 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>La imatge s'imprimeix a l'amplada de la seva columna. Una imatge al flux mai no és més ampla que la seva columna i la pàgina per defecte en té dues (<code>layout.layoutType: 'double'</code>): compon la pàgina a una columna, fes flotar la imatge sobre tota la pàgina (<code>placement.span: 'page'</code>) o puja'n la resolució si aquesta és la mida que busques.</td>
     </tr>
     <tr>
+      <td><code>emptyCaption</code></td>
+      <td>Un recurs d'un tipus amb prefix de peu no té peu propi, així que la seva línia de peu imprimeix només l'etiqueta i el número. <code>resourceId</code> l'anomena i <code>label</code> és la línia impresa. Informatiu: s'avisa un cop per recurs, al paràgraf que el cita o a la seva inserció. Des de postext 1.52.</td>
+      <td>S'imprimeix l'etiqueta. Escriu el peu, o deixa l'etiqueta sola si es vol una làmina numerada.</td>
+    </tr>
+    <tr>
+      <td><code>resourceMoved</code></td>
+      <td>Un recurs col·locat en el text (<code>position: 'here'</code>) era més alt que l'espai que quedava a la seva columna i va passar sencer a la següent. <code>resourceId</code> l'anomena, <code>emptyPx</code> i <code>emptyMm</code> donen l'espai que va deixar buit i <code>pageIndex</code> la pàgina. S'avisa quan aquest espai és de dues línies de la retícula del text o més; una imatge amb ajust de text ho diu amb <code>textWrap</code> <code>'moved'</code>. Assenyala la inserció. Des de postext 1.52.</td>
+      <td>El recurs queda al començament de la columna següent. Fes-lo més petit, mou la seva línia <code>::resource</code> o fes-lo flotar (<code>placement.position: 'auto'</code>).</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>Un recurs o una caixa envoltats de text (<code>placement.wrap</code>, el <code>wrap</code> d'una caixa) que no es componen com s'ha demanat. <code>reason</code>: <code>'tooNarrow'</code> (el text del costat quedaria més estret que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (és més baix que <code>layout.wrap.minLinesBeside</code> línies), <code>'moved'</code> (un en línia massa alt per a l'espai que queda a la columna ha passat a la següent, amb la seva àncora), <code>'verticalText'</code> o <code>'noContour'</code> (un text que ha de resseguir el contorn d'una imatge de forma desconeguda: un SVG sense <code>contour.points</code>, un mapa de bits sense transparència o un canal alfa que l'amfitrió no ha traçat). <code>resourceId</code> indica un recurs, i <code>box</code>, l'estil d'una caixa. L'avís indica la inserció o la caixa.</td>
       <td>L'element ocupa la banda sencera, o es col·loca a la columna següent, segons la raó; amb <code>'noContour'</code> el text envolta la caixa de la imatge. Dona a la imatge un polígon, fes servir un PNG amb transparència o llegeix-la amb <code>readBundle</code> o amb el Sandbox, que la tracen.</td>

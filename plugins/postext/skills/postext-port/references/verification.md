@@ -351,6 +351,12 @@ those lines, or run the script.
   `layout.layoutType: 'single'`, `placement: { position: 'top', span: 'page' }` or a composed-page frame
   (a picture in the flow is never wider than its column, and a config without `layout` has two). Treat it as a
   real finding when `resolution` came from the source's print size.
+- `note emptyCaption` (postext ≥ 1.52): a figure or table prints its label and number alone ("Figure 1.2.")
+  because its `caption` is empty. Right for a numbered plate; otherwise the port lost the caption: read it from
+  the source. `WARN resourceMoved` (≥ 1.52): a `position: 'here'` figure too tall for the room left in its
+  column moved on and left `emptyMm` mm empty on that page (`data.emptyMm` in `--json`); compare with the
+  source page, and float it (`position: 'auto'`), narrow it or move its `::resource` line when the source has
+  text there.
 - `WARN unknownMarkStyle` (postext ≥ 1.34.1): `:mark[…]{style}` names no `markStyles` id; the first style is
   used. `WARN comicPanelFrame` (postext ≥ 1.38): `unknownBox` (`box` names no callout style), `textOverflow`
   (a `::panel{text}` body is taller than its frame, `overflowMm`), `strip`/`spread` (raised

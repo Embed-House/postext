@@ -125,6 +125,8 @@ export type WarningKind =
   | 'codeOverflow'
   | 'floatShrunk'
   | 'pictureBelowPrintSize'
+  | 'emptyCaption'
+  | 'resourceMoved'
   | 'unknownConfigKey'
   | 'unknownConfigValue'
   | 'calloutStyleExtendsUnknown'
@@ -580,6 +582,13 @@ export type WarningPayload =
    *  a page whose text block is wider (#901): `scale` of its print width;
    *  the print, column and text block widths in mm. */
   | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printMm: number; columnMm: number; pageMm: number }
+  /** A resource of a type with a caption prefix and no caption of its
+   *  own: its caption line prints `label` alone (#1151). */
+  | { kind: 'emptyCaption'; resourceId: string; label: string }
+  /** A resource set in the text that moved on to the next column, too
+   *  tall for the room left, leaving `emptyMm` empty on book page `page`
+   *  (#1151). */
+  | { kind: 'resourceMoved'; resourceId: string; page: number; emptyMm: number }
   | { kind: 'dropCap'; reason: 'shortParagraph' | 'split' | 'joiningScript' | 'verticalText' | 'noLetter' | 'inBox'; handling?: 'reserve' | 'shrink' | 'skip'; lines?: number; text: string }
   /** A key the heading settings do not have (`headings`, its `balancing`
    *  and `levels`, `headingStyles`): the engine ignores it. `value` is the

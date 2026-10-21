@@ -159,6 +159,8 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'bitmapTooSmall':
     case 'floatShrunk':
     case 'pictureBelowPrintSize':
+    case 'emptyCaption':
+    case 'resourceMoved':
     case 'textWrap':
     case 'unknownTableStyle':
     case 'raggedTableGrid':
@@ -415,6 +417,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFloatShrunkTitle;
     case 'pictureBelowPrintSize':
       return labels.warningsPictureBelowPrintSizeTitle;
+    case 'emptyCaption':
+      return labels.warningsEmptyCaptionTitle;
+    case 'resourceMoved':
+      return labels.warningsResourceMovedTitle;
     case 'unknownTableStyle':
       return labels.warningsUnknownTableStyleTitle;
     case 'raggedTableGrid':
@@ -840,6 +846,12 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
         .replace('__print__', String(payload.printMm))
         .replace('__column__', String(payload.columnMm))
         .replace('__page__', String(payload.pageMm))}`;
+    case 'emptyCaption':
+      return `#${payload.resourceId} — ${labels.warningsEmptyCaptionDetail.replace('__label__', payload.label)}`;
+    case 'resourceMoved':
+      return `#${payload.resourceId} — ${labels.warningsResourceMovedDetail
+        .replace('__page__', String(payload.page))
+        .replace('__mm__', String(payload.emptyMm))}`;
     case 'unknownTableStyle':
       return `#${payload.resourceId} · styleId="${payload.styleId}" — ${labels.warningsUnknownTableStyleDetail}`;
     case 'raggedTableGrid': {

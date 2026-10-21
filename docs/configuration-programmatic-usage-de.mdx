@@ -280,6 +280,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Das Bild wird in Spaltenbreite ausgegeben. Ein Bild im Fluss ist nie breiter als seine Spalte, und die Standardseite hat zwei (<code>layout.layoutType: 'double'</code>): Setzen Sie die Seite einspaltig, lassen Sie das Bild als seitenbreites Gleitobjekt setzen (<code>placement.span: 'page'</code>) oder erhöhen Sie seine Auflösung, wenn diese Größe gewollt ist.</td>
     </tr>
     <tr>
+      <td><code>emptyCaption</code></td>
+      <td>Eine Ressource eines Typs mit Legendenpräfix hat keine eigene Legende, also druckt ihre Legendenzeile nur Bezeichnung und Nummer. <code>resourceId</code> nennt sie, <code>label</code> ist die gedruckte Zeile. Information: einmal je Ressource gemeldet, am Absatz, der sie zitiert, oder an ihrer Einbettung. Seit postext 1.52.</td>
+      <td>Die Bezeichnung wird gedruckt. Schreib die Legende, oder lass die Bezeichnung allein, wenn eine nummerierte Tafel gemeint ist.</td>
+    </tr>
+    <tr>
+      <td><code>resourceMoved</code></td>
+      <td>Eine im Text gesetzte Ressource (<code>position: 'here'</code>) war höher als der Platz, der in ihrer Spalte blieb, und rückte ganz in die nächste. <code>resourceId</code> nennt sie, <code>emptyPx</code> und <code>emptyMm</code> den Platz, den sie leer ließ, <code>pageIndex</code> die Seite. Gemeldet, wenn dieser Platz zwei Zeilen des Textrasters oder mehr misst; ein Bild mit Textumfluss meldet es mit <code>textWrap</code> <code>'moved'</code>. Zeigt auf die Einbettung. Seit postext 1.52.</td>
+      <td>Die Ressource steht oben in der nächsten Spalte. Mach sie kleiner, verschieb ihre <code>::resource</code>-Zeile oder lass sie gleiten (<code>placement.position: 'auto'</code>).</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>Eine Ressource oder ein Kasten, die bzw. der vom Text umflossen werden soll (<code>placement.wrap</code>, das <code>wrap</code> eines Kastens), es aber nicht wie gewünscht wird. <code>reason</code>: <code>'tooNarrow'</code> (der Text daneben wäre schmaler als <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (das Objekt ist kürzer als <code>layout.wrap.minLinesBeside</code> Zeilen), <code>'moved'</code> (ein Inline-Objekt, zu hoch für den restlichen Raum seiner Spalte, rückte mit seinem Anker in die nächste), <code>'verticalText'</code> oder <code>'noContour'</code> (ein Konturenumfluss um ein Bild, dessen Form nicht bekannt ist: ein SVG ohne <code>contour.points</code>, eine Bitmap ohne Transparenz oder ein Alphakanal, den der Host nicht abgetastet hat). <code>resourceId</code> gibt eine Ressource an, <code>box</code> den Stil eines Kastens. Verweist auf die Einbettung oder den Kasten.</td>
       <td>Das Objekt nimmt die ganze Spaltenbreite ein oder steht in der nächsten Spalte, je nach Grund; bei <code>'noContour'</code> umfließt der Text den Kasten des Bildes. Geben Sie dem Bild ein Polygon, nehmen Sie ein PNG mit Transparenz, oder lesen Sie es mit <code>readBundle</code> oder in der Sandbox ein, die es abtasten.</td>

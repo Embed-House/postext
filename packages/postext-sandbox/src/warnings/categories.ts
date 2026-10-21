@@ -30,6 +30,8 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'bitmapTooSmall':
     case 'floatShrunk':
     case 'pictureBelowPrintSize':
+    case 'emptyCaption':
+    case 'resourceMoved':
     case 'textWrap':
     case 'unknownTableStyle':
     case 'raggedTableGrid':
