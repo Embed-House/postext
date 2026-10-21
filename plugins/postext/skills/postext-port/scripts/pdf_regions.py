@@ -106,6 +106,7 @@ import fitz  # PyMuPDF
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import anchors as anc  # noqa: E402
+import extract_tables as et  # noqa: E402
 import images as imgs  # noqa: E402
 import line_art as la  # noqa: E402
 import postext_md as pmd  # noqa: E402
@@ -882,12 +883,75 @@ def dash_mm(dashes: Any) -> list[float]:
     return out if any(v > 0 for v in out) else []
 
 
-def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders, opts: argparse.Namespace) -> dict:
+GRID_TEXT = 0.6           # share of a ruled grid's cells that must hold text for it to be a table
+
+
+def grid_tables(page: fitz.Page, origin: tuple, lines: list, opts: argparse.Namespace) -> list[dict]:
+    """The page's ruled grids that are tables (PyMuPDF `find_tables`,
+    `lines_strict`: at least 2 × 2 cells, text in most of them), each as
+    {box (mm), model, style, notes} through `extract_tables` (the cells'
+    align, bold and fills, the nearest rules preset). The header row is the
+    first when it is filled or bold. `lines`: the page's text lines, for the
+    table's face."""
+    if getattr(opts, "no_tables", False) or not hasattr(page, "find_tables"):
+        return []
+    import contextlib
+
+    try:
+        with contextlib.redirect_stdout(sys.stderr):
+            found = page.find_tables(strategy="lines_strict")
+    except Exception:
+        return []
+    page_area = origin[2] * origin[3]
+    out: list[dict] = []
+    cache: dict = {}
+    for t in found.tables:
+        if t.row_count < 2 or t.col_count < 2:
+            continue
+        cells = [c for r in t.extract() for c in r if c is not None]
+        if not cells or sum(1 for c in cells if et.clean(c)) < GRID_TEXT * len(cells):
+            continue
+        box = to_mm(t.bbox, origin)
+        if area(box) > 0.8 * page_area:
+            continue
+        model = et.table_model(t, 1, page, cache)
+        style, notes = model.pop("_style"), model.pop("_notes")
+        if not (style.get("headerBackgroundEnabled") or style.get("headerBold")):
+            model = et.table_model(t, 0, page, cache)
+            style, notes = model.pop("_style"), model.pop("_notes")
+        mine = [l for l in lines if centre_in(l.box, box)]
+        if mine:
+            look = dominant(mine)
+            face = {"bodyFontFamily": look["family"], "bodyFontSize": ptv(look["size"]),
+                    "bodyColor": colour(look["color"]), "headerFontFamily": look["family"],
+                    "headerFontSize": ptv(look["size"])}
+            if model["headerRowCount"] and t.rows:
+                y1 = to_mm(t.rows[0].bbox, origin)[3]
+                head = [l for l in mine if (l.box[1] + l.box[3]) / 2 < y1]
+                if head:
+                    face["headerColor"] = colour(dominant(head)["color"])
+            # the padding: half what a row has over its line, the tightest row's
+            slack = [(to_mm(r.bbox, origin)[3] - to_mm(r.bbox, origin)[1]) * MM - look["size"] * 1.2 for r in t.rows]
+            if slack and min(slack) > 0:
+                face["cellPadding"] = ptv(min(slack) / 2)
+            style = {**face, **style}
+        out.append({"box": box, "model": model, "style": style, "notes": notes})
+    return out
+
+
+def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders, opts: argparse.Namespace,
+             claims: list = ()) -> dict:
     """Sort the page's shapes and images into ground, cards, highlight bands,
-    tabs, boxes and pictures."""
+    tabs, boxes and pictures. `claims`: boxes (mm) of the page's tables
+    (`grid_tables`): the shapes inside one are the table's (kind `table`)."""
     w_mm, h_mm = origin[2], origin[3]
     page_area = w_mm * h_mm
     shapes = [Shape(d, origin) for d in page.get_drawings()]
+    tabled = [s for s in shapes if any(inside_mm(s.box, b, 0.6) for b in claims)]
+    for s in tabled:
+        s.kind = "table"
+    if tabled:     # read apart from the rest; back in `shapes` at the end
+        shapes = [s for s in shapes if s.kind != "table"]
     out: dict[str, list] = {"ground": [], "cards": [], "bands": [], "tabs": [], "boxes": [], "art": []}
     # highlight bands: wide strokes or fills hugging words on a line
     for s in shapes:
@@ -1068,7 +1132,7 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
             s.kind = "art"
             out["boxes"].remove(s)
     out["art"] = art
-    out["shapes"] = shapes
+    out["shapes"] = sorted(shapes + tabled, key=lambda s: s.seq) if tabled else shapes
     return out
 
 
@@ -1501,6 +1565,12 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         if f.lines:
             f.kind = "figure"
         frames.append(f)
+    # tables (`grid_tables`): a frame each, filled with the table resource (laid like a picture)
+    for tb in cache.get("tables", []):
+        f = Frame("picture", tb["box"], picture={"box": tb["box"], "images": [], "vector": 0})
+        f.table = tb
+        f.lines = []
+        frames.append(f)
     # free text: headings alone, rotated lines alone, the rest in blocks
     free = [l for l in lines if owners[id(l)][0] == "free"]
     heads = [l for l in free if l.size >= ctx["heading_min"] and not l.rotate]
@@ -1595,8 +1665,8 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     # names
     counters: dict[str, int] = {}
     for f in ordered:
-        role = {"title": "title", "text": "text", "box": "box", "tab": "tab", "picture": "picture",
-                "figure": "figure"}[f.kind]
+        role = "table" if getattr(f, "table", None) else {
+            "title": "title", "text": "text", "box": "box", "tab": "tab", "picture": "picture", "figure": "figure"}[f.kind]
         counters[role] = counters.get(role, 0) + 1
         n = counters[role]
         if role in ("title", "text"):
@@ -1623,6 +1693,14 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     art = None if opts.raster_ground else read_line_art(sh, ordered, line_shows(page, origin, sh.get("shapes", [])))
     pic_n = 0
     for f in ordered:
+        if getattr(f, "table", None):
+            rid = f"{rid_base}-{f.name}"
+            f.alpha = False
+            f.resource = {"id": rid, "typeId": "table", "kind": "table", "caption": "",
+                          "table": {"model": f.table["model"], "styleId": rid}, "_style": f.table["style"]}
+            report["notes"] += [f"{f.name}: {n}" for n in f.table["notes"]]
+            res.append(f.resource)
+            continue
         if f.kind in ("picture", "figure"):
             pic_n += 1
             rid = f"{rid_base}-{f.name}"
@@ -3633,8 +3711,12 @@ def cmd_extract(args: argparse.Namespace) -> int:
         origin = trim_origin(page)
         renders = Renders(args.source, p - 1)
         lines, hidden = read_lines(args.source, page, fonts, origin, renders)
-        sh = classify(page, lines, origin, renders, args)
-        caches[p] = {"renders": renders, "lines": lines, "hidden": hidden, "shapes": sh}
+        # ruled grids with text are tables: their words, rules and fills are the table's
+        tables = grid_tables(page, origin, lines, args)
+        if tables:
+            lines = [l for l in lines if not any(centre_in(l.box, t["box"]) for t in tables)]
+        sh = classify(page, lines, origin, renders, args, claims=[t["box"] for t in tables])
+        caches[p] = {"renders": renders, "lines": lines, "hidden": hidden, "shapes": sh, "tables": tables}
         holders = [s.box for s in sh["cards"] + sh["boxes"] + sh["tabs"]]
         for l in lines:
             if holders and not any(centre_in(l.box, b) for b in holders):
@@ -3721,6 +3803,10 @@ def cmd_extract(args: argparse.Namespace) -> int:
                 figures.append({"resource": f.resource["id"], "slot": f.name, "labels": labels})
         # a heading the template takes must be the first of its level
         resources += page["resources"]
+        for r in page["resources"]:
+            if "_style" in r:     # a table's style: one tableStyles entry per table, named by its resource
+                library.setdefault("tableStyles", []).append({**r.pop("_style"), "id": r["table"]["styleId"],
+                                                              "name": r["id"]})
         library["pageTemplates"].append(tpl)
         page["md"] = page_markdown({"frames": frames, "attrs": page["attrs"], "template": tpl}, ctx)
     if centred_used:
@@ -3806,6 +3892,9 @@ def suggested_config(caches: dict, pages: list[int], body: float, head_sizes: li
              "defaultPlacement": {"position": "here", "span": "column"}},
             {"id": "ground", "name": "Ground", "namePlural": "Grounds", "shortLabel": "", "captionPrefix": "",
              "numberingTemplate": "", "resetOn": "never", "counterFormat": "decimal",
+             "defaultPlacement": {"position": "here", "span": "column"}},
+            {"id": "table", "name": "Table", "namePlural": "Tables", "shortLabel": "", "captionPrefix": "",
+             "numberingTemplate": "", "resetOn": "never", "counterFormat": "decimal",
              "defaultPlacement": {"position": "here", "span": "column"}}],
     }
     for lvl in sorted(heads):
@@ -3863,7 +3952,7 @@ def cmd_manifest(args: argparse.Namespace) -> int:
         "resourceTypes": sug.get("resourceTypes", []),
     }
     for k in ("calloutStyles", "markStyles", "chipStyles", "labelStyles", "paragraphStyles", "frameLooks",
-              "pageTemplates"):
+              "tableStyles", "pageTemplates"):
         if library.get(k):
             config[k] = library[k]
     chapters = {lang: kit.chapters_from_dir(root, lang) for lang in langs}
@@ -3921,6 +4010,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--raster-ground", action="store_true",
                    help="round 1: keep the page band, the cards, the lines and the shapes in a JPEG ground per page "
                         "(no connectors, no path elements, empty boxes stay frames)")
+    p.add_argument("--no-tables", action="store_true",
+                   help="leave ruled grids as frames and decoration (default: a grid with text in most cells is a "
+                        "table resource)")
     p.add_argument("--line-width", type=float, default=2.0,
                    help="strokes this thin (pt) or thinner, straight across or down, are read as lines: connectors "
                         "between frames, pointers into pictures, paths (default 2)")

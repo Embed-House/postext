@@ -472,6 +472,15 @@ What the extraction decides, so you know what to check:
   ground, never redacted (that would take the box's fill too); the frame
   draws the rule. `report.json` notes every cut whose box still crosses a
   box's rule. A cut-out with alpha keeps its overhang.
+- **Ruled grids are tables** (skill 1.61). A ruled grid of at least 2 × 2
+  cells with text in most of them (PyMuPDF `find_tables`, `lines_strict`)
+  becomes a `kind: "table"` resource built by `extract_tables.py` (cell
+  align, bold and fills) in a `table-N` frame where it stood, filled with
+  `::resource`, and a `tableStyles` entry of the same id (the nearest
+  `rules` preset, border, header fill and bold, face, colours and padding;
+  the resource's `table.styleId` names it). Its words, rules and fills are
+  the table's: no text frames, no decoration. The first row is the header
+  when it is filled or bold. `--no-tables` keeps the old reading.
 - **No debris in the decoration** (skill 1.61). A fill of the colour already
   under it (a white mask on white paper or a white card) is left out unless
   it hides loose art painted before it; a fill a later box hides is drawn
