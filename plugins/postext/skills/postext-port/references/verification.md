@@ -372,7 +372,7 @@ those lines, or run the script.
   column moved on and left `emptyMm` mm empty on that page (`data.emptyMm` in `--json`); compare with the
   source page, and float it (`position: 'auto'`), narrow it or move its `::resource` line when the source has
   text there.
-- `WARN folioMissing` (postext ≥ 1.52): a composed page draws nothing of a folio or running head (a template
+- `WARN folioMissing` (postext ≥ 1.53): a composed page draws nothing of a folio or running head (a template
   `header`/`footer` text, or a decoration text reading `{pageNumber}`, a running name or `{attr.x}`) that most
   pages of the same template and side draw (`data`: `template`, `elementId`, `slot`, `drawnOn`, `siblings`).
   Usually an `{attr.foot}` the page fence leaves out, or a running name empty on that page: copy the attribute

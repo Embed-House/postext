@@ -181,7 +181,7 @@ console.log(`Document has ${vdt.pages.length} pages`);
     </tr>
     <tr>
       <td><code>folioMissing</code></td>
-      <td>组版页面没有画出页码或书眉 (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>)，而同一模板、同一侧的其他 <code>siblings</code> 页中有 <code>drawnOn</code> 页画出了它：<code>header</code> 或 <code>footer</code> 中的文字，或装饰中读取 <code>&#123;pageNumber&#125;</code>、书眉名称或 <code>&#123;attr.x&#125;</code> 的文字。页面块用 <code>when</code> / <code>unless</code> 关闭该元素的页面、槽位中没有这个元素的页面都不计入；至少要有两页画出了它。由排版给出，带 <code>pageIndex</code>，指向页面块。自 postext 1.52 起。</td>
+      <td>组版页面没有画出页码或书眉 (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>)，而同一模板、同一侧的其他 <code>siblings</code> 页中有 <code>drawnOn</code> 页画出了它：<code>header</code> 或 <code>footer</code> 中的文字，或装饰中读取 <code>&#123;pageNumber&#125;</code>、书眉名称或 <code>&#123;attr.x&#125;</code> 的文字。页面块用 <code>when</code> / <code>unless</code> 关闭该元素的页面、槽位中没有这个元素的页面都不计入；至少要有两页画出了它。由排版给出，带 <code>pageIndex</code>，指向页面块。自 postext 1.53 起。</td>
       <td>这一页印出时没有它。在那个页面块上设置元素读取的属性，或者用 <code>when</code> 或 <code>unless</code> 有意在那里关闭它。</td>
     </tr>
     <tr>

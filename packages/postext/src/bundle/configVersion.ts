@@ -237,8 +237,9 @@ import { hasCJK } from '../measure/cjk.js';
  * 1.33 and gets nothing; one stored under 15 was written by postext 1.34 to
  * 1.47 and gets nothing either; one stored under 16 was written by postext
  * 1.48 to 1.51 and gets the version-17, version-18 and version-19 pins
- * (which every older one gets too); one stored under 17 or 18 was written
- * before postext 1.52 was released and gets the pins after its number.
+ * (which every older one gets too); one stored as 17 was written by a
+ * development build and gets the version-18 and version-19 pins; one stored
+ * as 18 was written by postext 1.52 and gets the version-19 pin.
  */
 export const CONFIG_VERSION = 19;
 

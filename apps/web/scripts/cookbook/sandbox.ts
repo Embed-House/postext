@@ -174,7 +174,7 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   wordDividedByCharacter: "1.52.0",
   wordDividedBySyllable: "1.52.0",
   strayFence: "1.52.0",
-  folioMissing: "1.52.0",
+  folioMissing: "1.53.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one
