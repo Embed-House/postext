@@ -24,6 +24,7 @@ import type { ContentWarning, FrameCoverProposal, FrameOutsideProposal, ReflowEv
 import type { Dimension } from '../types';
 import { physicalEdge } from '../design/logicalEdges';
 import { dimensionToPx } from '../units';
+import { contourOnPage } from '../contour';
 import { anchorOn, type FrameAreas, type Rect } from './geometry';
 import { frameClips, frameContentRect, frameMatrix } from './paint';
 import { anchorTarget } from './templates';
@@ -50,6 +51,10 @@ interface Ink {
   /** The words of a line, the resource of a picture. */
   text?: string;
   resourceId?: string;
+  /** A covering picture with a known shape (#1123): the rows of its
+   *  shape (its polygon or traced alpha channel), each a box on the sheet;
+   *  what it hides is what lies under them, not under its whole box. */
+  shape?: Rect[];
 }
 
 export interface OverlapCheckInput {
@@ -67,6 +72,11 @@ export interface OverlapCheckInput {
   fenceIndex: number;
   pageIndex: number;
   locale?: string;
+  /** The page lays its flow out right to left (`pageIsMirrored`): a
+   *  picture's shape turns in the frames' coordinates. */
+  mirrored?: boolean;
+  /** The page's flow is vertical: pictures cover with their boxes. */
+  verticalFlow?: boolean;
 }
 
 export interface OverlapCheckResult {
@@ -181,10 +191,15 @@ function isOutlineOnly(b: VDTDesignBlock): boolean {
     || (b.kind === 'path' && b.boxPart === 'border');
 }
 
+/** How pictures cover (#1123): by the rows of their shape, set as the page
+ *  lays them (`mirrored`), or by their boxes (`false`). */
+type PictureShapes = { mirrored: boolean } | false;
+
 /** The ink of one frame, in its blocks' own (laid-out) coordinates: what
  *  it paints. `covering` leaves out outlines (they hide only a hairline)
- *  and keeps what hides what is under it. */
-function frameInk(blocks: readonly VDTBlock[], covering: boolean): Ink[] {
+ *  and keeps what hides what is under it; a covering picture with a known
+ *  shape carries its rows (`shapes`). */
+function frameInk(blocks: readonly VDTBlock[], covering: boolean, shapes: PictureShapes = false): Ink[] {
   const out: Ink[] = [];
   for (const b of blocks) {
     if (b.hidden) continue;
@@ -197,7 +212,10 @@ function frameInk(blocks: readonly VDTBlock[], covering: boolean): Ink[] {
     const rb = b.resourceBlock;
     if (rb) {
       const body = rb.rotation ? { ...b.bbox } : { x: b.bbox.x + rb.bodyRect.x, y: b.bbox.y + rb.bodyRect.y, width: rb.bodyRect.width, height: rb.bodyRect.height };
-      if (rb.kind === 'bitmap' || rb.kind === 'svg' || rb.kind === 'video') out.push({ box: body, kind: 'picture', resourceId: rb.resource.id });
+      if (rb.kind === 'bitmap' || rb.kind === 'svg' || rb.kind === 'video') {
+        const shape = covering && shapes && rb.kind !== 'video' && !rb.rotation ? pictureShape(b, shapes.mirrored) : undefined;
+        out.push({ box: body, kind: 'picture', resourceId: rb.resource.id, ...(shape ? { shape } : {}) });
+      }
       else if (!covering) out.push({ box: body, kind: 'text', flow: 'fixed', text: rb.resource.id });
       if (!rb.rotation) {
         for (const l of [...rb.captionLines, ...rb.noteLines]) {
@@ -212,6 +230,17 @@ function frameInk(blocks: readonly VDTBlock[], covering: boolean): Ink[] {
     }
   }
   return out;
+}
+
+/** The rows of a picture's shape where its block lays it (a cut-out's
+ *  polygon or traced alpha channel, through its crop and scale), in the
+ *  block's coordinates; `undefined` when the shape is not known (the box
+ *  covers), none when the shape reaches no row. */
+function pictureShape(b: VDTBlock, mirrored: boolean): Rect[] | undefined {
+  const rb = b.resourceBlock!;
+  const c = contourOnPage(rb.resource, rb, undefined, { margin: 0, mirrored, originX: b.bbox.x, originY: b.bbox.y });
+  if (!c) return undefined;
+  return c.spans.filter((sp) => sp.height > 0 && sp.right > sp.left).map((sp) => ({ x: sp.left, y: sp.y, width: sp.right - sp.left, height: sp.height }));
 }
 
 const ELEMENT_EDGES: ReadonlySet<string> = new Set(['right-of', 'left-of', 'below', 'above', 'align-top', 'align-bottom', 'align-left', 'align-right', 'align-start', 'align-end']);
@@ -229,6 +258,7 @@ export function overlapChecks(input: OverlapCheckInput): OverlapCheckResult {
   const resolved = new Map(template.frames.map((f) => [f.name, f]));
   const order = new Map(template.frames.map((f, i) => [f.name, i]));
   const byId = new Map(input.blocks.map((b) => [b.id, b]));
+  const shapes: PictureShapes = input.verticalFlow ? false : { mirrored: input.mirrored === true };
   const live = input.frames.filter((f) => !f.collapsed && !f.facingBlocks && resolved.has(f.name));
   /** Each frame's ink on the sheet, covered side and covering side, clipped
    *  to its box when its content overflows (painted clipped). */
@@ -239,10 +269,15 @@ export function overlapChecks(input: OverlapCheckInput): OverlapCheckResult {
     const clip = frameClips(f) ? frameContentRect(f) : undefined;
     const place = (list: Ink[]): Ink[] => list.flatMap((ink) => {
       const cut = clip ? intersect(ink.box, clip) : ink.box;
-      return cut ? [{ ...ink, box: mapRect(cut, m) }] : [];
+      if (!cut) return [];
+      const shape = ink.shape?.flatMap((r) => {
+        const piece = clip ? intersect(r, clip) : r;
+        return piece ? [mapRect(piece, m)] : [];
+      });
+      return [{ ...ink, box: mapRect(cut, m), ...(shape ? { shape } : {}) }];
     });
     const rules: Ink[] = (f.rules ?? []).map((r) => ({ box: { ...r.bbox }, kind: 'fill' as const }));
-    inkOf.set(f.name, { all: [...place(frameInk(blocks, false)), ...rules], covers: place(frameInk(blocks, true)) });
+    inkOf.set(f.name, { all: [...place(frameInk(blocks, false)), ...rules], covers: place(frameInk(blocks, true, shapes)) });
   }
   const warnings: ContentWarning[] = [];
   const events: ReflowEvent[] = [];
@@ -354,7 +389,8 @@ export function overlapChecks(input: OverlapCheckInput): OverlapCheckResult {
    * lies now, `b` the other frame's).
    */
   const tryMove: MoveTest = (moved, dx, dy, target) => {
-    const shift = (list: Ink[]): Ink[] => list.map((i) => ({ ...i, box: { ...i.box, x: i.box.x + dx, y: i.box.y + dy } }));
+    const move = (r: Rect): Rect => ({ ...r, x: r.x + dx, y: r.y + dy });
+    const shift = (list: Ink[]): Ink[] => list.map((i) => ({ ...i, box: move(i.box), ...(i.shape ? { shape: i.shape.map(move) } : {}) }));
     const shifted = new Map<string, FrameInk>();
     for (const name of moved) {
       const ink = inkOf.get(name);
@@ -499,14 +535,25 @@ type MoveTest = (moved: ReadonlySet<string>, dx: number, dy: number, target?: st
 
 const pairKey = (under: string, over: string): string => `${under}<${over}`;
 
-/** The cuts of `ink` by `covers` deeper than `depth` on both sides. */
+/** The cuts of `ink` by `covers` deeper than `depth` on both sides. A
+ *  covering picture with a shape (#1123) cuts by its rows: the pieces
+ *  under them, deeper than `depth` taken together. */
 function inkCuts(ink: Ink, covers: readonly Ink[], depth: number): Array<{ cut: Rect; c: Ink }> {
   return covers.flatMap((c) => {
     // A line over a picture hides a hairline of it, not the picture:
     // whether the words read on it is the contrast check's matter.
     if (ink.kind === 'picture' && c.kind === 'text') return [];
     const cut = intersect(ink.box, c.box);
-    return cut && cut.width >= depth && cut.height >= depth ? [{ cut, c }] : [];
+    if (!cut || cut.width < depth || cut.height < depth) return [];
+    if (!c.shape) return [{ cut, c }];
+    const pieces = c.shape.flatMap((r) => intersect(ink.box, r) ?? []);
+    if (pieces.length === 0) return [];
+    const x0 = Math.min(...pieces.map((p) => p.x));
+    const y0 = Math.min(...pieces.map((p) => p.y));
+    const x1 = Math.max(...pieces.map((p) => p.x + p.width));
+    const y1 = Math.max(...pieces.map((p) => p.y + p.height));
+    if (x1 - x0 < depth || y1 - y0 < depth) return [];
+    return pieces.map((p) => ({ cut: p, c }));
   });
 }
 

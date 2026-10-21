@@ -4161,6 +4161,12 @@ export interface SandboxLabels {
   pageTemplatesFrameLayerTooltip: string;
   pageTemplatesFrameOverlap: string;
   pageTemplatesFrameOverlapTooltip: string;
+  pageTemplatesFrameGrowWith: string;
+  pageTemplatesFrameGrowWithTooltip: string;
+  pageTemplatesFrameGrowWithNone: string;
+  pageTemplatesFrameGrowWithChildren: string;
+  pageTemplatesFrameGrowWithList: string;
+  pageTemplatesFrameGrowWithListLegend: string;
   pageTemplatesFrameRotate: string;
   pageTemplatesFrameRotateTooltip: string;
   pageTemplatesFrameAsPage: string;

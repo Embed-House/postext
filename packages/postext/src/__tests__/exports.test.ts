@@ -758,6 +758,7 @@ describe("package exports", () => {
       "groupPlaceable",
       "placeFrameBox",
       "frameUnionRect",
+      "growMembers",
       "sourceAt",
       "elementsForSource",
       "findElement",

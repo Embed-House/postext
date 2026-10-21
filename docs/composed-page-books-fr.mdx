@@ -164,6 +164,8 @@ Un bouton qui modifie le gabarit (et donc toutes les pages composées avec lui) 
 
 <Screenshot src="/docs-shots/fr/checks.webp" alt="Le panneau Vérifications avec l’entrée Le texte déborde de son bloc et trois boutons de solution, et la page dont la première boîte est entourée de rouge avec une bande qui indique 26 mm de trop." caption="Un bloc qui ne tient pas, et les corrections que la mise en page a calculées pour lui." />
 
+Une boîte avec des photos et leurs légendes (des blocs ancrés à l’intérieur, une légende `below` chaque photo) ne s’agrandit pas d’elle-même quand une traduction allonge les légendes : elles sortent de la boîte et passent sur ce qui se trouve dessous. Ouvrez le bloc de la boîte dans l’éditeur de gabarits et réglez **S’agrandit avec les blocs intérieurs** sur *Les blocs ancrés à l’intérieur* (`growWith: "children"` dans le gabarit). La boîte descend alors jusqu’au pied de la légende la plus basse plus sa marge intérieure du bas, son fond, sa bordure et son onglet suivent, et les blocs du dessous descendent. *Les blocs choisis* prend à la place une liste de noms. Comptent les blocs ancrés à un point du bord supérieur de la boîte et ceux qui sont ancrés à eux ; un bloc ancré au pied ou au milieu de la boîte ne compte pas, et une boîte tournée ne s’agrandit pas. Depuis postext 1.52.
+
 ## 7. Sélectionner sur la page et dans le texte
 
 La page et son Markdown restent synchronisés.

@@ -194,3 +194,29 @@ describe('modules nested and sharing a row', () => {
     expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
   });
 });
+
+// #1117: what a box grows with, which the frame editor's «Grows with the
+// frames inside» writes, is a setting like any other: `'children'` or a
+// list of names.
+describe('a box that grows with the frames inside it', () => {
+  const composed = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="card"}\n:::frame{slot="box" label="Tab"}\n:::\n\n:::frame{slot="note"}\nWords.\n:::\n::::\n')];
+    const config = { pageTemplates: [{ id: 'card', frames: [
+      { name: 'box', style: 'note' },
+      { name: 'note', placement: { anchor: { to: '#box', edge: 'top-left' } } },
+    ] }] };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it.each([
+    ['pageTemplates[id=card].frames[name=box].growWith', 'children', 'pageTemplates[id=card].frames[0].growWith', 'children'],
+    ['pageTemplates[id=card].frames[name=box].growWith', ['note'], 'pageTemplates[id=card].frames[0].growWith[0]', 'note'],
+  ] as const)('writes %s = %j and nothing else moves', async (path, value, read, want) => {
+    const { call } = harness(composed() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const done = await call('sandbox_set_config', { changes: [{ path, value }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    expect(after.get(read)).toBe(want);
+    expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
+  });
+});
