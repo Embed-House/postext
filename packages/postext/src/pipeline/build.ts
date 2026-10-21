@@ -236,7 +236,7 @@ import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines.js';
 import { pickTableStyle } from '../defaults/tableStyle.js';
 import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout.js';
 import { buildLineNumbers, lineNumberWarnings } from './lineNumbers.js';
-import { buildHeadersAndFooters, connectorAnchorUnknownWarnings, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter.js';
+import { buildHeadersAndFooters, connectorAnchorUnknownWarnings, pageFurnitureWarnings, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter.js';
 import { flowColorValues } from './partPalette.js';
 import { chapterNumberCounter, leadingBoldText } from './placeholders.js';
 import { proposeBalanceLines, GRID_LINE_LEVERS, collectColumnGaps, firstDivergentColumn, gapLinesIn, boxRoomIn, boxLeverKeys, pageSegments, type LooseBudget, type PageRange, type ColumnGap, MAX_BALANCING_PASSES, MAX_BALANCING_PASSES_PER_DOCUMENT, balanceKey, candidateKey, flexFigureKey, flexFloatKey } from './columnBalancing.js';
@@ -9302,6 +9302,9 @@ export function* buildDocumentGen(
   loose.push(...figureLabelWarnings(doc, (b) => (b.sourceStart !== undefined && b.sourceEnd !== undefined ? { start: b.sourceStart, end: b.sourceEnd } : undefined)));
   // Connectors' ends at an anchor their frame's picture lacks (#1057).
   loose.push(...connectorAnchorUnknownWarnings(doc));
+  // Composed pages that draw no folio or running head their siblings of
+  // the same template and side draw (#1163).
+  loose.push(...pageFurnitureWarnings(doc));
   // Comic panels whose cell cannot hold their picture's safe area (#556).
   for (const page of doc.pages) {
     if (page.comic) loose.push(...comicPageLayoutWarnings(page.comic));

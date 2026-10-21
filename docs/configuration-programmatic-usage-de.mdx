@@ -180,6 +180,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Der Rahmen wird dort gezeichnet, wo er steht; was über das Endformat hinausragt, wird abgeschnitten.</td>
     </tr>
     <tr>
+      <td><code>folioMissing</code></td>
+      <td>Eine gestaltete Seite zeichnet nichts von einer Pagina oder einem Kolumnentitel (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>), den <code>drawnOn</code> der <code>siblings</code> anderen Seiten ihrer Vorlage auf derselben Buchseite zeichnen: ein Text aus <code>header</code> oder <code>footer</code> oder ein Text der Dekoration, der <code>&#123;pageNumber&#125;</code>, einen lebenden Namen oder <code>&#123;attr.x&#125;</code> liest. Eine Seite, deren Block das Element abschaltet (<code>when</code> / <code>unless</code>), oder deren Slot kein solches Element hat, zählt nicht mit; es braucht zwei Seiten, die es zeichnen. Vom Umbruch gemeldet, mit dem <code>pageIndex</code>, und auf den Seitenblock gerichtet. Seit postext 1.52.</td>
+      <td>Die Seite wird ohne es gedruckt. Setzen Sie an diesem Block das Attribut, das das Element liest, oder schalten Sie es dort mit <code>when</code> oder <code>unless</code> bewusst ab.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Ein Raster einer zusammengesetzten Seite, das sich wiederholt, fasst <code>max</code> Einträge, und die Seite gibt ihm mehr (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Eine Warnung je überzähligen Eintrag. Seit postext 1.48.</td>
       <td>Der Eintrag kommt in den Flussrahmen oder hinter die Seite.</td>

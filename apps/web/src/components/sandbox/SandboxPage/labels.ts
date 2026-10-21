@@ -339,6 +339,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     warningsFrameCoveredPictureDetail: t("warningsFrameCoveredPictureDetail"),
     warningsFrameCoveredDetail: t("warningsFrameCoveredDetail"),
     warningsFrameOutsideTitle: t("warningsFrameOutsideTitle"),
+    warningsFolioMissingTitle: t("warningsFolioMissingTitle"),
+    warningsFolioMissingDetail: t("warningsFolioMissingDetail"),
     warningsFrameOutsideTrimDetail: t("warningsFrameOutsideTrimDetail"),
     warningsFrameOutsideBleedDetail: t("warningsFrameOutsideBleedDetail"),
     warningsFrameOutsideFrameDetail: t("warningsFrameOutsideFrameDetail"),

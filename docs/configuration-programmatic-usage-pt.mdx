@@ -180,6 +180,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>O bloco é pintado onde está; o que passa do refile é cortado.</td>
     </tr>
     <tr>
+      <td><code>folioMissing</code></td>
+      <td>Uma página composta não desenha nada de um fólio ou cabeço (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>) que <code>drawnOn</code> das <code>siblings</code> outras páginas do seu modelo e do seu lado desenham: um texto de <code>header</code> ou <code>footer</code>, ou um texto da decoração que lê <code>&#123;pageNumber&#125;</code>, um nome corrido ou <code>&#123;attr.x&#125;</code>. Não conta uma página cujo contêiner desliga o elemento (<code>when</code> / <code>unless</code>), nem uma cujo slot não o tem; são precisas duas páginas que o desenhem. Vem da diagramação, com o <code>pageIndex</code>, e aponta para o contêiner da página. Desde o postext 1.52.</td>
+      <td>A página é impressa sem ele. Defina nesse contêiner o atributo que o elemento lê, ou desligue-o ali de propósito com <code>when</code> ou <code>unless</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Uma grade que se repete numa página composta comporta <code>max</code> itens e a página lhe dá mais (<code>template</code>, <code>group</code>, <code>frame</code>, <code>item</code>, <code>max</code>, <code>flowFrame</code>, <code>fenceIndex</code>). Um aviso por item a mais. Desde o postext 1.48.</td>
       <td>O item vai para o bloco de fluxo, ou para depois da página.</td>

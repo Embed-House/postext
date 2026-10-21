@@ -118,6 +118,7 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'continueTargetMissing':
     case 'frameCovered':
     case 'frameOutsideArea':
+    case 'folioMissing':
       return 'typesetting';
     case 'storageUnavailable':
       return 'system';

@@ -369,6 +369,8 @@ export interface SandboxLabels {
   warningsFrameCoveredPictureDetail: string;
   warningsFrameCoveredDetail: string;
   warningsFrameOutsideTitle: string;
+  warningsFolioMissingTitle: string;
+  warningsFolioMissingDetail: string;
   warningsFrameOutsideTrimDetail: string;
   warningsFrameOutsideBleedDetail: string;
   warningsFrameOutsideFrameDetail: string;

@@ -180,6 +180,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>枠はその位置に描かれ、仕上がり線を越えた部分は切れます。</td>
     </tr>
     <tr>
+      <td><code>folioMissing</code></td>
+      <td>組版ページに、同じテンプレート・同じ側のほかの <code>siblings</code> ページのうち <code>drawnOn</code> ページが描くノンブルや柱 (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>) が何も描かれていません。対象は <code>header</code> や <code>footer</code> のテキスト、または <code>&#123;pageNumber&#125;</code>、柱の名前、<code>&#123;attr.x&#125;</code> を読む装飾のテキストです。ブロックが <code>when</code> / <code>unless</code> でその要素を消しているページと、スロットにその要素がないページは数えません。描いているページが二つ以上必要です。割り付けが出し、<code>pageIndex</code> を持ち、ページブロックを指します。postext 1.52 から。</td>
+      <td>そのページは要素なしで印刷されます。要素が読む属性をそのブロックに設定するか、<code>when</code> や <code>unless</code> で意図的に消します。</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>テンプレートページの繰り返しのグリッドが受け取る項目は<code>max</code>までなのに、ページがそれより多く渡しています（<code>template</code>、<code>group</code>、<code>frame</code>、<code>item</code>、<code>max</code>、<code>flowFrame</code>、<code>fenceIndex</code>）。超えた項目1つごとに出ます。postext 1.48以降。</td>
       <td>項目は流し込み枠か、ページの後に入ります。</td>

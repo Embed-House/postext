@@ -947,6 +947,8 @@
     "warningsFrameCoveredPictureDetail": "الصفحة __page__ · تقع الصورة ⁦__picture__⁩ تحت ⁦__by__⁩ المرسوم فوقها، فيختفي منها __area__ مم² (القالب ⁦__template__⁩).",
     "warningsFrameCoveredDetail": "الصفحة __page__ · يقع جزء من هذا الإطار تحت ⁦__by__⁩ المرسوم فوقه، فيختفي منه __area__ مم² (القالب ⁦__template__⁩).",
     "warningsFrameOutsideTitle": "الإطار يتجاوز حدّه",
+    "warningsFolioMissingTitle": "صفحة بلا رقم أو بلا ترويسة جارية",
+    "warningsFolioMissingDetail": "الصفحة __page__ · لا ترسم هذه الصفحة من القالب ⁦__template__⁩ شيئًا من هذا العنصر، بينما ترسمه __drawn__ من صفحاته الأخرى الـ__siblings__ في الجهة نفسها. تحقّق مما يقرؤه هنا (سمة لا تضبطها كتلة الصفحة، أو اسم فارغ في هذه الصفحة)، أو أطفئه عمدًا بـ ⁦when⁩ أو ⁦unless⁩ وسمة في كتلة الصفحة.",
     "warningsFrameOutsideTrimDetail": "الصفحة __page__ · يتجاوز نصّه خط القص بمقدار __mm__ مم فيُقصّ هناك (القالب ⁦__template__⁩).",
     "warningsFrameOutsideBleedDetail": "الصفحة __page__ · تتجاوز خلفيته أو صوره النزف بمقدار __mm__ مم (القالب ⁦__template__⁩).",
     "warningsFrameOutsideFrameDetail": "الصفحة __page__ · يتجاوز ⁦__target__⁩، الإطار المثبَّت داخله، بمقدار __mm__ مم (القالب ⁦__template__⁩).",

@@ -317,6 +317,8 @@ export const DEFAULT_LABELS: SandboxLabels = {
   warningsFrameCoveredPictureDetail: "page __page__ · the picture __picture__ lies under __by__, which is painted over it: __area__ mm² hidden (template __template__).",
   warningsFrameCoveredDetail: "page __page__ · part of this frame lies under __by__, which is painted over it: __area__ mm² hidden (template __template__).",
   warningsFrameOutsideTitle: "Frame runs past its edge",
+  warningsFolioMissingTitle: "Page without its folio or running head",
+  warningsFolioMissingDetail: "page __page__ \u00b7 this page of template __template__ draws nothing of this element, while __drawn__ of its other __siblings__ pages on the same side do. Check what it reads here (an attribute the page block leaves unset, a name that is empty on this page), or turn it off on purpose with when or unless and an attribute on the page block.",
   warningsFrameOutsideTrimDetail: "page __page__ · its text runs __mm__ mm past the trim, where it is cut (template __template__).",
   warningsFrameOutsideBleedDetail: "page __page__ · its fill or pictures run __mm__ mm past the bleed (template __template__).",
   warningsFrameOutsideFrameDetail: "page __page__ · it runs __mm__ mm past __target__, the frame it is anchored inside (template __template__).",

@@ -365,7 +365,7 @@ export interface LayoutContext {
   arabicNumbers?: boolean;
 }
 
-function pageMatchesParity(pageIndex: number, parity: PageParity): boolean {
+export function pageMatchesParity(pageIndex: number, parity: PageParity): boolean {
   if (parity === 'all') return true;
   const pageNumber = pageIndex + 1;
   const isOdd = pageNumber % 2 === 1;
@@ -1319,10 +1319,19 @@ function layoutConnectorElement(
  *  condition. The same array when nothing is left out. */
 function drawnOnFence<E extends ResolvedDesignElement>(elements: readonly E[], placeholders: DesignPlaceholderContext): readonly E[] {
   if (!FENCE_CONDITION_CONTEXTS.has(placeholders.kind)) return elements;
-  if (!elements.some((el) => el.when !== undefined || el.unless !== undefined)) return elements;
+  const dropped = fenceDroppedIds(elements, placeholders.pageAttrs);
+  return dropped.size === 0 ? elements : elements.filter((el) => !dropped.has(el.id));
+}
+
+/** The ids of the elements a page fence with `attrs` leaves out (#1087):
+ *  those whose `when` it does not set or whose `unless` it does, and every
+ *  element placed on one of them or sized to it. Empty when nothing is
+ *  left out. */
+export function fenceDroppedIds(elements: readonly ResolvedDesignElement[], attrs: Readonly<Record<string, string>> | undefined): Set<string> {
   const dropped = new Set<string>();
-  for (const el of elements) if (!fenceConditionMet(el, placeholders.pageAttrs)) dropped.add(el.id);
-  if (dropped.size === 0) return elements;
+  if (!elements.some((el) => el.when !== undefined || el.unless !== undefined)) return dropped;
+  for (const el of elements) if (!fenceConditionMet(el, attrs)) dropped.add(el.id);
+  if (dropped.size === 0) return dropped;
   for (let changed = true; changed; ) {
     changed = false;
     for (const el of elements) {
@@ -1334,7 +1343,7 @@ function drawnOnFence<E extends ResolvedDesignElement>(elements: readonly E[], p
       }
     }
   }
-  return elements.filter((el) => !dropped.has(el.id));
+  return dropped;
 }
 
 /** Layout one design slot against its container. */

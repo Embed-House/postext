@@ -947,6 +947,8 @@
     "warningsFrameCoveredPictureDetail": "pàgina __page__ · la imatge __picture__ queda sota __by__, que es pinta a sobre: __area__ mm² tapats (plantilla __template__).",
     "warningsFrameCoveredDetail": "pàgina __page__ · part d’aquest marc queda sota __by__, que es pinta a sobre: __area__ mm² tapats (plantilla __template__).",
     "warningsFrameOutsideTitle": "El marc surt del seu límit",
+    "warningsFolioMissingTitle": "Pàgina sense foli o sense titolet",
+    "warningsFolioMissingDetail": "pàgina __page__ · aquesta pàgina de la plantilla __template__ no dibuixa res d'aquest element, i en canvi el dibuixen __drawn__ de les altres __siblings__ pàgines del mateix costat. Mira què hi llegeix (un atribut que el bloc de pàgina no posa, un nom buit en aquesta pàgina) o apaga'l expressament amb when o unless i un atribut al bloc de pàgina.",
     "warningsFrameOutsideTrimDetail": "pàgina __page__ · el text passa __mm__ mm del tall i s’hi talla (plantilla __template__).",
     "warningsFrameOutsideBleedDetail": "pàgina __page__ · el fons o les imatges passen __mm__ mm de la sang (plantilla __template__).",
     "warningsFrameOutsideFrameDetail": "pàgina __page__ · surt __mm__ mm de __target__, el marc dins del qual està ancorat (plantilla __template__).",
