@@ -236,7 +236,7 @@ import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines.js';
 import { pickTableStyle } from '../defaults/tableStyle.js';
 import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout.js';
 import { buildLineNumbers, lineNumberWarnings } from './lineNumbers.js';
-import { buildHeadersAndFooters, connectorAnchorUnknownWarnings, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter.js';
+import { buildHeadersAndFooters, connectorAnchorUnknownWarnings, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, markedTitleFields, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter.js';
 import { flowColorValues } from './partPalette.js';
 import { chapterNumberCounter, leadingBoldText } from './placeholders.js';
 import { proposeBalanceLines, GRID_LINE_LEVERS, collectColumnGaps, firstDivergentColumn, gapLinesIn, boxRoomIn, boxLeverKeys, pageSegments, type LooseBudget, type PageRange, type ColumnGap, MAX_BALANCING_PASSES, MAX_BALANCING_PASSES_PER_DOCUMENT, balanceKey, candidateKey, flexFigureKey, flexFloatKey } from './columnBalancing.js';
@@ -3875,7 +3875,7 @@ function placeDocumentPass(
       const title = defaultOpenerTitle(measured.measured.lines, pref, rawBlock.titleBreaks, rawBlock.text.length, level.numberSeparator);
       const design = measureHeadingDesign(
         level,
-        { titleText: title.titleText, ...(title.marked !== undefined ? { titleMarked: title.marked } : {}), formattedNumber: pref, attrs: rawBlock.attrs },
+        { titleText: title.titleText, ...markedTitleFields(title, resolved.chipStyles), formattedNumber: pref, attrs: rawBlock.attrs },
         width, resolved.page.dpi, doc.metadata, cursor.pageIndex, designFramesOn(page), undefined, resourceById,
       );
       height = Math.max(height, design.height, design.textFloor);
@@ -4405,8 +4405,8 @@ function placeDocumentPass(
   const boxHeadingDesign = (raw: ContentBlock, blockIdx: number, lines: readonly VDTLine[], pref: string, headingNumber: number | undefined, width: number): number | undefined => {
     const lvl = headingLevels.forBlock(raw);
     if (!lvl?.advancedDesign.enabled) return undefined;
-    const { titleText, marked } = defaultOpenerTitle(lines, pref, raw.titleBreaks, raw.text.length, lvl.numberSeparator);
-    const info: HeadingPlaceholderInfo = { titleText, ...(marked !== undefined ? { titleMarked: marked } : {}), formattedNumber: pref, numericValue: headingNumber, locale: resolvedLocale(resolved), ...(resolved.numerals ? { numerals: resolved.numerals } : {}), chapterNumber: chapterNumberByBlock[blockIdx] ?? '', attrs: raw.attrs };
+    const title = defaultOpenerTitle(lines, pref, raw.titleBreaks, raw.text.length, lvl.numberSeparator);
+    const info: HeadingPlaceholderInfo = { titleText: title.titleText, ...markedTitleFields(title, resolved.chipStyles), formattedNumber: pref, numericValue: headingNumber, locale: resolvedLocale(resolved), ...(resolved.numerals ? { numerals: resolved.numerals } : {}), chapterNumber: chapterNumberByBlock[blockIdx] ?? '', attrs: raw.attrs };
     const design = measureHeadingDesign(lvl, info, width, resolved.page.dpi, doc.metadata, cursor.pageIndex, undefined, undefined, resourceById);
     return Math.max(design.height, design.textFloor);
   };
@@ -8131,12 +8131,12 @@ function placeDocumentPass(
           const pref = numberPrefix ?? '';
           // The lines joined back into the title (EF-162), as the design is
           // painted (`buildHeadersAndFooters`).
-          const { titleText: title, marked: titleMarked } = defaultOpenerTitle(remainingLines, pref, rawBlock.titleBreaks, rawBlock.text.length, lvl.numberSeparator);
+          const openerTitle = defaultOpenerTitle(remainingLines, pref, rawBlock.titleBreaks, rawBlock.text.length, lvl.numberSeparator);
           // Span-page openers lay out across the full content area (both
           // columns); in-column headings use just the column width.
           const pageArea = doc.pages[cursor.pageIndex]!.contentArea;
           const measureWidth = lvl.span === 'page' ? pageArea.width : curCol.bbox.width;
-          const info: HeadingPlaceholderInfo = { titleText: title, ...(titleMarked !== undefined ? { titleMarked } : {}), formattedNumber: pref, numericValue: headingNumber, locale: resolvedLocale(resolved), ...(resolved.numerals ? { numerals: resolved.numerals } : {}), chapterNumber: chapterNumberByBlock[blockIdx] ?? '', attrs: rawBlock.attrs };
+          const info: HeadingPlaceholderInfo = { titleText: openerTitle.titleText, ...markedTitleFields(openerTitle, resolved.chipStyles), formattedNumber: pref, numericValue: headingNumber, locale: resolvedLocale(resolved), ...(resolved.numerals ? { numerals: resolved.numerals } : {}), chapterNumber: chapterNumberByBlock[blockIdx] ?? '', attrs: rawBlock.attrs };
           const design = measureHeadingDesign(
             lvl,
             info,
@@ -8166,12 +8166,13 @@ function placeDocumentPass(
             const painted = measureDefaultOpenerHeight(
               lvl,
               resolved.headings.textAlign,
-              defaultOpenerTitle(remainingLines, pref, rawBlock.titleBreaks, rawBlock.text.length, lvl.numberSeparator),
+              openerTitle,
               pref,
               pageArea.width,
               resolved.page.dpi,
               doc.metadata,
               cursor.pageIndex,
+              resolved.chipStyles,
             );
             if (painted > effectiveRemainHeight) effectiveRemainHeight = painted;
           }

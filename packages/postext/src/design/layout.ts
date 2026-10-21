@@ -23,6 +23,7 @@ import type {
   ResolvedDesignSlot,
   ResolvedPlacedDesignElement,
   ResolvedDesignTextElement,
+  ResolvedChipStyleConfig,
   Resource,
   TextOverflow,
   VAlign,
@@ -977,7 +978,7 @@ function mirroredTextSeams(el: ResolvedDesignTextElement, printed: string, place
   const upper = el.textTransform === 'uppercase';
   const print = (template: string): string => {
     const resolved = resolveDesignText(template, placeholders, el.inlineMarks === true);
-    const plain = el.inlineMarks ? plainDesignText(resolved) : resolved;
+    const plain = el.inlineMarks ? plainDesignText(resolved, placeholders.heading?.chipStyles !== undefined) : resolved;
     return upper ? plain.toLocaleUpperCase() : plain;
   };
   let whole: string | undefined;
@@ -1394,6 +1395,9 @@ export function layoutDesignSlot(
   // Primitives per element, keyed by the element itself (a text element may
   // emit several: drop cap, rich runs…), emitted in `candidates` order.
   const primsByElement = new Map<ResolvedDesignElement, ResolvedPrimitive[]>();
+  // The chip styles a heading title's chips are set in (#1162).
+  const chipStyles = context.placeholders.heading?.chipStyles;
+  const textFrame = chipStyles ? { ...context, chipStyles } : context;
 
   for (const given of ordered) {
     const target = anchorTargetId(given.placement);
@@ -1458,16 +1462,16 @@ export function layoutDesignSlot(
       const leadered = content.includes(LEADER_MARK) && leader && !turned && getMeasureWritingMode() !== 'vertical-rl';
       const text = leadered ? content : content.split(LEADER_MARK).join('');
       const prims = turned
-        ? layoutVerticalTextElement(el, text, pin, fillRef, context.dpi, useElementEdge, textSeams.get(el.id))
+        ? layoutVerticalTextElement(el, text, pin, fillRef, context.dpi, useElementEdge, textSeams.get(el.id), chipStyles)
         : leadered
           ? layoutLeaderTextElement(el, text, leader, pin, fillRef, context.dpi, useElementEdge, context)
-          : layoutTextElement(el, text, pin, fillRef, context.dpi, useElementEdge, context, textSeams.get(el.id));
+          : layoutTextElement(el, text, pin, fillRef, context.dpi, useElementEdge, textFrame, textSeams.get(el.id));
       resolvedGeo.set(el.id, prims[0]!);
       primsByElement.set(given, prims);
       const truncated = prims[0]!.truncated;
       if (truncated) {
         const text = content.split(LEADER_MARK).join('');
-        issues.push({ kind: 'textTruncated', elementId: el.id, mode: truncated, text: el.inlineMarks ? plainDesignText(text) : text });
+        issues.push({ kind: 'textTruncated', elementId: el.id, mode: truncated, text: el.inlineMarks ? plainDesignText(text, chipStyles !== undefined) : text });
       }
     } else if (el.kind === 'rule') {
       const prim = layoutRuleElement(el, {
@@ -1649,7 +1653,7 @@ function justifyLine(
   }
   const pieces: DesignTextRun[] = runs ?? [{ text, fontString: font, width: natural }];
   // A run the author oriented in vertical text is never cut at its spaces.
-  const splittable = (i: number): boolean => !pieces[i]!.stacked && !pieces[i - 1]?.stacked && !pieces[i]!.tcy && !pieces[i]!.orientation;
+  const splittable = (i: number): boolean => !pieces[i]!.stacked && !pieces[i - 1]?.stacked && !pieces[i]!.tcy && !pieces[i]!.orientation && !pieces[i]!.chip;
   let spaces = 0;
   pieces.forEach((r, i) => { if (splittable(i)) spaces += stretchableSpaces(r.text); });
   const room = width - natural;
@@ -1690,8 +1694,9 @@ function layoutTextElement(
   container: AnchorReference,
   dpi: number,
   anchoredToElement: boolean,
-  /** The document's direction and the slot's frame (`LayoutContext`). */
-  frame: { direction?: 'ltr' | 'rtl'; mirrored?: boolean; arabicNumbers?: boolean } = {},
+  /** The document's direction and the slot's frame (`LayoutContext`),
+   *  and the chip styles a heading title's chips are set in (#1162). */
+  frame: { direction?: 'ltr' | 'rtl'; mirrored?: boolean; arabicNumbers?: boolean; chipStyles?: readonly ResolvedChipStyleConfig[] } = {},
   /** Offsets into the printed text (its inline marks dropped) where a
    *  number the layout wrote meets a text mirrored from the document
    *  (#724, {@link mirroredTextSeams}). */
@@ -1724,8 +1729,11 @@ function layoutTextElement(
   const padding: ResolvedPadding = box?.padding ?? { top: 0, right: 0, bottom: 0, left: 0 };
   // Inline marks: a text that carries any is laid out in runs; one that
   // carries none (only escapes) is plain text with its markers resolved.
+  // A heading title's chips (#1162): only a text that reads inline marks,
+  // in a design given the document's chip styles, sets them.
+  const chips = el.inlineMarks && frame.chipStyles ? { styles: frame.chipStyles, dpi, letterSpacingPx } : undefined;
   const rich = el.inlineMarks
-    ? parseRichDesignText(text, { family: el.fontFamily, sizePx: fontSizePx, weight: el.fontWeight, italic: el.italic })
+    ? parseRichDesignText(text, { family: el.fontFamily, sizePx: fontSizePx, weight: el.fontWeight, italic: el.italic }, chips)
     : undefined;
   const richM = rich?.hasMarks ? new RichMeasurer(rich, letterSpacingPx, asPainted ? flowIn : undefined) : undefined;
   if (rich && !rich.hasMarks) text = rich.text;
@@ -1934,6 +1942,22 @@ function layoutTextElement(
       } else if (Math.abs(set - line.width) > 1e-9) {
         line.width = set;
         resized = true;
+      }
+    }
+    // A chip of a mirrored frame (#1162) advances through its runs along
+    // the flow's x axis too: their order turned, as `mirrorFrame` turns a
+    // body chip's.
+    if (mirrored) {
+      for (const line of m.lines) {
+        for (const run of line.runs ?? []) {
+          const chip = run.chip;
+          if (!chip || chip.runs.length < 2) continue;
+          const flow = [...(chip.order ?? chip.runs.map((_, i) => i))].reverse();
+          const next = { ...chip };
+          if (flow.every((v, i) => v === i)) delete next.order;
+          else next.order = flow;
+          run.chip = next;
+        }
       }
     }
     // A text that sizes its own box is as wide as its widest line.
@@ -2244,6 +2268,7 @@ function layoutVerticalTextElement(
   dpi: number,
   anchoredToElement: boolean,
   seams?: readonly number[],
+  chipStyles?: readonly ResolvedChipStyleConfig[],
 ): ResolvedTextPrimitive[] {
   const flowPin: AnchorResult = { anchorX: pin.anchorY, anchorY: -pin.anchorX, pinX: pin.pinY, pinY: flipPin(pin.pinX) };
   const flowContainer: AnchorReference = { x: container.y, y: -(container.x + container.width), width: container.height, height: container.width };
@@ -2264,7 +2289,7 @@ function layoutVerticalTextElement(
       ? { box: { ...el.box, ...(padding ? { padding: { top: padding.right, right: padding.bottom, bottom: padding.left, left: padding.top } } : {}) } }
       : {}),
   };
-  const [main] = withMeasureWritingMode('vertical-rl', () => layoutTextElement(turned, resolvedText, flowPin, flowContainer, dpi, anchoredToElement, {}, seams));
+  const [main] = withMeasureWritingMode('vertical-rl', () => layoutTextElement(turned, resolvedText, flowPin, flowContainer, dpi, anchoredToElement, chipStyles ? { chipStyles } : {}, seams));
   return [{ ...main!, x: -(main!.y + main!.height), y: main!.x, width: main!.height, height: main!.width, vertical: true }];
 }
 
