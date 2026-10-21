@@ -2232,10 +2232,12 @@ function turnedCellHtml(run: VerticalRun, advance: number | undefined, tracking:
  * `content` is placed inside that one with physical `top` (along the line)
  * and `right` (from the box's physical right edge, the flow's top).
  */
-function uprightBox(left: number, top: number, width: number, height: number, decl: string, content: string, attrs = ''): string {
+function uprightBox(left: number, top: number, width: number, height: number, decl: string, content: string, attrs = '', sideways = ''): string {
   return (
     `<div${attrs ? ` ${attrs}` : ''} style="position:absolute;left:${left.toFixed(3)}px;top:${top.toFixed(3)}px;width:${Math.max(0, width).toFixed(3)}px;height:${height.toFixed(3)}px;">` +
     uprightInner(width, height, decl, content) +
+    // What is set in the turned flow itself (a chip, #1162): sideways.
+    sideways +
     `</div>`
   );
 }
@@ -2502,10 +2504,17 @@ function verticalDesignLines(block: VDTDesignTextBlock, v: VerticalHtml, originX
     const runs = line.runs ?? [{ text: line.text, fontString: block.fontString, width: line.width }];
     let x = 0;
     const inner: string[] = [];
+    const sideways: string[] = [];
     for (const run of runs) {
-      // A heading title's chip (#1162) is not set down a column here: its
-      // room is kept.
+      // A heading title's chip (#1162): turned with the column, as the
+      // canvas and the PDF paint it, its baseline the line's (0.8 of the
+      // size under the top of a box one line high).
       if (run.chip) {
+        sideways.push(
+          `<span style="position:absolute;left:0;top:${(line.baselineY - top - size * 0.8).toFixed(3)}px;font:${font};line-height:1;color:${block.color};">`
+          + renderChip(run.chip, x + (run.inkOffset ?? 0), size * 0.8, font, block.color, () => block.color)
+          + '</span>',
+        );
         x += run.width;
         continue;
       }
@@ -2523,7 +2532,7 @@ function verticalDesignLines(block: VDTDesignTextBlock, v: VerticalHtml, originX
     const width = Math.max(line.width, x);
     const decl = `font:${font};color:${block.color};${hasCJK(line.text) ? cjkTextDecl(tracked) : tracked ? ligaturesDecl() : ''}`
       + (line.wordSpacingPx ? `word-spacing:${line.wordSpacingPx.toFixed(3)}px;` : '');
-    parts.push(uprightBox(originX + line.xOffset, originY + top, width, h, decl, inner.join('')));
+    parts.push(uprightBox(originX + line.xOffset, originY + top, width, h, decl, inner.join(''), '', sideways.join('')));
   }
   return parts.join('');
 }

@@ -92,6 +92,50 @@ interface RunStyle {
   chip?: VDTChip;
   chipWidth?: number;
   chipSpan?: InlineSpan;
+  /** The chip style's gap (px) to a neighbour across a space. */
+  chipGap?: number;
+}
+
+/**
+ * A chip keeps at least its style's `gap` to a neighbour across a run of
+ * spaces, as in a paragraph (`measure/rich.ts`, `applyChipGaps`): a
+ * narrower run is topped up by a margin inside the chip's own advance, and
+ * between two chips the shortfall is shared. A chip at either end of the
+ * text has no margin on that side; one that opens or closes a line loses
+ * it there (`RichMeasurer.line`).
+ */
+function applyDesignChipGaps(text: string, styleAt: readonly number[], styles: RunStyle[], letterSpacingPx: number): void {
+  const isChip = (i: number): boolean => i >= 0 && i < text.length && styles[styleAt[i]!]!.chip !== undefined;
+  const add = (i: number, side: 'marginLeft' | 'marginRight', px: number): void => {
+    const st = styles[styleAt[i]!]!;
+    st.chip = { ...st.chip!, [side]: st.chip![side] + px };
+    st.chipWidth = (st.chipWidth ?? 0) + px;
+  };
+  let i = 0;
+  while (i < text.length) {
+    if (!/\s/.test(text[i]!) || text[i] === '\n') {
+      i++;
+      continue;
+    }
+    let j = i;
+    while (j < text.length && /\s/.test(text[j]!) && text[j] !== '\n') j++;
+    const left = i > 0 && text[i - 1] !== '\n' && isChip(i - 1) ? i - 1 : -1;
+    const right = j < text.length && text[j] !== '\n' && isChip(j) ? j : -1;
+    // Spaces at an end of the text, or with no chip beside them: nothing.
+    if (i > 0 && j < text.length && (left >= 0 || right >= 0)) {
+      const font = styles[styleAt[i]!]!.font;
+      const run = text.slice(i, j);
+      const width = Math.max(0, flowTextWidth(run, font) + letterSpacingPx * graphemeCount(run));
+      const gapOf = (k: number): number => (k >= 0 ? styles[styleAt[k]!]!.chipGap ?? 0 : 0);
+      const shortfall = Math.max(gapOf(left), gapOf(right)) - width;
+      if (shortfall > 0) {
+        const share = left >= 0 && right >= 0 ? shortfall / 2 : shortfall;
+        if (left >= 0) add(left, 'marginRight', share);
+        if (right >= 0) add(right, 'marginLeft', share);
+      }
+    }
+    i = j;
+  }
 }
 
 /** A design text read for inline marks: its plain text (markers dropped)
@@ -174,7 +218,7 @@ export function parseRichDesignText(text: string, spec: RichFontSpec, chips?: De
       // them).
       const token = chipToken(span, fonts.normal, fonts.bold, fonts.italic, fonts.boldItalic, chips.letterSpacingPx);
       const chipIdx = styles.length;
-      styles.push({ font: styles[idx]!.font, base: idx, chip: token.chip!, chipWidth: token.width, chipSpan: span });
+      styles.push({ font: styles[idx]!.font, base: idx, chip: token.chip!, chipWidth: token.width, chipSpan: span, chipGap: token.chipGap ?? 0 });
       hasMarks = true;
       out += span.text;
       for (let i = 0; i < span.text.length; i++) styleAt.push(chipIdx);
@@ -197,6 +241,7 @@ export function parseRichDesignText(text: string, spec: RichFontSpec, chips?: De
     out += span.text;
     for (let i = 0; i < span.text.length; i++) styleAt.push(idx);
   }
+  if (chips) applyDesignChipGaps(out, styleAt, styles, chips.letterSpacingPx);
   return { text: out, styleAt, styles, hasMarks };
 }
 
@@ -396,6 +441,17 @@ export class RichMeasurer {
       first.width = 0;
       first.stacked = true;
     }
+    // A chip opening or closing the line sits flush with it: no gap
+    // margin on that side (as `trimChipLineEdges` does in a paragraph).
+    // Wrapping measured it with the margin, so the line still fits.
+    const edge = (k: number, side: 'marginLeft' | 'marginRight'): void => {
+      const run = runs[k];
+      const m = run?.chip?.[side] ?? 0;
+      if (!run || m <= 0) return;
+      runs[k] = { ...run, width: run.width - m, chip: { ...run.chip!, [side]: 0 } };
+    };
+    edge(0, 'marginLeft');
+    edge(runs.length - 1, 'marginRight');
     for (const r of runs) width += r.width;
     return { text, width, runs };
   }

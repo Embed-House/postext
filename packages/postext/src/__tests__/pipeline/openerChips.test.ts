@@ -7,7 +7,7 @@ import type { DesignElement, PostextConfig } from '../../types.js';
 import type { VDTChip, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
 import { CHIP_PLACEHOLDER } from '../../parse/inlineFormatting.js';
 import { defaultOpenerTitle } from '../../pipeline/headerFooter.js';
-import { parseRichDesignText } from '../../design/richText.js';
+import { RichMeasurer, parseRichDesignText } from '../../design/richText.js';
 import { resolveChipStylesConfig } from '../../defaults/chipStyles.js';
 
 // #1162: a heading's chip printed by the opener or design that draws the
@@ -156,5 +156,40 @@ describe('a heading chip in a design-drawn opener (#1162)', () => {
     expect(html).toContain('///');
     expect(html).not.toContain(CHIP_PLACEHOLDER);
     expect(html).not.toContain(':chip[');
+  });
+  it('keeps the chip style gap across a space, and drops it at a line edge', () => {
+    const spec = { family: 'serif', sizePx: 20, weight: 400, italic: false };
+    // A 16 px gap against a 10 px space: 6 px of margin inside the chip.
+    const styles = resolveChipStylesConfig([{ ...MARK, gap: { value: 16, unit: 'px' } }]);
+    const rt = parseRichDesignText(':chip[ab]{style="mark"} Title', spec, { styles, dpi: 72, letterSpacingPx: 0 });
+    const style = rt.styles[rt.styleAt[0]!]!;
+    expect(style.chip!.marginLeft).toBe(0);
+    expect(style.chip!.marginRight).toBeCloseTo(6, 5);
+    expect(style.chipWidth).toBeCloseTo(style.chip!.boxWidth + 6, 5);
+    const m = new RichMeasurer(rt, 0);
+    // With the title on the line, the margin stays; closing the line, it goes.
+    const whole = m.rangeLine(0, rt.text.length);
+    expect(whole.runs[0]!.chip!.marginRight).toBeCloseTo(6, 5);
+    const alone = m.rangeLine(0, 1);
+    expect(alone.runs[0]!.chip!.marginRight).toBe(0);
+    expect(alone.width).toBeCloseTo(style.chip!.boxWidth, 5);
+    // Two chips across a space share the shortfall.
+    const two = parseRichDesignText(':chip[a]{style="mark"} :chip[b]{style="mark"}', spec, { styles, dpi: 72, letterSpacingPx: 0 });
+    expect(two.styles[two.styleAt[0]!]!.chip!.marginRight).toBeCloseTo(3, 5);
+    expect(two.styles[two.styleAt[2]!]!.chip!.marginLeft).toBeCloseTo(3, 5);
+    // A space wider than the gap needs no margin.
+    const wide = parseRichDesignText(':chip[ab]{style="mark"}   Title', spec, { styles, dpi: 72, letterSpacingPx: 0 });
+    expect(wide.styles[wide.styleAt[0]!]!.chip!.marginRight).toBe(0);
+  });
+
+  it('paints the chip in the HTML of a vertical opener', () => {
+    const cfg: PostextConfig = { ...designed(true), locale: 'ja', layout: { layoutType: 'single', writingMode: 'vertical-rl' } };
+    const doc = build('# :chip[ab]{style=mark} 見出し\n\n本文。', cfg);
+    const blocks = openerBlocks(doc);
+    expect(chipRuns(blocks)).toHaveLength(1);
+    const html = renderToHtml(doc);
+    expect(html).toContain('background:#cc3300');
+    expect(html).toContain('>ab<');
+    expect(html).not.toContain(CHIP_PLACEHOLDER);
   });
 });
