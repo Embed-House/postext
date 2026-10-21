@@ -2942,7 +2942,8 @@ def cmd_manifest(args: argparse.Namespace) -> int:
         "footer": {"elements": []},
         "resourceTypes": sug.get("resourceTypes", []),
     }
-    for k in ("calloutStyles", "markStyles", "chipStyles", "labelStyles", "paragraphStyles", "pageTemplates"):
+    for k in ("calloutStyles", "markStyles", "chipStyles", "labelStyles", "paragraphStyles", "frameLooks",
+              "pageTemplates"):
         if library.get(k):
             config[k] = library[k]
     chapters = {lang: kit.chapters_from_dir(root, lang) for lang in langs}

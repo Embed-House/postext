@@ -253,6 +253,70 @@ def style_match(a: dict, b: dict, tol: dict) -> tuple[bool, dict]:
 
 
 # ---------------------------------------------------------------------------
+# colours a named look can carry (#1089)
+# ---------------------------------------------------------------------------
+
+#: style paths (as `leaves` writes them) a frame look (`frameLooks`, the
+#: fields of `FrameConfig.look`) can recolour
+LOOK_PATHS = ("/background", "/border/color", "/stripe/color", "/icon/color", "/marker/color",
+              "/marker/rule/color", "/titleStyle/color", "/body/color", "/body/boldColor", "/body/italicColor",
+              "/label/color", "/label/background", "/label/rule/color")
+
+
+def style_class(st: dict) -> str:
+    """A style with the colours a look can carry left out: styles of one
+    class differ only in those colours."""
+    out = {k: ("*" if k in LOOK_PATHS and is_colour(v) else v) for k, v in leaves(st).items() if k not in ("/id", "/name")}
+    return json.dumps(out, sort_keys=True)
+
+
+def colour_look(a: dict, b: dict, tol: dict) -> dict | None:
+    """The look that dresses style `a` as style `b`: the colours of `b` that
+    differ from `a`'s (beyond --delta-e), as a `frameLooks` entry's fields;
+    {} when the two are alike, None when they differ in anything else."""
+    la = {k: v for k, v in leaves(a).items() if k not in ("/id", "/name")}
+    lb = {k: v for k, v in leaves(b).items() if k not in ("/id", "/name")}
+    if set(la) != set(lb):
+        return None
+    look: dict[str, Any] = {}
+    for k in la:
+        if leaf_diff(la[k], lb[k], k, tol) is not None:
+            continue
+        if k not in LOOK_PATHS or not is_colour(lb[k]):
+            return None
+        node = look
+        parts = k.strip("/").split("/")
+        for part in parts[:-1]:
+            node = node.setdefault(part, {})
+        node[parts[-1]] = {"hex": lb[k]["hex"], "model": lb[k].get("model", "hex")}
+    return look
+
+
+def look_name(look: dict) -> str:
+    """A plain name for a look, by its most visible colour."""
+    for path in (("background",), ("label", "background"), ("border", "color"), ("stripe", "color"),
+                 ("body", "color"), ("label", "color")):
+        node: Any = look
+        for part in path:
+            node = node.get(part) if isinstance(node, dict) else None
+        if is_colour(node):
+            return colour_name(node["hex"])
+    return "colour"
+
+
+def look_book(styles: list[dict], tol: dict, taken: set[str] | None = None) -> "tf.LookBook":
+    by = {s["id"]: s for s in styles}
+    classes = {s["id"]: style_class(s) for s in styles}
+
+    def between(x: str, y: str) -> dict | None:
+        if x not in by or y not in by:
+            return None
+        return colour_look(by[x], by[y], tol)
+
+    return tf.LookBook(classes, between, look_name, taken)
+
+
+# ---------------------------------------------------------------------------
 # styles
 # ---------------------------------------------------------------------------
 
@@ -755,6 +819,118 @@ def common_base(templates: list[dict], tol: float, max_diff: int, used: set[str]
                  "decoration": [element_key(e) for e in elements], "children": children}
 
 
+def merge_furniture_shells(templates: list[dict], fences: list[str], tol: float
+                           ) -> tuple[list[dict], dict[str, str], dict[str, list[str]], list[dict]]:
+    """Page templates that differ only by their furniture (front matter with
+    no folio, no page colour) as one, its elements drawn when the page fence
+    says so (#1087): `unless: "<attr>"` on what some pages leave out, `when:
+    "<attr>"` on what only some pages draw, whichever names fewer pages.
+    `fences` is every page fence's template, in book order. The attribute is
+    `frontmatter` for the book's first pages, `backmatter` for its last,
+    else `variant-N`. Returns (templates, old id -> kept id, kept id's old
+    ids -> attributes their fences set, report)."""
+    roots = [t for t in templates if not t.get("extends") and t.get("role") != "module"]
+    parents = {t.get("extends") for t in templates if t.get("extends")}
+    cands = [t for t in roots if t["id"] not in parents]
+    usage = {t["id"]: fences.count(t["id"]) for t in cands}
+    cands.sort(key=lambda t: (-usage[t["id"]], t["id"]))
+    used: set[str] = set()
+    mapping: dict[str, str] = {}
+    flags: dict[str, list[str]] = {}
+    report = []
+    names_taken: set[str] = set()
+    out_ids: dict[str, dict] = {}
+    for base in cands:
+        if base["id"] in used:
+            continue
+        used.add(base["id"])
+        group = [base]
+        for t in cands:
+            if t["id"] in used:
+                continue
+            c = compare_templates(base, t, tol)
+            if n_diff(c) or c["top"] or not _furniture_only(group + [t], tol):
+                continue
+            group.append(t)
+            used.add(t["id"])
+        if len(group) < 2:
+            continue
+        ids = [t["id"] for t in group]
+        pages = [i for i, f in enumerate(fences) if f in ids]
+        # every element of the group, in paint order
+        merged: list[dict] = []
+        have: dict[str, set[str]] = {}
+        for t in group:
+            prev = None
+            for e in decoration_of(t):
+                k = element_key(e)
+                if k not in have:
+                    at = 0 if prev is None else next(i for i, m in enumerate(merged) if element_key(m) == prev) + 1
+                    merged.insert(at, json.loads(json.dumps(e)))
+                    have[k] = set()
+                have[k].add(t["id"])
+                prev = k
+        attrs: dict[frozenset, tuple[str, str]] = {}
+        for e in merged:
+            on = frozenset(have[element_key(e)])
+            if len(on) == len(group):
+                continue
+            if on not in attrs:
+                with_pages = [i for i, f in enumerate(fences) if f in on]
+                without = [i for i in pages if i not in with_pages]
+                key, marked = ("unless", without) if len(without) <= len(with_pages) else ("when", with_pages)
+                attrs[on] = (key, _fence_attr_name(marked, len(fences), names_taken))
+                for tid in {fences[i] for i in marked}:
+                    flags.setdefault(tid, []).append(attrs[on][1])
+            key, name = attrs[on]
+            e.pop("when", None)
+            e.pop("unless", None)
+            e[key] = name
+        keep = json.loads(json.dumps(base))
+        if merged:
+            keep["decoration"] = {"elements": merged}
+        out_ids[base["id"]] = keep
+        for t in group[1:]:
+            mapping[t["id"]] = base["id"]
+        report.append({"id": base["id"], "from": ids, "conditions": [
+            {"element": element_key(e), **{k: e[k] for k in ("when", "unless") if k in e}}
+            for e in merged if "when" in e or "unless" in e]})
+    out = []
+    for t in templates:
+        if t["id"] in mapping:
+            continue
+        out.append(out_ids.get(t["id"], t))
+    return out, mapping, flags, report
+
+
+def _furniture_only(group: list[dict], tol: float) -> bool:
+    """The templates' decorations agree on every element they share, and
+    none already draws on a page attribute (`when` / `unless`)."""
+    seen: dict[str, dict] = {}
+    for t in group:
+        for e in decoration_of(t):
+            if "when" in e or "unless" in e:
+                return False
+            k = element_key(e)
+            if k in seen and element_diff(seen[k], e, tol) is None:
+                return False
+            seen.setdefault(k, e)
+    return True
+
+
+def _fence_attr_name(pages: list[int], total: int, taken: set[str]) -> str:
+    """`frontmatter` when `pages` are the book's first pages, `backmatter`
+    when its last, else `variant-N`."""
+    pages = sorted(pages)
+    run = bool(pages) and pages == list(range(pages[0], pages[0] + len(pages)))
+    base = "frontmatter" if run and pages[0] == 0 else "backmatter" if run and pages[-1] == total - 1 else "variant"
+    name, n = (base, 2) if base != "variant" else ("variant-1", 2)
+    while name in taken:
+        name, n = f"{base}-{n}", n + 1
+    taken.add(name)
+    return name
+
+
 def _decoration_extends(base: dict, child: dict, tol: float) -> bool:
     """A patch can add decoration elements but not take one away."""
     dc = {element_key(e): e for e in decoration_of(child)}
@@ -1071,10 +1247,13 @@ CONTAINER_CLOSE_RE = re.compile(r"^\s*:::\s*$")
 
 
 def rewrite_markdown(text: str, templates: dict[str, str], attrs_map: dict[str, dict[str, str]],
-                     styles: dict[str, str], slots: dict[str, dict[str, str]] | None = None) -> str:
+                     styles: dict[str, str], slots: dict[str, dict[str, str]] | None = None,
+                     flags: dict[str, list[str]] | None = None) -> str:
     """The text with the new template ids, page attributes and mark styles
     and, inside a page fence, the new slot names of that page's template
-    (`slots`: template id -> {old frame name: new})."""
+    (`slots`: template id -> {old frame name: new}). `flags` (old template
+    id -> attribute names) adds the attributes a merged shell draws its
+    furniture on (`frontmatter`) to the fences of those pages."""
     out = []
     current: dict[str, str] | None = None
     page_slots: dict[str, str] | None = None
@@ -1107,18 +1286,23 @@ def rewrite_markdown(text: str, templates: dict[str, str], attrs_map: dict[str, 
                     line = SLOT_ATTR_RE.sub(lambda a: f'slot="{current.get(a.group(1), a.group(1))}"', line)
                 stack.append((om.group(1), None))  # type: ignore[union-attr]
         elif m:
-            tid = ""
+            tid, old_tid = "", ""
 
             def sub(a: re.Match) -> str:
-                nonlocal tid
+                nonlocal tid, old_tid
                 k, v = a.group(1), a.group(2)
                 if k == "template":
+                    old_tid = v
                     v = templates.get(v, v)
                     tid = v
                 elif k in attrs_map:
                     v = attrs_map[k].get(v, v)
                 return f'{k}="{v}"'
-            line = m.group(1) + "{" + ATTR_RE.sub(sub, m.group(2)) + "}"
+            inner = ATTR_RE.sub(sub, m.group(2))
+            for flag in (flags or {}).get(old_tid, []):
+                if not re.search(r'(?:^|\s)' + re.escape(flag) + r'(?:=|\s|$)', inner):
+                    inner = inner.rstrip() + " " + flag
+            line = m.group(1) + "{" + inner + "}"
             current = (slots or {}).get(tid) or None
             page_slots = current or {}
             stack = []
@@ -1147,6 +1331,17 @@ def fence_usage(markdowns: list[str]) -> dict[str, int]:
     return usage
 
 
+def fence_templates(markdowns: list[str]) -> list[str]:
+    """The template of every page fence, in book order."""
+    out = []
+    for text in markdowns:
+        for line in text.split("\n"):
+            m = FENCE_RE.match(line)
+            if m:
+                out.append(dict(ATTR_RE.findall(m.group(2))).get("template", ""))
+    return out
+
+
 def fence_attr_values(markdowns: list[str], key: str) -> list[str]:
     out = []
     for text in markdowns:
@@ -1166,7 +1361,8 @@ def fence_attr_values(markdowns: list[str], key: str) -> list[str]:
 
 def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: bool = False,
                name_frames_by_role: bool = True, fold_grids: bool = True, fold_modules: bool = True,
-               laid: Path | None = None) -> dict:
+               laid: Path | None = None, fold_rows: bool = True, fold_looks: bool = True,
+               merge_shells: bool = True) -> dict:
     lib_path, res_path = root / "library.json", root / "resources.json"
     library = json.loads(lib_path.read_text(encoding="utf-8"))
     resources = json.loads(res_path.read_text(encoding="utf-8")) if res_path.exists() else []
@@ -1251,18 +1447,44 @@ def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: 
             for page in json.loads(laid.read_text(encoding="utf-8")).get("pages", []):
                 if page.get("template") and page["template"] not in laid_boxes:
                     laid_boxes[page["template"]] = page.get("frames", {})
+        looks = None
+        if fold_looks:
+            taken = {e.get("id") for e in library.get("frameLooks") or []}
+            looks = look_book(library.get("calloutStyles") or [], tol, {t for t in taken if t})
         fold_report = tf.fold_book(templates, regions, markdowns, tol, frame_diff, element_diff, _group_equal,
-                                   grids=fold_grids, modules=fold_modules, laid=laid_boxes)
+                                   grids=fold_grids, modules=fold_modules, laid=laid_boxes, rows=fold_rows,
+                                   looks=looks)
         report["grids"] = fold_report["grids"]
         report["modules"] = fold_report["modules"]
+        report["rows"] = fold_report.get("rows") or []
+        if fold_report.get("frameLooks"):
+            library["frameLooks"] = (library.get("frameLooks") or []) + fold_report["frameLooks"]
+            report["frameLooks"] = [e["id"] for e in fold_report["frameLooks"]]
         if fold_report.get("skipped"):
             report["foldSkipped"] = fold_report["skipped"]
     report["after"]["grids"] = len(report.get("grids") or [])
     report["after"]["modules"] = len(report.get("modules") or [])
+    report["after"]["moduleRows"] = len(report.get("rows") or [])
+    report["after"]["frameLooks"] = len(report.get("frameLooks") or [])
 
     # 4. templates
     usage = fence_usage(markdowns)
     new_templates, tmap, treport = dedupe_templates(templates, usage, tol["geom"], max_diff)
+    # 4b. shells that differ only by their furniture: one, drawn on the fences' word
+    fence_flags: dict[str, list[str]] = {}
+    if merge_shells:
+        order = [tmap.get(t, t) for t in fence_templates(markdowns)]
+        new_templates, smap, sflags, sreport = merge_furniture_shells(new_templates, order, tol["geom"])
+        if smap or sflags:
+            mapped = set(tmap.values())
+            for sid, fl in sflags.items():
+                if sid not in mapped:
+                    fence_flags[sid] = list(fl)
+            for old, new in list(tmap.items()):
+                if new in sflags:
+                    fence_flags[old] = list(sflags[new])
+                tmap[old] = smap.get(new, new)
+            report["shells"] = sreport
     library["pageTemplates"] = new_templates
     report["templates"] = treport
     report["after"]["pageTemplates"] = sum(1 for t in new_templates if t.get("role") != "module")
@@ -1291,7 +1513,7 @@ def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: 
             report["pages"][old_id] = {"template": tid, "frames": final}
 
     mark_map = {**style_maps.get("markStyles", {}), **style_maps.get("chipStyles", {})}
-    new_md = [rewrite_markdown(t, tmap, attrs_map, mark_map, slot_maps) for t in markdowns]
+    new_md = [rewrite_markdown(t, tmap, attrs_map, mark_map, slot_maps, fence_flags) for t in markdowns]
     if not dry_run:
         lib_path.write_text(json.dumps(library, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         kept_res = [r for r in resources if r["id"] not in dropped]
@@ -1390,6 +1612,15 @@ def print_report(rep: dict) -> None:
               f"{sum(1 for m in rep['modules'] if len(m['uses']) > 1)} used more than once)")
         for m in rep["modules"]:
             print(f"  {m['id']}: {m['frames']} frame(s), on {', '.join(m['uses'])}")
+    for r in rep.get("rows") or []:
+        cols = f", {r['columns']} column(s)" if r.get("columns") else ""
+        print(f"  modules {r['kind']} {r['group']}{cols}: {', '.join(r['templates'])}; on {', '.join(r['uses'])}")
+    if rep.get("frameLooks"):
+        print(f"frame looks {len(rep['frameLooks'])}: {', '.join(rep['frameLooks'])}")
+    for sh in rep.get("shells") or []:
+        conds = ", ".join(f"{c['element']} {'when' if 'when' in c else 'unless'} {c.get('when') or c.get('unless')}"
+                          for c in sh["conditions"])
+        print(f"  shell {sh['id']} serves {', '.join(sh['from'])}: {conds or 'no condition'}")
     if rep.get("foldSkipped"):
         print(f"grids and modules: skipped, {rep['foldSkipped']}")
     for t in rep.get("templates", []):
@@ -1428,6 +1659,10 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--lattice-tol", type=float, default=1.0, help="cards whose edges and widths agree within this many mm stand on one lattice (default 1)")
     ap.add_argument("--module-tol", type=float, default=0.5, help="bands whose frames and decoration agree within this many mm are one module (default 0.5)")
     ap.add_argument("--grid-min", type=int, default=3, help="the fewest cards with nothing hanging from them a grid takes (default 3; cards with a tab or caption: 2)")
+    ap.add_argument("--no-rows", action="store_true", help="lay the clusters of a band side by side as one module, not a row of modules")
+    ap.add_argument("--no-looks", action="store_true", help="cards whose styles differ in colours are no grid (no frameLooks)")
+    ap.add_argument("--no-shell-merge", action="store_true", help="keep a shell per furniture (no when/unless, no fence attributes)")
+    ap.add_argument("--member-reach", type=float, default=8.0, help="a frame this close (mm) above or below a card can be its member (default 8)")
     ap.add_argument("--laid", metavar="FRAMES", help="the draft's laid frame boxes (render.mjs --frames): grids and modules are measured on them")
     ap.add_argument("--compare-boxes", nargs=2, metavar=("BEFORE", "AFTER"), help="compare the frame boxes of two render.mjs --frames files (DIR's dedupe-report.json gives the new names) and exit")
     ap.add_argument("--box-tol", type=float, default=0.5, help="with --compare-boxes: boxes within this many mm are the same (default 0.5)")
@@ -1437,7 +1672,7 @@ def main(argv: list[str] | None = None) -> None:
     args = ap.parse_args(argv)
     tol = {"geom": args.geom_tol, "dim": args.style_tol, "padding": args.padding_tol, "font": args.font_tol,
            "delta_e": args.delta_e, "lattice": args.lattice_tol, "grid_min": args.grid_min,
-           "module": args.module_tol}
+           "module": args.module_tol, "reach": args.member_reach}
     if args.compare_boxes:
         rep_path = Path(args.dir) / "dedupe-report.json"
         names = json.loads(rep_path.read_text(encoding="utf-8")).get("pages", {}) if rep_path.exists() else {}
@@ -1449,7 +1684,8 @@ def main(argv: list[str] | None = None) -> None:
             print_compare(cmp)
         raise SystemExit(0 if cmp["over"] == 0 and cmp["missing"] == 0 else 1)
     rep = dedupe_dir(Path(args.dir), tol, args.max_diff, args.image_tol, args.dry_run, not args.keep_frame_names,
-                     not args.no_grids, not args.no_modules, Path(args.laid) if args.laid else None)
+                     not args.no_grids, not args.no_modules, Path(args.laid) if args.laid else None,
+                     not args.no_rows, not args.no_looks, not args.no_shell_merge)
     if args.json:
         print(json.dumps(rep, ensure_ascii=False, indent=1))
     else:
