@@ -275,6 +275,58 @@ class SingleCaption(unittest.TestCase):
         finally:
             tmp.cleanup()
 
+    @staticmethod
+    def beside_page(side, align, size=8):
+        """A box: two lines of text, a narrow picture, a two-line caption
+        2 mm beside it, level with the picture's top or its foot."""
+        doc = fitz.open()
+        page = new_page(doc)
+        x, y = 25 * MM, 40 * MM
+        page.draw_rect(fitz.Rect(x - 10, y - 20, 175 * MM, 150 * MM), color=(0.2, 0.4, 0.7), fill=(0.93, 0.96, 1),
+                       width=1)
+        put(page, x, y, PARA[0], size=11)
+        put(page, x, y + 14, PARA[1], size=11)
+        px = x if side == "right" else x + 60 * MM
+        pic = fitz.Rect(px, y + 30, px + 60 * MM, y + 30 + 20 * MM)
+        page.insert_image(pic, stream=map_png())
+        lines = ["El río Tajo cerca de", "Toledo, en invierno."]
+        lead = size * 1.25
+        top = pic.y0 + size * 0.75 if align == "top" else pic.y1 - lead * (len(lines) - 1) - size * 0.25
+        for k, s in enumerate(lines):
+            w = fitz.get_text_length(s, fontname="helv", fontsize=size)
+            cx = pic.x1 + 2 * MM if side == "right" else pic.x0 - 2 * MM - w
+            put(page, cx, top + k * lead, s, size=size)
+        return doc
+
+    def beside(self, side, align):
+        tmp, md, lib, _ = extract(self.beside_page(side, align))
+        try:
+            res = __import__("json").loads((Path(tmp.name) / "out" / "resources.json").read_text(encoding="utf-8"))
+            return next(r for r in res if r.get("typeId") != "ground"), md, lib
+        finally:
+            tmp.cleanup()
+
+    def test_a_small_caption_beside_its_picture_is_the_resource_caption_inside(self):
+        for side, align in (("right", "top"), ("left", "top"), ("right", "bottom")):
+            with self.subTest(side=side, align=align):
+                pic, md, lib = self.beside(side, align)
+                self.assertEqual(pic["caption"], "El río Tajo cerca de Toledo, en invierno.")
+                self.assertNotIn("Toledo", md)
+                pl = pic["placement"]
+                self.assertEqual(pl["captionSide"], "inside")
+                self.assertEqual(pl["align"], "left" if side == "right" else "right")
+                self.assertTrue(0.6 < pl["width"] < 0.9, pl)
+                # the picture's frame holds the caption's room too
+                frame = next(f for f in lib["pageTemplates"][0]["frames"] if f["name"].startswith("picture"))
+                self.assertGreater(frame["width"]["value"], 62)
+
+    def test_a_caption_as_large_as_the_box_text_beside_a_picture_stays_text(self):
+        tmp, md, lib, _ = extract(self.beside_page("right", "top", size=11))
+        try:
+            self.assertIn("Toledo", md)
+        finally:
+            tmp.cleanup()
+
     def test_an_italic_caption_further_down_is_a_frame_after_its_picture(self):
         tmp, md, lib, _ = extract(self.box_page("El río Tajo cerca de Toledo.", 11, "heit", 5.0, False))
         try:
