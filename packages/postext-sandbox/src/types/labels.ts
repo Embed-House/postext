@@ -204,6 +204,10 @@ export interface SandboxLabels {
   debugLooseLinesThresholdTooltip: string;
   debugPageNegative: string;
   debugPageNegativeTooltip: string;
+  debugFitMarks: string;
+  debugFitMarksTooltip: string;
+  debugFitMarksMinScale: string;
+  debugFitMarksMinScaleTooltip: string;
   debugWarnings: string;
   debugWarningsMissingFont: string;
   debugWarningsMissingFontTooltip: string;
@@ -1831,6 +1835,10 @@ export interface SandboxLabels {
   composedFitLookUnknown: string;
   reflowToggle: string;
   reflowToggleHint: string;
+  fitMarksAll: string;
+  fitMarksProblems: string;
+  fitMarksNone: string;
+  fitMarksToggleState: string;
   reflowTitle: string;
   reflowClose: string;
   reflowLegend: string;

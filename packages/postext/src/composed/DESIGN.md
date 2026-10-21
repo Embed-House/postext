@@ -3665,3 +3665,19 @@ anchored inside it, the frames chosen) and, for a list, a checkbox per frame and
 the frames anchored inside it). Fixture: `__tests__/composed/growWith.test.ts`, three photos and their
 captions in a labelled box under a 1.3 text stress; the skill's end-to-end test runs the same page
 through `composed_check --stress 1.3`.
+
+### 14.5 Which fit marks the canvas draws (#1160)
+
+The fit marks of §12 (a frame that does not fit, text or pictures the ladder scaled, an unknown look)
+are split in two groups: problems (`frameOverflow`, `lookUnknown`) and information (the scale badges,
+a scale within what `fit.minScale` allows). `debug.fitMarks: 'all' | 'problems' | 'none'` (default
+`'all'`) is the book's default and `debug.fitMarksMinScale` (default 1) leaves out the badge of a frame
+set at that scale or larger, text and pictures apart. Both are resolved and stripped with the rest of
+`debug`; neither reaches `ResolvedConfig`, so the VDT is the same, and the Sandbox's `configKeyOf`
+drops them, so a cached layout stays valid. Sandbox: `fitMarksFor` takes `mode` and `minScale`
+(`viewport/composed/fitMarks.ts`); the reader's choice is kept per browser
+(`viewport/composed/fitMarksView.ts`, the rail button next to the reflow switch, All → Problems only
+→ None) and wins over the book's; `sandbox_get_state` reports `view.fitMarks` and `sandbox_set_view
+{ fitMarks }` sets it (`book` forgets the choice). The frame a check just reached is outlined in every
+mode. Only the Sandbox canvas and its side-by-side view draw these marks; the Folio, the HTML viewer,
+the PDF and the EPUB never did.

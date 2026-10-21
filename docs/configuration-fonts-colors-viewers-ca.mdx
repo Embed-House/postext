@@ -1300,6 +1300,18 @@ La propietat `debug` agrupa dos tipus d'ajudes per a l'autor: capes visuals que 
       <td><code>false</code></td>
       <td>Renderitza un negatiu d'alt contrast sobre la pàgina, útil per revisar d'un cop d'ull la forma general d'una doble pàgina (densitat del text, equilibratge de columnes, espai en blanc) sense que et distregui el detall dels glifs.</td>
     </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Quines marques d’ajust dibuixa el canvas del Sandbox sobre les pàgines compostes per a qui no hagi triat a la barra del canvas: totes, només els marcs que no hi caben i els aspectes desconeguts, o cap. Mana la tria del lector. Des de postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Un marc compost a aquesta escala o més gran no porta distintiu d’escala (amb <code>0.95</code> només es marquen els que queden per sota del 95 %). El text i les imatges es miren per separat.</td>
+    </tr>
   </tbody>
 </table>
 

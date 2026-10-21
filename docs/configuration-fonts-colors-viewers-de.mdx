@@ -1301,6 +1301,18 @@ Die Eigenschaft `debug` fasst zwei Arten von Hilfen beim Schreiben zusammen: vis
       <td><code>false</code></td>
       <td>Legt ein kontrastreiches Negativ über die Seite – nützlich, um die Gesamtform einer Doppelseite (Textdichte, Spaltenausgleich, Weißraum) auf einen Blick zu prüfen, ohne von den Einzelheiten der Glyphen abgelenkt zu werden.</td>
     </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Welche Passmarken die Leinwand der Sandbox über zusammengesetzte Seiten legt, solange der Leser in der Werkzeugleiste nichts gewählt hat: alle, nur Rahmen, die nicht passen, und unbekannte Aussehen, oder keine. Die Wahl des Lesers geht vor. Seit postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Ein Rahmen, der in diesem Maßstab oder größer gesetzt ist, bekommt keine Skalierungsplakette (mit <code>0.95</code> nur Rahmen unter 95 %). Text und Bilder werden getrennt beurteilt.</td>
+    </tr>
   </tbody>
 </table>
 

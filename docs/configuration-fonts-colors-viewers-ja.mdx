@@ -1302,6 +1302,18 @@ Sandboxでは、これらの設定はデザインパネルの**Folio**グルー�
       <td><code>false</code></td>
       <td>ページにハイコントラストの反転オーバーレイを重ねます。字形の細部に気を取られずに、見開きの全体の形（文字の密度、段末のそろい、余白）をひと目で確かめるのに役立ちます。</td>
     </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>読者がキャンバスのツールバーでまだ選んでいないとき、Sandboxのキャンバスがテンプレートページに描く収まりマーク：すべて、収まらない枠と不明な外観だけ、または表示しない。読者の選択が優先されます。postext 1.52 以降。</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>この倍率以上で組まれた枠には縮小ラベルを付けません（<code>0.95</code>なら95%未満の枠だけ）。文字と画像は別々に判定します。</td>
+    </tr>
   </tbody>
 </table>
 

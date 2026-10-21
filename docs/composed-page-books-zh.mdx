@@ -164,6 +164,33 @@ Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre d
 
 <Screenshot src="/docs-shots/zh/checks.webp" alt="检查面板里有条目“框内放不下文字”和三个解决办法按钮；页面上第一个方框带着红色轮廓，旁边一条色带写着“差 26 毫米”。" caption="一个放不下文字的框，以及排版为它找到的解决办法。" />
 
+画布上的标记并不都是错误。排版在模板允许的范围内缩小了文字或图片的框，带琥珀色虚线轮廓和<em>文字90%</em>之类的标签，这只是提示。问题用红色（内容放不下的框）和紫色（设计里没有的外观）标出。与<strong>重排</strong>同在一条工具栏里的<strong>适配标记</strong>按钮依次切换三种设置：
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '30%' }}>设置</th>
+      <th>画布画出的标记</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>全部</td>
+      <td>所有标记：放不下的框、未知外观、缩小的文字和图片</td>
+    </tr>
+    <tr>
+      <td>仅问题</td>
+      <td>放不下的框和未知外观</td>
+    </tr>
+    <tr>
+      <td>不显示</td>
+      <td>不画适配标记</td>
+    </tr>
+  </tbody>
+</table>
+
+Sandbox会在这个浏览器里记住你的选择。书可以为还没选过的人设定默认值：<code>debug.fitMarks</code>（<code>"all"</code>、<code>"problems"</code>或<code>"none"</code>）和<code>debug.fitMarksMinScale</code>，以这个比例或更大比例排出的框不再显示标签（设为<code>0.95</code>时只标出低于95%的框）。这些标记只属于画布：PDF、HTML查看器、EPUB和Folio都不会画出。自 postext 1.52 起。
+
 放着照片和图注的方框（框内锚定的框，每张照片 `below` 一条图注）在译文让图注变长时不会自己增高：图注会跑出方框，压到下面的内容上。在模板编辑器里打开方框的框，把**随内部的框增高**设为*锚定在内部的框*（模板里写作 `growWith: "children"`）。方框随即延伸到最低一条图注的底端再加上下内边距，底色、边框和标签随之变化，下面的框下移。*选定的框*则改用名称列表。算在内的是锚定在方框顶边某一点上的框，以及锚定在这些框上的框；锚定在方框底端或中点的框不算，旋转的方框不会增高。自 postext 1.52 起。
 
 ## 7. 在页面和正文里选择

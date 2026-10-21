@@ -1302,6 +1302,18 @@ The `debug` property groups two kinds of authoring aids: visual overlays that ke
       <td><code>false</code></td>
       <td>Renders a high-contrast negative overlay over the page — useful for visually auditing the overall shape of a spread (text density, column balance, whitespace) at a glance, without being distracted by glyph detail.</td>
     </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Which fit marks the Sandbox canvas draws over composed pages for a reader who has not chosen in the canvas toolbar: every one, only frames that do not fit and unknown looks, or none. The reader's choice wins. Since postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>A frame set at this scale or larger gets no scale badge (<code>0.95</code> marks only frames under 95 %). Text and pictures are judged apart.</td>
+    </tr>
   </tbody>
 </table>
 

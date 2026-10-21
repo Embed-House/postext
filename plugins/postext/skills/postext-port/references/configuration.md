@@ -2559,7 +2559,11 @@ shows the reverse page more than any stock but bible (its coldset ink soaks into
 
 `debug`: `cursorSync {enabled=true,color}`, `selectionSync {enabled=true,color}`,
 `looseLineHighlight {enabled=false,color,threshold=3}`, `pageNegative {enabled=false}`,
-`warnings { missingFont=true, looseLines=true, headingHierarchy=true, consecutiveHeadings=false, listAfterHeading=false, designIssues=true }`.
+`warnings { missingFont=true, looseLines=true, headingHierarchy=true, consecutiveHeadings=false, listAfterHeading=false, designIssues=true }`,
+`fitMarks='all'|'problems'|'none'` and `fitMarksMinScale=1` (postext ≥ 1.52, #1160): which fit marks the Sandbox canvas draws
+over composed pages for a reader who has not chosen in the canvas rail (`problems` keeps the frames that do not fit and
+the unknown looks, drops the scale badges), and the scale at or above which a frame gets no scale badge (0.95 for a
+multi-language book whose headings may set at 90 %). Out of the layout key; never in the PDF, HTML, EPUB or Folio.
 Reading a line's word spacing off the VDT (postext ≥ 1.28): compare `lineWordSpacing(line)` with `minWordSpacing` /
 `maxWordSpacing`, not `line.justifiedSpaceRatio`. The latter is the width every space is painted at over the regular
 face's space, and a line with an italic or a bold space reads a few hundredths under or over the limit it was
