@@ -24,6 +24,28 @@ export const SWATCH_PLACEHOLDER = '⁤';
  *  painted from it (they live in the span's `chip.spans`). */
 export const CHIP_PLACEHOLDER = '\uE1A0';
 
+/** `text` without its chip placeholders, each with the space before it
+ *  (a chip at the start takes the space after it): a heading's title as
+ *  its contents entry, running heads and bookmarks read it (#1100). */
+export function withoutChips(text: string): string {
+  let out = '';
+  let dropSpace = false;
+  for (const ch of text) {
+    if (ch === CHIP_PLACEHOLDER) {
+      if (out.endsWith(' ')) out = out.slice(0, -1);
+      else if (out.trim() === '') dropSpace = true;
+      continue;
+    }
+    if (dropSpace && ch === ' ') {
+      dropSpace = false;
+      continue;
+    }
+    dropSpace = false;
+    out += ch;
+  }
+  return out;
+}
+
 /** Atomic plain-text placeholder for a footnote marker (`[^id]`), one code
  *  unit per marker. A private-use code point of its own. */
 export const FOOTNOTE_PLACEHOLDER = '\uE1A6';
