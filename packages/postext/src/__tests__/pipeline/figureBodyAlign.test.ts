@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig, Resource, ResourcePlacement, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig, Resource, ResourcePlacement, VDTBlock, VDTDocument } from '../../index.js';
 
 // EF-98: a figure body narrower than its slot — shrunk by
 // `layout.fitFiguresToPage`, or a bitmap smaller than the column — sits in

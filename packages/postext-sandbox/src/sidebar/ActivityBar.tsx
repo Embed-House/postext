@@ -1,14 +1,14 @@
 'use client';
 
-import { LargeTargetsToggle } from '../ui/LargeTargetsToggle';
+import { LargeTargetsToggle } from '../ui/LargeTargetsToggle.js';
 import { BookOpen, FileCode, Settings2, FolderOpen, AlertTriangle, Type, Files, Eye } from 'lucide-react';
 import { useRef, useLayoutEffect, useEffect, useCallback, useState, type ReactNode } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxPresetStale, useSandboxSelector, useSandboxWarnings } from '../context/SandboxContext';
-import type { PanelId } from '../types';
-import { isAcceptedWarning } from '../warnings/categories';
-import { Tooltip, cn } from '../ui';
-import { bookEditionsOf } from '../editions/bookLocales';
-import { localeDisplayName } from '../presets/localeNames';
+import { useSandboxDispatch, useSandboxLabels, useSandboxPresetStale, useSandboxSelector, useSandboxWarnings } from '../context/SandboxContext.js';
+import type { PanelId } from '../types/index.js';
+import { isAcceptedWarning } from '../warnings/categories.js';
+import { Tooltip, cn } from '../ui/index.js';
+import { bookEditionsOf } from '../editions/bookLocales.js';
+import { localeDisplayName } from '../presets/localeNames.js';
 
 interface ActivityBarProps {
   themeToggle?: ReactNode;

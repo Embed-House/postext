@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripCalloutStylesDefaults } from '../../defaults';
-import { collectConfigWarnings } from '../../configWarnings';
-import { iconShapeBlock } from '../../design/iconShape';
-import { renderToHtml } from '../../html-backend';
-import type { CalloutStyleConfig, PostextConfig, Resource, VDTBlock, VDTDesignBlock, VDTDesignImageBlock, VDTDesignPathBlock, VDTDesignTextBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripCalloutStylesDefaults } from '../../defaults/index.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { iconShapeBlock } from '../../design/iconShape.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { CalloutStyleConfig, PostextConfig, Resource, VDTBlock, VDTDesignBlock, VDTDesignImageBlock, VDTDesignPathBlock, VDTDesignTextBlock, VDTDocument } from '../../index.js';
 
 // #1120: a picture icon painted in a colour of its own (or the icon's),
 // and a ring or a dot the engine draws, on a box's icon, its marker and a

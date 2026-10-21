@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseTemplate, formatNumeral, computeHeadingNumbers } from '../numbering';
-import { parseMarkdown, type ContentBlock } from '../parse';
-import { resolveBlockKind, uppercasePreservingLength } from '../pipeline/buildBlockKind';
-import { resolveAllConfig } from '../pipeline/config';
-import { resolveBodyStyle, resolveBlockquoteStyle } from '../pipeline/styles';
+import { parseTemplate, formatNumeral, computeHeadingNumbers } from '../numbering.js';
+import { parseMarkdown, type ContentBlock } from '../parse/index.js';
+import { resolveBlockKind, uppercasePreservingLength } from '../pipeline/buildBlockKind.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { resolveBodyStyle, resolveBlockquoteStyle } from '../pipeline/styles.js';
 
 describe('formatNumeral', () => {
   it('formats decimal', () => {

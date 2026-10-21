@@ -4,12 +4,12 @@
 
 import { useCallback, useState } from 'react';
 import { bitmapInfo, type PostextConfig, type Resource, type ResourceType } from 'postext';
-import { newChapter } from '../book/chapterOps';
-import type { Chapter } from '../book/types';
-import type { SandboxAction } from '../context/SandboxContext';
-import { putBlob } from '../storage/blobStore';
-import { generateId } from '../storage/ids';
-import { isValidSvg, svgIntrinsicSize } from '../panels/resources/svgIntrinsic';
+import { newChapter } from '../book/chapterOps.js';
+import type { Chapter } from '../book/types.js';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import { putBlob } from '../storage/blobStore.js';
+import { generateId } from '../storage/ids.js';
+import { isValidSvg, svgIntrinsicSize } from '../panels/resources/svgIntrinsic.js';
 import {
   applyStyleTracking,
   characterTargetOf,
@@ -28,7 +28,7 @@ import {
   type WordDocument,
   type WordTemplate,
 } from 'postext/word';
-import type { SandboxLabels } from '../types';
+import type { SandboxLabels } from '../types/index.js';
 
 /** Where an import's text goes: into the open chapter in place of its
  *  text, as new chapters after it, or as the whole book. */

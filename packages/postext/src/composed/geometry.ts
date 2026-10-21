@@ -16,11 +16,11 @@
  *   the frame its chain comes from (`next`), and frames that push text
  *   (`exclude: 'push'`) before the others; ties keep template order.
  */
-import { physicalEdge } from '../design/logicalEdges';
-import type { AnchorEdge, Dimension, ElementPlacement } from '../types';
-import { dimensionToPx } from '../units';
-import { anchorTarget, continueInFrame } from './templates';
-import type { FrameSize, ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types';
+import { physicalEdge } from '../design/logicalEdges.js';
+import type { AnchorEdge, Dimension, ElementPlacement } from '../types.js';
+import { dimensionToPx } from '../units.js';
+import { anchorTarget, continueInFrame } from './templates.js';
+import type { FrameSize, ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types.js';
 
 export interface Rect {
   x: number;

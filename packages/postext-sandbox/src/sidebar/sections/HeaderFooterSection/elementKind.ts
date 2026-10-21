@@ -1,5 +1,5 @@
 import type { DesignElement } from 'postext';
-import type { SandboxLabels } from '../../../types/labels';
+import type { SandboxLabels } from '../../../types/labels.js';
 
 /** The kind of a design element in words (#1063: shapes and connectors
  *  too). */

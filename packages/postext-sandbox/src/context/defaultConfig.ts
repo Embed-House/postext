@@ -1,8 +1,8 @@
 import type { PostextConfig, ResourceType } from 'postext';
 import { chineseScriptOf, cloneDefaultColorPalette, defaultResourceTypes, isJapaneseLanguage } from 'postext';
-import { arabicDefaults, isArabicScriptLanguage } from './arabicDefaults';
-import { chineseDefaults } from './chineseDefaults';
-import { japaneseDefaults } from './japaneseDefaults';
+import { arabicDefaults, isArabicScriptLanguage } from './arabicDefaults.js';
+import { chineseDefaults } from './chineseDefaults.js';
+import { japaneseDefaults } from './japaneseDefaults.js';
 
 /** The sandbox's pristine configuration: the default colour palette plus the
  *  built-in resource types localised to `locale`. Lives in its own module so

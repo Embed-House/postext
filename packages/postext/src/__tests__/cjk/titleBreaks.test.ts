@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // Book titles kept from one-character breaks (#637, `cjk.titleMinChars`).
 // The stub measures a Han character and the brackets 1 em (20 px).

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { ChapterLayout } from '../book/types';
+import type { ChapterLayout } from '../book/types.js';
 
 const store = vi.hoisted(() => ({ put: [] as unknown[] }));
-vi.mock('./blobStore', () => ({
+vi.mock('./blobStore.js', () => ({
   LAYOUTS_STORE: 'layouts',
   hasIndexedDB: () => true,
   runInStore: async (_name: string, _mode: string, run: (s: { put(value: unknown): unknown }) => unknown) => {
@@ -10,7 +10,7 @@ vi.mock('./blobStore', () => ({
   },
 }));
 
-import { putChapterLayouts } from './layouts';
+import { putChapterLayouts } from './layouts.js';
 
 const layout = (chapterId: string, over: Partial<ChapterLayout> = {}): ChapterLayout => ({
   chapterId, markdown: '# A', configKey: 'c', resourcesKey: 'r', engine: 'e', continuationKey: 'k', pageCount: 3, leadingBlankPages: 0,

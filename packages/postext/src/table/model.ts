@@ -6,7 +6,7 @@ import type {
   TableCellVerticalAlign,
   TableCellPos,
   TableModel,
-} from '../types';
+} from '../types.js';
 
 /** Position of a cell within the grid (zero-based row/column). */
 export type CellPos = TableCellPos;

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EditorState, type TransactionSpec } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
 import { CompletionContext, type Completion } from '@codemirror/autocomplete';
-import { tabCompletionSource, tabRanges, tabbableLines } from './tabSyntax';
+import { tabCompletionSource, tabRanges, tabbableLines } from './tabSyntax.js';
 
 const marked = (text: string, kind: 'tab' | 'attr') => tabRanges(text).filter((r) => r.kind === kind).map((r) => text.slice(r.from, r.to));
 

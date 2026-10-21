@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTFrame } from 'postext';
-import { fitMarksFor } from './fitMarks';
+import { fitMarksFor } from './fitMarks.js';
 
 // #1095: the canvas marks a frame whose `:::frame` piece names a look the
 // config does not have, beside the marks it already draws.

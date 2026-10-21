@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { measureBlock } from '../measure/plain';
-import { createMeasurementCache } from '../measure';
-import { buildDocument } from '../pipeline/build';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../defaults';
-import type { PostextConfig, VDTDocument } from '../index';
+import { measureBlock } from '../measure/plain.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { buildDocument } from '../pipeline/build.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../defaults/index.js';
+import type { PostextConfig, VDTDocument } from '../index.js';
 
 // A proportional stub: narrow spaces, as in a text face, and letters of
 // three widths — so a word space is well under a letter, as in print.

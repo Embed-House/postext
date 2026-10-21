@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { renderToEpub, readEpub } from '../index';
-import type { EpubWarning, EpubProgress, ReadEpubResult } from '../types';
-import { buildFixedPublication } from './index';
-import { fontUses, missingFaces, stackFamilies } from './fontUse';
-import { nestOutline } from './outline';
-import { LORA, PNG, sampleBook, layOutBook } from '../__tests__/sampleBook';
+import { renderToEpub, readEpub } from '../index.js';
+import type { EpubWarning, EpubProgress, ReadEpubResult } from '../types.js';
+import { buildFixedPublication } from './index.js';
+import { fontUses, missingFaces, stackFamilies } from './fontUse.js';
+import { nestOutline } from './outline.js';
+import { LORA, PNG, sampleBook, layOutBook } from '../__tests__/sampleBook.js';
 
 const MODIFIED = new Date(Date.UTC(2026, 9, 4));
 

@@ -1,4 +1,4 @@
-import type { Dimension } from './types';
+import type { Dimension } from './types.js';
 
 /**
  * Convert a Dimension to pixels at a given DPI.

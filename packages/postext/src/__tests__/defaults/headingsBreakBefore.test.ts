@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { resolveHeadingsConfig, stripHeadingsDefaults } from '../../defaults/headings';
-import { resolveAllConfig } from '../../pipeline/config';
-import { createHeadingLevelResolver } from '../../pipeline/headingStyles';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig } from '../../types';
+import { resolveHeadingsConfig, stripHeadingsDefaults } from '../../defaults/headings.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { createHeadingLevelResolver } from '../../pipeline/headingStyles.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

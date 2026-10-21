@@ -7,11 +7,11 @@ import fontkit from '@pdf-lib/fontkit';
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFString, PDFHexString, decodePDFRawStream, type PDFFont } from 'pdf-lib';
 import { buildDocument, resolveParagraph } from 'postext';
 import type { PostextConfig, VDTDocument, VDTLine } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { complexShaperReady, loadComplexShaper, shapeRun } from '../complexShaping';
-import { fileRuns, registerFaceFiles } from '../faceFiles';
-import { svgToVectorDrawing, type VectorFont, type VectorText } from '../pdf-backend/svgVector';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { complexShaperReady, loadComplexShaper, shapeRun } from '../complexShaping.js';
+import { fileRuns, registerFaceFiles } from '../faceFiles.js';
+import { svgToVectorDrawing, type VectorFont, type VectorText } from '../pdf-backend/svgVector.js';
 
 // Issue #380, part 2: the PDF renderer on the right-to-left VDT the engine
 // produces — lines laid out in `order` and painted and tagged in logical

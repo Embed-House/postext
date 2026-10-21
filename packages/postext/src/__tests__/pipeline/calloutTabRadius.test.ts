@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripCalloutStylesDefaults } from '../../defaults';
-import { boxOutline, boxStylePathBlocks, tabRegionOutline } from '../../design/boxShape';
-import { createBoundingBox } from '../../vdt';
-import type { CalloutStyleConfig, PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignPathBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripCalloutStylesDefaults } from '../../defaults/index.js';
+import { boxOutline, boxStylePathBlocks, tabRegionOutline } from '../../design/boxShape.js';
+import { createBoundingBox } from '../../vdt.js';
+import type { CalloutStyleConfig, PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignPathBlock, VDTDocument } from '../../index.js';
 
 // #1102: a label tab with corners of its own, apart from the box or
 // joined to it.

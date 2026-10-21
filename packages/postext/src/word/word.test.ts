@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
-import { parseMarkdown } from '../parse';
-import type { PostextConfig } from '../types';
-import { analyzeDocx } from './analyze';
-import { readDocx } from './docxRead';
-import { parseInline, renderInline } from './inline';
-import { displayStyleName, emptyTemplate, guessCharacterTarget, guessParagraphTarget, parseTemplate, type WordTemplate } from './template';
-import { postextToDocx } from './toDocx';
-import { applyStyleTracking, wordStyleTracking } from './tracking';
-import { wordToPostext } from './toMarkdown';
+import { parseMarkdown } from '../parse/index.js';
+import type { PostextConfig } from '../types.js';
+import { analyzeDocx } from './analyze.js';
+import { readDocx } from './docxRead.js';
+import { parseInline, renderInline } from './inline.js';
+import { displayStyleName, emptyTemplate, guessCharacterTarget, guessParagraphTarget, parseTemplate, type WordTemplate } from './template.js';
+import { postextToDocx } from './toDocx.js';
+import { applyStyleTracking, wordStyleTracking } from './tracking.js';
+import { wordToPostext } from './toMarkdown.js';
 
 const config = {
   paragraphStyles: [{ id: 'verso', name: 'Verso', italic: true }, { id: 'firma', name: 'Firma' }],

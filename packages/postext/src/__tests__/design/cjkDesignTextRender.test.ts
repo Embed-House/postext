@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter';
-import { renderToHtml } from '../../html-backend';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig } from '../../types';
-import type { VDTDesignSlot, VDTDesignTextBlock } from '../../vdt';
-import { installSizedStub, stubCharWidth } from '../vertical/stub';
+import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter.js';
+import { renderToHtml } from '../../html-backend.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDesignSlot, VDTDesignTextBlock } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from '../vertical/stub.js';
 
 // #637: a design run whose width is its box (a CJK mark that gave up
 // blank) paints its glyphs `inkOffset` into it, on canvas and in HTML.

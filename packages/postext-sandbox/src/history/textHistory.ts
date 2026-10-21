@@ -10,7 +10,7 @@
 
 import { EditorState, Transaction } from '@codemirror/state';
 import { history, historyField, isolateHistory, redo, redoDepth, undo, undoDepth } from '@codemirror/commands';
-import { minimalChange, type TextChange } from '../book/textChanges';
+import { minimalChange, type TextChange } from '../book/textChanges.js';
 
 const EXTENSIONS = [history()];
 

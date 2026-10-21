@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { layoutDesignSlot } from '../../design/layout';
-import { resolveDesignPlaceholders, type DesignPlaceholderContext } from '../../design/placeholders';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import { computeChapterTitles } from '../../pipeline/placeholders';
-import type { DesignElement } from '../../types';
-import type { VDTBlock, VDTLine, VDTPage } from '../../vdt';
+import { layoutDesignSlot } from '../../design/layout.js';
+import { resolveDesignPlaceholders, type DesignPlaceholderContext } from '../../design/placeholders.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import { computeChapterTitles } from '../../pipeline/placeholders.js';
+import type { DesignElement } from '../../types.js';
+import type { VDTBlock, VDTLine, VDTPage } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

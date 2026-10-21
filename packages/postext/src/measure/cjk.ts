@@ -1,5 +1,5 @@
-import { cjkBreakAllowed, cjkClassOf, getCjkLineBreak, isCjkGrapheme, isLabelEndProhibited, type CjkLineBreakLevel } from './cjkClasses';
-import { lastGrapheme } from './graphemes';
+import { cjkBreakAllowed, cjkClassOf, getCjkLineBreak, isCjkGrapheme, isLabelEndProhibited, type CjkLineBreakLevel } from './cjkClasses.js';
+import { lastGrapheme } from './graphemes.js';
 
 /**
  * Chinese, Japanese and Korean: scripts set without spaces between words.

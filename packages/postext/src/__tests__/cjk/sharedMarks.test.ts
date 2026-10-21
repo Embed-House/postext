@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { measureRichBlock } from '../../measure/rich';
-import { clearTextWidthCache } from '../../measure/canvas';
-import { withMeasureWritingMode } from '../../measure/vertical';
-import type { CjkComposition } from '../../measure/cjkPunctuation';
-import type { Dimension, PostextConfig } from '../../types';
-import type { VDTLine, VDTLineSegment } from '../../vdt';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { measureRichBlock } from '../../measure/rich.js';
+import { clearTextWidthCache } from '../../measure/canvas.js';
+import { withMeasureWritingMode } from '../../measure/vertical.js';
+import type { CjkComposition } from '../../measure/cjkPunctuation.js';
+import type { Dimension, PostextConfig } from '../../types.js';
+import type { VDTLine, VDTLineSegment } from '../../vdt.js';
 
 // “ ” ‘ ’ … — · are shared by Latin and Chinese text. A font may set them
 // proportionally (LXGW WenKai: “ ” at 0.35 em; Noto Serif SC: the em dash

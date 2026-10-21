@@ -1,6 +1,6 @@
 'use client';
 
-import type { TemplateSheet } from '../../../templates/templateSheet';
+import type { TemplateSheet } from '../../../templates/templateSheet.js';
 
 interface TemplateSheetSvgProps {
   sheet: TemplateSheet;

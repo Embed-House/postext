@@ -1,11 +1,11 @@
 'use client';
 
 import type { ElementSize, ElementSizeTo } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { SelectInput } from '../../../controls';
-import type { Sibling } from './PlacementFields';
-import { elementKindLabel } from './elementKind';
-import type { SlotKind } from './placementAdapter';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { SelectInput } from '../../../controls/index.js';
+import type { Sibling } from './PlacementFields.js';
+import { elementKindLabel } from './elementKind.js';
+import type { SlotKind } from './placementAdapter.js';
 
 /** A frame or a group of the page template whose decoration is being
  *  edited: a size can run to its edge (`#name`, #945). */

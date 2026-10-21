@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdownWithIssues } from '../parse';
+import { parseMarkdownWithIssues } from '../parse/index.js';
 
 // #1125: one-line directives (`:::toc`, `:::index`, `:::pagebreak`,
 // `:::space`…) take no closing fence. A bare `:::` after one, with no `:::`

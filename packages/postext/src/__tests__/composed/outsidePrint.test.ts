@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { composedPaintOrder, composedReadingOrder } from '../../composed/paint';
-import { altWithLabels } from '../../composed/labelText';
-import { renderToHtmlIndexed } from '../../html-backend';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { composedPaintOrder, composedReadingOrder } from '../../composed/paint.js';
+import { altWithLabels } from '../../composed/labelText.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index.js';
 
 // #862: what the outputs that do not draw a composed page as print read
 // from the VDT — a `:::figure`'s labels on its resource block, wherever the

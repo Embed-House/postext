@@ -1,10 +1,10 @@
 'use client';
 
 import { Pointer } from 'lucide-react';
-import { IconButton } from './icon-button';
-import { useLargeTargets } from './largeTargets';
-import type { TooltipSide } from './tooltip';
-import { useSandboxLabels } from '../context/SandboxContext';
+import { IconButton } from './icon-button.js';
+import { useLargeTargets } from './largeTargets.js';
+import type { TooltipSide } from './tooltip.js';
+import { useSandboxLabels } from '../context/SandboxContext.js';
 
 /** The "Large buttons and fields" switch beside the theme and language
  *  controls: a pressed/unpressed icon button (aria-pressed). */

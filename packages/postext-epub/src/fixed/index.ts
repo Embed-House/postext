@@ -24,15 +24,15 @@ import type {
   EpubSource,
   EpubSpineEntry,
   RenderToEpubOptions,
-} from '../types';
-import { defaultAccessibility } from '../shared/accessibility';
-import { fontAssets, imageAssets, pageProgressionOf, remoteVideoItems, videoAssets } from '../shared/assets';
-import { decodeEntities, escapeAttr, escapeXml, htmlToXhtml, xhtmlDocument, xmlId } from '../shared/xml';
-import { videoScriptItem, VIDEO_SCRIPT_HREF, withVideoScript } from '../shared/videoScript';
-import { navStrings } from '../package/strings';
-import { fontUses, missingFaces, type FontUse } from './fontUse';
-import { contentsRows, headingTitle, nestOutline, pageHeadings, partTitle, type OutlineEntry } from './outline';
-import { comicDirectionOf, kindlePanelMarkup, regionNavItem, type ComicPagePlan } from './regions';
+} from '../types.js';
+import { defaultAccessibility } from '../shared/accessibility.js';
+import { fontAssets, imageAssets, pageProgressionOf, remoteVideoItems, videoAssets } from '../shared/assets.js';
+import { decodeEntities, escapeAttr, escapeXml, htmlToXhtml, xhtmlDocument, xmlId } from '../shared/xml.js';
+import { videoScriptItem, VIDEO_SCRIPT_HREF, withVideoScript } from '../shared/videoScript.js';
+import { navStrings } from '../package/strings.js';
+import { fontUses, missingFaces, type FontUse } from './fontUse.js';
+import { contentsRows, headingTitle, nestOutline, pageHeadings, partTitle, type OutlineEntry } from './outline.js';
+import { comicDirectionOf, kindlePanelMarkup, regionNavItem, type ComicPagePlan } from './regions.js';
 
 /** Directory of the page documents, relative to the package document. */
 const PAGES_DIR = 'pages/';

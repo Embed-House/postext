@@ -4,7 +4,7 @@
 
 import type { PostextConfig } from 'postext';
 import { isDefaultColorPalette } from 'postext';
-import { SETTINGS_GROUPS, SETTINGS_SECTIONS, type SettingsGroupId, type SettingsSectionEntry, type SettingsSectionId } from './registry';
+import { SETTINGS_GROUPS, SETTINGS_SECTIONS, type SettingsGroupId, type SettingsSectionEntry, type SettingsSectionId } from './registry.js';
 
 function hasKeys(v: unknown): boolean {
   return typeof v === 'object' && v !== null && Object.keys(v).length > 0;

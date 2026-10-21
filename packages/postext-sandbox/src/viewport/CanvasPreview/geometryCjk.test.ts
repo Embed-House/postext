@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { cjkCompositionOf, measureBlock, resolveCjkConfig, type VDTDocument } from 'postext';
-import { pixelToSourceOffset, segmentGraphemeStarts, xForPlainInLine } from './geometry';
+import { pixelToSourceOffset, segmentGraphemeStarts, xForPlainInLine } from './geometry.js';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTSegment = NonNullable<VDTBlock['lines'][number]['segments']>[number];

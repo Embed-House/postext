@@ -1,7 +1,7 @@
 import type { OrderedListNumberFormat } from 'postext';
 import { parseNumberFormat } from 'postext';
-import type { useSandboxLabels } from '../../../context/SandboxContext';
-import { arabicNumberFormatOptions, eastAsianNumberFormatOptions } from '../../settings/eastAsianOptions';
+import type { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { arabicNumberFormatOptions, eastAsianNumberFormatOptions } from '../../settings/eastAsianOptions.js';
 
 export function numberFormatOptions(labels: ReturnType<typeof useSandboxLabels>) {
   return [

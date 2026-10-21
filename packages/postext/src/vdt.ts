@@ -54,10 +54,10 @@ import type {
   FrameLookEntry,
   Dimension,
   PageMargins,
-} from './types';
-import type { NumeralStyle } from './numbering';
-import type { MathRender } from './math/types';
-import type { StoryJump } from './composed/carryTypes';
+} from './types.js';
+import type { NumeralStyle } from './numbering.js';
+import type { MathRender } from './math/types.js';
+import type { StoryJump } from './composed/carryTypes.js';
 
 // ---------------------------------------------------------------------------
 // Bounding box — all values in px, relative to page origin
@@ -426,7 +426,7 @@ export interface VDTLineSegment {
    *  box less its indent: `bbox.x` is that edge plus the line's indent).
    *  Read by outputs that cannot keep the stops exactly (the reflowable
    *  EPUB). */
-  tab?: { align: import('./types').TabStopAlign; at: number };
+  tab?: { align: import('./types.js').TabStopAlign; at: number };
   /** True when this segment is part of a caption's numbered label, so renderers
    *  paint it in the configured caption-label colour. */
   captionLabel?: boolean;
@@ -561,7 +561,7 @@ export interface VDTLineSegment {
    *  forms of Han text. Absent on every other segment, and on every segment
    *  of a face that draws them the same under any script. (The name
    *  `script` is taken by superscripts and subscripts.) */
-  scriptContext?: import('./measure/script').ScriptContext;
+  scriptContext?: import('./measure/script.js').ScriptContext;
   /** The run's UAX #9 embedding level, when it is more than 1 (a number or
    *  a Latin word inside an Arabic phrase inside an English paragraph) or a
    *  renderer needs it for tagging and `/ActualText`. Absent otherwise:

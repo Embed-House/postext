@@ -5,19 +5,19 @@
  * bar), stroked in the line's width.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { collectConfigWarnings } from '../../configWarnings';
-import { validatePageTemplates } from '../../composed/validate';
-import { figureLabelLeaderPath } from '../../composed/labels';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { renderPageToCanvas } from '../../index';
-import { colorWithOpacity, markerSvgElement, pathHit, pathInkBox, pathMarkerOutline } from '../../design/pathBlock';
-import { flowRectToPage, type VDTDesignPathBlock, type VDTPathCommand, type VDTPathMarker } from '../../vdt';
-import type { PageTemplate } from '../../composed/types';
-import type { DesignConnectorElement, PostextConfig, VDTBlock, VDTDocument, VDTPage } from '../../index';
-import { CONNECTOR_CONFIG, mm } from './fixtures/connectors';
-import { mapPartsFixture } from './fixtures/mapParts';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { figureLabelLeaderPath } from '../../composed/labels.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { renderPageToCanvas } from '../../index.js';
+import { colorWithOpacity, markerSvgElement, pathHit, pathInkBox, pathMarkerOutline } from '../../design/pathBlock.js';
+import { flowRectToPage, type VDTDesignPathBlock, type VDTPathCommand, type VDTPathMarker } from '../../vdt.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { DesignConnectorElement, PostextConfig, VDTBlock, VDTDocument, VDTPage } from '../../index.js';
+import { CONNECTOR_CONFIG, mm } from './fixtures/connectors.js';
+import { mapPartsFixture } from './fixtures/mapParts.js';
 
 class StubCtx {
   font = '';

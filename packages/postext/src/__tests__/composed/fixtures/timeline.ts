@@ -8,7 +8,7 @@
  * configuration, the content all in the Markdown. The strip is a flat
  * placeholder (`fixtures/timeline/tira-tiempo.png`).
  */
-import type { PostextConfig, Resource, ResourceType } from '../../../types';
+import type { PostextConfig, Resource, ResourceType } from '../../../types.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });

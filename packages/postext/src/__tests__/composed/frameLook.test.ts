@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolvePageTemplate } from '../../composed/templates';
-import { validatePageTemplates } from '../../composed/validate';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignTextBlock, VDTDocument, VDTFrame } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolvePageTemplate } from '../../composed/templates.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignTextBlock, VDTDocument, VDTFrame } from '../../index.js';
 
 // #976: a frame sets the colours of its callout style (and the tracking of
 // its body) for itself; a template or a page fence recolours a

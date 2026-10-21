@@ -2,8 +2,8 @@
 // lands, the balancing levers, the anatomy of a book and the Sandbox
 // interface. Same kit and unit system as the figures in `index.ts`.
 
-import { FS, P, PAGE_VW, SERIF_JA, SERIF_ZH, arabicDigits, bar, edge, text } from './svgKit';
-import { byLang, type GuideLang } from './lang';
+import { FS, P, PAGE_VW, SERIF_JA, SERIF_ZH, arabicDigits, bar, edge, text } from './svgKit.js';
+import { byLang, type GuideLang } from './lang.js';
 
 const NIGHT = '#15171c';
 const GILT = '#d8a21a';

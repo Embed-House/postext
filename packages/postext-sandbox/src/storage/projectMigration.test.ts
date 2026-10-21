@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolveHeadingsConfig, stripConfigDefaults } from 'postext';
 import type { HeadingBreakBeforeConfig, PostextConfig } from 'postext';
-import { PROJECT_RECORD_VERSION, migrateProjectRecord, normalizeBookContent, pinLegacyHeadingBreaks } from './projectMigration';
+import { PROJECT_RECORD_VERSION, migrateProjectRecord, normalizeBookContent, pinLegacyHeadingBreaks } from './projectMigration.js';
 
 let n = 0;
 const deps = { ids: () => `id${++n}`, untitled: (k: number) => `Chapter ${k}` };

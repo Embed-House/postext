@@ -10,12 +10,12 @@
  * in it.
  */
 
-import type { ContentBlock, ParseOptions } from '../parse';
-import type { CalloutStyleConfig, Dimension } from '../types';
-import type { ResolvedConfig } from '../vdt';
-import { dimensionToPx } from '../units';
-import { resolvedCodeStyle } from '../defaults/codeStyle';
-import { computeBaselineGrid } from './config';
+import type { ContentBlock, ParseOptions } from '../parse/index.js';
+import type { CalloutStyleConfig, Dimension } from '../types.js';
+import type { ResolvedConfig } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import { resolvedCodeStyle } from '../defaults/codeStyle.js';
+import { computeBaselineGrid } from './config.js';
 
 /** Style id of a listing's box. Not a user style: no configuration can
  *  name it. */

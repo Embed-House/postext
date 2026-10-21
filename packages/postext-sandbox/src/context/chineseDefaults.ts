@@ -36,7 +36,7 @@ import {
   resolveOrderedListsConfig,
   resolvePageConfig,
 } from 'postext';
-import { documentComicDirection, documentDirection } from './documentDirection';
+import { documentComicDirection, documentDirection } from './documentDirection.js';
 import {
   builtInTypes,
   canonicalJson,
@@ -55,7 +55,7 @@ import {
   type DefaultsMemory,
   type DefaultsStatus,
   type DefaultsUndo,
-} from './defaultsReview';
+} from './defaultsReview.js';
 
 /** One row of the review list, in the order the list shows them. */
 export type ChineseDefaultId =

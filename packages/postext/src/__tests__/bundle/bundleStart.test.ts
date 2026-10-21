@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { unzipSync, zipSync } from 'fflate';
-import { buildBundle, bundleStart, createBundle, isBundleManifest, openBundle, pickBundleStart } from '../../bundle';
-import type { BundleManifest, BundleStart } from '../../bundle';
-import { buildDocument, continuationAfter } from '../../pipeline';
-import type { DesignElement, LayoutContinuation, PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
+import { buildBundle, bundleStart, createBundle, isBundleManifest, openBundle, pickBundleStart } from '../../bundle/index.js';
+import type { BundleManifest, BundleStart } from '../../bundle/index.js';
+import { buildDocument, continuationAfter } from '../../pipeline/index.js';
+import type { DesignElement, LayoutContinuation, PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
 
 // #695: a bundle that holds part of a longer book says where it starts,
 // the `continuation` of its first chapter, so it lays out as the document

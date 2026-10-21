@@ -7,11 +7,11 @@ import fontkit from '@pdf-lib/fontkit';
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, decodePDFRawStream, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { FontCache } from '../fontCache';
-import { loadComplexShaper } from '../complexShaping';
-import { beginActualTextSpan, drawMeasuredTextPx, drawTextPx, endActualTextSpan, measuredTextShows, textShows, type PageCtx, type TextShow } from '../pdf-backend/primitives';
-import '../pdf-backend/shapedText';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { FontCache } from '../fontCache.js';
+import { loadComplexShaper } from '../complexShaping.js';
+import { beginActualTextSpan, drawMeasuredTextPx, drawTextPx, endActualTextSpan, measuredTextShows, textShows, type PageCtx, type TextShow } from '../pdf-backend/primitives.js';
+import '../pdf-backend/shapedText.js';
 
 // #755: a font's `/ToUnicode` map is one per font and a glyph keeps the
 // characters it was first given. A right-to-left run draws a bracket with

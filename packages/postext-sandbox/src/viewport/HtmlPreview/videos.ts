@@ -3,7 +3,7 @@
 // outside the pages: each with the resource it plays and its page.
 
 import type { VDTDocument } from 'postext';
-import type { PlayableVideo, PreviewVideo, PreviewVideoResult } from '../viewerVideos';
+import type { PlayableVideo, PreviewVideo, PreviewVideoResult } from '../viewerVideos.js';
 
 /** The players under `scroll`, the pages of `doc` rendered there. */
 export function htmlVideoPlayers(scroll: ParentNode, doc: VDTDocument): PlayableVideo<HTMLVideoElement>[] {

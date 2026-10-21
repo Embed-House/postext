@@ -10,18 +10,18 @@ import {
   sameContentLocale,
   stringsFor,
   stringsKeyOf,
-} from '../locale';
-import { defaultResourceTypes } from '../defaults/resourceTypes';
-import { defaultTableContinuationStrings } from '../defaults/tableStyle';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { stripConfigDefaults } from '../defaults';
-import { resolveAllConfig, resolvedLocale } from '../pipeline/config';
-import { expandIndexDirectives } from '../pipeline/indexDirective';
-import { buildDocument } from '../pipeline';
-import { parseMarkdown } from '../parse';
-import { renderToHtml } from '../html-backend';
-import type { OutlineEntry, PostextConfig, Resource } from '../types';
-import type { VDTDesignTextBlock, VDTDocument } from '../vdt';
+} from '../locale.js';
+import { defaultResourceTypes } from '../defaults/resourceTypes.js';
+import { defaultTableContinuationStrings } from '../defaults/tableStyle.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { resolveAllConfig, resolvedLocale } from '../pipeline/config.js';
+import { expandIndexDirectives } from '../pipeline/indexDirective.js';
+import { buildDocument } from '../pipeline/index.js';
+import { parseMarkdown } from '../parse/index.js';
+import { renderToHtml } from '../html-backend.js';
+import type { OutlineEntry, PostextConfig, Resource } from '../types.js';
+import type { VDTDesignTextBlock, VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -296,7 +296,7 @@ describe('lang in the output', () => {
       has: (t, k) => k in t || k === 'lang',
     });
     const canvas = { width: 0, height: 0, getContext: () => ctx } as unknown as HTMLCanvasElement;
-    return import('../canvas-backend').then(({ renderPageToCanvas }) => {
+    return import('../canvas-backend/index.js').then(({ renderPageToCanvas }) => {
       renderPageToCanvas(doc.pages[0]!, doc, canvas);
       return set;
     });

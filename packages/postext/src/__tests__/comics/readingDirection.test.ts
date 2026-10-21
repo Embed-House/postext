@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { resolveAllConfig } from '../../pipeline/config';
-import { comicReadingDirection, resolvedComics } from '../../defaults/comics';
-import { comicPageDirection } from '../../comics/layoutPage';
-import { comicsLocaleDirection } from '../../locale';
-import type { ComicsConfig, PostextConfig, Resource } from '../../types';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { comicReadingDirection, resolvedComics } from '../../defaults/comics.js';
+import { comicPageDirection } from '../../comics/layoutPage.js';
+import { comicsLocaleDirection } from '../../locale.js';
+import type { ComicsConfig, PostextConfig, Resource } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

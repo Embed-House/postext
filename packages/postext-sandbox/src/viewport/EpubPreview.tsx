@@ -2,8 +2,8 @@
 
 import { memo, type MutableRefObject } from 'react';
 import { BookOpen } from 'lucide-react';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { EpubReader, type EpubReaderHandle, type EpubReaderPosition } from './EpubReader';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { EpubReader, type EpubReaderHandle, type EpubReaderPosition } from './EpubReader.js';
 
 /** Where a generation stands: the chapters being laid out, the fonts,
  *  pictures and cover being gathered, then the writer's own phases. */

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { LabelStyle, Resource } from 'postext';
-import type { SandboxAction } from '../context/SandboxContext';
-import { applyLabelStyleRename } from './applyRename';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import { applyLabelStyleRename } from './applyRename.js';
 
 const STYLES: LabelStyle[] = [{ id: 'city' } as LabelStyle, { id: 'river' } as LabelStyle];
 const RESOURCES = [

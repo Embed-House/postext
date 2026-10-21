@@ -8,20 +8,20 @@ import {
   formatNumeral,
   headingCounterStart,
   parseNumberFormat,
-} from '../numbering';
-import { abjadNumeral, arabicLettering, asciiDigits, withDigits, ABJAD_LETTERS, HIJAI_LETTERS } from '../arabicNumerals';
-import { defaultNumeralsFor, resolveNumerals } from '../locale';
-import { formatListNumber } from '../pipeline/lists';
-import { parsePartNumber } from '../pipeline/parts';
-import { continuationAfter } from '../pipeline/continuation';
-import { resolveAllConfig } from '../pipeline/config';
-import { parseMarkdown, spaceDirectiveLines } from '../parse';
-import { buildDocument } from '../pipeline';
-import { createMeasurementCache } from '../measure';
-import { collectConfigWarnings } from '../configWarnings';
-import { stripConfigDefaults } from '../defaults';
-import type { NumeralsSetting, PostextConfig, Resource } from '../types';
-import type { VDTDocument } from '../vdt';
+} from '../numbering.js';
+import { abjadNumeral, arabicLettering, asciiDigits, withDigits, ABJAD_LETTERS, HIJAI_LETTERS } from '../arabicNumerals.js';
+import { defaultNumeralsFor, resolveNumerals } from '../locale.js';
+import { formatListNumber } from '../pipeline/lists.js';
+import { parsePartNumber } from '../pipeline/parts.js';
+import { continuationAfter } from '../pipeline/continuation.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { parseMarkdown, spaceDirectiveLines } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import type { NumeralsSetting, PostextConfig, Resource } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

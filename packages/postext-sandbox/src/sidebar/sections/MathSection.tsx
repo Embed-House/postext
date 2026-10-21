@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveMathConfig, DEFAULT_MATH_CONFIG, dimensionsEqual } from 'postext';
 import type { ColorValue, MathConfig, DimensionUnit } from 'postext';
 import {
@@ -10,7 +10,7 @@ import {
   DimensionInput,
   NumberInput,
   ToggleSwitch,
-} from '../../controls';
+} from '../../controls/index.js';
 
 const MARGIN_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 

@@ -5,8 +5,8 @@
 // the planner's call (`chapterLayoutIsCurrent`), so reopening a book shows
 // its pagination at once and only what changed is laid out again.
 
-import type { ChapterLayout } from '../book/types';
-import { LAYOUTS_STORE, hasIndexedDB, runInStore } from './blobStore';
+import type { ChapterLayout } from '../book/types.js';
+import { LAYOUTS_STORE, hasIndexedDB, runInStore } from './blobStore.js';
 
 /** The stored records of `chapterIds` (those that exist), by chapter id. */
 export async function getChapterLayouts(chapterIds: readonly string[]): Promise<Record<string, ChapterLayout>> {

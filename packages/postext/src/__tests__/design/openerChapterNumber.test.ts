@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { DesignElement, HeadingLevelConfig, PostextConfig } from '../../types';
-import type { VDTDesignTextBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import type { DesignElement, HeadingLevelConfig, PostextConfig } from '../../types.js';
+import type { VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
 
 // EF-59: `{chapterNumber}` in a heading design was measured with the
 // heading's own number prefix (empty without a numbering template) but

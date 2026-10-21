@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { renderBlock } from '../canvas-backend/blockRender';
-import { renderToHtml } from '../html-backend';
-import type { PostextConfig } from '../types';
-import type { VDTBlock } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import { renderToHtml } from '../html-backend.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock } from '../vdt.js';
 
 // EF-58: the number of a contents entry is text set beside the title, so it
 // sits on the title's baseline — in any face and size. It was painted as a

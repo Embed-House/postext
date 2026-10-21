@@ -6,9 +6,9 @@ import { execFileSync } from 'node:child_process';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { complexShaperReady, shapeRun } from '../complexShaping';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { complexShaperReady, shapeRun } from '../complexShaping.js';
 import { resolveParagraph } from 'postext';
 
 // Issue #377: a running head and a chip of a right-to-left document are

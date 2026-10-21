@@ -1,9 +1,9 @@
 'use client';
 
 import { Printer } from 'lucide-react';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { ToolbarButton } from '../viewport/CanvasToolbar';
-import { usePrintPreview } from './printPreviewToggle';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { ToolbarButton } from '../viewport/CanvasToolbar.js';
+import { usePrintPreview } from './printPreviewToggle.js';
 
 /** The print preview switch (#606), in the Canvas and Folio toolbars. */
 export function PrintPreviewButton() {

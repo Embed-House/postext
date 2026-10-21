@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { EMPTY_VIEW_HASH, isViewportTab, parseViewHash, pdfPageFragment, readViewHash, sameBook, viewHashFragment, writeViewHash } from './viewHash';
+import { EMPTY_VIEW_HASH, isViewportTab, parseViewHash, pdfPageFragment, readViewHash, sameBook, viewHashFragment, writeViewHash } from './viewHash.js';
 
 // Minimal window stand-in: the helpers only touch `location` and
 // `history.replaceState`.
@@ -159,7 +159,7 @@ describe('view hash', () => {
 
 describe('hashAsksRestore', () => {
   it('reads the homepage flag, which the fragment never writes back', async () => {
-    const { hashAsksRestore } = await import('./viewHash');
+    const { hashAsksRestore } = await import('./viewHash.js');
     const link = '#preset=deep-sky&lang=es&view=canvas&restore=ask';
     expect(hashAsksRestore(link)).toBe(true);
     expect(hashAsksRestore('#preset=deep-sky&lang=es')).toBe(false);
@@ -171,7 +171,7 @@ describe('hashAsksRestore', () => {
 
 describe('parseHashBundle / hashNamesOtherBook', () => {
   it('reads a host key with its id and lang', async () => {
-    const { parseHashBundle, hashBundleOrigin } = await import('./viewHash');
+    const { parseHashBundle, hashBundleOrigin } = await import('./viewHash.js');
     const ref = parseHashBundle('#recipe=magazine-feature-opener&lang=ES&view=pdf', ['recipe']);
     expect(ref).toEqual({ key: 'recipe', id: 'magazine-feature-opener', lang: 'es' });
     expect(hashBundleOrigin(ref!)).toBe('recipe:magazine-feature-opener:es');
@@ -188,7 +188,7 @@ describe('parseHashBundle / hashNamesOtherBook', () => {
   });
 
   it('boots straight into a linked book that is not the stored one', async () => {
-    const { hashNamesOtherBook } = await import('./viewHash');
+    const { hashNamesOtherBook } = await import('./viewHash.js');
     const stored = { projectId: null, presetId: 'guide', presetLocale: 'es' };
     expect(hashNamesOtherBook({ preset: null, project: null, lang: null }, stored, null)).toBe(false);
     expect(hashNamesOtherBook({ preset: 'guide', project: null, lang: 'es' }, stored, null)).toBe(false);

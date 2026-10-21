@@ -8,8 +8,8 @@ import type {
   ResolvedCaptionStyleConfig,
   TextAlign,
 } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { separatorFromOption, separatorOption, separatorOptions, type SeparatorChoice } from '../settings/eastAsianOptions';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { separatorFromOption, separatorOption, separatorOptions, type SeparatorChoice } from '../settings/eastAsianOptions.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -17,8 +17,8 @@ import {
   FontPicker,
   SelectInput,
   ToggleSwitch,
-} from '../../controls';
-import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
+} from '../../controls/index.js';
+import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em'];
 /** Between the label and the number: 图 1-1 or 图1-1. */

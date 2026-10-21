@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { validatePageTemplates } from '../../composed/validate';
-import { resolvePageTemplate } from '../../composed/templates';
-import { composedPages } from '../../composed/document';
-import { elementsForSource, findElement } from '../../composed/sourceMap';
-import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo';
-import { parseMarkdown } from '../../parse';
-import { flowRectToPage } from '../../vdt';
-import type { PageTemplate } from '../../composed/types';
-import type { ContentWarning, DesignConnectorElement, DesignElement, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { BOX_MODULE, boxModule, MODULE_CONFIG, MODULE_RESOURCES, TOPIC_TEMPLATE, TOPIC_WORDS, topicPage, TREE_MODULE, treeModule } from './fixtures/modules';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { resolvePageTemplate } from '../../composed/templates.js';
+import { composedPages } from '../../composed/document.js';
+import { elementsForSource, findElement } from '../../composed/sourceMap.js';
+import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { flowRectToPage } from '../../vdt.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, DesignConnectorElement, DesignElement, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { BOX_MODULE, boxModule, MODULE_CONFIG, MODULE_RESOURCES, TOPIC_TEMPLATE, TOPIC_WORDS, topicPage, TREE_MODULE, treeModule } from './fixtures/modules.js';
 
 // #1062 (DESIGN §12.7): module templates a page stacks in its modules
 // group, one per `:::module` block, their frames scoped by the instance.

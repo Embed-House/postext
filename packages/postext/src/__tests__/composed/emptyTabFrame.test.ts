@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { renderPageToCanvas } from '../../index';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignTextBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { renderPageToCanvas } from '../../index.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignTextBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
 
 // #1084: a `:::frame` fence with nothing in it, for a frame with a callout
 // style, draws the style's box (fill, border, the tab with its `label`) at

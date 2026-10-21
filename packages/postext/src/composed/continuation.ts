@@ -20,11 +20,11 @@
  *
  * Pure helpers: `build.ts` adds the pages, `composedLayout.ts` lays them.
  */
-import type { CalloutCut } from '../pipeline/frameLayout';
-import type { PlannedCallout } from '../pipeline/calloutLayout';
-import { nextFrameOf } from './geometry';
-import { continueInPage, continueInTemplate, repeatInstance } from './templates';
-import type { ComposedModuleUse, ResolvedFrame, ResolvedPageTemplate } from './types';
+import type { CalloutCut } from '../pipeline/frameLayout.js';
+import type { PlannedCallout } from '../pipeline/calloutLayout.js';
+import { nextFrameOf } from './geometry.js';
+import { continueInPage, continueInTemplate, repeatInstance } from './templates.js';
+import type { ComposedModuleUse, ResolvedFrame, ResolvedPageTemplate } from './types.js';
 
 /** How many pages, one after another, the content of one composed page may
  *  go on to: the generation of added pages after which what still does not

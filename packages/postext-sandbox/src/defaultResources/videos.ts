@@ -6,7 +6,7 @@
 // French, German and Italian since #843).
 
 import type { Resource, ResourcePlacement } from 'postext';
-import type { GuideLang } from './lang';
+import type { GuideLang } from './lang.js';
 
 /** The media CDN; each video lives under `<video>/<version>/<cut>/`. */
 export const GUIDE_MEDIA_BASE = 'https://postext-media.a2r-crew.workers.dev';
@@ -103,16 +103,16 @@ const SPECS: VideoSpec[] = [
 
 /** Each cut's posters, a chunk of their own. */
 const POSTERS: Record<(typeof CUT)[VideoLang], () => Promise<{ SHOWREEL_POSTER: string; TUTORIAL_POSTER: string }>> = {
-  en: () => import('./videoPosters/en'),
-  es: () => import('./videoPosters/es'),
-  zh: () => import('./videoPosters/zh'),
-  ca: () => import('./videoPosters/ca'),
-  ar: () => import('./videoPosters/ar'),
-  ja: () => import('./videoPosters/ja'),
-  pt: () => import('./videoPosters/pt'),
-  fr: () => import('./videoPosters/fr'),
-  de: () => import('./videoPosters/de'),
-  it: () => import('./videoPosters/it'),
+  en: () => import('./videoPosters/en.js'),
+  es: () => import('./videoPosters/es.js'),
+  zh: () => import('./videoPosters/zh.js'),
+  ca: () => import('./videoPosters/ca.js'),
+  ar: () => import('./videoPosters/ar.js'),
+  ja: () => import('./videoPosters/ja.js'),
+  pt: () => import('./videoPosters/pt.js'),
+  fr: () => import('./videoPosters/fr.js'),
+  de: () => import('./videoPosters/de.js'),
+  it: () => import('./videoPosters/it.js'),
 };
 
 /** The blob id of a video's poster in one edition. */

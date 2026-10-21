@@ -5,24 +5,24 @@
 // `pageNumbering`) is left to the caller, which knows how many pages the
 // preceding content produced and how its last page was numbered.
 
-import { hasAnchorRefs } from './crossRefs';
-import { extractFrontmatter } from '../frontmatter';
-import { parseMarkdownMemo } from '../parse';
-import type { ContentBlock } from '../parse';
-import { effectiveResourceTypes } from '../defaults';
-import { documentLocale } from '../defaults/resourceTypes';
-import type { HeadingCounters, LayoutContinuation, OutlineEntry, PartState, PostextConfig, PostextContent } from '../types';
-import { computeHeadingContext, computeResourceNumberingState } from './resourceNumbering';
-import { planParts } from './parts';
-import { resolveAllConfig } from './config';
-import { codeParseOptions } from './codeBlocks';
-import { headingIsNumbered } from './headingStyles';
-import { computeOutline, hasIndexDirective, hasTocDirective } from './outline';
-import { lastFootnoteNumber, numberFootnotes, splitFootnoteDefinitions } from './footnotes';
-import { numberStatements } from './statementNumbering';
-import { lastVerseLineNumber } from './lineNumbers';
-import { composedPages } from '../composed/document';
-import { isModuleTemplate, resolvePageTemplate } from '../composed/templates';
+import { hasAnchorRefs } from './crossRefs.js';
+import { extractFrontmatter } from '../frontmatter.js';
+import { parseMarkdownMemo } from '../parse/index.js';
+import type { ContentBlock } from '../parse/index.js';
+import { effectiveResourceTypes } from '../defaults/index.js';
+import { documentLocale } from '../defaults/resourceTypes.js';
+import type { HeadingCounters, LayoutContinuation, OutlineEntry, PartState, PostextConfig, PostextContent } from '../types.js';
+import { computeHeadingContext, computeResourceNumberingState } from './resourceNumbering.js';
+import { planParts } from './parts.js';
+import { resolveAllConfig } from './config.js';
+import { codeParseOptions } from './codeBlocks.js';
+import { headingIsNumbered } from './headingStyles.js';
+import { computeOutline, hasIndexDirective, hasTocDirective } from './outline.js';
+import { lastFootnoteNumber, numberFootnotes, splitFootnoteDefinitions } from './footnotes.js';
+import { numberStatements } from './statementNumbering.js';
+import { lastVerseLineNumber } from './lineNumbers.js';
+import { composedPages } from '../composed/document.js';
+import { isModuleTemplate, resolvePageTemplate } from '../composed/templates.js';
 
 const NO_HEADINGS: HeadingCounters = { h1: 0, h2: 0, h3: 0, h4: 0, h5: 0, h6: 0 };
 

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { renderToHtml } from '../../html-backend';
-import type { DesignElement, PostextConfig, Resource } from '../../types';
-import type { VDTDesignImageBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { DesignElement, PostextConfig, Resource } from '../../types.js';
+import type { VDTDesignImageBlock, VDTDocument } from '../../vdt.js';
 
 // A picture a design draws (a chapter plate, a cover picture) carries its
 // resource's alternative text into the VDT and the HTML (#213); a

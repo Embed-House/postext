@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown, parseDirectiveAttrs } from '../parse/blockParser';
-import { buildDocument } from '../pipeline';
-import { collectColumnGaps } from '../pipeline/columnBalancing';
-import type { PostextConfig } from '../types';
+import { parseMarkdown, parseDirectiveAttrs } from '../parse/blockParser.js';
+import { buildDocument } from '../pipeline/index.js';
+import { collectColumnGaps } from '../pipeline/columnBalancing.js';
+import type { PostextConfig } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

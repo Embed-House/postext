@@ -3,13 +3,13 @@
  * the QR code, placed on the body the layout gave the poster, plus what the
  * interactive outputs need to play it.
  */
-import type { Resource, VideoOverlayPosition } from '../types';
-import type { ResolvedConfig, VDTResourceVideo, VDTVideoPlayMark, VDTVideoQr } from '../vdt';
-import { createBoundingBox } from '../vdt';
-import { dimensionToPx } from '../units';
-import { resolveVideoPlayerOptions } from '../defaults/videoStyle';
-import { encodeQr } from '../video/qr';
-import { parseVideoUrl, resourceVideoFormat, resourceVideoLink, videoEmbedUrl, videoMimeType } from '../video/url';
+import type { Resource, VideoOverlayPosition } from '../types.js';
+import type { ResolvedConfig, VDTResourceVideo, VDTVideoPlayMark, VDTVideoQr } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import { resolveVideoPlayerOptions } from '../defaults/videoStyle.js';
+import { encodeQr } from '../video/qr.js';
+import { parseVideoUrl, resourceVideoFormat, resourceVideoLink, videoEmbedUrl, videoMimeType } from '../video/url.js';
 
 /** The play mark's share of the poster's shorter side, at most. */
 const PLAY_MARK_MAX_SHARE = 0.4;

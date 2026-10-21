@@ -1,5 +1,5 @@
 import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from 'postext';
-import { measureInLanguage } from '../../controls/measureLanguage';
+import { measureInLanguage } from '../../controls/measureLanguage.js';
 
 /**
  * Geometry and source mapping for design-band text that mirrors document

@@ -1,9 +1,9 @@
 // The panel the strictPlacement tests letter (#728), shared by the files
 // they are split in so the workers share the minute they take (#1118).
 
-import { letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import type { LetteringEnv, LetteringItem, LetteringPanel, Point, Rect } from '../types';
+import { letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import type { LetteringEnv, LetteringItem, LetteringPanel, Point, Rect } from '../types.js';
 
 export const rect = (x: number, y: number, width: number, height: number): Rect => ({ x, y, width, height });
 export const corners = (r: Rect): Point[] => [{ x: r.x, y: r.y }, { x: r.x + r.width, y: r.y }, { x: r.x + r.width, y: r.y + r.height }, { x: r.x, y: r.y + r.height }];

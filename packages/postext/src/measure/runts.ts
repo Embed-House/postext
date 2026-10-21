@@ -1,4 +1,4 @@
-import type { VDTLine } from '../vdt';
+import type { VDTLine } from '../vdt.js';
 
 /**
  * Whether a broken paragraph ends in a runt: a last line narrower than the

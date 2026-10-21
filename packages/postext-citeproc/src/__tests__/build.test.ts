@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle, buildDocument, createBundleLayoutCache, renderToHtml, type PostextConfig, type VDTDocument } from 'postext';
-import '../register';
+import '../register.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

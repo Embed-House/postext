@@ -17,15 +17,15 @@ import type {
   EpubSpineEntry,
   EpubWarning,
   RenderToEpubOptions,
-} from '../types';
-import { fontAssets, imageAssets, pageProgressionOf, remoteVideoItems, videoAssets } from '../shared/assets';
-import { videoScriptItem, VIDEO_SCRIPT_HREF, withVideoScript } from '../shared/videoScript';
-import { bookStylesheet, stylesheetOverrides, withPalette } from './css';
-import { xmlAttr, xmlText } from './inline';
-import type { FileModel, HeadingEntry } from './model';
-import { docLanguage, walkBook } from './walk';
-import { relativeHref, writeContentDocument } from './xhtml';
-import { isRtlLanguage, navStrings } from '../package/strings';
+} from '../types.js';
+import { fontAssets, imageAssets, pageProgressionOf, remoteVideoItems, videoAssets } from '../shared/assets.js';
+import { videoScriptItem, VIDEO_SCRIPT_HREF, withVideoScript } from '../shared/videoScript.js';
+import { bookStylesheet, stylesheetOverrides, withPalette } from './css.js';
+import { xmlAttr, xmlText } from './inline.js';
+import type { FileModel, HeadingEntry } from './model.js';
+import { docLanguage, walkBook } from './walk.js';
+import { relativeHref, writeContentDocument } from './xhtml.js';
+import { isRtlLanguage, navStrings } from '../package/strings.js';
 import { isJapaneseLanguage } from 'postext';
 
 export const STYLESHEET_HREF = 'styles/book.css';

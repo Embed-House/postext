@@ -7,11 +7,11 @@ import fontkit from '@pdf-lib/fontkit';
 import { PDFDocument, type PDFFont } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument, VDTLineSegment } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { loadComplexShaper, shapeRun } from '../complexShaping';
-import { shapeInCurrentLanguage, shapingKey, shapingScript, withShapingLanguage, withShapingScript } from '../shapingLanguage';
-import { textAdvancePx } from '../pdf-backend/primitives';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { loadComplexShaper, shapeRun } from '../complexShaping.js';
+import { shapeInCurrentLanguage, shapingKey, shapingScript, withShapingLanguage, withShapingScript } from '../shapingLanguage.js';
+import { textAdvancePx } from '../pdf-backend/primitives.js';
 
 // #725, in a Chinese face. Noto Serif SC draws its digits and its ellipsis
 // by script: proportional digits (0.55 em) and three dots on the baseline

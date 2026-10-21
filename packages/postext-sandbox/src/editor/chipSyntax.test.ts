@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EditorState } from '@codemirror/state';
 import { CompletionContext, type Completion } from '@codemirror/autocomplete';
-import { chipCompletionSource, chipRanges } from './chipSyntax';
+import { chipCompletionSource, chipRanges } from './chipSyntax.js';
 
 const complete = (doc: string, styles = [{ id: 'chip', name: 'Chip' }, { id: 'key', name: 'Key' }]) => {
   const state = EditorState.create({ doc });

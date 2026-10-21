@@ -6,7 +6,7 @@
  */
 
 import type { FrameConfig } from 'postext';
-import type { Handle, Rect } from './frameGeometry';
+import type { Handle, Rect } from './frameGeometry.js';
 
 export type FrameDragKind = 'move' | 'resize' | 'draw';
 

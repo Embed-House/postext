@@ -5,15 +5,15 @@
 // (spaces, hard hyphens, CJK under kinsoku), and any range of it written
 // back as design-text markup the layout reads (`inlineMarks`).
 
-import type { InlineDirection, InlineSpan } from '../../parse/types';
-import { cjkJoinBreaks } from '../../measure/cjk';
-import type { CjkLineBreakLevel } from '../../measure/cjkClasses';
-import { hasJoiningScript } from '../../bidi';
-import { isBreakingSpace } from '../../measure/spaces';
-import { languageOf } from '../../locale';
-import { buildFontString } from '../../measure';
-import { measureTextWidth } from '../../measure/canvas';
-import type { LetteringStyle, LetteringText } from './types';
+import type { InlineDirection, InlineSpan } from '../../parse/types.js';
+import { cjkJoinBreaks } from '../../measure/cjk.js';
+import type { CjkLineBreakLevel } from '../../measure/cjkClasses.js';
+import { hasJoiningScript } from '../../bidi.js';
+import { isBreakingSpace } from '../../measure/spaces.js';
+import { languageOf } from '../../locale.js';
+import { buildFontString } from '../../measure/index.js';
+import { measureTextWidth } from '../../measure/canvas.js';
+import type { LetteringStyle, LetteringText } from './types.js';
 
 /** How one character of the prepared text is set. */
 export interface CharStyle {

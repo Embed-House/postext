@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTDesignTextBlock, VDTDocument } from 'postext';
-import { bandLineBoxes, bandPlainToSource, bandSourceToPlain, bandTitleBlocks } from './bandTitle';
+import { bandLineBoxes, bandPlainToSource, bandSourceToPlain, bandTitleBlocks } from './bandTitle.js';
 
 const textBlock = (id: string, sourceStart?: number) => ({
   kind: 'text', id, bbox: { x: 0, y: 0, width: 10, height: 10 }, lines: [], fontString: '12px x', color: '#000',

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { validatePageTemplates } from '../../composed/validate';
-import { attrPlaceholderUses, attrPlaceholdersNeverSet, markdownAttributesSet } from '../../design/fenceCondition';
-import { parseMarkdown } from '../../parse';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig } from '../../types';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { attrPlaceholderUses, attrPlaceholdersNeverSet, markdownAttributesSet } from '../../design/fenceCondition.js';
+import { parseMarkdown } from '../../parse/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig } from '../../types.js';
 
 // #1152: an element of a variant whose parity is the other side's is never
 // drawn (a recto is an odd page, a verso an even one), and an {attr.x} no

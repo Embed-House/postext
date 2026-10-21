@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { PanelId } from '../types';
-import { openBookThenShowChapters } from './openBook';
+import type { PanelId } from '../types/index.js';
+import { openBookThenShowChapters } from './openBook.js';
 
 function harness(panel: PanelId | null = 'projects') {
   const calls: string[] = [];

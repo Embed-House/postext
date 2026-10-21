@@ -6,9 +6,9 @@
  */
 
 import { resolvePageTemplate, type PageTemplateSource, type VDTDocument } from 'postext';
-import { SVG_NS } from '../viewport/CanvasPreview/dom';
-import { idName, selectedElement, type PageSelection } from './pageSelection';
-import { frameDragNow, type FrameDrag } from './frameDrag';
+import { SVG_NS } from '../viewport/CanvasPreview/dom.js';
+import { idName, selectedElement, type PageSelection } from './pageSelection.js';
+import { frameDragNow, type FrameDrag } from './frameDrag.js';
 
 export interface PickedMark {
   rect: { x: number; y: number; width: number; height: number };

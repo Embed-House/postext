@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { arabicMarkNeeded, buildDocument, markerSetText, renderPageToCanvas, renderToHtml } from '../../index';
-import type { PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { arabicMarkNeeded, buildDocument, markerSetText, renderPageToCanvas, renderToHtml } from '../../index.js';
+import type { PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 // #664: the marker of a right-to-left list item reads in its item's
 // direction on the canvas, as it does in HTML: `1-` with its hyphen on the

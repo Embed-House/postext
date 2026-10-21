@@ -6,9 +6,9 @@
  * art (tagged PDF, HTML, EPUB). Pure functions over the VDT.
  */
 
-import type { ComicCastMember } from '../types';
-import type { VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTPoint } from '../vdt';
-import { translateComicPage } from './transform';
+import type { ComicCastMember } from '../types.js';
+import type { VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTPoint } from '../vdt.js';
+import { translateComicPage } from './transform.js';
 
 /** The affine matrix `[a, b, c, d, e, f]` (canvas order, page px, y down:
  *  x' = a·x + c·y + e, y' = b·x + d·y + f) a balloon is painted through:

@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveBodyTextConfig, resolveLineNumbersConfig, defaultLineNumbersRestart, DEFAULT_LINE_NUMBERS_CONFIG, dimensionsEqual } from 'postext';
 import type { DimensionUnit, LineNumbersConfig } from 'postext';
 import {
@@ -13,8 +13,8 @@ import {
   NumberInput,
   SelectInput,
   ToggleSwitch,
-} from '../../controls';
-import { listNumberFormatValue, numberFormatOptions } from './OrderedListsSection/numberFormat';
+} from '../../controls/index.js';
+import { listNumberFormatValue, numberFormatOptions } from './OrderedListsSection/numberFormat.js';
 
 const SIZE_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const GAP_UNITS: DimensionUnit[] = ['em', 'pt', 'mm'];

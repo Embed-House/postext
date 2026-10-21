@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { directDesignTextBlock, directedTextWidth, measuresRunsAsPainted } from '../../design/bidiText';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import { layoutSlotToVdt } from '../../pipeline/headerFooter';
-import { clearMeasurementCache } from '../../measure';
-import { setMeasureLanguage } from '../../measure/canvas';
-import { chipToken } from '../../measure/rich';
-import { createBoundingBox, type VDTDesignTextBlock, type VDTDesignTextLine, type VDTPage } from '../../vdt';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { DesignElement, DesignTextElement } from '../../types';
-import type { InlineSpan } from '../../parse/types';
+import { directDesignTextBlock, directedTextWidth, measuresRunsAsPainted } from '../../design/bidiText.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import { layoutSlotToVdt } from '../../pipeline/headerFooter.js';
+import { clearMeasurementCache } from '../../measure/index.js';
+import { setMeasureLanguage } from '../../measure/canvas.js';
+import { chipToken } from '../../measure/rich.js';
+import { createBoundingBox, type VDTDesignTextBlock, type VDTDesignTextLine, type VDTPage } from '../../vdt.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { DesignElement, DesignTextElement } from '../../types.js';
+import type { InlineSpan } from '../../parse/types.js';
 
 // #770, round 2: the runs of a design text (a running head, an opener, a
 // callout's title) and of a chip. A renderer paints a right-to-left run

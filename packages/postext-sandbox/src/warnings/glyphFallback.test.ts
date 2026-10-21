@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { buildDocument, forgetFontCoverage, registerFontCoverage } from 'postext';
 import type { PostextConfig } from 'postext';
-import { computeWarnings } from './compute';
-import { warningCategory } from './categories';
-import type { WarningPayload } from './types';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
+import { computeWarnings } from './compute.js';
+import { warningCategory } from './categories.js';
+import type { WarningPayload } from './types.js';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
 
 // #1105: the characters a face lacks, which another face drew (the
 // engine's `glyphFallback`), are listed under Fonts, once per face, and go

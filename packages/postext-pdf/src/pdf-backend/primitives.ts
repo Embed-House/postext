@@ -39,15 +39,15 @@ import {
   setLineCap,
   LineCapStyle,
 } from 'pdf-lib';
-import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors';
-import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode';
+import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors.js';
+import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode.js';
 import { graphemesOf, joinsLetters, scriptContextUntracked, textDots, type VDTTextDots, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type SwatchGeometry, type VDTChip } from 'postext';
-import type { PageTagger } from './tagging';
-import type { ResourceImageMap } from './renderResourceBlock';
-import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces';
-import { fileRuns, inRun, noteMissingGlyphs, wordRuns, type FileRun } from '../faceFiles';
-import { needsComplexShaping } from '../complexShaping';
-import { shapesAsCanvas, shapingKey, shapingLanguage, withShapingScript } from '../shapingLanguage';
+import type { PageTagger } from './tagging.js';
+import type { ResourceImageMap } from './renderResourceBlock.js';
+import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces.js';
+import { fileRuns, inRun, noteMissingGlyphs, wordRuns, type FileRun } from '../faceFiles.js';
+import { needsComplexShaping } from '../complexShaping.js';
+import { shapesAsCanvas, shapingKey, shapingLanguage, withShapingScript } from '../shapingLanguage.js';
 
 export interface PageCtx {
   page: PDFPage;

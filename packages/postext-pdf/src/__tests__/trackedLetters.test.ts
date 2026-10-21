@@ -2,8 +2,8 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
 import { PDFDocument, type PDFFont } from 'pdf-lib';
-import { shapeInCurrentLanguage, withDocumentLanguage } from '../shapingLanguage';
-import { letterTrackingTj, measuredTextShows, showTextShaped, textAdvancePx, textShows } from '../pdf-backend/primitives';
+import { shapeInCurrentLanguage, withDocumentLanguage } from '../shapingLanguage.js';
+import { letterTrackingTj, measuredTextShows, showTextShaped, textAdvancePx, textShows } from '../pdf-backend/primitives.js';
 
 // #770: the layout counts the tracking of a tracked word once a letter, and
 // `Tc` follows every glyph: a ligature, one glyph for two or three letters,

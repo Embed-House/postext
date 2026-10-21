@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { comicGeometry, pointInPolygon } from '../../comics/geometry';
-import { parseComicSplit } from '../../comics/split';
-import { comicPanelPadding, comicPageDirection, parseComicDimension } from '../../comics/layoutPage';
-import { resolveComicsConfig } from '../../defaults/comics';
-import { resolveAllConfig } from '../../pipeline/config';
+import { comicGeometry, pointInPolygon } from '../../comics/geometry.js';
+import { parseComicSplit } from '../../comics/split.js';
+import { comicPanelPadding, comicPageDirection, parseComicDimension } from '../../comics/layoutPage.js';
+import { resolveComicsConfig } from '../../defaults/comics.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
 
 const frame = { x: 100, y: 100, width: 1000, height: 1000 };
 const bleedBox = { x: 0, y: 0, width: 1200, height: 1200 };

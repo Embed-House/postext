@@ -34,21 +34,21 @@
  * measured from its own start side.
  */
 
-import type { ContentBlock, InlineSpan } from '../parse';
-import type { DirectiveAttrs } from '../parse/types';
-import type { ResolvedConfig, VDTLine, VDTLineSegment } from '../vdt';
-import { createBoundingBox } from '../vdt';
-import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from '../measure';
-import { measureRichBlock } from '../measure';
-import { cachedMeasureRichBlock } from '../measure/cache';
-import { pickSpanFont, textWidth } from '../measure/rich';
-import { normalSpaceWidthFor } from '../measure/canvas';
-import { lineBaselineOffset } from '../measure/vertical';
-import { sliceSpan } from '../parse/links';
-import { dimensionToPx } from '../units';
-import type { ResolvedVerseConfig } from '../types';
-import type { BlockStyle } from './styles';
-import { lengthAttr } from './verse';
+import type { ContentBlock, InlineSpan } from '../parse/index.js';
+import type { DirectiveAttrs } from '../parse/types.js';
+import type { ResolvedConfig, VDTLine, VDTLineSegment } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from '../measure/index.js';
+import { measureRichBlock } from '../measure/index.js';
+import { cachedMeasureRichBlock } from '../measure/cache.js';
+import { pickSpanFont, textWidth } from '../measure/rich.js';
+import { normalSpaceWidthFor } from '../measure/canvas.js';
+import { lineBaselineOffset } from '../measure/vertical.js';
+import { sliceSpan } from '../parse/links.js';
+import { dimensionToPx } from '../units.js';
+import type { ResolvedVerseConfig } from '../types.js';
+import type { BlockStyle } from './styles.js';
+import { lengthAttr } from './verse.js';
 
 /** Measure a line of verse on one line. */
 const ONE_LINE = 1e7;

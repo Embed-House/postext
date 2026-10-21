@@ -4,8 +4,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFNumber, PDFSt
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // EF-36: the words of a Markdown link carry its URL (`VDTLineSegment.href`)
 // and the PDF makes them a live link — one URI link annotation per run of

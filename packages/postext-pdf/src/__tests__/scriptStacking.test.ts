@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // EF-80: a subscript and a superscript that touch (`*T*~0~^2^`) are set one
 // over the other at the same x, the subscript 0.25 em down and the

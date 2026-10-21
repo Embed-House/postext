@@ -1,14 +1,14 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { cjkCompositionKey, cjkCompositionOf, setCjkComposition } from '../../measure/cjkPunctuation';
-import { resolveCjkConfig } from '../../defaults/cjk';
-import { stripConfigDefaults } from '../../defaults';
-import { setCjkLineBreak } from '../../measure/cjkClasses';
-import { buildDocument } from '../../pipeline';
-import type { MeasureBlockOptions } from '../../measure/types';
-import type { VDTLine } from '../../vdt';
-import type { PostextConfig } from '../../types';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { cjkCompositionKey, cjkCompositionOf, setCjkComposition } from '../../measure/cjkPunctuation.js';
+import { resolveCjkConfig } from '../../defaults/cjk.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { setCjkLineBreak } from '../../measure/cjkClasses.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { MeasureBlockOptions } from '../../measure/types.js';
+import type { VDTLine } from '../../vdt.js';
+import type { PostextConfig } from '../../types.js';
 
 // A paragraph does not end on a line holding one character, alone or with
 // the marks that may not open a line (孤字, clreq §7.2): the line above

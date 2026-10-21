@@ -7,8 +7,8 @@
  * grown.
  */
 
-import type { KPItem, KPOptions } from '../types';
-import { DEFAULT_CONSECUTIVE_HYPHEN_DEMERIT, DEFAULT_FITNESS_CLASS_DEMERIT } from '../constants';
+import type { KPItem, KPOptions } from '../types.js';
+import { DEFAULT_CONSECUTIVE_HYPHEN_DEMERIT, DEFAULT_FITNESS_CLASS_DEMERIT } from '../constants.js';
 
 /** What the module exports (`rust/crates/wasm/src/linebreak.rs`). */
 interface LineBreakExports {

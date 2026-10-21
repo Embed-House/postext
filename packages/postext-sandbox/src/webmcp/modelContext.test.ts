@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ToolError, imageResult, registerWebMcpTools, runTool, validateArgs, type JsonSchema, type PageToolRegistry, type WebMcpTool } from './modelContext';
+import { ToolError, imageResult, registerWebMcpTools, runTool, validateArgs, type JsonSchema, type PageToolRegistry, type WebMcpTool } from './modelContext.js';
 
 const schema: JsonSchema = {
   type: 'object',

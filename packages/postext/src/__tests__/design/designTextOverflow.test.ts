@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { layoutDesignSlot, type LayoutIssue, type ResolvedTextPrimitive } from '../../design/layout';
-import { defaultTextOverflow, resolveDesignSlot, stripDesignSlotDefaults, type DesignSlotKind } from '../../defaults/headerFooter';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { DesignElement, DesignTextElement, ResolvedDesignTextElement } from '../../types';
-import type { VDTPage } from '../../vdt';
+import { layoutDesignSlot, type LayoutIssue, type ResolvedTextPrimitive } from '../../design/layout.js';
+import { defaultTextOverflow, resolveDesignSlot, stripDesignSlotDefaults, type DesignSlotKind } from '../../defaults/headerFooter.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { DesignElement, DesignTextElement, ResolvedDesignTextElement } from '../../types.js';
+import type { VDTPage } from '../../vdt.js';
 
 // #628: a design text that sets no `overflow` takes its slot's default —
 // a heading or part title wraps, a running head, a folio and a contents

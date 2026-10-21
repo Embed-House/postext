@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../../vdt';
-import type { Dimension, LayoutType, PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
+import type { Dimension, LayoutType, PostextConfig } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character is 7px wide whatever the font.

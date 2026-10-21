@@ -1,6 +1,6 @@
-import type { ResolvedBodyTextConfig, OrderedListsConfig, OrderedListLevelConfig, ResolvedOrderedListsConfig, ResolvedOrderedListLevelConfig, OrderedListNumberFormat, OrderedListNumberAlign, OrderedListNumberWidth, ColorValue, Dimension } from '../types';
-import { dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared';
-import { parseNumberFormat, toOrderedListNumberFormat } from '../numbering';
+import type { ResolvedBodyTextConfig, OrderedListsConfig, OrderedListLevelConfig, ResolvedOrderedListsConfig, ResolvedOrderedListLevelConfig, OrderedListNumberFormat, OrderedListNumberAlign, OrderedListNumberWidth, ColorValue, Dimension } from '../types.js';
+import { dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared.js';
+import { parseNumberFormat, toOrderedListNumberFormat } from '../numbering.js';
 import {
   DEFAULT_LIST_BULLET_FONT_SIZE,
   DEFAULT_LIST_GAP,
@@ -11,7 +11,7 @@ import {
   DEFAULT_LIST_ITEM_SPACING,
   DEFAULT_LIST_SNAP_TOP_TO_GRID,
   DEFAULT_LIST_HANGING_INDENT,
-} from './lists-shared';
+} from './lists-shared.js';
 
 const DEFAULT_ORDERED_NUMBER_FORMAT: OrderedListNumberFormat = 'arabic';
 const DEFAULT_ORDERED_SEPARATOR = '.';

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { SIDE_COLUMN_MIN_SHARE } from '../../pipeline/config';
-import { collectConfigWarnings } from '../../configWarnings';
-import { createMeasurementCache } from '../../measure';
-import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/layout';
-import type { VDTDocument, VDTPage } from '../../vdt';
-import type { LayoutConfig, PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { SIDE_COLUMN_MIN_SHARE } from '../../pipeline/config.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/layout.js';
+import type { VDTDocument, VDTPage } from '../../vdt.js';
+import type { LayoutConfig, PostextConfig } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

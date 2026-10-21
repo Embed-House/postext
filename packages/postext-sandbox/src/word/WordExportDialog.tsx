@@ -3,12 +3,12 @@
 import { useId, useRef, useState } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { X } from 'lucide-react';
-import { useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import { downloadBytes } from '../storage/persistence';
-import { Button, IconButton, Select, announce, usePortalContainer, type SelectOption } from '../ui';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from '../ui/surface';
-import { loadLastTemplateId, useWordTemplates } from './sandboxImport';
-import { isolate } from './WordImportDialog';
+import { useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
+import { downloadBytes } from '../storage/persistence.js';
+import { Button, IconButton, Select, announce, usePortalContainer, type SelectOption } from '../ui/index.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from '../ui/surface.js';
+import { loadLastTemplateId, useWordTemplates } from './sandboxImport.js';
+import { isolate } from './WordImportDialog.js';
 import { emptyTemplate, postextToDocx } from 'postext/word';
 
 type Scope = 'chapter' | 'book';

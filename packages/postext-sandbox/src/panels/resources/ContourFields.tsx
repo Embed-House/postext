@@ -1,8 +1,8 @@
 'use client';
 
 import { contourRowsOf, DEFAULT_CONTOUR_THRESHOLD, type Dimension, type Resource, type ResourceContour } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { DimensionInput, NumberInput, ToggleSwitch } from '../../controls';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { DimensionInput, NumberInput, ToggleSwitch } from '../../controls/index.js';
 
 const hintStyle = { color: 'var(--slate)', fontSize: 11, lineHeight: '14px' } as const;
 

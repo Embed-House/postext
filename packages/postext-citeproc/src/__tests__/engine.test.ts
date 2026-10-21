@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { CslItem } from 'postext';
-import { type BibtexIssue, createCiteprocEngine, LOCALES, parseBibtex, pickLocale, STYLES, STYLE_CATALOG } from '../index';
-import { LOCALE_TAGS } from '../catalog';
+import { type BibtexIssue, createCiteprocEngine, LOCALES, parseBibtex, pickLocale, STYLES, STYLE_CATALOG } from '../index.js';
+import { LOCALE_TAGS } from '../catalog.js';
 
 const engine = createCiteprocEngine({ styles: STYLES, locales: LOCALES });
 

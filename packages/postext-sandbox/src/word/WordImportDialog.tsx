@@ -4,10 +4,10 @@ import { useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
 import { AlertTriangle, CheckCircle2, ChevronRight, Download, Info, Save, Trash2, Upload, X } from 'lucide-react';
 import { defaultResourceTypes } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import { downloadBytes } from '../storage/persistence';
-import { Button, Collapsible, ConfirmPopover, IconButton, Select, Switch, announce, usePortalContainer, type SelectOption } from '../ui';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from '../ui/surface';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
+import { downloadBytes } from '../storage/persistence.js';
+import { Button, Collapsible, ConfirmPopover, IconButton, Select, Switch, announce, usePortalContainer, type SelectOption } from '../ui/index.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from '../ui/surface.js';
 import {
   FINDING_LABEL,
   convertWordDocument,
@@ -23,7 +23,7 @@ import {
   wordImportActions,
   wordTrackingPlan,
   type WordDestination,
-} from './sandboxImport';
+} from './sandboxImport.js';
 import {
   analyzeDocx,
   calloutStylesOf,
@@ -43,7 +43,7 @@ import {
   type QualityReport,
   type WordDocument,
 } from 'postext/word';
-import type { SandboxLabels } from '../types';
+import type { SandboxLabels } from '../types/index.js';
 
 export interface WordImportFile {
   name: string;

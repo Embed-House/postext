@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripBodyTextDefaults } from '../../defaults';
-import { CONFIG_VERSION, migrateConfig, pinLegacyBoxParagraphStyles } from '../../bundle';
-import type { VDTBlock, VDTDocument } from '../../vdt';
-import type { PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripBodyTextDefaults } from '../../defaults/index.js';
+import { CONFIG_VERSION, migrateConfig, pinLegacyBoxParagraphStyles } from '../../bundle/index.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
+import type { PostextConfig } from '../../types.js';
 
 // #1119: a paragraph style inside a box takes the box's body for the type
 // fields it leaves unset; a configuration stored before rules 17 keeps the

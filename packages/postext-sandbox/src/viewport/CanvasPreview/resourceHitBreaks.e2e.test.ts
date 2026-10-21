@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, mapInlineSnippet } from 'postext';
 import type { PostextConfig, Resource, VDTDocument } from 'postext';
-import { resourceBlocksOnPage } from './geometry';
-import { resolveResourceRun, resourceTextAtPixel, xForPlainInResourceLine } from './resourceHit';
+import { resourceBlocksOnPage } from './geometry.js';
+import { resolveResourceRun, resourceTextAtPixel, xForPlainInResourceLine } from './resourceHit.js';
 
 // EF-95: a caption or a note broken with `\\` (or a backslash ending a line)
 // still maps every painted glyph back to its own char of the snippet, so

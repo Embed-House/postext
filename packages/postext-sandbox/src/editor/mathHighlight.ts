@@ -2,7 +2,7 @@
 
 import { ViewPlugin, Decoration, EditorView, type DecorationSet, type ViewUpdate } from '@codemirror/view';
 import { Prec, RangeSetBuilder } from '@codemirror/state';
-import { inFencedCode } from './codeFences';
+import { inFencedCode } from './codeFences.js';
 
 const displayMark = Decoration.mark({ class: 'cm-math-display' });
 const inlineMark = Decoration.mark({ class: 'cm-math-inline' });

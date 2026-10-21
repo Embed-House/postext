@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { buildReflowablePublication } from '.';
+import { buildReflowablePublication } from './index.js';
 import { buildBundle } from 'postext';
-import '../__tests__/sampleBook';
+import '../__tests__/sampleBook.js';
 
 // #703: letter-spacing never changes the glyphs. A reading system turns
 // the common ligatures off where the letter-spacing is not zero; the

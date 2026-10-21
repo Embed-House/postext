@@ -3,9 +3,9 @@
 import type { ReactNode } from 'react';
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from './cn';
-import { usePortalContainer } from './portal';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from './surface';
+import { cn } from './cn.js';
+import { usePortalContainer } from './portal.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from './surface.js';
 
 export interface SelectOption<T extends string = string> {
   value: T;

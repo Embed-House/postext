@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLineSegment } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLineSegment } from '../../vdt.js';
 
 // #427: in Japanese text the CJK composer carries the language an inline
 // isolate names (`:ltr[…]{lang=zh}`) to the segments of its text, never

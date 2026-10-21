@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseInlineFormatting } from '../parse/inlineFormatting';
+import { parseInlineFormatting } from '../parse/inlineFormatting.js';
 import {
   measureRichBlock,
   scriptMetrics,
@@ -7,18 +7,18 @@ import {
   SUBSCRIPT_SHIFT_RATIO,
   STACKED_SUBSCRIPT_SHIFT_RATIO,
   SUPERSCRIPT_SHIFT_RATIO,
-} from '../measure/rich';
-import { layoutDesignSlot, type ResolvedTextPrimitive } from '../design/layout';
-import { resolveDesignSlot } from '../defaults/headerFooter';
-import { buildDocument } from '../pipeline';
-import { raggedLooseLines } from '../pipeline/raggedLines';
-import { trackSegments } from '../knuthPlass/tracking';
-import { renderBlock } from '../canvas-backend/blockRender';
-import { renderHeaderFooterSlot } from '../canvas-backend/headerFooter';
-import { renderToHtmlIndexed } from '../html-backend';
-import type { DesignPlaceholderContext } from '../design/placeholders';
-import type { DesignElement, PostextConfig } from '../types';
-import type { VDTBlock, VDTLine, VDTLineSegment, VDTPage } from '../vdt';
+} from '../measure/rich.js';
+import { layoutDesignSlot, type ResolvedTextPrimitive } from '../design/layout.js';
+import { resolveDesignSlot } from '../defaults/headerFooter.js';
+import { buildDocument } from '../pipeline/index.js';
+import { raggedLooseLines } from '../pipeline/raggedLines.js';
+import { trackSegments } from '../knuthPlass/tracking.js';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import { renderHeaderFooterSlot } from '../canvas-backend/headerFooter.js';
+import { renderToHtmlIndexed } from '../html-backend.js';
+import type { DesignPlaceholderContext } from '../design/placeholders.js';
+import type { DesignElement, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTLine, VDTLineSegment, VDTPage } from '../vdt.js';
 
 // EF-80: a subscript used to drop as far as a superscript rises (a third of
 // the text size), so it hung below the descenders, and a superscript right

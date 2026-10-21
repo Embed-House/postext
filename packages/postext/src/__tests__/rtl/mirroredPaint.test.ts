@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index';
-import type { PostextConfig, VDTDocument } from '../../index';
+import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
 
 // Issue #370: renderers paint a right-to-left page's flow through its
 // mirror and turn every text run and picture back about its own box.

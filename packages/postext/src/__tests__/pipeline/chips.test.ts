@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { layoutResourceBlock } from '../../pipeline/resourceLayout';
-import { resolveAllConfig } from '../../pipeline/config';
-import { resolveChipSpans, chipContextOf } from '../../pipeline/chips';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { resolveChipStylesConfig, stripChipStylesDefaults, pickChipStyle } from '../../defaults/chipStyles';
-import { stripConfigDefaults } from '../../defaults';
-import { parseMarkdownWithIssues } from '../../parse';
-import { parseInlineSnippetSpans } from '../../parse/inlineSnippet';
-import { CHIP_PLACEHOLDER } from '../../parse/inlineFormatting';
-import { measureRichBlock, cachedMeasureRichBlock, createMeasurementCache } from '../../measure';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTLineSegment } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { layoutResourceBlock } from '../../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { resolveChipSpans, chipContextOf } from '../../pipeline/chips.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { resolveChipStylesConfig, stripChipStylesDefaults, pickChipStyle } from '../../defaults/chipStyles.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { parseMarkdownWithIssues } from '../../parse/index.js';
+import { parseInlineSnippetSpans } from '../../parse/inlineSnippet.js';
+import { CHIP_PLACEHOLDER } from '../../parse/inlineFormatting.js';
+import { measureRichBlock, cachedMeasureRichBlock, createMeasurementCache } from '../../measure/index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTLineSegment } from '../../index.js';
 
 // Deterministic measurement that scales with the font size: every glyph is
 // half an em wide (no DOM in the node test env).

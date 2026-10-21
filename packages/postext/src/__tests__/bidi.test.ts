@@ -20,8 +20,8 @@ import {
   spanIsolates,
   visualOrder,
   type BidiClass,
-} from '../bidi';
-import { parseInlineFormatting } from '../parse/inlineFormatting';
+} from '../bidi.js';
+import { parseInlineFormatting } from '../parse/inlineFormatting.js';
 
 // The conformance files of the Unicode Character Database. The fixtures are
 // deterministic subsets written by scripts/gen-bidi-data.mjs (the full files

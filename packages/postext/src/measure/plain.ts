@@ -1,37 +1,37 @@
-import { FORCED_BREAK } from './hardBreaks';
+import { FORCED_BREAK } from './hardBreaks.js';
 import {
   layoutNextLine,
   type PreparedTextWithSegments,
   type LayoutCursor,
 } from '@chenglou/pretext';
-import type { VDTLine, VDTLineSegment } from '../vdt';
-import { createBoundingBox } from '../vdt';
-import type { TextAlign } from '../types';
-import { hyphenateText, hyphenateTextKeepingCompounds, withoutEdgeSoftHyphens } from '../hyphenate';
+import type { VDTLine, VDTLineSegment } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import type { TextAlign } from '../types.js';
+import { hyphenateText, hyphenateTextKeepingCompounds, withoutEdgeSoftHyphens } from '../hyphenate.js';
 import {
   pretextSegmentsToItems,
   computeBreakpoints,
   reconstructPretextLines,
-} from '../knuthPlass';
-import { SOFT_HYPHEN } from './types';
-import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate';
-import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, maxLineIndent, maxLineInset, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types';
-import { cleanSoftHyphens, getMeasureLanguage, measureTextWidth, normalSpaceWidthFor } from './canvas';
-import { isRuntLastLine } from './runts';
-import { justifiedSpaceRatios } from './spaceRatios';
-import { measureRichBlock } from './rich';
-import { hasCJK, hasCJKRun } from './cjk';
-import { composesAsCjk, composesDashRow } from './cjkCompose';
-import { markCuts } from './markCuts';
-import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measuringVertically, withMeasureWritingMode } from './vertical';
-import { holdsVerticalCell } from '../writingMode';
-import { WORDS_AND_SPACES_RE, isBreakingSpaceRun } from './spaces';
-import { breaksAfterHardHyphen, hasCompound, raggedStretchPx } from './breakRules';
-import { joiningScriptIn } from './joining';
-import { getMeasureDirection } from './bidiLines';
-import { needsBidi } from '../bidi';
-import { faceReadsScript, getMeasureScriptContext, isLetterless, wordPieceScript } from './script';
-import { prepareInLanguage } from './pretextLanguage';
+} from '../knuthPlass/index.js';
+import { SOFT_HYPHEN } from './types.js';
+import { GEMINATE_DOT, endsInsideGeminate, withLineEndHyphen } from './geminate.js';
+import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, maxLineIndent, maxLineInset, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types.js';
+import { cleanSoftHyphens, getMeasureLanguage, measureTextWidth, normalSpaceWidthFor } from './canvas.js';
+import { isRuntLastLine } from './runts.js';
+import { justifiedSpaceRatios } from './spaceRatios.js';
+import { measureRichBlock } from './rich.js';
+import { hasCJK, hasCJKRun } from './cjk.js';
+import { composesAsCjk, composesDashRow } from './cjkCompose.js';
+import { markCuts } from './markCuts.js';
+import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, measuringVertically, withMeasureWritingMode } from './vertical.js';
+import { holdsVerticalCell } from '../writingMode.js';
+import { WORDS_AND_SPACES_RE, isBreakingSpaceRun } from './spaces.js';
+import { breaksAfterHardHyphen, hasCompound, raggedStretchPx } from './breakRules.js';
+import { joiningScriptIn } from './joining.js';
+import { getMeasureDirection } from './bidiLines.js';
+import { needsBidi } from '../bidi.js';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, wordPieceScript } from './script.js';
+import { prepareInLanguage } from './pretextLanguage.js';
 
 /** Whether a word of `text` (between breaking spaces) has no letter. */
 function holdsLetterlessWord(text: string): boolean {

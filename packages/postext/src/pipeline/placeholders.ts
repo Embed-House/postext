@@ -1,10 +1,10 @@
-import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, charBefore, withoutChips, charFrom, flattenTitleBreaks, joinsWide, plainTitleBreak, plainTitleBreaks, replaceTitleBreaks } from '../parse/inlineFormatting';
-import { collapseBreakingSpaces, collapseTitleSpaces } from '../measure/spaces';
-import type { InlineSpan } from '../parse';
-import type { DigitSystem, DocumentMetadata } from '../types';
-import { metadataText } from '../frontmatter';
-import { withDigits } from '../arabicNumerals';
-import type { VDTBlock, VDTLine, VDTPage } from '../vdt';
+import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, charBefore, withoutChips, charFrom, flattenTitleBreaks, joinsWide, plainTitleBreak, plainTitleBreaks, replaceTitleBreaks } from '../parse/inlineFormatting.js';
+import { collapseBreakingSpaces, collapseTitleSpaces } from '../measure/spaces.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { DigitSystem, DocumentMetadata } from '../types.js';
+import { metadataText } from '../frontmatter.js';
+import { withDigits } from '../arabicNumerals.js';
+import type { VDTBlock, VDTLine, VDTPage } from '../vdt.js';
 
 /** A minimal view of a page used by `computeChapterTitles` to detect
  *  blank parity-padding pages. We accept just the flags rather than the

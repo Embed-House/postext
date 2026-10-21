@@ -2,12 +2,12 @@
 
 import { useId, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { FieldGroup } from '../../../controls';
-import { Button, IconButton, Select } from '../../../ui';
-import { pointersOf, removePointer, setPointer } from '../../../templates/pointerEdits';
-import { anchorsOfTemplateFrame } from '../../../viewport/composed/labelAnchorGeometry';
-import { usePageTemplates } from './model';
+import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { FieldGroup } from '../../../controls/index.js';
+import { Button, IconButton, Select } from '../../../ui/index.js';
+import { pointersOf, removePointer, setPointer } from '../../../templates/pointerEdits.js';
+import { anchorsOfTemplateFrame } from '../../../viewport/composed/labelAnchorGeometry.js';
+import { usePageTemplates } from './model.js';
 
 /**
  * The pointers of a frame (#1064): lines from the frame (a note) to an

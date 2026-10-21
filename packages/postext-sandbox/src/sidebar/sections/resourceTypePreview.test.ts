@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ResourceType } from 'postext';
-import { renderResourceTypePreview, resourceCounterFormat } from './resourceTypePreview';
+import { renderResourceTypePreview, resourceCounterFormat } from './resourceTypePreview.js';
 
 const plate = (counterFormat: string): ResourceType => ({
   id: 'plate',

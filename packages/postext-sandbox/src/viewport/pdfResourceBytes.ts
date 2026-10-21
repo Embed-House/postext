@@ -10,7 +10,7 @@
 
 import type { PostextConfig, Resource } from 'postext';
 import { resolveDiagramStyleConfig } from 'postext';
-import { getBlob } from '../storage/blobStore';
+import { getBlob } from '../storage/blobStore.js';
 
 /** Pull every image-bearing resource's bytes from the blob store. Missing
  *  entries are simply absent — the PDF renderer falls back to a placeholder

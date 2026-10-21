@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { onSettingsSwitchesRequest, reportSettingsChangedOnly, type SettingsPanelSwitches } from '../../context/settingsNavigation';
-import type { ViewportTab } from '../../types';
+import { onSettingsSwitchesRequest, reportSettingsChangedOnly, type SettingsPanelSwitches } from '../../context/settingsNavigation.js';
+import type { ViewportTab } from '../../types/index.js';
 import {
   latestControls,
   registerViewerControls,
@@ -8,16 +8,16 @@ import {
   type ViewerControls,
   type ViewerStatus,
   type ViewerVideoTarget,
-} from '../../viewport/viewerControls';
-import { pickVideo, type PlayableVideo } from '../../viewport/viewerVideos';
-import { runTool } from '../modelContext';
-import { editModeNow, resetEditMode } from '../../editing/editMode';
-import { fitMarksChoiceNow, resetFitMarksView, setFitMarksChoice } from '../../viewport/composed/fitMarksView';
-import { sourcePlace } from '../pagePoint';
-import { compactStatus } from '../viewerStatus';
-import { chapter, harness } from './testHarness';
-import { contentsEntry } from './view';
-import { viewerCommandTools } from './viewerCommands';
+} from '../../viewport/viewerControls.js';
+import { pickVideo, type PlayableVideo } from '../../viewport/viewerVideos.js';
+import { runTool } from '../modelContext.js';
+import { editModeNow, resetEditMode } from '../../editing/editMode.js';
+import { fitMarksChoiceNow, resetFitMarksView, setFitMarksChoice } from '../../viewport/composed/fitMarksView.js';
+import { sourcePlace } from '../pagePoint.js';
+import { compactStatus } from '../viewerStatus.js';
+import { chapter, harness } from './testHarness.js';
+import { contentsEntry } from './view.js';
+import { viewerCommandTools } from './viewerCommands.js';
 
 const cleanups: (() => void)[] = [];
 afterEach(() => {

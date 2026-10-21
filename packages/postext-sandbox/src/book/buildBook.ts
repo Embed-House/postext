@@ -6,12 +6,12 @@
  */
 import { resolveJumpMarks } from 'postext';
 import type { LayoutContinuation, NumeralStyle, PostextConfig, PostextContent, Resource, StoryJump, VDTDocument } from 'postext';
-import { composeBookMemo } from './compose';
-import { layoutCacheKey, stableStringify } from './layoutKeys';
-import { chapterLayoutFromDoc } from './pagination';
-import type { StitchedChapter } from './stitch';
-import type { BookPlan, Chapter, ChapterLayout, ComposedBook } from './types';
-import { jumpsKeyOf, planContent, routeJumps } from './jumps';
+import { composeBookMemo } from './compose.js';
+import { layoutCacheKey, stableStringify } from './layoutKeys.js';
+import { chapterLayoutFromDoc } from './pagination.js';
+import type { StitchedChapter } from './stitch.js';
+import type { BookPlan, Chapter, ChapterLayout, ComposedBook } from './types.js';
+import { jumpsKeyOf, planContent, routeJumps } from './jumps.js';
 
 /** One chapter's document as last built, with the key of everything it
  *  was built from (a hit spares the worker). */

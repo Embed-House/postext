@@ -17,7 +17,7 @@ export type {
   PresetSource,
   PresetSourceSpec,
   PresetSummary,
-} from './types';
+} from './types.js';
 export {
   extensionForResource,
   fontsToCustomFonts,
@@ -30,17 +30,17 @@ export {
   presetFileId,
   presetFontFileId,
   resourceFromSpec,
-} from './manifest';
-export { BUILTIN_PRESET_ID, BUILTIN_PRESET_LOCALES, GUIDE_SAMPLE_DOCUMENTS, createPostextGuidePreset, isPristineArabicGuide, isPristineChineseGuide, isPristineJapaneseGuide, pristineGuideFollowsViewer } from './builtin';
-export { buildBundleFiles, parseBundle, planBundle, presetIdScheme, MARKDOWN_FILE } from './bundle';
-export type { BundleContent, BundleFileReader, BundleIdScheme, BundleMeta, BundlePlan, BuiltBundle } from './bundle';
-export { openBundleZip, zipBundle, POSTEXT_EXTENSION, POSTEXT_MIME } from './zip';
-export type { OpenedBundleZip } from './zip';
-export { createRemotePreset, fetchPresetIndex } from './remote';
-export { findDefaultPrivatePreset, listPresets } from './registry';
-export { applyPreset } from './apply';
-export { hashChapters, hashConfig, hashMarkdown, hashResources, hashString, isDocumentUntouched, rekeyMigratedConfig } from './hash';
-export type { DocumentHashSource } from './hash';
-export { decidePresetUpdate } from './watch';
-export type { PresetUpdateDecision } from './watch';
-export { hidePresetId, unhidePresetId, isPresetHideable, partitionPresets } from './hidden';
+} from './manifest.js';
+export { BUILTIN_PRESET_ID, BUILTIN_PRESET_LOCALES, GUIDE_SAMPLE_DOCUMENTS, createPostextGuidePreset, isPristineArabicGuide, isPristineChineseGuide, isPristineJapaneseGuide, pristineGuideFollowsViewer } from './builtin.js';
+export { buildBundleFiles, parseBundle, planBundle, presetIdScheme, MARKDOWN_FILE } from './bundle.js';
+export type { BundleContent, BundleFileReader, BundleIdScheme, BundleMeta, BundlePlan, BuiltBundle } from './bundle.js';
+export { openBundleZip, zipBundle, POSTEXT_EXTENSION, POSTEXT_MIME } from './zip.js';
+export type { OpenedBundleZip } from './zip.js';
+export { createRemotePreset, fetchPresetIndex } from './remote.js';
+export { findDefaultPrivatePreset, listPresets } from './registry.js';
+export { applyPreset } from './apply.js';
+export { hashChapters, hashConfig, hashMarkdown, hashResources, hashString, isDocumentUntouched, rekeyMigratedConfig } from './hash.js';
+export type { DocumentHashSource } from './hash.js';
+export { decidePresetUpdate } from './watch.js';
+export type { PresetUpdateDecision } from './watch.js';
+export { hidePresetId, unhidePresetId, isPresetHideable, partitionPresets } from './hidden.js';

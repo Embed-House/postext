@@ -9,7 +9,7 @@ import {
   needsComplexShaping,
   shapeRun,
   type ShapedGlyph,
-} from '../complexShaping';
+} from '../complexShaping.js';
 import { lineRuns, resolveParagraph } from 'postext';
 
 // Amiri and Noto Naskh Arabic cut to the test sentences (OFL, see

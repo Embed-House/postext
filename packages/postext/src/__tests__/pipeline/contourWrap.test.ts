@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { zlibSync } from 'fflate';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { exclusionInsets } from '../../pipeline/calloutLayout';
-import { lineInsetsAt } from '../../measure/types';
-import { formatWarning } from '../../pipeline/contentWarnings';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { exclusionInsets } from '../../pipeline/calloutLayout.js';
+import { lineInsetsAt } from '../../measure/types.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
 import {
   contourInsetSteps,
   contourOnPage,
@@ -15,12 +15,12 @@ import {
   traceAlpha,
   traceResourceContour,
   withContourTrace,
-} from '../../contour';
-import { traceBundleContours, planBundle } from '../../bundle/codec';
-import { normalizeFrame } from '../../composed/templates';
-import { validatePageTemplates } from '../../composed/validate';
-import type { PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, Resource, VDTBlock, VDTDocument, VDTExclusionContour, VDTLine } from '../../index';
+} from '../../contour/index.js';
+import { traceBundleContours, planBundle } from '../../bundle/codec.js';
+import { normalizeFrame } from '../../composed/templates.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, Resource, VDTBlock, VDTDocument, VDTExclusionContour, VDTLine } from '../../index.js';
 
 // #883: text that runs round the real shape of a picture (`wrap:
 // 'contour'`): a polygon or the alpha channel of a bitmap.

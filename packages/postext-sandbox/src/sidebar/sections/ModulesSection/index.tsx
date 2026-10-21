@@ -3,17 +3,17 @@
 import { memo, useMemo, useState } from 'react';
 import { PackagePlus, PenLine, Plus, X } from 'lucide-react';
 import { resolvePageTemplate } from 'postext';
-import type { SandboxLabels } from '../../../types/labels';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { CollapsibleSection, SelectInput } from '../../../controls';
-import { Button, IconButton } from '../../../ui';
-import { applyTemplateRewrite, bookChapters } from '../../../templates/applyTemplateRewrite';
-import { chapterPages, createModule, moduleTemplates, moduleUsage, pageAtOffset, planInsertModule, renameModuleChanges, type ModuleUsage } from '../../../templates/moduleEdits';
-import { templateSheet } from '../../../templates/templateSheet';
-import { applyViewerEdit } from '../../../editor/viewerEdits';
-import { TemplateSheetSvg } from '../PageTemplatesSection/TemplateSheetSvg';
-import { TemplateEditor } from '../PageTemplatesSection';
-import { moduleWidthText } from '../PageTemplatesSection/ModuleWidthField';
+import type { SandboxLabels } from '../../../types/labels.js';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { CollapsibleSection, SelectInput } from '../../../controls/index.js';
+import { Button, IconButton } from '../../../ui/index.js';
+import { applyTemplateRewrite, bookChapters } from '../../../templates/applyTemplateRewrite.js';
+import { chapterPages, createModule, moduleTemplates, moduleUsage, pageAtOffset, planInsertModule, renameModuleChanges, type ModuleUsage } from '../../../templates/moduleEdits.js';
+import { templateSheet } from '../../../templates/templateSheet.js';
+import { applyViewerEdit } from '../../../editor/viewerEdits.js';
+import { TemplateSheetSvg } from '../PageTemplatesSection/TemplateSheetSvg.js';
+import { TemplateEditor } from '../PageTemplatesSection/index.js';
+import { moduleWidthText } from '../PageTemplatesSection/ModuleWidthField.js';
 
 /** «2 blocks on 1 page», «Not used yet». */
 export function moduleUsageText(labels: SandboxLabels, u: ModuleUsage | undefined): string {

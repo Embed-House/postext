@@ -6,19 +6,19 @@ import type {
   VDTDesignImageBlock,
   VDTDesignPathBlock,
   VDTDesignBoxStyle,
-} from '../vdt';
-import { pathMarkerOutline } from '../design/pathBlock';
-import { boxNeedsShape, boxStylePathBlocks } from '../design/boxShape';
-import { fillTextDots } from './textDots';
-import { drawResourceImage, roundedOutlinePath } from './renderResourceBlock';
-import { fillFlowText, drawUprightInBox, setVerticalPaint, verticalPaintActive } from './verticalText';
-import { segmentOrientation, type ForcedOrientation } from '../writingMode';
-import { paintRunInDirection, runPaintOrder } from './runDirection';
-import { fillTrackedWord } from './trackedText';
-import { hasCJK } from '../measure/cjk';
-import { markCuts } from '../measure/markCuts';
-import { restoreContext, saveContext, setLetterSpacing } from './contextState';
-import { fillCellRuns } from './cellText';
+} from '../vdt.js';
+import { pathMarkerOutline } from '../design/pathBlock.js';
+import { boxNeedsShape, boxStylePathBlocks } from '../design/boxShape.js';
+import { fillTextDots } from './textDots.js';
+import { drawResourceImage, roundedOutlinePath } from './renderResourceBlock.js';
+import { fillFlowText, drawUprightInBox, setVerticalPaint, verticalPaintActive } from './verticalText.js';
+import { segmentOrientation, type ForcedOrientation } from '../writingMode.js';
+import { paintRunInDirection, runPaintOrder } from './runDirection.js';
+import { fillTrackedWord } from './trackedText.js';
+import { hasCJK } from '../measure/cjk.js';
+import { markCuts } from '../measure/markCuts.js';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState.js';
+import { fillCellRuns } from './cellText.js';
 
 /** Adds a rounded rectangle to the current path, as a closed subpath. */
 function traceRoundedRect(

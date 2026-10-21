@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { computeBreakpoints } from '../knuthPlass/breakpoints';
-import { KP_INFINITY, MAX_STRETCH, HYPHEN_PENALTY } from '../knuthPlass/constants';
-import type { KPItem, KPOptions } from '../knuthPlass/types';
+import { computeBreakpoints } from '../knuthPlass/breakpoints.js';
+import { KP_INFINITY, MAX_STRETCH, HYPHEN_PENALTY } from '../knuthPlass/constants.js';
+import type { KPItem, KPOptions } from '../knuthPlass/types.js';
 
 /** Deterministic pseudo-random paragraphs: words of varying width, some
  *  with a discretionary hyphen, glue between them, the closing glue and

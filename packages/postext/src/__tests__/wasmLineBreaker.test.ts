@@ -5,8 +5,8 @@
  * lines that avoid a hyphen, ragged settings, kashida boxes).
  */
 import { describe, expect, it } from 'vitest';
-import { computeBreakpoints, computeBreakpointsTs, type KPItem, type KPOptions } from '../knuthPlass';
-import { readyWasmBreaker } from '../knuthPlass/wasm/engine';
+import { computeBreakpoints, computeBreakpointsTs, type KPItem, type KPOptions } from '../knuthPlass/index.js';
+import { readyWasmBreaker } from '../knuthPlass/wasm/engine.js';
 
 /** A small seeded generator, so a failure names its paragraph. */
 function rng(seed: number): () => number {

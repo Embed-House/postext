@@ -5,8 +5,8 @@
  * block (DESIGN §12.1), which every backend paints alike: a dot is a
  * filled circle, a ring the band between two circles filled even-odd.
  */
-import type { CalloutIconShape } from '../types';
-import { createBoundingBox, type VDTDesignPathBlock, type VDTPathCommand } from '../vdt';
+import type { CalloutIconShape } from '../types.js';
+import { createBoundingBox, type VDTDesignPathBlock, type VDTPathCommand } from '../vdt.js';
 
 /** Kappa: the control-point distance of a cubic quarter circle, as a
  *  fraction of its radius. */

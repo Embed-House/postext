@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../index';
-import type { PostextConfig, VDTDocument } from '../index';
+import { buildDocument, renderPageToCanvas, renderToHtml } from '../index.js';
+import type { PostextConfig, VDTDocument } from '../index.js';
 
 // #1054: a label tab's glyph icon painted on the canvas and in HTML, in
 // its colour and face, where the layout put it; HTML hides it from

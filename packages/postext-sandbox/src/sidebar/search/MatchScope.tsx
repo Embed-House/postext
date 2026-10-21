@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { useSettingsSearch } from './SearchContext';
+import { useSettingsSearch } from './SearchContext.js';
 
 export interface ScopeEntry {
   /** The entry passes the current filter. */

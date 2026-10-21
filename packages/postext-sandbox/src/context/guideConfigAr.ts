@@ -8,7 +8,7 @@ import { defaultResourceTypes } from 'postext';
 import {
   DISPLAY, GUIDE_COVER_RESOURCE_ID, GUIDE_FOLIO, M_BOTTOM, M_INNER, M_OUTER, M_TOP, PAGE_H, PAGE_W, TEXT_W,
   at, box, col, colorPalette, em, guideCodeStyle, image, mm, pt, rule, slot, text, type TextOpts,
-} from './guideKit';
+} from './guideKit.js';
 
 // The Arabic edition of the Postext guide, in Modern Standard Arabic, set as
 // an Arabic book: right to left and bound on the right, so its first page

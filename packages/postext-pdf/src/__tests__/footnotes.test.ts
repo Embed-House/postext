@@ -4,8 +4,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef, PDFString, PDFHexStrin
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // Footnotes (#162): a marker links to its note, the note is tagged `Note`
 // with an `/ID` listed in the structure tree's `/IDTree`.

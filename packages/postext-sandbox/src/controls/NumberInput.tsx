@@ -1,7 +1,7 @@
 'use client';
 
-import { FieldRow } from './FieldRow';
-import { NumberControl } from './NumberControl';
+import { FieldRow } from './FieldRow.js';
+import { NumberControl } from './NumberControl.js';
 
 interface NumberInputProps {
   label: string;

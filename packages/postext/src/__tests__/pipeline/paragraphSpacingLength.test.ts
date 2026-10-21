@@ -7,16 +7,16 @@
  * back onto it.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveBodyStyle, paragraphSpacingPx } from '../../pipeline/styles';
-import { resolveAllConfig } from '../../pipeline/config';
-import { resolveHeadingsConfig } from '../../defaults/headings';
-import { resolveUnorderedListsConfig } from '../../defaults/unorderedLists';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
-import { resolveCalloutStylesConfig, stripCalloutStylesDefaults } from '../../defaults/calloutStyles';
-import type { PageTemplate } from '../../composed/types';
-import type { Dimension, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveBodyStyle, paragraphSpacingPx } from '../../pipeline/styles.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { resolveHeadingsConfig } from '../../defaults/headings.js';
+import { resolveUnorderedListsConfig } from '../../defaults/unorderedLists.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText.js';
+import { resolveCalloutStylesConfig, stripCalloutStylesDefaults } from '../../defaults/calloutStyles.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { Dimension, PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
 
 class StubCtx {
   font = '';

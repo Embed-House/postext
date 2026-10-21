@@ -5,7 +5,7 @@
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { RowTag } from './list-row';
+import { RowTag } from './list-row.js';
 
 describe('RowTag', () => {
   it('names a static tag by hidden text, not by aria-label on a span', () => {

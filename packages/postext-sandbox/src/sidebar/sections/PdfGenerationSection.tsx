@@ -10,13 +10,13 @@ import {
   useSandboxDispatch,
   useSandboxLabels,
   useSandboxSelector,
-} from '../../context/SandboxContext';
+} from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   NestedGroup,
   SelectInput,
   ToggleSwitch,
-} from '../../controls';
+} from '../../controls/index.js';
 
 const D = DEFAULT_PDF_GENERATION_CONFIG;
 

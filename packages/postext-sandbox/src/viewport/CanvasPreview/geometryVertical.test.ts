@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, flowToPage, pageToFlow, type PostextConfig } from 'postext';
-import { pixelToSourceOffset, designImageFileIdAtPixel } from './geometry';
-import { groupPagesIntoRows } from './layoutUtils';
+import { pixelToSourceOffset, designImageFileIdAtPixel } from './geometry.js';
+import { groupPagesIntoRows } from './layoutUtils.js';
 
 // CJK characters 1 em, anything else ½ em, at the font's size.
 const SIZE_RE = /(\d*\.?\d+)px/;

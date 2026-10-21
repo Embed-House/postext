@@ -14,7 +14,7 @@ import type {
   Dimension,
   ElementPlacement,
   LeaderStyle,
-} from '../types';
+} from '../types.js';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -671,8 +671,8 @@ export interface FigureLabelNode extends SourceRange {
 
 // `ReflowEventKind`, `ReflowEvent`, `VDTFrame` and `VDTComposedPage` live
 // in `vdt.ts` with the rest of the VDT (#855).
-export type { ReflowEventKind, ReflowEvent, VDTFrame, VDTComposedPage } from '../vdt';
+export type { ReflowEventKind, ReflowEvent, VDTFrame, VDTComposedPage } from '../vdt.js';
 
 // `FrameOverflowProposal` and `FrameFitStep` live in `vdt.ts` with the
 // `frameOverflow` warning that carries them (#858).
-export type { FrameOverflowProposal, FrameFitStep } from '../vdt';
+export type { FrameOverflowProposal, FrameFitStep } from '../vdt.js';

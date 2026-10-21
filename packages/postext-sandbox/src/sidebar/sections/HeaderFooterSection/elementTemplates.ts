@@ -1,5 +1,5 @@
 import { DEFAULT_TEXT_ELEMENT, type DesignTextElement } from 'postext';
-import { applyAlign, type SlotKind } from './placementAdapter';
+import { applyAlign, type SlotKind } from './placementAdapter.js';
 
 /** The text element "Add text" puts in a `slotKey` slot: the reference
  *  defaults, centred on the slot's body edge, with no `overflow` — the slot

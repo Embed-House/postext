@@ -1,9 +1,9 @@
 // Fonts, pictures and identity shared by both renditions.
 
 import { applySingleInkToSvg, chainSvgFontProviders, inlineSvgFontsDetailed, isHlsMimeType, parseUnicodeRange, resolveColorValue, type SvgFontProvider, type VDTDocument } from 'postext';
-import type { EpubFontFile, EpubItem, EpubMetadata, EpubResourceBytes, EpubSvgFontOptions, EpubWarning } from '../types';
-import { FONT_MEDIA_TYPES, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS, sniffFontFormat, sniffImageType, sniffVideoType } from './media';
-import { uuidV5 } from './uuid';
+import type { EpubFontFile, EpubItem, EpubMetadata, EpubResourceBytes, EpubSvgFontOptions, EpubWarning } from '../types.js';
+import { FONT_MEDIA_TYPES, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS, sniffFontFormat, sniffImageType, sniffVideoType } from './media.js';
+import { uuidV5 } from './uuid.js';
 
 /** The embedded font files as manifest items under `fonts/` and the
  *  `@font-face` rules that declare them, with `url()`s relative to a

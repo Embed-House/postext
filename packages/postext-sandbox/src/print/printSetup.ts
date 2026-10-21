@@ -20,7 +20,7 @@ import {
   type PrintPreview,
   type ResolvedPrintConfig,
 } from 'postext';
-import { getBlob } from '../storage/blobStore';
+import { getBlob } from '../storage/blobStore.js';
 
 let profileBaseUrl = DEFAULT_PROFILE_BASE_URL;
 

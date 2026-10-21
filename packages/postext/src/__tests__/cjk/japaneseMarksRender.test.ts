@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { sesamePath } from '../../canvas-backend/annotations';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLine, VDTLineMark } from '../../vdt';
-import { installSizedStub, stubCharWidth } from '../vertical/stub';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { sesamePath } from '../../canvas-backend/annotations.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLine, VDTLineMark } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from '../vertical/stub.js';
 
 // The sesame (傍点) and the side lines (傍線) of #421 in the canvas and HTML
 // backends: the sesame stands on the sheet the same way in horizontal and

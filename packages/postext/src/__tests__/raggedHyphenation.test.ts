@@ -1,11 +1,11 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../measure/rich';
-import { measureBlock } from '../measure/plain';
-import { setHyphenationLocale } from '../hyphenate';
-import { buildDocument } from '../pipeline';
-import { resolveBodyTextConfig, stripBodyTextDefaults, hyphenationEqual, DEFAULT_HYPHENATION_CONFIG } from '../defaults/bodyText';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig, VDTDocument } from '../index';
+import { measureRichBlock } from '../measure/rich.js';
+import { measureBlock } from '../measure/plain.js';
+import { setHyphenationLocale } from '../hyphenate.js';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults, hyphenationEqual, DEFAULT_HYPHENATION_CONFIG } from '../defaults/bodyText.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig, VDTDocument } from '../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character, the space included, is 7 px wide.

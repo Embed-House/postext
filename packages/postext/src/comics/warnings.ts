@@ -6,11 +6,11 @@
  * area. The layout adds `comicPanelLetterbox` (see `layoutComicPage`).
  */
 
-import type { Resource, ResolvedComicsConfig } from '../types';
-import type { ContentWarning } from '../vdt';
-import { anchorsOutsideSafeArea } from './art';
-import { comicSplitLeaves } from './split';
-import type { ComicPageSource } from './types';
+import type { Resource, ResolvedComicsConfig } from '../types.js';
+import type { ContentWarning } from '../vdt.js';
+import { anchorsOutsideSafeArea } from './art.js';
+import { comicSplitLeaves } from './split.js';
+import type { ComicPageSource } from './types.js';
 
 /** The warnings of one comic page; offsets as in `source` (the caller
  *  makes them absolute). */

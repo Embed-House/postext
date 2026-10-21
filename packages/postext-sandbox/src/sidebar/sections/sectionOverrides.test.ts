@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
 import { cloneDefaultColorPalette } from 'postext';
-import { groupOverrideCounts, sectionHasOverrides } from './sectionOverrides';
+import { groupOverrideCounts, sectionHasOverrides } from './sectionOverrides.js';
 
 const base: PostextConfig = { colorPalette: cloneDefaultColorPalette() };
 

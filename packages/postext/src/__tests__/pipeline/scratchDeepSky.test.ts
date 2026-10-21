@@ -6,8 +6,8 @@ import { describe, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import fontkit from '../../../../postext-pdf/node_modules/@pdf-lib/fontkit/dist/fontkit.es.js';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 const BUNDLE = join(__dirname, '../../../../../apps/web/public/presets/deep-sky');
 const manifest = JSON.parse(readFileSync(join(BUNDLE, 'preset.json'), 'utf8'));

@@ -4,15 +4,15 @@ import fontkit from '@pdf-lib/fontkit';
 import { PDFDocument, rgb, type PDFFont } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { FontCache, declarationOf, declaredFontFile, inDeclarationOrder, withBareFiles, type PdfFontAnswer, type PdfFontFile, type PdfFontRequest } from '../fontCache';
-import { FaceFiles, fileRuns, registerFaceFiles, type FileDeclaration } from '../faceFiles';
-import { parseFontString } from '../fontString';
-import { parseUnicodeRange, rangesHold } from '../unicodeRange';
-import { withDocumentLanguage } from '../shapingLanguage';
-import { drawTextPx, textAdvancePx, type PageCtx } from '../pdf-backend/primitives';
-import { inlineSvgFontsForRaster } from '../pdf-backend/renderResourceBlock';
-import { paintedGlyphs, type PaintedGlyph } from './glyphPositions';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { FontCache, declarationOf, declaredFontFile, inDeclarationOrder, withBareFiles, type PdfFontAnswer, type PdfFontFile, type PdfFontRequest } from '../fontCache.js';
+import { FaceFiles, fileRuns, registerFaceFiles, type FileDeclaration } from '../faceFiles.js';
+import { parseFontString } from '../fontString.js';
+import { parseUnicodeRange, rangesHold } from '../unicodeRange.js';
+import { withDocumentLanguage } from '../shapingLanguage.js';
+import { drawTextPx, textAdvancePx, type PageCtx } from '../pdf-backend/primitives.js';
+import { inlineSvgFontsForRaster } from '../pdf-backend/renderResourceBlock.js';
+import { paintedGlyphs, type PaintedGlyph } from './glyphPositions.js';
 
 // #770: a browser sets a character two files of a family hold in the file
 // declared last among those whose `unicode-range` holds it, and a provider

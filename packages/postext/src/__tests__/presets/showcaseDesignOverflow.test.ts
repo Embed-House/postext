@@ -7,9 +7,9 @@
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { migrateConfig } from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig, ResolvedDesignSlot } from '../../types';
+import { migrateConfig } from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig, ResolvedDesignSlot } from '../../types.js';
 
 /** Every design text of a configuration: [path, element]. */
 function designTexts(value: unknown, path: string, out: [string, Record<string, unknown>][] = []): [string, Record<string, unknown>][] {

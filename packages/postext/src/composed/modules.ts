@@ -20,8 +20,8 @@
  *
  * Pure. Run by `resolvePageTemplate` when it is given the page's modules.
  */
-import type { ConnectorEnd, DesignConnectorElement, ElementPlacement } from '../types';
-import type { ComposedModuleUse, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from './types';
+import type { ConnectorEnd, DesignConnectorElement, ElementPlacement } from '../types.js';
+import type { ComposedModuleUse, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from './types.js';
 
 /** The `role` of a module template. */
 const MODULE = 'module';

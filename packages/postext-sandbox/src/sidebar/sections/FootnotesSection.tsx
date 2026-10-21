@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveFootnotesConfig, DEFAULT_CJK_CONFIG, DEFAULT_FOOTNOTES_CONFIG, dimensionsEqual, isCjkLanguage } from 'postext';
 import type { ColorValue, DimensionUnit, FootnotesConfig } from 'postext';
 import {
@@ -13,10 +13,10 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
-import { listNumberFormatValue, numberFormatOptions } from './OrderedListsSection/numberFormat';
-import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
+} from '../../controls/index.js';
+import { listNumberFormatValue, numberFormatOptions } from './OrderedListsSection/numberFormat.js';
+import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
 
 const SIZE_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const MARKER_UNITS: DimensionUnit[] = ['em', 'pt'];

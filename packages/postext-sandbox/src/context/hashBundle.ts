@@ -7,8 +7,8 @@
 // the network and the question come in through `deps`, so the flow is
 // testable as is.
 
-import type { HashBundleResolver } from '../types/props';
-import { hashBundleOrigin, type HashBundleRef } from '../storage/viewHash';
+import type { HashBundleResolver } from '../types/props.js';
+import { hashBundleOrigin, type HashBundleRef } from '../storage/viewHash.js';
 
 export interface OpenHashBundleDeps {
   resolve: HashBundleResolver;

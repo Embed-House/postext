@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { columnClipRect } from '../../columnClip';
-import type { PostextConfig, Resource, TableCell, VDTBlock, VDTColumn, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { columnClipRect } from '../../columnClip.js';
+import type { PostextConfig, Resource, TableCell, VDTBlock, VDTColumn, VDTDocument } from '../../index.js';
 
 // #729: a resource set in the text (`position: 'here'`) with
 // `placement.captionSide` sets its caption and note in the float-only side

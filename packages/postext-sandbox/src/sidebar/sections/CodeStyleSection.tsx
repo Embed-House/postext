@@ -1,10 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { CODE_TOKEN_KINDS, DEFAULT_CODE_STYLE, DEFAULT_CODE_TOKENS, dimensionToPx, dimensionsEqual, resolveBodyTextConfig, resolveCodeStyleConfig, resolvePageConfig } from 'postext';
 import type { CodeStyleConfig, CodeTokenKind, CodeTokenStyle, DimensionUnit, InlineCodeStyleConfig } from 'postext';
-import type { SandboxLabels } from '../../types/labels';
+import type { SandboxLabels } from '../../types/labels.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -15,7 +15,7 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
+} from '../../controls/index.js';
 
 const SIZE_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const SPACING_UNITS: DimensionUnit[] = ['em', 'pt', 'mm'];

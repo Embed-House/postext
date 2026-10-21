@@ -5,9 +5,9 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { resolveBodyTextConfig, type BodyTextConfig } from 'postext';
-import { SandboxStoreContext } from '../../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../../types/defaultLabels';
-import { JustificationSubsection, RaggedBreakingSubsection, acrossColumnsChoice, acrossColumnsValue } from './JustificationSubsection';
+import { SandboxStoreContext } from '../../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../../types/defaultLabels.js';
+import { JustificationSubsection, RaggedBreakingSubsection, acrossColumnsChoice, acrossColumnsValue } from './JustificationSubsection.js';
 
 const LABEL = DEFAULT_LABELS.bodyHyphenateAcrossColumns;
 

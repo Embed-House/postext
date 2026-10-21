@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { VDTComicBalloon } from 'postext';
-import { fromBalloonFrame, onBalloon, toBalloonFrame } from './balloonDrag';
+import { fromBalloonFrame, onBalloon, toBalloonFrame } from './balloonDrag.js';
 
 const balloon = (extra: Partial<VDTComicBalloon>): VDTComicBalloon => ({
   id: 's', panelIndex: 0, order: 0, kind: 'sfx', style: 'plate', sourceStart: 0, sourceEnd: 1, group: 0,

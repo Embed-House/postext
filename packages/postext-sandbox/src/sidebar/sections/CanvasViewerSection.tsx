@@ -1,10 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { CANVAS_VIEWER_MAX_GAP, DEFAULT_CANVAS_VIEWER_CONFIG, resolveCanvasViewerConfig } from 'postext';
 import type { CanvasViewerConfig } from 'postext';
-import { CollapsibleSection, NumberInput } from '../../controls';
+import { CollapsibleSection, NumberInput } from '../../controls/index.js';
 
 /** The space between the pages in the Canvas (#1002): between the two pages
  *  of a pair, and between one row and the next. Screen pixels; they never

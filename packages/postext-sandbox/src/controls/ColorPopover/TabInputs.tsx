@@ -1,7 +1,7 @@
 'use client';
 
-import type { RGB, HSL, CMYK, ColorMode } from '../color-utils';
-import { SmallInput } from './SmallInput';
+import type { RGB, HSL, CMYK, ColorMode } from '../color-utils.js';
+import { SmallInput } from './SmallInput.js';
 
 interface Props {
   activeTab: ColorMode;

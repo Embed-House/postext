@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning, raggedLineWarnings } from '../../pipeline/contentWarnings';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning, raggedLineWarnings } from '../../pipeline/contentWarnings.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
 
 // Two things the engine did without saying so.
 //

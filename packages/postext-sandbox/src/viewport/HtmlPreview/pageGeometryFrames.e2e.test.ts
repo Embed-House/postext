@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, frameBounds } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { fitPagesToContent } from './pageGeometry';
+import { fitPagesToContent } from './pageGeometry.js';
 
 class StubCtx {
   font = '';

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // Ruby, emphasis marks, side lines and warichu notes in table cells and
 // captions (#429): a reading in the RT of its base's Ruby inside the cell

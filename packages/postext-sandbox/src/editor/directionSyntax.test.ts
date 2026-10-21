@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EditorState } from '@codemirror/state';
 import { CompletionContext } from '@codemirror/autocomplete';
-import { directionCompletionSource } from './directionSyntax';
+import { directionCompletionSource } from './directionSyntax.js';
 
 const complete = (doc: string) => {
   const state = EditorState.create({ doc });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hyphenateText } from '../hyphenate';
+import { hyphenateText } from '../hyphenate.js';
 
 // #835: an Italian or French apostrophe stands for an elided vowel, and the
 // patterns, reading `dellacqua`, split the consonants before it from their

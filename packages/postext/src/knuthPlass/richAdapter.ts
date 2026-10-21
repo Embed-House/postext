@@ -4,19 +4,19 @@
  * reconstruction of VDT lines from the optimal breakpoint sequence.
  */
 
-import { justifiedSpaceRatios } from '../measure/spaceRatios';
-import type { VDTAnnotationRun, VDTChip, VDTLine, VDTLineSegment, VDTSegmentMarks, VDTSwatch } from '../vdt';
-import { createBoundingBox } from '../vdt';
-import type { TextAlign } from '../types';
-import type { KPItem, RichTokenMeta } from './types';
-import { HYPHEN_PENALTY, KP_INFINITY, MAX_STRETCH } from './constants';
-import { cleanSoftHyphens } from './utils';
-import { trimChipLineEdges } from '../measure/chipEdges';
-import { lineTracking, trackSegments } from './tracking';
-import { graphemeCount } from '../measure/graphemes';
-import { endsInsideGeminate, withLineEndHyphen } from '../measure/geminate';
-import { joiningScriptIn } from '../measure/joining';
-import { pieceScriptContext } from '../measure/script';
+import { justifiedSpaceRatios } from '../measure/spaceRatios.js';
+import type { VDTAnnotationRun, VDTChip, VDTLine, VDTLineSegment, VDTSegmentMarks, VDTSwatch } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import type { TextAlign } from '../types.js';
+import type { KPItem, RichTokenMeta } from './types.js';
+import { HYPHEN_PENALTY, KP_INFINITY, MAX_STRETCH } from './constants.js';
+import { cleanSoftHyphens } from './utils.js';
+import { trimChipLineEdges } from '../measure/chipEdges.js';
+import { lineTracking, trackSegments } from './tracking.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { endsInsideGeminate, withLineEndHyphen } from '../measure/geminate.js';
+import { joiningScriptIn } from '../measure/joining.js';
+import { pieceScriptContext } from '../measure/script.js';
 
 interface RichBreakPoint {
   charIndex: number;
@@ -70,7 +70,7 @@ interface RichToken {
   width: number;
   breakPoints?: RichBreakPoint[];
   hyphenWidth?: number;
-  mathRender?: import('../math/types').MathRender;
+  mathRender?: import('../math/types.js').MathRender;
   refResourceId?: string;
   refAnchor?: true;
   refPageIndex?: number;
@@ -103,10 +103,10 @@ interface RichToken {
   kashida?: number;
   /** The script a word with no letter is shaped in (#725, see
    *  `measure/rich.ts`). */
-  scriptContext?: import('../measure/script').ScriptContext;
+  scriptContext?: import('../measure/script.js').ScriptContext;
   /** A word with a letter that may be set in pieces with none: the script
    *  in force where it starts (see `measure/rich.ts`). */
-  wordScript?: import('../measure/script').ScriptContext;
+  wordScript?: import('../measure/script.js').ScriptContext;
 }
 
 export function richTokensToItems(

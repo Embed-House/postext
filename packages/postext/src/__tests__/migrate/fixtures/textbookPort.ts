@@ -5,7 +5,7 @@
  * text as absolutely placed text elements, one per line block, in the same
  * places from page to page. The words are written for this fixture.
  */
-import type { DesignElement, HeadingStyleConfig, PostextConfig } from '../../../types';
+import type { DesignElement, HeadingStyleConfig, PostextConfig } from '../../../types.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });

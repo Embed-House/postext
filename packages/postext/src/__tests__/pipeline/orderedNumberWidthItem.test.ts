@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveBodyTextConfig, resolveOrderedListsConfig, stripConfigDefaults, stripOrderedListsDefaults } from '../../defaults';
-import type { OrderedListsConfig, PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveBodyTextConfig, resolveOrderedListsConfig, stripConfigDefaults, stripOrderedListsDefaults } from '../../defaults/index.js';
+import type { OrderedListsConfig, PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
 
 // `orderedLists.numberWidth: 'item'` (#722): the number column of an item
 // is its own number, so its text starts one gap after its own label:

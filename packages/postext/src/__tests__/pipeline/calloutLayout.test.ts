@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
-import { resolveAllConfig } from '../../pipeline/config';
-import { resolveBodyStyle, resolveBlockquoteStyle } from '../../pipeline/styles';
+import { parseMarkdown } from '../../parse/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { resolveBodyStyle, resolveBlockquoteStyle } from '../../pipeline/styles.js';
 import {
   computeLevelIndentsPx,
   computeOrderedLevelIndentsPx,
   computeOrderedListRunMetrics,
-} from '../../pipeline/lists';
-import type { BlockMeasureContext } from '../../pipeline/measureContentBlock';
+} from '../../pipeline/lists.js';
+import type { BlockMeasureContext } from '../../pipeline/measureContentBlock.js';
 import {
   deriveCalloutResolvedConfig,
   layoutCallout,
@@ -15,11 +15,11 @@ import {
   pickCalloutStyle,
   planCallouts,
   type CalloutLayoutResult,
-} from '../../pipeline/calloutLayout';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { dimensionToPx } from '../../units';
-import type { CalloutStyleConfig, PostextConfig, Resource } from '../../types';
-import type { VDTDesignBoxBlock, VDTDesignImageBlock, VDTDesignRuleBlock, VDTDesignTextBlock } from '../../vdt';
+} from '../../pipeline/calloutLayout.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { dimensionToPx } from '../../units.js';
+import type { CalloutStyleConfig, PostextConfig, Resource } from '../../types.js';
+import type { VDTDesignBoxBlock, VDTDesignImageBlock, VDTDesignRuleBlock, VDTDesignTextBlock } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

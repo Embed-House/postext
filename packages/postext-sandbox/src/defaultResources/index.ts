@@ -19,14 +19,14 @@
 // their mirror image, their labels set right to left (see `drawn`).
 
 import type { Resource, ResourcePlacement, TableCell, TableModel } from 'postext';
-import { invalidateResourceImage } from '../controls/resourceImages';
-import { putBlobAt } from '../storage/blobStore';
-import { COVER_VH, COVER_VW, COVER_ZH_VH, COVER_ZH_VW, coverArtSvg, coverArtVerticalSvg } from './cover';
-import { GUIDE_LANGS, byLang, guideLang, type ByLang, type GuideLang } from './lang';
-import { guideVideoPosters, guideVideoResources, guideVideosSignature } from './videos';
+import { invalidateResourceImage } from '../controls/resourceImages.js';
+import { putBlobAt } from '../storage/blobStore.js';
+import { COVER_VH, COVER_VW, COVER_ZH_VH, COVER_ZH_VW, coverArtSvg, coverArtVerticalSvg } from './cover.js';
+import { GUIDE_LANGS, byLang, guideLang, type ByLang, type GuideLang } from './lang.js';
+import { guideVideoPosters, guideVideoResources, guideVideosSignature } from './videos.js';
 
-export { GUIDE_LANGS, guideLang, type GuideLang } from './lang';
-export { GUIDE_VIDEO_IDS, guideHasVideos, guideVideoPosters } from './videos';
+export { GUIDE_LANGS, guideLang, type GuideLang } from './lang.js';
+export { GUIDE_VIDEO_IDS, guideHasVideos, guideVideoPosters } from './videos.js';
 
 /** Stable ids referenced by the default markdown (en.ts, es.ts, zh-Hans.ts…).
  *  Keys are internal; the string *values* are the ids the markdown's
@@ -88,8 +88,8 @@ export const DEFAULT_RESOURCE_IDS = {
 // sit in.
 // ───────────────────────────────────────────────────────────────────────────
 
-import { COLUMN_VW, DEFS, FS, P, PAGE_VW, bar, edge, localizeFigure, mirrorFragment, mirrorSvg, node, text } from './svgKit';
-import { balancingSvg, bookAnatomySvg, cjkCompositionSvg, columnLayoutsSvg, epubRenditionsSvg, floatSlotsSvg, sandboxUiSvg, vectorChartSvg, vectorClipSvg, vectorRosetteSvg } from './guideFigures';
+import { COLUMN_VW, DEFS, FS, P, PAGE_VW, bar, edge, localizeFigure, mirrorFragment, mirrorSvg, node, text } from './svgKit.js';
+import { balancingSvg, bookAnatomySvg, cjkCompositionSvg, columnLayoutsSvg, epubRenditionsSvg, floatSlotsSvg, sandboxUiSvg, vectorChartSvg, vectorClipSvg, vectorRosetteSvg } from './guideFigures.js';
 
 const PIPELINE = byLang(
   { parse: 'Parse', measure: 'Measure', layout: 'Layout', config: 'Configuration', loop: ['at most', '5 passes'], aria: 'Postext pipeline' },

@@ -8,7 +8,7 @@
  */
 
 import type { ConnectorEnd, DesignConnectorElement, DesignElement, PageTemplate, ResolvedPageTemplate } from 'postext';
-import { joinDecoration, scopeEntry, splitDecoration, templateAt, updateTemplate, type TemplateScope } from './templateEdits';
+import { joinDecoration, scopeEntry, splitDecoration, templateAt, updateTemplate, type TemplateScope } from './templateEdits.js';
 
 /** Which end a click on the canvas sets: the line's start (`from`), or one
  *  more of the ends it goes to. */

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createVDTPage, createVDTColumn, createBoundingBox, type VDTBlock, type VDTColumn, type VDTPage } from '../../vdt';
+import { createVDTPage, createVDTColumn, createBoundingBox, type VDTBlock, type VDTColumn, type VDTPage } from '../../vdt.js';
 import {
   enumerateCurrentPageSlots,
   measureFloatBand,
@@ -8,8 +8,8 @@ import {
   columnHasFloatBand,
   fitsStrict,
   type ColumnCapKind,
-} from '../../pipeline/floatSlots';
-import type { PlannedFloat } from '../../pipeline/floatPlacement';
+} from '../../pipeline/floatSlots.js';
+import type { PlannedFloat } from '../../pipeline/floatPlacement.js';
 
 const GRID = 12;
 const CONTENT = createBoundingBox(20, 20, 400, 600);

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline/build';
-import { createMeasurementCache } from '../measure';
+import { buildDocument } from '../pipeline/build.js';
+import { createMeasurementCache } from '../measure/index.js';
 import {
   collectColumnGaps,
   proposeBalanceLines,
@@ -8,9 +8,9 @@ import {
   balanceKey,
   type BalanceState,
   type BalanceProposalOptions,
-} from '../pipeline/columnBalancing';
-import { createVDTPage, type VDTDocument, type VDTColumn, type VDTBlock, type VDTLine } from '../vdt';
-import type { PostextConfig } from '../types';
+} from '../pipeline/columnBalancing.js';
+import { createVDTPage, type VDTDocument, type VDTColumn, type VDTBlock, type VDTLine } from '../vdt.js';
+import type { PostextConfig } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

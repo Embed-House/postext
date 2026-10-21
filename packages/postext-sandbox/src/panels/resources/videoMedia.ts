@@ -1,5 +1,5 @@
 import { parseVideoUrl, videoWatchUrl, youtubePosterUrls, type ResourceVideoPoster, type VideoSource } from 'postext';
-import { putBlob } from '../../storage/blobStore';
+import { putBlob } from '../../storage/blobStore.js';
 
 /** Video files a book may carry (#454). */
 export const VIDEO_ACCEPT = 'video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.m4v,.webm,.ogv,.mov';

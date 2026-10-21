@@ -1,8 +1,8 @@
-import { measurementGeneration } from '../measure/canvas';
-import { cellsOf } from '../wordPieces';
-import { languageOf, letterSpacingOf } from './contextState';
-import { contextTextWidth } from './contextText';
-import { paintAsOneRun } from './mirrorFrame';
+import { measurementGeneration } from '../measure/canvas.js';
+import { cellsOf } from '../wordPieces.js';
+import { languageOf, letterSpacingOf } from './contextState.js';
+import { contextTextWidth } from './contextText.js';
+import { paintAsOneRun } from './mirrorFrame.js';
 
 /**
  * The characters of a segment of the CJK composer painted where it

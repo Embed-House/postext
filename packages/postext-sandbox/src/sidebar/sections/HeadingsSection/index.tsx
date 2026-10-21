@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
 import { resolveHeadingsConfig, balancingOnByDefault, DEFAULT_HEADINGS_CONFIG, DEFAULT_COLUMN_BALANCING, dimensionsEqual, colorsEqual } from 'postext';
 import type { HeadingsConfig, HeadingLevelConfig, DimensionUnit, ClosingBoxLever, ColumnHeadSpace, GridLinesLever, KeepWithNextSplit, StretchAfterWideFloats, TrailingStep } from 'postext';
 import {
@@ -13,9 +13,9 @@ import {
   NumberInput,
   SelectInput,
   ToggleSwitch,
-} from '../../../controls';
-import { HeadingLevelSection } from './HeadingLevelSection';
-import { flowSideLabels, useRightToLeftFlow } from '../../settings/flowSides';
+} from '../../../controls/index.js';
+import { HeadingLevelSection } from './HeadingLevelSection.js';
+import { flowSideLabels, useRightToLeftFlow } from '../../settings/flowSides.js';
 
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const MARGIN_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

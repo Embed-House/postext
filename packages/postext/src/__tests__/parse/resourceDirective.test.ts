@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
+import { parseMarkdown } from '../../parse/index.js';
 
 describe('::resource block directive', () => {
   it('parses ::resource{id="x"} into a resourceBlock with the id', () => {

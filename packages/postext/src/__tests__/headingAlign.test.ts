@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../index';
-import { renderToHtml } from '../html-backend';
-import type { PostextConfig, TextAlign } from '../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../vdt';
+import { buildDocument, renderPageToCanvas } from '../index.js';
+import { renderToHtml } from '../html-backend.js';
+import type { PostextConfig, TextAlign } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

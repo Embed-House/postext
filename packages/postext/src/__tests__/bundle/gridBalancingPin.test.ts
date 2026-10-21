@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyGridBalancing } from '../../bundle/configVersion';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { migrateBundleConfig, migrateConfig, pinLegacyGridBalancing } from '../../bundle/configVersion.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #632: a configuration stored before a horizontal page on a character
 // grid was left unbalanced by default (configVersion 10 or older, postext

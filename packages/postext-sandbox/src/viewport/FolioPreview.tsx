@@ -3,27 +3,27 @@
 import { forwardRef, useDeferredValue, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { createFolioFromDocument, pageVideoSpots, spotContains, type FolioDocumentViewer, type FolioInteraction, type FolioLabels, type PageVideoSpot } from 'postext-folio';
 import { resolveColorValue, resolveDebugConfig, resolveDiagramStyleConfig, watchFonts, onFontsChanged, type PostextConfig, type VDTDocument } from 'postext';
-import { useBookPlan, useSandboxChapterDocsRef, useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector, useLayoutSource } from '../context/SandboxContext';
-import { composeBookMemo } from '../book/compose';
-import type { BookPlan } from '../book/types';
-import { buildBookChapters, type HeldChapterDoc } from '../book/buildBook';
-import { layoutCacheKey } from '../book/layoutKeys';
-import { chapterLayoutFromDoc, leadingBlankPageCount } from '../book/pagination';
-import { stitchDocuments, type StitchedBook } from '../book/stitch';
-import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../controls/fontLoader';
-import { ensureResourceImages, ensureResourceVideoUrls, getResourceVideoUrl } from '../controls/resourceImages';
-import { getBlob } from '../storage/blobStore';
-import { previewFor, printsGrayscale, usePrintSetup } from '../print/printSetup';
-import { usePrintPreview } from '../print/printPreviewToggle';
-import { useLayoutWorker } from '../worker/useLayoutWorker';
-import { onLateFonts } from '../worker/LayoutService';
-import { useCompactLayout } from '../hooks/useCompactLayout';
-import { defaultDocumentLocale } from './CanvasPreview/layoutUtils';
-import type { BookPageMap } from './usePageHashSync';
-import { FolioLoading } from './FolioLoading';
-import { useFolioSelection } from './useFolioSelection';
-import { pickVideo, type PlayableVideo, type PreviewVideo, type PreviewVideoResult, type VideoPick } from './viewerVideos';
-import { planContent } from '../book/jumps';
+import { useBookPlan, useSandboxChapterDocsRef, useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector, useLayoutSource } from '../context/SandboxContext.js';
+import { composeBookMemo } from '../book/compose.js';
+import type { BookPlan } from '../book/types.js';
+import { buildBookChapters, type HeldChapterDoc } from '../book/buildBook.js';
+import { layoutCacheKey } from '../book/layoutKeys.js';
+import { chapterLayoutFromDoc, leadingBlankPageCount } from '../book/pagination.js';
+import { stitchDocuments, type StitchedBook } from '../book/stitch.js';
+import { createFontGate, declareStandIns, loadVerticalTwins, standInsSettled, verticalTwinsSettled } from '../controls/fontLoader.js';
+import { ensureResourceImages, ensureResourceVideoUrls, getResourceVideoUrl } from '../controls/resourceImages.js';
+import { getBlob } from '../storage/blobStore.js';
+import { previewFor, printsGrayscale, usePrintSetup } from '../print/printSetup.js';
+import { usePrintPreview } from '../print/printPreviewToggle.js';
+import { useLayoutWorker } from '../worker/useLayoutWorker.js';
+import { onLateFonts } from '../worker/LayoutService.js';
+import { useCompactLayout } from '../hooks/useCompactLayout.js';
+import { defaultDocumentLocale } from './CanvasPreview/layoutUtils.js';
+import type { BookPageMap } from './usePageHashSync.js';
+import { FolioLoading } from './FolioLoading.js';
+import { useFolioSelection } from './useFolioSelection.js';
+import { pickVideo, type PlayableVideo, type PreviewVideo, type PreviewVideoResult, type VideoPick } from './viewerVideos.js';
+import { planContent } from '../book/jumps.js';
 
 interface FolioPreviewProps {
   /** What the left button does on the book. */

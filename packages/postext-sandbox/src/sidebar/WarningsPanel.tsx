@@ -3,23 +3,23 @@
 import { useState, type ReactNode } from 'react';
 import { AlertTriangle, ChevronRight, CircleCheck, Contrast, Printer, Type, FileWarning, Heading, List, FileText, Sigma, Image, Database, MessageCircle, LayoutGrid, MapPin } from 'lucide-react';
 import { HYPHENATION_LOCALES, KNOWN_CONTAINERS, KNOWN_DIRECTIVES, type PageTemplateWarningKind } from 'postext';
-import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
-import { Collapsible, EmptyState, IconButton, ListRow, PanelBody, PanelHeader, cn } from '../ui';
-import { warningAnchor } from '../warnings/anchorTarget';
-import { requestAnchorEditor } from '../panels/resources/anchorEditorRequest';
-import { WARNING_CATEGORY_ORDER, isAcceptedWarning, warningCategory, type WarningCategory } from '../warnings/categories';
-import type { Warning, WarningPayload } from '../warnings/types';
-import type { SandboxLabels } from '../types';
-import { preflightDetail, preflightTitle } from '../print/preflightText';
-import { contrastDetail, contrastTitle } from '../contrast/contrastText';
-import { fill } from '../print/fillTokens';
-import { frameOverflowDetail } from '../warnings/frameOverflowText';
-import { frameCoveredDetail, frameOutsideDetail, repeatOverflowDetail } from '../warnings/frameOverlapText';
-import { localNumber } from '../viewport/composed/reflowText';
-import { readViewHash, viewHashFragment } from '../storage/viewHash';
-import { ComposedChecksSection, useComposedChecks } from './ComposedChecks';
-import { isComposedCheckKind } from '../warnings/composedChecks';
-import { TextMigrationOffer } from '../migrate/TextMigrationOffer';
+import { useSandbox, useSandboxWarnings } from '../context/SandboxContext.js';
+import { Collapsible, EmptyState, IconButton, ListRow, PanelBody, PanelHeader, cn } from '../ui/index.js';
+import { warningAnchor } from '../warnings/anchorTarget.js';
+import { requestAnchorEditor } from '../panels/resources/anchorEditorRequest.js';
+import { WARNING_CATEGORY_ORDER, isAcceptedWarning, warningCategory, type WarningCategory } from '../warnings/categories.js';
+import type { Warning, WarningPayload } from '../warnings/types.js';
+import type { SandboxLabels } from '../types/index.js';
+import { preflightDetail, preflightTitle } from '../print/preflightText.js';
+import { contrastDetail, contrastTitle } from '../contrast/contrastText.js';
+import { fill } from '../print/fillTokens.js';
+import { frameOverflowDetail } from '../warnings/frameOverflowText.js';
+import { frameCoveredDetail, frameOutsideDetail, repeatOverflowDetail } from '../warnings/frameOverlapText.js';
+import { localNumber } from '../viewport/composed/reflowText.js';
+import { readViewHash, viewHashFragment } from '../storage/viewHash.js';
+import { ComposedChecksSection, useComposedChecks } from './ComposedChecks.js';
+import { isComposedCheckKind } from '../warnings/composedChecks.js';
+import { TextMigrationOffer } from '../migrate/TextMigrationOffer.js';
 
 /** Open a book page in the viewer: the fragment names it, and the viewer
  *  follows a fragment change (see `usePageHashSync`). */

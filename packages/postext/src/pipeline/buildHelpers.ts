@@ -3,10 +3,10 @@
  * main pipeline function readable; no behavior changes.
  */
 
-import type { ContentBlock } from '../parse';
-import { spaceDirectiveLines } from '../parse/attrs';
-import { dimensionToPx } from '../units';
-import { writtenText } from '../measure/kashida';
+import type { ContentBlock } from '../parse/index.js';
+import { spaceDirectiveLines } from '../parse/attrs.js';
+import { dimensionToPx } from '../units.js';
+import { writtenText } from '../measure/kashida.js';
 import {
   createBoundingBox,
   pageIsMirrored,
@@ -14,12 +14,12 @@ import {
   type VDTPage,
   type BoundingBox,
   type ResolvedConfig,
-} from '../vdt';
-import type { BlockStyle } from './styles';
-import type { MeasuredBlock } from '../measure';
-import { NO_BREAK_SPACES } from '../measure/spaces';
-import { GEMINATE_DOT, endsInsideGeminate } from '../measure/geminate';
-import { renderMath, isMathReady, noteMathWithoutEngine } from '../math';
+} from '../vdt.js';
+import type { BlockStyle } from './styles.js';
+import type { MeasuredBlock } from '../measure/index.js';
+import { NO_BREAK_SPACES } from '../measure/spaces.js';
+import { GEMINATE_DOT, endsInsideGeminate } from '../measure/geminate.js';
+import { renderMath, isMathReady, noteMathWithoutEngine } from '../math/index.js';
 
 // ---------------------------------------------------------------------------
 // Page geometry
@@ -339,7 +339,7 @@ export interface MeasureViewport {
 export function computeMeasureViewport(
   columnWidth: number,
   style: BlockStyle,
-  listBullet: import('./lists').ListBulletStyle | undefined,
+  listBullet: import('./lists.js').ListBulletStyle | undefined,
 ): MeasureViewport {
   let measureMaxWidth = columnWidth;
   let lineXShift = 0;

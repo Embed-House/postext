@@ -15,8 +15,8 @@
  */
 
 import type { ReflowEvent, VDTPage } from 'postext';
-import type { SandboxLabels } from '../../types';
-import { fill } from '../../print/fillTokens';
+import type { SandboxLabels } from '../../types/index.js';
+import { fill } from '../../print/fillTokens.js';
 
 export type ReflowLabels = Pick<
   SandboxLabels,

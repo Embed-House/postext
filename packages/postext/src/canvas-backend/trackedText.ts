@@ -1,10 +1,10 @@
-import { bidiClassOf, needsBidi } from '../bidi';
-import { graphemesOf } from '../measure/graphemes';
-import { joiningScriptIn } from '../measure/joining';
-import { hasCJK } from '../measure/cjk';
-import { paintAsOneRun } from './mirrorFrame';
-import { letterSpacingOf, setLetterSpacing } from './contextState';
-import { contextTextWidth } from './contextText';
+import { bidiClassOf, needsBidi } from '../bidi.js';
+import { graphemesOf } from '../measure/graphemes.js';
+import { joiningScriptIn } from '../measure/joining.js';
+import { hasCJK } from '../measure/cjk.js';
+import { paintAsOneRun } from './mirrorFrame.js';
+import { letterSpacingOf, setLetterSpacing } from './contextState.js';
+import { contextTextWidth } from './contextText.js';
 
 /**
  * Tracked words keep their ligatures (#663).

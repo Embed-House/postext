@@ -31,14 +31,14 @@
  * row metrics the full-table layout reports.
  */
 
-import { bitmapLayoutSize } from '../bitmapResolution';
-import { anchorRefLabel, findAnchorTarget, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs';
-import { measuringVertically, withMeasureWritingMode } from '../measure/vertical';
-import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
-import type { InlineIcon, InlineSpan, RefCase, SwatchBox, SwatchShape } from '../parse';
-import { suffixJoiner } from '../parse/inlineFormatting';
-import { resourceSafeArea, safeAreaHeightRange, safeAreaSource } from './safeArea';
-import { layoutVideo } from './videoOverlay';
+import { bitmapLayoutSize } from '../bitmapResolution.js';
+import { anchorRefLabel, findAnchorTarget, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs.js';
+import { measuringVertically, withMeasureWritingMode } from '../measure/vertical.js';
+import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines.js';
+import type { InlineIcon, InlineSpan, RefCase, SwatchBox, SwatchShape } from '../parse/index.js';
+import { suffixJoiner } from '../parse/inlineFormatting.js';
+import { resourceSafeArea, safeAreaHeightRange, safeAreaSource } from './safeArea.js';
+import { layoutVideo } from './videoOverlay.js';
 import type {
   ColorPaletteEntry,
   Dimension,
@@ -56,7 +56,7 @@ import type {
   TableCellAlignKeyword,
   TableCellVerticalAlign,
   TableRules,
-} from '../types';
+} from '../types.js';
 import type {
   ResolvedConfig,
   ResolvedResourceBlock,
@@ -66,36 +66,36 @@ import type {
   VDTLineSegment,
   VDTResourceTableLayout,
   VDTTableSlice,
-} from '../vdt';
-import { createBoundingBox } from '../vdt';
-import { cachedMeasureRichSnippet, measureRichBlock, measureTextWidth, buildFontString } from '../measure';
-import type { MeasureBlockOptions, MeasurementCache } from '../measure';
-import { isSwatchFill, measureRichSnippet } from '../measure/rich';
-import { isBlankText, refLabelPieces } from '../measure/spaces';
-import { linkSegments } from '../measure/links';
-import { graphemeCount } from '../measure/graphemes';
-import { dimensionToPx } from '../units';
-import { booktabsStrokes, type BooktabsRuleSpec } from '../table/booktabs';
+} from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import { cachedMeasureRichSnippet, measureRichBlock, measureTextWidth, buildFontString } from '../measure/index.js';
+import type { MeasureBlockOptions, MeasurementCache } from '../measure/index.js';
+import { isSwatchFill, measureRichSnippet } from '../measure/rich.js';
+import { isBlankText, refLabelPieces } from '../measure/spaces.js';
+import { linkSegments } from '../measure/links.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { dimensionToPx } from '../units.js';
+import { booktabsStrokes, type BooktabsRuleSpec } from '../table/booktabs.js';
 // Caption / table-cell / note content is parsed with the shared snippet
 // parser so measurement and the sandbox's glyph→snippet mapping agree on
 // one span list (`:ref{…}` becomes a one-char placeholder span).
-import { parseInlineSnippetSpans } from '../parse/inlineSnippet';
-import { hasAnnotations, resolveAnnotationSpans } from './annotations';
-import { sliceSpan } from '../parse/links';
-import { indentColumn, listDepth, nestListItem } from '../parse/listNesting';
-import { chipContextOf, fontSizePxOf, resolveChipSpans, type ChipContext } from './chips';
-import { withSnippetInlineCode } from './codeInline';
-import { mergeCaptionStyle } from '../defaults/captionStyle';
-import { pickTableStyle } from '../defaults/tableStyle';
-import { resolveColorValue, startEndAsLeftRight } from '../defaults/shared';
-import { resolveBodyStyle } from './styles';
-import { FIT_EPS } from './placement';
-import { captionInsideShare } from './captionInside';
-import { uppercasePreservingLength } from './buildBlockKind';
-import { lineTrailingTracking } from '../lineInk';
-import type { ResourceNumberingMap } from './resourceNumbering';
-import { resolveCitationSpans, type CaptionCitations } from './citations';
-import { renderMath } from '../math';
+import { parseInlineSnippetSpans } from '../parse/inlineSnippet.js';
+import { hasAnnotations, resolveAnnotationSpans } from './annotations.js';
+import { sliceSpan } from '../parse/links.js';
+import { indentColumn, listDepth, nestListItem } from '../parse/listNesting.js';
+import { chipContextOf, fontSizePxOf, resolveChipSpans, type ChipContext } from './chips.js';
+import { withSnippetInlineCode } from './codeInline.js';
+import { mergeCaptionStyle } from '../defaults/captionStyle.js';
+import { pickTableStyle } from '../defaults/tableStyle.js';
+import { resolveColorValue, startEndAsLeftRight } from '../defaults/shared.js';
+import { resolveBodyStyle } from './styles.js';
+import { FIT_EPS } from './placement.js';
+import { captionInsideShare } from './captionInside.js';
+import { uppercasePreservingLength } from './buildBlockKind.js';
+import { lineTrailingTracking } from '../lineInk.js';
+import type { ResourceNumberingMap } from './resourceNumbering.js';
+import { resolveCitationSpans, type CaptionCitations } from './citations.js';
+import { renderMath } from '../math/index.js';
 
 /**
  * A caption's, a note's or a cell's spans with their Chinese and Japanese

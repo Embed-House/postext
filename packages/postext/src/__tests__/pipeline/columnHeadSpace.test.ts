@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, Resource, VDTBlock, VDTColumn, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, Resource, VDTBlock, VDTColumn, VDTDocument } from '../../index.js';
 
 // #706, `headings.columnHeadSpace: 'remainder'`: a heading that snaps to the
 // grid and opens a column drops its space above in whole grid lines only.

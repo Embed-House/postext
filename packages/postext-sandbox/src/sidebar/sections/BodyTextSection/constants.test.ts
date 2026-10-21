@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { DOCUMENT_LANGUAGES } from 'postext';
-import { DOCUMENT_LOCALE_OPTIONS, LOCALE_OPTIONS, documentLocaleLabel, documentLocaleOptionsFor, localeOptionsFor } from './constants';
+import { DOCUMENT_LOCALE_OPTIONS, LOCALE_OPTIONS, documentLocaleLabel, documentLocaleOptionsFor, localeOptionsFor } from './constants.js';
 
 describe('localeOptionsFor', () => {
   it('offers the bundled languages when the value is one of them', () => {

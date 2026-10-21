@@ -50,9 +50,9 @@
  * full em otherwise.
  */
 
-import { bidiClassOf, type BidiIsolate } from '../bidi';
-import { languageOf, localeScript } from '../locale';
-import { measureMarkedWidth, scriptSensitive } from './canvas';
+import { bidiClassOf, type BidiIsolate } from '../bidi.js';
+import { languageOf, localeScript } from '../locale.js';
+import { measureMarkedWidth, scriptSensitive } from './canvas.js';
 
 /** The scripts a word with no letter may be shaped in (ISO 15924). `'Hani'`
  *  (Han) is given to a doubled ellipsis or dash only ({@link

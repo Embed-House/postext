@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderPageToCanvas } from '../canvas-backend';
-import { fillCellRuns } from '../canvas-backend/cellText';
-import { renderToHtml } from '../html-backend';
-import { buildDocument } from '../pipeline';
-import { clearMeasurementCache } from '../measure';
-import { cellsOf } from '../wordPieces';
-import type { PostextConfig } from '../types';
-import type { VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
+import { renderPageToCanvas } from '../canvas-backend/index.js';
+import { fillCellRuns } from '../canvas-backend/cellText.js';
+import { renderToHtml } from '../html-backend.js';
+import { buildDocument } from '../pipeline/index.js';
+import { clearMeasurementCache } from '../measure/index.js';
+import { cellsOf } from '../wordPieces.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment } from '../vdt.js';
 
 // #770: the cells of the CJK composer. The composer measures a Chinese or
 // Japanese character alone, and a line carries the cells of one style as

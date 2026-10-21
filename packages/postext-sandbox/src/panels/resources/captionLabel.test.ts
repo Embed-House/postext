@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, defaultResourceTypes } from 'postext';
 import type { Resource, ResourceType } from 'postext';
-import { captionPreviewLabel } from './captionLabel';
+import { captionPreviewLabel } from './captionLabel.js';
 
 class StubCtx {
   font = '';

@@ -1,12 +1,12 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../measure/rich';
-import { measureBlock } from '../measure/plain';
-import { hyphenateText, setHyphenationLocale } from '../hyphenate';
-import { layoutSlotToVdt } from '../pipeline/headerFooter';
-import { resolveDesignSlot } from '../defaults/headerFooter';
-import type { InlineSpan } from '../parse';
-import type { DesignElement } from '../types';
-import type { VDTDesignTextBlock, VDTPage } from '../vdt';
+import { measureRichBlock } from '../measure/rich.js';
+import { measureBlock } from '../measure/plain.js';
+import { hyphenateText, setHyphenationLocale } from '../hyphenate.js';
+import { layoutSlotToVdt } from '../pipeline/headerFooter.js';
+import { resolveDesignSlot } from '../defaults/headerFooter.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { DesignElement } from '../types.js';
+import type { VDTDesignTextBlock, VDTPage } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character, the space included, is 7 px wide.

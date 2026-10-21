@@ -1,3 +1,3 @@
-export type { SandboxLabels } from './labels';
-export type { PanelId, ViewportTab, EpubLayout, PostextSandboxProps, HashBundleResolver, HashBundleEditions } from './props';
-export { DEFAULT_LABELS } from './defaultLabels';
+export type { SandboxLabels } from './labels.js';
+export type { PanelId, ViewportTab, EpubLayout, PostextSandboxProps, HashBundleResolver, HashBundleEditions } from './props.js';
+export { DEFAULT_LABELS } from './defaultLabels.js';

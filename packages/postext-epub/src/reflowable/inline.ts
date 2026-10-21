@@ -7,8 +7,8 @@
 
 import type { CjkRegion, MathRender, VDTLine, VDTLineSegment, VDTRuby, VDTSwatch } from 'postext';
 import { graphemesOf, hasSwatchShape, verticalRuns } from 'postext';
-import type { Format, InlineItem, LinkTarget } from './model';
-import { escapeAttr, escapeXml, stripInvalidXmlChars } from '../shared/xml';
+import type { Format, InlineItem, LinkTarget } from './model.js';
+import { escapeAttr, escapeXml, stripInvalidXmlChars } from '../shared/xml.js';
 
 /** What turning lines into items needs to know about their document. */
 export interface InlineContext {

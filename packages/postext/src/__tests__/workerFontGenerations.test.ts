@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createFontGenerations, installFontGenerations } from '../worker/fontGenerations';
+import { createFontGenerations, installFontGenerations } from '../worker/fontGenerations.js';
 
 // #760: a worker's canvas resolves a font the first time a shorthand is set
 // and never looks at the font set again for it (Chrome 131 and 154). A face

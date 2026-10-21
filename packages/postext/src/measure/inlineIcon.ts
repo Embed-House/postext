@@ -7,12 +7,12 @@
  * line sample is twice as long as it is high, its stroke at half height.
  */
 
-import type { InlineIcon } from '../parse';
-import type { ResolvedResourceBlock, VDTInlineIcon, VDTLine } from '../vdt';
-import { buildFontString } from './font';
-import { measureTextWidth } from './canvas';
-import { fontEm } from './vertical';
-import { withPxSize } from './fontString';
+import type { InlineIcon } from '../parse/index.js';
+import type { ResolvedResourceBlock, VDTInlineIcon, VDTLine } from '../vdt.js';
+import { buildFontString } from './font.js';
+import { measureTextWidth } from './canvas.js';
+import { fontEm } from './vertical.js';
+import { withPxSize } from './fontString.js';
 
 /** The height of a capital, in ems: an icon's default height. */
 export const ICON_CAP_EM = 0.75;

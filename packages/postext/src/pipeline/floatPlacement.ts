@@ -16,8 +16,8 @@
  * which owns the VDT and measurement context.
  */
 
-import { resourceRefId } from './crossRefs';
-import type { ContentBlock } from '../parse';
+import { resourceRefId } from './crossRefs.js';
+import type { ContentBlock } from '../parse/index.js';
 import type {
   Dimension,
   FloatShrinkMode,
@@ -27,11 +27,11 @@ import type {
   ResourceFloatPosition,
   ResourceFloatSpan,
   ResourceRotation,
-} from '../types';
-import { floatColumnCount, startEndAsLeftRight } from '../defaults/shared';
-import { DEFAULT_FLOAT_MIN_SCALE, floatMinScaleOf, floatShrinkModeOf } from '../defaults/layout';
-import { resolveResourceWrap } from './textWrap';
-import { captionInsideShare } from './captionInside';
+} from '../types.js';
+import { floatColumnCount, startEndAsLeftRight } from '../defaults/shared.js';
+import { DEFAULT_FLOAT_MIN_SCALE, floatMinScaleOf, floatShrinkModeOf } from '../defaults/layout.js';
+import { resolveResourceWrap } from './textWrap.js';
+import { captionInsideShare } from './captionInside.js';
 
 export { floatColumnCount };
 

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDocument, PDFName, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PdfGenerationConfig, PostextConfig, VDTDocument } from 'postext';
-import { renderToPdf, type RenderToPdfOptions } from '../pdf-backend';
+import { renderToPdf, type RenderToPdfOptions } from '../pdf-backend/index.js';
 
 // EF-124. `config.pdfGeneration` was documented as read by postext-pdf, but
 // only the Sandbox mapped it onto `renderToPdf`'s options. `renderToPdf`

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { matchPosition, syncedScrollTop, type SyncDoc } from './compareSync';
+import { matchPosition, syncedScrollTop, type SyncDoc } from './compareSync.js';
 
 /** A document whose pages set the content blocks listed (inclusive
  *  ranges), or none (`null`), or a composed page (`{ fence }`). */

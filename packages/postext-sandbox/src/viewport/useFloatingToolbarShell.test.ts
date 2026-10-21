@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createBusyLatch } from './useFloatingToolbarShell';
+import { createBusyLatch } from './useFloatingToolbarShell.js';
 
 describe('createBusyLatch', () => {
   beforeEach(() => vi.useFakeTimers());

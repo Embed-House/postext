@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { applyTextChanges } from '../book/textChanges';
-import { countTemplatePages, fenceAttributeName, fenceTemplateChange, pageFenceAttributes, pageFenceIds, renameSlotChanges, renameTemplateChanges, templateFences } from './templateUsage';
+import { applyTextChanges } from '../book/textChanges.js';
+import { countTemplatePages, fenceAttributeName, fenceTemplateChange, pageFenceAttributes, pageFenceIds, renameSlotChanges, renameTemplateChanges, templateFences } from './templateUsage.js';
 
 const BOOK = [
   '# One',

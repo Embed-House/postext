@@ -4,7 +4,7 @@ import { ViewPlugin, Decoration, EditorView, type DecorationSet, type ViewUpdate
 import { Prec, RangeSetBuilder } from '@codemirror/state';
 import type { CompletionContext, CompletionResult } from '@codemirror/autocomplete';
 import { findAnnotations, type AnnotationName } from 'postext';
-import { inFencedCode } from './codeFences';
+import { inFencedCode } from './codeFences.js';
 
 /**
  * Editor support for the Chinese and Japanese annotations (#193–#195,

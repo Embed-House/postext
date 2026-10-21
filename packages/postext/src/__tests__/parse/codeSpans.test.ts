@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
-import { collectContentWarnings } from '../../pipeline/contentWarnings';
+import { parseMarkdown } from '../../parse/index.js';
+import { collectContentWarnings } from '../../pipeline/contentWarnings.js';
 
 const blockText = (md: string) => parseMarkdown(md).map((b) => b.spans.map((s) => s.text).join('')).join('\n');
 const spansOf = (md: string) => parseMarkdown(md).flatMap((b) => b.spans);

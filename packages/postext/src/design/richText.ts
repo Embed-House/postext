@@ -5,19 +5,19 @@
 // measures whole strings; here every width is the sum of per-run widths,
 // exactly as the renderers paint the runs one after another.
 
-import { flowTextWidth, fontEm, measuringVertically } from '../measure/vertical';
-import { measureTextWidth } from '../measure/canvas';
-import type { ForcedOrientation } from '../writingMode';
-import { parseInlineFormatting } from '../parse/inlineFormatting';
-import type { InlineSpan } from '../parse/types';
-import { buildFontString } from '../measure';
-import { scriptMetrics, stackedScriptPairs } from '../measure/rich';
-import { graphemeCount } from '../measure/graphemes';
-import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText } from '../hyphenate';
-import { endsInsideGeminate } from '../measure/geminate';
-import { NO_BREAK_SPACES, isBreakingSpace } from '../measure/spaces';
-import type { TextOverflow } from '../types';
-import { hasJoiningScript } from '../bidi';
+import { flowTextWidth, fontEm, measuringVertically } from '../measure/vertical.js';
+import { measureTextWidth } from '../measure/canvas.js';
+import type { ForcedOrientation } from '../writingMode.js';
+import { parseInlineFormatting } from '../parse/inlineFormatting.js';
+import type { InlineSpan } from '../parse/types.js';
+import { buildFontString } from '../measure/index.js';
+import { scriptMetrics, stackedScriptPairs } from '../measure/rich.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText } from '../hyphenate.js';
+import { endsInsideGeminate } from '../measure/geminate.js';
+import { NO_BREAK_SPACES, isBreakingSpace } from '../measure/spaces.js';
+import type { TextOverflow } from '../types.js';
+import { hasJoiningScript } from '../bidi.js';
 
 /** One run of a design text line in its own font (see `VDTDesignTextRun`). */
 export interface DesignTextRun {

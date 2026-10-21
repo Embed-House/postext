@@ -16,24 +16,24 @@
  * the comic, never lost.
  */
 
-import type { ContentBlock } from '../parse/types';
-import type { CalloutPaddingConfig, Dimension, ResolvedCalloutStyleConfig } from '../types';
-import type { ContentWarning, ResolvedConfig, VDTBlock, VDTComicPage, VDTFrame, VDTPage } from '../vdt';
-import { flowRectToPage, pageRectToFlow, pageToFlow, type BoundingBox, type VDTContourSpan } from '../vdt';
-import { FRAME_ATTR, FRAME_STYLE_ID } from '../composed/wrap';
-import { normalizeFrame } from '../composed/templates';
-import type { ResolvedFrame, ResolvedPageTemplate } from '../composed/types';
-import type { BoxExclusion, PlannedCallout } from '../pipeline/calloutLayout';
-import type { FrameLayoutPass } from '../pipeline/frameLayout';
-import { composedStories, layoutComposedPage, type ComposedStory, type PlannedComposedPage } from '../pipeline/composedLayout';
-import { resolvedDirection } from '../pipeline/config';
-import { SPAN_EMBED_STYLE_ID } from '../pipeline/spanEmbeds';
-import { dimensionToPx } from '../units';
-import { resolvedComics } from '../defaults/comics';
-import { comicBoxStyle, isComicTextPanel } from './frames';
-import { translateComicPage } from './transform';
-import { comicPanelSources, copyComicPanelSources, setComicLayoutWarnings, comicPageLayoutWarnings } from './layoutPage';
-import type { ComicPageSource, ComicPanelSource } from './types';
+import type { ContentBlock } from '../parse/types.js';
+import type { CalloutPaddingConfig, Dimension, ResolvedCalloutStyleConfig } from '../types.js';
+import type { ContentWarning, ResolvedConfig, VDTBlock, VDTComicPage, VDTFrame, VDTPage } from '../vdt.js';
+import { flowRectToPage, pageRectToFlow, pageToFlow, type BoundingBox, type VDTContourSpan } from '../vdt.js';
+import { FRAME_ATTR, FRAME_STYLE_ID } from '../composed/wrap.js';
+import { normalizeFrame } from '../composed/templates.js';
+import type { ResolvedFrame, ResolvedPageTemplate } from '../composed/types.js';
+import type { BoxExclusion, PlannedCallout } from '../pipeline/calloutLayout.js';
+import type { FrameLayoutPass } from '../pipeline/frameLayout.js';
+import { composedStories, layoutComposedPage, type ComposedStory, type PlannedComposedPage } from '../pipeline/composedLayout.js';
+import { resolvedDirection } from '../pipeline/config.js';
+import { SPAN_EMBED_STYLE_ID } from '../pipeline/spanEmbeds.js';
+import { dimensionToPx } from '../units.js';
+import { resolvedComics } from '../defaults/comics.js';
+import { comicBoxStyle, isComicTextPanel } from './frames.js';
+import { translateComicPage } from './transform.js';
+import { comicPanelSources, copyComicPanelSources, setComicLayoutWarnings, comicPageLayoutWarnings } from './layoutPage.js';
+import type { ComicPageSource, ComicPanelSource } from './types.js';
 
 /** `containerAttrs` key of a text panel's story box: the panel's index in
  *  its page's source (`ComicPanelSource.index`). */

@@ -4,8 +4,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // EF-146: a tagged page painted, and tagged, its opener, then each column,
 // then its floats, so the structure tree read every figure, table and

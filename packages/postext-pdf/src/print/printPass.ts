@@ -19,7 +19,7 @@
 
 import { PDFName, PDFNumber, PDFOperator, PDFOperatorNames, type PDFPage } from 'pdf-lib';
 import { dimensionToPx } from 'postext';
-import type { PrintColorMode } from './colorMode';
+import type { PrintColorMode } from './colorMode.js';
 
 /** Overprint flags of a graphics state: fill (`op`) and stroke (`OP`). */
 export interface OverprintFlags {

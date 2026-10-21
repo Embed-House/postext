@@ -7,9 +7,9 @@ import fontkit from '@pdf-lib/fontkit';
 import { PDFArray, PDFDocument, PDFHexString, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument, lineLevels, resolveParagraph, visualOrder } from 'postext';
 import type { PostextConfig, VDTDocument, VDTLine } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { complexShaperReady, shapeRun } from '../complexShaping';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { complexShaperReady, shapeRun } from '../complexShaping.js';
 
 // Issue #380: Arabic in the PDF is shaped by HarfBuzz (marks raised and
 // lowered with the text rise, numbers and Latin kept left to right) and

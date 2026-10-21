@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFDocument, PDFHexString, PDFName, PDFString } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 const fontBytes = fs.readFileSync(new URL('../../../../apps/web/public/fonts/Lora-Regular.ttf', import.meta.url));
 const fontProvider = async () => new Uint8Array(fontBytes);

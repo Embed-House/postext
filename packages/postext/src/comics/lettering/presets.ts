@@ -4,8 +4,8 @@
 // book's configuration; these are what an unset configuration amounts to,
 // and what the tests and the dev harness letter with.
 
-import { languageOf } from '../../locale';
-import type { LetteringStyle } from './types';
+import { languageOf } from '../../locale.js';
+import type { LetteringStyle } from './types.js';
 
 /** Inputs of {@link presetLetteringStyles}. */
 export interface PresetInputs {

@@ -5,8 +5,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFRawStream, PD
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #860: a figure's labels drawn on its picture are text in the PDF — read
 // after the figure, one paragraph each, their halos and plates artifacts —

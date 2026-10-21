@@ -1,8 +1,8 @@
 'use client';
 
 import type { Dimension, DimensionUnit } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { DimensionInput, ToggleSwitch } from '../../controls';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { DimensionInput, ToggleSwitch } from '../../controls/index.js';
 
 /**
  * `paragraphSpacing` of the body text or of a box's body (#1115): a switch

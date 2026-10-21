@@ -3,11 +3,11 @@ import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { parseFontString } from '../fontString';
-import type { PdfFontFallbackWarning, PdfWarning, RenderProgress } from '../pdf-backend';
-import type { createPdfWorker as CreatePdfWorker } from '../worker/client';
-import { declaredFontFile } from '../fontCache';
-import { paintedGlyphs } from './glyphPositions';
+import { parseFontString } from '../fontString.js';
+import type { PdfFontFallbackWarning, PdfWarning, RenderProgress } from '../pdf-backend/index.js';
+import type { createPdfWorker as CreatePdfWorker } from '../worker/client.js';
+import { declaredFontFile } from '../fontCache.js';
+import { paintedGlyphs } from './glyphPositions.js';
 
 // EF-52: `postext-pdf/worker` end to end, with the worker run in-process
 // behind a message channel that clones every message the way a real
@@ -61,8 +61,8 @@ beforeAll(async () => {
   scope.other = host;
   // The worker module binds `self` when it loads.
   (globalThis as unknown as { self: unknown }).self = scope;
-  await import('../worker/pdf.worker');
-  const { createPdfWorker } = await import('../worker/client');
+  await import('../worker/pdf.worker.js');
+  const { createPdfWorker } = await import('../worker/client.js');
   pdf = createPdfWorker({ worker: host as unknown as Worker });
 });
 

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFNumber, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // A justified CJK line is spread per segment (`VDTLineSegment.tracking`):
 // the PDF paints each tracked segment with that character spacing (`Tc`)

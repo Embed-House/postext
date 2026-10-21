@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { parseMarkdown, parseMarkdownWithIssues } from '../../parse';
-import { initMathEngine } from '../../math';
-import { resolveMathConfig, stripMathDefaults } from '../../defaults';
-import type { PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { parseMarkdown, parseMarkdownWithIssues } from '../../parse/index.js';
+import { initMathEngine } from '../../math/index.js';
+import { resolveMathConfig, stripMathDefaults } from '../../defaults/index.js';
+import type { PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

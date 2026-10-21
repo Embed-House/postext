@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdownMemo, parseMarkdownWithIssuesMemo, PARSE_MEMO_CAPACITY } from '../parse/blockParser';
-import { resolveAllConfig } from '../pipeline/config';
-import type { PostextConfig } from '../types';
+import { parseMarkdownMemo, parseMarkdownWithIssuesMemo, PARSE_MEMO_CAPACITY } from '../parse/blockParser.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import type { PostextConfig } from '../types.js';
 
 describe('parseMarkdownMemo', () => {
   it('returns the same blocks for the same input', () => {

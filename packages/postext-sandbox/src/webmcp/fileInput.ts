@@ -1,6 +1,6 @@
 // A file as a tool takes one in: an address the page fetches, or its bytes.
 
-import { ToolError, type JsonSchema } from './modelContext';
+import { ToolError, type JsonSchema } from './modelContext.js';
 
 /** Largest file a tool takes in (a picture, a font, a video), in bytes. */
 const MAX_FILE_BYTES = 40 * 1024 * 1024;

@@ -20,13 +20,13 @@
  * flow frame. With no flow frame that content stays outside the stories,
  * after them, and the layout sets it in the flow on the page after.
  */
-import type { ContentBlock } from '../parse/types';
-import type { CalloutStyleConfig } from '../types';
-import { composedPages, pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document';
-import { isModuleTemplate, repeatInstance, repeatInstanceName, resolvePageTemplate, type PageTemplateSource } from './templates';
-import { pageRepeats } from './repeat';
-import { nextFrameOf } from './geometry';
-import type { ResolvedFrame, ResolvedPageTemplate } from './types';
+import type { ContentBlock } from '../parse/types.js';
+import type { CalloutStyleConfig } from '../types.js';
+import { composedPages, pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document.js';
+import { isModuleTemplate, repeatInstance, repeatInstanceName, resolvePageTemplate, type PageTemplateSource } from './templates.js';
+import { pageRepeats } from './repeat.js';
+import { nextFrameOf } from './geometry.js';
+import type { ResolvedFrame, ResolvedPageTemplate } from './types.js';
 
 /** Style id of a story's box. Not a user style: no configuration can name
  *  it. A story whose frame is missing on its page (a variant dropped it)

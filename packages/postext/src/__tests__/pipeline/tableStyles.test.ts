@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { layoutResourceBlock } from '../../pipeline/resourceLayout';
-import type { TableSliceSpec } from '../../pipeline/resourceLayout';
-import { resolveAllConfig } from '../../pipeline/config';
-import { buildDocument } from '../../pipeline';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { renderToHtml } from '../../html-backend';
-import { renderPageToCanvas } from '../../canvas-backend';
-import { tableCellFill, tableCellFillRects, tableFrameOutline } from '../../vdt';
-import { stripTableStyleDefaults } from '../../defaults/tableStyle';
-import { dimensionToPx } from '../../units';
-import type { PostextConfig, Resource, TableCell, TableModel } from '../../types';
+import { layoutResourceBlock } from '../../pipeline/resourceLayout.js';
+import type { TableSliceSpec } from '../../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { buildDocument } from '../../pipeline/index.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { renderToHtml } from '../../html-backend.js';
+import { renderPageToCanvas } from '../../canvas-backend/index.js';
+import { tableCellFill, tableCellFillRects, tableFrameOutline } from '../../vdt.js';
+import { stripTableStyleDefaults } from '../../defaults/tableStyle.js';
+import { dimensionToPx } from '../../units.js';
+import type { PostextConfig, Resource, TableCell, TableModel } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

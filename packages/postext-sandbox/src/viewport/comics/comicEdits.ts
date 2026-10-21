@@ -12,11 +12,11 @@
  */
 
 import type { BoundingBox, Resource, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTComicSplitter, VDTPoint } from 'postext';
-import type { ComposedBook } from '../../book/types';
-import { segmentAtOffset } from '../../book/compose';
-import { shiftTextChanges, type TextChange } from '../../book/textChanges';
-import type { SplitterPosition } from './comicDrag';
-import { canMergeNext, mergePanelChanges, moveSplitterChanges, splitPanelChanges } from './comicSource';
+import type { ComposedBook } from '../../book/types.js';
+import { segmentAtOffset } from '../../book/compose.js';
+import { shiftTextChanges, type TextChange } from '../../book/textChanges.js';
+import type { SplitterPosition } from './comicDrag.js';
+import { canMergeNext, mergePanelChanges, moveSplitterChanges, splitPanelChanges } from './comicSource.js';
 import {
   balloonDropIssues,
   balloonEm,
@@ -30,8 +30,8 @@ import {
   pinToPage,
   tailTargetNow,
   type BalloonDropIssues,
-} from './balloonDrag';
-import { comicBalloonItem, pinLineChanges, rotateLineChanges, tailLineChanges, unpinLineChanges, untailLineChanges } from './balloonSource';
+} from './balloonDrag.js';
+import { comicBalloonItem, pinLineChanges, rotateLineChanges, tailLineChanges, unpinLineChanges, untailLineChanges } from './balloonSource.js';
 
 /** A balloon group held by the pointer, or moved from the keyboard. */
 export interface BalloonMove {

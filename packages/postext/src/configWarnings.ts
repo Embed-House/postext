@@ -37,40 +37,40 @@ import type {
   ChecksConfig,
   ContentInConfigCheckConfig,
   DocumentMetadata,
-} from './types';
-import type { ConfigWarning, ResolvedConfig } from './vdt';
-import { parseNumberFormat } from './numbering';
-import { parseTocGroupHead } from './defaults/toc';
-import { isFontStack, primaryFontFamily } from './measure/font';
-import { dimensionToPx } from './units';
-import { resolveAllConfig, resolveDirection, resolvedLocale, sideColumnPercentUsed, columnCountUsed } from './pipeline/config';
-import { computePageMetrics } from './pipeline/buildHelpers';
-import { deriveSectionGeometryConfig } from './pipeline/headingStyles';
-import { cjkGridGeometry } from './pipeline/cjkGrid';
-import { isDigitSystem } from './locale';
-import { defaultEmphasisFor, isEmphasisStyle, isTashkilMode } from './defaults/bodyText';
-import { parseFootnoteNumberFormat } from './defaults/footnotes';
-import { COMIC_CHOICES, isComicChoice, resolveComicsConfig } from './defaults/comics';
-import { resolvePrintConfig } from './defaults/print';
-import { CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig } from './defaults/canvasViewer';
-import { CONTRAST_LEVELS, CONTRAST_MODES, DEFAULT_CONTRAST_CONFIG } from './defaults/contrast';
-import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
-import { resolveContentInConfigCheck } from './defaults/checks';
-import { stripPlaceholders } from './pipeline/placeholders';
-import { configDesignSlots } from './design/slots';
-import { CONFIG_KEYS, DOTTED_PATH, designElementUnknownKeys, unknownKeysOf, type UnknownKey } from './design/elementKeys';
-import { FENCE_CONDITION_SLOTS } from './design/fenceCondition';
-import { parseSvgPath, pathViewBox } from './design/svgPath';
-import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES, connectorPaintsOver } from './design/connector';
-import { metadataText } from './frontmatter';
-import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
-import { outputProfileInfo } from './color/catalogue';
-import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle';
-import { closestKey } from './util/closestKey';
-import { isResourceCounterReset } from './defaults/resourceTypes';
-import { calloutStyleChain, labelIconKind, labelIconScale } from './defaults/calloutStyles';
-import { opacityWarning, validatePageTemplates } from './composed/validate';
-import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers';
+} from './types.js';
+import type { ConfigWarning, ResolvedConfig } from './vdt.js';
+import { parseNumberFormat } from './numbering.js';
+import { parseTocGroupHead } from './defaults/toc.js';
+import { isFontStack, primaryFontFamily } from './measure/font.js';
+import { dimensionToPx } from './units.js';
+import { resolveAllConfig, resolveDirection, resolvedLocale, sideColumnPercentUsed, columnCountUsed } from './pipeline/config.js';
+import { computePageMetrics } from './pipeline/buildHelpers.js';
+import { deriveSectionGeometryConfig } from './pipeline/headingStyles.js';
+import { cjkGridGeometry } from './pipeline/cjkGrid.js';
+import { isDigitSystem } from './locale.js';
+import { defaultEmphasisFor, isEmphasisStyle, isTashkilMode } from './defaults/bodyText.js';
+import { parseFootnoteNumberFormat } from './defaults/footnotes.js';
+import { COMIC_CHOICES, isComicChoice, resolveComicsConfig } from './defaults/comics.js';
+import { resolvePrintConfig } from './defaults/print.js';
+import { CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig } from './defaults/canvasViewer.js';
+import { CONTRAST_LEVELS, CONTRAST_MODES, DEFAULT_CONTRAST_CONFIG } from './defaults/contrast.js';
+import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops.js';
+import { resolveContentInConfigCheck } from './defaults/checks.js';
+import { stripPlaceholders } from './pipeline/placeholders.js';
+import { configDesignSlots } from './design/slots.js';
+import { CONFIG_KEYS, DOTTED_PATH, designElementUnknownKeys, unknownKeysOf, type UnknownKey } from './design/elementKeys.js';
+import { FENCE_CONDITION_SLOTS } from './design/fenceCondition.js';
+import { parseSvgPath, pathViewBox } from './design/svgPath.js';
+import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES, connectorPaintsOver } from './design/connector.js';
+import { metadataText } from './frontmatter.js';
+import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap.js';
+import { outputProfileInfo } from './color/catalogue.js';
+import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle.js';
+import { closestKey } from './util/closestKey.js';
+import { isResourceCounterReset } from './defaults/resourceTypes.js';
+import { calloutStyleChain, labelIconKind, labelIconScale } from './defaults/calloutStyles.js';
+import { opacityWarning, validatePageTemplates } from './composed/validate.js';
+import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers.js';
 
 /** The format fields and the decimal spelling each falls back to. A
  *  `format` is a format field only under `pageNumbering`. */

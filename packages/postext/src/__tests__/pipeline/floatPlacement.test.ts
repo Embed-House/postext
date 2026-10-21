@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { computeFloatPlan, resolveResourcePlacement } from '../../pipeline/floatPlacement';
-import { parseMarkdown } from '../../parse';
-import type { PostextContent, PostextConfig, Resource, ResourceType } from '../../types';
+import { buildDocument } from '../../pipeline/index.js';
+import { computeFloatPlan, resolveResourcePlacement } from '../../pipeline/floatPlacement.js';
+import { parseMarkdown } from '../../parse/index.js';
+import type { PostextContent, PostextConfig, Resource, ResourceType } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

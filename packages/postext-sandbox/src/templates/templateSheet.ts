@@ -11,8 +11,8 @@
  */
 
 import { resolvePageConfig, templateFrameRects, type Dimension, type FrameGeometryContext, type PostextConfig, type ResolvedFrame, type ResolvedFrameGroup, type ResolvedPageTemplate } from 'postext';
-import { dimensionToMm, gridGeometry, type GridGeometry, type Rect } from './frameGeometry';
-import { nextFrameName } from './frameChain';
+import { dimensionToMm, gridGeometry, type GridGeometry, type Rect } from './frameGeometry.js';
+import { nextFrameName } from './frameChain.js';
 
 export interface SheetFrame {
   name: string;

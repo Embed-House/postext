@@ -2,11 +2,11 @@
 
 import { useCallback, useRef } from 'react';
 import type { Dimension, DimensionUnit } from 'postext';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { Select } from '../ui/select';
-import { FieldRow } from './FieldRow';
-import { NumberControl } from './NumberControl';
-import { convertDimension } from './units';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { Select } from '../ui/select.js';
+import { FieldRow } from './FieldRow.js';
+import { NumberControl } from './NumberControl.js';
+import { convertDimension } from './units.js';
 
 interface DimensionInputProps {
   label: string;

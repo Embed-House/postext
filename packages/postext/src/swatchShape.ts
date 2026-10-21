@@ -5,7 +5,7 @@
  * without one keeps the square each painter has always drawn.
  */
 
-import type { VDTSwatch } from './vdt';
+import type { VDTSwatch } from './vdt.js';
 
 /** Whether a swatch segment carries a shape of its own. */
 export function hasSwatchShape(swatch: VDTSwatch): boolean {

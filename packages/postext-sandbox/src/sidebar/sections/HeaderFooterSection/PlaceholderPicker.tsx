@@ -2,8 +2,8 @@
 
 import { allowedPlaceholdersFor } from 'postext';
 import type { DesignContextKind } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import type { SlotKind } from './placementAdapter';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import type { SlotKind } from './placementAdapter.js';
 
 /** What a box design reads beyond the heading set: the box's content,
  *  whole or its first paragraph (any `{boxText.<n>}` works). */

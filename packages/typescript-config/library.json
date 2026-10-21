@@ -3,6 +3,10 @@
   "compilerOptions": {
     "lib": ["ES2022"],
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    // Published `dist` loads in plain Node: relative imports carry their
+    // `.js` extension (TS2834 otherwise), so vitest can leave it untransformed (#1158).
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
   }
 }

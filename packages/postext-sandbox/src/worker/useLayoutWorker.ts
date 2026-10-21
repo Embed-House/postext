@@ -3,8 +3,8 @@ import type { BuildProgress } from 'postext/worker';
 
 export type { BuildProgress } from 'postext/worker';
 import type { PostextConfig, PostextContent, VDTDocument } from 'postext';
-import { useLayoutService } from './LayoutServiceContext';
-import type { LayoutPriority } from './LayoutService';
+import { useLayoutService } from './LayoutServiceContext.js';
+import type { LayoutPriority } from './LayoutService.js';
 
 export interface LayoutWorkerApi {
   /**

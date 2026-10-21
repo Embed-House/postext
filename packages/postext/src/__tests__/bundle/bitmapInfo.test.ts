@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile } from 'node:fs';
 import { unzipSync } from 'fflate';
-import { bitmapInfo, bitmapSize, createBundle, readBundle, resourceFromSpec } from '../../bundle';
-import { pictureResolution } from '../../word';
-import type { BundleManifestV2 } from '../../bundle';
-import type { PostextConfig, Resource } from '../../types';
+import { bitmapInfo, bitmapSize, createBundle, readBundle, resourceFromSpec } from '../../bundle/index.js';
+import { pictureResolution } from '../../word/index.js';
+import type { BundleManifestV2 } from '../../bundle/index.js';
+import type { PostextConfig, Resource } from '../../types.js';
 
 // #631: the resolution a bitmap's file states (PNG pHYs, JPEG JFIF and
 // EXIF, WebP EXIF), read with its size; bundles carry a declared and a

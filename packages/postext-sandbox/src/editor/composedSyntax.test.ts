@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { composedLineRanges } from './composedSyntax';
+import { composedLineRanges } from './composedSyntax.js';
 
 /** The ranges of a line as `[kind, text]` pairs. */
 function marks(text: string) {

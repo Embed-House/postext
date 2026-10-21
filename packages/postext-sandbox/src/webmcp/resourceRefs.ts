@@ -6,7 +6,7 @@
 // quoted in a code block is left as written.
 
 import { parseMarkdown, type PostextConfig, type Resource } from 'postext';
-import type { TextChange } from '../book/textChanges';
+import type { TextChange } from '../book/textChanges.js';
 
 /** The id of an `id=…` or `#…` token of an attribute blob, in the forms
  *  the engine's attribute grammar reads: `"…"`, `'…'`, `“…”`, `「…」` or

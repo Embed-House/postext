@@ -9,10 +9,10 @@ import type {
   TocGroupHead,
   TocLeaderFaceConfig,
   TocLevelConfig,
-} from '../types';
-import { presentTag } from '../locale';
-import { resolveDesignSlot, stripDesignSlotDefaults } from './headerFooter';
-import { defaultTableContinuationStrings } from './tableStyle';
+} from '../types.js';
+import { presentTag } from '../locale.js';
+import { resolveDesignSlot, stripDesignSlotDefaults } from './headerFooter.js';
+import { defaultTableContinuationStrings } from './tableStyle.js';
 
 const ZERO: Dimension = { value: 0, unit: 'em' };
 const NUMBER_WIDTH: Dimension = { value: 2, unit: 'em' };

@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { renderBlock } from '../canvas-backend/blockRender';
-import { fillTrackedWord, setLetterTracking } from '../canvas-backend/trackedText';
-import { setSegmentLanguages } from '../canvas-backend/wordRuns';
-import { setLetterSpacing } from '../canvas-backend/contextState';
-import { setVerticalPaint } from '../canvas-backend/verticalText';
-import { renderToHtml } from '../html-backend';
-import { buildDocument } from '../pipeline';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../vdt';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import { fillTrackedWord, setLetterTracking } from '../canvas-backend/trackedText.js';
+import { setSegmentLanguages } from '../canvas-backend/wordRuns.js';
+import { setLetterSpacing } from '../canvas-backend/contextState.js';
+import { setVerticalPaint } from '../canvas-backend/verticalText.js';
+import { renderToHtml } from '../html-backend.js';
+import { buildDocument } from '../pipeline/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../vdt.js';
 
 // #770: what a letter-spacing takes away besides ligatures. Chrome sets no
 // contextual alternate under a letter-spacing, and the canvas cannot ask

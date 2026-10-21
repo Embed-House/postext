@@ -31,10 +31,10 @@
  */
 import type { PDFFont } from 'pdf-lib';
 import { mirroredCodePoint } from 'postext';
-import { isDefaultIgnorable, isFallbackHandled, substituteGlyph } from './pdf-backend/fallbackSpaces';
-import { besideLetterOf, shapesAsCanvas, shapingScript, shapingScriptLetter, withBesideLetter, withinWideText } from './shapingLanguage';
-import { canvasWords } from './canvasWords';
-import { parseUnicodeRange, rangesHold, type CodePointRanges } from './unicodeRange';
+import { isDefaultIgnorable, isFallbackHandled, substituteGlyph } from './pdf-backend/fallbackSpaces.js';
+import { besideLetterOf, shapesAsCanvas, shapingScript, shapingScriptLetter, withBesideLetter, withinWideText } from './shapingLanguage.js';
+import { canvasWords } from './canvasWords.js';
+import { parseUnicodeRange, rangesHold, type CodePointRanges } from './unicodeRange.js';
 
 /** The fontkit face of an embedded font, as far as coverage needs it. */
 interface CoverageFace {

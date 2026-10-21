@@ -31,11 +31,11 @@
 
 import type { Dispatch, MutableRefObject } from 'react';
 import { flowToPage, resolvePageTemplate, type PostextConfig, type ResolvedPageTemplate, type VDTComposedPage, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
-import type { SandboxAction } from '../../context/SandboxContext';
-import type { ComposedBook } from '../../book/types';
-import { segmentAtOffset } from '../../book/compose';
-import type { SandboxLabels } from '../../types/labels';
-import { applyViewerEdit } from '../../editor/viewerEdits';
+import type { SandboxAction } from '../../context/SandboxContext.js';
+import type { ComposedBook } from '../../book/types.js';
+import { segmentAtOffset } from '../../book/compose.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
 import {
   RESIZE_HANDLES,
   dimensionToMm,
@@ -56,20 +56,20 @@ import {
   templateAreaRect,
   type Handle,
   type Rect,
-} from '../../templates/frameGeometry';
-import { templateEditor, templateEditorHost } from '../../templates/editorStore';
-import { showPageTemplatesSection } from '../../templates/showSection';
-import { emitFrameEditorEvent, type FrameDragKind } from '../../templates/frameEvents';
-import { addFrame, ancestorsOf, namesInUse, uniqueName } from '../../templates/templateEdits';
-import { decorationElement, pickConnectorFrame, updateDecorationElement } from '../../templates/connectorEdits';
-import { connectorHandles } from '../../templates/connectorHandles';
-import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage, templateDisplayName } from '../../templates/pageEdits';
-import { countTemplatePages, fenceTemplateChange, templateFences } from '../../templates/templateUsage';
-import { nextFrameName } from '../../templates/frameChain';
-import { flowBoxOnSheet, frameHitAt, sheetToFlow } from './frameHit';
-import { setPointer } from '../../templates/pointerEdits';
-import { frameAnchorAt, frameAnchorsOnPage, type FrameAnchorPoint } from './labelAnchorGeometry';
-import { selectFrame as pickFrame } from '../../editing/editMode';
+} from '../../templates/frameGeometry.js';
+import { templateEditor, templateEditorHost } from '../../templates/editorStore.js';
+import { showPageTemplatesSection } from '../../templates/showSection.js';
+import { emitFrameEditorEvent, type FrameDragKind } from '../../templates/frameEvents.js';
+import { addFrame, ancestorsOf, namesInUse, uniqueName } from '../../templates/templateEdits.js';
+import { decorationElement, pickConnectorFrame, updateDecorationElement } from '../../templates/connectorEdits.js';
+import { connectorHandles } from '../../templates/connectorHandles.js';
+import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage, templateDisplayName } from '../../templates/pageEdits.js';
+import { countTemplatePages, fenceTemplateChange, templateFences } from '../../templates/templateUsage.js';
+import { nextFrameName } from '../../templates/frameChain.js';
+import { flowBoxOnSheet, frameHitAt, sheetToFlow } from './frameHit.js';
+import { setPointer } from '../../templates/pointerEdits.js';
+import { frameAnchorAt, frameAnchorsOnPage, type FrameAnchorPoint } from './labelAnchorGeometry.js';
+import { selectFrame as pickFrame } from '../../editing/editMode.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 /** CSS px a pointer may travel before a press becomes a drag. */

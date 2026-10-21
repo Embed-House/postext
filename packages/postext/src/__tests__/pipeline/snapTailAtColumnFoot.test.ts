@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { VDTBlock, VDTColumn, VDTDocument } from '../../vdt';
-import type { PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { VDTBlock, VDTColumn, VDTDocument } from '../../vdt.js';
+import type { PostextConfig } from '../../types.js';
 
 // A block that snaps the flow to the grid under itself, set at the foot of a
 // column whose foot is off the grid (notes reserved there) or whose last line

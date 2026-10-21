@@ -7,11 +7,11 @@
  * still needs them as soon as it has a `:::page`.
  */
 
-import type { PostextConfig, ResolvedBalloonStyleConfig } from '../types';
-import { directionOf, isCjkLanguage, presentTag } from '../locale';
-import { pickBalloonStyle, resolveComicsConfig } from '../defaults/comics';
-import { parseComicFence } from './page';
-import type { ComicScriptItem } from './types';
+import type { PostextConfig, ResolvedBalloonStyleConfig } from '../types.js';
+import { directionOf, isCjkLanguage, presentTag } from '../locale.js';
+import { pickBalloonStyle, resolveComicsConfig } from '../defaults/comics.js';
+import { parseComicFence } from './page.js';
+import type { ComicScriptItem } from './types.js';
 
 /** A line that opens a comic block (`:::page`, `:::strip`). */
 const COMIC_FENCE_LINE = /^[ \t]*:::(?:page|strip)(?=[\s{]|$)/m;

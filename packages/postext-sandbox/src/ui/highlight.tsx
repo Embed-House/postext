@@ -1,6 +1,6 @@
 'use client';
 
-import { matchRanges } from '../sidebar/search/normalize';
+import { matchRanges } from '../sidebar/search/normalize.js';
 
 interface HighlightedTextProps {
   text: string;

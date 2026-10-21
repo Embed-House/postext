@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
 import {
   resolveUnorderedListsConfig,
   resolveBodyTextConfig,
@@ -20,9 +20,9 @@ import {
   NumberInput,
   TextInput,
   ToggleSwitch,
-} from '../../../controls';
-import { UnorderedListLevelSection } from './UnorderedListLevelSection';
-import { TEXT_SIZE_UNITS, INDENT_UNITS, MARGIN_UNITS, OFFSET_UNITS } from './units';
+} from '../../../controls/index.js';
+import { UnorderedListLevelSection } from './UnorderedListLevelSection.js';
+import { TEXT_SIZE_UNITS, INDENT_UNITS, MARGIN_UNITS, OFFSET_UNITS } from './units.js';
 
 const D = DEFAULT_UNORDERED_LISTS_STATIC;
 

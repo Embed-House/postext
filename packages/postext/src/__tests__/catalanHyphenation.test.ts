@@ -1,9 +1,9 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../measure/rich';
-import { measureBlock } from '../measure/plain';
-import { hyphenateText, setHyphenationLocale } from '../hyphenate';
-import type { InlineSpan } from '../parse';
-import type { VDTLine } from '../vdt';
+import { measureRichBlock } from '../measure/rich.js';
+import { measureBlock } from '../measure/plain.js';
+import { hyphenateText, setHyphenationLocale } from '../hyphenate.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { VDTLine } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character, the space included, is 7 px wide.

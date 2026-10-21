@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Resource, ResourceType } from 'postext';
-import { anchorsOf, atOpensPicker, buildRefOptions, referencesOf, refMicroformat } from './refCompletion';
+import { anchorsOf, atOpensPicker, buildRefOptions, referencesOf, refMicroformat } from './refCompletion.js';
 
 const types: ResourceType[] = [
   { id: 'figure', name: 'Figura', shortLabel: 'Fig.', numberingTemplate: '{n}', resetOn: 'never', counterFormat: 'decimal', captionPrefix: 'Figura' },

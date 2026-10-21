@@ -5,16 +5,16 @@
 // back into their panel, off-panel balloons by their border.
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { letterPanel, letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import { prepareText, readLetteringText, breakPoints } from '../text';
-import { shapeText } from '../shape-text';
-import { dist, segmentsCross } from '../geom';
-import { buildBody } from '../shapes';
-import { uncrossTails, type PlaceUnit, type Placed, type UnitVariant } from '../placement';
-import type { ComicBalloonOut, LetteringItem, LetteringPanel, Point, Rect } from '../types';
-import type { InlineSpan } from '../../../parse/types';
+import { installStubMeasure } from './stubMeasure.js';
+import { letterPanel, letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import { prepareText, readLetteringText, breakPoints } from '../text.js';
+import { shapeText } from '../shape-text.js';
+import { dist, segmentsCross } from '../geom.js';
+import { buildBody } from '../shapes.js';
+import { uncrossTails, type PlaceUnit, type Placed, type UnitVariant } from '../placement.js';
+import type { ComicBalloonOut, LetteringItem, LetteringPanel, Point, Rect } from '../types.js';
+import type { InlineSpan } from '../../../parse/types.js';
 
 beforeAll(() => installStubMeasure());
 

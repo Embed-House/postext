@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { composedPages, parseMarkdown, resolvePageTemplate, type PageTemplate } from 'postext';
-import { chainTargets, composedPageInsertion } from './composedInsert';
+import { chainTargets, composedPageInsertion } from './composedInsert.js';
 
 const template = (frames: PageTemplate['frames']): PageTemplate => ({ id: 'tema', frames } as PageTemplate);
 

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import type { PostextContent, PostextConfig } from './types';
+import type { PostextContent, PostextConfig } from './types.js';
 
 /**
  * A React component that lays `content` out and shows its pages as canvases.
@@ -19,7 +19,7 @@ import type { PostextContent, PostextConfig } from './types';
 export function createLayout(content: PostextContent, config?: PostextConfig): FC {
   let Impl: FC | null = null;
   let failure: { error: unknown } | null = null;
-  const loading = import('./react/createLayout').then(
+  const loading = import('./react/createLayout.js').then(
     (m) => { Impl = m.createLayout(content, config) as FC; },
     (error: unknown) => { failure = { error }; },
   );

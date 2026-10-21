@@ -1,4 +1,4 @@
-import type { VDTLine } from './vdt';
+import type { VDTLine } from './vdt.js';
 
 /**
  * The tracking a flow line's measured width carries after its last glyph:

@@ -29,16 +29,16 @@
  * with its ink centred on the column's axis.
  */
 
-import type { CjkRegion } from '../types';
-import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
-import { forcedVerticalRuns, verticalRuns, CORNER_OFFSET_EM, type ForcedOrientation, type VerticalGlyph } from '../writingMode';
-import { graphemeCount, graphemesOf } from '../measure/graphemes';
-import { markPieces, type MarkCutRule } from '../measure/markCuts';
-import { measureRunWidth, withMeasureLanguage } from '../measure/canvas';
-import { hasCJK } from '../measure/cjk';
-import { fillTrackedWord } from './trackedText';
-import { languageOf, letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState';
-import { contextTextWidth, fillContextText, measureContextText, strokeContextText } from './contextText';
+import type { CjkRegion } from '../types.js';
+import { DEFAULT_CENTRAL_BASELINE } from '../vdt.js';
+import { forcedVerticalRuns, verticalRuns, CORNER_OFFSET_EM, type ForcedOrientation, type VerticalGlyph } from '../writingMode.js';
+import { graphemeCount, graphemesOf } from '../measure/graphemes.js';
+import { markPieces, type MarkCutRule } from '../measure/markCuts.js';
+import { measureRunWidth, withMeasureLanguage } from '../measure/canvas.js';
+import { hasCJK } from '../measure/cjk.js';
+import { fillTrackedWord } from './trackedText.js';
+import { languageOf, letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState.js';
+import { contextTextWidth, fillContextText, measureContextText, strokeContextText } from './contextText.js';
 
 /** What the painter needs while a vertical flow paints. */
 export interface VerticalPaintState {

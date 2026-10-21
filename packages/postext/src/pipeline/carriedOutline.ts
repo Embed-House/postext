@@ -11,10 +11,10 @@
  * by the sending chapter and the offset in its body.
  */
 
-import type { ContentBlock } from '../parse';
-import type { ImportedJumps } from '../composed/carry';
-import type { OutlineEntry } from '../types';
-import type { VDTBlock, VDTCarriedOutlineEntry, VDTDocument } from '../vdt';
+import type { ContentBlock } from '../parse/index.js';
+import type { ImportedJumps } from '../composed/carry.js';
+import type { OutlineEntry } from '../types.js';
+import type { VDTBlock, VDTCarriedOutlineEntry, VDTDocument } from '../vdt.js';
 
 interface Line {
   start: number;

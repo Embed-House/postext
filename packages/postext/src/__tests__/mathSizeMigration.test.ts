@@ -9,11 +9,11 @@ import {
   LEGACY_MATH_SIZE,
   migrateConfig,
   pinLegacyMathSize,
-} from '../bundle';
-import { initMathEngine, clearMathCache } from '../math';
-import { stripConfigDefaults } from '../defaults';
-import type { PostextConfig } from '../types';
-import type { VDTDocument } from '../vdt';
+} from '../bundle/index.js';
+import { initMathEngine, clearMathCache } from '../math/index.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

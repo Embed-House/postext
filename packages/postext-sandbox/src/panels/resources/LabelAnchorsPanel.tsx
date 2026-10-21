@@ -3,12 +3,12 @@
 import { useEffect, useId, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from 'react';
 import { MapPin, Plus, Trash2, TriangleAlert, X } from 'lucide-react';
 import type { LabelStyle, LeaderStyle, ResourceAnchor, ResourceSafeArea } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { Button, IconButton, NumberField, SegmentedControl, Select, Switch } from '../../ui';
-import { anchorIdProblem, anchorOutsideSafeArea, leaderChoiceOf, leaderDrawn, withAnchor, withLabelAway, withLabelFields, withLeader, withPoint, type AnchorIdProblem, type LabelFields, type LeaderChoice, type PictureMarks } from './pictureMarks';
-import type { MarkdownLabel } from './figureLabels';
-import type { LabelLeaderChoice } from '../../editor/labelAttrs';
-import { labelLeaderChoice } from './labelLeaderEdit';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { Button, IconButton, NumberField, SegmentedControl, Select, Switch } from '../../ui/index.js';
+import { anchorIdProblem, anchorOutsideSafeArea, leaderChoiceOf, leaderDrawn, withAnchor, withLabelAway, withLabelFields, withLeader, withPoint, type AnchorIdProblem, type LabelFields, type LeaderChoice, type PictureMarks } from './pictureMarks.js';
+import type { MarkdownLabel } from './figureLabels.js';
+import type { LabelLeaderChoice } from '../../editor/labelAttrs.js';
+import { labelLeaderChoice } from './labelLeaderEdit.js';
 
 // ---------------------------------------------------------------------------
 // The Anchors mode of the picture marks dialog (#866): the anchors a map's

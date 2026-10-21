@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { annotateArabicMarks, hasArabicMarks, lineWordInks, markInkOverhang } from '../../arabicMarks';
-import { columnClipRect } from '../../columnClip';
-import { clearMeasurementCache } from '../../measure';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTColumn, VDTDocument, VDTLine } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { annotateArabicMarks, hasArabicMarks, lineWordInks, markInkOverhang } from '../../arabicMarks.js';
+import { columnClipRect } from '../../columnClip.js';
+import { clearMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTColumn, VDTDocument, VDTLine } from '../../vdt.js';
 
 // Issue #376: Arabic vowel marks live in the leading. Lines that carry them
 // record how far their ink reaches (`VDTLine.markInk`), the column clip takes

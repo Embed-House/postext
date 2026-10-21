@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripCalloutStylesDefaults } from '../../defaults';
-import { configFontFamilies } from '../../fonts/usage';
-import { renderBlock } from '../../canvas-backend/blockRender';
-import type { VDTBlock, VDTDocument } from '../../vdt';
-import type { CalloutListStyleConfig, PostextConfig, UnorderedListsConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripCalloutStylesDefaults } from '../../defaults/index.js';
+import { configFontFamilies } from '../../fonts/usage.js';
+import { renderBlock } from '../../canvas-backend/blockRender.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
+import type { CalloutListStyleConfig, PostextConfig, UnorderedListsConfig } from '../../types.js';
 
 // #1103: a list inside a box keeps its bullet face. The bullet takes the
 // style's `lists.bulletFontFamily`; unset, the list level's own face.

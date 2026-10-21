@@ -3,9 +3,9 @@
  * `growWith: 'children'` or a list of names. Pure: which frames and groups
  * a box grows with, and the height it needs once they are laid.
  */
-import { anchorTarget } from './templates';
-import type { ResolvedFrame, ResolvedPageTemplate } from './types';
-import type { Rect } from './geometry';
+import { anchorTarget } from './templates.js';
+import type { ResolvedFrame, ResolvedPageTemplate } from './types.js';
+import type { Rect } from './geometry.js';
 
 /** The points of a box's top side: a frame anchored there stands inside the
  *  box whatever its height. */

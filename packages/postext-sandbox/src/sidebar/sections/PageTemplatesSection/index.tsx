@@ -3,12 +3,12 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { Copy, LayoutTemplate, Plus, Trash2 } from 'lucide-react';
 import { resolveDesignSlot, resolveHeaderFooterConfig, resolvePageTemplate, type DesignSlot, type PageTemplate, type VDTDocument } from 'postext';
-import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { CollapsibleSection, DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
-import { Button, ConfirmPopover, SegmentedControl } from '../../../ui';
-import { SearchScope } from '../../search/SearchScope';
-import { applyViewerEdit } from '../../../editor/viewerEdits';
-import { templateEditor, useTemplateEditor } from '../../../templates/editorStore';
+import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { CollapsibleSection, DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls/index.js';
+import { Button, ConfirmPopover, SegmentedControl } from '../../../ui/index.js';
+import { SearchScope } from '../../search/SearchScope.js';
+import { applyViewerEdit } from '../../../editor/viewerEdits.js';
+import { templateEditor, useTemplateEditor } from '../../../templates/editorStore.js';
 import {
   addFrame,
   createTemplate,
@@ -28,19 +28,19 @@ import {
   uniqueName,
   updateTemplate,
   type TemplateScope,
-} from '../../../templates/templateEdits';
-import { renameTemplateChanges } from '../../../templates/templateUsage';
-import { renameModuleChanges } from '../../../templates/moduleEdits';
-import { ReshapeFrames } from './ReshapeFrames';
-import { pageAreas, templateAreaRect } from '../../../templates/frameGeometry';
-import { templateSheet } from '../../../templates/templateSheet';
-import { SlotEditor } from '../HeaderFooterSection/SlotEditor';
-import { templateFrameInputs } from '../../../templates/connectorEdits';
-import { FrameProperties } from './FrameProperties';
-import { GroupsEditor } from './GroupsEditor';
-import { ModuleShareFields, ModuleWidthField } from './ModuleWidthField';
-import { TemplateSheetSvg } from './TemplateSheetSvg';
-import { laidHeights, resolveAt, usePageTemplates } from './model';
+} from '../../../templates/templateEdits.js';
+import { renameTemplateChanges } from '../../../templates/templateUsage.js';
+import { renameModuleChanges } from '../../../templates/moduleEdits.js';
+import { ReshapeFrames } from './ReshapeFrames.js';
+import { pageAreas, templateAreaRect } from '../../../templates/frameGeometry.js';
+import { templateSheet } from '../../../templates/templateSheet.js';
+import { SlotEditor } from '../HeaderFooterSection/SlotEditor.js';
+import { templateFrameInputs } from '../../../templates/connectorEdits.js';
+import { FrameProperties } from './FrameProperties.js';
+import { GroupsEditor } from './GroupsEditor.js';
+import { ModuleShareFields, ModuleWidthField } from './ModuleWidthField.js';
+import { TemplateSheetSvg } from './TemplateSheetSvg.js';
+import { laidHeights, resolveAt, usePageTemplates } from './model.js';
 
 /** The composed page «Save layout as template» reads: the one a frame was
  *  picked on, else the first of the document. */

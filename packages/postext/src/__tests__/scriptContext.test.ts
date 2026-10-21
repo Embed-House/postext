@@ -1,18 +1,18 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderPageToCanvas } from '../canvas-backend';
-import { beginMirroredFlow } from '../canvas-backend/mirrorFrame';
-import { fillScriptWord } from '../canvas-backend/scriptText';
-import { renderToHtml } from '../html-backend';
-import { buildDocument } from '../pipeline';
-import { clearMeasurementCache } from '../measure';
-import { measureBlock } from '../measure/plain';
-import { measureRichBlock } from '../measure/rich';
-import { cutDoubledMarks, faceReadsScript, hanMarksOfLocale, isDoubledMark, isLetterless, pieceScriptContext, resolveScriptContext, scriptAt, scriptMark, scriptTextWidth, setMeasureScriptContext, withScriptMark, wordPieceScript } from '../measure/script';
-import { measureTextWidth } from '../measure/canvas';
-import { spanIsolates } from '../bidi';
-import { parseInlineFormatting } from '../parse/inlineFormatting';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLineSegment } from '../vdt';
+import { renderPageToCanvas } from '../canvas-backend/index.js';
+import { beginMirroredFlow } from '../canvas-backend/mirrorFrame.js';
+import { fillScriptWord } from '../canvas-backend/scriptText.js';
+import { renderToHtml } from '../html-backend.js';
+import { buildDocument } from '../pipeline/index.js';
+import { clearMeasurementCache } from '../measure/index.js';
+import { measureBlock } from '../measure/plain.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { cutDoubledMarks, faceReadsScript, hanMarksOfLocale, isDoubledMark, isLetterless, pieceScriptContext, resolveScriptContext, scriptAt, scriptMark, scriptTextWidth, setMeasureScriptContext, withScriptMark, wordPieceScript } from '../measure/script.js';
+import { measureTextWidth } from '../measure/canvas.js';
+import { spanIsolates } from '../bidi.js';
+import { parseInlineFormatting } from '../parse/inlineFormatting.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLineSegment } from '../vdt.js';
 
 // #725: a word with no letter (`46.`, `1367)`) has no script of its own. A
 // face may draw its punctuation by script (Amiri: a Latin full stop and

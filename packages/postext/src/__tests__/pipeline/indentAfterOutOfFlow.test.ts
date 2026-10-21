@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index.js';
 
 // EF-67: with `indentAfterHeading: false`, the paragraph after a heading is
 // set flush. A box or a figure that leaves the flow — a `span: 'side'` box

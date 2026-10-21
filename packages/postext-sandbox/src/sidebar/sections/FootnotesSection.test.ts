@@ -6,9 +6,9 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { FootnotesSection } from './FootnotesSection';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { FootnotesSection } from './FootnotesSection.js';
 
 function render(config: PostextConfig): string {
   const state = { config, resources: [], labels: DEFAULT_LABELS, locale: 'en' };

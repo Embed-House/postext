@@ -2,8 +2,8 @@
 
 import { useId } from 'react';
 import type { ResolvedLayoutConfig, ResolvedPageConfig } from 'postext';
-import { toPt } from '../../controls/units';
-import { columnCountUsed } from './multipleColumns';
+import { toPt } from '../../controls/units.js';
+import { columnCountUsed } from './multipleColumns.js';
 
 export type PagePreviewHighlight = 'top' | 'bottom' | 'inner' | 'outer' | 'gutter' | null;
 

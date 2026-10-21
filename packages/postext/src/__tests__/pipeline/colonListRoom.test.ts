@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyColonListRoom } from '../../bundle/configVersion';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
-import type { ColonListRoom, PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyColonListRoom } from '../../bundle/configVersion.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText.js';
+import type { ColonListRoom, PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

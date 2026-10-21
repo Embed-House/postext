@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
-import { affixRichText, affixSpans, extractInlineCitations, parseLocator } from '../../parse/citations';
-import { htmlToSpans } from '../../citations/html';
-import { documentReferences, nociteKeys, normalizeCslItem } from '../../citations/data';
-import { bookCitationContexts } from '../../citations/context';
-import { parseBibtex } from '../../citations/bibtex';
+import { parseMarkdown } from '../../parse/index.js';
+import { affixRichText, affixSpans, extractInlineCitations, parseLocator } from '../../parse/citations.js';
+import { htmlToSpans } from '../../citations/html.js';
+import { documentReferences, nociteKeys, normalizeCslItem } from '../../citations/data.js';
+import { bookCitationContexts } from '../../citations/context.js';
+import { parseBibtex } from '../../citations/bibtex.js';
 
 const cites = (md: string) => parseMarkdown(md).flatMap((b) => b.spans.filter((s) => s.citation).map((s) => s.citation!));
 

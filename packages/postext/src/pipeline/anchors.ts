@@ -7,8 +7,8 @@
  * link destinations and the sandbox scrolls to.
  */
 
-import type { ContentBlock } from '../parse';
-import type { VDTAnchor, VDTBlock, VDTDocument } from '../vdt';
+import type { ContentBlock } from '../parse/index.js';
+import type { VDTAnchor, VDTBlock, VDTDocument } from '../vdt.js';
 
 /** Whether the parsed content sets any anchor. */
 export function hasAnchors(blocks: readonly ContentBlock[]): boolean {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { extractFrontmatter, frontmatterFieldSources } from "../frontmatter";
+import { extractFrontmatter, frontmatterFieldSources } from "../frontmatter.js";
 
 describe("extractFrontmatter", () => {
   it("parses a YAML frontmatter block and strips it from the content", () => {

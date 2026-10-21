@@ -11,10 +11,10 @@
  * its frames anchor to and before every frame that anchors to it or to one
  * of its frames.
  */
-import type { Rect } from './geometry';
-import { anchorTarget } from './templates';
-import { nextFrameOf } from './geometry';
-import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types';
+import type { Rect } from './geometry.js';
+import { anchorTarget } from './templates.js';
+import { nextFrameOf } from './geometry.js';
+import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types.js';
 
 /** A frame of a group as the solver reads it. Lengths in page px. */
 export interface GroupItem {

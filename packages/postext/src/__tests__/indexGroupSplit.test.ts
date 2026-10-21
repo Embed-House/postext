@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline/build';
-import { createMeasurementCache } from '../measure';
-import type { OutlineEntry, PostextConfig, VDTDocument } from '../index';
+import { buildDocument } from '../pipeline/build.js';
+import { createMeasurementCache } from '../measure/index.js';
+import type { OutlineEntry, PostextConfig, VDTDocument } from '../index.js';
 
 // #712, `index.groups.splitMinEntries`: when a column ends inside a group
 // of a `:::index`, at least two of its entries stay at the foot of the

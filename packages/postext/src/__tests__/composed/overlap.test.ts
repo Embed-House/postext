@@ -11,13 +11,13 @@
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { composedReflowLog } from '../../composed/reflowLog';
-import { validatePageTemplates } from '../../composed/validate';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { composedReflowLog } from '../../composed/reflowLog.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 class StubCtx {
   font = '';

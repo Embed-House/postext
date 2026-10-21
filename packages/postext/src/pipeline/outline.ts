@@ -6,19 +6,19 @@
  * engine derives one from a single document by laying it out again.
  */
 
-import type { ContentBlock, InlineSpan } from '../parse';
-import { CHIP_PLACEHOLDER, flattenTitleBreaks, withoutChips, flattenTitleBreakSpans, TITLE_BREAK_RE } from '../parse/inlineFormatting';
-import { collapseTitleSpaces } from '../measure/spaces';
-import { computeHeadingNumbering, type HeadingNumberingOptions, type HeadingTemplates } from '../numbering';
-import type { HeadingCounters, OutlineEntry, PostextConfig } from '../types';
-import type { ResolvedConfig, VDTDocument } from '../vdt';
-import { documentNumerals, resolvedLocale, resolveAllConfig } from './config';
-import { withDigits } from '../arabicNumerals';
-import { headingIsListed, headingIsNumbered, headingMarksFor, headingStyleOf, numberTitlesFor } from './headingStyles';
-import { tashkilFor } from './tashkil';
-import { partMarkPages, planParts } from './parts';
-import { withBookTitleBrackets } from './annotations';
-import { numberStatements, type StatementCounterState } from './statementNumbering';
+import type { ContentBlock, InlineSpan } from '../parse/index.js';
+import { CHIP_PLACEHOLDER, flattenTitleBreaks, withoutChips, flattenTitleBreakSpans, TITLE_BREAK_RE } from '../parse/inlineFormatting.js';
+import { collapseTitleSpaces } from '../measure/spaces.js';
+import { computeHeadingNumbering, type HeadingNumberingOptions, type HeadingTemplates } from '../numbering.js';
+import type { HeadingCounters, OutlineEntry, PostextConfig } from '../types.js';
+import type { ResolvedConfig, VDTDocument } from '../vdt.js';
+import { documentNumerals, resolvedLocale, resolveAllConfig } from './config.js';
+import { withDigits } from '../arabicNumerals.js';
+import { headingIsListed, headingIsNumbered, headingMarksFor, headingStyleOf, numberTitlesFor } from './headingStyles.js';
+import { tashkilFor } from './tashkil.js';
+import { partMarkPages, planParts } from './parts.js';
+import { withBookTitleBrackets } from './annotations.js';
+import { numberStatements, type StatementCounterState } from './statementNumbering.js';
 
 /** Whether the parsed content holds a `:::toc` directive. */
 export function hasTocDirective(blocks: readonly ContentBlock[]): boolean {

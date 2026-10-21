@@ -18,12 +18,12 @@
 // takes the value those settings resolve to under the page's palette
 // (`flowColorValues`). A cell's own fill follows its own link.
 
-import type { CaptionStyleConfig, ColorPaletteEntry, ColorValue, PostextConfig, ResourceType } from '../types';
-import type { ResolvedConfig, VDTBlock, VDTDesignBlock, VDTDocument, VDTLine, VDTResourceTableCell, ResolvedResourceBlock } from '../vdt';
-import { resolveAllConfig } from './config';
-import { mergeCaptionStyle } from '../defaults/captionStyle';
-import { CODE_BOX_STYLE_ID } from './codeBlocks';
-import { recolorPathBlock } from '../design/pathBlock';
+import type { CaptionStyleConfig, ColorPaletteEntry, ColorValue, PostextConfig, ResourceType } from '../types.js';
+import type { ResolvedConfig, VDTBlock, VDTDesignBlock, VDTDocument, VDTLine, VDTResourceTableCell, ResolvedResourceBlock } from '../vdt.js';
+import { resolveAllConfig } from './config.js';
+import { mergeCaptionStyle } from '../defaults/captionStyle.js';
+import { CODE_BOX_STYLE_ID } from './codeBlocks.js';
+import { recolorPathBlock } from '../design/pathBlock.js';
 
 type Remap = (hex: string | undefined) => string | undefined;
 

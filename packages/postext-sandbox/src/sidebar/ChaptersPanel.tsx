@@ -9,12 +9,12 @@ import {
   useSandboxPresets,
   useSandboxProjects,
   useSandboxSelector,
-} from '../context/SandboxContext';
-import { MenuItem, MenuSeparator, PanelHeader, RowTag } from '../ui';
-import { AddChapterButton, ChapterList } from './chapters/ChapterList';
-import { presetLocales } from '../presets/locale';
-import { LocaleTag } from './LocaleTag';
-import { RowActionsMenu } from './RowActionsMenu';
+} from '../context/SandboxContext.js';
+import { MenuItem, MenuSeparator, PanelHeader, RowTag } from '../ui/index.js';
+import { AddChapterButton, ChapterList } from './chapters/ChapterList.js';
+import { presetLocales } from '../presets/locale.js';
+import { LocaleTag } from './LocaleTag.js';
+import { RowActionsMenu } from './RowActionsMenu.js';
 
 /** The Chapters panel: the book on screen — its name and kind (your book,
  *  or a sample book in a language, edited or not) and the actions on it —

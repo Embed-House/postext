@@ -8,7 +8,7 @@ import {
   parseComicSplit,
   serializeComicSplit,
   splitComicCell,
-} from '../../comics/split';
+} from '../../comics/split.js';
 
 describe('parseComicSplit', () => {
   it("reads the owner's example: a top tier of three, a bottom tier", () => {

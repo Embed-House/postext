@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { PostextConfig } from 'postext';
-import type { Chapter } from '../book/types';
+import type { Chapter } from '../book/types.js';
 import {
   bookFromSnapshot,
   bookKeyOf,
@@ -15,13 +15,13 @@ import {
   pictureDifference,
   saveMigrationSnapshot,
   type MigrationSnapshot,
-} from './textMigration';
-import { closeTextMigration, openTextMigration, textMigrationRequestNow } from './migrationRequest';
-import { canUndoMigrationWrite, chapterEdits, undoMigrationWrite, writeBook } from './textMigration';
-import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext';
-import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory';
-import { resetViewerEdits } from '../editor/viewerEdits';
-import { state as baseState } from '../webmcp/tools/testHarness';
+} from './textMigration.js';
+import { closeTextMigration, openTextMigration, textMigrationRequestNow } from './migrationRequest.js';
+import { canUndoMigrationWrite, chapterEdits, undoMigrationWrite, writeBook } from './textMigration.js';
+import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext.js';
+import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory.js';
+import { resetViewerEdits } from '../editor/viewerEdits.js';
+import { state as baseState } from '../webmcp/tools/testHarness.js';
 
 class StubCtx {
   font = '';

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolvePageTemplate, stripPageTemplatesDefaults } from '../../composed/templates';
-import { collectConfigWarnings } from '../../configWarnings';
-import type { PageTemplate, PostextConfig, VDTDesignTextBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolvePageTemplate, stripPageTemplatesDefaults } from '../../composed/templates.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import type { PageTemplate, PostextConfig, VDTDesignTextBlock, VDTDocument } from '../../index.js';
 
 // #975: a child template or a variant takes an inherited decoration
 // element out with `{ id, remove: true }`.

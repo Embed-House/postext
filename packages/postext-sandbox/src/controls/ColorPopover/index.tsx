@@ -2,21 +2,21 @@
 
 import { useState, useEffect, useCallback, type ReactNode, type RefObject } from 'react';
 import type { ColorPaletteEntry } from 'postext';
-import { Popover, type PopoverCloseReason } from '../../ui';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { useLargeTargets } from '../../ui/largeTargets';
-import { SaturationValueArea } from '../SaturationValueArea';
-import { HueSlider } from '../HueSlider';
-import { AlphaSlider } from '../AlphaSlider';
+import { Popover, type PopoverCloseReason } from '../../ui/index.js';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { useLargeTargets } from '../../ui/largeTargets.js';
+import { SaturationValueArea } from '../SaturationValueArea.js';
+import { HueSlider } from '../HueSlider.js';
+import { AlphaSlider } from '../AlphaSlider.js';
 import {
   hexToHsv, hsvToHex, hsvToRgb, rgbToHsv,
   rgbToHsl, hslToRgb,
   clamp, hexAlpha, hexWithoutAlpha, hexWithAlpha,
   type HSV, type RGB, type HSL, type CMYK, type ColorMode,
-} from '../color-utils';
-import { PaletteChips } from './PaletteChips';
-import { TabInputs } from './TabInputs';
-import { useSeparation } from '../../print/useSeparation';
+} from '../color-utils.js';
+import { PaletteChips } from './PaletteChips.js';
+import { TabInputs } from './TabInputs.js';
+import { useSeparation } from '../../print/useSeparation.js';
 
 interface ColorPopoverBodyProps {
   hex: string;

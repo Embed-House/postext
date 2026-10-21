@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Check, TriangleAlert } from 'lucide-react';
-import type { SandboxLabels } from '../types';
-import { cn } from '../ui/cn';
-import { Tooltip } from '../ui/tooltip';
-import { fill } from '../print/fillTokens';
-import { useContrastSnapshot } from './contrastStore';
-import { counterpartsFor, measureField, ratioText, type Counterpart, type FieldContrast, type FieldMeasure } from './fieldContrast';
+import type { SandboxLabels } from '../types/index.js';
+import { cn } from '../ui/cn.js';
+import { Tooltip } from '../ui/tooltip.js';
+import { fill } from '../print/fillTokens.js';
+import { useContrastSnapshot } from './contrastStore.js';
+import { counterpartsFor, measureField, ratioText, type Counterpart, type FieldContrast, type FieldMeasure } from './fieldContrast.js';
 
 /** How long a field keeps the colours it was set with after its own
  *  colour changed and no laid-out page shows the new one yet. */

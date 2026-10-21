@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../../vdt';
-import type { PostextConfig, TextAlign } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
+import type { PostextConfig, TextAlign } from '../../types.js';
 
 // A measurement stub that knows the style: italic glyphs are 5px wide,
 // every other glyph 7px, so a run in italic takes less room than the same

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../index';
-import { createMeasurementCache } from '../measure';
-import { parseInlineFormatting, extractInlineSwatches, injectSwatchSpans, swatchShapeFromAttrs } from '../parse/inlineFormatting';
-import { swatchGeometry } from '../swatchShape';
-import type { PostextConfig, VDTDocument, VDTLineSegment } from '../index';
+import { buildDocument, renderPageToCanvas, renderToHtml } from '../index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { parseInlineFormatting, extractInlineSwatches, injectSwatchSpans, swatchShapeFromAttrs } from '../parse/inlineFormatting.js';
+import { swatchGeometry } from '../swatchShape.js';
+import type { PostextConfig, VDTDocument, VDTLineSegment } from '../index.js';
 
 // #1104: a legend's swatches set at a size of their own, with an outline
 // and rounded corners, and room after them for their label.

@@ -4,10 +4,10 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFRef, PDFStrea
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument, bundleFontProvider } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf, type PdfWarning } from '../pdf-backend';
-import { FontCache, type FontFileIssue, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
-import { parseFontString } from '../fontString';
-import { textShows } from '../pdf-backend/primitives';
+import { renderToPdf, type PdfWarning } from '../pdf-backend/index.js';
+import { FontCache, type FontFileIssue, type PdfFontProvider, type PdfFontRequest } from '../fontCache.js';
+import { parseFontString } from '../fontString.js';
+import { textShows } from '../pdf-backend/primitives.js';
 
 // Issue #196: a face made of several files (Fontsource's unicode-range
 // slices of Noto Serif TC), picked per character, each embedded as a subset

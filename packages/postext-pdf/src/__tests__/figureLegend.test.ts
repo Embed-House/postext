@@ -5,8 +5,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFRawStream, PD
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #1058: a map's key in the PDF — its symbols drawn (a glyph, a dashed line
 // sample, a picture), its plate outlined, and its rows read as a list in

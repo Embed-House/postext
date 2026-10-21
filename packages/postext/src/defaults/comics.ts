@@ -12,10 +12,10 @@ import type {
   ResolvedNamedPanelStyleConfig,
   ResolvedPanelStyleConfig,
   WritingMode,
-} from '../types';
-import type { ResolvedConfig } from '../vdt';
-import { chineseScriptOf, comicsLocaleDirection, isJapaneseLanguage, localeScript, presentTag } from '../locale';
-import { colorsEqual, dimensionsEqual } from './shared';
+} from '../types.js';
+import type { ResolvedConfig } from '../vdt.js';
+import { chineseScriptOf, comicsLocaleDirection, isJapaneseLanguage, localeScript, presentTag } from '../locale.js';
+import { colorsEqual, dimensionsEqual } from './shared.js';
 
 const HEX = (hex: string): ColorValue => ({ hex, model: 'hex' });
 const PT = (value: number): Dimension => ({ value, unit: 'pt' });

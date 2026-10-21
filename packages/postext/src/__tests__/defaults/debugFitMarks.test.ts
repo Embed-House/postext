@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_DEBUG_CONFIG, FIT_MARKS_MODES, resolveDebugConfig, stripConfigDefaults, stripDebugDefaults } from '../../index';
+import { DEFAULT_DEBUG_CONFIG, FIT_MARKS_MODES, resolveDebugConfig, stripConfigDefaults, stripDebugDefaults } from '../../index.js';
 
 // #1160: the book's default for the fit marks the Sandbox canvas draws over
 // composed pages, and the scale at which a scale badge is left out.

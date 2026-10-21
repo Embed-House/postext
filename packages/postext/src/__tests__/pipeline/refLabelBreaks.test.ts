@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { renderToHtml } from '../../html-backend';
-import { resolveCrossRefsConfig, stripCrossRefsDefaults } from '../../defaults/crossRefs';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import { anchorRefLabel, type AnchorTarget, type CrossRefStrings } from '../../pipeline/crossRefs';
-import { refLabelPieces } from '../../measure/spaces';
-import type { PostextConfig, Resource, VDTDocument, VDTLine, VDTLineSegment } from '../../index';
-import type { VDTBlock } from '../../vdt';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { resolveCrossRefsConfig, stripCrossRefsDefaults } from '../../defaults/crossRefs.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { anchorRefLabel, type AnchorTarget, type CrossRefStrings } from '../../pipeline/crossRefs.js';
+import { refLabelPieces } from '../../measure/spaces.js';
+import type { PostextConfig, Resource, VDTDocument, VDTLine, VDTLineSegment } from '../../index.js';
+import type { VDTBlock } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character 7 px.

@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 import type { PostextConfig } from 'postext';
 
 // #855: a composed page laid out by the engine (a tabbed title, running

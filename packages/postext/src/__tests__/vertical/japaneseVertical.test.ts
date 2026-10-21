@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index';
+import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index.js';
 import {
   CORNER_OFFSET_EM,
   SMALL_KANA_OFFSET_EM,
@@ -8,12 +8,12 @@ import {
   isUprightMarkPair,
   verticalOrientation,
   verticalRuns,
-} from '../../writingMode';
-import { registerVerticalAlternates, unregisterVerticalAlternates, VERTICAL_ALTERNATE_SAMPLE } from '../../canvas-backend/verticalText';
-import { graphemesOf } from '../../measure/graphemes';
-import type { CjkRegion, Dimension, PostextConfig } from '../../types';
-import type { VDTDocument, VDTLineSegment } from '../../vdt';
-import { installSizedStub, stubCharWidth } from './stub';
+} from '../../writingMode.js';
+import { registerVerticalAlternates, unregisterVerticalAlternates, VERTICAL_ALTERNATE_SAMPLE } from '../../canvas-backend/verticalText.js';
+import { graphemesOf } from '../../measure/graphemes.js';
+import type { CjkRegion, Dimension, PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from './stub.js';
 
 installSizedStub();
 

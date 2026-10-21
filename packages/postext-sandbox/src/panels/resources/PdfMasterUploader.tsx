@@ -2,9 +2,9 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { FileText, Loader2, X } from 'lucide-react';
-import { deleteBlob, putBlob } from '../../storage/blobStore';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { isPdfBytes } from './resourceEdits';
+import { deleteBlob, putBlob } from '../../storage/blobStore.js';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { isPdfBytes } from './resourceEdits.js';
 
 interface PdfMasterUploaderProps {
   /** Currently attached master, if any. */

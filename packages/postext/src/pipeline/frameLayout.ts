@@ -8,14 +8,14 @@
  * cut at the frame's foot are the same operation. Nothing here reads the
  * page or the cursor; the pass context hands in what the layout needs.
  */
-import type { ContentBlock } from '../parse';
-import type { ResolvedCalloutStyleConfig } from '../types';
-import type { ResolvedConfig, VDTBlock } from '../vdt';
-import type { BlockMeasureContext } from './measureContentBlock';
-import type { ParagraphContainerPlan } from './paragraphContainers';
-import type { MeasureMemo } from './measureMemo';
-import { layoutKey, memoLayout, type LayoutMemo } from './layoutMemo';
-import { isMarkerBlock } from './buildHelpers';
+import type { ContentBlock } from '../parse/index.js';
+import type { ResolvedCalloutStyleConfig } from '../types.js';
+import type { ResolvedConfig, VDTBlock } from '../vdt.js';
+import type { BlockMeasureContext } from './measureContentBlock.js';
+import type { ParagraphContainerPlan } from './paragraphContainers.js';
+import type { MeasureMemo } from './measureMemo.js';
+import { layoutKey, memoLayout, type LayoutMemo } from './layoutMemo.js';
+import { isMarkerBlock } from './buildHelpers.js';
 import {
   isDesignedBoxHeading,
   layoutCallout,
@@ -28,10 +28,10 @@ import {
   type CalloutUnit,
   type GroupPos,
   type PlannedCallout,
-} from './calloutLayout';
-import { fillGalley, galleyBreaks } from './columnsGroup';
-import type { CalloutCut } from './cutTypes';
-export type { CalloutCut } from './cutTypes';
+} from './calloutLayout.js';
+import { fillGalley, galleyBreaks } from './columnsGroup.js';
+import type { CalloutCut } from './cutTypes.js';
+export type { CalloutCut } from './cutTypes.js';
 
 /** What a frame of a composed page (#855) adds to a box's layout: its exact
  *  height, where content shorter than it sits, the rectangles its text

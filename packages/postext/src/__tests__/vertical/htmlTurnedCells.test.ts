@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderToHtml, verticalFlowOf } from '../../index';
-import type { PostextConfig, Dimension } from '../../types';
-import type { VDTLine } from '../../vdt';
-import { SizedStubCtx } from './stub';
+import { buildDocument, renderToHtml, verticalFlowOf } from '../../index.js';
+import type { PostextConfig, Dimension } from '../../types.js';
+import type { VDTLine } from '../../vdt.js';
+import { SizedStubCtx } from './stub.js';
 
 // A mark a vertical line turns in a cell of its own (· ‧ – …) advances its
 // cell in the layout, the canvas and the PDF, where a browser setting the

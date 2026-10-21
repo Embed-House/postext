@@ -1,4 +1,4 @@
-export { defaultDocumentLocale } from '../../controls/hyphenation';
+export { defaultDocumentLocale } from '../../controls/hyphenation.js';
 
 export type ViewMode = 'single' | 'spread';
 export type FitMode = 'none' | 'width' | 'height';

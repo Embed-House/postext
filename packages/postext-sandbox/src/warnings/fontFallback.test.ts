@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { FontFaceLike, FontFaceSetLike, PostextConfig } from 'postext';
-import { computeWarnings } from './compute';
-import { warningCategory } from './categories';
-import type { WarningPayload } from './types';
+import { computeWarnings } from './compute.js';
+import { warningCategory } from './categories.js';
+import type { WarningPayload } from './types.js';
 
 // #629: the faces the layout measured with a fallback (the engine's
 // `fontFallback`) are listed under Fonts, once per face, and go with the

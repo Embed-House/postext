@@ -8,9 +8,9 @@ import { describe, it } from 'vitest';
 import fs from 'node:fs';
 import { PDFDocument, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { loadComplexShaper } from '../complexShaping';
-import { drawShapedTextPx } from '../pdf-backend/shapedText';
-import { showTextShaped, type PageCtx } from '../pdf-backend/primitives';
+import { loadComplexShaper } from '../complexShaping.js';
+import { drawShapedTextPx } from '../pdf-backend/shapedText.js';
+import { showTextShaped, type PageCtx } from '../pdf-backend/primitives.js';
 
 const AMIRI = new Uint8Array(fs.readFileSync(new URL('../__tests__/fixtures/arabic/amiri-subset.ttf', import.meta.url)));
 const WORDS = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ السلام عليكم ورحمة الله وبركاته لا إله إلا كتـــاب عام سنة كلمة قوس'.split(' ');

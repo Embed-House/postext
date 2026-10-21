@@ -4,7 +4,7 @@ import { PDFArray, PDFBool, PDFDocument, PDFName, PDFRawStream, decodePDFRawStre
 import UPNG from '@pdf-lib/upng';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // #995: a label tab's picture painted in the label's text colour. A vector
 // drawing is recoloured (its own Form XObject), a bitmap is painted through

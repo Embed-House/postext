@@ -11,7 +11,7 @@
  */
 
 import { facingSide, type ConnectorEnd, type ConnectorRect, type DesignConnectorElement } from 'postext';
-import { connectorToEnds } from './connectorEdits';
+import { connectorToEnds } from './connectorEdits.js';
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 

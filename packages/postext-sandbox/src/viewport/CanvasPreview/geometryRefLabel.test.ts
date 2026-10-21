@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { linkTargetAtPixel, pixelToSourceOffset, placeLineSegments } from './geometry';
+import { linkTargetAtPixel, pixelToSourceOffset, placeLineSegments } from './geometry.js';
 
 // #702: a reference whose label is words is painted word by word and may
 // stand on two lines. Every piece is the reference: a click on any of them

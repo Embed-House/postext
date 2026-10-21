@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { continuationAfter } from '../pipeline/continuation';
-import { renderToHtml } from '../html-backend';
-import { collectConfigWarnings } from '../configWarnings';
-import { DEFAULT_LINE_NUMBERS_CONFIG, resolveLineNumbersConfig, stripLineNumbersDefaults } from '../defaults/lineNumbers';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { stripConfigDefaults } from '../defaults';
-import { collectFontUsage, configFontFamilies } from '../fonts/usage';
-import { flowRectToPage, type VDTBlock, type VDTDocument, type VDTLine, type VDTPage } from '../vdt';
-import type { LineNumbersConfig, PostextConfig } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { continuationAfter } from '../pipeline/continuation.js';
+import { renderToHtml } from '../html-backend.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { DEFAULT_LINE_NUMBERS_CONFIG, resolveLineNumbersConfig, stripLineNumbersDefaults } from '../defaults/lineNumbers.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { collectFontUsage, configFontFamilies } from '../fonts/usage.js';
+import { flowRectToPage, type VDTBlock, type VDTDocument, type VDTLine, type VDTPage } from '../vdt.js';
+import type { LineNumbersConfig, PostextConfig } from '../types.js';
 
 // #621: line numbers in the margin. The stub font: 7 px a character, a
 // space 4 px.

@@ -4,7 +4,7 @@
 
 import { blockLinesText, plainTitleText } from 'postext';
 import type { VDTBlock, VDTDocument, VDTPage } from 'postext';
-import type { EpubNavPoint } from '../types';
+import type { EpubNavPoint } from '../types.js';
 
 /** Runs of white space as one space; the ideographic space (U+3000) of a
  *  Chinese title stays. */

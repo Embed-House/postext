@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { coerceSetting, resolveEffectiveConfig } from './configEffective';
-import { getAtPath } from './configPaths';
-import { planWrite } from './configWrite';
-import './tools/testHarness';
+import { coerceSetting, resolveEffectiveConfig } from './configEffective.js';
+import { getAtPath } from './configPaths.js';
+import { planWrite } from './configWrite.js';
+import './tools/testHarness.js';
 
 const resolve = (config: PostextConfig) => resolveEffectiveConfig(config, 'en');
 

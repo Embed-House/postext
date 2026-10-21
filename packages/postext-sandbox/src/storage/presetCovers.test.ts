@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bytesToDataUrl } from './presetCovers';
+import { bytesToDataUrl } from './presetCovers.js';
 
 describe('bytesToDataUrl', () => {
   it('encodes the bytes as a base64 data URL of their type', () => {

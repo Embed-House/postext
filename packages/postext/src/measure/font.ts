@@ -1,8 +1,8 @@
 import { clearCache } from '@chenglou/pretext';
-import type { LocaleTag } from '../types';
-import { setHyphenationLocale, setHyphenationRules, type HyphenationRules } from '../hyphenate';
-import { clearTextWidthCache, evictTextWidths, measurementGeneration } from './canvas';
-import type { MeasurementCache } from './types';
+import type { LocaleTag } from '../types.js';
+import { setHyphenationLocale, setHyphenationRules, type HyphenationRules } from '../hyphenate.js';
+import { clearTextWidthCache, evictTextWidths, measurementGeneration } from './canvas.js';
+import type { MeasurementCache } from './types.js';
 
 /**
  * Build a CSS font shorthand string for canvas / pretext.

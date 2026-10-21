@@ -14,8 +14,8 @@ import {
   add, boundsOf, circleCmds, dist, lerp, norm, perp, polygonCmds, rayExit, resampleClosed, roundedRectCmds,
   scale, seededRandom, smoothClosedCmds, smoothOpenCmds, sub, hashString, perimeter, translateCmds,
   type PathCmd,
-} from './geom';
-import type { LetteringStyle, Point, Rect } from './types';
+} from './geom.js';
+import type { LetteringStyle, Point, Rect } from './types.js';
 
 /** A balloon body: its outline, the polygon standing for it, its box. */
 export interface Body {

@@ -2,7 +2,7 @@
 
 import { NumberField as NumberFieldPrimitive } from '@base-ui/react/number-field';
 import { Minus, Plus } from 'lucide-react';
-import { cn } from './cn';
+import { cn } from './cn.js';
 
 export interface NumberFieldProps {
   value: number;

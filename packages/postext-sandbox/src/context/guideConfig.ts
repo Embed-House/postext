@@ -5,16 +5,16 @@ import type {
   PostextConfig,
 } from 'postext';
 import { defaultResourceTypes } from 'postext';
-import { guideLang, type GuideLang } from '../defaultResources/lang';
+import { guideLang, type GuideLang } from '../defaultResources/lang.js';
 import {
   DISPLAY, GUIDE_COVER_RESOURCE_ID, GUIDE_FOLIO, HEAD, M_BOTTOM, M_INNER, M_OUTER, M_TOP, PAGE_H, PAGE_W, SANS, TEXT, TEXT_W,
   at, box, col, colorPalette, guideCodeStyle, image, mm, pt, rule, slot, text, type TextOpts,
-} from './guideKit';
-import { createChineseGuideConfig } from './guideConfigZh';
-import { createArabicGuideConfig } from './guideConfigAr';
-import { createJapaneseGuideConfig } from './guideConfigJa';
+} from './guideKit.js';
+import { createChineseGuideConfig } from './guideConfigZh.js';
+import { createArabicGuideConfig } from './guideConfigAr.js';
+import { createJapaneseGuideConfig } from './guideConfigJa.js';
 
-export { GUIDE_COVER_RESOURCE_ID, GUIDE_PART_COLOURS } from './guideKit';
+export { GUIDE_COVER_RESOURCE_ID, GUIDE_PART_COLOURS } from './guideKit.js';
 
 // The design of the built-in Postext guide: a 21 × 28 cm two-column book in
 // the colours and typefaces of the Postext brand (Fraunces for display, Lora

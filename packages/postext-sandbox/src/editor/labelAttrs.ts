@@ -1,4 +1,4 @@
-import type { TextChange } from '../book/textChanges';
+import type { TextChange } from '../book/textChanges.js';
 
 // ---------------------------------------------------------------------------
 // The attributes of a figure's label in the chapter's Markdown (#1064): the

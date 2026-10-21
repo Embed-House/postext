@@ -4,9 +4,9 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFNumber, PDFRef } from 'pdf-
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument, frameMatrix } from 'postext';
 import type { PostextConfig, Resource, VDTDocument, VDTFrame } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { sheetMatrixToPdf } from '../pdf-backend/comic';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { sheetMatrixToPdf } from '../pdf-backend/comic.js';
+import { parseFontString } from '../fontString.js';
 
 // #910: the tagged PDF's `BBox` of a figure in a composed frame whose text
 // is scaled (#858) or that is turned is the box the figure is painted in on

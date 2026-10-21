@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig, Resource } from '../../types';
-import type { VDTDocument, VDTLine } from '../../vdt';
-import { installSizedStub, stubCharWidth } from '../vertical/stub';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import type { VDTDocument, VDTLine } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from '../vertical/stub.js';
 
 // Kanbun marks (#430) in the canvas and HTML backends: the runs and the
 // 竪点 where the layout placed them; in HTML the 送り仮名 read and copy

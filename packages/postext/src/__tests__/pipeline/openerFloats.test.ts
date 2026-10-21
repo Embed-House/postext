@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { collectConfigWarnings } from '../../configWarnings';
-import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/layout';
-import type { CompositionRule, PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/layout.js';
+import type { CompositionRule, PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

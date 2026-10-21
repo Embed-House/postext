@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, PostextContent, VDTDocument } from 'postext';
-import { layOutBookPrint } from './printChain';
-import type { BookPlan, Chapter, ChapterPlan } from './types';
+import { layOutBookPrint } from './printChain.js';
+import type { BookPlan, Chapter, ChapterPlan } from './types.js';
 
 const chapter = (id: string, markdown: string): Chapter => ({ id, title: id, markdown, createdAt: 0, updatedAt: 0 });
 

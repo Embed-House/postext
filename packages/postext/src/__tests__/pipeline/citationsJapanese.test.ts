@@ -1,13 +1,13 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { renderToHtml } from '../../html-backend';
-import { citationLocale } from '../../pipeline/citations';
-import { resolveAllConfig } from '../../pipeline/config';
-import { registerCitationEngine } from '../../citations/registry';
-import { parseBibtex } from '../../citations/bibtex';
-import { normalizeCslItem } from '../../citations/data';
-import type { CitationEngine, CitationProcessor } from '../../citations/types';
-import type { PostextConfig } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { renderToHtml } from '../../html-backend.js';
+import { citationLocale } from '../../pipeline/citations.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { registerCitationEngine } from '../../citations/registry.js';
+import { parseBibtex } from '../../citations/bibtex.js';
+import { normalizeCslItem } from '../../citations/data.js';
+import type { CitationEngine, CitationProcessor } from '../../citations/types.js';
+import type { PostextConfig } from '../../index.js';
 
 // Japanese citations (#426): the ja-JP locale, the narrative names a
 // numbered marker or a note writes in the sentence, and family-first CJK

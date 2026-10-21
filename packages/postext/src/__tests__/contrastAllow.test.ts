@@ -5,10 +5,10 @@
  * warning.
  */
 import { describe, expect, it } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { contrastDocument, type ContrastIssue } from '../contrast';
-import { resolveContrastAllow, resolveContrastConfig, stripContrastDefaults } from '../defaults/contrast';
-import type { PostextConfig } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { contrastDocument, type ContrastIssue } from '../contrast.js';
+import { resolveContrastAllow, resolveContrastConfig, stripContrastDefaults } from '../defaults/contrast.js';
+import type { PostextConfig } from '../types.js';
 
 class StubCtx {
   font = '';

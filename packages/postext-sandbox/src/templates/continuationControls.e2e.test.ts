@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PageTemplate, PostextConfig, VDTDocument, VDTPage } from 'postext';
-import { updateFrame, updateTemplate } from './templateEdits';
+import { updateFrame, updateTemplate } from './templateEdits.js';
 
 // #859: what the template editor writes for continuation (the frame's
 // "Content that does not fit goes to" and "Mark at the cut", the

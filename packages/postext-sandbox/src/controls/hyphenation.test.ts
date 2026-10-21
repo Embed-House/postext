@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { matchHyphenationLocale, resolveBodyTextConfig, type PostextConfig } from 'postext';
-import { defaultDocumentLocale, withHyphenationLocale } from './hyphenation';
+import { defaultDocumentLocale, withHyphenationLocale } from './hyphenation.js';
 
 describe('withHyphenationLocale', () => {
   it('fills the app language when the document names none', () => {

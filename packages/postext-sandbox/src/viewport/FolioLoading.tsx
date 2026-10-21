@@ -1,6 +1,6 @@
 'use client';
 
-import { useSandboxSelector } from '../context/SandboxContext';
+import { useSandboxSelector } from '../context/SandboxContext.js';
 
 /** What the Folio tab shows until the book is on the desk: while its code
  *  (three.js, `postext-folio`) loads on the first visit, then while the

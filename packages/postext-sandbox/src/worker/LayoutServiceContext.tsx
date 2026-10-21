@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { createLayoutService, type LayoutService } from './LayoutService';
+import { createLayoutService, type LayoutService } from './LayoutService.js';
 
 const LayoutServiceContext = createContext<LayoutService | null>(null);
 

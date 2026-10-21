@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFDict, PDFDocument, PDFHexString, PDFName, PDFString } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // EF-81: a heading set in capitals (`textTransform: 'uppercase'`) is named
 // in the bookmarks as it was written, the way CSS `text-transform` leaves

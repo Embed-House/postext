@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { computeWarnings } from './compute';
-import { warningCategory } from './categories';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
+import { computeWarnings } from './compute.js';
+import { warningCategory } from './categories.js';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
 
 // #1150: a word wider than its whole line, cut to fit between two letters
 // or at a syllable, is listed in the Checks panel beside the words that run

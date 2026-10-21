@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { blankFrontmatter, frontmatterRange } from './frontmatter';
+import { blankFrontmatter, frontmatterRange } from './frontmatter.js';
 
 describe('frontmatterRange', () => {
   it('finds a leading block and its end (newline included)', () => {

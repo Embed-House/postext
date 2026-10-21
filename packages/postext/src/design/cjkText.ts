@@ -10,11 +10,11 @@
 // 破折号 keeps the stretch that joins the pair into one rule (`inkScale`,
 // #652).
 
-import type { InlineSpan } from '../parse/types';
-import type { VDTLine } from '../vdt';
-import { composeCjkParagraph, composesAsCjk } from '../measure/cjkCompose';
-import { getCjkComposition } from '../measure/cjkPunctuation';
-import type { DesignTextRun } from './richText';
+import type { InlineSpan } from '../parse/types.js';
+import type { VDTLine } from '../vdt.js';
+import { composeCjkParagraph, composesAsCjk } from '../measure/cjkCompose.js';
+import { getCjkComposition } from '../measure/cjkPunctuation.js';
+import type { DesignTextRun } from './richText.js';
 
 /** The fonts a CJK design text is set in: the element's, and the ones its
  *  inline marks pick (bold, italic). */

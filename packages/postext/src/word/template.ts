@@ -3,10 +3,10 @@
 // embedded in every `.docx` the Sandbox exports, so a manuscript that went
 // out to Word comes back with the same mapping.
 
-import { DEFAULT_CALLOUT_STYLES } from '../defaults/calloutStyles';
-import { DEFAULT_CHIP_STYLES } from '../defaults/chipStyles';
-import type { PostextConfig } from '../types';
-import type { WordDocument, WordStyle } from './model';
+import { DEFAULT_CALLOUT_STYLES } from '../defaults/calloutStyles.js';
+import { DEFAULT_CHIP_STYLES } from '../defaults/chipStyles.js';
+import type { PostextConfig } from '../types.js';
+import type { WordDocument, WordStyle } from './model.js';
 
 export type ParagraphTarget =
   | { kind: 'body' }

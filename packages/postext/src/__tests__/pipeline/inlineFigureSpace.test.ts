@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { zipSync, strToU8 } from 'fflate';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults';
-import { buildBundle, createBundle, migrateConfig, openBundle, pinLegacyInlineGap, CONFIG_VERSION, LEGACY_MATH_SIZE } from '../../bundle';
-import { migrateBundleConfig, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/index.js';
+import { buildBundle, createBundle, migrateConfig, openBundle, pinLegacyInlineGap, CONFIG_VERSION, LEGACY_MATH_SIZE } from '../../bundle/index.js';
+import { migrateBundleConfig, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

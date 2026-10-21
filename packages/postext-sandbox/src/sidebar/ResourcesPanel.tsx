@@ -1,16 +1,16 @@
 'use client';
 
-import { composeBookMemo } from '../book/compose';
+import { composeBookMemo } from '../book/compose.js';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { UploadCloud } from 'lucide-react';
 import type { Resource, ResourceKind, ResourceType } from 'postext';
 import { defaultResourceTypes } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import { ResourceList } from '../panels/resources/ResourceList';
-import { ResourceDetail } from '../panels/resources/ResourceDetail';
-import { newResource, renameResource, typesWithVideo } from '../panels/resources/resourceEdits';
-import { uploadFiles } from '../panels/resources/uploadFiles';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
+import { ResourceList } from '../panels/resources/ResourceList.js';
+import { ResourceDetail } from '../panels/resources/ResourceDetail.js';
+import { newResource, renameResource, typesWithVideo } from '../panels/resources/resourceEdits.js';
+import { uploadFiles } from '../panels/resources/uploadFiles.js';
 
 /** Escape a string for safe inclusion in a RegExp. */
 function escapeRegExp(s: string): string {

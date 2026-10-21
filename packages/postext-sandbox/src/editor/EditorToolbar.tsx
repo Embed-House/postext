@@ -28,14 +28,14 @@ import {
 import { isCjkLanguage } from 'postext';
 import type { EditorView } from '@codemirror/view';
 import { useRef, useState, type ReactNode } from 'react';
-import { useSandbox } from '../context/SandboxContext';
-import { useHistoryAvailability, useHistoryCommands } from '../history/HistoryButtons';
-import { IconButton } from '../ui';
-import { composedPageInsertion } from './composedInsert';
-import { TemplatePicker } from './TemplatePicker';
-import { IconPicker } from './IconPicker';
-import { LookPicker } from './LookPicker';
-import { framePieceAt, frameLookChange, type FramePiece } from '../templates/frameLooks';
+import { useSandbox } from '../context/SandboxContext.js';
+import { useHistoryAvailability, useHistoryCommands } from '../history/HistoryButtons.js';
+import { IconButton } from '../ui/index.js';
+import { composedPageInsertion } from './composedInsert.js';
+import { TemplatePicker } from './TemplatePicker.js';
+import { IconPicker } from './IconPicker.js';
+import { LookPicker } from './LookPicker.js';
+import { framePieceAt, frameLookChange, type FramePiece } from '../templates/frameLooks.js';
 
 /** Write `text` over the selection and put the caret after it (#1064: a
  *  label's symbol). */

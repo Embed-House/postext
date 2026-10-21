@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { measureRichBlock } from '../../measure/rich';
-import type { CjkComposition } from '../../measure/cjkPunctuation';
-import type { Dimension, PostextConfig } from '../../types';
-import type { VDTLine, VDTLineSegment } from '../../vdt';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { measureRichBlock } from '../../measure/rich.js';
+import type { CjkComposition } from '../../measure/cjkPunctuation.js';
+import type { Dimension, PostextConfig } from '../../types.js';
+import type { VDTLine, VDTLineSegment } from '../../vdt.js';
 
 // A 破折号 (——) prints as one unbroken rule over its two ems, on the
 // characters' centre line. The stub is Noto Serif SC's: its em dash is a

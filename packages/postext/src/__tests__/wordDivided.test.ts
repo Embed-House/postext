@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { measureRichSnippet } from '../measure/rich';
-import { initHyphenator } from '../measure/font';
-import { formatWarning } from '../pipeline/contentWarnings';
-import type { ContentWarning } from '../vdt';
-import type { PostextConfig } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { measureRichSnippet } from '../measure/rich.js';
+import { initHyphenator } from '../measure/font.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import type { ContentWarning } from '../vdt.js';
+import type { PostextConfig } from '../types.js';
 
 // #1150: a word wider than its whole line is cut to fit, at a syllable or,
 // where none fits, between two of its characters ("CL" | "IMA"). The line

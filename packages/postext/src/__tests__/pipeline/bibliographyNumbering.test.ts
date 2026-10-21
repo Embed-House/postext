@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { registerCitationEngine } from '../../citations/registry';
-import { bookCitationContexts } from '../../citations/context';
-import { parseMarkdown } from '../../parse';
-import type { CitationEngine } from '../../citations/types';
-import type { PostextConfig, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { registerCitationEngine } from '../../citations/registry.js';
+import { bookCitationContexts } from '../../citations/context.js';
+import { parseMarkdown } from '../../parse/index.js';
+import type { CitationEngine } from '../../citations/types.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
 
 class StubCtx {
   font = '';

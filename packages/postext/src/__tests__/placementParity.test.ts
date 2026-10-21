@@ -3,9 +3,9 @@ import {
   enforcePageParity,
   createPageWithColumns,
   type PlacementCursor,
-} from '../pipeline/placement';
-import { resolveAllConfig } from '../pipeline/config';
-import { createVDTDocument, type VDTDocument, type ResolvedConfig } from '../vdt';
+} from '../pipeline/placement.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { createVDTDocument, type VDTDocument, type ResolvedConfig } from '../vdt.js';
 
 function makeDoc(): { doc: VDTDocument; resolved: ResolvedConfig; contentArea: { x: number; y: number; width: number; height: number } } {
   const resolved = resolveAllConfig();

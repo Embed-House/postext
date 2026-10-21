@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type { FontFaceLike, PostextConfig } from 'postext';
-import { FONTSOURCE_PACKAGE_VERSION, fontsourceCssUrl, fontsourceFileUrl, fontsourceUrlAt, fontsourceVersionOf } from '../viewport/fontsourceSlices';
+import { FONTSOURCE_PACKAGE_VERSION, fontsourceCssUrl, fontsourceFileUrl, fontsourceUrlAt, fontsourceVersionOf } from '../viewport/fontsourceSlices.js';
 // The blocks of the Cookbook kit that fetch font files, as text (Vite's `?raw`).
 // @ts-expect-error a file outside the package, with no types
 import KIT_FONTS from '../../../../cookbook/_kit/fonts.js?raw';
@@ -23,10 +23,10 @@ import KIT_IMAGES from '../../../../cookbook/_kit/images.js?raw';
 // page and for the layout worker, and the PDF provider embeds from the
 // same list. Against the answers of Fontsource, jsDelivr and Google Fonts.
 
-vi.mock('../storage/fontStorage', () => ({ getFontFile: async () => null }));
+vi.mock('../storage/fontStorage.js', () => ({ getFontFile: async () => null }));
 vi.mock('postext-pdf', () => ({ decompressWoff2: async (bytes: Uint8Array) => bytes }));
 
-type Loader = typeof import('./fontLoader');
+type Loader = typeof import('./fontLoader.js');
 
 const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+2000-206F';
 const LATIN_EXT = 'U+0100-02BA,U+1E00-1E9F';
@@ -264,7 +264,7 @@ beforeEach(async () => {
   };
   globals.FontFace = FakeFace;
   vi.resetModules();
-  loader = await import('./fontLoader');
+  loader = await import('./fontLoader.js');
 });
 
 afterEach(() => {
@@ -538,7 +538,7 @@ describe('the hold of the previews on static cuts (#757, #659)', () => {
 });
 
 describe('the Sandbox\'s PDF and its previews (#757)', () => {
-  const provider = async () => (await import('../viewport/pdfFontProvider')).createPdfFontProvider({ raw: true });
+  const provider = async () => (await import('../viewport/pdfFontProvider.js')).createPdfFontProvider({ raw: true });
 
   it('embeds the files the previews declare for a face, the ones that hold its characters', async () => {
     const ask = await provider();
@@ -695,7 +695,7 @@ describe('a family from one version of its package (#766)', () => {
     // The page declares those very files.
     expect(fonts.faces.every((f) => f.source.includes('@5.3.1/files/'))).toBe(true);
     await loader.fetchFacePayloads(faces);
-    const provide = (await import('../viewport/pdfFontProvider')).createPdfFontProvider({ raw: true });
+    const provide = (await import('../viewport/pdfFontProvider.js')).createPdfFontProvider({ raw: true });
     await provide(SERIF, 400, 'normal', { codePoints: cps('abc') });
     await provide(SERIF, 500, 'normal', { codePoints: cps('abc') });
     expect(versionsAsked('source-serif-4')).toEqual(['5.3.1']);

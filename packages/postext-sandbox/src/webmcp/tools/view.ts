@@ -3,24 +3,24 @@
 
 import { applyHtmlViewerOverrides, resolveDebugConfig, resolveLayoutConfig } from 'postext';
 import type { PostextConfig } from 'postext';
-import { requestSettingsGroup, requestSettingsSwitches, settingsChangedOnly } from '../../context/settingsNavigation';
-import { printPreviewOn, setPrintPreview } from '../../print/printPreviewToggle';
-import { EDIT_MODES, editModeNow, selectedFrameNow, setEditMode, type EditMode } from '../../editing/editMode';
-import { breadcrumb, breadcrumbText, selectedElement } from '../../selection/pageSelection';
-import { pageSelectionNow } from '../../selection/selectionStore';
-import type { SandboxLabels } from '../../types/labels';
-import { SETTINGS_GROUPS, isSettingsGroupId } from '../../sidebar/sections/registry';
-import { loadSettingsHelpMode, saveSettingsGroup, saveSettingsHelpMode } from '../../storage/persistence';
-import { VIEWPORT_TABS, readViewHash, viewHashFragment } from '../../storage/viewHash';
-import type { PanelId, ViewportTab } from '../../types';
-import { folioSupported } from '../../viewport/folioSupport';
-import { FIT_MARKS_MODES, fitMarksViewOf, setFitMarksChoice, type FitMarksMode } from '../../viewport/composed/fitMarksView';
-import { viewerControls, type ViewerContentsEntry, type ViewerControls, type ViewerSettings } from '../../viewport/viewerControls';
-import { SETTLE_TIMEOUT_MS, chapterOf, dispatchAndWait, layOutChapter, pageIndexOf, whenSettled, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { findAnchor } from '../pagePoint';
-import { pagesOfOffset } from '../pageText';
-import { MAX_STATUS_ENTRIES, compactStatus, whenViewerIdle } from '../viewerStatus';
+import { requestSettingsGroup, requestSettingsSwitches, settingsChangedOnly } from '../../context/settingsNavigation.js';
+import { printPreviewOn, setPrintPreview } from '../../print/printPreviewToggle.js';
+import { EDIT_MODES, editModeNow, selectedFrameNow, setEditMode, type EditMode } from '../../editing/editMode.js';
+import { breadcrumb, breadcrumbText, selectedElement } from '../../selection/pageSelection.js';
+import { pageSelectionNow } from '../../selection/selectionStore.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { SETTINGS_GROUPS, isSettingsGroupId } from '../../sidebar/sections/registry.js';
+import { loadSettingsHelpMode, saveSettingsGroup, saveSettingsHelpMode } from '../../storage/persistence.js';
+import { VIEWPORT_TABS, readViewHash, viewHashFragment } from '../../storage/viewHash.js';
+import type { PanelId, ViewportTab } from '../../types/index.js';
+import { folioSupported } from '../../viewport/folioSupport.js';
+import { FIT_MARKS_MODES, fitMarksViewOf, setFitMarksChoice, type FitMarksMode } from '../../viewport/composed/fitMarksView.js';
+import { viewerControls, type ViewerContentsEntry, type ViewerControls, type ViewerSettings } from '../../viewport/viewerControls.js';
+import { SETTLE_TIMEOUT_MS, chapterOf, dispatchAndWait, layOutChapter, pageIndexOf, whenSettled, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { findAnchor } from '../pagePoint.js';
+import { pagesOfOffset } from '../pageText.js';
+import { MAX_STATUS_ENTRIES, compactStatus, whenViewerIdle } from '../viewerStatus.js';
 
 const PANELS: readonly PanelId[] = ['projects', 'chapters', 'markdown', 'resources', 'fonts', 'config', 'warnings'];
 

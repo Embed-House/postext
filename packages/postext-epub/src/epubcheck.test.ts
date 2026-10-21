@@ -8,10 +8,10 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { renderToEpub } from './index';
-import type { RenderToEpubOptions } from './types';
-import { page8Book, page8Bytes } from './__tests__/page8';
-import { AMIRI, LORA, MP4, PNG, arabicSampleBook, booktabsSampleBook, wrapSampleBook, comicSampleBook, composedSpreadSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook, videoSampleBook, japaneseSampleBook } from './__tests__/sampleBook';
+import { renderToEpub } from './index.js';
+import type { RenderToEpubOptions } from './types.js';
+import { page8Book, page8Bytes } from './__tests__/page8.js';
+import { AMIRI, LORA, MP4, PNG, arabicSampleBook, booktabsSampleBook, wrapSampleBook, comicSampleBook, composedSpreadSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook, videoSampleBook, japaneseSampleBook } from './__tests__/sampleBook.js';
 
 const available = process.env.EPUBCHECK === '1' && spawnSync('epubcheck', ['--version'], { encoding: 'utf8' }).status === 0;
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTComposedPage, VDTFrame } from 'postext';
-import { flowBoxOnSheet, frameAtSource, frameById, frameByName, frameCorners, frameHandleAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit';
+import { flowBoxOnSheet, frameAtSource, frameById, frameByName, frameCorners, frameHandleAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit.js';
 
 function frame(name: string, rect: VDTFrame['rect'], extra: Partial<VDTFrame> = {}): VDTFrame {
   return { id: `cp0:${name}`, name, rect, rotate: 0, layer: 1, scale: 1, overflowPx: 0, blockIds: [], configPath: '/pageTemplates/0/frames/0', ...extra };

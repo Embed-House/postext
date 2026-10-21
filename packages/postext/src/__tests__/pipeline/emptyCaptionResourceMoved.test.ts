@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 // #1151: `emptyCaption` when a typed resource prints its label and number
 // alone, and `resourceMoved` when a resource set in the text moves on and

@@ -13,9 +13,9 @@
  */
 
 import type { Dispatch } from 'react';
-import type { SandboxAction } from '../context/SandboxContext';
-import { applyTextChanges, type TextChange } from '../book/textChanges';
-import { activeHistory } from '../history/sandboxHistory';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import { applyTextChanges, type TextChange } from '../book/textChanges.js';
+import { activeHistory } from '../history/sandboxHistory.js';
 
 /** Changes dispatched last, for the editor to apply as they are. */
 let pending: TextChange[] | null = null;

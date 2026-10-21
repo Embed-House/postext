@@ -5,11 +5,11 @@
 
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { createDefaultConfig } from '../../context/defaultConfig';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import type { SandboxLabels } from '../../types/labels';
-import { SETTINGS_SECTIONS } from '../sections/registry';
-import { buildSectionSearchIndex, planSettingsSearch } from './sectionIndex';
+import { createDefaultConfig } from '../../context/defaultConfig.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { SETTINGS_SECTIONS } from '../sections/registry.js';
+import { buildSectionSearchIndex, planSettingsSearch } from './sectionIndex.js';
 
 // Loaded through dynamic imports (the package has no Node typings).
 const spanishMessages = ((await import(/* @vite-ignore */ new URL('../../../../../apps/web/messages/es.json', import.meta.url).href)) as {

@@ -8,17 +8,17 @@
 import type { PostextConfig, Resource } from 'postext';
 import { isBundleManifest, pickBundleMeta, pickBundleView, pickLocaleOverrides, planBundle as planCoreBundle, readBundle, resolveBundleConfigLocale, resolveBundleFiles } from 'postext/bundle';
 import type { BundleByteSources as CoreByteSources, BundleFileReader, BundleIdScheme, PlannedFile } from 'postext/bundle';
-import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from '../book/layoutKeys';
-import { createDefaultConfig } from '../context/defaultConfig';
-import { svgIntrinsicSize } from '../panels/resources/svgIntrinsic';
-import { deriveChapterTitle, newChapter } from '../book/chapterOps';
-import type { BookStart, Chapter, ChapterLayout, LayoutScope } from '../book/types';
-import { presetChapterId, presetFileId, presetFontFileId } from './manifest';
+import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from '../book/layoutKeys.js';
+import { createDefaultConfig } from '../context/defaultConfig.js';
+import { svgIntrinsicSize } from '../panels/resources/svgIntrinsic.js';
+import { deriveChapterTitle, newChapter } from '../book/chapterOps.js';
+import type { BookStart, Chapter, ChapterLayout, LayoutScope } from '../book/types.js';
+import { presetChapterId, presetFileId, presetFontFileId } from './manifest.js';
 import type {
   LoadedPreset,
   PresetManifestV2,
   PresetSummary,
-} from './types';
+} from './types.js';
 
 export type { BundleFileReader, BundleIdScheme, PlannedFile };
 export { EXPORTABLE_FONT_FORMATS } from 'postext/bundle';

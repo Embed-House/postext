@@ -12,15 +12,15 @@ import {
   type VectorItem,
   type VectorShape,
   type VectorText,
-} from '../pdf-backend/svgVector';
-import { FontCache } from '../fontCache';
+} from '../pdf-backend/svgVector.js';
+import { FontCache } from '../fontCache.js';
 import {
   drawEmbeddedResource,
   inlineSvgFontsForRaster,
   preloadResourceImages,
   sniffBytes,
-} from '../pdf-backend/renderResourceBlock';
-import { makeScale, type PageCtx } from '../pdf-backend/primitives';
+} from '../pdf-backend/renderResourceBlock.js';
+import { makeScale, type PageCtx } from '../pdf-backend/primitives.js';
 
 /** The page's content stream operators, before pdf-lib deflates them. */
 function pageContent(page: PDFPage): string {

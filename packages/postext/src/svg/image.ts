@@ -1,11 +1,11 @@
 // SVG pictures ready for an image: recoloured for single ink, then their
 // fonts inlined (#630), then decoded and registered for the canvas.
 
-import { registerResourceImage } from '../canvas-backend/renderResourceBlock';
-import type { SvgPictureFontWarning } from '../vdt';
-import { applySingleInkToSvg } from './singleInk';
-import { inlineSvgFontsDetailed, type InlineSvgFontsOptions, type SvgFontInlining, type SvgFontProvider, type SvgFontWarning } from './fonts';
-import { registeredFontProvider } from './fontRegistry';
+import { registerResourceImage } from '../canvas-backend/renderResourceBlock.js';
+import type { SvgPictureFontWarning } from '../vdt.js';
+import { applySingleInkToSvg } from './singleInk.js';
+import { inlineSvgFontsDetailed, type InlineSvgFontsOptions, type SvgFontInlining, type SvgFontProvider, type SvgFontWarning } from './fonts.js';
+import { registeredFontProvider } from './fontRegistry.js';
 
 export interface PrepareSvgOptions extends Omit<InlineSvgFontsOptions, 'onWarning'> {
   /** Where the faces come from. Default {@link registeredFontProvider}

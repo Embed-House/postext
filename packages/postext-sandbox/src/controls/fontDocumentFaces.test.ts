@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type { FontFaceLike, PostextConfig } from 'postext';
-import { fontsourceCssUrl } from '../viewport/fontsourceSlices';
-import { createPostextGuideConfig } from '../context/guideConfig';
+import { fontsourceCssUrl } from '../viewport/fontsourceSlices.js';
+import { createPostextGuideConfig } from '../context/guideConfig.js';
 
 // #770: the contents page of the Arabic guide sets the summary of each
 // chapter in Amiri italic (the default slant of `toc.subtitle`), and
@@ -14,10 +14,10 @@ import { createPostextGuideConfig } from '../context/guideConfig';
 // configuration asks for, and a face the pages alone name is loaded for the
 // characters the document sets.
 
-vi.mock('../storage/fontStorage', () => ({ getFontFile: async () => null }));
+vi.mock('../storage/fontStorage.js', () => ({ getFontFile: async () => null }));
 vi.mock('postext-pdf', () => ({ decompressWoff2: async (bytes: Uint8Array) => bytes }));
 
-type Loader = typeof import('./fontLoader');
+type Loader = typeof import('./fontLoader.js');
 
 const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+2000-206F';
 const LATIN_EXT = 'U+0100-02BA,U+1E00-1E9F';
@@ -141,7 +141,7 @@ beforeEach(async () => {
   globals.document = { fonts, createElement: () => ({}), head: { appendChild: (link: { onload?: () => void }) => queueMicrotask(() => link.onload?.()) } };
   globals.FontFace = FakeFace;
   vi.resetModules();
-  loader = await import('./fontLoader');
+  loader = await import('./fontLoader.js');
 });
 
 afterEach(() => {

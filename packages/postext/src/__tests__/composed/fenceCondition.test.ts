@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { collectConfigWarnings } from '../../configWarnings';
-import { stripPageTemplatesDefaults } from '../../composed/templates';
-import { sourceAt } from '../../composed/sourceMap';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { stripPageTemplatesDefaults } from '../../composed/templates.js';
+import { sourceAt } from '../../composed/sourceMap.js';
 import {
   fenceAttributesSet,
   fenceConditionMet,
   fenceConditionUses,
   fenceConditionsNeverMet,
   fenceSetsAttribute,
-} from '../../design/fenceCondition';
-import type { DesignElement, PageTemplate, PostextConfig, VDTDesignTextBlock, VDTDocument, VDTPage } from '../../index';
+} from '../../design/fenceCondition.js';
+import type { DesignElement, PageTemplate, PostextConfig, VDTDesignTextBlock, VDTDocument, VDTPage } from '../../index.js';
 
 // #1087: one page shell for every page. Decoration elements and the
 // template's running heads carry `when` / `unless` on the page fence's

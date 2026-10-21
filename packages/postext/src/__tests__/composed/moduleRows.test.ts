@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { validatePageTemplates } from '../../composed/validate';
-import { resolvePageTemplate } from '../../composed/templates';
-import { elementsForSource, findElement } from '../../composed/sourceMap';
-import { flowRectToPage } from '../../vdt';
-import type { PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { MODULE_RESOURCES, mm } from './fixtures/modules';
-import { CARD_MODULE, cardModule, NOTICE_MODULE, noticeModule, ROWS_CONFIG, ROWS_TEMPLATE, ROWS_WORDS, rowsPage } from './fixtures/moduleRows';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { resolvePageTemplate } from '../../composed/templates.js';
+import { elementsForSource, findElement } from '../../composed/sourceMap.js';
+import { flowRectToPage } from '../../vdt.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { MODULE_RESOURCES, mm } from './fixtures/modules.js';
+import { CARD_MODULE, cardModule, NOTICE_MODULE, noticeModule, ROWS_CONFIG, ROWS_TEMPLATE, ROWS_WORDS, rowsPage } from './fixtures/moduleRows.js';
 
 // #1088 (DESIGN §12.6, §12.7): modules side by side, in a row or a grid of
 // their own or inside the page's modules stack.

@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, columnClipRect, renderPageToCanvas } from '../../index';
-import { measureRichBlock } from '../../measure/rich';
-import { withMeasureWritingMode } from '../../measure/vertical';
-import { cjkClassOf } from '../../measure/cjkClasses';
-import { punctuationSide, type CjkComposition } from '../../measure/cjkPunctuation';
-import { graphemesOf } from '../../measure/graphemes';
-import { verticalRuns } from '../../writingMode';
-import type { InlineSpan } from '../../parse';
-import type { CjkRegion, Dimension, PostextConfig, WritingMode } from '../../types';
-import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub, stubCharWidth } from './stub';
+import { buildDocument, columnClipRect, renderPageToCanvas } from '../../index.js';
+import { measureRichBlock } from '../../measure/rich.js';
+import { withMeasureWritingMode } from '../../measure/vertical.js';
+import { cjkClassOf } from '../../measure/cjkClasses.js';
+import { punctuationSide, type CjkComposition } from '../../measure/cjkPunctuation.js';
+import { graphemesOf } from '../../measure/graphemes.js';
+import { verticalRuns } from '../../writingMode.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { CjkRegion, Dimension, PostextConfig, WritingMode } from '../../types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from './stub.js';
 
 // The punctuation model of #185–#187 fed through the cells of the vertical
 // writing mode (#188): compression, line-edge trims, hanging and the

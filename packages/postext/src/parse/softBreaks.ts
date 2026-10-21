@@ -15,9 +15,9 @@
  * spaces.
  */
 
-import type { InlineSpan } from './types';
-import { sliceLinks } from './links';
-import { FOOTNOTE_PLACEHOLDER } from './inlineFormatting';
+import type { InlineSpan } from './types.js';
+import { sliceLinks } from './links.js';
+import { FOOTNOTE_PLACEHOLDER } from './inlineFormatting.js';
 
 /** Hangul syllables and jamo, in every width. */
 function isHangul(cp: number): boolean {

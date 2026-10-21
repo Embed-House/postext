@@ -1,4 +1,4 @@
-import type { CmykPercent } from '../types';
+import type { CmykPercent } from '../types.js';
 
 function isAuthoredCmyk(v: unknown): v is { hex: string; model: 'cmyk'; cmyk: CmykPercent } {
   if (!v || typeof v !== 'object') return false;

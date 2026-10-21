@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EditorState } from '@codemirror/state';
 import { CompletionContext, type Completion } from '@codemirror/autocomplete';
-import { markCompletionSource, markRanges } from './markSyntax';
+import { markCompletionSource, markRanges } from './markSyntax.js';
 
 // #888: the editor marks `:mark[…]{style="…"}` and completes it.
 

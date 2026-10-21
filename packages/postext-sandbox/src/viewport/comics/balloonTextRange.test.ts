@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTComicBalloon, VDTDesignTextBlock } from 'postext';
-import { balloonTextAt, balloonTextRangeRects, type BalloonTextRect, type TextMeasure } from './balloonText';
-import { fromBalloonFrame } from './balloonDrag';
+import { balloonTextAt, balloonTextRangeRects, type BalloonTextRect, type TextMeasure } from './balloonText.js';
+import { fromBalloonFrame } from './balloonDrag.js';
 
 // Nothing measures in the node tests: a run's characters share its advance
 // evenly (the Sandbox measures them with the font in the browser).

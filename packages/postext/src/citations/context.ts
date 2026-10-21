@@ -7,14 +7,14 @@
  * own; a document laid out alone is a book of one.
  */
 
-import type { ContentBlock } from '../parse';
-import { extractFrontmatter } from '../frontmatter';
-import { parseMarkdownMemo } from '../parse';
-import type { CitationClusterInput, CslItem } from './types';
-import { documentReferences, type ReferenceIssue } from './data';
-import { snippetCitations } from '../parse/inlineSnippet';
-import { resourceRefId } from '../pipeline/crossRefs';
-import type { Resource } from '../types';
+import type { ContentBlock } from '../parse/index.js';
+import { extractFrontmatter } from '../frontmatter.js';
+import { parseMarkdownMemo } from '../parse/index.js';
+import type { CitationClusterInput, CslItem } from './types.js';
+import { documentReferences, type ReferenceIssue } from './data.js';
+import { snippetCitations } from '../parse/inlineSnippet.js';
+import { resourceRefId } from '../pipeline/crossRefs.js';
+import type { Resource } from '../types.js';
 
 /** A document's share of its book's citations. */
 export interface CitationContext {

@@ -9,7 +9,7 @@
 // page's readable style sheets (their files fetched; same-origin or CORS in
 // practice, as Fontsource's and Google's are).
 
-import type { SvgFontProvider, SvgFontStyle, SvgFontSyncProvider } from './fonts';
+import type { SvgFontProvider, SvgFontStyle, SvgFontSyncProvider } from './fonts.js';
 
 export interface RegisterFontOptions {
   /** CSS `unicode-range` of the file (`U+0000-00FF, U+0131`): a slice of a

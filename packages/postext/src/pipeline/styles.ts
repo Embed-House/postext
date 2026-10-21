@@ -1,9 +1,9 @@
-import type { CjkWordBreak, Dimension, EmphasisStyle, ParagraphDropCap, ResolvedHeadingLevelConfig, ResolvedParagraphStyleConfig, TabStop, TextAlign } from '../types';
-import { dimensionToPx } from '../units';
-import type { ResolvedConfig } from '../vdt';
-import { buildFontString } from '../measure';
-import { computeBaselineGrid } from './config';
-import { DEFAULT_BLOCKQUOTE_CONFIG } from '../defaults/bodyText';
+import type { CjkWordBreak, Dimension, EmphasisStyle, ParagraphDropCap, ResolvedHeadingLevelConfig, ResolvedParagraphStyleConfig, TabStop, TextAlign } from '../types.js';
+import { dimensionToPx } from '../units.js';
+import type { ResolvedConfig } from '../vdt.js';
+import { buildFontString } from '../measure/index.js';
+import { computeBaselineGrid } from './config.js';
+import { DEFAULT_BLOCKQUOTE_CONFIG } from '../defaults/bodyText.js';
 
 export interface BlockStyle {
   fontString: string;

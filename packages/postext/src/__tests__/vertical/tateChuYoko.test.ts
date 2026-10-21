@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index';
-import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting';
-import { verticalRuns, uprightDigitRuns, forcedVerticalRuns, segmentOrientation } from '../../writingMode';
-import { graphemesOf } from '../../measure/graphemes';
-import { atomicSpanToken } from '../../measure/rich';
-import { withMeasureWritingMode } from '../../measure/vertical';
-import type { CjkRegion, PostextConfig, Dimension, Resource } from '../../types';
-import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub, stubCharWidth } from './stub';
+import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index.js';
+import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting.js';
+import { verticalRuns, uprightDigitRuns, forcedVerticalRuns, segmentOrientation } from '../../writingMode.js';
+import { graphemesOf } from '../../measure/graphemes.js';
+import { atomicSpanToken } from '../../measure/rich.js';
+import { withMeasureWritingMode } from '../../measure/vertical.js';
+import type { CjkRegion, PostextConfig, Dimension, Resource } from '../../types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from './stub.js';
 
 installSizedStub();
 

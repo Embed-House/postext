@@ -1,8 +1,8 @@
 // #728 strictPlacement off, and on Latin lettering (split from strictPlacement.test.ts, #1118).
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { roof, ZH } from './strictPlacement.fixtures';
+import { installStubMeasure } from './stubMeasure.js';
+import { roof, ZH } from './strictPlacement.fixtures.js';
 
 beforeAll(() => installStubMeasure());
 

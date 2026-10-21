@@ -3,7 +3,7 @@
 import { ViewPlugin, Decoration, EditorView, type DecorationSet, type ViewUpdate } from '@codemirror/view';
 import { Prec, RangeSetBuilder } from '@codemirror/state';
 import { orientationMarkAt } from 'postext';
-import { inFencedCode } from './codeFences';
+import { inFencedCode } from './codeFences.js';
 
 /**
  * Editor support for the orientation marks of vertical text (`:tcy[12]`,

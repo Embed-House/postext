@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { comicArtPointToPage, type VDTComicBalloon, type VDTComicPage, type VDTComicPanel } from 'postext';
-import { comicHitAt } from './comicHit';
+import { comicHitAt } from './comicHit.js';
 import {
   balloonAt,
   balloonDropIssues,
@@ -21,7 +21,7 @@ import {
   pinAfterMove,
   pinToPage,
   roundPin,
-} from './balloonDrag';
+} from './balloonDrag.js';
 
 // A panel whose picture is cropped: the cell shows the middle of a wider
 // picture (the art box runs past the cell on both sides).

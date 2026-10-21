@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { activeLocaleTag, bundleContentLocales, choosePresetOpen, isEditionOnScreen, linkNamesBookOnScreen, presetLocaleFor, presetOpenLocale, presetReaderLocale, resolvePresetLocale, sameContentLocale } from './locale';
+import { activeLocaleTag, bundleContentLocales, choosePresetOpen, isEditionOnScreen, linkNamesBookOnScreen, presetLocaleFor, presetOpenLocale, presetReaderLocale, resolvePresetLocale, sameContentLocale } from './locale.js';
 
 const bilingual = { id: 'guide', locales: ['es', 'en'] };
 const spanish = { id: 'emp', locale: 'es' };

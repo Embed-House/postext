@@ -2,9 +2,9 @@
 // sandbox` builds this file and `worker/layout.worker.ts` from the working
 // tree and calls `window.__postextSandbox.layOutBundle` once per edition.
 
-import './nodeGlobals';
-import { layOutBundle, layOutState } from './layOutBundle';
-import type { LaidOutBundle, LayOutBundleOptions } from './layOutBundle';
+import './nodeGlobals.js';
+import { layOutBundle, layOutState } from './layOutBundle.js';
+import type { LaidOutBundle, LayOutBundleOptions } from './layOutBundle.js';
 
 declare global {
   interface Window {

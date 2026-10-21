@@ -1,9 +1,9 @@
-import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types';
-import { hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
-import { cjkRegionOfConfig } from './cjk';
-import { dimensionsEqual, colorsEqual, compositionRuleOf, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
-import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse';
-import { normalizeHyphenationExceptions } from '../hyphenationExceptions';
+import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types.js';
+import { hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale.js';
+import { cjkRegionOfConfig } from './cjk.js';
+import { dimensionsEqual, colorsEqual, compositionRuleOf, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared.js';
+import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse.js';
+import { normalizeHyphenationExceptions } from '../hyphenationExceptions.js';
 
 export const DEFAULT_HYPHENATION_CONFIG: ResolvedBodyTextConfig['hyphenation'] = {
   enabled: true,

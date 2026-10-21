@@ -1,4 +1,4 @@
-import { footnoteRuleSegments } from './columnRule';
+import { footnoteRuleSegments } from './columnRule.js';
 import type {
   VDTDocument,
   VDTPage,
@@ -25,43 +25,43 @@ import type {
   ResolvedResourceBlock,
   RoundedOutline,
   RenderWarning,
-} from './vdt';
-import { markerSvgElement, pathSvgData } from './design/pathBlock';
-import { leaderRuleGeometry, lineTextAlign, tableCellFillRects, tableFrameOutline } from './vdt';
-import { dimensionToPx } from './units';
-import { documentInkHex, isSingleInkSvgUrl, singleInkColorMatrix } from './svg/singleInk';
-import { inlineSvgFontsDetailedSync, type SvgFontSyncProvider } from './svg/fonts';
-import { registeredFontSyncProvider } from './svg/fontRegistry';
-import { svgPictureFontWarning } from './svg/image';
-import { lineInkExtent, lineTrailingTracking } from './lineInk';
-import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid';
-import { isJapaneseLanguage, renderLangOf, shapingLanguageOf, shapingTagOf } from './locale';
-import { hasCJK } from './measure/cjk';
-import { arabicMarkNeeded, needsBidi } from './bidi';
-import { joiningScriptIn } from './measure/joining';
-import { faceReadsScript, isLetterless, rtlTextWidth, scriptContextUntracked, scriptMark, scriptTextWidth, type ScriptContext } from './measure/script';
-import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
-import type { CjkRegion, ResourceSafeArea } from './types';
-import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
-import { graphemeCount, graphemesOf } from './measure/graphemes';
-import { measureSpacedWidth, measureTextWidth, withMeasureLanguage } from './measure/canvas';
-import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures';
-import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces';
-import { fontFamilyOf } from './measure/vertical';
-import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
-import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
-import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url';
-import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTSwatch, VDTTextDots } from './vdt';
-import { hasSwatchShape, swatchGeometry, type SwatchGeometry } from './swatchShape';
-import { iconLineDash, inlineIconBox } from './measure/inlineIcon';
-import { textDots } from './textDots';
-import type { ComicCastMember } from './types';
-import { renderComicHtml } from './htmlComic';
-import { comicBlockOnSheet, pageComics } from './comics/transform';
-import { altWithLabels } from './composed/labelText';
-import { figureLabelLeaderPaths, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
-import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, decorationOver, decorationUnder, frameClips, frameContentRect, frameMatrix } from './composed/paint';
-import { taskBoxSvgBody, taskBoxText } from './taskBox';
+} from './vdt.js';
+import { markerSvgElement, pathSvgData } from './design/pathBlock.js';
+import { leaderRuleGeometry, lineTextAlign, tableCellFillRects, tableFrameOutline } from './vdt.js';
+import { dimensionToPx } from './units.js';
+import { documentInkHex, isSingleInkSvgUrl, singleInkColorMatrix } from './svg/singleInk.js';
+import { inlineSvgFontsDetailedSync, type SvgFontSyncProvider } from './svg/fonts.js';
+import { registeredFontSyncProvider } from './svg/fontRegistry.js';
+import { svgPictureFontWarning } from './svg/image.js';
+import { lineInkExtent, lineTrailingTracking } from './lineInk.js';
+import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid.js';
+import { isJapaneseLanguage, renderLangOf, shapingLanguageOf, shapingTagOf } from './locale.js';
+import { hasCJK } from './measure/cjk.js';
+import { arabicMarkNeeded, needsBidi } from './bidi.js';
+import { joiningScriptIn } from './measure/joining.js';
+import { faceReadsScript, isLetterless, rtlTextWidth, scriptContextUntracked, scriptMark, scriptTextWidth, type ScriptContext } from './measure/script.js';
+import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt.js';
+import type { CjkRegion, ResourceSafeArea } from './types.js';
+import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode.js';
+import { graphemeCount, graphemesOf } from './measure/graphemes.js';
+import { measureSpacedWidth, measureTextWidth, withMeasureLanguage } from './measure/canvas.js';
+import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures.js';
+import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces.js';
+import { fontFamilyOf } from './measure/vertical.js';
+import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations.js';
+import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay.js';
+import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url.js';
+import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTSwatch, VDTTextDots } from './vdt.js';
+import { hasSwatchShape, swatchGeometry, type SwatchGeometry } from './swatchShape.js';
+import { iconLineDash, inlineIconBox } from './measure/inlineIcon.js';
+import { textDots } from './textDots.js';
+import type { ComicCastMember } from './types.js';
+import { renderComicHtml } from './htmlComic.js';
+import { comicBlockOnSheet, pageComics } from './comics/transform.js';
+import { altWithLabels } from './composed/labelText.js';
+import { figureLabelLeaderPaths, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels.js';
+import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, decorationOver, decorationUnder, frameClips, frameContentRect, frameMatrix } from './composed/paint.js';
+import { taskBoxSvgBody, taskBoxText } from './taskBox.js';
 
 /**
  * Declarations of every box of CJK text measured with no punctuation

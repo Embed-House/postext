@@ -1,6 +1,6 @@
-import type { InlineSpan } from './types';
-import { sliceLinks } from './links';
-import { annotationFields } from './annotations';
+import type { InlineSpan } from './types.js';
+import { sliceLinks } from './links.js';
+import { annotationFields } from './annotations.js';
 
 /**
  * Walk an InlineSpan list and replace each occurrence of `placeholder` with a

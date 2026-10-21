@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, buildDocumentAsync, BuildCancelledError, type BuildPassInfo } from '../pipeline/build';
-import { createMeasurementCache } from '../measure';
-import type { PostextConfig } from '../types';
+import { buildDocument, buildDocumentAsync, BuildCancelledError, type BuildPassInfo } from '../pipeline/build.js';
+import { createMeasurementCache } from '../measure/index.js';
+import type { PostextConfig } from '../types.js';
 
 class StubCtx {
   font = '';

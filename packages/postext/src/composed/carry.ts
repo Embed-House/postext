@@ -19,12 +19,12 @@
  * Pure helpers; `build.ts` exports the jump and `composedLayout.ts` lays
  * the imported story.
  */
-import type { ContentBlock } from '../parse/types';
-import type { CarriedNumber, StoryJump, CarriedNote } from './carryTypes';
-export type { CarriedNumber, StoryJump, CarriedNote } from './carryTypes';
-import { planCallouts } from '../pipeline/calloutLayout';
-import type { ComposedContinuation } from './continuation';
-import { CAP_HEADING_ATTR } from './wrap';
+import type { ContentBlock } from '../parse/types.js';
+import type { CarriedNumber, StoryJump, CarriedNote } from './carryTypes.js';
+export type { CarriedNumber, StoryJump, CarriedNote } from './carryTypes.js';
+import { planCallouts } from '../pipeline/calloutLayout.js';
+import type { ComposedContinuation } from './continuation.js';
+import { CAP_HEADING_ATTR } from './wrap.js';
 
 /** First container id the carried stories take: past every id the parser
  *  and the other synthetic boxes hand out. */

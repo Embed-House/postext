@@ -5,7 +5,7 @@
  * links, and character entities. Any other tag is dropped, its text kept.
  */
 
-import type { InlineSpan } from '../parse';
+import type { InlineSpan } from '../parse/index.js';
 
 interface Style {
   italic: boolean;

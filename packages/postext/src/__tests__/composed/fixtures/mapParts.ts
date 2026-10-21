@@ -8,8 +8,8 @@
  * for this fixture, the country is invented. The form is the template and
  * the label styles; every word is in the Markdown.
  */
-import type { PostextConfig, Resource } from '../../../types';
-import type { PageTemplate } from '../../../composed/types';
+import type { PostextConfig, Resource } from '../../../types.js';
+import type { PageTemplate } from '../../../composed/types.js';
 
 export const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });

@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { renderToHtml } from '../../html-backend';
-import { registerCitationEngine } from '../../citations/registry';
-import type { CitationEngine } from '../../citations/types';
-import type { PostextConfig } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { renderToHtml } from '../../html-backend.js';
+import { registerCitationEngine } from '../../citations/registry.js';
+import type { CitationEngine } from '../../citations/types.js';
+import type { PostextConfig } from '../../index.js';
 
 class StubCtx {
   font = '';

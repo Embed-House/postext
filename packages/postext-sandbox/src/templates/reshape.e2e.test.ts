@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, type PostextConfig, type VDTDocument } from 'postext';
-import { applyTextChanges } from '../book/textChanges';
-import { planFramesToGrid } from './framesToGrid';
-import { laidFrames } from './pagePieces';
-import { planExtractModule } from './moduleEdits';
-import { ONE_OFF_TEMPLATE, RESHAPE_CONFIG, RESHAPE_RESOURCES, oneOffPage } from './reshape.fixture';
+import { applyTextChanges } from '../book/textChanges.js';
+import { planFramesToGrid } from './framesToGrid.js';
+import { laidFrames } from './pagePieces.js';
+import { planExtractModule } from './moduleEdits.js';
+import { ONE_OFF_TEMPLATE, RESHAPE_CONFIG, RESHAPE_RESOURCES, oneOffPage } from './reshape.fixture.js';
 
 // Reshaping a page of one-off frames (#1065): five photo cards into a
 // grid, a box and its picture into a module. The page must look as it

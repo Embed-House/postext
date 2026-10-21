@@ -6,9 +6,9 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { FrameConfig, PostextConfig } from 'postext';
-import { SandboxStoreContext } from '../../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../../types/defaultLabels';
-import { FrameProperties } from './FrameProperties';
+import { SandboxStoreContext } from '../../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../../types/defaultLabels.js';
+import { FrameProperties } from './FrameProperties.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 

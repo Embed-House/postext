@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { configFontFaces, parseFontString, type FontFaceLike, type PostextConfig } from 'postext';
-import { createFontGate, ensureConfigFontsLoaded, missingConfigFontSpecs } from './fontLoader';
+import { createFontGate, ensureConfigFontsLoaded, missingConfigFontSpecs } from './fontLoader.js';
 
 // The hold of the previews on their first build (#659), against a font set
 // that does what Chrome does when a font style sheet lands: the faces of

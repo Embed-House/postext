@@ -15,13 +15,13 @@
  * text with it.
  */
 
-import type { CjkRegion, WritingMode } from '../types';
-import type { CjkClass } from './cjkClasses';
-import { measureTextWidth, measureInkBox, onTextWidthCacheClear, measureLanguageKey } from './canvas';
-import { isVerticalCell, verticalCellEms, verticalRuns, type UprightDigits } from '../writingMode';
-import { graphemesOf } from './graphemes';
-import { findPxSize } from './fontString';
-import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
+import type { CjkRegion, WritingMode } from '../types.js';
+import type { CjkClass } from './cjkClasses.js';
+import { measureTextWidth, measureInkBox, onTextWidthCacheClear, measureLanguageKey } from './canvas.js';
+import { isVerticalCell, verticalCellEms, verticalRuns, type UprightDigits } from '../writingMode.js';
+import { graphemesOf } from './graphemes.js';
+import { findPxSize } from './fontString.js';
+import { DEFAULT_CENTRAL_BASELINE } from '../vdt.js';
 
 let measureWritingMode: WritingMode = 'horizontal-tb';
 let measureRegion: CjkRegion = 'mainland';

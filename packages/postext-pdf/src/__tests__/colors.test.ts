@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hexToRgb } from '../colors';
+import { hexToRgb } from '../colors.js';
 
 describe('hexToRgb', () => {
   it('parses short and long hex', () => {

@@ -3,8 +3,8 @@
 // with `mergeVideo`.
 
 import { parseVideoUrl, videoFormatOfUrl, type Resource, type ResourceVideo, type ResourceVideoPoster, type VideoPlayerOptions, type VideoSource } from 'postext';
-import { putBlob } from '../../storage/blobStore';
-import { defaultPoster, readVideoMetadata, videoFormatOf, type StreamInfo } from './videoMedia';
+import { putBlob } from '../../storage/blobStore.js';
+import { defaultPoster, readVideoMetadata, videoFormatOf, type StreamInfo } from './videoMedia.js';
 
 type PlayerKey = keyof VideoPlayerOptions;
 

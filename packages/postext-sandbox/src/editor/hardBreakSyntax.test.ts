@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { breakableLines, hardBreakMarks } from './hardBreakSyntax';
+import { breakableLines, hardBreakMarks } from './hardBreakSyntax.js';
 
 const marked = (text: string, next?: string) => hardBreakMarks(text, next).map((r) => text.slice(r.from, r.to));
 

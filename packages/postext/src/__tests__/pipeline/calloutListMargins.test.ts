@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripCalloutStylesDefaults } from '../../defaults';
-import type { VDTBlock, VDTDocument } from '../../vdt';
-import type { CalloutListStyleConfig, PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripCalloutStylesDefaults } from '../../defaults/index.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
+import type { CalloutListStyleConfig, PostextConfig } from '../../types.js';
 
 // #1103: a box sets the space above and below its lists (`lists.marginTop`
 // / `marginBottom`), ordered lists too; unset, the document's.

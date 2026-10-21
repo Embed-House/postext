@@ -5,12 +5,12 @@
 // preceding chapter, recorded as a `ChapterLayout`). Page numbers thus run
 // on across chapters without ever laying out the whole book in a preview.
 
-import { builtWithoutFaces } from './withoutFaces';
+import { builtWithoutFaces } from './withoutFaces.js';
 import { anchorOutline, bookCitationContexts, citationContextKey, citationSourceOf, mayNeedCitations, needsCitationContext, configUsesPlaceholder, contentOutline, continuationAfter, extractFrontmatter, formatNumeral, indexOutline, mergeCarriedOutline, outlineFromDoc, outlineKey, parseMarkdown, resolveHeadingsConfig, resolvePageConfig, DEFAULT_PARTS_CONFIG, tocOutline } from 'postext';
 import type { CarriedPlace, CitationSource, LayoutContinuation, NumeralStyle, OutlineEntry, PostextConfig, Resource, VDTDocument } from 'postext';
-import type { BookPages, BookPlan, BookStart, CarriedOutlinePage, Chapter, ChapterLayout, ChapterPageNumber, ChapterPages, ChapterPart, ChapterPlan, OutlinePage } from './types';
-import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys';
-import { createPageIdsCache, jumpsKeyOf, keyOf, laterIdsOfBook, routeJumps } from './jumps';
+import type { BookPages, BookPlan, BookStart, CarriedOutlinePage, Chapter, ChapterLayout, ChapterPageNumber, ChapterPages, ChapterPart, ChapterPlan, OutlinePage } from './types.js';
+import { ENGINE_KEY, configKeyOf, resourcesKeyOf } from './layoutKeys.js';
+import { createPageIdsCache, jumpsKeyOf, keyOf, laterIdsOfBook, routeJumps } from './jumps.js';
 import type { StoryJump } from 'postext';
 
 /** The page number `n` resolves to when the chapter's first page is

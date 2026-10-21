@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // Tracking the engine measured a line with is painted with the matching
 // character spacing (`Tc`): a line's own justification tracking

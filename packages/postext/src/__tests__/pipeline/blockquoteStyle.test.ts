@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { resolveBodyTextConfig, stripBodyTextDefaults, DEFAULT_BLOCKQUOTE_CONFIG } from '../../defaults/bodyText';
-import { dimensionToPx } from '../../units';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults, DEFAULT_BLOCKQUOTE_CONFIG } from '../../defaults/bodyText.js';
+import { dimensionToPx } from '../../units.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
 
 // EF-135: a Markdown blockquote ignored the configuration: always #666666
 // grey, always italic, the body's first-line indent and no side indent.

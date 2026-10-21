@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { measureHeadingAdvancedDesignHeight } from '../../pipeline/headerFooter';
-import { resolveHeadingsConfig } from '../../defaults/headings';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import { layoutDesignSlot } from '../../design/layout';
-import { buildDocument } from '../../pipeline';
-import type { DesignElement, Dimension, PostextConfig } from '../../types';
-import type { VDTDesignTextBlock, VDTPage } from '../../vdt';
+import { measureHeadingAdvancedDesignHeight } from '../../pipeline/headerFooter.js';
+import { resolveHeadingsConfig } from '../../defaults/headings.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import { layoutDesignSlot } from '../../design/layout.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { DesignElement, Dimension, PostextConfig } from '../../types.js';
+import type { VDTDesignTextBlock, VDTPage } from '../../vdt.js';
 
 // EF-56: a design text's `lineHeight` written as a Dimension (as every
 // other leading in the config is) made the opener measurement NaN, and the

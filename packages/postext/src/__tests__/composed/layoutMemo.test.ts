@@ -7,15 +7,15 @@
  * the layout keeps by identity.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { clearComposedPageMemo } from '../../composed/pageMemo';
-import { layoutMemoSwitch, createLayoutMemo, memoLayout, copyLayout } from '../../pipeline/layoutMemo';
-import { widthLessEndIndent } from '../../pipeline/buildHelpers';
-import { isDesignedBoxHeading } from '../../pipeline/calloutLayout';
-import { page8Fixture } from './fixtures/page8';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { clearComposedPageMemo } from '../../composed/pageMemo.js';
+import { layoutMemoSwitch, createLayoutMemo, memoLayout, copyLayout } from '../../pipeline/layoutMemo.js';
+import { widthLessEndIndent } from '../../pipeline/buildHelpers.js';
+import { isDesignedBoxHeading } from '../../pipeline/calloutLayout.js';
+import { page8Fixture } from './fixtures/page8.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 class StubCtx {
   font = '';

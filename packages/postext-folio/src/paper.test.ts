@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveFolioConfig, type FolioPaperConfig } from "postext";
-import { paperSpec } from "./paper";
+import { paperSpec } from "./paper.js";
 
 /** A block of `pages` pages (pages / 2 leaves), in mm. */
 const blockMm = (paper: FolioPaperConfig, pages: number) => (pages / 2) * paperSpec(resolveFolioConfig({ paper }).paper).caliperMm;

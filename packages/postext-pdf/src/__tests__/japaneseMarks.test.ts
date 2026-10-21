@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // The Japanese sesame (傍点) and side lines (傍線, #421) in the PDF: vector
 // artifacts like the Chinese marks; the sesame stands on the sheet the same

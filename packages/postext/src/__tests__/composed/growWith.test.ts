@@ -6,13 +6,13 @@
  * text under it moves down: no caption leaves the box, nothing covers.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { growMembers, grownHeight } from '../../composed/grow';
-import { resolvePageTemplate } from '../../composed/templates';
-import { validatePageTemplates } from '../../composed/validate';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, Resource, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { growMembers, grownHeight } from '../../composed/grow.js';
+import { resolvePageTemplate } from '../../composed/templates.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, Resource, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
 
 class StubCtx {
   font = '';

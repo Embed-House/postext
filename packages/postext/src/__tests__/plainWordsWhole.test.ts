@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { clearMeasurementCache } from '../measure';
-import { setMeasureLanguage } from '../measure/canvas';
-import { measureBlock } from '../measure/plain';
-import { measureRichBlock } from '../measure/rich';
-import { setHyphenationLocale } from '../hyphenate';
-import type { MeasureBlockOptions } from '../measure/types';
-import type { VDTLine } from '../vdt';
+import { clearMeasurementCache } from '../measure/index.js';
+import { setMeasureLanguage } from '../measure/canvas.js';
+import { measureBlock } from '../measure/plain.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { setHyphenationLocale } from '../hyphenate.js';
+import type { MeasureBlockOptions } from '../measure/types.js';
+import type { VDTLine } from '../vdt.js';
 
 // #770: one book set the same word two ways. A paragraph with a style in
 // it is cut word by word, and a word a line may end inside is measured

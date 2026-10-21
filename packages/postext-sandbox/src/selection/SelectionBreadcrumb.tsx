@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import { ArrowUpLeft, X } from 'lucide-react';
-import { useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext';
-import { onFrameEditorEvent } from '../templates/frameEvents';
-import { createSelectionApply } from './applySelection';
-import { IconButton, announce, cn } from '../ui';
-import { breadcrumb, breadcrumbText, crumbText, type Crumb } from './pageSelection';
-import { clearPageSelection, climbPageSelection, followFrameEditor, pageSelectionNow, selectPageLevel, setSelectionChapters, setSelectionTemplates, usePageSelection } from './selectionStore';
-import type { SandboxLabels } from '../types/labels';
+import { useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext.js';
+import { onFrameEditorEvent } from '../templates/frameEvents.js';
+import { createSelectionApply } from './applySelection.js';
+import { IconButton, announce, cn } from '../ui/index.js';
+import { breadcrumb, breadcrumbText, crumbText, type Crumb } from './pageSelection.js';
+import { clearPageSelection, climbPageSelection, followFrameEditor, pageSelectionNow, selectPageLevel, setSelectionChapters, setSelectionTemplates, usePageSelection } from './selectionStore.js';
+import type { SandboxLabels } from '../types/labels.js';
 
 /** The viewers that show the book's pages and share the selection. */
 const PAGE_VIEWS = new Set(['canvas', 'folio', 'html']);

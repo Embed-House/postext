@@ -6,10 +6,10 @@ import type { Dispatch } from 'react';
 import { clearMeasurementCache } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
 import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
-import { setCustomFonts } from '../controls/fontLoader';
-import { invalidateResourceImage } from '../controls/resourceImages';
-import { slugify } from '../panels/resources/slugify';
-import type { BundleContent } from '../presets/bundle';
+import { setCustomFonts } from '../controls/fontLoader.js';
+import { invalidateResourceImage } from '../controls/resourceImages.js';
+import { slugify } from '../panels/resources/slugify.js';
+import type { BundleContent } from '../presets/bundle.js';
 import {
   buildBundleFiles,
   openBundleZip,
@@ -17,11 +17,11 @@ import {
   zipBundle,
   POSTEXT_EXTENSION,
   POSTEXT_MIME,
-} from '../presets';
-import type { LoadedPreset, PresetApplyParts, PresetProvider, PresetSummary } from '../presets';
-import { extensionForImageMime, mimeForFile } from '../presets/manifest';
-import { getBlob, putBlobAt } from '../storage/blobStore';
-import { getFontFile, putFontFile } from '../storage/fontStorage';
+} from '../presets/index.js';
+import type { LoadedPreset, PresetApplyParts, PresetProvider, PresetSummary } from '../presets/index.js';
+import { extensionForImageMime, mimeForFile } from '../presets/manifest.js';
+import { getBlob, putBlobAt } from '../storage/blobStore.js';
+import { getFontFile, putFontFile } from '../storage/fontStorage.js';
 import {
   clearPresetApplied,
   downloadBytes,
@@ -30,14 +30,14 @@ import {
   saveConfig,
   savePresetId,
   saveProjectId,
-} from '../storage/persistence';
-import { cloneBook, singleChapterBook } from '../book/chapterOps';
-import type { BookContent, BookStart, Chapter } from '../book/types';
-import { createBookPlanner } from '../book/pagination';
-import { cloneContentForProject, cloneEditionsForProject, projectFileId, projectFontFileId, remapContentFileIds } from '../storage/projectFiles';
-import { editionTitlesOf, projectEditionFields, recordLocaleOf, withNewEdition } from '../storage/projectEditions';
-import { localeDisplayName } from '../presets/localeNames';
-import { PROJECT_RECORD_VERSION } from '../storage/projectMigration';
+} from '../storage/persistence.js';
+import { cloneBook, singleChapterBook } from '../book/chapterOps.js';
+import type { BookContent, BookStart, Chapter } from '../book/types.js';
+import { createBookPlanner } from '../book/pagination.js';
+import { cloneContentForProject, cloneEditionsForProject, projectFileId, projectFontFileId, remapContentFileIds } from '../storage/projectFiles.js';
+import { editionTitlesOf, projectEditionFields, recordLocaleOf, withNewEdition } from '../storage/projectEditions.js';
+import { localeDisplayName } from '../presets/localeNames.js';
+import { PROJECT_RECORD_VERSION } from '../storage/projectMigration.js';
 import {
   allEditionChapters,
   deleteProject,
@@ -54,16 +54,16 @@ import {
   type ProjectContent,
   type ProjectRecord,
   type ProjectThumbnail,
-} from '../storage/projects';
-import { renameFrameInEdition } from '../templates/slotRename';
-import { createBlankBookConfig, withDefaultResourceTypes } from './defaultConfig';
-import type { SandboxAction, SandboxState } from './SandboxContext';
-import type { ChapterLayout } from '../book/types';
-import { deleteChapterLayouts, getChapterLayouts, putChapterLayouts } from '../storage/layouts';
-import { bundleContentLocales, sameLocaleTag } from '../presets/locale';
-import { getPresetDraft } from '../storage/presetDrafts';
-import { getPresetCover } from '../storage/presetCovers';
-import { coverTargetKey, sessionCoverAttempts, thumbnailIfMissing } from '../covers/autoCover';
+} from '../storage/projects.js';
+import { renameFrameInEdition } from '../templates/slotRename.js';
+import { createBlankBookConfig, withDefaultResourceTypes } from './defaultConfig.js';
+import type { SandboxAction, SandboxState } from './SandboxContext.js';
+import type { ChapterLayout } from '../book/types.js';
+import { deleteChapterLayouts, getChapterLayouts, putChapterLayouts } from '../storage/layouts.js';
+import { bundleContentLocales, sameLocaleTag } from '../presets/locale.js';
+import { getPresetDraft } from '../storage/presetDrafts.js';
+import { getPresetCover } from '../storage/presetCovers.js';
+import { coverTargetKey, sessionCoverAttempts, thumbnailIfMissing } from '../covers/autoCover.js';
 
 export interface ProjectActionDeps {
   dispatch: Dispatch<SandboxAction>;

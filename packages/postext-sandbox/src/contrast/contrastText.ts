@@ -1,9 +1,9 @@
 /** The Checks panel's words for a contrast finding (#748). */
 
-import type { SandboxLabels } from '../types';
-import type { ContrastCheck } from '../warnings/types';
-import { fill } from '../print/fillTokens';
-import { ratioText } from './fieldContrast';
+import type { SandboxLabels } from '../types/index.js';
+import type { ContrastCheck } from '../warnings/types.js';
+import { fill } from '../print/fillTokens.js';
+import { ratioText } from './fieldContrast.js';
 
 export function contrastTitle(check: ContrastCheck, labels: SandboxLabels): string {
   return check.kind === 'lowContrast' ? labels.contrastLowTitle : labels.contrastReversedTitle;

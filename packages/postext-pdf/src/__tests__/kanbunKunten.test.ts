@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { cjkLineText, readText } from '../pdf-backend/primitives';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { cjkLineText, readText } from '../pdf-backend/primitives.js';
 
 // Kanbun marks (#430) in the PDF: painted with their character, the line's
 // /ActualText reading the 送り仮名 after it (學ビテ) and leaving the 返り点

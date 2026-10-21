@@ -3,11 +3,11 @@
 // one step of the chapter's history, in the Sandbox's one history of text
 // and design (#899) that Cmd/Ctrl+Z and the tools undo from.
 
-import { minimalChange } from '../book/textChanges';
-import type { SandboxAction, SandboxState } from '../context/SandboxContext';
-import { applyViewerEdit } from '../editor/viewerEdits';
-import type { SandboxToolHost } from './host';
-import { ToolError } from './modelContext';
+import { minimalChange } from '../book/textChanges.js';
+import type { SandboxAction, SandboxState } from '../context/SandboxContext.js';
+import { applyViewerEdit } from '../editor/viewerEdits.js';
+import type { SandboxToolHost } from './host.js';
+import { ToolError } from './modelContext.js';
 
 /** How long an edit may take to reach the state: a render away, which a
  *  long book can make slow. */

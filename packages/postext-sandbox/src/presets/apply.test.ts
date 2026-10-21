@@ -4,9 +4,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { CustomFontFamily, PostextConfig } from 'postext';
 
-vi.mock('../storage/blobStore', async (importOriginal) => ({ ...(await importOriginal<object>()), putBlobsAt: async () => {} }));
-vi.mock('../storage/fontStorage', async (importOriginal) => ({ ...(await importOriginal<object>()), putFontFiles: async () => {} }));
-vi.mock('../storage/persistence', async (importOriginal) => ({
+vi.mock('../storage/blobStore.js', async (importOriginal) => ({ ...(await importOriginal<object>()), putBlobsAt: async () => {} }));
+vi.mock('../storage/fontStorage.js', async (importOriginal) => ({ ...(await importOriginal<object>()), putFontFiles: async () => {} }));
+vi.mock('../storage/persistence.js', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   saveBook: () => {},
   saveConfig: () => {},
@@ -14,9 +14,9 @@ vi.mock('../storage/persistence', async (importOriginal) => ({
   savePresetId: () => {},
 }));
 
-const { applyPreset } = await import('./apply');
-const { isRemovedCustomFontFamily, setCustomFonts } = await import('../controls/fontLoader');
-const { computeWarnings } = await import('../warnings/compute');
+const { applyPreset } = await import('./apply.js');
+const { isRemovedCustomFontFamily, setCustomFonts } = await import('../controls/fontLoader.js');
+const { computeWarnings } = await import('../warnings/compute.js');
 
 const bundled = (name: string): CustomFontFamily => ({ name, variants: [{ weight: 400, style: 'normal', fileId: `${name}-400`, format: 'ttf' }] });
 // 紅樓夢's bundled faces.

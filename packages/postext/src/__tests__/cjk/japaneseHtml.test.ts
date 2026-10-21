@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import { renderToHtml, renderToHtmlIndexed } from '../../html-backend';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLine, VDTLineSegment, VDTRuby } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
-import { verticalSpans } from '../vertical/verticalSpans';
+import { buildDocument } from '../../index.js';
+import { renderToHtml, renderToHtmlIndexed } from '../../html-backend.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment, VDTRuby } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
+import { verticalSpans } from '../vertical/verticalSpans.js';
 
 // #428: the HTML backend writes a ruby base and its reading as a semantic
 // <ruby> (the positioned boxes unchanged inside it), and a Japanese

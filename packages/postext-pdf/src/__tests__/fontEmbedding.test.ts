@@ -4,9 +4,9 @@ import { PDFDict, PDFDocument, PDFName, PDFRawStream, type PDFRef } from 'pdf-li
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf, type PdfFontProvider } from '../pdf-backend';
-import { FontCache } from '../fontCache';
-import { parseFontString } from '../fontString';
+import { renderToPdf, type PdfFontProvider } from '../pdf-backend/index.js';
+import { FontCache } from '../fontCache.js';
+import { parseFontString } from '../fontString.js';
 
 // EF-121. `renderToPdf` embedded one font program per requested (family,
 // weight, style), even when the provider answered two requests with the

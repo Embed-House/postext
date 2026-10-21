@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createLayoutWorker } from '../worker/client';
-import { cdnWorkerEntryUrl } from '../worker/entryUrl';
-import { documentFontFamilies, fontFaceDescriptors, unavailableFontFamilies } from '../worker/fonts';
-import { buildDocument } from '../pipeline';
-import type { ResponseMessage } from '../worker/protocol';
+import { createLayoutWorker } from '../worker/client.js';
+import { cdnWorkerEntryUrl } from '../worker/entryUrl.js';
+import { documentFontFamilies, fontFaceDescriptors, unavailableFontFamilies } from '../worker/fonts.js';
+import { buildDocument } from '../pipeline/index.js';
+import type { ResponseMessage } from '../worker/protocol.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

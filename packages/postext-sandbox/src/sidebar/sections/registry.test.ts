@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { SETTINGS_GROUPS, SETTINGS_SECTIONS, groupOfSection, isSettingsGroupId, sectionsInGroup } from './registry';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { SETTINGS_GROUPS, SETTINGS_SECTIONS, groupOfSection, isSettingsGroupId, sectionsInGroup } from './registry.js';
 
 describe('settings registry', () => {
   it('lists every section exactly once', () => {

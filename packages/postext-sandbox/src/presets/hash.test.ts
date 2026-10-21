@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, Resource } from 'postext';
-import { createDefaultConfig } from '../context/defaultConfig';
+import { createDefaultConfig } from '../context/defaultConfig.js';
 import {
   hashConfig,
   hashChapters,
@@ -8,8 +8,8 @@ import {
   hashString,
   isDocumentUntouched,
   stableStringify,
-} from './hash';
-import type { AppliedPresetSnapshot } from './types';
+} from './hash.js';
+import type { AppliedPresetSnapshot } from './types.js';
 
 const table = (over: Partial<Resource> = {}): Resource => ({
   id: 'tbl-1',

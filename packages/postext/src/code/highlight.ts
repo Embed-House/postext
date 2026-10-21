@@ -9,7 +9,7 @@
 // It aims at the common constructs of each language, not at full grammars;
 // a language it does not know is set plain.
 
-import type { CodeTokenKind } from '../types';
+import type { CodeTokenKind } from '../types.js';
 
 /** One run of a listing's line as a highlighter gives it: its text, the
  *  kind of token it is (unset: plain) or a colour of its own (a CSS hex,

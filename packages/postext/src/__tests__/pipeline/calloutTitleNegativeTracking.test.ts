@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { renderTextBlock } from '../../canvas-backend/headerFooter';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderTextBlock } from '../../canvas-backend/headerFooter.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
 
 // #1098: a box title with negative tracking is set tighter, measured and
 // painted with that tracking (it was clamped to zero).

@@ -3,7 +3,7 @@
 import { ViewPlugin, Decoration, EditorView, type DecorationSet, type ViewUpdate } from '@codemirror/view';
 import { Prec, RangeSetBuilder } from '@codemirror/state';
 import type { Completion, CompletionContext, CompletionResult } from '@codemirror/autocomplete';
-import { inFencedCode } from './codeFences';
+import { inFencedCode } from './codeFences.js';
 
 /**
  * Editor support for index marks (`:index[word]{…}`, `:index{term="…"}`,

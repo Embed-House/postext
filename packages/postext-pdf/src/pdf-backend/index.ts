@@ -4,14 +4,14 @@ import {
   BlendMode,
   ReadingDirection,
 } from 'pdf-lib';
-import type { ResourceImageMap, SvgRasterizer } from './renderResourceBlock';
+import type { ResourceImageMap, SvgRasterizer } from './renderResourceBlock.js';
 import fontkit from '@pdf-lib/fontkit';
 import type { HyphenationLocale, PdfColorSpace, PrintConfig, RenderWarning, VDTBlock, VDTComicPage, VDTDocument, VDTPage } from 'postext';
 import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfile, resolvePrintConfig, type CmykPercent, type ResolvedPrintConfig } from 'postext';
-import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode';
-import { runPagePrintPass } from '../print/printPass';
-import { writePdfX } from '../print/pdfx';
-import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, decorationOver, decorationUnder, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache';
+import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode.js';
+import { runPagePrintPass } from '../print/printPass.js';
+import { writePdfX } from '../print/pdfx.js';
+import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, decorationOver, decorationUnder, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache.js';
 import {
   type PageCtx,
   type PdfMatrix,
@@ -25,14 +25,14 @@ import {
   quarterTurnMatrix,
   mirrorMatrix,
   whiteColor,
-} from './primitives';
+} from './primitives.js';
 // Register the painters of vertical and of complex-script text with the
 // primitives.
-import './verticalText';
-import './shapedText';
-import { codePointNeedsComplexShaping, loadComplexShaper } from '../complexShaping';
-import type { HarfBuzzWasmSource } from '../harfbuzz';
-import { collectFontText, type FontText } from './fontHelpers';
+import './verticalText.js';
+import './shapedText.js';
+import { codePointNeedsComplexShaping, loadComplexShaper } from '../complexShaping.js';
+import type { HarfBuzzWasmSource } from '../harfbuzz.js';
+import { collectFontText, type FontText } from './fontHelpers.js';
 import {
   computeContentArea,
   renderBaselineGrid,
@@ -40,20 +40,20 @@ import {
   renderColumnRule,
   renderFootnoteRules,
   renderCutLines,
-} from './pageDecorations';
-import { renderBlock, renderStripCaption, type ResourceRenderContext } from './blockRender';
-import { renderHeaderFooterSlot, type SlotMark } from './headerFooter';
-import { pushClipPolygon, renderComicLetteringPdf, renderComicPage, renderComicPanelsPdf, sheetMatrixToPdf, type ComicPanelTags } from './comic';
-import { addOutlines, numberedHeadingText } from './outlines';
-import { addPageLabels } from './pageLabels';
+} from './pageDecorations.js';
+import { renderBlock, renderStripCaption, type ResourceRenderContext } from './blockRender.js';
+import { renderHeaderFooterSlot, type SlotMark } from './headerFooter.js';
+import { pushClipPolygon, renderComicLetteringPdf, renderComicPage, renderComicPanelsPdf, sheetMatrixToPdf, type ComicPanelTags } from './comic.js';
+import { addOutlines, numberedHeadingText } from './outlines.js';
+import { addPageLabels } from './pageLabels.js';
 import {
   preloadResourceImages,
   type ResourceBytesProvider,
-} from './renderResourceBlock';
-import { anchorDestination, LinkRegistry } from './links';
-import { StructTree, tagArtifact, type StructElem } from './tagging';
-import { StructureFlow } from './structureFlow';
-import { withDocumentLanguage } from '../shapingLanguage';
+} from './renderResourceBlock.js';
+import { anchorDestination, LinkRegistry } from './links.js';
+import { StructTree, tagArtifact, type StructElem } from './tagging.js';
+import { StructureFlow } from './structureFlow.js';
+import { withDocumentLanguage } from '../shapingLanguage.js';
 
 export interface RenderToPdfOptions {
   fontProvider: PdfFontProvider;
@@ -318,8 +318,8 @@ export interface RenderProgress {
 }
 
 export type { PdfFontAnswer, PdfFontFile, PdfFontFileDeclaration, PdfFontProvider, PdfFontRequest };
-export { declaredFontFile } from '../fontCache';
-export type { ResourceBytesProvider } from './renderResourceBlock';
+export { declaredFontFile } from '../fontCache.js';
+export type { ResourceBytesProvider } from './renderResourceBlock.js';
 
 /** BCP 47 tag of a document (`/Lang`): its `locale` (`'zh-Hant-TW'`,
  *  script and region kept), else the tag its hyphenation was asked for

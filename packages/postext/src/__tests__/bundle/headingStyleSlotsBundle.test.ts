@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { unzipSync } from 'fflate';
-import { buildBundle, createBundle, openBundle } from '../../bundle';
-import { buildDocument } from '../../pipeline';
-import type { DesignElement, PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
+import { buildBundle, createBundle, openBundle } from '../../bundle/index.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { DesignElement, PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
 
 // #694: a bundle stores its configuration stripped of defaults, and the
 // strip dropped a heading style's empty `header` or `footer`. A cover that

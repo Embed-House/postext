@@ -8,8 +8,8 @@
  */
 
 import type { ResolvedPageTemplate, VDTComposedPage, VDTFrame, VDTPage } from 'postext';
-import { frameAtSource, frameByName } from './frameHit';
-import { emptyFrameInsertion, flowInsertion, instanceOfSite, pageSites, repeatSetsOf, siteCaret, siteOfInstance, sitesOf, slotAtOffset, type PageSites, type SlotSite } from './slotSource';
+import { frameAtSource, frameByName } from './frameHit.js';
+import { emptyFrameInsertion, flowInsertion, instanceOfSite, pageSites, repeatSetsOf, siteCaret, siteOfInstance, sitesOf, slotAtOffset, type PageSites, type SlotSite } from './slotSource.js';
 
 /** The frame of the template whose content `name`'s content goes on
  *  from: the head of its chain (`next`, `overflow.continueIn: '#frame'`). */

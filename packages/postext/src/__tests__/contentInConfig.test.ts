@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildDocument, collectConfigWarnings, configDesignSlots, designTextLiteral, formatWarning, stripConfigDefaults } from '../index';
-import type { ConfigWarning, DesignElement, PostextConfig } from '../index';
+import { buildDocument, collectConfigWarnings, configDesignSlots, designTextLiteral, formatWarning, stripConfigDefaults } from '../index.js';
+import type { ConfigWarning, DesignElement, PostextConfig } from '../index.js';
 
 // A measurer for the build: every character half an em wide.
 (globalThis as unknown as { OffscreenCanvas: unknown }).OffscreenCanvas = class {

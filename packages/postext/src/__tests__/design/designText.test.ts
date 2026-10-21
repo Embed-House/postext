@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import { layoutSlotToVdt } from '../../pipeline/headerFooter';
-import { buildDocument } from '../../pipeline';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { DesignElement, DesignTextElement, PostextConfig } from '../../types';
-import type { VDTDesignTextBlock, VDTPage } from '../../vdt';
+import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import { layoutSlotToVdt } from '../../pipeline/headerFooter.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { DesignElement, DesignTextElement, PostextConfig } from '../../types.js';
+import type { VDTDesignTextBlock, VDTPage } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character is 7px wide whatever the font, so widths read as char counts.

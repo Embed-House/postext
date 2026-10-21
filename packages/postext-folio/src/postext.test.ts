@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { VDTDocument, VDTPage } from "postext";
-import { appearanceOf, carriedPaintings, sweepFor } from "./postext";
+import { appearanceOf, carriedPaintings, sweepFor } from "./postext.js";
 
 const page = (index: number, text = `p${index}`) => ({ index, width: 100, height: 140, text }) as unknown as VDTPage;
 

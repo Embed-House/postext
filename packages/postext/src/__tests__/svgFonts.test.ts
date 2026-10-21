@@ -23,8 +23,8 @@ import {
   renderToHtml,
   svgDeclaredFontFamilies,
   svgFontRequests,
-} from '../index';
-import type { BundleFontFile, PostextConfig, RenderWarning, Resource, SvgFontWarning } from '../index';
+} from '../index.js';
+import type { BundleFontFile, PostextConfig, RenderWarning, Resource, SvgFontWarning } from '../index.js';
 
 // #630: SVG pictures set their text in the document's fonts on canvas, in
 // HTML and in EPUB — the faces their text names are inlined as

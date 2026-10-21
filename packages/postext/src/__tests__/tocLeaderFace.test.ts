@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { findPxSize, parseFontString } from '../measure/fontString';
-import { resolveTocConfig, stripTocDefaults } from '../defaults/toc';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { renderToHtml } from '../html-backend';
-import type { DesignSlot, PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument, VDTLineSegment } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { findPxSize, parseFontString } from '../measure/fontString.js';
+import { resolveTocConfig, stripTocDefaults } from '../defaults/toc.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { renderToHtml } from '../html-backend.js';
+import type { DesignSlot, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument, VDTLineSegment } from '../vdt.js';
 
 // #1121: the contents' leader in a colour, face, size and weight of its
 // own, on the entry rows (`toc.leader`) and the part rows (`{leader}`,

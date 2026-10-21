@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chapter, harness } from './testHarness';
+import { chapter, harness } from './testHarness.js';
 
 const PARAGRAPH = 'Print typography spent five centuries learning how to set a page, and a browser learned how to lay out an interface in a few decades. ';
 

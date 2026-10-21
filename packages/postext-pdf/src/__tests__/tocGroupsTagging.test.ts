@@ -4,8 +4,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFRef, PDFStrin
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #850: a contents block cut between columns repeats its head row at the
 // top of each column it goes on in (`tocEntry.continued` /

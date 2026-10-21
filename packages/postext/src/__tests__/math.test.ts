@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdownWithIssues, MATH_PLACEHOLDER } from '../parse';
+import { parseMarkdownWithIssues, MATH_PLACEHOLDER } from '../parse/index.js';
 
 describe('math parsing', () => {
   it('extracts inline math', () => {

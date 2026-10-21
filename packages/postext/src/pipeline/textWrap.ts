@@ -21,16 +21,16 @@
  * afresh by every placement pass) and the line insets they ask of a block.
  */
 
-import type { ContentBlock } from '../parse';
-import type { Dimension, Resource, ResourceType, ResolvedTextWrapConfig } from '../types';
-import type { VDTColumn, VDTExclusion } from '../vdt';
-import type { LineInsetStep } from '../measure/types';
-import { lineInsetsAt } from '../measure/types';
-import { dimensionToPx } from '../units';
-import { wrapWidthOf } from '../defaults/layout';
-import { parseLengthText } from '../defaults/tabStops';
-import { contourInsetSteps } from '../contour';
-import { captionInsideShare } from './captionInside';
+import type { ContentBlock } from '../parse/index.js';
+import type { Dimension, Resource, ResourceType, ResolvedTextWrapConfig } from '../types.js';
+import type { VDTColumn, VDTExclusion } from '../vdt.js';
+import type { LineInsetStep } from '../measure/types.js';
+import { lineInsetsAt } from '../measure/types.js';
+import { dimensionToPx } from '../units.js';
+import { wrapWidthOf } from '../defaults/layout.js';
+import { parseLengthText } from '../defaults/tabStops.js';
+import { contourInsetSteps } from '../contour/index.js';
+import { captionInsideShare } from './captionInside.js';
 
 /** A `wrap` value as a side of the flow: `'start'` is `'left'`, `'end'` is
  *  `'right'`; `'none'` and anything else are no wrap. */

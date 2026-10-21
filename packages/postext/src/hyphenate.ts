@@ -7,13 +7,13 @@ import it from 'hyphenation.it';
 import pt from 'hyphenation.pt';
 import ca from 'hyphenation.ca';
 import nl from 'hyphenation.nl';
-import type { HyphenationLocale, LocaleTag } from './types';
-import { hyphenationLocaleFor } from './locale';
-import { joiningScriptIn } from './measure/joining';
-import { normalizeHyphenationExceptions } from './hyphenationExceptions';
+import type { HyphenationLocale, LocaleTag } from './types.js';
+import { hyphenationLocaleFor } from './locale.js';
+import { joiningScriptIn } from './measure/joining.js';
+import { normalizeHyphenationExceptions } from './hyphenationExceptions.js';
 
-export { HYPHENATION_LOCALES, matchHyphenationLocale, hyphenationLocaleFor } from './locale';
-export { normalizeHyphenationExceptions } from './hyphenationExceptions';
+export { HYPHENATION_LOCALES, matchHyphenationLocale, hyphenationLocaleFor } from './locale.js';
+export { normalizeHyphenationExceptions } from './hyphenationExceptions.js';
 
 /** Catalan words the IEC divides at their prefix rather than by syllable
  *  (*Llibre d'estil*, VI § 2.7): `vos-altres`, not `vo-saltres`. */

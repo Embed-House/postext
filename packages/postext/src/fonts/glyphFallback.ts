@@ -22,14 +22,14 @@
 //
 // A face neither source knows of is not checked.
 
-import type { VDTDocument, VDTLine } from '../vdt';
-import { quoteFamily } from '../measure/font';
-import { measureTextWidth } from '../measure/canvas';
-import { fontStringFamilies, parseFontString, type FontFaceRequest } from '../measure/fontString';
-import { parseUnicodeRange } from '../svg/fontRegistry';
-import { defaultFontSet, isGenericFamily, faceRequestKey, GLYPH_PROBE_FAMILY, type FontFaceLike, type FontFaceSetLike } from './faces';
-import { intersectRanges, rangesHave, sfntCodePointRanges, unionRanges, type CodePointRanges } from './cmap';
-import { minimalFont } from './minimalFont';
+import type { VDTDocument, VDTLine } from '../vdt.js';
+import { quoteFamily } from '../measure/font.js';
+import { measureTextWidth } from '../measure/canvas.js';
+import { fontStringFamilies, parseFontString, type FontFaceRequest } from '../measure/fontString.js';
+import { parseUnicodeRange } from '../svg/fontRegistry.js';
+import { defaultFontSet, isGenericFamily, faceRequestKey, GLYPH_PROBE_FAMILY, type FontFaceLike, type FontFaceSetLike } from './faces.js';
+import { intersectRanges, rangesHave, sfntCodePointRanges, unionRanges, type CodePointRanges } from './cmap.js';
+import { minimalFont } from './minimalFont.js';
 
 /** Characters of one face that another face drew. */
 export interface GlyphFallback extends FontFaceRequest {

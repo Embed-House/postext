@@ -1,14 +1,14 @@
 import { resolvePageTemplate } from 'postext';
-import { applyTemplateRewrite, bookChapters } from '../../templates/applyTemplateRewrite';
-import { planFramesToGrid, type GridRefusal } from '../../templates/framesToGrid';
-import { createModule, moduleTemplates, moduleUsage, planExtractModule, planInsertModule, planRenameModule, type ExtractRefusal } from '../../templates/moduleEdits';
-import { laidTemplatePage } from '../../templates/pagePieces';
-import { templateFences } from '../../templates/templateUsage';
-import { slugify } from '../../templates/templateEdits';
-import type { SandboxToolHost } from '../host';
-import { chapterOf, layOutChapter } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { layoutAnswer } from './book';
+import { applyTemplateRewrite, bookChapters } from '../../templates/applyTemplateRewrite.js';
+import { planFramesToGrid, type GridRefusal } from '../../templates/framesToGrid.js';
+import { createModule, moduleTemplates, moduleUsage, planExtractModule, planInsertModule, planRenameModule, type ExtractRefusal } from '../../templates/moduleEdits.js';
+import { laidTemplatePage } from '../../templates/pagePieces.js';
+import { templateFences } from '../../templates/templateUsage.js';
+import { slugify } from '../../templates/templateEdits.js';
+import type { SandboxToolHost } from '../host.js';
+import { chapterOf, layOutChapter } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { layoutAnswer } from './book.js';
 
 const WAIT = { type: 'boolean', description: 'Wait for the book to be laid out again (default true).' } as const;
 const CHAPTER = { type: ['number', 'string'], description: 'Chapter (1-based position, id or title) whose pages are read for the frames\' boxes; default: the first chapter with a page set with the template.' } as const;

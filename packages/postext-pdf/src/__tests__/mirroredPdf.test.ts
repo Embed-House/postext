@@ -7,8 +7,8 @@ import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
 import fontkit from '@pdf-lib/fontkit';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // Issue #370: a right-to-left page paints its flow through the mirror of
 // its frame, each text object turned back about its own box, so the text

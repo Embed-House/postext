@@ -1,7 +1,7 @@
-import { flowTextWidth, getMeasureWritingMode, lineBaselineOffset, withMeasureWritingMode } from '../measure/vertical';
-import { edgeSide, isLogicalEdge, physicalEdge, physicalPlacement, sideFraction } from './logicalEdges';
-import { bitmapLayoutSize } from '../bitmapResolution';
-import { comicArtCrop } from '../comics/art';
+import { flowTextWidth, getMeasureWritingMode, lineBaselineOffset, withMeasureWritingMode } from '../measure/vertical.js';
+import { edgeSide, isLogicalEdge, physicalEdge, physicalPlacement, sideFraction } from './logicalEdges.js';
+import { bitmapLayoutSize } from '../bitmapResolution.js';
+import { comicArtCrop } from '../comics/art.js';
 import type {
   AnchorEdge,
   ColorValue,
@@ -26,36 +26,36 @@ import type {
   Resource,
   TextOverflow,
   VAlign,
-} from '../types';
-import { dimensionToPx } from '../units';
-import { borderSidesPx, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, uniformRadius } from './boxShape';
-import { resolveTextDots } from '../textDots';
-import { resolveDesignLineHeight } from '../defaults/headerFooter';
-import { createBoundingBox, pictureTraits, type BoundingBox, type VDTDesignBoxStyle, type VDTPathCommand, type VDTPathMarker, type VDTPathStroke } from '../vdt';
-import { mapPath, parseSvgPathCached, pathViewBox } from './svgPath';
-import { buildFontString } from '../measure';
-import { graphemeCount } from '../measure/graphemes';
-import { joiningScriptIn } from '../measure/joining';
-import { parseInlineSnippetSpans } from '../parse/inlineSnippet';
-import type { InlineSpan } from '../parse/types';
-import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, withoutEdgeSoftHyphens, withoutSlashJoints } from '../hyphenate';
-import { withLineEndHyphen } from '../measure/geminate';
-import { BREAKING_SPACE_RUNS_SPLIT_RE, NO_BREAK_SPACES, isBreakingSpaceRun } from '../measure/spaces';
+} from '../types.js';
+import { dimensionToPx } from '../units.js';
+import { borderSidesPx, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, uniformRadius } from './boxShape.js';
+import { resolveTextDots } from '../textDots.js';
+import { resolveDesignLineHeight } from '../defaults/headerFooter.js';
+import { createBoundingBox, pictureTraits, type BoundingBox, type VDTDesignBoxStyle, type VDTPathCommand, type VDTPathMarker, type VDTPathStroke } from '../vdt.js';
+import { mapPath, parseSvgPathCached, pathViewBox } from './svgPath.js';
+import { buildFontString } from '../measure/index.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { joiningScriptIn } from '../measure/joining.js';
+import { parseInlineSnippetSpans } from '../parse/inlineSnippet.js';
+import type { InlineSpan } from '../parse/types.js';
+import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, withoutEdgeSoftHyphens, withoutSlashJoints } from '../hyphenate.js';
+import { withLineEndHyphen } from '../measure/geminate.js';
+import { BREAKING_SPACE_RUNS_SPLIT_RE, NO_BREAK_SPACES, isBreakingSpaceRun } from '../measure/spaces.js';
 import {
   LEADER_MARK,
   resolveDesignResourceId,
   resolveDesignText,
   type DesignLeader,
   type DesignPlaceholderContext,
-} from './placeholders';
-import { fitLeader } from '../measure/leader';
-import { layoutConnector, type ConnectorEndBox } from './connector';
-import { FENCE_CONDITION_CONTEXTS, fenceConditionMet } from './fenceCondition';
-import { repeatInstance } from '../composed/templates';
-import { hasJoiningScript, joinsWithNext } from '../bidi';
-import { designBaseDirection, directRuns, directedTextWidth, measuresRunsAsPainted, paintedRunWidth } from './bidiText';
-import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from './cjkText';
-import { getCjkComposition } from '../measure/cjkPunctuation';
+} from './placeholders.js';
+import { fitLeader } from '../measure/leader.js';
+import { layoutConnector, type ConnectorEndBox } from './connector.js';
+import { FENCE_CONDITION_CONTEXTS, fenceConditionMet } from './fenceCondition.js';
+import { repeatInstance } from '../composed/templates.js';
+import { hasJoiningScript, joinsWithNext } from '../bidi.js';
+import { designBaseDirection, directRuns, directedTextWidth, measuresRunsAsPainted, paintedRunWidth } from './bidiText.js';
+import { composeCjkDesignParagraph, composesDesignAsCjk, type CjkDesignFonts } from './cjkText.js';
+import { getCjkComposition } from '../measure/cjkPunctuation.js';
 import {
   RichMeasurer,
   ellipsisEndCut,
@@ -69,7 +69,7 @@ import {
   wrapRich,
   type DesignTextRun,
   type RichLine,
-} from './richText';
+} from './richText.js';
 
 /** A line of wrapped text with its measured width and baseline offset. */
 export interface WrappedLine {

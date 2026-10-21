@@ -11,9 +11,9 @@ import {
   resolveContrastConfig,
   resolveChecksConfig,
   stripConfigDefaults,
-} from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { DesignElement, PostextConfig } from '../../types';
+} from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { DesignElement, PostextConfig } from '../../types.js';
 
 // #694: the strip must not change what a configuration resolves to. Three
 // values were lost in two days because each stripper compared a value with

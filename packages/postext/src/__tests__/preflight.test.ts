@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile } from 'node:fs';
-import { buildDocument } from '../pipeline';
-import { placedImageResolutions, preflightDocument, type PreflightIssue } from '../preflight';
-import { resolvePrintConfig } from '../defaults/print';
-import { outputTransform, parseIccProfile } from '../color';
-import type { PostextConfig, Resource } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { placedImageResolutions, preflightDocument, type PreflightIssue } from '../preflight.js';
+import { resolvePrintConfig } from '../defaults/print.js';
+import { outputTransform, parseIccProfile } from '../color/index.js';
+import type { PostextConfig, Resource } from '../types.js';
 
 class StubCtx {
   font = '';

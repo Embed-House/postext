@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Resource } from 'postext';
-import { withMarks } from './resourceMarks';
+import { withMarks } from './resourceMarks.js';
 
 const picture: Resource = { id: 'panel', typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0, bitmap: { fileId: 'f', format: 'png', width: 800, height: 600 } };
 

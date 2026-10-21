@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderToHtml } from '../index';
-import { parseInlineFormatting, stripInlineFormatting } from '../parse/inlineFormatting';
-import { mapInlineSnippet } from '../parse/inlineSnippet';
-import type { PostextConfig, Resource, VDTDocument, VDTLine, VDTLineSegment } from '../index';
+import { buildDocument, renderToHtml } from '../index.js';
+import { parseInlineFormatting, stripInlineFormatting } from '../parse/inlineFormatting.js';
+import { mapInlineSnippet } from '../parse/inlineSnippet.js';
+import type { PostextConfig, Resource, VDTDocument, VDTLine, VDTLineSegment } from '../index.js';
 
 // EF-36: a Markdown link `[text](url)` keeps its URL. The parser records it
 // on the spans (without splitting them, so layout is exactly what it was),

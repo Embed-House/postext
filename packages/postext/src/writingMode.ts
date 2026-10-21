@@ -49,8 +49,8 @@
  * ?! ?? and ！！ ！？ ？！ ？？) side by side in one cell (JLReq §3.1.10).
  */
 
-import type { CjkRegion } from './types';
-import { cjkClassOf, isWordInnerMark } from './measure/cjkClasses';
+import type { CjkRegion } from './types.js';
+import { cjkClassOf, isWordInnerMark } from './measure/cjkClasses.js';
 
 /** How a character is set in a vertical line.
  *  - `upright`: standing, centred in its cell (Han, kana, hangul,

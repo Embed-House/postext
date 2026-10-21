@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, columnClipRect } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../../vdt';
-import { cjkMarkPieces } from '../../measure/cjkClasses';
-import { graphemeCount } from '../../measure/graphemes';
+import { buildDocument, renderPageToCanvas, columnClipRect } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../../vdt.js';
+import { cjkMarkPieces } from '../../measure/cjkClasses.js';
+import { graphemeCount } from '../../measure/graphemes.js';
 
 // CJK characters 16 px (1 em at 16 px), a space 4 px, anything else 8 px.
 const adv = (s: string): number => {

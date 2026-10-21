@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyFlowColumns } from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { migrateBundleConfig, migrateConfig, pinLegacyFlowColumns } from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #634: a configuration stored before `:::columns` ran in the main flow and
 // groups were cut (configVersion 10 or older, postext 1.24 or earlier)

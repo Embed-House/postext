@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { mirroredChar, resolveParagraph } from '../../bidi';
-import type { PostextConfig } from '../../types';
-import type { VDTLine } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { mirroredChar, resolveParagraph } from '../../bidi.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTLine } from '../../vdt.js';
 
 // #401: the ornate parentheses of Qurʾān quotations, ﴿ (U+FD3F, opening
 // since Unicode 14) and ﴾ (U+FD3E, closing), are not mirrored and are not

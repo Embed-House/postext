@@ -1,7 +1,7 @@
 'use client';
 
 import type { TableModel } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
 
 interface ColumnWidthsEditorProps {
   model: TableModel;

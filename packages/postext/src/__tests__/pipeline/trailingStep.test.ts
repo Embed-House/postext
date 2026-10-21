@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { bandCapLines, bandLinePitch, capRetryLimit, resolveTrailingCaps, type BandCap, type BandPassReport } from '../../pipeline/bandCaps';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, VDTBlock, VDTColumn, VDTDocument, VDTLine } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { bandCapLines, bandLinePitch, capRetryLimit, resolveTrailingCaps, type BandCap, type BandPassReport } from '../../pipeline/bandCaps.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, VDTBlock, VDTColumn, VDTDocument, VDTLine } from '../../index.js';
 
 // #711, `headings.balancing.trailingStep`: the level cut of a closing band
 // counts lines of the band's own text when that text is off the baseline

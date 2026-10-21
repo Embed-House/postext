@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
-import { HARFBUZZ_VERSION, loadHarfBuzz, type HarfBuzz } from '../harfbuzz';
+import { HARFBUZZ_VERSION, loadHarfBuzz, type HarfBuzz } from '../harfbuzz.js';
 
 // Issue #380: HarfBuzz is bound straight to its WebAssembly binary, so it
 // loads the same in Node, a page, a Worker and a bundle; and a PDF whose
@@ -74,8 +74,8 @@ describe('Arabic drawn without HarfBuzz', () => {
 
   it('is reported as a complexShapingUnavailable warning, and the PDF still builds', async () => {
     vi.resetModules();
-    vi.doMock('../harfbuzz', async (importOriginal) => ({
-      ...(await importOriginal<typeof import('../harfbuzz')>()),
+    vi.doMock('../harfbuzz.js', async (importOriginal) => ({
+      ...(await importOriginal<typeof import('../harfbuzz.js')>()),
       loadHarfBuzz: () => Promise.reject(new Error('https://example.test/harfbuzz.wasm: HTTP 404')),
     }));
     const face = fontkit.create(Buffer.from(AMIRI));
@@ -85,8 +85,8 @@ describe('Arabic drawn without HarfBuzz', () => {
       }
     };
     const { buildDocument } = await import('postext');
-    const { renderToPdf } = await import('../pdf-backend');
-    const { complexShaperReady } = await import('../complexShaping');
+    const { renderToPdf } = await import('../pdf-backend/index.js');
+    const { complexShaperReady } = await import('../complexShaping.js');
     const pt = (value: number) => ({ value, unit: 'pt' as const });
     const doc = buildDocument({ markdown: `${BASMALA} Latin 2024` }, {
       page: { width: pt(300), height: pt(200), dpi: 72, margins: { top: pt(20), bottom: pt(20), left: pt(20), right: pt(20) } },

@@ -3,14 +3,14 @@
 import { memo } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { ComicCastMember } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { CollapsibleSection, ColorPicker, FontPicker, ItemCard, ItemCardListActions, moveCardState, openCard, SelectInput } from '../../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../../ui';
-import { SearchScope } from '../../search/SearchScope';
-import { nextFreeId, removeById, renameById, resetFieldById, sanitizeSpeakerId, setComicsField, upsertById } from './comicsConfig';
-import { ComicsCardHeader } from './ComicsCardHeader';
-import { builtInBalloonName } from './ComicsBalloonStylesSection';
-import { useComics } from './comicsShared';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { CollapsibleSection, ColorPicker, FontPicker, ItemCard, ItemCardListActions, moveCardState, openCard, SelectInput } from '../../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../../ui/index.js';
+import { SearchScope } from '../../search/SearchScope.js';
+import { nextFreeId, removeById, renameById, resetFieldById, sanitizeSpeakerId, setComicsField, upsertById } from './comicsConfig.js';
+import { ComicsCardHeader } from './ComicsCardHeader.js';
+import { builtInBalloonName } from './ComicsBalloonStylesSection.js';
+import { useComics } from './comicsShared.js';
 
 /** The value the balloon-style menu uses for "the speech balloon" (no
  *  style of the character's own). */

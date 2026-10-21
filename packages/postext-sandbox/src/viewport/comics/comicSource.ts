@@ -26,9 +26,9 @@ import {
   type VDTComicPage,
   type VDTComicSplitter,
 } from 'postext';
-import { minimalChange, type TextChange } from '../../book/textChanges';
+import { minimalChange, type TextChange } from '../../book/textChanges.js';
 
-export type { TextChange } from '../../book/textChanges';
+export type { TextChange } from '../../book/textChanges.js';
 
 /** The `:::page` a laid-out comic page came from, read again from the
  *  Markdown the layout was built from; null when that text no longer

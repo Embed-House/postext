@@ -2,10 +2,10 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
 import { PDFDocument, type PDFFont } from 'pdf-lib';
-import { loadComplexShaper, shapeRun } from '../complexShaping';
-import { shapeInCurrentLanguage, shapesSegmentLanguages, shapingKey, shapingLanguage, shapingScriptOf, withDocumentLanguage, withSegmentLanguage, withShapingLanguage, withShapingScript } from '../shapingLanguage';
-import { textAdvancePx } from '../pdf-backend/primitives';
-import { shapedSvgText } from '../pdf-backend/shapedText';
+import { loadComplexShaper, shapeRun } from '../complexShaping.js';
+import { shapeInCurrentLanguage, shapesSegmentLanguages, shapingKey, shapingLanguage, shapingScriptOf, withDocumentLanguage, withSegmentLanguage, withShapingLanguage, withShapingScript } from '../shapingLanguage.js';
+import { textAdvancePx } from '../pdf-backend/primitives.js';
+import { shapedSvgText } from '../pdf-backend/shapedText.js';
 
 // #764: a text is shaped in the language the layout measured it in, by
 // both shapers of the PDF. The widths below are the ones Chrome 154 gives

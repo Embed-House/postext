@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { parseMarkdown } from '../../parse';
-import { comicBlockOnSheet, comicSplitGrid, comicStripOffset, comicStripPlacement, comicStripWidth, pageComics, parseComicAspect, parseComicSplit, parseComicStripAlign, parseComicStripWidth, translateSvgPath } from '../../comics';
-import { flowRectToPage, type VDTBlock, type VDTDocument, type VDTPage } from '../../vdt';
-import type { PostextConfig, Resource } from '../../types';
+import { buildDocument } from '../../pipeline/index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { comicBlockOnSheet, comicSplitGrid, comicStripOffset, comicStripPlacement, comicStripWidth, pageComics, parseComicAspect, parseComicSplit, parseComicStripAlign, parseComicStripWidth, translateSvgPath } from '../../comics/index.js';
+import { flowRectToPage, type VDTBlock, type VDTDocument, type VDTPage } from '../../vdt.js';
+import type { PostextConfig, Resource } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

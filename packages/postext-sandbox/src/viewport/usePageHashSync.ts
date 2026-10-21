@@ -1,8 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { useSandboxSelector } from '../context/SandboxContext';
-import { readViewHash, writeViewHash } from '../storage/viewHash';
+import { useSandboxSelector } from '../context/SandboxContext.js';
+import { readViewHash, writeViewHash } from '../storage/viewHash.js';
 
 /** One layout of the viewer's document: its page count, its first page
  *  with content (the ones before it are parity padding), and a counter

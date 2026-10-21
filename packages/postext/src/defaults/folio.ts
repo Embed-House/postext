@@ -6,7 +6,7 @@ import type {
   FolioPaperType,
   PageSizePreset,
   ResolvedFolioConfig,
-} from '../types';
+} from '../types.js';
 
 const hex = (value: string): ColorValue => ({ hex: value, model: 'hex' });
 

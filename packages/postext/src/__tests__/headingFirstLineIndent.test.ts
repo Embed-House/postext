@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings';
-import { stripConfigDefaults } from '../defaults';
-import { createBundle, openBundle } from '../bundle';
-import { computeOutlineFor } from '../pipeline/outline';
-import { parseMarkdown } from '../parse/blockParser';
-import type { HeadingLevelConfig, PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument } from '../vdt';
-import { installSizedStub } from './vertical/stub';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { createBundle, openBundle } from '../bundle/index.js';
+import { computeOutlineFor } from '../pipeline/outline.js';
+import { parseMarkdown } from '../parse/blockParser.js';
+import type { HeadingLevelConfig, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
+import { installSizedStub } from './vertical/stub.js';
 
 // A heading's first-line indent (#636): GB/T 9704 sets every level of head
 // two cells in, its turnover lines back at the margin. `em` counts the body

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
-import { parseDirectiveAttrs } from '../../parse/attrs';
-import { parseInlineSnippetSpans } from '../../parse/inlineSnippet';
+import { parseMarkdown } from '../../parse/index.js';
+import { parseDirectiveAttrs } from '../../parse/attrs.js';
+import { parseInlineSnippetSpans } from '../../parse/inlineSnippet.js';
 
 // EF-39: the attribute-value rules the Document Format page states, pinned
 // so the docs cannot drift from the parser.

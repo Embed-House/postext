@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveUnorderedListsConfig, resolveOrderedListsConfig, resolveBodyTextConfig, stripUnorderedListsDefaults, stripOrderedListsDefaults } from '../../defaults';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveUnorderedListsConfig, resolveOrderedListsConfig, resolveBodyTextConfig, stripUnorderedListsDefaults, stripOrderedListsDefaults } from '../../defaults/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

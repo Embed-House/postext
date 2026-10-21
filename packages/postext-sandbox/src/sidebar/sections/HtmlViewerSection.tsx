@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useEffect, useState } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   resolveHtmlViewerConfig,
   DEFAULT_HTML_VIEWER_CONFIG,
@@ -11,8 +11,8 @@ import {
   CollapsibleSection,
   NumberInput,
   ToggleSwitch,
-} from '../../controls';
-import { FieldRow } from '../../controls/FieldRow';
+} from '../../controls/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
 
 function overridesText(overrides: HtmlViewerOverrides | undefined): string {
   return overrides && Object.keys(overrides).length > 0 ? JSON.stringify(overrides, null, 2) : '';

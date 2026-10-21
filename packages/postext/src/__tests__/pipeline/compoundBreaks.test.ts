@@ -1,13 +1,13 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { computeChapterTitles } from '../../pipeline/placeholders';
-import { renderToHtml } from '../../html-backend';
-import { setHyphenationLocale } from '../../hyphenate';
-import { createMeasurementCache, measureBlock, measureRichBlock } from '../../measure';
-import { migrateConfig, migrateBundleConfig, pinLegacyHyphenBreaks, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
-import type { PostextConfig } from '../../types';
-import type { VDTLine } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { computeChapterTitles } from '../../pipeline/placeholders.js';
+import { renderToHtml } from '../../html-backend.js';
+import { setHyphenationLocale } from '../../hyphenate.js';
+import { createMeasurementCache, measureBlock, measureRichBlock } from '../../measure/index.js';
+import { migrateConfig, migrateBundleConfig, pinLegacyHyphenBreaks, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTLine } from '../../vdt.js';
 
 // Compound words, a hyphen between two letters ("after-dinner", "vencer-se").
 // EF-186: a justified paragraph set with Knuth–Plass broke after the

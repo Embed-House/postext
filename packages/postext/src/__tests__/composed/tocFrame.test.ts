@@ -6,14 +6,14 @@
  * to their page, a block kept together across the cuts of `overflow`.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { checkComposedSlots } from '../../composed/slotChecks';
-import { composedPages } from '../../composed/document';
-import { validatePageTemplates } from '../../composed/validate';
-import { parseMarkdown } from '../../parse';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { checkComposedSlots } from '../../composed/slotChecks.js';
+import { composedPages } from '../../composed/document.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { parseMarkdown } from '../../parse/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
 
 class StubCtx {
   font = '';

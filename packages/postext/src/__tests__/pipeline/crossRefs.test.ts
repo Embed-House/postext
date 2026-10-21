@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { buildBundle } from '../../bundle';
-import { anchoredResourceIds, renderToHtml } from '../../html-backend';
-import type { PostextConfig, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { buildBundle } from '../../bundle/index.js';
+import { anchoredResourceIds, renderToHtml } from '../../html-backend.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -170,7 +170,7 @@ describe('crossRefs configuration (#266)', () => {
   });
 
   it('strips only what the config sets on purpose', async () => {
-    const { stripCrossRefsDefaults } = await import('../../defaults');
+    const { stripCrossRefsDefaults } = await import('../../defaults/index.js');
     expect(stripCrossRefsDefaults({ chapter: ' ', defaultStyle: 'default' })).toBeUndefined();
     expect(stripCrossRefsDefaults({ page: 'pp. {n}' })).toEqual({ page: 'pp. {n}' });
   });

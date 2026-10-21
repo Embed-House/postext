@@ -2,23 +2,23 @@
 // measures text with them), its pictures to the canvas and HTML backends,
 // and its bytes to `postext-pdf`'s `resourceBytes` / `fontProvider`.
 
-import type { PostextConfig, Resource } from '../types';
-import type { SvgPictureFontWarning } from '../vdt';
-import { registerResourceImage } from '../canvas-backend';
-import { resolveColorValue, resolveDiagramStyleConfig } from '../defaults';
-import { applySingleInkToSvg } from '../svg/singleInk';
-import { chainSvgFontProviders, inlineSvgFontsDetailedSync, type SvgFontProvider, type SvgFontSyncProvider } from '../svg/fonts';
-import { registerFontBytes, registeredFontProvider, registeredFontSyncProvider } from '../svg/fontRegistry';
-import { decodeSvgImage, prepareSvgMarkup, svgPictureFontWarning } from '../svg/image';
-import type { PostextBundle } from './api';
-import type { BundleFontFile } from './types';
-import { mimeForFile } from './manifest';
-import { videoMimeType } from '../video/url';
-import { evictFontFamilies } from '../measure/font';
-import { fontFallbackOf, fontFallbackFamilies, hasOwnStyle } from '../fonts/fallback';
-import { STANDARD_FONT_VARIANTS } from '../fonts/usage';
-import { syncFontSet } from '../fonts/fontSet';
-import type { FontFaceSetLike } from '../fonts/faces';
+import type { PostextConfig, Resource } from '../types.js';
+import type { SvgPictureFontWarning } from '../vdt.js';
+import { registerResourceImage } from '../canvas-backend/index.js';
+import { resolveColorValue, resolveDiagramStyleConfig } from '../defaults/index.js';
+import { applySingleInkToSvg } from '../svg/singleInk.js';
+import { chainSvgFontProviders, inlineSvgFontsDetailedSync, type SvgFontProvider, type SvgFontSyncProvider } from '../svg/fonts.js';
+import { registerFontBytes, registeredFontProvider, registeredFontSyncProvider } from '../svg/fontRegistry.js';
+import { decodeSvgImage, prepareSvgMarkup, svgPictureFontWarning } from '../svg/image.js';
+import type { PostextBundle } from './api.js';
+import type { BundleFontFile } from './types.js';
+import { mimeForFile } from './manifest.js';
+import { videoMimeType } from '../video/url.js';
+import { evictFontFamilies } from '../measure/font.js';
+import { fontFallbackOf, fontFallbackFamilies, hasOwnStyle } from '../fonts/fallback.js';
+import { STANDARD_FONT_VARIANTS } from '../fonts/usage.js';
+import { syncFontSet } from '../fonts/fontSet.js';
+import type { FontFaceSetLike } from '../fonts/faces.js';
 
 /** The fields of a bundle the adapters read: an opened `PostextBundle`, or
  *  any object with the same shape. */

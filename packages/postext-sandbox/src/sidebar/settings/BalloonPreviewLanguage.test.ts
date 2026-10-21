@@ -7,8 +7,8 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { resolveComicsConfig } from 'postext';
-import { installLanguageCanvas, LanguageContext } from '../../controls/languageCanvasStub';
-import { BalloonPreview, measureLines } from './BalloonPreview';
+import { installLanguageCanvas, LanguageContext } from '../../controls/languageCanvasStub.js';
+import { BalloonPreview, measureLines } from './BalloonPreview.js';
 
 // The page that hosts the Sandbox is in English.
 installLanguageCanvas();

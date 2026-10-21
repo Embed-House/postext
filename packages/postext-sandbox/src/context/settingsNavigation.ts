@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import type { SettingsGroupId } from '../sidebar/sections/registry';
+import type { SettingsGroupId } from '../sidebar/sections/registry.js';
 
 /** Opens a group of the Design panel (clearing any search), for a section
  *  that points at a setting kept in another group. Null outside the panel. */

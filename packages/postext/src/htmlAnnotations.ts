@@ -13,8 +13,8 @@
  * PDF backends draw.
  */
 
-import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineMark, VDTLineSegment, VDTRuby, VDTWarichu } from './vdt';
-import { dottedCentres, sesamePath, wavePoints } from './canvas-backend/annotations';
+import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineMark, VDTLineSegment, VDTRuby, VDTWarichu } from './vdt.js';
+import { dottedCentres, sesamePath, wavePoints } from './canvas-backend/annotations.js';
 
 const HTML_ESCAPE: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => HTML_ESCAPE[c]!);

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { DEFAULT_HEADINGS_CONFIG, resolveHeadingsConfig, stripHeadingsDefaults } from '../../defaults/headings';
-import { stripConfigDefaults } from '../../defaults';
-import type { HeadingsConfig } from '../../types';
+import { DEFAULT_HEADINGS_CONFIG, resolveHeadingsConfig, stripHeadingsDefaults } from '../../defaults/headings.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import type { HeadingsConfig } from '../../types.js';
 
 // A level inherits the headings-wide face, colour, leading, weight and
 // margins (#691): set back to the level default under headings that say

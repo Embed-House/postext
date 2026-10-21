@@ -9,22 +9,22 @@
  * the letter head in its own block, so a head never ends a column alone.
  */
 
-import type { ContentBlock, IndexBlockInfo, InlineSpan } from '../parse';
-import { parseInlineFormatting, stripInlineFormatting } from '../parse/inlineFormatting';
-import type { OutlineEntry, ResolvedIndexConfig } from '../types';
-import type { ContentWarning, ResolvedConfig, VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
-import { dimensionToPx } from '../units';
-import { buildFontString, measureRichBlock } from '../measure';
-import { linkSegments } from '../measure/links';
-import type { BlockStyle } from './styles';
-import type { BlockMeasureContext, MeasuredContentBlock } from './measureContentBlock';
-import { stampSourceRanges } from './buildHelpers';
-import { bookTitlesAsConfigured } from './annotations';
-import { resolvedLocale } from './config';
-import { chineseScriptOf, languageOf, localeScript, stringsFor } from '../locale';
-import type { IndexGrouping } from './indexGroups';
-import { arabicSortKey, canGroupBy, indexGrouping, pinyinInitial, sortLocaleFor, strokeGroup, strokeLabel } from './indexGroups';
-import { compareJapanese, gojuonRow, gojuonRowLabel, hasKanji, japaneseLead, kanaLabel } from './indexJapanese';
+import type { ContentBlock, IndexBlockInfo, InlineSpan } from '../parse/index.js';
+import { parseInlineFormatting, stripInlineFormatting } from '../parse/inlineFormatting.js';
+import type { OutlineEntry, ResolvedIndexConfig } from '../types.js';
+import type { ContentWarning, ResolvedConfig, VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import { buildFontString, measureRichBlock } from '../measure/index.js';
+import { linkSegments } from '../measure/links.js';
+import type { BlockStyle } from './styles.js';
+import type { BlockMeasureContext, MeasuredContentBlock } from './measureContentBlock.js';
+import { stampSourceRanges } from './buildHelpers.js';
+import { bookTitlesAsConfigured } from './annotations.js';
+import { resolvedLocale } from './config.js';
+import { chineseScriptOf, languageOf, localeScript, stringsFor } from '../locale.js';
+import type { IndexGrouping } from './indexGroups.js';
+import { arabicSortKey, canGroupBy, indexGrouping, pinyinInitial, sortLocaleFor, strokeGroup, strokeLabel } from './indexGroups.js';
+import { compareJapanese, gojuonRow, gojuonRowLabel, hasKanji, japaneseLead, kanaLabel } from './indexJapanese.js';
 
 /** A page number's link target, carried as a Markdown link while the entry
  *  is measured and turned into `VDTLineSegment.pageLink` after. */

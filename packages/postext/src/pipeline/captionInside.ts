@@ -1,4 +1,4 @@
-import type { Resource, ResourceType } from '../types';
+import type { Resource, ResourceType } from '../types.js';
 
 /** The picture's share of its slot when `placement.width` does not give
  *  one, for a caption set beside it inside the column. */

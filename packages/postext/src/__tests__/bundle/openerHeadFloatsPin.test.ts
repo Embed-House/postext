@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyOpenerHeadFloats } from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { migrateBundleConfig, migrateConfig, pinLegacyOpenerHeadFloats } from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #639: a configuration stored before the head of a page-span opener's own
 // column became a float slot (configVersion 10 or older, postext 1.24 or

@@ -7,8 +7,8 @@ import { PDFArray, PDFDocument, PDFHexString, PDFRawStream, decodePDFRawStream }
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTLine } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // `bodyText.repeatHyphen` (Portuguese spelling) opens the line after a break
 // at a compound's hyphen with a hyphen too: "vencer-" | "-se". The PDF paints

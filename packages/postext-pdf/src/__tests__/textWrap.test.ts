@@ -7,8 +7,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource, VDTDocument } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #627: text wrapped round a picture and a box. The lines beside them are
 // painted at their own measure; a tagged PDF reads the picture and the box

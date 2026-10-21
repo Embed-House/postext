@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { uiDirectionOf } from './direction';
+import { uiDirectionOf } from './direction.js';
 
 describe('uiDirectionOf', () => {
   it('runs Arabic, Hebrew and Persian interfaces right to left', () => {

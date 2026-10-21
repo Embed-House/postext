@@ -6,7 +6,7 @@
 // every backend and stays vector in the PDF. Deterministic: a seeded
 // generator draws the word widths.
 
-import { byLang, type GuideLang } from './lang';
+import { byLang, type GuideLang } from './lang.js';
 
 /** Canvas size in SVG units: 216 × 168 mm (the cover band, 3 mm of bleed
  *  each side) at 5 units per millimetre. */

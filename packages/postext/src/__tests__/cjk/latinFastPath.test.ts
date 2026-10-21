@@ -4,8 +4,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // whether text needs the CJK features: a Latin page must not pay for them
 // word by word. `hasCJK` is counted to hold that.
 const calls = vi.hoisted(() => ({ hasCJK: 0 }));
-vi.mock('../../measure/cjk', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../measure/cjk')>();
+vi.mock('../../measure/cjk.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../measure/cjk.js')>();
   return {
     ...actual,
     hasCJK: (text: string) => {
@@ -15,12 +15,12 @@ vi.mock('../../measure/cjk', async (importOriginal) => {
   };
 });
 
-import { buildDocument, renderPageToCanvas, columnClipRect } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { measureRichBlock } from '../../measure/rich';
-import { hasCJK } from '../../measure/cjk';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
+import { buildDocument, renderPageToCanvas, columnClipRect } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { measureRichBlock } from '../../measure/rich.js';
+import { hasCJK } from '../../measure/cjk.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
 
 // CJK characters one em, a space a quarter, anything else half.
 const adv = (s: string, em = 16): number => {

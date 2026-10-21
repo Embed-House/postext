@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { fitPagesToContent, pickPageGeometry, singleScrollPageWidthPx, viewerLayoutType } from './pageGeometry';
+import { fitPagesToContent, pickPageGeometry, singleScrollPageWidthPx, viewerLayoutType } from './pageGeometry.js';
 
 const base = { columnGapPx: 50, gutterPx: 20, targetColumnPx: 400, sideFraction: 0.3 };
 

@@ -11,7 +11,7 @@
  */
 
 import { calloutStyleChain, srgbToLab, deltaE, type CalloutStyleConfig, type ResolvedCalloutStyleConfig } from 'postext';
-import { framesOnly, usageWeight, type StyleUsage } from './styleUsage';
+import { framesOnly, usageWeight, type StyleUsage } from './styleUsage.js';
 
 /** The fields a frame ignores (DESIGN §2.4: its rectangle comes from the
  *  template) plus the space around a box set in the flow: where the box

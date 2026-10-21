@@ -8,10 +8,10 @@
  * grid's foot, where the ladder scaled its picture down.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 installSizedStub();
 

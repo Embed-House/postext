@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { resolveAllConfig } from '../../pipeline/config';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
 import {
   computeOrderedLevelIndentsPx,
   computeOrderedListRunMetrics,
   resolveOrderedListItemStyle,
-} from '../../pipeline/lists';
-import { resolveBodyStyle } from '../../pipeline/styles';
-import { parseMarkdown } from '../../parse';
-import { dimensionToPx } from '../../units';
-import { applyPaletteToConfig, stripConfigDefaults } from '../../defaults';
-import { resolveOrderedListsConfig, stripOrderedListsDefaults } from '../../defaults/orderedLists';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import type { PostextConfig, VDTBlock } from '../../index';
+} from '../../pipeline/lists.js';
+import { resolveBodyStyle } from '../../pipeline/styles.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { dimensionToPx } from '../../units.js';
+import { applyPaletteToConfig, stripConfigDefaults } from '../../defaults/index.js';
+import { resolveOrderedListsConfig, stripOrderedListsDefaults } from '../../defaults/orderedLists.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import type { PostextConfig, VDTBlock } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // glyph is 7px wide whatever the font, so widths only depend on text length.

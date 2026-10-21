@@ -2,7 +2,7 @@
 
 import { MoreHorizontal } from 'lucide-react';
 import { useRef, type ReactNode } from 'react';
-import { ConfirmPopover, IconButton, Menu } from '../ui';
+import { ConfirmPopover, IconButton, Menu } from '../ui/index.js';
 
 /** The "⋯" button of a book row: every action with its name, instead of a
  *  strip of unlabelled icons. An item that needs confirming (delete,

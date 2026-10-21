@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import { resolveCalloutStylesConfig, stripCalloutStylesDefaults } from '../defaults/calloutStyles';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { resolveHeadingsConfig } from '../defaults/headings';
-import { resolveUnorderedListsConfig } from '../defaults/unorderedLists';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { resolveCalloutStylesConfig, stripCalloutStylesDefaults } from '../defaults/calloutStyles.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { resolveHeadingsConfig } from '../defaults/headings.js';
+import { resolveUnorderedListsConfig } from '../defaults/unorderedLists.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
 
 // #974: a box's `body` tracks its paragraphs and list items, as a paragraph
 // style's `letterSpacing` (#907) does.

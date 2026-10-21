@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildBody, buildNeck, buildTail, fitSuperellipse, tailLength, translateBody } from '../shapes';
-import { pathData, pointInConvex, pointInRect, dist } from '../geom';
-import { presetLetteringStyles } from '../presets';
-import type { LetteringStyle, Point, Rect } from '../types';
+import { buildBody, buildNeck, buildTail, fitSuperellipse, tailLength, translateBody } from '../shapes.js';
+import { pathData, pointInConvex, pointInRect, dist } from '../geom.js';
+import { presetLetteringStyles } from '../presets.js';
+import type { LetteringStyle, Point, Rect } from '../types.js';
 
 const EM = 12;
 const styles = presetLetteringStyles({ fontSizePx: EM, locale: 'en', fontFamily: 'Test' });

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { resolveResourcePlacement } from '../../pipeline/floatPlacement';
-import { createMeasurementCache } from '../../measure';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { resolveResourcePlacement } from '../../pipeline/floatPlacement.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

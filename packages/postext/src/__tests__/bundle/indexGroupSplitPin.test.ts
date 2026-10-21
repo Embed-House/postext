@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyIndexGroupSplit } from '../../bundle/configVersion';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { migrateBundleConfig, migrateConfig, pinLegacyIndexGroupSplit } from '../../bundle/configVersion.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #712: a configuration stored before a group of an index kept two entries
 // on each side of a column break (configVersion 11 or older, postext 1.27

@@ -7,10 +7,10 @@
 
 import type { PostextConfig, Resource } from 'postext';
 import { stripConfigDefaults } from 'postext';
-import type { BookContent } from '../book/types';
-import { PROJECTS_STORE, hasIndexedDB, runInStore, withTransaction } from './blobStore';
-import { generateId } from './ids';
-import { PROJECT_RECORD_VERSION, migrateProjectRecord, type MigrationDeps } from './projectMigration';
+import type { BookContent } from '../book/types.js';
+import { PROJECTS_STORE, hasIndexedDB, runInStore, withTransaction } from './blobStore.js';
+import { generateId } from './ids.js';
+import { PROJECT_RECORD_VERSION, migrateProjectRecord, type MigrationDeps } from './projectMigration.js';
 
 /** The three working slices a project owns: its chapters (with the active
  *  one), the configuration and the resource records. */

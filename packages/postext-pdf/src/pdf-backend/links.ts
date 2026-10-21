@@ -26,7 +26,7 @@ import {
   type PDFPage,
   type PDFRef,
 } from 'pdf-lib';
-import type { StructElem, StructTree } from './tagging';
+import type { StructElem, StructTree } from './tagging.js';
 
 /** Structure bookkeeping of a link in an accessible render: the `Link`
  *  element wrapping the ref text, and the annotation's `/Contents`. */

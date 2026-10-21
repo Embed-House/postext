@@ -4,9 +4,9 @@
  * both lay out the same editions.
  */
 
-import type { SandboxState } from '../context/SandboxContext';
-import { presetLocales, sameLocaleTag } from '../presets/locale';
-import type { PresetSummary } from '../presets/types';
+import type { SandboxState } from '../context/SandboxContext.js';
+import { presetLocales, sameLocaleTag } from '../presets/locale.js';
+import type { PresetSummary } from '../presets/types.js';
 
 /** The edition on screen (`''` when the book names no language). A preset's
  *  is the language it was applied in, a project's its record's. */

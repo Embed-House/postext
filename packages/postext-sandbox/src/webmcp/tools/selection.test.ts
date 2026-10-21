@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTBlock } from 'postext';
-import { resetEditMode, selectedFrameNow, setEditMode } from '../../editing/editMode';
-import { resetPageSelection } from '../../selection/selectionStore';
-import { chapter, harness } from './testHarness';
+import { resetEditMode, selectedFrameNow, setEditMode } from '../../editing/editMode.js';
+import { resetPageSelection } from '../../selection/selectionStore.js';
+import { chapter, harness } from './testHarness.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 

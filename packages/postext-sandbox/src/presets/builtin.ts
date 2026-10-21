@@ -1,13 +1,13 @@
 import type { PostextConfig } from 'postext';
-import { createPostextGuideConfig } from '../context/guideConfig';
-import { buildDefaultResources, defaultResourcesSignature } from '../defaultResources';
-import { coverThumbnailSvg } from '../defaultResources/cover';
-import { guideLang, type GuideLang } from '../defaultResources/lang';
-import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_IT, DEFAULT_MARKDOWN_ZH_HANS } from '../defaultMarkdown';
-import type { PresetProvider } from './types';
-import { isPristineBook, sampleBook } from '../book/chapterOps';
-import type { BookContent } from '../book/types';
-import { generateId } from '../storage/ids';
+import { createPostextGuideConfig } from '../context/guideConfig.js';
+import { buildDefaultResources, defaultResourcesSignature } from '../defaultResources/index.js';
+import { coverThumbnailSvg } from '../defaultResources/cover.js';
+import { guideLang, type GuideLang } from '../defaultResources/lang.js';
+import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_FR, DEFAULT_MARKDOWN_DE, DEFAULT_MARKDOWN_IT, DEFAULT_MARKDOWN_ZH_HANS } from '../defaultMarkdown/index.js';
+import type { PresetProvider } from './types.js';
+import { isPristineBook, sampleBook } from '../book/chapterOps.js';
+import type { BookContent } from '../book/types.js';
+import { generateId } from '../storage/ids.js';
 
 export const BUILTIN_PRESET_ID = 'postext-guide';
 

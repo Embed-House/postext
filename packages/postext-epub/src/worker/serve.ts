@@ -1,8 +1,8 @@
 // The worker side of `createEpubWorker`: answers render requests on a
 // message port (the worker's global scope, or a MessagePort in tests).
 
-import { renderToEpub } from '../index';
-import type { EpubRequestMessage, EpubResponseMessage } from './protocol';
+import { renderToEpub } from '../index.js';
+import type { EpubRequestMessage, EpubResponseMessage } from './protocol.js';
 
 /** What the worker needs of its scope. */
 export interface EpubWorkerPort {

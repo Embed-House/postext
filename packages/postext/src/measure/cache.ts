@@ -1,15 +1,15 @@
-import type { InlineSpan } from '../parse';
-import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types';
-import { measureBlock } from './plain';
-import { measureRichBlock, measureRichSnippet } from './rich';
-import { getHyphenationLocale, getHyphenationRulesKey } from '../hyphenate';
-import { hasCJK } from './cjk';
-import { getCjkLineBreak } from './cjkClasses';
-import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from './vertical';
-import { cjkCompositionKey, getCjkComposition } from './cjkPunctuation';
-import { getMeasureArabicNumbers, getMeasureDirection } from './bidiLines';
-import { evictionsSince, measurementGeneration, measureLanguageKey } from './canvas';
-import { scriptContextKey } from './script';
+import type { InlineSpan } from '../parse/index.js';
+import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types.js';
+import { measureBlock } from './plain.js';
+import { measureRichBlock, measureRichSnippet } from './rich.js';
+import { getHyphenationLocale, getHyphenationRulesKey } from '../hyphenate.js';
+import { hasCJK } from './cjk.js';
+import { getCjkLineBreak } from './cjkClasses.js';
+import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from './vertical.js';
+import { cjkCompositionKey, getCjkComposition } from './cjkPunctuation.js';
+import { getMeasureArabicNumbers, getMeasureDirection } from './bidiLines.js';
+import { evictionsSince, measurementGeneration, measureLanguageKey } from './canvas.js';
+import { scriptContextKey } from './script.js';
 
 /** Options that change a block's lines, joined into its cache key. The
  *  active hyphenation dictionary is one: soft hyphens (and the syllables an

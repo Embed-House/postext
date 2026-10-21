@@ -1,4 +1,4 @@
-import type { CjkRegion, DigitSystem, HyphenationLocale, LocaleTag, NumeralsSetting } from './types';
+import type { CjkRegion, DigitSystem, HyphenationLocale, LocaleTag, NumeralsSetting } from './types.js';
 
 /** The languages whose hyphenation patterns ship with the engine. */
 export const HYPHENATION_LOCALES: readonly HyphenationLocale[] = Object.freeze([

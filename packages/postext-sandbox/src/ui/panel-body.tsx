@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, type ComponentProps } from 'react';
-import { cn } from './cn';
+import { cn } from './cn.js';
 
 interface PanelBodyProps extends ComponentProps<'div'> {
   /** `px-3 py-3` around the content (lists that draw their own rows leave it off). */

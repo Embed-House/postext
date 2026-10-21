@@ -1,6 +1,6 @@
 'use client';
 
-import type { useSandboxLabels } from '../../../context/SandboxContext';
+import type { useSandboxLabels } from '../../../context/SandboxContext.js';
 import { dimensionsEqual, colorsEqual } from 'postext';
 import type {
   OrderedListLevelConfig,
@@ -18,9 +18,9 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../../controls';
-import { numberFormatOptions } from './numberFormat';
-import { TEXT_SIZE_UNITS, INDENT_UNITS, OFFSET_UNITS } from './units';
+} from '../../../controls/index.js';
+import { numberFormatOptions } from './numberFormat.js';
+import { TEXT_SIZE_UNITS, INDENT_UNITS, OFFSET_UNITS } from './units.js';
 
 export function OrderedListLevelSection({
   level,

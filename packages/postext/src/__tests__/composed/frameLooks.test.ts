@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { validatePageTemplates } from '../../composed/validate';
-import { lookOver, normalizeFrameLooks } from '../../composed/templates';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { FrameLookEntry, PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, VDTDesignBoxBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { CAPTIONS, GRID_CONFIG, GRID_RESOURCES, PHOTO_TEMPLATE } from './fixtures/grid';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { lookOver, normalizeFrameLooks } from '../../composed/templates.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { FrameLookEntry, PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, VDTDesignBoxBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { CAPTIONS, GRID_CONFIG, GRID_RESOURCES, PHOTO_TEMPLATE } from './fixtures/grid.js';
 
 // #1089: named frame looks. `frameLooks` defines them, a `:::frame{slot}`
 // piece names one with `look="<id>"`, and each item of a repeating grid can

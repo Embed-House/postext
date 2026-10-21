@@ -4,7 +4,7 @@
 // the finished file comes back transferred.
 
 import type { VDTDocument } from 'postext';
-import type { EpubProgress, EpubWarning, RenderToEpubOptions } from '../types';
+import type { EpubProgress, EpubWarning, RenderToEpubOptions } from '../types.js';
 
 /** A picture's bytes and media type, as `EpubResourceBytes` answers. */
 export interface EpubResourcePayload {

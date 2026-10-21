@@ -6,10 +6,10 @@
 
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, VDTDesignTextBlock, VDTDocument } from 'postext';
-import { installLanguageCanvas, LanguageContext } from '../../controls/languageCanvasStub';
-import { documentShapingLanguage } from '../../controls/measureLanguage';
-import { bandLineBoxes, bandPrefixX, bandSourceToPlain, bandTitleBlocks } from './bandTitle';
-import { pixelToSourceOffset } from './geometry';
+import { installLanguageCanvas, LanguageContext } from '../../controls/languageCanvasStub.js';
+import { documentShapingLanguage } from '../../controls/measureLanguage.js';
+import { bandLineBoxes, bandPrefixX, bandSourceToPlain, bandTitleBlocks } from './bandTitle.js';
+import { pixelToSourceOffset } from './geometry.js';
 
 // The page that hosts the Sandbox is in English.
 installLanguageCanvas();

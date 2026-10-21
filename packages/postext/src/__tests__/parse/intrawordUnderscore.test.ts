@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting';
-import { buildDocument } from '../../pipeline';
+import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting.js';
+import { buildDocument } from '../../pipeline/index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

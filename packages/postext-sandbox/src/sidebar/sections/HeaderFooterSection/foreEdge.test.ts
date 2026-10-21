@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { foreEdgeElements, foreEdgeFontSize } from './foreEdge';
+import { foreEdgeElements, foreEdgeFontSize } from './foreEdge.js';
 
 describe('fore-edge heads template (#192)', () => {
   it('sets the heads at 80 % of the body size, in its unit', () => {

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { computeColumnEdges, layoutResourceBlock } from '../../pipeline/resourceLayout';
-import { resolveAllConfig } from '../../pipeline/config';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { dimensionToPx } from '../../units';
-import type { PostextConfig, Resource, ResourceType, TableModel } from '../../types';
+import { computeColumnEdges, layoutResourceBlock } from '../../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { dimensionToPx } from '../../units.js';
+import type { PostextConfig, Resource, ResourceType, TableModel } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env). Widths
 // are proportional to length; captions here are short enough never to wrap.

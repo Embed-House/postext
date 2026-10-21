@@ -8,8 +8,8 @@ import {
   setSourceLocked,
   sourceLockedField,
   svgEditableRanges,
-} from './svgEditableRanges';
-import { scanSvgTextNodeRanges } from '../../controls/svgSource';
+} from './svgEditableRanges.js';
+import { scanSvgTextNodeRanges } from '../../controls/svgSource.js';
 
 const SRC = '<svg><text x="1">Hello</text><rect/><text>Bye</text></svg>';
 const HELLO = SRC.indexOf('Hello');

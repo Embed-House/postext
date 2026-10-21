@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, collectConfigWarnings, composedPaintOrder, moveTextToMarkdown } from '../../index';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, Resource, VDTDocument } from '../../index';
-import { PORT_CHAPTERS, PORT_CONFIG } from './fixtures/textbookPort';
+import { buildDocument, collectConfigWarnings, composedPaintOrder, moveTextToMarkdown } from '../../index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, Resource, VDTDocument } from '../../index.js';
+import { PORT_CHAPTERS, PORT_CONFIG } from './fixtures/textbookPort.js';
 
 class StubCtx {
   font = '';

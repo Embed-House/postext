@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { contourRowsOf, traceResourceContour, withContourTrace, type PostextConfig, type Resource } from 'postext';
-import { getBlob } from '../../storage/blobStore';
-import { useSandboxDispatch, useSandboxSelector, useSandboxStateGetter } from '../../context/SandboxContext';
+import { getBlob } from '../../storage/blobStore.js';
+import { useSandboxDispatch, useSandboxSelector, useSandboxStateGetter } from '../../context/SandboxContext.js';
 
 /** Whether a page template of `config` has a frame that pushes with its
  *  pictures' contour (#883). */

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown, spaceDirectiveLines } from '../parse/blockParser';
-import { buildDocument } from '../pipeline';
-import { computeBaselineGrid, resolveAllConfig } from '../pipeline/config';
-import type { VDTBlock, VDTDocument } from '../vdt';
-import type { PostextConfig } from '../types';
+import { parseMarkdown, spaceDirectiveLines } from '../parse/blockParser.js';
+import { buildDocument } from '../pipeline/index.js';
+import { computeBaselineGrid, resolveAllConfig } from '../pipeline/config.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
+import type { PostextConfig } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

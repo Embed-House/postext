@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { needsGlyphPadding, padTrueTypeGlyphs } from '../trueTypePadding';
+import { needsGlyphPadding, padTrueTypeGlyphs } from '../trueTypePadding.js';
 
 /** A minimal `glyf` TrueType: head, maxp, loca, glyf (plus a dummy table
  *  after glyf so offsets past it must move). Glyph records of the given

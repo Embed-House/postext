@@ -11,7 +11,7 @@
  * lists its results in the Checks panel.
  */
 
-import { pageIsVertical, type VDTBlock, type VDTDesignSlot, type VDTDocument } from '../vdt';
+import { pageIsVertical, type VDTBlock, type VDTDesignSlot, type VDTDocument } from '../vdt.js';
 
 /** A heading design laid out past the foot of what can print it. */
 export interface HeadingDesignCut {

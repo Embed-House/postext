@@ -4,13 +4,13 @@ import fontkit from '@pdf-lib/fontkit';
 import { PDFDocument, rgb, type PDFFont } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { loadComplexShaper } from '../complexShaping';
-import { parseFontString } from '../fontString';
-import { shapeInCurrentLanguage, withDocumentLanguage } from '../shapingLanguage';
-import { cellPieces, drawTextPx, textAdvancePx, textShows, type PageCtx } from '../pdf-backend/primitives';
-import '../pdf-backend/shapedText';
-import { paintedGlyphs, type PaintedGlyph } from './glyphPositions';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { loadComplexShaper } from '../complexShaping.js';
+import { parseFontString } from '../fontString.js';
+import { shapeInCurrentLanguage, withDocumentLanguage } from '../shapingLanguage.js';
+import { cellPieces, drawTextPx, textAdvancePx, textShows, type PageCtx } from '../pdf-backend/primitives.js';
+import '../pdf-backend/shapedText.js';
+import { paintedGlyphs, type PaintedGlyph } from './glyphPositions.js';
 
 // #770: a document shaped in its own language is shaped word by word, as
 // the canvas shaped it (`canvasWords.ts`), and the characters a line of the

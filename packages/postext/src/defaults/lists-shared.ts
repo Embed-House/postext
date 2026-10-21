@@ -1,4 +1,4 @@
-import type { Dimension } from '../types';
+import type { Dimension } from '../types.js';
 
 export const DEFAULT_LIST_BULLET_CHAR = '•';
 export const DEFAULT_LIST_BULLET_FONT_SIZE: Dimension = { value: 1, unit: 'em' };

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PageTemplate } from 'postext';
-import { frameFamily, renameFrame } from './templateEdits';
-import { renameFrameInEdition } from './slotRename';
+import { frameFamily, renameFrame } from './templateEdits.js';
+import { renameFrameInEdition } from './slotRename.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 

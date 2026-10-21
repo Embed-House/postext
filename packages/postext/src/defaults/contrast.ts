@@ -6,8 +6,8 @@ import type {
   ContrastReversedTextConfig,
   ResolvedContrastConfig,
   ResolvedContrastReversedTextConfig,
-} from '../types';
-import { dimensionsEqual } from './shared';
+} from '../types.js';
+import { dimensionsEqual } from './shared.js';
 
 export const DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG: ResolvedContrastReversedTextConfig = {
   enabled: true,

@@ -2,8 +2,8 @@
 // naming, and conversion of manifest entries into engine resources and
 // custom fonts. No DOM or storage access.
 
-import { canonicalLocaleTag, matchContentLocale, presentTag, sameContentLocale } from '../locale';
-import type { CustomFontFamily, CustomFontFormat, HeadingCounters, PartState, Resource } from '../types';
+import { canonicalLocaleTag, matchContentLocale, presentTag, sameContentLocale } from '../locale.js';
+import type { CustomFontFamily, CustomFontFormat, HeadingCounters, PartState, Resource } from '../types.js';
 import type {
   BundleChapterSpec,
   BundleFontFamilySpec,
@@ -16,7 +16,7 @@ import type {
   BundleResourceSpec,
   BundleStart,
   BundleViewSpec,
-} from './types';
+} from './types.js';
 
 // ---------------------------------------------------------------------------
 // Validation

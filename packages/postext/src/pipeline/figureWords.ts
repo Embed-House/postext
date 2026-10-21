@@ -7,8 +7,8 @@
  * brings the words of its language.
  */
 
-import type { ContentBlock, FigureWordKind } from '../parse/types';
-import type { Resource } from '../types';
+import type { ContentBlock, FigureWordKind } from '../parse/types.js';
+import type { Resource } from '../types.js';
 
 /** What a figure says, by the resource field it replaces. */
 export type FigureWordOverride = Partial<Pick<Resource, 'altText' | 'caption' | 'note'>>;

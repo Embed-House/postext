@@ -46,13 +46,13 @@ import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 import { resolveFolioConfig, type FolioConfig, type FolioPaperConfig, type ResolvedFolioConfig } from "postext";
-import { along, BINDINGS, gutterOcclusion, profiles, stackGeometry, topAt, type Profile } from "./bookGeometry";
-import { environment, type Environment, type EnvironmentKind } from "./environments";
-import { pagePaper, paperSpec, type PaperSpec } from "./paper";
-import { loadDeskMaps, type DeskMaps } from "./deskTextures";
-import { ATLAS_MAX, MAX_PAGE_VIDEOS, VideoAtlas } from "./videoAtlas";
-import { cachedDesk, cachedRelief, type DeskKind } from "./procedural";
-import { Loupe, type LoupeView } from "./loupe";
+import { along, BINDINGS, gutterOcclusion, profiles, stackGeometry, topAt, type Profile } from "./bookGeometry.js";
+import { environment, type Environment, type EnvironmentKind } from "./environments.js";
+import { pagePaper, paperSpec, type PaperSpec } from "./paper.js";
+import { loadDeskMaps, type DeskMaps } from "./deskTextures.js";
+import { ATLAS_MAX, MAX_PAGE_VIDEOS, VideoAtlas } from "./videoAtlas.js";
+import { cachedDesk, cachedRelief, type DeskKind } from "./procedural.js";
+import { Loupe, type LoupeView } from "./loupe.js";
 
 /** A page: an image URL, or a canvas or a decoded image to draw; "" is a
  *  blank page (drawn as paper), null no page at all. */

@@ -2,10 +2,10 @@
 
 import { memo } from 'react';
 import type { LetteringConfig } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { CollapsibleSection, ColorPicker, DimensionInput, FieldGroup, FontPicker, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
-import { setComicsField, setNestedField } from './comicsConfig';
-import { EM_UNITS, GUTTER_UNITS, useComics } from './comicsShared';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { CollapsibleSection, ColorPicker, DimensionInput, FieldGroup, FontPicker, NumberInput, SelectInput, ToggleSwitch } from '../../../controls/index.js';
+import { setComicsField, setNestedField } from './comicsConfig.js';
+import { EM_UNITS, GUTTER_UNITS, useComics } from './comicsShared.js';
 
 /** Comics → Lettering: the one face and size every balloon is lettered in
  *  (a balloon style may scale it), the house rules applied to the text and

@@ -29,9 +29,9 @@ import type {
   ResolvedCjkKuntenConfig,
   ResolvedCjkRubyConfig,
   ResolvedCjkWarichuConfig,
-} from '../types';
-import { cjkRegionOf, isJapaneseLanguage, languageOf, presentTag } from '../locale';
-import { dimensionsEqual } from './shared';
+} from '../types.js';
+import { cjkRegionOf, isJapaneseLanguage, languageOf, presentTag } from '../locale.js';
+import { dimensionsEqual } from './shared.js';
 
 /** `cjk` as written when nothing is set: everything follows the locale
  *  (marks hang in Japan only), lines break between characters (no

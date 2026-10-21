@@ -7,13 +7,13 @@
  */
 import { collectConfigWarnings, moveTextToMarkdown, type PostextConfig, type Resource, type TextMigrationOptions, type TextMigrationResult } from 'postext';
 import type { Dispatch } from 'react';
-import type { BookContent, Chapter } from '../book/types';
-import type { SandboxAction } from '../context/SandboxContext';
-import { composeBookMemo } from '../book/compose';
-import { minimalChange, type TextChange } from '../book/textChanges';
-import { applyViewerEdit } from '../editor/viewerEdits';
-import type { HistoryStepInfo, SandboxHistory } from '../history/sandboxHistory';
-import { deleteBlob, getBlob, listBlobIds, putBlobAt } from '../storage/blobStore';
+import type { BookContent, Chapter } from '../book/types.js';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import { composeBookMemo } from '../book/compose.js';
+import { minimalChange, type TextChange } from '../book/textChanges.js';
+import { applyViewerEdit } from '../editor/viewerEdits.js';
+import type { HistoryStepInfo, SandboxHistory } from '../history/sandboxHistory.js';
+import { deleteBlob, getBlob, listBlobIds, putBlobAt } from '../storage/blobStore.js';
 
 /** What the migration reads of the Sandbox state. */
 export interface MigrationStateSlice {

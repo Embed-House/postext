@@ -9,10 +9,10 @@
 import { describe, it, expect } from 'vitest';
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile } from 'node:fs';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { collectConfigWarnings } from '../../configWarnings';
-import type { PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignPathBlock } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import type { PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignPathBlock } from '../../index.js';
 
 class StubCtx {
   font = '';

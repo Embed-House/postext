@@ -10,10 +10,10 @@
  */
 
 import { resolvePageTemplate, type PageTemplateSource, type VDTDocument } from 'postext';
-import type { TextChange } from '../book/textChanges';
-import { pageSites, type PageSites, type SlotSite } from '../viewport/composed/slotSource';
-import { pageAreas, templateAreaRect, type Rect } from './frameGeometry';
-import { templateFences } from './templateUsage';
+import type { TextChange } from '../book/textChanges.js';
+import { pageSites, type PageSites, type SlotSite } from '../viewport/composed/slotSource.js';
+import { pageAreas, templateAreaRect, type Rect } from './frameGeometry.js';
+import { templateFences } from './templateUsage.js';
 
 /** One composed page of a chapter set with one of the templates asked. */
 export interface TemplatePage {

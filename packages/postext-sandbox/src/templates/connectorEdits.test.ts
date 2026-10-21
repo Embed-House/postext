@@ -15,7 +15,7 @@ import {
   toggleConnectorTo,
   updateConnectorEnd,
   updateDecorationElement,
-} from './connectorEdits';
+} from './connectorEdits.js';
 
 const line = (extra: Partial<DesignConnectorElement> = {}): DesignConnectorElement => ({ kind: 'connector', id: 'c', from: { to: '#root' }, to: [], ...extra });
 

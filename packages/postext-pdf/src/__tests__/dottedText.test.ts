@@ -3,11 +3,11 @@ import { readFileSync } from 'node:fs';
 import { PDFDocument, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import type { VDTChip, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from 'postext';
-import { FontCache } from '../fontCache';
-import { renderHeaderFooterSlot } from '../pdf-backend/headerFooter';
-import { paintChip } from '../pdf-backend/chip';
-import { collectFontStrings } from '../pdf-backend/fontHelpers';
-import { colorFromHex, makeScale, type PageCtx } from '../pdf-backend/primitives';
+import { FontCache } from '../fontCache.js';
+import { renderHeaderFooterSlot } from '../pdf-backend/headerFooter.js';
+import { paintChip } from '../pdf-backend/chip.js';
+import { collectFontStrings } from '../pdf-backend/fontHelpers.js';
+import { colorFromHex, makeScale, type PageCtx } from '../pdf-backend/primitives.js';
 
 // The dots the painters are given (no canvas in the node test env).
 const fake = vi.hoisted(() => ({ dots: undefined as undefined | { points: Float32Array; width: number } | null }));

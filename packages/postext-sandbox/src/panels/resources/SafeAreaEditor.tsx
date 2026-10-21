@@ -5,27 +5,27 @@ import { Dialog } from '@base-ui/react/dialog';
 import { Crop, Hand, MapPin, Maximize2, MessageCircle, Plus, Smile, Trash2, TriangleAlert, Type, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import type { LabelStyle, Resource, ResourceSafeArea } from 'postext';
 import { safeAreaHeightRange, safeAreaSource } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStore } from '../../context/SandboxContext';
-import { applyViewerEdit } from '../../editor/viewerEdits';
-import type { LabelLeaderChoice } from '../../editor/labelAttrs';
-import { labelLeaderEdit } from './labelLeaderEdit';
-import { NumberInput } from '../../controls';
-import { FieldRow } from '../../controls/FieldRow';
-import { Button, IconButton, SegmentedControl, Switch, usePortalContainer } from '../../ui';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from '../../ui/surface';
-import { useBlobObjectUrl } from './ResourcePreview';
-import { SvgSymbolsReader } from './SvgSymbolsReader';
-import { addZones } from './svgSymbols';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStore } from '../../context/SandboxContext.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
+import type { LabelLeaderChoice } from '../../editor/labelAttrs.js';
+import { labelLeaderEdit } from './labelLeaderEdit.js';
+import { NumberInput } from '../../controls/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { Button, IconButton, SegmentedControl, Switch, usePortalContainer } from '../../ui/index.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from '../../ui/surface.js';
+import { useBlobObjectUrl } from './ResourcePreview.js';
+import { SvgSymbolsReader } from './SvgSymbolsReader.js';
+import { addZones } from './svgSymbols.js';
 import {
   HANDLES, INITIAL_SAFE_AREA, MIN_SIDE,
   addAnchor, addBystanderFace, addFace, addHead, anchorIdProblem, anchorOutsideSafeArea, applyDrag, clamp, firstAnchorIdProblem,
   labelFieldsOf, leaderDrawn, marksOf, normalizeMarks, nudge, removeMark, sameMarks, switchZone, withAnchor, withPoint, zoneAround,
   type AnchorIdProblem, type Handle, type MarkDrag, type MarkTarget, type PictureMarks, type Point, type ZoneTarget,
-} from './pictureMarks';
-import { anchorLabelState, labelsInChapters, type MarkdownLabel } from './figureLabels';
-import { onAnchorEditorRequest, takeAnchorEditorRequest, type AnchorEditorRequest } from './anchorEditorRequest';
-import { DENSE_ANCHORS, LabelAnchorsPanel, labelStyleColor } from './LabelAnchorsPanel';
-import { MAX_STAGE_ZOOM, pinchZoom, scrollForFocus, STAGE_NAMES_ZOOM, touchPair, wheelZoom, zoomStep } from './stageZoom';
+} from './pictureMarks.js';
+import { anchorLabelState, labelsInChapters, type MarkdownLabel } from './figureLabels.js';
+import { onAnchorEditorRequest, takeAnchorEditorRequest, type AnchorEditorRequest } from './anchorEditorRequest.js';
+import { DENSE_ANCHORS, LabelAnchorsPanel, labelStyleColor } from './LabelAnchorsPanel.js';
+import { MAX_STAGE_ZOOM, pinchZoom, scrollForFocus, STAGE_NAMES_ZOOM, touchPair, wheelZoom, zoomStep } from './stageZoom.js';
 
 // ---------------------------------------------------------------------------
 // Safe area & lettering marks of a picture. The field sums them up over a

@@ -7,13 +7,13 @@
  * text the chips sit in.
  */
 
-import type { ChipBox, InlineSpan } from '../parse';
-import type { ResolvedChipStyleConfig } from '../types';
-import type { ResolvedConfig } from '../vdt';
-import { pickChipStyle } from '../defaults/chipStyles';
-import { dimensionToPx } from '../units';
-import { INLINE_CODE_CHIP_STYLE } from './codeInline';
-import { resolveTextDots } from '../textDots';
+import type { ChipBox, InlineSpan } from '../parse/index.js';
+import type { ResolvedChipStyleConfig } from '../types.js';
+import type { ResolvedConfig } from '../vdt.js';
+import { pickChipStyle } from '../defaults/chipStyles.js';
+import { dimensionToPx } from '../units.js';
+import { INLINE_CODE_CHIP_STYLE } from './codeInline.js';
+import { resolveTextDots } from '../textDots.js';
 
 /** What chip resolution needs from the resolved config. */
 export interface ChipContext {

@@ -13,8 +13,8 @@ import {
   marksOf,
   normalizeMarks,
   type PictureMarks,
-} from '../panels/resources/pictureMarks';
-import { ToolError, type JsonSchema } from './modelContext';
+} from '../panels/resources/pictureMarks.js';
+import { ToolError, type JsonSchema } from './modelContext.js';
 
 /** The `marks` parameter of the resource tool: each member replaces that
  *  kind of mark, `null` removes it, one left out stays as it is. */

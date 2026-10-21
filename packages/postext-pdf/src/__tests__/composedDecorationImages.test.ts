@@ -4,9 +4,9 @@ import fontkit from '@pdf-lib/fontkit';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { preloadResourceImages } from '../pdf-backend/renderResourceBlock';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { preloadResourceImages } from '../pdf-backend/renderResourceBlock.js';
+import { parseFontString } from '../fontString.js';
 
 // A picture in a composed page's decoration (a ground drawn to the bleed,
 // #878) is embedded like a running head's: the PDF used to paint the grey

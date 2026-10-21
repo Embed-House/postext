@@ -1,4 +1,4 @@
-import type { CjkLineBreak } from '../types';
+import type { CjkLineBreak } from '../types.js';
 
 /**
  * Character classes of Chinese (and Japanese) text layout, after the W3C

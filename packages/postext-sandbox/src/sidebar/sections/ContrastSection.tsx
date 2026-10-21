@@ -8,9 +8,9 @@ import {
   resolveContrastConfig,
 } from 'postext';
 import type { ContrastConfig, ContrastReversedTextConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
-import { ContrastAllowField } from '../settings/ContrastAllowField';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { CollapsibleSection, DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../controls/index.js';
+import { ContrastAllowField } from '../settings/ContrastAllowField.js';
 
 /** The contrast check (#748): whether it runs, the level its ratios are
  *  held to, the renditions it reads, the sizes under which reversed

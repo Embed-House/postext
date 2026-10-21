@@ -1,9 +1,9 @@
 // A viewer tab's status as a tool answers with it, and the wait for a
 // viewer to finish what it is making.
 
-import type { ViewportTab } from '../types';
-import type { ViewerControls, ViewerStatus } from '../viewport/viewerControls';
-import { ToolError } from './modelContext';
+import type { ViewportTab } from '../types/index.js';
+import type { ViewerControls, ViewerStatus } from '../viewport/viewerControls.js';
+import { ToolError } from './modelContext.js';
 
 /** Most entries of a table of contents, notices or videos one answer lists. */
 export const MAX_STATUS_ENTRIES = 40;

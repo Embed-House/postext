@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, flowRectToPage, pageComics, type PostextConfig, type Resource, type VDTComicPage, type VDTDocument, type VDTPage } from 'postext';
-import { applyTextChanges, changesApply, invertTextChanges } from '../../book/textChanges';
-import { comicBySource, comicHitAt, panelKeyAction } from './comicHit';
-import { mergePanelChanges, moveSplitterChanges, splitPanelChanges } from './comicSource';
-import { comicBalloonItem, pinBalloonChanges, tailLineChanges, untailLineChanges } from './balloonSource';
-import { boxCentre, pageToTailTarget, pinToPage } from './balloonDrag';
+import { applyTextChanges, changesApply, invertTextChanges } from '../../book/textChanges.js';
+import { comicBySource, comicHitAt, panelKeyAction } from './comicHit.js';
+import { mergePanelChanges, moveSplitterChanges, splitPanelChanges } from './comicSource.js';
+import { comicBalloonItem, pinBalloonChanges, tailLineChanges, untailLineChanges } from './balloonSource.js';
+import { boxCentre, pageToTailTarget, pinToPage } from './balloonDrag.js';
 
 class StubCtx {
   font = '';

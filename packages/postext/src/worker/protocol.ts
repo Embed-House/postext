@@ -1,6 +1,6 @@
-import type { PostextContent, PostextConfig } from '../types';
-import type { VDTDocument } from '../vdt';
-import type { BuildPassInfo, BuildProgress } from '../pipeline/build';
+import type { PostextContent, PostextConfig } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
+import type { BuildPassInfo, BuildProgress } from '../pipeline/build.js';
 
 /** Where a build's time went (dev tooling; always attached, cheap). */
 export interface BuildStats {

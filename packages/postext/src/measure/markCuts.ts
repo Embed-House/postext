@@ -8,9 +8,9 @@
  * the rule the measurer followed ({@link MarkCutRule}).
  */
 
-import { cjkMarkCuts, isCjkGrapheme, isTrimmableMark } from './cjkClasses';
-import { hasCJK } from './cjk';
-import { isBreakingSpace } from './spaces';
+import { cjkMarkCuts, isCjkGrapheme, isTrimmableMark } from './cjkClasses.js';
+import { hasCJK } from './cjk.js';
+import { isBreakingSpace } from './spaces.js';
 
 /**
  * How a string was measured, and so where it is cut when painted:

@@ -1,10 +1,10 @@
 'use client';
 
 import { useId, useMemo, useState } from 'react';
-import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { FieldRow, SelectInput, useFieldIds } from '../../../controls';
-import { cn } from '../../../ui/cn';
-import { fenceAttributeName, pageFenceAttributes } from '../../../templates/templateUsage';
+import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { FieldRow, SelectInput, useFieldIds } from '../../../controls/index.js';
+import { cn } from '../../../ui/cn.js';
+import { fenceAttributeName, pageFenceAttributes } from '../../../templates/templateUsage.js';
 
 /** The choice that opens the box for an attribute no fence writes yet
  *  (#1095): it holds a space, so no attribute name can be it. */

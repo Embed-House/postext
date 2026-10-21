@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { validatePageTemplates } from '../../composed/validate';
-import { flowRectToPage, type VDTDesignPathBlock, type VDTPathCommand } from '../../vdt';
-import type { PageTemplate } from '../../composed/types';
-import type { DesignConnectorElement, PostextConfig, VDTDocument, VDTPage } from '../../index';
-import { CONNECTOR_CONFIG, mm } from './fixtures/connectors';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { flowRectToPage, type VDTDesignPathBlock, type VDTPathCommand } from '../../vdt.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { DesignConnectorElement, PostextConfig, VDTDocument, VDTPage } from '../../index.js';
+import { CONNECTOR_CONFIG, mm } from './fixtures/connectors.js';
 
 // #1069: a module's connector may end on a frame of the page that stacks
 // the module, an org chart's head joined to each department the page

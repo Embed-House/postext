@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { renderPageToCanvas } from '../../index';
-import { keepOffGutter, spreadSheet, splitSpreadDecoration } from '../../composed/spread';
-import { composedPaintOrder } from '../../composed/paint';
-import { flowRectToPage } from '../../vdt';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { timelineFixture } from './fixtures/timeline';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { renderPageToCanvas } from '../../index.js';
+import { keepOffGutter, spreadSheet, splitSpreadDecoration } from '../../composed/spread.js';
+import { composedPaintOrder } from '../../composed/paint.js';
+import { flowRectToPage } from '../../vdt.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { timelineFixture } from './fixtures/timeline.js';
 
 // #861: a spread template laid as one sheet of two facing pages, cut at
 // the spine.

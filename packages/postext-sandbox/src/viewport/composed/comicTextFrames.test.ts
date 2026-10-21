@@ -5,8 +5,8 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, comicBlockOnSheet, flowToPage } from 'postext';
 import type { VDTPage } from 'postext';
-import { comicTextFrameAt, comicTextHitAt, frameHitAt, pointInComicFrame, sheetToFlow } from './frameHit';
-import { comicTextCaret } from './frameLink';
+import { comicTextFrameAt, comicTextHitAt, frameHitAt, pointInComicFrame, sheetToFlow } from './frameHit.js';
+import { comicTextCaret } from './frameLink.js';
 
 class StubCtx {
   font = '';

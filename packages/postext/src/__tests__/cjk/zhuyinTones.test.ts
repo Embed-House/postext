@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import type { PostextConfig } from '../../types';
-import type { VDTAnnotationRun } from '../../vdt';
-import { SizedStubCtx } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTAnnotationRun } from '../../vdt.js';
+import { SizedStubCtx } from '../vertical/stub.js';
 
 // Zhuyin tone marks placed by their ink (T8 review): fonts set ˊ ˇ ˋ high
 // in their em box (Noto Serif TC's ˇ inks 0.484–0.826 em over its

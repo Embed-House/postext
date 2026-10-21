@@ -12,8 +12,8 @@
  * the box lends them no body or list style).
  */
 
-import type { ContentBlock } from '../parse';
-import type { CalloutStyleConfig, Dimension } from '../types';
+import type { ContentBlock } from '../parse/index.js';
+import type { CalloutStyleConfig, Dimension } from '../types.js';
 
 /** Style ids of the frameless boxes of main-flow groups, in the text
  *  column and across the page. Not user styles: no configuration can

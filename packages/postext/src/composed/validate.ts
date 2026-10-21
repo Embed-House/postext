@@ -3,9 +3,9 @@
 // problem reported as a config warning whose `path` is a JSON pointer
 // (`/pageTemplates/3/frames/2/style`). Pure.
 
-import type { CalloutPaddingConfig, Dimension, LeaderStyle, PostextConfig, Resource } from '../types';
-import { CONNECTOR_CAPS, LEADER_ROUTINGS } from '../design/connector';
-import type { ConfigWarning } from '../vdt';
+import type { CalloutPaddingConfig, Dimension, LeaderStyle, PostextConfig, Resource } from '../types.js';
+import { CONNECTOR_CAPS, LEADER_ROUTINGS } from '../design/connector.js';
+import type { ConfigWarning } from '../vdt.js';
 import type {
   FrameConfig,
   FrameFitConfig,
@@ -22,9 +22,9 @@ import type {
   PageTemplatePatch,
   ResolvedFrame,
   ResolvedFrameGroup,
-} from './types';
-import { closestKey } from '../util/closestKey';
-import { dimensionToPx } from '../units';
+} from './types.js';
+import { closestKey } from '../util/closestKey.js';
+import { dimensionToPx } from '../units.js';
 import {
   FRAME_DIRECTIONS,
   FRAME_EXCLUDES,
@@ -53,9 +53,9 @@ import {
   resolveTemplateAt,
   templateChain,
   type TemplateIssue,
-} from './templates';
-import { modulesGroupRoot } from './modules';
-import { POINTER_PATH, TEMPLATE_DECORATION_KEYS, placementUnknownKeys, type UnknownKey } from '../design/elementKeys';
+} from './templates.js';
+import { modulesGroupRoot } from './modules.js';
+import { POINTER_PATH, TEMPLATE_DECORATION_KEYS, placementUnknownKeys, type UnknownKey } from '../design/elementKeys.js';
 
 // The keys of each object, checked against its type: a key added to a type
 // fails to compile until it is listed here.

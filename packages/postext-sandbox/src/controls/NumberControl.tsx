@@ -1,9 +1,9 @@
 'use client';
 
-import { NumberField } from '../ui/number-field';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { useFieldIds } from './fieldContext';
-import { useDebouncedCommit } from './useDebouncedCommit';
+import { NumberField } from '../ui/number-field.js';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { useFieldIds } from './fieldContext.js';
+import { useDebouncedCommit } from './useDebouncedCommit.js';
 
 interface NumberControlProps {
   value: number;

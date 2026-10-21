@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { DesignElement, DesignTextElement, TextOverflow } from '../../types';
-import type { VDTPage } from '../../vdt';
+import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { DesignElement, DesignTextElement, TextOverflow } from '../../types.js';
+import type { VDTPage } from '../../vdt.js';
 
 // EF-76: a truncated design text dropped the space before the ellipsis
 // only by luck and cut mid-word ("The history of th…"). The cut now falls

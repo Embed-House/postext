@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { collectConfigWarnings } from '../../configWarnings';
-import type { PostextConfig } from '../../index';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import type { PostextConfig } from '../../index.js';
 
 // #1122: a key written at the wrong level (a group's `size` instead of its
 // placement's) or misspelt in a decoration element, a connector, a

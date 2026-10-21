@@ -1,9 +1,9 @@
 import type { VDTDocument } from 'postext';
 import { mapInlineSnippet, parseMarkdown, resourceBlockRectToPage, resourceBlockToLocal, uncroppedPictureBox } from 'postext';
-import type { ResourceFocusTarget } from '../../context/SandboxContext';
-import { hitSvgTextIndex, type SvgTextIndex } from '../../controls/svgSource';
-import { addsHyphen, foldRefRuns, resourceBlocksOnPage, segmentPlainLength } from './geometry';
-import { blockFrameMatrix, intoBlockSpace } from '../composed/frameHit';
+import type { ResourceFocusTarget } from '../../context/SandboxContext.js';
+import { hitSvgTextIndex, type SvgTextIndex } from '../../controls/svgSource.js';
+import { addsHyphen, foldRefRuns, resourceBlocksOnPage, segmentPlainLength } from './geometry.js';
+import { blockFrameMatrix, intoBlockSpace } from '../composed/frameHit.js';
 
 // ---------------------------------------------------------------------------
 // Resource text hit-testing (pure). Resource runs — table cells, captions,

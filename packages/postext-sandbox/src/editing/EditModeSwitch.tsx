@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LayoutTemplate, PenLine } from 'lucide-react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import type { PanelId } from '../types';
-import { SegmentedControl, announce } from '../ui';
-import { EDIT_MODE_SHORTCUT, editModeNow, isEditModeShortcut, useEditMode, type EditMode } from './editMode';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
+import type { PanelId } from '../types/index.js';
+import { SegmentedControl, announce } from '../ui/index.js';
+import { EDIT_MODE_SHORTCUT, editModeNow, isEditModeShortcut, useEditMode, type EditMode } from './editMode.js';
 
 /** How the shortcut reads on this machine: ⌥⇧M on a Mac. */
 export function editModeShortcutText(): string {

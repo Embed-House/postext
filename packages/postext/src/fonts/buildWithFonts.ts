@@ -2,12 +2,12 @@
 // from `prepare.ts` so the worker client can prepare faces without
 // bringing the layout pipeline in.
 
-import type { PostextConfig, PostextContent } from '../types';
-import type { VDTDocument } from '../vdt';
-import type { BuildDocumentOptions } from '../pipeline/build';
-import type { MeasurementCache } from '../measure/types';
-import { buildDocumentAsync } from '../pipeline/build';
-import { contentTexts, prepareFonts, withLoadedFonts, type LoadedFontsOptions } from './prepare';
+import type { PostextConfig, PostextContent } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
+import type { BuildDocumentOptions } from '../pipeline/build.js';
+import type { MeasurementCache } from '../measure/types.js';
+import { buildDocumentAsync } from '../pipeline/build.js';
+import { contentTexts, prepareFonts, withLoadedFonts, type LoadedFontsOptions } from './prepare.js';
 
 export interface BuildDocumentWithFontsOptions extends LoadedFontsOptions, BuildDocumentOptions {
   /** The measurement cache handed to every build. */

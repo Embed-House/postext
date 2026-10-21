@@ -4,8 +4,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFRef, decodePD
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument, VDTPage } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #861: a spread template in the PDF is two pages, each painting its share
 // of the sheet (clipped to its bleed box); the half of a frame crossing the

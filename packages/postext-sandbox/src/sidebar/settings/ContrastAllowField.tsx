@@ -2,11 +2,11 @@
 
 import { Plus, Trash2 } from 'lucide-react';
 import type { ContrastAllowEntry } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { TextInput } from '../../controls';
-import { FieldRow } from '../../controls/FieldRow';
-import { Button, IconButton } from '../../ui';
-import { SearchScope } from '../search/SearchScope';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { TextInput } from '../../controls/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { Button, IconButton } from '../../ui/index.js';
+import { SearchScope } from '../search/SearchScope.js';
 
 /**
  * `contrast.allow` (#1124): the colour pairs of the source the contrast

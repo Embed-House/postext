@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
-import { indentColumn, listDepth, nestListItem, MAX_LIST_DEPTH } from '../../parse/listNesting';
+import { parseMarkdown } from '../../parse/index.js';
+import { indentColumn, listDepth, nestListItem, MAX_LIST_DEPTH } from '../../parse/listNesting.js';
 
 // #465: a list item's depth follows the item it is indented past (the
 // content column of the enclosing item, as CommonMark nests lists), not a

@@ -23,12 +23,12 @@
  * ```
  */
 
-import type { BoundingBox, ResolvedConfig, VDTComicPage } from '../vdt';
-import type { Dimension, Resource } from '../types';
-import { dimensionToPx } from '../units';
-import { layoutComicFrame, parseComicDimension } from './layoutPage';
-import type { ComicSplitList } from './split';
-import type { ComicPageSource } from './types';
+import type { BoundingBox, ResolvedConfig, VDTComicPage } from '../vdt.js';
+import type { Dimension, Resource } from '../types.js';
+import { dimensionToPx } from '../units.js';
+import { layoutComicFrame, parseComicDimension } from './layoutPage.js';
+import type { ComicSplitList } from './split.js';
+import type { ComicPageSource } from './types.js';
 
 /** Where and how wide a strip is set. */
 export interface ComicStripPlacement {

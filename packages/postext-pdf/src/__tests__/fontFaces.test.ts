@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf, type PdfFontFallbackWarning, type PdfWarning } from '../pdf-backend';
-import { FontCache } from '../fontCache';
-import { fontKey, parseFontString } from '../fontString';
+import { renderToPdf, type PdfFontFallbackWarning, type PdfWarning } from '../pdf-backend/index.js';
+import { FontCache } from '../fontCache.js';
+import { fontKey, parseFontString } from '../fontString.js';
 
 /** Keeps the font fallbacks among the render warnings. */
 function fallbacksInto(list: PdfFontFallbackWarning[], w: PdfWarning): void {

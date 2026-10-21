@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index';
-import type { PostextConfig, VDTDocument } from '../../index';
+import { buildDocument, renderPageToCanvas, renderToHtml } from '../../index.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
 
 // Issue #377: the canvas and the HTML paint design text and chip runs in
 // their order and direction — a running head on the sheet, a chip in the

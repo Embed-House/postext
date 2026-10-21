@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults';
-import type { ContentWarning, PostextConfig, Resource, VDTBlock, VDTColumn, VDTDocument, VDTLine } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/index.js';
+import type { ContentWarning, PostextConfig, Resource, VDTBlock, VDTColumn, VDTDocument, VDTLine } from '../../index.js';
 
 // #627 Phase 2: text wrapped round an inline picture narrower than its
 // column (`placement: { position: 'here', wrap }`).
@@ -448,7 +448,7 @@ describe('text wrap in CJK and vertical text (#627)', () => {
 
 describe('renderers paint the lines beside a wrapped picture at their measure (#627)', () => {
   it('canvas: a justified line beside the picture ends at its span, one below it at the column', async () => {
-    const { renderPageToCanvas } = await import('../../index');
+    const { renderPageToCanvas } = await import('../../index.js');
     const doc = build(`::resource{id="fig"}\n\n${para(8)}`, [figure({ wrap: 'right', width: 0.4 })]);
     const p = doc.blocks.find((b) => b.type === 'paragraph')!;
     const painted: { text: string; x: number; y: number }[] = [];

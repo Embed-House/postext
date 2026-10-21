@@ -13,10 +13,10 @@
  */
 
 import type { VDTDocument, VDTFrame, VDTPage } from 'postext';
-import { SVG_NS } from '../CanvasPreview/dom';
-import { markFontPx } from './frameOverlay';
-import { frameTurnMatrix } from './fitMarks';
-import { reflowEntries, reflowShort } from './reflowText';
+import { SVG_NS } from '../CanvasPreview/dom.js';
+import { markFontPx } from './frameOverlay.js';
+import { frameTurnMatrix } from './fitMarks.js';
+import { reflowEntries, reflowShort } from './reflowText.js';
 
 type Box = VDTFrame['rect'];
 type Point = { x: number; y: number };

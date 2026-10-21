@@ -8,11 +8,11 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync, statSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import fontkit from '../../../../postext-pdf/node_modules/@pdf-lib/fontkit/dist/fontkit.es.js';
-import { buildDocument } from '../../pipeline';
-import { contentOutline } from '../../pipeline/continuation';
-import { readBundle } from '../../bundle/codec';
-import { extractFrontmatter } from '../../frontmatter';
-import type { VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { contentOutline } from '../../pipeline/continuation.js';
+import { readBundle } from '../../bundle/codec.js';
+import { extractFrontmatter } from '../../frontmatter.js';
+import type { VDTDocument } from '../../index.js';
 
 const BUNDLE = join(__dirname, '../../../../../apps/web/public/presets/hongloumeng');
 const EDITORIAL = join(__dirname, '../../../../../scripts/presets/showcase/hongloumeng/editorial.py');

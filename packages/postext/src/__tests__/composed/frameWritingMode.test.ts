@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { framePageRect, frameMatrix } from '../../composed/paint';
-import { flowRectToPage } from '../../vdt';
-import { sourceAt } from '../../composed/sourceMap';
-import { installSizedStub, stubCharWidth } from '../vertical/stub';
-import { renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { framePageRect, frameMatrix } from '../../composed/paint.js';
+import { flowRectToPage } from '../../vdt.js';
+import { sourceAt } from '../../composed/sourceMap.js';
+import { installSizedStub, stubCharWidth } from '../vertical/stub.js';
+import { renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
 
 installSizedStub();
 

@@ -14,12 +14,12 @@ import {
   Pin,
   PinOff,
 } from 'lucide-react';
-import { useSandbox } from '../context/SandboxContext';
-import { groupPagesIntoRows } from './CanvasPreview/layoutUtils';
-import { Tooltip, useUiRtl } from '../ui';
-import { useCompactLayout } from '../hooks/useCompactLayout';
-import { useLargeTargets } from '../ui/largeTargets';
-import { PrintPreviewButton } from '../print/PrintPreviewButton';
+import { useSandbox } from '../context/SandboxContext.js';
+import { groupPagesIntoRows } from './CanvasPreview/layoutUtils.js';
+import { Tooltip, useUiRtl } from '../ui/index.js';
+import { useCompactLayout } from '../hooks/useCompactLayout.js';
+import { useLargeTargets } from '../ui/largeTargets.js';
+import { PrintPreviewButton } from '../print/PrintPreviewButton.js';
 
 type ViewMode = 'single' | 'spread';
 type FitMode = 'none' | 'width' | 'height';

@@ -4,10 +4,10 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFRef, decodePD
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument, frameMatrix } from 'postext';
 import type { VDTDocument, VDTFrame, VDTPage } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { collectFontText } from '../pdf-backend/fontHelpers';
-import { sheetMatrixToPdf } from '../pdf-backend/comic';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { collectFontText } from '../pdf-backend/fontHelpers.js';
+import { sheetMatrixToPdf } from '../pdf-backend/comic.js';
+import { parseFontString } from '../fontString.js';
 
 // #855: the PDF paints a composed page's frames in layer order (the
 // decoration at layer 0), each turned by its matrix (`cm`) and clipped to

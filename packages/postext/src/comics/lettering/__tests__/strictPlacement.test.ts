@@ -6,13 +6,13 @@
 // postext 1.27 lettered it.
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { presetLetteringStyles } from '../presets';
-import { prepareText, readLetteringText, breakPoints } from '../text';
-import { shapeText } from '../shape-text';
-import { buildDocument } from '../../../pipeline';
-import type { PostextConfig, Resource } from '../../../types';
-import { ZH } from './strictPlacement.fixtures';
+import { installStubMeasure } from './stubMeasure.js';
+import { presetLetteringStyles } from '../presets.js';
+import { prepareText, readLetteringText, breakPoints } from '../text.js';
+import { shapeText } from '../shape-text.js';
+import { buildDocument } from '../../../pipeline/index.js';
+import type { PostextConfig, Resource } from '../../../types.js';
+import { ZH } from './strictPlacement.fixtures.js';
 
 // The panel tests are in strictPlacement.{zh,off,ja}.test.ts (#1118).
 

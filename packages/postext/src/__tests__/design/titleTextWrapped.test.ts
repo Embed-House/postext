@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { defaultOpenerTitle, headingTitleText } from '../../pipeline/headerFooter';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { defaultOpenerTitle, headingTitleText } from '../../pipeline/headerFooter.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): each
 // character is half the font size wide, so a larger face wraps sooner.

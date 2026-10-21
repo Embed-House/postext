@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import type { LetteringItem, LetteringPanel, Point, Rect } from '../types';
+import { installStubMeasure } from './stubMeasure.js';
+import { letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import type { LetteringItem, LetteringPanel, Point, Rect } from '../types.js';
 
 beforeAll(() => installStubMeasure());
 

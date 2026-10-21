@@ -5,10 +5,10 @@
 // answers with files (the shape of the PDF font provider), the engine adds
 // them to the font set and to the font registry SVG pictures read (#630).
 
-import type { PostextConfig, PostextContent } from '../types';
-import type { VDTDocument } from '../vdt';
-import { evictFontFamilies } from '../measure/font';
-import { collectFontUsage, configFontFamilies, type FontContentText } from './usage';
+import type { PostextConfig, PostextContent } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
+import { evictFontFamilies } from '../measure/font.js';
+import { collectFontUsage, configFontFamilies, type FontContentText } from './usage.js';
 import {
   defaultFontSet,
   documentFontFaces,
@@ -19,10 +19,10 @@ import {
   type FontFaceRequest,
   type FontFaceSetLike,
   type FontFallbackOptions,
-} from './faces';
-import { isFontSetTracked, syncFontSet, watchFonts } from './fontSet';
-import { registerFontBytes, registerFontUrl } from '../svg/fontRegistry';
-import { installGlyphProbe, registerFontCoverage } from './glyphFallback';
+} from './faces.js';
+import { isFontSetTracked, syncFontSet, watchFonts } from './fontSet.js';
+import { registerFontBytes, registerFontUrl } from '../svg/fontRegistry.js';
+import { installGlyphProbe, registerFontCoverage } from './glyphFallback.js';
 
 /** A font file: its bytes, or the URL to fetch it from (a CSS `src`
  *  value — `url(…)`, `local(…)` — is taken as written). */

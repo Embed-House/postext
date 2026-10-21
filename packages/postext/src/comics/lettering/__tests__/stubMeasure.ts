@@ -2,7 +2,7 @@
 // node test environment): advances by character class, in ems of the
 // font's px size, close enough to a comic face for shapes to be judged.
 
-import { clearTextWidthCache } from '../../../measure/canvas';
+import { clearTextWidthCache } from '../../../measure/canvas.js';
 
 const SIZE_RE = /(\d*\.?\d+)px/;
 

@@ -22,7 +22,7 @@
  */
 
 import { canonicalLocaleTag } from 'postext';
-import type { ViewportTab } from '../types/props';
+import type { ViewportTab } from '../types/props.js';
 
 export interface ViewHash {
   /** Manifest id of the preset on screen, or null when absent / in project

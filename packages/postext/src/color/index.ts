@@ -6,7 +6,7 @@ export {
   type IccColorSpace,
   type LutPipeline,
   type XYZ,
-} from './icc';
+} from './icc.js';
 export {
   D50,
   xyzToLab,
@@ -30,7 +30,7 @@ export {
   type OutputTransform,
   type OutputTransformOptions,
   type RgbLut,
-} from './transform';
+} from './transform.js';
 export {
   OUTPUT_PROFILES,
   DEFAULT_OUTPUT_PROFILE_ID,
@@ -38,7 +38,7 @@ export {
   outputProfileInfo,
   loadOutputProfile,
   type OutputProfileInfo,
-} from './catalogue';
-export { srgbProfileBytes } from './srgbProfile';
-export { authoredCmykColors } from './authored';
-export { createPrintPreview, proofPixels, type PrintPreview, type PrintPreviewOptions } from './softProof';
+} from './catalogue.js';
+export { srgbProfileBytes } from './srgbProfile.js';
+export { authoredCmykColors } from './authored.js';
+export { createPrintPreview, proofPixels, type PrintPreview, type PrintPreviewOptions } from './softProof.js';

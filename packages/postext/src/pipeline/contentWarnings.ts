@@ -9,41 +9,41 @@
  * landed on.
  */
 
-import { parseVideoUrl } from '../video/url';
-import { resourceRefId, unprefixedId } from './crossRefs';
-import { citationIssues } from './citations';
-import { bookCitationContexts, needsCitationContext } from '../citations/context';
-import { duplicateAnchors } from './anchors';
-import { figureWordConflicts } from './figureWords';
-import { computeChapterTitles } from './placeholders';
-import type { ContentBlock } from '../parse';
-import { KNOWN_CONTAINERS, KNOWN_DIRECTIVES, parseInlineSnippetSpans, parseMarkdownMemo } from '../parse';
-import { invalidAttributeKeys } from '../parse/attrs';
-import { MARK_OPENER, directiveAttrRanges, readMarkAt } from '../parse/inlineFormatting';
-import { parsePaperAttrs } from './paper';
-import { extractFrontmatter } from '../frontmatter';
-import { tableGridIssues } from '../table/model';
-import { isGenericFamily } from '../fonts/faces';
-import type { PostextConfig, Resource } from '../types';
-import type { ConfigWarning, ContentWarning, LayoutWarning, RenderWarning, VDTDesignSlot, VDTDocument } from '../vdt';
-import type { HeadingDesignCut } from './headingDesignCuts';
-import { DEFAULT_CHIP_STYLES } from '../defaults/chipStyles';
-import { DEFAULT_MARK_STYLES } from '../defaults/markStyles';
-import { DEFAULT_PARAGRAPH_STYLES } from '../defaults/paragraphStyles';
-import { DEFAULT_HEADING_STYLES } from '../defaults/headingStyles';
-import { resolveAllConfig } from './config';
-import { codeParseOptions } from './codeBlocks';
-import { planHeadingSections, sectionWritingMode } from './headingStyles';
-import { comicSourceWarnings } from '../comics/warnings';
-import { comicFrameSourceWarnings, comicTextPanelsSupported } from '../comics/textPanels';
-import { resolvedComics } from '../defaults/comics';
-import { effectiveResourceTypes } from '../defaults/resourceTypes';
-import { composedPages } from '../composed/document';
-import { composedFrameBlockIds } from '../composed/paint';
-import { bitmapLayoutSize, bitmapResolutionFor } from '../bitmapResolution';
-import { checkComposedSlots, checkFrameLookNames } from '../composed/slotChecks';
-import { describeFitStep, describeFrameCoverProposal, describeFrameOutsideProposal, describeFrameOverflowProposal } from '../composed/reflowLog';
-import type { ComposedPagesConfigKeys } from '../composed/types';
+import { parseVideoUrl } from '../video/url.js';
+import { resourceRefId, unprefixedId } from './crossRefs.js';
+import { citationIssues } from './citations.js';
+import { bookCitationContexts, needsCitationContext } from '../citations/context.js';
+import { duplicateAnchors } from './anchors.js';
+import { figureWordConflicts } from './figureWords.js';
+import { computeChapterTitles } from './placeholders.js';
+import type { ContentBlock } from '../parse/index.js';
+import { KNOWN_CONTAINERS, KNOWN_DIRECTIVES, parseInlineSnippetSpans, parseMarkdownMemo } from '../parse/index.js';
+import { invalidAttributeKeys } from '../parse/attrs.js';
+import { MARK_OPENER, directiveAttrRanges, readMarkAt } from '../parse/inlineFormatting.js';
+import { parsePaperAttrs } from './paper.js';
+import { extractFrontmatter } from '../frontmatter.js';
+import { tableGridIssues } from '../table/model.js';
+import { isGenericFamily } from '../fonts/faces.js';
+import type { PostextConfig, Resource } from '../types.js';
+import type { ConfigWarning, ContentWarning, LayoutWarning, RenderWarning, VDTDesignSlot, VDTDocument } from '../vdt.js';
+import type { HeadingDesignCut } from './headingDesignCuts.js';
+import { DEFAULT_CHIP_STYLES } from '../defaults/chipStyles.js';
+import { DEFAULT_MARK_STYLES } from '../defaults/markStyles.js';
+import { DEFAULT_PARAGRAPH_STYLES } from '../defaults/paragraphStyles.js';
+import { DEFAULT_HEADING_STYLES } from '../defaults/headingStyles.js';
+import { resolveAllConfig } from './config.js';
+import { codeParseOptions } from './codeBlocks.js';
+import { planHeadingSections, sectionWritingMode } from './headingStyles.js';
+import { comicSourceWarnings } from '../comics/warnings.js';
+import { comicFrameSourceWarnings, comicTextPanelsSupported } from '../comics/textPanels.js';
+import { resolvedComics } from '../defaults/comics.js';
+import { effectiveResourceTypes } from '../defaults/resourceTypes.js';
+import { composedPages } from '../composed/document.js';
+import { composedFrameBlockIds } from '../composed/paint.js';
+import { bitmapLayoutSize, bitmapResolutionFor } from '../bitmapResolution.js';
+import { checkComposedSlots, checkFrameLookNames } from '../composed/slotChecks.js';
+import { describeFitStep, describeFrameCoverProposal, describeFrameOutsideProposal, describeFrameOverflowProposal } from '../composed/reflowLog.js';
+import type { ComposedPagesConfigKeys } from '../composed/types.js';
 
 /** A `:::name` line: the name starts it, whatever follows (a line the parser
  *  does not take as a fence — an unknown name, or text after the name — is

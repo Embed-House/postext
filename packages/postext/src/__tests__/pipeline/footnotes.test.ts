@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { parseMarkdown } from '../../parse';
-import type { PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import type { PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -157,7 +157,7 @@ describe('footnotes with balancing and closing bands', () => {
 
 describe('footnote warnings', () => {
   it('reports a marker with no definition and a definition never cited', async () => {
-    const { collectContentWarnings } = await import('../../pipeline/contentWarnings');
+    const { collectContentWarnings } = await import('../../pipeline/contentWarnings.js');
     const md = 'Texto.[^falta] Más texto.[^ok]\n\n[^ok]: Bien.\n\n[^sobra]: Nadie la cita.';
     const found = collectContentWarnings(md, undefined, []);
     const undef = found.find((w) => w.kind === 'undefinedFootnote');

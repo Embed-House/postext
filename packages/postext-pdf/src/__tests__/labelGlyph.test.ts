@@ -4,8 +4,8 @@ import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf, type PdfWarning } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf, type PdfWarning } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #1054: a label tab's glyph icon is drawn as text in the PDF, in its own
 // colour; a tagged PDF marks it a layout artifact, so the tab's tagged

@@ -6,15 +6,15 @@ import {
   resolvePageTemplate,
   stripLabelStylesDefaults,
   stripPageTemplatesDefaults,
-} from '../composed/templates';
-import { validatePageTemplates } from '../composed/validate';
-import { collectConfigWarnings } from '../configWarnings';
-import { formatWarning } from '../pipeline/contentWarnings';
-import { stripConfigDefaults } from '../defaults';
-import { resolveAllConfig } from '../pipeline/config';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig } from '../bundle/configVersion';
-import { configFingerprint } from '../util/stableHash';
-import type { PageTemplate, PostextConfig, Resource } from '../types';
+} from '../composed/templates.js';
+import { validatePageTemplates } from '../composed/validate.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig } from '../bundle/configVersion.js';
+import { configFingerprint } from '../util/stableHash.js';
+import type { PageTemplate, PostextConfig, Resource } from '../types.js';
 
 // Composed pages, configuration side (#853): page templates with frames,
 // groups and variants resolve and validate; invalid ones give warnings

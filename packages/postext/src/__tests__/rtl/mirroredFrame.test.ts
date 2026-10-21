@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { flowPageMirrored, pageMirrored } from '../../pipeline/buildHelpers';
-import { mirroredLineOrder } from '../../pipeline/mirrorFrame';
+import { buildDocument } from '../../pipeline/index.js';
+import { flowPageMirrored, pageMirrored } from '../../pipeline/buildHelpers.js';
+import { mirroredLineOrder } from '../../pipeline/mirrorFrame.js';
 import {
   flowRectToPage,
   flowToPage,
@@ -14,9 +14,9 @@ import {
   type VDTDocument,
   type VDTLine,
   type VDTPage,
-} from '../../vdt';
-import type { PostextConfig, Resource } from '../../types';
-import { resolveParagraph, visualOrder } from '../../bidi';
+} from '../../vdt.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import { resolveParagraph, visualOrder } from '../../bidi.js';
 
 // Issue #370: a right-to-left document lays its flow out as a left-to-right
 // one and mirrors it onto the sheet (`VDTMirroredFlowFrame`).

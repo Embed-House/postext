@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import type { SandboxAction, SandboxState } from '../context/SandboxContext';
-import { applyTextChanges } from '../book/textChanges';
-import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory';
-import { applyViewerEdit, redoViewerEdit, resetViewerEdits, takeViewerChanges, undoViewerEdit } from './viewerEdits';
+import type { SandboxAction, SandboxState } from '../context/SandboxContext.js';
+import { applyTextChanges } from '../book/textChanges.js';
+import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory.js';
+import { applyViewerEdit, redoViewerEdit, resetViewerEdits, takeViewerChanges, undoViewerEdit } from './viewerEdits.js';
 
 afterEach(() => {
   resetViewerEdits();

@@ -7,21 +7,21 @@
  * flow. A citation the book has no reference for prints as written.
  */
 
-import type { ContentBlock, InlineSpan } from '../parse';
-import type { InlineDirection } from '../parse/types';
-import { isRtlScriptChar } from '../bidi';
-import { resolvedDirection } from './config';
-import { FOOTNOTE_PLACEHOLDER } from '../parse/inlineFormatting';
-import type { Dimension } from '../types';
-import type { ResolvedConfig } from '../vdt';
-import type { ResolvedParagraphStyleConfig } from '../types';
-import { blockResourceIds, type CitationContext } from '../citations/context';
-import { citationEngine } from '../citations/registry';
-import type { BibliographyEntryOutput, CitationClusterInput, CitationProcessor, CslItem, CslName } from '../citations/types';
-import { isEtAlName } from '../citations/bibtex';
-import { htmlToSpans, decodeEntities } from '../citations/html';
-import { languageOf, stringsFor } from '../locale';
-import { affixRichText, affixSpans } from '../parse/citations';
+import type { ContentBlock, InlineSpan } from '../parse/index.js';
+import type { InlineDirection } from '../parse/types.js';
+import { isRtlScriptChar } from '../bidi.js';
+import { resolvedDirection } from './config.js';
+import { FOOTNOTE_PLACEHOLDER } from '../parse/inlineFormatting.js';
+import type { Dimension } from '../types.js';
+import type { ResolvedConfig } from '../vdt.js';
+import type { ResolvedParagraphStyleConfig } from '../types.js';
+import { blockResourceIds, type CitationContext } from '../citations/context.js';
+import { citationEngine } from '../citations/registry.js';
+import type { BibliographyEntryOutput, CitationClusterInput, CitationProcessor, CslItem, CslName } from '../citations/types.js';
+import { isEtAlName } from '../citations/bibtex.js';
+import { htmlToSpans, decodeEntities } from '../citations/html.js';
+import { languageOf, stringsFor } from '../locale.js';
+import { affixRichText, affixSpans } from '../parse/citations.js';
 
 /** Id of the paragraph style the bibliography is set in. */
 export const BIBLIOGRAPHY_STYLE_ID = '__postext-bibliography';

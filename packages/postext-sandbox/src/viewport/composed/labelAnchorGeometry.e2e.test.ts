@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache, flowRectToPage, frameOfBlock } from 'postext';
 import type { PostextConfig, Resource, VDTDocument } from 'postext';
-import { applyAffine, cornersBounds, insideCorners, labelAt, labelsOnPage, pictureToSheet, sheetToPicture, type PageLabel } from './labelAnchorGeometry';
-import { withAnchorMoved } from './labelAnchorEditor';
+import { applyAffine, cornersBounds, insideCorners, labelAt, labelsOnPage, pictureToSheet, sheetToPicture, type PageLabel } from './labelAnchorGeometry.js';
+import { withAnchorMoved } from './labelAnchorEditor.js';
 
 // #866: the drawn labels of a page located on the sheet, and a point of the
 // sheet taken back to a point of the picture (where a dragged anchor goes).

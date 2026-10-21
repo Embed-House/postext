@@ -1,6 +1,6 @@
 'use client';
 
-import { useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
 import { dimensionsEqual, colorsEqual } from 'postext';
 import type {
   UnorderedListLevelConfig,
@@ -16,8 +16,8 @@ import {
   NumberInput,
   TextInput,
   ToggleSwitch,
-} from '../../../controls';
-import { TEXT_SIZE_UNITS, INDENT_UNITS, OFFSET_UNITS } from './units';
+} from '../../../controls/index.js';
+import { TEXT_SIZE_UNITS, INDENT_UNITS, OFFSET_UNITS } from './units.js';
 
 export function UnorderedListLevelSection({
   level,

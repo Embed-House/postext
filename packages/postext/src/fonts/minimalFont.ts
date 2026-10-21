@@ -4,7 +4,7 @@
 // no text face has, so a character measured in a face with the probe
 // behind it comes out at that advance exactly when the face lacks it.
 
-import type { CodePointRanges } from './cmap';
+import type { CodePointRanges } from './cmap.js';
 
 const UNITS_PER_EM = 1000;
 

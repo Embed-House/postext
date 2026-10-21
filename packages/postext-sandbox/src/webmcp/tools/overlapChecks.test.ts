@@ -8,9 +8,9 @@
 import { readFileSync as readFile } from 'node:fs';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { PostextConfig, Resource } from 'postext';
-import { setActiveHistory } from '../../history/sandboxHistory';
-import { resetViewerEdits } from '../../editor/viewerEdits';
-import { chapter, harness } from './testHarness';
+import { setActiveHistory } from '../../history/sandboxHistory.js';
+import { resetViewerEdits } from '../../editor/viewerEdits.js';
+import { chapter, harness } from './testHarness.js';
 
 const readFileSync = readFile as (path: URL, encoding: 'utf8') => string;
 const DIR = new URL('../../../../postext/src/__tests__/composed/fixtures/overlap/', import.meta.url);

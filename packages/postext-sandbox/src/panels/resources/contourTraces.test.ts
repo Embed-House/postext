@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { Resource } from 'postext';
-import { configWrapsContours, resourcesToTrace } from './contourTraces';
-import { wrapChoiceOf } from '../../sidebar/settings/textWrap';
+import { configWrapsContours, resourcesToTrace } from './contourTraces.js';
+import { wrapChoiceOf } from '../../sidebar/settings/textWrap.js';
 
 const bitmap = (id: string, extra: Partial<Resource> = {}): Resource => ({
   id, typeId: 'figure', kind: 'bitmap', createdAt: 0, updatedAt: 0,

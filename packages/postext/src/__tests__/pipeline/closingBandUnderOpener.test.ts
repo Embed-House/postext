@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, VDTBlock, VDTColumn, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, VDTBlock, VDTColumn, VDTDocument } from '../../index.js';
 
 // A closing band under a page-span opener (#709): the headline right under
 // the opener, in the opener's own column, is that column's head. It takes no

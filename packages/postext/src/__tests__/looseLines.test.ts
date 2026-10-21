@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import * as postext from '../index';
-import type { VDTDocument } from '../vdt';
+import * as postext from '../index.js';
+import type { VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

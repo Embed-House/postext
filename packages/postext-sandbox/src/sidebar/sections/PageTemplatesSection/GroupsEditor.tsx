@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import type { AnchorEdge, Dimension, ElementPlacement, FrameGroupConfig } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { DimensionInput, FieldRow, ItemCard, ItemCardListActions, moveCardState, NumberInput, openCard, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../../ui';
-import { addGroup, moveMember, namesInUse, removeGroup, renameFrame, slugify, templateAt, uniqueName, updateGroup, type TemplateScope } from '../../../templates/templateEdits';
-import { modulesGroupParents, moduleTemplates } from '../../../templates/moduleEdits';
-import { resolveAt, usePageTemplates } from './model';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { DimensionInput, FieldRow, ItemCard, ItemCardListActions, moveCardState, NumberInput, openCard, SelectInput, TextControl, ToggleSwitch } from '../../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../../ui/index.js';
+import { addGroup, moveMember, namesInUse, removeGroup, renameFrame, slugify, templateAt, uniqueName, updateGroup, type TemplateScope } from '../../../templates/templateEdits.js';
+import { modulesGroupParents, moduleTemplates } from '../../../templates/moduleEdits.js';
+import { resolveAt, usePageTemplates } from './model.js';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
 

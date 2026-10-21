@@ -3,7 +3,7 @@ import type {
   ContentInConfigCheckConfig,
   ResolvedChecksConfig,
   ResolvedContentInConfigCheckConfig,
-} from '../types';
+} from '../types.js';
 
 export const DEFAULT_CONTENT_IN_CONFIG_CHECK: ResolvedContentInConfigCheckConfig = {
   enabled: true,

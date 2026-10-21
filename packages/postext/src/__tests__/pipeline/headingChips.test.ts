@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { parseMarkdown } from '../../parse';
-import { createMeasurementCache } from '../../measure';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig, VDTDocument } from '../../index';
-import { CHIP_PLACEHOLDER, withoutChips } from '../../parse/inlineFormatting';
-import { blockLinesText } from '../../pipeline/placeholders';
-import { defaultOpenerTitle } from '../../pipeline/headerFooter';
+import { buildDocument } from '../../pipeline/index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
+import { CHIP_PLACEHOLDER, withoutChips } from '../../parse/inlineFormatting.js';
+import { blockLinesText } from '../../pipeline/placeholders.js';
+import { defaultOpenerTitle } from '../../pipeline/headerFooter.js';
 
 // #1100: `:chip[…]{style}` in a heading, as in a paragraph.
 

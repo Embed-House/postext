@@ -5,7 +5,7 @@
 
 import { strToU8, unzipSync, zipSync } from 'fflate';
 import { describe, expect, it } from 'vitest';
-import { openBundleZip, readBundleZipManifest } from './zip';
+import { openBundleZip, readBundleZipManifest } from './zip.js';
 
 const manifest = { version: 2, id: 'hlm', name: '紅樓夢', locale: 'zh-Hant', locales: ['zh-Hant', 'zh-Hans', 'en'] };
 const chapter = strToU8('# 第一回\n\n此開卷第一回也。作者自云：因曾歷過一番夢幻之後，故將真事隱去。'.repeat(200));

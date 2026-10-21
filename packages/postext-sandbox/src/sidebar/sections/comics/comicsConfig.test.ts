@@ -13,7 +13,7 @@ import {
   setNestedField,
   slugifyStyleId,
   upsertById,
-} from './comicsConfig';
+} from './comicsConfig.js';
 
 const MM = (value: number) => ({ value, unit: 'mm' as const });
 

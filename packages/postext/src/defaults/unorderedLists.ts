@@ -1,5 +1,5 @@
-import type { ResolvedBodyTextConfig, UnorderedListsConfig, UnorderedListLevelConfig, ResolvedUnorderedListsConfig, ResolvedUnorderedListLevelConfig, ColorValue } from '../types';
-import { dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared';
+import type { ResolvedBodyTextConfig, UnorderedListsConfig, UnorderedListLevelConfig, ResolvedUnorderedListsConfig, ResolvedUnorderedListLevelConfig, ColorValue } from '../types.js';
+import { dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared.js';
 import {
   DEFAULT_LIST_BULLET_CHAR,
   DEFAULT_LIST_BULLET_FONT_SIZE,
@@ -14,7 +14,7 @@ import {
   DEFAULT_TASK_CHECKBOX_CHAR,
   DEFAULT_TASK_CHECKED_CHAR,
   DEFAULT_TASK_COMPLETED_STRIKETHROUGH,
-} from './lists-shared';
+} from './lists-shared.js';
 
 const DEFAULT_UNORDERED_LIST_FONT_WEIGHT = 700;
 const DEFAULT_UNORDERED_LIST_COLOR: ColorValue = { ...DEFAULT_MAIN_COLOR };

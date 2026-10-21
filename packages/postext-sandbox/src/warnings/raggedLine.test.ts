@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { computeWarnings } from './compute';
-import { warningCategory } from './categories';
-import { detailFor, titleFor } from '../sidebar/WarningsPanel';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
+import { computeWarnings } from './compute.js';
+import { warningCategory } from './categories.js';
+import { detailFor, titleFor } from '../sidebar/WarningsPanel.js';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
 
 // #732: a justified line the engine sets ragged (its word spaces would
 // stretch past 3×) is a row of the warnings panel, beside the loose lines,

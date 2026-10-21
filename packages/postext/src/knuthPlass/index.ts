@@ -13,9 +13,9 @@ export type {
   KPItem,
   KPOptions,
   RichTokenMeta,
-} from './types';
+} from './types.js';
 
-export { computeBreakpoints, computeBreakpointsTs } from './breakpoints';
-export { initLineBreaker, useWasmLineBreaker } from './wasm/engine';
-export { pretextSegmentsToItems, reconstructPretextLines } from './pretextAdapter';
-export { richTokensToItems, reconstructRichLines } from './richAdapter';
+export { computeBreakpoints, computeBreakpointsTs } from './breakpoints.js';
+export { initLineBreaker, useWasmLineBreaker } from './wasm/engine.js';
+export { pretextSegmentsToItems, reconstructPretextLines } from './pretextAdapter.js';
+export { richTokensToItems, reconstructRichLines } from './richAdapter.js';

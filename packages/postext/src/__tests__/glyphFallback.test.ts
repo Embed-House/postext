@@ -1,11 +1,11 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { buildDocument } from '../pipeline/build';
-import { formatWarning } from '../pipeline/contentWarnings';
-import { rangesHave, sfntCodePointRanges, type CodePointRanges } from '../fonts/cmap';
-import { minimalFont } from '../fonts/minimalFont';
-import { forgetFontCoverage, glyphFallbacks, registerFontCoverage, GLYPH_FALLBACK_LISTED } from '../fonts/glyphFallback';
-import { fontStringFamilies } from '../measure/fontString';
-import type { ContentWarning, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/build.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import { rangesHave, sfntCodePointRanges, type CodePointRanges } from '../fonts/cmap.js';
+import { minimalFont } from '../fonts/minimalFont.js';
+import { forgetFontCoverage, glyphFallbacks, registerFontCoverage, GLYPH_FALLBACK_LISTED } from '../fonts/glyphFallback.js';
+import { fontStringFamilies } from '../measure/fontString.js';
+import type { ContentWarning, VDTDocument } from '../vdt.js';
 
 // #1105: a character the text sets in a face that has no glyph for it was
 // taken from another face without a word. The build now says so, once per

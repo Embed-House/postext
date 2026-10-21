@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   DEFAULT_CITATIONS_CONFIG,
   citationLocale,
@@ -19,7 +19,7 @@ import {
   type ResolvedConfig,
 } from 'postext';
 import { LOCALE_TAGS, STYLE_CATALOG } from 'postext-citeproc/catalog';
-import { CollapsibleSection, DimensionInput, FieldGroup, NestedGroup, SelectInput, TextInput, ToggleSwitch } from '../../controls';
+import { CollapsibleSection, DimensionInput, FieldGroup, NestedGroup, SelectInput, TextInput, ToggleSwitch } from '../../controls/index.js';
 
 // The preview formats on the main thread: the engine is loaded the first
 // time the section opens (the layout worker loads its own).

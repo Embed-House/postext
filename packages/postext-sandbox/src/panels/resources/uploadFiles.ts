@@ -1,8 +1,8 @@
 import { bitmapInfo, type Resource } from 'postext';
-import { putBlob } from '../../storage/blobStore';
-import { slugifyFilename, uniqueSlug } from './slugify';
-import { isValidSvg, svgIntrinsicSize } from './svgIntrinsic';
-import { defaultPoster, readVideoMetadata, videoFormatOf } from './videoMedia';
+import { putBlob } from '../../storage/blobStore.js';
+import { slugifyFilename, uniqueSlug } from './slugify.js';
+import { isValidSvg, svgIntrinsicSize } from './svgIntrinsic.js';
+import { defaultPoster, readVideoMetadata, videoFormatOf } from './videoMedia.js';
 
 /** Bitmap MIME types we accept for upload. */
 const IMAGE_FORMATS: Record<string, 'png' | 'jpeg' | 'webp' | 'gif'> = {

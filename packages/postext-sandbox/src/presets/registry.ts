@@ -1,6 +1,6 @@
 import { matchContentLocale } from 'postext';
-import { createRemotePreset, fetchPresetIndexEntries } from './remote';
-import type { PresetProvider, PresetSourceSpec } from './types';
+import { createRemotePreset, fetchPresetIndexEntries } from './remote.js';
+import type { PresetProvider, PresetSourceSpec } from './types.js';
 
 export interface ListPresetsOptions {
   sources: PresetSourceSpec[];

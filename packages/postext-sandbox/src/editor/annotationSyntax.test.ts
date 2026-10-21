@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { annotationRanges } from './annotationSyntax';
+import { annotationRanges } from './annotationSyntax.js';
 
 describe('annotation highlighting', () => {
   it('marks the brackets, the attributes and the text of each annotation', () => {

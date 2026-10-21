@@ -6,9 +6,9 @@ import type {
   ResolvedCaptionStyleConfig,
   ResolvedCaptionNoteStyleConfig,
   ResolvedBodyTextConfig,
-} from '../types';
-import { DEFAULT_MAIN_COLOR, colorsEqual, dimensionsEqual, resolveColor, startEndAsLeftRight } from './shared';
-import { isJapaneseLanguage } from '../locale';
+} from '../types.js';
+import { DEFAULT_MAIN_COLOR, colorsEqual, dimensionsEqual, resolveColor, startEndAsLeftRight } from './shared.js';
+import { isJapaneseLanguage } from '../locale.js';
 
 /** Ratio of the note size to the caption size when `note.fontSize` is unset. */
 const NOTE_SIZE_RATIO = 0.85;

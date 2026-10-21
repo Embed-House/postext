@@ -1,11 +1,11 @@
 'use client';
 
-import { useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
 import type { AnchorEdge, DesignElement, Dimension, ElementPlacement, HAlign, PageRoleFilter } from 'postext';
-import { DimensionInput, SelectInput } from '../../../controls';
-import { elementKindLabel } from './elementKind';
-import { SidePointFields } from './sidePoint';
-import type { FrameTarget } from './sizeTo';
+import { DimensionInput, SelectInput } from '../../../controls/index.js';
+import { elementKindLabel } from './elementKind.js';
+import { SidePointFields } from './sidePoint.js';
+import type { FrameTarget } from './sizeTo.js';
 import {
   type SlotKind,
   CONTAINER_EDGES,
@@ -22,7 +22,7 @@ import {
   applyOffsetY,
   isElementAnchor,
   isPageFrameAnchor,
-} from './placementAdapter';
+} from './placementAdapter.js';
 
 const ZERO: Dimension = { value: 0, unit: 'pt' };
 

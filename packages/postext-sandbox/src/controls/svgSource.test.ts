@@ -8,7 +8,7 @@ import {
   svgSourceRangeToBoxes,
   svgTextRangeAt,
   type SvgTextIndex,
-} from './svgSource';
+} from './svgSource.js';
 
 const slices = (src: string) => scanSvgTextNodeRanges(src).map((r) => src.slice(r.start, r.end));
 

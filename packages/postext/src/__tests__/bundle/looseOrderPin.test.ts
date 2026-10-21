@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyLooseOrder } from '../../bundle/configVersion';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { migrateBundleConfig, migrateConfig, pinLegacyLooseOrder } from '../../bundle/configVersion.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #707: a configuration stored before column balancing tried the other
 // levers before a heading's third line (configVersion 11 or older, postext

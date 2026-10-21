@@ -1,5 +1,5 @@
-import type { BitmapResolution, Dimension, FloatShrinkConfig, FloatShrinkMode, LayoutConfig, LayoutType, ResolvedLayoutConfig, ResolvedTextWrapConfig, TextWrapConfig } from '../types';
-import { dimensionsEqual, colorsEqual, compositionRuleOf } from './shared';
+import type { BitmapResolution, Dimension, FloatShrinkConfig, FloatShrinkMode, LayoutConfig, LayoutType, ResolvedLayoutConfig, ResolvedTextWrapConfig, TextWrapConfig } from '../types.js';
+import { dimensionsEqual, colorsEqual, compositionRuleOf } from './shared.js';
 
 export const DEFAULT_COLUMN_RULE = {
   enabled: false,

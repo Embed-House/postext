@@ -1,6 +1,6 @@
-import type { Dimension } from '../types';
-import type { ComicPageSource } from '../comics/types';
-import type { FigureLabelNode, SourceRange } from '../composed/types';
+import type { Dimension } from '../types.js';
+import type { ComicPageSource } from '../comics/types.js';
+import type { FigureLabelNode, SourceRange } from '../composed/types.js';
 
 export type ContentBlockType =
   | 'heading'
@@ -255,10 +255,10 @@ export interface InlineTab {
   count?: number;
   /** The one-off stop of `:tab{at=…}`: the tab goes there, whatever the
    *  paragraph's own stops. */
-  stop?: import('../types').TabStop;
+  stop?: import('../types.js').TabStop;
   /** {@link stop} in px, resolved by the pipeline against the paragraph's
    *  size (see `resolveTabStop`). */
-  px?: import('../measure/tabs').TabStopPx;
+  px?: import('../measure/tabs.js').TabStopPx;
 }
 
 export interface InlineLink {
@@ -364,7 +364,7 @@ export interface InlineSpan {
   math?: MathMeta;
   /** Resolved math render — populated by the pipeline before measurement
    *  so the parser remains free of MathJax dependencies. */
-  mathRender?: import('../math/types').MathRender;
+  mathRender?: import('../math/types.js').MathRender;
   /** Present when this span is an inline `:swatch{color="…"}` — a small
    *  filled square set on the baseline, the key of a colour legend (a
    *  table note explaining its cell fills). The `text` is a single
@@ -418,7 +418,7 @@ export interface InlineSpan {
    *  the `text` is a single placeholder char until the pipeline formats the
    *  citation (or prints `raw` back when it cannot). */
   citation?: {
-    cluster: import('../citations/types').CitationClusterInput;
+    cluster: import('../citations/types.js').CitationClusterInput;
     /** The citation as written. */
     raw: string;
   };

@@ -4,16 +4,16 @@ import { useMemo, type ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { isCjkLanguage, resolveBodyTextConfig, resolveColorValue, resolveLayoutConfig, resolvePageConfig } from 'postext';
 import type { Dimension } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { formatNumber, toPt } from '../../controls/units';
-import { cn } from '../../ui';
-import type { SettingsGroupId } from '../sections/registry';
-import { pageDrawingConfig } from '../sections/cjkGridReadout';
-import { documentLocaleLabel } from '../sections/BodyTextSection/constants';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
-import { documentComicDirection, documentDirection, documentLanguage } from '../../context/documentDirection';
-import { PagePreview } from './PagePreview';
-import { columnCountUsed } from './multipleColumns';
+import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { formatNumber, toPt } from '../../controls/units.js';
+import { cn } from '../../ui/index.js';
+import type { SettingsGroupId } from '../sections/registry.js';
+import { pageDrawingConfig } from '../sections/cjkGridReadout.js';
+import { documentLocaleLabel } from '../sections/BodyTextSection/constants.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
+import { documentComicDirection, documentDirection, documentLanguage } from '../../context/documentDirection.js';
+import { PagePreview } from './PagePreview.js';
+import { columnCountUsed } from './multipleColumns.js';
 
 interface DesignSummaryProps {
   onOpenGroup: (id: SettingsGroupId) => void;

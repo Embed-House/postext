@@ -1,9 +1,9 @@
-import type { InlineSpan } from './types';
-import { MATH_PLACEHOLDER } from './inlineMath';
-import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, FOOTNOTE_PLACEHOLDER, MARK_OPENER, REF_PLACEHOLDER, SMALLCAPS_OPENER, SWATCH_PLACEHOLDER, TAB_PLACEHOLDER, readMarkAt } from './inlineFormatting';
-import { sliceSpan } from './links';
-import { orientationOpenerAt } from './orientationMarks';
-import { annotationSourceSkips } from './annotations';
+import type { InlineSpan } from './types.js';
+import { MATH_PLACEHOLDER } from './inlineMath.js';
+import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, FOOTNOTE_PLACEHOLDER, MARK_OPENER, REF_PLACEHOLDER, SMALLCAPS_OPENER, SWATCH_PLACEHOLDER, TAB_PLACEHOLDER, readMarkAt } from './inlineFormatting.js';
+import { sliceSpan } from './links.js';
+import { orientationOpenerAt } from './orientationMarks.js';
+import { annotationSourceSkips } from './annotations.js';
 
 /** A `:smallcaps[` at `r` that the parser took as markup: its closing `]`
  *  comes later on the same line (an unclosed one stays literal text). */

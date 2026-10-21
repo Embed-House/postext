@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { HTML_TEXT_RESET, renderToHtml, renderToHtmlIndexed } from '../html-backend';
-import * as postext from '../index';
+import { buildDocument } from '../pipeline/index.js';
+import { HTML_TEXT_RESET, renderToHtml, renderToHtmlIndexed } from '../html-backend.js';
+import * as postext from '../index.js';
 
 // EF-96: the HTML output sets every line at the widths the engine measured,
 // so it must not inherit the host page's text properties (letter-spacing,

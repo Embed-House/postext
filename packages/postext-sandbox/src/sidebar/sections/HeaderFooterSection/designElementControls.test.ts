@@ -5,10 +5,10 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { resolveDesignSlot, type DesignElement } from 'postext';
-import { SandboxStoreContext } from '../../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../../types/defaultLabels';
-import { SlotEditor } from './SlotEditor';
-import type { SlotKind } from './placementAdapter';
+import { SandboxStoreContext } from '../../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../../types/defaultLabels.js';
+import { SlotEditor } from './SlotEditor.js';
+import type { SlotKind } from './placementAdapter.js';
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
 

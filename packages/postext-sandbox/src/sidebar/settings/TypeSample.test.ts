@@ -6,9 +6,9 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { resolveBodyTextConfig, type PostextConfig } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { TypeSample } from './TypeSample';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { TypeSample } from './TypeSample.js';
 
 function render(config: PostextConfig, lang: string): string {
   const state = { config, resources: [], labels: DEFAULT_LABELS, locale: 'en' };

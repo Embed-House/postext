@@ -8,7 +8,7 @@
  * written for this fixture and the country is invented. The picture is a
  * flat placeholder of the map's proportions (`fixtures/page8/foto-dinero.png`).
  */
-import type { PostextConfig, Resource } from '../../../types';
+import type { PostextConfig, Resource } from '../../../types.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });

@@ -5,11 +5,11 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { allowedPlaceholdersFor } from 'postext';
-import { SandboxStoreContext } from '../../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../../types/defaultLabels';
-import type { SandboxLabels } from '../../../types/labels';
-import { PlaceholderPicker } from './PlaceholderPicker';
-import type { SlotKind } from './placementAdapter';
+import { SandboxStoreContext } from '../../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../../types/defaultLabels.js';
+import type { SandboxLabels } from '../../../types/labels.js';
+import { PlaceholderPicker } from './PlaceholderPicker.js';
+import type { SlotKind } from './placementAdapter.js';
 
 // Loaded through a dynamic import (the package has no Node typings).
 const spanishMessages = ((await import(/* @vite-ignore */ new URL('../../../../../../apps/web/messages/es.json', import.meta.url).href)) as {

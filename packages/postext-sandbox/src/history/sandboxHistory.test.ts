@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { EditorState, Transaction } from '@codemirror/state';
 import { history as cmHistory, historyField, isolateHistory, undo as cmUndo, redo as cmRedo } from '@codemirror/commands';
-import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext';
-import { minimalChange } from '../book/textChanges';
-import { applyViewerEdit, resetViewerEdits } from '../editor/viewerEdits';
-import { state as baseState } from '../webmcp/tools/testHarness';
-import { COALESCE_MS, createSandboxHistory, setActiveHistory, type SandboxHistory } from './sandboxHistory';
+import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext.js';
+import { minimalChange } from '../book/textChanges.js';
+import { applyViewerEdit, resetViewerEdits } from '../editor/viewerEdits.js';
+import { state as baseState } from '../webmcp/tools/testHarness.js';
+import { COALESCE_MS, createSandboxHistory, setActiveHistory, type SandboxHistory } from './sandboxHistory.js';
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
 

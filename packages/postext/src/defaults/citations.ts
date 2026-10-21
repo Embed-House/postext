@@ -1,5 +1,5 @@
-import type { CitationsConfig, ResolvedCitationsConfig } from '../types';
-import { dimensionsEqual } from './shared';
+import type { CitationsConfig, ResolvedCitationsConfig } from '../types.js';
+import { dimensionsEqual } from './shared.js';
 
 export const DEFAULT_CITATIONS_CONFIG: ResolvedCitationsConfig = {
   style: 'apa',

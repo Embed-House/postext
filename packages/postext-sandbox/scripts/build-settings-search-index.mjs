@@ -45,7 +45,8 @@ function labelKeys() {
 }
 
 function resolveModule(fromFile, spec) {
-  const base = resolve(dirname(fromFile), spec);
+  // Sources import `./foo.js` for `foo.ts` / `foo.tsx` (#1158).
+  const base = resolve(dirname(fromFile), spec.replace(/\.js$/, ''));
   for (const candidate of [base, `${base}.tsx`, `${base}.ts`, join(base, 'index.tsx'), join(base, 'index.ts')]) {
     if (existsSync(candidate) && /\.(tsx?)$/.test(candidate)) return candidate;
   }
@@ -120,8 +121,8 @@ export function buildIndexSource() {
     '// Run `node scripts/build-settings-search-index.mjs` after changing the',
     '// labels a settings section uses.',
     '',
-    "import type { SandboxLabels } from '../../types/labels';",
-    "import type { SettingsSectionId } from '../sections/registry';",
+    "import type { SandboxLabels } from '../../types/labels.js';",
+    "import type { SettingsSectionId } from '../sections/registry.js';",
     '',
     "export type SearchWordSource = 'color' | 'dimension' | 'font' | 'resources' | 'citationStyles' | 'outputProfiles';",
     '',

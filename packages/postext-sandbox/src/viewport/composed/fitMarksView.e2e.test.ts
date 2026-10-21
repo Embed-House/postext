@@ -7,9 +7,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache } from 'postext';
 import type { PostextConfig, Resource, VDTDocument, VDTFrame, VDTPage } from 'postext';
-import { configKeyOf } from '../../book/layoutKeys';
-import { fitMarksFor } from './fitMarks';
-import { fitMarksChoiceNow, fitMarksViewOf, nextFitMarksMode, resetFitMarksView, setFitMarksChoice } from './fitMarksView';
+import { configKeyOf } from '../../book/layoutKeys.js';
+import { fitMarksFor } from './fitMarks.js';
+import { fitMarksChoiceNow, fitMarksViewOf, nextFitMarksMode, resetFitMarksView, setFitMarksChoice } from './fitMarksView.js';
 
 (globalThis as unknown as { OffscreenCanvas: unknown }).OffscreenCanvas = class {
   getContext() {

@@ -1,6 +1,6 @@
-import type { PendingEditorFocus } from '../../context/SandboxContext';
-import type { ComposedBook } from '../../book/types';
-import { fromBookOffset, segmentForChapter } from '../../book/compose';
+import type { PendingEditorFocus } from '../../context/SandboxContext.js';
+import type { ComposedBook } from '../../book/types.js';
+import { fromBookOffset, segmentForChapter } from '../../book/compose.js';
 
 /** Map a document-offset selection to a chapter-local focus request. A
  *  drag whose head lands in another chapter is clamped to the anchor's

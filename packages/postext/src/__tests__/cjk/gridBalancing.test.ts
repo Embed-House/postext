@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, balancingOnByDefault } from '../../index';
-import { resolveAllConfig } from '../../pipeline/config';
-import { cjkGridGeometry } from '../../pipeline/cjkGrid';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
+import { buildDocument, balancingOnByDefault } from '../../index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { cjkGridGeometry } from '../../pipeline/cjkGrid.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
 
 // CJK characters one em wide, anything else half.
 const adv = (s: string, size: number): number => {

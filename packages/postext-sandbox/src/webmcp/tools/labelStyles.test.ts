@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { leafEntries } from '../configPaths';
-import { chapter, harness } from './testHarness';
+import { leafEntries } from '../configPaths.js';
+import { chapter, harness } from './testHarness.js';
 
 // The label styles are configuration (#969): the Design panel's section
 // writes `labelStyles`, and the sandbox_* config tools read and write the

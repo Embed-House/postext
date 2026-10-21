@@ -1,11 +1,11 @@
 import { strToU8, zipSync } from 'fflate';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { DuplicateSource, ProjectSummary, SandboxState } from '../../context/SandboxContext';
-import type { ProjectActions } from '../../context/projectActions';
-import { resetViewerEdits } from '../../editor/viewerEdits';
-import { runTool } from '../modelContext';
-import { answerTools } from './library';
-import { harness } from './testHarness';
+import type { DuplicateSource, ProjectSummary, SandboxState } from '../../context/SandboxContext.js';
+import type { ProjectActions } from '../../context/projectActions.js';
+import { resetViewerEdits } from '../../editor/viewerEdits.js';
+import { runTool } from '../modelContext.js';
+import { answerTools } from './library.js';
+import { harness } from './testHarness.js';
 
 afterEach(() => resetViewerEdits());
 

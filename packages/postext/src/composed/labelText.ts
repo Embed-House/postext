@@ -5,7 +5,7 @@
  * text followed by its labels; the reflowable EPUB lists them after the
  * picture.
  */
-import type { VDTFigureLabel } from '../vdt';
+import type { VDTFigureLabel } from '../vdt.js';
 
 /** A label's text read as one line (#1045): its forced line breaks (a
  *  `\\` that ends a word, `Pico Albar \\ 2565 m`) are spaces, as is any

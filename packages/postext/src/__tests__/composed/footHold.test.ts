@@ -7,11 +7,11 @@
  * moves anything, and `frameOverflow` says when it cannot.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PageTemplate } from '../../composed/types';
-import { composedReflowLog } from '../../composed/reflowLog';
-import type { PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import { composedReflowLog } from '../../composed/reflowLog.js';
+import type { PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
 
 class StubCtx {
   font = '';

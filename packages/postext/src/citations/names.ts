@@ -1,4 +1,4 @@
-import type { CslItem } from './types';
+import type { CslItem } from './types.js';
 
 /**
  * The family names and the `literal` names of every person of `items`

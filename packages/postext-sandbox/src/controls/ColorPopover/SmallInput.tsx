@@ -1,6 +1,6 @@
 'use client';
 
-import { clamp } from '../color-utils';
+import { clamp } from '../color-utils.js';
 
 export function SmallInput({
   value,

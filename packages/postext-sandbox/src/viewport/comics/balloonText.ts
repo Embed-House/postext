@@ -25,8 +25,8 @@
  */
 
 import type { VDTComicBalloon, VDTDesignTextBlock, VDTPoint } from 'postext';
-import { measureInLanguage } from '../../controls/measureLanguage';
-import { toBalloonFrame } from './balloonDrag';
+import { measureInLanguage } from '../../controls/measureLanguage.js';
+import { toBalloonFrame } from './balloonDrag.js';
 
 /** The advance of a text in a CSS font (px), or null when nothing can
  *  measure it (the characters then share a run's advance evenly). */

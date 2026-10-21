@@ -13,9 +13,9 @@
  * corners where the side changes, each split where the widths meet (the
  * whole corner to a side whose neighbour has no width), as CSS splits it.
  */
-import type { BorderSides, ColorValue, CornerRadius, Dimension } from '../types';
-import type { BoundingBox, VDTDesignBoxStyle, VDTDesignPathBlock, VDTPathCommand } from '../vdt';
-import { createBoundingBox } from '../vdt';
+import type { BorderSides, ColorValue, CornerRadius, Dimension } from '../types.js';
+import type { BoundingBox, VDTDesignBoxStyle, VDTDesignPathBlock, VDTPathCommand } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
 
 export type ShapeSide = 'top' | 'right' | 'bottom' | 'left';
 

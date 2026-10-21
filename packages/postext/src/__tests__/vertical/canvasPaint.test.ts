@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import type { PostextConfig, Dimension } from '../../types';
-import { installSizedStub, stubCharWidth } from './stub';
-import { registerVerticalAlternates, unregisterVerticalAlternates, drawUprightInBox, setVerticalPaint } from '../../canvas-backend/verticalText';
-import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter';
-import { renderToHtml } from '../../html-backend';
-import type { Resource } from '../../types';
-import type { VDTDocument } from '../../vdt';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import type { PostextConfig, Dimension } from '../../types.js';
+import { installSizedStub, stubCharWidth } from './stub.js';
+import { registerVerticalAlternates, unregisterVerticalAlternates, drawUprightInBox, setVerticalPaint } from '../../canvas-backend/verticalText.js';
+import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { Resource } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
 
 installSizedStub();
 

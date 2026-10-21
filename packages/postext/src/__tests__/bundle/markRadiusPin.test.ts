@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyMarkRadius } from '../../bundle/configVersion';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveMarkStylesConfig, stripMarkStylesDefaults } from '../../defaults/markStyles';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { MarkStyleConfig, PostextConfig } from '../../types';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyMarkRadius } from '../../bundle/configVersion.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveMarkStylesConfig, stripMarkStylesDefaults } from '../../defaults/markStyles.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { MarkStyleConfig, PostextConfig } from '../../types.js';
 
 // #1149: a highlight band's ends are square by default, the print norm.
 // Up to postext 1.51 they were rounded at 0.2 em; a configuration stored

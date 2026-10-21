@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTDocument } from 'postext';
-import { designImageFileIdAtPixel, pixelToSourceOffset, sourceToPlainIndex, xForPlainInLine } from './geometry';
+import { designImageFileIdAtPixel, pixelToSourceOffset, sourceToPlainIndex, xForPlainInLine } from './geometry.js';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTSegment = NonNullable<VDTBlock['lines'][number]['segments']>[number];

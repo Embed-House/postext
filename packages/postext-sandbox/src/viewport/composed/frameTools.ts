@@ -12,15 +12,15 @@
 
 import type { Dispatch, MutableRefObject } from 'react';
 import { resolvePageTemplate, type PageTemplateSource, type VDTComicPage, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
-import type { SandboxAction } from '../../context/SandboxContext';
-import type { ComposedBook } from '../../book/types';
-import type { PanelId } from '../../types';
-import { segmentAtOffset } from '../../book/compose';
-import { applyViewerEdit } from '../../editor/viewerEdits';
-import { editModeNow, selectFrame } from '../../editing/editMode';
-import { comicTextHitAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit';
-import { emptyMarkRect } from './frameOverlay';
-import { comicTextCaret, frameClickTarget } from './frameLink';
+import type { SandboxAction } from '../../context/SandboxContext.js';
+import type { ComposedBook } from '../../book/types.js';
+import type { PanelId } from '../../types/index.js';
+import { segmentAtOffset } from '../../book/compose.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
+import { editModeNow, selectFrame } from '../../editing/editMode.js';
+import { comicTextHitAt, frameHitAt, frameIsEmpty, framesTopFirst, pointInFrame, sheetToFlow } from './frameHit.js';
+import { emptyMarkRect } from './frameOverlay.js';
+import { comicTextCaret, frameClickTarget } from './frameLink.js';
 
 export interface FrameToolsDeps {
   docRef: MutableRefObject<VDTDocument | null>;

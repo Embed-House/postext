@@ -1,11 +1,11 @@
 import { cssWeightOrder } from 'postext';
-import { padTrueTypeGlyphs } from './trueTypePadding';
+import { padTrueTypeGlyphs } from './trueTypePadding.js';
 import { PDFDict, PDFName, PDFRef, PDFStream, type PDFDocument, type PDFFont } from 'pdf-lib';
-import { fontKey, parseFontString } from './fontString';
-import { missingGlyphsOf, registerFaceFiles, wantsGlyph, type FaceFiles, type FileDeclaration } from './faceFiles';
-import { registerFontFamily } from './fontFamilies';
-import { verticalTwinRefOf } from './verticalFonts';
-import { shapeInCurrentLanguage } from './shapingLanguage';
+import { fontKey, parseFontString } from './fontString.js';
+import { missingGlyphsOf, registerFaceFiles, wantsGlyph, type FaceFiles, type FileDeclaration } from './faceFiles.js';
+import { registerFontFamily } from './fontFamilies.js';
+import { verticalTwinRefOf } from './verticalFonts.js';
+import { shapeInCurrentLanguage } from './shapingLanguage.js';
 
 /** True when `bytes` starts with the `OTTO` magic identifying a CFF-flavored
  *  OpenType font — the ones pdf-lib cannot subset reliably, so they embed

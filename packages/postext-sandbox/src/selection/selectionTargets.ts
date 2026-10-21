@@ -19,9 +19,9 @@
 
 import type { SourceElement, VDTBlock, VDTDocument, VDTFrame, VDTPage } from 'postext';
 import { extractFrontmatter } from 'postext';
-import { SETTINGS_SECTIONS, type SettingsGroupId, type SettingsSectionId } from '../sidebar/sections/registry';
-import type { EditMode } from '../editing/editMode';
-import { idName, selectedElement, type PageSelection } from './pageSelection';
+import { SETTINGS_SECTIONS, type SettingsGroupId, type SettingsSectionId } from '../sidebar/sections/registry.js';
+import type { EditMode } from '../editing/editMode.js';
+import { idName, selectedElement, type PageSelection } from './pageSelection.js';
 
 /** Where a selection leads. Markdown offsets are the page's document
  *  offsets (its composed book's), as the VDT carries them. */

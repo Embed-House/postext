@@ -45,15 +45,15 @@ import {
   hasLatinEmphasis,
   isKnownUnavailableGoogleFont,
   isRemovedCustomFontFamily,
-} from '../controls/fontLoader';
-import type { ContrastCheck, PreflightCheck, Warning, WarningPayload, WarningSlotKind } from './types';
-import type { PdfFontCheck } from '../controls/pdfFontWarnings';
-import type { PreflightInputs } from '../print/preflightInputs';
-import { contrastMediaFor, documentContrastPairs } from '../contrast/contrastStore';
-import type { ComposedBook } from '../book/types';
-import { fromBookLine, fromBookOffset } from '../book/compose';
-import { frontmatterRange } from '../book/frontmatter';
-import { isComposedCheckKind } from './composedChecks';
+} from '../controls/fontLoader.js';
+import type { ContrastCheck, PreflightCheck, Warning, WarningPayload, WarningSlotKind } from './types.js';
+import type { PdfFontCheck } from '../controls/pdfFontWarnings.js';
+import type { PreflightInputs } from '../print/preflightInputs.js';
+import { contrastMediaFor, documentContrastPairs } from '../contrast/contrastStore.js';
+import type { ComposedBook } from '../book/types.js';
+import { fromBookLine, fromBookOffset } from '../book/compose.js';
+import { frontmatterRange } from '../book/frontmatter.js';
+import { isComposedCheckKind } from './composedChecks.js';
 
 function lineNumberForOffset(markdown: string, offset: number): number {
   if (offset <= 0) return 1;

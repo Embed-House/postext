@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useSandboxSelector } from '../context/SandboxContext';
+import { useSandboxSelector } from '../context/SandboxContext.js';
 
 interface SidebarPanelProps {
   /** Name of the open panel: the region is a landmark only while open. */

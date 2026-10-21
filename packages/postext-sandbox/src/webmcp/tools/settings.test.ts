@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { leafEntries } from '../configPaths';
-import { chapter, harness } from './testHarness';
-import { book, moved, text } from './settingsSweep';
+import { leafEntries } from '../configPaths.js';
+import { chapter, harness } from './testHarness.js';
+import { book, moved, text } from './settingsSweep.js';
 
 // "Change any of the settings": the round trip of every setting with the
 // value it has is in settingsRoundTrip.part*.test.ts (#1118); the setup and

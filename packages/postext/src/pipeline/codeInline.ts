@@ -8,13 +8,13 @@
  * face, as before #624.
  */
 
-import type { ChipBox, ContentBlock, InlineSpan } from '../parse';
-import type { ResolvedInlineCodeStyleConfig } from '../types';
-import type { ResolvedConfig } from '../vdt';
-import { sliceSpan } from '../parse/links';
-import { computeSourceMap } from '../parse/sourceMapping';
-import { setsObject } from '../measure/rich';
-import { dimensionToPx } from '../units';
+import type { ChipBox, ContentBlock, InlineSpan } from '../parse/index.js';
+import type { ResolvedInlineCodeStyleConfig } from '../types.js';
+import type { ResolvedConfig } from '../vdt.js';
+import { sliceSpan } from '../parse/links.js';
+import { computeSourceMap } from '../parse/sourceMapping.js';
+import { setsObject } from '../measure/rich.js';
+import { dimensionToPx } from '../units.js';
 
 /** Style id of an inline code chip: no chip style can name it. */
 export const INLINE_CODE_CHIP_STYLE = '__postext-code';

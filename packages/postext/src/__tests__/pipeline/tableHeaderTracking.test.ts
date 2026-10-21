@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { layoutResourceBlock } from '../../pipeline/resourceLayout';
-import { resolveAllConfig } from '../../pipeline/config';
-import { buildDocument } from '../../pipeline';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { renderToHtml } from '../../html-backend';
-import { renderPageToCanvas } from '../../canvas-backend';
-import { resolveTableStyleConfig, stripTableStyleDefaults } from '../../defaults/tableStyle';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import type { PostextConfig, Resource, TableCell, TableModel } from '../../types';
+import { layoutResourceBlock } from '../../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { buildDocument } from '../../pipeline/index.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { renderToHtml } from '../../html-backend.js';
+import { renderPageToCanvas } from '../../canvas-backend/index.js';
+import { resolveTableStyleConfig, stripTableStyleDefaults } from '../../defaults/tableStyle.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import type { PostextConfig, Resource, TableCell, TableModel } from '../../types.js';
 
 // EF-174: header cells can be tracked (`headerLetterSpacing`) and set in
 // capitals (`headerTextTransform`), as callout titles and headings can.

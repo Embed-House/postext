@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // The word joiner U+2060 glues in Chinese text too, as the docs say it does
 // (found on Nº 086: a line still ended on a sense number ① with a joiner

@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { clearMeasurementCache } from '../measure';
-import { setMeasureLanguage } from '../measure/canvas';
-import { measureRichBlock } from '../measure/rich';
-import { setHyphenationLocale } from '../hyphenate';
-import type { MeasureBlockOptions } from '../measure/types';
-import type { VDTLine, VDTLineSegment } from '../vdt';
+import { clearMeasurementCache } from '../measure/index.js';
+import { setMeasureLanguage } from '../measure/canvas.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { setHyphenationLocale } from '../hyphenate.js';
+import type { MeasureBlockOptions } from '../measure/types.js';
+import type { VDTLine, VDTLineSegment } from '../vdt.js';
 
 // #770, round 2: the two halves of a word broken at a line end. In a
 // paragraph cut word by word a piece of a word was as wide as the word

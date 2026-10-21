@@ -20,16 +20,16 @@
  * of a ruby reading go outside it (as CSS Text Decoration 3 sets them).
  */
 
-import type { ContentWarning, VDTBlock, VDTDocument, VDTLine, VDTLineMark, VDTLineSegment, VDTRuby, VDTSegmentMarks } from './vdt';
-import type { CjkRegion, ResolvedCjkConfig } from './types';
-import { lineInkExtent, lineTrailingTracking } from './lineInk';
-import { measureTextWidth } from './measure/canvas';
-import { graphemesOf } from './measure/graphemes';
-import { isCjkGrapheme } from './measure/cjkClasses';
-import { CENTRAL, ZHUYIN_SIZE_RATIO, isZhuyin } from './measure/cjkAnnotate';
-import { fontEm } from './measure/vertical';
-import { latinReadingLift } from './measure/rubyLift';
-import { verticalRuns } from './writingMode';
+import type { ContentWarning, VDTBlock, VDTDocument, VDTLine, VDTLineMark, VDTLineSegment, VDTRuby, VDTSegmentMarks } from './vdt.js';
+import type { CjkRegion, ResolvedCjkConfig } from './types.js';
+import { lineInkExtent, lineTrailingTracking } from './lineInk.js';
+import { measureTextWidth } from './measure/canvas.js';
+import { graphemesOf } from './measure/graphemes.js';
+import { isCjkGrapheme } from './measure/cjkClasses.js';
+import { CENTRAL, ZHUYIN_SIZE_RATIO, isZhuyin } from './measure/cjkAnnotate.js';
+import { fontEm } from './measure/vertical.js';
+import { latinReadingLift } from './measure/rubyLift.js';
+import { verticalRuns } from './writingMode.js';
 
 /** What a block contributes to its lines' painting. */
 type BlockLike = Pick<VDTBlock, 'bbox' | 'textAlign' | 'letterSpacing' | 'fontString' | 'boldFontString' | 'italicFontString' | 'boldItalicFontString'>;

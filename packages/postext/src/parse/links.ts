@@ -2,7 +2,7 @@
 // passes that cut a span's text, so every piece keeps its share of the
 // links with offsets rebased to it.
 
-import type { InlineLink, InlineSpan } from './types';
+import type { InlineLink, InlineSpan } from './types.js';
 
 /** The links of `[start, end)` of a span's text, rebased to that slice —
  *  spread into a span cut from it. Empty when none falls inside. */

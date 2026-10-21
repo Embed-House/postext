@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache, type DesignConnectorElement, type LabelStyle, type PostextConfig, type Resource, type VDTDocument } from 'postext';
-import { applyTextChanges } from '../book/textChanges';
-import { setLabelLeader } from '../editor/labelAttrs';
-import { labelsInChapters } from '../panels/resources/figureLabels';
-import { applyMarks, marksOf, withLabelAway, withLabelFields, withLeader, withPoint } from '../panels/resources/pictureMarks';
-import { withLeaderLook } from '../sidebar/sections/LabelStylesSection';
-import { frameAnchorsOnPage, labelsOnPage } from '../viewport/composed/labelAnchorGeometry';
-import { pointersOf, setPointer } from './pointerEdits';
-import { connectorHandles } from './connectorHandles';
-import { updateConnectorEnd } from './connectorEdits';
-import { MAP_NOTES_CONFIG, MAP_NOTES_MARKDOWN, MAP_NOTES_RESOURCES } from './mapNotes.fixture';
+import { applyTextChanges } from '../book/textChanges.js';
+import { setLabelLeader } from '../editor/labelAttrs.js';
+import { labelsInChapters } from '../panels/resources/figureLabels.js';
+import { applyMarks, marksOf, withLabelAway, withLabelFields, withLeader, withPoint } from '../panels/resources/pictureMarks.js';
+import { withLeaderLook } from '../sidebar/sections/LabelStylesSection.js';
+import { frameAnchorsOnPage, labelsOnPage } from '../viewport/composed/labelAnchorGeometry.js';
+import { pointersOf, setPointer } from './pointerEdits.js';
+import { connectorHandles } from './connectorHandles.js';
+import { updateConnectorEnd } from './connectorEdits.js';
+import { MAP_NOTES_CONFIG, MAP_NOTES_MARKDOWN, MAP_NOTES_RESOURCES } from './mapNotes.fixture.js';
 
 // #1064, done when: a "parts of a map" page with its pointers and its key
 // is built in the Sandbox without writing JSON. Each step is the edit a

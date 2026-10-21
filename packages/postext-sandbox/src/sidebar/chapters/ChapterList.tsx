@@ -3,16 +3,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDown, ArrowUp, GripVertical, MoreHorizontal, Pencil, Plus, Scissors, Trash2, Merge } from 'lucide-react';
 import { isCjkLanguage } from 'postext';
-import { useBookContent, useBookPlan, useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { h1Count, newChapter, wordCount } from '../../book/chapterOps';
-import { chapterPageLabels } from '../../book/pagination';
-import { chapterMenuEntries, partLabel } from '../../book/chapterMenu';
-import type { Chapter, ChapterPages } from '../../book/types';
-import { generateChapterId } from '../../storage/projects';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
-import { formatNumber } from '../../controls/units';
-import { ConfirmPopover, IconButton, ListRow, Menu, MenuItem, MenuSeparator, cn } from '../../ui';
-import { useRowDrag, type RowDragHandleProps } from './useRowDrag';
+import { useBookContent, useBookPlan, useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { h1Count, newChapter, wordCount } from '../../book/chapterOps.js';
+import { chapterPageLabels } from '../../book/pagination.js';
+import { chapterMenuEntries, partLabel } from '../../book/chapterMenu.js';
+import type { Chapter, ChapterPages } from '../../book/types.js';
+import { generateChapterId } from '../../storage/projects.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
+import { formatNumber } from '../../controls/units.js';
+import { ConfirmPopover, IconButton, ListRow, Menu, MenuItem, MenuSeparator, cn } from '../../ui/index.js';
+import { useRowDrag, type RowDragHandleProps } from './useRowDrag.js';
 
 /** Adds a chapter at the end of the book (the Chapters panel's header). */
 export function AddChapterButton() {

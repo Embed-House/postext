@@ -6,9 +6,9 @@ import { spawnSync } from 'node:child_process';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument, resolveParagraph } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { complexShaperReady, shapeRun } from '../complexShaping';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { complexShaperReady, shapeRun } from '../complexShaping.js';
 
 // #900: on a right-to-left page a picture is painted turned back in its
 // box (`counterFlipPx`), and the graphics state pushed for that closed the

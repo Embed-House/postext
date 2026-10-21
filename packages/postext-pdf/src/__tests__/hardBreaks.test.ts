@@ -7,8 +7,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRef } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTLine } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #620: a forced line break inside a paragraph (a backslash ending a line
 // of the source). The paragraph stays one `P` of the structure tree, the

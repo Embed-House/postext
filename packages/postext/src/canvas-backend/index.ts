@@ -1,34 +1,34 @@
-import type { RenderWarning, VDTDocument, VDTPage } from '../vdt';
-import { computePageTextExtent, verticalFlowOf } from '../vdt';
-import { dimensionToPx } from '../units';
-import { columnClipRect } from '../columnClip';
-import { pageColumnRule } from '../columnRule';
-import { renderBaselineGrid, renderCharacterGrid, renderColumnRule, renderCutLines, renderFootnoteRules, computeContentArea } from './decorations';
-import { cjkGridCells } from '../pipeline/cjkGrid';
-import { renderBlock } from './blockRender';
-import { renderHeaderFooterSlot } from './headerFooter';
-import { documentInkHex } from '../svg/singleInk';
-import { shapingLanguageOf } from '../locale';
-import { setSegmentLanguages } from './wordRuns';
-import { setMissingImageSink, setTintUnflagged } from './renderResourceBlock';
-import { setVerticalPaint } from './verticalText';
-import { beginMirroredFlow } from './mirrorFrame';
-import { renderComicBalloons, renderComicPage, renderComicPanels } from './comic';
-import { renderComicTextFrames, renderComposedDecoration, renderComposedFrames } from './composed';
-import { comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, paintsOverFrames } from '../composed/paint';
-import { pageComics } from '../comics/transform';
-import { proofPixels, type PrintPreview } from '../color/softProof';
-import { resetContextState, restoreContext, saveContext } from './contextState';
-import { resetWordSpacing } from './contextText';
+import type { RenderWarning, VDTDocument, VDTPage } from '../vdt.js';
+import { computePageTextExtent, verticalFlowOf } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import { columnClipRect } from '../columnClip.js';
+import { pageColumnRule } from '../columnRule.js';
+import { renderBaselineGrid, renderCharacterGrid, renderColumnRule, renderCutLines, renderFootnoteRules, computeContentArea } from './decorations.js';
+import { cjkGridCells } from '../pipeline/cjkGrid.js';
+import { renderBlock } from './blockRender.js';
+import { renderHeaderFooterSlot } from './headerFooter.js';
+import { documentInkHex } from '../svg/singleInk.js';
+import { shapingLanguageOf } from '../locale.js';
+import { setSegmentLanguages } from './wordRuns.js';
+import { setMissingImageSink, setTintUnflagged } from './renderResourceBlock.js';
+import { setVerticalPaint } from './verticalText.js';
+import { beginMirroredFlow } from './mirrorFrame.js';
+import { renderComicBalloons, renderComicPage, renderComicPanels } from './comic.js';
+import { renderComicTextFrames, renderComposedDecoration, renderComposedFrames } from './composed.js';
+import { comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, paintsOverFrames } from '../composed/paint.js';
+import { pageComics } from '../comics/transform.js';
+import { proofPixels, type PrintPreview } from '../color/softProof.js';
+import { resetContextState, restoreContext, saveContext } from './contextState.js';
+import { resetWordSpacing } from './contextText.js';
 export {
   registerResourceImage,
   unregisterResourceImage,
   clearResourceImages,
   getResourceImage,
-} from './renderResourceBlock';
-export type { ResourceImageSource, RegisterResourceImageOptions } from './renderResourceBlock';
-export { registerVerticalAlternates, unregisterVerticalAlternates, loadVerticalAlternates, verticalTwinName, VERTICAL_ALTERNATE_SAMPLE } from './verticalText';
-export type { VerticalAlternatesFace } from './verticalText';
+} from './renderResourceBlock.js';
+export type { ResourceImageSource, RegisterResourceImageOptions } from './renderResourceBlock.js';
+export { registerVerticalAlternates, unregisterVerticalAlternates, loadVerticalAlternates, verticalTwinName, VERTICAL_ALTERNATE_SAMPLE } from './verticalText.js';
+export type { VerticalAlternatesFace } from './verticalText.js';
 
 export interface RenderPageOptions {
   pageNegative?: boolean;

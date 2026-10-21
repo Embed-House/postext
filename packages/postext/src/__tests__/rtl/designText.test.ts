@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { directChipRuns, directRuns, designBaseDirection, firstStrongDirection } from '../../design/bidiText';
-import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import { layoutSlotToVdt } from '../../pipeline/headerFooter';
-import { tocRowOrder } from '../../pipeline/toc';
-import { buildDocument } from '../../pipeline';
-import { chipToken } from '../../measure/rich';
-import { flowToPage, pageIsMirrored, type VDTDesignTextBlock, type VDTDesignTextLine, type VDTDocument, type VDTPage } from '../../vdt';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { DesignElement, DesignTextElement, PostextConfig } from '../../types';
-import type { InlineSpan } from '../../parse/types';
+import { directChipRuns, directRuns, designBaseDirection, firstStrongDirection } from '../../design/bidiText.js';
+import { layoutDesignSlot, type ResolvedTextPrimitive } from '../../design/layout.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import { layoutSlotToVdt } from '../../pipeline/headerFooter.js';
+import { tocRowOrder } from '../../pipeline/toc.js';
+import { buildDocument } from '../../pipeline/index.js';
+import { chipToken } from '../../measure/rich.js';
+import { flowToPage, pageIsMirrored, type VDTDesignTextBlock, type VDTDesignTextLine, type VDTDocument, type VDTPage } from '../../vdt.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { DesignElement, DesignTextElement, PostextConfig } from '../../types.js';
+import type { InlineSpan } from '../../parse/types.js';
 
 // Issue #377: design text (running heads, openers, contents part rows,
 // callout titles), chips and the contents rows in right-to-left documents.
@@ -312,8 +312,8 @@ describe('contents rows', () => {
     expect(tocRowOrder([0, 1, 2], 3, 5, true)).toEqual([4, 3, 0, 1, 2]);
   });
 
-  const physicalXs = (doc: VDTDocument, page: VDTPage, line: VDTDesignTextLine | import('../../vdt').VDTLine) => {
-    const l = line as import('../../vdt').VDTLine;
+  const physicalXs = (doc: VDTDocument, page: VDTPage, line: VDTDesignTextLine | import('../../vdt.js').VDTLine) => {
+    const l = line as import('../../vdt.js').VDTLine;
     const segs = l.segments!;
     const order = l.order ?? segs.map((_, i) => i);
     let x = l.bbox.x;

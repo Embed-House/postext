@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { describeFitStep, describeFrameOverflowProposal, describeReflowEvent } from '../../composed/reflowLog';
-import { frameBounds, frameContentRect, frameMatrix } from '../../composed/paint';
-import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo';
-import { elementsForSource, sourceAt } from '../../composed/sourceMap';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { ContentWarning, FrameOverflowProposal, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { page8Fixture } from './fixtures/page8';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { describeFitStep, describeFrameOverflowProposal, describeReflowEvent } from '../../composed/reflowLog.js';
+import { frameBounds, frameContentRect, frameMatrix } from '../../composed/paint.js';
+import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo.js';
+import { elementsForSource, sourceAt } from '../../composed/sourceMap.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, FrameOverflowProposal, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { page8Fixture } from './fixtures/page8.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): seven
 // px per character, whatever the face.

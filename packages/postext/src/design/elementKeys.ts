@@ -19,9 +19,9 @@ import type {
   ElementSizeTo,
   PostextConfig,
   TextDotsStyle,
-} from '../types';
-import type { DecorationRemoval, TemplateDecoration } from '../composed/types';
-import { closestKey } from '../util/closestKey';
+} from '../types.js';
+import type { DecorationRemoval, TemplateDecoration } from '../composed/types.js';
+import { closestKey } from '../util/closestKey.js';
 
 const COMMON = { kind: true, id: true, parity: true, pages: true, when: true, unless: true, pin: true } as const;
 const PLACED = { ...COMMON, reserve: true, placement: true } as const;

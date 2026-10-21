@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { buildDocument } from '../pipeline/build';
-import { GLYPH_PROBE_FAMILY, installGlyphProbe } from '../fonts/glyphFallback';
-import { sfntCodePointRanges, rangesHave } from '../fonts/cmap';
-import { fontStringFamilies } from '../measure/fontString';
-import { syncFontSet } from '../fonts/fontSet';
-import { measurementGeneration } from '../measure/canvas';
-import type { ContentWarning } from '../vdt';
+import { buildDocument } from '../pipeline/build.js';
+import { GLYPH_PROBE_FAMILY, installGlyphProbe } from '../fonts/glyphFallback.js';
+import { sfntCodePointRanges, rangesHave } from '../fonts/cmap.js';
+import { fontStringFamilies } from '../measure/fontString.js';
+import { syncFontSet } from '../fonts/fontSet.js';
+import { measurementGeneration } from '../measure/canvas.js';
+import type { ContentWarning } from '../vdt.js';
 
 // #1105, the glyph probe: in a browser the engine cannot read a loaded
 // face's `cmap`, so it declares a face that covers all of Unicode at an

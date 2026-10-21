@@ -1,7 +1,7 @@
 'use client';
 
 import { Plus, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
-import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
+import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
 import { DEFAULT_RULE_ELEMENT, DEFAULT_BOX_ELEMENT, DEFAULT_MAIN_COLOR, resolveBodyTextConfig } from 'postext';
 import type {
   DesignSlot,
@@ -13,24 +13,24 @@ import type {
   ResolvedDesignElement,
   ResolvedDesignSlot,
 } from 'postext';
-import { Button, ConfirmPopover, IconButton as UiIconButton } from '../../../ui';
-import { SearchScope } from '../../search/SearchScope';
-import { ShowingDefaultsContext } from '../../../controls/fieldContext';
-import { ItemCard, ItemCardListActions, openCard, ToggleSwitch } from '../../../controls';
-import { TextElementEditor } from './TextElementEditor';
-import { RuleElementEditor } from './RuleElementEditor';
-import { BoxElementEditor } from './BoxElementEditor';
-import { ImageElementEditor } from './ImageElementEditor';
-import { PathElementEditor } from './PathElementEditor';
-import { ConnectorElementEditor, type ConnectorHost } from './ConnectorElementEditor';
-import { elementKindLabel } from './elementKind';
-import { PATH_PRESETS } from './shapeEdits';
-import { newConnector } from '../../../templates/connectorEdits';
-import { applyAlign, type SlotKind } from './placementAdapter';
-import { foreEdgeElements } from './foreEdge';
-import { newTextElement } from './elementTemplates';
-import type { FrameTarget } from './sizeTo';
-import { FenceConditionFields, useFenceAttributes } from './FenceConditionFields';
+import { Button, ConfirmPopover, IconButton as UiIconButton } from '../../../ui/index.js';
+import { SearchScope } from '../../search/SearchScope.js';
+import { ShowingDefaultsContext } from '../../../controls/fieldContext.js';
+import { ItemCard, ItemCardListActions, openCard, ToggleSwitch } from '../../../controls/index.js';
+import { TextElementEditor } from './TextElementEditor.js';
+import { RuleElementEditor } from './RuleElementEditor.js';
+import { BoxElementEditor } from './BoxElementEditor.js';
+import { ImageElementEditor } from './ImageElementEditor.js';
+import { PathElementEditor } from './PathElementEditor.js';
+import { ConnectorElementEditor, type ConnectorHost } from './ConnectorElementEditor.js';
+import { elementKindLabel } from './elementKind.js';
+import { PATH_PRESETS } from './shapeEdits.js';
+import { newConnector } from '../../../templates/connectorEdits.js';
+import { applyAlign, type SlotKind } from './placementAdapter.js';
+import { foreEdgeElements } from './foreEdge.js';
+import { newTextElement } from './elementTemplates.js';
+import type { FrameTarget } from './sizeTo.js';
+import { FenceConditionFields, useFenceAttributes } from './FenceConditionFields.js';
 
 interface SlotEditorProps {
   slotKey: SlotKind;

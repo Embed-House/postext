@@ -1,19 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { renderPageToCanvas } from '../canvas-backend';
-import { renderBlock } from '../canvas-backend/blockRender';
-import { beginMirroredFlow } from '../canvas-backend/mirrorFrame';
-import { fillTrackedWord, trackedPieces, shapedOtherwise } from '../canvas-backend/trackedText';
-import { setLetterSpacing } from '../canvas-backend/contextState';
-import { renderHeaderFooterSlot, renderTextBlock } from '../canvas-backend/headerFooter';
-import { renderComicBalloon } from '../canvas-backend/comic';
-import { fillFlowText, setVerticalPaint } from '../canvas-backend/verticalText';
-import { renderToHtml } from '../html-backend';
-import { buildDocument } from '../pipeline';
-import { layoutSlotToVdt } from '../pipeline/headerFooter';
-import { resolveDesignSlot } from '../defaults/headerFooter';
-import type { DesignPlaceholderContext } from '../design/placeholders';
-import type { DesignElement, DesignTextElement, PostextConfig, Resource } from '../types';
-import type { VDTBlock, VDTComicBalloon, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTLine, VDTPage } from '../vdt';
+import { renderPageToCanvas } from '../canvas-backend/index.js';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import { beginMirroredFlow } from '../canvas-backend/mirrorFrame.js';
+import { fillTrackedWord, trackedPieces, shapedOtherwise } from '../canvas-backend/trackedText.js';
+import { setLetterSpacing } from '../canvas-backend/contextState.js';
+import { renderHeaderFooterSlot, renderTextBlock } from '../canvas-backend/headerFooter.js';
+import { renderComicBalloon } from '../canvas-backend/comic.js';
+import { fillFlowText, setVerticalPaint } from '../canvas-backend/verticalText.js';
+import { renderToHtml } from '../html-backend.js';
+import { buildDocument } from '../pipeline/index.js';
+import { layoutSlotToVdt } from '../pipeline/headerFooter.js';
+import { resolveDesignSlot } from '../defaults/headerFooter.js';
+import type { DesignPlaceholderContext } from '../design/placeholders.js';
+import type { DesignElement, DesignTextElement, PostextConfig, Resource } from '../types.js';
+import type { VDTBlock, VDTComicBalloon, VDTDesignSlot, VDTDesignTextBlock, VDTDocument, VDTLine, VDTPage } from '../vdt.js';
 
 // #663: a tracked word is measured at its natural width, ligatures counted,
 // plus the tracking times its letters. A browser shapes it without its

@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo, type ReactNode } from 'react';
-import { useSettingsSearch } from '../sidebar/search/SearchContext';
-import { MatchScopeProvider, useScopeVisible } from '../sidebar/search/MatchScope';
-import { normalizeText } from '../sidebar/search/normalize';
-import { HighlightedText } from '../ui/highlight';
+import { useSettingsSearch } from '../sidebar/search/SearchContext.js';
+import { MatchScopeProvider, useScopeVisible } from '../sidebar/search/MatchScope.js';
+import { normalizeText } from '../sidebar/search/normalize.js';
+import { HighlightedText } from '../ui/highlight.js';
 
 interface FieldGroupProps {
   title: string;

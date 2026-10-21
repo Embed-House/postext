@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { warningAnchor } from './anchorTarget';
-import { detailFor, titleFor } from '../sidebar/WarningsPanel';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
+import { warningAnchor } from './anchorTarget.js';
+import { detailFor, titleFor } from '../sidebar/WarningsPanel.js';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
 
 // #902: the Checks panel words the two label checks and leads to the anchor.
 
