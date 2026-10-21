@@ -74,7 +74,7 @@ const CELL_KEYS = { col: true, row: true, cols: true, rows: true } satisfies Rec
 const FRAME_KEYS = {
   name: true, placement: true, grid: true, width: true, height: true, minWidth: true, maxWidth: true, minHeight: true,
   maxHeight: true, style: true, layer: true, rotate: true, verticalAlign: true, columns: true, columnGap: true, padding: true,
-  exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
+  exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, growWith: true, fit: true,
   overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, look: true, overlap: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
 const LOOK_KEYS = { background: true, border: true, stripe: true, icon: true, marker: true, titleStyle: true, body: true, label: true } satisfies Record<keyof FrameLook, true>;
@@ -213,6 +213,31 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
   choice(frame, 'takes', FRAME_TAKES, '', path, push);
   choice(frame, 'writingMode', FRAME_WRITING_MODES, '', path, push);
   choice(frame, 'direction', FRAME_DIRECTIONS, '', path, push);
+  // A box that grows with what is laid inside it (#1117): `'children'` or
+  // a list of names (the names are checked once the template resolves).
+  const gw = frame.growWith;
+  if (gw !== undefined && gw !== 'children') {
+    if (!Array.isArray(gw)) {
+      const suggestion = typeof gw === 'string' ? closestKey(gw, ['children']) : undefined;
+      push({ kind: 'unknownConfigValue', path: `${path}/growWith`, value: typeof gw === 'object' ? JSON.stringify(gw) : String(gw), used: '', ...(suggestion ? { suggestion } : {}) });
+    } else {
+      gw.forEach((n, k) => {
+        if (typeof n !== 'string' || n.trim() === '') push({ kind: 'unknownConfigValue', path: `${path}/growWith/${k}`, value: String(n), used: '' });
+      });
+    }
+  }
+}
+
+/** The names a frame's `growWith` list gives (#1117) that are no frame or
+ *  group of its template, or the frame itself: ignored. */
+function checkGrowWith(frame: ResolvedFrame, names: readonly string[], push: Push): void {
+  if (!Array.isArray(frame.growWith)) return;
+  const path = frame.fieldPaths.growWith ?? `${frame.configPath}/growWith`;
+  frame.growWith.forEach((n) => {
+    if (n !== frame.name && names.includes(n)) return;
+    const suggestion = closestKey(n, names.filter((x) => x !== frame.name));
+    push({ kind: 'unknownConfigValue', path, value: n, used: '', ...(suggestion ? { suggestion } : {}) });
+  });
 }
 
 /** The nested keys of a frame's `look` (#976), against the tree of the
@@ -345,7 +370,11 @@ function checkTemplates(
       const resolved = resolveTemplateAt(templates, index, { parity, calloutStyleIds, prefix });
       if (!resolved) continue;
       for (const issue of resolved.issues) push(issueWarning(issue));
-      for (const frame of resolved.template.frames) checkMinMax(frame, toPx, push);
+      const known = [...resolved.template.frames.map((f) => f.name), ...resolved.template.groups.map((g) => g.name)];
+      for (const frame of resolved.template.frames) {
+        checkMinMax(frame, toPx, push);
+        checkGrowWith(frame, known, push);
+      }
       if (parity === undefined && resolved.template.role === MODULE_ROLE) checkModule(t, path, push);
       if (parity === undefined && resolved.template.role !== MODULE_ROLE) checkPageModules(t, resolved.template.groups, path, push);
     }

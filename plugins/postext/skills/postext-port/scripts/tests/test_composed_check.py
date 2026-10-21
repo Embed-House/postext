@@ -571,6 +571,61 @@ class EndToEnd(unittest.TestCase):
             self.assertEqual(res["crossLocale"][0]["es"], ["caja", "titulo", "texto"])
             self.assertIn("stress", res["editions"]["en"])
 
+    def _photo_box(self, root: Path, grow: bool) -> dict:
+        """Three photos with their captions in a labelled box, the page's
+        text under it (postext#1117): the stress run makes the captions
+        longer."""
+        import fitz  # PyMuPDF: the photos are small synthetic PNGs
+        (root / "resources").mkdir(parents=True)
+        for k in range(3):
+            pix = fitz.Pixmap(fitz.csRGB, fitz.IRect(0, 0, 60, 40), False)
+            pix.clear_with(40 + 60 * k)
+            pix.save(str(root / "resources" / f"foto{k + 1}.png"))
+        caps = ["A grey heron waits at the edge of the mill pond, still for an hour before it strikes.",
+                "An otter swims under the old bridge at dusk, when the mill wheel stops for the night.",
+                "The willows lean over the water by the lock, their roots holding the bank in spring."]
+        body = "".join(f'::resource{{id="foto{k + 1}" slot="foto{k + 1}"}}\n\n:::frame{{slot="pie{k + 1}"}}\n{caps[k]}\n:::\n\n'
+                       for k in range(3))
+        md = ('::::page{template="t"}\n' + ':::frame{slot="caja" label="Along the river"}\n:::\n\n' + body
+              + "The river rises after the spring rains and falls again by midsummer.\n::::\n")
+        (root / "chapters" / "en").mkdir(parents=True)
+        (root / "chapters" / "en" / "01.md").write_text(md, encoding="utf-8")
+        mm = lambda v: {"value": v, "unit": "mm"}  # noqa: E731
+        frames = [{"name": "caja", "style": "c", "width": mm(170), "minHeight": mm(50),
+                   "placement": {"anchor": {"to": "container", "edge": "top-left"}}, **({"growWith": "children"} if grow else {})}]
+        for k in range(3):
+            frames += [{"name": f"foto{k + 1}", "width": mm(50), "height": mm(33),
+                        "placement": {"anchor": {"to": "#caja", "edge": "top-left"}, "offset": {"x": mm(4 + 55 * k), "y": mm(10)}}},
+                       {"name": f"pie{k + 1}", "width": mm(50),
+                        "placement": {"anchor": {"to": f"#foto{k + 1}", "edge": "below"}, "offset": {"y": mm(2)}}}]
+        frames.append({"name": "texto", "flow": True, "placement": {"anchor": {"to": "#caja", "edge": "below"}, "offset": {"y": mm(1)}}})
+        cfg = {"page": {"width": mm(210), "height": mm(280),
+                        "margins": {"top": mm(15), "bottom": mm(15), "left": mm(15), "right": mm(15)}},
+               "calloutStyles": [{"id": "c", "backgroundEnabled": True, "background": {"hex": "#e8f1fb", "model": "hex"},
+                                  "padding": {"top": mm(4), "right": mm(4), "bottom": mm(3), "left": mm(4)}}],
+               "resourceTypes": [{"id": "foto", "numberingTemplate": ""}],
+               "pageTemplates": [{"id": "t", "frames": frames}]}
+        res = [{"id": f"foto{k + 1}", "typeId": "foto", "kind": "bitmap", "file": f"resources/foto{k + 1}.png",
+                "width": 60, "height": 40, "caption": "", "altText": f"Photo {k + 1}"} for k in range(3)]
+        (root / "preset.json").write_text(json.dumps({
+            "version": 2, "configVersion": 16, "id": "t", "name": "T", "locale": "en",
+            "chapters": {"en": [{"title": "One", "file": "chapters/en/01.md"}]},
+            "config": cfg, "resources": res, "fonts": []}))
+        r = subprocess.run([sys.executable, str(SCRIPTS / "composed_check.py"), "check", str(root), "--json",
+                            "--offline", "--stress", "1.3", "--postext", os.environ["POSTEXT_CLI"]],
+                           capture_output=True, text=True, timeout=900)
+        return json.loads(r.stdout)["editions"]["en"]
+
+    def test_a_box_that_grows_with_its_captions_passes_the_stress(self):
+        with tempfile.TemporaryDirectory() as d:
+            st = self._photo_box(Path(d), grow=True)["stress"]
+            self.assertEqual([f["kind"] for f in st["fail"] if f["kind"] in ("frameCovered", "frameOutsideArea")], [])
+
+    def test_without_it_the_stress_finds_the_captions_over_the_text(self):
+        with tempfile.TemporaryDirectory() as d:
+            st = self._photo_box(Path(d), grow=False)["stress"]
+            self.assertIn("frameCovered", [f["kind"] for f in st["fail"]])
+
 
 SHELL_TEMPLATES = [
     {"id": "shell", "frames": [{"name": "title", "takes": "h1"}],

@@ -583,6 +583,15 @@ change in the generator:
   `:::space{lines=1}` in it. The box reads where its fence lies in the
   Markdown (postext#1116; before, its tab came last in the HTML, the EPUB and
   the tagged PDF), and `composed_check.py` expects it there.
+- **A box whose captions run longer** than it holds (a translation, the
+  `--stress 1.3` run): give the box `growWith: "children"` (postext 1.52,
+  #1117). Its height reaches at least the foot of the frames anchored to a
+  point of its top side and of those anchored to them (a caption `below` its
+  photo), plus its bottom padding; its fill, border and tab follow and the
+  frames under it move down. A list of names (`"growWith": ["foto-1",
+  "pie-1"]`) takes those instead. A frame anchored to the box's foot or middle
+  never counts, and a turned box does not grow. Before 1.52 the captions ran
+  out of the box and onto the text under it (`frameCovered`).
 - **Overlaps the source prints** (pills on photos, notes on an illustrated
   band, cut-outs past a box's edge) go to `composed-check.json`, one entry per
   look with its reason; that book needed 21 (27 with skill 1.60, the same
@@ -1317,6 +1326,10 @@ Un mercado de barrio.
   only for 1.37 and older.
 - A row keeps its frames' widths and grows as tall as the tallest caption
   needs. Photos of different widths: different frame widths.
+- Photos and captions inside a styled box (a fenced `:::frame` with a tab,
+  the photos anchored `top-left` of `#caja`, each caption `below` its photo):
+  set `"growWith": "children"` on the box so it grows with the captions
+  (postext 1.52); without it a longer caption leaves the box.
 - From 1.48 photos of one width on a lattice (three in a row, a wall of six)
   are one frame set repeated by a `grid` group (6.16): the template draws
   `foto` and its `pie` once and each `:::frame{slot="foto"}` of the page is a

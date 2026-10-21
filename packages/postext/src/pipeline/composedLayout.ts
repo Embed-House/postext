@@ -52,6 +52,7 @@ import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat';
 import { moduleOfFrame, nestedChain } from '../composed/modules';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules';
 import { overlapChecks } from '../composed/overlap';
+import { growMembers, grownHeight } from '../composed/grow';
 import { offsetCalloutToAbsolute, type BoxExclusion, type CalloutLayoutResult, type PlannedCallout } from './calloutLayout';
 import { isMarkerBlock } from './buildHelpers';
 import type { BlockMeasureContext } from './measureContentBlock';
@@ -1117,7 +1118,46 @@ export function keepChromeAt(style: ResolvedCalloutStyleConfig, scale: number): 
 }
 
 /** Lay out every frame of the page once, with the reflow ladder's `fit`. */
+/** Most times a page is laid again for its growing boxes (#1117): a box's
+ *  members stand where its top puts them, so one more lay is enough
+ *  unless a member hangs from a box that grows in turn. */
+const GROW_ROUNDS = 3;
+
+/**
+ * Lay the page; then, while a box that grows with the frames laid inside
+ * it (`growWith`, #1117) ends above the foot of one of them and its bottom
+ * padding, lay it again with that height as the box's least height. What
+ * the box's foot places (a frame `below` it, the rest of its stack) moves
+ * down as under any growing box.
+ */
 function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState, collapsed: ReadonlySet<string>): Composition {
+  let c = composePageOnce(pageInput, template, fit, collapsed);
+  if (!template.frames.some((f) => f.growWith)) return c;
+  const mmPx = pageInput.dpi / MM_PER_IN;
+  let tpl = template;
+  for (let round = 0; round < GROW_ROUNDS; round++) {
+    const grown = new Map<string, number>();
+    const laid = new Map(c.frames.filter((f) => !f.collapsed).map((f) => [f.name, f]));
+    for (const box of tpl.frames) {
+      const v = box.growWith && box.rotate === 0 && !collapsed.has(box.name) ? laid.get(box.name) : undefined;
+      if (!v) continue;
+      const members = growMembers(tpl, box);
+      const rects = [
+        ...members.frames.flatMap((n) => (laid.has(n) ? [laid.get(n)!.rect] : [])),
+        ...members.groups.flatMap((n) => (c.groupRects.has(n) ? [c.groupRects.get(n)!] : [])),
+      ];
+      const pad = lengthPx(pageInput.styleOf(box).padding.bottom, pageInput.dpi, pageInput.emPx);
+      const need = grownHeight(v.rect, rects, pad);
+      if (need !== undefined) grown.set(box.name, need);
+    }
+    if (grown.size === 0) break;
+    tpl = { ...tpl, frames: tpl.frames.map((f) => (grown.has(f.name) ? { ...f, minHeight: { value: grown.get(f.name)! / mmPx, unit: 'mm' as const } } : f)) };
+    c = composePageOnce(pageInput, tpl, fit, collapsed);
+  }
+  return c;
+}
+
+function composePageOnce(pageInput: ComposedPageInput, template: ResolvedPageTemplate, fit: FitState, collapsed: ReadonlySet<string>): Composition {
   /** What the frames are placed in: the page, or, while a module's frames
    *  are placed (#1062), the page with the module's box as its area. */
   let input = pageInput;
