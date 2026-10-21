@@ -1806,8 +1806,10 @@ def check_comic_block(name: str, kind: str, attrs: dict[str, str], body: list[tu
         w = f"{name}:{ln}"
         if not line or (line.startswith("<!--") and line.endswith("-->")):
             continue
-        if line.startswith("::label") and figure is None:
-            rep.warn(where, "::label outside a :::figure prints as text")
+        if line.startswith("::label"):
+            # a comic block holds no :::figure, so a label line there is never one's
+            rep.warn(w, "::label outside a :::figure prints as text")
+            continue
         if line.startswith("::panel"):
             m = COMIC_PANEL_RE.match(line)
             if not m:

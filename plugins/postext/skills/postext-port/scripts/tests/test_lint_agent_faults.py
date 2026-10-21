@@ -174,5 +174,21 @@ class SmallCapsByHand(unittest.TestCase):
         self.assertEqual(having(lint(cfg, '# One\n\n:chip[NASA]{style="big"}\n'), "smallCapsByHand"), [])
 
 
+class LabelInComic(unittest.TestCase):
+    def test_a_label_line_in_a_comic_page_warns_instead_of_crashing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "chapters").mkdir()
+            (root / "chapters" / "01.md").write_text(
+                '# One\n\n:::page\n::panel\n::label[Bang]{at="10% 10%"}\n:::\n', encoding="utf-8")
+            (root / "preset.json").write_text(json.dumps({
+                "version": 2, "configVersion": 16, "id": "t", "name": "T", "locale": "en", "config": {},
+                "chapters": {"en": [{"title": "One", "file": "chapters/01.md"}]}}), encoding="utf-8")
+            r = subprocess.run([sys.executable, str(SCRIPTS / "lint_project.py"), str(root)],
+                               capture_output=True, text=True)
+            self.assertNotIn("Traceback", r.stderr)
+            self.assertIn("01.md:5: ::label outside a :::figure prints as text", r.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
