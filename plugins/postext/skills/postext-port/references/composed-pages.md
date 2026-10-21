@@ -421,6 +421,17 @@ What the extraction decides, so you know what to check:
   position with no space character) becomes a narrow no-break space
   (U+202F), so the number never breaks; thin spaces before `; : ! ?` and
   inside `« »` do too. A plain space beside a fixed one is dropped.
+- **Lists** (skill 1.61). A line opened by a bullet (`•·▪■●◦‣►▸◆`) is a
+  list item; the bullets' left edges in a frame, grouped within 1.5 mm,
+  are the levels, so an item whose bullet sits further in is nested
+  (`  - ` under the item above). The frame's style gets `lists` from its
+  top-level bullets: `bulletChar`, `color`, `indent`, `gap` (from the
+  bullet's advance to the words), `bulletFontSize` (em of the item text)
+  and `bulletFontWeight`. Each level's bullet goes to
+  `suggested.unorderedLists` (`bulletChar`, `levels[]` with `bulletChar`,
+  `fontSize`, `fontWeight`), which `manifest` writes into the config: keep
+  it, since a box whose `lists.bulletChar` differs from the document's
+  replaces every level's bullet with its own.
 - **Shapes.** Large white fills are cards; filled or
   stroked rectangles and rounded rectangles that hold text or pictures are
   boxes; a shape 4–13 mm high holding one line of up to ten words is a tab

@@ -1236,6 +1236,86 @@ def bullet_of(line: Line) -> Char | None:
     return None
 
 
+def list_levels(lines: list[Line], tol: float = 1.5) -> list[float]:
+    """The x0 (mm) of each list level in a run of lines: the bullets' left
+    edges clustered within `tol` mm, left to right."""
+    xs = sorted(b.x0 for b in (bullet_of(l) for l in lines) if b is not None)
+    levels: list[float] = []
+    for x in xs:
+        if not levels or x - levels[-1] > tol:
+            levels.append(x)
+    return levels
+
+
+def level_of_bullet(b: Char, levels: list[float]) -> int:
+    """The depth (0 = top) of a bullet among `list_levels`, at most 4."""
+    if not levels:
+        return 0
+    return min(4, min(range(len(levels)), key=lambda i: abs(levels[i] - b.x0)))
+
+
+def item_size(line: Line) -> float:
+    """The text size (pt) of a list item's line, its bullet left out."""
+    b = bullet_of(line)
+    sizes = [c.size for c in line.chars if c.c.strip() and c is not b]
+    return statistics.median(sizes) if sizes else line.size
+
+
+def bullet_look(items: list[Line]) -> dict:
+    """bulletChar, size (em of the item text) and weight of the bullets of
+    one list level: the most common of each."""
+    bs = [(bullet_of(l), item_size(l)) for l in items]
+    chars: dict[str, int] = {}
+    weights: dict[int, int] = {}
+    for b, _ in bs:
+        chars[b.c] = chars.get(b.c, 0) + 1
+        weights[b.weight] = weights.get(b.weight, 0) + 1
+    ratio = statistics.median(b.size / s for b, s in bs if s > 0) if bs else 1.0
+    return {"bulletChar": max(chars, key=lambda k: (chars[k], k)),
+            "bulletFontSize": {"value": round(ratio * 20) / 20, "unit": "em"},
+            "bulletFontWeight": max(weights, key=lambda k: (weights[k], -k))}
+
+
+def list_style(lines: list[Line], left_edge: float) -> dict | None:
+    """A frame's `lists` style from its top-level bullets: the character,
+    its colour, size and weight measured against the item text, the indent
+    from the frame's text edge and the gap from the bullet to the text."""
+    bl = [l for l in lines if bullet_of(l)]
+    if not bl:
+        return None
+    levels = list_levels(bl)
+    top = [l for l in bl if level_of_bullet(bullet_of(l), levels) == 0]
+    b = bullet_of(top[0])
+    look = bullet_look(top)
+    return {"bulletChar": look["bulletChar"], "color": colour(b.color),
+            "indent": mmv(max(0.0, b.x0 - left_edge)), "gap": mmv(max(0.5, text_x0(top[0]) - b.x1)),
+            "bulletFontSize": look["bulletFontSize"], "bulletFontWeight": look["bulletFontWeight"]}
+
+
+def unordered_lists(found: dict[int, list[dict]]) -> dict | None:
+    """`unorderedLists` for the suggested config from every list level read
+    (`describe_frame` fills `found`, depth -> bullet looks): level 1 sets the
+    list's own bullet, each level its `levels[]` entry, so a box style that
+    keeps the level-1 bullet leaves the nested ones alone."""
+    if not found:
+        return None
+
+    def most(depth: int) -> dict:
+        looks = found[depth]
+        keys = [json.dumps(x, sort_keys=True) for x in looks]
+        best = max(set(keys), key=lambda k: (keys.count(k), k))
+        return json.loads(best)
+
+    first = most(min(found))
+    out: dict[str, Any] = {"bulletChar": first["bulletChar"], "bulletFontSize": first["bulletFontSize"],
+                           "fontWeight": first["bulletFontWeight"], "levels": []}
+    for depth in sorted(found):
+        lk = most(depth)
+        out["levels"].append({"level": depth + 1, "bulletChar": lk["bulletChar"], "fontSize": lk["bulletFontSize"],
+                              "fontWeight": lk["bulletFontWeight"]})
+    return out
+
+
 def paragraphs(lines: list[Line]) -> list[list[Line]]:
     """Chain lines into paragraphs: same look, one leading apart, flush left
     or centred on each other; a bullet or a bold head line starts a new one."""
@@ -1999,6 +2079,10 @@ def text_blocks(lines: list[Line], frames: list[Frame]) -> list[list[Line]]:
             gap = p[0].base - last.base
             same_left = abs(text_x0(p[0]) - text_x0(q[0])) < 3.5 or abs(p[0].x0 - q[0].x0) < 3.5 \
                 or (bullet_of(q[0]) and abs(p[0].x0 - text_x0(q[0])) < 1.5)
+            if not same_left and bullet_of(p[0]):
+                # an item of a nested list: its bullet within 12 mm right of the list's first bullet
+                outer = min((r[0].x0 for r in blk if bullet_of(r[0])), default=None)
+                same_left = outer is not None and outer - 1.5 <= p[0].x0 <= outer + 12.0
             same_mid = abs((p[0].x0 + p[0].x1) / 2 - (q[0].x0 + q[0].x1) / 2) < 3.0
             if not (same_left or same_mid) or not (0 < gap < 2.6 * max(lead, 4.0)):
                 continue
@@ -2058,8 +2142,8 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
     if f.kind in ("picture", "figure"):
         return
     paras = paragraphs(f.lines)
+    levels = list_levels(f.lines)
     blocks = []
-    in_list = False
     centred = f.kind == "text" and (len(f.lines) > 1 and is_centred(f.lines) or getattr(f, "caption_centred", False))
     for p in paras:
         size = p[0].size
@@ -2071,8 +2155,11 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
         md = para_markdown(p, mark_ids, mode)
         if not md:
             continue
-        if bullet_of(p[0]):
-            blocks.append(("li", 0, md))
+        b = bullet_of(p[0])
+        if b:
+            depth = level_of_bullet(b, levels)
+            blocks.append(("li", depth, md))
+            ctx.setdefault("list_levels", {}).setdefault(depth, []).append(bullet_look([p[0]]))
         else:
             blocks.append(("p", 0, md))
     f.blocks = blocks
@@ -2110,8 +2197,12 @@ def body_of(look: dict) -> dict:
 
 def text_style(lines: list[Line], centred: bool) -> dict:
     look = dominant(lines)
-    return {"id": "text", "backgroundEnabled": False, "border": {"enabled": False},
-            "padding": {"top": mmv(0), "right": mmv(0), "bottom": mmv(0), "left": mmv(0)}, "body": body_of(look)}
+    st = {"id": "text", "backgroundEnabled": False, "border": {"enabled": False},
+          "padding": {"top": mmv(0), "right": mmv(0), "bottom": mmv(0), "left": mmv(0)}, "body": body_of(look)}
+    ls = list_style(lines, min(min(l.x0, text_x0(l)) for l in lines)) if lines else None
+    if ls:
+        st["lists"] = ls
+    return st
 
 
 def give_slack(right: float, inner: float, ctx: dict) -> float:
@@ -2201,11 +2292,9 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
         bottom = max(0.0, min(by1 - (last.base + 0.2 * lead), 8.0))
         st["padding"] = {"top": mmv(top), "right": mmv(right), "bottom": mmv(bottom), "left": mmv(left)}
         st["body"] = body_of(look)
-        bl = [l for l in f.lines if bullet_of(l)]
-        if bl:
-            b = bullet_of(bl[0])
-            st["lists"] = {"bulletChar": b.c, "color": colour(b.color),
-                           "indent": mmv(max(0.0, b.x0 - (bx0 + left))), "gap": mmv(max(0.5, text_x0(bl[0]) - b.x0))}
+        ls = list_style(f.lines, bx0 + left)
+        if ls:
+            st["lists"] = ls
     else:
         st["padding"] = {"top": mmv(0), "right": mmv(0), "bottom": mmv(0), "left": mmv(0)}
     t: Shape | None = f.tab
@@ -3531,11 +3620,13 @@ def blocks_markdown(blocks: list[tuple]) -> list[str]:
         if kind == "h":
             out.append(pmd.heading(level, text))
         elif kind == "li":
+            # a nested item indents to the text of the item above (two spaces under `- `)
+            item = "  " * level + "- " + text
             if prev == "li" and out:
-                out[-1] += "\n- " + text
+                out[-1] += "\n" + item
                 prev = "li"
                 continue
-            out.append("- " + text)
+            out.append(item)
         else:
             out.append(pmd.guard_line_start(text))
         prev = kind
@@ -3757,6 +3848,9 @@ def cmd_extract(args: argparse.Namespace) -> int:
             ms.append(st)
         library["markStyles" if args.highlights == "mark" else "chipStyles"] = ms
     library["suggested"] = suggested_config(caches, pages, body, head_sizes, level_of, doc)
+    ul = unordered_lists(ctx.get("list_levels", {}))
+    if ul:
+        library["suggested"]["unorderedLists"] = ul
     library = {k: v for k, v in library.items() if v}
     # frame names by role: by request, and for a run of one page, which dedupe has nothing to merge in
     frame_names: list[dict] = []
@@ -3885,6 +3979,8 @@ def cmd_manifest(args: argparse.Namespace) -> int:
         "footer": {"elements": []},
         "resourceTypes": sug.get("resourceTypes", []),
     }
+    if sug.get("unorderedLists"):
+        config["unorderedLists"] = sug["unorderedLists"]
     for k in ("calloutStyles", "markStyles", "chipStyles", "labelStyles", "paragraphStyles", "frameLooks",
               "pageTemplates"):
         if library.get(k):

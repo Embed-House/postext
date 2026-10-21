@@ -148,5 +148,81 @@ class MeasuredSpaces(unittest.TestCase):
             tmp.cleanup()
 
 
+def bullet(page, x, y, char, size, words, text_size=11, gap=2.0, bfont="helv"):
+    """A list item: `char` at x (points) in `size`, its words `gap` points
+    after the bullet's advance."""
+    font = fitz.Font(bfont)
+    w = font.text_length(char, fontsize=size)
+    tw = fitz.TextWriter(page.rect)     # insert_text would set U+2022 as a middle dot
+    tw.append((x, y), char, font=font, fontsize=size)
+    tw.write_text(page, color=(0.1, 0.1, 0.1))
+    put(page, x + w + gap, y, words, size=text_size)
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class NestedLists(unittest.TestCase):
+    @staticmethod
+    def list_page(in_box):
+        doc = fitz.open()
+        page = doc.new_page(width=210 * MM, height=297 * MM)
+        x = 25 * MM
+        y = 40 * MM
+        if in_box:
+            page.draw_rect(fitz.Rect(x - 12, y - 20, 150 * MM, y + 100), color=(0.2, 0.4, 0.7), fill=(0.9, 0.95, 1),
+                           width=1)
+        # level 1: a large bold bullet; level 2: a small white bullet, 6 mm further in
+        bullet(page, x, y, "•", 14, "Las raíces sujetan la planta al suelo.", bfont="hebo")
+        bullet(page, x + 6 * MM, y + 15, "◦", 8, "Raíz principal y raíces secundarias.")
+        bullet(page, x + 6 * MM, y + 30, "◦", 8, "Pelos absorbentes.")
+        bullet(page, x, y + 45, "•", 14, "El tallo lleva el agua a las hojas.", bfont="hebo")
+        bullet(page, x, y + 60, "•", 14, "Las hojas fabrican el alimento.", bfont="hebo")
+        for k in range(5):
+            put(page, x - 8, y + 130 + k * 14, "Texto corrido de la página para medir el cuerpo del texto.", size=11)
+        return doc
+
+    def check(self, md, lib, style_kind):
+        self.assertIn("- Las raíces sujetan la planta al suelo.\n"
+                      "  - Raíz principal y raíces secundarias.\n"
+                      "  - Pelos absorbentes.\n"
+                      "- El tallo lleva el agua a las hojas.\n"
+                      "- Las hojas fabrican el alimento.", md)
+        st = next(s for s in lib["calloutStyles"] if s.get("lists"))
+        self.assertTrue(st["id"].startswith(style_kind), st["id"])
+        lists = st["lists"]
+        self.assertEqual(lists["bulletChar"], "•")
+        self.assertAlmostEqual(lists["bulletFontSize"]["value"], 14 / 11, delta=0.06)
+        self.assertEqual(lists["bulletFontWeight"], 700)
+        # the gap runs from the bullet's advance to the words
+        self.assertAlmostEqual(lists["gap"]["value"], 2.0 / MM, delta=0.3)
+        ul = lib["suggested"]["unorderedLists"]
+        self.assertEqual(ul["bulletChar"], "•")
+        self.assertEqual([lv["bulletChar"] for lv in ul["levels"]], ["•", "◦"])
+        self.assertAlmostEqual(ul["levels"][1]["fontSize"]["value"], 8 / 11, delta=0.06)
+        self.assertEqual(ul["levels"][1]["fontWeight"], 400)
+
+    def test_nested_list_in_a_box(self):
+        tmp, md, lib, _ = extract(self.list_page(True))
+        try:
+            self.check(md, lib, "box")
+        finally:
+            tmp.cleanup()
+
+    def test_nested_list_in_running_text(self):
+        tmp, md, lib, _ = extract(self.list_page(False))
+        try:
+            self.check(md, lib, "text")
+        finally:
+            tmp.cleanup()
+
+    def test_levels(self):
+        lv = [pr.Char("•", 10, 0, 12, 3, 3, "f", 400, False, 11, "#000000"),
+              pr.Char("•", 16.2, 0, 18, 3, 3, "f", 400, False, 11, "#000000"),
+              pr.Char("•", 10.8, 0, 12, 3, 3, "f", 400, False, 11, "#000000")]
+        lines = [pr.Line([c, pr.Char("a", c.x1 + 1, 0, c.x1 + 3, 3, 3, "f", 400, False, 11, "#000000")]) for c in lv]
+        levels = pr.list_levels(lines)
+        self.assertEqual(levels, [10, 16.2])
+        self.assertEqual([pr.level_of_bullet(c, levels) for c in lv], [0, 1, 0])
+
+
 if __name__ == "__main__":
     unittest.main()
