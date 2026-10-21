@@ -127,7 +127,17 @@ def page_paint(page) -> tuple[list[dict], list[tuple]]:
         fill = hexc(d.get("fill")) if (d.get("fill_opacity") or 1) > 0.2 else None
         stroke = hexc(d.get("color")) if (d.get("stroke_opacity") or 1) > 0.2 else None
         width = float(d.get("width") or 0)
-        for it in d.get("items", []):
+        items = d.get("items", [])
+        if fill and items and not any(it[0] == "re" for it in items):
+            # a fill drawn as a closed path (lines, quads, rounded corners): its box
+            r = d["rect"]
+            if min(r.width, r.height) < RULE_MAX:
+                rules.append(("h", (r.y0 + r.y1) / 2, r.x0, r.x1, r.height, fill) if r.width >= r.height
+                             else ("v", (r.x0 + r.x1) / 2, r.y0, r.y1, r.width, fill))
+            else:
+                fills.append({"rect": (r.x0, r.y0, r.x1, r.y1), "color": fill, "seq": d.get("seqno", 0)})
+            fill = None       # read; its stroke, if any, is read below
+        for it in items:
             if it[0] == "re":
                 r = it[1]
                 if fill:
