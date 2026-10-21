@@ -439,6 +439,34 @@ Look at the sheet, then at single pairs:
 - page breaks: aim for the same pages as the source on most pages, and
   within ±1 page per chapter.
 
+### Attribute by attribute: `port_audit.py`
+
+The eye misses what a reader of the printed page finds: an en space set as a
+word space, a synthetic italic read as roman, capitals where the source has
+small capitals, a bullet a size too small, a cell centred in the source and
+flush left in the port, a grey folio printed black. `port_audit.py` reads the
+text of both PDFs, matches the source's words to the port's by their
+content (line breaks and case aside) and compares, pair by pair: special
+spaces (and two glued words broken across lines), italic (a sheared upright
+face counts as italic), bold, small capitals, bullet size and weight (and a
+missing bullet), the alignment and weight of ruled table cells, and the
+colour of the head and foot margins (folios, running heads) and of the text:
+
+```bash
+postext pdf my-book --locale es -o /tmp/port.pdf
+python3 scripts/port_audit.py source.pdf /tmp/port.pdf --source-pages 23-40 --port-pages 1-18 \
+    --json /tmp/audit.json --md /tmp/audit.md
+```
+
+The report counts the gaps per attribute and per source page (a run of
+words with the same gap counts once) and lists each with both pages, the
+words and both values. Fix each at its cause (the draft, the config, the
+chapter), or name it in the delivery report as a choice or an engine limit.
+`--strict` exits 1 while any remains. Check the matched share first: under
+half means the two page ranges do not cover the same stretch of the book.
+Horizontal text only; synthetic bold (a stroked fill) and the colours inside
+pictures are not read.
+
 Chinese books, page by page:
 - lines never start with 、，。）」》 or end with 「（《 (the region's `lineBreak`), and a justified line ends in
   the same cell as the others;
