@@ -663,6 +663,7 @@ describe("package exports", () => {
       "MAX_SPACE_LINES",
       "composedPages",
       "checkComposedSlots",
+      "checkFrameLookNames",
       "computeSourceMap",
       "parseInlineSnippetSpans",
       "mapInlineSnippet",

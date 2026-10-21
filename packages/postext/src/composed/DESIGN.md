@@ -3376,3 +3376,44 @@ Round 3 lets ports keep fewer templates and the Markdown say more about each pag
   bench-layout hashes unchanged, composed recipes pass `--check` (see the lane report for numbers).
 - **Not done here.** The skill's fold (`template_fold.py` / `template_dedupe.py` merging shells that differ
   by furniture and writing the attribute on the fences) is the skill lane's.
+
+### 13.4 What R3-3 built (#1089)
+
+Named frame looks: one colour per item of a grid without leaving the grid.
+
+- **Config.** `PostextConfig.frameLooks: FrameLookEntry[]` (`composed/types.ts`): `{ id, name?, …FrameLook }`,
+  the fields of `FrameConfig.look` (#976) under an id. `normalizeFrameLooks` (`templates.ts`) keeps the
+  entries with an id (the first of an id wins) and of each what `normalizeLook` keeps; `resolveAllConfig`
+  carries `frameLooks` only when one survives, so a config without looks resolves (and hashes, and keys the
+  page memo) as before. Palette-linked colours are relinked by `applyPaletteToResolvedConfig` like every
+  colour of the config, so part and page palettes recolour them by value (`partPalette.ts` needs no kind
+  for them, as for a template look).
+- **Markdown.** `look="<id>"` on any `:::frame{slot}` piece: a page's frame, a grid item's main piece, a
+  member's nested `:::frame`. The parser already kept every fence attribute (`containerAttrs`,
+  `containerAttrSources`); `wrap.ts` already dressed each story (and each instance, by its own item's
+  fence) with its fence's attributes, so the story box carries `look` like `label` and `title`. No parser
+  change.
+- **Resolution.** `layoutComposedPage`'s `styleOf` lays the story's named look over the frame
+  (`withNamedLook`, memoised per look and frame so `styleWithLook` keeps its per-look styles) before
+  `frameStyleOf`: style, then the template frame's `look`, then the named look, key by key (`lookOver` =
+  `mergeLook`). Decision: the look is the **story's** (read from the head's fence), so every frame of a
+  chain and the frames a story goes on in on later pages (`continueIn`) wear it; a later link's own fence
+  is not read (as for `label` and `title`). Paint needs nothing: the look lives in the style the box is
+  laid and drawn with.
+- **Validation.** `validatePageTemplates` checks `frameLooks` (and `htmlViewer.overrides.frameLooks`): an
+  entry with no id is `unknownConfigValue` at `…/id`, keys at any depth as a frame's look
+  (`unknownConfigKey` with the nearest name); no new config kind. Content warning `lookUnknown`
+  (`template`, `frame`, `look`, `suggestion?`, `fenceIndex`; WARNING_SINCE 1.50.0) from
+  `checkFrameLookNames` (`slotChecks.ts`): each `:::frame` inside a page fence whose `look` names no entry,
+  at the value; a `:::frame` outside a page is not checked. An empty `look=""` names none.
+- **Sandbox.** Design › Boxes › Frame looks (`FrameLooksSection`): id (renamed on blur; the pieces that
+  name it are rewritten in every chapter), name, the fourteen fields in three groups, a sample swatch and
+  the count of pieces naming it. The editor's Frame look button (`LookPicker`) lists the looks for the
+  `:::frame` piece at the caret (`framePieceAt`, a member before its item) and writes, replaces or removes
+  `look="…"` on its opening line (`frameLookChange`; `SlotSite.look` and `attrsEnd` from `pageSites`).
+  `lookUnknown` is a composed check; WebMCP reads and writes `frameLooks` and lists `lookUnknown`.
+- **Parity.** bench-layout hashes unchanged on Don Quijote, Señales, Kokoro, Bioquímica and
+  Pepper&Carrot (base and head); composed recipes `--check` (see the lane's report).
+- **Not done.** The skill's fold into one grid with a look per colour is the skill lane's. The Canvas does
+  not draw an unknown look's piece any differently (the Checks panel lists it). A look on a `:::frame`
+  outside a page fence does nothing and is not reported.
