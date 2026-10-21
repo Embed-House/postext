@@ -3447,3 +3447,71 @@ Named frame looks: one colour per item of a grid without leaving the grid.
 - **Not done.** Rows are rare on extracted pages: extract anchors most frames to the frame above, so a
   page's units chain into one cluster; a column of a page is a row module only when it is a unit of
   its own. No nested group inside a row (engine: one level).
+
+### 13.6 What #1095 changed (engine and Sandbox)
+
+The engine and Sandbox items of #1095: the limits §13.1, §13.3 and §13.4 left noted.
+
+- **Groups inside groups, to any depth.** `within` may name any modules group of the template (a row
+  or a grid too), as long as following `within` reaches a modules group inside no other without a
+  loop (`modulesGroupRoot`, `composed/modules.ts`; resolution drops a broken link and the validator
+  reports it at `…/within`, as before). Routing (`expandModules`): a module goes to the first group,
+  in template order, among those whose chain reaches the page's modules group, that takes its
+  template; a group with `templates` takes those, one without takes every template **unless other
+  groups lie inside it**, then none directly (decision: an intermediate row or grid would otherwise
+  swallow every module; its content comes from its inner groups and the templates it names).
+  `ResolvedModule.nested` is the innermost group; `nestedChain` gives the path out.
+- **Layout** (`placeModules`). The rows are built recursively: `cellsOf` splits a list of modules
+  into the cells of a group (a module the group lays itself, or a run of consecutive modules of the
+  group inside it on their path). Inside a stack a run's rows join the stack's rows (as in R3-2, so
+  continuation still goes by whole top-level rows); inside a row or a grid a run is one cell, laid as
+  its group's kind in the cell's box (`layRows`), measured as the sum of its rows (`measureCell`).
+  Decisions: such a cell takes a `'fill'` share of a row (grow 1; a group has no `width` key), is laid
+  at its own height (`'stretch'` does not stretch a group's cell; `'center'`/`'end'` move it), and a
+  module's percentage width is of the cell it is in. Every group on a module's path gets the union of
+  its modules' boxes (`#banda` reads the row, column included). A row of a nested group is never split
+  from its top-level row: the top-level row goes on whole.
+- **grow / shrink among a row's modules.** `PageTemplate.grow` / `shrink` on a module template
+  (inherited through `extends` like `width`; `moduleFactor`: a finite number ≥ 0, else
+  `unknownConfigValue`; on a page template, `unknownConfigValue` with `used: ''`). In a row (not a
+  stack, not a grid): the room the fixed widths and gaps leave goes by grow, a `'fill'` module (and a
+  group's cell) taking `max(1, grow)` and a sized one `grow ?? 0`; when the widths run past the end,
+  the sized modules give width back by `shrink × width` (CSS flex), down to 0. With every grow at its
+  default the arithmetic is the old equal share (`spare × 1 / n`), so rows lay byte for byte. No
+  `minWidth` for modules: a module shrinks to 0 at worst (not done).
+- **Ordering dependency.** `composedOrder`'s `stepKey` reads a modules group with `within` as the step
+  of the group it lies in, up to the one that holds the module frames: a page frame anchored to
+  `#banda` is placed after the modules group step, so it sees the row's box on the first pass.
+- **`rowAlign: 'stretch'` on `'auto'` boxes.** A stretched module (a row of several, `'stretch'`,
+  spare > 0.01 px) sets `stretchTo` while it is laid; `stretchAuto` (run before `clipAtFoot` for a
+  frame step, a group's members and a grid's cells) takes an `'auto'`-height frame of the module whose
+  foot is the module's own foot (within 0.5 px) down to the row's foot, and its declared box by as
+  much, so the reflow log shows no motion (the template asked for it). Left alone: a frame as wide as
+  its content (`width: 'auto'`, a pill or a tab), a pinned one and one held by the module's foot.
+  Decision: "the module's boxes" read as the frames that end where the module ends; a frame above
+  another keeps its height (stretching it would move what hangs below).
+- **Unknown look on the frame.** `VDTFrame.lookUnknown` (the id) is set on a frame that holds a story
+  whose `look` names no `frameLooks` entry (`unknownLookOf`, the story's look as for #1089). Optional,
+  absent on every existing book, so VDT hashes do not move.
+- **Sandbox.** `FenceConditionFields`: each select ends with «Another attribute…», which opens a box
+  (focus moves to it); Enter or leaving it takes the name when `fenceAttributeName`
+  (`templates/templateUsage.ts`) accepts it (the ASCII key grammar of `parse/attrs.ts`, at most 64
+  characters, not `template`/`spread`/`id`), else a `role="alert"` message tied to the box by
+  `aria-describedby` and `aria-invalid`; Escape or an empty box gives up. The name then shows in the
+  select as any value no fence sets. Canvas: `fitMarksFor` adds a `'look'` mark (violet dashed
+  outline, `#6a2c91`, white text 8.8 : 1, the look's name at the top-left corner) for each frame with
+  `lookUnknown`, beside its overflow or scale mark. Group editor: «Inside the group» lists
+  `modulesGroupParents` (every other modules group but those inside the edited one); the module's
+  template editor has «Share of the room left» (`grow`, shown at its default 1 or 0) and, once it has
+  a width, «Width given back when short» (`shrink`). 11 new labels and 3 changed, in the ten
+  languages; WebMCP `settings.test.ts` writes a group inside a row, `grow` and `shrink`.
+- **Parity.** bench-layout hashes unchanged on Don Quijote, Señales, Kokoro, Bioquímica and
+  Pepper&Carrot; the Cookbook bench (`--engine local --no-pixels --hash-warn`) and the composed
+  recipes (`capture --composed --check`) keep every approved layout: no recipe has a stretched row of
+  modules, a nested group or a module `grow`/`shrink` yet. A book whose row stretches a module ending
+  in an `'auto'` box moves, as the issue asks.
+- **Not done.** A `width` for a group's cell in a row (it is a `'fill'` share); `'stretch'` of a
+  group's cell; `minWidth`/`maxWidth` for modules; the porting skill's items of #1095 (another lane).
+- **Fixture.** `__tests__/composed/fixtures/moduleNesting.ts` (a box beside a column of two cards in a
+  row inside the page's stack, a note under the row, a row of two boxes sharing by grow);
+  `moduleNesting.test.ts`.
