@@ -3415,6 +3415,10 @@ export interface CalloutLabelConfig {
    *  `bottomLeft` / `bottomRight` at the foot), which otherwise copy the
    *  box's corner it hugs. The fillets keep their own radius. */
   borderRadius?: CornerRadius;
+  /** A joined tab filled in the label's own `background` (#1102): the
+   *  tab and its fillets are painted over the box's fill (or where the box
+   *  has none), under the one border. Default `false`: the box's fill. */
+  ownBackground?: boolean;
 }
 
 /** Vertical rule drawn between a callout marker and its box. */
@@ -3532,6 +3536,10 @@ export interface CalloutListStyleConfig {
    *  {@link bulletFontSize} and inherits the list face from the body sets
    *  its bullets in the box's body face. */
   bulletFontFamily?: string;
+  /** Space above and below a list in the box, ordered lists too (#1103).
+   *  Unset: the document's (`unorderedLists` / `orderedLists`). */
+  marginTop?: Dimension;
+  marginBottom?: Dimension;
 }
 
 /** A named callout style, selected by `:::callout{type="<id>"}`. */
@@ -3853,6 +3861,8 @@ export interface ResolvedCalloutStyleConfig {
     fillet?: Dimension;
     /** Absent: a square tab, or a joined one with the box's corner. */
     borderRadius?: CornerRadius;
+    /** Present (`true`) only when set: a joined tab in its own fill. */
+    ownBackground?: true;
   };
   columnGap: Dimension;
   marker: {
@@ -3910,6 +3920,9 @@ export interface ResolvedCalloutStyleConfig {
     bulletFontWeight?: number;
     /** Absent when the style sets none. */
     bulletFontFamily?: string;
+    /** Absent unless set: the document's list margins. */
+    marginTop?: Dimension;
+    marginBottom?: Dimension;
     /** `true` when the style sets `lists.color` itself. The colour then
      *  reaches the numbers of the box's ordered lists even when it equals
      *  `unorderedLists.color` (the value an unset field inherits). Absent

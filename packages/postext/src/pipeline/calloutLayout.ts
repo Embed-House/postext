@@ -94,7 +94,7 @@ import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from './colu
 import type { LineInsetStep } from '../measure/types';
 import type { CalloutLineWidth, GroupPos } from './cutTypes';
 import { offsetPathBlock } from '../design/pathBlock';
-import { borderSidesPx, boxOutline, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, shapePathBlocks, SHAPE_SIDES, uniformRadius, type ShapeBorder } from '../design/boxShape';
+import { borderSidesPx, boxOutline, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, shapePathBlocks, SHAPE_SIDES, tabRegionOutline, uniformRadius, type ShapeBorder, type ShapeTab } from '../design/boxShape';
 export type { CalloutLineWidth, GroupPos } from './cutTypes';
 
 // ---------------------------------------------------------------------------
@@ -189,6 +189,12 @@ export function deriveCalloutResolvedConfig(
   const bulletFamily = (levelFamily: string): string | undefined =>
     lists.bulletFontFamily
       ?? (lists.bulletFontSize && levelFamily === resolved.bodyText.fontFamily ? body.fontFamily : undefined);
+  // List margins of the box's own (#1103), on ordered lists too; unset,
+  // the document's.
+  const listMargins = {
+    ...(lists.marginTop ? { marginTop: lists.marginTop } : {}),
+    ...(lists.marginBottom ? { marginBottom: lists.marginBottom } : {}),
+  };
   return {
     ...resolved,
     bodyText: {
@@ -219,6 +225,7 @@ export function deriveCalloutResolvedConfig(
       indent: lists.indent,
       gap: lists.gap,
       itemSpacing: lists.itemSpacing,
+      ...listMargins,
       levels: ul.levels.map((l) => {
         const fontFamily = bulletFamily(l.fontFamily);
         return {
@@ -237,6 +244,7 @@ export function deriveCalloutResolvedConfig(
       indent: lists.indent,
       gap: lists.gap,
       itemSpacing: lists.itemSpacing,
+      ...listMargins,
       levels: ol.levels.map((l) => ({ ...l, color: numberColorOverride ? lists.color : l.color })),
     },
   };
@@ -2160,17 +2168,28 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       const outer: number | [number, number] = own
         ? (labelAtFoot ? [own[3], own[2]] : [own[0], own[1]])
         : tabRadius;
-      const outline = boxOutline(createBoundingBox(0, 0, boxWidth, boxHeight), radii, {
+      const shapeTab: ShapeTab = {
         edge: labelAtFoot ? 'bottom' : 'top',
         x0: tabX,
         x1: tabX + tabW,
         height: tabH,
         radius: outer,
         fillet: lb.fillet ? Math.max(0, px(lb.fillet)) : tabRadius,
-      });
+      };
+      const boxRect = createBoundingBox(0, 0, boxWidth, boxHeight);
+      const outline = boxOutline(boxRect, radii, shapeTab);
       const whole = borderOn && px(style.border.width) > 0 ? { color: style.border.color.hex, widthPx: px(style.border.width) } : null;
       const border: ShapeBorder = sides ?? { top: whole, right: whole, bottom: whole, left: whole };
       const shapes = shapePathBlocks(outline, style.backgroundEnabled ? style.background.hex : undefined, border);
+      // A tab in its own fill (#1102): the tab's part of the outline in the
+      // label's background, over the box's fill and under the border.
+      if (lb.ownBackground) {
+        const [tabFill] = shapePathBlocks(tabRegionOutline(boxRect, radii, shapeTab), lb.background.hex, undefined);
+        if (tabFill) {
+          const at = shapes.findIndex((b) => b.boxPart !== 'fill');
+          shapes.splice(at < 0 ? shapes.length : at, 0, tabFill);
+        }
+      }
       overlayBlocks.splice(boxShapeAt, boxPainted ? 1 : 0, ...shapes);
       if (stripeBlock) {
         const at = (cx: number, cy: number) => outline.vertices.find((v) => v.x === cx && v.y === cy)?.r ?? 0;

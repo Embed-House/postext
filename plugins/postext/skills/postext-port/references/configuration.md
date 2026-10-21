@@ -1207,7 +1207,7 @@ All em values = the callout body font size.
            letterSpacing (≥ 1.42: em of the body size, negative tightens; tracks the box's paragraphs and
            list items, measured into the lines) }   → inherit bodyText
          + italic = false, smallCaps = false   (paragraphs, list items and blockquotes of the box)
-  lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight?, bulletFontFamily? }  → inherit unorderedLists (bulletFontFamily unset: the list level keeps its own face)
+  lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight?, bulletFontFamily?, marginTop?, marginBottom? }  → inherit unorderedLists (bulletFontFamily unset: the list level keeps its own face; margins unset: the document's, ordered lists too)
            (a set `color` also colours ordered-list numbers, even when equal to unorderedLists.color)
   columnGap = 1.5em                  for :::columns{count=N} groups inside the box (a fence `gap=` overrides it)
   marginTop = 0.75em, marginBottom = 0.75em (minimum; grid-snapped after)
@@ -2099,6 +2099,7 @@ Callout styles as frame dress (≥ 1.48): borderRadius per corner as above, bord
   'bottom-end', label.icon { kind: 'glyph', glyph, fontFamily?, fontWeight?, scale? (1), color?, placement?, gap? }
   label.borderRadius (#1102): CornerRadius of the tab itself. Plain tab: square unless set. Joined tab: its two
   outer corners (topLeft/topRight at the head, bottomLeft/bottomRight at the foot), default the box corner; fillets keep fillet.
+  label.ownBackground: true (#1102): a joined tab painted in label.background over the box fill (white tab on a tinted card).
 
 ResourceAnchor (≥ 1.48): labelAt?: { x, y } (fractions: the label away from its point), leader?: boolean | LeaderStyle
 LeaderStyle  { color? (the label's), opacity? (≥ 1.49), width? (0.75pt), dash?, startCap? ('none'), endCap? ('dot'),

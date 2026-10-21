@@ -1889,7 +1889,8 @@ decoration["elements"].append(
 - **Tab corners.** `label.borderRadius` (one length or per corner) rounds the
   tab itself: a plain tab is square without it; a joined tab rounds its two
   outer corners with it instead of copying the box corner (the fillets keep
-  `fillet`).
+  `fillet`). `label.ownBackground: true` paints a joined tab in the label's
+  `background` over the box fill: a white tab on a tinted card.
 - **Path element** (`kind: "path"`, every design slot): SVG path data `d` in
   a `viewBox` (default `[1, 1]`: fractions of the box), stretched to the
   element's box (`preserveAspectRatio: "none"`) or fitted (`"meet"`); `fill`,

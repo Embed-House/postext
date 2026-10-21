@@ -2355,6 +2355,10 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   `ShapeTab.radius` as a pair, the corner at `x0` and the one at `x1`, each clamped to half the tab's
   width and its height less the fillet as the single radius was; unset, both copy the box corner the tab
   hugs. The fillets keep `fillet`, default the box corner.
+- **A joined tab in its own fill (#1102).** `label.ownBackground` paints `tabRegionOutline` (the tab,
+  its outer corners and the fillets flaring into the edge, closed along the edge; the same clamped
+  geometry as `boxOutline`) in the label's `background`, as a `boxPart: 'fill'` path between the box's
+  fill and the border, so palettes and the contrast check read it as a fill.
 - **Readers.** Part palettes recolour each side's colour as the border, a joined fill as the fill and
   its border pieces as the border; a frame's `look` border colour recolours every side; preflight checks
   each side (and a joined border) as a rule; the contrast check reads a joined fill as the ground; the

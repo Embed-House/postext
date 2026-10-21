@@ -399,7 +399,7 @@ interface CalloutStyleCardProps {
   stored: boolean;
   iconResources: Resource[];
   /** Resolved document list values the optional bullet fields fall back to. */
-  listDefaults: { bulletFontSize: Dimension; bulletFontWeight: number; bulletFontFamily: string };
+  listDefaults: { bulletFontSize: Dimension; bulletFontWeight: number; bulletFontFamily: string; marginTop: Dimension; marginBottom: Dimension };
   onChange: (partial: Partial<CalloutStyleConfig>) => void;
   onResetField: (field: keyof CalloutStyleConfig) => void;
   onRename: (nextId: string) => void;
@@ -1183,6 +1183,16 @@ export function CalloutStyleCard({
               onReset={() => resetGroupField('label', 'joined')}
             />
             {resolved.label.joined && (
+              <ToggleSwitch
+                label={labels.calloutStyleLabelOwnBackground}
+                tooltip={labels.calloutStyleLabelOwnBackgroundTooltip}
+                checked={resolved.label.ownBackground === true}
+                onChange={(v) => label({ ownBackground: v })}
+                isDefault={groupUnset('label', 'ownBackground')}
+                onReset={() => resetGroupField('label', 'ownBackground')}
+              />
+            )}
+            {resolved.label.joined && (
               <DimensionInput
                 label={labels.calloutStyleLabelFillet}
                 tooltip={labels.calloutStyleLabelFilletTooltip}
@@ -1858,6 +1868,28 @@ export function CalloutStyleCard({
           searchPlaceholder={labels.headingFontSearch}
           noResultsLabel={labels.headingFontNoResults}
         />
+        <DimensionInput
+          label={labels.calloutStyleListsMarginTop}
+          tooltip={labels.calloutStyleListsMarginsTooltip}
+          value={resolved.lists.marginTop ?? listDefaults.marginTop}
+          onChange={(v) => lists({ marginTop: v })}
+          min={0}
+          step={0.1}
+          units={SPACING_UNITS}
+          isDefault={groupUnset('lists', 'marginTop')}
+          onReset={() => resetGroupField('lists', 'marginTop')}
+        />
+        <DimensionInput
+          label={labels.calloutStyleListsMarginBottom}
+          tooltip={labels.calloutStyleListsMarginsTooltip}
+          value={resolved.lists.marginBottom ?? listDefaults.marginBottom}
+          onChange={(v) => lists({ marginBottom: v })}
+          min={0}
+          step={0.1}
+          units={SPACING_UNITS}
+          isDefault={groupUnset('lists', 'marginBottom')}
+          onReset={() => resetGroupField('lists', 'marginBottom')}
+        />
         <ColorPicker
           label={labels.colorLabel}
           value={resolved.lists.color}
@@ -2003,7 +2035,7 @@ export function useCalloutStyleEdits() {
     parents: parentsOf(style),
     stored: raw !== undefined,
     iconResources,
-    listDefaults: { bulletFontSize: unorderedLists.bulletFontSize, bulletFontWeight: unorderedLists.fontWeight, bulletFontFamily: unorderedLists.fontFamily },
+    listDefaults: { bulletFontSize: unorderedLists.bulletFontSize, bulletFontWeight: unorderedLists.fontWeight, bulletFontFamily: unorderedLists.fontFamily, marginTop: unorderedLists.marginTop, marginBottom: unorderedLists.marginBottom },
     onChange: (partial: Partial<CalloutStyleConfig>) => updateStyle(style.id, partial),
     onResetField: (field: keyof CalloutStyleConfig) => resetStyleField(style.id, field),
     onRename: (nextId: string) => renameStyle(style.id, nextId),

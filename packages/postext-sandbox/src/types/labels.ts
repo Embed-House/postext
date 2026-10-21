@@ -3535,6 +3535,8 @@ export interface SandboxLabels {
   calloutStyleLabelFilletTooltip: string;
   calloutStyleLabelBorderRadius: string;
   calloutStyleLabelBorderRadiusTooltip: string;
+  calloutStyleLabelOwnBackground: string;
+  calloutStyleLabelOwnBackgroundTooltip: string;
   calloutStyleLabelPositionBottomRight: string;
   calloutStyleLabelPositionBottomLeft: string;
   calloutStyleLabelPositionBottomStart: string;
@@ -3582,6 +3584,9 @@ export interface SandboxLabels {
   calloutStyleListsBulletWeight: string;
   calloutStyleListsBulletFont: string;
   calloutStyleListsBulletFontTooltip: string;
+  calloutStyleListsMarginTop: string;
+  calloutStyleListsMarginBottom: string;
+  calloutStyleListsMarginsTooltip: string;
   calloutStyleMarginTopTooltip: string;
   calloutStyleMarginBottomTooltip: string;
   calloutStyleSnapToGrid: string;

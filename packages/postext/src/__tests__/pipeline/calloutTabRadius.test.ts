@@ -3,7 +3,7 @@ import { buildDocument } from '../../pipeline';
 import { createMeasurementCache } from '../../measure';
 import { resolveAllConfig } from '../../pipeline/config';
 import { stripCalloutStylesDefaults } from '../../defaults';
-import { boxOutline, boxStylePathBlocks } from '../../design/boxShape';
+import { boxOutline, boxStylePathBlocks, tabRegionOutline } from '../../design/boxShape';
 import { createBoundingBox } from '../../vdt';
 import type { CalloutStyleConfig, PostextConfig, VDTBlock, VDTDesignBlock, VDTDesignBoxBlock, VDTDesignPathBlock, VDTDocument } from '../../index';
 
@@ -116,5 +116,45 @@ describe('a joined tab with its own radius (#1102)', () => {
     const base = paths(joined({}, 'bottom-left'))[0]!;
     const curves = (p: VDTDesignPathBlock) => p.subpaths[0]!.filter((c) => c.op === 'C').length;
     expect(curves(own)).toBe(curves(base) - 2);
+  });
+});
+
+describe('a joined tab in its own fill (#1102)', () => {
+  const joined = (extra: Record<string, unknown> = {}, style: Partial<CalloutStyleConfig> = {}) => build({
+    borderRadius: pt(6),
+    border: { enabled: true, color: hex('#336699'), width: pt(1) },
+    label: label({ position: 'top-left', joined: true, inset: pt(12), ...extra }),
+    ...style,
+  });
+
+  it('paints only the box fill by default, as before', () => {
+    expect(paths(joined()).map((p) => p.boxPart)).toEqual(['fill', 'border']);
+    expect(resolveAllConfig({ calloutStyles: [{ id: 'x', label: {} }] }).calloutStyles[0]!.label!.ownBackground).toBeUndefined();
+  });
+
+  it('fills the tab in the label background over the box fill and under the border', () => {
+    const [box, tab, border] = paths(joined({ ownBackground: true }));
+    expect(box!.fill).toBe('#fafafa');
+    expect(tab!.boxPart).toBe('fill');
+    expect(tab!.fill).toBe('#336699');
+    expect(border!.boxPart).toBe('border');
+    // The tab region stands on the box's edge: it ends where the box starts.
+    expect(tab!.bbox.y + tab!.bbox.height).toBeCloseTo(box!.bbox.y + 14, 6);
+  });
+
+  it('fills the tab on a box with no fill', () => {
+    const shapes = paths(joined({ ownBackground: true }, { backgroundEnabled: false }));
+    expect(shapes.filter((p) => p.boxPart === 'fill').map((p) => p.fill)).toEqual(['#336699']);
+  });
+
+  it('builds the tab region with its corners and fillets, closed along the edge', () => {
+    const box = createBoundingBox(0, 0, 200, 100);
+    const radii = [6, 6, 6, 6] as const;
+    const head = tabRegionOutline(box, radii, { edge: 'top', x0: 20, x1: 80, height: 14, radius: 4, fillet: 5 });
+    expect(head.vertices.map((v) => [v.x, v.y, v.r, v.concave === true])).toEqual([
+      [15, 0, 0, false], [20, 0, 5, true], [20, -14, 4, false], [80, -14, 4, false], [80, 0, 5, true], [85, 0, 0, false],
+    ]);
+    const flush = tabRegionOutline(box, radii, { edge: 'bottom', x0: 0, x1: 60, height: 14, radius: 4, fillet: 5 });
+    expect(flush.vertices.map((v) => [v.x, v.y, v.r])).toEqual([[65, 100, 0], [60, 100, 5], [60, 114, 4], [0, 114, 4], [0, 100, 0]]);
   });
 });

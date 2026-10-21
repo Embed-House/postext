@@ -244,6 +244,7 @@ function resolveCalloutStyleConfig(
             joined: partial.label.joined === true,
             ...(partial.label.fillet ? { fillet: partial.label.fillet } : {}),
             ...(partial.label.borderRadius !== undefined ? { borderRadius: partial.label.borderRadius } : {}),
+            ...(partial.label.ownBackground === true ? { ownBackground: true as const } : {}),
           },
         }
       : {}),
@@ -307,6 +308,8 @@ function resolveCalloutStyleConfig(
       ...(partial.lists?.bulletFontSize ? { bulletFontSize: partial.lists.bulletFontSize } : {}),
       ...(partial.lists?.bulletFontWeight !== undefined ? { bulletFontWeight: partial.lists.bulletFontWeight } : {}),
       ...(partial.lists?.bulletFontFamily ? { bulletFontFamily: partial.lists.bulletFontFamily } : {}),
+      ...(partial.lists?.marginTop ? { marginTop: partial.lists.marginTop } : {}),
+      ...(partial.lists?.marginBottom ? { marginBottom: partial.lists.marginBottom } : {}),
       // Set, not merely equal to the inherited value: the box's colour then
       // reaches its ordered-list numbers (EF-92).
       ...(partial.lists?.color ? { colorSet: true } : {}),
@@ -601,6 +604,8 @@ export function stripCalloutStylesDefaults(
       if (s.lists.bulletFontSize !== undefined) l.bulletFontSize = s.lists.bulletFontSize;
       if (s.lists.bulletFontWeight !== undefined) l.bulletFontWeight = s.lists.bulletFontWeight;
       if (s.lists.bulletFontFamily) l.bulletFontFamily = s.lists.bulletFontFamily;
+      if (s.lists.marginTop !== undefined) l.marginTop = s.lists.marginTop;
+      if (s.lists.marginBottom !== undefined) l.marginBottom = s.lists.marginBottom;
       const kept = stripObject(l);
       if (kept) r.lists = kept;
     }

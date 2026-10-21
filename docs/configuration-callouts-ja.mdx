@@ -190,13 +190,13 @@ The glass stays hot for an hour after the flame is out.
     </tr>
     <tr>
       <td><code>lists</code></td>
-      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight, bulletFontFamily &#125;</code></td>
+      <td><code>&#123; bulletChar, color, indent, gap, itemSpacing, bulletFontSize, bulletFontWeight, bulletFontFamily, marginTop, marginBottom &#125;</code></td>
       <td><code>unorderedLists</code>を継承</td>
-      <td>囲みの中のリストの文字組みです（<code>color</code>、<code>indent</code>、<code>gap</code>、<code>itemSpacing</code>は番号付きリストにも適用されます）。<code>bulletFontSize</code>/<code>bulletFontWeight</code>は、行頭記号のグリフを囲みの本文の書体でそのサイズとウェイトにします（太い色付きの行頭記号など）。<code>bulletFontFamily</code>は行頭記号を専用の書体（記号フォントなど）で組みます。未指定のとき、独自の書体を持つリスト（<code>unorderedLists.fontFamily</code>や階層ごとの<code>fontFamily</code>）は、囲みの中でもその書体で行頭記号を組みます。</td>
+      <td>囲みの中のリストの文字組みです（<code>color</code>、<code>indent</code>、<code>gap</code>、<code>itemSpacing</code>は番号付きリストにも適用されます）。<code>bulletFontSize</code>/<code>bulletFontWeight</code>は、行頭記号のグリフを囲みの本文の書体でそのサイズとウェイトにします（太い色付きの行頭記号など）。<code>bulletFontFamily</code>は行頭記号を専用の書体（記号フォントなど）で組みます。未指定のとき、独自の書体を持つリスト（<code>unorderedLists.fontFamily</code>や階層ごとの<code>fontFamily</code>）は、囲みの中でもその書体で行頭記号を組みます。<code>marginTop</code>/<code>marginBottom</code>は囲みの中のリスト（番号付きリストも）の前後のアキです。未指定のときは文書のリストのアキになります。</td>
     </tr>
     <tr>
       <td><code>label</code></td>
-      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet, borderRadius &#125;</code></td>
+      <td><code>&#123; fontFamily, fontSize, fontWeight, color, background, position, height, paddingX, offset, inset, icon, rule, joined, fillet, borderRadius, ownBackground &#125;</code></td>
       <td>未設定（タブなし）</td>
       <td>囲みの上辺に付け、ブロックの<code>label</code>属性を印字するタブです。番号付きの囲みの番号（「BOX 1-1」）に使います。<code>position</code>の角（<code>'top-right'</code>/<code>'top-left'</code>、または帯の<code>'start'</code>/<code>'end'</code>と同じく囲み自身の書字方向に従う<code>'top-start'</code>/<code>'top-end'</code>）に寄せて<code>inset</code>だけ内側に置き、囲みの上端から<code>offset</code>だけ突き出します（この分はブロックの一部として<code>marginTop</code>に上乗せされるので、段の先頭でもタブの場所が確保されます）。高さは<code>height</code>で、テキストの左右に<code>paddingX</code>を取ります。横に<code>icon</code>リソース（<code>&#123; resourceId, width, gap &#125;</code>、角と反対側）を付けることも、上辺に沿って反対側の角からタブまで<code>rule</code>（<code>&#123; enabled, color, width &#125;</code>）を引くこともできます。既定値は見出しのフォント、本文のサイズ、<code>700</code>、メインカラーの地に白、高さ<code>1.4em</code>、内側余白<code>0.6em</code>、持ち上げと内側へのずらしはなし、画像は幅<code>1em</code>で文字から<code>0.3em</code>離します。タブは枠の上に立つ独立した形なので、囲みの<code>borderRadius</code>にかかわらず角は四角いままです。<code>joined: true</code>（postext 1.48以降）を指定すると、タブと囲みは1つの輪郭になり、<code>fillet</code>が両者の接する内側の角を丸めます。<code>bottom-right</code>、<code>bottom-left</code>、<code>bottom-start</code>、<code>bottom-end</code>の位置（postext 1.48以降）は、タブを囲みの下端から下げ、<code>rule</code>を下辺に沿って引きます。postext 1.48以降は、アイコンにフォントの文字も使えます（<code>icon.kind: 'glyph'</code>。<a href="#タブの上のグリフ">タブの上のグリフ</a>を参照）。postext 1.42以降は、<code>icon.placement: 'inside'</code>で画像をタブの内側の先頭（右から左に組む囲みでは右端）、文字の前に<code>gap</code>だけ離して置けます。タブの幅は画像、間隔、文字、内側余白の合計になり、画像は<code>icon.width</code>とタブの高さに収めて中央に置かれます。画像は元の色のままなので、色付きのタブの白い輪と、白いタブの色付きの輪は別々のリソースとして、スタイルごとに指定します。既定の<code>'beside'</code>は、タブの縁の外に画像を置きます。postext 1.43以降は、<code>icon.tint: true</code>で画像を本来の色ではなくタブの<code>color</code>で描けます。画像が覆っている形を文字と同じ色で塗るので、1つの輪で本のすべての色調をまかなえます。透明部分のない画像は単色の長方形になります。PDFではSVGは縁をそのまま保ち、ビットマップは半透明になる境で切り抜かれます。印刷用の原版（<code>svg.pdfFileId</code>）はPDFのページで色を変えられないため使われません。</td>
     </tr>
@@ -308,7 +308,7 @@ calloutStyles: [
 
 - **角**：`borderRadius`は4つの角に共通の1つの長さか、`{ topLeft, topRight, bottomRight, bottomLeft }`です。オブジェクトに書かなかった角は四角になります。角は紙面の上での角です。2つの角が、その間の辺より多くを取ることはなく、それぞれが比率に応じて譲ります。
 - **辺**：`border.sides.top`、`right`、`bottom`、`left`は`enabled`、`color`、`width`を取り、書かなかった項目は枠線全体の値になります。上辺だけに枠線のある囲みは`border: { enabled: false, sides: { top: { enabled: true } } }`か、`enabled: true`にしてほかの3辺を切ります。辺の内側の縁はその太さに従うので、細い辺と太い辺の間の丸い角は、CSSと同じ曲線になります。
-- **つながったタブ**：`label.joined: true`にすると、タブと囲みは1つの輪郭、1つの塗り（囲みの`background`。タブ自身の`background`は塗りません）、タブの周りを回る1本の枠線になります。タブは辺の上に立ち、その高さだけ囲みの外に出るので、`offset`は`0`でなければなりません（ほかの値は`unknownConfigValue`として報告され、`0`として読みます）。タブの外側の角は、寄せている囲みの角の半径を取り、囲みと接する内側の角は`fillet`で丸めます（既定はその半径）。囲みの辺にぴったり寄せたタブ（`inset`が半ピクセル未満）は、その辺からまっすぐ立ち上がります。タブにはもう自分の塗りがないので、文字には囲みの塗りの上で読める色を付けます（`label.color`）。
+- **つながったタブ**：`label.joined: true`にすると、タブと囲みは1つの輪郭、1つの塗り（囲みの`background`。タブ自身の`background`は塗りません）、タブの周りを回る1本の枠線になります。タブは辺の上に立ち、その高さだけ囲みの外に出るので、`offset`は`0`でなければなりません（ほかの値は`unknownConfigValue`として報告され、`0`として読みます）。タブの外側の角は、寄せている囲みの角の半径を取り、囲みと接する内側の角は`fillet`で丸めます（既定はその半径）。囲みの辺にぴったり寄せたタブ（`inset`が半ピクセル未満）は、その辺からまっすぐ立ち上がります。タブにはもう自分の塗りがないので、文字には囲みの塗りの上で読める色を付けます（`label.color`）。`label.ownBackground: true`にすると、つながったタブはラベル自身の`background`で塗られます。ボックスの塗りの上、枠線の下に描くので、色付きのボックスに白いタブを、塗りのないボックスに色付きのタブをつなげられます。
 - **タブの角**：`label.borderRadius`でタブに独自の角を与えます。一つの長さか、ボックスの`borderRadius`と同じく紙面の角ごとの`{ topLeft, topRight, bottomRight, bottomLeft }`です。ボックスから離れたタブは、指定しなければ角が直角です。つながったタブは外側の二つの角をこれで丸めます（上のタブは`topLeft`と`topRight`、下のタブは`bottomLeft`と`bottomRight`）。指定がなければボックスの角の半径になります。へこみの曲線はどちらの場合も`fillet`のままです。
 - **下のタブ**：`position: 'bottom-right'`、`'bottom-left'`、`'bottom-start'`、`'bottom-end'`は、タブを囲みの下端から下げます。つながったタブでも、そうでないタブでも使えます。上のタブを裏返したもので、`offset`は下端より下、`rule`は下辺に沿います。横のタブはありません。タブの文字は横に進むからです。
 
@@ -493,7 +493,7 @@ calloutStyles: [
 囲みは内容を自分の`body`と`lists`の文字組みで組みます。それ以外はすべて文書のスタイルのままです。
 
 - **段落**は囲みの`body`に従います。書体、サイズ、行送り、色、強調の色、ウェイト、`italic`、`smallCaps`、行そろえ、ハイフネーション、字下げ、段落間隔です。未設定のフィールドは`bodyText`を継承します。継承した強調の色はパレットとのリンクを保つので、囲みの中の太字、イタリック、`:ref`のラベルは、囲みの外と同じく`colorPalette`に合わせて変わります。（postext 1.4までは、囲みの中の太字はメインカラーにかかわらず`#295AA3`のままでした。）
-- **箇条書きリスト**は`unorderedLists`より囲みの`lists`（行頭記号の文字、色、グリフのサイズとウェイト、字下げ、アキ、項目の間隔）を優先し、テキストは囲みの本文テキストになります。`lists.bulletChar`や`lists.color`が文書の値（`unorderedLists`）と異なるときは、すべてのレベルの行頭記号や色を置き換えます。同じ値を繰り返すとき、または未設定のときは、各レベルの値（`unorderedLists.levels`）をそのまま残すので、入れ子のダッシュも囲みの中で保たれます。
+- **箇条書きリスト**は`unorderedLists`より囲みの`lists`（行頭記号の文字、色、グリフのサイズ、ウェイトと書体、字下げ、アキ、項目の間隔、リストの前後のアキ）を優先し、テキストは囲みの本文テキストになります。`lists.bulletChar`や`lists.color`が文書の値（`unorderedLists`）と異なるときは、すべてのレベルの行頭記号や色を置き換えます。同じ値を繰り返すとき、または未設定のときは、各レベルの値（`unorderedLists.levels`）をそのまま残すので、入れ子のダッシュも囲みの中で保たれます。
 - **番号付きリスト**は`lists.indent`、`gap`、`itemSpacing`に従い、スタイルが`lists.color`を設定していれば、文書の行頭記号の色と同じ値でもそれに従います。設定していないスタイルでは、番号は`orderedLists.color`のままです。（postext 1.4までは、色が`unorderedLists.color`と異なるときにしか番号に反映されなかったため、まさにその色に設定しても何も変わりませんでした。）番号そのもの（書体、サイズ、区切り）は全体の`orderedLists`から取ります。`lists`には行頭記号のフィールドしかないので、囲みの番号はそちらで設定してください。
 - **囲みの中の`:::paragraphs`コンテナー**は、入れ子の囲みの中でも、その段落スタイルに従います。スタイルが設定しないフィールドは、囲みの`body`ではなく文書の`bodyText`を継承します（囲みのイタリックやスモールキャピタルも継承しません）。
 - **`:::columns`グループ**には独自のスタイルはありません。どの段も囲みの本文とリストの文字組みを共有し、`columnGap`が段間を決めます。
