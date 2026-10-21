@@ -10,6 +10,7 @@ same page ground on every page) become one resource.
                          [--keep-frame-names] [--dry-run] [--json]
                          [--laid FRAMES] [--no-grids] [--no-modules]
                          [--lattice-tol 1] [--grid-min 3] [--module-tol 0.5]
+                         [--member-reach 8] [--no-rows] [--no-looks] [--no-shell-merge]
   template_dedupe.py DIR --compare-boxes BEFORE AFTER [--box-tol 0.5]
 
 DIR is what `pdf_regions.py extract` wrote: library.json (pageTemplates,
@@ -38,7 +39,19 @@ chapters/<lang>/*.md. The script rewrites the three in place (with
   than as measured; --no-grids / --no-modules skip either. The report's
   `pages` gives every frame's name on the laid page, which
   --compare-boxes BEFORE AFTER uses to list every frame that moved by more
-  than --box-tol mm once the result is laid out again.
+  than --box-tol mm once the result is laid out again. A band whose
+  clusters stand side by side is a row of modules (rows in the page's
+  equal columns one after another a modules grid) inside the stack
+  (`within`, `templates`; --no-rows: one module). Cards whose styles
+  differ only in colours are one grid: the set keeps the style most cards
+  have, the others a named look (`frameLooks`, `look=` on the piece;
+  --no-looks turns it off). A member hangs at most --member-reach mm off
+  its card.
+- **One shell.** Page templates that differ only by furniture (front
+  matter with no folio) are one: what some pages leave out is drawn
+  `unless` their fence says `frontmatter` (`backmatter`, `variant-N`),
+  what only some draw `when` it does, and those fences carry the word
+  (--no-shell-merge keeps a shell each).
 - **Templates.** Two templates are one kind of page when every frame of the
   same name has the same style, role and flags and stands within --geom-tol
   mm (position, width, minimum and maximum height); their groups are the
@@ -263,19 +276,39 @@ LOOK_PATHS = ("/background", "/border/color", "/stripe/color", "/icon/color", "/
               "/label/color", "/label/background", "/label/rule/color")
 
 
+def centred(st: dict) -> dict:
+    """The style as a lattice compares it: words set left with even padding
+    on both sides (within 1 mm, the way extract reads a pill whose word it
+    measured centred) are centred words, and centred words do not depend on
+    the side padding, so neither is compared."""
+    body = st.get("body") or {}
+    pad = st.get("padding") or {}
+    left, right = pad.get("left"), pad.get("right")
+    align = body.get("textAlign", "left")
+    even = is_dim(left) and is_dim(right) and abs((dim_mm(left) or 0) - (dim_mm(right) or 0)) <= 1.0
+    if align == "center" or (align in ("left", "start") and even):
+        st = {**st, "body": {**body, "textAlign": "center"},
+              "padding": {k: v for k, v in pad.items() if k not in ("left", "right")}}
+    return st
+
+
 def style_class(st: dict) -> str:
     """A style with the colours a look can carry left out: styles of one
-    class differ only in those colours."""
-    out = {k: ("*" if k in LOOK_PATHS and is_colour(v) else v) for k, v in leaves(st).items() if k not in ("/id", "/name")}
+    class differ only in those colours (and in how they centre their
+    words, `centred`)."""
+    out = {k: ("*" if k in LOOK_PATHS and is_colour(v) else v) for k, v in leaves(centred(st)).items()
+           if k not in ("/id", "/name")}
     return json.dumps(out, sort_keys=True)
 
 
 def colour_look(a: dict, b: dict, tol: dict) -> dict | None:
     """The look that dresses style `a` as style `b`: the colours of `b` that
     differ from `a`'s (beyond --delta-e), as a `frameLooks` entry's fields;
-    {} when the two are alike, None when they differ in anything else."""
-    la = {k: v for k, v in leaves(a).items() if k not in ("/id", "/name")}
-    lb = {k: v for k, v in leaves(b).items() if k not in ("/id", "/name")}
+    {} when the two are alike, None when they differ in anything else (a
+    pill read with even side padding and one read centred are alike:
+    `centred`)."""
+    la = {k: v for k, v in leaves(centred(a)).items() if k not in ("/id", "/name")}
+    lb = {k: v for k, v in leaves(centred(b)).items() if k not in ("/id", "/name")}
     if set(la) != set(lb):
         return None
     look: dict[str, Any] = {}

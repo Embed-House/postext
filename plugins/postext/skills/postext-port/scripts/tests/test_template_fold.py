@@ -592,6 +592,36 @@ class LookTest(unittest.TestCase):
             else:
                 self.assertIn(':::frame{slot="grid-box"}', item)
 
+    def test_a_pill_between_two_rows_hangs_over_its_own_photo(self):
+        # pills 6.1 mm over each photo; the second row's pills stand 6.2 mm
+        # under the first row's photos, so they hang from both
+        t, reg, md = grid_page()
+        tops = {1: 55.0, 2: 110.3}
+        for k in range(1, 7):
+            row = 1 if k <= 3 else 2
+            p = next(f for f in reg["frames"] if f["name"] == f"picture-{k}")
+            p["box"] = [p["box"][0], tops[row], p["box"][2], tops[row] + 35]
+            next(f for f in t["frames"] if f["name"] == f"picture-{k}")["placement"] = at(p["box"][0], tops[row])
+            b = next(f for f in reg["frames"] if f["name"] == f"box-{k}")
+            b["box"] = [p["box"][0] + 8, tops[row] - 14.1, p["box"][0] + 48, tops[row] - 6.1]
+            next(f for f in t["frames"] if f["name"] == f"box-{k}")["placement"] = at(b["box"][0], b["box"][1])
+        templates, _, rep = fold([(t, reg, md)], modules=False)
+        self.assertEqual([(g["columns"], g["rows"], g["frames"]) for g in rep["grids"]],
+                         [(3, 2, ["grid-picture", "grid-box"])])
+        pill = next(f for f in templates[0]["frames"] if f["name"] == "grid-box")
+        self.assertEqual(pill["placement"]["anchor"], {"to": "#grid-picture", "edge": "top-left"})
+
+    def test_photos_of_their_own_widths_are_no_centred_members(self):
+        # tabs on a lattice, a photo under each, centred but of other widths:
+        # a picture has no width of its words, so the photos are no members
+        t, reg, md = grid_page()
+        for k, w in enumerate([56, 40, 56, 48, 56, 36], start=1):
+            p = next(f for f in reg["frames"] if f["name"] == f"picture-{k}")
+            cx = (p["box"][0] + p["box"][2]) / 2
+            p["box"] = [cx - w / 2, p["box"][1], cx + w / 2, p["box"][3]]
+        _, _, rep = fold([(t, reg, md)], modules=False)
+        self.assertFalse(any("grid-picture" in g["frames"][1:] for g in rep["grids"]))
+
     def test_without_looks_the_pills_are_no_grid(self):
         _, _, rep = fold([look_grid_page()], modules=False)
         self.assertEqual([g["frames"] for g in rep["grids"]], [["grid-picture"]])

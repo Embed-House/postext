@@ -37,7 +37,13 @@ the trim, the coordinates the templates' placements use).
   `:::module{template="…"}` blocks with the bands' pieces inside (the
   flowing text's module with the pieces that name no slot), so the content
   stays in the Markdown. «Extract a module» (`templates/moduleEdits.ts`) is
-  the model.
+  the model. A band whose clusters stand side by side (`row_columns`) is a
+  row of modules instead, laid by a modules group inside the stack
+  (`nested_groups`: `within`, `templates`; a grid when rows in equal
+  columns follow each other).
+- **Looks** (`LookBook`). With style classes, cards whose styles differ
+  only in colours stand on one lattice; each card that differs from the
+  set's style names a look (`frameLooks`, `look=` on its piece).
 
 Both keep a map of every frame's old name to the name the engine gives it
 (`grid-picture[3]`, `box-picture[1].picture-2`), per page fence, for the
@@ -432,16 +438,25 @@ def _lattice(mains: list[str], by: dict[str, dict], rects: dict[str, Box], kinds
     # members: frames hanging from a card, one per kind in every card
     hang: dict[str, dict[tuple, str]] = {n: {} for n in cells}
     hanging: set[str] = set()
+    # a frame between two rows of cards hangs under one and over the next:
+    # it takes the way most frames of its look hang (a pill over every photo)
+    cands: dict[str, list[tuple[float, str, str]]] = {}
+    ways: dict[tuple, int] = {}
     for name, f in by.items():
         if name in mset:
             continue
-        best = None
         for m in cells:
             how = _hangs(rects[name], rects[m], tol, reach)
             if how:
-                d = abs(_cx(rects[name]) - _cx(rects[m]))
-                if best is None or d < best[0]:
-                    best = (d, m, how)
+                cands.setdefault(name, []).append((abs(_cx(rects[name]) - _cx(rects[m])), m, how))
+        for how in {c[2] for c in cands.get(name, [])}:
+            k = (how,) + _look(f, kinds.get(name, "box"), classes)
+            ways[k] = ways.get(k, 0) + 1
+    for name, f in by.items():
+        if name not in cands:
+            continue
+        look = _look(f, kinds.get(name, "box"), classes)
+        best = min(cands[name], key=lambda c: (-ways.get((c[2],) + look, 0), c[0]))
         if best:
             hanging.add(name)
             key = (best[2],) + _look(f, kinds.get(name, "box"), classes)
@@ -465,7 +480,8 @@ def _lattice(mains: list[str], by: dict[str, dict], rects: dict[str, Box], kinds
             continue
         if max(ws) - min(ws) <= tol and max(dx) - min(dx) <= tol:
             rules[key] = {"how": how, "centred": False, "dx": dx[0], "dy": dy[0], "minWidth": None}
-        elif max(dcx) - min(dcx) <= tol:
+        elif max(dcx) - min(dcx) <= tol and kinds.get(mem[0], "box") not in ("picture", "figure"):
+            # (words as wide as they are: a picture has no such width)
             rules[key] = {"how": how, "centred": True, "dx": sum(dcx) / len(dcx), "dy": dy[0],
                           "minWidth": min(ws), "maxWidth": max(ws)}
     # row extents as the engine measures a row: reach above the card, below its top
