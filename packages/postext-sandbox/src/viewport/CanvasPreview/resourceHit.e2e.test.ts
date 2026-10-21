@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, mapInlineSnippet } from 'postext';
 import type { PostextConfig, PostextContent, Resource, VDTDocument } from 'postext';
-import { resourceBlocksOnPage } from './geometry';
+import { resourceBlocksOnPage } from './geometry.js';
 import {
   contentOffsetToPlain,
   resolveResourceRun,
   resourceTextAtPixel,
   xForPlainInResourceLine,
-} from './resourceHit';
+} from './resourceHit.js';
 
 // Font-aware width stub (as in geometry.e2e.test.ts): bold glyphs wider than
 // regular so segment widths differ per weight.

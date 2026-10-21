@@ -120,6 +120,8 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
 
 标为`14`的清单由postext 1.30至1.33写出。规则15（postext 1.34，#853）为[模板页](/zh/docs/composed-pages)增加了页面模板（`pageTemplates`）和标签样式（`labelStyles`）。它们不改变旧配置所写的任何内容，所以标为`14`的清单按原样读取，没有固定值。这个编号表示配置里可能有模板，按14或更低版本读取的程序会忽略它们。
 
+标为`15`或`16`的清单由 postext 1.34 至 1.51 写出（规则16，#1056，为模板的装饰加入连接线，不固定任何旧行为）。规则17（#1119）让段落样式未设置的字体、字号、行距、字重和颜色取自它所在框的正文，而到 1.51 为止取自文档正文。标为`16`或更早的清单，在合并后的配置声明了段落样式且未写明该设置时，会在生效的`bodyText`上得到`bodyText.paragraphStylesInBoxes: 'document'`（`pinLegacyBoxParagraphStyles`）。
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

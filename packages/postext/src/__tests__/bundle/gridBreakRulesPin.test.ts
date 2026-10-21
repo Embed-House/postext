@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { unzipSync } from 'fflate';
-import { createBundle, openBundle } from '../../bundle';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyGridBreakRules } from '../../bundle/configVersion';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { createBundle, openBundle } from '../../bundle/index.js';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyGridBreakRules } from '../../bundle/configVersion.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #717: a configuration stored before the widow and orphan rules were
 // turned off by default on a character grid (configVersion 11 or older,
@@ -62,17 +62,20 @@ describe('pinLegacyGridBreakRules (#717)', () => {
   });
 
   it('pins every version before 12, none from 12', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
     for (const v of [undefined, 1, 5, 8, 10, 11]) {
       expect(rules(migrateConfig(grid('ja'), v)), String(v)).toEqual(ON);
     }
     const current = grid('ja');
-    // One stamped 12 takes the pins of rules 13 and 14 alone: the language
-    // (#764, #770) and, its text not being known, the task box (#765). One
-    // stamped 13 takes the language alone; one stamped 14 is read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' } });
-    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' } });
-    expect(migrateConfig(current, 14)).toBe(current);
+    // One stamped 12 takes the pins of rules 13, 14 and 18 alone: the
+    // language (#764, #770) and, its text not being known, the task box
+    // (#765) and the rounded mark ends (#1149). One stamped 13 takes the
+    // language and the mark ends; one stamped 14 the mark ends alone; one
+    // stamped 18 is read as it is.
+    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 14)).toEqual({ ...current, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 18)).toBe(current);
   });
 
   it('survives a save: the stripped configuration keeps the rules it was pinned to', () => {
@@ -127,7 +130,7 @@ describe('a bundle keeps the break rules of its grid (#717)', () => {
     expect(rules(opened.config)).toEqual(ON);
     // Written again from what was read: stamped 14, the rules spelled out.
     const again = await createBundle({ name: 'Old', locale: 'ja', markdown: MD, config: opened.config });
-    expect(again.manifest.configVersion).toBe(16);
+    expect(again.manifest.configVersion).toBe(18);
     expect(again.manifest.config!.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host' });
     expect(rules((await openBundle(again.bytes)).config)).toEqual(ON);
   });

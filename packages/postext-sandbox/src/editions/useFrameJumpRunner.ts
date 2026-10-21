@@ -12,17 +12,17 @@ import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { sourceAt, type VDTDocument } from 'postext';
 import {
   useSandboxChapterDocsRef, useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxSelector,
-} from '../context/SandboxContext';
-import { fromBookOffset } from '../book/compose';
-import type { ComposedBook } from '../book/types';
-import { selectFrame } from '../editing/editMode';
-import { climbable, elementRectOnSheet } from '../selection/pageSelection';
-import { setPageSelection } from '../selection/selectionStore';
-import { sameLocaleTag } from '../presets/locale';
-import { hashBundleOrigin, readViewHash, viewHashFragment } from '../storage/viewHash';
-import { resolveJump } from '../warnings/composedChecks';
-import { setOverlapFocus } from './overlapFocus';
-import { clearFrameJump, onFrameJumpChange, pendingFrameJump, setJumpFlash, type PendingFrameJump } from './frameJump';
+} from '../context/SandboxContext.js';
+import { fromBookOffset } from '../book/compose.js';
+import type { ComposedBook } from '../book/types.js';
+import { selectFrame } from '../editing/editMode.js';
+import { climbable, elementRectOnSheet } from '../selection/pageSelection.js';
+import { setPageSelection } from '../selection/selectionStore.js';
+import { sameLocaleTag } from '../presets/locale.js';
+import { hashBundleOrigin, readViewHash, viewHashFragment } from '../storage/viewHash.js';
+import { resolveJump } from '../warnings/composedChecks.js';
+import { setOverlapFocus } from './overlapFocus.js';
+import { clearFrameJump, onFrameJumpChange, pendingFrameJump, setJumpFlash, type PendingFrameJump } from './frameJump.js';
 
 /** Pick frame `frameId` of page `pageIndex` as the page selection, at
  *  frame level (what a click on it and Esc from its text would pick).

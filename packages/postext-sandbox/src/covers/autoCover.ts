@@ -10,7 +10,7 @@
 // This module holds the decisions (pure, tested); the capture itself is
 // covers/useAutoCover.ts, the storage the two stores above.
 
-import { sameContentLocale } from '../presets/locale';
+import { sameContentLocale } from '../presets/locale.js';
 
 /** The book a cover is for. */
 export type CoverTarget =

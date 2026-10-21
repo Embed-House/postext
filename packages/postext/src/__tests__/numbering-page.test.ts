@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildPageLabels, collectPageLabelRuns } from '../numbering';
+import { buildPageLabels, collectPageLabelRuns } from '../numbering.js';
 
 describe('buildPageLabels', () => {
   it('single decimal segment', () => {

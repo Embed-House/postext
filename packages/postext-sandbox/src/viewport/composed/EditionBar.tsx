@@ -6,7 +6,8 @@
  * same composed page (the same fence, and the frame picked; its page
  * number may differ in that language), and «Side by side» shows the page
  * next to the same page of another edition. With them, the switch of the
- * reflow marks (#868).
+ * reflow marks (#868) and the choice of fit marks (#1160): all, problems
+ * only, none.
  *
  * A rail at the start edge (#1009), the mirror of the toolbar at the end
  * edge: hidden until the pointer reaches that edge, gone again when it
@@ -14,21 +15,22 @@
  * layout docks it as a row at the top, as there is no hover there.
  */
 
-import { Columns2, MoveDiagonal, Pin, PinOff } from 'lucide-react';
+import { Columns2, EyeOff, MoveDiagonal, Pin, PinOff, SquareDashed, TriangleAlert } from 'lucide-react';
 import type { CSSProperties } from 'react';
-import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { selectedFrameNow } from '../../editing/editMode';
-import { requestFrameJump } from '../../editions/frameJump';
-import { useBookEditions } from '../../editions/useBookEditions';
-import { useCompactLayout } from '../../hooks/useCompactLayout';
-import { sameLocaleTag } from '../../presets/locale';
-import { localeDisplayName, localeShortTag } from '../../presets/localeNames';
-import { readViewHash } from '../../storage/viewHash';
-import { useUiRtl } from '../../ui';
-import { TOOLBAR_STYLE_BASE, ToolbarButton, ToolbarSeparator, toolbarHiddenStyle } from '../CanvasToolbar';
-import { useFloatingToolbarShell } from '../useFloatingToolbarShell';
-import { hasComposedPages } from './ReflowPanel';
-import { useReflowShown } from './reflowView';
+import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { selectedFrameNow } from '../../editing/editMode.js';
+import { requestFrameJump } from '../../editions/frameJump.js';
+import { useBookEditions } from '../../editions/useBookEditions.js';
+import { useCompactLayout } from '../../hooks/useCompactLayout.js';
+import { sameLocaleTag } from '../../presets/locale.js';
+import { localeDisplayName, localeShortTag } from '../../presets/localeNames.js';
+import { readViewHash } from '../../storage/viewHash.js';
+import { useUiRtl } from '../../ui/index.js';
+import { TOOLBAR_STYLE_BASE, ToolbarButton, ToolbarSeparator, toolbarHiddenStyle } from '../CanvasToolbar.js';
+import { useFloatingToolbarShell } from '../useFloatingToolbarShell.js';
+import { hasComposedPages } from './ReflowPanel.js';
+import { useReflowShown } from './reflowView.js';
+import { fitMarksViewOf, nextFitMarksMode, useFitMarksChoice, type FitMarksMode } from './fitMarksView.js';
 
 /** Over the side-by-side view (z-30), which it opens and closes. */
 const RAIL_Z = 35;
@@ -55,6 +57,8 @@ export function EditionRail({ comparing, onToggleCompare }: { comparing: boolean
   const docRef = useSandboxDocRef();
   const { presetId, projectId, linked, locales, activeLocale } = useBookEditions(false);
   const [reflowShown, setReflowShown] = useReflowShown();
+  const [fitChoice, setFitChoice] = useFitMarksChoice();
+  const debug = useSandboxSelector((s) => s.config.debug);
   const compact = useCompactLayout();
   const rtl = useUiRtl();
   const shell = useFloatingToolbarShell('canvas-editions', false, { edge: 'start', defaultPinned: false });
@@ -164,7 +168,27 @@ export function EditionRail({ comparing, onToggleCompare }: { comparing: boolean
             tooltipSide={tooltipSide}
           />
         )}
+        {reflow && <FitMarksButton mode={fitMarksViewOf(debug, fitChoice).mode} onChange={setFitChoice} tooltipSide={tooltipSide} />}
       </div>
     </>
+  );
+}
+
+const FIT_ICONS: Record<FitMarksMode, typeof SquareDashed> = { all: SquareDashed, problems: TriangleAlert, none: EyeOff };
+
+/** The fit marks on the canvas (#1160): each press takes the next of all,
+ *  problems only and none, and keeps it as the reader's choice. */
+function FitMarksButton({ mode, onChange, tooltipSide }: { mode: FitMarksMode; onChange: (next: FitMarksMode) => void; tooltipSide: 'inline-start' | 'inline-end' }) {
+  const labels = useSandboxLabels();
+  const names: Record<FitMarksMode, string> = { all: labels.fitMarksAll, problems: labels.fitMarksProblems, none: labels.fitMarksNone };
+  const Icon = FIT_ICONS[mode];
+  const next = nextFitMarksMode(mode);
+  return (
+    <ToolbarButton
+      icon={<Icon size={16} aria-hidden="true" />}
+      label={labels.fitMarksToggleState.replace('__mode__', names[mode]).replace('__next__', names[next])}
+      onClick={() => onChange(next)}
+      tooltipSide={tooltipSide}
+    />
   );
 }

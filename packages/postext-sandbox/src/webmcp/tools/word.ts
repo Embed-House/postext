@@ -23,10 +23,10 @@ import {
   type WordImportOptions,
   type WordTemplate,
 } from 'postext/word';
-import { wordCount } from '../../book/chapterOps';
-import type { SandboxLabels } from '../../types';
-import type { SandboxAction } from '../../context/SandboxContext';
-import { downloadBytes } from '../../storage/persistence';
+import { wordCount } from '../../book/chapterOps.js';
+import type { SandboxLabels } from '../../types/index.js';
+import type { SandboxAction } from '../../context/SandboxContext.js';
+import { downloadBytes } from '../../storage/persistence.js';
 import {
   FINDING_LABEL,
   convertWordDocument,
@@ -45,12 +45,12 @@ import {
   wordTrackingPlan,
   type WordTrackingPlan,
   type WordDestination,
-} from '../../word/sandboxImport';
-import { chapterText, editChapter } from '../chapterEdits';
-import { chapterOf, dispatchAndWait, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { CHAPTER_PARAM, UNDO_HINT, WAIT_PARAM, fileParam, layoutAnswer } from './book';
-import { readFileInput, type FileInput } from './resources';
+} from '../../word/sandboxImport.js';
+import { chapterText, editChapter } from '../chapterEdits.js';
+import { chapterOf, dispatchAndWait, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { CHAPTER_PARAM, UNDO_HINT, WAIT_PARAM, fileParam, layoutAnswer } from './book.js';
+import { readFileInput, type FileInput } from './resources.js';
 
 /** Most of the converted Markdown a dry run hands back, as much as the
  *  dialog's preview shows. */

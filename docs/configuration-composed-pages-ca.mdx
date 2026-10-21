@@ -342,6 +342,12 @@ Un marc es col·loca segons la cel·la de `grid` quan la plantilla té retícula
       <td>Com comparteix el marc l'espai del seu grup: <code>grow</code> pren una part de l'espai sobrant, <code>shrink</code> deixa que el marc torni espai, i els marcs amb una <code>priority</code> més baixa el cedeixen primer.</td>
     </tr>
     <tr>
+      <td><code>growWith</code></td>
+      <td><code>'children' | string[]</code></td>
+      <td>—</td>
+      <td>Creix amb els marcs de dins (vegeu <a href="/ca/docs/composed-page-books">Llibres de pàgines compostes</a>, pas 6).</td>
+    </tr>
+    <tr>
       <td><code>optional</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -681,6 +687,8 @@ Una plantilla amb `extends` parteix de la plantilla que indica (que al seu torn 
 
 `variants.recto` i `variants.verso` s'escriuen com una plantilla i es combinen igual, en una pàgina senar o en una de parella. S'apliquen després de tota la cadena d'`extends`, primer la variant de l'arrel. Una doble pàgina té els dos costats, de manera que no se li aplica cap variant.
 
+Un element de `variants.recto` amb `parity: 'even'`, o de `variants.verso` amb `'odd'`, no es dibuixa mai: `unknownConfigValue`.
+
 ```ts
 pageTemplates: [
   { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
@@ -711,7 +719,7 @@ decoration: { elements: [
 - Un element ancorat a un altre que queda fora, o amb la mida mesurada fins a ell, també queda fora.
 - Amb les dues claus, l'element es dibuixa on el bloc fixa l'atribut de `when` i no el d'`unless`.
 - Els encapçalaments del document i els d'una secció també les llegeixen. Una pàgina que no és composta no té bloc de pàgina i no fixa res. Els dissenys de títol, de part i de caixa no les tenen en compte.
-- Un valor que no és un text no buit, o un d'escrit en un disseny de títol, de part o de caixa, s'avisa com a `unknownConfigValue` i l'element es dibuixa com si no en tingués. `postext check` afegeix una nota, `conditionNeverMet`, per cada `when` o `unless` amb un atribut que cap pàgina del llibre no fixa: aquell element no es dibuixa mai, o sempre.
+- Un valor que no és un text no buit, o un d'escrit en un disseny de títol, de part o de caixa, s'avisa com a `unknownConfigValue` i l'element es dibuixa com si no en tingués. `postext check` afegeix una nota, `conditionNeverMet`, per cada `when` o `unless` amb un atribut que cap pàgina del llibre no fixa: aquell element no es dibuixa mai, o sempre. També un `{attr.x}` que res defineix: queda buit.
 - Al Sandbox, cada targeta d'element d'un encapçalament i de la decoració d'una plantilla té els camps **Es dibuixa si la pàgina ho diu** i **No es dibuixa si la pàgina ho diu**, que ofereixen els atributs que fan servir les pàgines del llibre.
 
 ### El que aplica la maquetació

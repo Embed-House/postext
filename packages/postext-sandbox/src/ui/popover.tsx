@@ -2,8 +2,8 @@
 
 import type { CSSProperties, ReactNode, Ref, RefObject } from 'react';
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
-import { usePortalContainer } from './portal';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from './surface';
+import { usePortalContainer } from './portal.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from './surface.js';
 
 /** `inline-start` / `inline-end`: beside the anchor, before or after it in
  *  the interface's reading order (left / right, mirrored right to left). */

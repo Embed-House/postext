@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import type { Resource } from 'postext';
-import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext';
-import { state as baseState } from '../webmcp/tools/testHarness';
-import { COALESCE_MS, createSandboxHistory, setActiveHistory } from './sandboxHistory';
-import { describeStep } from './historyKeys';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
+import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext.js';
+import { state as baseState } from '../webmcp/tools/testHarness.js';
+import { COALESCE_MS, createSandboxHistory, setActiveHistory } from './sandboxHistory.js';
+import { describeStep } from './historyKeys.js';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
 
 // #866: the marks of a picture (its label anchors) are steps of the one
 // undo history when the change asks for it.

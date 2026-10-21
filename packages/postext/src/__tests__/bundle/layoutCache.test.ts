@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { buildBundle, createBundleLayoutCache } from '../../bundle';
-import type { BundleLayoutCache } from '../../bundle';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
+import { buildBundle, createBundleLayoutCache } from '../../bundle/index.js';
+import type { BundleLayoutCache } from '../../bundle/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
 
 // #782: a layout cache handed to `buildBundle` build after build lays out
 // again only the chapters whose inputs changed, and gives what a build

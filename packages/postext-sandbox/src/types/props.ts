@@ -1,7 +1,7 @@
 import type { PostextConfig } from 'postext';
 import type { ReactNode } from 'react';
-import type { SandboxLabels } from './labels';
-import type { PresetSourceSpec } from '../presets/types';
+import type { SandboxLabels } from './labels.js';
+import type { PresetSourceSpec } from '../presets/types.js';
 
 export type PanelId = 'projects' | 'chapters' | 'markdown' | 'config' | 'resources' | 'fonts' | 'warnings';
 /** The preview tabs, in the order the bar shows them: Canvas, PDF, Folio,

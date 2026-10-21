@@ -5,8 +5,8 @@
 
 import type { LayoutContinuation, NumeralStyle, StoryJump, VDTDocument } from 'postext';
 import { resolveJumpMarks } from 'postext';
-import { routeJumps } from './jumps';
-import type { ChapterPlan } from './types';
+import { routeJumps } from './jumps.js';
+import type { ChapterPlan } from './types.js';
 
 /** Lays out `plans` in order with `build`, chaining the page offset and the
  *  numbering on the documents built, not on the layout records (a record

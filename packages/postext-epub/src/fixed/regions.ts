@@ -10,9 +10,9 @@
 
 import { comicBalloonGroups, comicBalloonKind, comicBalloonText, comicPanelContinues, isComicSpreadPartner } from 'postext';
 import type { BoundingBox, VDTComicBalloon, VDTComicPage, VDTDocument, VDTPage } from 'postext';
-import type { EpubItem } from '../types';
-import { escapeAttr, xhtmlDocument } from '../shared/xml';
-import { isRtlLanguage } from '../package/strings';
+import type { EpubItem } from '../types.js';
+import { escapeAttr, xhtmlDocument } from '../shared/xml.js';
+import { isRtlLanguage } from '../package/strings.js';
 
 export const REGIONS_HREF = 'regions.xhtml';
 

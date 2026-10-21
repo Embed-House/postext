@@ -1,7 +1,7 @@
-import type { VDTTextDots } from '../vdt';
-import { textDots } from '../textDots';
-import { counterFlipBox } from './mirrorFrame';
-import { languageOf, letterSpacingOf, restoreContext, saveContext } from './contextState';
+import type { VDTTextDots } from '../vdt.js';
+import { textDots } from '../textDots.js';
+import { counterFlipBox } from './mirrorFrame.js';
+import { languageOf, letterSpacingOf, restoreContext, saveContext } from './contextState.js';
 
 /**
  * Paint `text` at `(x, y)` as dots to trace (#1017), as `fillText` would

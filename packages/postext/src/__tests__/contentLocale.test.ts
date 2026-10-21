@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { canonicalLocaleTag, matchContentLocale, sameContentLocale } from '../locale';
-import { pickChapterSpecs, pickLocaleOverrides, readBundle, resolveBundleConfigLocale, resolveBundleLocale } from '../bundle';
-import type { BundleManifestV2 } from '../bundle';
+import { canonicalLocaleTag, matchContentLocale, sameContentLocale } from '../locale.js';
+import { pickChapterSpecs, pickLocaleOverrides, readBundle, resolveBundleConfigLocale, resolveBundleLocale } from '../bundle/index.js';
+import type { BundleManifestV2 } from '../bundle/index.js';
 
 // #198: a book in Traditional and Simplified Chinese (plus an English
 // translation) opened for a reader whose tag names a region, a script or

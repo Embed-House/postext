@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { Chapter } from '../../book/types';
-import { FIXTURE_LOCALES, threeEditionsBook, type FixtureLocale } from '../../editions/threeEditions.fixture';
-import type { LoadedPreset, PresetProvider, PresetSummary } from '../../presets/types';
-import { harness } from './testHarness';
+import type { Chapter } from '../../book/types.js';
+import { FIXTURE_LOCALES, threeEditionsBook, type FixtureLocale } from '../../editions/threeEditions.fixture.js';
+import type { LoadedPreset, PresetProvider, PresetSummary } from '../../presets/types.js';
+import { harness } from './testHarness.js';
 
 // Text measured at about the width of a book face, as the editions' own
 // tests do (the harness's stub is narrower).

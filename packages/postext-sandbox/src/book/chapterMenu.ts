@@ -1,7 +1,7 @@
 // The chapter menu and list of a long book: chapters grouped under the
 // parts they belong to, and filtered by number or title. Pure.
 
-import type { ChapterPart } from './types';
+import type { ChapterPart } from './types.js';
 
 /** A book this long gets a filter field at the top of its chapter menu. */
 export const CHAPTER_FILTER_MIN_CHAPTERS = 30;

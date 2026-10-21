@@ -6,10 +6,10 @@
 // and calls `letterPanel`; it gets back balloons shaped like
 // `VDTComicBalloon` (SPEC D5), whose text is ordinary design text.
 
-import type { InlineSpan } from '../../parse/types';
-import type { BoundingBox, VDTComicBalloon, VDTPoint } from '../../vdt';
-import type { CjkLineBreakLevel } from '../../measure/cjkClasses';
-import type { CjkRegion } from '../../types';
+import type { InlineSpan } from '../../parse/types.js';
+import type { BoundingBox, VDTComicBalloon, VDTPoint } from '../../vdt.js';
+import type { CjkLineBreakLevel } from '../../measure/cjkClasses.js';
+import type { CjkRegion } from '../../types.js';
 
 /** A point in page px. */
 export type Point = VDTPoint;

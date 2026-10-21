@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { VDTBlock, VDTDocument } from '../../vdt';
-import type { PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
+import type { PostextConfig } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -76,12 +76,21 @@ describe('typography inside a callout', () => {
     expect(block('Box text.').lines[0]!.text).toBe('BOX TEXT.');
   });
 
-  it('applies a paragraph style, whose unset fields inherit the document body, in nested boxes too', () => {
+  it('applies a paragraph style, whose unset fields inherit the box body, in nested boxes too (#1119)', () => {
+    expect(face(block('Styled text.').fontString)).toEqual(['normal', '700', 7, 'Box']);
+    // The inner box sets only its face: its size is the document body's.
+    expect(face(block('Nested styled.').fontString)).toEqual(['normal', '700', 10, 'Inner']);
     for (const text of ['Styled text.', 'Nested styled.']) {
-      const b = block(text);
+      // The box's small caps do not reach the styled paragraph.
+      expect(block(text).lines[0]!.text).toBe(text);
+    }
+  });
+
+  it('keeps the document body under paragraphStylesInBoxes: document, as up to 1.51', () => {
+    const legacy = buildDocument({ markdown: MD }, { ...CONFIG, bodyText: { ...CONFIG.bodyText, paragraphStylesInBoxes: 'document' } }, createMeasurementCache());
+    for (const text of ['Styled text.', 'Nested styled.']) {
+      const b = legacy.blocks.find((x) => x.lines.some((l) => l.text.includes(text)))!;
       expect(face(b.fontString)).toEqual(['normal', '700', 10, 'Doc']);
-      // The box's small caps do not reach the styled paragraph either.
-      expect(b.lines[0]!.text).toBe(text);
     }
   });
 

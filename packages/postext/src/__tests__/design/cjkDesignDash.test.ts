@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { clearTextWidthCache } from '../../measure/canvas';
-import type { Dimension, PostextConfig, Resource } from '../../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDesignTextLine, VDTDesignTextRun, VDTDocument } from '../../vdt';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { clearTextWidthCache } from '../../measure/canvas.js';
+import type { Dimension, PostextConfig, Resource } from '../../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDesignTextLine, VDTDesignTextRun, VDTDocument } from '../../vdt.js';
 
 // #652: a 破折号 (——) in Chinese design text (a running head, a heading
 // design, the lettering of a comic balloon) is one unbroken rule over its

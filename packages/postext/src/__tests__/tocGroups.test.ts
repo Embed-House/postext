@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { resolveAllConfig } from '../pipeline/config';
-import { parseTocLevelsAttr, tocKeepOf } from '../pipeline/toc';
-import { resolveTocConfig, stripTocDefaults } from '../defaults/toc';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { collectConfigWarnings } from '../configWarnings';
-import { formatWarning } from '../pipeline/contentWarnings';
-import type { PostextConfig } from '../types';
-import type { VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { parseTocLevelsAttr, tocKeepOf } from '../pipeline/toc.js';
+import { resolveTocConfig, stripTocDefaults } from '../defaults/toc.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
 
 class StubCtx {
   font = '';

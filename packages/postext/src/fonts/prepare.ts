@@ -5,10 +5,10 @@
 // answers with files (the shape of the PDF font provider), the engine adds
 // them to the font set and to the font registry SVG pictures read (#630).
 
-import type { PostextConfig, PostextContent } from '../types';
-import type { VDTDocument } from '../vdt';
-import { evictFontFamilies } from '../measure/font';
-import { collectFontUsage, configFontFamilies, type FontContentText } from './usage';
+import type { PostextConfig, PostextContent } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
+import { evictFontFamilies } from '../measure/font.js';
+import { collectFontUsage, configFontFamilies, type FontContentText } from './usage.js';
 import {
   defaultFontSet,
   documentFontFaces,
@@ -19,9 +19,10 @@ import {
   type FontFaceRequest,
   type FontFaceSetLike,
   type FontFallbackOptions,
-} from './faces';
-import { isFontSetTracked, syncFontSet, watchFonts } from './fontSet';
-import { registerFontBytes, registerFontUrl } from '../svg/fontRegistry';
+} from './faces.js';
+import { isFontSetTracked, syncFontSet, watchFonts } from './fontSet.js';
+import { registerFontBytes, registerFontUrl } from '../svg/fontRegistry.js';
+import { installGlyphProbe, registerFontCoverage } from './glyphFallback.js';
 
 /** A font file: its bytes, or the URL to fetch it from (a CSS `src`
  *  value — `url(…)`, `local(…)` — is taken as written). */
@@ -85,6 +86,10 @@ export interface PrepareFontsOptions {
   FontFace?: FontFaceConstructor;
   /** The probe that tells an installed family from a missing one. */
   measureWidth?: FontFallbackOptions['measureWidth'];
+  /** Declare the glyph probe (#1105) in the font set the engine measures
+   *  with, so the builds report the characters a face lacks
+   *  (`glyphFallback`). Default true. */
+  glyphProbe?: boolean;
 }
 
 /** What a preparation found. */
@@ -306,6 +311,10 @@ async function loadFaces(
               registerFontBytes(f.family, String(descriptors.weight), style, bytesOf(file.source), { unicodeRange: file.unicodeRange });
             }
           }
+          // What the file covers, read from its `cmap` (#1105): a
+          // TrueType or OpenType file; a compressed one is left to the
+          // glyph probe.
+          if (typeof file.source !== 'string') registerFontCoverage(f.family, String(descriptors.weight), String(descriptors.style), bytesOf(file.source), file.unicodeRange);
         });
         if (toAdd[i]!.length > 0) {
           touched.add(f.family);
@@ -373,6 +382,9 @@ export async function prepareFonts(
 }
 
 async function prepareFaces(wanted: readonly FontFaceRequest[], fontSet: FontFaceSetLike, sample: string, options: PrepareFontsOptions): Promise<FontReport> {
+  // The glyph probe (#1105), in the set the engine measures with only,
+  // before the set is first read: it is no face of the document's.
+  if (options.glyphProbe !== false && fontSet === defaultFontSet()) await installGlyphProbe(fontSet, options.FontFace);
   if (!isFontSetTracked(fontSet)) syncFontSet(fontSet);
   const { added, touched } = await loadFaces(wanted, fontSet, sample, options);
   // Drop what was measured in the families whose faces changed: those

@@ -1,5 +1,5 @@
-import type { DigitSystem, PostextConfig, ResolvedHeadingLevelConfig } from '../types';
-import { columnCountUsed, layoutColumnCount, MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN } from '../defaults/layout';
+import type { DigitSystem, PostextConfig, ResolvedHeadingLevelConfig } from '../types.js';
+import { columnCountUsed, layoutColumnCount, MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN } from '../defaults/layout.js';
 
 export { columnCountUsed, layoutColumnCount, MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN };
 export { balancingOnByDefault, avoidWidowsByDefault, avoidOrphansByDefault };
@@ -44,15 +44,15 @@ import {
   balancingOnByDefault,
   avoidWidowsByDefault,
   avoidOrphansByDefault,
-} from '../defaults';
-import { dimensionToPx } from '../units';
-import { applyCjkGrid } from './cjkGrid';
-import { directionOf, localeScript, presentTag, resolveNumerals } from '../locale';
-import { configFingerprint } from '../util/stableHash';
-import { forgetFlowColorValues } from './partPalette';
-import { createBoundingBox, type BoundingBox, type ResolvedConfig } from '../vdt';
-import { normalizeFrameLooks, resolveLabelStyles, stripPageTemplatesDefaults } from '../composed/templates';
-import type { FrameLookEntry } from '../composed/types';
+} from '../defaults/index.js';
+import { dimensionToPx } from '../units.js';
+import { applyCjkGrid } from './cjkGrid.js';
+import { directionOf, localeScript, presentTag, resolveNumerals } from '../locale.js';
+import { configFingerprint } from '../util/stableHash.js';
+import { forgetFlowColorValues } from './partPalette.js';
+import { createBoundingBox, type BoundingBox, type ResolvedConfig } from '../vdt.js';
+import { normalizeFrameLooks, resolveLabelStyles, stripPageTemplatesDefaults } from '../composed/templates.js';
+import type { FrameLookEntry } from '../composed/types.js';
 
 // Resolved configs are never mutated (derived variants spread them), so
 // one resolution per config object serves every pass of a build and every

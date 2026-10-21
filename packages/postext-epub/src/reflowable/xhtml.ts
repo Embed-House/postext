@@ -17,15 +17,15 @@ import type {
   TabItem,
   VerseNode,
   WrapFloat,
-} from './model';
-import { bridgeLinks, formatKey, idOf, linkKey, wrapFormat, xmlAttr, xmlText } from './inline';
+} from './model.js';
+import { bridgeLinks, formatKey, idOf, linkKey, wrapFormat, xmlAttr, xmlText } from './inline.js';
 
 /** Style id of a code listing's box (`postext` `CODE_BOX_STYLE_ID`). */
 const CODE_BOX_STYLE = '__postext-code';
 /** Style ids of the frameless boxes of `:::columns` groups in the running
  *  text (`postext` `FLOW_COLUMNS_STYLE_ID`, #634). */
 const FLOW_COLUMNS_STYLES: ReadonlySet<string> = new Set(['__postext-flow-columns', '__postext-flow-columns-page']);
-import type { BookModel, Loc } from './walk';
+import type { BookModel, Loc } from './walk.js';
 
 /** What a content document needs from the rest of the book. */
 export interface SerializeContext {

@@ -3,9 +3,9 @@
 import { useMemo } from 'react';
 import type { ComicsConfig, DimensionUnit, PanelStyleConfig, ResolvedComicsConfig, ResolvedPanelStyleConfig } from 'postext';
 import { resolveComicsConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { ColorPicker, DimensionInput, SelectInput, ToggleSwitch } from '../../../controls';
-import { pruneComics } from './comicsConfig';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { ColorPicker, DimensionInput, SelectInput, ToggleSwitch } from '../../../controls/index.js';
+import { pruneComics } from './comicsConfig.js';
 
 export const BORDER_UNITS: DimensionUnit[] = ['pt', 'mm', 'px'];
 export const GUTTER_UNITS: DimensionUnit[] = ['mm', 'pt', 'cm', 'in'];

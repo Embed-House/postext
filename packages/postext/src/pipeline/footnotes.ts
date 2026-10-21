@@ -7,11 +7,11 @@
  * {@link appendChapterEndNotes}).
  */
 
-import type { ContentBlock, InlineSpan } from '../parse';
-import type { DigitSystem, Dimension, FootnoteNumberFormat, FootnoteNumbering as FootnoteNumberingMode, ResolvedParagraphStyleConfig } from '../types';
-import { documentNumeralStyle, formatNumeral } from '../numbering';
-import type { ResolvedConfig, VDTLine } from '../vdt';
-import { hasCJK } from '../measure/cjk';
+import type { ContentBlock, InlineSpan } from '../parse/index.js';
+import type { DigitSystem, Dimension, FootnoteNumberFormat, FootnoteNumbering as FootnoteNumberingMode, ResolvedParagraphStyleConfig } from '../types.js';
+import { documentNumeralStyle, formatNumeral } from '../numbering.js';
+import type { ResolvedConfig, VDTLine } from '../vdt.js';
+import { hasCJK } from '../measure/cjk.js';
 
 /** Id of the paragraph style the notes are set in (not a user style). */
 export const FOOTNOTE_STYLE_ID = '__postext-footnote';

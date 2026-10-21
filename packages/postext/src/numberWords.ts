@@ -13,15 +13,15 @@
  * heading without an article ("Erstes Kapitel", see
  * {@link NumberWordsOptions}).
  */
-import { stringsKeyOf } from './locale';
-import { chineseNumeral } from './chineseNumerals';
-import { japaneseNumeral } from './japaneseNumerals';
-import { arabicCardinal, arabicOrdinal, type ArabicSpelling } from './arabicNumberWords';
+import { stringsKeyOf } from './locale.js';
+import { chineseNumeral } from './chineseNumerals.js';
+import { japaneseNumeral } from './japaneseNumerals.js';
+import { arabicCardinal, arabicOrdinal, type ArabicSpelling } from './arabicNumberWords.js';
 import {
   catalanCardinal, catalanOrdinal, frenchCardinal, frenchOrdinal, italianCardinal, italianOrdinal,
   portugueseCardinal, portugueseOrdinal, type RomanceGender,
-} from './romanceNumberWords';
-import { germanCardinal, germanOrdinal } from './germanNumberWords';
+} from './romanceNumberWords.js';
+import { germanCardinal, germanOrdinal } from './germanNumberWords.js';
 
 /** Cardinal ("twenty-one") or ordinal ("twenty-first"). */
 export type NumberWordsKind = 'cardinal' | 'ordinal';

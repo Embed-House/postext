@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { PagePreviewHighlight } from './PagePreview';
+import type { PagePreviewHighlight } from './PagePreview.js';
 
 interface HighlightState {
   highlight: PagePreviewHighlight;

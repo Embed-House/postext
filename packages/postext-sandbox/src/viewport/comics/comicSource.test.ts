@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, type PostextConfig, type VDTComicPage } from 'postext';
-import { applyTextChanges, changesApply, invertTextChanges, minimalChange, shiftTextChanges } from '../../book/textChanges';
+import { applyTextChanges, changesApply, invertTextChanges, minimalChange, shiftTextChanges } from '../../book/textChanges.js';
 import {
   canMergeNext,
   canSplitPanel,
@@ -10,7 +10,7 @@ import {
   mergePanelChanges,
   moveSplitterChanges,
   splitPanelChanges,
-} from './comicSource';
+} from './comicSource.js';
 
 class StubCtx {
   font = '';

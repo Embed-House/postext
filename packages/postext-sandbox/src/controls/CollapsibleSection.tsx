@@ -2,12 +2,12 @@
 
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import { ChevronRight, RotateCcw } from 'lucide-react';
-import { saveSectionState, loadSectionState } from '../storage/persistence';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { Collapsible, ConfirmPopover, HighlightedText, IconButton, cn } from '../ui';
-import { useSettingsSearch } from '../sidebar/search/SearchContext';
-import { MatchScopeProvider, useScopeCounts, useScopeVisible } from '../sidebar/search/MatchScope';
-import { normalizeText } from '../sidebar/search/normalize';
+import { saveSectionState, loadSectionState } from '../storage/persistence.js';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { Collapsible, ConfirmPopover, HighlightedText, IconButton, cn } from '../ui/index.js';
+import { useSettingsSearch } from '../sidebar/search/SearchContext.js';
+import { MatchScopeProvider, useScopeCounts, useScopeVisible } from '../sidebar/search/MatchScope.js';
+import { normalizeText } from '../sidebar/search/normalize.js';
 
 interface CollapsibleSectionProps {
   title: string;

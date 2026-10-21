@@ -8,10 +8,10 @@
  */
 
 import { resolvePageTemplate, type PageTemplateSource, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
-import { dimensionToMm } from '../../templates/frameGeometry';
-import { SVG_NS } from '../CanvasPreview/dom';
-import { fill } from '../../print/fillTokens';
-import { localNumber } from './reflowText';
+import { dimensionToMm } from '../../templates/frameGeometry.js';
+import { SVG_NS } from '../CanvasPreview/dom.js';
+import { fill } from '../../print/fillTokens.js';
+import { localNumber } from './reflowText.js';
 
 export interface DesignBadgeLabels {
   /** «auto» */

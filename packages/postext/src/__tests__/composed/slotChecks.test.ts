@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { collectContentWarnings, formatWarning } from '../../pipeline/contentWarnings';
-import { parseMarkdownWithIssues } from '../../parse';
-import { composedPages } from '../../composed/document';
-import { checkComposedSlots } from '../../composed/slotChecks';
-import type { ComposedPagesConfigKeys, PageTemplate } from '../../composed/types';
-import type { PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/index.js';
+import { collectContentWarnings, formatWarning } from '../../pipeline/contentWarnings.js';
+import { parseMarkdownWithIssues } from '../../parse/index.js';
+import { composedPages } from '../../composed/document.js';
+import { checkComposedSlots } from '../../composed/slotChecks.js';
+import type { ComposedPagesConfigKeys, PageTemplate } from '../../composed/types.js';
+import type { PostextConfig } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

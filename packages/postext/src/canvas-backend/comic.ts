@@ -9,13 +9,13 @@
  * is in sheet coordinates: call it outside any flow frame.
  */
 
-import type { VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTDesignTextBlock } from '../vdt';
-import { drawResourceImage } from './renderResourceBlock';
-import { renderTextBlock } from './headerFooter';
-import { comicBalloonMatrix, comicRoughBorder } from '../comics/paint';
-import { restoreContext, saveContext } from './contextState';
+import type { VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTDesignTextBlock } from '../vdt.js';
+import { drawResourceImage } from './renderResourceBlock.js';
+import { renderTextBlock } from './headerFooter.js';
+import { comicBalloonMatrix, comicRoughBorder } from '../comics/paint.js';
+import { restoreContext, saveContext } from './contextState.js';
 
-export { roughOutline, comicRoughBorder } from '../comics/paint';
+export { roughOutline, comicRoughBorder } from '../comics/paint.js';
 
 /** Trace a panel's outline as the current path: its polygon, or a rounded
  *  rectangle when it has a radius. */

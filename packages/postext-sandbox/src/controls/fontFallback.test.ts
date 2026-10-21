@@ -1,16 +1,16 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type { FontFaceLike } from 'postext';
-import { fontsourceCssUrl } from '../viewport/fontsourceSlices';
+import { fontsourceCssUrl } from '../viewport/fontsourceSlices.js';
 
 // #978: a bundle that leaves a licensed family's files out names an open
 // family of about the same width for it. The Sandbox sets the faces the
 // family has no file of in that family's files, under the licensed name,
 // on the page and for the layout worker.
 
-vi.mock('../storage/fontStorage', () => ({ getFontFile: async (id: string) => (id === 'own-regular' ? { buffer: new TextEncoder().encode('own-regular').buffer } : null) }));
+vi.mock('../storage/fontStorage.js', () => ({ getFontFile: async (id: string) => (id === 'own-regular' ? { buffer: new TextEncoder().encode('own-regular').buffer } : null) }));
 vi.mock('postext-pdf', () => ({ decompressWoff2: async (bytes: Uint8Array) => bytes }));
 
-type Loader = typeof import('./fontLoader');
+type Loader = typeof import('./fontLoader.js');
 
 const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+2000-206F';
 const SERIF = 'Source Serif 4';
@@ -120,7 +120,7 @@ beforeEach(async () => {
   globals.document = { fonts, createElement: () => ({}), head: { appendChild: (link: { onload?: () => void }) => queueMicrotask(() => link.onload?.()) } };
   globals.FontFace = FakeFace;
   vi.resetModules();
-  loader = await import('./fontLoader');
+  loader = await import('./fontLoader.js');
 });
 
 afterEach(() => {

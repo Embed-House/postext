@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { MAX_STAGE_ZOOM, pinchZoom, scrollForFocus, STAGE_NAMES_ZOOM, touchPair, wheelZoom, zoomStep } from './stageZoom';
+import { MAX_STAGE_ZOOM, pinchZoom, scrollForFocus, STAGE_NAMES_ZOOM, touchPair, wheelZoom, zoomStep } from './stageZoom.js';
 
 // #956: the zoom of the picture in the marks dialog.
 

@@ -4,7 +4,7 @@
  * canvas viewers paint (CMYK → Lab → screen sRGB).
  */
 
-import type { Channels, IccProfile, LutPipeline, PcsEncoding, XYZ } from './icc';
+import type { Channels, IccProfile, LutPipeline, PcsEncoding, XYZ } from './icc.js';
 
 export type RenderingIntent = 'perceptual' | 'relative' | 'saturation' | 'absolute';
 

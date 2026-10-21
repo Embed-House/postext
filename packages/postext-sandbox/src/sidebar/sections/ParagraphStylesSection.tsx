@@ -2,9 +2,9 @@
 
 import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import type { BodyTextConfig, ColorValue, Dimension, DimensionUnit, ParagraphContainerSpacing, ParagraphStyleConfig, ResolvedParagraphStyleConfig } from 'postext';
+import type { BodyTextConfig, ColorValue, Dimension, DimensionUnit, ParagraphContainerSpacing, ParagraphStyleConfig, ParagraphStylesInBoxes, ResolvedParagraphStyleConfig } from 'postext';
 import { DEFAULT_BODY_TEXT_CONFIG, DEFAULT_CJK_CONFIG, isCjkLanguage, resolveBodyTextConfig, resolveParagraphStylesConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -17,14 +17,14 @@ import {
   NumberInput,
   SelectInput,
   ToggleSwitch,
-} from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { FieldRow } from '../../controls/FieldRow';
-import { SearchScope } from '../search/SearchScope';
-import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
-import { TabStopsField } from '../settings/TabStopsField';
-import { DropCapFields } from '../settings/DropCapFields';
+} from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { SearchScope } from '../search/SearchScope.js';
+import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
+import { TabStopsField } from '../settings/TabStopsField.js';
+import { DropCapFields } from '../settings/DropCapFields.js';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
@@ -547,6 +547,21 @@ export const ParagraphStylesSection = memo(function ParagraphStylesSection() {
       payload: { bodyText: Object.keys(next).length > 0 ? next : undefined },
     });
   };
+  /** What a style's unset type fields take inside a box (#1119), kept in
+   *  `bodyText`. */
+  const writeInBoxes = (value: ParagraphStylesInBoxes | undefined) => {
+    const next: BodyTextConfig = { ...bodyTextRaw };
+    if (value === undefined) delete next.paragraphStylesInBoxes;
+    else next.paragraphStylesInBoxes = value;
+    dispatch({
+      type: 'UPDATE_CONFIG',
+      payload: { bodyText: Object.keys(next).length > 0 ? next : undefined },
+    });
+  };
+  const inBoxesOptions = [
+    { value: 'box', label: labels.paragraphStylesInBoxesBox },
+    { value: 'document', label: labels.paragraphStylesInBoxesDocument },
+  ];
   const containerSpacingOptions = [
     { value: 'collapse', label: labels.paragraphContainerSpacingCollapse },
     { value: 'add', label: labels.paragraphContainerSpacingAdd },
@@ -575,6 +590,17 @@ export const ParagraphStylesSection = memo(function ParagraphStylesSection() {
           tooltip={labels.paragraphContainerSpacingTooltip}
           isDefault={bodyText.paragraphContainerSpacing === DEFAULT_BODY_TEXT_CONFIG.paragraphContainerSpacing}
           onReset={() => writeContainerSpacing(undefined)}
+        />
+      )}
+      {styles.length > 0 && (
+        <SelectInput
+          label={labels.paragraphStylesInBoxes}
+          value={bodyText.paragraphStylesInBoxes}
+          options={inBoxesOptions}
+          onChange={(v) => writeInBoxes(v as ParagraphStylesInBoxes)}
+          tooltip={labels.paragraphStylesInBoxesTooltip}
+          isDefault={bodyText.paragraphStylesInBoxes === DEFAULT_BODY_TEXT_CONFIG.paragraphStylesInBoxes}
+          onReset={() => writeInBoxes(undefined)}
         />
       )}
       <ItemCardListActions list="paragraphStyles" ids={styles.map((s) => s.id)} />

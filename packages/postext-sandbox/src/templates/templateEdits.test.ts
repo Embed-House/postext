@@ -23,7 +23,7 @@ import {
   updateGroup,
   updateTemplate,
   variantForPage,
-} from './templateEdits';
+} from './templateEdits.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 

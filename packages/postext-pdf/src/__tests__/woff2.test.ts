@@ -29,7 +29,7 @@ describe('decompressWoff2', () => {
   it('turns a WOFF2 back into the TrueType it was made from', async () => {
     const woff2 = await woff2Fixture();
     expect(String.fromCharCode(...woff2.slice(0, 4))).toBe('wOF2');
-    const { decompressWoff2 } = await import('../woff2');
+    const { decompressWoff2 } = await import('../woff2.js');
     const ttf = await within(decompressWoff2(woff2), 20_000);
     expect(Array.from(ttf.slice(0, 4))).toEqual([0, 1, 0, 0]);
     expect(ttf.length).toBeGreaterThan(woff2.length);
@@ -48,7 +48,7 @@ describe('decompressWoff2', () => {
     const versions = Object.getOwnPropertyDescriptor(process, 'versions')!;
     Object.defineProperty(process, 'versions', { value: {}, configurable: true });
     try {
-      const { decompressWoff2 } = await import('../woff2');
+      const { decompressWoff2 } = await import('../woff2.js');
       const ttf = await within(decompressWoff2(woff2), 20_000);
       expect(Array.from(ttf.slice(0, 4))).toEqual([0, 1, 0, 0]);
     } finally {
@@ -58,14 +58,14 @@ describe('decompressWoff2', () => {
 
   it('serializes calls and keeps each answer its own', async () => {
     const woff2 = await woff2Fixture();
-    const { decompressWoff2 } = await import('../woff2');
+    const { decompressWoff2 } = await import('../woff2.js');
     const [a, b] = await within(Promise.all([decompressWoff2(woff2), decompressWoff2(woff2)]), 20_000);
     expect(a).not.toBe(b);
     expect(Array.from(a)).toEqual(Array.from(b));
   });
 
   it('rejects bytes that are no WOFF2', async () => {
-    const { decompressWoff2 } = await import('../woff2');
+    const { decompressWoff2 } = await import('../woff2.js');
     await expect(within(decompressWoff2(new Uint8Array([1, 2, 3, 4])), 20_000)).rejects.toThrow(/WOFF2/);
   });
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index.js';
 
 // EF-190: a section's or a part's palette recolours the table fills (header,
 // body, zebra rows, a cell's own fill) and the caption bar on its pages, as

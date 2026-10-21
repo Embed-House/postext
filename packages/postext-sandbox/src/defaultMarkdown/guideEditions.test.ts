@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_ZH_HANS } from '.';
-import { sampleChapterTexts } from '../book/chapterOps';
-import { DEFAULT_RESOURCE_IDS, GUIDE_VIDEO_IDS } from '../defaultResources';
+import { DEFAULT_MARKDOWN_AR, DEFAULT_MARKDOWN_CA, DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES, DEFAULT_MARKDOWN_JA, DEFAULT_MARKDOWN_PT_BR, DEFAULT_MARKDOWN_ZH_HANS } from './index.js';
+import { sampleChapterTexts } from '../book/chapterOps.js';
+import { DEFAULT_RESOURCE_IDS, GUIDE_VIDEO_IDS } from '../defaultResources/index.js';
 
 const EDITIONS = { en: DEFAULT_MARKDOWN_EN, es: DEFAULT_MARKDOWN_ES, ca: DEFAULT_MARKDOWN_CA, 'zh-Hans': DEFAULT_MARKDOWN_ZH_HANS, ar: DEFAULT_MARKDOWN_AR, ja: DEFAULT_MARKDOWN_JA, 'pt-BR': DEFAULT_MARKDOWN_PT_BR } as const;
 

@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { FileInput, Undo2 } from 'lucide-react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext';
-import { Button, announce } from '../ui';
-import { openTextMigration } from './migrationRequest';
-import { bookFromSnapshot, bookKeyOf, writeBook, dropMigrationSnapshot, loadMigrationSnapshot, onMigrationSnapshotsChanged, type MigrationSnapshot } from './textMigration';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext.js';
+import { Button, announce } from '../ui/index.js';
+import { openTextMigration } from './migrationRequest.js';
+import { bookFromSnapshot, bookKeyOf, writeBook, dropMigrationSnapshot, loadMigrationSnapshot, onMigrationSnapshotsChanged, type MigrationSnapshot } from './textMigration.js';
 
 /** At the head of the Checks panel (#874): the way into «Move the text to
  *  the Markdown» when the book's configuration holds content, and the way

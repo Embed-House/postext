@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildDocument, type PostextConfig } from "postext";
-import { firstPageIsRecto } from "./postext";
-import { spreadOfPage, spreadsOf } from "./spreads";
+import { firstPageIsRecto } from "./postext.js";
+import { spreadOfPage, spreadsOf } from "./spreads.js";
 
 // #861: the two pages of a spread template open together in the Folio, the
 // verso facing the recto, in a left-bound and a right-bound book alike

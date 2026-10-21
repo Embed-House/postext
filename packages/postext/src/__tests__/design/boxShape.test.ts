@@ -7,8 +7,8 @@ import {
   normalizeBoxStyle,
   outlineSubpath,
   shapePathBlocks,
-} from '../../design/boxShape';
-import { createBoundingBox, type VDTPathCommand } from '../../vdt';
+} from '../../design/boxShape.js';
+import { createBoundingBox, type VDTPathCommand } from '../../vdt.js';
 
 // #1059: box shapes — a radius per corner, a border per side and a card
 // joined to its tab — as outlines of the vector block.

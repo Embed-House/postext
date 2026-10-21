@@ -1,6 +1,6 @@
 import type { VDTDocument } from 'postext';
-import type { PdfFontFileDeclaration } from '../fontCache';
-import type { PdfWarning, RenderProgress, RenderToPdfOptions } from '../pdf-backend';
+import type { PdfFontFileDeclaration } from '../fontCache.js';
+import type { PdfWarning, RenderProgress, RenderToPdfOptions } from '../pdf-backend/index.js';
 
 /** The render options that travel to the worker as data. */
 export type PdfRenderSettings = Pick<RenderToPdfOptions, 'pageNegative' | 'outlines' | 'colorSpace' | 'accessible' | 'print' | 'outputProfile' | 'profileBaseUrl'> & {

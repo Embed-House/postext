@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyColonListRoom } from '../../bundle/configVersion';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
-import type { ColonListRoom, PostextConfig } from '../../types';
-import type { VDTBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyColonListRoom } from '../../bundle/configVersion.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText.js';
+import type { ColonListRoom, PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -125,7 +125,7 @@ describe('colonListRoom: \'line\' keeps the postext 1.4 room check (EF-110)', ()
 describe('configurations stored before rules 6 keep the 1.4 colon-list room', () => {
   const LIST = 'Look for these signs:\n\n- one\n- two';
   it('pins a configuration older than 6 whose book introduces a list with a colon, once', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
     const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     for (const version of [undefined, 3, 4, 5]) {
       expect(migrateConfig(stored, version, { content: LIST }).bodyText, `${version}`)

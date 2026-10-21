@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PageTemplate } from '../../composed/types';
-import type { DesignElement, PostextConfig, VDTDesignBlock, VDTDocument, VDTPage } from '../../index';
-import { flowRectToPage } from '../../vdt';
-import { physicalEdge, physicalPlacement } from '../../design/logicalEdges';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { DesignElement, PostextConfig, VDTDesignBlock, VDTDocument, VDTPage } from '../../index.js';
+import { flowRectToPage } from '../../vdt.js';
+import { physicalEdge, physicalPlacement } from '../../design/logicalEdges.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

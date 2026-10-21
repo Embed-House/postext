@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { createMeasurementCache, measureBlock, measureRichBlock, cachedMeasureBlock, cachedMeasureRichBlock } from '../measure';
-import type { MeasuredBlock, MeasureBlockOptions } from '../measure';
-import type { InlineSpan } from '../parse';
-import { buildDocument } from '../pipeline/build';
-import { initMathEngine } from '../math';
-import { createBoundingBox } from '../vdt';
-import type { VDTDocument } from '../vdt';
+import { createMeasurementCache, measureBlock, measureRichBlock, cachedMeasureBlock, cachedMeasureRichBlock } from '../measure/index.js';
+import type { MeasuredBlock, MeasureBlockOptions } from '../measure/index.js';
+import type { InlineSpan } from '../parse/index.js';
+import { buildDocument } from '../pipeline/build.js';
+import { initMathEngine } from '../math/index.js';
+import { createBoundingBox } from '../vdt.js';
+import type { VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

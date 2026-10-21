@@ -2,10 +2,10 @@
 
 import { useSyncExternalStore, type ReactNode } from 'react';
 import { ChevronRight, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
-import { loadSectionState, saveSectionState } from '../storage/persistence';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { Button, Collapsible, HighlightedText, cn } from '../ui';
-import { useSettingsSearch } from '../sidebar/search/SearchContext';
+import { loadSectionState, saveSectionState } from '../storage/persistence.js';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { Button, Collapsible, HighlightedText, cn } from '../ui/index.js';
+import { useSettingsSearch } from '../sidebar/search/SearchContext.js';
 
 /*
  * The cards of a Design panel list (paragraph styles, box styles, TOC

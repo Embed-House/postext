@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { breakPoints, markupOf, prepareText, readLetteringText } from '../text';
-import { presetLetteringStyles } from '../presets';
-import { parseRichDesignText } from '../../../design/richText';
-import type { InlineSpan } from '../../../parse/types';
+import { breakPoints, markupOf, prepareText, readLetteringText } from '../text.js';
+import { presetLetteringStyles } from '../presets.js';
+import { parseRichDesignText } from '../../../design/richText.js';
+import type { InlineSpan } from '../../../parse/types.js';
 
 const styleFor = (locale: string, id = 'speech') => presetLetteringStyles({ fontSizePx: 12, locale })[id]!;
 const prep = (text: string | InlineSpan[], locale: string, extra: Record<string, unknown> = {}, map?: number[]) =>

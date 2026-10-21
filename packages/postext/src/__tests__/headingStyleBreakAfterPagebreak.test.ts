@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import type { HeadingBreakParity, PostextConfig } from '../types';
-import type { VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import type { HeadingBreakParity, PostextConfig } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
 
 // EF-60 (documented behaviour, locked here): a heading style inherits its
 // level's `breakBefore`, and a heading applies it wherever it stands —

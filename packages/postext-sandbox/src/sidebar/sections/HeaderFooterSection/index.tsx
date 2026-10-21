@@ -1,11 +1,11 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
 import { resolveHeaderFooterConfig } from 'postext';
 import type { HeaderFooterSlot } from 'postext';
-import { CollapsibleSection } from '../../../controls';
-import { SlotEditor } from './SlotEditor';
+import { CollapsibleSection } from '../../../controls/index.js';
+import { SlotEditor } from './SlotEditor.js';
 
 type SlotKey = 'header' | 'footer';
 

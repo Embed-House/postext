@@ -1,4 +1,4 @@
-import type { VDTChip, VDTLineSegment } from '../vdt';
+import type { VDTChip, VDTLineSegment } from '../vdt.js';
 
 /** A chip opening or closing a line keeps no gap margin on that side, so it
  *  sits flush with the measure like a word. The pieces of a piece of

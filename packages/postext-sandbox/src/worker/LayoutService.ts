@@ -15,10 +15,10 @@ import {
   loadFont,
   onCustomFontsChanged,
   fontRequestsUnanswered,
-} from '../controls/fontLoader';
-import { resourcesKeyOf } from '../book/layoutKeys';
-import { markBuiltWithoutFaces } from '../book/withoutFaces';
-import { perfSizeKb, perfSpan } from '../perf/marks';
+} from '../controls/fontLoader.js';
+import { resourcesKeyOf } from '../book/layoutKeys.js';
+import { markBuiltWithoutFaces } from '../book/withoutFaces.js';
+import { perfSizeKb, perfSpan } from '../perf/marks.js';
 
 /** Who is asking, by urgency: what the reader is looking at, what they
  *  asked for, what runs behind their back. */
@@ -115,7 +115,7 @@ const FONT_RETRIES = 3;
  *  the views lay out again in an effect, a moment after they are told. */
 const LATE_RELAYOUT_GRACE_MS = 1_000;
 
-export { builtWithoutFaces } from '../book/withoutFaces';
+export { builtWithoutFaces } from '../book/withoutFaces.js';
 
 /** Keys of a laid-out document that hold no text it sets (its
  *  configuration, raw sources, pictures). */

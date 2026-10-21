@@ -120,6 +120,8 @@ The rules of 13 also draw the box of a task item (`- [ ]`, `- [x]`): a square th
 
 A manifest stamped `14` was written by postext 1.30 to 1.33. The rules of 15 (postext 1.34, #853) add page templates (`pageTemplates`) and label styles (`labelStyles`) for [composed pages](/en/docs/composed-pages). They change nothing an older configuration says, so a manifest stamped `14` is read as it is, with no pin. The number marks a configuration that may hold templates, which a reader of 14 or less ignores.
 
+A manifest stamped `15` or `16` was written by postext 1.34 to 1.51 (the rules of 16, #1056, add connectors to a template's decoration and pin nothing). The rules of 17 (#1119) set the face, size, leading, weights and colour a paragraph style leaves unset in the body of the box it sits in, where up to 1.51 they were the document's body text. A manifest stamped `16` or older gets `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) on the `bodyText` in force, when the merged configuration declares a paragraph style and does not name the setting.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

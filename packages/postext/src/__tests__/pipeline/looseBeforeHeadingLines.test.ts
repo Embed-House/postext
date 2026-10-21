@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { collectColumnGaps } from '../../pipeline/columnBalancing';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { collectColumnGaps } from '../../pipeline/columnBalancing.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 // #707: a short column tries its loose paragraphs before its heading takes a
 // third line. One page, one heading, two long paragraphs and a box that

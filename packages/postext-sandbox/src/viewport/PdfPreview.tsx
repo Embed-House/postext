@@ -2,10 +2,10 @@
 
 import { memo, useMemo, useRef } from 'react';
 import { ExternalLink, FileText } from 'lucide-react';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { useCompactLayout } from '../hooks/useCompactLayout';
-import { pdfPageFragment } from '../storage/viewHash';
-import type { BuildProgress } from '../worker/useLayoutWorker';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { useCompactLayout } from '../hooks/useCompactLayout.js';
+import { pdfPageFragment } from '../storage/viewHash.js';
+import type { BuildProgress } from '../worker/useLayoutWorker.js';
 import type { RenderProgress } from 'postext-pdf/worker';
 
 interface PdfPreviewProps {

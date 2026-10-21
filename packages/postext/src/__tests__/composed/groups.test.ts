@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { composedOrder, layoutGroup, shareOut, type GroupItem, type GroupLayoutInput } from '../../composed/groups';
-import { composedReflowLog, describeReflowEvent, reflowEvents } from '../../composed/reflowLog';
-import { resolvePageTemplate } from '../../composed/templates';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { page8Fixture } from './fixtures/page8';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { composedOrder, layoutGroup, shareOut, type GroupItem, type GroupLayoutInput } from '../../composed/groups.js';
+import { composedReflowLog, describeReflowEvent, reflowEvents } from '../../composed/reflowLog.js';
+import { resolvePageTemplate } from '../../composed/templates.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { page8Fixture } from './fixtures/page8.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): seven
 // px per character, whatever the face.

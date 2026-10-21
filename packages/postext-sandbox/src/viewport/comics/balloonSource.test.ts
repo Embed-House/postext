@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, type PostextConfig, type Resource, type VDTComicPage } from 'postext';
-import { applyTextChanges, changesApply, invertTextChanges } from '../../book/textChanges';
+import { applyTextChanges, changesApply, invertTextChanges } from '../../book/textChanges.js';
 import {
   comicBalloonItem,
   formatPinPercent,
@@ -11,8 +11,8 @@ import {
   rotateLineChanges,
   unpinBalloonChanges,
   unpinLineChanges,
-} from './balloonSource';
-import { balloonGroup, boxCentre, pinToPage } from './balloonDrag';
+} from './balloonSource.js';
+import { balloonGroup, boxCentre, pinToPage } from './balloonDrag.js';
 
 class StubCtx {
   font = '';

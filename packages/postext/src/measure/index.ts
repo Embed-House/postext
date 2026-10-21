@@ -1,22 +1,22 @@
-import type { InlineSpan } from '../parse';
-import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types';
-import { measureBlock } from './plain';
-import { measureRichBlock, measureRichSnippet } from './rich';
-import { cachedMeasureBlock as cachedPlainBlock, cachedMeasureRichBlock as cachedRichBlock, cachedMeasureRichSnippet as cachedRichSnippet } from './cache';
-import { hasCompound } from './breakRules';
+import type { InlineSpan } from '../parse/index.js';
+import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types.js';
+import { measureBlock } from './plain.js';
+import { measureRichBlock, measureRichSnippet } from './rich.js';
+import { cachedMeasureBlock as cachedPlainBlock, cachedMeasureRichBlock as cachedRichBlock, cachedMeasureRichSnippet as cachedRichSnippet } from './cache.js';
+import { hasCompound } from './breakRules.js';
 
-export type { BreakTrace, LineInsetStep, LineWidthStep, MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types';
-export { lineIndentAt, maxLineIndent } from './types';
-export { buildFontString, initHyphenator, clearMeasurementCache, createMeasurementCache, evictFontFamilies } from './font';
-export { measurementGeneration } from './canvas';
-export { parseFontString, fontStringFamily } from './fontString';
-export type { FontFaceRequest } from './fontString';
-export { measureGlyphWidth, measureTextWidth } from './canvas';
-export { measureBlock } from './plain';
-export { measureRichBlock } from './rich';
-export { setCjkLineBreak, getCjkLineBreak } from './cjkClasses';
-export { setCjkComposition, getCjkComposition, cjkCompositionOf, cjkCompositionKey, punctuationAdvance, punctuationSide, PLAIN_CJK_COMPOSITION } from './cjkPunctuation';
-export type { CjkComposition, PunctuationSide } from './cjkPunctuation';
+export type { BreakTrace, LineInsetStep, LineWidthStep, MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types.js';
+export { lineIndentAt, maxLineIndent } from './types.js';
+export { buildFontString, initHyphenator, clearMeasurementCache, createMeasurementCache, evictFontFamilies } from './font.js';
+export { measurementGeneration } from './canvas.js';
+export { parseFontString, fontStringFamily } from './fontString.js';
+export type { FontFaceRequest } from './fontString.js';
+export { measureGlyphWidth, measureTextWidth } from './canvas.js';
+export { measureBlock } from './plain.js';
+export { measureRichBlock } from './rich.js';
+export { setCjkLineBreak, getCjkLineBreak } from './cjkClasses.js';
+export { setCjkComposition, getCjkComposition, cjkCompositionOf, cjkCompositionKey, punctuationAdvance, punctuationSide, PLAIN_CJK_COMPOSITION } from './cjkPunctuation.js';
+export type { CjkComposition, PunctuationSide } from './cjkPunctuation.js';
 
 /** The caches that hold measurements made with the line-breaking options
  *  added after postext 1.4 (`breakAfterDashes`, `optimalRagged`,

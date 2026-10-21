@@ -29,8 +29,8 @@
  *   end (see `measure/leader.ts`), `gapPx` clear of the text on each side.
  */
 
-import type { TabStopAlign } from '../types';
-import { fitLeader } from './leader';
+import type { TabStopAlign } from '../types.js';
+import { fitLeader } from './leader.js';
 
 /** A tab stop with its lengths in px (see `TabStop`). `at` is px from the
  *  start edge of the measure, `'end'` that line's end edge, or a share of

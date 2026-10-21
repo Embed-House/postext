@@ -12,9 +12,9 @@
  * box, outside any flow frame.
  */
 
-import type { ComicCastMember } from './types';
-import type { VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTDesignTextBlock } from './vdt';
-import { comicBalloonGroups, comicBalloonKind, comicBalloonMatrix, comicBalloonText, comicBorderPathData, comicPanelContinues, comicPanelPathData, comicSpeakerName } from './comics/paint';
+import type { ComicCastMember } from './types.js';
+import type { VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTDesignTextBlock } from './vdt.js';
+import { comicBalloonGroups, comicBalloonKind, comicBalloonMatrix, comicBalloonText, comicBorderPathData, comicPanelContinues, comicPanelPathData, comicSpeakerName } from './comics/paint.js';
 
 const HTML_ESCAPE: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => HTML_ESCAPE[c] ?? c);

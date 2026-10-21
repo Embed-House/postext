@@ -1,10 +1,10 @@
-import { BREAK_PLACEHOLDER, charBefore, charFrom, flattenTitleBreaks, joinsWide, plainTitleBreak, plainTitleBreaks, replaceTitleBreaks } from '../parse/inlineFormatting';
-import { collapseBreakingSpaces, collapseTitleSpaces } from '../measure/spaces';
-import type { InlineSpan } from '../parse';
-import type { DigitSystem, DocumentMetadata } from '../types';
-import { metadataText } from '../frontmatter';
-import { withDigits } from '../arabicNumerals';
-import type { VDTBlock, VDTLine, VDTPage } from '../vdt';
+import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, charBefore, withoutChips, charFrom, flattenTitleBreaks, joinsWide, plainTitleBreak, plainTitleBreaks, replaceTitleBreaks } from '../parse/inlineFormatting.js';
+import { collapseBreakingSpaces, collapseTitleSpaces } from '../measure/spaces.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { DigitSystem, DocumentMetadata } from '../types.js';
+import { metadataText } from '../frontmatter.js';
+import { withDigits } from '../arabicNumerals.js';
+import type { VDTBlock, VDTLine, VDTPage } from '../vdt.js';
 
 /** A minimal view of a page used by `computeChapterTitles` to detect
  *  blank parity-padding pages. We accept just the flags rather than the
@@ -623,8 +623,12 @@ export function blockLinesText(block: VDTBlock, options?: BlockLinesTextOptions)
     text += piece;
     if (plain) for (let k = 0; k < piece.length; k++) inserted.push(ins?.[k] === true);
   });
-  return (plain ? plainBreaksOf(text, block, inserted) : text).trim();
+  const read = plain ? plainBreaksOf(text, block, inserted) : text;
+  // A heading's chips (#1100) are boxes of the page, not words of its
+  // title: the running heads and the bookmarks read the title without them.
+  return (block.type === 'heading' && read.includes(CHIP_PLACEHOLDER) ? withoutChips(read) : read).trim();
 }
+
 
 /** For each UTF-16 unit of `line.text` from `from` on, whether the layout
  *  inserted it (a segment with `inserted`); undefined when the segments do

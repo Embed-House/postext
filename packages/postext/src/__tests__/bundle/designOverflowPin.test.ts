@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyDesignOverflow, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { DesignElement, DesignSlot, PostextConfig, ResolvedDesignSlot, ResolvedDesignTextElement, TextOverflow } from '../../types';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyDesignOverflow, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { DesignElement, DesignSlot, PostextConfig, ResolvedDesignSlot, ResolvedDesignTextElement, TextOverflow } from '../../types.js';
 
 // #628: a configuration stored before the heading and part designs wrapped
 // by default (configVersion 9 or older, postext 1.23 or earlier) keeps the
@@ -70,7 +70,7 @@ describe('pinLegacyDesignOverflow (#628)', () => {
   });
 
   it('pins every version before 10, none from 10', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
     for (const v of [undefined, 1, 5, 8, 9]) {
       expect(overflowOf(migrateConfig(stored(), v).parts!.design, 'partTitle'), String(v)).toBe('ellipsis-end');
     }

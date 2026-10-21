@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { collectFontUsage } from '../fonts/usage';
-import { configFontFaces } from '../fonts/prepare';
-import type { PostextConfig } from '../types';
+import { collectFontUsage } from '../fonts/usage.js';
+import { configFontFaces } from '../fonts/prepare.js';
+import type { PostextConfig } from '../types.js';
 
 // #741: `collectFontUsage` read no `boldFontWeight` but the code face's. A
 // book whose bold is 600 was laid out by the command line with the 700 face

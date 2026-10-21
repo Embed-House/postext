@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { isAllowedPlaceholder, resolveDesignPlaceholders, LEADER_MARK, type DesignPlaceholderContext } from '../design/placeholders';
-import type { DesignSlot, PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { isAllowedPlaceholder, resolveDesignPlaceholders, LEADER_MARK, type DesignPlaceholderContext } from '../design/placeholders.js';
+import type { DesignSlot, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock } from '../vdt.js';
 
 // #889: a contents part row (`toc.parts.design`) draws the contents' leader
 // up to its page number with `{leader}`, as the entry rows do.

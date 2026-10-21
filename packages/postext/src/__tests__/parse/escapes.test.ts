@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting';
-import { mapInlineSnippet, parseInlineSnippetSpans } from '../../parse/inlineSnippet';
+import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting.js';
+import { mapInlineSnippet, parseInlineSnippetSpans } from '../../parse/inlineSnippet.js';
 
 const text = (spans: { text: string }[]) => spans.map((s) => s.text).join('');
 

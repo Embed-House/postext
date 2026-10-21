@@ -3,10 +3,10 @@
 import { memo, useEffect, useState } from 'react';
 import { DEFAULT_CONTENT_IN_CONFIG_CHECK, resolveContentInConfigCheck } from 'postext';
 import type { ChecksConfig, ContentInConfigCheckConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, FieldRow, NumberInput, ToggleSwitch } from '../../controls';
-import { useFieldIds } from '../../controls/fieldContext';
-import { cn } from '../../ui/cn';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { CollapsibleSection, FieldRow, NumberInput, ToggleSwitch } from '../../controls/index.js';
+import { useFieldIds } from '../../controls/fieldContext.js';
+import { cn } from '../../ui/cn.js';
 
 /** The phrases of the allow list, one per line. Kept as typed while the
  *  box has the focus, written to the config when it loses it. */

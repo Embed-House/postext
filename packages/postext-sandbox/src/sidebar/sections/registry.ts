@@ -4,7 +4,7 @@
 // each section are wired up in ConfigPanel so this stays testable.
 
 import type { PostextConfig } from 'postext';
-import type { SandboxLabels } from '../../types/labels';
+import type { SandboxLabels } from '../../types/labels.js';
 
 export type SettingsGroupId =
   | 'page'

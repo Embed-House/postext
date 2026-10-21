@@ -4,12 +4,12 @@ import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { NamedTableStyleConfig, ResolvedTableStyleConfig, TableStyleConfig } from 'postext';
 import { resolveBodyTextConfig, resolveTableStylesConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard } from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { FieldRow } from '../../controls/FieldRow';
-import { SearchScope } from '../search/SearchScope';
-import { TableStyleFields } from './TableStyleSection';
+import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector } from '../../context/SandboxContext.js';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard } from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { SearchScope } from '../search/SearchScope.js';
+import { TableStyleFields } from './TableStyleSection.js';
 
 const inputClass = 'min-w-0 flex-1 rounded border bg-transparent px-1.5 py-1 text-xs';
 const inputStyle = { borderColor: 'var(--pt-control-border)', color: 'var(--foreground)' } as const;

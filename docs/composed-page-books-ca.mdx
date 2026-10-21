@@ -164,6 +164,35 @@ Un botó que canvia la plantilla (i, per tant, totes les pàgines que la fan ser
 
 <Screenshot src="/docs-shots/ca/checks.webp" alt="El tauler Revisió amb l'entrada El text no cap al seu marc i tres botons amb solucions, i la pàgina amb la primera caixa amb un contorn vermell i una banda que diu falten 26 mm." caption="Un marc on no hi cap el text, i les solucions que la maquetació hi ha preparat." />
 
+No totes les marques del canvas són errors. Un marc el text o les imatges del qual la maquetació ha reduït, dins del que permet la plantilla, porta un contorn ambre discontinu i un distintiu com *text al 90 %*: és informació. Els problemes es dibuixen en vermell (un marc on no hi cap el contingut) i en violeta (un aspecte que el disseny no té). **Marques d’ajust**, a la mateixa barra que **Reajustament**, passa per tres opcions:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '30%' }}>Opció</th>
+      <th>Què dibuixa el canvas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Totes</td>
+      <td>Totes les marques: marcs que no hi caben, aspectes desconeguts, text i imatges reduïts</td>
+    </tr>
+    <tr>
+      <td>Només problemes</td>
+      <td>Els marcs que no hi caben i els aspectes desconeguts</td>
+    </tr>
+    <tr>
+      <td>Cap</td>
+      <td>Cap marca d’ajust</td>
+    </tr>
+  </tbody>
+</table>
+
+El Sandbox recorda la teva tria en aquest navegador. El llibre la pot fixar per a qui no hagi triat: `debug.fitMarks` (`"all"`, `"problems"` o `"none"`) i `debug.fitMarksMinScale`, que treu el distintiu a un marc compost a aquesta escala o més gran (amb `0.95` només es marca el que queda per sota del 95 %). Aquestes marques són del canvas: el PDF, el visor HTML, l’EPUB i el Folio no les dibuixen mai. Des de postext 1.52.
+
+Una caixa amb fotos i els seus peus (marcs ancorats a dins, un peu `below` cada foto) no creix sola quan una traducció allarga els peus: surten de la caixa i cauen sobre el que hi ha a sota. Obre el marc de la caixa a l’editor de plantilles i posa **Creix amb els marcs de dins** a *Els marcs ancorats a dins* (`growWith: "children"` a la plantilla). La caixa arriba llavors fins al peu del peu de foto més baix més el seu farciment inferior, el fons, la vora i la pestanya la segueixen, i els marcs de sota baixen. *Els marcs triats* pren en canvi una llista de noms. Compten els marcs ancorats a un punt del costat superior de la caixa i els ancorats a aquests; un marc ancorat al peu o al centre de la caixa no, i una caixa girada no creix. Des de postext 1.52.
+
 ## 7. Selecciona a la pàgina i al text
 
 La pàgina i el Markdown se segueixen l'un a l'altre.

@@ -7,7 +7,7 @@
  */
 
 import { fenceAttributesSet, parseDirectiveAttrs } from 'postext';
-import type { TextChange } from '../book/textChanges';
+import type { TextChange } from '../book/textChanges.js';
 
 /** A composed-page fence (`::::page{…}`, four or more colons) in a text. */
 export interface TemplateFence {

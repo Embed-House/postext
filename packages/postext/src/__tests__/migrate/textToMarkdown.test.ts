@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, collectConfigWarnings, configDesignSlots, moveTextToMarkdown } from '../../index';
-import { createMeasurementCache } from '../../measure';
-import { scanChapter } from '../../migrate/markdownRuns';
-import { joinLines } from '../../migrate/pageDesign';
-import type { PageTemplate, PostextConfig } from '../../index';
-import { PORT_CHAPTERS, PORT_CONFIG } from './fixtures/textbookPort';
+import { buildDocument, collectConfigWarnings, configDesignSlots, moveTextToMarkdown } from '../../index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { scanChapter } from '../../migrate/markdownRuns.js';
+import { joinLines } from '../../migrate/pageDesign.js';
+import type { PageTemplate, PostextConfig } from '../../index.js';
+import { PORT_CHAPTERS, PORT_CONFIG } from './fixtures/textbookPort.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

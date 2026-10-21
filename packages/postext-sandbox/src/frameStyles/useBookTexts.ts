@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useSandboxSelector } from '../context/SandboxContext';
-import type { UsageChapter } from './styleUsage';
+import { useSandboxSelector } from '../context/SandboxContext.js';
+import type { UsageChapter } from './styleUsage.js';
 
 const NONE: never[] = [];
 

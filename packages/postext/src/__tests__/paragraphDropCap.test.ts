@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import { createMeasurementCache } from '../measure';
-import { collectConfigWarnings } from '../configWarnings';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../defaults/paragraphStyles';
-import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings';
-import { resolveHeadingStylesConfig } from '../defaults/headingStyles';
-import { collectFontUsage } from '../fonts/usage';
-import { documentFontFamilies } from '../worker/fonts';
-import type { ParagraphDropCap, PostextConfig, Resource } from '../types';
-import type { ContentWarning, VDTBlock, VDTDocument, VDTLine } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../defaults/paragraphStyles.js';
+import { resolveHeadingsConfig, stripHeadingsDefaults } from '../defaults/headings.js';
+import { resolveHeadingStylesConfig } from '../defaults/headingStyles.js';
+import { collectFontUsage } from '../fonts/usage.js';
+import { documentFontFamilies } from '../worker/fonts.js';
+import type { ParagraphDropCap, PostextConfig, Resource } from '../types.js';
+import type { ContentWarning, VDTBlock, VDTDocument, VDTLine } from '../vdt.js';
 
 // #623: drop caps in body paragraphs. The initial comes out of the text the
 // measurers break; the paragraph's first `sink` lines are indented by its

@@ -21,9 +21,9 @@
  * face pass through (the same array).
  */
 
-import type { InlineSpan } from './parse';
-import { sliceSpan } from './parse/links';
-import { graphemesOf } from './measure/graphemes';
+import type { InlineSpan } from './parse/index.js';
+import { sliceSpan } from './parse/links.js';
+import { graphemesOf } from './measure/graphemes.js';
 
 /** Letters (and marks) of the Arabic script. */
 const ARABIC_RE = /\p{Script=Arabic}/u;

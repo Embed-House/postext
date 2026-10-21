@@ -1,11 +1,11 @@
-import type { VDTLine, VDTLineSegment } from '../vdt';
-import { lineWordSegmentsInOrder, sameSetWidth, type SetLine } from '../wordPieces';
-import { graphemeCount } from '../measure/graphemes';
-import { measurementGeneration } from '../measure/canvas';
-import { languageOf, setLetterSpacing } from './contextState';
-import { inSegmentLanguage } from './wordRuns';
-import { contextTextWidth } from './contextText';
-import { verticalFlowAdvance } from './verticalText';
+import type { VDTLine, VDTLineSegment } from '../vdt.js';
+import { lineWordSegmentsInOrder, sameSetWidth, type SetLine } from '../wordPieces.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { measurementGeneration } from '../measure/canvas.js';
+import { languageOf, setLetterSpacing } from './contextState.js';
+import { inSegmentLanguage } from './wordRuns.js';
+import { contextTextWidth } from './contextText.js';
+import { verticalFlowAdvance } from './verticalText.js';
 
 /**
  * The segments the canvas paints a line from (#770): the line's own, the

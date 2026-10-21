@@ -1,12 +1,12 @@
-import type { MathRender, MathPath, MathViewBox } from './types';
-import type { MathJaxConverter } from './mathjax';
+import type { MathRender, MathPath, MathViewBox } from './types.js';
+import type { MathJaxConverter } from './mathjax.js';
 import {
   IDENTITY,
   multiply,
   parseSvgTransform,
   transformPath,
   type AffineMatrix,
-} from './pathTransform';
+} from './pathTransform.js';
 
 // ---------------------------------------------------------------------------
 // MathJax singleton — lazy init, liteAdaptor so it runs in any environment
@@ -44,7 +44,7 @@ export async function initMathEngine(): Promise<void> {
     // documents that actually contain math. The module holds every MathJax
     // piece the engine uses and ships pre-bundled (see ./mathjax.ts).
     try {
-      const { createMathJaxConverter } = await import('./mathjax');
+      const { createMathJaxConverter } = await import('./mathjax.js');
       handle = createMathJaxConverter();
     } catch (err) {
       initPromise = null;

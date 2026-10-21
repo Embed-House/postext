@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { DEFAULT_HYPHENATION_CONFIG, dimensionsEqual, normalizeHyphenationExceptions } from 'postext';
 import type { BodyTextConfig, HyphenationConfig, ResolvedBodyTextConfig } from 'postext';
-import { DimensionInput, NestedGroup, SelectInput, TextInput, ToggleSwitch } from '../../../controls';
-import type { useSandboxLabels } from '../../../context/SandboxContext';
-import { localeOptionsFor, HYPHENATION_ZONE_UNITS } from './constants';
+import { DimensionInput, NestedGroup, SelectInput, TextInput, ToggleSwitch } from '../../../controls/index.js';
+import type { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { localeOptionsFor, HYPHENATION_ZONE_UNITS } from './constants.js';
 
 interface HyphenationFieldProps {
   bodyText: ResolvedBodyTextConfig;

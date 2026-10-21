@@ -14,9 +14,9 @@ import {
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTLine } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { measuredTextOperator } from '../pdf-backend/primitives';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { measuredTextOperator } from '../pdf-backend/primitives.js';
+import { parseFontString } from '../fontString.js';
 
 // EF-137: a ragged line with no styled run was painted with one show-text
 // call of its whole text, so the PDF advanced by the embedded face's own

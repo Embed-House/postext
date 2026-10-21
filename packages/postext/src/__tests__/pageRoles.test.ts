@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { classifyPage } from '../pipeline/pageRoles';
-import { resolveAllConfig } from '../pipeline/config';
-import { createVDTPage } from '../vdt';
-import type { PostextConfig, DesignElement } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { classifyPage } from '../pipeline/pageRoles.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { createVDTPage } from '../vdt.js';
+import type { PostextConfig, DesignElement } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

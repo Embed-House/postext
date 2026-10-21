@@ -22,7 +22,7 @@ import {
   type PostextConfig,
   type ResolvedPageTemplate,
 } from 'postext';
-import { chainTargets } from './composedInsert';
+import { chainTargets } from './composedInsert.js';
 
 export interface ThumbnailFrame {
   name: string;

@@ -4,13 +4,13 @@
  * are laid out counter-rotated and stand upright, inside the box.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { frameContentRect } from '../../composed/paint';
-import { resourceBlockToPage } from '../../vdt';
-import { renderPageToCanvas, registerResourceImage } from '../../index';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { frameContentRect } from '../../composed/paint.js';
+import { resourceBlockToPage } from '../../vdt.js';
+import { renderPageToCanvas, registerResourceImage } from '../../index.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 installSizedStub();
 

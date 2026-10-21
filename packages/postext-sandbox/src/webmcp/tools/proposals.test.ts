@@ -6,9 +6,9 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { setActiveHistory } from '../../history/sandboxHistory';
-import { resetViewerEdits } from '../../editor/viewerEdits';
-import { chapter, harness } from './testHarness';
+import { setActiveHistory } from '../../history/sandboxHistory.js';
+import { resetViewerEdits } from '../../editor/viewerEdits.js';
+import { chapter, harness } from './testHarness.js';
 
 type Fixture = (locale: 'es' | 'en') => { markdown: string; config: PostextConfig; resources: Resource[] };
 const FIXTURES = '../../../../postext/src/__tests__/composed/fixtures/';

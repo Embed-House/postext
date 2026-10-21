@@ -22,9 +22,9 @@ import {
   resolveUnorderedListsConfig,
 } from 'postext';
 import type { PostextContent } from 'postext';
-import { getFontFile } from '../storage/fontStorage';
-import { fontsourceCssUrl, fontsourceId, parseFontsourceCss, parseUnicodeRange, fontsourceUrlAt, fontsourceVersionOf } from '../viewport/fontsourceSlices';
-import { isGenericFontFamily, isSystemFontFamily } from './systemFonts';
+import { getFontFile } from '../storage/fontStorage.js';
+import { fontsourceCssUrl, fontsourceId, parseFontsourceCss, parseUnicodeRange, fontsourceUrlAt, fontsourceVersionOf } from '../viewport/fontsourceSlices.js';
+import { isGenericFontFamily, isSystemFontFamily } from './systemFonts.js';
 
 const FONT_LOAD_TIMEOUT_MS = 3000;
 

@@ -164,6 +164,35 @@ Un botón que cambia la plantilla (y, con ella, todas las páginas que la usan) 
 
 <Screenshot src="/docs-shots/es/checks.webp" alt="El panel Revisión con el aviso El texto no cabe en su marco y tres botones con soluciones, y la página con su primera caja marcada con un contorno rojo y una banda que dice faltan 14,9 mm." caption="Un marco en el que no cabe el texto, y las soluciones que ha calculado la maquetación." />
 
+No todas las marcas del canvas son errores. Un marco cuyo texto o cuyas imágenes la maquetación ha reducido, dentro de lo que permite su plantilla, lleva un contorno ámbar discontinuo y un distintivo como *texto al 90 %*: es información. Los problemas se dibujan en rojo (un marco en el que no cabe su contenido) y en violeta (un aspecto que el diseño no tiene). **Marcas de ajuste**, en la misma barra que **Reajuste**, pasa por tres opciones:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '30%' }}>Opción</th>
+      <th>Qué dibuja el canvas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Todas</td>
+      <td>Todas las marcas: marcos que no caben, aspectos desconocidos, texto e imágenes reducidos</td>
+    </tr>
+    <tr>
+      <td>Solo problemas</td>
+      <td>Los marcos que no caben y los aspectos desconocidos</td>
+    </tr>
+    <tr>
+      <td>Ninguna</td>
+      <td>Ninguna marca de ajuste</td>
+    </tr>
+  </tbody>
+</table>
+
+El Sandbox recuerda tu elección en este navegador. El libro puede fijarla para quien no haya elegido: `debug.fitMarks` (`"all"`, `"problems"` o `"none"`) y `debug.fitMarksMinScale`, que quita el distintivo a un marco compuesto a esa escala o mayor (con `0.95` solo se marca lo que queda por debajo del 95 %). Estas marcas son del canvas: el PDF, el visor HTML, el EPUB y el Folio no las dibujan nunca. Desde postext 1.52.
+
+Una caja con fotos y sus pies (marcos anclados dentro de ella, un pie `below` cada foto) no crece sola cuando una traducción alarga los pies: se salen de la caja y caen sobre lo que hay debajo. Abre el marco de la caja en el editor de plantillas y pon **Crece con los marcos de dentro** en *Los marcos anclados dentro* (`growWith: "children"` en la plantilla). La caja llega entonces hasta el pie del pie de foto más bajo más su relleno inferior, su fondo, su borde y su pestaña la siguen, y los marcos de debajo bajan. *Los marcos elegidos* toma en su lugar una lista de nombres. Cuentan los marcos anclados a un punto del lado superior de la caja y los anclados a ellos; un marco anclado al pie o al centro de la caja no, y una caja girada no crece. Desde postext 1.52.
+
 ## 7. Selecciona sobre la página y en el texto
 
 La página y su Markdown van siempre a la par.

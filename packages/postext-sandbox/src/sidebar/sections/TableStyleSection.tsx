@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveBodyTextConfig, resolveTableStyleConfig } from 'postext';
 import type { TableStyleConfig, ResolvedTableStyleConfig, TableRules, TableOverflow, TableTextTransform, TableSpanRules, TableContinuedFootRule, DimensionUnit } from 'postext';
 import {
@@ -12,7 +12,7 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
+} from '../../controls/index.js';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em'];
 const BORDER_UNITS: DimensionUnit[] = ['pt', 'px'];

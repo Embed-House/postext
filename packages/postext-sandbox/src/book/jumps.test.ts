@@ -1,19 +1,19 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache, resolveDebugConfig } from 'postext';
 import type { PostextConfig, PostextContent, Resource, VDTDocument } from 'postext';
-import { layOutBookChain } from './chain';
-import { newChapter } from './chapterOps';
-import { buildBookChapters } from './buildBook';
-import { chapterLayoutFromDoc, createBookPlanner } from './pagination';
-import { planContent } from './jumps';
+import { layOutBookChain } from './chain.js';
+import { newChapter } from './chapterOps.js';
+import { buildBookChapters } from './buildBook.js';
+import { chapterLayoutFromDoc, createBookPlanner } from './pagination.js';
+import { planContent } from './jumps.js';
 import { buildBundle } from 'postext/bundle';
-import { applyTarget } from '../selection/applySelection';
-import { pickAt, selectionAtSource } from '../selection/pageSelection';
-import { selectionTarget } from '../selection/selectionTargets';
-import { setSelectionChapters } from '../selection/selectionStore';
-import { findCaretBlockIdx, findCarriedCaretBlockIdx } from '../viewport/CanvasPreview/caret';
-import { drawOverlay } from '../viewport/CanvasPreview/overlay';
-import type { BookPlan, Chapter, ChapterLayout, ChapterPlan } from './types';
+import { applyTarget } from '../selection/applySelection.js';
+import { pickAt, selectionAtSource } from '../selection/pageSelection.js';
+import { selectionTarget } from '../selection/selectionTargets.js';
+import { setSelectionChapters } from '../selection/selectionStore.js';
+import { findCaretBlockIdx, findCarriedCaretBlockIdx } from '../viewport/CanvasPreview/caret.js';
+import { drawOverlay } from '../viewport/CanvasPreview/overlay.js';
+import type { BookPlan, Chapter, ChapterLayout, ChapterPlan } from './types.js';
 
 // #943: a story that jumps from one chapter file into a page of a later
 // one, in the book layout. The chapter that sends it records the rest

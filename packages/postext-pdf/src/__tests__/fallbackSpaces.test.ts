@@ -4,8 +4,8 @@ import { PDFArray, PDFDocument, PDFHexString, PDFNumber, PDFRawStream, decodePDF
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { showTextShaped } from '../pdf-backend/primitives';
-import { renderToPdf, type PdfWarning } from '../pdf-backend';
+import { showTextShaped } from '../pdf-backend/primitives.js';
+import { renderToPdf, type PdfWarning } from '../pdf-backend/index.js';
 
 // EF-66: a no-break space glues its words, and the docs recommend the
 // narrow no-break space (10 %) and the figure space (225 000). Most shipped

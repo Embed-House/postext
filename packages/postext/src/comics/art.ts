@@ -16,9 +16,9 @@
  * (`uncroppedPictureBox`). A mirrored picture is flipped inside `box`.
  */
 
-import type { ResourceAnchor, ResourceSafeArea } from '../types';
-import type { BoundingBox, VDTComicArt, VDTPoint } from '../vdt';
-import { normalizeSafeArea } from '../pipeline/safeArea';
+import type { ResourceAnchor, ResourceSafeArea } from '../types.js';
+import type { BoundingBox, VDTComicArt, VDTPoint } from '../vdt.js';
+import { normalizeSafeArea } from '../pipeline/safeArea.js';
 
 export interface ComicCropInput {
   /** The picture's intrinsic size (any unit; only the ratio counts). */

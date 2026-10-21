@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { contentOutline } from '../pipeline/continuation';
-import { computeOutline, hasTocDirective, outlineFromDoc, outlineKey, sameOutline } from '../pipeline/outline';
-import { expandTocDirectives } from '../pipeline/toc';
-import { parseMarkdown } from '../parse';
-import { resolveAllConfig } from '../pipeline/config';
-import { resolveTocConfig, stripTocDefaults } from '../defaults/toc';
-import { dimensionToPx } from '../units';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { contentOutline } from '../pipeline/continuation.js';
+import { computeOutline, hasTocDirective, outlineFromDoc, outlineKey, sameOutline } from '../pipeline/outline.js';
+import { expandTocDirectives } from '../pipeline/toc.js';
+import { parseMarkdown } from '../parse/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { resolveTocConfig, stripTocDefaults } from '../defaults/toc.js';
+import { dimensionToPx } from '../units.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock } from '../vdt.js';
 
 class StubCtx {
   font = '';

@@ -11,12 +11,12 @@
  * block's numbers) is fixed for the run and may change before the next one.
  */
 
-import type { ContentBlock } from '../parse';
-import type { ResolvedCalloutStyleConfig } from '../types';
-import { getMeasureArabicNumbers, getMeasureDirection } from '../measure/bidiLines';
-import { measureLanguageKey } from '../measure/canvas';
-import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from '../measure/vertical';
-import { measureContentBlock, type BlockMeasureContext, type DropCapNote, type MeasureContentBlockOptions, type MeasuredContentBlock } from './measureContentBlock';
+import type { ContentBlock } from '../parse/index.js';
+import type { ResolvedCalloutStyleConfig } from '../types.js';
+import { getMeasureArabicNumbers, getMeasureDirection } from '../measure/bidiLines.js';
+import { measureLanguageKey } from '../measure/canvas.js';
+import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from '../measure/vertical.js';
+import { measureContentBlock, type BlockMeasureContext, type DropCapNote, type MeasureContentBlockOptions, type MeasuredContentBlock } from './measureContentBlock.js';
 
 interface MemoEntry {
   result: MeasuredContentBlock | null;

@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterAll } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo';
-import type { PostextConfig, VDTDocument } from '../../index';
-import { page8Fixture } from './fixtures/page8';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../../composed/pageMemo.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
+import { page8Fixture } from './fixtures/page8.js';
 
 // Seven px per character, whatever the face (no DOM in node).
 class StubCtx {

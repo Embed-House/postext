@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { fontsourceCssUrl } from '../viewport/fontsourceSlices';
+import { fontsourceCssUrl } from '../viewport/fontsourceSlices.js';
 
 // #993: a family the book may not hand on is not left to the reading system
 // when it names an open `fallback`: the EPUB carries the fallback's faces
 // under the family's own name, in the book's text and in its SVG pictures.
 
-vi.mock('../storage/fontStorage', () => ({ getFontFile: async () => null }));
+vi.mock('../storage/fontStorage.js', () => ({ getFontFile: async () => null }));
 vi.mock('postext-pdf', () => ({ decompressWoff2: async (bytes: Uint8Array) => bytes }));
 
 const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+2000-206F';
@@ -36,14 +36,14 @@ function stubFetch(): void {
   });
 }
 
-let loader: typeof import('../controls/fontLoader');
-let inputs: typeof import('./inputs');
+let loader: typeof import('../controls/fontLoader.js');
+let inputs: typeof import('./inputs.js');
 
 beforeEach(async () => {
   stubFetch();
   vi.resetModules();
-  loader = await import('../controls/fontLoader');
-  inputs = await import('./inputs');
+  loader = await import('../controls/fontLoader.js');
+  inputs = await import('./inputs.js');
 });
 
 afterEach(() => {

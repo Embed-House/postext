@@ -17,10 +17,10 @@
  * into `page.floats`); this module only enumerates and measures.
  */
 
-import type { BoundingBox, VDTColumn, VDTPage } from '../vdt';
-import { bandColumns, currentBand, sideColumnOf, sideColumns, sideUsedBottom } from './placement';
-import { columnBottom } from './bandCaps';
-import type { PlannedFloat } from './floatPlacement';
+import type { BoundingBox, VDTColumn, VDTPage } from '../vdt.js';
+import { bandColumns, currentBand, sideColumnOf, sideColumns, sideUsedBottom } from './placement.js';
+import { columnBottom } from './bandCaps.js';
+import type { PlannedFloat } from './floatPlacement.js';
 
 export type FloatSlotPosition = 'top' | 'bottom';
 

@@ -4,11 +4,11 @@ import { memo, useState } from 'react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import type { ColorPaletteEntry } from 'postext';
 import { cloneDefaultColorPalette, isDefaultColorPalette } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { findPaletteUsages, unlinkPaletteRefs } from '../../context/paletteUtils';
-import { CollapsibleSection, ColorPicker } from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { SearchScope } from '../search/SearchScope';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { findPaletteUsages, unlinkPaletteRefs } from '../../context/paletteUtils.js';
+import { CollapsibleSection, ColorPicker } from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { SearchScope } from '../search/SearchScope.js';
 
 function newEntryId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {

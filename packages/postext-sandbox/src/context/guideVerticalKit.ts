@@ -2,7 +2,7 @@ import type { CalloutStyleConfig } from 'postext';
 import {
   DISPLAY, GUIDE_COVER_RESOURCE_ID, M_BOTTOM, M_OUTER, PAGE_H, PAGE_W,
   at, box, col, image, mm, pt, rule, slot, text,
-} from './guideKit';
+} from './guideKit.js';
 
 // The designs the two vertical editions of the guide share — the Chinese
 // one (`guideConfigZh.ts`) and the Japanese one (`guideConfigJa.ts`): a

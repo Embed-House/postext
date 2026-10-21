@@ -3,11 +3,11 @@
  * middle or the foot of a slanted cell (#959).
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml, collectContentWarnings, comicFramePaintOrder, composedFrameBlockIds, pageComics, sourceAt, flowRectToPage, flowToPage } from '../../index';
-import { comicBlockOnSheet } from '../../comics';
-import { innerBox } from '../../comics/textPanels';
-import type { PostextConfig } from '../../types';
-import type { BoundingBox, VDTBlock, VDTDocument, VDTPage } from '../../vdt';
+import { buildDocument, renderPageToCanvas, renderToHtml, collectContentWarnings, comicFramePaintOrder, composedFrameBlockIds, pageComics, sourceAt, flowRectToPage, flowToPage } from '../../index.js';
+import { comicBlockOnSheet } from '../../comics/index.js';
+import { innerBox } from '../../comics/textPanels.js';
+import type { PostextConfig } from '../../types.js';
+import type { BoundingBox, VDTBlock, VDTDocument, VDTPage } from '../../vdt.js';
 
 class StubCtx {
   font = '';

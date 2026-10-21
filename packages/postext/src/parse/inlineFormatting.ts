@@ -1,11 +1,11 @@
-import { applyOrientationMarks, markOrientation, stripOrientationMarks } from './orientationMarks';
-import type { InlineIcon, InlineLink, InlineSpan, RefCase, RefStyle } from './types';
-import { injectPlaceholderSpans } from './injectSpans';
-import { sliceSpan } from './links';
-import { parseDirectiveAttrs } from './attrs';
-import { applyAnnotationMarks, markAnnotations, stripAnnotations, type QueuedAnnotation } from './annotations';
-import type { TabStop } from '../types';
-import { tabStopFromAttrs } from '../defaults/tabStops';
+import { applyOrientationMarks, markOrientation, stripOrientationMarks } from './orientationMarks.js';
+import type { InlineIcon, InlineLink, InlineSpan, RefCase, RefStyle, SwatchShape } from './types.js';
+import { injectPlaceholderSpans } from './injectSpans.js';
+import { sliceSpan } from './links.js';
+import { parseDirectiveAttrs } from './attrs.js';
+import { applyAnnotationMarks, markAnnotations, stripAnnotations, type QueuedAnnotation } from './annotations.js';
+import type { Dimension, TabStop } from '../types.js';
+import { parseLengthText, tabStopFromAttrs } from '../defaults/tabStops.js';
 
 /** Atomic plain-text placeholder for an inline reference span. One code unit
  *  per `:ref{…}` so `sourceMap` stays 1-to-1 (mirroring the inline-math
@@ -23,6 +23,28 @@ export const SWATCH_PLACEHOLDER = '⁤';
  *  code unit per chip. A private-use code point: the chip's words are never
  *  painted from it (they live in the span's `chip.spans`). */
 export const CHIP_PLACEHOLDER = '\uE1A0';
+
+/** `text` without its chip placeholders, each with the space before it
+ *  (a chip at the start takes the space after it): a heading's title as
+ *  its contents entry, running heads and bookmarks read it (#1100). */
+export function withoutChips(text: string): string {
+  let out = '';
+  let dropSpace = false;
+  for (const ch of text) {
+    if (ch === CHIP_PLACEHOLDER) {
+      if (out.endsWith(' ')) out = out.slice(0, -1);
+      else if (out.trim() === '') dropSpace = true;
+      continue;
+    }
+    if (dropSpace && ch === ' ') {
+      dropSpace = false;
+      continue;
+    }
+    dropSpace = false;
+    out += ch;
+  }
+  return out;
+}
 
 /** Atomic plain-text placeholder for a footnote marker (`[^id]`), one code
  *  unit per marker. A private-use code point of its own. */
@@ -484,7 +506,44 @@ export interface SwatchMeta {
   sourceEnd: number;
   /** An inline symbol (`:icon[alt]{…}`, #1058) read in the swatch's
    *  place: `color` is then its tint as written (`''` for none). */
-  icon?: InlineIcon;
+  icon?: InlineIcon;  /** `size`, `border`, `borderColor`, `borderWidth`, `radius` and `gap`
+   *  as written (#1104). */
+  shape?: SwatchShape;
+}
+
+/** The shape attributes of a `:swatch{…}` (#1104): `size`, `radius` and
+ *  `gap` lengths (`8pt`, `0.9em`; a bare number is in points), `border`
+ *  as `none` or a width and a colour in either order (`1pt #333`),
+ *  `borderColor` and `borderWidth` on their own (they win over `border`).
+ *  A value that does not read is left out; undefined when none reads. */
+export function swatchShapeFromAttrs(attrs: Readonly<Record<string, string>>): SwatchShape | undefined {
+  const shape: SwatchShape = {};
+  const length = (raw: string | undefined): Dimension | undefined => {
+    const d = raw !== undefined ? parseLengthText(raw) : undefined;
+    return d && d.value >= 0 ? d : undefined;
+  };
+  const size = length(attrs.size);
+  if (size && size.value > 0) shape.size = size;
+  const border = attrs.border?.trim();
+  if (border !== undefined && border !== '') {
+    if (border.toLowerCase() === 'none') shape.borderWidth = { value: 0, unit: 'pt' };
+    else {
+      for (const part of border.split(/\s+/)) {
+        const width = length(part);
+        if (width) shape.borderWidth = width;
+        else shape.borderColor = part;
+      }
+    }
+  }
+  const borderWidth = length(attrs.borderWidth);
+  if (borderWidth) shape.borderWidth = borderWidth;
+  const borderColor = attrs.borderColor?.trim();
+  if (borderColor) shape.borderColor = borderColor;
+  const radius = length(attrs.radius);
+  if (radius) shape.radius = radius;
+  const gap = length(attrs.gap);
+  if (gap) shape.gap = gap;
+  return Object.keys(shape).length > 0 ? shape : undefined;
 }
 
 const ICON_LINES = ['solid', 'dashed', 'dotted'] as const;
@@ -556,8 +615,10 @@ export function extractInlineSwatches(
     const color = attrs.color?.trim();
     if (color === undefined || color.length === 0) continue;
     out += text.slice(last, m.index);
+    const shape = swatchShapeFromAttrs(attrs);
     swatches.push({
       color,
+      ...(shape ? { shape } : {}),
       sourceStart: fallbackStart + m.index,
       sourceEnd: fallbackStart + m.end,
     });
@@ -722,7 +783,7 @@ export function injectSwatchSpans(spans: InlineSpan[], swatches: SwatchMeta[]): 
     text: SWATCH_PLACEHOLDER,
     bold,
     italic,
-    swatch: meta.icon ? { color: meta.color, icon: meta.icon } : { color: meta.color },
+    swatch: meta.icon ? { color: meta.color, icon: meta.icon } : meta.shape ? { color: meta.color, shape: meta.shape } : { color: meta.color },
   }));
 }
 

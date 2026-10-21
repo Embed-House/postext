@@ -22,12 +22,12 @@
  * pages.
  */
 
-import { bidiClassOf, lineLevels, needsBidi, resolveParagraph, visualOrder } from '../bidi';
-import { getMeasureLanguage } from '../measure/canvas';
-import { graphemeCount } from '../measure/graphemes';
-import { rtlTextWidth } from '../measure/script';
-import { flowTextWidth, measuringVertically } from '../measure/vertical';
-import type { VDTDesignTextBlock, VDTDesignTextRun } from '../vdt';
+import { bidiClassOf, lineLevels, needsBidi, resolveParagraph, visualOrder } from '../bidi.js';
+import { getMeasureLanguage } from '../measure/canvas.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { rtlTextWidth } from '../measure/script.js';
+import { flowTextWidth, measuringVertically } from '../measure/vertical.js';
+import type { VDTDesignTextBlock, VDTDesignTextRun } from '../vdt.js';
 
 /**
  * Whether the runs of a design text or a chip are measured as they are

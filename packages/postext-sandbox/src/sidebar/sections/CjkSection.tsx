@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useState } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   DEFAULT_CJK_CONFIG,
   cjkRegionOf,
@@ -24,12 +24,12 @@ import {
   resolveBodyTextConfig,
 } from 'postext';
 import type { CjkBracketPair, CjkConfig, CjkEmphasisMarkConfig, CjkGridConfig, CjkKuntenConfig, CjkRubyConfig, CjkWarichuConfig } from 'postext';
-import { CollapsibleSection, ColorPicker, DimensionInput, FieldGroup, FontPicker, NumberInput, SelectInput, TextInput, ToggleSwitch } from '../../controls';
-import { Button } from '../../ui';
-import { useSettingsSearch } from '../search/SearchContext';
-import { gridMarginsText, mmText, useCjkGrid } from './cjkGridReadout';
-import { documentLocaleLabel } from './BodyTextSection/constants';
-import { defaultDocumentLocale } from '../../controls/hyphenation';
+import { CollapsibleSection, ColorPicker, DimensionInput, FieldGroup, FontPicker, NumberInput, SelectInput, TextInput, ToggleSwitch } from '../../controls/index.js';
+import { Button } from '../../ui/index.js';
+import { useSettingsSearch } from '../search/SearchContext.js';
+import { gridMarginsText, mmText, useCjkGrid } from './cjkGridReadout.js';
+import { documentLocaleLabel } from './BodyTextSection/constants.js';
+import { defaultDocumentLocale } from '../../controls/hyphenation.js';
 
 /**
  * East Asian typography (`cjk`): the regional conventions Chinese text

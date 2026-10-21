@@ -14,7 +14,7 @@
  * Cyrillic, Hebrew or CJK word), which never holds a joining letter.
  */
 
-import { hasJoiningScript, joiningTypeOf } from '../bidi';
+import { hasJoiningScript, joiningTypeOf } from '../bidi.js';
 
 /** The first code unit a joining letter can have: the Arabic block. */
 const FIRST_JOINING_UNIT = 0x0600;

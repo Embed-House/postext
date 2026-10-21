@@ -1,15 +1,15 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import { useBookPlan, useSandboxDispatch, useSandboxSelector } from '../context/SandboxContext';
-import { composeBookMemo } from '../book/compose';
-import { chapterLayoutFromDoc } from '../book/pagination';
-import { layoutCacheKey } from '../book/layoutKeys';
-import { withHyphenationLocale } from '../controls/hyphenation';
-import { useDebouncedValue } from '../hooks/useDebouncedValue';
-import { useLayoutWorker } from '../worker/useLayoutWorker';
-import { fontsPending, onFontsPending, onLateFonts } from '../worker/LayoutService';
-import { planContent } from '../book/jumps';
+import { useBookPlan, useSandboxDispatch, useSandboxSelector } from '../context/SandboxContext.js';
+import { composeBookMemo } from '../book/compose.js';
+import { chapterLayoutFromDoc } from '../book/pagination.js';
+import { layoutCacheKey } from '../book/layoutKeys.js';
+import { withHyphenationLocale } from '../controls/hyphenation.js';
+import { useDebouncedValue } from '../hooks/useDebouncedValue.js';
+import { useLayoutWorker } from '../worker/useLayoutWorker.js';
+import { fontsPending, onFontsPending, onLateFonts } from '../worker/LayoutService.js';
+import { planContent } from '../book/jumps.js';
 
 /** Pause before a preceding chapter is laid out in the background (ms). */
 const PAGINATION_DEBOUNCE_MS = 300;

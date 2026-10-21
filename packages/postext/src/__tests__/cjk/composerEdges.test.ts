@@ -1,15 +1,15 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { linkSegments } from '../../measure/links';
-import { buildDocument, cachedMeasureRichBlock, createMeasurementCache, renderToHtml } from '../../index';
-import type { PostextConfig } from '../../types';
-import { hasCJK } from '../../measure/cjk';
-import { cjkClassOf, setCjkLineBreak, type CjkLineBreakLevel } from '../../measure/cjkClasses';
-import { setCjkComposition } from '../../measure/cjkPunctuation';
-import type { InlineSpan } from '../../parse';
-import type { MeasureBlockOptions } from '../../measure/types';
-import type { VDTLine } from '../../vdt';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { linkSegments } from '../../measure/links.js';
+import { buildDocument, cachedMeasureRichBlock, createMeasurementCache, renderToHtml } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import { hasCJK } from '../../measure/cjk.js';
+import { cjkClassOf, setCjkLineBreak, type CjkLineBreakLevel } from '../../measure/cjkClasses.js';
+import { setCjkComposition } from '../../measure/cjkPunctuation.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { MeasureBlockOptions } from '../../measure/types.js';
+import type { VDTLine } from '../../vdt.js';
 
 // The composer's edge cases: links, segments the caret can map, spaces next
 // to marks, unit squares, fullwidth numbers, CJK text without a run of two

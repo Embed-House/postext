@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { buildDocument, clearResourceImages, registerResourceImage, renderPageToCanvas, renderToHtml } from '../index';
-import type { PostextConfig, Resource } from '../index';
+import { buildDocument, clearResourceImages, registerResourceImage, renderPageToCanvas, renderToHtml } from '../index.js';
+import type { PostextConfig, Resource } from '../index.js';
 
 // #995: a label tab's picture painted in the label's text colour. The
 // canvas composites the decoded picture with `source-in` on a scratch

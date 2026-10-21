@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { createMeasurementCache } from '../measure';
-import { DEFAULT_FOOTNOTES_CONFIG, resolveFootnotesConfig, stripFootnotesDefaults, stripConfigDefaults } from '../defaults';
-import { collectConfigWarnings } from '../configWarnings';
-import type { Dimension, PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
-import { installSizedStub, stubCharWidth } from './vertical/stub';
-import { renderPageToCanvas } from '../index';
-import { renderToHtml } from '../html-backend';
+import { buildDocument } from '../pipeline/index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { DEFAULT_FOOTNOTES_CONFIG, resolveFootnotesConfig, stripFootnotesDefaults, stripConfigDefaults } from '../defaults/index.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import type { Dimension, PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt.js';
+import { installSizedStub, stubCharWidth } from './vertical/stub.js';
+import { renderPageToCanvas } from '../index.js';
+import { renderToHtml } from '../html-backend.js';
 
 // CJK characters and full-width forms 1 em, anything else ½ em (stub.ts).
 installSizedStub();
@@ -225,8 +225,9 @@ describe('endnotes of a Japanese vertical book', () => {
 });
 
 /** Book text with notes cited on several pages: `per` paragraphs per
- *  page, each citing one note. */
-function spreadBook(pages: number, per: number, noteText = '短い注。', textLength = 20): string {
+ *  page, each citing one note; `opener`, a short paragraph opening each
+ *  page after the first. */
+function spreadBook(pages: number, per: number, noteText = '短い注。', textLength = 20, opener = ''): string {
   const out: string[] = [];
   let k = 0;
   for (let p = 0; p < pages; p++) {
@@ -234,7 +235,8 @@ function spreadBook(pages: number, per: number, noteText = '短い注。', textL
       k++;
       out.push(`${kana(1).slice(0, textLength)}注${k}[^n${k}]。${kana(1).slice(0, textLength)}`);
     }
-    out.push(':::pagebreak\n:::');
+    out.push(':::pagebreak');
+    if (opener && p < pages - 1) out.push(opener);
   }
   for (let i = 1; i <= k; i++) out.push(`[^n${i}]: ${noteText}`);
   return out.join('\n\n');
@@ -269,7 +271,8 @@ describe('sidenotes on the spread (傍注, placement: spread)', () => {
 
   it('keeps a note on the even page when the odd one has no room left for it', () => {
     const long = kana(5);
-    const doc = build(spreadBook(3, 3, long, 4), cfg);
+    // A short line opens each page, so the odd pages have no room left for the last note.
+    const doc = build(spreadBook(3, 3, long, 4, '〇〇〇'), cfg);
     const evenNotes = notes(doc).filter((b) => (b.pageIndex + 1) % 2 === 0);
     expect(evenNotes.length).toBeGreaterThan(0);
     for (const page of doc.pages) {
@@ -282,7 +285,7 @@ describe('sidenotes on the spread (傍注, placement: spread)', () => {
   });
 
   it('keeps on the last even page the notes of a chapter ending there', () => {
-    const md = `${kana(3)}\n\n:::pagebreak\n:::\n\n短い本文[^z]。\n\n[^z]: 最後の注。`;
+    const md = `${kana(3)}\n\n:::pagebreak\n\n短い本文[^z]。\n\n[^z]: 最後の注。`;
     const doc = build(md, cfg);
     const note = noteOf(doc, 'z');
     expect(note).toBeDefined();

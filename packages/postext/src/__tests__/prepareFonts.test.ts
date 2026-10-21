@@ -1,17 +1,17 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { buildDocument } from '../pipeline/build';
-import { createMeasurementCache, clearMeasurementCache, evictFontFamilies, measurementGeneration, parseFontString } from '../measure';
-import { evictionsSince, measureTextWidth } from '../measure/canvas';
-import { prepareFonts, configFontFaces, fontSampleText, withLoadedFonts } from '../fonts/prepare';
-import { buildDocumentWithFonts } from '../fonts/buildWithFonts';
-import { documentFontFaces, fontFallbacks, matchFace, type FontFaceLike, type FontFaceSetLike } from '../fonts/faces';
-import { onFontsChanged, syncFontSet, watchFonts } from '../fonts/fontSet';
-import { invalidateConfig, resolveAllConfig, validateConfigCache } from '../pipeline/config';
-import { flowColorValues } from '../pipeline/partPalette';
-import { clearRegisteredFonts, registeredFontFiles } from '../svg/fontRegistry';
-import { stableStringify, hashString } from '../util/stableHash';
-import type { ContentWarning } from '../vdt';
-import type { DesignTextElement, PostextConfig } from '../types';
+import { buildDocument } from '../pipeline/build.js';
+import { createMeasurementCache, clearMeasurementCache, evictFontFamilies, measurementGeneration, parseFontString } from '../measure/index.js';
+import { evictionsSince, measureTextWidth } from '../measure/canvas.js';
+import { prepareFonts, configFontFaces, fontSampleText, withLoadedFonts } from '../fonts/prepare.js';
+import { buildDocumentWithFonts } from '../fonts/buildWithFonts.js';
+import { documentFontFaces, fontFallbacks, matchFace, type FontFaceLike, type FontFaceSetLike } from '../fonts/faces.js';
+import { onFontsChanged, syncFontSet, watchFonts } from '../fonts/fontSet.js';
+import { invalidateConfig, resolveAllConfig, validateConfigCache } from '../pipeline/config.js';
+import { flowColorValues } from '../pipeline/partPalette.js';
+import { clearRegisteredFonts, registeredFontFiles } from '../svg/fontRegistry.js';
+import { stableStringify, hashString } from '../util/stableHash.js';
+import type { ContentWarning } from '../vdt.js';
+import type { DesignTextElement, PostextConfig } from '../types.js';
 
 // A fake font set: a face is "there" once a loaded FontFace of its family
 // answers for its weight and slant. The stub canvas measures 10 px a

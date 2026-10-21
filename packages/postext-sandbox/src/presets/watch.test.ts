@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { AppliedPresetSnapshot } from './types';
-import { decidePresetUpdate } from './watch';
+import type { AppliedPresetSnapshot } from './types.js';
+import { decidePresetUpdate } from './watch.js';
 
 const snapshot = (over: Partial<AppliedPresetSnapshot> = {}): AppliedPresetSnapshot => ({
   presetId: 'brochure',

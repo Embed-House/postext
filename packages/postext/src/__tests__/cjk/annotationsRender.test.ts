@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLine } from '../../vdt';
-import { installSizedStub, stubCharWidth } from '../vertical/stub';
-import { verticalSpans } from '../vertical/verticalSpans';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLine } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from '../vertical/stub.js';
+import { verticalSpans } from '../vertical/verticalSpans.js';
 
 // The marks, readings and notes of #193–#195 in the canvas and HTML
 // backends: drawn where the layout put them.

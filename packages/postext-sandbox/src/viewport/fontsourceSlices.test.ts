@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { PdfFontAnswer, PdfFontFile } from 'postext-pdf';
-import { parseFontsourceCss, parseUnicodeRange, pickSlices } from './fontsourceSlices';
+import { parseFontsourceCss, parseUnicodeRange, pickSlices } from './fontsourceSlices.js';
 
-vi.mock('../controls/fontLoader', () => ({
+vi.mock('../controls/fontLoader.js', () => ({
   getCustomFontFamily: () => undefined,
   // The catalogue's record of the family, which the loader keeps (#753).
   fontFamilyWeights: async () => [400, 700],
@@ -16,7 +16,7 @@ vi.mock('../controls/fontLoader', () => ({
   fontsourcePackageVersion: () => null,
   facesForCodePoints: <T,>(faces: readonly T[]) => [...faces],
 }));
-vi.mock('../storage/fontStorage', () => ({ getFontFile: async () => null }));
+vi.mock('../storage/fontStorage.js', () => ({ getFontFile: async () => null }));
 vi.mock('postext-pdf', () => ({ decompressWoff2: async (bytes: Uint8Array) => bytes }));
 
 // Abridged from `@fontsource/noto-serif-tc@5/400.css`: numbered slices
@@ -126,7 +126,7 @@ describe('createPdfFontProvider (#196)', () => {
   });
 
   it('answers a Chinese face with the slices of its characters', async () => {
-    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const { createPdfFontProvider } = await import('./pdfFontProvider.js');
     const provider = createPdfFontProvider();
     const files = await provider('Noto Serif TC', 400, 'normal', { codePoints: cps('之也，') });
     expect(names(files)).toEqual(['noto-serif-tc-123-400-normal.woff2', 'noto-serif-tc-122-400-normal.woff2']);
@@ -141,7 +141,7 @@ describe('createPdfFontProvider (#196)', () => {
     // among those whose range holds it, as the page does: it needs the
     // range of each file and where its rule stands (122, 123, latin-ext,
     // latin: 0 to 3), whatever files an answer leaves out.
-    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const { createPdfFontProvider } = await import('./pdfFontProvider.js');
     const provider = createPdfFontProvider();
     const files = filesOf(await provider('Noto Serif TC', 400, 'normal', { codePoints: cps('之也， A') }));
     expect(files.every((f) => f instanceof Uint8Array)).toBe(true);
@@ -161,7 +161,7 @@ describe('createPdfFontProvider (#196)', () => {
   });
 
   it('fetches a file that failed once again, and leaves out one that fails twice', async () => {
-    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const { createPdfFontProvider } = await import('./pdfFontProvider.js');
     const provider = createPdfFontProvider();
     failing.set(fileUrl('noto-sans-tc', '122'), 1);
     expect(names(await provider('Noto Sans TC', 400, 'normal', { codePoints: cps('之也，') }))).toEqual([
@@ -178,7 +178,7 @@ describe('createPdfFontProvider (#196)', () => {
   });
 
   it('rejects the face only when none of its files can be had', async () => {
-    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const { createPdfFontProvider } = await import('./pdfFontProvider.js');
     const provider = createPdfFontProvider();
     failing.set(fileUrl('noto-serif-jp', '122'), 2);
     failing.set(fileUrl('noto-serif-jp', '123'), 2);
@@ -186,7 +186,7 @@ describe('createPdfFontProvider (#196)', () => {
   });
 
   it('remembers a stylesheet the CDN does not have, and fetches one it could not reach again', async () => {
-    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const { createPdfFontProvider } = await import('./pdfFontProvider.js');
     const provider = createPdfFontProvider();
     const italicCss = 'https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5/400-italic.css';
     await provider('Noto Serif SC', 400, 'italic', { codePoints: cps('Ab') });

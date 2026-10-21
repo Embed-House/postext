@@ -11,9 +11,9 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { Resource, ResourcePlacement } from 'postext';
 import { defaultResourceTypes } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { ResourceDetail } from './ResourceDetail';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { ResourceDetail } from './ResourceDetail.js';
 
 const L = DEFAULT_LABELS;
 
@@ -76,6 +76,15 @@ describe('ResourceDetail placement: width and align', () => {
     expect(captionSide(render(bitmap({ position: 'here', span: 'page' })))).toBe(false);
     expect(captionSide(render(bitmap({ position: 'auto', span: 'side' })))).toBe(false);
     expect(captionSide(render(bitmap({ position: 'auto', rotate: 'ccw' })))).toBe(false);
+  });
+
+  it('offers the caption beside a picture inside its column for pictures only (#1106)', () => {
+    const inside = (html: string) => html.includes('>' + L.resourceCaptionSideInside + '<');
+    expect(inside(render(bitmap({ position: 'here' })))).toBe(true);
+    expect(inside(render(bitmap({ position: 'auto', captionSide: 'inside' })))).toBe(true);
+    const tableHtml = render(table({ position: 'auto' }));
+    expect(captionSide(tableHtml)).toBe(true);
+    expect(inside(tableHtml)).toBe(false);
   });
 
   it('hides Width and Align for a turned resource (a page of its own)', () => {

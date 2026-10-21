@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { emitFrameEditorEvent, onFrameEditorEvent } from './frameEvents';
+import { emitFrameEditorEvent, onFrameEditorEvent } from './frameEvents.js';
 
 describe('frame editor events', () => {
   it('reaches every listener until it stops, and one that throws does not stop the others', () => {

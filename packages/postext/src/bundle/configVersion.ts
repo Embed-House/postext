@@ -3,21 +3,22 @@
 // the number as `configVersion` (every writer since postext 1.5 sets it);
 // the Sandbox numbers its stored projects the same way.
 
-import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig, UnorderedListsConfig } from '../types';
-import { DEFAULT_MATH_CONFIG } from '../defaults/math';
-import { avoidOrphansByDefault } from '../defaults/bodyText';
-import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings';
-import { cjkRegionOfConfig } from '../defaults/cjk';
-import { dimensionsEqual } from '../defaults/shared';
-import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter';
-import { DEFAULT_PAGE_CONFIG } from '../defaults/page';
-import { dimensionToPx } from '../units';
-import { KNOWN_CONTAINERS } from '../parse/blockParser';
-import { codeFenceOpen } from '../parse/codeFence';
-import { hasCJK } from '../measure/cjk';
+import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig, UnorderedListsConfig } from '../types.js';
+import { DEFAULT_MATH_CONFIG } from '../defaults/math.js';
+import { DEFAULT_MARK_STYLES } from '../defaults/markStyles.js';
+import { avoidOrphansByDefault } from '../defaults/bodyText.js';
+import { DEFAULT_COLUMN_BALANCING, balancingOnByDefault } from '../defaults/headings.js';
+import { cjkRegionOfConfig } from '../defaults/cjk.js';
+import { dimensionsEqual } from '../defaults/shared.js';
+import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter.js';
+import { DEFAULT_PAGE_CONFIG } from '../defaults/page.js';
+import { dimensionToPx } from '../units.js';
+import { KNOWN_CONTAINERS } from '../parse/blockParser.js';
+import { codeFenceOpen } from '../parse/codeFence.js';
+import { hasCJK } from '../measure/cjk.js';
 
 /**
- * The configuration rules this engine writes: 16 since #1056 (15 from #853, 14 from
+ * The configuration rules this engine writes: 18 since #1149 (17 from #1119, 16 from #1056, 15 from #853, 14 from
  * postext 1.30, 13 from 1.29, 12 from 1.28, 11 from 1.25, 10 from 1.24, 9 from 1.23, 8 from 1.5). Thirteen rules changed in 1.5 and
  * more since, and a configuration
  * stored under an older
@@ -201,6 +202,15 @@ import { hasCJK } from '../measure/cjk';
  *   not placed by an anchor. An engine that reads 15 or less leaves them
  *   out (`unknownConfigValue`). Nothing older changes meaning: one stored
  *   under 15 is read as it is (no pin).
+ * - 17 (#1119), the rule of postext 1.52: a paragraph style's unset type
+ *   fields (face, size, leading, weights, colour) take the box's body
+ *   inside a box (`bodyText.paragraphStylesInBoxes: 'box'`), where up to
+ *   1.51 they took the document's body text ({@link
+ *   pinLegacyBoxParagraphStyles}).
+ * - 18 (#1149): a highlight style that names no `borderRadius` has square
+ *   ends (`markStyles[].borderRadius` defaults to 0, the print norm),
+ *   where up to 1.51 its band's ends were rounded at 0.2 em ({@link
+ *   pinLegacyMarkRadius}).
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -220,9 +230,11 @@ import { hasCJK } from '../measure/cjk';
  * was written by postext 1.29 and gets the version-14 pin (which every
  * older one gets too); one stored under 14 was written by postext 1.30 to
  * 1.33 and gets nothing; one stored under 15 was written by postext 1.34 to
- * 1.47 and gets nothing either.
+ * 1.47 and gets nothing either; one stored under 16 was written by postext
+ * 1.48 to 1.51 and gets the version-17 and version-18 pins (which every
+ * older one gets too).
  */
-export const CONFIG_VERSION = 16;
+export const CONFIG_VERSION = 18;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -334,6 +346,11 @@ export const COMPOSED_PAGES_RULES = 15;
 /** The rules that draw connectors in a template's decoration (#1056): new
  *  keys only, nothing to pin. */
 export const CONNECTOR_RULES = 16;
+/** The rules that set a paragraph style's unset type fields in a box's
+ *  body (#1119). */
+const BOX_PARAGRAPH_STYLE_RULES = 17;
+/** The rules that give a highlight style square ends by default (#1149). */
+const MARK_RADIUS_RULES = 18;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1582,6 +1599,22 @@ export function pinLegacyShapingLanguage<T extends Partial<PostextConfig>>(confi
 }
 
 /**
+ * A configuration written before #1119 (postext 1.51 or earlier), pinned to
+ * the type its paragraph styles took inside a box:
+ * `bodyText.paragraphStylesInBoxes: 'document'`, the face, size, leading,
+ * weights and colour a style leaves unset taken from the document's body
+ * text, where today they are the box's. A configuration that names the
+ * setting already, or declares no paragraph style (in the configuration or
+ * in its HTML viewer's overrides), is returned as it is (the same object).
+ */
+export function pinLegacyBoxParagraphStyles<T extends Partial<PostextConfig>>(config: T): T {
+  const bodyText: BodyTextConfig = isRecord(config.bodyText) ? config.bodyText : {};
+  if (bodyText.paragraphStylesInBoxes !== undefined) return config;
+  if (!declaresParagraphStyles(config)) return config;
+  return { ...config, bodyText: { ...bodyText, paragraphStylesInBoxes: 'document' } };
+}
+
+/**
  * A configuration written before #765 (postext 1.28 or earlier), pinned to
  * the box it set before a task item: `unorderedLists.taskBox: 'character'`,
  * the character ☐ (☑ when the item is done) set as text in the list's
@@ -1625,6 +1658,36 @@ function mayHaveComics(content: string | readonly string[] | undefined): boolean
 function mayHaveCjkText(content: string | readonly string[] | undefined): boolean {
   if (content === undefined) return true;
   return typeof content === 'string' ? hasCJK(content) : content.some(hasCJK);
+}
+
+/** The corner radius every highlight style had by default up to
+ *  postext 1.51. */
+const LEGACY_MARK_RADIUS: Dimension = { value: 0.2, unit: 'em' };
+
+/**
+ * A configuration written for postext 1.51 or earlier, pinned to the
+ * rounded ends its highlight bands had then (#1149): every mark style that
+ * names no `borderRadius` gets the old default, 0.2 em, and a
+ * configuration with no `markStyles` gets the built-in `mark` style with
+ * it. An empty list, or one where every style names its radius, is
+ * returned as it is (the same object).
+ */
+export function pinLegacyMarkRadius<T extends Partial<PostextConfig>>(config: T): T {
+  const styles = Array.isArray(config.markStyles) ? config.markStyles : config.markStyles === undefined ? DEFAULT_MARK_STYLES : [];
+  if (!styles.some((st) => isRecord(st) && st.borderRadius === undefined)) return config;
+  return { ...config, markStyles: styles.map((st) => (isRecord(st) && st.borderRadius === undefined ? { ...st, borderRadius: { ...LEGACY_MARK_RADIUS } } : st)) };
+}
+
+/** A highlight mark typed in the text. */
+const MARK_RE = /:mark\[/;
+
+/** Whether a document may set a highlight mark: a `:mark[…]` in its
+ *  markdown or in the configuration's own text (a design text that reads
+ *  inline marks). Unknown content (undefined) may. */
+function mayHaveMarks(content: string | readonly string[] | undefined, config: Partial<PostextConfig>): boolean {
+  if (content === undefined) return true;
+  if (typeof content === 'string' ? MARK_RE.test(content) : content.some((text) => MARK_RE.test(text))) return true;
+  return MARK_RE.test(JSON.stringify(config));
 }
 
 /** A two-row note typed in the text. */
@@ -1770,7 +1833,12 @@ export interface MigrateConfigOptions {
  * set as a character by {@link pinLegacyTaskBox}, unless `options.content`
  * shows no task item; one older than 14 has its text shaped in the host's
  * language by {@link pinLegacyShapingLanguage}, unless it names the
- * language its text is shaped in.
+ * language its text is shaped in; one older than 17 has the type of its
+ * paragraph styles inside a box pinned by {@link
+ * pinLegacyBoxParagraphStyles}, when it declares a paragraph style; one
+ * older than 18 has the rounded ends of its highlight bands pinned by
+ * {@link pinLegacyMarkRadius}, unless neither `options.content` nor the
+ * configuration shows a `:mark[…]`.
  * A current one is returned as it is (the same object).
  * Migrate a stored configuration once and store it again under
  * `CONFIG_VERSION`: the maths pin multiplies a scale, so a configuration
@@ -1822,8 +1890,10 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   if (rules < SCRIPT_CONTEXT_RULES) out = pinLegacyScriptContext(out);
   if (rules < SHAPING_LANGUAGE_RULES) out = pinLegacyShapingLanguage(out);
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) out = pinLegacyTaskBox(out);
+  if (rules < BOX_PARAGRAPH_STYLE_RULES) out = pinLegacyBoxParagraphStyles(out);
   // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
   // keys only, nothing to pin.
+  if (rules < MARK_RADIUS_RULES && mayHaveMarks(content, out)) out = pinLegacyMarkRadius(out);
   return out;
 }
 
@@ -1862,7 +1932,10 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
  * force, and the labels of cross-references on the `crossRefs` in force,
  * and the shaping of words with no letter and the language the text is
  * shaped in on the `bodyText` in force, and the box of a task item on the
- * `unorderedLists` in force.
+ * `unorderedLists` in force, the type of paragraph styles inside a box
+ * on the `bodyText` in force (when the merged configuration declares a
+ * paragraph style), and the ends of the highlight bands on the
+ * `markStyles` in force.
  * @internal `readBundle`'s; hosts call {@link migrateConfig}.
  */
 export function migrateBundleConfig(
@@ -1915,7 +1988,9 @@ export function migrateBundleConfig(
   if (rules < SCRIPT_CONTEXT_RULES) merged = pinLegacyScriptContext(merged);
   if (rules < SHAPING_LANGUAGE_RULES) merged = pinLegacyShapingLanguage(merged);
   if (rules < TASK_BOX_RULES && mayHaveTaskItems(content)) merged = pinLegacyTaskBox(merged);
+  if (rules < BOX_PARAGRAPH_STYLE_RULES) merged = pinLegacyBoxParagraphStyles(merged);
   // COMPOSED_PAGES_RULES (15, #853) and CONNECTOR_RULES (16, #1056): new
   // keys only, nothing to pin.
+  if (rules < MARK_RADIUS_RULES && mayHaveMarks(content, merged)) merged = pinLegacyMarkRadius(merged);
   return merged;
 }

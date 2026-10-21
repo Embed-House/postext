@@ -164,6 +164,35 @@ A button that changes the template (and so every page set with it) asks first an
 
 <Screenshot src="/docs-shots/en/checks.webp" alt="The Checks panel with the entry Text does not fit its frame and three buttons offering fixes, and the page with its first box outlined in red and a band saying 26 mm short." caption="A frame that does not fit, and the fixes the layout worked out for it." />
 
+Not every mark on the canvas is a fault. A frame whose text or pictures the layout set smaller, within what its template allows, has a dashed amber outline and a badge such as *text at 90 %*: that is information. The problems are drawn in red (a frame whose content does not fit) and violet (a look the design does not have). **Fit marks**, in the same toolbar as **Reflow**, goes through three settings:
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '30%' }}>Setting</th>
+      <th>What the canvas draws</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>All</td>
+      <td>Every mark: frames that do not fit, unknown looks, text and pictures set smaller</td>
+    </tr>
+    <tr>
+      <td>Problems only</td>
+      <td>Frames that do not fit and unknown looks</td>
+    </tr>
+    <tr>
+      <td>None</td>
+      <td>No fit marks</td>
+    </tr>
+  </tbody>
+</table>
+
+The Sandbox remembers your choice in this browser. The book can set it for whoever has not chosen: `debug.fitMarks` (`"all"`, `"problems"` or `"none"`) and `debug.fitMarksMinScale`, which leaves the badge off a frame set at that scale or larger (with `0.95` only what is under 95 % is marked). These marks belong to the canvas: the PDF, the HTML viewer, the EPUB and the Folio never draw them. Since postext 1.52.
+
+A box with photos and their captions (frames anchored inside it, a caption `below` each photo) does not grow by itself when a translation makes the captions longer: they run out of the box and onto what lies under it. Open the box's frame in the template editor and set **Grows with the frames inside** to *The frames anchored inside it* (`growWith: "children"` in the template). The box then reaches the foot of the lowest caption and its bottom padding, its fill, border and tab follow, and the frames under it move down. *The frames chosen* takes a list of names instead. The frames anchored to a point of the box's top side count, and those anchored to them; a frame anchored to the box's foot or middle does not, and a turned box does not grow. Since postext 1.52.
+
 ## 7. Select on the page and in the text
 
 The page and its Markdown follow each other.

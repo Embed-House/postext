@@ -2,8 +2,8 @@
 // and `font-family` declarations, so a family with no embedded face is
 // reported instead of silently falling back in the reader.
 
-import type { EpubFontFile } from '../types';
-import { decodeEntities } from '../shared/xml';
+import type { EpubFontFile } from '../types.js';
+import { decodeEntities } from '../shared/xml.js';
 
 /** A face as CSS names it. */
 export interface FontUse {

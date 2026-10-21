@@ -3,7 +3,7 @@
 // about it — an edit must never land on another passage than the one
 // meant.
 
-import { ToolError } from './modelContext';
+import { ToolError } from './modelContext.js';
 
 export interface FindReplace {
   find: string;

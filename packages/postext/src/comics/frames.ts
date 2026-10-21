@@ -16,10 +16,10 @@
  * locale and across relayouts.
  */
 
-import type { BoundingBox, ResolvedConfig, VDTComicPage, VDTComicPanel, VDTFrame, VDTPoint } from '../vdt';
-import type { ResolvedCalloutStyleConfig } from '../types';
-import { clipPolygon, polygonBBox, type ComicCell } from './geometry';
-import type { ComicPanelSource } from './types';
+import type { BoundingBox, ResolvedConfig, VDTComicPage, VDTComicPanel, VDTFrame, VDTPoint } from '../vdt.js';
+import type { ResolvedCalloutStyleConfig } from '../types.js';
+import { clipPolygon, polygonBBox, type ComicCell } from './geometry.js';
+import type { ComicPanelSource } from './types.js';
 
 /** A comic (page, spread or strip): `cm<n>`, `n` the ordinal of its fence
  *  among the comic fences of its chapter. */

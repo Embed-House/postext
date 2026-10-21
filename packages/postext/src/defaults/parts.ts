@@ -7,9 +7,9 @@ import type {
   ResolvedPageConfig,
   ResolvedPartsConfig,
   ResolvedUnorderedListsConfig,
-} from '../types';
-import { resolveDesignSlot, stripDesignSlotDefaults } from './headerFooter';
-import { startEndAsLeftRight } from './shared';
+} from '../types.js';
+import { resolveDesignSlot, stripDesignSlotDefaults } from './headerFooter.js';
+import { startEndAsLeftRight } from './shared.js';
 
 /** Static defaults of the `parts` section. Fields that inherit from another
  *  section (`margins` from the page, `bodyStyle.*` from the body text and

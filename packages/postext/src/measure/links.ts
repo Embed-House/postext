@@ -7,12 +7,12 @@
 // target is stamped on every segment holding a linked character
 // (`VDTLineSegment.href`), for the HTML and PDF backends to make live.
 
-import type { VDTLine, VDTLineSegment, VDTSegmentMark } from '../vdt';
-import type { InlineSpan } from '../parse';
-import { writtenText } from './kashida';
-import { SOFT_HYPHEN } from './types';
-import { GEMINATE_DOT, endsInsideGeminate } from './geminate';
-import { BREAKING_SPACE_RE } from './spaces';
+import type { VDTLine, VDTLineSegment, VDTSegmentMark } from '../vdt.js';
+import type { InlineSpan } from '../parse/index.js';
+import { writtenText } from './kashida.js';
+import { SOFT_HYPHEN } from './types.js';
+import { GEMINATE_DOT, endsInsideGeminate } from './geminate.js';
+import { BREAKING_SPACE_RE } from './spaces.js';
 
 /** Whitespace between words: the measurers split words at breaking
  *  whitespace only, and keep a no-break space inside the word it glues. */

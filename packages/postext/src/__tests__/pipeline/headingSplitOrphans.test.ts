@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveHeadingsConfig, stripHeadingsDefaults } from '../../defaults/headings';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyHeadingSplit, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import type { BodyTextConfig, KeepWithNextSplit, PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveHeadingsConfig, stripHeadingsDefaults } from '../../defaults/headings.js';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyHeadingSplit, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import type { BodyTextConfig, KeepWithNextSplit, PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -112,7 +112,7 @@ describe('a paragraph kept with the heading above it splits by the orphan rule t
     }
     // Stored under today's rules, it is read as it is.
     expect(migrateConfig(stored, CONFIG_VERSION, { content: markdown })).toBe(stored);
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
   });
 
   it('pins only what the setting changes', () => {

@@ -22,7 +22,7 @@ import type {
   PrintConfig,
   PrintPreflightConfig,
 } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -32,10 +32,10 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
-import { putBlob } from '../../storage/blobStore';
-import { fill } from '../../print/fillTokens';
-import { usePrintSetup } from '../../print/printSetup';
+} from '../../controls/index.js';
+import { putBlob } from '../../storage/blobStore.js';
+import { fill } from '../../print/fillTokens.js';
+import { usePrintSetup } from '../../print/printSetup.js';
 
 /** Print preparation (#607): crop marks and bleed, the PDF/X standard and
  *  output profile, black handling and the preflight thresholds. Writes

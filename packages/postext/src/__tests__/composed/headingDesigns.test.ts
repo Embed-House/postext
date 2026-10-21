@@ -6,14 +6,14 @@
  * design takes, and the design follows the frame's scale and turn.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { frameMatrix } from '../../composed/paint';
-import { sourceAt } from '../../composed/sourceMap';
-import { framesInFrame } from '../../pipeline/headerFooter';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDesignTextBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { page8Fixture } from './fixtures/page8';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { frameMatrix } from '../../composed/paint.js';
+import { sourceAt } from '../../composed/sourceMap.js';
+import { framesInFrame } from '../../pipeline/headerFooter.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDesignTextBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { page8Fixture } from './fixtures/page8.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): seven
 // px per character, whatever the face.

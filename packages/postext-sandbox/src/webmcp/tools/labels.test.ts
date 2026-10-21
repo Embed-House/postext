@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MAP_NOTES_CONFIG, MAP_NOTES_MARKDOWN, MAP_NOTES_RESOURCES } from '../../templates/mapNotes.fixture';
-import { chapter, harness } from './testHarness';
+import { MAP_NOTES_CONFIG, MAP_NOTES_MARKDOWN, MAP_NOTES_RESOURCES } from '../../templates/mapNotes.fixture.js';
+import { chapter, harness } from './testHarness.js';
 
 // #1064: sandbox_edit_labels does what the anchor editor, the symbol picker
 // and a frame's pointers do; sandbox_save_resource stores labelAt and leader.

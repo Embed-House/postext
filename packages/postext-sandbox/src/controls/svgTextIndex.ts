@@ -13,8 +13,8 @@
 // walked with `getExtentOfChar`. `getBBox`/`getExtentOfChar` do not exist in
 // jsdom, so this module is exercised in the browser only.
 
-import { decodeXmlText, scanSvgTextNodeRanges, type SvgCharBox, type SvgTextIndex, type SvgTextRun } from './svgSource';
-import { svgIntrinsicSize } from '../panels/resources/svgIntrinsic';
+import { decodeXmlText, scanSvgTextNodeRanges, type SvgCharBox, type SvgTextIndex, type SvgTextRun } from './svgSource.js';
+import { svgIntrinsicSize } from '../panels/resources/svgIntrinsic.js';
 
 const indexes = new Map<string, SvgTextIndex>();
 const EMPTY: SvgTextIndex = { runs: [] };

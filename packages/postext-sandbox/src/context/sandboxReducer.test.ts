@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { sandboxReducer, type SandboxState } from './SandboxContext';
-import { DEFAULT_LABELS } from '../types';
-import { BUILTIN_PRESET_ID } from '../presets';
-import { WHOLE_BOOK_MAX_CHAPTERS } from '../book/scope';
-import { comicBalloonItem, pinLineChanges, unpinLineChanges } from '../viewport/comics/balloonSource';
+import { sandboxReducer, type SandboxState } from './SandboxContext.js';
+import { DEFAULT_LABELS } from '../types/index.js';
+import { BUILTIN_PRESET_ID } from '../presets/index.js';
+import { WHOLE_BOOK_MAX_CHAPTERS } from '../book/scope.js';
+import { comicBalloonItem, pinLineChanges, unpinLineChanges } from '../viewport/comics/balloonSource.js';
 
 function ch(id: string, markdown = ''): SandboxState['chapters'][number] {
   return { id, title: id.toUpperCase(), markdown, createdAt: 1, updatedAt: 1 };

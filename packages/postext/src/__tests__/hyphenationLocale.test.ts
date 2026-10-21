@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { hyphenateText, setHyphenationLocale, getHyphenationLocale, matchHyphenationLocale, HYPHENATION_LOCALES } from '../hyphenate';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { buildDocument } from '../pipeline';
-import { createMeasurementCache, cachedMeasureRichBlock, initHyphenator } from '../measure';
-import type { PostextConfig, VDTDocument } from '../index';
+import { hyphenateText, setHyphenationLocale, getHyphenationLocale, matchHyphenationLocale, HYPHENATION_LOCALES } from '../hyphenate.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { buildDocument } from '../pipeline/index.js';
+import { createMeasurementCache, cachedMeasureRichBlock, initHyphenator } from '../measure/index.js';
+import type { PostextConfig, VDTDocument } from '../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character, the space included, is 7 px wide.

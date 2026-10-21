@@ -3,14 +3,14 @@
 // no tail is drawn through another balloon's lettering (#672).
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import type { LetteringItem, LetteringPanel, Point, Rect } from '../types';
-import { buildDocument } from '../../../pipeline';
-import { comicArtRectToPage } from '../../art';
-import type { PostextConfig, Resource } from '../../../types';
-import type { VDTComicBalloon, VDTComicPage } from '../../../vdt';
+import { installStubMeasure } from './stubMeasure.js';
+import { letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import type { LetteringItem, LetteringPanel, Point, Rect } from '../types.js';
+import { buildDocument } from '../../../pipeline/index.js';
+import { comicArtRectToPage } from '../../art.js';
+import type { PostextConfig, Resource } from '../../../types.js';
+import type { VDTComicBalloon, VDTComicPage } from '../../../vdt.js';
 
 beforeAll(() => installStubMeasure());
 

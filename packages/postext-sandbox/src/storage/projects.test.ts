@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, Resource } from 'postext';
-import { referencedFileIds, toSummary, type ProjectRecord } from './projects';
-import { projectFileId, projectFontFileId, remapContentFileIds } from './projectFiles';
-import { PROJECT_RECORD_VERSION } from './projectMigration';
-import type { BookContent } from '../book/types';
+import { referencedFileIds, toSummary, type ProjectRecord } from './projects.js';
+import { projectFileId, projectFontFileId, remapContentFileIds } from './projectFiles.js';
+import { PROJECT_RECORD_VERSION } from './projectMigration.js';
+import type { BookContent } from '../book/types.js';
 
 const book: BookContent = { chapters: [{ id: 'c1', title: 'One', markdown: '# x', createdAt: 0, updatedAt: 0 }], activeChapterId: 'c1' };
 

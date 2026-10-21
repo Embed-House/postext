@@ -6,7 +6,7 @@
 // carries `data-pt-alongside`.
 
 import { VIDEO_PLAYBACK_SCRIPT } from 'postext';
-import type { EpubItem } from '../types';
+import type { EpubItem } from '../types.js';
 
 /** The script's place, relative to the package document. */
 export const VIDEO_SCRIPT_HREF = 'scripts/videos.js';

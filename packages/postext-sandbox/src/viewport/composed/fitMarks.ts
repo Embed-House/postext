@@ -12,13 +12,18 @@
  *   (`VDTFrame.lookUnknown`, #1095): a violet dashed outline and the name;
  * - the frame a check of the Checks panel just took the reader to,
  *   outlined for a moment.
+ *
+ * Which of them are drawn (#1160): every one (`all`), the problems only
+ * (`problems`: frames that do not fit, unknown looks) or none; the scale
+ * badges of frames set at `minScale` or larger are left out. The frame a
+ * check just reached is outlined in every mode, as it answers a click.
  */
 
-import type { VDTDocument, VDTFrame, VDTPage } from 'postext';
-import { SVG_NS } from '../CanvasPreview/dom';
-import { markFontPx } from './frameOverlay';
-import { jumpFlashNow } from '../../editions/frameJump';
-import { drawOverlapMarks } from './overlapMarks';
+import type { FitMarksMode, VDTDocument, VDTFrame, VDTPage } from 'postext';
+import { SVG_NS } from '../CanvasPreview/dom.js';
+import { markFontPx } from './frameOverlay.js';
+import { jumpFlashNow } from '../../editions/frameJump.js';
+import { drawOverlapMarks } from './overlapMarks.js';
 
 export interface FitMark {
   frame: VDTFrame;
@@ -57,6 +62,18 @@ function millimetres(px: number, dpi: number, locale?: string): string {
   }
 }
 
+/** Which marks are drawn (#1160): the mode, and the scale at which a
+ *  scale badge is no longer drawn (1 draws every scaled frame). */
+export interface FitMarksFilter {
+  mode?: FitMarksMode;
+  minScale?: number;
+}
+
+export interface FitMarksOptions extends FitMarksFilter {
+  targetFrameId?: string | null;
+  locale?: string;
+}
+
 /** The marks of one page: the frame just reached, then the frames that
  *  do not fit and the scaled ones, in template order. Frames read on the facing page of a spread
  *  are marked where they are read. */
@@ -64,13 +81,15 @@ export function fitMarksFor(
   doc: Pick<VDTDocument, 'config'>,
   page: Pick<VDTPage, 'composed'>,
   labels: FitMarkLabels,
-  options: { targetFrameId?: string | null; locale?: string } = {},
+  options: FitMarksOptions = {},
 ): FitMark[] {
   const composed = page.composed;
   if (!composed) return [];
   const dpi = doc.config.page?.dpi ?? 300;
+  const mode = options.mode ?? 'all';
+  const minScale = options.minScale ?? 1;
   const out: FitMark[] = [];
-  for (const frame of composed.frames) {
+  for (const frame of mode === 'none' ? [] : composed.frames) {
     if (frame.facingBlocks && frame.blockIds.length === 0) continue;
     // A look the config does not have (#1095): drawn with its style alone.
     if (frame.lookUnknown !== undefined && labels.lookUnknown) out.push({ frame, kind: 'look', text: labels.lookUnknown.replace('__look__', frame.lookUnknown) });
@@ -78,9 +97,12 @@ export function fitMarksFor(
       out.push({ frame, kind: 'overflow', text: labels.overflow.replace('__mm__', millimetres(frame.overflowPx, dpi, options.locale)) });
       continue;
     }
+    // A scaled frame is information, not a problem: the ladder set it
+    // within what the template allows.
+    if (mode === 'problems') continue;
     const lines: string[] = [];
-    if (frame.scale < 1) lines.push(labels.scaled.replace('__percent__', percent(frame.scale, options.locale)));
-    if (frame.imageScale !== undefined && frame.imageScale < 1) lines.push(labels.imageScaled.replace('__percent__', percent(frame.imageScale, options.locale)));
+    if (frame.scale < Math.min(1, minScale)) lines.push(labels.scaled.replace('__percent__', percent(frame.scale, options.locale)));
+    if (frame.imageScale !== undefined && frame.imageScale < Math.min(1, minScale)) lines.push(labels.imageScaled.replace('__percent__', percent(frame.imageScale, options.locale)));
     if (lines.length > 0) out.push({ frame, kind: 'scaled', text: lines.join(' · ') });
   }
   // The frame just reached goes under the others' marks (its overflow
@@ -158,7 +180,7 @@ export function drawFitMarks(
   doc: VDTDocument,
   pageIndex: number,
   labels: FitMarkLabels,
-  options: { targetFrameId?: string | null; locale?: string } = {},
+  options: FitMarksOptions = {},
 ): void {
   const page = doc.pages[pageIndex];
   if (!page?.composed) {
@@ -226,13 +248,15 @@ export function drawFitMarks(
 }
 
 /** The canvas's call: the page's fit marks, with the frame a jump just
- *  reached (see `editions/frameJump.ts`). */
+ *  reached (see `editions/frameJump.ts`), filtered as the viewer or the
+ *  book asks (`viewport/composed/fitMarksView.ts`). */
 export function drawPageFitMarks(
   svg: SVGSVGElement,
   doc: VDTDocument,
   pageIndex: number,
   labels: { composedFitOverflow: string; composedFitScaled: string; composedFitImageScaled: string; composedFitLookUnknown?: string },
   locale?: string,
+  filter: FitMarksFilter = {},
 ): void {
   const flash = jumpFlashNow();
   drawFitMarks(svg, doc, pageIndex, {
@@ -240,7 +264,7 @@ export function drawPageFitMarks(
     scaled: labels.composedFitScaled,
     imageScaled: labels.composedFitImageScaled,
     ...(labels.composedFitLookUnknown ? { lookUnknown: labels.composedFitLookUnknown } : {}),
-  }, { targetFrameId: flash && flash.pageIndex === pageIndex ? flash.frameId : null, ...(locale ? { locale } : {}) });
+  }, { ...filter, targetFrameId: flash && flash.pageIndex === pageIndex ? flash.frameId : null, ...(locale ? { locale } : {}) });
   // The overlap check the reader selected (#1066), over the fit marks.
   drawOverlapMarks(svg, doc, pageIndex);
 }

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter';
-import { renderToHtml } from '../../html-backend';
-import type { CalloutStyleConfig, PostextConfig } from '../../types';
-import type { VDTBlock, VDTDesignBoxBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { CalloutStyleConfig, PostextConfig } from '../../types.js';
+import type { VDTBlock, VDTDesignBoxBlock, VDTDocument } from '../../vdt.js';
 
 // EF-99: a callout's stripe follows the frame's rounding — it is clipped to
 // the rounded rectangle of the background and border, as CSS clips a

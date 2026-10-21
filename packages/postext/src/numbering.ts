@@ -1,10 +1,10 @@
-import type { ContentBlock } from './parse';
-import { caseWords, numberToWords, type NumberWordsOptions, type WordsCase } from './numberWords';
-import type { DigitSystem, OrderedListNumberFormat } from './types';
-import { languageOf, localeScript } from './locale';
-import { chineseNumeral, cjkDecimal, circledDecimal, fullwidthDecimal, fixedSymbol, CJK_HEAVENLY_STEMS, CJK_EARTHLY_BRANCHES } from './chineseNumerals';
-import { japaneseNumeral, japaneseZero, kanaSeries, HIRAGANA, HIRAGANA_IROHA, KATAKANA, KATAKANA_IROHA } from './japaneseNumerals';
-import { abjadNumeral, arabicIndicDecimal, arabicLettering, asciiDigits, persianDecimal, withDigits, ABJAD_LETTERS, HIJAI_LETTERS } from './arabicNumerals';
+import type { ContentBlock } from './parse/index.js';
+import { caseWords, numberToWords, type NumberWordsOptions, type WordsCase } from './numberWords.js';
+import type { DigitSystem, OrderedListNumberFormat } from './types.js';
+import { languageOf, localeScript } from './locale.js';
+import { chineseNumeral, cjkDecimal, circledDecimal, fullwidthDecimal, fixedSymbol, CJK_HEAVENLY_STEMS, CJK_EARTHLY_BRANCHES } from './chineseNumerals.js';
+import { japaneseNumeral, japaneseZero, kanaSeries, HIRAGANA, HIRAGANA_IROHA, KATAKANA, KATAKANA_IROHA } from './japaneseNumerals.js';
+import { abjadNumeral, arabicIndicDecimal, arabicLettering, asciiDigits, persianDecimal, withDigits, ABJAD_LETTERS, HIJAI_LETTERS } from './arabicNumerals.js';
 
 /** The East Asian numeral styles, named as in CSS Counter Styles 3: Chinese
  *  numerals in the informal (一百二十) and formal (壹佰贰拾) longhand of

@@ -5,23 +5,23 @@
 
 import { describeFrameCoverProposal, describeFrameOutsideProposal, describeFrameOverflowProposal, resolvePdfGenerationConfig, resolvePrintConfig } from 'postext';
 import type { FrameCoverProposal, FrameOutsideProposal, FrameOverflowProposal, PostextConfig, Resource } from 'postext';
-import { composeBookMemo } from '../../book/compose';
-import { pdfFontChecksFor } from '../../controls/pdfFontWarnings';
-import { svgFontIssues, unavailableResourceImages } from '../../controls/resourceImages';
-import { onPreflightInputsChange, preflightInputs, type PreflightInputs } from '../../print/preflightInputs';
-import { detailFor, titleFor } from '../../sidebar/WarningsPanel';
-import { hasIndexedDB } from '../../storage/blobStore';
-import { WARNING_CATEGORY_ORDER, warningCategory } from '../../warnings/categories';
-import { computeComposedWarnings, computeWarnings } from '../../warnings/compute';
-import { FRAME_FIX_KINDS, fixesOfPayload, isFrameFixPayload, planIsAdvice, planProposal, proposalContextOf, valueInWords, type FrameFixPayload } from '../../warnings/proposalActions';
-import type { FrameProposal } from '../../warnings/frameOverlapText';
-import type { Warning } from '../../warnings/types';
-import { applyViewerEdit } from '../../editor/viewerEdits';
-import { chapterText, stateReaches } from '../chapterEdits';
-import { chapterOf, dispatchAndWait, layOutChapter, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { preparePainting } from '../pageImage';
-import { screenPosition } from './view';
+import { composeBookMemo } from '../../book/compose.js';
+import { pdfFontChecksFor } from '../../controls/pdfFontWarnings.js';
+import { svgFontIssues, unavailableResourceImages } from '../../controls/resourceImages.js';
+import { onPreflightInputsChange, preflightInputs, type PreflightInputs } from '../../print/preflightInputs.js';
+import { detailFor, titleFor } from '../../sidebar/WarningsPanel.js';
+import { hasIndexedDB } from '../../storage/blobStore.js';
+import { WARNING_CATEGORY_ORDER, isAcceptedWarning, warningCategory } from '../../warnings/categories.js';
+import { computeComposedWarnings, computeWarnings } from '../../warnings/compute.js';
+import { FRAME_FIX_KINDS, fixesOfPayload, isFrameFixPayload, planIsAdvice, planProposal, proposalContextOf, valueInWords, type FrameFixPayload } from '../../warnings/proposalActions.js';
+import type { FrameProposal } from '../../warnings/frameOverlapText.js';
+import type { Warning } from '../../warnings/types.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
+import { chapterText, stateReaches } from '../chapterEdits.js';
+import { chapterOf, dispatchAndWait, layOutChapter, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { preparePainting } from '../pageImage.js';
+import { screenPosition } from './view.js';
 
 /** How long the checks wait for the print profile of a book set up for
  *  print, in milliseconds. */
@@ -116,7 +116,11 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
       }
 
       const counts: Record<string, number> = {};
+      // Contrast pairs `contrast.allow` accepts (#1124) are listed, marked
+      // accepted, and left out of the counts.
+      const acceptedCount = all.filter(({ warning }) => isAcceptedWarning(warning)).length;
       for (const { warning } of all) {
+        if (isAcceptedWarning(warning)) continue;
         const category = warningCategory(warning.payload.kind);
         counts[category] = (counts[category] ?? 0) + 1;
       }
@@ -127,8 +131,9 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
         laidOut,
         scope: whole ? 'book' : 'chapter',
         ...(whole ? { chapters: perChapter } : { chapter: targets[0]!.index + 1, title: targets[0]!.chapter.title }),
-        total: all.length,
+        total: all.length - acceptedCount,
         byCategory: counts,
+        ...(acceptedCount > 0 ? { accepted: acceptedCount } : {}),
         ...(pending ? { note: 'The print profile had not loaded in time: the ink checks and the contrast on paper are not in this answer. Call again in a moment.' } : {}),
         warnings: wanted.slice(0, limit).map(({ warning: w, chapter }) => {
           const payload = w.payload as Record<string, unknown>;
@@ -144,6 +149,7 @@ export function checkTools(host: SandboxToolHost): WebMcpTool[] {
             ...(typeof payload.path === 'string' ? { setting: payload.path } : {}),
             ...(typeof payload.resourceId === 'string' ? { resource: payload.resourceId } : {}),
             ...(typeof payload.page === 'number' ? { page: payload.page } : {}),
+            ...(w.payload.kind === 'contrast' && w.payload.check.accepted ? { accepted: w.payload.check.accepted } : {}),
             // A frame that does not fit: its fixes, numbered as
             // sandbox_apply_proposal takes them (#868).
             ...(w.payload.kind === 'frameOverflow' ? { frame: w.payload.frame, proposals: proposalList(w.payload) } : {}),

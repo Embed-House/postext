@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { layoutSlotToVdt } from '../../pipeline/headerFooter';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { AnchorEdge, DesignElement, DesignTextAlign, ElementSize } from '../../types';
-import type { VDTDesignSlot, VDTDesignTextBlock, VDTPage } from '../../vdt';
+import { layoutSlotToVdt } from '../../pipeline/headerFooter.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { AnchorEdge, DesignElement, DesignTextAlign, ElementSize } from '../../types.js';
+import type { VDTDesignSlot, VDTDesignTextBlock, VDTPage } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character advances 7 px.

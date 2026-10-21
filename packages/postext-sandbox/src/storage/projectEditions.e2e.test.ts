@@ -6,22 +6,22 @@
 
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
-import { layOutEdition } from '../editions/editionLayout';
-import { FIXTURE_LOCALES, threeEditionsBook, type FixtureLocale } from '../editions/threeEditions.fixture';
-import { composedChecksOf } from '../warnings/composedChecks';
-import { buildBundleFiles, parseBundle } from '../presets/bundle';
-import { openBundleZip, zipBundle } from '../presets/zip';
-import { bundleContentLocales } from '../presets/locale';
-import type { LoadedPreset } from '../presets';
-import { newChapter } from '../book/chapterOps';
-import type { Chapter } from '../book/types';
-import { contentOfLoaded, editionTitlesOf, projectEditionFields } from './projectEditions';
-import { migrateProjectRecord, PROJECT_RECORD_VERSION } from './projectMigration';
-import { allEditionChapters, editionContentOf, editionTitleOf, renamePatch, toSummary, withActiveEdition, type ProjectRecord } from './projects';
-import { chapterLayoutFromDoc, createBookPlanner } from '../book/pagination';
-import { composeBookMemo } from '../book/compose';
-import { LAYOUTS_FILE, localeLayoutsFile, type BundleLayoutsFile } from '../presets/bundle';
-import type { ChapterLayout } from '../book/types';
+import { layOutEdition } from '../editions/editionLayout.js';
+import { FIXTURE_LOCALES, threeEditionsBook, type FixtureLocale } from '../editions/threeEditions.fixture.js';
+import { composedChecksOf } from '../warnings/composedChecks.js';
+import { buildBundleFiles, parseBundle } from '../presets/bundle.js';
+import { openBundleZip, zipBundle } from '../presets/zip.js';
+import { bundleContentLocales } from '../presets/locale.js';
+import type { LoadedPreset } from '../presets/index.js';
+import { newChapter } from '../book/chapterOps.js';
+import type { Chapter } from '../book/types.js';
+import { contentOfLoaded, editionTitlesOf, projectEditionFields } from './projectEditions.js';
+import { migrateProjectRecord, PROJECT_RECORD_VERSION } from './projectMigration.js';
+import { allEditionChapters, editionContentOf, editionTitleOf, renamePatch, toSummary, withActiveEdition, type ProjectRecord } from './projects.js';
+import { chapterLayoutFromDoc, createBookPlanner } from '../book/pagination.js';
+import { composeBookMemo } from '../book/compose.js';
+import { LAYOUTS_FILE, localeLayoutsFile, type BundleLayoutsFile } from '../presets/bundle.js';
+import type { ChapterLayout } from '../book/types.js';
 import type { PostextConfig, Resource } from 'postext';
 import type { PostextContent } from 'postext';
 

@@ -9,8 +9,8 @@
 import { PDFDocument, PDFImage, PDFName, PDFRef } from 'pdf-lib';
 import UPNG from '@pdf-lib/upng';
 import { buildRgbLut, outputTransform, sampleRgbLut, type RgbLut } from 'postext';
-import type { PrintColorMode } from './colorMode';
-import { rgbToCmyk, rgbToGrayscale } from '../colors';
+import type { PrintColorMode } from './colorMode.js';
+import { rgbToCmyk, rgbToGrayscale } from '../colors.js';
 
 /** Decoded pixels, 8-bit RGBA, rows top-down. */
 export interface RgbaPixels {

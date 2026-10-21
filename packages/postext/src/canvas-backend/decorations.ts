@@ -1,9 +1,9 @@
-import type { VDTDocument, VDTPage, VDTColumn, BoundingBox } from '../vdt';
-import { dimensionToPx } from '../units';
-import { columnRuleSegments, footnoteRuleSegments } from '../columnRule';
-import { cropMarkSegments } from '../cropMarks';
-import { CHARACTER_GRID_COLOR, type CjkGridCells } from '../pipeline/cjkGrid';
-import { restoreContext, saveContext } from './contextState';
+import type { VDTDocument, VDTPage, VDTColumn, BoundingBox } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import { columnRuleSegments, footnoteRuleSegments } from '../columnRule.js';
+import { cropMarkSegments } from '../cropMarks.js';
+import { CHARACTER_GRID_COLOR, type CjkGridCells } from '../pipeline/cjkGrid.js';
+import { restoreContext, saveContext } from './contextState.js';
 
 export function renderBaselineGrid(
   ctx: CanvasRenderingContext2D,

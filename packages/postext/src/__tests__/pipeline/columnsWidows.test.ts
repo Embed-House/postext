@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 // A `:::columns` group set whole is cut where its columns stand level
 // without leaving a lone line of a paragraph at the foot or the head of a

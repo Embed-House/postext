@@ -1,7 +1,7 @@
-import type { VDTBlock, VDTDocument, VDTLine, VDTPage } from './vdt';
-import { DEFAULT_DEBUG_CONFIG } from './defaults/debug';
-import { restoreContext, saveContext } from './canvas-backend/contextState';
-import { findPxSize } from './measure/fontString';
+import type { VDTBlock, VDTDocument, VDTLine, VDTPage } from './vdt.js';
+import { DEFAULT_DEBUG_CONFIG } from './defaults/debug.js';
+import { restoreContext, saveContext } from './canvas-backend/contextState.js';
+import { findPxSize } from './measure/fontString.js';
 
 /**
  * The word spacing of a justified line in the units of

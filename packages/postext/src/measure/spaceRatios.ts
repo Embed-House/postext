@@ -1,4 +1,4 @@
-import type { VDTLineSegment } from '../vdt';
+import type { VDTLineSegment } from '../vdt.js';
 
 /** The two word-space ratios of a justified line (see `VDTLine`). */
 export interface SpaceRatios {

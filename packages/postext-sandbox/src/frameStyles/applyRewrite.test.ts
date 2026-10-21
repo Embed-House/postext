@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { HistoryStepInfo } from '../history/sandboxHistory';
-import { canUndoStyleRewrite, undoStyleRewrite, type StyleRewriteRecord } from './applyRewrite';
+import type { HistoryStepInfo } from '../history/sandboxHistory.js';
+import { canUndoStyleRewrite, undoStyleRewrite, type StyleRewriteRecord } from './applyRewrite.js';
 
 /** A history whose latest steps are `steps` (top last). */
 function fakeHistory(steps: HistoryStepInfo[]) {

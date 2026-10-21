@@ -21,9 +21,9 @@ import type {
   ResolvedDesignSlot,
   ResolvedDesignTextElement,
   TextOverflow,
-} from '../types';
-import { DEFAULT_MAIN_COLOR } from './shared';
-import { dimensionToPx } from '../units';
+} from '../types.js';
+import { DEFAULT_MAIN_COLOR } from './shared.js';
+import { dimensionToPx } from '../units.js';
 
 export type HeaderFooterSlotKind = 'header' | 'footer';
 

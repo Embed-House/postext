@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { parseInlineFormatting, stripInlineFormatting } from '../parse/inlineFormatting';
-import { renderToHtml } from '../html-backend';
-import { computeSourceMap } from '../parse/sourceMapping';
-import { resolveMarkStylesConfig, stripMarkStylesDefaults } from '../defaults/markStyles';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { parseInlineFormatting, stripInlineFormatting } from '../parse/inlineFormatting.js';
+import { renderToHtml } from '../html-backend.js';
+import { computeSourceMap } from '../parse/sourceMapping.js';
+import { resolveMarkStylesConfig, stripMarkStylesDefaults } from '../defaults/markStyles.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../vdt.js';
 
 // #888: an inline highlight mark, `:mark[text]{style="…"}`: ordinary text
 // with a band behind it that follows each piece of the phrase on its line.
@@ -27,6 +27,9 @@ const config = (more: Partial<PostextConfig> = {}): PostextConfig => ({
   page: { width: pt(60), height: pt(400), margins: { top: pt(6), bottom: pt(6), left: pt(6), right: pt(6) } },
   layout: { layoutType: 'single' },
   bodyText: { textAlign: 'left', hyphenation: { enabled: false } },
+  // Rounded ends, to tell the phrase's true ends from its cuts (the
+  // default is square since #1149).
+  markStyles: [{ id: 'mark', borderRadius: { value: 0.2, unit: 'em' } }],
   ...more,
 });
 
@@ -86,6 +89,35 @@ describe(':mark[…] (#888)', () => {
     expect(seg.mark).toMatchObject({ from: 0, to: 4 });
     // Words of the first piece, the band from the first marked word on.
     expect(marked(withBands[0]!)[0]).toBe('water');
+  });
+
+  it("decorationBreak 'clone' gives each line piece a whole band, the layout unchanged (#1101)", () => {
+    const md = 'The water cycle moves :mark[water between the sea, the air and the land]{style="band"}. Then rain.';
+    const styles = (decorationBreak?: 'slice' | 'clone') => config({ markStyles: [{ id: 'band', paddingX: pt(2), borderRadius: pt(3), ...(decorationBreak ? { decorationBreak } : {}) }] });
+    const sliced = paragraph(buildDocument({ markdown: md }, styles()));
+    const cloned = paragraph(buildDocument({ markdown: md }, styles('clone')));
+    expect(cloned.lines.map((l) => l.bbox)).toEqual(sliced.lines.map((l) => l.bbox));
+    const bands = (b: VDTBlock) => b.lines.flatMap((l) => l.highlights ?? []);
+    const s = bands(sliced);
+    const c = bands(cloned);
+    expect(c.length).toBe(s.length);
+    expect(c.length).toBeGreaterThan(1);
+    // 2 pt and 3 pt at the default 300 dpi.
+    const padX = (2 * 300) / 72;
+    for (const [i, band] of c.entries()) {
+      expect([band.radiusLeft, band.radiusRight]).toEqual([12.5, 12.5]);
+      const cut = s[i]!;
+      const grownLeft = cut.radiusLeft > 0 ? 0 : padX;
+      const grownRight = cut.radiusRight > 0 ? 0 : padX;
+      expect(band.x).toBeCloseTo(cut.x - grownLeft, 6);
+      expect(band.width).toBeCloseTo(cut.width + grownLeft + grownRight, 6);
+      expect([band.y, band.height]).toEqual([cut.y, cut.height]);
+    }
+    // One band per line piece in the HTML, each with both ends rounded.
+    const html = renderToHtml(buildDocument({ markdown: md }, styles('clone')));
+    const radii = [...html.matchAll(/background:#fff0a0;border-radius:([^;]+);/g)].map((m) => m[1]!.split(" "));
+    expect(radii.length).toBe(c.length);
+    for (const r of radii) expect(new Set(r).size).toBe(1);
   });
 
   it('takes its style from markStyles: colour, text colour, padding', () => {
@@ -178,8 +210,10 @@ describe(':mark[…] (#888)', () => {
   });
 
   it('resolves and strips its styles', () => {
-    expect(resolveMarkStylesConfig(undefined)).toEqual([{ id: 'mark', name: 'Mark', background: { hex: '#fff0a0', model: 'hex' }, borderRadius: { value: 0.2, unit: 'em' }, paddingX: { value: 0.15, unit: 'em' }, paddingY: { value: 0.05, unit: 'em' } }]);
+    expect(resolveMarkStylesConfig(undefined)).toEqual([{ id: 'mark', name: 'Mark', background: { hex: '#fff0a0', model: 'hex' }, borderRadius: { value: 0, unit: 'em' }, paddingX: { value: 0.15, unit: 'em' }, paddingY: { value: 0.05, unit: 'em' }, decorationBreak: 'slice' }]);
     expect(stripMarkStylesDefaults([{ id: 'mark', name: 'Mark' }])).toBeUndefined();
+    expect(stripMarkStylesDefaults([{ id: 'mark', decorationBreak: 'slice' }])).toBeUndefined();
+    expect(stripMarkStylesDefaults([{ id: 'k', decorationBreak: 'clone' }])).toEqual([{ id: 'k', decorationBreak: 'clone' }]);
     expect(stripMarkStylesDefaults([{ id: 'k', background: { hex: '#fff0a0', model: 'hex' }, paddingTop: pt(1) }])).toEqual([{ id: 'k', paddingTop: pt(1) }]);
     expect(stripMarkStylesDefaults([])).toEqual([]);
   });

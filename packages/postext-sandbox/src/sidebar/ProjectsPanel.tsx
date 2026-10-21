@@ -11,20 +11,20 @@ import {
   useSandboxProjects,
   useSandboxSelector,
   type ProjectSummary,
-} from '../context/SandboxContext';
-import { Button, Collapsible, ConfirmPopover, EmptyState, IconButton, ListRow, Menu, MenuItem, MenuSeparator, PanelBody, PanelHeader, RowTag, Select } from '../ui';
-import { DOCUMENT_LOCALE_OPTIONS } from './sections/BodyTextSection/constants';
-import { isPresetHideable, partitionPresets } from '../presets/hidden';
-import { activeLocaleTag, bundleContentLocales, choosePresetOpen, presetLocales, sameLocaleTag } from '../presets/locale';
-import { readBundleZipManifest } from '../presets/zip';
-import { localeDisplayName, localeShortTag } from '../presets/localeNames';
-import { useBlobObjectUrl } from '../panels/resources/ResourcePreview';
-import type { PresetSummary } from '../presets';
-import { presetCoverFor } from '../covers/autoCover';
-import { openBookThenShowChapters } from './openBook';
-import { RowActionsMenu } from './RowActionsMenu';
-import { LocaleTag } from './LocaleTag';
-import { openTextMigration } from '../migrate/migrationRequest';
+} from '../context/SandboxContext.js';
+import { Button, Collapsible, ConfirmPopover, EmptyState, IconButton, ListRow, Menu, MenuItem, MenuSeparator, PanelBody, PanelHeader, RowTag, Select } from '../ui/index.js';
+import { DOCUMENT_LOCALE_OPTIONS } from './sections/BodyTextSection/constants.js';
+import { isPresetHideable, partitionPresets } from '../presets/hidden.js';
+import { activeLocaleTag, bundleContentLocales, choosePresetOpen, presetLocales, sameLocaleTag } from '../presets/locale.js';
+import { readBundleZipManifest } from '../presets/zip.js';
+import { localeDisplayName, localeShortTag } from '../presets/localeNames.js';
+import { useBlobObjectUrl } from '../panels/resources/ResourcePreview.js';
+import type { PresetSummary } from '../presets/index.js';
+import { presetCoverFor } from '../covers/autoCover.js';
+import { openBookThenShowChapters } from './openBook.js';
+import { RowActionsMenu } from './RowActionsMenu.js';
+import { LocaleTag } from './LocaleTag.js';
+import { openTextMigration } from '../migrate/migrationRequest.js';
 
 function GroupTitle({ children, actions }: { children: ReactNode; actions?: ReactNode }) {
   return (

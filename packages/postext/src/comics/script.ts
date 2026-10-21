@@ -14,12 +14,12 @@
  *   caption: emphasis, `:ruby`, `:tcy`, `:ltr` / `:rtl`, forced breaks.
  */
 
-import type { DirectiveAttrs } from '../parse/types';
-import type { ComicBalloonPosition } from '../types';
-import { scanDirectiveAttrs } from '../parse/attrs';
-import { mapInlineSnippet } from '../parse/inlineSnippet';
-import { BREAK_PLACEHOLDER } from '../parse/inlineFormatting';
-import { COMIC_RESERVED_KEYS, type ComicScriptItem, type ComicScriptRole, type ComicSourceRange, type ComicTailSide } from './types';
+import type { DirectiveAttrs } from '../parse/types.js';
+import type { ComicBalloonPosition } from '../types.js';
+import { scanDirectiveAttrs } from '../parse/attrs.js';
+import { mapInlineSnippet } from '../parse/inlineSnippet.js';
+import { BREAK_PLACEHOLDER } from '../parse/inlineFormatting.js';
+import { COMIC_RESERVED_KEYS, type ComicScriptItem, type ComicScriptRole, type ComicSourceRange, type ComicTailSide } from './types.js';
 
 /** `key`, an optional `{attrs}`, then the colon. */
 const SCRIPT_LINE_RE = /^([\p{L}\p{N}_.-]+)(?:[ \t]*\{([^}\n]*)\})?[ \t]*[:：]/u;

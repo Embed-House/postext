@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { leafEntries } from '../configPaths';
-import { chapter, harness } from './testHarness';
-import { partOf } from './testParts';
+import { leafEntries } from '../configPaths.js';
+import { chapter, harness } from './testHarness.js';
+import { partOf } from './testParts.js';
 
 // "Change any of the settings": every setting the engine resolves for a
 // book that stores no design of its own is written through

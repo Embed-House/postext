@@ -12,8 +12,8 @@
  * source.
  */
 
-import type { BoundingBox, VDTPoint } from '../vdt';
-import { comicSplitLines, type ComicSplitAxis, type ComicSplitList } from './split';
+import type { BoundingBox, VDTPoint } from '../vdt.js';
+import { comicSplitLines, type ComicSplitAxis, type ComicSplitList } from './split.js';
 
 /** A half-plane: the points where `nx·x + ny·y <= c`. */
 export interface HalfPlane {

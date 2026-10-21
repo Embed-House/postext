@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { ONE_OFF_TEMPLATE, RESHAPE_CONFIG, RESHAPE_RESOURCES, oneOffPage } from '../../templates/reshape.fixture';
-import { chapter, harness } from './testHarness';
+import { ONE_OFF_TEMPLATE, RESHAPE_CONFIG, RESHAPE_RESOURCES, oneOffPage } from '../../templates/reshape.fixture.js';
+import { chapter, harness } from './testHarness.js';
 
 // The module library and the template reshapes (#1065) through the agent
 // tools: a page of one-off frames turned into a grid and a module, a

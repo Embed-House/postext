@@ -5,9 +5,9 @@
 
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, PlacedDesignElement } from 'postext';
-import { installLanguageCanvas, LanguageContext } from '../../controls/languageCanvasStub';
-import { configShapingLanguage } from '../../controls/measureLanguage';
-import { buildHtmlConfigOverride, measureColumnWidthPx } from './configOverride';
+import { installLanguageCanvas, LanguageContext } from '../../controls/languageCanvasStub.js';
+import { configShapingLanguage } from '../../controls/measureLanguage.js';
+import { buildHtmlConfigOverride, measureColumnWidthPx } from './configOverride.js';
 
 // The page that hosts the Sandbox is in English.
 installLanguageCanvas();

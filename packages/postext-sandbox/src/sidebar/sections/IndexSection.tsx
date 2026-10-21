@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import type { DimensionUnit, IndexConfig, IndexGroupBy, IndexGroupsConfig } from 'postext';
 import { DEFAULT_INDEX_CONFIG, resolveBodyTextConfig, resolveIndexConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -13,7 +13,7 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
+} from '../../controls/index.js';
 
 const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

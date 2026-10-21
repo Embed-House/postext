@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo, useRef } from 'react';
-import { useSandboxSelector } from '../context/SandboxContext';
-import { useBookTexts } from '../frameStyles/useBookTexts';
-import { labelStyleRefs, labelStyleUsage, type LabelStyleRef, type LabelStyleUse } from './labelRefs';
+import { useSandboxSelector } from '../context/SandboxContext.js';
+import { useBookTexts } from '../frameStyles/useBookTexts.js';
+import { labelStyleRefs, labelStyleUsage, type LabelStyleRef, type LabelStyleUse } from './labelRefs.js';
 
 const NONE: never[] = [];
 

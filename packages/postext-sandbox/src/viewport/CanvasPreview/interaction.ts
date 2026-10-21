@@ -1,11 +1,11 @@
 import type { Dispatch, MutableRefObject } from 'react';
 import type { Resource, VDTDocument } from 'postext';
 import { pageToFlow, sourceAt } from 'postext';
-import type { ResourceFocusTarget, SandboxAction } from '../../context/SandboxContext';
-import type { ComposedBook } from '../../book/types';
-import { toChapterFocus } from './chapterFocus';
-import type { PanelId } from '../../types';
-import { getSvgTextIndex } from '../../controls/svgTextIndex';
+import type { ResourceFocusTarget, SandboxAction } from '../../context/SandboxContext.js';
+import type { ComposedBook } from '../../book/types.js';
+import { toChapterFocus } from './chapterFocus.js';
+import type { PanelId } from '../../types/index.js';
+import { getSvgTextIndex } from '../../controls/svgTextIndex.js';
 import {
   designImageFileIdAtPixel,
   findLinkLocation,
@@ -14,17 +14,17 @@ import {
   pageTargetAtPixel,
   type LinkTarget,
   type ResourceLocation,
-} from './geometry';
-import { resourceTextAtPixel, type ResourceTextHit } from './resourceHit';
-import type { SandboxLabels } from '../../types/labels';
-import { createComicEditor, slotComicSurface, type BalloonTextPress, type ComicEditor, type ComicSurface } from '../comics/comicEditing';
-import { createFrameTools, type FrameTools } from '../composed/frameTools';
-import { createLabelEditor, type LabelEditor, type LabelSurface } from '../composed/labelAnchorEditor';
-import { editModeNow } from '../../editing/editMode';
-import { pickAt, type PageSelection } from '../../selection/pageSelection';
-import { clearPageSelection, pageSelectionNow, selectionChapters, setPageSelection } from '../../selection/selectionStore';
-import { createSelectionApply } from '../../selection/applySelection';
-import { chapterOfPages } from '../../selection/viewerSelection';
+} from './geometry.js';
+import { resourceTextAtPixel, type ResourceTextHit } from './resourceHit.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { createComicEditor, slotComicSurface, type BalloonTextPress, type ComicEditor, type ComicSurface } from '../comics/comicEditing.js';
+import { createFrameTools, type FrameTools } from '../composed/frameTools.js';
+import { createLabelEditor, type LabelEditor, type LabelSurface } from '../composed/labelAnchorEditor.js';
+import { editModeNow } from '../../editing/editMode.js';
+import { pickAt, type PageSelection } from '../../selection/pageSelection.js';
+import { clearPageSelection, pageSelectionNow, selectionChapters, setPageSelection } from '../../selection/selectionStore.js';
+import { createSelectionApply } from '../../selection/applySelection.js';
+import { chapterOfPages } from '../../selection/viewerSelection.js';
 
 function sameTarget(a: ResourceFocusTarget, b: ResourceFocusTarget): boolean {
   if (a.kind !== b.kind) return false;

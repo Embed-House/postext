@@ -8,7 +8,7 @@ import {
   resourceTextAtPixel,
   stampRunPlainRanges,
   xForPlainInResourceLine,
-} from './resourceHit';
+} from './resourceHit.js';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTLine = VDTBlock['lines'][number];

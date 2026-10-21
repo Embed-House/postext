@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, measureBlock, getCjkLineBreak, setCjkLineBreak } from '../../index';
-import { forcedVerticalRuns, segmentOrientation, verticalRuns } from '../../writingMode';
-import { graphemesOf } from '../../measure/graphemes';
-import { getMeasureWritingMode } from '../../measure/vertical';
-import type { PostextConfig, Dimension, Resource } from '../../types';
-import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub, stubCharWidth } from './stub';
+import { buildDocument, measureBlock, getCjkLineBreak, setCjkLineBreak } from '../../index.js';
+import { forcedVerticalRuns, segmentOrientation, verticalRuns } from '../../writingMode.js';
+import { graphemesOf } from '../../measure/graphemes.js';
+import { getMeasureWritingMode } from '../../measure/vertical.js';
+import type { PostextConfig, Dimension, Resource } from '../../types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from './stub.js';
 
 installSizedStub();
 

@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { figureLabelBounds, overlappingLabels, polygonPenetration } from '../../composed/labels';
-import { contrastDocument, contrastPairs } from '../../contrast';
-import { renderPageToCanvas } from '../../index';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { preflightDocument } from '../../preflight';
-import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { figureLabelBounds, overlappingLabels, polygonPenetration } from '../../composed/labels.js';
+import { contrastDocument, contrastPairs } from '../../contrast.js';
+import { renderPageToCanvas } from '../../index.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { preflightDocument } from '../../preflight.js';
+import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 // #902: checks on the labels of a figure (overlap, overflow).
 

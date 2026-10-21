@@ -6,15 +6,15 @@ import {
   resolvePageTemplate,
   stripLabelStylesDefaults,
   stripPageTemplatesDefaults,
-} from '../composed/templates';
-import { validatePageTemplates } from '../composed/validate';
-import { collectConfigWarnings } from '../configWarnings';
-import { formatWarning } from '../pipeline/contentWarnings';
-import { stripConfigDefaults } from '../defaults';
-import { resolveAllConfig } from '../pipeline/config';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig } from '../bundle/configVersion';
-import { configFingerprint } from '../util/stableHash';
-import type { PageTemplate, PostextConfig, Resource } from '../types';
+} from '../composed/templates.js';
+import { validatePageTemplates } from '../composed/validate.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig } from '../bundle/configVersion.js';
+import { configFingerprint } from '../util/stableHash.js';
+import type { PageTemplate, PostextConfig, Resource } from '../types.js';
 
 // Composed pages, configuration side (#853): page templates with frames,
 // groups and variants resolve and validate; invalid ones give warnings
@@ -373,14 +373,14 @@ describe('the config sections', () => {
 
 describe('configVersion 15 (#853)', () => {
   it('is the version this engine writes', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
   });
 
   it('reads a configuration stored under 14 as it is, templates and all', () => {
     const stored = config([TEMA], { labelStyles: [{ id: 'mar' }], bodyText: { fontSize: { value: 10, unit: 'pt' } } });
     expect(migrateConfig(stored, 14, { content: '::::page{template="tema-cajas"}\n# T\n::::\n' })).toEqual(stored);
-    expect(migrateConfig(stored, 15)).toBe(stored);
+    expect(migrateConfig(stored, 15, { content: 'Words.' })).toBe(stored);
     expect(migrateBundleConfig({}, [stored], 14, { content: 'Words.' })).toEqual(stored);
-    expect(migrateBundleConfig({ locale: 'es' }, [{ pageTemplates: [TEMA] }, { labelStyles: [{ id: 'mar' }] }], 15)).toEqual({ locale: 'es', pageTemplates: [TEMA], labelStyles: [{ id: 'mar' }] });
+    expect(migrateBundleConfig({ locale: 'es' }, [{ pageTemplates: [TEMA] }, { labelStyles: [{ id: 'mar' }] }], 15, { content: 'Words.' })).toEqual({ locale: 'es', pageTemplates: [TEMA], labelStyles: [{ id: 'mar' }] });
   });
 });

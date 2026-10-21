@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderToHtml, TASK_BOX_SIDE_EM, TASK_BOX_TICK, taskBoxSize, taskBoxSvgBody, taskBoxTick } from '../index';
-import type { PostextConfig, VDTBlock, VDTDocument } from '../index';
+import { buildDocument, renderPageToCanvas, renderToHtml, TASK_BOX_SIDE_EM, TASK_BOX_TICK, taskBoxSize, taskBoxSvgBody, taskBoxTick } from '../index.js';
+import type { PostextConfig, VDTBlock, VDTDocument } from '../index.js';
 
 // #765: the box of a task item (`- [ ]`, `- [x]`) is drawn by the engine.
 // Up to postext 1.28 it was the character ☐ (☑ when done) in the list's

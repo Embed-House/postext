@@ -1,6 +1,6 @@
 'use client';
 
-import type { useSandboxLabels } from '../../context/SandboxContext';
+import type { useSandboxLabels } from '../../context/SandboxContext.js';
 import type {
   OrderedListNumberFormat,
   OrderedListsConfig,
@@ -17,9 +17,9 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
-import { TEXT_SIZE_UNITS, INDENT_UNITS, MARGIN_UNITS, OFFSET_UNITS } from './OrderedListsSection/units';
-import { listNumberFormatValue, numberFormatOptions } from './OrderedListsSection/numberFormat';
+} from '../../controls/index.js';
+import { TEXT_SIZE_UNITS, INDENT_UNITS, MARGIN_UNITS, OFFSET_UNITS } from './OrderedListsSection/units.js';
+import { listNumberFormatValue, numberFormatOptions } from './OrderedListsSection/numberFormat.js';
 
 type Labels = ReturnType<typeof useSandboxLabels>;
 

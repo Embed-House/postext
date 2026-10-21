@@ -3,12 +3,12 @@
 import { useEffect, useRef } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import type { TableCell, TableCellPos } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
 import {
   InlineMarkdownInput,
   type InlineFocusRequest,
   type InlineSelection,
-} from '../../../controls/InlineMarkdownInput';
+} from '../../../controls/InlineMarkdownInput.js';
 
 // ---------------------------------------------------------------------------
 // TableEditorCell — a single editable grid cell. It renders the Phase-6

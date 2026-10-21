@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolveDesignSlot } from 'postext';
 import type { DesignTextElement, ResolvedDesignTextElement } from 'postext';
-import { lineHeightFieldValue, lineHeightFromField } from './lineHeight';
+import { lineHeightFieldValue, lineHeightFromField } from './lineHeight.js';
 
 // EF-56: a design text's leading may be a Dimension; the Sandbox field
 // offers em (the multiplier, stored as a number as before) and pt / mm.

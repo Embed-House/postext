@@ -5,8 +5,8 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { renderToEpub, readEpub } from './index';
-import type { ReadEpubResult, RenderToEpubOptions } from './types';
+import { renderToEpub, readEpub } from './index.js';
+import type { ReadEpubResult, RenderToEpubOptions } from './types.js';
 
 class StubCtx {
   font = '';

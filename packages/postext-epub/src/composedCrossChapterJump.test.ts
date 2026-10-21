@@ -6,11 +6,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { buildBundle } from 'postext/bundle';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { renderToEpub, readEpub } from './index';
-import type { ReadEpubResult } from './types';
-import { checkXml } from './reflowable/__tests__/xml';
+import { renderToEpub, readEpub } from './index.js';
+import type { ReadEpubResult } from './types.js';
+import { checkXml } from './reflowable/__tests__/xml.js';
 // The measuring stub the engine's layout needs in node.
-import './__tests__/page8';
+import './__tests__/page8.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const top = { anchor: { to: 'container' as const, edge: 'top-left' as const } };

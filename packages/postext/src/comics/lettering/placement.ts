@@ -14,9 +14,9 @@
 import {
   boundsOf, clipToRect, dist, insetConvex, nearestOnPolygon, norm, pointInConvex, pointInRect, rayExit, rectsOverlap, segmentHitsRect,
   segmentDistance, segmentsCross, sub, add, scale,
-} from './geom';
-import { tailLength, type Body } from './shapes';
-import type { LetteringDiagnostic, LetteringForeignArt, LetteringPanel, LetteringPosition, PanelSide, Point, Rect } from './types';
+} from './geom.js';
+import { tailLength, type Body } from './shapes.js';
+import type { LetteringDiagnostic, LetteringForeignArt, LetteringPanel, LetteringPosition, PanelSide, Point, Rect } from './types.js';
 
 /** One way to lay out a unit (a balloon, or a group of joined balloons):
  *  its bodies relative to the unit's anchor (the first body's centre). */

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { collectContentWarnings, formatWarning } from '../pipeline/contentWarnings';
-import type { ContentWarning } from '../vdt';
-import type { PostextConfig, Resource, TableModel } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { collectContentWarnings, formatWarning } from '../pipeline/contentWarnings.js';
+import type { ContentWarning } from '../vdt.js';
+import type { PostextConfig, Resource, TableModel } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

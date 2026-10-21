@@ -356,6 +356,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>补上结束行：模板页用与开始行同样数目的冒号，框或插图用<code>:::</code>。</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>单行指令（<code>:::toc</code>、<code>:::index</code>、<code>:::pagebreak</code>、<code>:::space</code>等）后面紧跟一行单独的<code>:::</code>，而没有打开的框或文本框可以结束。这些指令没有结束行，所以这一行被丢弃，不会印出。</td>
+      <td>删掉这个<code>:::</code>。</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>重复网格最多容纳<code>repeat.max</code>张卡片，而这一页给了它更多（见<a href="#重复的槽位">重复的槽位</a>）。每多出一张卡片一条，位于它的<code>slot="…"</code>处：这张卡片进入流文框，或排在这一页之后。</td>
       <td>在模板中调高或去掉<code>max</code>，或者把多出的卡片移到另一页。</td>

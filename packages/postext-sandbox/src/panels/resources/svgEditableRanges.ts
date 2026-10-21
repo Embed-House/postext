@@ -19,7 +19,7 @@ import {
   type TransactionSpec,
 } from '@codemirror/state';
 import { Decoration, EditorView, type DecorationSet } from '@codemirror/view';
-import { escapeXmlText, scanSvgTextNodeRanges, type SourceRange } from '../../controls/svgSource';
+import { escapeXmlText, scanSvgTextNodeRanges, type SourceRange } from '../../controls/svgSource.js';
 
 /** Replace the editable ranges (after loading a new document). */
 export const setEditableRanges = StateEffect.define<SourceRange[]>();

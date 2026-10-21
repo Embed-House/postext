@@ -2,13 +2,13 @@
 // itself in place of the layout worker: what the tool tests run on.
 
 import { buildDocument } from 'postext';
-import { sandboxReducer, type SandboxAction, type SandboxState, type SandboxStore } from '../../context/SandboxContext';
-import { createBookPlanner } from '../../book/pagination';
-import { createSandboxHistory, setActiveHistory } from '../../history/sandboxHistory';
-import { DEFAULT_LABELS } from '../../types';
-import type { SandboxToolHost } from '../host';
-import { runTool, type WebMcpTool } from '../modelContext';
-import { createSandboxTools } from './index';
+import { sandboxReducer, type SandboxAction, type SandboxState, type SandboxStore } from '../../context/SandboxContext.js';
+import { createBookPlanner } from '../../book/pagination.js';
+import { createSandboxHistory, setActiveHistory } from '../../history/sandboxHistory.js';
+import { DEFAULT_LABELS } from '../../types/index.js';
+import type { SandboxToolHost } from '../host.js';
+import { runTool, type WebMcpTool } from '../modelContext.js';
+import { createSandboxTools } from './index.js';
 
 // The engine measures text on a canvas: every glyph the same width here.
 (globalThis as unknown as { OffscreenCanvas: unknown }).OffscreenCanvas = class {

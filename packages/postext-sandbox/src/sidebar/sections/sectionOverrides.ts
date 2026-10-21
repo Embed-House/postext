@@ -4,7 +4,7 @@
 
 import type { PostextConfig } from 'postext';
 import { isDefaultColorPalette } from 'postext';
-import { SETTINGS_GROUPS, SETTINGS_SECTIONS, type SettingsGroupId, type SettingsSectionEntry, type SettingsSectionId } from './registry';
+import { SETTINGS_GROUPS, SETTINGS_SECTIONS, type SettingsGroupId, type SettingsSectionEntry, type SettingsSectionId } from './registry.js';
 
 function hasKeys(v: unknown): boolean {
   return typeof v === 'object' && v !== null && Object.keys(v).length > 0;
@@ -69,7 +69,9 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
         config.debug?.cursorSync !== undefined ||
         config.debug?.selectionSync !== undefined ||
         config.debug?.looseLineHighlight !== undefined ||
-        config.debug?.pageNegative !== undefined
+        config.debug?.pageNegative !== undefined ||
+        config.debug?.fitMarks !== undefined ||
+        config.debug?.fitMarksMinScale !== undefined
       );
     case 'warnings':
       return hasKeys(config.debug?.warnings);

@@ -1,12 +1,12 @@
 // The Sandbox's one undo history of text and design (#899), for an agent:
 // what Cmd/Ctrl+Z and the Undo / Redo buttons do.
 
-import type { SandboxState } from '../../context/SandboxContext';
-import type { HistoryStepInfo } from '../../history/sandboxHistory';
-import { stateReaches } from '../chapterEdits';
-import type { SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { WAIT_PARAM, layoutAnswer } from './book';
+import type { SandboxState } from '../../context/SandboxContext.js';
+import type { HistoryStepInfo } from '../../history/sandboxHistory.js';
+import { stateReaches } from '../chapterEdits.js';
+import type { SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { WAIT_PARAM, layoutAnswer } from './book.js';
 
 /** How long a change taken back may take to reach the state. */
 const LANDING_MS = 5000;

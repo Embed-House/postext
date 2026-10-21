@@ -2,9 +2,9 @@
 
 import { DEFAULT_VERSE_CONFIG, dimensionsEqual } from 'postext';
 import type { BodyTextConfig, ResolvedBodyTextConfig, VerseConfig } from 'postext';
-import { CollapsibleSection, DimensionInput, NumberInput, SelectInput, TextInput, ToggleSwitch } from '../../../controls';
-import type { useSandboxLabels } from '../../../context/SandboxContext';
-import { INDENT_UNITS } from './constants';
+import { CollapsibleSection, DimensionInput, NumberInput, SelectInput, TextInput, ToggleSwitch } from '../../../controls/index.js';
+import type { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { INDENT_UNITS } from './constants.js';
 
 interface Props {
   bodyText: ResolvedBodyTextConfig;

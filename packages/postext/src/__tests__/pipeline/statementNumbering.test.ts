@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { parseMarkdown } from '../../parse';
-import { initMathEngine } from '../../math';
-import { resolveAllConfig } from '../../pipeline/config';
-import { applyStatementNumbering, numberStatements } from '../../pipeline/statementNumbering';
-import { continuationAfter, contentOutline } from '../../pipeline/continuation';
-import { resolveMathConfig, stripMathDefaults } from '../../defaults';
-import type { CalloutStyleConfig, PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { initMathEngine } from '../../math/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { applyStatementNumbering, numberStatements } from '../../pipeline/statementNumbering.js';
+import { continuationAfter, contentOutline } from '../../pipeline/continuation.js';
+import { resolveMathConfig, stripMathDefaults } from '../../defaults/index.js';
+import type { CalloutStyleConfig, PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

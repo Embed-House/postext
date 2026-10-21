@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import type { PostextConfig } from '../types';
-import type { VDTBlock } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock } from '../vdt.js';
 
 // #401: a contents number wider than the number column (an Arabic chapter
 // label `الفصل {1:ordinal}`, a `Chapter {1}`) was right-aligned in a 2 em

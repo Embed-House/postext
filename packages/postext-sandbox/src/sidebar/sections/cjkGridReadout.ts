@@ -3,8 +3,8 @@
 import { useMemo } from 'react';
 import { applyCjkGrid, cjkGridGeometry, resolvePageConfig } from 'postext';
 import type { CjkGridGeometry, Dimension, PostextConfig } from 'postext';
-import { useSandboxSelector } from '../../context/SandboxContext';
-import { formatNumber } from '../../controls/units';
+import { useSandboxSelector } from '../../context/SandboxContext.js';
+import { formatNumber } from '../../controls/units.js';
 
 /** The character grid (`cjk.grid`) the config sets, or undefined when it is
  *  off: what the Page and East Asian typography sections read out. */

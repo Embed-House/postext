@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { parseMarkdown } from 'postext';
-import { applyTextChanges } from '../book/textChanges';
-import { attrTokens, iconDirective, labelBraces, setLabelAttr, setLabelLeader } from './labelAttrs';
-import { pickerDirective, INITIAL_ICON_PICKER } from './IconPicker';
+import { applyTextChanges } from '../book/textChanges.js';
+import { attrTokens, iconDirective, labelBraces, setLabelAttr, setLabelLeader } from './labelAttrs.js';
+import { pickerDirective, INITIAL_ICON_PICKER } from './IconPicker.js';
 
 // #1064: a label's own attributes written in the chapter's Markdown, and the
 // symbol picker's :icon directive.

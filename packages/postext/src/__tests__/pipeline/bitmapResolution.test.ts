@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/layout';
-import { bitmapLayoutSize, bitmapResolutionFor, effectiveBitmapResolution, withBitmapResolutions } from '../../bitmapResolution';
-import type { PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/layout.js';
+import { bitmapLayoutSize, bitmapResolutionFor, effectiveBitmapResolution, withBitmapResolutions } from '../../bitmapResolution.js';
+import type { PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 // #631: a bitmap takes its natural print size from its own resolution
 // (declared, or the document's `layout.bitmapResolution`), not only from

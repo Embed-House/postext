@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { CjkConfig, Dimension, PostextConfig } from '../../types';
-import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../pipeline/index.js';
+import type { CjkConfig, Dimension, PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 installSizedStub();
 

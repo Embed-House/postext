@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas, collectConfigWarnings, formatWarning } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { resolveAllConfig } from '../../pipeline/config';
-import { applyCjkGrid, cjkGridCells, cjkGridGeometry } from '../../pipeline/cjkGrid';
-import { computePageMetrics } from '../../pipeline/buildHelpers';
-import { flowRectToPage, verticalFlowOf } from '../../index';
-import type { PostextConfig } from '../../types';
+import { buildDocument, renderPageToCanvas, collectConfigWarnings, formatWarning } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { applyCjkGrid, cjkGridCells, cjkGridGeometry } from '../../pipeline/cjkGrid.js';
+import { computePageMetrics } from '../../pipeline/buildHelpers.js';
+import { flowRectToPage, verticalFlowOf } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
 
 // CJK characters one em wide, anything else half.
 const adv = (s: string, size: number): number => {

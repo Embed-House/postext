@@ -3,10 +3,10 @@ import { readFileSync } from 'node:fs';
 import { PDFDict, PDFDocument, PDFName, PDFNumber, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import type { VDTDesignSlot, VDTDesignTextBlock, VDTDocument } from 'postext';
-import { FontCache } from '../fontCache';
-import { renderHeaderFooterSlot } from '../pdf-backend/headerFooter';
-import { collectFontStrings } from '../pdf-backend/fontHelpers';
-import { makeScale, type PageCtx } from '../pdf-backend/primitives';
+import { FontCache } from '../fontCache.js';
+import { renderHeaderFooterSlot } from '../pdf-backend/headerFooter.js';
+import { collectFontStrings } from '../pdf-backend/fontHelpers.js';
+import { makeScale, type PageCtx } from '../pdf-backend/primitives.js';
 
 /** The page's content stream operators, before pdf-lib deflates them. */
 function pageContent(page: PDFPage): string {

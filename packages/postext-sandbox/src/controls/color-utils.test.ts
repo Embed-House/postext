@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hexAlpha, hexWithAlpha, hexWithoutAlpha } from './color-utils';
+import { hexAlpha, hexWithAlpha, hexWithoutAlpha } from './color-utils.js';
 
 // EF-30: colour values may carry alpha in any of the forms the engine
 // paints (`#rrggbbaa`, `#rgba`, `rgba()`); the picker reads them all.

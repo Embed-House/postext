@@ -3,13 +3,13 @@
 import { memo } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { NamedPanelStyleConfig } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard } from '../../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../../ui';
-import { SearchScope } from '../../search/SearchScope';
-import { nextFreeId, removeById, renameById, resetFieldById, setComicsField, slugifyStyleId, upsertById } from './comicsConfig';
-import { ComicsCardHeader } from './ComicsCardHeader';
-import { PanelStyleFields, useComics } from './comicsShared';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard } from '../../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../../ui/index.js';
+import { SearchScope } from '../../search/SearchScope.js';
+import { nextFreeId, removeById, renameById, resetFieldById, setComicsField, slugifyStyleId, upsertById } from './comicsConfig.js';
+import { ComicsCardHeader } from './ComicsCardHeader.js';
+import { PanelStyleFields, useComics } from './comicsShared.js';
 
 /** Comics → Panel styles: named panel looks a page (`:::page{style=…}`) or
  *  a panel (`::panel{style=…}`) picks. Each inherits the fields it leaves

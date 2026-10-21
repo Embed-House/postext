@@ -5,11 +5,11 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { buildDocument, lineRuns, resolveParagraph } from 'postext';
 import type { PostextConfig, VDTBlock, VDTDocument, VDTLine, VDTPage } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { browserSizePx } from '../pdf-backend/wordPieces';
-import { parseFontString } from '../fontString';
-import { loadComplexShaper, shapeRun } from '../complexShaping';
-import { paintedGlyphs } from './glyphPositions';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { browserSizePx } from '../pdf-backend/wordPieces.js';
+import { parseFontString } from '../fontString.js';
+import { loadComplexShaper, shapeRun } from '../complexShaping.js';
+import { paintedGlyphs } from './glyphPositions.js';
 
 // #764, end to end, in the faces the page review found off: an Arabic
 // paragraph with quotations in guillemets, brackets and full stops in

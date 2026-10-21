@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { editModeNow, isEditModeShortcut, onEditModeChange, resetEditMode, selectFrame, selectedFrameNow, setEditMode, toggleEditMode } from './editMode';
-import { panelForMode } from './EditModeSwitch';
+import { editModeNow, isEditModeShortcut, onEditModeChange, resetEditMode, selectFrame, selectedFrameNow, setEditMode, toggleEditMode } from './editMode.js';
+import { panelForMode } from './EditModeSwitch.js';
 
 afterEach(() => resetEditMode());
 

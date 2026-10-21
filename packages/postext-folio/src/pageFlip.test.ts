@@ -4,7 +4,7 @@
 // the left) and its leaves turn from left to right.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PlaneGeometry, Vector3, type Mesh, type ShaderMaterial } from "three";
-import { along, profiles } from "./bookGeometry";
+import { along, profiles } from "./bookGeometry.js";
 
 vi.mock("three", async (importOriginal) => {
   const three = await importOriginal<typeof import("three")>();
@@ -36,8 +36,8 @@ vi.mock("three/examples/jsm/postprocessing/RenderPass.js", () => ({ RenderPass: 
 vi.mock("three/examples/jsm/postprocessing/OutputPass.js", () => ({ OutputPass: class {} }));
 vi.mock("three/examples/jsm/postprocessing/SMAAPass.js", () => ({ SMAAPass: class {} }));
 
-const { PageFlipper, pagePlane } = await import("./pageFlip");
-type FlipAppearance = import("./pageFlip").FlipAppearance;
+const { PageFlipper, pagePlane } = await import("./pageFlip.js");
+type FlipAppearance = import("./pageFlip.js").FlipAppearance;
 type Flipper = InstanceType<typeof PageFlipper>;
 
 // The DOM spread: two 320 × 450 pages side by side, the canvas centred on it.
@@ -308,7 +308,7 @@ describe("the page flipper", () => {
   });
 
   it("never ripples a thin leaf held low down into the page under it", async () => {
-    const { foldOf, layLeaf, progressFrom } = await import("./pageFlip");
+    const { foldOf, layLeaf, progressFrom } = await import("./pageFlip.js");
     const W = 650;
     const H = 920;
     const book = profiles("hardcover", W, 4, 60, 60);
@@ -351,7 +351,7 @@ describe("the page flipper", () => {
   });
 
   it("keeps the paper curled up over the gutter free of creases", async () => {
-    const { foldOf, layLeaf, progressFrom } = await import("./pageFlip");
+    const { foldOf, layLeaf, progressFrom } = await import("./pageFlip.js");
     // The middle of a thick book: a deep gutter between two level pages.
     const W = 600;
     const H = 850;
@@ -385,7 +385,7 @@ describe("the page flipper", () => {
   });
 
   it("never jumps: a few pixels of the hand move the leaf a few pixels, wherever it is taken (#502)", async () => {
-    const { foldOf, layLeaf, progressFrom } = await import("./pageFlip");
+    const { foldOf, layLeaf, progressFrom } = await import("./pageFlip.js");
     const W = 476;
     const H = 672;
     const book = profiles("hardcover", W, 4, 60, 60);
@@ -412,7 +412,7 @@ describe("the page flipper", () => {
   });
 
   it("folds a leaf back over its own paper, never through it, rippling or not (#499, #500)", async () => {
-    const { foldOf, layLeaf, progressFrom } = await import("./pageFlip");
+    const { foldOf, layLeaf, progressFrom } = await import("./pageFlip.js");
     // A thick paperback, the leaf turning off the thin side, which hangs
     // from the spine; its top outer corner carried down to the middle of
     // the other page.

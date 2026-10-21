@@ -2,9 +2,9 @@
 
 import { useEffect, useReducer } from 'react';
 import { primaryFontFamily, resolveBodyTextConfig, resolveHeadingsConfig, type PostextConfig } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../context/SandboxContext';
-import { fontFamilySource, getConfigFontFamilies, loadFont, onCustomFontsChanged, onFontSourceResolved, type FontFamilySource } from '../controls/fontLoader';
-import { RowTag } from '../ui';
+import { useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
+import { fontFamilySource, getConfigFontFamilies, loadFont, onCustomFontsChanged, onFontSourceResolved, type FontFamilySource } from '../controls/fontLoader.js';
+import { RowTag } from '../ui/index.js';
 
 /** A family the book is set in, and what it sets. */
 export interface BookFontFamily {

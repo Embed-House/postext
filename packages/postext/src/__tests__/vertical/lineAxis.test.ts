@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import type { PostextConfig, Dimension, DesignTextElement } from '../../types';
-import type { VDTDesignTextBlock, VDTDocument, VDTPage } from '../../vdt';
-import { installSizedStub, stubCharWidth } from './stub';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import type { PostextConfig, Dimension, DesignTextElement } from '../../types.js';
+import type { VDTDesignTextBlock, VDTDocument, VDTPage } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from './stub.js';
 
 installSizedStub();
 

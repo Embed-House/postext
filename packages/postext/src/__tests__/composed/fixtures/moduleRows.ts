@@ -6,10 +6,10 @@
  * first box is longer, so its row grows and the cards move down); the
  * pictures are the solid placeholders of `fixtures/page8`.
  */
-import type { PostextConfig } from '../../../types';
-import type { PageTemplate } from '../../../composed/types';
-import { MODULE_CONFIG, mm } from './modules';
-import { PAGE8_RESOURCES } from './page8';
+import type { PostextConfig } from '../../../types.js';
+import type { PageTemplate } from '../../../composed/types.js';
+import { MODULE_CONFIG, mm } from './modules.js';
+import { PAGE8_RESOURCES } from './page8.js';
 
 const PICTURES = PAGE8_RESOURCES.filter((r) => r.id.startsWith('foto-')).map((r) => r.id);
 

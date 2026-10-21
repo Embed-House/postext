@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { letterPanel, letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import { dist, pointInRect } from '../geom';
-import type { ComicBalloonOut, LetteringItem, LetteringPanel, Point, Rect } from '../types';
+import { installStubMeasure } from './stubMeasure.js';
+import { letterPanel, letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import { dist, pointInRect } from '../geom.js';
+import type { ComicBalloonOut, LetteringItem, LetteringPanel, Point, Rect } from '../types.js';
 
 beforeAll(() => installStubMeasure());
 

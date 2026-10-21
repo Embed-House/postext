@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderToHtml, renderToHtmlIndexed, comicPanelSvg, comicBalloonText, comicBalloonKind, comicViewerLeaf, resolvedComics } from '../../index';
-import type { Resource, VDTComicBalloon, VDTDesignTextBlock, VDTDocument, VDTPage } from '../../index';
+import { buildDocument, renderToHtml, renderToHtmlIndexed, comicPanelSvg, comicBalloonText, comicBalloonKind, comicViewerLeaf, resolvedComics } from '../../index.js';
+import type { Resource, VDTComicBalloon, VDTDesignTextBlock, VDTDocument, VDTPage } from '../../index.js';
 
 class StubCtx {
   font = '';

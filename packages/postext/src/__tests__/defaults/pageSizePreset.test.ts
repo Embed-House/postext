@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolvePageConfig, PAGE_SIZE_PRESETS } from '../../defaults/page';
+import { resolvePageConfig, PAGE_SIZE_PRESETS } from '../../defaults/page.js';
 
 describe('resolvePageConfig size presets', () => {
   it('derives width and height from a named preset', () => {

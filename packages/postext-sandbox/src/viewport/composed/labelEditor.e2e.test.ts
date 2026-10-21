@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache } from 'postext';
 import type { Resource, VDTDocument } from 'postext';
 import type { Dispatch, MutableRefObject } from 'react';
-import type { SandboxAction, SandboxState } from '../../context/SandboxContext';
-import type { ComposedBook } from '../../book/types';
-import { resetEditMode, setEditMode } from '../../editing/editMode';
-import { setTemplateEditorHost } from '../../templates/editorStore';
-import { resetViewerEdits } from '../../editor/viewerEdits';
-import { insideCorners, labelsOnPage, sheetToPicture } from './labelAnchorGeometry';
-import { createLabelEditor, touchPads, type LabelEditor, type LabelSurface } from './labelAnchorEditor';
-import { labelMarkShapes } from './labelMarks';
-import type { MarkShape } from './labelMarks';
+import type { SandboxAction, SandboxState } from '../../context/SandboxContext.js';
+import type { ComposedBook } from '../../book/types.js';
+import { resetEditMode, setEditMode } from '../../editing/editMode.js';
+import { setTemplateEditorHost } from '../../templates/editorStore.js';
+import { resetViewerEdits } from '../../editor/viewerEdits.js';
+import { insideCorners, labelsOnPage, sheetToPicture } from './labelAnchorGeometry.js';
+import { createLabelEditor, touchPads, type LabelEditor, type LabelSurface } from './labelAnchorEditor.js';
+import { labelMarkShapes } from './labelMarks.js';
+import type { MarkShape } from './labelMarks.js';
 
 // #970: the label editor knows nothing of the page it sits on, so the Folio
 // can drag the marks of the labels as the Canvas does. The Folio's surface is

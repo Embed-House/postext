@@ -3,9 +3,9 @@
 // become inline marks, Word lists become Postext lists, notes become
 // footnotes, pictures and tables become resources placed where they were.
 
-import type { PostextConfig, TableCell, TableModel } from '../types';
-import { guardLineStart, LINE_BREAK, renderInline, WORD_JOINER, type InlineRun } from './inline';
-import type { WordBlock, WordDocument, WordMedia, WordParagraph, WordRun, WordStyle, WordTable, WordTabStop, WordTextRun } from './model';
+import type { PostextConfig, TableCell, TableModel } from '../types.js';
+import { guardLineStart, LINE_BREAK, renderInline, WORD_JOINER, type InlineRun } from './inline.js';
+import type { WordBlock, WordDocument, WordMedia, WordParagraph, WordRun, WordStyle, WordTable, WordTabStop, WordTextRun } from './model.js';
 import {
   guessCharacterTarget,
   guessParagraphTarget,
@@ -13,7 +13,7 @@ import {
   type CharacterTarget,
   type ParagraphTarget,
   type WordTemplate,
-} from './template';
+} from './template.js';
 
 export type ChapterMode = 'single' | 'split';
 

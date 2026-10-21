@@ -2,8 +2,8 @@
 // resolution, and the normalisation of frames, groups and label styles.
 // Pure; nothing here lays anything out (that is P4, #855).
 
-import { expandModules, modulesGroupRoot } from './modules';
-import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types';
+import { expandModules, modulesGroupRoot } from './modules.js';
+import type { ColorValue, DesignElement, DesignSlot, Dimension, ElementPlacement } from '../types.js';
 import type {
   FrameConfig,
   FrameGridCell,
@@ -25,7 +25,7 @@ import type {
   ResolvedLabelStyle,
   ResolvedPageTemplate,
   ResolvePageTemplateOptions,
-} from './types';
+} from './types.js';
 
 // ---------------------------------------------------------------------------
 // Defaults
@@ -419,6 +419,16 @@ export function moduleFactor(v: unknown): number | undefined {
 
 const nonNegative = (v: unknown, fallback: number): number => (finite(v) && v >= 0 ? v : fallback);
 
+/** A frame's `growWith` (#1117) the engine can use: `'children'`, or the
+ *  names of a list (a name that is no string, or empty, is left out; a
+ *  list with none is no list). */
+export function growWithOf(v: unknown): { growWith?: 'children' | string[] } {
+  if (v === 'children') return { growWith: 'children' };
+  if (!Array.isArray(v)) return {};
+  const names = [...new Set(v.filter((n): n is string => typeof n === 'string' && n.trim() !== ''))];
+  return names.length > 0 ? { growWith: names } : {};
+}
+
 /** A frame as the layout reads it: every default filled in, sizes read
  *  from `width`/`height` and else `placement.size`, values the engine
  *  cannot use replaced by their default. */
@@ -448,6 +458,7 @@ export function normalizeFrame(
     grow: nonNegative(f.grow, DEFAULT_FRAME.grow),
     shrink: nonNegative(f.shrink, DEFAULT_FRAME.shrink),
     priority: finite(f.priority) ? f.priority : DEFAULT_FRAME.priority,
+    ...growWithOf(f.growWith),
     fit: normalizeFit(f.fit),
     overflow: normalizeOverflow(f.overflow),
     optional: f.optional === true,

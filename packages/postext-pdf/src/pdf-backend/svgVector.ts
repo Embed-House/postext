@@ -79,11 +79,11 @@ import {
   setTextMatrix,
   stroke,
 } from 'pdf-lib';
-import { type PageCtx, colorFromHex, textShows } from './primitives';
-import { isPrintMode, modeKey } from '../print/colorMode';
-import { applyPrintPass, overprintStateDict } from '../print/printPass';
-import { shapedSvgText } from './shapedText';
-import { complexShaperReady, needsComplexShaping } from '../complexShaping';
+import { type PageCtx, colorFromHex, textShows } from './primitives.js';
+import { isPrintMode, modeKey } from '../print/colorMode.js';
+import { applyPrintPass, overprintStateDict } from '../print/printPass.js';
+import { shapedSvgText } from './shapedText.js';
+import { complexShaperReady, needsComplexShaping } from '../complexShaping.js';
 import { isFontFaceOnlyStyleSheet } from 'postext';
 
 // ---------------------------------------------------------------- IR types

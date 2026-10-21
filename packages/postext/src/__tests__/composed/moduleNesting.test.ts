@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { validatePageTemplates } from '../../composed/validate';
-import { resolvePageTemplate } from '../../composed/templates';
-import { composedOrder } from '../../composed/groups';
-import type { PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { MODULE_RESOURCES, mm } from './fixtures/modules';
-import { CARD_MODULE, NOTICE_MODULE, ROWS_TEMPLATE, cardModule, noticeModule } from './fixtures/moduleRows';
-import { NARROW_MODULE, NESTED_CONFIG, NESTED_TEMPLATE, WIDE_MODULE, boxOf, nestedPage } from './fixtures/moduleNesting';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { resolvePageTemplate } from '../../composed/templates.js';
+import { composedOrder } from '../../composed/groups.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { MODULE_RESOURCES, mm } from './fixtures/modules.js';
+import { CARD_MODULE, NOTICE_MODULE, ROWS_TEMPLATE, cardModule, noticeModule } from './fixtures/moduleRows.js';
+import { NARROW_MODULE, NESTED_CONFIG, NESTED_TEMPLATE, WIDE_MODULE, boxOf, nestedPage } from './fixtures/moduleNesting.js';
 
 // #1095 (DESIGN §13): modules nested more than one level, `grow` and
 // `shrink` among the modules of a row, the ordering dependency of a page

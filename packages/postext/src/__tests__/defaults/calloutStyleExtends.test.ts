@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { inheritCalloutStyles, resolveCalloutStylesConfig, stripCalloutStylesDefaults } from '../../defaults/calloutStyles';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import { resolveHeadingsConfig } from '../../defaults/headings';
-import { resolveUnorderedListsConfig } from '../../defaults/unorderedLists';
-import { collectConfigWarnings } from '../../configWarnings';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { CalloutStyleConfig, PostextConfig } from '../../types';
+import { inheritCalloutStyles, resolveCalloutStylesConfig, stripCalloutStylesDefaults } from '../../defaults/calloutStyles.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import { resolveHeadingsConfig } from '../../defaults/headings.js';
+import { resolveUnorderedListsConfig } from '../../defaults/unorderedLists.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { CalloutStyleConfig, PostextConfig } from '../../types.js';
 
 // Box styles based on another (#905): a style per place shares the look of
 // one.

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../index';
-import { createMeasurementCache } from '../measure';
-import type { ColorValue, PostextConfig } from '../types';
+import { buildDocument } from '../index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import type { ColorValue, PostextConfig } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

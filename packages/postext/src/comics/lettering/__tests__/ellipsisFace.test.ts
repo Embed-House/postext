@@ -3,12 +3,12 @@
 // speak Arabic in Lalezar, whose U+2026 is as wide as its full stop).
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { stubAdvance } from './stubMeasure';
-import { clearTextWidthCache } from '../../../measure/canvas';
-import { letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import { prepareText, readLetteringText } from '../text';
-import type { LetteringPanel } from '../types';
+import { stubAdvance } from './stubMeasure.js';
+import { clearTextWidthCache } from '../../../measure/canvas.js';
+import { letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import { prepareText, readLetteringText } from '../text.js';
+import type { LetteringPanel } from '../types.js';
 
 // The stub measurer, with a face named Lalezar whose ellipsis is one dot.
 beforeAll(() => {

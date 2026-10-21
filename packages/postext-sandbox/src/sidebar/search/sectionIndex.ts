@@ -28,17 +28,17 @@ import {
   defaultComicFont,
   defaultComicSfxFont,
 } from 'postext';
-import type { SandboxLabels } from '../../types/labels';
+import type { SandboxLabels } from '../../types/labels.js';
 import {
   SETTINGS_GROUPS,
   SETTINGS_SECTIONS,
   type SettingsGroupId,
   type SettingsSectionEntry,
   type SettingsSectionId,
-} from '../sections/registry';
-import { sectionHasOverrides } from '../sections/sectionOverrides';
-import { SECTION_SEARCH_KEYS, type SearchWordSource } from './sectionSearchIndex.generated';
-import { matchesTokens, normalizeText } from './normalize';
+} from '../sections/registry.js';
+import { sectionHasOverrides } from '../sections/sectionOverrides.js';
+import { SECTION_SEARCH_KEYS, type SearchWordSource } from './sectionSearchIndex.generated.js';
+import { matchesTokens, normalizeText } from './normalize.js';
 
 export interface SectionSearchText {
   id: SettingsSectionId;

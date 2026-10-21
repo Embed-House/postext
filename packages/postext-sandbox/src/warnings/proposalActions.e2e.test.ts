@@ -8,18 +8,18 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache } from 'postext';
 import type { FrameOverflowProposal, PostextConfig, Resource, VDTDocument } from 'postext';
-import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext';
-import { composeBook } from '../book/compose';
-import { resetViewerEdits } from '../editor/viewerEdits';
-import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory';
-import { state as baseState } from '../webmcp/tools/testHarness';
-import { DEFAULT_LABELS } from '../types';
-import { computeComposedWarnings } from './compute';
+import { sandboxReducer, type SandboxAction, type SandboxState } from '../context/SandboxContext.js';
+import { composeBook } from '../book/compose.js';
+import { resetViewerEdits } from '../editor/viewerEdits.js';
+import { createSandboxHistory, setActiveHistory } from '../history/sandboxHistory.js';
+import { state as baseState } from '../webmcp/tools/testHarness.js';
+import { DEFAULT_LABELS } from '../types/index.js';
+import { computeComposedWarnings } from './compute.js';
 import {
   applyProposalPlan, getAtPointer, planProposal, pointerInWords, pointerSteps, proposalContextOf, proposalLeaves, setAtPointer, valueInWords,
-} from './proposalActions';
-import { proposalQuestion, runProposal } from './ProposalButtons';
-import type { Warning } from './types';
+} from './proposalActions.js';
+import { proposalQuestion, runProposal } from './ProposalButtons.js';
+import type { Warning } from './types.js';
 
 type Fixture = (locale: 'es' | 'en') => { markdown: string; config: PostextConfig; resources: Resource[] };
 const FIXTURES = '../../../postext/src/__tests__/composed/fixtures/';

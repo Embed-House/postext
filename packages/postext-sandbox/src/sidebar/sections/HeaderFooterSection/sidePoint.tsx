@@ -1,8 +1,8 @@
 'use client';
 
 import type { SidePosition } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { NumberInput, SelectInput } from '../../../controls';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { NumberInput, SelectInput } from '../../../controls/index.js';
 
 /** A point along a side as the select shows it: a word, `fraction` for a
  *  number, `''` for unset. */

@@ -8,7 +8,7 @@
  */
 
 import { getResourceImage, type VDTComicArt } from 'postext';
-import type { ArtOpacity } from './comicHit';
+import type { ArtOpacity } from './comicHit.js';
 
 /** The longest side of a mask (px). */
 const MASK_SIDE = 256;

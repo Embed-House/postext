@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { baseConfig, layOut } from './__tests__/vdt';
-import { buildReflowablePublication } from '.';
+import { baseConfig, layOut } from './__tests__/vdt.js';
+import { buildReflowablePublication } from './index.js';
 
 // #702: a reference whose label is words is set word by word and may stand
 // on two print lines. The reflowed text holds one link around the whole

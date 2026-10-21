@@ -15,7 +15,7 @@ import type {
   PageParity,
   PageRoleFilter,
 } from 'postext';
-import type { GuideLang } from '../defaultResources/lang';
+import type { GuideLang } from '../defaultResources/lang.js';
 
 // What every edition of the built-in Postext guide shares: the page, the
 // Postext palette, the part colours and the small builders its designs are

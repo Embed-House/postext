@@ -20,13 +20,13 @@
  * flow frame. With no flow frame that content stays outside the stories,
  * after them, and the layout sets it in the flow on the page after.
  */
-import type { ContentBlock } from '../parse/types';
-import type { CalloutStyleConfig } from '../types';
-import { composedPages, pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document';
-import { isModuleTemplate, repeatInstance, repeatInstanceName, resolvePageTemplate, type PageTemplateSource } from './templates';
-import { pageRepeats } from './repeat';
-import { nextFrameOf } from './geometry';
-import type { ResolvedFrame, ResolvedPageTemplate } from './types';
+import type { ContentBlock } from '../parse/types.js';
+import type { CalloutStyleConfig } from '../types.js';
+import { composedPages, pageModuleUses, takenBlocks, type FrameTake, type ParsedComposedPage } from './document.js';
+import { isModuleTemplate, repeatInstance, repeatInstanceName, resolvePageTemplate, type PageTemplateSource } from './templates.js';
+import { pageRepeats } from './repeat.js';
+import { nextFrameOf } from './geometry.js';
+import type { ResolvedFrame, ResolvedPageTemplate } from './types.js';
 
 /** Style id of a story's box. Not a user style: no configuration can name
  *  it. A story whose frame is missing on its page (a variant dropped it)
@@ -213,8 +213,12 @@ function regroupPage(
   const fenceAttrSources = new Map<string, Record<string, { sourceStart: number; sourceEnd: number }>>();
   /** The fence block each slot's attributes came from. */
   const fenceBlocks = new Map<string, ContentBlock>();
-  const readFence = (key: string, b: ContentBlock): void => {
+  /** Where each slot's fence lies among the blocks: an empty story's
+   *  place in reading order (#1116). */
+  const fenceAt = new Map<string, number>();
+  const readFence = (key: string, b: ContentBlock, at: number): void => {
     fenceBlocks.set(key, b);
+    fenceAt.set(key, at);
     fenceAttrs.set(key, Object.fromEntries(Object.entries(b.containerAttrs ?? {}).filter(([k]) => k !== 'slot')));
     if (b.containerAttrSources) fenceAttrSources.set(key, Object.fromEntries(Object.entries(b.containerAttrSources).filter(([k]) => k !== 'slot')));
   };
@@ -224,10 +228,10 @@ function regroupPage(
     if (b.sourceStart < page.sourceStart || b.sourceStart > page.sourceEnd) continue;
     const slot = b.slot?.name;
     if (slot === undefined || fenceAttrs.has(slot) || repeats.repeated.has(slot)) continue;
-    readFence(slot, b);
+    readFence(slot, b, i);
   }
   // Each instance is dressed by its own item's fence (#1061).
-  for (const [name, at] of instanceFences) readFence(name, blocks[at]!);
+  for (const [name, at] of instanceFences) readFence(name, blocks[at]!, at);
   // Stories: each chain's frames' pieces, head first.
   const stories: { head: string; indices: number[]; attrs: Record<string, string>; attrSources?: Record<string, { sourceStart: number; sourceEnd: number }>; fence?: ContentBlock }[] = [];
   const done = new Set<string>();
@@ -271,7 +275,10 @@ function regroupPage(
     const attrSources = fenceAttrSources.get(head);
     stories.push({ head, indices, attrs: fenceAttrs.get(head) ?? {}, ...(attrSources ? { attrSources } : {}), ...(fence ? { fence } : {}) });
   }
-  stories.sort((a, b) => Math.min(...a.indices) - Math.min(...b.indices));
+  // A story reads where its first block lies; an empty one (#1084) where
+  // its fence lies (#1116), not after every other.
+  const placeOf = (s: (typeof stories)[number]): number => (s.indices.length > 0 ? Math.min(...s.indices) : (fenceAt.get(s.head) ?? Infinity));
+  stories.sort((a, b) => placeOf(a) - placeOf(b));
   /** The heading another story took that the flow story's first block
    *  came right after in the Markdown (past fences and directives), if
    *  that block is a paragraph (#947). */

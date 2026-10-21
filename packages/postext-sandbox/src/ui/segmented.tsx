@@ -1,8 +1,8 @@
 'use client';
 
 import type { KeyboardEvent, ReactNode } from 'react';
-import { cn } from './cn';
-import { useUiRtl } from './direction';
+import { cn } from './cn.js';
+import { useUiRtl } from './direction.js';
 
 export interface SegmentedOption<T extends string> {
   value: T;

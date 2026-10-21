@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
-import { REF_PLACEHOLDER } from '../../parse/inlineFormatting';
-import type { InlineSpan } from '../../parse';
+import { parseMarkdown } from '../../parse/index.js';
+import { REF_PLACEHOLDER } from '../../parse/inlineFormatting.js';
+import type { InlineSpan } from '../../parse/index.js';
 
 /** Collect all spans across all parsed blocks. */
 const allSpans = (md: string): InlineSpan[] =>

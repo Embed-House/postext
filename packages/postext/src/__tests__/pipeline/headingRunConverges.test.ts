@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import type { PostextConfig, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

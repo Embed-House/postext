@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyFindReplace, findInText, numberedLines } from './textEdits';
+import { applyFindReplace, findInText, numberedLines } from './textEdits.js';
 
 const text = '# Title\n\nOne fish, two fish.\nRed fish, blue fish.\n';
 

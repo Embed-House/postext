@@ -29,6 +29,8 @@ export type {
   IndexMark,
   AnchorMark,
   ChipBox,
+  SwatchShape,
+  SwatchBox,
   EmphasisMark,
   InlineRuby,
   InlineWarichu,
@@ -41,10 +43,10 @@ export type {
   FigureLabel,
   FigureWord,
   FigureWordKind,
-} from './types';
-export { MATH_PLACEHOLDER } from './inlineMath';
-export { REF_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, extractInlineSwatches, injectSwatchSpans, extractInlineChips, injectChipSpans } from './inlineFormatting';
-export type { SwatchMeta, ChipMeta } from './inlineFormatting';
+} from './types.js';
+export { MATH_PLACEHOLDER } from './inlineMath.js';
+export { REF_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, extractInlineSwatches, injectSwatchSpans, extractInlineChips, injectChipSpans } from './inlineFormatting.js';
+export type { SwatchMeta, ChipMeta } from './inlineFormatting.js';
 export {
   parseMarkdownMemo,
   parseMarkdownWithIssuesMemo,
@@ -54,10 +56,10 @@ export {
   KNOWN_CONTAINERS,
   spaceDirectiveLines,
   MAX_SPACE_LINES,
-} from './blockParser';
-export { computeSourceMap } from './sourceMapping';
-export { orientationMarkAt } from './orientationMarks';
-export type { OrientationMark } from './orientationMarks';
-export { parseInlineSnippetSpans, mapInlineSnippet, contentHasMath, resourceHasMath } from './inlineSnippet';
-export type { InlineSnippetMapping } from './inlineSnippet';
-export { extractIndexMarks } from './indexMarks';
+} from './blockParser.js';
+export { computeSourceMap } from './sourceMapping.js';
+export { orientationMarkAt } from './orientationMarks.js';
+export type { OrientationMark } from './orientationMarks.js';
+export { parseInlineSnippetSpans, mapInlineSnippet, contentHasMath, resourceHasMath } from './inlineSnippet.js';
+export type { InlineSnippetMapping } from './inlineSnippet.js';
+export { extractIndexMarks } from './indexMarks.js';

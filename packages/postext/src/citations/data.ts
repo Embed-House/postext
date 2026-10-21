@@ -6,9 +6,9 @@
  */
 
 import matter from 'gray-matter';
-import type { ContentBlock } from '../parse';
-import type { CslDate, CslItem, CslName } from './types';
-import { ET_AL_NAME, parseBibtex, type BibtexIssue } from './bibtex';
+import type { ContentBlock } from '../parse/index.js';
+import type { CslDate, CslItem, CslName } from './types.js';
+import { ET_AL_NAME, parseBibtex, type BibtexIssue } from './bibtex.js';
 
 /** Something wrong with the reference data, where it is written. */
 export interface ReferenceIssue {

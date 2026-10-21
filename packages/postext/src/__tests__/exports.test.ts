@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import * as postext from "../index";
+import * as postext from "../index.js";
 import type {
   Resource,
   ResourceType,
   ResourceKind,
   TableModel,
   TableCell,
-} from "../index";
+} from "../index.js";
 
 // Compile-time assertion that the resources/table public types are exported
 // from the package root (issue #49). These are type-only exports, so they do
@@ -428,6 +428,7 @@ describe("package exports", () => {
       "stripPageDefaults",
       "stripConfigDefaults",
       "DEFAULT_DEBUG_CONFIG",
+      "FIT_MARKS_MODES",
       "resolveDebugConfig",
       "stripDebugDefaults",
       "DEFAULT_CANVAS_VIEWER_CONFIG",
@@ -707,6 +708,8 @@ describe("package exports", () => {
       "inlineIconBox",
       "measureInlineIcon",
       "resourceBlockIcons",
+      "hasSwatchShape",
+      "swatchGeometry",
       "figureLabelBounds",
       "figureLabelLeaderPath",
       "figureLabelLeaderPaths",
@@ -756,6 +759,7 @@ describe("package exports", () => {
       "groupPlaceable",
       "placeFrameBox",
       "frameUnionRect",
+      "growMembers",
       "sourceAt",
       "elementsForSource",
       "findElement",
@@ -775,6 +779,9 @@ describe("package exports", () => {
       "fenceConditionsNeverMet",
       "fenceAttributesSet",
       "FENCE_CONDITION_SLOTS",
+      "attrPlaceholderUses",
+      "attrPlaceholdersNeverSet",
+      "markdownAttributesSet",
       "parseDirectiveAttrs",
       "moveTextToMarkdown",
       "initMathEngine",
@@ -826,6 +833,14 @@ describe("package exports", () => {
       "fontFallbackOf",
       "fontFallbackFamilies",
       "hasOwnStyle",
+      "glyphFallbacks",
+      "documentFontTexts",
+      "registerFontCoverage",
+      "forgetFontCoverage",
+      "installGlyphProbe",
+      "GLYPH_PROBE_FAMILY",
+      "GLYPH_FALLBACK_LISTED",
+      "sfntCodePointRanges",
       "evictFontFamilies",
       "measurementGeneration",
       "parseFontString",

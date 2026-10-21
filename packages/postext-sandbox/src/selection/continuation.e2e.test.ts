@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache } from 'postext';
 import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTFrame, VDTPage } from 'postext';
-import { atLevel, breadcrumb, breadcrumbText, pickAt, resolveSelection, selectedElement, type CrumbLabels } from './pageSelection';
-import { selectionTarget } from './selectionTargets';
+import { atLevel, breadcrumb, breadcrumbText, pickAt, resolveSelection, selectedElement, type CrumbLabels } from './pageSelection.js';
+import { selectionTarget } from './selectionTargets.js';
 
 // A frame whose content goes on on a page added after the composed page
 // (#859): the piece there is the same `:::frame` of the Markdown (#865).

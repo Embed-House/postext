@@ -19,9 +19,9 @@
  * wrongly or leaves without a word ({@link figureLabelWarnings}).
  */
 
-import type { InlineSpan } from '../parse/types';
-import type { FigureLabel } from '../parse/types';
-import type { ColorValue, Dimension, LeaderStyle, LineCap, Resource, ResourceAnchor, ResourceType, ResolvedParagraphStyleConfig } from '../types';
+import type { InlineSpan } from '../parse/types.js';
+import type { FigureLabel } from '../parse/types.js';
+import type { ColorValue, Dimension, LeaderStyle, LineCap, Resource, ResourceAnchor, ResourceType, ResolvedParagraphStyleConfig } from '../types.js';
 import type {
   BoundingBox,
   ContentWarning,
@@ -38,21 +38,21 @@ import type {
   VDTPathMarker,
   VDTLine,
   VDTVerticalText,
-} from '../vdt';
-import type { MeasurementCache } from '../measure';
-import type { ResourceNumberingMap } from '../pipeline/resourceNumbering';
-import { buildFontString } from '../measure';
-import { flowTextWidth, fontFamilyOf, measureCentralBaseline, withMeasureWritingMode } from '../measure/vertical';
-import { dimensionToPx } from '../units';
-import { resolveColorValue } from '../defaults/shared';
-import { layoutLabelLines } from '../pipeline/resourceLayout';
-import { uppercasePreservingLength } from '../pipeline/buildBlockKind';
-import { firstStrongDirection } from '../design/bidiText';
-import { withIconAlts } from './labelText';
-import { BREAK_PLACEHOLDER, SWATCH_PLACEHOLDER } from '../parse/inlineFormatting';
-import { flowRectToPage, flowToPage } from '../vdt';
-import { capEnd, DEFAULT_CAP_SIZE_PER_WIDTH, DEFAULT_CONNECTOR_WIDTH, opacityOf, polylineCommands, type Pt as LinePt } from '../design/connector';
-import { colorWithOpacity, pathInkBox } from '../design/pathBlock';
+} from '../vdt.js';
+import type { MeasurementCache } from '../measure/index.js';
+import type { ResourceNumberingMap } from '../pipeline/resourceNumbering.js';
+import { buildFontString } from '../measure/index.js';
+import { flowTextWidth, fontFamilyOf, measureCentralBaseline, withMeasureWritingMode } from '../measure/vertical.js';
+import { dimensionToPx } from '../units.js';
+import { resolveColorValue } from '../defaults/shared.js';
+import { layoutLabelLines } from '../pipeline/resourceLayout.js';
+import { uppercasePreservingLength } from '../pipeline/buildBlockKind.js';
+import { firstStrongDirection } from '../design/bidiText.js';
+import { withIconAlts } from './labelText.js';
+import { BREAK_PLACEHOLDER, SWATCH_PLACEHOLDER } from '../parse/inlineFormatting.js';
+import { flowRectToPage, flowToPage } from '../vdt.js';
+import { capEnd, DEFAULT_CAP_SIZE_PER_WIDTH, DEFAULT_CONNECTOR_WIDTH, opacityOf, polylineCommands, type Pt as LinePt } from '../design/connector.js';
+import { colorWithOpacity, pathInkBox } from '../design/pathBlock.js';
 
 /** `[a, b, c, d, e, f]`, canvas `transform` order (y down). */
 export type LabelMatrix = [number, number, number, number, number, number];

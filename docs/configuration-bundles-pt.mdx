@@ -120,6 +120,8 @@ As regras de 13 também desenham a caixa de um item de tarefa (`- [ ]`, `- [x]`)
 
 Um manifesto marcado `14` foi gravado pelo postext 1.30 a 1.33. As regras de 15 (postext 1.34, #853) acrescentam os modelos de página (`pageTemplates`) e os estilos de rótulo (`labelStyles`) das [páginas compostas](/pt/docs/composed-pages). Elas não mudam nada do que uma configuração mais antiga diz; por isso, um manifesto marcado `14` é lido como está, sem fixação. O número marca uma configuração que pode conter modelos, que um leitor de 14 ou menos ignora.
 
+Um manifesto com `15` ou `16` foi escrito pelo postext 1.34 a 1.51 (as regras de 16, #1056, acrescentam conectores à decoração de um modelo e não fixam nada). As regras de 17 (#1119) tomam do texto do boxe onde o estilo de parágrafo está a fonte, o tamanho, a entrelinha, os pesos e a cor que o estilo deixa sem definir, onde até 1.51 eram os do texto do documento. Um manifesto com `16` ou anterior recebe `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) no `bodyText` em vigor, quando a configuração combinada declara um estilo de parágrafo e não nomeia o ajuste.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

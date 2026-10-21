@@ -29,7 +29,7 @@ const fontLoader = vi.hoisted(() => ({
   unanswered: new Set<string>(),
 }));
 
-vi.mock('../controls/fontLoader', () => {
+vi.mock('../controls/fontLoader.js', () => {
   const STANDARD = [{ weight: 400, style: 'normal' }, { weight: 700, style: 'normal' }, { weight: 400, style: 'italic' }, { weight: 700, style: 'italic' }] as const;
   const key = (p: { family: string; weight: string; style: string; unicodeRange?: string }) => `${p.family}|${p.weight}|${p.style}|${p.unicodeRange ?? ''}`;
   return {
@@ -69,7 +69,7 @@ vi.mock('../controls/fontLoader', () => {
   };
 });
 
-import { builtWithoutFaces, createLayoutService, documentCharacters, FONT_WAIT_CEILING_MS, fontsPending, onFontsPending, onLateFonts } from './LayoutService';
+import { builtWithoutFaces, createLayoutService, documentCharacters, FONT_WAIT_CEILING_MS, fontsPending, onFontsPending, onLateFonts } from './LayoutService.js';
 
 interface FakeBuild {
   markdown: string;

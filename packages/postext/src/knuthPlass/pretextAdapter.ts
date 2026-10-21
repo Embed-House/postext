@@ -4,19 +4,19 @@
  * optimal breakpoint sequence.
  */
 
-import { justifiedSpaceRatios } from '../measure/spaceRatios';
-import { graphemeCount } from '../measure/graphemes';
+import { justifiedSpaceRatios } from '../measure/spaceRatios.js';
+import { graphemeCount } from '../measure/graphemes.js';
 import type { PreparedTextWithSegments } from '@chenglou/pretext';
-import type { VDTLine, VDTLineSegment } from '../vdt';
-import { createBoundingBox } from '../vdt';
-import type { TextAlign } from '../types';
-import type { KPItem } from './types';
-import { HYPHEN_PENALTY, KP_INFINITY, MAX_STRETCH, SOFT_HYPHEN } from './constants';
-import { cleanSoftHyphens } from './utils';
-import { lineTracking, trackSegments } from './tracking';
-import { breaksAfterDash, breaksAfterHardHyphen, isDash } from '../measure/breakRules';
-import { endsInsideGeminate, withLineEndHyphen } from '../measure/geminate';
-import { joiningScriptIn } from '../measure/joining';
+import type { VDTLine, VDTLineSegment } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import type { TextAlign } from '../types.js';
+import type { KPItem } from './types.js';
+import { HYPHEN_PENALTY, KP_INFINITY, MAX_STRETCH, SOFT_HYPHEN } from './constants.js';
+import { cleanSoftHyphens } from './utils.js';
+import { lineTracking, trackSegments } from './tracking.js';
+import { breaksAfterDash, breaksAfterHardHyphen, isDash } from '../measure/breakRules.js';
+import { endsInsideGeminate, withLineEndHyphen } from '../measure/geminate.js';
+import { joiningScriptIn } from '../measure/joining.js';
 
 /** The room the dot of an `l·l` takes at the end of `piece`: a width, or
  *  what the caller's measurer says for that piece. */

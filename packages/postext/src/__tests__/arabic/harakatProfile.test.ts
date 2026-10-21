@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { annotateArabicMarks } from '../../arabicMarks';
-import type { VDTBlock, VDTColumn, VDTDocument, VDTLine } from '../../vdt';
+import { annotateArabicMarks } from '../../arabicMarks.js';
+import type { VDTBlock, VDTColumn, VDTDocument, VDTLine } from '../../vdt.js';
 
 // Issue #445: two words whose ink boxes meet are painted and compared
 // column by column. A tall mark at one end of a word and a deep descender

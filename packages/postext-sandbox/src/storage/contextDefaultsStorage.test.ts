@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { avoidOrphansByDefault, avoidWidowsByDefault, balancingOnByDefault, type PostextConfig } from 'postext';
-import { configKeyOf } from '../book/layoutKeys';
-import { hashConfig, isDocumentUntouched } from '../presets/hash';
-import { snapshotForApply } from '../presets/apply';
-import type { LoadedPreset } from '../presets/types';
-import { PROJECTS_STORE } from './blobStore';
-import { configFromExport, loadConfig, saveConfig } from './persistence';
-import { getPresetDraft, presetDraftKey, putPresetDraft, type PresetDraftRecord } from './presetDrafts';
-import { getProject, putProject, updateProject, type ProjectRecord } from './projects';
-import { PROJECT_RECORD_VERSION } from './projectMigration';
+import { configKeyOf } from '../book/layoutKeys.js';
+import { hashConfig, isDocumentUntouched } from '../presets/hash.js';
+import { snapshotForApply } from '../presets/apply.js';
+import type { LoadedPreset } from '../presets/types.js';
+import { PROJECTS_STORE } from './blobStore.js';
+import { configFromExport, loadConfig, saveConfig } from './persistence.js';
+import { getPresetDraft, presetDraftKey, putPresetDraft, type PresetDraftRecord } from './presetDrafts.js';
+import { getProject, putProject, updateProject, type ProjectRecord } from './projects.js';
+import { PROJECT_RECORD_VERSION } from './projectMigration.js';
 
 // #651: the Sandbox stores every configuration stripped of defaults. The
 // strip took `headings.balancing.enabled: true` for the default it is on a
@@ -18,8 +18,8 @@ import { PROJECT_RECORD_VERSION } from './projectMigration';
 
 // The object stores, in memory: what `put` wrote is what `get` reads.
 const rows = vi.hoisted(() => new Map<string, Map<string, unknown>>());
-vi.mock('./blobStore', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('./blobStore')>();
+vi.mock('./blobStore.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./blobStore.js')>();
   const request = <T,>(result: T) => {
     const req = { result, error: null, onsuccess: null as null | (() => void), onerror: null as null | (() => void) };
     queueMicrotask(() => req.onsuccess?.());
@@ -329,9 +329,9 @@ describe('the break rules of a character grid survive a save (#717)', () => {
     const current = configFromExport({ type: 'postext-config', version: 1, configVersion: 12, config: japanese() });
     expect(laidOut(current)).toEqual(OFF);
     const today = japanese();
-    expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 14, config: today })).toBe(today);
+    expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 18, config: today })).toBe(today);
     // One stamped 13 (postext 1.29) keeps the language of the host (#770).
-    expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 13, config: today })).toEqual({ ...today, bodyText: { shapingLanguage: 'host' } });
+    expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 13, config: today })).toEqual({ ...today, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
   });
 
   it('the layout key sees a rule turned on where it is off by default', () => {

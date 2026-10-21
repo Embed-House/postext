@@ -2,18 +2,18 @@
 
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { applyHtmlViewerOverrides, resolveLayoutConfig } from 'postext';
-import { useSandboxSelector } from '../context/SandboxContext';
-import { HtmlPreview, type HtmlPreviewHandle } from './HtmlPreview';
-import { HtmlToolbar } from './HtmlToolbar';
-import { useFloatingToolbarShell } from './useFloatingToolbarShell';
-import { useViewerControls } from './viewerControls';
-import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync';
+import { useSandboxSelector } from '../context/SandboxContext.js';
+import { HtmlPreview, type HtmlPreviewHandle } from './HtmlPreview/index.js';
+import { HtmlToolbar } from './HtmlToolbar.js';
+import { useFloatingToolbarShell } from './useFloatingToolbarShell.js';
+import { useViewerControls } from './viewerControls.js';
+import { usePageHashSync, pageIndexOf, pageNumberAt, EMPTY_VIEWER_LAYOUT, type BookPageMap, type ViewerLayout } from './usePageHashSync.js';
 import {
   loadHtmlFontScale,
   saveHtmlFontScale,
   loadHtmlColumnMode,
   saveHtmlColumnMode,
-} from '../storage/persistence';
+} from '../storage/persistence.js';
 
 type ColumnMode = 'single' | 'multi';
 

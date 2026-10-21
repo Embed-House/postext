@@ -1,8 +1,8 @@
 /** The Checks panel's words for a preflight finding (#605). */
 
-import type { SandboxLabels } from '../types';
-import type { PreflightCheck } from '../warnings/types';
-import { fill } from './fillTokens';
+import type { SandboxLabels } from '../types/index.js';
+import type { PreflightCheck } from '../warnings/types.js';
+import { fill } from './fillTokens.js';
 
 export function preflightTitle(check: PreflightCheck, labels: SandboxLabels): string {
   switch (check.kind) {

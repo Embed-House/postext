@@ -9,12 +9,12 @@
 
 import { useEffect, useId, useState } from 'react';
 import { isCornerRadii, type BorderSides, type ColorValue, type CornerRadius, type Dimension, type DimensionUnit } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { ColorPicker, DimensionInput, NestedGroup, ToggleSwitch } from '../../../controls';
-import { FieldRow } from '../../../controls/FieldRow';
-import { useFieldIds } from '../../../controls/fieldContext';
-import { cn } from '../../../ui';
-import { CORNERS, SIDES, cornerValues, formatDash, linkCorners, parseDash, setCorner, setSideField, sideValue, unlinkCorners, type Corner, type Side } from './shapeEdits';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { ColorPicker, DimensionInput, NestedGroup, ToggleSwitch } from '../../../controls/index.js';
+import { FieldRow } from '../../../controls/FieldRow.js';
+import { useFieldIds } from '../../../controls/fieldContext.js';
+import { cn } from '../../../ui/index.js';
+import { CORNERS, SIDES, cornerValues, formatDash, linkCorners, parseDash, setCorner, setSideField, sideValue, unlinkCorners, type Corner, type Side } from './shapeEdits.js';
 
 interface CornerRadiusFieldsProps {
   /** The radius the style resolves to. */

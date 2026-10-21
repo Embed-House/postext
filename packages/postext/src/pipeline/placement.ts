@@ -11,14 +11,14 @@ import {
   type VDTColumn,
   mirroredFlowFrame,
   verticalFlowFrame,
-} from '../vdt';
-import { settleColumnWraps } from './textWrap';
-import type { HeadingBreakParity } from '../types';
-import { computeColumnBboxes, hasFloatSideColumn } from './config';
-import { contentAreaForPage, flowPageMirrored, mirrorContentArea, pageMirrored, sheetRectToFlow, widthLessEndIndent, type PageMetrics } from './buildHelpers';
-import { dimensionToPx } from '../units';
-import { measuringVertically } from '../measure/vertical';
-import { shiftLineX } from '../measure/bidiLines';
+} from '../vdt.js';
+import { settleColumnWraps } from './textWrap.js';
+import type { HeadingBreakParity } from '../types.js';
+import { computeColumnBboxes, hasFloatSideColumn } from './config.js';
+import { contentAreaForPage, flowPageMirrored, mirrorContentArea, pageMirrored, sheetRectToFlow, widthLessEndIndent, type PageMetrics } from './buildHelpers.js';
+import { dimensionToPx } from '../units.js';
+import { measuringVertically } from '../measure/vertical.js';
+import { shiftLineX } from '../measure/bidiLines.js';
 
 export interface PlacementCursor {
   pageIndex: number;

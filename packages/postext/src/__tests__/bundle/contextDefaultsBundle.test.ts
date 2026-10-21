@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { unzipSync } from 'fflate';
-import { createBundle, openBundle } from '../../bundle';
-import { CONFIG_VERSION, migrateConfig } from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { createBundle, openBundle } from '../../bundle/index.js';
+import { CONFIG_VERSION, migrateConfig } from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #651: a bundle stores its configuration stripped of defaults. The strip
 // dropped `headings.balancing.enabled: true` as the default it is on a

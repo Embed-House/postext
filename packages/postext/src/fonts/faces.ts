@@ -4,12 +4,12 @@
 // another one (the nearest weight as it is, bold drawn heavier, italic
 // slanted; #650). Shared by the main thread and the layout worker.
 
-import type { VDTDocument, VDTLine } from '../vdt';
-import { quoteFamily } from '../measure/font';
-import { measureTextWidth } from '../measure/canvas';
-import { parseFontString, type FontFaceRequest } from '../measure/fontString';
+import type { VDTDocument, VDTLine } from '../vdt.js';
+import { quoteFamily } from '../measure/font.js';
+import { measureTextWidth } from '../measure/canvas.js';
+import { parseFontString, type FontFaceRequest } from '../measure/fontString.js';
 
-export type { FontFaceRequest } from '../measure/fontString';
+export type { FontFaceRequest } from '../measure/fontString.js';
 
 /** The part of a `FontFace` the engine reads. */
 export interface FontFaceLike {
@@ -41,6 +41,10 @@ export function defaultFontSet(): FontFaceSetLike | undefined {
   const g = globalThis as { document?: { fonts?: FontFaceSetLike }; fonts?: FontFaceSetLike };
   return g.document?.fonts ?? g.fonts;
 }
+
+/** The family of the glyph probe face (#1105, `fonts/glyphFallback.ts`):
+ *  no text is set in it, and the font set's record leaves it out. */
+export const GLYPH_PROBE_FAMILY = 'Postext Glyph Probe';
 
 /** CSS generic families: always there, never reported. */
 const GENERIC_FAMILIES = new Set([

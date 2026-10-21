@@ -32,8 +32,8 @@ import {
   type VDTLine,
   type VDTLineSegment,
   type VDTPage,
-} from '../vdt';
-import { mirrorLabelLayout } from '../composed/labels';
+} from '../vdt.js';
+import { mirrorLabelLayout } from '../composed/labels.js';
 
 /** Lines this pass made (already in flow order). */
 const oriented = new WeakSet<VDTLine>();

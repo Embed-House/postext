@@ -11,16 +11,16 @@ import type {
   ElementSize,
   Resource,
 } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector } from '../../../context/SandboxContext';
-import { SelectInput, DimensionInput, NumberInput, ToggleSwitch } from '../../../controls';
-import { FieldRow } from '../../../controls/FieldRow';
-import { useBlobObjectUrl } from '../../../panels/resources/ResourcePreview';
-import { resourceFromFile } from '../../../panels/resources/uploadFiles';
-import { IconButton } from '../../../ui';
-import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
-import { type SlotKind } from './placementAdapter';
-import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo';
-import { FOCUS_CENTER, focusFromPercent, focusFromPointer, focusPercent, type FocusPoint } from './focusPoint';
+import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { SelectInput, DimensionInput, NumberInput, ToggleSwitch } from '../../../controls/index.js';
+import { FieldRow } from '../../../controls/FieldRow.js';
+import { useBlobObjectUrl } from '../../../panels/resources/ResourcePreview.js';
+import { resourceFromFile } from '../../../panels/resources/uploadFiles.js';
+import { IconButton } from '../../../ui/index.js';
+import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields.js';
+import { type SlotKind } from './placementAdapter.js';
+import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo.js';
+import { FOCUS_CENTER, focusFromPercent, focusFromPointer, focusPercent, type FocusPoint } from './focusPoint.js';
 
 const DEFAULT_SIZE_DIM: Dimension = { value: 20, unit: 'mm' };
 const IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/svg+xml,.svg';

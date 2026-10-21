@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, type PageTemplate, type PostextConfig, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
-import { dimensionToMm, mmToPx, pageAreas, spreadFlowSide, spreadGutterBand, spreadPageAreas } from './frameGeometry';
+import { dimensionToMm, mmToPx, pageAreas, spreadFlowSide, spreadGutterBand, spreadPageAreas } from './frameGeometry.js';
 
 // The template editor draws a spread page's sheet and its spine in the
 // page's flow frame (#961): the facing page and the gutter band are on the

@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import { measureRichBlock } from '../measure';
-import { collectConfigWarnings } from '../configWarnings';
-import { collectContentWarnings } from '../pipeline/contentWarnings';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../defaults/bodyText';
-import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../defaults/paragraphStyles';
-import { defaultDecimalChar } from '../measure/tabs';
-import type { PostextConfig, TabStop } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
-import { pageIsMirrored } from '../vdt';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { measureRichBlock } from '../measure/index.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { collectContentWarnings } from '../pipeline/contentWarnings.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../defaults/bodyText.js';
+import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../defaults/paragraphStyles.js';
+import { defaultDecimalChar } from '../measure/tabs.js';
+import type { PostextConfig, TabStop } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt.js';
+import { pageIsMirrored } from '../vdt.js';
 
 // #622: tab stops and leaders in body text. A tab (`:tab`, or a tab
 // character in a paragraph whose style sets stops) sends the text after it

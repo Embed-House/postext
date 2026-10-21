@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { layoutDesignSlot, pageMatchesRole, type DesignFrames } from '../../design/layout';
-import { measureHeadingAdvancedDesignHeight } from '../../pipeline/headerFooter';
-import { resolveDesignSlot } from '../../defaults/headerFooter';
-import { resolveHeadingsConfig } from '../../defaults/headings';
-import type { DesignPlaceholderContext } from '../../design/placeholders';
-import type { DesignElement, ElementAnchor } from '../../types';
-import type { VDTPage } from '../../vdt';
+import { layoutDesignSlot, pageMatchesRole, type DesignFrames } from '../../design/layout.js';
+import { measureHeadingAdvancedDesignHeight } from '../../pipeline/headerFooter.js';
+import { resolveDesignSlot } from '../../defaults/headerFooter.js';
+import { resolveHeadingsConfig } from '../../defaults/headings.js';
+import type { DesignPlaceholderContext } from '../../design/placeholders.js';
+import type { DesignElement, ElementAnchor } from '../../types.js';
+import type { VDTPage } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

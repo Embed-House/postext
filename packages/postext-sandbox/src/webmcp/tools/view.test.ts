@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { onSettingsSwitchesRequest, reportSettingsChangedOnly, type SettingsPanelSwitches } from '../../context/settingsNavigation';
-import type { ViewportTab } from '../../types';
+import { onSettingsSwitchesRequest, reportSettingsChangedOnly, type SettingsPanelSwitches } from '../../context/settingsNavigation.js';
+import type { ViewportTab } from '../../types/index.js';
 import {
   latestControls,
   registerViewerControls,
@@ -8,15 +8,16 @@ import {
   type ViewerControls,
   type ViewerStatus,
   type ViewerVideoTarget,
-} from '../../viewport/viewerControls';
-import { pickVideo, type PlayableVideo } from '../../viewport/viewerVideos';
-import { runTool } from '../modelContext';
-import { editModeNow, resetEditMode } from '../../editing/editMode';
-import { sourcePlace } from '../pagePoint';
-import { compactStatus } from '../viewerStatus';
-import { chapter, harness } from './testHarness';
-import { contentsEntry } from './view';
-import { viewerCommandTools } from './viewerCommands';
+} from '../../viewport/viewerControls.js';
+import { pickVideo, type PlayableVideo } from '../../viewport/viewerVideos.js';
+import { runTool } from '../modelContext.js';
+import { editModeNow, resetEditMode } from '../../editing/editMode.js';
+import { fitMarksChoiceNow, resetFitMarksView, setFitMarksChoice } from '../../viewport/composed/fitMarksView.js';
+import { sourcePlace } from '../pagePoint.js';
+import { compactStatus } from '../viewerStatus.js';
+import { chapter, harness } from './testHarness.js';
+import { contentsEntry } from './view.js';
+import { viewerCommandTools } from './viewerCommands.js';
 
 const cleanups: (() => void)[] = [];
 afterEach(() => {
@@ -169,6 +170,18 @@ describe('sandbox_set_view', () => {
     expect(set.notes[0]).toMatch(/set vertically.*keeps columns/);
     const horizontal = harness({ activeViewport: 'html' });
     expect((await horizontal.call('sandbox_set_view', { columns: 'single' })).notes).toBeUndefined();
+  });
+
+  it('chooses the fit marks of composed pages over the book\'s default, and goes back to it (#1160)', async () => {
+    cleanups.push(() => { setFitMarksChoice(null); resetFitMarksView(); });
+    const { call } = harness({ config: { debug: { fitMarks: 'problems', fitMarksMinScale: 0.95 } } });
+    expect((await call('sandbox_get_state')).view.fitMarks).toEqual({ mode: 'problems', minScale: 0.95, source: 'book' });
+    const none = await call('sandbox_set_view', { fitMarks: 'none' });
+    expect(none.view.fitMarks).toEqual({ mode: 'none', minScale: 0.95, source: 'viewer' });
+    expect(fitMarksChoiceNow()).toBe('none');
+    const book = await call('sandbox_set_view', { fitMarks: 'book' });
+    expect(book.view.fitMarks).toEqual({ mode: 'problems', minScale: 0.95, source: 'book' });
+    expect((await call('sandbox_set_view', { fitMarks: 'some' })).error).toBeTruthy();
   });
 });
 

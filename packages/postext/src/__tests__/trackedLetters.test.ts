@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { renderBlock } from '../canvas-backend/blockRender';
-import { fillTrackedWord, setLetterTracking } from '../canvas-backend/trackedText';
-import { setSegmentLanguages } from '../canvas-backend/wordRuns';
-import { setLetterSpacing } from '../canvas-backend/contextState';
-import { renderToHtml } from '../html-backend';
-import { buildDocument } from '../pipeline';
-import { setMeasureLanguage, measureSpacedWidth, measureTextWidth, clearTextWidthCache } from '../measure/canvas';
-import { trackedLigaturePieces } from '../measure/trackedLigatures';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDesignTextBlock, VDTDocument, VDTLine } from '../vdt';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import { fillTrackedWord, setLetterTracking } from '../canvas-backend/trackedText.js';
+import { setSegmentLanguages } from '../canvas-backend/wordRuns.js';
+import { setLetterSpacing } from '../canvas-backend/contextState.js';
+import { renderToHtml } from '../html-backend.js';
+import { buildDocument } from '../pipeline/index.js';
+import { setMeasureLanguage, measureSpacedWidth, measureTextWidth, clearTextWidthCache } from '../measure/canvas.js';
+import { trackedLigaturePieces } from '../measure/trackedLigatures.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDesignTextBlock, VDTDocument, VDTLine } from '../vdt.js';
 
 // #770: the layout counts the tracking of a tracked word once a letter. A
 // ligature painted alone advanced by one tracking, as one glyph, so a word

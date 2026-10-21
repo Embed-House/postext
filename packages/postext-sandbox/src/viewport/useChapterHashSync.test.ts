@@ -67,7 +67,7 @@ const store = vi.hoisted(() => ({
   loadPreset: null as unknown as (id: string, locale?: string) => Promise<boolean>,
 }));
 
-vi.mock('../context/SandboxContext', () => ({
+vi.mock('../context/SandboxContext.js', () => ({
   useSandboxDispatch: () => (action: { type: string; payload: unknown }) => {
     if (action.type === 'SET_ACTIVE_CHAPTER') store.state = { ...store.state, activeChapterId: action.payload as string };
   },
@@ -86,7 +86,7 @@ vi.mock('../context/SandboxContext', () => ({
   }),
 }));
 
-import { useChapterHashSync } from './useChapterHashSync';
+import { useChapterHashSync } from './useChapterHashSync.js';
 
 /** The component under test: the hook alone. */
 function Probe(): null {

@@ -5,10 +5,10 @@
 
 import { documentFontFaces, exportStandInOf, type PostextConfig, type VDTDocument } from 'postext';
 import type { EpubCover, EpubFontFile, EpubResourceBytes, EpubSvgFontOptions } from 'postext-epub';
-import { collectFontPayloadsForFaces, configFontUses, getConfigFontFamilies, getCustomFontFamily, listCustomFontFamilies } from '../controls/fontLoader';
-import { sandboxSvgFontProvider, withholdNonRedistributable } from '../controls/svgFontProvider';
-import { getBlob } from '../storage/blobStore';
-import { documentCodePoints, facesForText, fontFormatOf } from './fontSubsets';
+import { collectFontPayloadsForFaces, configFontUses, getConfigFontFamilies, getCustomFontFamily, listCustomFontFamilies } from '../controls/fontLoader.js';
+import { sandboxSvgFontProvider, withholdNonRedistributable } from '../controls/svgFontProvider.js';
+import { getBlob } from '../storage/blobStore.js';
+import { documentCodePoints, facesForText, fontFormatOf } from './fontSubsets.js';
 
 /** The open family that is set under the name of `family` in a file that
  *  leaves the app (#993): the `fallback` of a custom family marked as not

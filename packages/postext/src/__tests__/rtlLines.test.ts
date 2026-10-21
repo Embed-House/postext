@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { measureBlock } from '../measure/plain';
-import { measureRichBlock } from '../measure/rich';
-import { getMeasureDirection } from '../measure/bidiLines';
-import { buildDocument } from '../pipeline';
-import { renderBlock } from '../canvas-backend/blockRender';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTLine } from '../vdt';
+import { measureBlock } from '../measure/plain.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { getMeasureDirection } from '../measure/bidiLines.js';
+import { buildDocument } from '../pipeline/index.js';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTLine } from '../vdt.js';
 
 // #369: right-to-left lines. Segments stay in logical order; each carries
 // its direction (`rtl`, `level`), the line the order to paint them in

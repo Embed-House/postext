@@ -1,16 +1,16 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { createMeasurementCache } from '../measure';
-import { measureBlock } from '../measure/plain';
-import { measureRichBlock } from '../measure/rich';
-import { hyphenateText, setHyphenationLocale, softHyphenBreaks, withoutEdgeSoftHyphens } from '../hyphenate';
-import { layoutDesignSlot, type ResolvedTextPrimitive } from '../design/layout';
-import { resolveDesignSlot } from '../defaults/headerFooter';
-import type { DesignPlaceholderContext } from '../design/placeholders';
-import type { DesignElement } from '../types';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig, VDTDocument, VDTLine } from '../index';
-import type { VDTPage } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { measureBlock } from '../measure/plain.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { hyphenateText, setHyphenationLocale, softHyphenBreaks, withoutEdgeSoftHyphens } from '../hyphenate.js';
+import { layoutDesignSlot, type ResolvedTextPrimitive } from '../design/layout.js';
+import { resolveDesignSlot } from '../defaults/headerFooter.js';
+import type { DesignPlaceholderContext } from '../design/placeholders.js';
+import type { DesignElement } from '../types.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig, VDTDocument, VDTLine } from '../index.js';
+import type { VDTPage } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // printed character, the space included, is 7 px wide; a soft hyphen, a word

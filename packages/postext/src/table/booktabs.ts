@@ -3,8 +3,8 @@
  * `\cmidrule` and `\bottomrule`, computed once from a laid-out table (or a
  * slice of one) so that every renderer strokes the same lines.
  */
-import type { TableContinuedFootRule, TableSpanRules } from '../types';
-import type { VDTResourceTableLayout, VDTTableStroke } from '../vdt';
+import type { TableContinuedFootRule, TableSpanRules } from '../types.js';
+import type { VDTResourceTableLayout, VDTTableStroke } from '../vdt.js';
 
 /** The widths (px) and options of a booktabs table, resolved. */
 export interface BooktabsRuleSpec {

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { parseMarkdown } from '../../parse';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { parseMarkdown } from '../../parse/index.js';
 import {
   computeHeadingContext,
   computeResourceNumbering,
-} from '../../pipeline/resourceNumbering';
-import type { Resource } from '../../types';
+} from '../../pipeline/resourceNumbering.js';
+import type { Resource } from '../../types.js';
 
 const VALID_FORMATS = new Set([
   'decimal',

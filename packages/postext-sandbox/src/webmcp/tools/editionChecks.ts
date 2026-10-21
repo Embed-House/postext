@@ -3,15 +3,15 @@
 // languages of a preset's bundle or of a local project, laid out for the
 // tool itself so that the answer does not depend on the panel being open.
 
-import { bookEditionsOf } from '../../editions/bookLocales';
-import { layOutLoadedEdition, loadPresetEdition, loadProjectEdition } from '../../editions/editionStore';
-import type { EditionLayout } from '../../editions/editionLayout';
-import { sameContentLocale, sameLocaleTag } from '../../presets/locale';
-import { detailFor, titleFor } from '../../sidebar/WarningsPanel';
-import { composedChecksOf, type ComposedCheck } from '../../warnings/composedChecks';
-import { warningCategory } from '../../warnings/categories';
-import type { SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
+import { bookEditionsOf } from '../../editions/bookLocales.js';
+import { layOutLoadedEdition, loadPresetEdition, loadProjectEdition } from '../../editions/editionStore.js';
+import type { EditionLayout } from '../../editions/editionLayout.js';
+import { sameContentLocale, sameLocaleTag } from '../../presets/locale.js';
+import { detailFor, titleFor } from '../../sidebar/WarningsPanel.js';
+import { composedChecksOf, type ComposedCheck } from '../../warnings/composedChecks.js';
+import { warningCategory } from '../../warnings/categories.js';
+import type { SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
 
 /** An edition's tag as the tool names it (`''` is a book with no language). */
 const tagOf = (locale: string): string => locale || 'und';

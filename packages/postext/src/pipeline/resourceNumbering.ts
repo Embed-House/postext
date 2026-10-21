@@ -14,9 +14,9 @@
  * takes the style suffix a heading template's does (`{h1:A}.{n}`, #730).
  */
 
-import { resourceRefId } from './crossRefs';
-import type { ContentBlock } from '../parse';
-import type { DigitSystem, HeadingCounters, Resource, ResourceNumberEntry, ResourceType, ResourceCounterFormat } from '../types';
+import { resourceRefId } from './crossRefs.js';
+import type { ContentBlock } from '../parse/index.js';
+import type { DigitSystem, HeadingCounters, Resource, ResourceNumberEntry, ResourceType, ResourceCounterFormat } from '../types.js';
 import {
   counterStyleOf,
   formatCounter,
@@ -27,7 +27,7 @@ import {
   type CounterStyle,
   type NumeralStyle,
   type RenderPiece,
-} from '../numbering';
+} from '../numbering.js';
 
 /** Heading counters (1-indexed by level) in effect at a given point in the
  *  document. `h1`..`h6` carry the running heading number for each level. */

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { comicLineKinds, comicLineRanges, type ComicLineKind } from './comicSyntax';
+import { comicLineKinds, comicLineRanges, type ComicLineKind } from './comicSyntax.js';
 
 /** The ranges of a line as `[kind, text]` pairs. */
 function marks(text: string, kind: ComicLineKind) {

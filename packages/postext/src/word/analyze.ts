@@ -3,11 +3,11 @@
 // converts cleanly; one set entirely in Normal with formatting by hand comes
 // in as plain paragraphs, and the report says so before the import.
 
-import type { PostextConfig } from '../types';
-import type { WordBlock, WordDocument, WordParagraph, WordTextRun } from './model';
-import { paragraphStyleName, paragraphText } from './model';
-import type { WordTemplate } from './template';
-import { paragraphTargetOf } from './toMarkdown';
+import type { PostextConfig } from '../types.js';
+import type { WordBlock, WordDocument, WordParagraph, WordTextRun } from './model.js';
+import { paragraphStyleName, paragraphText } from './model.js';
+import type { WordTemplate } from './template.js';
+import { paragraphTargetOf } from './toMarkdown.js';
 
 export interface StyleUse {
   name: string;

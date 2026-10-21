@@ -83,7 +83,7 @@ const titleBlock = { enabled: true, minHeight: mm(58), slot: { elements: [
     placement: at('#authors', 'below', 1.2) }),
   { kind: 'rule', id: 'rule', thickness: pt(0.5), color: col('rule'),
     placement: at('#affiliation', 'below', 4) },
-  text('note', '{attr.note}', SERIF, 8.2, { fontStyle: 'italic', lineHeight: 1.35,
+  text('note', '{attr.note}', SERIF, 8.2, { lineHeight: 1.35,
     color: col('muted'), placement: at('#rule', 'below', 2) }),
 ] } };
 // #endregion

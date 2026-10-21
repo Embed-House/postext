@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { resolveDesignSlot, type ResolvedDesignTextElement } from 'postext';
-import { newTextElement } from './elementTemplates';
+import { newTextElement } from './elementTemplates.js';
 
 // #628: "Add text" leaves `overflow` unset, so the slot's default applies.
 describe('newTextElement', () => {

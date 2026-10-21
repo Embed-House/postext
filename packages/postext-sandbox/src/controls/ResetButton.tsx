@@ -1,8 +1,8 @@
 'use client';
 
 import { RotateCcw } from 'lucide-react';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { IconButton } from '../ui';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { IconButton } from '../ui/index.js';
 
 interface ResetButtonProps {
   onClick: () => void;

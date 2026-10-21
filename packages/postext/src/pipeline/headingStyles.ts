@@ -8,16 +8,16 @@
  * resolved up front by index so the placement loop can rewind freely.
  */
 
-import type { ContentBlock } from '../parse';
-import { plainSpans } from '../parse/inlineFormatting';
-import { withBookBrackets } from '../parse/annotations';
-import type { ResolvedHeadingLevelConfig, ResolvedHeadingStyleConfig, WritingMode } from '../types';
-import type { ResolvedConfig, VDTBlock } from '../vdt';
-import { buildHeadingLevelMap } from './config';
-import { resolveBreakBefore } from '../defaults/headings';
-import type { ChapterTitlePageInfo } from './placeholders';
-import { derivePartResolvedConfig, derivePartMeasureContext } from './parts';
-import type { BlockMeasureContext } from './measureContentBlock';
+import type { ContentBlock } from '../parse/index.js';
+import { plainSpans } from '../parse/inlineFormatting.js';
+import { withBookBrackets } from '../parse/annotations.js';
+import type { ResolvedHeadingLevelConfig, ResolvedHeadingStyleConfig, WritingMode } from '../types.js';
+import type { ResolvedConfig, VDTBlock } from '../vdt.js';
+import { buildHeadingLevelMap } from './config.js';
+import { resolveBreakBefore } from '../defaults/headings.js';
+import type { ChapterTitlePageInfo } from './placeholders.js';
+import { derivePartResolvedConfig, derivePartMeasureContext } from './parts.js';
+import type { BlockMeasureContext } from './measureContentBlock.js';
 
 /** The `style` attribute of a heading block, when it names a configured
  *  style. */

@@ -16,17 +16,17 @@
  * colour; the segments' widths are final, from the line's box (`bbox.x`).
  */
 
-import type { ContentBlock } from '../parse';
-import type { CodeTokenKind, ResolvedCodeStyleConfig } from '../types';
-import { createBoundingBox, flowRectToPage, pageIsVertical, type ResolvedConfig, type VDTBlock, type VDTDesignTextBlock, type VDTDocument, type VDTLine, type VDTLineSegment, type ContentWarning } from '../vdt';
-import type { MeasuredBlock } from '../measure';
-import { buildFontString } from '../measure';
-import { measureTextWidth } from '../measure/canvas';
-import { graphemesOf } from '../measure/graphemes';
-import { lineBaselineOffset } from '../measure/vertical';
-import { dimensionToPx } from '../units';
-import { resolvedCodeStyle } from '../defaults/codeStyle';
-import { highlightCode, type CodeToken } from '../code/highlight';
+import type { ContentBlock } from '../parse/index.js';
+import type { CodeTokenKind, ResolvedCodeStyleConfig } from '../types.js';
+import { createBoundingBox, flowRectToPage, pageIsVertical, type ResolvedConfig, type VDTBlock, type VDTDesignTextBlock, type VDTDocument, type VDTLine, type VDTLineSegment, type ContentWarning } from '../vdt.js';
+import type { MeasuredBlock } from '../measure/index.js';
+import { buildFontString } from '../measure/index.js';
+import { measureTextWidth } from '../measure/canvas.js';
+import { graphemesOf } from '../measure/graphemes.js';
+import { lineBaselineOffset } from '../measure/vertical.js';
+import { dimensionToPx } from '../units.js';
+import { resolvedCodeStyle } from '../defaults/codeStyle.js';
+import { highlightCode, type CodeToken } from '../code/highlight.js';
 
 /** What a fence asks of its listing, over `codeStyle`. */
 export interface CodeFenceSettings {

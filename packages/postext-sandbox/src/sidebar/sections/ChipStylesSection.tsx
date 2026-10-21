@@ -4,12 +4,12 @@ import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { ChipStyleConfig, DimensionUnit, ResolvedBodyTextConfig, ResolvedChipStyleConfig } from 'postext';
 import { DEFAULT_CHIP_STYLES, resolveBodyTextConfig, resolveChipStylesConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput, FontPicker, ToggleSwitch } from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { FieldRow } from '../../controls/FieldRow';
-import { SearchScope } from '../search/SearchScope';
-import { TextDotsFields } from '../settings/TextDotsFields';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput, FontPicker, ToggleSwitch } from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { SearchScope } from '../search/SearchScope.js';
+import { TextDotsFields } from '../settings/TextDotsFields.js';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 const BOX_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

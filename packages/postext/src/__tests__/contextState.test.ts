@@ -1,16 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile, readdirSync as readDir } from 'node:fs';
-import { renderPageToCanvas } from '../canvas-backend';
-import { renderBlock } from '../canvas-backend/blockRender';
-import { renderComicBalloon } from '../canvas-backend/comic';
-import { fillScriptWord } from '../canvas-backend/scriptText';
-import { fillFlowText } from '../canvas-backend/verticalText';
-import { languageOf, letterSpacingOf, resetContextState, restoreContext, saveContext, setLetterSpacing } from '../canvas-backend/contextState';
-import { buildDocument } from '../pipeline';
-import { clearMeasurementCache } from '../measure';
-import type { PostextConfig, Resource } from '../types';
-import type { VDTBlock, VDTComicBalloon, VDTDesignTextBlock, VDTDocument, VDTPage } from '../vdt';
+import { renderPageToCanvas } from '../canvas-backend/index.js';
+import { renderBlock } from '../canvas-backend/blockRender.js';
+import { renderComicBalloon } from '../canvas-backend/comic.js';
+import { fillScriptWord } from '../canvas-backend/scriptText.js';
+import { fillFlowText } from '../canvas-backend/verticalText.js';
+import { languageOf, letterSpacingOf, resetContextState, restoreContext, saveContext, setLetterSpacing } from '../canvas-backend/contextState.js';
+import { buildDocument } from '../pipeline/index.js';
+import { clearMeasurementCache } from '../measure/index.js';
+import type { PostextConfig, Resource } from '../types.js';
+import type { VDTBlock, VDTComicBalloon, VDTDesignTextBlock, VDTDocument, VDTPage } from '../vdt.js';
 
 // #764, the paint side. Chrome (131 and 154, a DOM canvas and an
 // OffscreenCanvas) makes every saved state with the language `inherit`,

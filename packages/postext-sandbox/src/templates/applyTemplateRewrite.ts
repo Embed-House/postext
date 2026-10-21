@@ -9,10 +9,10 @@
 
 import type { Dispatch } from 'react';
 import type { PageTemplate } from 'postext';
-import type { SandboxAction, SandboxState } from '../context/SandboxContext';
-import type { TextChange } from '../book/textChanges';
-import { applyViewerEdit } from '../editor/viewerEdits';
-import type { HistoryStepInfo, SandboxHistory } from '../history/sandboxHistory';
+import type { SandboxAction, SandboxState } from '../context/SandboxContext.js';
+import type { TextChange } from '../book/textChanges.js';
+import { applyViewerEdit } from '../editor/viewerEdits.js';
+import type { HistoryStepInfo, SandboxHistory } from '../history/sandboxHistory.js';
 
 export interface TemplateRewrite {
   /** The templates after it; undefined: they do not change. */

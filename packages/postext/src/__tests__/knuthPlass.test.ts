@@ -7,7 +7,7 @@ import {
   type KPGlue,
   type KPPenalty,
   type KPOptions,
-} from '../knuthPlass';
+} from '../knuthPlass/index.js';
 
 // ---------------------------------------------------------------------------
 // Helpers to build items manually

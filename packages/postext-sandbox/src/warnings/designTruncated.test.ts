@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { DesignElement, PostextConfig } from 'postext';
-import { computeWarnings } from './compute';
-import { warningCategory } from './categories';
-import type { WarningPayload } from './types';
+import { computeWarnings } from './compute.js';
+import { warningCategory } from './categories.js';
+import type { WarningPayload } from './types.js';
 
 // #628: a design text the layout cut to fit its width is listed under
 // Design, names the book page it was cut on, and goes with the design

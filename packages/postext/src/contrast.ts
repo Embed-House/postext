@@ -37,18 +37,22 @@
  * `composedPaintOrder`), else the page's paper colour; a translucent colour is blended with what is
  * under it. Text over a picture is skipped (its ground is not a colour),
  * as are comic lettering, ruby and formulas.
+ *
+ * The pairs `contrast.allow` names (#1124: by colours, by the style the
+ * text is set in, or both) are still reported, as accepted with the
+ * entry's reason, so a host lists them apart and does not count them.
  */
 
-import type { CmykPercent, ContrastLevel, ResolvedContrastConfig } from './types';
-import type { BoundingBox, ResolvedConfig, VDTBlock, VDTDesignSlot, VDTDocument, VDTLine } from './vdt';
-import { flowRectToPage, tableCellFill } from './vdt';
-import { labToXyz, type OutputTransform } from './color/transform';
-import { authoredCmykColors } from './color/authored';
-import { resolveContrastConfig } from './defaults/contrast';
-import { findPxSize, parseFontString } from './measure/fontString';
-import { dimensionToPx } from './units';
-import { taskBoxText } from './taskBox';
-import { composedFrameBlockIds, composedPaintOrder, frameMatrix } from './composed/paint';
+import type { CmykPercent, ContrastAllowEntry, ContrastLevel, ResolvedContrastConfig } from './types.js';
+import type { BoundingBox, ResolvedConfig, VDTBlock, VDTDesignSlot, VDTDocument, VDTLine } from './vdt.js';
+import { flowRectToPage, tableCellFill } from './vdt.js';
+import { labToXyz, type OutputTransform } from './color/transform.js';
+import { authoredCmykColors } from './color/authored.js';
+import { resolveContrastConfig } from './defaults/contrast.js';
+import { findPxSize, parseFontString } from './measure/fontString.js';
+import { dimensionToPx } from './units.js';
+import { taskBoxText } from './taskBox.js';
+import { composedFrameBlockIds, composedPaintOrder, frameMatrix } from './composed/paint.js';
 
 export type ContrastMedium = 'screen' | 'print';
 
@@ -97,6 +101,19 @@ export interface ContrastPair {
    *  sizes of `contrast.reversedText`. `inks`: how many of the four the
    *  ground is built of. */
   reversed?: { reasons: ReversedTextReason[]; minimumPt: number; inks: number };
+  /** The styles the text is set in, innermost first (a chip style, a
+   *  label style, a paragraph or heading style, the box styles round it):
+   *  set only while `contrast.allow` names a style, the pairs then kept
+   *  apart by them. */
+  styles?: string[];
+}
+
+/** Why a finding is accepted: the `contrast.allow` entry it matches. */
+export interface ContrastAccepted {
+  reason: string;
+  fg?: string;
+  bg?: string;
+  style?: string;
 }
 
 export type ContrastIssue = {
@@ -115,6 +132,9 @@ export type ContrastIssue = {
   text: string;
   /** Runs of text set so, over every size sharing the finding. */
   count: number;
+  /** The pair is one `contrast.allow` accepts (#1124): listed, not a
+   *  warning. */
+  accepted?: ContrastAccepted;
 } & (
   | {
       kind: 'lowContrast';
@@ -337,6 +357,22 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
   const minPt = pxToPt(dimensionToPx(reversedCfg.minSize, dpi));
   const minFinePt = pxToPt(dimensionToPx(reversedCfg.minFineSize, dpi));
   const pairs = new Map<string, ContrastPair>();
+  // The styles of the text being walked (#1124), kept only while an allow
+  // entry names a style.
+  const byStyle = contrast.allow?.some((e) => e.style !== undefined) ?? false;
+  let styles: string[] = [];
+  const withStyles = <T>(inner: readonly (string | undefined)[], walk: () => T): T => {
+    if (!byStyle) return walk();
+    const outer = styles;
+    styles = [...inner.filter((v): v is string => !!v), ...outer];
+    try {
+      return walk();
+    } finally {
+      styles = outer;
+    }
+  };
+  /** A box's style by its parser container id, from its frame block. */
+  const boxStyles = new Map<number, string>();
 
   const printLum = new Map<string, number>();
   const lumOnPaper = (hex: string): number => {
@@ -422,7 +458,7 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
       const italic = face?.style === 'italic';
       const hex = toHex(blend(c, parseColor(ground.hex)!));
       const sizePt = Math.round(pxToPt(sizePx) * 10) / 10;
-      const key = `${hex}|${ground.hex}|${normal(color!)}|${ground.raw}|${sizePt}|${weight}|${italic ? 'i' : 'n'}`;
+      const key = `${hex}|${ground.hex}|${normal(color!)}|${ground.raw}|${sizePt}|${weight}|${italic ? 'i' : 'n'}${byStyle ? `|${styles.join(',')}` : ''}`;
       const seen = pairs.get(key);
       if (seen) {
         seen.count++;
@@ -448,6 +484,7 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
         screen: contrastRatio(hex, ground.hex),
       };
       if (printContext) pair.print = ratioOf(lumOnPaper(hex), lumOnPaper(ground.hex));
+      if (byStyle && styles.length > 0) pair.styles = [...styles];
       // Knocked out of an inked ground: lighter than it, and the ground
       // is more than bare paper.
       const lighter = printContext ? lumOnPaper(hex) > lumOnPaper(ground.hex) : relativeLuminance(hex) > relativeLuminance(ground.hex);
@@ -490,9 +527,11 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
           if (seg.kind === 'chip' && seg.chip) {
             const chip = seg.chip;
             const chipGround = over(chip.background, ground);
-            for (const run of chip.runs) {
-              if (run.text.trim()) note(chip.color ?? segColor, run.fontString, run.text, chipGround, rectOf(line), 'chip', lineSrc);
-            }
+            withStyles([chip.styleId], () => {
+              for (const run of chip.runs) {
+                if (run.text.trim()) note(chip.color ?? segColor, run.fontString, run.text, chipGround, rectOf(line), 'chip', lineSrc);
+              }
+            });
             continue;
           }
           if (seg.kind !== 'text' || !seg.text.trim() || seg.sideMarker) continue;
@@ -547,7 +586,18 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
       }
     };
 
-    const walkBlock = (block: VDTBlock) => {
+    /** The styles a block's text is set in: its own paragraph or heading
+     *  style, a box's own, then the boxes round it, innermost first. */
+    const blockStyles = (block: VDTBlock): (string | undefined)[] => {
+      if (!byStyle) return [];
+      if (block.callout && block.containerId !== undefined) boxStyles.set(block.containerId, block.callout.styleId);
+      const around = [...(block.calloutPath ?? []), ...(block.containerId !== undefined ? [block.containerId] : [])]
+        .reverse()
+        .map((id) => boxStyles.get(id));
+      return [block.paragraphStyleId, block.headingStyleId, block.boxDesign?.styleId, block.callout?.styleId, ...around];
+    };
+    const walkBlock = (block: VDTBlock) => withStyles(blockStyles(block), () => walkOneBlock(block));
+    const walkOneBlock = (block: VDTBlock) => {
       if (block.hidden) return;
       const src = { start: block.sourceStart, end: block.sourceEnd };
       const heading = block.type === 'heading' || block.headingLevel !== undefined;
@@ -621,14 +671,14 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
           const ground = over(layout.background?.color, undefined) ?? over(layout.halo?.color, undefined);
           if (!ground) continue;
           const labelBox = label.rect ? sheet(label.rect, true) : box;
-          noteLines(layout.lines, {
+          withStyles([layout.styleId ?? label.style], () => noteLines(layout.lines, {
             font: layout.fontString,
             boldFont: layout.boldFontString,
             italicFont: layout.italicFontString,
             boldItalicFont: layout.boldItalicFontString,
             color: layout.color,
             refColor: rb.linkColor,
-          }, ground, () => labelBox, 'label', { start: label.sourceStart, end: label.sourceEnd });
+          }, ground, () => labelBox, 'label', { start: label.sourceStart, end: label.sourceEnd }));
         }
         return;
       }
@@ -671,7 +721,9 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
       if (item.kind === 'over') continue;
       if (item.facing) continue;
       frameToSheet = frameMatrix(item.frame);
-      for (const block of item.blocks) walkBlock(block);
+      withStyles([item.frame.styleId], () => {
+        for (const block of item.blocks) walkBlock(block);
+      });
       frameToSheet = undefined;
     }
     for (const block of page.marginNotes) walkBlock(block);
@@ -702,6 +754,7 @@ export function contrastDocument(doc: VDTDocument, options: ContrastOptions = {}
   const pairs = options.pairs ?? contrastPairs(doc, { ...options, contrast });
   const low = new Map<string, Extract<ContrastIssue, { kind: 'lowContrast' }>>();
   const reversed = new Map<string, Extract<ContrastIssue, { kind: 'reversedText' }>>();
+  const allow = contrast.allow ?? [];
 
   // The finding of a pair is its first occurrence, at its smallest size.
   const merge = <T extends ContrastIssue>(into: T, pair: ContrastPair): void => {
@@ -743,8 +796,11 @@ export function contrastDocument(doc: VDTDocument, options: ContrastOptions = {}
     const failing: ContrastMedium[] = [];
     if (screen && pair.screen < pair.required) failing.push('screen');
     if (print && pair.print !== undefined && pair.print < pair.required) failing.push('print');
+    const entry = allow.length > 0 && (failing.length > 0 || pair.reversed) ? allowEntryFor(pair, allow) : undefined;
+    const accepted = entry ? acceptedBy(entry) : undefined;
+    const mark = accepted ? '|accepted' : '';
     if (failing.length > 0) {
-      const key = `${pair.color}|${pair.background}|${pair.required}`;
+      const key = `${pair.color}|${pair.background}|${pair.required}${mark}`;
       const seen = low.get(key);
       if (seen) {
         merge(seen, pair);
@@ -758,24 +814,49 @@ export function contrastDocument(doc: VDTDocument, options: ContrastOptions = {}
           ...(screen ? { screen: round(pair.screen) } : {}),
           ...(print && pair.print !== undefined ? { print: round(pair.print) } : {}),
           failing,
+          ...(accepted ? { accepted } : {}),
         });
       }
     }
     if (print && contrast.reversedText.enabled && pair.reversed) {
-      const key = `${pair.color}|${pair.background}`;
+      const key = `${pair.color}|${pair.background}${mark}`;
       const seen = reversed.get(key);
       if (seen) {
         for (const reason of pair.reversed.reasons) if (!seen.reasons.includes(reason)) seen.reasons.push(reason);
         seen.minimumPt = Math.max(seen.minimumPt, pair.reversed.minimumPt);
         merge(seen, pair);
       } else {
-        reversed.set(key, { ...base(pair), kind: 'reversedText', reasons: [...pair.reversed.reasons], minimumPt: pair.reversed.minimumPt, inks: pair.reversed.inks });
+        reversed.set(key, { ...base(pair), kind: 'reversedText', reasons: [...pair.reversed.reasons], minimumPt: pair.reversed.minimumPt, inks: pair.reversed.inks, ...(accepted ? { accepted } : {}) });
       }
     }
   }
   const worst = (issue: Extract<ContrastIssue, { kind: 'lowContrast' }>) => Math.min(issue.screen ?? Infinity, issue.print ?? Infinity);
-  return [
+  const sorted = [
     ...[...low.values()].sort((a, b) => worst(a) - worst(b) || a.pageIndex - b.pageIndex),
     ...[...reversed.values()].sort((a, b) => a.sizePt - b.sizePt || a.pageIndex - b.pageIndex),
   ];
+  // The accepted findings after the others, in the same order.
+  return allow.length > 0 ? [...sorted.filter((i) => !i.accepted), ...sorted.filter((i) => i.accepted)] : sorted;
+}
+
+const sameHex = (a: string | undefined, b: string): boolean => a !== undefined && a.toLowerCase() === b.toLowerCase();
+
+/** The first `contrast.allow` entry (resolved: colours `#rrggbb` in lower
+ *  case) that accepts `pair`: its colours are the text's and the ground's
+ *  as written or as painted, its style one the text is set in. */
+export function allowEntryFor(pair: ContrastPair, allow: readonly ContrastAllowEntry[]): ContrastAllowEntry | undefined {
+  return allow.find((e) =>
+    (e.fg !== undefined || e.bg !== undefined || e.style !== undefined)
+    && (e.fg === undefined || sameHex(e.fg, pair.textColor) || sameHex(e.fg, pair.color))
+    && (e.bg === undefined || sameHex(e.bg, pair.groundColor) || sameHex(e.bg, pair.background))
+    && (e.style === undefined || (pair.styles?.includes(e.style) ?? false)));
+}
+
+function acceptedBy(entry: ContrastAllowEntry): ContrastAccepted {
+  return {
+    reason: entry.reason,
+    ...(entry.fg !== undefined ? { fg: entry.fg } : {}),
+    ...(entry.bg !== undefined ? { bg: entry.bg } : {}),
+    ...(entry.style !== undefined ? { style: entry.style } : {}),
+  };
 }

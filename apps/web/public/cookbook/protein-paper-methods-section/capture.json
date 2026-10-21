@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "protein-paper-methods-section",
-  "sourceHash": "d310cc030cbd15fb9d0f0e42244b31b27ce7964440f42f5181f8bbb995b3b840",
+  "sourceHash": "ed5ba3a7258a199b06cf9e246e16fcfab46653cfebc940bab2aaccfa623226af",
   "engine": {
     "postext": "1.34.0",
     "postextPdf": "1.34.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.982Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-21T18:29:20.455Z",
   "variants": {
     "en": {
-      "hash8": "e11ebbe7",
+      "hash8": "45e41151",
       "vdtHash": "c6a91251811d0b7f32b17d49934df966dc76f9d4",
       "timings": {
-        "importMs": 1039,
-        "fontsMs": 270,
-        "buildMs": 377,
-        "totalMs": 2980,
+        "importMs": 210,
+        "fontsMs": 88,
+        "buildMs": 316,
+        "totalMs": 1308,
         "builds": 1
       },
       "specimen": {
@@ -32,7 +32,7 @@
         "body": {
           "family": "Noto Serif",
           "sizePt": 9.3,
-          "leadingPt": 12.600000000000001
+          "leadingPt": 12.6
         },
         "families": [
           "Noto Sans",
@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "protein-paper-methods-section.postext",
-        "bytes": 77640,
+        "bytes": 77631,
         "folio": "9eaee533",
         "chapters": [
           {
@@ -346,7 +346,7 @@
           "resourceTypes",
           "tableStyle"
         ],
-        "configLeaves": 324,
+        "configLeaves": 323,
         "designElements": 11,
         "directives": [
           ":::callout",
@@ -439,7 +439,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 5 pages)"
+            "detail": "the edition's images weigh 1.33 MB (warning at 0.9 MB for 5 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C35",
@@ -449,7 +449,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

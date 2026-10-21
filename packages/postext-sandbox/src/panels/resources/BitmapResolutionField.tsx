@@ -14,12 +14,12 @@ import {
   type BitmapInfo,
   type Resource,
 } from 'postext';
-import { useSandboxDispatch, useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { NumberInput } from '../../controls';
-import { Button } from '../../ui';
-import { getBlob } from '../../storage/blobStore';
-import { fill } from '../../print/fillTokens';
-import { bitmapAtFileResolution, bitmapWithResolution } from './resourceEdits';
+import { useSandboxDispatch, useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { NumberInput } from '../../controls/index.js';
+import { Button } from '../../ui/index.js';
+import { getBlob } from '../../storage/blobStore.js';
+import { fill } from '../../print/fillTokens.js';
+import { bitmapAtFileResolution, bitmapWithResolution } from './resourceEdits.js';
 
 type Bitmap = NonNullable<Resource['bitmap']>;
 

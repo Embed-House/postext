@@ -22,7 +22,7 @@ import type {
   PageTemplatePatch,
   ResolvedPageTemplate,
 } from 'postext';
-import { mmDim, pxToMm, type Rect } from './frameGeometry';
+import { mmDim, pxToMm, type Rect } from './frameGeometry.js';
 
 export type TemplateScope = 'base' | 'recto' | 'verso';
 

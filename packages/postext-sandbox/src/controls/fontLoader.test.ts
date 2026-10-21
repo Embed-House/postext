@@ -11,7 +11,7 @@ import {
   hasLatinEmphasis,
   isRemovedCustomFontFamily,
   missingUsedVariants,
-} from './fontLoader';
+} from './fontLoader.js';
 
 const family = (name: string, variants: Array<[number, 'normal' | 'italic', string]>): CustomFontFamily => ({
   name,

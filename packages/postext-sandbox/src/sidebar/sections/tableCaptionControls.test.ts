@@ -6,10 +6,10 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { resolveBodyTextConfig, resolveCaptionStyleConfig, resolveTableStyleConfig, type TableStyleConfig } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { TableStyleFields } from './TableStyleSection';
-import { CaptionStyleFields } from './CaptionStyleFields';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { TableStyleFields } from './TableStyleSection.js';
+import { CaptionStyleFields } from './CaptionStyleFields.js';
 
 function wrap(node: ReturnType<typeof h>): string {
   const state = { config: {}, resources: [], labels: DEFAULT_LABELS, locale: 'en' };

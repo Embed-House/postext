@@ -4,10 +4,10 @@
 // project's images would silently change when the bundle is edited on disk.
 
 import type { CustomFontFormat, PostextConfig, Resource } from 'postext';
-import { slugify } from '../panels/resources/slugify';
-import { getBlob, putBlobAt } from './blobStore';
-import { getFontFile, putFontFile } from './fontStorage';
-import type { ProjectContent } from './projects';
+import { slugify } from '../panels/resources/slugify.js';
+import { getBlob, putBlobAt } from './blobStore.js';
+import { getFontFile, putFontFile } from './fontStorage.js';
+import type { ProjectContent } from './projects.js';
 
 export function projectFileId(projectId: string, file: string): string {
   return `project:${projectId}:${slugify(file)}`;

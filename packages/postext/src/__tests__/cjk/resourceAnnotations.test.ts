@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { sesamePath } from '../../canvas-backend/annotations';
-import type { PostextConfig, Resource } from '../../types';
-import type { ResolvedResourceBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub, stubCharWidth } from '../vertical/stub';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { sesamePath } from '../../canvas-backend/annotations.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import type { ResolvedResourceBlock, VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub, stubCharWidth } from '../vertical/stub.js';
 
 // Ruby, emphasis marks, side lines and warichu notes in table cells,
 // captions and notes (#429): measured, marked and painted as in the body.

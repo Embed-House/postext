@@ -5,12 +5,12 @@
  * per content-block index instead of being pushed/popped inside the loop.
  */
 
-import type { ContentBlock, DirectiveAttrs } from '../parse';
-import type { ParagraphContainerSpacing, TextAlign } from '../types';
-import { dimensionToPx } from '../units';
-import type { ResolvedConfig } from '../vdt';
-import { resolveBodyStyle, resolveParagraphStyle, type BlockStyle } from './styles';
-import { lengthAttr } from './verse';
+import type { ContentBlock, DirectiveAttrs } from '../parse/index.js';
+import type { ParagraphContainerSpacing, TextAlign } from '../types.js';
+import { dimensionToPx } from '../units.js';
+import type { ResolvedConfig } from '../vdt.js';
+import { resolveBodyStyle, resolveParagraphStyle, type BlockStyle } from './styles.js';
+import { lengthAttr } from './verse.js';
 
 export interface ParagraphContainer {
   /** `containerId` of the start/end marker pair. */
@@ -45,6 +45,13 @@ export interface ParagraphContainer {
    *  {@link containerStyle} reads; `style` holds them over the document's
    *  body text. */
   overBody?: LayoutAttrs;
+  /** The fence's own layout attributes over the style (#1119), kept so a
+   *  box can set the container again in its own body
+   *  ({@link restyleContainerFor}). */
+  layout?: LayoutAttrs;
+  /** The container names no style and takes its enclosing container's
+   *  (`styleId` is that one's), with no margins of its own. */
+  attrsOnly?: true;
 }
 
 /** The style a paragraph of `container` is set in: the container's tail
@@ -96,7 +103,7 @@ export function planParagraphContainers(
           marginBottomPx: 0,
           snapToGrid: outer?.snapToGrid ?? true,
           ...(outer?.spacing !== undefined ? { spacing: outer.spacing } : {}),
-          ...(outer ? {} : { overBody: layout }),
+          ...(outer ? { layout, attrsOnly: true as const } : { overBody: layout }),
         };
         byId.set(b.containerId, entry);
         open.push(entry);
@@ -105,28 +112,12 @@ export function planParagraphContainers(
       if (b.containerName === 'paragraphs' && styleId !== undefined && b.containerId !== undefined) {
         let base = cache.get(styleId);
         if (!base) {
-          const cfg = resolved.paragraphStyles.find((s) => s.id === styleId);
-          if (cfg) {
-            const style = resolveParagraphStyle(cfg, resolved);
-            const marginBottomPx = dimensionToPx(cfg.marginBottom, dpi, style.fontSizePx);
-            // A negative margin pulls the flow after the container up past
-            // the entries' own spacing instead of collapsing with it.
-            const tailMarginPx = marginBottomPx < 0 ? marginBottomPx : Math.max(style.marginBottomPx, marginBottomPx);
-            base = {
-              styleId,
-              style,
-              tailStyle: { ...style, marginBottomPx: tailMarginPx },
-              marginTopPx: dimensionToPx(cfg.marginTop, dpi, style.fontSizePx),
-              marginBottomPx,
-              snapToGrid: cfg.snapToGrid,
-              ...(cfg.containerSpacing !== undefined ? { spacing: cfg.containerSpacing } : {}),
-            };
-            cache.set(styleId, base);
-          }
+          base = styledBase(styleId, resolved);
+          if (base) cache.set(styleId, base);
         }
         if (base) {
           entry = layout
-            ? { id: b.containerId, ...base, style: withLayoutAttrs(base.style, layout, dpi), tailStyle: withLayoutAttrs(base.tailStyle, layout, dpi) }
+            ? { id: b.containerId, ...base, style: withLayoutAttrs(base.style, layout, dpi), tailStyle: withLayoutAttrs(base.tailStyle, layout, dpi), layout }
             : { id: b.containerId, ...base };
           byId.set(b.containerId, entry);
         }
@@ -143,6 +134,67 @@ export function planParagraphContainers(
     }
   }
   return { byId, byBlock };
+}
+
+/** A container of style `styleId` as `resolved` sets it, before the
+ *  fence's own attributes; undefined for an unknown style. */
+function styledBase(styleId: string, resolved: ResolvedConfig): Omit<ParagraphContainer, 'id'> | undefined {
+  const cfg = resolved.paragraphStyles.find((s) => s.id === styleId);
+  if (!cfg) return undefined;
+  const dpi = resolved.page.dpi;
+  const style = resolveParagraphStyle(cfg, resolved);
+  const marginBottomPx = dimensionToPx(cfg.marginBottom, dpi, style.fontSizePx);
+  // A negative margin pulls the flow after the container up past
+  // the entries' own spacing instead of collapsing with it.
+  const tailMarginPx = marginBottomPx < 0 ? marginBottomPx : Math.max(style.marginBottomPx, marginBottomPx);
+  return {
+    styleId,
+    style,
+    tailStyle: { ...style, marginBottomPx: tailMarginPx },
+    marginTopPx: dimensionToPx(cfg.marginTop, dpi, style.fontSizePx),
+    marginBottomPx,
+    snapToGrid: cfg.snapToGrid,
+    ...(cfg.containerSpacing !== undefined ? { spacing: cfg.containerSpacing } : {}),
+  };
+}
+
+/**
+ * The containers of the document's plan as a box sets them (#1119): a box
+ * whose resolved configuration gives a paragraph style its own body
+ * (`deriveCalloutResolvedConfig`) sets the style's containers again
+ * against it, with the fence's attributes over them; every other
+ * container is the plan's own. The identity when `resolved` sets no style
+ * apart from `documentStyles` (the document's resolved styles).
+ */
+export function restyleContainerFor(
+  resolved: ResolvedConfig,
+  documentStyles: ResolvedConfig['paragraphStyles'],
+): (container: ParagraphContainer | undefined) => ParagraphContainer | undefined {
+  if (resolved.paragraphStyles === documentStyles) return (c) => c;
+  const dpi = resolved.page.dpi;
+  const bases = new Map<string, Omit<ParagraphContainer, 'id'> | undefined>();
+  const done = new Map<number, ParagraphContainer>();
+  return (c) => {
+    if (!c || c.styleId === undefined) return c;
+    const own = resolved.paragraphStyles.find((s) => s.id === c.styleId);
+    const doc = documentStyles.find((s) => s.id === c.styleId);
+    if (!own || own === doc) return c;
+    const hit = done.get(c.id);
+    if (hit) return hit;
+    if (!bases.has(c.styleId)) bases.set(c.styleId, styledBase(c.styleId, resolved));
+    const base = bases.get(c.styleId);
+    if (!base) return c;
+    const layout = c.layout;
+    const style = layout ? withLayoutAttrs(base.style, layout, dpi) : base.style;
+    const tailStyle = layout ? withLayoutAttrs(base.tailStyle, layout, dpi) : base.tailStyle;
+    // A container of attributes only keeps its own margins (none) and the
+    // style it takes from the one around it.
+    const out: ParagraphContainer = c.attrsOnly
+      ? { ...c, style, tailStyle }
+      : { ...c, ...base, style, tailStyle };
+    done.set(c.id, out);
+    return out;
+  };
 }
 
 /** What a `:::paragraphs` fence sets beside its style (#424): `align`

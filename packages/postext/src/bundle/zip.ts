@@ -3,7 +3,7 @@
 // resource forks); writing produces the flat layout.
 
 import { unzipSync, zipSync } from 'fflate';
-import type { BundleFileReader } from './types';
+import type { BundleFileReader } from './types.js';
 
 export const POSTEXT_EXTENSION = '.postext';
 export const POSTEXT_MIME = 'application/zip';

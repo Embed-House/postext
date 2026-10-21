@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
 import { resolveBodyTextConfig, DEFAULT_BODY_TEXT_CONFIG, avoidOrphansByDefault, avoidWidowsByDefault, dimensionsEqual, colorsEqual, isCjkLanguage } from 'postext';
 import type { BodyTextConfig, ColonListRoom, CompositionRule, EmphasisStyle, HyphenationConfig, TashkilMode } from 'postext';
 import { ChevronRight } from 'lucide-react';
@@ -16,20 +16,21 @@ import {
   ToggleSwitch,
   FieldRow,
   useFieldIds,
-} from '../../../controls';
-import { documentLocaleLabel, TEXT_SIZE_UNITS, LINE_HEIGHT_UNITS, INDENT_UNITS } from './constants';
-import { defaultDocumentLocale, withHyphenationLocale } from '../../../controls/hyphenation';
-import { useOpenSettingsGroup } from '../../../context/settingsNavigation';
-import { JustificationSubsection, KashidaFields, RaggedBreakingSubsection } from './JustificationSubsection';
-import { BlockquoteSubsection } from './BlockquoteSubsection';
-import { VerseSubsection } from './VerseSubsection';
-import { RaggedHyphenationSubsection } from './HyphenationFields';
-import { TypeSample } from '../../settings/TypeSample';
-import { AlignPicture } from '../../settings/pictures';
-import { OrphansSubsection, WidowsSubsection, RuntsSubsection } from './OrphansWidowsRuntsSubsections';
-import { isArabicScriptLanguage } from '../../../context/arabicDefaults';
-import { flowSideLabels, useRightToLeftFlow } from '../../settings/flowSides';
-import { TabStopsField } from '../../settings/TabStopsField';
+} from '../../../controls/index.js';
+import { documentLocaleLabel, TEXT_SIZE_UNITS, LINE_HEIGHT_UNITS, INDENT_UNITS } from './constants.js';
+import { defaultDocumentLocale, withHyphenationLocale } from '../../../controls/hyphenation.js';
+import { useOpenSettingsGroup } from '../../../context/settingsNavigation.js';
+import { JustificationSubsection, KashidaFields, RaggedBreakingSubsection } from './JustificationSubsection.js';
+import { BlockquoteSubsection } from './BlockquoteSubsection.js';
+import { VerseSubsection } from './VerseSubsection.js';
+import { RaggedHyphenationSubsection } from './HyphenationFields.js';
+import { TypeSample } from '../../settings/TypeSample.js';
+import { AlignPicture } from '../../settings/pictures.js';
+import { OrphansSubsection, WidowsSubsection, RuntsSubsection } from './OrphansWidowsRuntsSubsections.js';
+import { isArabicScriptLanguage } from '../../../context/arabicDefaults.js';
+import { flowSideLabels, useRightToLeftFlow } from '../../settings/flowSides.js';
+import { TabStopsField } from '../../settings/TabStopsField.js';
+import { ParagraphSpacingField } from '../../settings/ParagraphSpacingField.js';
 
 const D = DEFAULT_BODY_TEXT_CONFIG;
 
@@ -403,11 +404,10 @@ export const BodyTextSection = memo(function BodyTextSection() {
           isDefault={isHangingIndentDefault}
           onReset={() => resetField('hangingIndent')}
         />
-        <ToggleSwitch
-          label={labels.bodyParagraphSpacing}
-          checked={bodyText.paragraphSpacing}
-          onChange={(checked) => updateBodyText({ paragraphSpacing: checked })}
-          tooltip={labels.bodyParagraphSpacingTooltip}
+        <ParagraphSpacingField
+          value={bodyText.paragraphSpacing}
+          line={bodyText.lineHeight}
+          onChange={(paragraphSpacing) => updateBodyText({ paragraphSpacing })}
           isDefault={isParagraphSpacingDefault}
           onReset={() => resetField('paragraphSpacing')}
         />

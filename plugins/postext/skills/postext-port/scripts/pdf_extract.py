@@ -4,14 +4,15 @@
 A designed page sets every role (body, headings, captions, box text, notes,
 running heads…) in its own font/size/colour. Step 1 tabulates those
 combinations; you name them; step 2 rebuilds the reading order, paragraphs,
-lists, headings, inline bold/italic/super/subscripts and de-hyphenates, then
+lists, headings, inline bold/italic/super/subscripts (a roman the source slants
+by shearing is italic) and de-hyphenates, then
 writes Postext Markdown.
 
   1. pdf_extract.py roles book.pdf [--pages 5-40] > roles.json
      Prints a table of font/size/colour styles (most used first) with samples
      and writes a roles.json skeleton to stdout: edit each "role".
   2. pdf_extract.py markdown book.pdf --roles roles.json --out draft/ [--pages 5-40]
-        [--lang es] [--columns 2] [--split-role h1] [--link-refs]
+        [--lang es] [--columns 2] [--split-role h1] [--no-link-refs] [--refs-from resources.json]
 
 Roles (value of "role" in roles.json):
   body                    running text
@@ -55,6 +56,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from postext_md import (  # noqa: E402
     CAPTION_LABEL_RE,
+    MENTION_RE,
     Run,
     Slugger,
     attr_value,
@@ -64,6 +66,7 @@ from postext_md import (  # noqa: E402
     fence,
     guard_line_start,
     heading,
+    heading_number,
     join_blocks,
     link_mentions,
     render_runs,
@@ -142,9 +145,88 @@ class Line:
         return "".join(s.text for s in self.spans)
 
 
+#: shear (horizontal run per unit of height) from which an upright face is
+#: read as italic: a source that slants a roman instead of setting its italic
+SYNTHETIC_ITALIC_SHEAR = 0.15
+
+
+def char_shears(chars: list[dict]) -> list[float | None]:
+    """The slant of each character from MuPDF's character boxes (`rawdict`
+    chars: `c`, `origin`, `bbox`). A box is the advance by the face's
+    ascender and descender carried through the text matrix, so a sheared
+    matrix (an upright face obliqued by the source) widens it by the shear
+    times its height. Positive leans right; None for a space or a character
+    whose advance is unknown (the last of a span). MuPDF joins a sheared run
+    to the span of the same face around it, so the slant is read per
+    character, not per span."""
+    out: list[float | None] = []
+    for i, a in enumerate(chars):
+        b = chars[i + 1] if i + 1 < len(chars) else None
+        if b is None or not a["c"].strip():
+            out.append(None)
+            continue
+        adv = b["origin"][0] - a["origin"][0]
+        x0, y0, x1, y1 = a["bbox"]
+        h = y1 - y0
+        if adv <= 0 or h <= 0:
+            out.append(None)
+            continue
+        right = x1 - (a["origin"][0] + adv)
+        left = a["origin"][0] - x0
+        sign = 1.0 if right >= left else -1.0
+        out.append(sign * max(0.0, (x1 - x0) - adv) / h)
+    return out
+
+
+def span_shear(chars: list[dict]) -> float:
+    """The median slant of a run of characters (`char_shears`), 0 when none
+    can be measured."""
+    vals = [v for v in char_shears(chars) if v is not None]
+    return statistics.median(vals) if vals else 0.0
+
+
+def slant_mask(chars: list[dict], italic: bool) -> list[bool]:
+    """Which characters of a span are set in an upright face slanted by at
+    least `SYNTHETIC_ITALIC_SHEAR`: the source's italic, made by shearing.
+    A character that cannot be measured takes the state of the one before
+    it; a space is slanted only between two slanted characters. All False
+    for a face that is italic already."""
+    n = len(chars)
+    if italic or n == 0:
+        return [False] * n
+    shears = char_shears(chars)
+    mask: list[bool] = []
+    prev = False
+    for c, v in zip(chars, shears):
+        if not c["c"].strip():
+            mask.append(False)
+            continue
+        if v is not None:
+            prev = abs(v) >= SYNTHETIC_ITALIC_SHEAR
+        mask.append(prev)
+    for i, c in enumerate(chars):
+        if not c["c"].strip():
+            before = next((mask[j] for j in range(i - 1, -1, -1) if chars[j]["c"].strip()), False)
+            after = next((mask[j] for j in range(i + 1, n) if chars[j]["c"].strip()), False)
+            mask[i] = before and after
+    return mask
+
+
+def slant_runs(chars: list[dict], italic: bool) -> list[tuple[int, int, bool]]:
+    """The span cut where the slant starts and stops: (start, end, slanted)."""
+    mask = slant_mask(chars, italic)
+    runs: list[tuple[int, int, bool]] = []
+    for i, m in enumerate(mask):
+        if runs and runs[-1][2] == m:
+            runs[-1] = (runs[-1][0], i + 1, m)
+        else:
+            runs.append((i, i + 1, m))
+    return runs
+
+
 def read_lines(doc, pages: list[int]) -> tuple[list[Line], dict]:
     lines: list[Line] = []
-    info = {"images": Counter(), "drawings": Counter(), "size": {}}
+    info = {"images": Counter(), "drawings": Counter(), "size": {}, "slanted": Counter()}
     for pno in pages:
         page = doc[pno]
         info["size"][pno] = (page.rect.width, page.rect.height)
@@ -153,7 +235,8 @@ def read_lines(doc, pages: list[int]) -> tuple[list[Line], dict]:
         except Exception:
             pass
         info["images"][pno] = len(page.get_images(full=True))
-        d = page.get_text("dict", flags=fitz.TEXT_PRESERVE_WHITESPACE)
+        # rawdict: the same spans as "dict", with the character boxes the slant is read from
+        d = page.get_text("rawdict", flags=fitz.TEXT_PRESERVE_WHITESPACE)
         for block in d["blocks"]:
             if block.get("type") != 0:
                 continue
@@ -162,22 +245,28 @@ def read_lines(doc, pages: list[int]) -> tuple[list[Line], dict]:
                     continue  # rotated text (spines, vertical labels)
                 spans = []
                 for s in ln["spans"]:
-                    if not s["text"]:
+                    if not s["chars"]:
                         continue
                     fname = font_name(s["font"])
-                    spans.append(
-                        Span(
-                            text=s["text"],
-                            font=fname,
-                            size=round(s["size"], 2),
-                            color=hexcolor(s["color"]),
-                            bold=bool(s["flags"] & 16) or bool(BOLD_RE.search(fname)),
-                            italic=bool(s["flags"] & 2) or bool(ITALIC_RE.search(fname)),
-                            origin_y=s["origin"][1],
-                            x0=s["bbox"][0],
-                            x1=s["bbox"][2],
+                    italic = bool(s["flags"] & 2) or bool(ITALIC_RE.search(fname))
+                    for a, b, slant in slant_runs(s["chars"], italic):
+                        part = s["chars"][a:b]
+                        text = "".join(c["c"] for c in part)
+                        if slant:
+                            info["slanted"][fname] += 1
+                        spans.append(
+                            Span(
+                                text=text,
+                                font=fname,
+                                size=round(s["size"], 2),
+                                color=hexcolor(s["color"]),
+                                bold=bool(s["flags"] & 16) or bool(BOLD_RE.search(fname)),
+                                italic=italic or slant,
+                                origin_y=s["origin"][1],
+                                x0=part[0]["bbox"][0],
+                                x1=part[-1]["bbox"][2],
+                            )
                         )
-                    )
                 if not spans or not "".join(s.text for s in spans).strip():
                     continue
                 main = max(spans, key=lambda s: len(s.text.strip()))
@@ -258,6 +347,8 @@ def cmd_roles(args) -> None:
     heavy = [p + 1 for p, n in info["drawings"].items() if n > 150]
     if heavy:
         print(f"# pages with many vector drawings (infographics/diagrams?): {heavy[:40]}", file=sys.stderr)
+    for fname, n in info["slanted"].most_common():
+        print(f"# {n} spans of {fname} slanted by the source: read as italic (rule key italic: true)", file=sys.stderr)
     out = {
         "pdf": str(Path(args.pdf).resolve()),
         "columns": "auto",
@@ -565,6 +656,60 @@ def para_text(p: Para, vocab: Vocabulary, base: dict[str, tuple[bool, bool]], pl
     return render_runs(runs)
 
 
+def load_refs(path: str | None) -> list[tuple[tuple[str, str], str]]:
+    """((kind, number), id) for every resource of a resources.json whose
+    caption, label or source label starts with one (`Figura 3. …`), for
+    `--refs-from`: mentions link to resources another script cut."""
+    if not path:
+        return []
+    out = []
+    for r in json.loads(Path(path).read_text(encoding="utf-8")):
+        if not isinstance(r, dict) or not r.get("id"):
+            continue
+        for t in (r.get("label"), (r.get("source") or {}).get("label"), r.get("caption")):
+            m = CAPTION_LABEL_RE.match(t or "")
+            if m:
+                out.append(((caption_kind(m.group("label")), m.group("num").replace("–", "-")), r["id"]))
+                break
+    return out
+
+
+def mention_colours(lines: list[Line]) -> tuple[str, int] | None:
+    """The colour mentions (`Figura 3`, `capítulo 2`) are set in when it is
+    not their line's: the source colours its references, which Postext
+    does with `bodyText.referenceColor`. (colour, count) or None."""
+    found: Counter = Counter()
+    for ln in lines:
+        for sp in ln.spans:
+            if sp.color != ln.color and MENTION_RE.search(sp.text):
+                found[sp.color] += len(MENTION_RE.findall(sp.text))
+    if not found:
+        return None
+    col, n = found.most_common(1)[0]
+    return (col, n) if n >= 2 else None
+
+
+def strip_caption_label(text: str, label: str) -> str:
+    """The caption's Markdown without its label (`Fig. 1.`). A label wrapped
+    in marks (`**Figura 1.** El corazón`) goes with them; one that opens a
+    longer marked run (`**Figura 1. El corazón**`) leaves the run's marks on
+    the rest; a mark that opens the words after the label (`Fig. 1.
+    *tako-tsubo* es`) stays: a closing marker is stripped only when it
+    matches an opening one."""
+    lab = re.escape(label).replace("\\ ", "\\s*")
+    m = re.match(rf"^(\*{{1,3}})?\s*{lab}\s*", text)
+    if not m:
+        return text
+    opening = m.group(1) or ""
+    rest = text[m.end():]
+    if opening:
+        if rest.startswith(opening):
+            rest = rest[len(opening):].lstrip()
+        else:
+            rest = opening + rest
+    return rest
+
+
 def repair_ligature_gaps(text: str, vocab: Vocabulary) -> str:
     """'Clasifi cación' -> 'Clasificación' when the joined word is known."""
 
@@ -582,6 +727,97 @@ def repair_ligature_gaps(text: str, vocab: Vocabulary) -> str:
 # ---------------------------------------------------------------------------
 
 
+# --- ruled tables (#1145) ------------------------------------------------------
+
+def find_tables(doc, pages: list[int], lines: list[Line]) -> list[dict]:
+    """The ruled tables of the pages (extract_tables.page_tables); each line
+    inside one gets the role `table:<k>`, so no paragraph takes it."""
+    import extract_tables as et  # noqa: PLC0415
+
+    tables: list[dict] = []
+    for pno in pages:
+        try:
+            found = et.page_tables(doc[pno])
+        except Exception:  # noqa: BLE001 - a page find_tables cannot read keeps its lines as text
+            continue
+        for e in found:
+            k = len(tables)
+            tables.append({**e, "page": pno})
+            x0, y0, x1, y1 = e["bbox"]
+            for ln in lines:
+                cx, cy = (ln.x0 + ln.x1) / 2, (ln.y0 + ln.y1) / 2
+                if ln.page == pno and ln.role != "skip" and x0 - 1 <= cx <= x1 + 1 and y0 - 1 <= cy <= y1 + 1:
+                    ln.role = f"table:{k}"
+    return tables
+
+
+def pair_tables(tables: list[dict], paras: list) -> dict[int, int]:
+    """A table with no title row of its own takes the nearest table caption
+    of its page (a `caption` paragraph labelled Table, Tabla…): {table:
+    paragraph index}."""
+    used: set[int] = set()
+    out: dict[int, int] = {}
+    for k, t in enumerate(tables):
+        if t.get("caption") is not None:
+            continue
+        best = None
+        for n, p in enumerate(paras):
+            if p.role != "caption" or n in used or p.page != t["page"]:
+                continue
+            m = CAPTION_LABEL_RE.match(clean_text("".join(ln.text for ln in p.lines[:1])))
+            if not m or caption_kind(m.group("label")) != "table":
+                continue
+            d = min(abs(p.lines[-1].y1 - t["bbox"][1]), abs(p.lines[0].y0 - t["bbox"][3]))
+            if best is None or d < best[0]:
+                best = (d, n)
+        if best is not None:
+            used.add(best[1])
+            out[k] = best[1]
+            t["captionBox"] = [round(min(ln.x0 for ln in paras[best[1]].lines), 1),
+                               round(min(ln.y0 for ln in paras[best[1]].lines), 1)]
+    return out
+
+
+def table_resource(t: dict, slug, resources: list[dict], label_to_id: dict) -> str:
+    """A table resource for a table whose caption is its own title row (or
+    that has none), with its model; returns its id."""
+    caption = t.get("caption") or ""
+    rid = slug(caption or f"p{t['page'] + 1}", "table")
+    label = t.get("label") or ""
+    m = CAPTION_LABEL_RE.match(label) if label else None
+    if m:
+        label_to_id[("table", m.group("num").replace("–", "-"))] = rid
+    resources.append({
+        "id": rid, "typeId": "table", "kind": "table", "caption": caption,
+        "altText": attr_value(caption), "placement": {"position": "auto", "span": "column"},
+        "table": {"model": t["model"]},
+        "source": {"page": t["page"] + 1, "tableBox": [round(v, 1) for v in t["bbox"]], "label": label,
+                   "tableStyle": t["style"], **({"notes": t["notes"]} if t["notes"] else {})},
+    })
+    return rid
+
+
+def attach_tables(tables: list[dict], table_to_caption: dict[int, int], resources: list[dict], report: Counter) -> None:
+    """Give each caption stub its table's model (paired by `pair_tables`)."""
+    for k, t in enumerate(tables):
+        if k not in table_to_caption:
+            report["tables read into resources from their own title row or with no caption"] += 1
+            continue
+        x0, y0 = t["captionBox"]
+        stub = next((r for r in resources if r.get("kind") == "table" and "table" not in r
+                     and (r.get("source") or {}).get("page") == t["page"] + 1
+                     and (r.get("source") or {}).get("captionBox", [None, None])[:2] == [x0, y0]), None)
+        if stub is None:
+            report["tables whose caption stub was not found (left out: read them with extract_tables.py)"] += 1
+            continue
+        stub["table"] = {"model": t["model"]}
+        stub["source"]["tableBox"] = [round(v, 1) for v in t["bbox"]]
+        stub["source"]["tableStyle"] = t["style"]
+        if t["notes"]:
+            stub["source"]["notes"] = t["notes"]
+        report["tables attached to their caption stub"] += 1
+
+
 def cmd_markdown(args) -> None:
     cfg = load_rules(args.roles)
     doc = fitz.open(args.pdf)
@@ -589,6 +825,8 @@ def cmd_markdown(args) -> None:
     lines, info = read_lines(doc, pages)
     lines = merge_split_lines(lines)
     report: Counter = Counter()
+    for fname, n in info["slanted"].items():
+        report[f"spans in a slanted upright face read as italic ({fname})"] += n
     unmatched: Counter = Counter()
     for ln in lines:
         h = info["size"][ln.page][1]
@@ -603,6 +841,7 @@ def cmd_markdown(args) -> None:
             if lines[i].role in ("body",) or lines[i].role.startswith("h"):
                 lines[i].role = "skip"
                 report["furniture lines dropped (running heads/folios)"] += 1
+    tables = find_tables(doc, pages, lines) if args.tables else []
     credits = [(ln.page + 1, clean_text(ln.text).strip()) for ln in lines if ln.role == "credit"]
     kept = [ln for ln in lines if ln.role not in ("skip", "credit")]
 
@@ -619,11 +858,15 @@ def cmd_markdown(args) -> None:
     base: dict[str, tuple[bool, bool]] = {}
     per_role: dict[str, Counter] = defaultdict(Counter)
     for ln in kept:
-        per_role[ln.role][(ln.bold, ln.italic)] += len(ln.text)
+        # by characters across the spans: a line's longest span is not its style
+        for sp in ln.spans:
+            per_role[ln.role][(sp.bold, sp.italic)] += len(sp.text.strip())
     for role, cnt in per_role.items():
         base[role] = cnt.most_common(1)[0][0]
 
     paras = build_paragraphs(ordered, starts)
+    table_to_caption = pair_tables(tables, paras)
+    emitted: set[int] = set()
     out = Path(args.out)
     chap_dir = out / "chapters" / args.lang
     chap_dir.mkdir(parents=True, exist_ok=True)
@@ -636,6 +879,9 @@ def cmd_markdown(args) -> None:
         chapters.append((title, [], []))
 
     split_role = args.split_role
+    chapter_n = 0
+    for r in load_refs(getattr(args, "refs_from", None)):
+        label_to_id.setdefault(r[0], r[1])
     i = 0
     callout: tuple[str, str | None, list[str]] | None = None
 
@@ -675,9 +921,28 @@ def cmd_markdown(args) -> None:
             level = int(role[1:])
             if not chapters[-1][0] and role == split_role:
                 chapters[-1] = (text, blocks, chapters[-1][2])
-            blocks.append(heading(level, text))
+            # every heading gets an id; a numbered one (`3.2 Los ríos`, `Capítulo 4`) is what
+            # `sección 3.2` / `capítulo 4` mentions link to, a chapter without one its place
+            hid = slug(text, "sec")
+            num = heading_number(clean_text(p.lines[0].text))   # the list-marker strip may take "2. " off
+            if role == split_role:
+                chapter_n += 1
+            if num:
+                label_to_id[("section", num)] = hid
+            elif role == split_role:
+                label_to_id.setdefault(("section", str(chapter_n)), hid)
+            blocks.append(heading(level, text, id=hid))
             continue
         i += 1
+        if role.startswith("table:"):
+            # a ruled table (#1145): its lines are the model, set where the table stood
+            k = int(role.split(":", 1)[1])
+            if k not in emitted and k not in table_to_caption:
+                close_callout()
+                flush_list(blocks)
+                blocks.append(resource_embed(table_resource(tables[k], slug, resources, label_to_id)))
+            emitted.add(k)
+            continue
         text = repair_ligature_gaps(para_text(p, vocab, base), vocab)
         if not text:
             continue
@@ -690,10 +955,7 @@ def cmd_markdown(args) -> None:
             rid = slug(CAPTION_LABEL_RE.sub("", plain) or f"p{p.page + 1}", "table" if kind == "table" else "fig")
             if m:
                 label_to_id[(kind, m.group("num").replace("–", "-"))] = rid
-                # the label may be wrapped in marks (**Figure 1.**): strip it with them
-                label = re.escape(m.group(0).strip()).replace("\\ ", "\\s*")
-                text = re.sub(rf"^(\*{{1,3}})?\s*{label}\s*(\*{{1,3}})?\s*", "", text, count=1)
-                text = re.sub(r"^\*{1,3}\s+", "", text)
+                text = strip_caption_label(text, m.group(0).strip())
             bbox = [min(l.x0 for l in p.lines), min(l.y0 for l in p.lines), max(l.x1 for l in p.lines), max(l.y1 for l in p.lines)]
             resources.append({
                 "id": rid,
@@ -748,15 +1010,17 @@ def cmd_markdown(args) -> None:
     if chapters:
         flush_list(chapters[-1][1])
 
+    attach_tables(tables, table_to_caption, resources, report)
     manifest = []
+    left_out: Counter = Counter()
     for n, (title, blocks, notes) in enumerate(chapters, 1):
         if notes:
             blocks.append(fence("paragraphs", notes, style="notes"))
         body = join_blocks(blocks)
         if args.link_refs:
-            def float_it(rid: str) -> None:
-                pass
-            body = link_mentions(body, label_to_id, float_it)
+            def unresolved(words: str) -> None:
+                left_out[words] += 1
+            body = link_mentions(body, label_to_id, on_unresolved=unresolved)
         name = f"{n:02d}-{slugify(title or f'chapter {n}')}.md"
         (chap_dir / name).write_text(body, encoding="utf-8")
         manifest.append({"title": title or f"Chapter {n}", "file": f"chapters/{args.lang}/{name}"})
@@ -770,6 +1034,15 @@ def cmd_markdown(args) -> None:
     if unmatched:
         rep += ["## Styles no rule matched (set as body)", ""]
         rep += [f"- {k[0]} {k[1]}pt {k[2]}: {n} lines" for k, n in unmatched.most_common(20)] + [""]
+    if left_out:
+        rep += ["## Mentions left as text (nothing to link them to)", ""]
+        rep += [f"- {k}: {v}" for k, v in left_out.most_common(40)] + [""]
+    ref_col = mention_colours(kept)
+    if ref_col:
+        col, n = ref_col
+        rep += ["## Reference colour", "",
+                f"- {n} mentions are set in {col} where their text is not: set `bodyText.referenceColor` "
+                f"to {col} (the :ref links take it)", ""]
     if report:
         rep += ["## Decisions to review", ""] + [f"- {k}: {v}" for k, v in report.most_common()] + [""]
     if heavy:
@@ -797,8 +1070,14 @@ def main() -> None:
     m.add_argument("--lang", default="en")
     m.add_argument("--columns", help="number of body columns (default: roles.json 'columns' or auto)")
     m.add_argument("--split-role", default="h1", help="role that starts a new chapter file (default h1; 'none' = one file)")
-    m.add_argument("--link-refs", action="store_true", help="turn 'Figure 1.2' mentions into :ref for captioned stubs")
+    m.add_argument("--link-refs", dest="link_refs", action="store_true", default=True,
+                   help="turn 'Figure 1.2' / 'capítulo 3' mentions into :ref (default)")
+    m.add_argument("--no-link-refs", dest="link_refs", action="store_false",
+                   help="leave mentions as text")
+    m.add_argument("--refs-from", help="a resources.json whose captions (Figura 3…) mentions link to as well")
     m.add_argument("--no-auto-furniture", dest="auto_furniture", action="store_false")
+    m.add_argument("--no-tables", dest="tables", action="store_false",
+                   help="leave ruled tables as text (default: read them with find_tables into table resources)")
     args = ap.parse_args()
     if args.cmd == "roles":
         cmd_roles(args)

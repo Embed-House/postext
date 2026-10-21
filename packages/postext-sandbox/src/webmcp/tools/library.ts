@@ -4,20 +4,20 @@
 import { emptyTemplate, postextToDocx } from 'postext/word';
 import { isBundleManifest, pickBundleMeta } from 'postext/bundle';
 import { canonicalLocaleTag } from 'postext';
-import type { DuplicateSource, SandboxState } from '../../context/SandboxContext';
-import { slugify } from '../../panels/resources/slugify';
-import { isDocumentUntouched } from '../../presets';
-import { bundleContentLocales, choosePresetOpen, isEditionOnScreen, sameLocaleTag } from '../../presets/locale';
-import { readBundleZipManifest } from '../../presets/zip';
-import { downloadBytes, exportConfigToJson, exportMarkdownFile } from '../../storage/persistence';
-import type { ViewportTab } from '../../types';
-import { loadLastTemplateId, loadTemplates } from '../../word/sandboxImport';
-import { stateReaches } from '../chapterEdits';
-import { bookPagesSummary, chapterOf, dispatchAndWait, isSettled, whenSettled, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { bookIdentity, fileParam, pendingQuestion } from './book';
-import { readFileInput, type FileInput } from './resources';
-import { controlsOf } from './view';
+import type { DuplicateSource, SandboxState } from '../../context/SandboxContext.js';
+import { slugify } from '../../panels/resources/slugify.js';
+import { isDocumentUntouched } from '../../presets/index.js';
+import { bundleContentLocales, choosePresetOpen, isEditionOnScreen, sameLocaleTag } from '../../presets/locale.js';
+import { readBundleZipManifest } from '../../presets/zip.js';
+import { downloadBytes, exportConfigToJson, exportMarkdownFile } from '../../storage/persistence.js';
+import type { ViewportTab } from '../../types/index.js';
+import { loadLastTemplateId, loadTemplates } from '../../word/sandboxImport.js';
+import { stateReaches } from '../chapterEdits.js';
+import { bookPagesSummary, chapterOf, dispatchAndWait, isSettled, whenSettled, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { bookIdentity, fileParam, pendingQuestion } from './book.js';
+import { readFileInput, type FileInput } from './resources.js';
+import { controlsOf } from './view.js';
 
 const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 /** Largest file handed back inside a result, in bytes; larger ones are

@@ -2,9 +2,9 @@
 
 import type { RefObject } from 'react';
 import type { ColorValue, FrameLookEntry } from 'postext';
-import type { SandboxLabels } from '../types/labels';
-import { Popover } from '../ui';
-import type { FramePiece } from '../templates/frameLooks';
+import type { SandboxLabels } from '../types/labels.js';
+import { Popover } from '../ui/index.js';
+import type { FramePiece } from '../templates/frameLooks.js';
 
 /** A label with `code` spans set as code. */
 function withCode(text: string) {

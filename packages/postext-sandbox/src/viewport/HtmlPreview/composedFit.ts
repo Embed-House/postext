@@ -1,5 +1,5 @@
 import type { VDTDocument } from 'postext';
-import { composedPageScale, isComposedLeaf } from './pageGeometry';
+import { composedPageScale, isComposedLeaf } from './pageGeometry.js';
 
 /** Class of the box a composed page is shown in at its scale: as large as
  *  the page scaled, clipping the page's own (unscaled) layout box. */

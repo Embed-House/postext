@@ -14,7 +14,7 @@ import {
   srgbToLab,
   totalAreaCoverage,
   IccParseError,
-} from '../color';
+} from '../color/index.js';
 
 const readFileSync = readFile as (path: URL) => Uint8Array;
 const readdirSync = readDir as (path: URL) => string[];
@@ -120,7 +120,7 @@ describe('pixel LUT', () => {
 
 describe('built-in sRGB profile', () => {
   it('parses back as a matrix/TRC RGB profile that matches sRGB', async () => {
-    const { srgbProfileBytes } = await import('../color');
+    const { srgbProfileBytes } = await import('../color/index.js');
     const p = parseIccProfile(srgbProfileBytes());
     expect(p.colorSpace).toBe('RGB');
     expect(p.pcs).toBe('XYZ');
@@ -134,8 +134,8 @@ describe('built-in sRGB profile', () => {
 
 describe('soft proof', () => {
   it('shows paper white, K-only black and rich black for large black areas', async () => {
-    const { createPrintPreview, proofPixels } = await import('../color');
-    const { resolvePrintConfig } = await import('../defaults/print');
+    const { createPrintPreview, proofPixels } = await import('../color/index.js');
+    const { resolvePrintConfig } = await import('../defaults/print.js');
     const t = outputTransform(load('fogra39'));
     // 72 dpi page px: the 6 mm rich-black side is 17 px.
     const preview = createPrintPreview(t, resolvePrintConfig(), { paper: true, dpi: 72 });
@@ -160,8 +160,8 @@ describe('soft proof', () => {
   });
 
   it('proofs a grayscale print in black ink alone, by luma, without rich black (#800)', async () => {
-    const { createPrintPreview, proofPixels } = await import('../color');
-    const { resolvePrintConfig } = await import('../defaults/print');
+    const { createPrintPreview, proofPixels } = await import('../color/index.js');
+    const { resolvePrintConfig } = await import('../defaults/print.js');
     const t = outputTransform(load('fogra39'));
     const preview = createPrintPreview(t, resolvePrintConfig(), { paper: true, dpi: 72, grayscale: true });
     expect(preview.richBlack).toBeUndefined();

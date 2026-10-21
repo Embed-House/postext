@@ -3,11 +3,11 @@
  * for the first frame in its mode, and goes on in the next in its own.
  */
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 installSizedStub();
 

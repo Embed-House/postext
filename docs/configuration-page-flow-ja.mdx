@@ -163,6 +163,12 @@ export const metadata = {
       <td><code>'collapse'</code></td>
       <td>段落で終わる<code>:::paragraphs</code>コンテナーの下、つまりその段落と次のブロックの間のアキ（<a href="/ja/docs/configuration-styles#paragraphsコンテナー"><code>:::paragraphs</code>コンテナー</a>を参照）。<code>'collapse'</code>：スタイルの<code>spaceBetween</code>と<code>marginBottom</code>、およびコンテナーの周りのテキストの段落間隔（<code>paragraphSpacing</code>を使う場合は1行。囲みの中なら囲みの値）のうち大きいほうを取り、本文の2つの段落の間と同様に、次のブロックが自身の上に取るアキと統合します。参考文献の下の見出しは、そのアキに項目の間隔を足した位置ではなく、自身の<code>marginTop</code>だけ下に置かれます。<code>'add'</code>：postext 1.4までと同じく、グリッドへのスナップの前に最終行の下にスタイルのアキだけを置き、その下に次のブロック自身の上のアキを加え、段落間隔は含めません。そのため、コンテナーの後の段落がほかのどこよりもコンテナーに近づくことがありました。<code>configVersion</code> 8より前に保存した設定で、段落スタイルを宣言し、本の中にそうしたコンテナーがあるものは<code>'add'</code>で読み込まれます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。マイナスの<code>marginBottom</code>は、どちらの場合も次のブロックを引き上げます。段落スタイルは自分のコンテナーの規則を別に決められます（<code>containerSpacing</code>、postext 1.28以降）。</td>
     </tr>
+    <tr>
+      <td><code>paragraphStylesInBoxes</code></td>
+      <td><code>'box' | 'document'</code></td>
+      <td><code>'box'</code></td>
+      <td>段落スタイルが指定していない書体・サイズ・行送り・ウェイト・色を、囲みの中で何から取るかです（postext 1.52 から、#1119）。<code>'box'</code>：囲みの本文から取ります。<code>textAlign</code>だけを指定したスタイルを、明朝の囲みにもゴシックの囲みにも使えます。スタイルが指定した項目はそのままです。<code>'document'</code>：文書の本文から取ります（postext 1.51 までと同じ）。<code>configVersion</code> 17 より前に保存され、段落スタイルを宣言した設定は<code>'document'</code>で読みます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。</td>
+    </tr>
   </tbody>
 </table>
 

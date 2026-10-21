@@ -2,8 +2,8 @@
  * The rest of a story that jumps into a page of a later chapter (#943), as
  * plain types: `LayoutContinuation.jumps` names them.
  */
-import type { ContentBlock } from '../parse/types';
-import type { CalloutCut } from '../pipeline/cutTypes';
+import type { ContentBlock } from '../parse/types.js';
+import type { CalloutCut } from '../pipeline/cutTypes.js';
 
 /** The number a block of the carried story prints, as the sender gave it. */
 export interface CarriedNumber {

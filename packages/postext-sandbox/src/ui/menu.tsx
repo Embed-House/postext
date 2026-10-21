@@ -2,9 +2,9 @@
 
 import type { ReactElement, ReactNode, Ref } from 'react';
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
-import { cn } from './cn';
-import { usePortalContainer } from './portal';
-import { POPUP_SURFACE, POPUP_Z_INDEX } from './surface';
+import { cn } from './cn.js';
+import { usePortalContainer } from './portal.js';
+import { POPUP_SURFACE, POPUP_Z_INDEX } from './surface.js';
 
 interface MenuProps {
   /** The trigger element (a `Button` or `IconButton`); Base UI merges the

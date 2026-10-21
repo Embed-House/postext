@@ -12,10 +12,10 @@
  * the flow as any strip, its box ignored.
  */
 
-import type { ContentBlock } from '../parse';
-import type { CalloutStyleConfig, Resource, ResourceType } from '../types';
-import { resolveResourcePlacement } from './floatPlacement';
-import { comicStripPlacement } from '../comics/strip';
+import type { ContentBlock } from '../parse/index.js';
+import type { CalloutStyleConfig, Resource, ResourceType } from '../types.js';
+import { resolveResourcePlacement } from './floatPlacement.js';
+import { comicStripPlacement } from '../comics/strip.js';
 
 /** Style id of the frameless box that carries a page-span embed. Not a
  *  user style: no configuration can name it. */

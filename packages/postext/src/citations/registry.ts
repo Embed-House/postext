@@ -1,4 +1,4 @@
-import type { CitationEngine } from './types';
+import type { CitationEngine } from './types.js';
 
 let engine: CitationEngine | undefined;
 

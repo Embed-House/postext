@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { expandIndexDirectives } from '../pipeline/indexDirective';
-import { indexGrouping } from '../pipeline/indexGroups';
-import { GOJUON, GOJUON_ROWS, compareJapanese, gojuonRow, japaneseLead, sameJapaneseBase } from '../pipeline/indexJapanese';
-import { computeOutline } from '../pipeline/outline';
-import { parseMarkdown } from '../parse';
-import { resolveAllConfig } from '../pipeline/config';
-import { resolveIndexConfig, stripIndexDefaults } from '../defaults/indexConfig';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import type { ContentBlock } from '../parse';
-import type { OutlineEntry, PostextConfig } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { expandIndexDirectives } from '../pipeline/indexDirective.js';
+import { indexGrouping } from '../pipeline/indexGroups.js';
+import { GOJUON, GOJUON_ROWS, compareJapanese, gojuonRow, japaneseLead, sameJapaneseBase } from '../pipeline/indexJapanese.js';
+import { computeOutline } from '../pipeline/outline.js';
+import { parseMarkdown } from '../parse/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { resolveIndexConfig, stripIndexDefaults } from '../defaults/indexConfig.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import type { ContentBlock } from '../parse/index.js';
+import type { OutlineEntry, PostextConfig } from '../types.js';
 
 // The Japanese back-of-book index (#425): readings, JIS X 4061 order and
 // gojūon heads.

@@ -685,6 +685,12 @@ const config: PostextConfig = {
       <td><code>char</code> se repete no espaço entre o título e o número da página, alinhado à direita para que os pontos de entradas seguidas fiquem alinhados (<code>'. '</code> os espaça); <code>gap</code> é o espaço mínimo mantido entre o título e a linha de pontos. A linha de pontos leva quantos caracteres couberem, medidos como uma sequência inteira na fonte dela; por isso, uma fonte que afasta pontos finais seguidos com kerning recebe menos pontos, em vez de pontos que chegam até o número da página. (Até o postext 1.4 a contagem vinha de um único ponto, e numa fonte assim a linha de pontos corria do título até o número.) Um título que não deixaria espaço para o rótulo quebra um pouco antes. A linha de pontos leva três caracteres ou mais: onde só cabem um ou dois, a linha do sumário fica sem ela, porque um ponto solto antes do número da página se lê como um ponto final. Num PDF marcado, os pontos são artefatos, deixados de fora do texto extraído. O texto do corpo compõe as mesmas linhas de pontos nas <a href="/pt/docs/configuration-text#paradas-de-tabulação">paradas de tabulação</a>.</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>os do número de página</td>
+      <td>Os pontos com cor, fonte, tamanho e peso próprios (desde o postext 1.52), como o sumário de um original que compõe pontinhos coloridos à parte dos números de página. Cada um que se omite mantém o que os pontos teriam sem ele: o do número de página numa entrada. <code>fontSize</code> em <code>em</code> é medido sobre esse tamanho. A menos que <code>parts.leader</code> defina os seus, o <code>{'{leader}'}</code> de uma linha de parte também os usa.</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>object</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -707,6 +713,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>vazio</td>
       <td>Design da linha; o contêiner dele é a linha (largura da coluna × <code>height</code>). Marcadores: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code>…, <code>{'{titleText}'}</code> e <code>{'{pageNumber}'}</code> (o rótulo da página de parte; com <code>parts.page: false</code>, que não abre página de parte, o rótulo da página em que começa o conteúdo da parte, onde os cabeços passam a ela; num livro diagramado capítulo a capítulo, um delimitador que fecha o capítulo aponta para a primeira página de conteúdo do capítulo seguinte). As cores vinculadas à paleta usam a <code>palette</code> da própria parte; por isso, a linha de cada seção sai na cor dela. Quando vazio, <code>{'{number} {titleText}'}</code> (com o <code>numberSeparator</code> do H1 entre eles) e o número da página são compostos com a tipografia da entrada de nível 1. <code>{'{leader}'}</code> coloca o <code>leader</code> do sumário entre o texto anterior e o seguinte, no mesmo elemento de texto: <code>{'{number} {titleText}{leader}{pageNumber}'}</code> põe o título no início da linha, o número da página no fim e os pontos entre eles, alinhados ao número e a <code>gap</code> de cada texto, como nas linhas de entrada. O elemento passa a ocupar toda a largura da linha (uma largura <code>auto</code> vai até a borda do contêiner); um título longo demais é cortado, nunca o número, e com a linha de pontos desligada (<code>leader.enabled: false</code>) o espaço fica em branco. Fora de uma linha de parte, e em páginas verticais, <code>{'{leader}'}</code> não imprime nada. Num PDF marcado e em HTML, os pontos ficam fora do texto lido.</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>A aparência do <code>{'{leader}'}</code> de uma linha de parte: <code>color</code>, <code>fontFamily</code>, <code>fontSize</code> (em <code>em</code> do tamanho do elemento) e <code>fontWeight</code>, campo a campo sobre a de <code>leader</code>; um campo que nenhum dos dois define mantém o do próprio elemento de texto. Desde o postext 1.52. Para pôr o número de página num elemento próprio (outra fonte, uma caixa), faça a linha com três elementos: o título ancorado à esquerda da linha, o número de página à direita e, entre eles, os pontos num elemento cujo conteúdo é só <code>{'{leader}'}</code>, ancorado com <code>{"{ to: '#title', edge: 'right-of' }"}</code> e com <code>{"width: { to: '#page', edge: 'left' }"}</code>. Os pontos param à distância <code>gap</code> do elemento do número, onde quer que ele fique.</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

@@ -3,16 +3,19 @@
 import { memo } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type {
+  ColorValue,
+  Dimension,
   DesignSlot,
   DimensionUnit,
   ResolvedTocEntryStyleConfig,
   TocConfig,
   TocEntryStyleConfig,
   TocGroupHead,
+  TocLeaderFaceConfig,
   TocLevelConfig,
 } from 'postext';
 import { DEFAULT_TOC_CONFIG, resolveBodyTextConfig, resolveDesignSlot, resolveTocConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   CollapsibleSection,
   ColorPicker,
@@ -26,11 +29,11 @@ import {
   SelectInput,
   TextInput,
   ToggleSwitch,
-} from '../../controls';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { SearchScope } from '../search/SearchScope';
-import { ShowingDefaultsContext } from '../../controls/fieldContext';
-import { SlotEditor } from './HeaderFooterSection/SlotEditor';
+} from '../../controls/index.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { SearchScope } from '../search/SearchScope.js';
+import { ShowingDefaultsContext } from '../../controls/fieldContext.js';
+import { SlotEditor } from './HeaderFooterSection/SlotEditor.js';
 
 const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
@@ -67,6 +70,60 @@ function merge<T extends object>(base: T | undefined, partial: Partial<T>): T {
     if (v === undefined) delete (next as Record<string, unknown>)[k];
   }
   return next;
+}
+
+/** The face of a contents leader (#1121): colour, family, size and
+ *  weight, each shown as what the leader is set in while it is unset
+ *  (`shown`). */
+function LeaderFaceFields({ raw, shown, onUpdate, onReset, fieldId, labels }: {
+  raw: TocLeaderFaceConfig | undefined;
+  shown: { color: ColorValue; fontFamily: string; fontSize: Dimension; fontWeight: number };
+  onUpdate: (partial: TocLeaderFaceConfig) => void;
+  onReset: (field: keyof TocLeaderFaceConfig) => void;
+  fieldId: string;
+  labels: Labels;
+}) {
+  return (
+    <>
+      <ColorPicker
+        label={labels.colorLabel}
+        value={raw?.color ?? shown.color}
+        onChange={(v) => onUpdate({ color: v })}
+        isDefault={raw?.color === undefined}
+        onReset={() => onReset('color')}
+        fieldId={fieldId}
+      />
+      <FontPicker
+        label={labels.fontLabel}
+        value={raw?.fontFamily ?? shown.fontFamily}
+        onChange={(v) => onUpdate({ fontFamily: v })}
+        isDefault={raw?.fontFamily === undefined}
+        onReset={() => onReset('fontFamily')}
+        searchPlaceholder={labels.bodyFontSearch}
+        noResultsLabel={labels.bodyFontNoResults}
+      />
+      <DimensionInput
+        label={labels.sizeLabel}
+        value={raw?.fontSize ?? shown.fontSize}
+        onChange={(v) => onUpdate({ fontSize: v })}
+        min={0.5}
+        step={0.5}
+        units={TEXT_SIZE_UNITS}
+        isDefault={raw?.fontSize === undefined}
+        onReset={() => onReset('fontSize')}
+      />
+      <NumberInput
+        label={labels.headingFontWeight}
+        value={raw?.fontWeight ?? shown.fontWeight}
+        onChange={(v) => onUpdate({ fontWeight: v })}
+        min={100}
+        max={900}
+        step={10}
+        isDefault={raw?.fontWeight === undefined}
+        onReset={() => onReset('fontWeight')}
+      />
+    </>
+  );
 }
 
 interface EntryStyleFieldsProps {
@@ -301,6 +358,17 @@ export const TocSection = memo(function TocSection() {
   const resetSubtitleField = (field: keyof SubtitleConfig) => setGroup('subtitle', omit(raw?.subtitle, field));
   const updateParts = (partial: Partial<PartsRowConfig>) => setGroup('parts', merge(raw?.parts, partial));
   const resetPartsField = (field: keyof PartsRowConfig) => setGroup('parts', omit(raw?.parts, field));
+  // The part rows' leader face (#1121), over `toc.leader`'s.
+  const updatePartsLeader = (partial: TocLeaderFaceConfig) => updateParts({ leader: { ...raw?.parts?.leader, ...partial } });
+  const resetPartsLeaderField = (field: keyof TocLeaderFaceConfig) => updateParts({ leader: omit(raw?.parts?.leader, field) });
+  // What the entry rows' leader is set in while its face is unset: the
+  // page number's.
+  const leaderShown = {
+    color: resolved.leader.color ?? resolved.pageNumber.color,
+    fontFamily: resolved.leader.fontFamily ?? resolved.pageNumber.fontFamily,
+    fontSize: resolved.leader.fontSize ?? resolved.pageNumber.fontSize,
+    fontWeight: resolved.leader.fontWeight ?? resolved.pageNumber.fontWeight,
+  };
   // Blocks kept together (#850).
   const updateGroups = (partial: Partial<GroupsConfig>) => setGroup('groups', merge(raw?.groups, partial));
   const resetGroupsField = (field: keyof GroupsConfig) => setGroup('groups', omit(raw?.groups, field));
@@ -513,6 +581,21 @@ export const TocSection = memo(function TocSection() {
           isDefault={raw?.leader?.gap === undefined}
           onReset={() => resetLeaderField('gap')}
         />
+        {resolved.leader.enabled && (
+          <CollapsibleSection title={labels.tocLeaderFace} sectionId="toc-leader-face" variant="subsection">
+            <p className="px-2 py-1 text-xs" style={infoStyle}>
+              {labels.tocLeaderFaceInfo}
+            </p>
+            <LeaderFaceFields
+              raw={raw?.leader}
+              shown={leaderShown}
+              onUpdate={updateLeader}
+              onReset={resetLeaderField}
+              fieldId="toc-leader-color"
+              labels={labels}
+            />
+          </CollapsibleSection>
+        )}
       </CollapsibleSection>
 
       <CollapsibleSection
@@ -660,6 +743,21 @@ export const TocSection = memo(function TocSection() {
               isDefault={raw?.parts?.marginBottom === undefined}
               onReset={() => resetPartsField('marginBottom')}
             />
+            {resolved.leader.enabled && (
+              <CollapsibleSection title={labels.tocPartsLeaderFace} sectionId="toc-parts-leader-face" variant="subsection">
+                <p className="px-2 py-1 text-xs" style={infoStyle}>
+                  {labels.tocPartsLeaderFaceInfo}
+                </p>
+                <LeaderFaceFields
+                  raw={raw?.parts?.leader}
+                  shown={leaderShown}
+                  onUpdate={updatePartsLeader}
+                  onReset={resetPartsLeaderField}
+                  fieldId="toc-parts-leader-color"
+                  labels={labels}
+                />
+              </CollapsibleSection>
+            )}
             <p className="px-2 py-1 text-xs" style={infoStyle}>
               {labels.tocPartsDesignInfo}
             </p>

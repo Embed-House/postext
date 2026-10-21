@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cssWeightOrder, cssWeightOrderOf, fontFallbacks, type FontFaceLike } from '../index';
+import { cssWeightOrder, cssWeightOrderOf, fontFallbacks, type FontFaceLike } from '../index.js';
 
 // #757: one rule for the weight that answers one a family has no cut for,
 // where the command line took the nearest (the 400 for a 550 of a family

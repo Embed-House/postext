@@ -1,14 +1,14 @@
 import type { Dispatch } from 'react';
 import { clearMeasurementCache } from 'postext';
-import type { SandboxAction } from '../context/SandboxContext';
-import { invalidateResourceImage } from '../controls/resourceImages';
-import { setCustomFonts } from '../controls/fontLoader';
-import { putBlobsAt } from '../storage/blobStore';
-import { putFontFiles } from '../storage/fontStorage';
-import { saveBook, saveConfig, savePresetApplied, savePresetId } from '../storage/persistence';
-import type { BookContent } from '../book/types';
-import { hashChapters, hashConfig, hashResources, type DocumentHashSource } from './hash';
-import type { AppliedPresetSnapshot, LoadedPreset, PresetApplyParts } from './types';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import { invalidateResourceImage } from '../controls/resourceImages.js';
+import { setCustomFonts } from '../controls/fontLoader.js';
+import { putBlobsAt } from '../storage/blobStore.js';
+import { putFontFiles } from '../storage/fontStorage.js';
+import { saveBook, saveConfig, savePresetApplied, savePresetId } from '../storage/persistence.js';
+import type { BookContent } from '../book/types.js';
+import { hashChapters, hashConfig, hashResources, type DocumentHashSource } from './hash.js';
+import type { AppliedPresetSnapshot, LoadedPreset, PresetApplyParts } from './types.js';
 
 export interface ApplyPresetOptions {
   parts: PresetApplyParts;

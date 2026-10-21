@@ -10,7 +10,7 @@ import {
   useSandboxProjects,
   useSandboxResources,
   useSandboxSelector,
-} from '../context/SandboxContext';
+} from '../context/SandboxContext.js';
 import {
   exportConfigToJson,
   importConfigFromJson,
@@ -18,28 +18,28 @@ import {
   loadSettingsHelpMode,
   saveSettingsGroup,
   saveSettingsHelpMode,
-} from '../storage/persistence';
-import { ConfirmPopover, EmptyState, IconButton, PanelBody, PanelHeader, announce, cn } from '../ui';
-import { HelpModeContext } from '../controls/fieldContext';
-import { SettingsSearchContext, useSettingsSearch, type SettingsSearchState } from './search/SearchContext';
-import { MatchScopeProvider, useScopeCounts } from './search/MatchScope';
-import { compileMatcher } from './search/normalize';
-import { buildSectionSearchIndex, planSettingsSearch, type SearchPlanGroup } from './search/sectionIndex';
+} from '../storage/persistence.js';
+import { ConfirmPopover, EmptyState, IconButton, PanelBody, PanelHeader, announce, cn } from '../ui/index.js';
+import { HelpModeContext } from '../controls/fieldContext.js';
+import { SettingsSearchContext, useSettingsSearch, type SettingsSearchState } from './search/SearchContext.js';
+import { MatchScopeProvider, useScopeCounts } from './search/MatchScope.js';
+import { compileMatcher } from './search/normalize.js';
+import { buildSectionSearchIndex, planSettingsSearch, type SearchPlanGroup } from './search/sectionIndex.js';
 import {
   SETTINGS_GROUPS,
   isSettingsGroupId,
   sectionsInGroup,
   type SettingsGroupId,
   type SettingsSectionId,
-} from './sections/registry';
-import { groupOverrideCounts } from './sections/sectionOverrides';
-import { GROUP_ICONS } from './settings/groupIcons';
-import { DesignSummary } from './settings/DesignSummary';
-import { PageGroupPreview } from './settings/PageGroupPreview';
-import { PreviewHighlightProvider } from './settings/previewHighlight';
-import { OpenSettingsGroupContext, onSettingsGroupRequest, onSettingsSectionRequest, onSettingsSwitchesRequest, pendingSettingsGroup, reportSettingsChangedOnly, takeSettingsFocus, takeSettingsSection } from '../context/settingsNavigation';
-import { focusSettingsEntry } from './settingsFocus';
-import { SECTION_COMPONENTS } from './sections/components';
+} from './sections/registry.js';
+import { groupOverrideCounts } from './sections/sectionOverrides.js';
+import { GROUP_ICONS } from './settings/groupIcons.js';
+import { DesignSummary } from './settings/DesignSummary.js';
+import { PageGroupPreview } from './settings/PageGroupPreview.js';
+import { PreviewHighlightProvider } from './settings/previewHighlight.js';
+import { OpenSettingsGroupContext, onSettingsGroupRequest, onSettingsSectionRequest, onSettingsSwitchesRequest, pendingSettingsGroup, reportSettingsChangedOnly, takeSettingsFocus, takeSettingsSection } from '../context/settingsNavigation.js';
+import { focusSettingsEntry } from './settingsFocus.js';
+import { SECTION_COMPONENTS } from './sections/components.js';
 
 /** The Design panel. Three views share one header and search box:
  *  - overview: a summary of the book and the list of setting groups;

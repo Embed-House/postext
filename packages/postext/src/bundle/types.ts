@@ -3,7 +3,7 @@
 // `fonts/*` — zipped into one file. These types describe the manifest; the
 // codec lives in `manifest.ts`, `codec.ts` and `zip.ts`.
 
-import type { CustomFontFormat, LayoutContinuation, PostextConfig, Resource } from '../types';
+import type { CustomFontFormat, LayoutContinuation, PostextConfig, Resource } from '../types.js';
 
 /** Optional showcase metadata a manifest may carry: everything a picker can
  *  show beyond name and description. All fields are purely descriptive. */

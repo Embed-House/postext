@@ -1,18 +1,18 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { parseMarkdown, parseMarkdownWithIssues } from '../parse';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import { CONFIG_VERSION, migrateConfig, migrateBundleConfig, pinLegacyCodeBlocks } from '../bundle/configVersion';
-import { resolveCodeStyleConfig, stripCodeStyleDefaults, DEFAULT_CODE_STYLE } from '../defaults/codeStyle';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { stripConfigDefaults } from '../defaults';
-import { highlightCode, registerCodeHighlighter } from '../code/highlight';
-import { fencedCodeLines } from '../parse/codeFence';
-import { collectConfigWarnings } from '../configWarnings';
-import { configFontFamilies, collectFontUsage } from '../fonts/usage';
-import { formatWarning } from '../pipeline/contentWarnings';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
+import { parseMarkdown, parseMarkdownWithIssues } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { CONFIG_VERSION, migrateConfig, migrateBundleConfig, pinLegacyCodeBlocks } from '../bundle/configVersion.js';
+import { resolveCodeStyleConfig, stripCodeStyleDefaults, DEFAULT_CODE_STYLE } from '../defaults/codeStyle.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { highlightCode, registerCodeHighlighter } from '../code/highlight.js';
+import { fencedCodeLines } from '../parse/codeFence.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { configFontFamilies, collectFontUsage } from '../fonts/usage.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../vdt.js';
 
 // #624: code blocks. The stub font: 7 px a character, a space 4 px; the
 // 'Shrinky' face scales with its size (7 px at 17 px).
@@ -668,7 +668,7 @@ describe('stored documents (CONFIG_VERSION 9)', () => {
   ].join('\n');
 
   it('pins the 1.22 reading of fences for a configuration with fences in its text', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
     expect(pinLegacyCodeBlocks({} as PostextConfig)).toEqual({ codeStyle: { blocks: false } });
     const own = { codeStyle: { blocks: true } };
     expect(pinLegacyCodeBlocks(own)).toBe(own);

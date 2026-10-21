@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { zipSync, strToU8 } from 'fflate';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults';
-import { buildBundle, migrateConfig, openBundle, pinLegacyBoxResourceGap, CONFIG_VERSION } from '../../bundle';
-import { migrateBundleConfig } from '../../bundle/configVersion';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { resolveLayoutConfig, stripLayoutDefaults } from '../../defaults/index.js';
+import { buildBundle, migrateConfig, openBundle, pinLegacyBoxResourceGap, CONFIG_VERSION } from '../../bundle/index.js';
+import { migrateBundleConfig } from '../../bundle/configVersion.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument } from '../../index.js';
 
 // EF-117: an inline resource (`placement.position: 'here'`) inside a box
 // keeps the gap it keeps in running text (EF-93): a line above it, and a
@@ -118,7 +118,7 @@ describe('configurations stored before rules 6 keep the 1.4 box spacing', () => 
   const config: PostextConfig = { layout: { layoutType: 'single', boxChildSplitMinLines: 2 } };
 
   it('pins a configuration whose book embeds a resource in a box, once', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
     // Stamped 5 (a 1.5 prerelease): the box gap is the only pin it gets.
     expect(migrateConfig(config, 5, { content: MD }).layout).toEqual({ layoutType: 'single', boxChildSplitMinLines: 2, inlineResourceGapInBoxes: false });
     // Unversioned (1.4): both gap pins.

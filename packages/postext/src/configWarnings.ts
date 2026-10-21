@@ -37,39 +37,40 @@ import type {
   ChecksConfig,
   ContentInConfigCheckConfig,
   DocumentMetadata,
-} from './types';
-import type { ConfigWarning, ResolvedConfig } from './vdt';
-import { parseNumberFormat } from './numbering';
-import { parseTocGroupHead } from './defaults/toc';
-import { isFontStack, primaryFontFamily } from './measure/font';
-import { dimensionToPx } from './units';
-import { resolveAllConfig, resolveDirection, resolvedLocale, sideColumnPercentUsed, columnCountUsed } from './pipeline/config';
-import { computePageMetrics } from './pipeline/buildHelpers';
-import { deriveSectionGeometryConfig } from './pipeline/headingStyles';
-import { cjkGridGeometry } from './pipeline/cjkGrid';
-import { isDigitSystem } from './locale';
-import { defaultEmphasisFor, isEmphasisStyle, isTashkilMode } from './defaults/bodyText';
-import { parseFootnoteNumberFormat } from './defaults/footnotes';
-import { COMIC_CHOICES, isComicChoice, resolveComicsConfig } from './defaults/comics';
-import { resolvePrintConfig } from './defaults/print';
-import { CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig } from './defaults/canvasViewer';
-import { CONTRAST_LEVELS, CONTRAST_MODES, DEFAULT_CONTRAST_CONFIG } from './defaults/contrast';
-import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
-import { resolveContentInConfigCheck } from './defaults/checks';
-import { stripPlaceholders } from './pipeline/placeholders';
-import { configDesignSlots } from './design/slots';
-import { FENCE_CONDITION_SLOTS } from './design/fenceCondition';
-import { parseSvgPath, pathViewBox } from './design/svgPath';
-import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES, connectorPaintsOver } from './design/connector';
-import { metadataText } from './frontmatter';
-import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap';
-import { outputProfileInfo } from './color/catalogue';
-import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle';
-import { closestKey } from './util/closestKey';
-import { isResourceCounterReset } from './defaults/resourceTypes';
-import { calloutStyleChain, labelIconKind, labelIconScale } from './defaults/calloutStyles';
-import { opacityWarning, validatePageTemplates } from './composed/validate';
-import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers';
+} from './types.js';
+import type { ConfigWarning, ResolvedConfig } from './vdt.js';
+import { parseNumberFormat } from './numbering.js';
+import { parseTocGroupHead } from './defaults/toc.js';
+import { isFontStack, primaryFontFamily } from './measure/font.js';
+import { dimensionToPx } from './units.js';
+import { resolveAllConfig, resolveDirection, resolvedLocale, sideColumnPercentUsed, columnCountUsed } from './pipeline/config.js';
+import { computePageMetrics } from './pipeline/buildHelpers.js';
+import { deriveSectionGeometryConfig } from './pipeline/headingStyles.js';
+import { cjkGridGeometry } from './pipeline/cjkGrid.js';
+import { isDigitSystem } from './locale.js';
+import { defaultEmphasisFor, isEmphasisStyle, isTashkilMode } from './defaults/bodyText.js';
+import { parseFootnoteNumberFormat } from './defaults/footnotes.js';
+import { COMIC_CHOICES, isComicChoice, resolveComicsConfig } from './defaults/comics.js';
+import { resolvePrintConfig } from './defaults/print.js';
+import { CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig } from './defaults/canvasViewer.js';
+import { CONTRAST_LEVELS, CONTRAST_MODES, DEFAULT_CONTRAST_CONFIG } from './defaults/contrast.js';
+import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops.js';
+import { resolveContentInConfigCheck } from './defaults/checks.js';
+import { stripPlaceholders } from './pipeline/placeholders.js';
+import { configDesignSlots } from './design/slots.js';
+import { CONFIG_KEYS, DOTTED_PATH, designElementUnknownKeys, unknownKeysOf, type UnknownKey } from './design/elementKeys.js';
+import { FENCE_CONDITION_SLOTS } from './design/fenceCondition.js';
+import { parseSvgPath, pathViewBox } from './design/svgPath.js';
+import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES, connectorPaintsOver } from './design/connector.js';
+import { metadataText } from './frontmatter.js';
+import { DROP_CAP_PUNCTUATION, DROP_CAP_SHORT_PARAGRAPH, isDropCap, readDropCap } from './defaults/dropCap.js';
+import { outputProfileInfo } from './color/catalogue.js';
+import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle.js';
+import { closestKey } from './util/closestKey.js';
+import { isResourceCounterReset } from './defaults/resourceTypes.js';
+import { calloutStyleChain, labelIconKind, labelIconScale } from './defaults/calloutStyles.js';
+import { opacityWarning, validatePageTemplates } from './composed/validate.js';
+import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers.js';
 
 /** The format fields and the decimal spelling each falls back to. A
  *  `format` is a format field only under `pageNumbering`. */
@@ -102,7 +103,9 @@ function percentText(n: number): string {
  * - a character grid (`cjk.grid`) larger than the page leaves room for;
  * - a key the heading settings or a paragraph style do not have
  *   (`unknownConfigKey`: `headings`, its `balancing` and `levels`,
- *   `headingStyles`, `paragraphStyles`);
+ *   `headingStyles`, `paragraphStyles`), a top-level key a config does not
+ *   have, and a key a design element, its placement or a connector's end
+ *   does not have (#1122);
  * - a setting with a value outside its choices (`unknownConfigValue`):
  *   `direction`, the Arabic body text words (`emphasis`, `tashkil`,
  *   `kashida`, `kashidaPatterns`), the composition rules, `toc.groups.head`,
@@ -137,7 +140,7 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectPageTemplateWarnings(config, options), ...collectCalloutStyleWarnings(config), ...collectLabelIconWarnings(config),
     ...collectContentInConfigWarnings(config, options),
     ...collectDesignAnchorWarnings(config),
-    ...collectDesignPathWarnings(config), ...collectBoxShapeWarnings(config),
+    ...collectDesignPathWarnings(config), ...collectDesignKeyWarnings(config), ...collectBoxShapeWarnings(config),
     ...collectConnectorWarnings(config), ...collectFenceConditionWarnings(config),
   ];
 }
@@ -220,32 +223,34 @@ function collectConnectorWarnings(config: PostextConfig): ConfigWarning[] {
   return out;
 }
 
-const DESIGN_PATH_KEYS = {
-  kind: true, id: true, parity: true, pages: true, when: true, unless: true, pin: true, reserve: true, placement: true,
-  d: true, viewBox: true, fill: true, stroke: true, width: true, dash: true, preserveAspectRatio: true,
-} satisfies Record<keyof DesignPathElement, true>;
+/** The keys of every design element (#1122): a key its kind does not
+ *  have, at the element, in its placement (anchor, offset, size, a
+ *  `{ to, edge }` size), a connector's ends and a text's or box's nested
+ *  looks (`unknownConfigKey`, the key ignored). A path element's keys
+ *  (#1060) are checked here too. */
+function collectDesignKeyWarnings(config: PostextConfig): ConfigWarning[] {
+  const found: UnknownKey[] = [];
+  for (const slot of configDesignSlots(config)) {
+    slot.slot.elements.forEach((el, i) => designElementUnknownKeys(el, `${slot.path}.elements[${i}]`, DOTTED_PATH, found));
+  }
+  return found.map((k) => ({ kind: 'unknownConfigKey', path: k.path, value: k.value, used: '', ...(k.suggestion ? { suggestion: k.suggestion } : {}) }));
+}
 
 /** The longest piece of bad path data a warning repeats. */
 const PATH_DATA_SAMPLE = 60;
 
-/** The path elements of every design slot (#1060): a key a path element
- *  does not have (`unknownConfigKey`); path data that cannot be read (its
+/** The path elements of every design slot (#1060): path data that cannot
+ *  be read (its
  *  first characters in `value`) and a `viewBox` that is no pair of
  *  positive numbers (`unknownConfigValue`, `used` empty: the element draws
  *  nothing); a `preserveAspectRatio` other than `none` and `meet`
  *  (`used: 'none'`). */
 function collectDesignPathWarnings(config: PostextConfig): ConfigWarning[] {
   const out: ConfigWarning[] = [];
-  const names = Object.keys(DESIGN_PATH_KEYS);
   for (const slot of configDesignSlots(config)) {
     slot.slot.elements.forEach((el, i) => {
       if (!el || typeof el !== 'object' || (el as { kind?: unknown }).kind !== 'path') return;
       const path = `${slot.path}.elements[${i}]`;
-      for (const key of Object.keys(el)) {
-        if (Object.prototype.hasOwnProperty.call(DESIGN_PATH_KEYS, key)) continue;
-        const suggestion = closestKey(key, names);
-        out.push({ kind: 'unknownConfigKey', path: `${path}.${key}`, value: key, used: '', ...(suggestion ? { suggestion } : {}) });
-      }
       const e = el as DesignPathElement;
       const d = e.d as unknown;
       const parsed = typeof d === 'string' ? parseSvgPath(d) : undefined;
@@ -402,7 +407,7 @@ function collectCalloutStyleWarnings(config: PostextConfig): ConfigWarning[] {
 
 const LABEL_ICON_KEYS = {
   kind: true, resourceId: true, width: true, gap: true, placement: true, tint: true,
-  glyph: true, fontFamily: true, fontWeight: true, scale: true, color: true,
+  glyph: true, fontFamily: true, fontWeight: true, scale: true, color: true, shape: true, strokeWidth: true,
 } satisfies Record<keyof CalloutLabelIconConfig, true>;
 
 /** The icon of a box style's label tab (#981, #995, #1054): a key it does
@@ -423,14 +428,19 @@ function collectLabelIconWarnings(config: PostextConfig): ConfigWarning[] {
     }
     const ic = icon as CalloutLabelIconConfig;
     const kind = ic.kind as unknown;
-    if (kind !== undefined && kind !== 'resource' && kind !== 'glyph') {
-      const suggestion = closestKey(String(kind), ['resource', 'glyph']);
+    if (kind !== undefined && kind !== 'resource' && kind !== 'glyph' && kind !== 'shape') {
+      const suggestion = closestKey(String(kind), ['resource', 'glyph', 'shape']);
       out.push({ kind: 'unknownConfigValue', path: `${path}.kind`, value: String(kind), used: labelIconKind(ic), ...(suggestion ? { suggestion } : {}) });
     }
     const placement = ic.placement as unknown;
     if (placement !== undefined && placement !== 'beside' && placement !== 'inside') {
       const suggestion = closestKey(String(placement), ['beside', 'inside']);
       out.push({ kind: 'unknownConfigValue', path: `${path}.placement`, value: String(placement), used: 'beside', ...(suggestion ? { suggestion } : {}) });
+    }
+    const shape = ic.shape as unknown;
+    if (shape !== undefined && shape !== 'ring' && shape !== 'dot') {
+      const suggestion = closestKey(String(shape), ['ring', 'dot']);
+      out.push({ kind: 'unknownConfigValue', path: `${path}.shape`, value: String(shape), used: 'ring', ...(suggestion ? { suggestion } : {}) });
     }
     if (ic.scale !== undefined && labelIconScale(ic.scale) !== ic.scale) {
       out.push({ kind: 'unknownConfigValue', path: `${path}.scale`, value: String(ic.scale), used: String(labelIconScale(ic.scale)) });
@@ -953,6 +963,13 @@ function collectUnknownKeyWarnings(config: PostextConfig): ConfigWarning[] {
   };
   checkConfig(config, '');
   checkConfig(config.htmlViewer?.overrides, 'htmlViewer.overrides.');
+  // The config's own keys (#1122), and those of the HTML viewer's
+  // overrides (a config without `htmlViewer`).
+  const top: UnknownKey[] = [];
+  unknownKeysOf(config, CONFIG_KEYS, '', DOTTED_PATH, top);
+  const overrideKeys: Record<string, true> = Object.fromEntries(Object.keys(CONFIG_KEYS).filter((k) => k !== 'htmlViewer').map((k) => [k, true as const]));
+  unknownKeysOf(config.htmlViewer?.overrides, overrideKeys, 'htmlViewer.overrides', DOTTED_PATH, top);
+  for (const k of top) out.push({ kind: 'unknownConfigKey', path: k.path, value: k.value, used: '', ...(k.suggestion ? { suggestion: k.suggestion } : {}) });
   for (const { stops, path } of tabStopLists(config)) stops.forEach((st, i) => check(st, TAB_STOP_KEYS, `${path}[${i}]`));
   for (const { cap, path } of dropCapSettings(config)) {
     check(cap, DROP_CAP_KEYS, path);

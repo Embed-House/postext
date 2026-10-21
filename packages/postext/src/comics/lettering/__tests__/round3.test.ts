@@ -6,12 +6,12 @@
 // of its panel, short CJK lines in a close-up keep off the face.
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { letterPanel, letterPanelDetailed } from '../letter';
-import { presetLetteringStyles } from '../presets';
-import { placeUnits, type PlaceUnit, type UnitVariant } from '../placement';
-import { buildBody } from '../shapes';
-import type { LetteringAnchor, LetteringItem, LetteringPanel, Point, Rect } from '../types';
+import { installStubMeasure } from './stubMeasure.js';
+import { letterPanel, letterPanelDetailed } from '../letter.js';
+import { presetLetteringStyles } from '../presets.js';
+import { placeUnits, type PlaceUnit, type UnitVariant } from '../placement.js';
+import { buildBody } from '../shapes.js';
+import type { LetteringAnchor, LetteringItem, LetteringPanel, Point, Rect } from '../types.js';
 
 beforeAll(() => installStubMeasure());
 

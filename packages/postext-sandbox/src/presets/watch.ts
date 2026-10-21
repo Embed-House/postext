@@ -1,7 +1,7 @@
 // The one decision behind live presets, kept pure so the polling effect in
 // SandboxContext stays a thin loop around it.
 
-import type { AppliedPresetSnapshot } from './types';
+import type { AppliedPresetSnapshot } from './types.js';
 
 export type PresetUpdateDecision = 'apply' | 'stale' | 'none';
 

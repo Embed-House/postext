@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { resolvePageTemplate, templateFrameRects } from '../../index';
-import { PAGE8_CONFIG } from './fixtures/page8';
+import { resolvePageTemplate, templateFrameRects } from '../../index.js';
+import { PAGE8_CONFIG } from './fixtures/page8.js';
 
 // Millimetres as pixels (25.4 dpi): the boxes read in the template's units.
 const ctx = {

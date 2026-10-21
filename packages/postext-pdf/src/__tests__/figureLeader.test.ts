@@ -5,8 +5,8 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFRef } from 'p
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument, figureLabelLeaderPath } from 'postext';
 import type { PostextConfig, Resource, VDTBlock } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // #1057: a label set away from its point draws its leader in the PDF as
 // vector lines with a dot on the point, under the label, a layout artifact

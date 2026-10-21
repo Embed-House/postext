@@ -31,14 +31,14 @@
  * row metrics the full-table layout reports.
  */
 
-import { bitmapLayoutSize } from '../bitmapResolution';
-import { anchorRefLabel, findAnchorTarget, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs';
-import { measuringVertically, withMeasureWritingMode } from '../measure/vertical';
-import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
-import type { InlineIcon, InlineSpan, RefCase } from '../parse';
-import { suffixJoiner } from '../parse/inlineFormatting';
-import { resourceSafeArea, safeAreaHeightRange, safeAreaSource } from './safeArea';
-import { layoutVideo } from './videoOverlay';
+import { bitmapLayoutSize } from '../bitmapResolution.js';
+import { anchorRefLabel, findAnchorTarget, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs.js';
+import { measuringVertically, withMeasureWritingMode } from '../measure/vertical.js';
+import { getMeasureDirection, setMeasureDirection, shiftLineX } from '../measure/bidiLines.js';
+import type { InlineIcon, InlineSpan, RefCase, SwatchBox, SwatchShape } from '../parse/index.js';
+import { suffixJoiner } from '../parse/inlineFormatting.js';
+import { resourceSafeArea, safeAreaHeightRange, safeAreaSource } from './safeArea.js';
+import { layoutVideo } from './videoOverlay.js';
 import type {
   ColorPaletteEntry,
   Dimension,
@@ -56,7 +56,7 @@ import type {
   TableCellAlignKeyword,
   TableCellVerticalAlign,
   TableRules,
-} from '../types';
+} from '../types.js';
 import type {
   ResolvedConfig,
   ResolvedResourceBlock,
@@ -66,35 +66,36 @@ import type {
   VDTLineSegment,
   VDTResourceTableLayout,
   VDTTableSlice,
-} from '../vdt';
-import { createBoundingBox } from '../vdt';
-import { cachedMeasureRichSnippet, measureRichBlock, measureTextWidth, buildFontString } from '../measure';
-import type { MeasureBlockOptions, MeasurementCache } from '../measure';
-import { isSwatchFill, measureRichSnippet } from '../measure/rich';
-import { isBlankText, refLabelPieces } from '../measure/spaces';
-import { linkSegments } from '../measure/links';
-import { graphemeCount } from '../measure/graphemes';
-import { dimensionToPx } from '../units';
-import { booktabsStrokes, type BooktabsRuleSpec } from '../table/booktabs';
+} from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import { cachedMeasureRichSnippet, measureRichBlock, measureTextWidth, buildFontString } from '../measure/index.js';
+import type { MeasureBlockOptions, MeasurementCache } from '../measure/index.js';
+import { isSwatchFill, measureRichSnippet } from '../measure/rich.js';
+import { isBlankText, refLabelPieces } from '../measure/spaces.js';
+import { linkSegments } from '../measure/links.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { dimensionToPx } from '../units.js';
+import { booktabsStrokes, type BooktabsRuleSpec } from '../table/booktabs.js';
 // Caption / table-cell / note content is parsed with the shared snippet
 // parser so measurement and the sandbox's glyph→snippet mapping agree on
 // one span list (`:ref{…}` becomes a one-char placeholder span).
-import { parseInlineSnippetSpans } from '../parse/inlineSnippet';
-import { hasAnnotations, resolveAnnotationSpans } from './annotations';
-import { sliceSpan } from '../parse/links';
-import { indentColumn, listDepth, nestListItem } from '../parse/listNesting';
-import { chipContextOf, fontSizePxOf, resolveChipSpans, type ChipContext } from './chips';
-import { withSnippetInlineCode } from './codeInline';
-import { mergeCaptionStyle } from '../defaults/captionStyle';
-import { pickTableStyle } from '../defaults/tableStyle';
-import { resolveColorValue, startEndAsLeftRight } from '../defaults/shared';
-import { resolveBodyStyle } from './styles';
-import { FIT_EPS } from './placement';
-import { uppercasePreservingLength } from './buildBlockKind';
-import { lineTrailingTracking } from '../lineInk';
-import type { ResourceNumberingMap } from './resourceNumbering';
-import { resolveCitationSpans, type CaptionCitations } from './citations';
-import { renderMath } from '../math';
+import { parseInlineSnippetSpans } from '../parse/inlineSnippet.js';
+import { hasAnnotations, resolveAnnotationSpans } from './annotations.js';
+import { sliceSpan } from '../parse/links.js';
+import { indentColumn, listDepth, nestListItem } from '../parse/listNesting.js';
+import { chipContextOf, fontSizePxOf, resolveChipSpans, type ChipContext } from './chips.js';
+import { withSnippetInlineCode } from './codeInline.js';
+import { mergeCaptionStyle } from '../defaults/captionStyle.js';
+import { pickTableStyle } from '../defaults/tableStyle.js';
+import { resolveColorValue, startEndAsLeftRight } from '../defaults/shared.js';
+import { resolveBodyStyle } from './styles.js';
+import { FIT_EPS } from './placement.js';
+import { captionInsideShare } from './captionInside.js';
+import { uppercasePreservingLength } from './buildBlockKind.js';
+import { lineTrailingTracking } from '../lineInk.js';
+import type { ResourceNumberingMap } from './resourceNumbering.js';
+import { resolveCitationSpans, type CaptionCitations } from './citations.js';
+import { renderMath } from '../math/index.js';
 
 /**
  * A caption's, a note's or a cell's spans with their Chinese and Japanese
@@ -230,7 +231,7 @@ export interface TableRowMetrics {
  *  value is looked up as a document palette entry id. An unresolved colour
  *  is left as written (the measurer then draws an empty outline). Spans
  *  without a swatch pass through. */
-export function resolveSwatchSpans(spans: InlineSpan[], palette: ColorPaletteEntry[] | undefined, resources?: readonly Resource[]): InlineSpan[] {
+export function resolveSwatchSpans(spans: InlineSpan[], palette: ColorPaletteEntry[] | undefined, resources?: readonly Resource[], metrics?: SwatchMetrics): InlineSpan[] {
   return spans.map((span) => {
     if (!span.swatch) return span;
     const icon = span.swatch.icon;
@@ -243,8 +244,36 @@ export function resolveSwatchSpans(spans: InlineSpan[], palette: ColorPaletteEnt
       return { ...span, swatch: { color, icon: picture ? { ...icon, picture } : icon } };
     }
     const color = resolveSwatchColor(span.swatch.color, palette);
-    return color !== undefined ? { ...span, swatch: { color } } : span;
+    // The size, outline, corners and gap written on it (#1104), in px for
+    // the text it sits in.
+    const shape = span.swatch.shape;
+    const box = shape && metrics ? resolveSwatchBox(shape, palette, metrics) : undefined;
+    if (color === undefined && !box) return span;
+    return { ...span, swatch: { color: color ?? span.swatch.color, ...(shape ? { shape } : {}), ...(box ? { box } : {}) } };
   });
+}
+
+/** What a swatch's lengths are read against (#1104): the document's DPI
+ *  and the font size of the text the swatch sits in (its em). */
+export interface SwatchMetrics {
+  dpi: number;
+  fontSizePx: number;
+}
+
+/** A swatch's shape in px and hex (#1104): an outline colour that names
+ *  no palette entry is left out (the text colour outlines it). */
+export function resolveSwatchBox(shape: SwatchShape, palette: ColorPaletteEntry[] | undefined, metrics: SwatchMetrics): SwatchBox {
+  const px = (d: Dimension): number => Math.max(0, dimensionToPx(d, metrics.dpi, metrics.fontSizePx));
+  const box: SwatchBox = {};
+  if (shape.size) box.sidePx = Math.max(1, px(shape.size));
+  if (shape.borderWidth) box.borderWidthPx = px(shape.borderWidth);
+  if (shape.borderColor) {
+    const hex = resolveSwatchColor(shape.borderColor, palette);
+    if (hex !== undefined) box.borderColor = hex;
+  }
+  if (shape.radius) box.radiusPx = px(shape.radius);
+  if (shape.gap) box.gapPx = px(shape.gap);
+  return box;
 }
 
 /** A swatch's colour as a fill (see {@link resolveSwatchSpans}), or
@@ -606,6 +635,46 @@ function measureSnippet(
     : measureRichSnippet(spans, normal, bold, italic, boldItalic, maxWidthPx, lineHeightPx, options);
 }
 
+/**
+ * A caption or note line justified in its segments (#1099): its word spaces
+ * take the line's slack, each as wide as the others, so every renderer,
+ * which paints a caption line as measured, sets it flush on both sides. The
+ * rule is the one body text is painted with (`renderLine` in the canvas
+ * backend): the last line of a paragraph, a tabbed line and a line the
+ * measurer set ragged keep their natural spaces unless they run past the
+ * measure; a hung mark stays out of the count and a Han–Latin space
+ * (`autospace`) keeps the width the CJK composer gave it. A composed CJK
+ * line already spread to its measure has no slack left and comes back as
+ * it was. Highlight bands are placed from the segments once the document is
+ * laid out, so they follow the wider spaces. Never changes `line` in place
+ * (a cached measurement may share it).
+ */
+export function justifySnippetLine(line: VDTLine, maxWidthPx: number): VDTLine {
+  const segments = line.segments;
+  if (!segments || segments.length === 0 || line.tabbed) return line;
+  const measure = line.measure?.width ?? maxWidthPx - line.bbox.x;
+  let wordWidth = 0;
+  let natural = 0;
+  let spaceCount = 0;
+  for (const seg of segments) {
+    if (seg.hangs) continue;
+    if (seg.kind === 'space' && !seg.autospace) spaceCount++;
+    else wordWidth += seg.width;
+    natural += seg.width;
+  }
+  if (spaceCount === 0) return line;
+  if ((line.isLastLine || line.ragged) && !(natural > measure + FIT_EPS)) return line;
+  if (Math.abs(measure - natural) <= FIT_EPS) return line;
+  const spaceWidth = Math.max(0, (measure - wordWidth) / spaceCount);
+  const widened = segments.map((seg) => (seg.kind === 'space' && !seg.autospace && !seg.hangs ? { ...seg, width: spaceWidth } : seg));
+  const grown = spaceWidth * spaceCount + wordWidth - natural;
+  return {
+    ...line,
+    segments: widened,
+    bbox: createBoundingBox(line.bbox.x, line.bbox.y, line.bbox.width + grown, line.bbox.height),
+  };
+}
+
 /** The four faces a caption or note run is set in (normal, bold, italic,
  *  bold italic). */
 type SnippetFonts = readonly [string, string, string, string];
@@ -625,9 +694,10 @@ function measureSnippetLines(
   options: MeasureBlockOptions,
 ): VDTLine[] {
   const [normal, bold, italic, boldItalic] = fonts;
-  // The measurer sets every line flush left at its natural width unless it
-  // justifies: a centred or right-aligned caption or note is pushed over by
-  // each line's slack (EF-166), as table cells are.
+  // The measurer sets every line flush left at its natural width: a
+  // centred or right-aligned caption or note is pushed over by each line's
+  // slack (EF-166), as table cells are, and a justified one has the slack
+  // spread over its word spaces (#1099).
   const align = options.textAlign;
   const aligned = (lines: VDTLine[]): VDTLine[] =>
     align === 'center' || align === 'right'
@@ -635,7 +705,9 @@ function measureSnippetLines(
           const slack = Math.max(0, maxWidthPx - line.bbox.width);
           return shiftLines([line], align === 'center' ? slack / 2 : slack, 0)[0]!;
         })
-      : lines;
+      : align === 'justify'
+        ? lines.map((line) => justifySnippetLine(line, maxWidthPx))
+        : lines;
   const measure = (ps: InlineSpan[]): VDTLine[] =>
     aligned(linkSegments(measureSnippet(ps, normal, bold, italic, boldItalic, maxWidthPx, lineHeightPx, options).lines, ps));
   if (!spans.some((s) => !s.ref && !s.math && FORCED_BREAK_RE.test(s.text))) return measure(spans);
@@ -1105,7 +1177,7 @@ function layoutTableIn(
         resourceTypes,
         resources,
         refStyle,
-      ), style.palette, resources), style.chips, set), style.annotations, set.fontString);
+      ), style.palette, resources, { dpi: style.dpi, fontSizePx: fontSizePxOf(set.fontString) }), style.chips, set), style.annotations, set.fontString);
       const align = cellAlignOf(cell.align, opposite);
       const m = measureCellContent(
         spans,
@@ -1397,7 +1469,7 @@ function layoutCaptionTextIn(input: CaptionTextInput): CaptionTextLayout {
       resourceTypes,
       resources,
       refStyle,
-    ), resolved.colorPalette, resources), chipContextOf(resolved), captionFontPx), { cjk: resolved.cjk, dpi }, captionFontString);
+    ), resolved.colorPalette, resources, { dpi, fontSizePx: captionFontPx }), chipContextOf(resolved), captionFontPx), { cjk: resolved.cjk, dpi }, captionFontString);
     // Description spans pick up the configured slant on top of their own markup.
     const descSpans: InlineSpan[] = cs.descriptionItalic
       ? resolvedSpans.map((s) => ({ ...s, italic: s.italic || true }))
@@ -1469,7 +1541,7 @@ export function layoutLabelLines(input: LabelLinesInput): VDTLine[] {
       input.resourceTypes ?? [],
       input.resources ?? [],
       refStyle,
-    ), resolved.colorPalette, input.resources), chipContextOf(resolved), fontPx), { cjk: resolved.cjk, dpi: resolved.page.dpi }, input.fonts[0]);
+    ), resolved.colorPalette, input.resources, { dpi: resolved.page.dpi, fontSizePx: fontPx }), chipContextOf(resolved), fontPx), { cjk: resolved.cjk, dpi: resolved.page.dpi }, input.fonts[0]);
     const tracking = input.letterSpacingPx ?? 0;
     // A name on a map breaks between words only.
     const lines = measureSnippetLines(spans, input.fonts, Math.max(1, input.maxWidthPx), lineHeightPx, {
@@ -1546,6 +1618,24 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // Inline `:ref` emphasis (bold/italic), applied to refs in captions + cells.
   const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels };
 
+  // A caption beside the picture inside its slot (`placement.captionSide:
+  // 'inside'`, #1106): the picture takes its share of the slot on its
+  // `align` side, the caption and note the rest after the gutter. A band
+  // too narrow to read goes back under the picture.
+  const inside = (() => {
+    const share = !rotate && !input.captionAside ? captionInsideShare(resource, resourceType) : undefined;
+    if (share === undefined) return undefined;
+    const gapPx = Math.max(0, dimensionToPx(resolved.layout.gutterWidth, dpi, bodyStyle.fontSizePx));
+    const bodyMax = columnWidth * share;
+    const captionWidth = columnWidth - bodyMax - gapPx;
+    if (!(captionWidth >= columnWidth * CAPTION_INSIDE_MIN_SHARE)) return undefined;
+    const right = startEndAsLeftRight(resource.placement?.align ?? resourceType?.defaultPlacement?.align ?? 'left') === 'right';
+    return { bodyMax, captionWidth, captionX: right ? 0 : bodyMax + gapPx, right };
+  })();
+  // Widest the picture is set: the caller's cap, and the share `inside`
+  // gives it.
+  const pictureMaxWidth = Math.min(columnWidth, input.maxBodyWidth ?? columnWidth, inside?.bodyMax ?? Infinity);
+
   // --- Figure body -------------------------------------------------------
   let bodyWidth = columnWidth;
   let bodyHeight = 0;
@@ -1560,7 +1650,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     // Its pixels at its own resolution (#631), else at `page.dpi`; the
     // column caps it, a smaller picture keeps its size.
     const natural = bitmapLayoutSize(resource.bitmap, dpi);
-    const fit = fitWidth(natural.width, natural.height, Math.min(columnWidth, input.maxBodyWidth ?? columnWidth));
+    const fit = fitWidth(natural.width, natural.height, pictureMaxWidth);
     bodyWidth = fit.width;
     bodyHeight = fit.height;
   } else if (resource.kind === 'svg' && resource.svg) {
@@ -1570,7 +1660,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     // only when no intrinsic size was captured.
     const iw = resource.svg.width ?? 0;
     const ih = resource.svg.height ?? 0;
-    bodyWidth = Math.min(columnWidth, input.maxBodyWidth ?? columnWidth);
+    bodyWidth = pictureMaxWidth;
     bodyHeight = iw > 0 && ih > 0 ? bodyWidth * (ih / iw) : bodyWidth * 0.75;
   } else if (resource.kind === 'video') {
     // A video is set as its poster (#454): the column's width, the poster's
@@ -1581,7 +1671,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     format = poster?.format;
     const iw = poster?.width ?? resource.video?.width ?? 0;
     const ih = poster?.height ?? resource.video?.height ?? 0;
-    bodyWidth = Math.min(columnWidth, input.maxBodyWidth ?? columnWidth);
+    bodyWidth = pictureMaxWidth;
     bodyHeight = iw > 0 && ih > 0 ? bodyWidth * (ih / iw) : bodyWidth * (9 / 16);
   } else if (resource.kind === 'table' && resource.table) {
     const ts = tableStyle;
@@ -1688,7 +1778,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     resourceType,
     number,
     resolved,
-    width: input.captionAside?.width ?? input.captionWidth ?? columnWidth,
+    width: input.captionAside?.width ?? inside?.captionWidth ?? input.captionWidth ?? columnWidth,
     resourceNumbering,
     resourceTypes,
     resources,
@@ -1732,14 +1822,14 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
       resourceTypes,
       resources,
       refStyle,
-    ), palette, resources), chipContextOf(resolved), noteFontPx), { cjk: resolved.cjk, dpi }, noteFontString);
+    ), palette, resources, { dpi, fontSizePx: noteFontPx }), chipContextOf(resolved), noteFontPx), { cjk: resolved.cjk, dpi }, noteFontString);
     const slanted: InlineSpan[] = cs.note.italic
       ? noteSpans.map((s) => ({ ...s, italic: s.italic || true }))
       : noteSpans;
     measuredNote = measureSnippetLines(
       slanted,
       [noteFontString, noteBoldFontString, noteItalicFontString, noteBoldItalicFontString],
-      Math.max(1, input.captionAside?.width ?? input.captionWidth ?? columnWidth),
+      Math.max(1, input.captionAside?.width ?? inside?.captionWidth ?? input.captionWidth ?? columnWidth),
       noteLineHeightPx,
       { textAlign: cs.note.align },
     );
@@ -1814,7 +1904,8 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     const m = resolved.page.margins;
     const areaHeight = dimensionToPx(resolved.page.height, dpi)
       - dimensionToPx(m.top, dpi) - dimensionToPx(m.bottom, dpi);
-    const room = areaHeight - captionHeight - noteHeight - continuesHeight - bodyStyle.lineHeightPx;
+    // A caption set beside the picture (`inside`) takes none of its height.
+    const room = areaHeight - (inside ? 0 : captionHeight + noteHeight) - continuesHeight - bodyStyle.lineHeightPx;
     // A picture with a safe area is cropped first, keeping its width.
     if (bodyHeight > room + FIT_EPS && bodyHeight > 0 && room > 0 && flexRange) {
       bodyHeight = Math.max(room, flexRange(bodyWidth).min);
@@ -1867,7 +1958,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // rounds follow the width down.
   const captionMeasure = resource.placement?.captionMeasure ?? resourceType?.defaultPlacement?.captionMeasure;
   if (
-    captionMeasure === 'body' && picture && !rotate && !input.captionAside
+    captionMeasure === 'body' && picture && !rotate && !input.captionAside && !inside
     && input.captionWidth === undefined && bodyWidth < columnWidth - 0.5
   ) {
     let width = bodyWidth;
@@ -1882,17 +1973,21 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // --- Vertical stacking -------------------------------------------------
   // above: [caption band] gap [body] noteGap [note]
   // below: [body] gap [caption band] noteGap [note]
+  // beside (`inside`): [body] gutter [caption band, noteGap, note], the
+  // body and the caption band both from the block's top
   const aside = input.captionAside;
   const asideBand = aside ? captionBandHeight + noteHeight : 0;
-  const captionAbove = !aside && cs.position === 'above' && captionBandHeight > 0;
+  const besideBand = inside ? captionBandHeight + noteHeight : 0;
+  const captionAbove = !aside && !inside && cs.position === 'above' && captionBandHeight > 0;
   const captionBandY = aside
     ? (aside.alignBottom ? Math.max(0, bodyHeight - asideBand) : Math.max(0, aside.offsetY ?? 0))
+    : inside ? 0
     : captionAbove ? 0 : bodyHeight + (captionBandHeight > 0 ? captionGapPx : 0);
   const bodyY = captionAbove ? captionHeight : 0;
-  const asideDx = aside ? aside.dx : 0;
+  const asideDx = aside ? aside.dx : inside ? inside.captionX : 0;
   // A caption measured to the picture (`placement.captionMeasure: 'body'`)
   // sits under it per `placement.align`, as the picture sits in the slot.
-  const captionDx = !aside && input.captionWidth !== undefined && input.captionWidth < columnWidth
+  const captionDx = !aside && !inside && input.captionWidth !== undefined && input.captionWidth < columnWidth
     ? (columnWidth - input.captionWidth) * alignFactor(resource.placement?.align ?? resourceType?.defaultPlacement?.align)
     : asideDx;
   // A picture narrower than its slot — shrunk to fit the page or the room
@@ -1900,7 +1995,10 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // sits in the slot per `placement.align`, as a float narrowed by
   // `placement.width` does; the caption and note keep the slot's measure.
   // A turned figure and one with its caption beside it stay flush left.
-  const bodyX = !rotate && !aside && picture && bodyWidth < columnWidth
+  // A picture with its caption inside the slot keeps to its own side.
+  const bodyX = inside
+    ? (inside.right ? columnWidth - bodyWidth : 0)
+    : !rotate && !aside && picture && bodyWidth < columnWidth
     ? (columnWidth - bodyWidth) * alignFactor(resource.placement?.align ?? resourceType?.defaultPlacement?.align)
     : 0;
   const bodyRect = createBoundingBox(bodyX, bodyY, bodyWidth, bodyHeight);
@@ -1926,11 +2024,11 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   const barOverhang = table ? table.borderWidthPx / 2 : 0;
   const captionBar = cs.backgroundEnabled && captionBandHeight > 0
     ? {
-        rect: createBoundingBox(captionDx - barOverhang || 0, captionBandY, (aside?.width ?? input.captionWidth ?? columnWidth) + 2 * barOverhang, captionBandHeight),
+        rect: createBoundingBox(captionDx - barOverhang || 0, captionBandY, (aside?.width ?? inside?.captionWidth ?? input.captionWidth ?? columnWidth) + 2 * barOverhang, captionBandHeight),
         background: cs.background.hex,
       }
     : undefined;
-  const noteY = aside
+  const noteY = aside || inside
     ? captionBandY + captionBandHeight + noteGapPx
     : (captionAbove ? bodyY + bodyHeight : bodyHeight + captionHeight) + noteGapPx;
   const noteLines = shiftLines(measuredNote, captionDx, noteY);
@@ -1938,6 +2036,8 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   const continuesLines = shiftLines(measuredContinues, 0, aside ? bodyHeight + noteGapPx : noteY);
   const totalHeight = aside
     ? bodyHeight + continuesHeight
+    : inside
+    ? Math.max(bodyHeight, besideBand) + continuesHeight
     : bodyHeight + captionHeight + noteHeight + continuesHeight;
 
   const video = layoutVideo(resource, resolved, bodyWidth, bodyHeight);
@@ -1988,6 +2088,11 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   };
 }
 
+
+/** The narrowest caption band set beside a picture inside its slot
+ *  (`placement.captionSide: 'inside'`), as a share of the slot: a
+ *  narrower one goes back under the picture. */
+const CAPTION_INSIDE_MIN_SHARE = 0.2;
 
 /** The share of its first width an upright picture keeps when its frame
  *  narrows (see `layoutUprightResourceBlock`): it may give up a quarter,

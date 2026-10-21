@@ -89,10 +89,10 @@ const calloutStyles = [
 // #region answer: one base template and a family of topics that extend it
 // Ground, tab and number are decoration anchored to the title frame; the number,
 // `{headingNumber}`, stands over the padding before its words. A topic extends the base.
-const ground = () => ({ kind: 'box', id: 'ground', decorative: true,
+const ground = () => ({ kind: 'box', id: 'ground',
   placement: { ...at('bleed', 'top-left'), size: { width: 'fill', height: 'fill' } },
   style: { backgroundColor: col('tema-ground') } });
-const titleTab = () => ({ kind: 'box', id: 'tab', decorative: true, placement: { ...at('#titulo',
+const titleTab = () => ({ kind: 'box', id: 'tab', placement: { ...at('#titulo',
   'top-left'), size: { width: { to: '#titulo', edge: 'right' }, height: { to: '#titulo',
     edge: 'bottom' } } }, style: { backgroundColor: col('tema'), borderRadius: mm(4) } });
 const badge = () => ({ kind: 'text', id: 'number', content: '{headingNumber}',
@@ -154,8 +154,6 @@ const pageTemplates = [
         : [box('actividad', 'actividad', 24)]),
       { name: 'curso', style: 'dato', minHeight: mm(46) },
     ],
-    ...(!CJK && { decoration: { elements: [pointer(1, 'alto', 0.01),
-      pointer(2, 'medio', 0.08), pointer(3, 'bajo', 0.2)] } }),
     groups: [
       stack('izquierda', CJK ? ['titulo', 'texto', 'actividad'] : ['titulo', 'mapa', 'texto',
         'actividad'], { gap: mm(6), ...(CJK && { placement: at('container', 'top-left', DOWN) }) }),
@@ -235,7 +233,7 @@ const toc = {
   pageNumber: { fontFamily: DISPLAY, fontWeight: fw(500), width: mm(9), color: col('agua') },
   leader: { char: CJK ? '…' : '.', gap: mm(1.5) },
   parts: { height: pt(34), marginTop: pt(12), marginBottom: pt(4), design: { elements: [
-    { kind: 'box', id: 'band', decorative: true,
+    { kind: 'box', id: 'band',
       placement: { ...at('container', 'top-left'), size: { width: 'fill', height: 'fill' } },
       style: { backgroundColor: col('paper'), borderRadius: mm(3) } },
     { kind: 'text', id: 'letter', content: '{number}', fontFamily: DISPLAY, fontSize: pt(16),
@@ -248,7 +246,7 @@ const toc = {
 };
 // #endregion
 
-// #region art-labels: the map's label styles, anchors and pointers; the words are in the Markdown
+// #region art-labels: the map's label styles and anchors; the words are in the Markdown
 // An anchor is a point of the painting (fractions of its width and height) and a label style;
 // every language's ::label lines use the same anchors. A right-bound book shows the painting
 // mirrored, the mountains on the right, so the river runs the way its pages are read: x comes
@@ -285,13 +283,6 @@ const ANCHORS = [
   { id: 'medio', x: 0.4, y: 0.77, style: 'curso' },
   { id: 'bajo', x: 0.74, y: 0.865, style: 'curso' },
 ];
-// Each course box points at its stretch of the river: an elbow from the box's top to an anchor
-// of the painting; the runs across stand at different heights (`trunk`), so none crosses.
-function pointer(n, anchor, trunk) {
-  return { kind: 'connector', id: `a-${anchor}`, routing: 'elbow', trunk, radius: mm(2),
-    from: { to: `#curso[${n}]`, side: 'top' }, to: { to: '#mapa', anchor, gap: mm(4.5) },
-    color: col('tema'), width: pt(1.6), startCap: 'dot', capSize: mm(2.4) };
-}
 const flip = (x) => Math.round((1 - x) * 1000) / 1000;
 const flipped = (a) => ({ ...a, x: flip(a.x), ...(a.labelAt && { labelAt: { ...a.labelAt,
     x: flip(a.labelAt.x) } }),

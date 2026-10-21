@@ -304,6 +304,8 @@ Um estilo pode definir a regra dos próprios contêineres com `containerSpacing`
 
 Dentro de um `:::callout`, o contêiner aplica as margens do estilo dele da mesma maneira: `marginTop` e `marginBottom` se fundem com o espaçamento dos blocos em volta (uma margem negativa os aproxima), e um contêiner que abre o boxe não recebe margem superior, como no topo de uma coluna. Um boxe não tem grade de linhas de base à qual voltar; por isso, o espaço abaixo do último parágrafo é o maior entre `marginBottom`, `spaceBetween` e o espaçamento entre parágrafos do próprio boxe (o `body.paragraphSpacing` dele, uma linha do texto; fica de fora com `paragraphContainerSpacing: 'add'`), ou a margem superior do bloco seguinte, quando esta é maior ainda; um `marginBottom` negativo puxa o bloco seguinte para cima. (Até o postext 1.4, um contêiner dentro de um boxe ignorava as duas margens.)
 
+Dentro de um boxe, os campos tipográficos que um estilo deixa sem definir vêm do boxe (desde o postext 1.52): a fonte, o tamanho, a entrelinha, os pesos e a cor que o estilo deixa para o texto são os do texto do boxe, assim `:::paragraphs{style="centred"}` com um estilo que só define `textAlign: 'center'` é composto na sem serifa de um boxe e na serifada de outro. Os campos que o estilo define permanecem. `bodyText.paragraphStylesInBoxes: 'document'` mantém o texto do documento, como até o postext 1.51.
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => todo campo não definido é preenchido a partir do texto corrido resolvido
@@ -472,7 +474,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Estilos de destaque
 
-A propriedade `markStyles` declara os estilos nomeados do `:mark[texto]{style="…"}` em linha: a faixa colorida atrás de uma frase, como um livro didático destaca suas palavras-chave (a sintaxe e suas regras de quebra de linha estão na referência do formato de documento). Um estilo, `mark`, vem por padrão (uma faixa amarelo-clara que passa um pouco da frase, com as pontas levemente arredondadas e o texto na própria cor); por isso, `:mark[…]` funciona sem nenhuma configuração; declarar `markStyles` substitui essa lista. Uma marca sem `style`, ou com um id que nenhum estilo declara, usa o primeiro estilo (o Sandbox aponta o id desconhecido).
+A propriedade `markStyles` declara os estilos nomeados do `:mark[texto]{style="…"}` em linha: a faixa colorida atrás de uma frase, como um livro didático destaca suas palavras-chave (a sintaxe e suas regras de quebra de linha estão na referência do formato de documento). Um estilo, `mark`, vem por padrão (uma faixa amarelo-clara que passa um pouco da frase, com as pontas retas e o texto na própria cor); por isso, `:mark[…]` funciona sem nenhuma configuração; declarar `markStyles` substitui essa lista. Uma marca sem `style`, ou com um id que nenhum estilo declara, usa o primeiro estilo (o Sandbox aponta o id desconhecido).
 
 ```ts
 const config: PostextConfig = {
@@ -531,8 +533,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Raio das duas pontas da faixa, limitado à metade da altura dela.</td>
+      <td><code>0</code></td>
+      <td>Raio das duas pontas da faixa, limitado à metade da altura dela. Pontas retas são a norma na impressão. Até o postext 1.51 o padrão era <code>0.2em</code>; uma configuração salva nessa época cujo texto tenha alguma marca é lida com <code>0.2em</code> escrito em cada estilo que não indique raio.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -551,6 +553,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>Espaço acima e abaixo, cada um no lugar de <code>paddingY</code>.</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>Como a faixa de uma frase que passa para outra linha é cortada, como <code>box-decoration-break</code> em CSS. <code>'slice'</code>: uma só faixa, reta onde a linha quebra, com o recuo e os cantos arredondados só no início e no fim verdadeiros da frase. <code>'clone'</code>: cada pedaço de linha recebe uma faixa inteira, com <code>paddingX</code> e os cantos nas duas pontas, para um título composto sobre uma faixa de cor cortada por linha. A composição é a mesma nos dois casos.</td>
     </tr>
   </tbody>
 </table>

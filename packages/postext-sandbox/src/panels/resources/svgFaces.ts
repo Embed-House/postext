@@ -1,6 +1,6 @@
 import { inlineSvgFontsDetailed, svgFontRequests, type SvgFontFaceReport } from 'postext';
-import { sandboxSvgFontProvider } from '../../controls/svgFontProvider';
-import { getBlob } from '../../storage/blobStore';
+import { sandboxSvgFontProvider } from '../../controls/svgFontProvider.js';
+import { getBlob } from '../../storage/blobStore.js';
 
 // The faces the text of an SVG resource names (#630), and what becomes of
 // each when the picture is shown or exported.

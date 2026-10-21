@@ -17,9 +17,9 @@ import {
   type TableCellPos,
   type TableModel,
 } from 'postext';
-import { setHeaderRows, toggleHeaderColumn } from '../panels/resources/TableEditor/headerCells';
-import { tableWithDirection, tableWithStyle } from '../panels/resources/resourceEdits';
-import { ToolError, type JsonSchema } from './modelContext';
+import { setHeaderRows, toggleHeaderColumn } from '../panels/resources/TableEditor/headerCells.js';
+import { tableWithDirection, tableWithStyle } from '../panels/resources/resourceEdits.js';
+import { ToolError, type JsonSchema } from './modelContext.js';
 
 type Table = NonNullable<Resource['table']>;
 

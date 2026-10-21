@@ -2,9 +2,9 @@ import type { PdfFontFile, PdfFontProvider } from 'postext-pdf';
 import type { CustomFontFamily, CustomFontVariant } from 'postext';
 import { fontFallbackOf, hasOwnStyle } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
-import { facesForCodePoints, fontFamilyWeights, fontsourcePackageVersion, getCustomFontFamily, isUncataloguedFontFamily, sheetFaceFiles, staticFaceFiles } from '../controls/fontLoader';
-import { getFontFile } from '../storage/fontStorage';
-import { fontsourceCssUrl, fontsourceFileUrl, fontsourceUrlAt, fontsourceVersionOf, parseFontsourceCss, pickSlices, type FontSlice } from './fontsourceSlices';
+import { facesForCodePoints, fontFamilyWeights, fontsourcePackageVersion, getCustomFontFamily, isUncataloguedFontFamily, sheetFaceFiles, staticFaceFiles } from '../controls/fontLoader.js';
+import { getFontFile } from '../storage/fontStorage.js';
+import { fontsourceCssUrl, fontsourceFileUrl, fontsourceUrlAt, fontsourceVersionOf, parseFontsourceCss, pickSlices, type FontSlice } from './fontsourceSlices.js';
 
 const bytesCache = new Map<string, Promise<Uint8Array>>();
 const slicesCache = new Map<string, Promise<FontSlice[] | null>>();

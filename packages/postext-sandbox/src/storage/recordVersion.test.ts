@@ -34,8 +34,8 @@ const deps = { ids: () => 'x', untitled: (n: number) => `Chapter ${n}` };
 
 describe('record version follows the engine\'s CONFIG_VERSION', () => {
   it('is the engine constant', async () => {
-    const { PROJECT_RECORD_VERSION } = await import('./projectMigration');
-    expect(CONFIG_VERSION).toBe(16);
+    const { PROJECT_RECORD_VERSION } = await import('./projectMigration.js');
+    expect(CONFIG_VERSION).toBe(18);
     expect(PROJECT_RECORD_VERSION).toBe(CONFIG_VERSION);
   });
 
@@ -45,11 +45,11 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
       'postext-sandbox-config-version': '3',
       'postext-sandbox-book': JSON.stringify({ version: 2, activeChapterId: 'a', chapters: [chapter(MATHS)] }),
     });
-    const { loadConfig, saveConfig } = await import('./persistence');
+    const { loadConfig, saveConfig } = await import('./persistence.js');
     const first = loadConfig()!;
     expect(first.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
     saveConfig(first);
-    expect(map.get('postext-sandbox-config-version')).toBe('16');
+    expect(map.get('postext-sandbox-config-version')).toBe('18');
     const second = loadConfig()!;
     expect(second).toEqual(first);
     saveConfig(second);
@@ -57,7 +57,7 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
   });
 
   it('migrates a project record once, and stores it as it reads back', async () => {
-    const { migrateProjectRecord } = await import('./projectMigration');
+    const { migrateProjectRecord } = await import('./projectMigration.js');
     const saved = {
       version: 3, id: 'p', name: 'P', resources: [], createdAt: 1, updatedAt: 1,
       chapters: [chapter(MATHS)],
@@ -65,7 +65,7 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
       config: { math: { fontSizeScale: 1.2 } },
     };
     const once = migrateProjectRecord(saved, deps)!;
-    expect(once.version).toBe(16);
+    expect(once.version).toBe(18);
     expect(once.config.math?.fontSizeScale).toBe(1.2 * LEGACY_MATH_SIZE);
     const twice = migrateProjectRecord(once, deps)!;
     expect(twice.config).toEqual(once.config);
@@ -77,7 +77,7 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
   });
 
   it('leaves the configuration of a record whose book sets no maths as it was', async () => {
-    const { migrateProjectRecord } = await import('./projectMigration');
+    const { migrateProjectRecord } = await import('./projectMigration.js');
     const config: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     const saved = {
       version: 3, id: 'p', name: 'P', resources: [], createdAt: 1, updatedAt: 1,
@@ -89,8 +89,8 @@ describe('record version follows the engine\'s CONFIG_VERSION', () => {
   });
 
   it('reads back its own config exports as they are', async () => {
-    const { configFromExport } = await import('./persistence');
-    const { PROJECT_RECORD_VERSION } = await import('./projectMigration');
+    const { configFromExport } = await import('./persistence.js');
+    const { PROJECT_RECORD_VERSION } = await import('./projectMigration.js');
     const config = { math: { fontSizeScale: 2 } };
     expect(configFromExport({ type: 'postext-config', version: 1, configVersion: PROJECT_RECORD_VERSION, config })).toEqual(config);
     expect(configFromExport({ type: 'postext-config', version: 1, configVersion: 3, config }).math?.fontSizeScale).toBe(2 * LEGACY_MATH_SIZE);

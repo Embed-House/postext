@@ -3,10 +3,10 @@ import {
   mergeCaptionStyle,
   resolveCaptionStyleConfig,
   stripCaptionStyleDefaults,
-} from '../../defaults/captionStyle';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import { DEFAULT_MAIN_COLOR_HEX, DEFAULT_MAIN_COLOR_ID } from '../../defaults/shared';
-import type { CaptionStyleConfig, ColorPaletteEntry } from '../../types';
+} from '../../defaults/captionStyle.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import { DEFAULT_MAIN_COLOR_HEX, DEFAULT_MAIN_COLOR_ID } from '../../defaults/shared.js';
+import type { CaptionStyleConfig, ColorPaletteEntry } from '../../types.js';
 
 const bodyText = resolveBodyTextConfig(undefined);
 

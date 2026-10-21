@@ -9,10 +9,10 @@
 
 import type { Dispatch } from 'react';
 import type { PostextConfig } from 'postext';
-import type { SandboxAction } from '../context/SandboxContext';
-import { applyViewerEdit } from '../editor/viewerEdits';
-import type { HistoryStepInfo, SandboxHistory } from '../history/sandboxHistory';
-import type { StyleRewritePlan } from './styleMerge';
+import type { SandboxAction } from '../context/SandboxContext.js';
+import { applyViewerEdit } from '../editor/viewerEdits.js';
+import type { HistoryStepInfo, SandboxHistory } from '../history/sandboxHistory.js';
+import type { StyleRewritePlan } from './styleMerge.js';
 
 /** What a rewrite wrote: the chapters it changed, for its undo. */
 export interface StyleRewriteRecord {

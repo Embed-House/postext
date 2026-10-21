@@ -1,10 +1,10 @@
-import { resolvedComics } from '../defaults/comics';
-import { fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measureCentralBaseline, setMeasureWritingMode, withMeasureWritingMode } from '../measure/vertical';
-import type { PartPageInfo } from './placeholders';
-import { applyPartPalettesToFlow, type FlowColorValues } from './partPalette';
-import { recolorLineNumbers } from './lineNumbers';
-import { applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting';
-import type { ColorPaletteEntry, ColorValue, DesignSlot, DesignTextAlign, Dimension, DocumentMetadata, Resource, ResolvedCalloutDesignConfig, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types';
+import { resolvedComics } from '../defaults/comics.js';
+import { fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measureCentralBaseline, setMeasureWritingMode, withMeasureWritingMode } from '../measure/vertical.js';
+import type { PartPageInfo } from './placeholders.js';
+import { applyPartPalettesToFlow, type FlowColorValues } from './partPalette.js';
+import { recolorLineNumbers } from './lineNumbers.js';
+import { CHIP_PLACEHOLDER, applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting.js';
+import type { ColorPaletteEntry, ColorValue, DesignSlot, DesignTextAlign, Dimension, DocumentMetadata, Resource, ResolvedCalloutDesignConfig, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types.js';
 import {
   createBoundingBox,
   flowRectToPage,
@@ -25,22 +25,22 @@ import {
   type VDTColumn,
   type VDTFrame,
   type VDTPage,
-} from '../vdt';
-import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders';
-import { parsePartNumber, parsePartPalette, partMarkPages } from './parts';
-import { composedLeafConfig, computePageMetrics, onComposedLeaf, sheetRectToFlow } from './buildHelpers';
-import { arabicNumbersOf, resolvedLocale } from './config';
-import { classifyPages } from './pageRoles';
-import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles';
-import { dimensionToPx } from '../units';
-import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter';
-import { repeatInstance, resolvePageTemplate } from '../composed/templates';
-import { splitSpreadDecoration } from '../composed/spread';
-import { pathInkBox } from '../design/pathBlock';
-import { frameOfBlock, framePageRect } from '../composed/paint';
-import { figureAnchorPointOnPage } from '../composed/labels';
-import type { ResolvedConfig } from '../vdt';
-import type { PageRole } from '../types';
+} from '../vdt.js';
+import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers, computeChapterNumbersAtTop, computeChapterNumbersByBlock, computeChapterAttrs, computePageMarks, computePartValues, lineJoin, markSourceOf, type JoinedLine, type PageMarks } from './placeholders.js';
+import { parsePartNumber, parsePartPalette, partMarkPages } from './parts.js';
+import { composedLeafConfig, computePageMetrics, onComposedLeaf, sheetRectToFlow } from './buildHelpers.js';
+import { arabicNumbersOf, resolvedLocale } from './config.js';
+import { classifyPages } from './pageRoles.js';
+import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles.js';
+import { dimensionToPx } from '../units.js';
+import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter.js';
+import { repeatInstance, resolvePageTemplate } from '../composed/templates.js';
+import { splitSpreadDecoration } from '../composed/spread.js';
+import { pathInkBox } from '../design/pathBlock.js';
+import { frameOfBlock, framePageRect } from '../composed/paint.js';
+import { figureAnchorPointOnPage } from '../composed/labels.js';
+import type { ResolvedConfig } from '../vdt.js';
+import type { PageRole } from '../types.js';
 import {
   layoutDesignSlot,
   textVerticalOffset,
@@ -52,10 +52,31 @@ import {
   type ResolvedBoxPrimitive,
   type ResolvedImagePrimitive,
   type ResolvedPathPrimitive,
-} from '../design/layout';
-import { resolveDesignText, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders';
-import { plainDesignText } from '../design/richText';
-import { withDigits } from '../arabicNumerals';
+} from '../design/layout.js';
+import { resolveDesignText, type DesignLeader, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders.js';
+import { plainDesignText } from '../design/richText.js';
+import { withDigits } from '../arabicNumerals.js';
+
+/** The leader a contents part row's `{leader}` draws (#889): the contents'
+ *  character, gap and switch, and the face of `toc.parts.leader` field by
+ *  field over `toc.leader`'s (#1121); a field neither sets keeps the text
+ *  element's own. */
+function tocPartLeader(toc: ResolvedConfig['toc']): DesignLeader {
+  const own = toc.parts.leader ?? {};
+  const color = own.color ?? toc.leader.color;
+  const fontFamily = own.fontFamily ?? toc.leader.fontFamily;
+  const fontSize = own.fontSize ?? toc.leader.fontSize;
+  const fontWeight = own.fontWeight ?? toc.leader.fontWeight;
+  return {
+    enabled: toc.leader.enabled,
+    char: toc.leader.char,
+    gap: toc.leader.gap,
+    ...(color ? { color: color.hex } : {}),
+    ...(fontFamily ? { fontFamily } : {}),
+    ...(fontSize ? { fontSize } : {}),
+    ...(fontWeight !== undefined ? { fontWeight } : {}),
+  };
+}
 
 /** Slots live in the page margin area between the body edge and the trim
  *  edge. Header slot container: from the trim top down to body top.
@@ -175,6 +196,7 @@ function textPrimitiveToBlock(prim: ResolvedTextPrimitive): VDTDesignTextBlock {
     ...(l.wordSpacingPx !== undefined ? { wordSpacingPx: l.wordSpacingPx } : {}),
     ...(l.order ? { order: [...l.order] } : {}),
     ...(l.wordOverflow ? { wordOverflow: true as const } : {}),
+    ...(l.wordDivided ? { wordDivided: l.wordDivided } : {}),
   }));
 
   return {
@@ -887,6 +909,11 @@ export function defaultOpenerTitle(
   /** Where a line break was read back as a space or a no-break space. */
   const separators = new Set<number>();
   let hasMarks = false;
+  /** Where each chip of the title was left out (#1100), in `chars`, with
+   *  the space after it when a space or the start of the line comes
+   *  before it: a chip is a box of the page, not words of the title. */
+  const removedAt: number[] = [];
+  let afterChip = false;
   lines.forEach((ln, i) => {
     const start = chars.length;
     // The hyphen repeated from the line before (`repeatHyphen`) is not part
@@ -898,6 +925,17 @@ export function defaultOpenerTitle(
         if (s.text.startsWith('-')) from = 1;
         skipRepeated = false;
       }
+      if (s.text === CHIP_PLACEHOLDER) {
+        removedAt.push(chars.length);
+        afterChip = true;
+        continue;
+      }
+      if (afterChip && s.text === ' ' && (chars.length === start || chars[chars.length - 1] === ' ')) {
+        removedAt.push(chars.length);
+        afterChip = false;
+        continue;
+      }
+      afterChip = false;
       const f: TitleRunFlags = s.bold || s.italic || s.script
         ? { bold: !!s.bold, italic: !!s.italic, ...(s.script ? { script: s.script } : {}) }
         : PLAIN_RUN;
@@ -935,7 +973,18 @@ export function defaultOpenerTitle(
   }
   const full = chars.join('');
   const drop = numberPrefix && full.startsWith(`${numberPrefix}${numberSeparator}`) ? numberPrefix.length + numberSeparator.length : 0;
-  const title = full.slice(drop);
+  if (removedAt.length > 0) {
+    // The forced breaks and the length of the title without what was left
+    // out; a space a closing chip stood after goes too.
+    titleBreaks = titleBreaks?.map((i) => i - removedAt.filter((c, k) => c - drop + k < i).length);
+    titleLength -= removedAt.length;
+    while (chars.length > drop && chars[chars.length - 1] === ' ') {
+      chars.pop();
+      flags.pop();
+      titleLength--;
+    }
+  }
+  const title = chars.join('').slice(drop);
   const titleText = applyTitleBreaks(title, titleBreaks, titleLength);
   if (!hasMarks) return { titleText };
   let tChars = chars.slice(drop);
@@ -1701,7 +1750,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       const placeholders: DesignPlaceholderContext = {
         kind: 'part',
         // `{leader}` fills the row with the contents' leader (#889).
-        leader: { enabled: resolved.toc.leader.enabled, char: resolved.toc.leader.char, gap: resolved.toc.leader.gap },
+        leader: tocPartLeader(resolved.toc),
         page: rowPage,
         allPages: doc.pages,
         metadata: doc.metadata,

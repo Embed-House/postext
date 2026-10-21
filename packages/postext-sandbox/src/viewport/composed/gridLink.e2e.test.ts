@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, resolvePageTemplate, type VDTPage } from 'postext';
-import { applyTextChanges } from '../../book/textChanges';
-import { planFramesToGrid } from '../../templates/framesToGrid';
-import { templateFrameOf } from '../../templates/instanceNames';
-import { laidFrames } from '../../templates/pagePieces';
-import { ONE_OFF_TEMPLATE, RESHAPE_CONFIG, RESHAPE_RESOURCES, oneOffPage } from '../../templates/reshape.fixture';
-import { frameByName } from './frameHit';
-import { frameAtCaret, frameClickTarget } from './frameLink';
-import { frameMarksFor } from './frameOverlay';
+import { applyTextChanges } from '../../book/textChanges.js';
+import { planFramesToGrid } from '../../templates/framesToGrid.js';
+import { templateFrameOf } from '../../templates/instanceNames.js';
+import { laidFrames } from '../../templates/pagePieces.js';
+import { ONE_OFF_TEMPLATE, RESHAPE_CONFIG, RESHAPE_RESOURCES, oneOffPage } from '../../templates/reshape.fixture.js';
+import { frameByName } from './frameHit.js';
+import { frameAtCaret, frameClickTarget } from './frameLink.js';
+import { frameMarksFor } from './frameOverlay.js';
 
 // A grid's instances ↔ their items in the Markdown (#1065): a click on
 // `foto[3]` puts the caret in the third card's piece, on `pie[3]` in the

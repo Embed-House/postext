@@ -10,7 +10,7 @@
  * types 3.
  */
 
-import type { DigitSystem } from './types';
+import type { DigitSystem } from './types.js';
 
 const ARABIC_INDIC_ZERO = 0x0660;
 const PERSIAN_ZERO = 0x06f0;

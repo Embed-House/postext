@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { resolvePageTemplate, type PostextConfig } from 'postext';
-import { templateSheet } from './templateSheet';
+import { templateSheet } from './templateSheet.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const config: PostextConfig = {

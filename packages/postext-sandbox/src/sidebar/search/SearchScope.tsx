@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo, type ReactNode } from 'react';
-import { MatchScopeProvider, useScopeVisible } from './MatchScope';
-import { useSettingsSearch } from './SearchContext';
-import { normalizeText } from './normalize';
-import { cn } from '../../ui/cn';
+import { MatchScopeProvider, useScopeVisible } from './MatchScope.js';
+import { useSettingsSearch } from './SearchContext.js';
+import { normalizeText } from './normalize.js';
+import { cn } from '../../ui/cn.js';
 
 interface SearchScopeProps {
   /** Card title (matching it keeps the whole card visible). */

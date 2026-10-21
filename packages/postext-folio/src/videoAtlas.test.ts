@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ATLAS_MAX, packVideoAtlas, type AtlasRect } from "./videoAtlas";
+import { ATLAS_MAX, packVideoAtlas, type AtlasRect } from "./videoAtlas.js";
 
 const overlaps = (a: AtlasRect, b: AtlasRect) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 

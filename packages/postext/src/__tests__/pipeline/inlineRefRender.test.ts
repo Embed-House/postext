@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { PostextContent, Resource } from '../../types';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextContent, Resource } from '../../types.js';
 
 // The build pipeline measures text via an OffscreenCanvas 2D context. The node
 // test environment has none, so install a deterministic stub (width ∝ length)

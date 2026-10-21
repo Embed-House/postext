@@ -44,8 +44,8 @@ import {
 } from 'pdf-lib';
 import { comicBalloonMatrix, comicBalloonText as sharedBalloonText, comicPanelContinues, comicRoughBorder } from 'postext';
 import type { VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTDesignTextBlock, VDTPoint } from 'postext';
-import type { FontCache } from '../fontCache';
-import { renderTextBlock, type SlotMark } from './headerFooter';
+import type { FontCache } from '../fontCache.js';
+import { renderTextBlock, type SlotMark } from './headerFooter.js';
 import {
   type PageCtx,
   type PdfMatrix,
@@ -58,11 +58,11 @@ import {
   popTransform,
   pushFrame,
   pushTransform,
-} from './primitives';
-import { drawEmbeddedResource, figureLayout, type ResourceImageMap } from './renderResourceBlock';
-import type { StructureFlow } from './structureFlow';
-import { parsePathData, type PathSeg } from './svgVector';
-import { tagArtifact, tagContent, type StructElem } from './tagging';
+} from './primitives.js';
+import { drawEmbeddedResource, figureLayout, type ResourceImageMap } from './renderResourceBlock.js';
+import type { StructureFlow } from './structureFlow.js';
+import { parsePathData, type PathSeg } from './svgVector.js';
+import { tagArtifact, tagContent, type StructElem } from './tagging.js';
 
 /** Bézier handle length of a quarter circle, as a fraction of its radius. */
 const KAPPA = 0.5522847498;

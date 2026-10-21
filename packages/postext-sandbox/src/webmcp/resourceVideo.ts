@@ -11,8 +11,8 @@ import {
   type VideoPlayerOptions,
   type VideoSource,
 } from 'postext';
-import { getBlob } from '../storage/blobStore';
-import { resourceFromFile } from '../panels/resources/uploadFiles';
+import { getBlob } from '../storage/blobStore.js';
+import { resourceFromFile } from '../panels/resources/uploadFiles.js';
 import {
   VIDEO_PLAYER_SOURCES,
   addressEdit,
@@ -24,10 +24,10 @@ import {
   sourceSwitched,
   streamInfoEdit,
   videoFileEdit,
-} from '../panels/resources/videoEdits';
-import { addressMetadata, fetchStreamInfo, posterAt } from '../panels/resources/videoMedia';
-import { FILE_PARAM, readFileInput, type FileInput } from './fileInput';
-import { ToolError, type JsonSchema } from './modelContext';
+} from '../panels/resources/videoEdits.js';
+import { addressMetadata, fetchStreamInfo, posterAt } from '../panels/resources/videoMedia.js';
+import { FILE_PARAM, readFileInput, type FileInput } from './fileInput.js';
+import { ToolError, type JsonSchema } from './modelContext.js';
 
 type PlayerKey = keyof VideoPlayerOptions;
 

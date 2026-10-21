@@ -6,11 +6,11 @@
 
 import { describe, expect, it } from 'vitest';
 import { buildDocument, createMeasurementCache, type CalloutStyleConfig, type DesignConnectorElement, type PostextConfig, type VDTBlock, type VDTDesignPathBlock, type VDTPathCommand } from 'postext';
-import { createTemplate, updateTemplate } from './templateEdits';
-import { newConnector, pickConnectorFrame, updateDecorationElement, type ConnectorPickPhase } from './connectorEdits';
-import { connectorHandles } from './connectorHandles';
-import { joinedTabPatch } from '../sidebar/sections/CalloutStylesSection';
-import { setCorner, unlinkCorners } from '../sidebar/sections/HeaderFooterSection/shapeEdits';
+import { createTemplate, updateTemplate } from './templateEdits.js';
+import { newConnector, pickConnectorFrame, updateDecorationElement, type ConnectorPickPhase } from './connectorEdits.js';
+import { connectorHandles } from './connectorHandles.js';
+import { joinedTabPatch } from '../sidebar/sections/CalloutStylesSection.js';
+import { setCorner, unlinkCorners } from '../sidebar/sections/HeaderFooterSection/shapeEdits.js';
 
 class StubCtx {
   font = '';

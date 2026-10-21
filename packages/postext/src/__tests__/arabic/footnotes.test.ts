@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { resolveFootnotesConfig, stripFootnotesDefaults } from '../../defaults/footnotes';
-import { formatFootnoteNumber, noteNumberPositionOf } from '../../pipeline/footnotes';
-import { flowRectToPage, type VDTDocument, type VDTLineSegment } from '../../vdt';
-import type { PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/index.js';
+import { resolveFootnotesConfig, stripFootnotesDefaults } from '../../defaults/footnotes.js';
+import { formatFootnoteNumber, noteNumberPositionOf } from '../../pipeline/footnotes.js';
+import { flowRectToPage, type VDTDocument, type VDTLineSegment } from '../../vdt.js';
+import type { PostextConfig } from '../../types.js';
 
 // Issue #376: Arabic footnotes — «(١)» markers in the document digits, raised
 // in the text and on the line in the note, numbered per page, the rule and

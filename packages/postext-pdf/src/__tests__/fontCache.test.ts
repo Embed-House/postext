@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { coverAllGlyphWidths } from '../fontCache';
+import { coverAllGlyphWidths } from '../fontCache.js';
 
 // A TrueType face from the demo app's static fonts (OFL). The width fix is
 // applied to CFF faces in production, but the mechanics are format-agnostic.

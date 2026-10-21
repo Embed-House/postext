@@ -1,5 +1,5 @@
 import type { Dimension, ResolvedDesignTextElement } from 'postext';
-import { TO_PT, toPt } from '../../../controls/units';
+import { TO_PT, toPt } from '../../../controls/units.js';
 
 /** The default leading of a design text (`DEFAULT_TEXT_ELEMENT.lineHeight`). */
 const DEFAULT_MULTIPLIER = 1.2;

@@ -1,8 +1,8 @@
 'use client';
 
-import { Switch } from '../ui/switch';
-import { FieldRow } from './FieldRow';
-import { useFieldIds } from './fieldContext';
+import { Switch } from '../ui/switch.js';
+import { FieldRow } from './FieldRow.js';
+import { useFieldIds } from './fieldContext.js';
 
 interface ToggleSwitchProps {
   label: string;

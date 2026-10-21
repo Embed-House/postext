@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { PageTemplate } from 'postext';
-import { pointersOf, removePointer, setPointer } from './pointerEdits';
+import { pointersOf, removePointer, setPointer } from './pointerEdits.js';
 
 // #1064: pointers from a frame to an anchor of another frame's picture, as
 // connectors of the template's decoration.

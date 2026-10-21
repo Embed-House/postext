@@ -7,8 +7,8 @@
  * all in the Markdown, and the lines are decoration of the templates, not
  * pictures.
  */
-import type { PostextConfig } from '../../../types';
-import type { PageTemplate } from '../../../composed/types';
+import type { PostextConfig } from '../../../types.js';
+import type { PageTemplate } from '../../../composed/types.js';
 
 export const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });

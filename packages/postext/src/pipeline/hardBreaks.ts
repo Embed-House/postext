@@ -9,8 +9,8 @@
  * back.
  */
 
-import type { ContentBlock } from '../parse';
-import type { ResolvedConfig } from '../vdt';
+import type { ContentBlock } from '../parse/index.js';
+import type { ResolvedConfig } from '../vdt.js';
 
 /** Memo of {@link literalBreaksFor}, per parsed array. */
 const memo = new WeakMap<ContentBlock[], ContentBlock[]>();

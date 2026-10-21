@@ -1,17 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { joinsWithNext } from '../bidi';
-import { measureRichBlock } from '../measure/rich';
-import { chosenKashidaPoints, distributeKashida, kashidaCapacity, kashidaMeasureOptions, patternsForFont, writtenText, TATWEEL, type KashidaOptions } from '../measure/kashida';
-import { computeBreakpoints } from '../knuthPlass/breakpoints';
-import { richTokensToItems } from '../knuthPlass/richAdapter';
-import { lineTracking } from '../knuthPlass/tracking';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../defaults/bodyText';
-import { collectConfigWarnings } from '../configWarnings';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig } from '../types';
-import type { VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
+import { joinsWithNext } from '../bidi.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { chosenKashidaPoints, distributeKashida, kashidaCapacity, kashidaMeasureOptions, patternsForFont, writtenText, TATWEEL, type KashidaOptions } from '../measure/kashida.js';
+import { computeBreakpoints } from '../knuthPlass/breakpoints.js';
+import { richTokensToItems } from '../knuthPlass/richAdapter.js';
+import { lineTracking } from '../knuthPlass/tracking.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../defaults/bodyText.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment } from '../vdt.js';
 
 // #375: kashida justification. Fixtures are Arabic with Latin marker words
 // so that order and placement can be checked.

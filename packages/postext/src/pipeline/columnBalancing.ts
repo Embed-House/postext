@@ -67,8 +67,8 @@
  * off by default on a grid (`balancingOnByDefault`).
  */
 
-import type { BalanceLever, VDTBlock, VDTColumn, VDTDocument, VDTPage } from '../vdt';
-import type { ClosingBoxLever, StretchAfterWideFloats } from '../types';
+import type { BalanceLever, VDTBlock, VDTColumn, VDTDocument, VDTPage } from '../vdt.js';
+import type { ClosingBoxLever, StretchAfterWideFloats } from '../types.js';
 
 /** Tolerance against FP drift when converting free space to grid lines. */
 const EPS = 0.01;

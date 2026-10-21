@@ -1,5 +1,5 @@
 import { bitmapInfo, type Resource } from 'postext';
-import { getBlob } from '../../storage/blobStore';
+import { getBlob } from '../../storage/blobStore.js';
 
 /** The resolution each bitmap's file states, by file id, for the bitmaps
  *  that do not carry one yet (#631): read from the stored bytes when a book

@@ -1,8 +1,8 @@
 // #728 strictPlacement on Japanese lettering (split from strictPlacement.test.ts, #1118).
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { installStubMeasure } from './stubMeasure';
-import { roof, JA } from './strictPlacement.fixtures';
+import { installStubMeasure } from './stubMeasure.js';
+import { roof, JA } from './strictPlacement.fixtures.js';
 
 beforeAll(() => installStubMeasure());
 

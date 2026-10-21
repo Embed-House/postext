@@ -8,12 +8,14 @@ import {
   resolveContrastConfig,
 } from 'postext';
 import type { ContrastConfig, ContrastReversedTextConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { CollapsibleSection, DimensionInput, NumberInput, SelectInput, ToggleSwitch } from '../../controls/index.js';
+import { ContrastAllowField } from '../settings/ContrastAllowField.js';
 
 /** The contrast check (#748): whether it runs, the level its ratios are
- *  held to, the renditions it reads and the sizes under which reversed
- *  text is reported. Writes `contrast`; no page is laid out again. */
+ *  held to, the renditions it reads, the sizes under which reversed
+ *  text is reported and the pairs it accepts (#1124). Writes `contrast`;
+ *  no page is laid out again. */
 export const ContrastSection = memo(function ContrastSection() {
   const dispatch = useSandboxDispatch();
   const labels = useSandboxLabels();
@@ -82,6 +84,9 @@ export const ContrastSection = memo(function ContrastSection() {
                   tooltip={labels.contrastReversedLightWeightTooltip} isDefault={cfg.reversedText.lightWeight === R.lightWeight} onReset={() => resetReversed('lightWeight')} />
               </>
             )}
+          </CollapsibleSection>
+          <CollapsibleSection title={labels.contrastAllowGroup} sectionId="contrast-allow" variant="subsection">
+            <ContrastAllowField value={raw?.allow} onChange={(allow) => (allow ? update({ allow }) : resetField('allow'))} />
           </CollapsibleSection>
         </>
       )}

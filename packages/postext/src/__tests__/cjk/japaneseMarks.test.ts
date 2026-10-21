@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import { parseMarkdown } from '../../parse';
-import { stripAnnotations, withBookBrackets } from '../../parse/annotations';
-import { plainSpans } from '../../parse/inlineFormatting';
-import { defaultCjkBookTitleBrackets, defaultCjkEmphasisMark, resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk';
-import { createMeasurementCache } from '../../measure';
-import type { InlineSpan } from '../../parse';
-import type { CjkRegion, PostextConfig, Resource } from '../../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineMark, VDTLineSegment } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { stripAnnotations, withBookBrackets } from '../../parse/annotations.js';
+import { plainSpans } from '../../parse/inlineFormatting.js';
+import { defaultCjkBookTitleBrackets, defaultCjkEmphasisMark, resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { CjkRegion, PostextConfig, Resource } from '../../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineMark, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // Japanese emphasis marks (傍点: the sesame over the text), side lines
 // (傍線, `:sideline[…]`) and the 『』 of book titles (#421). The stub

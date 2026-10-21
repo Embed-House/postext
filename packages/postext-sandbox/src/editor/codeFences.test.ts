@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Text } from '@codemirror/state';
-import { inFencedCode } from './codeFences';
+import { inFencedCode } from './codeFences.js';
 
 describe('code fences in the editor (#624)', () => {
   it('reads a fence and its lines as one region', () => {

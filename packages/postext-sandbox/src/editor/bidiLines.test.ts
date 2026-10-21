@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bidiLine } from './bidiLines';
+import { bidiLine } from './bidiLines.js';
 
 const islands = (text: string) => bidiLine(text).isolates.map((r) => text.slice(r.from, r.to));
 

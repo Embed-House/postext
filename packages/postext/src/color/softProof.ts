@@ -9,10 +9,10 @@
  * them) show as rich black.
  */
 
-import type { BoundingBox } from '../vdt';
-import type { ResolvedPrintConfig } from '../types';
-import { buildRgbLut, sampleRgbLut, type OutputTransform, type RgbLut } from './transform';
-import { dimensionToPx } from '../units';
+import type { BoundingBox } from '../vdt.js';
+import type { ResolvedPrintConfig } from '../types.js';
+import { buildRgbLut, sampleRgbLut, type OutputTransform, type RgbLut } from './transform.js';
+import { dimensionToPx } from '../units.js';
 
 export interface PrintPreview {
   /** sRGB → proofed sRGB (0..1, 3 channels). */

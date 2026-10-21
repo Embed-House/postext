@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { renderBlock } from '../../canvas-backend/blockRender';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { renderBlock } from '../../canvas-backend/blockRender.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock } from '../../vdt.js';
 
 // A chip on a line of the CJK composer was painted with the letter spacing
 // the justified run before it had set (`seg.tracking`), though it was

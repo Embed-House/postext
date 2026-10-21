@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { loadVerticalAlternates, unregisterVerticalAlternates, verticalAlternatesOf } from '../../canvas-backend/verticalText';
+import { loadVerticalAlternates, unregisterVerticalAlternates, verticalAlternatesOf } from '../../canvas-backend/verticalText.js';
 
 // A browser stand-in: `document.fonts` keeps the faces added to it, and a
 // canvas measures the probe brackets with other ink in a twin face (the

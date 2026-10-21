@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { initMathEngine, renderMath, clearMathCache } from '../math';
-import { renderToHtml } from '../html-backend';
-import type { MathRender } from '../math';
-import type { VDTBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { initMathEngine, renderMath, clearMathCache } from '../math/index.js';
+import { renderToHtml } from '../html-backend.js';
+import type { MathRender } from '../math/index.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

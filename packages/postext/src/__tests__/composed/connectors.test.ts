@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { collectConfigWarnings } from '../../configWarnings';
-import { validatePageTemplates } from '../../composed/validate';
-import { composedReflowLog } from '../../composed/reflowLog';
-import { sourceAt } from '../../composed/sourceMap';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { flowRectToPage, type VDTDesignPathBlock, type VDTPathCommand } from '../../vdt';
-import type { PageTemplate } from '../../composed/types';
-import type { DesignConnectorElement, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index';
-import { CONNECTOR_CONFIG, mm, orgPage, timelinePage, treePage, TREE_TEMPLATE, type FixtureLocale } from './fixtures/connectors';
-import { CAPTIONS, GRID_CONFIG, GRID_RESOURCES, photoPage, PHOTO_TEMPLATE } from './fixtures/grid';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import { composedReflowLog } from '../../composed/reflowLog.js';
+import { sourceAt } from '../../composed/sourceMap.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { flowRectToPage, type VDTDesignPathBlock, type VDTPathCommand } from '../../vdt.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { DesignConnectorElement, PostextConfig, VDTDocument, VDTFrame, VDTPage } from '../../index.js';
+import { CONNECTOR_CONFIG, mm, orgPage, timelinePage, treePage, TREE_TEMPLATE, type FixtureLocale } from './fixtures/connectors.js';
+import { CAPTIONS, GRID_CONFIG, GRID_RESOURCES, photoPage, PHOTO_TEMPLATE } from './fixtures/grid.js';
 
 // #1056 (DESIGN §12.3): connectors in a template's decoration, laid between
 // the frames' final boxes.

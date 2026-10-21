@@ -1,7 +1,7 @@
-import { scriptMark, type ScriptContext } from '../measure/script';
-import { paintAsOneRun } from './mirrorFrame';
-import { letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState';
-import { contextTextWidth } from './contextText';
+import { scriptMark, type ScriptContext } from '../measure/script.js';
+import { paintAsOneRun } from './mirrorFrame.js';
+import { letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState.js';
+import { contextTextWidth } from './contextText.js';
 
 /**
  * A word with no letter painted in the script it was measured in (#725,

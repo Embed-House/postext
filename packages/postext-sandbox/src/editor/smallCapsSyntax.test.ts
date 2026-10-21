@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { EditorState, type TransactionSpec } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
 import { CompletionContext, type Completion } from '@codemirror/autocomplete';
-import { smallCapsCompletionSource, smallCapsRanges } from './smallCapsSyntax';
+import { smallCapsCompletionSource, smallCapsRanges } from './smallCapsSyntax.js';
 
 const complete = (doc: string) => {
   const state = EditorState.create({ doc });

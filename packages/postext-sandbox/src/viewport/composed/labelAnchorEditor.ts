@@ -32,16 +32,16 @@
 
 import type { Dispatch, MutableRefObject } from 'react';
 import type { Resource, VDTDocument } from 'postext';
-import type { SandboxAction } from '../../context/SandboxContext';
-import type { ComposedBook } from '../../book/types';
-import type { SandboxLabels } from '../../types/labels';
-import { segmentAtOffset } from '../../book/compose';
-import { applyViewerEdit } from '../../editor/viewerEdits';
-import { editModeNow, onEditModeChange } from '../../editing/editMode';
-import { templateEditorHost } from '../../templates/editorStore';
-import { requestAnchorEditor } from '../../panels/resources/anchorEditorRequest';
-import { labelAt, labelsOnPage, sheetToPicture, type PageLabel } from './labelAnchorGeometry';
-import { labelKey, labelMarkShapes, paintShapesSvg, type MarkShape } from './labelMarks';
+import type { SandboxAction } from '../../context/SandboxContext.js';
+import type { ComposedBook } from '../../book/types.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { segmentAtOffset } from '../../book/compose.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
+import { editModeNow, onEditModeChange } from '../../editing/editMode.js';
+import { templateEditorHost } from '../../templates/editorStore.js';
+import { requestAnchorEditor } from '../../panels/resources/anchorEditorRequest.js';
+import { labelAt, labelsOnPage, sheetToPicture, type PageLabel } from './labelAnchorGeometry.js';
+import { labelKey, labelMarkShapes, paintShapesSvg, type MarkShape } from './labelMarks.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 /** CSS px a pointer may travel before a press becomes a drag. */

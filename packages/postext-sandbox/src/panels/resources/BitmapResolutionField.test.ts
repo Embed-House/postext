@@ -6,9 +6,9 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { buildDocument, type PostextConfig, type Resource, type VDTDocument } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { BitmapResolutionField } from './BitmapResolutionField';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { BitmapResolutionField } from './BitmapResolutionField.js';
 
 class StubCtx {
   font = '';

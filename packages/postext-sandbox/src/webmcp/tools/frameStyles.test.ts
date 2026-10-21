@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig } from 'postext';
-import { chapter, harness } from './testHarness';
+import { chapter, harness } from './testHarness.js';
 
 // The frame-style library (#873) through the agent tools: the same usage
 // and suggestions as Design › Boxes › Frame styles, and the merge.

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { sourceAt } from '../../composed/sourceMap';
-import { isAllowedPlaceholder, allowedPlaceholdersFor } from '../../design/placeholders';
-import { collectConfigWarnings } from '../../configWarnings';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, VDTDesignTextBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { sourceAt } from '../../composed/sourceMap.js';
+import { isAllowedPlaceholder, allowedPlaceholdersFor } from '../../design/placeholders.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, VDTDesignTextBlock, VDTDocument } from '../../index.js';
 
 // #984: a decoration text that sits over a frame answers a click before the
 // bare frame, and `{headingNumber}` prints the counter of the heading a frame

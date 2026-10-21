@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
-import type { LayoutService } from '../worker/LayoutService';
-import type { Chapter } from '../book/types';
-import { editionEntry, ensureEdition, resetEditions, subscribeEditions, type EditionEntry } from './editionStore';
-import { threeEditionsBook } from './threeEditions.fixture';
+import type { LayoutService } from '../worker/LayoutService.js';
+import type { Chapter } from '../book/types.js';
+import { editionEntry, ensureEdition, resetEditions, subscribeEditions, type EditionEntry } from './editionStore.js';
+import { threeEditionsBook } from './threeEditions.fixture.js';
 
 // Text measured at about the width of a book face (0.42 em a character).
 class StubCtx {

@@ -10,9 +10,9 @@
 //   of later chapters is blanked length-preservingly and never parsed.
 
 import { extractFrontmatter, type DocumentMetadata } from 'postext';
-import type { EditorSelection } from '../context/SandboxContext';
-import { blankFrontmatter } from './frontmatter';
-import type { BookSegment, Chapter, ComposedBook } from './types';
+import type { EditorSelection } from '../context/SandboxContext.js';
+import { blankFrontmatter } from './frontmatter.js';
+import type { BookSegment, Chapter, ComposedBook } from './types.js';
 
 export const CHAPTER_SEPARATOR = '\n\n';
 

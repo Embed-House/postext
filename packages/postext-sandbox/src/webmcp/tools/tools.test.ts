@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { harness } from './testHarness';
+import { harness } from './testHarness.js';
 
 describe('the Sandbox tools', () => {
   it('are named apart, described, and take an object', () => {

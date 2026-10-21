@@ -16,7 +16,7 @@ import {
   snapLines,
   snapRect,
   unrotatePoint,
-} from './frameGeometry';
+} from './frameGeometry.js';
 
 const DPI = 96;
 const px = (mm: number) => mmToPx(mm, DPI);

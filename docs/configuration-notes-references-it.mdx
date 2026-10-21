@@ -685,6 +685,12 @@ const config: PostextConfig = {
       <td><code>char</code> si ripete nello spazio tra il titolo e il numero di pagina, allineato a destra perché i punti di voci consecutive si allineino (<code>'. '</code> li distanzia); <code>gap</code> è lo spazio minimo mantenuto tra il titolo e la linea di guida. La linea di guida prende tutti i caratteri che ci stanno, misurati come un’unica sequenza nel suo carattere, quindi un carattere che allontana con la crenatura i punti consecutivi ottiene meno punti, anziché punti che arrivano fino al numero di pagina. (Fino a postext 1.4 il conteggio si ricavava da un solo punto, e con un carattere del genere la linea di guida invadeva il numero partendo dal titolo.) Un titolo che non lascerebbe spazio all’etichetta va a capo un po’ prima. Una linea di guida si compone con tre caratteri o più: dove ne stanno solo uno o due, la riga non ne ha, perché un punto isolato prima del numero di pagina si legge come un punto fermo. In un PDF con tag i punti sono artefatti, esclusi dal testo estratto. Il testo corrente compone le stesse linee di guida ai suoi <a href="/it/docs/configuration-text#tabulatori">tabulatori</a>.</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>quelli del numero di pagina</td>
+      <td>I puntini con colore, carattere, corpo e peso propri (da postext 1.52), come l’indice di un originale che compone piccoli punti colorati a parte dai numeri di pagina. Ogni campo omesso mantiene ciò che i puntini avrebbero senza di esso: quello del numero di pagina in una riga di voce. <code>fontSize</code> in <code>em</code> si misura su quel corpo. Salvo che <code>parts.leader</code> imposti i propri, anche il <code>{'{leader}'}</code> di una riga di parte li prende.</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>oggetto</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -707,6 +713,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>vuoto</td>
       <td>Grafica della riga; il suo contenitore è la riga (larghezza della colonna × <code>height</code>). Segnaposto: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code>…, <code>{'{titleText}'}</code> e <code>{'{pageNumber}'}</code> (l’etichetta della pagina di parte; con <code>parts.page: false</code>, che non apre alcuna pagina di parte, l’etichetta della pagina in cui inizia il contenuto della parte, dove le sue testatine passano a essa; in un libro impaginato capitolo per capitolo, un blocco di parte che chiude il suo capitolo indica la prima pagina di contenuto del capitolo successivo). I colori collegati alla tavolozza prendono la <code>palette</code> propria della parte, così la riga di ogni sezione esce nel suo colore. Quando è vuoto, <code>{'{number} {titleText}'}</code> (con il <code>numberSeparator</code> dell’H1 tra i due) e il numero di pagina si compongono nella tipografia delle voci di livello 1. <code>{'{leader}'}</code> mette il <code>leader</code> dell’indice tra il testo che lo precede e quello che lo segue, nello stesso elemento di testo: <code>{'{number} {titleText}{leader}{pageNumber}'}</code> mette il titolo all’inizio della riga, il numero di pagina alla fine e i puntini in mezzo, allineati al numero e a <code>gap</code> da ciascun testo, come nelle righe delle voci. L’elemento occupa allora tutta la larghezza della riga (una larghezza <code>auto</code> arriva fino al bordo del contenitore); un titolo troppo lungo viene tagliato, mai il numero, e con la linea di guida disattivata (<code>leader.enabled: false</code>) lo spazio resta vuoto. Fuori da una riga di parte, e nelle pagine verticali, <code>{'{leader}'}</code> non stampa nulla. In un PDF con tag e in HTML i puntini restano fuori dal testo letto.</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>L’aspetto del <code>{'{leader}'}</code> di una riga di parte: <code>color</code>, <code>fontFamily</code>, <code>fontSize</code> (in <code>em</code> del corpo dell’elemento) e <code>fontWeight</code>, campo per campo sopra quello di <code>leader</code>; un campo che nessuno dei due imposta mantiene quello dell’elemento di testo. Da postext 1.52. Per mettere il numero di pagina in un elemento a sé (un altro carattere, un riquadro), fate la riga di tre elementi: il titolo ancorato a sinistra della riga, il numero di pagina a destra e, fra i due, i puntini in un elemento il cui contenuto è solo <code>{'{leader}'}</code>, ancorato con <code>{"{ to: '#title', edge: 'right-of' }"}</code> e con <code>{"width: { to: '#page', edge: 'left' }"}</code>. I suoi puntini si fermano a <code>gap</code> dall’elemento del numero, ovunque esso finisca.</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

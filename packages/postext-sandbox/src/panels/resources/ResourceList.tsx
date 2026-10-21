@@ -3,10 +3,10 @@
 import { FileCode, Table as TableIcon, ImageIcon, Plus, ChevronDown, FolderOpen, Search, X, Film, Play } from 'lucide-react';
 import { useDeferredValue, useMemo, useState } from 'react';
 import type { Resource, ResourceKind, ResourceType } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { useBlobObjectUrl } from './ResourcePreview';
-import { Button, EmptyState, HighlightedText, IconButton, ListRow, Menu, MenuItem, PanelBody, PanelHeader } from '../../ui';
-import { compileMatcher, normalizeText } from '../../sidebar/search/normalize';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { useBlobObjectUrl } from './ResourcePreview.js';
+import { Button, EmptyState, HighlightedText, IconButton, ListRow, Menu, MenuItem, PanelBody, PanelHeader } from '../../ui/index.js';
+import { compileMatcher, normalizeText } from '../../sidebar/search/normalize.js';
 
 interface ThumbProps {
   resource: Resource;

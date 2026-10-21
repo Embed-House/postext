@@ -279,7 +279,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>takes</code></td>
       <td><code>'h1'</code> … <code>'h6'</code>, <code>'toc'</code></td>
       <td>none</td>
-      <td>The frame receives the first heading of that level that names no slot, so a page title is just <code># Title</code> at the top of the fence. With <code>'toc'</code> it receives the <code>:::toc</code> of the page that names no slot and sets it by the rules of the contents (since postext 1.42; see <a href="/en/docs/composed-pages">Composed pages</a>).</td>
+      <td>The frame receives the first heading of that level that names no slot, so a page title is <code># Title</code> atop the fence. With <code>'toc'</code> it receives the <code>:::toc</code> of the page that names no slot and sets it by the rules of the contents (since postext 1.42; see <a href="/en/docs/composed-pages">Composed pages</a>).</td>
     </tr>
     <tr>
       <td><code>next</code></td>
@@ -340,6 +340,12 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>number</code></td>
       <td><code>0</code></td>
       <td>How the frame shares the space of its group: <code>grow</code> takes a share of the spare space, <code>shrink</code> lets the frame give space back, and frames with a lower <code>priority</code> give it first.</td>
+    </tr>
+    <tr>
+      <td><code>growWith</code></td>
+      <td><code>'children' | string[]</code></td>
+      <td>—</td>
+      <td>Grows with its inner frames (<a href="/en/docs/composed-page-books">Composed-page books</a>, step 6).</td>
     </tr>
     <tr>
       <td><code>optional</code></td>
@@ -679,7 +685,7 @@ A template with `extends` starts from the template it names (which may itself ex
 - `frames` and `groups` merge **by name**: an entry with the name of an inherited one changes the fields it writes and keeps the rest (`fit`, `overflow` and `padding` merge key by key; `placement` is replaced whole); `remove: true` drops it; a new name is added after the inherited ones.
 - Decoration elements merge by `id` the same way; an element with a new id, or none, is added. Since postext 1.42, `{ id: 'head-even', remove: true }` in a child template's or variant's `decoration.elements` takes the inherited element of that `id` out, as `remove: true` does for a frame; an `id` the template does not inherit changes nothing. A new element with the same `id` can follow the removal in the same list.
 
-`variants.recto` and `variants.verso` are written like a template and merge the same way, on a right or a left page. They apply after the whole `extends` chain, the root's variant first. A spread has both sides, so no variant applies to it.
+`variants.recto` and `variants.verso` are written like a template and merge the same way, on a right or a left page. They apply after the whole `extends` chain, the root's variant first. A spread has both sides, so no variant applies to it. A variant element with the other side's `parity` is never drawn (`unknownConfigValue`).
 
 ```ts
 pageTemplates: [
@@ -711,7 +717,7 @@ decoration: { elements: [
 - An element anchored to an element left out, or sized to it, is left out too.
 - With both keys, the element is drawn where the fence sets the `when` attribute and not the `unless` one.
 - The document's and a section's running heads read them as well. A page that is not composed has no fence and sets nothing. Heading, part and box designs ignore them.
-- A value that is not a non-empty string, or one written in a heading, part or box design, is reported as `unknownConfigValue`, and the element is drawn as if it had none. `postext check` adds a note, `conditionNeverMet`, for a `when` or `unless` on an attribute no page fence of the book sets: that element is never drawn, or always.
+- A value that is not a non-empty string, or one written in a heading, part or box design, is reported as `unknownConfigValue` and ignored. `postext check` notes (`conditionNeverMet`) a `when` or `unless` on an attribute no page fence sets, and an `{attr.x}` nothing sets.
 - In the Sandbox, each element card of a running head and of a template's decoration has the fields **Drawn when the page says** and **Not drawn when the page says**, whose choices are the attributes the book's page fences use.
 
 ### What the layout applies

@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useSandboxBookActions, useSandboxDispatch, useSandboxSelector } from '../context/SandboxContext';
-import { linkNamesBookOnScreen } from '../presets/locale';
-import { parseHashBundle, readViewHash, sameBook, writeViewHash, type ViewHash, type ViewHashBook } from '../storage/viewHash';
+import { useSandboxBookActions, useSandboxDispatch, useSandboxSelector } from '../context/SandboxContext.js';
+import { linkNamesBookOnScreen } from '../presets/locale.js';
+import { parseHashBundle, readViewHash, sameBook, writeViewHash, type ViewHash, type ViewHashBook } from '../storage/viewHash.js';
 
 /**
  * Keep the book on screen, the viewer tab and the active chapter in step

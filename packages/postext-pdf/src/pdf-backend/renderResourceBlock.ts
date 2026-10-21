@@ -40,13 +40,13 @@ import type {
 } from 'postext';
 import type { PdfColorSpace } from 'postext';
 import { altWithLabels, figureLabelLeaderPaths, figureLabelMatrix, labelPlateBox, resourceBlockIcons, undrawnLabels, unmirrorLabelLayout, applySingleInkToSvg, fontFaceRule, injectSvgStyle, sniffFontFormat, svgDeclaredFontFamilies, pageComics, playMarkTriangle, qrModuleRuns, resolveColorValue, tableCellFillRects, tableFrameOutline, uncroppedPictureBox } from 'postext';
-import { drawRoundedBox, roundedRectSvgPath } from './headerFooter';
-import { renderPathBlock } from './pathBlock';
-import { pdfUri } from './links';
-import { parseFontString } from '../fontString';
-import { FontCache, declarationOf, fontFilesOf, inDeclarationOrder, type PdfFontFile, type PdfFontProvider } from '../fontCache';
-import { parseUnicodeRange } from '../unicodeRange';
-import { widthOfTextAtSize } from '../faceFiles';
+import { drawRoundedBox, roundedRectSvgPath } from './headerFooter.js';
+import { renderPathBlock } from './pathBlock.js';
+import { pdfUri } from './links.js';
+import { parseFontString } from '../fontString.js';
+import { FontCache, declarationOf, fontFilesOf, inDeclarationOrder, type PdfFontFile, type PdfFontProvider } from '../fontCache.js';
+import { parseUnicodeRange } from '../unicodeRange.js';
+import { widthOfTextAtSize } from '../faceFiles.js';
 import {
   type PageCtx,
   type PdfMatrix,
@@ -74,31 +74,31 @@ import {
   counterFlipPx,
   paintInScript,
   textAdvancePx,
-} from './primitives';
-import { LinkRegistry, RefRun, refTarget, UriRuns } from './links';
-import { paintChip } from './chip';
-import { renderMathSegment } from './blockRender';
-import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations';
-import { tagArtifact, tagContent, type StructAttrs, type StructElem } from './tagging';
-import { sheetMatrixToPdf } from './comic';
-import type { StructureFlow } from './structureFlow';
+} from './primitives.js';
+import { LinkRegistry, RefRun, refTarget, UriRuns } from './links.js';
+import { paintChip } from './chip.js';
+import { renderMathSegment } from './blockRender.js';
+import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations.js';
+import { tagArtifact, tagContent, type StructAttrs, type StructElem } from './tagging.js';
+import { sheetMatrixToPdf } from './comic.js';
+import type { StructureFlow } from './structureFlow.js';
 import {
   svgToVectorDrawing,
   drawVectorDrawing,
   type VectorDrawing,
   type VectorFont,
   type VectorFontResolver,
-} from './svgVector';
-import { inkScaleOperators } from './inkScale';
-import { paintSwatchSegmentPdf } from './inlineIcon';
-import { drawShapedTextPx, drawStyledWordPx } from './shapedText';
-import { segmentLanguages, segmentOffsets, wordParts } from './directedLine';
-import { withSegmentLanguage } from '../shapingLanguage';
-import { wordSegments } from './wordPieces';
-import { loadComplexShaper, needsComplexShaping } from '../complexShaping';
-import type { PrintColorMode } from '../print/colorMode';
-import { embedDeviceRaster, embedPrintRaster } from '../print/images';
-import { alphaStencil, tintedDrawing, type AlphaStencil } from './tint';
+} from './svgVector.js';
+import { inkScaleOperators } from './inkScale.js';
+import { paintSwatchSegmentPdf } from './inlineIcon.js';
+import { drawShapedTextPx, drawStyledWordPx } from './shapedText.js';
+import { segmentLanguages, segmentOffsets, wordParts } from './directedLine.js';
+import { withSegmentLanguage } from '../shapingLanguage.js';
+import { wordSegments } from './wordPieces.js';
+import { loadComplexShaper, needsComplexShaping } from '../complexShaping.js';
+import type { PrintColorMode } from '../print/colorMode.js';
+import { embedDeviceRaster, embedPrintRaster } from '../print/images.js';
+import { alphaStencil, tintedDrawing, type AlphaStencil } from './tint.js';
 
 /** Raw bytes of a resource binary, keyed by `fileId`. */
 export type ResourceBytesProvider = (fileId: string) => Uint8Array | undefined;

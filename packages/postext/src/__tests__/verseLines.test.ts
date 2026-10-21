@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import { renderToHtml } from '../html-backend';
-import { renderPageToCanvas } from '../index';
-import { CONFIG_VERSION, migrateConfig, migrateBundleConfig, pinLegacyPairedIndents, pinLegacyVerseLayout, pinLegacyVerseTightening } from '../bundle/configVersion';
-import { resolveVerseConfig, stripVerseDefaults, DEFAULT_VERSE_CONFIG } from '../defaults/verse';
-import { stripBodyTextDefaults } from '../defaults/bodyText';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../vdt';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { renderPageToCanvas } from '../index.js';
+import { CONFIG_VERSION, migrateConfig, migrateBundleConfig, pinLegacyPairedIndents, pinLegacyVerseLayout, pinLegacyVerseTightening } from '../bundle/configVersion.js';
+import { resolveVerseConfig, stripVerseDefaults, DEFAULT_VERSE_CONFIG } from '../defaults/verse.js';
+import { stripBodyTextDefaults } from '../defaults/bodyText.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../vdt.js';
 
 // #620: verse line by line — kept line breaks, indents, stanzas and
 // hanging turnovers. The stub font: 7 px a character, a space 4 px.
@@ -474,7 +474,7 @@ describe('bodyText.verse and the configurations stored before #620', () => {
   const PLAIN = ':::verse\nA line\nAnother\n:::';
   const BAYT = ':::verse\nA || B\n:::';
   it('pins the 1.22 verse layout when the text holds a poem with no separator', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
     const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     for (const version of [undefined, 3, 7, 8]) {
       expect(migrateConfig(stored, version, { content: PLAIN }).bodyText?.verse, `${version}`).toEqual({ layout: 'bayt' });

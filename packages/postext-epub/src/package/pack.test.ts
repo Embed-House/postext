@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { unzipSync } from 'fflate';
-import type { EpubPublication } from '../types';
-import { buildNav, buildNcx, buildOpf, packEpub, w3cDate } from './pack';
-import { readEpub, resolveHref } from './read';
-import { xhtmlDocument } from '../shared/xml';
-import { parseXml, descendants } from '../shared/xmlRead';
+import type { EpubPublication } from '../types.js';
+import { buildNav, buildNcx, buildOpf, packEpub, w3cDate } from './pack.js';
+import { readEpub, resolveHref } from './read.js';
+import { xhtmlDocument } from '../shared/xml.js';
+import { parseXml, descendants } from '../shared/xmlRead.js';
 
 const page = (n: number, body: string): string => xhtmlDocument({
   lang: 'es',

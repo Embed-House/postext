@@ -1,7 +1,7 @@
 // Small geometry helpers of the lettering: seeded noise, polygons, rects,
 // and SVG path data (M L C Z only, so that every renderer reads it).
 
-import type { Point, Rect } from './types';
+import type { Point, Rect } from './types.js';
 
 /** A 32-bit FNV-1a hash of a string: the seed of every jitter. */
 export function hashString(s: string): number {

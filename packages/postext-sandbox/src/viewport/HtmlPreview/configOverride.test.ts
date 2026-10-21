@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { DesignElement, PostextConfig, PlacedDesignElement } from 'postext';
-import { buildHtmlConfigOverride, hasComicPages, partTitlesOf } from './configOverride';
+import { buildHtmlConfigOverride, hasComicPages, partTitlesOf } from './configOverride.js';
 
 // No canvas under node: every glyph measures 10px.
 vi.mock('postext', async (importOriginal) => ({

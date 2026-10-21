@@ -1,7 +1,7 @@
-import type { VDTLine } from '../vdt';
-import type { CjkWordBreak, TextAlign, WritingMode } from '../types';
-import type { CjkLineBreakLevel } from './cjkClasses';
-import type { CjkComposition } from './cjkPunctuation';
+import type { VDTLine } from '../vdt.js';
+import type { CjkWordBreak, TextAlign, WritingMode } from '../types.js';
+import type { CjkLineBreakLevel } from './cjkClasses.js';
+import type { CjkComposition } from './cjkPunctuation.js';
 
 /** Where the Knuth–Plass breaker broke a paragraph: the path it ran on
  *  (the plain and the rich path number their items differently) and the
@@ -199,7 +199,7 @@ export interface MeasureBlockOptions {
    *  tab is set line by line, whatever {@link optimal} says. Unset: a tab
    *  without a stop of its own (`:tab{at=…}`) is a word space. Joins the
    *  cache key only when set. */
-  tabs?: import('./tabs').TabSettings;
+  tabs?: import('./tabs.js').TabSettings;
   /** Use Knuth-Plass optimal line breaking instead of greedy. */
   optimal?: boolean;
   /** Max space stretch ratio (for K-P glue model). Default 1.5. */
@@ -272,7 +272,7 @@ export interface MeasureBlockOptions {
    *  in Knuth–Plass, and its lines but the last fill their slack with
    *  tatweels before their spaces. Rich path only (a paragraph with
    *  right-to-left text always takes it). Unset: off. */
-  kashida?: import('./kashida').KashidaOptions;
+  kashida?: import('./kashida.js').KashidaOptions;
   /** Let a line end after an em or en dash set closed between words ("say—
    *  that’s", "riddles.—I"; see `breaksAfterDash`), on the Knuth–Plass path
    *  as well as line by line (`BodyTextConfig.breakAfterDashes`). Unset:

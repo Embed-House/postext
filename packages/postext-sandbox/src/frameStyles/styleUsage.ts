@@ -6,8 +6,8 @@
  */
 
 import { resolvePageTemplate, type CalloutStyleConfig, type PageTemplate, type PostextConfig } from 'postext';
-import { calloutFences } from './calloutFences';
-import { templateFences } from '../templates/templateUsage';
+import { calloutFences } from './calloutFences.js';
+import { templateFences } from '../templates/templateUsage.js';
 
 export interface UsageChapter {
   id: string;

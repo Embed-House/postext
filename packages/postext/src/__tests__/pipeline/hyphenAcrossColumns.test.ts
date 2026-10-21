@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { measureBlock } from '../../measure/plain';
-import { computeBreakpoints } from '../../knuthPlass';
-import { HYPHEN_PENALTY, KP_INFINITY, MAX_STRETCH } from '../../knuthPlass/constants';
-import type { KPItem } from '../../knuthPlass/types';
-import { resolveBodyTextConfig, stripBodyTextDefaults, stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig, VDTDocument } from '../../index';
-import type { VDTPage } from '../../vdt';
-import { columnClosesPage, flowColumnsAfter } from '../../pipeline/placement';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { measureBlock } from '../../measure/plain.js';
+import { computeBreakpoints } from '../../knuthPlass/index.js';
+import { HYPHEN_PENALTY, KP_INFINITY, MAX_STRETCH } from '../../knuthPlass/constants.js';
+import type { KPItem } from '../../knuthPlass/types.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults, stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
+import type { VDTPage } from '../../vdt.js';
+import { columnClosesPage, flowColumnsAfter } from '../../pipeline/placement.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

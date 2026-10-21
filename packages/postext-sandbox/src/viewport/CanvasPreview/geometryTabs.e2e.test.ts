@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { placeLineSegments, segmentPlainLength, xForPlainInLine } from './geometry';
+import { placeLineSegments, segmentPlainLength, xForPlainInLine } from './geometry.js';
 
 // Every glyph 7 px wide, so widths are easy to follow.
 class StubCtx {

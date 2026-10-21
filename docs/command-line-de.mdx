@@ -376,6 +376,8 @@ fehlgeschlagener Download, ein Schriftordner ohne die Datei), wird der Text in d
 Schnitt der Familie gesetzt, der nach derselben Regel dafür einspringt, und `postext check`
 listet das als Warnung `fontFallback` auf: Die Zeilen dieses Textes können anders umbrechen als in der Sandbox.
 
+Ein Zeichen, für das eine Schrift keine Glyphe hat, wird aus einer anderen Schrift gezeichnet. `postext check` liest die `cmap`-Tabelle jeder geladenen Schrift und meldet solche Zeichen einmal je Schrift für das ganze Buch als Warnung `glyphFallback`; mit `--json` enthält ihr `data` die Zeichen und ihre Anzahl.
+
 Der Cache liegt in `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` unter Windows);
 `POSTEXT_CACHE_DIR` oder `--cache-dir` verlegt ihn. `--offline` überspringt den Download.
 Eine nirgends gefundene Familie wird unter ihrem eigenen Namen in EB Garamond gesetzt, sodass Layout

@@ -7,21 +7,21 @@ import {
   computeHeadingNumbers,
   buildPageLabels,
   type NumeralStyle,
-} from '../numbering';
-import { parseChineseNumeral } from '../chineseNumerals';
-import { numberToWords } from '../numberWords';
-import { parsePartNumber } from '../pipeline/parts';
-import { formatListNumber } from '../pipeline/lists';
-import { flattenTitleBreaks, plainTitleBreaks } from '../parse/inlineFormatting';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import { computeOutlineFor } from '../pipeline/outline';
-import { collectConfigWarnings } from '../configWarnings';
-import { stripConfigDefaults } from '../defaults';
-import { renderToHtml } from '../html-backend';
-import { blockLinesText, computeChapterTitles } from '../pipeline/placeholders';
-import type { OrderedListNumberFormat, PageNumberFormat, PostextConfig, Resource } from '../types';
-import type { VDTDesignTextBlock, VDTDocument } from '../vdt';
+} from '../numbering.js';
+import { parseChineseNumeral } from '../chineseNumerals.js';
+import { numberToWords } from '../numberWords.js';
+import { parsePartNumber } from '../pipeline/parts.js';
+import { formatListNumber } from '../pipeline/lists.js';
+import { flattenTitleBreaks, plainTitleBreaks } from '../parse/inlineFormatting.js';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { computeOutlineFor } from '../pipeline/outline.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { blockLinesText, computeChapterTitles } from '../pipeline/placeholders.js';
+import type { OrderedListNumberFormat, PageNumberFormat, PostextConfig, Resource } from '../types.js';
+import type { VDTDesignTextBlock, VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

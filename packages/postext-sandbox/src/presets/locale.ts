@@ -2,9 +2,9 @@
 // (see storage/presetDrafts.ts) is what opens. Pure.
 
 import { matchContentLocale, sameContentLocale } from 'postext';
-import type { PresetDraftSummary } from '../storage/presetDrafts';
-import { sameBook, type ViewHashBook } from '../storage/viewHash';
-import type { PresetSummary } from './types';
+import type { PresetDraftSummary } from '../storage/presetDrafts.js';
+import { sameBook, type ViewHashBook } from '../storage/viewHash.js';
+import type { PresetSummary } from './types.js';
 
 /** Same content language (see `postext`'s `sameContentLocale`): region and
  *  case aside (`es-ES` is `es`), and for Chinese the same script (`zh-TW`

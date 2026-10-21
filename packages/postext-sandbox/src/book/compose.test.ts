@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { composeBook, composeBookMemo, fromBookLine, fromBookOffset, segmentAtOffset, toBookLine, toBookOffset, toBookSelection } from './compose';
-import { newChapter } from './chapterOps';
+import { composeBook, composeBookMemo, fromBookLine, fromBookOffset, segmentAtOffset, toBookLine, toBookOffset, toBookSelection } from './compose.js';
+import { newChapter } from './chapterOps.js';
 
 const a = newChapter('a', 'A', '---\ntitle: Book\n---\n# One\n\nFirst.', 1);
 const b = newChapter('b', 'B', '---\ntitle: Nope\n---\n# Two\nSecond', 1);

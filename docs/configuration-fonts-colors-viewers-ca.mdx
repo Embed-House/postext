@@ -147,6 +147,8 @@ Si fas clic en qualsevol d'aquests avisos, s'obre el tauler **Fonts** perquè hi
 
 Quan ja hi ha una maquetació, el tauler també mostra l'avís del motor **Font substituïda a la composició** (`fontFallback`): una variant que les pàgines no han pogut fer servir en mesurar el text, perquè falta o perquè el navegador la dibuixa a partir d'un altre pes o d'una altra inclinació. Una família que ja surt com a desconeguda o amb una variant que falta no hi apareix dues vegades. Abans de la primera composició, n'ocupa el lloc una comprovació contra `document.fonts`.
 
+El quadre també mostra **Caràcters presos d'una altra font** (`glyphFallback`): caràcters que el text posa en una font que no té glif per a ells, un cop per font, amb la família genèrica que els ha dibuixat (`serif`, `sans-serif`, `monospace`) quan la comprovació ho pot saber.
+
 ## Paleta de colors
 
 La propietat `colorPalette` de `PostextConfig` permet definir un conjunt reutilitzable de colors amb nom i fer-hi referència des de qualsevol `ColorValue` de la configuració. És l'equivalent a Postext de les propietats personalitzades de CSS o del tauler de mostres d'InDesign: canvia l'entrada una sola vegada i tots els colors que hi apuntin s'actualitzen al document.
@@ -790,6 +792,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -810,10 +813,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>S'avisa del text calat per sota d'aquest cos.</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>El mateix per a cursives i pesos fins, de traç més prim.</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>Un pes igual o inferior a aquest compta com a fi.</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>Parells de colors que la comprovació accepta, cadascun amb la seva <code>reason</code>: pel color del text (<code>fg</code>) i el del fons (<code>bg</code>), per l'<code>style</code> amb què va el text, o per tots dos. Vegeu [Parells acceptats](#parells-acceptats).</td></tr>
   </tbody>
 </table>
 
 Un `level` o un `mode` escrit de qualsevol altra manera es llegeix com el valor per defecte i genera un avís de valor de paràmetre desconegut (vegeu [Avisos de configuració](#avisos-de-configuració)).
+
+### Parells acceptats
+
+Una adaptació conserva la paleta de l'original, i alguns dels seus parells queden sota el llindar: una tinta clara darrere del text d'un requadre, un color de marca en un titolet. `allow` els accepta sense apagar la comprovació (des de postext 1.52). Una entrada anomena el color del text `fg` i el del fons `bg` (en hexadecimal, tal com els escriu la configuració o com es pinten), o un `style`: l'id d'un estil de requadre (`calloutStyles`, o l'`style` d'un marc de pàgina composta), de paràgraf, de títol, d'etiqueta en línia o de rètol de figura. Tots els camps que dona una entrada han de coincidir, així que `{ style: 'note', fg: '#7a8a99' }` accepta aquest gris només dins dels requadres `note`. Una entrada que no dona cap dels tres no coincideix amb res.
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: "L'ocre de l'editorial per als titolets" },
+    { style: 'nota-marge', reason: "L'original compon les notes al marge en un gris clar" },
+  ],
+}
+```
+
+Un parell acceptat es continua assenyalant: cada troballa que hi coincideix porta `accepted` (la `reason` de l'entrada, amb el seu `fg`, el seu `bg` i el seu `style`), i les troballes acceptades van després de les altres. El Sandbox les mostra a Comprovacions, sota Parells de contrast acceptats, amb el motiu, i no les compta; `postext check` les imprimeix com a notes, que no fan fallar `--strict`. Els mateixos colors fora del que anomena l'entrada continuen sent un avís.
 
 ### Llindars
 
@@ -1280,6 +1299,18 @@ La propietat `debug` agrupa dos tipus d'ajudes per a l'autor: capes visuals que 
       <td><code>boolean</code></td>
       <td><code>false</code></td>
       <td>Renderitza un negatiu d'alt contrast sobre la pàgina, útil per revisar d'un cop d'ull la forma general d'una doble pàgina (densitat del text, equilibratge de columnes, espai en blanc) sense que et distregui el detall dels glifs.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Quines marques d’ajust dibuixa el canvas del Sandbox sobre les pàgines compostes per a qui no hagi triat a la barra del canvas: totes, només els marcs que no hi caben i els aspectes desconeguts, o cap. Mana la tria del lector. Des de postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Un marc compost a aquesta escala o més gran no porta distintiu d’escala (amb <code>0.95</code> només es marquen els que queden per sota del 95 %). El text i les imatges es miren per separat.</td>
     </tr>
   </tbody>
 </table>

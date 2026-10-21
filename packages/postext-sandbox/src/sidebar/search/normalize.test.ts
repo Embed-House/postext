@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { compileMatcher, matchRanges, matchesTokens, normalizeText, tokenize } from './normalize';
+import { compileMatcher, matchRanges, matchesTokens, normalizeText, tokenize } from './normalize.js';
 
 describe('normalizeText', () => {
   it('strips accents and lowercases while keeping the length', () => {

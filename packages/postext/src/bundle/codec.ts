@@ -4,8 +4,8 @@
 // resources and file payloads; `planBundle` / `resolveBundleFiles` do the
 // reverse. Nothing here touches storage.
 
-import type { CustomFontFamily, PostextConfig, Resource } from '../types';
-import { cloneDefaultColorPalette, defaultResourceTypes, stripConfigDefaults } from '../defaults';
+import type { CustomFontFamily, PostextConfig, Resource } from '../types.js';
+import { cloneDefaultColorPalette, defaultResourceTypes, stripConfigDefaults } from '../defaults/index.js';
 import {
   bitmapInfo,
   bundleStart,
@@ -29,9 +29,9 @@ import {
   slugify,
   svgSize,
   uniqueSlug,
-} from './manifest';
-import { CONFIG_VERSION, migrateBundleConfig } from './configVersion';
-import { contourRowsOf, contourWantsAlpha, traceResourceContour, withContourTrace, type TraceContourOptions } from '../contour';
+} from './manifest.js';
+import { CONFIG_VERSION, migrateBundleConfig } from './configVersion.js';
+import { contourRowsOf, contourWantsAlpha, traceResourceContour, withContourTrace, type TraceContourOptions } from '../contour/index.js';
 import type {
   BundleBlob,
   BundleCanvasScope,
@@ -47,7 +47,7 @@ import type {
   BundleManifestV2,
   BundleResourceSpec,
   BundleStart,
-} from './types';
+} from './types.js';
 
 /** The configuration a bundle's own `config` is laid over: the default
  *  colour palette plus the built-in resource types localised to `locale`

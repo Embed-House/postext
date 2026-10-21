@@ -396,6 +396,8 @@ un dossier de polices sans le fichier), le texte est composé dans le caractère
 de la famille qui le remplace selon la même règle, et `postext check` le liste
 comme avertissement `fontFallback` : ses lignes peuvent se couper autrement que dans le Sandbox.
 
+Un caractère pour lequel une police n’a pas de glyphe est dessiné avec une autre police. `postext check` lit la table `cmap` de chaque police qu’il charge et liste ces caractères une fois par police pour tout le livre, en avertissement `glyphFallback` ; avec `--json`, son `data` porte les caractères et leur nombre.
+
 Le cache est `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` sous
 Windows) ; `POSTEXT_CACHE_DIR` ou `--cache-dir` le déplace. `--offline` saute
 le téléchargement. Une famille introuvable est composée en EB Garamond sous son

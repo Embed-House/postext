@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { layoutResourceBlock } from '../../pipeline/resourceLayout';
-import { resolveAllConfig } from '../../pipeline/config';
-import { defaultResourceTypes } from '../../defaults/resourceTypes';
-import { mapInlineSnippet } from '../../parse/inlineSnippet';
-import type { PostextConfig, Resource, TableModel } from '../../types';
-import type { VDTLine } from '../../vdt';
+import { layoutResourceBlock } from '../../pipeline/resourceLayout.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { defaultResourceTypes } from '../../defaults/resourceTypes.js';
+import { mapInlineSnippet } from '../../parse/inlineSnippet.js';
+import type { PostextConfig, Resource, TableModel } from '../../types.js';
+import type { VDTLine } from '../../vdt.js';
 
 // EF-95: a caption, a note or a table cell can break a line where the author
 // says — `\\` (the forced break of titles) or a backslash at the end of a

@@ -15,7 +15,7 @@
  * package ships by `scripts/make-ot-languages.mjs`, which also checks the
  * lookup below against HarfBuzz for more than a million tags.
  */
-import { OT_LANGUAGE_DATA } from './otLanguageData';
+import { OT_LANGUAGE_DATA } from './otLanguageData.js';
 
 const NONE: readonly string[] = [];
 

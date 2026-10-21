@@ -8,16 +8,16 @@
  * bundle, as importing it would read it, without importing it.
  */
 
-import { slugify } from '../panels/resources/slugify';
-import { openBundleZip, parseBundle } from '../presets';
-import type { LoadedPresetBlob } from '../presets/types';
-import { generateChapterId } from '../storage/projects';
-import { putFontFile } from '../storage/fontStorage';
-import type { HashBundleRef } from '../storage/viewHash';
-import type { HashBundleResolver } from '../types/props';
-import { fetchBundleBytes, isSameOriginUrl } from '../context/hashBundle';
-import { sameLocaleTag } from '../presets/locale';
-import type { EditionSource } from './editionLayout';
+import { slugify } from '../panels/resources/slugify.js';
+import { openBundleZip, parseBundle } from '../presets/index.js';
+import type { LoadedPresetBlob } from '../presets/types.js';
+import { generateChapterId } from '../storage/projects.js';
+import { putFontFile } from '../storage/fontStorage.js';
+import type { HashBundleRef } from '../storage/viewHash.js';
+import type { HashBundleResolver } from '../types/props.js';
+import { fetchBundleBytes, isSameOriginUrl } from '../context/hashBundle.js';
+import { sameLocaleTag } from '../presets/locale.js';
+import type { EditionSource } from './editionLayout.js';
 
 /** The primary language subtag (`zh-Hans` → `zh`). */
 function primary(tag: string): string {

@@ -3,14 +3,14 @@
 // measure with. The Sandbox loads them into the page, the CLI registers
 // them with its canvas.
 
-import type { PostextConfig } from '../types';
-import type { ContentBlock } from '../parse';
-import { DEFAULT_TEXT_ELEMENT, defaultCjkEmphasis, resolveBodyTextConfig, resolveHeaderFooterConfig, resolveHeadingsConfig, resolveOrderedListsConfig, resolveUnorderedListsConfig } from '../defaults';
-import { primaryFontFamily } from '../measure/font';
-import { comicFontFamilies, comicFontUses } from '../comics/fonts';
-import { DEFAULT_CODE_STYLE } from '../defaults/codeStyle';
-import { codeFenceOpen } from '../parse/codeFence';
-import { parseDirectiveAttrs } from '../parse/attrs';
+import type { PostextConfig } from '../types.js';
+import type { ContentBlock } from '../parse/index.js';
+import { DEFAULT_TEXT_ELEMENT, defaultCjkEmphasis, resolveBodyTextConfig, resolveHeaderFooterConfig, resolveHeadingsConfig, resolveOrderedListsConfig, resolveUnorderedListsConfig } from '../defaults/index.js';
+import { primaryFontFamily } from '../measure/font.js';
+import { comicFontFamilies, comicFontUses } from '../comics/fonts.js';
+import { DEFAULT_CODE_STYLE } from '../defaults/codeStyle.js';
+import { codeFenceOpen } from '../parse/codeFence.js';
+import { parseDirectiveAttrs } from '../parse/attrs.js';
 
 /** The text of the document (one string, or the chapters of a book): the
  *  families a config names are not all the families a build uses — comic
@@ -71,10 +71,10 @@ export function configFontFamilies(config: PostextConfig, markdown?: FontContent
     families.add(level.separatorFontFamily);
   }
   // Callout styles: title, glyph icon / marker, the glyph of the label tab
-  // (#1054) and body fonts. Unset fields inherit the headings / body
+  // (#1054), body and bullet (#1103) fonts. Unset fields inherit the headings / body
   // families collected above.
   for (const style of config.calloutStyles ?? []) {
-    for (const family of [style.titleStyle?.fontFamily, style.icon?.fontFamily, style.marker?.fontFamily, style.label?.icon?.fontFamily, style.body?.fontFamily]) {
+    for (const family of [style.titleStyle?.fontFamily, style.icon?.fontFamily, style.marker?.fontFamily, style.label?.icon?.fontFamily, style.body?.fontFamily, style.lists?.bulletFontFamily]) {
       if (family) families.add(family);
     }
   }

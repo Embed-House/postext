@@ -52,9 +52,9 @@ La propriété `bodyText` règle la typographie de tout le texte des paragraphes
     </tr>
     <tr>
       <td><code>paragraphSpacing</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | Dimension</code></td>
       <td><code>false</code></td>
-      <td>Activé, insère une ligne blanche (égale à <code>lineHeight</code>) entre deux paragraphes consécutifs, pour une séparation à la manière des éditeurs.</td>
+      <td>L’espace entre deux paragraphes. <code>true</code> insère une ligne blanche (égale à <code>lineHeight</code>), à la manière des éditeurs ; une longueur comme <code>&#123; value: 2, unit: 'mm' &#125;</code> ou <code>0.33em</code> du corps du texte met exactement cet espace, dans le texte courant, dans les encadrés et dans les blocs des pages composées. Une longueur qui n’est pas un nombre entier de lignes fait sortir les paragraphes de la grille de lignes ; le bloc suivant qui s’y cale (un titre, le dernier élément d’une liste, une formule centrée) y ramène le texte. C’est le même espace que <code>paragraphStyles[].spaceBetween</code>, qui le remplace dans un conteneur <code>:::paragraphs</code>. Un encadré fixe le sien dans <code>calloutStyles[].body.paragraphSpacing</code>.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

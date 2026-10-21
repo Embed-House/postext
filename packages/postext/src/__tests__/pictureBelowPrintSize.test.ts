@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { formatWarning } from '../pipeline/contentWarnings';
-import type { PostextConfig, Resource } from '../types';
-import type { ContentWarning, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { formatWarning } from '../pipeline/contentWarnings.js';
+import type { PostextConfig, Resource } from '../types.js';
+import type { ContentWarning, VDTDocument } from '../vdt.js';
 
 // #901: a full-page picture in the flow is set at its column's width,
 // and the default page has two columns. Nothing in the figure sizing caps

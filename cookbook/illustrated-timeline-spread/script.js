@@ -93,7 +93,7 @@ function ticks(band, cards) {
 
 // The cream ground under the cards: from the foot of the band down to the bleed.
 function ground() {
-  return { kind: 'box', id: 'ground', decorative: true,
+  return { kind: 'box', id: 'ground',
     placement: { ...at('bleed', 'bottom-left'), size: { width: 'fill',
       height: { to: '#band-1', edge: 'bottom' } } },
     style: { backgroundColor: col('ground') } };

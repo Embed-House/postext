@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { emptyTemplate, postextToDocx } from 'postext/word';
-import { resetViewerEdits } from '../../editor/viewerEdits';
-import { runTool, type WebMcpTool } from '../modelContext';
-import { harness, state } from './testHarness';
-import { wordTools } from './word';
+import { resetViewerEdits } from '../../editor/viewerEdits.js';
+import { runTool, type WebMcpTool } from '../modelContext.js';
+import { harness, state } from './testHarness.js';
+import { wordTools } from './word.js';
 
 /** The browser storage the templates are kept in. */
 function memoryStorage(): Storage {

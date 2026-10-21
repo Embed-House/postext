@@ -22,7 +22,7 @@ const holds = (range: string, cp: number): boolean => range.split(',').some((par
   return cp >= parseInt(lo!, 16) && cp <= parseInt(hi!, 16);
 });
 
-vi.mock('../controls/fontLoader', () => ({
+vi.mock('../controls/fontLoader.js', () => ({
   getCustomFontFamily: () => undefined,
   fontFamilyWeights: async () => [400],
   isUncataloguedFontFamily: () => false,
@@ -43,7 +43,7 @@ vi.mock('../controls/fontLoader', () => ({
     return faces.filter((_, i) => picked.has(i));
   },
 }));
-vi.mock('../storage/fontStorage', () => ({ getFontFile: async () => null }));
+vi.mock('../storage/fontStorage.js', () => ({ getFontFile: async () => null }));
 vi.mock('postext-pdf', () => ({ decompressWoff2: async (bytes: Uint8Array) => bytes }));
 
 const cps = (text: string) => new Set([...text].map((ch) => ch.codePointAt(0)!));
@@ -56,7 +56,7 @@ describe('createPdfFontProvider: the files of a cut the loader declares (#770)',
   });
 
   it('hands each file with its range and its place in the cut, the one declared last first', async () => {
-    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const { createPdfFontProvider } = await import('./pdfFontProvider.js');
     const files = filesOf(await createPdfFontProvider()('Noto Serif JP', 400, 'normal', { codePoints: cps('Shift_JIS \u00E9') }));
     // The letters are slice 118's and the `_` slice 113's, declared after
     // `latin`, which keeps the e acute it alone holds; the space is slice 119's.
@@ -70,13 +70,13 @@ describe('createPdfFontProvider: the files of a cut the loader declares (#770)',
   });
 
   it('keeps a file\u2019s place whatever files an answer leaves out', async () => {
-    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const { createPdfFontProvider } = await import('./pdfFontProvider.js');
     const files = filesOf(await createPdfFontProvider()('Noto Serif JP', 400, 'normal', { codePoints: cps('_\u00E9') }));
     expect(files.map((file) => [name(file), file.order])).toEqual([['113.woff2', 3], ['latin.woff2', 0]]);
   });
 
   it('answers an SVG picture with the bytes as they are', async () => {
-    const { createPdfFontProvider } = await import('./pdfFontProvider');
+    const { createPdfFontProvider } = await import('./pdfFontProvider.js');
     const files = filesOf(await createPdfFontProvider({ raw: true })('Noto Serif JP', 400, 'normal', { codePoints: cps('S_') }));
     expect(files.map((file) => [name(file), file.order, file.unicodeRange])).toEqual([['113.woff2', undefined, undefined], ['118.woff2', undefined, undefined]]);
   });

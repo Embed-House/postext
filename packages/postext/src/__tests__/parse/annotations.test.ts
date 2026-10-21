@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown } from '../../parse';
-import type { ContentBlock, InlineSpan } from '../../parse';
-import { parseInlineFormatting, plainSpans, stripInlineFormatting } from '../../parse/inlineFormatting';
+import { parseMarkdown } from '../../parse/index.js';
+import type { ContentBlock, InlineSpan } from '../../parse/index.js';
+import { parseInlineFormatting, plainSpans, stripInlineFormatting } from '../../parse/inlineFormatting.js';
 
 // Chinese inline annotations (#193 emphasis dots and marks, #194 ruby, #195
 // warichu), with passages of 红楼梦.

@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, type ComponentProps, type ReactNode } from 'react';
-import { cn } from './cn';
+import { cn } from './cn.js';
 
 export interface ListRowProps extends Omit<ComponentProps<'div'>, 'title'> {
   selected?: boolean;

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { caseWords, numberToWords } from '../numberWords';
-import { computeHeadingNumbering } from '../numbering';
-import { parseMarkdown } from '../parse';
+import { caseWords, numberToWords } from '../numberWords.js';
+import { computeHeadingNumbering } from '../numbering.js';
+import { parseMarkdown } from '../parse/index.js';
 
 /** `numberToWords` for 1…100 in `locale`, one entry per number. */
 const upTo100 = (locale: string) => Array.from({ length: 100 }, (_, i) => numberToWords(i + 1, 'cardinal', locale));

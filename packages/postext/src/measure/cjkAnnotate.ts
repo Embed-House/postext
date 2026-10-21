@@ -50,13 +50,13 @@
  *   lower half and nothing takes advance.
  */
 
-import type { VDTAnnotationRun, VDTKunten } from '../vdt';
-import { DEFAULT_CENTRAL_BASELINE } from '../vdt';
-import { measureInkBox, measureTextWidth, onTextWidthCacheClear, measureLanguageKey } from './canvas';
-import { flowTextWidth, fontEm, measuringVertically } from './vertical';
-import { graphemesOf } from './graphemes';
-import { splitAtFontSize } from './fontString';
-import { latinReadingLift } from './rubyLift';
+import type { VDTAnnotationRun, VDTKunten } from '../vdt.js';
+import { DEFAULT_CENTRAL_BASELINE } from '../vdt.js';
+import { measureInkBox, measureTextWidth, onTextWidthCacheClear, measureLanguageKey } from './canvas.js';
+import { flowTextWidth, fontEm, measuringVertically } from './vertical.js';
+import { graphemesOf } from './graphemes.js';
+import { splitAtFontSize } from './fontString.js';
+import { latinReadingLift } from './rubyLift.js';
 
 /** The central axis of a face, in em above its baseline. */
 export const CENTRAL = DEFAULT_CENTRAL_BASELINE;

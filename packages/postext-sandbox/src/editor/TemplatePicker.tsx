@@ -2,9 +2,9 @@
 
 import { useMemo, type RefObject } from 'react';
 import { resolvePageTemplate, type PageTemplateSource, type PostextConfig, type ResolvedPageTemplate } from 'postext';
-import type { SandboxLabels } from '../types/labels';
-import { Popover } from '../ui';
-import { templateIds, templateThumbnail, type TemplateThumbnail } from './templateThumbnail';
+import type { SandboxLabels } from '../types/labels.js';
+import { Popover } from '../ui/index.js';
+import { templateIds, templateThumbnail, type TemplateThumbnail } from './templateThumbnail.js';
 
 const THUMB_HEIGHT = 140;
 

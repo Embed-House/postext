@@ -1,8 +1,8 @@
-import type { Dimension, DigitSystem, DocumentMetadata, PostextConfig } from '../types';
-import { withDigits } from '../arabicNumerals';
-import type { VDTPage } from '../vdt';
-import { formatCounter, formatNumeral, hanInformalStyle } from '../numbering';
-import { metadataText } from '../frontmatter';
+import type { Dimension, DigitSystem, DocumentMetadata, PostextConfig } from '../types.js';
+import { withDigits } from '../arabicNumerals.js';
+import type { VDTPage } from '../vdt.js';
+import { formatCounter, formatNumeral, hanInformalStyle } from '../numbering.js';
+import { metadataText } from '../frontmatter.js';
 import {
   resolvePlaceholders as legacyResolvePlaceholders,
   attrPlaceholderKey,
@@ -14,7 +14,7 @@ import {
   type PlaceholderContext as LegacyPlaceholderContext,
   type PlaceholderResolveOptions,
   type PlaceholderResult,
-} from '../pipeline/placeholders';
+} from '../pipeline/placeholders.js';
 
 /** `'part'` is the opener design of a `:::part` page: it resolves the
  *  heading placeholder set with the part's number and title. */
@@ -70,6 +70,12 @@ export interface DesignLeader {
   char: string;
   /** Room kept on either side of the run. */
   gap: Dimension;
+  /** The run's own colour, face, size (`em` of the element's) and weight
+   *  (#1121); each unset keeps the element's. */
+  color?: string;
+  fontFamily?: string;
+  fontSize?: Dimension;
+  fontWeight?: number;
 }
 
 export interface DesignPlaceholderContext {

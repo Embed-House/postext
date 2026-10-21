@@ -9,9 +9,9 @@
 // — see `pageChapterIds`.
 
 import type { VDTBlock, VDTDocument, VDTPage } from 'postext';
-import { segmentAtOffset } from './compose';
-import { leadingBlankPageCount } from './pagination';
-import type { ComposedBook } from './types';
+import { segmentAtOffset } from './compose.js';
+import { leadingBlankPageCount } from './pagination.js';
+import type { ComposedBook } from './types.js';
 
 export interface StitchedChapter {
   chapterId: string;

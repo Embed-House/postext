@@ -9,7 +9,7 @@ import {
   type Resource,
   type ResourceImageSource,
   type TableModel,
-} from '../index';
+} from '../index.js';
 
 class StubCtx {
   font = '';

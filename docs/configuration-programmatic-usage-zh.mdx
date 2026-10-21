@@ -280,6 +280,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>图片按栏宽印出。正文流中的图片不会比所在栏更宽，而默认页面有两栏（<code>layout.layoutType: 'double'</code>）：把页面改为单栏，让图片跨整页浮动（<code>placement.span: 'page'</code>），或者如果想要这个尺寸，就提高它的分辨率。</td>
     </tr>
     <tr>
+      <td><code>emptyCaption</code></td>
+      <td>某个类型带题注前缀的资源没有自己的题注，于是题注行只排出标签和编号。<code>resourceId</code> 指明资源，<code>label</code> 是排出的那一行。属于提示：每个资源报告一次，指向引用它的段落或它的嵌入处。postext 1.52起。</td>
+      <td>标签照样排出。请补写题注；若本意是编号图版，可只保留标签。</td>
+    </tr>
+    <tr>
+      <td><code>resourceMoved</code></td>
+      <td>随文放置的资源（<code>position: 'here'</code>）比栏中剩余的空间高，于是整块移到下一栏。<code>resourceId</code> 指明资源，<code>emptyPx</code> 和 <code>emptyMm</code> 给出留空的空间，<code>pageIndex</code> 给出页码。留空达到正文网格两行或以上时报告；带文字绕排的图片用 <code>textWrap</code> 的 <code>'moved'</code> 报告。指向嵌入处。postext 1.52起。</td>
+      <td>资源排在下一栏的顶部。请把它缩小、移动它的 <code>::resource</code> 行，或让它浮动（<code>placement.position: 'auto'</code>）。</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>设置了让正文绕排的资源或框（<code>placement.wrap</code>、框的<code>wrap</code>）没能按要求绕排。<code>reason</code>：<code>'tooNarrow'</code>（旁边的正文会窄于<code>layout.wrap.minTextWidth</code>）、<code>'fewLines'</code>（它的高度不到<code>layout.wrap.minLinesBeside</code>行）、<code>'moved'</code>（行内对象高于所在栏剩余空间，已随锚点移到下一栏）、<code>'verticalText'</code>，或<code>'noContour'</code>（沿形状绕排的图片形状未知：没有<code>contour.points</code>的SVG、没有透明度的位图，或宿主没有描摹的Alpha通道）。<code>resourceId</code>指资源，<code>box</code>指框的样式。指向嵌入处或框。</td>
       <td>按原因所述，对象独占它所在的那一段高度，或放到下一栏；为<code>'noContour'</code>时，正文绕着图片的外框排。可以给图片一个多边形，改用带透明度的PNG，或者通过<code>readBundle</code>或沙盒读取它，两者都会描出轮廓。</td>
@@ -324,10 +334,15 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>文字排版所用的某个字体（<code>family</code>、<code>weight</code>、<code>style</code>），在构建时字体集给不出来：<code>reason: 'missing'</code>表示该字体族既没有加载、也没有安装任何字体，或者对应这个字重和倾斜的字体当时还没有加载完；<code>'synthesized'</code>表示该字体族没有这个字重或倾斜的字体，浏览器取用族内的另一个字体，原样使用，或加粗、倾斜（用700的字体排600；向只有400常规体的字体族要700斜体）。在有字体集的地方检查（<code>document.fonts</code>、工作线程的<code>self.fonts</code>，或<code>BuildDocumentOptions.fontSet</code>），由<code>debug.warnings.missingFont</code>控制。没有页码，也没有源码范围。</td>
       <td>文字用回退字体测量和绘制，或用族内的另一个字体（原样使用，或经浏览器加粗、倾斜）；该字体加载完成后，断行会随之改变。见<a href="#排版前加载字体">排版前加载字体</a>。</td>
     </tr>
+    <tr>
+      <td><code>glyphFallback</code></td>
+      <td>文本用某个字体（<code>family</code>、<code>weight</code>、<code>style</code>）排的字符中，有该字体没有字形的：<code>characters</code>列出前24个（每个只列一次），<code>count</code>给出总数，<code>supplier</code>给出实际绘制它们的字体族（如<code>serif</code>这样的通用字体族）；若由系统选定的字体绘制，则没有这一项。每个字体一条。在浏览器或worker中，引擎向它在字体集中声明的探测字体发问（<code>installGlyphProbe</code>，由<code>prepareFonts</code>和排版worker调用）；在其他环境中，它读取用<code>registerFontCoverage</code>登记的文件的<code>cmap</code>表，命令行就是这样做的。受<code>debug.warnings.missingFont</code>控制。没有页码，也没有源码范围。postext 1.52起提供。</td>
+      <td>这些字符由另一个字体绘制，其字形设计和宽度可能与正文字体不一致。请选择包含这些字符的字体族。</td>
+    </tr>
   </tbody>
 </table>
 
-上表列出任何文档都可能产生的警告类型。某一功能特有的类型与该功能一起介绍：漫画的（`comicPanelCount`、`comicBalloonOverflow`……）在[漫画](/zh/docs/comics)页，视频的（`videoWithoutUrl`、`videoUrlInvalid`、`videoWithoutPoster`）在[资源](/zh/docs/document-format-resources)中，引用和索引的（`unknownCitationKey`、`referencesUnreadable`、`indexMark`……）在[注释与引用](/zh/docs/document-format-notes-references)中，中文、日文和阿拉伯文的（`cjkLooseLine`、`rubyExceedsLeading`、`arabicMarksExceedLeading`……）在这几种文字各自的页面上，断行器的（`raggedLine`、`unbreakableWordOverflow`）在[断词与两端对齐](/zh/docs/justification)中。
+上表列出任何文档都可能产生的警告类型。某一功能特有的类型与该功能一起介绍：漫画的（`comicPanelCount`、`comicBalloonOverflow`……）在[漫画](/zh/docs/comics)页，视频的（`videoWithoutUrl`、`videoUrlInvalid`、`videoWithoutPoster`）在[资源](/zh/docs/document-format-resources)中，引用和索引的（`unknownCitationKey`、`referencesUnreadable`、`indexMark`……）在[注释与引用](/zh/docs/document-format-notes-references)中，中文、日文和阿拉伯文的（`cjkLooseLine`、`rubyExceedsLeading`、`arabicMarksExceedLeading`……）在这几种文字各自的页面上，断行器的（`raggedLine`、`unbreakableWordOverflow`、`wordDividedByCharacter`、`wordDividedBySyllable`）在[断词与两端对齐](/zh/docs/justification)中。
 
 关于某个资源的警告（它的表格样式、网格，或其题注、附注、单元格中的引用）都指向正文中该资源的第一次嵌入或引用，并且每个资源只列出一次。只检查文档用到的资源：书中的一章只报告它引用的表格，而不是书中的所有表格。
 

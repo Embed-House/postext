@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildBundle } from '../../bundle';
-import { buildDocument } from '../../pipeline/build';
-import { continuationAfter } from '../../pipeline/continuation';
-import { anchoredResourceIds, renderToHtml } from '../../html-backend';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildBundle } from '../../bundle/index.js';
+import { buildDocument } from '../../pipeline/build.js';
+import { continuationAfter } from '../../pipeline/continuation.js';
+import { anchoredResourceIds, renderToHtml } from '../../html-backend.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

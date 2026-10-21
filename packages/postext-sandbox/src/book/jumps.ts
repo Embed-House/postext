@@ -7,7 +7,7 @@
 
 import { hashStringWide, laterPageIdsOf, pageFenceIds, stableStringify } from 'postext';
 import type { PostextConfig, PostextContent, StoryJump } from 'postext';
-import type { ChapterPlan } from './types';
+import type { ChapterPlan } from './types.js';
 
 /** A chapter with a composed page fence. */
 export const COMPOSED_PAGE_RE = /:::+page\b/;

@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { measureRichBlock } from '../../measure/rich';
-import { composesAsCjk } from '../../measure/cjkCompose';
-import { resolveFootnotesConfig, stripFootnotesDefaults } from '../../defaults/footnotes';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { InlineSpan } from '../../parse';
-import type { PostextConfig, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { measureRichBlock } from '../../measure/rich.js';
+import { composesAsCjk } from '../../measure/cjkCompose.js';
+import { resolveFootnotesConfig, stripFootnotesDefaults } from '../../defaults/footnotes.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { PostextConfig, VDTDocument } from '../../index.js';
 
 // Deterministic text measurement stub: Latin characters 7 px, CJK 14 px, a
 // word joiner none.

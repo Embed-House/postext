@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { Redo2, Undo2 } from 'lucide-react';
-import { useSandboxLabels, useSandboxStore } from '../context/SandboxContext';
-import { IconButton } from '../ui';
-import { runHistoryFromUi } from './historyKeys';
+import { useSandboxLabels, useSandboxStore } from '../context/SandboxContext.js';
+import { IconButton } from '../ui/index.js';
+import { runHistoryFromUi } from './historyKeys.js';
 
 const noSubscription = () => () => undefined;
 const noVersion = () => 0;

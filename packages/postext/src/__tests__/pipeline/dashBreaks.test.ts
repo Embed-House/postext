@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { breaksAfterDash } from '../../measure/breakRules';
-import { measureRichBlock } from '../../measure/rich';
-import { measureBlock } from '../../measure/plain';
-import { migrateConfig, pinLegacyDashBreaks, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText';
-import type { PostextConfig } from '../../types';
-import type { VDTLine } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { breaksAfterDash } from '../../measure/breakRules.js';
+import { measureRichBlock } from '../../measure/rich.js';
+import { measureBlock } from '../../measure/plain.js';
+import { migrateConfig, pinLegacyDashBreaks, CONFIG_VERSION, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import { resolveBodyTextConfig, stripBodyTextDefaults } from '../../defaults/bodyText.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTLine } from '../../vdt.js';
 
 // EF-141: Knuth–Plass had no break after an em or en dash set closed between
 // words ("say—that’s"), on either path, so a paragraph full of them was set
@@ -323,7 +323,7 @@ describe('breakAfterDashes in the configuration', () => {
   });
 
   it('is pinned off for configurations stored before rules 7 whose text sets a closed dash', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
     const stored: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
     for (const version of [undefined, 3, 5, 6]) {
       expect(migrateConfig(stored, version, { content: ALICE }).bodyText?.breakAfterDashes, `${version}`).toBe(false);

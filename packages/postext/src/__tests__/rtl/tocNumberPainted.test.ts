@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { PostextConfig } from '../../types';
-import type { VDTBlock } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTBlock } from '../../vdt.js';
 
 // #770, round 2: the number of a contents entry in a right-to-left
 // document. The canvas paints it with its context set right to left and

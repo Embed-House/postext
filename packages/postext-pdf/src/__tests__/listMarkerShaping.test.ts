@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
 import fontkit from '@pdf-lib/fontkit';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { paintedGlyphs } from './glyphPositions';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { paintedGlyphs } from './glyphPositions.js';
 
 // #770: the marker of a right-to-left list item is measured, and painted on
 // the canvas and in the HTML, as one text set right to left. Its runs with

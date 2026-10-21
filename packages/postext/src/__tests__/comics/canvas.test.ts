@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { buildDocument, renderPageToCanvas, renderComicPanel, registerResourceImage, clearResourceImages, pageComics } from '../../index';
-import type { Resource } from '../../types';
+import { buildDocument, renderPageToCanvas, renderComicPanel, registerResourceImage, clearResourceImages, pageComics } from '../../index.js';
+import type { Resource } from '../../types.js';
 
 class StubCtx {
   font = '';

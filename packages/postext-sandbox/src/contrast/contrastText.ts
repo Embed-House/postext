@@ -1,9 +1,9 @@
 /** The Checks panel's words for a contrast finding (#748). */
 
-import type { SandboxLabels } from '../types';
-import type { ContrastCheck } from '../warnings/types';
-import { fill } from '../print/fillTokens';
-import { ratioText } from './fieldContrast';
+import type { SandboxLabels } from '../types/index.js';
+import type { ContrastCheck } from '../warnings/types.js';
+import { fill } from '../print/fillTokens.js';
+import { ratioText } from './fieldContrast.js';
 
 export function contrastTitle(check: ContrastCheck, labels: SandboxLabels): string {
   return check.kind === 'lowContrast' ? labels.contrastLowTitle : labels.contrastReversedTitle;
@@ -31,5 +31,9 @@ export function contrastDetail(check: ContrastCheck, labels: SandboxLabels): str
         weight: `${check.weight}${check.italic ? ` ${labels.contrastItalic}` : ''}`,
         min: check.minimumPt,
       });
-  return check.count > 1 ? `${detail} ${fill(labels.contrastOccurrences, { count: check.count })}` : detail;
+  const counted = check.count > 1 ? `${detail} ${fill(labels.contrastOccurrences, { count: check.count })}` : detail;
+  // A pair `contrast.allow` accepts (#1124): the reason it stays.
+  const accepted = check.accepted;
+  if (!accepted) return counted;
+  return `${counted} ${accepted.reason.trim() ? fill(labels.contrastAcceptedDetail, { reason: accepted.reason.trim() }) : labels.contrastAcceptedNoReason}`;
 }

@@ -11,13 +11,13 @@
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile } from 'node:fs';
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { formatWarning } from '../../pipeline/contentWarnings';
-import { composedReflowLog } from '../../composed/reflowLog';
-import { validatePageTemplates } from '../../composed/validate';
-import type { FrameConfig, PageTemplate } from '../../composed/types';
-import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { formatWarning } from '../../pipeline/contentWarnings.js';
+import { composedReflowLog } from '../../composed/reflowLog.js';
+import { validatePageTemplates } from '../../composed/validate.js';
+import type { FrameConfig, PageTemplate } from '../../composed/types.js';
+import type { ContentWarning, PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 class StubCtx {
   font = '';
@@ -366,5 +366,43 @@ describe('FrameConfig.overlap (#1053)', () => {
     const ws = validatePageTemplates({ ...CONFIG, pageTemplates: [tpl] });
     expect(ws).toEqual([expect.objectContaining({ kind: 'unknownConfigValue', path: '/pageTemplates/0/frames/1/overlap', value: 'sometimes', used: 'check' })]);
     expect(validatePageTemplates({ ...CONFIG, pageTemplates: [withFrames({ photo: { overlap: 'allow' } })] })).toEqual([]);
+  });
+});
+
+describe('frameCovered reads a cut-out by its shape (#1123)', () => {
+  /** The fixture with the cut-out's shape given: its alpha channel traced
+   *  in rows (per row its left and right edge, -1 for a row the shape
+   *  does not reach), or a polygon. */
+  const withCutout = (contour: Resource['contour']): VDTDocument => {
+    const resources = RESOURCES.map((r) => (r.id === 'cutout' ? { ...r, contour } : r));
+    return buildDocument({ markdown: MARKDOWN, resources }, { ...CONFIG, pageTemplates: [template()] }, createMeasurementCache());
+  };
+  const traced = (rows: number, spans: number[]): Resource['contour'] => ({ traced: { fileId: 'cutout.png', threshold: 0.5, rows, spans } });
+  const plain = (): Covered => pair(build(), 'card', 'cutout')!;
+
+  it('a transparent cut-out whose shape stays clear of the tab raises nothing', () => {
+    // Only the top-left corner of the picture is opaque: it stands above
+    // the card, where the tab is not.
+    const doc = withCutout(traced(4, [0, 0.25, -1, -1, -1, -1, -1, -1]));
+    expect(pair(doc, 'card', 'cutout')).toBeUndefined();
+  });
+
+  it('the same corner given as a polygon raises nothing either', () => {
+    const doc = withCutout({ points: [{ x: 0, y: 0 }, { x: 0.25, y: 0 }, { x: 0, y: 0.25 }] });
+    expect(pair(doc, 'card', 'cutout')).toBeUndefined();
+  });
+
+  it('an opaque picture still covers: a trace that fills every row is its box', () => {
+    const w = pair(withCutout(traced(4, [0, 1, 0, 1, 0, 1, 0, 1])), 'card', 'cutout');
+    expect(w).toBeDefined();
+    expect(w!.overlapMm2).toBeCloseTo(plain().overlapMm2, 1);
+  });
+
+  it('a shape over part of the tab counts only what it hides', () => {
+    // The left half of the picture is opaque: the tab's words under its
+    // right half are not covered.
+    const w = pair(withCutout(traced(4, [0, 0.5, 0, 0.5, 0, 0.5, 0, 0.5])), 'card', 'cutout');
+    expect(w).toBeDefined();
+    expect(w!.overlapMm2).toBeLessThan(plain().overlapMm2);
   });
 });

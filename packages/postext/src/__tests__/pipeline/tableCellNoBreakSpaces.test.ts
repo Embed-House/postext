@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { measureRichBlock, measureRichSnippet } from '../../measure/rich';
-import type { PostextConfig, Resource, TableModel } from '../../types';
-import type { ResolvedResourceBlock, VDTDocument, VDTResourceTableCell } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { measureRichBlock, measureRichSnippet } from '../../measure/rich.js';
+import type { PostextConfig, Resource, TableModel } from '../../types.js';
+import type { ResolvedResourceBlock, VDTDocument, VDTResourceTableCell } from '../../vdt.js';
 
 // EF-154: a table cell drops no-break spaces. (a) A cell paragraph holding
 // only U+00A0 set no line, although CommonMark keeps such a line as

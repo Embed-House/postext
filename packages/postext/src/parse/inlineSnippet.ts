@@ -1,10 +1,10 @@
-import type { InlineSpan } from './types';
-import type { Resource } from '../types';
-import { extractInlineChips, extractInlineRefs, extractInlineSwatches, injectChipSpans, injectRefSpans, injectSwatchSpans, parseInlineFormatting, protectCodeSpans, protectDollarEscapes, replaceSnippetBreaks } from './inlineFormatting';
-import { computeSourceMap } from './sourceMapping';
-import { joinEastAsianSnippetLines } from './softBreaks';
-import { extractInlineCitations, injectCitationSpans } from './citations';
-import { extractInlineMath, injectMathSpans } from './inlineMath';
+import type { InlineSpan } from './types.js';
+import type { Resource } from '../types.js';
+import { extractInlineChips, extractInlineRefs, extractInlineSwatches, injectChipSpans, injectRefSpans, injectSwatchSpans, parseInlineFormatting, protectCodeSpans, protectDollarEscapes, replaceSnippetBreaks } from './inlineFormatting.js';
+import { computeSourceMap } from './sourceMapping.js';
+import { joinEastAsianSnippetLines } from './softBreaks.js';
+import { extractInlineCitations, injectCitationSpans } from './citations.js';
+import { extractInlineMath, injectMathSpans } from './inlineMath.js';
 
 /**
  * Inline snippets — the self-contained rich-text runs held by a resource

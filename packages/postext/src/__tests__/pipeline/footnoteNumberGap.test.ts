@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, VDTBlock, VDTLine } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, VDTBlock, VDTLine } from '../../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): a
 // word space narrower than a letter, an en space wider than a word space.

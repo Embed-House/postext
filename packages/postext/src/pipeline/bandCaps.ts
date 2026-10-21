@@ -21,7 +21,7 @@
  * then dropped — the block falls back to stage 1.
  */
 
-import type { VDTColumn } from '../vdt';
+import type { VDTColumn } from '../vdt.js';
 
 /** Cap on the band that opens with content block `startContentIndex`
  *  (part `startPart` — a split paragraph's continuation can open a band

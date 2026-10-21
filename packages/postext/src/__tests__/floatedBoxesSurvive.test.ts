@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../index';
-import { createMeasurementCache } from '../measure';
-import type { PostextConfig, Resource, ResourcePlacement } from '../types';
+import { buildDocument } from '../index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import type { PostextConfig, Resource, ResourcePlacement } from '../types.js';
 class StubCtx { font = ''; measureText(s: string) { return { width: s.length * 5 }; } }
 (globalThis as unknown as { OffscreenCanvas: unknown }).OffscreenCanvas = class { getContext() { return new StubCtx(); } };
 const pt = (value: number) => ({ value, unit: 'pt' as const });

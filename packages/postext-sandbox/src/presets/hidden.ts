@@ -2,8 +2,8 @@
 // locally (built-in + remote sources), so "delete" means hide, and a hidden
 // preset can always be shown again. Pure list helpers.
 
-import { BUILTIN_PRESET_ID } from './builtin';
-import type { PresetSummary } from './types';
+import { BUILTIN_PRESET_ID } from './builtin.js';
+import type { PresetSummary } from './types.js';
 
 export function hidePresetId(ids: readonly string[], id: string): string[] {
   if (id === BUILTIN_PRESET_ID || ids.includes(id)) return [...ids];

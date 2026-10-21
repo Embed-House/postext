@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting';
-import { parseMarkdown } from '../../parse/blockParser';
-import { measureRichBlock, SMALL_CAPS_SIZE_RATIO } from '../../measure/rich';
-import { cachedMeasureRichBlock, createMeasurementCache } from '../../measure';
-import { buildDocument } from '../../pipeline/build';
-import { renderToHtml } from '../../html-backend';
-import type { VDTBlock, VDTDocument, VDTLineSegment } from '../../vdt';
-import type { PostextConfig } from '../../types';
+import { parseInlineFormatting, stripInlineFormatting } from '../../parse/inlineFormatting.js';
+import { parseMarkdown } from '../../parse/blockParser.js';
+import { measureRichBlock, SMALL_CAPS_SIZE_RATIO } from '../../measure/rich.js';
+import { cachedMeasureRichBlock, createMeasurementCache } from '../../measure/index.js';
+import { buildDocument } from '../../pipeline/build.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { VDTBlock, VDTDocument, VDTLineSegment } from '../../vdt.js';
+import type { PostextConfig } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): the
 // width follows the font size, so a small-caps run measures narrower.

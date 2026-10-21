@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { chineseScriptOf, resolveLayoutConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, type SandboxState } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector, type SandboxState } from '../../context/SandboxContext.js';
 import {
   chineseDefaults,
   forgetChineseDefaults,
@@ -16,12 +16,12 @@ import {
   type ChineseDefaultId,
   type ChineseDefaultValue,
   type ChineseDefaultsMemory,
-} from '../../context/chineseDefaults';
-import { FieldRow } from '../../controls';
-import { formatNumber } from '../../controls/units';
-import { Button, SegmentedControl } from '../../ui';
-import type { SandboxLabels } from '../../types/labels';
-import { documentLocaleLabel } from './BodyTextSection/constants';
+} from '../../context/chineseDefaults.js';
+import { FieldRow } from '../../controls/index.js';
+import { formatNumber } from '../../controls/units.js';
+import { Button, SegmentedControl } from '../../ui/index.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { documentLocaleLabel } from './BodyTextSection/constants.js';
 
 type Script = 'zh-Hans' | 'zh-Hant';
 

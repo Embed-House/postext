@@ -1,11 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { useCompactLayout } from '../hooks/useCompactLayout';
-import { useUiRtl } from '../ui/direction';
-import { openViewerBook, type ViewerBook } from '../epub/viewerBook';
-import { createSwipeTracker, fillLabel, firstIndexOf, fixedScreens, flattenToc, keepReaderFocus, linkTarget, prefersSpreads, screenOf, type SwipePoint } from '../epub/viewer';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { useCompactLayout } from '../hooks/useCompactLayout.js';
+import { useUiRtl } from '../ui/direction.js';
+import { openViewerBook, type ViewerBook } from '../epub/viewerBook.js';
+import { createSwipeTracker, fillLabel, firstIndexOf, fixedScreens, flattenToc, keepReaderFocus, linkTarget, prefersSpreads, screenOf, type SwipePoint } from '../epub/viewer.js';
 
 /** What the toolbar shows of the reader: where it is and where it can go. */
 export interface EpubReaderPosition {

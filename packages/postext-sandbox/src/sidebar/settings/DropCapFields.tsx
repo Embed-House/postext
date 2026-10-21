@@ -1,8 +1,8 @@
 'use client';
 
 import type { ColorValue, Dimension, DimensionUnit, DesignTextElement, ParagraphDropCap } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { ColorPicker, DimensionInput, FontPicker, NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../controls';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { ColorPicker, DimensionInput, FontPicker, NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../controls/index.js';
 
 const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const GAP_UNITS: DimensionUnit[] = ['pt', 'mm', 'cm', 'in', 'em', 'px'];

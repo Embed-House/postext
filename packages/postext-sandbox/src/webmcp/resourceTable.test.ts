@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { tableGridIssues, type TableModel } from 'postext';
-import { buildTable, type TableContext } from './resourceTable';
+import { buildTable, type TableContext } from './resourceTable.js';
 
 const context: TableContext = {
   imageIds: new Set(['logo']),

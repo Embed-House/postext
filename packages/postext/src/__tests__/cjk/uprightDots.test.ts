@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import type { PostextConfig } from '../../types';
-import type { VDTLine } from '../../vdt';
-import { SizedStubCtx, stubCharWidth } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTLine } from '../../vdt.js';
+import { SizedStubCtx, stubCharWidth } from '../vertical/stub.js';
 
 // Emphasis dots over an `:upright[…]` run down a vertical line (#190 with
 // #193): each letter stands in a cell of one em, so each dot is centred on

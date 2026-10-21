@@ -10,10 +10,10 @@
  * picks the frame and puts the editor's caret in its slot.
  */
 
-import { hashBundleFragment, hashBundleOrigin, readViewHash, viewHashFragment, type HashBundleRef } from '../storage/viewHash';
-import { openLinkQuietly } from '../context/hashBundle';
-import type { FrameJump } from '../warnings/composedChecks';
-import { setOverlapFocus } from './overlapFocus';
+import { hashBundleFragment, hashBundleOrigin, readViewHash, viewHashFragment, type HashBundleRef } from '../storage/viewHash.js';
+import { openLinkQuietly } from '../context/hashBundle.js';
+import type { FrameJump } from '../warnings/composedChecks.js';
+import { setOverlapFocus } from './overlapFocus.js';
 
 export interface PendingFrameJump extends FrameJump {
   /** The book the jump is for: a preset's id (null for a project). */

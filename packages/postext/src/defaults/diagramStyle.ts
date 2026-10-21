@@ -1,5 +1,5 @@
-import type { DiagramStyleConfig, ResolvedDiagramStyleConfig } from '../types';
-import { DEFAULT_MAIN_COLOR, colorsEqual } from './shared';
+import type { DiagramStyleConfig, ResolvedDiagramStyleConfig } from '../types.js';
+import { DEFAULT_MAIN_COLOR, colorsEqual } from './shared.js';
 
 export const DEFAULT_DIAGRAM_STYLE_CONFIG: ResolvedDiagramStyleConfig = {
   singleInk: false,

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { cachedMeasureBlock, cachedMeasureRichBlock, createMeasurementCache, measureBlock, measureRichBlock } from '../index';
-import type { MeasuredBlock, MeasureBlockOptions } from '../index';
-import type { InlineSpan } from '../parse';
+import { cachedMeasureBlock, cachedMeasureRichBlock, createMeasurementCache, measureBlock, measureRichBlock } from '../index.js';
+import type { MeasuredBlock, MeasureBlockOptions } from '../index.js';
+import type { InlineSpan } from '../parse/index.js';
 
 // `MeasureBlockOptions.keepBreaks` changes the lines a text is broken into,
 // but it is not part of the measurement cache's key. Passed to the exported

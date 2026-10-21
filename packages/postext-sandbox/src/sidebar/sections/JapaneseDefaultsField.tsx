@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { resolveLayoutConfig } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   forgetJapaneseDefaults,
   japaneseDefaults,
@@ -16,13 +16,13 @@ import {
   type JapaneseDefaultId,
   type JapaneseDefaultValue,
   type JapaneseRuleField,
-} from '../../context/japaneseDefaults';
-import type { DefaultsFocus, DefaultsMemory } from '../../context/defaultsReview';
-import { FieldRow } from '../../controls';
-import { fetchGoogleFonts, type FontEntry } from '../../controls/FontPicker';
-import { Button, SegmentedControl } from '../../ui';
-import type { SandboxLabels } from '../../types/labels';
-import { Choice, bookKeyOf, valueText as chineseValueText } from './ChineseDefaultsField';
+} from '../../context/japaneseDefaults.js';
+import type { DefaultsFocus, DefaultsMemory } from '../../context/defaultsReview.js';
+import { FieldRow } from '../../controls/index.js';
+import { fetchGoogleFonts, type FontEntry } from '../../controls/FontPicker.js';
+import { Button, SegmentedControl } from '../../ui/index.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { Choice, bookKeyOf, valueText as chineseValueText } from './ChineseDefaultsField.js';
 
 /** What each row of the review list is called. The rows the Chinese and
  *  Arabic lists share keep their labels. */

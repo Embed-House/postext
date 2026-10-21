@@ -5,9 +5,9 @@
  * so); an unknown `align` reads as `'start'`.
  */
 
-import type { Dimension, DimensionUnit, TabStop, TabStopAlign, TabStopPosition } from '../types';
-import { dimensionToPx } from '../units';
-import { defaultDecimalChar, type TabSettings, type TabStopPx } from '../measure/tabs';
+import type { Dimension, DimensionUnit, TabStop, TabStopAlign, TabStopPosition } from '../types.js';
+import { dimensionToPx } from '../units.js';
+import { defaultDecimalChar, type TabSettings, type TabStopPx } from '../measure/tabs.js';
 
 const ALIGNS: readonly TabStopAlign[] = ['start', 'end', 'center', 'decimal'];
 const UNITS: readonly DimensionUnit[] = ['cm', 'mm', 'in', 'pt', 'px', 'em', 'rem'];

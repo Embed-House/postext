@@ -17,7 +17,7 @@ import {
 } from 'pdf-lib';
 import type { VDTDocument, VDTPage, VDTColumn, BoundingBox, CjkGridCells } from 'postext';
 import { dimensionToPx, columnRuleSegments, cropMarkSegments, footnoteRuleSegments } from 'postext';
-import { type PageCtx, drawLinePx, colorFromHex } from './primitives';
+import { type PageCtx, drawLinePx, colorFromHex } from './primitives.js';
 
 export function renderBaselineGrid(
   ctx: PageCtx,

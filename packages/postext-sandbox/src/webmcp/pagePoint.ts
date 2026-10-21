@@ -5,8 +5,8 @@
 
 import { formatNumeral, pageComics, pageToFlow } from 'postext';
 import type { Resource, VDTBlock, VDTComicBalloon, VDTDocument } from 'postext';
-import type { BookPlan, Chapter } from '../book/types';
-import { getSvgTextIndex } from '../controls/svgTextIndex';
+import type { BookPlan, Chapter } from '../book/types.js';
+import { getSvgTextIndex } from '../controls/svgTextIndex.js';
 import {
   designImageFileIdAtPixel,
   findLinkLocation,
@@ -14,10 +14,10 @@ import {
   pageTargetAtPixel,
   pixelToSourceOffset,
   type LinkTarget,
-} from '../viewport/CanvasPreview/geometry';
-import { resourceTextAtPixel, type ResourceTextHit } from '../viewport/CanvasPreview/resourceHit';
-import { registryArtOpacity } from '../viewport/comics/artAlpha';
-import { comicPressAt, type ComicPress } from '../viewport/comics/comicHit';
+} from '../viewport/CanvasPreview/geometry.js';
+import { resourceTextAtPixel, type ResourceTextHit } from '../viewport/CanvasPreview/resourceHit.js';
+import { registryArtOpacity } from '../viewport/comics/artAlpha.js';
+import { comicPressAt, type ComicPress } from '../viewport/comics/comicHit.js';
 
 /** A link under a point: one of the text's (see `LinkTarget`), or a row
  *  of the contents, which goes to the book page it lists. */

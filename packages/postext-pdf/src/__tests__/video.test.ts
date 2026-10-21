@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFNumber, PDFRawStream, PDFString, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource, VDTBlock } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // A video resource (#454) prints as its poster frame with the play mark and
 // the QR code drawn as vectors over it, and the poster links to the video.

@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { installStubMeasure } from '../../comics/lettering/__tests__/stubMeasure';
-import { comicArtPointToPage, pointInPolygon } from '../../comics';
-import type { PostextConfig, Resource } from '../../types';
-import type { VDTComicBalloon, VDTComicPage, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { installStubMeasure } from '../../comics/lettering/__tests__/stubMeasure.js';
+import { comicArtPointToPage, pointInPolygon } from '../../comics/index.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import type { VDTComicBalloon, VDTComicPage, VDTDocument } from '../../vdt.js';
 
 // The lettering of comic pages in the build (#559–#561): balloons set from
 // each panel's script around the speakers the pictures mark, in four

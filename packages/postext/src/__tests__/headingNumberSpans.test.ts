@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../index';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLineSegment } from '../vdt';
-import { installSizedStub } from './vertical/stub';
+import { buildDocument } from '../index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLineSegment } from '../vdt.js';
+import { installSizedStub } from './vertical/stub.js';
 
 // A heading number joins the title's first span only when that span is
 // plain text: a ruby base, emphasis dots, a name or title line, a warichu,

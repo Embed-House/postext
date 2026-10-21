@@ -3,8 +3,8 @@
 // package writes and ordinary EPUB 3 (and EPUB 2 NCX-only) files.
 
 import { unzipSync } from 'fflate';
-import type { EpubLayout, EpubNavPoint, EpubPageTarget, ReadEpubResult } from '../types';
-import { childElements, descendants, localName, parseXml, textOf, type XmlElement } from '../shared/xmlRead';
+import type { EpubLayout, EpubNavPoint, EpubPageTarget, ReadEpubResult } from '../types.js';
+import { childElements, descendants, localName, parseXml, textOf, type XmlElement } from '../shared/xmlRead.js';
 
 const dec = new TextDecoder();
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { ARABIC_FONTS, JAPANESE_FONTS, chineseSubsetsFor, fetchGoogleFonts, rankFontsForScript, scriptSubsetsFor, type FontEntry } from './FontPicker';
-import { configFontSampleText } from './fontLoader';
+import { ARABIC_FONTS, JAPANESE_FONTS, chineseSubsetsFor, fetchGoogleFonts, rankFontsForScript, scriptSubsetsFor, type FontEntry } from './FontPicker.js';
+import { configFontSampleText } from './fontLoader.js';
 
 const entry = (family: string, ...subsets: string[]): FontEntry => ({ family, subsets });
 

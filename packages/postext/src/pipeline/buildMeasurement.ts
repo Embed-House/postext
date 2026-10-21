@@ -3,17 +3,17 @@
  * text runs and the `mathDisplay` bypass path that skips text layout entirely.
  */
 
-import type { ContentBlock } from '../parse';
-import type { Resource, ResourceType } from '../types';
-import type { ResolvedConfig, VDTBlock, ResolvedResourceBlock, VDTFigureLabel } from '../vdt';
-import { layOutFigureLabels } from '../composed/labels';
-import type { BlockStyle } from './styles';
-import type { MeasuredBlock, MeasurementCache } from '../measure';
-import { measureBlock, measureRichBlock, cachedMeasureBlock, cachedMeasureRichBlock } from '../measure';
-import { renderMath } from '../math';
-import { layoutResourceBlock, type TableRowMetrics, type TableSliceSpec } from './resourceLayout';
-import type { ResourceNumberingMap } from './resourceNumbering';
-import type { CaptionCitations } from './citations';
+import type { ContentBlock } from '../parse/index.js';
+import type { Resource, ResourceType } from '../types.js';
+import type { ResolvedConfig, VDTBlock, ResolvedResourceBlock, VDTFigureLabel } from '../vdt.js';
+import { layOutFigureLabels } from '../composed/labels.js';
+import type { BlockStyle } from './styles.js';
+import type { MeasuredBlock, MeasurementCache } from '../measure/index.js';
+import { measureBlock, measureRichBlock, cachedMeasureBlock, cachedMeasureRichBlock } from '../measure/index.js';
+import { renderMath } from '../math/index.js';
+import { layoutResourceBlock, type TableRowMetrics, type TableSliceSpec } from './resourceLayout.js';
+import type { ResourceNumberingMap } from './resourceNumbering.js';
+import type { CaptionCitations } from './citations.js';
 
 export interface MeasurementInput {
   vdtType: VDTBlock['type'];

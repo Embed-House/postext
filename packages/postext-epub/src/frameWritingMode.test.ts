@@ -5,9 +5,9 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToEpub, readEpub } from './index';
-import type { ReadEpubResult } from './types';
-import { checkXml } from './reflowable/__tests__/xml';
+import { renderToEpub, readEpub } from './index.js';
+import type { ReadEpubResult } from './types.js';
+import { checkXml } from './reflowable/__tests__/xml.js';
 
 class StubCtx {
   font = '';

@@ -10,14 +10,14 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { useSandbox } from '../context/SandboxContext';
+import { useSandbox } from '../context/SandboxContext.js';
 import {
   PinToolbarButton,
   ToolbarButton,
   ToolbarSeparator,
   useToolbarRootProps,
   PageTurnButtons,
-} from './CanvasToolbar';
+} from './CanvasToolbar.js';
 
 type ColumnMode = 'single' | 'multi';
 

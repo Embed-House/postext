@@ -1,9 +1,9 @@
-import { withBitmapResolutions } from '../bitmapResolution';
-import { plainTitleBreaks } from '../parse/inlineFormatting';
-import type { PostextContent, PostextConfig, Resource, ResourceType, ResourceRotation, HeadingBreakParity, ResolvedCalloutStyleConfig, ResolvedHeadingLevelConfig, CalloutSpan } from '../types';
-import type { HeadingPlaceholderInfo } from '../design/placeholders';
-import type { ComposedPageFence, ContentBlock, ListKind } from '../parse';
-import { dimensionToPx } from '../units';
+import { withBitmapResolutions } from '../bitmapResolution.js';
+import { plainTitleBreaks } from '../parse/inlineFormatting.js';
+import type { PostextContent, PostextConfig, Resource, ResourceType, ResourceRotation, HeadingBreakParity, ResolvedCalloutStyleConfig, ResolvedHeadingLevelConfig, CalloutSpan } from '../types.js';
+import type { HeadingPlaceholderInfo } from '../design/placeholders.js';
+import type { ComposedPageFence, ContentBlock, ListKind } from '../parse/index.js';
+import { dimensionToPx } from '../units.js';
 import {
   createVDTDocument,
   createVDTBlock,
@@ -33,42 +33,43 @@ import {
   type VDTFrame,
   type VDTDesignTextBlock,
   type ReflowEvent,
-} from '../vdt';
-import { figureLabels } from './buildMeasurement';
-import { withFigureWords } from './figureWords';
-import { contourOnPage } from '../contour';
-import { figureLabelWarnings, layOutFigureLabels, stampFigureLabelRects } from '../composed/labels';
-import { anchorBox } from '../design/layout';
-import { parseMarkdownMemo, spaceDirectiveLines } from '../parse';
+} from '../vdt.js';
+import { figureLabels } from './buildMeasurement.js';
+import { withFigureWords } from './figureWords.js';
+import { contourOnPage } from '../contour/index.js';
+import { figureLabelWarnings, layOutFigureLabels, stampFigureLabelRects } from '../composed/labels.js';
+import { anchorBox } from '../design/layout.js';
+import { parseMarkdownMemo, spaceDirectiveLines } from '../parse/index.js';
 import {
   buildPageLabels,
   computeHeadingNumbering,
   parseNumberFormat,
   type NumeralStyle,
   type PageNumberSegment,
-} from '../numbering';
-import { extractFrontmatter, normalizeMetadata } from '../frontmatter';
-import { collectConfigWarnings } from '../configWarnings';
-import { initHyphenator, measureRichBlock } from '../measure';
-import { setHyphenationRules } from '../hyphenate';
-import { citedNames } from '../citations/names';
-import { getCjkLineBreak, setCjkLineBreak } from '../measure/cjkClasses';
-import { cjkCompositionOf, getCjkComposition, setCjkComposition } from '../measure/cjkPunctuation';
-import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measuringVertically, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical';
-import { stampCentralBaselines } from './verticalMetrics';
-import { orientLinesToFrames } from './mirrorFrame';
-import { verseMarginTopPx } from './buildBlockKind';
-import { verseLinesSettings, versesLineByLine } from './verseLines';
-import type { MeasurementCache } from '../measure';
-import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config';
-import { resolveDebugConfig } from '../defaults/debug';
-import { defaultFontSet, documentFontFaces, fontFallbacks, type FontFaceSetLike } from '../fonts/faces';
-import { syncFontSet } from '../fonts/fontSet';
-import { asciiDigits } from '../arabicNumerals';
-import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
-import { getMeasureScriptContext, hanMarksOfLocale, scriptContextOfLocale, setMeasureScriptContext } from '../measure/script';
-import { getMeasureLanguage, setMeasureLanguage } from '../measure/canvas';
-import { shapingLanguageOf } from '../locale';
+} from '../numbering.js';
+import { extractFrontmatter, normalizeMetadata } from '../frontmatter.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { initHyphenator, measureRichBlock } from '../measure/index.js';
+import { setHyphenationRules } from '../hyphenate.js';
+import { citedNames } from '../citations/names.js';
+import { getCjkLineBreak, setCjkLineBreak } from '../measure/cjkClasses.js';
+import { cjkCompositionOf, getCjkComposition, setCjkComposition } from '../measure/cjkPunctuation.js';
+import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measuringVertically, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical.js';
+import { stampCentralBaselines } from './verticalMetrics.js';
+import { orientLinesToFrames } from './mirrorFrame.js';
+import { verseMarginTopPx } from './buildBlockKind.js';
+import { verseLinesSettings, versesLineByLine } from './verseLines.js';
+import type { MeasurementCache } from '../measure/index.js';
+import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config.js';
+import { resolveDebugConfig } from '../defaults/debug.js';
+import { defaultFontSet, documentFontFaces, faceRequestKey, fontFallbacks, type FontFaceSetLike } from '../fonts/faces.js';
+import { glyphFallbacks } from '../fonts/glyphFallback.js';
+import { syncFontSet } from '../fonts/fontSet.js';
+import { asciiDigits } from '../arabicNumerals.js';
+import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines.js';
+import { getMeasureScriptContext, hanMarksOfLocale, scriptContextOfLocale, setMeasureScriptContext } from '../measure/script.js';
+import { getMeasureLanguage, setMeasureLanguage } from '../measure/canvas.js';
+import { shapingLanguageOf } from '../locale.js';
 import {
   createHeadingLevelResolver,
   deriveSectionGeometryConfig,
@@ -80,32 +81,32 @@ import {
   headingStyleOf,
   numberTitlesFor,
   planHeadingSections,
-} from './headingStyles';
-import { locateAnchors } from './anchors';
-import { locateCarriedOutline } from './carriedOutline';
-import { applyCitations, citationLocale, processCitations, withBibliographyStyle } from './citations';
-import { bookCitationContexts, needsCitationContext } from '../citations/context';
-import { anchorTargetsOf, hasAnchorRefs, printsAnchorPages } from './crossRefs';
-import type { AnchorRefContext } from './resourceLayout';
-import { applyStatementNumbering, numberStatements, outlineLookup } from './statementNumbering';
-import { SPAN_EMBED_STYLE_ID, isPageSpanStrip, spanEmbedStyle, wrapPageSpanEmbeds } from './spanEmbeds';
-import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowColumns';
-import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap';
-import { continueInPage, isModuleTemplate, resolvePageTemplate } from '../composed/templates';
-import { moduleUsesOf } from '../composed/modules';
-import type { ComposedModuleUse } from '../composed/types';
-import { layoutComposedSpread } from '../composed/spread';
-import { assignJumpReceivers, assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation';
-import { frameElementId } from '../composed/ids';
-import { nextFrameOf } from '../composed/geometry';
-import { carriedPass, composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout';
-import { importJumps, type CarriedNote, type CarriedNumber, type ImportedJumps, type StoryJump } from '../composed/carry';
-import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '../composed/pageMemo';
-import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline';
-import { expandTocDirectives, tocBlockStamps } from './toc';
-import { expandIndexDirectives, locateIndexMarks } from './indexDirective';
-import type { ResolvedHeadingStyleConfig } from '../types';
-import { resolveBodyStyle, resolveBlockquoteStyle, resolveParagraphStyle, type BlockStyle } from './styles';
+} from './headingStyles.js';
+import { locateAnchors } from './anchors.js';
+import { locateCarriedOutline } from './carriedOutline.js';
+import { applyCitations, citationLocale, processCitations, withBibliographyStyle } from './citations.js';
+import { bookCitationContexts, needsCitationContext } from '../citations/context.js';
+import { anchorTargetsOf, hasAnchorRefs, printsAnchorPages } from './crossRefs.js';
+import type { AnchorRefContext } from './resourceLayout.js';
+import { applyStatementNumbering, numberStatements, outlineLookup } from './statementNumbering.js';
+import { SPAN_EMBED_STYLE_ID, isPageSpanStrip, spanEmbedStyle, wrapPageSpanEmbeds } from './spanEmbeds.js';
+import { flowColumnsStyles, isFlowColumnsStyle, wrapFlowColumns } from './flowColumns.js';
+import { FRAME_STYLE_ID, frameBoxStyle, wrapComposedPages } from '../composed/wrap.js';
+import { continueInPage, isModuleTemplate, resolvePageTemplate } from '../composed/templates.js';
+import { moduleUsesOf } from '../composed/modules.js';
+import type { ComposedModuleUse } from '../composed/types.js';
+import { layoutComposedSpread } from '../composed/spread.js';
+import { assignJumpReceivers, assignReceivers, continuationTarget, MAX_CONTINUATION_PAGES, type ComposedContinuation, type ComposedContinuationInput } from '../composed/continuation.js';
+import { frameElementId } from '../composed/ids.js';
+import { nextFrameOf } from '../composed/geometry.js';
+import { carriedPass, composedPageAt, frameStyleOf, layoutComposedPage, planComposedPages, type PlannedComposedPage } from './composedLayout.js';
+import { importJumps, type CarriedNote, type CarriedNumber, type ImportedJumps, type StoryJump } from '../composed/carry.js';
+import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '../composed/pageMemo.js';
+import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline.js';
+import { expandTocDirectives, tocBlockStamps } from './toc.js';
+import { expandIndexDirectives, locateIndexMarks } from './indexDirective.js';
+import type { ResolvedHeadingStyleConfig } from '../types.js';
+import { resolveBodyStyle, resolveBlockquoteStyle, resolveParagraphStyle, type BlockStyle } from './styles.js';
 import {
   computeLevelIndentsPx,
   computeOrderedLevelIndentsPx,
@@ -115,8 +116,8 @@ import {
   listItemGapPx,
   listItemSpacingPx,
   mirrorListMarker,
-} from './lists';
-import type { PlacementCursor } from './placement';
+} from './lists.js';
+import type { PlacementCursor } from './placement.js';
 import {
   resetLinePositions,
   createPageWithColumns,
@@ -142,13 +143,13 @@ import {
   closeBandAt,
   pageLayoutOf,
   FIT_EPS,
-} from './placement';
-import { chooseParagraphSplit } from './orphanWidow';
-import { layoutComicPage, comicPageLayoutWarnings } from '../comics/layoutPage';
-import { comicStripExtent, comicStripOffset, comicStripPlacement, comicStripWidth, layoutComicStrip } from '../comics/strip';
-import { comicSpreadGutter, isComicSpread, layoutComicSpread } from '../comics/spread';
-import { comicTextPanelsSupported, layoutComicTextFrames, layoutStripTextFrames, planComicTextPanels, wrapComicTextPanels, type ComicTextFramesInput, type ComicTextFramesLayout } from '../comics/textPanels';
-import type { ComicPageSource } from '../comics/types';
+} from './placement.js';
+import { chooseParagraphSplit } from './orphanWidow.js';
+import { layoutComicPage, comicPageLayoutWarnings } from '../comics/layoutPage.js';
+import { comicStripExtent, comicStripOffset, comicStripPlacement, comicStripWidth, layoutComicStrip } from '../comics/strip.js';
+import { comicSpreadGutter, isComicSpread, layoutComicSpread } from '../comics/spread.js';
+import { comicTextPanelsSupported, layoutComicTextFrames, layoutStripTextFrames, planComicTextPanels, wrapComicTextPanels, type ComicTextFramesInput, type ComicTextFramesLayout } from '../comics/textPanels.js';
+import type { ComicPageSource } from '../comics/types.js';
 import {
   applyStyleAttrs,
   computePageMetrics,
@@ -161,9 +162,9 @@ import {
   spaceLinesAfter,
   prevNonMarkerBlock,
   rollbackTrailingBlocks,
-} from './buildHelpers';
-import { measureContentBlock, type BlockMeasureContext, type DropCapNote, type MeasureContentBlockOptions, type MeasuredContentBlock } from './measureContentBlock';
-import { containerStyle, paragraphStyleIdOf, planParagraphContainers } from './paragraphContainers';
+} from './buildHelpers.js';
+import { measureContentBlock, type BlockMeasureContext, type DropCapNote, type MeasureContentBlockOptions, type MeasuredContentBlock } from './measureContentBlock.js';
+import { containerStyle, paragraphStyleIdOf, planParagraphContainers } from './paragraphContainers.js';
 import {
   appendChapterEndNotes,
   footnoteIdsOfLines,
@@ -176,8 +177,8 @@ import {
   sameFootnoteNumbers,
   splitFootnoteDefinitions,
   withFootnoteStyle,
-} from './footnotes';
-import { planParts, derivePartMeasureContext } from './parts';
+} from './footnotes.js';
+import { planParts, derivePartMeasureContext } from './parts.js';
 import {
   offsetBlock,
   offsetCalloutToAbsolute,
@@ -186,7 +187,7 @@ import {
   resolveCalloutAttrs,
   type CalloutLayoutResult,
   type PlannedCallout,
-} from './calloutLayout';
+} from './calloutLayout.js';
 import {
   CUT_START,
   fragmentRange,
@@ -198,15 +199,15 @@ import {
   type CalloutFragment,
   type CalloutLayouter,
   type FrameLayoutPass,
-} from './frameLayout';
-import { chooseTableSlice, layoutCaptionText, layoutResourceBlock, MIN_TAIL_ROWS, type TableRowMetrics, type TableSliceSpec } from './resourceLayout';
+} from './frameLayout.js';
+import { chooseTableSlice, layoutCaptionText, layoutResourceBlock, MIN_TAIL_ROWS, type TableRowMetrics, type TableSliceSpec } from './resourceLayout.js';
 import {
   computeFloatPlan,
   floatedResourceIds,
   type PlannedFloat,
   floatColumnCount,
   resolveResourcePlacement,
-} from './floatPlacement';
+} from './floatPlacement.js';
 import {
   enumerateCurrentPageSlots,
   measureFloatBand,
@@ -222,23 +223,23 @@ import {
   type FloatSlot,
   type FloatSlotPosition,
   type SideObstacle,
-} from './floatSlots';
+} from './floatSlots.js';
 import {
   computeHeadingContext,
   computeResourceNumberingState,
   type ResourceNumberingMap,
-} from './resourceNumbering';
-import { documentLocale, effectiveResourceTypes } from '../defaults/resourceTypes';
-import { resolveCalloutStylesConfig } from '../defaults/calloutStyles';
-import { codeBoxStyle, codeParseOptions, wrapCodeBlocks } from './codeBlocks';
-import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines';
-import { pickTableStyle } from '../defaults/tableStyle';
-import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout';
-import { buildLineNumbers, lineNumberWarnings } from './lineNumbers';
-import { buildHeadersAndFooters, connectorAnchorUnknownWarnings, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter';
-import { flowColorValues } from './partPalette';
-import { chapterNumberCounter, leadingBoldText } from './placeholders';
-import { proposeBalanceLines, GRID_LINE_LEVERS, collectColumnGaps, firstDivergentColumn, gapLinesIn, boxRoomIn, boxLeverKeys, pageSegments, type LooseBudget, type PageRange, type ColumnGap, MAX_BALANCING_PASSES, MAX_BALANCING_PASSES_PER_DOCUMENT, balanceKey, candidateKey, flexFigureKey, flexFloatKey } from './columnBalancing';
+} from './resourceNumbering.js';
+import { documentLocale, effectiveResourceTypes } from '../defaults/resourceTypes.js';
+import { resolveCalloutStylesConfig } from '../defaults/calloutStyles.js';
+import { codeBoxStyle, codeParseOptions, wrapCodeBlocks } from './codeBlocks.js';
+import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines.js';
+import { pickTableStyle } from '../defaults/tableStyle.js';
+import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout.js';
+import { buildLineNumbers, lineNumberWarnings } from './lineNumbers.js';
+import { buildHeadersAndFooters, connectorAnchorUnknownWarnings, defaultOpenerTitle, headingDesignBoxes, layoutBoxDesign, measureBoxDesign, measureDefaultOpenerHeight, measureHeadingDesign } from './headerFooter.js';
+import { flowColorValues } from './partPalette.js';
+import { chapterNumberCounter, leadingBoldText } from './placeholders.js';
+import { proposeBalanceLines, GRID_LINE_LEVERS, collectColumnGaps, firstDivergentColumn, gapLinesIn, boxRoomIn, boxLeverKeys, pageSegments, type LooseBudget, type PageRange, type ColumnGap, MAX_BALANCING_PASSES, MAX_BALANCING_PASSES_PER_DOCUMENT, balanceKey, candidateKey, flexFigureKey, flexFloatKey } from './columnBalancing.js';
 import {
   applyBandCap,
   uncapBand,
@@ -254,23 +255,23 @@ import {
   type BandCapZone,
   bandLinePitch,
   capRetryLimit,
-} from './bandCaps';
-import { raggedLooseLines } from './raggedLines';
-import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, joiningLetterSpacingWarnings, pictureBelowPrintSizeWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings';
-import { dropCapSinkAfter } from './dropCap';
-import { mostlyJoiningScript } from '../measure/joining';
-import { composesAsCjk } from '../measure/cjkCompose';
-import { annotateDocument } from '../cjkMarks';
-import { annotateArabicMarks } from '../arabicMarks';
-import { literalBreaksFor } from './hardBreaks';
-import { tashkilFor } from './tashkil';
-import { overlineEmphasis } from '../emphasisOverline';
-import { highlightDocument } from '../highlightMarks';
-import { withBookTitleBrackets } from './annotations';
-import { paperByBlock, stampPagePaper } from './paper';
-import { headingLineSpanBand } from './lineSpan';
-import { columnCursorY, insetsBefore, minTextWidthPx, openColumnWrap, resolveCalloutWrap, resolveResourceWrap, type ResolvedWrap, runsBesideWrap, sameInsetsFrom, settleColumnWraps, transparentToWrap, wrapGapPx, wrapInsetSteps } from './textWrap';
-import { lineInsetsAt, type LineInsetStep } from '../measure/types';
+} from './bandCaps.js';
+import { raggedLooseLines } from './raggedLines.js';
+import { cjkLooseLineWarnings, raggedLineWarnings, collectContentWarnings, designTruncationWarnings, dropCapWarnings, floatShrinkWarnings, emptyCaptionWarnings, joiningLetterSpacingWarnings, pictureBelowPrintSizeWarnings, locateContentWarnings, wordOverflowWarnings } from './contentWarnings.js';
+import { dropCapSinkAfter } from './dropCap.js';
+import { mostlyJoiningScript } from '../measure/joining.js';
+import { composesAsCjk } from '../measure/cjkCompose.js';
+import { annotateDocument } from '../cjkMarks.js';
+import { annotateArabicMarks } from '../arabicMarks.js';
+import { literalBreaksFor } from './hardBreaks.js';
+import { tashkilFor } from './tashkil.js';
+import { overlineEmphasis } from '../emphasisOverline.js';
+import { highlightDocument } from '../highlightMarks.js';
+import { withBookTitleBrackets } from './annotations.js';
+import { paperByBlock, stampPagePaper } from './paper.js';
+import { headingLineSpanBand } from './lineSpan.js';
+import { columnCursorY, insetsBefore, minTextWidthPx, openColumnWrap, resolveCalloutWrap, resolveResourceWrap, type ResolvedWrap, runsBesideWrap, sameInsetsFrom, settleColumnWraps, transparentToWrap, wrapGapPx, wrapInsetSteps } from './textWrap.js';
+import { lineInsetsAt, type LineInsetStep } from '../measure/types.js';
 
 /** Room (px) under closing boxes a balancing pass must close to be kept on
  *  that ground alone (see `boxRoomIn`). */
@@ -1804,6 +1805,9 @@ function placeDocumentPass(
   };
   /** The `textWrap` warnings of this pass (#627). */
   const textWrapNotes: ContentWarning[] = [];
+  /** `resourceMoved` (#1151): resources set in the text that moved on and
+   *  left their column's foot empty. */
+  const movedNotes: ContentWarning[] = [];
   /** Resources whose contour wrap fell back to the box this pass (#883):
    *  said once each. */
   const contourFallbacks = new Set<string>();
@@ -7515,6 +7519,9 @@ function placeDocumentPass(
         continue;
       }
       const columnBefore = col;
+      // The room the embed leaves when it moves on (#1151).
+      const roomBefore = col.availableHeight;
+      const pageBefore = cursor.pageIndex;
       if (sliced === 'whole') {
         enterBand(blockIdx, 0);
         // A side caption is decided where the block is placed (#729): an
@@ -7562,6 +7569,14 @@ function placeDocumentPass(
           textWrapNotes.push({
             kind: 'textWrap', reason: 'moved', resourceId: kind.resource!.id,
             sourceStart: rawBlock.sourceStart + bodyOffset, sourceEnd: rawBlock.sourceEnd + bodyOffset, pageIndex: cursor.pageIndex,
+          });
+        } else if (!wraps && currentColumn(doc, cursor) !== columnBefore && columnBefore.blocks.length > 0 && roomBefore >= 2 * baselineGrid - FIT_EPS) {
+          // Too tall for the room left, an embed moved on and left the
+          // foot of its column empty (#1151): say how much.
+          movedNotes.push({
+            kind: 'resourceMoved', resourceId: kind.resource!.id,
+            emptyPx: Math.round(roomBefore), emptyMm: Math.round((roomBefore * 254) / geomResolved.page.dpi) / 10,
+            sourceStart: rawBlock.sourceStart + bodyOffset, sourceEnd: rawBlock.sourceEnd + bodyOffset, pageIndex: pageBefore,
           });
         }
         // `placeBlockInColumn` (inside placeAtomicBlock) shifts `blk.lines`; the
@@ -9163,8 +9178,13 @@ function placeDocumentPass(
     const b = contentBlocks[idx];
     return b ? { start: b.sourceStart + bodyOffset, end: b.sourceEnd + bodyOffset } : undefined;
   });
-  if (shrunk.length > 0 || belowPrint.length > 0) floatShrinkWarningsByDoc.set(doc, [...shrunk, ...belowPrint]);
-  if (textWrapNotes.length > 0 || columnsNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes]);
+  // Resources whose caption prints the label alone (#1151).
+  const lonely = emptyCaptionWarnings(doc, (idx) => {
+    const b = contentBlocks[idx];
+    return b ? { start: b.sourceStart + bodyOffset, end: b.sourceEnd + bodyOffset } : undefined;
+  });
+  if (shrunk.length > 0 || belowPrint.length > 0 || lonely.length > 0) floatShrinkWarningsByDoc.set(doc, [...shrunk, ...belowPrint, ...lonely]);
+  if (textWrapNotes.length > 0 || columnsNotes.length > 0 || movedNotes.length > 0) textWrapWarningsByDoc.set(doc, [...textWrapNotes, ...columnsNotes, ...movedNotes]);
   // Composed pages (#855): frames whose content does not fit.
   if (composedNotes.length > 0) composedWarningsByDoc.set(doc, composedNotes);
   if (pendingJumps.length > 0) doc.pendingJumps = pendingJumps;
@@ -9303,9 +9323,16 @@ export function* buildDocumentGen(
   // The bands of the highlight marks (`:mark[…]`, #888).
   highlightDocument(doc);
   // Faces the text was set in that the font set could not give (#629).
-  const fallbacks: ContentWarning[] = fontSet && resolveDebugConfig(config?.debug).warnings.missingFont
+  const checkFonts = resolveDebugConfig(config?.debug).warnings.missingFont;
+  const fallbacks: ContentWarning[] = fontSet && checkFonts
     ? fontFallbacks(documentFontFaces(doc), fontSet).map((f) => ({ kind: 'fontFallback', family: f.family, weight: f.weight, style: f.style, reason: f.reason }))
     : [];
+  // Characters a face lacks, which another face drew (#1105). A face
+  // missing altogether is a `fontFallback` above, not one per character.
+  if (checkFonts) {
+    const skip = new Set(fallbacks.flatMap((f) => (f.kind === 'fontFallback' && f.reason === 'missing' ? [faceRequestKey(f)] : [])));
+    for (const g of glyphFallbacks(doc, { skip })) fallbacks.push({ kind: 'glyphFallback', ...g });
+  }
   if (located.length > 0 || loose.length > 0 || annotations.length > 0 || harakat.length > 0 || fallbacks.length > 0) {
     doc.contentWarnings = [...located, ...loose, ...annotations, ...harakat, ...fallbacks];
   }

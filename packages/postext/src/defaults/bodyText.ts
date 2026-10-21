@@ -1,9 +1,9 @@
-import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types';
-import { hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale';
-import { cjkRegionOfConfig } from './cjk';
-import { dimensionsEqual, colorsEqual, compositionRuleOf, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared';
-import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse';
-import { normalizeHyphenationExceptions } from '../hyphenationExceptions';
+import type { BlockquoteConfig, BodyTextConfig, EmphasisStyle, PostextConfig, ResolvedBlockquoteConfig, ResolvedBodyTextConfig, ResolvedKashidaConfig, HyphenationConfig, KashidaPatterns, LocaleTag, TashkilMode } from '../types.js';
+import { hyphenationLocaleFor, isUnhyphenatedLanguage, localeScript, presentTag } from '../locale.js';
+import { cjkRegionOfConfig } from './cjk.js';
+import { dimensionsEqual, colorsEqual, compositionRuleOf, DEFAULT_MAIN_COLOR, startEndAsLeftRight } from './shared.js';
+import { DEFAULT_VERSE_CONFIG, resolveVerseConfig, stripVerseDefaults } from './verse.js';
+import { normalizeHyphenationExceptions } from '../hyphenationExceptions.js';
 
 export const DEFAULT_HYPHENATION_CONFIG: ResolvedBodyTextConfig['hyphenation'] = {
   enabled: true,
@@ -115,6 +115,7 @@ export const DEFAULT_BODY_TEXT_CONFIG: ResolvedBodyTextConfig = {
   colonListRoom: 'item',
   hyphenateAcrossColumns: true,
   paragraphContainerSpacing: 'collapse',
+  paragraphStylesInBoxes: 'box',
 };
 
 export function hyphenationEqual(a: HyphenationConfig | undefined, b: HyphenationConfig | undefined): boolean {
@@ -382,6 +383,7 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     paragraphContainerSpacing: partial.paragraphContainerSpacing === 'add' || partial.paragraphContainerSpacing === 'collapse'
       ? partial.paragraphContainerSpacing
       : DEFAULT_BODY_TEXT_CONFIG.paragraphContainerSpacing,
+    paragraphStylesInBoxes: partial.paragraphStylesInBoxes === 'document' ? 'document' : DEFAULT_BODY_TEXT_CONFIG.paragraphStylesInBoxes,
     ...emphasisAndTashkil(partial, documentLocale),
   };
 }
@@ -665,6 +667,10 @@ export function stripBodyTextDefaults(
   }
   if (bodyText.paragraphContainerSpacing !== undefined && bodyText.paragraphContainerSpacing !== DEFAULT_BODY_TEXT_CONFIG.paragraphContainerSpacing) {
     result.paragraphContainerSpacing = bodyText.paragraphContainerSpacing;
+    hasOverride = true;
+  }
+  if (bodyText.paragraphStylesInBoxes === 'document') {
+    result.paragraphStylesInBoxes = 'document';
     hasOverride = true;
   }
   // Its default follows the language: a set value other than `'auto'` is

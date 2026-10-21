@@ -5,9 +5,9 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument, VDTLine } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { loadComplexShaper, shapeRun } from '../complexShaping';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { loadComplexShaper, shapeRun } from '../complexShaping.js';
 
 // #764, end to end: a document is laid out by a measurer that shapes in
 // the language the engine sets on it (`ctx.lang`), as a browser's canvas

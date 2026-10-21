@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useSandboxLabels } from '../context/SandboxContext';
-import { cn } from '../ui/cn';
-import { useUiRtl } from '../ui/direction';
+import { useSandboxLabels } from '../context/SandboxContext.js';
+import { cn } from '../ui/cn.js';
+import { useUiRtl } from '../ui/direction.js';
 
 interface ResizableHandleProps {
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;

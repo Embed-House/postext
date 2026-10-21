@@ -6,22 +6,22 @@ import {
   isUnhyphenatedLanguage,
   renderLangOf,
   stringsKeyOf,
-} from '../locale';
-import { defaultResourceTypes } from '../defaults/resourceTypes';
-import { defaultTableContinuationStrings } from '../defaults/tableStyle';
-import { resolveBodyTextConfig } from '../defaults/bodyText';
-import { resolveIndexConfig, stripIndexDefaults } from '../defaults/indexConfig';
-import { resolveAllConfig } from '../pipeline/config';
-import { defaultCrossRefStrings } from '../pipeline/crossRefs';
-import { citationLocale, defaultBibliographyTitle } from '../pipeline/citations';
-import { expandIndexDirectives } from '../pipeline/indexDirective';
-import { arabicSortKey } from '../pipeline/indexGroups';
-import { dateLocaleOf, metadataText, normalizeMetadata } from '../frontmatter';
-import { buildDocument } from '../pipeline';
-import { parseMarkdown } from '../parse';
-import { renderToHtml } from '../html-backend';
-import type { ContentBlock } from '../parse';
-import type { DocumentMetadata, OutlineEntry, PostextConfig } from '../types';
+} from '../locale.js';
+import { defaultResourceTypes } from '../defaults/resourceTypes.js';
+import { defaultTableContinuationStrings } from '../defaults/tableStyle.js';
+import { resolveBodyTextConfig } from '../defaults/bodyText.js';
+import { resolveIndexConfig, stripIndexDefaults } from '../defaults/indexConfig.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { defaultCrossRefStrings } from '../pipeline/crossRefs.js';
+import { citationLocale, defaultBibliographyTitle } from '../pipeline/citations.js';
+import { expandIndexDirectives } from '../pipeline/indexDirective.js';
+import { arabicSortKey } from '../pipeline/indexGroups.js';
+import { dateLocaleOf, metadataText, normalizeMetadata } from '../frontmatter.js';
+import { buildDocument } from '../pipeline/index.js';
+import { parseMarkdown } from '../parse/index.js';
+import { renderToHtml } from '../html-backend.js';
+import type { ContentBlock } from '../parse/index.js';
+import type { DocumentMetadata, OutlineEntry, PostextConfig } from '../types.js';
 
 // Arabic locale tables, dates, citations and index collation (#372).
 

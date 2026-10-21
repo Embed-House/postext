@@ -6,9 +6,9 @@
  */
 
 import { useMemo } from 'react';
-import { useSandboxSelector } from '../context/SandboxContext';
-import { cmykToRgb, rgbToCmyk, rgbToHex, type CMYK, type RGB } from '../controls/color-utils';
-import { usePrintSetup } from './printSetup';
+import { useSandboxSelector } from '../context/SandboxContext.js';
+import { cmykToRgb, rgbToCmyk, rgbToHex, type CMYK, type RGB } from '../controls/color-utils.js';
+import { usePrintSetup } from './printSetup.js';
 
 export interface Separation {
   /** True when the output profile separates (not the textbook formula). */

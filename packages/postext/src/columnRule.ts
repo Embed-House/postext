@@ -1,5 +1,5 @@
-import type { VDTColumn, VDTColumnRule, VDTDocument, VDTFootnoteArea, VDTPage } from './vdt';
-import { dimensionToPx } from './units';
+import type { VDTColumn, VDTColumnRule, VDTDocument, VDTFootnoteArea, VDTPage } from './vdt.js';
+import { dimensionToPx } from './units.js';
 
 /** The column rule `page` draws: its own (a styled section's, see
  *  `VDTPage.columnRule`), else the document's `layout.columnRule`. Shared

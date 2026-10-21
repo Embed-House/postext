@@ -2,15 +2,15 @@
 
 import { collectConfigWarnings, stripConfigDefaults } from 'postext';
 import type { PostextConfig } from 'postext';
-import { SETTINGS_GROUPS, SETTINGS_SECTIONS } from '../../sidebar/sections/registry';
-import { tokenize } from '../../sidebar/search/normalize';
-import { buildSectionSearchIndex, planSettingsSearch } from '../../sidebar/search/sectionIndex';
-import { configFromExport, type ConfigExport } from '../../storage/persistence';
-import { isColor, isDimension, resolveEffectiveConfig } from '../configEffective';
-import { canonicalSteps, formatPath, getAtPath, leafEntries, parsePath, patchPaths } from '../configPaths';
-import { planWrite, stableText } from '../configWrite';
-import { bookPagesSummary, dispatchAndWait, whenSettled, type SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
+import { SETTINGS_GROUPS, SETTINGS_SECTIONS } from '../../sidebar/sections/registry.js';
+import { tokenize } from '../../sidebar/search/normalize.js';
+import { buildSectionSearchIndex, planSettingsSearch } from '../../sidebar/search/sectionIndex.js';
+import { configFromExport, type ConfigExport } from '../../storage/persistence.js';
+import { isColor, isDimension, resolveEffectiveConfig } from '../configEffective.js';
+import { canonicalSteps, formatPath, getAtPath, leafEntries, parsePath, patchPaths } from '../configPaths.js';
+import { planWrite, stableText } from '../configWrite.js';
+import { bookPagesSummary, dispatchAndWait, whenSettled, type SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
 
 /** Every top-level key a configuration has: a path outside them is
  *  refused. */

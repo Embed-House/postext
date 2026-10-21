@@ -1,9 +1,9 @@
 import type { VDTDocument } from 'postext';
-import { declarationOf, type PdfFontProvider } from '../fontCache';
-import type { RenderToPdfOptions } from '../pdf-backend';
-import { sourceBase } from '../harfbuzz';
-import { rasterizeSvgWithDom, type SvgRasterizer } from '../pdf-backend/renderResourceBlock';
-import type { PdfRequestMessage, PdfResponseMessage } from './protocol';
+import { declarationOf, type PdfFontProvider } from '../fontCache.js';
+import type { RenderToPdfOptions } from '../pdf-backend/index.js';
+import { sourceBase } from '../harfbuzz.js';
+import { rasterizeSvgWithDom, type SvgRasterizer } from '../pdf-backend/renderResourceBlock.js';
+import type { PdfRequestMessage, PdfResponseMessage } from './protocol.js';
 
 export type {
   PdfWarning,
@@ -13,7 +13,7 @@ export type {
   PdfVariableFontWarning,
   PdfCffEmbeddedWholeWarning,
   RenderProgress,
-} from '../pdf-backend';
+} from '../pdf-backend/index.js';
 
 export interface PdfWorkerRenderOptions extends Omit<RenderToPdfOptions, 'resourceBytes' | 'rasterizeSvg'> {
   /** Resource bytes by file id. Their buffers are transferred: pass copies

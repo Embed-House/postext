@@ -9,7 +9,7 @@
  * of a pointer prefix (its cards are not mounted while it is closed).
  */
 
-import type { SettingsFocus } from '../context/settingsNavigation';
+import type { SettingsFocus } from '../context/settingsNavigation.js';
 
 /** Of the pointers the panel shows, the one `path` points into (itself,
  *  or the longest one it lies under); null when none. */

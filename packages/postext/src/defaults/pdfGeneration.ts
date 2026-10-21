@@ -1,7 +1,7 @@
 import type {
   PdfGenerationConfig,
   ResolvedPdfGenerationConfig,
-} from '../types';
+} from '../types.js';
 
 export const DEFAULT_PDF_GENERATION_CONFIG: ResolvedPdfGenerationConfig = {
   outlines: true,

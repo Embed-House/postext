@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   resolveBodyTextConfig,
   resolveDesignSlot,
@@ -31,11 +31,11 @@ import {
   NestedGroup,
   SelectInput,
   ToggleSwitch,
-} from '../../controls';
-import { SlotEditor } from './HeaderFooterSection/SlotEditor';
-import { PartsOrderedListsOverrides, PartsUnorderedListsOverrides } from './PartsListOverrides';
-import { breakParityOptions } from './HeadingsSection/breakParityOptions';
-import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides';
+} from '../../controls/index.js';
+import { SlotEditor } from './HeaderFooterSection/SlotEditor.js';
+import { PartsOrderedListsOverrides, PartsUnorderedListsOverrides } from './PartsListOverrides.js';
+import { breakParityOptions } from './HeadingsSection/breakParityOptions.js';
+import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
 
 const TEXT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];

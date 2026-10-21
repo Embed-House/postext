@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { buildBundle } from '../bundle';
-import { contentOutline } from '../pipeline/continuation';
-import { computeOutline, hasIndexDirective, indexOutline, outlineFromDoc, tocOutline } from '../pipeline/outline';
-import { expandIndexDirectives, rangeEnd } from '../pipeline/indexDirective';
-import { parseMarkdown } from '../parse';
-import { resolveAllConfig } from '../pipeline/config';
-import { stripIndexDefaults } from '../defaults/indexConfig';
-import type { OutlineEntry, PostextConfig } from '../types';
-import type { ContentBlock } from '../parse';
-import type { VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { buildBundle } from '../bundle/index.js';
+import { contentOutline } from '../pipeline/continuation.js';
+import { computeOutline, hasIndexDirective, indexOutline, outlineFromDoc, tocOutline } from '../pipeline/outline.js';
+import { expandIndexDirectives, rangeEnd } from '../pipeline/indexDirective.js';
+import { parseMarkdown } from '../parse/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { stripIndexDefaults } from '../defaults/indexConfig.js';
+import type { OutlineEntry, PostextConfig } from '../types.js';
+import type { ContentBlock } from '../parse/index.js';
+import type { VDTDocument } from '../vdt.js';
 
 class StubCtx {
   font = '';

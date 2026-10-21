@@ -7,8 +7,8 @@ import type {
   LineNumbersRestart,
   ResolvedBodyTextConfig,
   ResolvedLineNumbersConfig,
-} from '../types';
-import { dimensionsEqual } from './shared';
+} from '../types.js';
+import { dimensionsEqual } from './shared.js';
 
 /** Line numbers (#621): off; when on, every fifth line of verse numbered
  *  in the outer margin, an em from the text, at 0.8 of the body size. */

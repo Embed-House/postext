@@ -21,11 +21,11 @@
  *
  * Pure.
  */
-import type { ElementPlacement } from '../types';
-import type { ParsedComposedPage, SlotPiece } from './document';
-import type { SourceRange } from './types';
-import { anchorTarget, repeatInstance, repeatInstanceName } from './templates';
-import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types';
+import type { ElementPlacement } from '../types.js';
+import type { ParsedComposedPage, SlotPiece } from './document.js';
+import type { SourceRange } from './types.js';
+import { anchorTarget, repeatInstance, repeatInstanceName } from './templates.js';
+import type { ResolvedFrame, ResolvedFrameGroup, ResolvedPageTemplate } from './types.js';
 
 /** One item of a grid on a page. */
 export interface RepeatItem {
@@ -166,6 +166,8 @@ export function expandRepeats(template: ResolvedPageTemplate, items: ReadonlyMap
           if (inSet.has(f.next)) out.next = repeatInstanceName(f.next, item);
           else delete out.next;
         }
+        // A box of the set grows with its own item's frames (#1117).
+        if (Array.isArray(f.growWith)) out.growWith = f.growWith.map((n) => (inSet.has(n) ? repeatInstanceName(n, item) : n));
         const to = f.overflow.continueIn;
         if (typeof to === 'string' && to.startsWith('#')) {
           const frame = to.slice(1);

@@ -37,7 +37,7 @@ import {
   resolveOrderedListsConfig,
   withDigits,
 } from 'postext';
-import { documentDigits, documentDirection } from './documentDirection';
+import { documentDigits, documentDirection } from './documentDirection.js';
 import {
   builtInTypes,
   canonicalJson,
@@ -55,7 +55,7 @@ import {
   typeNames,
   undoDefaults,
   without,
-} from './defaultsReview';
+} from './defaultsReview.js';
 
 /** One row of the review list, in the order the list shows them. */
 export type ArabicDefaultId =

@@ -1,12 +1,13 @@
 import type {
+  ContrastAllowEntry,
   ContrastConfig,
   ContrastLevel,
   ContrastMode,
   ContrastReversedTextConfig,
   ResolvedContrastConfig,
   ResolvedContrastReversedTextConfig,
-} from '../types';
-import { dimensionsEqual } from './shared';
+} from '../types.js';
+import { dimensionsEqual } from './shared.js';
 
 export const DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG: ResolvedContrastReversedTextConfig = {
   enabled: true,
@@ -20,6 +21,7 @@ export const DEFAULT_CONTRAST_CONFIG: ResolvedContrastConfig = {
   level: 'AA',
   mode: 'auto',
   reversedText: DEFAULT_CONTRAST_REVERSED_TEXT_CONFIG,
+  allow: [],
 };
 
 export const CONTRAST_LEVELS: readonly ContrastLevel[] = ['AA', 'AAA'];
@@ -36,6 +38,34 @@ export function resolveContrastReversedTextConfig(partial?: ContrastReversedText
   };
 }
 
+/** A colour of an allow entry as `#rrggbb` (or `#rrggbbaa`) in lower
+ *  case: `#` added, a short form spelled out. Undefined for no hex. */
+export function normalContrastHex(color: unknown): string | undefined {
+  if (typeof color !== 'string') return undefined;
+  const m = /^#?([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.exec(color.trim());
+  if (!m) return undefined;
+  const hex = m[1]!.toLowerCase();
+  return `#${hex.length <= 4 ? [...hex].map((c) => c + c).join('') : hex}`;
+}
+
+/** The allow entries that match something (#1124): colours that are no
+ *  hex and entries that give no colour or style are dropped. */
+export function resolveContrastAllow(allow: unknown): ContrastAllowEntry[] {
+  if (!Array.isArray(allow)) return [];
+  const out: ContrastAllowEntry[] = [];
+  for (const raw of allow) {
+    if (!raw || typeof raw !== 'object') continue;
+    const e = raw as Partial<ContrastAllowEntry>;
+    const fg = normalContrastHex(e.fg);
+    const bg = normalContrastHex(e.bg);
+    const style = typeof e.style === 'string' && e.style.trim() ? e.style.trim() : undefined;
+    if ((e.fg !== undefined && !fg) || (e.bg !== undefined && !bg)) continue;
+    if (!fg && !bg && !style) continue;
+    out.push({ ...(fg ? { fg } : {}), ...(bg ? { bg } : {}), ...(style ? { style } : {}), reason: typeof e.reason === 'string' ? e.reason : '' });
+  }
+  return out;
+}
+
 /** A level or a mode written otherwise reads as the default
  *  (`collectConfigWarnings` reports it). */
 export function resolveContrastConfig(partial?: ContrastConfig): ResolvedContrastConfig {
@@ -45,6 +75,7 @@ export function resolveContrastConfig(partial?: ContrastConfig): ResolvedContras
     level: CONTRAST_LEVELS.includes(partial?.level as ContrastLevel) ? (partial!.level as ContrastLevel) : d.level,
     mode: CONTRAST_MODES.includes(partial?.mode as ContrastMode) ? (partial!.mode as ContrastMode) : d.mode,
     reversedText: resolveContrastReversedTextConfig(partial?.reversedText),
+    allow: resolveContrastAllow(partial?.allow),
   };
 }
 
@@ -65,5 +96,6 @@ export function stripContrastDefaults(cfg?: ContrastConfig): ContrastConfig | un
     if (r.lightWeight !== undefined && r.lightWeight !== dr.lightWeight) reversed.lightWeight = r.lightWeight;
     if (Object.keys(reversed).length > 0) result.reversedText = reversed;
   }
+  if (Array.isArray(cfg.allow) && cfg.allow.length > 0) result.allow = cfg.allow;
   return Object.keys(result).length > 0 ? result : undefined;
 }

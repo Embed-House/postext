@@ -120,6 +120,8 @@ Les règles 13 dessinent aussi la case d’un élément de tâche (`- [ ]`, `- [
 
 Un manifeste marqué `14` a été écrit par postext 1.30 à 1.33. Les règles 15 (postext 1.34, #853) ajoutent les modèles de page (`pageTemplates`) et les styles d’étiquette (`labelStyles`) des [pages composées](/fr/docs/composed-pages). Elles ne changent rien de ce que dit une configuration plus ancienne : un manifeste marqué `14` est lu tel quel, sans épinglage. Le numéro signale une configuration qui peut contenir des modèles, qu’un lecteur des règles 14 ou antérieures ignore.
 
+Un manifeste marqué `15` ou `16` a été écrit par postext 1.34 à 1.51 (les règles de 16, #1056, ajoutent des connecteurs à la décoration d’un gabarit et ne figent rien). Les règles de 17 (#1119) prennent dans le texte de l’encadré où se trouve le style de paragraphe la police, la taille, l’interligne, les graisses et la couleur que le style laisse sans valeur, là où jusqu’à 1.51 c’étaient ceux du texte du document. Un manifeste marqué `16` ou plus ancien reçoit `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) sur le `bodyText` en vigueur, quand la configuration fusionnée déclare un style de paragraphe et ne nomme pas le réglage.
+
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
 

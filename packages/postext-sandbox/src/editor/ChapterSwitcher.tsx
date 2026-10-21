@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useBookContent, useBookPlan, useSandboxDispatch, useSandboxLabels } from '../context/SandboxContext';
-import { chapterPageLabels } from '../book/pagination';
-import { CHAPTER_FILTER_MIN_CHAPTERS, chapterFilterKey, chapterMenuEntries, partLabel, type ChapterMenuSource } from '../book/chapterMenu';
-import { IconButton, Menu, MenuItem, cn } from '../ui';
+import { useBookContent, useBookPlan, useSandboxDispatch, useSandboxLabels } from '../context/SandboxContext.js';
+import { chapterPageLabels } from '../book/pagination.js';
+import { CHAPTER_FILTER_MIN_CHAPTERS, chapterFilterKey, chapterMenuEntries, partLabel, type ChapterMenuSource } from '../book/chapterMenu.js';
+import { IconButton, Menu, MenuItem, cn } from '../ui/index.js';
 
 /** Header widget of the Markdown panel: previous/next chapter and a menu to
  *  jump to any chapter (with page ranges once its pagination is known).

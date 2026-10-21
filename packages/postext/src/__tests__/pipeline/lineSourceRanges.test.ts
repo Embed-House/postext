@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import type { VDTLine } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import type { VDTLine } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // character, the space included, is 7 px wide.

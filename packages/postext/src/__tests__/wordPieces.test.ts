@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { renderPageToCanvas } from '../canvas-backend';
-import { renderToHtml } from '../html-backend';
-import { buildDocument } from '../pipeline';
-import { clearMeasurementCache } from '../measure';
-import { joinedWordPieces, lineWordSegments, lineWordSegmentsInOrder } from '../wordPieces';
-import * as engine from '../index';
-import type { PostextConfig, Resource } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
+import { renderPageToCanvas } from '../canvas-backend/index.js';
+import { renderToHtml } from '../html-backend.js';
+import { buildDocument } from '../pipeline/index.js';
+import { clearMeasurementCache } from '../measure/index.js';
+import { joinedWordPieces, lineWordSegments, lineWordSegmentsInOrder } from '../wordPieces.js';
+import * as engine from '../index.js';
+import type { PostextConfig, Resource } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt.js';
 
 // #770: the pieces of a word. A paragraph with a style in it is cut word
 // by word, and a piece of a word is as wide as the word grew by it; a

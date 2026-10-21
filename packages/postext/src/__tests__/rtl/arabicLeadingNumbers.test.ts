@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { lineRuns, markerRuns, resolveParagraph } from '../../bidi';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { cachedMeasureBlock } from '../../measure/cache';
-import { measureRichBlock } from '../../measure/rich';
-import { getMeasureArabicNumbers, setMeasureArabicNumbers } from '../../measure/bidiLines';
-import { arabicNumbersOf, resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig, Resource } from '../../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../../vdt';
+import { lineRuns, markerRuns, resolveParagraph } from '../../bidi.js';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { cachedMeasureBlock } from '../../measure/cache.js';
+import { measureRichBlock } from '../../measure/rich.js';
+import { getMeasureArabicNumbers, setMeasureArabicNumbers } from '../../measure/bidiLines.js';
+import { arabicNumbersOf, resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../../vdt.js';
 
 // #665: in an Arabic-script document a European number with no letter
 // before it reads as the numbers after the paragraph's letters do, as an

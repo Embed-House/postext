@@ -3,16 +3,16 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { buildDocument, contrastPairs } from 'postext';
 import type { PostextConfig } from 'postext';
-import { SandboxStoreContext } from '../context/SandboxContext';
-import { ColorPicker } from '../controls/ColorPicker';
-import { DEFAULT_LABELS } from '../types/defaultLabels';
-import { computeWarnings } from '../warnings/compute';
-import { warningCategory } from '../warnings/categories';
-import type { WarningPayload } from '../warnings/types';
-import { configKeyOf } from '../book/layoutKeys';
-import { contrastSnapshot, publishContrast } from './contrastStore';
-import { contrastDetail, contrastTitle } from './contrastText';
-import { counterpartsFor, measureField, normalizeHex, ratioText } from './fieldContrast';
+import { SandboxStoreContext } from '../context/SandboxContext.js';
+import { ColorPicker } from '../controls/ColorPicker.js';
+import { DEFAULT_LABELS } from '../types/defaultLabels.js';
+import { computeWarnings } from '../warnings/compute.js';
+import { isAcceptedWarning, warningCategory } from '../warnings/categories.js';
+import type { WarningPayload } from '../warnings/types.js';
+import { configKeyOf } from '../book/layoutKeys.js';
+import { contrastSnapshot, publishContrast } from './contrastStore.js';
+import { contrastDetail, contrastTitle } from './contrastText.js';
+import { counterpartsFor, measureField, normalizeHex, ratioText } from './fieldContrast.js';
 
 // #748: the contrast check in the Sandbox. The Checks panel lists the
 // pairs that do not read; a colour field shows the ratio its colour has
@@ -77,6 +77,20 @@ describe('contrast in the Checks panel', () => {
 
   it('leaves the layout alone when its settings change', () => {
     expect(configKeyOf(config({ contrast: { level: 'AAA', mode: 'both' } }))).toBe(configKeyOf(config()));
+    expect(configKeyOf(config({ contrast: { allow: [{ fg: OCHRE, reason: 'Brand' }] } }))).toBe(configKeyOf(config()));
+  });
+
+  // #1124: a pair `contrast.allow` accepts is listed as accepted, with its
+  // reason, and is not counted.
+  it('lists an allowed pair as accepted, apart from the warnings', () => {
+    const found = contrastWarnings(config({ contrast: { allow: [{ fg: OCHRE, bg: '#ffffff', reason: 'The publisher\'s ochre' }] } }));
+    expect(found).toHaveLength(1);
+    expect(isAcceptedWarning(found[0]!)).toBe(true);
+    const { check } = found[0]!.payload;
+    expect(check.accepted).toEqual({ reason: 'The publisher\'s ochre', fg: OCHRE, bg: '#ffffff' });
+    expect(contrastDetail(check, DEFAULT_LABELS)).toBe('“A title in ochre”: ⁦#b7820f⁩ on ⁦#ffffff⁩, 12 pt. 3.37:1 on screen; AA asks for 4.5:1. Accepted: The publisher\'s ochre');
+    expect(contrastDetail({ ...check, accepted: { reason: '' } }, DEFAULT_LABELS)).toMatch(/Accepted in the contrast settings\.$/);
+    expect(isAcceptedWarning(contrastWarnings(config())[0]!)).toBe(false);
   });
 });
 

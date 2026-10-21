@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canonicalSteps, formatPath, getAtPath, identityKeyOf, leafEntries, mergePatch, parsePath, patchPaths, setAtPath } from './configPaths';
+import { canonicalSteps, formatPath, getAtPath, identityKeyOf, leafEntries, mergePatch, parsePath, patchPaths, setAtPath } from './configPaths.js';
 
 const config = {
   page: { margins: { top: { value: 2, unit: 'cm' } }, dpi: 300 },

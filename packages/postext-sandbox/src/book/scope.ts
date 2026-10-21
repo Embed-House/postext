@@ -4,7 +4,7 @@
 // which it opens on. Past the limit a book is shown a chapter at a time.
 // Pure.
 
-import type { LayoutScope } from './types';
+import type { LayoutScope } from './types.js';
 
 /** The most chapters a book may have for the canvas and the HTML preview
  *  to show it whole. The PDF can still take a longer book whole. */

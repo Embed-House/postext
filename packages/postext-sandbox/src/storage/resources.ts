@@ -4,7 +4,7 @@
 // referenced by `fileId`.
 
 import type { Resource } from 'postext';
-import { RESOURCES_STORE, runInStore, deleteBlob, hasIndexedDB } from './blobStore';
+import { RESOURCES_STORE, runInStore, deleteBlob, hasIndexedDB } from './blobStore.js';
 
 /** Load every stored resource. Returns an empty array when IndexedDB is
  *  unavailable rather than rejecting, so callers can start with no resources

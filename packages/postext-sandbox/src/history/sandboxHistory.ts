@@ -35,10 +35,10 @@ import type { Dispatch } from 'react';
 import type { EditorState, Transaction } from '@codemirror/state';
 import { Transaction as Tr } from '@codemirror/state';
 import type { PostextConfig, Resource } from 'postext';
-import type { SandboxAction, SandboxState } from '../context/SandboxContext';
-import { applyTextChanges, changesApply } from '../book/textChanges';
-import { applyPatch, carryPatch, diffConfig, patchCovers, patchIsEmpty, patchSettingPaths, patchTopKeys, type ConfigPatch } from './configPatch';
-import { depthsOf, editSaved, runSaved, savedState, stateJSON } from './textHistory';
+import type { SandboxAction, SandboxState } from '../context/SandboxContext.js';
+import { applyTextChanges, changesApply } from '../book/textChanges.js';
+import { applyPatch, carryPatch, diffConfig, patchCovers, patchIsEmpty, patchSettingPaths, patchTopKeys, type ConfigPatch } from './configPatch.js';
+import { depthsOf, editSaved, runSaved, savedState, stateJSON } from './textHistory.js';
 
 /** Writes of the same settings closer than this are one step. */
 export const COALESCE_MS = 1000;

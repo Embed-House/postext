@@ -685,6 +685,12 @@ const config: PostextConfig = {
       <td><code>char</code> is repeated across the gap between the title and the page number, right-aligned so the dots of consecutive entries line up (<code>'. '</code> spaces them out); <code>gap</code> is the least room kept between the title and the leader. The leader takes as many characters as fit, measured as a whole run in its face, so a face that kerns consecutive full stops apart gets fewer dots rather than dots that reach the page number. (Up to postext 1.4 the count was taken from one dot, and in such a face the leader ran from the title into the number.) A title that would leave the label no room wraps a little earlier. A leader is set with three characters or more: where only one or two fit, the row has none, since a lone dot before the page number reads as a full stop. In a tagged PDF the dots are artifacts, left out of the extracted text. Body text sets the same leaders at its <a href="/en/docs/configuration-text#tab-stops">tab stops</a>.</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>the page number's</td>
+      <td>The leader in a colour, face, size and weight of its own (since postext 1.52), as a source's contents set small coloured dots apart from the page numbers. Each one left out keeps what the dots are set in without it: the page number's on an entry row. <code>fontSize</code> in <code>em</code> is of that size. Unless <code>parts.leader</code> sets its own, a part row's <code>{'{leader}'}</code> takes them too.</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>object</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -707,6 +713,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>empty</td>
       <td>Row design; its container is the row (column width × <code>height</code>). Placeholders: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code>…, <code>{'{titleText}'}</code> and <code>{'{pageNumber}'}</code> (the part page's label; with <code>parts.page: false</code>, which opens no part page, the label of the page the part's content starts on, where its running heads switch to it; in a book laid out chapter by chapter, a fence that closes its chapter points at the first content page of the next chapter). Palette-linked colours take the part's own <code>palette</code>, so each section's row comes in its colour. When empty, <code>{'{number} {titleText}'}</code> (the H1's <code>numberSeparator</code> between them) and the page number are set in the level-1 entry typography. <code>{'{leader}'}</code> sets the contents' <code>leader</code> between the text before it and the text after it, in one text element: <code>{'{number} {titleText}{leader}{pageNumber}'}</code> puts the title at the row's start, the page number at its end and the dots between, flush with the number and <code>gap</code> from either text, as an entry row sets them. The element then takes the row's whole width (an <code>auto</code> width fills to the container's edge); a title too long for the row is cut, never the number, and a leader turned off (<code>leader.enabled: false</code>) leaves the room blank. Outside a part row, and on a vertical page, <code>{'{leader}'}</code> prints nothing. In a tagged PDF and in HTML the dots are left out of the text read.</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>The face of a part row's <code>{'{leader}'}</code>: <code>color</code>, <code>fontFamily</code>, <code>fontSize</code> (<code>em</code> of the element's size) and <code>fontWeight</code>, field by field over the face of <code>leader</code>; a field neither sets keeps the text element's own. Since postext 1.52. To set the page number in an element of its own (another face, a box), make the row three elements: the title anchored to the row's left, the page number to its right, and the leader between them in an element whose content is <code>{'{leader}'}</code> alone, anchored <code>{"{ to: '#title', edge: 'right-of' }"}</code> with <code>{"width: { to: '#page', edge: 'left' }"}</code>. Its dots stop the leader's <code>gap</code> short of the page number element, wherever that element ends up.</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
 
-import { renderToPdf } from '../pdf-backend';
-import { declaredFontFile } from '../fontCache';
-import type { PdfRequestMessage, PdfResponseMessage } from './protocol';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { declaredFontFile } from '../fontCache.js';
+import type { PdfRequestMessage, PdfResponseMessage } from './protocol.js';
 
 const ctx: DedicatedWorkerGlobalScope = self as unknown as DedicatedWorkerGlobalScope;
 

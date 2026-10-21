@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { measureRichBlock } from '../measure/rich';
-import type { InlineSpan } from '../parse';
+import { measureRichBlock } from '../measure/rich.js';
+import type { InlineSpan } from '../parse/index.js';
 
 // Deterministic widths: 7px per character, whatever the font.
 class StubCtx {

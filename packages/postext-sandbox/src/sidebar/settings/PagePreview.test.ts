@@ -7,7 +7,7 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { LayoutConfig, PageConfig } from 'postext';
 import { resolveLayoutConfig, resolvePageConfig } from 'postext';
-import { PagePreview } from './PagePreview';
+import { PagePreview } from './PagePreview.js';
 
 const PAGE: PageConfig = {
   sizePreset: 'custom',

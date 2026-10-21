@@ -1,13 +1,13 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import {
   resolveDebugConfig,
   DEFAULT_DEBUG_CONFIG,
 } from 'postext';
 import type { DebugConfig, WarningsToggleConfig } from 'postext';
-import { CollapsibleSection, ToggleSwitch } from '../../controls';
+import { CollapsibleSection, ToggleSwitch } from '../../controls/index.js';
 
 export const WarningsConfigSection = memo(function WarningsConfigSection() {
   const dispatch = useSandboxDispatch();

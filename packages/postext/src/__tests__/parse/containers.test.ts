@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseMarkdown, parseMarkdownWithIssues, KNOWN_CONTAINERS, KNOWN_DIRECTIVES } from '../../parse';
-import type { ContentBlock } from '../../parse';
+import { parseMarkdown, parseMarkdownWithIssues, KNOWN_CONTAINERS, KNOWN_DIRECTIVES } from '../../parse/index.js';
+import type { ContentBlock } from '../../parse/index.js';
 
 /** Assert every plain-text char of `block` maps back to the same char in the
  *  original markdown (the sourceMap must survive the surrounding fences). */

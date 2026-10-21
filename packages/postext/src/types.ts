@@ -1,6 +1,6 @@
-import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering';
-import type { FrameLookEntry, LabelStyle, PageTemplate } from './composed/types';
-import type { StoryJump } from './composed/carryTypes';
+import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering.js';
+import type { FrameLookEntry, LabelStyle, PageTemplate } from './composed/types.js';
+import type { StoryJump } from './composed/carryTypes.js';
 
 // Composed pages (#846): the config types live next to their resolver.
 export type {
@@ -8,7 +8,7 @@ export type {
   PageTemplateGrid, DecorationRemoval, TemplateDecoration, PageTemplatePatch, PageTemplate, LabelStyle, ComposedPagesConfigKeys,
   PageSide, ResolvePageTemplateOptions, ResolvedFrameFit, ResolvedFrame, ResolvedFrameGroup,
   ResolvedPageTemplate, ResolvedLabelStyle,
-} from './composed/types';
+} from './composed/types.js';
 
 /** @deprecated Legacy content-model resource used by the VDT renderer
  *  (`VDTBlock.resource`). The Resources-panel feature uses the newer
@@ -119,8 +119,20 @@ export interface ResourcePlacement {
    *  'here'`, #729, `layout.inlineCaptionSide`): there the caption stands
    *  level with the body's top when the side column is free over its
    *  band, else under the body. Not for a page-span or rotated resource,
-   *  one inside a box, or one text wraps round. */
-  captionSide?: boolean;
+   *  one inside a box, or one text wraps round.
+   *
+   *  `'inside'` (#1106): the caption and note stand beside the picture
+   *  within its own slot, in any layout (one column, two, a page-span
+   *  float, a resource set in the text, a box, a composed page's frame).
+   *  The picture takes `width` of the slot (default 0.5) on its `align`
+   *  side (`'center'` reads as `'left'`); the caption takes the rest of
+   *  the slot after `layout.gutterWidth`, its first line level with the
+   *  picture's top. The block is as tall as the taller of the two, and
+   *  moves on whole like any float or embed. Pictures only (bitmap, SVG,
+   *  video); a table, a turned resource and one on a vertical page keep
+   *  the caption under them. A caption band narrower than a fifth of the
+   *  slot goes back under the picture. */
+  captionSide?: boolean | 'inside';
   /** Scale a floated picture (bitmap, SVG, a video's poster) down, keeping
    *  its proportions, to the room a slot has, instead of moving it on
    *  (#626). `'never'`: a float either fits a slot at its size or waits
@@ -738,7 +750,7 @@ export interface PostextContent {
    *  and citation of the book, and where this document's sit — what
    *  `bookCitationContexts` gives a host for each chapter. When absent the
    *  document is a book of its own. */
-  citations?: import('./citations/context').CitationContext;
+  citations?: import('./citations/context.js').CitationContext;
   /** The `id` of every page fence (`::::page{id="…"}`) of the chapters
    *  after this one in its book, with the position of the chapter that has
    *  it (#943). A frame whose `overflow.continueIn` is `'page:<id>'` for
@@ -1490,7 +1502,18 @@ export interface BodyTextConfig {
   fontFamily?: string;
   fontSize?: Dimension;
   lineHeight?: Dimension;
-  paragraphSpacing?: boolean;
+  /** The space between two paragraphs (#1115). `true` adds one
+   *  baseline-grid line (the body's line height), `false` (default) none,
+   *  and a length (`2mm`, `0.33em` of the font size, `4pt`) exactly that
+   *  much, in the main flow, in boxes and in composed frames. A length that
+   *  is not a whole number of lines takes the paragraphs off the baseline
+   *  grid, as `paragraphStyles[].spaceBetween` does in a `:::paragraphs`
+   *  container (the same slot of the paragraph's style): the next block
+   *  that snaps (a heading, the last item of a list, display maths, the
+   *  last paragraph of a container) brings the flow back onto the grid.
+   *  Inside a `:::paragraphs` container the style's `spaceBetween` sets
+   *  the space instead. */
+  paragraphSpacing?: boolean | Dimension;
   color?: ColorValue;
   boldColor?: ColorValue;
   italicColor?: ColorValue;
@@ -1894,6 +1917,14 @@ export interface BodyTextConfig {
    *  container that closes on a list is set as in 1.4 under both rules: the
    *  list keeps its own space in its snap, and `marginBottom` follows. */
   paragraphContainerSpacing?: ParagraphContainerSpacing;
+  /** What the fields a paragraph style leaves unset (face, size, leading,
+   *  weights, colour) inherit inside a box (#1119):
+   *  - `'box'` (default): the box's body, so one style that sets only
+   *    `textAlign` serves a serif box and a sans one alike;
+   *  - `'document'`: the document's body text, as up to postext 1.51.
+   *    Configurations stored before `configVersion` 17 read with it (see
+   *    `pinLegacyBoxParagraphStyles` in `postext/bundle`). */
+  paragraphStylesInBoxes?: ParagraphStylesInBoxes;
   /** How Markdown emphasis (`*…*`) is set (see {@link EmphasisStyle}).
    *  `'auto'` (the default): `'bold'` in a document whose language is
    *  written in Arabic script (`ar`, `fa`, `ur`…), whose type has no
@@ -1949,6 +1980,14 @@ export type CompositionRule = 'allow' | 'warn' | 'avoid';
 /** How the space under a `:::paragraphs` container is worked out
  *  (`BodyTextConfig.paragraphContainerSpacing`). */
 export type ParagraphContainerSpacing = 'collapse' | 'add';
+
+/** What a paragraph style's unset type fields inherit inside a box
+ *  (`BodyTextConfig.paragraphStylesInBoxes`, #1119). */
+export type ParagraphStylesInBoxes = 'box' | 'document';
+
+/** The type fields a paragraph style inherits from the body text when it
+ *  leaves them unset (`ResolvedParagraphStyleConfig.inheritsBody`). */
+export type ParagraphBodyField = 'fontFamily' | 'fontSize' | 'lineHeight' | 'fontWeight' | 'boldFontWeight' | 'color';
 
 /** How Markdown blockquotes (`> …`) are set (`BodyTextConfig.blockquote`).
  *  They take the body's family, size, leading, weights, alignment and
@@ -2347,7 +2386,7 @@ export interface ResolvedBodyTextConfig {
   fontFamily: string;
   fontSize: Dimension;
   lineHeight: Dimension;
-  paragraphSpacing: boolean;
+  paragraphSpacing: boolean | Dimension;
   color: ColorValue;
   boldColor?: ColorValue;
   italicColor?: ColorValue;
@@ -2415,6 +2454,7 @@ export interface ResolvedBodyTextConfig {
   colonListRoom: ColonListRoom;
   hyphenateAcrossColumns: boolean | 'withinPage';
   paragraphContainerSpacing: ParagraphContainerSpacing;
+  paragraphStylesInBoxes: ParagraphStylesInBoxes;
   /** `emphasis` resolved; absent when `*…*` is set in italics. */
   emphasis?: Exclude<EmphasisStyle, 'italic'>;
   /** `tashkil`; absent when the marks are kept. */
@@ -3149,6 +3189,11 @@ export interface ResolvedParagraphStyleConfig {
    *  with a non-zero {@link hangingIndent} the two pair up (#620). Absent
    *  when inherited. */
   ownFirstLineIndent?: true;
+  /** The type fields the style leaves unset and takes from the body text
+   *  (#1119), so a box can set them in its own body instead. Absent when
+   *  the style sets them all, and on the styles the engine makes itself
+   *  (footnotes, bibliography). */
+  inheritsBody?: ParagraphBodyField[];
   hangingIndent: Dimension;
   spaceBetween: Dimension;
   marginTop: Dimension;
@@ -3214,7 +3259,16 @@ export type CalloutWidth = 'fill' | 'auto';
  *  set against the document's direction (`:::callout{dir=ltr}` in an
  *  Arabic book). */
 export type CalloutStripeSide = 'left' | 'right' | 'top' | 'start' | 'end';
-export type CalloutIconKind = 'none' | 'glyph' | 'resource';
+export type CalloutIconKind = 'none' | 'glyph' | 'resource' | 'shape';
+/** A drawn icon (#1120, `kind: 'shape'`): a ring (a circle's outline) or
+ *  a dot (a filled circle), drawn by the engine in every backend, no font
+ *  or picture asked for. */
+export type CalloutIconShape = 'ring' | 'dot';
+/** A picture icon painted in one colour (#995, #1120): `true` in the
+ *  icon's own colour (a label tab's: its words' colour), a colour to paint
+ *  it in that one (a palette colour follows the palette), `false` as the
+ *  picture is. */
+export type IconTint = boolean | ColorValue;
 export type CalloutIconAlign = 'top' | 'center';
 /** Where the in-box icon sits: `'inline'` (the default) in a column of its
  *  own left of the title and content (or centred on the side stripe);
@@ -3318,6 +3372,15 @@ export interface CalloutIconConfig {
   /** Width of the icon's box when it is not square (a wide strip of
    *  icons): the picture is fitted into `width` x `size`. Default: `size`. */
   width?: Dimension;
+  /** The drawn icon of `kind: 'shape'` (#1120), `size` across in `color`.
+   *  Default `'ring'`. */
+  shape?: CalloutIconShape;
+  /** The line of a `ring`. Default: an eighth of `size`. */
+  strokeWidth?: Dimension;
+  /** A picture icon (`kind: 'resource'`) painted in one colour (#1120):
+   *  `true` in `color`, or a colour of its own, so one ring picture serves
+   *  every tint. Default `false`. */
+  tint?: IconTint;
 }
 
 /** A small tab on the box's top edge carrying the fence's `label`
@@ -3332,7 +3395,7 @@ export type CalloutLabelIconPlacement = 'beside' | 'inside';
 
 /** What a label tab's icon is (#1054): a picture resource, or a character
  *  of a font. */
-export type CalloutLabelIconKind = 'resource' | 'glyph';
+export type CalloutLabelIconKind = 'resource' | 'glyph' | 'shape';
 
 /** The icon of a label tab: a picture (`resourceId`, #981/#995) or a glyph
  *  (#1054). `placement` and `gap` work alike for both; `width` and `tint`
@@ -3349,7 +3412,15 @@ export interface CalloutLabelIconConfig {
    *  (`inside`). Default `0.3em`. */
   gap?: Dimension;
   placement?: CalloutLabelIconPlacement;
-  tint?: boolean;
+  /** The picture painted in one colour: `true` in the label's `color`
+   *  (#995), or a colour of its own (#1120). */
+  tint?: IconTint;
+  /** The drawn icon of `kind: 'shape'` (#1120): a ring or a dot as large
+   *  as a glyph would be (`scale` of the tab's text size), in `color`.
+   *  Default `'ring'`. */
+  shape?: CalloutIconShape;
+  /** The line of a `ring`. Default: an eighth of its size. */
+  strokeWidth?: Dimension;
   /** The character set as the icon (`'◉'`). */
   glyph?: string;
   /** The glyph's font family. Default: the label's. */
@@ -3408,6 +3479,17 @@ export interface CalloutLabelConfig {
   /** The radius of the concave fillets of a joined tab. Default: the
    *  radius of the box's corner the tab hugs. */
   fillet?: Dimension;
+  /** The tab's own corners (#1102): one radius, or one per corner, on the
+   *  sheet's corners as the box's `borderRadius`. A tab apart from the box
+   *  rounds the corners it names (square by default); a joined tab rounds
+   *  its two outer corners (`topLeft` / `topRight` for a tab at the head,
+   *  `bottomLeft` / `bottomRight` at the foot), which otherwise copy the
+   *  box's corner it hugs. The fillets keep their own radius. */
+  borderRadius?: CornerRadius;
+  /** A joined tab filled in the label's own `background` (#1102): the
+   *  tab and its fillets are painted over the box's fill (or where the box
+   *  has none), under the one border. Default `false`: the box's fill. */
+  ownBackground?: boolean;
 }
 
 /** Vertical rule drawn between a callout marker and its box. */
@@ -3498,7 +3580,9 @@ export interface CalloutBodyStyleConfig {
   /** Hyphenate when justified — and, when `bodyText.hyphenation.ragged` is
    *  on, when ragged too. Defaults to the body hyphenation setting. */
   hyphenation?: boolean;
-  paragraphSpacing?: boolean;
+  /** As `bodyText.paragraphSpacing`: `true` is one line of the box's body,
+   *  a length is set exactly. Unset: the body's. */
+  paragraphSpacing?: boolean | Dimension;
   firstLineIndent?: Dimension;
   /** Tab stops of the box's paragraphs and list items (#622). Unset: the
    *  body's (`bodyText.tabStops`). */
@@ -3519,6 +3603,16 @@ export interface CalloutListStyleConfig {
   /** Size and weight of the bullet glyph (inherit `unorderedLists`). */
   bulletFontSize?: Dimension;
   bulletFontWeight?: number;
+  /** Face of the bullet glyph (#1103), for a bullet set in a symbol or
+   *  display face. Unset, each list level keeps its own face
+   *  (`unorderedLists.fontFamily` or the level's); a style that sets
+   *  {@link bulletFontSize} and inherits the list face from the body sets
+   *  its bullets in the box's body face. */
+  bulletFontFamily?: string;
+  /** Space above and below a list in the box, ordered lists too (#1103).
+   *  Unset: the document's (`unorderedLists` / `orderedLists`). */
+  marginTop?: Dimension;
+  marginBottom?: Dimension;
 }
 
 /** A named callout style, selected by `:::callout{type="<id>"}`. */
@@ -3806,6 +3900,11 @@ export interface ResolvedCalloutStyleConfig {
     position: CalloutIconPosition;
     cornerSide: CalloutIconCornerSide;
     width?: Dimension;
+    /** Present for `kind: 'shape'` (#1120). */
+    shape?: CalloutIconShape;
+    strokeWidth?: Dimension;
+    /** Absent when the picture is painted as it is. */
+    tint?: true | ColorValue;
   };
   label?: {
     fontFamily: string;
@@ -3824,7 +3923,10 @@ export interface ResolvedCalloutStyleConfig {
       width: Dimension;
       gap: Dimension;
       placement: CalloutLabelIconPlacement;
-      tint: boolean;
+      tint: IconTint;
+      /** Present for `kind: 'shape'` (#1120). */
+      shape?: CalloutIconShape;
+      strokeWidth?: Dimension;
       glyph: string;
       fontFamily: string;
       fontWeight: number;
@@ -3838,6 +3940,10 @@ export interface ResolvedCalloutStyleConfig {
     joined: boolean;
     /** Absent: the radius of the box's corner the tab hugs. */
     fillet?: Dimension;
+    /** Absent: a square tab, or a joined one with the box's corner. */
+    borderRadius?: CornerRadius;
+    /** Present (`true`) only when set: a joined tab in its own fill. */
+    ownBackground?: true;
   };
   columnGap: Dimension;
   marker: {
@@ -3851,6 +3957,10 @@ export interface ResolvedCalloutStyleConfig {
     align: CalloutIconAlign;
     gap: Dimension;
     rule: { enabled: boolean; color: ColorValue; width: Dimension; length: Dimension };
+    /** As the icon's (#1120). */
+    shape?: CalloutIconShape;
+    strokeWidth?: Dimension;
+    tint?: true | ColorValue;
   };
   titleStyle: {
     fontFamily: string;
@@ -3879,7 +3989,7 @@ export interface ResolvedCalloutStyleConfig {
     letterSpacing?: Dimension;
     textAlign: 'left' | 'justify';
     hyphenation: boolean;
-    paragraphSpacing: boolean;
+    paragraphSpacing: boolean | Dimension;
     firstLineIndent: Dimension;
     /** Absent when the style sets none. */
     tabStops?: TabStop[];
@@ -3893,6 +4003,11 @@ export interface ResolvedCalloutStyleConfig {
     itemSpacing: Dimension;
     bulletFontSize?: Dimension;
     bulletFontWeight?: number;
+    /** Absent when the style sets none. */
+    bulletFontFamily?: string;
+    /** Absent unless set: the document's list margins. */
+    marginTop?: Dimension;
+    marginBottom?: Dimension;
     /** `true` when the style sets `lists.color` itself. The colour then
      *  reaches the numbers of the box's ordered lists even when it equals
      *  `unorderedLists.color` (the value an unset field inherits). Absent
@@ -4016,7 +4131,7 @@ export interface MarkStyleConfig {
   /** Colour of the marked text. Default the text's own. */
   color?: ColorValue;
   /** Corner radius of the band's two ends, clamped to half its height.
-   *  Default `0.2em`. */
+   *  Default `0` (square ends; `0.2em` up to postext 1.51). */
   borderRadius?: Dimension;
   /** How far the band reaches past the first and the last letter of the
    *  phrase, into the space beside it. Default `0.15em`. */
@@ -4027,7 +4142,18 @@ export interface MarkStyleConfig {
   paddingTop?: Dimension;
   /** Room below the text band, in place of {@link paddingY}. */
   paddingBottom?: Dimension;
+  /** How the band of a phrase that wraps onto another line is cut (CSS
+   *  `box-decoration-break`). `'slice'` (the default): one band cut where
+   *  the line breaks, square at the cut, with the padding and the rounded
+   *  corners only at the phrase's true start and end. `'clone'`: each line
+   *  piece gets a whole band of its own, with `paddingX` and the rounded
+   *  corners on both of its ends, as a heading set on a colour band cut per
+   *  line. The layout is the same either way. */
+  decorationBreak?: MarkDecorationBreak;
 }
+
+/** `markStyles[].decorationBreak`. */
+export type MarkDecorationBreak = 'slice' | 'clone';
 
 export interface ResolvedMarkStyleConfig {
   id: string;
@@ -4042,6 +4168,7 @@ export interface ResolvedMarkStyleConfig {
   paddingTop?: Dimension;
   /** Unset: `paddingY`. */
   paddingBottom?: Dimension;
+  decorationBreak: MarkDecorationBreak;
 }
 
 export interface ResolvedChipStyleConfig {
@@ -4904,7 +5031,18 @@ export interface DebugConfig {
   looseLineHighlight?: LooseLineHighlightConfig;
   pageNegative?: { enabled: boolean };
   warnings?: WarningsToggleConfig;
+  /** Which fit marks the Sandbox canvas draws over composed pages by
+   *  default (#1160): `all` (default), `problems` (frames that do not fit,
+   *  looks the config does not have) or `none`. A viewer's own choice in
+   *  the canvas toolbar wins. Never painted in any output. */
+  fitMarks?: FitMarksMode;
+  /** A frame set at this scale or larger shows no scale badge (0.95 hides
+   *  95 % and up). Default 1: every scaled frame is marked. */
+  fitMarksMinScale?: number;
 }
+
+/** What the Sandbox canvas marks of how composed frames fit (#1160). */
+export type FitMarksMode = 'all' | 'problems' | 'none';
 
 export interface ResolvedDebugConfig {
   cursorSync: { enabled: boolean; color: ColorValue };
@@ -4912,6 +5050,8 @@ export interface ResolvedDebugConfig {
   looseLineHighlight: { enabled: boolean; color: ColorValue; threshold: number };
   pageNegative: { enabled: boolean };
   warnings: ResolvedWarningsToggleConfig;
+  fitMarks: FitMarksMode;
+  fitMarksMinScale: number;
 }
 
 /** Partial document config that applies to the HTML viewer only (see
@@ -6219,6 +6359,28 @@ export interface ResolvedContrastReversedTextConfig {
   lightWeight: number;
 }
 
+/** A text and ground pair the contrast check accepts (#1124): the
+ *  colours a publisher's palette sets on purpose, which a port cannot
+ *  change. Text that matches is still reported, as accepted with its
+ *  reason, and no longer counts as a warning. An entry matches the text
+ *  whose every field it gives matches; one that gives none of `fg`, `bg`
+ *  and `style` matches nothing. */
+export interface ContrastAllowEntry {
+  /** The text colour (`#rrggbb`, or `#rgb`), as the configuration writes
+   *  it or as it is painted (a translucent colour blended with its
+   *  ground). */
+  fg?: string;
+  /** The ground the text is set on, the same way. */
+  bg?: string;
+  /** A style the text is set in: a box style (`calloutStyles[].id`, the
+   *  `style` of a composed page's frame too), a paragraph style, a heading
+   *  style, a chip style or a figure label style. Every colour pair of the
+   *  text set in it is accepted, unless `fg` or `bg` narrow it. */
+  style?: string;
+  /** Why the pair stays: listed beside the accepted finding. */
+  reason: string;
+}
+
 /** The contrast check (`contrastDocument`): the text of the laid-out pages
  *  against the ground it is set on. Layout ignores it. */
 export interface ContrastConfig {
@@ -6229,6 +6391,9 @@ export interface ContrastConfig {
   /** Defaults to `'auto'`. */
   mode?: ContrastMode;
   reversedText?: ContrastReversedTextConfig;
+  /** Pairs the check accepts (#1124), each with its reason. Defaults to
+   *  none. */
+  allow?: ContrastAllowEntry[];
 }
 
 export interface ResolvedContrastConfig {
@@ -6236,6 +6401,9 @@ export interface ResolvedContrastConfig {
   level: ContrastLevel;
   mode: ContrastMode;
   reversedText: ResolvedContrastReversedTextConfig;
+  /** The entries that match something, their colours written
+   *  `#rrggbb` in lower case. */
+  allow: ContrastAllowEntry[];
 }
 
 /** The content check (`checks.contentInConfig`, #849): a design text
@@ -7420,6 +7588,19 @@ export interface ResolvedHeadingStyleConfig {
 // Table of contents — what `:::toc` prints.
 // ---------------------------------------------------------------------------
 
+/** The face of a contents leader (#1121): the dots set in a colour, face,
+ *  size and weight of their own, as a source's contents set small coloured
+ *  dots in a face apart from the page numbers. Each field unset keeps what
+ *  the leader is set in without it: the page number's on an entry row, the
+ *  text element's own in a part row (`{leader}`). */
+export interface TocLeaderFaceConfig {
+  color?: ColorValue;
+  fontFamily?: string;
+  /** `em` is the size the leader would have without it. */
+  fontSize?: Dimension;
+  fontWeight?: number;
+}
+
 /** Typography of one kind of contents entry. Every field inherits the body
  *  text (or the `toc`-wide value) when unset. */
 export interface TocEntryStyleConfig {
@@ -7473,8 +7654,11 @@ export interface TocConfig {
     /** Width reserved for the number at the right edge. Default `2em`. */
     width?: Dimension;
   };
-  /** Leader between the title and the page number. */
-  leader?: {
+  /** Leader between the title and the page number. Its face fields
+   *  (`color`, `fontFamily`, `fontSize`, `fontWeight`, #1121) set the dots
+   *  of the entry rows and, unless `parts.leader` sets its own, of the part
+   *  rows' `{leader}`. */
+  leader?: TocLeaderFaceConfig & {
     /** Default `true`. */
     enabled?: boolean;
     /** Repeated across the gap, right-aligned so dots line up. Default `'.'`;
@@ -7514,6 +7698,9 @@ export interface TocConfig {
      *  with the H1's `numberSeparator`) and the page number are set in the
      *  level-1 entry typography. */
     design?: DesignSlot;
+    /** The face of the part rows' `{leader}` (#1121), field by field over
+     *  `toc.leader`'s; unset fields keep the text element's own. */
+    leader?: TocLeaderFaceConfig;
     /** Row height; `em` is the body text size. Default `2em`, twice the
      *  body size (a row one or two body lines tall, depending on the
      *  leading). */
@@ -7596,7 +7783,8 @@ export interface ResolvedTocConfig {
     color: ColorValue;
     width: Dimension;
   };
-  leader: { enabled: boolean; char: string; gap: Dimension };
+  /** The face fields are present only when set (#1121). */
+  leader: TocLeaderFaceConfig & { enabled: boolean; char: string; gap: Dimension };
   subtitle: {
     enabled: boolean;
     attr: string;
@@ -7611,6 +7799,8 @@ export interface ResolvedTocConfig {
     enabled: boolean;
     breakBefore: boolean;
     design: ResolvedDesignSlot;
+    /** Present only when set (#1121). */
+    leader?: TocLeaderFaceConfig;
     height: Dimension;
     marginTop: Dimension;
     marginBottom: Dimension;

@@ -9,19 +9,19 @@
 
 import { useEffect } from 'react';
 import { DEFAULT_CONNECTOR_WIDTH, DEFAULT_MAIN_COLOR, connectorPaintsOver, type ConnectorEnd, type DesignConnectorElement, type Dimension, type LineCap, type PageParity } from 'postext';
-import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { anchorsOfTemplateFrame } from '../../../viewport/composed/labelAnchorGeometry';
-import { ColorPicker, DimensionInput, NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
-import { FieldRow } from '../../../controls/FieldRow';
-import { useFieldIds } from '../../../controls/fieldContext';
-import { Button, cn } from '../../../ui';
-import { templateEditor, useTemplateEditor } from '../../../templates/editorStore';
-import { connectorTargets, connectorToEnds, setConnectorFrom, toggleConnectorTo, updateConnectorEnd, type ConnectorFrameInput, type ConnectorTarget } from '../../../templates/connectorEdits';
-import type { TemplateScope } from '../../../templates/templateEdits';
-import { PagesSelect, type Sibling } from './PlacementFields';
-import { DashField } from './shapeFields';
-import { SidePointFields } from './sidePoint';
-import { elementKindLabel } from './elementKind';
+import { useSandboxDocRef, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { anchorsOfTemplateFrame } from '../../../viewport/composed/labelAnchorGeometry.js';
+import { ColorPicker, DimensionInput, NestedGroup, NumberInput, SelectInput, ToggleSwitch } from '../../../controls/index.js';
+import { FieldRow } from '../../../controls/FieldRow.js';
+import { useFieldIds } from '../../../controls/fieldContext.js';
+import { Button, cn } from '../../../ui/index.js';
+import { templateEditor, useTemplateEditor } from '../../../templates/editorStore.js';
+import { connectorTargets, connectorToEnds, setConnectorFrom, toggleConnectorTo, updateConnectorEnd, type ConnectorFrameInput, type ConnectorTarget } from '../../../templates/connectorEdits.js';
+import type { TemplateScope } from '../../../templates/templateEdits.js';
+import { PagesSelect, type Sibling } from './PlacementFields.js';
+import { DashField } from './shapeFields.js';
+import { SidePointFields } from './sidePoint.js';
+import { elementKindLabel } from './elementKind.js';
 
 const ZERO: Dimension = { value: 0, unit: 'pt' };
 const STROKE_UNITS: Dimension['unit'][] = ['pt', 'mm', 'px'];

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { clearTextWidthCache, measureTextWidth } from '../../measure/canvas';
-import { cjkMarkCuts } from '../../measure/cjkClasses';
-import { markCuts } from '../../measure/markCuts';
-import { graphemesOf } from '../../measure/graphemes';
-import type { Dimension, PostextConfig, WritingMode } from '../../types';
-import type { VDTDocument, VDTLine } from '../../vdt';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { clearTextWidthCache, measureTextWidth } from '../../measure/canvas.js';
+import { cjkMarkCuts } from '../../measure/cjkClasses.js';
+import { markCuts } from '../../measure/markCuts.js';
+import { graphemesOf } from '../../measure/graphemes.js';
+import type { Dimension, PostextConfig, WritingMode } from '../../types.js';
+import type { VDTDocument, VDTLine } from '../../vdt.js';
 
 // A browser sets the first of two CJK marks that meet half width when it
 // measures or paints them in one run (Chrome's `text-spacing-trim: normal`,

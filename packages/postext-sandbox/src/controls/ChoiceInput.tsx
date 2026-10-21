@@ -1,8 +1,8 @@
 'use client';
 
-import { ChoiceCards, type ChoiceCard } from '../ui/choice-cards';
-import { FieldRow } from './FieldRow';
-import { useFieldIds } from './fieldContext';
+import { ChoiceCards, type ChoiceCard } from '../ui/choice-cards.js';
+import { FieldRow } from './FieldRow.js';
+import { useFieldIds } from './fieldContext.js';
 
 interface ChoiceInputProps<T extends string> {
   label: string;

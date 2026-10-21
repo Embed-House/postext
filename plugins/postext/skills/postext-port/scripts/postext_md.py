@@ -40,20 +40,53 @@ _LIGATURES = {
     "ﬆ": "st",
 }
 
-# Odd spaces become plain spaces; the no-break ones (U+00A0, U+202F narrow,
-# U+2007 figure) are kept: postext 1.5 glues the words on either side of them.
-_SPACES_RE = re.compile(r"[ -  -  　\t]")
-_ZERO_WIDTH_RE = re.compile(r"[​‌‍﻿\u0007]")
+# Odd spaces become plain spaces; the fixed and no-break ones are kept:
+# U+2002 (en) and U+2003 (em) hold the room a source sets between a chip, a
+# number or a tab and its title, and in running heads; U+00A0, U+202F
+# (narrow) and U+2007 (figure) glue the words on either side of them
+# (postext >= 1.5). Thin and hair spaces (U+2009, U+200A) glue too where the
+# source uses them to keep a number whole (`_THIN_GLUE_RE`).
+_SPACES_RE = re.compile(r"[\u2000\u2001\u2004-\u2006\u2008\u205f\u3000\t]")
+_ZERO_WIDTH_RE = re.compile(r"[\u200b\u200c\u200d\ufeff\u0007]")
+FIXED_SPACES = "\u2002\u2003"
+NO_BREAK_SPACES = "\u00a0\u202f\u2007"
+_THIN = "[\u2009\u200a]"
+# Units a number keeps on its line. Letters count as a unit only when the
+# word ends there (`5 mm`, not `5 mesas`).
+_UNIT_WORDS = (
+    "mm|cm|dm|km|m|µm|μm|nm|mg|µg|μg|kg|g|t|ml|mL|cl|dl|dL|l|L|µl|µL|s|ms|min|h|Hz|kHz|MHz|GHz|"
+    "V|mV|kV|W|kW|MW|A|mA|Pa|kPa|hPa|mmHg|bar|mol|mmol|µmol|K|J|kJ|cal|kcal|N|lpm|rpm|ppm|"
+    "UI|IU|U|dB|px|pt"
+)
+# A thin space between digits (`1 000`), before a sign that belongs to the
+# number (`21 %`, `37 °C`, `5 €`) or before a unit word.
+_THIN_GLUE_RE = re.compile(
+    "(?<=\\d)" + _THIN + "(?=\\d|[%\u2030\u2031\u00b0\u00ba\u2103\u2109\u2032\u2033\u20ac$\u00a3\u00a5]|(?:"
+    + _UNIT_WORDS + ")(?![^\\W\\d_]))"
+)
+# French spacing: a thin space before ; : ! ? » or after « is a narrow no-break one.
+_THIN_PUNCT_RE = re.compile(_THIN + "(?=[;:!?\u00bb\u203a])|(?<=[\u00ab\u2039])" + _THIN)
+# A plain space next to a fixed or no-break space adds nothing to it.
+_SPACE_AROUND_FIXED_RE = re.compile("[ ]*([\u2002\u2003\u00a0\u202f\u2007])[ ]*")
 
 
 def clean_text(text: str) -> str:
     """Normalise characters that extraction leaves behind (ligatures, odd spaces,
-    zero-width marks, line separators) without touching the words."""
+    zero-width marks, line separators) without touching the words.
+
+    En and em spaces stay. A thin or hair space that holds a number together
+    (between digits, before `%`, `°`, a currency or a unit) or sets off French
+    punctuation becomes the narrow no-break space U+202F, any other one a
+    plain space. A plain space beside a fixed or no-break space is dropped."""
     for lig, rep in _LIGATURES.items():
         text = text.replace(lig, rep)
     text = _ZERO_WIDTH_RE.sub("", text)
     text = _SPACES_RE.sub(" ", text)
-    text = text.replace(" ", " ").replace(" ", " ")
+    text = _THIN_GLUE_RE.sub("\u202f", text)
+    text = _THIN_PUNCT_RE.sub("\u202f", text)
+    text = re.sub(_THIN, " ", text)
+    text = text.replace("\u2028", " ").replace("\u2029", " ")
+    text = _SPACE_AROUND_FIXED_RE.sub(r"\1", text)
     # Non-breaking hyphen: many faces lack the glyph, so it becomes a plain
     # hyphen (a break opportunity between letters). To keep a compound on one
     # line, join it with a word joiner (U+2060) instead.
@@ -61,15 +94,29 @@ def clean_text(text: str) -> str:
     return unicodedata.normalize("NFC", text)
 
 
-# Runs of breaking whitespace; the no-break spaces are not collapsed, since
-# they glue their neighbours (Python's `\s` matches them too).
-_BREAKING_SPACE_RUN_RE = re.compile(r"[^\S\u00a0\u202f\u2007]+")
+# Runs of breaking whitespace; the no-break and fixed spaces are not
+# collapsed, since they glue their neighbours or hold a measured room
+# (Python's `\s` matches them too).
+_BREAKING_SPACE_RUN_RE = re.compile(r"[^\S\u00a0\u202f\u2007\u2002\u2003]+")
 
 
 def collapse_spaces(text: str) -> str:
     """Collapse runs of breaking whitespace to one space and trim the ends,
-    keeping the no-break spaces (U+00A0, U+202F, U+2007) in the text."""
-    return _BREAKING_SPACE_RUN_RE.sub(" ", text).strip()
+    keeping the no-break spaces (U+00A0, U+202F, U+2007) and the fixed ones
+    (U+2002 en, U+2003 em) in the text; a plain space beside one goes."""
+    text = _BREAKING_SPACE_RUN_RE.sub(" ", text)
+    return _SPACE_AROUND_FIXED_RE.sub(r"\1", text).strip()
+
+
+def fixed_space(gap: float, em: float, word_space: float = 0.5) -> str:
+    """The space a measured gap between two words on one line stands for: a
+    plain space up to `word_space` em, an en space (U+2002) up to 0.8 em, an
+    em space (U+2003) beyond. `gap` and `em` in the same unit. Use it where a
+    gap is set, not stretched: headings, running heads, the room after a
+    chip or a number, never between the words of a justified line."""
+    if em <= 0 or gap < word_space * em:
+        return " "
+    return "\u2002" if gap < 0.8 * em else "\u2003"
 
 
 def escape(text: str) -> str:
@@ -278,7 +325,8 @@ def render_runs(runs: list[Run]) -> str:
         trail = text[len(text.rstrip()):]
         parts.append(lead + mark + escape(text.strip()) + mark + trail)
     out = "".join(parts)
-    return re.sub(r"[ ]{2,}", " ", out).strip()
+    out = _SPACE_AROUND_FIXED_RE.sub(r"\1", re.sub(r"[ ]{2,}", " ", out))
+    return out.strip()
 
 
 def paragraph(runs_or_text: list[Run] | str) -> str:
@@ -299,8 +347,10 @@ def resource_embed(rid: str) -> str:
     return f'::resource{{id="{rid}"}}'
 
 
-def ref(rid: str, style: str | None = None, case: str | None = None) -> str:
+def ref(rid: str, style: str | None = None, case: str | None = None, text: str | None = None) -> str:
     extra = ""
+    if text:
+        extra += f' text="{attr_value(text)}"'
     if style:
         extra += f' style="{style}"'
     if case:
@@ -394,38 +444,79 @@ CAPTION_LABEL_RE = re.compile(
     r"\s*(?P<num>[0-9IVXLC]+(?:[.\-–][0-9]+)*)\s*[.:\-–—]?\s*",
     re.IGNORECASE,
 )
+# Words that name a chapter or a section, in the site's languages (es, en, ca,
+# fr, pt, it, de); `§` too.
+SECTION_WORDS = (
+    "Cap[íi]tulos?|Cap[íi]tols?|Chapters?|Chapitres?|Capitol[oi]|Kapitel|Cap\\.|Ch\\.|Chap\\.|"
+    "Secci[óo]n|Secciones|Secci[óo]|Seccions|Sections?|Se[çc][ãa]o|Se[çc][õo]es|Sezion[ei]|Abschnitts?|Sec\\.|"
+    "Apartados?|Apartats?|Paragraphe|§"
+)
 MENTION_RE = re.compile(
-    r"\b(?P<label>Fig(?:ure|ura|s)?\.?|Figuras?|Figures|Tab(?:le|la|las|les)?\.?|Plates?|Láminas?)\s+(?P<num>[0-9]+(?:[.\-–][0-9]+)*)",
+    r"(?<!\w)(?P<label>Fig(?:ure|ura|s)?\.?|Figuras?|Figures|Abbildung(?:en)?|Abb\.|Tab(?:le|la|las|les|elle|ella|leau)?\.?|"
+    r"Plates?|Láminas?|" + SECTION_WORDS + r")\s*(?P<num>[0-9]+(?:[.\-–][0-9]+)*)(?![\w])",
     re.IGNORECASE,
 )
+# a mention set in its own bold or italic run (`**Figura 3**`): the marks go with it
+_WRAPPED_MENTION_RE = re.compile(r"(?P<open>\*{1,3})?(?P<mention>" + MENTION_RE.pattern + r")(?P<close>\*{1,3})?",
+                                 re.IGNORECASE)
+_SECTION_LABEL_RE = re.compile(r"^(?:" + SECTION_WORDS + r")$", re.IGNORECASE)
 
 
 def caption_kind(label: str) -> str:
+    """`table`, `section` (a chapter or section word) or `figure`."""
+    if _SECTION_LABEL_RE.match(label.strip()):
+        return "section"
     return "table" if label.lower().startswith(("tab", "cuadro")) else "figure"
 
 
-def link_mentions(text: str, label_to_id: dict[tuple[str, str], str], on_link=None) -> str:
-    """Turn 'Figure 1.2' / 'tabla 3-1' in body lines into :ref. `label_to_id`
-    maps (kind, number) to a resource id; `on_link(rid)` is called for every
-    link (e.g. to float the resource). Headings, fences and embeds are left
-    alone."""
-    if not label_to_id:
-        return text
+_HEADING_NUMBER_RE = re.compile(r"^\s*(?:(?:" + SECTION_WORDS + r")\s*)?(?P<num>[0-9]+(?:\.[0-9]+)*)\.?(?:\s|$)",
+                                re.IGNORECASE)
+
+
+def heading_number(text: str) -> str | None:
+    """The number a heading carries (`3.2 Los ríos`, `Capítulo 4. El mar`,
+    `Chapter 2`), for linking `capítulo 4` / `section 3.2` mentions to it."""
+    m = _HEADING_NUMBER_RE.match(text)
+    return m.group("num") if m else None
+
+
+def link_mentions(text: str, label_to_id: dict[tuple[str, str], str], on_link=None, on_unresolved=None) -> str:
+    """Turn 'Figure 1.2' / 'tabla 3-1' / 'capítulo 4' in body lines into
+    :ref. `label_to_id` maps (kind, number) to a resource or heading id
+    (kind `figure`, `table` or `section`); `on_link(rid)` is called for
+    every link (e.g. to float the resource), `on_unresolved(words)` for a
+    mention with nothing to link to. A mention in a bold or italic run of
+    its own (`**Figura 3**`) takes its marks along: the reference is set in
+    the config's reference style (`referenceBold`), not bolded twice. A
+    section reference keeps the source's words (`text=`). Headings, fences
+    and embeds are left alone."""
 
     def sub(m: re.Match) -> str:
-        label = m.group("label")
-        rid = label_to_id.get((caption_kind(label), m.group("num").replace("–", "-")))
+        opening, closing = m.group("open") or "", m.group("close") or ""
+        if opening != closing:      # marks of a longer run: they stay where they are
+            inner = m.group("mention")
+            lead, trail = opening, closing
+        else:
+            inner, lead, trail = m.group("mention"), "", ""
+        mm = MENTION_RE.match(inner)
+        label = mm.group("label")
+        kind = caption_kind(label)
+        rid = label_to_id.get((kind, mm.group("num").replace("–", "-")))
         if not rid:
+            if on_unresolved:
+                on_unresolved(inner)
             return m.group(0)
         if on_link:
             on_link(rid)
+        if kind == "section":
+            return lead + ref(rid, text=inner) + trail
         style = "full" if len(label.rstrip(".")) > 4 else None
         case = "lower" if label[:1].islower() else None
-        return ref(rid, style=style, case=case)
+        return lead + ref(rid, style=style, case=case) + trail
 
     lines = text.split("\n")
     for n, line in enumerate(lines):
         if line.startswith(("#", ":::", "::resource", "---", "title:", "author:", "subtitle:")):
             continue
-        lines[n] = MENTION_RE.sub(sub, line)
+        lines[n] = _WRAPPED_MENTION_RE.sub(sub, line)
     return "\n".join(lines)

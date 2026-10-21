@@ -14,10 +14,10 @@ import {
 } from 'react';
 import type { PostextConfig, VDTDocument, Resource, LayoutContinuation } from 'postext';
 import { clearMeasurementCache, stripConfigDefaults } from 'postext';
-import { PROJECT_RECORD_VERSION } from '../storage/projectMigration';
-import type { EpubLayout, PanelId, ViewportTab, SandboxLabels } from '../types';
-import type { HashBundleEditions, HashBundleResolver } from '../types/props';
-import { DEFAULT_LABELS } from '../types';
+import { PROJECT_RECORD_VERSION } from '../storage/projectMigration.js';
+import type { EpubLayout, PanelId, ViewportTab, SandboxLabels } from '../types/index.js';
+import type { HashBundleEditions, HashBundleResolver } from '../types/props.js';
+import { DEFAULT_LABELS } from '../types/index.js';
 import {
   EMPTY_VIEW_HASH,
   hashAsksRestore,
@@ -30,15 +30,15 @@ import {
   type HashBundleRef,
   type ViewHash,
   type ViewHashBook,
-} from '../storage/viewHash';
-import { loadConfig, loadStoredConfig, loadBook, loadViewport, loadSidebarPercent, loadPanel, loadPresetApplied, loadPresetId, loadProjectId, loadHiddenPresetIds, loadViewerLocale, loadEpubLayout, saveConfig, saveBook, saveViewport, saveSidebarPercent, savePanel, savePresetApplied, savePresetId, saveProjectId, saveHiddenPresetIds, saveViewerLocale, saveEpubLayout } from '../storage/persistence';
-import { defaultEpubLayout } from '../epub/defaultLayout';
-import { loadResources, saveResource, deleteResource } from '../storage/resources';
-import { customFontsSignature, setCustomFonts } from '../controls/fontLoader';
-import { pruneFontFiles } from '../storage/fontStorage';
-import { pruneBlobs } from '../storage/blobStore';
-import { keepMigrationSnapshots } from '../migrate/textMigration';
-import { allEditionChapters, collectProjectFileIds, generateChapterId, listProjects, referencedFileIds, toSummary, updateProject } from '../storage/projects';
+} from '../storage/viewHash.js';
+import { loadConfig, loadStoredConfig, loadBook, loadViewport, loadSidebarPercent, loadPanel, loadPresetApplied, loadPresetId, loadProjectId, loadHiddenPresetIds, loadViewerLocale, loadEpubLayout, saveConfig, saveBook, saveViewport, saveSidebarPercent, savePanel, savePresetApplied, savePresetId, saveProjectId, saveHiddenPresetIds, saveViewerLocale, saveEpubLayout } from '../storage/persistence.js';
+import { defaultEpubLayout } from '../epub/defaultLayout.js';
+import { loadResources, saveResource, deleteResource } from '../storage/resources.js';
+import { customFontsSignature, setCustomFonts } from '../controls/fontLoader.js';
+import { pruneFontFiles } from '../storage/fontStorage.js';
+import { pruneBlobs } from '../storage/blobStore.js';
+import { keepMigrationSnapshots } from '../migrate/textMigration.js';
+import { allEditionChapters, collectProjectFileIds, generateChapterId, listProjects, referencedFileIds, toSummary, updateProject } from '../storage/projects.js';
 import {
   decideDraftSave,
   deletePresetDraft,
@@ -50,16 +50,16 @@ import {
   toDraftSummary,
   type PresetDraftRecord,
   type PresetDraftSummary,
-} from '../storage/presetDrafts';
-import { createSaveScheduler, type SaveScheduler } from '../storage/saveScheduler';
-import { getBlob, putBlobAt } from '../storage/blobStore';
-import { effectiveCanvasScope, wholeBookAllowed } from '../book/scope';
-import { choosePresetOpen, isEditionOnScreen, linkNamesBookOnScreen, presetReaderLocale } from '../presets/locale';
-import { fetchBundleBytes, openHashBundle, takeQuietLink } from './hashBundle';
-import { getChapterLayouts, pruneChapterLayoutStore, putChapterLayouts } from '../storage/layouts';
-import type { ProjectSummary } from '../storage/projects';
-import type { BookContent, BookPages, BookPlan, BookStart, Chapter, ChapterLayout, ChapterPlan, ComposedBook, LayoutScope } from '../book/types';
-import { createBookPlanner, sameChapterLayout, sameLayoutInputs } from '../book/pagination';
+} from '../storage/presetDrafts.js';
+import { createSaveScheduler, type SaveScheduler } from '../storage/saveScheduler.js';
+import { getBlob, putBlobAt } from '../storage/blobStore.js';
+import { effectiveCanvasScope, wholeBookAllowed } from '../book/scope.js';
+import { choosePresetOpen, isEditionOnScreen, linkNamesBookOnScreen, presetReaderLocale } from '../presets/locale.js';
+import { fetchBundleBytes, openHashBundle, takeQuietLink } from './hashBundle.js';
+import { getChapterLayouts, pruneChapterLayoutStore, putChapterLayouts } from '../storage/layouts.js';
+import type { ProjectSummary } from '../storage/projects.js';
+import type { BookContent, BookPages, BookPlan, BookStart, Chapter, ChapterLayout, ChapterPlan, ComposedBook, LayoutScope } from '../book/types.js';
+import { createBookPlanner, sameChapterLayout, sameLayoutInputs } from '../book/pagination.js';
 import {
   activeChapter,
   addChapter,
@@ -72,27 +72,27 @@ import {
   sampleBook,
   splitChapterAt,
   splitChapterAtHeadings,
-} from '../book/chapterOps';
-import { composeBookMemo } from '../book/compose';
-import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges';
-import { hidePresetId, unhidePresetId } from '../presets/hidden';
-import { computeWarnings } from '../warnings/compute';
-import { publishContrast } from '../contrast/contrastStore';
-import type { Warning } from '../warnings/types';
-import { hasIndexedDB } from '../storage/blobStore';
-import { folioSupported } from '../viewport/folioSupport';
-import { onSvgFontReportsChange, onUnavailableResourceImagesChange, svgFontIssues, unavailableResourceImages } from '../controls/resourceImages';
-import { onPdfFontChecksChange, pdfFontChecks, pdfFontChecksFor } from '../controls/pdfFontWarnings';
-import { onPreflightInputsChange, preflightInputs, preflightInputsVersion } from '../print/preflightInputs';
-import { DEFAULT_MARKDOWN_EN } from '../defaultMarkdown';
-import { withDefaultResourceTypes } from './defaultConfig';
-import { createPostextGuideConfig } from './guideConfig';
-import { createProjectActions } from './projectActions';
-import type { ProjectActions } from './projectActions';
-import { createSandboxHistory, setActiveHistory, type ConfigHistoryMeta, type SandboxHistory } from '../history/sandboxHistory';
-import { installHistoryKeys } from '../history/historyKeys';
-import { presetCoverKey, type CoverTarget } from '../covers/autoCover';
-import { bytesToDataUrl, listPresetCovers, putPresetCoverIfMissing } from '../storage/presetCovers';
+} from '../book/chapterOps.js';
+import { composeBookMemo } from '../book/compose.js';
+import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges.js';
+import { hidePresetId, unhidePresetId } from '../presets/hidden.js';
+import { computeWarnings } from '../warnings/compute.js';
+import { publishContrast } from '../contrast/contrastStore.js';
+import type { Warning } from '../warnings/types.js';
+import { hasIndexedDB } from '../storage/blobStore.js';
+import { folioSupported } from '../viewport/folioSupport.js';
+import { onSvgFontReportsChange, onUnavailableResourceImagesChange, svgFontIssues, unavailableResourceImages } from '../controls/resourceImages.js';
+import { onPdfFontChecksChange, pdfFontChecks, pdfFontChecksFor } from '../controls/pdfFontWarnings.js';
+import { onPreflightInputsChange, preflightInputs, preflightInputsVersion } from '../print/preflightInputs.js';
+import { DEFAULT_MARKDOWN_EN } from '../defaultMarkdown/index.js';
+import { withDefaultResourceTypes } from './defaultConfig.js';
+import { createPostextGuideConfig } from './guideConfig.js';
+import { createProjectActions } from './projectActions.js';
+import type { ProjectActions } from './projectActions.js';
+import { createSandboxHistory, setActiveHistory, type ConfigHistoryMeta, type SandboxHistory } from '../history/sandboxHistory.js';
+import { installHistoryKeys } from '../history/historyKeys.js';
+import { presetCoverKey, type CoverTarget } from '../covers/autoCover.js';
+import { bytesToDataUrl, listPresetCovers, putPresetCoverIfMissing } from '../storage/presetCovers.js';
 import {
   BUILTIN_PRESET_ID,
   GUIDE_SAMPLE_DOCUMENTS,
@@ -104,19 +104,19 @@ import {
   listPresets,
   pristineGuideFollowsViewer,
   rekeyMigratedConfig,
-} from '../presets';
+} from '../presets/index.js';
 import type {
   AppliedPresetSnapshot,
   PresetApplyParts,
   PresetProvider,
   PresetSourceSpec,
   PresetSummary,
-} from '../presets';
+} from '../presets/index.js';
 
-export { createDefaultConfig } from './defaultConfig';
-export type { ProjectSummary } from '../storage/projects';
-export type { BookContent, Chapter, LayoutScope } from '../book/types';
-export type { DuplicateSource } from './projectActions';
+export { createDefaultConfig } from './defaultConfig.js';
+export type { ProjectSummary } from '../storage/projects.js';
+export type { BookContent, Chapter, LayoutScope } from '../book/types.js';
+export type { DuplicateSource } from './projectActions.js';
 
 export interface EditorSelection {
   from: number;

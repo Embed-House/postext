@@ -13,17 +13,17 @@
  * #968); its pictures are stored and decoded for the side-by-side view.
  */
 
-import type { LayoutService } from '../worker/LayoutService';
-import { declareEditionFonts, ensureConfigFontsLoaded } from '../controls/fontLoader';
-import { ensureResourceImages } from '../controls/resourceImages';
-import { getBlob, putBlobsAt } from '../storage/blobStore';
-import { getPresetDraft, type PresetDraftSummary } from '../storage/presetDrafts';
-import { getChapterLayouts } from '../storage/layouts';
-import { editionContentOf, getProject } from '../storage/projects';
-import { withDefaultResourceTypes } from '../context/defaultConfig';
-import { sameLocaleTag } from '../presets/locale';
-import type { LoadedPresetBlob, PresetProvider } from '../presets/types';
-import { chapterHasComposedChecks, layOutEdition, type EditionLayout, type EditionSource, type LayOutEditionOptions } from './editionLayout';
+import type { LayoutService } from '../worker/LayoutService.js';
+import { declareEditionFonts, ensureConfigFontsLoaded } from '../controls/fontLoader.js';
+import { ensureResourceImages } from '../controls/resourceImages.js';
+import { getBlob, putBlobsAt } from '../storage/blobStore.js';
+import { getPresetDraft, type PresetDraftSummary } from '../storage/presetDrafts.js';
+import { getChapterLayouts } from '../storage/layouts.js';
+import { editionContentOf, getProject } from '../storage/projects.js';
+import { withDefaultResourceTypes } from '../context/defaultConfig.js';
+import { sameLocaleTag } from '../presets/locale.js';
+import type { LoadedPresetBlob, PresetProvider } from '../presets/types.js';
+import { chapterHasComposedChecks, layOutEdition, type EditionLayout, type EditionSource, type LayOutEditionOptions } from './editionLayout.js';
 
 export type EditionStatus = 'loading' | 'ready' | 'error';
 

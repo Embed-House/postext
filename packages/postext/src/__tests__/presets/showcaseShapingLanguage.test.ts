@@ -10,11 +10,11 @@
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { CONFIG_VERSION, migrateBundleConfig } from '../../bundle/configVersion';
-import { pickLocaleOverrides } from '../../bundle/manifest';
-import { shapingLanguageOf } from '../../locale';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { BundleManifest } from '../../bundle/types';
+import { CONFIG_VERSION, migrateBundleConfig } from '../../bundle/configVersion.js';
+import { pickLocaleOverrides } from '../../bundle/manifest.js';
+import { shapingLanguageOf } from '../../locale.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { BundleManifest } from '../../bundle/types.js';
 
 const PRESETS = join(__dirname, '../../../../../apps/web/public/presets');
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { decodeEntities, escapeAttr, htmlToXhtml, isNcName, stripInvalidXmlChars, xhtmlDocument, xmlId } from './xml';
-import { childElements, descendants, parseXml, textOf } from './xmlRead';
+import { decodeEntities, escapeAttr, htmlToXhtml, isNcName, stripInvalidXmlChars, xhtmlDocument, xmlId } from './xml.js';
+import { childElements, descendants, parseXml, textOf } from './xmlRead.js';
 
 describe('escaping', () => {
   it('escapes text and attributes', () => {

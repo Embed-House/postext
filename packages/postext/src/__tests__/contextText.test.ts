@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 // @ts-expect-error -- a Node built-in: the package compiles without @types/node.
 import { readFileSync as readFile, readdirSync as readDir } from 'node:fs';
-import { renderPageToCanvas } from '../canvas-backend';
-import { contextTextWidth, fillContextText, handedText, measureContextText, strokeContextText } from '../canvas-backend/contextText';
-import { buildDocument } from '../pipeline';
-import { clearMeasurementCache } from '../measure';
-import type { PostextConfig } from '../types';
-import type { VDTDocument, VDTLine } from '../vdt';
+import { renderPageToCanvas } from '../canvas-backend/index.js';
+import { contextTextWidth, fillContextText, handedText, measureContextText, strokeContextText } from '../canvas-backend/contextText.js';
+import { buildDocument } from '../pipeline/index.js';
+import { clearMeasurementCache } from '../measure/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTDocument, VDTLine } from '../vdt.js';
 
 // #770, the painter's side of Chrome's word cache. A canvas keeps the
 // words it shaped under their text alone, and a word with no letter

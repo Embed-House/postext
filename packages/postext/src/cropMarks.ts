@@ -1,5 +1,5 @@
-import type { ResolvedPageConfig } from './types';
-import { dimensionToPx } from './units';
+import type { ResolvedPageConfig } from './types.js';
+import { dimensionToPx } from './units.js';
 
 /** One crop mark, in page px: a line on the prolongation of a trim edge,
  *  from its end nearer the trim (`x1`, `y1`) outwards (`x2`, `y2`). */

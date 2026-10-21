@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { mapInlineSnippet, parseInlineSnippetSpans } from '../../parse/inlineSnippet';
-import { REF_PLACEHOLDER } from '../../parse/inlineFormatting';
+import { mapInlineSnippet, parseInlineSnippetSpans } from '../../parse/inlineSnippet.js';
+import { REF_PLACEHOLDER } from '../../parse/inlineFormatting.js';
 
 /** Every plain char must map back to the same char in the snippet (or, for a
  *  ref placeholder, to the leading `:` of its `:ref{…}`). */

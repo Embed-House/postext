@@ -100,6 +100,7 @@ CI runs its jobs at once, each on a runner of its own: the long suites in shards
 
 - TypeScript strict mode is enforced across all packages.
 - ESM-only — no CommonJS.
+- Relative imports in the published packages carry the extension Node needs: `./layout.js` for `layout.ts`, `./parse/index.js` for a folder. Their `dist` then loads in plain Node and vitest leaves it untransformed; `check-types` reports a missing extension (TS2834).
 - Run `pnpm lint` before submitting. The CI pipeline will reject PRs that fail linting.
 
 ### Documentation Convention

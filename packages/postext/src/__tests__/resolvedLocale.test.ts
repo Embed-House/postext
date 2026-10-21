@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { resolveAllConfig, resolvedLocale } from '../pipeline/config';
-import { buildDocument } from '../pipeline';
+import { resolveAllConfig, resolvedLocale } from '../pipeline/config.js';
+import { buildDocument } from '../pipeline/index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

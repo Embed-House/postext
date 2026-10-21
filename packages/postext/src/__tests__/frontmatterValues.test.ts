@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { metadataText, normalizeMetadata } from '../frontmatter';
-import { resolvePlaceholders, type PlaceholderContext } from '../pipeline/placeholders';
-import { resolveDesignPlaceholders } from '../design/placeholders';
-import type { VDTPage } from '../vdt';
-import type { DocumentMetadata, PostextConfig } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { metadataText, normalizeMetadata } from '../frontmatter.js';
+import { resolvePlaceholders, type PlaceholderContext } from '../pipeline/placeholders.js';
+import { resolveDesignPlaceholders } from '../design/placeholders.js';
+import type { VDTPage } from '../vdt.js';
+import type { DocumentMetadata, PostextConfig } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

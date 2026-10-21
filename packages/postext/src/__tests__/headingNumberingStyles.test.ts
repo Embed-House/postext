@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { computeHeadingNumbers, computeHeadingNumbering, parseTemplate } from '../numbering';
-import { numberToWords } from '../numberWords';
-import { parseMarkdown } from '../parse';
-import { buildDocument } from '../pipeline';
-import { computeOutlineFor } from '../pipeline/outline';
-import { continuationAfter } from '../pipeline/continuation';
-import type { PostextConfig } from '../types';
+import { computeHeadingNumbers, computeHeadingNumbering, parseTemplate } from '../numbering.js';
+import { numberToWords } from '../numberWords.js';
+import { parseMarkdown } from '../parse/index.js';
+import { buildDocument } from '../pipeline/index.js';
+import { computeOutlineFor } from '../pipeline/outline.js';
+import { continuationAfter } from '../pipeline/continuation.js';
+import type { PostextConfig } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

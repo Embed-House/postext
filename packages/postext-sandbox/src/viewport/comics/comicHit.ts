@@ -9,9 +9,9 @@
  */
 
 import { pointInPolygon, type VDTComicArt, type VDTComicBalloon, type VDTComicPage, type VDTComicPanel, type VDTComicSplitter } from 'postext';
-import { balloonAt, tailTipAt } from './balloonDrag';
-import { panelAt, splitterAt } from './comicDrag';
-import { balloonTextAt, type BalloonTextOptions } from './balloonText';
+import { balloonAt, tailTipAt } from './balloonDrag.js';
+import { panelAt, splitterAt } from './comicDrag.js';
+import { balloonTextAt, type BalloonTextOptions } from './balloonText.js';
 
 export type ComicHit =
   | { kind: 'tail'; comic: VDTComicPage; balloon: VDTComicBalloon }

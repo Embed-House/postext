@@ -13,27 +13,27 @@
  * surface, so clickability is PDF-only for v1.
  */
 
-import type { VDTBlock, VDTFigureLabelLayout, VDTLine, ResolvedResourceBlock, RoundedOutline, VDTResourceVideo } from '../vdt';
-import { playMarkTriangle, qrModuleRuns } from '../pipeline/videoOverlay';
-import { fillFlowText, setVerticalPaint, verticalPaintActive } from './verticalText';
-import { fillSegmentText, fillWordsText } from './segmentText';
-import { lineMarkCuts } from '../measure/markCuts';
-import { hasCJK } from '../measure/cjk';
-import { tableCellFill, tableFrameOutline } from '../vdt';
-import { paintSwatchSegment } from './swatch';
-import { paintChip } from './chip';
-import { renderMathSegment } from './blockRender';
-import { applySingleInkToPixels, isSingleInkSvgUrl } from '../svg/singleInk';
-import { fillSegmentWord, type WordRun } from './wordRuns';
-import { paintedSegments } from './wordPieces';
-import { uncroppedPictureBox } from '../pipeline/safeArea';
-import { figureLabelLeaderPaths, figureLabelMatrix, labelPlateBox, unmirrorLabelLayout } from '../composed/labels';
-import { drawBoxBackground, renderPathBlock } from './headerFooter';
-import { mirroredPaintActive, paintUnmirrored } from './mirrorFrame';
-import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations';
-import { rasterScaleOf } from './deviceScale';
-import { restoreContext, saveContext, setLetterSpacing } from './contextState';
-import { fillContextText, strokeContextText } from './contextText';
+import type { VDTBlock, VDTFigureLabelLayout, VDTLine, ResolvedResourceBlock, RoundedOutline, VDTResourceVideo } from '../vdt.js';
+import { playMarkTriangle, qrModuleRuns } from '../pipeline/videoOverlay.js';
+import { fillFlowText, setVerticalPaint, verticalPaintActive } from './verticalText.js';
+import { fillSegmentText, fillWordsText } from './segmentText.js';
+import { lineMarkCuts } from '../measure/markCuts.js';
+import { hasCJK } from '../measure/cjk.js';
+import { tableCellFill, tableFrameOutline } from '../vdt.js';
+import { paintSwatchSegment } from './swatch.js';
+import { paintChip } from './chip.js';
+import { renderMathSegment } from './blockRender.js';
+import { applySingleInkToPixels, isSingleInkSvgUrl } from '../svg/singleInk.js';
+import { fillSegmentWord, type WordRun } from './wordRuns.js';
+import { paintedSegments } from './wordPieces.js';
+import { uncroppedPictureBox } from '../pipeline/safeArea.js';
+import { figureLabelLeaderPaths, figureLabelMatrix, labelPlateBox, unmirrorLabelLayout } from '../composed/labels.js';
+import { drawBoxBackground, renderPathBlock } from './headerFooter.js';
+import { mirroredPaintActive, paintUnmirrored } from './mirrorFrame.js';
+import { paintKunten, paintLineHighlights, paintLineMarks, paintRuby, paintWarichu } from './annotations.js';
+import { rasterScaleOf } from './deviceScale.js';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState.js';
+import { fillContextText, strokeContextText } from './contextText.js';
 
 /** A decoded image the canvas backend can `drawImage`. */
 export type ResourceImageSource = CanvasImageSource;
@@ -455,7 +455,7 @@ function paintLineRuns(
         continue;
       }
       if (seg.kind === 'swatch') {
-        paintSwatchSegment(ctx, seg.swatch, x, line.baseline, seg.width, color);
+        paintSwatchSegment(ctx, seg.swatch, x, line.baseline, seg.width, color, seg.rtl === true);
         x += seg.width;
         continue;
       }

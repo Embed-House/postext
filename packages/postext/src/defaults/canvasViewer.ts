@@ -1,4 +1,4 @@
-import type { CanvasViewerConfig, ResolvedCanvasViewerConfig } from '../types';
+import type { CanvasViewerConfig, ResolvedCanvasViewerConfig } from '../types.js';
 
 export const DEFAULT_CANVAS_VIEWER_CONFIG: ResolvedCanvasViewerConfig = {
   pageGap: 24,

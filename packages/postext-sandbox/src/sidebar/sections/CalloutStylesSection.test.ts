@@ -6,9 +6,9 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { CalloutStyleConfig } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { COMMON_TAB_GLYPHS, CalloutStylesSection, labelIconKindPatch } from './CalloutStylesSection';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import { COMMON_TAB_GLYPHS, CalloutStylesSection, labelIconKindPatch } from './CalloutStylesSection.js';
 
 function render(calloutStyles: CalloutStyleConfig[]): string {
   const state = { config: { calloutStyles }, resources: [], labels: DEFAULT_LABELS, locale: 'en', chapters: [], activeChapterId: null };

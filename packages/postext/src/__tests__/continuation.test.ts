@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { continuationAfter } from '../pipeline/continuation';
-import type { LayoutContinuation, PostextConfig, Resource } from '../types';
+import { buildDocument } from '../pipeline/index.js';
+import { continuationAfter } from '../pipeline/continuation.js';
+import type { LayoutContinuation, PostextConfig, Resource } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

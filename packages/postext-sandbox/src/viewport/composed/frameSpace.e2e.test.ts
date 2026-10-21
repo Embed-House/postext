@@ -9,9 +9,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument, frameMatrix, resolveDebugConfig } from 'postext';
 import type { PostextConfig, VDTBlock, VDTDocument, VDTFrame } from 'postext';
-import { pixelToSourceOffset, xForPlainInLine } from '../CanvasPreview/geometry';
-import { drawOverlay } from '../CanvasPreview/overlay';
-import { blockFrameMatrix, fromBlockSpace, intoBlockSpace, type FrameAffine } from './frameHit';
+import { pixelToSourceOffset, xForPlainInLine } from '../CanvasPreview/geometry.js';
+import { drawOverlay } from '../CanvasPreview/overlay.js';
+import { blockFrameMatrix, fromBlockSpace, intoBlockSpace, type FrameAffine } from './frameHit.js';
 
 class StubCtx {
   font = '';

@@ -12,11 +12,11 @@
  * under 100 ms for a property change on one page, under 300 ms with reflow).
  */
 import { describe, it } from 'vitest';
-import { buildDocument } from '../pipeline/build';
-import { createMeasurementCache } from '../measure';
-import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../composed/pageMemo';
-import { sourceAt } from '../composed/sourceMap';
-import { page8Fixture } from '../__tests__/composed/fixtures/page8';
+import { buildDocument } from '../pipeline/build.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { clearComposedPageMemo, composedPageMemoStats, setComposedPageMemo } from '../composed/pageMemo.js';
+import { sourceAt } from '../composed/sourceMap.js';
+import { page8Fixture } from '../__tests__/composed/fixtures/page8.js';
 
 class StubCtx {
   font = '';

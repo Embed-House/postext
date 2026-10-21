@@ -1,4 +1,4 @@
-import type { Resource, ResourceSafeArea } from '../types';
+import type { Resource, ResourceSafeArea } from '../types.js';
 
 /**
  * Safe area of a picture (`Resource.safeArea`, #442): the rectangle that

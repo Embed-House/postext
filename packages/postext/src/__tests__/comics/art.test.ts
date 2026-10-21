@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { anchorsOutsideSafeArea, comicArtCrop, comicArtPointToPage, comicCropFeasibleRange } from '../../comics/art';
-import { pointInPolygon } from '../../comics/geometry';
+import { anchorsOutsideSafeArea, comicArtCrop, comicArtPointToPage, comicCropFeasibleRange } from '../../comics/art.js';
+import { pointInPolygon } from '../../comics/geometry.js';
 
 const r = (n: number) => Math.round(n * 1000) / 1000;
 const cellRect = (cell: { x: number; y: number; width: number; height: number }) => [

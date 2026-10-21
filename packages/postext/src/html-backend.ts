@@ -1,4 +1,4 @@
-import { footnoteRuleSegments } from './columnRule';
+import { footnoteRuleSegments } from './columnRule.js';
 import type {
   VDTDocument,
   VDTPage,
@@ -25,42 +25,43 @@ import type {
   ResolvedResourceBlock,
   RoundedOutline,
   RenderWarning,
-} from './vdt';
-import { markerSvgElement, pathSvgData } from './design/pathBlock';
-import { leaderRuleGeometry, lineTextAlign, tableCellFillRects, tableFrameOutline } from './vdt';
-import { dimensionToPx } from './units';
-import { documentInkHex, isSingleInkSvgUrl, singleInkColorMatrix } from './svg/singleInk';
-import { inlineSvgFontsDetailedSync, type SvgFontSyncProvider } from './svg/fonts';
-import { registeredFontSyncProvider } from './svg/fontRegistry';
-import { svgPictureFontWarning } from './svg/image';
-import { lineInkExtent, lineTrailingTracking } from './lineInk';
-import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid';
-import { isJapaneseLanguage, renderLangOf, shapingLanguageOf, shapingTagOf } from './locale';
-import { hasCJK } from './measure/cjk';
-import { arabicMarkNeeded, needsBidi } from './bidi';
-import { joiningScriptIn } from './measure/joining';
-import { faceReadsScript, isLetterless, rtlTextWidth, scriptContextUntracked, scriptMark, scriptTextWidth, type ScriptContext } from './measure/script';
-import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt';
-import type { CjkRegion, ResourceSafeArea } from './types';
-import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode';
-import { graphemeCount, graphemesOf } from './measure/graphemes';
-import { measureSpacedWidth, measureTextWidth, withMeasureLanguage } from './measure/canvas';
-import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures';
-import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces';
-import { fontFamilyOf } from './measure/vertical';
-import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
-import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
-import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url';
-import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTTextDots } from './vdt';
-import { iconLineDash, inlineIconBox } from './measure/inlineIcon';
-import { textDots } from './textDots';
-import type { ComicCastMember } from './types';
-import { renderComicHtml } from './htmlComic';
-import { comicBlockOnSheet, pageComics } from './comics/transform';
-import { altWithLabels } from './composed/labelText';
-import { figureLabelLeaderPaths, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels';
-import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, decorationOver, decorationUnder, frameClips, frameContentRect, frameMatrix } from './composed/paint';
-import { taskBoxSvgBody, taskBoxText } from './taskBox';
+} from './vdt.js';
+import { markerSvgElement, pathSvgData } from './design/pathBlock.js';
+import { leaderRuleGeometry, lineTextAlign, tableCellFillRects, tableFrameOutline } from './vdt.js';
+import { dimensionToPx } from './units.js';
+import { documentInkHex, isSingleInkSvgUrl, singleInkColorMatrix } from './svg/singleInk.js';
+import { inlineSvgFontsDetailedSync, type SvgFontSyncProvider } from './svg/fonts.js';
+import { registeredFontSyncProvider } from './svg/fontRegistry.js';
+import { svgPictureFontWarning } from './svg/image.js';
+import { lineInkExtent, lineTrailingTracking } from './lineInk.js';
+import { CHARACTER_GRID_COLOR, cjkGridCells, type CjkGridCells } from './pipeline/cjkGrid.js';
+import { isJapaneseLanguage, renderLangOf, shapingLanguageOf, shapingTagOf } from './locale.js';
+import { hasCJK } from './measure/cjk.js';
+import { arabicMarkNeeded, needsBidi } from './bidi.js';
+import { joiningScriptIn } from './measure/joining.js';
+import { faceReadsScript, isLetterless, rtlTextWidth, scriptContextUntracked, scriptMark, scriptTextWidth, type ScriptContext } from './measure/script.js';
+import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt.js';
+import type { CjkRegion, ResourceSafeArea } from './types.js';
+import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode.js';
+import { graphemeCount, graphemesOf } from './measure/graphemes.js';
+import { measureSpacedWidth, measureTextWidth, withMeasureLanguage } from './measure/canvas.js';
+import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures.js';
+import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces.js';
+import { fontFamilyOf } from './measure/vertical.js';
+import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations.js';
+import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay.js';
+import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url.js';
+import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTSwatch, VDTTextDots } from './vdt.js';
+import { hasSwatchShape, swatchGeometry, type SwatchGeometry } from './swatchShape.js';
+import { iconLineDash, inlineIconBox } from './measure/inlineIcon.js';
+import { textDots } from './textDots.js';
+import type { ComicCastMember } from './types.js';
+import { renderComicHtml } from './htmlComic.js';
+import { comicBlockOnSheet, pageComics } from './comics/transform.js';
+import { altWithLabels } from './composed/labelText.js';
+import { figureLabelLeaderPaths, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels.js';
+import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, decorationOver, decorationUnder, frameClips, frameContentRect, frameMatrix } from './composed/paint.js';
+import { taskBoxSvgBody, taskBoxText } from './taskBox.js';
 
 /**
  * Declarations of every box of CJK text measured with no punctuation
@@ -493,7 +494,9 @@ function directedDesignRunsHtml(line: VDTDesignTextBlock['lines'][number], block
     const words = runFont === font && !cjkDecl && !tracked ? runWordBoxesHtml(run.text, run.fontString, run.rtl === true, run.width) : undefined;
     const text = words ?? letterlessRunHtml(run.text, run.fontString, run.rtl === true, run.width, block.letterSpacingPx ?? 0) ?? wordsHtml(run.text, trackedIn(run.fontString, block.letterSpacingPx));
     const top = run.baselineShift ? `${run.baselineShift.toFixed(3)}px` : '0';
-    const pos = `position:absolute;left:${at[i]!.toFixed(3)}px;top:${top};white-space:pre;${words !== undefined ? `width:${run.width.toFixed(3)}px;` : ''}${cjkDecl}`;
+    // A run in a colour of its own (a part row's leader, #1121).
+    const colorDecl = run.color ? `color:${run.color};` : '';
+    const pos = `position:absolute;left:${at[i]!.toFixed(3)}px;top:${top};white-space:pre;${words !== undefined ? `width:${run.width.toFixed(3)}px;` : ''}${cjkDecl}${colorDecl}`;
     // A run in another face sits on the baseline of the line's own.
     const inner = runFont !== font
       ? `<span style="font:${runFont};line-height:0;${cjkDecl ? cjkFeaturesDecl(tracked) : tracked ? ligaturesDecl() : ''}">${text}</span>`
@@ -1581,7 +1584,7 @@ function renderSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -1734,7 +1737,7 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -1834,14 +1837,29 @@ function renderSwatch(x: number, baselineOffset: number, side: number, fill: str
 /** A `'swatch'` segment: its inline symbol when it carries one (#1058),
  *  else the colour swatch. */
 function renderSwatchSegment(
-  swatch: { color?: string; icon?: VDTInlineIcon } | undefined,
+  swatch: VDTSwatch | undefined,
   x: number,
   baselineOffset: number,
   width: number,
   ink: string,
   paint?: HtmlPaint,
+  rtl = false,
 ): string {
-  return swatch?.icon ? renderInlineIconHtml(swatch.icon, x, baselineOffset, ink, paint) : renderSwatch(x, baselineOffset, width, swatch?.color, ink);
+  if (swatch?.icon) return renderInlineIconHtml(swatch.icon, x, baselineOffset, ink, paint);
+  if (swatch && hasSwatchShape(swatch)) return renderShapedSwatch(swatchGeometry(swatch, x, baselineOffset, width, rtl), swatch.color, swatch.borderColor ?? ink);
+  return renderSwatch(x, baselineOffset, width, swatch?.color, ink);
+}
+
+/** A swatch with a shape of its own (#1104): the square of `g` (from the
+ *  line top), its outline inside the edge, its corners rounded. */
+function renderShapedSwatch(g: SwatchGeometry, fill: string | undefined, ink: string): string {
+  const border = g.stroke > 0 ? `border:${g.stroke.toFixed(2)}px solid ${ink};` : '';
+  const radius = g.radius > 0 ? `border-radius:${g.radius.toFixed(3)}px;` : '';
+  return (
+    `<span aria-hidden="true" style="position:absolute;left:${g.x.toFixed(3)}px;top:${g.y.toFixed(3)}px;` +
+    `width:${g.side.toFixed(3)}px;height:${g.side.toFixed(3)}px;box-sizing:border-box;` +
+    `${border}${radius}${fill ? `background:${fill};` : ''}"></span>`
+  );
 }
 
 /**
@@ -2351,7 +2369,7 @@ function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, tar
       continue;
     }
     if (seg.kind === 'swatch') {
-      sideways.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
+      sideways.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -2597,7 +2615,7 @@ function renderResourceLine(
         continue;
       }
       if (seg.kind === 'swatch') {
-        parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, color, paint));
+        parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, color, paint, seg.rtl === true));
         x += seg.width;
         continue;
       }
@@ -3171,7 +3189,9 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
           // A contents part row's leader (#889): painted, hidden from
           // assistive technology, as an entry row's is.
           const hidden = run.leader ? ' aria-hidden="true"' : '';
-          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl || hidden ? `<span${hidden} style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
+          // In a colour of its own when the contents give it one (#1121).
+          const colorDecl = run.color ? `color:${run.color};` : '';
+          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl || hidden || colorDecl ? `<span${hidden} style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}${colorDecl}">${text}</span>` : text;
         }).join('')
       : letterlessRunHtml(line.text, block.fontString, false, line.width, block.letterSpacingPx ?? 0) ?? wordsHtml(line.text, trackedIn(block.fontString, block.letterSpacingPx));
     // A line that carries directions (an order, a right-to-left run): a box

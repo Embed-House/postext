@@ -12,12 +12,12 @@
  * `VDTFrame.rules` in page coordinates; the template's decoration paints
  * them (`headerFooter.ts`).
  */
-import type { ResolvedCalloutStyleConfig } from '../types';
-import type { VDTDesignRuleBlock } from '../vdt';
-import { createBoundingBox } from '../vdt';
-import { dimensionToPx } from '../units';
-import type { Rect } from './geometry';
-import type { FrameRulesConfig } from './types';
+import type { ResolvedCalloutStyleConfig } from '../types.js';
+import type { VDTDesignRuleBlock } from '../vdt.js';
+import { createBoundingBox } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import type { Rect } from './geometry.js';
+import type { FrameRulesConfig } from './types.js';
 
 /** The rules' colour when the frame sets none. */
 export const DEFAULT_RULE_COLOR = '#9a9a9a';

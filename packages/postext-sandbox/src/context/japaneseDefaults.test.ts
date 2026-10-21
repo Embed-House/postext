@@ -11,8 +11,8 @@ import {
   resolveOrderedListsConfig,
   resolvePageConfig,
 } from 'postext';
-import { createDefaultConfig } from './defaultConfig';
-import { chineseDefaults } from './chineseDefaults';
+import { createDefaultConfig } from './defaultConfig.js';
+import { chineseDefaults } from './chineseDefaults.js';
 import {
   forgetJapaneseDefaults,
   japaneseDefaults,
@@ -20,8 +20,8 @@ import {
   rememberJapaneseDefaults,
   undoJapaneseDefaults,
   type JapaneseDefaultId,
-} from './japaneseDefaults';
-import { foreEdgeElements } from '../sidebar/sections/HeaderFooterSection/foreEdge';
+} from './japaneseDefaults.js';
+import { foreEdgeElements } from '../sidebar/sections/HeaderFooterSection/foreEdge.js';
 
 const ids = (r: ReturnType<typeof japaneseDefaults>) => r.changes.map((c) => c.id);
 const change = (r: ReturnType<typeof japaneseDefaults>, id: JapaneseDefaultId) => r.changes.find((c) => c.id === id);

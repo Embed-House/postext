@@ -26,10 +26,10 @@
  * line is left exactly as it was, with none of these fields.
  */
 
-import type { VDTLine, VDTLineSegment } from '../vdt';
-import { lineLevels, visualOrder, type BidiParagraph } from '../bidi';
-import { insideJoiningWord } from './joining';
-import { lineInsetsAt, lineMeasure, type LineInsetStep, type LineWidthStep } from './types';
+import type { VDTLine, VDTLineSegment } from '../vdt.js';
+import { lineLevels, visualOrder, type BidiParagraph } from '../bidi.js';
+import { insideJoiningWord } from './joining.js';
+import { lineInsetsAt, lineMeasure, type LineInsetStep, type LineWidthStep } from './types.js';
 
 let measureDirection: 'ltr' | 'rtl' = 'ltr';
 

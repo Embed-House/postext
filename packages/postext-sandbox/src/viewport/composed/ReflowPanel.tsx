@@ -17,14 +17,14 @@
 import { useMemo } from 'react';
 import { MoveDiagonal, X } from 'lucide-react';
 import type { ReflowEvent, VDTDocument } from 'postext';
-import { useSandboxDocRef, useSandboxLabels, useSandboxSelector, useSandboxWarnings } from '../../context/SandboxContext';
-import { IconButton } from '../../ui';
-import { fill } from '../../print/fillTokens';
-import { ProposalActions } from '../../warnings/ProposalButtons';
-import type { Warning } from '../../warnings/types';
-import { documentReflow } from './reflowText';
-import { setReflowFocus, useReflowShown } from './reflowView';
-import { overlapFocusOf, setOverlapFocus } from '../../editions/overlapFocus';
+import { useSandboxDocRef, useSandboxLabels, useSandboxSelector, useSandboxWarnings } from '../../context/SandboxContext.js';
+import { IconButton } from '../../ui/index.js';
+import { fill } from '../../print/fillTokens.js';
+import { ProposalActions } from '../../warnings/ProposalButtons.js';
+import type { Warning } from '../../warnings/types.js';
+import { documentReflow } from './reflowText.js';
+import { setReflowFocus, useReflowShown } from './reflowView.js';
+import { overlapFocusOf, setOverlapFocus } from '../../editions/overlapFocus.js';
 
 
 /** Whether the document on screen has composed pages (the switch, in the

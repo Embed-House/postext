@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { fitLeader, MIN_LEADER_REPEATS } from '../measure/leader';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { fitLeader, MIN_LEADER_REPEATS } from '../measure/leader.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument, VDTLine, VDTLineSegment } from '../vdt.js';
 
 // #666: a leader with room for one or two repeats printed them: a lone dot
 // between a title and its page number, which reads as a full stop

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyInlineCaptionSide } from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripConfigDefaults } from '../../defaults';
-import type { PostextConfig } from '../../types';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyInlineCaptionSide } from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import type { PostextConfig } from '../../types.js';
 
 // #729: a configuration stored before a resource set in the text took
 // `placement.captionSide` (configVersion 11 or older, postext 1.27 or

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { flowToPage, renderPageToCanvas } from '../../index';
-import { elementsForSource, sourceAt } from '../../composed/sourceMap';
-import { composedPaintOrder } from '../../composed/paint';
-import type { PageTemplate } from '../../composed/types';
-import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTPage } from '../../index';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { flowToPage, renderPageToCanvas } from '../../index.js';
+import { elementsForSource, sourceAt } from '../../composed/sourceMap.js';
+import { composedPaintOrder } from '../../composed/paint.js';
+import type { PageTemplate } from '../../composed/types.js';
+import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTPage } from '../../index.js';
 
 // #876 (R3, the school atlas): a map across the spine of a spread, its
 // labels on both halves, in a left-to-right and a right-to-left book.

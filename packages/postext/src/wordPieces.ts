@@ -48,9 +48,9 @@
  * against the mark after it; {@link cellsOf} tells which texts are cells,
  * for an output to set them where they were measured.
  */
-import type { VDTLine, VDTLineSegment } from './vdt';
-import { isCjkGrapheme } from './measure/cjkClasses';
-import { graphemesOf } from './measure/graphemes';
+import type { VDTLine, VDTLineSegment } from './vdt.js';
+import { isCjkGrapheme } from './measure/cjkClasses.js';
+import { graphemesOf } from './measure/graphemes.js';
 
 /** A piece of a word as a line carries it: its text and the width the
  *  layout gave it. */

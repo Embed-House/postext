@@ -5,11 +5,11 @@
  * on the widths of its letters.
  */
 
-import type { VDTLineSegment } from '../vdt';
-import type { KPItem } from './types';
-import { adjustLine } from './breakpoints';
-import { graphemeCount } from '../measure/graphemes';
-import { joiningScriptIn } from '../measure/joining';
+import type { VDTLineSegment } from '../vdt.js';
+import type { KPItem } from './types.js';
+import { adjustLine } from './breakpoints.js';
+import { graphemeCount } from '../measure/graphemes.js';
+import { joiningScriptIn } from '../measure/joining.js';
 
 /**
  * Tracking (px after every character; negative tightens) of the line made

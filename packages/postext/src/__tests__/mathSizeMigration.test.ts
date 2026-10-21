@@ -9,11 +9,11 @@ import {
   LEGACY_MATH_SIZE,
   migrateConfig,
   pinLegacyMathSize,
-} from '../bundle';
-import { initMathEngine, clearMathCache } from '../math';
-import { stripConfigDefaults } from '../defaults';
-import type { PostextConfig } from '../types';
-import type { VDTDocument } from '../vdt';
+} from '../bundle/index.js';
+import { initMathEngine, clearMathCache } from '../math/index.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {
@@ -179,8 +179,8 @@ describe('maths in configurations written before postext 1.5 (EF-75)', () => {
 
   it('writes bundles for today\'s rules, which read back unpinned', async () => {
     const { manifest, bytes } = await createBundle({ name: 'Now', chapters: [{ markdown: CHAPTER }], config: BODY });
-    expect(CONFIG_VERSION).toBe(16);
-    expect(manifest.configVersion).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
+    expect(manifest.configVersion).toBe(18);
     const again = await openBundle(bytes);
     expect(again.config.math).toBeUndefined();
     // …and a 1.4 bundle, opened and written again, is read back as it was

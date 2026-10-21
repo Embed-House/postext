@@ -26,7 +26,7 @@
  * paint on the sheet untouched.
  */
 
-import { restoreContext, saveContext } from './contextState';
+import { restoreContext, saveContext } from './contextState.js';
 
 /** Whether the flow of a mirrored page is being painted (see the module
  *  comment). */

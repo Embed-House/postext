@@ -7,8 +7,8 @@ import {
   stripTableStylesDefaults,
   pickTableStyle,
   stripConfigDefaults,
-} from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
+} from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
 const hex = (h: string) => ({ hex: h, model: 'hex' as const });

@@ -3,22 +3,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Camera, Film, Loader2, RefreshCw } from 'lucide-react';
 import { parseVideoUrl, videoFormatOfUrl, type Resource, type ResourceVideo, type VideoPlayerOptions, type VideoSource } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import type { SandboxLabels } from '../../types/labels';
-import { FieldRow } from '../../controls/FieldRow';
-import { useFieldIds } from '../../controls/fieldContext';
-import { NumberInput, SelectInput } from '../../controls';
-import { Button } from '../../ui';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { useFieldIds } from '../../controls/fieldContext.js';
+import { NumberInput, SelectInput } from '../../controls/index.js';
+import { Button } from '../../ui/index.js';
 import { attachVideoSource } from 'postext-folio';
-import { BitmapUploader, type BitmapUploadResult } from './BitmapUploader';
-import { useBlobObjectUrl } from './ResourcePreview';
+import { BitmapUploader, type BitmapUploadResult } from './BitmapUploader.js';
+import { useBlobObjectUrl } from './ResourcePreview.js';
 import {
   VIDEO_ACCEPT,
   captureFrame,
   fetchStreamInfo,
   formatDuration,
   videoFormatOf,
-} from './videoMedia';
+} from './videoMedia.js';
 import {
   VIDEO_PLAYER_SOURCES,
   addressEdit,
@@ -30,7 +30,7 @@ import {
   sourceSwitched,
   streamInfoEdit,
   videoFileEdit,
-} from './videoEdits';
+} from './videoEdits.js';
 
 const inputClass = 'min-w-0 flex-1 rounded border bg-transparent px-2 py-1.5';
 const inputStyle = { borderColor: 'var(--pt-control-border)', color: 'var(--foreground)', fontFamily: 'inherit', fontSize: 13, lineHeight: '20px' } as const;

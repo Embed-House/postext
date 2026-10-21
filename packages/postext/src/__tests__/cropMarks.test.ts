@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { renderCutLines } from '../canvas-backend/decorations';
-import { cropMarkSegments } from '../cropMarks';
-import { dimensionToPx } from '../units';
-import type { PostextConfig } from '../types';
-import type { VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { renderCutLines } from '../canvas-backend/decorations.js';
+import { cropMarkSegments } from '../cropMarks.js';
+import { dimensionToPx } from '../units.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTDocument } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

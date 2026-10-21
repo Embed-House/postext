@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyPatch, carryPatch, diffConfig, formatPatchPath, patchCovers, patchIsEmpty, patchSettingPaths, patchTopKeys } from './configPatch';
+import { applyPatch, carryPatch, diffConfig, formatPatchPath, patchCovers, patchIsEmpty, patchSettingPaths, patchTopKeys } from './configPatch.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' });
 

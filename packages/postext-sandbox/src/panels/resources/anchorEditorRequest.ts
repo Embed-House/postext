@@ -1,5 +1,5 @@
 import type { Dispatch } from 'react';
-import type { SandboxAction } from '../../context/SandboxContext';
+import type { SandboxAction } from '../../context/SandboxContext.js';
 
 // ---------------------------------------------------------------------------
 // Opening a picture's anchor editor from elsewhere (#866): a warning, a

@@ -4,11 +4,11 @@
 
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, VDTDocument } from 'postext';
-import { createBlankBookConfig } from '../context/defaultConfig';
-import { createPostextGuideConfig } from '../context/guideConfig';
-import { BUILTIN_PRESET_LOCALES } from '../presets/builtin';
-import { installLanguageCanvas, LanguageContext } from './languageCanvasStub';
-import { configShapingLanguage, documentShapingLanguage, measureInLanguage } from './measureLanguage';
+import { createBlankBookConfig } from '../context/defaultConfig.js';
+import { createPostextGuideConfig } from '../context/guideConfig.js';
+import { BUILTIN_PRESET_LOCALES } from '../presets/builtin.js';
+import { installLanguageCanvas, LanguageContext } from './languageCanvasStub.js';
+import { configShapingLanguage, documentShapingLanguage, measureInLanguage } from './measureLanguage.js';
 
 installLanguageCanvas();
 

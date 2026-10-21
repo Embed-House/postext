@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { CalloutStyleConfig, PostextConfig, Resource } from 'postext';
-import { inheritedStyle, paintStylePreview, requestStylePreview, type PreviewSample } from '../../../frameStyles/stylePreview';
+import { inheritedStyle, paintStylePreview, requestStylePreview, type PreviewSample } from '../../../frameStyles/stylePreview.js';
 
 interface StylePreviewProps {
   style: CalloutStyleConfig;

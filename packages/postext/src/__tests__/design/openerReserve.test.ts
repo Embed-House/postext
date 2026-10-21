@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import type { DesignFrames } from '../../design/layout';
-import { measureHeadingAdvancedDesignHeight } from '../../pipeline/headerFooter';
-import { resolveHeadingsConfig } from '../../defaults/headings';
-import { buildDocument } from '../../pipeline';
-import type { DesignElement, ElementAnchor, PostextConfig } from '../../types';
-import type { VDTDocument } from '../../vdt';
+import type { DesignFrames } from '../../design/layout.js';
+import { measureHeadingAdvancedDesignHeight } from '../../pipeline/headerFooter.js';
+import { resolveHeadingsConfig } from '../../defaults/headings.js';
+import { buildDocument } from '../../pipeline/index.js';
+import type { DesignElement, ElementAnchor, PostextConfig } from '../../types.js';
+import type { VDTDocument } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

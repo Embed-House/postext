@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_LABELS } from '../../../types/defaultLabels';
-import { groupsText, kindText, listText, suggestionText, usageText } from './text';
+import { DEFAULT_LABELS } from '../../../types/defaultLabels.js';
+import { groupsText, kindText, listText, suggestionText, usageText } from './text.js';
 
 describe('the words of the frame-style library', () => {
   it('names the settings a suggestion differs in as the panel names them', () => {

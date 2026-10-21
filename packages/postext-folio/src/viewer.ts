@@ -1,7 +1,7 @@
 import { resolveFolioConfig, type FolioConfig, type FolioPaperConfig } from "postext";
-import { canFlip, PageFlipper, type FlipAppearance, type PageSource, type PageVideoFrame, type SpreadSrc } from "./pageFlip";
-import { spreadOfPage, spreadsOf, type Spread } from "./spreads";
-import { injectStyles } from "./styles";
+import { canFlip, PageFlipper, type FlipAppearance, type PageSource, type PageVideoFrame, type SpreadSrc } from "./pageFlip.js";
+import { spreadOfPage, spreadsOf, type Spread } from "./spreads.js";
+import { injectStyles } from "./styles.js";
 
 /** A page of the book: its source, or its source with a text alternative
  *  and the paper it is printed on when that is not the book's (a plate

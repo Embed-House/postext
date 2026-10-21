@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { compileMatcher, type SearchMatcher } from './normalize';
+import { compileMatcher, type SearchMatcher } from './normalize.js';
 
 export interface SettingsSearchState {
   /** Raw query as typed. */

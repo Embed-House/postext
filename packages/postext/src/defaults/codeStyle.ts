@@ -8,8 +8,8 @@ import type {
   ResolvedBodyTextConfig,
   ResolvedCodeStyleConfig,
   ResolvedInlineCodeStyleConfig,
-} from '../types';
-import { colorsEqual, dimensionsEqual } from './shared';
+} from '../types.js';
+import { colorsEqual, dimensionsEqual } from './shared.js';
 
 /** Code listings (#624): a monospaced face a little smaller than the
  *  text on the text's leading, in a pale box padded by 0.6 em, split

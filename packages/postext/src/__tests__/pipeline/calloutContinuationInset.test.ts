@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import type { VDTBlock, VDTDocument } from '../../vdt';
-import type { CalloutStyleConfig, PostextConfig } from '../../types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { VDTBlock, VDTDocument } from '../../vdt.js';
+import type { CalloutStyleConfig, PostextConfig } from '../../types.js';
 
 // EF-114: the continuation of a split box (`keepTogether: false`) draws no
 // icon, but its text keeps the inset the icon column gives the head (icon

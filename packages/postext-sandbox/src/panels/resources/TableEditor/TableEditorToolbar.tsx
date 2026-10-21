@@ -19,9 +19,9 @@ import {
   X,
 } from 'lucide-react';
 import type { ColorValue, TableCellAlign, TableCellVerticalAlign } from 'postext';
-import { useSandboxLabels } from '../../../context/SandboxContext';
-import { ColorPicker } from '../../../controls/ColorPicker';
-import { Menu, MenuItem, MenuSeparator } from '../../../ui';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
+import { ColorPicker } from '../../../controls/ColorPicker.js';
+import { Menu, MenuItem, MenuSeparator } from '../../../ui/index.js';
 
 /** Fill offered when the active cell has none: white, the paper. */
 const NO_FILL: ColorValue = { hex: '#ffffff', model: 'hex' };

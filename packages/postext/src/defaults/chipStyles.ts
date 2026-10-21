@@ -1,5 +1,5 @@
-import type { ChipStyleConfig, ColorValue, Dimension, ResolvedChipStyleConfig } from '../types';
-import { colorsEqual, dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared';
+import type { ChipStyleConfig, ColorValue, Dimension, ResolvedChipStyleConfig } from '../types.js';
+import { colorsEqual, dimensionsEqual, DEFAULT_MAIN_COLOR } from './shared.js';
 
 const EM = (value: number): Dimension => ({ value, unit: 'em' });
 

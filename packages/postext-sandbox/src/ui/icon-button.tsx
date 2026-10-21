@@ -1,8 +1,8 @@
 'use client';
 
 import { forwardRef, type ComponentProps, type ReactNode } from 'react';
-import { cn } from './cn';
-import { Tooltip, type TooltipSide } from './tooltip';
+import { cn } from './cn.js';
+import { Tooltip, type TooltipSide } from './tooltip.js';
 
 export interface IconButtonProps extends Omit<ComponentProps<'button'>, 'children'> {
   /** Accessible name; also the tooltip text. */

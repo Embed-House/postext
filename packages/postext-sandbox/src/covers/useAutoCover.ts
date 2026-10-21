@@ -9,9 +9,9 @@
 import { useEffect, type MutableRefObject } from 'react';
 import { renderPageToCanvas } from 'postext';
 import type { VDTDocument, VDTPage } from 'postext';
-import { useSandboxCoverSaver, useSandboxStateGetter } from '../context/SandboxContext';
-import { missingConfigFontSpecs } from '../controls/fontLoader';
-import { coverTargetKey, coverToCapture, sessionCoverAttempts as attempted } from './autoCover';
+import { useSandboxCoverSaver, useSandboxStateGetter } from '../context/SandboxContext.js';
+import { missingConfigFontSpecs } from '../controls/fontLoader.js';
+import { coverTargetKey, coverToCapture, sessionCoverAttempts as attempted } from './autoCover.js';
 
 /** Width of a cover picture, in pixels (a Books row shows it at 36 px;
  *  a bundle's `thumbnail.jpg` is read elsewhere at a larger size). */

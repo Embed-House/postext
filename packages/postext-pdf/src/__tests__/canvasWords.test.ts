@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { canvasWords } from '../canvasWords';
+import { canvasWords } from '../canvasWords.js';
 
 // #770: the words Chrome's canvas shapes a string in. Each cut below was
 // measured in Chrome 154: the width of the string against the sum of its

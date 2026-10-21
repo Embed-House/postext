@@ -53,9 +53,9 @@ La propietat `bodyText` controla la tipografia de tot el text de paràgraf.
     </tr>
     <tr>
       <td><code>paragraphSpacing</code></td>
-      <td><code>boolean</code></td>
+      <td><code>boolean | Dimension</code></td>
       <td><code>false</code></td>
-      <td>Quan està activat, insereix una línia en blanc (igual al <code>lineHeight</code>) entre paràgrafs consecutius, com fan algunes editorials.</td>
+      <td>L'espai entre dos paràgrafs. <code>true</code> insereix una línia en blanc (igual al <code>lineHeight</code>), com fan algunes editorials; una mida com <code>&#123; value: 2, unit: 'mm' &#125;</code> o <code>0.33em</code> del cos del text deixa exactament aquest espai, al text corregut, als requadres i als marcs de les pàgines compostes. Una mida que no sigui un nombre enter de línies treu els paràgrafs de la retícula base; el bloc següent que s'hi ajusta (un títol, l'últim element d'una llista, una fórmula destacada) hi torna el text. És el mateix espai que <code>paragraphStyles[].spaceBetween</code>, que el substitueix dins d'un contenidor <code>:::paragraphs</code>. Un requadre fixa el seu a <code>calloutStyles[].body.paragraphSpacing</code>.</td>
     </tr>
     <tr>
       <td><code>color</code></td>

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { HTML_TEXT_RESET, renderToHtml, renderToHtmlIndexed } from '../../html-backend';
-import type { PostextConfig, Resource } from '../../types';
-import type { VDTBlock, VDTDocument, VDTLine } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { HTML_TEXT_RESET, renderToHtml, renderToHtmlIndexed } from '../../html-backend.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import type { VDTBlock, VDTDocument, VDTLine } from '../../vdt.js';
 
 // #379: the HTML backend renders right-to-left text. Every word stays a box
 // at the x the layout gave it; a box whose direction differs from what it

@@ -35,10 +35,10 @@
  * expression test) and left as it was.
  */
 
-import type { ContentWarning, VDTBlock, VDTDocument, VDTLine } from './vdt';
-import { measureInkBox, measureInkProfile, measureLanguageKey, measurementGeneration, type InkProfile } from './measure/canvas';
-import { fontEm } from './measure/vertical';
-import { segmentFont, segmentPositions } from './cjkMarks';
+import type { ContentWarning, VDTBlock, VDTDocument, VDTLine } from './vdt.js';
+import { measureInkBox, measureInkProfile, measureLanguageKey, measurementGeneration, type InkProfile } from './measure/canvas.js';
+import { fontEm } from './measure/vertical.js';
+import { segmentFont, segmentPositions } from './cjkMarks.js';
 
 /** The combining marks of Arabic vocalisation and Qurʾānic annotation:
  *  the honorific and Qurʾānic signs U+0610–U+061A, the ḥarakāt and their

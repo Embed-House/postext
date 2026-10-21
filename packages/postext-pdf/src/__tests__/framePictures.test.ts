@@ -4,7 +4,7 @@ import zlib from 'node:zlib';
 import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // Pictures in a frame set in its own writing mode (#960): a vertical frame is
 // turned a quarter turn on its page, and a picture in it is laid out

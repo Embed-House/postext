@@ -1,16 +1,19 @@
-import type { ColorValue, Dimension, MarkStyleConfig, ResolvedMarkStyleConfig } from '../types';
-import { colorsEqual, dimensionsEqual } from './shared';
+import type { ColorValue, Dimension, MarkDecorationBreak, MarkStyleConfig, ResolvedMarkStyleConfig } from '../types.js';
+import { colorsEqual, dimensionsEqual } from './shared.js';
 
 const EM = (value: number): Dimension => ({ value, unit: 'em' });
 
 /** Static defaults shared by every highlight style (#888): a pale yellow
- *  band reaching a little past the phrase, its ends slightly rounded. The
- *  text keeps its own colour. */
+ *  band reaching a little past the phrase, its ends square (the print norm;
+ *  up to postext 1.51 they were rounded at 0.2 em, which a configuration
+ *  stored then keeps through `pinLegacyMarkRadius`, #1149). The text keeps
+ *  its own colour. */
 export const DEFAULT_MARK_STYLE_STATIC = {
   background: { hex: '#fff0a0', model: 'hex' } as ColorValue,
-  borderRadius: EM(0.2),
+  borderRadius: EM(0),
   paddingX: EM(0.15),
   paddingY: EM(0.05),
+  decorationBreak: 'slice' as MarkDecorationBreak,
 };
 
 /** One style ships by default so `:mark[…]` works out of the box. */
@@ -28,6 +31,7 @@ function resolveMarkStyleConfig(partial: MarkStyleConfig): ResolvedMarkStyleConf
     paddingY: partial.paddingY ?? d.paddingY,
     ...(partial.paddingTop ? { paddingTop: partial.paddingTop } : {}),
     ...(partial.paddingBottom ? { paddingBottom: partial.paddingBottom } : {}),
+    decorationBreak: partial.decorationBreak === 'clone' ? 'clone' : d.decorationBreak,
   };
 }
 
@@ -67,6 +71,7 @@ export function stripMarkStylesDefaults(styles: MarkStyleConfig[] | undefined): 
     if (s.paddingY !== undefined && !dimensionsEqual(s.paddingY, d.paddingY)) r.paddingY = s.paddingY;
     if (s.paddingTop !== undefined) r.paddingTop = s.paddingTop;
     if (s.paddingBottom !== undefined) r.paddingBottom = s.paddingBottom;
+    if (s.decorationBreak !== undefined && s.decorationBreak !== d.decorationBreak) r.decorationBreak = s.decorationBreak;
     return r;
   });
   if (stripped.length === 1) {

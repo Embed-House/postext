@@ -2,9 +2,9 @@
 // (`VDTBlock.paragraphStyleId`, `VDTBlock.indexLevel`, `VDTLine.indexLevel`):
 // metadata for renditions that set the text again (a reflowable EPUB).
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTDocument } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTDocument } from '../vdt.js';
 
 class StubCtx {
   font = '';

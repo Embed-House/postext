@@ -1,5 +1,5 @@
-import { joiningScriptIn } from '../measure/joining';
-import { letterSpacingOf, setLetterSpacing } from './contextState';
+import { joiningScriptIn } from '../measure/joining.js';
+import { letterSpacingOf, setLetterSpacing } from './contextState.js';
 
 /**
  * Painting one right-to-left run of a design text or a chip on the canvas

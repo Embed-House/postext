@@ -3,13 +3,13 @@
 import { memo } from 'react';
 import { Plus } from 'lucide-react';
 import type { BalloonStyleConfig, ComicBalloonPosition, ComicBalloonShape, ComicBalloonTail, ResolvedBalloonStyleConfig } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { CollapsibleSection, ColorPicker, DimensionInput, FontPicker, NumberInput, SelectInput, ToggleSwitch } from '../../../controls';
-import { Button } from '../../../ui';
-import type { SandboxLabels } from '../../../types/labels';
-import { SearchScope } from '../../search/SearchScope';
-import { BalloonPreview } from '../../settings/BalloonPreview';
-import { configShapingLanguage } from '../../../controls/measureLanguage';
+import { useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { CollapsibleSection, ColorPicker, DimensionInput, FontPicker, NumberInput, SelectInput, ToggleSwitch } from '../../../controls/index.js';
+import { Button } from '../../../ui/index.js';
+import type { SandboxLabels } from '../../../types/labels.js';
+import { SearchScope } from '../../search/SearchScope.js';
+import { BalloonPreview } from '../../settings/BalloonPreview.js';
+import { configShapingLanguage } from '../../../controls/measureLanguage.js';
 import {
   isBuiltInBalloonStyle,
   nextFreeId,
@@ -20,9 +20,9 @@ import {
   setComicsField,
   slugifyStyleId,
   upsertById,
-} from './comicsConfig';
-import { ComicsCardHeader } from './ComicsCardHeader';
-import { BORDER_UNITS, EM_UNITS, useComics } from './comicsShared';
+} from './comicsConfig.js';
+import { ComicsCardHeader } from './ComicsCardHeader.js';
+import { BORDER_UNITS, EM_UNITS, useComics } from './comicsShared.js';
 
 /** The localized name of a built-in balloon style. */
 export function builtInBalloonName(id: string, labels: SandboxLabels): string | undefined {

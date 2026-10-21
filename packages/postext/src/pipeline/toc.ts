@@ -10,25 +10,25 @@
  * design `buildHeadersAndFooters` lays out from `toc.parts.design`.
  */
 
-import { flowTextWidth, measuringVertically } from '../measure/vertical';
-import { getMeasureArabicNumbers } from '../measure/bidiLines';
-import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
-import { fitLeader } from '../measure/leader';
-import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script';
-import { measuresRunsAsPainted } from '../design/bidiText';
-import type { ContentBlock, InlineSpan, TocBlockInfo, TocGroupInfo } from '../parse';
-import { suffixJoiner } from '../parse/inlineFormatting';
-import { parseTocGroupHead } from '../defaults/toc';
-import type { OutlineEntry, ResolvedTocEntryStyleConfig, TocGroupHead } from '../types';
-import type { VDTBlock, VDTLine, VDTLineSegment } from '../vdt';
-import { dimensionToPx } from '../units';
-import { buildFontString, measureRichBlock } from '../measure';
-import type { ResolvedConfig } from '../vdt';
-import type { BlockStyle } from './styles';
-import type { BlockMeasureContext, MeasuredContentBlock } from './measureContentBlock';
-import { markerTextWidth, type ListBulletStyle } from './lists';
-import { stampSourceRanges } from './buildHelpers';
-import { resolvedDirection } from './config';
+import { flowTextWidth, measuringVertically } from '../measure/vertical.js';
+import { getMeasureArabicNumbers } from '../measure/bidiLines.js';
+import { onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas.js';
+import { fitLeader } from '../measure/leader.js';
+import { faceReadsScript, getMeasureScriptContext, isLetterless, scriptTextWidth, type ScriptContext } from '../measure/script.js';
+import { measuresRunsAsPainted } from '../design/bidiText.js';
+import type { ContentBlock, InlineSpan, TocBlockInfo, TocGroupInfo } from '../parse/index.js';
+import { suffixJoiner } from '../parse/inlineFormatting.js';
+import { parseTocGroupHead } from '../defaults/toc.js';
+import type { OutlineEntry, ResolvedTocEntryStyleConfig, TocGroupHead } from '../types.js';
+import type { VDTBlock, VDTLine, VDTLineSegment } from '../vdt.js';
+import { dimensionToPx } from '../units.js';
+import { buildFontString, measureRichBlock } from '../measure/index.js';
+import type { ResolvedConfig } from '../vdt.js';
+import type { BlockStyle } from './styles.js';
+import type { BlockMeasureContext, MeasuredContentBlock } from './measureContentBlock.js';
+import { markerTextWidth, type ListBulletStyle } from './lists.js';
+import { stampSourceRanges } from './buildHelpers.js';
+import { resolvedDirection } from './config.js';
 
 /** The content blocks with every `:::toc` directive replaced by the blocks
  *  of the contents it prints. Without an outline (no directive) the input
@@ -457,6 +457,17 @@ export function measureTocBlock(
   const labelColor = pn.color.hex;
   const reservePx = label.length > 0 ? dimensionToPx(pn.width, dpi, fontSizePx) : 0;
   const gapPx = label.length > 0 ? dimensionToPx(toc.leader.gap, dpi, fontSizePx) : 0;
+  // The leader's own face (#1121), field by field over the page number's.
+  const leaderFace = toc.leader;
+  const leaderFont = leaderFace.fontFamily !== undefined || leaderFace.fontSize !== undefined || leaderFace.fontWeight !== undefined
+    ? buildFontString(
+      leaderFace.fontFamily ?? pn.fontFamily,
+      leaderFace.fontSize ? dimensionToPx(leaderFace.fontSize, dpi, labelFontSizePx) : labelFontSizePx,
+      (leaderFace.fontWeight ?? pn.fontWeight).toString(),
+      pn.italic ? 'italic' : 'normal',
+    )
+    : labelFont;
+  const leaderColor = leaderFace.color?.hex ?? labelColor;
   const labelW = label.length > 0 ? flowTextWidth(label, labelFont) : 0;
 
   const measureTitle = (maxW: number) => measureRichBlock(
@@ -487,12 +498,12 @@ export function measureTocBlock(
       // script it is measured, and painted, in the script of the document's
       // language (#725), where each browser shaped it its own way and one
       // counted half as many dots again as another.
-      const leaderScript = leaderScriptOf(toc.leader.char, labelFont);
-      const leader = fitLeader(toc.leader.char, leaderEnd - leaderStart, (run) => (leaderScript ? scriptTextWidth(run, labelFont, leaderScript, false) : flowTextWidth(run, labelFont)));
+      const leaderScript = leaderScriptOf(toc.leader.char, leaderFont);
+      const leader = fitLeader(toc.leader.char, leaderEnd - leaderStart, (run) => (leaderScript ? scriptTextWidth(run, leaderFont, leaderScript, false) : flowTextWidth(run, leaderFont)));
       if (leader) {
         const { text: dots, width: dotsW } = leader;
         pushSpace(leaderEnd - dotsW - x);
-        segs.push({ kind: 'text', text: dots, width: dotsW, fontString: labelFont, color: labelColor, leader: 'text', ...(leaderScript ? { scriptContext: leaderScript } : {}) });
+        segs.push({ kind: 'text', text: dots, width: dotsW, fontString: leaderFont, color: leaderColor, leader: 'text', ...(leaderScript ? { scriptContext: leaderScript } : {}) });
         x += dotsW;
       }
     }

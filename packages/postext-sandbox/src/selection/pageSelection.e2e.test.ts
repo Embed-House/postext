@@ -1,10 +1,10 @@
 import { describe, expect, it, beforeAll, beforeEach } from 'vitest';
 import { buildDocument, createMeasurementCache, flowToPage, sourceAt } from 'postext';
 import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTPage } from 'postext';
-import { atLevel, breadcrumb, breadcrumbText, climb, pickAt, resolveSelection, selectedElement, selectionAtSource, type CrumbLabels, type PageSelection } from './pageSelection';
-import { headingInChapters, sectionForConfigPath, selectionTarget } from './selectionTargets';
-import { pickedMarkFor } from './pickedOverlay';
-import { climbPageSelection, followFrameEditor, frameDragNow, pageSelectionNow, resetPageSelection, selectPageLevel, setPageSelection, syncPageSelection } from './selectionStore';
+import { atLevel, breadcrumb, breadcrumbText, climb, pickAt, resolveSelection, selectedElement, selectionAtSource, type CrumbLabels, type PageSelection } from './pageSelection.js';
+import { headingInChapters, sectionForConfigPath, selectionTarget } from './selectionTargets.js';
+import { pickedMarkFor } from './pickedOverlay.js';
+import { climbPageSelection, followFrameEditor, frameDragNow, pageSelectionNow, resetPageSelection, selectPageLevel, setPageSelection, syncPageSelection } from './selectionStore.js';
 
 class StubCtx {
   font = '';

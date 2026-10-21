@@ -12,11 +12,11 @@
  */
 
 import { resolvePageTemplate, type PageTemplateSource, type VDTDocument, type VDTFrame, type VDTPage } from 'postext';
-import { SVG_NS } from '../CanvasPreview/dom';
-import { flowBoxOnSheet, frameIsEmpty } from './frameHit';
-import { chainHeadOf, frameAtCaret } from './frameLink';
-import type { EditMode } from '../../editing/editMode';
-import { designBadgesFor, drawDesignBadge, type DesignBadgeLabels } from './designBadges';
+import { SVG_NS } from '../CanvasPreview/dom.js';
+import { flowBoxOnSheet, frameIsEmpty } from './frameHit.js';
+import { chainHeadOf, frameAtCaret } from './frameLink.js';
+import type { EditMode } from '../../editing/editMode.js';
+import { designBadgesFor, drawDesignBadge, type DesignBadgeLabels } from './designBadges.js';
 
 export interface FrameMarksOptions {
   mode: EditMode;

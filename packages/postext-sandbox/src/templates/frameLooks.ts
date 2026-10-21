@@ -9,9 +9,9 @@
  * Pure: chapter offsets.
  */
 
-import type { TextChange } from '../book/textChanges';
-import { pageSites, type SlotSite } from '../viewport/composed/slotSource';
-import { templateFences } from './templateUsage';
+import type { TextChange } from '../book/textChanges.js';
+import { pageSites, type SlotSite } from '../viewport/composed/slotSource.js';
+import { templateFences } from './templateUsage.js';
 
 /** A `:::frame` piece of a composed page, as the Markdown writes it. */
 export type FramePiece = SlotSite & { kind: 'frame' };

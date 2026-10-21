@@ -1,4 +1,4 @@
-import type { ContentBlock, DirectiveAttrs } from '../parse/types';
+import type { ContentBlock, DirectiveAttrs } from '../parse/types.js';
 import type {
   ColorPaletteEntry,
   ColorValue,
@@ -6,7 +6,7 @@ import type {
   FolioPaperFinish,
   FolioPaperTexture,
   FolioPaperType,
-} from '../types';
+} from '../types.js';
 
 /** The stocks `:::paper{type=…}` accepts (see {@link FolioPaperType}). */
 const PAPER_TYPES: ReadonlySet<string> = new Set<FolioPaperType>([

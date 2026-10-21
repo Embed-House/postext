@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../index';
-import { createMeasurementCache } from '../measure';
-import { collectConfigWarnings } from '../configWarnings';
-import { columnRuleSegments } from '../columnRule';
-import type { PostextConfig, Resource } from '../types';
-import type { VDTDocument, VDTPage } from '../vdt';
+import { buildDocument } from '../index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { collectConfigWarnings } from '../configWarnings.js';
+import { columnRuleSegments } from '../columnRule.js';
+import type { PostextConfig, Resource } from '../types.js';
+import type { VDTDocument, VDTPage } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

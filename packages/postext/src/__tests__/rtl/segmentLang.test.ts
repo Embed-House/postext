@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { renderToHtml } from '../../html-backend';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLineSegment } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { renderToHtml } from '../../html-backend.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLineSegment } from '../../vdt.js';
 
 // #379: the language an inline isolate names (`:ltr[…]{lang=en}`) rides on
 // the segments of its text (`VDTLineSegment.lang`), for HTML `lang` and PDF

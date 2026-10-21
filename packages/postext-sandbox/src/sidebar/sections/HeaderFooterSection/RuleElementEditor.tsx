@@ -1,6 +1,6 @@
 'use client';
 
-import { useSandboxLabels } from '../../../context/SandboxContext';
+import { useSandboxLabels } from '../../../context/SandboxContext.js';
 import { DEFAULT_RULE_ELEMENT, dimensionsEqual, colorsEqual } from 'postext';
 import type {
   DesignRuleElement,
@@ -9,14 +9,14 @@ import type {
   Dimension,
   ColorValue,
 } from 'postext';
-import type { PlacementSize } from './placementAdapter';
+import type { PlacementSize } from './placementAdapter.js';
 import {
   SelectInput,
   DimensionInput,
   ColorPicker,
-} from '../../../controls';
-import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo';
-import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields';
+} from '../../../controls/index.js';
+import { SizeToFields, isSizeTo, type FrameTarget } from './sizeTo.js';
+import { PlacementFields, PagesSelect, type Sibling } from './PlacementFields.js';
 import {
   type SlotKind,
   alignFromPlacement,
@@ -27,7 +27,7 @@ import {
   marginFromBody,
   marginFromEdge,
   widthMode,
-} from './placementAdapter';
+} from './placementAdapter.js';
 
 const ZERO: Dimension = { value: 0, unit: 'pt' };
 

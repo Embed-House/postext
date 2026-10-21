@@ -3,15 +3,15 @@
 import { memo, useMemo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import type { ColorValue, Dimension, FrameLookEntry } from 'postext';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { CollapsibleSection, ColorPicker, DimensionInput, FieldGroup, ItemCard, ItemCardListActions, moveCardState, openCard } from '../../controls';
-import { FieldRow } from '../../controls/FieldRow';
-import { Button, ConfirmPopover, IconButton } from '../../ui';
-import { applyViewerEdit } from '../../editor/viewerEdits';
-import { useBookTexts } from '../../frameStyles/useBookTexts';
-import { lookUsage, renameLookChanges } from '../../templates/frameLooks';
-import { SearchScope } from '../search/SearchScope';
-import type { SandboxLabels } from '../../types/labels';
+import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { CollapsibleSection, ColorPicker, DimensionInput, FieldGroup, ItemCard, ItemCardListActions, moveCardState, openCard } from '../../controls/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
+import { useBookTexts } from '../../frameStyles/useBookTexts.js';
+import { lookUsage, renameLookChanges } from '../../templates/frameLooks.js';
+import { SearchScope } from '../search/SearchScope.js';
+import type { SandboxLabels } from '../../types/labels.js';
 
 const inputClass = 'min-w-0 flex-1 rounded border bg-transparent px-1.5 py-1 text-xs';
 const inputStyle = { borderColor: 'var(--pt-control-border)', color: 'var(--foreground)' } as const;

@@ -15,7 +15,7 @@
  * alone (`bitmapLayoutSize`).
  */
 
-import type { BitmapResolution, Resource } from './types';
+import type { BitmapResolution, Resource } from './types.js';
 
 type Bitmap = NonNullable<Resource['bitmap']>;
 

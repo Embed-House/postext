@@ -1,5 +1,5 @@
-import type { EquationNumberingConfig, MathConfig, ResolvedEquationNumberingConfig, ResolvedMathConfig, Dimension } from '../types';
-import { dimensionsEqual, colorsEqual } from './shared';
+import type { EquationNumberingConfig, MathConfig, ResolvedEquationNumberingConfig, ResolvedMathConfig, Dimension } from '../types.js';
+import { dimensionsEqual, colorsEqual } from './shared.js';
 
 const DEFAULT_MATH_MARGIN_TOP: Dimension = { value: 0.8, unit: 'em' };
 const DEFAULT_MATH_MARGIN_BOTTOM: Dimension = { value: 0.8, unit: 'em' };

@@ -14,7 +14,7 @@
  * element left, so the element is the mirror image of the left-to-right
  * one.
  */
-import type { AnchorEdge, ElementPlacement } from '../types';
+import type { AnchorEdge, ElementPlacement } from '../types.js';
 
 const LOGICAL: Record<string, readonly [AnchorEdge, AnchorEdge]> = {
   // [the start on the left, the start on the right]

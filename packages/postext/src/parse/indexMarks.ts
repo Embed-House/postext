@@ -9,12 +9,12 @@
  * holding that character.
  */
 
-import { remapComicSource } from '../comics/page';
-import type { AnchorMark, ContentBlock, IndexMark, ParseIssue } from './types';
-import { parseDirectiveAttrs } from './attrs';
-import { stripInlineFormatting } from './inlineFormatting';
-import { findAnnotations } from './annotations';
-import { closesCodeFence, codeFenceOpen } from './codeFence';
+import { remapComicSource } from '../comics/page.js';
+import type { AnchorMark, ContentBlock, IndexMark, ParseIssue } from './types.js';
+import { parseDirectiveAttrs } from './attrs.js';
+import { stripInlineFormatting } from './inlineFormatting.js';
+import { findAnnotations } from './annotations.js';
+import { closesCodeFence, codeFenceOpen } from './codeFence.js';
 
 /** `:index[text]{attrs}`, `:index[text]` or `:index{attrs}`: not after a
  *  colon (the `:::index` directive) or a backslash (an escaped mark). The

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyCircledNumbers, pinLegacyDesignText, pinLegacyLatinSpacingEdge, pinLegacyNoteBreaks, pinLegacyTitleBreaks, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion';
-import { resolveAllConfig } from '../../pipeline/config';
-import { stripConfigDefaults } from '../../defaults';
-import type { PostextConfig } from '../../types';
+import { migrateBundleConfig, migrateConfig, pinLegacyCircledNumbers, pinLegacyDesignText, pinLegacyLatinSpacingEdge, pinLegacyNoteBreaks, pinLegacyTitleBreaks, pinLegacyScriptContext, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import type { PostextConfig } from '../../types.js';
 
 // #637: a configuration stored before book titles kept two characters on
 // either side of a break, circled numbers were set as Chinese characters

@@ -36,14 +36,14 @@
  *   template is written in the flow's frame, as a vertical book's single
  *   pages are.
  */
-import type { BoundingBox, ContentWarning, ReflowEvent, VDTBlock, VDTComposedPage, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt';
-import { offsetBlock, offsetDesignBlock } from '../pipeline/calloutLayout';
-import { layoutComposedPage, lengthPx, type ComposedPageInput, type ComposedPageLayout } from '../pipeline/composedLayout';
-import { frameBounds } from './paint';
-import { keepLabelsOffGutter, type SpineBand } from './labels';
-import type { FrameAreas, Rect } from './geometry';
-import type { ResolvedFrame, ResolvedPageTemplate } from './types';
-import type { ComposedContinuation } from './continuation';
+import type { BoundingBox, ContentWarning, ReflowEvent, VDTBlock, VDTComposedPage, VDTDesignSlot, VDTFrame, VDTPage } from '../vdt.js';
+import { offsetBlock, offsetDesignBlock } from '../pipeline/calloutLayout.js';
+import { layoutComposedPage, lengthPx, type ComposedPageInput, type ComposedPageLayout } from '../pipeline/composedLayout.js';
+import { frameBounds } from './paint.js';
+import { keepLabelsOffGutter, type SpineBand } from './labels.js';
+import type { FrameAreas, Rect } from './geometry.js';
+import type { ResolvedFrame, ResolvedPageTemplate } from './types.js';
+import type { ComposedContinuation } from './continuation.js';
 
 const MM_PER_IN = 25.4;
 /** Below this a frame touches the spine without crossing it (px). */

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyTaskBox } from '../../bundle/configVersion';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
+import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyTaskBox } from '../../bundle/configVersion.js';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
 
 // #765: a configuration stored before the engine drew the box of a task
 // item (configVersion 12 or older, postext 1.28 or earlier) keeps the
@@ -34,7 +34,7 @@ describe('pinLegacyTaskBox (#765)', () => {
   });
 
   it('pins every version before 13 whose text may hold a task item, and none from 13', () => {
-    expect(CONFIG_VERSION).toBe(16);
+    expect(CONFIG_VERSION).toBe(18);
     for (const v of [undefined, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
       // Unknown content may hold one.
       expect(kept(migrateConfig({}, v)), String(v)).toBe('character');

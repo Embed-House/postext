@@ -19,9 +19,9 @@
  * nested annotations included (`:warichu[甲戌側批：:name[寶玉]…]`).
  */
 
-import type { DirectiveAttrs, EmphasisMark, InlineDirection, InlineKunten, InlineRuby, InlineSideline, InlineSpan, InlineWarichu } from './types';
-import { parseDirectiveAttrs } from './attrs';
-import { graphemesOf } from '../measure/graphemes';
+import type { DirectiveAttrs, EmphasisMark, InlineDirection, InlineKunten, InlineRuby, InlineSideline, InlineSpan, InlineWarichu } from './types.js';
+import { parseDirectiveAttrs } from './attrs.js';
+import { graphemesOf } from '../measure/graphemes.js';
 
 /** The inline annotation directives, by name. */
 export const ANNOTATION_NAMES = ['dots', 'name', 'book', 'ruby', 'warichu', 'ltr', 'rtl', 'sideline', 'kunten'] as const;

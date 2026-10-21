@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { flowRectToPage, flowToPage, resourceBlockToPage, type VDTBlock, type VDTDocument, type VDTPage } from '../../vdt';
-import type { PostextConfig, Dimension, Resource } from '../../types';
-import { installSizedStub } from './stub';
+import { buildDocument } from '../../pipeline/index.js';
+import { flowRectToPage, flowToPage, resourceBlockToPage, type VDTBlock, type VDTDocument, type VDTPage } from '../../vdt.js';
+import type { PostextConfig, Dimension, Resource } from '../../types.js';
+import { installSizedStub } from './stub.js';
 
 installSizedStub();
 

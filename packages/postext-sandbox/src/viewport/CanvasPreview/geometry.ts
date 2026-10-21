@@ -1,8 +1,8 @@
 import type { VDTDocument } from 'postext';
 import { lineTextAlign, pageIsMirrored, pageToFlow, resourceBlockToLocal } from 'postext';
-import { bandCharAtX, bandLineBoxes, bandPlainToSource, bandTitleBlocks, bandTitleOwner, isHiddenUnderBand } from './bandTitle';
-import { blockFrameMatrix, blockPointShown, intoBlockSpace } from '../composed/frameHit';
-import { documentShapingLanguage } from '../../controls/measureLanguage';
+import { bandCharAtX, bandLineBoxes, bandPlainToSource, bandTitleBlocks, bandTitleOwner, isHiddenUnderBand } from './bandTitle.js';
+import { blockFrameMatrix, blockPointShown, intoBlockSpace } from '../composed/frameHit.js';
+import { documentShapingLanguage } from '../../controls/measureLanguage.js';
 
 type VDTBlock = VDTDocument['blocks'][number];
 type VDTLine = VDTBlock['lines'][number];

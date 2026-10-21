@@ -16,7 +16,7 @@
 
 import { PDFDict, PDFDocument, PDFHexString, PDFName, PDFString, type PDFPage } from 'pdf-lib';
 import { srgbProfileBytes } from 'postext';
-import type { PrintColorMode } from './colorMode';
+import type { PrintColorMode } from './colorMode.js';
 
 export interface PdfXMeta {
   title: string;

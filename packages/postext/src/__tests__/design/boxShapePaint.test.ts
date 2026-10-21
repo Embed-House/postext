@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import { renderToHtmlIndexed } from '../../html-backend';
-import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter';
-import { collectConfigWarnings } from '../../configWarnings';
-import { applyPaletteOverrides } from '../../design/layout';
-import type { PostextConfig, VDTDesignBoxBlock, VDTDesignBoxStyle, VDTDesignSlot } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { renderToHtmlIndexed } from '../../html-backend.js';
+import { renderHeaderFooterSlot } from '../../canvas-backend/headerFooter.js';
+import { collectConfigWarnings } from '../../configWarnings.js';
+import { applyPaletteOverrides } from '../../design/layout.js';
+import type { PostextConfig, VDTDesignBoxBlock, VDTDesignBoxStyle, VDTDesignSlot } from '../../index.js';
 
 // #1059: decoration boxes with a radius per corner and a border per side,
 // and how canvas and HTML paint box shapes.

@@ -2,17 +2,17 @@
 
 import { useEffect, useId, useMemo, useRef } from 'react';
 import { DEFAULT_CHIP_STYLES, DEFAULT_MARK_STYLES, canonicalLocaleTag, defaultResourceTypes } from 'postext';
-import { documentLanguage } from '../context/documentDirection';
-import { defaultDocumentLocale } from '../controls/hyphenation';
-import { useCodeMirror } from './useCodeMirror';
-import { EditorToolbar } from './EditorToolbar';
-import { useUiRtl } from '../ui/direction';
-import { useSandbox, useSandboxEditorStateRef, useSandboxStore } from '../context/SandboxContext';
-import { runHistoryFromUi } from '../history/historyKeys';
-import { anchorsOf, referencesOf, type RefCompletionContext } from './refCompletion';
-import { indexTermsOf } from './indexSyntax';
-import { useEditMode } from '../editing/editMode';
-import { Button } from '../ui';
+import { documentLanguage } from '../context/documentDirection.js';
+import { defaultDocumentLocale } from '../controls/hyphenation.js';
+import { useCodeMirror } from './useCodeMirror.js';
+import { EditorToolbar } from './EditorToolbar.js';
+import { useUiRtl } from '../ui/direction.js';
+import { useSandbox, useSandboxEditorStateRef, useSandboxStore } from '../context/SandboxContext.js';
+import { runHistoryFromUi } from '../history/historyKeys.js';
+import { anchorsOf, referencesOf, type RefCompletionContext } from './refCompletion.js';
+import { indexTermsOf } from './indexSyntax.js';
+import { useEditMode } from '../editing/editMode.js';
+import { Button } from '../ui/index.js';
 
 interface MarkdownEditorProps {
   isDark?: boolean;

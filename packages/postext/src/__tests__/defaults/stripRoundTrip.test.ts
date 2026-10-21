@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { stripConfigDefaults } from '../../defaults';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig } from '../../types';
-import { clone, hex, pt, survives, sweepSizes, text, type Fields } from './stripRoundTrip.harness';
+import { stripConfigDefaults } from '../../defaults/index.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig } from '../../types.js';
+import { clone, hex, pt, survives, sweepSizes, text, type Fields } from './stripRoundTrip.harness.js';
 
 // #694: the strip must not change what a configuration resolves to. The
 // sweep that sets every field of eight documents lives in

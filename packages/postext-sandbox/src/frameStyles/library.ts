@@ -15,9 +15,9 @@ import {
   type PostextConfig,
   type ResolvedCalloutStyleConfig,
 } from 'postext';
-import { mergeSuggestions, styleKinds, type CompareOptions, type MergeSuggestion, type StyleKind } from './styleCompare';
-import { bookCalloutStyles, styleUsage, type StyleUsage, type UsageChapter } from './styleUsage';
-import { toPt } from '../controls/units';
+import { mergeSuggestions, styleKinds, type CompareOptions, type MergeSuggestion, type StyleKind } from './styleCompare.js';
+import { bookCalloutStyles, styleUsage, type StyleUsage, type UsageChapter } from './styleUsage.js';
+import { toPt } from '../controls/units.js';
 
 export interface FrameStyleLibrary {
   /** The styles as the book stores them (the built-in list while it

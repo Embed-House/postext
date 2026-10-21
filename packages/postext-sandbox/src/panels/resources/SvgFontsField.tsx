@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import type { Resource } from 'postext';
-import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext';
-import { ToggleSwitch } from '../../controls';
-import { FieldRow } from '../../controls/FieldRow';
-import { svgWithInlineFonts } from './resourceEdits';
-import { readSvgFaces, type FaceRow } from './svgFaces';
+import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
+import { ToggleSwitch } from '../../controls/index.js';
+import { FieldRow } from '../../controls/FieldRow.js';
+import { svgWithInlineFonts } from './resourceEdits.js';
+import { readSvgFaces, type FaceRow } from './svgFaces.js';
 
 // The fonts of an SVG resource (#630): the families its text names, whether
 // each is embedded when the picture is shown or exported, and the

@@ -9,12 +9,12 @@ import {
   leadingBoldText,
   markPlaceholder,
   type PlaceholderContext,
-} from '../pipeline/placeholders';
-import { resolveDesignPlaceholders, isAllowedPlaceholder, configUsesPlaceholder, type DesignPlaceholderContext } from '../design/placeholders';
-import type { VDTDesignTextBlock } from '../vdt';
-import { buildDocument } from '../pipeline';
-import type { VDTBlock, VDTPage } from '../vdt';
-import type { PostextConfig } from '../types';
+} from '../pipeline/placeholders.js';
+import { resolveDesignPlaceholders, isAllowedPlaceholder, configUsesPlaceholder, type DesignPlaceholderContext } from '../design/placeholders.js';
+import type { VDTDesignTextBlock } from '../vdt.js';
+import { buildDocument } from '../pipeline/index.js';
+import type { VDTBlock, VDTPage } from '../vdt.js';
+import type { PostextConfig } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

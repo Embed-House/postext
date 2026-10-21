@@ -163,6 +163,12 @@ export const metadata = {
       <td><code>'collapse'</code></td>
       <td>المسافة تحت حاوية <code>:::paragraphs</code> التي تُغلق على فقرة، بين تلك الفقرة والكتلة التي تليها (انظر <a href="/ar/docs/configuration-styles#الحاوية-paragraphs">الحاوية <code>:::paragraphs</code></a>). <code>'collapse'</code>: الأكبر من <code>spaceBetween</code> و<code>marginBottom</code> الخاصين بالنمط ومن تباعد الفقرات في النص المحيط بالحاوية (سطر مع <code>paragraphSpacing</code>؛ وفي الإطار، تباعد الإطار)، مدمجًا مع المسافة التي تُبقيها الكتلة التالية فوقها، كما بين فقرتين من النص الجاري: فالعنوان الواقع تحت قائمة مراجع يقع على بُعد <code>marginTop</code> الخاص به تحتها، لا ذلك الهامش مضافًا إليه تباعد المدخلات. <code>'add'</code>: كما حتى postext 1.4، تُوضع مسافة النمط وحدها تحت السطر الأخير قبل المحاذاة إلى الشبكة، وتُضاف تحتها المسافة التي تُبقيها الكتلة التالية فوقها، ويُستبعد تباعد الفقرات، فقد تقع الفقرة التالية للحاوية أقرب إليها من أي فقرة أخرى. والإعدادات المخزَّنة قبل <code>configVersion</code> 8 التي تعرّف نمط فقرة، في كتاب يحوي مثل هذه الحاوية، تُقرأ بـ<code>'add'</code> (انظر <a href="/ar/docs/configuration-bundles#الحزم-التي-كتبها-postext-14-أو-ما-قبله">الحزم التي كتبها postext 1.4 أو ما قبله</a>). والقيمة السالبة لـ<code>marginBottom</code> تسحب الكتلة التالية إلى الأعلى في الحالتين. ويستطيع نمط الفقرة أن يحدّد قاعدته الخاصة لحاوياته (<code>containerSpacing</code>، منذ postext 1.28).</td>
     </tr>
+    <tr>
+      <td><code>paragraphStylesInBoxes</code></td>
+      <td><code>'box' | 'document'</code></td>
+      <td><code>'box'</code></td>
+      <td>ما يأخذه داخل الإطار الخطُّ والحجم والتباعد بين الأسطر والأوزان واللون التي يتركها نمط الفقرة دون تحديد (منذ postext 1.52، ‏#1119). <code>'box'</code>: نص الإطار، فيصلح نمط لا يضبط إلا <code>textAlign</code> لإطار بخط ذي زوائد ولآخر بخط بلا زوائد معًا؛ ويبقى الحقل الذي يضبطه النمط. <code>'document'</code>: نص المستند، كما حتى postext 1.51. والإعداد المحفوظ قبل <code>configVersion</code> 17 الذي يصرّح بنمط فقرة يُقرأ بـ<code>'document'</code> (انظر <a href="/ar/docs/configuration-bundles#الحزم-التي-كتبها-postext-14-أو-ما-قبله">الحزم التي كتبها postext 1.4 أو ما قبله</a>).</td>
+    </tr>
   </tbody>
 </table>
 

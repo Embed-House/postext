@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { dimensionToPx } from '../units';
-import type { PostextConfig } from '../types';
-import type { VDTBlock, VDTLineSegment } from '../vdt';
+import { buildDocument } from '../pipeline/index.js';
+import { dimensionToPx } from '../units.js';
+import type { PostextConfig } from '../types.js';
+import type { VDTBlock, VDTLineSegment } from '../vdt.js';
 
 // EF-148: the contents leader was sized from one dot (`n = room / width of
 // '.'`) and painted as `'.'.repeat(n)`. A face that kerns full stops apart

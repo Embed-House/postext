@@ -4,7 +4,7 @@ import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, PDFStream, PDFSt
 import UPNG from '@pdf-lib/upng';
 import { buildDocument } from 'postext';
 import type { PostextConfig, PrintConfig, Resource } from 'postext';
-import { renderToPdf, type PdfWarning } from '../pdf-backend';
+import { renderToPdf, type PdfWarning } from '../pdf-backend/index.js';
 
 // #603 / #604: colour-managed CMYK, black handling and PDF/X output.
 
@@ -288,7 +288,7 @@ describe('authored CMYK', () => {
 
 describe('inspectPrintMaster', () => {
   it('reports non-embedded fonts, RGB colour and transparency in a placed PDF', async () => {
-    const { inspectPrintMaster } = await import('../print/inspectMaster');
+    const { inspectPrintMaster } = await import('../print/inspectMaster.js');
     const { StandardFonts, rgb, cmyk } = await import('pdf-lib');
     const loose = await PDFDocument.create();
     const page = loose.addPage([200, 200]);

@@ -1,15 +1,15 @@
 import { describe, it, expect, afterEach, beforeAll, afterAll } from 'vitest';
-import { buildDocument } from '../pipeline';
-import { createMeasurementCache } from '../measure';
-import { measureRichBlock } from '../measure/rich';
-import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, normalizeHyphenationExceptions, setHyphenationLocale, setHyphenationRules, type HyphenationRules } from '../hyphenate';
-import { stripConfigDefaults } from '../defaults';
-import { resolveAllConfig } from '../pipeline/config';
-import { citedNames } from '../citations/names';
-import { registerCitationEngine } from '../citations/registry';
-import type { CitationEngine } from '../citations/types';
-import type { InlineSpan } from '../parse';
-import type { PostextConfig, VDTDocument, VDTLine } from '../index';
+import { buildDocument } from '../pipeline/index.js';
+import { createMeasurementCache } from '../measure/index.js';
+import { measureRichBlock } from '../measure/rich.js';
+import { getHyphenationRulesKey, hyphenateByDictionary, hyphenateText, normalizeHyphenationExceptions, setHyphenationLocale, setHyphenationRules, type HyphenationRules } from '../hyphenate.js';
+import { stripConfigDefaults } from '../defaults/index.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { citedNames } from '../citations/names.js';
+import { registerCitationEngine } from '../citations/registry.js';
+import type { CitationEngine } from '../citations/types.js';
+import type { InlineSpan } from '../parse/index.js';
+import type { PostextConfig, VDTDocument, VDTLine } from '../index.js';
 
 // Deterministic text measurement stub (no DOM in the node test env): every
 // printed character, the space included, is 7 px wide.

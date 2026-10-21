@@ -22,7 +22,7 @@
  * same words recur through a book.
  */
 
-import { loadHarfBuzz, type HarfBuzz, type HarfBuzzWasmSource, type HbFontHandle } from './harfbuzz';
+import { loadHarfBuzz, type HarfBuzz, type HarfBuzzWasmSource, type HbFontHandle } from './harfbuzz.js';
 
 let hb: HarfBuzz | undefined;
 let loading: Promise<HarfBuzz> | undefined;

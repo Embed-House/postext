@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import type { PdfFontRequest } from '../fontCache';
-import { renderToPdf } from '../pdf-backend';
-import { collectFontText } from '../pdf-backend/fontHelpers';
+import type { PdfFontRequest } from '../fontCache.js';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { collectFontText } from '../pdf-backend/fontHelpers.js';
 
 // A full-width pair of marks (！！) set in one cell of a vertical balloon is
 // painted with the half-width marks (`!!`, `VerticalGlyph.paintAs`): the

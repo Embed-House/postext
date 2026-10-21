@@ -18,20 +18,20 @@
  * the fragment that holds its first line.
  */
 
-import type { ContentBlock, InlineSpan } from '../parse';
-import type { ResolvedConfig } from '../vdt';
-import type { BlockStyle } from './styles';
-import type { HeadingLevelResolver } from './headingStyles';
-import { dropCapAttr, readDropCap, type DropCapSettings } from '../defaults/dropCap';
-import { buildFontString } from '../measure';
-import { measureInkBox, measureTextWidth, onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas';
-import { fontFamilyOf } from '../measure/vertical';
-import { graphemesOf } from '../measure/graphemes';
-import { hasCJK } from '../measure/cjk';
-import { joinsWithNext } from '../bidi';
-import { dimensionToPx } from '../units';
-import { isMarkerBlock } from './buildHelpers';
-import { uppercasePreservingLength } from './buildBlockKind';
+import type { ContentBlock, InlineSpan } from '../parse/index.js';
+import type { ResolvedConfig } from '../vdt.js';
+import type { BlockStyle } from './styles.js';
+import type { HeadingLevelResolver } from './headingStyles.js';
+import { dropCapAttr, readDropCap, type DropCapSettings } from '../defaults/dropCap.js';
+import { buildFontString } from '../measure/index.js';
+import { measureInkBox, measureTextWidth, onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas.js';
+import { fontFamilyOf } from '../measure/vertical.js';
+import { graphemesOf } from '../measure/graphemes.js';
+import { hasCJK } from '../measure/cjk.js';
+import { joinsWithNext } from '../bidi.js';
+import { dimensionToPx } from '../units.js';
+import { isMarkerBlock } from './buildHelpers.js';
+import { uppercasePreservingLength } from './buildBlockKind.js';
 
 /** `containerAttrs` key of a composed page's story box (`FRAME_ATTR` of
  *  `composed/wrap.ts`). */

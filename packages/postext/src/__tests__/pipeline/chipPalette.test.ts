@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { createMeasurementCache } from '../../measure';
-import type { PostextConfig, VDTDocument, VDTLineSegment } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { PostextConfig, VDTDocument, VDTLineSegment } from '../../index.js';
 
 // EF-87: a section's or a part's palette recolours the chips set on its
 // pages, as it recolours headings, bold runs and callout frames.

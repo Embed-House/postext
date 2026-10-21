@@ -1,5 +1,5 @@
 import type { ArabicNumeralStyle, EastAsianNumeralStyle } from 'postext';
-import type { SandboxLabels } from '../../types/labels';
+import type { SandboxLabels } from '../../types/labels.js';
 
 /** The East Asian numeral styles, as every numbering select lists them
  *  after the Latin ones: the value is the CSS name, which the page-number,

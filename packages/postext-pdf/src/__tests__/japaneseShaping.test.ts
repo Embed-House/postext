@@ -4,10 +4,10 @@ import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFRawStream, PD
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
-import { openTypeLanguagesOf } from '../otLanguages';
-import { shapingKey, shapingLanguage, withDocumentLanguage, withShapingLanguage } from '../shapingLanguage';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
+import { openTypeLanguagesOf } from '../otLanguages.js';
+import { shapingKey, shapingLanguage, withDocumentLanguage, withShapingLanguage } from '../shapingLanguage.js';
 
 // Issue #427: Japanese text is shaped in the OpenType language system
 // `JAN `, so the PDF prints the Japanese forms (`locl`) the canvas and the

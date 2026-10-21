@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { LayoutContinuation, VDTDocument } from 'postext';
-import { layOutBookChain } from './chain';
-import type { ChapterPlan } from './types';
+import { layOutBookChain } from './chain.js';
+import type { ChapterPlan } from './types.js';
 
 /** A plan inheriting `continuation` (only the fields the chain reads). */
 const planOf = (index: number, continuation?: LayoutContinuation): ChapterPlan =>

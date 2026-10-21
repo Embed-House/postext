@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { mapInlineSnippet, parseInlineSnippetSpans } from '../../parse/inlineSnippet';
-import type { PostextConfig, Resource } from '../../types';
-import type { ResolvedResourceBlock, VDTDocument } from '../../vdt';
+import { buildDocument } from '../../pipeline/index.js';
+import { mapInlineSnippet, parseInlineSnippetSpans } from '../../parse/inlineSnippet.js';
+import type { PostextConfig, Resource } from '../../types.js';
+import type { ResolvedResourceBlock, VDTDocument } from '../../vdt.js';
 
 // EF-151: `\$` prints a dollar sign in the body (the maths pass unescapes
 // it), and it did not in table cells, captions and notes, which are not

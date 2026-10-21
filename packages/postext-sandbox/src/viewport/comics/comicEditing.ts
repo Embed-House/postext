@@ -43,14 +43,14 @@
  * `comicDrag.ts`, the source edits in `comicSource.ts`.
  */
 
-import { comicTextFrameAt, sheetToFlow } from '../composed/frameHit';
+import { comicTextFrameAt, sheetToFlow } from '../composed/frameHit.js';
 import type { Dispatch, MutableRefObject } from 'react';
 import { pageComics, type Resource, type VDTComicBalloon, type VDTComicPage, type VDTComicPanel, type VDTComicSplitter, type VDTDocument, type VDTPoint } from 'postext';
-import type { SandboxAction } from '../../context/SandboxContext';
-import type { ComposedBook } from '../../book/types';
-import type { SandboxLabels } from '../../types/labels';
-import type { TextChange } from '../../book/textChanges';
-import { applyViewerEdit } from '../../editor/viewerEdits';
+import type { SandboxAction } from '../../context/SandboxContext.js';
+import type { ComposedBook } from '../../book/types.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import type { TextChange } from '../../book/textChanges.js';
+import { applyViewerEdit } from '../../editor/viewerEdits.js';
 import {
   SPLITTER_HIT_MIN_SCREEN_PX,
   dragSplitter,
@@ -61,12 +61,12 @@ import {
   splitterCursor,
   splitterLine,
   type SplitterPosition,
-} from './comicDrag';
-import { canMergeNext, canSplitPanel } from './comicSource';
-import { comicBySource, comicHitAt, comicPressAt, panelKeyAction, type ArtOpacity, type ComicHit, type ComicPress } from './comicHit';
-import { balloonTextNearest, type TextMeasure } from './balloonText';
-import { documentShapingLanguage } from '../../controls/measureLanguage';
-import { registryArtOpacity } from './artAlpha';
+} from './comicDrag.js';
+import { canMergeNext, canSplitPanel } from './comicSource.js';
+import { comicBySource, comicHitAt, comicPressAt, panelKeyAction, type ArtOpacity, type ComicHit, type ComicPress } from './comicHit.js';
+import { balloonTextNearest, type TextMeasure } from './balloonText.js';
+import { documentShapingLanguage } from '../../controls/measureLanguage.js';
+import { registryArtOpacity } from './artAlpha.js';
 import {
   BALLOON_NUDGE_PERCENT,
   BALLOON_NUDGE_SHIFT_PERCENT,
@@ -82,7 +82,7 @@ import {
   rotateAbout,
   turnAngle,
   type BalloonDropIssues,
-} from './balloonDrag';
+} from './balloonDrag.js';
 import {
   balloonMoveChanges,
   balloonMoveOf,
@@ -99,7 +99,7 @@ import {
   untailChanges,
   type BalloonMove,
   type TailMove,
-} from './comicEdits';
+} from './comicEdits.js';
 
 /** A shape the tools draw over a page (sheet px; `width` and `dash` in
  *  CSS px, whatever the zoom). */

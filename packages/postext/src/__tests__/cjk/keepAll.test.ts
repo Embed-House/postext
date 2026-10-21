@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLine } from '../../vdt';
-import { resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk';
-import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../../defaults/paragraphStyles';
-import { resolveBodyTextConfig } from '../../defaults/bodyText';
-import { cjkCompositionKey, cjkCompositionOf } from '../../measure/cjkPunctuation';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLine } from '../../vdt.js';
+import { resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk.js';
+import { resolveParagraphStylesConfig, stripParagraphStylesDefaults } from '../../defaults/paragraphStyles.js';
+import { resolveBodyTextConfig } from '../../defaults/bodyText.js';
+import { cjkCompositionKey, cjkCompositionOf } from '../../measure/cjkPunctuation.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // `cjk.wordBreak: 'keep-all'` (#463): kana written with a space between
 // phrases (分かち書き) breaks only at the spaces, and next to punctuation

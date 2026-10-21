@@ -20,8 +20,8 @@
  *
  * Pure. Run by `resolvePageTemplate` when it is given the page's modules.
  */
-import type { ConnectorEnd, DesignConnectorElement, ElementPlacement } from '../types';
-import type { ComposedModuleUse, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from './types';
+import type { ConnectorEnd, DesignConnectorElement, ElementPlacement } from '../types.js';
+import type { ComposedModuleUse, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from './types.js';
 
 /** The `role` of a module template. */
 const MODULE = 'module';
@@ -120,6 +120,12 @@ export function expandModules(
       if (f.next !== undefined) {
         if (local.has(f.next)) out.next = scope(f.next);
         else delete out.next;
+      }
+      // The frames a box grows with (#1117) are the module's own.
+      if (Array.isArray(f.growWith)) {
+        const names = f.growWith.filter((n) => local.has(n)).map(scope);
+        if (names.length > 0) out.growWith = names;
+        else delete out.growWith;
       }
       const to = f.overflow.continueIn;
       if (typeof to === 'string' && to.startsWith('#')) {

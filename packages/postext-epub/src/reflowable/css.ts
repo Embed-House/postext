@@ -6,8 +6,8 @@
 
 import type { ColorValue, CornerRadius, Dimension, ResolvedConfig, ResolvedTableStyleConfig } from 'postext';
 import { dimensionToPx, isCornerRadii, primaryFontFamily, resolvedCodeStyle, uniformRadius } from 'postext';
-import { cssString } from '../shared/assets';
-import { idOf, round } from './inline';
+import { cssString } from '../shared/assets.js';
+import { idOf, round } from './inline.js';
 
 /** What the walk found that decides the writing mode of the book. */
 export interface StylesheetOptions {
@@ -145,6 +145,14 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
   };
   const color = (c: ColorValue | undefined, prop = 'color') => (c?.hex && c.hex !== 'transparent' ? `${prop}: ${c.hex}` : undefined);
   const px = (d: Dimension, basePx = bodyPx) => dimensionToPx(d, dpi, basePx);
+  /** `paragraphSpacing` in ems of `basePx` (#1115): `true` is a line of
+   *  `lineHeight`, a length that length, else none. */
+  const spacingEm = (spacing: boolean | Dimension | undefined, lineHeight: Dimension, basePx = bodyPx): number => {
+    if (spacing === true) return round(px(lineHeight, basePx) / basePx);
+    if (!spacing || typeof spacing !== 'object') return 0;
+    const d = px(spacing, basePx);
+    return Number.isFinite(d) && d > 0 ? round(d / basePx) : 0;
+  };
   // Right to left (#402): the content documents declare it (`dir` on the
   // root, as EPUB asks, rather than the CSS `direction`); the rules use
   // logical sides (`margin-inline-start`, `text-align: start`), so they
@@ -182,12 +190,13 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
   ]));
   const indent = px(body.firstLineIndent);
   const ratio = round(dimensionToPx(body.lineHeight, dpi, bodyPx) / bodyPx);
+  const spacing = spacingEm(body.paragraphSpacing, body.lineHeight);
   out.push(rule('p', [
     'margin: 0',
-    !body.paragraphSpacing && indent > 0 && `text-indent: ${round(indent / bodyPx)}em`,
-    body.paragraphSpacing && `margin-block-end: ${ratio}em`,
+    spacing === 0 && indent > 0 && `text-indent: ${round(indent / bodyPx)}em`,
+    spacing > 0 && `margin-block-end: ${spacing}em`,
   ]));
-  if (!body.paragraphSpacing && indent > 0) {
+  if (spacing === 0 && indent > 0) {
     // The first paragraph after a heading, a list, a figure… is not
     // indented (unless the book indents after headings).
     const after = ['ul', 'ol', 'blockquote', 'figure', 'div', 'aside', 'nav', 'section > p:first-child'];
@@ -517,7 +526,7 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
     ]));
     out.push(rule(under('p'), [
       `text-indent: ${round(px(s.body.firstLineIndent, bPx) / bPx)}em`,
-      s.body.paragraphSpacing && `margin-block-end: ${round(px(s.body.lineHeight, bPx) / bPx)}em`,
+      spacingEm(s.body.paragraphSpacing, s.body.lineHeight, bPx) > 0 && `margin-block-end: ${spacingEm(s.body.paragraphSpacing, s.body.lineHeight, bPx)}em`,
       lh(s.body.lineHeight, bPx),
     ]));
     const t = s.titleStyle;

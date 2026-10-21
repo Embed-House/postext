@@ -1,13 +1,13 @@
-import type { VDTLineSegment } from '../vdt';
-import type { MarkCutRule } from '../measure/markCuts';
-import { hasCJK } from '../measure/cjk';
-import { segmentOrientation } from '../writingMode';
-import { fillFlowText, verticalPaintActive } from './verticalText';
-import { fillTrackedWord } from './trackedText';
-import { inSegmentLanguage } from './wordRuns';
-import { letterSpacingOf, restoreContext, saveContext } from './contextState';
-import { fillContextText } from './contextText';
-import { fillCellRuns } from './cellText';
+import type { VDTLineSegment } from '../vdt.js';
+import type { MarkCutRule } from '../measure/markCuts.js';
+import { hasCJK } from '../measure/cjk.js';
+import { segmentOrientation } from '../writingMode.js';
+import { fillFlowText, verticalPaintActive } from './verticalText.js';
+import { fillTrackedWord } from './trackedText.js';
+import { inSegmentLanguage } from './wordRuns.js';
+import { letterSpacingOf, restoreContext, saveContext } from './contextState.js';
+import { fillContextText } from './contextText.js';
+import { fillCellRuns } from './cellText.js';
 
 /**
  * Paint `text` of a line set word by word (not `VDTLine.cjkComposed`) on

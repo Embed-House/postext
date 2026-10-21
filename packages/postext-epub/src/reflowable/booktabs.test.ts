@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { renderToEpub } from '..';
-import { buildReflowablePublication } from '.';
-import { booktabsSampleBook } from '../__tests__/sampleBook';
+import { renderToEpub } from '../index.js';
+import { buildReflowablePublication } from './index.js';
+import { booktabsSampleBook } from '../__tests__/sampleBook.js';
 
 // Journal tables (#625): booktabs rules in the reflowable stylesheet, a
 // named table style as a class.

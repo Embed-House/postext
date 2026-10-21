@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../index';
-import { parseMarkdown } from '../../parse';
-import { stripAnnotations } from '../../parse/annotations';
-import { plainSpans } from '../../parse/inlineFormatting';
-import { resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk';
-import { createMeasurementCache } from '../../measure';
-import type { InlineSpan } from '../../parse';
-import type { PostextConfig } from '../../types';
-import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt';
-import { installSizedStub } from '../vertical/stub';
+import { buildDocument } from '../../index.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { stripAnnotations } from '../../parse/annotations.js';
+import { plainSpans } from '../../parse/inlineFormatting.js';
+import { resolveCjkConfig, stripCjkDefaults } from '../../defaults/cjk.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import type { InlineSpan } from '../../parse/index.js';
+import type { PostextConfig } from '../../types.js';
+import type { VDTDocument, VDTLine, VDTLineSegment } from '../../vdt.js';
+import { installSizedStub } from '../vertical/stub.js';
 
 // Kanbun reading marks (訓点, `:kunten[字]{kaeri okuri tate}`, #430): the
 // 返り点 after their character in the foot half of the line (JIS X 4051

@@ -15,9 +15,9 @@ import {
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
-import { buildXmp } from '../pdf-backend/tagging';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { buildXmp } from '../pdf-backend/tagging.js';
+import { parseFontString } from '../fontString.js';
 
 const fontBytes = fs.readFileSync(new URL('../../../../apps/web/public/fonts/Lora-Regular.ttf', import.meta.url));
 const fontProvider = async () => new Uint8Array(fontBytes);

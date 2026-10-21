@@ -2,8 +2,8 @@
 
 import type { ReactElement, ReactNode } from 'react';
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
-import { usePortalContainer } from './portal';
-import { POPUP_SURFACE, TOOLTIP_Z_INDEX } from './surface';
+import { usePortalContainer } from './portal.js';
+import { POPUP_SURFACE, TOOLTIP_Z_INDEX } from './surface.js';
 
 /** `inline-start` / `inline-end` follow the interface's direction. */
 export type TooltipSide = 'top' | 'right' | 'bottom' | 'left' | 'inline-start' | 'inline-end';

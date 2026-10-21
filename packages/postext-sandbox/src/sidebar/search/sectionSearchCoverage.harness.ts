@@ -12,19 +12,19 @@ import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { PostextConfig, Resource } from 'postext';
-import { SandboxStoreContext } from '../../context/SandboxContext';
-import { createDefaultConfig } from '../../context/defaultConfig';
-import { createPostextGuideConfig } from '../../context/guideConfig';
-import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import type { SandboxLabels } from '../../types/labels';
-import { SECTION_COMPONENTS } from '../sections/components';
-import type { SettingsSectionId } from '../sections/registry';
-import { sectionHasOverrides } from '../sections/sectionOverrides';
-import { SettingsSearchContext, type SettingsSearchState } from './SearchContext';
-import { MatchScopeProvider } from './MatchScope';
-import { buildSectionSearchIndex } from './sectionIndex';
-import { matchesTokens } from './normalize';
-import { harvest } from './searchHarvest';
+import { SandboxStoreContext } from '../../context/SandboxContext.js';
+import { createDefaultConfig } from '../../context/defaultConfig.js';
+import { createPostextGuideConfig } from '../../context/guideConfig.js';
+import { DEFAULT_LABELS } from '../../types/defaultLabels.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import { SECTION_COMPONENTS } from '../sections/components.js';
+import type { SettingsSectionId } from '../sections/registry.js';
+import { sectionHasOverrides } from '../sections/sectionOverrides.js';
+import { SettingsSearchContext, type SettingsSearchState } from './SearchContext.js';
+import { MatchScopeProvider } from './MatchScope.js';
+import { buildSectionSearchIndex } from './sectionIndex.js';
+import { matchesTokens } from './normalize.js';
+import { harvest } from './searchHarvest.js';
 
 // Loaded through dynamic imports (the package has no Node typings).
 const load = async <T>(path: string): Promise<T> =>

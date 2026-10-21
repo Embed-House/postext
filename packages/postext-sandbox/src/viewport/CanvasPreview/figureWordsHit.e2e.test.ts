@@ -5,8 +5,8 @@
 import { describe, expect, it } from 'vitest';
 import { buildDocument } from 'postext';
 import type { PostextContent, Resource } from 'postext';
-import { resourceBlocksOnPage } from './geometry';
-import { figureWordsSource, resourceTextAtPixel } from './resourceHit';
+import { resourceBlocksOnPage } from './geometry.js';
+import { figureWordsSource, resourceTextAtPixel } from './resourceHit.js';
 
 class StubCtx {
   font = '';

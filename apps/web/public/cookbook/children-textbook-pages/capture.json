@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "9ba737e20fbf9524ac7438db79d235d3e623c2c4abd2861a1f070257ed973b9b",
+  "sourceHash": "54b5144b4ec95ac95c599ee788343ed96654392d0b407fe73a326ef279e3c5a2",
   "engine": {
-    "postext": "1.48.1",
-    "postextPdf": "1.48.1",
+    "postext": "1.48.0",
+    "postextPdf": "1.48.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-21T03:47:30.926Z",
+  "capturedAt": "2026-10-21T18:29:32.290Z",
   "variants": {
     "en": {
-      "hash8": "24ab87f5",
+      "hash8": "3704107c",
       "vdtHash": "fae03d32b06e40bc17dad1fdd761184265e74696",
       "timings": {
-        "importMs": 6725,
-        "fontsMs": 828,
-        "buildMs": 38,
-        "totalMs": 9424,
+        "importMs": 751,
+        "fontsMs": 169,
+        "buildMs": 32,
+        "totalMs": 1719,
         "builds": 2
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -104,7 +104,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 208710,
+          "bytes": 208816,
           "alt": "Page 6: From the mountains to the sea."
         },
         {
@@ -115,7 +115,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 164022,
+          "bytes": 163654,
           "alt": "Page 7."
         },
         {
@@ -177,12 +177,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732870,
+        "bytes": 1731651,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100863,
+        "bytes": 2100361,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -469,8 +469,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 768,
-        "designElements": 18,
+        "configLeaves": 720,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -562,11 +562,6 @@
             "detail": "every element came back to its source: 61 block, 40 frame, 6 label, 104 line, 1 text"
           },
           {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
-          },
-          {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
@@ -575,13 +570,13 @@
       }
     },
     "es": {
-      "hash8": "36eafb2e",
+      "hash8": "2b647b49",
       "vdtHash": "91bec0362f1d6d7e1f289c28d9fe106ca096e678",
       "timings": {
-        "importMs": 6832,
-        "fontsMs": 823,
-        "buildMs": 38,
-        "totalMs": 9427,
+        "importMs": 754,
+        "fontsMs": 164,
+        "buildMs": 33,
+        "totalMs": 1719,
         "builds": 2
       },
       "specimen": {
@@ -602,7 +597,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -668,7 +663,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 206868,
+          "bytes": 206946,
           "alt": "Página 6: De la montaña al mar."
         },
         {
@@ -679,7 +674,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 163206,
+          "bytes": 162710,
           "alt": "Página 7."
         },
         {
@@ -741,12 +736,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1733916,
+        "bytes": 1732696,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100767,
+        "bytes": 2100212,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1033,8 +1028,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 768,
-        "designElements": 18,
+        "configLeaves": 720,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -1134,13 +1129,13 @@
       }
     },
     "ca": {
-      "hash8": "9986a88f",
+      "hash8": "fb4c7a38",
       "vdtHash": "b5aa30b769fbba04a10ef6eea708937e3559d8d3",
       "timings": {
-        "importMs": 3512,
-        "fontsMs": 326,
-        "buildMs": 34,
-        "totalMs": 5611,
+        "importMs": 751,
+        "fontsMs": 166,
+        "buildMs": 32,
+        "totalMs": 1721,
         "builds": 2
       },
       "specimen": {
@@ -1161,7 +1156,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -1227,7 +1222,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 206388,
+          "bytes": 206952,
           "alt": "Pàgina 6: De la muntanya al mar."
         },
         {
@@ -1238,7 +1233,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 162672,
+          "bytes": 162338,
           "alt": "Pàgina 7."
         },
         {
@@ -1300,12 +1295,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1733580,
+        "bytes": 1732363,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100772,
+        "bytes": 2100302,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1592,8 +1587,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 768,
-        "designElements": 18,
+        "configLeaves": 720,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -1683,13 +1678,13 @@
       }
     },
     "zh": {
-      "hash8": "08eafa24",
+      "hash8": "902d143e",
       "vdtHash": "a184f481f8f19bd942ca30f6c6901746789866cb",
       "timings": {
-        "importMs": 2553,
-        "fontsMs": 4924,
-        "buildMs": 138,
-        "totalMs": 8964,
+        "importMs": 549,
+        "fontsMs": 342,
+        "buildMs": 96,
+        "totalMs": 1653,
         "builds": 1
       },
       "specimen": {
@@ -1710,7 +1705,7 @@
           "ZCOOL KuaiLe"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -1855,7 +1850,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2106734,
+        "bytes": 2106728,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -2143,7 +2138,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 754,
+        "configLeaves": 748,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -2227,23 +2222,18 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.10 MB: state 1.1 MB"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "fb5a9ff2",
+      "hash8": "4335b60f",
       "vdtHash": "337d795aabdf191d67b1b6b317304f3c5b44f89e",
       "timings": {
-        "importMs": 4118,
-        "fontsMs": 939,
-        "buildMs": 130,
-        "totalMs": 6657,
+        "importMs": 601,
+        "fontsMs": 169,
+        "buildMs": 123,
+        "totalMs": 1613,
         "builds": 1
       },
       "specimen": {
@@ -2264,7 +2254,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -2330,7 +2320,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 198318,
+          "bytes": 198100,
           "alt": "الصفحة ٦: من الجبل إلى البحر."
         },
         {
@@ -2341,7 +2331,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 157812,
+          "bytes": 157334,
           "alt": "الصفحة ٧."
         },
         {
@@ -2404,12 +2394,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1770684,
+        "bytes": 1769339,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2108297,
+        "bytes": 2107974,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -2696,8 +2686,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 768,
-        "designElements": 18,
+        "configLeaves": 720,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -2790,13 +2780,13 @@
       }
     },
     "ja": {
-      "hash8": "5b677eba",
+      "hash8": "c1d9ddd7",
       "vdtHash": "17c52dad070b64a6fa01af9d62884bfcf175a0fb",
       "timings": {
-        "importMs": 2566,
-        "fontsMs": 4667,
-        "buildMs": 130,
-        "totalMs": 8736,
+        "importMs": 300,
+        "fontsMs": 325,
+        "buildMs": 108,
+        "totalMs": 1344,
         "builds": 1
       },
       "specimen": {
@@ -2817,7 +2807,7 @@
           "Zen Maru Gothic"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -2962,7 +2952,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2107551,
+        "bytes": 2107543,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -3253,7 +3243,7 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 754,
+        "configLeaves": 748,
         "designElements": 15,
         "directives": [
           "::::page",
@@ -3344,23 +3334,18 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.12 MB: state 1.15 MB"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "77ed110d",
+      "hash8": "bced1da8",
       "vdtHash": "8ec86d48414bc40a36359763872e81163075375e",
       "timings": {
-        "importMs": 3611,
-        "fontsMs": 245,
-        "buildMs": 33,
-        "totalMs": 5438,
+        "importMs": 373,
+        "fontsMs": 373,
+        "buildMs": 31,
+        "totalMs": 1518,
         "builds": 2
       },
       "specimen": {
@@ -3381,7 +3366,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -3447,7 +3432,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 207106,
+          "bytes": 207452,
           "alt": "Página 6: Da montanha ao mar."
         },
         {
@@ -3458,7 +3443,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 166264,
+          "bytes": 164050,
           "alt": "Página 7."
         },
         {
@@ -3520,12 +3505,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1733278,
+        "bytes": 1732068,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100840,
+        "bytes": 2100335,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -3812,8 +3797,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 768,
-        "designElements": 18,
+        "configLeaves": 720,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -3913,13 +3898,13 @@
       }
     },
     "fr": {
-      "hash8": "1c2d5099",
+      "hash8": "ec310f2e",
       "vdtHash": "14504815c39a41dda92794b93618057079c54ce3",
       "timings": {
-        "importMs": 3921,
-        "fontsMs": 371,
-        "buildMs": 37,
-        "totalMs": 6418,
+        "importMs": 597,
+        "fontsMs": 125,
+        "buildMs": 34,
+        "totalMs": 1542,
         "builds": 2
       },
       "specimen": {
@@ -3940,7 +3925,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -4006,7 +3991,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 208752,
+          "bytes": 208756,
           "alt": "Page 6 : De la montagne à la mer."
         },
         {
@@ -4017,7 +4002,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 169798,
+          "bytes": 167292,
           "alt": "Page 7."
         },
         {
@@ -4079,12 +4064,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1734590,
+        "bytes": 1733370,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2101651,
+        "bytes": 2101171,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -4371,8 +4356,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 768,
-        "designElements": 18,
+        "configLeaves": 720,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -4477,13 +4462,13 @@
       }
     },
     "de": {
-      "hash8": "c1765db0",
+      "hash8": "185af102",
       "vdtHash": "8a91fd6d3cd0731750545bba60e30c3b71b7e27f",
       "timings": {
-        "importMs": 3912,
-        "fontsMs": 697,
-        "buildMs": 34,
-        "totalMs": 6077,
+        "importMs": 598,
+        "fontsMs": 124,
+        "buildMs": 31,
+        "totalMs": 1458,
         "builds": 2
       },
       "specimen": {
@@ -4504,7 +4489,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -4570,7 +4555,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 209854,
+          "bytes": 209746,
           "alt": "Seite 6: Von den Bergen bis zum Meer."
         },
         {
@@ -4581,7 +4566,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 167290,
+          "bytes": 164878,
           "alt": "Seite 7."
         },
         {
@@ -4643,12 +4628,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1735190,
+        "bytes": 1733978,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2101483,
+        "bytes": 2100949,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -4935,8 +4920,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 768,
-        "designElements": 18,
+        "configLeaves": 720,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",
@@ -5041,13 +5026,13 @@
       }
     },
     "it": {
-      "hash8": "f4edc502",
+      "hash8": "31d4427a",
       "vdtHash": "37172b606872ee63c6875fcb61be6a378d3b4a7f",
       "timings": {
-        "importMs": 3481,
-        "fontsMs": 1899,
-        "buildMs": 38,
-        "totalMs": 6968,
+        "importMs": 472,
+        "fontsMs": 360,
+        "buildMs": 35,
+        "totalMs": 1616,
         "builds": 2
       },
       "specimen": {
@@ -5068,7 +5053,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 298
+        "ownLines": 296
       },
       "pages": [
         {
@@ -5134,7 +5119,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 206896,
+          "bytes": 206922,
           "alt": "Pagina 6: Dalla montagna al mare."
         },
         {
@@ -5145,7 +5130,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 164900,
+          "bytes": 164544,
           "alt": "Pagina 7."
         },
         {
@@ -5207,12 +5192,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732597,
+        "bytes": 1731384,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100891,
+        "bytes": 2100417,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -5499,8 +5484,8 @@
           "toc",
           "unorderedLists"
         ],
-        "configLeaves": 768,
-        "designElements": 18,
+        "configLeaves": 720,
+        "designElements": 15,
         "directives": [
           "::::page",
           ":::frame",

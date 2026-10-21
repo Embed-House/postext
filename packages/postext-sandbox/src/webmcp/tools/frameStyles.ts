@@ -1,12 +1,12 @@
-import type { SandboxState } from '../../context/SandboxContext';
-import { bookCompareOptions, frameStyleLibrary } from '../../frameStyles/library';
-import { stylesAfterMerging, type CompareOptions } from '../../frameStyles/styleCompare';
-import { placesToKeep, planMerges, type MergeGroup } from '../../frameStyles/styleMerge';
-import { applyStyleRewrite } from '../../frameStyles/applyRewrite';
-import type { UsageChapter } from '../../frameStyles/styleUsage';
-import type { SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { layoutAnswer } from './book';
+import type { SandboxState } from '../../context/SandboxContext.js';
+import { bookCompareOptions, frameStyleLibrary } from '../../frameStyles/library.js';
+import { stylesAfterMerging, type CompareOptions } from '../../frameStyles/styleCompare.js';
+import { placesToKeep, planMerges, type MergeGroup } from '../../frameStyles/styleMerge.js';
+import { applyStyleRewrite } from '../../frameStyles/applyRewrite.js';
+import type { UsageChapter } from '../../frameStyles/styleUsage.js';
+import type { SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { layoutAnswer } from './book.js';
 
 /** The chapters with the text each holds now (the one in the editor from
  *  the editor's text). */

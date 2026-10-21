@@ -7,9 +7,9 @@ import type {
   ResolvedPrintBlackConfig,
   ResolvedPrintConfig,
   ResolvedPrintPreflightConfig,
-} from '../types';
-import { DEFAULT_OUTPUT_PROFILE_ID, outputProfileInfo } from '../color/catalogue';
-import { dimensionsEqual } from './shared';
+} from '../types.js';
+import { DEFAULT_OUTPUT_PROFILE_ID, outputProfileInfo } from '../color/catalogue.js';
+import { dimensionsEqual } from './shared.js';
 
 export const DEFAULT_RICH_BLACK: CmykPercent = { c: 60, m: 40, y: 40, k: 100 };
 

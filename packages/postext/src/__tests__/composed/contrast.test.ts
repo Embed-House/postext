@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { contrastDocument, contrastPairs } from '../../contrast';
-import type { PostextConfig } from '../../types';
-import type { FrameConfig } from '../../composed/types';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { contrastDocument, contrastPairs } from '../../contrast.js';
+import type { PostextConfig } from '../../types.js';
+import type { FrameConfig } from '../../composed/types.js';
 
 class StubCtx {
   font = '';
@@ -16,7 +16,7 @@ class StubCtx {
     return new StubCtx();
   }
 };
-import { PAGE8_CONFIG, PAGE8_RESOURCES, page8Fixture } from './fixtures/page8';
+import { PAGE8_CONFIG, PAGE8_RESOURCES, page8Fixture } from './fixtures/page8.js';
 
 // The contrast check on a composed page (#908): frame text is read on what
 // is painted under it, in the page's paint order — the frame's own box, the

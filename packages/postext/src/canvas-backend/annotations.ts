@@ -9,10 +9,10 @@
  * sideways).
  */
 
-import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineMark, VDTLineSegment, VDTRuby, VDTWarichu } from '../vdt';
-import { fillFlowText, verticalPaintActive, type TextPaintMode } from './verticalText';
-import type { MarkCutRule } from '../measure/markCuts';
-import { restoreContext, saveContext, setLetterSpacing } from './contextState';
+import type { VDTAnnotationRun, VDTKunten, VDTLine, VDTLineMark, VDTLineSegment, VDTRuby, VDTWarichu } from '../vdt.js';
+import { fillFlowText, verticalPaintActive, type TextPaintMode } from './verticalText.js';
+import type { MarkCutRule } from '../measure/markCuts.js';
+import { restoreContext, saveContext, setLetterSpacing } from './contextState.js';
 
 type Ctx = CanvasRenderingContext2D;
 

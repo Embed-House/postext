@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { VDTComicArt, VDTComicBalloon, VDTComicPage, VDTComicPanel, VDTDesignTextBlock } from 'postext';
-import { comicArtAt, comicPressAt, type ArtOpacity } from './comicHit';
+import { comicArtAt, comicPressAt, type ArtOpacity } from './comicHit.js';
 
 const art = (resourceId: string, box: VDTComicArt['box']): VDTComicArt => ({
   resourceId,

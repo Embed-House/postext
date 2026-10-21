@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { createLayout } from "../createLayout";
-import { createLayout as createReactLayout } from "../react";
-import type { PostextContent, PostextConfig } from "../types";
+import { createLayout } from "../createLayout.js";
+import { createLayout as createReactLayout } from "../react/index.js";
+import type { PostextContent, PostextConfig } from "../types.js";
 
 describe("createLayout", () => {
   const minimalContent: PostextContent = {

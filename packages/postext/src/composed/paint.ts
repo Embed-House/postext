@@ -6,7 +6,7 @@
  * clipped to the page's share of the sheet. Shared by canvas, PDF and HTML
  * so the three agree.
  */
-import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComicPage, type VDTComposedPage, type VDTDesignBlock, type VDTDesignSlot, type VDTFrame, type VDTPage } from '../vdt';
+import { flowRectToPage, pageRectToFlow, pageToFlow, type VDTBlock, type VDTComicPage, type VDTComposedPage, type VDTDesignBlock, type VDTDesignSlot, type VDTFrame, type VDTPage } from '../vdt.js';
 
 /** One step of a composed page's paint order. */
 export type ComposedPaintItem =

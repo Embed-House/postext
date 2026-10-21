@@ -11,12 +11,12 @@
  */
 
 import { useSyncExternalStore, type Dispatch } from 'react';
-import type { SandboxAction, SandboxState } from '../context/SandboxContext';
-import type { TemplateScope } from './templateEdits';
-import type { ConnectorPickPhase } from './connectorEdits';
-import { editModeNow, onEditModeChange, selectedFrameNow, setEditMode } from '../editing/editMode';
-import { selectionTemplates } from '../selection/selectionStore';
-import { templateFrameOf } from './instanceNames';
+import type { SandboxAction, SandboxState } from '../context/SandboxContext.js';
+import type { TemplateScope } from './templateEdits.js';
+import type { ConnectorPickPhase } from './connectorEdits.js';
+import { editModeNow, onEditModeChange, selectedFrameNow, setEditMode } from '../editing/editMode.js';
+import { selectionTemplates } from '../selection/selectionStore.js';
+import { templateFrameOf } from './instanceNames.js';
 
 export interface TemplateEditorSelection {
   templateId: string;

@@ -12,7 +12,7 @@
  * marks into span fields once the spans exist ({@link applyOrientationMarks}).
  */
 
-import type { InlineSpan } from './types';
+import type { InlineSpan } from './types.js';
 
 /** The openers of `:tcy[…]`, `:upright[…]` and `:sideways[…]` (one line,
  *  not empty, other inline marks allowed inside, `\]` for a literal

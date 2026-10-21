@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { collectContentWarnings } from 'postext';
-import { DEFAULT_LABELS } from '../types';
-import { detailFor, titleFor } from '../sidebar/WarningsPanel';
-import { isComposedCheckKind } from './composedChecks';
-import type { WarningPayload } from './types';
+import { DEFAULT_LABELS } from '../types/index.js';
+import { detailFor, titleFor } from '../sidebar/WarningsPanel.js';
+import { isComposedCheckKind } from './composedChecks.js';
+import type { WarningPayload } from './types.js';
 
 // The checks of modules (#1062) in the Checks panel (#1065): composed
 // checks with a title and a detail in the panel's words.

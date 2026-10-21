@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline';
-import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from '../../pipeline/columnsGroup';
-import { wrapFlowColumns, FLOW_COLUMNS_STYLE_ID, FLOW_COLUMNS_PAGE_STYLE_ID } from '../../pipeline/flowColumns';
-import { parseMarkdown } from '../../parse';
-import { computeOutlineFor, outlineFromDoc } from '../../pipeline/outline';
-import type { PostextConfig, VDTBlock, VDTDocument } from '../../index';
+import { buildDocument } from '../../pipeline/index.js';
+import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from '../../pipeline/columnsGroup.js';
+import { wrapFlowColumns, FLOW_COLUMNS_STYLE_ID, FLOW_COLUMNS_PAGE_STYLE_ID } from '../../pipeline/flowColumns.js';
+import { parseMarkdown } from '../../parse/index.js';
+import { computeOutlineFor, outlineFromDoc } from '../../pipeline/outline.js';
+import type { PostextConfig, VDTBlock, VDTDocument } from '../../index.js';
 
 // `:::columns` in the running text, and groups that split (#634).
 

@@ -6,8 +6,8 @@ import { execFileSync } from 'node:child_process';
 import { buildDocument } from 'postext';
 import type { PostextConfig, VDTDocument } from 'postext';
 import fontkit from '@pdf-lib/fontkit';
-import { renderToPdf } from '../pdf-backend';
-import { parseFontString } from '../fontString';
+import { renderToPdf } from '../pdf-backend/index.js';
+import { parseFontString } from '../fontString.js';
 
 // postext #664: the marker of a right-to-left list item reads in its
 // item's direction in the PDF, as on the canvas and in HTML: `1-` with the

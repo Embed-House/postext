@@ -5,7 +5,7 @@
  * export. Entries become CSL-JSON items.
  */
 
-import type { CslDate, CslItem, CslName } from './types';
+import type { CslDate, CslItem, CslName } from './types.js';
 
 const TYPES: Readonly<Record<string, string>> = {
   article: 'article-journal',

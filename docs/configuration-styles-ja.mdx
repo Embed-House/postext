@@ -304,6 +304,8 @@ paragraphStyles: [
 
 `:::callout`の中でも、コンテナーはスタイルの上下のアキを同じように取ります。`marginTop`と`marginBottom`は前後のブロックのアキと相殺され（負の値は前後を近づけます）、囲みの先頭にあるコンテナーは、段の頭と同じく上のアキを取りません。囲みには戻る先のベースライングリッドがないため、最後の段落の下のアキは、`marginBottom`、`spaceBetween`、囲み自身の段落間のアキ（その`body.paragraphSpacing`、つまり囲みのテキスト1行分。`paragraphContainerSpacing: 'add'`では含まれません）のうち最も大きいもの、または次のブロック自身の上のアキのほうがさらに大きければそれになります。負の`marginBottom`は、代わりに次のブロックを引き上げます（postext 1.4までは、囲みの中のコンテナーはどちらのアキも無視していました）。
 
+囲みの中では、スタイルが指定していない文字組みの項目を囲みから取ります（postext 1.52 から）。スタイルが本文に任せた書体・サイズ・行送り・ウェイト・色は囲みの本文のものになるので、`textAlign: 'center'`だけを指定したスタイルの`:::paragraphs{style="centred"}`は、ある囲みではゴシックで、別の囲みでは明朝で組まれます。スタイルが指定した項目はそのままです。`bodyText.paragraphStylesInBoxes: 'document'`にすると、postext 1.51 までと同じく文書の本文から取ります。
+
 ```ts
 const resolved = resolveParagraphStylesConfig(config.paragraphStyles, resolvedBodyText);
 // => every unset field filled from the resolved body text
@@ -472,7 +474,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## ハイライトのスタイル
 
-`markStyles`プロパティは、インラインの`:mark[テキスト]{style="…"}`の名前付きスタイルを宣言します。教科書がキーワードに線を引くように語句の後ろに敷く色の帯です（構文と改行の規則は文書形式のリファレンスにあります）。既定では`mark`というスタイルが1つあります（語句から少しはみ出す淡い黄色の帯で、両端はわずかに丸く、文字は自分の色のまま）。そのため設定なしで`:mark[…]`が使えます。`markStyles`を宣言すると、この既定のリストを置き換えます。`style`のないマーク、またはどのスタイルにも宣言されていないidのマークは、最初のスタイルになります（Sandboxは不明なidを警告します）。
+`markStyles`プロパティは、インラインの`:mark[テキスト]{style="…"}`の名前付きスタイルを宣言します。教科書がキーワードに線を引くように語句の後ろに敷く色の帯です（構文と改行の規則は文書形式のリファレンスにあります）。既定では`mark`というスタイルが1つあります（語句から少しはみ出す淡い黄色の帯で、両端は角のまま、文字は自分の色のまま）。そのため設定なしで`:mark[…]`が使えます。`markStyles`を宣言すると、この既定のリストを置き換えます。`style`のないマーク、またはどのスタイルにも宣言されていないidのマークは、最初のスタイルになります（Sandboxは不明なidを警告します）。
 
 ```ts
 const config: PostextConfig = {
@@ -531,8 +533,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>帯の両端の角の半径です。帯の高さの半分までに制限されます。</td>
+      <td><code>0</code></td>
+      <td>帯の両端の角の半径です。帯の高さの半分までに制限されます。 角のままの端が印刷の標準です。postext 1.51 までの既定値は <code>0.2em</code> でした。その頃に保存され、本文にマークがある設定は、半径を指定していない各スタイルに <code>0.2em</code> を書き込んで読み込まれます。</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -551,6 +553,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>上と下の内側余白です。それぞれ<code>paddingY</code>の代わりになります。</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>語句が次の行に送られたときの帯の切り方（CSS の <code>box-decoration-break</code> と同じ）。<code>'slice'</code>：一本の帯として改行位置で角を立てて切り、余白と丸い角は語句の本当の始まりと終わりにだけ付く。<code>'clone'</code>：各行の部分にそれぞれ完全な帯を付け、両端に <code>paddingX</code> と丸い角を付ける。行ごとに切った色帯の上に組む見出しに使う。どちらでも組版は変わらない。</td>
     </tr>
   </tbody>
 </table>

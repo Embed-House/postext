@@ -2,18 +2,18 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Trash2 } from 'lucide-react';
-import { DEFAULT_CALLOUT_STYLES, type AnchorEdge, type ColorValue, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
-import { useSandboxActiveProjectId, useSandboxDocRef, useSandboxEditionActions, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext';
-import { applyViewerEdit } from '../../../editor/viewerEdits';
-import { useFrameDrag } from '../../../selection/frameDrag';
-import { ColorPicker, DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls';
-import { Button, ConfirmPopover } from '../../../ui';
-import { frameEntry, frameFamily, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits';
-import { resolveAt, usePageTemplates } from './model';
-import { useBookTexts } from '../../../frameStyles/useBookTexts';
-import { pageFenceIds, renameSlotChanges } from '../../../templates/templateUsage';
-import { resolveBookStyles } from '../../../frameStyles/library';
-import { FramePointers } from './FramePointers';
+import { DEFAULT_CALLOUT_STYLES, growMembers, type AnchorEdge, type ColorValue, type Dimension, type ElementPlacement, type FrameConfig, type FrameSize } from 'postext';
+import { useSandboxActiveProjectId, useSandboxDocRef, useSandboxEditionActions, useSandboxLabels, useSandboxSelector } from '../../../context/SandboxContext.js';
+import { applyViewerEdit } from '../../../editor/viewerEdits.js';
+import { useFrameDrag } from '../../../selection/frameDrag.js';
+import { ColorPicker, DimensionInput, FieldGroup, FieldRow, NumberInput, SelectInput, TextControl, ToggleSwitch } from '../../../controls/index.js';
+import { Button, ConfirmPopover } from '../../../ui/index.js';
+import { frameEntry, frameFamily, removeFrame, renameFrame, namesInUse, slugify, updateFrame, type TemplateScope } from '../../../templates/templateEdits.js';
+import { resolveAt, usePageTemplates } from './model.js';
+import { useBookTexts } from '../../../frameStyles/useBookTexts.js';
+import { pageFenceIds, renameSlotChanges } from '../../../templates/templateUsage.js';
+import { resolveBookStyles } from '../../../frameStyles/library.js';
+import { FramePointers } from './FramePointers.js';
 
 const MM0: Dimension = { value: 0, unit: 'mm' };
 const NINE_POINT: AnchorEdge[] = ['top-left', 'top', 'top-right', 'left', 'center', 'right', 'bottom-left', 'bottom', 'bottom-right'];
@@ -217,6 +217,19 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
     <DimensionInput label={label} value={frame[k] ?? MM0} onChange={(d) => set({ [k]: d })} isDefault={!has(k)} onReset={reset(k)} tooltip={labels.pageTemplatesLimitTooltip} />
   );
 
+  // What the frame grows with (#1117): as the scope writes it (an empty
+  // list is still a list being chosen), else as it inherits it.
+  const growValue = (entry?.growWith as FrameConfig['growWith'] | undefined) ?? frame.growWith;
+  const growMode = growValue === 'children' ? 'children' : Array.isArray(growValue) ? 'list' : 'none';
+  const growList = Array.isArray(growValue) ? growValue : [];
+  /** The list a choice of names starts from: the frames anchored inside
+   *  it, else the first other frame (a list holds a name at least). */
+  const growSeed = (): string[] => {
+    const inside = growMembers(template, { ...frame, growWith: 'children' });
+    const names = [...inside.frames, ...inside.groups];
+    return names.length > 0 ? names : others.slice(0, 1);
+  };
+
   const fit = frame.fit;
   const overflow = frame.overflow;
   const continueIn = overflow.continueIn ?? '';
@@ -322,6 +335,43 @@ export function FrameProperties({ templateId, scope, name, onRenamed, onRemoved 
         {limit('maxWidth', labels.pageTemplatesMaxWidth)}
         {limit('minHeight', labels.pageTemplatesMinHeight)}
         {limit('maxHeight', labels.pageTemplatesMaxHeight)}
+        {/* Grows with the frames laid inside it (#1117): the frames
+            anchored to its top side, or a list of names. */}
+        <SelectInput
+          label={labels.pageTemplatesFrameGrowWith}
+          value={growMode}
+          options={[
+            { value: 'none', label: labels.pageTemplatesFrameGrowWithNone },
+            { value: 'children', label: labels.pageTemplatesFrameGrowWithChildren },
+            { value: 'list', label: labels.pageTemplatesFrameGrowWithList },
+          ]}
+          onChange={(v) => set({ growWith: v === 'children' ? 'children' : v === 'list' ? (growList.length > 0 ? growList : growSeed()) : undefined })}
+          tooltip={labels.pageTemplatesFrameGrowWithTooltip}
+          isDefault={!has('growWith')}
+          onReset={reset('growWith')}
+        />
+        {growMode === 'list' && (
+          <fieldset className="m-0 mt-1 border-0 p-0">
+            <legend className="mb-1 p-0 text-xs" style={{ color: 'var(--slate)' }}>{labels.pageTemplatesFrameGrowWithListLegend}</legend>
+            <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
+              {[...others, ...groups].map((n) => (
+                <li key={n} className="flex min-h-6 items-center text-xs">
+                  <label className="flex min-w-0 flex-1 items-center gap-1.5">
+                    <input
+                      type="checkbox"
+                      checked={growList.includes(n)}
+                      onChange={(e) => {
+                        const next = e.target.checked ? [...growList, n] : growList.filter((x) => x !== n);
+                        set({ growWith: next.length > 0 ? next : undefined });
+                      }}
+                    />
+                    <span className="truncate" dir="ltr">{n}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </fieldset>
+        )}
       </FieldGroup>
 
       <FieldGroup title={labels.pageTemplatesFrameGroupLook}>

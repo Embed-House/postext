@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
-import { renderToPdf } from '../pdf-backend';
+import { renderToPdf } from '../pdf-backend/index.js';
 
 // EF-183: an SVG drawn on several pages (here a frame in every page's
 // header design) used to be written into every page's content stream, so

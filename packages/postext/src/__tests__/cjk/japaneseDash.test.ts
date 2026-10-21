@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument, renderPageToCanvas } from '../../index';
-import { renderToHtml } from '../../html-backend';
-import { measureRichBlock } from '../../measure/rich';
-import { cjkCompositionOf, type CjkComposition } from '../../measure/cjkPunctuation';
-import { resolveCjkConfig } from '../../defaults/cjk';
-import type { Dimension, PostextConfig } from '../../types';
-import type { VDTLine, VDTLineSegment } from '../../vdt';
+import { buildDocument, renderPageToCanvas } from '../../index.js';
+import { renderToHtml } from '../../html-backend.js';
+import { measureRichBlock } from '../../measure/rich.js';
+import { cjkCompositionOf, type CjkComposition } from '../../measure/cjkPunctuation.js';
+import { resolveCjkConfig } from '../../defaults/cjk.js';
+import type { Dimension, PostextConfig } from '../../types.js';
+import type { VDTLine, VDTLineSegment } from '../../vdt.js';
 
 // A Japanese two-em dash (2倍ダッシュ, ―― or ——) is one stroke, and a row
 // of dashes one rule (#680). The stub is Noto Serif JP's: its horizontal

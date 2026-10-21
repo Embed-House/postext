@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { buildDocument } from '../../pipeline/build';
-import { createMeasurementCache } from '../../measure';
-import { collectColumnGaps } from '../../pipeline/columnBalancing';
-import { columnRuleSegments } from '../../columnRule';
-import { renderToHtml } from '../../html-backend';
+import { buildDocument } from '../../pipeline/build.js';
+import { createMeasurementCache } from '../../measure/index.js';
+import { collectColumnGaps } from '../../pipeline/columnBalancing.js';
+import { columnRuleSegments } from '../../columnRule.js';
+import { renderToHtml } from '../../html-backend.js';
 import {
   createVDTPage,
   createVDTColumn,
@@ -12,9 +12,9 @@ import {
   type VDTColumn,
   type VDTDocument,
   type VDTPage,
-} from '../../vdt';
-import { resolveAllConfig } from '../../pipeline/config';
-import type { PostextConfig, PostextContent, Resource } from '../../types';
+} from '../../vdt.js';
+import { resolveAllConfig } from '../../pipeline/config.js';
+import type { PostextConfig, PostextContent, Resource } from '../../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
 class StubCtx {

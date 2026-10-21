@@ -1,13 +1,13 @@
 import type { Dispatch, MutableRefObject } from 'react';
 import type { Resource, VDTDocument } from 'postext';
-import type { SandboxAction } from '../../context/SandboxContext';
-import type { PanelId } from '../../types';
-import type { SandboxLabels } from '../../types/labels';
-import type { ComposedBook } from '../../book/types';
-import { createPageCanvas, createOverlaySvg, setPairSide } from './dom';
-import { attachSlotClickHandler, type PageNavigator } from './interaction';
-import { attachFrameEditor } from '../composed/frameEditor';
-import { attachLabelAnchorEditor } from '../composed/labelAnchorEditor';
+import type { SandboxAction } from '../../context/SandboxContext.js';
+import type { PanelId } from '../../types/index.js';
+import type { SandboxLabels } from '../../types/labels.js';
+import type { ComposedBook } from '../../book/types.js';
+import { createPageCanvas, createOverlaySvg, setPairSide } from './dom.js';
+import { attachSlotClickHandler, type PageNavigator } from './interaction.js';
+import { attachFrameEditor } from '../composed/frameEditor.js';
+import { attachLabelAnchorEditor } from '../composed/labelAnchorEditor.js';
 import {
   DEFAULT_PAGE_GAPS,
   PAGE_PADDING,
@@ -16,7 +16,7 @@ import {
   groupPagesIntoRows,
   innerRowWidth,
   rowPadding,
-} from './layoutUtils';
+} from './layoutUtils.js';
 
 export interface BuildPagesDomResult {
   innerDiv: HTMLDivElement;

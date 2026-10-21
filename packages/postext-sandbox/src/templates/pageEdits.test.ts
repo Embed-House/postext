@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { resolvePageTemplate, type PageTemplate } from 'postext';
-import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage } from './pageEdits';
+import { changeFrameForPage, changeTemplateFrame, frameScopeOnPage } from './pageEdits.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
 const T: PageTemplate[] = [

@@ -76,7 +76,7 @@ const titleBlock = { enabled: true,
       lineHeight: 1.35, color: col('muted'), placement: at('#authors', 'below', 0, 2, MEASURE) }),
     { kind: 'rule', id: 'rule', thickness: pt(0.5), color: col('rule'),
       placement: at('#affiliations', 'below', 0, 3, MEASURE) },
-    text('note', '{attr.note}', SANS, 7.4, { fontStyle: 'italic', color: col('muted'),
+    text('note', '{attr.note}', SANS, 7.4, { color: col('muted'),
       placement: at('#rule', 'below', 0, 1.6, MEASURE) }),
   ] },
 };

@@ -1,15 +1,15 @@
-import type { InlineSpan } from '../parse';
-import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types';
-import { measureBlock } from './plain';
-import { measureRichBlock, measureRichSnippet } from './rich';
-import { getHyphenationLocale, getHyphenationRulesKey } from '../hyphenate';
-import { hasCJK } from './cjk';
-import { getCjkLineBreak } from './cjkClasses';
-import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from './vertical';
-import { cjkCompositionKey, getCjkComposition } from './cjkPunctuation';
-import { getMeasureArabicNumbers, getMeasureDirection } from './bidiLines';
-import { evictionsSince, measurementGeneration, measureLanguageKey } from './canvas';
-import { scriptContextKey } from './script';
+import type { InlineSpan } from '../parse/index.js';
+import type { MeasuredBlock, MeasurementCache, MeasureBlockOptions } from './types.js';
+import { measureBlock } from './plain.js';
+import { measureRichBlock, measureRichSnippet } from './rich.js';
+import { getHyphenationLocale, getHyphenationRulesKey } from '../hyphenate.js';
+import { hasCJK } from './cjk.js';
+import { getCjkLineBreak } from './cjkClasses.js';
+import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode } from './vertical.js';
+import { cjkCompositionKey, getCjkComposition } from './cjkPunctuation.js';
+import { getMeasureArabicNumbers, getMeasureDirection } from './bidiLines.js';
+import { evictionsSince, measurementGeneration, measureLanguageKey } from './canvas.js';
+import { scriptContextKey } from './script.js';
 
 /** Options that change a block's lines, joined into its cache key. The
  *  active hyphenation dictionary is one: soft hyphens (and the syllables an
@@ -108,7 +108,7 @@ function buildRichCacheKey(
   // Script and small-caps marks change the measure of the same text, and a
   // formula or a swatch colour what a placeholder paints: they join the key
   // only when set, so the common keys are unchanged.
-  const spanKey = spans.map((s) => `${s.text}|${s.bold}|${s.italic}|${s.ref?.resourceId ?? ''}${s.ref?.anchor ? `@a${s.ref.pageIndex ?? ''}` : ''}${s.ref?.breakable ? '@b' : ''}${s.footnote ? `|fn:${s.footnote.id}${s.footnote.scale !== undefined ? `@${s.footnote.scale}` : ''}${s.footnote.place ? `:${s.footnote.place}` : ''}` : ''}${s.chip ? chipCacheKey(s.chip) : ''}${s.math ? mathCacheKey(s) : ''}${s.swatch ? `|sw:${s.swatch.color}${s.swatch.icon ? `:${JSON.stringify(s.swatch.icon)}` : ''}` : ''}${s.script ? `|${s.script}` : ''}${s.smallCaps ? '|sc' : ''}${s.fixedSpace ? '|fx' : ''}${s.codeSpace ? `|cs:${JSON.stringify(s.codeSpace)}` : ''}${s.labelTab ? `|lt:${s.labelTab}` : ''}${s.tab ? `|tab:${s.tab.px ? JSON.stringify(s.tab.px) : ''}` : ''}${s.combineUpright ? '|tcy' : ''}${s.orientation === 'upright' ? '|up' : s.orientation === 'sideways' ? '|side' : ''}${annotationCacheKey(s)}`).join('\x01');
+  const spanKey = spans.map((s) => `${s.text}|${s.bold}|${s.italic}|${s.ref?.resourceId ?? ''}${s.ref?.anchor ? `@a${s.ref.pageIndex ?? ''}` : ''}${s.ref?.breakable ? '@b' : ''}${s.footnote ? `|fn:${s.footnote.id}${s.footnote.scale !== undefined ? `@${s.footnote.scale}` : ''}${s.footnote.place ? `:${s.footnote.place}` : ''}` : ''}${s.chip ? chipCacheKey(s.chip) : ''}${s.math ? mathCacheKey(s) : ''}${s.swatch ? `|sw:${s.swatch.color}${s.swatch.icon ? `:${JSON.stringify(s.swatch.icon)}` : ''}${s.swatch.box ? `:${JSON.stringify(s.swatch.box)}` : ''}` : ''}${s.script ? `|${s.script}` : ''}${s.smallCaps ? '|sc' : ''}${s.fixedSpace ? '|fx' : ''}${s.codeSpace ? `|cs:${JSON.stringify(s.codeSpace)}` : ''}${s.labelTab ? `|lt:${s.labelTab}` : ''}${s.tab ? `|tab:${s.tab.px ? JSON.stringify(s.tab.px) : ''}` : ''}${s.combineUpright ? '|tcy' : ''}${s.orientation === 'upright' ? '|up' : s.orientation === 'sideways' ? '|side' : ''}${annotationCacheKey(s)}`).join('\x01');
   return `R\x00${spanKey}\x00${fonts[0]}\x00${fonts[1]}\x00${fonts[2]}\x00${fonts[3]}\x00${maxWidthPx}\x00${lineHeightPx}\x00${optionsKey(options)}${cjkKey(spanKey, options)}${cjkLinkKey(spans, spanKey)}`;
 }
 

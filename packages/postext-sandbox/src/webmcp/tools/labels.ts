@@ -1,11 +1,11 @@
-import { applyTextChanges, type TextChange } from '../../book/textChanges';
-import { setLabelLeader, iconDirective, type IconSpec, type LabelLeaderChoice } from '../../editor/labelAttrs';
-import { labelsInChapters, type MarkdownLabel } from '../../panels/resources/figureLabels';
-import { pointersOf, removePointer, setPointer } from '../../templates/pointerEdits';
-import { chapterText, editChapter } from '../chapterEdits';
-import type { SandboxToolHost } from '../host';
-import { ToolError, type WebMcpTool } from '../modelContext';
-import { layoutAnswer } from './book';
+import { applyTextChanges, type TextChange } from '../../book/textChanges.js';
+import { setLabelLeader, iconDirective, type IconSpec, type LabelLeaderChoice } from '../../editor/labelAttrs.js';
+import { labelsInChapters, type MarkdownLabel } from '../../panels/resources/figureLabels.js';
+import { pointersOf, removePointer, setPointer } from '../../templates/pointerEdits.js';
+import { chapterText, editChapter } from '../chapterEdits.js';
+import type { SandboxToolHost } from '../host.js';
+import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { layoutAnswer } from './book.js';
 
 // The leaders and legends of a figure's labels for agents (#1064): what the
 // anchor editor, the text editor's symbol picker and the frame's pointers

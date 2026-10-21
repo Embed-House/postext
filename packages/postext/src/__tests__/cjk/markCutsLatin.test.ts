@@ -4,8 +4,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Latin book goes through it once per painted segment, so text with no CJK
 // must not reach it (#184, #185).
 const scans = vi.hoisted(() => ({ breakingSpace: 0, markCuts: 0 }));
-vi.mock('../../measure/spaces', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../measure/spaces')>();
+vi.mock('../../measure/spaces.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../measure/spaces.js')>();
   return {
     ...actual,
     isBreakingSpace: (ch: string | undefined) => {
@@ -14,8 +14,8 @@ vi.mock('../../measure/spaces', async (importOriginal) => {
     },
   };
 });
-vi.mock('../../measure/cjkClasses', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../measure/cjkClasses')>();
+vi.mock('../../measure/cjkClasses.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../measure/cjkClasses.js')>();
   return {
     ...actual,
     cjkMarkCuts: (text: string, shared: boolean) => {
@@ -25,9 +25,9 @@ vi.mock('../../measure/cjkClasses', async (importOriginal) => {
   };
 });
 
-import { markCuts, markPieces } from '../../measure/markCuts';
-import { isTrimmableMark } from '../../measure/cjkClasses';
-import { hasCJK } from '../../measure/cjk';
+import { markCuts, markPieces } from '../../measure/markCuts.js';
+import { isTrimmableMark } from '../../measure/cjkClasses.js';
+import { hasCJK } from '../../measure/cjk.js';
 
 const LATIN = [
   'En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo',

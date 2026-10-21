@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { wordRangeAt } from './wordRange';
+import { wordRangeAt } from './wordRange.js';
 
 describe('wordRangeAt', () => {
   const text = 'La ocupación_1 es  clave.';

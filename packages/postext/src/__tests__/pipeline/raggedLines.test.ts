@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { raggedLooseLines } from '../../pipeline/raggedLines';
-import type { VDTLine } from '../../vdt';
+import { raggedLooseLines } from '../../pipeline/raggedLines.js';
+import type { VDTLine } from '../../vdt.js';
 
 const line = (text: string, ratio?: number, isLastLine = false): VDTLine =>
   ({ text, bbox: { x: 0, y: 0, width: 100, height: 12 }, baseline: 10, isLastLine, ...(ratio !== undefined ? { justifiedSpaceRatio: ratio } : {}) }) as VDTLine;

@@ -27,7 +27,7 @@
  * layout measured it, and the painter places the pen itself.
  */
 import { PDFArray, PDFDict, PDFName, PDFRef, type PDFFont } from 'pdf-lib';
-import { shapingKey } from './shapingLanguage';
+import { shapingKey } from './shapingLanguage.js';
 
 /** The vertical origin (`DW2`'s first number) every twin is written with,
  *  in thousandths of the em: the ideographic em box's top above the

@@ -6,9 +6,9 @@
  * this fixture (Spanish and English, a different count of cards per
  * language); the pictures are the solid placeholders of `fixtures/page8`.
  */
-import type { PostextConfig, Resource } from '../../../types';
-import type { PageTemplate } from '../../../composed/types';
-import { PAGE8_RESOURCES, PAGE8_TYPES } from './page8';
+import type { PostextConfig, Resource } from '../../../types.js';
+import type { PageTemplate } from '../../../composed/types.js';
+import { PAGE8_RESOURCES, PAGE8_TYPES } from './page8.js';
 
 export const mm = (value: number) => ({ value, unit: 'mm' as const });
 const pt = (value: number) => ({ value, unit: 'pt' as const });

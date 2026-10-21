@@ -13,14 +13,14 @@
  */
 
 import type { PostextConfig, PostextContent, Resource, VDTDocument } from 'postext';
-import { composeBookMemo } from '../book/compose';
-import { layoutCacheKey } from '../book/layoutKeys';
-import { chapterLayoutFromDoc, createBookPlanner } from '../book/pagination';
-import type { BookStart, Chapter, ChapterLayout, ComposedBook } from '../book/types';
-import { withHyphenationLocale } from '../controls/hyphenation';
-import { computeComposedWarnings } from '../warnings/compute';
-import type { Warning } from '../warnings/types';
-import { planContent } from '../book/jumps';
+import { composeBookMemo } from '../book/compose.js';
+import { layoutCacheKey } from '../book/layoutKeys.js';
+import { chapterLayoutFromDoc, createBookPlanner } from '../book/pagination.js';
+import type { BookStart, Chapter, ChapterLayout, ComposedBook } from '../book/types.js';
+import { withHyphenationLocale } from '../controls/hyphenation.js';
+import { computeComposedWarnings } from '../warnings/compute.js';
+import type { Warning } from '../warnings/types.js';
+import { planContent } from '../book/jumps.js';
 
 /** An edition of a book, as the Sandbox would open it. */
 export interface EditionSource {

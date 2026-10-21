@@ -3,10 +3,10 @@
 import { useId, useState } from 'react';
 import { Shapes } from 'lucide-react';
 import type { ResourceSafeArea } from 'postext';
-import { useSandboxLabels } from '../../context/SandboxContext';
-import { Button } from '../../ui';
-import { getBlob } from '../../storage/blobStore';
-import { readSvgSymbols } from './svgSymbols';
+import { useSandboxLabels } from '../../context/SandboxContext.js';
+import { Button } from '../../ui/index.js';
+import { getBlob } from '../../storage/blobStore.js';
+import { readSvgSymbols } from './svgSymbols.js';
 
 interface SvgSymbolsReaderProps {
   /** The picture's SVG file. */

@@ -10,7 +10,7 @@ import type {
   CslName,
 } from 'postext';
 import { parseBibtex } from 'postext';
-import { STYLE_CATALOG } from './catalog';
+import { STYLE_CATALOG } from './catalog.js';
 
 /** The XML of the styles and locales an engine can use. */
 export interface CslSources {

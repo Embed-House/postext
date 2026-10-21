@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { verticalOrientation, verticalRuns, uaxVerticalOrientation, isVerticalCell } from '../../writingMode';
-import { composeCjkParagraph } from '../../measure/cjkCompose';
-import { cachedMeasureRichBlock, createMeasurementCache } from '../../measure';
-import { fontFamilyOf, measureCentralBaseline, withMeasureWritingMode } from '../../measure/vertical';
-import { graphemesOf } from '../../measure/graphemes';
+import { verticalOrientation, verticalRuns, uaxVerticalOrientation, isVerticalCell } from '../../writingMode.js';
+import { composeCjkParagraph } from '../../measure/cjkCompose.js';
+import { cachedMeasureRichBlock, createMeasurementCache } from '../../measure/index.js';
+import { fontFamilyOf, measureCentralBaseline, withMeasureWritingMode } from '../../measure/vertical.js';
+import { graphemesOf } from '../../measure/graphemes.js';
 
 // Proportional marks, as Noto CJK draws them without `fwid`: — 0.89 em,
 // · 0.33 em; Han and fullwidth forms 1 em, Latin ½ em.
