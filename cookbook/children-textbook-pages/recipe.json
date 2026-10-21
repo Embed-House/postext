@@ -20,7 +20,6 @@
       "page-modules"
     ],
     "also": [
-      "frame-connectors",
       "figure-leaders",
       "frame-groups",
       "callout-label-tabs",
@@ -239,7 +238,7 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-10-17",
-  "updated": "2026-10-20",
+  "updated": "2026-10-21",
   "downloads": {
     "pdf": true
   },
