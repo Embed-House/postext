@@ -2338,6 +2338,11 @@ export interface SandboxLabels {
   headerFooterElementMarginFromEdgeTooltip: string;
   headerFooterElementPages: string;
   headerFooterElementPagesTooltip: string;
+  headerFooterElementWhen: string;
+  headerFooterElementWhenTooltip: string;
+  headerFooterElementUnless: string;
+  headerFooterElementUnlessTooltip: string;
+  headerFooterElementFenceAny: string;
   headerFooterElementPagesAll: string;
   headerFooterElementPagesBody: string;
   headerFooterElementPagesOpener: string;

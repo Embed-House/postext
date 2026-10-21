@@ -153,3 +153,32 @@ describe('modules side by side', () => {
     expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
   });
 });
+
+// #1087: a design element's page-fence condition, which the element card's
+// «Drawn when / Not drawn when the page says» fields write, is a setting
+// like any other: written, read back, nothing else moving.
+describe('a design element\'s page-fence condition', () => {
+  const composed = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="shell" frontmatter}\nWords.\n::::\n')];
+    const folio = { kind: 'text', id: 'folio', content: '{pageNumber}', placement: { anchor: { to: 'page', edge: 'bottom-center' } } };
+    const config = {
+      pageTemplates: [{ id: 'shell', frames: [{ name: 'main', flow: true }], decoration: { elements: [folio] }, footer: { elements: [{ ...folio, id: 'foot' }] } }],
+    };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it.each([
+    ['pageTemplates[id=shell].decoration.elements[id=folio].when', 'folio'],
+    ['pageTemplates[id=shell].decoration.elements[id=folio].unless', 'frontmatter'],
+    ['pageTemplates[id=shell].footer.elements[id=foot].unless', 'frontmatter'],
+  ])('%s takes a value and nothing else moves', async (path, value) => {
+    const { call } = harness(composed() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const done = await call('sandbox_set_config', { changes: [{ path, value }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const added = moved(before, after);
+    expect(added).toHaveLength(1);
+    expect(added[0]!.endsWith(path.slice(path.lastIndexOf('.')))).toBe(true);
+    expect(after.get(added[0]!)).toBe(value);
+  });
+});

@@ -729,6 +729,7 @@ export { configDesignSlots } from './design/slots';
 // Decoration drawn when the page fence says so (#1087).
 export { fenceSetsAttribute, fenceConditionMet, fenceConditionUses, fenceConditionsNeverMet, fenceAttributesSet, FENCE_CONDITION_SLOTS } from './design/fenceCondition';
 export type { FenceConditionUse } from './design/fenceCondition';
+export { parseDirectiveAttrs } from './parse/attrs';
 // «Move the text to the Markdown» (#874): page designs held in heading
 // styles become page templates, their text `::::page` fences.
 export { moveTextToMarkdown } from './migrate/textToMarkdown';

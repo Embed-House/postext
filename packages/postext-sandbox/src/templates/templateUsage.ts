@@ -6,6 +6,7 @@
  * its own.
  */
 
+import { fenceAttributesSet, parseDirectiveAttrs } from 'postext';
 import type { TextChange } from '../book/textChanges';
 
 /** A composed-page fence (`::::page{…}`, four or more colons) in a text. */
@@ -26,6 +27,9 @@ export interface TemplateFence {
   /** The fence's `id` (#943): a story of an earlier page may jump to it
    *  (`overflow.continueIn: 'page:<id>'`). */
   id?: string;
+  /** The attributes the fence sets (#1087): written as a flag or with any
+   *  value but `false`, `template`, `spread` and `id` included. */
+  attrs: string[];
 }
 
 const PAGE_FENCE_RE = /^(\s{0,3})(:{4,})\s*page\s*(?:\{([^}]*)\})?\s*$/;
@@ -55,10 +59,11 @@ export function templateFences(markdown: string): TemplateFence[] {
     const blob = m[3];
     if (blob === undefined) {
       const at = start + line.trimEnd().length;
-      out.push({ fenceStart: start, template: '', valueFrom: at, valueTo: at, missing: true, spread: false });
+      out.push({ fenceStart: start, template: '', valueFrom: at, valueTo: at, missing: true, spread: false, attrs: [] });
       continue;
     }
     const blobStart = start + line.indexOf('{') + 1;
+    const attrs = fenceAttributesSet(parseDirectiveAttrs(blob));
     const spreadMatch = SPREAD_ATTR_RE.exec(blob);
     const spreadValue = spreadMatch ? (spreadMatch[2] ?? spreadMatch[3] ?? spreadMatch[4]) : undefined;
     const spread = !!spreadMatch && spreadValue !== 'false';
@@ -68,14 +73,14 @@ export function templateFences(markdown: string): TemplateFence[] {
     const t = TEMPLATE_ATTR_RE.exec(blob);
     if (!t) {
       const at = blobStart + blob.length;
-      out.push({ fenceStart: start, template: '', valueFrom: at, valueTo: at, missing: true, spread, ...id });
+      out.push({ fenceStart: start, template: '', valueFrom: at, valueTo: at, missing: true, spread, ...id, attrs });
       continue;
     }
     const value = t[2] ?? t[3] ?? t[4] ?? '';
     const quoted = t[2] !== undefined || t[3] !== undefined;
     const valueEndInBlob = t.index + t[0].length - (quoted ? 1 : 0);
     const from = blobStart + valueEndInBlob - value.length;
-    out.push({ fenceStart: start, template: value, valueFrom: from, valueTo: from + value.length, missing: false, spread, ...id });
+    out.push({ fenceStart: start, template: value, valueFrom: from, valueTo: from + value.length, missing: false, spread, ...id, attrs });
   }
   return out;
 }
@@ -92,6 +97,24 @@ export function pageFenceIds(chapters: readonly { markdown: string }[]): { id: s
       out.push({ id: f.id, chapter });
     }
   });
+  return out;
+}
+
+/** The attributes the book's page fences set (#1087), each once, in book
+ *  order, without `template`, `spread` and `id`: what a design element's
+ *  `when` / `unless` can name. */
+export function pageFenceAttributes(chapters: readonly { markdown: string }[]): string[] {
+  const seen = new Set<string>(['template', 'spread', 'id']);
+  const out: string[] = [];
+  for (const ch of chapters) {
+    for (const f of templateFences(ch.markdown)) {
+      for (const a of f.attrs) {
+        if (seen.has(a)) continue;
+        seen.add(a);
+        out.push(a);
+      }
+    }
+  }
   return out;
 }
 
