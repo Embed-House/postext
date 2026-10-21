@@ -480,7 +480,15 @@ What the extraction decides, so you know what to check:
   `rules` preset, border, header fill and bold, face, colours and padding;
   the resource's `table.styleId` names it). Its words, rules and fills are
   the table's: no text frames, no decoration. The first row is the header
-  when it is filled or bold. `--no-tables` keeps the old reading.
+  when it is filled or bold. A grid whose words run across its rules (a
+  drawing on squared paper) is no table. `--no-tables` keeps the old
+  reading.
+- **A hidden second set of labels** (skill 1.61). A span that another
+  span's box covers in part (a smaller copy of a map's degrees set just
+  off the visible ones, under the map's paint) is read on renders of its
+  own glyphs alone, so the visible copy's ink no longer makes it visible.
+  A figure where two label sizes each set an evenly spaced row over each
+  other gets a `report.json` note: check the source for a hidden copy.
 - **No debris in the decoration** (skill 1.61). A fill of the colour already
   under it (a white mask on white paper or a white card) is left out unless
   it hides loose art painted before it; a fill a later box hides is drawn

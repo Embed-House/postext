@@ -114,6 +114,25 @@ class GridTableTest(unittest.TestCase):
         self.assertFalse([e for e in els if (e.get("style") or {}).get("backgroundColor")], els)
         self.assertFalse([r for r in self.res if r["typeId"] == "ground"])
 
+    def test_words_across_the_rules_are_no_table(self):
+        doc = fitz.open()
+        page = doc.new_page(width=210 * MM, height=297 * MM)
+        for r in range(4):
+            y = (TOP + r * ROW) * MM
+            page.draw_line(fitz.Point(COLS[0] * MM, y), fitz.Point(COLS[-1] * MM, y), color=(0, 0, 0), width=0.6)
+        for x in COLS:
+            page.draw_line(fitz.Point(x * MM, TOP * MM), fitz.Point(x * MM, (TOP + 3 * ROW) * MM), color=(0, 0, 0), width=0.6)
+        for r in range(3):
+            page.insert_text(((COLS[0] + 2) * MM, (TOP + r * ROW + 6.5) * MM),
+                             "a sentence that runs right across the grid's rules", fontsize=10, fontname="helv")
+        pdf = Path(self.tmp.name) / "across.pdf"
+        doc.save(str(pdf))
+        out = Path(self.tmp.name) / "across"
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            pr.main(["extract", str(pdf), "--out", str(out), "--lang", "en", "--name-frames", "never"])
+        res = json.loads((out / "resources.json").read_text(encoding="utf-8"))
+        self.assertFalse([r for r in res if r["kind"] == "table"])
+
     def test_no_tables_keeps_the_old_reading(self):
         out = Path(self.tmp.name) / "plain"
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):

@@ -392,6 +392,8 @@ class Renders:
         p3.apply_redactions(images=fitz.PDF_REDACT_IMAGE_REMOVE, graphics=fitz.PDF_REDACT_LINE_ART_REMOVE_IF_TOUCHED,
                             text=fitz.PDF_REDACT_TEXT_NONE)
         self.ink = self._pix(p3, rgb=False)
+        self._docs = (doc, doc2, doc3)          # kept open for `span_shows` (renders of one clip)
+        self._pages = (page, p2, p3)
 
     def _pix(self, page: fitz.Page, rgb: bool):
         np = self.np
@@ -409,10 +411,61 @@ class Renders:
         h, w = self.ink.shape
         return max(0, x0), max(0, y0), min(w, x1), min(h, y1)
 
-    def text_visible(self, bbox_pt: tuple) -> bool:
+    def span_shows(self, span: dict, dpi: int = 600) -> bool | None:
+        """Do one span's own glyphs show, read on renders of its box alone at
+        `dpi`: its characters drawn by themselves at their origins and size
+        (a stand-in face, grown by a pixel) mark its glyphs in the page's
+        text ink, and those pixels must differ between the page and the page
+        without text. None when too few pixels are its own to tell."""
+        np = self.np
+        chars = [c for c in span.get("chars", []) if c["c"].strip()]
+        if not chars:
+            return None
+        b = span["bbox"]
+        clip = fitz.Rect(b[0] - 1, b[1] - 1, b[2] + 1, b[3] + 1)
+
+        def grab(page: fitz.Page, rgb: bool):
+            pm = page.get_pixmap(dpi=dpi, clip=clip, colorspace=fitz.csRGB if rgb else fitz.csGRAY, alpha=False)
+            a = np.frombuffer(pm.samples, dtype=np.uint8).reshape(pm.height, pm.stride)[:, :pm.width * pm.n]
+            return a.reshape(pm.height, pm.width, pm.n).astype(int) if rgb else a.astype(int)
+
+        page, bare, ink = self._pages
+        alone = fitz.open()
+        ap = alone.new_page(width=self.rect.width, height=self.rect.height)
+        if self.rect.x0 or self.rect.y0:
+            ap.set_mediabox(self.rect)
+        tw = fitz.TextWriter(ap.rect)
+        font = fitz.Font("helv")
+        for c in chars:
+            tw.append(fitz.Point(c["origin"]), c["c"], font=font, fontsize=span["size"])
+        tw.write_text(ap)
+        m = grab(ap, False) < 128
+        grown = m.copy()
+        grown[1:, :] |= m[:-1, :]
+        grown[:-1, :] |= m[1:, :]
+        grown[:, 1:] |= m[:, :-1]
+        grown[:, :-1] |= m[:, 1:]
+        a, z, k = grab(page, True), grab(bare, True), grab(ink, False)
+        h = min(a.shape[0], z.shape[0], k.shape[0], grown.shape[0])
+        w = min(a.shape[1], z.shape[1], k.shape[1], grown.shape[1])
+        own = grown[:h, :w] & (k[:h, :w] < 128)
+        if own.sum() < 12:
+            return None
+        d = np.abs(a[:h, :w] - z[:h, :w]).sum(axis=2)
+        return float((d[own] > 45).mean()) > 0.5
+
+    def text_visible(self, bbox_pt: tuple, span: dict | None = None) -> bool:
+        """Do the span's glyphs show on the printed page? With `span` (a
+        rawdict span another one's box covers in part), only its own glyphs
+        are read (`span_shows`): a hidden copy of a label set just off a
+        visible one saw the visible one's ink as its own (#1135)."""
         x0, y0, x1, y1 = self._win(bbox_pt)
         if x1 <= x0 or y1 <= y0:
             return False
+        if span is not None:
+            got = self.span_shows(span)
+            if got is not None:
+                return got
         d = abs(self.rgb[y0:y1, x0:x1] - self.bare[y0:y1, x0:x1]).sum(axis=2)
         glyphs = self.ink[y0:y1, x0:x1] < 128
         if glyphs.sum() >= 6:
@@ -633,6 +686,16 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
     pieces: list[Line] = []
     hidden: list[str] = []
     raw = page.get_text("rawdict", flags=FLAGS)
+    inked = [tuple(s["bbox"]) for b in raw["blocks"] if b.get("type", 0) == 0 for l in b["lines"] for s in l["spans"]
+             if any(ch["c"].strip() for ch in s["chars"])]
+
+    def near(bb: tuple) -> bool:
+        """Another span's box covers a fifth of this one's, or more (a copy
+        set just off it; spans side by side on a line barely meet)."""
+        own = max((bb[2] - bb[0]) * (bb[3] - bb[1]), 1e-6)
+        return any(o != tuple(bb) and inter(o, bb) >= 0.2 * min(own, max((o[2] - o[0]) * (o[3] - o[1]), 1e-6))
+                   for o in inked)
+
     for block in raw["blocks"]:
         if block.get("type", 0) != 0:
             continue
@@ -649,7 +712,8 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
                                           False, span["size"], "#000000"))
                     continue
                 sb = to_mm(span["bbox"], origin)
-                if not centre_in(sb, trim) or not renders.text_visible(span["bbox"]):
+                if not centre_in(sb, trim) or not renders.text_visible(
+                        span["bbox"], span if abs(rot) < 1 and near(span["bbox"]) else None):
                     hidden.append(text.strip())
                     continue
                 fam, weight, italic = fonts.face(span["font"], span["flags"])
@@ -886,6 +950,21 @@ def dash_mm(dashes: Any) -> list[float]:
 GRID_TEXT = 0.6           # share of a ruled grid's cells that must hold text for it to be a table
 
 
+def crosses_cells(l: Any, table: Any, origin: tuple, tol: float = 1.0) -> bool:
+    """Does a text line run across the edge between two cells of its row
+    (more than `tol` mm on both sides)? Words of a table stay in their cells."""
+    for row in table.rows:
+        cells = [to_mm(c, origin) for c in row.cells if c is not None]
+        if not cells:
+            continue
+        rb = to_mm(row.bbox, origin)
+        if not rb[1] <= (l.y0 + l.y1) / 2 <= rb[3]:
+            continue
+        edges = sorted({c[2] for c in cells} - {max(c[2] for c in cells)})
+        return any(l.x0 + tol < x < l.x1 - tol for x in edges)
+    return False
+
+
 def grid_tables(page: fitz.Page, origin: tuple, lines: list, opts: argparse.Namespace) -> list[dict]:
     """The page's ruled grids that are tables (PyMuPDF `find_tables`,
     `lines_strict`: at least 2 × 2 cells, text in most of them), each as
@@ -914,12 +993,17 @@ def grid_tables(page: fitz.Page, origin: tuple, lines: list, opts: argparse.Name
         box = to_mm(t.bbox, origin)
         if area(box) > 0.8 * page_area:
             continue
+        mine = [l for l in lines if centre_in(l.box, box)]
+        if any(crosses_cells(l, t, origin) for l in mine):
+            continue        # words run across its rules: a drawing on a grid, not a table
         model = et.table_model(t, 1, page, cache)
         style, notes = model.pop("_style"), model.pop("_notes")
         if not (style.get("headerBackgroundEnabled") or style.get("headerBold")):
             model = et.table_model(t, 0, page, cache)
             style, notes = model.pop("_style"), model.pop("_notes")
-        mine = [l for l in lines if centre_in(l.box, box)]
+        rows = [r for r in model["rows"] if any(c["content"] for c in r)]
+        if len(rows) < 2 or max(len(r) for r in rows) < 2:
+            continue
         if mine:
             look = dominant(mine)
             face = {"bodyFontFamily": look["family"], "bodyFontSize": ptv(look["size"]),
@@ -1716,6 +1800,10 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                 report["notes"].append(f"{f.name}: the cut crosses the rule of {frame_of.get(id(s), 'a box')} "
                                        f"at {r2(s.box)} mm; check the cut")
             if f.kind == "figure":
+                twin = label_series(f.lines)
+                if twin:
+                    report["notes"].append(f"{f.name}: labels of {twin[0]} pt and {twin[1]} pt form two evenly "
+                                           "spaced series over each other; one may be a hidden copy, check the source")
                 items = [l.label_dict(ctx["mark_ids"], opts.highlights) for l in f.lines]
                 notes: list[str] = []
                 groups = anc.merge_lines(items, merge=not opts.no_merge_labels, notes=notes)
@@ -2340,6 +2428,48 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
     if alpha:
         res["contour"] = {"threshold": 0.5, "margin": mmv(1.5)}
     return res
+
+
+def even_rows(lines: list, min_n: int = 4, cv: float = 0.2) -> list[tuple]:
+    """Rows (one baseline, within 1 mm) of `min_n` or more labels evenly
+    spaced across (the gaps between their centres vary by under `cv` of
+    their mean), as (baseline, x0, x1)."""
+    rows: list[list] = []
+    for l in sorted(lines, key=lambda l: l.base):
+        if rows and abs(rows[-1][-1].base - l.base) <= 1.0:
+            rows[-1].append(l)
+        else:
+            rows.append([l])
+    out = []
+    for row in rows:
+        if len(row) < min_n:
+            continue
+        xs = sorted((l.x0 + l.x1) / 2 for l in row)
+        gaps = [b - a for a, b in zip(xs, xs[1:])]
+        mean = sum(gaps) / len(gaps)
+        if mean > 0 and statistics.pstdev(gaps) <= cv * mean:
+            out.append((row[0].base, xs[0], xs[-1]))
+    return out
+
+
+def label_series(lines: list, reach: float = 5.0) -> tuple[float, float] | None:
+    """Two label sizes of a figure that each set an evenly spaced row, the
+    rows within `reach` mm of each other and across the same stretch: a
+    hidden second set of a map's degrees under the visible one (#1135).
+    Returns the two sizes (pt), or None."""
+    by_size: dict[float, list] = {}
+    for l in lines:
+        if not l.rotate and l.plain.strip():
+            by_size.setdefault(round(l.size, 1), []).append(l)
+    sizes = sorted(by_size)
+    rows = {s: even_rows(by_size[s]) for s in sizes}
+    for i, a in enumerate(sizes):
+        for b in sizes[i + 1:]:
+            for ra in rows[a]:
+                for rb in rows[b]:
+                    if abs(ra[0] - rb[0]) <= reach and min(ra[2], rb[2]) - max(ra[1], rb[1]) > 0:
+                        return (a, b)
+    return None
 
 
 def holder_of(box: tuple, boxes: list, over: set | None = None) -> Shape | None:
