@@ -766,6 +766,12 @@ move when a crop is tuned).
   sources whose files state their resolution, `layout.bitmapResolution: 'file'`.
 - A multi-part figure sent as separate files: join them side by side
   (`images.py join`).
+- An illustration on white that should let the text run round it:
+  `images.py cutout <resource-id>` makes the white joined to its edge
+  transparent (a white plate inside the art stays) and adds a `contour`.
+  To trim a cut: `images.py crop <resource-id> --left 3mm --bottom 40`
+  (px or mm per side); anchors, `avoid`, `faces`, `safeArea` and contour
+  points move with the crop, so labels stay on their points.
 - Pulling a raster out of the book PDF: `pdf_figures.py image --xref`.
 - Always declare `width` and `height`.
 
@@ -777,7 +783,12 @@ recoloured to tints of `main-color`). This disables print masters.
 - A table becomes a resource with a TableModel (`extract_tables.py`, pandoc
   and IDML give drafts). Set header rows (on the header fill, or a bold first
   row), merges (colSpan/rowSpan + hiddenBy), `columnWidths` from the printed
-  columns and the per-cell `align`.
+  columns and the per-cell `align`. From a PDF, `extract_tables.py` writes
+  the cells' `align`, `verticalAlign`, bold (`**…**`) and `background`,
+  and a style hint (nearest `rules` preset, border colour and width,
+  header bold, shared fills) for the table style. Rules belong to the
+  table style (`rules`, `borders`), never to a cell: a source with a rule
+  under one cell gets the nearest preset.
 - Notes under the table go in `note`. A table continued on the next page is
   one table: merge it and drop the repeated header.
 - "Tables" that are really framed text boxes: one row per paragraph, or a
