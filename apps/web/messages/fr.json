@@ -2634,6 +2634,8 @@
     "warningsWrapUnsupportedDetail": "l’habillage ne s’applique qu’au texte horizontal ; les figures occupent toute leur bande.",
     "warningsUnclosedCodeBlockTitle": "Délimiteur de code non fermé",
     "warningsUnclosedCodeBlockDetail": "le délimiteur d’ouverture n’a pas de délimiteur de fermeture ; le reste du texte est donc composé comme du code.",
+    "warningsStrayFenceTitle": "Fermeture après une directive d’une ligne",
+    "warningsStrayFenceDetail": "la directive n’a pas de délimiteur de fermeture : ce ::: ne ferme rien et il est écarté. Supprimez-le.",
     "warningsLineNumbersUnsupportedTitle": "Pas de numéros de ligne en texte vertical",
     "warningsLineNumbersUnsupportedDetail": "les documents verticaux n’ont pas de numéros de ligne ; le réglage est ignoré.",
     "warningsUnknownConfigKeyTitle": "Réglage inconnu",

@@ -2635,6 +2635,8 @@
     "warningsWrapUnsupportedDetail": "lo scontorno funziona solo nel testo orizzontale; le figure occupano le loro fasce intere.",
     "warningsUnclosedCodeBlockTitle": "Blocco di codice non chiuso",
     "warningsUnclosedCodeBlockDetail": "la riga di apertura non ha una riga di chiusura, quindi il resto del testo è composto come codice.",
+    "warningsStrayFenceTitle": "Chiusura dopo una direttiva di una riga",
+    "warningsStrayFenceDetail": "la direttiva non ha una riga di chiusura, quindi questo ::: non chiude nulla e viene scartato: eliminalo.",
     "warningsLineNumbersUnsupportedTitle": "Nessun numero di riga nel testo verticale",
     "warningsLineNumbersUnsupportedDetail": "i documenti verticali non hanno numeri di riga; l’impostazione viene ignorata.",
     "warningsUnknownConfigKeyTitle": "Impostazione sconosciuta",

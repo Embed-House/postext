@@ -636,6 +636,14 @@ describe('engine content warnings', () => {
     expect(legacy.map((w) => w.payload.kind)).not.toContain('unclosedCodeBlock');
   });
 
+  it('lists a closing fence after a one-line directive (#1125)', () => {
+    const md = ['# Contents', '', ':::toc', ':::', '', 'Text.'].join('\n');
+    const all = computeWarnings({ markdown: md, config: {}, doc: null, resources: [] });
+    const stray = all.filter((w) => w.payload.kind === 'strayFence');
+    expect(stray.map((w) => [w.payload, w.line])).toEqual([[{ kind: 'strayFence', directive: 'toc' }, 4]]);
+    expect(warningCategory('strayFence')).toBe(warningCategory('unclosedContainer'));
+  });
+
   it('reports sub-columns too narrow for their text (#634)', () => {
     const md = `:::columns{count=6}\n${Array.from({ length: 6 }, (_, i) => `Item ${i} of the group.`).join('\n\n')}\n:::`;
     const config: PostextConfig = { page: { width: { value: 200, unit: 'pt' }, height: { value: 300, unit: 'pt' } } };

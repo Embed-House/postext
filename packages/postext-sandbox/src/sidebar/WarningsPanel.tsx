@@ -92,6 +92,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'tabInVerticalText':
     case 'unclosedContainer':
     case 'unclosedCodeBlock':
+    case 'strayFence':
     case 'unknownParagraphStyle':
     case 'columnsFlowUnknown':
     case 'templateUnknown':
@@ -288,6 +289,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsUnclosedContainerTitle;
     case 'unclosedCodeBlock':
       return labels.warningsUnclosedCodeBlockTitle;
+    case 'strayFence':
+      return labels.warningsStrayFenceTitle;
     case 'unknownParagraphStyle':
       return labels.warningsUnknownParagraphStyleTitle;
     case 'unknownCalloutType':
@@ -641,6 +644,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return `:::${payload.name} — ${labels.warningsUnclosedContainerDetail}`;
     case 'unclosedCodeBlock':
       return `${payload.delimiter}${payload.lang ?? ''} — ${labels.warningsUnclosedCodeBlockDetail}`;
+    case 'strayFence':
+      return `:::${payload.directive} + ::: — ${labels.warningsStrayFenceDetail}`;
     case 'malformedEmbed':
       return `::${payload.name} — ${labels.warningsMalformedEmbedDetail}`;
     case 'fullwidthMarkup':

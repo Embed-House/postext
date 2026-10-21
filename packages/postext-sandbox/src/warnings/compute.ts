@@ -526,6 +526,17 @@ function collectContainerWarnings(markdown: string, issues: ParseIssue[]): Warni
       });
       continue;
     }
+    if (issue.kind === 'strayFence') {
+      // A closing fence after a one-line directive (#1125): dropped.
+      out.push({
+        id: `stray-fence-${idx++}-${issue.sourceStart}`,
+        payload: { kind: 'strayFence', directive: issue.directiveName },
+        sourceStart: issue.sourceStart,
+        sourceEnd: issue.sourceEnd,
+        line: lineNumberForOffset(markdown, issue.sourceStart),
+      });
+      continue;
+    }
     if (issue.kind !== 'unclosedContainer') continue;
     out.push({
       id: `container-unclosed-${idx++}-${issue.sourceStart}`,

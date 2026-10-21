@@ -2634,6 +2634,8 @@
     "warningsWrapUnsupportedDetail": "回り込みは横組みのみです。図は全幅のままです。",
     "warningsUnclosedCodeBlockTitle": "閉じていないコードブロック",
     "warningsUnclosedCodeBlockDetail": "コードブロックに終了行がないため、以降の本文はすべてコードとして組まれます。",
+    "warningsStrayFenceTitle": "1行の指示の後の終了行",
+    "warningsStrayFenceDetail": "この指示には終了行がないため、この:::は何も閉じず、捨てられます。消してください。",
     "warningsLineNumbersUnsupportedTitle": "縦組みに行番号は付かない",
     "warningsLineNumbersUnsupportedDetail": "縦組みの文書には行番号が付きません。この設定は無視されます。",
     "warningsUnknownConfigKeyTitle": "不明な設定",

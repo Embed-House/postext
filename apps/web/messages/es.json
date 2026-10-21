@@ -3754,6 +3754,8 @@
     "warningsWrapUnsupportedDetail": "el texto solo rodea en escritura horizontal; las figuras conservan su banda entera.",
     "warningsUnclosedCodeBlockTitle": "Bloque de código sin cerrar",
     "warningsUnclosedCodeBlockDetail": "el bloque no tiene línea de cierre, así que el resto del texto se compone como código.",
+    "warningsStrayFenceTitle": "Cierre tras una directiva de una línea",
+    "warningsStrayFenceDetail": "la directiva no lleva línea de cierre, así que este ::: no cierra nada y se descarta: bórralo.",
     "warningsLineNumbersUnsupportedTitle": "Sin numeración de líneas en texto vertical",
     "warningsLineNumbersUnsupportedDetail": "los documentos verticales no llevan números de línea; el ajuste se ignora.",
     "warningsUnknownConfigKeyTitle": "Ajuste desconocido",

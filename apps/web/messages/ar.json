@@ -2634,6 +2634,8 @@
     "warningsWrapUnsupportedDetail": "التفاف النص في الكتابة الأفقية فقط؛ تحتفظ الأشكال بشرائطها كاملة.",
     "warningsUnclosedCodeBlockTitle": "كتلة شيفرة غير مغلقة",
     "warningsUnclosedCodeBlockDetail": "ليس لكتلة الشيفرة سطر إغلاق، فنُضِّد ما تبقّى من النص شيفرةً.",
+    "warningsStrayFenceTitle": "سطر إغلاق بعد توجيه من سطر واحد",
+    "warningsStrayFenceDetail": "لا سطر إغلاق لهذا التوجيه، فسطر ::: هذا لا يُغلق شيئًا ويُسقط: احذفه.",
     "warningsLineNumbersUnsupportedTitle": "لا ترقيم للأسطر في النص العمودي",
     "warningsLineNumbersUnsupportedDetail": "المستندات العمودية لا تُرقَّم أسطرها، ويُتجاهل هذا الإعداد.",
     "warningsUnknownConfigKeyTitle": "إعداد غير معروف",
