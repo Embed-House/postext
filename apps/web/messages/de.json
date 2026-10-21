@@ -948,6 +948,8 @@
     "warningsFrameCoveredPictureDetail": "Seite __page__ · das Bild __picture__ liegt unter __by__, das darüber gemalt wird: __area__ mm² verdeckt (Vorlage __template__).",
     "warningsFrameCoveredDetail": "Seite __page__ · ein Teil dieses Rahmens liegt unter __by__, das darüber gemalt wird: __area__ mm² verdeckt (Vorlage __template__).",
     "warningsFrameOutsideTitle": "Rahmen ragt über seine Grenze hinaus",
+    "warningsFolioMissingTitle": "Seite ohne Pagina oder Kolumnentitel",
+    "warningsFolioMissingDetail": "Seite __page__ · Diese Seite der Vorlage __template__ zeichnet nichts von diesem Element, während __drawn__ der anderen __siblings__ Seiten derselben Buchseite (recto oder verso) es zeichnen. Prüfen Sie, was es hier liest (ein Attribut, das der Seitenblock nicht setzt, ein Name, der auf dieser Seite leer ist), oder schalten Sie es mit when oder unless und einem Attribut am Seitenblock bewusst ab.",
     "warningsFrameOutsideTrimDetail": "Seite __page__ · sein Text ragt __mm__ mm über das Endformat hinaus und wird dort abgeschnitten (Vorlage __template__).",
     "warningsFrameOutsideBleedDetail": "Seite __page__ · seine Fläche oder seine Bilder ragen __mm__ mm über den Anschnitt hinaus (Vorlage __template__).",
     "warningsFrameOutsideFrameDetail": "Seite __page__ · er ragt __mm__ mm über __target__ hinaus, den Rahmen, in dem er verankert ist (Vorlage __template__).",

@@ -947,6 +947,8 @@
     "warningsFrameCoveredPictureDetail": "page __page__ · l’image __picture__ se trouve sous __by__, peint par-dessus : __area__ mm² cachés (gabarit __template__).",
     "warningsFrameCoveredDetail": "page __page__ · une partie de ce bloc se trouve sous __by__, peint par-dessus : __area__ mm² cachés (gabarit __template__).",
     "warningsFrameOutsideTitle": "Le bloc dépasse sa limite",
+    "warningsFolioMissingTitle": "Page sans folio ni titre courant",
+    "warningsFolioMissingDetail": "page __page__ · cette page du gabarit __template__ ne dessine rien de cet élément, alors que __drawn__ de ses __siblings__ autres pages du même côté le dessinent. Vérifiez ce qu’il lit ici (un attribut que le délimiteur de page ne pose pas, un nom vide sur cette page), ou coupez-le exprès avec when ou unless et un attribut sur le délimiteur de page.",
     "warningsFrameOutsideTrimDetail": "page __page__ · son texte dépasse la coupe de __mm__ mm et y est coupé (gabarit __template__).",
     "warningsFrameOutsideBleedDetail": "page __page__ · son fond ou ses images dépassent le fond perdu de __mm__ mm (gabarit __template__).",
     "warningsFrameOutsideFrameDetail": "page __page__ · il dépasse de __mm__ mm __target__, le bloc à l’intérieur duquel il est ancré (gabarit __template__).",

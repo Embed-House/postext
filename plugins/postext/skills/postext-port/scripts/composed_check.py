@@ -25,7 +25,8 @@ the round-2 checks of a ported book, edition by edition.
           figure's), headingClaimsColumn (1.43: an in-column heading whose
           design reserves the whole column) and a labelOverlap that runs onto a symbol of the picture
           (1.42: the label meets one of its `avoid` zones), repeatOverflow, moduleUnknown,
-          moduleAsPage, moduleNested and moduleNameRejected (1.48), and unknownConfigKey /
+          moduleAsPage, moduleNested and moduleNameRejected (1.48), folioMissing (1.52: a page
+          that draws no folio or running head its siblings of the template draw), and unknownConfigKey /
           unknownConfigValue (a misspelt setting or a value the engine does not take);
         - frameCovered and frameOutsideArea (1.48: a frame under another frame, or past the
           trim, the bleed or the frame it is anchored inside), each with the fixes the engine
@@ -837,6 +838,10 @@ FAIL_KINDS = {
     # postext 1.52: a word wider than its whole line (a narrow frame), cut between two letters with no
     # hyphen ("CL" | "IMA"). The cut at a syllable (wordDividedBySyllable) is a note (severity info).
     "wordDividedByCharacter",
+    # postext 1.52: a composed page that draws no folio or running head most pages of its template and side
+    # draw (an {attr.x} its fence leaves unset). A page meant bare turns the element off with when / unless,
+    # which the engine does not report.
+    "folioMissing",
 }
 # postext 1.48: a frame under another frame, or past the trim, the bleed or the frame it is anchored
 # inside. Both fail unless the project records the pair as meant (composed-check.json, below); a frame

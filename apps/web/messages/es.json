@@ -2095,6 +2095,8 @@
     "warningsFrameCoveredPictureDetail": "página __page__ · la imagen __picture__ queda debajo de __by__, que se pinta encima: __area__ mm² tapados (plantilla __template__).",
     "warningsFrameCoveredDetail": "página __page__ · parte de este marco queda debajo de __by__, que se pinta encima: __area__ mm² tapados (plantilla __template__).",
     "warningsFrameOutsideTitle": "El marco se sale de su límite",
+    "warningsFolioMissingTitle": "Página sin folio o sin titulillo",
+    "warningsFolioMissingDetail": "página __page__ · esta página de la plantilla __template__ no dibuja nada de este elemento, y sí lo dibujan __drawn__ de sus otras __siblings__ páginas del mismo lado. Mira qué lee aquí (un atributo que el bloque de página no pone, un nombre vacío en esta página) o apágalo a propósito con when o unless y un atributo en el bloque de página.",
     "warningsFrameOutsideTrimDetail": "página __page__ · su texto pasa __mm__ mm del corte y ahí se corta (plantilla __template__).",
     "warningsFrameOutsideBleedDetail": "página __page__ · su fondo o sus imágenes pasan __mm__ mm del sangrado (plantilla __template__).",
     "warningsFrameOutsideFrameDetail": "página __page__ · se sale __mm__ mm de __target__, el marco dentro del que está anclado (plantilla __template__).",

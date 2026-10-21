@@ -944,6 +944,8 @@
     "warningsFrameCoveredPictureDetail": "página __page__ · a imagem __picture__ fica sob __by__, pintado por cima: __area__ mm² cobertos (modelo __template__).",
     "warningsFrameCoveredDetail": "página __page__ · parte deste bloco fica sob __by__, pintado por cima: __area__ mm² cobertos (modelo __template__).",
     "warningsFrameOutsideTitle": "O bloco passa do seu limite",
+    "warningsFolioMissingTitle": "Página sem fólio ou sem cabeço",
+    "warningsFolioMissingDetail": "página __page__ · esta página do modelo __template__ não desenha nada deste elemento, enquanto __drawn__ das outras __siblings__ páginas do mesmo lado o desenham. Veja o que ele lê aqui (um atributo que o contêiner de página não define, um nome vazio nesta página) ou desligue-o de propósito com when ou unless e um atributo no contêiner de página.",
     "warningsFrameOutsideTrimDetail": "página __page__ · o texto passa __mm__ mm do refile e é cortado ali (modelo __template__).",
     "warningsFrameOutsideBleedDetail": "página __page__ · o fundo ou as imagens passam __mm__ mm da sangria (modelo __template__).",
     "warningsFrameOutsideFrameDetail": "página __page__ · passa __mm__ mm de __target__, o bloco dentro do qual está ancorado (modelo __template__).",

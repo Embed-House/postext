@@ -180,6 +180,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>يُرسم الإطار في موضعه، ويُقصّ ما يتجاوز خط القص.</td>
     </tr>
     <tr>
+      <td><code>folioMissing</code></td>
+      <td>صفحة مركّبة لا ترسم شيئًا من رقم صفحة أو ترويسة جارية (<code>template</code>, <code>elementId</code>, <code>slot</code>: <code>'header'</code>, <code>'footer'</code> or <code>'decoration'</code>, <code>folio</code>, <code>side</code>, <code>drawnOn</code>, <code>siblings</code>) ترسمه <code>drawnOn</code> من صفحات قالبها وجهتها الأخرى البالغة <code>siblings</code>: نص في <code>header</code> أو <code>footer</code>، أو نص في الزخرفة يقرأ <code>&#123;pageNumber&#125;</code> أو اسمًا جاريًا أو <code>&#123;attr.x&#125;</code>. لا تُحسب صفحة تطفئ كتلتُها العنصر (<code>when</code> / <code>unless</code>)، ولا صفحة ليس في خانتها هذا العنصر؛ ويلزم صفحتان ترسمانه. يصدر عن التنضيد مع <code>pageIndex</code>، ويشير إلى كتلة الصفحة. منذ postext 1.52.</td>
+      <td>تُطبع الصفحة بدونه. اضبط في تلك الكتلة السمة التي يقرؤها العنصر، أو أطفئه هناك عمدًا بـ <code>when</code> أو <code>unless</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>شبكة متكرّرة في صفحة مركّبة تتّسع لـ<code>max</code> من العناصر، والصفحة تعطيها أكثر (<code>template</code> و<code>group</code> و<code>frame</code> و<code>item</code> و<code>max</code> و<code>flowFrame</code> و<code>fenceIndex</code>). تحذير لكل عنصر زائد. منذ postext 1.48.</td>
       <td>ينتقل العنصر إلى إطار التدفق، أو إلى ما بعد الصفحة.</td>

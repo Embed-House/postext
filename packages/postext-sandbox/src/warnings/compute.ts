@@ -280,6 +280,18 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'folioMissing') {
+      // A composed page that draws no folio or running head its siblings
+      // of the template draw (#1163), pointed at its page fence.
+      out.push({
+        id: `layout-folioMissing-${w.template}-${w.slot}-${w.elementId}-${w.pageIndex ?? 'x'}-${i}`,
+        payload: { kind: 'folioMissing', template: w.template, elementId: w.elementId, slot: w.slot, folio: w.folio, side: w.side, drawnOn: w.drawnOn, siblings: w.siblings, page: (w.pageIndex ?? 0) + 1 + (doc.pageIndexOffset ?? 0) },
+        sourceStart: w.sourceStart,
+        sourceEnd: w.sourceEnd,
+        line: w.sourceStart !== undefined ? lineNumberForOffset(markdown, w.sourceStart) : undefined,
+      });
+      return;
+    }
     if (w.kind === 'continueTargetMissing') {
       // A story that jumps to a page fence no later page has (#917).
       out.push({

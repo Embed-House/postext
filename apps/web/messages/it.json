@@ -948,6 +948,8 @@
     "warningsFrameCoveredPictureDetail": "pagina __page__ · l’immagine __picture__ sta sotto __by__, dipinta sopra: __area__ mm² coperti (modello __template__).",
     "warningsFrameCoveredDetail": "pagina __page__ · parte di questa cornice sta sotto __by__, dipinta sopra: __area__ mm² coperti (modello __template__).",
     "warningsFrameOutsideTitle": "La cornice esce dal suo limite",
+    "warningsFolioMissingTitle": "Pagina senza folio o senza testatina",
+    "warningsFolioMissingDetail": "pagina __page__ · questa pagina del modello __template__ non disegna nulla di questo elemento, mentre __drawn__ delle sue altre __siblings__ pagine dello stesso lato lo disegnano. Controlla che cosa legge qui (un attributo che il blocco di pagina non imposta, un nome vuoto in questa pagina) oppure spegnilo di proposito con when o unless e un attributo sul blocco di pagina.",
     "warningsFrameOutsideTrimDetail": "pagina __page__ · il testo supera il rifilo di __mm__ mm e lì viene tagliato (modello __template__).",
     "warningsFrameOutsideBleedDetail": "pagina __page__ · lo sfondo o le immagini superano l’abbondanza di __mm__ mm (modello __template__).",
     "warningsFrameOutsideFrameDetail": "pagina __page__ · esce di __mm__ mm da __target__, la cornice dentro cui è ancorata (modello __template__).",

@@ -8534,5 +8534,59 @@
         "it": "Avvisi"
       }
     }
+  },
+  "folioMissing": {
+    "source": "engine",
+    "label": {
+      "en": "Page without its folio or running head",
+      "es": "Página sin folio o sin titulillo",
+      "ca": "Pàgina sense foli o sense titolet",
+      "zh": "页面缺少页码或书眉",
+      "ar": "صفحة بلا رقم أو بلا ترويسة جارية",
+      "ja": "ノンブルや柱のないページ",
+      "pt": "Página sem fólio ou sem cabeço",
+      "fr": "Page sans folio ni titre courant",
+      "de": "Seite ohne Pagina oder Kolumnentitel",
+      "it": "Pagina senza folio o senza testatina"
+    },
+    "cause": {
+      "en": "A composed page draws nothing of a folio, running head or running foot (a text of the template's header or footer, or a decoration text that reads {pageNumber}, a running name or a page block attribute) that most other pages of the same template and side draw. The usual causes: an {attr.x} the page block leaves unset, a running name that is empty on that page, or an element hung from a frame the page does not have. A page whose block turns the element off with when or unless, or whose template has no such element, is not counted.",
+      "es": "Una página compuesta no dibuja nada de un folio, un titulillo o un pie corrido (un texto de la cabecera o el pie de la plantilla, o un texto de su decoración que lee {pageNumber}, un nombre corrido o un atributo del bloque de página) que sí dibujan la mayoría de las demás páginas de la misma plantilla y del mismo lado. Las causas habituales: un {attr.x} que el bloque de página no pone, un nombre corrido vacío en esa página o un elemento colgado de un marco que la página no tiene. No cuenta una página cuyo bloque apaga el elemento con when o unless, ni una cuya plantilla no lo tiene.",
+      "ca": "Una pàgina composta no dibuixa res d'un foli, un titolet o un peu corregut (un text de la capçalera o el peu de la plantilla, o un text de la seva decoració que llegeix {pageNumber}, un nom corregut o un atribut del bloc de pàgina) que sí que dibuixen la majoria de les altres pàgines de la mateixa plantilla i del mateix costat. Les causes habituals: un {attr.x} que el bloc de pàgina no posa, un nom corregut buit en aquella pàgina o un element penjat d'un marc que la pàgina no té. No compta una pàgina el bloc de la qual apaga l'element amb when o unless, ni una la plantilla de la qual no el té.",
+      "zh": "某个组版页面没有画出页码、书眉或页脚（模板页眉或页脚中的文字，或装饰中读取 {pageNumber}、书眉名称或页面块属性的文字），而同一模板、同一侧的大多数其他页面都画出了它。常见原因：页面块没有设置的 {attr.x}、这一页为空的书眉名称，或者挂在这一页没有的框上的元素。页面块用 when 或 unless 关闭该元素的页面，以及模板中没有这个元素的页面，都不计入。",
+      "ar": "صفحة مركّبة لا ترسم شيئًا من رقم صفحة أو ترويسة جارية أو تذييل جارٍ (نص في ترويسة القالب أو تذييله، أو نص في زخرفته يقرأ {pageNumber} أو اسمًا جاريًا أو سمة من كتلة الصفحة) ترسمه معظم الصفحات الأخرى من القالب نفسه وفي الجهة نفسها. الأسباب المعتادة: ‏{attr.x} لا تضبطه كتلة الصفحة، أو اسم جارٍ فارغ في تلك الصفحة، أو عنصر معلّق بإطار ليس في الصفحة. لا تُحسب صفحة تطفئ كتلتُها العنصرَ بـ when أو unless، ولا صفحة ليس في قالبها هذا العنصر.",
+      "ja": "組版ページに、同じテンプレート・同じ側のほかのページの多くが描くノンブル、柱、または柱のフッター（テンプレートのヘッダーやフッターのテキスト、または {pageNumber}、柱の名前、ページブロックの属性を読む装飾のテキスト）が何も描かれていません。よくある原因は、ページブロックが設定していない {attr.x}、そのページで空になる柱の名前、そのページにない枠にぶら下がった要素です。ページブロックが when や unless で要素を消しているページと、テンプレートにその要素がないページは数えません。",
+      "pt": "Uma página composta não desenha nada de um fólio, cabeço ou rodapé corrido (um texto do cabeçalho ou do rodapé do modelo, ou um texto da sua decoração que lê {pageNumber}, um nome corrido ou um atributo do contêiner de página) que a maioria das outras páginas do mesmo modelo e do mesmo lado desenha. As causas habituais: um {attr.x} que o contêiner de página não define, um nome corrido vazio nessa página ou um elemento pendurado num bloco que a página não tem. Não conta uma página cujo contêiner desliga o elemento com when ou unless, nem uma cujo modelo não o tem.",
+      "fr": "Une page composée ne dessine rien d’un folio, d’un titre courant ou d’un pied courant (un texte de l’en-tête ou du pied du gabarit, ou un texte de son décor qui lit {pageNumber}, un nom courant ou un attribut du délimiteur de page) que dessinent la plupart des autres pages du même gabarit et du même côté. Les causes habituelles : un {attr.x} que le délimiteur de page ne pose pas, un nom courant vide sur cette page, ou un élément accroché à un bloc que la page n’a pas. Une page dont le délimiteur coupe l’élément avec when ou unless, ou dont le gabarit n’a pas cet élément, n’entre pas dans le compte.",
+      "de": "Eine gestaltete Seite zeichnet nichts von einer Pagina, einem Kolumnentitel oder einem lebenden Fuß (einem Text aus Kopf- oder Fußzeile der Vorlage oder einem Text ihrer Dekoration, der {pageNumber}, einen lebenden Namen oder ein Attribut des Seitenblocks liest), den die meisten anderen Seiten derselben Vorlage auf derselben Buchseite zeichnen. Die üblichen Ursachen: ein {attr.x}, das der Seitenblock nicht setzt, ein lebender Name, der auf dieser Seite leer ist, oder ein Element an einem Rahmen, den die Seite nicht hat. Eine Seite, deren Block das Element mit when oder unless abschaltet, oder deren Vorlage kein solches Element hat, zählt nicht mit.",
+      "it": "Una pagina composta non disegna nulla di un folio, di una testatina o di un piede corrente (un testo dell’intestazione o del piè di pagina del modello, o un testo della sua decorazione che legge {pageNumber}, un nome corrente o un attributo del blocco di pagina) che la maggior parte delle altre pagine dello stesso modello e dello stesso lato disegna. Le cause solite: un {attr.x} che il blocco di pagina non imposta, un nome corrente vuoto in quella pagina, o un elemento appeso a una cornice che la pagina non ha. Non conta una pagina il cui blocco spegne l’elemento con when o unless, né una il cui modello non ha quell’elemento."
+    },
+    "fix": {
+      "en": "Set the attribute on that page block (foot=\"…\"), or give the element text that is never empty. If the page should print no folio on purpose, put unless: 'x' (or when: 'x') on the element and the attribute on the page block, as front matter does.",
+      "es": "Pon el atributo en ese bloque de página (foot=\"…\") o da al elemento un texto que nunca quede vacío. Si la página no debe llevar folio a propósito, pon unless: 'x' (o when: 'x') en el elemento y el atributo en el bloque de página, como se hace en los preliminares.",
+      "ca": "Posa l'atribut en aquell bloc de pàgina (foot=\"…\") o dona a l'element un text que no quedi mai buit. Si la pàgina no ha de dur foli expressament, posa unless: 'x' (o when: 'x') a l'element i l'atribut al bloc de pàgina, com es fa als preliminars.",
+      "zh": "在那个页面块上设置该属性（foot=\"…\"），或者给元素一段永远不会为空的文字。如果这一页本来就不该有页码，就在元素上写 unless: 'x'（或 when: 'x'），并在页面块上写该属性，正文前的页面就是这样做的。",
+      "ar": "اضبط السمة في كتلة تلك الصفحة (foot=\"…\")، أو أعطِ العنصر نصًا لا يفرغ أبدًا. وإن كان ينبغي ألا تحمل الصفحة رقمًا عمدًا، فضع unless: 'x' (أو when: 'x') على العنصر والسمة على كتلة الصفحة، كما في الصفحات التمهيدية.",
+      "ja": "そのページブロックに属性を設定する（foot=\"…\"）か、決して空にならないテキストを要素に与えます。そのページにわざとノンブルを付けないなら、前付けと同じように、要素に unless: 'x'（または when: 'x'）を、ページブロックにその属性を書きます。",
+      "pt": "Defina o atributo nesse contêiner de página (foot=\"…\") ou dê ao elemento um texto que nunca fique vazio. Se a página não deve levar fólio de propósito, ponha unless: 'x' (ou when: 'x') no elemento e o atributo no contêiner de página, como nos preliminares.",
+      "fr": "Posez l’attribut sur ce délimiteur de page (foot=\"…\"), ou donnez à l’élément un texte qui n’est jamais vide. Si la page ne doit pas porter de folio, exprès, mettez unless: 'x' (ou when: 'x') sur l’élément et l’attribut sur le délimiteur de page, comme pour les pages liminaires.",
+      "de": "Setz das Attribut an diesem Seitenblock (foot=\"…\") oder gib dem Element einen Text, der nie leer ist. Soll die Seite bewusst keine Pagina tragen, setz unless: 'x' (oder when: 'x') an das Element und das Attribut an den Seitenblock, wie bei der Titelei.",
+      "it": "Imposta l’attributo su quel blocco di pagina (foot=\"…\") o dai all’elemento un testo che non resti mai vuoto. Se la pagina non deve avere il folio di proposito, metti unless: 'x' (o when: 'x') sull’elemento e l’attributo sul blocco di pagina, come nelle pagine preliminari."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Warnings",
+        "es": "Avisos",
+        "ca": "Avisos",
+        "zh": "警告",
+        "ar": "التحذيرات",
+        "ja": "警告",
+        "pt": "Avisos",
+        "fr": "Avertissements",
+        "de": "Warnungen",
+        "it": "Avvisi"
+      }
+    }
   }
 }

@@ -947,6 +947,8 @@
     "warningsFrameCoveredPictureDetail": "__page__ページ · 画像__picture__は上に描かれる__by__の下にあります：__area__ mm²が隠れています（テンプレート__template__）。",
     "warningsFrameCoveredDetail": "__page__ページ · この枠の一部は上に描かれる__by__の下にあります：__area__ mm²が隠れています（テンプレート__template__）。",
     "warningsFrameOutsideTitle": "枠がはみ出しています",
+    "warningsFolioMissingTitle": "ノンブルや柱のないページ",
+    "warningsFolioMissingDetail": "__page__ページ · テンプレート__template__のこのページにはこの要素が何も描かれていませんが、同じ側のほかの__siblings__ページのうち__drawn__ページには描かれています。このページで読む値（ページブロックが設定していない属性、このページで空になる名前）を確かめるか、whenまたはunlessとページブロックの属性で意図的に消してください。",
     "warningsFrameOutsideTrimDetail": "__page__ページ · 文字が仕上がり線から__mm__ mmはみ出し、そこで切れます（テンプレート__template__）。",
     "warningsFrameOutsideBleedDetail": "__page__ページ · 地色か画像が塗り足しから__mm__ mmはみ出しています（テンプレート__template__）。",
     "warningsFrameOutsideFrameDetail": "__page__ページ · アンカーした枠__target__から__mm__ mmはみ出しています（テンプレート__template__）。",

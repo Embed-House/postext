@@ -372,6 +372,13 @@ those lines, or run the script.
   column moved on and left `emptyMm` mm empty on that page (`data.emptyMm` in `--json`); compare with the
   source page, and float it (`position: 'auto'`), narrow it or move its `::resource` line when the source has
   text there.
+- `WARN folioMissing` (postext ≥ 1.52): a composed page draws nothing of a folio or running head (a template
+  `header`/`footer` text, or a decoration text reading `{pageNumber}`, a running name or `{attr.x}`) that most
+  pages of the same template and side draw (`data`: `template`, `elementId`, `slot`, `drawnOn`, `siblings`).
+  Usually an `{attr.foot}` the page fence leaves out, or a running name empty on that page: copy the attribute
+  from the source page. When the source page prints no folio on purpose (a title page, an opener), put
+  `unless: 'x'` (or `when: 'x'`) on the element and `x` on that fence; a page switched off that way is not
+  reported. `composed_check.py` fails on it.
 - `WARN unknownMarkStyle` (postext ≥ 1.34.1): `:mark[…]{style}` names no `markStyles` id; the first style is
   used. `WARN comicPanelFrame` (postext ≥ 1.38): `unknownBox` (`box` names no callout style), `textOverflow`
   (a `::panel{text}` body is taller than its frame, `overflowMm`), `strip`/`spread` (raised

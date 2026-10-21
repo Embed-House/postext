@@ -52,6 +52,7 @@ export type WarningKind =
   | 'continueTargetMissing'
   | 'frameCovered'
   | 'frameOutsideArea'
+  | 'folioMissing'
   | 'repeatOverflow'
   | 'lookUnknown'
   | 'moduleUnknown'
@@ -306,6 +307,10 @@ export type WarningPayload =
    *  fence (#917; `before`: that fence comes before it): the rest went on
    *  on the next page. */
   | { kind: 'continueTargetMissing'; template: string; frame: string; fenceIndex: number; target: string; before: boolean; page: number; configPath: string }
+  /** A composed page that draws no folio or running head (`elementId`, of
+   *  the template's `slot`) while `drawnOn` of the `siblings` other pages
+   *  of its template and side draw it (#1163). `page` is the book page. */
+  | { kind: 'folioMissing'; template: string; elementId: string; slot: 'header' | 'footer' | 'decoration'; folio: boolean; side: 'recto' | 'verso'; drawnOn: number; siblings: number; page: number }
   /** Ink of a frame under a frame painted over it (#1053): its lines,
    *  tab, title or pictures. `page` is the book page; `coveredBy` the
    *  covering frame (`coveredByPath` its JSON pointer); `text` the first
