@@ -642,9 +642,13 @@ Pick the path per [sources.md](references/sources.md):
 
 - **PDF**: edit `roles.json` (the role of each font/size/colour), then run
   `scripts/pdf_extract.py markdown source.pdf --roles roles.json --out draft --lang es --link-refs`.
+  A roman the source slants by shearing comes out as italic, and
+  `report.md` counts those runs: check them against the page.
   Cut the figures with
   `scripts/pdf_figures.py stubs source.pdf draft/resources.json --out-dir my-book/resources`,
-  and the tables with `scripts/extract_tables.py source.pdf --pages N`.
+  and the tables with `scripts/extract_tables.py source.pdf --pages N` (cells
+  with their align, bold and fills; the rules as the nearest table-style
+  preset, never per cell).
 - **DOCX / PPTX / ODT / EPUB / HTML / LaTeX / Markdown / JATS / DocBook**:
   `scripts/pandoc_to_postext.py SOURCE --dump-styles`, then
   `scripts/pandoc_to_postext.py SOURCE --out draft --lang es --style-map map.json --link-refs`.
@@ -695,7 +699,9 @@ Pick the path per [sources.md](references/sources.md):
   role itself, `--name-frames`; art no pixel of its colour shows is left out,
   a cut keeps only its picture, plates whose fill shows over a picture lie over
   it, captions in columns under a box's pictures are a frame each, ornaments
-  by a running head are anchored to it),
+  by a running head are anchored to it; a box with art over its fill gets the
+  fill as decoration under that art, bars under 1 mm are lines, a picture in
+  a rounded box is clipped to its corners),
   `scripts/template_dedupe.py work/regions --laid laid.json` (one template per kind
   of page, `extends` children, merged styles and grounds, frames on a lattice
   as a repeating grid (cards that differ only in colour too, each naming a look from
