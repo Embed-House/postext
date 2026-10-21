@@ -100,6 +100,22 @@ class LeadTitle(unittest.TestCase):
         finally:
             tmp.cleanup()
 
+    def test_a_single_bold_letter_is_no_title(self):
+        doc = fitz.open()
+        page = new_page(doc)
+        x, y = 25 * MM, 40 * MM
+        page.draw_rect(fitz.Rect(x - 10, y - 20, 175 * MM, y + 50), color=(0.2, 0.4, 0.7), fill=(0.93, 0.96, 1),
+                       width=1)
+        put(page, x, y, "V", size=11, font="hebo")
+        put(page, x, y + 16, PARA[0], size=11)
+        put(page, x, y + 30, PARA[1], size=11)
+        tmp, md, _, _ = extract(doc)
+        try:
+            self.assertNotIn("## V", md)
+            self.assertIn("**V**", md)
+        finally:
+            tmp.cleanup()
+
     def test_a_bold_sentence_is_no_title(self):
         doc = fitz.open()
         page = new_page(doc)
