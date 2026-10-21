@@ -488,6 +488,11 @@ def page_fences(markdown: str) -> list[dict]:
                         child = (into, True)  # a module inside a module: its blocks are the outer one's
                 elif into is not None:
                     item = {"kind": "container", "name": name, "slot": ca.get("slot"), "line": i + 1}
+                    j = i + 1
+                    while j < len(lines) and not lines[j].strip():
+                        j += 1
+                    if j < len(lines) and _CLOSE.match(lines[j]):
+                        item["empty"] = True     # a box whose words all went to frames of their own
                     into.append(item)
                     if level and item["slot"] is not None:
                         item["within"] = []
@@ -694,9 +699,15 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
     page = _Level(frames, template_groups(templates, tid), "", None, order)
     has_modules = any(g.get("modules") is True for g in template_groups(templates, tid))
     instances = iter(module_instances(fence["items"]))
+    # an empty fence (a box whose words all went to frames of their own) has nothing to
+    # read: the HTML lays its frame where it likes, so it is left out of the order
+    empty: set[str] = set()
     for it in fence["items"]:
         if it.get("kind") != "module":
+            n = len(order)
             page.piece(it)
+            if it.get("empty"):
+                empty.update(order[n:])
             continue
         inst = next(instances)
         mt = it.get("template") or ""
@@ -707,8 +718,11 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
             continue
         mod = _Level(mframes, template_groups(templates, mt), inst + ".", page.flow, order)
         for sub in it.get("items") or []:
+            n = len(order)
             mod.piece(sub)
-    return order
+            if sub.get("empty"):
+                empty.update(order[n:])
+    return [x for x in order if x not in empty]
 
 
 # --- the HTML side: the order the viewer writes the frames in ---------------

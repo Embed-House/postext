@@ -325,19 +325,76 @@ def colour_look(a: dict, b: dict, tol: dict) -> dict | None:
     return look
 
 
-def look_name(look: dict) -> str:
-    """A plain name for a look, by its most visible colour."""
+def look_colour(look: dict) -> str | None:
+    """A look's most visible colour (hex)."""
     for path in (("background",), ("label", "background"), ("border", "color"), ("stripe", "color"),
                  ("body", "color"), ("label", "color")):
         node: Any = look
         for part in path:
             node = node.get(part) if isinstance(node, dict) else None
         if is_colour(node):
-            return colour_name(node["hex"])
-    return "colour"
+            return node["hex"]
+    return None
 
 
-def look_book(styles: list[dict], tol: dict, taken: set[str] | None = None) -> "tf.LookBook":
+def look_name(look: dict, roles: list[tuple[str, str]] | None = None, delta: float = 3.0) -> str:
+    """A plain name for a look: the role its colour has where the book
+    already says what that colour marks (`look_roles`: a palette entry, a
+    style named by role, the page's own colour), else its colour."""
+    hx = look_colour(look)
+    if hx is None:
+        return "colour"
+    for rh, role in roles or []:
+        if delta_e(hx, rh) <= delta:
+            return role
+    return colour_name(hx)
+
+
+def _named_by_role(sid: str, generated: str) -> bool:
+    """An id a person gave (`tip`, `key-term`), not one dedupe made from
+    the style's kind and colours (`box-light-blue-2`)."""
+    base = re.sub(r"-\d+$", "", sid)
+    if not base or base.split("-")[0] in ("box", "tab", "text", "title", "frame", "callout"):
+        return False      # a kind and what follows it: a name made of the style's looks
+    return base != generated and not base.startswith(generated + "-")
+
+
+def look_roles(library: dict, templates: list[dict] | None = None) -> list[tuple[str, str]]:
+    """(hex, role) of the colours whose role the book already names, most
+    telling first: a palette entry with an id that is no colour name
+    (`brand`, `part-green` is fine, `light-green` is not), the background
+    (or tab) of a callout style named by role, and the page's own colour
+    (`page-colour`, the ground every page of the book is set on)."""
+    out: list[tuple[str, str]] = []
+    for e in library.get("colorPalette") or []:
+        val = e.get("value") if isinstance(e, dict) else None
+        eid = str(e.get("id") or "") if isinstance(e, dict) else ""
+        if is_colour(val) and eid and eid != colour_name(val["hex"]):
+            out.append((val["hex"], slug(eid)))
+    for st in library.get("calloutStyles") or []:
+        sid = str(st.get("id") or "")
+        if not sid or not _named_by_role(sid, style_role(st, "calloutStyles")):
+            continue
+        for node in (st.get("background") if st.get("backgroundEnabled", True) else None,
+                     (st.get("label") or {}).get("background")):
+            if is_colour(node):
+                out.append((node["hex"], slug(sid)))
+                break
+    for t in templates or []:
+        for el in (t.get("decoration") or {}).get("elements", []) if isinstance(t.get("decoration"), dict) else []:
+            bg = (el.get("style") or {}).get("backgroundColor") if isinstance(el, dict) else None
+            if str(el.get("id", "")).startswith("page-colour") and is_colour(bg):
+                out.append((bg["hex"], "page-colour"))
+                break
+    return out
+
+
+def slug(s: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-") or "look"
+
+
+def look_book(styles: list[dict], tol: dict, taken: set[str] | None = None,
+              roles: list[tuple[str, str]] | None = None) -> "tf.LookBook":
     by = {s["id"]: s for s in styles}
     classes = {s["id"]: style_class(s) for s in styles}
 
@@ -346,7 +403,10 @@ def look_book(styles: list[dict], tol: dict, taken: set[str] | None = None) -> "
             return None
         return colour_look(by[x], by[y], tol)
 
-    return tf.LookBook(classes, between, look_name, taken)
+    def name(look: dict) -> str:
+        return look_name(look, roles, tol.get("delta_e", 3.0))
+
+    return tf.LookBook(classes, between, name, taken)
 
 
 # ---------------------------------------------------------------------------
@@ -903,6 +963,13 @@ def merge_furniture_shells(templates: list[dict], fences: list[str], tol: float
                     have[k] = set()
                 have[k].add(t["id"])
                 prev = k
+        # an element the extract already draws on an attribute (`when: "head"`: an ornament by a
+        # running head that reads `{attr.head}`) keeps it; a second `when` cannot be added to it
+        if any(len(have[element_key(e)]) < len(group) and "when" in e and len(
+                [i for i in pages if fences[i] in have[element_key(e)]]) * 2 < len(pages) for e in merged):
+            for t in group[1:]:
+                used.discard(t["id"])
+            continue
         attrs: dict[frozenset, tuple[str, str]] = {}
         for e in merged:
             on = frozenset(have[element_key(e)])
@@ -916,8 +983,6 @@ def merge_furniture_shells(templates: list[dict], fences: list[str], tol: float
                 for tid in {fences[i] for i in marked}:
                     flags.setdefault(tid, []).append(attrs[on][1])
             key, name = attrs[on]
-            e.pop("when", None)
-            e.pop("unless", None)
             e[key] = name
         keep = json.loads(json.dumps(base))
         if merged:
@@ -938,11 +1003,13 @@ def merge_furniture_shells(templates: list[dict], fences: list[str], tol: float
 
 def _furniture_only(group: list[dict], tol: float) -> bool:
     """The templates' decorations agree on every element they share, and
-    none already draws on a page attribute (`when` / `unless`)."""
+    none already leaves a page out on an attribute (`unless`); a `when` the
+    extract wrote (an ornament drawn with the running head it is anchored
+    to) is kept."""
     seen: dict[str, dict] = {}
     for t in group:
         for e in decoration_of(t):
-            if "when" in e or "unless" in e:
+            if "unless" in e:
                 return False
             k = element_key(e)
             if k in seen and element_diff(seen[k], e, tol) is None:
@@ -1483,7 +1550,8 @@ def dedupe_dir(root: Path, tol: dict, max_diff: int, image_tol: float, dry_run: 
         looks = None
         if fold_looks:
             taken = {e.get("id") for e in library.get("frameLooks") or []}
-            looks = look_book(library.get("calloutStyles") or [], tol, {t for t in taken if t})
+            looks = look_book(library.get("calloutStyles") or [], tol, {t for t in taken if t},
+                              roles=look_roles(library, templates))
         fold_report = tf.fold_book(templates, regions, markdowns, tol, frame_diff, element_diff, _group_equal,
                                    grids=fold_grids, modules=fold_modules, laid=laid_boxes, rows=fold_rows,
                                    looks=looks)

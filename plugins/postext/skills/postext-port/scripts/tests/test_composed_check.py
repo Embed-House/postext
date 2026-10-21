@@ -169,6 +169,14 @@ class Markdown(unittest.TestCase):
         self.assertEqual(cc.expected_order(fences[1], TEMPLATES), ["tira", "texto"])
         self.assertIsNone(cc.expected_order({"template": "x", "items": []}, TEMPLATES))
 
+    def test_an_empty_fence_is_left_out_of_the_order(self):
+        # a box whose words all went to captions of their own: nothing to read in it
+        md = ('::::page{template="tema"}\n# One\n\n:::frame{slot="dinero" label="Tab"}\n\n:::\n\n'
+              '::resource{id="foto" slot="dinero-fotos"}\n::::\n')
+        fence = cc.page_fences(md)[0]
+        self.assertTrue(fence["items"][1]["empty"])
+        self.assertEqual(cc.expected_order(fence, TEMPLATES), ["titulo", "dinero-fotos"])
+
     def test_second_heading_goes_to_the_flow(self):
         fence = cc.page_fences('::::page{template="tema"}\n## A\n\n# One\n\n# Two\n::::\n')[0]
         self.assertEqual(cc.expected_order(fence, TEMPLATES), ["texto", "titulo"])

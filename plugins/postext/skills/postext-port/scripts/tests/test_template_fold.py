@@ -757,5 +757,120 @@ class Round3DirTest(unittest.TestCase):
             self.assertNotIn(bad, kinds, [w for w in data.get("warnings", []) if w.get("kind") == bad][:3])
 
 
+# --- #1095: what the round-3 port still curated by hand --------------------
+
+def chained_row_page(tid: str, words: str):
+    """Under the text, a box and a photo side by side, each anchored `below`
+    the text as extract anchors a frame to the one over it on the card."""
+    frames = [frame("text", 15, 15, 180, flow=True, minHeight=mm(40), style="text-1"),
+              {"name": "box-1", "placement": at(0, 10, "#text", "below"), "width": mm(110), "minHeight": mm(45),
+               "style": "box-white"},
+              {"name": "picture-1", "placement": at(120, 10, "#text", "below"), "width": mm(60)}]
+    regions = [{"name": "text", "kind": "text", "box": [15, 15, 195, 55], "parent": None},
+               {"name": "box-1", "kind": "box", "box": [15, 65, 125, 110], "parent": None},
+               {"name": "picture-1", "kind": "picture", "box": [135, 65, 195, 102.5], "parent": None}]
+    md = "\n".join([f'::::page{{template="{tid}"}}', "", f"{words} at the head of the page.", "",
+                    ':::frame{slot="box-1"}', f"{words} in the box beside the photo.", ":::", "",
+                    f'::resource{{id="{tid}-picture-1" slot="picture-1"}}', "", "::::", ""])
+    t = {"id": tid, "area": "trim", "header": False, "footer": False, "frames": frames,
+         "decoration": {"elements": [folio()]}}
+    return t, {"page": 1, "frames": regions}, md
+
+
+def ornament(eid: str, head: str, dx: float) -> dict:
+    return {"kind": "path", "id": eid, "parity": "odd", "when": "head", "d": "M0 0 L3 1.5 L0 3 Z", "viewBox": [3, 3],
+            "fill": {"hex": "#00a88e", "model": "hex"},
+            "placement": {"anchor": {"to": f"#{head}", "edge": "left-of"}, "offset": {"x": mm(dx), "y": mm(1)},
+                          "size": {"width": mm(3), "height": mm(3)}}}
+
+
+def head_page(tid: str, words: str):
+    """A body page whose running head has two chevrons anchored before it,
+    as extract writes them (#1095)."""
+    t, reg, md = band_page(tid, words)
+    head = {"kind": "text", "id": "head-odd", "parity": "odd", "content": "{attr.head}", "align": "right",
+            "fontSize": {"value": 9, "unit": "pt"},
+            "placement": {"anchor": {"to": "page", "edge": "top-right"}, "offset": {"x": mm(-15), "y": mm(7)}}}
+    els = t["decoration"]["elements"]
+    els[-1]["parity"] = "odd"
+    els += [head, ornament("head-odd-ornament-1", "head-odd", -2.7), ornament("head-odd-ornament-2", "head-odd", -7.8)]
+    md = md.replace(f'::::page{{template="{tid}"}}', f'::::page{{template="{tid}" head="{words.upper()}"}}')
+    return t, reg, md
+
+
+class LimitsTest(unittest.TestCase):
+    def test_frames_chained_below_the_text_still_stand_side_by_side_as_a_row(self):
+        templates, md, rep = fold([chained_row_page("p01", "Rivers"), chained_row_page("p02", "Hills")])
+        self.assertEqual([(r["kind"], len(r["templates"])) for r in rep["rows"]], [("row", 2)])
+        mods = {t["id"]: t for t in templates if t.get("role") == "module"}
+        box_mod, pic_mod = (mods[i] for i in rep["rows"][0]["templates"])
+        # the anchor to the text, now in another module, is the frame's laid place
+        self.assertEqual(box_mod["frames"][0]["placement"], at(15, 10))
+        self.assertEqual(pic_mod["frames"][0]["placement"], at(0, 10))
+        order = [line.split('"')[1] for line in md.split("\n") if line.startswith(":::module{")]
+        self.assertEqual(len(order), 6)
+
+    def test_a_frame_chained_below_another_with_nothing_beside_it_stays_in_its_module(self):
+        t, reg, md = chained_row_page("p01", "Rivers")
+        t["frames"] = t["frames"][:2]
+        t["frames"][1]["width"] = mm(180)
+        reg["frames"] = reg["frames"][:2]
+        reg["frames"][1]["box"] = [15, 65, 195, 110]
+        templates, _, rep = fold([(t, reg, md)])
+        self.assertEqual(rep["rows"], [])
+        self.assertEqual([m["frames"] for m in rep["modules"]], [2])
+        mod = next(x for x in templates if x.get("role") == "module")
+        self.assertEqual(mod["frames"][1]["placement"]["anchor"], {"to": "#text-1", "edge": "below"})
+
+    def test_ornaments_anchored_to_the_running_head_stay_on_the_shell_with_it(self):
+        templates, _, rep = fold([head_page("p01", "Rivers"), head_page("p03", "Hills")])
+        shell = templates[0]
+        els = {e["id"]: e for e in shell["decoration"]["elements"]}
+        heads = [e for e in els.values() if e.get("content") == "{attr.head}"]
+        self.assertEqual(len(heads), 1)
+        orns = [e for e in els.values() if e.get("kind") == "path" and e.get("when") == "head"]
+        self.assertEqual(len(orns), 2)
+        for e in orns:
+            self.assertEqual(e["placement"]["anchor"], {"to": f'#{heads[0]["id"]}', "edge": "left-of"})
+        for m in (t for t in templates if t.get("role") == "module"):
+            for e in (m.get("decoration") or {}).get("elements", []):
+                self.assertNotIn("#head", json.dumps(e.get("placement")))
+                self.assertNotIn(heads[0]["id"], json.dumps(e.get("placement")))
+
+    def test_a_shell_merge_keeps_the_ornaments_drawn_with_their_head(self):
+        sh = ShellTest().shell
+        orn = ornament("head-odd-ornament-1", "head-odd", -2.7)
+        head = {"kind": "text", "id": "head-odd", "content": "{attr.head}", "parity": "odd",
+                "placement": {**at(-15, 7, "page", "top-right")}}
+        body = sh("page-2", [page_colour(), head, orn, folio()])
+        front = sh("page", [])
+        out, mapping, flags, _ = td.merge_furniture_shells([front, body], ["page"] * 2 + ["page-2"] * 6, 3)
+        self.assertEqual(mapping, {"page": "page-2"})
+        got = {e["id"]: (e.get("when"), e.get("unless")) for e in out[0]["decoration"]["elements"]}
+        self.assertEqual(got["head-odd-ornament-1"], ("head", "frontmatter"))
+        self.assertEqual(got["head-odd"], (None, "frontmatter"))
+        # an ornament only the minority draws would need a second `when`: no merge
+        out, mapping, _, _ = td.merge_furniture_shells([sh("page", [head, orn]), sh("page-2", [])],
+                                                       ["page"] * 2 + ["page-2"] * 6, 3)
+        self.assertEqual(mapping, {})
+
+    def test_looks_are_named_by_the_role_the_book_gives_their_colour(self):
+        lib = {"colorPalette": [{"id": "brand", "value": {"hex": "#c4ecd4", "model": "hex"}},
+                                {"id": "light-blue", "value": {"hex": "#bfe0f7", "model": "hex"}}],
+               "calloutStyles": style_lib() + [style("tip", "#bfe0f7")]}
+        roles = td.look_roles(lib, [{"id": "p01", "decoration": {"elements": [page_colour()]}}])
+        self.assertIn(("#c4ecd4", "brand"), roles)
+        self.assertIn(("#bfe0f7", "tip"), roles)
+        self.assertNotIn("light-blue", [r for _, r in roles])     # a colour name is no role
+        self.assertNotIn("box-sky", [r for _, r in roles])         # nor an id dedupe made of one
+        self.assertIn(("#eef6f2", "page-colour"), roles)
+        self.assertEqual(td.look_name({"background": {"hex": "#c4ecd5", "model": "hex"}}, roles), "brand")
+        self.assertEqual(td.look_name({"background": {"hex": "#f6c4d4", "model": "hex"}}, roles), td.colour_name("#f6c4d4"))
+        book = td.look_book(style_lib(), TOL, roles=roles)
+        _, md, rep = fold([look_grid_page()], modules=False, looks=book)
+        self.assertEqual(sorted(e["id"] for e in rep["frameLooks"]), ["look-brand", "look-tip"])
+        self.assertEqual(md.count('look="look-tip"'), 2)
+
+
 if __name__ == "__main__":
     unittest.main()

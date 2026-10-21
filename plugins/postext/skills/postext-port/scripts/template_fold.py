@@ -809,12 +809,77 @@ def _frame_box(t: dict, rects: dict[str, Box], name: str) -> Box | None:
     return (min(r[0] for r in insts), min(r[1] for r in insts), max(r[2] for r in insts), max(r[3] for r in insts))
 
 
+def soft_links(t: dict, rects: dict[str, Box]) -> set[tuple[str, str]]:
+    """(frame or group, target) of every placement `below` a frame that
+    stands wholly above it: the extract's way of keeping a frame under the
+    one over it on the card, which the stack of modules also does."""
+    out = set()
+    items = [(f["name"], f.get("placement"), _frame_box(t, rects, f["name"]))
+             for f in t.get("frames", []) if not f.get("remove")]
+    for g in t.get("groups", []):
+        bs = [b for b in (_frame_box(t, rects, m) for m in _group_members(g)) if b]
+        items.append((g["name"], g.get("placement"), (min(b[0] for b in bs), min(b[1] for b in bs),
+                                                      max(b[2] for b in bs), max(b[3] for b in bs)) if bs else None))
+    for name, pl, box in items:
+        tgt = _target(pl)
+        edge = ((pl or {}).get("anchor") or {}).get("edge") if isinstance(pl, dict) else None
+        tb = _frame_box(t, rects, tgt) if tgt else None
+        if edge == "below" and box and tb and tb[3] <= box[1] + 0.5:
+            out.add((name, tgt))  # type: ignore[arg-type]
+    return out
+
+
+def _side_by_side(band: dict, tol: float = 0.5) -> bool:
+    """A band whose units stand in two clusters or more across the page."""
+    units = sorted(band.get("units") or [], key=lambda u: u[1][0])
+    n, end = 0, None
+    for _, b in units:
+        if end is None or b[0] >= end - tol:
+            n += 1
+            end = b[2]
+        else:
+            end = max(end, b[2])
+    return n > 1
+
+
 def bands_of(t: dict, rects: dict[str, Box], parents: dict[str, str | None]) -> list[dict] | None:
     """Every frame of template `t` in bands, top to bottom: [{frames,
     groups, box}]. Frames are joined into units (containment, anchors to a
     frame or a group, a group's members, a connector's ends, a `next` or
     `continueIn: '#x'` chain); units whose boxes overlap down the page are
-    one band. None when a frame has no box."""
+    one band. None when a frame has no box.
+
+    A frame anchored `below` one wholly above it (`soft_links`) is not
+    joined to it when that keeps units side by side from standing apart:
+    the bands are first read without those links, and a link is kept only
+    when neither end lies in a band whose units stand side by side in
+    another band than the other end's. The stack of modules keeps such a
+    frame under the band above as the anchor did, and the band can be a
+    row of modules (#1095)."""
+    soft = soft_links(t, rects)
+    first = _bands(t, rects, parents, soft)
+    if first is None or not soft:
+        return first
+    band_of: dict[str, int] = {}
+    rows: set[int] = set()
+    for i, b in enumerate(first):
+        for n in b["frames"]:
+            band_of[n] = i
+        if _side_by_side(b):
+            rows.add(i)
+    for g in t.get("groups", []):
+        ms = [m for m in _group_members(g) if m in band_of]
+        if ms:
+            band_of[g["name"]] = band_of[ms[0]]
+    apart = {(a, z) for a, z in soft if band_of.get(a) != band_of.get(z)
+             and (band_of.get(a) in rows or band_of.get(z) in rows)}
+    if not apart:
+        return _bands(t, rects, parents, set())
+    return _bands(t, rects, parents, apart)
+
+
+def _bands(t: dict, rects: dict[str, Box], parents: dict[str, str | None],
+           skip: set[tuple[str, str]]) -> list[dict] | None:
     frames = [f for f in t.get("frames", []) if not f.get("remove")]
     names = [f["name"] for f in frames]
     u = _Union(names)
@@ -832,11 +897,11 @@ def bands_of(t: dict, rects: dict[str, Box], parents: dict[str, str | None]) -> 
         for m in ms[1:]:
             u.join(ms[0], m)
         tgt = first_of(_target(g.get("placement")))
-        if ms and tgt:
+        if ms and tgt and (g["name"], _target(g.get("placement"))) not in skip:
             u.join(ms[0], tgt)
     for f in frames:
         tgt = first_of(_target(f.get("placement")))
-        if tgt:
+        if tgt and (f["name"], _target(f.get("placement"))) not in skip:
             u.join(f["name"], tgt)
         par = parents.get(f["name"])
         if par in u.p:
@@ -1137,8 +1202,12 @@ def mark_furniture(templates: list[dict], element_diff, tol: float = 0.5) -> int
     known = [k for k, sd in enumerate(sides) if sd]
     classes: list[dict] = []
     for k in known:
+        ids = {str(e.get("id")) for e in _decoration(templates[k])}
         for el in _decoration(templates[k]):
-            if el.get("remove") or el.get("kind") == "connector" or _target(el.get("placement")):
+            # an element anchored to a frame moves with it; one anchored to another element
+            # (an ornament by the running head) is furniture with it
+            tgt = _target(el.get("placement"))
+            if el.get("remove") or el.get("kind") == "connector" or (tgt and tgt not in ids):
                 continue
             if el.get("kind") == "text" and "{" not in str(el.get("content", "")):
                 continue
@@ -1198,6 +1267,9 @@ def _text_box(el: dict, page: tuple[float, float]) -> Box | None:
     ox, oy = _mm_of(off.get("x")) or 0.0, _mm_of(off.get("y")) or 0.0
     w = _mm_of((p.get("size") or {}).get("width"))
     fs = _mm_of(el.get("fontSize"))
+    if w is None and fs is not None and "size" not in p:
+        # as wide as its words (a head with ornaments anchored to it): at most half the page
+        w = page[0] / 2
     if w is None or fs is None:
         return None
     h = fs * float(el.get("lineHeight") or 1.2)
@@ -1289,7 +1361,10 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
             painted.append(_fixed_box(el) or slots[owner[eid]]["box"])
             continue
         box = _text_box(el, page) if el.get("kind") == "text" else _fixed_box(el)
-        if is_furniture(el) and (clean or _clear_of(box, painted)):
+        # an ornament anchored to a running head the shell keeps stays with it (in a module
+        # its anchor would name an element the module does not have)
+        by_head = _target(el.get("placement")) in keep
+        if by_head or is_furniture(el) and (clean or _clear_of(box, painted)):
             keep.append(eid)
             continue
         extra.add(eid)
