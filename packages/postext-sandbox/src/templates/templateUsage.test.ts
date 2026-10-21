@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyTextChanges } from '../book/textChanges';
-import { countTemplatePages, fenceTemplateChange, pageFenceAttributes, pageFenceIds, renameSlotChanges, renameTemplateChanges, templateFences } from './templateUsage';
+import { countTemplatePages, fenceAttributeName, fenceTemplateChange, pageFenceAttributes, pageFenceIds, renameSlotChanges, renameTemplateChanges, templateFences } from './templateUsage';
 
 const BOOK = [
   '# One',
@@ -126,5 +126,25 @@ describe('renameSlotChanges (#979)', () => {
 
   it('names nothing when no page uses the templates', () => {
     expect(renameSlotChanges(md, new Set(['nope']), 'caja-1', 'x')).toEqual([]);
+  });
+});
+
+// #1095: «Drawn when / Not drawn when the page says» takes an attribute no
+// fence writes yet, typed, when it is a name a fence can write.
+describe('fenceAttributeName', () => {
+  it('takes a key the attribute grammar reads', () => {
+    expect(fenceAttributeName('  frontmatter ')).toEqual({ ok: true, name: 'frontmatter' });
+    expect(fenceAttributeName('sin_folio-2')).toEqual({ ok: true, name: 'sin_folio-2' });
+    expect(fenceAttributeName('_x')).toEqual({ ok: true, name: '_x' });
+  });
+  it('refuses what a fence cannot write, and the page\'s own keys', () => {
+    expect(fenceAttributeName('')).toEqual({ ok: false, reason: 'empty' });
+    expect(fenceAttributeName('2col')).toEqual({ ok: false, reason: 'syntax' });
+    expect(fenceAttributeName('sin folio')).toEqual({ ok: false, reason: 'syntax' });
+    expect(fenceAttributeName('portada=1')).toEqual({ ok: false, reason: 'syntax' });
+    expect(fenceAttributeName('作者')).toEqual({ ok: false, reason: 'syntax' });
+    expect(fenceAttributeName('x'.repeat(65))).toEqual({ ok: false, reason: 'syntax' });
+    expect(fenceAttributeName('template')).toEqual({ ok: false, reason: 'reserved' });
+    expect(fenceAttributeName('spread')).toEqual({ ok: false, reason: 'reserved' });
   });
 });
