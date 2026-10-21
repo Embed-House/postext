@@ -7,6 +7,10 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "check-types": "turbo run check-types",
+    "test": "turbo run test",
+    "test:quick": "POSTEXT_QUICK_TESTS=1 turbo run test",
+    "test:changed": "TURBO_SCM_BASE=HEAD turbo run test --affected",
+    "test:affected": "turbo run test --affected",
     "publish-postext": "pnpm --filter postext publish --access public",
     "cookbook": "pnpm --dir apps/web run cookbook"
   },

@@ -6,32 +6,198 @@ on:
   # main's own status, which the README badge shows
   push:
     branches: [main]
+  # Every job again, the markers of earlier passes ignored
+  workflow_dispatch:
+    inputs:
+      full:
+        description: Run every job even where an earlier run passed the same inputs
+        type: boolean
+        default: true
 
 # Read-only token: no job here writes to the repository (artifacts and
 # caches use the runner's own token).
 permissions:
   contents: read
 
-jobs:
-  ci:
-    name: Build & Check
-    runs-on: ubuntu-latest
+# A new push to a pull request stops the run of the push before it.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# The jobs run at once, each on a runner of its own (#1118): one job that
+# built everything and then ran every package's suite at once on four
+# cores took 18 to 28 minutes. Each job restores Turbo's cache of the
+# packages' dist (.github/actions/setup), so a package that did not change
+# is not built again.
+#
+# A job that passes leaves a marker under the Turbo hash of what it ran
+# (.github/scripts/turbo-hash.mjs: the package's files, its dependencies',
+# the lockfile and the files outside it the tests read, as turbo.json lists
+# them). A later run whose hash is the same finds the marker and skips the
+# job: a pull request that only touches the site does not run the engine's
+# tests again.
+
+jobs:
+  test:
+    name: Test ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: postext 1/4, packages: postext, shard: 1/4 }
+          - { name: postext 2/4, packages: postext, shard: 2/4 }
+          - { name: postext 3/4, packages: postext, shard: 3/4 }
+          - { name: postext 4/4, packages: postext, shard: 4/4 }
+          - { name: sandbox 1/3, packages: postext-sandbox, shard: 1/3 }
+          - { name: sandbox 2/3, packages: postext-sandbox, shard: 2/3 }
+          - { name: sandbox 3/3, packages: postext-sandbox, shard: 3/3 }
+          - { name: pdf 1/2, packages: postext-pdf, shard: 1/2 }
+          - { name: pdf 2/2, packages: postext-pdf, shard: 2/2 }
+          - { name: web 1/2, packages: web, shard: 1/2 }
+          - { name: web 2/2, packages: web, shard: 2/2 }
+          # Small suites, whole, one after another
+          - { name: citeproc epub folio cli, packages: postext-citeproc postext-epub postext-folio postext-cli }
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
 
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
+      - id: hash
+        run: echo "hash=$(node .github/scripts/turbo-hash.mjs test ${{ matrix.packages }})" >> "$GITHUB_OUTPUT"
+      - id: passed
+        if: ${{ !inputs.full }}
+        uses: actions/cache/restore@v4
         with:
-          node-version: 22
-          cache: pnpm
+          path: .ci-passed
+          key: passed-test-${{ matrix.name }}-${{ steps.hash.outputs.hash }}
+          lookup-only: true
 
-      - run: pnpm install --frozen-lockfile
+      - name: Test
+        if: steps.passed.outputs.cache-hit != 'true'
+        env:
+          PACKAGES: ${{ matrix.packages }}
+          SHARD: ${{ matrix.shard }}
+        run: |
+          filters=""
+          for p in $PACKAGES; do filters="$filters --filter=$p"; done
+          if [ -n "$SHARD" ]; then
+            pnpm turbo run test $filters -- --shard="$SHARD"
+          else
+            pnpm turbo run test $filters
+          fi
 
-      - run: pnpm turbo run build
+      - if: steps.passed.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-passed && echo "${{ steps.hash.outputs.hash }}" > .ci-passed/hash
+      - if: steps.passed.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-passed
+          key: passed-test-${{ matrix.name }}-${{ steps.hash.outputs.hash }}
 
-      - run: pnpm turbo run test
+  # W3C EPUBCheck on postext-epub's sample books (src/epubcheck.test.ts,
+  # skipped by `pnpm test`): fixed and reflowable, with and without a
+  # cover, must pass with no errors or warnings. The runner's Java runs the
+  # official release.
+  epubcheck:
+    name: EPUBCheck
+    runs-on: ubuntu-latest
+    env:
+      EPUBCHECK: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - id: hash
+        run: echo "hash=$(node .github/scripts/turbo-hash.mjs test postext-epub)" >> "$GITHUB_OUTPUT"
+      - id: passed
+        if: ${{ !inputs.full }}
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-passed
+          key: passed-epubcheck-${{ steps.hash.outputs.hash }}
+          lookup-only: true
+
+      - name: EPUBCheck
+        if: steps.passed.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/epubcheck.zip" https://github.com/w3c/epubcheck/releases/download/v5.4.0/epubcheck-5.4.0.zip
+          unzip -q "$RUNNER_TEMP/epubcheck.zip" -d "$RUNNER_TEMP/epubcheck"
+          JAR=$(find "$RUNNER_TEMP/epubcheck" -name epubcheck.jar | head -1)
+          mkdir -p "$RUNNER_TEMP/bin"
+          printf '#!/bin/sh\nexec java -jar "%s" "$@"\n' "$JAR" > "$RUNNER_TEMP/bin/epubcheck"
+          chmod +x "$RUNNER_TEMP/bin/epubcheck"
+          export PATH="$RUNNER_TEMP/bin:$PATH"
+          epubcheck --version
+          pnpm turbo run build --filter=postext-epub...
+          pnpm --filter postext-epub epubcheck
+
+      - if: steps.passed.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-passed && echo "${{ steps.hash.outputs.hash }}" > .ci-passed/hash
+      - if: steps.passed.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-passed
+          key: passed-epubcheck-${{ steps.hash.outputs.hash }}
+
+  # The site's production build: some 8000 static pages, the longest job.
+  # Next's own cache (.next/cache) is kept between runs.
+  web-build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - id: hash
+        run: echo "hash=$(node .github/scripts/turbo-hash.mjs build web)" >> "$GITHUB_OUTPUT"
+      - id: passed
+        if: ${{ !inputs.full }}
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-passed
+          key: passed-web-build-${{ steps.hash.outputs.hash }}
+          lookup-only: true
+
+      - if: steps.passed.outputs.cache-hit != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: apps/web/.next/cache
+          key: next-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: next-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - if: steps.passed.outputs.cache-hit != 'true'
+        run: pnpm turbo run build --filter=web
+
+      - if: steps.passed.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: apps/web/.next/cache
+          key: next-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+
+      - if: steps.passed.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-passed && echo "${{ steps.hash.outputs.hash }}" > .ci-passed/hash
+      - if: steps.passed.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-passed
+          key: passed-web-build-${{ steps.hash.outputs.hash }}
+
+  # Types, lint and the command line's executable. This job builds every
+  # package and saves Turbo's cache for the next runs.
+  checks:
+    name: Types, lint & CLI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+
+      - run: pnpm turbo run build --filter=!web
+
+      # The site's route types, which `next build` would write: next-env.d.ts
+      # imports them.
+      - run: pnpm --filter web exec next typegen
+
+      - run: pnpm turbo run check-types lint
 
       # The command line as a self-contained executable: built for this
       # runner and run with nothing else (the release builds every platform).
@@ -48,29 +214,15 @@ jobs:
           path: packages/postext-cli/bin/postext-windows-x64.exe
           retention-days: 3
 
-      # W3C EPUBCheck on postext-epub's sample books (src/epubcheck.test.ts,
-      # skipped by `pnpm test`): fixed and reflowable, with and without a
-      # cover, must pass with no errors or warnings. The runner's Java runs
-      # the official release.
-      - name: EPUBCheck
-        run: |
-          curl -fsSL -o "$RUNNER_TEMP/epubcheck.zip" https://github.com/w3c/epubcheck/releases/download/v5.4.0/epubcheck-5.4.0.zip
-          unzip -q "$RUNNER_TEMP/epubcheck.zip" -d "$RUNNER_TEMP/epubcheck"
-          JAR=$(find "$RUNNER_TEMP/epubcheck" -name epubcheck.jar | head -1)
-          mkdir -p "$RUNNER_TEMP/bin"
-          printf '#!/bin/sh\nexec java -jar "%s" "$@"\n' "$JAR" > "$RUNNER_TEMP/bin/epubcheck"
-          chmod +x "$RUNNER_TEMP/bin/epubcheck"
-          export PATH="$RUNNER_TEMP/bin:$PATH"
-          epubcheck --version
-          pnpm --filter postext-epub epubcheck
-
-      - run: pnpm turbo run check-types
-
-      - run: pnpm turbo run lint
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ github.sha }}
 
   cli-windows:
     name: CLI on Windows
-    needs: ci
+    needs: checks
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -83,3 +235,19 @@ jobs:
       - name: Smoke test
         shell: bash
         run: sh packages/postext-cli/scripts/smoke.sh bin/postext-windows-x64.exe
+
+  # One check that stands for all of them, for branch protection.
+  ci:
+    name: Build & Check
+    if: always()
+    needs: [test, epubcheck, web-build, checks, cli-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every job passed
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "$RESULTS"
+          for r in $RESULTS; do
+            if [ "$r" != "success" ]; then exit 1; fi
+          done

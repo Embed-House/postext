@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { partOf } from "./testing/parts";
 import { serialize } from "next-mdx-remote/serialize";
 import { getAllDocs, getDocSource } from "./docs";
 
@@ -33,18 +34,21 @@ async function strayEmphasis(source: string): Promise<string[]> {
   return found;
 }
 
-describe("docs emphasis", () => {
-  // One test per language: every page goes through the MDX compiler, about
-  // ten seconds for all of them on a workstation and ten to fifteen times as
-  // long on CI, where every package's suite runs at once (#805).
-  const locales = [...new Set(getAllDocs().flatMap((doc) => Object.keys(doc.locales)))].sort();
-  it.each(locales)("leaves no literal ** on any %s page, CJK text included", async (locale) => {
-    const stray: string[] = [];
-    for (const doc of getAllDocs()) {
-      if (!(locale in doc.locales)) continue;
-      const page = getDocSource(doc.slug, locale)!;
-      for (const hit of await strayEmphasis(page.source)) stray.push(`${doc.slug}-${locale}.mdx:${hit}`);
-    }
-    expect(stray).toEqual([]);
-  }, 120_000);
-});
+/** Registers part `part` of `of` of the languages: one test per language,
+ *  every page through the MDX compiler, about ten seconds for all of them
+ *  on a workstation and ten to fifteen times as long on CI (#805). The
+ *  docsEmphasis.part*.test.ts files share them (#1118). */
+export function registerEmphasis(part: number, of: number): void {
+  describe(`docs emphasis, part ${part} of ${of}`, () => {
+    const locales = partOf([...new Set(getAllDocs().flatMap((doc) => Object.keys(doc.locales)))].sort(), part, of);
+    it.each(locales)("leaves no literal ** on any %s page, CJK text included", async (locale) => {
+      const stray: string[] = [];
+      for (const doc of getAllDocs()) {
+        if (!(locale in doc.locales)) continue;
+        const page = getDocSource(doc.slug, locale)!;
+        for (const hit of await strayEmphasis(page.source)) stray.push(`${doc.slug}-${locale}.mdx:${hit}`);
+      }
+      expect(stray).toEqual([]);
+    }, 120_000);
+  });
+}
