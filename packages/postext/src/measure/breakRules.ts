@@ -126,3 +126,84 @@ export function fontSizePxOf(font: string): number {
 export function raggedStretchPx(font: string): number {
   return RAGGED_STRETCH_EM * fontSizePxOf(font);
 }
+
+/** The zero-width space U+200B: a break opportunity the author typed,
+ *  with no width and nothing added at the line end. */
+export const ZERO_WIDTH_SPACE = '​';
+
+/** Whether the rich breaker ends a line after a slash between two words
+ *  (`bodyText.breakAfterSlashes`, #1164). A build sets it for its own
+ *  measuring, as it sets the hyphenation dictionary; off, a line breaks
+ *  after a slash only inside a web address, as up to postext 1.51. */
+let slashBreaks = true;
+
+/** See {@link getSlashBreaks}. */
+export function setSlashBreaks(on: boolean): void {
+  slashBreaks = on;
+}
+
+/** Whether a line may end after a slash between two words (see
+ *  {@link slashBreakIndices}); also whether a word wider than its line is
+ *  divided after a slash first. */
+export function getSlashBreaks(): boolean {
+  return slashBreaks;
+}
+
+/** A character of a word a slash may part: a letter, a mark or a decimal
+ *  digit. Not a superscript (`m³`), nor a vulgar fraction. */
+const WORD_CHAR_RE = /[\p{L}\p{M}\p{Nd}]/u;
+const DECIMAL_DIGIT_RE = /\p{Nd}/u;
+/** How many such characters stand on each side of a slash a line may end
+ *  after (see {@link slashBreakIndices}). */
+const SLASH_SIDE_MIN = 3;
+
+/** How many characters of {@link WORD_CHAR_RE} run from `from` in the
+ *  direction `step`, counting up to `limit`. */
+function wordRun(text: string, from: number, step: 1 | -1, limit: number): number {
+  let n = 0;
+  for (let i = from; n < limit && i >= 0 && i < text.length && WORD_CHAR_RE.test(text[i]!); i += step) n++;
+  return n;
+}
+
+/**
+ * Where a line may end after a slash inside a word (#1164), as offsets into
+ * `text` (the position after the slash): "entrada/" | "salida",
+ * "ACC/" | "AHA/" | "AAPA". The slash stands between two runs of at least
+ * three letters or digits, and not between two digits. A unit keeps its
+ * slash ("km/h", "m/s", "kg/m³", "km/min", "mg/dL"), and so do a short
+ * pair ("and/or", "y/o", "c/Mayor"), a fraction and a date ("1/2",
+ * "10/03/2026", "2020/2021"). Nothing is added at the line end, and the
+ * next line opens with the word after the slash. A web address is broken
+ * at its own joints instead (`urlBreakIndices`). None while
+ * {@link getSlashBreaks} is off.
+ */
+export function slashBreakIndices(text: string): number[] {
+  const out: number[] = [];
+  if (!slashBreaks) return out;
+  for (let i = SLASH_SIDE_MIN; i < text.length - SLASH_SIDE_MIN; i++) {
+    if (text[i] !== '/') continue;
+    if (wordRun(text, i - 1, -1, SLASH_SIDE_MIN) < SLASH_SIDE_MIN || wordRun(text, i + 1, 1, SLASH_SIDE_MIN) < SLASH_SIDE_MIN) continue;
+    if (DECIMAL_DIGIT_RE.test(text[i - 1]!) && DECIMAL_DIGIT_RE.test(text[i + 1]!)) continue;
+    out.push(i + 1);
+  }
+  return out;
+}
+
+/**
+ * `text` with its zero-width spaces taken out, and where each one stood as
+ * offsets into the text left (#1164): the rich breaker may end a line
+ * there, adds nothing, and the character never reaches the line text (the
+ * plain breaker drops it too). Offsets at either end of the text are no
+ * break. A text that is only zero-width spaces is left as it is.
+ */
+export function withoutZeroWidthSpaces(text: string): { text: string; breaks: number[] } {
+  if (!text.includes(ZERO_WIDTH_SPACE)) return { text, breaks: [] };
+  let out = '';
+  const breaks: number[] = [];
+  for (const ch of text) {
+    if (ch !== ZERO_WIDTH_SPACE) out += ch;
+    else if (breaks[breaks.length - 1] !== out.length) breaks.push(out.length);
+  }
+  if (out === '') return { text, breaks: [] };
+  return { text: out, breaks: breaks.filter((b) => b > 0 && b < out.length) };
+}

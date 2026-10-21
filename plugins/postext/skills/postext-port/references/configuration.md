@@ -310,6 +310,10 @@ H&J / Knuth–Plass
 │                        false = 1.4 breaks (a preset without configVersion 7 whose chapters set such a dash reads false)
 ├─ breakAfterHyphens    boolean  true   Knuth-Plass may end a line after a compound's hyphen (well- | known) in every paragraph;
 │                        false = 1.4 breaks: a justified paragraph without formatting never breaks there (a preset without configVersion 8 whose chapters set a compound reads false)
+├─ breakAfterSlashes    boolean  true   (≥ 1.52) formatted text, captions, cells, notes and bibliographies may end a line after a slash between two words,
+│                        each side ≥ 3 letters/digits and not digit/digit (ACC/ | AHA, entrada/ | salida; km/h, kg/m³, and/or, 1/2, 10/03/2026 stay whole);
+│                        a word wider than its line is divided after a slash first; a typed U+200B is a break with no width either way;
+│                        false = 1.51 breaks, after a slash only inside a URL (a preset below configVersion 19 reads false)
 ├─ repeatHyphen         boolean  false  the line after a break at a compound's hyphen opens with a hyphen too (vencer- | -se; Portuguese, Spanish RAE 2010); line.repeatedHyphen; never in a URL
 ├─ hardLineBreaks       boolean  true   (≥ 1.23) a backslash ending a source line, or `\\` + space, is a forced line break in paragraphs, quotes, list items;
 │                        false = 1.22: the backslashes print (a preset below configVersion 9 whose chapters end a line with `\` reads false)

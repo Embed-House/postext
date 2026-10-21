@@ -350,6 +350,7 @@ if (typeof bundleApi?.migrateConfig === 'function') {
     [(c) => c.crossRefs?.breakLabels, 'reference labels set as one word'],
     [(c) => c.bodyText?.scriptContext, 'words with no letter shaped alone'],
     [(c) => c.bodyText?.shapingLanguage, 'text shaped in the language of the page that hosts the layout'],
+    [(c) => c.bodyText?.breakAfterSlashes, 'formatted text broken after a slash only inside a web address'],
   ].filter(([of]) => of(read) !== of(config)).map(([, what]) => what);
   if (kept.length) {
     const v = manifest.configVersion;

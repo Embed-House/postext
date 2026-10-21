@@ -1085,6 +1085,8 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     bodyBreakAfterDashesTooltip: t("bodyBreakAfterDashesTooltip"),
     bodyBreakAfterHyphens: t("bodyBreakAfterHyphens"),
     bodyBreakAfterHyphensTooltip: t("bodyBreakAfterHyphensTooltip"),
+    bodyBreakAfterSlashes: t("bodyBreakAfterSlashes"),
+    bodyBreakAfterSlashesTooltip: t("bodyBreakAfterSlashesTooltip"),
     bodyHardLineBreaks: t("bodyHardLineBreaks"),
     bodyHardLineBreaksTooltip: t("bodyHardLineBreaksTooltip"),
     bodyScriptContext: t("bodyScriptContext"),

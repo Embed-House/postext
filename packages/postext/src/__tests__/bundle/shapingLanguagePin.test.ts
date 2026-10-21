@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
-import { createBundle, openBundle } from '../../bundle/index.js';
+import { createBundle, openBundle, pinLegacySlashBreaks } from '../../bundle/index.js';
 import { CONFIG_VERSION, migrateBundleConfig, migrateConfig, pinLegacyShapingLanguage } from '../../bundle/configVersion.js';
 import { stripConfigDefaults } from '../../defaults/index.js';
 import { shapingLanguageOf } from '../../locale.js';
@@ -42,7 +42,7 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
   });
 
   it('pins every version before 14, whatever its content, and none from 14', () => {
-    expect(CONFIG_VERSION).toBe(18);
+    expect(CONFIG_VERSION).toBe(19);
     for (const v of [undefined, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]) {
       expect(kept(migrateConfig({}, v)), String(v)).toBe('host');
       // A face may answer with other glyphs to any text: the content alone
@@ -60,20 +60,20 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
     // and one stored under 13 whatever its text holds, get this pin and no
     // other (their text known to set no mark, #1149).
     const stored: PostextConfig = { locale: 'tr', bodyText: { fontFamily: 'Literata' } };
-    expect(migrateConfig(stored, 12, { content: 'Words.' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
-    expect(migrateConfig(stored, 13, { content: 'Words.' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
-    expect(migrateConfig(stored, 13, { content: '- [ ] a task\n\n:::page\n:::' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
-    expect(migrateConfig({} as PostextConfig, 13, { content: 'Words.' })).toEqual({ bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig(stored, 12, { content: 'Words.' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host', breakAfterSlashes: false } });
+    expect(migrateConfig(stored, 13, { content: 'Words.' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host', breakAfterSlashes: false } });
+    expect(migrateConfig(stored, 13, { content: '- [ ] a task\n\n:::page\n:::' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host', breakAfterSlashes: false } });
+    expect(migrateConfig({} as PostextConfig, 13, { content: 'Words.' })).toEqual({ bodyText: { shapingLanguage: 'host', breakAfterSlashes: false } });
     expect(stored.bodyText).toEqual({ fontFamily: 'Literata' });
-    // One that names the setting has nothing left to pin: the same object.
+    // One that names the setting has nothing of it left to pin (the breaks
+    // at a slash of 1.51 aside, #1164).
     for (const value of ['document', 'host'] as const) {
       const named: PostextConfig = { bodyText: { shapingLanguage: value } };
-      expect(migrateConfig(named, 12, { content: 'Words.' })).toBe(named);
-      expect(migrateConfig(named, 13, { content: 'Words.' })).toBe(named);
-      expect(migrateConfig(named, 14, { content: 'Words.' })).toBe(named);
+      for (const v of [12, 13, 14]) expect(migrateConfig(named, v, { content: 'Words.' })).toEqual(pinLegacySlashBreaks(named));
+      expect(migrateConfig(named, 19, { content: 'Words.' })).toBe(named);
     }
     // One stored under today's rules is read as it is.
-    for (const v of [14, CONFIG_VERSION, 99]) {
+    for (const v of [19, CONFIG_VERSION, 99]) {
       const current: PostextConfig = {};
       expect(migrateConfig(current, v, { content: 'Words.' }), String(v)).toBe(current);
       const own: PostextConfig = { locale: 'ca', bodyText: { fontFamily: 'Literata' } };
@@ -104,7 +104,8 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
     // language: the default from postext 1.30, as in 1.29.0 alone before.
     expect(shapingLanguageOf(resolveAllConfig(migrateConfig({ locale: 'ca' }, 14)))).toBe('ca');
     expect(shapingLanguageOf(resolveAllConfig(migrateConfig({}, 14)))).toBe('en-US');
-    expect(resolveAllConfig(migrateConfig({}, 14)).bodyText).toEqual(resolveAllConfig({}).bodyText);
+    // (its breaks at a slash pinned to 1.51's, #1164)
+    expect(resolveAllConfig(migrateConfig({}, 14)).bodyText).toEqual(resolveAllConfig({ bodyText: { breakAfterSlashes: false } }).bodyText);
     // One read from before keeps the host's, written out: stamped 12 or
     // older, and stamped 13 with no value.
     for (const v of [undefined, 8, 12, 13]) {
@@ -145,7 +146,7 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
     // pin goes on what is left in force.
     for (const v of [12, 13]) {
       const merged = migrateBundleConfig({}, [{ bodyText: { fontFamily: 'Amiri' } }, { bodyText: { fontFamily: 'Lora' } }], v);
-      expect(merged.bodyText, String(v)).toEqual({ fontFamily: 'Lora', shapingLanguage: 'host' });
+      expect(merged.bodyText, String(v)).toEqual({ fontFamily: 'Lora', shapingLanguage: 'host', breakAfterSlashes: false });
       // A layer that names the setting keeps its word.
       expect(kept(migrateBundleConfig({}, [{ bodyText: { shapingLanguage: 'document' } }], v)), String(v)).toBe('document');
       expect(kept(migrateBundleConfig({}, [{ bodyText: { shapingLanguage: 'host' } }], v)), String(v)).toBe('host');
@@ -157,15 +158,15 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
     }
     // A bundle from before 12 takes the pin of #725 with it.
     const older = migrateBundleConfig({}, [{ bodyText: { fontFamily: 'Amiri' } }, { bodyText: { fontFamily: 'Lora' } }], 11);
-    expect(older.bodyText).toEqual({ fontFamily: 'Lora', scriptContext: false, shapingLanguage: 'host' });
+    expect(older.bodyText).toEqual({ fontFamily: 'Lora', scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     // A current bundle is read as written.
     expect(kept(migrateBundleConfig({}, [{}], 14))).toBeUndefined();
-    expect(migrateBundleConfig({ bodyText: { fontFamily: 'Amiri' } }, [{}], 14).bodyText).toEqual({ fontFamily: 'Amiri' });
+    expect(migrateBundleConfig({ bodyText: { fontFamily: 'Amiri' } }, [{}], 14).bodyText).toEqual({ fontFamily: 'Amiri', breakAfterSlashes: false });
   });
 
   it('a bundle written by postext 1.29 keeps its lines, and one written today is shaped in its language', async () => {
     const written = await createBundle({ name: 'Llibre', locale: 'ca', markdown: 'El col\u00B7legi.', config: { locale: 'ca', bodyText: { fontFamily: 'Literata' } } });
-    expect(written.manifest.configVersion).toBe(18);
+    expect(written.manifest.configVersion).toBe(19);
     expect(written.manifest.config?.bodyText).toEqual({ fontFamily: 'Literata' });
     /** The language the chapters of an opened bundle are laid out in. */
     const laidOutIn = (bundle: Awaited<ReturnType<typeof openBundle>>): string | undefined => shapingLanguageOf(resolveAllConfig(bundle.config));
@@ -193,8 +194,8 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
     // goes with it under today's number.
     const old = await openBundle(restamped(13, { fontFamily: 'Literata' }));
     const again = await createBundle({ name: 'Llibre', locale: 'ca', markdown: 'El col\u00B7legi.', config: stripConfigDefaults(old.config) });
-    expect(again.manifest.configVersion).toBe(18);
-    expect(again.manifest.config?.bodyText).toEqual({ fontFamily: 'Literata', shapingLanguage: 'host' });
+    expect(again.manifest.configVersion).toBe(19);
+    expect(again.manifest.config?.bodyText).toEqual({ fontFamily: 'Literata', shapingLanguage: 'host', breakAfterSlashes: false });
     expect(kept((await openBundle(again.bytes)).config)).toBe('host');
   });
 });

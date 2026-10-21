@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyGridBalancing } from '../../bundle/configVersion.js';
+import { migrateBundleConfig, migrateConfig, pinLegacyGridBalancing, pinLegacySlashBreaks } from '../../bundle/configVersion.js';
 import { stripConfigDefaults } from '../../defaults/index.js';
 import { resolveAllConfig } from '../../pipeline/config.js';
 import type { PostextConfig } from '../../types.js';
@@ -56,15 +56,17 @@ describe('pinLegacyGridBalancing (#632)', () => {
     // 12 are pinned on it (#717).
     const current = grid();
     expect(migrateConfig(current, 11, { content: '正文。' }).headings).toBe(current.headings);
-    // One stamped 12 takes the pins of rules 13, 14 and 18 alone: the
+    // One stamped 12 takes the pins of rules 13, 14, 18 and 19 alone: the
     // language (#764, #770) and, its text not being known, the task box
-    // (#765) and the rounded mark ends (#1149). One stamped 13 takes the
-    // language and the mark ends; one stamped 14 the mark ends alone; one
-    // stamped 18 is read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 14)).toEqual({ ...current, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 18)).toBe(current);
+    // (#765) and the rounded mark ends (#1149), and the breaks at a slash
+    // (#1164). One stamped 13 takes the language, the mark ends and the
+    // slash breaks; one stamped 14 the mark ends and the slash breaks; one
+    // stamped 18 the slash breaks alone; one stamped 19 is read as it is.
+    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 14)).toEqual({ ...pinLegacySlashBreaks(current), markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 18)).toEqual(pinLegacySlashBreaks(current));
+    expect(migrateConfig(current, 19)).toBe(current);
   });
 
   // #651: the first save stores the migrated configuration stripped of

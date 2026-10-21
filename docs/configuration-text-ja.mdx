@@ -214,6 +214,12 @@ export const metadata = {
       <td>Knuth-Plassで改行するすべての段落で、複合語のハイフン、つまり2文字の間のハイフンの後で改行できるようにします（<code>well-</code> · <code>known</code>、<code>vencer-</code> · <code>se</code>）。行はハイフンで終わり、何も追加されません。この改行は音節での分割と同じコストで評価します。数字や記号に隣接するハイフンの後では改行しません（<code>COVID-19</code>、<code>-5 °C</code>）。インライン書式のない両端そろえの段落では、ハイフンの前後にそれぞれ2文字以上ある場合にだけ改行するので、<code>e-mail</code>の<code>e-</code>で終わる行はできません。<code>false</code>にすると1.4の改行に戻ります。インライン書式のない両端そろえの段落ではそこで改行しませんが、同じ段落でもどこかに1語でもイタリックがある場合や、行末不ぞろいの段落、1行ずつ組む段落では改行します。それ以前に保存した設定のうち、テキストに複合語を含むものは、この値で読み込まれます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。本文テキスト、見出し、リスト、引用ブロック、囲みに適用されます。<a href="/ja/docs/justification#複合語">複合語</a>を参照してください。</td>
     </tr>
     <tr>
+      <td><code>breakAfterSlashes</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>書式付きの文字の行を、2つの語のあいだのスラッシュの後で終えてよいとします（<code>input/</code> · <code>output</code>、<code>ACC/</code> · <code>AHA</code>）。両側にそれぞれ3文字以上続く文字か数字が必要で、両側とも数字の場合は除くので、<code>km/h</code>、<code>kg/m³</code>、<code>and/or</code>、<code>1/2</code>、<code>10/03/2026</code>は分けません。行はスラッシュで終わり、何も足しません。行より広い語は、まずスラッシュの後で分けます。書式付きの文字を組むすべての箇所に適用します。本文、キャプション、表のセル、注、参考文献です。行内書式のない段落は、どちらの場合もどのスラッシュの後でも改行します。<code>false</code>はpostext 1.51の改行を保ち、ウェブアドレスの中のスラッシュの後でだけ改行します。<code>configVersion</code> 19より前に保存した設定はこの値で読みます（<a href="/ja/docs/configuration-bundles#postext-14以前で書き出したバンドル">postext 1.4以前で書き出したバンドル</a>を参照）。<a href="/ja/docs/justification#ハイフネーションとknuth-plassの連携">ハイフネーションとKnuth-Plassの連携</a>も参照してください。</td>
+    </tr>
+    <tr>
       <td><code>repeatHyphen</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>

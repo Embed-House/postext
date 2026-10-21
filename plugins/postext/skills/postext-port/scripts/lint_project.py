@@ -3021,8 +3021,10 @@ def main() -> None:
                  "page that hosts the layout, and in none in a worker, instead of the document's own, unless "
                  "the config names bodyText.shapingLanguage; below 17: a paragraph style's unset face, size, "
                  "leading, weights and colour inside a box taken from the document's body text instead of the box's; "
-                 "below 18: a mark style that names no borderRadius rounded at 0.2em when the text has a :mark); "
-                 "set \"configVersion\": 18 for today's rules")
+                 "below 18: a mark style that names no borderRadius rounded at 0.2em when the text has a :mark; "
+                 "below 19: formatted text, captions, cells and notes broken after a slash only inside a web "
+                 "address, never between two words such as ACC/AHA); "
+                 "set \"configVersion\": 19 for today's rules")
     for k in ("id", "name"):
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")

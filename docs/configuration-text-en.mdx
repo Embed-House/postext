@@ -214,6 +214,12 @@ The `bodyText` property controls the typography of all paragraph text.
       <td>Let a line end after the hyphen of a compound, a hyphen between two letters (<code>well-</code> · <code>known</code>, <code>vencer-</code> · <code>se</code>), in every paragraph Knuth-Plass breaks. The line ends on the hyphen and nothing is added; the break is priced like a syllable. Never after a hyphen next to a digit or a sign (<code>COVID-19</code>, <code>-5 °C</code>). A justified paragraph without inline formatting breaks there only with two letters on each side of the hyphen, so no line ends on the <code>e-</code> of <code>e-mail</code>. <code>false</code> keeps the 1.4 breaks: a justified paragraph without inline formatting never breaks there, while the same paragraph with one italic word anywhere, a ragged paragraph and a paragraph set line by line do; configurations stored earlier whose text sets a compound read with it (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>). It applies to the running text, headings, lists, blockquotes and boxes. See <a href="/en/docs/justification#compound-words">Compound words</a>.</td>
     </tr>
     <tr>
+      <td><code>breakAfterSlashes</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Let a line of formatted text end after a slash between two words (<code>entrada/</code> · <code>salida</code>, <code>ACC/</code> · <code>AHA</code>): each side a run of at least three letters or digits, not two digits, so <code>km/h</code>, <code>kg/m³</code>, <code>and/or</code>, <code>1/2</code> and <code>10/03/2026</code> stay whole. The line ends on the slash and nothing is added. A word wider than its line is divided after a slash first. It applies wherever formatted text is set: the running text, captions, table cells, notes and bibliographies; a paragraph without inline formatting breaks after any slash either way. <code>false</code> keeps the breaks of postext 1.51, after a slash only inside a web address; configurations stored before <code>configVersion</code> 19 read with it (see <a href="/en/docs/configuration-bundles#bundles-written-by-postext-14-or-earlier">Bundles written by postext 1.4 or earlier</a>). See <a href="/en/docs/justification#how-hyphenation-integrates-with-knuth-plass">How Hyphenation Integrates with Knuth-Plass</a>.</td>
+    </tr>
+    <tr>
       <td><code>repeatHyphen</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
