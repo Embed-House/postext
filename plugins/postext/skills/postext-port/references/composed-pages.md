@@ -572,6 +572,14 @@ What the extraction decides, so you know what to check:
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report
   lists every match.
+  From skill 1.61 the style part is read from every form producers write
+  (`Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`, `ArialBold`); a face
+  takes the heavier of the file's weight and the one its name or bold flag
+  says, and either slant; a file with no OS/2 weight takes its name's; a
+  prefix match only joins faces whose names say the same weight and slant.
+  A run is bold at 150 over its paragraph's base and at least 500. When
+  every face comes out at one weight although the names say several, the
+  run prints a `WARNING` and `report.json` lists it under `warnings`.
 
 Also decided by the drafting, checked on a real textbook in three languages:
 

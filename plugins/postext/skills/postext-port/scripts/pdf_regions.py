@@ -217,6 +217,33 @@ def weight_italic_of(style: str) -> tuple[int, bool, list[str]]:
     return weight, italic, widths
 
 
+_STYLE_WORDS = set(WEIGHTS) | set(WIDTH_TOKENS) | {"italic", "oblique", "it", "ita", "kursiv", "slanted"}
+
+
+def split_face_name(name: str) -> tuple[str, str]:
+    """(family part, style part) of a PDF font name in any of the forms
+    producers write: `Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`,
+    `ArialBold`. The subset prefix (`ABCDEF+`) is dropped first."""
+    base = name.split("+")[-1]
+    m = re.match(r"^([^-,]+)[-,](.*)$", base)
+    if m:
+        return m.group(1).strip(), m.group(2).strip()
+    words = base.split(" ")
+    k = len(words)
+    while k > 1 and all(t in _STYLE_WORDS for t in style_tokens(words[k - 1])) and style_tokens(words[k - 1]):
+        k -= 1
+    if k < len(words):
+        return " ".join(words[:k]), "".join(words[k:])
+    # glued: the family's last capitalised words that are style words (`ArialBold`)
+    parts = re.findall(r"[A-Z][a-z]+|[A-Z]+(?![a-z])|[a-z]+|\d+", base)
+    k = len(parts)
+    while k > 1 and parts[k - 1].lower() in _STYLE_WORDS:
+        k -= 1
+    if 0 < k < len(parts):
+        return "".join(parts[:k]), "".join(parts[k:])
+    return base, ""
+
+
 def font_table(fonts_dir: Path) -> dict[str, tuple[str, int, str, str]]:
     """PostScript name -> (family, weight, style, file) for the faces in
     fonts_dir. A width the family name does not say (`-BoldCn`) is added to
@@ -236,10 +263,12 @@ def font_table(fonts_dir: Path) -> dict[str, tuple[str, int, str, str]]:
             ps = TTFont(str(f), lazy=True, fontNumber=0)["name"].getDebugName(6) or f.stem
         except Exception:
             pass
-        sub = ps.partition("-")[2]
+        sub = split_face_name(ps)[1]
         w2, it2, widths = weight_italic_of(sub)
         if it2:
             style = "italic"
+        if int(weight) == 400 and w2 != 400:
+            weight = w2      # a file without OS/2 weight: its name says it
         for wd in widths:
             if wd not in fam.lower().replace(" ", ""):
                 fam = f"{fam} {wd.capitalize()}"
@@ -272,10 +301,14 @@ class Fonts:
         if key in self.cache:
             return self.cache[key]
         base = pdf_name.split("+")[-1]
-        fam_part, _, style = base.partition("-")
+        fam_part, style = split_face_name(base)
         weight, italic, _ = weight_italic_of(style)
+        name_w, name_it = weight, italic
+        toks = style_tokens(style)
+        said = any(t in WEIGHTS for t in toks) or any("".join(toks[i:i + 2]) in WEIGHTS for i in range(len(toks)))
         if flags & 16 and weight < 600:
             weight = 700
+            said = True
         if flags & 2:
             italic = True
         out = None
@@ -290,18 +323,38 @@ class Fonts:
         if out is None and self.table:
             ps = base if base in self.table else None
             if ps is None:
-                cands = [p for p in self.table if p.startswith(base) or base.startswith(p)]
-                cands += [p for p in self.table if p.lower() == base.lower()]
+                cands = [p for p in self.table if p.lower() == base.lower()]
+                if not cands:
+                    # a prefix match only between faces whose names say the same weight and slant:
+                    # `Font-Bold` never maps to the regular `Font`
+                    cands = [p for p in self.table if (p.startswith(base) or base.startswith(p))
+                             and weight_italic_of(split_face_name(p)[1])[:2] == (name_w, name_it)]
                 if cands:
                     ps = sorted(cands, key=lambda p: (-len(p), p))[0]
             if ps:
                 fam, w, st, _ = self.table[ps]
-                out = (fam, w, st == "italic")
+                # the heavier of the file's weight and the name's (or the bold flag), either slant
+                out = (fam, max(int(w), weight) if said else int(w), st == "italic" or italic)
         if out is None:
             out = (_split_camel(fam_part) or base, weight, italic)
         self.cache[key] = out
         self.seen[base] = out
         return out
+
+
+def font_warnings(fonts: Fonts) -> list[str]:
+    """A loud note when every face came out at one weight although the PDF's
+    font names say several: the draft then has no bold, and the fonts
+    folder or the font map needs a look."""
+    if len(fonts.seen) < 2:
+        return []
+    out_w = {v[1] for v in fonts.seen.values()}
+    named = {weight_italic_of(split_face_name(k)[1])[0] for k in fonts.seen}
+    if len(out_w) == 1 and len(named) > 1:
+        return [f"every face reads as weight {next(iter(out_w))} but the PDF names "
+                f"{len(fonts.seen)} faces of weights {sorted(named)}: no bold will be marked; "
+                "check --fonts and --font-map"]
+    return []
 
 
 # ---------------------------------------------------------------------------
@@ -757,7 +810,7 @@ def runs_markdown(chars: list[Char], base_weight: int, base_italic: bool, mark_i
     """Inline Markdown of a run of characters: bold, italic, highlight marks."""
     segs: list[tuple[Any, list[pmd.Run]]] = []
     for c in chars:
-        bold = c.weight >= max(600, base_weight + 200) if c.c.strip() else False
+        bold = c.weight >= max(500, base_weight + 150) if c.c.strip() else False
         italic = c.italic and not base_italic if c.c.strip() else False
         mk = mark_ids.get(c.mark) if c.mark else None
         if not segs or segs[-1][0] != mk:
@@ -4143,10 +4196,13 @@ def cmd_extract(args: argparse.Namespace) -> int:
         "notes": {p["report"]["page"]: p["report"]["notes"] for p in built if p["report"]["notes"]},
         "fonts": {k: list(v) for k, v in sorted(fonts.seen.items())},
         "syntheticItalic": dict(sorted(fonts.slanted.items())),
+        "warnings": font_warnings(fonts),
         "bodySize": body, "headingSizes": head_sizes,
         "frameNames": frame_names,
     }
     (out / "report.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    for w in summary["warnings"]:
+        print("WARNING: " + w, file=sys.stderr)
     if args.json:
         print(json.dumps(summary, ensure_ascii=False, indent=1))
     else:
