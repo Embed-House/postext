@@ -59,6 +59,16 @@ Read every WARN:
 - markup typed with an input method (`：：：`, `＃`, `［＾…］`, `＊＊`);
 - a CFF font over 2 MB, a variable font, a vertical book whose Chinese face lacks `vert`;
 - a config past 3 MB (the Sandbox keeps a book in about 5 MB of browser storage; aim under 1 MB);
+- `designMarksLiteral`: `**…**`, `*…*`, `^…^`, `~…~` or `:mark[…]` typed in a design text element, or brought
+  into it by an `{attr.key}` whose value carries them, while the element has no `inlineMarks: true`: the
+  markers print as written. Set `inlineMarks: true` on the element;
+- `fixedSpacePlusSpace`: a plain space typed beside an en, em, thin or no-break space (`1.  Title`): the
+  line sets both, a gap wider than the source's. Keep the fixed space alone;
+- `headingChip`: `:chip` in a heading on a book pinned to a postext older than 1.52.0, where it prints
+  literally (`--engine 1.51.0` names the pin; the project's `package.json` or `recipe.json` is read
+  otherwise; unpinned, an INFO line reminds you of the version);
+- `smallCapsByHand`: capitals typed in a bare chip (no fill, no outline) at 55–85 % of the text: type the word
+  in lowercase in `:smallcaps[…]`, which keeps the capitals at full size as small capitals do;
 - comics: panels ≠ cells, stray text, unknown balloon or panel styles, script attributes that do not read,
   an anchor outside its safe area, unbundled lettering or sound-effect faces, and editions whose splits or
   panel pictures differ (the geometry is the same in every language). INFO lists speakers no picture marks.
