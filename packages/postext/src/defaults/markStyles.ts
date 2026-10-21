@@ -4,11 +4,13 @@ import { colorsEqual, dimensionsEqual } from './shared';
 const EM = (value: number): Dimension => ({ value, unit: 'em' });
 
 /** Static defaults shared by every highlight style (#888): a pale yellow
- *  band reaching a little past the phrase, its ends slightly rounded. The
- *  text keeps its own colour. */
+ *  band reaching a little past the phrase, its ends square (the print norm;
+ *  up to postext 1.51 they were rounded at 0.2 em, which a configuration
+ *  stored then keeps through `pinLegacyMarkRadius`, #1149). The text keeps
+ *  its own colour. */
 export const DEFAULT_MARK_STYLE_STATIC = {
   background: { hex: '#fff0a0', model: 'hex' } as ColorValue,
-  borderRadius: EM(0.2),
+  borderRadius: EM(0),
   paddingX: EM(0.15),
   paddingY: EM(0.05),
   decorationBreak: 'slice' as MarkDecorationBreak,
