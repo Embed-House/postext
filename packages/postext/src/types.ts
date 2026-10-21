@@ -4016,7 +4016,7 @@ export interface MarkStyleConfig {
   /** Colour of the marked text. Default the text's own. */
   color?: ColorValue;
   /** Corner radius of the band's two ends, clamped to half its height.
-   *  Default `0.2em`. */
+   *  Default `0` (square ends; `0.2em` up to postext 1.51). */
   borderRadius?: Dimension;
   /** How far the band reaches past the first and the last letter of the
    *  phrase, into the space beside it. Default `0.15em`. */

@@ -402,8 +402,9 @@ those lines, or run the script.
   laid out, as in the Sandbox, with the postext 1.4 rules the line names
   (heading breaks, formula size, space around inline resources, plain
   headings, drop-cap sizes, room under a colon line, box cuts, breaks at dashes, breaks at
-  compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers).
-  Set `"configVersion": 15` and check the pages again when the config is meant for today's rules.
+  compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers;
+  below 18, mark styles with no `borderRadius` rounded at 0.2em when the text has a `:mark`).
+  Set `"configVersion": 18` and check the pages again when the config is meant for today's rules.
 - Run each language (`--lang`).
 
 ## 3. Compare with the source, page by page

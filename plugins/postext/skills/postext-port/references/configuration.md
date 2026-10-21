@@ -1318,7 +1318,7 @@ style declares (`unknownMarkStyle`), takes the first style; declaring `markStyle
 ```
 { id (REQUIRED), name?,
   background: ColorValue = #fff0a0 (palette-linkable), color?: ColorValue (the text's; reaches the whole word that
-  holds glued punctuation), borderRadius = 0.2em (the phrase's two ends, clamped), paddingX = 0.15em (past the
+  holds glued punctuation), borderRadius = 0 (square ends, the print norm; 0.2em up to postext 1.51, which a config stored then keeps through the configVersion 18 pin when its text has a mark; write it to round a band's ends), paddingX = 0.15em (past the
   first and last letter, into the word spaces), paddingY = 0.05em, paddingTop?, paddingBottom? (each in place
   of paddingY), decorationBreak = 'slice' | 'clone' (postext ≥ 1.52.0; 'clone' gives every line piece of a wrapped
   phrase a whole band, paddingX and corners on both ends: a heading on a colour band cut per line) }

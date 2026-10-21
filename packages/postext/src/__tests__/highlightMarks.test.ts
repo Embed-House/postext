@@ -27,6 +27,9 @@ const config = (more: Partial<PostextConfig> = {}): PostextConfig => ({
   page: { width: pt(60), height: pt(400), margins: { top: pt(6), bottom: pt(6), left: pt(6), right: pt(6) } },
   layout: { layoutType: 'single' },
   bodyText: { textAlign: 'left', hyphenation: { enabled: false } },
+  // Rounded ends, to tell the phrase's true ends from its cuts (the
+  // default is square since #1149).
+  markStyles: [{ id: 'mark', borderRadius: { value: 0.2, unit: 'em' } }],
   ...more,
 });
 
@@ -207,7 +210,7 @@ describe(':mark[…] (#888)', () => {
   });
 
   it('resolves and strips its styles', () => {
-    expect(resolveMarkStylesConfig(undefined)).toEqual([{ id: 'mark', name: 'Mark', background: { hex: '#fff0a0', model: 'hex' }, borderRadius: { value: 0.2, unit: 'em' }, paddingX: { value: 0.15, unit: 'em' }, paddingY: { value: 0.05, unit: 'em' }, decorationBreak: 'slice' }]);
+    expect(resolveMarkStylesConfig(undefined)).toEqual([{ id: 'mark', name: 'Mark', background: { hex: '#fff0a0', model: 'hex' }, borderRadius: { value: 0, unit: 'em' }, paddingX: { value: 0.15, unit: 'em' }, paddingY: { value: 0.05, unit: 'em' }, decorationBreak: 'slice' }]);
     expect(stripMarkStylesDefaults([{ id: 'mark', name: 'Mark' }])).toBeUndefined();
     expect(stripMarkStylesDefaults([{ id: 'mark', decorationBreak: 'slice' }])).toBeUndefined();
     expect(stripMarkStylesDefaults([{ id: 'k', decorationBreak: 'clone' }])).toEqual([{ id: 'k', decorationBreak: 'clone' }]);

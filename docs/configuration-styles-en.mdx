@@ -472,7 +472,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Highlight styles
 
-The `markStyles` property declares the named styles of the inline `:mark[text]{style="…"}`: the coloured band behind a phrase, as a textbook highlights its key words (the syntax and its line-breaking rules are in the document format reference). One style, `mark`, ships by default (a pale yellow band reaching a little past the phrase, its ends slightly rounded, the text in its own colour), so `:mark[…]` works without any configuration; declaring `markStyles` replaces that default list. A mark without `style`, or with an id no style declares, takes the first style (the Sandbox flags an unknown id).
+The `markStyles` property declares the named styles of the inline `:mark[text]{style="…"}`: the coloured band behind a phrase, as a textbook highlights its key words (the syntax and its line-breaking rules are in the document format reference). One style, `mark`, ships by default (a pale yellow band reaching a little past the phrase, its ends square, the text in its own colour), so `:mark[…]` works without any configuration; declaring `markStyles` replaces that default list. A mark without `style`, or with an id no style declares, takes the first style (the Sandbox flags an unknown id).
 
 ```ts
 const config: PostextConfig = {
@@ -531,8 +531,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Radius of the band's two ends, clamped to half its height.</td>
+      <td><code>0</code></td>
+      <td>Radius of the band's two ends, clamped to half its height. Square ends are the print norm. Up to postext 1.51 the default was <code>0.2em</code>; a configuration stored then whose text sets a mark is read with <code>0.2em</code> written on every style that names no radius.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
