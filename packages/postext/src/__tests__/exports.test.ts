@@ -428,6 +428,7 @@ describe("package exports", () => {
       "stripPageDefaults",
       "stripConfigDefaults",
       "DEFAULT_DEBUG_CONFIG",
+      "FIT_MARKS_MODES",
       "resolveDebugConfig",
       "stripDebugDefaults",
       "DEFAULT_CANVAS_VIEWER_CONFIG",

@@ -1,4 +1,4 @@
-import type { DebugConfig, ResolvedDebugConfig, WarningsToggleConfig } from '../types';
+import type { DebugConfig, FitMarksMode, ResolvedDebugConfig, WarningsToggleConfig } from '../types';
 import { colorsEqual } from './shared';
 
 export const DEFAULT_DEBUG_CONFIG: ResolvedDebugConfig = {
@@ -18,7 +18,19 @@ export const DEFAULT_DEBUG_CONFIG: ResolvedDebugConfig = {
     listAfterHeading: false,
     designIssues: true,
   },
+  fitMarks: 'all',
+  fitMarksMinScale: 1,
 };
+
+export const FIT_MARKS_MODES: readonly FitMarksMode[] = ['all', 'problems', 'none'];
+
+function fitMarksOf(value: unknown): FitMarksMode {
+  return FIT_MARKS_MODES.includes(value as FitMarksMode) ? (value as FitMarksMode) : DEFAULT_DEBUG_CONFIG.fitMarks;
+}
+
+function fitMarksMinScaleOf(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : DEFAULT_DEBUG_CONFIG.fitMarksMinScale;
+}
 
 export function resolveDebugConfig(partial?: DebugConfig): ResolvedDebugConfig {
   if (!partial) {
@@ -28,6 +40,8 @@ export function resolveDebugConfig(partial?: DebugConfig): ResolvedDebugConfig {
       looseLineHighlight: { ...DEFAULT_DEBUG_CONFIG.looseLineHighlight },
       pageNegative: { ...DEFAULT_DEBUG_CONFIG.pageNegative },
       warnings: { ...DEFAULT_DEBUG_CONFIG.warnings },
+      fitMarks: DEFAULT_DEBUG_CONFIG.fitMarks,
+      fitMarksMinScale: DEFAULT_DEBUG_CONFIG.fitMarksMinScale,
     };
   }
   return {
@@ -55,6 +69,8 @@ export function resolveDebugConfig(partial?: DebugConfig): ResolvedDebugConfig {
       listAfterHeading: partial.warnings?.listAfterHeading ?? DEFAULT_DEBUG_CONFIG.warnings.listAfterHeading,
       designIssues: partial.warnings?.designIssues ?? DEFAULT_DEBUG_CONFIG.warnings.designIssues,
     },
+    fitMarks: fitMarksOf(partial.fitMarks),
+    fitMarksMinScale: fitMarksMinScaleOf(partial.fitMarksMinScale),
   };
 }
 
@@ -141,6 +157,15 @@ export function stripDebugDefaults(debug?: DebugConfig): DebugConfig | undefined
       result.warnings = out;
       hasOverride = true;
     }
+  }
+
+  if (debug.fitMarks !== undefined && debug.fitMarks !== DEFAULT_DEBUG_CONFIG.fitMarks) {
+    result.fitMarks = debug.fitMarks;
+    hasOverride = true;
+  }
+  if (debug.fitMarksMinScale !== undefined && debug.fitMarksMinScale !== DEFAULT_DEBUG_CONFIG.fitMarksMinScale) {
+    result.fitMarksMinScale = debug.fitMarksMinScale;
+    hasOverride = true;
   }
 
   return hasOverride ? result : undefined;
