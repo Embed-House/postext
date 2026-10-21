@@ -53,9 +53,30 @@ import {
   type ResolvedImagePrimitive,
   type ResolvedPathPrimitive,
 } from '../design/layout';
-import { resolveDesignText, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders';
+import { resolveDesignText, type DesignLeader, type DesignPlaceholderContext, type HeadingPlaceholderInfo } from '../design/placeholders';
 import { plainDesignText } from '../design/richText';
 import { withDigits } from '../arabicNumerals';
+
+/** The leader a contents part row's `{leader}` draws (#889): the contents'
+ *  character, gap and switch, and the face of `toc.parts.leader` field by
+ *  field over `toc.leader`'s (#1121); a field neither sets keeps the text
+ *  element's own. */
+function tocPartLeader(toc: ResolvedConfig['toc']): DesignLeader {
+  const own = toc.parts.leader ?? {};
+  const color = own.color ?? toc.leader.color;
+  const fontFamily = own.fontFamily ?? toc.leader.fontFamily;
+  const fontSize = own.fontSize ?? toc.leader.fontSize;
+  const fontWeight = own.fontWeight ?? toc.leader.fontWeight;
+  return {
+    enabled: toc.leader.enabled,
+    char: toc.leader.char,
+    gap: toc.leader.gap,
+    ...(color ? { color: color.hex } : {}),
+    ...(fontFamily ? { fontFamily } : {}),
+    ...(fontSize ? { fontSize } : {}),
+    ...(fontWeight !== undefined ? { fontWeight } : {}),
+  };
+}
 
 /** Slots live in the page margin area between the body edge and the trim
  *  edge. Header slot container: from the trim top down to body top.
@@ -1701,7 +1722,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       const placeholders: DesignPlaceholderContext = {
         kind: 'part',
         // `{leader}` fills the row with the contents' leader (#889).
-        leader: { enabled: resolved.toc.leader.enabled, char: resolved.toc.leader.char, gap: resolved.toc.leader.gap },
+        leader: tocPartLeader(resolved.toc),
         page: rowPage,
         allPages: doc.pages,
         metadata: doc.metadata,

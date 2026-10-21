@@ -1015,8 +1015,10 @@ toc
 ├─ unnumbered   TocEntryStyleConfig partial — for headings of a style with numbered:false
 ├─ pageNumber   { fontFamily, fontSize (= level-1), fontWeight (= body weight), italic=false, color, width=2em }
 ├─ leader       { enabled=true, char='.', gap=0.5em }      ('. ' spaces the dots; the leader code body tab stops use, §4a; an artifact in tagged PDF ≥ 1.23)
+│                 + face ≥ 1.52 (#1121): color, fontFamily, fontSize (em of the page number's), fontWeight; unset = the page number's
 ├─ subtitle     { enabled=false, attr='author', fontFamily, fontSize, fontWeight, italic=true, color, indent=0 }
 ├─ parts        { enabled=true, breakBefore=false, design: DesignSlot (row; placeholders {number} {numberRoman}… {titleText} {pageNumber}, {leader} ≥ 1.34.1),
+│                 leader ≥ 1.52: { color, fontFamily, fontSize (em of the element's), fontWeight } over toc.leader's face; unset = the element's own,
 │                 height = 2em (twice the body size, not two body lines), marginTop=0, marginBottom=0 }
 └─ groups       ≥ 1.34 blocks of the contents kept on one column/page
    ├─ keepTogether   false     a head row + every entry under it moves whole when it does not fit
@@ -1031,6 +1033,18 @@ A part row that needs dots up to its page number is ONE text element: `content: 
 `toc.leader` (char, gap, enabled), the same as the entry rows, so the dots line up with them; a title too long is
 cut, never the number. Never a literal run of dots in `content` (clipped, `designTextTruncated`). `{leader}` prints
 nothing outside a part row and on a vertical page (postext ≥ 1.34.1).
+Dots in their own colour, face or size (small coloured dots, a page number in bold): `toc.leader.color` / `fontFamily` /
+`fontSize` / `fontWeight` (entry rows, and part rows unless `toc.parts.leader` sets its own), ≥ 1.52.
+A page number in an element of its own (another face, a box around it) makes the part row THREE elements (≥ 1.52):
+```jsonc
+"elements": [
+  { "kind": "text", "id": "title", "content": "{number} {titleText}", "placement": { "anchor": { "to": "container", "edge": "left" } } },
+  { "kind": "text", "id": "page", "content": "{pageNumber}", "fontWeight": 700, "placement": { "anchor": { "to": "container", "edge": "right" } } },
+  { "kind": "text", "id": "dots", "content": "{leader}",
+    "placement": { "anchor": { "to": "#title", "edge": "right-of" }, "size": { "width": { "to": "#page", "edge": "left" } } } }
+]
+```
+The leader element holds `{leader}` alone; its dots end `toc.leader.gap` before the page number element.
 `:::toc{keep="part"}` / `keep="1"`…`"6"` / `keep="none"` and `:::toc{levels="1-2"}` override `groups` and
 `levels` for one contents (≥ 1.34, document-format.md). A block that still runs over columns raises
 `tocGroupSplit`.

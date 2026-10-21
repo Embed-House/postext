@@ -493,7 +493,9 @@ function directedDesignRunsHtml(line: VDTDesignTextBlock['lines'][number], block
     const words = runFont === font && !cjkDecl && !tracked ? runWordBoxesHtml(run.text, run.fontString, run.rtl === true, run.width) : undefined;
     const text = words ?? letterlessRunHtml(run.text, run.fontString, run.rtl === true, run.width, block.letterSpacingPx ?? 0) ?? wordsHtml(run.text, trackedIn(run.fontString, block.letterSpacingPx));
     const top = run.baselineShift ? `${run.baselineShift.toFixed(3)}px` : '0';
-    const pos = `position:absolute;left:${at[i]!.toFixed(3)}px;top:${top};white-space:pre;${words !== undefined ? `width:${run.width.toFixed(3)}px;` : ''}${cjkDecl}`;
+    // A run in a colour of its own (a part row's leader, #1121).
+    const colorDecl = run.color ? `color:${run.color};` : '';
+    const pos = `position:absolute;left:${at[i]!.toFixed(3)}px;top:${top};white-space:pre;${words !== undefined ? `width:${run.width.toFixed(3)}px;` : ''}${cjkDecl}${colorDecl}`;
     // A run in another face sits on the baseline of the line's own.
     const inner = runFont !== font
       ? `<span style="font:${runFont};line-height:0;${cjkDecl ? cjkFeaturesDecl(tracked) : tracked ? ligaturesDecl() : ''}">${text}</span>`
@@ -3171,7 +3173,9 @@ function renderDesignTextBlock(block: VDTDesignTextBlock, options?: HtmlPaint): 
           // A contents part row's leader (#889): painted, hidden from
           // assistive technology, as an entry row's is.
           const hidden = run.leader ? ' aria-hidden="true"' : '';
-          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl || hidden ? `<span${hidden} style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}">${text}</span>` : text;
+          // In a colour of its own when the contents give it one (#1121).
+          const colorDecl = run.color ? `color:${run.color};` : '';
+          return fontDecl || cjkDecl || stackDecl || shiftDecl || boxDecl || hidden || colorDecl ? `<span${hidden} style="${fontDecl}${cjkDecl}${cellsDecl}${stackDecl}${shiftDecl}${boxDecl}${colorDecl}">${text}</span>` : text;
         }).join('')
       : letterlessRunHtml(line.text, block.fontString, false, line.width, block.letterSpacingPx ?? 0) ?? wordsHtml(line.text, trackedIn(block.fontString, block.letterSpacingPx));
     // A line that carries directions (an order, a right-to-left run): a box

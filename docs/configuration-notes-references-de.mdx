@@ -685,6 +685,12 @@ const config: PostextConfig = {
       <td><code>char</code> wird über die Lücke zwischen Titel und Seitenzahl wiederholt, rechtsbündig, damit die Punkte aufeinanderfolgender Einträge fluchten (<code>'. '</code> setzt sie gesperrt); <code>gap</code> ist der kleinste Abstand zwischen Titel und Füllzeichen. Die Füllzeichen nehmen so viele Zeichen auf, wie hineinpassen, gemessen als zusammenhängende Folge in ihrer Schrift, sodass eine Schrift, die aufeinanderfolgende Punkte auseinanderkernt, weniger Punkte erhält statt Punkte, die bis zur Seitenzahl reichen. (Bis postext 1.4 wurde die Anzahl an einem einzelnen Punkt bemessen, und in einer solchen Schrift liefen die Füllzeichen vom Titel bis in die Nummer.) Ein Titel, der der Seitenbezeichnung keinen Platz ließe, bricht etwas früher um. Füllzeichen werden ab drei Zeichen gesetzt: Wo nur eines oder zwei passen, erhält die Zeile keine, denn ein einzelner Punkt vor der Seitenzahl liest sich wie ein Satzpunkt. In einem getaggten PDF sind die Punkte Artefakte und fehlen im extrahierten Text. Der Fließtext setzt dieselben Füllzeichen an seinen <a href="/de/docs/configuration-text#tabulatoren">Tabulatoren</a>.</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>die der Seitenzahl</td>
+      <td>Die Füllzeichen in eigener Farbe, Schrift, Größe und Stärke (seit postext 1.52), wie ein Inhaltsverzeichnis der Vorlage, das kleine farbige Punkte getrennt von den Seitenzahlen setzt. Jedes ausgelassene Feld behält, was die Punkte ohne es hätten: die Werte der Seitenzahl in einer Eintragszeile. <code>fontSize</code> in <code>em</code> bezieht sich auf diese Größe. Sofern <code>parts.leader</code> keine eigenen setzt, übernimmt sie auch der <code>{'{leader}'}</code> einer Teilzeile.</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>Objekt</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -707,6 +713,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>leer</td>
       <td>Gestaltung der Zeile; ihr Container ist die Zeile (Spaltenbreite × <code>height</code>). Platzhalter: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code> …, <code>{'{titleText}'}</code> und <code>{'{pageNumber}'}</code> (die Bezeichnung der Teiltitelseite; mit <code>parts.page: false</code>, das keine Teiltitelseite öffnet, die Bezeichnung der Seite, auf der der Inhalt des Teils beginnt und seine Kolumnentitel zu ihm wechseln; in einem Buch, das Kapitel für Kapitel gesetzt wird, verweist ein Teilblock, der sein Kapitel abschließt, auf die erste Inhaltsseite des nächsten Kapitels). Mit der Palette verknüpfte Farben übernehmen die eigene <code>palette</code> des Teils, sodass die Zeile jedes Abschnitts in dessen Farbe erscheint. Ist sie leer, werden <code>{'{number} {titleText}'}</code> (dazwischen der <code>numberSeparator</code> der H1) und die Seitenzahl in der Typografie der Einträge der Ebene 1 gesetzt. <code>{'{leader}'}</code> setzt den <code>leader</code> des Inhaltsverzeichnisses zwischen den Text davor und den Text danach, innerhalb eines Textelements: <code>{'{number} {titleText}{leader}{pageNumber}'}</code> stellt den Titel an den Anfang der Zeile, die Seitenzahl an ihr Ende und die Punkte dazwischen, bündig an der Seitenzahl und mit <code>gap</code> Abstand zu beiden Texten, wie in den Eintragszeilen. Das Element nimmt dann die ganze Zeilenbreite ein (eine Breite <code>auto</code> reicht bis zum Rand des Containers); ein zu langer Titel wird gekürzt, nie die Seitenzahl, und mit abgeschaltetem Füllzeichen (<code>leader.enabled: false</code>) bleibt der Zwischenraum leer. Außerhalb einer Teilzeile und auf vertikalen Seiten gibt <code>{'{leader}'}</code> nichts aus. In einem getaggten PDF und in HTML gehören die Punkte nicht zum gelesenen Text.</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>Das Aussehen des <code>{'{leader}'}</code> einer Teilzeile: <code>color</code>, <code>fontFamily</code>, <code>fontSize</code> (in <code>em</code> der Größe des Elements) und <code>fontWeight</code>, Feld für Feld über dem von <code>leader</code>; ein Feld, das keines von beiden setzt, behält das des Textelements. Seit postext 1.52. Um die Seitenzahl in ein eigenes Element zu setzen (eine andere Schrift, ein Kasten), baut man die Zeile aus drei Elementen: den Titel links an der Zeile verankert, die Seitenzahl rechts und dazwischen die Füllzeichen in einem Element, dessen Inhalt nur <code>{'{leader}'}</code> ist, verankert mit <code>{"{ to: '#title', edge: 'right-of' }"}</code> und mit <code>{"width: { to: '#page', edge: 'left' }"}</code>. Seine Punkte enden um <code>gap</code> vor dem Element der Seitenzahl, wo immer es steht.</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

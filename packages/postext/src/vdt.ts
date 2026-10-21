@@ -2263,6 +2263,10 @@ export interface VDTDesignTextRun {
    *  the blank room around them. Read by no assistive technology: an
    *  artifact in a tagged PDF, hidden in HTML. */
   leader?: true;
+  /** The run's own colour, over the block's (`#rrggbb`): a part row's
+   *  leader set in a colour of its own (`toc.leader.color`, #1121). Absent
+   *  on every other run. */
+  color?: string;
   /** Advance of the run, tracking included. */
   width: number;
   /** Superscript / subscript offset off the baseline (px, positive down). */

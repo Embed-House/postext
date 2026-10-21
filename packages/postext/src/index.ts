@@ -156,6 +156,7 @@ export type {
   ResolvedIndexConfig,
   OutlineIndexMark,
   TocLevelConfig,
+  TocLeaderFaceConfig,
   TocEntryStyleConfig,
   ResolvedTocConfig,
   ResolvedTocLevelConfig,

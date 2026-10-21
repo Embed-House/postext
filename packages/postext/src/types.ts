@@ -7461,6 +7461,19 @@ export interface ResolvedHeadingStyleConfig {
 // Table of contents — what `:::toc` prints.
 // ---------------------------------------------------------------------------
 
+/** The face of a contents leader (#1121): the dots set in a colour, face,
+ *  size and weight of their own, as a source's contents set small coloured
+ *  dots in a face apart from the page numbers. Each field unset keeps what
+ *  the leader is set in without it: the page number's on an entry row, the
+ *  text element's own in a part row (`{leader}`). */
+export interface TocLeaderFaceConfig {
+  color?: ColorValue;
+  fontFamily?: string;
+  /** `em` is the size the leader would have without it. */
+  fontSize?: Dimension;
+  fontWeight?: number;
+}
+
 /** Typography of one kind of contents entry. Every field inherits the body
  *  text (or the `toc`-wide value) when unset. */
 export interface TocEntryStyleConfig {
@@ -7514,8 +7527,11 @@ export interface TocConfig {
     /** Width reserved for the number at the right edge. Default `2em`. */
     width?: Dimension;
   };
-  /** Leader between the title and the page number. */
-  leader?: {
+  /** Leader between the title and the page number. Its face fields
+   *  (`color`, `fontFamily`, `fontSize`, `fontWeight`, #1121) set the dots
+   *  of the entry rows and, unless `parts.leader` sets its own, of the part
+   *  rows' `{leader}`. */
+  leader?: TocLeaderFaceConfig & {
     /** Default `true`. */
     enabled?: boolean;
     /** Repeated across the gap, right-aligned so dots line up. Default `'.'`;
@@ -7555,6 +7571,9 @@ export interface TocConfig {
      *  with the H1's `numberSeparator`) and the page number are set in the
      *  level-1 entry typography. */
     design?: DesignSlot;
+    /** The face of the part rows' `{leader}` (#1121), field by field over
+     *  `toc.leader`'s; unset fields keep the text element's own. */
+    leader?: TocLeaderFaceConfig;
     /** Row height; `em` is the body text size. Default `2em`, twice the
      *  body size (a row one or two body lines tall, depending on the
      *  leading). */
@@ -7637,7 +7656,8 @@ export interface ResolvedTocConfig {
     color: ColorValue;
     width: Dimension;
   };
-  leader: { enabled: boolean; char: string; gap: Dimension };
+  /** The face fields are present only when set (#1121). */
+  leader: TocLeaderFaceConfig & { enabled: boolean; char: string; gap: Dimension };
   subtitle: {
     enabled: boolean;
     attr: string;
@@ -7652,6 +7672,8 @@ export interface ResolvedTocConfig {
     enabled: boolean;
     breakBefore: boolean;
     design: ResolvedDesignSlot;
+    /** Present only when set (#1121). */
+    leader?: TocLeaderFaceConfig;
     height: Dimension;
     marginTop: Dimension;
     marginBottom: Dimension;

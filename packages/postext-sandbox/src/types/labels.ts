@@ -3960,6 +3960,8 @@ export interface SandboxLabels {
   tocLeaderCharTooltip: string;
   tocLeaderGap: string;
   tocLeaderGapTooltip: string;
+  tocLeaderFace: string;
+  tocLeaderFaceInfo: string;
   tocSubtitle: string;
   tocSubtitleInfo: string;
   tocSubtitleEnabled: string;
@@ -3975,6 +3977,8 @@ export interface SandboxLabels {
   tocPartsHeight: string;
   tocPartsHeightTooltip: string;
   tocPartsDesignInfo: string;
+  tocPartsLeaderFace: string;
+  tocPartsLeaderFaceInfo: string;
   tocGroups: string;
   tocGroupsInfo: string;
   tocGroupsKeepTogether: string;
