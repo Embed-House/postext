@@ -183,7 +183,12 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   (`role: "module"`, `:::module`) stacked on a shell template, and a frame
   under another or past its box is reported (`frameCovered`,
   `frameOutsideArea`; `overlap: "allow"` when the source means it); from
-  1.49 lines end in rings or bars and can be translucent. Recipes 6.12–6.18
+  1.49 lines end in rings or bars and can be translucent; from 1.52 a tab
+  has corners of its own (`label.borderRadius`), a box holding pictures and
+  their captions grows with them (`growWith: "children"`) and a transparent
+  cut-out covers only where its shape is. Captions: Markdown in the frame by
+  default, the picture's resource caption when the source sets it small and
+  attached to the picture (composed-pages.md §6.5). Recipes 6.12–6.18
   of the reference say when to use each. Follow
   [references/composed-pages.md](references/composed-pages.md). The script
   lists what the installed version lacks and what to do instead. To a person
@@ -703,7 +708,9 @@ Pick the path per [sources.md](references/sources.md):
   `--raster-ground` for the round-1 JPEG; a one-page run names its frames by
   role itself, `--name-frames`; art no pixel of its colour shows is left out,
   a cut keeps only its picture, plates whose fill shows over a picture lie over
-  it, captions in columns under a box's pictures are a frame each, ornaments
+  it, captions in columns under a box's pictures are a frame each (the box
+  `growWith: "children"`), a small caption attached to its picture its
+  resource caption, ornaments
   by a running head are anchored to it; a box with art over its fill gets the
   fill as decoration under that art, bars under 1 mm are lines, a picture in
   a rounded box is clipped to its corners),
