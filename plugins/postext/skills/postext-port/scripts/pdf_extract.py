@@ -4,7 +4,8 @@
 A designed page sets every role (body, headings, captions, box text, notes,
 running heads…) in its own font/size/colour. Step 1 tabulates those
 combinations; you name them; step 2 rebuilds the reading order, paragraphs,
-lists, headings, inline bold/italic/super/subscripts and de-hyphenates, then
+lists, headings, inline bold/italic/super/subscripts (a roman the source slants
+by shearing is italic) and de-hyphenates, then
 writes Postext Markdown.
 
   1. pdf_extract.py roles book.pdf [--pages 5-40] > roles.json
@@ -142,9 +143,88 @@ class Line:
         return "".join(s.text for s in self.spans)
 
 
+#: shear (horizontal run per unit of height) from which an upright face is
+#: read as italic: a source that slants a roman instead of setting its italic
+SYNTHETIC_ITALIC_SHEAR = 0.15
+
+
+def char_shears(chars: list[dict]) -> list[float | None]:
+    """The slant of each character from MuPDF's character boxes (`rawdict`
+    chars: `c`, `origin`, `bbox`). A box is the advance by the face's
+    ascender and descender carried through the text matrix, so a sheared
+    matrix (an upright face obliqued by the source) widens it by the shear
+    times its height. Positive leans right; None for a space or a character
+    whose advance is unknown (the last of a span). MuPDF joins a sheared run
+    to the span of the same face around it, so the slant is read per
+    character, not per span."""
+    out: list[float | None] = []
+    for i, a in enumerate(chars):
+        b = chars[i + 1] if i + 1 < len(chars) else None
+        if b is None or not a["c"].strip():
+            out.append(None)
+            continue
+        adv = b["origin"][0] - a["origin"][0]
+        x0, y0, x1, y1 = a["bbox"]
+        h = y1 - y0
+        if adv <= 0 or h <= 0:
+            out.append(None)
+            continue
+        right = x1 - (a["origin"][0] + adv)
+        left = a["origin"][0] - x0
+        sign = 1.0 if right >= left else -1.0
+        out.append(sign * max(0.0, (x1 - x0) - adv) / h)
+    return out
+
+
+def span_shear(chars: list[dict]) -> float:
+    """The median slant of a run of characters (`char_shears`), 0 when none
+    can be measured."""
+    vals = [v for v in char_shears(chars) if v is not None]
+    return statistics.median(vals) if vals else 0.0
+
+
+def slant_mask(chars: list[dict], italic: bool) -> list[bool]:
+    """Which characters of a span are set in an upright face slanted by at
+    least `SYNTHETIC_ITALIC_SHEAR`: the source's italic, made by shearing.
+    A character that cannot be measured takes the state of the one before
+    it; a space is slanted only between two slanted characters. All False
+    for a face that is italic already."""
+    n = len(chars)
+    if italic or n == 0:
+        return [False] * n
+    shears = char_shears(chars)
+    mask: list[bool] = []
+    prev = False
+    for c, v in zip(chars, shears):
+        if not c["c"].strip():
+            mask.append(False)
+            continue
+        if v is not None:
+            prev = abs(v) >= SYNTHETIC_ITALIC_SHEAR
+        mask.append(prev)
+    for i, c in enumerate(chars):
+        if not c["c"].strip():
+            before = next((mask[j] for j in range(i - 1, -1, -1) if chars[j]["c"].strip()), False)
+            after = next((mask[j] for j in range(i + 1, n) if chars[j]["c"].strip()), False)
+            mask[i] = before and after
+    return mask
+
+
+def slant_runs(chars: list[dict], italic: bool) -> list[tuple[int, int, bool]]:
+    """The span cut where the slant starts and stops: (start, end, slanted)."""
+    mask = slant_mask(chars, italic)
+    runs: list[tuple[int, int, bool]] = []
+    for i, m in enumerate(mask):
+        if runs and runs[-1][2] == m:
+            runs[-1] = (runs[-1][0], i + 1, m)
+        else:
+            runs.append((i, i + 1, m))
+    return runs
+
+
 def read_lines(doc, pages: list[int]) -> tuple[list[Line], dict]:
     lines: list[Line] = []
-    info = {"images": Counter(), "drawings": Counter(), "size": {}}
+    info = {"images": Counter(), "drawings": Counter(), "size": {}, "slanted": Counter()}
     for pno in pages:
         page = doc[pno]
         info["size"][pno] = (page.rect.width, page.rect.height)
@@ -153,7 +233,8 @@ def read_lines(doc, pages: list[int]) -> tuple[list[Line], dict]:
         except Exception:
             pass
         info["images"][pno] = len(page.get_images(full=True))
-        d = page.get_text("dict", flags=fitz.TEXT_PRESERVE_WHITESPACE)
+        # rawdict: the same spans as "dict", with the character boxes the slant is read from
+        d = page.get_text("rawdict", flags=fitz.TEXT_PRESERVE_WHITESPACE)
         for block in d["blocks"]:
             if block.get("type") != 0:
                 continue
@@ -162,22 +243,28 @@ def read_lines(doc, pages: list[int]) -> tuple[list[Line], dict]:
                     continue  # rotated text (spines, vertical labels)
                 spans = []
                 for s in ln["spans"]:
-                    if not s["text"]:
+                    if not s["chars"]:
                         continue
                     fname = font_name(s["font"])
-                    spans.append(
-                        Span(
-                            text=s["text"],
-                            font=fname,
-                            size=round(s["size"], 2),
-                            color=hexcolor(s["color"]),
-                            bold=bool(s["flags"] & 16) or bool(BOLD_RE.search(fname)),
-                            italic=bool(s["flags"] & 2) or bool(ITALIC_RE.search(fname)),
-                            origin_y=s["origin"][1],
-                            x0=s["bbox"][0],
-                            x1=s["bbox"][2],
+                    italic = bool(s["flags"] & 2) or bool(ITALIC_RE.search(fname))
+                    for a, b, slant in slant_runs(s["chars"], italic):
+                        part = s["chars"][a:b]
+                        text = "".join(c["c"] for c in part)
+                        if slant:
+                            info["slanted"][fname] += 1
+                        spans.append(
+                            Span(
+                                text=text,
+                                font=fname,
+                                size=round(s["size"], 2),
+                                color=hexcolor(s["color"]),
+                                bold=bool(s["flags"] & 16) or bool(BOLD_RE.search(fname)),
+                                italic=italic or slant,
+                                origin_y=s["origin"][1],
+                                x0=part[0]["bbox"][0],
+                                x1=part[-1]["bbox"][2],
+                            )
                         )
-                    )
                 if not spans or not "".join(s.text for s in spans).strip():
                     continue
                 main = max(spans, key=lambda s: len(s.text.strip()))
@@ -258,6 +345,8 @@ def cmd_roles(args) -> None:
     heavy = [p + 1 for p, n in info["drawings"].items() if n > 150]
     if heavy:
         print(f"# pages with many vector drawings (infographics/diagrams?): {heavy[:40]}", file=sys.stderr)
+    for fname, n in info["slanted"].most_common():
+        print(f"# {n} spans of {fname} slanted by the source: read as italic (rule key italic: true)", file=sys.stderr)
     out = {
         "pdf": str(Path(args.pdf).resolve()),
         "columns": "auto",
@@ -589,6 +678,8 @@ def cmd_markdown(args) -> None:
     lines, info = read_lines(doc, pages)
     lines = merge_split_lines(lines)
     report: Counter = Counter()
+    for fname, n in info["slanted"].items():
+        report[f"spans in a slanted upright face read as italic ({fname})"] += n
     unmatched: Counter = Counter()
     for ln in lines:
         h = info["size"][ln.page][1]

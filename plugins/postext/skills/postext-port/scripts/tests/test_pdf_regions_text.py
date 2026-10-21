@@ -224,5 +224,88 @@ class NestedLists(unittest.TestCase):
         self.assertEqual([pr.level_of_bullet(c, levels) for c in lv], [0, 1, 0])
 
 
+def slanted_page(shear=0.25):
+    """Running text with two words set in the upright face sheared by the text
+    matrix (`shear` leans right), a real italic word, and a back-slanted one
+    that is not italic either way below 0.15."""
+    doc = fitz.open()
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    x0, y = 25 * MM, 40 * MM
+    x = put(page, x0, y, "El ser humano, ", size=11)
+    o = fitz.Point(x, y)
+    # the morph matrix acts in PDF space (y up): a positive c leans the letters right
+    page.insert_text(o, "Homo sapiens", fontsize=11, fontname="helv", color=(0.1, 0.1, 0.1),
+                     morph=(o, fitz.Matrix(1, 0, shear, 1, 0, 0)))
+    x += fitz.get_text_length("Homo sapiens", fontname="helv", fontsize=11)
+    x = put(page, x, y, ", vive en la ", size=11)
+    x = put(page, x, y, "Tierra", size=11, font="heit")
+    put(page, x, y, " desde hace mucho tiempo.", size=11)
+    x = put(page, x0, y + 15, "Una línea con ", size=11)
+    o = fitz.Point(x, y + 15)
+    page.insert_text(o, "poca", fontsize=11, fontname="helv", color=(0.1, 0.1, 0.1),
+                     morph=(o, fitz.Matrix(1, 0, 0.08, 1, 0, 0)))
+    x += fitz.get_text_length("poca", fontname="helv", fontsize=11)
+    put(page, x, y + 15, " inclinación y nada más que decir aquí.", size=11)
+    for k in range(4):
+        put(page, x0, y + 30 + k * 14, "Texto corrido de la página para medir el cuerpo del texto.", size=11)
+    return doc
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class SyntheticItalic(unittest.TestCase):
+    def test_char_shears(self):
+        import pdf_extract as pex
+
+        page = slanted_page()[0]
+        runs, shear = [], {}
+        for b in page.get_text("rawdict")["blocks"]:
+            for l in b.get("lines", []):
+                for s in l["spans"]:
+                    chars = s["chars"]
+                    text = "".join(c["c"] for c in chars)
+                    # MuPDF puts the sheared words in the span of the upright text around them
+                    runs += ["".join(c["c"] for c in chars[i:j]) for i, j, m in pex.slant_runs(chars, False) if m]
+                    for word in ("Homo sapiens", "poca", "Tierra", "humano"):
+                        k = text.find(word)
+                        if k >= 0:
+                            shear[word] = pex.span_shear(chars[k:k + len(word) + 1])
+        self.assertEqual(runs, ["Homo sapiens"])
+        self.assertAlmostEqual(shear["Homo sapiens"], 0.25, delta=0.02)
+        self.assertAlmostEqual(shear["poca"], 0.08, delta=0.02)
+        self.assertAlmostEqual(shear["Tierra"], 0.0, delta=0.02)
+        self.assertAlmostEqual(shear["humano"], 0.0, delta=0.02)
+        # an italic face is not read again
+        chars = next(s["chars"] for b in page.get_text("rawdict")["blocks"] for l in b.get("lines", [])
+                     for s in l["spans"] if "Homo" in "".join(c["c"] for c in s["chars"]))
+        self.assertFalse(any(pex.slant_mask(chars, True)))
+
+    def test_regions_draft_writes_emphasis(self):
+        tmp, md, _, report = extract(slanted_page())
+        try:
+            self.assertIn("El ser humano, *Homo sapiens*, vive en la *Tierra* desde", md)
+            self.assertIn("Una línea con poca inclinación", md)
+            self.assertEqual(report["syntheticItalic"], {"Helvetica": 1})
+        finally:
+            tmp.cleanup()
+
+    def test_flow_draft_writes_emphasis_and_counts(self):
+        import subprocess
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            slanted_page().save(str(root / "src.pdf"))
+            (root / "roles.json").write_text(json.dumps({"rules": []}), encoding="utf-8")
+            subprocess.run([sys.executable, str(SCRIPTS / "pdf_extract.py"), "markdown", str(root / "src.pdf"),
+                            "--roles", str(root / "roles.json"), "--out", str(root / "out")],
+                           check=True, capture_output=True)
+            md = "".join(p.read_text(encoding="utf-8") for p in sorted((root / "out").rglob("*.md"))
+                         if p.name != "report.md")
+            rep = (root / "out" / "report.md").read_text(encoding="utf-8")
+        self.assertIn("*Homo sapiens*", md)
+        self.assertIn("*Tierra*", md)
+        self.assertNotIn("*poca*", md)
+        self.assertIn("spans in a slanted upright face read as italic (Helvetica): 1", rep)
+
+
 if __name__ == "__main__":
     unittest.main()

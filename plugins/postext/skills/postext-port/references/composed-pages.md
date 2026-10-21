@@ -410,6 +410,11 @@ What the extraction decides, so you know what to check:
   span is compared with a render of the page without text: a copy drawn
   under a picture or a fill, clipped away or off the page is left out and
   listed under `hiddenTexts` in the report.
+- **Slanted romans** (skill 1.61). A source that obliques an upright face
+  (a sheared text matrix) instead of setting its italic is read from each
+  character's box: a shear of 0.15 or more is italic, written `*…*`, and
+  `report.json` counts the runs per face under `syntheticItalic`. The
+  project then needs that family's italic among its fonts.
 - **Spaces** (skill 1.61). En (U+2002) and em (U+2003) spaces the source
   sets are kept. In headings, running heads and tab labels each gap
   between words is measured: over half an em is an en space, over 0.8 em

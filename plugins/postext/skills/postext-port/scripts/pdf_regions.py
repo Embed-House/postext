@@ -107,6 +107,7 @@ import fitz  # PyMuPDF
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import anchors as anc  # noqa: E402
 import line_art as la  # noqa: E402
+import pdf_extract as pex  # noqa: E402
 import postext_md as pmd  # noqa: E402
 import template_dedupe as td  # noqa: E402
 
@@ -263,6 +264,8 @@ class Fonts:
         self.table = font_table(fonts_dir) if fonts_dir and fonts_dir.exists() else {}
         self.cache: dict[tuple[str, int], tuple[str, int, bool]] = {}
         self.seen: dict[str, tuple[str, int, bool]] = {}
+        #: PDF font name -> spans of an upright face the source slanted (read as italic)
+        self.slanted: dict[str, int] = {}
 
     def face(self, pdf_name: str, flags: int = 0) -> tuple[str, int, bool]:
         key = (pdf_name, flags)
@@ -651,11 +654,17 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
                     hidden.append(text.strip())
                     continue
                 fam, weight, italic = fonts.face(span["font"], span["flags"])
+                # an upright face obliqued by the text matrix is the source's italic
+                slant = pex.slant_mask(span["chars"], italic) if abs(rot) < 1 else [False] * len(span["chars"])
+                runs = sum(1 for k, m in enumerate(slant) if m and (k == 0 or not slant[k - 1]))
+                if runs:
+                    base = span["font"].split("+")[-1]
+                    fonts.slanted[base] = fonts.slanted.get(base, 0) + runs
                 col = hexc(span["color"]) or "#000000"
-                for ch in span["chars"]:
+                for ch, sl in zip(span["chars"], slant):
                     b = to_mm(ch["bbox"], origin)
                     chars.append(Char(ch["c"], b[0], b[1], b[2], b[3], (ch["origin"][1] - oy) * PT_MM, fam, weight,
-                                      italic, span["size"], col))
+                                      italic or sl, span["size"], col))
             if any(c.c.strip() for c in chars):
                 for c in chars:
                     if not c.family:   # spaces take the face of the text before them
@@ -675,9 +684,15 @@ def thin_gaps(chars: list[Char]) -> list[Char]:
     """Thin spaces set by position: a number's groups (`1 000`) or a number
     and its sign or unit (`21 %`, `5 mm`) printed with a narrow gap and no
     space character (MuPDF writes none under about a quarter em), or with a
-    space narrower than a word space. The gap becomes U+2009, which
-    `postext_md.clean_text` turns into a narrow no-break space."""
+    space clearly narrower than the run's word spaces. The gap less the
+    letter spacing is measured, so spaced capitals and figures (`2 0 2 6`)
+    stay as they are. The gap becomes U+2009, which `postext_md.clean_text`
+    turns into a narrow no-break space."""
     out: list[Char] = []
+    track = tracking(chars)
+    word_gaps = [b.x0 - a.x1 for a, s, b in zip(chars, chars[1:], chars[2:])
+                 if a.c.strip() and s.c == " " and b.c.strip()]
+    word = statistics.median(word_gaps) if word_gaps else None
     i = 0
     n = len(chars)
     while i < n:
@@ -695,10 +710,11 @@ def thin_gaps(chars: list[Char]) -> list[Char]:
         nxt = chars[j]
         tail = nxt.c in _NUMBER_TAIL or nxt.c.isalpha()
         em = max(c.size, nxt.size) * PT_MM
-        gap = nxt.x0 - c.x1
+        gap = nxt.x0 - c.x1 - track
         own = chars[i + 1:j]
         if tail and em > 0 and ((not own and 0.1 * em <= gap < 0.3 * em)
-                                or (own and all(o.c == " " for o in own) and gap < 0.2 * em)):
+                                or (own and all(o.c == " " for o in own) and gap < 0.2 * em
+                                    and (word is None or nxt.x0 - c.x1 < 0.6 * word))):
             out.append(Char(" ", c.x1, c.y0, nxt.x0, c.y1, c.oy, c.family, c.weight, c.italic, c.size,
                             c.color, c.mark if c.mark == nxt.mark else None))
             i = j
@@ -1390,40 +1406,73 @@ def _space_char(c: Char, s: str) -> Char:
     return Char(s, c.x0, c.y0, c.x1, c.y1, c.oy, c.family, c.weight, c.italic, c.size, c.color, None)
 
 
+def tracking(chars: list[Char]) -> float:
+    """The letter spacing (mm) of a run of characters: the median gap
+    between two touching letters (MuPDF's boxes are the advances, so 0 for
+    text set solid). Spaced capitals in a running head have a few tenths
+    of an em between every two letters, which no gap rule should read as a
+    space."""
+    gaps = [b.x0 - a.x1 for a, b in zip(chars, chars[1:]) if a.c.strip() and b.c.strip()]
+    return max(0.0, statistics.median(gaps)) if gaps else 0.0
+
+
 def spaced_chars(chars: list[Char], em: float, only_lead: bool = False) -> list[Char]:
     """The characters with each run of spaces between two words replaced by
     the space its measured width stands for (`postext_md.fixed_space`): a
     plain space, an en space or an em space; a fixed or no-break space the
-    source set itself is kept. `em` in mm. With `only_lead`, only the gap
-    after a highlighted run (a chip, a number on a band) that opens the text
-    is measured: a justified line's spaces are stretched, not set."""
-    out: list[Char] = []
-    prev_ink: Char | None = None
-    gap_run: list[Char] = []
+    source set itself is kept. `em` in mm. A gap is fixed only when, less
+    the letter spacing, it is over half an em and at least 1.6 times the
+    narrowest other word space of the run: spaced capitals and justified lines stay
+    plain. With `only_lead`, only the gap after a highlighted run (a chip, a
+    number on a band) that opens the text is measured."""
+    # the runs of spaces between two words: (first space index, next ink index, gap)
+    gaps: list[tuple[int, int, float]] = []
+    prev_ink = None
+    i = 0
+    n = len(chars)
+    while i < n:
+        if chars[i].c.strip():
+            prev_ink = i
+            i += 1
+            continue
+        j = i
+        while j < n and not chars[j].c.strip():
+            j += 1
+        if prev_ink is not None and j < n:
+            gaps.append((i, j, chars[j].x0 - chars[prev_ink].x1))
+        i = j
+    track = tracking(chars)
     first_ink = next((c for c in chars if c.c.strip()), None)
     lead_mark = first_ink.mark if first_ink is not None else None
-    in_lead = only_lead and lead_mark is not None
-    for c in chars:
-        if not c.c.strip():
-            gap_run.append(c)
+    # with only_lead, the one gap measured ends at the first word past the opening highlight
+    lead_end = next((x for x, c in enumerate(chars) if c.c.strip() and c.mark != lead_mark), None) \
+        if lead_mark is not None else None
+    replace: dict[int, tuple[int, str]] = {}
+    for k, (i, j, gap) in enumerate(gaps):
+        run = chars[i:j]
+        own = next((g.c for g in run if g.c in pmd.FIXED_SPACES + pmd.NO_BREAK_SPACES), None)
+        if own is not None:
+            replace[i] = (j, own)
             continue
-        if only_lead and in_lead and c.mark != lead_mark:
-            in_lead = False
-            measure = True          # the gap where the opening chip ends
-        else:
-            measure = not only_lead
-        if gap_run:
-            own = next((g.c for g in gap_run if g.c in pmd.FIXED_SPACES + pmd.NO_BREAK_SPACES), None)
-            if own is not None:
-                out.append(_space_char(gap_run[0], own))
-            elif measure and prev_ink is not None:
-                out.append(_space_char(gap_run[0], pmd.fixed_space(c.x0 - prev_ink.x1, em)))
-            else:
-                out.extend(gap_run)
-            gap_run = []
-        out.append(c)
-        prev_ink = c
-    out.extend(gap_run)
+        if only_lead and (lead_end is None or j != lead_end):
+            continue
+        others = [g - track for kk, (_, _, g) in enumerate(gaps) if kk != k]
+        g = gap - track
+        sp = pmd.fixed_space(g, em)
+        if sp != " " and others and g < 1.6 * min(others):
+            sp = " "
+        if sp != " ":
+            replace[i] = (j, sp)
+    out: list[Char] = []
+    i = 0
+    while i < n:
+        if i in replace:
+            j, sp = replace[i]
+            out.append(_space_char(chars[i], sp))
+            i = j
+            continue
+        out.append(chars[i])
+        i += 1
     return out
 
 
@@ -3877,6 +3926,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
         "hiddenTexts": {p["report"]["page"]: p["report"]["hidden"] for p in built if p["report"]["hidden"]},
         "notes": {p["report"]["page"]: p["report"]["notes"] for p in built if p["report"]["notes"]},
         "fonts": {k: list(v) for k, v in sorted(fonts.seen.items())},
+        "syntheticItalic": dict(sorted(fonts.slanted.items())),
         "bodySize": body, "headingSizes": head_sizes,
         "frameNames": frame_names,
     }
@@ -3891,6 +3941,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
         hid = sum(len(v) for v in summary["hiddenTexts"].values())
         if hid:
             print(f"hidden text left out: {hid} spans on pages {', '.join(str(k) for k in summary['hiddenTexts'])}")
+        if fonts.slanted:
+            print("slanted upright faces read as italic: " + "; ".join(f"{k} ({v} spans)" for k, v in sorted(fonts.slanted.items())))
         print("fonts: " + "; ".join(f"{k} -> {v[0]} {v[1]}{' italic' if v[2] else ''}" for k, v in summary["fonts"].items()))
         print("next: template_dedupe.py " + str(out) + ", then pdf_regions.py manifest " + str(out))
     return 0

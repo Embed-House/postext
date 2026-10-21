@@ -53,7 +53,11 @@ geometry, media and scan pages, and names the next command.
    - joins end-of-line hyphens using the book's own vocabulary, keeping real
      compounds and names;
    - expands ligatures and repairs dropped-ligature gaps ("Clasifi cación");
-   - keeps bold and italic runs;
+   - keeps bold and italic runs, and reads a roman the source slanted by
+     its text matrix (a shear of 0.15 or more, measured on every
+     character's box) as italic: `*…*`, counted in `report.md` per face;
+   - keeps en and em spaces, and turns a thin space inside a number or
+     before its unit (`1 000`, `21 %`) into a narrow no-break space;
    - sets raised small digits as `^n^` and lowered ones as `~n~`;
    - builds lists from bullet markers;
    - collects footnotes as endnotes;
