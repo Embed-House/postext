@@ -628,11 +628,13 @@ def ink_box(win: Any, background: str | None, holes: list[tuple] = (), outside: 
 
 
 class Char:
-    __slots__ = ("c", "x0", "y0", "x1", "y1", "oy", "family", "weight", "italic", "size", "color", "mark")
+    __slots__ = ("c", "x0", "y0", "x1", "y1", "oy", "family", "weight", "italic", "size", "color", "mark", "font")
 
-    def __init__(self, c, x0, y0, x1, y1, oy, family, weight, italic, size, color, mark=None):
+    def __init__(self, c, x0, y0, x1, y1, oy, family, weight, italic, size, color, mark=None, font=None):
         self.c, self.x0, self.y0, self.x1, self.y1, self.oy = c, x0, y0, x1, y1, oy
         self.family, self.weight, self.italic, self.size, self.color, self.mark = family, weight, italic, size, color, mark
+        #: the PDF font the character is set in (None for spaces made up by the reader)
+        self.font = font
 
 
 class Line:
@@ -720,7 +722,7 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
                 for ch, sl in zip(span["chars"], slant):
                     b = to_mm(ch["bbox"], origin)
                     chars.append(Char(ch["c"], b[0], b[1], b[2], b[3], (ch["origin"][1] - oy) * PT_MM, fam, weight,
-                                      italic or sl, span["size"], col))
+                                      italic or sl, span["size"], col, font=span["font"].split("+")[-1]))
             if any(c.c.strip() for c in chars):
                 for c in chars:
                     if not c.family:   # spaces take the face of the text before them
@@ -809,8 +811,17 @@ def merge_pieces(pieces: list[Line]) -> list[Line]:
 def runs_markdown(chars: list[Char], base_weight: int, base_italic: bool, mark_ids: dict, mode: str) -> str:
     """Inline Markdown of a run of characters: bold, italic, highlight marks."""
     segs: list[tuple[Any, list[pmd.Run]]] = []
+    # the base face: the font most of the base-weight letters are set in. A run in another
+    # font (a Medium file beside the Book) is bold at 100 over the base; within one font,
+    # whose reported weight alone varies, at 150
+    fonts: dict[Any, int] = {}
     for c in chars:
-        bold = c.weight >= max(500, base_weight + 150) if c.c.strip() else False
+        if c.c.strip() and c.weight <= base_weight and c.font:
+            fonts[c.font] = fonts.get(c.font, 0) + 1
+    base_font = max(fonts, key=lambda k: (fonts[k], k)) if fonts else None
+    for c in chars:
+        other = base_font is not None and c.font is not None and c.font != base_font
+        bold = c.weight >= max(500, base_weight + (100 if other else 150)) if c.c.strip() else False
         italic = c.italic and not base_italic if c.c.strip() else False
         mk = mark_ids.get(c.mark) if c.mark else None
         if not segs or segs[-1][0] != mk:
@@ -2495,6 +2506,8 @@ def frame_lead_title(f: Frame, paras: list[list[Line]]) -> list[Line] | None:
     rest_ink = [c for l in rest for c in l.chars if c.c.strip()]
     if not ink or not rest_ink or any(c.mark for c in ink):
         return None     # (a highlighted lead keeps its mark: headings set none)
+    if sum(1 for c in ink if c.c.isalpha()) < 2:
+        return None     # a single letter or a number (a box's "I", "2") is no title
     body = dominant(rest)
     bold = all(c.weight >= max(500, body["weight"] + 150) for c in ink)
     big = statistics.median(c.size for c in ink) >= 1.12 * statistics.median(c.size for c in rest_ink)

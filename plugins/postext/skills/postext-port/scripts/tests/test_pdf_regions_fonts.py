@@ -77,6 +77,16 @@ class FaceNames(unittest.TestCase):
         self.assertEqual(md(400, 500), "ab cd")          # +100 is not bold
         self.assertEqual(md(300, 400), "ab cd")          # under 500 is not bold
 
+    def test_bold_at_100_over_the_base_in_another_font(self):
+        def md(base, base_font, w, font):
+            c = [pr.Char(ch, i, 0, i + 1, 3, 3, "F", cw, False, 11, "#000000", font=f)
+                 for i, (ch, cw, f) in enumerate(zip("ab cd", (base,) * 3 + (w,) * 2, (base_font,) * 3 + (font,) * 2))]
+            return pr.runs_markdown(c, base, False, {}, "mark")
+        self.assertEqual(md(400, "Face-Book", 500, "Face-Medium"), "ab **cd**")        # Medium over Book
+        self.assertEqual(md(500, "Face-Medium", 600, "Face-Semibold"), "ab **cd**")    # Semibold over Medium
+        self.assertEqual(md(400, "Face-Roman", 400, "Face-Book"), "ab cd")             # Book over Roman
+        self.assertEqual(md(400, "Face-Book", 500, "Face-Book"), "ab cd")              # one font: +150
+
     def test_draft_marks_bold_and_italic(self):
         doc = named_page({"helv": "Arial", "hebo": "Arial,Bold", "heit": "Arial,Italic", "cobo": "Helvetica Bold"})
         tmp, md, lib, report = extract(doc)

@@ -421,7 +421,8 @@ What the extraction decides, so you know what to check:
   `**…**`, and a frame set wholly in italic gets `body.italic` with no `*`.
 - **Frame titles** (skill 1.61). The first paragraph of a box or text
   frame is its title (a heading in the frame) when it has at most two lines
-  and fifteen words, text follows it, and it is wholly bold, 1.12 times the
+  and fifteen words and two letters or more, text follows it, and it is
+  wholly bold, 1.12 times the
   size of that text or more, or in another colour. A title at heading size
   takes that size's level; one at body size goes a level under the
   smallest heading size (two when it is not bold).
@@ -584,7 +585,9 @@ What the extraction decides, so you know what to check:
   takes the heavier of the file's weight and the one its name or bold flag
   says, and either slant; a file with no OS/2 weight takes its name's; a
   prefix match only joins faces whose names say the same weight and slant.
-  A run is bold at 150 over its paragraph's base and at least 500. When
+  A run is bold at least 500 and 100 over its paragraph's base when it is
+  set in another font (a Medium file beside the Book), 150 over it within
+  one font. When
   every face comes out at one weight although the names say several, the
   run prints a `WARNING` and `report.json` lists it under `warnings`.
 
