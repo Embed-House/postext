@@ -2151,6 +2151,10 @@ export interface SandboxLabels {
   warningsFloatShrunkOverflowDetail: string;
   warningsPictureBelowPrintSizeTitle: string;
   warningsPictureBelowPrintSizeDetail: string;
+  warningsEmptyCaptionTitle: string;
+  warningsEmptyCaptionDetail: string;
+  warningsResourceMovedTitle: string;
+  warningsResourceMovedDetail: string;
   warningsTextWrapTitle: string;
   warningsColumnsTooNarrowTitle: string;
   warningsColumnsTooNarrowDetail: string;

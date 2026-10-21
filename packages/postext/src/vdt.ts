@@ -3965,6 +3965,19 @@ export type ContentWarning = ContentWarningBase & (
    *  than its column, and the default page has two (`layout.layoutType:
    *  'double'`). Found by the layout; reported once per picture. */
   | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printWidthPx: number; widthPx: number; pageWidthPx: number }
+  /** `emptyCaption` (#1151): a resource of a type with a caption prefix
+   *  whose own caption is empty, so its caption line prints the label and
+   *  number alone ("Figure 1.2."). Often meant (a numbered plate), often a
+   *  caption left out; information. Reported once per resource, where it
+   *  is first placed. Found by the layout. */
+  | { kind: 'emptyCaption'; resourceId: string; label: string }
+  /** `resourceMoved` (#1151): a resource set where its `::resource` line
+   *  stands (`position: 'here'`) was too tall for the room left in its
+   *  column and moved on to the next, leaving `emptyPx` (`emptyMm`) of
+   *  that column empty on page `pageIndex`. Reported when the room left is at least
+   *  two lines of the body grid; a wrapped picture says it with
+   *  `textWrap` `'moved'`. Found by the layout. */
+  | { kind: 'resourceMoved'; resourceId: string; emptyPx: number; emptyMm: number }
   /** `textWrap` (#627): a resource or a box set to wrap text round it
    *  (`placement.wrap`, a box's `wrap`) that does not as asked.
    *  `'tooNarrow'`: the text beside it would be narrower than

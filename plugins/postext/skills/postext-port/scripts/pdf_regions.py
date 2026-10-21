@@ -108,6 +108,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import anchors as anc  # noqa: E402
 import extract_tables as et  # noqa: E402
 import images as imgs  # noqa: E402
+import legends as lgd  # noqa: E402
 import line_art as la  # noqa: E402
 import pdf_extract as pex  # noqa: E402
 import postext_md as pmd  # noqa: E402
@@ -2060,6 +2061,9 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                 continue
         kept.append(p)
     pictures = sh["pictures"] = kept
+    # a key of symbol rows (legends.py, #1144): a line printed twice is one, the key's rows leave the flow
+    key_text = lambda l: l.label_dict(ctx["mark_ids"], opts.highlights)["text"]  # noqa: E731
+    lines = lgd.take_legends(lines, page, origin, pictures, cache, report, key_text)
 
     # small words just off a picture's edge (a globe's degrees) are its lettering:
     # the picture's box takes them in
@@ -2310,6 +2314,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                     report["notes"].extend(notes)
                 ctx["label_groups"].append(groups)
                 f.labels = groups
+    res += lgd.place_legends(ordered, cache, Path(opts.out), ctx, key_text)
 
     ordered = [f for f in ordered if not getattr(f, "inline", False)]     # tables set in a box's text
     # geometry and the template
@@ -3000,7 +3005,7 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
         page.add_redact_annot(page.rect, fill=False)
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE, graphics=fitz.PDF_REDACT_LINE_ART_NONE,
                               text=fitz.PDF_REDACT_TEXT_REMOVE)
-        remove = list(remove or [])
+        remove = list(remove or []) + lgd.key_rects(p)     # a key the label draws (#1144)
         holes = []
         under = []
         for s, rect, cols in neighbours or []:
@@ -4409,11 +4414,9 @@ def page_markdown(page: dict, ctx: dict) -> str:
             continue
         if f.kind in ("picture", "figure"):
             rid = f.resource["id"]
-            if f.kind == "figure" and f.labels:
-                labels = f.figure_labels
-                add(anc.figure_block(rid, f.name, labels))
-            else:
-                add(f'::resource{{id="{rid}" slot="{f.name}"}}')
+            block = anc.figure_block(rid, f.name, f.figure_labels) if f.kind == "figure" and f.labels else None
+            block = lgd.figure_markdown(block, f, rid, f.name)     # a key on it (#1144)
+            add(block if block is not None else f'::resource{{id="{rid}" slot="{f.name}"}}')
             continue
         body = blocks_markdown(f.blocks)
         if getattr(f, "centred", False) and getattr(f, "caption_of", None) is None:
@@ -4569,7 +4572,7 @@ def cmd_extract(args: argparse.Namespace) -> int:
     figures: list[dict] = []
     all_groups = [g for gs in ctx["label_groups"] for g in gs]
     lstyles, lids = anc.label_styles(all_groups)
-    library["labelStyles"] = lstyles
+    library["labelStyles"] = lstyles + lgd.label_styles(ctx)
     for page in built:
         tpl = page["template"]
         frames: list[Frame] = page["frames"]

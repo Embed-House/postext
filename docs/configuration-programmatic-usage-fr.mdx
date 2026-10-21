@@ -280,6 +280,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>L’image s’imprime à la largeur de sa colonne. Une image dans le flux n’est jamais plus large que sa colonne, et la page par défaut en a deux (<code>layout.layoutType: 'double'</code>) : composez la page sur une colonne, faites flotter l’image sur toute la page (<code>placement.span: 'page'</code>), ou relevez sa résolution si cette taille est voulue.</td>
     </tr>
     <tr>
+      <td><code>emptyCaption</code></td>
+      <td>Une ressource d’un type doté d’un préfixe de légende n’a pas de légende propre : sa ligne de légende n’imprime que l’étiquette et le numéro. <code>resourceId</code> la nomme, <code>label</code> est la ligne imprimée. Information : signalée une fois par ressource, au paragraphe qui la cite ou à son insertion. Depuis postext 1.52.</td>
+      <td>L’étiquette est imprimée. Écrivez la légende, ou gardez l’étiquette seule si une planche numérotée est voulue.</td>
+    </tr>
+    <tr>
+      <td><code>resourceMoved</code></td>
+      <td>Une ressource placée dans le texte (<code>position: 'here'</code>) était trop haute pour la place restant dans sa colonne et est passée entière à la suivante. <code>resourceId</code> la nomme, <code>emptyPx</code> et <code>emptyMm</code> donnent la place laissée vide, <code>pageIndex</code> la page. Signalée quand cette place fait deux lignes de la grille du texte ou plus ; une image habillée le dit par <code>textWrap</code> <code>'moved'</code>. Pointe sur l’insertion. Depuis postext 1.52.</td>
+      <td>La ressource se place en tête de la colonne suivante. Réduisez-la, déplacez sa ligne <code>::resource</code> ou faites-la flotter (<code>placement.position: 'auto'</code>).</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>Une ressource ou un encadré réglé pour que le texte l’habille (<code>placement.wrap</code>, le <code>wrap</code> d’un encadré) et qui ne le fait pas comme demandé. <code>reason</code> : <code>'tooNarrow'</code> (le texte à côté serait plus étroit que <code>layout.wrap.minTextWidth</code>), <code>'fewLines'</code> (il fait moins de <code>layout.wrap.minLinesBeside</code> lignes), <code>'moved'</code> (un élément en ligne trop haut pour la place restante dans sa colonne est passé à la suivante, avec son ancre), <code>'verticalText'</code> ou <code>'noContour'</code> (un habillage au contour autour d’une image dont la forme n’est pas connue : un SVG sans <code>contour.points</code>, un bitmap sans transparence, ou un canal alpha que l’hôte n’a pas tracé). <code>resourceId</code> identifie une ressource, <code>box</code> le style d’un encadré. Pointe sur l’insertion ou sur l’encadré.</td>
       <td>L’élément occupe toute sa bande, ou se place dans la colonne suivante, selon la raison ; avec <code>'noContour'</code>, le texte habille le cadre de l’image. Donnez à l’image un polygone, prenez un PNG avec transparence, ou lisez-la avec <code>readBundle</code> ou dans le Sandbox, qui la tracent.</td>

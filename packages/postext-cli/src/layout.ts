@@ -187,9 +187,13 @@ function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Rep
       kind: w.kind,
       // A template frame left empty is a note (#854): a page may leave a
       // frame unused on purpose; so is an anchor this edition leaves
-      // without a word (#860), and a word too long for its line divided at
-      // a syllable (#1150).
-      severity: w.kind === 'slotEmpty' || w.kind === 'anchorUnlabelled' || w.kind === 'wordDividedBySyllable' ? 'info' : 'warning',
+      // without a word (#860), a word too long for its line divided at a
+      // syllable (#1150), and a caption that prints its label alone (#1151):
+      // a numbered plate may want no more.
+      severity: w.kind === 'slotEmpty' || w.kind === 'anchorUnlabelled' || w.kind === 'wordDividedBySyllable' || w.kind === 'emptyCaption' ? 'info' : 'warning',
+      // A resource set in the text that moved on (#1151): which, and the
+      // room it left.
+      ...(w.kind === 'resourceMoved' ? { data: { resourceId: w.resourceId, emptyMm: w.emptyMm } } : {}),
       message: formatWarning(w),
       at: sourceAt(chapter, w.sourceStart),
       ...(local ? { page: String(local.pageLabel ?? local.pageNumberValue) } : {}),

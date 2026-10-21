@@ -280,6 +280,16 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>تُطبع الصورة بعرض عمودها. الصورة في المتن لا تكون أعرض من عمودها أبدًا، وللصفحة الافتراضية عمودان (<code>layout.layoutType: 'double'</code>): نضّد الصفحة في عمود واحد، أو اجعل الصورة تطفو على عرض الصفحة (<code>placement.span: 'page'</code>)، أو ارفع دقّتها إن كان هذا المقاس هو المراد.</td>
     </tr>
     <tr>
+      <td><code>emptyCaption</code></td>
+      <td>لمورد من نوع له بادئة تعليق لا تعليق خاص به، فيطبع سطر تعليقه الوسم والرقم وحدهما. يسمّيه <code>resourceId</code>، و<code>label</code> هو السطر المطبوع. للعلم: يُبلَّغ عنه مرة لكل مورد، عند الفقرة التي تحيل إليه أو عند تضمينه. منذ postext 1.52.</td>
+      <td>يُطبع الوسم. اكتب التعليق، أو أبقِ الوسم وحده إن كان المقصود لوحة مرقَّمة.</td>
+    </tr>
+    <tr>
+      <td><code>resourceMoved</code></td>
+      <td>مورد موضوع في النص (<code>position: 'here'</code>) كان أطول من المساحة الباقية في عموده فانتقل كاملًا إلى العمود التالي. يسمّيه <code>resourceId</code>، ويذكر <code>emptyPx</code> و<code>emptyMm</code> المساحة التي تركها فارغة، و<code>pageIndex</code> الصفحة. يُبلَّغ عنه حين تبلغ تلك المساحة سطرين من شبكة النص أو أكثر؛ أما الصورة التي يلتف حولها النص فتقول ذلك بـ<code>textWrap</code> <code>'moved'</code>. يشير إلى التضمين. منذ postext 1.52.</td>
+      <td>يقف المورد في أعلى العمود التالي. صغِّره، أو انقل سطر <code>::resource</code> الخاص به، أو اجعله عائمًا (<code>placement.position: 'auto'</code>).</td>
+    </tr>
+    <tr>
       <td><code>textWrap</code></td>
       <td>مورد أو إطار ضُبط ليلتف النص حوله (<code>placement.wrap</code>، و<code>wrap</code> في الإطار) لم يُنضَّد كما طُلب. <code>reason</code>: <code>'tooNarrow'</code> (سيكون النص المجاور أضيق من <code>layout.wrap.minTextWidth</code>)، أو <code>'fewLines'</code> (أقصر من <code>layout.wrap.minLinesBeside</code> سطرًا)، أو <code>'moved'</code> (عنصر داخل النص أطول من المساحة المتبقية في عموده انتقل إلى العمود التالي مع مرساته)، أو <code>'verticalText'</code>، أو <code>'noContour'</code> (التفاف حول محيط صورة لا يُعرف شكلها: SVG بلا <code>contour.points</code>، أو صورة نقطية بلا شفافية، أو قناة ألفا لم يتتبّعها المضيف). <code>resourceId</code> يحدّد المورد، و<code>box</code> نمط الصندوق. يشير إلى موضع المورد أو الإطار.</td>
       <td>يأخذ العنصر الشريط كله، أو يوضع في العمود التالي، كما يقول السبب؛ ومع <code>'noContour'</code> يلتف النص حول إطار الصورة. أعطِ الصورة مضلّعًا، أو استعمل PNG فيه شفافية، أو اقرأها عبر <code>readBundle</code> أو Sandbox، فكلاهما يتتبّع شكلها.</td>
