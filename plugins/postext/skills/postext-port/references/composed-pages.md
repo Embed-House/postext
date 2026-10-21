@@ -417,9 +417,10 @@ What the extraction decides, so you know what to check:
   project then needs that family's italic among its fonts.
 - **Spaces** (skill 1.61). En (U+2002) and em (U+2003) spaces the source
   sets are kept. In headings, running heads and tab labels each gap
-  between words is measured: over half an em is an en space, over 0.8 em
-  an em space (the room between a number and its title, a chip and its
-  words). A paragraph opened by a highlight keeps the measured room after
+  between words is measured, less the line's letter spacing: over half an
+  em and 1.6 times the narrowest other word space of the line is an en
+  space, over 0.8 em an em space (the room between a number and its
+  title, a chip and its words); spaced capitals stay plain. A paragraph opened by a highlight keeps the measured room after
   it the same way; with `--highlights chip` that room is the chip style's
   `gap` instead (in em, when wider than 0.4 em). A narrow gap inside a
   number or before its sign or unit (`1 000`, `21 %`, `5 mm`, often set by
