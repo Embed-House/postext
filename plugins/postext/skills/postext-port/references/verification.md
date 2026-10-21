@@ -374,7 +374,13 @@ those lines, or run the script.
   another order than the Markdown; it warns when editions read a page differently and lists the scaled
   frames. `--stress 1.3` repeats each edition with the text 30 % longer (the Cookbook bench's C38): a
   page must rearrange or go on; a `frameOverflow` with valued proposals warns, any other new warning
-  fails (composed-pages.md §7).
+  fails (composed-pages.md §7). From postext 1.48 it also fails on `frameCovered` (a frame's lines,
+  tab or pictures under an opaque frame painted after it) and `frameOutsideArea` (text past the trim,
+  ink past the bleed, a frame past the frame or group it is anchored inside), printing the engine's
+  fixes, and ends with `overlaps: N`: close a port at 0. An overlap the source prints is `overlap:
+  "allow"` on the frame or an entry with its reason in the project's `composed-check.json`
+  (composed-pages.md §6.18); `compare_pages.py --score --check` fails the likeness score while one
+  remains.
 - `CONFIG cjkGridClamped`: `cjk.grid` asked for more characters or lines than the margins leave room for.
 - `CONFIG fontFamilyStack`: a `fontFamily` (or any `…FontFamily`) holds a CSS stack (`'EB Garamond',
   Georgia, serif`); the text is set in the first family only (canvas, HTML and PDF embed one face per

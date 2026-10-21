@@ -32,7 +32,9 @@ Contents: 1 choosing the round · 2 the model · 3 the phases in round 2 ·
 category tree, a double-page timeline, a labelled map, photos with captions,
 text round an illustration, a box that continues, a magazine thread with
 jumps, an activity sheet with answer lines, a photo and its ground, a
-contents page) ·
+contents page; from 1.48: lines between frames, notes that point into a
+picture, a map's key and symbols, cards and shapes, cards the Markdown
+repeats, modules, frames that lie over each other) ·
 7 verification · 8 one bundle for every edition · 9 ports made with round 1
 or postext 1.33 · 10 limits.
 
@@ -58,6 +60,10 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.42.0</td><td><code>calloutStyles[].body.letterSpacing</code>; <code>{ "id": …, "remove": true }</code> takes a decoration element of the base template out in a child or variant; a frame's own colours (<code>look</code>) and <code>palette</code> on a template or a page fence, so one box style serves every tint; <code>width: "auto"</code> on a frame is its longest line plus padding; <code>label.icon.placement: "inside"</code>; <code>{headingNumber}</code> in decoration text and a click on decoration text over a frame; <code>takes: "toc"</code> (or <code>:::toc</code> in a frame) lays the contents on a composed page; <code>overlap: "allow"</code> on anchors and label styles, the picture's <code>avoid</code> zones as map symbols (<code>labelOverlap</code> with <code>withSymbol</code>); <code>figureWordsShared</code>; labels of right-to-left books in the reflowable EPUB; <code>fonts[].fallback</code> (an open family for a licensed one the bundle leaves out); pictures upright in the frames of a vertical page's own flow; index marks, anchors and headings of a story that went on in a later chapter listed where that chapter sets them; layout memo (a page whose boxes overflow lays faster); Sandbox: renaming a frame renames the <code>slot</code> of the page fences that fill it (every chapter, the other editions of a local project), Design &rsaquo; Figures &amp; tables &rsaquo; Label styles, label dragging on the Folio's pages, each edition's title and pagination (<code>layouts.&lt;lang&gt;.json</code>) on export</td><td>2</td></tr>
 <tr><td>1.43.0</td><td>labels of a figure across the spine slide off the gutter band (<code>gutter: "cross"</code> on an anchor keeps a name across both pages); renaming a label style in the Sandbox rewrites its users; the picture's <code>avoid</code> zones read from an SVG's own symbols; <code>label.icon.tint</code>; the faces of a licensed family's <code>fallback</code> are embedded in EPUB, HTML and SVG exports; <code>toc.parts.breakBefore</code> in a contents frame; <code>headingClaimsColumn</code>; Sandbox: Add a language, rename one language only, group order in the template editor</td><td>2</td></tr>
 <tr><td>1.44.0–1.46.0</td><td>1.46.0: a frame set in <code>columns</code> (and a <code>:::columns</code> group) never ends a column on a heading: under <code>headings.keepWithNext</code> the heading goes on with its text. 1.44 and 1.45 change nothing in composed pages (1.45 box-style designs are configuration.md §12)</td><td>2</td></tr>
+<tr><td>1.47.0</td><td>the Sandbox's HTML viewer lays a composed page on the print leaf (§10); nothing else</td><td>2</td></tr>
+<tr><td>1.48.0</td><td>lines, shapes, repeats and modules (§6.12–6.18): decoration <code>connector</code>s between frames (<code>straight</code>, <code>elbow</code>, <code>tree</code>, ends on <code>#card[*]</code> and on a picture's anchor, painted over the frames with <code>over</code>); a label away from its point with a leader (<code>labelAt</code>, <code>leader</code>); keys (<code>kind: "legend"</code>, <code>:::label</code> of several lines) and <code>:icon</code> symbols in labels, captions and cells; per-corner radii, per-side borders, a tab joined to its box, foot tabs, <code>path</code> elements and a glyph as a tab's icon; <code>anchor.at</code> and the <code>center</code> size edge; <code>kind: "grid"</code> groups that <code>repeat</code> a frame set per item of the Markdown; <code>role: "module"</code> templates stacked by a <code>modules</code> group from <code>:::module</code> blocks; the overlap checks <code>frameCovered</code> and <code>frameOutsideArea</code> with <code>overlap: "allow"</code>; <code>configVersion</code> 16; Sandbox: connectors, shapes, leaders, keys, grids and the module library edited without JSON, «Turn into a grid» and «Extract a module»</td><td>2</td></tr>
+<tr><td>1.48.1</td><td>a module's connector may end on a frame of the page that stacks it</td><td>2</td></tr>
+<tr><td>1.49.0</td><td><code>ring</code> and <code>bar</code> caps on connectors and leaders, <code>opacity</code> on their lines; a picture in an <code>auto</code> frame of a vertical page fills the room the frame measured; Sandbox: <code>overlap</code> in the frame editor and an «allow overlap» fix in the Checks panel</td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -91,6 +97,9 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>Markdown <code>::::page{template=… attr=…}</code></td><td>one page (or spread) and its content in reading order</td></tr>
 <tr><td>Markdown <code>:::frame{slot label title}</code>, <code>slot=</code> on a block</td><td>which frame a piece goes to; the words of its tab and title</td></tr>
 <tr><td>Markdown <code>:::figure{resource slot}</code> + <code>::label[…]{at style}</code></td><td>a picture and the words set on it</td></tr>
+<tr><td>config <code>decoration</code> <code>connector</code> and <code>path</code> elements (1.48)</td><td>the lines between frames and the shapes the source draws as vectors (6.12–6.15)</td></tr>
+<tr><td>config <code>groups[]</code> <code>kind: "grid"</code> + <code>repeat</code>, templates with <code>role: "module"</code> (1.48)</td><td>a card drawn once and laid per item of the Markdown (6.16); a block drawn once and stacked where the Markdown puts it (6.17)</td></tr>
+<tr><td>Markdown <code>:::module{template name}</code> (1.48)</td><td>one module of the page and its content, its slots the module's</td></tr>
 </table>
 
 How content is shared out: a `:::frame{slot}` sends its body (any Markdown:
@@ -125,6 +134,12 @@ spans two pages.
   named by role (`linea-tiempo`, `mapa-provincias`), never by page number.
 - A two-page design (a timeline, a map across the spine) is one spread
   template, not two pages.
+- From 1.48 record the **bands** too: blocks that recur from page to page in
+  another order (a box with its photo, a tree, a photo wall) are modules
+  (6.17), and cards of one look on a lattice are a grid (6.16). A book whose
+  pages differ mostly in which bands they stack needs one shell template and
+  a module per band, not a template per page; `template_dedupe.py` finds both
+  in a draft (§3.7).
 - Write the table into the spec sheet: kind, pages, frames, base template.
   The 28-page social-science textbook ported with round 1 needed 117
   callout styles for 121 boxes; its pages fall into about six kinds.
@@ -214,8 +229,9 @@ geometry constants, with helpers of your own (`frame(name, …)`,
 ### 3.5 Verification
 
 Section 7: per edition, `frameOverflow` = 0, `contentInConfig` = 0, every
-template and slot warning fixed, HTML reading order = Markdown order, the
-stress test at 1.3, and the page images against the source.
+template and slot warning fixed, overlaps = 0 (from 1.48: `frameCovered`,
+`frameOutsideArea`), HTML reading order = Markdown order, the stress test
+at 1.3, and the page images against the source.
 
 ### 3.6 Packing
 
@@ -234,10 +250,24 @@ python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts   # t
 node scripts/render.mjs work/regions --frames work/laid.json                   # its frames as laid
 python3 scripts/template_dedupe.py work/regions --laid work/laid.json          # kinds of page, styles, grounds, grids, modules
 python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts
-postext check work/regions; python3 scripts/composed_check.py check work/regions
-node scripts/render.mjs work/regions --frames work/folded.json
+python3 scripts/lint_project.py work/regions --quiet
+python3 scripts/composed_check.py check work/regions --json > work/check.json  # overlaps: 0 to pass
+node scripts/render.mjs work/regions --frames work/folded.json --jpeg work/pages
 python3 scripts/template_dedupe.py work/regions --compare-boxes work/laid.json work/folded.json
+python3 scripts/compare_pages.py source.pdf work/pages --source-pages 4-28 --render-pages 1-25 \
+    --out work/compare --dpi 60 --score work/score.json --check work/check.json
 ```
+
+The loop, in words: extract (frames, styles, pictures, labels, and the
+page's lines, cards and shapes as vectors), lay the draft out and keep its
+frame boxes, fold (grids, modules, the shell), lay it out again and compare
+the boxes (nothing moved by more than 0.5 mm) and the pages (the score), and
+close with the checks. A draft is done when `composed_check.py` passes with
+**0 overlaps** and the score is no worse than before the fold; the score
+fails while the check lists an overlap, because a page that matches the
+source on average can still hide a caption under a photo. Fix each overlap
+as §6.18 says before curating anything else: a frame that lies over another
+is usually a group or an anchor the draft read wrongly.
 
 <table>
 <tr><th>Script</th><th>Run it</th><th>It writes</th></tr>
@@ -461,7 +491,7 @@ by side with a connector between them are one frame each; arrows typed in a
 worked example need a face that has the glyph (a `chipStyles` entry in the
 face that does, not a picture); a tab's ring icon is not drawn (cut the
 ring as a picture resource and set it with `label.icon` and `placement:
-"inside"`, 1.42; 6.1); the draft's `box-N` stacks anchor to the frame above,
+"inside"`, 1.42; 6.1; from 1.48 a glyph icon, `kind: "glyph"`, 6.15); the draft's `box-N` stacks anchor to the frame above,
 so a translation that shortens a text moves everything under it up (frames the
 source fixes at the card's foot are held there with the foot-hold stack of
 section 5, not by anchoring them to the card's foot).
@@ -840,6 +870,12 @@ Es el instrumento utilizado como medio de pago…
   has no setting: put it at `top-left` with `inset` and say so in the report.
   A title tab as wide as its title in every edition is `width: "auto"` with
   a `maxWidth` on the frame (section 5, "Sizes").
+- From 1.48 a ring, a dot or a check before the words needs no picture:
+  `label.icon: { "kind": "glyph", "glyph": "◉" }` sets a character in the
+  tab's face (or `fontFamily`, `fontWeight`), `scale` of the tab's text,
+  coloured as the words unless `color` says otherwise (6.15). A tab grown
+  out of the box as one outline, a tab at the foot and per-corner radii are
+  6.15 too.
 - A box with a second topic title inside it: an `##` in the frame draws
   its heading style's design from 1.37 (section 5, "Headings in frames"),
   and is listed by `:::toc` and the bookmarks. Before 1.37, make the
@@ -886,7 +922,10 @@ resources.append(svg(PROJECT, "arbol-sectores", "resources/arbol-sectores.svg",
   a callout style), and draw the connectors as one decoration `connector`
   (`routing: "tree"`, `from: { to: "#raiz" }`, `to: [{ to: "#primario" }, …]`),
   which follows the frames when a box grows (`pdf_regions.py` writes it from
-  the source's lines).
+  the source's lines). From 1.48 prefer this whenever a translation may
+  lengthen a node: the picture's lines cannot follow a box that grows
+  (6.12). A tree that recurs on several pages is a module (6.17), the
+  children a grid when their number changes from page to page (6.16).
 - Before labels are drawn (postext < 1.37): the round-1 live-text SVG
   (playbooks J4) and say in the report where the words are.
 
@@ -966,7 +1005,10 @@ Con relojes mecánicos
   the spine gap so its words start on the recto, where they are read.
 - Dots and ticks on a timeline are decoration elements anchored to the
   card (`#era-3`, `top`, a negative y offset): they follow it when a row
-  moves or widens it. Declare `bitmap.resolution` on pictures inside cards
+  moves or widens it. From 1.48 they are one `tree` connector per band with
+  `trunk: 0` (a drop from the band's edge to each card, no bar), a `gap`
+  under the band and `startCap: "dot"`, whose `to` is `#era[*]` when the
+  cards are a repeating grid (6.12, 6.16): no element per card. Declare `bitmap.resolution` on pictures inside cards
   so the natural width is the narrowest card's measure; a picture is never
   enlarged, so a wider card gives its room to the text.
 - A map across the fold: ONE resource in a `crossGutter` frame. From 1.43 a
@@ -1183,6 +1225,11 @@ Un mercado de barrio.
   only for 1.37 and older.
 - A row keeps its frames' widths and grows as tall as the tallest caption
   needs. Photos of different widths: different frame widths.
+- From 1.48 photos of one width on a lattice (three in a row, a wall of six)
+  are one frame set repeated by a `grid` group (6.16): the template draws
+  `foto` and its `pie` once and each `:::frame{slot="foto"}` of the page is a
+  photo, so a page with four photos needs no other template.
+  `template_dedupe.py` folds such rows by itself (§3.7).
 - Labels on a photo (a chip naming what is shown, an arrow's word): a
   `:::figure` on that photo with anchors (6.4), label style with
   `background` + `padding` for a chip-like plate.
@@ -1574,6 +1621,370 @@ with their entries and page numbers.
   (`continueIn`); set a contents page that must stay on one page with
   `fit.minScale` and read `frameOverflow`.
 
+### 6.12 Lines between frames: connectors (1.48)
+
+The source: a tree diagram, an org chart, a timeline's drops, arrows from
+one box to the next. The lines join boxes that hold words.
+
+```python
+decoration["elements"] += [
+    {"kind": "connector", "id": "ramas", "routing": "tree", "from": {"to": "#raiz"},
+     "to": [{"to": "#primario"}, {"to": "#secundario"}, {"to": "#terciario"}],
+     "radius": mm(1.5), "width": pt(1), "color": color("#1d3557", "main-color")},
+    {"kind": "connector", "id": "paso", "routing": "elbow", "from": {"to": "#causa", "side": "right"},
+     "to": {"to": "#efecto", "side": "left", "gap": mm(1)}, "endCap": "arrow"},
+    {"kind": "connector", "id": "marcas", "routing": "tree", "trunk": 0, "startCap": "dot",
+     "from": {"to": "#banda", "side": "bottom", "gap": mm(1.5)}, "to": {"to": "#era[*]"}},
+]
+```
+
+- **When.** Any line that ends on a box of words. The line is laid after the
+  frames have their final boxes, so it follows a box that grows, an edition
+  with longer words, a group that moves its frames and the mirrored page of
+  a right-to-left edition. Lines inside a picture that join nothing of the
+  page (a map's border, a scale bar) stay the picture's art. Before 1.48 the
+  lines were the ground's or the picture's, and a longer translation left
+  them pointing at the old boxes.
+- **Routing.** `straight` (one segment), `elbow` (across, along, across
+  between sides that face each other; an L between perpendicular sides;
+  `trunk` places the middle run, 0 at `from`), `tree` (a trunk from the
+  parent `from`, a bar across the children's points at `trunk` of the gap,
+  a drop to each child; `trunk: 0` draws no bar, a drop from the parent's
+  edge to each child: a timeline's ticks). `radius` rounds the bends.
+- **Ends.** `to` names a frame, a group, another decoration element, an
+  instance (`#foto[2]`), every instance of a repeating grid (`#foto[*]`,
+  in `to` only), or a module's frame inside the module (`#raiz`; from 1.48.1
+  also a frame of the page that stacks the module). `side` (default: the
+  side facing the other end across the wider gap), `at` (`start`, `center`,
+  `end` or a fraction along the side; written by `pdf_regions.py` when the
+  source's point is off the middle by more than 0.3 mm) and `gap` (room
+  between the edge and the line). An end on a frame the page does not show
+  (collapsed, optional and empty, a card past the page's items) is dropped
+  and the reflow log says `connectorDropped`; a tree keeps its other
+  children.
+- **Look.** `color` (palette-linked, default the main colour; part and page
+  palettes recolour it), `width` (0.75 pt), `dash`, `startCap` / `endCap`
+  (`none`, `dot`, `arrow`; `ring` and `bar` from 1.49), `capSize` (3 ×
+  width), `opacity` (1.49: 0 to 1, times the colour's alpha). A cased line
+  (a pale wide line under a dashed one) is two connectors. Before 1.49 a
+  hollow marker is a filled `dot`, and a casing needs an opaque colour.
+- **Layer.** Connectors paint with the decoration, under the frames, unless
+  `over: true` (a line drawn across a photo in the source) or an end stops at
+  a picture's anchor (6.13), which paints over by default. `pin: true` joins
+  the declared boxes instead of the laid ones.
+- Only a page template's or a module's decoration takes connectors; in a
+  running head or a heading design one is `unknownConfigValue` and not
+  drawn. `frameAnchorUnknown` names an end on nothing.
+
+### 6.13 Notes that point into a picture, names away from their point (1.48)
+
+The source: a note box beside a map with a line to a lake; a name set in
+the sea with a thin line to its island.
+
+```python
+resources.append(bitmap(PROJECT, "mapa-rio", "resources/mapa-rio.png", alt="El curso del río",
+    anchors=[{"id": "lago", "x": 0.62, "y": 0.41},
+             {"id": "isla", "x": 0.18, "y": 0.70, "labelAt": {"x": 0.08, "y": 0.86}, "leader": True}]))
+label_styles.append({"id": "nombre", "fontSize": pt(9),
+                     "leader": {"width": pt(0.5), "endCap": "dot", "routing": "elbow"}})
+decoration["elements"].append(
+    {"kind": "connector", "id": "nota-lago", "routing": "straight", "from": {"to": "#nota", "side": "right"},
+     "to": {"to": "#mapa", "anchor": "lago", "gap": mm(0.8)}, "endCap": "dot"})
+```
+
+```md
+:::figure{resource="mapa-rio" slot="mapa"}
+::label[Isla Larga]{at="isla" style="nombre"}
+::label[Lago Verde]{at="lago" leader="none"}
+:::
+```
+
+- **A frame's pointer** is a connector whose `to` (or `from`) has `anchor`:
+  the end is that anchor of the picture the frame holds, through crop, safe
+  area and the ladder's scale, as labels are. `side` says which way the line
+  arrives; `at` is not read. It paints over the frames by default (`over`).
+  `pdf_regions.py` writes such pointers itself (`pointer-N` anchors) and cuts
+  their lines out of the picture. An unknown anchor is `labelAnchorUnknown`
+  with the connector's id; a point the frame cuts off drops the end.
+- **A label away from its point.** `labelAt` on the anchor (fractions of the
+  picture) moves the label; `leader` on the anchor (`true` or a look) or on
+  the `::label` (`leader`, `leader="none"` off) draws the line from the
+  label's box to the point; else a label set away gets one when its style has
+  a `leader`. The look is the label style's `leader` (`color` default the
+  label's colour, `width` 0.75 pt, `dash`, caps default `endCap: "dot"`,
+  `capSize`, `routing` `straight` or `elbow`, `opacity` from 1.49).
+- **When which.** A note box (a frame of words) pointing at a place:
+  connector with an anchor end. A name on the picture set off its point
+  because the place is too small: `labelAt` + leader. Words on the picture at
+  their point: a plain `::label` (6.4).
+- Before 1.48 the pointer was art in the picture, so a mirrored or a
+  translated page pointed wrong; name the gap.
+
+### 6.14 A map's key and symbols in labels (1.48)
+
+The source: a key box on a map (a square per country colour, a dot for a
+capital, a dashed line for a border) and names with a symbol before them.
+
+```python
+label_styles.append({"id": "clave", "kind": "legend", "align": "start", "fontSize": pt(8.5),
+                     "background": color("#ffffff"), "padding": mm(1.5),
+                     "border": {"color": color("#5b6770"), "width": pt(0.5)}, "radius": mm(1)})
+```
+
+```md
+:::figure{resource="mapa-politico" slot="mapa"}
+:::label{at="clave" style="clave"}
+:icon[País]{glyph="■" color="pais"} País
+:icon[Capital]{glyph="⊙" font="Noto Sans Math"} Capital
+:icon[Pueblo]{resource="marca-pueblo" size="0.55"} Pueblo
+:icon[Frontera]{line="dashed" color="#5b6770"} Frontera
+:::
+::label[:icon[Capital]{glyph="⊙" font="Noto Sans Math"} Varena]{at="capital"}
+:::
+```
+
+- `:::label{at style}` … `:::` inside a `:::figure` keeps every non-blank line
+  as a line of the label (an address, a key); the first `:::` closes the
+  label, the next the figure. `::label[…]` stays one line (`\\` breaks it).
+- `kind: "legend"` hangs the symbol that opens each row in a column as wide
+  as the widest symbol, so the words start on one edge (start-aligned unless
+  `align` says otherwise; an Arabic key mirrors). `border` and `radius` draw
+  the plate's outline.
+- `:icon[alt]{…}`: `resource=` (a bitmap or SVG of the book), `glyph=` (with
+  an optional `font=`), `line="solid|dashed|dotted"`; `color=` (hex or a
+  palette id), `size=` (height in ems, 0.75 by default: a capital). The alt
+  text is what readers hear; empty brackets make it decoration. Read in
+  labels, captions, notes and table cells; not in body text, headings or
+  design texts.
+- **When.** A key whose words change per edition, or symbols the source sets
+  in running label text. Keep the key in the picture only when it holds no
+  words. Scale bars stay art: their numbers are labels at anchors along the
+  bar. Before 1.48 a key was labels one per line with the symbols in the
+  picture.
+
+### 6.15 Cards, tabs and shapes without a picture (1.48)
+
+The source: a card rounded on two corners, a box ruled on top only, a title
+tab that grows out of the card in one outline, a ribbon or chevron behind a
+heading, a ring before a tab's words.
+
+```python
+callout_styles += [
+    {"id": "tarjeta", "backgroundEnabled": True, "background": color("#fff4d6"),
+     "borderRadius": {"topLeft": mm(4), "topRight": mm(4)},
+     "border": {"enabled": False, "sides": {"top": {"enabled": True, "color": color("#e0a100"), "width": pt(2)}}},
+     "label": {"position": "top-left", "joined": True, "fillet": mm(2), "offset": mm(0), "height": mm(7),
+               "paddingX": mm(3), "color": color("#5a3b00"),
+               "icon": {"kind": "glyph", "glyph": "◉", "scale": 0.9, "placement": "inside", "gap": mm(1.5)}}},
+]
+decoration["elements"].append(
+    {"kind": "path", "id": "cinta", "d": "M0 0 H0.94 L1 0.5 L0.94 1 H0 Z", "fill": color("#1d3557", "main-color"),
+     "placement": {"anchor": {"to": "#titulo", "edge": "top-left"}, "offset": {"x": mm(-6)},
+                   "size": {"width": {"to": "#titulo", "edge": "right"}, "height": mm(9)}}})
+```
+
+- **Corners and sides.** `borderRadius` takes one length or `{ topLeft,
+  topRight, bottomRight, bottomLeft }` (a corner left out is square), on
+  callout styles and on decoration boxes (`style.borderRadius`). Callout
+  `border.sides` and a decoration box's `style.borderSides` give each side
+  `{ enabled, color, width }` over the whole border: a box ruled on top only
+  is `enabled: false` plus a `top` side.
+- **Joined tab.** `label.joined: true` draws the box and its tab as one
+  outline with concave `fillet`s where they meet (default the corner radius)
+  and one fill (the box's `background`; the tab's own is not painted, so set
+  the label `color` for the card's ground). It needs `offset: 0`. Tabs may
+  also stand at the foot (`bottom-left`, `bottom-right`, `bottom-start`,
+  `bottom-end`), joined or not. No side tabs. `pdf_regions.py` writes a card
+  and its tab of one colour as one path outline.
+- **Path element** (`kind: "path"`, every design slot): SVG path data `d` in
+  a `viewBox` (default `[1, 1]`: fractions of the box), stretched to the
+  element's box (`preserveAspectRatio: "none"`) or fitted (`"meet"`); `fill`,
+  `stroke`, `width`, `dash`, colours palette-linked. For ribbons, chevrons,
+  arrows, waves and icons the source draws as vectors. Bad data draws nothing
+  and is `unknownConfigValue` (the Sandbox's shape editor checks it as typed).
+- **Glyph tab icon.** `label.icon.kind: "glyph"` with `glyph`, `fontFamily`,
+  `fontWeight`, `scale`, `color`, `placement`, `gap`; a missing glyph is the
+  PDF's `missingGlyph`. Use a picture icon (`resourceId`, `tint`) only for a
+  mark no face has.
+- **Points on a side.** A decoration element anchored to `#frame` with
+  `anchor.at` (`start`, `center`, `end`, a fraction) is centred on that point
+  of the side; `size.width: { to, edge: "center" }` runs to the middle of
+  another box. A badge on the middle of a card's top edge needs no offset
+  worked out in the generator.
+- **When.** Every card, band, ribbon or icon the source draws with vectors.
+  A raster ground is left for photos behind the page and art nothing else
+  draws (`pdf_regions.py` does so). Before 1.48 such cards and tabs were
+  painted in a ground per page, and the ground did not grow with the box.
+
+### 6.16 Cards the Markdown repeats: grids (1.48)
+
+The source: a wall of photos with a caption pill each, a row of activity
+cards, portraits with a name under each; the number differs from page to
+page or between editions.
+
+```python
+frames += [
+    {"name": "foto", "style": "marco", "width": mm(56)},
+    {"name": "pie", "style": "pastilla", "width": "auto", "minWidth": mm(20), "maxWidth": mm(52),
+     "layer": 2, "overlap": "allow",
+     "placement": {"anchor": {"to": "#foto", "edge": "bottom"}, "offset": {"y": mm(-3)}}},
+]
+groups.append({"name": "fotos", "kind": "grid", "columns": 3, "columnGap": mm(6), "rowGap": mm(9),
+               "rowAlign": "start", "repeat": {"frames": ["foto", "pie"]},
+               "placement": {"anchor": {"to": "#texto", "edge": "below"}, "offset": {"y": mm(6)}}})
+```
+
+```md
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie"}
+La garza
+:::
+:::
+
+:::frame{slot="foto"}
+::resource{id="nutria"}
+
+:::frame{slot="pie"}
+La nutria
+:::
+:::
+```
+
+- The first frame of `repeat.frames` is the cell's main frame (the cell's
+  width, its own height rule); the others hang from it as the template draws
+  them. Each `:::frame{slot="foto"}` piece is one item; a block or
+  `:::frame` inside it that names a member goes to that item's member; a
+  lone `::resource{slot="foto"}` is an item too. Instances are `foto[n]`,
+  `pie[n]`: warnings, the reflow log, ids (`cp0:foto[2]`) and connector ends
+  (`#foto[2]`, `#foto[*]`) use them.
+- Cells fill rows from the start side; a row is as tall as its tallest cell
+  (a tab above the main frame and a pill below it count); `rowAlign` places
+  shorter cells (`stretch` grows `auto` main frames to the row). `max` caps
+  the items (the rest goes to the flow frame with `repeatOverflow`, which
+  `composed_check.py` fails). With `overflow.continueIn` on the main frame
+  the grid goes on by whole rows on the added page.
+- **When.** Three or more cards of one look on a lattice, or any count that
+  the Markdown should decide (a translation with one more photo). Cards of
+  different widths or looks stay frames of their own. `template_dedupe.py`
+  turns a draft's lattices into grids (`grid-picture`, `grid-box`), and the
+  Sandbox's «Turn into a grid» does it for frames picked by hand.
+- Not on grid rows: `grow`, `shrink`, `redistribute`. A caption pill laid over
+  its photo on purpose takes `overlap: "allow"` (6.18).
+
+### 6.17 Blocks that recur in another order: modules (1.48)
+
+The source: pages that stack the same blocks (a box with a photo beside it,
+a tree of three ideas, a heading over four photos) in another order or
+number, so that a template per page multiplies templates.
+
+```python
+templates += [
+    {"id": "tema", "frames": [{"name": "titulo", "takes": "h1", "style": "tab-titulo"}],
+     "groups": [{"name": "cuerpo", "modules": True, "gap": mm(8), "overflow": {"continueIn": "next-page"},
+                 "placement": {"anchor": {"to": "#titulo", "edge": "below"}, "offset": {"y": mm(6)},
+                               "size": {"width": "fill", "height": "fill"}}}]},
+    {"id": "arbol", "role": "module",
+     "frames": [{"name": "raiz", "style": "nodo", "width": mm(56),
+                 "placement": {"anchor": {"to": "container", "edge": "top"}}},
+                {"name": "rama", "style": "nodo", "width": mm(50)}],
+     "groups": [{"name": "ramas", "kind": "grid", "columns": 3, "columnGap": mm(6), "repeat": {"frames": ["rama"]},
+                 "placement": {"anchor": {"to": "#raiz", "edge": "below"}, "offset": {"y": mm(10)}}}],
+     "decoration": {"elements": [{"kind": "connector", "id": "ramas", "routing": "tree",
+                                  "from": {"to": "#raiz"}, "to": {"to": "#rama[*]"}}]}},
+]
+```
+
+```md
+::::page{template="tema"}
+# El río
+
+:::module{template="arbol" name="usos"}
+:::frame{slot="raiz"}
+Usamos el agua del río
+:::
+:::frame{slot="rama"}
+para beber
+:::
+:::frame{slot="rama"}
+para regar
+:::
+:::
+::::
+```
+
+- A module (`role: "module"`) has frames, groups (grids too), decoration and
+  connectors; no `area`, running heads, variants or spread. A page template
+  takes the page's modules in a group with `modules: true` (a stack, `gap`
+  between modules). A module is as wide as the group and as tall as its
+  frames; `container` inside it is the module's box (a ground sized to it
+  covers the module whatever its words make of it).
+- In the Markdown `:::module{template="…" name="…"}` (three colons, inside
+  the page fence) holds the module's content, its slots the module's own.
+  Instances are `<name>.<frame>`, or `<template>[n].<frame>` without a free
+  name (`arbol[2].raiz`); `moduleNameRejected` when a name is taken or holds
+  a space, `.`, `#`, `[` or `]`. Content with no slot goes to the module's
+  flow frame (a heading to its `takes` frame), else the page's.
+- With `overflow.continueIn` on the modules group, the first module that
+  does not fit and those after it go on whole to the added page.
+- **When.** Bands that recur across the book in another order or number, and
+  any page whose design is a stack of such bands. `template_dedupe.py` makes
+  every band of a draft's page a module and the page template a shell (§3.7);
+  bands alike within 0.5 mm share one module. The Sandbox has a module
+  library (Design › Page & columns › Modules), «Extract a module» and
+  `sandbox_insert_module`. Before 1.48: one template per page kind (§3.1).
+- `moduleUnknown` (unknown id, not a module, or a page template with no
+  modules group), `moduleAsPage` (a page fence names a module) and
+  `moduleNested` (a module inside a module) fail `composed_check.py`;
+  `lint_project.py` raises them before the build.
+
+### 6.18 Frames that lie over each other (1.48)
+
+The check: `frameCovered` (a frame's lines, tab or pictures under the box of
+a frame painted after it that is opaque there: a caption under a photo, a
+tab under a cut-out picture) and `frameOutsideArea` (text past the trim,
+fills and pictures past the bleed, or a frame past the frame or group it is
+anchored inside: a note pushed past its card's foot). Both are content
+warnings with fixes, per edition and per page; `composed_check.py` fails on
+both, so a port closes with **0 overlaps**.
+
+- **Fix in this order.** The draft's geometry first: a frame anchored to the
+  wrong box, a stack that should hold it, a `maxHeight` the longer edition
+  needs. Then the proposals the warning carries: `layer` (the covering frame
+  under the covered one, offered only when that hides nothing else),
+  `exclude: "push"` (the covered text runs round it), `move` (`dxMm`, `dyMm`,
+  tried on the page: offered only when the frame and what hangs from it land
+  clear), `maxHeight`, `continueNextPage`, the host's `minHeight`. The
+  Sandbox applies each in one click; `sandbox_apply_proposal` too.
+- **Meant overlaps.** A caption pill set over its photo, a badge hung off its
+  card, a drawing that reaches over the text: `overlap: "allow"` on the
+  frame (the covering one, or the one that runs past) silences the pair in
+  the engine, and the close report lists every such frame as a note, so a
+  reviewer sees them. When a pair is meant on some pages only, or the frame
+  must stay checked against the rest, record it in the project's
+  `composed-check.json` (next to `preset.json`) instead, with the reason:
+
+  ```json
+  { "overlaps": [
+      { "kind": "frameCovered", "template": "fotos", "frame": "pie[*]", "coveredBy": "foto[*]",
+        "reason": "the source sets each caption pill over its photo" },
+      { "kind": "frameOutsideArea", "frame": "insignia", "target": "tarjeta",
+        "reason": "the badge hangs off the card's corner in the source" } ] }
+  ```
+
+  `frame` and `reason` are required; `[*]` matches any instance, `*` any
+  run of characters; `kind`, `template`, `coveredBy`, `past`, `target`,
+  `locale` and `page` narrow an entry. A matched warning is listed as
+  `allowed` with its reason, and an entry that matches nothing is reported so
+  stale ones go. Never record an overlap the source does not print.
+- What is not reported: words over a picture (the contrast check's job), a
+  cut under 0.3 mm or a pair under 1 mm², a frame whose pictures push with
+  `wrap: "contour"`, connectors over frames, decoration (painted under the
+  frames).
+- `compare_pages.py --score --check work/check.json` fails the score while
+  overlaps remain (§3.7).
+
 ## 7. Verification
 
 Run per edition, at every milestone and before delivery:
@@ -1620,12 +2031,24 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   `slotEmpty` (a frame given nothing) and `anchorUnlabelled` (an anchor this
   edition gives no word) are notes: read each, mark deliberate empties
   `optional: true`.
+- **Overlaps = 0** (1.48): `frameCovered` and `frameOutsideArea` fail, each
+  printed with the engine's fixes and the way out; the report's last lines
+  say `overlaps: N`. A pair the source prints so is either `overlap:
+  "allow"` on the frame (listed as a note: «overlap: 'allow' (not checked by
+  the engine)») or an entry of the project's `composed-check.json` with its
+  reason (listed as `allowed`; `--exceptions FILE` reads another file); an
+  invalid entry fails the check, one that matches nothing is a note (6.18).
+  `repeatOverflow`, `moduleUnknown`, `moduleAsPage`, `moduleNested` and
+  `moduleNameRejected` fail too.
 - **Reading order = source order**: the HTML viewer (`postext html`) writes
   each page's frames in reading order; the script checks they come in the
   order the Markdown sends content to them, and warns when two editions
   read a page fence's frames in different orders (a box moved before the
-  text in one translation). Then check by eye that the Markdown follows
-  the source page's reading order.
+  text in one translation). The items of a repeating grid are read as its
+  instances (`foto[2]`, `pie[2]`) and the frames of a `:::module` by their
+  scoped names (`arbol[1].raiz`), so a page template that is a shell of
+  modules is checked too. Then check by eye that the Markdown follows the
+  source page's reading order.
 - **The stress test** (`--stress 1.3`, the Cookbook bench's C38): every
   paragraph, heading and list item 30 % longer, its own words repeated.
   Each page must rearrange (the reflow log) or go on; a `frameOverflow`
@@ -1846,7 +2269,21 @@ Then:
 
 ## 10. Limits to name in the report
 
-- Tabs are square and stand at a top corner, start or end; no centred tab.
+- Tabs stand at a top or (1.48) foot corner, start or end; no centred tab and
+  no tab on a side. A joined tab needs `offset: 0`, and the reflowable EPUB
+  draws it as a plain tab.
+- Connectors (1.48) join frames, groups, instances and decoration elements
+  of a page template's or module's decoration; they end at a box's side or at
+  a picture's anchor, never at a label's box; diagonal lines and curves are
+  `path` elements or art. A connector paints under the frames or (`over`)
+  over all of them, never between two layers. Modules stack (no modules side
+  by side), a module holds no module and no template `grid` cells, and a
+  module's decoration is drawn only on the page that lays the module.
+  `:icon` symbols are read in labels, captions, notes and cells, not in body
+  text or headings. The overlap checks read frames only: a connector over a
+  frame's text, decoration under a negative layer and a picture hanging past
+  the frame it stands in are not reported. Before 1.49 connector caps are
+  filled dots and arrows only and lines are opaque.
 - Rows run left to right in every writing direction; a template's
   `bodyStyle` is read but not applied yet (its `palette` is, from 1.42).
   A frame's own `writingMode` and `direction` on frames work on every page
@@ -1897,5 +2334,8 @@ Then:
   a click, the label tab's picture stood past its edge and `labelOverlap`
   knew no symbols; before 1.43 a label could stand on the fold of a spread, a
   tab's picture could not be tinted, a contents frame had no part breaks and the
-  stand-in faces of a licensed family stayed out of EPUB and HTML exports: name
-  the gap when the installed version is older.
+  stand-in faces of a licensed family stayed out of EPUB and HTML exports;
+  before 1.48 lines between frames, cards, tabs and shapes lived in a raster
+  ground or the picture, a label stood at its point, every card was a frame of
+  its own, every kind of page a template, and frames could lie over each
+  other unreported: name the gap when the installed version is older.

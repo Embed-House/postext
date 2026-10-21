@@ -171,7 +171,20 @@ python3 scripts/composed_check.py round      # reads postext --version (or the n
   open stand-in's faces travel in EPUB, HTML and SVG exports, the contents
   frame can open each part on a page (`toc.parts.breakBefore`), a heading
   that reserves the whole column is reported (`headingClaimsColumn`), and the
-  Sandbox adds a language to a book (Books › ⋯ › Add a language…). Follow
+  Sandbox adds a language to a book (Books › ⋯ › Add a language…); from 1.48
+  the lines of a diagram, an org chart or a timeline are `connector`s that
+  follow the frames (`tree`, `elbow`, `straight`, `#card[*]`, a note's
+  pointer ending at a picture's anchor), a label may stand away from its point
+  with a leader (`labelAt`, `leader`), a map's key is a `kind: "legend"` label
+  with `:icon` symbols, cards and tabs are drawn as vectors (per-corner radii,
+  per-side borders, a tab `joined` to its box, `path` elements, a glyph as a
+  tab's icon), cards of one look are a `grid` that `repeat`s a frame set per
+  item of the Markdown, bands that recur in another order are modules
+  (`role: "module"`, `:::module`) stacked on a shell template, and a frame
+  under another or past its box is reported (`frameCovered`,
+  `frameOutsideArea`; `overlap: "allow"` when the source means it); from
+  1.49 lines end in rings or bars and can be translucent. Recipes 6.12–6.18
+  of the reference say when to use each. Follow
   [references/composed-pages.md](references/composed-pages.md). The script
   lists what the installed version lacks and what to do instead. To a person
   who has not made a composed page, point to the two docs pages rather than
@@ -466,8 +479,11 @@ Full references (load the one you need):
   box with a tab, a category tree, a double-page timeline, a labelled map,
   photos with captions, text round an illustration, a box that continues
   on the next page, a magazine thread with jumps, an activity sheet with
-  answer lines, a photo and its ground), the figure's own words and the
-  label checks, the composed-page checks, one
+  answer lines, a photo and its ground, a contents page; from 1.48 lines
+  between frames, notes that point into a picture, a map's key and symbols,
+  cards and shapes, cards the Markdown repeats, modules, frames that lie over
+  each other), the drafting loop, the figure's own words and the
+  label checks, the composed-page checks with 0 overlaps, one
   bundle for every edition, and moving a round-1 or 1.33 port over.
 - [references/comics.md](references/comics.md): comic pages, strips and
   spreads: the split grammar, panels, script lines, the `comics` config,
@@ -690,7 +706,10 @@ Pick the path per [sources.md](references/sources.md):
   editions' `::label` lines from a strings file (`--strings en=en.json`); it
   merges a label printed twice at one point and writes `overlap: "allow"`
   for names the source prints touching, and `scripts/pdf_figures.py symbols`
-  lists a map's dots as `avoid` zones.
+  lists a map's dots as `avoid` zones. Close the draft with
+  `scripts/composed_check.py check work/regions --json > work/check.json`
+  (0 overlaps) and `scripts/compare_pages.py … --score work/score.json
+  --check work/check.json` (composed-pages.md §3.7, §6.18).
 
 Every extractor writes `chapters/<lang>/*.md`, `resources.json` and a
 `report.md` of decisions to review. Copy the chapters into `my-book/chapters/`
@@ -835,7 +854,13 @@ exit 3 on errors) and the Sandbox's own checks (`sandbox_get_warnings`, or
 `contentInConfig`, template and slot warnings and a page whose HTML reading
 order is not the Markdown's, and lays the text out 30 % longer as the
 Cookbook bench does (composed-pages.md §7). `labelOverflow` fails it too;
-`labelOverlap` is listed as a note to read in every language.
+`labelOverlap` is listed as a note to read in every language. From 1.48 it
+fails on every frame under another frame or past its box (`frameCovered`,
+`frameOutsideArea`) and ends with `overlaps: N`: fix each with the fixes it
+prints, or, only when the source prints it so, set `overlap: "allow"` on the
+frame or record the pair with its reason in the project's
+`composed-check.json` (composed-pages.md §6.18). `compare_pages.py --score
+--check` fails the likeness score while an overlap remains.
 
 Build the PDF (`postext pdf my-book -o /tmp/my-book.pdf`, or `render.mjs --out`)
 for the print checks and once at the end, not on every iteration.
@@ -845,7 +870,9 @@ Fix the config or the Markdown until you reach:
 - zero lint errors, and `preset_kit.py lint` clean (no content in the
   config, config under 1 MB);
 - with composed pages, `composed_check.py check` passed in every edition
-  (no `frameOverflow`, reading order = source order, the stress test);
+  (no `frameOverflow`, 0 overlaps, reading order = source order, the stress
+  test), and the report lists every `overlap: "allow"` frame and recorded
+  exception with its reason;
 - `converged=true`;
 - no warnings;
 - the same page breaks on most pages, within ±1 page per chapter.
