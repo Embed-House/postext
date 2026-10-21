@@ -449,7 +449,14 @@ What the extraction decides, so you know what to check:
   a heading in it: the title frame that `takes` the level); a rectangle
   under many drawn shapes is a map's ground, not a box; wide coloured
   strokes or fills hugging words are highlights (`:mark`, or `:chip` with
-  `--highlights chip`). A shape a render does not show is not read, and
+  `--highlights chip`). From skill 1.61 a fill over words of one line that
+  runs on past it is a highlight too, never a box (a band with room round
+  its words marks whole words only), the highlighted words do not count in
+  the line's look, so a mark that ends mid-paragraph does not part it, and
+  a borderless fill of the colour behind it under one or two lines is a
+  mask: no frame, no decoration. A last pass joins text frames one under
+  the other in the same look and leading with nothing between them.
+  A shape a render does not show is not read, and
   from skill 1.60 neither is art no pixel of its colour shows (lettering
   under a white panel painted after it, a drawing in the bleed, art clipped
   away): it makes no picture, no box's art and no decoration.

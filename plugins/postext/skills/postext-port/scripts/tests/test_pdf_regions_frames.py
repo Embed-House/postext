@@ -19,6 +19,23 @@ if HAVE_DEPS:
 BODY = "Texto corrido de la página para medir el cuerpo del texto."
 
 
+def map_png() -> bytes:
+    """A small striped picture standing for a map."""
+    import io
+
+    from PIL import Image
+
+    im = Image.new("RGB", (120, 40), (190, 205, 190))
+    px = im.load()
+    for yy in range(40):
+        for xx in range(120):
+            if (xx + yy) % 9 < 3:
+                px[xx, yy] = (120, 150, 200)
+    buf = io.BytesIO()
+    im.save(buf, format="PNG")
+    return buf.getvalue()
+
+
 def new_page(doc):
     return doc.new_page(width=210 * MM, height=297 * MM)
 
@@ -102,6 +119,56 @@ class Furniture(unittest.TestCase):
         tmp, md, _, _ = extract(doc)
         try:
             self.assertEqual(md.count('head="CIENCIAS NATURALES"'), 2)
+        finally:
+            tmp.cleanup()
+
+
+PARA = ["Los ríos nacen en las montañas, donde la lluvia y la nieve",
+        "se juntan en pequeños arroyos que bajan por las laderas",
+        "hasta formar un cauce más ancho que llega al mar."]
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class OneParagraph(unittest.TestCase):
+    def test_a_white_mask_under_the_last_line_of_a_box(self):
+        doc = fitz.open()
+        page = new_page(doc)
+        x, y = 25 * MM, 50 * MM
+        page.draw_rect(fitz.Rect(x - 10, y - 20, 175 * MM, y + 60), color=(0.2, 0.4, 0.7), fill=(1, 1, 1), width=1)
+        # a grey map strip under the last line, and the white mask that blanks it out under the words
+        page.insert_image(fitz.Rect(x - 5, y + 22, 170 * MM, y + 55), stream=map_png())
+        page.draw_rect(fitz.Rect(x - 2, y + 19, x + 290, y + 33), color=None, fill=(1, 1, 1))
+        for k, t in enumerate(PARA):
+            put(page, x, y + k * 14, t, size=11)
+        tmp, md, lib, _ = extract(doc)
+        try:
+            self.assertIn(" ".join(PARA), md)
+            self.assertEqual(md.count(":::frame"), 1, md)
+            self.assertFalse(any("white" in s["id"] for s in lib["calloutStyles"]))
+        finally:
+            tmp.cleanup()
+
+    def test_a_highlight_ending_mid_paragraph(self):
+        doc = fitz.open()
+        page = new_page(doc)
+        x, y = 25 * MM, 50 * MM
+        head = "se juntan en "
+        word = "pequeños arroyos"
+        wx = x + fitz.get_text_length(head, fontname="helv", fontsize=11)
+        ww = fitz.get_text_length(word, fontname="helv", fontsize=11)
+        # a band with room round its words (it does not hug them), its words in another colour
+        page.draw_rect(fitz.Rect(wx - 3 * MM, y + 14 - 10, wx + ww + 3 * MM, y + 14 + 4), color=None, fill=(1, 0.9, 0.3))
+        put(page, x, y, PARA[0], size=11)
+        put(page, x, y + 14, head, size=11)
+        put(page, wx, y + 14, word, size=11, color=(0.7, 0.1, 0.1))
+        put(page, wx + ww, y + 14, " que bajan por las laderas", size=11)
+        put(page, x, y + 28, PARA[2], size=11)
+        for k in range(4):
+            put(page, x, y + 60 + k * 14, BODY, size=11)
+        tmp, md, lib, _ = extract(doc)
+        try:
+            self.assertRegex(md, "donde la lluvia y la nieve se juntan en :mark\\[pequeños arroyos\\]\\{style=\"[^\"]+\"\\} "
+                             "que bajan por las laderas hasta formar")
         finally:
             tmp.cleanup()
 

@@ -598,7 +598,10 @@ class Line:
         self.y1 = max(c.y1 for c in ink)
         self.base = statistics.median(c.oy for c in ink)
         counts: dict[tuple, int] = {}
-        for c in ink:
+        # highlighted words (a chip's white letters on its band) are not the line's look:
+        # a mark ending mid-paragraph must not part the lines on either side of it
+        plain_ink = [c for c in ink if not c.mark] or ink
+        for c in plain_ink:
             k = (c.family, round(c.size * 2) / 2, c.color)
             counts[k] = counts.get(k, 0) + 1
         self.family, self.size, self.color = max(counts, key=lambda k: (counts[k], k))
@@ -939,6 +942,43 @@ def dash_mm(dashes: Any) -> list[float]:
     return out if any(v > 0 for v in out) else []
 
 
+def cuts_word(l: Line, box: tuple) -> bool:
+    """A band edge falls inside a word of the line: the band's padding takes
+    in the edge letters of the words beside its own, by less than half a
+    word. A band hugging part of a long word (a syllable) covers most of it
+    or a run of letters away from the band's edge."""
+    word: list[Char] = []
+    for c in l.chars + [None]:
+        if c is not None and c.c.strip():
+            word.append(c)
+            continue
+        if word:
+            ins = [centre_in((w.x0, w.y0, w.x1, w.y1), box) for w in word]
+            if any(ins) and not all(ins) and sum(ins) <= 2 and sum(ins) < len(word) / 2:
+                return True
+        word = []
+    return False
+
+
+def is_mask(s: Any, shapes: list, lines: list[Line]) -> bool:
+    """A borderless fill of the colour behind it (the filled shape painted
+    before it that holds it, else the white paper) under one or two lines:
+    a mask that blanks out a picture or a rule under the words. It is no
+    box: a frame of its own would split the paragraph it sits under."""
+    if not s.fill or s.stroke:
+        return False
+    held = [l for l in lines if not l.rotate and centre_in(l.box, s.box)]
+    if not 1 <= len(held) <= 2:
+        return False
+    # every fill painted before it that it overlaps must be its colour (a white tab half
+    # over a blue box shows as a tab), and so must the paper where nothing holds it
+    over = [o for o in shapes if o is not s and o.fill and o.seq < s.seq and inter(o.box, s.box) > 0.02 * area(s.box)]
+    if any(td.delta_e(s.fill, o.fill) > 3 for o in over):
+        return False
+    held_by = [o for o in over if inside_mm(s.box, o.box, 0.5)]
+    return bool(held_by) or td.delta_e(s.fill, "#ffffff") <= 3
+
+
 def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders, opts: argparse.Namespace) -> dict:
     """Sort the page's shapes and images into ground, cards, highlight bands,
     tabs, boxes and pictures."""
@@ -950,23 +990,35 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
     for s in shapes:
         b = s.band()
         col = s.stroke
-        if b is None and s.fill and s.rect_like() and s.h < 9:
+        if b is None and s.fill and s.rect_like() and s.h < 13:
             b, col = s.box, s.fill
         if b is None or whiteish(col):
             continue
-        over = [c for l in lines for c in l.chars if c.c.strip() and centre_in((c.x0, c.y0, c.x1, c.y1), b)]
+        over_lines = [(l, [c for c in l.chars if c.c.strip() and centre_in((c.x0, c.y0, c.x1, c.y1), b)])
+                      for l in lines]
+        over_lines = [(l, cs) for l, cs in over_lines if cs]
+        over = [c for _, cs in over_lines for c in cs]
         if not over:
             continue
         size = statistics.median(c.size for c in over) * PT_MM
         bh = b[3] - b[1]
         if not (0.6 * size <= bh <= 2.4 * size):
             continue
-        if s.band() is None:   # a filled band must hug its words
+        if s.band() is None:
+            # a filled band hugs its words, or covers words of one line that runs on past it
+            # (a highlight with room round it): never a box that would cut the line in two
             x0, x1 = min(c.x0 for c in over), max(c.x1 for c in over)
-            if x0 - b[0] > 1.5 or b[2] - x1 > 1.5:
+            hugs = x0 - b[0] <= 1.5 and b[2] - x1 <= 1.5 and s.h < 9 and not any(
+                cuts_word(l, b) for l, _ in over_lines)
+            in_line = len(over_lines) == 1 and len(over) < sum(1 for c in over_lines[0][0].chars if c.c.strip())
+            if not (hugs or in_line):
                 continue
+        else:
+            hugs = True
         s.kind = "band"
-        out["bands"].append({"box": b, "color": col, "shape": s})
+        # a loose band (room round its words) marks whole words only: its padding covers
+        # the edge letters of the words beside it
+        out["bands"].append({"box": b, "color": col, "shape": s, "loose": not hugs})
     # thin straight lines across and down (a diagram's connectors, a pointer, a rule): read as
     # lines, never as boxes or as a picture's art (round-1 grounds kept them in a raster)
     out["lines"] = []
@@ -1001,6 +1053,9 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
         elif s.fill and a >= 0.6 * page_area:
             s.kind = "ground"
         elif s.rect_like() and (s.fill or s.stroke) and s.w >= 6 and s.h >= 4 and a < 0.6 * page_area:
+            if is_mask(s, shapes, lines):
+                s.kind = "mask"     # owns no lines and is not drawn
+                continue
             if not renders.shape_visible(s.rect_pt, s.fill, None) and not (s.stroke and renders.shape_visible(s.rect_pt, None, s.stroke)):
                 s.kind = "hidden"
                 continue
@@ -1653,8 +1708,22 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
     report: dict[str, Any] = {"page": pno + 1, "hidden": hidden, "notes": []}
     for b in sh["bands"]:
         for l in lines:
-            for c in l.chars:
-                if c.c.strip() and centre_in((c.x0, c.y0, c.x1, c.y1), b["box"]):
+            inside = [c.c.strip() != "" and centre_in((c.x0, c.y0, c.x1, c.y1), b["box"]) for c in l.chars]
+            if b.get("loose"):
+                k = 0
+                while k < len(l.chars):     # a word is marked when all of it is inside
+                    if not l.chars[k].c.strip():
+                        k += 1
+                        continue
+                    e = k
+                    while e < len(l.chars) and l.chars[e].c.strip():
+                        e += 1
+                    whole = all(inside[k:e])
+                    for q in range(k, e):
+                        inside[q] = whole
+                    k = e
+            for c, ins in zip(l.chars, inside):
+                if ins:
                     c.mark = b["color"]
     for l in lines:   # a space between two marked words is marked too
         ink = [i for i, c in enumerate(l.chars) if c.c.strip()]
@@ -1664,6 +1733,9 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             before = [j for j in ink if j < i]
             after = [j for j in ink if j > i]
             c.mark = l.chars[before[-1]].mark if before and after and l.chars[before[-1]].mark == l.chars[after[0]].mark else None
+    for l in lines:
+        if any(c.mark for c in l.chars):
+            l.refresh()
     lead_chip_gaps(lines, sh["bands"], ctx.setdefault("chip_gaps", {}))
     cards =sorted(sh["cards"], key=lambda s: (round(s.box[1], 1), s.box[0]))
     boxes = sh["boxes"]
@@ -1800,6 +1872,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         frames.append(Frame("title", set_box(hp, 1.0), lines=hp))
     for blk in text_blocks(body, frames):
         frames.append(Frame("text", set_box(blk, None), lines=blk))
+    frames = merge_text_frames(frames)
     furniture = [l for l in lines if owners[id(l)][0] == "furniture"]
 
     # zones (cards) and containment
@@ -2190,6 +2263,47 @@ def text_blocks(lines: list[Line], frames: list[Frame]) -> list[list[Line]]:
         else:
             blocks.append([p])
     return [[l for p in blk for l in p] for blk in blocks]
+
+
+def merge_text_frames(frames: list[Frame]) -> list[Frame]:
+    """The last pass over free text: two text frames one under the other,
+    flush left, in the same face, size, colour and leading, with nothing
+    between them and at most a paragraph's gap apart, are one frame (what a
+    mask, a highlight or a stray shape left in two)."""
+    def key(f: Frame) -> tuple:
+        look = dominant(f.lines)
+        return (look["family"], look["size"], look["color"]), look["lead"]
+
+    out = list(frames)
+    changed = True
+    while changed:
+        changed = False
+        texts = [f for f in out if f.kind == "text" and f.lines and not getattr(f, "rotate", 0)]
+        for a in texts:
+            for b in texts:
+                if a is b:
+                    continue
+                last = max(a.lines, key=lambda l: l.base)
+                first = min(b.lines, key=lambda l: l.base)
+                step = first.base - last.base
+                if step <= 0:
+                    continue
+                (ka, lead_a), (kb, lead_b) = key(a), key(b)
+                if ka != kb or (len(a.lines) > 1 and len(b.lines) > 1 and abs(lead_a - lead_b) > 0.3):
+                    continue
+                if step > 2.2 * lead_a or abs(a.box[0] - b.box[0]) > 3.5 or hoverlap(a.box, b.box) <= 0:
+                    continue
+                between = (min(a.box[0], b.box[0]), last.y1, max(a.box[2], b.box[2]), first.y0)
+                if any(f is not a and f is not b and inter(between, f.box) > 1.0 for f in out):
+                    continue
+                a.lines = sorted(a.lines + b.lines, key=lambda l: (round(l.base, 1), l.x0))
+                a.box = set_box(a.lines, None)
+                out.remove(b)
+                changed = True
+                break
+            if changed:
+                break
+    return out
 
 
 def xy_order(frames: list[Frame]) -> list[Frame]:
