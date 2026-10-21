@@ -1,4 +1,4 @@
-import { bitmapInfo, composedReflowLog, contrastDocument, contrastMedia, outputTransform, parseIccProfile, preflightDocument, resolveContrastConfig, resolvePrintConfig, type ContrastIssue, type OutputTransform } from 'postext';
+import { bitmapInfo, composedReflowLog, fenceAttributesSet, fenceConditionsNeverMet, contrastDocument, contrastMedia, outputTransform, parseIccProfile, preflightDocument, resolveContrastConfig, resolvePrintConfig, type ContrastIssue, type OutputTransform } from 'postext';
 import { iccProfile } from '../assets';
 import type { CommandContext } from '../context';
 import { pageLabelOf, sourceAt } from '../layout';
@@ -101,6 +101,22 @@ export default async function check(ctx: CommandContext): Promise<void> {
   }));
   for (const r of reflow) reporter.info(`${style.dim('reflow')} p. ${r.pageLabel} (${r.template}): ${r.lines.join('; ')}`);
   reporter.data.reflow = reflow;
+  // Decoration drawn when the page fence says so (#1087): a `when` or
+  // `unless` on an attribute no page of the book sets is a note (the
+  // element is never drawn, or always). Read over the whole book only: a
+  // selection of chapters may leave out the pages that set it.
+  if (layout.chapters.length === book.chapters.length) {
+    const set = new Set<string>();
+    for (const doc of layout.docs) for (const page of doc.pages) for (const k of fenceAttributesSet(page.composed?.attrs)) set.add(k);
+    for (const use of fenceConditionsNeverMet(book.config, set)) {
+      reporter.warn({
+        kind: 'conditionNeverMet',
+        severity: 'info',
+        message: `${use.path}: no page fence sets “${use.attribute}”, so the element is ${use.condition === 'when' ? 'never' : 'always'} drawn`,
+        data: { path: use.path, condition: use.condition, attribute: use.attribute },
+      });
+    }
+  }
   const errors = reporter.errorCount();
   const warnings = reporter.warnings.filter((w) => w.severity === 'warning').length;
   const failed = errors > 0 || (opts.flag('strict') === true && warnings > 0);

@@ -330,6 +330,28 @@ describe('postext cli', () => {
     expect(r.stderr).toMatch(/reflow p\. \S+ \(boxes\): a grew [\d.]+ mm; b moved down [\d.]+ mm/);
   }, 60_000);
 
+  // #1087: a `when` / `unless` on an attribute no page fence sets is a note.
+  it('check notes a decoration condition no page of the book meets', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'postext-cli-'));
+    mkdirSync(join(dir, 'ch'));
+    const mm = (value: number) => ({ value, unit: 'mm' });
+    const folio = { kind: 'text', id: 'folio', content: '{pageNumber}', placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: mm(-8) } } };
+    writeFileSync(join(dir, 'config.json'), JSON.stringify({
+      pageTemplates: [{
+        id: 'shell',
+        frames: [{ name: 'texto', flow: true }],
+        decoration: { elements: [{ ...folio, when: 'folio' }, { ...folio, id: 'band', unless: 'appendix' }] },
+      }],
+    }));
+    writeFileSync(join(dir, 'ch', '01.md'), '::::page{template="shell" frontmatter}\nFront.\n::::\n\n::::page{template="shell" folio}\nBody.\n::::\n');
+    const r = run(['check', 'ch', '--config', 'config.json', '--offline', '--json'], dir);
+    expect(r.code).toBe(0);
+    const notes = (JSON.parse(r.stdout).warnings as { kind: string; severity: string; data?: Record<string, unknown> }[]).filter((x) => x.kind === 'conditionNeverMet');
+    expect(notes).toHaveLength(1);
+    expect(notes[0]!.severity).toBe('info');
+    expect(notes[0]!.data).toEqual({ path: 'pageTemplates[0].decoration.elements[1].unless', condition: 'unless', attribute: 'appendix' });
+  }, 60_000);
+
   // #858: a frame whose text still does not fit names the steps tried and
   // the proposals, in words and, with their values, in --json.
   it('check prints frameOverflow with its proposals', () => {
