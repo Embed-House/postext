@@ -46,7 +46,9 @@ What `extract` reads on every page:
   segments between two frames an `elbow`, a line through frames a
   `straight` connector per run between two of them, a line painted over a
   picture into its art a connector to a new anchor `pointer-N` of that
-  picture; what joins nothing is a `path`. The page's colour, the cards (a
+  picture (one slanted stroke from a frame into a picture too, `straight`);
+  what joins nothing is a `path`. Each end's `at` is measured on the box the
+  template lays (the picture as cut, the text frame at its measure). The page's colour, the cards (a
   card with a title tab grown out of it is one path), borders with no words
   (decoration boxes round the frames they hold, never empty frames) and
   loose shapes are decoration too. The raster ground keeps only what none
@@ -936,6 +938,13 @@ class Shape:
 RULE_FILL_MM = 1.0        # a filled rectangle thinner than this is a rule
 
 
+def box_dist(p: tuple, b: tuple) -> float:
+    """How far a point (mm) lies outside a box (0 inside it)."""
+    dx = max(b[0] - p[0], 0.0, p[0] - b[2])
+    dy = max(b[1] - p[1], 0.0, p[1] - b[3])
+    return math.hypot(dx, dy)
+
+
 def fill_rule(s: Shape) -> la.Seg | None:
     """A filled rectangle under 1 mm thick read as a line: one segment along
     its length, as thick as the rectangle (pt), in its fill colour. None for
@@ -1010,6 +1019,26 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
             s.kind = "line"
             s.segs = segs
             out["lines"].append(s)
+        # one slanted stroke with an end at a box, a tab or a line of text: a leader (a note's
+        # line to what it names), read against the frames as a connector to a picture's point
+        out["leaders"] = []
+        stops = [l.box for l in lines] + [s.box for s in shapes if s.kind == "art" and s.rect_like()
+                                          and (s.fill or s.stroke) and s.w >= 6 and s.h >= 4
+                                          and area(s.box) < opts.card_area * page_area]
+        for s in shapes:
+            if s.kind != "art" or s.fill is not None or s.stroke is None or not 0 < s.width <= opts.line_width:
+                continue
+            pieces = s.mm_lines()
+            if not pieces or len(pieces) != 1:
+                continue
+            (x0, y0), (x1, y1) = pieces[0]
+            if min(abs(x1 - x0), abs(y1 - y0)) <= la.SLANT or math.hypot(x1 - x0, y1 - y0) < 3.0:
+                continue
+            if not any(box_dist(e, b) <= la.REACH for e in ((x0, y0), (x1, y1)) for b in stops):
+                continue
+            s.kind = "leader"
+            s.leader = ((x0, y0), (x1, y1))
+            out["leaders"].append(s)
         # a rule drawn as a filled rectangle under 1 mm thick (guides, table and
         # margin rules from layout programs) is a line of that thickness too
         for s in shapes:
@@ -1021,7 +1050,7 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
             s.segs = [seg]
             out["lines"].append(s)
     for s in shapes:
-        if s.kind in ("band", "line"):
+        if s.kind in ("band", "line", "leader"):
             continue
         a = area(s.box)
         if s.fill and not s.stroke and whiteish(s.fill) and opts.card_area * page_area <= a < 0.97 * page_area \
@@ -1181,9 +1210,16 @@ def paint_log(page: fitz.Page, shapes: list) -> tuple[list, dict[int, int]]:
     j = 0
     for s in sorted(shapes, key=lambda s: s.seq):
         r = s.rect_pt
+        # a stroke's entry reaches past its path by up to its miters (ten half widths a side)
+        reach = 0.6 + (10 * s.width if s.stroke else 0.0)
         for k in range(j, len(log)):
             kind, q = log[k]
-            if kind.endswith("-path") and all(abs(a - b) < 0.6 for a, b in zip(q, r)):
+            if not kind.endswith("-path"):
+                continue
+            if all(abs(a - b) < 0.6 for a, b in zip(q, r)) or (
+                    kind == "stroke-path" and s.stroke and q[0] <= r[0] + 0.6 and q[1] <= r[1] + 0.6
+                    and q[2] >= r[2] - 0.6 and q[3] >= r[3] - 0.6
+                    and all(abs(a - b) < reach for a, b in zip(q, r))):
                 at_log[s.seq] = k
                 j = k + 1
                 break
@@ -1988,7 +2024,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         attrs = {"ground": ground_id, **attrs}
     else:
         vdeco, vground = vector_decoration(pdf_path, pno, origin, sh, ordered, cards, borders, art, opts,
-                                           ground_id, report)
+                                           ground_id, report, template=template)
         template["decoration"] = {"elements": vdeco + deco}
         anchor_ornaments(template["decoration"]["elements"], heads)
         if vground:
@@ -2637,9 +2673,11 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
             # are the boxes, tabs and highlights round it. One rectangle at a time: with
             # several applied at once MuPDF kept paths that one of them covers whole
             for r in remove:
-                page.add_redact_annot(r, fill=False)
+                touched = isinstance(r, tuple)      # ("touched", speck): a slanted leader
+                page.add_redact_annot(r[1] if touched else r, fill=False)
                 page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
-                                      graphics=fitz.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
+                                      graphics=fitz.PDF_REDACT_LINE_ART_REMOVE_IF_TOUCHED if touched
+                                      else fitz.PDF_REDACT_LINE_ART_REMOVE_IF_COVERED,
                                       text=fitz.PDF_REDACT_TEXT_NONE)
         if holder is not None and holder.stroke:
             # the holder's rule is drawn by its frame: painted out where the cut still meets it
@@ -3012,9 +3050,12 @@ def line_shows(page: fitz.Page, origin: tuple, shapes: list):
     log, at_log = paint_log(page, shapes)
 
     def shows(p: tuple, d_back: tuple, ids: set, box: tuple) -> bool:
-        seqs = [at_log.get(i, i) for i in ids if isinstance(i, int)]
-        if not seqs:
+        if not any(isinstance(i, int) for i in ids):
             return True
+        # a path not found in the paint log is not known to show over the picture: no pointer
+        seqs = [at_log[i] for i in ids if isinstance(i, int) and i in at_log]
+        if not seqs:
+            return False
         last = max(seqs)
         q = ((p[0] + d_back[0] * 0.5) * MM + origin[0], (p[1] + d_back[1] * 0.5) * MM + origin[1])
         big = 0.4 * area(box) * MM * MM
@@ -3129,6 +3170,14 @@ def read_line_art(sh: dict, frames: list[Frame], shows: Any = None) -> dict:
         c, rest = la.read_net(net, lfs)
         conns += c
         left += rest
+    # a slanted leader from a frame into a picture: a straight connector to a point of it; any
+    # other is a loose shape (a path)
+    for s in sh.get("leaders", []):
+        c = la.read_leader(s.leader[0], s.leader[1], (s.stroke, round(s.width, 2), tuple(s.dash)), lfs, {s.seq})
+        if c is None:
+            s.kind = "art"
+        else:
+            conns.append(c)
     # what an opaque frame or a picture covers whole is not drawn (the picture's cut keeps its own)
     covered = [g for g in left if any(f.kind in la.OPAQUE and la.inside(g.point(g.lo), f.box, 0.3)
                                       and la.inside(g.point(g.hi), f.box, 0.3) for f in lfs)]
@@ -3174,6 +3223,19 @@ def lines_over(art: dict, sh: dict, box: tuple, origin: tuple) -> list:
     for s in art.get("cap_shapes", {}).values():
         r = fitz.Rect(s.rect_pt)
         out.append(fitz.Rect(r.x0 - 0.5, r.y0 - 0.5, r.x1 + 0.5, r.y1 + 0.5))
+    # a slanted leader's box would cover the picture's art under it: it is taken out by a speck
+    # on the stroke that no other path's box holds (removed where touched)
+    others = [fitz.Rect(o.rect_pt) for o in sh.get("shapes", []) if o.kind not in ("leader", "unseen")]
+    for s in sh.get("leaders", []):
+        if s.kind != "leader" or s.seq not in art["used"] or inter(s.box, box) <= 0:
+            continue
+        (x0, y0), (x1, y1) = s.leader
+        for t in (0.5, 0.3, 0.7, 0.15, 0.85, 0.05, 0.95):
+            q = fitz.Point((x0 + (x1 - x0) * t) * MM + origin[0], (y0 + (y1 - y0) * t) * MM + origin[1])
+            speck = fitz.Rect(q.x - 0.2, q.y - 0.2, q.x + 0.2, q.y + 0.2)
+            if not any(o.intersects(speck) for o in others):
+                out.append(("touched", speck))
+                break
     return out
 
 
@@ -3240,22 +3302,32 @@ def shape_path(eid: str, s: Shape) -> dict | None:
     return path_element(eid, box, d, s.fill, s.stroke, s.width, s.dash)
 
 
-def end_config(e: Any, by_name: dict) -> dict:
+def end_config(e: Any, by_name: dict, always_at: bool = False) -> dict:
     """A connector end; an end at a point inside a picture adds an anchor
     to that picture (`pointer-N`)."""
     if e.point is None:
-        return e.config()
+        return e.config(always_at)
     f = by_name[e.frame]
     lst = f.__dict__.setdefault("pointer_points", [])
     lst.append(e.point)
     return {"to": f"#{e.frame}", "anchor": f"pointer-{len(lst)}", "side": e.side}
 
 
-def connector_element(n: int, c: Any, by_name: dict) -> dict:
+def connector_element(n: int, c: Any, by_name: dict, laid: dict | None = None) -> dict:
+    """A connector element. With `laid` (frame name -> the box the template
+    lays it in, `laid_boxes`), each end's `at` and `gap` are worked out on
+    that box, not on the one the line was read against; straight and elbow
+    lines always say their `at`."""
     col, width, dash = c.key
+    line = c.routing in ("straight", "elbow")
+
+    def fit(e: Any) -> Any:
+        box = (laid or {}).get(e.frame)
+        return la.refit(e, box, gap=line) if box is not None else e
+
     el: dict[str, Any] = {"kind": "connector", "id": f"connector-{n}", "routing": c.routing,
-                          "from": end_config(c.start, by_name)}
-    ends = [end_config(e, by_name) for e in c.ends]
+                          "from": end_config(fit(c.start), by_name, line)}
+    ends = [end_config(fit(e), by_name, line) for e in c.ends]
     el["to"] = ends[0] if len(ends) == 1 else ends
     if c.trunk is not None:
         el["trunk"] = c.trunk
@@ -3266,6 +3338,29 @@ def connector_element(n: int, c: Any, by_name: dict) -> dict:
     if c.over and not any(isinstance(e, dict) and e.get("anchor") for e in [el["from"]] + ends):
         el["over"] = True        # drawn over a picture it crosses (one that ends in it is over by default)
     return el
+
+
+def laid_boxes(frames: list, template: dict | None) -> dict:
+    """Frame name -> the box (mm) the template lays it in: a picture's box
+    as cut (`cut_picture`, `trim_to_ink`), a text frame as wide as the
+    measure `make_template` gave it (a centred one about its middle, a
+    caption from its offset under its picture)."""
+    cfg = {c["name"]: c for c in (template or {}).get("frames", [])}
+    out = {}
+    for f in frames:
+        x0, y0, x1, y1 = f.box
+        c = cfg.get(f.name) or {}
+        w = (c.get("width") or {}).get("value")
+        if w is not None and f.kind in ("text", "title") and not f.rotate:
+            cap = getattr(f, "caption_of", None)
+            off = ((c.get("placement") or {}).get("offset") or {}).get("x", {}).get("value")
+            if cap is not None and off is not None:
+                x0 = cap.box[0] + off
+            elif getattr(f, "centred", False) and f.kind == "text":
+                x0 = x0 - (w - (x1 - x0)) / 2
+            x1 = x0 + w
+        out[f.name] = (x0, y0, x1, y1)
+    return out
 
 
 def border_elements(n: int, b: dict) -> list[dict]:
@@ -3378,7 +3473,7 @@ def residual_ground(pdf_path: str, pno: int, origin: tuple, painted: list[dict],
 
 def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: list[Frame], cards: list[Shape],
                       borders: list[dict], art: dict, opts: argparse.Namespace, ground_id: str,
-                      report: dict) -> tuple[list[dict], dict | None]:
+                      report: dict, template: dict | None = None) -> tuple[list[dict], dict | None]:
     """The template's decoration in vector form, in paint order: the page's
     colour (to the bleed), the cards (a card with a tab grown out of it is
     one outline), borders round frames, the shapes left on the page, the
@@ -3517,8 +3612,9 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
         stats["lines"] += len(segs)
     # connectors
     by_name = {f.name: f for f in frames}
+    laid = laid_boxes(frames, template)
     for n, c in enumerate(art["connectors"], 1):
-        el = connector_element(n, c, by_name)
+        el = connector_element(n, c, by_name, laid)
         el.update(caps.get(id(c), {}))
         els.append(el)
         stats["connectors"] += 1

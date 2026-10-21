@@ -476,6 +476,19 @@ What the extraction decides, so you know what to check:
   `template_dedupe.py` renames connector ends and size targets with the
   frames and keeps a connector or border in a shared base only when the
   base has its frames.
+- **Connector ends on the laid box** (skill 1.61). A line is read against
+  the frames before the pictures are cut and the text frames get their
+  measure, so each end keeps the point where the source's line meets its
+  frame and its `at` (and `gap`) is worked out again on the box the template
+  lays: the picture as cut (to its card, its holder, its ink) and the text
+  frame as wide as `make_template` sets it. Straight and elbow connectors
+  always say their `at` (left out, the engine runs the line from the side's
+  middle and it crosses another box or kinks). One slanted stroke from a
+  frame into a picture, painted over it (a note's leader), is a `straight`
+  connector from the frame's side to a new `pointer-N` anchor of the
+  picture, and the cut loses the stroke; a slanted stroke that joins no
+  frame to a picture stays a loose shape. A path the page's paint order does
+  not list is not known to lie over a picture, so it gives no pointer.
 - **Line art in boxes, rules as bars, white strokes** (skill 1.61). A box
   with art painted over its fill (an icon, writing guides, a rule, a
   connector inside it) would hide that art, since frames paint over the

@@ -247,5 +247,121 @@ class MergeLabelLinesTest(unittest.TestCase):
         self.assertEqual(sorted(len(g) for g in groups), [1, 1])
 
 
+# ---------------------------------------------------------------------------
+# III-2: connector ends on the laid box, slanted leaders (#1139)
+# ---------------------------------------------------------------------------
+
+PILL = (0.95, 0.85, 0.6)
+NOTE = (0.85, 0.92, 0.98)
+LEAD = (0.3, 0.3, 0.3)
+LAND = (0.6, 0.8, 0.5)
+
+
+def blobs(page, x0, y0, cols=4, rows=3, w=12, h=10):
+    """A drawn map: rows of filled outlines, one cluster of art."""
+    for i in range(cols * rows):
+        x, y = x0 + (i % cols) * w, y0 + (i // cols) * h
+        pts = [P(x + dx, y + dy) for dx, dy in ((0, 0), (w, 1), (w + 1, h), (2, h + 0.5), (-0.5, h / 2))]
+        page.draw_polyline(pts + [pts[0]], color=(0.2, 0.5, 0.2), fill=LAND, closePath=True, width=0.5)
+
+
+def draw_leader_page(doc):
+    """A pill over a drawing that stands on white paper wider than its art
+    (its cut is trimmed), joined by a line off the drawing's middle; a note
+    with a slanted leader into a drawn map."""
+    page = doc.new_page(width=210 * MM, height=297 * MM)
+    body(page, 20, 3)
+    page.draw_rect(R(60, 50, 110, 60), color=None, fill=PILL)
+    text(page, 66, 56.5, "The forest", size=10)
+    # white paper 30 mm left of the art: the cluster's box, trimmed to the art when cut
+    page.draw_rect(R(40, 75, 150, 110), color=None, fill=(1, 1, 1))
+    blobs(page, 70, 75, cols=6, rows=3, w=13, h=11)
+    page.draw_line(P(80, 60), P(80, 75), color=LEAD, width=0.7)
+    # a drawn map and a note whose slanted leader runs into it
+    blobs(page, 20, 150)
+    page.draw_rect(R(120, 135, 180, 150), color=None, fill=NOTE)
+    text(page, 123, 141, "The lake is fed", size=10)
+    text(page, 123, 146, "by two rivers.", size=10)
+    page.draw_line(P(120, 150), P(45, 166), color=LEAD, width=0.6)
+    body(page, 220, 3)
+    return page
+
+
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class ConnectorEndsTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        doc = fitz.open()
+        draw_leader_page(doc)
+        cls.tmp, cls.out = run_extract(doc)
+        cls.lib, cls.res, cls.md, cls.regions = load(cls.out)
+        cls.frames = {f["name"]: f for f in cls.regions[0]["frames"]}
+        cls.conns = [e for e in cls.lib["pageTemplates"][0]["decoration"]["elements"] if e["kind"] == "connector"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_at_is_measured_on_the_cut_box(self):
+        c = next(c for c in self.conns if c["routing"] == "straight" and not c["to"].get("anchor"))
+        ends = [c["from"], c["to"]]
+        pic = next(e for e in ends if self.frames[e["to"][1:]]["kind"] in ("picture", "figure"))
+        box = self.frames[pic["to"][1:]]["box"]
+        self.assertGreater(box[0], 60)                 # the white paper left the cut
+        self.assertIn("at", pic)
+        self.assertAlmostEqual(box[0] + pic["at"] * (box[2] - box[0]), 80.0, delta=0.4)
+        other = next(e for e in ends if e is not pic)
+        self.assertIn("at", other)                     # a straight line always says its `at`
+        ob = self.frames[other["to"][1:]]["box"]
+        self.assertAlmostEqual(ob[0] + other["at"] * (ob[2] - ob[0]), 80.0, delta=0.4)
+
+    def test_a_slanted_leader_points_into_the_map(self):
+        ptr = [c for c in self.conns if c["to"].get("anchor") or c["from"].get("anchor")]
+        self.assertEqual(len(ptr), 1, self.conns)
+        c = ptr[0]
+        self.assertEqual(c["routing"], "straight")
+        frame = c["from"] if not c["from"].get("anchor") else c["to"]
+        point = c["to"] if frame is c["from"] else c["from"]
+        self.assertEqual(self.frames[frame["to"][1:]]["kind"], "box")
+        res = next(r for r in self.res if any(a.get("id") == point["anchor"] for a in r.get("anchors", [])))
+        a = next(a for a in res["anchors"] if a["id"] == point["anchor"])
+        box = next(f["box"] for f in self.frames.values() if f["kind"] in ("picture", "figure")
+                   and f["name"] == point["to"][1:])
+        x = box[0] + a["x"] * (box[2] - box[0])
+        y = box[1] + a["y"] * (box[3] - box[1])
+        self.assertAlmostEqual(x, 45.0, delta=0.5)
+        self.assertAlmostEqual(y, 166.0, delta=0.5)
+        # the leader left the map's cut: no grey on its middle inside the map
+        with Image.open(self.out / res["file"]) as im:
+            rgb = im.convert("RGB")
+            w, h = rgb.size
+            t = 0.85     # a point on the leader inside the map
+            px, py = 120 + (45 - 120) * t, 150 + (166 - 150) * t
+            got = rgb.getpixel((int((px - box[0]) / (box[2] - box[0]) * w), int((py - box[1]) / (box[3] - box[1]) * h)))
+        self.assertGreater(abs(got[1] - got[0]), 20, got)
+
+    def test_an_unmatched_path_gives_no_pointer(self):
+        doc = fitz.open()
+        page = doc.new_page(width=100 * MM, height=100 * MM)
+        page.draw_rect(R(10, 10, 60, 60), color=None, fill=LAND)
+        shows = pr.line_shows(page, pr.trim_origin(page), [])
+        self.assertFalse(shows((30, 30), (1, 0), {12345}, (10, 10, 60, 60)))
+        self.assertTrue(shows((30, 30), (1, 0), set(), (10, 10, 60, 60)))
+
+
+class RefitTest(unittest.TestCase):
+    def test_refit_moves_at_and_gap(self):
+        import line_art as la
+
+        e = la.End("pic", "top", 0.5, 0.0, span=100.0, xy=(50.0, 10.0))
+        got = la.refit(e, (30.0, 12.0, 70.0, 40.0))
+        self.assertAlmostEqual(got.at, 0.5)
+        self.assertAlmostEqual(got.gap, 2.0)
+        got = la.refit(e, (40.0, 10.0, 100.0, 40.0))
+        self.assertAlmostEqual(got.at, 10 / 60)
+        self.assertIn("at", got.config(always_at=False))
+        self.assertEqual(la.End("a", "left", 0.5, span=20.0).config(always_at=True)["at"], 0.5)
+
+
 if __name__ == "__main__":
     unittest.main()
