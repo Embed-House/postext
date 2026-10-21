@@ -3135,3 +3135,51 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   its Markdown, `pages`), with `POSTEXT_REPO` the draft laid out before
   and after with no frame off by 0.5 mm, with `POSTEXT_CLI` `postext check` without unknown anchors, slots,
   templates or module warnings.
+
+### 12.35 What S8 built (#1072)
+
+- **Where.** The porting skill only (`plugins/postext/skills/postext-port`), skill 1.58.0. No engine change.
+- **References.** `references/composed-pages.md` gains recipes 6.12–6.18 (connectors; pointers into a picture
+  and labels away from their point; keys and `:icon`; corners, sides, joined and foot tabs, path elements,
+  glyph tab icons and side points; repeating grids; modules; overlaps), each saying when to use it and what
+  a port did before 1.48; the version table runs to 1.49.0 (§12.32's caps and opacity, §12.33); §3.1 records
+  bands, §3.7 writes the drafting loop as extract → lay out (`render.mjs --frames`) → fold
+  (`template_dedupe.py`) → lay out and compare boxes → close (`composed_check.py`, 0 overlaps) → score; §7
+  and §10 follow. `configuration.md` §19g, `document-format.md` §12.2, `verification.md` and `SKILL.md` list
+  the new keys, blocks and the close rule.
+- **Overlaps fail the close checks.** `composed_check.py` read every warning outside its failure list as
+  nothing, so `frameCovered` / `frameOutsideArea` (warnings, §12.16) passed silently. Now both fail, printed
+  with the engine's own fixes and a hint, and the report ends with `overlaps: N`. Decisions:
+  - A **recorded exception list per project**: `composed-check.json` beside `preset.json` (or the bundle),
+    or `--exceptions FILE`: `{ "overlaps": [{ kind?, template?, frame, coveredBy?, past?, target?, locale?,
+    page?, reason }] }`. `frame` and `reason` are required; `[*]` stands for any instance number and `*` for
+    any run (no regular expression from the file: each pattern is escaped piece by piece). A matched warning
+    is listed as `allowed` with its reason; an invalid entry fails the run; an entry that matches nothing is a
+    note, so stale ones go. `overlap: 'allow'` stays the first way out (the engine skips the pair); every frame
+    that sets it is listed as a note, so the close report names what the engine no longer checks.
+  - `repeatOverflow`, `moduleUnknown`, `moduleAsPage`, `moduleNested` and `moduleNameRejected` fail too.
+  - **The score**: `compare_pages.py --score --check REPORT` (a `composed_check.py --json` report, or a raw
+    `postext check --json` one read through the same exceptions) fails (exit 1, `passed: false`) while
+    overlaps remain, listed by page label.
+- **Reading order on shells.** A page template that is a shell of modules (S7, §12.34) has no frames of its
+  own, so the HTML order check compared nothing. `page_fences` now records a slotted container's pieces one
+  level down and `:::module` blocks with their own items; `expected_order` reads a repeating grid's pieces as
+  instances (`foto[2]`, `pie[2]`, a lone member resource an item of its own) and a module's frames by their
+  scoped names (`<name>.<frame>`, else `<template>[n]` as C11 numbers them; an unknown module's content to the
+  page's flow frame). On the fresh port below the expected order equals the HTML's frame ids one for one.
+- **lint_project.py** read `:::module` as an unknown container and every module slot as `slotUnknown` (22
+  errors on a two-page S7 draft); it now checks a module's slots against the module template and raises
+  `moduleUnknown` (three reasons), `moduleAsPage`, `moduleNested` and `moduleNameRejected` before the build,
+  and reads a `:::label` container's lines inside a figure. `preset_kit.py` stamps `configVersion` 16.
+- **`round`** knows the composed features of 1.46.0, 1.48.0, 1.48.1 and 1.49.0 (unreleased when written).
+- **Release.** `plugins/postext/.claude-plugin/plugin.json` and `.cursor-plugin/plugin.json` 1.57.0 → 1.58.0;
+  the marketplace files carry no version; `skills-lock.json` lists only third-party skills (unchanged); the
+  docs Skill page (ten languages) says what the extract, the fold, the check and the score do with 1.48.
+- **Fresh port.** Two invented diagram pages (the S6 test page twice) through extract, `render.mjs --frames`,
+  `template_dedupe.py --laid`, manifest: one shell and two modules; `lint_project.py` 0 errors,
+  `composed_check.py check` passed with 0 overlaps. The engine's overlap fixture as a book fails with the four
+  overlaps and their fixes; two recorded exceptions leave two.
+- **Not done.** The exception file is not packed by `preset_kit.py pack --manifest-only` (it is a porting
+  record, not part of the book). The check does not reflow to test a fix; the Sandbox's fixes do.
+- **Docs finding.** `configuration-composed-pages` lists `over` in the table of a connector's *end* fields;
+  it is a key of the connector (`DesignConnectorElement.over`, §12.26).
