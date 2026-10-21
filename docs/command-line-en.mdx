@@ -374,6 +374,8 @@ download that failed, a font folder without the file), the text is set in the
 face of the family that the same rule picks in its place, and `postext check`
 lists it as a `fontFallback` warning: its lines may break differently from the Sandbox.
 
+A character a face has no glyph for is drawn from another face. `postext check` reads the `cmap` of every face it loads and lists such characters once per face for the whole book as a `glyphFallback` warning; with `--json`, its `data` holds the characters and their count.
+
 The cache is `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` on Windows);
 `POSTEXT_CACHE_DIR` or `--cache-dir` moves it. `--offline` skips the download.
 A family found nowhere is set in EB Garamond under its own name, so the layout

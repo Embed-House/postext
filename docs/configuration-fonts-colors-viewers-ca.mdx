@@ -147,6 +147,8 @@ Si fas clic en qualsevol d'aquests avisos, s'obre el tauler **Fonts** perquè hi
 
 Quan ja hi ha una maquetació, el tauler també mostra l'avís del motor **Font substituïda a la composició** (`fontFallback`): una variant que les pàgines no han pogut fer servir en mesurar el text, perquè falta o perquè el navegador la dibuixa a partir d'un altre pes o d'una altra inclinació. Una família que ja surt com a desconeguda o amb una variant que falta no hi apareix dues vegades. Abans de la primera composició, n'ocupa el lloc una comprovació contra `document.fonts`.
 
+El quadre també mostra **Caràcters presos d'una altra font** (`glyphFallback`): caràcters que el text posa en una font que no té glif per a ells, un cop per font, amb la família genèrica que els ha dibuixat (`serif`, `sans-serif`, `monospace`) quan la comprovació ho pot saber.
+
 ## Paleta de colors
 
 La propietat `colorPalette` de `PostextConfig` permet definir un conjunt reutilitzable de colors amb nom i fer-hi referència des de qualsevol `ColorValue` de la configuració. És l'equivalent a Postext de les propietats personalitzades de CSS o del tauler de mostres d'InDesign: canvia l'entrada una sola vegada i tots els colors que hi apuntin s'actualitzen al document.

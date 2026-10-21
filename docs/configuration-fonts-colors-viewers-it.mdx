@@ -148,6 +148,8 @@ Un clic su uno qualsiasi di questi avvisi apre il pannello Font, così puoi cari
 
 Quando esiste un’impaginazione, il pannello elenca anche il **Font di ripiego nell’impaginazione** del motore (`fontFallback`): un carattere senza il quale sono state misurate le pagine, mancante oppure disegnato dal browser a partire da un altro peso o da un’altra inclinazione. Una famiglia già indicata come sconosciuta o priva di una variante non viene elencata due volte. Prima della prima impaginazione, la sostituisce un controllo su `document.fonts`.
 
+Il pannello elenca anche i **Caratteri presi da un altro font** (`glyphFallback`): caratteri che il testo compone in un font privo di glifi per loro, una volta per font, con la famiglia generica che li ha disegnati (`serif`, `sans-serif`, `monospace`) quando il controllo può dirlo.
+
 ## Tavolozza dei colori
 
 La proprietà `colorPalette` di `PostextConfig` ti permette di definire un insieme riutilizzabile di colori con nome e di richiamarli da qualsiasi `ColorValue` della configurazione. È l’equivalente in Postext delle proprietà personalizzate CSS o del pannello Campioni di InDesign: modifichi una volta la voce della tavolozza, e ogni colore che vi punta si aggiorna in tutto il documento.

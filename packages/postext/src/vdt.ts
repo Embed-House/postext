@@ -4019,6 +4019,16 @@ export type ContentWarning = ContentWarningBase & (
    *  `BuildDocumentOptions.fontSet`), behind
    *  `debug.warnings.missingFont`. No page and no source range. */
   | { kind: 'fontFallback'; family: string; weight: number; style: 'normal' | 'italic'; reason: 'missing' | 'synthesized' }
+  /** Characters the text sets in a face that has no glyph for them, which
+   *  another face drew (#1105): the next family of the font list that has
+   *  them (`supplier`, a generic family such as `serif` too), or, without
+   *  `supplier`, a face the system picks. One per face: `characters` lists
+   *  the first of them (each once, at most 24), `count` says how many in
+   *  all. Checked by the glyph probe where there is a font set
+   *  (`installGlyphProbe`), else against the `cmap` of the files
+   *  registered with `registerFontCoverage`; behind
+   *  `debug.warnings.missingFont`. No page and no source range. */
+  | { kind: 'glyphFallback'; family: string; weight: number; style: 'normal' | 'italic'; characters: string[]; count: number; supplier?: string }
 );
 
 /** Where a design slot is painted: a running head (`'header'`), a folio

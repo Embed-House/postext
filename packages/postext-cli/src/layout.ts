@@ -6,6 +6,7 @@
 import {
   createMeasurementCache,
   formatWarning,
+  glyphFallbacks,
   initMathEngine,
   parseMarkdownWithIssues,
   type ContentWarning,
@@ -112,6 +113,18 @@ export async function layOut(
   docs.forEach((doc, i) => reportDocWarnings(doc, chapters[i]!, reporter));
   // A weight the family ships, set in another face (#741).
   if (fonts) for (const warning of fontFallbackWarnings(docs, fonts)) reporter.warn(warning);
+  // Characters a face lacks (#1105): each chapter's build found its own,
+  // reported once per face for the book.
+  if (docs.some((doc) => doc.contentWarnings?.some((w) => w.kind === 'glyphFallback'))) {
+    for (const g of glyphFallbacks(docs)) {
+      reporter.warn({
+        kind: 'glyphFallback',
+        severity: 'warning',
+        message: formatWarning({ kind: 'glyphFallback', ...g }),
+        data: { family: g.family, weight: g.weight, style: g.style, characters: g.characters, count: g.count, ...(g.supplier ? { supplier: g.supplier } : {}) },
+      });
+    }
+  }
   const pageCount = docs.reduce((n, d) => n + d.pages.length, 0);
   reporter.data.pages = pageCount;
   return { docs, chapters, pageCount, laidOut };
@@ -163,7 +176,8 @@ function overlapData(w: Extract<ContentWarning, { kind: 'frameCovered' | 'frameO
 
 function reportDocWarnings(doc: VDTDocument, chapter: BookChapter, reporter: Reporter): void {
   type Any = Parameters<typeof formatWarning>[0] & { sourceStart?: number; pageIndex?: number };
-  const all: Any[] = [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []), ...(doc.configWarnings ?? [])] as Any[];
+  // A face's missing characters are reported once for the book (see layOut).
+  const all: Any[] = [...(doc.warnings ?? []), ...(doc.contentWarnings ?? []).filter((w) => w.kind !== 'glyphFallback'), ...(doc.configWarnings ?? [])] as Any[];
   for (const w of all) {
     const local = w.pageIndex !== undefined ? doc.pages[w.pageIndex] : undefined;
     reporter.warn({

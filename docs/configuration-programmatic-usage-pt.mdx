@@ -324,6 +324,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>Uma face em que o texto foi composto (<code>family</code>, <code>weight</code>, <code>style</code>) e que o conjunto de fontes não pôde fornecer quando a compilação rodou: <code>reason: 'missing'</code>, nenhuma face da família estava carregada nem instalada, ou a que responde por esse peso e essa inclinação ainda não tinha carregado; <code>'synthesized'</code>, a família não tem face desse peso ou dessa inclinação e o navegador a tira de outra, como ela é ou engrossada ou inclinada (um 600 composto com o 700, um itálico 700 pedido a uma família que só tem o regular 400). É verificado onde há um conjunto de fontes (<code>document.fonts</code>, o <code>self.fonts</code> de um worker ou <code>BuildDocumentOptions.fontSet</code>), sob <code>debug.warnings.missingFont</code>. Sem página e sem intervalo de origem.</td>
       <td>O texto é medido e desenhado com a fonte alternativa, ou com outra face da família, como ela é ou engrossada ou inclinada; suas quebras de linha mudam quando a face chega. Veja <a href="#carregar-as-fontes-antes-da-diagramação">Carregar as fontes antes da diagramação</a>.</td>
     </tr>
+    <tr>
+      <td><code>glyphFallback</code></td>
+      <td>Caracteres que o texto põe numa fonte (<code>family</code>, <code>weight</code>, <code>style</code>) que não tem glifo para eles: <code>characters</code> traz os 24 primeiros, uma vez cada, <code>count</code> diz quantos são ao todo e <code>supplier</code> nomeia a família que os desenhou (uma família genérica como <code>serif</code>), ausente quando foi uma fonte escolhida pelo sistema. Um por fonte. No navegador ou num worker, o motor consulta uma fonte sonda que declara no conjunto de fontes (<code>installGlyphProbe</code>, chamada por <code>prepareFonts</code> e pelo worker de diagramação); fora deles lê a tabela <code>cmap</code> dos arquivos registrados com <code>registerFontCoverage</code>, como faz a linha de comando. Sujeito a <code>debug.warnings.missingFont</code>. Sem página nem intervalo de origem. Desde o postext 1.52.</td>
+      <td>Os caracteres são desenhados com outra fonte, cujo desenho e larguras podem não combinar com a fonte do texto. Escolha uma família que os inclua.</td>
+    </tr>
   </tbody>
 </table>
 

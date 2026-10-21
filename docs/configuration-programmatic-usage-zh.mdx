@@ -324,6 +324,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>文字排版所用的某个字体（<code>family</code>、<code>weight</code>、<code>style</code>），在构建时字体集给不出来：<code>reason: 'missing'</code>表示该字体族既没有加载、也没有安装任何字体，或者对应这个字重和倾斜的字体当时还没有加载完；<code>'synthesized'</code>表示该字体族没有这个字重或倾斜的字体，浏览器取用族内的另一个字体，原样使用，或加粗、倾斜（用700的字体排600；向只有400常规体的字体族要700斜体）。在有字体集的地方检查（<code>document.fonts</code>、工作线程的<code>self.fonts</code>，或<code>BuildDocumentOptions.fontSet</code>），由<code>debug.warnings.missingFont</code>控制。没有页码，也没有源码范围。</td>
       <td>文字用回退字体测量和绘制，或用族内的另一个字体（原样使用，或经浏览器加粗、倾斜）；该字体加载完成后，断行会随之改变。见<a href="#排版前加载字体">排版前加载字体</a>。</td>
     </tr>
+    <tr>
+      <td><code>glyphFallback</code></td>
+      <td>文本用某个字体（<code>family</code>、<code>weight</code>、<code>style</code>）排的字符中，有该字体没有字形的：<code>characters</code>列出前24个（每个只列一次），<code>count</code>给出总数，<code>supplier</code>给出实际绘制它们的字体族（如<code>serif</code>这样的通用字体族）；若由系统选定的字体绘制，则没有这一项。每个字体一条。在浏览器或worker中，引擎向它在字体集中声明的探测字体发问（<code>installGlyphProbe</code>，由<code>prepareFonts</code>和排版worker调用）；在其他环境中，它读取用<code>registerFontCoverage</code>登记的文件的<code>cmap</code>表，命令行就是这样做的。受<code>debug.warnings.missingFont</code>控制。没有页码，也没有源码范围。postext 1.52起提供。</td>
+      <td>这些字符由另一个字体绘制，其字形设计和宽度可能与正文字体不一致。请选择包含这些字符的字体族。</td>
+    </tr>
   </tbody>
 </table>
 

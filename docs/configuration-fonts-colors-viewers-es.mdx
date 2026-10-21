@@ -148,6 +148,8 @@ Al hacer clic en cualquiera de estos avisos se abre el panel **Fuentes**, para q
 
 Cuando ya hay una maquetación, el panel muestra también el aviso del motor **Fuente sustituida en la composición** (`fontFallback`): un estilo con el que no se han podido medir las páginas, bien porque falta, bien porque el navegador lo dibuja a partir de otro peso o de otra inclinación. Una familia que ya aparece como desconocida o con un estilo que falta no se muestra dos veces. Antes de la primera maquetación, se hace en su lugar una comprobación con `document.fonts`.
 
+El panel también muestra **Caracteres tomados de otra fuente** (`glyphFallback`): caracteres que el texto pone en una fuente que no tiene glifo para ellos, una vez por fuente, con la familia genérica que los dibujó (`serif`, `sans-serif`, `monospace`) cuando la comprobación puede saberlo.
+
 ## Paleta de colores
 
 La propiedad `colorPalette` de `PostextConfig` permite definir un conjunto reutilizable de colores con nombre y remitir a ellos desde cualquier `ColorValue` de la configuración. Es el equivalente en Postext de las propiedades personalizadas de CSS o del panel de muestras de InDesign: si cambias una entrada de la paleta, se actualizan en todo el documento todos los colores que remiten a ella.

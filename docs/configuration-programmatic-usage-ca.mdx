@@ -324,6 +324,11 @@ console.log(`El document té ${vdt.pages.length} pàgines`);
       <td>Una variant amb què s'ha compost el text (<code>family</code>, <code>weight</code>, <code>style</code>) que el conjunt de fonts no podia proporcionar quan s'ha executat la construcció: <code>reason: 'missing'</code>, no hi havia carregada ni instal·lada cap cara de la família, o la que respon a aquest pes i aquesta inclinació encara no s'havia carregat; <code>'synthesized'</code>, la família no té cara d'aquest pes o d'aquesta inclinació i el navegador la treu d'una altra, tal com és o feta més gruixuda o inclinada (una 600 composta amb la 700, una cursiva 700 demanada a una família que només té una rodona 400). Es comprova on hi ha un conjunt de fonts (<code>document.fonts</code>, el <code>self.fonts</code> d'un worker o <code>BuildDocumentOptions.fontSet</code>), sota <code>debug.warnings.missingFont</code>. No porta pàgina ni interval d'origen.</td>
       <td>El text es mesura i es dibuixa amb la font de reserva, o amb una altra cara de la família, tal com és o feta més gruixuda o inclinada; els seus talls de línia canvien quan arriba la cara. Vegeu <a href="#carregar-les-fonts-abans-de-compondre">Carregar les fonts abans de compondre</a>.</td>
     </tr>
+    <tr>
+      <td><code>glyphFallback</code></td>
+      <td>Caràcters que el text posa en una font (<code>family</code>, <code>weight</code>, <code>style</code>) que no té glif per a ells: <code>characters</code> en dona els 24 primers, un cop cadascun, <code>count</code> quants n'hi ha en total i <code>supplier</code> la família que els ha dibuixat (una família genèrica com <code>serif</code>), absent quan els ha dibuixat una font que ha triat el sistema. Un per font. En un navegador o en un worker el motor pregunta a una font sonda que declara al conjunt de fonts (<code>installGlyphProbe</code>, que criden <code>prepareFonts</code> i el worker de compaginació); fora d'aquests llegeix la taula <code>cmap</code> dels fitxers registrats amb <code>registerFontCoverage</code>, com fa la línia d'ordres. Subjecte a <code>debug.warnings.missingFont</code>. Sense pàgina ni rang d'origen. Des de postext 1.52.</td>
+      <td>Els caràcters es dibuixen amb una altra font, que pot no casar en disseny i amplades amb la del text. Tria una família que els inclogui.</td>
+    </tr>
   </tbody>
 </table>
 

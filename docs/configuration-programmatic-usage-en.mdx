@@ -324,6 +324,11 @@ console.log(`Document has ${vdt.pages.length} pages`);
       <td>A face the text was set in (<code>family</code>, <code>weight</code>, <code>style</code>) that the font set could not give when the build ran: <code>reason: 'missing'</code>, no face of the family was loaded nor installed, or the one that answers for that weight and slant had not loaded yet; <code>'synthesized'</code>, the family has no face of that weight or slant and the browser takes it from another one, as it is or drawn bolder or slanted (a 600 set from the 700, a 700 italic asked of a family with only a 400 regular). Checked where there is a font set (<code>document.fonts</code>, a worker's <code>self.fonts</code>, or <code>BuildDocumentOptions.fontSet</code>), behind <code>debug.warnings.missingFont</code>. No page and no source range.</td>
       <td>The text is measured and drawn with the fallback face, or with another face of the family, as it is or made bolder or slanted; its line breaks change once the face arrives. See <a href="#loading-fonts-before-layout">Loading fonts before layout</a>.</td>
     </tr>
+    <tr>
+      <td><code>glyphFallback</code></td>
+      <td>Characters the text sets in a face (<code>family</code>, <code>weight</code>, <code>style</code>) that has no glyph for them: <code>characters</code> lists the first 24, each once, <code>count</code> says how many there are in all, and <code>supplier</code> names the family that drew them (a generic family such as <code>serif</code>), absent when a face the system picked drew them. One per face. In a browser or a worker the engine asks a probe face it declares in the font set (<code>installGlyphProbe</code>, which <code>prepareFonts</code> and the layout worker call); elsewhere it reads the <code>cmap</code> of the files registered with <code>registerFontCoverage</code>, as the command line does. Behind <code>debug.warnings.missingFont</code>. No page and no source range. Since postext 1.52.</td>
+      <td>The characters are drawn from another face, whose design and widths may not match the text face. Choose a family that covers them.</td>
+    </tr>
   </tbody>
 </table>
 

@@ -634,6 +634,46 @@ function measureSnippet(
     : measureRichSnippet(spans, normal, bold, italic, boldItalic, maxWidthPx, lineHeightPx, options);
 }
 
+/**
+ * A caption or note line justified in its segments (#1099): its word spaces
+ * take the line's slack, each as wide as the others, so every renderer,
+ * which paints a caption line as measured, sets it flush on both sides. The
+ * rule is the one body text is painted with (`renderLine` in the canvas
+ * backend): the last line of a paragraph, a tabbed line and a line the
+ * measurer set ragged keep their natural spaces unless they run past the
+ * measure; a hung mark stays out of the count and a Han–Latin space
+ * (`autospace`) keeps the width the CJK composer gave it. A composed CJK
+ * line already spread to its measure has no slack left and comes back as
+ * it was. Highlight bands are placed from the segments once the document is
+ * laid out, so they follow the wider spaces. Never changes `line` in place
+ * (a cached measurement may share it).
+ */
+export function justifySnippetLine(line: VDTLine, maxWidthPx: number): VDTLine {
+  const segments = line.segments;
+  if (!segments || segments.length === 0 || line.tabbed) return line;
+  const measure = line.measure?.width ?? maxWidthPx - line.bbox.x;
+  let wordWidth = 0;
+  let natural = 0;
+  let spaceCount = 0;
+  for (const seg of segments) {
+    if (seg.hangs) continue;
+    if (seg.kind === 'space' && !seg.autospace) spaceCount++;
+    else wordWidth += seg.width;
+    natural += seg.width;
+  }
+  if (spaceCount === 0) return line;
+  if ((line.isLastLine || line.ragged) && !(natural > measure + FIT_EPS)) return line;
+  if (Math.abs(measure - natural) <= FIT_EPS) return line;
+  const spaceWidth = Math.max(0, (measure - wordWidth) / spaceCount);
+  const widened = segments.map((seg) => (seg.kind === 'space' && !seg.autospace && !seg.hangs ? { ...seg, width: spaceWidth } : seg));
+  const grown = spaceWidth * spaceCount + wordWidth - natural;
+  return {
+    ...line,
+    segments: widened,
+    bbox: createBoundingBox(line.bbox.x, line.bbox.y, line.bbox.width + grown, line.bbox.height),
+  };
+}
+
 /** The four faces a caption or note run is set in (normal, bold, italic,
  *  bold italic). */
 type SnippetFonts = readonly [string, string, string, string];
@@ -653,9 +693,10 @@ function measureSnippetLines(
   options: MeasureBlockOptions,
 ): VDTLine[] {
   const [normal, bold, italic, boldItalic] = fonts;
-  // The measurer sets every line flush left at its natural width unless it
-  // justifies: a centred or right-aligned caption or note is pushed over by
-  // each line's slack (EF-166), as table cells are.
+  // The measurer sets every line flush left at its natural width: a
+  // centred or right-aligned caption or note is pushed over by each line's
+  // slack (EF-166), as table cells are, and a justified one has the slack
+  // spread over its word spaces (#1099).
   const align = options.textAlign;
   const aligned = (lines: VDTLine[]): VDTLine[] =>
     align === 'center' || align === 'right'
@@ -663,7 +704,9 @@ function measureSnippetLines(
           const slack = Math.max(0, maxWidthPx - line.bbox.width);
           return shiftLines([line], align === 'center' ? slack / 2 : slack, 0)[0]!;
         })
-      : lines;
+      : align === 'justify'
+        ? lines.map((line) => justifySnippetLine(line, maxWidthPx))
+        : lines;
   const measure = (ps: InlineSpan[]): VDTLine[] =>
     aligned(linkSegments(measureSnippet(ps, normal, bold, italic, boldItalic, maxWidthPx, lineHeightPx, options).lines, ps));
   if (!spans.some((s) => !s.ref && !s.math && FORCED_BREAK_RE.test(s.text))) return measure(spans);
