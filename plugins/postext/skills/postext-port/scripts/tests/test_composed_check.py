@@ -259,6 +259,13 @@ class Judge(unittest.TestCase):
         v = cc.judge({"warnings": [{"kind": "continueTargetMissing", "severity": "warning", "message": "no page"}]})
         self.assertEqual([w["kind"] for w in v["fail"]], ["continueTargetMissing"])
 
+    def test_word_cut_between_letters_fails_and_a_syllable_cut_is_a_note(self):
+        v = cc.judge({"warnings": [
+            {"kind": "wordDividedByCharacter", "severity": "warning", "message": "CL", "page": "2"},
+            {"kind": "wordDividedBySyllable", "severity": "info", "message": "anti-"}]})
+        self.assertEqual([w["kind"] for w in v["fail"]], ["wordDividedByCharacter"])
+        self.assertEqual([w["kind"] for w in v["notes"]], ["wordDividedBySyllable"])
+
     def test_label_checks_and_style_extends(self):
         v = cc.judge({"warnings": [
             {"kind": "labelOverflow", "severity": "warning", "message": "too wide", "page": "3"},

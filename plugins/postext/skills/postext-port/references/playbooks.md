@@ -1023,7 +1023,8 @@ Decimal comma vs point in data and captions; `{,}` in LaTeX.
 - Running heads/folios are physical: chapter title on odd (left) pages, book title on even (right) pages,
   folio outer corner (left of odd pages) or centred.
 - Keep the author's typed digits and punctuation (، ؛ ؟ «»); generated numbers follow `numerals`.
-- Watch in the render: `unbreakableWordOverflow` (a word wider than a narrow cell/column: widen it),
+- Watch in the render: `unbreakableWordOverflow` (a word wider than a narrow cell/column: widen it;
+  a Latin word there is cut instead and reported as `wordDividedByCharacter` / `wordDividedBySyllable`),
   `joiningScriptLetterSpacing` (a style tracks Arabic: remove `letterSpacing`).
 
 ### F8. Arabic, classical vocalised edition (turāth, tahqīq, Nights)

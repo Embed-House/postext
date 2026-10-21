@@ -933,6 +933,11 @@ function wordBreakPoints(
  * touches a run of another script (`ABCكتاب`), with nothing added. Null
  * when no such place fits: the word then runs past the measure, and the
  * line says so (`VDTLine.wordOverflow`).
+ *
+ * `divided` says how a word was cut (#1150): at a syllable (`'syllable'`)
+ * or between two characters (`'character'`); absent for a cut at a
+ * no-break space, at the edge of a run of another script, or next to an
+ * ideograph, which divide no word.
  */
 export function emergencySplit(
   token: RichToken,
@@ -940,7 +945,7 @@ export function emergencySplit(
   letterSpacingPx: number,
   lineMaxWidth: number,
   syllablesOnly = false,
-): { head: RichToken; tail: RichToken; hard?: boolean } | null {
+): { head: RichToken; tail: RichToken; hard?: boolean; divided?: 'syllable' | 'character' } | null {
   const text = token.text;
   if (text.length < 2) return null;
   // Styled runs of one Arabic word (`RichToken.runs`) are one shaped word.
@@ -994,6 +999,7 @@ export function emergencySplit(
     else over = mid;
   }
   let at = 0;
+  let divided: 'syllable' | 'character' | undefined;
   // The dictionary's syllables, as offsets into the text: `syllabify` maps
   // them past anything else the dictionary might put in.
   const { clean, soft } = syllabify(text, true);
@@ -1002,6 +1008,7 @@ export function emergencySplit(
       if (s.index > 0 && s.index <= reach && fits(s.index)) at = s.index;
     }
   }
+  if (at > 0) divided = 'syllable';
   // A word the document keeps whole (`hyphenation.exceptions`, capitalised
   // words, cited names) is still divided when it is wider than its measure:
   // at its entry's points above, else at the dictionary's syllables (#699).
@@ -1012,6 +1019,7 @@ export function emergencySplit(
         if (s.index > 0 && s.index <= reach && fits(s.index)) at = s.index;
       }
     }
+    if (at > 0) divided = 'syllable';
   }
   if (at === 0 && !syllablesOnly) {
     for (let idx = reach; idx >= 1; idx--) {
@@ -1022,6 +1030,9 @@ export function emergencySplit(
       if (joining && insideJoiningWord(text, idx)) continue;
       if (fits(idx)) { at = idx; break; }
     }
+    // Between two letters of one word: not where a word of a joining script
+    // meets another run, nor beside an ideograph, nor after a hyphen.
+    if (at > 0 && !joining && !afterHyphen(at) && !hasCJK(text.slice(at - 1, at + 1))) divided = 'character';
   }
   if (at === 0) return null;
   const mark = markW(at) > 0 ? '-' : '';
@@ -1033,6 +1044,7 @@ export function emergencySplit(
       : { ...flags, ...pieceScriptFields(token, 0, at), text: text.slice(0, at) + mark, kind: 'text', width: widthBefore(at) + markW(at) },
     tail: { ...restFrom(at), ...flags, ...pieceScriptFields(token, at, text.length) },
     ...(afterHyphen(at) ? { hard: true } : {}),
+    ...(divided && !afterHyphen(at) ? { divided } : {}),
   };
 }
 
@@ -2235,6 +2247,7 @@ function measureRichText(
     let lineHardHyphen = false;
     // A word of a joining script wider than the line runs past it.
     let lineWordOverflow = false;
+    let lineWordDivided: 'syllable' | 'character' | undefined;
     // The line holds a tab placed at a stop (#622).
     let lineTabbed = false;
 
@@ -2363,6 +2376,7 @@ function measureRichText(
         const font = tokenFont(token, normalFont, boldFont, italicFont, boldItalicFont);
         const split = emergencySplit(token, font, letterSpacingPx, lineMaxWidth);
         if (split) {
+          lineWordDivided = split.divided;
           lineTokens.push(split.head);
           lineWidth += split.head.width;
           lineHyphenated = true;
@@ -2421,6 +2435,7 @@ function measureRichText(
         if (isDivisible(token)) {
           const split = emergencySplit(token, font, letterSpacingPx, lineMaxWidth - lineWidth, true);
           if (split) {
+            lineWordDivided = split.divided;
             lineTokens.push(split.head);
             lineWidth += split.head.width;
             lineHyphenated = true;
@@ -2515,6 +2530,7 @@ function measureRichText(
       isLastLine,
       ...spaceRatios,
       ...(lineWordOverflow ? { wordOverflow: true as const } : {}),
+      ...(lineWordDivided ? { wordDivided: lineWordDivided } : {}),
       ...(lineTabbed ? { tabbed: true as const, ...(textAlign === 'justify' ? { ragged: true } : {}) } : {}),
     });
 

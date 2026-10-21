@@ -2181,6 +2181,11 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   `slotEmpty` (a frame given nothing) and `anchorUnlabelled` (an anchor this
   edition gives no word) are notes: read each, mark deliberate empties
   `optional: true`.
+  `wordDividedByCharacter` (1.52) fails: a word wider than its whole line,
+  cut between two letters with no hyphen to fit ("CL" | "IMA" in a narrow
+  rotated frame). Widen the frame, set a smaller size, or write the word
+  shorter. `wordDividedBySyllable`, the same word divided at a syllable, is
+  a note (severity info): read it in the render.
 - **Overlaps = 0** (1.48): `frameCovered` and `frameOutsideArea` fail, each
   printed with the engine's fixes and the way out; the report's last lines
   say `overlaps: N`. A pair the source prints so is either `overlap:

@@ -828,6 +828,13 @@ export interface VDTLine {
    *  measure, and the build reports an `unbreakableWordOverflow` content
    *  warning. Absent otherwise. */
   wordOverflow?: true;
+  /** The line ends in a piece of a word wider than its whole measure,
+   *  which the breaker cut to fit (#1150): at one of its syllables, a
+   *  hyphen added (`'syllable'`), or, where none fits, between two of its
+   *  characters (`'character'`). The build reports a
+   *  `wordDividedBySyllable` note or a `wordDividedByCharacter` warning.
+   *  Absent otherwise (and for a cut at a no-break space). */
+  wordDivided?: 'syllable' | 'character';
   /** Set by the CJK composer (a paragraph set as Chinese, Japanese or
    *  Korean text, `composesAsCjk`): its characters were measured one by
    *  one, so a renderer paints two CJK marks that meet apart — the marks
@@ -2333,6 +2340,10 @@ export interface VDTDesignTextLine {
    *  box, and the build reports an `unbreakableWordOverflow` warning, as
    *  for {@link VDTLine.wordOverflow}. Absent otherwise. */
   wordOverflow?: true;
+  /** The line of a wrapping text ends in a piece of a word wider than the
+   *  room, cut at a syllable or between two characters, as for
+   *  {@link VDTLine.wordDivided} (#1150). Absent otherwise. */
+  wordDivided?: 'syllable' | 'character';
 }
 
 /** Outline of the glyphs of a design text block, resolved to px / hex. */
@@ -3776,6 +3787,16 @@ export type ContentWarning = ContentWarningBase & (
    *  (`VDTLine.wordOverflow`). `text` is the line's text. Found by the
    *  layout, so `collectContentWarnings` never returns it. */
   | { kind: 'unbreakableWordOverflow'; text: string }
+  /** A word wider than its whole line (a narrow frame, a running head, a
+   *  table cell), cut to fit between two of its characters, with no
+   *  hyphen (`VDTLine.wordDivided`, #1150): "CL" | "IMA". `text` is the
+   *  line's text. A warning: give the text more room or a smaller size.
+   *  Found by the layout, so `collectContentWarnings` never returns it. */
+  | { kind: 'wordDividedByCharacter'; text: string }
+  /** A word wider than its whole line, cut at one of its syllables with a
+   *  hyphen (`VDTLine.wordDivided`, #1150). A note: the cut is a
+   *  dictionary one, but the word was too long for the measure. */
+  | { kind: 'wordDividedBySyllable'; text: string }
   /** A paragraph or heading whose style sets letter-spacing
    *  (`letterSpacing`) on words of a joining script: they are set without
    *  it, since spacing their letters apart breaks the joins, and only the

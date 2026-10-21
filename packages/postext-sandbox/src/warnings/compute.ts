@@ -113,7 +113,7 @@ function collectLooseLineWarnings(
 const LAYOUT_CONTENT_KINDS: ReadonlySet<string> = new Set([
   'indexSeeUnknown', 'indexRangeUnclosed', 'indexReadingMissing', 'cjkLooseLine', 'raggedLine',
   'cjkMarksExceedLeading', 'rubyExceedsLeading', 'kuntenExceedsLeading', 'arabicMarksExceedLeading',
-  'unbreakableWordOverflow', 'joiningScriptLetterSpacing',
+  'unbreakableWordOverflow', 'wordDividedByCharacter', 'wordDividedBySyllable', 'joiningScriptLetterSpacing',
   'comicPanelLetterbox', 'comicBalloonOverflow', 'lineNumberOverlap', 'dropCap', 'codeOverflow', 'textWrap',
   'columnsTooNarrow',
 ]);
