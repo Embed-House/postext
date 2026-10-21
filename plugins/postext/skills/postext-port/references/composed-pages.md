@@ -358,7 +358,17 @@ it merges the styles and before it merges the templates:
   `--grid-min` (3) of them. A member hangs at most `--member-reach` (8 mm)
   off its card; a pill between two rows that hangs under one photo and over
   the next takes the way most pills of its look hang. A picture is never a
-  centred member (it has no width of its words). From 1.50, cards and
+  centred member (it has no width of its words). A lattice is folded whole
+  or not at all: when a frame of its cards' kind and layer stands on one of
+  its rows or columns no more than a pitch (card plus gap) off its edge and
+  the lattice did not take it (a 3 x 3 wall whose first column is narrower
+  than the rest, or whose other cards differ in width), the lattice stays
+  frames and `dedupe-report.json` lists it under `gridsLeft` (`frames`,
+  `columns`, `rows`, and the `strays` left out), so a wall is never one
+  grid column plus loose cards. Make the cards one width in the template
+  (or raise `--lattice-tol`) and fold again, or turn them into a grid by
+  hand. Cards that differ only in colours are no reason to leave a wall:
+  they fold as one grid with looks (below). From 1.50, cards and
   members whose styles differ only in colours (fill, border, tab, words;
   a pill read with even side padding counts as centred) are one look: the
   set keeps the style most cards have and every other card names a look
@@ -2259,7 +2269,9 @@ La nutria
   the grid goes on by whole rows on the added page.
 - **When.** Three or more cards of one look on a lattice, or any count that
   the Markdown should decide (a translation with one more photo). Cards of
-  different widths or looks stay frames of their own. `template_dedupe.py`
+  different widths or looks stay frames of their own, and so does every
+  card of a wall the fold could read only in part (`gridsLeft`).
+  `template_dedupe.py`
   turns a draft's lattices into grids (`grid-picture`, `grid-box`), and the
   Sandbox's «Turn into a grid» does it for frames picked by hand.
 - Not on grid rows: `grow`, `shrink`, `redistribute`. A caption pill laid over
