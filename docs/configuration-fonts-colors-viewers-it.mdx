@@ -1301,6 +1301,18 @@ La proprietà `debug` raccoglie due tipi di aiuti alla composizione: sovrapposiz
       <td><code>false</code></td>
       <td>Disegna sopra la pagina una sovrapposizione in negativo ad alto contrasto: utile per controllare a colpo d’occhio la forma complessiva di una doppia pagina (densità del testo, equilibrio delle colonne, bianchi) senza farsi distrarre dal dettaglio dei glifi.</td>
     </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Quali segni di adattamento il canvas del Sandbox disegna sulle pagine composte per chi non ha scelto nella barra del canvas: tutti, solo le cornici in cui il contenuto non entra e gli aspetti sconosciuti, oppure nessuno. Vale la scelta del lettore. Da postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Una cornice composta a questa scala o più grande non ha etichetta di scala (con <code>0.95</code> solo quelle sotto il 95 %). Testo e immagini si valutano a parte.</td>
+    </tr>
   </tbody>
 </table>
 

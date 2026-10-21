@@ -2459,6 +2459,13 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   template fits, `continueNextPage` for a box the source continues,
   `shortenText` last (it is an estimate). A translation that overflows is
   fixed in the template's limits, not by hand-shrinking that edition.
+  In the Sandbox canvas a frame that does not fit is outlined in red with
+  the shortfall, a frame the ladder scaled carries an amber «text at 90 %»
+  badge, an unknown look a violet one. The scaled badges are information,
+  not faults: for a book handed to editors and translators set
+  `debug.fitMarks: "problems"` (the red and violet marks stay) or
+  `debug.fitMarksMinScale: 0.95` (badges only under 95 %), postext ≥ 1.52.
+  The reader's choice in the canvas rail wins; no output carries the marks.
 - `frameContinuationLimit` = 0, and `continueTargetMissing` = 0 (1.38: a
   `page:<id>` jump whose later page fence is missing).
 - `contentInConfig` = 0 (and `preset_kit.py lint` clean: it counts page

@@ -1302,6 +1302,18 @@ stripFolioDefaults({ paper: { type: 'bible', grammage: 40 } });
       <td><code>false</code></td>
       <td>在页面上渲染一层高对比度负片，用来一眼检查跨页的整体形态（文字密度、各栏是否齐底、留白），不受字形细节干扰。</td>
     </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>读者还没在画布工具栏里选择时，Sandbox画布在模板页上画哪些适配标记：全部；只画放不下的框和未知外观；或都不画。读者的选择优先。自 postext 1.52 起。</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>以这个比例或更大比例排出的框不显示缩放标签（设为<code>0.95</code>时只标出低于95%的框）。文字和图片分开判断。</td>
+    </tr>
   </tbody>
 </table>
 

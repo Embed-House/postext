@@ -1302,6 +1302,18 @@ La propiedad `debug` agrupa dos tipos de ayudas para la edición: superposicione
       <td><code>false</code></td>
       <td>Dibuja sobre la página una superposición en negativo de alto contraste: sirve para revisar de un vistazo la forma general de una doble página (densidad del texto, equilibrio de las columnas, espacio en blanco) sin que distraiga el detalle de los glifos.</td>
     </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Qué marcas de ajuste dibuja el canvas del Sandbox sobre las páginas compuestas para quien no haya elegido en la barra del canvas: todas, solo los marcos que no caben y los aspectos desconocidos, o ninguna. Manda la elección del lector. Desde postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Un marco compuesto a esta escala o mayor no lleva distintivo de escala (con <code>0.95</code> solo se marcan los que quedan por debajo del 95 %). Texto e imágenes se miran por separado.</td>
+    </tr>
   </tbody>
 </table>
 

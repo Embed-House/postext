@@ -1302,6 +1302,18 @@ A propriedade `debug` reúne dois tipos de recursos de autoria: sobreposições 
       <td><code>false</code></td>
       <td>Renderiza uma sobreposição em negativo de alto contraste sobre a página, útil para conferir visualmente, de relance, a forma geral de uma página dupla (densidade do texto, equilíbrio das colunas, espaços em branco), sem se distrair com o detalhe dos glifos.</td>
     </tr>
+    <tr>
+      <td><code>fitMarks</code></td>
+      <td><code>'all' | 'problems' | 'none'</code></td>
+      <td><code>'all'</code></td>
+      <td>Que marcas de ajuste o canvas do Sandbox desenha sobre as páginas compostas para quem não escolheu na barra do canvas: todas, só os blocos em que o conteúdo não cabe e as aparências desconhecidas, ou nenhuma. A escolha do leitor prevalece. Desde o postext 1.52.</td>
+    </tr>
+    <tr>
+      <td><code>fitMarksMinScale</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Um bloco composto nesta escala ou maior não recebe selo de escala (com <code>0.95</code>, só os abaixo de 95% são marcados). Texto e imagens são avaliados à parte.</td>
+    </tr>
   </tbody>
 </table>
 
