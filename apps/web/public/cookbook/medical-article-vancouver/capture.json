@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "medical-article-vancouver",
-  "sourceHash": "eb047a07c639fc1de68d006eeb823cc9bfc6604815c4f09ba40fada9196bf5e0",
+  "sourceHash": "f9f5495b075d646732dba9bd252220b94f824f835fee6799f2e82c72ed317494",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.51.1",
+    "postextPdf": "1.51.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-21T18:29:20.444Z",
+  "capturedAt": "2026-10-21T18:59:59.255Z",
   "variants": {
     "en": {
-      "hash8": "84d3e945",
-      "vdtHash": "b5a88b75988b0357901a1282d307f9902af9b1d7",
+      "hash8": "d9262794",
+      "vdtHash": "8ae3205b92b44fa3226c0a6a2f7d0de19467b445",
       "timings": {
-        "importMs": 726,
-        "fontsMs": 87,
-        "buildMs": 123,
-        "totalMs": 3888,
+        "importMs": 458,
+        "fontsMs": 51,
+        "buildMs": 120,
+        "totalMs": 1331,
         "builds": 1
       },
       "specimen": {
@@ -40,7 +40,7 @@
           "PT Serif"
         ],
         "pages": 3,
-        "ownLines": 178
+        "ownLines": 179
       },
       "pages": [
         {
@@ -73,7 +73,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116132,
+          "bytes": 112646,
           "alt": "Page 183: References."
         }
       ],
@@ -101,18 +101,18 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 122321,
+        "bytes": 122747,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 53348,
+        "bytes": 53346,
         "folio": "b245c39c",
         "chapters": [
           {
             "pages": 3,
-            "hash": "736b69052aced2b5",
-            "lines": "99ffe51a53df030e"
+            "hash": "ed85268c399b4cb8",
+            "lines": "0c41249fcdaf41ad"
           }
         ]
       },
@@ -424,23 +424,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “What is already known Self-monitoring lowers blo…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e05cf1b2",
-      "vdtHash": "81cf1725dfd96bd2ca1e99f7b3b87c7579fa19f8",
+      "hash8": "65f073ba",
+      "vdtHash": "bddb5b535c942a65f43871a4eba1e7128d9595eb",
       "timings": {
-        "importMs": 727,
-        "fontsMs": 85,
-        "buildMs": 118,
-        "totalMs": 3875,
+        "importMs": 454,
+        "fontsMs": 53,
+        "buildMs": 124,
+        "totalMs": 1335,
         "builds": 1
       },
       "specimen": {
@@ -463,7 +458,7 @@
           "PT Serif"
         ],
         "pages": 3,
-        "ownLines": 178
+        "ownLines": 179
       },
       "pages": [
         {
@@ -496,7 +491,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 149454,
+          "bytes": 145462,
           "alt": "Página 183: Información del artículo."
         }
       ],
@@ -524,18 +519,18 @@
       },
       "pdf": {
         "file": "medical-article-vancouver.pdf",
-        "bytes": 131485,
+        "bytes": 131937,
         "pages": 3
       },
       "sandbox": {
         "file": "medical-article-vancouver.postext",
-        "bytes": 54595,
+        "bytes": 54592,
         "folio": "b245c39c",
         "chapters": [
           {
             "pages": 3,
-            "hash": "73bb51b337b08f5b",
-            "lines": "e16a9b9775999b6d"
+            "hash": "de99c6bf8dfe696f",
+            "lines": "67b002722716de06"
           }
         ]
       },
@@ -828,7 +823,7 @@
       },
       "diagnostics": {
         "converged": true,
-        "iterationCount": 2,
+        "iterationCount": 3,
         "looseLines": {
           "count": 0,
           "share": 0,
@@ -837,13 +832,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }
