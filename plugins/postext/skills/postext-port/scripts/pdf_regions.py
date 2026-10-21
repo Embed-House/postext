@@ -991,9 +991,10 @@ class Shape:
         return radii
 
     def rect_like(self) -> bool:
-        """A rectangle (corners rounded or not): a rectangle a plain
-        rectangular clip cuts is one too (its box is what shows)."""
-        if not self.items or len(self.items) > 16 or (self.clipped and not self.clip_exact):
+        """A rectangle (corners rounded or not): a filled one a plain
+        rectangular clip cuts is one too (its box is what shows); a clipped
+        outline is not (what shows of it is no rectangle's outline)."""
+        if not self.items or len(self.items) > 16 or (self.clipped and (not self.clip_exact or self.stroke)):
             return False
         if all(it[0] == "re" for it in self.items):
             return True

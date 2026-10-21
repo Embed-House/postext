@@ -447,6 +447,17 @@ class ClipTest(unittest.TestCase):
         self.assertEqual(pr.clip_segment((0, 5), (10, 5), (2, 0, 6, 10)), ((2.0, 5.0), (6.0, 5.0)))
         self.assertIsNone(pr.clip_segment((0, 20), (10, 20), (2, 0, 6, 10)))
 
+    def test_a_clipped_outline_is_no_rectangle(self):
+        origin = (0.0, 0.0, 210.0, 297.0)
+        rect = {"rect": fitz.Rect(0, 0, 100, 100), "items": [("re", fitz.Rect(0, 0, 100, 100), 1)], "seqno": 1}
+        clip = fitz.Rect(0, 0, 50, 100)
+        filled = pr.Shape(dict(rect, fill=(1, 0, 0)), origin, clip, True)
+        self.assertTrue(filled.clipped and filled.rect_like())
+        self.assertAlmostEqual(filled.w, 50 * pr.PT_MM)
+        outline = pr.Shape(dict(rect, color=(1, 0, 0), width=1.0), origin, clip, True)
+        self.assertTrue(outline.clipped)
+        self.assertFalse(outline.rect_like())
+
 
 # ---------------------------------------------------------------------------
 # III-4: hatching, paint order, merged shapes, the raster fallback (#1141)
