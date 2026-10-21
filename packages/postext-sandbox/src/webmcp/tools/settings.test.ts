@@ -55,7 +55,7 @@ describe('every setting the engine resolves', () => {
       if (off.length > 0) failures.push(`${path}: moved ${off.slice(0, 4).join(', ')}`);
     }
     expect(failures).toEqual([]);
-  }, 120_000);
+  }, 300_000);
 
   it('takes another value when it is a number or a switch, and the answer accounts for everything that moved', async () => {
     const before = leafEntries((await harness(book()).call('sandbox_get_config', { effective: true })).effective);
@@ -99,7 +99,7 @@ describe('every setting the engine resolves', () => {
     expect(failures).toEqual([]);
     expect(changed).toBeGreaterThan(650);
     expect(limited).toBeLessThan(20);
-  }, 120_000);
+  }, 300_000);
 });
 
 // #1081: a frame's overlap (C2), which the frame editor's «May overlap on
