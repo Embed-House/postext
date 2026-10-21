@@ -833,8 +833,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     ? titleFontPx * titleLh.value
     : dimensionToPx(titleLh, dpi, titleFontPx);
   // A title in a joining script (Arabic…) is set untracked: spacing its
-  // letters apart breaks the joins (`measure/joining.ts`).
-  const titleTrackingPx = joiningScriptIn(titleText) ? 0 : Math.max(0, dimensionToPx(style.titleStyle.letterSpacing, dpi, titleFontPx));
+  // letters apart breaks the joins (`measure/joining.ts`). A negative
+  // tracking tightens the title (#1098), as it does a heading.
+  const titleTrackingRaw = dimensionToPx(style.titleStyle.letterSpacing, dpi, titleFontPx);
+  const titleTrackingPx = joiningScriptIn(titleText) || !Number.isFinite(titleTrackingRaw) ? 0 : titleTrackingRaw;
   // A corner badge on the left hangs half over the title's side: the title
   // starts past it (its inner half plus the icon gap), at least — a
   // configured `indent` only adds beyond that room.
@@ -860,9 +862,10 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   let titleBlock: VDTDesignTextBlock | undefined;
   if (hasTitle) {
     const titleW = Math.max(1, innerWidth - titleIndentPx);
-    // Tracking only widens lines on the rich path: the plain breaker would
-    // fit an untracked line and the tracked title would overrun the box.
-    const measured = titleTrackingPx > 0
+    // Tracking only changes line widths on the rich path: the plain breaker
+    // would fit an untracked line and a tracked title would overrun the box
+    // (or, tightened, break earlier than it needs to).
+    const measured = titleTrackingPx !== 0
       ? measureRichBlock(
         [{ text: titleText, bold: false, italic: false }],
         titleFont, titleFont, titleFont, titleFont, titleW, titleLineHeight,
@@ -903,7 +906,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         };
       }),
       clip: false,
-      ...(titleTrackingPx > 0 ? { letterSpacingPx: titleTrackingPx } : {}),
+      ...(titleTrackingPx !== 0 ? { letterSpacingPx: titleTrackingPx } : {}),
       ...(repeatedTitle ? { artifact: true } : {}),
     }, titleTrackingPx);
     cursorY += titleHeight;
