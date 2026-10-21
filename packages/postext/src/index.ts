@@ -758,6 +758,11 @@ export type { FontsChangedListener } from './fonts/fontSet';
 export { documentFontFaces, documentFontFamilies, fontFallbacks, defaultFontSet, cssWeightOrder, cssWeightOrderOf } from './fonts/faces';
 export type { FontFaceLike, FontFaceSetLike, FontFallback, FontFallbackReason, FontFallbackOptions, FontFaceRequest } from './fonts/faces';
 export { exportStandInOf, fontFallbackOf, fontFallbackFamilies, hasOwnStyle } from './fonts/fallback';
+// Characters a face lacks, drawn from another face (#1105).
+export { glyphFallbacks, documentFontTexts, registerFontCoverage, forgetFontCoverage, installGlyphProbe, GLYPH_PROBE_FAMILY, GLYPH_FALLBACK_LISTED } from './fonts/glyphFallback';
+export type { GlyphFallback, GlyphFallbackOptions } from './fonts/glyphFallback';
+export { sfntCodePointRanges } from './fonts/cmap';
+export type { CodePointRanges } from './fonts/cmap';
 export { evictFontFamilies } from './measure/font';
 export { measurementGeneration } from './measure/canvas';
 export { parseFontString } from './measure/fontString';

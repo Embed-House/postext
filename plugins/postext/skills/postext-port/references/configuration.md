@@ -2536,6 +2536,10 @@ much as a bold made from the regular). Builds with a font set check it (the brow
 the `postext` command line (≥ 1.28): it warns `fontFallback` when a face the family ships could not be loaded
 (offline with nothing cached, a failed download, a `--font-dir` without the file) and another face of the family
 stood in. A weight or slant the family does not ship stays silent there. `render.mjs` does not check it.
+It gates `glyphFallback` too (≥ 1.52): characters the text sets in a face with no glyph for them, which
+another face drew (an arrow or a Greek letter from a fallback serif beside a sans text face), one warning per
+face with the characters. The command line reads the `cmap` of every face it loads; browser and worker builds
+ask a probe face that `prepareFonts` and the layout worker declare (`installGlyphProbe`).
 
 **Fonts and caches in browser code (≥ 1.25).** Build with `buildDocumentWithFonts(content, config,
 { resolve })`, or call `prepareFonts(content, config, { resolve })` before `buildDocument`: it loads

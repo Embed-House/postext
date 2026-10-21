@@ -11,6 +11,7 @@ export type WarningKind =
   | 'missingFontFamily'
   | 'missingFontVariant'
   | 'fontFallback'
+  | 'glyphFallback'
   | 'duplicateFontVariant'
   | 'looseLine'
   | 'cjkLooseLine'
@@ -164,6 +165,11 @@ export type WarningPayload =
    *  in that the font set could not give when it was built — missing, or
    *  drawn by the browser from another weight or slant. */
   | { kind: 'fontFallback'; family: string; weight: number; style: 'normal' | 'italic'; reason: 'missing' | 'synthesized' }
+  /** The engine's `glyphFallback` (#1105): characters the text sets in a
+   *  face that has no glyph for them, drawn from `supplier` (a family of
+   *  the font list or a generic one) or, without it, from a face the
+   *  system picks. `characters` are the first of them, `count` all. */
+  | { kind: 'glyphFallback'; family: string; weight: number; style: 'normal' | 'italic'; characters: string[]; count: number; supplier?: string }
   /** Referenced family is neither a loaded Google Font nor a custom
    *  family in `customFonts`. Silently falls back to a system font at
    *  render time; this warning makes the fall-through visible. */

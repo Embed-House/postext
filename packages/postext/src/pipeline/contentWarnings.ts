@@ -23,6 +23,7 @@ import { MARK_OPENER, directiveAttrRanges, readMarkAt } from '../parse/inlineFor
 import { parsePaperAttrs } from './paper';
 import { extractFrontmatter } from '../frontmatter';
 import { tableGridIssues } from '../table/model';
+import { isGenericFamily } from '../fonts/faces';
 import type { PostextConfig, Resource } from '../types';
 import type { ConfigWarning, ContentWarning, LayoutWarning, RenderWarning, VDTDesignSlot, VDTDocument } from '../vdt';
 import type { HeadingDesignCut } from './headingDesignCuts';
@@ -1102,6 +1103,13 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       text = w.reason === 'missing'
         ? `The face ${face} was not loaded when the document was laid out — its text was measured with a fallback face; load it first (prepareFonts, buildDocumentWithFonts)`
         : `The face ${face} has no file of its own — the browser draws it from another weight or slant of the family; load that face or set a weight the family has`;
+      break;
+    }
+    case 'glyphFallback': {
+      const face = `"${w.family}" ${w.weight}${w.style === 'italic' ? ' italic' : ''}`;
+      const more = w.count > w.characters.length ? ` and ${w.count - w.characters.length} more` : '';
+      const by = w.supplier ? `the face of ${isGenericFamily(w.supplier) ? w.supplier : `"${w.supplier}"`}` : 'a face the system picks';
+      text = `The face ${face} has no glyph for ${w.count === 1 ? '1 character' : `${w.count} characters`} (${w.characters.join(' ')}${more}); ${by} draws them instead — choose a family that covers them or name one after it`;
       break;
     }
     case 'designTextTruncated':

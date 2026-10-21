@@ -51,6 +51,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'missingFontFamily':
     case 'missingFontVariant':
     case 'fontFallback':
+    case 'glyphFallback':
     case 'duplicateFontVariant':
       return Type;
     case 'looseLine':
@@ -238,6 +239,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsMissingFontVariantTitle;
     case 'fontFallback':
       return labels.warningsFontFallbackTitle;
+    case 'glyphFallback':
+      return labels.warningsGlyphFallbackTitle;
     case 'duplicateFontVariant':
       return labels.warningsDuplicateFontVariantTitle;
     case 'looseLine':
@@ -581,6 +584,15 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
     case 'fontFallback':
       return (payload.reason === 'missing' ? labels.warningsFontFallbackMissingDetail : labels.warningsFontFallbackSynthesizedDetail)
         .replace('__face__', `"${payload.family}" ${formatVariantList([payload])}`);
+    case 'glyphFallback': {
+      // The characters listed, then how many more: `→ ← … +12`.
+      const rest = payload.count - payload.characters.length;
+      const chars = rest > 0 ? `${payload.characters.join(' ')} … +${rest}` : payload.characters.join(' ');
+      return (payload.supplier ? labels.warningsGlyphFallbackDetail : labels.warningsGlyphFallbackSystemDetail)
+        .replace('__face__', `"${payload.family}" ${formatVariantList([payload])}`)
+        .replace('__chars__', chars)
+        .replace('__supplier__', payload.supplier ?? '');
+    }
     case 'duplicateFontVariant': {
       const slots = payload.variants
         .map((v) => `${v.weight}${v.style === 'italic' ? ' italic' : ''} ×${v.count}`)
@@ -1016,6 +1028,7 @@ function isFontWarning(kind: WarningPayload['kind']): boolean {
     kind === 'missingFontFamily' ||
     kind === 'missingFontVariant' ||
     kind === 'fontFallback' ||
+    kind === 'glyphFallback' ||
     kind === 'duplicateFontVariant' ||
     kind === 'missingGlyph' ||
     kind === 'variableFontDefaultInstance' ||

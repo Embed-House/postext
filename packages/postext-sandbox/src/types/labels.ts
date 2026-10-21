@@ -226,6 +226,9 @@ export interface SandboxLabels {
   /** `__face__`: the family, weight and slant (`"Garamond" 700 italic`). */
   warningsFontFallbackMissingDetail: string;
   warningsFontFallbackSynthesizedDetail: string;
+  warningsGlyphFallbackTitle: string;
+  warningsGlyphFallbackDetail: string;
+  warningsGlyphFallbackSystemDetail: string;
   warningsLooseLineTitle: string;
   warningsRaggedLineTitle: string;
   warningsRaggedLineDetail: string;

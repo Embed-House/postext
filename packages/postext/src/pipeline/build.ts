@@ -62,7 +62,8 @@ import { verseLinesSettings, versesLineByLine } from './verseLines';
 import type { MeasurementCache } from '../measure';
 import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config';
 import { resolveDebugConfig } from '../defaults/debug';
-import { defaultFontSet, documentFontFaces, fontFallbacks, type FontFaceSetLike } from '../fonts/faces';
+import { defaultFontSet, documentFontFaces, faceRequestKey, fontFallbacks, type FontFaceSetLike } from '../fonts/faces';
+import { glyphFallbacks } from '../fonts/glyphFallback';
 import { syncFontSet } from '../fonts/fontSet';
 import { asciiDigits } from '../arabicNumerals';
 import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines';
@@ -9303,9 +9304,16 @@ export function* buildDocumentGen(
   // The bands of the highlight marks (`:mark[…]`, #888).
   highlightDocument(doc);
   // Faces the text was set in that the font set could not give (#629).
-  const fallbacks: ContentWarning[] = fontSet && resolveDebugConfig(config?.debug).warnings.missingFont
+  const checkFonts = resolveDebugConfig(config?.debug).warnings.missingFont;
+  const fallbacks: ContentWarning[] = fontSet && checkFonts
     ? fontFallbacks(documentFontFaces(doc), fontSet).map((f) => ({ kind: 'fontFallback', family: f.family, weight: f.weight, style: f.style, reason: f.reason }))
     : [];
+  // Characters a face lacks, which another face drew (#1105). A face
+  // missing altogether is a `fontFallback` above, not one per character.
+  if (checkFonts) {
+    const skip = new Set(fallbacks.flatMap((f) => (f.kind === 'fontFallback' && f.reason === 'missing' ? [faceRequestKey(f)] : [])));
+    for (const g of glyphFallbacks(doc, { skip })) fallbacks.push({ kind: 'glyphFallback', ...g });
+  }
   if (located.length > 0 || loose.length > 0 || annotations.length > 0 || harakat.length > 0 || fallbacks.length > 0) {
     doc.contentWarnings = [...located, ...loose, ...annotations, ...harakat, ...fallbacks];
   }

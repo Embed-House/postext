@@ -148,6 +148,8 @@ Clicar em qualquer um desses avisos abre o painel Fontes, para você enviar a va
 
 Quando já existe uma diagramação, o painel também lista o aviso do motor **Fonte substituta na diagramação** (`fontFallback`): uma face sem a qual as páginas foram medidas, seja porque falta, seja porque o navegador a desenha a partir de outro peso ou de outra inclinação. Uma família que já aparece como desconhecida ou com variante ausente não é listada duas vezes. Antes da primeira diagramação, uma verificação contra `document.fonts` ocupa o lugar desse aviso.
 
+O painel também lista **Caracteres tirados de outra fonte** (`glyphFallback`): caracteres que o texto põe numa fonte que não tem glifo para eles, uma vez por fonte, com a família genérica que os desenhou (`serif`, `sans-serif`, `monospace`) quando a verificação consegue saber.
+
 ## Paleta de cores
 
 A propriedade `colorPalette` de `PostextConfig` permite definir um conjunto reutilizável de cores com nome e referenciá-las a partir de qualquer `ColorValue` da configuração. É o equivalente, no Postext, às propriedades personalizadas do CSS ou ao painel de amostras do InDesign: você muda a entrada da paleta uma vez, e todas as cores que apontam para ela se atualizam no documento inteiro.
