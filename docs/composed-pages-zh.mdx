@@ -69,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-**槽位**指明一段内容进哪个框：它与模板中某个框的名称对应。`:::frame{slot="…"}`把其中的全部内容送进那个框。框里可以写任何Markdown：段落、列表、标题、行内标签、`::resource`嵌入、`:ref`引用、脚注、`:::columns`和嵌套的标注框。`label`和`title`为框的页签或标题提供文字，与`:::callout`相同；框的外观来自模板给它指定的标注框样式。
+**槽位**指明一段内容进哪个框：它与模板中某个框的名称对应。`:::frame{slot="…"}`把其中的全部内容送进那个框。框里可以写任何Markdown：段落、列表、标题、行内标签、`::resource`嵌入、`:ref`引用、脚注、`:::columns`和嵌套的标注框。`label`和`title`为框的页签或标题提供文字，与`:::callout`相同；框的外观来自模板给它指定的标注框样式，一段内容也可以指定自己的外观（见[框的外观](#框的外观)）。
 
 单个块也可以自己写明槽位：
 
@@ -131,6 +131,36 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 - **数量。** 页面上有几段内容，就有几张卡片。有五种动物的西班牙语版和有四种的英语版用同一个模板。设了`repeat.max`的网格最多容纳这么多张；每多出一段就给出`repeatOverflow`，这段内容进入流文框。
 
 这组框中的某个框，只有在本页没有任何卡片填它时，才报告为`slotEmpty`。重复的框从不接收标题，也从不是流文框。
+
+### 框的外观
+
+一段内容可以采用一种有名称的外观：一组颜色，由配置在`frameLooks`中定义（见[配置 › 框的外观](/zh/docs/configuration-composed-pages#框的外观)）。Markdown指明用哪种外观，配置说明这种外观是什么样子。在网格中，这样每张卡片可以有自己的颜色，而所有卡片仍用同一个模板和同一种样式：
+
+```md
+::::page{template="fotos"}
+# 河边的动物
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+苍鹭
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+水獭
+:::
+:::
+::::
+```
+
+- **写在哪里。** `look`写在任何`:::frame{slot="…"}`的开始行上。卡片的主内容（这里是第二张照片的框）和嵌在其中的成员（每个题注小签）各自指定自己的外观。
+- **改变什么。** 外观叠加在框的样式和模板自身的颜色之上，只作用于这一段内容：其他卡片保持各自的颜色。接续到另一个框里的文字（串接框、追加页）仍保持这种外观。
+- **未知的id。** `frameLooks`中没有的id会在该属性处给出`lookUnknown`，并附上最接近的id，框保持原来的颜色。
 
 ### 页面中的模块
 
@@ -331,6 +361,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>在模板中调高或去掉<code>max</code>，或者把多出的卡片移到另一页。</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td><code>:::frame</code>写了<code>look="…"</code>，而没有哪一项<code>frameLooks</code>有这个id（见<a href="#框的外观">框的外观</a>）。框保持它的样式和模板的颜色。警告给出最接近的id（<code>suggestion</code>）。</td>
+      <td>改正id，或者把这种外观加进<code>frameLooks</code>。</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td><code>:::module</code>没有指定模板，指定的模板不是模块，或者这一页的模板没有模块组（<code>reason</code>）。它的内容进入流文框。</td>
       <td>改正模块的<code>template</code>，或者给这一页的模板加一个<code>modules: true</code>的组。</td>
@@ -353,7 +388,7 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
-模块的各条警告和`repeatOverflow`自postext 1.48起提供；每条警告在模板一侧的情况见[配置 › 重叠、重复与模块的警告](/zh/docs/configuration-composed-pages#重叠重复与模块的警告)。
+模块的各条警告和`repeatOverflow`自postext 1.48起提供，`lookUnknown`自postext 1.50起提供；每条警告在模板一侧的情况见[配置 › 重叠、重复与模块的警告](/zh/docs/configuration-composed-pages#重叠重复与模块的警告)。
 
 全书排好之后，这些警告还会带上所涉及的页（`pageIndex`），检查面板和`postext check`在模板、框或槽位以及源码范围旁边给出页码。
 

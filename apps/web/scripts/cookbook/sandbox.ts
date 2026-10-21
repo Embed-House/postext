@@ -167,6 +167,7 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   moduleAsPage: "1.48.0",
   moduleNested: "1.48.0",
   moduleNameRejected: "1.48.0",
+  lookUnknown: "1.50.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one

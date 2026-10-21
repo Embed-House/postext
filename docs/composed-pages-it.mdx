@@ -69,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Lo **slot** è il nome della cornice a cui va un pezzo di contenuto, e corrisponde al nome di una cornice del modello. `:::frame{slot="…"}` manda in quella cornice tutto ciò che contiene. Al suo interno vale tutto il Markdown: paragrafi, elenchi, titoli, chip, inserimenti `::resource`, rimandi `:ref`, note a piè di pagina, `:::columns` e riquadri annidati. `label` e `title` impostano il testo della linguetta o del titolo della cornice, come per un `:::callout`; l’aspetto della cornice viene dallo stile di riquadro che le assegna il modello.
+Lo **slot** è il nome della cornice a cui va un pezzo di contenuto, e corrisponde al nome di una cornice del modello. `:::frame{slot="…"}` manda in quella cornice tutto ciò che contiene. Al suo interno vale tutto il Markdown: paragrafi, elenchi, titoli, chip, inserimenti `::resource`, rimandi `:ref`, note a piè di pagina, `:::columns` e riquadri annidati. `label` e `title` impostano il testo della linguetta o del titolo della cornice, come per un `:::callout`; l’aspetto della cornice viene dallo stile di riquadro che le assegna il modello, e un pezzo può indicare un aspetto suo (vedi [Aspetti delle cornici](#aspetti-delle-cornici)).
 
 Un singolo blocco può indicare da sé il suo slot:
 
@@ -131,6 +131,36 @@ La lontra
 - **Quante.** La pagina ha tante schede quanti sono i pezzi. Un’edizione spagnola con cinque animali e una inglese con quattro usano lo stesso modello. Una griglia con `repeat.max` ne prende al massimo quel numero; ogni pezzo in più produce `repeatOverflow` e va alla cornice di flusso.
 
 Una cornice dell’insieme viene segnalata come `slotEmpty` solo quando nessuna scheda della pagina la riempie. Una cornice ripetuta non riceve mai un titolo e non è mai la cornice di flusso.
+
+### Aspetti delle cornici
+
+Un pezzo può portare un aspetto con nome: un insieme di colori che la configurazione definisce in `frameLooks` (vedi [Configurazione › Aspetti delle cornici](/it/docs/configuration-composed-pages#aspetti-delle-cornici)). Il Markdown nomina l’aspetto e la configurazione dice com’è. In una griglia questo dà a ogni scheda il suo colore, mentre tutte le schede tengono un solo modello e un solo stile:
+
+```md
+::::page{template="fotos"}
+# Gli animali del fiume
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+L’airone
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+La lontra
+:::
+:::
+::::
+```
+
+- **Dove.** `look` va sulla riga di apertura di qualsiasi pezzo `:::frame{slot="…"}`. Il pezzo principale di una scheda (qui la cornice della seconda foto) e un membro annidato in esso (ogni pastiglia) indicano ciascuno il proprio.
+- **Che cosa cambia.** L’aspetto si posa sullo stile della cornice e sui colori propri del modello, solo per quel pezzo: le altre schede tengono i loro. Il testo che prosegue in un’altra cornice (una catena, una pagina di continuazione) mantiene l’aspetto.
+- **Un id sconosciuto.** Un id che `frameLooks` non ha produce `lookUnknown` sull’attributo, con l’id più vicino, e la cornice tiene i suoi colori.
 
 ### Moduli in una pagina
 
@@ -331,6 +361,11 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
       <td>Alza o togli <code>max</code> nel modello, oppure sposta le schede in più su un’altra pagina.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un pezzo <code>:::frame</code> scrive <code>look="…"</code> con un id che nessuna voce di <code>frameLooks</code> ha (vedi <a href="#aspetti-delle-cornici">Aspetti delle cornici</a>). La cornice tiene il suo stile e i colori del modello. L’avviso indica l’id più vicino (<code>suggestion</code>).</td>
+      <td>Correggi l’id, oppure aggiungi l’aspetto a <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Un <code>:::module</code> non indica alcun modello, ne indica uno che non è un modulo, oppure il modello della pagina non ha un gruppo di moduli (<code>reason</code>). Il suo contenuto va alla cornice di flusso.</td>
       <td>Correggi il <code>template</code> del modulo, oppure dai al modello della pagina un gruppo con <code>modules: true</code>.</td>
@@ -353,7 +388,7 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
   </tbody>
 </table>
 
-Gli avvisi dei moduli e `repeatOverflow` esistono da postext 1.48; il lato del modello di ciascuno è descritto in [Configurazione › Avvisi di sovrapposizione, ripetizione e moduli](/it/docs/configuration-composed-pages#avvisi-di-sovrapposizione-ripetizione-e-moduli).
+Gli avvisi dei moduli e `repeatOverflow` esistono da postext 1.48, `lookUnknown` da postext 1.50; il lato del modello di ciascuno è descritto in [Configurazione › Avvisi di sovrapposizione, ripetizione e moduli](/it/docs/configuration-composed-pages#avvisi-di-sovrapposizione-ripetizione-e-moduli).
 
 Una volta impaginato il libro, ciascuno di questi avvisi riporta anche la pagina a cui si riferisce (`pageIndex`), così il pannello **Verifiche** e `postext check` danno il numero di pagina accanto al modello, alla cornice o allo slot e all’intervallo del sorgente.
 

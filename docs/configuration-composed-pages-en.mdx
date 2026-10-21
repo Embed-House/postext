@@ -351,7 +351,7 @@ A frame is placed by its `grid` cell when the template has a grid, else by its `
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>The parts of its callout style's look that this frame changes, with the style's own names and nesting: colours (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> and <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) and the tracking of the text (<code>body.letterSpacing</code>). A <code>background</code> also turns the style's fill on; a tab colour only applies to a style that has a tab. In a child template it merges key by key over the frame it overrides. A book with one box shape in several tints keeps one style and writes the tint here, or lets <code>palette</code> recolour a palette-linked fill. Since postext 1.42.</td>
+      <td>The parts of its callout style's look that this frame changes, with the style's own names and nesting: colours (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> and <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) and the tracking of the text (<code>body.letterSpacing</code>). A <code>background</code> also turns the style's fill on; a tab colour only applies to a style that has a tab. In a child template it merges key by key over the frame it overrides. A book with one box shape in several tints keeps one style and writes the tint here, or lets <code>palette</code> recolour a palette-linked fill. A piece of the page can lay a named look over it (see <a href="#frame-looks">Frame looks</a>). Since postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **Checks.** An end whose `to` names nothing is `frameAnchorUnknown` (at `…/from/to` or `…/to/<k>/to`) and is left out; `[*]` is valid only in `to` and on a repeated frame. An `anchor` that no picture of the frame has is `labelAnchorUnknown`, with the connector's id. A word outside the choices of `routing`, `startCap`, `endCap` or `side`, and an `at` outside 0 to 1, are `unknownConfigValue`. An `opacity` that is not a number from 0 to 1 is `unknownConfigValue` as well (a number out of range is held to it).
 
+## Frame looks
+
+A grid of photo cards whose pills differ only in colour, or a page of boxes in a dozen tints, keeps one callout style and one template: the colours go in `frameLooks`, a list of named looks, and the Markdown names one on each piece that wears it. Since postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Field</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Required. The word a piece writes in <code>look="…"</code>. When two looks share an id, the first one is used.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Shown in the Sandbox only.</td>
+    </tr>
+    <tr>
+      <td>The fields of a frame's <code>look</code></td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, named and nested as in the frame's <code>look</code> (see <a href="#frames">Frames</a>). A <code>background</code> also turns the style's fill on; a tab colour only applies to a style that has a tab.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Where it applies.** A `:::frame{slot="…" look="<id>"}` piece wears the look. On a grid, the item's main piece and a member's nested `:::frame` each name their own (see [Composed pages › Frame looks](/en/docs/composed-pages#frame-looks)).
+- **Order.** The look is laid over the frame's callout style and over the template frame's own `look`, key by key: a look that sets only the fill keeps the template's text colour. It applies to that piece only. The frames its text goes on in (a chain, a page added by continuation) wear it too.
+- **Palettes.** A colour linked to a palette entry follows the palette as every colour of the configuration does, so a part palette or a page's `palette` recolours it.
+- **Checks.** An entry with no `id` is ignored (`unknownConfigValue`), and a key a look does not have is an `unknownConfigKey` at any depth, with the nearest name. A piece that names an id no entry has keeps its frame's colours and raises `lookUnknown`.
+
+In the Sandbox the looks are edited under **Design › Boxes › Frame looks**, which also counts the pieces that name each one, and the editor's **Frame look** button writes `look="…"` on the piece the caret is in.
+
 ## Label styles
 
 The `labelStyles` property names the looks of the labels set on a picture: the seas and towns of a map, the parts of a diagram. A label stands at an anchor of the picture (a point stored with the resource, as comic speakers are) and takes the style the anchor or the label names. In the Sandbox they are edited under **Design › Figures & tables › Label styles** (since postext 1.42). Renaming a style there rewrites the anchors and the `::label` lines that name it (since postext 1.43).
@@ -1126,7 +1168,7 @@ anchors: [
 
 Elsewhere the engine ignores a key it does not know. Page templates and label styles are checked instead, and every problem is a configuration warning in `postext check` and in the Sandbox's Checks panel. The `path` of these warnings is a JSON pointer to the field at fault: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. When the field was inherited, the pointer names the template that wrote it. A warning that names an id or a name that does not exist also suggests the closest one that does.
 
-A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or label style is an `unknownConfigKey`; a word outside a setting's choices (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, a connector's `routing`, caps and `side`, a leader's caps and `routing`) is an `unknownConfigValue`, and the setting keeps its default. A template with no `id`, or a frame or group with no `name`, is ignored with an `unknownConfigValue` at that field.
+A misspelt key of a template, frame, group, grid, `fit`, `overflow`, variant or label style is an `unknownConfigKey`; a word outside a setting's choices (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, a connector's `routing`, caps and `side`, a leader's caps and `routing`) is an `unknownConfigValue`, and the setting keeps its default. A template with no `id`, or a frame or group with no `name`, is ignored with an `unknownConfigValue` at that field. Frame looks (`frameLooks`) are checked the same way: a look with no `id` is ignored, and a key a frame's `look` does not have is an `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ Since connectors (postext 1.48) the configuration version is 16; page templates 
 
 ### Overlap, repeat and module warnings
 
-These warnings come from the layout or from the page's Markdown, not from the template alone, so they name a page. They are listed by `postext check` (`--json` carries their fields as `data`), in the Sandbox's Checks panel and in the document's `contentWarnings`. Since postext 1.48.
+These warnings come from the layout or from the page's Markdown, not from the template alone, so they name a page. They are listed by `postext check` (`--json` carries their fields as `data`), in the Sandbox's Checks panel and in the document's `contentWarnings`. Since postext 1.48, `lookUnknown` since postext 1.50.
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ These warnings come from the layout or from the page's Markdown, not from the te
       <td><code>repeatOverflow</code></td>
       <td>A grid that repeats a frame set holds <code>repeat.max</code> items and the page gives it more. One per item over, at its <code>slot="…"</code>: the item goes to the flow frame (<code>flowFrame</code>), or after the page.</td>
       <td>Raise <code>max</code>, remove it, or move the extra items to another page.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>A <code>:::frame</code> piece writes <code>look="…"</code> with an id that no <code>frameLooks</code> entry has (see <a href="#frame-looks">Frame looks</a>). The frame keeps its style and its template colours. Points at the attribute's value, and names the nearest id (<code>suggestion</code>).</td>
+      <td>Correct the id on the piece, or add a look with that id to <code>frameLooks</code>.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

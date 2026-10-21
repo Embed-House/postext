@@ -69,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Ein **Slot** gibt an, in welchen Rahmen ein Teil des Inhalts kommt: Er entspricht dem Namen eines Rahmens der Vorlage. `:::frame{slot="…"}` leitet alles, was darin steht, in diesen Rahmen. Der Inhalt ist vollständiges Markdown: Absätze, Listen, Überschriften, Chips, `::resource`-Einbettungen, `:ref`-Verweise, Fußnoten, `:::columns` und verschachtelte Kästen. `label` und `title` legen den Text des Etiketts bzw. des Titels des Rahmens fest, wie bei einem `:::callout`; das Aussehen des Rahmens bestimmt der Kastenstil, den die Vorlage ihm zuweist.
+Ein **Slot** gibt an, in welchen Rahmen ein Teil des Inhalts kommt: Er entspricht dem Namen eines Rahmens der Vorlage. `:::frame{slot="…"}` leitet alles, was darin steht, in diesen Rahmen. Der Inhalt ist vollständiges Markdown: Absätze, Listen, Überschriften, Chips, `::resource`-Einbettungen, `:ref`-Verweise, Fußnoten, `:::columns` und verschachtelte Kästen. `label` und `title` legen den Text des Etiketts bzw. des Titels des Rahmens fest, wie bei einem `:::callout`; das Aussehen des Rahmens bestimmt der Kastenstil, den die Vorlage ihm zuweist, und ein Teil kann ein eigenes Aussehen nennen (siehe [Rahmenaussehen](#rahmenaussehen)).
 
 Ein einzelner Block kann seinen Slot selbst angeben:
 
@@ -131,6 +131,36 @@ Der Fischotter
 - **Wie viele.** Die Seite hat so viele Karten wie Teile. Eine spanische Ausgabe mit fünf Tieren und eine englische mit vier verwenden dieselbe Vorlage. Ein Raster mit `repeat.max` nimmt so viele auf; jeder Teil darüber hinaus löst `repeatOverflow` aus und kommt in den Flussrahmen.
 
 Ein Rahmen des Satzes wird nur dann als `slotEmpty` gemeldet, wenn keine Karte der Seite ihn füllt. Ein wiederholter Rahmen übernimmt nie eine Überschrift und ist nie der Flussrahmen.
+
+### Rahmenaussehen
+
+Ein Teil kann ein benanntes Aussehen tragen: einen Satz Farben, den die Konfiguration in `frameLooks` festlegt (siehe [Konfiguration › Rahmenaussehen](/de/docs/configuration-composed-pages#rahmenaussehen)). Das Markdown nennt das Aussehen, die Konfiguration sagt, wie es ist. In einem Raster bekommt so jede Karte ihre eigene Farbe, während alle Karten bei einer Vorlage und einem Stil bleiben:
+
+```md
+::::page{template="fotos"}
+# Tiere am Fluss
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+Der Reiher
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+Der Fischotter
+:::
+:::
+::::
+```
+
+- **Wo.** `look` steht in der Eröffnungszeile eines beliebigen Teils `:::frame{slot="…"}`. Der Hauptteil einer Karte (hier der Rahmen des zweiten Fotos) und ein darin verschachteltes Mitglied (jedes Etikett) nennen jeweils ihr eigenes.
+- **Was es ändert.** Das Aussehen legt sich über den Stil des Rahmens und die eigenen Farben der Vorlage, nur für diesen Teil: Die anderen Karten behalten ihre. Text, der in einem anderen Rahmen weiterläuft (eine Kette, eine Fortsetzungsseite), behält das Aussehen.
+- **Eine unbekannte ID.** Eine ID, die `frameLooks` nicht hat, löst `lookUnknown` am Attribut aus, mit der nächstliegenden ID, und der Rahmen behält seine Farben.
 
 ### Module auf einer Seite
 
@@ -331,6 +361,11 @@ Die Prüfungen werten Markdown und Konfiguration aus, noch bevor das Buch gesetz
       <td>Erhöhen oder entfernen Sie <code>max</code> in der Vorlage, oder setzen Sie die überzähligen Karten auf eine andere Seite.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Ein Teil <code>:::frame</code> schreibt <code>look="…"</code> mit einer ID, die kein Eintrag von <code>frameLooks</code> hat (siehe <a href="#rahmenaussehen">Rahmenaussehen</a>). Der Rahmen behält seinen Stil und die Farben seiner Vorlage. Die Warnung nennt die nächstliegende ID (<code>suggestion</code>).</td>
+      <td>Korrigieren Sie die ID, oder fügen Sie das Aussehen zu <code>frameLooks</code> hinzu.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Ein <code>:::module</code> nennt keine Vorlage, eine Vorlage, die kein Modul ist, oder die Vorlage der Seite hat keine Modulgruppe (<code>reason</code>). Sein Inhalt kommt in den Flussrahmen.</td>
       <td>Korrigieren Sie das <code>template</code> des Moduls, oder geben Sie der Vorlage der Seite eine Gruppe mit <code>modules: true</code>.</td>
@@ -353,7 +388,7 @@ Die Prüfungen werten Markdown und Konfiguration aus, noch bevor das Buch gesetz
   </tbody>
 </table>
 
-Die Modulwarnungen und `repeatOverflow` gibt es seit postext 1.48; die Seite der Vorlage beschreibt jeweils [Konfiguration › Warnungen zu Überlappung, Wiederholung und Modulen](/de/docs/configuration-composed-pages#warnungen-zu-überlappung-wiederholung-und-modulen).
+Die Modulwarnungen und `repeatOverflow` gibt es seit postext 1.48, `lookUnknown` seit postext 1.50; die Seite der Vorlage beschreibt jeweils [Konfiguration › Warnungen zu Überlappung, Wiederholung und Modulen](/de/docs/configuration-composed-pages#warnungen-zu-überlappung-wiederholung-und-modulen).
 
 Sobald das Buch gesetzt ist, enthält jede dieser Warnungen auch die Seite, die sie betrifft (`pageIndex`), sodass das Bedienfeld Prüfungen und `postext check` die Seitenzahl neben der Vorlage, dem Rahmen oder Slot und dem Quellbereich angeben.
 

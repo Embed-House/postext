@@ -69,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-La **ranura** (l'atribut `slot`) és el nom del marc on va un tros de contingut, i coincideix amb el nom d'un marc de la plantilla. `:::frame{slot="…"}` envia a aquest marc tot el que conté. El contingut és Markdown complet: paràgrafs, llistes, encapçalaments, xips, insercions `::resource`, referències `:ref`, notes a peu de pàgina, `:::columns` i caixes niades. `label` i `title` posen el text de la pestanya o del títol del marc, com en un `:::callout`; l'aspecte del marc surt de l'estil de requadre que li assigna la plantilla.
+La **ranura** (l'atribut `slot`) és el nom del marc on va un tros de contingut, i coincideix amb el nom d'un marc de la plantilla. `:::frame{slot="…"}` envia a aquest marc tot el que conté. El contingut és Markdown complet: paràgrafs, llistes, encapçalaments, xips, insercions `::resource`, referències `:ref`, notes a peu de pàgina, `:::columns` i caixes niades. `label` i `title` posen el text de la pestanya o del títol del marc, com en un `:::callout`; l'aspecte del marc surt de l'estil de requadre que li assigna la plantilla, i un tros pot indicar un aspecte propi (vegeu [Aspectes de marc](#aspectes-de-marc)).
 
 Un bloc solt també pot indicar la seva ranura:
 
@@ -131,6 +131,36 @@ La llúdriga
 - **Quantes.** La pàgina té tantes targetes com trossos. Una edició en castellà amb cinc animals i una en anglès amb quatre fan servir la mateixa plantilla. Una graella amb `repeat.max` n'admet aquest nombre; cada tros de més genera `repeatOverflow` i va al marc de flux.
 
 Un marc del joc només es dona com a `slotEmpty` quan cap targeta de la pàgina no l'omple. Un marc repetit no rep mai cap encapçalament i no és mai el marc de flux.
+
+### Aspectes de marc
+
+Un tros pot portar un aspecte amb nom: un joc de colors que la configuració defineix a `frameLooks` (vegeu [Configuració › Aspectes de marc](/ca/docs/configuration-composed-pages#aspectes-de-marc)). El Markdown diu quin aspecte porta i la configuració diu com és. En una graella, així cada targeta té el seu color i totes comparteixen una plantilla i un estil:
+
+```md
+::::page{template="fotos"}
+# Animals del riu
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+El bernat pescaire
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+La llúdriga
+:::
+:::
+::::
+```
+
+- **On.** `look` va a la línia d'obertura de qualsevol tros `:::frame{slot="…"}`. El tros principal d'una targeta (aquí el marc de la segona foto) i un membre niat a dins (cada píndola) indiquen el seu.
+- **Què canvia.** L'aspecte es posa sobre l'estil del marc i els colors propis de la plantilla, només per a aquell tros: les altres targetes conserven els seus. El text que continua en un altre marc (una cadena, una pàgina de continuació) manté l'aspecte.
+- **Un id desconegut.** Un id que `frameLooks` no té genera l'avís `lookUnknown` a l'atribut, amb l'id més semblant, i el marc conserva els seus colors.
 
 ### Mòduls en una pàgina
 
@@ -331,6 +361,11 @@ Les revisions llegeixen el Markdown i la configuració abans de maquetar res, ai
       <td>Augmenta o treu el <code>max</code> de la plantilla, o passa les targetes de més a una altra pàgina.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un tros <code>:::frame</code> escriu <code>look="…"</code> amb un id que cap entrada de <code>frameLooks</code> no té (vegeu <a href="#aspectes-de-marc">Aspectes de marc</a>). El marc conserva el seu estil i els colors de la plantilla. L'avís indica l'id més semblant (<code>suggestion</code>).</td>
+      <td>Corregeix l'id, o afegeix l'aspecte a <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Un <code>:::module</code> no indica cap plantilla, n'indica una que no és un mòdul, o la plantilla de la pàgina no té cap grup de mòduls (<code>reason</code>). El seu contingut va al marc de flux.</td>
       <td>Corregeix el <code>template</code> del mòdul, o dona a la plantilla de la pàgina un grup amb <code>modules: true</code>.</td>
@@ -353,7 +388,7 @@ Les revisions llegeixen el Markdown i la configuració abans de maquetar res, ai
   </tbody>
 </table>
 
-Els avisos dels mòduls i `repeatOverflow` existeixen des de postext 1.48; la part de cada un que toca la plantilla es descriu a [Configuració › Avisos de superposició, repetició i mòduls](/ca/docs/configuration-composed-pages#avisos-de-superposició-repetició-i-mòduls).
+Els avisos dels mòduls i `repeatOverflow` existeixen des de postext 1.48, i `lookUnknown` des de postext 1.50; la part de cada un que toca la plantilla es descriu a [Configuració › Avisos de superposició, repetició i mòduls](/ca/docs/configuration-composed-pages#avisos-de-superposició-repetició-i-mòduls).
 
 Un cop maquetat el llibre, cadascun d'aquests avisos també indica la pàgina a què es refereix (`pageIndex`), de manera que el tauler Revisió i `postext check` mostren el número de pàgina al costat de la plantilla, el marc o la ranura i l'interval d'origen.
 

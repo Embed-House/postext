@@ -351,7 +351,7 @@ Ein Rahmen wird über seine Rasterzelle (`grid`) platziert, wenn die Vorlage ein
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Was dieser Rahmen am Aussehen seines Kastenstils ändert, mit den Namen und der Verschachtelung des Stils selbst: Farben (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> und <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) und die Laufweite des Textes (<code>body.letterSpacing</code>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; die Farbe eines Etiketts gilt nur für einen Stil mit Etikett. In einer Kindvorlage wird der Wert Schlüssel für Schlüssel mit dem Rahmen zusammengeführt, den er überschreibt. Ein Buch mit einer Kastenform in mehreren Farbtönen behält einen Stil und schreibt den Farbton hier, oder lässt <code>palette</code> eine an die Palette gebundene Füllung umfärben. Seit postext 1.42.</td>
+      <td>Was dieser Rahmen am Aussehen seines Kastenstils ändert, mit den Namen und der Verschachtelung des Stils selbst: Farben (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> und <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) und die Laufweite des Textes (<code>body.letterSpacing</code>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; die Farbe eines Etiketts gilt nur für einen Stil mit Etikett. In einer Kindvorlage wird der Wert Schlüssel für Schlüssel mit dem Rahmen zusammengeführt, den er überschreibt. Ein Buch mit einer Kastenform in mehreren Farbtönen behält einen Stil und schreibt den Farbton hier, oder lässt <code>palette</code> eine an die Palette gebundene Füllung umfärben. Ein Teil der Seite kann ein benanntes Aussehen darüberlegen (siehe <a href="#rahmenaussehen">Rahmenaussehen</a>). Seit postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **Prüfungen.** Ein Ende, dessen `to` nichts nennt, ist `frameAnchorUnknown` (an `…/from/to` oder `…/to/<k>/to`) und wird weggelassen; `[*]` gilt nur in `to` und an einem wiederholten Rahmen. Ein `anchor`, den kein Bild des Rahmens hat, ist `labelAnchorUnknown`, mit der ID des Verbinders. Ein Wort außerhalb der Auswahl von `routing`, `startCap`, `endCap` oder `side` und ein `at` außerhalb von 0 bis 1 sind `unknownConfigValue`. Ein `opacity`, das keine Zahl von 0 bis 1 ist, ist ebenfalls `unknownConfigValue` (eine Zahl außerhalb wird auf den Bereich begrenzt).
 
+## Rahmenaussehen
+
+Ein Raster aus Fotokarten, deren Etiketten sich nur in der Farbe unterscheiden, oder eine Seite mit Kästen in einem Dutzend Tönen behält einen Kastenstil und eine Vorlage: Die Farben kommen in `frameLooks`, eine Liste benannter Aussehen, und das Markdown nennt eines an jedem Teil, der es trägt. Seit postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Feld</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Pflichtfeld. Das Wort, das ein Teil in <code>look="…"</code> schreibt. Haben zwei Aussehen dieselbe ID, gilt das erste.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Wird nur in der Sandbox angezeigt.</td>
+    </tr>
+    <tr>
+      <td>Die Felder des <code>look</code> eines Rahmens</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, benannt und verschachtelt wie im <code>look</code> des Rahmens (siehe <a href="#rahmen">Rahmen</a>). Ein <code>background</code> schaltet auch die Füllung des Stils ein; eine Etikettfarbe gilt nur für einen Stil mit Etikett.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Wo es gilt.** Ein Teil `:::frame{slot="…" look="<id>"}` trägt das Aussehen. In einem Raster nennen der Hauptteil des Eintrags und das verschachtelte `:::frame` eines Mitglieds jeweils ihr eigenes (siehe [Zusammengesetzte Seiten › Rahmenaussehen](/de/docs/composed-pages#rahmenaussehen)).
+- **Reihenfolge.** Das Aussehen legt sich Schlüssel für Schlüssel über den Kastenstil des Rahmens und über das eigene `look` des Vorlagenrahmens: Ein Aussehen, das nur die Füllung setzt, behält die Textfarbe der Vorlage. Es gilt nur für diesen Teil. Die Rahmen, in denen sein Text weiterläuft (eine Kette, eine durch Fortsetzung hinzugefügte Seite), tragen es ebenfalls.
+- **Paletten.** Eine an einen Paletteneintrag gebundene Farbe folgt der Palette wie jede Farbe der Konfiguration, also färbt eine Teilpalette oder die `palette` einer Seite sie um.
+- **Prüfungen.** Ein Eintrag ohne `id` wird ignoriert (`unknownConfigValue`), und ein Schlüssel, den ein Aussehen nicht hat, ist in jeder Tiefe ein `unknownConfigKey`, mit dem nächstliegenden Namen. Ein Teil, der eine ID nennt, die kein Eintrag hat, behält die Farben seines Rahmens und löst `lookUnknown` aus.
+
+In der Sandbox werden die Aussehen unter **Gestaltung › Kästen › Rahmenaussehen** bearbeitet; dort steht auch, wie viele Teile jedes nennen. Die Schaltfläche **Rahmenaussehen** des Editors schreibt `look="…"` an den Teil, in dem der Cursor steht.
+
 ## Beschriftungsstile
 
 Die Eigenschaft `labelStyles` legt das Aussehen der Beschriftungen auf einem Bild fest: die Meere und Städte einer Karte, die Teile eines Schemas. Eine Beschriftung steht an einem Anker des Bilds (einem Punkt, der mit der Ressource gespeichert ist, wie die Sprecher in Comics) und übernimmt den Stil, den der Anker oder die Beschriftung angibt. In der Sandbox werden sie unter **Gestaltung › Abbildungen und Tabellen › Beschriftungsstile** bearbeitet (seit postext 1.42). Wird ein Stil dort umbenannt, schreibt die Sandbox die Anker und die `::label`-Zeilen um, die ihn nennen (seit postext 1.43).
@@ -1126,7 +1168,7 @@ anchors: [
 
 Anderswo ignoriert die Engine einen Schlüssel, den sie nicht kennt. Seitenvorlagen und Beschriftungsstile werden dagegen geprüft, und jedes Problem ist eine Konfigurationswarnung in `postext check` und im Bedienfeld Prüfungen der Sandbox. Der `path` dieser Warnungen ist ein JSON-Pointer auf das fehlerhafte Feld: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Wurde das Feld geerbt, verweist der Pointer auf die Vorlage, in der es steht. Eine Warnung, die eine nicht vorhandene ID oder einen nicht vorhandenen Namen nennt, schlägt außerdem den nächstliegenden vorhandenen vor.
 
-Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, `routing`, Endmarken und `side` eines Verbinders, Endmarken und `routing` einer Hinweislinie) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert.
+Ein falsch geschriebener Schlüssel einer Vorlage, eines Rahmens, einer Gruppe, eines Rasters, von `fit`, von `overflow`, einer Variante oder eines Beschriftungsstils ist ein `unknownConfigKey`; ein Wort außerhalb der Auswahl einer Einstellung (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, `routing`, Endmarken und `side` eines Verbinders, Endmarken und `routing` einer Hinweislinie) ist ein `unknownConfigValue`, und die Einstellung behält ihren Standardwert. Eine Vorlage ohne `id` oder ein Rahmen oder eine Gruppe ohne `name` wird mit einem `unknownConfigValue` an diesem Feld ignoriert. Rahmenaussehen (`frameLooks`) werden genauso geprüft: Ein Aussehen ohne `id` wird ignoriert, und ein Schlüssel, den das `look` eines Rahmens nicht hat, ist ein `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ Seit es Verbinder gibt (postext 1.48), ist die Konfigurationsversion 16; die Sei
 
 ### Warnungen zu Überlappung, Wiederholung und Modulen
 
-Diese Warnungen entstehen beim Setzen oder aus dem Markdown der Seite, nicht aus der Vorlage allein; sie nennen deshalb eine Seite. Sie stehen in `postext check` (`--json` liefert ihre Felder als `data`), im Bedienfeld Prüfungen der Sandbox und in den `contentWarnings` des Dokuments. Seit postext 1.48.
+Diese Warnungen entstehen beim Setzen oder aus dem Markdown der Seite, nicht aus der Vorlage allein; sie nennen deshalb eine Seite. Sie stehen in `postext check` (`--json` liefert ihre Felder als `data`), im Bedienfeld Prüfungen der Sandbox und in den `contentWarnings` des Dokuments. Seit postext 1.48, `lookUnknown` seit postext 1.50.
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ Diese Warnungen entstehen beim Setzen oder aus dem Markdown der Seite, nicht aus
       <td><code>repeatOverflow</code></td>
       <td>Ein Raster, das einen Rahmensatz wiederholt, fasst <code>repeat.max</code> Einträge, und die Seite gibt ihm mehr. Eine Warnung je überzähligen Eintrag, an seinem <code>slot="…"</code>: Der Eintrag kommt in den Flussrahmen (<code>flowFrame</code>) oder hinter die Seite.</td>
       <td>Erhöhen Sie <code>max</code>, entfernen Sie es, oder setzen Sie die überzähligen Einträge auf eine andere Seite.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Ein Teil <code>:::frame</code> schreibt <code>look="…"</code> mit einer ID, die kein Eintrag von <code>frameLooks</code> hat (siehe <a href="#rahmenaussehen">Rahmenaussehen</a>). Der Rahmen behält seinen Stil und die Farben seiner Vorlage. Zeigt auf den Wert des Attributs und nennt die nächstliegende ID (<code>suggestion</code>).</td>
+      <td>Korrigieren Sie die ID am Teil, oder fügen Sie <code>frameLooks</code> ein Aussehen mit dieser ID hinzu.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

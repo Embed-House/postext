@@ -351,7 +351,7 @@ Um bloco é posicionado pela célula de `grid` quando o modelo tem grade e, sen�
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>O que este bloco muda na aparência do estilo de boxe dele, com os nomes e o aninhamento do próprio estilo: cores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e o espaçamento entre letras do texto (<code>body.letterSpacing</code>). Um <code>background</code> liga também o preenchimento do estilo; a cor de uma aba só conta se o estilo tiver aba. Num modelo filho, mescla-se chave a chave com o bloco que ele substitui. Um livro com uma forma de caixa em várias cores mantém um estilo e escreve aqui a cor, ou deixa que <code>palette</code> recolora um preenchimento ligado à paleta. Desde o postext 1.42.</td>
+      <td>O que este bloco muda na aparência do estilo de boxe dele, com os nomes e o aninhamento do próprio estilo: cores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> e <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) e o espaçamento entre letras do texto (<code>body.letterSpacing</code>). Um <code>background</code> liga também o preenchimento do estilo; a cor de uma aba só conta se o estilo tiver aba. Num modelo filho, mescla-se chave a chave com o bloco que ele substitui. Um livro com uma forma de caixa em várias cores mantém um estilo e escreve aqui a cor, ou deixa que <code>palette</code> recolora um preenchimento ligado à paleta. Um trecho da página pode aplicar uma aparência com nome por cima (veja <a href="#aparências-de-bloco">Aparências de bloco</a>). Desde o postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **Verificações.** Uma ponta cujo `to` não indica nada é `frameAnchorUnknown` (em `…/from/to` ou `…/to/<k>/to`) e fica de fora; `[*]` só é válido em `to` e num bloco repetido. Um `anchor` que nenhuma imagem do bloco tem é `labelAnchorUnknown`, com o id do conector. Uma palavra fora das opções de `routing`, `startCap`, `endCap` ou `side`, e um `at` fora de 0 a 1, são `unknownConfigValue`. Um `opacity` que não é um número de 0 a 1 também é `unknownConfigValue` (um número fora do intervalo é ajustado a ele).
 
+## Aparências de bloco
+
+Uma grade de cartões com foto cujas pílulas só mudam de cor, ou uma página de boxes em uma dúzia de tons, mantém um só estilo de boxe e um só modelo: as cores vão em `frameLooks`, uma lista de aparências com nome, e o Markdown indica uma em cada trecho que a usa. Desde o postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th>Significado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Obrigatório. A palavra que um trecho escreve em <code>look="…"</code>. Quando duas aparências têm o mesmo id, vale a primeira.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Mostrado só no Sandbox.</td>
+    </tr>
+    <tr>
+      <td>Os campos do <code>look</code> de um bloco</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, com os nomes e o aninhamento do <code>look</code> do bloco (veja <a href="#blocos">Blocos</a>). Um <code>background</code> também liga o preenchimento do estilo; a cor de uma aba só vale para um estilo que tem aba.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Onde vale.** Um trecho `:::frame{slot="…" look="<id>"}` usa a aparência. Numa grade, o trecho principal do item e o `:::frame` aninhado de um membro indicam cada um a sua (veja [Páginas compostas › Aparências de bloco](/pt/docs/composed-pages#aparências-de-bloco)).
+- **Ordem.** A aparência é aplicada sobre o estilo de boxe do bloco e sobre o `look` próprio do bloco do modelo, chave a chave: uma aparência que só define o preenchimento mantém a cor do texto do modelo. Vale só para esse trecho. Os blocos em que o texto dele continua (uma cadeia, uma página acrescentada por continuação) também a usam.
+- **Paletas.** Uma cor ligada a uma entrada da paleta acompanha a paleta como toda cor da configuração, então uma paleta de parte ou o `palette` de uma página a recolorem.
+- **Verificações.** Uma entrada sem `id` é ignorada (`unknownConfigValue`), e uma chave que uma aparência não tem é um `unknownConfigKey` em qualquer nível, com o nome mais parecido. Um trecho que indica um id que nenhuma entrada tem mantém as cores do bloco e gera o aviso `lookUnknown`.
+
+No Sandbox as aparências são editadas em **Design › Boxes › Aparências de bloco**, que também conta os trechos que indicam cada uma, e o botão **Aparência do bloco** do editor escreve `look="…"` no trecho em que está o cursor.
+
 ## Estilos de rótulo
 
 A propriedade `labelStyles` dá nome às aparências dos rótulos colocados sobre uma imagem: os mares e as cidades de um mapa, as partes de um esquema. Um rótulo fica numa âncora da imagem (um ponto guardado com o recurso, como as âncoras de personagem dos quadrinhos) e usa o estilo que a âncora ou o rótulo indica. No Sandbox eles são editados em **Design › Figuras e tabelas › Estilos de rótulo** (desde o postext 1.42). Renomear ali um estilo reescreve as âncoras e as linhas `::label` que o citam (desde o postext 1.43).
@@ -1126,7 +1168,7 @@ anchors: [
 
 No resto da configuração, o motor ignora uma chave que não conhece. Os modelos de página e os estilos de rótulo, por outro lado, são verificados, e cada problema é um aviso de configuração no `postext check` e no painel Verificações do Sandbox. O campo `path` desses avisos é um ponteiro JSON para o campo com problema: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quando o campo foi herdado, o ponteiro indica o modelo que o escreveu. Um aviso que cita um id ou um nome inexistente também sugere o existente mais parecido.
 
-Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, o `routing`, as pontas e o `side` de um conector, as pontas e o `routing` de uma linha de chamada) é um `unknownConfigValue`, e o ajuste mantém o valor padrão. Um modelo sem `id`, ou um bloco ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo.
+Uma chave digitada errado de um modelo, bloco, grupo, grade, `fit`, `overflow`, variante ou estilo de rótulo é um `unknownConfigKey`; uma palavra fora das opções de um ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, o `routing`, as pontas e o `side` de um conector, as pontas e o `routing` de uma linha de chamada) é um `unknownConfigValue`, e o ajuste mantém o valor padrão. Um modelo sem `id`, ou um bloco ou grupo sem `name`, é ignorado com um `unknownConfigValue` nesse campo. As aparências de bloco (`frameLooks`) são verificadas do mesmo jeito: uma aparência sem `id` é ignorada, e uma chave que o `look` de um bloco não tem é um `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ Desde os conectores (postext 1.48), a versão da configuração é a 16; os mode
 
 ### Avisos de sobreposição, repetição e módulos
 
-Estes avisos vêm da diagramação ou do Markdown da página, não só do modelo; por isso, indicam uma página. São listados pelo `postext check` (o `--json` traz os campos deles como `data`), no painel Verificações do Sandbox e nos `contentWarnings` do documento. Desde o postext 1.48.
+Estes avisos vêm da diagramação ou do Markdown da página, não só do modelo; por isso, indicam uma página. São listados pelo `postext check` (o `--json` traz os campos deles como `data`), no painel Verificações do Sandbox e nos `contentWarnings` do documento. Desde o postext 1.48, e o `lookUnknown` desde o postext 1.50.
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ Estes avisos vêm da diagramação ou do Markdown da página, não só do modelo
       <td><code>repeatOverflow</code></td>
       <td>Uma grade que repete um conjunto de blocos comporta <code>repeat.max</code> itens e a página lhe dá mais. Um aviso por item a mais, no <code>slot="…"</code> dele: o item vai para o bloco de fluxo (<code>flowFrame</code>), ou para depois da página.</td>
       <td>Aumente o <code>max</code>, retire-o, ou passe os itens a mais para outra página.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Um trecho <code>:::frame</code> escreve <code>look="…"</code> com um id que nenhuma entrada de <code>frameLooks</code> tem (veja <a href="#aparências-de-bloco">Aparências de bloco</a>). O bloco mantém o seu estilo e as cores do modelo. Aponta para o valor do atributo e indica o id mais parecido (<code>suggestion</code>).</td>
+      <td>Corrija o id no trecho, ou acrescente a <code>frameLooks</code> uma aparência com esse id.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

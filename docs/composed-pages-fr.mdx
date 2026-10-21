@@ -69,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Un **emplacement** (attribut `slot`) désigne le bloc où va un morceau de contenu : il correspond au nom d’un bloc du gabarit. `:::frame{slot="…"}` envoie dans ce bloc tout ce qu’il contient. Son contenu peut être n’importe quel Markdown : paragraphes, listes, titres, pastilles, insertions `::resource`, renvois `:ref`, notes de bas de page, `:::columns` et encadrés imbriqués. `label` et `title` fixent le texte de l’onglet ou du titre du bloc, comme pour un `:::callout` ; l’apparence du bloc vient du style d’encadré que le gabarit lui attribue.
+Un **emplacement** (attribut `slot`) désigne le bloc où va un morceau de contenu : il correspond au nom d’un bloc du gabarit. `:::frame{slot="…"}` envoie dans ce bloc tout ce qu’il contient. Son contenu peut être n’importe quel Markdown : paragraphes, listes, titres, pastilles, insertions `::resource`, renvois `:ref`, notes de bas de page, `:::columns` et encadrés imbriqués. `label` et `title` fixent le texte de l’onglet ou du titre du bloc, comme pour un `:::callout` ; l’apparence du bloc vient du style d’encadré que le gabarit lui attribue, et un morceau peut désigner sa propre apparence (voir [Apparences de bloc](#apparences-de-bloc)).
 
 Un élément isolé peut indiquer lui-même son emplacement :
 
@@ -131,6 +131,36 @@ La loutre
 - **Combien.** La page a autant de cartes que de morceaux. Une édition espagnole à cinq animaux et une édition anglaise à quatre utilisent le même gabarit. Une grille avec `repeat.max` en prend ce nombre ; chaque morceau en trop déclenche `repeatOverflow` et va dans le bloc de flux.
 
 Un bloc du jeu n’est signalé comme `slotEmpty` que si aucune carte de la page ne le remplit. Un bloc répété ne prend jamais de titre, et il n’est jamais le bloc de flux.
+
+### Apparences de bloc
+
+Un morceau peut porter une apparence nommée : un jeu de couleurs que la configuration définit dans `frameLooks` (voir [Configuration › Apparences de bloc](/fr/docs/configuration-composed-pages#apparences-de-bloc)). Le Markdown nomme l’apparence et la configuration dit ce qu’elle est. Dans une grille, chaque carte reçoit ainsi sa propre couleur, alors que toutes gardent un seul gabarit et un seul style :
+
+```md
+::::page{template="fotos"}
+# Les animaux du fleuve
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+Le héron
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+La loutre
+:::
+:::
+::::
+```
+
+- **Où.** `look` se place sur la ligne d’ouverture de n’importe quel morceau `:::frame{slot="…"}`. Le morceau principal d’une carte (ici le bloc de la deuxième photo) et un membre imbriqué dans celui-ci (chaque pastille) désignent chacun la leur.
+- **Ce qu’elle change.** L’apparence se pose sur le style du bloc et sur les couleurs propres du gabarit, pour ce morceau seulement : les autres cartes gardent les leurs. Le texte qui se poursuit dans un autre bloc (une chaîne, une page de suite) garde l’apparence.
+- **Un identifiant inconnu.** Un identifiant absent de `frameLooks` déclenche `lookUnknown` sur l’attribut, avec l’identifiant le plus proche, et le bloc garde ses couleurs.
 
 ### Modules dans une page
 
@@ -331,6 +361,11 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
       <td>Relever ou retirer <code>max</code> dans le gabarit, ou déplacer les cartes en trop sur une autre page.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un morceau <code>:::frame</code> écrit <code>look="…"</code> avec un identifiant qu’aucune entrée de <code>frameLooks</code> ne porte (voir <a href="#apparences-de-bloc">Apparences de bloc</a>). Le bloc garde son style et les couleurs de son gabarit. L’avertissement indique l’identifiant le plus proche (<code>suggestion</code>).</td>
+      <td>Corriger l’identifiant, ou ajouter l’apparence à <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Un <code>:::module</code> n’indique aucun gabarit, indique un gabarit qui n’est pas un module, ou le gabarit de la page n’a pas de groupe de modules (<code>reason</code>). Son contenu va dans le bloc de flux.</td>
       <td>Corriger le <code>template</code> du module, ou donner au gabarit de la page un groupe avec <code>modules: true</code>.</td>
@@ -353,7 +388,7 @@ Les vérifications lisent le Markdown et la configuration avant toute mise en pa
   </tbody>
 </table>
 
-Les avertissements des modules et `repeatOverflow` existent depuis postext 1.48 ; le versant gabarit de chacun est décrit dans [Configuration › Avertissements de chevauchement, de répétition et de modules](/fr/docs/configuration-composed-pages#avertissements-de-chevauchement-de-répétition-et-de-modules).
+Les avertissements des modules et `repeatOverflow` existent depuis postext 1.48, `lookUnknown` depuis postext 1.50 ; le versant gabarit de chacun est décrit dans [Configuration › Avertissements de chevauchement, de répétition et de modules](/fr/docs/configuration-composed-pages#avertissements-de-chevauchement-de-répétition-et-de-modules).
 
 Une fois le livre mis en page, chacun de ces avertissements indique aussi la page qu’il concerne (`pageIndex`) : le panneau Vérifications et `postext check` donnent le numéro de page à côté du gabarit, du bloc ou de l’emplacement, et de la position dans la source.
 

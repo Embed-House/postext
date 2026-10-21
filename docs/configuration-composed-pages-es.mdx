@@ -351,7 +351,7 @@ Un marco se coloca por su celda de `grid` cuando la plantilla tiene rejilla y, s
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Lo que este marco cambia del aspecto de su estilo de recuadro, con los nombres y el anidamiento del propio estilo: colores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> y <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) y el espaciado entre letras del texto (<code>body.letterSpacing</code>). Un <code>background</code> activa además el relleno del estilo; el color de una pestaña solo cuenta si el estilo tiene pestaña. En una plantilla hija se combina clave a clave con el marco al que sustituye. Un libro que usa una misma forma de recuadro en varios tonos conserva un solo estilo y escribe aquí el tono, o deja que <code>palette</code> recoloree un relleno vinculado a la paleta. Desde postext 1.42.</td>
+      <td>Lo que este marco cambia del aspecto de su estilo de recuadro, con los nombres y el anidamiento del propio estilo: colores (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> y <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) y el espaciado entre letras del texto (<code>body.letterSpacing</code>). Un <code>background</code> activa además el relleno del estilo; el color de una pestaña solo cuenta si el estilo tiene pestaña. En una plantilla hija se combina clave a clave con el marco al que sustituye. Un libro que usa una misma forma de recuadro en varios tonos conserva un solo estilo y escribe aquí el tono, o deja que <code>palette</code> recoloree un relleno vinculado a la paleta. Un trozo de la página puede poner encima un aspecto con nombre (véase <a href="#aspectos-de-marco">Aspectos de marco</a>). Desde postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **Comprobaciones.** Un extremo cuyo `to` no corresponde a nada es `frameAnchorUnknown` (en `…/from/to` o en `…/to/<k>/to`) y se deja fuera; `[*]` solo es válido en `to` y sobre un marco repetido. Un `anchor` que no tiene ninguna imagen del marco es `labelAnchorUnknown`, con el id del conector. Una palabra que no está entre las opciones de `routing`, `startCap`, `endCap` o `side`, y un `at` fuera de 0 a 1, son `unknownConfigValue`. Un `opacity` que no es un número de 0 a 1 también es `unknownConfigValue` (un número fuera del intervalo se ajusta a él).
 
+## Aspectos de marco
+
+Una rejilla de tarjetas con foto cuyas pastillas solo cambian de color, o una página de recuadros en una docena de tonos, conserva un solo estilo de recuadro y una sola plantilla: los colores van en `frameLooks`, una lista de aspectos con nombre, y el Markdown indica uno en cada trozo que lo lleva. Desde postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Campo</th>
+      <th>Significado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Obligatorio. La palabra que un trozo escribe en <code>look="…"</code>. Si dos aspectos comparten id, se usa el primero.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Solo se muestra en el Sandbox.</td>
+    </tr>
+    <tr>
+      <td>Los campos del <code>look</code> de un marco</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, con los nombres y el anidamiento del <code>look</code> del marco (véase <a href="#marcos">Marcos</a>). Un <code>background</code> activa además el relleno del estilo; el color de una pestaña solo cuenta si el estilo tiene pestaña.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Dónde se aplica.** Un trozo `:::frame{slot="…" look="<id>"}` lleva el aspecto. En una rejilla, el trozo principal del elemento y el `:::frame` anidado de un miembro indican cada uno el suyo (véase [Páginas compuestas › Aspectos de marco](/es/docs/composed-pages#aspectos-de-marco)).
+- **Orden.** El aspecto se pone sobre el estilo de recuadro del marco y sobre el `look` propio del marco de la plantilla, clave a clave: un aspecto que solo fija el relleno conserva el color de texto de la plantilla. Solo afecta a ese trozo. Los marcos en los que sigue su texto (una cadena, una página añadida por continuación) también lo llevan.
+- **Paletas.** Un color vinculado a una entrada de la paleta sigue a la paleta como cualquier color de la configuración, así que una paleta de parte o el `palette` de una página lo recolorean.
+- **Comprobaciones.** Una entrada sin `id` se ignora (`unknownConfigValue`), y una clave que un aspecto no tiene es un `unknownConfigKey` a cualquier profundidad, con el nombre más parecido. Un trozo que indica un id que ninguna entrada tiene conserva los colores de su marco y da el aviso `lookUnknown`.
+
+En el Sandbox los aspectos se editan en **Diseño › Recuadros › Aspectos de marco**, que además cuenta los trozos que indican cada uno, y el botón **Aspecto de marco** del editor escribe `look="…"` en el trozo donde está el cursor.
+
 ## Estilos de rótulo
 
 La propiedad `labelStyles` define, cada uno con su nombre, los aspectos de los rótulos que se ponen sobre una imagen: los mares y las ciudades de un mapa, las partes de un esquema. Un rótulo se sitúa en un ancla de la imagen (un punto con nombre guardado con el recurso, como los personajes de un cómic) y toma el estilo que indica el ancla o el propio rótulo. En el Sandbox se editan en **Diseño › Figuras y tablas › Estilos de rótulo** (desde postext 1.42). Al renombrar ahí un estilo se reescriben las anclas y las líneas `::label` que lo nombran (desde postext 1.43).
@@ -1126,7 +1168,7 @@ anchors: [
 
 En el resto de la configuración, el motor ignora una clave que no conoce. Las plantillas de página y los estilos de rótulo, en cambio, se comprueban, y cada problema es un aviso de configuración en `postext check` y en el panel Revisión del Sandbox. El campo `path` de estos avisos es un puntero JSON al campo que falla: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Cuando el campo es heredado, el puntero indica la plantilla que lo escribió. Un aviso sobre un id o un nombre que no existe propone además el más parecido de los que sí existen.
 
-Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, `overflow`, una variante o un estilo de rótulo es un `unknownConfigKey`; una palabra fuera de las opciones de un ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, el `routing`, las marcas y el `side` de un conector, y las marcas y el `routing` de una línea de referencia) es un `unknownConfigValue`, y el ajuste conserva su valor por defecto. Una plantilla sin `id`, o un marco o un grupo sin `name`, se ignora con un `unknownConfigValue` en ese campo.
+Una clave mal escrita de una plantilla, un marco, un grupo, una rejilla, `fit`, `overflow`, una variante o un estilo de rótulo es un `unknownConfigKey`; una palabra fuera de las opciones de un ajuste (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, el `routing`, las marcas y el `side` de un conector, y las marcas y el `routing` de una línea de referencia) es un `unknownConfigValue`, y el ajuste conserva su valor por defecto. Una plantilla sin `id`, o un marco o un grupo sin `name`, se ignora con un `unknownConfigValue` en ese campo. Los aspectos de marco (`frameLooks`) se comprueban igual: un aspecto sin `id` se ignora, y una clave que el `look` de un marco no tiene es un `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ La versión de la configuración es la 16 desde que existen los conectores (post
 
 ### Avisos de solapamiento, repetición y módulos
 
-Estos avisos vienen de la maquetación o del Markdown de la página, no solo de la plantilla, así que indican una página. Aparecen en `postext check` (`--json` incluye sus campos como `data`), en el panel Revisión del Sandbox y en los `contentWarnings` del documento. Desde postext 1.48.
+Estos avisos vienen de la maquetación o del Markdown de la página, no solo de la plantilla, así que indican una página. Aparecen en `postext check` (`--json` incluye sus campos como `data`), en el panel Revisión del Sandbox y en los `contentWarnings` del documento. Desde postext 1.48, y `lookUnknown` desde postext 1.50.
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ Estos avisos vienen de la maquetación o del Markdown de la página, no solo de 
       <td><code>repeatOverflow</code></td>
       <td>Una rejilla que repite un juego de marcos admite <code>repeat.max</code> elementos y la página le da más. Uno por cada elemento de más, en su <code>slot="…"</code>: el elemento va al marco de flujo (<code>flowFrame</code>), o detrás de la página.</td>
       <td>Sube <code>max</code>, quítalo o pasa los elementos sobrantes a otra página.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un trozo <code>:::frame</code> escribe <code>look="…"</code> con un id que ninguna entrada de <code>frameLooks</code> tiene (véase <a href="#aspectos-de-marco">Aspectos de marco</a>). El marco conserva su estilo y los colores de su plantilla. Señala el valor del atributo e indica el id más parecido (<code>suggestion</code>).</td>
+      <td>Corrige el id en el trozo, o añade a <code>frameLooks</code> un aspecto con ese id.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

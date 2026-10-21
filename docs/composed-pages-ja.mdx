@@ -69,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-**スロット**は、内容の行き先となる枠を示す名前で、テンプレートの枠の名前と対応します。`:::frame{slot="…"}`は、中のものをすべてその枠に送ります。中身には、段落、リスト、見出し、チップ、`::resource`の埋め込み、`:ref`の参照、脚注、`:::columns`、入れ子の囲みなど、どんなMarkdownでも書けます。`label`と`title`は、`:::callout`と同じく、枠のタブやタイトルの文字を指定します。枠の見た目は、テンプレートがその枠に割り当てた囲みスタイルで決まります。
+**スロット**は、内容の行き先となる枠を示す名前で、テンプレートの枠の名前と対応します。`:::frame{slot="…"}`は、中のものをすべてその枠に送ります。中身には、段落、リスト、見出し、チップ、`::resource`の埋め込み、`:ref`の参照、脚注、`:::columns`、入れ子の囲みなど、どんなMarkdownでも書けます。`label`と`title`は、`:::callout`と同じく、枠のタブやタイトルの文字を指定します。枠の見た目は、テンプレートがその枠に割り当てた囲みスタイルで決まり、内容ごとに独自の見た目を指定することもできます（[枠の見た目](#枠の見た目)を参照）。
 
 1つのブロックに、それ自身のスロットを指定することもできます。
 
@@ -131,6 +131,36 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 - **枚数**：ページのカードは内容の数だけできます。動物が5種のスペイン語版と4種の英語版が、同じテンプレートを使えます。`repeat.max`のあるグリッドはその数まで受け取り、超えた内容はそれぞれ`repeatOverflow`を出して流し込み枠に入ります。
 
 セットの枠が`slotEmpty`として報告されるのは、ページのどのカードもその枠を埋めないときだけです。繰り返す枠は見出しを受け取らず、流し込み枠になることもありません。
+
+### 枠の見た目
+
+内容には、名前の付いた見た目を指定できます。見た目は色の組み合わせで、設定の`frameLooks`で定義します（[設定 › 枠の見た目](/ja/docs/configuration-composed-pages#枠の見た目)を参照）。Markdownは見た目の名前を示し、設定はその中身を決めます。グリッドでは、どのカードも同じテンプレートと同じスタイルのまま、カードごとに色を変えられます。
+
+```md
+::::page{template="fotos"}
+# 川の動物
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+サギ
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+カワウソ
+:::
+:::
+::::
+```
+
+- **書く場所**：`look`は、どの`:::frame{slot="…"}`でも開始行に書きます。カードの主な内容（ここでは2枚目の写真の枠）と、その中に入れ子にした構成要素（それぞれのキャプションの札）が、それぞれ自分の見た目を指定します。
+- **変わるもの**：見た目は枠のスタイルとテンプレート自身の色の上に重ねられ、その内容だけに効きます。ほかのカードは自分の色のままです。別の枠に続くテキスト（枠のつながりや追加ページ）も、同じ見た目を保ちます。
+- **不明なid**：`frameLooks`にないidは、その属性の位置で`lookUnknown`を出し、いちばん近いidを示します。枠は元の色のままです。
 
 ### ページの中のモジュール
 
@@ -331,6 +361,11 @@ Si necesitas o quieres comprar algo muy caro…
       <td>テンプレートの<code>max</code>を上げるか外すか、余ったカードを別のページへ移します。</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td><code>:::frame</code>が<code>look="…"</code>に、どの<code>frameLooks</code>の項目にもないidを書いています（<a href="#枠の見た目">枠の見た目</a>を参照）。枠は自分のスタイルとテンプレートの色を保ちます。警告はいちばん近いid（<code>suggestion</code>）を示します。</td>
+      <td>idを直すか、その見た目を<code>frameLooks</code>に加えます。</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td><code>:::module</code>がテンプレートを指定していないか、モジュールでないテンプレートを指定しているか、ページのテンプレートにモジュールのグループがありません（<code>reason</code>）。その内容は流し込み枠に入ります。</td>
       <td>モジュールの<code>template</code>を直すか、ページのテンプレートに<code>modules: true</code>のグループを加えます。</td>
@@ -353,7 +388,7 @@ Si necesitas o quieres comprar algo muy caro…
   </tbody>
 </table>
 
-モジュールの警告と`repeatOverflow`はpostext 1.48以降です。それぞれのテンプレート側の説明は[設定 › 重なり、繰り返し、モジュールの警告](/ja/docs/configuration-composed-pages#重なり繰り返しモジュールの警告)にあります。
+モジュールの警告と`repeatOverflow`はpostext 1.48以降、`lookUnknown`はpostext 1.50以降です。それぞれのテンプレート側の説明は[設定 › 重なり、繰り返し、モジュールの警告](/ja/docs/configuration-composed-pages#重なり繰り返しモジュールの警告)にあります。
 
 本の割り付けが済むと、これらの警告には対象のページ（`pageIndex`）も付きます。検査パネルと`postext check`は、テンプレート、枠またはスロット、ソース範囲と並べてページ番号を示します。
 

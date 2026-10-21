@@ -351,7 +351,7 @@ Un bloc se place par sa cellule `grid` quand le gabarit a une grille, sinon par 
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>Ce que ce bloc change de l’apparence de son style d’encadré, avec les noms et l’imbrication du style lui-même : couleurs (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> et <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) et interlettrage du texte (<code>body.letterSpacing</code>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet. Dans un gabarit enfant, il se fusionne clé par clé avec le bloc qu’il remplace. Un livre dont l’encadré existe en plusieurs teintes garde un seul style et écrit la teinte ici, ou laisse <code>palette</code> recolorer un fond lié à la palette. Depuis postext 1.42.</td>
+      <td>Ce que ce bloc change de l’apparence de son style d’encadré, avec les noms et l’imbrication du style lui-même : couleurs (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> et <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) et interlettrage du texte (<code>body.letterSpacing</code>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet. Dans un gabarit enfant, il se fusionne clé par clé avec le bloc qu’il remplace. Un livre dont l’encadré existe en plusieurs teintes garde un seul style et écrit la teinte ici, ou laisse <code>palette</code> recolorer un fond lié à la palette. Un morceau de la page peut y poser une apparence nommée (voir <a href="#apparences-de-bloc">Apparences de bloc</a>). Depuis postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **Vérifications.** Une extrémité dont le `to` ne désigne rien est un `frameAnchorUnknown` (sur `…/from/to` ou `…/to/<k>/to`) et est laissée de côté ; `[*]` n’est valable que dans `to` et sur un bloc répété. Une `anchor` qu’aucune image du bloc n’a est un `labelAnchorUnknown`, avec l’identifiant du connecteur. Un mot hors des choix de `routing`, `startCap`, `endCap` ou `side`, et un `at` hors de l’intervalle 0 à 1, sont des `unknownConfigValue`. Une `opacity` qui n’est pas un nombre de 0 à 1 est aussi un `unknownConfigValue` (un nombre hors de l’intervalle y est ramené).
 
+## Apparences de bloc
+
+Une grille de cartes photo dont les pastilles ne diffèrent que par la couleur, ou une page d’encadrés en une douzaine de teintes, garde un seul style d’encadré et un seul gabarit : les couleurs vont dans `frameLooks`, une liste d’apparences nommées, et le Markdown en désigne une sur chaque morceau qui la porte. Depuis postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Champ</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Obligatoire. Le mot qu’un morceau écrit dans <code>look="…"</code>. Quand deux apparences ont le même identifiant, la première est utilisée.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Affiché seulement dans le Sandbox.</td>
+    </tr>
+    <tr>
+      <td>Les champs du <code>look</code> d’un bloc</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, nommés et imbriqués comme dans le <code>look</code> du bloc (voir <a href="#blocs">Blocs</a>). Un <code>background</code> active aussi le fond du style ; la couleur d’un onglet ne compte que si le style a un onglet.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **Où elle s’applique.** Un morceau `:::frame{slot="…" look="<id>"}` porte l’apparence. Dans une grille, le morceau principal de l’élément et le `:::frame` imbriqué d’un membre désignent chacun la leur (voir [Pages composées › Apparences de bloc](/fr/docs/composed-pages#apparences-de-bloc)).
+- **Ordre.** L’apparence se pose sur le style d’encadré du bloc et sur le `look` propre du bloc du gabarit, clé par clé : une apparence qui ne fixe que le fond garde la couleur du texte du gabarit. Elle ne s’applique qu’à ce morceau. Les blocs où son texte se poursuit (une chaîne, une page ajoutée par la suite) la portent aussi.
+- **Palettes.** Une couleur liée à une entrée de palette suit la palette comme toutes les couleurs de la configuration : une palette de partie ou la `palette` d’une page la recolore.
+- **Vérifications.** Une entrée sans `id` est ignorée (`unknownConfigValue`), et une clé qu’une apparence n’a pas est un `unknownConfigKey` à toute profondeur, avec le nom le plus proche. Un morceau qui désigne un identifiant qu’aucune entrée ne porte garde les couleurs de son bloc et déclenche `lookUnknown`.
+
+Dans le Sandbox, les apparences se modifient dans **Maquette › Encadrés › Apparences de bloc**, qui compte aussi les morceaux qui désignent chacune d’elles, et le bouton **Apparence du bloc** de l’éditeur écrit `look="…"` sur le morceau où se trouve le curseur.
+
 ## Styles d’étiquette
 
 La propriété `labelStyles` définit des apparences nommées pour les étiquettes posées sur une image : les mers et les villes d’une carte, les parties d’un schéma. Une étiquette se place sur une ancre de l’image (un point enregistré avec la ressource, comme les locuteurs de la bande dessinée) et prend le style que désigne l’ancre ou l’étiquette. Dans le Sandbox, ils se modifient sous **Maquette › Figures et tableaux › Styles d’étiquette** (depuis postext 1.42). Renommer un style à cet endroit réécrit les ancres et les lignes `::label` qui le nomment (depuis postext 1.43).
@@ -1126,7 +1168,7 @@ anchors: [
 
 Ailleurs, le moteur ignore une clé qu’il ne connaît pas. Les gabarits de page et les styles d’étiquette sont au contraire vérifiés, et chaque problème devient un avertissement de configuration dans `postext check` et dans le panneau Vérifications du Sandbox. Le `path` de ces avertissements est un pointeur JSON vers le champ en cause : `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quand le champ a été hérité, le pointeur désigne le gabarit qui l’a défini. Un avertissement qui cite un identifiant ou un nom inexistant propose aussi le plus proche qui existe.
 
-Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, le `routing`, les extrémités et le `side` d’un connecteur, les extrémités et le `routing` d’un trait de rappel) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ.
+Une clé mal orthographiée d’un gabarit, d’un bloc, d’un groupe, d’une grille, de `fit`, d’`overflow`, d’une variante ou d’un style d’étiquette est un `unknownConfigKey` ; un mot hors des choix d’un réglage (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, le `routing`, les extrémités et le `side` d’un connecteur, les extrémités et le `routing` d’un trait de rappel) est un `unknownConfigValue`, et le réglage garde sa valeur par défaut. Un gabarit sans `id`, ou un bloc ou un groupe sans `name`, est ignoré avec un `unknownConfigValue` sur ce champ. Les apparences de bloc (`frameLooks`) sont vérifiées de la même façon : une apparence sans `id` est ignorée, et une clé que le `look` d’un bloc n’a pas est un `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ Depuis les connecteurs (postext 1.48), la version de la configuration est 16 ;
 
 ### Avertissements de chevauchement, de répétition et de modules
 
-Ces avertissements viennent de la mise en page ou du Markdown de la page, et non du gabarit seul : ils indiquent donc une page. Ils sont listés par `postext check` (`--json` fournit leurs champs dans `data`), dans le panneau Vérifications du Sandbox et dans les `contentWarnings` du document. Depuis postext 1.48.
+Ces avertissements viennent de la mise en page ou du Markdown de la page, et non du gabarit seul : ils indiquent donc une page. Ils sont listés par `postext check` (`--json` fournit leurs champs dans `data`), dans le panneau Vérifications du Sandbox et dans les `contentWarnings` du document. Depuis postext 1.48, `lookUnknown` depuis postext 1.50.
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ Ces avertissements viennent de la mise en page ou du Markdown de la page, et non
       <td><code>repeatOverflow</code></td>
       <td>Une grille qui répète un jeu de blocs contient <code>repeat.max</code> éléments et la page lui en donne davantage. Un avertissement par élément en trop, sur son <code>slot="…"</code> : l’élément va dans le bloc de flux (<code>flowFrame</code>), ou après la page.</td>
       <td>Relever <code>max</code>, le retirer, ou déplacer les éléments en trop sur une autre page.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un morceau <code>:::frame</code> écrit <code>look="…"</code> avec un identifiant qu’aucune entrée de <code>frameLooks</code> ne porte (voir <a href="#apparences-de-bloc">Apparences de bloc</a>). Le bloc garde son style et les couleurs de son gabarit. Pointe vers la valeur de l’attribut et indique l’identifiant le plus proche (<code>suggestion</code>).</td>
+      <td>Corriger l’identifiant sur le morceau, ou ajouter à <code>frameLooks</code> une apparence qui porte cet identifiant.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

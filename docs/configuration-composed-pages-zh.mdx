@@ -351,7 +351,7 @@ const config: PostextConfig = {
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>此框对其框样式外观所做的修改，使用样式自身的名称和嵌套结构：颜色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>和<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）以及文字的字距（<code>body.letterSpacing</code>）。设置<code>background</code>时同时打开样式的填充；标签颜色只对带标签的样式有效。在子模板中，它与所覆盖的框逐键合并。同一种框形有多种色调的书只保留一个样式，在这里写色调，或者让<code>palette</code>重新着色与调色板关联的填充。自postext 1.42起。</td>
+      <td>此框对其框样式外观所做的修改，使用样式自身的名称和嵌套结构：颜色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>和<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）以及文字的字距（<code>body.letterSpacing</code>）。设置<code>background</code>时同时打开样式的填充；标签颜色只对带标签的样式有效。在子模板中，它与所覆盖的框逐键合并。同一种框形有多种色调的书只保留一个样式，在这里写色调，或者让<code>palette</code>重新着色与调色板关联的填充。页面上的一段内容可以在它上面叠加一种有名称的外观（见<a href="#框的外观">框的外观</a>）。自postext 1.42起。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **检查。** `to`什么也没指到的一端是`frameAnchorUnknown`（位于`…/from/to`或`…/to/<k>/to`），这一端被略去；`[*]`只能用在`to`中，而且只能用于重复的框。框中没有任何图片带有的`anchor`是`labelAnchorUnknown`，附有连接线的id。`routing`、`startCap`、`endCap`或`side`取值范围以外的词，以及0到1以外的`at`，是`unknownConfigValue`。不在0到1之间的数字或不是数字的`opacity`也是`unknownConfigValue`（超出范围的数字会被限制在范围内）。
 
+## 框的外观
+
+一个照片卡片的网格，各个小签只有颜色不同；或者一页上的方框有十几种色调：这样的书只保留一种标注框样式和一个模板。颜色写在`frameLooks`里，它是一个有名称的外观列表，Markdown在每段采用某种外观的内容上写出它的名称。自postext 1.50起。
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>字段</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>必填。内容在<code>look="…"</code>中写的词。两种外观的id相同时，用第一种。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>只在沙盒中显示。</td>
+    </tr>
+    <tr>
+      <td>框的<code>look</code>中的各字段</td>
+      <td><code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>、<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>body.letterSpacing</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>，名称和嵌套结构与框的<code>look</code>相同（见<a href="#框">框</a>）。设置<code>background</code>时同时打开样式的填充；标签颜色只对带标签的样式有效。</td>
+    </tr>
+  </tbody>
+</table>
+
+- **用在哪里。** `:::frame{slot="…" look="<id>"}`这段内容采用该外观。在网格中，条目的主内容和成员嵌套的`:::frame`各自指定自己的外观（见[模板页 › 框的外观](/zh/docs/composed-pages#框的外观)）。
+- **顺序。** 外观逐键叠加在框的标注框样式和模板中该框自己的`look`之上：只设填充的外观保留模板的文字颜色。它只作用于这一段内容。这段文字接续进去的框（串接框、因接续而追加的页面）也采用它。
+- **调色板。** 与调色板条目关联的颜色跟随调色板，与配置中的其他颜色一样，所以分部调色板或页面的`palette`会给它重新着色。
+- **检查。** 没有`id`的条目会被忽略（`unknownConfigValue`），外观没有的键在任何层级都是`unknownConfigKey`，并附上最接近的名称。内容指定的id若没有对应的条目，框保持原来的颜色，并给出`lookUnknown`。
+
+在沙盒中，外观在**版面设计 › 标注框 › 框的外观**里编辑，那里还会统计指定每种外观的内容有多少段；编辑器的**框的外观**按钮在光标所在的那段内容上写入`look="…"`。
+
 ## 标注样式
 
 `labelStyles`属性为写在图片上的标注命名各种外观：地图上的海洋和城镇，示意图的各个部分。标注位于图片的一个锚点上（锚点是随资源保存的一个点，与漫画的说话人相同），使用锚点或标注所指定的样式。在沙盒中，它们在**版面设计 › 图与表 › 标注样式**里编辑（自postext 1.42起）。在那里重命名一个样式时，引用它的锚点和`::label`行也会随之改写（自postext 1.43起）。
@@ -1126,7 +1168,7 @@ anchors: [
 
 在其他地方，引擎会忽略它不认识的键。页面模板和标注样式则会被检查，每个问题都是一条配置警告，出现在`postext check`和沙盒的检查面板中。这些警告的`path`是指向出错字段的JSON指针：`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`。字段是继承来的时，指针指向写出它的模板。指出不存在的id或名称的警告，还会给出最接近的现有名称。
 
-模板、框、组、网格、`fit`、`overflow`、变体或标注样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`，连接线的`routing`、端点标记和`side`，引线的端点标记和`routing`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框或组，会被忽略，并在该字段上报告`unknownConfigValue`。
+模板、框、组、网格、`fit`、`overflow`、变体或标注样式中拼错的键是`unknownConfigKey`；超出某个设置取值范围的词（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`，连接线的`routing`、端点标记和`side`，引线的端点标记和`routing`）是`unknownConfigValue`，该设置保留默认值。没有`id`的模板，或没有`name`的框或组，会被忽略，并在该字段上报告`unknownConfigValue`。框的外观（`frameLooks`）按同样的方式检查：没有`id`的外观会被忽略，框的`look`没有的键是`unknownConfigKey`。
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ anchors: [
 
 ### 重叠、重复与模块的警告
 
-这些警告来自排版或页面的Markdown，而不只是来自模板，所以它们会写明页码。它们列在`postext check`中（`--json`把它们的字段放在`data`里），也出现在沙盒的检查面板和文档的`contentWarnings`中。自postext 1.48起。
+这些警告来自排版或页面的Markdown，而不只是来自模板，所以它们会写明页码。它们列在`postext check`中（`--json`把它们的字段放在`data`里），也出现在沙盒的检查面板和文档的`contentWarnings`中。自postext 1.48起，`lookUnknown`自postext 1.50起。
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ anchors: [
       <td><code>repeatOverflow</code></td>
       <td>重复一组框的网格最多容纳<code>repeat.max</code>个条目，而这一页给了它更多。每多出一个条目一条，位于它的<code>slot="…"</code>处：这个条目进入流文框（<code>flowFrame</code>），或排在这一页之后。</td>
       <td>调高<code>max</code>，去掉它，或者把多出的条目移到另一页。</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td><code>:::frame</code>写了<code>look="…"</code>，而没有哪一项<code>frameLooks</code>有这个id（见<a href="#框的外观">框的外观</a>）。框保持它的样式和模板的颜色。警告指向该属性的值，并给出最接近的id（<code>suggestion</code>）。</td>
+      <td>改正这段内容上的id，或者在<code>frameLooks</code>中加一种有这个id的外观。</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

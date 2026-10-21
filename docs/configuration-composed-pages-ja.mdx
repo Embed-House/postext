@@ -351,7 +351,7 @@ const config: PostextConfig = {
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>この枠が、囲みスタイルの見た目のうち変えるものです。名前と入れ子はスタイルのものと同じで、色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>と<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）と、文字の字間（<code>body.letterSpacing</code>）を指定できます。<code>background</code>を書くとスタイルの塗りもオンになります。タブの色は、タブのあるスタイルにだけ働きます。子テンプレートでは、上書きする枠とキーごとに統合されます。同じ形の囲みを何色も使う本では、スタイルは1つにしてここに色合いを書くか、<code>palette</code>でパレットにリンクした塗りの色を替えます（postext 1.42以降）。</td>
+      <td>この枠が、囲みスタイルの見た目のうち変えるものです。名前と入れ子はスタイルのものと同じで、色（<code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>と<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>）と、文字の字間（<code>body.letterSpacing</code>）を指定できます。<code>background</code>を書くとスタイルの塗りもオンになります。タブの色は、タブのあるスタイルにだけ働きます。子テンプレートでは、上書きする枠とキーごとに統合されます。同じ形の囲みを何色も使う本では、スタイルは1つにしてここに色合いを書くか、<code>palette</code>でパレットにリンクした塗りの色を替えます。ページの内容は、その上に名前の付いた見た目を重ねられます（<a href="#枠の見た目">枠の見た目</a>を参照）。postext 1.42以降。</td>
     </tr>
     <tr>
       <td><code>writingMode</code>、<code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **検査**：`to`が何も指さない端は`frameAnchorUnknown`（`…/from/to`または`…/to/<k>/to`）になり、省かれます。`[*]`は`to`の中で、繰り返す枠に対してだけ使えます。枠のどの画像にもない`anchor`は、コネクターのidを添えて`labelAnchorUnknown`になります。`routing`、`startCap`、`endCap`、`side`の選択肢にない語と、0から1の範囲外の`at`は`unknownConfigValue`です。0から1の数でない`opacity`も`unknownConfigValue`です（範囲外の数は範囲内に収められます）。
 
+## 枠の見た目
+
+写真カードのグリッドで札の色だけが違う場合や、1ページの囲みが十数色に分かれる場合でも、囲みスタイルとテンプレートは1つで済みます。色は名前の付いた見た目のリスト`frameLooks`に書き、Markdownはその見た目を使う内容ごとに名前を指定します。postext 1.50以降。
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>項目</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>必須。内容が<code>look="…"</code>に書く語です。2つの見た目が同じidを持つときは、最初のものを使います。</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Sandboxでだけ表示します。</td>
+    </tr>
+    <tr>
+      <td>枠の<code>look</code>の項目</td>
+      <td><code>background</code>、<code>border.color</code>、<code>stripe.color</code>、<code>icon.color</code>、<code>marker.color</code>、<code>marker.rule.color</code>、<code>titleStyle.color</code>、<code>body.color</code>、<code>body.boldColor</code>、<code>body.italicColor</code>、<code>body.letterSpacing</code>、<code>label.color</code>、<code>label.background</code>、<code>label.rule.color</code>。名前と入れ子は枠の<code>look</code>と同じです（<a href="#枠">枠</a>を参照）。<code>background</code>を書くとスタイルの塗りもオンになります。タブの色は、タブのあるスタイルにだけ働きます。</td>
+    </tr>
+  </tbody>
+</table>
+
+- **効く場所**：`:::frame{slot="…" look="<id>"}`の内容がその見た目になります。グリッドでは、項目の主な内容と、構成要素の入れ子の`:::frame`が、それぞれ自分の見た目を指定します（[テンプレートページ › 枠の見た目](/ja/docs/composed-pages#枠の見た目)を参照）。
+- **重ねる順**：見た目は、枠の囲みスタイルと、テンプレートの枠自身の`look`の上に、キーごとに重ねられます。塗りだけを指定した見た目では、文字の色はテンプレートのものが残ります。効くのはその内容だけです。そのテキストが続く枠（枠のつながりや、継続で加わるページ）も同じ見た目になります。
+- **パレット**：パレットの項目にリンクした色は、設定のほかの色と同じくパレットに従います。部のパレットやページの`palette`で色が替わります。
+- **検査**：`id`のない項目は無視され（`unknownConfigValue`）、見た目にないキーはどの深さでも`unknownConfigKey`になり、いちばん近い名前が示されます。どの項目にもないidを指定した内容は、枠の色のままで、`lookUnknown`を出します。
+
+Sandboxでは、見た目は**デザイン › 囲み › 枠の見た目**で編集します。そこでは見た目ごとに、それを指定している内容の数も数えます。エディターの**枠の見た目**ボタンは、カーソルのある内容に`look="…"`を書き込みます。
+
 ## ラベルスタイル
 
 `labelStyles`プロパティは、画像の上に置くラベルの見た目に名前を付けます。地図の海や町、図の各部の名前などです。ラベルは画像のアンカー（漫画の話者と同じく、リソースと一緒に保存する点）に立ち、アンカーまたはラベルが指定するスタイルを使います。Sandboxでは、**デザイン › 図と表 › ラベルスタイル**で編集します（postext 1.42以降）。そこでスタイルの名前を変えると、そのスタイルを指定しているアンカーと`::label`行も書き換えられます（postext 1.43以降）。
@@ -1126,7 +1168,7 @@ anchors: [
 
 ほかの設定では、エンジンは知らないキーを無視します。ページテンプレートとラベルスタイルはそうではなく検査され、問題はすべて設定の警告として`postext check`とSandboxの**検査**パネルに出ます。これらの警告の`path`は、問題のある項目を指すJSONポインターです。たとえば`/pageTemplates/3/frames/2/style`、`/pageTemplates/0/variants/recto/frames/1/next`、`/resources/4/anchors/0/style`です。項目が継承されたものなら、ポインターはそれを書いたテンプレートを指します。存在しないidや名前を指す警告は、存在するもののうち最も近いものも示します。
 
-テンプレート、枠、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`、コネクターの`routing`、端の印と`side`、引き出し線の端の印と`routing`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のない枠とグループは無視され、その項目に`unknownConfigValue`が出ます。
+テンプレート、枠、グループ、グリッド、`fit`、`overflow`、バリアント、ラベルスタイルのキーの綴り違いは`unknownConfigKey`になります。設定の選択肢にない語（`area`、`verticalAlign`、`exclude`、`wrap`、`takes`、`kind`、`align`、`writingMode`、`direction`、`fontStyle`、`textTransform`、`overlap`、`rowAlign`、コネクターの`routing`、端の印と`side`、引き出し線の端の印と`routing`）は`unknownConfigValue`になり、その設定は既定値のままです。`id`のないテンプレートや、`name`のない枠とグループは無視され、その項目に`unknownConfigValue`が出ます。枠の見た目（`frameLooks`）も同じように検査します。`id`のない見た目は無視され、枠の`look`にないキーは`unknownConfigKey`になります。
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ anchors: [
 
 ### 重なり、繰り返し、モジュールの警告
 
-これらの警告はテンプレートだけでなく、割り付けやページのMarkdownから出るので、ページを示します。`postext check`（`--json`ではその項目が`data`に入ります）、Sandboxの検査パネル、文書の`contentWarnings`に挙がります。postext 1.48以降。
+これらの警告はテンプレートだけでなく、割り付けやページのMarkdownから出るので、ページを示します。`postext check`（`--json`ではその項目が`data`に入ります）、Sandboxの検査パネル、文書の`contentWarnings`に挙がります。postext 1.48以降、`lookUnknown`はpostext 1.50以降です。
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ anchors: [
       <td><code>repeatOverflow</code></td>
       <td>枠のセットを繰り返すグリッドが受け取る項目は<code>repeat.max</code>までなのに、ページがそれより多く渡しています。超えた項目1つごとに、その<code>slot="…"</code>の位置で出ます。項目は流し込み枠（<code>flowFrame</code>）か、ページの後に入ります。</td>
       <td><code>max</code>を上げるか外すか、余った項目を別のページへ移します。</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td><code>:::frame</code>が<code>look="…"</code>に、どの<code>frameLooks</code>の項目にもないidを書いています（<a href="#枠の見た目">枠の見た目</a>を参照）。枠は自分のスタイルとテンプレートの色を保ちます。属性の値の位置を指し、いちばん近いid（<code>suggestion</code>）を示します。</td>
+      <td>内容のidを直すか、そのidの見た目を<code>frameLooks</code>に加えます。</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

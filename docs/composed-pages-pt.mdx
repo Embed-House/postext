@@ -69,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-Um **slot** indica o bloco para onde vai um trecho de conteúdo: é o nome de um bloco do modelo. `:::frame{slot="…"}` manda para esse bloco tudo o que está dentro dele. O corpo dele é Markdown completo: parágrafos, listas, títulos, chips, inserções `::resource`, referências `:ref`, notas de rodapé, `:::columns` e boxes aninhados. `label` e `title` dão as palavras da aba ou do título do bloco, como num `:::callout`; a aparência do bloco vem do estilo de boxe que o modelo atribui a ele.
+Um **slot** indica o bloco para onde vai um trecho de conteúdo: é o nome de um bloco do modelo. `:::frame{slot="…"}` manda para esse bloco tudo o que está dentro dele. O corpo dele é Markdown completo: parágrafos, listas, títulos, chips, inserções `::resource`, referências `:ref`, notas de rodapé, `:::columns` e boxes aninhados. `label` e `title` dão as palavras da aba ou do título do bloco, como num `:::callout`; a aparência do bloco vem do estilo de boxe que o modelo atribui a ele, e um trecho pode indicar uma aparência própria (veja [Aparências de bloco](#aparências-de-bloco)).
 
 Um elemento avulso também pode indicar o próprio slot:
 
@@ -131,6 +131,36 @@ A lontra
 - **Quantos.** A página tem tantos cartões quanto trechos. Uma edição em espanhol com cinco animais e uma em inglês com quatro usam o mesmo modelo. Uma grade com `repeat.max` recebe esse número; cada trecho a mais gera `repeatOverflow` e vai para o bloco de fluxo.
 
 Um bloco do conjunto só é apontado como `slotEmpty` quando nenhum cartão da página o preenche. Um bloco repetido nunca recebe um título e nunca é o bloco de fluxo.
+
+### Aparências de bloco
+
+Um trecho pode usar uma aparência com nome: um conjunto de cores que a configuração define em `frameLooks` (veja [Configuração › Aparências de bloco](/pt/docs/configuration-composed-pages#aparências-de-bloco)). O Markdown diz qual aparência o trecho usa e a configuração diz como ela é. Numa grade, assim cada cartão tem a sua cor e todos compartilham um modelo e um estilo:
+
+```md
+::::page{template="fotos"}
+# Animais do rio
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+A garça
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+A lontra
+:::
+:::
+::::
+```
+
+- **Onde.** `look` vai na linha de abertura de qualquer trecho `:::frame{slot="…"}`. O trecho principal de um cartão (aqui o bloco da segunda foto) e um membro aninhado nele (cada pílula) indicam a sua.
+- **O que muda.** A aparência é aplicada sobre o estilo do bloco e as cores próprias do modelo, só para esse trecho: os outros cartões mantêm as suas. O texto que continua em outro bloco (uma cadeia, uma página de continuação) mantém a aparência.
+- **Um id desconhecido.** Um id que `frameLooks` não tem gera o aviso `lookUnknown` no atributo, com o id mais parecido, e o bloco mantém as suas cores.
 
 ### Módulos numa página
 
@@ -331,6 +361,11 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
       <td>Aumente ou retire o <code>max</code> no modelo, ou passe os cartões a mais para outra página.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Um trecho <code>:::frame</code> escreve <code>look="…"</code> com um id que nenhuma entrada de <code>frameLooks</code> tem (veja <a href="#aparências-de-bloco">Aparências de bloco</a>). O bloco mantém o seu estilo e as cores do modelo. O aviso indica o id mais parecido (<code>suggestion</code>).</td>
+      <td>Corrija o id, ou acrescente a aparência a <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>Um <code>:::module</code> não indica nenhum modelo, indica um modelo que não é módulo, ou o modelo da página não tem grupo de módulos (<code>reason</code>). O conteúdo dele vai para o bloco de fluxo.</td>
       <td>Corrija o <code>template</code> do módulo, ou dê ao modelo da página um grupo com <code>modules: true</code>.</td>
@@ -353,7 +388,7 @@ As verificações leem o Markdown e a configuração antes de qualquer diagrama�
   </tbody>
 </table>
 
-Os avisos de módulo e o `repeatOverflow` existem desde o postext 1.48; o lado do modelo de cada um está descrito em [Configuração › Avisos de sobreposição, repetição e módulos](/pt/docs/configuration-composed-pages#avisos-de-sobreposição-repetição-e-módulos).
+Os avisos de módulo e o `repeatOverflow` existem desde o postext 1.48, e o `lookUnknown` desde o postext 1.50; o lado do modelo de cada um está descrito em [Configuração › Avisos de sobreposição, repetição e módulos](/pt/docs/configuration-composed-pages#avisos-de-sobreposição-repetição-e-módulos).
 
 Depois que o livro é diagramado, cada um desses avisos traz também a página a que se refere (`pageIndex`); por isso, o painel Verificações e o `postext check` mostram o número da página ao lado do modelo, do bloco ou do slot e do intervalo de origem.
 

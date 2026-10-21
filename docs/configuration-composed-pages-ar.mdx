@@ -351,7 +351,7 @@ const config: PostextConfig = {
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>ما يغيّره هذا الإطار في مظهر نمطه، بأسماء النمط نفسه وبنيته المتداخلة: الألوان (<code>background</code> و<code>border.color</code> و<code>stripe.color</code> و<code>icon.color</code> و<code>marker.color</code> و<code>marker.rule.color</code> و<code>titleStyle.color</code> و<code>body.color</code> و<code>body.boldColor</code> و<code>body.italicColor</code> و<code>label.color</code> و<code>label.background</code> و<code>label.rule.color</code>) وتباعد حروف النص (<code>body.letterSpacing</code>). كتابة <code>background</code> تُشغّل تعبئة النمط أيضًا؛ ولون اللسان لا يسري إلا على نمط له لسان. وفي القالب المبني على غيره يُدمج خاصيةً خاصيةً مع الإطار الذي يغيّره. الكتاب الذي له شكل صندوق واحد بعدة ألوان يحتفظ بنمط واحد ويكتب اللون هنا، أو يدع <code>palette</code> يعيد تلوين تعبئة مرتبطة باللوحة. منذ postext 1.42.</td>
+      <td>ما يغيّره هذا الإطار في مظهر نمطه، بأسماء النمط نفسه وبنيته المتداخلة: الألوان (<code>background</code> و<code>border.color</code> و<code>stripe.color</code> و<code>icon.color</code> و<code>marker.color</code> و<code>marker.rule.color</code> و<code>titleStyle.color</code> و<code>body.color</code> و<code>body.boldColor</code> و<code>body.italicColor</code> و<code>label.color</code> و<code>label.background</code> و<code>label.rule.color</code>) وتباعد حروف النص (<code>body.letterSpacing</code>). كتابة <code>background</code> تُشغّل تعبئة النمط أيضًا؛ ولون اللسان لا يسري إلا على نمط له لسان. وفي القالب المبني على غيره يُدمج خاصيةً خاصيةً مع الإطار الذي يغيّره. الكتاب الذي له شكل صندوق واحد بعدة ألوان يحتفظ بنمط واحد ويكتب اللون هنا، أو يدع <code>palette</code> يعيد تلوين تعبئة مرتبطة باللوحة. ويمكن لقطعة من الصفحة أن تضع فوقه مظهرًا مسمّى (انظر <a href="#مظاهر-الإطارات">مظاهر الإطارات</a>). منذ postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code> و<code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **الفحوص.** الطرف الذي لا يذكر `to` فيه شيئًا موجودًا يُذكر بالتحذير `frameAnchorUnknown` (عند `…/from/to` أو `…/to/<k>/to`) ويُترك؛ ولا يصح `[*]` إلا في `to` وعلى إطار متكرّر. والـ`anchor` الذي ليس في أي صورة من صور الإطار يُذكر بالتحذير `labelAnchorUnknown`، مع معرّف الموصل. والكلمة الخارجة عن خيارات `routing` أو `startCap` أو `endCap` أو `side`، و`at` الخارج عن المجال من 0 إلى 1، تُذكر بالتحذير `unknownConfigValue`. والـ`opacity` الذي ليس عددًا من 0 إلى 1 يُذكر كذلك بالتحذير `unknownConfigValue` (والعدد الخارج عن المجال يُردّ إليه).
 
+## مظاهر الإطارات
+
+شبكة بطاقات صور لا تختلف أشرطتها إلا في اللون، أو صفحة صناديق بدزينة من الألوان، تحتفظ بنمط إطار واحد وقالب واحد: تُكتب الألوان في `frameLooks`، وهي قائمة مظاهر مسمّاة، ويذكر Markdown مظهرًا على كل قطعة تأخذه. منذ postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>الحقل</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>مطلوب. الكلمة التي تكتبها القطعة في <code>look="…"</code>. وحين يشترك مظهران في معرّف واحد، يُستعمل الأول.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>يظهر في Sandbox وحده.</td>
+    </tr>
+    <tr>
+      <td>حقول <code>look</code> الإطار</td>
+      <td><code>background</code> و<code>border.color</code> و<code>stripe.color</code> و<code>icon.color</code> و<code>marker.color</code> و<code>marker.rule.color</code> و<code>titleStyle.color</code> و<code>body.color</code> و<code>body.boldColor</code> و<code>body.italicColor</code> و<code>body.letterSpacing</code> و<code>label.color</code> و<code>label.background</code> و<code>label.rule.color</code>، بالأسماء والبنية المتداخلة نفسها التي في <code>look</code> الإطار (انظر <a href="#الإطارات">الإطارات</a>). كتابة <code>background</code> تُشغّل تعبئة النمط أيضًا؛ ولون اللسان لا يسري إلا على نمط له لسان.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **أين يسري.** تأخذ القطعة `:::frame{slot="…" look="<id>"}` المظهر. وفي الشبكة، تذكر القطعة الرئيسية للعنصر و`:::frame` المتداخل لكل عضو مظهرَه الخاص (انظر [الصفحات المركّبة › مظاهر الإطارات](/ar/docs/composed-pages#مظاهر-الإطارات)).
+- **الترتيب.** يوضع المظهر فوق نمط إطار الإطار وفوق `look` إطار القالب نفسه، خاصيةً خاصيةً: فالمظهر الذي لا يضبط إلا التعبئة يُبقي لون نص القالب. ولا يسري إلا على تلك القطعة. والإطارات التي يستمر فيها نصها (سلسلة، أو صفحة تضيفها المتابعة) تأخذه أيضًا.
+- **اللوحات.** اللون المرتبط بمدخل في اللوحة يتبع اللوحة كما يتبعها كل لون في الإعدادات، فتعيد لوحة القسم أو `palette` الصفحة تلوينه.
+- **الفحوص.** المدخل الذي لا `id` له يُتجاهل (`unknownConfigValue`)، والخاصية التي ليست للمظهر هي `unknownConfigKey` على أي عمق، مع أقرب اسم. والقطعة التي تذكر معرّفًا لا يملكه أي مدخل تحتفظ بألوان إطارها وتُصدر `lookUnknown`.
+
+وتُحرَّر المظاهر في Sandbox ضمن **التصميم › الإطارات › مظاهر الإطارات**، وهناك يُعدّ أيضًا القطع التي تذكر كل مظهر، ويكتب زر **مظاهر الإطارات** في المحرر `look="…"` على القطعة التي فيها المؤشر.
+
 ## أنماط التسميات
 
 تحدّد الخاصية `labelStyles` هيئات التسميات المكتوبة على صورة: البحار والمدن في خريطة، وأجزاء الرسم التوضيحي. وتقف التسمية عند مرساة في الصورة (نقطة محفوظة مع المورد، كما تُحفظ نقاط ارتكاز الشخصيات في القصص المصورة)، وتأخذ النمط الذي تحدّده المرساة أو التسمية. وتُحرَّر في Sandbox ضمن **التصميم › الأشكال والجداول › أنماط التسميات** (منذ postext 1.42). وإعادة تسمية نمط هناك تعيد كتابة المراسي وأسطر `::label` التي تسمّيه (منذ postext 1.43).
@@ -1126,7 +1168,7 @@ anchors: [
 
 في غير هذا الموضع يتجاهل المحرّك الخاصية التي لا يعرفها. أما قوالب الصفحات وأنماط التسميات فتُفحص، وكل مشكلة فيها تحذير إعدادات يظهر في `postext check` وفي لوحة **الفحوص** في Sandbox. والحقل `path` في هذه التحذيرات مؤشر JSON إلى الحقل المخطئ: `/pageTemplates/3/frames/2/style`، و`/pageTemplates/0/variants/recto/frames/1/next`، و`/resources/4/anchors/0/style`. وحين يكون الحقل موروثًا يشير المؤشر إلى القالب الذي كتبه. والتحذير الذي يذكر معرّفًا أو اسمًا غير موجود يقترح أيضًا أقرب معرّف أو اسم موجود.
 
-الخاصية المكتوبة خطأً في قالب أو إطار أو مجموعة أو شبكة أو `fit` أو `overflow` أو نسخة صفحة أو نمط تسمية تُصدر `unknownConfigKey`؛ والكلمة الخارجة عن خيارات إعداد ما (`area` و`verticalAlign` و`exclude` و`wrap` و`takes` و`kind` و`align` و`writingMode` و`direction` و`fontStyle` و`textTransform` و`overlap` و`rowAlign`، و`routing` الموصل وعلامتا طرفيه و`side`، وعلامتا طرفي خط الإشارة و`routing` الخاص به) هي `unknownConfigValue`، ويحتفظ الإعداد بقيمته الافتراضية. ويُتجاهل القالب الذي لا `id` له، والإطار أو المجموعة بلا `name`، مع `unknownConfigValue` عند ذلك الحقل.
+الخاصية المكتوبة خطأً في قالب أو إطار أو مجموعة أو شبكة أو `fit` أو `overflow` أو نسخة صفحة أو نمط تسمية تُصدر `unknownConfigKey`؛ والكلمة الخارجة عن خيارات إعداد ما (`area` و`verticalAlign` و`exclude` و`wrap` و`takes` و`kind` و`align` و`writingMode` و`direction` و`fontStyle` و`textTransform` و`overlap` و`rowAlign`، و`routing` الموصل وعلامتا طرفيه و`side`، وعلامتا طرفي خط الإشارة و`routing` الخاص به) هي `unknownConfigValue`، ويحتفظ الإعداد بقيمته الافتراضية. ويُتجاهل القالب الذي لا `id` له، والإطار أو المجموعة بلا `name`، مع `unknownConfigValue` عند ذلك الحقل. وتُفحص مظاهر الإطارات (`frameLooks`) بالطريقة نفسها: يُتجاهل المظهر الذي لا `id` له، والخاصية التي ليست في `look` الإطار هي `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ anchors: [
 
 ### تحذيرات التداخل والتكرار والوحدات
 
-تأتي هذه التحذيرات من التنضيد أو من Markdown الصفحة، لا من القالب وحده، فهي تذكر صفحة. ويسردها `postext check` (وتحمل `--json` حقولها في `data`)، ولوحة **الفحوص** في Sandbox، و`contentWarnings` الخاصة بالمستند. منذ postext 1.48.
+تأتي هذه التحذيرات من التنضيد أو من Markdown الصفحة، لا من القالب وحده، فهي تذكر صفحة. ويسردها `postext check` (وتحمل `--json` حقولها في `data`)، ولوحة **الفحوص** في Sandbox، و`contentWarnings` الخاصة بالمستند. منذ postext 1.48، و`lookUnknown` منذ postext 1.50.
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ anchors: [
       <td><code>repeatOverflow</code></td>
       <td>شبكة تكرّر مجموعة إطارات تتّسع لـ<code>repeat.max</code> من العناصر، والصفحة تعطيها أكثر. تحذير لكل عنصر زائد، عند <code>slot="…"</code> الخاص به: يذهب العنصر إلى إطار التدفق (<code>flowFrame</code>)، أو إلى ما بعد الصفحة.</td>
       <td>ارفع <code>max</code>، أو احذفه، أو انقل العناصر الزائدة إلى صفحة أخرى.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>قطعة <code>:::frame</code> تكتب <code>look="…"</code> بمعرّف لا يملكه أي مدخل من <code>frameLooks</code> (انظر <a href="#مظاهر-الإطارات">مظاهر الإطارات</a>). ويحتفظ الإطار بنمطه وبألوان قالبه. ويشير إلى قيمة السمة، ويذكر أقرب معرّف (<code>suggestion</code>).</td>
+      <td>صحّح المعرّف على القطعة، أو أضف إلى <code>frameLooks</code> مظهرًا بهذا المعرّف.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>

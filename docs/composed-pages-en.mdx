@@ -69,7 +69,7 @@ Hasta hace pocos años, lo más normal era pagar con dinero en **efectivo**…
 :::
 ```
 
-A **slot** names the frame a piece of content goes to: it matches the name of a frame in the template. `:::frame{slot="…"}` sends everything inside it to that frame. Its body is full Markdown: paragraphs, lists, headings, chips, `::resource` embeds, `:ref` references, footnotes, `:::columns` and nested callouts. `label` and `title` set the text of the frame's tab or title, as they do for a `:::callout`; the frame's look comes from the callout style the template gives it.
+A **slot** names the frame a piece of content goes to: it matches the name of a frame in the template. `:::frame{slot="…"}` sends everything inside it to that frame. Its body is full Markdown: paragraphs, lists, headings, chips, `::resource` embeds, `:ref` references, footnotes, `:::columns` and nested callouts. `label` and `title` set the text of the frame's tab or title, as they do for a `:::callout`; the frame's look comes from the callout style the template gives it, and a piece can name a look of its own (see [Frame looks](#frame-looks)).
 
 A single block can name its own slot:
 
@@ -131,6 +131,36 @@ The otter
 - **How many.** The page has as many cards as pieces. A Spanish edition with five animals and an English one with four use the same template. A grid with `repeat.max` takes that many; each piece over raises `repeatOverflow` and goes to the flow frame.
 
 A frame of the set is reported as `slotEmpty` only when no card of the page fills it. A repeated frame never takes a heading, and it is never the flow frame.
+
+### Frame looks
+
+A piece can wear a named look: a set of colours the configuration defines in `frameLooks` (see [Configuration › Frame looks](/en/docs/configuration-composed-pages#frame-looks)). The Markdown names the look and the configuration says what it is. On a grid this gives each card its own colour, while every card keeps one template and one style:
+
+```md
+::::page{template="fotos"}
+# Animals of the river
+
+:::frame{slot="foto"}
+::resource{id="garza"}
+
+:::frame{slot="pie" look="rojo"}
+The heron
+:::
+:::
+
+:::frame{slot="foto" look="marino"}
+::resource{id="nutria"}
+
+:::frame{slot="pie" look="verde"}
+The otter
+:::
+:::
+::::
+```
+
+- **Where.** `look` goes on the opening line of any `:::frame{slot="…"}` piece. A card's main piece (here the second photo's frame) and a member nested in it (each pill) name their own.
+- **What it changes.** The look is laid over the frame's style and the template's own colours, for that piece only: the other cards keep theirs. Text that goes on in another frame (a chain, a continuation page) keeps the look.
+- **An unknown id.** An id that `frameLooks` does not have raises `lookUnknown` at the attribute, with the nearest id, and the frame keeps its colours.
 
 ### Modules in a page
 
@@ -331,6 +361,11 @@ The checks read the Markdown and the configuration before any layout, so they sh
       <td>Raise or remove <code>max</code> in the template, or move the extra cards to another page.</td>
     </tr>
     <tr>
+      <td><code>lookUnknown</code></td>
+      <td>A <code>:::frame</code> piece writes <code>look="…"</code> with an id that no <code>frameLooks</code> entry has (see <a href="#frame-looks">Frame looks</a>). The frame keeps its style and its template colours. The warning names the nearest id (<code>suggestion</code>).</td>
+      <td>Correct the id, or add the look to <code>frameLooks</code>.</td>
+    </tr>
+    <tr>
       <td><code>moduleUnknown</code></td>
       <td>A <code>:::module</code> names no template, a template that is no module, or the page's template has no modules group (<code>reason</code>). Its content goes to the flow frame.</td>
       <td>Correct the <code>template</code> of the module, or give the page's template a group with <code>modules: true</code>.</td>
@@ -353,7 +388,7 @@ The checks read the Markdown and the configuration before any layout, so they sh
   </tbody>
 </table>
 
-The module warnings and `repeatOverflow` are since postext 1.48; the template side of each is described in [Configuration › Overlap, repeat and module warnings](/en/docs/configuration-composed-pages#overlap-repeat-and-module-warnings).
+The module warnings and `repeatOverflow` are since postext 1.48, `lookUnknown` since postext 1.50; the template side of each is described in [Configuration › Overlap, repeat and module warnings](/en/docs/configuration-composed-pages#overlap-repeat-and-module-warnings).
 
 Once the book is laid out, each of these warnings also carries the page it concerns (`pageIndex`), so the Checks panel and `postext check` give the page number next to the template, the frame or slot, and the source range.
 

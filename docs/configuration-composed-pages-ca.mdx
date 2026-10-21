@@ -351,7 +351,7 @@ Un marc es col·loca segons la cel·la de `grid` quan la plantilla té retícula
       <td><code>look</code></td>
       <td><code>&#123; background?, border?, stripe?, icon?, marker?, titleStyle?, body?, label? &#125;</code></td>
       <td>—</td>
-      <td>El que aquest marc canvia de l'aspecte del seu estil de requadre, amb els mateixos noms i la mateixa estructura imbricada de l'estil: colors (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> i <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) i l'espaiat entre lletres del text (<code>body.letterSpacing</code>). Un <code>background</code> activa a més el farciment de l'estil; el color d'una pestanya només compta si l'estil té pestanya. En una plantilla filla es combina clau a clau amb el marc que substitueix. Un llibre amb una mateixa forma de caixa en diversos tons conserva un sol estil i indica el to a cada marc, o deixa que <code>palette</code> canviï el color d'un farciment lligat a la paleta. Des de postext 1.42.</td>
+      <td>El que aquest marc canvia de l'aspecte del seu estil de requadre, amb els mateixos noms i la mateixa estructura imbricada de l'estil: colors (<code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code> i <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>) i l'espaiat entre lletres del text (<code>body.letterSpacing</code>). Un <code>background</code> activa a més el farciment de l'estil; el color d'una pestanya només compta si l'estil té pestanya. En una plantilla filla es combina clau a clau amb el marc que substitueix. Un llibre amb una mateixa forma de caixa en diversos tons conserva un sol estil i indica el to a cada marc, o deixa que <code>palette</code> canviï el color d'un farciment lligat a la paleta. Un tros de la pàgina hi pot posar a sobre un aspecte amb nom (vegeu <a href="#aspectes-de-marc">Aspectes de marc</a>). Des de postext 1.42.</td>
     </tr>
     <tr>
       <td><code>writingMode</code>, <code>direction</code></td>
@@ -905,6 +905,48 @@ decoration: { elements: [
 
 **Revisions.** Un extrem amb un `to` que no indica res és `frameAnchorUnknown` (a `…/from/to` o `…/to/<k>/to`) i es deixa fora; `[*]` només és vàlid a `to` i en un marc repetit. Un `anchor` que cap imatge del marc no té és `labelAnchorUnknown`, amb l'id del connector. Una paraula fora de les opcions de `routing`, `startCap`, `endCap` o `side`, i un `at` fora de l'interval de 0 a 1, són `unknownConfigValue`. Un `opacity` que no és un nombre de 0 a 1 també és `unknownConfigValue` (un nombre fora de l'interval s'hi ajusta).
 
+## Aspectes de marc
+
+Una graella de targetes amb foto les píndoles de les quals només canvien de color, o una pàgina de requadres en una dotzena de tons, conserva un sol estil de requadre i una sola plantilla: els colors van a `frameLooks`, una llista d'aspectes amb nom, i el Markdown n'indica un a cada tros que el porta. Des de postext 1.50.
+
+```ts
+frameLooks: [
+  { id: 'rojo', name: 'Red pill', background: { hex: '#e63946', model: 'hex' }, body: { color: { hex: '#ffffff', model: 'hex' } } },
+  { id: 'verde', background: { hex: '#6a994e', model: 'hex' } },
+  { id: 'marino', border: { color: { hex: '#264653', model: 'hex' } } },
+]
+```
+
+<table>
+  <thead>
+    <tr>
+      <th style={{ width: '170px' }}>Camp</th>
+      <th>Significat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>Obligatori. La paraula que un tros escriu a <code>look="…"</code>. Si dos aspectes comparteixen id, es fa servir el primer.</td>
+    </tr>
+    <tr>
+      <td><code>name</code></td>
+      <td>Només es mostra al Sandbox.</td>
+    </tr>
+    <tr>
+      <td>Els camps del <code>look</code> d'un marc</td>
+      <td><code>background</code>, <code>border.color</code>, <code>stripe.color</code>, <code>icon.color</code>, <code>marker.color</code>, <code>marker.rule.color</code>, <code>titleStyle.color</code>, <code>body.color</code>, <code>body.boldColor</code>, <code>body.italicColor</code>, <code>body.letterSpacing</code>, <code>label.color</code>, <code>label.background</code>, <code>label.rule.color</code>, amb els noms i l'anidament del <code>look</code> del marc (vegeu <a href="#marcs">Marcs</a>). Un <code>background</code> activa també el farciment de l'estil; el color d'una pestanya només compta si l'estil té pestanya.</td>
+    </tr>
+  </tbody>
+</table>
+
+- **On s'aplica.** Un tros `:::frame{slot="…" look="<id>"}` porta l'aspecte. En una graella, el tros principal de l'element i el `:::frame` niat d'un membre indiquen cadascun el seu (vegeu [Pàgines compostes › Aspectes de marc](/ca/docs/composed-pages#aspectes-de-marc)).
+- **Ordre.** L'aspecte es posa sobre l'estil de requadre del marc i sobre el `look` propi del marc de la plantilla, clau a clau: un aspecte que només fixa el farciment conserva el color de text de la plantilla. Només afecta aquell tros. Els marcs on continua el text (una cadena, una pàgina afegida per continuació) també el porten.
+- **Paletes.** Un color lligat a una entrada de la paleta segueix la paleta com qualsevol color de la configuració, de manera que una paleta de part o el `palette` d'una pàgina el canvien.
+- **Revisions.** Una entrada sense `id` s'ignora (`unknownConfigValue`), i una clau que un aspecte no té és un `unknownConfigKey` a qualsevol profunditat, amb el nom més semblant. Un tros que indica un id que cap entrada no té conserva els colors del seu marc i genera l'avís `lookUnknown`.
+
+Al Sandbox els aspectes s'editen a **Disseny › Requadres › Aspectes de marc**, que també compta els trossos que indiquen cadascun, i el botó **Aspecte de marc** de l'editor escriu `look="…"` al tros on és el cursor.
+
 ## Estils de rètol
 
 La propietat `labelStyles` defineix, amb un nom, l'aspecte dels rètols que es posen sobre una imatge: els mars i les ciutats d'un mapa, les parts d'un esquema. Un rètol se situa en una àncora de la imatge (un punt amb nom desat amb el recurs, com els dels personatges d'un còmic) i pren l'estil que indica l'àncora o el rètol. Al Sandbox s'editen a **Disseny › Figures i taules › Estils de rètol** (des de postext 1.42). En canviar-hi el nom d'un estil es reescriuen les àncores i les línies `::label` que l'esmenten (des de postext 1.43).
@@ -1126,7 +1168,7 @@ anchors: [
 
 A la resta de la configuració, el motor ignora una clau que no coneix. Les plantilles de pàgina i els estils de rètol, en canvi, es comproven, i cada problema és un avís de configuració a `postext check` i al tauler Revisió del Sandbox. El camp `path` d'aquests avisos és un punter JSON al camp que falla: `/pageTemplates/3/frames/2/style`, `/pageTemplates/0/variants/recto/frames/1/next`, `/resources/4/anchors/0/style`. Quan el camp és heretat, el punter indica la plantilla que el va escriure. Un avís sobre un id o un nom que no existeix proposa a més el nom existent que s'hi assembla més.
 
-Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `overflow`, una variant o un estil de rètol és un `unknownConfigKey`; una paraula fora de les opcions d'un paràmetre (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, el `routing`, les marques d'extrem i el `side` d'un connector, i les marques d'extrem i el `routing` d'una línia de referència) és un `unknownConfigValue`, i el paràmetre conserva el valor per defecte. Una plantilla sense `id`, o un marc o un grup sense `name`, s'ignora amb un `unknownConfigValue` en aquest camp.
+Una clau mal escrita d'una plantilla, un marc, un grup, una retícula, `fit`, `overflow`, una variant o un estil de rètol és un `unknownConfigKey`; una paraula fora de les opcions d'un paràmetre (`area`, `verticalAlign`, `exclude`, `wrap`, `takes`, `kind`, `align`, `writingMode`, `direction`, `fontStyle`, `textTransform`, `overlap`, `rowAlign`, el `routing`, les marques d'extrem i el `side` d'un connector, i les marques d'extrem i el `routing` d'una línia de referència) és un `unknownConfigValue`, i el paràmetre conserva el valor per defecte. Una plantilla sense `id`, o un marc o un grup sense `name`, s'ignora amb un `unknownConfigValue` en aquest camp. Els aspectes de marc (`frameLooks`) es revisen igual: un aspecte sense `id` s'ignora, i una clau que el `look` d'un marc no té és un `unknownConfigKey`.
 
 <table>
   <thead>
@@ -1204,7 +1246,7 @@ Des dels connectors (postext 1.48) la versió de la configuració és la 16; les
 
 ### Avisos de superposició, repetició i mòduls
 
-Aquests avisos surten de la maquetació o del Markdown de la pàgina, no només de la plantilla, així que indiquen una pàgina. Els llisten `postext check` (`--json` porta els seus camps a `data`), el tauler Revisió del Sandbox i els `contentWarnings` del document. Des de postext 1.48.
+Aquests avisos surten de la maquetació o del Markdown de la pàgina, no només de la plantilla, així que indiquen una pàgina. Els llisten `postext check` (`--json` porta els seus camps a `data`), el tauler Revisió del Sandbox i els `contentWarnings` del document. Des de postext 1.48, i `lookUnknown` des de postext 1.50.
 
 <table>
   <thead>
@@ -1229,6 +1271,11 @@ Aquests avisos surten de la maquetació o del Markdown de la pàgina, no només 
       <td><code>repeatOverflow</code></td>
       <td>Una graella que repeteix un joc de marcs admet <code>repeat.max</code> elements i la pàgina n'hi dona més. Un avís per cada element de més, al seu <code>slot="…"</code>: l'element va al marc de flux (<code>flowFrame</code>), o després de la pàgina.</td>
       <td>Augmenta <code>max</code>, treu-lo, o passa els elements de més a una altra pàgina.</td>
+    </tr>
+    <tr>
+      <td><code>lookUnknown</code></td>
+      <td>Un tros <code>:::frame</code> escriu <code>look="…"</code> amb un id que cap entrada de <code>frameLooks</code> no té (vegeu <a href="#aspectes-de-marc">Aspectes de marc</a>). El marc conserva el seu estil i els colors de la plantilla. Assenyala el valor de l'atribut i indica l'id més semblant (<code>suggestion</code>).</td>
+      <td>Corregeix l'id al tros, o afegeix a <code>frameLooks</code> un aspecte amb aquest id.</td>
     </tr>
     <tr>
       <td><code>moduleUnknown</code></td>
