@@ -684,6 +684,12 @@ const config: PostextConfig = {
       <td><code>char</code> es repeteix al llarg de l'espai entre el títol i el número de pàgina, alineat a la dreta perquè els punts d'entrades consecutives quedin alineats (<code>'. '</code> els espaia); <code>gap</code> és l'espai mínim entre el títol i la línia de punts. La línia porta tants caràcters com hi caben, mesurada com una tira sencera amb la seva font, de manera que, amb una font en què el *kerning* separa els punts seguits, hi ha menys punts en lloc de punts que arriben fins al número de pàgina. (Fins a postext 1.4, el compte es feia a partir d'un sol punt, i amb una font així la línia de punts anava des del títol fins a superposar-se al número.) Un títol que no deixaria lloc a l'etiqueta salta de línia una mica abans. La línia de punts té tres caràcters o més: on només n'hi caben un o dos, la fila queda sense punts, perquè un punt solt davant del número de pàgina es llegeix com un punt final. En un PDF etiquetat els punts són artefactes, que el text extret omet. El text de cos posa els mateixos farciments a les seves <a href="/ca/docs/configuration-text#tabulacions">tabulacions</a>.</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>els del número de pàgina</td>
+      <td>Els punts en un color, una lletra, un cos i un gruix propis (des de postext 1.52), com l'índex d'un original que compon punts petits de color, a part dels números de pàgina. Cada un que s'omet conserva el que tindrien els punts sense ell: el del número de pàgina en una entrada. <code>fontSize</code> en <code>em</code> es mesura sobre aquest cos. Llevat que <code>parts.leader</code> en fixi els seus, el <code>{'{leader}'}</code> d'una fila de part també els pren.</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>objecte</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -706,6 +712,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>buit</td>
       <td>Disseny de la fila; el contenidor és la fila (amplada de columna × <code>height</code>). Marcadors: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code>…, <code>{'{titleText}'}</code> i <code>{'{pageNumber}'}</code> (l'etiqueta de la pàgina de part; amb <code>parts.page: false</code>, que no obre pàgina de part, l'etiqueta de la pàgina on comença el contingut de la part, que és on les capçaleres passen a indicar la part; en un llibre maquetat capítol a capítol, un bloc de part que tanca el seu capítol remet a la primera pàgina amb contingut del capítol següent). Els colors vinculats a la paleta agafen la <code>palette</code> de la mateixa part, així que la fila de cada secció surt amb el seu color. Si és buit, es componen <code>{'{number} {titleText}'}</code> (separats pel <code>numberSeparator</code> de l'H1) i el número de pàgina amb la tipografia de les entrades de nivell 1. <code>{'{leader}'}</code> posa la <code>leader</code> de l'índex entre el text anterior i el posterior, dins d'un mateix element de text: <code>{'{number} {titleText}{leader}{pageNumber}'}</code> col·loca el títol al començament de la fila, el número de pàgina al final i els punts entremig, alineats amb el número i a <code>gap</code> de cada text, com a les files d'entrada. Llavors l'element ocupa tota l'amplada de la fila (una amplada <code>auto</code> arriba fins a la vora del contenidor); si el títol no hi cap, es retalla el títol i mai el número, i amb la línia de punts desactivada (<code>leader.enabled: false</code>), l'espai queda en blanc. Fora d'una fila de part, i en pàgines verticals, <code>{'{leader}'}</code> no imprimeix res. En un PDF etiquetat i en HTML els punts queden fora del text que es llegeix.</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>L'aspecte del <code>{'{leader}'}</code> d'una fila de part: <code>color</code>, <code>fontFamily</code>, <code>fontSize</code> (en <code>em</code> del cos de l'element) i <code>fontWeight</code>, camp a camp sobre el de <code>leader</code>; un camp que cap dels dos fixa conserva el de l'element de text. Des de postext 1.52. Per posar el número de pàgina en un element propi (una altra lletra, un requadre), fes la fila de tres elements: el títol ancorat a l'esquerra de la fila, el número de pàgina a la dreta i, entre tots dos, els punts en un element el contingut del qual és només <code>{'{leader}'}</code>, ancorat amb <code>{"{ to: '#title', edge: 'right-of' }"}</code> i amb <code>{"width: { to: '#page', edge: 'left' }"}</code>. Els punts s'aturen a la distància <code>gap</code> de l'element del número, sigui on sigui.</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

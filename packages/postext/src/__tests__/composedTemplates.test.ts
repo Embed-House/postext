@@ -373,14 +373,14 @@ describe('the config sections', () => {
 
 describe('configVersion 15 (#853)', () => {
   it('is the version this engine writes', () => {
-    expect(CONFIG_VERSION).toBe(17);
+    expect(CONFIG_VERSION).toBe(18);
   });
 
   it('reads a configuration stored under 14 as it is, templates and all', () => {
     const stored = config([TEMA], { labelStyles: [{ id: 'mar' }], bodyText: { fontSize: { value: 10, unit: 'pt' } } });
     expect(migrateConfig(stored, 14, { content: '::::page{template="tema-cajas"}\n# T\n::::\n' })).toEqual(stored);
-    expect(migrateConfig(stored, 15)).toBe(stored);
+    expect(migrateConfig(stored, 15, { content: 'Words.' })).toBe(stored);
     expect(migrateBundleConfig({}, [stored], 14, { content: 'Words.' })).toEqual(stored);
-    expect(migrateBundleConfig({ locale: 'es' }, [{ pageTemplates: [TEMA] }, { labelStyles: [{ id: 'mar' }] }], 15)).toEqual({ locale: 'es', pageTemplates: [TEMA], labelStyles: [{ id: 'mar' }] });
+    expect(migrateBundleConfig({ locale: 'es' }, [{ pageTemplates: [TEMA] }, { labelStyles: [{ id: 'mar' }] }], 15, { content: 'Words.' })).toEqual({ locale: 'es', pageTemplates: [TEMA], labelStyles: [{ id: 'mar' }] });
   });
 });

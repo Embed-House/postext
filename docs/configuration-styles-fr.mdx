@@ -474,7 +474,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Styles de surlignage
 
-La propriété `markStyles` déclare les styles nommés du `:mark[texte]{style="…"}` en ligne : la bande de couleur derrière une phrase, comme un manuel surligne ses mots clés (la syntaxe et ses règles de coupure sont dans la référence du format de document). Un style est fourni par défaut, `mark` (une bande jaune pâle qui dépasse un peu de la phrase, aux extrémités légèrement arrondies, le texte dans sa propre couleur) : `:mark[…]` fonctionne donc sans aucune configuration ; déclarer `markStyles` remplace cette liste. Une marque sans `style`, ou avec un identifiant qu’aucun style ne déclare, prend le premier style (le Sandbox signale l’identifiant inconnu).
+La propriété `markStyles` déclare les styles nommés du `:mark[texte]{style="…"}` en ligne : la bande de couleur derrière une phrase, comme un manuel surligne ses mots clés (la syntaxe et ses règles de coupure sont dans la référence du format de document). Un style est fourni par défaut, `mark` (une bande jaune pâle qui dépasse un peu de la phrase, aux extrémités droites, le texte dans sa propre couleur) : `:mark[…]` fonctionne donc sans aucune configuration ; déclarer `markStyles` remplace cette liste. Une marque sans `style`, ou avec un identifiant qu’aucun style ne déclare, prend le premier style (le Sandbox signale l’identifiant inconnu).
 
 ```ts
 const config: PostextConfig = {
@@ -533,8 +533,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Rayon des deux extrémités de la bande, limité à la moitié de sa hauteur.</td>
+      <td><code>0</code></td>
+      <td>Rayon des deux extrémités de la bande, limité à la moitié de sa hauteur. Les extrémités droites sont la norme à l'impression. Jusqu'à postext 1.51 la valeur par défaut était <code>0.2em</code> ; une configuration enregistrée alors dont le texte porte une marque est lue avec <code>0.2em</code> écrit dans chaque style qui ne donne pas de rayon.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -553,6 +553,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>Espace au-dessus et au-dessous, chacun à la place de <code>paddingY</code>.</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>Comment la bande d'une expression qui passe à la ligne est coupée, comme <code>box-decoration-break</code> en CSS. <code>'slice'</code> : une seule bande, coupée droit à la fin de la ligne, avec la marge et les coins arrondis seulement au vrai début et à la vraie fin de l'expression. <code>'clone'</code> : chaque morceau de ligne reçoit une bande entière, avec <code>paddingX</code> et les coins à ses deux bouts, pour un titre posé sur une bande de couleur coupée ligne par ligne. La mise en page est la même dans les deux cas.</td>
     </tr>
   </tbody>
 </table>

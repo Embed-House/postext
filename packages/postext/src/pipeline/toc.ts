@@ -457,6 +457,17 @@ export function measureTocBlock(
   const labelColor = pn.color.hex;
   const reservePx = label.length > 0 ? dimensionToPx(pn.width, dpi, fontSizePx) : 0;
   const gapPx = label.length > 0 ? dimensionToPx(toc.leader.gap, dpi, fontSizePx) : 0;
+  // The leader's own face (#1121), field by field over the page number's.
+  const leaderFace = toc.leader;
+  const leaderFont = leaderFace.fontFamily !== undefined || leaderFace.fontSize !== undefined || leaderFace.fontWeight !== undefined
+    ? buildFontString(
+      leaderFace.fontFamily ?? pn.fontFamily,
+      leaderFace.fontSize ? dimensionToPx(leaderFace.fontSize, dpi, labelFontSizePx) : labelFontSizePx,
+      (leaderFace.fontWeight ?? pn.fontWeight).toString(),
+      pn.italic ? 'italic' : 'normal',
+    )
+    : labelFont;
+  const leaderColor = leaderFace.color?.hex ?? labelColor;
   const labelW = label.length > 0 ? flowTextWidth(label, labelFont) : 0;
 
   const measureTitle = (maxW: number) => measureRichBlock(
@@ -487,12 +498,12 @@ export function measureTocBlock(
       // script it is measured, and painted, in the script of the document's
       // language (#725), where each browser shaped it its own way and one
       // counted half as many dots again as another.
-      const leaderScript = leaderScriptOf(toc.leader.char, labelFont);
-      const leader = fitLeader(toc.leader.char, leaderEnd - leaderStart, (run) => (leaderScript ? scriptTextWidth(run, labelFont, leaderScript, false) : flowTextWidth(run, labelFont)));
+      const leaderScript = leaderScriptOf(toc.leader.char, leaderFont);
+      const leader = fitLeader(toc.leader.char, leaderEnd - leaderStart, (run) => (leaderScript ? scriptTextWidth(run, leaderFont, leaderScript, false) : flowTextWidth(run, leaderFont)));
       if (leader) {
         const { text: dots, width: dotsW } = leader;
         pushSpace(leaderEnd - dotsW - x);
-        segs.push({ kind: 'text', text: dots, width: dotsW, fontString: labelFont, color: labelColor, leader: 'text', ...(leaderScript ? { scriptContext: leaderScript } : {}) });
+        segs.push({ kind: 'text', text: dots, width: dotsW, fontString: leaderFont, color: leaderColor, leader: 'text', ...(leaderScript ? { scriptContext: leaderScript } : {}) });
         x += dotsW;
       }
     }

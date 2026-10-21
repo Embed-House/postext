@@ -164,6 +164,8 @@ Un botón que cambia la plantilla (y, con ella, todas las páginas que la usan) 
 
 <Screenshot src="/docs-shots/es/checks.webp" alt="El panel Revisión con el aviso El texto no cabe en su marco y tres botones con soluciones, y la página con su primera caja marcada con un contorno rojo y una banda que dice faltan 14,9 mm." caption="Un marco en el que no cabe el texto, y las soluciones que ha calculado la maquetación." />
 
+Una caja con fotos y sus pies (marcos anclados dentro de ella, un pie `below` cada foto) no crece sola cuando una traducción alarga los pies: se salen de la caja y caen sobre lo que hay debajo. Abre el marco de la caja en el editor de plantillas y pon **Crece con los marcos de dentro** en *Los marcos anclados dentro* (`growWith: "children"` en la plantilla). La caja llega entonces hasta el pie del pie de foto más bajo más su relleno inferior, su fondo, su borde y su pestaña la siguen, y los marcos de debajo bajan. *Los marcos elegidos* toma en su lugar una lista de nombres. Cuentan los marcos anclados a un punto del lado superior de la caja y los anclados a ellos; un marco anclado al pie o al centro de la caja no, y una caja girada no crece. Desde postext 1.52.
+
 ## 7. Selecciona sobre la página y en el texto
 
 La página y su Markdown van siempre a la par.

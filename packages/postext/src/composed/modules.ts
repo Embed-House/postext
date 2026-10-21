@@ -121,6 +121,12 @@ export function expandModules(
         if (local.has(f.next)) out.next = scope(f.next);
         else delete out.next;
       }
+      // The frames a box grows with (#1117) are the module's own.
+      if (Array.isArray(f.growWith)) {
+        const names = f.growWith.filter((n) => local.has(n)).map(scope);
+        if (names.length > 0) out.growWith = names;
+        else delete out.growWith;
+      }
       const to = f.overflow.continueIn;
       if (typeof to === 'string' && to.startsWith('#')) {
         out.overflow = { ...f.overflow };

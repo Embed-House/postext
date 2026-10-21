@@ -685,6 +685,12 @@ const config: PostextConfig = {
       <td><code>char</code> est répété dans l’espace entre l’intitulé et le numéro de page, aligné à droite pour que les points d’entrées consécutives s’alignent (<code>'. '</code> les espace) ; <code>gap</code> est l’espace minimal gardé entre l’intitulé et les points de conduite. Les points de conduite prennent autant de caractères qu’il en tient, mesurés comme une suite entière dans leur caractère : une police dont le crénage écarte les points consécutifs en reçoit donc moins, au lieu de points qui atteignent le numéro de page. (Jusqu’à postext 1.4, le compte se faisait à partir d’un seul point, et dans une telle police les points de conduite couraient de l’intitulé jusque dans le numéro.) Un intitulé qui ne laisserait pas de place à l’étiquette passe à la ligne un peu plus tôt. Des points de conduite ne sont composés qu’à partir de trois caractères : là où il n’en tient qu’un ou deux, la rangée n’en a aucun, car un point isolé avant le numéro de page se lit comme un point final. Dans un PDF balisé, les points sont des artefacts, exclus du texte extrait. Le texte courant compose les mêmes points de conduite à ses <a href="/fr/docs/configuration-text#taquets-de-tabulation">taquets de tabulation</a>.</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>ceux du numéro de page</td>
+      <td>Les points dans une couleur, une police, un corps et une graisse à eux (depuis postext 1.52), comme la table d’un original qui compose de petits points colorés à part des numéros de page. Chaque champ omis garde ce que les points auraient sans lui : ceux du numéro de page sur une ligne d’entrée. <code>fontSize</code> en <code>em</code> se mesure sur ce corps. Sauf si <code>parts.leader</code> fixe les siens, le <code>{'{leader}'}</code> d’une ligne de partie les prend aussi.</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>objet</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -707,6 +713,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>vide</td>
       <td>Maquette de la rangée ; son conteneur est la rangée (largeur de colonne × <code>height</code>). Variables : <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code>…, <code>{'{titleText}'}</code> et <code>{'{pageNumber}'}</code> (l’étiquette de la page de partie ; avec <code>parts.page: false</code>, qui n’ouvre aucune page de partie, l’étiquette de la page où commence le contenu de la partie, là où ses titres courants passent à elle ; dans un livre mis en page chapitre par chapitre, une directive qui clôt son chapitre désigne la première page de contenu du chapitre suivant). Les couleurs liées à la palette prennent la <code>palette</code> propre de la partie : la rangée de chaque section prend donc sa couleur. Quand elle est vide, <code>{'{number} {titleText}'}</code> (avec le <code>numberSeparator</code> du H1 entre les deux) et le numéro de page sont composés avec la typographie des entrées de niveau 1. <code>{'{leader}'}</code> place le <code>leader</code> de la table des matières entre le texte qui le précède et celui qui le suit, dans un même élément de texte : <code>{'{number} {titleText}{leader}{pageNumber}'}</code> met le titre au début de la ligne, le numéro de page à la fin et les points entre les deux, calés sur le numéro et à <code>gap</code> de chaque texte, comme sur les lignes d’entrée. L’élément prend alors toute la largeur de la ligne (une largeur <code>auto</code> va jusqu’au bord du conteneur) ; un titre trop long est coupé, jamais le numéro, et des points de conduite désactivés (<code>leader.enabled: false</code>) laissent l’espace vide. Hors d’une ligne de partie, et sur une page verticale, <code>{'{leader}'}</code> n’imprime rien. Dans un PDF balisé et en HTML, les points restent hors du texte lu.</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>L’aspect du <code>{'{leader}'}</code> d’une ligne de partie : <code>color</code>, <code>fontFamily</code>, <code>fontSize</code> (en <code>em</code> du corps de l’élément) et <code>fontWeight</code>, champ par champ par-dessus celui de <code>leader</code> ; un champ qu’aucun des deux ne fixe garde celui de l’élément de texte. Depuis postext 1.52. Pour mettre le numéro de page dans un élément à lui (une autre police, un encadré), faites la ligne en trois éléments : le titre ancré à gauche de la ligne, le numéro de page à droite et, entre les deux, les points dans un élément dont le contenu est <code>{'{leader}'}</code> seul, ancré par <code>{"{ to: '#title', edge: 'right-of' }"}</code> avec <code>{"width: { to: '#page', edge: 'left' }"}</code>. Ses points s’arrêtent à <code>gap</code> de l’élément du numéro, où qu’il se trouve.</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

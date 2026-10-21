@@ -1,3 +1,4 @@
+import type { Dimension } from '../types';
 import type { ComicPageSource } from '../comics/types';
 import type { FigureLabelNode, SourceRange } from '../composed/types';
 
@@ -378,6 +379,13 @@ export interface InlineSpan {
      *  every pass that keeps a swatch whole keeps it whole. `color` is then
      *  the icon's tint as written (`''` when it has none). */
     icon?: InlineIcon;
+    /** The square's size, outline, corners and gap as written
+     *  (`:swatch{size=… border=… radius=… gap=…}`, #1104); unset: a square
+     *  the size of a capital outlined in the text colour. */
+    shape?: SwatchShape;
+    /** {@link shape} resolved by the pipeline for the text the swatch sits
+     *  in: lengths in px, the outline colour as hex. */
+    box?: SwatchBox;
   };
   /** Present when this span is an inline chip (`:chip[text]{style="…"}`):
    *  a boxed run of text set as one unbreakable unit. The `text` is a single
@@ -635,6 +643,34 @@ export interface InlineWarichu {
   color?: string;
 }
 
+/** The attributes of a `:swatch{…}` beside its colour (#1104), as
+ *  written: lengths as `Dimension`s (em of the text the swatch sits in), the
+ *  outline colour as a hex or a palette id. */
+export interface SwatchShape {
+  /** Side of the square. Default 0.75 em (a capital's height). */
+  size?: Dimension;
+  /** Width of the outline; 0 draws none. Default 6 % of the side (at
+   *  least half a pixel). */
+  borderWidth?: Dimension;
+  /** Colour of the outline. Default the text's. */
+  borderColor?: string;
+  /** Corner radius, clamped to half the side. Default square corners. */
+  radius?: Dimension;
+  /** Room after the square, between it and the words that follow (its
+   *  label), part of the swatch's advance. Default none. */
+  gap?: Dimension;
+}
+
+/** A {@link SwatchShape} resolved for one swatch: lengths in px, the
+ *  outline colour as hex. Only the fields the swatch sets. */
+export interface SwatchBox {
+  sidePx?: number;
+  borderWidthPx?: number;
+  borderColor?: string;
+  radiusPx?: number;
+  gapPx?: number;
+}
+
 /** A chip style resolved for one chip in its context: lengths in px (em
  *  read against the chip's font size), colours as hex. */
 export interface ChipBox {
@@ -673,7 +709,7 @@ export type MathSpan = InlineSpan & { math: MathMeta };
 
 export type ListKind = 'unordered' | 'ordered' | 'task';
 
-export type ParseIssueKind = 'unclosedMath' | 'unclosedMathBlock' | 'unclosedContainer' | 'unclosedCodeBlock';
+export type ParseIssueKind = 'unclosedMath' | 'unclosedMathBlock' | 'unclosedContainer' | 'unclosedCodeBlock' | 'strayFence';
 
 interface ParseIssueBase {
   kind: ParseIssueKind;
@@ -713,7 +749,19 @@ export interface UnclosedCodeBlockIssue extends ParseIssueBase {
   lang?: string;
 }
 
-export type ParseIssue = UnclosedMathIssue | UnclosedContainerIssue | UnclosedCodeBlockIssue;
+/** A bare `:::` right after a one-line directive (`:::toc`, `:::index`,
+ *  `:::pagebreak`, `:::space`…) with no `:::` container open to close
+ *  (#1125): those directives take no closing fence, so the line is
+ *  dropped instead of printed. `sourceStart`/`sourceEnd` cover the fence
+ *  line. */
+export interface StrayFenceIssue extends ParseIssueBase {
+  kind: 'strayFence';
+  delimiter: ':::';
+  /** The directive the fence follows. */
+  directiveName: DirectiveName;
+}
+
+export type ParseIssue = UnclosedMathIssue | UnclosedContainerIssue | UnclosedCodeBlockIssue | StrayFenceIssue;
 
 /** How a text is read (see `parseMarkdownWithIssues`). */
 export interface ParseOptions {

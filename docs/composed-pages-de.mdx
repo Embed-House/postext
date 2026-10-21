@@ -356,6 +356,11 @@ Die Prüfungen werten Markdown und Konfiguration aus, noch bevor das Buch gesetz
       <td>Ergänzen Sie die schließende Zeile: so viele Doppelpunkte wie in der öffnenden Zeile der Seite, oder <code>:::</code> für einen Rahmen oder eine Abbildung.</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>Ein alleinstehendes <code>:::</code> direkt nach einer einzeiligen Direktive (<code>:::toc</code>, <code>:::index</code>, <code>:::pagebreak</code>, <code>:::space</code> …), ohne offenen Rahmen oder Kasten, den es schließen könnte. Diese Direktiven haben keine schließende Zeile; die Zeile wird verworfen statt gedruckt.</td>
+      <td>Löschen Sie das <code>:::</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Ein Raster, das sich wiederholt, fasst <code>repeat.max</code> Karten, und die Seite gibt ihm mehr (siehe <a href="#wiederholte-slots">Wiederholte Slots</a>). Eine Warnung je überzählige Karte, an ihrem <code>slot="…"</code>: Die Karte kommt in den Flussrahmen oder hinter die Seite.</td>
       <td>Erhöhen oder entfernen Sie <code>max</code> in der Vorlage, oder setzen Sie die überzähligen Karten auf eine andere Seite.</td>

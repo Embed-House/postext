@@ -66,6 +66,8 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.48.1</td><td>a module's connector may end on a frame of the page that stacks it</td><td>2</td></tr>
 <tr><td>1.49.0</td><td><code>ring</code> and <code>bar</code> caps on connectors and leaders, <code>opacity</code> on their lines; a picture in an <code>auto</code> frame of a vertical page fills the room the frame measured; Sandbox: <code>overlap</code> in the frame editor and an «allow overlap» fix in the Checks panel</td><td>2</td></tr>
 <tr><td>1.50.0</td><td>decoration drawn when the page fence says so (<code>when</code> / <code>unless</code> on a design element: one shell for front matter and body pages); modules side by side (a modules group of <code>kind: "row"</code> or <code>"grid"</code> <code>within</code> the stack, its <code>templates</code>, a module's <code>width</code>); named frame looks (<code>frameLooks</code>, <code>look="…"</code> on a <code>:::frame</code> piece, <code>lookUnknown</code>); the shrink proposal keeps a long word whole</td><td>2</td></tr>
+<tr><td>1.51.0</td><td>groups inside groups, to any depth (<code>within</code> may name a row or a grid: a box beside a column of cards); the modules of a row share its room by <code>grow</code> and give width back by <code>shrink</code> (on a module template); <code>rowAlign: "stretch"</code> takes a module's <code>auto</code> box that ends at its foot down to the row's foot; a frame whose story names a look <code>frameLooks</code> lacks is marked (<code>lookUnknown</code>); Sandbox: page-fence conditions on any attribute, «Inside the group» for modules groups, a module's grow and shrink</td><td>2</td></tr>
+<tr><td>1.52.0</td><td>a tab with corners of its own (<code>label.borderRadius</code>, one length or per corner; a joined tab rounds its outer corners with it); a box that grows with the frames laid inside it (<code>growWith: "children"</code> or a list of names: photos and their captions in a box, §6.5); <code>frameCovered</code> reads a cut-out with an alpha channel or a polygon by its shape, so a transparent cut-out beside text needs no <code>overlap: "allow"</code>; an empty styled fence reads where it lies (HTML, EPUB, tagged PDF, <code>composed_check</code>); <code>unknownConfigKey</code> for keys of design elements, connector ends, placements, a decoration and the config's top level (a group's <code>size</code> beside its <code>placement</code>); <code>:chip</code> in a heading; <code>markStyles[].decorationBreak: "clone"</code>; <code>:swatch</code> size, border, radius and gap; <code>captionSide: "inside"</code>; a justified caption painted justified; negative tracking in a box title; a box's bullets in a face of their own (<code>lists.bulletFontFamily</code>); <code>glyphFallback</code>; a stray <code>:::</code> after a one-line directive dropped and reported (<code>strayFence</code>)</td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -253,7 +255,7 @@ node scripts/render.mjs work/regions --frames work/laid.json                   #
 python3 scripts/template_dedupe.py work/regions --laid work/laid.json          # kinds of page, styles, grounds, grids, modules
 python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts
 python3 scripts/lint_project.py work/regions --quiet
-python3 scripts/composed_check.py check work/regions --json > work/check.json  # overlaps: 0 to pass
+python3 scripts/composed_check.py check work/regions --json-out work/check.json  # overlaps: 0 to pass; report and exit code kept
 node scripts/render.mjs work/regions --frames work/folded.json --jpeg work/pages
 python3 scripts/template_dedupe.py work/regions --compare-boxes work/laid.json work/folded.json
 python3 scripts/compare_pages.py source.pdf work/pages --source-pages 4-28 --render-pages 1-25 \
@@ -271,11 +273,39 @@ source on average can still hide a caption under a photo. Fix each overlap
 as §6.18 says before curating anything else: a frame that lies over another
 is usually a group or an anchor the draft read wrongly.
 
+**The curation loop.** `manifest` writes `preset.json` again from
+`library.json` on every run, so a fix typed into `preset.json` is lost at
+the next build, and the skill never edits `preset.json` by hand. Each fix
+goes into `curation.json` in the extract folder instead (`extract` writes
+it empty; `manifest --patch FILE` names another), and `manifest` applies it
+after the build, every time. Its tables, each a list of entries with a
+`reason`:
+
+| Table | Entry | Does |
+|---|---|---|
+| `framePatch` | `{template, frame, set, reason}` | merges `set` into the frame (`null` removes a key) |
+| `frameDrop` | `{template, frame, reason}` | removes the frame and its name from the template's groups |
+| `frameAdd` | `{template, frame: {name, …}, after?, reason}` | adds a frame after `after`, or at the end |
+| `decorationDrop` | `{template, element, reason}` | removes a decoration element by id |
+| `overlapAllow` | `{template, frame, reason}` | sets `overlap: "allow"` on a frame the source prints over or past another (§6.18) |
+| `styles` | `{table, id, set, reason}` | merges `set` into a style of a config list (`calloutStyles`, `labelStyles`, `frameLooks`, `paragraphStyles`…) |
+| `resources` | `{resource: {id, typeId, …}, reason}` | adds a resource the extract did not write |
+
+An entry whose template, frame, element, style or table does not exist, an
+entry without a reason, a frame added twice or a resource id taken already
+fails the run with the list of them, and nothing is written. Write the
+entries against the names `template_dedupe.py` gives (the role names), and
+run `manifest` after dedupe; a rename that breaks an entry fails loudly
+rather than dropping the fix. The `reason`s are the curation's record: the
+port's report lists them. A fix that belongs to the extraction (a frame
+every page reads wrongly) goes into an issue for the scripts, not into a
+long curation file.
+
 <table>
 <tr><th>Script</th><th>Run it</th><th>It writes</th></tr>
-<tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, with <code>--overlay</code> the source pages with every frame drawn</td></tr>
+<tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, an empty <code>curation.json</code> (kept when it exists), with <code>--overlay</code> the source pages with every frame drawn</td></tr>
 <tr><td><code>template_dedupe.py</code></td><td>right after <code>extract</code>, and again after merging the output of several runs</td><td>the same files in place: shared templates named by what they hold, <code>extends</code> children, a <code>page-base</code> with the decoration most pages share, styles merged by look, alike grounds merged, frames on a lattice as grid groups, every band of a page as a module and the page template as a shell (below), frames named by role (below); <code>dedupe-report.json</code> with every merge and its largest difference, every grid and module, every frame renamed and (<code>pages</code>) every frame's name on the laid page</td></tr>
-<tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits</td></tr>
+<tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits, with the tables of <code>curation.json</code> (or <code>--patch FILE</code>) applied and listed</td></tr>
 <tr><td><code>anchors.py</code></td><td>for one map or diagram, or for another edition's labels</td><td><code>anchors.json</code> (the resource's <code>anchors</code>, <code>labelStyles</code>, the labels) and <code>figure.&lt;lang&gt;.md</code>; <code>anchors.py relabel work/regions/figures.json --strings en=en.json</code> writes other editions from a strings file keyed by the source text or the anchor id</td></tr>
 </table>
 
@@ -410,6 +440,46 @@ What the extraction decides, so you know what to check:
   span is compared with a render of the page without text: a copy drawn
   under a picture or a fill, clipped away or off the page is left out and
   listed under `hiddenTexts` in the report.
+- **Slanted romans** (skill 1.61). A source that obliques an upright face
+  (a sheared text matrix) instead of setting its italic is read from each
+  character's box: a shear of 0.15 or more is italic, written `*…*`, and
+  `report.json` counts the runs per face under `syntheticItalic`. The
+  project then needs that family's italic among its fonts.
+- **Bold and italic** (skill 1.61). The marks of a paragraph are measured
+  against its frame's body (the weight and slant most of the frame's text
+  has): a paragraph set wholly in bold in a regular box comes out as
+  `**…**`, and a frame set wholly in italic gets `body.italic` with no `*`.
+- **Frame titles** (skill 1.61). The first paragraph of a box or text
+  frame is its title (a heading in the frame) when it has at most two lines
+  and fifteen words and two letters or more, text follows it, and it is
+  wholly bold, 1.12 times the
+  size of that text or more, or in another colour. A title at heading size
+  takes that size's level; one at body size goes a level under the
+  smallest heading size (two when it is not bold).
+- **Spaces** (skill 1.61). En (U+2002) and em (U+2003) spaces the source
+  sets are kept. In headings, running heads and tab labels each gap
+  between words is measured, less the line's letter spacing: over half an
+  em and 1.6 times the narrowest other word space of the line is an en
+  space, over 0.8 em an em space (the room between a number and its
+  title, a chip and its words); spaced capitals stay plain. A paragraph opened by a highlight keeps the measured room after
+  it the same way; with `--highlights chip` that room is the chip style's
+  `gap` instead (in em, when wider than 0.4 em). A narrow gap inside a
+  number or before its sign or unit (`1 000`, `21 %`, `5 mm`, often set by
+  position with no space character) becomes a narrow no-break space
+  (U+202F), so the number never breaks; thin spaces before `; : ! ?` and
+  inside `« »` do too. A plain space beside a fixed one is dropped.
+- **Lists** (skill 1.61). A line opened by a bullet (`•·▪■●◦‣►▸◆`) is a
+  list item; the bullets' left edges in a frame, grouped within 1.5 mm,
+  are the levels, so an item whose bullet sits further in is nested
+  (`  - ` under the item above). The frame's style gets `lists` from its
+  top-level bullets: `bulletChar`, `color` (the bullets' most common),
+  `indent`, `gap` (from the bullet's advance to the words),
+  `bulletFontSize` (em of the item text), `bulletFontWeight` and
+  `itemSpacing` (the room between two items over their leading). Each level's bullet goes to
+  `suggested.unorderedLists` (`bulletChar`, `color`, `levels[]` with `bulletChar`,
+  `fontSize`, `fontWeight`), which `manifest` writes into the config: keep
+  it, since a box whose `lists.bulletChar` differs from the document's
+  replaces every level's bullet with its own.
 - **Shapes.** Large white fills are cards; filled or
   stroked rectangles and rounded rectangles that hold text or pictures are
   boxes; a shape 4–13 mm high holding one line of up to ten words is a tab
@@ -417,7 +487,14 @@ What the extraction decides, so you know what to check:
   a heading in it: the title frame that `takes` the level); a rectangle
   under many drawn shapes is a map's ground, not a box; wide coloured
   strokes or fills hugging words are highlights (`:mark`, or `:chip` with
-  `--highlights chip`). A shape a render does not show is not read, and
+  `--highlights chip`). From skill 1.61 a fill over words of one line that
+  runs on past it is a highlight too, never a box (a band with room round
+  its words marks whole words only), the highlighted words do not count in
+  the line's look, so a mark that ends mid-paragraph does not part it, and
+  a borderless fill of the colour behind it under one or two lines is a
+  mask: no frame, no decoration. A last pass joins text frames one under
+  the other in the same look and leading with nothing between them.
+  A shape a render does not show is not read, and
   from skill 1.60 neither is art no pixel of its colour shows (lettering
   under a white panel painted after it, a drawing in the bleed, art clipped
   away): it makes no picture, no box's art and no decoration.
@@ -430,7 +507,8 @@ What the extraction decides, so you know what to check:
   size off the last one's foot, so it grows with them: never an empty
   `:::frame`), loose shapes (icons, chevrons: `path` elements), lines that
   join nothing (`path`), and `connector`s. Thin strokes (`--line-width`,
-  2 pt) straight across or down are lines, never boxes or a picture's art:
+  2 pt) straight across or down are lines, never boxes (inside a cluster of
+  art they are the picture's: a chart's axes, a scale bar):
   a bar with one trunk to a frame and drops to two or more is a `tree`
   (each end found by walking the line to the first frame it reaches, the
   bar's place as `trunk`, a drop's place as `at`); two or three segments
@@ -447,6 +525,109 @@ What the extraction decides, so you know what to check:
   `template_dedupe.py` renames connector ends and size targets with the
   frames and keeps a connector or border in a shared base only when the
   base has its frames.
+- **Hatching, paint order and the raster fallback** (skill 1.61). Three or
+  more strokes of one look, each one straight piece, parallel, side by
+  side and evenly spaced (0.2 to 4 mm), that touch no other stroke and have
+  no line of text set between two of them are hatching: one `hatch-N` path,
+  never connectors and stubs. A fill over most of the page that the source
+  paints after a loose shape it covers keeps that place among the shapes
+  (a translucent one stays in the raster ground). Shapes of one look merge
+  into one path only when they do not overlap (two bars of an X wound
+  opposite ways open a hole where they cross in one path). Shapes over a
+  picture cut from its own image (an image with alpha) are not dropped, and
+  the ground keeps what shows round that image's outline (its frame shows
+  the image itself). A page sends its loose shapes, its hatching and its
+  stray line pieces to the raster ground (`report.json` says why) when it
+  has more loose shapes than `--max-paths`, clipped art outside its
+  pictures, six stray line pieces under 5 mm or more and more of them than
+  connector pieces (fragments; a page's long rules stay paths), or a
+  full-page image; connectors, cards, borders and the page
+  colour stay vectors. `--vector-ground` keeps the vectors.
+- **Clip paths** (skill 1.61). Paths are read with the clips they are
+  painted in (`get_drawings(extended=True)`): each path's box is what shows
+  inside its innermost clip, and straight lines are cut to it before they
+  are read as lines. A map's graticule and coastline drawn past the window
+  that shows them stay in the map's cut, inside its box. A rectangle cut
+  by a clip is the part that shows inside the clip's box (a stroked one is
+  not: what shows of its outline is no rectangle); any other clipped shape
+  stays art inside a picture and goes to the raster ground outside one,
+  never to a `path` element (paths carry no clip).
+- **Connector ends on the laid box** (skill 1.61). A line is read against
+  the frames before the pictures are cut and the text frames get their
+  measure, so each end keeps the point where the source's line meets its
+  frame and its `at` (and `gap`) is worked out again on the box the template
+  lays: the picture as cut (to its card, its holder, its ink) and the text
+  frame as wide as `make_template` sets it. Straight and elbow connectors
+  always say their `at` (left out, the engine runs the line from the side's
+  middle and it crosses another box or kinks). One slanted stroke from a
+  frame into a picture, painted over it (a note's leader), is a `straight`
+  connector from the frame's side to a new `pointer-N` anchor of the
+  picture, and the cut loses the stroke; a slanted stroke that joins no
+  frame to a picture stays a loose shape. A path the page's paint order does
+  not list is not known to lie over a picture, so it gives no pointer.
+- **Line art in boxes, rules as bars, white strokes** (skill 1.61). A box
+  with art painted over its fill (an icon, writing guides, a rule, a
+  connector inside it) would hide that art, since frames paint over the
+  decoration: its fill becomes a decoration `box` laid on the frame
+  (`<frame>-fill`, anchored to `#<frame>` and sized to its right and bottom
+  edges, so it follows the frame), painted before the art, and the box's
+  style has no fill (`report.json` notes it). Art painted before the fill
+  stays hidden. A filled rectangle under 1 mm thick is a line of that
+  thickness (guides and rules from layout programs), read as a stroked line
+  is. Colours are those MuPDF renders (Separation, DeviceN, ICC and Lab
+  through their alternate space); a white that colour management leaves a
+  shade off is written `#ffffff`. With `--raster-ground` a box's fill still
+  covers the art under it in the ground.
+- **Pictures in rounded boxes** (skill 1.61). A picture that runs into a
+  corner of a rounded box or card it sits in is cut as a PNG clipped to the
+  box's inner rectangle and corner radii (the outline less half its stroke),
+  transparent past the curve.
+- **Cuts inside their box** (skill 1.61). A cut without its own alpha goes
+  no further than the inside of the box that holds it (the box less half
+  its rule) and no further than a filled rectangle its art is drawn on (a
+  map's sea: masks and page colour past it are not the picture's). What is
+  left of the holder's rule in the cut is painted out in the picture's
+  ground, never redacted (that would take the box's fill too); the frame
+  draws the rule. `report.json` notes every cut whose box still crosses a
+  box's rule. A cut-out with alpha keeps its overhang.
+- **Ruled grids are tables** (skill 1.61). A ruled grid of at least 2 × 2
+  cells with text in most of them (PyMuPDF `find_tables`, `lines_strict`)
+  becomes a `kind: "table"` resource built by `extract_tables.py` (cell
+  align, bold and fills) in a `table-N` frame where it stood, filled with
+  `::resource` (a table set in a box's text goes into that text instead,
+  between the paragraphs it stood between), and a `tableStyles` entry of the same id (the nearest
+  `rules` preset, border, header fill and bold, face, colours and padding;
+  the resource's `table.styleId` names it). Its words, rules and fills are
+  the table's: no text frames, no decoration. The first row is the header
+  when it is filled or bold. A grid whose words run across its rules (a
+  drawing on squared paper) is no table. `--no-tables` keeps the old
+  reading.
+- **A hidden second set of labels** (skill 1.61). A span that another
+  span's box covers in part (a smaller copy of a map's degrees set just
+  off the visible ones, under the map's paint) is read on renders of its
+  own glyphs alone, so the visible copy's ink no longer makes it visible.
+  A figure where two label sizes each set an evenly spaced row over each
+  other gets a `report.json` note: check the source for a hidden copy.
+- **No debris in the decoration** (skill 1.61). A fill of the colour already
+  under it (a white mask on white paper or a white card) is left out unless
+  it hides loose art painted before it; a fill a later box hides is drawn
+  only when it shows a ring of at least 3 % of its box round what covers it;
+  a box with no words wholly under a picture is the picture's art. In
+  `template_dedupe.py`'s modules, furniture (running heads, folios, the page
+  colour, a ground from a fence attribute) always stays on the page shell;
+  when the source paints it over art that moves into a module, the fold's
+  report lists it under `furnitureUnder` (on the shell it lies under that
+  art). A child template's new decoration paints after all it inherits, so
+  when a page's extra element meets an inherited text element or furniture
+  (a band over the folio), the patch takes that element out and writes it
+  again after the extras (`{"id": …, "remove": true}`, then the whole
+  element): it stays on top, as on the source.
+- **Illustrations on white** (skill 1.61). A cut standing on white whose
+  border is at least 80 % white has the white joined to its edge made
+  transparent (`images.py cutout` does the same by hand): a PNG with a
+  `contour`, so it covers no text round it and a box's text can run round
+  it. A white plate the art closes stays. To trim a cut afterwards use
+  `images.py crop <resource-id>`, which moves its anchors with it.
 - **Pictures and labels.** Images and clusters of line art are pictures,
   cut at `--dpi` with all text removed. Words on a picture's ink, short
   words on it or just off its edge (a globe's degrees) are its labels:
@@ -461,6 +642,27 @@ What the extraction decides, so you know what to check:
   map's white masks, a neighbour's strip, white paper round a drawing:
   `regions.json` has the trimmed box). A cluster that paints nothing of its
   own (white shapes, a plate's corner) is no picture (`report.json` notes).
+- **Charts keep their lettering** (skill 1.61). Thin lines join the
+  clusters of art they touch when they lie inside them (a tenth of their
+  length past them at most) or half inside with the rest reaching no box: a
+  chart's axes, grid and ticks hold its bars together again, a pointer
+  that runs out to a note joins nothing, and a rule under a row of drawings
+  that are pictures on their own leaves them a row. A picture with six numbers or
+  single letters or more in regular rows or columns (ticks, a month's
+  initials; a map's `20°N` is no tick) and an axis across half its width or
+  down half its height, or a turned axis title, is a chart: its box takes in
+  the ticks, the axis titles (turned ones within 8 mm) and the short words
+  within 6 mm, all its words stay printed in its cut (the text outside its
+  box is removed), and it lifts no labels (`report.json` notes each chart).
+  Redraw a chart for other editions by hand, or cut it per edition.
+- **Pieces of a line** (skill 1.61). The pieces MuPDF splits a line into
+  join when two numbers or single letters are of one face, size and colour
+  less than 0.3 em apart (`1` `000` is one number), and words when they are
+  less than an em apart and of one size where they meet (a heading's en and
+  em gaps, a chip's number before its words). Two digits are never joined
+  by a space, so a chart's ticks stay apart. A cut clipped to its card, its
+  holder or its art's ground is grown back over its labels, so no anchor is
+  pinned to the cut's edge.
 - **What lies over a picture** (skill 1.60). A box or tab whose fill shows
   where it meets a picture (read off the render; the paint order where the
   box has no fill) lies over it: it is never the picture's holder, it hangs
@@ -474,11 +676,25 @@ What the extraction decides, so you know what to check:
   the source centres it, and laid over the box's pictures (a longer
   translation runs over the next row, not under it). The box keeps the rest
   of its words; with none, its fence stays empty (it draws its box, 1.49.1).
+  From skill 1.61 a single caption under a single picture is read the same
+  way when it is set unlike the box's text (size, slant or colour) or
+  centred on the picture; its frame comes right after the picture in
+  reading order. A caption set smaller than the box's text, at most 3 mm
+  under its picture and no wider than it, is the picture's own resource
+  `caption` instead, with no frame (Markdown in a frame by
+  default, a resource caption when small and attached to the picture).
 - **Label hygiene** (`anchors.py`, `pdf_regions.py`). The same text printed
   twice at one point (within 0.5 mm: two grids of degree figures laid one
   over the other, in two sizes) is one label, the larger size kept, with a
   `# merged` note in the report (`report.json` `notes`, the `anchors.py`
-  output), not a second anchor. Names the source prints touching (a
+  output), not a second anchor. Lines stack into one name only when centred
+  within a fifth of the wider line or flush left within 1 mm, and a number
+  or a single letter never stacks (skill 1.61: `10` over `0`, a month's `E`
+  over an axis title). A line printed twice on the page (a fake
+  bold of two offset prints, a fill and a stroke drawn apart: the same text,
+  its box within 0.3 mm) is one line in `pdf_regions.py extract`
+  (`legends.drop_duplicate_lines`); an offset copy sets the line bold, with a
+  `# dropped a second copy` note. Names the source prints touching (a
   continent with a hundred country and capital names) get `overlap:
   "allow"` on their anchors (from 1.42), so `labelOverlap` stops listing what
   the source itself prints; `anchors.py` writes it once on the map's label
@@ -501,10 +717,24 @@ What the extraction decides, so you know what to check:
   are anchored to it (`left-of` / `right-of`, ids `head-odd-ornament-N`,
   `when: "head"` so they go with the head on a page that sets none) and the
   head is as wide as its words; the fold keeps them on the shell with it.
+  From skill 1.61 a line is furniture only when the same place and look
+  come back on another page of the run (a running head set large too), or,
+  set below heading size, when the page prints a folio: a section heading
+  near the foot, or a lone source line in the margin, stays in the text.
 - **Faces.** The PDF's font names are matched to the PostScript names of
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report
   lists every match.
+  From skill 1.61 the style part is read from every form producers write
+  (`Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`, `ArialBold`); a face
+  takes the heavier of the file's weight and the one its name or bold flag
+  says, and either slant; a file with no OS/2 weight takes its name's; a
+  prefix match only joins faces whose names say the same weight and slant.
+  A run is bold at least 500 and 100 over its paragraph's base when it is
+  set in another font (a Medium file beside the Book), 150 over it within
+  one font. When
+  every face comes out at one weight although the names say several, the
+  run prints a `WARNING` and `report.json` lists it under `warnings`.
 
 Also decided by the drafting, checked on a real textbook in three languages:
 
@@ -580,7 +810,18 @@ change in the generator:
   to stand under their pictures) keeps its fence with nothing in it: since
   postext 1.49.1 an empty fence on a styled frame draws its box and its tab at
   the frame's size (#1084). Before, it drew nothing, and a port left
-  `:::space{lines=1}` in it.
+  `:::space{lines=1}` in it. The box reads where its fence lies in the
+  Markdown (postext#1116; before, its tab came last in the HTML, the EPUB and
+  the tagged PDF), and `composed_check.py` expects it there.
+- **A box whose captions run longer** than it holds (a translation, the
+  `--stress 1.3` run): give the box `growWith: "children"` (postext 1.52,
+  #1117; the draft writes it on a box whose captions it splits into frames). Its height reaches at least the foot of the frames anchored to a
+  point of its top side and of those anchored to them (a caption `below` its
+  photo), plus its bottom padding; its fill, border and tab follow and the
+  frames under it move down. A list of names (`"growWith": ["foto-1",
+  "pie-1"]`) takes those instead. A frame anchored to the box's foot or middle
+  never counts, and a turned box does not grow. Before 1.52 the captions ran
+  out of the box and onto the text under it (`frameCovered`).
 - **Overlaps the source prints** (pills on photos, notes on an illustrated
   band, cut-outs past a box's edge) go to `composed-check.json`, one entry per
   look with its reason; that book needed 21 (27 with skill 1.60, the same
@@ -1304,10 +1545,33 @@ Un mercado de barrio.
 :::
 ```
 
-- The caption is Markdown in the photo's frame, so correcting or
-  translating it is a Markdown edit. Use the resource's own `caption` (and
-  `localized.<lang>.resources`) only when the book numbers its figures
-  ("Figura 3").
+- **Where the caption goes** (decided, #1114). By default the caption is
+  Markdown in a frame (the photo's frame, or a frame of its own hung `below`
+  the photo), so correcting or translating it is a Markdown edit. Use the
+  resource's own `caption` (and `localized.<lang>.resources`) when the
+  source sets the caption small and attached to the picture, as one figure
+  with it, and when the book numbers its figures ("Figura 3"). The draft
+  does this: `split_captions` (`pdf_regions.py`) gives a column of lines
+  under a box's picture to the picture as its resource caption
+  (`attached_caption`: set at most 92 % of the size of the box's text, no
+  more than 3 mm under the picture, no wider than it plus 2 mm), and makes
+  every other caption column a text frame `below` its picture, the box
+  marked `growWith: "children"`. A small caption beside its picture
+  (`beside_caption`: lines to its left or right, at most 3 mm from its
+  side, level with its top or its foot, no taller than it and a line, set
+  at most 92 % of the box text's size) is the picture's resource caption
+  too, with `placement: {captionSide: "inside", width, align}` (postext
+  1.52): the picture's frame widens to hold both, `width` is the picture's
+  share of it and `align` the picture's side. The engine sets the caption
+  level with the picture's top and `layout.gutterWidth` from it, so a
+  caption the source sets on the picture's foot moves up to its top. For a
+  book pinned to 1.51 or older, take the `captionSide` out (the caption then
+  goes under the picture) and narrow the frame back to the picture.
+- A box that holds photos and their captions takes `"growWith": "children"`
+  (postext 1.52): it grows down to the lowest caption's foot and its bottom
+  padding, and the frames under it move down. On 1.51 and older, size the
+  box for the longest edition (`minHeight`) and check it with `--stress
+  1.3`.
 - An unnumbered resource type (`numberingTemplate: ""`) keeps "Photo 1"
   off the page. From 1.38 the type may leave the other fields out (the
   built-in type of the same id, else the id and `{h1}.{n}`, fill them):
@@ -1689,7 +1953,6 @@ with their entries and page numbers.
 # Contenido {toc="false"}
 
 :::toc
-:::
 
 ::resource{id="mapa-contenido" slot="mapa"}
 ::::
@@ -1701,6 +1964,13 @@ with their entries and page numbers.
   a band or a picture are the template's decoration. Before 1.42 this was a
   flow page whose heading design carried the ground: leave such ports
   alone only when the installed Postext is older.
+- Dots in the source's own colour, face or size are `toc.leader.color`,
+  `fontFamily`, `fontSize`, `fontWeight` (part rows: `toc.parts.leader`
+  over them), 1.52. A part row whose page number sits in an element of its
+  own is three elements: the title, the page number anchored to the row's
+  right, and an element holding `{leader}` alone anchored `right-of`
+  `#title` with `width: { to: "#page", edge: "left" }` (configuration.md
+  §9); its dots stop the leader's `gap` before the number.
 - The title heading is not an entry of itself: `toc: false` in its heading
   style, or `{toc="false"}`.
 - A small copy of a picture on the page (the map) is a second resource on the
@@ -1851,6 +2121,25 @@ label_styles.append({"id": "clave", "kind": "legend", "align": "start", "fontSiz
   words. Scale bars stay art: their numbers are labels at anchors along the
   bar. Before 1.48 a key was labels one per line with the symbols in the
   picture.
+- **The draft writes it** (`pdf_regions.py extract`, `scripts/legends.py`,
+  skill 1.61). Two rows or more of a small symbol (at most 15 × 8 mm) and a
+  few words (six at most), the symbols starting within 1 mm of each other
+  at a steady pitch and of two looks or more (a list of one bullet repeated
+  is no key), are a key. A filled rectangle becomes
+  `:icon[…]{glyph="■" color="#…"}` (the label's face must carry U+25A0, or
+  add `font=`), a straight stroked segment `:icon[…]{line="solid|dashed|dotted"
+  color="#…"}`, any other drawing (a front's triangle, a semicircle, a
+  pictogram) an SVG resource `icon-<hash>` written once per shape and colour
+  for the whole book, named by `:icon[…]{resource="icon-…"}` (`size=` when
+  it stands taller or shorter than a capital). On a picture the key is a
+  `:::label{at="legend" style="legend-…"}` block in its `:::figure`, an
+  anchor `legend` (`align: start`, `verticalAlign: top`) at the key's first
+  row, the label style `kind: "legend"` with the plate drawn round the key
+  as `background`, `padding` and `border`, and the key leaves the picture's
+  cut. A key standing alone is a frame holding a two-column table without
+  rules (symbol, words; `columnWidths` from the source). The rows keep the
+  label's line pitch, not the source's: raise the style's `fontSize` or set
+  the rows apart in the Markdown when the source spaces them widely.
 
 ### 6.15 Cards, tabs and shapes without a picture (1.48)
 
@@ -1886,11 +2175,19 @@ decoration["elements"].append(
   also stand at the foot (`bottom-left`, `bottom-right`, `bottom-start`,
   `bottom-end`), joined or not. No side tabs. `pdf_regions.py` writes a card
   and its tab of one colour as one path outline.
-- **Tab corners.** `label.borderRadius` (one length or per corner) rounds the
-  tab itself: a plain tab is square without it; a joined tab rounds its two
-  outer corners with it instead of copying the box corner (the fillets keep
-  `fillet`). `label.ownBackground: true` paints a joined tab in the label's
-  `background` over the box fill: a white tab on a tinted card.
+- **Tab corners** (postext 1.52). `label.borderRadius` (one length or per
+  corner) rounds the tab itself: a plain tab is square without it; a joined
+  tab rounds its two outer corners with it instead of copying the box corner
+  (the fillets keep `fillet`). Read them off the source: a card with a pill
+  of its own colour on its top edge is a plain tab with
+  `"borderRadius": mm(3)` (half its height for a full pill); a tab grown out
+  of the card's top is `joined: true` with `fillet` the concave corner's
+  radius, the card's `borderRadius` per corner (`{"topLeft": mm(0),
+  "topRight": mm(4), …}` when the tab takes the top-left corner), and
+  `label.borderRadius` only when the tab's outer corners differ from the
+  card's. On 1.51 and older a tab's corners copy the card's (joined) or are
+  square. `label.ownBackground: true` paints a joined tab in the label's `background`
+  over the box fill: a white tab on a tinted card.
 - **Path element** (`kind: "path"`, every design slot): SVG path data `d` in
   a `viewBox` (default `[1, 1]`: fractions of the box), stretched to the
   element's box (`preserveAspectRatio: "none"`) or fitted (`"meet"`); `fill`,
@@ -2092,7 +2389,11 @@ templates += [{"id": "aviso", "role": "module", "width": mm(110), "frames": [...
   left out goes with it. Front matter with no folio, the closing page of a
   block that prints its running head on an even page too, a cover with no
   page colour: one shell and a word on the fence, not a template each. `postext
-  check` notes a condition no fence sets (`conditionNeverMet`).
+  check` notes a condition no fence sets (`conditionNeverMet`), and from
+  1.52 an `{attr.x}` that no heading or fence sets (it always reads empty:
+  a folio or running foot that prints nothing). An element of
+  `variants.recto` with `parity: "even"` (or of `variants.verso` with
+  `"odd"`) is never drawn, since a recto is an odd page: `unknownConfigValue`.
 
 ### 6.18 Frames that lie over each other (1.48)
 
@@ -2186,6 +2487,11 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   `slotEmpty` (a frame given nothing) and `anchorUnlabelled` (an anchor this
   edition gives no word) are notes: read each, mark deliberate empties
   `optional: true`.
+  `wordDividedByCharacter` (1.52) fails: a word wider than its whole line,
+  cut between two letters with no hyphen to fit ("CL" | "IMA" in a narrow
+  rotated frame). Widen the frame, set a smaller size, or write the word
+  shorter. `wordDividedBySyllable`, the same word divided at a syllable, is
+  a note (severity info): read it in the render.
 - **Overlaps = 0** (1.48): `frameCovered` and `frameOutsideArea` fail, each
   printed with the engine's fixes and the way out; the report's last lines
   say `overlaps: N`. A pair the source prints so is either `overlap:

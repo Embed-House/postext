@@ -34,7 +34,7 @@ export {
   printLuminance,
   printSeparation,
 } from './contrast';
-export type { ContrastIssue, ContrastKind, ContrastMedium, ContrastOptions, ContrastPair, ContrastRole, PrintContrastContext, ReversedTextReason } from './contrast';
+export type { ContrastAccepted, ContrastIssue, ContrastKind, ContrastMedium, ContrastOptions, ContrastPair, ContrastRole, PrintContrastContext, ReversedTextReason } from './contrast';
 export { bitmapResolutionFor, effectiveBitmapResolution, bitmapLayoutSize, isPlaceholderResolution } from './bitmapResolution';
 export { bitmapResolutionOf } from './defaults/layout';
 export { bitmapInfo, bitmapSize } from './bundle';
@@ -156,6 +156,7 @@ export type {
   ResolvedIndexConfig,
   OutlineIndexMark,
   TocLevelConfig,
+  TocLeaderFaceConfig,
   TocEntryStyleConfig,
   ResolvedTocConfig,
   ResolvedTocLevelConfig,
@@ -323,6 +324,7 @@ export type {
   ChipStyleConfig,
   ResolvedChipStyleConfig,
   MarkStyleConfig,
+  MarkDecorationBreak,
   ResolvedMarkStyleConfig,
   CalloutSpan,
   CalloutSideAtColumnEnd,
@@ -449,6 +451,7 @@ export type {
   ContrastReversedTextConfig,
   ResolvedContrastReversedTextConfig,
   ContrastConfig,
+  ContrastAllowEntry,
   ResolvedContrastConfig,
   ChecksConfig,
   ResolvedChecksConfig,
@@ -543,6 +546,7 @@ export type {
   VDTLineHighlight,
   VDTSegmentMark,
   VDTChip,
+  VDTSwatch,
   VDTChipRun,
   VDTLine,
   VDTAnchor,
@@ -646,7 +650,7 @@ export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiOptions,
 export { computeColumnEdges } from './pipeline/resourceLayout';
 export { findAnnotations } from './parse/annotations';
 export type { FoundAnnotation, AnnotationName } from './parse/annotations';
-export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
+export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, SwatchShape, SwatchBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
 export { parseMarkdownWithIssues, MATH_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, KNOWN_DIRECTIVES, KNOWN_CONTAINERS, spaceDirectiveLines, MAX_SPACE_LINES } from './parse';
 // Composed pages in the document (#854): each `::::page` fence's content by
 // slot, and the slot checks the content warnings run.
@@ -677,6 +681,7 @@ export type { ValidatePageTemplatesOptions } from './composed/validate';
 export { altWithLabels, labelPlainText, withIconAlts } from './composed/labelText';
 // Inline symbols in labels and captions (#1058): their boxes and what the painters need.
 export { ICON_CAP_EM, iconLineDash, inlineIconBox, measureInlineIcon, resourceBlockIcons } from './measure/inlineIcon';
+export { hasSwatchShape, swatchGeometry, type SwatchGeometry } from './swatchShape';
 export {
   figureLabelBounds,
   figureLabelLeaderPath,
@@ -712,6 +717,8 @@ export type { ComposedPageReflow, FrameMotion } from './composed/reflowLog';
 // without laying a page out (the Sandbox's template thumbnails, #864).
 export { frameOrder, framePlaceable, groupPlaceable, placeBox as placeFrameBox, unionRect as frameUnionRect } from './composed/geometry';
 export type { FrameAreas, FrameGeometryContext, Rect as FrameRect } from './composed/geometry';
+export { growMembers } from './composed/grow';
+export type { GrowMembers } from './composed/grow';
 // The source map of a laid-out document and the stable ids of a composed
 // page's elements (#857).
 export { sourceAt, elementsForSource, findElement } from './composed/sourceMap';
@@ -731,7 +738,8 @@ export type { DesignTextVerdict } from './configWarnings';
 export type { ConfigWarningOptions } from './configWarnings';
 export { configDesignSlots } from './design/slots';
 // Decoration drawn when the page fence says so (#1087).
-export { fenceSetsAttribute, fenceConditionMet, fenceConditionUses, fenceConditionsNeverMet, fenceAttributesSet, FENCE_CONDITION_SLOTS } from './design/fenceCondition';
+export { fenceSetsAttribute, fenceConditionMet, fenceConditionUses, fenceConditionsNeverMet, fenceAttributesSet, FENCE_CONDITION_SLOTS, attrPlaceholderUses, attrPlaceholdersNeverSet, markdownAttributesSet } from './design/fenceCondition';
+export type { AttrPlaceholderUse } from './design/fenceCondition';
 export type { FenceConditionUse } from './design/fenceCondition';
 export { parseDirectiveAttrs } from './parse/attrs';
 // «Move the text to the Markdown» (#874): page designs held in heading
@@ -762,6 +770,11 @@ export type { FontsChangedListener } from './fonts/fontSet';
 export { documentFontFaces, documentFontFamilies, fontFallbacks, defaultFontSet, cssWeightOrder, cssWeightOrderOf } from './fonts/faces';
 export type { FontFaceLike, FontFaceSetLike, FontFallback, FontFallbackReason, FontFallbackOptions, FontFaceRequest } from './fonts/faces';
 export { exportStandInOf, fontFallbackOf, fontFallbackFamilies, hasOwnStyle } from './fonts/fallback';
+// Characters a face lacks, drawn from another face (#1105).
+export { glyphFallbacks, documentFontTexts, registerFontCoverage, forgetFontCoverage, installGlyphProbe, GLYPH_PROBE_FAMILY, GLYPH_FALLBACK_LISTED } from './fonts/glyphFallback';
+export type { GlyphFallback, GlyphFallbackOptions } from './fonts/glyphFallback';
+export { sfntCodePointRanges } from './fonts/cmap';
+export type { CodePointRanges } from './fonts/cmap';
 export { evictFontFamilies } from './measure/font';
 export { measurementGeneration } from './measure/canvas';
 export { parseFontString } from './measure/fontString';

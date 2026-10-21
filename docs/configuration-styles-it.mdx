@@ -474,7 +474,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Stili di evidenziazione
 
-La proprietà `markStyles` dichiara gli stili con nome del `:mark[testo]{style="…"}` in linea: la fascia colorata dietro una frase, come un libro di scuola evidenzia le sue parole chiave (la sintassi e le sue regole di a capo sono nella guida al formato del documento). Uno stile, `mark`, è fornito di serie (una fascia giallo pallido che sporge un poco dalla frase, con le estremità leggermente arrotondate e il testo nel suo colore), quindi `:mark[…]` funziona senza alcuna configurazione; dichiarare `markStyles` sostituisce questo elenco. Un segno senza `style`, o con un id che nessuno stile dichiara, prende il primo stile (il Sandbox segnala l’id sconosciuto).
+La proprietà `markStyles` dichiara gli stili con nome del `:mark[testo]{style="…"}` in linea: la fascia colorata dietro una frase, come un libro di scuola evidenzia le sue parole chiave (la sintassi e le sue regole di a capo sono nella guida al formato del documento). Uno stile, `mark`, è fornito di serie (una fascia giallo pallido che sporge un poco dalla frase, con le estremità diritte e il testo nel suo colore), quindi `:mark[…]` funziona senza alcuna configurazione; dichiarare `markStyles` sostituisce questo elenco. Un segno senza `style`, o con un id che nessuno stile dichiara, prende il primo stile (il Sandbox segnala l’id sconosciuto).
 
 ```ts
 const config: PostextConfig = {
@@ -533,8 +533,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Raggio delle due estremità della fascia, limitato a metà della sua altezza.</td>
+      <td><code>0</code></td>
+      <td>Raggio delle due estremità della fascia, limitato a metà della sua altezza. Le estremità diritte sono la norma in tipografia. Fino a postext 1.51 il valore predefinito era <code>0.2em</code>; una configurazione salvata allora il cui testo contiene un segno viene letta con <code>0.2em</code> scritto in ogni stile che non indica un raggio.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -553,6 +553,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>Spazio sopra e sotto, ciascuno al posto di <code>paddingY</code>.</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>Come si taglia la fascia di una frase che va a capo, come <code>box-decoration-break</code> in CSS. <code>'slice'</code>: una sola fascia, tagliata dritta dove la riga si spezza, con il margine e gli angoli arrotondati solo all'inizio e alla fine veri della frase. <code>'clone'</code>: ogni pezzo di riga riceve una fascia intera, con <code>paddingX</code> e gli angoli alle due estremità, per un titolo composto su una fascia di colore tagliata riga per riga. L'impaginazione è la stessa nei due casi.</td>
     </tr>
   </tbody>
 </table>

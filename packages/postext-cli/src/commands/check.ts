@@ -1,4 +1,4 @@
-import { bitmapInfo, composedReflowLog, fenceAttributesSet, fenceConditionsNeverMet, contrastDocument, contrastMedia, outputTransform, parseIccProfile, preflightDocument, resolveContrastConfig, resolvePrintConfig, type ContrastIssue, type OutputTransform } from 'postext';
+import { attrPlaceholdersNeverSet, bitmapInfo, composedReflowLog, fenceAttributesSet, fenceConditionsNeverMet, markdownAttributesSet, parseMarkdown, contrastDocument, contrastMedia, outputTransform, parseIccProfile, preflightDocument, resolveContrastConfig, resolvePrintConfig, type ContrastIssue, type OutputTransform } from 'postext';
 import { iccProfile } from '../assets';
 import type { CommandContext } from '../context';
 import { pageLabelOf, sourceAt } from '../layout';
@@ -68,7 +68,7 @@ export default async function check(ctx: CommandContext): Promise<void> {
       const media = opts.flag('preflight') && contrast.mode === 'auto' ? ['screen', 'print'] as const : contrastMedia(doc.config, contrast);
       const transform = media.includes('print') ? outputSeparation() : undefined;
       for (const issue of contrastDocument(doc, { contrast, media, ...(transform ? { transform } : {}) })) {
-        const key = `${issue.kind}|${issue.color}|${issue.background}|${issue.kind === 'lowContrast' ? issue.required : ''}`;
+        const key = `${issue.kind}|${issue.color}|${issue.background}|${issue.kind === 'lowContrast' ? issue.required : ''}${issue.accepted ? '|accepted' : ''}`;
         const first = seen.get(key);
         if (first) first.issue.count += issue.count;
         else seen.set(key, { issue: { ...issue }, doc: i });
@@ -80,17 +80,21 @@ export default async function check(ctx: CommandContext): Promise<void> {
       const ratios = issue.kind === 'lowContrast'
         ? [issue.screen !== undefined ? `${issue.screen}:1 on screen` : '', issue.print !== undefined ? `${issue.print}:1 in print` : ''].filter(Boolean).join(', ')
         : '';
+      // A pair `contrast.allow` accepts (#1124) is listed, as a note.
+      const accepted = issue.accepted ? `accepted${issue.accepted.style ? ` in ${issue.accepted.style}` : ''}${issue.accepted.reason ? ` (${issue.accepted.reason})` : ''}: ` : '';
       reporter.warn({
         kind: `contrast.${issue.kind}`,
-        severity: 'warning',
-        message: issue.kind === 'lowContrast'
+        severity: issue.accepted ? 'info' : 'warning',
+        message: accepted + (issue.kind === 'lowContrast'
           ? `${issue.color} on ${issue.background}, ${face}: ${ratios}; ${issue.level} asks for ${issue.required}:1 (${issue.count} run${issue.count === 1 ? '' : 's'}): “${issue.text}”`
-          : `${issue.color} reversed out of ${issue.background} (${issue.inks} ink${issue.inks === 1 ? '' : 's'}), ${face}: under ${issue.minimumPt} pt it can fill in on press (${issue.count} run${issue.count === 1 ? '' : 's'}): “${issue.text}”`,
+          : `${issue.color} reversed out of ${issue.background} (${issue.inks} ink${issue.inks === 1 ? '' : 's'}), ${face}: under ${issue.minimumPt} pt it can fill in on press (${issue.count} run${issue.count === 1 ? '' : 's'}): “${issue.text}”`),
+        ...(issue.accepted ? { data: { accepted: issue.accepted } } : {}),
         at: sourceAt(layout.chapters[i], issue.sourceStart),
         page: pageLabelOf(doc, issue.pageIndex),
       });
     }
-    reporter.data.contrast = { level: contrast.level, issues: seen.size };
+    const acceptedCount = [...seen.values()].filter((s) => s.issue.accepted).length;
+    reporter.data.contrast = { level: contrast.level, issues: seen.size - acceptedCount, accepted: acceptedCount };
   }
   // Composed pages (#856): what the layout changed from each template's
   // drawing so the page's content fits («dinero grew 8 mm; gasto moved
@@ -114,6 +118,18 @@ export default async function check(ctx: CommandContext): Promise<void> {
         severity: 'info',
         message: `${use.path}: no page fence sets “${use.attribute}”, so the element is ${use.condition === 'when' ? 'never' : 'always'} drawn`,
         data: { path: use.path, condition: use.condition, attribute: use.attribute },
+      });
+    }
+    // An `{attr.x}` no heading or fence of the book sets (#1152): it always
+    // reads '', so the folio or running foot it fills prints nothing.
+    const attrs = new Set<string>();
+    for (const chapter of layout.chapters) for (const k of markdownAttributesSet(parseMarkdown(chapter.markdown))) attrs.add(k);
+    for (const use of attrPlaceholdersNeverSet(book.config, attrs)) {
+      reporter.warn({
+        kind: 'conditionNeverMet',
+        severity: 'info',
+        message: `${use.path}: no heading or fence sets “${use.attribute}”, so {attr.${use.attribute}} is always empty`,
+        data: { path: use.path, condition: 'attr', attribute: use.attribute },
       });
     }
   }

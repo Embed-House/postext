@@ -392,6 +392,8 @@ el fitxer), el text es compon amb la font de la família que triaria la
 mateixa regla, i `postext check` en dona un avís `fontFallback`: les línies es poden
 tallar d'una altra manera que al Sandbox.
 
+Un caràcter per al qual una font no té glif es dibuixa amb una altra font. `postext check` llegeix la taula `cmap` de cada font que carrega i mostra aquests caràcters un cop per font per a tot el llibre com a avís `glyphFallback`; amb `--json`, el seu `data` porta els caràcters i quants són.
+
 La memòria cau és `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` a
 Windows); `POSTEXT_CACHE_DIR` o `--cache-dir` la canvien de lloc. `--offline`
 s'estalvia la baixada. Una família que no es troba enlloc es compon en EB

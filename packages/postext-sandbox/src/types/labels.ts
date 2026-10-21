@@ -226,6 +226,9 @@ export interface SandboxLabels {
   /** `__face__`: the family, weight and slant (`"Garamond" 700 italic`). */
   warningsFontFallbackMissingDetail: string;
   warningsFontFallbackSynthesizedDetail: string;
+  warningsGlyphFallbackTitle: string;
+  warningsGlyphFallbackDetail: string;
+  warningsGlyphFallbackSystemDetail: string;
   warningsLooseLineTitle: string;
   warningsRaggedLineTitle: string;
   warningsRaggedLineDetail: string;
@@ -233,6 +236,10 @@ export interface SandboxLabels {
   warningsCjkLooseLineDetail: string;
   warningsUnbreakableWordOverflowTitle: string;
   warningsUnbreakableWordOverflowDetail: string;
+  warningsWordDividedByCharacterTitle: string;
+  warningsWordDividedByCharacterDetail: string;
+  warningsWordDividedBySyllableTitle: string;
+  warningsWordDividedBySyllableDetail: string;
   warningsJoiningScriptLetterSpacingTitle: string;
   warningsJoiningScriptLetterSpacingDetail: string;
   warningsCjkMarksLeadingTitle: string;
@@ -579,6 +586,20 @@ export interface SandboxLabels {
   contrastReversedMinFineSizeTooltip: string;
   contrastReversedLightWeight: string;
   contrastReversedLightWeightTooltip: string;
+  contrastAllowGroup: string;
+  contrastAllow: string;
+  contrastAllowTooltip: string;
+  contrastAllowAdd: string;
+  contrastAllowItem: string;
+  contrastAllowRemove: string;
+  contrastAllowFg: string;
+  contrastAllowFgTooltip: string;
+  contrastAllowBg: string;
+  contrastAllowBgTooltip: string;
+  contrastAllowStyle: string;
+  contrastAllowStyleTooltip: string;
+  contrastAllowReason: string;
+  contrastAllowReasonTooltip: string;
   contrastLowTitle: string;
   contrastLowDetail: string;
   contrastOnScreen: string;
@@ -587,6 +608,9 @@ export interface SandboxLabels {
   contrastReversedDetail: string;
   contrastItalic: string;
   contrastOccurrences: string;
+  contrastAcceptedSection: string;
+  contrastAcceptedDetail: string;
+  contrastAcceptedNoReason: string;
   contrastBadgeFail: string;
   contrastBadgePass: string;
   contrastAsText: string;
@@ -1057,6 +1081,8 @@ export interface SandboxLabels {
   bodyLineHeightTooltip: string;
   bodyParagraphSpacing: string;
   bodyParagraphSpacingTooltip: string;
+  bodyParagraphSpacingSize: string;
+  bodyParagraphSpacingSizeTooltip: string;
   bodyColor: string;
   bodyColorTooltip: string;
   bodyBoldColor: string;
@@ -2125,6 +2151,10 @@ export interface SandboxLabels {
   warningsFloatShrunkOverflowDetail: string;
   warningsPictureBelowPrintSizeTitle: string;
   warningsPictureBelowPrintSizeDetail: string;
+  warningsEmptyCaptionTitle: string;
+  warningsEmptyCaptionDetail: string;
+  warningsResourceMovedTitle: string;
+  warningsResourceMovedDetail: string;
   warningsTextWrapTitle: string;
   warningsColumnsTooNarrowTitle: string;
   warningsColumnsTooNarrowDetail: string;
@@ -2147,6 +2177,8 @@ export interface SandboxLabels {
   warningsWrapUnsupportedDetail: string;
   warningsUnclosedCodeBlockTitle: string;
   warningsUnclosedCodeBlockDetail: string;
+  warningsStrayFenceTitle: string;
+  warningsStrayFenceDetail: string;
   warningsLineNumbersUnsupportedTitle: string;
   warningsLineNumbersUnsupportedDetail: string;
   warningsUnknownConfigKeyTitle: string;
@@ -3287,6 +3319,10 @@ export interface SandboxLabels {
   markStyleColorTooltip: string;
   markStylePaddingXTooltip: string;
   markStylePaddingYTooltip: string;
+  markStyleDecorationBreak: string;
+  markStyleDecorationBreakSlice: string;
+  markStyleDecorationBreakClone: string;
+  markStyleDecorationBreakTooltip: string;
   warningsUnknownMarkStyleTitle: string;
   warningsUnknownMarkStyleDetail: string;
   calloutStyleAdd: string;
@@ -3743,6 +3779,9 @@ export interface SandboxLabels {
   resourceTypePlacementCaptionMeasureTooltip: string;
   resourceCaptionMeasureSlot: string;
   resourceCaptionMeasurePicture: string;
+  resourceCaptionSideOff: string;
+  resourceCaptionSideMargin: string;
+  resourceCaptionSideInside: string;
   resourceTypePlacementWrap: string;
   resourceTypePlacementWrapTooltip: string;
   resourceWrapNone: string;
@@ -3965,6 +4004,8 @@ export interface SandboxLabels {
   tocLeaderCharTooltip: string;
   tocLeaderGap: string;
   tocLeaderGapTooltip: string;
+  tocLeaderFace: string;
+  tocLeaderFaceInfo: string;
   tocSubtitle: string;
   tocSubtitleInfo: string;
   tocSubtitleEnabled: string;
@@ -3980,6 +4021,8 @@ export interface SandboxLabels {
   tocPartsHeight: string;
   tocPartsHeightTooltip: string;
   tocPartsDesignInfo: string;
+  tocPartsLeaderFace: string;
+  tocPartsLeaderFaceInfo: string;
   tocGroups: string;
   tocGroupsInfo: string;
   tocGroupsKeepTogether: string;
@@ -4171,6 +4214,12 @@ export interface SandboxLabels {
   pageTemplatesFrameLayerTooltip: string;
   pageTemplatesFrameOverlap: string;
   pageTemplatesFrameOverlapTooltip: string;
+  pageTemplatesFrameGrowWith: string;
+  pageTemplatesFrameGrowWithTooltip: string;
+  pageTemplatesFrameGrowWithNone: string;
+  pageTemplatesFrameGrowWithChildren: string;
+  pageTemplatesFrameGrowWithList: string;
+  pageTemplatesFrameGrowWithListLegend: string;
   pageTemplatesFrameRotate: string;
   pageTemplatesFrameRotateTooltip: string;
   pageTemplatesFrameAsPage: string;

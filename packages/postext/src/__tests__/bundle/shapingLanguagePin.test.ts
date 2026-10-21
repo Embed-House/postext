@@ -42,7 +42,7 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
   });
 
   it('pins every version before 14, whatever its content, and none from 14', () => {
-    expect(CONFIG_VERSION).toBe(17);
+    expect(CONFIG_VERSION).toBe(18);
     for (const v of [undefined, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]) {
       expect(kept(migrateConfig({}, v)), String(v)).toBe('host');
       // A face may answer with other glyphs to any text: the content alone
@@ -58,26 +58,26 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
     expect(kept(migrateConfig({}, null))).toBe('host');
     // A configuration stored under 12 whose text holds no task item (#765),
     // and one stored under 13 whatever its text holds, get this pin and no
-    // other.
+    // other (their text known to set no mark, #1149).
     const stored: PostextConfig = { locale: 'tr', bodyText: { fontFamily: 'Literata' } };
     expect(migrateConfig(stored, 12, { content: 'Words.' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
-    expect(migrateConfig(stored, 13)).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
+    expect(migrateConfig(stored, 13, { content: 'Words.' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
     expect(migrateConfig(stored, 13, { content: '- [ ] a task\n\n:::page\n:::' })).toEqual({ locale: 'tr', bodyText: { fontFamily: 'Literata', shapingLanguage: 'host' } });
-    expect(migrateConfig({} as PostextConfig, 13)).toEqual({ bodyText: { shapingLanguage: 'host' } });
+    expect(migrateConfig({} as PostextConfig, 13, { content: 'Words.' })).toEqual({ bodyText: { shapingLanguage: 'host' } });
     expect(stored.bodyText).toEqual({ fontFamily: 'Literata' });
     // One that names the setting has nothing left to pin: the same object.
     for (const value of ['document', 'host'] as const) {
       const named: PostextConfig = { bodyText: { shapingLanguage: value } };
       expect(migrateConfig(named, 12, { content: 'Words.' })).toBe(named);
-      expect(migrateConfig(named, 13)).toBe(named);
-      expect(migrateConfig(named, 14)).toBe(named);
+      expect(migrateConfig(named, 13, { content: 'Words.' })).toBe(named);
+      expect(migrateConfig(named, 14, { content: 'Words.' })).toBe(named);
     }
     // One stored under today's rules is read as it is.
     for (const v of [14, CONFIG_VERSION, 99]) {
       const current: PostextConfig = {};
-      expect(migrateConfig(current, v), String(v)).toBe(current);
+      expect(migrateConfig(current, v, { content: 'Words.' }), String(v)).toBe(current);
       const own: PostextConfig = { locale: 'ca', bodyText: { fontFamily: 'Literata' } };
-      expect(migrateConfig(own, v), String(v)).toBe(own);
+      expect(migrateConfig(own, v, { content: 'Words.' }), String(v)).toBe(own);
     }
   });
 
@@ -165,7 +165,7 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
 
   it('a bundle written by postext 1.29 keeps its lines, and one written today is shaped in its language', async () => {
     const written = await createBundle({ name: 'Llibre', locale: 'ca', markdown: 'El col\u00B7legi.', config: { locale: 'ca', bodyText: { fontFamily: 'Literata' } } });
-    expect(written.manifest.configVersion).toBe(17);
+    expect(written.manifest.configVersion).toBe(18);
     expect(written.manifest.config?.bodyText).toEqual({ fontFamily: 'Literata' });
     /** The language the chapters of an opened bundle are laid out in. */
     const laidOutIn = (bundle: Awaited<ReturnType<typeof openBundle>>): string | undefined => shapingLanguageOf(resolveAllConfig(bundle.config));
@@ -193,7 +193,7 @@ describe('pinLegacyShapingLanguage (#764, #770)', () => {
     // goes with it under today's number.
     const old = await openBundle(restamped(13, { fontFamily: 'Literata' }));
     const again = await createBundle({ name: 'Llibre', locale: 'ca', markdown: 'El col\u00B7legi.', config: stripConfigDefaults(old.config) });
-    expect(again.manifest.configVersion).toBe(17);
+    expect(again.manifest.configVersion).toBe(18);
     expect(again.manifest.config?.bodyText).toEqual({ fontFamily: 'Literata', shapingLanguage: 'host' });
     expect(kept((await openBundle(again.bytes)).config)).toBe('host');
   });

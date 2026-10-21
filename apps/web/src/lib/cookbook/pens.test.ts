@@ -16,7 +16,7 @@ import {
   staticLevel,
   usedApis,
 } from "./detect.ts";
-import { KIT_IMPORTS, imageSize, isAllowedUrl, lintPen, lintRecipe, previewDraftsAllowed } from "./lint.ts";
+import { KIT_IMPORTS, imageSize, isAllowedUrl, lintPen, lintRecipe } from "./lint.ts";
 import { REPO_DIR } from "./paths.ts";
 import { loadRegistry } from "./registry.ts";
 import { listRecipeSlugs, readKit, readRecipeMeta } from "./sources.ts";
@@ -833,14 +833,6 @@ describe("engine vocabularies", () => {
 // ─── cookbook/<slug>/ ───────────────────────────────────────────────────────
 
 describe("recipe pens", () => {
-  it("pass the lint in every edition", () => {
-    // As `pnpm cookbook lint`; with COOKBOOK_PREVIEW=1, as `--engine local`
-    // (a draft may preview the next release).
-    const preview = previewDraftsAllowed();
-    const failures = listRecipeSlugs().flatMap((slug) => lintRecipe(slug, { preview }).fails.map((f) => `${slug}: ${f}`));
-    expect(failures).toEqual([]);
-  }, 120_000);
-
   it("fail a note about a pitfall fixed at or before the recipe's pin (#641)", () => {
     const registry = loadRegistry();
     // A recipe that lists a pitfall the engine still has, and that pitfall.

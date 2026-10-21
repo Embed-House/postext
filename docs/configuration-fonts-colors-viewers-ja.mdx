@@ -148,6 +148,8 @@ Sandboxの**検査**パネルは、カスタムフォントに固有の3種類�
 
 レイアウトができた後は、エンジンが報告する**レイアウトで代替フォントを使用**（`fontFallback`）もパネルに並びます。ページの計測に使われなかったフェイスのことで、存在しないか、ブラウザーが同じファミリーの別のウェイトや傾きから作って描いたものです。不明なファミリーやバリアントの欠落としてすでに挙がっているファミリーは、重ねて表示しません。最初のレイアウトの前は、`document.fonts`に対する検査がその代わりを務めます。
 
+パネルには**別のフォントで描かれた文字**（`glyphFallback`）も並びます。テキストがグリフのないフェイスで組んだ文字をフェイスごとに1件にまとめ、検査で判別できるときは描いた総称ファミリー（`serif`、`sans-serif`、`monospace`）も示します。
+
 ## カラーパレット
 
 `PostextConfig`の`colorPalette`プロパティは、名前付きの色の再利用可能なセットを定義し、設定内の任意の`ColorValue`から参照できるようにします。CSSのカスタムプロパティやInDesignのスウォッチパネルに相当するもので、パレットの項目を1回変えれば、それを指すすべての色が文書全体で更新されます。
@@ -791,6 +793,7 @@ interface ContrastConfig {
     minFineSize?: Dimension;
     lightWeight?: number;
   };
+  allow?: { fg?: string; bg?: string; style?: string; reason: string }[];
 }
 ```
 
@@ -811,10 +814,26 @@ interface ContrastConfig {
     <tr><td><code>reversedText.minSize</code></td><td><code>Dimension</code></td><td><code>8pt</code></td><td>このサイズより小さい白抜き文字を報告します。</td></tr>
     <tr><td><code>reversedText.minFineSize</code></td><td><code>Dimension</code></td><td><code>12pt</code></td><td>線の細いイタリックと細いウェイトには、こちらのサイズを使います。</td></tr>
     <tr><td><code>reversedText.lightWeight</code></td><td><code>number</code></td><td><code>300</code></td><td>この値以下のウェイトを細いとみなします。</td></tr>
+    <tr><td><code>allow</code></td><td><code>ContrastAllowEntry[]</code></td><td><code>[]</code></td><td>チェックで許容する色の組み合わせで、それぞれに<code>reason</code>を付けます。文字の色（<code>fg</code>）と地の色（<code>bg</code>）で、文字が組まれた<code>style</code>で、またはその両方で指定します。[許容する組み合わせ](#許容する組み合わせ)を参照。</td></tr>
   </tbody>
 </table>
 
 `level`や`mode`にこれ以外の値を書くと、既定値として読まれ、不明な設定値として報告されます（[設定の警告](#設定の警告)を参照）。
+
+### 許容する組み合わせ
+
+移植では原本のパレットを残すため、その一部の組み合わせがしきい値を下回ることがあります。囲みの文字の後ろの淡い地色や、柱に使うブランドカラーなどです。`allow`を使うと、チェックを切らずにそれらを許容できます（postext 1.52 から）。各項目には文字の色`fg`と地の色`bg`（16進数で、設定に書かれたとおり、または描画されたとおり）を書くか、`style`を書きます。`style`は囲みのスタイル（`calloutStyles`、または組版ページのフレームの`style`）、段落スタイル、見出しスタイル、インラインチップのスタイル、図のラベルのスタイルの id です。項目に書いたフィールドはすべて一致する必要があるので、`{ style: 'note', fg: '#7a8a99' }`はその灰色を`note`の囲みの中でだけ許容します。3つのどれも書いていない項目は何にも一致しません。
+
+```ts
+contrast: {
+  allow: [
+    { fg: '#b7820f', bg: '#ffffff', reason: '出版社が柱に使うオーカー' },
+    { style: 'margin-note', reason: '原本では傍注を淡い灰色で組んでいる' },
+  ],
+}
+```
+
+許容した組み合わせも報告はされます。一致した結果にはそれぞれ`accepted`（項目の`reason`と、その`fg`、`bg`、`style`）が付き、許容済みの結果はほかの結果のあとに並びます。Sandbox では「チェック」の「許容したコントラストの組み合わせ」の下に理由とともに表示され、件数には数えません。`postext check`はこれを注記として出力し、`--strict`でも失敗にはなりません。項目が指す範囲の外で同じ色を使った文字は、引き続き警告になります。
 
 ### しきい値
 

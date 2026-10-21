@@ -7,7 +7,7 @@ import { useSandbox, useSandboxWarnings } from '../context/SandboxContext';
 import { Collapsible, EmptyState, IconButton, ListRow, PanelBody, PanelHeader, cn } from '../ui';
 import { warningAnchor } from '../warnings/anchorTarget';
 import { requestAnchorEditor } from '../panels/resources/anchorEditorRequest';
-import { WARNING_CATEGORY_ORDER, warningCategory, type WarningCategory } from '../warnings/categories';
+import { WARNING_CATEGORY_ORDER, isAcceptedWarning, warningCategory, type WarningCategory } from '../warnings/categories';
 import type { Warning, WarningPayload } from '../warnings/types';
 import type { SandboxLabels } from '../types';
 import { preflightDetail, preflightTitle } from '../print/preflightText';
@@ -51,12 +51,15 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'missingFontFamily':
     case 'missingFontVariant':
     case 'fontFallback':
+    case 'glyphFallback':
     case 'duplicateFontVariant':
       return Type;
     case 'looseLine':
     case 'cjkLooseLine':
     case 'raggedLine':
     case 'unbreakableWordOverflow':
+    case 'wordDividedByCharacter':
+    case 'wordDividedBySyllable':
     case 'joiningScriptLetterSpacing':
     case 'cjkMarksExceedLeading':
     case 'rubyExceedsLeading':
@@ -92,6 +95,7 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'tabInVerticalText':
     case 'unclosedContainer':
     case 'unclosedCodeBlock':
+    case 'strayFence':
     case 'unknownParagraphStyle':
     case 'columnsFlowUnknown':
     case 'templateUnknown':
@@ -159,6 +163,8 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'bitmapTooSmall':
     case 'floatShrunk':
     case 'pictureBelowPrintSize':
+    case 'emptyCaption':
+    case 'resourceMoved':
     case 'textWrap':
     case 'unknownTableStyle':
     case 'raggedTableGrid':
@@ -238,6 +244,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsMissingFontVariantTitle;
     case 'fontFallback':
       return labels.warningsFontFallbackTitle;
+    case 'glyphFallback':
+      return labels.warningsGlyphFallbackTitle;
     case 'duplicateFontVariant':
       return labels.warningsDuplicateFontVariantTitle;
     case 'looseLine':
@@ -248,6 +256,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsRaggedLineTitle;
     case 'unbreakableWordOverflow':
       return labels.warningsUnbreakableWordOverflowTitle;
+    case 'wordDividedByCharacter':
+      return labels.warningsWordDividedByCharacterTitle;
+    case 'wordDividedBySyllable':
+      return labels.warningsWordDividedBySyllableTitle;
     case 'joiningScriptLetterSpacing':
       return labels.warningsJoiningScriptLetterSpacingTitle;
     case 'cjkMarksExceedLeading':
@@ -288,6 +300,8 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsUnclosedContainerTitle;
     case 'unclosedCodeBlock':
       return labels.warningsUnclosedCodeBlockTitle;
+    case 'strayFence':
+      return labels.warningsStrayFenceTitle;
     case 'unknownParagraphStyle':
       return labels.warningsUnknownParagraphStyleTitle;
     case 'unknownCalloutType':
@@ -415,6 +429,10 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsFloatShrunkTitle;
     case 'pictureBelowPrintSize':
       return labels.warningsPictureBelowPrintSizeTitle;
+    case 'emptyCaption':
+      return labels.warningsEmptyCaptionTitle;
+    case 'resourceMoved':
+      return labels.warningsResourceMovedTitle;
     case 'unknownTableStyle':
       return labels.warningsUnknownTableStyleTitle;
     case 'raggedTableGrid':
@@ -581,6 +599,15 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
     case 'fontFallback':
       return (payload.reason === 'missing' ? labels.warningsFontFallbackMissingDetail : labels.warningsFontFallbackSynthesizedDetail)
         .replace('__face__', `"${payload.family}" ${formatVariantList([payload])}`);
+    case 'glyphFallback': {
+      // The characters listed, then how many more: `→ ← … +12`.
+      const rest = payload.count - payload.characters.length;
+      const chars = rest > 0 ? `${payload.characters.join(' ')} … +${rest}` : payload.characters.join(' ');
+      return (payload.supplier ? labels.warningsGlyphFallbackDetail : labels.warningsGlyphFallbackSystemDetail)
+        .replace('__face__', `"${payload.family}" ${formatVariantList([payload])}`)
+        .replace('__chars__', chars)
+        .replace('__supplier__', payload.supplier ?? '');
+    }
     case 'duplicateFontVariant': {
       const slots = payload.variants
         .map((v) => `${v.weight}${v.style === 'italic' ? ' italic' : ''} ×${v.count}`)
@@ -595,6 +622,10 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return labels.warningsRaggedLineDetail.replace('__text__', payload.text.trim()).replace('__ratio__', payload.ratio.toFixed(1));
     case 'unbreakableWordOverflow':
       return labels.warningsUnbreakableWordOverflowDetail.replace('__text__', payload.text);
+    case 'wordDividedByCharacter':
+      return labels.warningsWordDividedByCharacterDetail.replace('__text__', payload.text);
+    case 'wordDividedBySyllable':
+      return labels.warningsWordDividedBySyllableDetail.replace('__text__', payload.text);
     case 'joiningScriptLetterSpacing':
       return labels.warningsJoiningScriptLetterSpacingDetail.replace('__text__', payload.text);
     case 'cjkMarksExceedLeading':
@@ -641,6 +672,8 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return `:::${payload.name} — ${labels.warningsUnclosedContainerDetail}`;
     case 'unclosedCodeBlock':
       return `${payload.delimiter}${payload.lang ?? ''} — ${labels.warningsUnclosedCodeBlockDetail}`;
+    case 'strayFence':
+      return `:::${payload.directive} + ::: — ${labels.warningsStrayFenceDetail}`;
     case 'malformedEmbed':
       return `::${payload.name} — ${labels.warningsMalformedEmbedDetail}`;
     case 'fullwidthMarkup':
@@ -840,6 +873,12 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
         .replace('__print__', String(payload.printMm))
         .replace('__column__', String(payload.columnMm))
         .replace('__page__', String(payload.pageMm))}`;
+    case 'emptyCaption':
+      return `#${payload.resourceId} — ${labels.warningsEmptyCaptionDetail.replace('__label__', payload.label)}`;
+    case 'resourceMoved':
+      return `#${payload.resourceId} — ${labels.warningsResourceMovedDetail
+        .replace('__page__', String(payload.page))
+        .replace('__mm__', String(payload.emptyMm))}`;
     case 'unknownTableStyle':
       return `#${payload.resourceId} · styleId="${payload.styleId}" — ${labels.warningsUnknownTableStyleDetail}`;
     case 'raggedTableGrid': {
@@ -1016,6 +1055,7 @@ function isFontWarning(kind: WarningPayload['kind']): boolean {
     kind === 'missingFontFamily' ||
     kind === 'missingFontVariant' ||
     kind === 'fontFallback' ||
+    kind === 'glyphFallback' ||
     kind === 'duplicateFontVariant' ||
     kind === 'missingGlyph' ||
     kind === 'variableFontDefaultInstance' ||
@@ -1133,7 +1173,11 @@ export function WarningsPanel() {
     requestAnchorEditor(dispatch, target.place ? { resourceId, place: target.anchor } : { resourceId, anchor: target.anchor });
   };
 
-  const listed = composedBook ? warnings.filter((w) => !isComposedCheckKind(w.payload.kind)) : warnings;
+  // The contrast pairs `contrast.allow` accepts (#1124) are listed after
+  // the rest, in a group of their own, and not counted.
+  const accepted = warnings.filter(isAcceptedWarning);
+  const open = accepted.length > 0 ? warnings.filter((w) => !isAcceptedWarning(w)) : warnings;
+  const listed = composedBook ? open.filter((w) => !isComposedCheckKind(w.payload.kind)) : open;
   const groups = WARNING_CATEGORY_ORDER
     .map((category) => ({ category, items: listed.filter((w) => warningCategory(w.payload.kind) === category) }))
     .filter((g) => g.items.length > 0);
@@ -1166,6 +1210,15 @@ export function WarningsPanel() {
               ))}
             </WarningGroup>
           ))
+        )}
+        {accepted.length > 0 && (
+          <WarningGroup title={labels.contrastAcceptedSection} count={accepted.length}>
+            {accepted.map((w) => (
+              <li key={w.id}>
+                <WarningItem warning={w} labels={labels} locale={state.locale} multiChapter={multiChapter} onClick={handleClick} onAnchor={handleAnchor} />
+              </li>
+            ))}
+          </WarningGroup>
         )}
       </PanelBody>
     </div>

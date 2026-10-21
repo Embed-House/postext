@@ -5,6 +5,7 @@ import { BookOpen, FileCode, Settings2, FolderOpen, AlertTriangle, Type, Files, 
 import { useRef, useLayoutEffect, useEffect, useCallback, useState, type ReactNode } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxPresetStale, useSandboxSelector, useSandboxWarnings } from '../context/SandboxContext';
 import type { PanelId } from '../types';
+import { isAcceptedWarning } from '../warnings/categories';
 import { Tooltip, cn } from '../ui';
 import { bookEditionsOf } from '../editions/bookLocales';
 import { localeDisplayName } from '../presets/localeNames';
@@ -56,7 +57,7 @@ function PanelNav() {
   const [indicator, setIndicator] = useState<{ top: number; height: number } | null>(null);
   const hasAnimated = useRef(false);
 
-  const warningCount = useSandboxWarnings().length;
+  const warningCount = useSandboxWarnings().filter((w) => !isAcceptedWarning(w)).length;
   const checksName = useChecksName(labels.navWarnings, warningCount);
 
   const updateIndicator = useCallback(() => {
@@ -253,7 +254,7 @@ export function MobileNavBar() {
   const labels = useSandboxLabels();
   const activePanel = useSandboxSelector((s) => s.activePanel);
   const presetStale = useSandboxPresetStale();
-  const warningCount = useSandboxWarnings().length;
+  const warningCount = useSandboxWarnings().filter((w) => !isAcceptedWarning(w)).length;
   const checksName = useChecksName(labels.navWarnings, warningCount);
   const items: { id: PanelId | null; Icon: typeof FileCode; label: string; hint: string }[] = [
     { id: null, Icon: Eye, label: labels.navPreview, hint: labels.navPreviewHint },

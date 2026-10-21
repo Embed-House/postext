@@ -685,6 +685,12 @@ const config: PostextConfig = {
       <td><code>char</code> se repite a lo largo del hueco entre el título y el número de página, alineado a la derecha para que los puntos de entradas consecutivas queden en línea (<code>'. '</code> los espacia); <code>gap</code> es el hueco mínimo entre el título y la línea de puntos. La línea lleva tantos caracteres como caben, medida como una tira entera en su fuente, de modo que una fuente que separa con el kerning los puntos seguidos pone menos puntos en lugar de puntos que alcancen el número de página. (Hasta postext 1.4 la cuenta salía de un solo punto, y con una fuente así la línea de puntos iba del título hasta montarse en el número). Un título que no dejara sitio a la etiqueta salta de línea un poco antes. La línea de puntos lleva tres caracteres o más: donde solo caben uno o dos, la fila se queda sin ella, porque un punto suelto delante del número de página se lee como un punto final. En un PDF etiquetado los puntos son artefactos, que quedan fuera del texto extraído. El texto base pone los mismos rellenos en sus <a href="/es/docs/configuration-text#tabulaciones">tabulaciones</a>.</td>
     </tr>
     <tr>
+      <td><code>leader.color</code>, <code>fontFamily</code>, <code>fontSize</code>, <code>fontWeight</code></td>
+      <td><code>ColorValue</code>, <code>string</code>, <code>Dimension</code>, <code>number</code></td>
+      <td>los del número de página</td>
+      <td>Los puntos en un color, una letra, un cuerpo y un grosor propios (desde postext 1.52), como el índice de un original que compone puntos pequeños de color, aparte de los números de página. Cada uno que se omite conserva lo que tendrían los puntos sin él: lo del número de página en una entrada. <code>fontSize</code> en <code>em</code> se mide sobre ese cuerpo. Salvo que <code>parts.leader</code> fije los suyos, el <code>{'{leader}'}</code> de una fila de parte también los toma.</td>
+    </tr>
+    <tr>
       <td><code>subtitle</code></td>
       <td>objeto</td>
       <td><code>{"{ enabled: false, attr: 'author' }"}</code></td>
@@ -707,6 +713,12 @@ const config: PostextConfig = {
       <td><code>DesignSlot</code></td>
       <td>vacío</td>
       <td>Diseño de la fila; su contenedor es la fila (anchura de columna × <code>height</code>). Marcadores: <code>{'{number}'}</code>, <code>{'{numberDecimal}'}</code>, <code>{'{numberRoman}'}</code>…, <code>{'{titleText}'}</code> y <code>{'{pageNumber}'}</code> (la etiqueta de la página de parte; con <code>parts.page: false</code>, que no abre página de parte, la etiqueta de la página en la que empieza el contenido de la parte, donde sus cabeceras pasan a ella; en un libro maquetado capítulo a capítulo, un bloque `:::part` que cierra su capítulo apunta a la primera página con contenido del capítulo siguiente). Los colores ligados a la paleta toman la <code>palette</code> de la propia parte, así que la fila de cada sección sale en su color. Vacío, se componen <code>{'{number} {titleText}'}</code> (separados por el <code>numberSeparator</code> del H1) y el número de página con la tipografía de las entradas de nivel 1. <code>{'{leader}'}</code> pone la <code>leader</code> del índice entre el texto anterior y el posterior, dentro de un mismo elemento de texto: <code>{'{number} {titleText}{leader}{pageNumber}'}</code> coloca el título al principio de la fila, el número de página al final y los puntos entre ambos, alineados con el número y a <code>gap</code> de cada texto, como en las filas de entrada. El elemento ocupa entonces todo el ancho de la fila (un ancho <code>auto</code> llega hasta el borde del contenedor); si el título no cabe, se recorta el título y nunca el número, y con la línea de puntos desactivada (<code>leader.enabled: false</code>) el hueco queda en blanco. Fuera de una fila de parte, y en páginas verticales, <code>{'{leader}'}</code> no imprime nada. En un PDF etiquetado y en HTML los puntos quedan fuera del texto que se lee.</td>
+    </tr>
+    <tr>
+      <td><code>parts.leader</code></td>
+      <td>object</td>
+      <td>—</td>
+      <td>El aspecto del <code>{'{leader}'}</code> de una fila de parte: <code>color</code>, <code>fontFamily</code>, <code>fontSize</code> (en <code>em</code> del cuerpo del elemento) y <code>fontWeight</code>, campo a campo sobre el de <code>leader</code>; un campo que ninguno fija conserva el del propio elemento de texto. Desde postext 1.52. Para poner el número de página en un elemento propio (otra letra, un recuadro), haz la fila de tres elementos: el título anclado a la izquierda de la fila, el número de página a su derecha y, entre ambos, los puntos en un elemento cuyo contenido es solo <code>{'{leader}'}</code>, anclado con <code>{"{ to: '#title', edge: 'right-of' }"}</code> y con <code>{"width: { to: '#page', edge: 'left' }"}</code>. Sus puntos se detienen a la distancia <code>gap</code> del elemento del número, esté donde esté.</td>
     </tr>
     <tr>
       <td><code>parts.height</code>, <code>marginTop</code>, <code>marginBottom</code></td>

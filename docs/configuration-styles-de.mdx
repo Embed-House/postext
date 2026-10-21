@@ -474,7 +474,7 @@ const style = pickChipStyle(resolved, 'key');
 
 ## Hervorhebungsstile
 
-Die Eigenschaft `markStyles` deklariert die benannten Stile des Inline-`:mark[Text]{style="…"}`: das farbige Band hinter einer Wendung, so wie ein Schulbuch seine Schlüsselwörter hervorhebt (die Syntax und ihre Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `mark`, ist vorgegeben (ein blassgelbes Band, das ein wenig über die Wendung hinausreicht, mit leicht abgerundeten Enden, der Text in seiner eigenen Farbe), sodass `:mark[…]` ohne jede Konfiguration funktioniert; wer `markStyles` deklariert, ersetzt diese Liste. Eine Markierung ohne `style` oder mit einer ID, die kein Stil deklariert, nimmt den ersten Stil (die Sandbox meldet die unbekannte ID).
+Die Eigenschaft `markStyles` deklariert die benannten Stile des Inline-`:mark[Text]{style="…"}`: das farbige Band hinter einer Wendung, so wie ein Schulbuch seine Schlüsselwörter hervorhebt (die Syntax und ihre Umbruchregeln stehen in der Referenz zum Dokumentformat). Ein Stil, `mark`, ist vorgegeben (ein blassgelbes Band, das ein wenig über die Wendung hinausreicht, mit geraden Enden, der Text in seiner eigenen Farbe), sodass `:mark[…]` ohne jede Konfiguration funktioniert; wer `markStyles` deklariert, ersetzt diese Liste. Eine Markierung ohne `style` oder mit einer ID, die kein Stil deklariert, nimmt den ersten Stil (die Sandbox meldet die unbekannte ID).
 
 ```ts
 const config: PostextConfig = {
@@ -533,8 +533,8 @@ The sun warms the sea and :mark[water rises into the air as vapour].
     <tr>
       <td><code>borderRadius</code></td>
       <td><code>Dimension</code></td>
-      <td><code>0.2em</code></td>
-      <td>Radius der beiden Enden des Bandes, begrenzt auf seine halbe Höhe.</td>
+      <td><code>0</code></td>
+      <td>Radius der beiden Enden des Bandes, begrenzt auf seine halbe Höhe. Gerade Enden sind im Druck die Regel. Bis postext 1.51 war der Standard <code>0.2em</code>; eine damals gespeicherte Konfiguration, deren Text eine Markierung setzt, wird mit <code>0.2em</code> in jedem Stil ohne eigenen Radius gelesen.</td>
     </tr>
     <tr>
       <td><code>paddingX</code></td>
@@ -553,6 +553,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>Dimension</code></td>
       <td><code>paddingY</code></td>
       <td>Raum oben und unten, jeweils anstelle von <code>paddingY</code>.</td>
+    </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>Wie das Band einer Wendung, die in die nächste Zeile läuft, geteilt wird, wie <code>box-decoration-break</code> in CSS. <code>'slice'</code>: ein Band, am Zeilenumbruch gerade abgeschnitten, Innenabstand und runde Ecken nur am echten Anfang und Ende der Wendung. <code>'clone'</code>: Jedes Zeilenstück bekommt ein ganzes Band, mit <code>paddingX</code> und den Ecken an beiden Enden, für eine Überschrift auf einem zeilenweise geteilten Farbband. Der Satz ist in beiden Fällen derselbe.</td>
     </tr>
   </tbody>
 </table>

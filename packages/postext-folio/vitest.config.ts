@@ -6,7 +6,7 @@ export default defineConfig({
     include: ['src/**/*.test.ts'],
     exclude: ['**/node_modules/**', '**/dist/**'],
     // Whole-book layouts take seconds on a workstation and ten to twenty times
-    // as long on CI, which runs every package's suite at once on a small runner.
+    // as long on a small CI runner (a shard of the suite each since #1118).
     testTimeout: process.env.CI ? 120_000 : 30_000,
   },
 });

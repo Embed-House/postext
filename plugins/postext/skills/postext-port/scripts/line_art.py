@@ -20,6 +20,10 @@ the tests drive them with invented boxes.
   each single segment cut into the runs between the frames it passes
   (`straight`), and an end deep inside a picture as an anchor end. What no
   rule explains is returned as left-over segments, for a path element.
+- `read_leader(p, q, key, frames)`: one slanted stroke from a frame into a
+  picture as a `straight` connector to a point of the picture.
+- `refit(end, box)`: an end's `at` (and `gap`) worked out again on the box
+  the template lays the frame in.
 - `path_data(...)`: SVG path data for segments or a PDF path's items, in
   millimetres from a box's corner.
 """
@@ -84,14 +88,29 @@ class End:
     span: float = 0.0             # the side's length (mm): `at` is written when off its middle by 0.3 mm
     xy: tuple | None = None       # where the source's line ends (mm), to find a cap drawn there
 
-    def config(self) -> dict:
+    def config(self, always_at: bool = False) -> dict:
+        """The end as a connector's `from` / `to`; `at` written when off the
+        side's middle by 0.3 mm, or always (`always_at`: a straight or elbow
+        line, which the engine would otherwise run from the middle)."""
         out: dict[str, Any] = {"to": f"#{self.frame}", "side": self.side}
         if self.point is None:
-            if abs(self.at - 0.5) * (self.span or 100.0) > 0.3:
+            if always_at or abs(self.at - 0.5) * (self.span or 100.0) > 0.3:
                 out["at"] = round(self.at, 3)
         if self.gap > 0.2:
             out["gap"] = {"value": round(self.gap, 2), "unit": "mm"}
         return out
+
+
+def refit(e: End, box: tuple, gap: bool = True) -> End:
+    """`e` worked out again on the frame's box as the template lays it (a
+    picture cut to its card and its ink, a text frame given the measure its
+    lines need): `at` from where the source's line ends (`xy`), and with
+    `gap` the room it leaves before the side. An end at a point, or with no
+    `xy`, is kept."""
+    if e.point is not None or e.xy is None:
+        return e
+    at, g = side_point(box, e.side, e.xy)
+    return End(e.frame, e.side, at, g if gap else e.gap, None, side_length(box, e.side), e.xy)
 
 
 @dataclass
@@ -643,7 +662,54 @@ def read_segment(s: Seg, frames: list[Frame]) -> tuple[list[Connector], list[Seg
                 p = lo_p if f is start else hi_p if f is end else None
                 if p is not None and not inside(p, f.box):
                     e.at, e.gap = side_point(f.box, e.side, p)
+                    e.xy = p
     return conns, stubs
+
+
+def _toward(p: tuple, q: tuple) -> tuple[float, float]:
+    d = (q[0] - p[0], q[1] - p[1])
+    n = max((d[0] ** 2 + d[1] ** 2) ** 0.5, 1e-9)
+    return (d[0] / n, d[1] / n)
+
+
+def read_leader(p: tuple, q: tuple, key: tuple, frames: list[Frame], ids: set | None = None) -> Connector | None:
+    """One slanted stroke from a frame into a picture (a leader from a note
+    to what it names): a `straight` connector from the frame's side facing
+    the line to a point of the picture (its end deep inside it, the line
+    shown over it). None when one end is not on a frame (text, a box, a
+    tab) or the other not on a picture."""
+    ids = ids or set()
+    pics = [f for f in frames if f.kind in ("picture", "figure")]
+    for a, b in ((p, q), (q, p)):
+        hold = [f for f in pics if inside(b, f.box) and depth(b, f.box) > TINY]
+        if not hold:
+            continue
+        pic = min(hold, key=lambda f: f.area)
+        back = _toward(b, a)
+        if not (depth(b, pic.box) > DEEP or pic.shows is not None) or not over(pic, b, back, ids):
+            continue
+        out = _toward(b, a)        # going on past `a`, away from the picture
+        cands = [f for f in frames if f.name != pic.name and f.kind not in ("picture", "figure")]
+        fa = None
+        holding = [f for f in cands if inside(a, f.box, 0.2)]
+        if holding:
+            fa = min(holding, key=lambda f: f.area)
+        else:
+            for t in (0.5, 1.0, 1.5, 2.0, REACH):
+                pt = (a[0] + out[0] * t, a[1] + out[1] * t)
+                hit = [f for f in cands if inside(pt, f.box)]
+                if hit:
+                    fa = min(hit, key=lambda f: f.area)
+                    break
+        if fa is None:
+            continue
+        d = _toward(a, b)
+        side = side_facing((1 if d[0] > 0 else -1, 0) if abs(d[0]) >= abs(d[1]) else (0, 1 if d[1] > 0 else -1))
+        at, gap = side_point(fa.box, side, a)
+        start = End(fa.name, side, at, gap, span=side_length(fa.box, side), xy=a)
+        end = End(pic.name, side_facing(_unit(b, a)), point=b, xy=b)
+        return Connector("straight", start, [end], key, None, set(ids))
+    return None
 
 
 def _side_end(f: Frame, s: Seg, t: float, fwd: tuple, back: tuple, leaving: bool) -> End:

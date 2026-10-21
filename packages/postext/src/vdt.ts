@@ -240,6 +240,24 @@ export interface VDTChipRun {
   rtl?: true;
 }
 
+/** An inline colour swatch on its line (`VDTLineSegment.swatch`): the
+ *  fill (hex; absent when the colour did not resolve), or the inline symbol
+ *  that rides its placeholder (#1058). The other fields are set only by a
+ *  swatch that writes them (#1104): `side`, the square's side in px when it
+ *  is not the segment's whole width (a `size`, or a `gap` after the square,
+ *  which takes the rest of the width: on the square's right, on its left
+ *  in a right-to-left segment); `borderWidth` (px, 0 for no outline) and
+ *  `borderColor` (hex) of the outline, which is otherwise 6 % of the side
+ *  in the text colour; `radius`, the corner radius in px. */
+export interface VDTSwatch {
+  color?: string;
+  icon?: VDTInlineIcon;
+  side?: number;
+  borderWidth?: number;
+  borderColor?: string;
+  radius?: number;
+}
+
 /** A laid-out inline chip (`:chip[…]`): a box drawn from
  *  `x + marginLeft` (the segment's left edge `x`), `boxWidth` wide, from
  *  `ascent` above the baseline to `descent` below it, with the text runs
@@ -348,8 +366,9 @@ export interface VDTLineSegment {
   /** Present when `kind === 'swatch'`: an inline colour swatch (`:swatch{…}`),
    *  a square of `width` px filled with `color` (a hex; absent when the
    *  colour did not resolve — the square is then an empty outline), sitting
-   *  on the baseline and outlined in the text colour. */
-  swatch?: { color?: string; icon?: VDTInlineIcon };
+   *  on the baseline and outlined in the text colour. A swatch with a shape
+   *  of its own (#1104) carries it (see {@link VDTSwatch}). */
+  swatch?: VDTSwatch;
   /** Present when `kind === 'chip'`: an inline chip (`:chip[…]`), painted
    *  as a box with its own text runs. The segment's `text` is the one-char
    *  plain-text placeholder; the words live in `chip.runs`. */
@@ -828,6 +847,13 @@ export interface VDTLine {
    *  measure, and the build reports an `unbreakableWordOverflow` content
    *  warning. Absent otherwise. */
   wordOverflow?: true;
+  /** The line ends in a piece of a word wider than its whole measure,
+   *  which the breaker cut to fit (#1150): at one of its syllables, a
+   *  hyphen added (`'syllable'`), or, where none fits, between two of its
+   *  characters (`'character'`). The build reports a
+   *  `wordDividedBySyllable` note or a `wordDividedByCharacter` warning.
+   *  Absent otherwise (and for a cut at a no-break space). */
+  wordDivided?: 'syllable' | 'character';
   /** Set by the CJK composer (a paragraph set as Chinese, Japanese or
    *  Korean text, `composesAsCjk`): its characters were measured one by
    *  one, so a renderer paints two CJK marks that meet apart — the marks
@@ -2263,6 +2289,10 @@ export interface VDTDesignTextRun {
    *  the blank room around them. Read by no assistive technology: an
    *  artifact in a tagged PDF, hidden in HTML. */
   leader?: true;
+  /** The run's own colour, over the block's (`#rrggbb`): a part row's
+   *  leader set in a colour of its own (`toc.leader.color`, #1121). Absent
+   *  on every other run. */
+  color?: string;
   /** Advance of the run, tracking included. */
   width: number;
   /** Superscript / subscript offset off the baseline (px, positive down). */
@@ -2333,6 +2363,10 @@ export interface VDTDesignTextLine {
    *  box, and the build reports an `unbreakableWordOverflow` warning, as
    *  for {@link VDTLine.wordOverflow}. Absent otherwise. */
   wordOverflow?: true;
+  /** The line of a wrapping text ends in a piece of a word wider than the
+   *  room, cut at a syllable or between two characters, as for
+   *  {@link VDTLine.wordDivided} (#1150). Absent otherwise. */
+  wordDivided?: 'syllable' | 'character';
 }
 
 /** Outline of the glyphs of a design text block, resolved to px / hex. */
@@ -3780,6 +3814,16 @@ export type ContentWarning = ContentWarningBase & (
    *  (`VDTLine.wordOverflow`). `text` is the line's text. Found by the
    *  layout, so `collectContentWarnings` never returns it. */
   | { kind: 'unbreakableWordOverflow'; text: string }
+  /** A word wider than its whole line (a narrow frame, a running head, a
+   *  table cell), cut to fit between two of its characters, with no
+   *  hyphen (`VDTLine.wordDivided`, #1150): "CL" | "IMA". `text` is the
+   *  line's text. A warning: give the text more room or a smaller size.
+   *  Found by the layout, so `collectContentWarnings` never returns it. */
+  | { kind: 'wordDividedByCharacter'; text: string }
+  /** A word wider than its whole line, cut at one of its syllables with a
+   *  hyphen (`VDTLine.wordDivided`, #1150). A note: the cut is a
+   *  dictionary one, but the word was too long for the measure. */
+  | { kind: 'wordDividedBySyllable'; text: string }
   /** A paragraph or heading whose style sets letter-spacing
    *  (`letterSpacing`) on words of a joining script: they are set without
    *  it, since spacing their letters apart breaks the joins, and only the
@@ -3925,6 +3969,19 @@ export type ContentWarning = ContentWarningBase & (
    *  than its column, and the default page has two (`layout.layoutType:
    *  'double'`). Found by the layout; reported once per picture. */
   | { kind: 'pictureBelowPrintSize'; resourceId: string; scale: number; printWidthPx: number; widthPx: number; pageWidthPx: number }
+  /** `emptyCaption` (#1151): a resource of a type with a caption prefix
+   *  whose own caption is empty, so its caption line prints the label and
+   *  number alone ("Figure 1.2."). Often meant (a numbered plate), often a
+   *  caption left out; information. Reported once per resource, where it
+   *  is first placed. Found by the layout. */
+  | { kind: 'emptyCaption'; resourceId: string; label: string }
+  /** `resourceMoved` (#1151): a resource set where its `::resource` line
+   *  stands (`position: 'here'`) was too tall for the room left in its
+   *  column and moved on to the next, leaving `emptyPx` (`emptyMm`) of
+   *  that column empty on page `pageIndex`. Reported when the room left is at least
+   *  two lines of the body grid; a wrapped picture says it with
+   *  `textWrap` `'moved'`. Found by the layout. */
+  | { kind: 'resourceMoved'; resourceId: string; emptyPx: number; emptyMm: number }
   /** `textWrap` (#627): a resource or a box set to wrap text round it
    *  (`placement.wrap`, a box's `wrap`) that does not as asked.
    *  `'tooNarrow'`: the text beside it would be narrower than
@@ -4004,6 +4061,16 @@ export type ContentWarning = ContentWarningBase & (
    *  `BuildDocumentOptions.fontSet`), behind
    *  `debug.warnings.missingFont`. No page and no source range. */
   | { kind: 'fontFallback'; family: string; weight: number; style: 'normal' | 'italic'; reason: 'missing' | 'synthesized' }
+  /** Characters the text sets in a face that has no glyph for them, which
+   *  another face drew (#1105): the next family of the font list that has
+   *  them (`supplier`, a generic family such as `serif` too), or, without
+   *  `supplier`, a face the system picks. One per face: `characters` lists
+   *  the first of them (each once, at most 24), `count` says how many in
+   *  all. Checked by the glyph probe where there is a font set
+   *  (`installGlyphProbe`), else against the `cmap` of the files
+   *  registered with `registerFontCoverage`; behind
+   *  `debug.warnings.missingFont`. No page and no source range. */
+  | { kind: 'glyphFallback'; family: string; weight: number; style: 'normal' | 'italic'; characters: string[]; count: number; supplier?: string }
 );
 
 /** Where a design slot is painted: a running head (`'header'`), a folio

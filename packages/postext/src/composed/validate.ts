@@ -55,6 +55,7 @@ import {
   type TemplateIssue,
 } from './templates';
 import { modulesGroupRoot } from './modules';
+import { POINTER_PATH, TEMPLATE_DECORATION_KEYS, placementUnknownKeys, type UnknownKey } from '../design/elementKeys';
 
 // The keys of each object, checked against its type: a key added to a type
 // fails to compile until it is listed here.
@@ -73,7 +74,7 @@ const CELL_KEYS = { col: true, row: true, cols: true, rows: true } satisfies Rec
 const FRAME_KEYS = {
   name: true, placement: true, grid: true, width: true, height: true, minWidth: true, maxWidth: true, minHeight: true,
   maxHeight: true, style: true, layer: true, rotate: true, verticalAlign: true, columns: true, columnGap: true, padding: true,
-  exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, fit: true,
+  exclude: true, wrap: true, flow: true, next: true, takes: true, pin: true, grow: true, shrink: true, priority: true, growWith: true, fit: true,
   overflow: true, optional: true, crossGutter: true, writingMode: true, direction: true, rules: true, look: true, overlap: true, remove: true,
 } satisfies Record<keyof FrameConfig, true>;
 const LOOK_KEYS = { background: true, border: true, stripe: true, icon: true, marker: true, titleStyle: true, body: true, label: true } satisfies Record<keyof FrameLook, true>;
@@ -120,7 +121,8 @@ export interface ValidatePageTemplatesOptions {
  * the same keys under `htmlViewer.overrides`), as config warnings with a
  * JSON-pointer `path`: the kinds listed on {@link ConfigWarning}, plus
  * `unknownConfigKey` for a key no template, frame, group, grid, fit,
- * overflow, variant or label style has, and `unknownConfigValue` for a word
+ * overflow, variant, label style, placement (its anchor, offset and size)
+ * or decoration has, and `unknownConfigValue` for a word
  * outside a setting's choices (`area`, `verticalAlign`, `exclude`, `takes`,
  * `kind`, `align`, `writingMode`, `direction`, `overlap`, `fontStyle`,
  * `textTransform`) or a template with no id or a frame or group with no
@@ -177,6 +179,14 @@ function escapePointer(token: string): string {
   return token.replace(/~/g, '~0').replace(/\//g, '~1');
 }
 
+/** A frame's or a group's `placement` (#1122): its keys and those of its
+ *  anchor, offset and size. */
+function checkPlacement(placement: unknown, path: string, push: Push): void {
+  const found: UnknownKey[] = [];
+  placementUnknownKeys(placement, path, POINTER_PATH, found);
+  for (const k of found) push({ kind: 'unknownConfigKey', path: k.path, value: k.value, used: '', ...(k.suggestion ? { suggestion: k.suggestion } : {}) });
+}
+
 function checkGrid(grid: unknown, path: string, push: Push): void {
   unknownKeys(grid, GRID_KEYS, path, push);
 }
@@ -188,6 +198,7 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
     return;
   }
   unknownKeys(frame, FRAME_KEYS, path, push);
+  checkPlacement(frame.placement, `${path}/placement`, push);
   unknownKeys(frame.grid, CELL_KEYS, `${path}/grid`, push);
   unknownKeys(frame.fit, FIT_KEYS, `${path}/fit`, push);
   unknownKeys(frame.overflow, OVERFLOW_KEYS, `${path}/overflow`, push);
@@ -202,6 +213,31 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
   choice(frame, 'takes', FRAME_TAKES, '', path, push);
   choice(frame, 'writingMode', FRAME_WRITING_MODES, '', path, push);
   choice(frame, 'direction', FRAME_DIRECTIONS, '', path, push);
+  // A box that grows with what is laid inside it (#1117): `'children'` or
+  // a list of names (the names are checked once the template resolves).
+  const gw = frame.growWith;
+  if (gw !== undefined && gw !== 'children') {
+    if (!Array.isArray(gw)) {
+      const suggestion = typeof gw === 'string' ? closestKey(gw, ['children']) : undefined;
+      push({ kind: 'unknownConfigValue', path: `${path}/growWith`, value: typeof gw === 'object' ? JSON.stringify(gw) : String(gw), used: '', ...(suggestion ? { suggestion } : {}) });
+    } else {
+      gw.forEach((n, k) => {
+        if (typeof n !== 'string' || n.trim() === '') push({ kind: 'unknownConfigValue', path: `${path}/growWith/${k}`, value: String(n), used: '' });
+      });
+    }
+  }
+}
+
+/** The names a frame's `growWith` list gives (#1117) that are no frame or
+ *  group of its template, or the frame itself: ignored. */
+function checkGrowWith(frame: ResolvedFrame, names: readonly string[], push: Push): void {
+  if (!Array.isArray(frame.growWith)) return;
+  const path = frame.fieldPaths.growWith ?? `${frame.configPath}/growWith`;
+  frame.growWith.forEach((n) => {
+    if (n !== frame.name && names.includes(n)) return;
+    const suggestion = closestKey(n, names.filter((x) => x !== frame.name));
+    push({ kind: 'unknownConfigValue', path, value: n, used: '', ...(suggestion ? { suggestion } : {}) });
+  });
 }
 
 /** The nested keys of a frame's `look` (#976), against the tree of the
@@ -224,6 +260,7 @@ function checkGroupEntry(group: unknown, path: string, push: Push): void {
     return;
   }
   unknownKeys(group, GROUP_KEYS, path, push);
+  checkPlacement(group.placement, `${path}/placement`, push);
   unknownKeys(group.grid, CELL_KEYS, `${path}/grid`, push);
   choice(group, 'kind', FRAME_GROUP_KINDS, DEFAULT_FRAME_GROUP.kind, path, push);
   choice(group, 'align', FRAME_GROUP_ALIGNS, DEFAULT_FRAME_GROUP.align, path, push);
@@ -275,6 +312,9 @@ function checkPatch(patch: unknown, path: string, push: Push, keys: Record<strin
   unknownKeys(patch, keys, path, push);
   choice(patch, 'area', TEMPLATE_AREAS, DEFAULT_PAGE_TEMPLATE.area, path, push);
   checkGrid(patch.grid, `${path}/grid`, push);
+  // The decoration's own keys; its elements' are checked with every
+  // design slot's (`configWarnings.ts`).
+  unknownKeys(patch.decoration, TEMPLATE_DECORATION_KEYS, `${path}/decoration`, push);
   if (Array.isArray(patch.frames)) patch.frames.forEach((f, j) => checkFrameEntry(f, `${path}/frames/${j}`, push));
   if (Array.isArray(patch.groups)) patch.groups.forEach((g, j) => checkGroupEntry(g, `${path}/groups/${j}`, push));
 }
@@ -306,7 +346,10 @@ function checkTemplates(
     checkPatch(t, path, push, TEMPLATE_KEYS);
     unknownKeys(t.variants, VARIANTS_KEYS, `${path}/variants`, push);
     if (isRecord(t.variants)) {
-      for (const side of ['recto', 'verso'] as const) checkPatch(t.variants[side], `${path}/variants/${side}`, push, PATCH_KEYS);
+      for (const side of ['recto', 'verso'] as const) {
+        checkPatch(t.variants[side], `${path}/variants/${side}`, push, PATCH_KEYS);
+        checkVariantParity(t.variants[side], side, `${path}/variants/${side}`, push);
+      }
     }
   });
   const toPx = pxConverter(options);
@@ -330,10 +373,32 @@ function checkTemplates(
       const resolved = resolveTemplateAt(templates, index, { parity, calloutStyleIds, prefix });
       if (!resolved) continue;
       for (const issue of resolved.issues) push(issueWarning(issue));
-      for (const frame of resolved.template.frames) checkMinMax(frame, toPx, push);
+      const known = [...resolved.template.frames.map((f) => f.name), ...resolved.template.groups.map((g) => g.name)];
+      for (const frame of resolved.template.frames) {
+        checkMinMax(frame, toPx, push);
+        checkGrowWith(frame, known, push);
+      }
       if (parity === undefined && resolved.template.role === MODULE_ROLE) checkModule(t, path, push);
       if (parity === undefined && resolved.template.role !== MODULE_ROLE) checkPageModules(t, resolved.template.groups, path, push);
     }
+  }
+}
+
+/** An element of a variant whose `parity` is the other side's (#1152): a
+ *  recto is an odd page and a verso an even one, so an `even` element in
+ *  `variants.recto` (or `odd` in `variants.verso`) is never drawn
+ *  (`unknownConfigValue`; the folio or running foot it holds is lost). */
+function checkVariantParity(patch: unknown, side: 'recto' | 'verso', path: string, push: Push): void {
+  if (!isRecord(patch)) return;
+  const never = side === 'recto' ? 'even' : 'odd';
+  for (const key of ['header', 'footer', 'decoration'] as const) {
+    const slot = patch[key];
+    if (!isRecord(slot) || !Array.isArray(slot.elements)) continue;
+    slot.elements.forEach((el: unknown, i: number) => {
+      if (isRecord(el) && el.parity === never) {
+        push({ kind: 'unknownConfigValue', path: `${path}/${key}/elements/${i}/parity`, value: never, used: '' });
+      }
+    });
   }
 }
 

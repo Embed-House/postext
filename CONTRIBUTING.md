@@ -43,8 +43,21 @@ pnpm dev
 # Build all packages
 pnpm build
 
-# Run tests
-pnpm turbo run test
+# Run tests (a package whose inputs did not change replays from Turbo's cache)
+pnpm test
+
+# Only the packages your uncommitted changes touch, and those that depend on them
+pnpm test:changed
+
+# The packages that differ from main (what the next release runs)
+pnpm test:affected
+
+# Leave out the long sweeps, whole books and end-to-end runs while you work
+pnpm test:quick
+
+# One package, or one file
+pnpm --filter postext test
+pnpm --filter postext exec vitest run src/__tests__/knuthPlass.test.ts
 
 # Type-check all packages
 pnpm check-types
@@ -70,6 +83,8 @@ The repository is a pnpm + Turborepo monorepo with seven packages, the web app a
 
 Turborepo handles the dependency graph: the packages build first, then `apps/web` picks up the changes.
 
+CI runs its jobs at once, each on a runner of its own: the long suites in shards (`vitest --shard`), the site's build, EPUBCheck, and types, lint and the command line. A job whose Turbo hash matches a run that already passed is skipped. A test file that takes much longer than the rest holds its whole shard up, so a long sweep is cut into `*.part<N>.test.ts` files that share it (see `stripRoundTrip.harness.ts`).
+
 ## Making Changes
 
 1. Fork the repository and create a branch from `develop`.
@@ -77,7 +92,7 @@ Turborepo handles the dependency graph: the packages build first, then `apps/web
 3. Add or update tests for any new or changed behavior.
 4. Make sure all checks pass:
    ```bash
-   pnpm build && pnpm turbo run test && pnpm check-types && pnpm lint
+   pnpm build && pnpm test && pnpm check-types && pnpm lint
    ```
 5. Submit a pull request targeting the `develop` branch.
 

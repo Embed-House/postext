@@ -24,6 +24,22 @@
     "test": {
       "dependsOn": [
         "^build"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/web/public/**",
+        "$TURBO_ROOT$/apps/web/messages/**",
+        "$TURBO_ROOT$/docs/**",
+        "$TURBO_ROOT$/cookbook/**",
+        "$TURBO_ROOT$/plugins/**",
+        "$TURBO_ROOT$/scripts/**"
+      ],
+      "env": [
+        "EPUBCHECK",
+        "VERAPDF",
+        "COOKBOOK_PREVIEW",
+        "COOKBOOK_FORCE_CONFIG",
+        "POSTEXT_QUICK_TESTS"
       ]
     },
     "lint": {},

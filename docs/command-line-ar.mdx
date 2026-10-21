@@ -352,6 +352,8 @@ postext build chapters/ --pdf book.pdf --watch
 العائلة الذي تختاره القاعدة نفسها بدلًا منه، وأصدر عنه `postext check` التحذير `fontFallback`: فقد تنكسر
 أسطره على غير ما تنكسر في Sandbox.
 
+المحرف الذي ليس له شكل في خط يُرسم بخط آخر. يقرأ `postext check` جدول `cmap` من كل خط يحمّله، ويذكر تلك المحارف مرة واحدة لكل خط في الكتاب كله في تحذير `glyphFallback`؛ ومع `--json` يحمل `data` المحارف وعددها.
+
 الذاكرة المؤقتة هي `~/.cache/postext` (و`%LOCALAPPDATA%\postext\cache` في Windows)؛
 وينقلها `POSTEXT_CACHE_DIR` أو `--cache-dir`. ويتخطى `--offline` التنزيل.
 والعائلة التي لا توجد في أي مكان تُنضَّد بخط EB Garamond تحت اسمها، فيبقى الإخراج

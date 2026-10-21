@@ -177,6 +177,8 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
     for (const i of runPaintOrder(line.order, line.runs.length)) {
       const run = line.runs[i]!;
       ctx.font = run.fontString;
+      // A run in a colour of its own (a part row's leader, #1121).
+      if (run.color) ctx.fillStyle = run.color;
       // A vertical line: the orientation its author gave the run
       // (`:tcy`, `:upright`, `:sideways`).
       // A run whose width is its box (a CJK mark that gave up blank, #637)
@@ -200,6 +202,7 @@ export function renderTextBlock(ctx: CanvasRenderingContext2D, block: VDTDesignT
         paint(run.text, 0, 0, verticalPaintActive() ? 'sideways' : undefined);
         restoreContext(ctx);
       }
+      if (run.color) ctx.fillStyle = block.color;
       x += run.width;
     }
     ctx.font = block.fontString;

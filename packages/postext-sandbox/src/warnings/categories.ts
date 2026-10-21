@@ -7,6 +7,12 @@ export type WarningCategory = 'fonts' | 'figures' | 'markup' | 'design' | 'contr
 
 export const WARNING_CATEGORY_ORDER: readonly WarningCategory[] = ['fonts', 'figures', 'markup', 'design', 'contrast', 'typesetting', 'preflight', 'system'];
 
+/** A contrast finding `contrast.allow` accepts (#1124): the Checks panel
+ *  lists it apart and does not count it. */
+export function isAcceptedWarning(w: { payload: WarningPayload }): boolean {
+  return w.payload.kind === 'contrast' && w.payload.check.accepted !== undefined;
+}
+
 export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
   switch (kind) {
     case 'preflight':
@@ -17,6 +23,7 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'missingFontFamily':
     case 'missingFontVariant':
     case 'fontFallback':
+    case 'glyphFallback':
     case 'duplicateFontVariant':
     case 'fontFamilyStack':
     case 'missingGlyph':
@@ -30,6 +37,8 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'bitmapTooSmall':
     case 'floatShrunk':
     case 'pictureBelowPrintSize':
+    case 'emptyCaption':
+    case 'resourceMoved':
     case 'textWrap':
     case 'unknownTableStyle':
     case 'raggedTableGrid':
@@ -82,6 +91,8 @@ export function warningCategory(kind: WarningPayload['kind']): WarningCategory {
     case 'cjkLooseLine':
     case 'raggedLine':
     case 'unbreakableWordOverflow':
+    case 'wordDividedByCharacter':
+    case 'wordDividedBySyllable':
     case 'joiningScriptLetterSpacing':
     case 'cjkMarksExceedLeading':
     case 'rubyExceedsLeading':

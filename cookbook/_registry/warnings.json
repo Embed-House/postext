@@ -8210,5 +8210,113 @@
         "it": "Estensione e grafica avanzata"
       }
     }
+  },
+  "emptyCaption": {
+    "source": "engine",
+    "label": {
+      "en": "Caption with the label alone",
+      "es": "Pie solo con la etiqueta",
+      "ca": "Peu només amb l'etiqueta",
+      "zh": "题注只有标签",
+      "ar": "تعليق بالوسم وحده",
+      "ja": "ラベルだけのキャプション",
+      "pt": "Legenda só com o rótulo",
+      "fr": "Légende réduite à l’étiquette",
+      "de": "Legende nur mit der Bezeichnung",
+      "it": "Didascalia con la sola etichetta"
+    },
+    "cause": {
+      "en": "A resource of a type with a caption prefix (a figure, a table) has no caption of its own, so its caption line prints the label and number alone, such as “Figure 1.2.”. That is right for a numbered plate and wrong when the caption was left out.",
+      "es": "Un recurso de un tipo con prefijo de pie (una figura, una tabla) no tiene pie propio, así que su línea de pie imprime solo la etiqueta y el número, por ejemplo «Figura 1.2.». Está bien en una lámina numerada y mal cuando el pie se quedó sin escribir.",
+      "ca": "Un recurs d'un tipus amb prefix de peu (una figura, una taula) no té peu propi, així que la seva línia de peu imprimeix només l'etiqueta i el número, per exemple «Figura 1.2.». És correcte en una làmina numerada i no ho és quan el peu s'ha quedat sense escriure.",
+      "zh": "某个类型带题注前缀的资源（图、表）没有自己的题注，于是题注行只排出标签和编号，例如“图1.2”。编号图版这样是对的；忘了写题注时就是错的。",
+      "ar": "لمورد من نوع له بادئة تعليق (شكل، جدول) لا تعليق خاص به، فيطبع سطر تعليقه الوسم والرقم وحدهما، مثل «الشكل 1.2.». هذا صحيح للوحة مرقَّمة، وخطأ حين يكون التعليق قد سقط.",
+      "ja": "キャプションの接頭辞がある種類（図、表）のリソースに自身のキャプションがないため、キャプションの行にラベルと番号だけ（「図1.2」など）が組まれます。番号付きの図版ならそれで正しく、キャプションを書き忘れたのなら誤りです。",
+      "pt": "Um recurso de um tipo com prefixo de legenda (uma figura, uma tabela) não tem legenda própria, então a linha da legenda imprime só o rótulo e o número, como “Figura 1.2.”. Isso está certo numa prancha numerada e errado quando a legenda ficou por escrever.",
+      "fr": "Une ressource d’un type doté d’un préfixe de légende (une figure, un tableau) n’a pas de légende propre : sa ligne de légende n’imprime que l’étiquette et le numéro, par exemple « Figure 1.2. ». C’est juste pour une planche numérotée, faux quand la légende a été oubliée.",
+      "de": "Eine Ressource eines Typs mit Legendenpräfix (eine Abbildung, eine Tabelle) hat keine eigene Legende, also druckt ihre Legendenzeile nur Bezeichnung und Nummer, etwa „Abbildung 1.2.“. Bei einer nummerierten Tafel ist das richtig, bei einer vergessenen Legende nicht.",
+      "it": "Una risorsa di un tipo con prefisso di didascalia (una figura, una tabella) non ha una didascalia propria, quindi la sua riga di didascalia stampa solo etichetta e numero, per esempio «Figura 1.2.». Va bene per una tavola numerata, non quando la didascalia è stata dimenticata."
+    },
+    "fix": {
+      "en": "Write the resource's caption. If a numbered label is all you want, leave it: the warning is information.",
+      "es": "Escribe el pie del recurso. Si lo único que quieres es una etiqueta numerada, déjalo: el aviso es informativo.",
+      "ca": "Escriu el peu del recurs. Si només vols una etiqueta numerada, deixa-ho: l'avís és informatiu.",
+      "zh": "补写该资源的题注。若只需要编号标签，可保持不变：这条警告只是提示。",
+      "ar": "اكتب تعليق المورد. وإن كان كل ما تريده وسمًا مرقَّمًا فاتركه: التحذير للعلم.",
+      "ja": "リソースのキャプションを書きます。番号付きのラベルだけでよければそのままにします。この警告は情報です。",
+      "pt": "Escreva a legenda do recurso. Se só quer um rótulo numerado, deixe como está: o aviso é informativo.",
+      "fr": "Écrivez la légende de la ressource. Si une étiquette numérotée suffit, laissez-la : l’avertissement est une information.",
+      "de": "Schreib die Legende der Ressource. Genügt eine nummerierte Bezeichnung, lass es so: Der Hinweis ist eine Information.",
+      "it": "Scrivi la didascalia della risorsa. Se basta un’etichetta numerata, lasciala così: l’avviso è informativo."
+    },
+    "docs": {
+      "slug": "configuration-resources",
+      "heading": {
+        "en": "Resource types",
+        "es": "Tipos de recurso",
+        "ca": "Tipus de recurs",
+        "zh": "资源类型",
+        "ar": "أنواع الموارد",
+        "ja": "リソースの種類",
+        "pt": "Tipos de recurso",
+        "fr": "Types de ressources",
+        "de": "Ressourcentypen",
+        "it": "Tipi di risorsa"
+      }
+    }
+  },
+  "resourceMoved": {
+    "source": "engine",
+    "label": {
+      "en": "Figure moved on",
+      "es": "Figura llevada más adelante",
+      "ca": "Figura portada més endavant",
+      "zh": "图片被移到后面",
+      "ar": "شكل نُقل إلى ما بعده",
+      "ja": "次へ送られた図版",
+      "pt": "Figura levada adiante",
+      "fr": "Figure reportée plus loin",
+      "de": "Abbildung weitergeschoben",
+      "it": "Figura spostata avanti"
+    },
+    "cause": {
+      "en": "A resource set where its ::resource line stands (position: 'here') was too tall for the room left in its column, so it moved on to the next column whole and left the foot of its column empty. The warning gives the room left, in mm, and the page.",
+      "es": "Un recurso colocado donde está su línea ::resource (position: 'here') era más alto que el espacio que quedaba en su columna, así que pasó entero a la columna siguiente y dejó vacío el pie de la suya. El aviso da el espacio que quedó, en mm, y la página.",
+      "ca": "Un recurs col·locat on hi ha la seva línia ::resource (position: 'here') era més alt que l'espai que quedava a la seva columna, així que va passar sencer a la columna següent i va deixar buit el peu de la seva. L'avís dona l'espai que va quedar, en mm, i la pàgina.",
+      "zh": "放在::resource行所在处的资源（position: 'here'）比栏中剩余的空间高，于是整块移到下一栏，原栏底部留空。警告给出留下的空间（mm）和页码。",
+      "ar": "مورد موضوع حيث يقف سطر ::resource الخاص به (position: 'here') كان أطول من المساحة الباقية في عموده، فانتقل كاملًا إلى العمود التالي وترك أسفل عموده فارغًا. يذكر التحذير المساحة الباقية بالمليمتر والصفحة.",
+      "ja": "::resource の行の位置に置いたリソース（position: 'here'）が段に残った余白より高かったため、まるごと次の段へ送られ、元の段の下が空きました。警告は残った空き（mm）とページを示します。",
+      "pt": "Um recurso posto onde está a linha ::resource (position: 'here') era mais alto que o espaço que restava na coluna, então passou inteiro para a coluna seguinte e deixou vazio o pé da sua. O aviso dá o espaço que ficou, em mm, e a página.",
+      "fr": "Une ressource placée là où se trouve sa ligne ::resource (position: 'here') était trop haute pour la place restant dans sa colonne : elle est passée entière à la colonne suivante et laisse vide le pied de la sienne. L’avertissement donne la place laissée, en mm, et la page.",
+      "de": "Eine Ressource, die dort steht, wo ihre ::resource-Zeile steht (position: 'here'), war höher als der Platz, der in ihrer Spalte blieb, und rückte deshalb ganz in die nächste Spalte; der Fuß ihrer Spalte bleibt leer. Der Hinweis nennt den freien Platz in mm und die Seite.",
+      "it": "Una risorsa collocata dove si trova la sua riga ::resource (position: 'here') era più alta dello spazio rimasto nella sua colonna, quindi è passata intera alla colonna successiva e ha lasciato vuoto il piede della sua. L’avviso indica lo spazio rimasto, in mm, e la pagina."
+    },
+    "fix": {
+      "en": "Make the picture smaller (placement.width, or a smaller bitmap), move its ::resource line earlier or later in the text, or float it (placement.position: 'auto'), which lets the text fill the column before it.",
+      "es": "Haz la imagen más pequeña (placement.width o un mapa de bits menor), mueve su línea ::resource antes o después en el texto, o hazla flotar (placement.position: 'auto'), y el texto llenará la columna antes de ella.",
+      "ca": "Fes la imatge més petita (placement.width o un mapa de bits menor), mou la seva línia ::resource abans o després en el text, o fes-la flotar (placement.position: 'auto'), i el text omplirà la columna abans d'ella.",
+      "zh": "把图片缩小（placement.width，或换更小的位图），把它的::resource行在正文中前移或后移，或让它浮动（placement.position: 'auto'），正文就会先填满这一栏。",
+      "ar": "صغِّر الصورة (placement.width، أو صورة نقطية أصغر)، أو انقل سطر ::resource الخاص بها إلى موضع أبكر أو أبعد في النص، أو اجعلها عائمة (placement.position: 'auto') فيملأ النص العمود قبلها.",
+      "ja": "図版を小さくする（placement.width、または小さいビットマップ）、::resource の行を本文の前後に移す、またはフロートにする（placement.position: 'auto'）と、その前に本文が段を埋めます。",
+      "pt": "Diminua a imagem (placement.width, ou um bitmap menor), mova a linha ::resource para antes ou depois no texto, ou faça-a flutuar (placement.position: 'auto'), e o texto enche a coluna antes dela.",
+      "fr": "Réduisez l’image (placement.width, ou un bitmap plus petit), déplacez sa ligne ::resource plus tôt ou plus tard dans le texte, ou faites-la flotter (placement.position: 'auto') : le texte remplit alors la colonne avant elle.",
+      "de": "Mach das Bild kleiner (placement.width oder eine kleinere Bitmap), setz seine ::resource-Zeile früher oder später in den Text, oder lass es gleiten (placement.position: 'auto'); dann füllt der Text die Spalte vor ihm.",
+      "it": "Riduci l’immagine (placement.width, o una bitmap più piccola), sposta la sua riga ::resource prima o dopo nel testo, o falla flottare (placement.position: 'auto'): il testo riempirà la colonna prima di lei."
+    },
+    "docs": {
+      "slug": "document-format-resources",
+      "heading": {
+        "en": "Block embed (optional, explicit inline placement)",
+        "es": "Inserción en bloque (opcional, colocación en línea explícita)",
+        "ca": "Inserció en bloc (opcional, col·locació en línia explícita)",
+        "zh": "块级嵌入（可选，显式的行内放置）",
+        "ar": "التضمين في كتلة (اختياري، لوضع صريح داخل التدفق)",
+        "ja": "ブロック埋め込み（任意、本文中への明示的な配置）",
+        "pt": "Inserção em bloco (opcional, posição explícita no fluxo)",
+        "fr": "Insertion en bloc (facultative, placement explicite dans le texte)",
+        "de": "Blockeinbettung (optional, ausdrückliche Platzierung im Text)",
+        "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
+      }
+    }
   }
 }

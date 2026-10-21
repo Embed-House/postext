@@ -25,7 +25,7 @@ import { createCanvas, GlobalFonts } from '@napi-rs/canvas';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { extname, join } from 'node:path';
-import { collectFontUsage, configFontFamilies, cssWeightOrder, documentFontFaces, exportStandInOf, fontFallbackOf, parseFontString, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
+import { collectFontUsage, configFontFamilies, cssWeightOrder, documentFontFaces, exportStandInOf, fontFallbackOf, parseFontString, registerFontCoverage, STANDARD_FONT_VARIANTS, type FontVariantUse, type VDTDocument } from 'postext';
 import { decompressWoff2 } from 'postext-pdf';
 import { EMBEDDED_FACES, FALLBACK_FAMILY, readEmbedded } from './assets';
 import type { Book } from './input';
@@ -205,6 +205,9 @@ function register(face: Face): void {
   const bytes = declaredFace(face);
   GlobalFonts.register(Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength), face.family);
   noteSvgFont(bytes, face.family);
+  // What the face's `cmap` covers, for the characters it lacks that Skia
+  // draws from another face (`glyphFallback`, #1105).
+  registerFontCoverage(face.family, face.weight, face.style, bytes);
 }
 
 /** The weight class and whether the slant bits (`OS/2` fsSelection, `head`

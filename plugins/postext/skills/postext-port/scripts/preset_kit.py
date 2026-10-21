@@ -110,11 +110,13 @@ from typing import Any
 # mark a config whose templates may hold connectors and pin nothing either.
 # 17 (1.52) sets a paragraph style's unset type fields in a box's body;
 # 16 and older read with the document's (bodyText.paragraphStylesInBoxes).
-# A book ported today is stamped 17 and is shaped in its own language. An
+# 18 (1.52) gives a mark style that names no borderRadius square ends; 17 and
+# older keep 0.2em when the text has a :mark.
+# A book ported today is stamped 18 and is shaped in its own language. An
 # engine older than 1.23 reads 9 as 8, one older than 1.24 reads 10 as 9,
 # one older than 1.25 reads 11 as 10, one older than 1.28 reads 12 as 11,
 # one older than 1.30 reads 14 as 13, one older than 1.34 reads 15 as 14.
-CONFIG_VERSION = 17
+CONFIG_VERSION = 18
 
 # ---------------------------------------------------------------------------
 # primitives
@@ -523,6 +525,199 @@ def fingerprint(project: Path | str) -> str:
     return h.hexdigest()
 
 
+# ---------------------------------------------------------------------------
+# curation: the hand fixes of a composed-page draft, kept apart from the
+# generated preset.json so that a rebuild keeps them (#1136)
+# ---------------------------------------------------------------------------
+
+CURATION_FILE = "curation.json"
+# Each table is a list of entries; every entry carries a "reason".
+CURATION_TABLES = {
+    "framePatch": "merge `set` into a frame: {template, frame, set, reason}",
+    "frameDrop": "remove a frame (and its name from the template's groups): {template, frame, reason}",
+    "frameAdd": "add a frame, after another or at the end: {template, frame: {name, …}, after?, reason}",
+    "decorationDrop": "remove a decoration element: {template, element, reason}",
+    "overlapAllow": "set overlap: \"allow\" on a frame the source prints over or past another: "
+                    "{template, frame, reason}",
+    "styles": "merge `set` into a style of a config list (calloutStyles, labelStyles, frameLooks…): "
+              "{table, id, set, reason}",
+    "resources": "add a resource the extract did not write: {resource: {id, typeId, …}, reason}",
+}
+
+
+def empty_curation() -> dict:
+    return {"about": "Hand fixes applied by `pdf_regions.py manifest` after each build (composed-pages.md "
+                     "§3.7). Every entry needs a reason; an unknown template, frame, element or style fails.",
+            "tables": CURATION_TABLES, **{k: [] for k in CURATION_TABLES}}
+
+
+def write_empty_curation(folder: Path | str) -> Path | None:
+    """An empty curation.json in `folder`, unless one is there."""
+    path = Path(folder) / CURATION_FILE
+    if path.exists():
+        return None
+    path.write_text(json.dumps(empty_curation(), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return path
+
+
+def _merge(base: dict, patch: dict) -> dict:
+    """Deep merge: dicts merge, a null removes the key, anything else replaces."""
+    out = dict(base)
+    for k, v in patch.items():
+        if v is None:
+            out.pop(k, None)
+        elif isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = _merge(out[k], v)
+        else:
+            out[k] = v
+    return out
+
+
+def apply_curation(manifest: dict, curation: dict) -> list[str]:
+    """Apply the curation tables to a manifest in place; one line per entry
+    applied. Raises SystemExit listing every entry whose target does not
+    exist, or that has no reason, before anything is changed."""
+    config = manifest.setdefault("config", {})
+    templates = {t.get("id"): t for t in config.get("pageTemplates") or [] if isinstance(t, dict)}
+    problems: list[str] = []
+    unknown = sorted(k for k in curation if k not in CURATION_TABLES and k not in ("about", "tables", "version"))
+    if unknown:
+        problems.append(f"unknown table(s) {unknown}: the tables are {sorted(CURATION_TABLES)}")
+
+    def entries(table: str) -> list[tuple[str, dict]]:
+        rows = curation.get(table) or []
+        if not isinstance(rows, list):
+            problems.append(f"{table} must be a list")
+            return []
+        out = []
+        for n, e in enumerate(rows):
+            where = f"{table}[{n}]"
+            if not isinstance(e, dict):
+                problems.append(f"{where} is not an object")
+            elif not str(e.get("reason") or "").strip():
+                problems.append(f"{where} has no reason")
+            else:
+                out.append((where, e))
+        return out
+
+    def template(where: str, e: dict) -> dict | None:
+        t = templates.get(e.get("template"))
+        if t is None:
+            problems.append(f"{where}: no page template {e.get('template')!r} (templates: {sorted(templates)})")
+        return t
+
+    def frame_at(where: str, e: dict, t: dict | None) -> int | None:
+        if t is None:
+            return None
+        names = [f.get("name") for f in t.get("frames") or []]
+        if e.get("frame") not in names:
+            problems.append(f"{where}: template {t.get('id')!r} has no frame {e.get('frame')!r} (frames: {names})")
+            return None
+        return names.index(e["frame"])
+
+    plan: list[tuple] = []
+    for where, e in entries("framePatch"):
+        t = template(where, e)
+        i = frame_at(where, e, t)
+        if i is not None:
+            if not isinstance(e.get("set"), dict):
+                problems.append(f"{where}: `set` must be an object")
+            else:
+                plan.append(("framePatch", where, e, t))
+    for where, e in entries("overlapAllow"):
+        t = template(where, e)
+        if frame_at(where, e, t) is not None:
+            plan.append(("overlapAllow", where, e, t))
+    for where, e in entries("frameDrop"):
+        t = template(where, e)
+        if frame_at(where, e, t) is not None:
+            plan.append(("frameDrop", where, e, t))
+    for where, e in entries("frameAdd"):
+        t = template(where, e)
+        f = e.get("frame")
+        if t is None:
+            continue
+        names = [x.get("name") for x in t.get("frames") or []]
+        if not isinstance(f, dict) or not f.get("name"):
+            problems.append(f"{where}: `frame` must be a frame object with a name")
+        elif f["name"] in names:
+            problems.append(f"{where}: template {t['id']!r} already has a frame {f['name']!r} (use framePatch)")
+        elif e.get("after") is not None and (e["after"] not in names or any(
+                k == "frameDrop" and pt is t and pe["frame"] == e["after"] for k, _, pe, pt in plan)):
+            problems.append(f"{where}: template {t['id']!r} has no frame {e['after']!r} to add after")
+        else:
+            plan.append(("frameAdd", where, e, t))
+    for where, e in entries("decorationDrop"):
+        t = template(where, e)
+        if t is None:
+            continue
+        ids = [el.get("id") for el in ((t.get("decoration") or {}).get("elements") or [])]
+        if e.get("element") not in ids:
+            problems.append(f"{where}: template {t['id']!r} has no decoration element {e.get('element')!r} "
+                            f"(elements: {ids})")
+        else:
+            plan.append(("decorationDrop", where, e, t))
+    for where, e in entries("styles"):
+        table = config.get(e.get("table"))
+        if not isinstance(table, list):
+            problems.append(f"{where}: the config has no style list {e.get('table')!r}")
+            continue
+        ids = [s.get("id") for s in table if isinstance(s, dict)]
+        if e.get("id") not in ids:
+            problems.append(f"{where}: {e.get('table')} has no style {e.get('id')!r} (ids: {ids})")
+        elif not isinstance(e.get("set"), dict):
+            problems.append(f"{where}: `set` must be an object")
+        else:
+            plan.append(("styles", where, e, table))
+    have = {r.get("id") for r in manifest.get("resources") or []}
+    for where, e in entries("resources"):
+        r = e.get("resource")
+        if not isinstance(r, dict) or not r.get("id") or not r.get("typeId"):
+            problems.append(f"{where}: `resource` must be a resource with an id and a typeId")
+        elif r["id"] in have:
+            problems.append(f"{where}: a resource {r['id']!r} exists already")
+        else:
+            have.add(r["id"])
+            plan.append(("resources", where, e, None))
+    if problems:
+        raise SystemExit(f"{CURATION_FILE}: {len(problems)} entr{'y' if len(problems) == 1 else 'ies'} cannot be "
+                         "applied, nothing was written:\n  " + "\n  ".join(problems))
+
+    done: list[str] = []
+    for kind, where, e, target in plan:
+        if kind in ("framePatch", "overlapAllow"):
+            frames = target["frames"]
+            i = [f.get("name") for f in frames].index(e["frame"])
+            frames[i] = _merge(frames[i], e["set"] if kind == "framePatch" else {"overlap": "allow"})
+            done.append(f"{kind} {target['id']}/{e['frame']}: {e['reason']}")
+        elif kind == "frameDrop":
+            target["frames"] = [f for f in target["frames"] if f.get("name") != e["frame"]]
+            for g in target.get("groups") or []:
+                if isinstance(g, dict) and isinstance(g.get("frames"), list):
+                    g["frames"] = [n for n in g["frames"] if n != e["frame"]]
+            refs = [f.get("name") for f in target["frames"] if f'"#{e["frame"]}"' in json.dumps(f)]
+            done.append(f"frameDrop {target['id']}/{e['frame']}: {e['reason']}"
+                        + (f" (still named by {refs}: check their anchors)" if refs else ""))
+        elif kind == "frameAdd":
+            frames = target.setdefault("frames", [])
+            names = [f.get("name") for f in frames]
+            at = names.index(e["after"]) + 1 if e.get("after") is not None else len(frames)
+            frames.insert(at, e["frame"])
+            done.append(f"frameAdd {target['id']}/{e['frame']['name']}: {e['reason']}")
+        elif kind == "decorationDrop":
+            deco = target["decoration"]
+            deco["elements"] = [el for el in deco["elements"] if el.get("id") != e["element"]]
+            done.append(f"decorationDrop {target['id']}/{e['element']}: {e['reason']}")
+        elif kind == "styles":
+            i = [s.get("id") for s in target].index(e["id"])
+            target[i] = _merge(target[i], e["set"])
+            done.append(f"styles {e['table']}/{e['id']}: {e['reason']}")
+        else:
+            manifest.setdefault("resources", []).append(e["resource"])
+            done.append(f"resources {e['resource']['id']}: {e['reason']}")
+    return done
+
+
 def write_manifest(project: Path | str, manifest: dict) -> Path:
     """Write preset.json (v2, stamped with CONFIG_VERSION unless the manifest
     names one) after checking that every referenced file exists, then
@@ -651,7 +846,7 @@ def resources() -> list:
 def main() -> None:
     primary = LANGS[0]
     manifest = {{
-        "version": 2, "configVersion": 17, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
+        "version": 2, "configVersion": 18, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
         "view": {{"canvasScope": "book"}},
         "chapters": {{lang: chapters_from_dir(HERE, lang) for lang in LANGS}},
         "config": config(primary),
@@ -772,9 +967,57 @@ def parse_fallbacks(specs: list[str] | None) -> dict[str, str]:
     return out
 
 
+CHECK_RESULT = "work/check.json"  # where `composed_check.py check --json-out` writes the result
+
+
+def _checked_project(res: dict) -> Path | None:
+    """The project folder a saved check result was written for (None for a
+    bundle or an unreadable target)."""
+    target = str(res.get("target") or "").split("!", 1)[0]
+    if not target or target.endswith(".postext"):
+        return None
+    p = Path(target).resolve()
+    return p.parent if p.name == "preset.json" else p
+
+
+def check_refusal(project: Path, check: str | None = None) -> str | None:
+    """Why the book must not be packed: the saved result of `composed_check.py
+    check` says it failed: --check FILE, else work/check.json in the project
+    or in the current folder when it was written for this project. None when
+    it passed or no result is saved."""
+    project = project.resolve()
+    if check:
+        path = Path(check)
+        if not path.is_file():
+            return f"--check {check}: no such file"
+        candidates = [path]
+    else:
+        candidates = [p for p in dict.fromkeys([project / CHECK_RESULT, Path.cwd() / CHECK_RESULT]) if p.is_file()]
+    for path in candidates:
+        try:
+            res = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError:
+            return f"{path}: not the JSON of `composed_check.py check --json-out`"
+        if check or _checked_project(res) in (None, project):
+            break
+    else:
+        return None
+    if res.get("passed") is not False:
+        return None
+    fails = sum(len(e.get("fail") or []) for e in (res.get("editions") or {}).values())
+    return (f"{path} says the composed-page check failed ({fails} failing warning(s), "
+            f"{res.get('overlaps', 0)} overlap(s)). Fix each failure (an overlap: a fix the check lists, "
+            "overlap: \"allow\" when the source prints it so, or an entry with its reason in composed-check.json, "
+            "raised with the user), run `composed_check.py check … --json-out work/check.json` again, then pack. "
+            "--ignore-check packs anyway")
+
+
 def cmd_pack(args) -> None:
     project = Path(args.project).resolve()
     manifest = json.loads((project / "preset.json").read_text(encoding="utf-8"))
+    refusal = None if getattr(args, "ignore_check", False) else check_refusal(project, getattr(args, "check", None))
+    if refusal:
+        raise SystemExit(refusal)
     out = Path(args.out or f"{manifest['id']}.postext").resolve()
     skip_fonts = {v["file"] for f in manifest.get("fonts", []) if f.get("redistributable") is False for v in f["variants"]}
     files = pack_files(project, manifest, args.manifest_only, args.exclude or [])
@@ -1423,6 +1666,10 @@ def main() -> None:
                    help="leave out the paths (or folders) this glob matches; repeat")
     p.add_argument("--fallback", action="append", metavar="FAMILY=OPEN FAMILY",
                    help="the open family that stands in for a licensed family the pack leaves out (postext >= 1.42); repeat")
+    p.add_argument("--check", metavar="FILE",
+                   help=f"the saved result of `composed_check.py check --json-out` (default: {CHECK_RESULT} in the "
+                        "project, when it exists): refuse to pack while it says the check failed")
+    p.add_argument("--ignore-check", action="store_true", help="pack even when the saved check failed")
     p = sub.add_parser("index")
     p.add_argument("root")
     p = sub.add_parser("fonts")
