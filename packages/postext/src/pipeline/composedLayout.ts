@@ -1731,8 +1731,9 @@ function composePage(pageInput: ComposedPageInput, template: ResolvedPageTemplat
           st!.cut = st!.L.end;
         }
       } else if (st && frame.style) {
-        // A styled frame with nothing (left) to hold still draws its box.
-        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, true, mirroredIn(frame), { boxHeight: laidH }));
+        // A styled frame with nothing (left) to hold still draws its box;
+        // an empty story's own frame (#1084) its tab and title too.
+        result = inMode(frame, () => st.L.layoutRange(st.L.end, st.L.end, laidW, blockId, continuation, mirroredIn(frame), { boxHeight: laidH }));
       }
       // A frame cut below its least height overflows by the cut, holding
       // content or not (#911).
