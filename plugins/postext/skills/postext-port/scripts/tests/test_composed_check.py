@@ -169,13 +169,31 @@ class Markdown(unittest.TestCase):
         self.assertEqual(cc.expected_order(fences[1], TEMPLATES), ["tira", "texto"])
         self.assertIsNone(cc.expected_order({"template": "x", "items": []}, TEMPLATES))
 
-    def test_an_empty_fence_is_left_out_of_the_order(self):
-        # a box whose words all went to captions of their own: nothing to read in it
+    def test_an_empty_styled_fence_reads_where_it_lies(self):
+        # a box whose words all went to captions of their own: its box and tab are
+        # drawn, and read where the fence lies (postext#1116)
         md = ('::::page{template="tema"}\n# One\n\n:::frame{slot="dinero" label="Tab"}\n\n:::\n\n'
               '::resource{id="foto" slot="dinero-fotos"}\n::::\n')
         fence = cc.page_fences(md)[0]
         self.assertTrue(fence["items"][1]["empty"])
-        self.assertEqual(cc.expected_order(fence, TEMPLATES), ["titulo", "dinero-fotos"])
+        self.assertEqual(cc.expected_order(fence, TEMPLATES), ["titulo", "dinero", "dinero-fotos"])
+
+    def test_an_empty_styled_fence_between_two_frames(self):
+        md = ('::::page{template="tema"}\n:::frame{slot="col-3"}\nFirst.\n:::\n\n'
+              ':::frame{slot="dinero" label="Tab"}\n:::\n\nText of the flow.\n::::\n')
+        fence = cc.page_fences(md)[0]
+        order = cc.expected_order(fence, TEMPLATES)
+        self.assertEqual(order, ["col-3", "dinero", "texto"])
+        html = [{"page": 0, "frames": [{"id": f"cp0:{x}", "facing": False} for x in ("dinero", "col-3", "texto")]}]
+        fences = [{"chapter": "c", "fence": 0, "line": 1, "spread": False, "order": order}]
+        self.assertEqual([p["kind"] for p in cc.compare_order(html, fences)], ["order"])
+        html[0]["frames"] = [{"id": f"cp0:{x}", "facing": False} for x in order]
+        self.assertEqual(cc.compare_order(html, fences), [])
+
+    def test_an_empty_fence_of_a_plain_frame_is_left_out(self):
+        # no style: the frame draws nothing, so it has no place to read in
+        md = '::::page{template="tema"}\n:::frame{slot="col-1"}\n:::\n\nText.\n::::\n'
+        self.assertEqual(cc.expected_order(cc.page_fences(md)[0], TEMPLATES), ["texto"])
 
     def test_second_heading_goes_to_the_flow(self):
         fence = cc.page_fences('::::page{template="tema"}\n## A\n\n# One\n\n# Two\n::::\n')[0]

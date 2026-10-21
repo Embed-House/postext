@@ -580,7 +580,9 @@ change in the generator:
   to stand under their pictures) keeps its fence with nothing in it: since
   postext 1.49.1 an empty fence on a styled frame draws its box and its tab at
   the frame's size (#1084). Before, it drew nothing, and a port left
-  `:::space{lines=1}` in it.
+  `:::space{lines=1}` in it. The box reads where its fence lies in the
+  Markdown (postext#1116; before, its tab came last in the HTML, the EPUB and
+  the tagged PDF), and `composed_check.py` expects it there.
 - **Overlaps the source prints** (pills on photos, notes on an illustrated
   band, cut-outs past a box's edge) go to `composed-check.json`, one entry per
   look with its reason; that book needed 21 (27 with skill 1.60, the same
