@@ -2493,8 +2493,8 @@ def frame_lead_title(f: Frame, paras: list[list[Line]]) -> list[Line] | None:
     rest = [l for q in paras[1:] for l in q]
     ink = [c for l in p for c in l.chars if c.c.strip()]
     rest_ink = [c for l in rest for c in l.chars if c.c.strip()]
-    if not ink or not rest_ink:
-        return None
+    if not ink or not rest_ink or any(c.mark for c in ink):
+        return None     # (a highlighted lead keeps its mark: headings set none)
     body = dominant(rest)
     bold = all(c.weight >= max(500, body["weight"] + 150) for c in ink)
     big = statistics.median(c.size for c in ink) >= 1.12 * statistics.median(c.size for c in rest_ink)
