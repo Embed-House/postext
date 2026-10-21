@@ -55,6 +55,7 @@ import {
   type TemplateIssue,
 } from './templates';
 import { modulesGroupRoot } from './modules';
+import { POINTER_PATH, TEMPLATE_DECORATION_KEYS, placementUnknownKeys, type UnknownKey } from '../design/elementKeys';
 
 // The keys of each object, checked against its type: a key added to a type
 // fails to compile until it is listed here.
@@ -120,7 +121,8 @@ export interface ValidatePageTemplatesOptions {
  * the same keys under `htmlViewer.overrides`), as config warnings with a
  * JSON-pointer `path`: the kinds listed on {@link ConfigWarning}, plus
  * `unknownConfigKey` for a key no template, frame, group, grid, fit,
- * overflow, variant or label style has, and `unknownConfigValue` for a word
+ * overflow, variant, label style, placement (its anchor, offset and size)
+ * or decoration has, and `unknownConfigValue` for a word
  * outside a setting's choices (`area`, `verticalAlign`, `exclude`, `takes`,
  * `kind`, `align`, `writingMode`, `direction`, `overlap`, `fontStyle`,
  * `textTransform`) or a template with no id or a frame or group with no
@@ -177,6 +179,14 @@ function escapePointer(token: string): string {
   return token.replace(/~/g, '~0').replace(/\//g, '~1');
 }
 
+/** A frame's or a group's `placement` (#1122): its keys and those of its
+ *  anchor, offset and size. */
+function checkPlacement(placement: unknown, path: string, push: Push): void {
+  const found: UnknownKey[] = [];
+  placementUnknownKeys(placement, path, POINTER_PATH, found);
+  for (const k of found) push({ kind: 'unknownConfigKey', path: k.path, value: k.value, used: '', ...(k.suggestion ? { suggestion: k.suggestion } : {}) });
+}
+
 function checkGrid(grid: unknown, path: string, push: Push): void {
   unknownKeys(grid, GRID_KEYS, path, push);
 }
@@ -188,6 +198,7 @@ function checkFrameEntry(frame: unknown, path: string, push: Push): void {
     return;
   }
   unknownKeys(frame, FRAME_KEYS, path, push);
+  checkPlacement(frame.placement, `${path}/placement`, push);
   unknownKeys(frame.grid, CELL_KEYS, `${path}/grid`, push);
   unknownKeys(frame.fit, FIT_KEYS, `${path}/fit`, push);
   unknownKeys(frame.overflow, OVERFLOW_KEYS, `${path}/overflow`, push);
@@ -224,6 +235,7 @@ function checkGroupEntry(group: unknown, path: string, push: Push): void {
     return;
   }
   unknownKeys(group, GROUP_KEYS, path, push);
+  checkPlacement(group.placement, `${path}/placement`, push);
   unknownKeys(group.grid, CELL_KEYS, `${path}/grid`, push);
   choice(group, 'kind', FRAME_GROUP_KINDS, DEFAULT_FRAME_GROUP.kind, path, push);
   choice(group, 'align', FRAME_GROUP_ALIGNS, DEFAULT_FRAME_GROUP.align, path, push);
@@ -275,6 +287,9 @@ function checkPatch(patch: unknown, path: string, push: Push, keys: Record<strin
   unknownKeys(patch, keys, path, push);
   choice(patch, 'area', TEMPLATE_AREAS, DEFAULT_PAGE_TEMPLATE.area, path, push);
   checkGrid(patch.grid, `${path}/grid`, push);
+  // The decoration's own keys; its elements' are checked with every
+  // design slot's (`configWarnings.ts`).
+  unknownKeys(patch.decoration, TEMPLATE_DECORATION_KEYS, `${path}/decoration`, push);
   if (Array.isArray(patch.frames)) patch.frames.forEach((f, j) => checkFrameEntry(f, `${path}/frames/${j}`, push));
   if (Array.isArray(patch.groups)) patch.groups.forEach((g, j) => checkGroupEntry(g, `${path}/groups/${j}`, push));
 }

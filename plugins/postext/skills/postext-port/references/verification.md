@@ -37,7 +37,12 @@ Fix every ERROR. Common ones:
 - `postext check` reports `unknownConfigKey` (with `suggestion`) only in `headings` (its `balancing` and
   `levels[]`), `headingStyles[]`, `paragraphStyles[]` (and the same under `htmlViewer.overrides`), tab stops,
   drop caps (and `leadIn`), `lineNumbers`, `canvasViewer`, `checks` (and `contentInConfig`), `codeStyle` (its
-  `tokens` and `inline`), `comics`, `pageTemplates` and `labelStyles`.
+  `tokens` and `inline`), `comics`, `pageTemplates` and `labelStyles`. Since postext#1122 it also reports the
+  top-level keys of the config (and of `htmlViewer.overrides`), every design element's keys by its `kind`
+  (running heads, decorations, heading and part designs: text, rule, box, image, path, connector, a `remove`
+  entry), a connector's `from`/`to` ends, the `placement` of an element, a frame or a group (its `anchor`,
+  `offset`, `size` and a `{to, edge}` size) and a decoration's own keys: a group's `size` written beside its
+  `placement` is `/pageTemplates/0/groups/0/size`.
 - `lint_project.py` checks the top-level keys (`bodyTex`, `pageTemplate` are reported), and the keys of `folio`,
   `comics`, `lineNumbers`, `codeStyle`, tab stops and drop caps.
 - Nothing checks the keys inside `page`, `layout`, `bodyText`, `tableStyle(s)`, `captionStyle`, `diagramStyle`,

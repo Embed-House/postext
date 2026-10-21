@@ -58,6 +58,7 @@ import { isTabStopAlign, parseTabStopPosition } from './defaults/tabStops';
 import { resolveContentInConfigCheck } from './defaults/checks';
 import { stripPlaceholders } from './pipeline/placeholders';
 import { configDesignSlots } from './design/slots';
+import { CONFIG_KEYS, DOTTED_PATH, designElementUnknownKeys, unknownKeysOf, type UnknownKey } from './design/elementKeys';
 import { FENCE_CONDITION_SLOTS } from './design/fenceCondition';
 import { parseSvgPath, pathViewBox } from './design/svgPath';
 import { CONNECTOR_CAPS, CONNECTOR_ROUTINGS, CONNECTOR_SIDES, connectorPaintsOver } from './design/connector';
@@ -102,7 +103,9 @@ function percentText(n: number): string {
  * - a character grid (`cjk.grid`) larger than the page leaves room for;
  * - a key the heading settings or a paragraph style do not have
  *   (`unknownConfigKey`: `headings`, its `balancing` and `levels`,
- *   `headingStyles`, `paragraphStyles`);
+ *   `headingStyles`, `paragraphStyles`), a top-level key a config does not
+ *   have, and a key a design element, its placement or a connector's end
+ *   does not have (#1122);
  * - a setting with a value outside its choices (`unknownConfigValue`):
  *   `direction`, the Arabic body text words (`emphasis`, `tashkil`,
  *   `kashida`, `kashidaPatterns`), the composition rules, `toc.groups.head`,
@@ -137,7 +140,7 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectPageTemplateWarnings(config, options), ...collectCalloutStyleWarnings(config), ...collectLabelIconWarnings(config),
     ...collectContentInConfigWarnings(config, options),
     ...collectDesignAnchorWarnings(config),
-    ...collectDesignPathWarnings(config), ...collectBoxShapeWarnings(config),
+    ...collectDesignPathWarnings(config), ...collectDesignKeyWarnings(config), ...collectBoxShapeWarnings(config),
     ...collectConnectorWarnings(config), ...collectFenceConditionWarnings(config),
   ];
 }
@@ -220,32 +223,34 @@ function collectConnectorWarnings(config: PostextConfig): ConfigWarning[] {
   return out;
 }
 
-const DESIGN_PATH_KEYS = {
-  kind: true, id: true, parity: true, pages: true, when: true, unless: true, pin: true, reserve: true, placement: true,
-  d: true, viewBox: true, fill: true, stroke: true, width: true, dash: true, preserveAspectRatio: true,
-} satisfies Record<keyof DesignPathElement, true>;
+/** The keys of every design element (#1122): a key its kind does not
+ *  have, at the element, in its placement (anchor, offset, size, a
+ *  `{ to, edge }` size), a connector's ends and a text's or box's nested
+ *  looks (`unknownConfigKey`, the key ignored). A path element's keys
+ *  (#1060) are checked here too. */
+function collectDesignKeyWarnings(config: PostextConfig): ConfigWarning[] {
+  const found: UnknownKey[] = [];
+  for (const slot of configDesignSlots(config)) {
+    slot.slot.elements.forEach((el, i) => designElementUnknownKeys(el, `${slot.path}.elements[${i}]`, DOTTED_PATH, found));
+  }
+  return found.map((k) => ({ kind: 'unknownConfigKey', path: k.path, value: k.value, used: '', ...(k.suggestion ? { suggestion: k.suggestion } : {}) }));
+}
 
 /** The longest piece of bad path data a warning repeats. */
 const PATH_DATA_SAMPLE = 60;
 
-/** The path elements of every design slot (#1060): a key a path element
- *  does not have (`unknownConfigKey`); path data that cannot be read (its
+/** The path elements of every design slot (#1060): path data that cannot
+ *  be read (its
  *  first characters in `value`) and a `viewBox` that is no pair of
  *  positive numbers (`unknownConfigValue`, `used` empty: the element draws
  *  nothing); a `preserveAspectRatio` other than `none` and `meet`
  *  (`used: 'none'`). */
 function collectDesignPathWarnings(config: PostextConfig): ConfigWarning[] {
   const out: ConfigWarning[] = [];
-  const names = Object.keys(DESIGN_PATH_KEYS);
   for (const slot of configDesignSlots(config)) {
     slot.slot.elements.forEach((el, i) => {
       if (!el || typeof el !== 'object' || (el as { kind?: unknown }).kind !== 'path') return;
       const path = `${slot.path}.elements[${i}]`;
-      for (const key of Object.keys(el)) {
-        if (Object.prototype.hasOwnProperty.call(DESIGN_PATH_KEYS, key)) continue;
-        const suggestion = closestKey(key, names);
-        out.push({ kind: 'unknownConfigKey', path: `${path}.${key}`, value: key, used: '', ...(suggestion ? { suggestion } : {}) });
-      }
       const e = el as DesignPathElement;
       const d = e.d as unknown;
       const parsed = typeof d === 'string' ? parseSvgPath(d) : undefined;
@@ -953,6 +958,13 @@ function collectUnknownKeyWarnings(config: PostextConfig): ConfigWarning[] {
   };
   checkConfig(config, '');
   checkConfig(config.htmlViewer?.overrides, 'htmlViewer.overrides.');
+  // The config's own keys (#1122), and those of the HTML viewer's
+  // overrides (a config without `htmlViewer`).
+  const top: UnknownKey[] = [];
+  unknownKeysOf(config, CONFIG_KEYS, '', DOTTED_PATH, top);
+  const overrideKeys: Record<string, true> = Object.fromEntries(Object.keys(CONFIG_KEYS).filter((k) => k !== 'htmlViewer').map((k) => [k, true as const]));
+  unknownKeysOf(config.htmlViewer?.overrides, overrideKeys, 'htmlViewer.overrides', DOTTED_PATH, top);
+  for (const k of top) out.push({ kind: 'unknownConfigKey', path: k.path, value: k.value, used: '', ...(k.suggestion ? { suggestion: k.suggestion } : {}) });
   for (const { stops, path } of tabStopLists(config)) stops.forEach((st, i) => check(st, TAB_STOP_KEYS, `${path}[${i}]`));
   for (const { cap, path } of dropCapSettings(config)) {
     check(cap, DROP_CAP_KEYS, path);
