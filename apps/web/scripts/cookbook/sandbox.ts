@@ -170,6 +170,10 @@ export const WARNING_SINCE: Readonly<Record<string, string>> = {
   lookUnknown: "1.50.0",
   emptyCaption: "1.52.0",
   resourceMoved: "1.52.0",
+  glyphFallback: "1.52.0",
+  wordDividedByCharacter: "1.52.0",
+  wordDividedBySyllable: "1.52.0",
+  strayFence: "1.52.0",
 };
 
 /** The release that first raises `warning` (its kind, or its kind and one

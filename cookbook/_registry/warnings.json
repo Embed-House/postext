@@ -8318,5 +8318,221 @@
         "it": "Inserimento di blocco (facoltativo, collocazione in linea esplicita)"
       }
     }
+  },
+  "glyphFallback": {
+    "source": "engine",
+    "label": {
+      "en": "Characters drawn from another face",
+      "es": "Caracteres tomados de otra fuente",
+      "ca": "Caràcters presos d'una altra font",
+      "zh": "字符取自其他字体",
+      "ar": "محارف مرسومة بخط آخر",
+      "ja": "別のフォントで描かれた文字",
+      "pt": "Caracteres tirados de outra fonte",
+      "fr": "Caractères pris dans une autre police",
+      "de": "Zeichen aus einer anderen Schrift",
+      "it": "Caratteri presi da un altro font"
+    },
+    "cause": {
+      "en": "The text sets characters in a face that has no glyph for them: a Greek letter in a Latin-only font, an arrow, a symbol. Another face draws them, often a system font that does not match the type around it. The warning lists the characters once per face, with the generic family that drew them when the check can tell.",
+      "es": "El texto compone caracteres en una fuente que no tiene glifo para ellos: una letra griega en una fuente solo latina, una flecha, un símbolo. Los dibuja otra fuente, a menudo una del sistema que no casa con la letra de alrededor. El aviso enumera los caracteres una vez por fuente, con la familia genérica que los dibujó cuando la comprobación lo sabe.",
+      "ca": "El text compon caràcters en una font que no en té el glif: una lletra grega en una font només llatina, una fletxa, un símbol. Els dibuixa una altra font, sovint una del sistema que no lliga amb la lletra del voltant. L'avís enumera els caràcters una vegada per font, amb la família genèrica que els ha dibuixat quan la comprovació ho sap.",
+      "zh": "正文在某个字体里排了它没有字形的字符：只含拉丁字母的字体里的希腊字母、箭头、符号。这些字符改由另一个字体画出，常常是与周围字形不协调的系统字体。警告按字体列出这些字符，每个字体一次；检查能判断时，还写明画出它们的通用字体族。",
+      "ar": "يصفّ النص محارف بخط لا يملك لها رسمًا: حرف يوناني في خط لاتيني فقط، سهم، رمز. فيرسمها خط آخر، كثيرًا ما يكون خطًا من خطوط النظام لا ينسجم مع الحروف حوله. يسرد التحذير المحارف مرة واحدة لكل خط، مع العائلة العامة التي رسمتها حين يستطيع الفحص معرفتها.",
+      "ja": "本文が、字形を持たないフォントで文字を組んでいます。ラテン文字だけのフォントの中のギリシャ文字、矢印、記号などです。それらは別のフォントで描かれ、周りの書体と合わないシステムフォントになることがよくあります。警告はフォントごとに一度、その文字を挙げ、判別できれば描いた総称フォントファミリーも示します。",
+      "pt": "O texto compõe caracteres numa fonte que não tem glifo para eles: uma letra grega numa fonte só latina, uma seta, um símbolo. Outra fonte os desenha, muitas vezes uma do sistema que não combina com a letra ao redor. O aviso lista os caracteres uma vez por fonte, com a família genérica que os desenhou quando a verificação consegue saber.",
+      "fr": "Le texte compose des caractères dans une police qui n’en a pas le glyphe : une lettre grecque dans une police seulement latine, une flèche, un symbole. Une autre police les dessine, souvent une police système qui ne s’accorde pas avec le caractère autour. L’avertissement liste ces caractères une fois par police, avec la famille générique qui les a dessinés quand la vérification peut le savoir.",
+      "de": "Der Text setzt Zeichen in einer Schrift, die keine Glyphe dafür hat: ein griechischer Buchstabe in einer rein lateinischen Schrift, ein Pfeil, ein Symbol. Eine andere Schrift zeichnet sie, oft eine Systemschrift, die nicht zur umgebenden Schrift passt. Die Warnung nennt die Zeichen einmal je Schrift, mit der generischen Familie, die sie gezeichnet hat, wenn die Prüfung das erkennen kann.",
+      "it": "Il testo compone caratteri in un font che non ne ha il glifo: una lettera greca in un font solo latino, una freccia, un simbolo. Li disegna un altro font, spesso un font di sistema che non si accorda con il carattere intorno. L’avviso elenca i caratteri una volta per font, con la famiglia generica che li ha disegnati quando il controllo lo può sapere."
+    },
+    "fix": {
+      "en": "Use a face that has those characters, or name a fallback family that has them after the main one in the font stack.",
+      "es": "Usa una fuente que tenga esos caracteres, o pon después de la principal una familia de respaldo que los tenga.",
+      "ca": "Fes servir una font que tingui aquests caràcters, o posa després de la principal una família de reserva que els tingui.",
+      "zh": "换用含有这些字符的字体，或在字体列表里主字体之后加一个含有它们的备用字体族。",
+      "ar": "استعمل خطًا يملك هذه المحارف، أو أضف بعد الخط الرئيسي عائلة احتياطية تملكها.",
+      "ja": "それらの文字を持つフォントを使うか、フォントの並びで主フォントの後に、それらを持つ代替ファミリーを指定してください。",
+      "pt": "Use uma fonte que tenha esses caracteres, ou ponha depois da principal uma família reserva que os tenha.",
+      "fr": "Prenez une police qui a ces caractères, ou nommez après la police principale une famille de secours qui les a.",
+      "de": "Nehmen Sie eine Schrift, die diese Zeichen enthält, oder nennen Sie nach der Hauptschrift eine Ersatzfamilie, die sie hat.",
+      "it": "Usa un font che abbia quei caratteri, oppure indica dopo quello principale una famiglia di riserva che li abbia."
+    },
+    "docs": {
+      "slug": "configuration-fonts-colors-viewers",
+      "heading": {
+        "en": "Missing-font warnings",
+        "es": "Avisos de fuentes faltantes",
+        "ca": "Avisos de fonts que falten",
+        "zh": "缺失字体警告",
+        "ar": "تحذيرات الخطوط المفقودة",
+        "ja": "フォント欠落の警告",
+        "pt": "Avisos de fontes ausentes",
+        "fr": "Avertissements de police manquante",
+        "de": "Warnungen zu fehlenden Schriften",
+        "it": "Avvisi di font mancanti"
+      }
+    }
+  },
+  "wordDividedByCharacter": {
+    "source": "engine",
+    "label": {
+      "en": "Word cut between two letters",
+      "es": "Palabra cortada entre dos letras",
+      "ca": "Paraula tallada entre dues lletres",
+      "zh": "词在两个字母之间被截断",
+      "ar": "كلمة قُطعت بين حرفين",
+      "ja": "2文字の間で切られた単語",
+      "pt": "Palavra cortada entre duas letras",
+      "fr": "Mot coupé entre deux lettres",
+      "de": "Wort zwischen zwei Buchstaben getrennt",
+      "it": "Parola tagliata tra due lettere"
+    },
+    "cause": {
+      "en": "A word is wider than its whole line (a narrow table cell, a narrow frame, a long compound) and the dictionary offers no syllable where it would fit, so the engine cut it at the last letter that fits, with no hyphen. The rest of the word goes on the next line.",
+      "es": "Una palabra es más ancha que toda su línea (una celda estrecha, un marco estrecho, un compuesto largo) y el diccionario no ofrece ninguna sílaba donde quepa, así que el motor la cortó en la última letra que cabe, sin guion. El resto de la palabra pasa a la línea siguiente.",
+      "ca": "Una paraula és més ampla que tota la línia (una cel·la estreta, un marc estret, un compost llarg) i el diccionari no ofereix cap síl·laba on hi càpiga, així que el motor l'ha tallada a l'última lletra que hi cap, sense guionet. La resta de la paraula passa a la línia següent.",
+      "zh": "一个词比整行还宽（窄表格单元格、窄文本框、长复合词），而词典在能排下的位置没有音节可断，于是引擎在最后一个排得下的字母处把它截断，不加连字符。词的其余部分排到下一行。",
+      "ar": "كلمة أعرض من سطرها كله (خلية جدول ضيقة، إطار ضيق، كلمة مركّبة طويلة) ولا يقدّم القاموس مقطعًا تتسع عنده، فقطعها المحرك عند آخر حرف يتسع، بلا واصلة. وينتقل باقي الكلمة إلى السطر التالي.",
+      "ja": "単語が行全体より長く（狭い表のセル、狭いフレーム、長い複合語）、辞書には収まる位置に音節の区切りがないため、エンジンは収まる最後の文字の位置でハイフンなしに切りました。単語の残りは次の行に送られます。",
+      "pt": "Uma palavra é mais larga que a linha inteira (uma célula de tabela estreita, um quadro estreito, um composto longo) e o dicionário não oferece sílaba onde ela caiba, então o motor a cortou na última letra que cabe, sem hífen. O resto da palavra vai para a linha seguinte.",
+      "fr": "Un mot est plus large que toute sa ligne (une cellule de tableau étroite, un cadre étroit, un long composé) et le dictionnaire n’offre aucune syllabe où il tiendrait : le moteur l’a coupé à la dernière lettre qui tient, sans trait d’union. La suite du mot passe à la ligne suivante.",
+      "de": "Ein Wort ist breiter als seine ganze Zeile (eine schmale Tabellenzelle, ein schmaler Rahmen, ein langes Kompositum), und das Wörterbuch bietet keine Silbe, an der es passen würde. Darum hat die Engine es nach dem letzten Buchstaben getrennt, der noch passt, ohne Trennstrich. Der Rest des Wortes kommt in die nächste Zeile.",
+      "it": "Una parola è più larga di tutta la sua riga (una cella di tabella stretta, una cornice stretta, un composto lungo) e il dizionario non offre una sillaba in cui starebbe, quindi il motore l’ha tagliata all’ultima lettera che ci sta, senza trattino. Il resto della parola va alla riga seguente."
+    },
+    "fix": {
+      "en": "Give the text more room (a wider column, cell or frame), set it smaller, turn on hyphenation so the cut can fall at a syllable, or use a shorter word.",
+      "es": "Da más espacio al texto (una columna, celda o marco más ancho), redúcelo, activa la separación silábica para que el corte caiga en una sílaba o usa una palabra más corta.",
+      "ca": "Dona més espai al text (una columna, cel·la o marc més ample), redueix-lo, activa la partició de mots perquè el tall caigui en una síl·laba o fes servir una paraula més curta.",
+      "zh": "给文字更多空间（更宽的栏、单元格或文本框）、缩小字号、开启断词让截断落在音节处，或换一个更短的词。",
+      "ar": "أعطِ النص مساحة أكبر (عمودًا أو خلية أو إطارًا أعرض)، أو صغّره، أو فعّل تقسيم الكلمات ليقع القطع عند مقطع، أو استعمل كلمة أقصر.",
+      "ja": "文字に余裕を与える（段、セル、フレームを広くする）、文字を小さくする、ハイフネーションを有効にして音節で切れるようにする、または短い語に変えてください。",
+      "pt": "Dê mais espaço ao texto (uma coluna, célula ou quadro mais largo), reduza-o, ative a hifenização para o corte cair numa sílaba ou use uma palavra mais curta.",
+      "fr": "Donnez plus de place au texte (une colonne, une cellule ou un cadre plus large), composez-le plus petit, activez la césure pour que la coupe tombe sur une syllabe, ou prenez un mot plus court.",
+      "de": "Geben Sie dem Text mehr Platz (eine breitere Spalte, Zelle oder einen breiteren Rahmen), setzen Sie ihn kleiner, schalten Sie die Silbentrennung ein, damit an einer Silbe getrennt wird, oder nehmen Sie ein kürzeres Wort.",
+      "it": "Dai più spazio al testo (una colonna, una cella o una cornice più larga), componilo più piccolo, attiva la sillabazione perché il taglio cada su una sillaba, oppure usa una parola più corta."
+    },
+    "docs": {
+      "slug": "justification",
+      "heading": {
+        "en": "How Hyphenation Integrates with Knuth-Plass",
+        "es": "Cómo se integra la separación silábica con Knuth-Plass",
+        "ca": "Com s'integra la partició de mots amb Knuth-Plass",
+        "zh": "断词如何与Knuth-Plass结合",
+        "ar": "كيف يندمج تقسيم الكلمات مع Knuth-Plass",
+        "ja": "ハイフネーションとKnuth-Plassの連携",
+        "pt": "Como a hifenização se integra ao Knuth-Plass",
+        "fr": "Comment la césure s’intègre à Knuth-Plass",
+        "de": "Wie die Silbentrennung mit Knuth-Plass zusammenspielt",
+        "it": "Come la sillabazione si integra con Knuth-Plass"
+      }
+    }
+  },
+  "wordDividedBySyllable": {
+    "source": "engine",
+    "label": {
+      "en": "Word divided to fit its line",
+      "es": "Palabra dividida para caber",
+      "ca": "Paraula dividida perquè hi càpiga",
+      "zh": "词被断开以排进一行",
+      "ar": "كلمة قُسّمت لتتسع في سطرها",
+      "ja": "行に収めるため分割された単語",
+      "pt": "Palavra dividida para caber",
+      "fr": "Mot divisé pour tenir dans sa ligne",
+      "de": "Wort getrennt, damit es passt",
+      "it": "Parola divisa per entrare nella riga"
+    },
+    "cause": {
+      "en": "A word is wider than its whole line (a narrow table cell, a narrow frame, a long compound), so the engine divided it at the last syllable that fits, with a hyphen. This is a note: the cut is a correct one, but a reader meets a word split where a wider measure would have kept it whole.",
+      "es": "Una palabra es más ancha que toda su línea (una celda estrecha, un marco estrecho, un compuesto largo), así que el motor la dividió en la última sílaba que cabe, con guion. Es una nota: el corte es correcto, pero el lector encuentra partida una palabra que con una medida más ancha iría entera.",
+      "ca": "Una paraula és més ampla que tota la línia (una cel·la estreta, un marc estret, un compost llarg), així que el motor l'ha dividida a l'última síl·laba que hi cap, amb guionet. És una nota: el tall és correcte, però el lector troba partida una paraula que amb una mesura més ampla aniria sencera.",
+      "zh": "一个词比整行还宽（窄表格单元格、窄文本框、长复合词），于是引擎在最后一个排得下的音节处加连字符把它断开。这是一条提示：断法本身正确，但行长再宽一些，这个词本可以不断开。",
+      "ar": "كلمة أعرض من سطرها كله (خلية جدول ضيقة، إطار ضيق، كلمة مركّبة طويلة)، فقسّمها المحرك عند آخر مقطع يتسع، بواصلة. هذه ملاحظة: القسمة صحيحة، لكن القارئ يجد مقسومة كلمةً كانت ستبقى كاملة في سطر أعرض.",
+      "ja": "単語が行全体より長く（狭い表のセル、狭いフレーム、長い複合語）、エンジンは収まる最後の音節でハイフンを付けて分割しました。これは注記です。分割自体は正しいものの、行長がもっと広ければ切らずに済んだ単語です。",
+      "pt": "Uma palavra é mais larga que a linha inteira (uma célula de tabela estreita, um quadro estreito, um composto longo), então o motor a dividiu na última sílaba que cabe, com hífen. É uma nota: o corte está certo, mas o leitor encontra partida uma palavra que, numa medida mais larga, ficaria inteira.",
+      "fr": "Un mot est plus large que toute sa ligne (une cellule de tableau étroite, un cadre étroit, un long composé) : le moteur l’a divisé à la dernière syllabe qui tient, avec un trait d’union. C’est une note : la coupe est juste, mais le lecteur trouve coupé un mot qu’une justification plus large aurait gardé entier.",
+      "de": "Ein Wort ist breiter als seine ganze Zeile (eine schmale Tabellenzelle, ein schmaler Rahmen, ein langes Kompositum), also hat die Engine es an der letzten Silbe getrennt, die noch passt, mit Trennstrich. Das ist ein Hinweis: Die Trennung ist korrekt, aber bei einer breiteren Satzbreite bliebe das Wort ganz.",
+      "it": "Una parola è più larga di tutta la sua riga (una cella di tabella stretta, una cornice stretta, un composto lungo), quindi il motore l’ha divisa all’ultima sillaba che ci sta, con il trattino. È una nota: la divisione è corretta, ma il lettore trova spezzata una parola che con una giustezza più larga resterebbe intera."
+    },
+    "fix": {
+      "en": "If the word should stay whole, give the text more room (a wider column, cell or frame), set it smaller or use a shorter word. Otherwise leave it: the note is information.",
+      "es": "Si la palabra debe ir entera, da más espacio al texto (una columna, celda o marco más ancho), redúcelo o usa una palabra más corta. Si no, déjalo: la nota es informativa.",
+      "ca": "Si la paraula ha d'anar sencera, dona més espai al text (una columna, cel·la o marc més ample), redueix-lo o fes servir una paraula més curta. Si no, deixa-ho: la nota és informativa.",
+      "zh": "如果这个词应当完整，就给文字更多空间（更宽的栏、单元格或文本框）、缩小字号或换一个更短的词。否则不必处理：这条提示仅供参考。",
+      "ar": "إن كان ينبغي أن تبقى الكلمة كاملة، فأعطِ النص مساحة أكبر (عمودًا أو خلية أو إطارًا أعرض)، أو صغّره، أو استعمل كلمة أقصر. وإلا فاتركها: الملاحظة للعلم.",
+      "ja": "単語を切りたくなければ、文字に余裕を与える（段、セル、フレームを広くする）、文字を小さくする、または短い語に変えてください。そうでなければそのままで構いません。この注記は情報です。",
+      "pt": "Se a palavra deve ficar inteira, dê mais espaço ao texto (uma coluna, célula ou quadro mais largo), reduza-o ou use uma palavra mais curta. Senão, deixe assim: a nota é informativa.",
+      "fr": "Si le mot doit rester entier, donnez plus de place au texte (une colonne, une cellule ou un cadre plus large), composez-le plus petit ou prenez un mot plus court. Sinon, laissez : la note est une information.",
+      "de": "Soll das Wort ganz bleiben, geben Sie dem Text mehr Platz (eine breitere Spalte, Zelle oder einen breiteren Rahmen), setzen Sie ihn kleiner oder nehmen Sie ein kürzeres Wort. Sonst lassen Sie es: Der Hinweis dient nur der Information.",
+      "it": "Se la parola deve restare intera, dai più spazio al testo (una colonna, una cella o una cornice più larga), componilo più piccolo o usa una parola più corta. Altrimenti lascia così: la nota è informativa."
+    },
+    "docs": {
+      "slug": "justification",
+      "heading": {
+        "en": "How Hyphenation Integrates with Knuth-Plass",
+        "es": "Cómo se integra la separación silábica con Knuth-Plass",
+        "ca": "Com s'integra la partició de mots amb Knuth-Plass",
+        "zh": "断词如何与Knuth-Plass结合",
+        "ar": "كيف يندمج تقسيم الكلمات مع Knuth-Plass",
+        "ja": "ハイフネーションとKnuth-Plassの連携",
+        "pt": "Como a hifenização se integra ao Knuth-Plass",
+        "fr": "Comment la césure s’intègre à Knuth-Plass",
+        "de": "Wie die Silbentrennung mit Knuth-Plass zusammenspielt",
+        "it": "Come la sillabazione si integra con Knuth-Plass"
+      }
+    }
+  },
+  "strayFence": {
+    "source": "parse",
+    "label": {
+      "en": "Closing fence after a one-line directive",
+      "es": "Cierre tras una directiva de una línea",
+      "ca": "Tancament després d'una directiva d'una línia",
+      "zh": "单行指令后的结束行",
+      "ar": "سطر إغلاق بعد توجيه من سطر واحد",
+      "ja": "1行の指示の後の終了行",
+      "pt": "Fechamento depois de uma diretiva de uma linha",
+      "fr": "Fermeture après une directive d’une ligne",
+      "de": "Schließende Zeile nach einer einzeiligen Direktive",
+      "it": "Chiusura dopo una direttiva di una riga"
+    },
+    "cause": {
+      "en": "A bare ::: follows a one-line directive such as :::toc, :::index, :::pagebreak or :::space, and no ::: container is open for it to close. One-line directives take no closing fence, so the engine drops the line instead of printing it.",
+      "es": "Un ::: suelto sigue a una directiva de una línea, como :::toc, :::index, :::pagebreak o :::space, y no hay ningún contenedor ::: abierto que cerrar. Las directivas de una línea no llevan cierre, así que el motor descarta esa línea en vez de imprimirla.",
+      "ca": "Un ::: solt segueix una directiva d'una línia, com :::toc, :::index, :::pagebreak o :::space, i no hi ha cap contenidor ::: obert per tancar. Les directives d'una línia no porten tancament, així que el motor descarta aquella línia en lloc d'imprimir-la.",
+      "zh": "单独一行 ::: 跟在 :::toc、:::index、:::pagebreak、:::space 这类单行指令后面，而且没有打开的 ::: 容器可供它关闭。单行指令不需要结束行，所以引擎丢弃这一行，不把它印出来。",
+      "ar": "يأتي ::: منفرد بعد توجيه من سطر واحد مثل :::toc أو :::index أو :::pagebreak أو :::space، ولا توجد حاوية ::: مفتوحة ليغلقها. التوجيهات ذات السطر الواحد لا تحتاج سطر إغلاق، فيُسقط المحرك هذا السطر بدل أن يطبعه.",
+      "ja": "単独の ::: が :::toc、:::index、:::pagebreak、:::space などの1行の指示の後にあり、閉じるべき ::: コンテナーが開いていません。1行の指示には終了行が要らないため、エンジンはその行を印刷せずに捨てます。",
+      "pt": "Um ::: solto vem depois de uma diretiva de uma linha, como :::toc, :::index, :::pagebreak ou :::space, e não há contêiner ::: aberto para ele fechar. Diretivas de uma linha não levam fechamento, então o motor descarta essa linha em vez de imprimi-la.",
+      "fr": "Un ::: seul suit une directive d’une ligne comme :::toc, :::index, :::pagebreak ou :::space, et aucun conteneur ::: n’est ouvert pour qu’il le ferme. Les directives d’une ligne ne prennent pas de fermeture : le moteur écarte cette ligne au lieu de l’imprimer.",
+      "de": "Ein alleinstehendes ::: folgt auf eine einzeilige Direktive wie :::toc, :::index, :::pagebreak oder :::space, und kein :::-Container ist offen, den es schließen könnte. Einzeilige Direktiven haben keine schließende Zeile, daher verwirft die Engine diese Zeile, statt sie zu drucken.",
+      "it": "Un ::: isolato segue una direttiva di una riga come :::toc, :::index, :::pagebreak o :::space, e non c’è un contenitore ::: aperto da chiudere. Le direttive di una riga non hanno chiusura, quindi il motore scarta quella riga invece di stamparla."
+    },
+    "fix": {
+      "en": "Delete the :::. If you meant to close a container, check that its opening line is there.",
+      "es": "Borra el :::. Si querías cerrar un contenedor, comprueba que su línea de apertura está.",
+      "ca": "Esborra el :::. Si volies tancar un contenidor, comprova que la línia d'obertura hi és.",
+      "zh": "删掉这行 :::。如果本想关闭某个容器，请检查它的开始行是否还在。",
+      "ar": "احذف سطر :::. وإن كنت تقصد إغلاق حاوية، فتحقق من وجود سطر فتحها.",
+      "ja": "::: の行を削除してください。コンテナーを閉じるつもりだったなら、その開始行があるか確かめてください。",
+      "pt": "Apague o :::. Se a ideia era fechar um contêiner, confira se a linha de abertura dele está lá.",
+      "fr": "Supprimez le :::. Si vous vouliez fermer un conteneur, vérifiez que sa ligne d’ouverture est bien là.",
+      "de": "Löschen Sie das :::. Wollten Sie einen Container schließen, prüfen Sie, ob seine öffnende Zeile vorhanden ist.",
+      "it": "Cancella il :::. Se volevi chiudere un contenitore, controlla che la sua riga di apertura ci sia."
+    },
+    "docs": {
+      "slug": "composed-pages",
+      "heading": {
+        "en": "Warnings",
+        "es": "Avisos",
+        "ca": "Avisos",
+        "zh": "警告",
+        "ar": "التحذيرات",
+        "ja": "警告",
+        "pt": "Avisos",
+        "fr": "Avertissements",
+        "de": "Warnungen",
+        "it": "Avvisi"
+      }
+    }
   }
 }
