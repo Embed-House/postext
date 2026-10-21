@@ -122,6 +122,21 @@ class Furniture(unittest.TestCase):
         finally:
             tmp.cleanup()
 
+    def test_a_large_running_head_repeated_on_two_pages(self):
+        doc = fitz.open()
+        for n in range(2):
+            page = new_page(doc)
+            put(page, 120 * MM, 12 * MM, "Unidad 3" if n else "Unidad 2", size=20, font="hebo")
+            for k in range(8):
+                put(page, 25 * MM, 40 * MM + k * 14, BODY, size=11)
+        tmp, md, _, _ = extract(doc)
+        try:
+            self.assertIn('head="Unidad 2"', md)
+            self.assertIn('head="Unidad 3"', md)
+            self.assertNotIn("# Unidad", md)
+        finally:
+            tmp.cleanup()
+
 
 PARA = ["Los ríos nacen en las montañas, donde la lluvia y la nieve",
         "se juntan en pequeños arroyos que bajan por las laderas",

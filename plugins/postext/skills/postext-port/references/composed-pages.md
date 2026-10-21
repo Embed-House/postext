@@ -564,10 +564,10 @@ What the extraction decides, so you know what to check:
   are anchored to it (`left-of` / `right-of`, ids `head-odd-ornament-N`,
   `when: "head"` so they go with the head on a page that sets none) and the
   head is as wide as its words; the fold keeps them on the shell with it.
-  From skill 1.61 a line is furniture only when it is set below heading
-  size and the page prints a folio or the same place and look come back on
-  another page of the run: a section heading near the foot, or a lone
-  source line in the margin, stays in the text.
+  From skill 1.61 a line is furniture only when the same place and look
+  come back on another page of the run (a running head set large too), or,
+  set below heading size, when the page prints a folio: a section heading
+  near the foot, or a lone source line in the margin, stays in the text.
 - **Faces.** The PDF's font names are matched to the PostScript names of
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report

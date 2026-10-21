@@ -1440,21 +1440,22 @@ def repeated_looks(caches: dict, pages: list[int]) -> dict[tuple, set[int]]:
 
 
 def furniture_line(l: Line, lines: list[Line], ctx: dict) -> bool:
-    """A line outside the cards is a running head or a folio only when it is
-    set below heading size and either the page prints a folio (a running
-    head at the top of a page numbered at the foot counts) or the line
-    stands at the same place in the same look on two pages or more. A
-    section heading near the foot stays in the text."""
-    if l.size >= ctx["heading_min"]:
-        return False
-    if is_folio(l) or any(o is not l and is_folio(o) for o in lines):
-        return True
+    """A line outside the cards is a running head or a folio when it stands
+    at the same place in the same look on two pages or more of the run, or,
+    set below heading size, when the page prints a folio (a running head at
+    the top of a page numbered at the foot counts). A heading-size line
+    seen on one page only (a section heading near the foot) stays in the
+    text; a running head set large comes back on the other pages."""
     rep = ctx.get("repeated") or {}
     y, fam, size = look_key(l)
     seen: set[int] = set()
     for dy in (-1, 0, 1):
         seen |= rep.get((y + dy, fam, size), set())
-    return len(seen) >= 2
+    if len(seen) >= 2:
+        return True
+    if l.size >= ctx["heading_min"]:
+        return False
+    return is_folio(l) or any(o is not l and is_folio(o) for o in lines)
 
 
 def text_x0(line: Line) -> float:
