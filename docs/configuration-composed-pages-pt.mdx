@@ -160,6 +160,18 @@ Um modelo que define só o `id` e um bloco é uma página inteira, com esse bloc
       <td><code>'fill'</code></td>
       <td>Um módulo: a largura dele numa fileira ou numa pilha de módulos, como comprimento, como porcentagem da largura do grupo ou como <code>'fill'</code>, uma parte igual do que os outros módulos da fileira deixam. Numa grade, o módulo ocupa a coluna dele. Desde o postext 1.50.</td>
     </tr>
+    <tr>
+      <td><code>grow</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code> · <code>'fill'</code>: <code>1</code></td>
+      <td>Um módulo: sua parte do espaço que uma fileira de módulos deixa além das larguras de seus módulos; um módulo <code>'fill'</code> recebe 1 no mínimo. Desde o postext 1.51.</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Um módulo com <code>width</code>: quanta largura ele cede, segundo sua largura, quando uma fileira de módulos passa do fim do grupo. Desde o postext 1.51.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -440,7 +452,7 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Uma grade: onde fica uma célula mais baixa que a fila. <code>'stretch'</code> dá ao bloco principal dela a altura da fila (até o <code>maxHeight</code> dele), quando a altura desse bloco é <code>'auto'</code> ou <code>'fill'</code>. Numa fileira ou numa grade de módulos: onde fica um módulo mais baixo que a fileira; <code>'stretch'</code> o põe numa caixa da altura da fileira, de modo que o fundo e os blocos <code>'fill'</code> dele chegam ao pé da fileira.</td>
+      <td>Uma grade: onde fica uma célula mais baixa que a fila. <code>'stretch'</code> dá ao bloco principal dela a altura da fila (até o <code>maxHeight</code> dele), quando a altura desse bloco é <code>'auto'</code> ou <code>'fill'</code>. Numa fileira ou numa grade de módulos: onde fica um módulo mais baixo que a fileira; <code>'stretch'</code> o põe numa caixa da altura da fileira, de modo que o fundo e os blocos <code>'fill'</code> dele chegam ao pé da fileira. Desde o postext 1.51 também seus blocos <code>'auto'</code> que terminam no seu pé chegam ao pé da linha, mas não um tão largo quanto seu conteúdo.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -464,13 +476,13 @@ Um grupo é uma pilha (de cima para baixo) ou uma fileira (do início ao fim) de
       <td><code>within</code></td>
       <td><code>string</code></td>
       <td>nenhum</td>
-      <td>Um grupo de módulos dentro da pilha de módulos com esse nome: cada sequência de módulos da página que ele recebe, na ordem do Markdown, é posta como uma fileira ou uma grade dessa pilha, onde vem o primeiro módulo da sequência. Desde o postext 1.50.</td>
+      <td>Um grupo de módulos dentro do grupo de módulos com este nome: cada sequência dos módulos da página que ele recebe é posta onde vem o seu primeiro módulo, como linhas de uma pilha ou como uma célula de uma fileira ou de uma grade. Desde o postext 1.50; qualquer grupo de módulos, em qualquer profundidade, desde o postext 1.51.</td>
     </tr>
     <tr>
       <td><code>templates</code></td>
       <td><code>string[]</code></td>
       <td>nenhum</td>
-      <td>Um grupo de módulos com <code>within</code>: os modelos de módulo que ele recebe. Sem valor, todos os módulos. Um módulo vai para o primeiro grupo desse tipo que o recebe; senão, para a pilha.</td>
+      <td>Um grupo de módulos <code>within</code> outro: os modelos de módulo que ele recebe. Sem definir, todos os módulos, ou só os de seus grupos internos se tiver algum. Um módulo vai para o primeiro grupo que o recebe; senão, para o grupo de módulos da página.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -628,7 +640,9 @@ pageTemplates: [
 - **Quando os módulos não cabem.** Um módulo que passa do pé do grupo é cortado ali e os blocos dele sobem a escada de ajuste; `frameOverflow` é gerado uma vez para o grupo. Com `overflow.continueIn` no grupo de módulos (`'next-page'` ou `'template:<id>'`), o primeiro módulo que não cabe e todos os seguintes continuam **inteiros** na página acrescentada, com os mesmos nomes, no alto do grupo de módulos dessa página. Numa fileira ou numa grade de módulos, a fileira continua inteira: os módulos dela nunca se dividem entre duas páginas.
 - **Lado a lado.** Um grupo de módulos com `kind: 'row'` põe os módulos do início ao fim, cada um com a `width` do seu modelo (um comprimento, `{ percent: 48 }` ou `'fill'`, uma parte igual do que sobra), e a fileira com a altura do módulo mais alto; `kind: 'grid'` os põe em `columns` colunas iguais, fileira após fileira. `rowAlign` posiciona um módulo mais baixo que a fileira. As fileiras começam pelo lado onde a linha começa, então uma página da direita para a esquerda põe o primeiro módulo à direita. Desde o postext 1.50.
 - **Grupos dentro da pilha.** Um grupo de módulos com `within: '<pilha>'` fica dentro da pilha de módulos da página, e `templates` diz quais módulos ele recebe: cada sequência deles no Markdown forma uma fileira ou uma grade da pilha, onde vem o seu primeiro módulo. Com os grupos abaixo, dois blocos `aviso` seguidos de quatro blocos `tarjeta` formam uma fileira de dois quadros sobre uma grade de 2 × 2 cartões, e o Markdown só tem blocos `:::module`.
-- **Ainda não.** Um módulo dentro de um módulo (`moduleNested`), células `grid` do modelo dentro de um módulo e um grupo dentro de uma fileira ou de uma grade de módulos.
+- **Grupos dentro de grupos.** Desde o postext 1.51 `within` pode nomear qualquer grupo de módulos, também uma fileira ou uma grade, em qualquer profundidade. Com `banda` uma fileira dentro de `cuerpo` e `columna` uma pilha dentro de `banda`, um quadro seguido de dois cartões fica ao lado de uma coluna com os dois cartões. Um bloco da página ancorado a `#banda` é posto depois dos módulos.
+- **Dividir uma fileira.** Desde o postext 1.51 o espaço que uma fileira de módulos deixa vai pelo `grow` de cada módulo, e uma fileira mais larga que seu grupo cede largura segundo `shrink`.
+- **Ainda não.** Um módulo dentro de um módulo (`moduleNested`) e células `grid` do modelo dentro de um módulo.
 
 ```ts
 groups: [

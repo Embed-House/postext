@@ -160,6 +160,18 @@ const config: PostextConfig = {
       <td><code>'fill'</code></td>
       <td>模块：它在模块行或模块堆叠中的宽度，可以是一个长度、组宽度的百分比，或<code>'fill'</code>，即平分这一行其他模块留下的宽度。在网格中，模块占据它所在的栏。从postext 1.50开始。</td>
     </tr>
+    <tr>
+      <td><code>grow</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code> · <code>'fill'</code>: <code>1</code></td>
+      <td>模块：模块行中，各模块宽度之外剩余空间里它所占的份额；<code>'fill'</code> 模块至少占 1。自 postext 1.51 起。</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>带 <code>width</code> 的模块：模块行超出组的末端时，它按自身宽度让出的宽度。自 postext 1.51 起。</td>
+    </tr>
   </tbody>
 </table>
 
@@ -440,7 +452,7 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>网格：比所在行矮的单元格放在哪里。主框的高度为<code>'auto'</code>或<code>'fill'</code>时，<code>'stretch'</code>让它与这一行一样高（最多到它的<code>maxHeight</code>）。 模块行或模块网格：比所在行矮的模块放在哪里；<code>'stretch'</code>把它放进与这一行一样高的方框，它的底色和<code>'fill'</code>框因此延伸到行的底边。</td>
+      <td>网格：比所在行矮的单元格放在哪里。主框的高度为<code>'auto'</code>或<code>'fill'</code>时，<code>'stretch'</code>让它与这一行一样高（最多到它的<code>maxHeight</code>）。 模块行或模块网格：比所在行矮的模块放在哪里；<code>'stretch'</code>把它放进与这一行一样高的方框，它的底色和<code>'fill'</code>框因此延伸到行的底边。 自 postext 1.51 起，模块中止于其底部的 <code>'auto'</code> 框也延伸到行的底部，但与内容同宽的框除外。</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -464,13 +476,13 @@ groups: [{ name: 'actividad', kind: 'stack', gap: { value: 3, unit: 'mm' }, fram
       <td><code>within</code></td>
       <td><code>string</code></td>
       <td>无</td>
-      <td>位于这个名称的模块堆叠内的模块组：它接收的页面模块中，按Markdown顺序连续的每一段，都作为该堆叠的一行或一个网格排出，位置在这一段第一个模块处。从postext 1.50开始。</td>
+      <td>位于此名称的模块组内的模块组：它接收的页面模块，每一段连续的模块放在该段第一个模块所在的位置，作为堆叠中的若干行，或作为行、网格中的一个单元格。自 postext 1.50 起；自 postext 1.51 起可位于任意模块组内，任意层级。</td>
     </tr>
     <tr>
       <td><code>templates</code></td>
       <td><code>string[]</code></td>
       <td>无</td>
-      <td>设了<code>within</code>的模块组：它接收的模块模板。不设时接收所有模块。模块进入第一个接收它的此类组，否则进入堆叠。</td>
+      <td>位于另一组 <code>within</code> 中的模块组：它接收的模块模板。不设置时接收所有模块；若其内另有组，则只接收它们的模块。模块进入第一个接收它的组，否则进入页面的模块组。</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -628,7 +640,9 @@ pageTemplates: [
 - **模块放不下时。** 超出组底边的模块在那里截断，它的框按逐级重排的步骤尝试；整个组只报告一次`frameOverflow`。模块组设了`overflow.continueIn`（`'next-page'`或`'template:<id>'`）时，第一个放不下的模块及其后的每个模块都**整个**转到追加的页上，名称不变，排在那一页模块组的顶端。 在模块行或模块网格中，一行整体接续：一行的模块不会分到两页上。
 - **并排。** `kind: 'row'`的模块组把模块从行首排到行尾，每个的宽度取其模板的`width`（一个长度、`{ percent: 48 }`，或`'fill'`，即平分剩余宽度），行高等于其中最高的模块；`kind: 'grid'`把模块排成`columns`个等宽的栏，逐行排列。`rowAlign`决定比所在行矮的模块放在哪里。行从文字行的起始一侧开始，所以从右到左的页面把第一个模块放在右边。从postext 1.50开始。
 - **堆叠里的组。** 设了`within: '<堆叠>'`的模块组位于页面的模块堆叠内，`templates`说明它接收哪些模块：Markdown中这些模块每连续的一段，在第一个模块的位置组成堆叠的一行或一个网格。用下面的组，两个`aviso`块后接四个`tarjeta`块，排成一行两个方框，下面是2 × 2的卡片网格，而Markdown里只有`:::module`块。
-- **暂不支持。** 模块里面再套模块（`moduleNested`）、模块内的模板`grid`单元格，以及模块行或模块网格里面的组。
+- **组中之组。** 自 postext 1.51 起，`within` 可以指定任意模块组，包括行或网格，任意层级。若 `banda` 是 `cuerpo` 中的行，`columna` 是 `banda` 中的堆叠，一个方框后接两张卡片，方框就放在由这两张卡片组成的一列旁边。锚定到 `#banda` 的页面框在模块之后放置。
+- **分享一行。** 自 postext 1.51 起，模块行剩余的空间按每个模块的 `grow` 分配，比所在组更宽的行按 `shrink` 让出宽度。
+- **暂不支持。** 模块里面再套模块（`moduleNested`），以及模块内的模板`grid`单元格。
 
 ```ts
 groups: [

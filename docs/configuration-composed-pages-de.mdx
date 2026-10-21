@@ -160,6 +160,18 @@ Eine Vorlage, die nur ihre `id` und einen Rahmen festlegt, ist eine ganze Seite,
       <td><code>'fill'</code></td>
       <td>Ein Modul: seine Breite in einer Modulreihe oder einem Modulstapel, als Länge, als Prozentsatz der Gruppenbreite oder als <code>'fill'</code>, ein gleicher Teil dessen, was die anderen Module der Reihe übrig lassen. Im Raster nimmt das Modul seine Spalte. Seit postext 1.50.</td>
     </tr>
+    <tr>
+      <td><code>grow</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code> · <code>'fill'</code>: <code>1</code></td>
+      <td>Ein Modul: sein Anteil an dem Platz, den eine Modulreihe über die Breiten ihrer Module hinaus lässt; ein <code>'fill'</code>-Modul erhält mindestens 1. Seit postext 1.51.</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Ein Modul mit <code>width</code>: wie viel Breite es nach seiner Breite abgibt, wenn eine Modulreihe über das Ende der Gruppe hinausläuft. Seit postext 1.51.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -440,7 +452,7 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Ein Raster: wo eine Zelle steht, die niedriger als ihre Reihe ist. <code>'stretch'</code> macht ihren Hauptrahmen so hoch wie die Reihe (bis zu seiner <code>maxHeight</code>), wenn die Höhe dieses Rahmens <code>'auto'</code> oder <code>'fill'</code> ist. Eine Modulreihe oder ein Modulraster: wo ein Modul steht, das niedriger als seine Reihe ist; <code>'stretch'</code> setzt es in ein Rechteck so hoch wie die Reihe, sodass sein Grund und seine <code>'fill'</code>-Rahmen bis zum Fuß der Reihe reichen.</td>
+      <td>Ein Raster: wo eine Zelle steht, die niedriger als ihre Reihe ist. <code>'stretch'</code> macht ihren Hauptrahmen so hoch wie die Reihe (bis zu seiner <code>maxHeight</code>), wenn die Höhe dieses Rahmens <code>'auto'</code> oder <code>'fill'</code> ist. Eine Modulreihe oder ein Modulraster: wo ein Modul steht, das niedriger als seine Reihe ist; <code>'stretch'</code> setzt es in ein Rechteck so hoch wie die Reihe, sodass sein Grund und seine <code>'fill'</code>-Rahmen bis zum Fuß der Reihe reichen. Seit postext 1.51 reichen auch seine <code>'auto'</code>-Rahmen, die an seinem Fuß enden, bis zum Fuß der Reihe, aber keiner, der so breit wie sein Inhalt ist.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -464,13 +476,13 @@ Eine Gruppe ist ein Stapel (von oben nach unten) oder eine Reihe (vom Anfang zum
       <td><code>within</code></td>
       <td><code>string</code></td>
       <td>keine</td>
-      <td>Eine Modulgruppe im Modulstapel dieses Namens: Jede Folge von Modulen der Seite, die sie aufnimmt, wird in der Reihenfolge des Markdowns als eine Reihe oder ein Raster dieses Stapels gesetzt, dort, wo das erste Modul der Folge steht. Seit postext 1.50.</td>
+      <td>Eine Modulgruppe in der Modulgruppe dieses Namens: Jede Folge der Module der Seite, die sie aufnimmt, steht dort, wo ihr erstes Modul steht, als Zeilen eines Stapels oder als eine Zelle einer Reihe oder eines Rasters. Seit postext 1.50; in jeder Modulgruppe und beliebig tief seit postext 1.51.</td>
     </tr>
     <tr>
       <td><code>templates</code></td>
       <td><code>string[]</code></td>
       <td>keine</td>
-      <td>Eine Modulgruppe mit <code>within</code>: die Modulvorlagen, die sie aufnimmt. Nicht gesetzt: alle Module. Ein Modul kommt in die erste solche Gruppe, die es aufnimmt, sonst in den Stapel.</td>
+      <td>Eine Modulgruppe <code>within</code> einer anderen: die Modulvorlagen, die sie aufnimmt. Ohne Angabe alle Module, oder nur die ihrer inneren Gruppen, wenn sie welche hat. Ein Modul kommt in die erste Gruppe, die es aufnimmt, sonst in die Modulgruppe der Seite.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -628,7 +640,9 @@ pageTemplates: [
 - **Wenn Module nicht passen.** Ein Modul jenseits des Fußes der Gruppe wird dort abgeschnitten, und seine Rahmen durchlaufen die Einpassstufen; `frameOverflow` wird einmal für die Gruppe ausgelöst. Mit `overflow.continueIn` an der Modulgruppe (`'next-page'` oder `'template:<id>'`) laufen das erste Modul, das nicht passt, und jedes Modul danach **als Ganzes** auf der hinzugefügten Seite weiter, unter denselben Namen, oben in der Modulgruppe dieser Seite. In einer Modulreihe oder einem Modulraster geht eine Reihe ganz weiter: Ihre Module werden nie auf zwei Seiten verteilt.
 - **Nebeneinander.** Eine Modulgruppe mit `kind: 'row'` setzt ihre Module vom Anfang zum Ende, jedes so breit wie die `width` seiner Vorlage (eine Länge, `{ percent: 48 }` oder `'fill'`, ein gleicher Teil des Rests), die Reihe so hoch wie ihr höchstes Modul; `kind: 'grid'` setzt sie in `columns` gleiche Spalten, Reihe für Reihe. `rowAlign` platziert ein Modul, das niedriger als seine Reihe ist. Reihen beginnen auf der Seite, auf der die Zeile beginnt: Eine Seite von rechts nach links setzt das erste Modul rechts. Seit postext 1.50.
 - **Gruppen im Stapel.** Eine Modulgruppe mit `within: '<Stapel>'` liegt im Modulstapel der Seite, und `templates` sagt, welche Module sie aufnimmt: Jede Folge davon im Markdown bildet eine Reihe oder ein Raster des Stapels, dort, wo ihr erstes Modul steht. Mit den Gruppen unten ergeben zwei `aviso`-Blöcke, gefolgt von vier `tarjeta`-Blöcken, eine Reihe aus zwei Kästen über einem Raster aus 2 × 2 Karten, und das Markdown enthält nur `:::module`-Blöcke.
-- **Noch nicht.** Ein Modul in einem Modul (`moduleNested`), `grid`-Zellen der Vorlage in einem Modul und eine Gruppe in einer Modulreihe oder einem Modulraster.
+- **Gruppen in Gruppen.** Seit postext 1.51 kann `within` jede Modulgruppe nennen, auch eine Reihe oder ein Raster, beliebig tief. Mit `banda` als Reihe in `cuerpo` und `columna` als Stapel in `banda` steht ein Kasten mit zwei folgenden Karten neben einer Spalte aus den beiden Karten. Ein Rahmen der Seite, der an `#banda` verankert ist, wird nach den Modulen gesetzt.
+- **Eine Reihe teilen.** Seit postext 1.51 geht der Platz, den eine Modulreihe lässt, nach dem `grow` jedes Moduls, und eine Reihe, die breiter als ihre Gruppe ist, gibt nach `shrink` Breite ab.
+- **Noch nicht.** Ein Modul in einem Modul (`moduleNested`) und `grid`-Zellen der Vorlage in einem Modul.
 
 ```ts
 groups: [

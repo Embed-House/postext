@@ -160,6 +160,18 @@ Un modello che imposta solo il suo `id` e una cornice è una pagina intera in cu
       <td><code>'fill'</code></td>
       <td>Un modulo: la sua larghezza in una fila o in una pila di moduli, come lunghezza, come percentuale della larghezza del gruppo o come <code>'fill'</code>, una parte uguale di ciò che lasciano gli altri moduli della fila. In una griglia il modulo prende la sua colonna. Da postext 1.50.</td>
     </tr>
+    <tr>
+      <td><code>grow</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code> · <code>'fill'</code>: <code>1</code></td>
+      <td>Un modulo: la sua quota dello spazio che una riga di moduli lascia oltre le larghezze dei suoi moduli; un modulo <code>'fill'</code> ne prende almeno 1. Da postext 1.51.</td>
+    </tr>
+    <tr>
+      <td><code>shrink</code></td>
+      <td><code>number</code></td>
+      <td><code>0</code></td>
+      <td>Un modulo con <code>width</code>: quanta larghezza cede, secondo la sua larghezza, quando una riga di moduli supera la fine del gruppo. Da postext 1.51.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -440,7 +452,7 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
       <td><code>rowAlign</code></td>
       <td><code>'start' | 'center' | 'end' | 'stretch'</code></td>
       <td><code>'stretch'</code></td>
-      <td>Una griglia: dove sta una cella più bassa della sua riga. <code>'stretch'</code> rende la sua cornice principale alta quanto la riga (fino al suo <code>maxHeight</code>), quando l’altezza di quella cornice è <code>'auto'</code> o <code>'fill'</code>. Una fila o una griglia di moduli: dove sta un modulo più basso della sua fila; <code>'stretch'</code> lo mette in un riquadro alto quanto la fila, così il suo fondo e le sue cornici <code>'fill'</code> arrivano al piede della fila.</td>
+      <td>Una griglia: dove sta una cella più bassa della sua riga. <code>'stretch'</code> rende la sua cornice principale alta quanto la riga (fino al suo <code>maxHeight</code>), quando l’altezza di quella cornice è <code>'auto'</code> o <code>'fill'</code>. Una fila o una griglia di moduli: dove sta un modulo più basso della sua fila; <code>'stretch'</code> lo mette in un riquadro alto quanto la fila, così il suo fondo e le sue cornici <code>'fill'</code> arrivano al piede della fila. Da postext 1.51 anche le sue cornici <code>'auto'</code> che finiscono al suo piede arrivano al piede della riga, ma non una larga quanto il suo contenuto.</td>
     </tr>
     <tr>
       <td><code>repeat</code></td>
@@ -464,13 +476,13 @@ Un gruppo è una pila (dall’alto in basso) o una fila (dall’inizio alla fine
       <td><code>within</code></td>
       <td><code>string</code></td>
       <td>nessuno</td>
-      <td>Un gruppo di moduli dentro la pila di moduli con questo nome: ogni serie consecutiva di moduli della pagina che riceve, nell’ordine del Markdown, viene messa come una fila o una griglia di quella pila, dove viene il primo modulo della serie. Da postext 1.50.</td>
+      <td>Un gruppo di moduli dentro il gruppo di moduli con questo nome: ogni serie consecutiva dei moduli della pagina che riceve viene messa dove viene il suo primo modulo, come righe di una pila o come una cella di una riga o di una griglia. Da postext 1.50; qualsiasi gruppo di moduli, a qualsiasi profondità, da postext 1.51.</td>
     </tr>
     <tr>
       <td><code>templates</code></td>
       <td><code>string[]</code></td>
       <td>nessuno</td>
-      <td>Un gruppo di moduli con <code>within</code>: i modelli di modulo che riceve. Se non è indicato, tutti i moduli. Un modulo va al primo gruppo di questo tipo che lo riceve, altrimenti alla pila.</td>
+      <td>Un gruppo di moduli <code>within</code> un altro: i modelli di modulo che riceve. Se non indicato, tutti i moduli, o solo quelli dei suoi gruppi interni se ne ha. Un modulo va al primo gruppo che lo riceve, altrimenti al gruppo di moduli della pagina.</td>
     </tr>
     <tr>
       <td><code>gap</code></td>
@@ -628,7 +640,9 @@ pageTemplates: [
 - **Quando i moduli non entrano.** Un modulo che supera il piede del gruppo viene tagliato lì e le sue cornici percorrono la scala di reimpaginazione; `frameOverflow` viene segnalato una volta per il gruppo. Con `overflow.continueIn` sul gruppo di moduli (`'next-page'` o `'template:<id>'`), il primo modulo che non entra e tutti quelli che lo seguono proseguono **interi** nella pagina aggiunta, con gli stessi nomi, in cima al gruppo di moduli di quella pagina. In una fila o in una griglia di moduli una fila prosegue intera: i suoi moduli non vengono mai divisi tra due pagine.
 - **Affiancati.** Un gruppo di moduli con `kind: 'row'` mette i suoi moduli dall’inizio alla fine, ciascuno largo quanto la `width` del suo modello (una lunghezza, `{ percent: 48 }` o `'fill'`, una parte uguale di ciò che resta), con la fila alta quanto il suo modulo più alto; `kind: 'grid'` li mette in `columns` colonne uguali, fila dopo fila. `rowAlign` colloca un modulo più basso della sua fila. Le file partono dal lato in cui inizia la riga, quindi una pagina da destra a sinistra mette il primo modulo a destra. Da postext 1.50.
 - **Gruppi dentro la pila.** Un gruppo di moduli con `within: '<pila>'` sta dentro la pila di moduli della pagina, e `templates` dice quali moduli riceve: ogni serie consecutiva di questi nel Markdown forma una fila o una griglia della pila, dove viene il suo primo modulo. Con i gruppi qui sotto, due blocchi `aviso` seguiti da quattro blocchi `tarjeta` danno una fila di due riquadri sopra una griglia di 2 × 2 schede, e il Markdown contiene solo blocchi `:::module`.
-- **Non ancora.** Un modulo dentro un modulo (`moduleNested`), celle `grid` del modello dentro un modulo e un gruppo dentro una fila o una griglia di moduli.
+- **Gruppi dentro gruppi.** Da postext 1.51 `within` può nominare qualsiasi gruppo di moduli, anche una riga o una griglia, a qualsiasi profondità. Con `banda` una riga dentro `cuerpo` e `columna` una pila dentro `banda`, un riquadro seguito da due schede sta accanto a una colonna con le due schede. Una cornice della pagina ancorata a `#banda` viene messa dopo i moduli.
+- **Dividere una riga.** Da postext 1.51 lo spazio che una riga di moduli lascia va secondo il `grow` di ogni modulo, e una riga più larga del suo gruppo cede larghezza secondo `shrink`.
+- **Non ancora.** Un modulo dentro un modulo (`moduleNested`) e celle `grid` del modello dentro un modulo.
 
 ```ts
 groups: [

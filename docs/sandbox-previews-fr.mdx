@@ -47,6 +47,7 @@ Sur une page composée (`::::page{template="…"}`), le canvas relie chaque bloc
 - Un bloc vide affiche un contour en pointillés, son nom et **Écrire ici** ; un bloc qui ne fait que prolonger un autre indique lequel. Ces marques ne sont dessinées que sur le canvas : le PDF, l’impression et tous les exports les laissent de côté.
 - En mode Maquette, chaque bloc affiche son contour et son nom, et un clic en sélectionne un pour l’éditeur de gabarits.
 - Un bloc dont le contenu ne tient pas est entouré de rouge, avec sous son pied une bande aussi haute que ce qui a été coupé, et ce qui manque (*15 mm de trop*). Un bloc dont le texte a été réduit par les étapes d’ajustement affiche l’échelle retenue (*texte à 85 %*, et *images à 80 %* quand ses images ont aussi été réduites). Comme les autres marques, elles ne sont dessinées que sur le canvas.
+- Un bloc dont le morceau `:::frame` nomme une apparence que `frameLooks` n’a pas est entouré de tirets violets, avec le nom (*apparence inconnue : azul*) : il est dessiné avec son seul style tant qu’aucune apparence n’a cet id.
 
 #### Éditions d’un livre
 

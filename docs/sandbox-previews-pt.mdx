@@ -47,6 +47,7 @@ Numa página composta (`::::page{template="…"}`), o canvas liga cada bloco ao 
 - Um bloco vazio mostra um contorno tracejado, o nome e **Escreva aqui**; um bloco que só continua outro diz qual. Essas marcas são desenhadas apenas sobre o canvas: o PDF, a impressão e qualquer exportação as deixam de fora.
 - No modo Design, todos os blocos mostram o contorno e o nome, e um clique seleciona um para o editor de modelos.
 - Um bloco cujo conteúdo não cabe ganha um contorno vermelho, com uma faixa abaixo do pé tão alta quanto o que foi cortado e o que falta (*faltam 15 mm*). Um bloco cujo texto a escada de ajuste reduziu mostra a escala usada (*texto a 85%*, e *imagens a 80%* quando as imagens também foram reduzidas). Como as outras marcas, aparecem só sobre o canvas.
+- Um bloco cujo trecho `:::frame` nomeia uma aparência que `frameLooks` não tem é contornado por tracejado violeta, com o nome (*aparência desconhecida: azul*): ele é desenhado só com seu estilo até que exista uma aparência com esse id.
 
 #### Edições de um livro
 

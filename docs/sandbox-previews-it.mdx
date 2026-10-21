@@ -47,6 +47,7 @@ In una pagina composta (`::::page{template="…"}`) il canvas collega ogni corni
 - Una cornice vuota mostra un contorno tratteggiato, il suo nome e **Scrivi qui**; una cornice che serve solo a proseguire un’altra indica quale. Questi segni sono disegnati solo sul canvas: il PDF, la stampa e ogni esportazione li tralasciano.
 - In modalità Grafica ogni cornice mostra il suo contorno e il suo nome, e un clic ne seleziona una per l’editor dei modelli.
 - Una cornice il cui contenuto non entra è contornata di rosso, con sotto il piede una fascia alta quanto ciò che è stato tagliato e quanto manca (*mancano 15 mm*). Una cornice di cui la sequenza di reimpaginazione ha ridotto il testo mostra la scala scelta (*testo al 85%*, e *immagini al 80%* quando sono state ridotte anche le immagini). Come gli altri segni, questi compaiono solo sul canvas.
+- Una cornice il cui pezzo `:::frame` nomina un aspetto che `frameLooks` non ha viene contornata da trattini viola, con il nome (*aspetto sconosciuto: azul*): è disegnata solo con il suo stile finché non esiste un aspetto con quell'id.
 
 #### Edizioni di un libro
 
