@@ -22,6 +22,15 @@ them as JSON. Run it on the render before and after a reshape
 (template_dedupe.py grids and modules) to see that the pages still look
 the same.
 
+--check REPORT (with --score) reads the checks of the same render, the
+JSON of `composed_check.py check --json` or of `postext check --json`, and
+fails the score (exit 1, "passed": false in FILE) while any frame lies
+under another or runs past its box (frameCovered, frameOutsideArea,
+postext 1.48) that the project has not recorded as meant
+(composed-check.json beside preset.json, or --exceptions FILE): a page
+that looks like the source but hides a caption under a photo is not a
+match. The overlaps are listed by page label.
+
 The page ranges are 1-based PDF page numbers (mind the offset between the
 book's folios and the PDF pages). Requires PyMuPDF and Pillow.
 """
@@ -87,6 +96,29 @@ class JpegPages:
         return im
 
 
+def overlaps_of(report_path: str, exceptions: str | None = None) -> list[dict]:
+    """The overlaps a check report says fail: from `composed_check.py check
+    --json` (its failures marked `overlap`), or from `postext check --json`
+    (frameCovered / frameOutsideArea, less the recorded exceptions)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import composed_check as cc  # noqa: PLC0415
+
+    data = json.loads(Path(report_path).read_text(encoding="utf-8"))
+    out: list[dict] = []
+    if isinstance(data.get("editions"), dict):
+        for loc, ed in data["editions"].items():
+            for run in (ed, ed.get("stress") or {}):
+                for f in run.get("fail") or []:
+                    if f.get("overlap"):
+                        out.append({"locale": loc, "kind": f["kind"], "page": f.get("page"), "message": f["message"]})
+        return out
+    path = Path(exceptions) if exceptions else Path(report_path).parent / cc.EXCEPTIONS_FILE
+    entries, _ = cc.load_exceptions(path)
+    v = cc.judge(data, exceptions=entries)
+    return [{"locale": None, "kind": f["kind"], "page": f.get("page"), "message": f["message"]}
+            for f in v["fail"] if f.get("overlap")]
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("source")
@@ -98,6 +130,9 @@ def main() -> None:
     ap.add_argument("--sheet", action="store_true")
     ap.add_argument("--score", nargs="?", const="", default=None, metavar="FILE",
                     help="print how alike each pair is (and write it to FILE as JSON)")
+    ap.add_argument("--check", metavar="REPORT",
+                    help="with --score: fail while REPORT (composed_check.py or postext check --json) lists overlaps")
+    ap.add_argument("--exceptions", metavar="FILE", help="overlaps recorded as meant, for a postext check report")
     args = ap.parse_args()
     src = fitz.open(args.source)
     ren = JpegPages(Path(args.render)) if Path(args.render).is_dir() else fitz.open(args.render)
@@ -138,13 +173,24 @@ def main() -> None:
             scores.append({"source": sp[n] + 1, "render": rp[n] + 1, "mean": round(m, 2), "over40": round(over, 2)})
             print(f"p{sp[n] + 1:02d}  mean {m:5.1f}  >40: {over:5.1f}%")
     print(f"wrote {len(pairs)} pairs to {out}/")
+    overlaps = overlaps_of(args.check, args.exceptions) if args.check and args.score is not None else None
     if scores:
         mean = sum(r["mean"] for r in scores) / len(scores)
         over = sum(r["over40"] for r in scores) / len(scores)
         print(f"all   mean {mean:5.1f}  >40: {over:5.1f}%")
+        result = {"pages": scores, "mean": round(mean, 2), "over40": round(over, 2)}
+        if overlaps is not None:
+            result["overlaps"] = overlaps
+            result["passed"] = not overlaps
+            by_page: dict[str, int] = {}
+            for o in overlaps:
+                by_page[str(o.get("page") or "?")] = by_page.get(str(o.get("page") or "?"), 0) + 1
+            print(f"overlaps {len(overlaps)}" + (": " + ", ".join(f"p. {p} ({n})" for p, n in by_page.items())
+                                                 if by_page else ""))
+            if overlaps:
+                print("score failed: fix the overlaps (composed_check.py check lists their fixes) or record them as meant")
         if args.score:
-            Path(args.score).write_text(json.dumps({"pages": scores, "mean": round(mean, 2), "over40": round(over, 2)},
-                                                   indent=1) + "\n", encoding="utf-8")
+            Path(args.score).write_text(json.dumps(result, indent=1) + "\n", encoding="utf-8")
     if args.sheet and pairs:
         cols = 2
         pw = max(p.width for p in pairs)
@@ -155,6 +201,8 @@ def main() -> None:
             sheet.paste(p, ((i % cols) * (pw + 16), (i // cols) * (ph + 16)))
         sheet.save(out / "sheet.png")
         print(f"wrote {out / 'sheet.png'}")
+    if overlaps:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

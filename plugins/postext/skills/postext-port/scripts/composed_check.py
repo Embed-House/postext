@@ -24,7 +24,19 @@ the round-2 checks of a ported book, edition by edition.
           figureWordsShared (1.42: a figure's words dropped for the first
           figure's), headingClaimsColumn (1.43: an in-column heading whose
           design reserves the whole column) and a labelOverlap that runs onto a symbol of the picture
-          (1.42: the label meets one of its `avoid` zones);
+          (1.42: the label meets one of its `avoid` zones), repeatOverflow, moduleUnknown,
+          moduleAsPage, moduleNested and moduleNameRejected (1.48);
+        - frameCovered and frameOutsideArea (1.48: a frame under another frame, or past the
+          trim, the bleed or the frame it is anchored inside), each with the fixes the engine
+          proposes, unless the project records the pair as meant in composed-check.json
+          (or --exceptions FILE) with its reason:
+              {"overlaps": [{"kind": "frameCovered", "template": "photos",
+                             "frame": "grid-picture[*]", "coveredBy": "pill-*",
+                             "reason": "the source sets each pill over its photo"}]}
+          (`frame` and `reason` required; `[*]` any instance, `*` any run of characters;
+          `kind`, `template`, `coveredBy`, `past`, `target`, `locale`, `page` narrow it).
+          Prefer `overlap: "allow"` on the frame for art that always lies over text: the
+          engine then skips the pair, and the report lists such frames as a note;
         - a composed page whose frames the HTML writes in another order than
           the Markdown sends content to them (reading order = source order);
       warns when two editions read the frames of one page fence in different
@@ -37,6 +49,8 @@ the round-2 checks of a ported book, edition by edition.
       as the Cookbook bench does (C38): a warning the longer text raises
       fails, except a frameOverflow whose proposals carry values (a warning:
       the copy-fitter's next move).
+      The report ends with the number of overlaps that fail (0 to pass) and
+      lists the exceptions that matched nothing.
 
 The postext command defaults to `postext`; pass another one with --postext
 (`--postext "npx postext-cli"`, `--postext "bun ~/src/postext/packages/postext-cli/src/main.ts"`).
@@ -228,6 +242,35 @@ FEATURES: list[tuple[tuple[int, int, int], str, str, str]] = [
     ((1, 43, 0), "sandboxEditions", "Sandbox: Add a language... (sandbox_save_book add_language), rename one "
      "language only, group order of the template editor", "copy the chapters of an edition and set "
      "config.locale by hand"),
+    ((1, 46, 0), "columnHeadings", "a frame set in columns (or a :::columns group) never ends a column on a "
+     "heading: under headings.keepWithNext the heading goes on with its text",
+     "look at the column feet of frames set in columns for a stranded heading"),
+    ((1, 48, 0), "overlapChecks", "frameCovered and frameOutsideArea: a frame under another frame, or past the "
+     "trim, the bleed or the frame it is anchored inside, with fixes; Frame.overlap 'allow'",
+     "compare the page images with the source for captions under photos and notes past their cards"),
+    ((1, 48, 0), "connectors", "decoration connectors between frames (straight, elbow, tree; '#card[*]'; caps; "
+     "ends at a picture's anchor, painted over the frames)",
+     "the lines of a diagram in the raster ground (pdf_regions.py extract --raster-ground)"),
+    ((1, 48, 0), "leaders", "labelAt sets a label away from its point and leader draws the line back to it; "
+     "::label{leader} / leader=\"none\"; LabelStyle.leader",
+     "the label at its point, or the leader line drawn in the picture"),
+    ((1, 48, 0), "legends", "kind 'legend' label styles, :::label containers of several lines, :icon symbols "
+     "(resource, glyph, line sample) in labels, captions and cells", "the key as part of the picture"),
+    ((1, 48, 0), "shapes", "per-corner borderRadius and per-side borders on callout styles and decoration "
+     "boxes, a tab joined to its box (label.joined, fillet), path elements (kind 'path', SVG path data)",
+     "a card drawn in the raster ground; one radius and one border per box"),
+    ((1, 48, 0), "glyphTabIcon", "label.icon kind 'glyph': a character as a tab's icon",
+     "a picture resource as the tab's icon (label.icon.resourceId)"),
+    ((1, 48, 0), "sidePoints", "anchor.at (a point along a side) and size edge 'center' in design slots",
+     "offsets worked out in the generator"),
+    ((1, 48, 0), "grids", "kind 'grid' groups with repeat: one frame set laid per item of the Markdown "
+     "(instances foto[2]), going on by whole rows", "one frame per card (foto-1, foto-2…) in row groups"),
+    ((1, 48, 0), "modules", "role 'module' templates stacked by a modules group, filled from :::module blocks "
+     "(instances arbol[1].raiz), going on whole", "one page template per page"),
+    ((1, 48, 1), "moduleConnectorToPage", "a module's connector may end on a frame of the page that stacks it",
+     "keep a module's connectors between its own frames"),
+    ((1, 49, 0), "ringBarCaps", "ring and bar caps on connectors and leaders, opacity on connector and leader "
+     "lines", "dot caps; an opaque casing under a dashed line"),
 ]
 
 ROUND2: tuple[int, int, int] = (1, 35, 0)
@@ -319,7 +362,7 @@ _CODE = re.compile(r"^\s*(```+|~~~+)(.*)$")
 _HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*$")
 _ATTRS = re.compile(r"([A-Za-z_][\w-]*)\s*=\s*\"([^\"]*)\"")
 _TRAILING_ATTRS = re.compile(r"\{([^{}]*)\}\s*$")
-CONTAINERS = {"callout", "paragraphs", "part", "columns", "paper", "frame", "figure", "verse", "references"}
+CONTAINERS = {"callout", "paragraphs", "part", "columns", "paper", "frame", "figure", "verse", "references", "label"}
 
 
 def attrs_of(text: str | None) -> dict[str, str]:
@@ -387,7 +430,10 @@ def page_fences(markdown: str) -> list[dict]:
     """The `::::page` fences of a chapter, in order: `template`, `attrs`,
     `line` (1-based) and `items`, the slot each top-level piece of the page
     asks for (`slot` None = no slot) with its kind (`heading` + level,
-    `block`, `container`)."""
+    `block`, `container`). A slotted container also lists the pieces one
+    level inside it (`within`: the members of a repeating grid's item); a
+    `:::module{template name}` (postext 1.48) is an item of kind `module`
+    whose own `items` are read like the page's."""
     lines = markdown.replace("\r\n", "\n").split("\n")
     out: list[dict] = []
     i = 0
@@ -401,7 +447,10 @@ def page_fences(markdown: str) -> list[dict]:
         fence = {"template": a.get("template"), "attrs": a, "line": i + 1, "items": [],
                  "spread": bool(m.group(2) and re.search(r"(^|[\s{])spread([\s}]|$)", m.group(2)))}
         i += 1
-        depth = 0
+        # Open containers: the list their children are recorded in (None: not
+        # recorded) and whether it is a level of the page (the page itself or a
+        # module) or the `within` of a slotted container (recorded flat).
+        stack: list[tuple[list | None, bool]] = []
         code: str | None = None
         para = False
         while i < len(lines):
@@ -411,34 +460,49 @@ def page_fences(markdown: str) -> list[dict]:
                     code = None
                 i += 1
                 continue
-            if depth == 0 and line.strip() == colons:
+            if not stack and line.strip() == colons:
                 i += 1
                 break
-            if depth == 0 and _PAGE_OPEN.match(line):
+            if not stack and _PAGE_OPEN.match(line):
                 break  # a page left open closes at the next one
+            into, level = stack[-1] if stack else (fence["items"], True)
             cm = _CODE.match(line)
             if cm:
                 code = cm.group(1)
-                if depth == 0:
-                    fence["items"].append({"kind": "block", "slot": attrs_of(cm.group(2)).get("slot"), "line": i + 1})
-                    para = False
+                if into is not None:
+                    into.append({"kind": "block", "slot": attrs_of(cm.group(2)).get("slot"), "line": i + 1})
+                para = False
                 i += 1
                 continue
             ct = _CONTAINER.match(line)
-            if ct and ct.group(1) in CONTAINERS:
-                if depth == 0:
-                    fence["items"].append({"kind": "container", "name": ct.group(1),
-                                           "slot": attrs_of(ct.group(2)).get("slot"), "line": i + 1})
-                    para = False
-                depth += 1
+            if ct and (ct.group(1) in CONTAINERS or ct.group(1) == "module"):
+                name, ca = ct.group(1), attrs_of(ct.group(2))
+                child: tuple[list | None, bool] = (None, False)
+                if into is not None and level and name == "module":
+                    if into is fence["items"]:
+                        item = {"kind": "module", "template": ca.get("template"), "name": ca.get("name"),
+                                "slot": None, "line": i + 1, "items": []}
+                        into.append(item)
+                        child = (item["items"], True)
+                    else:
+                        child = (into, True)  # a module inside a module: its blocks are the outer one's
+                elif into is not None:
+                    item = {"kind": "container", "name": name, "slot": ca.get("slot"), "line": i + 1}
+                    into.append(item)
+                    if level and item["slot"] is not None:
+                        item["within"] = []
+                        child = (item["within"], False)
+                stack.append(child)
+                para = False
                 i += 1
                 continue
             if _CLOSE.match(line):
-                depth = max(0, depth - 1)
+                if stack:
+                    stack.pop()
                 i += 1
                 para = False
                 continue
-            if depth > 0:
+            if into is None:
                 i += 1
                 continue
             if not line.strip():
@@ -448,56 +512,202 @@ def page_fences(markdown: str) -> list[dict]:
             hm = _HEADING.match(line)
             if hm:
                 ta = _TRAILING_ATTRS.search(hm.group(2))
-                fence["items"].append({"kind": "heading", "level": len(hm.group(1)),
-                                       "slot": attrs_of(ta.group(1)).get("slot") if ta else None, "line": i + 1})
+                into.append({"kind": "heading", "level": len(hm.group(1)),
+                             "slot": attrs_of(ta.group(1)).get("slot") if ta else None, "line": i + 1})
                 para = False
             elif _LEAF.match(line) or line.startswith(":::"):
-                fence["items"].append({"kind": "block", "slot": attrs_of(line).get("slot") if line.startswith("::resource") else None,
-                                       "line": i + 1})
+                into.append({"kind": "block", "slot": attrs_of(line).get("slot") if line.startswith("::resource") else None,
+                             "line": i + 1})
                 para = False
             elif not para:
-                fence["items"].append({"kind": "block", "slot": None, "line": i + 1})
+                into.append({"kind": "block", "slot": None, "line": i + 1})
                 para = True
             i += 1
         out.append(fence)
     return out
 
 
+def _template(templates: list[dict], tid: str) -> dict | None:
+    return next((t for t in templates or [] if isinstance(t, dict) and t.get("id") == tid), None)
+
+
+def template_groups(templates: list[dict], tid: str) -> list[dict]:
+    """The groups of template `tid` with its `extends` chain merged by name."""
+    chain: list[dict] = []
+    seen: set[str] = set()
+    cur: Any = tid
+    while isinstance(cur, str) and cur not in seen:
+        t = _template(templates, cur)
+        if t is None:
+            break
+        seen.add(cur)
+        chain.append(t)
+        cur = t.get("extends")
+    groups: dict[str, dict] = {}
+    for t in reversed(chain):
+        for g in t.get("groups") or []:
+            if not isinstance(g, dict) or not isinstance(g.get("name"), str):
+                continue
+            if g.get("remove"):
+                groups.pop(g["name"], None)
+            else:
+                groups[g["name"]] = {**groups.get(g["name"], {}), **g}
+    return list(groups.values())
+
+
+def is_module(templates: list[dict], tid: str) -> bool:
+    """Whether `tid` is a module template (`role: 'module'`, its own or inherited)."""
+    seen: set[str] = set()
+    cur: Any = tid
+    while isinstance(cur, str) and cur not in seen:
+        t = _template(templates, cur)
+        if t is None:
+            return False
+        seen.add(cur)
+        if "role" in t:
+            return t.get("role") == "module"
+        cur = t.get("extends")
+    return False
+
+
+def repeat_sets(groups: list[dict]) -> dict[str, list[str]]:
+    """main frame -> the frame set its repeating grid lays per item (main first)."""
+    out: dict[str, list[str]] = {}
+    for g in groups:
+        rep = g.get("repeat") if g.get("kind") == "grid" else None
+        frames = rep.get("frames") if isinstance(rep, dict) else None
+        if isinstance(frames, list) and frames and all(isinstance(f, str) for f in frames):
+            out.setdefault(frames[0], list(frames))
+    return out
+
+
+_NAME_BAD = re.compile(r"[\s.#\[\]]")
+
+
+def module_instances(items: list[dict]) -> list[str]:
+    """The instance name of each `module` item of a page, as the engine
+    names them: the fence's `name` when it is free and has no space, `.`,
+    `#`, `[` or `]`, else `<template>[n]` (n its ordinal among the page's
+    modules of that template, the next free one on a clash)."""
+    mods = [it for it in items if it.get("kind") == "module"]
+    taken: set[str] = set()
+    given: list[str | None] = []
+    for it in mods:
+        n = it.get("name")
+        ok = isinstance(n, str) and bool(n) and not _NAME_BAD.search(n) and n not in taken
+        given.append(n if ok else None)
+        if ok:
+            taken.add(n)
+    count: dict[str, int] = {}
+    out: list[str] = []
+    for it, n in zip(mods, given):
+        t = it.get("template") or ""
+        count[t] = count.get(t, 0) + 1
+        if n is None:
+            k = count[t]
+            while f"{t}[{k}]" in taken:
+                k += 1
+            n = f"{t}[{k}]"
+            taken.add(n)
+        out.append(n)
+    return out
+
+
+class _Level:
+    """One level of a page fence as the engine shares it out: the page with
+    its template, or one module with the module's template (its frames named
+    `<instance>.<frame>`). Keeps the level's counters across the page."""
+
+    def __init__(self, frames: list[dict], groups: list[dict], prefix: str, outer_flow: str | None,
+                 order: list[str]) -> None:
+        self.names = {f["name"] for f in frames}
+        self.by_name = {f["name"]: f for f in frames}
+        self.sets = repeat_sets(groups)
+        self.member_of = {m: main for main, fs in self.sets.items() for m in fs}
+        self.own_flow = next((f["name"] for f in frames if f.get("flow")), None)
+        self.prefix = prefix
+        self.flow = prefix + self.own_flow if self.own_flow else outer_flow
+        self.takes: dict[int, str] = {}
+        for f in frames:
+            t = f.get("takes")
+            if isinstance(t, str) and re.fullmatch(r"h[1-6]", t) and int(t[1]) not in self.takes:
+                self.takes[int(t[1])] = f["name"]
+        self.used_levels: set[int] = set()
+        self.items: dict[str, int] = {}
+        self.order = order
+
+    def put(self, name: str | None) -> None:
+        if name and name not in self.order:
+            self.order.append(name)
+
+    def frame(self, name: str) -> None:
+        seen: set[str] = set()
+        cur: str | None = name
+        while cur and cur in self.names and cur not in seen:
+            seen.add(cur)
+            self.put(self.prefix + cur)
+            cur = chain_next(self.by_name[cur])
+
+    def to_flow(self) -> None:
+        if self.own_flow:
+            self.frame(self.own_flow)
+        else:
+            self.put(self.flow)
+
+    def piece(self, it: dict) -> None:
+        slot = it.get("slot")
+        if slot is not None and slot in self.member_of:
+            # one item of a repeating grid: its main frame and the members written inside it
+            main = self.member_of[slot]
+            self.items[main] = self.items.get(main, 0) + 1
+            k = self.items[main]
+            if slot != main:
+                self.put(f"{self.prefix}{slot}[{k}]")
+                return
+            for sub in it.get("within") or [{"slot": None}]:
+                s = sub.get("slot")
+                self.put(f"{self.prefix}{s if s in self.sets[main] else main}[{k}]")
+        elif slot is not None:
+            if slot in self.names:
+                self.frame(slot)
+            else:
+                self.to_flow()
+        elif it["kind"] == "heading" and it["level"] in self.takes and it["level"] not in self.used_levels:
+            self.used_levels.add(it["level"])
+            self.frame(self.takes[it["level"]])
+        else:
+            self.to_flow()
+
+
 def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
     """The frames of a page fence in reading order, as the engine reads
     them: each frame where its content first appears in the Markdown, the
-    frames its chain continues into right after it. None when the
-    template is unknown."""
-    frames = resolve_frames(templates, fence.get("template") or "")
+    frames its chain continues into right after it. A piece sent to a
+    repeating grid's frame is an item whose frames are instances (`foto[2]`,
+    `pie[2]`); the frames of a `:::module` are scoped by its instance
+    (`arbol[1].raiz`, `ramas.izq`). None when the template is unknown."""
+    tid = fence.get("template") or ""
+    frames = resolve_frames(templates, tid)
     if frames is None:
         return None
-    names = {f["name"] for f in frames}
-    flow = next((f["name"] for f in frames if f.get("flow")), None)
-    takes: dict[int, str] = {}
-    for f in frames:
-        t = f.get("takes")
-        if isinstance(t, str) and re.fullmatch(r"h[1-6]", t) and int(t[1]) not in takes:
-            takes[int(t[1])] = f["name"]
-    by_name = {f["name"]: f for f in frames}
-    used_levels: set[int] = set()
     order: list[str] = []
-
-    def add(name: str | None) -> None:
-        seen: set[str] = set()
-        while name and name in names and name not in seen:
-            seen.add(name)
-            if name not in order:
-                order.append(name)
-            name = chain_next(by_name[name])
+    page = _Level(frames, template_groups(templates, tid), "", None, order)
+    has_modules = any(g.get("modules") is True for g in template_groups(templates, tid))
+    instances = iter(module_instances(fence["items"]))
     for it in fence["items"]:
-        slot = it.get("slot")
-        if slot is not None:
-            add(slot if slot in names else flow)
-        elif it["kind"] == "heading" and it["level"] in takes and it["level"] not in used_levels:
-            used_levels.add(it["level"])
-            add(takes[it["level"]])
-        else:
-            add(flow)
+        if it.get("kind") != "module":
+            page.piece(it)
+            continue
+        inst = next(instances)
+        mt = it.get("template") or ""
+        mframes = resolve_frames(templates, mt) if has_modules and is_module(templates, mt) else None
+        if mframes is None:  # moduleUnknown: its content goes to the page's flow frame
+            for _ in it.get("items") or []:
+                page.to_flow()
+            continue
+        mod = _Level(mframes, template_groups(templates, mt), inst + ".", page.flow, order)
+        for sub in it.get("items") or []:
+            mod.piece(sub)
     return order
 
 
@@ -588,6 +798,21 @@ FAIL_KINDS = {
     "frameChainLoop", "overflowTargetUnknown", "labelStyleUnknown", "labelAnchorUnknown",
     "labelOverflow", "calloutStyleExtendsUnknown", "calloutStyleExtendsCycle", "figureWordsShared",
     "headingClaimsColumn",
+    # postext 1.48: a grid given more items than its `repeat.max`, and modules the page cannot lay
+    "repeatOverflow", "moduleUnknown", "moduleAsPage", "moduleNested", "moduleNameRejected",
+}
+# postext 1.48: a frame under another frame, or past the trim, the bleed or the frame it is anchored
+# inside. Both fail unless the project records the pair as meant (composed-check.json, below); a frame
+# set `overlap: "allow"` is silenced by the engine itself and listed as a note.
+OVERLAP_KINDS = {"frameCovered", "frameOutsideArea"}
+EXCEPTIONS_FILE = "composed-check.json"
+_OVERLAP_HINT = {
+    "frameCovered": "take a fix the message lists (a lower layer, exclude: 'push', a move), or, when the "
+                    "source prints the frames over each other, set overlap: 'allow' on the covering frame "
+                    f"or record the pair in {EXCEPTIONS_FILE} with the reason",
+    "frameOutsideArea": "take a fix the message lists (maxHeight, continueNextPage, the host's minHeight, a "
+                        "move), or, when the source hangs the frame off its box on purpose, set overlap: "
+                        f"'allow' on it or record it in {EXCEPTIONS_FILE} with the reason",
 }
 # labelOverlap between two labels is a note: whether two labels that meet are wrong is the reader's
 # call. A label that runs onto one of the picture's `avoid` zones (a symbol; 1.42, data.withSymbol) is a
@@ -601,17 +826,128 @@ def _with_symbol(w: dict) -> bool:
     return bool(data.get("withSymbol")) or str(data.get("with", "")).startswith("symbol")
 
 
-def judge(report: dict, stressed: bool = False, base: dict | None = None) -> dict:
+def _name_pattern(pattern: str) -> re.Pattern:
+    """A frame name of an exception: `[*]` stands for any instance number
+    (`grid-picture[*]`), `*` for any run of characters; the rest is literal."""
+    out = []
+    i = 0
+    while i < len(pattern):
+        if pattern.startswith("[*]", i):
+            out.append(r"\[\d+\]")
+            i += 3
+        elif pattern[i] == "*":
+            out.append(".*?")
+            i += 1
+        else:
+            out.append(re.escape(pattern[i]))
+            i += 1
+    return re.compile("".join(out) + r"\Z")
+
+
+_EXCEPTION_KEYS = {"kind", "template", "frame", "coveredBy", "past", "target", "locale", "page", "reason"}
+
+
+def load_exceptions(path: Path | None) -> tuple[list[dict], list[str]]:
+    """(entries, problems) of a project's recorded overlap exceptions:
+    `{"overlaps": [{"frame": "pill", "coveredBy": "photo", "reason": "…"}]}`.
+    Each entry needs `frame` and a `reason`; `kind` (frameCovered /
+    frameOutsideArea, else both), `template`, `coveredBy`, `past`, `target`,
+    `locale` and `page` narrow it."""
+    if path is None or not path.is_file():
+        return [], []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        return [], [f"{path}: not JSON ({e})"]
+    raw = data.get("overlaps") if isinstance(data, dict) else None
+    if not isinstance(raw, list):
+        return [], [f"{path}: needs an \"overlaps\" list"]
+    entries, problems = [], []
+    for n, e in enumerate(raw):
+        where = f"{path.name} overlaps[{n}]"
+        if not isinstance(e, dict):
+            problems.append(f"{where}: not an object")
+            continue
+        extra = sorted(set(e) - _EXCEPTION_KEYS)
+        if extra:
+            problems.append(f"{where}: unknown key(s) {extra}")
+        if not isinstance(e.get("frame"), str) or not e["frame"]:
+            problems.append(f"{where}: needs the frame it excuses (\"frame\")")
+            continue
+        if not isinstance(e.get("reason"), str) or not e["reason"].strip():
+            problems.append(f"{where}: needs a \"reason\" (why the source prints it so)")
+            continue
+        if e.get("kind") is not None and e["kind"] not in OVERLAP_KINDS:
+            problems.append(f"{where}: kind {e['kind']!r} is neither frameCovered nor frameOutsideArea")
+            continue
+        entries.append({**e, "_index": n})
+    return entries, problems
+
+
+def exception_for(w: dict, locale: str | None, entries: list[dict]) -> dict | None:
+    """The first recorded exception that matches an overlap warning."""
+    data = w.get("data") or {}
+    for e in entries:
+        if e.get("kind") and e["kind"] != w.get("kind"):
+            continue
+        if not _name_pattern(e["frame"]).match(str(data.get("frame", ""))):
+            continue
+        if e.get("coveredBy") is not None and not _name_pattern(e["coveredBy"]).match(str(data.get("coveredBy", ""))):
+            continue
+        if e.get("target") is not None and not _name_pattern(e["target"]).match(str(data.get("target", ""))):
+            continue
+        if any(e.get(k) is not None and str(e[k]) != str(v) for k, v in
+               (("template", data.get("template")), ("past", data.get("past")),
+                ("locale", data.get("locale") or locale), ("page", w.get("page")))):
+            continue
+        return e
+    return None
+
+
+def exceptions_path(target: str) -> Path:
+    """Where a project keeps its overlap exceptions: composed-check.json in
+    the project folder, beside its preset.json or beside the bundle."""
+    p = Path(target)
+    return (p if p.is_dir() else p.parent) / EXCEPTIONS_FILE
+
+
+def allowed_frames(templates: list[dict]) -> list[str]:
+    """`template/frame` of every frame set `overlap: "allow"` (postext 1.48):
+    the engine reports neither check for it, so the close report names them."""
+    out = []
+    for t in templates or []:
+        if not isinstance(t, dict):
+            continue
+        for f in t.get("frames") or []:
+            if isinstance(f, dict) and f.get("overlap") == "allow":
+                out.append(f"{t.get('id')}/{f.get('name')}")
+    return out
+
+
+def judge(report: dict, stressed: bool = False, base: dict | None = None,
+          exceptions: list[dict] | None = None, locale: str | None = None) -> dict:
     """Failures, warnings and notes of one `postext check --json` report.
     In a stressed run (`base` = the report of the text as written) a
     frameOverflow whose proposals carry a value is a warning, and any other
     warning the longer text raises fails: a composed-page kind always, any
-    other kind when the text as written did not raise it."""
+    other kind when the text as written did not raise it. frameCovered and
+    frameOutsideArea fail unless an entry of `exceptions` records the pair
+    (then they are listed under `allowed` with its reason); `overlaps`
+    counts the ones that fail."""
     had = {w.get("kind") for w in (base or {}).get("warnings") or []}
-    fails, warns, notes = [], [], []
+    fails, warns, notes, allowed = [], [], [], []
+    used: set[int] = set()
     for w in report.get("warnings") or []:
         kind = w.get("kind", "")
         entry = {"kind": kind, "message": w.get("message", ""), "at": w.get("at"), "page": w.get("page")}
+        if kind in OVERLAP_KINDS:
+            ex = exception_for(w, locale, exceptions or [])
+            if ex is not None:
+                used.add(ex["_index"])
+                allowed.append({**entry, "reason": ex["reason"]})
+            else:
+                fails.append({**entry, "overlap": True, "hint": _OVERLAP_HINT[kind]})
+            continue
         if kind == "labelOverlap" and _with_symbol(w):
             fails.append(entry)
         elif kind in NOTE_KINDS or w.get("severity") == "info":
@@ -628,7 +964,8 @@ def judge(report: dict, stressed: bool = False, base: dict | None = None) -> dic
         kinds = {e.get("kind") for e in r.get("events") or []}
         if kinds & {"textScaled", "imageScaled"}:
             scaled.append({"page": r.get("pageLabel"), "template": r.get("template"), "lines": r.get("lines")})
-    return {"fail": fails, "warn": warns, "notes": notes, "scaled": scaled,
+    return {"fail": fails, "warn": warns, "notes": notes, "scaled": scaled, "allowed": allowed,
+            "overlaps": sum(1 for f in fails if f.get("overlap")), "exceptionsUsed": sorted(used),
             "reflow": [{"page": r.get("pageLabel"), "template": r.get("template"), "lines": r.get("lines")}
                        for r in report.get("reflow") or []]}
 
@@ -910,7 +1247,14 @@ def cmd_check(args) -> int:
     editions = {e["locale"]: e for e in kit.editions(data, read)}
     work = Path(args.keep) if args.keep else Path(tempfile.mkdtemp(prefix="composed-check-"))
     result: dict[str, Any] = {"target": where, "version": vstr(v) if v else None, "editions": {}}
-    failed = False
+    ex_path = Path(args.exceptions) if args.exceptions else exceptions_path(args.target)
+    exceptions, ex_problems = load_exceptions(ex_path)
+    if args.exceptions and not ex_path.is_file():
+        ex_problems.append(f"{ex_path}: no such file")
+    result["exceptions"] = {"file": str(ex_path) if ex_path and ex_path.is_file() else None,
+                            "entries": len(exceptions), "problems": ex_problems, "unused": []}
+    used: set[int] = set()
+    failed = bool(ex_problems)
     orders: dict[str, list[dict]] = {}
     try:
         for loc in edition_locales(data, args.locale):
@@ -920,8 +1264,10 @@ def cmd_check(args) -> int:
             fences = edition_fences(data, read, loc, templates)
             orders[key] = fences
             report = cli_report(cmd, args.target, loc, extra)
-            verdict = judge(report)
-            entry: dict[str, Any] = {**verdict, "fences": len(fences), "order": []}
+            verdict = judge(report, exceptions=exceptions, locale=loc)
+            used.update(verdict["exceptionsUsed"])
+            entry: dict[str, Any] = {**verdict, "fences": len(fences), "order": [],
+                                     "allowedFrames": allowed_frames(templates)}
             if fences and not args.no_html:
                 page_html = cli_html(cmd, args.target, loc, work / f"html-{key}", extra)
                 if page_html is None:
@@ -935,12 +1281,17 @@ def cmd_check(args) -> int:
                 sdir.mkdir(parents=True)
                 root, b, a = stretched_copy(args.target, data, read, args.stress, sdir)
                 sreport = cli_report(cmd, str(root), loc, extra)
-                entry["stress"] = {"factor": args.stress, "before": b, "after": a, **judge(sreport, stressed=True, base=report)}
+                entry["stress"] = {"factor": args.stress, "before": b, "after": a, **judge(sreport, stressed=True, base=report,
+                                                                                          exceptions=exceptions, locale=loc)}
+                used.update(entry["stress"]["exceptionsUsed"])
             if verdict["fail"] or any(o["kind"] == "order" for o in entry["order"]) \
                     or (args.stress and entry["stress"]["fail"]):
                 failed = True
             result["editions"][key] = entry
         result["crossLocale"] = cross_locale(orders)
+        result["exceptions"]["unused"] = [{k: v for k, v in e.items() if k != "_index"}
+                                          for e in exceptions if e["_index"] not in used]
+        result["overlaps"] = sum(e["overlaps"] for e in result["editions"].values())
     finally:
         if not args.keep:
             shutil.rmtree(work, ignore_errors=True)
@@ -954,12 +1305,23 @@ def cmd_check(args) -> int:
 
 def print_check(res: dict) -> None:
     print(f"{res['target']} (postext {res['version'] or '?'})")
+    ex = res.get("exceptions") or {}
+    if ex.get("file"):
+        print(f"  overlap exceptions: {ex['entries']} in {ex['file']}")
+    for p in ex.get("problems") or []:
+        print(f"  FAIL {p}")
     for loc, e in res["editions"].items():
         bad_order = [o for o in e["order"] if o["kind"] == "order"]
         print(f"  [{loc}] {e['fences']} page fence(s): {len(e['fail'])} failing warning(s), "
-              f"{len(bad_order)} page(s) out of reading order")
+              f"{e.get('overlaps', 0)} overlap(s), {len(bad_order)} page(s) out of reading order")
         for w in e["fail"]:
             print(f"    FAIL {w['kind']} ({w.get('at') or '?'}, page {w.get('page') or '?'}): {w['message']}")
+            if w.get("hint"):
+                print(f"         {w['hint']}")
+        for w in e.get("allowed") or []:
+            print(f"    allowed {w['kind']} (page {w.get('page') or '?'}): {w['message'][:120]} [{w['reason']}]")
+        if e.get("allowedFrames"):
+            print(f"    note overlap: 'allow' (not checked by the engine): {', '.join(e['allowedFrames'])}")
         for o in bad_order:
             print(f"    FAIL reading order p. {o['page']} ({o['chapter']}:{o['line']}): HTML {' > '.join(o['html'])}; "
                   f"Markdown {' > '.join(o['markdown'])}")
@@ -982,6 +1344,10 @@ def print_check(res: dict) -> None:
                 print(f"      WARN {w['kind']} (page {w.get('page') or '?'}): {w['message']}")
             for w in st["fail"]:
                 print(f"      FAIL {w['kind']} (page {w.get('page') or '?'}): {w['message']}")
+    for u in ex.get("unused") or []:
+        print(f"  note exception never met (remove it?): {json.dumps(u, ensure_ascii=False)}")
+    if "overlaps" in res:
+        print(f"  overlaps: {res['overlaps']}")
     for c in res.get("crossLocale") or []:
         langs = [k for k in c if k not in ("chapter", "line", "fence")]
         print(f"  WARN editions read page fence {c['fence']} of {c['chapter']} differently: "
@@ -1004,6 +1370,8 @@ def main() -> None:
     p.add_argument("--offline", action="store_true", help="pass --offline to postext (no font downloads)")
     p.add_argument("--no-html", action="store_true", help="skip the reading-order check")
     p.add_argument("--keep", metavar="DIR", help="keep the HTML and stretched copies in DIR")
+    p.add_argument("--exceptions", metavar="FILE",
+                   help=f"overlaps recorded as meant (default: {EXCEPTIONS_FILE} next to preset.json or the bundle)")
     p.add_argument("--json", action="store_true")
     args = ap.parse_args()
     sys.exit(cmd_round(args) if args.cmd == "round" else cmd_check(args))
