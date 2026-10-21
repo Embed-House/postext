@@ -133,6 +133,40 @@ class GridTableTest(unittest.TestCase):
         res = json.loads((out / "resources.json").read_text(encoding="utf-8"))
         self.assertFalse([r for r in res if r["kind"] == "table"])
 
+    def test_a_table_in_a_box_goes_in_its_text(self):
+        doc = fitz.open()
+        page = doc.new_page(width=210 * MM, height=297 * MM)
+        page.draw_rect(fitz.Rect(20 * MM, 40 * MM, 190 * MM, 140 * MM), color=(0.2, 0.4, 0.7), fill=(0.95, 0.97, 1), width=1)
+        page.insert_text((25 * MM, 50 * MM), "The Romans wrote their numbers with seven letters:", fontsize=10, fontname="helv")
+        top = 60
+        # the header's fill is a rounded shape (curves), not a rectangle
+        page.draw_rect(fitz.Rect(COLS[0] * MM, top * MM, COLS[-1] * MM, (top + 8) * MM), color=None, fill=HEAD, radius=0.2)
+        for r, row in enumerate([("I", "V", "X"), ("1", "5", "10")]):
+            for c, word in enumerate(row):
+                page.insert_text(((COLS[c] + 2) * MM, (top + r * 8 + 5.5) * MM), word, fontsize=10,
+                                 fontname="hebo" if r == 0 else "helv")
+        for r in range(3):
+            y = (top + r * 8) * MM
+            page.draw_line(fitz.Point(COLS[0] * MM, y), fitz.Point(COLS[-1] * MM, y), color=(0, 0, 0), width=0.6)
+        for x in COLS:
+            page.draw_line(fitz.Point(x * MM, top * MM), fitz.Point(x * MM, (top + 16) * MM), color=(0, 0, 0), width=0.6)
+        page.insert_text((25 * MM, 90 * MM), "Read them from left to right and add up their values.", fontsize=10, fontname="helv")
+        pdf = Path(self.tmp.name) / "inbox.pdf"
+        doc.save(str(pdf))
+        out = Path(self.tmp.name) / "inbox"
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            pr.main(["extract", str(pdf), "--out", str(out), "--lang", "en", "--name-frames", "never"])
+        res = json.loads((out / "resources.json").read_text(encoding="utf-8"))
+        lib = json.loads((out / "library.json").read_text(encoding="utf-8"))
+        md = (out / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
+        t = next(r for r in res if r["kind"] == "table")
+        regions = json.loads((out / "regions.json").read_text(encoding="utf-8"))
+        self.assertFalse([f for f in regions[0]["frames"] if f["name"].startswith("table")])
+        a, b, c = (md.index("seven letters"), md.index(f'::resource{{id="{t["id"]}"}}'), md.index("add up"))
+        self.assertTrue(a < b < c, md)
+        st = next(s for s in lib["tableStyles"] if s["id"] == t["table"]["styleId"])
+        self.assertIs(st["headerBackgroundEnabled"], True)
+
     def test_no_tables_keeps_the_old_reading(self):
         out = Path(self.tmp.name) / "plain"
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):

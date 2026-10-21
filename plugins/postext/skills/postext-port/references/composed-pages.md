@@ -476,7 +476,8 @@ What the extraction decides, so you know what to check:
   cells with text in most of them (PyMuPDF `find_tables`, `lines_strict`)
   becomes a `kind: "table"` resource built by `extract_tables.py` (cell
   align, bold and fills) in a `table-N` frame where it stood, filled with
-  `::resource`, and a `tableStyles` entry of the same id (the nearest
+  `::resource` (a table set in a box's text goes into that text instead,
+  between the paragraphs it stood between), and a `tableStyles` entry of the same id (the nearest
   `rules` preset, border, header fill and bold, face, colours and padding;
   the resource's `table.styleId` names it). Its words, rules and fills are
   the table's: no text frames, no decoration. The first row is the header

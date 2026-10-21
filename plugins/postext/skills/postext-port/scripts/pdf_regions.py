@@ -1784,6 +1784,13 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                           "table": {"model": f.table["model"], "styleId": rid}, "_style": f.table["style"]}
             report["notes"] += [f"{f.name}: {n}" for n in f.table["notes"]]
             res.append(f.resource)
+            p = f.parent
+            if p is not None and p.kind == "box" and p.lines:
+                # set in a box's text: the table goes in that text where it stood, not in a frame
+                # over it (the box's text, set anew, would run under it)
+                k = sum(1 for para in paragraphs(p.lines) if para[0].y0 < f.box[1])
+                p.blocks.insert(min(k, len(p.blocks)), ("raw", 0, f'::resource{{id="{rid}"}}'))
+                f.inline = True
             continue
         if f.kind in ("picture", "figure"):
             pic_n += 1
@@ -1816,6 +1823,7 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                 ctx["label_groups"].append(groups)
                 f.labels = groups
 
+    ordered = [f for f in ordered if not getattr(f, "inline", False)]     # tables set in a box's text
     # geometry and the template
     template = make_template(rid_base, ordered, cards, origin, opts, report)
     heads: dict = {}
@@ -3479,6 +3487,8 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
             if hits and getattr(f, "alpha", False):
                 c["exclude"] = "push"
                 c["wrap"] = "contour"
+            elif getattr(f, "table", None) is not None:
+                c["exclude"] = "push"       # a table set in a box's text keeps that text off it
         elif f.name in member and f.name not in group_first:
             c["placement"] = placement_abs(f.box)   # a group member: its x counts, the group sets y
         else:
@@ -3746,6 +3756,8 @@ def blocks_markdown(blocks: list[tuple]) -> list[str]:
                 prev = "li"
                 continue
             out.append("- " + text)
+        elif kind == "raw":       # a directive written as is (a table's ::resource)
+            out.append(text)
         else:
             out.append(pmd.guard_line_start(text))
         prev = kind
