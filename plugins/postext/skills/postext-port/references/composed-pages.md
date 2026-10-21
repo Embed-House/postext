@@ -530,6 +530,13 @@ What the extraction decides, so you know what to check:
   the source centres it, and laid over the box's pictures (a longer
   translation runs over the next row, not under it). The box keeps the rest
   of its words; with none, its fence stays empty (it draws its box, 1.49.1).
+  From skill 1.61 a single caption under a single picture is read the same
+  way when it is set unlike the box's text (size, slant or colour) or
+  centred on the picture; its frame comes right after the picture in
+  reading order. A caption set smaller than the box's text, at most 3 mm
+  under its picture and no wider than it, is the picture's own resource
+  `caption` instead, with no frame (Markdown in a frame by
+  default, a resource caption when small and attached to the picture).
 - **Label hygiene** (`anchors.py`, `pdf_regions.py`). The same text printed
   twice at one point (within 0.5 mm: two grids of degree figures laid one
   over the other, in two sizes) is one label, the larger size kept, with a

@@ -1953,6 +1953,16 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
 
     for f in xy_order(top):
         emit(f)
+    # a caption frame comes right after its picture in reading order
+    for f in [g for g in ordered if getattr(g, "caption_of", None) is not None]:
+        p = f.caption_of
+        if p not in ordered:
+            continue
+        ordered.remove(f)
+        k = ordered.index(p) + 1
+        while k < len(ordered) and getattr(ordered[k], "caption_of", None) is p:
+            k += 1
+        ordered.insert(k, f)
 
     # names
     counters: dict[str, int] = {}
@@ -1963,6 +1973,8 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
         n = counters[role]
         if role in ("title", "text"):
             f.name = role if n == 1 else f"{role}-{n}"
+            if f.name == "text" and getattr(f, "caption_of", None) is not None:
+                f.name = "text-1"   # a caption is never the page's flow (`text` is written bare)
         else:
             f.name = f"{role}-{n}"
     free_text = [f for f in ordered if f.kind == "text" and not f.rotate and getattr(f, "caption_of", None) is None]
@@ -1994,6 +2006,9 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                                      art=[s for s in sh.get("shapes", []) if s.kind == "art"],
                                      background=ground_round(f.box), over=drawn_over(f, ordered),
                                      rounds=sh["boxes"] + cards)
+            cap = getattr(f, "resource_caption", None)
+            if cap:
+                f.resource["caption"] = para_markdown(cap, ctx["mark_ids"], opts.highlights)
             res.append(f.resource)
             if f.kind == "figure":
                 items = [l.label_dict(ctx["mark_ids"], opts.highlights) for l in f.lines]
@@ -2049,6 +2064,32 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
             "regions": regions}
 
 
+def single_caption(box: Any, pic: Any, col: list) -> bool:
+    """One column of lines under one picture is its caption when it is set
+    unlike the box's other text (size, slant or colour) or centred on the
+    picture; otherwise it is the box's last paragraph."""
+    rest = [l for l in box.lines if l not in col]
+    if not rest:
+        return False
+    body = dominant(rest)
+    look = dominant(col)
+    differs = abs(look["size"] - body["size"]) > 0.25 or look["color"] != body["color"] or \
+        all(c.italic for l in col for c in l.chars if c.c.strip()) != bool(body.get("italic"))
+    mid = (min(l.x0 for l in col) + max(l.x1 for l in col)) / 2
+    width = max(l.x1 for l in col) - min(l.x0 for l in col)
+    centred = abs(mid - (pic.box[0] + pic.box[2]) / 2) <= 2.0 and width < (pic.box[2] - pic.box[0]) - 4.0
+    return differs or centred
+
+
+def attached_caption(pic: Any, col: list, body: dict) -> bool:
+    """A caption set smaller than the box's text, at most 3 mm under its
+    picture and no wider than it: the picture's resource caption (#1114)."""
+    look = dominant(col)
+    gap = min(l.y0 for l in col) - pic.box[3]
+    width = max(l.x1 for l in col) - min(l.x0 for l in col)
+    return look["size"] <= 0.92 * body["size"] and gap <= 3.0 and width <= (pic.box[2] - pic.box[0]) + 2.0
+
+
 def split_captions(frames: list, reach: float = 8.0) -> list:
     """Captions set in columns under the pictures of a box: the box's lines
     read row by row ran across the columns as one text (a sentence of the
@@ -2056,10 +2097,13 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
     just under a picture (within `reach` mm below its foot or 3 mm above
     it, its middle over the picture)
     and goes on line by line under itself becomes a text frame of its own,
-    a child of the box hung under its picture (`caption_of`). Only when a
-    box has two such columns or more: one caption under one picture may be
-    the box's own last paragraph. Returns the new frames; the box keeps the
-    rest of its lines."""
+    a child of the box hung under its picture (`caption_of`). A box with
+    two such columns or more always; a single one only when its look differs
+    from the box's text (size, slant or colour) or it is centred on the
+    picture, else it is the box's own last paragraph. A caption set smaller
+    than the box's text and attached to the picture (at most 3 mm under it)
+    becomes the picture's resource caption instead (`resource_caption`, no
+    frame). Returns the new frames; the box keeps the rest of its lines."""
     out = []
     for c in [f for f in frames if f.kind == "box" and f.lines]:
         pics = [g for g in frames if g.parent is c and g.kind in ("picture", "figure")]
@@ -2097,7 +2141,7 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
                 else:
                     cols.append([l])
             groups += [(p, col) for col in cols]
-        if len(groups) < 2:
+        if not groups or (len(groups) < 2 and not single_caption(c, *groups[0])):
             continue
         taken = {id(l) for _, col in groups for l in col}
         # each column goes on down, line under line
@@ -2115,8 +2159,13 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
                 n = min(nxt, key=lambda l: l.base)
                 col.append(n)
                 taken.add(id(n))
+        rest = [l for l in c.lines if id(l) not in taken]
+        body = dominant(rest) if rest else None
         for p, col in groups:
             col.sort(key=lambda l: (l.base, l.x0))
+            if body is not None and attached_caption(p, col, body) and getattr(p, "resource_caption", None) is None:
+                p.resource_caption = col     # the picture's own caption (cmd: resource `caption`)
+                continue
             f = Frame("text", set_box(col, None), lines=col)
             f.parent, f.zone, f.caption_of = c, c.zone, p
             f.over = list(pics)       # a longer caption in another edition runs over, not under, a picture

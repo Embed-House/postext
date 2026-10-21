@@ -173,5 +173,56 @@ class OneParagraph(unittest.TestCase):
             tmp.cleanup()
 
 
+@unittest.skipUnless(HAVE_DEPS, "needs PyMuPDF, numpy and Pillow")
+class SingleCaption(unittest.TestCase):
+    @staticmethod
+    def box_page(caption, size, font, gap_mm, centred):
+        """A box: two lines of text, a picture, one caption line under it."""
+        doc = fitz.open()
+        page = new_page(doc)
+        x, y = 25 * MM, 40 * MM
+        page.draw_rect(fitz.Rect(x - 10, y - 20, 175 * MM, 150 * MM), color=(0.2, 0.4, 0.7), fill=(0.93, 0.96, 1),
+                       width=1)
+        put(page, x, y, PARA[0], size=11)
+        put(page, x, y + 14, PARA[1], size=11)
+        pic = fitz.Rect(x, y + 30, x + 75 * MM, y + 30 + 25 * MM)    # the picture's own 3:1 shape
+        page.insert_image(pic, stream=map_png())
+        w = fitz.get_text_length(caption, fontname=font, fontsize=size)
+        cx = (pic.x0 + pic.x1) / 2 - w / 2 if centred else pic.x0
+        put(page, cx, pic.y1 + gap_mm * MM + size * 0.75, caption, size=size, font=font)
+        return doc
+
+    def test_small_and_attached_is_the_resource_caption(self):
+        tmp, md, lib, _ = extract(self.box_page("El río Tajo cerca de Toledo.", 8, "helv", 1.0, False))
+        try:
+            res = __import__("json").loads((Path(tmp.name) / "out" / "resources.json").read_text(encoding="utf-8"))
+            pic = next(r for r in res if r.get("typeId") != "ground")
+            self.assertEqual(pic["caption"], "El río Tajo cerca de Toledo.")
+            self.assertNotIn("Toledo", md)
+        finally:
+            tmp.cleanup()
+
+    def test_an_italic_caption_further_down_is_a_frame_after_its_picture(self):
+        tmp, md, lib, _ = extract(self.box_page("El río Tajo cerca de Toledo.", 11, "heit", 5.0, False))
+        try:
+            self.assertRegex(md, r'::resource\{id="[^"]+" slot="(picture[^"]*)"\}\n\n:::frame\{slot="[^"]+"\}\n'
+                                 r'El río Tajo cerca de Toledo\.\n:::')
+            tpl = lib["pageTemplates"][0]
+            cap = next(f for f in tpl["frames"] if f.get("placement", {}).get("anchor", {}).get("edge") == "below"
+                       and f["placement"]["anchor"].get("to", "").startswith("#picture"))
+            style = next(s for s in lib["calloutStyles"] if s["id"] == cap["style"])
+            self.assertTrue(style["body"].get("italic"))     # set in italic: its style says so, no `*`
+            self.assertIn("bajan por las laderas\n:::", md)
+        finally:
+            tmp.cleanup()
+
+    def test_a_line_like_the_box_text_stays_in_the_box(self):
+        tmp, md, lib, _ = extract(self.box_page("Y el agua sigue su camino hacia el mar.", 11, "helv", 5.0, False))
+        try:
+            self.assertRegex(md, r':::frame\{slot="box[^"]*"\}\n[^:]*Y el agua sigue su camino hacia el mar\.')
+        finally:
+            tmp.cleanup()
+
+
 if __name__ == "__main__":
     unittest.main()
