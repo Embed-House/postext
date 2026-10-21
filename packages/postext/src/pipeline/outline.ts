@@ -7,7 +7,7 @@
  */
 
 import type { ContentBlock, InlineSpan } from '../parse';
-import { flattenTitleBreaks, flattenTitleBreakSpans, TITLE_BREAK_RE } from '../parse/inlineFormatting';
+import { CHIP_PLACEHOLDER, flattenTitleBreaks, withoutChips, flattenTitleBreakSpans, TITLE_BREAK_RE } from '../parse/inlineFormatting';
 import { collapseTitleSpaces } from '../measure/spaces';
 import { computeHeadingNumbering, type HeadingNumberingOptions, type HeadingTemplates } from '../numbering';
 import type { HeadingCounters, OutlineEntry, PostextConfig } from '../types';
@@ -88,9 +88,18 @@ export function indexOutline(entries: readonly OutlineEntry[]): OutlineEntry[] {
 
 function titleSpans(blockText: string, spans: readonly InlineSpan[]): OutlineEntry['spans'] {
   const out: NonNullable<OutlineEntry['spans']> = [];
+  let chipped = false;
   for (const s of flattenTitleBreakSpans(blockText, spans)) {
-    if (s.math || s.ref) continue; // formulas and references do not carry into the contents
-    const text = s.text;
+    // Formulas, references and chips (#1100) do not carry into the
+    // contents; the space a chip stood before goes with it.
+    if (s.math || s.ref) continue;
+    if (s.chip) {
+      chipped = true;
+      continue;
+    }
+    let text = s.text;
+    if (chipped && (out.length === 0 || /\s$/.test(out[out.length - 1]!.text))) text = text.replace(/^ /, '');
+    chipped = false;
     if (text.length === 0) continue;
     const last = out[out.length - 1];
     if (last && last.bold === s.bold && last.italic === s.italic) last.text += text;
@@ -221,7 +230,7 @@ function computeOutlineEntries(
       // No-break spaces stay: a running head or contents entry keeps them,
       // and so does the ideographic space between the halves of a Chinese
       // couplet title.
-      title: collapseTitleSpaces(flattenTitleBreaks(titled.text)).trim(),
+      title: collapseTitleSpaces(flattenTitleBreaks(titled.text.includes(CHIP_PLACEHOLDER) ? withoutChips(titled.text) : titled.text)).trim(),
       spans: titleSpans(titled.text, titled.spans),
       number,
       ...(numbered && values[i] !== undefined ? { counter: values[i] } : {}),

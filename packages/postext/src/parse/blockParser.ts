@@ -1495,7 +1495,10 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       headingRawContent = headingRawContent.replace(TITLE_BREAK_RE, BREAK_PLACEHOLDER);
       // Inline pre-passes run refs -> math -> formatting so a ref's `text="…"`
       // attribute is shielded from the later math/formatting scanners.
-      const refExtract = extractInlineRefs(protectCodeSpans(headingRawContent), contentAbsStart);
+      // Chips run first, as in a paragraph (#1100): their words are shielded
+      // from the later passes.
+      const chipExtract = extractInlineChips(protectCodeSpans(headingRawContent), contentAbsStart);
+      const refExtract = extractInlineRefs(chipExtract.cleaned, contentAbsStart);
       const swExtract = extractInlineSwatches(refExtract.cleaned, contentAbsStart);
       const { cleaned, maths, issues: mathIssues } = extractInlineMath(
         swExtract.cleaned,
@@ -1508,11 +1511,11 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       // the title with its markers dropped, trimmed. A configuration with
       // `headings.inlineMarks: false` sets them plain again
       // (`plainHeadingBlocks`).
-      const rawSpans = injectRefSpans(injectSwatchSpans(
+      const rawSpans = injectChipSpans(injectRefSpans(injectSwatchSpans(
         injectMathSpans(trimSpans(parseInlineFormatting(cleaned)), maths), swExtract.swatches),
         refExtract.refs,
-      );
-      const mapping = buildBlockMapping(markdown, srcStart, srcEnd, rawSpans);
+      ), chipExtract.chips);
+      const mapping = withChipSources(markdown, buildBlockMapping(markdown, srcStart, srcEnd, rawSpans));
       fixMathSourceMap(mapping.text, mapping.spans, mapping.sourceMap);
       const titleBreaks = titleBreakIndices(mapping.text);
       blocks.push({

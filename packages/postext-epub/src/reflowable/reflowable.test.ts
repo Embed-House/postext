@@ -102,6 +102,17 @@ const joined = (lines: VDTLine[], lang = 'en'): string => {
   return sink.inl.map((i) => (i.t === 'text' ? i.text : '')).join('');
 };
 
+describe('chips in headings (#1100)', () => {
+  it('writes the chip in the heading and leaves it out of the contents', async () => {
+    const doc = layOut('# :chip[///]{style=mark} Title\n\nText.', { ...baseConfig, chipStyles: [{ id: 'mark' }] });
+    const { all } = await render([doc]);
+    expect(all).toMatch(/<h1[^>]*>(?:<span epub:type="pagebreak"[^>]*><\/span>)?<span class="pt-chip pt-chip-mark">\/\/\/<\/span> Title<\/h1>/);
+    expect(all).not.toContain('\uE1A0');
+    // The navigation and the chapter file's title read the title alone.
+    expect(all).toContain('<title>Title</title>');
+  });
+});
+
 describe('joining lines', () => {
   it('joins lines with a space and drops the hyphen a break added', () => {
     expect(joined([
@@ -306,7 +317,7 @@ describe('buildReflowablePublication', () => {
     const md = [para.repeat(3), '', ':::callout{type="note"}', para.repeat(10), '', 'Last words **in** **the** box.', ':::'].join('\n');
     const doc = layOut(md, config as typeof baseConfig);
     expect(doc.pages.flatMap((p) => p.columns.flatMap((c) => c.blocks)).filter((b) => b.type === 'callout').length).toBeGreaterThan(1);
-    const { pub, files, all } = await render([doc]);
+    const { all } = await render([doc]);
     expectSound(pub, files);
     const box = /<aside class="pt-callout pt-callout-note">[\s\S]*?<\/aside>/.exec(all)![0];
     expect(box.match(/<p>/g)).toHaveLength(2);
@@ -594,7 +605,7 @@ describe('reflowable rendition: Japanese note markers (JLReq §4.2.3)', () => {
 
   it('sets a side marker in a box of no advance over the text, linked to its note', async () => {
     const doc = layOut(md, { ...baseConfig, locale: 'ja', footnotes: { placement: 'column', markerPosition: 'side' } });
-    const { pub, files, all } = await render([doc]);
+    const { all } = await render([doc]);
     expectSound(pub, files);
     expect(all).toMatch(/<a epub:type="noteref"[^>]*><span class="pt-note-side"><span>1<\/span><\/span><\/a>/);
     const css = pub.items.find((i) => i.href === 'styles/book.css')!.data as string;
@@ -604,7 +615,7 @@ describe('reflowable rendition: Japanese note markers (JLReq §4.2.3)', () => {
 
   it('sets a right marker of a vertical book reduced against the line\'s right side', async () => {
     const doc = layOut(md, { ...baseConfig, locale: 'ja', layout: { writingMode: 'vertical-rl' }, footnotes: { placement: 'column' } });
-    const { pub, all } = await render([doc]);
+    const { all } = await render([doc]);
     // The digit stands upright in its own cell (automatic tate-chū-yoko, #428).
     expect(all).toMatch(/<a epub:type="noteref"[^>]*><span class="pt-note-right">（<\/span><span class="pt-note-right"><span class="pt-tcy">1<\/span><\/span><span class="pt-note-right">）<\/span><\/a>/);
     const css = pub.items.find((i) => i.href === 'styles/book.css')!.data as string;
@@ -754,7 +765,7 @@ describe('reflowable rendition: text wrap (#627)', () => {
     const md = [para, '', '::resource{id="f1"}', '', `${para}${para}${para}`, '', ':::callout{wrap="left" width=0.35}', 'Sow thinly.', ':::', '', `${para}${para}`, '', '## Next', '', para].join('\n');
     const doc = layOut(md, config, wrapped);
     expect(doc.pages[0]!.columns[0]!.exclusions?.length).toBe(2);
-    const { pub, files, all } = await render([doc]);
+    const { all } = await render([doc]);
     expectSound(pub, files);
     expect(all).toMatch(/<figure id="[^"]+" class="pt-wrap pt-wrap-right" style="width:40%;margin-left:[\d.]+%">/);
     expect(all).toMatch(/<aside class="pt-callout[^"]* pt-wrap pt-wrap-left" style="width:35%;margin-right:[\d.]+%">/);

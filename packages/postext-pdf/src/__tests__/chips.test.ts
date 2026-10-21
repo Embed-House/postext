@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { PDFArray, PDFDocument, PDFRawStream, decodePDFRawStream } from 'pdf-lib';
+import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFRawStream, PDFString, decodePDFRawStream } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { buildDocument } from 'postext';
 import type { PostextConfig, Resource } from 'postext';
@@ -136,6 +136,29 @@ describe('inline chips in the PDF', () => {
       const text = execFileSync('pdftotext', ['-raw', file, '-'], { encoding: 'utf8' }).replace(/\s+/g, ' ');
       fs.unlinkSync(file);
       expect(text).toMatch(/Respuesta: y fin\./);
+      expect(text).not.toContain(':chip');
+    }
+  });
+
+  // #1100: a chip before a heading's title is painted, and the bookmark
+  // reads the title alone.
+  it('paints a chip in a heading and leaves it out of the bookmark', async () => {
+    const cfg: PostextConfig = { ...config, chipStyles: [{ id: 'mark', background: hex('#cc3300'), borderWidth: pt(0) }] };
+    const doc = buildDocument({ markdown: '## :chip[///]{style=mark} Title\n\nText.' }, cfg);
+    const headingBytes = await renderToPdf(doc, { fontProvider });
+    if (process.env.POSTEXT_HEADING_PDF_OUT) fs.writeFileSync(process.env.POSTEXT_HEADING_PDF_OUT, headingBytes);
+    const out = await PDFDocument.load(headingBytes);
+    const content = pageContent(0, out);
+    expect(content).toMatch(/0\.8 0\.2 0 rg/);
+    const outlines = out.catalog.lookup(PDFName.of('Outlines'), PDFDict);
+    const first = outlines.lookup(PDFName.of('First'), PDFDict);
+    expect(first.lookup(PDFName.of('Title'), PDFHexString, PDFString).decodeText()).toBe('Title');
+    if (hasPdftotext) {
+      const file = path.join(os.tmpdir(), `postext-heading-chip-${process.pid}.pdf`);
+      fs.writeFileSync(file, await out.save());
+      const text = execFileSync('pdftotext', ['-raw', file, '-'], { encoding: 'utf8' }).replace(/\s+/g, ' ');
+      fs.unlinkSync(file);
+      expect(text).toMatch(/\/ ?\/ ?\/ Title/);
       expect(text).not.toContain(':chip');
     }
   });
