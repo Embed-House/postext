@@ -457,6 +457,19 @@ Write `**a** ***b***`, never `**a *b***`. Move punctuation stuck between two
 styled runs to one side. A style change inside a word is a typesetting slip:
 the larger part wins. The converters do all of this (`postext_md.render_runs`).
 
+### B8a. Roman numerals in small capitals (centuries, reigns, volumes)
+Many books set a century or a reign number in small capitals: «siglo
+xviii», «Luis xiv», «tomo iii». Write the numeral in lower case inside
+`:smallcaps[…]`: `siglo :smallcaps[xviii]`, `Luis :smallcaps[xiv]`. The
+letters are drawn as capitals at 70 % of the size, the same on every
+backend, and the text stays searchable as its letters. Never type capitals
+in a smaller font size by hand, and never write the numeral in capitals
+inside `:smallcaps` (capitals stay full size). A source PDF extracts such
+numerals in lower case (sources.md): turn `siglo xviii` back into
+`siglo :smallcaps[xviii]`, not into `XVIII`, when the source shows small
+capitals; full capitals only when the source prints full capitals. A
+whole paragraph in small caps is a paragraph style with `smallCaps: true`.
+
 ### B9. Copy-fitted pages
 The source set some paragraphs smaller or tighter so a page fits. Use a
 `compact` paragraph style and accept ±1 page per chapter. Do not chase the
@@ -477,8 +490,21 @@ source line by line.
   and never two chips for a translated phrase. A heading drawn by a design
   (an opener) prints the words without the band. On an older engine
   `:mark[…]` prints literally: use a chip for one or two words and say so.
+- A **heading on a colour band** that wraps to two lines, each line on a
+  band of its own with rounded ends (a textbook's unit title):
+  `## :mark[The water cycle and the seasons of the river]{style="band"}`
+  with a mark style that clones its ends on every line (postext ≥ 1.52):
+  ```json
+  "markStyles": [{ "id": "band", "background": { "hex": "#1d4f91", "model": "hex" },
+    "color": { "hex": "#ffffff", "model": "hex" }, "paddingX": { "value": 0.35, "unit": "em" },
+    "borderRadius": { "value": 0.3, "unit": "em" }, "decorationBreak": "clone" }]
+  ```
+  The default `"slice"` cuts one band at the line end (no padding or corner
+  there), as a highlighter does on running text. A heading drawn by a design
+  (an opener) prints the words without the band.
 - A colour key square: `:swatch{color="band"}` (a palette id or `#hex`), in
-  text, captions or table notes.
+  text, captions or table notes; from 1.52 it takes `size`, `border`,
+  `radius` and `gap` to match the source's key.
 
 ### B11. Lists that stay on the grid
 Engine list margins are em-based. Restate `marginTop`/`marginBottom`,
@@ -604,6 +630,8 @@ numbers" panels, grey boxes, badges. In Markdown write
 | Icon on a corner, half outside | `icon.position: "corner"`, `cornerSide: "outer"` |
 | Icon outside the box with a vertical rule | `marker: {kind: "resource", resourceId, gap, rule: {enabled: true, color, width, length}}` |
 | Numbered tab ("BOX 1-1") | `label: {background, color, position: "top-right", height, paddingX}` + fence `label="BOX 1-1"` (reduce `marginTop` by the tab's rise) |
+| Rounded tab, a pill on the box's edge | `label.borderRadius` (≥ 1.52; one length or per corner; half the tab's `height` for a pill) |
+| Tab grown out of the box, one outline | `label: {joined: true, fillet, offset: 0}` + the box's per-corner `borderRadius`; `label.borderRadius` when the tab's outer corners differ (≥ 1.52) |
 | Glyph icon hanging in the margin (a big quote mark) | `icon: {kind: "glyph", glyph: "“"}`, negative left padding |
 | Title in caps with tracking | `titleStyle: {textTransform: "uppercase", letterSpacing}` |
 | Key terms in colour inside | `body.boldColor` |
@@ -768,6 +796,12 @@ move when a crop is tuned).
   (`images.py join`).
 - Pulling a raster out of the book PDF: `pdf_figures.py image --xref`.
 - Always declare `width` and `height`.
+- A narrow photo with its caption beside it in the column (manuals,
+  textbooks): `placement: {captionSide: "inside", width: 0.5}` (≥ 1.52), in
+  a one- or two-column page, a float, a `here` embed, a box or a frame. The
+  caption takes the slot's rest after `layout.gutterWidth`, level with the
+  picture's top. `captionSide: true` is the side column of a
+  column-and-a-half layout, not this.
 
 ### D8. Diagrams in a single ink
 For a spot-colour book use `diagramStyle.singleInk: true` (every SVG

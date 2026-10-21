@@ -66,6 +66,7 @@ python3 scripts/composed_check.py round --version 1.35.0   # the engine the book
 <tr><td>1.48.1</td><td>a module's connector may end on a frame of the page that stacks it</td><td>2</td></tr>
 <tr><td>1.49.0</td><td><code>ring</code> and <code>bar</code> caps on connectors and leaders, <code>opacity</code> on their lines; a picture in an <code>auto</code> frame of a vertical page fills the room the frame measured; Sandbox: <code>overlap</code> in the frame editor and an «allow overlap» fix in the Checks panel</td><td>2</td></tr>
 <tr><td>1.50.0</td><td>decoration drawn when the page fence says so (<code>when</code> / <code>unless</code> on a design element: one shell for front matter and body pages); modules side by side (a modules group of <code>kind: "row"</code> or <code>"grid"</code> <code>within</code> the stack, its <code>templates</code>, a module's <code>width</code>); named frame looks (<code>frameLooks</code>, <code>look="…"</code> on a <code>:::frame</code> piece, <code>lookUnknown</code>); the shrink proposal keeps a long word whole</td><td>2</td></tr>
+<tr><td>1.52.0</td><td>a tab with corners of its own (<code>label.borderRadius</code>, one length or per corner; a joined tab rounds its outer corners with it); a box that grows with the frames laid inside it (<code>growWith: "children"</code> or a list of names: photos and their captions in a box, §6.5); <code>frameCovered</code> reads a cut-out with an alpha channel or a polygon by its shape, so a transparent cut-out beside text needs no <code>overlap: "allow"</code>; an empty styled fence reads where it lies (HTML, EPUB, tagged PDF, <code>composed_check</code>); <code>unknownConfigKey</code> for keys of design elements, connector ends, placements, a decoration and the config's top level (a group's <code>size</code> beside its <code>placement</code>); <code>:chip</code> in a heading; <code>markStyles[].decorationBreak: "clone"</code>; <code>:swatch</code> size, border, radius and gap; <code>captionSide: "inside"</code>; a justified caption painted justified; negative tracking in a box title; a box's bullets in a face of their own (<code>lists.bulletFontFamily</code>); <code>glyphFallback</code>; a stray <code>:::</code> after a one-line directive dropped and reported (<code>strayFence</code>)</td><td>2</td></tr>
 </table>
 
 - **Which version counts.** The one the book will be opened in: the
@@ -698,7 +699,7 @@ change in the generator:
   the tagged PDF), and `composed_check.py` expects it there.
 - **A box whose captions run longer** than it holds (a translation, the
   `--stress 1.3` run): give the box `growWith: "children"` (postext 1.52,
-  #1117). Its height reaches at least the foot of the frames anchored to a
+  #1117; the draft writes it on a box whose captions it splits into frames). Its height reaches at least the foot of the frames anchored to a
   point of its top side and of those anchored to them (a caption `below` its
   photo), plus its bottom padding; its fill, border and tab follow and the
   frames under it move down. A list of names (`"growWith": ["foto-1",
@@ -1428,10 +1429,25 @@ Un mercado de barrio.
 :::
 ```
 
-- The caption is Markdown in the photo's frame, so correcting or
-  translating it is a Markdown edit. Use the resource's own `caption` (and
-  `localized.<lang>.resources`) only when the book numbers its figures
-  ("Figura 3").
+- **Where the caption goes** (decided, #1114). By default the caption is
+  Markdown in a frame (the photo's frame, or a frame of its own hung `below`
+  the photo), so correcting or translating it is a Markdown edit. Use the
+  resource's own `caption` (and `localized.<lang>.resources`) when the
+  source sets the caption small and attached to the picture, as one figure
+  with it, and when the book numbers its figures ("Figura 3"). The draft
+  does this: `split_captions` (`pdf_regions.py`) gives a column of lines
+  under a box's picture to the picture as its resource caption
+  (`attached_caption`: set at most 92 % of the size of the box's text, no
+  more than 3 mm under the picture, no wider than it plus 2 mm), and makes
+  every other caption column a text frame `below` its picture, the box
+  marked `growWith: "children"`. Not detected: a small caption set beside
+  its picture (write it as a resource caption with `captionSide` by hand,
+  `"inside"` inside a box or a frame from 1.52).
+- A box that holds photos and their captions takes `"growWith": "children"`
+  (postext 1.52): it grows down to the lowest caption's foot and its bottom
+  padding, and the frames under it move down. On 1.51 and older, size the
+  box for the longest edition (`minHeight`) and check it with `--stress
+  1.3`.
 - An unnumbered resource type (`numberingTemplate: ""`) keeps "Photo 1"
   off the page. From 1.38 the type may leave the other fields out (the
   built-in type of the same id, else the id and `{h1}.{n}`, fill them):
@@ -1439,10 +1455,6 @@ Un mercado de barrio.
   only for 1.37 and older.
 - A row keeps its frames' widths and grows as tall as the tallest caption
   needs. Photos of different widths: different frame widths.
-- Photos and captions inside a styled box (a fenced `:::frame` with a tab,
-  the photos anchored `top-left` of `#caja`, each caption `below` its photo):
-  set `"growWith": "children"` on the box so it grows with the captions
-  (postext 1.52); without it a longer caption leaves the box.
 - From 1.48 photos of one width on a lattice (three in a row, a wall of six)
   are one frame set repeated by a `grid` group (6.16): the template draws
   `foto` and its `pie` once and each `:::frame{slot="foto"}` of the page is a
@@ -2013,10 +2025,18 @@ decoration["elements"].append(
   also stand at the foot (`bottom-left`, `bottom-right`, `bottom-start`,
   `bottom-end`), joined or not. No side tabs. `pdf_regions.py` writes a card
   and its tab of one colour as one path outline.
-- **Tab corners.** `label.borderRadius` (one length or per corner) rounds the
-  tab itself: a plain tab is square without it; a joined tab rounds its two
-  outer corners with it instead of copying the box corner (the fillets keep
-  `fillet`).
+- **Tab corners** (postext 1.52). `label.borderRadius` (one length or per
+  corner) rounds the tab itself: a plain tab is square without it; a joined
+  tab rounds its two outer corners with it instead of copying the box corner
+  (the fillets keep `fillet`). Read them off the source: a card with a pill
+  of its own colour on its top edge is a plain tab with
+  `"borderRadius": mm(3)` (half its height for a full pill); a tab grown out
+  of the card's top is `joined: true` with `fillet` the concave corner's
+  radius, the card's `borderRadius` per corner (`{"topLeft": mm(0),
+  "topRight": mm(4), …}` when the tab takes the top-left corner), and
+  `label.borderRadius` only when the tab's outer corners differ from the
+  card's. On 1.51 and older a tab's corners copy the card's (joined) or are
+  square.
 - **Path element** (`kind: "path"`, every design slot): SVG path data `d` in
   a `viewBox` (default `[1, 1]`: fractions of the box), stretched to the
   element's box (`preserveAspectRatio: "none"`) or fitted (`"meet"`); `fill`,

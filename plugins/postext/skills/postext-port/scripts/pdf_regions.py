@@ -2199,7 +2199,9 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
     picture, else it is the box's own last paragraph. A caption set smaller
     than the box's text and attached to the picture (at most 3 mm under it)
     becomes the picture's resource caption instead (`resource_caption`, no
-    frame). Returns the new frames; the box keeps the rest of its lines."""
+    frame). A box that gets caption frames grows with them (`grow_with`:
+    `growWith: "children"` in its template). Returns the new frames; the
+    box keeps the rest of its lines."""
     out = []
     for c in [f for f in frames if f.kind == "box" and f.lines]:
         pics = [g for g in frames if g.parent is c and g.kind in ("picture", "figure")]
@@ -2268,6 +2270,7 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
             mid = (min(l.x0 for l in col) + max(l.x1 for l in col)) / 2
             f.caption_centred = len(col) > 1 and is_centred(col) or abs(mid - (p.box[0] + p.box[2]) / 2) <= 2.0
             out.append(f)
+            c.grow_with = True       # the box grows with the captions hung in it (postext 1.52)
         c.lines = [l for l in c.lines if id(l) not in taken]
     return out
 
@@ -3774,6 +3777,8 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
         h = f.box[3] - f.box[1]
         if f.kind in ("box", "tab"):
             c["minHeight"] = mmv(h)
+        if getattr(f, "grow_with", False):
+            c["growWith"] = "children"   # a longer caption makes the box taller (#1117)
         elif f.kind == "text" and f.lines:
             c["minHeight"] = mmv(max(0.0, h - 0.5))
         if f.kind == "tab":

@@ -111,8 +111,10 @@ Gotchas:
 - **Symbol fonts** (Symbol, Wingdings, Zapf Dingbats, private-use code
   points): map the characters to Unicode (⇌ ≤ α → •). Skip decorative
   bullets.
-- **Small caps** extract as lower case: restore roman numerals ("xix" → "XIX")
-  and acronyms.
+- **Small caps** extract as lower case: a numeral or an acronym the source
+  prints in small capitals goes back into `:smallcaps[…]` in lower case
+  (`siglo :smallcaps[xix]`, playbooks B8a); one printed in full capitals
+  is written in capitals ("xix" → "XIX").
 - **Tabbed lines** (a menu, a cast list, a price list, marks at the margin):
   the extractor joins the parts with a space and drops the dot leader, or
   keeps the dots as text. Delete typed leaders, write `:tab` between the
