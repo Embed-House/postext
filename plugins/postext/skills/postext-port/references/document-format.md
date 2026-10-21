@@ -72,8 +72,8 @@ A heading's inline content is read like a paragraph's while `headings.inlineMark
 - With `headings.inlineMarks: false` (and in a preset without `configVersion` 6 whose headings carry marks) they are **reduced to plain text**: the markers are removed and the heading's look comes only from the level/style config.
 - `` `code` `` becomes its text. Images are removed.
 - Escapes `\* \_ \^ \~ \`` produce the literal character.
-- **Kept as live spans:** `:ref{…}`, the `@sec:id` / `[@fig:id]` / `\ref{…}` / `\eqref{…}` cross-references, `:swatch{…}` and inline `$math$`. `:mark`, the CJK marks, ruby and `:tcy`/`:upright`/`:sideways` are read with the other inline marks. **Printed as written** in a heading: `:chip[…]`, footnote markers `[^id]`, citations `[@key]` / `@key`, and `:tab`.
-- **`:chip[…]` is NOT processed in headings.** It stays literal text.
+- **Kept as live spans:** `:ref{…}`, the `@sec:id` / `[@fig:id]` / `\ref{…}` / `\eqref{…}` cross-references, `:swatch{…}` and inline `$math$`. `:mark`, the CJK marks, ruby and `:tcy`/`:upright`/`:sideways` are read with the other inline marks. **Printed as written** in a heading: footnote markers `[^id]`, citations `[@key]` / `@key`, and `:tab`.
+- **`:chip[…]` in a heading** (postext ≥ 1.52.0): set as in a paragraph (`## :chip[///]{style="mark"} Title`, a coloured chip or a symbol run before the title); the contents, running heads, PDF bookmarks and EPUB navigation read the title without it, and a heading drawn by a design prints the title without the chip. An older engine prints it literally.
 
 ### 2.2 Heading attributes: trailing `{…}`
 
@@ -177,6 +177,7 @@ The same triggers also end a running paragraph mid-way (§3.1): a continuation l
 - Leading and trailing whitespace of every line is trimmed. Internal runs of spaces survive in the text but are measured as spaces.
 - **Tabs (postext ≥ 1.23, §10.9).** `:tab` is always a tab. A tab character (U+0009) inside a line is a tab **only in a paragraph whose resolved style has `tabStops` or `tabInterval`** (body text, paragraph style or callout body); everywhere else it is a word space, as up to 1.22. A tab character at the start of a source line is trimmed with the line: start a line at a stop with `:tab`. Headings, captions and table cells keep their own meaning of tabs.
 - **Non-breaking spaces (postext ≥ 1.5):** U+00A0, the narrow U+202F and the figure space U+2007 **glue** the words on either side, on every breaker (plain and rich text, Knuth–Plass, captions, cells, boxes, design text): a number and its unit (37 °C, with U+202F), a group of thousands (225 000, with U+00A0), a label and its number. Each keeps its own width; justification stretches only the word spaces. The word joiner U+2060 glues with no width. Type the character itself, not `&nbsp;` (HTML is not interpreted). A glued group wider than the whole line breaks at its last no-break space. The atomic inline units are therefore NBSP-glued groups, text that touches with no space (`**word**.`, `(:ref{…})`), a `:chip` and a `:ref` label. Up to 1.4 a paragraph with inline formatting or a `:ref` could break at a NBSP, and the port scripts replaced it with a plain space; they keep it now.
+- **Fixed spaces.** The en space U+2002 and the em space U+2003 keep their width (half an em, an em): the room between a number and a title (`## 3 Las plantas` with U+2002), in a running head, after a chip. A line may break after them, as after a word space. The port scripts keep them (`postext_md.clean_text`) and turn a thin or hair space (U+2009, U+200A) into U+202F where it holds a number together (between digits, before `%`, `°`, a currency or a unit) or sets off French punctuation; any other thin space becomes a plain space.
 - **Soft hyphen U+00AD** is a discretionary break, with a hyphen added at the break, **only between two letters or digits** (postext ≥ 1.28). A word that carries one gets no dictionary point, so `to\u00ADgether` breaks there and nowhere else, and a soft hyphen **before the first letter** (`\u00ADAlice`, what InDesign's discretionary hyphen exports as) keeps that occurrence of the word whole: the way to stop one word from being divided once, in any language (for every occurrence use `hyphenation.exceptions`). At a word's edge, after `(` or `“`, or before `,` `)` `”` it breaks nothing and prints nothing; keep such marks when you extract text. Up to 1.27 an edge soft hyphen was a break (`said Alice-` | `indignantly`) and port scripts had to strip it.
 - A **hard hyphen between two letters** (`enseñanza-aprendizaje`) is a break opportunity; the line ends on the existing hyphen.
 - Automatic hyphenation follows the config locale.
@@ -500,10 +501,11 @@ The keeper's quarters occupy the eastern wing.
 
 ### 9.4 Placement (resource JSON, not Markdown)
 
-`placement: { position: auto|top|bottom|here, span: column|page|side, rotate?: ccw|cw, width?: 0..1, align?: left|center|right, captionSide?: bool, columns?: int, wrap?: none|left|right|start|end|contour, wrapGap?: Dimension }`. `align` also takes `start|end` (≥ 1.15, logical sides). `position: here` with `span: page` (≥ 1.19) cuts a multi-column band like a page-span box. `wrap: contour` (≥ 1.36) runs the text round the picture's shape (`Resource.contour`). Other placement fields (`shrink`, `minScale`, `captionMeasure`, `citingPage`): configuration.md §15.
+`placement: { position: auto|top|bottom|here, span: column|page|side, rotate?: ccw|cw, width?: 0..1, align?: left|center|right, captionSide?: bool|inside, columns?: int, wrap?: none|left|right|start|end|contour, wrapGap?: Dimension }`. `align` also takes `start|end` (≥ 1.15, logical sides). `position: here` with `span: page` (≥ 1.19) cuts a multi-column band like a page-span box. `wrap: contour` (≥ 1.36) runs the text round the picture's shape (`Resource.contour`). Other placement fields (`shrink`, `minScale`, `captionMeasure`, `citingPage`): configuration.md §15.
 - `wrap` (≥ 1.24): text beside a picture narrower than its column. With `position: here` the text after the `::resource` line runs beside it and then under it (a paragraph may start beside it and end under it); on a one-column float at the head or foot of a column, the column's first or last lines. Headings, display maths, figures, tables, boxes and poems go under it. `width` defaults to `layout.wrap.defaultWidth` (0.45); `wrapGap` to one body line. This replaces a `:::columns{count=2 breaks=…}` group holding the text and the picture.
 - `columns` (≥ 1.18): a `span: column` float across that many adjacent columns (a newspaper picture across 2 of 5 columns); as many as the page has = page-wide; ignored for page/side spans, rotated resources and `here` embeds; `captionSide` only on 1-column floats.
 - `captionSide` (the float-only side column of `oneAndHalf`): a column float and, ≥ 1.28, a `here` embed one column wide. The embed's caption and note stand in the side column level with the body's top, its block is as tall as the body, and later side figures and boxes keep clear of the caption; where the side column is taken beside it the caption stays under the body. Not in a box, on a vertical page or with `wrap`. `layout.inlineCaptionSide: false` = floats only (1.27).
+- `captionSide: inside` (≥ 1.52): the caption beside a narrow picture inside its own slot, in a one- or two-column page, a float, a `here` embed, a box or a frame. The picture takes `width` of the slot (0.5 by default) on its `align` side, the caption the rest after `layout.gutterWidth`, level with the picture's top; the block is as tall as the taller of the two and moves on whole. Pictures only.
 - A resource's own placement falls back to its type's `defaultPlacement`, then to `auto`/`column`.
 
 ### 9.5 Tables
@@ -571,9 +573,15 @@ The sun warms the sea and :mark[water rises into the air as vapour].
 **Regex:** `:swatch\{([^}]*)\}`.
 - `color` is required (no colour: literal text). Values: `#rgb` or `#rrggbb`, **or a palette entry id** (e.g. `color="table-compatible"`). An unresolved value draws an empty outline.
 - Allowed in every text block including headings, and in snippets.
+- Shape (postext ≥ 1.52.0): `size` (side, default 0.75em), `border` (`none`, or a width and a colour in either
+  order), `borderWidth` / `borderColor` (each alone, over `border`; default a 6 % outline in the text colour),
+  `radius` (corners, clamped to a circle), `gap` (room after the square, part of its advance, so the label follows
+  with no space). Lengths `pt|px|mm|cm|in|em|rem`, a bare number is pt, em of the surrounding text; the outline
+  colour is a hex or a palette id. Port a map legend's keys this way, never as chips or pictures.
 
 ```md
 :swatch{color="ok"}: compatible; :swatch{color="#e5adb8"}: incompatible
+:swatch{color="farmland" size=10pt border="0.75pt ink" radius=2pt gap=3pt}Farmland
 ```
 
 ### 10.3 `:smallcaps[text]` (small capitals)
@@ -945,6 +953,7 @@ draws its design (1.37), and a `{style="…"}` heading attribute works in it. Wa
 label styles before any layout.
 
 **Directives inside a `:::callout` are ignored** (except `:::space`). An unknown `:::word` is literal text (`unknownDirective`).
+**`:::toc`, `:::index`, `:::pagebreak`, `:::columnbreak`, `:::space`, `:::numbering` and `:::bibliography` are one line: never close them.** A bare `:::` after one closes the frame or box it sits in; with none open, postext (1.52) drops it and reports `strayFence`, and `lint_project.py` warns (older engines print it).
 
 ```md
 # Contents {style="front-matter" toc="false"}
@@ -996,6 +1005,7 @@ styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings`
 - `textWrap` (≥ 1.24: a resource or box with `wrap` kept its band whole: `tooNarrow` (text beside it under `layout.wrap.minTextWidth`), `fewLines` (shorter than `minLinesBeside`), `verticalText`; or `moved`: an inline one too tall for the room left moved to the next column with its anchor), and the config warning `wrapUnsupported` (a type's `defaultPlacement.wrap` in vertical text)
 - `dropCap` (≥ 1.23: a paragraph a drop cap opens could not take it as configured; `reason` `shortParagraph` (with `handling` reserve/shrink/skip), `split`, `joiningScript`, `verticalText`, `noLetter`), and the config warnings `unknownConfigKey` / `unknownConfigValue` for a drop cap's unknown key, `punctuation`, `shortParagraph`, `lines`, `sink` or `characters` (configuration.md §4b)
 - `fontFallback` (≥ 1.25, browser and worker builds: a face the text was set in that was not loaded, `missing`, or that the browser drew from another weight or slant, `synthesized`; load it with `prepareFonts` / `buildDocumentWithFonts`)
+- `glyphFallback` (≥ 1.52: characters the text sets in a face that has no glyph for them, drawn from another face; one per face with `characters` (the first 24), `count` and `supplier` (the generic family that drew them, absent when the system picked one); browser and worker builds ask a probe face, the command line reads each face's `cmap`. Choose a family that covers the characters, or set them in one that does)
 - `fullwidthMarkup` (`：：：`, `＃`, `［＾…］`, `｛…｝`, `＊＊` typed with a Chinese input method: set as text), `attributeKeyInvalid` (a key outside ASCII, `作者=曹雪芹`: dropped, the block's other keys still apply)
 - `invalidFrontmatter` (≥ 1.24, §1), `unclosedMathBlock`, `spaceInvalidLines`, `paperAttributeInvalid`, `columnsFlowUnknown` / `columnsTooNarrow` (§7.4), `undefinedFootnote` / `unusedFootnote` (§10.4), `indexMarkInvalid` / `indexRangeUnclosed` / `indexSeeUnknown` / `indexReadingMissing` (§10.5), `duplicateAnchor` (§10.6), `unknownCitationKey` / `referencesUnreadable` / `citationsUnavailable` (§10.7)
 
@@ -1104,7 +1114,7 @@ styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings`
 5. Attribute values contain no `}`. Quotes don't clash. `::resource` uses exactly `{id="…"}`.
 6. Every `type=`, `style=` and `:chip{style}` id exists in the config. Every `:ref` / `::resource` id exists in `resources`.
 7. Every opened `:::callout|paragraphs|part|columns` has its closing `:::`. A `:::columns` outside a callout needs postext ≥ 1.25 (`layout.flowColumns`; below `configVersion` 11 it is ignored).
-8. No headings end in brace text unless it is meant as attributes. No `:chip` in headings.
+8. No headings end in brace text unless it is meant as attributes. No `:chip` in headings on an engine older than 1.52.0.
 9. Frontmatter appears only in the book's first chapter.
 10. No GFM tables, HTML, or `---` rules remain. A code listing is a ```` ``` ```` / `~~~` fence (postext ≥ 1.23, §3.4), never one paragraph per line. Every `[^id]` marker has one `[^id]:` definition in its chapter, and none sits in a heading, caption or cell.
 11. Index marks sit in running text (not captions or cells), never right after a colon; ranges are paired; every `see`/`seealso` target is an entry; each index that has marks has its `:::index`.

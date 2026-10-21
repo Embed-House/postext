@@ -1207,7 +1207,7 @@ All em values = the callout body font size.
            letterSpacing (≥ 1.42: em of the body size, negative tightens; tracks the box's paragraphs and
            list items, measured into the lines) }   → inherit bodyText
          + italic = false, smallCaps = false   (paragraphs, list items and blockquotes of the box)
-  lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight? }  → inherit unorderedLists
+  lists = { bulletChar, color, indent, gap, itemSpacing, bulletFontSize?, bulletFontWeight?, bulletFontFamily? }  → inherit unorderedLists (bulletFontFamily unset: the list level keeps its own face)
            (a set `color` also colours ordered-list numbers, even when equal to unorderedLists.color)
   columnGap = 1.5em                  for :::columns{count=N} groups inside the box (a fence `gap=` overrides it)
   marginTop = 0.75em, marginBottom = 0.75em (minimum; grid-snapped after)
@@ -1320,7 +1320,8 @@ style declares (`unknownMarkStyle`), takes the first style; declaring `markStyle
   background: ColorValue = #fff0a0 (palette-linkable), color?: ColorValue (the text's; reaches the whole word that
   holds glued punctuation), borderRadius = 0.2em (the phrase's two ends, clamped), paddingX = 0.15em (past the
   first and last letter, into the word spaces), paddingY = 0.05em, paddingTop?, paddingBottom? (each in place
-  of paddingY) }
+  of paddingY), decorationBreak = 'slice' | 'clone' (postext ≥ 1.52.0; 'clone' gives every line piece of a wrapped
+  phrase a whole band, paddingX and corners on both ends: a heading on a colour band cut per line) }
 ```
 The band takes no room: the lines break as they would without the mark, so marking a laid-out book moves no page.
 Port rule: one style per distinct highlight colour of the source, the highlight's text colour in the style's
@@ -1372,6 +1373,10 @@ align?:   'left' (default) | 'center' | 'right' | 'start' | 'end'   (start/end �
                          flow sides, so in an RTL book 'left' is the sheet's right)
 captionSide?: boolean    caption in the float-only side column, level with the figure (oneAndHalf+floats): column floats and,
                          ≥ 1.28, a 'here' embed one column wide (layout.inlineCaptionSide; not in a box, a vertical page or with wrap)
+              | 'inside' ≥ 1.52: caption + note beside a picture inside its own slot, any layout (1 or 2 columns,
+                         page span, 'here', box, frame): picture = `width` of the slot (default 0.5) at `align`'s side,
+                         caption = the rest after layout.gutterWidth, top-aligned; block = the taller of the two;
+                         band < 1/5 of the slot -> caption under. Pictures only; no wrap, rotate or vertical page
 columns?: number         ≥ 1.18: a span:'column' float across this many adjacent columns (picture across 2 of 5);
                          ≥ the page's column count = page-wide; ignored for page/side spans, rotate, here;
                          captionSide only on 1-column floats
@@ -2097,6 +2102,8 @@ Decoration elements (≥ 1.48, besides text, image, rule, box):
 Callout styles as frame dress (≥ 1.48): borderRadius per corner as above, border.sides per side, label.joined +
   label.fillet (one outline with the box; offset 0), label.position 'bottom-left'|'bottom-right'|'bottom-start'|
   'bottom-end', label.icon { kind: 'glyph', glyph, fontFamily?, fontWeight?, scale? (1), color?, placement?, gap? }
+  label.borderRadius (#1102): CornerRadius of the tab itself. Plain tab: square unless set. Joined tab: its two
+  outer corners (topLeft/topRight at the head, bottomLeft/bottomRight at the foot), default the box corner; fillets keep fillet.
 
 ResourceAnchor (≥ 1.48): labelAt?: { x, y } (fractions: the label away from its point), leader?: boolean | LeaderStyle
 LeaderStyle  { color? (the label's), opacity? (≥ 1.49), width? (0.75pt), dash?, startCap? ('none'), endCap? ('dot'),
@@ -2536,6 +2543,10 @@ much as a bold made from the regular). Builds with a font set check it (the brow
 the `postext` command line (≥ 1.28): it warns `fontFallback` when a face the family ships could not be loaded
 (offline with nothing cached, a failed download, a `--font-dir` without the file) and another face of the family
 stood in. A weight or slant the family does not ship stays silent there. `render.mjs` does not check it.
+It gates `glyphFallback` too (≥ 1.52): characters the text sets in a face with no glyph for them, which
+another face drew (an arrow or a Greek letter from a fallback serif beside a sans text face), one warning per
+face with the characters. The command line reads the `cmap` of every face it loads; browser and worker builds
+ask a probe face that `prepareFonts` and the layout worker declare (`installGlyphProbe`).
 
 **Fonts and caches in browser code (≥ 1.25).** Build with `buildDocumentWithFonts(content, config,
 { resolve })`, or call `prepareFonts(content, config, { resolve })` before `buildDocument`: it loads

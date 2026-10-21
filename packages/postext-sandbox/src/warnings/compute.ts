@@ -328,6 +328,15 @@ function collectLayoutWarnings(doc: VDTDocument, markdown: string): Warning[] {
       });
       return;
     }
+    if (w.kind === 'glyphFallback') {
+      // Characters a face lacks, drawn from another face (#1105): one per
+      // face, no place in the text.
+      out.push({
+        id: `glyph-fallback-${w.family}-${w.weight}-${w.style}`,
+        payload: { kind: 'glyphFallback', family: w.family, weight: w.weight, style: w.style, characters: [...w.characters], count: w.count, ...(w.supplier ? { supplier: w.supplier } : {}) },
+      });
+      return;
+    }
     // A text panel's text clipped (#885) is the layout's; the panel frame's
     // other reasons are read from the source.
     if (!LAYOUT_CONTENT_KINDS.has(w.kind) && !(w.kind === 'comicPanelFrame' && w.reason === 'textOverflow')) return;
@@ -1585,8 +1594,10 @@ function computeDocumentWarnings(params: {
     // A family the Sandbox already names as unknown or short of files is
     // not reported again as a fallback.
     const named = new Set(warnings.flatMap((w) => (w.payload.kind === 'missingFontFamily' || w.payload.kind === 'missingFontVariant' ? [w.payload.family.toLowerCase()] : [])));
-    warnings.push(...collectLayoutWarnings(doc, markdown).filter((w) => w.payload.kind !== 'fontFallback'
-      || (toggles.missingFont && !(w.payload.reason === 'missing' && named.has(w.payload.family.toLowerCase())))));
+    warnings.push(...collectLayoutWarnings(doc, markdown).filter((w) => (w.payload.kind === 'glyphFallback'
+      ? toggles.missingFont && !named.has(w.payload.family.toLowerCase())
+      : w.payload.kind !== 'fontFallback'
+        || (toggles.missingFont && !(w.payload.reason === 'missing' && named.has(w.payload.family.toLowerCase()))))));
   }
   if (doc) warnings.push(...collectHeadingDesignCutWarnings(doc, markdown));
 

@@ -1,0 +1,24 @@
+name: Setup
+description: pnpm, Node and the workspace's packages, with Turbo's cache of the last build restored
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: pnpm
+
+    - run: pnpm install --frozen-lockfile
+      shell: bash
+
+    # The packages' dist from the newest run that saved one (the checks job
+    # saves it): a package whose inputs did not change is replayed in a
+    # second rather than built again (#1118).
+    - uses: actions/cache/restore@v4
+      with:
+        path: .turbo/cache
+        key: turbo-${{ runner.os }}-${{ github.sha }}
+        restore-keys: turbo-${{ runner.os }}-

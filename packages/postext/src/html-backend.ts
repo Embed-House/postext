@@ -51,7 +51,8 @@ import { fontFamilyOf } from './measure/vertical';
 import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay';
 import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url';
-import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTTextDots } from './vdt';
+import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTSwatch, VDTTextDots } from './vdt';
+import { hasSwatchShape, swatchGeometry, type SwatchGeometry } from './swatchShape';
 import { iconLineDash, inlineIconBox } from './measure/inlineIcon';
 import { textDots } from './textDots';
 import type { ComicCastMember } from './types';
@@ -1581,7 +1582,7 @@ function renderSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -1734,7 +1735,7 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -1834,14 +1835,29 @@ function renderSwatch(x: number, baselineOffset: number, side: number, fill: str
 /** A `'swatch'` segment: its inline symbol when it carries one (#1058),
  *  else the colour swatch. */
 function renderSwatchSegment(
-  swatch: { color?: string; icon?: VDTInlineIcon } | undefined,
+  swatch: VDTSwatch | undefined,
   x: number,
   baselineOffset: number,
   width: number,
   ink: string,
   paint?: HtmlPaint,
+  rtl = false,
 ): string {
-  return swatch?.icon ? renderInlineIconHtml(swatch.icon, x, baselineOffset, ink, paint) : renderSwatch(x, baselineOffset, width, swatch?.color, ink);
+  if (swatch?.icon) return renderInlineIconHtml(swatch.icon, x, baselineOffset, ink, paint);
+  if (swatch && hasSwatchShape(swatch)) return renderShapedSwatch(swatchGeometry(swatch, x, baselineOffset, width, rtl), swatch.color, swatch.borderColor ?? ink);
+  return renderSwatch(x, baselineOffset, width, swatch?.color, ink);
+}
+
+/** A swatch with a shape of its own (#1104): the square of `g` (from the
+ *  line top), its outline inside the edge, its corners rounded. */
+function renderShapedSwatch(g: SwatchGeometry, fill: string | undefined, ink: string): string {
+  const border = g.stroke > 0 ? `border:${g.stroke.toFixed(2)}px solid ${ink};` : '';
+  const radius = g.radius > 0 ? `border-radius:${g.radius.toFixed(3)}px;` : '';
+  return (
+    `<span aria-hidden="true" style="position:absolute;left:${g.x.toFixed(3)}px;top:${g.y.toFixed(3)}px;` +
+    `width:${g.side.toFixed(3)}px;height:${g.side.toFixed(3)}px;box-sizing:border-box;` +
+    `${border}${radius}${fill ? `background:${fill};` : ''}"></span>`
+  );
 }
 
 /**
@@ -2351,7 +2367,7 @@ function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, tar
       continue;
     }
     if (seg.kind === 'swatch') {
-      sideways.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color));
+      sideways.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -2597,7 +2613,7 @@ function renderResourceLine(
         continue;
       }
       if (seg.kind === 'swatch') {
-        parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, color, paint));
+        parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, color, paint, seg.rtl === true));
         x += seg.width;
         continue;
       }

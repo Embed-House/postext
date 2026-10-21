@@ -39,14 +39,15 @@ export interface ShapeOutline {
 
 /** A label tab grown out of a box (`label.joined`): it stands on the
  *  `edge` side, from `x0` to `x1` across, `height` out from the edge, its
- *  outer corners rounded `radius`, its sides meeting the box in fillets of
+ *  outer corners rounded `radius` (one for both, or the corner at `x0`
+ *  and the one at `x1`, #1102), its sides meeting the box in fillets of
  *  `fillet`. */
 export interface ShapeTab {
   edge: 'top' | 'bottom';
   x0: number;
   x1: number;
   height: number;
-  radius: number;
+  radius: number | readonly [number, number];
   fillet: number;
 }
 
@@ -90,7 +91,10 @@ export function boxOutline(box: BoundingBox, radii: readonly [number, number, nu
   const rL = flushL ? 0 : Math.min(cornerL, gapL - fL);
   const rR = flushR ? 0 : Math.min(cornerR, gapR - fR);
   const f = Math.max(0, Math.min(Math.max(fL, fR), th));
-  const rt = Math.max(0, Math.min(tab.radius, (b - a) / 2, th - f));
+  const [radiusA, radiusB] = typeof tab.radius === 'number' ? [tab.radius, tab.radius] : tab.radius;
+  const outer = (r: number) => Math.max(0, Math.min(r, (b - a) / 2, th - f));
+  const ra = outer(radiusA);
+  const rb = outer(radiusB);
   const fl = Math.min(fL, f);
   const fr = Math.min(fR, f);
   const vertices: ShapeVertex[] = [];
@@ -106,8 +110,8 @@ export function boxOutline(box: BoundingBox, radii: readonly [number, number, nu
       push({ x, y, r: rL }, 'top');
       push({ x: a, y, r: fl, concave: true }, 'top');
     }
-    push({ x: a, y: ty, r: rt }, 'top');
-    push({ x: b, y: ty, r: rt }, flushR ? 'right' : 'top');
+    push({ x: a, y: ty, r: ra }, 'top');
+    push({ x: b, y: ty, r: rb }, flushR ? 'right' : 'top');
     if (!flushR) {
       push({ x: b, y, r: fr, concave: true }, 'top');
       push({ x: right, y, r: rR }, 'right');
@@ -122,8 +126,8 @@ export function boxOutline(box: BoundingBox, radii: readonly [number, number, nu
       push({ x: right, y: foot, r: rR }, 'bottom');
       push({ x: b, y: foot, r: fr, concave: true }, 'bottom');
     }
-    push({ x: b, y: ty, r: rt }, 'bottom');
-    push({ x: a, y: ty, r: rt }, flushL ? 'left' : 'bottom');
+    push({ x: b, y: ty, r: rb }, 'bottom');
+    push({ x: a, y: ty, r: ra }, flushL ? 'left' : 'bottom');
     if (!flushL) {
       push({ x: a, y: foot, r: fl, concave: true }, 'bottom');
       push({ x, y: foot, r: rL }, 'left');

@@ -3,7 +3,7 @@ import { fontFamilyOf, getMeasureRegion, getMeasureUprightDigits, getMeasureWrit
 import type { PartPageInfo } from './placeholders';
 import { applyPartPalettesToFlow, type FlowColorValues } from './partPalette';
 import { recolorLineNumbers } from './lineNumbers';
-import { applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting';
+import { CHIP_PLACEHOLDER, applyTitleBreaks, parseInlineFormatting, replaceTitleBreaks } from '../parse/inlineFormatting';
 import type { ColorPaletteEntry, ColorValue, DesignSlot, DesignTextAlign, Dimension, DocumentMetadata, Resource, ResolvedCalloutDesignConfig, ResolvedDesignSlot, ResolvedDesignTextElement, ResolvedHeadingLevelConfig, TextAlign } from '../types';
 import {
   createBoundingBox,
@@ -887,6 +887,11 @@ export function defaultOpenerTitle(
   /** Where a line break was read back as a space or a no-break space. */
   const separators = new Set<number>();
   let hasMarks = false;
+  /** Where each chip of the title was left out (#1100), in `chars`, with
+   *  the space after it when a space or the start of the line comes
+   *  before it: a chip is a box of the page, not words of the title. */
+  const removedAt: number[] = [];
+  let afterChip = false;
   lines.forEach((ln, i) => {
     const start = chars.length;
     // The hyphen repeated from the line before (`repeatHyphen`) is not part
@@ -898,6 +903,17 @@ export function defaultOpenerTitle(
         if (s.text.startsWith('-')) from = 1;
         skipRepeated = false;
       }
+      if (s.text === CHIP_PLACEHOLDER) {
+        removedAt.push(chars.length);
+        afterChip = true;
+        continue;
+      }
+      if (afterChip && s.text === ' ' && (chars.length === start || chars[chars.length - 1] === ' ')) {
+        removedAt.push(chars.length);
+        afterChip = false;
+        continue;
+      }
+      afterChip = false;
       const f: TitleRunFlags = s.bold || s.italic || s.script
         ? { bold: !!s.bold, italic: !!s.italic, ...(s.script ? { script: s.script } : {}) }
         : PLAIN_RUN;
@@ -935,7 +951,18 @@ export function defaultOpenerTitle(
   }
   const full = chars.join('');
   const drop = numberPrefix && full.startsWith(`${numberPrefix}${numberSeparator}`) ? numberPrefix.length + numberSeparator.length : 0;
-  const title = full.slice(drop);
+  if (removedAt.length > 0) {
+    // The forced breaks and the length of the title without what was left
+    // out; a space a closing chip stood after goes too.
+    titleBreaks = titleBreaks?.map((i) => i - removedAt.filter((c, k) => c - drop + k < i).length);
+    titleLength -= removedAt.length;
+    while (chars.length > drop && chars[chars.length - 1] === ' ') {
+      chars.pop();
+      flags.pop();
+      titleLength--;
+    }
+  }
+  const title = chars.join('').slice(drop);
   const titleText = applyTitleBreaks(title, titleBreaks, titleLength);
   if (!hasMarks) return { titleText };
   let tChars = chars.slice(drop);

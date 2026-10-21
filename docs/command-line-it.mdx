@@ -376,6 +376,8 @@ download fallito, una cartella di font senza il file), il testo viene composto n
 carattere della famiglia che lo sostituisce secondo la stessa regola e `postext check`
 lo elenca come avviso `fontFallback`: le sue righe possono andare a capo diversamente rispetto alla Sandbox.
 
+Un carattere per cui un font non ha glifo viene disegnato con un altro font. `postext check` legge la tabella `cmap` di ogni font che carica ed elenca questi caratteri una volta per font per tutto il libro come avviso `glyphFallback`; con `--json`, il suo `data` riporta i caratteri e quanti sono.
+
 La cache è `~/.cache/postext` (`%LOCALAPPDATA%\postext\cache` su Windows);
 `POSTEXT_CACHE_DIR` o `--cache-dir` la spostano. `--offline` salta il download.
 Una famiglia non trovata da nessuna parte viene composta in EB Garamond con il proprio nome, così l’impaginazione

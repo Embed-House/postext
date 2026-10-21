@@ -240,6 +240,24 @@ export interface VDTChipRun {
   rtl?: true;
 }
 
+/** An inline colour swatch on its line (`VDTLineSegment.swatch`): the
+ *  fill (hex; absent when the colour did not resolve), or the inline symbol
+ *  that rides its placeholder (#1058). The other fields are set only by a
+ *  swatch that writes them (#1104): `side`, the square's side in px when it
+ *  is not the segment's whole width (a `size`, or a `gap` after the square,
+ *  which takes the rest of the width: on the square's right, on its left
+ *  in a right-to-left segment); `borderWidth` (px, 0 for no outline) and
+ *  `borderColor` (hex) of the outline, which is otherwise 6 % of the side
+ *  in the text colour; `radius`, the corner radius in px. */
+export interface VDTSwatch {
+  color?: string;
+  icon?: VDTInlineIcon;
+  side?: number;
+  borderWidth?: number;
+  borderColor?: string;
+  radius?: number;
+}
+
 /** A laid-out inline chip (`:chip[…]`): a box drawn from
  *  `x + marginLeft` (the segment's left edge `x`), `boxWidth` wide, from
  *  `ascent` above the baseline to `descent` below it, with the text runs
@@ -348,8 +366,9 @@ export interface VDTLineSegment {
   /** Present when `kind === 'swatch'`: an inline colour swatch (`:swatch{…}`),
    *  a square of `width` px filled with `color` (a hex; absent when the
    *  colour did not resolve — the square is then an empty outline), sitting
-   *  on the baseline and outlined in the text colour. */
-  swatch?: { color?: string; icon?: VDTInlineIcon };
+   *  on the baseline and outlined in the text colour. A swatch with a shape
+   *  of its own (#1104) carries it (see {@link VDTSwatch}). */
+  swatch?: VDTSwatch;
   /** Present when `kind === 'chip'`: an inline chip (`:chip[…]`), painted
    *  as a box with its own text runs. The segment's `text` is the one-char
    *  plain-text placeholder; the words live in `chip.runs`. */
@@ -4000,6 +4019,16 @@ export type ContentWarning = ContentWarningBase & (
    *  `BuildDocumentOptions.fontSet`), behind
    *  `debug.warnings.missingFont`. No page and no source range. */
   | { kind: 'fontFallback'; family: string; weight: number; style: 'normal' | 'italic'; reason: 'missing' | 'synthesized' }
+  /** Characters the text sets in a face that has no glyph for them, which
+   *  another face drew (#1105): the next family of the font list that has
+   *  them (`supplier`, a generic family such as `serif` too), or, without
+   *  `supplier`, a face the system picks. One per face: `characters` lists
+   *  the first of them (each once, at most 24), `count` says how many in
+   *  all. Checked by the glyph probe where there is a font set
+   *  (`installGlyphProbe`), else against the `cmap` of the files
+   *  registered with `registerFontCoverage`; behind
+   *  `debug.warnings.missingFont`. No page and no source range. */
+  | { kind: 'glyphFallback'; family: string; weight: number; style: 'normal' | 'italic'; characters: string[]; count: number; supplier?: string }
 );
 
 /** Where a design slot is painted: a running head (`'header'`), a folio

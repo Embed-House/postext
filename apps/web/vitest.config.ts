@@ -1,6 +1,11 @@
 import { defineConfig } from "vitest/config";
 import path from "node:path";
 
+// `pnpm test:quick` (POSTEXT_QUICK_TESTS=1) leaves out the sweeps cut in
+// parts, the whole books and the end-to-end runs: a check while working.
+// CI runs every file (#1118).
+const QUICK = process.env.POSTEXT_QUICK_TESTS ? ["**/*.part*.test.ts", "**/*.e2e.test.ts", "**/presets/**"] : [];
+
 export default defineConfig({
   resolve: {
     alias: { "@": path.join(__dirname, "src") },
@@ -8,9 +13,9 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
+    exclude: ["**/node_modules/**", "**/dist/**", ...QUICK],
     // One test renders the Markdown of every docs and Cookbook page: about
-    // a second on a workstation, close to 30 s on CI, which runs every
-    // package's suite at once on a small runner.
+    // a second on a workstation, close to 30 s on a small CI runner.
     testTimeout: process.env.CI ? 120_000 : 30_000,
   },
 });

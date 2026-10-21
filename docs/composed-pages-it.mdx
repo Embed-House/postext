@@ -356,6 +356,11 @@ I controlli leggono il Markdown e la configurazione prima di qualsiasi impaginaz
       <td>Aggiungi la riga di chiusura: tanti segni di due punti quanti ne ha la riga di apertura della pagina, oppure <code>:::</code> per una cornice o una figura.</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>Un <code>:::</code> isolato subito dopo una direttiva di una riga (<code>:::toc</code>, <code>:::index</code>, <code>:::pagebreak</code>, <code>:::space</code>…), senza cornici o riquadri aperti da chiudere. Quelle direttive non hanno riga di chiusura, quindi la riga viene scartata invece di essere stampata.</td>
+      <td>Elimina il <code>:::</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>Una griglia che si ripete contiene <code>repeat.max</code> schede e la pagina gliene dà di più (vedi <a href="#slot-ripetuti">Slot ripetuti</a>). Uno per ogni scheda in più, sul suo <code>slot="…"</code>: la scheda va alla cornice di flusso, o dopo la pagina.</td>
       <td>Alza o togli <code>max</code> nel modello, oppure sposta le schede in più su un’altra pagina.</td>

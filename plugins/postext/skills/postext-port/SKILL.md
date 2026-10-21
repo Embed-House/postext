@@ -641,7 +641,14 @@ single-use templates only for pages like no other, named by role
 Pick the path per [sources.md](references/sources.md):
 
 - **PDF**: edit `roles.json` (the role of each font/size/colour), then run
-  `scripts/pdf_extract.py markdown source.pdf --roles roles.json --out draft --lang es --link-refs`.
+  `scripts/pdf_extract.py markdown source.pdf --roles roles.json --out draft --lang es`.
+  Mentions of figures, tables, chapters and sections become `:ref` by
+  default (`--no-link-refs` leaves them as text, `--refs-from
+  resources.json` links them to resources cut by another script too);
+  `report.md` lists the ones left as text and the colour the source sets
+  them in, for `bodyText.referenceColor`.
+  A roman the source slants by shearing comes out as italic, and
+  `report.md` counts those runs: check them against the page.
   Cut the figures with
   `scripts/pdf_figures.py stubs source.pdf draft/resources.json --out-dir my-book/resources`,
   and the tables with `scripts/extract_tables.py source.pdf --pages N` (cells
@@ -717,7 +724,7 @@ Pick the path per [sources.md](references/sources.md):
   merges a label printed twice at one point and writes `overlap: "allow"`
   for names the source prints touching, and `scripts/pdf_figures.py symbols`
   lists a map's dots as `avoid` zones. Close the draft with
-  `scripts/composed_check.py check work/regions --json > work/check.json`
+  `scripts/composed_check.py check work/regions --json-out work/check.json`
   (0 overlaps) and `scripts/compare_pages.py … --score work/score.json
   --check work/check.json` (composed-pages.md §3.7, §6.18).
 
@@ -876,6 +883,21 @@ frame or record the pair with its reason in the project's
 Build the PDF (`postext pdf my-book -o /tmp/my-book.pdf`, or `render.mjs --out`)
 for the print checks and once at the end, not on every iteration.
 
+Before delivery, audit that PDF against the source attribute by attribute
+(verification.md §3):
+
+```bash
+python3 scripts/port_audit.py source.pdf /tmp/my-book.pdf --source-pages 23-40 --port-pages 1-18 \
+    --json /tmp/audit.json --md /tmp/audit.md
+```
+
+It matches the words of both by content and counts, per attribute and
+page, the special spaces lost, italic (a sheared upright face included),
+bold, small capitals, bullet size and weight, table cell alignment and
+weight, and the colours of folios, running heads and text that differ.
+Fix each gap at its cause, or name it in the report as a choice or an
+engine limit.
+
 Fix the config or the Markdown until you reach:
 
 - zero lint errors, and `preset_kit.py lint` clean (no content in the
@@ -886,13 +908,28 @@ Fix the config or the Markdown until you reach:
   exception with its reason;
 - `converged=true`;
 - no warnings;
+- `port_audit.py` at 0 in every attribute, or each gap left named in the
+  report;
 - the same page breaks on most pages, within ±1 page per chapter.
 
 A right-bound book reads its spreads right to left: compare page by page,
 and when you look at spreads, the source's odd page is the left one.
 
 ### 8. Deliver
+
+**Hard rule for composed pages: no `pack` while `composed_check.py check`
+exits non-zero.** Run it on the book with `--json-out work/check.json`
+(never `--json > file`, which hides the report and the exit code). Each
+failure is fixed; each overlap is fixed with a move the check lists, set to
+`overlap: "allow"` when the source prints it so, or recorded with its
+reason in `composed-check.json` and raised with the user in the report.
+`unknownConfigKey` and `unknownConfigValue` fail too: a misspelt setting
+changes nothing on the page. Read every WARN line it prints. `preset_kit.py
+pack` refuses while `work/check.json` (or `--check FILE`) says the check
+failed; `--ignore-check` is for the user to choose, not for you.
+
 ```bash
+python3 scripts/composed_check.py check my-book --stress 1.3 --json-out work/check.json   # exit 0 before packing
 python3 scripts/preset_kit.py pack my-book --manifest-only   # my-book.postext: preset.json and the files it names
 python3 scripts/preset_kit.py lint my-book.postext --max-size 1   # no content in the config, config under 1 MB
 ```

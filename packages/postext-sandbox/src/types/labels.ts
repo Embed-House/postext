@@ -226,6 +226,9 @@ export interface SandboxLabels {
   /** `__face__`: the family, weight and slant (`"Garamond" 700 italic`). */
   warningsFontFallbackMissingDetail: string;
   warningsFontFallbackSynthesizedDetail: string;
+  warningsGlyphFallbackTitle: string;
+  warningsGlyphFallbackDetail: string;
+  warningsGlyphFallbackSystemDetail: string;
   warningsLooseLineTitle: string;
   warningsRaggedLineTitle: string;
   warningsRaggedLineDetail: string;
@@ -3283,6 +3286,10 @@ export interface SandboxLabels {
   markStyleColorTooltip: string;
   markStylePaddingXTooltip: string;
   markStylePaddingYTooltip: string;
+  markStyleDecorationBreak: string;
+  markStyleDecorationBreakSlice: string;
+  markStyleDecorationBreakClone: string;
+  markStyleDecorationBreakTooltip: string;
   warningsUnknownMarkStyleTitle: string;
   warningsUnknownMarkStyleDetail: string;
   calloutStyleAdd: string;
@@ -3533,6 +3540,8 @@ export interface SandboxLabels {
   calloutStyleLabelJoinedTooltip: string;
   calloutStyleLabelFillet: string;
   calloutStyleLabelFilletTooltip: string;
+  calloutStyleLabelBorderRadius: string;
+  calloutStyleLabelBorderRadiusTooltip: string;
   calloutStyleLabelPositionBottomRight: string;
   calloutStyleLabelPositionBottomLeft: string;
   calloutStyleLabelPositionBottomStart: string;
@@ -3578,6 +3587,8 @@ export interface SandboxLabels {
   calloutStyleListsHint: string;
   calloutStyleListsBulletSize: string;
   calloutStyleListsBulletWeight: string;
+  calloutStyleListsBulletFont: string;
+  calloutStyleListsBulletFontTooltip: string;
   calloutStyleMarginTopTooltip: string;
   calloutStyleMarginBottomTooltip: string;
   calloutStyleSnapToGrid: string;
@@ -3719,6 +3730,9 @@ export interface SandboxLabels {
   resourceTypePlacementCaptionMeasureTooltip: string;
   resourceCaptionMeasureSlot: string;
   resourceCaptionMeasurePicture: string;
+  resourceCaptionSideOff: string;
+  resourceCaptionSideMargin: string;
+  resourceCaptionSideInside: string;
   resourceTypePlacementWrap: string;
   resourceTypePlacementWrapTooltip: string;
   resourceWrapNone: string;

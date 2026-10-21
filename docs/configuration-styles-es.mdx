@@ -552,6 +552,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>paddingY</code></td>
       <td>Espacio por encima y por debajo; cada uno sustituye a <code>paddingY</code> en su lado.</td>
     </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>Cómo se corta la franja de una frase que pasa a otra línea, como <code>box-decoration-break</code> en CSS. <code>'slice'</code>: una sola franja, recta donde se parte la línea, con el relleno y las esquinas redondeadas solo en el principio y el final de la frase. <code>'clone'</code>: cada trozo de línea lleva una franja completa, con <code>paddingX</code> y las esquinas en sus dos extremos, para un título compuesto sobre una banda de color cortada por líneas. La composición es la misma en los dos casos.</td>
+    </tr>
   </tbody>
 </table>
 

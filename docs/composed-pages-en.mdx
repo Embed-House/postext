@@ -356,6 +356,11 @@ The checks read the Markdown and the configuration before any layout, so they sh
       <td>Add the closing fence: as many colons as the page's opening line, or <code>:::</code> for a frame or a figure.</td>
     </tr>
     <tr>
+      <td><code>strayFence</code></td>
+      <td>A bare <code>:::</code> right after a one-line directive (<code>:::toc</code>, <code>:::index</code>, <code>:::pagebreak</code>, <code>:::space</code>…) with no frame or box open to close. Those directives take no closing fence, so the line is dropped instead of printed.</td>
+      <td>Delete the <code>:::</code>.</td>
+    </tr>
+    <tr>
       <td><code>repeatOverflow</code></td>
       <td>A repeating grid holds <code>repeat.max</code> cards and the page gives it more (see <a href="#repeated-slots">Repeated slots</a>). One per card over, at its <code>slot="…"</code>: the card goes to the flow frame, or after the page.</td>
       <td>Raise or remove <code>max</code> in the template, or move the extra cards to another page.</td>

@@ -253,7 +253,7 @@ node scripts/render.mjs work/regions --frames work/laid.json                   #
 python3 scripts/template_dedupe.py work/regions --laid work/laid.json          # kinds of page, styles, grounds, grids, modules
 python3 scripts/pdf_regions.py manifest work/regions --fonts my-book/fonts
 python3 scripts/lint_project.py work/regions --quiet
-python3 scripts/composed_check.py check work/regions --json > work/check.json  # overlaps: 0 to pass
+python3 scripts/composed_check.py check work/regions --json-out work/check.json  # overlaps: 0 to pass; report and exit code kept
 node scripts/render.mjs work/regions --frames work/folded.json --jpeg work/pages
 python3 scripts/template_dedupe.py work/regions --compare-boxes work/laid.json work/folded.json
 python3 scripts/compare_pages.py source.pdf work/pages --source-pages 4-28 --render-pages 1-25 \
@@ -271,11 +271,39 @@ source on average can still hide a caption under a photo. Fix each overlap
 as §6.18 says before curating anything else: a frame that lies over another
 is usually a group or an anchor the draft read wrongly.
 
+**The curation loop.** `manifest` writes `preset.json` again from
+`library.json` on every run, so a fix typed into `preset.json` is lost at
+the next build, and the skill never edits `preset.json` by hand. Each fix
+goes into `curation.json` in the extract folder instead (`extract` writes
+it empty; `manifest --patch FILE` names another), and `manifest` applies it
+after the build, every time. Its tables, each a list of entries with a
+`reason`:
+
+| Table | Entry | Does |
+|---|---|---|
+| `framePatch` | `{template, frame, set, reason}` | merges `set` into the frame (`null` removes a key) |
+| `frameDrop` | `{template, frame, reason}` | removes the frame and its name from the template's groups |
+| `frameAdd` | `{template, frame: {name, …}, after?, reason}` | adds a frame after `after`, or at the end |
+| `decorationDrop` | `{template, element, reason}` | removes a decoration element by id |
+| `overlapAllow` | `{template, frame, reason}` | sets `overlap: "allow"` on a frame the source prints over or past another (§6.18) |
+| `styles` | `{table, id, set, reason}` | merges `set` into a style of a config list (`calloutStyles`, `labelStyles`, `frameLooks`, `paragraphStyles`…) |
+| `resources` | `{resource: {id, typeId, …}, reason}` | adds a resource the extract did not write |
+
+An entry whose template, frame, element, style or table does not exist, an
+entry without a reason, a frame added twice or a resource id taken already
+fails the run with the list of them, and nothing is written. Write the
+entries against the names `template_dedupe.py` gives (the role names), and
+run `manifest` after dedupe; a rename that breaks an entry fails loudly
+rather than dropping the fix. The `reason`s are the curation's record: the
+port's report lists them. A fix that belongs to the extraction (a frame
+every page reads wrongly) goes into an issue for the scripts, not into a
+long curation file.
+
 <table>
 <tr><th>Script</th><th>Run it</th><th>It writes</th></tr>
-<tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, with <code>--overlay</code> the source pages with every frame drawn</td></tr>
+<tr><td><code>pdf_regions.py extract</code></td><td>once per range of composed pages, after the inventory</td><td><code>library.json</code> (one template per page, callout, mark, label and paragraph styles, <code>suggested</code> bodyText, headings and resource types), <code>resources.json</code> + <code>resources/</code> (grounds, pictures, figures with anchors), <code>chapters/&lt;lang&gt;/01-pages.md</code>, <code>regions.json</code>, <code>report.json</code>, an empty <code>curation.json</code> (kept when it exists), with <code>--overlay</code> the source pages with every frame drawn</td></tr>
 <tr><td><code>template_dedupe.py</code></td><td>right after <code>extract</code>, and again after merging the output of several runs</td><td>the same files in place: shared templates named by what they hold, <code>extends</code> children, a <code>page-base</code> with the decoration most pages share, styles merged by look, alike grounds merged, frames on a lattice as grid groups, every band of a page as a module and the page template as a shell (below), frames named by role (below); <code>dedupe-report.json</code> with every merge and its largest difference, every grid and module, every frame renamed and (<code>pages</code>) every frame's name on the laid page</td></tr>
-<tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits</td></tr>
+<tr><td><code>pdf_regions.py manifest</code></td><td>to look at the draft</td><td>a <code>preset.json</code> in the folder (page size, the library, the chapter, the resources, the fonts) that builds without edits, with the tables of <code>curation.json</code> (or <code>--patch FILE</code>) applied and listed</td></tr>
 <tr><td><code>anchors.py</code></td><td>for one map or diagram, or for another edition's labels</td><td><code>anchors.json</code> (the resource's <code>anchors</code>, <code>labelStyles</code>, the labels) and <code>figure.&lt;lang&gt;.md</code>; <code>anchors.py relabel work/regions/figures.json --strings en=en.json</code> writes other editions from a strings file keyed by the source text or the anchor id</td></tr>
 </table>
 
@@ -410,6 +438,46 @@ What the extraction decides, so you know what to check:
   span is compared with a render of the page without text: a copy drawn
   under a picture or a fill, clipped away or off the page is left out and
   listed under `hiddenTexts` in the report.
+- **Slanted romans** (skill 1.61). A source that obliques an upright face
+  (a sheared text matrix) instead of setting its italic is read from each
+  character's box: a shear of 0.15 or more is italic, written `*…*`, and
+  `report.json` counts the runs per face under `syntheticItalic`. The
+  project then needs that family's italic among its fonts.
+- **Bold and italic** (skill 1.61). The marks of a paragraph are measured
+  against its frame's body (the weight and slant most of the frame's text
+  has): a paragraph set wholly in bold in a regular box comes out as
+  `**…**`, and a frame set wholly in italic gets `body.italic` with no `*`.
+- **Frame titles** (skill 1.61). The first paragraph of a box or text
+  frame is its title (a heading in the frame) when it has at most two lines
+  and fifteen words and two letters or more, text follows it, and it is
+  wholly bold, 1.12 times the
+  size of that text or more, or in another colour. A title at heading size
+  takes that size's level; one at body size goes a level under the
+  smallest heading size (two when it is not bold).
+- **Spaces** (skill 1.61). En (U+2002) and em (U+2003) spaces the source
+  sets are kept. In headings, running heads and tab labels each gap
+  between words is measured, less the line's letter spacing: over half an
+  em and 1.6 times the narrowest other word space of the line is an en
+  space, over 0.8 em an em space (the room between a number and its
+  title, a chip and its words); spaced capitals stay plain. A paragraph opened by a highlight keeps the measured room after
+  it the same way; with `--highlights chip` that room is the chip style's
+  `gap` instead (in em, when wider than 0.4 em). A narrow gap inside a
+  number or before its sign or unit (`1 000`, `21 %`, `5 mm`, often set by
+  position with no space character) becomes a narrow no-break space
+  (U+202F), so the number never breaks; thin spaces before `; : ! ?` and
+  inside `« »` do too. A plain space beside a fixed one is dropped.
+- **Lists** (skill 1.61). A line opened by a bullet (`•·▪■●◦‣►▸◆`) is a
+  list item; the bullets' left edges in a frame, grouped within 1.5 mm,
+  are the levels, so an item whose bullet sits further in is nested
+  (`  - ` under the item above). The frame's style gets `lists` from its
+  top-level bullets: `bulletChar`, `color` (the bullets' most common),
+  `indent`, `gap` (from the bullet's advance to the words),
+  `bulletFontSize` (em of the item text), `bulletFontWeight` and
+  `itemSpacing` (the room between two items over their leading). Each level's bullet goes to
+  `suggested.unorderedLists` (`bulletChar`, `color`, `levels[]` with `bulletChar`,
+  `fontSize`, `fontWeight`), which `manifest` writes into the config: keep
+  it, since a box whose `lists.bulletChar` differs from the document's
+  replaces every level's bullet with its own.
 - **Shapes.** Large white fills are cards; filled or
   stroked rectangles and rounded rectangles that hold text or pictures are
   boxes; a shape 4–13 mm high holding one line of up to ten words is a tab
@@ -417,7 +485,14 @@ What the extraction decides, so you know what to check:
   a heading in it: the title frame that `takes` the level); a rectangle
   under many drawn shapes is a map's ground, not a box; wide coloured
   strokes or fills hugging words are highlights (`:mark`, or `:chip` with
-  `--highlights chip`). A shape a render does not show is not read, and
+  `--highlights chip`). From skill 1.61 a fill over words of one line that
+  runs on past it is a highlight too, never a box (a band with room round
+  its words marks whole words only), the highlighted words do not count in
+  the line's look, so a mark that ends mid-paragraph does not part it, and
+  a borderless fill of the colour behind it under one or two lines is a
+  mask: no frame, no decoration. A last pass joins text frames one under
+  the other in the same look and leading with nothing between them.
+  A shape a render does not show is not read, and
   from skill 1.60 neither is art no pixel of its colour shows (lettering
   under a white panel painted after it, a drawing in the bleed, art clipped
   away): it makes no picture, no box's art and no decoration.
@@ -533,6 +608,13 @@ What the extraction decides, so you know what to check:
   the source centres it, and laid over the box's pictures (a longer
   translation runs over the next row, not under it). The box keeps the rest
   of its words; with none, its fence stays empty (it draws its box, 1.49.1).
+  From skill 1.61 a single caption under a single picture is read the same
+  way when it is set unlike the box's text (size, slant or colour) or
+  centred on the picture; its frame comes right after the picture in
+  reading order. A caption set smaller than the box's text, at most 3 mm
+  under its picture and no wider than it, is the picture's own resource
+  `caption` instead, with no frame (Markdown in a frame by
+  default, a resource caption when small and attached to the picture).
 - **Label hygiene** (`anchors.py`, `pdf_regions.py`). The same text printed
   twice at one point (within 0.5 mm: two grids of degree figures laid one
   over the other, in two sizes) is one label, the larger size kept, with a
@@ -560,10 +642,24 @@ What the extraction decides, so you know what to check:
   are anchored to it (`left-of` / `right-of`, ids `head-odd-ornament-N`,
   `when: "head"` so they go with the head on a page that sets none) and the
   head is as wide as its words; the fold keeps them on the shell with it.
+  From skill 1.61 a line is furniture only when the same place and look
+  come back on another page of the run (a running head set large too), or,
+  set below heading size, when the page prints a folio: a section heading
+  near the foot, or a lone source line in the margin, stays in the text.
 - **Faces.** The PDF's font names are matched to the PostScript names of
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report
   lists every match.
+  From skill 1.61 the style part is read from every form producers write
+  (`Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`, `ArialBold`); a face
+  takes the heavier of the file's weight and the one its name or bold flag
+  says, and either slant; a file with no OS/2 weight takes its name's; a
+  prefix match only joins faces whose names say the same weight and slant.
+  A run is bold at least 500 and 100 over its paragraph's base when it is
+  set in another font (a Medium file beside the Book), 150 over it within
+  one font. When
+  every face comes out at one weight although the names say several, the
+  run prints a `WARNING` and `report.json` lists it under `warnings`.
 
 Also decided by the drafting, checked on a real textbook in three languages:
 
@@ -1748,7 +1844,6 @@ with their entries and page numbers.
 # Contenido {toc="false"}
 
 :::toc
-:::
 
 ::resource{id="mapa-contenido" slot="mapa"}
 ::::
@@ -1945,6 +2040,10 @@ decoration["elements"].append(
   also stand at the foot (`bottom-left`, `bottom-right`, `bottom-start`,
   `bottom-end`), joined or not. No side tabs. `pdf_regions.py` writes a card
   and its tab of one colour as one path outline.
+- **Tab corners.** `label.borderRadius` (one length or per corner) rounds the
+  tab itself: a plain tab is square without it; a joined tab rounds its two
+  outer corners with it instead of copying the box corner (the fillets keep
+  `fillet`).
 - **Path element** (`kind: "path"`, every design slot): SVG path data `d` in
   a `viewBox` (default `[1, 1]`: fractions of the box), stretched to the
   element's box (`preserveAspectRatio: "none"`) or fitted (`"meet"`); `fill`,

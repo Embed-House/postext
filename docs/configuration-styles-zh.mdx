@@ -551,6 +551,12 @@ The sun warms the sea and :mark[water rises into the air as vapour].
       <td><code>paddingY</code></td>
       <td>上方或下方的留白，分别取代<code>paddingY</code>。</td>
     </tr>
+    <tr>
+      <td><code>decorationBreak</code></td>
+      <td><code>'slice' | 'clone'</code></td>
+      <td><code>'slice'</code></td>
+      <td>短语跨到下一行时色带的切法，同 CSS 的 <code>box-decoration-break</code>。<code>'slice'</code>：一条色带，在换行处直接截断，只有短语真正的开头和结尾才有内边距和圆角。<code>'clone'</code>：每一行的片段各有一段完整的色带，两端都有 <code>paddingX</code> 和圆角，用于逐行切开的色带标题。两种方式的排版完全相同。</td>
+    </tr>
   </tbody>
 </table>
 

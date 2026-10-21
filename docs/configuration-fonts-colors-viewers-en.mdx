@@ -148,6 +148,8 @@ Clicking any of these warnings opens the Fonts panel so you can upload the missi
 
 Once a layout exists, the panel also lists the engine's **Font fallback in the layout** (`fontFallback`): a face the pages were measured without, either missing or drawn by the browser from another weight or slant. A family already named as unknown or short of a variant is not listed twice. Before the first layout, a check against `document.fonts` stands in for it.
 
+The panel also lists **Characters drawn from another face** (`glyphFallback`): characters the text sets in a face that has no glyph for them, once per face, with the generic family that drew them (`serif`, `sans-serif`, `monospace`) when the check can tell.
+
 ## Color Palette
 
 The `colorPalette` property on `PostextConfig` lets you define a reusable set of named colors and reference them from any `ColorValue` in the configuration. It is the Postext equivalent of CSS custom properties or an InDesign swatches panel: change the palette entry once, and every color that points to it updates across the document.

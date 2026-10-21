@@ -5,7 +5,7 @@
  */
 
 import { justifiedSpaceRatios } from '../measure/spaceRatios';
-import type { VDTAnnotationRun, VDTChip, VDTLine, VDTLineSegment, VDTSegmentMarks } from '../vdt';
+import type { VDTAnnotationRun, VDTChip, VDTLine, VDTLineSegment, VDTSegmentMarks, VDTSwatch } from '../vdt';
 import { createBoundingBox } from '../vdt';
 import type { TextAlign } from '../types';
 import type { KPItem, RichTokenMeta } from './types';
@@ -81,7 +81,7 @@ interface RichToken {
   /** A bibliography label's space (#290, see `measure/rich.ts`). */
   labelTab?: 'lead' | 'gap';
   /** An inline colour swatch (atomic square; see `measure/rich.ts`). */
-  swatch?: { color?: string };
+  swatch?: VDTSwatch;
   /** An inline chip (atomic box; see `measure/rich.ts`). */
   chip?: VDTChip;
   /** Chinese marks on the token's text (#193). */

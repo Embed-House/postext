@@ -15,7 +15,10 @@
  * vertical padding. At the phrase's true start and end it reaches
  * `paddingX` past the letters and its corners are rounded; where the phrase
  * breaks onto the next line the band stops square at the last letter, and
- * the next line's band starts square at the first.
+ * the next line's band starts square at the first. A style with
+ * `decorationBreak: 'clone'` gives every line piece the padding and the
+ * corners of both ends instead (CSS `box-decoration-break: clone`); the
+ * band is painted, not measured, so the layout is the same.
  */
 
 import type { ResolvedMarkStyleConfig } from './types';
@@ -81,8 +84,10 @@ export function lineHighlights(line: VDTLine, block: BlockLike, styles: readonly
     // flow.
     const isStart = (i: number) => i === p.firstI && segments[i]!.mark!.start === true;
     const isEnd = (i: number) => i === p.lastI && segments[i]!.mark!.end === true;
-    const capLeft = isStart(p.leftI) || isEnd(p.leftI);
-    const capRight = isStart(p.rightI) || isEnd(p.rightI);
+    // `decorationBreak: 'clone'`: every line piece is a whole band.
+    const clone = style.decorationBreak === 'clone';
+    const capLeft = clone || isStart(p.leftI) || isEnd(p.leftI);
+    const capRight = clone || isStart(p.rightI) || isEnd(p.rightI);
     const left = p.left - (capLeft ? padX : 0);
     const right = p.right + (capRight ? padX : 0);
     const top = -(ASCENT * p.em + padTop);

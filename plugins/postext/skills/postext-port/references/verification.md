@@ -59,6 +59,16 @@ Read every WARN:
 - markup typed with an input method (`：：：`, `＃`, `［＾…］`, `＊＊`);
 - a CFF font over 2 MB, a variable font, a vertical book whose Chinese face lacks `vert`;
 - a config past 3 MB (the Sandbox keeps a book in about 5 MB of browser storage; aim under 1 MB);
+- `designMarksLiteral`: `**…**`, `*…*`, `^…^`, `~…~` or `:mark[…]` typed in a design text element, or brought
+  into it by an `{attr.key}` whose value carries them, while the element has no `inlineMarks: true`: the
+  markers print as written. Set `inlineMarks: true` on the element;
+- `fixedSpacePlusSpace`: a plain space typed beside an en, em, thin or no-break space (`1.  Title`): the
+  line sets both, a gap wider than the source's. Keep the fixed space alone;
+- `headingChip`: `:chip` in a heading on a book pinned to a postext older than 1.52.0, where it prints
+  literally (`--engine 1.51.0` names the pin; the project's `package.json` or `recipe.json` is read
+  otherwise; unpinned, an INFO line reminds you of the version);
+- `smallCapsByHand`: capitals typed in a bare chip (no fill, no outline) at 55–85 % of the text: type the word
+  in lowercase in `:smallcaps[…]`, which keeps the capitals at full size as small capitals do;
 - comics: panels ≠ cells, stray text, unknown balloon or panel styles, script attributes that do not read,
   an anchor outside its safe area, unbundled lettering or sound-effect faces, and editions whose splits or
   panel pictures differ (the geometry is the same in every language). INFO lists speakers no picture marks.
@@ -370,8 +380,10 @@ those lines, or run the script.
   report.
 - **Composed pages, all at once**: `python3 scripts/composed_check.py check my-book [--stress 1.3]` runs
   `postext check --json` and `postext html` for every edition and fails on the warnings above, on
-  `contentInConfig`, `tocGroupSplit` and template warnings, and on a page whose frames the HTML reads in
-  another order than the Markdown; it warns when editions read a page differently and lists the scaled
+  `contentInConfig`, `tocGroupSplit`, template warnings, `unknownConfigKey` and `unknownConfigValue`, and
+  on a page whose frames the HTML reads in another order than the Markdown; every other warning prints as
+  WARN. `--json-out work/check.json` saves the result and keeps the report and the exit code, and
+  `preset_kit.py pack` refuses while that result failed (SKILL.md §8). It warns when editions read a page differently and lists the scaled
   frames. `--stress 1.3` repeats each edition with the text 30 % longer (the Cookbook bench's C38): a
   page must rearrange or go on; a `frameOverflow` with valued proposals warns, any other new warning
   fails (composed-pages.md §7). From postext 1.48 it also fails on `frameCovered` (a frame's lines,
@@ -416,6 +428,22 @@ python3 scripts/compare_pages.py source.pdf /tmp/my-book.pdf \
     --source-pages 23-40 --render-pages 1-18 --out /tmp/cmp --sheet
 ```
 
+While you work, keep the pairs current with `--watch`: it runs beside the
+watcher of the work loop and, each time a page image changes, writes that
+page's pair and score again (only the pages whose images changed), and
+prints one line per refresh:
+
+```bash
+postext build my-book --locale es --images /tmp/pages --pages '#12-#15' -f png --dpi 60 --watch > /tmp/watch.log 2>&1 &
+python3 scripts/compare_pages.py source.pdf --watch /tmp/pages --source-pages 23-26 --render-pages 12-15 \
+    --out /tmp/cmp --score /tmp/score.json > /tmp/cmp.log 2>&1 &
+```
+
+Edit a chapter, wait for the next `refreshed` line in `/tmp/cmp.log`, open
+`/tmp/cmp/pair-NN.png`. `--render-pages` takes the numbers in the file
+names (positions in the layout, hence `'#12-#15'` for the build). Stop both watchers when the
+pages are right (by their PIDs: `kill %1 %2`).
+
 Look at the sheet, then at single pairs:
 
 - chapter opener: band, number, title wrap, lead, first text line height;
@@ -428,6 +456,34 @@ Look at the sheet, then at single pairs:
   numbering;
 - page breaks: aim for the same pages as the source on most pages, and
   within ±1 page per chapter.
+
+### Attribute by attribute: `port_audit.py`
+
+The eye misses what a reader of the printed page finds: an en space set as a
+word space, a synthetic italic read as roman, capitals where the source has
+small capitals, a bullet a size too small, a cell centred in the source and
+flush left in the port, a grey folio printed black. `port_audit.py` reads the
+text of both PDFs, matches the source's words to the port's by their
+content (line breaks and case aside) and compares, pair by pair: special
+spaces (and two glued words broken across lines), italic (a sheared upright
+face counts as italic), bold, small capitals, bullet size and weight (and a
+missing bullet), the alignment and weight of ruled table cells, and the
+colour of the head and foot margins (folios, running heads) and of the text:
+
+```bash
+postext pdf my-book --locale es -o /tmp/port.pdf
+python3 scripts/port_audit.py source.pdf /tmp/port.pdf --source-pages 23-40 --port-pages 1-18 \
+    --json /tmp/audit.json --md /tmp/audit.md
+```
+
+The report counts the gaps per attribute and per source page (a run of
+words with the same gap counts once) and lists each with both pages, the
+words and both values. Fix each at its cause (the draft, the config, the
+chapter), or name it in the delivery report as a choice or an engine limit.
+`--strict` exits 1 while any remains. Check the matched share first: under
+half means the two page ranges do not cover the same stretch of the book.
+Horizontal text only; synthetic bold (a stroked fill) and the colours inside
+pictures are not read.
 
 Chinese books, page by page:
 - lines never start with 、，。）」》 or end with 「（《 (the region's `lineBreak`), and a justified line ends in

@@ -399,7 +399,7 @@ interface CalloutStyleCardProps {
   stored: boolean;
   iconResources: Resource[];
   /** Resolved document list values the optional bullet fields fall back to. */
-  listDefaults: { bulletFontSize: Dimension; bulletFontWeight: number };
+  listDefaults: { bulletFontSize: Dimension; bulletFontWeight: number; bulletFontFamily: string };
   onChange: (partial: Partial<CalloutStyleConfig>) => void;
   onResetField: (field: keyof CalloutStyleConfig) => void;
   onRename: (nextId: string) => void;
@@ -1195,6 +1195,19 @@ export function CalloutStyleCard({
                 onReset={() => resetGroupField('label', 'fillet')}
               />
             )}
+            {/* The tab's own corners (#1102): square apart from the box,
+                the box's corner on a joined tab, unless set. */}
+            <CornerRadiusFields
+              label={labels.calloutStyleLabelBorderRadius}
+              tooltip={labels.calloutStyleLabelBorderRadiusTooltip}
+              value={resolved.label.borderRadius}
+              fallback={(resolved.label.joined ? uniformRadius(resolved.borderRadius) : undefined) ?? { value: 0, unit: 'pt' }}
+              step={0.05}
+              units={SPACING_UNITS}
+              isDefault={groupUnset('label', 'borderRadius')}
+              onReset={() => resetGroupField('label', 'borderRadius')}
+              onChange={(v) => label({ borderRadius: v })}
+            />
             <DimensionInput
               label={labels.calloutStyleLabelHeight}
               value={resolved.label.height}
@@ -1835,6 +1848,16 @@ export function CalloutStyleCard({
           isDefault={groupUnset('lists', 'bulletFontWeight')}
           onReset={() => resetGroupField('lists', 'bulletFontWeight')}
         />
+        <FontPicker
+          label={labels.calloutStyleListsBulletFont}
+          value={resolved.lists.bulletFontFamily ?? listDefaults.bulletFontFamily}
+          onChange={(v) => lists({ bulletFontFamily: v })}
+          tooltip={labels.calloutStyleListsBulletFontTooltip}
+          isDefault={groupUnset('lists', 'bulletFontFamily')}
+          onReset={() => resetGroupField('lists', 'bulletFontFamily')}
+          searchPlaceholder={labels.headingFontSearch}
+          noResultsLabel={labels.headingFontNoResults}
+        />
         <ColorPicker
           label={labels.colorLabel}
           value={resolved.lists.color}
@@ -1980,7 +2003,7 @@ export function useCalloutStyleEdits() {
     parents: parentsOf(style),
     stored: raw !== undefined,
     iconResources,
-    listDefaults: { bulletFontSize: unorderedLists.bulletFontSize, bulletFontWeight: unorderedLists.fontWeight },
+    listDefaults: { bulletFontSize: unorderedLists.bulletFontSize, bulletFontWeight: unorderedLists.fontWeight, bulletFontFamily: unorderedLists.fontFamily },
     onChange: (partial: Partial<CalloutStyleConfig>) => updateStyle(style.id, partial),
     onResetField: (field: keyof CalloutStyleConfig) => resetStyleField(style.id, field),
     onRename: (nextId: string) => renameStyle(style.id, nextId),

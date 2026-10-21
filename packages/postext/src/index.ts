@@ -321,6 +321,7 @@ export type {
   ChipStyleConfig,
   ResolvedChipStyleConfig,
   MarkStyleConfig,
+  MarkDecorationBreak,
   ResolvedMarkStyleConfig,
   CalloutSpan,
   CalloutSideAtColumnEnd,
@@ -539,6 +540,7 @@ export type {
   VDTLineHighlight,
   VDTSegmentMark,
   VDTChip,
+  VDTSwatch,
   VDTChipRun,
   VDTLine,
   VDTAnchor,
@@ -642,7 +644,7 @@ export type { BidiClass, BaseDirection, BidiParagraph, BidiIsolate, BidiOptions,
 export { computeColumnEdges } from './pipeline/resourceLayout';
 export { findAnnotations } from './parse/annotations';
 export type { FoundAnnotation, AnnotationName } from './parse/annotations';
-export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
+export type { ContentBlock, ContentBlockType, DirectiveAttrs, VerseInfo, VerseStanza, VerseLineInfo, DirectiveName, ContainerName, RefCase, InlineSpan, InlineIcon, InlineLink, TextSpan, MathSpan, MathMeta, ListKind, ParseIssue, ParseIssueKind, UnclosedMathIssue, UnclosedContainerIssue, UnclosedCodeBlockIssue, CodeBlockInfo, ParseOptions, TocBlockInfo, IndexBlockInfo, IndexMark, ChipBox, SwatchShape, SwatchBox, EmphasisMark, InlineRuby, InlineWarichu, InlineDirection, InlineSideline, InlineKunten } from './parse';
 export { parseMarkdownWithIssues, MATH_PLACEHOLDER, SWATCH_PLACEHOLDER, CHIP_PLACEHOLDER, KNOWN_DIRECTIVES, KNOWN_CONTAINERS, spaceDirectiveLines, MAX_SPACE_LINES } from './parse';
 // Composed pages in the document (#854): each `::::page` fence's content by
 // slot, and the slot checks the content warnings run.
@@ -673,6 +675,7 @@ export type { ValidatePageTemplatesOptions } from './composed/validate';
 export { altWithLabels, labelPlainText, withIconAlts } from './composed/labelText';
 // Inline symbols in labels and captions (#1058): their boxes and what the painters need.
 export { ICON_CAP_EM, iconLineDash, inlineIconBox, measureInlineIcon, resourceBlockIcons } from './measure/inlineIcon';
+export { hasSwatchShape, swatchGeometry, type SwatchGeometry } from './swatchShape';
 export {
   figureLabelBounds,
   figureLabelLeaderPath,
@@ -758,6 +761,11 @@ export type { FontsChangedListener } from './fonts/fontSet';
 export { documentFontFaces, documentFontFamilies, fontFallbacks, defaultFontSet, cssWeightOrder, cssWeightOrderOf } from './fonts/faces';
 export type { FontFaceLike, FontFaceSetLike, FontFallback, FontFallbackReason, FontFallbackOptions, FontFaceRequest } from './fonts/faces';
 export { exportStandInOf, fontFallbackOf, fontFallbackFamilies, hasOwnStyle } from './fonts/fallback';
+// Characters a face lacks, drawn from another face (#1105).
+export { glyphFallbacks, documentFontTexts, registerFontCoverage, forgetFontCoverage, installGlyphProbe, GLYPH_PROBE_FAMILY, GLYPH_FALLBACK_LISTED } from './fonts/glyphFallback';
+export type { GlyphFallback, GlyphFallbackOptions } from './fonts/glyphFallback';
+export { sfntCodePointRanges } from './fonts/cmap';
+export type { CodePointRanges } from './fonts/cmap';
 export { evictFontFamilies } from './measure/font';
 export { measurementGeneration } from './measure/canvas';
 export { parseFontString } from './measure/fontString';

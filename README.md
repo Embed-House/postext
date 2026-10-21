@@ -321,8 +321,8 @@ pnpm lint
 # Type-check all packages
 pnpm check-types
 
-# Run every package's tests
-pnpm turbo run test
+# Run every package's tests (`pnpm test:changed` for only what you touched)
+pnpm test
 ```
 
 Turborepo handles the dependency graph: `packages/postext` builds first, then `apps/web` picks up the changes. In dev mode, the library recompiles on save and the Next.js app hot-reloads.
