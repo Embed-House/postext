@@ -877,6 +877,21 @@ frame or record the pair with its reason in the project's
 Build the PDF (`postext pdf my-book -o /tmp/my-book.pdf`, or `render.mjs --out`)
 for the print checks and once at the end, not on every iteration.
 
+Before delivery, audit that PDF against the source attribute by attribute
+(verification.md §3):
+
+```bash
+python3 scripts/port_audit.py source.pdf /tmp/my-book.pdf --source-pages 23-40 --port-pages 1-18 \
+    --json /tmp/audit.json --md /tmp/audit.md
+```
+
+It matches the words of both by content and counts, per attribute and
+page, the special spaces lost, italic (a sheared upright face included),
+bold, small capitals, bullet size and weight, table cell alignment and
+weight, and the colours of folios, running heads and text that differ.
+Fix each gap at its cause, or name it in the report as a choice or an
+engine limit.
+
 Fix the config or the Markdown until you reach:
 
 - zero lint errors, and `preset_kit.py lint` clean (no content in the
@@ -887,6 +902,8 @@ Fix the config or the Markdown until you reach:
   exception with its reason;
 - `converged=true`;
 - no warnings;
+- `port_audit.py` at 0 in every attribute, or each gap left named in the
+  report;
 - the same page breaks on most pages, within ±1 page per chapter.
 
 A right-bound book reads its spreads right to left: compare page by page,
