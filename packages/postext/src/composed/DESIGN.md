@@ -3244,12 +3244,11 @@ words taken from the round-1 port (the owner's corrected Spanish and his transla
 - **Parity.** bench-layout hashes unchanged on Señales, Pepper&Carrot, Bioquímica, Kokoro, Don
   Quijote and a composed textbook port; the composed recipes pass `--check`.
 
-
 ## 13. Round 3 (#1086)
 
 Round 3 of composed pages: what the round 2 ports still could not say (tracker #1086).
 
-### 13.2 What R3-2 built (#1088)
+### 13.1 What R3-2 built (#1088)
 
 Modules side by side (§12.7, §12.19 left them always stacked).
 
@@ -3304,7 +3303,7 @@ Modules side by side (§12.7, §12.19 left them always stacked).
 - **Fixture.** `__tests__/composed/fixtures/moduleRows.ts` (a page shell whose stack holds a row of boxes
   and a 2 × 2 grid of cards, words in Spanish and English); `moduleRows.test.ts`.
 
-### 13.4 What R3-4 built (#1090)
+### 13.2 What R3-4 built (#1090)
 
 - **The shrink proposal keeps words whole.** `allowShrink` of a `frameOverflow` still starts from the
   largest scale (2.5 % steps down to `PROPOSAL_MIN_SCALE`, 50 %) at which the frame fits. When the
@@ -3327,3 +3326,53 @@ Modules side by side (§12.7, §12.19 left them always stacked).
   ten locales; the docs' `frameOverflow` proposals table says the same.
 - **Not done.** `dividesWord` sees a word divided because it is wider than the measure (a hyphenated
   line with no space); an ordinary hyphenation at a line end is not counted, as in §12.37.
+
+Round 3 lets ports keep fewer templates and the Markdown say more about each page.
+
+### 13.3 What R3-1 built (#1087)
+
+- **Keys.** Every design element kind (`text`, `rule`, `box`, `image`, `path`, `connector`) gains
+  `when?: string` and `unless?: string` in `types.ts`. Resolution (`resolveDesignSlot`, through
+  `fenceConditionOf`) keeps a non-empty string, trimmed, and drops anything else, so the resolved element
+  carries only a name it can test. Pure helpers in `design/fenceCondition.ts` (exported):
+  `fenceSetsAttribute`, `fenceConditionMet`, `fenceConditionUses`, `fenceConditionsNeverMet`,
+  `fenceAttributesSet`, `FENCE_CONDITION_SLOTS`.
+- **What "sets" means.** Departure from the issue's wording ("any non-empty value"): the parser gives a
+  flag (`::::page{template="pagina" folio}`) the value `''`, and the flag is the form the issue's own
+  examples use, so a fence sets an attribute when it writes the key, as a flag or with any value but
+  `false` (case-insensitive, as `spread` reads it). `folio=""` cannot be told from the flag and counts as
+  set. `hasOwnProperty`, so `when: 'toString'` is never met through the prototype.
+- **Where it is read.** In `layoutDesignSlot`, before the parity and role filters (`drawnOnFence`), for
+  the contexts `header`, `footer` and `composed`: the document's and a styled section's running heads, a
+  template's own `header`/`footer`, its decoration (and a module's, laid with the page's). The page's
+  attributes are `DesignPlaceholderContext.pageAttrs`, already there for `{attr.x}` (#855): the fence's own
+  attributes, never the chapter heading's. A page that is not composed has none: `when` is not met there,
+  `unless` always is. Heading, part, contents-row and box designs ignore the keys (their contexts carry no
+  page fence), and the validation says so.
+- **What goes with an element left out.** Every element anchored to it (`anchor.to: '#id'`) or sized to
+  one of its edges (`size.*.to`), transitively, as `withoutAnchoredTo` drops what hangs from a frame that
+  takes no room: a label on the band goes with the band. A connector with an end on it drops that end
+  through the existing path (`connectorDropped` in the reflow log); give the connector the same condition
+  to avoid the log line.
+- **Source map.** Unchanged in kind: undrawn elements emit no block, and every drawn block keeps the
+  element's own config path (`elementPaths` is keyed by id), so indices do not shift. Tested.
+- **Spreads, continuation.** The decoration of a spread is laid once with the first page's attributes
+  (the fence is the same); pages added by continuation carry the fence's attributes as for `{attr.x}`.
+- **Validation.** `collectFenceConditionWarnings`: `unknownConfigValue` (`used: ''`, the element drawn as
+  if unconditioned) for a value that is not a non-empty string and for a condition in a slot that does not
+  read it. `DESIGN_PATH_KEYS` lists the two keys. No new warning kind in the engine: the never-met check
+  needs the whole book's fences, so it is `postext check`'s, an `info` note `conditionNeverMet` (`data`:
+  `path`, `condition`, `attribute`) computed with `fenceConditionsNeverMet` over the laid pages'
+  `composed.attrs`, only when every chapter is laid (a `--chapters` selection could leave out the page that
+  sets it). Not a `ContentWarning`, so the Sandbox's warning panel and the Cookbook's `WARNING_SINCE` are
+  untouched.
+- **Sandbox.** `FenceConditionFields` under each element card of a slot that reads the keys (`slotKey`
+  `header`/`footer`, or a decoration: `connectorHost` set): two selects, «Drawn when the page says» and «Not
+  drawn when the page says», whose choices are `pageFenceAttributes` of the book (the open chapter as typed;
+  `template`, `spread`, `id` left out) plus the current value when no fence sets it. `TemplateFence.attrs`
+  reads a fence through `parseDirectiveAttrs` (now exported from postext). No free-text entry: the
+  attribute is written in the Markdown first.
+- **Parity.** Elements without the keys take the early return in `drawnOnFence` (the same array):
+  bench-layout hashes unchanged, composed recipes pass `--check` (see the lane report for numbers).
+- **Not done here.** The skill's fold (`template_fold.py` / `template_dedupe.py` merging shells that differ
+  by furniture and writing the attribute on the fences) is the skill lane's.

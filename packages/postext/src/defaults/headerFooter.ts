@@ -519,7 +519,9 @@ function resolvePathElement(el: DesignPathElement, idx: number): ResolvedDesignP
  *  filled in (the main colour, palette-linked, so a part recolours it);
  *  the geometry's defaults are read where it is laid (`design/connector.ts`). */
 function resolveConnectorElement(el: DesignConnectorElement, idx: number): ResolvedDesignConnectorElement {
-  const { when: _when, unless: _unless, ...rest } = el;
+  const rest: DesignConnectorElement = { ...el };
+  delete rest.when;
+  delete rest.unless;
   return {
     ...rest,
     id: el.id ?? `connector-${idx + 1}`,
