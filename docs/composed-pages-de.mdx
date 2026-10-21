@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Zusammengesetzte Seiten',
   description: 'Wie Sie eine zusammengesetzte Seite in Markdown schreiben: der Seitenblock, eingeleitet mit vier Doppelpunkten, der die Vorlage angibt; Rahmen und das Attribut slot, die den Inhalt auf die Rahmen der Vorlage verteilen; wiederholte Slots und Module; und die Warnungen, wenn Inhalt und Vorlage nicht zusammenpassen oder ein Rahmen einen anderen verdeckt',
   lang: 'de',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '41 min',
   order: 34,
   plainSummary: "Manche Seiten bestehen nicht aus einer Spalte Fließtext, sondern aus mehreren Feldern, so wie eine Schulbuchseite mit einem Titelband, einem Text und drei farbigen Kästen mit Fotos. Postext nennt sie zusammengesetzte Seiten. Die Form der Seite ist eine Vorlage in der Konfiguration, und das Markdown sagt nur, welcher Teil des Textes in welches Feld gehört. Diese Seite zeigt, wie Sie dieses Markdown schreiben: den Seitenblock, die Rahmen, die Slot-Namen, Karten, die sich in einem Raster wiederholen, und Blöcke, die als Module übereinanderstehen. Sie führt außerdem die Warnungen auf, die Postext ausgibt, wenn Text und Vorlage nicht zusammenpassen.",
@@ -43,6 +43,7 @@ Eine zusammengesetzte Seite wird als *Seitenblock* geschrieben: Er beginnt mit e
     <tr><td><code>spread</code></td><td>Die Seite ist eine Doppelseite aus zwei gegenüberliegenden Seiten (siehe <a href="#doppelseiten">Doppelseiten</a>). Sie muss zum <code>spread</code> der Vorlage passen; sonst entscheidet die Vorlage, und <code>spreadMismatch</code> meldet es.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Ein Verweisziel: Ein <code>:ref</code> darauf gibt die Seitenzahl aus, auf der die zusammengesetzte Seite steht.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Farben der Paletteneinträge dieser Seite, als Paare <code>Eintrag=#hex</code>, durch Kommas getrennt: <code>palette="farbton=#f6c3d0"</code> für eine Seite, deren Kästen den Farbton des Themas annehmen. Alle an die Palette gebundenen Farben ihrer Rahmen und ihrer Dekoration übernehmen sie; die <code>palette</code> der Vorlage wird dabei überschrieben. Seit postext 1.42.</td></tr>
+    <tr><td>ein Schalter wie <code>frontmatter</code></td><td>Ein Attribut, das ein Element der Vorlage in <code>when</code> oder <code>unless</code> nennt: <code>frontmatter</code> auf einer Titelseite lässt die Seitenzahl und das Band weg, die die Vorlage auf Textseiten zeichnet. Allein geschrieben ist es gesetzt, ebenso mit jedem Wert außer <code>false</code>. Siehe <a href="/de/docs/configuration-composed-pages#gezeichnet-wenn-die-seite-es-sagt">Gezeichnet, wenn die Seite es sagt</a>. Seit postext 1.50.</td></tr>
     <tr><td>jedes andere</td><td>Ein Wert, den die Vorlage als <code>&#123;attr.name&#125;</code> liest, etwa ein Hintergrundbild, das Seite für Seite gewählt wird: <code>fondo="banda-retos"</code> mit <code>resourceId: "&#123;attr.fondo&#125;"</code> in der Dekoration.</td></tr>
   </tbody>
 </table>

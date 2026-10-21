@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Einstellungen für zusammengesetzte Seiten',
   description: 'Seitenvorlagen für zusammengesetzte Seiten: Rahmen, Gruppen, Raster, die einen Rahmensatz wiederholen, Module, Dekoration und Verbinder, Vererbung und Varianten für rechte und linke Seiten, die Beschriftungsstile der Bildanker und die Warnungen, die eine Vorlage auslösen kann',
   lang: 'de',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10 min',
   order: 18,
   parent: 'configuration',
@@ -680,6 +680,26 @@ Ein Wert, der einem Standardwert gleicht, wird beim Speichern einer Vorlage in d
 
 Im Code liefert `resolvePageTemplate(config, id, { parity })` eine Vorlage mit zusammengeführter Kette, angewandter Variante der jeweiligen Seite, allen eingesetzten Standardwerten und jedem Verweis so aufgelöst, wie es die Warnungen unten beschreiben; `validatePageTemplates(config)` liefert die Warnungen.
 
+### Gezeichnet, wenn die Seite es sagt
+
+Ein Element der Dekoration und ein Element von `header` oder `footer` der Vorlage kann `when` oder `unless` tragen, jeweils mit dem Namen eines Attributs des Seitenblocks. `when: 'folio'` zeichnet das Element nur auf Seiten, deren Block `folio` setzt; `unless: 'frontmatter'` lässt es auf Seiten weg, deren Block `frontmatter` setzt. Ein Block setzt ein Attribut, wenn er es allein schreibt (`::::page{template="pagina" frontmatter}`) oder mit einem Wert außer `false`. So dient eine Vorlage der Titelei, die weder Seitenzahl noch Band druckt, und den Textseiten, die beides drucken: Das Markdown sagt, was die Seite ist, die Vorlage behält die Zeichnung. Seit postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Ein Element, das an einem weggelassenen Element verankert ist oder dessen Größe bis zu ihm reicht, fällt ebenfalls weg.
+- Mit beiden Schlüsseln wird das Element dort gezeichnet, wo der Block das Attribut von `when` setzt und das von `unless` nicht.
+- Die Kopf- und Fußzeilen des Dokuments und die eines Abschnitts lesen sie ebenso. Eine Seite, die nicht zusammengesetzt ist, hat keinen Seitenblock und setzt nichts. Überschriften-, Teil- und Kastengestaltungen beachten sie nicht.
+- Ein Wert, der kein nicht leerer Text ist, oder einer in einer Überschriften-, Teil- oder Kastengestaltung, wird als `unknownConfigValue` gemeldet, und das Element wird gezeichnet, als hätte es keinen. `postext check` fügt einen Hinweis hinzu, `conditionNeverMet`, für ein `when` oder `unless` mit einem Attribut, das keine Seite des Buchs setzt: Dieses Element wird nie gezeichnet, oder immer.
+- In der Sandbox hat jede Elementkarte einer Kopf- oder Fußzeile und der Dekoration einer Vorlage die Felder **Gezeichnet, wenn die Seite es sagt** und **Nicht gezeichnet, wenn die Seite es sagt**; zur Wahl stehen die Attribute, die die Seitenblöcke des Buchs verwenden.
+
 ### Was der Umbruch umsetzt
 
 Der Umbruch setzt Platzierung und Größen jedes Rahmens um (Raster, Verankerungen, `min`/`max`, `verticalAlign`), seinen Stil und sein `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (samt `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) mit `overflow.mark` und `overflow.fromMark` und sein `fit` (das Verkleinern von Text und Bildern in den Einpassstufen, siehe [Wenn der Inhalt nicht passt](#wenn-der-inhalt-nicht-passt)); die Raumverteilung in einer Gruppe (`grow`, `shrink`, `priority`, `pin` sowie `gap` und `align` der Gruppe, siehe [Wie Gruppen den Platz teilen](#wie-gruppen-den-platz-teilen)); dazu `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` und `overflowTemplate` der Vorlage. Seit postext 1.42 setzt er auch die `palette` der Vorlage, den `look` eines Rahmens und die Breite `'auto'` um (so breit wie die längste Zeile des Rahmens). `writingMode` und `direction` eines Rahmens werden seit postext 1.39 umgesetzt. Seit postext 1.48 setzt er Rastergruppen und ihr `repeat` um, Modulgruppen und Modulvorlagen, Verbinder und Pfadelemente in der Dekoration sowie das `overlap` eines Rahmens. Gelesen und geprüft, aber noch nicht umgesetzt wird `bodyStyle` der Vorlage.
@@ -815,7 +835,7 @@ decoration: {
       <td>Verbindet die Rechtecke, die die Vorlage angibt, nicht die Rechtecke, die der Inhalt den Rahmen gegeben hat.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>wie bei anderen Elementen</td>
       <td><code>'all'</code></td>
       <td>Welche Seiten ihn zeichnen.</td>

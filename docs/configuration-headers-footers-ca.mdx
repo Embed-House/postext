@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Capçaleres i peus de pàgina',
   description: "Què s'imprimeix a dalt i a baix de cada pàgina (text amb marcadors, filets, caixes, imatges i traçats vectorials), com canvia segons si la pàgina és parella o senar, i on es col·loca cada element",
   lang: 'ca',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '33 min',
   order: 6,
   parent: 'configuration',
@@ -107,6 +107,12 @@ Els valors per defecte de la taula següent són els d'un element de text que af
       <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>En quins <em>rols</em> de pàgina apareix l'element, combinat amb <code>parity</code>. Després de la col·locació, cada pàgina es classifica com a <code>'blank'</code> (pàgina afegida per paritat o com a separador, o sense contingut), <code>'part'</code> (pàgina divisòria de part), <code>'opener'</code> (el primer bloc és un encapçalament amb un nivell que ocupa l'amplada de la pàgina o que força un salt de pàgina abans: la primera pàgina d'un capítol), <code>'comic'</code> (una pàgina de còmic, <code>:::page</code>), <code>'composed'</code> (una pàgina composta, o el <code>role</code> que indica la seva plantilla) o <code>'body'</code> (la resta). <code>pages: 'body'</code> amaga una capçalera a les obertures de capítol; <code>pages: 'opener'</code> mostra un foli només allà.</td>
+    </tr>
+    <tr>
+      <td><code>when</code>, <code>unless</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Encapçalaments i decoració d’una plantilla de pàgina: dibuixa l’element només en una pàgina composta el bloc de la qual fixa aquest atribut (<code>when</code>), o el treu d’aquesta pàgina (<code>unless</code>). Els admeten tots els tipus d’element. Vegeu <a href="/ca/docs/configuration-composed-pages#es-dibuixa-si-la-pàgina-ho-diu">Es dibuixa si la pàgina ho diu</a>. Des de postext 1.50.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>

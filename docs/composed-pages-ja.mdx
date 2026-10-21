@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'テンプレートページ',
   description: 'テンプレートページをMarkdownで書く方法：コロン4つで始めて使うテンプレートを指定するページブロック、内容をテンプレートの各枠に振り分ける枠とslot属性、繰り返すスロットとモジュール、そして内容がテンプレートに合わないときやほかの枠を覆うときに出る警告',
   lang: 'ja',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '41分',
   order: 34,
   plainSummary: "ページの中には、1段の本文ではなく、いくつもの枠を組み合わせてできているものがあります。たとえば教科書のページで、題名の帯と本文があり、写真の付いた色付きの囲みが3つ並んでいるようなものです。Postextはこうしたページをテンプレートページと呼びます。ページの形は設定の中のテンプレートが決め、Markdownにはどの文章をどの枠に入れるかだけを書きます。このページでは、ページブロック、枠、スロットの名前、グリッドに繰り返し並ぶカード、モジュールとして積み重ねるブロックという、そのMarkdownの書き方を説明します。文章とテンプレートが合わないときにPostextが出す警告も挙げます。",
@@ -43,6 +43,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
     <tr><td><code>spread</code></td><td>ページを向かい合う2ページの見開きにします（<a href="#見開き">見開き</a>を参照）。テンプレートの<code>spread</code>と一致している必要があり、食い違うとテンプレートに従って組まれ、<code>spreadMismatch</code>が出ます。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>アンカーです。これを指す<code>:ref</code>は、テンプレートページが入ったページの番号を印字します。</td></tr>
     <tr><td><code>palette="…"</code></td><td>このページのパレットの項目の色を、<code>エントリ=#hex</code>の組をカンマで区切って指定します。<code>palette="tint=#f6c3d0"</code>は、囲みがその単元の色合いになるページに使います。枠と装飾のうちパレットにリンクした色はすべてこれに従い、テンプレートの<code>palette</code>より優先されます。postext 1.42以降。</td></tr>
+    <tr><td><code>frontmatter</code>などのフラグ</td><td>テンプレートの要素が<code>when</code>や<code>unless</code>で指す属性です。扉ページの<code>frontmatter</code>は、テンプレートが本文ページに描くノンブルと帯を外します。単独で書けば指定したことになり、<code>false</code>以外の値でも同じです。<a href="/ja/docs/configuration-composed-pages#ページが指定したときに描く">ページが指定したときに描く</a>を参照。postext 1.50以降。</td></tr>
     <tr><td>その他の属性</td><td>テンプレートから<code>&#123;attr.name&#125;</code>で参照できる値です。たとえばページごとに選ぶ背景の画像なら、ページに<code>fondo="banda-retos"</code>、装飾に<code>resourceId: "&#123;attr.fondo&#125;"</code>と書きます。</td></tr>
   </tbody>
 </table>

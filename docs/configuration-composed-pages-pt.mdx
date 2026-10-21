@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Ajustes de páginas compostas',
   description: 'Os modelos das páginas compostas (blocos, grupos, grades que repetem um conjunto de blocos, módulos, decoração e conectores, herança e variantes de página ímpar e par), os estilos dos rótulos colocados nas âncoras de uma imagem e os avisos que um modelo pode gerar',
   lang: 'pt',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '11 min',
   order: 18,
   parent: 'configuration',
@@ -680,6 +680,26 @@ Quando o Sandbox salva um modelo, um valor igual ao padrão nunca é descartado:
 
 No código, `resolvePageTemplate(config, id, { parity })` devolve um modelo com a cadeia mesclada, a variante do lado aplicada, todos os padrões preenchidos e cada referência resolvida como os avisos abaixo descrevem; `validatePageTemplates(config)` devolve os avisos.
 
+### Desenhado quando a página diz
+
+Um elemento da decoração, e um do `header` ou do `footer` do modelo, pode ter `when` ou `unless`, cada um com o nome de um atributo do contêiner de página. `when: 'folio'` desenha o elemento só nas páginas cujo contêiner define `folio`; `unless: 'frontmatter'` o tira das páginas cujo contêiner define `frontmatter`. Um contêiner define um atributo quando o escreve sozinho (`::::page{template="pagina" frontmatter}`) ou com qualquer valor exceto `false`. Assim um só modelo serve às páginas pré-textuais, sem fólio nem faixa, e às páginas do miolo, que têm os dois: o Markdown diz o que a página é e o modelo guarda o desenho. Desde o postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Um elemento ancorado a um elemento deixado de fora, ou com o tamanho medido até ele, também fica de fora.
+- Com as duas chaves, o elemento é desenhado onde o contêiner define o atributo de `when` e não o de `unless`.
+- Os cabeçalhos do documento e os de uma seção também as leem. Uma página que não é composta não tem contêiner e não define nada. Os desenhos de título, de parte e de caixa as ignoram.
+- Um valor que não é um texto não vazio, ou um escrito num desenho de título, de parte ou de caixa, é avisado como `unknownConfigValue`, e o elemento é desenhado como se não o tivesse. O `postext check` acrescenta uma nota, `conditionNeverMet`, para um `when` ou `unless` com um atributo que nenhuma página do livro define: esse elemento nunca é desenhado, ou sempre.
+- No Sandbox, cada cartão de elemento de um cabeçalho e da decoração de um modelo tem os campos **Desenhado quando a página diz** e **Não desenhado quando a página diz**, cujas opções são os atributos que os contêineres de página do livro usam.
+
 ### O que a diagramação aplica
 
 A diagramação aplica o posicionamento e os tamanhos de cada bloco (grade, âncoras, `min`/`max`, `verticalAlign`), o estilo e o `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e o `wrap` correspondente), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) com `overflow.mark` e `overflow.fromMark`, e o `fit` (a redução do texto e das imagens na escada de ajuste, veja [Quando o conteúdo não cabe](#quando-o-conteúdo-não-cabe)); a negociação de espaço de um grupo (`grow`, `shrink`, `priority`, `pin`, e o `gap` e o `align` do grupo, veja [Como os grupos dividem o espaço](#como-os-grupos-dividem-o-espaço)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` do modelo. Desde o postext 1.42 aplica também a `palette` do modelo, o `look` de um bloco e a largura `'auto'` (a da linha mais longa do bloco). O `writingMode` e a `direction` de um bloco são aplicados desde o postext 1.39. Desde o postext 1.48 aplica os grupos de grade e o `repeat` deles, os grupos de módulos e os modelos de módulo, os conectores e os elementos de caminho da decoração, e o `overlap` de um bloco. É lido e verificado, mas ainda não aplicado: o `bodyStyle` do modelo.
@@ -815,7 +835,7 @@ decoration: {
       <td>Liga as caixas que o modelo declara, e não as caixas que o conteúdo deu aos blocos.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>como nos outros elementos</td>
       <td><code>'all'</code></td>
       <td>Em que páginas é desenhado.</td>

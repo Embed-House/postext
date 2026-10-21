@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compostas',
   description: 'Como se escreve uma página composta em Markdown: o contêiner ::::page, aberto com quatro sinais de dois-pontos, que indica o modelo; os blocos e o atributo slot, que distribuem o conteúdo pelos blocos do modelo; os slots repetidos e os módulos; e os avisos que aparecem quando o conteúdo não corresponde ao modelo ou cobre outro bloco',
   lang: 'pt',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '44 min',
   order: 34,
   plainSummary: "Algumas páginas não são uma coluna de texto corrido, e sim um conjunto de caixas, como a página de um livro didático com uma faixa para o título, um texto e três caixas coloridas com fotos. O Postext chama essas páginas de páginas compostas. A forma da página é um modelo que fica na configuração, e o Markdown só diz qual trecho de texto vai em cada caixa. Esta página mostra como escrever esse Markdown: o contêiner de página, os blocos, os nomes de slot, os cartões repetidos numa grade e os conjuntos empilhados como módulos. Ela também lista os avisos que o Postext mostra quando o texto e o modelo não combinam.",
@@ -43,6 +43,7 @@ Uma página composta se escreve como um *contêiner de página*: abre com uma li
     <tr><td><code>spread</code></td><td>A página é uma página dupla, que ocupa duas páginas lado a lado (veja <a href="#páginas-duplas">Páginas duplas</a>). Ela precisa concordar com o <code>spread</code> do modelo; caso contrário, vale o modelo e <code>spreadMismatch</code> avisa.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Uma âncora: um <code>:ref</code> que aponta para ela imprime o número da página composta.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Cores das entradas da paleta desta página, como pares <code>entrada=#hex</code> separados por vírgulas: <code>palette="tom=#f6c3d0"</code> para uma página cujas caixas recebem a cor do tema. Toda cor dos blocos e da decoração dela ligada à paleta recebe esses valores, por cima da <code>palette</code> do modelo. Desde o postext 1.42.</td></tr>
+    <tr><td>uma marca como <code>frontmatter</code></td><td>Um atributo que um elemento do modelo nomeia em <code>when</code> ou <code>unless</code>: <code>frontmatter</code> numa falsa folha de rosto tira o fólio e a faixa que o modelo desenha nas páginas do miolo. Escrito sozinho fica definido, e também com qualquer valor exceto <code>false</code>. Veja <a href="/pt/docs/configuration-composed-pages#desenhado-quando-a-página-diz">Desenhado quando a página diz</a>. Desde o postext 1.50.</td></tr>
     <tr><td>qualquer outro</td><td>Um valor que o modelo lê como <code>&#123;attr.name&#125;</code>, por exemplo uma imagem de fundo escolhida página a página: <code>fondo="banda-retos"</code> com <code>resourceId: "&#123;attr.fondo&#125;"</code> na decoração.</td></tr>
   </tbody>
 </table>

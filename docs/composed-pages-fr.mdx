@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pages composées',
   description: 'Comment écrire une page composée en Markdown : le délimiteur de page (une ligne de quatre deux-points) qui indique le gabarit ; les blocs et l’attribut slot, qui répartissent le contenu entre les blocs du gabarit ; les emplacements répétés et les modules ; et les avertissements émis quand le contenu ne correspond pas au gabarit ou recouvre un autre bloc',
   lang: 'fr',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '45 min',
   order: 34,
   plainSummary: "Certaines pages ne sont pas une simple colonne de texte courant mais un assemblage de blocs, comme une page de manuel scolaire avec un bandeau de titre, un texte et trois encadrés de couleur accompagnés de photos. Postext les appelle des pages composées. La forme de la page est un gabarit rangé dans la configuration, et le Markdown indique seulement quel morceau de texte va dans quel bloc. Cette page montre comment écrire ce Markdown : le délimiteur de page, les blocs, les noms d’emplacement, les cartes répétées dans une grille et les blocs empilés sous forme de modules. Elle liste aussi les avertissements qu’émet Postext quand le texte et le gabarit ne concordent pas.",
@@ -43,6 +43,7 @@ Une page composée s’ouvre par une ligne de **quatre deux-points** suivie de `
     <tr><td><code>spread</code></td><td>La page est une double page, sur deux pages en regard (voir <a href="#doubles-pages">Doubles pages</a>). Elle doit s’accorder avec le <code>spread</code> du gabarit ; sinon c’est le gabarit qui l’emporte, et <code>spreadMismatch</code> le signale.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Une ancre : un <code>:ref</code> vers elle affiche le numéro de page de la page composée.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Couleurs des entrées de la palette de cette page, en paires <code>entrée=#hex</code> séparées par des virgules : <code>palette="teinte=#f6c3d0"</code> pour une page dont les encadrés prennent la teinte du thème. Toutes les couleurs de ses blocs et de son décor liées à la palette les adoptent, à la place de la <code>palette</code> du gabarit. Depuis postext 1.42.</td></tr>
+    <tr><td>un drapeau comme <code>frontmatter</code></td><td>Un attribut qu’un élément du gabarit nomme dans <code>when</code> ou <code>unless</code> : <code>frontmatter</code> sur une page de titre retire le folio et le bandeau que le gabarit dessine sur les pages du corps. Écrit seul, il est posé ; avec une valeur autre que <code>false</code> aussi. Voir <a href="/fr/docs/configuration-composed-pages#dessiné-quand-la-page-le-dit">Dessiné quand la page le dit</a>. Depuis postext 1.50.</td></tr>
     <tr><td>tout autre attribut</td><td>Une valeur que le gabarit utilise sous la forme <code>&#123;attr.name&#125;</code>, par exemple une image de fond choisie page par page : <code>fondo="banda-retos"</code> avec <code>resourceId: "&#123;attr.fondo&#125;"</code> dans le décor.</td></tr>
   </tbody>
 </table>

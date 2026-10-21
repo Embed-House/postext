@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Páginas compuestas',
   description: 'Cómo se escribe una página compuesta en Markdown: el bloque de página, delimitado por cuatro signos de dos puntos, que indica la plantilla; los marcos y el atributo slot, que reparten el contenido entre los marcos de la plantilla; las ranuras repetidas y los módulos, y los avisos que saltan cuando el contenido no encaja con la plantilla o tapa otro marco',
   lang: 'es',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '47 min',
   order: 34,
   plainSummary: "Algunas páginas no son una columna de texto corrido, sino un conjunto de cajas, como la página de un libro de texto escolar con una banda para el título, un texto y tres cajas de colores con fotos. Postext las llama páginas compuestas. La forma de la página está en una plantilla de la configuración, y el Markdown solo dice qué trozo de texto va en cada caja. Esta página enseña a escribir ese Markdown: el bloque de página, los marcos, los nombres de ranura, las tarjetas repetidas en una rejilla y los bloques apilados como módulos. También recoge los avisos que da Postext cuando el texto y la plantilla no encajan.",
@@ -43,6 +43,7 @@ Una página compuesta se escribe como un *bloque de página*: se abre con una l�
     <tr><td><code>spread</code></td><td>La página es una doble página, formada por dos páginas enfrentadas (véase <a href="#dobles-páginas">Dobles páginas</a>). Tiene que coincidir con el <code>spread</code> de la plantilla; si no, manda la plantilla y salta el aviso <code>spreadMismatch</code>.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Un ancla: un <code>:ref</code> que remita a ella imprime el número de página de la página compuesta.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Colores de las entradas de la paleta para esta página, como pares <code>entrada=#hex</code> separados por comas: <code>palette="tinte=#f6c3d0"</code> para una página cuyas cajas toman el tono del tema. Todos los colores de sus marcos y de su decoración vinculados a la paleta los toman, por encima de la <code>palette</code> de la plantilla. Desde postext 1.42.</td></tr>
+    <tr><td>una marca como <code>frontmatter</code></td><td>Un atributo que un elemento de la plantilla nombra en <code>when</code> o <code>unless</code>: <code>frontmatter</code> en una portadilla quita el folio y la banda que la plantilla dibuja en las páginas del cuerpo. Escrito solo queda fijado, y también con cualquier valor salvo <code>false</code>. Véase <a href="/es/docs/configuration-composed-pages#se-dibuja-si-la-página-lo-dice">Se dibuja si la página lo dice</a>. Desde postext 1.50.</td></tr>
     <tr><td>cualquier otro</td><td>Un valor que la plantilla lee como <code>&#123;attr.name&#125;</code>, por ejemplo una imagen de fondo elegida página a página: <code>fondo="banda-retos"</code> con <code>resourceId: "&#123;attr.fondo&#125;"</code> en la decoración.</td></tr>
   </tbody>
 </table>

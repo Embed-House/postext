@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pàgines compostes',
   description: 'Com s’escriu una pàgina composta en Markdown: el bloc de pàgina, delimitat per quatre signes de dos punts, que indica quina plantilla fa servir; els marcs i l’atribut slot, que reparteixen el contingut entre els marcs de la plantilla; les ranures repetides i els mòduls, i els avisos que surten quan el contingut no lliga amb la plantilla o tapa un altre marc',
   lang: 'ca',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '46 min',
   order: 34,
   plainSummary: "Algunes pàgines no són una columna de text corregut, sinó un conjunt de caixes, com la pàgina d'un llibre de text escolar amb una banda per al títol, un text i tres caixes de colors amb fotos. Postext en diu pàgines compostes. La forma de la pàgina la dona una plantilla de la configuració, i el Markdown només indica quin tros de text va a cada caixa. Aquesta pàgina explica com s'escriu aquest Markdown: el bloc de pàgina, els marcs, els noms de les ranures, les targetes repetides en una graella i els blocs apilats com a mòduls. També recull els avisos que dona Postext quan el text i la plantilla no lliguen.",
@@ -43,6 +43,7 @@ Una pàgina composta s'obre amb una línia de **quatre signes de dos punts** seg
     <tr><td><code>spread</code></td><td>La pàgina és una doble pàgina que ocupa dues pàgines afrontades (vegeu <a href="#dobles-pàgines">Dobles pàgines</a>). Ha de coincidir amb l'<code>spread</code> de la plantilla; si no, té prioritat la plantilla i Postext en dona un avís (<code>spreadMismatch</code>).</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>Una àncora: un <code>:ref</code> que hi remet imprimeix el número de la pàgina on cau la pàgina composta.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Colors de les entrades de la paleta per a aquesta pàgina, com a parells <code>entrada=#hex</code> separats per comes: <code>palette="to=#f6c3d0"</code> per a una pàgina amb les caixes del color del tema. Qualsevol color dels marcs i de la decoració de la pàgina vinculat a la paleta agafa aquests valors, per sobre de la <code>palette</code> de la plantilla. Des de postext 1.42.</td></tr>
+    <tr><td>una marca com <code>frontmatter</code></td><td>Un atribut que un element de la plantilla anomena a <code>when</code> o <code>unless</code>: <code>frontmatter</code> en una portadella treu el foli i la banda que la plantilla dibuixa a les pàgines del cos. Escrit sol queda fixat, i també amb qualsevol valor llevat de <code>false</code>. Vegeu <a href="/ca/docs/configuration-composed-pages#es-dibuixa-si-la-pàgina-ho-diu">Es dibuixa si la pàgina ho diu</a>. Des de postext 1.50.</td></tr>
     <tr><td>qualsevol altre</td><td>Un valor que la plantilla llegeix com a <code>&#123;attr.name&#125;</code>, per exemple una imatge de fons triada pàgina a pàgina: <code>fondo="banda-retos"</code> amb <code>resourceId: "&#123;attr.fondo&#125;"</code> a la decoració.</td></tr>
   </tbody>
 </table>

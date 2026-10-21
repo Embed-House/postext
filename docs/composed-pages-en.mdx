@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Composed pages',
   description: 'How to write a composed page in Markdown: the page fence, opened with four colons, that chooses the template; frames and the slot attribute, which share content out among its frames; repeated slots and modules; and warnings for content that does not match the template or covers another frame',
   lang: 'en',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '41 min',
   order: 34,
   plainSummary: "Some pages are not one column of running text but a set of boxes, like a page of a school textbook with a title band, a text and three coloured boxes with photos. Postext calls them composed pages. The shape of the page is a template in the configuration, and the Markdown only says which piece of text goes into which box. This page shows how to write that Markdown: the page fence, the frames, the slot names, cards repeated in a grid and blocks stacked as modules. It also lists the warnings Postext gives when the text and the template do not match.",
@@ -43,6 +43,7 @@ A composed page is written as a *page fence*: it opens with a line of **four col
     <tr><td><code>spread</code></td><td>The page is a spread of two facing pages (see <a href="#spreads">Spreads</a>). It must agree with the template's <code>spread</code>; otherwise the template wins and <code>spreadMismatch</code> reports it.</td></tr>
     <tr><td><code>id="…"</code>, <code>#id</code></td><td>An anchor: a <code>:ref</code> to it prints the page number of the composed page.</td></tr>
     <tr><td><code>palette="…"</code></td><td>Colours of this page's palette entries, as <code>entry=#hex</code> pairs separated by commas: <code>palette="tint=#f6c3d0"</code> for a page whose boxes take the topic's tint. Every palette-linked colour of its frames and decoration takes them, overriding the template's <code>palette</code>. Since postext 1.42.</td></tr>
+    <tr><td>a flag such as <code>frontmatter</code></td><td>An attribute a template element names in <code>when</code> or <code>unless</code>: <code>frontmatter</code> on a title page leaves off the folio and the band the template draws on body pages. Written alone it is set; so it is with any value but <code>false</code>. See <a href="/en/docs/configuration-composed-pages#drawn-when-the-page-says">Drawn when the page says</a>. Since postext 1.50.</td></tr>
     <tr><td>any other</td><td>A value the template reads as <code>&#123;attr.name&#125;</code>, such as a background picture chosen page by page: <code>fondo="banda-retos"</code> with <code>resourceId: "&#123;attr.fondo&#125;"</code> in the decoration.</td></tr>
   </tbody>
 </table>

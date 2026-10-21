@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Cabeceras y pies de página',
   description: 'Qué se imprime en la cabecera y al pie de cada página: textos con marcadores, filetes, cajas, imágenes y trazados vectoriales, según la página sea par o impar, y dónde se coloca cada elemento.',
   lang: 'es',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '33 min',
   order: 6,
   parent: 'configuration',
@@ -108,6 +108,12 @@ Los valores por defecto de la tabla siguiente son los de un elemento de texto qu
       <td><code>'all' | 'body' | 'opener' | 'part' | 'blank' | 'comic' | 'composed'</code></td>
       <td><code>'all'</code></td>
       <td>En qué <em>tipos</em> de página aparece el elemento, en combinación con <code>parity</code>. Tras la colocación, cada página se clasifica como <code>'blank'</code> (página de relleno para la paridad o separadora, o sin contenido), <code>'part'</code> (una página de parte), <code>'opener'</code> (su primer bloque es un encabezado cuyo nivel ocupa toda la página o fuerza un salto de página antes de él: la primera página de un capítulo), <code>'comic'</code> (una página de cómic, <code>:::page</code>), <code>'composed'</code> (una página compuesta, o el <code>role</code> que nombra su plantilla) o <code>'body'</code> (todas las demás). <code>pages: 'body'</code> oculta un titulillo en las aperturas de capítulo; <code>pages: 'opener'</code> muestra un folio solo en ellas.</td>
+    </tr>
+    <tr>
+      <td><code>when</code>, <code>unless</code></td>
+      <td><code>string</code></td>
+      <td>—</td>
+      <td>Encabezados y decoración de una plantilla de página: dibuja el elemento solo en una página compuesta cuya línea de apertura fija ese atributo (<code>when</code>), o lo quita de ella (<code>unless</code>). Los admiten todos los tipos de elemento. Véase <a href="/es/docs/configuration-composed-pages#se-dibuja-si-la-página-lo-dice">Se dibuja si la página lo dice</a>. Desde postext 1.50.</td>
     </tr>
     <tr>
       <td><code>fontFamily</code></td>

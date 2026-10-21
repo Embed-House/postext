@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'テンプレートページの設定',
   description: 'テンプレートページのためのページテンプレート：枠、グループ、枠のセットを繰り返すグリッド、モジュール、装飾とコネクター、継承と左右ページのバリアント、画像のアンカーに付けるラベルスタイル、テンプレートが出す警告',
   lang: 'ja',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10分',
   order: 18,
   parent: 'configuration',
@@ -680,6 +680,26 @@ Sandboxがテンプレートを保存するとき、既定値と同じ値も捨�
 
 コードからは、`resolvePageTemplate(config, id, { parity })`が、連鎖を統合し、その側のバリアントを適用し、すべての既定値を埋め、下の警告で説明するとおりにすべての参照を解決したテンプレートを返します。`validatePageTemplates(config)`は警告を返します。
 
+### ページが指定したときに描く
+
+装飾の要素と、テンプレートの`header`・`footer`の要素には、`when`または`unless`を付けられます。どちらもページブロックの属性名を書きます。`when: 'folio'`はブロックに`folio`があるページにだけ要素を描き、`unless: 'frontmatter'`はブロックに`frontmatter`があるページでは要素を描きません。属性は単独で書くか（`::::page{template="pagina" frontmatter}`）、`false`以外の値を付ければ指定したことになります。これでひとつのテンプレートが、ノンブルも帯も入れない前付と、両方を入れる本文ページの両方をまかなえます。ページが何であるかはMarkdownが示し、図柄はテンプレートが持ちます。postext 1.50以降。
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- 描かない要素にアンカーした要素や、その要素までの寸法をとる要素も描きません。
+- 両方のキーがあるときは、ブロックに`when`の属性があり、`unless`の属性がないページで描きます。
+- 文書の柱とノンブル、セクションの柱とノンブルもこのキーを読みます。テンプレートページでないページにはページブロックがなく、どの属性もありません。見出し・部扉・ボックスのデザインはこのキーを無視します。
+- 空でない文字列でない値や、見出し・部扉・ボックスのデザインに書いた値は`unknownConfigValue`として報告し、要素はキーがないものとして描きます。`postext check`は、本のどのページブロックにもない属性を`when`や`unless`が指していると、注記`conditionNeverMet`を出します。その要素は一度も描かれないか、常に描かれます。
+- Sandboxでは、柱とノンブルやテンプレートの装飾の要素カードごとに**ページが指定したときに描く**と**ページが指定したときは描かない**の欄があり、本のページブロックが使う属性から選べます。
+
 ### 割り付けに反映される設定
 
 割り付けに反映されるのは、各枠の配置と大きさ（グリッド、アンカー、`min`/`max`、`verticalAlign`）、スタイルと`padding`、`columns`、`rules`、`layer`、`rotate`、`exclude`（とその`wrap`）、`flow`、`takes`、`next`、`overflow.continueIn`（`"#frame"`、`"next-page"`、`"template:<id>"`、`"page:<id>"`）と`overflow.mark`、`overflow.fromMark`、枠の`fit`（組み直しの段階で文字と画像を縮める設定。[内容が収まらないとき](#内容が収まらないとき)を参照）、グループによる空間の配分（`grow`、`shrink`、`priority`、`pin`、グループの`gap`と`align`。[グループが空間を分け合うしくみ](#グループが空間を分け合うしくみ)を参照）、そしてテンプレートの`area`、`grid`、`decoration`、`header`、`footer`、`variants`、`spread`、`overflowTemplate`です。postext 1.42以降は、テンプレートの`palette`、枠の`look`、幅の`'auto'`（枠のいちばん長い行に合わせた幅）も反映されます。枠の`writingMode`と`direction`は、postext 1.39以降は反映されます。postext 1.48以降は、グリッドのグループとその`repeat`、モジュールのグループとモジュールのテンプレート、装飾のコネクターとパス要素、枠の`overlap`も反映されます。テンプレートの`bodyStyle`は読み込まれて検査されますが、まだ割り付けには反映されません。
@@ -815,7 +835,7 @@ decoration: {
       <td>内容が枠に与えたボックスではなく、テンプレートが宣言したボックスを結びます。</td>
     </tr>
     <tr>
-      <td><code>parity</code>、<code>pages</code></td>
+      <td><code>parity</code>、<code>pages</code>、<code>when</code>、<code>unless</code></td>
       <td>ほかの要素と同じ</td>
       <td><code>'all'</code></td>
       <td>どのページに描くかです。</td>

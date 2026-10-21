@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '模板页',
   description: '怎样用Markdown写模板页：以四个冒号开头的页面块指明所用的模板；框和slot属性把内容分到模板的各个框；重复的槽位与模块；内容与模板对不上或盖住另一个框时会给出警告',
   lang: 'zh',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '28分钟',
   order: 34,
   plainSummary: "有些页面不是一栏连续的正文，而是由一组框拼成，比如课本里的一页：顶上一条标题色带，下面一段课文，再加三个配有照片的彩色方框。Postext把这样的页面叫作模板页。页面的样子由配置中的模板决定，Markdown只说明哪段文字放进哪个框。本页介绍这种Markdown的写法：页面块、框、槽位名、在网格中重复排列的卡片，以及作为模块叠放的块。本页还列出文字与模板对不上时Postext给出的警告。",
@@ -43,6 +43,7 @@ Las personas utilizan :chip[recursos]{style="clave"} que se obtienen de la natur
     <tr><td><code>spread</code></td><td>这一页是跨页，由左右相对的两页组成（见<a href="#跨页">跨页</a>）。它必须与模板的<code>spread</code>一致；不一致时以模板为准，并给出<code>spreadMismatch</code>警告。</td></tr>
     <tr><td><code>id="…"</code>、<code>#id</code></td><td>锚点：指向它的<code>:ref</code>印出模板页所在的页码。</td></tr>
     <tr><td><code>palette="…"</code></td><td>本页调色板条目的颜色，写成以逗号分隔的<code>条目=#hex</code>对。例如某页的框要用这一课的主题色调，就写<code>palette="tint=#f6c3d0"</code>。框和装饰中所有与调色板关联的颜色都改用这些值，优先于模板的<code>palette</code>。自postext 1.42起。</td></tr>
+    <tr><td>标记，如<code>frontmatter</code></td><td>模板元素在<code>when</code>或<code>unless</code>中指名的属性：书名页上的<code>frontmatter</code>去掉模板在正文页上绘制的页码和色带。单独写出即算设有，带除<code>false</code>以外的任意值也算。见<a href="/zh/docs/configuration-composed-pages#页面标明时才绘制">页面标明时才绘制</a>。自postext 1.50起。</td></tr>
     <tr><td>其他任何属性</td><td>模板以<code>&#123;attr.name&#125;</code>读取的值，例如逐页选择的背景图：页面上写<code>fondo="banda-retos"</code>，装饰中写<code>resourceId: "&#123;attr.fondo&#125;"</code>。</td></tr>
   </tbody>
 </table>

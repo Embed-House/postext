@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Impostazioni delle pagine composte',
   description: 'I modelli delle pagine composte: cornici, gruppi, griglie che ripetono un insieme di cornici, moduli, decorazione e connettori, ereditarietà e varianti per pagina dispari e pari (recto/verso); gli stili delle etichette poste sulle ancore delle immagini, e gli avvisi che un modello può dare',
   lang: 'it',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10 min',
   order: 18,
   parent: 'configuration',
@@ -680,6 +680,26 @@ Un valore uguale a un predefinito non viene mai scartato quando la Sandbox salva
 
 Dal codice, `resolvePageTemplate(config, id, { parity })` restituisce un modello con la catena unita, la variante del lato applicata, ogni valore predefinito compilato e ogni riferimento risolto come descrivono gli avvisi più sotto; `validatePageTemplates(config)` restituisce gli avvisi.
 
+### Disegnato quando la pagina lo dice
+
+Un elemento della decorazione, e uno dell’`header` o del `footer` del modello, può avere `when` o `unless`, ciascuno con il nome di un attributo del blocco della pagina. `when: 'folio'` disegna l’elemento solo nelle pagine il cui blocco imposta `folio`; `unless: 'frontmatter'` lo toglie dalle pagine il cui blocco imposta `frontmatter`. Un blocco imposta un attributo quando lo scrive da solo (`::::page{template="pagina" frontmatter}`) o con un valore diverso da `false`. Così un solo modello serve alle pagine preliminari, senza folio né banda, e alle pagine del testo, che hanno entrambi: il Markdown dice che cosa è la pagina e il modello tiene il disegno. Da postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Un elemento ancorato a un elemento tolto, o con la misura che arriva fino a esso, viene tolto anche lui.
+- Con entrambe le chiavi, l’elemento si disegna dove il blocco imposta l’attributo di `when` e non quello di `unless`.
+- Le testatine del documento e quelle di una sezione le leggono anch’esse. Una pagina che non è composta non ha blocco e non imposta nulla. I disegni di titolo, di parte e di riquadro le ignorano.
+- Un valore che non è un testo non vuoto, o uno scritto in un disegno di titolo, di parte o di riquadro, viene segnalato come `unknownConfigValue`, e l’elemento si disegna come se non lo avesse. `postext check` aggiunge una nota, `conditionNeverMet`, per un `when` o un `unless` su un attributo che nessuna pagina del libro imposta: quell’elemento non si disegna mai, oppure sempre.
+- Nel Sandbox, ogni scheda di elemento di una testatina e della decorazione di un modello ha i campi **Disegnato quando la pagina lo dice** e **Non disegnato quando la pagina lo dice**, che offrono gli attributi usati dai blocchi di pagina del libro.
+
 ### Che cosa applica l’impaginazione
 
 L’impaginazione applica la collocazione e le dimensioni di ogni cornice (griglia, ancoraggi, `min`/`max`, `verticalAlign`), il suo stile e il suo `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (e il suo `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) con `overflow.mark` e `overflow.fromMark`, e il suo `fit` (la riduzione del testo e delle immagini nella scala di riadattamento, vedi [Quando il contenuto non entra](#quando-il-contenuto-non-entra)); la ripartizione dello spazio in un gruppo (`grow`, `shrink`, `priority`, `pin`, e il `gap` e l’`align` del gruppo, vedi [Come i gruppi si dividono lo spazio](#come-i-gruppi-si-dividono-lo-spazio)); e `area`, `grid`, `decoration`, `header`, `footer`, `variants`, `spread` e `overflowTemplate` del modello. Da postext 1.42 applica anche la `palette` del modello, il `look` di una cornice e la larghezza `'auto'` (quella della riga più lunga della cornice). Il `writingMode` e la `direction` di una cornice sono applicati da postext 1.39. Da postext 1.48 applica i gruppi a griglia e il loro `repeat`, i gruppi di moduli e i modelli di modulo, i connettori e gli elementi tracciato nella decorazione, e l’`overlap` di una cornice. Viene letto e controllato, ma non ancora applicato: il `bodyStyle` del modello.
@@ -815,7 +835,7 @@ decoration: {
       <td>Unisce i riquadri che dichiara il modello, non quelli che il contenuto ha dato alle cornici.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>come gli altri elementi</td>
       <td><code>'all'</code></td>
       <td>Quali pagine lo disegnano.</td>

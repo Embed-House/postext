@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Paràmetres de pàgines compostes',
   description: "Les plantilles de les pàgines compostes (marcs, grups, graelles que repeteixen un joc de marcs, mòduls, decoració i connectors, herència i variants per a pàgina senar i parella), els estils dels rètols que es posen sobre les àncores d'una imatge i els avisos que pot donar una plantilla",
   lang: 'ca',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10 min',
   order: 18,
   parent: 'configuration',
@@ -680,6 +680,26 @@ Quan el Sandbox desa una plantilla, mai no descarta un valor igual al valor per 
 
 Des del codi, `resolvePageTemplate(config, id, { parity })` retorna una plantilla amb tota la cadena d'herència combinada, la variant del costat aplicada, tots els valors per defecte omplerts i cada referència resolta com descriuen els avisos de més avall; `validatePageTemplates(config)` retorna els avisos.
 
+### Es dibuixa si la pàgina ho diu
+
+Un element de la decoració, i un del `header` o el `footer` de la plantilla, pot portar `when` o `unless`, cadascun amb el nom d'un atribut del bloc de pàgina. `when: 'folio'` dibuixa l'element només a les pàgines el bloc de les quals fixa `folio`; `unless: 'frontmatter'` el treu de les pàgines el bloc de les quals fixa `frontmatter`. Un bloc fixa un atribut quan l'escriu sol (`::::page{template="pagina" frontmatter}`) o amb qualsevol valor llevat de `false`. Així una sola plantilla serveix per als preliminars, que no porten foli ni banda, i per a les pàgines del cos, que porten totes dues coses: el Markdown diu què és la pàgina i la plantilla guarda el dibuix. Des de postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Un element ancorat a un altre que queda fora, o amb la mida mesurada fins a ell, també queda fora.
+- Amb les dues claus, l'element es dibuixa on el bloc fixa l'atribut de `when` i no el d'`unless`.
+- Els encapçalaments del document i els d'una secció també les llegeixen. Una pàgina que no és composta no té bloc de pàgina i no fixa res. Els dissenys de títol, de part i de caixa no les tenen en compte.
+- Un valor que no és un text no buit, o un d'escrit en un disseny de títol, de part o de caixa, s'avisa com a `unknownConfigValue` i l'element es dibuixa com si no en tingués. `postext check` afegeix una nota, `conditionNeverMet`, per cada `when` o `unless` amb un atribut que cap pàgina del llibre no fixa: aquell element no es dibuixa mai, o sempre.
+- Al Sandbox, cada targeta d'element d'un encapçalament i de la decoració d'una plantilla té els camps **Es dibuixa si la pàgina ho diu** i **No es dibuixa si la pàgina ho diu**, que ofereixen els atributs que fan servir les pàgines del llibre.
+
 ### El que aplica la maquetació
 
 La maquetació aplica la col·locació i les mides de cada marc (retícula, ancoratges, `min`/`max`, `verticalAlign`), el seu estil i el seu `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (i el seu `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) amb `overflow.mark` i `overflow.fromMark`, i el seu `fit` (la reducció del text i de les imatges de l'escala de reajustament, vegeu [Quan el contingut no hi cap](#quan-el-contingut-no-hi-cap)); el repartiment de l'espai d'un grup (`grow`, `shrink`, `priority`, `pin`, i el `gap` i l'`align` del grup, vegeu [Com es reparteixen l'espai els grups](#com-es-reparteixen-lespai-els-grups)); i l'`area`, la `grid`, la `decoration`, el `header`, el `footer`, les `variants`, `spread` i l'`overflowTemplate` de la plantilla. Des de postext 1.42 aplica també la `palette` de la plantilla, el `look` d'un marc i l'amplada `'auto'` (la de la línia més llarga del marc). El `writingMode` i la `direction` d'un marc s'apliquen des de postext 1.39. Des de postext 1.48 aplica les graelles i el seu `repeat`, els grups de mòduls i les plantilles de mòdul, els connectors i els elements de traçat de la decoració, i l'`overlap` d'un marc. Es llegeix i es comprova, però encara no s'aplica: el `bodyStyle` de la plantilla.
@@ -815,7 +835,7 @@ decoration: {
       <td>Uneix les caixes que declara la plantilla, no les que el contingut ha donat als marcs.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>com els altres elements</td>
       <td><code>'all'</code></td>
       <td>Quines pàgines el dibuixen.</td>

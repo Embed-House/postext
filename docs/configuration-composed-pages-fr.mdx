@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Réglages des pages composées',
   description: 'Les gabarits des pages composées (blocs, groupes, grilles qui répètent un jeu de blocs, modules, décor et connecteurs, héritage, variantes recto et verso), les styles des étiquettes placées sur les ancres d’une image, et les avertissements qu’un gabarit peut déclencher',
   lang: 'fr',
-  lastUpdated: '2026-10-20',
+  lastUpdated: '2026-10-21',
   readingTime: '10 min',
   order: 18,
   parent: 'configuration',
@@ -680,6 +680,26 @@ Une valeur égale à une valeur par défaut n’est jamais abandonnée quand le 
 
 Depuis le code, `resolvePageTemplate(config, id, { parity })` renvoie un gabarit avec sa chaîne fusionnée, la variante du côté appliquée, toutes les valeurs par défaut remplies et chaque référence réglée comme le décrivent les avertissements ci-dessous ; `validatePageTemplates(config)` renvoie les avertissements.
 
+### Dessiné quand la page le dit
+
+Un élément de la décoration, et un élément du `header` ou du `footer` du gabarit, peut porter `when` ou `unless`, chacun nommant un attribut du délimiteur de la page. `when: 'folio'` ne dessine l’élément que sur les pages dont le délimiteur pose `folio` ; `unless: 'frontmatter'` le retire des pages dont le délimiteur pose `frontmatter`. Un délimiteur pose un attribut quand il l’écrit seul (`::::page{template="pagina" frontmatter}`) ou avec une valeur autre que `false`. Un même gabarit sert alors aux pages liminaires, sans folio ni bandeau, et aux pages du corps, qui portent les deux : le Markdown dit ce qu’est la page, le gabarit garde le dessin. Depuis postext 1.50.
+
+```ts
+decoration: { elements: [
+  { kind: 'box', id: 'band', unless: 'frontmatter',
+    placement: { anchor: { to: 'page', edge: 'top-left' }, size: { width: 'fill', height: { value: 12, unit: 'mm' } } },
+    style: { backgroundColor: { hex: '#2a6f97' } } },
+  { kind: 'text', id: 'folio', when: 'folio', content: '{pageNumber}',
+    placement: { anchor: { to: 'page', edge: 'bottom-center' }, offset: { y: { value: -8, unit: 'mm' } } } },
+] }
+```
+
+- Un élément ancré à un élément retiré, ou dont la taille va jusqu’à lui, est retiré aussi.
+- Avec les deux clés, l’élément est dessiné là où le délimiteur pose l’attribut de `when` et pas celui de `unless`.
+- Les titres courants du document et ceux d’une section les lisent aussi. Une page qui n’est pas composée n’a pas de délimiteur et ne pose rien. Les dessins de titre, de partie et d’encadré les ignorent.
+- Une valeur qui n’est pas un texte non vide, ou une valeur écrite dans un dessin de titre, de partie ou d’encadré, est signalée par `unknownConfigValue`, et l’élément est dessiné comme s’il n’en avait pas. `postext check` ajoute une note, `conditionNeverMet`, pour un `when` ou un `unless` sur un attribut qu’aucune page du livre ne pose : cet élément n’est jamais dessiné, ou toujours.
+- Dans le Sandbox, chaque fiche d’élément d’un titre courant et de la décoration d’un gabarit a les champs **Dessiné quand la page le dit** et **Pas dessiné quand la page le dit**, dont les choix sont les attributs des délimiteurs du livre.
+
 ### Ce que la mise en page applique
 
 La mise en page applique le placement et les tailles de chaque bloc (grille, ancrages, `min`/`max`, `verticalAlign`), son style et son `padding`, `columns`, `rules`, `layer`, `rotate`, `exclude` (et son `wrap`), `flow`, `takes`, `next`, `overflow.continueIn` (`"#frame"`, `"next-page"`, `"template:<id>"`, `"page:<id>"`) avec `overflow.mark` et `overflow.fromMark`, et son `fit` (la réduction du texte et des images des étapes d’ajustement, voir [Quand le contenu ne tient pas](#quand-le-contenu-ne-tient-pas)) ; la négociation de l’espace dans un groupe (`grow`, `shrink`, `priority`, `pin`, et le `gap` et l’`align` du groupe, voir [Comment les groupes se partagent l’espace](#comment-les-groupes-se-partagent-lespace)) ; et l’`area`, la `grid`, le `decoration`, le `header`, le `footer`, les `variants`, `spread` et l’`overflowTemplate` du gabarit. Depuis postext 1.42, elle applique aussi la `palette` du gabarit, le `look` d’un bloc et la largeur `'auto'` (celle de la plus longue ligne du bloc). Le `writingMode` et la `direction` d’un bloc sont appliqués depuis postext 1.39. Depuis postext 1.48, elle applique les groupes en grille et leur `repeat`, les groupes de modules et les gabarits de module, les connecteurs et les éléments tracé du décor, et l’`overlap` d’un bloc. Est lu et vérifié, mais pas encore appliqué : le `bodyStyle` du gabarit.
@@ -815,7 +835,7 @@ decoration: {
       <td>Relie les boîtes que déclare le gabarit, et non celles que le contenu a données aux blocs.</td>
     </tr>
     <tr>
-      <td><code>parity</code>, <code>pages</code></td>
+      <td><code>parity</code>, <code>pages</code>, <code>when</code>, <code>unless</code></td>
       <td>comme les autres éléments</td>
       <td><code>'all'</code></td>
       <td>Les pages qui le dessinent.</td>
