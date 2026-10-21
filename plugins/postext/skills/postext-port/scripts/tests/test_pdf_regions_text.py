@@ -214,6 +214,27 @@ class NestedLists(unittest.TestCase):
         finally:
             tmp.cleanup()
 
+    def test_bullet_colour_and_item_spacing(self):
+        doc = fitz.open()
+        page = doc.new_page(width=210 * MM, height=297 * MM)
+        x, y = 25 * MM, 40 * MM
+        # two-line items: 13 pt between their lines, 20 pt from one item to the next
+        for k in range(3):
+            yy = y + k * 33
+            bullet(page, x, yy, "•", 11, "Una frase larga que ocupa la primera línea del punto")
+            put(page, x + 4 * MM, yy + 13, "y sigue en una segunda línea.", size=11)
+        for k in range(4):
+            put(page, x, y + 130 + k * 13, "Texto corrido de la página para medir el cuerpo del texto.", size=11)
+        tmp, md, lib, _ = extract(doc)
+        try:
+            st = next(s for s in lib["calloutStyles"] if s.get("lists"))
+            self.assertEqual(st["lists"]["color"]["hex"], "#1a1a1a")
+            self.assertAlmostEqual(st["lists"]["itemSpacing"]["value"], 7 / MM, delta=0.3)
+            self.assertEqual(lib["suggested"]["unorderedLists"]["color"]["hex"], "#1a1a1a")
+            self.assertEqual(md.count("- Una frase larga"), 3)
+        finally:
+            tmp.cleanup()
+
     def test_levels(self):
         lv = [pr.Char("•", 10, 0, 12, 3, 3, "f", 400, False, 11, "#000000"),
               pr.Char("•", 16.2, 0, 18, 3, 3, "f", 400, False, 11, "#000000"),

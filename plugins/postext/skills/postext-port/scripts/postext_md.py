@@ -347,8 +347,10 @@ def resource_embed(rid: str) -> str:
     return f'::resource{{id="{rid}"}}'
 
 
-def ref(rid: str, style: str | None = None, case: str | None = None) -> str:
+def ref(rid: str, style: str | None = None, case: str | None = None, text: str | None = None) -> str:
     extra = ""
+    if text:
+        extra += f' text="{attr_value(text)}"'
     if style:
         extra += f' style="{style}"'
     if case:
@@ -442,38 +444,79 @@ CAPTION_LABEL_RE = re.compile(
     r"\s*(?P<num>[0-9IVXLC]+(?:[.\-–][0-9]+)*)\s*[.:\-–—]?\s*",
     re.IGNORECASE,
 )
+# Words that name a chapter or a section, in the site's languages (es, en, ca,
+# fr, pt, it, de); `§` too.
+SECTION_WORDS = (
+    "Cap[íi]tulos?|Cap[íi]tols?|Chapters?|Chapitres?|Capitol[oi]|Kapitel|Cap\\.|Ch\\.|Chap\\.|"
+    "Secci[óo]n|Secciones|Secci[óo]|Seccions|Sections?|Se[çc][ãa]o|Se[çc][õo]es|Sezion[ei]|Abschnitts?|Sec\\.|"
+    "Apartados?|Apartats?|Paragraphe|§"
+)
 MENTION_RE = re.compile(
-    r"\b(?P<label>Fig(?:ure|ura|s)?\.?|Figuras?|Figures|Tab(?:le|la|las|les)?\.?|Plates?|Láminas?)\s+(?P<num>[0-9]+(?:[.\-–][0-9]+)*)",
+    r"(?<!\w)(?P<label>Fig(?:ure|ura|s)?\.?|Figuras?|Figures|Abbildung(?:en)?|Abb\.|Tab(?:le|la|las|les|elle|ella|leau)?\.?|"
+    r"Plates?|Láminas?|" + SECTION_WORDS + r")\s*(?P<num>[0-9]+(?:[.\-–][0-9]+)*)(?![\w])",
     re.IGNORECASE,
 )
+# a mention set in its own bold or italic run (`**Figura 3**`): the marks go with it
+_WRAPPED_MENTION_RE = re.compile(r"(?P<open>\*{1,3})?(?P<mention>" + MENTION_RE.pattern + r")(?P<close>\*{1,3})?",
+                                 re.IGNORECASE)
+_SECTION_LABEL_RE = re.compile(r"^(?:" + SECTION_WORDS + r")$", re.IGNORECASE)
 
 
 def caption_kind(label: str) -> str:
+    """`table`, `section` (a chapter or section word) or `figure`."""
+    if _SECTION_LABEL_RE.match(label.strip()):
+        return "section"
     return "table" if label.lower().startswith(("tab", "cuadro")) else "figure"
 
 
-def link_mentions(text: str, label_to_id: dict[tuple[str, str], str], on_link=None) -> str:
-    """Turn 'Figure 1.2' / 'tabla 3-1' in body lines into :ref. `label_to_id`
-    maps (kind, number) to a resource id; `on_link(rid)` is called for every
-    link (e.g. to float the resource). Headings, fences and embeds are left
-    alone."""
-    if not label_to_id:
-        return text
+_HEADING_NUMBER_RE = re.compile(r"^\s*(?:(?:" + SECTION_WORDS + r")\s*)?(?P<num>[0-9]+(?:\.[0-9]+)*)\.?(?:\s|$)",
+                                re.IGNORECASE)
+
+
+def heading_number(text: str) -> str | None:
+    """The number a heading carries (`3.2 Los ríos`, `Capítulo 4. El mar`,
+    `Chapter 2`), for linking `capítulo 4` / `section 3.2` mentions to it."""
+    m = _HEADING_NUMBER_RE.match(text)
+    return m.group("num") if m else None
+
+
+def link_mentions(text: str, label_to_id: dict[tuple[str, str], str], on_link=None, on_unresolved=None) -> str:
+    """Turn 'Figure 1.2' / 'tabla 3-1' / 'capítulo 4' in body lines into
+    :ref. `label_to_id` maps (kind, number) to a resource or heading id
+    (kind `figure`, `table` or `section`); `on_link(rid)` is called for
+    every link (e.g. to float the resource), `on_unresolved(words)` for a
+    mention with nothing to link to. A mention in a bold or italic run of
+    its own (`**Figura 3**`) takes its marks along: the reference is set in
+    the config's reference style (`referenceBold`), not bolded twice. A
+    section reference keeps the source's words (`text=`). Headings, fences
+    and embeds are left alone."""
 
     def sub(m: re.Match) -> str:
-        label = m.group("label")
-        rid = label_to_id.get((caption_kind(label), m.group("num").replace("–", "-")))
+        opening, closing = m.group("open") or "", m.group("close") or ""
+        if opening != closing:      # marks of a longer run: they stay where they are
+            inner = m.group("mention")
+            lead, trail = opening, closing
+        else:
+            inner, lead, trail = m.group("mention"), "", ""
+        mm = MENTION_RE.match(inner)
+        label = mm.group("label")
+        kind = caption_kind(label)
+        rid = label_to_id.get((kind, mm.group("num").replace("–", "-")))
         if not rid:
+            if on_unresolved:
+                on_unresolved(inner)
             return m.group(0)
         if on_link:
             on_link(rid)
+        if kind == "section":
+            return lead + ref(rid, text=inner) + trail
         style = "full" if len(label.rstrip(".")) > 4 else None
         case = "lower" if label[:1].islower() else None
-        return ref(rid, style=style, case=case)
+        return lead + ref(rid, style=style, case=case) + trail
 
     lines = text.split("\n")
     for n, line in enumerate(lines):
         if line.startswith(("#", ":::", "::resource", "---", "title:", "author:", "subtitle:")):
             continue
-        lines[n] = MENTION_RE.sub(sub, line)
+        lines[n] = _WRAPPED_MENTION_RE.sub(sub, line)
     return "\n".join(lines)

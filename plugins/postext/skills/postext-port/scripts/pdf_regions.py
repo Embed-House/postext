@@ -217,6 +217,33 @@ def weight_italic_of(style: str) -> tuple[int, bool, list[str]]:
     return weight, italic, widths
 
 
+_STYLE_WORDS = set(WEIGHTS) | set(WIDTH_TOKENS) | {"italic", "oblique", "it", "ita", "kursiv", "slanted"}
+
+
+def split_face_name(name: str) -> tuple[str, str]:
+    """(family part, style part) of a PDF font name in any of the forms
+    producers write: `Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`,
+    `ArialBold`. The subset prefix (`ABCDEF+`) is dropped first."""
+    base = name.split("+")[-1]
+    m = re.match(r"^([^-,]+)[-,](.*)$", base)
+    if m:
+        return m.group(1).strip(), m.group(2).strip()
+    words = base.split(" ")
+    k = len(words)
+    while k > 1 and all(t in _STYLE_WORDS for t in style_tokens(words[k - 1])) and style_tokens(words[k - 1]):
+        k -= 1
+    if k < len(words):
+        return " ".join(words[:k]), "".join(words[k:])
+    # glued: the family's last capitalised words that are style words (`ArialBold`)
+    parts = re.findall(r"[A-Z][a-z]+|[A-Z]+(?![a-z])|[a-z]+|\d+", base)
+    k = len(parts)
+    while k > 1 and parts[k - 1].lower() in _STYLE_WORDS:
+        k -= 1
+    if 0 < k < len(parts):
+        return "".join(parts[:k]), "".join(parts[k:])
+    return base, ""
+
+
 def font_table(fonts_dir: Path) -> dict[str, tuple[str, int, str, str]]:
     """PostScript name -> (family, weight, style, file) for the faces in
     fonts_dir. A width the family name does not say (`-BoldCn`) is added to
@@ -236,10 +263,12 @@ def font_table(fonts_dir: Path) -> dict[str, tuple[str, int, str, str]]:
             ps = TTFont(str(f), lazy=True, fontNumber=0)["name"].getDebugName(6) or f.stem
         except Exception:
             pass
-        sub = ps.partition("-")[2]
+        sub = split_face_name(ps)[1]
         w2, it2, widths = weight_italic_of(sub)
         if it2:
             style = "italic"
+        if int(weight) == 400 and w2 != 400:
+            weight = w2      # a file without OS/2 weight: its name says it
         for wd in widths:
             if wd not in fam.lower().replace(" ", ""):
                 fam = f"{fam} {wd.capitalize()}"
@@ -272,10 +301,14 @@ class Fonts:
         if key in self.cache:
             return self.cache[key]
         base = pdf_name.split("+")[-1]
-        fam_part, _, style = base.partition("-")
+        fam_part, style = split_face_name(base)
         weight, italic, _ = weight_italic_of(style)
+        name_w, name_it = weight, italic
+        toks = style_tokens(style)
+        said = any(t in WEIGHTS for t in toks) or any("".join(toks[i:i + 2]) in WEIGHTS for i in range(len(toks)))
         if flags & 16 and weight < 600:
             weight = 700
+            said = True
         if flags & 2:
             italic = True
         out = None
@@ -290,18 +323,38 @@ class Fonts:
         if out is None and self.table:
             ps = base if base in self.table else None
             if ps is None:
-                cands = [p for p in self.table if p.startswith(base) or base.startswith(p)]
-                cands += [p for p in self.table if p.lower() == base.lower()]
+                cands = [p for p in self.table if p.lower() == base.lower()]
+                if not cands:
+                    # a prefix match only between faces whose names say the same weight and slant:
+                    # `Font-Bold` never maps to the regular `Font`
+                    cands = [p for p in self.table if (p.startswith(base) or base.startswith(p))
+                             and weight_italic_of(split_face_name(p)[1])[:2] == (name_w, name_it)]
                 if cands:
                     ps = sorted(cands, key=lambda p: (-len(p), p))[0]
             if ps:
                 fam, w, st, _ = self.table[ps]
-                out = (fam, w, st == "italic")
+                # the heavier of the file's weight and the name's (or the bold flag), either slant
+                out = (fam, max(int(w), weight) if said else int(w), st == "italic" or italic)
         if out is None:
             out = (_split_camel(fam_part) or base, weight, italic)
         self.cache[key] = out
         self.seen[base] = out
         return out
+
+
+def font_warnings(fonts: Fonts) -> list[str]:
+    """A loud note when every face came out at one weight although the PDF's
+    font names say several: the draft then has no bold, and the fonts
+    folder or the font map needs a look."""
+    if len(fonts.seen) < 2:
+        return []
+    out_w = {v[1] for v in fonts.seen.values()}
+    named = {weight_italic_of(split_face_name(k)[1])[0] for k in fonts.seen}
+    if len(out_w) == 1 and len(named) > 1:
+        return [f"every face reads as weight {next(iter(out_w))} but the PDF names "
+                f"{len(fonts.seen)} faces of weights {sorted(named)}: no bold will be marked; "
+                "check --fonts and --font-map"]
+    return []
 
 
 # ---------------------------------------------------------------------------
@@ -575,11 +628,13 @@ def ink_box(win: Any, background: str | None, holes: list[tuple] = (), outside: 
 
 
 class Char:
-    __slots__ = ("c", "x0", "y0", "x1", "y1", "oy", "family", "weight", "italic", "size", "color", "mark")
+    __slots__ = ("c", "x0", "y0", "x1", "y1", "oy", "family", "weight", "italic", "size", "color", "mark", "font")
 
-    def __init__(self, c, x0, y0, x1, y1, oy, family, weight, italic, size, color, mark=None):
+    def __init__(self, c, x0, y0, x1, y1, oy, family, weight, italic, size, color, mark=None, font=None):
         self.c, self.x0, self.y0, self.x1, self.y1, self.oy = c, x0, y0, x1, y1, oy
         self.family, self.weight, self.italic, self.size, self.color, self.mark = family, weight, italic, size, color, mark
+        #: the PDF font the character is set in (None for spaces made up by the reader)
+        self.font = font
 
 
 class Line:
@@ -667,7 +722,7 @@ def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tupl
                 for ch, sl in zip(span["chars"], slant):
                     b = to_mm(ch["bbox"], origin)
                     chars.append(Char(ch["c"], b[0], b[1], b[2], b[3], (ch["origin"][1] - oy) * PT_MM, fam, weight,
-                                      italic or sl, span["size"], col))
+                                      italic or sl, span["size"], col, font=span["font"].split("+")[-1]))
             if any(c.c.strip() for c in chars):
                 for c in chars:
                     if not c.family:   # spaces take the face of the text before them
@@ -756,8 +811,17 @@ def merge_pieces(pieces: list[Line]) -> list[Line]:
 def runs_markdown(chars: list[Char], base_weight: int, base_italic: bool, mark_ids: dict, mode: str) -> str:
     """Inline Markdown of a run of characters: bold, italic, highlight marks."""
     segs: list[tuple[Any, list[pmd.Run]]] = []
+    # the base face: the font most of the base-weight letters are set in. A run in another
+    # font (a Medium file beside the Book) is bold at 100 over the base; within one font,
+    # whose reported weight alone varies, at 150
+    fonts: dict[Any, int] = {}
     for c in chars:
-        bold = c.weight >= max(600, base_weight + 200) if c.c.strip() else False
+        if c.c.strip() and c.weight <= base_weight and c.font:
+            fonts[c.font] = fonts.get(c.font, 0) + 1
+    base_font = max(fonts, key=lambda k: (fonts[k], k)) if fonts else None
+    for c in chars:
+        other = base_font is not None and c.font is not None and c.font != base_font
+        bold = c.weight >= max(500, base_weight + (100 if other else 150)) if c.c.strip() else False
         italic = c.italic and not base_italic if c.c.strip() else False
         mk = mark_ids.get(c.mark) if c.mark else None
         if not segs or segs[-1][0] != mk:
@@ -1338,13 +1402,38 @@ def bullet_look(items: list[Line]) -> dict:
     bs = [(bullet_of(l), item_size(l)) for l in items]
     chars: dict[str, int] = {}
     weights: dict[int, int] = {}
+    colours: dict[str, int] = {}
     for b, _ in bs:
         chars[b.c] = chars.get(b.c, 0) + 1
         weights[b.weight] = weights.get(b.weight, 0) + 1
+        colours[b.color] = colours.get(b.color, 0) + 1
     ratio = statistics.median(b.size / s for b, s in bs if s > 0) if bs else 1.0
     return {"bulletChar": max(chars, key=lambda k: (chars[k], k)),
             "bulletFontSize": {"value": round(ratio * 20) / 20, "unit": "em"},
-            "bulletFontWeight": max(weights, key=lambda k: (weights[k], -k))}
+            "bulletFontWeight": max(weights, key=lambda k: (weights[k], -k)),
+            "color": max(colours, key=lambda k: (colours[k], k))}
+
+
+def item_spacing(lines: list[Line]) -> float | None:
+    """The room (mm) between two list items over the leading of their
+    lines: the median of what each item's first baseline stands below the
+    last baseline of the item before, less the leading. None without two
+    items one under the other."""
+    paras = [p for p in paragraphs(lines) if bullet_of(p[0])]
+    leads = [s for p in paragraphs(lines) for s in [para_lead(p)] if s]
+    if len(paras) < 2:
+        return None
+    size = statistics.median(l.size_mm for p in paras for l in p)
+    lead = statistics.median(leads) if leads else LEADS.get((paras[0][0].family, round(paras[0][0].size * 4) / 4),
+                                                           size * 1.25)
+    steps = []
+    for a, b in zip(paras, paras[1:]):
+        step = b[0].base - a[-1].base
+        if 0 < step < 3 * lead:
+            steps.append(step - lead)
+    if not steps:
+        return None
+    return max(0.0, statistics.median(steps))
 
 
 def list_style(lines: list[Line], left_edge: float) -> dict | None:
@@ -1358,9 +1447,13 @@ def list_style(lines: list[Line], left_edge: float) -> dict | None:
     top = [l for l in bl if level_of_bullet(bullet_of(l), levels) == 0]
     b = bullet_of(top[0])
     look = bullet_look(top)
-    return {"bulletChar": look["bulletChar"], "color": colour(b.color),
-            "indent": mmv(max(0.0, b.x0 - left_edge)), "gap": mmv(max(0.5, text_x0(top[0]) - b.x1)),
-            "bulletFontSize": look["bulletFontSize"], "bulletFontWeight": look["bulletFontWeight"]}
+    st = {"bulletChar": look["bulletChar"], "color": colour(look["color"]),
+          "indent": mmv(max(0.0, b.x0 - left_edge)), "gap": mmv(max(0.5, text_x0(top[0]) - b.x1)),
+          "bulletFontSize": look["bulletFontSize"], "bulletFontWeight": look["bulletFontWeight"]}
+    sp = item_spacing(lines)
+    if sp is not None:
+        st["itemSpacing"] = mmv(sp)
+    return st
 
 
 def unordered_lists(found: dict[int, list[dict]]) -> dict | None:
@@ -1380,6 +1473,8 @@ def unordered_lists(found: dict[int, list[dict]]) -> dict | None:
     first = most(min(found))
     out: dict[str, Any] = {"bulletChar": first["bulletChar"], "bulletFontSize": first["bulletFontSize"],
                            "fontWeight": first["bulletFontWeight"], "levels": []}
+    if first.get("color"):
+        out["color"] = colour(first["color"])
     for depth in sorted(found):
         lk = most(depth)
         out["levels"].append({"level": depth + 1, "bulletChar": lk["bulletChar"], "fontSize": lk["bulletFontSize"],
@@ -2392,6 +2487,46 @@ def xy_order(frames: list[Frame]) -> list[Frame]:
     return out
 
 
+def frame_lead_title(f: Frame, paras: list[list[Line]]) -> list[Line] | None:
+    """A frame's first paragraph when it is the frame's title: at most two
+    lines and fifteen words, not a list item, with text after it, and set
+    apart from that text by being wholly bold (150 over its weight and at
+    least 500), 1.12 times its size or more, or in another colour. Panel
+    titles set at body size in bold are titles too, in text frames as in
+    boxes. A caption frame has none."""
+    if len(paras) < 2 or getattr(f, "caption_of", None) is not None:
+        return None
+    p = paras[0]
+    if len(p) > 2 or bullet_of(p[0]) or len(" ".join(l.plain for l in p).split()) > 15:
+        return None
+    if any(l.base > q.base for l in p for q in paras[1][:1]):
+        return None     # the first paragraph must stand above the rest
+    rest = [l for q in paras[1:] for l in q]
+    ink = [c for l in p for c in l.chars if c.c.strip()]
+    rest_ink = [c for l in rest for c in l.chars if c.c.strip()]
+    if not ink or not rest_ink or any(c.mark for c in ink):
+        return None     # (a highlighted lead keeps its mark: headings set none)
+    if sum(1 for c in ink if c.c.isalpha()) < 2:
+        return None     # a single letter or a number (a box's "I", "2") is no title
+    body = dominant(rest)
+    bold = all(c.weight >= max(500, body["weight"] + 150) for c in ink)
+    big = statistics.median(c.size for c in ink) >= 1.12 * statistics.median(c.size for c in rest_ink)
+    colour_ = dominant(p)["color"] != body["color"]
+    return p if (bold or big or colour_) else None
+
+
+def title_level(p: list[Line], ctx: dict) -> int:
+    """The level of a title paragraph: by size among the book's heading
+    sizes; one set below heading size goes under the smallest of them, a
+    level further down when it is not bold either."""
+    size = statistics.median(c.size for l in p for c in l.chars if c.c.strip())
+    if size >= ctx["heading_min"]:
+        return ctx["level_of"](size)
+    deepest = ctx["level_of"](0.0)
+    bold = min(c.weight for l in p for c in l.chars if c.c.strip()) >= 500
+    return min(6, deepest + (1 if bold else 2))
+
+
 def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) -> None:
     """Style and Markdown of one frame."""
     mark_ids = ctx["mark_ids"]
@@ -2406,10 +2541,11 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
     body_lines = [l for l in f.lines if l.size < ctx["heading_min"]] or f.lines
     look = dominant(body_lines) if body_lines else None
     base = (int(look["weight"]), bool(look["italic"])) if look else None
+    lead_title = frame_lead_title(f, paras) if f.kind in ("box", "text") else None
     for p in paras:
         size = p[0].size
-        if size >= ctx["heading_min"] and f.kind in ("box", "tab", "title"):
-            level = ctx["level_of"](size)
+        if (size >= ctx["heading_min"] and f.kind in ("box", "tab", "title")) or p is lead_title:
+            level = title_level(p, ctx)
             text = " ".join(spaced_text(l) for l in p)
             blocks.append(("h", level, text))
             continue
@@ -4143,12 +4279,15 @@ def cmd_extract(args: argparse.Namespace) -> int:
         "notes": {p["report"]["page"]: p["report"]["notes"] for p in built if p["report"]["notes"]},
         "fonts": {k: list(v) for k, v in sorted(fonts.seen.items())},
         "syntheticItalic": dict(sorted(fonts.slanted.items())),
+        "warnings": font_warnings(fonts),
         "bodySize": body, "headingSizes": head_sizes,
         "frameNames": frame_names,
     }
     (out / "report.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     import preset_kit  # noqa: PLC0415
     preset_kit.write_empty_curation(out)  # the hand fixes `manifest` applies (#1136)
+    for w in summary["warnings"]:
+        print("WARNING: " + w, file=sys.stderr)
     if args.json:
         print(json.dumps(summary, ensure_ascii=False, indent=1))
     else:

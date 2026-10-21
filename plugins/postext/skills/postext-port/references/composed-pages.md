@@ -447,6 +447,13 @@ What the extraction decides, so you know what to check:
   against its frame's body (the weight and slant most of the frame's text
   has): a paragraph set wholly in bold in a regular box comes out as
   `**…**`, and a frame set wholly in italic gets `body.italic` with no `*`.
+- **Frame titles** (skill 1.61). The first paragraph of a box or text
+  frame is its title (a heading in the frame) when it has at most two lines
+  and fifteen words and two letters or more, text follows it, and it is
+  wholly bold, 1.12 times the
+  size of that text or more, or in another colour. A title at heading size
+  takes that size's level; one at body size goes a level under the
+  smallest heading size (two when it is not bold).
 - **Spaces** (skill 1.61). En (U+2002) and em (U+2003) spaces the source
   sets are kept. In headings, running heads and tab labels each gap
   between words is measured, less the line's letter spacing: over half an
@@ -463,10 +470,11 @@ What the extraction decides, so you know what to check:
   list item; the bullets' left edges in a frame, grouped within 1.5 mm,
   are the levels, so an item whose bullet sits further in is nested
   (`  - ` under the item above). The frame's style gets `lists` from its
-  top-level bullets: `bulletChar`, `color`, `indent`, `gap` (from the
-  bullet's advance to the words), `bulletFontSize` (em of the item text)
-  and `bulletFontWeight`. Each level's bullet goes to
-  `suggested.unorderedLists` (`bulletChar`, `levels[]` with `bulletChar`,
+  top-level bullets: `bulletChar`, `color` (the bullets' most common),
+  `indent`, `gap` (from the bullet's advance to the words),
+  `bulletFontSize` (em of the item text), `bulletFontWeight` and
+  `itemSpacing` (the room between two items over their leading). Each level's bullet goes to
+  `suggested.unorderedLists` (`bulletChar`, `color`, `levels[]` with `bulletChar`,
   `fontSize`, `fontWeight`), which `manifest` writes into the config: keep
   it, since a box whose `lists.bulletChar` differs from the document's
   replaces every level's bullet with its own.
@@ -600,6 +608,16 @@ What the extraction decides, so you know what to check:
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report
   lists every match.
+  From skill 1.61 the style part is read from every form producers write
+  (`Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`, `ArialBold`); a face
+  takes the heavier of the file's weight and the one its name or bold flag
+  says, and either slant; a file with no OS/2 weight takes its name's; a
+  prefix match only joins faces whose names say the same weight and slant.
+  A run is bold at least 500 and 100 over its paragraph's base when it is
+  set in another font (a Medium file beside the Book), 150 over it within
+  one font. When
+  every face comes out at one weight although the names say several, the
+  run prints a `WARNING` and `report.json` lists it under `warnings`.
 
 Also decided by the drafting, checked on a real textbook in three languages:
 
