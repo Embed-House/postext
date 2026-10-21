@@ -496,6 +496,35 @@ so a translation that shortens a text moves everything under it up (frames the
 source fixes at the card's foot are held there with the foot-hold stack of
 section 5, not by anchoring them to the card's foot).
 
+Re-porting that textbook with round 2 (1.48.1, three editions) left this
+curation, each a template or Markdown change in the generator:
+
+- **Picture cuts take what lies next to them.** A cut is the picture's box
+  with the text removed, so it keeps fills and art the page paints inside that
+  box: the highlight of the line above a map, the foot of a note and its
+  pointer above a plan, the white of a box's last line over a timeline's art,
+  a plate's outline or a blank strip cut as a picture of its own. Look at
+  every cut whose box touches another frame; crop it (and move its anchors and
+  the frames anchored to its top by as much) or drop it.
+- **Plates and date boxes under the photos they name.** The draft keeps the
+  source's paint order, and a plate painted before its photo lies under it:
+  give the pills and the boxes that stand on a picture a higher `layer`.
+- **A box's measure is its longest source line.** The rest of a wide box is
+  right padding (38 mm on one page), and a longer translation breaks far short
+  of the edge. Where nothing stands in the box on that side, give the padding
+  back (the box's left padding).
+- **Running-head ornaments stand at fixed points** of the page; a longer part
+  name runs over them. Anchor them to the head (`left-of`) and let the head be
+  as wide as its words.
+- **A box whose words all went to frames of their own** (captions moved out
+  to stand under their pictures) draws nothing, its tab and border with it:
+  leave `:::space{lines=1}` in it.
+- **Overlaps the source prints** (pills on photos, notes on an illustrated
+  band, cut-outs past a box's edge) go to `composed-check.json`, one entry per
+  look with its reason; that book needed 21, and three real overlaps fixed in
+  the port (a plan over a note, a strip over the last line of a box, a map's
+  margin over the descenders above it).
+
 Curate after it: name the templates by role (`tema-cajas`), give pictures
 their `altText`, read the notes in `report.json` (a centred tab set at
 `top-left`, a tab's icon not drawn, paragraph spacing inside boxes), and

@@ -3183,3 +3183,31 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   record, not part of the book). The check does not reflow to test a fix; the Sandbox's fixes do.
 - **Docs finding.** `configuration-composed-pages` lists `over` in the table of a connector's *end* fields;
   it is a key of the connector (`DesignConnectorElement.over`, §12.26).
+
+### 12.36 What S9 found (#1073)
+
+The acceptance test of round 2: the 28-page social-science textbook (230 × 288 mm, Spanish, checked
+privately) re-ported with the S8 skill on 1.48.1 in Spanish, Catalan and English from one bundle, the
+words taken from the round-1 port (the owner's corrected Spanish and his translations, as Markdown).
+
+- **The loop as written.** `pdf_regions.py extract` (28 pages, 367 frames, 152 callout styles, 245
+  labels) → `render.mjs --frames` → `template_dedupe.py --laid` (2 shells, 36 modules, 6 grids, 88
+  styles) → manifest → render, compare boxes, `composed_check.py`, score. The curation is a generator
+  (template changes) and a Markdown pass; no word of the book in either.
+- **Result.** 3 shells (front matter, body, and a body child that adds the even running head of a
+  block's closing page), 36 module templates, 6 grids, 52 connectors (trees, elbows, the map's pointers
+  to anchors), 100 path elements, 2 raster grounds left (two art scraps the vectors do not paint; no line,
+  connector or border in either). Config 0.32 MB. `composed_check.py` passed in every edition with 0
+  overlaps and 21 recorded exceptions (pills on photos, boxes on an illustrated band, cut-outs past a
+  box's edge, each with its reason); 0 `frameOverflow`, 0 `contentInConfig`. The bundle opens with the
+  Sandbox's own import path (`openBundleZip`, `parseBundle`, `layOutBundle`): three editions, 28 pages each.
+- **Likeness** (round 1's measure, 60 dpi grey, blurred 2 px, share of pixels off by more than 40;
+  round 1 in brackets): es 1.6 % (2.0), ca 2.1 % (2.4), en 3.0 % (3.2); mean difference 8.1 (8.6),
+  8.7 (8.9), 9.4 (9.5).
+- **Skill fixes** (S9 commits): `render.mjs` stopped on a face with one unreadable glyph; the fold
+  read a module's gap off the laid boxes (a grown box baked its growth into the gap under it) and lost
+  the connector ends on a renamed grid's cards (`#grid-2-picture[2]`). `composed-pages.md` §3.7 lists the
+  curation the draft still needs.
+- **Engine.** Nothing changed. Two behaviours a port meets: a box frame with no content draws nothing
+  (its tab and border too; a `:::space` keeps it), and a one-line pill held with `maxHeight` and
+  `fit.minScale` still breaks a long word over two lines before it shrinks the word.
