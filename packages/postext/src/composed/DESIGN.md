@@ -3244,3 +3244,62 @@ words taken from the round-1 port (the owner's corrected Spanish and his transla
 - **Parity.** bench-layout hashes unchanged on Señales, Pepper&Carrot, Bioquímica, Kokoro, Don
   Quijote and a composed textbook port; the composed recipes pass `--check`.
 
+
+## 13. Round 3 (#1086)
+
+Round 3 of composed pages: what the round 2 ports still could not say (tracker #1086).
+
+### 13.2 What R3-2 built (#1088)
+
+Modules side by side (§12.7, §12.19 left them always stacked).
+
+- **Config.** A modules group's `kind` is read: `'stack'` (the default, as before), `'row'` or `'grid'`
+  (`columns`, `columnGap`, `rowGap`, `rowAlign`; `repeat` is not read on a modules grid and is reported
+  as `unknownConfigValue`). `rowAlign` is also read on a modules row (default `'stretch'`). A module
+  template has a new optional `width: ModuleWidth` (`Dimension | { percent } | 'fill'`, inherited through
+  `extends` like `role`; `ResolvedPageTemplate.width`, `ResolvedModule.width`). Two new group keys:
+  `within: '<stack>'` (a modules group inside the page's modules stack) and `templates: string[]` (the
+  module templates such a group takes; unset, every one). `normalizeGroup` adds the modules fields only to
+  a modules group, so a modules stack with neither resolves to the same object as before.
+- **Decision: how a nested group is written and filled.** §12.7 left open how "a row inside a stack" is
+  spelled. A modules group with `within` names the page's modules stack (the first modules group without
+  `within`); `expandModules` gives each module, in Markdown order, to the first such group whose
+  `templates` holds its template, else to the stack (`ResolvedModule.nested`, `items[].nested`). Each run of
+  consecutive modules of one nested group is one item of the stack, laid as that group's kind where the
+  run's first module comes; so a page of boxes and card rows interleaved needs no geometry in the Markdown,
+  only the module templates it names. Nested groups have no frames and no `items`; `#<nested>` reads the
+  union of its modules' boxes (all its runs) once the stack is laid. Only one level: `within` must name a
+  modules stack that is in no other (else `unknownConfigValue` at `…/within`, and the group is a
+  modules group of its own, which takes nothing since the page uses its first modules group);
+  `templates` without `within`, and `overflow.continueIn` on a nested group, are `unknownConfigValue`.
+- **Layout** (`placeModules`, rewritten as rows). The group's modules become a list of rows: a stack gives
+  each module a row of its own, at its template's `width` from the start side (`'fill'`/unset: the group's
+  width, as before); a row group one row, widths by template (`'fill'`/unset share what the fixed ones and
+  the gaps leave, equally); a grid `columns` equal columns, `rowGap` between rows (the template width is
+  not read). Each module of a row is measured as before (its frames placed in the room left, held-by-foot
+  frames left out), the row is as tall as the tallest, and each is laid in a box that tall when the row has
+  several modules and `rowAlign` is `'stretch'` (its `'container'` ground and `'fill'` frames reach the
+  row's foot), else at its own height, moved by `'center'`/`'end'`. `placeGrid` is not reused: its cells
+  are frame sets placed by the template's drawing, a module is a sub-layout of steps; the column and
+  row-gap arithmetic is the same. Rows run left to right in flow coordinates: start to end on a
+  right-to-left page (mirrored flow), as grids do. A stack row of one full-width module goes through the
+  same arithmetic as the old per-module loop (cursor, declared shift, clip), so stacks lay out byte for byte.
+- **Continuation.** By whole rows: the first row that does not fit, when the stack's (or the row/grid
+  group's) `overflow.continueIn` goes off the page, and every row after it spill whole (`FitState.gridsOn`
+  keyed by the top modules group, as before). A row of a nested group never splits; a nested grid keeps its
+  rows that fit. The receiving page resolves its template with the modules it receives and routes them
+  again, so a run cut by the page is one run on the next.
+- **Ids, source map.** Unchanged: module frames keep `<name>.<frame>` ids; `moduleOfFrame` still returns
+  the top modules group (the one with `items`), so cut warnings stay one per group.
+- **Sandbox.** The group editor offers stack / row / grid for a modules group (grid: columns, gaps,
+  `rowAlign`, no repeat; row: `rowAlign`), «Inside the group» (the template's other modules stacks) and
+  «Modules it takes» (checkboxes of the book's module templates); the template editor of a module has
+  «Width in its group» (share / length / percentage); the module library shows each module's width. 14
+  new labels in ten languages; WebMCP `settings.test.ts` writes a nested group's kind and templates and a
+  module's width.
+- **Not done.** A group inside a row or grid of modules (one level only); a module wider than its
+  group is not clipped; `grow`/`shrink` among a row's modules; anchoring a page frame to a nested group is
+  read only after the stack is laid (no ordering dependency is recorded for it); the skill's
+  `template_fold.py` side (a later lane).
+- **Fixture.** `__tests__/composed/fixtures/moduleRows.ts` (a page shell whose stack holds a row of boxes
+  and a 2 × 2 grid of cards, words in Spanish and English); `moduleRows.test.ts`.
