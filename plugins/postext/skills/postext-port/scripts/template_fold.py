@@ -106,10 +106,18 @@ def _el_targets(el: dict) -> set[str]:
 
 
 def retarget(t: dict, rename: dict[str, str]) -> None:
-    """Point every `#name` / `next` of template `t` at `rename[name]`."""
+    """Point every `#name` / `next` of template `t` at `rename[name]`. An
+    instance of a grid's card (`#grid-picture[2]`, `[*]`) follows its set's
+    name: a connector that ends on the second photo of a grid renamed in its
+    module still ends on it."""
     def ref(v: Any) -> Any:
-        if isinstance(v, str) and v.startswith("#") and v[1:] in rename:
+        if not isinstance(v, str) or not v.startswith("#"):
+            return v
+        if v[1:] in rename:
             return "#" + rename[v[1:]]
+        base, bracket, rest = v[1:].partition("[")
+        if bracket and rest.endswith("]") and base in rename:
+            return "#" + rename[base] + "[" + rest
         return v
 
     for f in t.get("frames", []):
@@ -1098,7 +1106,8 @@ def _clear_of(box: Box | None, others: list[Box | None]) -> bool:
 
 
 def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
-                      parents: dict[str, str | None], page: tuple[float, float] = (210.0, 297.0)) -> dict | None:
+                      parents: dict[str, str | None], page: tuple[float, float] = (210.0, 297.0),
+                      measured: dict[str, Box] | None = None) -> dict | None:
     """Every band of one page template as a module (nothing changed yet).
     The modules group fills the page from its top-left, with no gap: each
     module's frames stand where the band stood, offset by how far the band
@@ -1107,11 +1116,31 @@ def plan_page_modules(t: dict, rects: dict[str, Box], kinds: dict[str, str],
     follows. The page keeps its furniture (`is_furniture`) while nothing
     the page paints earlier moved; every other element goes with the band
     whose frames it reads or inside which it is painted, else with the first
-    module, as it is."""
+    module, as it is.
+
+    The distance between two bands is read off the `measured` boxes (the
+    source's, regions.json) when every frame of both has one, not off the
+    laid ones: a box the draft's measure grew past its drawn height would
+    otherwise bake its growth into the gap under it, and a measure that fits
+    the text in the drawn height (another renderer, a shorter translation)
+    would lay the next band that much higher than the source."""
     bands = bands_of(t, rects, parents)
     if not bands:
         return None
-    leads = [bands[0]["box"][1]] + [bands[i]["box"][1] - bands[i - 1]["box"][3] for i in range(1, len(bands))]
+
+    def drawn(band: dict) -> Box | None:
+        bs = [measured[n] for n in band["frames"] if measured and n in measured]
+        if not bs or len(bs) != len(band["frames"]):
+            return None
+        return (min(b[0] for b in bs), min(b[1] for b in bs), max(b[2] for b in bs), max(b[3] for b in bs))
+
+    def lead(i: int) -> float:
+        above, here = drawn(bands[i - 1]), drawn(bands[i])
+        if above and here:
+            return here[1] - above[3]
+        return bands[i]["box"][1] - bands[i - 1]["box"][3]
+
+    leads = [bands[0]["box"][1]] + [lead(i) for i in range(1, len(bands))]
     first = [module_of_band(t, band, rects, kinds, 0.0, band["box"][1], lead) for band, lead in zip(bands, leads)]
     owner: dict[str, int] = {}
     for k, (_, _, ids) in enumerate(first):
@@ -1211,6 +1240,7 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
     pages: list[dict | None] = []
     for t, reg in zip(templates, regions):
         rects = {f["name"]: tuple(f["box"]) for f in reg.get("frames", []) if f.get("box")}
+        measured = dict(rects)
         for n, b in ((laid or {}).get(t["id"]) or {}).items():
             if n in rects and b[2] - b[0] > 0.01:
                 rects[n] = tuple(b)
@@ -1235,14 +1265,14 @@ def fold_book(templates: list[dict], regions: list[dict], markdowns: list[str], 
                                         "items": len(plan["cells"])})
         trim = reg.get("trim") or [210.0, 297.0]
         pages.append({"t": t, "rects": rects, "kinds": kinds, "parents": parents, "names": names,
-                      "page": (float(trim[0]), float(trim[1]))})
+                      "page": (float(trim[0]), float(trim[1])), "measured": measured})
     if modules:
         report["furniture"] = mark_furniture([pg["t"] for pg in pages if pg is not None], element_diff)
         cands = []
         for pg in pages:
             if pg is None:
                 continue
-            plan = plan_page_modules(pg["t"], pg["rects"], pg["kinds"], pg["parents"], pg["page"])
+            plan = plan_page_modules(pg["t"], pg["rects"], pg["kinds"], pg["parents"], pg["page"], pg["measured"])
             if plan:
                 pg["plan"] = plan
                 cands += [(pg, k) for k in range(len(plan["modules"]))]

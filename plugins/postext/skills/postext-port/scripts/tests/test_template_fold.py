@@ -261,6 +261,31 @@ class ModuleTest(unittest.TestCase):
         self.assertIn('Mountains: the effect.', md)
         self.assertEqual(rep["names"]["p02"]["box-4"], f"{pair['id']}[1].box-2")
 
+    def test_a_connector_to_a_grid_card_follows_the_renamed_set(self):
+        # a page with a second grid: its set `grid-2-picture` is `grid-picture`
+        # in the module, and a line that ends on its second card ends on it there
+        t = {"id": "p", "frames": [frame("text", 15, 15, 180), {"name": "grid-2-picture", "width": mm(50)}],
+             "decoration": {"elements": [
+                 {"kind": "connector", "id": "c", "routing": "straight", "from": {"to": "#text", "side": "bottom"},
+                  "to": {"to": "#grid-2-picture[2]", "side": "top"}},
+                 {"kind": "connector", "id": "d", "routing": "straight", "from": {"to": "#text", "side": "bottom"},
+                  "to": {"to": "#grid-2-picture[*]", "side": "top"}}]}}
+        tf.retarget(t, {"grid-2-picture": "grid-picture", "text": "text"})
+        ends = [e["to"]["to"] for e in t["decoration"]["elements"]]
+        self.assertEqual(ends, ["#grid-picture[2]", "#grid-picture[*]"])
+
+    def test_a_box_the_draft_grew_keeps_the_drawn_gap_under_it(self):
+        # the draft's measure grew the blue box 6 mm past its drawn foot: the
+        # pair under it stands the drawn 10 mm below the box, not 4 mm below
+        # the grown foot (a measure that fits the words would lay it higher)
+        laid = {"p01": {"box-1": (15, 70, 195, 126), "picture-1": (20, 80, 70, 111.25), "box-2": (80, 80, 180, 100)}}
+        templates, md, rep = fold([band_page("p01", "Rivers")], grids=False, laid=laid)
+        mods = [t for t in templates if t.get("role") == "module"]
+        pair = next(m for m in mods if any(e["kind"] == "connector" for e in (m.get("decoration") or {}).get("elements", [])))
+        self.assertEqual(pair["frames"][0]["placement"]["offset"]["y"], mm(10))
+        box = next(m for m in mods if any(f["name"] == "picture-1" for f in m["frames"]))
+        self.assertEqual(box["frames"][0]["placement"]["offset"]["y"], mm(15))
+
     def test_a_connector_from_the_text_joins_its_box_to_the_text(self):
         t, reg, md = band_page("p01", "Lakes")
         t["decoration"]["elements"].append({"kind": "connector", "id": "connector-2", "routing": "straight",
