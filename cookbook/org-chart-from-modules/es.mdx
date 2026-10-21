@@ -1,0 +1,60 @@
+---
+title: "Un organigrama y una rejilla de fotos hechos con módulos"
+summary: "Una guía de servicios municipales hecha con módulos: un organigrama cuyas líneas traza la plantilla y rejillas que repiten una ficha por edificio."
+plain: "Dos páginas de una guía del ayuntamiento: quién lleva cada cosa, como un esquema de cajas unidas por líneas, y dónde está cada servicio, en filas de imágenes. Se hacen con unos pocos bloques reutilizables; el Markdown dice cuántos."
+description: "Un organigrama y una rejilla de fotos en Postext: plantillas de módulo apiladas por la página, conectores desde la alcaldía a cada área y fichas con foto."
+question: "¿Cómo hago un organigrama y una rejilla de fotos con módulos, con las líneas trazadas por la plantilla?"
+aliases: ["organigrama", "módulo", "bloque reutilizable", "rejilla de fotos", "conector", "guía municipal", "guía de servicios", "diagrama de árbol", "org chart", "organigram"]
+pageNotes: { "1": "Así se organiza tu ayuntamiento: un título con remates, una entradilla, una caja roja para la alcaldía y el pleno y, debajo, cuatro cajas verdes de área, cada una con sus servicios en cajas claras; una línea verde baja desde la alcaldía con una flecha hasta cada área, y un árbol une cada área con sus servicios.", "2": "Dónde encontrarnos: dos paneles verde claro, Cultura y mayores y Deporte y comercio, cada uno con tres acuarelas en fila y el nombre, la dirección y el horario debajo de cada una; un recuadro de la oficina de atención al vecino con la pestaña nacida del contorno; un colofón al pie." }
+---
+
+## Lo que vas a componer
+
+Una doble página de la guía de servicios de Valdeloma, un pueblo inventado de 8.400 vecinos. La página par es el organigrama del ayuntamiento: la alcaldía y el pleno en una caja roja, cuatro áreas en verde y, bajo cada área, sus servicios en cajas claras, unidos por líneas verdes con un punto o una flecha en el extremo. La impar cuenta dónde están los servicios: dos paneles de tres acuarelas, con el nombre, la dirección y el horario bajo cada imagen, y un recuadro para la oficina de atención al vecino. Nada se dibuja a mano. La plantilla tiene tres módulos (un área, un panel de fotos y un aviso) y cada página apila tantos como tiene su Markdown; las líneas siguen a las cajas allí donde el texto las lleve.
+
+## Elaboración
+
+### 1 · Un módulo por área
+
+<Excerpt region="answer" />
+
+Una plantilla con `role: 'module'` es un módulo: unos pocos marcos, grupos y decoración pensados para volver a usarse. La página del organigrama tiene un grupo con `modules: true`, y cada `:::module{template="area"}` de su Markdown coloca un área más debajo de la anterior, a 6 mm. Los marcos del módulo toman el nombre de la instancia, `area[1].concejalia`, `area[2].concejalia`…, así que sus dos conectores se escriben una sola vez: `rama`, un árbol (`tree`) desde el pie del área hasta cada servicio de su rejilla (`#servicio[*]`), y `tronco`, un ángulo (`elbow`) desde un punto cerca de la izquierda de la caja de la alcaldía (`at: 0.06`) hasta el lado izquierdo del área. `#alcaldia` es un marco de la página, no del módulo: el módulo conserva ese extremo y la maquetación lo encuentra en la página, de modo que los cuatro ángulos comparten su primer tramo y se leen como un solo tronco con una flecha hacia cada área. Los servicios son una rejilla de tres columnas que repite un marco `servicio`, así que un área con dos servicios dibuja dos cajas y su árbol, dos ramas.
+
+### 2 · Paneles de fichas con foto
+
+<Excerpt region="gallery" />
+
+Un panel también es un módulo: un marco de cabecera que toma el título `##` del módulo y una rejilla que repite un juego de dos marcos, la foto y las palabras de debajo. Cada `:::frame{slot="foto"}` es una ficha, y el `:::frame{slot="pie"}` que lleva dentro va a las palabras de esa ficha. El fondo tintado es decoración del módulo, una caja tan grande como el módulo, así que crece con las filas y con el pie más largo. La oficina de atención es un tercer módulo, un recuadro cuya pestaña es `joined`: pestaña y recuadro son un solo contorno con un solo relleno.
+
+### 3 · Imágenes al tamaño de impresión
+
+<Excerpt region="art" />
+
+Las seis acuarelas miden 900 × 600 px a 400 ppp, 57 mm de ancho, más o menos lo que mide una columna de la rejilla, así que la rejilla nunca las amplía. Su texto alternativo está aquí, en el script, porque las imágenes son las mismas en las dos ediciones; un pie que cambiara con el idioma sería una línea `::caption` del Markdown.
+
+### 4 · Un solo verde para las líneas y las cajas
+
+<Excerpt region="palette" />
+
+Los conectores, las cajas de área y las cabeceras de los paneles usan `green`, una entrada de la paleta, así que un pueblo con otro color cambia un solo hexadecimal. La caja de la alcaldía lleva el único color cálido de la doble página, el sitio al que el lector mira primero.
+
+## Variantes
+
+### Dos columnas de servicios
+
+Con `columns: 2` los servicios de cada área van de dos en dos; el árbol traza su barra solo sobre la primera fila, así que resérvalo para áreas con dos o cuatro servicios.
+
+```diff
+-  groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
++  groups: [{ name: 'servicios', kind: 'grid', columns: 2, columnGap: mm(4), rowGap: mm(4),
+```
+
+### Redondea las esquinas del tronco
+
+`radius` redondea los codos de un ángulo y de un árbol: el ayudante `line()` da 2,5 mm a todos los conectores; con `radius: mm(0)` el organigrama se vuelve recto.
+
+## Errores frecuentes
+
+- Un elemento de la rejilla es un bloque propio: las palabras de una ficha solo le pertenecen si su `:::frame{slot="pie"}` está escrito dentro del `:::frame{slot="foto"}` de la ficha.
+- Un conector de un módulo que nombra un marco de la página solo se dibuja en las páginas que tienen ese marco; en otra se omite, y el registro de recomposición dice `connectorDropped`.
+- Una pestaña unida queda sobre el borde del recuadro y toma su relleno: dale a sus palabras un `color` oscuro, porque un rótulo blanco sobre un recuadro claro no se lee.

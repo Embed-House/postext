@@ -1,0 +1,60 @@
+---
+title: "An org chart and a photo grid built from modules"
+summary: "A town hall's services guide set from modules: an org chart whose lines the template draws, and photo grids that repeat one card per building."
+plain: "Two pages of a council guide: who runs what, as a chart of boxes joined by lines, and where each service is, as rows of pictures. The pages are made of a few reusable blocks; the Markdown says how many."
+description: "An org chart and a photo grid in Postext: module templates stacked by a page, connectors from the head to each department, grids of photo cards."
+question: "How do I build an org chart and a photo grid from reusable modules, with the lines drawn by the template?"
+aliases: ["org chart", "organigram", "organigrama", "module", "reusable block", "photo grid", "connector", "council guide", "services guide", "tree diagram"]
+pageNotes: { "1": "How your town hall is run: a serif title, a lead, a red box for the mayor and council, and under it four green department boxes, each with its services in pale boxes beneath; a green spine runs down from the mayor's box with an arrow into each department, and a tree joins each department to its services.", "2": "Where to find us: two pale green panels, Culture and older people and Sport and trade, each with three watercolours in a row and the name, address and hours under each; a notice box for the residents' office with its tab grown out of the outline; a colophon at the foot." }
+---
+
+## What you'll build
+
+A spread from the services guide of Valdeloma, an invented town of 8,400 people. The left page is the council's org chart: the mayor and council in a red box, four departments in green, and each department's services in pale boxes under it, joined by green lines with a dot or an arrow at their ends. The right page shows where the services are: two panels of three watercolours each, with the name, the address and the opening hours under every picture, and a box for the residents' office. Nothing is drawn by hand. The template holds three modules (a department, a panel of photos and a notice), and each page stacks as many of them as its Markdown has; the lines follow the boxes wherever the text puts them.
+
+## Method
+
+### 1 · A module per department
+
+<Excerpt region="answer" />
+
+A template with `role: 'module'` is a module: a few frames, groups and decoration meant to be used again. The chart page has a group with `modules: true`, and each `:::module{template="area"}` of its Markdown lays one more department under the one before, 6 mm apart. The module's frames get the instance's name, `area[1].concejalia`, `area[2].concejalia`…, so its two connectors are written once: `rama`, a `tree` from the department's foot to every service of its grid (`#servicio[*]`), and `tronco`, an `elbow` from a point near the left of the mayor's box (`at: 0.06`) to the department's left side. `#alcaldia` is a frame of the page, not of the module: the module keeps the end and the layout finds it on the page, so the four elbows share their first run and read as one spine with an arrow into each department. The services are a grid of three columns that repeats one `servicio` frame, so a department with two services draws two boxes and the tree has two drops.
+
+### 2 · Panels of photo cards
+
+<Excerpt region="gallery" />
+
+A panel is a module too: a heading frame that takes the module's `##` heading, and a grid that repeats a set of two frames, the photo and the words under it. Each `:::frame{slot="foto"}` is one card, and the `:::frame{slot="pie"}` inside it goes to that card's words. The tinted ground is decoration of the module, a box as large as the module, so it grows with the rows and the longest caption. The residents' office is a third module, one box whose tab is `joined`: the tab and the box are one outline with one fill.
+
+### 3 · Pictures at the size they print
+
+<Excerpt region="art" />
+
+The six watercolours are 900 × 600 px declared at 400 ppi, 57 mm wide, about the width of a grid column, so the grid never enlarges them. Their alternative text is in the script here because the pictures are the same in both editions; a caption that changed with the language would be a `::caption` line in the Markdown.
+
+### 4 · One green for the lines and the boxes
+
+<Excerpt region="palette" />
+
+The connectors, the department boxes and the panel headings use `green`, a palette entry, so a town with another colour changes one hex. The mayor's box takes the one warm colour of the spread, the place a reader looks first.
+
+## Variations
+
+### Two columns of services
+
+With `columns: 2` each department's services stand two to a row; the tree draws its bar over the first row only, so keep it for departments with two or four services.
+
+```diff
+-  groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
++  groups: [{ name: 'servicios', kind: 'grid', columns: 2, columnGap: mm(4), rowGap: mm(4),
+```
+
+### Round the corners of the spine
+
+`radius` rounds the bends of an elbow and of a tree: the `line()` helper gives every connector 2.5 mm; with `radius: mm(0)` the chart turns square.
+
+## Pitfalls
+
+- A grid item is a fence of its own: the words of a photo card belong to it only when their `:::frame{slot="pie"}` is written inside the card's `:::frame{slot="foto"}`.
+- A connector of a module that names a frame of the page draws only on pages that have that frame; on another page it is left out, and the reflow log says `connectorDropped`.
+- A joined tab sits on the box's edge and takes the box's fill: give its words a dark `color`, since a white label on a pale box does not read.
