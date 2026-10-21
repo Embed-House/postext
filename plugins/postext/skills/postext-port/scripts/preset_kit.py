@@ -521,6 +521,199 @@ def fingerprint(project: Path | str) -> str:
     return h.hexdigest()
 
 
+# ---------------------------------------------------------------------------
+# curation: the hand fixes of a composed-page draft, kept apart from the
+# generated preset.json so that a rebuild keeps them (#1136)
+# ---------------------------------------------------------------------------
+
+CURATION_FILE = "curation.json"
+# Each table is a list of entries; every entry carries a "reason".
+CURATION_TABLES = {
+    "framePatch": "merge `set` into a frame: {template, frame, set, reason}",
+    "frameDrop": "remove a frame (and its name from the template's groups): {template, frame, reason}",
+    "frameAdd": "add a frame, after another or at the end: {template, frame: {name, …}, after?, reason}",
+    "decorationDrop": "remove a decoration element: {template, element, reason}",
+    "overlapAllow": "set overlap: \"allow\" on a frame the source prints over or past another: "
+                    "{template, frame, reason}",
+    "styles": "merge `set` into a style of a config list (calloutStyles, labelStyles, frameLooks…): "
+              "{table, id, set, reason}",
+    "resources": "add a resource the extract did not write: {resource: {id, typeId, …}, reason}",
+}
+
+
+def empty_curation() -> dict:
+    return {"about": "Hand fixes applied by `pdf_regions.py manifest` after each build (composed-pages.md "
+                     "§3.7). Every entry needs a reason; an unknown template, frame, element or style fails.",
+            "tables": CURATION_TABLES, **{k: [] for k in CURATION_TABLES}}
+
+
+def write_empty_curation(folder: Path | str) -> Path | None:
+    """An empty curation.json in `folder`, unless one is there."""
+    path = Path(folder) / CURATION_FILE
+    if path.exists():
+        return None
+    path.write_text(json.dumps(empty_curation(), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return path
+
+
+def _merge(base: dict, patch: dict) -> dict:
+    """Deep merge: dicts merge, a null removes the key, anything else replaces."""
+    out = dict(base)
+    for k, v in patch.items():
+        if v is None:
+            out.pop(k, None)
+        elif isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = _merge(out[k], v)
+        else:
+            out[k] = v
+    return out
+
+
+def apply_curation(manifest: dict, curation: dict) -> list[str]:
+    """Apply the curation tables to a manifest in place; one line per entry
+    applied. Raises SystemExit listing every entry whose target does not
+    exist, or that has no reason, before anything is changed."""
+    config = manifest.setdefault("config", {})
+    templates = {t.get("id"): t for t in config.get("pageTemplates") or [] if isinstance(t, dict)}
+    problems: list[str] = []
+    unknown = sorted(k for k in curation if k not in CURATION_TABLES and k not in ("about", "tables", "version"))
+    if unknown:
+        problems.append(f"unknown table(s) {unknown}: the tables are {sorted(CURATION_TABLES)}")
+
+    def entries(table: str) -> list[tuple[str, dict]]:
+        rows = curation.get(table) or []
+        if not isinstance(rows, list):
+            problems.append(f"{table} must be a list")
+            return []
+        out = []
+        for n, e in enumerate(rows):
+            where = f"{table}[{n}]"
+            if not isinstance(e, dict):
+                problems.append(f"{where} is not an object")
+            elif not str(e.get("reason") or "").strip():
+                problems.append(f"{where} has no reason")
+            else:
+                out.append((where, e))
+        return out
+
+    def template(where: str, e: dict) -> dict | None:
+        t = templates.get(e.get("template"))
+        if t is None:
+            problems.append(f"{where}: no page template {e.get('template')!r} (templates: {sorted(templates)})")
+        return t
+
+    def frame_at(where: str, e: dict, t: dict | None) -> int | None:
+        if t is None:
+            return None
+        names = [f.get("name") for f in t.get("frames") or []]
+        if e.get("frame") not in names:
+            problems.append(f"{where}: template {t.get('id')!r} has no frame {e.get('frame')!r} (frames: {names})")
+            return None
+        return names.index(e["frame"])
+
+    plan: list[tuple] = []
+    for where, e in entries("framePatch"):
+        t = template(where, e)
+        i = frame_at(where, e, t)
+        if i is not None:
+            if not isinstance(e.get("set"), dict):
+                problems.append(f"{where}: `set` must be an object")
+            else:
+                plan.append(("framePatch", where, e, t))
+    for where, e in entries("overlapAllow"):
+        t = template(where, e)
+        if frame_at(where, e, t) is not None:
+            plan.append(("overlapAllow", where, e, t))
+    for where, e in entries("frameDrop"):
+        t = template(where, e)
+        if frame_at(where, e, t) is not None:
+            plan.append(("frameDrop", where, e, t))
+    for where, e in entries("frameAdd"):
+        t = template(where, e)
+        f = e.get("frame")
+        if t is None:
+            continue
+        names = [x.get("name") for x in t.get("frames") or []]
+        if not isinstance(f, dict) or not f.get("name"):
+            problems.append(f"{where}: `frame` must be a frame object with a name")
+        elif f["name"] in names:
+            problems.append(f"{where}: template {t['id']!r} already has a frame {f['name']!r} (use framePatch)")
+        elif e.get("after") is not None and (e["after"] not in names or any(
+                k == "frameDrop" and pt is t and pe["frame"] == e["after"] for k, _, pe, pt in plan)):
+            problems.append(f"{where}: template {t['id']!r} has no frame {e['after']!r} to add after")
+        else:
+            plan.append(("frameAdd", where, e, t))
+    for where, e in entries("decorationDrop"):
+        t = template(where, e)
+        if t is None:
+            continue
+        ids = [el.get("id") for el in ((t.get("decoration") or {}).get("elements") or [])]
+        if e.get("element") not in ids:
+            problems.append(f"{where}: template {t['id']!r} has no decoration element {e.get('element')!r} "
+                            f"(elements: {ids})")
+        else:
+            plan.append(("decorationDrop", where, e, t))
+    for where, e in entries("styles"):
+        table = config.get(e.get("table"))
+        if not isinstance(table, list):
+            problems.append(f"{where}: the config has no style list {e.get('table')!r}")
+            continue
+        ids = [s.get("id") for s in table if isinstance(s, dict)]
+        if e.get("id") not in ids:
+            problems.append(f"{where}: {e.get('table')} has no style {e.get('id')!r} (ids: {ids})")
+        elif not isinstance(e.get("set"), dict):
+            problems.append(f"{where}: `set` must be an object")
+        else:
+            plan.append(("styles", where, e, table))
+    have = {r.get("id") for r in manifest.get("resources") or []}
+    for where, e in entries("resources"):
+        r = e.get("resource")
+        if not isinstance(r, dict) or not r.get("id") or not r.get("typeId"):
+            problems.append(f"{where}: `resource` must be a resource with an id and a typeId")
+        elif r["id"] in have:
+            problems.append(f"{where}: a resource {r['id']!r} exists already")
+        else:
+            have.add(r["id"])
+            plan.append(("resources", where, e, None))
+    if problems:
+        raise SystemExit(f"{CURATION_FILE}: {len(problems)} entr{'y' if len(problems) == 1 else 'ies'} cannot be "
+                         "applied, nothing was written:\n  " + "\n  ".join(problems))
+
+    done: list[str] = []
+    for kind, where, e, target in plan:
+        if kind in ("framePatch", "overlapAllow"):
+            frames = target["frames"]
+            i = [f.get("name") for f in frames].index(e["frame"])
+            frames[i] = _merge(frames[i], e["set"] if kind == "framePatch" else {"overlap": "allow"})
+            done.append(f"{kind} {target['id']}/{e['frame']}: {e['reason']}")
+        elif kind == "frameDrop":
+            target["frames"] = [f for f in target["frames"] if f.get("name") != e["frame"]]
+            for g in target.get("groups") or []:
+                if isinstance(g, dict) and isinstance(g.get("frames"), list):
+                    g["frames"] = [n for n in g["frames"] if n != e["frame"]]
+            refs = [f.get("name") for f in target["frames"] if f'"#{e["frame"]}"' in json.dumps(f)]
+            done.append(f"frameDrop {target['id']}/{e['frame']}: {e['reason']}"
+                        + (f" (still named by {refs}: check their anchors)" if refs else ""))
+        elif kind == "frameAdd":
+            frames = target.setdefault("frames", [])
+            names = [f.get("name") for f in frames]
+            at = names.index(e["after"]) + 1 if e.get("after") is not None else len(frames)
+            frames.insert(at, e["frame"])
+            done.append(f"frameAdd {target['id']}/{e['frame']['name']}: {e['reason']}")
+        elif kind == "decorationDrop":
+            deco = target["decoration"]
+            deco["elements"] = [el for el in deco["elements"] if el.get("id") != e["element"]]
+            done.append(f"decorationDrop {target['id']}/{e['element']}: {e['reason']}")
+        elif kind == "styles":
+            i = [s.get("id") for s in target].index(e["id"])
+            target[i] = _merge(target[i], e["set"])
+            done.append(f"styles {e['table']}/{e['id']}: {e['reason']}")
+        else:
+            manifest.setdefault("resources", []).append(e["resource"])
+            done.append(f"resources {e['resource']['id']}: {e['reason']}")
+    return done
+
+
 def write_manifest(project: Path | str, manifest: dict) -> Path:
     """Write preset.json (v2, stamped with CONFIG_VERSION unless the manifest
     names one) after checking that every referenced file exists, then

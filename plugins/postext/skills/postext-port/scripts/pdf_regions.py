@@ -3467,6 +3467,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
         "frameNames": frame_names,
     }
     (out / "report.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    import preset_kit  # noqa: PLC0415
+    preset_kit.write_empty_curation(out)  # the hand fixes `manifest` applies (#1136)
     if args.json:
         print(json.dumps(summary, ensure_ascii=False, indent=1))
     else:
@@ -3575,9 +3577,16 @@ def cmd_manifest(args: argparse.Namespace) -> int:
                 "config": config, "resources": resources, "fonts": fonts}
     if len(langs) > 1:
         manifest["locales"] = langs
+    patch = Path(args.patch) if args.patch else root / kit.CURATION_FILE
+    if args.patch and not patch.is_file():
+        raise SystemExit(f"--patch {args.patch}: no such file")
+    applied = kit.apply_curation(manifest, json.loads(patch.read_text(encoding="utf-8"))) if patch.is_file() else []
     path = kit.write_manifest(root, manifest)
-    print(f"{path}: {sum(len(v) for v in chapters.values())} chapter file(s), {len(resources)} resources, "
-          f"{len(config.get('pageTemplates', []))} page templates, {len(fonts)} font families")
+    print(f"{path}: {sum(len(v) for v in chapters.values())} chapter file(s), {len(manifest['resources'])} resources, "
+          f"{len(config.get('pageTemplates', []))} page templates, {len(fonts)} font families"
+          + (f", {len(applied)} curation(s) from {patch.name}" if applied else ""))
+    for line in applied:
+        print(f"  {line}")
     return 0
 
 
@@ -3638,6 +3647,9 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("--fonts", help="copy these font files into DIR/fonts and list them")
     m.add_argument("--id")
     m.add_argument("--name")
+    m.add_argument("--patch", metavar="FILE",
+                   help="the curation tables applied after the build (default: DIR/curation.json when it exists; "
+                        "composed-pages.md §3.7)")
     args = ap.parse_args(argv)
     if args.cmd == "extract":
         return cmd_extract(args)
