@@ -3211,3 +3211,36 @@ words taken from the round-1 port (the owner's corrected Spanish and his transla
 - **Engine.** Nothing changed. Two behaviours a port meets: a box frame with no content draws nothing
   (its tab and border too; a `:::space` keeps it), and a one-line pill held with `maxHeight` and
   `fit.minScale` still breaks a long word over two lines before it shrinks the word.
+
+### 12.37 What #1084 changed (S9 findings)
+
+- **An empty styled frame draws its box.** A `:::frame{slot=…}` fence with no blocks gave its frame no
+  story (`wrap.ts` skipped a story with no indices), so a frame with a callout style drew nothing, its
+  tab included. Now the fence of a frame with a `style` whose whole chain is empty makes an empty story
+  (the `callout` container opens and closes at the fence, with the fence's attributes); the frame lays
+  it through the existing "styled frame with nothing to hold" path, which now passes the piece's
+  `continuation` (false for the story's first piece) so the tab and title are drawn. The box is the
+  frame's size (`minHeight`, `height`), the label keeps its source. Decided where the issue was open: a
+  fence without a `label` draws the box too (the author asked for the frame); a frame with no fence, or
+  with no style, draws nothing as before, and `slotEmpty` is raised exactly as before (an empty fence
+  already counted as filling its slot). An empty frame's `rules` (#914) now land on the box's overlay,
+  as a frame with content has them.
+- **A long word is set smaller before it is divided.** A line that holds nothing but the head of a
+  divided word (`hyphenated`, no space in its text) marks a word wider than its measure
+  (`dividesWord`). Two places act on it, both only for a frame whose text may shrink (`fit.shrinkText`,
+  `minScale` < 1, text in its story):
+  - in the ladder's step 5, once the largest scale that fits is found, if that scale divides a word, a
+    smaller one down to `minScale` at which the frame still fits and no word is divided wins (the
+    largest such, lowest first then bisection, as `searchScale`); none, and the division stays;
+  - a frame that is not short but divides such a word and is held to its height (a fixed `height` or a
+    `maxHeight`) gets the same search from its own scale down. This is the pill of the report: its
+    height held the two pieces at full size, so the ladder never ran. A frame free to grow keeps its
+    size: growing does not widen the measure, and shrinking every narrow auto box would move existing
+    pages.
+- **Not done.** The `allowShrink` proposal still names the largest scale that fits, which may be one
+  that divides a word (the pill of `minScale: 1` proposes 0.925, where the word is divided over two
+  lines); once applied, the ladder sets the word whole only if `minScale` reaches that far. The skill's
+  `:::space{lines=1}` workaround (composed-pages.md) is no longer needed; its text is the skill's issue.
+- **Parity.** bench-layout hashes unchanged on Señales, Pepper&Carrot, Bioquímica, Kokoro, Don
+  Quijote and a composed textbook port; the composed recipes pass `--check`.
+
