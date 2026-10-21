@@ -775,6 +775,12 @@ decoration: {
       <td>点やリングの直径、矢じりやバーの長さです。</td>
     </tr>
     <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td><code>anchor</code>の端を持つコネクターは枠の上に、ほかは枠の下に描かれる</td>
+      <td>線をページのすべての枠の後に描く（<code>true</code>）か、装飾と一緒に枠の下に描く（<code>false</code>）かを決めます。未指定のとき、<code>anchor</code>の端を持つコネクターは上に描かれるので、画像の中を指す線は画像の枠の上に見えます。枠どうしを結ぶ線は下のままです。</td>
+    </tr>
+    <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -830,12 +836,6 @@ decoration: {
       <td><code>string</code></td>
       <td>なし</td>
       <td>枠が収める画像のアンカーです。端は枠の辺の点ではなく画像のその点になり、ラベルと同じく画像のトリミング、セーフエリア、縮尺を通して求めます。<code>at</code>は読みません。<code>side</code>は線がどちらから届くかを示します（既定ではもう一方の端の側から）。</td>
-    </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td><code>anchor</code>の端を持つコネクターは枠の上に、ほかは枠の下に描かれる</td>
-      <td>線をページのすべての枠の後に描く（<code>true</code>）か、装飾と一緒に枠の下に描く（<code>false</code>）かを決めます。未指定のとき、<code>anchor</code>の端を持つコネクターは上に描かれるので、画像の中を指す線は画像の枠の上に見えます。枠どうしを結ぶ線は下のままです。</td>
     </tr>
   </tbody>
 </table>

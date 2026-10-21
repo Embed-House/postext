@@ -775,6 +775,12 @@ decoration: {
       <td>圆点或圆环的直径，箭头或短横的长度。</td>
     </tr>
     <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>带<code>anchor</code>端的连接线画在各框之上，其余的在框之下</td>
+      <td>把线画在页面所有框之后（<code>true</code>），或与装饰一起画在框之下（<code>false</code>）。不设时，带<code>anchor</code>端的连接线画在上面，所以指进图片的线显示在图片的框之上；两个框之间的线仍在下面。</td>
+    </tr>
+    <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -830,12 +836,6 @@ decoration: {
       <td><code>string</code></td>
       <td>无</td>
       <td>框中图片的一个锚点：这一端就是图片上的那个点，与标注的点一样经过图片的裁切、安全区和缩放换算，而不是框边上的一点。不读取<code>at</code>；<code>side</code>说明线从哪个方向到达（默认从另一端过来）。</td>
-    </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>带<code>anchor</code>端的连接线画在各框之上，其余的在框之下</td>
-      <td>把线画在页面所有框之后（<code>true</code>），或与装饰一起画在框之下（<code>false</code>）。不设时，带<code>anchor</code>端的连接线画在上面，所以指进图片的线显示在图片的框之上；两个框之间的线仍在下面。</td>
     </tr>
   </tbody>
 </table>

@@ -775,6 +775,12 @@ decoration: {
       <td>El ancho de un punto o de un anillo, la longitud de una punta de flecha o de una barra.</td>
     </tr>
     <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un conector con un extremo <code>anchor</code> se pinta sobre los marcos, los demás bajo ellos</td>
+      <td>Pinta la línea después de todos los marcos de la página (<code>true</code>) o con la decoración, bajo los marcos (<code>false</code>). Sin valor, un conector con un extremo <code>anchor</code> se pinta encima, de modo que una línea que apunta dentro de una imagen se ve sobre el marco de la imagen; una línea entre marcos queda debajo.</td>
+    </tr>
+    <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -830,12 +836,6 @@ Cada extremo (`ConnectorEnd`) indica una caja y un punto de uno de sus lados:
       <td><code>string</code></td>
       <td>ninguno</td>
       <td>Un ancla de la imagen que contiene el marco: el extremo es ese punto de la imagen, a través de su recorte, su zona segura y su escala, como el de un rótulo, en lugar de un punto del lado del marco. <code>at</code> no se lee; <code>side</code> indica por dónde llega la línea (por defecto, desde el otro extremo).</td>
-    </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>un conector con un extremo <code>anchor</code> se pinta sobre los marcos, los demás bajo ellos</td>
-      <td>Pinta la línea después de todos los marcos de la página (<code>true</code>) o con la decoración, bajo los marcos (<code>false</code>). Sin valor, un conector con un extremo <code>anchor</code> se pinta encima, de modo que una línea que apunta dentro de una imagen se ve sobre el marco de la imagen; una línea entre marcos queda debajo.</td>
     </tr>
   </tbody>
 </table>

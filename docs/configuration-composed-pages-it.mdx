@@ -775,6 +775,12 @@ decoration: {
       <td>La larghezza di un punto o di un anello, la lunghezza di una punta di freccia o di una barra.</td>
     </tr>
     <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connettore con un’estremità <code>anchor</code> si disegna sopra le cornici, gli altri sotto</td>
+      <td>Disegna la linea dopo tutte le cornici della pagina (<code>true</code>) o con la decorazione, sotto le cornici (<code>false</code>). Senza valore, un connettore con un’estremità <code>anchor</code> si disegna sopra, così una linea che punta dentro un’immagine si vede sopra la cornice dell’immagine; una linea fra cornici resta sotto.</td>
+    </tr>
+    <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -830,12 +836,6 @@ Ogni estremità (`ConnectorEnd`) indica un riquadro e un punto su uno dei suoi l
       <td><code>string</code></td>
       <td>nessuna</td>
       <td>Un’ancora dell’immagine contenuta nella cornice: l’estremità è quel punto dell’immagine, attraverso il suo ritaglio, la sua zona sicura e la sua scala, come per un’etichetta, invece di un punto del lato della cornice. <code>at</code> non viene letto; <code>side</code> dice da che parte arriva la linea (per impostazione predefinita, dall’altra estremità).</td>
-    </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>un connettore con un’estremità <code>anchor</code> si disegna sopra le cornici, gli altri sotto</td>
-      <td>Disegna la linea dopo tutte le cornici della pagina (<code>true</code>) o con la decorazione, sotto le cornici (<code>false</code>). Senza valore, un connettore con un’estremità <code>anchor</code> si disegna sopra, così una linea che punta dentro un’immagine si vede sopra la cornice dell’immagine; una linea fra cornici resta sotto.</td>
     </tr>
   </tbody>
 </table>

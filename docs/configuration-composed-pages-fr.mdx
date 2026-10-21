@@ -775,6 +775,12 @@ decoration: {
       <td>Le diamètre d’un point ou d’un anneau, la longueur d’une pointe de flèche ou d’une barre.</td>
     </tr>
     <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connecteur avec une extrémité <code>anchor</code> est peint sur les blocs, les autres dessous</td>
+      <td>Peint la ligne après tous les blocs de la page (<code>true</code>) ou avec le décor, sous les blocs (<code>false</code>). Sans valeur, un connecteur qui a une extrémité <code>anchor</code> est peint dessus, si bien qu’une ligne qui pointe dans une image se voit sur le bloc de l’image ; une ligne entre blocs reste dessous.</td>
+    </tr>
+    <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -830,12 +836,6 @@ Chaque extrémité (`ConnectorEnd`) désigne une boîte et un point sur l’un d
       <td><code>string</code></td>
       <td>aucun</td>
       <td>Une ancre de l’image que contient le bloc : l’extrémité est ce point de l’image, à travers son recadrage, sa zone de sécurité et son échelle, comme pour une étiquette, au lieu d’un point du côté du bloc. <code>at</code> n’est pas lu ; <code>side</code> indique par où arrive la ligne (par défaut, depuis l’autre extrémité).</td>
-    </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>un connecteur avec une extrémité <code>anchor</code> est peint sur les blocs, les autres dessous</td>
-      <td>Peint la ligne après tous les blocs de la page (<code>true</code>) ou avec le décor, sous les blocs (<code>false</code>). Sans valeur, un connecteur qui a une extrémité <code>anchor</code> est peint dessus, si bien qu’une ligne qui pointe dans une image se voit sur le bloc de l’image ; une ligne entre blocs reste dessous.</td>
     </tr>
   </tbody>
 </table>

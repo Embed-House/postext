@@ -775,6 +775,12 @@ decoration: {
       <td>Die Breite eines Punkts oder Rings, die Länge einer Pfeilspitze oder eines Strichs.</td>
     </tr>
     <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>ein Verbinder mit einem <code>anchor</code>-Ende wird über den Rahmen gezeichnet, andere darunter</td>
+      <td>Zeichnet die Linie nach allen Rahmen der Seite (<code>true</code>) oder mit der Dekoration, unter den Rahmen (<code>false</code>). Ohne Wert wird ein Verbinder mit einem <code>anchor</code>-Ende darüber gezeichnet, sodass eine Linie, die in ein Bild zeigt, über dem Rahmen des Bilds sichtbar ist; eine Linie zwischen Rahmen bleibt darunter.</td>
+    </tr>
+    <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -830,12 +836,6 @@ Jedes Ende (`ConnectorEnd`) nennt einen Kasten und einen Punkt auf einer seiner 
       <td><code>string</code></td>
       <td>keiner</td>
       <td>Ein Anker des Bilds, das der Rahmen enthält: Das Ende ist dieser Punkt des Bilds, über Beschnitt, Sicherheitsbereich und Skalierung abgebildet wie der einer Beschriftung, statt eines Punkts auf der Seite des Rahmens. <code>at</code> wird nicht gelesen; <code>side</code> gibt an, aus welcher Richtung die Linie ankommt (standardmäßig vom anderen Ende her).</td>
-    </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>ein Verbinder mit einem <code>anchor</code>-Ende wird über den Rahmen gezeichnet, andere darunter</td>
-      <td>Zeichnet die Linie nach allen Rahmen der Seite (<code>true</code>) oder mit der Dekoration, unter den Rahmen (<code>false</code>). Ohne Wert wird ein Verbinder mit einem <code>anchor</code>-Ende darüber gezeichnet, sodass eine Linie, die in ein Bild zeigt, über dem Rahmen des Bilds sichtbar ist; eine Linie zwischen Rahmen bleibt darunter.</td>
     </tr>
   </tbody>
 </table>

@@ -775,6 +775,12 @@ decoration: {
       <td>L'amplada d'un punt o d'una anella, la llargada d'una punta de fletxa o d'una barra.</td>
     </tr>
     <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connector amb un extrem <code>anchor</code> es pinta sobre els marcs, els altres sota</td>
+      <td>Pinta la línia després de tots els marcs de la pàgina (<code>true</code>) o amb la decoració, sota els marcs (<code>false</code>). Sense valor, un connector amb un extrem <code>anchor</code> es pinta a sobre, de manera que una línia que assenyala dins d'una imatge es veu sobre el marc de la imatge; una línia entre marcs queda a sota.</td>
+    </tr>
+    <tr>
       <td><code>pin</code></td>
       <td><code>boolean</code></td>
       <td><code>false</code></td>
@@ -830,12 +836,6 @@ Cada extrem (`ConnectorEnd`) indica una caixa i un punt d'un dels seus costats:
       <td><code>string</code></td>
       <td>cap</td>
       <td>Una àncora de la imatge que conté el marc: l'extrem és aquest punt de la imatge, tenint en compte el retall, la zona segura i l'escala, com el d'un rètol, en lloc d'un punt del costat del marc. <code>at</code> no es llegeix; <code>side</code> diu per on arriba la línia (per defecte, des de l'altre extrem).</td>
-    </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>un connector amb un extrem <code>anchor</code> es pinta sobre els marcs, els altres sota</td>
-      <td>Pinta la línia després de tots els marcs de la pàgina (<code>true</code>) o amb la decoració, sota els marcs (<code>false</code>). Sense valor, un connector amb un extrem <code>anchor</code> es pinta a sobre, de manera que una línia que assenyala dins d'una imatge es veu sobre el marc de la imatge; una línia entre marcs queda a sota.</td>
     </tr>
   </tbody>
 </table>
