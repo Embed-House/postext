@@ -681,6 +681,8 @@ A template with `extends` starts from the template it names (which may itself ex
 
 `variants.recto` and `variants.verso` are written like a template and merge the same way, on a right or a left page. They apply after the whole `extends` chain, the root's variant first. A spread has both sides, so no variant applies to it.
 
+A recto is an odd page and a verso an even one, so an element of `variants.recto` with `parity: 'even'`, or of `variants.verso` with `parity: 'odd'`, is never drawn: it is reported as `unknownConfigValue` at its `parity`.
+
 ```ts
 pageTemplates: [
   { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
@@ -711,7 +713,7 @@ decoration: { elements: [
 - An element anchored to an element left out, or sized to it, is left out too.
 - With both keys, the element is drawn where the fence sets the `when` attribute and not the `unless` one.
 - The document's and a section's running heads read them as well. A page that is not composed has no fence and sets nothing. Heading, part and box designs ignore them.
-- A value that is not a non-empty string, or one written in a heading, part or box design, is reported as `unknownConfigValue`, and the element is drawn as if it had none. `postext check` adds a note, `conditionNeverMet`, for a `when` or `unless` on an attribute no page fence of the book sets: that element is never drawn, or always.
+- A value that is not a non-empty string, or one written in a heading, part or box design, is reported as `unknownConfigValue`, and the element is drawn as if it had none. `postext check` adds a note, `conditionNeverMet`, for a `when` or `unless` on an attribute no page fence of the book sets: that element is never drawn, or always. It adds the same note for an `{attr.x}` that no heading or fence of the book sets: it always reads empty, and the folio or running foot it fills prints nothing.
 - In the Sandbox, each element card of a running head and of a template's decoration has the fields **Drawn when the page says** and **Not drawn when the page says**, whose choices are the attributes the book's page fences use.
 
 ### What the layout applies

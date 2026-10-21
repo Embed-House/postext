@@ -681,6 +681,8 @@ Eine Vorlage mit `extends` geht von der Vorlage aus, die sie angibt (und die sel
 
 `variants.recto` und `variants.verso` werden wie eine Vorlage geschrieben und auf dieselbe Weise zusammengeführt, auf einer rechten oder einer linken Seite. Sie gelten nach der ganzen `extends`-Kette, die Variante der Wurzel zuerst. Eine Doppelseite hat beide Seiten, daher gilt für sie keine Variante.
 
+Ein Recto ist eine ungerade Seite und ein Verso eine gerade. Ein Element in `variants.recto` mit `parity: 'even'` oder in `variants.verso` mit `parity: 'odd'` wird deshalb nie gezeichnet und als `unknownConfigValue` an seinem `parity` gemeldet.
+
 ```ts
 pageTemplates: [
   { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
@@ -711,7 +713,7 @@ decoration: { elements: [
 - Ein Element, das an einem weggelassenen Element verankert ist oder dessen Größe bis zu ihm reicht, fällt ebenfalls weg.
 - Mit beiden Schlüsseln wird das Element dort gezeichnet, wo der Block das Attribut von `when` setzt und das von `unless` nicht.
 - Die Kopf- und Fußzeilen des Dokuments und die eines Abschnitts lesen sie ebenso. Eine Seite, die nicht zusammengesetzt ist, hat keinen Seitenblock und setzt nichts. Überschriften-, Teil- und Kastengestaltungen beachten sie nicht.
-- Ein Wert, der kein nicht leerer Text ist, oder einer in einer Überschriften-, Teil- oder Kastengestaltung, wird als `unknownConfigValue` gemeldet, und das Element wird gezeichnet, als hätte es keinen. `postext check` fügt einen Hinweis hinzu, `conditionNeverMet`, für ein `when` oder `unless` mit einem Attribut, das keine Seite des Buchs setzt: Dieses Element wird nie gezeichnet, oder immer.
+- Ein Wert, der kein nicht leerer Text ist, oder einer in einer Überschriften-, Teil- oder Kastengestaltung, wird als `unknownConfigValue` gemeldet, und das Element wird gezeichnet, als hätte es keinen. `postext check` fügt einen Hinweis hinzu, `conditionNeverMet`, für ein `when` oder `unless` mit einem Attribut, das keine Seite des Buchs setzt: Dieses Element wird nie gezeichnet, oder immer. Dieselbe Notiz kommt für ein `{attr.x}`, das keine Überschrift und kein Block des Buchs setzt: Es bleibt immer leer, und die Seitenzahl oder Fußzeile, die es füllt, druckt nichts.
 - In der Sandbox hat jede Elementkarte einer Kopf- oder Fußzeile und der Dekoration einer Vorlage die Felder **Gezeichnet, wenn die Seite es sagt** und **Nicht gezeichnet, wenn die Seite es sagt**; zur Wahl stehen die Attribute, die die Seitenblöcke des Buchs verwenden.
 
 ### Was der Umbruch umsetzt

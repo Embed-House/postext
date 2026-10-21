@@ -1,4 +1,4 @@
-import { bitmapInfo, composedReflowLog, fenceAttributesSet, fenceConditionsNeverMet, contrastDocument, contrastMedia, outputTransform, parseIccProfile, preflightDocument, resolveContrastConfig, resolvePrintConfig, type ContrastIssue, type OutputTransform } from 'postext';
+import { attrPlaceholdersNeverSet, bitmapInfo, composedReflowLog, fenceAttributesSet, fenceConditionsNeverMet, markdownAttributesSet, parseMarkdown, contrastDocument, contrastMedia, outputTransform, parseIccProfile, preflightDocument, resolveContrastConfig, resolvePrintConfig, type ContrastIssue, type OutputTransform } from 'postext';
 import { iccProfile } from '../assets';
 import type { CommandContext } from '../context';
 import { pageLabelOf, sourceAt } from '../layout';
@@ -114,6 +114,18 @@ export default async function check(ctx: CommandContext): Promise<void> {
         severity: 'info',
         message: `${use.path}: no page fence sets “${use.attribute}”, so the element is ${use.condition === 'when' ? 'never' : 'always'} drawn`,
         data: { path: use.path, condition: use.condition, attribute: use.attribute },
+      });
+    }
+    // An `{attr.x}` no heading or fence of the book sets (#1152): it always
+    // reads '', so the folio or running foot it fills prints nothing.
+    const attrs = new Set<string>();
+    for (const chapter of layout.chapters) for (const k of markdownAttributesSet(parseMarkdown(chapter.markdown))) attrs.add(k);
+    for (const use of attrPlaceholdersNeverSet(book.config, attrs)) {
+      reporter.warn({
+        kind: 'conditionNeverMet',
+        severity: 'info',
+        message: `${use.path}: no heading or fence sets “${use.attribute}”, so {attr.${use.attribute}} is always empty`,
+        data: { path: use.path, condition: 'attr', attribute: use.attribute },
       });
     }
   }

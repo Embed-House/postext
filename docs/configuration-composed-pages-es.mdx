@@ -681,6 +681,8 @@ Una plantilla con `extends` parte de la plantilla que indica (que a su vez puede
 
 `variants.recto` y `variants.verso` se escriben como una plantilla y se combinan igual, en una página impar o en una par. Se aplican después de toda la cadena de `extends`, primero la variante de la raíz. Una doble página tiene los dos lados, así que no se le aplica ninguna variante.
 
+Un recto es una página impar y un verso una par, así que un elemento de `variants.recto` con `parity: 'even'`, o de `variants.verso` con `parity: 'odd'`, no se dibuja nunca: se avisa como `unknownConfigValue` en su `parity`.
+
 ```ts
 pageTemplates: [
   { id: 'tema', frames: [{ name: 'texto', flow: true }, { name: 'margen', width: { value: 30, unit: 'mm' },
@@ -711,7 +713,7 @@ decoration: { elements: [
 - Un elemento anclado a otro que queda fuera, o con el tamaño medido hasta él, queda fuera también.
 - Con las dos claves, el elemento se dibuja donde la línea fija el atributo de `when` y no el de `unless`.
 - Los encabezados del documento y los de una sección también las leen. Una página que no es compuesta no tiene línea de apertura y no fija nada. Los diseños de título, de parte y de caja no las tienen en cuenta.
-- Un valor que no es un texto no vacío, o uno escrito en un diseño de título, de parte o de caja, se avisa como `unknownConfigValue` y el elemento se dibuja como si no lo tuviera. `postext check` añade una nota, `conditionNeverMet`, por cada `when` o `unless` con un atributo que ninguna página del libro fija: ese elemento no se dibuja nunca, o siempre.
+- Un valor que no es un texto no vacío, o uno escrito en un diseño de título, de parte o de caja, se avisa como `unknownConfigValue` y el elemento se dibuja como si no lo tuviera. `postext check` añade una nota, `conditionNeverMet`, por cada `when` o `unless` con un atributo que ninguna página del libro fija: ese elemento no se dibuja nunca, o siempre. Añade la misma nota para un `{attr.x}` que ningún título ni bloque del libro define: siempre queda vacío, y el folio o el pie que rellena no imprime nada.
 - En el Sandbox, cada tarjeta de elemento de un encabezado y de la decoración de una plantilla tiene los campos **Se dibuja si la página lo dice** y **No se dibuja si la página lo dice**, que ofrecen los atributos que usan las páginas del libro.
 
 ### Lo que aplica la maquetación
