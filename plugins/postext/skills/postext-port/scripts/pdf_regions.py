@@ -847,6 +847,7 @@ class Shape:
 
 
 RULE_FILL_MM = 1.0        # a filled rectangle thinner than this is a rule
+HIDDEN_SHOWS = 0.03       # share of its box a hidden fill must show to be drawn (its ring)
 
 
 def fill_rule(s: Shape) -> la.Seg | None:
@@ -1006,6 +1007,12 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
         cols = [c for c in (s.fill, s.stroke) if c and not whiteish(c)]
         if cols and not any(renders.paints(s.rect_pt, c) for c in cols):
             s.kind = "unseen"
+        elif s.kind == "hidden" and s.fill and not s.stroke:
+            # a fill the box check calls hidden is drawn for the ring it shows round what covers it;
+            # one that shows next to nothing (a few pixels at an edge) is debris
+            share = renders.share_of(s.rect_pt, s.fill)
+            if share is not None and share < HIDDEN_SHOWS:
+                s.kind = "unseen"
     # a speck too small to tell (the dot of an i) goes with the unseen shapes of its colour
     # painted next to it
     by_seq = {s.seq: s for s in shapes}
@@ -1053,6 +1060,13 @@ def classify(page: fitz.Page, lines: list[Line], origin: tuple, renders: Renders
     # pictures that overlap become one (a photo on a drawn map)
     pictures = merge_pictures(pictures)
     out["pictures"] = [p for p in pictures if area(p["box"]) < 0.6 * page_area]
+    # a box with no words that lies wholly under a picture is the picture's art (a map's
+    # frame, a panel of a drawing): it goes with the cut, not as a frame or a decoration fill
+    for s in list(out["boxes"]):
+        if any(inside_mm(s.box, p["box"], 0.3) for p in out["pictures"]) \
+                and not any(centre_in(l.box, s.box) for l in lines):
+            s.kind = "art"
+            out["boxes"].remove(s)
     out["art"] = art
     out["shapes"] = shapes
     return out
@@ -2614,6 +2628,27 @@ def drawn_before_fill(s: Any, frames: list[Frame]) -> bool:
     return any(art_over(f) and inside_mm(box, f.box, 0.3) and max(seqs) < fill_seq(f.shape) for f in frames)
 
 
+def ground_under(s: Shape, sh: dict, cards: list) -> str:
+    """The colour painted under a shape: the last fill painted before it
+    that holds it (a box, a card, the page's colour), else the paper."""
+    under = [g for g in list(sh.get("ground", [])) + list(cards) + list(sh.get("boxes", [])) + list(sh.get("tabs", []))
+             if isinstance(g, Shape) and g is not s and g.fill and g.seq < s.seq and inside_mm(s.box, g.box, 0.3)]
+    return max(under, key=lambda g: g.seq).fill if under else "#ffffff"
+
+
+def paints_its_ground(s: Shape, sh: dict, cards: list, claims: list = ()) -> bool:
+    """A fill of the colour already under it (a white mask on white paper or
+    on a white card) that hides no decoration painted before it: it paints
+    nothing, and as decoration it is debris. Art a picture's cut takes
+    (`claims`, the pictures' boxes) is the cut's: a mask over it goes too.
+    A mask over loose art stays (dropped, what it hides would show)."""
+    if not s.fill or s.stroke or td.delta_e(s.fill, ground_under(s, sh, cards)) > 2.0:
+        return False
+    return not any(o is not s and o.kind in ("art", "hidden", "line") and o.seq < s.seq and inter(o.box, s.box) > 0
+                   and not any(inter(o.box, c) >= 0.8 * max(area(o.box), 1e-6) for c in claims)
+                   for o in sh.get("shapes", []))
+
+
 def fill_element(f: Frame) -> dict:
     """The fill of a box with art over it, as decoration laid on the box's
     frame (it follows the frame), painted before that art."""
@@ -3000,7 +3035,8 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
     residual = [s for s in sh["shapes"] if s.kind in ("art", "hidden")
                 and not any(inter(s.box, claim_of(f)) >= 0.8 * max(area(s.box), 1e-6) for f in pics)
                 and not any(inside_mm(s.box, f.box, 0.3) for f in covering)
-                and not drawn_before_fill(s, frames)]
+                and not drawn_before_fill(s, frames)
+                and not paints_its_ground(s, sh, cards, [claim_of(f) for f in pics])]
     caps = art["caps"]
     residual = [s for s in residual if id(s) not in art["cap_shapes"]]
     if len(residual) > opts.max_paths:

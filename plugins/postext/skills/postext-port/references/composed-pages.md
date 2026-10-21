@@ -472,6 +472,16 @@ What the extraction decides, so you know what to check:
   ground, never redacted (that would take the box's fill too); the frame
   draws the rule. `report.json` notes every cut whose box still crosses a
   box's rule. A cut-out with alpha keeps its overhang.
+- **No debris in the decoration** (skill 1.61). A fill of the colour already
+  under it (a white mask on white paper or a white card) is left out unless
+  it hides loose art painted before it; a fill a later box hides is drawn
+  only when it shows a ring of at least 3 % of its box round what covers it;
+  a box with no words wholly under a picture is the picture's art. In
+  `template_dedupe.py`'s modules, furniture (running heads, folios, the page
+  colour, a ground from a fence attribute) always stays on the page shell;
+  when the source paints it over art that moves into a module, the fold's
+  report lists it under `furnitureUnder` (on the shell it lies under that
+  art).
 - **Illustrations on white** (skill 1.61). A cut standing on white whose
   border is at least 80 % white has the white joined to its edge made
   transparent (`images.py cutout` does the same by hand): a PNG with a
