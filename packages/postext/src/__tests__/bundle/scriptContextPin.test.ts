@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { migrateBundleConfig, migrateConfig, pinLegacyScriptContext } from '../../bundle/configVersion.js';
+import { migrateBundleConfig, migrateConfig, pinLegacyScriptContext, pinLegacySlashBreaks } from '../../bundle/configVersion.js';
 import { stripConfigDefaults } from '../../defaults/index.js';
 import { resolveAllConfig } from '../../pipeline/config.js';
 import type { PostextConfig } from '../../types.js';
@@ -36,15 +36,17 @@ describe('pinLegacyScriptContext (#725)', () => {
       expect(kept(migrateConfig({ bodyText: { scriptContext: true } }, v)), String(v)).toBe(true);
     }
     const current: PostextConfig = {};
-    // One stamped 12 takes the pins of rules 13, 14 and 18 alone: the
+    // One stamped 12 takes the pins of rules 13, 14, 18 and 19 alone: the
     // language (#764, #770) and, its text not being known, the task box
-    // (#765) and the rounded mark ends (#1149). One stamped 13 takes the
-    // language and the mark ends; one stamped 14 the mark ends alone; one
-    // stamped 18 is read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host' }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 14)).toEqual({ ...current, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 18)).toBe(current);
+    // (#765) and the rounded mark ends (#1149), and the breaks at a slash
+    // (#1164). One stamped 13 takes the language, the mark ends and the
+    // slash breaks; one stamped 14 the mark ends and the slash breaks; one
+    // stamped 18 the slash breaks alone; one stamped 19 is read as it is.
+    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 14)).toEqual({ ...pinLegacySlashBreaks(current), markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
+    expect(migrateConfig(current, 18)).toEqual(pinLegacySlashBreaks(current));
+    expect(migrateConfig(current, 19)).toBe(current);
     // A new document has the rule; one read from before keeps the old way.
     expect(resolveAllConfig(current).bodyText.scriptContext).toBeUndefined();
     expect(resolveAllConfig(migrateConfig({}, 11)).bodyText.scriptContext).toBe(false);
@@ -71,7 +73,7 @@ describe('pinLegacyScriptContext (#725)', () => {
     // pin goes on what is left in force.
     const merged = migrateBundleConfig({}, [{ bodyText: { fontFamily: 'Amiri' } }, { bodyText: { fontFamily: 'Lora' } }], 11);
     // (With the pin every bundle before 14 takes, #764 and #770.)
-    expect(merged.bodyText).toEqual({ fontFamily: 'Lora', scriptContext: false, shapingLanguage: 'host' });
+    expect(merged.bodyText).toEqual({ fontFamily: 'Lora', scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     // A layer that names the setting keeps its word.
     expect(kept(migrateBundleConfig({}, [{ bodyText: { scriptContext: true } }], 11))).toBe(true);
     // The reader's own base is pinned with the rest when nothing names it.

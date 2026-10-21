@@ -1644,6 +1644,20 @@ export interface BodyTextConfig {
    *  `pinLegacyHyphenBreaks`). Applies to the running text, headings, lists,
    *  blockquotes and boxes. */
   breakAfterHyphens?: boolean;
+  /** Let a line of formatted text end after a slash between two words
+   *  ("entrada/" | "salida", "ACC/" | "AHA/" | "AAPA", #1164): each side
+   *  a run of at least three letters or digits, not two digits, so a unit
+   *  ("km/h", "kg/m³", "mg/dL"), a short pair ("and/or"), a fraction or a
+   *  date ("1/2", "10/03/2026") stays whole. The line ends on the slash and
+   *  nothing is added. A word wider than its whole line is divided after a
+   *  slash before a syllable or a letter. Default `true`; `false` keeps
+   *  the breaks of postext 1.51, which broke there only inside a web
+   *  address (configurations stored before `configVersion` 19 read with
+   *  it, see `pinLegacySlashBreaks`). Applies to every text the rich
+   *  breaker sets: paragraphs with inline formatting, captions, table
+   *  cells, notes, bibliographies; a plain paragraph breaks after any
+   *  slash, as the hyphenation dictionary marks it, either way. */
+  breakAfterSlashes?: boolean;
   /** Read a backslash at the end of a source line, and `\\` before a space,
    *  as a forced line break inside a paragraph, a quotation or a list item
    *  (CommonMark's hard break, #620): the next words start a new line
@@ -2419,6 +2433,9 @@ export interface ResolvedBodyTextConfig {
   breakAfterDashes: boolean;
   breakAfterHyphens: boolean;
   hardLineBreaks: boolean;
+  /** Present only when switched off (see
+   *  {@link BodyTextConfig.breakAfterSlashes}). */
+  breakAfterSlashes?: false;
   /** Present only when switched off (see
    *  {@link BodyTextConfig.scriptContext}). */
   scriptContext?: false;

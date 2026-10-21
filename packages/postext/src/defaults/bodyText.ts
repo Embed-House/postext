@@ -346,6 +346,8 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     hardLineBreaks: partial.hardLineBreaks ?? DEFAULT_BODY_TEXT_CONFIG.hardLineBreaks,
     // Present only when off (#725): a document that shapes its words with
     // no letter in the script of their context resolves as before.
+    // Present only when off (#1164), as the script context.
+    ...(partial.breakAfterSlashes === false ? { breakAfterSlashes: false as const } : {}),
     ...(partial.scriptContext === false ? { scriptContext: false as const } : {}),
     // Present only for the host's language (#764): a document shaped in
     // its own, the default since postext 1.30 (#770), resolves as before.
@@ -542,6 +544,11 @@ export function stripBodyTextDefaults(
   }
   if (bodyText.hardLineBreaks !== undefined && bodyText.hardLineBreaks !== DEFAULT_BODY_TEXT_CONFIG.hardLineBreaks) {
     result.hardLineBreaks = bodyText.hardLineBreaks;
+    hasOverride = true;
+  }
+  // On by default, and resolved only when off (#1164).
+  if (bodyText.breakAfterSlashes === false) {
+    result.breakAfterSlashes = false;
     hasOverride = true;
   }
   // On by default, and resolved only when off (#725).

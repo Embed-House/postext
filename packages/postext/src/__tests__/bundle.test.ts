@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { pinLegacyScriptContext, pinLegacyShapingLanguage } from '../bundle/configVersion.js';
+import { pinLegacyScriptContext, pinLegacyShapingLanguage, pinLegacySlashBreaks } from '../bundle/configVersion.js';
 import { zipSync } from 'fflate';
 import {
   bitmapSize,
@@ -730,7 +730,7 @@ describe('bundles written by postext 1.4 or earlier', () => {
 
   it('stamps every manifest it writes with the configuration rules', async () => {
     const { manifest } = await sample();
-    expect(CONFIG_VERSION).toBe(18);
+    expect(CONFIG_VERSION).toBe(19);
     expect(manifest.configVersion).toBe(CONFIG_VERSION);
   });
 
@@ -788,12 +788,12 @@ describe('bundles written by postext 1.4 or earlier', () => {
     const old: PostextConfig = { headings: { levels: [{ level: 1, breakBefore: { parity: 'odd' } }] } };
     expect(migrateConfig(old, CONFIG_VERSION)).toBe(old);
     expect(migrateConfig(old, 99)).toBe(old);
-    expect(migrateConfig(old, 3, prose)).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(old)));
+    expect(migrateConfig(old, 3, prose)).toEqual(pinLegacySlashBreaks(pinLegacyShapingLanguage(pinLegacyScriptContext(old))));
     expect(migrateConfig(old, undefined, prose).headings?.levels?.[0]?.breakBefore).toEqual({ parity: 'odd', enabled: false });
     expect(migrateConfig(old, '3', prose).headings?.levels?.[0]?.breakBefore).toEqual({ parity: 'odd', enabled: false });
     const plain: PostextConfig = { bodyText: { fontFamily: 'Georgia' } };
-    expect(migrateConfig(plain, undefined, prose)).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(plain)));
+    expect(migrateConfig(plain, undefined, prose)).toEqual(pinLegacySlashBreaks(pinLegacyShapingLanguage(pinLegacyScriptContext(plain))));
     const full: PostextConfig = { headings: { levels: [{ level: 1, breakBefore: { enabled: true, parity: 'odd' } }] } };
-    expect(migrateConfig(full, undefined, prose)).toEqual(pinLegacyShapingLanguage(pinLegacyScriptContext(full)));
+    expect(migrateConfig(full, undefined, prose)).toEqual(pinLegacySlashBreaks(pinLegacyShapingLanguage(pinLegacyScriptContext(full))));
   });
 });

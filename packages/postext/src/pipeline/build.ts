@@ -53,6 +53,7 @@ import { initHyphenator, measureRichBlock } from '../measure/index.js';
 import { setHyphenationRules } from '../hyphenate.js';
 import { citedNames } from '../citations/names.js';
 import { getCjkLineBreak, setCjkLineBreak } from '../measure/cjkClasses.js';
+import { getSlashBreaks, setSlashBreaks } from '../measure/breakRules.js';
 import { cjkCompositionOf, getCjkComposition, setCjkComposition } from '../measure/cjkPunctuation.js';
 import { getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, measuringVertically, setMeasureUprightDigits, setMeasureWritingMode } from '../measure/vertical.js';
 import { stampCentralBaselines } from './verticalMetrics.js';
@@ -599,9 +600,11 @@ export function buildDocumentPass(
   const arabicNumbers = getMeasureArabicNumbers();
   const scriptContext = getMeasureScriptContext();
   const language = getMeasureLanguage();
+  const slashBreaks = getSlashBreaks();
   try {
     return placeDocumentPass(content, config, cache, options, hints);
   } finally {
+    setSlashBreaks(slashBreaks);
     setMeasureLanguage(language);
     setMeasureScriptContext(scriptContext);
     setMeasureArabicNumbers(arabicNumbers);
@@ -672,6 +675,9 @@ function placeDocumentPass(
   // authors it cites join them below, once its references are read.
   const hyphenationRules = { exceptions: resolved.bodyText.hyphenation.exceptions, capitalized: resolved.bodyText.hyphenation.capitalized };
   initHyphenator(resolved.bodyText.hyphenation.locale, hyphenationRules);
+  // A line may end after a slash between two words wherever rich text is
+  // measured (#1164), unless the configuration keeps the breaks of 1.51.
+  setSlashBreaks(resolved.bodyText.breakAfterSlashes !== false);
   // CJK text breaks at the document's level wherever it is measured (body,
   // captions, cells, notes, boxes), as it hyphenates in its language.
   setCjkLineBreak(resolved.cjk.lineBreak);
