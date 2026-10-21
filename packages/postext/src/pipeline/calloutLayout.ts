@@ -48,6 +48,7 @@ import { spaceDirectiveLines } from '../parse/attrs';
 import type {
   CalloutPlacement,
   CalloutSpan,
+  ColorValue,
   Dimension,
   ResolvedCalloutDesignConfig,
   ResolvedCalloutStyleConfig,
@@ -94,6 +95,7 @@ import { fillGalley, galleyBreaks, minFillHeight, type GalleyItem } from './colu
 import type { LineInsetStep } from '../measure/types';
 import type { CalloutLineWidth, GroupPos } from './cutTypes';
 import { offsetPathBlock } from '../design/pathBlock';
+import { iconShapeBlock } from '../design/iconShape';
 import { borderSidesPx, boxOutline, cornerRadiiPx, isCornerRadii, normalizeBoxStyle, shapePathBlocks, SHAPE_SIDES, tabRegionOutline, uniformRadius, type ShapeBorder, type ShapeTab } from '../design/boxShape';
 export type { CalloutLineWidth, GroupPos } from './cutTypes';
 
@@ -2106,7 +2108,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       : style.icon.align === 'center'
         ? innerTop + (contentBottom - innerTop - iconSize) / 2
         : innerTop;
-    const built = buildIconBlock(style.icon, iconX, iconY, iconSize, ctx, iconBoxW);
+    const built = buildIconBlock(style.icon, iconX, iconY, iconSize, ctx, iconBoxW, px);
     if (built) {
       overlayBlocks.push(built.block);
       iconFileId = built.fileId;
@@ -2137,14 +2139,17 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     const textW = flowTextWidth(labelText, lbFont);
     // A picture inside the tab (#981) sits at its start, before the words:
     // the tab is as wide as the picture, the gap, the words and the padding.
-    const glyphIcon = lb.icon.kind === 'glyph' && lb.icon.glyph.length > 0;
+    // A drawn ring or dot (#1120) stands where a glyph would, as large as
+    // one at `scale` of the words' size.
+    const shapeIcon = lb.icon.kind === 'shape';
+    const glyphIcon = shapeIcon || (lb.icon.kind === 'glyph' && lb.icon.glyph.length > 0);
     const iconResource = !glyphIcon && lb.icon.resourceId ? ctx.resourceById.get(lb.icon.resourceId) : undefined;
     const iconFileId = iconResource?.bitmap?.fileId ?? iconResource?.svg?.fileId;
     // A glyph (#1054): a character of a font at `scale` of the words' size,
     // as wide as its advance, centred on the tab's middle as the words are.
     const glyphPx = glyphIcon ? lbFontPx * lb.icon.scale : 0;
-    const glyphFont = glyphIcon ? buildFontString(lb.icon.fontFamily, glyphPx, lb.icon.fontWeight.toString()) : '';
-    const glyphW = glyphIcon ? flowTextWidth(lb.icon.glyph, glyphFont) : 0;
+    const glyphFont = glyphIcon && !shapeIcon ? buildFontString(lb.icon.fontFamily, glyphPx, lb.icon.fontWeight.toString()) : '';
+    const glyphW = shapeIcon ? glyphPx : glyphIcon ? flowTextWidth(lb.icon.glyph, glyphFont) : 0;
     const inside = lb.icon.placement === 'inside' && (!!iconFileId || glyphIcon);
     let iconFit = { w: glyphW, h: 0 };
     if (iconFileId) {
@@ -2156,12 +2161,14 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
         iconFit = { w: dims.width * k, h: dims.height * k };
       }
     }
-    // The picture painted in the colour of the words (#995): a print master
-    // (a PDF page) cannot be recoloured, so the PDF draws the SVG itself.
-    const tintOf = lb.icon.tint ? { tint: lb.color.hex } : {};
+    // The picture painted in the colour of the words (#995), or in a colour
+    // of its own (#1120): a print master (a PDF page) cannot be recoloured,
+    // so the PDF draws the SVG itself.
+    const tint = tintHex(lb.icon.tint, lb.color);
+    const tintOf = tint ? { tint } : {};
     const traitsOf = (resource: Parameters<typeof pictureTraits>[0], fileId: string) => {
       const traits = pictureTraits(resource, fileId);
-      if (lb.icon.tint) delete traits.pdfFileId;
+      if (tint) delete traits.pdfFileId;
       return traits;
     };
     const iconRoom = inside ? iconFit.w + px(lb.icon.gap) : 0;
@@ -2248,7 +2255,11 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     let edgeX = onRight ? tabX : tabX + tabW;
     // The glyph block at `x`: pagination furniture to a reader (a tagged
     // PDF's artifact, hidden in HTML), so the tab reads only its words.
-    const glyphBlock = (x: number): VDTDesignTextBlock => ({
+    const glyphBlock = (x: number): VDTDesignBlock => (shapeIcon
+      ? iconShapeBlock(lb.icon.shape ?? 'ring', x + glyphW / 2, tabY + tabH / 2, glyphW, (lb.icon.color ?? lb.color).hex,
+        lb.icon.strokeWidth ? Math.max(0, dimensionToPx(lb.icon.strokeWidth, dpi, lbFontPx)) : undefined)
+      : glyphTextBlock(x));
+    const glyphTextBlock = (x: number): VDTDesignTextBlock => ({
       kind: 'text',
       bbox: createBoundingBox(x, tabY, glyphW, tabH),
       fontString: glyphFont,
@@ -2312,7 +2323,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   let markerFormat: string | undefined;
   if (hasMarker) {
     const markerY = centerMarker ? (totalHeight - markerSize) / 2 : 0;
-    const built = buildIconBlock(style.marker, 0, markerY, markerSize, ctx);
+    const built = buildIconBlock(style.marker, 0, markerY, markerSize, ctx, markerSize, px);
     if (built) {
       markerBlocks.push(built.block);
       markerFileId = built.fileId;
@@ -2393,7 +2404,15 @@ type IconSpec = Omit<ResolvedCalloutStyleConfig['icon'], 'position' | 'cornerSid
 function iconPresent(spec: IconSpec): boolean {
   if (spec.kind === 'glyph') return spec.glyph.length > 0;
   if (spec.kind === 'resource') return spec.resourceId.length > 0;
-  return false;
+  return spec.kind === 'shape';
+}
+
+/** The colour a picture icon is painted in (#995, #1120): `tint: true`
+ *  in `own` (the icon's colour, a label tab's words'), a colour of its own,
+ *  none for `false` or unset. */
+function tintHex(tint: boolean | ColorValue | undefined, own: ColorValue): string | undefined {
+  if (tint === true) return own.hex;
+  return tint && typeof tint === 'object' ? tint.hex : undefined;
 }
 
 /** Fit a `w × h` image inside the square `(x, y, size)`, centred, keeping
@@ -2435,7 +2454,13 @@ function buildIconBlock(
   size: number,
   ctx: BlockMeasureContext,
   boxWidth = size,
+  px: (d: Dimension) => number = () => 0,
 ): BuiltIcon | undefined {
+  if (spec.kind === 'shape') {
+    // A drawn ring or dot (#1120), `size` across in the slot's middle.
+    const stroke = spec.strokeWidth ? Math.max(0, px(spec.strokeWidth)) : undefined;
+    return { block: iconShapeBlock(spec.shape ?? 'ring', x + size / 2, y + size / 2, size, spec.color.hex, stroke) };
+  }
   if (spec.kind === 'resource') {
     const resource = ctx.resourceById.get(spec.resourceId);
     const fileId = resource?.bitmap?.fileId ?? resource?.svg?.fileId;
@@ -2448,8 +2473,14 @@ function buildIconBlock(
       const fh = dims.height * k;
       bbox = createBoundingBox(x, y + (size - fh) / 2, fw, fh);
     }
+    // Painted in one colour (#1120): one ring picture serves every tint.
+    // A print master (a PDF page) cannot be recoloured, so the PDF draws
+    // the SVG itself.
+    const tint = tintHex(spec.tint, spec.color);
+    const traits = pictureTraits(resource, fileId);
+    if (tint) delete traits.pdfFileId;
     return {
-      block: { kind: 'image', bbox, fileId, ...pictureTraits(resource, fileId) },
+      block: { kind: 'image', bbox, fileId, ...traits, ...(tint ? { tint } : {}) },
       fileId,
       format: resource?.bitmap?.format,
     };

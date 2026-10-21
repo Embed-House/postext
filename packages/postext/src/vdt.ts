@@ -2597,6 +2597,10 @@ export interface VDTDesignPathBlock extends VDTDesignBlockOrigin {
   boxPart?: 'fill' | 'border';
   /** The widest side of a `boxPart: 'border'` path. */
   borderWidthPx?: number;
+  /** A ring or a dot the engine draws as a box's icon, its marker or a
+   *  label tab's icon (#1120, `kind: 'shape'`): part palettes recolour it
+   *  as the frame's icon (its text role). Absent on other paths. */
+  drawnIcon?: true;
   /** A connector painted over the frames (#1076, `DesignConnectorElement.over`):
    *  the block stays in its decoration slot, but the backends paint it
    *  after every frame of the page (`composedPaintOrder`'s `'over'` item),

@@ -13,6 +13,7 @@ import type {
   CalloutIconCornerSide,
   CalloutIconKind,
   CalloutIconPosition,
+  CalloutIconShape,
   CalloutLabelConfig,
   CalloutLabelIconKind,
   CalloutListStyleConfig,
@@ -29,6 +30,7 @@ import type {
   CalloutTextTransform,
   CalloutTitleStyleConfig,
   CalloutWidth,
+  ColorValue,
   DesignSlot,
   Dimension,
   DimensionUnit,
@@ -208,10 +210,90 @@ function GlyphButtons({ label, useLabel, value, onPick }: { label: string; useLa
   );
 }
 
+/** A picture painted in one colour (#995, #1120): a switch, and the
+ *  colour it is painted in (`ownColor` until one is picked). */
+function TintFields({ tint, ownColor, update, isDefault, onReset, fieldId, toggleLabel, toggleTooltip }: {
+  tint: boolean | ColorValue | undefined;
+  ownColor: ColorValue;
+  update: (tint: boolean | ColorValue) => void;
+  isDefault: boolean;
+  onReset: () => void;
+  fieldId: string;
+  toggleLabel: string;
+  toggleTooltip: string;
+}) {
+  const labels = useSandboxLabels();
+  const on = tint === true || (typeof tint === 'object' && tint !== null);
+  return (
+    <>
+      <ToggleSwitch
+        label={toggleLabel}
+        checked={on}
+        onChange={(v) => update(v)}
+        tooltip={toggleTooltip}
+        isDefault={isDefault}
+        onReset={onReset}
+      />
+      {on && (
+        <ColorPicker
+          label={labels.calloutStyleIconTintColor}
+          tooltip={labels.calloutStyleIconTintColorTooltip}
+          value={typeof tint === 'object' ? tint : ownColor}
+          onChange={(v) => update(v)}
+          isDefault={tint === true}
+          onReset={() => update(true)}
+          fieldId={fieldId}
+        />
+      )}
+    </>
+  );
+}
+
+/** A drawn ring or dot (#1120): which, and the ring's line. */
+function ShapeFields({ shape, strokeWidth, sizeForDefault, update, isDefault, onReset }: {
+  shape: CalloutIconShape;
+  strokeWidth: Dimension | undefined;
+  sizeForDefault: Dimension;
+  update: (partial: { shape?: CalloutIconShape; strokeWidth?: Dimension }) => void;
+  isDefault: (field: 'shape' | 'strokeWidth') => boolean;
+  onReset: (field: 'shape' | 'strokeWidth') => void;
+}) {
+  const labels = useSandboxLabels();
+  return (
+    <>
+      <SelectInput
+        label={labels.calloutStyleIconShape}
+        value={shape}
+        options={[
+          { value: 'ring', label: labels.calloutStyleIconShapeRing },
+          { value: 'dot', label: labels.calloutStyleIconShapeDot },
+        ]}
+        onChange={(v) => update({ shape: v as CalloutIconShape })}
+        tooltip={labels.calloutStyleIconShapeTooltip}
+        isDefault={isDefault('shape')}
+        onReset={() => onReset('shape')}
+      />
+      {shape === 'ring' && (
+        <DimensionInput
+          label={labels.calloutStyleIconStrokeWidth}
+          value={strokeWidth ?? { value: sizeForDefault.value / 8, unit: sizeForDefault.unit }}
+          onChange={(v) => update({ strokeWidth: v })}
+          min={0}
+          step={0.05}
+          units={SPACING_UNITS}
+          tooltip={labels.calloutStyleIconStrokeWidthTooltip}
+          isDefault={isDefault('strokeWidth')}
+          onReset={() => onReset('strokeWidth')}
+        />
+      )}
+    </>
+  );
+}
+
 /** The fields the icon and the marker share; the position fields exist on
  *  the in-box icon only (the marker always sits in its own column). */
 type IconSpec = Pick<ResolvedCalloutStyleConfig['icon'], 'kind' | 'glyph' | 'resourceId' | 'fontFamily' | 'fontWeight' | 'size' | 'color' | 'align'> &
-  Partial<Pick<ResolvedCalloutStyleConfig['icon'], 'position' | 'cornerSide' | 'width'>>;
+  Partial<Pick<ResolvedCalloutStyleConfig['icon'], 'position' | 'cornerSide' | 'width' | 'shape' | 'strokeWidth' | 'tint'>>;
 type IconField = keyof CalloutIconConfig;
 
 interface IconFieldsProps {
@@ -237,6 +319,7 @@ function IconFields({ value, kindLabel, kindTooltip, update, isDefault, onReset,
     { value: 'none', label: labels.calloutStyleIconKindNone },
     { value: 'glyph', label: labels.calloutStyleIconKindGlyph },
     { value: 'resource', label: labels.calloutStyleIconKindResource },
+    { value: 'shape', label: labels.calloutStyleIconKindShape },
   ];
   const alignOptions = [
     { value: 'top', label: labels.calloutStyleIconAlignTop },
@@ -317,15 +400,47 @@ function IconFields({ value, kindLabel, kindTooltip, update, isDefault, onReset,
         </>
       )}
       {value.kind === 'resource' && (
-        <SelectInput
-          label={labels.calloutStyleIconResource}
-          value={value.resourceId}
-          options={resourceOptions}
-          onChange={(v) => update({ resourceId: v })}
-          tooltip={labels.calloutStyleIconResourceTooltip}
-          isDefault={isDefault('resourceId')}
-          onReset={() => onReset('resourceId')}
-        />
+        <>
+          <SelectInput
+            label={labels.calloutStyleIconResource}
+            value={value.resourceId}
+            options={resourceOptions}
+            onChange={(v) => update({ resourceId: v })}
+            tooltip={labels.calloutStyleIconResourceTooltip}
+            isDefault={isDefault('resourceId')}
+            onReset={() => onReset('resourceId')}
+          />
+          <TintFields
+            tint={value.tint}
+            ownColor={value.color}
+            update={(tint) => update({ tint })}
+            isDefault={isDefault('tint')}
+            onReset={() => onReset('tint')}
+            fieldId={`${fieldId}-tint`}
+            toggleLabel={labels.calloutStyleIconTint}
+            toggleTooltip={labels.calloutStyleIconTintTooltip}
+          />
+        </>
+      )}
+      {value.kind === 'shape' && (
+        <>
+          <ShapeFields
+            shape={value.shape ?? 'ring'}
+            strokeWidth={value.strokeWidth}
+            sizeForDefault={value.size}
+            update={update}
+            isDefault={isDefault}
+            onReset={onReset}
+          />
+          <ColorPicker
+            label={labels.calloutStyleIconColor}
+            value={value.color}
+            onChange={(v) => update({ color: v })}
+            isDefault={isDefault('color')}
+            onReset={() => onReset('color')}
+            fieldId={`${fieldId}-shape`}
+          />
+        </>
       )}
       {value.kind !== 'none' && (
         <>
@@ -1265,6 +1380,7 @@ export function CalloutStyleCard({
               options={[
                 { value: 'resource', label: labels.calloutStyleLabelIconKindPicture },
                 { value: 'glyph', label: labels.calloutStyleIconKindGlyph },
+                { value: 'shape', label: labels.calloutStyleIconKindShape },
               ]}
               onChange={(v) => updateLabelIcon(labelIconKindPatch(style.label?.icon, v as CalloutLabelIconKind))}
               tooltip={labels.calloutStyleLabelIconKindTooltip}
@@ -1350,7 +1466,59 @@ export function CalloutStyleCard({
                 />
               </>
             )}
-            {resolved.label.icon.kind !== 'glyph' && (
+            {resolved.label.icon.kind === 'shape' && (
+              <>
+                <ShapeFields
+                  shape={resolved.label.icon.shape ?? 'ring'}
+                  strokeWidth={resolved.label.icon.strokeWidth}
+                  sizeForDefault={{ value: resolved.label.icon.scale, unit: 'em' }}
+                  update={(partial) => updateLabelIcon(partial)}
+                  isDefault={(field) => labelIconUnset(field)}
+                  onReset={(field) => resetLabelIconField(field)}
+                />
+                <NumberInput
+                  label={labels.calloutStyleLabelIconScale}
+                  value={resolved.label.icon.scale}
+                  onChange={(v) => updateLabelIcon({ scale: v })}
+                  min={0.1}
+                  max={4}
+                  step={0.05}
+                  tooltip={labels.calloutStyleLabelIconScaleTooltip}
+                  isDefault={labelIconUnset('scale')}
+                  onReset={() => resetLabelIconField('scale')}
+                />
+                <ColorPicker
+                  label={labels.calloutStyleIconColor}
+                  value={resolved.label.icon.color ?? resolved.label.color}
+                  onChange={(v) => updateLabelIcon({ color: v })}
+                  isDefault={labelIconUnset('color')}
+                  onReset={() => resetLabelIconField('color')}
+                  fieldId={`${fieldId}-label-shape`}
+                />
+                <SelectInput
+                  label={labels.calloutStyleLabelIconGlyphPlacement}
+                  value={resolved.label.icon.placement}
+                  options={[
+                    { value: 'beside', label: labels.calloutStyleLabelIconBeside },
+                    { value: 'inside', label: labels.calloutStyleLabelIconInside },
+                  ]}
+                  onChange={(v) => updateLabelIcon({ placement: v as 'beside' | 'inside' })}
+                  isDefault={labelIconUnset('placement')}
+                  onReset={() => resetLabelIconField('placement')}
+                />
+                <DimensionInput
+                  label={labels.calloutStyleLabelIconGap}
+                  value={resolved.label.icon.gap}
+                  onChange={(v) => updateLabelIcon({ gap: v })}
+                  min={0}
+                  step={0.05}
+                  units={SPACING_UNITS}
+                  isDefault={labelIconUnset('gap')}
+                  onReset={() => resetLabelIconField('gap')}
+                />
+              </>
+            )}
+            {resolved.label.icon.kind === 'resource' && (
             <SelectInput
               label={labels.calloutStyleLabelIcon}
               value={resolved.label.icon.resourceId}
@@ -1361,7 +1529,7 @@ export function CalloutStyleCard({
               onReset={() => resetLabelIconField('resourceId')}
             />
             )}
-            {resolved.label.icon.kind !== 'glyph' && resolved.label.icon.resourceId && (
+            {resolved.label.icon.kind === 'resource' && resolved.label.icon.resourceId && (
               <>
                 <DimensionInput
                   label={labels.calloutStyleLabelIconWidth}
@@ -1385,13 +1553,15 @@ export function CalloutStyleCard({
                   isDefault={labelIconUnset('placement')}
                   onReset={() => resetLabelIconField('placement')}
                 />
-                <ToggleSwitch
-                  label={labels.calloutStyleLabelIconTint}
-                  checked={resolved.label.icon.tint}
-                  onChange={(v) => updateLabelIcon({ tint: v })}
-                  tooltip={labels.calloutStyleLabelIconTintTooltip}
+                <TintFields
+                  tint={resolved.label.icon.tint}
+                  ownColor={resolved.label.color}
+                  update={(tint) => updateLabelIcon({ tint })}
                   isDefault={labelIconUnset('tint')}
                   onReset={() => resetLabelIconField('tint')}
+                  fieldId={`${fieldId}-label-tint`}
+                  toggleLabel={labels.calloutStyleLabelIconTint}
+                  toggleTooltip={labels.calloutStyleLabelIconTintTooltip}
                 />
                 <DimensionInput
                   label={labels.calloutStyleLabelIconGap}

@@ -3236,7 +3236,16 @@ export type CalloutWidth = 'fill' | 'auto';
  *  set against the document's direction (`:::callout{dir=ltr}` in an
  *  Arabic book). */
 export type CalloutStripeSide = 'left' | 'right' | 'top' | 'start' | 'end';
-export type CalloutIconKind = 'none' | 'glyph' | 'resource';
+export type CalloutIconKind = 'none' | 'glyph' | 'resource' | 'shape';
+/** A drawn icon (#1120, `kind: 'shape'`): a ring (a circle's outline) or
+ *  a dot (a filled circle), drawn by the engine in every backend, no font
+ *  or picture asked for. */
+export type CalloutIconShape = 'ring' | 'dot';
+/** A picture icon painted in one colour (#995, #1120): `true` in the
+ *  icon's own colour (a label tab's: its words' colour), a colour to paint
+ *  it in that one (a palette colour follows the palette), `false` as the
+ *  picture is. */
+export type IconTint = boolean | ColorValue;
 export type CalloutIconAlign = 'top' | 'center';
 /** Where the in-box icon sits: `'inline'` (the default) in a column of its
  *  own left of the title and content (or centred on the side stripe);
@@ -3340,6 +3349,15 @@ export interface CalloutIconConfig {
   /** Width of the icon's box when it is not square (a wide strip of
    *  icons): the picture is fitted into `width` x `size`. Default: `size`. */
   width?: Dimension;
+  /** The drawn icon of `kind: 'shape'` (#1120), `size` across in `color`.
+   *  Default `'ring'`. */
+  shape?: CalloutIconShape;
+  /** The line of a `ring`. Default: an eighth of `size`. */
+  strokeWidth?: Dimension;
+  /** A picture icon (`kind: 'resource'`) painted in one colour (#1120):
+   *  `true` in `color`, or a colour of its own, so one ring picture serves
+   *  every tint. Default `false`. */
+  tint?: IconTint;
 }
 
 /** A small tab on the box's top edge carrying the fence's `label`
@@ -3354,7 +3372,7 @@ export type CalloutLabelIconPlacement = 'beside' | 'inside';
 
 /** What a label tab's icon is (#1054): a picture resource, or a character
  *  of a font. */
-export type CalloutLabelIconKind = 'resource' | 'glyph';
+export type CalloutLabelIconKind = 'resource' | 'glyph' | 'shape';
 
 /** The icon of a label tab: a picture (`resourceId`, #981/#995) or a glyph
  *  (#1054). `placement` and `gap` work alike for both; `width` and `tint`
@@ -3371,7 +3389,15 @@ export interface CalloutLabelIconConfig {
    *  (`inside`). Default `0.3em`. */
   gap?: Dimension;
   placement?: CalloutLabelIconPlacement;
-  tint?: boolean;
+  /** The picture painted in one colour: `true` in the label's `color`
+   *  (#995), or a colour of its own (#1120). */
+  tint?: IconTint;
+  /** The drawn icon of `kind: 'shape'` (#1120): a ring or a dot as large
+   *  as a glyph would be (`scale` of the tab's text size), in `color`.
+   *  Default `'ring'`. */
+  shape?: CalloutIconShape;
+  /** The line of a `ring`. Default: an eighth of its size. */
+  strokeWidth?: Dimension;
   /** The character set as the icon (`'◉'`). */
   glyph?: string;
   /** The glyph's font family. Default: the label's. */
@@ -3849,6 +3875,11 @@ export interface ResolvedCalloutStyleConfig {
     position: CalloutIconPosition;
     cornerSide: CalloutIconCornerSide;
     width?: Dimension;
+    /** Present for `kind: 'shape'` (#1120). */
+    shape?: CalloutIconShape;
+    strokeWidth?: Dimension;
+    /** Absent when the picture is painted as it is. */
+    tint?: true | ColorValue;
   };
   label?: {
     fontFamily: string;
@@ -3867,7 +3898,10 @@ export interface ResolvedCalloutStyleConfig {
       width: Dimension;
       gap: Dimension;
       placement: CalloutLabelIconPlacement;
-      tint: boolean;
+      tint: IconTint;
+      /** Present for `kind: 'shape'` (#1120). */
+      shape?: CalloutIconShape;
+      strokeWidth?: Dimension;
       glyph: string;
       fontFamily: string;
       fontWeight: number;
@@ -3898,6 +3932,10 @@ export interface ResolvedCalloutStyleConfig {
     align: CalloutIconAlign;
     gap: Dimension;
     rule: { enabled: boolean; color: ColorValue; width: Dimension; length: Dimension };
+    /** As the icon's (#1120). */
+    shape?: CalloutIconShape;
+    strokeWidth?: Dimension;
+    tint?: true | ColorValue;
   };
   titleStyle: {
     fontFamily: string;

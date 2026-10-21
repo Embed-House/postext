@@ -2359,6 +2359,13 @@ Recorded where the implementation settles a point §12.9 leaves open, or departs
   its outer corners and the fillets flaring into the edge, closed along the edge; the same clamped
   geometry as `boxOutline`) in the label's `background`, as a `boxPart: 'fill'` path between the box's
   fill and the border, so palettes and the contrast check read it as a fill.
+- **Drawn icons and tints (#1120).** `kind: 'shape'` on a box's `icon`, its `marker` or `label.icon`
+  draws a ring or a dot (`design/iconShape.ts`): a path block marked `drawnIcon`, a dot one filled
+  circle, a ring two circles filled even-odd, its line `strokeWidth` (an eighth of the size by default).
+  A label tab's shape stands where a glyph would, `scale` of the words' size. `tint` on a resource icon
+  (box, marker, tab) is `true` (the icon's colour, a tab's words' colour) or a `ColorValue`, so a
+  palette link follows the palette; a tinted picture drops its PDF print master, as #995 did. Part
+  palettes recolour a drawn icon and a tinted picture with the frame's text role.
 - **Readers.** Part palettes recolour each side's colour as the border, a joined fill as the fill and
   its border pieces as the border; a frame's `look` border colour recolours every side; preflight checks
   each side (and a joined border) as a rule; the contrast check reads a joined fill as the ground; the

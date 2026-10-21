@@ -402,7 +402,7 @@ function collectCalloutStyleWarnings(config: PostextConfig): ConfigWarning[] {
 
 const LABEL_ICON_KEYS = {
   kind: true, resourceId: true, width: true, gap: true, placement: true, tint: true,
-  glyph: true, fontFamily: true, fontWeight: true, scale: true, color: true,
+  glyph: true, fontFamily: true, fontWeight: true, scale: true, color: true, shape: true, strokeWidth: true,
 } satisfies Record<keyof CalloutLabelIconConfig, true>;
 
 /** The icon of a box style's label tab (#981, #995, #1054): a key it does
@@ -423,14 +423,19 @@ function collectLabelIconWarnings(config: PostextConfig): ConfigWarning[] {
     }
     const ic = icon as CalloutLabelIconConfig;
     const kind = ic.kind as unknown;
-    if (kind !== undefined && kind !== 'resource' && kind !== 'glyph') {
-      const suggestion = closestKey(String(kind), ['resource', 'glyph']);
+    if (kind !== undefined && kind !== 'resource' && kind !== 'glyph' && kind !== 'shape') {
+      const suggestion = closestKey(String(kind), ['resource', 'glyph', 'shape']);
       out.push({ kind: 'unknownConfigValue', path: `${path}.kind`, value: String(kind), used: labelIconKind(ic), ...(suggestion ? { suggestion } : {}) });
     }
     const placement = ic.placement as unknown;
     if (placement !== undefined && placement !== 'beside' && placement !== 'inside') {
       const suggestion = closestKey(String(placement), ['beside', 'inside']);
       out.push({ kind: 'unknownConfigValue', path: `${path}.placement`, value: String(placement), used: 'beside', ...(suggestion ? { suggestion } : {}) });
+    }
+    const shape = ic.shape as unknown;
+    if (shape !== undefined && shape !== 'ring' && shape !== 'dot') {
+      const suggestion = closestKey(String(shape), ['ring', 'dot']);
+      out.push({ kind: 'unknownConfigValue', path: `${path}.shape`, value: String(shape), used: 'ring', ...(suggestion ? { suggestion } : {}) });
     }
     if (ic.scale !== undefined && labelIconScale(ic.scale) !== ic.scale) {
       out.push({ kind: 'unknownConfigValue', path: `${path}.scale`, value: String(ic.scale), used: String(labelIconScale(ic.scale)) });

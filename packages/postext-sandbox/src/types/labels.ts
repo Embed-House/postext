@@ -3368,6 +3368,17 @@ export interface SandboxLabels {
   calloutStyleIconKindNone: string;
   calloutStyleIconKindGlyph: string;
   calloutStyleIconKindResource: string;
+  calloutStyleIconKindShape: string;
+  calloutStyleIconShape: string;
+  calloutStyleIconShapeTooltip: string;
+  calloutStyleIconShapeRing: string;
+  calloutStyleIconShapeDot: string;
+  calloutStyleIconStrokeWidth: string;
+  calloutStyleIconStrokeWidthTooltip: string;
+  calloutStyleIconTint: string;
+  calloutStyleIconTintTooltip: string;
+  calloutStyleIconTintColor: string;
+  calloutStyleIconTintColorTooltip: string;
   calloutStyleIconGlyph: string;
   calloutStyleIconGlyphTooltip: string;
   calloutStyleIconResource: string;

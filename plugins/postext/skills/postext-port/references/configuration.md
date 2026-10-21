@@ -2103,6 +2103,10 @@ Callout styles as frame dress (≥ 1.48): borderRadius per corner as above, bord
   label.borderRadius (#1102): CornerRadius of the tab itself. Plain tab: square unless set. Joined tab: its two
   outer corners (topLeft/topRight at the head, bottomLeft/bottomRight at the foot), default the box corner; fillets keep fillet.
   label.ownBackground: true (#1102): a joined tab painted in label.background over the box fill (white tab on a tinted card).
+  Icons (#1120, 1.52): icon/marker/label.icon kind 'shape' + shape 'ring'|'dot' (+ strokeWidth, default size/8) is drawn
+  by the engine in color, no font or picture; icon.tint / marker.tint / label.icon.tint: true (the icon's / words' colour)
+  or a ColorValue (palette-linkable), so ONE ring SVG serves every tint. A box icon needs no label: icon.position
+  'inline' | 'corner' on a label-less box is the tab-less ring card.
 
 ResourceAnchor (≥ 1.48): labelAt?: { x, y } (fractions: the label away from its point), leader?: boolean | LeaderStyle
 LeaderStyle  { color? (the label's), opacity? (≥ 1.49), width? (0.75pt), dash?, startCap? ('none'), endCap? ('dot'),
