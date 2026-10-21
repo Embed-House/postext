@@ -3515,3 +3515,62 @@ The engine and Sandbox items of #1095: the limits §13.1, §13.3 and §13.4 left
 - **Fixture.** `__tests__/composed/fixtures/moduleNesting.ts` (a box beside a column of two cards in a
   row inside the page's stack, a note under the row, a row of two boxes sharing by grow);
   `moduleNesting.test.ts`.
+
+### 13.7 What the skill lane built for #1095 (the round-3 curation list)
+
+`pdf_regions.py` / `template_fold.py` / `template_dedupe.py` (skill 1.60.0) do the seven steps §12.36 and
+§13.5 left to a port's generator. No engine change.
+
+- **Unseen art.** A drawn shape no pixel of its colour shows in the text-free render (a pixel counts on
+  the line from white to the colour, so a thin stroke blended with the paper does, another colour's grey
+  edge does not) is `unseen`: lettering under a white panel painted after it, a drawing in the bleed,
+  art clipped away. It joins no picture, no box's art, no decoration and no ground comparison; a speck
+  too small to judge goes with unseen shapes of its colour painted next to it. Decision: the test is
+  the render, not the paint order, because clipping is what hid the real textbook's lettering. A drawn
+  cluster with no paint of its own (white on white, a plate's corner) is no picture (`report.json`).
+- **Cuts keep only the picture.** Highlights, and the boxes and tabs the draft lays over the picture
+  (`drawn_over`: frames set on it, frames with `over`, a free tab over a free picture) are redacted
+  from the cut, one rectangle at a time (MuPDF kept a path one of several rectangles applied together
+  covered), a stroked one 6 widths wide (its miters). A box laid under the picture stays in the cut:
+  the cut is opaque and would hide it where it lies over it. Art of the picture painted over a
+  neighbour keeps that neighbour; its outline and fill are painted out of the cut in the picture's
+  ground (`paint_out`). Then every cut (not an alpha one) is trimmed to the paint it has of its own
+  (`trim_to_ink`: ground = the holder's or the card's colour, else the paper round it; neighbours'
+  colours and the page past the card's rounded corner are not ink; a side moves by 1 mm or more, keeps
+  0.3 mm, never past a label). `claim_of` keeps the untrimmed box as the picture's for the loose-shape
+  and ground checks, so a map's white masks become neither paths nor a ground.
+- **Over a picture** (`plates_over_pictures`, after containment). A box or tab with words that meets a
+  picture is over it when its fill is at least half of what shows where they meet (render); with no
+  fill, by the paint order weighed by area (`lies_over`). Such a frame is never the picture's overlay
+  holder: the picture leaves it, and the frame hangs from the picture when it lies on it by half or
+  more; else `make_template` gives it a layer above the picture's.
+- **Measure.** A box's right padding is its left one (less the wrap slack) when nothing stands in the
+  box beside its lines (`right_free`), whatever the source's longest line was.
+- **Running-head ornaments** (`anchor_ornaments`). Path elements on a running head's line, each within
+  8 mm of the next, are anchored `left-of` / `right-of` the head (ids `<head>-ornament-N`, so pages
+  agree), carry `when: "<attr>"` of the head's `{attr.x}` and follow it in the list; the head loses its
+  `size`. The fold: `mark_furniture` takes an element anchored to an element as furniture; the shell
+  keeps whatever is anchored to an element it keeps; `_text_box` reads a head with no size as half the
+  page; `merge_furniture_shells` keeps an extract `when` and refuses a merge that would need a second.
+- **Captions in columns** (`split_captions`, before reading order). Lines of a box starting within 8 mm
+  under (or 3 mm over) the foot of one of its pictures, middle over it, or on the baseline the row's
+  other captions start on; per picture, columns by x; two columns or more in the box. Each column, line
+  under line, is a text frame (child of the box, `caption_of`, `over` its pictures), placed `below` its
+  picture, as wide as its longest line with the free-text slack, no further than halfway to the next
+  caption; centred ones are centred by their style (`textAlign`), not a paragraph style, which would
+  set them in the running text's face. Not the flowing text. `composed_check` leaves an empty fence (a
+  box whose words all went to captions) out of the reading order: the HTML lays its frame anywhere.
+- **Looks by role.** `look_roles`: palette entries with an id that is no colour name, callout styles
+  whose id is not of a kind and its looks (`box-…`, `tab-…`), and the page colour; a look within
+  `--delta-e` of one takes its name. On the real textbook nothing names those colours, so its looks
+  stay named by colour.
+- **Rows.** `soft_links`: a frame or group placed `below` a frame wholly above it. `bands_of` reads the
+  bands without them, and a soft link stays apart only when one end lies in a band whose units stand
+  side by side; the module keeps the frame at its laid place. Elsewhere the units join as before.
+- **On the real textbook** (local acceptance): rows 1 → 7, one shell, 11 grids, 59 modules (43), two
+  raster grounds; 0 overlaps in the three editions; likeness es 1.60, ca 2.14, en 3.06 % (round 3: 1.60
+  / 2.14 / 3.08) with the curation of these seven steps removed from the generator. Still curated: a
+  picture cut opaque over its holder's last line (crop), captions set beside a picture.
+- **Not done.** Transparent cuts (a PNG ground for a drawing's paper is 3–4× the JPEG); grids whose cards
+  differ in height take the smallest height (a picture of a caption grid shrank 5.6 mm with
+  `--lattice-tol 2`); role names from the source itself (spot colour names are not read).
