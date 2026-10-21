@@ -2925,3 +2925,289 @@ The guides of round 2, in the ten site languages, with screenshots of each inter
   checked element by element, the pointer gone from the map's cut, no ground, `--raster-ground` unchanged,
   dedupe renames, and with `POSTEXT_CLI` the draft passes `postext check` without unknown keys, values or
   anchors.
+
+### 12.31 What #1081 and #1082 changed (D4 findings)
+
+- **`overlap` in the frame editor (#1081).** The template editor's frame properties have a switch «May
+  overlap on purpose» after **Layer**, in the frame's look: on writes `overlap: 'allow'`, off `'check'`,
+  reset takes the field off. Its help names the two checks it silences (*Frame under another frame*,
+  *Frame runs past its edge*). Labels in the 12 places, search index regenerated.
+- **The Checks panel's way out is a fix.** Both overlap checks now end their fixes with a Sandbox-only
+  proposal `allowOverlap` (`AllowOverlapProposal { frame, path }`, `warnings/frameOverlapText.ts`;
+  `allowOverlapOf` / `fixesOf` in `proposalActions.ts`): `overlap: 'allow'` at the pointer the check names,
+  one confirmed click and one undo step like the others, in the Checks and Reflow panels and in
+  `sandbox_apply_proposal` (listed after the layout's fixes, so their numbers do not move). Decision: for
+  `frameCovered` it goes on the **covering** frame (`coveredByPath`: the one laid over on purpose, a caption
+  pill over its photo), for `frameOutsideArea` on the frame itself. The engine's payloads are unchanged;
+  the detail sentence «set overlap to allow» stays.
+- **Repeating grids drawn in their cells (#1082).** `templateSheet` (every template drawing: the module
+  library, the Page templates list and the editor's sheet) lays a repeating grid's set as `placeGrid` does,
+  on the template alone: the grid's own box (its placement, resolved against the frames' drawn boxes, so a
+  grid `below` an `'auto'` root starts under the root's drawn height), else from the main frame's drawn
+  place to the area's right edge and foot; equal columns, the main frame the cell's width and its height
+  rule; members anchored in the set placed with the column as their area, members anchored to nothing moved
+  with the cell, members anchored outside the set drawn once where the template puts them; row heights by
+  reach above/below the main frame, `rowAlign`, cut at the foot. Decision: it draws a row of items, at least
+  two (to show the repeat), at most `repeat.max` (`sketchItems`). `SheetFrame.instance` numbers the copies;
+  only the first copy of a frame is a button in the editor's sheet (one name, one keyboard stop).
+- **Not done.** A frame outside the set anchored to a frame of the set is drawn from the template's place
+  of that frame, not from the grid's box (as the engine reads it); right-to-left cells are not mirrored;
+  the drawing does not read a laid page. The composed-page-books guide's grid still hangs its caption under
+  the photo (D4 chose that for want of the switch); a docs follow-up can now show `overlap: 'allow'`.
+
+### 12.32 What #1079 changed (R8 finding)
+
+- **Caps.** `LineCap` gains `'ring'` (a hollow dot centred on the end, stroked in the line's width) and
+  `'bar'` (a stroke across the line at the end, in its width), for connectors and leader looks alike
+  (`CONNECTOR_CAPS`, so `collectConnectorWarnings` and `checkLeader` accept them with no new code).
+  `VDTPathMarker.kind` gains both and `widthPx` (the stroke of a ring or a bar; a marker without one
+  strokes at a tenth of its size). Decisions: a ring's **outer edge** is `capSize` across, as a dot's
+  is, so swapping a dot for a ring keeps the mark's size (the stroke's middle is `(capSize − width) / 2`
+  out); a bar is `capSize` long, square-cut. `pathMarkerOutline` returns the two new outlines;
+  `markerSvgData` traces them, `markerSvgElement` (exported) writes a marker as a filled or stroked
+  `<path>` for HTML, fixed EPUB and the reflowable EPUB's label layer. Canvas strokes them solid
+  (`setLineDash([])`, butt), PDF strokes them in their own `q … Q`. `pathInkBox` and `pathHit` (on the
+  ring's stroke, not its hole) follow.
+- **Where the line stops** (`capInset`, `design/connector.ts`). A ring: where the line's corners meet
+  the ring's outer edge (`√(R² − (w/2)²)` short of the centre), so nothing shows in the hole and the
+  overlap is a sliver under the ring's ink; a bar: at its inner side (`w / 2`), no overlap and no gap.
+  For a **translucent** colour only, a dot stops the line at its edge in the same way and an arrow at its
+  base (instead of `0.6 × capSize` inside it), so no spot is inked twice; opaque dots and arrows lay out
+  as before (no VDT change for existing books). `capEnd` takes the line width as a new last argument.
+- **Alpha.** Nothing was needed for `#rrggbbaa`: `ColorValue.hex` carries it from the config to the path
+  block (EF-30), canvas and SVG paint it as a CSS colour and the PDF's `colorFromHex` → `alphaStateOp`
+  sends it through the shared ExtGState (`ca` for fills, `CA` for strokes). Added: `opacity?: number`
+  (0…1) on `DesignConnectorElement` and `LeaderStyle`, times the colour's own alpha
+  (`colorWithOpacity`, exported; `#rgb`/`#rgba`/`#rrggbb`/`#rrggbbaa` → `#rrggbbaa`, other forms
+  unchanged). Why a key and not only the colour: a palette-linked colour (the connector's default main
+  colour included) takes the palette entry's `hex`, which would drop an alpha written beside it, and the
+  Sandbox's colour picker has no alpha. A connector applies it in `layoutConnector` (after
+  `applyPaletteOverrides`); a leader keeps it apart in `VDTFigureLabelLeader.opacity` and applies it in
+  `figureLabelLeaderPath`, because the part palette's remap matches the leader's stroke colour as written.
+  Validation: an `opacity` outside 0…1 is `unknownConfigValue` with the held value as `used`, a value
+  that is not a number `used: '1'` (`opacityWarning`, at `…elements[i].opacity` and in a leader look at
+  `…/leader/opacity`). No `CONFIG_VERSION` bump: one new optional key.
+- **Translucency within one block.** A connector's lines are one stroke (one `S` / `stroke()` / `<path>`),
+  so a tree's bar and drops do not darken where they meet; each mark is painted on its own, so two
+  marks that overlap ink that spot twice. A cased line is two connectors (a wide pale one with `opacity`
+  under a dashed one, `over: true` to sit on a picture).
+- **Sandbox.** The connector editor's start and end marks offer Ring and Bar (a list now: five marks do
+  not fit a segmented row) and an Opacity field (0–100 %) under the line colour; four new labels and the
+  mark-size tooltip in the ten site languages. U11's leader look (label styles) takes the same marks (a
+  list) and Opacity field, the anchors panel's end mark the two new marks; they reuse the connector's
+  labels. The docs say «since postext 1.49» (1.48.0 was out before this landed).
+- **Docs.** `configuration-composed-pages` (connector table: `opacity` row, alpha note, the new caps and
+  sizes, checks; the label style's `leader`) and `composed-pages-figures` (leaders), ten languages.
+- **Not done.** The atlas recipe's casing and a timeline with rings belong to R8 (#1069, the Cookbook);
+  the skill (S6).
+
+### 12.33 What #1078 changed (R8 finding)
+
+- **The finding.** On a vertical page a grid of a box and a picture anchored inside it (the frame set
+  `uso` + `uso-foto`) laid its rows (columns on the page) wider than the boxes, and the ladder scaled the
+  last row's picture down. `placeGrid` was not at fault: it measures a row in the flow frame, where the
+  block axis is `y` as on a horizontal page, from the cells' frame boxes. The picture's frame was wider
+  than the picture it held.
+- **Cause.** A picture in a frame of a vertical page stands upright (#971): `uprightIn` hands the box
+  `uprightMaxLength`, the room across the lines. The natural measure (`naturalOf`) gives it the area's
+  whole extent and the frame takes the height the picture settles at (a bitmap at its size). Laid in that
+  box (`fill`, `uprightMaxLength` = the frame's height), the callout layouter took off a line's gap above
+  the picture and one below it (`inlineResourceGapInBoxes`) although the box sets neither for its first
+  block nor for its last; the picture came out two lines smaller and the frame kept the measured height.
+  Any `'auto'`-height frame holding only a picture showed it (a grid only made it visible: its rows add
+  the empty room up, and the last row went past the foot).
+- **Fix** (`calloutLayout.ts`, where a resource child is measured with `uprightMaxLength`): the gaps taken
+  off are the ones the box sets, `st.prevMarginBottom` alone above its first block (as its spacing is) and
+  nothing below its last real child (`isLastRealOf`). Measure and fill now agree; the grid's row measure
+  is unchanged and counts what the cells show.
+- **Parity.** Horizontal pages never pass `uprightMaxLength`: no change (bench-layout hashes of the
+  presets, the composed recipes' horizontal editions). Vertical pages change wherever a picture is the
+  first or last block of a box whose room across the lines bounds it: the picture grows by up to two lines
+  to the size its frame was laid for (frames do not move). bench-layout hashes of six presets are equal,
+  the two vertical ones (Kokoro, Hongloumeng) included: their pictures are not bounded so. Of the
+  composed recipes only Nº 156's Chinese and Japanese editions change (the contents' map, the field map,
+  the pictures beside the boxes): there the pictures beside the boxes now stand at their size and reach
+  past their boxes, which is what their 44 mm frames ask for (below).
+- **The recipe.** With pictures at their size, a 44 mm `uso-foto` (along the lines) on the vertical
+  editions holds a 720 × 540 px painting at 330 ppi at 55.4 × 41.6 mm: 8 + 55.4 mm across the lines, past
+  the 52 mm box, so the row is honestly 63.4 mm and three of them do not fit 184 mm with any `rowGap`.
+  The vertical editions get the template's 8 mm back when the picture stands inside its box: a 30 mm
+  frame (`PIC = CJK ? 30 : 56`) sets the paintings 40 × 30 mm (`gridVertical.test.ts` reproduces the
+  frame set: rows 8 mm apart, no picture scaled); the same `PIC` keeps the `cuidar` box's picture
+  (52 mm box, `turno` 8 mm after it in a stack) from reaching the next box.
+- **Not done.** A frame narrower than its picture needs along the lines still sets the picture in it as
+  before (the column bounds the upright height, `UPRIGHT_MIN_PICTURE_SHARE`); no warning for a picture
+  that hangs past the box it is anchored in (the overlap checks of C2 see frames, not their anchors).
+
+### 12.34 What S7 built (#1071)
+
+- **Where.** The porting skill only: `template_dedupe.py` runs a fold (new `scripts/template_fold.py`, pure
+  functions over the templates, the measured boxes and the Markdown) after it merges the styles and the grounds
+  and before it merges the templates. No engine change. It needs `regions.json` and templates one per page as
+  `extract` wrote them (else it is skipped and the report says why); `--no-grids` / `--no-modules` turn either off.
+- **Boxes.** Read off the draft as the engine lays it when given (`--laid FRAMES`, written by the new
+  `render.mjs --frames`: every composed page's laid frame boxes in mm), else off `regions.json`. Decision: the laid
+  boxes, not the measured ones, are the reference, because the extract's stack and row groups already move frames
+  off their measured places (on a real textbook 129 of 367 frames by more than 0.3 mm), and the fold must keep the
+  page as the draft lays it.
+- **Grids** (C10, after U12's «Turn into a grid»). Departure from U12: nothing is picked; every set of frames of
+  one look (kind, style, layer, rotate, optional; widths within `--lattice-tol`, 1 mm) is tried, largest first, no
+  frame in two grids. A lattice: tops make rows, starts make columns, full rows but the last, one column gap, one
+  row gap measured as the engine measures rows; one height rule (cards whose own `minHeight`/`maxHeight`/`height`
+  differ while their laid heights differ are no lattice; laid alike, the main frame takes the smallest laid
+  height); no other frame of the same or a higher layer with its centre among the cards (two boxes of one width
+  far apart with others between them are no grid), frames hanging from a card excepted. Members, unlike U12, are
+  found by geometry, not by names: a frame above, below or inside a card (centre over it, within 5 mm), one of
+  each look per card, that every card has and that hangs the same way (offsets within the tolerance). Anchors:
+  `top-left` off the card (above, inside), `below` the card (under it); members as wide as their words and
+  centred over cards of one width become `top` / `bottom` with `width: 'auto'`, the narrowest width as `minWidth`
+  and the widest as `maxWidth`. Cards with no members need `--grid-min` (3) cards. The grid's box is the first
+  row's reach from the first card's start, as wide as the columns, `height: 'fill'`, `rowAlign: 'start'`,
+  anchored as the topmost frame of the first card was (U12's rule). A row or stack group left empty is dropped
+  and what hung from it hangs from the lowest card of the last row (a frame `below` a row of photos). Names:
+  `grid` (`grid-2`), the set `grid-<kind>` (`grid-picture`, `grid-box`), never positional, so the role naming
+  after it leaves them.
+- **Modules: the page is a shell** (C11, after U12's «Extract a module»). Departure from U12: the whole page is
+  read, not a picked set, every frame goes into a module and modules are shared across pages, so a page template
+  is a shell (no frames, one modules group, the furniture) and pages differ only by their Markdown and their
+  `:::module` blocks. Units: union of a containment parent (`regions.json`), anchors to another frame or group, a
+  group's members, the frames an element reads (through the elements it reads: a border and its size helper), a
+  `next` / `continueIn: '#x'` chain, and all flow and `takes` frames together (one module takes the pieces that
+  name no slot). Bands: units side by side joined, top to bottom. The group: `modules: true`, `gap: 0`, at the
+  area's top-left, `size: fill × fill`. A module: the band's frames anchored inside it as they were, the rest at
+  their laid place with `x` from the area's left and `y` from the module's top plus its `lead` (the band's distance
+  from the laid foot of the band before, the first band's from the area's top), so each frame lays where it laid
+  and a band that grows pushes the ones after it (percent sizes and `'fill'` heights fixed); the band's groups; the
+  decoration whose targets are all in the band (iterated) and every element the page paints at a fixed place inside
+  the band's box (re-anchored to the module), so paint order holds (the engine paints a module's decoration after
+  the page's). The rest of the page's own decoration (its card, a band of colour) goes with the first module as it
+  is, anchored to the page. Frames named `<kind>-<n>` in the module (role names follow), elements
+  `deco-<kind>-<n>` (an element id like `box-1` would be taken for a frame by the role naming). Modules alike
+  (same frames by name, `frame_diff`, `_group_equal` and `element_diff` within `--module-tol`, 0.5 mm, tighter
+  than the 3 mm of page templates, since a module's offsets are where its frames lay) are one template,
+  `module-<what it holds>`. Page: one `:::module{template}` block per band, holding the band's pieces (container,
+  leaf and `{slot}` heading pieces, and for the flowing text's module every piece that names no slot) with their
+  slots renamed, where the first moved piece stood; instance names `<template>[n]` as C11 numbers them. Parity rule
+  found on the way: a module frame outside a group of its own runs the ladder with its whole module as peers (it
+  scales the module's pictures; on the page it scaled only its own), so a box or text frame that stood in no group
+  gets `fit.scaleImages: false` in its module when the module holds pictures.
+- **Furniture** (what the shell keeps). `mark_furniture`: an element (no frame anchor, no plain words) painted
+  alike within 0.5 mm on every page of a side (by the folio's `parity`), or on every page with a folio, is renamed
+  `furniture-N` on each page and kept to its side (`parity`), or to every page when it is alike on both. With it,
+  `is_furniture` keeps the page colour (a box to the bleed), running heads and folios (`{pageNumber}`,
+  `{attr.x}`) and a ground read from a fence attribute. A furniture element stays on the shell while nothing the
+  page painted before it moved, or when its box meets nothing that did (marks under 25 mm² do not count): the shell
+  paints under every module, so a running head painted over the page's card stays only off the card, and an
+  attribute ground painted over the cards goes with the first module. In dedupe, an element reading `{attr.x}` is
+  joinable like a parity one (it draws nothing where the fence sets no such attribute), and a one-line text set
+  flush to the side it is anchored by is one element whatever its width (`text_width_free`; the widest is kept).
+  Departure from the coordinator's plan (title tab as an `auto`-width frame drawing its own tab, card as a box,
+  `'auto'` heights on the shell's text): with every frame and the card in the page's modules, nothing per-page is
+  left in the shell, so the card keeps its outline with the tab grown out of it (the concave fillet at the join
+  included) and the text keeps its measured height; nothing moves.
+- **The rest of dedupe.** Module templates are kept out of the template merge and the shared base;
+  `rewrite_markdown` follows `:::module` blocks (their slots by the module's renames) and nested containers;
+  `rename_in_template` also renames group anchors and grid sets; `rename_module_refs` keeps page references into a
+  module in step with the module's role names. The report gains `grids`, `modules` (with their uses), `after.grids`
+  / `after.modules` and `pages`: per extract template, every frame's old name → the name on the laid page
+  (`grid-picture[3]`, `module-box-picture[1].picture-in-box`).
+- **Checking.** `template_dedupe.py DIR --compare-boxes BEFORE AFTER [--box-tol 0.5]` reads two `--frames` files and
+  `pages`, and lists every frame that moved or is missing; `compare_pages.py --score [FILE]` gives round 1's
+  likeness (grey, blurred 2 px, mean difference, share over 40) per page, and reads `postext images` PNGs too.
+- **A real textbook** (28 pages, round-1 port 27 templates for 28 pages). After the fold: 2 page templates, one
+  shell for the 25 body pages (page colour, folios and running heads kept to their side, the marks by the folio)
+  and one bare shell for the 3 front-matter pages, which print no page colour and no folio; 36 modules (each used
+  once: no two bands of the book are alike within 0.5 mm); 6 grids (3 × 1 photos, 3 × 2 figures, a 3 × 1 photo
+  row, a row of three boxes, two boxes with a tab each, 2 × 2 photos). Laid frames: 367 compared, 1 off by more
+  than 0.5 mm (a centred tab set `auto`, 1.55 mm narrower than the measured width); `postext check` warnings the
+  same kinds and counts as before; likeness 6.04 / 2.79 % before, 6.05 / 2.79 % after. The folio stands where most
+  pages print it (the source's drifts by up to 1.8 mm page to page, as dedupe merged it before).
+- **Not done.** One shell for the front matter and the body (it needs a page to drop the shell's furniture, e.g.
+  a fence attribute switching it off); modules side by side (C11 stacks them); per-item looks in a grid (a pill of
+  another colour per card is no member); a lattice with one card off by more than the tolerance (a row of photos
+  pushed 1.1 mm by the draft's own groups). Sandbox, docs (D3/D4) and the release (S8) are other lanes.
+- **Tests.** `tests/test_template_fold.py` on invented pages: a 3 × 2 photo wall with pills (grid, items, reading
+  order, names), tabs as wide as their words (centred `auto` members), a badge among the cards and a card off the
+  lattice (no grid / a grid of the pills only), what hung from a row group, two pages of three bands (a bare
+  shell, the text and the pair shared, the box 4 mm lower a module of its own, the connector and the shape moved,
+  the folio left), a connector from the text joining its box to it, furniture kept to its side, `:::module` slot
+  renames, `compare_boxes`; `dedupe_dir` end to end (one shell, modules kept apart, role names in the module and
+  its Markdown, `pages`), with `POSTEXT_REPO` the draft laid out before
+  and after with no frame off by 0.5 mm, with `POSTEXT_CLI` `postext check` without unknown anchors, slots,
+  templates or module warnings.
+
+### 12.35 What S8 built (#1072)
+
+- **Where.** The porting skill only (`plugins/postext/skills/postext-port`), skill 1.58.0. No engine change.
+- **References.** `references/composed-pages.md` gains recipes 6.12–6.18 (connectors; pointers into a picture
+  and labels away from their point; keys and `:icon`; corners, sides, joined and foot tabs, path elements,
+  glyph tab icons and side points; repeating grids; modules; overlaps), each saying when to use it and what
+  a port did before 1.48; the version table runs to 1.49.0 (§12.32's caps and opacity, §12.33); §3.1 records
+  bands, §3.7 writes the drafting loop as extract → lay out (`render.mjs --frames`) → fold
+  (`template_dedupe.py`) → lay out and compare boxes → close (`composed_check.py`, 0 overlaps) → score; §7
+  and §10 follow. `configuration.md` §19g, `document-format.md` §12.2, `verification.md` and `SKILL.md` list
+  the new keys, blocks and the close rule.
+- **Overlaps fail the close checks.** `composed_check.py` read every warning outside its failure list as
+  nothing, so `frameCovered` / `frameOutsideArea` (warnings, §12.16) passed silently. Now both fail, printed
+  with the engine's own fixes and a hint, and the report ends with `overlaps: N`. Decisions:
+  - A **recorded exception list per project**: `composed-check.json` beside `preset.json` (or the bundle),
+    or `--exceptions FILE`: `{ "overlaps": [{ kind?, template?, frame, coveredBy?, past?, target?, locale?,
+    page?, reason }] }`. `frame` and `reason` are required; `[*]` stands for any instance number and `*` for
+    any run (no regular expression from the file: each pattern is escaped piece by piece). A matched warning
+    is listed as `allowed` with its reason; an invalid entry fails the run; an entry that matches nothing is a
+    note, so stale ones go. `overlap: 'allow'` stays the first way out (the engine skips the pair); every frame
+    that sets it is listed as a note, so the close report names what the engine no longer checks.
+  - `repeatOverflow`, `moduleUnknown`, `moduleAsPage`, `moduleNested` and `moduleNameRejected` fail too.
+  - **The score**: `compare_pages.py --score --check REPORT` (a `composed_check.py --json` report, or a raw
+    `postext check --json` one read through the same exceptions) fails (exit 1, `passed: false`) while
+    overlaps remain, listed by page label.
+- **Reading order on shells.** A page template that is a shell of modules (S7, §12.34) has no frames of its
+  own, so the HTML order check compared nothing. `page_fences` now records a slotted container's pieces one
+  level down and `:::module` blocks with their own items; `expected_order` reads a repeating grid's pieces as
+  instances (`foto[2]`, `pie[2]`, a lone member resource an item of its own) and a module's frames by their
+  scoped names (`<name>.<frame>`, else `<template>[n]` as C11 numbers them; an unknown module's content to the
+  page's flow frame). On the fresh port below the expected order equals the HTML's frame ids one for one.
+- **lint_project.py** read `:::module` as an unknown container and every module slot as `slotUnknown` (22
+  errors on a two-page S7 draft); it now checks a module's slots against the module template and raises
+  `moduleUnknown` (three reasons), `moduleAsPage`, `moduleNested` and `moduleNameRejected` before the build,
+  and reads a `:::label` container's lines inside a figure. `preset_kit.py` stamps `configVersion` 16.
+- **`round`** knows the composed features of 1.46.0, 1.48.0, 1.48.1 and 1.49.0 (unreleased when written).
+- **Release.** `plugins/postext/.claude-plugin/plugin.json` and `.cursor-plugin/plugin.json` 1.57.0 → 1.58.0;
+  the marketplace files carry no version; `skills-lock.json` lists only third-party skills (unchanged); the
+  docs Skill page (ten languages) says what the extract, the fold, the check and the score do with 1.48.
+- **Fresh port.** Two invented diagram pages (the S6 test page twice) through extract, `render.mjs --frames`,
+  `template_dedupe.py --laid`, manifest: one shell and two modules; `lint_project.py` 0 errors,
+  `composed_check.py check` passed with 0 overlaps. The engine's overlap fixture as a book fails with the four
+  overlaps and their fixes; two recorded exceptions leave two.
+- **Not done.** The exception file is not packed by `preset_kit.py pack --manifest-only` (it is a porting
+  record, not part of the book). The check does not reflow to test a fix; the Sandbox's fixes do.
+- **Docs finding.** `configuration-composed-pages` lists `over` in the table of a connector's *end* fields;
+  it is a key of the connector (`DesignConnectorElement.over`, §12.26).
+
+### 12.36 What S9 found (#1073)
+
+The acceptance test of round 2: the 28-page social-science textbook (230 × 288 mm, Spanish, checked
+privately) re-ported with the S8 skill on 1.48.1 in Spanish, Catalan and English from one bundle, the
+words taken from the round-1 port (the owner's corrected Spanish and his translations, as Markdown).
+
+- **The loop as written.** `pdf_regions.py extract` (28 pages, 367 frames, 152 callout styles, 245
+  labels) → `render.mjs --frames` → `template_dedupe.py --laid` (2 shells, 36 modules, 6 grids, 88
+  styles) → manifest → render, compare boxes, `composed_check.py`, score. The curation is a generator
+  (template changes) and a Markdown pass; no word of the book in either.
+- **Result.** 3 shells (front matter, body, and a body child that adds the even running head of a
+  block's closing page), 36 module templates, 6 grids, 52 connectors (trees, elbows, the map's pointers
+  to anchors), 100 path elements, 2 raster grounds left (two art scraps the vectors do not paint; no line,
+  connector or border in either). Config 0.32 MB. `composed_check.py` passed in every edition with 0
+  overlaps and 21 recorded exceptions (pills on photos, boxes on an illustrated band, cut-outs past a
+  box's edge, each with its reason); 0 `frameOverflow`, 0 `contentInConfig`. The bundle opens with the
+  Sandbox's own import path (`openBundleZip`, `parseBundle`, `layOutBundle`): three editions, 28 pages each.
+- **Likeness** (round 1's measure, 60 dpi grey, blurred 2 px, share of pixels off by more than 40;
+  round 1 in brackets): es 1.6 % (2.0), ca 2.1 % (2.4), en 3.0 % (3.2); mean difference 8.1 (8.6),
+  8.7 (8.9), 9.4 (9.5).
+- **Skill fixes** (S9 commits): `render.mjs` stopped on a face with one unreadable glyph; the fold
+  read a module's gap off the laid boxes (a grown box baked its growth into the gap under it) and lost
+  the connector ends on a renamed grid's cards (`#grid-2-picture[2]`). `composed-pages.md` §3.7 lists the
+  curation the draft still needs.
+- **Engine.** Nothing changed. Two behaviours a port meets: a box frame with no content draws nothing
+  (its tab and border too; a `:::space` keeps it), and a one-line pill held with `maxHeight` and
+  `fit.minScale` still breaks a long word over two lines before it shrinks the word.

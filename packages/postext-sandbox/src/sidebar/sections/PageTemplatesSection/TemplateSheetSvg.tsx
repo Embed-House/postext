@@ -65,10 +65,20 @@ export function TemplateSheetSvg({ sheet, width, selectedFrame, onSelectFrame, f
             strokeWidth={(selected ? 2.5 : 1) * k}
           />
         );
-        if (!onSelectFrame) return <g key={f.name} transform={transform}>{box}</g>;
+        if (!onSelectFrame) return <g key={`${f.name}#${f.instance ?? 0}`} transform={transform}>{box}</g>;
+        // A repeating grid's later items (#1082) are drawn, not buttons: the
+        // first item's frame selects the template frame they all copy.
+        if ((f.instance ?? 1) > 1) {
+          return (
+            <g key={`${f.name}#${f.instance}`} transform={transform} style={{ pointerEvents: 'none' }}>
+              {box}
+              <text x={r.x + 1.2 * k * 3} y={r.y + 10 * k} fontSize={9 * k} fill="var(--foreground, #111)">{f.name}</text>
+            </g>
+          );
+        }
         return (
           <g
-            key={f.name}
+            key={`${f.name}#${f.instance ?? 0}`}
             transform={transform}
             role="button"
             tabIndex={0}

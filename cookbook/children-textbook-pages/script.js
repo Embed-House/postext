@@ -116,7 +116,7 @@ const box = (name, style, minHeight, more) => ({ name, style, width: mm(MEASURE)
 const answer = (name, lines) => ({ name, optional: true, style: 'respuesta', width: mm(MEASURE),
   height: mm(LINE * lines), minHeight: mm(LINE * lines),
   rules: { every: mm(LINE), color: col('rule'), width: pt(0.75) } });
-const PIC = CJK ? 44 : 56; // a picture at the end of a box's first lines pushes the text aside
+const PIC = CJK ? 30 : 56; // a picture at the end of a box's first lines pushes the text aside
 const withPic = (name, style, minHeight, more) => [box(name, style, minHeight,
   { padding: { right: mm(PIC + 8) }, ...more }), { name: `${name}-foto`, layer: 2, width: mm(PIC),
   exclude: 'push', placement: at(`#${name}`, 'top-right', -5, 8) }];
@@ -170,8 +170,7 @@ const pageTemplates = [
       ...withPic('uso', 'dato', CJK ? 52 : 66),
     ],
     groups: [stack('izquierda', ['titulo', 'texto', 'cuidar', 'turno']),
-      grid('usos', ['uso', 'uso-foto'], 1, onSecond, { rowAlign: 'start',
-        ...(CJK && { rowGap: mm(0) }) })], // a vertical row counts the picture beside its box
+      grid('usos', ['uso', 'uso-foto'], 1, onSecond, { rowAlign: 'start' })],
   }),
   { id: 'saberes', header: false,
     decoration: { elements: [titleTab()] },

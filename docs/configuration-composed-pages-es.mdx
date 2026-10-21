@@ -748,7 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>el color principal</td>
-      <td>Un color vinculado a la paleta sigue la <code>palette</code> de la plantilla, la del bloque de página y la de una parte, como los filetes.</td>
+      <td>Un color vinculado a la paleta sigue la <code>palette</code> de la plantilla, la del bloque de página y la de una parte, como los filetes. Un color con canal alfa (<code>#rrggbbaa</code>) pinta la línea y sus marcas translúcidas, y deja ver la imagen que hay debajo (desde postext 1.49).</td>
+    </tr>
+    <tr>
+      <td><code>opacity</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Lo opacas que son la línea y sus marcas, de <code>0</code> a <code>1</code>, multiplicado por el alfa del propio color. Va aparte del color, así que un color vinculado a la paleta sigue vinculado. Una línea con orla son dos conectores: uno ancho y pálido con <code>opacity: 0.6</code> debajo de otro discontinuo. Desde postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -758,15 +764,21 @@ decoration: {
     </tr>
     <tr>
       <td><code>startCap</code>, <code>endCap</code></td>
-      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>Una marca en <code>from</code> y en cada <code>to</code>: un punto relleno centrado en el extremo, o una punta de flecha cuyo vértice es el extremo.</td>
+      <td>Una marca en <code>from</code> y en cada <code>to</code>: un punto relleno centrado en el extremo, o una punta de flecha cuyo vértice es el extremo. <code>'ring'</code>: un punto hueco centrado en el extremo, trazado con el grosor de la línea, que llega hasta su borde; <code>'bar'</code>: un trazo atravesado en el extremo, del grosor de la línea (los dos desde postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
       <td><code>Dimension</code></td>
       <td>3 × <code>width</code></td>
-      <td>El ancho de un punto, o la longitud de una punta de flecha.</td>
+      <td>El ancho de un punto o de un anillo, la longitud de una punta de flecha o de una barra.</td>
+    </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un conector con un extremo <code>anchor</code> se pinta sobre los marcos, los demás bajo ellos</td>
+      <td>Pinta la línea después de todos los marcos de la página (<code>true</code>) o con la decoración, bajo los marcos (<code>false</code>). Sin valor, un conector con un extremo <code>anchor</code> se pinta encima, de modo que una línea que apunta dentro de una imagen se ve sobre el marco de la imagen; una línea entre marcos queda debajo.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -825,12 +837,6 @@ Cada extremo (`ConnectorEnd`) indica una caja y un punto de uno de sus lados:
       <td>ninguno</td>
       <td>Un ancla de la imagen que contiene el marco: el extremo es ese punto de la imagen, a través de su recorte, su zona segura y su escala, como el de un rótulo, en lugar de un punto del lado del marco. <code>at</code> no se lee; <code>side</code> indica por dónde llega la línea (por defecto, desde el otro extremo).</td>
     </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>un conector con un extremo <code>anchor</code> se pinta sobre los marcos, los demás bajo ellos</td>
-      <td>Pinta la línea después de todos los marcos de la página (<code>true</code>) o con la decoración, bajo los marcos (<code>false</code>). Sin valor, un conector con un extremo <code>anchor</code> se pinta encima, de modo que una línea que apunta dentro de una imagen se ve sobre el marco de la imagen; una línea entre marcos queda debajo.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -849,7 +855,7 @@ decoration: { elements: [
 ] },
 ```
 
-**Comprobaciones.** Un extremo cuyo `to` no corresponde a nada es `frameAnchorUnknown` (en `…/from/to` o en `…/to/<k>/to`) y se deja fuera; `[*]` solo es válido en `to` y sobre un marco repetido. Un `anchor` que no tiene ninguna imagen del marco es `labelAnchorUnknown`, con el id del conector. Una palabra que no está entre las opciones de `routing`, `startCap`, `endCap` o `side`, y un `at` fuera de 0 a 1, son `unknownConfigValue`.
+**Comprobaciones.** Un extremo cuyo `to` no corresponde a nada es `frameAnchorUnknown` (en `…/from/to` o en `…/to/<k>/to`) y se deja fuera; `[*]` solo es válido en `to` y sobre un marco repetido. Un `anchor` que no tiene ninguna imagen del marco es `labelAnchorUnknown`, con el id del conector. Una palabra que no está entre las opciones de `routing`, `startCap`, `endCap` o `side`, y un `at` fuera de 0 a 1, son `unknownConfigValue`. Un `opacity` que no es un número de 0 a 1 también es `unknownConfigValue` (un número fuera del intervalo se ajusta a él).
 
 ## Estilos de rótulo
 
@@ -971,9 +977,9 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>leader</code></td>
-      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>ninguno</td>
-      <td>El aspecto de las líneas de referencia de los rótulos de este estilo: la línea que va de la caja de un rótulo al punto de su ancla. Por defecto, el color del rótulo, un grosor de <code>0.75pt</code>, <code>endCap: 'dot'</code> en el punto, sin <code>startCap</code>, un <code>capSize</code> de tres veces el grosor y <code>routing</code> <code>'straight'</code> (o <code>'elbow'</code>: sale de la caja en ángulo recto y gira una vez hacia el punto). Un rótulo apartado de su punto (<code>labelAt</code>) con un estilo que tiene <code>leader</code> lleva una. Desde postext 1.48.</td>
+      <td>El aspecto de las líneas de referencia de los rótulos de este estilo: la línea que va de la caja de un rótulo al punto de su ancla. Por defecto, el color del rótulo, un grosor de <code>0.75pt</code>, <code>endCap: 'dot'</code> en el punto, sin <code>startCap</code>, un <code>capSize</code> de tres veces el grosor y <code>routing</code> <code>'straight'</code> (o <code>'elbow'</code>: sale de la caja en ángulo recto y gira una vez hacia el punto). Un rótulo apartado de su punto (<code>labelAt</code>) con un estilo que tiene <code>leader</code> lleva una. Desde postext 1.48. <code>startCap</code> y <code>endCap</code> admiten las marcas del conector, <code>'ring'</code> y <code>'bar'</code> incluidas, y <code>opacity</code> (de 0 a 1) o un color con canal alfa vuelven translúcida la línea (desde postext 1.49).</td>
     </tr>
   </tbody>
 </table>

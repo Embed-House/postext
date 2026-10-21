@@ -67,7 +67,7 @@ import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle';
 import { closestKey } from './util/closestKey';
 import { isResourceCounterReset } from './defaults/resourceTypes';
 import { calloutStyleChain, labelIconKind, labelIconScale } from './defaults/calloutStyles';
-import { validatePageTemplates } from './composed/validate';
+import { opacityWarning, validatePageTemplates } from './composed/validate';
 import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers';
 
 /** The format fields and the decimal spelling each falls back to. A
@@ -163,6 +163,8 @@ function collectConnectorWarnings(config: PostextConfig): ConfigWarning[] {
       word(`${path}.routing`, e.routing, CONNECTOR_ROUTINGS, 'elbow');
       word(`${path}.startCap`, e.startCap, CONNECTOR_CAPS, 'none');
       word(`${path}.endCap`, e.endCap, CONNECTOR_CAPS, 'none');
+      const opacity = opacityWarning(e.opacity, `${path}.opacity`);
+      if (opacity) out.push(opacity);
       // Over the frames or under them (#1076): a boolean; anything else is
       // read as unset (over when an end names a picture's anchor).
       if (e.over !== undefined && typeof e.over !== 'boolean') {

@@ -91,7 +91,7 @@ const LABEL_STYLE_KEYS = {
   writingMode: true, overlap: true, align: true, border: true, radius: true, kind: true, leader: true,
 } satisfies Record<keyof LabelStyle, true>;
 const LEADER_KEYS = {
-  color: true, width: true, dash: true, startCap: true, endCap: true, capSize: true, routing: true,
+  color: true, opacity: true, width: true, dash: true, startCap: true, endCap: true, capSize: true, routing: true,
 } satisfies Record<keyof LeaderStyle, true>;
 const LABEL_BORDER_KEYS = { color: true, width: true } satisfies Record<keyof NonNullable<LabelStyle['border']>, true>;
 
@@ -410,6 +410,23 @@ function checkLeader(leader: unknown, path: string, push: Push): void {
   choice(leader, 'startCap', CONNECTOR_CAPS, 'none', path, push);
   choice(leader, 'endCap', CONNECTOR_CAPS, 'dot', path, push);
   choice(leader, 'routing', LEADER_ROUTINGS, 'straight', path, push);
+  checkOpacity(leader.opacity, `${path}/opacity`, push);
+}
+
+/** An `opacity` (#1079): a number in 0…1. Out of range: held (`used` the
+ *  held value); not a number: opaque (`used: '1'`). */
+export function opacityWarning(value: unknown, path: string): ConfigWarning | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    if (value >= 0 && value <= 1) return undefined;
+    return { kind: 'unknownConfigValue', path, value: String(value), used: String(Math.max(0, Math.min(1, value))) };
+  }
+  return { kind: 'unknownConfigValue', path, value: String(value), used: '1' };
+}
+
+function checkOpacity(value: unknown, path: string, push: Push): void {
+  const w = opacityWarning(value, path);
+  if (w) push(w);
 }
 
 /** A resource anchor's `labelAt` (#1057): two fractions of the picture;

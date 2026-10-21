@@ -124,4 +124,10 @@ describe('a label’s leader over the picture in the reflowable EPUB (#1057)', (
     // No leader asked for: none drawn.
     expect(overlay(figure('::label[Lake]{at="a" leader="none"}'), away)).not.toContain('<path');
   });
+
+  it('strokes a ring at the point and paints a translucent line (#1079)', () => {
+    const away = resource({ anchors: [{ id: 'a', x: 0.2, y: 0.8, labelAt: { x: 0.7, y: 0.2 }, leader: { color: { hex: '#7a3b10', model: 'hex' }, opacity: 0.5, endCap: 'ring' } }] });
+    const svg = overlay(figure('::label[Lake]{at="a"}'), away)!;
+    expect(svg).toMatch(/<path d="M[^"]+" fill="none" stroke="#7a3b1080" stroke-width="([\d.]+)"\/><path d="M[^"]+A[^"]+Z" fill="none" stroke="#7a3b1080" stroke-width="\1"\/>/);
+  });
 });

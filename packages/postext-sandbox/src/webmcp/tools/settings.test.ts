@@ -101,3 +101,26 @@ describe('every setting the engine resolves', () => {
     expect(limited).toBeLessThan(20);
   }, 120_000);
 });
+
+// #1081: a frame's overlap (C2), which the frame editor's «May overlap on
+// purpose» switch writes, is a setting like any other: written with each
+// value, read back, nothing else moving.
+describe('a composed frame\'s overlap', () => {
+  const composed = () => {
+    const chapters = [chapter('a', 'Page', '::::page{template="card"}\n:::frame{slot="main"}\nWords.\n:::\n::::\n')];
+    const config = { pageTemplates: [{ id: 'card', frames: [{ name: 'main', height: { value: 40, unit: 'mm' } }, { name: 'badge', width: { value: 10, unit: 'mm' }, height: { value: 10, unit: 'mm' } }] }] };
+    return { chapters, markdown: chapters[0]!.markdown, config };
+  };
+  it.each(['allow', 'check'])('takes %s and nothing else moves', async (value) => {
+    const { call } = harness(composed() as never);
+    const before = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    const path = 'pageTemplates[id=card].frames[name=badge].overlap';
+    const done = await call('sandbox_set_config', { changes: [{ path, value }], wait: false });
+    expect(done.ok, text(done)).toBe(true);
+    const after = leafEntries((await call('sandbox_get_config', { effective: true })).effective);
+    // Read back by the frame's place in the list.
+    const read = 'pageTemplates[id=card].frames[1].overlap';
+    expect(after.get(read)).toBe(value);
+    expect(moved(before, after).filter((p) => p !== read)).toEqual([]);
+  });
+});

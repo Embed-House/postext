@@ -3,7 +3,7 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { SandboxStoreContext } from '../../context/SandboxContext';
 import { DEFAULT_LABELS } from '../../types/defaultLabels';
-import { LabelAnchorsPanel } from './LabelAnchorsPanel';
+import { LabelAnchorsPanel, LeaderFields } from './LabelAnchorsPanel';
 import type { PictureMarks } from './pictureMarks';
 
 // #931: the anchors list ticks anchors for a change together.
@@ -53,5 +53,18 @@ describe('the anchors list with ticks (#931)', () => {
   it('offers the names switch only on a dense map', () => {
     expect(render(props())).not.toContain('Names on the picture');
     expect(render(props({ denseMap: true }))).toContain('Names on the picture');
+  });
+});
+
+describe('the mark at the point of an anchor\'s leader (#1079)', () => {
+  it('offers a ring and a bar beside the dot and the arrow', () => {
+    const anchor = { id: 'lago', x: 0.4, y: 0.6, leader: { endCap: 'ring' as const } };
+    const state = { labels: DEFAULT_LABELS };
+    const store = { getSnapshot: () => state, subscribe: () => () => {}, dispatch: () => {} };
+    const html = renderToString(h(SandboxStoreContext, { value: store as never }, h(LeaderFields, {
+      anchor, index: 0, marks: { ...marks, anchors: [anchor] }, texts: [], commit: noop, edit: noop, beginEdit: noop, styleHasLeader: () => false,
+    } as ComponentProps<typeof LeaderFields>)));
+    expect(html).toContain(`>${DEFAULT_LABELS.connectorCapRing}<`);
+    expect(html).toContain(`>${DEFAULT_LABELS.connectorCapBar}<`);
   });
 });

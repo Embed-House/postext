@@ -1,0 +1,452 @@
+"""Tests of the grid and module folding of `template_dedupe.py`
+(`template_fold.py`): invented pages written as `pdf_regions.py extract`
+writes them (one template per page, frames named by kind and order, the
+measured boxes in regions.json), no PDF.
+
+    python3 -m unittest discover -s plugins/postext/skills/postext-port/scripts/tests
+
+With POSTEXT_REPO set to a Postext checkout with built dists, the folded
+draft is laid out before and after with render.mjs and every frame box is
+compared; with POSTEXT_CLI set, `postext check` must find no unknown
+anchors, slots or templates in it.
+"""
+from __future__ import annotations
+
+import contextlib
+import copy
+import io
+import json
+import os
+import shlex
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(HERE))
+
+import template_dedupe as td  # noqa: E402
+import template_fold as tf  # noqa: E402
+
+TOL = {"geom": 3, "dim": 0.5, "padding": 1.5, "font": 0.25, "delta_e": 3, "lattice": 1.0, "grid_min": 3}
+
+
+def mm(v: float) -> dict:
+    return {"value": v, "unit": "mm"}
+
+
+def at(x: float, y: float, to: str = "container", edge: str = "top-left") -> dict:
+    return {"anchor": {"to": to, "edge": edge}, "offset": {"x": mm(x), "y": mm(y)}}
+
+
+def style(sid: str, fill: str, tab: bool = False) -> dict:
+    st = {"id": sid, "backgroundEnabled": True, "background": {"hex": fill, "model": "hex"},
+          "border": {"enabled": False}, "borderRadius": mm(1.0),
+          "padding": {"top": mm(2), "right": mm(2), "bottom": mm(2), "left": mm(2)},
+          "body": {"fontFamily": "Inter", "fontSize": {"value": 10, "unit": "pt"}, "lineHeight": mm(4.5),
+                   "color": {"hex": "#222222", "model": "hex"}, "fontWeight": 400, "textAlign": "left"}}
+    if tab:
+        st["label"] = {"background": {"hex": "#ffffff", "model": "hex"}}
+    return st
+
+
+def folio() -> dict:
+    return {"kind": "text", "id": "folio", "content": "{pageNumber}",
+            "placement": {**at(100, 285, "page"), "size": {"width": mm(10)}}, "fontSize": {"value": 9, "unit": "pt"}}
+
+
+def frame(name, x, y, w, kind="box", **more):
+    f = {"name": name, "placement": at(x, y), "width": mm(w)}
+    f.update(more)
+    return f
+
+
+# --- the grid page: six photos on a 3 x 2 lattice, a caption pill under each --
+
+def grid_page(tid: str = "p01"):
+    frames = [frame("text", 15, 15, 180, flow=True, minHeight=mm(30), style="text-1")]
+    regions = [{"name": "text", "kind": "text", "box": [15, 15, 195, 45], "parent": None}]
+    md = [f'::::page{{template="{tid}"}}', "", "Some words about the photos below.", ""]
+    k = 0
+    for row, y in enumerate((55, 110)):
+        for col, x in enumerate((15, 77, 139)):
+            k += 1
+            frames.append(frame(f"picture-{k}", x, y, 56))
+            frames.append(frame(f"box-{k}", x + 8, y + 37, 40, minHeight=mm(8), style="box-1"))
+            regions.append({"name": f"picture-{k}", "kind": "picture", "box": [x, y, x + 56, y + 35], "parent": None})
+            regions.append({"name": f"box-{k}", "kind": "box", "box": [x + 8, y + 37, x + 48, y + 45], "parent": None})
+    for k in range(1, 7):
+        md += [f'::resource{{id="{tid}-picture-{k}" slot="picture-{k}"}}', "",
+               f':::frame{{slot="box-{k}"}}', f"Caption number {k}", ":::", ""]
+    md += ["::::", ""]
+    t = {"id": tid, "area": "trim", "header": False, "footer": False, "frames": frames,
+         "decoration": {"elements": [folio()]}}
+    return t, {"page": 1, "frames": regions}, "\n".join(md)
+
+
+# --- a page with two bands under its text: a box holding a photo and a note,
+#     then two boxes side by side joined by a line ---------------------------
+
+def band_page(tid: str, words: str, shift: float = 0.0):
+    frames = [
+        frame("text", 15, 15, 180, flow=True, minHeight=mm(40), style="text-1"),
+        frame("box-1", 15, 70 + shift, 180, minHeight=mm(50), style="box-blue"),
+        {"name": "picture-1", "placement": at(5, 10, "#box-1"), "layer": 2, "width": mm(50)},
+        {"name": "box-2", "placement": at(65, 10, "#box-1"), "layer": 2, "width": mm(100), "minHeight": mm(20),
+         "style": "box-white"},
+        frame("box-3", 15, 130 + shift, 80, minHeight=mm(30), style="box-white"),
+        frame("box-4", 115, 130 + shift, 80, minHeight=mm(30), style="box-white"),
+    ]
+    regions = [
+        {"name": "text", "kind": "text", "box": [15, 15, 195, 55], "parent": None},
+        {"name": "box-1", "kind": "box", "box": [15, 70 + shift, 195, 120 + shift], "parent": None},
+        {"name": "picture-1", "kind": "picture", "box": [20, 80 + shift, 70, 111.25 + shift], "parent": "box-1"},
+        {"name": "box-2", "kind": "box", "box": [80, 80 + shift, 180, 100 + shift], "parent": "box-1"},
+        {"name": "box-3", "kind": "box", "box": [15, 130 + shift, 95, 160 + shift], "parent": None},
+        {"name": "box-4", "kind": "box", "box": [115, 130 + shift, 195, 160 + shift], "parent": None},
+    ]
+    deco = [
+        {"kind": "connector", "id": "connector-1", "routing": "straight", "from": {"to": "#box-3", "side": "right"},
+         "to": {"to": "#box-4", "side": "left"}, "color": {"hex": "#666666", "model": "hex"}, "width": {"value": 0.5, "unit": "pt"}},
+        # a mark painted at a fixed place inside the second band
+        {"kind": "path", "id": "shape-1", "placement": {**at(100, 140 + shift, "page"), "size": {"width": mm(10), "height": mm(10)}},
+         "d": "M0 0 L10 0 L10 10 Z", "viewBox": [10, 10], "fill": {"hex": "#cc3333", "model": "hex"}},
+        folio(),
+    ]
+    md = "\n".join([
+        f'::::page{{template="{tid}"}}', "", f"{words} at the head of the page.", "",
+        ':::frame{slot="box-1"}', f"{words} in the blue box.", ":::", "",
+        f'::resource{{id="{tid}-picture-1" slot="picture-1"}}', "",
+        ':::frame{slot="box-2"}', f"A note on {words}.", ":::", "",
+        ':::frame{slot="box-3"}', f"{words}: the cause.", ":::", "",
+        ':::frame{slot="box-4"}', f"{words}: the effect.", ":::", "", "::::", ""])
+    t = {"id": tid, "area": "trim", "header": False, "footer": False, "frames": frames,
+         "decoration": {"elements": deco}}
+    return t, {"page": 1, "frames": regions}, md
+
+
+def fold(pages, **kw):
+    templates = [copy.deepcopy(p[0]) for p in pages]
+    regions = [p[1] for p in pages]
+    mds = ["\n".join(p[2] for p in pages)]
+    rep = tf.fold_book(templates, regions, mds, TOL, td.frame_diff, td.element_diff, td._group_equal, **kw)
+    return templates, mds[0], rep
+
+
+class GridTest(unittest.TestCase):
+    def test_photos_with_pills_on_a_lattice_are_one_grid(self):
+        templates, md, rep = fold([grid_page()], modules=False)
+        self.assertEqual(len(rep["grids"]), 1)
+        g = rep["grids"][0]
+        self.assertEqual((g["columns"], g["rows"], g["items"]), (3, 2, 6))
+        t = templates[0]
+        grid = next(x for x in t["groups"] if x.get("kind") == "grid")
+        self.assertEqual(grid["repeat"]["frames"], ["grid-picture", "grid-box"])
+        self.assertAlmostEqual(grid["columnGap"]["value"], 6.0, places=1)
+        self.assertAlmostEqual(grid["rowGap"]["value"], 10.0, places=1)
+        self.assertEqual(grid["placement"]["offset"]["x"]["value"], 15)
+        self.assertEqual(grid["placement"]["offset"]["y"]["value"], 55)
+        names = [f["name"] for f in t["frames"]]
+        self.assertEqual(names, ["text", "grid-picture", "grid-box"])
+        pill = t["frames"][2]
+        # the pill hangs under its photo as the source draws it
+        self.assertEqual(pill["placement"]["anchor"], {"to": "#grid-picture", "edge": "below"})
+        self.assertEqual((pill["placement"]["offset"]["x"]["value"], pill["placement"]["offset"]["y"]["value"]), (8, 2))
+        self.assertNotIn("width", t["frames"][1])
+        # one item per card in reading order, the pill inside it
+        self.assertEqual(md.count(':::frame{slot="grid-picture"}'), 6)
+        self.assertEqual(md.count(':::frame{slot="grid-box"}'), 6)
+        self.assertNotIn('slot="picture-', md)
+        first = md.index(':::frame{slot="grid-picture"}')
+        self.assertLess(md.index('::resource{id="p01-picture-1"}'), md.index("Caption number 1"))
+        self.assertLess(first, md.index("Caption number 1"))
+        self.assertLess(md.index("Caption number 3"), md.index('::resource{id="p01-picture-4"}'))
+        self.assertEqual(rep["names"]["p01"]["picture-4"], "grid-picture[4]")
+        self.assertEqual(rep["names"]["p01"]["box-6"], "grid-box[6]")
+
+    def test_tabs_of_their_words_width_are_centred_over_their_photo(self):
+        t, reg, md = grid_page()
+        # the pills above the photos, centred, as wide as their words
+        widths = [30, 39, 30, 34, 30, 30]
+        for k, w in enumerate(widths, start=1):
+            p = next(f for f in reg["frames"] if f["name"] == f"picture-{k}")["box"]
+            cx = (p[0] + p[2]) / 2
+            b = next(f for f in reg["frames"] if f["name"] == f"box-{k}")
+            b["box"] = [cx - w / 2, p[1] - 10, cx + w / 2, p[1] - 2]
+            f = next(f for f in t["frames"] if f["name"] == f"box-{k}")
+            f["placement"] = at(cx - w / 2, p[1] - 10)
+            f["width"] = mm(w)
+        templates, _, rep = fold([(t, reg, md)], modules=False)
+        pill = next(f for f in templates[0]["frames"] if f["name"] == "grid-box")
+        self.assertEqual(pill["placement"]["anchor"], {"to": "#grid-picture", "edge": "top"})
+        self.assertEqual(pill["width"], "auto")
+        self.assertEqual(pill["minWidth"]["value"], 30)
+        self.assertAlmostEqual(pill["placement"]["offset"]["y"]["value"], -10)
+        grid = next(x for x in templates[0]["groups"] if x.get("kind") == "grid")
+        # the grid's box starts at the pills of the first row
+        self.assertEqual(grid["placement"]["offset"]["y"]["value"], 45)
+
+    def test_cards_with_another_frame_among_them_are_no_lattice(self):
+        t, reg, md = grid_page()
+        # a badge between two photos of the second row, hanging from none
+        t["frames"].append(frame("box-9", 68, 120, 14, minHeight=mm(6), style="box-2"))
+        reg["frames"].append({"name": "box-9", "kind": "box", "box": [68, 120, 82, 126], "parent": None})
+        self.assertEqual(fold([(t, reg, md)], modules=False)[2]["grids"], [])
+
+    def test_off_the_lattice_or_uneven_heights_are_left_alone(self):
+        t, reg, md = grid_page()
+        b = next(f for f in reg["frames"] if f["name"] == "picture-5")
+        b["box"] = [b["box"][0], b["box"][1] + 3, b["box"][2], b["box"][3] + 3]
+        got = fold([(t, reg, md)], modules=False)[2]["grids"]
+        # the photos are off the lattice; the pills, still on it, are a grid
+        # of their own and the photos keep their places
+        self.assertEqual([(g["columns"], g["rows"], g["frames"]) for g in got], [(3, 2, ["grid-box"])])
+
+    def test_what_hung_from_a_row_of_cards_hangs_from_the_last_row(self):
+        t, reg, md = grid_page()
+        t["groups"] = [{"name": "row-1", "kind": "row", "frames": ["picture-1", "picture-2", "picture-3"]}]
+        t["frames"].append({"name": "text-2", "placement": at(0, 4, "#row-1", "below"), "width": mm(100),
+                            "style": "text-1"})
+        reg["frames"].append({"name": "text-2", "kind": "text", "box": [15, 94, 115, 100], "parent": None})
+        # (placed under the first row: not among the cards of the lattice's
+        # second row; leave the lattice one row)
+        templates, _, _ = fold([(t, reg, md)], modules=False)
+        t2 = next(f for f in templates[0]["frames"] if f["name"] == "text-2")
+        self.assertRegex(t2["placement"]["anchor"]["to"], r"^#grid-picture\[\d\]$")
+        self.assertFalse(any(g["name"] == "row-1" for g in templates[0]["groups"]))
+
+
+class ModuleTest(unittest.TestCase):
+    def test_every_band_is_a_module_and_the_page_a_bare_shell(self):
+        pages = [band_page("p01", "Rivers"), band_page("p02", "Mountains", shift=4.0)]
+        templates, md, rep = fold(pages, grids=False)
+        mods = {t["id"]: t for t in templates if t.get("role") == "module"}
+        uses = {m["id"]: len(m["uses"]) for m in rep["modules"]}
+        # the text and the pair of boxes stand alike on both pages; the box
+        # stands 4 mm lower on the second: a module of its own
+        self.assertEqual(sorted(uses.values()), [1, 1, 2, 2])
+        for page in templates[:2]:
+            self.assertEqual(page["frames"], [])
+            self.assertEqual(page["groups"], [{"name": "modules", "modules": True, "gap": mm(0),
+                                               "placement": {**at(0, 0), "size": {"width": "fill", "height": "fill"}}}])
+            # the folio stays on the page
+            self.assertEqual([e["id"] for e in page["decoration"]["elements"]], ["folio"])
+        text = next(m for m in mods.values() if any(f.get("flow") for f in m["frames"]))
+        self.assertEqual(uses[text["id"]], 2)
+        self.assertEqual(text["frames"][0]["placement"], at(15, 15))
+        boxes = [m for m in mods.values() if any(f["name"] == "picture-1" for f in m["frames"])]
+        self.assertEqual(len(boxes), 2)
+        box = next(m for m in boxes if m["id"] in rep["names"]["p01"]["box-1"])
+        self.assertEqual([f["name"] for f in box["frames"]], ["box-1", "picture-1", "box-2"])
+        # its frames stand where the band stood, from the foot of the text
+        self.assertEqual(box["frames"][0]["placement"], at(15, 15))
+        self.assertEqual(box["frames"][1]["placement"]["anchor"]["to"], "#box-1")
+        # a text frame beside a picture keeps the page's ladder (its own pictures only)
+        self.assertEqual(box["frames"][0]["fit"], {"scaleImages": False})
+        pair = next(m for m in mods.values() if any(e["kind"] == "connector" for e in (m.get("decoration") or {}).get("elements", [])))
+        self.assertEqual(uses[pair["id"]], 2)
+        conn = next(e for e in pair["decoration"]["elements"] if e["kind"] == "connector")
+        self.assertEqual((conn["from"]["to"], conn["to"]["to"]), ("#box-1", "#box-2"))
+        # the shape painted inside the band goes with it, placed in the module
+        shape = next(e for e in pair["decoration"]["elements"] if e["kind"] == "path")
+        self.assertEqual(shape["placement"]["anchor"], {"to": "container", "edge": "top-left"})
+        self.assertEqual((shape["placement"]["offset"]["x"]["value"], shape["placement"]["offset"]["y"]["value"]), (100, 20))
+        # the Markdown is the modules, the text's module with the words that name no slot
+        self.assertEqual(md.count(':::module{template="'), 6)
+        self.assertIn(f':::module{{template="{text["id"]}"}}\nRivers at the head of the page.\n:::', md)
+        self.assertIn(f':::module{{template="{box["id"]}"}}\n:::frame{{slot="box-1"}}\nRivers in the blue box.', md)
+        self.assertIn('::resource{id="p02-picture-1" slot="picture-1"}', md)
+        self.assertIn('Mountains: the effect.', md)
+        self.assertEqual(rep["names"]["p02"]["box-4"], f"{pair['id']}[1].box-2")
+
+    def test_a_connector_to_a_grid_card_follows_the_renamed_set(self):
+        # a page with a second grid: its set `grid-2-picture` is `grid-picture`
+        # in the module, and a line that ends on its second card ends on it there
+        t = {"id": "p", "frames": [frame("text", 15, 15, 180), {"name": "grid-2-picture", "width": mm(50)}],
+             "decoration": {"elements": [
+                 {"kind": "connector", "id": "c", "routing": "straight", "from": {"to": "#text", "side": "bottom"},
+                  "to": {"to": "#grid-2-picture[2]", "side": "top"}},
+                 {"kind": "connector", "id": "d", "routing": "straight", "from": {"to": "#text", "side": "bottom"},
+                  "to": {"to": "#grid-2-picture[*]", "side": "top"}}]}}
+        tf.retarget(t, {"grid-2-picture": "grid-picture", "text": "text"})
+        ends = [e["to"]["to"] for e in t["decoration"]["elements"]]
+        self.assertEqual(ends, ["#grid-picture[2]", "#grid-picture[*]"])
+
+    def test_a_box_the_draft_grew_keeps_the_drawn_gap_under_it(self):
+        # the draft's measure grew the blue box 6 mm past its drawn foot: the
+        # pair under it stands the drawn 10 mm below the box, not 4 mm below
+        # the grown foot (a measure that fits the words would lay it higher)
+        laid = {"p01": {"box-1": (15, 70, 195, 126), "picture-1": (20, 80, 70, 111.25), "box-2": (80, 80, 180, 100)}}
+        templates, md, rep = fold([band_page("p01", "Rivers")], grids=False, laid=laid)
+        mods = [t for t in templates if t.get("role") == "module"]
+        pair = next(m for m in mods if any(e["kind"] == "connector" for e in (m.get("decoration") or {}).get("elements", [])))
+        self.assertEqual(pair["frames"][0]["placement"]["offset"]["y"], mm(10))
+        box = next(m for m in mods if any(f["name"] == "picture-1" for f in m["frames"]))
+        self.assertEqual(box["frames"][0]["placement"]["offset"]["y"], mm(15))
+
+    def test_a_connector_from_the_text_joins_its_box_to_the_text(self):
+        t, reg, md = band_page("p01", "Lakes")
+        t["decoration"]["elements"].append({"kind": "connector", "id": "connector-2", "routing": "straight",
+                                            "from": {"to": "#text", "side": "bottom"}, "to": {"to": "#box-1", "side": "top"}})
+        templates, _, rep = fold([(t, reg, md)], grids=False)
+        self.assertEqual([m["frames"] for m in rep["modules"]], [4, 2])
+        first = next(m for m in templates if m["id"] == rep["modules"][0]["id"])
+        conn = next(e for e in first["decoration"]["elements"] if e["kind"] == "connector")
+        self.assertEqual((conn["from"]["to"], conn["to"]["to"]), ("#text-1", "#box-1"))
+
+    def test_furniture_alike_on_every_page_of_a_side_stays_on_the_shell(self):
+        def mark(k):
+            return {"kind": "path", "id": f"shape-{k}", "placement": {**at(195, 280, "page"), "size": {"width": mm(4), "height": mm(4)}},
+                    "d": "M0 0 L4 0 L4 4 Z", "viewBox": [4, 4], "fill": {"hex": "#00aa88", "model": "hex"}}
+        pages = []
+        for k, tid in enumerate(("p01", "p02", "p03", "p04"), start=1):
+            t, reg, md = band_page(tid, "Words")
+            folio = next(e for e in t["decoration"]["elements"] if e["id"] == "folio")
+            folio["parity"] = "odd" if k % 2 else "even"
+            if k % 2:
+                t["decoration"]["elements"].insert(0, mark(k))
+            pages.append((t, reg, md))
+        templates, _, rep = fold(pages, grids=False)
+        self.assertGreaterEqual(rep["furniture"], 2)
+        odd = templates[0]["decoration"]["elements"]
+        self.assertEqual([(e["id"].startswith("furniture-"), e.get("parity")) for e in odd if e["kind"] == "path"],
+                         [(True, "odd")])
+        self.assertFalse(any(e["kind"] == "path" for e in templates[1]["decoration"]["elements"]))
+
+    def test_markdown_rewrite_renames_slots_inside_a_module(self):
+        text = "\n".join(['::::page{template="a"}', ':::module{template="m"}', ':::frame{slot="box-1"}', "x", ":::",
+                          ":::", ':::frame{slot="box-1"}', "y", ":::", "::::"])
+        out = td.rewrite_markdown(text, {"a": "shell"}, {}, {}, {"shell": {"box-1": "note"}, "m": {"box-1": "card"}})
+        self.assertIn('::::page{template="shell"}', out)
+        self.assertIn(':::module{template="m"}\n:::frame{slot="card"}', out)
+        self.assertIn(':::\n:::frame{slot="note"}\ny', out)
+
+    def test_compare_boxes_reads_the_new_names(self):
+        before = {"pages": [{"template": "p01", "frames": {"box-1": [0, 0, 10, 10], "picture-2": [0, 20, 10, 30]}}]}
+        after = {"pages": [{"template": "shell", "frames": {"m[1].card": [0, 0.3, 10, 10.3], "grid-picture[2]": [0, 21, 10, 31]}}]}
+        names = {"p01": {"frames": {"box-1": "m[1].card", "picture-2": "grid-picture[2]"}}}
+        got = td.compare_boxes(before, after, names, 0.5)
+        self.assertEqual((got["frames"], got["over"], got["missing"]), (2, 1, 0))
+        self.assertEqual(got["pages"][0]["over"][0][:2], ("picture-2", "grid-picture[2]"))
+
+
+def write_project(root: Path, pages) -> None:
+    """A draft as extract writes it: library.json, regions.json,
+    resources.json with the photos, chapters/en/01-pages.md."""
+    from PIL import Image  # type: ignore
+
+    (root / "resources").mkdir(parents=True)
+    (root / "chapters" / "en").mkdir(parents=True)
+    res = []
+    for t, _, _ in pages:
+        for f in t["frames"]:
+            if f["name"].startswith("picture"):
+                rid = f"{t['id']}-{f['name']}"
+                Image.new("RGB", (160, 100), (90, 140, 200)).save(root / "resources" / f"{rid}.png")
+                res.append({"id": rid, "typeId": "picture", "kind": "bitmap", "file": f"resources/{rid}.png",
+                            "width": 160, "height": 100, "resolution": 72.0, "caption": "", "altText": ""})
+    styles = [style("text-1", "#ffffff"), style("box-1", "#f5e6a0"), style("box-blue", "#cfe3f5", tab=True),
+              style("box-white", "#ffffff")]
+    styles[0]["backgroundEnabled"] = False
+    lib = {"pageTemplates": [t for t, _, _ in pages], "calloutStyles": styles,
+           "suggested": {"page": {"sizePreset": "custom", "width": mm(210), "height": mm(297)}}}
+    (root / "library.json").write_text(json.dumps(lib, indent=1), encoding="utf-8")
+    (root / "regions.json").write_text(json.dumps([r for _, r, _ in pages], indent=1), encoding="utf-8")
+    (root / "resources.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
+    (root / "chapters" / "en" / "01-pages.md").write_text("\n".join(m for _, _, m in pages), encoding="utf-8")
+
+
+class FoldDirTest(unittest.TestCase):
+    """dedupe_dir end to end on a draft of three pages."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.root = Path(cls.tmp.name)
+        cls.pages = [grid_page("p01"), band_page("p02", "Rivers"), band_page("p03", "Mountains")]
+        cls.before = cls.root / "before"
+        write_project(cls.before, cls.pages)
+        cls.after = cls.root / "after"
+        write_project(cls.after, cls.pages)
+        with contextlib.redirect_stdout(io.StringIO()):
+            cls.report = td.dedupe_dir(cls.after, TOL, 2, 2.0)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_one_shell_and_the_modules(self):
+        lib = json.loads((self.after / "library.json").read_text(encoding="utf-8"))
+        mods = [t for t in lib["pageTemplates"] if t.get("role") == "module"]
+        shells = [t for t in lib["pageTemplates"] if t.get("role") != "module"]
+        self.assertEqual(len(shells), 1)
+        self.assertEqual(self.report["after"]["pageTemplates"], 1)
+        self.assertEqual(shells[0]["frames"], [])
+        # the first page: its text and its grid; the others: text, box and pair, alike
+        self.assertEqual(sorted(len(m["uses"]) for m in self.report["modules"]), [1, 1, 2, 2, 2])
+        self.assertEqual(self.report["after"]["modules"], len(mods))
+        self.assertEqual(self.report["after"]["grids"], 1)
+        md = (self.after / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")
+        fences = [line for line in md.split("\n") if line.startswith("::::page")]
+        self.assertEqual(len(set(fences)), 1)
+        for m in mods:
+            self.assertFalse(m.get("extends"))
+        # module frames are named by role in the module, and the Markdown follows
+        box = next(m for m in mods if any(f["name"].startswith("picture") for f in m["frames"]))
+        names = [f["name"] for f in box["frames"]]
+        self.assertNotIn("box-1", names)
+        for n in names:
+            if not n.startswith("picture"):
+                self.assertIn(f'slot="{n}"', md)
+        # the names report gives the laid name of every frame
+        pages = self.report["pages"]
+        self.assertRegex(pages["p02"]["frames"]["box-2"], rf"^{box['id']}\[1\]\.[a-z]")
+        self.assertRegex(pages["p01"]["frames"]["picture-2"], r"^module-[\w-]+\[1\]\.grid-picture\[2\]$")
+
+    def test_the_folded_draft_lays_out_as_before(self):
+        repo = os.environ.get("POSTEXT_REPO")
+        if not repo:
+            self.skipTest("POSTEXT_REPO not set")
+        import pdf_regions as pr
+
+        frames = {}
+        for name, d in (("before", self.before), ("after", self.after)):
+            with contextlib.redirect_stdout(io.StringIO()):
+                pr.main(["manifest", str(d)])
+            out = self.root / f"{name}-frames.json"
+            # (exit 1 only says the fixture's face is not bundled)
+            run = subprocess.run(["node", str(HERE / "render.mjs"), str(d), "--repo", repo, "--frames", str(out)],
+                                 capture_output=True, text=True)
+            self.assertTrue(out.exists(), run.stdout[-2000:] + run.stderr[-2000:])
+            self.assertNotIn("CONFIG frameAnchorUnknown", run.stdout)
+            self.assertNotIn("WARN slot", run.stdout)
+            frames[name] = json.loads(out.read_text(encoding="utf-8"))
+        got = td.compare_boxes(frames["before"], frames["after"], self.report["pages"], 0.5)
+        self.assertEqual(got["missing"], 0, got)
+        self.assertEqual(got["over"], 0, [r["over"] for r in got["pages"]])
+        self.assertGreater(got["frames"], 15)
+
+    def test_the_folded_draft_checks_clean(self):
+        cli = os.environ.get("POSTEXT_CLI")
+        if not cli:
+            self.skipTest("POSTEXT_CLI not set")
+        import pdf_regions as pr
+
+        work = self.root / "checked"
+        import shutil
+
+        shutil.copytree(self.after, work)
+        with contextlib.redirect_stdout(io.StringIO()):
+            pr.main(["manifest", str(work)])
+        run = subprocess.run(shlex.split(cli) + ["check", str(work), "--offline", "--json"], capture_output=True, text=True)
+        data = json.loads(run.stdout)
+        kinds = {w.get("kind") for w in data.get("warnings", [])}
+        for bad in ("unknownConfigValue", "unknownConfigKey", "frameAnchorUnknown", "templateUnknown", "slotUnknown",
+                    "moduleUnknown", "moduleAsPage", "slotEmpty", "repeatOverflow"):
+            self.assertNotIn(bad, kinds, [w for w in data.get("warnings", []) if w.get("kind") == bad][:3])
+
+
+if __name__ == "__main__":
+    unittest.main()

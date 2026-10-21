@@ -5,6 +5,12 @@
 //   node render.mjs <project | book.postext> [--lang es] [--chapters all|0,2] [--out book.pdf]
 //        [--jpeg out-dir --pages 3,7-9 --dpi 100 --quality 85]
 //        [--png out-dir --dpi 60 --pages 1-8] [--preflight] [--tools DIR | --repo /path/to/postext]
+//        [--frames frames.json]
+//
+// --frames writes every composed page's laid frame boxes in mm
+// ({pages: [{index, template, fence, frames: {name: [x0, y0, x1, y1]}}]}):
+// template_dedupe.py reads a draft's with --laid and compares two with
+// --compare-boxes (the pages before and after it folds grids and modules).
 //
 // --jpeg paints the pages straight from the layout with the engine's own
 // canvas renderer (`renderPageToCanvas` on @napi-rs/canvas), the painter the
@@ -218,8 +224,22 @@ class Ctx {
     const v = pickVariant(family, m[2] === 'bold' ? 700 : m[2] ? Number(m[2]) : 400, m[1] ? 'italic' : 'normal');
     if (!v) return { width: s.length * Number(m[3]) * 0.5 };
     const { face } = faces.get(v.file);
-    return { width: (face.layout(s).advanceWidth / face.unitsPerEm) * Number(m[3]) };
+    return { width: (advanceOf(face, s) / face.unitsPerEm) * Number(m[3]) };
   }
+}
+// A face whose glyf data is cut short for one glyph (a shipped Saira has an
+// empty no-break space) makes fontkit throw while it reads that glyph's box:
+// measure such a string a character at a time, the bad glyph by its hmtx
+// advance (what a browser uses), instead of stopping the whole layout.
+function advanceOf(face, s) {
+  try { return face.layout(s).advanceWidth; } catch { /* a glyph fontkit cannot read */ }
+  let w = 0;
+  for (const ch of s) {
+    try { w += face.layout(ch).advanceWidth; continue; } catch { /* below */ }
+    const g = face.glyphForCodePoint(ch.codePointAt(0));
+    w += face.hmtx?.metrics?.get?.(g.id)?.advance ?? face.unitsPerEm / 4;
+  }
+  return w;
 }
 globalThis.OffscreenCanvas = class { getContext() { return new Ctx(); } };
 
@@ -384,6 +404,25 @@ if (start) delete start.bookPageCount;
 const t0 = Date.now();
 const doc = postext.buildDocument({ markdown, resources, ...(start ? { continuation: start } : {}) }, config);
 console.log(`layout: ${doc.pages.length} pages, converged=${doc.converged}, passes=${doc.iterationCount}, ${Date.now() - t0} ms (${lang}, ${picked.length} chapter file(s))`);
+
+// ---- --frames FILE: every composed page's laid frame boxes, in mm --------------
+// {pages: [{index, template, fence, frames: {name: [x0, y0, x1, y1]}}]}, for
+// `template_dedupe.py --compare-boxes` (the same page before and after a
+// reshape: grids, modules).
+const FRAMES = opt('frames', null);
+if (FRAMES) {
+  const k = 25.4 / (doc.config?.page?.dpi ?? 96);
+  const r2 = (v) => Math.round(v * k * 100) / 100;
+  const pages = doc.pages.flatMap((p, index) => {
+    const c = p.composed;
+    if (!c) return [];
+    const frames = {};
+    for (const f of c.frames ?? []) frames[f.name] = [r2(f.rect.x), r2(f.rect.y), r2(f.rect.x + f.rect.width), r2(f.rect.y + f.rect.height)];
+    return [{ index, template: c.template, fence: c.fenceIndex, frames }];
+  });
+  writeFileSync(FRAMES, JSON.stringify({ pages }, null, 1) + '\n');
+  console.log(`frames: ${pages.length} composed page(s) -> ${FRAMES}`);
+}
 
 // ---- diagnostics ----------------------------------------------------------------
 for (const issue of postext.parseMarkdownWithIssues(markdown).issues ?? []) {

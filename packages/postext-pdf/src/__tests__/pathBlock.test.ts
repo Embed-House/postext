@@ -76,6 +76,36 @@ describe('path blocks in the PDF backend (#1055)', () => {
     expect(content).toContain('1 0 0 rg\n90 350 m\n80 346.5 l\n80 353.5 l\nh\nf\n');
   });
 
+  it('strokes a ring as its circle and a bar as a segment, in their width, solid (#1079)', async () => {
+    const content = await paint([{
+      kind: 'path',
+      bbox: { x: 0, y: 0, width: 100, height: 100 },
+      subpaths: [[{ op: 'M', x: 10, y: 50 }, { op: 'L', x: 90, y: 50 }]],
+      stroke: { color: '#000000', widthPx: 2, dash: [4, 2] },
+      markers: [
+        { kind: 'ring', x: 10, y: 50, angle: Math.PI, sizePx: 12, color: '#ff0000', widthPx: 2 },
+        { kind: 'bar', x: 90, y: 50, angle: 0, sizePx: 10, color: '#0000ff', widthPx: 2 },
+      ],
+    }]);
+    // The ring: its middle 5 px out (outer edge 6), four curves, stroked.
+    expect(content).toMatch(/q\n1 0 0 RG\n2 w\n15 350 m\n(.* c\n){4}h\nS\nQ\n/);
+    // The bar: across the line at its end, 10 px long, stroked.
+    expect(content).toMatch(/q\n0 0 1 RG\n2 w\n90 34[05] m\n90 3[56]5 l\nS\nQ\n/);
+    // Nothing of the marks is filled.
+    expect(content).not.toMatch(/rg\n[^Q]*f\n/);
+  });
+
+  it('a translucent line and its marks go through an ExtGState stroke alpha (#1079)', async () => {
+    const content = await paint([{
+      kind: 'path',
+      bbox: { x: 0, y: 0, width: 100, height: 100 },
+      subpaths: [[{ op: 'M', x: 10, y: 50 }, { op: 'L', x: 90, y: 50 }]],
+      stroke: { color: '#ffffff80', widthPx: 6 },
+      markers: [{ kind: 'ring', x: 90, y: 50, angle: 0, sizePx: 12, color: '#ffffff80', widthPx: 2 }],
+    }]);
+    expect(content.match(/\/GS-?\w* gs\n1 1 1 RG/g)?.length ?? content.match(/ gs\n1 1 1 RG/g)?.length).toBe(2);
+  });
+
   it('is a Layout artifact in a tagged PDF, like a rule', async () => {
     const content = await paint([{
       kind: 'path',

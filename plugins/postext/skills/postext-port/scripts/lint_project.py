@@ -95,6 +95,8 @@ def figure_word(line: str) -> tuple[str, str] | None:
 
 PERCENT_AT_RE = re.compile(r"^\s*-?\d+(?:\.\d+)?%\s+-?\d+(?:\.\d+)?%\s*$")
 COMPOSED_CONTAINERS = {"frame", "figure"}
+# A module's instance name the engine refuses (postext 1.48): a space, ".", "#", "[" or "]".
+MODULE_NAME_BAD_RE = re.compile(r"[\s.#\[\]]")
 ORDERED_RE = re.compile(r"^\s*\d+[.)]\s+")
 UNORDERED_RE = re.compile(r"^\s*[-*+]\s+")
 
@@ -1947,6 +1949,26 @@ def _composed_frames(ctx: dict, template: str | None) -> tuple[list[str] | None,
     return [f["name"] for f in frames], composed_check.template_spread(tpl, template)
 
 
+def _is_module(ctx: dict, template: str) -> bool:
+    """Whether `template` is a module (`role: "module"`, postext 1.48)."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import composed_check  # noqa: PLC0415
+    except ImportError:
+        return False
+    return composed_check.is_module(ctx.get("templates") or [], template)
+
+
+def _has_modules_group(ctx: dict, template: str) -> bool:
+    """Whether page template `template` has a group with `modules: true`."""
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import composed_check  # noqa: PLC0415
+    except ImportError:
+        return True
+    return any(g.get("modules") is True for g in composed_check.template_groups(ctx.get("templates") or [], template))
+
+
 def style_ids(cfg: dict) -> dict[str, set[str]]:
     def ids(key: str, default: set[str]) -> set[str]:
         v = cfg.get(key)
@@ -2118,11 +2140,68 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
     def check_slot(slot: str | None, where: str, what: str) -> None:
         if slot is None:
             return
+        mod = page.get("module") if page is not None else None
         if page is None:
             rep.info(where, f"slot={slot!r} on {what} outside a ::::page changes nothing")
+        elif mod is not None:
+            # postext 1.48: inside a :::module the slots are the module template's frames
+            if mod["frames"] is not None and slot not in mod["frames"]:
+                rep.error(where, f"slotUnknown: module {mod['template']!r} has no frame {slot!r} (frames: "
+                                 f"{sorted(mod['frames'])}); the content goes to the flow frame")
         elif page["frames"] is not None and slot not in page["frames"]:
             rep.error(where, f"slotUnknown: template {page['template']!r} has no frame {slot!r} (frames: "
                              f"{sorted(page['frames'])}); the content goes to the flow frame")
+
+    def check_label_attrs(la: dict, rid: str | None, where: str, has_text: bool) -> None:
+        """A ::label line's or a :::label container's attributes."""
+        at = la.get("at")
+        if not has_text:
+            rep.warn(where, "::label with no text draws nothing")
+        if not at:
+            rep.error(where, "::label needs at=\"anchor\" (an anchor of the resource) or at=\"x% y%\"")
+        elif not PERCENT_AT_RE.match(at) and rid in comic_ctx.get("anchors", {}) and \
+                at not in comic_ctx["anchors"][rid]:
+            rep.error(where, f"labelAnchorUnknown: resource {rid!r} has no anchor {at!r} (anchors: "
+                             f"{sorted(x for x in comic_ctx['anchors'][rid] if x)}); the label is not drawn")
+        st = la.get("style")
+        if st and st not in comic_ctx.get("label_styles", set()):
+            rep.error(where, f"label style {st!r} is not in labelStyles {sorted(comic_ctx.get('label_styles', set()))}")
+
+    def open_module(attrs: dict, where: str) -> None:
+        """A :::module{template name} block (postext 1.48): the template must be
+        a module and the page's template must have a modules group."""
+        if page is None:
+            rep.info(where, ":::module outside a ::::page is a plain box of its content")
+            return
+        if page.get("module") is not None:
+            rep.error(where, "moduleNested: a :::module inside a :::module is not laid as a module; its blocks "
+                             "are the outer module's")
+            return
+        t = attrs.get("template")
+        frames = None
+        if not t:
+            rep.error(where, ':::module needs template="…" (a pageTemplates id with role "module")')
+        else:
+            frames, _ = _composed_frames(comic_ctx, t)
+            if frames is None:
+                rep.error(where, f"moduleUnknown: no pageTemplates entry {t!r}; its content goes to the flow frame")
+            elif not _is_module(comic_ctx, t):
+                rep.error(where, f"moduleUnknown: template {t!r} is not a module (role: \"module\"); its content "
+                                 "goes to the flow frame")
+                frames = None
+            elif page["frames"] is not None and not page.get("modulesGroup"):
+                rep.error(where, f"moduleUnknown: template {page['template']!r} has no modules group "
+                                 "(groups: [{ modules: true }]); the module's content goes to the flow frame")
+        n = attrs.get("name")
+        if n is not None:
+            if not n or MODULE_NAME_BAD_RE.search(n):
+                rep.warn(where, f"moduleNameRejected: {n!r} has a space, '.', '#', '[' or ']': the module is named "
+                                "<template>[n] instead")
+            elif n in page.setdefault("moduleNames", set()):
+                rep.warn(where, f"moduleNameRejected: another module of this page is named {n!r}: this one is "
+                                "named <template>[n] instead")
+            page.setdefault("moduleNames", set()).add(n)
+        page["module"] = {"template": t, "frames": frames, "depth": len(stack)}
 
     def close_page(where_line: int, closed: bool) -> None:
         nonlocal page, stack
@@ -2215,6 +2294,16 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
             continue
         # a :::figure's ::label lines, up to its :::
         if figure is not None:
+            if figure.get("label") is not None:
+                # postext 1.48: every line of a :::label container is a line of the label, up to its :::
+                if line == ":::":
+                    figure["label"] = None
+                continue
+            lc = FENCE_RE.match(line)
+            if lc and lc.group(1) == "label":
+                check_label_attrs(parse_attrs(lc.group(2)), figure["resource"], where, has_text=True)
+                figure["label"] = i + 1
+                continue
             if line == ":::":
                 if figure["words"]:
                     words = {k: v for k, (_, v) in figure["words"].items()}
@@ -2244,20 +2333,7 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                 continue
             lm = LABEL_RE.match(line)
             if lm:
-                la = parse_attrs(lm.group(2))
-                at = la.get("at")
-                rid = figure["resource"]
-                if not lm.group(1).strip():
-                    rep.warn(where, "::label with no text draws nothing")
-                if not at:
-                    rep.error(where, "::label needs at=\"anchor\" (an anchor of the resource) or at=\"x% y%\"")
-                elif not PERCENT_AT_RE.match(at) and rid in comic_ctx.get("anchors", {}) and \
-                        at not in comic_ctx["anchors"][rid]:
-                    rep.error(where, f"labelAnchorUnknown: resource {rid!r} has no anchor {at!r} (anchors: "
-                                     f"{sorted(x for x in comic_ctx['anchors'][rid] if x)}); the label is not drawn")
-                st = la.get("style")
-                if st and st not in comic_ctx.get("label_styles", set()):
-                    rep.error(where, f"label style {st!r} is not in labelStyles {sorted(comic_ctx.get('label_styles', set()))}")
+                check_label_attrs(parse_attrs(lm.group(2)), figure["resource"], where, has_text=bool(lm.group(1).strip()))
                 continue
             rep.error(f"{name}:{figure['line']}", "a :::figure ends at its first line that is neither a ::label, "
                                                   "::alt / ::caption / ::note nor blank: close it with ::: before line "
@@ -2287,7 +2363,11 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
             elif spread is not None and spread != ("spread" in pa):
                 rep.warn(where, f"spreadMismatch: template {t!r} is {'a spread' if spread else 'a single page'}; "
                                 f"{'add' if spread else 'remove'} the spread flag on the fence")
-            page = {"colons": len(pm.group(1)), "line": i + 1, "template": t, "frames": frames, "depth": len(stack)}
+            if t and frames is not None and _is_module(comic_ctx, t):
+                rep.error(where, f"moduleAsPage: template {t!r} is a module (role: \"module\"): a page fence names a "
+                                 "page template, and the page is set in the running text")
+            page = {"colons": len(pm.group(1)), "line": i + 1, "template": t, "frames": frames, "depth": len(stack),
+                    "module": None, "modulesGroup": _has_modules_group(comic_ctx, t) if t else False}
             prev_nonblank, prev_kind = True, "fence"
             continue
         if re.fullmatch(r":{4,}", line):
@@ -2320,6 +2400,8 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                     rep.warn(where, "stray ::: with no open container prints literally")
                 else:
                     stack.pop()
+                    if page is not None and page.get("module") is not None and len(stack) <= page["module"]["depth"]:
+                        page["module"] = None
                 prev_nonblank, prev_kind = True, "fence"
                 continue
             m = FENCE_RE.match(line)
@@ -2327,6 +2409,11 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                 rep.error(where, "malformed fence (lowercase name, optional {attrs}, nothing after it on the line)")
                 continue
             fname, attrs = m.group(1), parse_attrs(m.group(2))
+            if fname == "module":
+                open_module(attrs, where)
+                stack.append((fname, i + 1))
+                prev_nonblank, prev_kind = True, "fence"
+                continue
             if fname in COMPOSED_CONTAINERS:
                 if fname == "frame":
                     if "slot" not in attrs:
@@ -2660,7 +2747,7 @@ def main() -> None:
                  "of the list's face instead of drawn; below 14: the text measured in the language of the "
                  "page that hosts the layout, and in none in a worker, instead of the document's own, unless "
                  "the config names bodyText.shapingLanguage); "
-                 "set \"configVersion\": 15 for today's rules (14 reads the same)")
+                 "set \"configVersion\": 16 for today's rules (14 and 15 read the same)")
     for k in ("id", "name"):
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")

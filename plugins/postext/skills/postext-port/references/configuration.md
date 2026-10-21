@@ -125,8 +125,8 @@ Conversion at `page.dpi` (default 300):
 | `folio` | FolioConfig | §21 | Folio 3D viewer only: tilt, yaw, paper stock, binding (type, covers, spine image), surface, lighting |
 | `debug` | DebugConfig | §21 | editor overlays + warning toggles; no effect on output |
 | `checks` | `{ contentInConfig?: { enabled?, allow?, maxWords?, maxChars? } }` | §19h | the `contentInConfig` check of design texts (postext 1.34; read by `preset_kit.py lint` on any version); out of the layout key; an older engine ignores the key |
-| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0, continue-before-shrink, `page:` jumps, ruled frames, vertical spreads from 1.38.0; frame `writingMode`/`direction`, label checks from 1.39.0; label styles that switch off a borrowed italic, frames in their own mode on right-to-left pages from 1.40.0; round 2, composed-pages.md) |
-| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (read from 1.34.0, drawn from 1.37.0, vertical and checked from 1.39.0; `fontStyle` / `textTransform` left unset follow a borrowed paragraph style from 1.40.0) |
+| `pageTemplates` | PageTemplate[] | §19g | composed-page templates (read and checked from 1.34.0, laid out from 1.34.1, groups and spreads from 1.35.0, `fit` from 1.36.0, continuation from 1.37.0, continue-before-shrink, `page:` jumps, ruled frames, vertical spreads from 1.38.0; frame `writingMode`/`direction`, label checks from 1.39.0; label styles that switch off a borrowed italic, frames in their own mode on right-to-left pages from 1.40.0; connectors, path elements, box shapes, repeating grids, modules and the overlap checks from 1.48.0; round 2, composed-pages.md) |
+| `labelStyles` | LabelStyle[] | §19g | styles of `::label` words on pictures (read from 1.34.0, drawn from 1.37.0, vertical and checked from 1.39.0; `fontStyle` / `textTransform` left unset follow a borrowed paragraph style from 1.40.0; leaders, keys (`kind: 'legend'`), plates with outlines from 1.48.0) |
 
 Not configurable (no config exists — don't look for it): margin notes (emulate with
 `span:'side'` callouts; footnotes and endnotes are `footnotes`, §19a), a blockquote's own family, size,
@@ -2000,11 +2000,19 @@ says it for the installed one):
 1.43.0  anchor gutter 'keep'|'cross' (labels off a spread's fold); label.icon.tint; toc.parts.breakBefore in a
         contents frame that can go on; headingClaimsColumn; avoid zones read from an SVG's symbols (Sandbox)
 1.46.0  a heading never ends a column of a frame set in columns or of a :::columns group
-not yet template bodyStyle
+1.48.0  decoration connectors (straight/elbow/tree, '#card[*]', anchor ends, over) and path elements; anchor.at
+        and size edge 'center'; per-corner borderRadius, per-side borders, label.joined + fillet, foot tabs,
+        label.icon kind 'glyph'; ResourceAnchor.labelAt + leader, LabelStyle leader/align/border/radius/kind
+        'legend', :::label and :icon; group kind 'grid' + repeat; role 'module' + modules groups (:::module);
+        Frame.overlap and the frameCovered / frameOutsideArea checks; configVersion 16
+1.48.1  a module's connector may end on a frame of the page that stacks it
+1.49.0  caps 'ring' | 'bar' and opacity on connectors and leader looks
+not yet template bodyStyle; modules side by side; a module inside a module
 ```
 
-Both keys are in the layout key; `configVersion` 15 marks a config that may hold templates (14 and
-older load unchanged). With an engine older than 1.35.0 port composed pages with the round-1
+Both keys are in the layout key; `configVersion` 15 marks a config that may hold templates, 16 (1.48)
+one whose decoration may hold connectors (14 and older load unchanged; nothing is pinned).
+composed-pages.md §6.12–6.18 says when to use each 1.48 feature. With an engine older than 1.35.0 port composed pages with the round-1
 ladder (playbooks J) and write templates only when the brief asks to prepare for them.
 
 ```
@@ -2017,7 +2025,9 @@ PageTemplate
 ├─ decoration?  DesignSlot       placeholders only, like every design text (§7)
 ├─ header? / footer?  DesignSlot | false
 ├─ spread?, gutter?, overflowTemplate?, bodyStyle? (read, not applied)
-├─ role?        page role reported to header/footer/decoration `pages` filters (§7.3), default 'composed' (≥ 1.37)
+├─ role?        page role reported to header/footer/decoration `pages` filters (§7.3), default 'composed' (≥ 1.37);
+│               'module' (≥ 1.48): a module, stacked by a page's modules group from `:::module` blocks; frames,
+│               groups, decoration only (area, header, footer, variants, spread, gutter, overflowTemplate ignored)
 ├─ palette?     string "id=#hex, id=#hex" (applied from 1.42), as `:::part{palette}` writes it, NOT an object
 │               (an object is dropped in silence; `headingStyles[].palette` is the object form). The page
 │               fence's `palette="id=#hex, …"` goes on top of it:
@@ -2050,6 +2060,8 @@ Frame
 ├─ fit?         { shrinkText (true), minScale (0.9), scaleImages (true), imageMinScale (0.8), preferContinue (true, 1.38) }
 ├─ overflow?    { continueIn?: '#frame'|'next-page'|'template:<id>'|'page:<id>' (1.38; <id> may be {attr.x}),
 │                 mark?: string|false ({page} = the page it goes on on, 1.38), fromMark?: string (1.38) }
+├─ overlap?    'check'|'allow' (≥ 1.48, 'check'): 'allow' leaves the frame out of frameCovered (either side of a
+│               pair) and frameOutsideArea: art meant to lie over text, a pill over its photo, a badge off its card
 └─ optional? (no slotEmpty when nothing fills it), crossGutter? (spread: may cross the spine band), remove? (patch: drop it)
    pin? never moves or resizes; grow?/shrink?/priority? default 0 (lower priority gives way first)
    writingMode?  'horizontal-tb'|'vertical-rl' (applied from 1.39; before, read only): the frame's content is laid
@@ -2062,15 +2074,42 @@ Decoration text (≥ 1.42): `{headingNumber}` = the counter of the first numbere
 (the document's digits; empty when none), `{headingNumber.<frame>}` the one a named frame holds; allowed in
 composed pages' decoration only. A text over a frame answers a click where the frame has no text of its own.
 
-Group  { name, kind?: 'stack'|'row' ('stack'), frames?: string[], gap?, placement?, grid?,
-         align?: 'start'|'center'|'end'|'space-between', remove? }
+Group  { name, kind?: 'stack'|'row'|'grid' ('stack'), frames?: string[], gap?, placement?, grid?,
+         align?: 'start'|'center'|'end'|'space-between', remove?,
+         columns?, columnGap?, rowGap?, rowAlign?: 'start'|'center'|'end'|'stretch',   (grid, ≥ 1.48)
+         repeat?: { frames: string[] (main first), max? },   (grid: the set laid per item; instances frame[n])
+         modules?: true, overflow?: { continueIn: 'next-page'|'template:<id>' } }   (≥ 1.48: takes the page's
+         :::module blocks, a stack; goes on by whole modules)
+
+Decoration elements (≥ 1.48, besides text, image, rule, box):
+  { kind: 'connector', id, from: End, to: End | End[], routing?: 'straight'|'elbow'|'tree' ('elbow'), trunk? (0.5;
+    0 = a tree with no bar), radius?, color? (main colour), width? (0.75pt), dash?, opacity? (1, ≥ 1.49),
+    startCap?/endCap?: 'none'|'dot'|'arrow'|'ring'|'bar' ('none'; ring, bar ≥ 1.49), capSize? (3 × width),
+    over? (default: true when an end has an anchor), pin?, parity?, pages? }   page templates and modules only
+  End = { to: '#frame'|'#group'|'#frame[2]'|'#frame[*]' (to only)|'#element', side?, at?: 'start'|'center'|'end'|0..1,
+          gap?, anchor?: a picture anchor of the frame }
+  { kind: 'path', id, placement, d: SVG path data, viewBox?: [w, h] ([1, 1]), fill?, stroke?, width? (0.5pt), dash?,
+    preserveAspectRatio?: 'none'|'meet' }   every design slot
+  placement.anchor.at (a point along a side of '#x') and size { to, edge: 'center' } in every design slot
+  box style: borderRadius: Dimension | { topLeft?, topRight?, bottomRight?, bottomLeft? }, borderSides: { top?, right?,
+    bottom?, left?: { enabled?, color?, width? } }
+
+Callout styles as frame dress (≥ 1.48): borderRadius per corner as above, border.sides per side, label.joined +
+  label.fillet (one outline with the box; offset 0), label.position 'bottom-left'|'bottom-right'|'bottom-start'|
+  'bottom-end', label.icon { kind: 'glyph', glyph, fontFamily?, fontWeight?, scale? (1), color?, placement?, gap? }
+
+ResourceAnchor (≥ 1.48): labelAt?: { x, y } (fractions: the label away from its point), leader?: boolean | LeaderStyle
+LeaderStyle  { color? (the label's), opacity? (≥ 1.49), width? (0.75pt), dash?, startCap? ('none'), endCap? ('dot'),
+               capSize?, routing?: 'straight'|'elbow' }
 
 LabelStyle  { id, name? (Sandbox only), paragraphStyle? (borrows its type; the fields below override it),
               fontFamily?/fontSize?/fontWeight?/color? (default: the body text's), fontStyle? 'normal'|'italic',
               textTransform? 'none'|'uppercase', letterSpacing? number (em, default 0; NOT a Dimension),
               halo?: { color, width: Dimension }, background? (a plate), padding?: Dimension,
               minScale? (0.85: how far a label wider than its anchor `width` shrinks),
-              writingMode? 'horizontal-tb'|'vertical-rl' (≥ 1.39), overlap? 'check'|'allow' (≥ 1.42) }
+              writingMode? 'horizontal-tb'|'vertical-rl' (≥ 1.39), overlap? 'check'|'allow' (≥ 1.42),
+              align? 'start'|'center'|'end', border?: { color, width }, radius?, kind? 'legend' (a key: the
+              symbol opening each row hangs in a column), leader?: LeaderStyle (≥ 1.48) }
               lines of a several-line label stand 1.15 × its size apart (or at the borrowed style's leading);
               the halo shrinks with the label
 ```

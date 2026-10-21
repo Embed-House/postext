@@ -748,7 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>the main colour</td>
-      <td>A palette-linked colour follows the template's <code>palette</code>, the page fence's and a part's, as rules do.</td>
+      <td>A palette-linked colour follows the template's <code>palette</code>, the page fence's and a part's, as rules do. A colour with an alpha channel (<code>#rrggbbaa</code>) paints the line and its marks translucent, so a picture under it shows through (since postext 1.49).</td>
+    </tr>
+    <tr>
+      <td><code>opacity</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>How opaque the line and its marks are, from <code>0</code> to <code>1</code>, times the colour's own alpha. Kept apart from the colour, so a palette-linked colour stays linked. A cased line is two connectors: a wide pale one at <code>opacity: 0.6</code> under a dashed one. Since postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -758,15 +764,21 @@ decoration: {
     </tr>
     <tr>
       <td><code>startCap</code>, <code>endCap</code></td>
-      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>A mark at <code>from</code> and at every <code>to</code>: a filled dot centred on the end, or an arrowhead whose tip is the end.</td>
+      <td>A mark at <code>from</code> and at every <code>to</code>: a filled dot centred on the end, or an arrowhead whose tip is the end. <code>'ring'</code>: a hollow dot centred on the end, stroked in the line's width, the line stopping at its edge; <code>'bar'</code>: a stroke across the line at the end, in its width (both since postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
       <td><code>Dimension</code></td>
       <td>3 × <code>width</code></td>
-      <td>The width of a dot, or the length of an arrowhead.</td>
+      <td>The width of a dot or a ring, the length of an arrowhead, the length of a bar.</td>
+    </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>a connector with an <code>anchor</code> end paints over the frames, any other under them</td>
+      <td>Paints the line after every frame of the page (<code>true</code>) or with the decoration, under the frames (<code>false</code>). Unset, a connector that has an <code>anchor</code> end paints over, so a pointer into a picture shows over the picture's frame; a line between frames stays under.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -825,12 +837,6 @@ Each end (`ConnectorEnd`) names a box and a point on one of its sides:
       <td>none</td>
       <td>An anchor of the picture the frame holds: the end is that point of the picture, through its crop, safe area and scale, as a label's is, instead of a point of the frame's side. <code>at</code> is not read; <code>side</code> says which way the line arrives (by default, from the other end).</td>
     </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>a connector with an <code>anchor</code> end paints over the frames, any other under them</td>
-      <td>Paints the line after every frame of the page (<code>true</code>) or with the decoration, under the frames (<code>false</code>). Unset, a connector that has an <code>anchor</code> end paints over, so a pointer into a picture shows over the picture's frame; a line between frames stays under.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -849,7 +855,7 @@ decoration: { elements: [
 ] },
 ```
 
-**Checks.** An end whose `to` names nothing is `frameAnchorUnknown` (at `…/from/to` or `…/to/<k>/to`) and is left out; `[*]` is valid only in `to` and on a repeated frame. An `anchor` that no picture of the frame has is `labelAnchorUnknown`, with the connector's id. A word outside the choices of `routing`, `startCap`, `endCap` or `side`, and an `at` outside 0 to 1, are `unknownConfigValue`.
+**Checks.** An end whose `to` names nothing is `frameAnchorUnknown` (at `…/from/to` or `…/to/<k>/to`) and is left out; `[*]` is valid only in `to` and on a repeated frame. An `anchor` that no picture of the frame has is `labelAnchorUnknown`, with the connector's id. A word outside the choices of `routing`, `startCap`, `endCap` or `side`, and an `at` outside 0 to 1, are `unknownConfigValue`. An `opacity` that is not a number from 0 to 1 is `unknownConfigValue` as well (a number out of range is held to it).
 
 ## Label styles
 
@@ -971,9 +977,9 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>leader</code></td>
-      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>none</td>
-      <td>The look of the leaders of the labels set in this style: the line from a label's box to its anchor's point. Colour by default the label's, width <code>0.75pt</code>, <code>endCap: 'dot'</code> at the point, no <code>startCap</code>, <code>capSize</code> three times the width, <code>routing</code> <code>'straight'</code> (or <code>'elbow'</code>: out of the box square, then one turn onto the point). A label set away from its point (<code>labelAt</code>) in a style with a <code>leader</code> gets one. Since postext 1.48.</td>
+      <td>The look of the leaders of the labels set in this style: the line from a label's box to its anchor's point. Colour by default the label's, width <code>0.75pt</code>, <code>endCap: 'dot'</code> at the point, no <code>startCap</code>, <code>capSize</code> three times the width, <code>routing</code> <code>'straight'</code> (or <code>'elbow'</code>: out of the box square, then one turn onto the point). A label set away from its point (<code>labelAt</code>) in a style with a <code>leader</code> gets one. Since postext 1.48. <code>startCap</code> and <code>endCap</code> take the connector's marks, <code>'ring'</code> and <code>'bar'</code> included, and <code>opacity</code> (0 to 1) or a colour with an alpha channel makes the line translucent (since postext 1.49).</td>
     </tr>
   </tbody>
 </table>

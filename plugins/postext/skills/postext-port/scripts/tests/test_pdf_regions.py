@@ -244,9 +244,10 @@ class ExtractTest(unittest.TestCase):
         md = (work / "chapters/en/01-pages.md").read_text()
         self.assertEqual(md.count(f'template="{tid}"'), 2)
         self.assertFalse([r for r in json.loads((work / "resources.json").read_text()) if r["typeId"] == "ground"])
-        # parity-bound decoration of both pages joined
-        ids = {e["id"] for e in lib["pageTemplates"][0]["decoration"]["elements"]}
-        self.assertTrue({"folio-odd", "folio-even"} <= ids)
+        # the folios of both pages joined (drawn alike on both sides: one
+        # element for every page, #1071)
+        els = lib["pageTemplates"][0]["decoration"]["elements"]
+        self.assertEqual(sum(1 for e in els if e.get("content") == "{pageNumber}"), 1)
         with contextlib.redirect_stdout(io.StringIO()):
             pr.main(["manifest", str(work)])
         manifest = json.loads((work / "preset.json").read_text())
@@ -356,7 +357,9 @@ class FrameNamesTest(unittest.TestCase):
 
     def test_dedupe_goes_on_from_named_frames(self):
         out = self.run_extract(self.two, "e", "--name-frames", "always")
-        rep = td.dedupe_dir(out, {"geom": 3, "dim": 0.5, "padding": 1.5, "font": 0.25, "delta_e": 3}, 2, 2.0)
+        # (the names on the page itself: no modules, which would take the box)
+        rep = td.dedupe_dir(out, {"geom": 3, "dim": 0.5, "padding": 1.5, "font": 0.25, "delta_e": 3}, 2, 2.0,
+                            fold_modules=False)
         lib = json.loads((out / "library.json").read_text(encoding="utf-8"))
         self.assertEqual(rep["after"]["pageTemplates"], 1)
         md = (out / "chapters" / "en" / "01-pages.md").read_text(encoding="utf-8")

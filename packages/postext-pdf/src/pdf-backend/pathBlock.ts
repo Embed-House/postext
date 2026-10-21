@@ -2,8 +2,10 @@
  * The vector design block (`VDTDesignPathBlock`, DESIGN §12.1, #1055) in
  * PDF: its outline as `m l c h` (a quadratic curve as the cubic it is),
  * filled (`f` / `f*`), stroked (`S`) or both (`B` / `B*`) with its width,
- * dash (`d`), cap (`J`) and join (`j`), then each marker filled on top: a
- * dot as a circle of four cubics, an arrow as a triangle.
+ * dash (`d`), cap (`J`) and join (`j`), then each marker on top: a dot
+ * filled as a circle of four cubics, an arrow as a triangle, a ring
+ * (#1079) as the circle stroked in its width, a bar (#1079) as a segment
+ * stroked in its width. A colour's alpha goes through the shared ExtGState.
  */
 import {
   appendBezierCurve,
@@ -108,7 +110,19 @@ export function renderPathBlock(ctx: PageCtx, block: VDTDesignPathBlock): void {
     const color = colorFromHex(m.color, ctx.colorSpace);
     const o = pathMarkerOutline(m);
     let outline: VDTPathCommand[];
-    if (o.kind === 'dot') {
+    if (o.kind === 'bar') {
+      ctx.page.pushOperators(
+        pushGraphicsState(),
+        ...opt(alphaStateOp(ctx, 1, alphaOf(color))),
+        setStrokingColor(color),
+        setLineWidth(Math.max(0.01, o.widthPx * ctx.scale)),
+        ...traceOps(ctx, [[{ op: 'M', ...o.points[0] }, { op: 'L', ...o.points[1] }]]),
+        stroke(),
+        popGraphicsState(),
+      );
+      continue;
+    }
+    if (o.kind === 'dot' || o.kind === 'ring') {
       const { cx, cy, r } = o;
       const k = r * KAPPA;
       outline = [
@@ -122,6 +136,18 @@ export function renderPathBlock(ctx: PageCtx, block: VDTDesignPathBlock): void {
     } else {
       const [a, b, c] = o.points;
       outline = [{ op: 'M', ...a }, { op: 'L', ...b }, { op: 'L', ...c }, { op: 'Z' }];
+    }
+    if (o.kind === 'ring') {
+      ctx.page.pushOperators(
+        pushGraphicsState(),
+        ...opt(alphaStateOp(ctx, 1, alphaOf(color))),
+        setStrokingColor(color),
+        setLineWidth(Math.max(0.01, o.widthPx * ctx.scale)),
+        ...traceOps(ctx, [outline]),
+        stroke(),
+        popGraphicsState(),
+      );
+      continue;
     }
     ctx.page.pushOperators(
       pushGraphicsState(),

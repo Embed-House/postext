@@ -1,0 +1,60 @@
+---
+title: "Um organograma e uma grade de fotos feitos de módulos"
+summary: "Um guia de serviços da prefeitura feito de módulos: um organograma cujas linhas o modelo traça e grades que repetem uma ficha por prédio."
+plain: "Duas páginas do guia de uma prefeitura: quem cuida de quê, num esquema de caixas ligadas por linhas, e onde fica cada serviço, em fileiras de imagens. As páginas são feitas de poucos blocos reutilizáveis; o Markdown diz quantos."
+description: "Um organograma e uma grade de fotos com Postext: modelos de módulo empilhados pela página, conectores do gabinete a cada secretaria, grades de fichas com foto."
+question: "Como monto um organograma e uma grade de fotos com módulos reutilizáveis, com as linhas traçadas pelo modelo?"
+aliases: ["organograma", "módulo", "bloco reutilizável", "grade de fotos", "conector", "guia municipal", "guia de serviços", "diagrama em árvore", "org chart", "organigrama"]
+pageNotes: { "1": "Como a sua prefeitura se organiza: um título com serifa, uma linha fina, uma caixa vermelha para o gabinete do prefeito e a câmara e, embaixo, quatro caixas verdes de secretaria, cada uma com seus serviços em caixas claras; uma linha verde desce da caixa do gabinete com uma seta até cada secretaria, e uma árvore liga cada secretaria aos seus serviços.", "2": "Onde nos encontrar: dois painéis verde-claros, Cultura e terceira idade e Esporte e comércio, cada um com três aquarelas em fila e o nome, o endereço e o horário embaixo de cada uma; um boxe do atendimento ao cidadão com a aba nascida do contorno; um colofão no pé." }
+---
+
+## O que você vai compor
+
+Uma página dupla do guia de serviços de Valdeloma, uma cidade inventada de 8.400 habitantes. A página da esquerda é o organograma da prefeitura: o gabinete do prefeito e a câmara numa caixa vermelha, quatro secretarias em verde e, embaixo de cada uma, seus serviços em caixas claras, ligados por linhas verdes com um ponto ou uma seta na ponta. A da direita mostra onde ficam os serviços: dois painéis de três aquarelas, com o nome, o endereço e o horário embaixo de cada imagem, e um boxe para o atendimento ao cidadão. Nada é desenhado à mão. O modelo tem três módulos (uma secretaria, um painel de fotos e um aviso), e cada página empilha tantos quantos o seu Markdown tiver; as linhas acompanham as caixas para onde o texto as levar.
+
+## Preparo
+
+### 1 · Um módulo por secretaria
+
+<Excerpt region="answer" />
+
+Um modelo com `role: 'module'` é um módulo: alguns quadros, grupos e enfeites feitos para serem usados de novo. A página do organograma tem um grupo com `modules: true`, e cada `:::module{template="area"}` do seu Markdown põe mais uma secretaria embaixo da anterior, a 6 mm. Os quadros do módulo recebem o nome da instância, `area[1].concejalia`, `area[2].concejalia`…, e por isso os seus dois conectores são escritos uma vez só: `rama`, uma árvore (`tree`) do pé da secretaria até cada serviço da sua grade (`#servicio[*]`), e `tronco`, um cotovelo (`elbow`) de um ponto perto da esquerda da caixa do gabinete (`at: 0.06`) até o lado esquerdo da secretaria. `#alcaldia` é um quadro da página, não do módulo: o módulo guarda essa ponta e a diagramação a encontra na página, de modo que os quatro cotovelos dividem o primeiro trecho e se leem como um só tronco com uma seta para cada secretaria. Os serviços são uma grade de três colunas que repete um quadro `servicio`, então uma secretaria com dois serviços desenha duas caixas, e a sua árvore, dois ramos.
+
+### 2 · Painéis de fichas com foto
+
+<Excerpt region="gallery" />
+
+Um painel também é um módulo: um quadro de cabeçalho que recebe o título `##` do módulo e uma grade que repete um par de quadros, a foto e o texto embaixo dela. Cada `:::frame{slot="foto"}` é uma ficha, e o `:::frame{slot="pie"}` que vai dentro dele vai para o texto dessa ficha. O fundo tingido é enfeite do módulo, uma caixa do tamanho do módulo, então cresce com as fileiras e com a legenda mais longa. O atendimento ao cidadão é um terceiro módulo, um boxe cuja aba é `joined`: aba e boxe são um só contorno com um só preenchimento.
+
+### 3 · Imagens no tamanho de impressão
+
+<Excerpt region="art" />
+
+As seis aquarelas têm 900 × 600 px declarados a 400 ppi, ou 57 mm de largura, mais ou menos a largura de uma coluna da grade, e por isso a grade nunca as amplia. O texto alternativo delas está aqui no script porque as imagens são as mesmas nas duas edições; uma legenda que mudasse com o idioma seria uma linha `::caption` do Markdown.
+
+### 4 · Um só verde para as linhas e as caixas
+
+<Excerpt region="palette" />
+
+Os conectores, as caixas das secretarias e os cabeçalhos dos painéis usam `green`, uma entrada da paleta, então uma cidade com outra cor muda um único hexadecimal. A caixa do gabinete leva a única cor quente da página dupla, o lugar para onde o leitor olha primeiro.
+
+## Variações
+
+### Duas colunas de serviços
+
+Com `columns: 2`, os serviços de cada secretaria ficam dois por fileira; a árvore traça a sua barra só sobre a primeira fileira, então use isso nas secretarias com dois ou quatro serviços.
+
+```diff
+-  groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
++  groups: [{ name: 'servicios', kind: 'grid', columns: 2, columnGap: mm(4), rowGap: mm(4),
+```
+
+### Arredondar os cantos do tronco
+
+`radius` arredonda as dobras de um cotovelo e de uma árvore: o auxiliar `line()` dá 2,5 mm a todos os conectores; com `radius: mm(0)`, o organograma fica com cantos retos.
+
+## Erros comuns
+
+- Um item da grade é um bloco à parte: o texto de uma ficha com foto só pertence a ela se o seu `:::frame{slot="pie"}` estiver escrito dentro do `:::frame{slot="foto"}` da ficha.
+- Um conector de um módulo que cita um quadro da página só é desenhado nas páginas que têm esse quadro; nas outras ele é omitido, e o registro de recomposição diz `connectorDropped`.
+- Uma aba unida fica sobre a borda do boxe e recebe o preenchimento dele: dê ao texto dela uma `color` escura, porque um rótulo branco sobre um boxe claro não se lê.

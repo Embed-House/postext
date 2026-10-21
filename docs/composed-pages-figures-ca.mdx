@@ -77,7 +77,7 @@ Des de postext 1.48, un rètol pot quedar apartat del que anomena, un rètol pot
 :::
 ```
 
-`leader` amb qualsevol valor que no sigui `none`, `false` o `off` l'activa; sense l'atribut, decideix el `leader` de l'àncora, i si no hi ha cap dels dos, un rètol apartat del seu punt en porta una quan el seu estil té `leader`. La nota d'un marc també pot assenyalar un lloc de la imatge: un [connector](/ca/docs/configuration-composed-pages#connectors) amb un extrem que indica una àncora de la imatge (`anchor: 'lake'`).
+`leader` amb qualsevol valor que no sigui `none`, `false` o `off` l'activa; sense l'atribut, decideix el `leader` de l'àncora, i si no hi ha cap dels dos, un rètol apartat del seu punt en porta una quan el seu estil té `leader`. La nota d'un marc també pot assenyalar un lloc de la imatge: un [connector](/ca/docs/configuration-composed-pages#connectors) amb un extrem que indica una àncora de la imatge (`anchor: 'lake'`). L'aspecte decideix les marques i la tinta: una anella al punt (`endCap: 'ring'`) deixa veure el lloc que indica, i un color translúcid o un `opacity` deixen veure la imatge a través de la línia (des de postext 1.49).
 
 **Rètols de diverses línies.** `:::label{at="…" style="…"}` … `:::`, dins d'una `:::figure`, escriu un rètol línia per línia: cada línia no buida del text font és una línia del rètol, de manera que una llegenda o una adreça no necessiten `\\` al final de cada línia. El primer `:::` tanca el rètol, i el següent, la figura. `::label[…]` continua sent un rètol d'una sola línia, que només es parteix on hi ha `\\`.
 

@@ -99,28 +99,35 @@ class Round(unittest.TestCase):
         V143 = {"labelsOffFold", "standInExports", "labelIconTint", "tocPartBreak", "headingClaimsColumn",
                 "sandboxEditions", "svgSymbols"}
         V142 |= V143
+        V148 = {"columnHeadings", "overlapChecks", "connectors", "leaders", "legends", "shapes", "glyphTabIcon",
+                "sidePoints", "grids", "modules", "moduleConnectorToPage", "ringBarCaps"}
         p = cc.plan_for((1, 37, 0))
         v138 = {"continueFirst", "jumps", "answerSpaces", "designSizes", "textPanels",
                 "partialTypes", "labelsOnPictures", "sandboxFixes"}
         self.assertTrue(v138 <= {f["feature"] for f in p["lacks"]})
-        self.assertTrue(all(f["since"] in ("1.38.0", "1.39.0", "1.40.0", "1.41.0", "1.42.0", "1.43.0") for f in p["lacks"]))
+        LATER = ("1.46.0", "1.48.0", "1.48.1", "1.49.0")
+        self.assertTrue(all(f["since"] in ("1.38.0", "1.39.0", "1.40.0", "1.41.0", "1.42.0", "1.43.0") + LATER
+                            for f in p["lacks"]))
         p = cc.plan_for((1, 38, 0))
         self.assertEqual({f["feature"] for f in p["lacks"]},
                          {"labelChecks", "figureWords", "styleExtends", "frameModes", "startEnd", "cuts",
                           "textPanelsMirrored", "coverUpright", "sourceAtFlow", "editionsKept", "wordTracking"}
                          | {"labelStyleOff", "epubLabels", "textPanelsStrips", "framesRtl", "migrationLayer",
                             "editionChecks", "wordTrackingSandbox", "jumpsAcrossChapters"}
-                            | V142)
-        self.assertTrue(all(f["since"] in ("1.39.0", "1.40.0", "1.41.0", "1.42.0", "1.43.0") for f in p["lacks"]))
+                            | V142 | V148)
+        self.assertTrue(all(f["since"] in ("1.39.0", "1.40.0", "1.41.0", "1.42.0", "1.43.0") + LATER
+                            for f in p["lacks"]))
         p = cc.plan_for((1, 39, 0))
         self.assertEqual({f["feature"] for f in p["lacks"]},
                          {"labelStyleOff", "epubLabels", "textPanelsStrips", "framesRtl", "migrationLayer",
-                          "editionChecks", "wordTrackingSandbox", "jumpsAcrossChapters"} | V142)
-        self.assertTrue(all(f["since"] in ("1.40.0", "1.41.0", "1.42.0", "1.43.0") for f in p["lacks"]))
-        self.assertEqual({f["feature"] for f in cc.plan_for((1, 40, 0))["lacks"]}, {"jumpsAcrossChapters"} | V142)
-        self.assertEqual({f["feature"] for f in cc.plan_for((1, 41, 0))["lacks"]}, V142)
-        self.assertEqual({f["feature"] for f in cc.plan_for((1, 42, 0))["lacks"]}, V143)
-        self.assertEqual(cc.plan_for((1, 43, 0))["lacks"], [])
+                          "editionChecks", "wordTrackingSandbox", "jumpsAcrossChapters"} | V142 | V148)
+        self.assertTrue(all(f["since"] in ("1.40.0", "1.41.0", "1.42.0", "1.43.0") + LATER for f in p["lacks"]))
+        self.assertEqual({f["feature"] for f in cc.plan_for((1, 40, 0))["lacks"]}, {"jumpsAcrossChapters"} | V142 | V148)
+        self.assertEqual({f["feature"] for f in cc.plan_for((1, 41, 0))["lacks"]}, V142 | V148)
+        self.assertEqual({f["feature"] for f in cc.plan_for((1, 42, 0))["lacks"]}, V143 | V148)
+        self.assertEqual({f["feature"] for f in cc.plan_for((1, 43, 0))["lacks"]}, V148)
+        self.assertEqual({f["feature"] for f in cc.plan_for((1, 48, 0))["lacks"]}, {"moduleConnectorToPage", "ringBarCaps"})
+        self.assertEqual(cc.plan_for((1, 49, 0))["lacks"], [])
 
     def test_round_command(self):
         r = subprocess.run([sys.executable, str(SCRIPTS / "composed_check.py"), "round", "--version", "1.36.0", "--json"],
@@ -329,12 +336,13 @@ def run_lint(project: Path) -> str:
 
 
 class Lint(unittest.TestCase):
-    def project(self, d: str, md: str) -> Path:
+    def project(self, d: str, md: str, templates: list[dict] | None = None) -> Path:
         root = Path(d)
         (root / "chapters").mkdir()
         (root / "chapters" / "01.md").write_text(md, encoding="utf-8")
         cfg = {"header": {"elements": []}, "layout": {"layoutType": "single"},
-               "calloutStyles": [{"id": "caja"}, {"id": "nota"}], "chipStyles": [{"id": "clave"}], "labelStyles": [{"id": "mar"}], "pageTemplates": TEMPLATES}
+               "calloutStyles": [{"id": "caja"}, {"id": "nota"}, {"id": "c"}], "chipStyles": [{"id": "clave"}],
+               "labelStyles": [{"id": "mar"}], "pageTemplates": templates or TEMPLATES}
         res = [{"id": "dinero-pago", "typeId": "figure", "kind": "svg", "caption": ""},
                {"id": "tira", "typeId": "figure", "kind": "svg", "caption": "", "anchors": [{"id": "a", "x": 0.1, "y": 0.5}]}]
         (root / "preset.json").write_text(json.dumps({"version": 2, "configVersion": 15, "id": "t", "name": "T",
@@ -465,6 +473,49 @@ class Lint(unittest.TestCase):
             out = run_lint(self.project(d, md))
             self.assertIn("neither a ::label, ::alt / ::caption / ::note nor blank", out)
 
+    def test_label_container(self):
+        # postext 1.48: a key of several lines, symbols in it, a leader on a label
+        md = ('::::page{template="linea"}\n:::figure{resource="tira" slot="tira"}\n'
+              ':::label{at="a" style="mar"}\n:icon[Town]{glyph="⊙"} Town\n\n:icon[Road]{line="dashed"} Road\n:::\n'
+              '::label[Lake]{at="a" leader}\n:::\n::::\n')
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md))
+            self.assertNotIn("a :::figure ends at its first line", out)
+            self.assertNotIn("not a Postext container", out)
+            self.assertNotIn("stray :::", out)
+        md = ':::figure{resource="tira"}\n:::label{at="nope" style="zz"}\nX\n:::\n:::\n'
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md))
+            self.assertIn("labelAnchorUnknown: resource 'tira' has no anchor 'nope'", out)
+            self.assertIn("label style 'zz' is not in labelStyles", out)
+
+    def test_modules_and_grids(self):
+        # postext 1.48: slots inside a :::module are the module's; a grid's items name its frames
+        md = MODULE_PAGE.replace(':::module{template="nope"}\nLost.\n:::\n', "") + "\n" + GRID_PAGE
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md, SHELL_TEMPLATES))
+            errors = [ln for ln in out.splitlines() if ln.startswith("ERROR") and "unknown resource" not in ln]
+            self.assertEqual(errors, [], out)
+            self.assertIn("moduleNameRejected: another module of this page is named 'branches'", out)
+        md = ('::::page{template="shell"}\n:::module{template="nope"}\nA\n:::\n'
+              ':::module{template="cards"}\nB\n:::\n'
+              ':::module{template="tree" name="a.b"}\n:::frame{slot="trunk"}\nC\n:::\n'
+              ':::module{template="tree"}\nD\n:::\n:::\n'
+              ':::frame{slot="root"}\nE\n:::\n::::\n\n'
+              '::::page{template="tree"}\nF\n::::\n\n'
+              '::::page{template="cards"}\n:::module{template="tree"}\nG\n:::\n::::\n')
+        with tempfile.TemporaryDirectory() as d:
+            out = run_lint(self.project(d, md, SHELL_TEMPLATES))
+            self.assertIn("moduleUnknown: no pageTemplates entry 'nope'", out)
+            self.assertIn("moduleUnknown: template 'cards' is not a module", out)
+            self.assertIn("moduleNameRejected: 'a.b' has a space", out)
+            self.assertIn("slotUnknown: module 'tree' has no frame 'trunk'", out)
+            self.assertIn("moduleNested", out)
+            # after the module closes, slots are the page template's again
+            self.assertIn("slotUnknown: template 'shell' has no frame 'root'", out)
+            self.assertIn("moduleAsPage: template 'tree' is a module", out)
+            self.assertIn("moduleUnknown: template 'cards' has no modules group", out)
+
 
 @unittest.skipUnless(os.environ.get("POSTEXT_CLI"), "set POSTEXT_CLI to a postext command (1.35.0 or later)")
 class EndToEnd(unittest.TestCase):
@@ -493,6 +544,270 @@ class EndToEnd(unittest.TestCase):
             self.assertEqual(res["crossLocale"][0]["en"], ["titulo", "texto", "caja"])
             self.assertEqual(res["crossLocale"][0]["es"], ["caja", "titulo", "texto"])
             self.assertIn("stress", res["editions"]["en"])
+
+
+SHELL_TEMPLATES = [
+    {"id": "shell", "frames": [{"name": "title", "takes": "h1"}],
+     "groups": [{"name": "body", "modules": True}]},
+    {"id": "tree", "role": "module", "frames": [{"name": "root"}, {"name": "left"}, {"name": "right"}]},
+    {"id": "tree-wide", "extends": "tree"},
+    {"id": "photos", "role": "module",
+     "frames": [{"name": "head", "takes": "h2"}, {"name": "text", "flow": True}, {"name": "photo"}, {"name": "pill"}],
+     "groups": [{"name": "wall", "kind": "grid", "columns": 2, "repeat": {"frames": ["photo", "pill"]}}]},
+    {"id": "cards", "frames": [{"name": "title", "takes": "h1"}, {"name": "text", "flow": True},
+                               {"name": "card", "style": "c"}, {"name": "tab"}, {"name": "note"}],
+     "groups": [{"name": "grid", "kind": "grid", "columns": 3, "repeat": {"frames": ["card", "tab"]}}]},
+]
+
+GRID_PAGE = """::::page{template="cards"}
+# Animals
+
+Intro.
+
+:::frame{slot="card"}
+::resource{id="heron"}
+
+:::frame{slot="tab"}
+Heron
+:::
+:::
+
+:::frame{slot="card"}
+:::frame{slot="tab"}
+Otter
+:::
+
+The otter swims.
+:::
+
+::resource{id="fox" slot="tab"}
+
+:::frame{slot="note"}
+A note.
+:::
+::::
+"""
+
+MODULE_PAGE = """::::page{template="shell"}
+# The river
+
+:::module{template="tree" name="branches"}
+:::frame{slot="root"}
+River
+:::
+:::frame{slot="right"}
+Banks
+:::
+:::frame{slot="left"}
+Water
+:::
+:::
+
+:::module{template="photos"}
+## Along the banks
+
+Some text.
+
+:::frame{slot="photo"}
+::resource{id="heron"}
+:::frame{slot="pill"}
+Heron
+:::
+:::
+:::
+
+:::module{template="tree"}
+:::frame{slot="root"}
+Two
+:::
+:::
+
+:::module{template="tree" name="branches"}
+:::frame{slot="root"}
+Three
+:::
+:::
+
+:::module{template="nope"}
+Lost.
+:::
+::::
+"""
+
+
+class Round2Order(unittest.TestCase):
+    """Reading order of pages with repeating grids and modules (postext 1.48)."""
+
+    def test_grid_items(self):
+        fence = cc.page_fences(GRID_PAGE)[0]
+        kinds = [(it["kind"], it.get("slot")) for it in fence["items"]]
+        self.assertEqual(kinds, [("heading", None), ("block", None), ("container", "card"), ("container", "card"),
+                                 ("block", "tab"), ("container", "note")])
+        self.assertEqual([w.get("slot") for w in fence["items"][3]["within"]], ["tab", None])
+        # each piece is an item; its members are the same item's instances, in the order written
+        self.assertEqual(cc.expected_order(fence, SHELL_TEMPLATES),
+                         ["title", "text", "card[1]", "tab[1]", "tab[2]", "card[2]", "tab[3]", "note"])
+
+    def test_modules(self):
+        fence = cc.page_fences(MODULE_PAGE)[0]
+        mods = [it for it in fence["items"] if it["kind"] == "module"]
+        self.assertEqual([m["template"] for m in mods], ["tree", "photos", "tree", "tree", "nope"])
+        self.assertEqual(cc.module_instances(fence["items"]),
+                         ["branches", "photos[1]", "tree[2]", "tree[3]", "nope[1]"])
+        self.assertTrue(cc.is_module(SHELL_TEMPLATES, "tree-wide"))
+        self.assertFalse(cc.is_module(SHELL_TEMPLATES, "shell"))
+        # slots scoped by the module, a module's heading to its takes frame and its text to its flow
+        # frame, a grid inside a module, a taken name numbered, an unknown module to the page's flow
+        # frame (the shell has none: nothing)
+        self.assertEqual(cc.expected_order(fence, SHELL_TEMPLATES),
+                         ["title", "branches.root", "branches.right", "branches.left",
+                          "photos[1].head", "photos[1].text", "photos[1].photo[1]", "photos[1].pill[1]",
+                          "tree[2].root", "tree[3].root"])
+
+    def test_module_without_a_modules_group(self):
+        templates = [{"id": "plain", "frames": [{"name": "text", "flow": True}]}] + SHELL_TEMPLATES[1:]
+        fence = cc.page_fences('::::page{template="plain"}\n:::module{template="tree"}\n'
+                               ':::frame{slot="root"}\nA\n:::\n:::\n::::\n')[0]
+        self.assertEqual(cc.expected_order(fence, templates), ["text"])
+
+    def test_html_ids_of_instances(self):
+        self.assertEqual(cc.split_frame_id("cp0:arbol[2].raiz~1"), (0, "arbol[2].raiz", 1))
+        pages = cc.html_frame_order(page(0, "cp0:title", "cp0:branches.root", "cp0:branches.left"))
+        order = ["title", "branches.root", "branches.right", "branches.left"]
+        self.assertEqual(cc.compare_order(pages, [fence("01.md", 0, order)]), [])
+        pages = cc.html_frame_order(page(0, "cp0:branches.left", "cp0:branches.root"))
+        self.assertEqual(cc.compare_order(pages, [fence("01.md", 0, order)])[0]["kind"], "order")
+
+
+COVERED = {"kind": "frameCovered", "severity": "warning", "page": "4",
+           "message": 'Frame "pill[2]" of template "photos" (en) lies under frame "photo[2]"',
+           "data": {"template": "photos", "frame": "pill[2]", "coveredBy": "photo[2]", "locale": "en",
+                    "overlapMm2": 12.5, "proposals": [{"kind": "layer", "value": 0}]}}
+OUTSIDE = {"kind": "frameOutsideArea", "severity": "warning", "page": "5",
+           "message": 'Frame "note" of template "map" (en) runs 4 mm past the frame "card"',
+           "data": {"template": "map", "frame": "note", "past": "frame", "target": "card", "excessMm": 4}}
+
+
+class Overlaps(unittest.TestCase):
+    def test_overlaps_fail(self):
+        v = cc.judge({"warnings": [COVERED, OUTSIDE, {"kind": "repeatOverflow", "severity": "warning", "message": "m"},
+                                   {"kind": "moduleUnknown", "severity": "warning", "message": "m"}]})
+        self.assertEqual([w["kind"] for w in v["fail"]],
+                         ["frameCovered", "frameOutsideArea", "repeatOverflow", "moduleUnknown"])
+        self.assertEqual(v["overlaps"], 2)
+        self.assertIn("overlap: 'allow'", v["fail"][0]["hint"])
+        self.assertIn(cc.EXCEPTIONS_FILE, v["fail"][1]["hint"])
+
+    def test_exceptions(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / cc.EXCEPTIONS_FILE
+            f.write_text(json.dumps({"overlaps": [
+                {"kind": "frameCovered", "frame": "pill[*]", "coveredBy": "photo*", "reason": "pills sit on the photos"},
+                {"frame": "note", "template": "other", "reason": "another template"},
+                {"frame": "x"},
+                {"frame": "y", "reason": "r", "kind": "frameOverflow"},
+                {"frame": "z", "reason": "r", "colour": "red"},
+            ]}), encoding="utf-8")
+            entries, problems = cc.load_exceptions(f)
+        self.assertEqual(len(entries), 3)
+        self.assertEqual(len(problems), 3)
+        self.assertTrue(any("reason" in p for p in problems))
+        self.assertTrue(any("unknown key" in p for p in problems))
+        v = cc.judge({"warnings": [COVERED, OUTSIDE]}, exceptions=entries, locale="en")
+        self.assertEqual([w["kind"] for w in v["allowed"]], ["frameCovered"])
+        self.assertEqual(v["allowed"][0]["reason"], "pills sit on the photos")
+        self.assertEqual([w["kind"] for w in v["fail"]], ["frameOutsideArea"])  # its template differs
+        self.assertEqual((v["overlaps"], v["exceptionsUsed"]), (1, [0]))
+        # a pattern is literal but for [*] and *
+        self.assertFalse(cc._name_pattern("pill[*]").match("pill"))
+        self.assertTrue(cc._name_pattern("mod[*].pill[*]").match("mod[2].pill[10]"))
+        self.assertFalse(cc._name_pattern("a.b").match("axb"))
+        self.assertEqual(cc.load_exceptions(Path(d) / "missing.json"), ([], []))
+
+    def test_allowed_frames(self):
+        self.assertEqual(cc.allowed_frames([{"id": "t", "frames": [{"name": "a", "overlap": "allow"},
+                                                                    {"name": "b", "overlap": "check"}]}]), ["t/a"])
+
+    def test_score_fails_on_overlaps(self):
+        try:
+            import fitz  # noqa: F401, PLC0415
+        except ImportError:
+            self.skipTest("PyMuPDF not installed")
+        with tempfile.TemporaryDirectory() as d:
+            pdf = Path(d) / "pages.pdf"
+            doc = fitz.open()
+            doc.new_page(width=200, height=280).insert_text((20, 40), "A page")
+            doc.save(pdf)
+            raw = Path(d) / "check.json"
+            raw.write_text(json.dumps({"warnings": [COVERED, OUTSIDE]}), encoding="utf-8")
+            base = [sys.executable, str(SCRIPTS / "compare_pages.py"), str(pdf), str(pdf), "--source-pages", "1",
+                    "--render-pages", "1", "--out", str(Path(d) / "cmp"), "--dpi", "20"]
+            score = Path(d) / "score.json"
+            r = subprocess.run(base + ["--score", str(score), "--check", str(raw)], capture_output=True, text=True,
+                               timeout=120)
+            self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+            res = json.loads(score.read_text(encoding="utf-8"))
+            self.assertFalse(res["passed"])
+            self.assertEqual([o["kind"] for o in res["overlaps"]], ["frameCovered", "frameOutsideArea"])
+            self.assertIn("overlaps 2: p. 4 (1), p. 5 (1)", r.stdout)
+            # the project's recorded exceptions apply to a raw postext report
+            (Path(d) / cc.EXCEPTIONS_FILE).write_text(json.dumps({"overlaps": [
+                {"frame": "pill[*]", "reason": "on the photo"}, {"frame": "note", "reason": "hangs off"}]}),
+                encoding="utf-8")
+            r = subprocess.run(base + ["--score", str(score), "--check", str(raw)], capture_output=True, text=True,
+                               timeout=120)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            self.assertTrue(json.loads(score.read_text(encoding="utf-8"))["passed"])
+            # a composed_check report: its failures marked as overlaps
+            cc_report = Path(d) / "cc.json"
+            cc_report.write_text(json.dumps({"editions": {"en": {"fail": [
+                {"kind": "frameCovered", "page": "2", "message": "m", "overlap": True},
+                {"kind": "frameOverflow", "page": "2", "message": "m"}]}}}), encoding="utf-8")
+            r = subprocess.run(base + ["--score", "--check", str(cc_report)], capture_output=True, text=True, timeout=120)
+            self.assertEqual(r.returncode, 1)
+            self.assertIn("overlaps 1: p. 2 (1)", r.stdout)
+
+    def test_check_with_a_stand_in_cli(self):
+        """The whole check on a stand-in postext command: an overlap fails until it is recorded."""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d) / "book"
+            (root / "chapters").mkdir(parents=True)
+            (root / "chapters" / "01.md").write_text('::::page{template="photos"}\n:::frame{slot="photo"}\nA\n:::\n::::\n',
+                                                     encoding="utf-8")
+            (root / "preset.json").write_text(json.dumps({
+                "version": 2, "configVersion": 16, "id": "t", "name": "T", "locale": "en",
+                "chapters": [{"title": "One", "file": "chapters/01.md"}],
+                "config": {"pageTemplates": [{"id": "photos", "frames": [{"name": "photo"}, {"name": "pill", "overlap": "allow"}]}]},
+                "resources": [], "fonts": []}), encoding="utf-8")
+            report = Path(d) / "report.json"
+            report.write_text(json.dumps({"warnings": [COVERED]}), encoding="utf-8")
+            fake = Path(d) / "fake_postext.py"
+            fake.write_text(
+                "import sys\n"
+                "a = sys.argv[1:]\n"
+                "if a[0] == '--version': print('postext 1.48.1 (engine 1.48.1, test)')\n"
+                f"elif a[0] == 'check': print(open({str(report)!r}).read())\n"
+                "elif a[0] == 'html': open(a[a.index('-o') + 1], 'w').write('<div class=\"pt-page\" data-page=\"0\"></div>')\n",
+                encoding="utf-8")
+            cmd = [sys.executable, str(SCRIPTS / "composed_check.py"), "check", str(root), "--json",
+                   "--postext", f"{sys.executable} {fake}"]
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+            self.assertEqual(r.returncode, 1, r.stderr)
+            res = json.loads(r.stdout)
+            self.assertEqual(res["overlaps"], 1)
+            self.assertEqual(next(iter(res["editions"].values()))["allowedFrames"], ["photos/pill"])
+            (root / cc.EXCEPTIONS_FILE).write_text(json.dumps({"overlaps": [
+                {"frame": "pill[*]", "coveredBy": "photo[*]", "reason": "the source sets the pill on the photo"},
+                {"frame": "never", "reason": "stale"}]}), encoding="utf-8")
+            r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            res = json.loads(r.stdout)
+            self.assertEqual((res["overlaps"], res["passed"]), (0, True))
+            self.assertEqual([u["frame"] for u in res["exceptions"]["unused"]], ["never"])
+            r = subprocess.run(cmd[:-3] + ["--postext", f"{sys.executable} {fake}"], capture_output=True, text=True,
+                               timeout=120)
+            self.assertIn("overlaps: 0", r.stdout)
+            self.assertIn("allowed frameCovered", r.stdout)
 
 
 if __name__ == "__main__":

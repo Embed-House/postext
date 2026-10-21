@@ -295,7 +295,7 @@ Earlier passes shield their content from later ones. Math is extracted before em
 
 **Close:** a bare `:::` line closes the **innermost** open container. A stray `:::` with nothing open is a literal paragraph.
 
-**Known containers:** `callout`, `paragraphs`, `part`, `columns`, `paper`, `frame` (composed pages, §12.2).
+**Known containers:** `callout`, `paragraphs`, `part`, `columns`, `paper`, `frame`, `module` and, inside a `:::figure`, `label` (composed pages, §12.2; the last two from 1.48).
 
 **Unknown names** such as `:::note`, `:::figure` or `:::aside` are **not** containers (`:::verse` is a raw-body block, §12, not a container either). The fence line becomes paragraph text, the content parses normally, and the closing `:::` becomes a literal paragraph too. The sandbox raises `unknownDirective`.
 
@@ -859,12 +859,39 @@ North, south, east and west.
   ```` ```js {slot="code"} ````, `:::callout{… slot="aside"}` (the whole box).
 - Without a slot, a block goes to the template's flow frame; a heading
   without one goes to the first frame that `takes` its level. The same slot
-  twice is joined in Markdown order.
+  twice is joined in Markdown order, except a repeating grid's (below).
+- **Repeated slots** (1.48): when a `grid` group of the template repeats a
+  frame set (`repeat: { frames: ["foto", "pie"] }`), each `:::frame{slot="foto"}`
+  piece is one card (an item), and a block or `:::frame` inside it that names a
+  member (`slot="pie"`) goes to that card's member; a lone
+  `::resource{id slot="foto"}` is a card too. The cards are `foto[1]`,
+  `foto[2]`… in warnings, ids and connector ends. Past `repeat.max`, a piece
+  goes to the flow frame (`repeatOverflow`).
+- **Modules** (1.48): `:::module{template="arbol" name="usos"}` … `:::` (three
+  colons, inside a page fence whose template has a `modules: true` group)
+  holds one module's content; its slots are the module template's frames
+  (`role: "module"`), scoped as `usos.raiz` (or `arbol[n].raiz` without a
+  free `name`; a name with a space, `.`, `#`, `[` or `]` is
+  `moduleNameRejected`). Content with no slot goes to the module's flow frame,
+  a heading to its `takes` frame, else to the page's. Modules stack in
+  Markdown order. Outside a page fence it is a plain box; inside a module,
+  `moduleNested`; an id that is no module, `moduleUnknown`; a page fence that
+  names a module, `moduleAsPage`.
 - `:::figure{resource="map" slot="map"}` holds one
   `::label[TEXT]{at="anchor" style="labelStyle"}` per line, then `:::`.
   `at` names an anchor of the resource or a point in percent of the picture
   (`at="62% 48%"`); `style` is a `labelStyles` id. A figure in the flow is
   set as `::resource` with its labels.
+- **Labels away from their point, keys, symbols** (1.48): `::label[…]{at="x"
+  leader}` draws a leader from the label to its anchor's point (the anchor's
+  `labelAt` sets the label away; `leader="none"` turns one off).
+  `:::label{at="key" style="key"}` … `:::` inside the figure is a label of
+  several lines, one per non-blank source line (a key, an address); the first
+  `:::` closes the label, the next the figure. `:icon[alt]{resource="…"}`,
+  `:icon[alt]{glyph="⊙" font="…"}` and `:icon[alt]{line="dashed"}` (with
+  `color=` and `size=` in ems, 0.75 by default) set a symbol on the line, in
+  labels, captions, notes and table cells only; in a label style with
+  `kind: "legend"` the symbol that opens each row hangs in a column.
 - The edition's own words for the picture (1.39), as attributes of the fence
   or as lines among the labels (blank lines allowed; a line wins over the
   attribute; nested brackets and `\\` are kept):

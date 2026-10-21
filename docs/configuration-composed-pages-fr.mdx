@@ -748,7 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>la couleur principale</td>
-      <td>Une couleur liée à la palette suit la <code>palette</code> du gabarit, celle du délimiteur de page et celle d’une partie, comme les filets.</td>
+      <td>Une couleur liée à la palette suit la <code>palette</code> du gabarit, celle du délimiteur de page et celle d’une partie, comme les filets. Une couleur avec un canal alpha (<code>#rrggbbaa</code>) peint la ligne et ses marques en transparence, et laisse voir l’image qui se trouve dessous (depuis postext 1.49).</td>
+    </tr>
+    <tr>
+      <td><code>opacity</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>L’opacité de la ligne et de ses marques, de <code>0</code> à <code>1</code>, multipliée par l’alpha de la couleur elle-même. Elle reste à part de la couleur : une couleur liée à la palette reste liée. Une ligne bordée se fait avec deux connecteurs : un large et pâle à <code>opacity: 0.6</code> sous un autre en tirets. Depuis postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -758,15 +764,21 @@ decoration: {
     </tr>
     <tr>
       <td><code>startCap</code>, <code>endCap</code></td>
-      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>Une marque à <code>from</code> et à chaque <code>to</code> : un point plein centré sur l’extrémité, ou une pointe de flèche dont la pointe est l’extrémité.</td>
+      <td>Une marque à <code>from</code> et à chaque <code>to</code> : un point plein centré sur l’extrémité, ou une pointe de flèche dont la pointe est l’extrémité. <code>'ring'</code> : un point creux centré sur l’extrémité, tracé dans l’épaisseur de la ligne, qui s’arrête à son bord ; <code>'bar'</code> : un trait en travers de la ligne à l’extrémité, de la même épaisseur (tous deux depuis postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
       <td><code>Dimension</code></td>
       <td>3 × <code>width</code></td>
-      <td>Le diamètre d’un point, ou la longueur d’une pointe de flèche.</td>
+      <td>Le diamètre d’un point ou d’un anneau, la longueur d’une pointe de flèche ou d’une barre.</td>
+    </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connecteur avec une extrémité <code>anchor</code> est peint sur les blocs, les autres dessous</td>
+      <td>Peint la ligne après tous les blocs de la page (<code>true</code>) ou avec le décor, sous les blocs (<code>false</code>). Sans valeur, un connecteur qui a une extrémité <code>anchor</code> est peint dessus, si bien qu’une ligne qui pointe dans une image se voit sur le bloc de l’image ; une ligne entre blocs reste dessous.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -825,12 +837,6 @@ Chaque extrémité (`ConnectorEnd`) désigne une boîte et un point sur l’un d
       <td>aucun</td>
       <td>Une ancre de l’image que contient le bloc : l’extrémité est ce point de l’image, à travers son recadrage, sa zone de sécurité et son échelle, comme pour une étiquette, au lieu d’un point du côté du bloc. <code>at</code> n’est pas lu ; <code>side</code> indique par où arrive la ligne (par défaut, depuis l’autre extrémité).</td>
     </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>un connecteur avec une extrémité <code>anchor</code> est peint sur les blocs, les autres dessous</td>
-      <td>Peint la ligne après tous les blocs de la page (<code>true</code>) ou avec le décor, sous les blocs (<code>false</code>). Sans valeur, un connecteur qui a une extrémité <code>anchor</code> est peint dessus, si bien qu’une ligne qui pointe dans une image se voit sur le bloc de l’image ; une ligne entre blocs reste dessous.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -849,7 +855,7 @@ decoration: { elements: [
 ] },
 ```
 
-**Vérifications.** Une extrémité dont le `to` ne désigne rien est un `frameAnchorUnknown` (sur `…/from/to` ou `…/to/<k>/to`) et est laissée de côté ; `[*]` n’est valable que dans `to` et sur un bloc répété. Une `anchor` qu’aucune image du bloc n’a est un `labelAnchorUnknown`, avec l’identifiant du connecteur. Un mot hors des choix de `routing`, `startCap`, `endCap` ou `side`, et un `at` hors de l’intervalle 0 à 1, sont des `unknownConfigValue`.
+**Vérifications.** Une extrémité dont le `to` ne désigne rien est un `frameAnchorUnknown` (sur `…/from/to` ou `…/to/<k>/to`) et est laissée de côté ; `[*]` n’est valable que dans `to` et sur un bloc répété. Une `anchor` qu’aucune image du bloc n’a est un `labelAnchorUnknown`, avec l’identifiant du connecteur. Un mot hors des choix de `routing`, `startCap`, `endCap` ou `side`, et un `at` hors de l’intervalle 0 à 1, sont des `unknownConfigValue`. Une `opacity` qui n’est pas un nombre de 0 à 1 est aussi un `unknownConfigValue` (un nombre hors de l’intervalle y est ramené).
 
 ## Styles d’étiquette
 
@@ -971,9 +977,9 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>leader</code></td>
-      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>aucun</td>
-      <td>L’aspect des traits de rappel des étiquettes de ce style : la ligne qui va de la boîte d’une étiquette au point de son ancre. Par défaut, la couleur de l’étiquette, une épaisseur de <code>0.75pt</code>, <code>endCap: 'dot'</code> au point, pas de <code>startCap</code>, un <code>capSize</code> de trois fois l’épaisseur, <code>routing</code> <code>'straight'</code> (ou <code>'elbow'</code> : sortie d’équerre de la boîte, puis un seul coude jusqu’au point). Une étiquette placée à l’écart de son point (<code>labelAt</code>) dans un style doté d’un <code>leader</code> en reçoit un. Depuis postext 1.48.</td>
+      <td>L’aspect des traits de rappel des étiquettes de ce style : la ligne qui va de la boîte d’une étiquette au point de son ancre. Par défaut, la couleur de l’étiquette, une épaisseur de <code>0.75pt</code>, <code>endCap: 'dot'</code> au point, pas de <code>startCap</code>, un <code>capSize</code> de trois fois l’épaisseur, <code>routing</code> <code>'straight'</code> (ou <code>'elbow'</code> : sortie d’équerre de la boîte, puis un seul coude jusqu’au point). Une étiquette placée à l’écart de son point (<code>labelAt</code>) dans un style doté d’un <code>leader</code> en reçoit un. Depuis postext 1.48. <code>startCap</code> et <code>endCap</code> prennent les marques du connecteur, <code>'ring'</code> et <code>'bar'</code> compris, et <code>opacity</code> (de 0 à 1) ou une couleur avec un canal alpha rendent la ligne transparente (depuis postext 1.49).</td>
     </tr>
   </tbody>
 </table>

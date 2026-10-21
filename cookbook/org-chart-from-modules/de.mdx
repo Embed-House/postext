@@ -1,0 +1,60 @@
+---
+title: "Ein Organigramm und ein Fotoraster aus Modulen"
+summary: "Ein Bürgerwegweiser aus Modulen: ein Organigramm, dessen Linien die Vorlage zieht, und Fotoraster, die je Gebäude eine Karte wiederholen."
+plain: "Zwei Seiten aus dem Wegweiser einer Gemeinde: wer wofür zuständig ist, als Schaubild aus Kästen mit Linien, und wo jede Stelle zu finden ist, in Bildreihen. Die Seiten bestehen aus wenigen Bausteinen; das Markdown sagt, wie viele."
+description: "Ein Organigramm und ein Fotoraster mit Postext: Modulvorlagen, die eine Seite stapelt, Verbinder von der Gemeindespitze zu jedem Amt, Raster aus Fotokarten."
+question: "Wie baue ich ein Organigramm und ein Fotoraster aus Modulen, deren Linien die Vorlage zieht?"
+aliases: ["Organigramm", "Modul", "wiederverwendbarer Baustein", "Fotoraster", "Verbinder", "Bürgerwegweiser", "Behördenwegweiser", "Baumdiagramm", "org chart", "organigrama"]
+pageNotes: { "1": "So ist Ihre Gemeinde aufgebaut: ein Serifentitel, ein Vorspann, ein roter Kasten für Bürgermeisterin und Gemeinderat und darunter vier grüne Kästen für die Ämter, jedes mit seinen Stellen in hellen Kästen darunter; eine grüne Linie läuft vom Kasten der Gemeindespitze nach unten, mit einem Pfeil in jedes Amt, und ein Baum verbindet jedes Amt mit seinen Stellen.", "2": "So finden Sie uns: zwei blassgrüne Tafeln, Kultur und Senioren sowie Sport und Handel, jede mit drei Aquarellen in einer Reihe und darunter Name, Adresse und Öffnungszeiten; ein Hinweiskasten für das Bürgerbüro, dessen Reiter aus der Kontur wächst; ein Impressum am Fuß." }
+---
+
+## Was Sie setzen
+
+Eine Doppelseite aus dem Bürgerwegweiser von Valdeloma, einer erfundenen Gemeinde mit 8.400 Einwohnern. Die linke Seite ist das Organigramm der Gemeinde: Bürgermeisteramt und Gemeinderat in einem roten Kasten, vier Ämter in Grün und unter jedem Amt seine Stellen in hellen Kästen, verbunden durch grüne Linien mit einem Punkt oder Pfeil am Ende. Die rechte Seite zeigt, wo die Stellen sind: zwei Tafeln mit je drei Aquarellen, unter jedem Bild Name, Adresse und Öffnungszeiten, dazu ein Kasten für das Bürgerbüro. Nichts ist von Hand gezeichnet. Die Vorlage enthält drei Module (ein Amt, eine Fototafel und einen Hinweis), und jede Seite stapelt so viele davon, wie ihr Markdown enthält; die Linien folgen den Kästen, wohin der Text sie auch schiebt.
+
+## Zubereitung
+
+### 1 · Ein Modul je Amt
+
+<Excerpt region="answer" />
+
+Eine Vorlage mit `role: 'module'` ist ein Modul: ein paar Rahmen, Gruppen und Dekor, gedacht zum Wiederverwenden. Die Organigrammseite hat eine Gruppe mit `modules: true`, und jedes `:::module{template="area"}` ihres Markdowns setzt ein weiteres Amt 6 mm unter das vorige. Die Rahmen des Moduls tragen den Namen der Instanz, `area[1].concejalia`, `area[2].concejalia` …, darum stehen seine beiden Verbinder nur einmal da: `rama`, ein Baum (`tree`) vom Fuß des Amts zu jeder Stelle seines Rasters (`#servicio[*]`), und `tronco`, ein Winkel (`elbow`) von einem Punkt nahe der linken Kante des Bürgermeisterkastens (`at: 0.06`) zur linken Seite des Amts. `#alcaldia` ist ein Rahmen der Seite, nicht des Moduls: Das Modul behält dieses Ende, und das Layout findet es auf der Seite, sodass die vier Winkel ihr erstes Stück teilen und sich wie ein einziger Stamm mit einem Pfeil in jedes Amt lesen. Die Stellen sind ein dreispaltiges Raster, das einen Rahmen `servicio` wiederholt; ein Amt mit zwei Stellen zeichnet also zwei Kästen, und sein Baum hat zwei Äste.
+
+### 2 · Tafeln aus Fotokarten
+
+<Excerpt region="gallery" />
+
+Auch eine Tafel ist ein Modul: ein Kopfrahmen, der die `##`-Überschrift des Moduls aufnimmt, und ein Raster, das einen Satz aus zwei Rahmen wiederholt, das Foto und den Text darunter. Jedes `:::frame{slot="foto"}` ist eine Karte, und das `:::frame{slot="pie"}` darin geht an den Text dieser Karte. Der getönte Grund ist Dekor des Moduls, ein Kasten so groß wie das Modul, und wächst deshalb mit den Reihen und der längsten Bildunterschrift. Das Bürgerbüro ist ein drittes Modul, ein Kasten, dessen Reiter `joined` ist: Reiter und Kasten bilden eine Kontur mit einer Füllung.
+
+### 3 · Bilder in ihrer Druckgröße
+
+<Excerpt region="art" />
+
+Die sechs Aquarelle haben 900 × 600 px bei angegebenen 400 ppi, sind also 57 mm breit, etwa so breit wie eine Rasterspalte; das Raster vergrößert sie nie. Ihr Alternativtext steht hier im Skript, weil die Bilder in beiden Ausgaben dieselben sind; eine Bildunterschrift, die sich mit der Sprache ändert, wäre eine `::caption`-Zeile im Markdown.
+
+### 4 · Ein Grün für Linien und Kästen
+
+<Excerpt region="palette" />
+
+Die Verbinder, die Amtskästen und die Köpfe der Tafeln verwenden `green`, einen Eintrag der Palette; eine Gemeinde mit einer anderen Farbe ändert also einen einzigen Hexwert. Der Kasten der Gemeindespitze trägt die einzige warme Farbe der Doppelseite, dort, wohin der Blick zuerst fällt.
+
+## Varianten
+
+### Zwei Spalten für die Stellen
+
+Mit `columns: 2` stehen die Stellen jedes Amts zu zweit in einer Reihe; der Baum zieht seinen Querbalken nur über die erste Reihe, nehmen Sie das also für Ämter mit zwei oder vier Stellen.
+
+```diff
+-  groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
++  groups: [{ name: 'servicios', kind: 'grid', columns: 2, columnGap: mm(4), rowGap: mm(4),
+```
+
+### Die Ecken des Stamms abrunden
+
+`radius` rundet die Knicke eines Winkels und eines Baums ab: Die Hilfsfunktion `line()` gibt jedem Verbinder 2,5 mm; mit `radius: mm(0)` wird das Organigramm eckig.
+
+## Häufige Fehler
+
+- Ein Rasterelement ist ein eigener Bereich: Der Text einer Fotokarte gehört nur dann zu ihr, wenn sein `:::frame{slot="pie"}` innerhalb des `:::frame{slot="foto"}` der Karte steht.
+- Ein Verbinder eines Moduls, der einen Rahmen der Seite nennt, wird nur auf Seiten gezeichnet, die diesen Rahmen haben; auf anderen fällt er weg, und das Umbruchprotokoll meldet `connectorDropped`.
+- Ein verbundener Reiter sitzt auf der Kante des Kastens und übernimmt dessen Füllung: Geben Sie seinem Text eine dunkle `color`, denn eine weiße Beschriftung auf einem hellen Kasten ist nicht lesbar.

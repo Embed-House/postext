@@ -748,7 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>il colore principale</td>
-      <td>Un colore legato alla tavolozza segue la <code>palette</code> del modello, quella del blocco di pagina e quella di una parte, come i filetti.</td>
+      <td>Un colore legato alla tavolozza segue la <code>palette</code> del modello, quella del blocco di pagina e quella di una parte, come i filetti. Un colore con canale alfa (<code>#rrggbbaa</code>) dipinge la linea e i suoi segni in trasparenza e lascia vedere l’immagine che sta sotto (da postext 1.49).</td>
+    </tr>
+    <tr>
+      <td><code>opacity</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Quanto sono opachi la linea e i suoi segni, da <code>0</code> a <code>1</code>, moltiplicato per l’alfa del colore stesso. Resta separata dal colore, così un colore legato alla tavolozza resta legato. Una linea bordata sono due connettori: uno largo e chiaro con <code>opacity: 0.6</code> sotto uno tratteggiato. Da postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -758,15 +764,21 @@ decoration: {
     </tr>
     <tr>
       <td><code>startCap</code>, <code>endCap</code></td>
-      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>Un segno su <code>from</code> e su ogni <code>to</code>: un punto pieno centrato sull’estremità, o una punta di freccia il cui vertice è l’estremità.</td>
+      <td>Un segno su <code>from</code> e su ogni <code>to</code>: un punto pieno centrato sull’estremità, o una punta di freccia il cui vertice è l’estremità. <code>'ring'</code>: un punto vuoto centrato sull’estremità, tracciato nello spessore della linea, che arriva fino al suo bordo; <code>'bar'</code>: un tratto di traverso all’estremità, dello spessore della linea (entrambi da postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
       <td><code>Dimension</code></td>
       <td>3 × <code>width</code></td>
-      <td>La larghezza di un punto, o la lunghezza di una punta di freccia.</td>
+      <td>La larghezza di un punto o di un anello, la lunghezza di una punta di freccia o di una barra.</td>
+    </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connettore con un’estremità <code>anchor</code> si disegna sopra le cornici, gli altri sotto</td>
+      <td>Disegna la linea dopo tutte le cornici della pagina (<code>true</code>) o con la decorazione, sotto le cornici (<code>false</code>). Senza valore, un connettore con un’estremità <code>anchor</code> si disegna sopra, così una linea che punta dentro un’immagine si vede sopra la cornice dell’immagine; una linea fra cornici resta sotto.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -825,12 +837,6 @@ Ogni estremità (`ConnectorEnd`) indica un riquadro e un punto su uno dei suoi l
       <td>nessuna</td>
       <td>Un’ancora dell’immagine contenuta nella cornice: l’estremità è quel punto dell’immagine, attraverso il suo ritaglio, la sua zona sicura e la sua scala, come per un’etichetta, invece di un punto del lato della cornice. <code>at</code> non viene letto; <code>side</code> dice da che parte arriva la linea (per impostazione predefinita, dall’altra estremità).</td>
     </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>un connettore con un’estremità <code>anchor</code> si disegna sopra le cornici, gli altri sotto</td>
-      <td>Disegna la linea dopo tutte le cornici della pagina (<code>true</code>) o con la decorazione, sotto le cornici (<code>false</code>). Senza valore, un connettore con un’estremità <code>anchor</code> si disegna sopra, così una linea che punta dentro un’immagine si vede sopra la cornice dell’immagine; una linea fra cornici resta sotto.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -849,7 +855,7 @@ decoration: { elements: [
 ] },
 ```
 
-**Controlli.** Un’estremità il cui `to` non indica nulla è `frameAnchorUnknown` (in `…/from/to` o `…/to/<k>/to`) e viene tralasciata; `[*]` vale solo in `to` e su una cornice ripetuta. Un’`anchor` che nessuna immagine della cornice ha è `labelAnchorUnknown`, con l’id del connettore. Una parola fuori dalle scelte di `routing`, `startCap`, `endCap` o `side`, e un `at` fuori dall’intervallo da 0 a 1, sono `unknownConfigValue`.
+**Controlli.** Un’estremità il cui `to` non indica nulla è `frameAnchorUnknown` (in `…/from/to` o `…/to/<k>/to`) e viene tralasciata; `[*]` vale solo in `to` e su una cornice ripetuta. Un’`anchor` che nessuna immagine della cornice ha è `labelAnchorUnknown`, con l’id del connettore. Una parola fuori dalle scelte di `routing`, `startCap`, `endCap` o `side`, e un `at` fuori dall’intervallo da 0 a 1, sono `unknownConfigValue`. Un’`opacity` che non è un numero da 0 a 1 è anch’essa `unknownConfigValue` (un numero fuori dall’intervallo viene riportato al suo interno).
 
 ## Stili delle etichette
 
@@ -971,9 +977,9 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>leader</code></td>
-      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>nessuno</td>
-      <td>L’aspetto delle linee di richiamo delle etichette di questo stile: la linea dal riquadro di un’etichetta al punto della sua ancora. Per impostazione predefinita il colore è quello dell’etichetta, lo spessore <code>0.75pt</code>, <code>endCap: 'dot'</code> sul punto, nessun <code>startCap</code>, <code>capSize</code> tre volte lo spessore, <code>routing</code> <code>'straight'</code> (oppure <code>'elbow'</code>: esce dal riquadro ad angolo retto, poi una sola svolta verso il punto). Un’etichetta lontana dal suo punto (<code>labelAt</code>) in uno stile con <code>leader</code> ne riceve una. Da postext 1.48.</td>
+      <td>L’aspetto delle linee di richiamo delle etichette di questo stile: la linea dal riquadro di un’etichetta al punto della sua ancora. Per impostazione predefinita il colore è quello dell’etichetta, lo spessore <code>0.75pt</code>, <code>endCap: 'dot'</code> sul punto, nessun <code>startCap</code>, <code>capSize</code> tre volte lo spessore, <code>routing</code> <code>'straight'</code> (oppure <code>'elbow'</code>: esce dal riquadro ad angolo retto, poi una sola svolta verso il punto). Un’etichetta lontana dal suo punto (<code>labelAt</code>) in uno stile con <code>leader</code> ne riceve una. Da postext 1.48. <code>startCap</code> ed <code>endCap</code> accettano i segni del connettore, <code>'ring'</code> e <code>'bar'</code> compresi, e <code>opacity</code> (da 0 a 1) o un colore con canale alfa rendono la linea trasparente (da postext 1.49).</td>
     </tr>
   </tbody>
 </table>

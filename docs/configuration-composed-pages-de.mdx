@@ -748,7 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>die Hauptfarbe</td>
-      <td>Eine an die Palette gebundene Farbe folgt der <code>palette</code> der Vorlage, der des Seitenblocks und der eines Teils, wie Linien es tun.</td>
+      <td>Eine an die Palette gebundene Farbe folgt der <code>palette</code> der Vorlage, der des Seitenblocks und der eines Teils, wie Linien es tun. Eine Farbe mit Alphakanal (<code>#rrggbbaa</code>) malt die Linie und ihre Marken durchscheinend, sodass ein Bild darunter sichtbar bleibt (seit postext 1.49).</td>
+    </tr>
+    <tr>
+      <td><code>opacity</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Wie deckend die Linie und ihre Marken sind, von <code>0</code> bis <code>1</code>, mal dem Alpha der Farbe selbst. Getrennt von der Farbe, sodass eine an die Palette gebundene Farbe gebunden bleibt. Eine unterlegte Linie sind zwei Verbinder: ein breiter, heller mit <code>opacity: 0.6</code> unter einem gestrichelten. Seit postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -758,15 +764,21 @@ decoration: {
     </tr>
     <tr>
       <td><code>startCap</code>, <code>endCap</code></td>
-      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>Eine Marke bei <code>from</code> und bei jedem <code>to</code>: ein gefüllter Punkt, auf dem Ende zentriert, oder eine Pfeilspitze, deren Spitze das Ende ist.</td>
+      <td>Eine Marke bei <code>from</code> und bei jedem <code>to</code>: ein gefüllter Punkt, auf dem Ende zentriert, oder eine Pfeilspitze, deren Spitze das Ende ist. <code>'ring'</code>: ein hohler Punkt, auf dem Ende zentriert, in der Linienstärke gezogen, die Linie endet an seinem Rand; <code>'bar'</code>: ein Strich quer zur Linie am Ende, in ihrer Stärke (beide seit postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
       <td><code>Dimension</code></td>
       <td>3 × <code>width</code></td>
-      <td>Die Breite eines Punkts oder die Länge einer Pfeilspitze.</td>
+      <td>Die Breite eines Punkts oder Rings, die Länge einer Pfeilspitze oder eines Strichs.</td>
+    </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>ein Verbinder mit einem <code>anchor</code>-Ende wird über den Rahmen gezeichnet, andere darunter</td>
+      <td>Zeichnet die Linie nach allen Rahmen der Seite (<code>true</code>) oder mit der Dekoration, unter den Rahmen (<code>false</code>). Ohne Wert wird ein Verbinder mit einem <code>anchor</code>-Ende darüber gezeichnet, sodass eine Linie, die in ein Bild zeigt, über dem Rahmen des Bilds sichtbar ist; eine Linie zwischen Rahmen bleibt darunter.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -825,12 +837,6 @@ Jedes Ende (`ConnectorEnd`) nennt einen Kasten und einen Punkt auf einer seiner 
       <td>keiner</td>
       <td>Ein Anker des Bilds, das der Rahmen enthält: Das Ende ist dieser Punkt des Bilds, über Beschnitt, Sicherheitsbereich und Skalierung abgebildet wie der einer Beschriftung, statt eines Punkts auf der Seite des Rahmens. <code>at</code> wird nicht gelesen; <code>side</code> gibt an, aus welcher Richtung die Linie ankommt (standardmäßig vom anderen Ende her).</td>
     </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>ein Verbinder mit einem <code>anchor</code>-Ende wird über den Rahmen gezeichnet, andere darunter</td>
-      <td>Zeichnet die Linie nach allen Rahmen der Seite (<code>true</code>) oder mit der Dekoration, unter den Rahmen (<code>false</code>). Ohne Wert wird ein Verbinder mit einem <code>anchor</code>-Ende darüber gezeichnet, sodass eine Linie, die in ein Bild zeigt, über dem Rahmen des Bilds sichtbar ist; eine Linie zwischen Rahmen bleibt darunter.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -849,7 +855,7 @@ decoration: { elements: [
 ] },
 ```
 
-**Prüfungen.** Ein Ende, dessen `to` nichts nennt, ist `frameAnchorUnknown` (an `…/from/to` oder `…/to/<k>/to`) und wird weggelassen; `[*]` gilt nur in `to` und an einem wiederholten Rahmen. Ein `anchor`, den kein Bild des Rahmens hat, ist `labelAnchorUnknown`, mit der ID des Verbinders. Ein Wort außerhalb der Auswahl von `routing`, `startCap`, `endCap` oder `side` und ein `at` außerhalb von 0 bis 1 sind `unknownConfigValue`.
+**Prüfungen.** Ein Ende, dessen `to` nichts nennt, ist `frameAnchorUnknown` (an `…/from/to` oder `…/to/<k>/to`) und wird weggelassen; `[*]` gilt nur in `to` und an einem wiederholten Rahmen. Ein `anchor`, den kein Bild des Rahmens hat, ist `labelAnchorUnknown`, mit der ID des Verbinders. Ein Wort außerhalb der Auswahl von `routing`, `startCap`, `endCap` oder `side` und ein `at` außerhalb von 0 bis 1 sind `unknownConfigValue`. Ein `opacity`, das keine Zahl von 0 bis 1 ist, ist ebenfalls `unknownConfigValue` (eine Zahl außerhalb wird auf den Bereich begrenzt).
 
 ## Beschriftungsstile
 
@@ -971,9 +977,9 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>leader</code></td>
-      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>keine</td>
-      <td>Das Aussehen der Hinweislinien der Beschriftungen in diesem Stil: die Linie vom Kasten einer Beschriftung zum Punkt ihres Ankers. Standardmäßig die Farbe der Beschriftung, Stärke <code>0.75pt</code>, <code>endCap: 'dot'</code> am Punkt, kein <code>startCap</code>, <code>capSize</code> dreimal die Stärke, <code>routing</code> <code>'straight'</code> (oder <code>'elbow'</code>: rechtwinklig aus dem Kasten heraus, dann ein Knick auf den Punkt). Eine Beschriftung, die abseits ihres Punkts steht (<code>labelAt</code>), in einem Stil mit <code>leader</code> erhält eine. Seit postext 1.48.</td>
+      <td>Das Aussehen der Hinweislinien der Beschriftungen in diesem Stil: die Linie vom Kasten einer Beschriftung zum Punkt ihres Ankers. Standardmäßig die Farbe der Beschriftung, Stärke <code>0.75pt</code>, <code>endCap: 'dot'</code> am Punkt, kein <code>startCap</code>, <code>capSize</code> dreimal die Stärke, <code>routing</code> <code>'straight'</code> (oder <code>'elbow'</code>: rechtwinklig aus dem Kasten heraus, dann ein Knick auf den Punkt). Eine Beschriftung, die abseits ihres Punkts steht (<code>labelAt</code>), in einem Stil mit <code>leader</code> erhält eine. Seit postext 1.48. <code>startCap</code> und <code>endCap</code> nehmen die Marken des Verbinders, <code>'ring'</code> und <code>'bar'</code> eingeschlossen, und <code>opacity</code> (0 bis 1) oder eine Farbe mit Alphakanal macht die Linie durchscheinend (seit postext 1.49).</td>
     </tr>
   </tbody>
 </table>

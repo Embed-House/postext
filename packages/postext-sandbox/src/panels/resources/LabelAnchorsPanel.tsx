@@ -545,7 +545,7 @@ export function LeaderFields({ anchor: a, index: i, marks, texts, commit, edit, 
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span id={`${uid}-cap`} className="w-24 shrink-0 text-(--slate)">{labels.leaderEndCap}</span>
-            <SegmentedControl<'dot' | 'arrow' | 'none'>
+            <SegmentedControl<'dot' | 'arrow' | 'ring' | 'bar' | 'none'>
               size="sm"
               value={own.endCap ?? 'dot'}
               onValueChange={(v) => setLook({ endCap: v === 'dot' ? undefined : v })}
@@ -554,6 +554,8 @@ export function LeaderFields({ anchor: a, index: i, marks, texts, commit, edit, 
               options={[
                 { value: 'dot', label: labels.leaderCapDot },
                 { value: 'arrow', label: labels.leaderCapArrow },
+                { value: 'ring', label: labels.connectorCapRing },
+                { value: 'bar', label: labels.connectorCapBar },
                 { value: 'none', label: labels.leaderCapNone },
               ]}
             />

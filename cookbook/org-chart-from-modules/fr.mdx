@@ -1,0 +1,60 @@
+---
+title: "Un organigramme et une grille de photos faits de modules"
+summary: "Un guide des services d’une mairie fait de modules : un organigramme dont le gabarit trace les traits, des grilles qui répètent une fiche par bâtiment."
+plain: "Deux pages d’un guide municipal : qui s’occupe de quoi, en un schéma de boîtes reliées par des traits, et où se trouve chaque service, en rangées d’images. Les pages sont faites de quelques blocs réutilisables ; le Markdown dit combien."
+description: "Un organigramme et une grille de photos avec Postext : des modules empilés par la page, des connecteurs de la mairie à chaque pôle, des fiches photo en grille."
+question: "Comment faire un organigramme et une grille de photos avec des modules dont le gabarit trace les traits ?"
+aliases: ["organigramme", "module", "bloc réutilisable", "grille de photos", "connecteur", "guide municipal", "guide des services", "arborescence", "org chart", "organigrama"]
+pageNotes: { "1": "L’organisation de la mairie : un titre à empattements, un chapeau, une boîte rouge pour le maire et le conseil et, dessous, quatre boîtes vertes de pôle, chacune avec ses services dans des boîtes claires ; un trait vert descend de la boîte du maire avec une flèche vers chaque pôle, et une arborescence relie chaque pôle à ses services.", "2": "Où nous trouver : deux panneaux vert pâle, Culture et seniors, Sport et commerce, chacun avec trois aquarelles en rang et le nom, l’adresse et les horaires sous chacune ; un encadré pour l’accueil des habitants dont l’onglet naît du contour ; un colophon en pied de page." }
+---
+
+## Ce que vous allez composer
+
+Une double page du guide des services de Valdeloma, une commune inventée de 8 400 habitants. La page de gauche est l’organigramme de la mairie : le maire et le conseil dans une boîte rouge, quatre pôles en vert et, sous chaque pôle, ses services dans des boîtes claires, reliés par des traits verts terminés par un point ou une flèche. La page de droite dit où se trouvent les services : deux panneaux de trois aquarelles, avec le nom, l’adresse et les horaires sous chaque image, et un encadré pour l’accueil des habitants. Rien n’est dessiné à la main. Le gabarit contient trois modules (un pôle, un panneau de photos et un avis), et chaque page en empile autant que son Markdown en compte ; les traits suivent les boîtes là où le texte les place.
+
+## Préparation
+
+### 1 · Un module par pôle
+
+<Excerpt region="answer" />
+
+Un gabarit avec `role: 'module'` est un module : quelques blocs, groupes et éléments de décor faits pour resservir. La page de l’organigramme a un groupe `modules: true`, et chaque `:::module{template="area"}` de son Markdown pose un pôle de plus sous le précédent, à 6 mm. Les blocs du module prennent le nom de l’instance, `area[1].concejalia`, `area[2].concejalia`…, si bien que ses deux connecteurs s’écrivent une seule fois : `rama`, un arbre (`tree`) du pied du pôle vers chaque service de sa grille (`#servicio[*]`), et `tronco`, un coude (`elbow`) d’un point proche de la gauche de la boîte du maire (`at: 0.06`) jusqu’au côté gauche du pôle. `#alcaldia` est un bloc de la page, pas du module : le module garde cette extrémité et la mise en page la trouve sur la page, de sorte que les quatre coudes partagent leur premier segment et se lisent comme un seul tronc avec une flèche vers chaque pôle. Les services forment une grille de trois colonnes qui répète un bloc `servicio` : un pôle à deux services dessine deux boîtes, et son arbre deux branches.
+
+### 2 · Des panneaux de fiches photo
+
+<Excerpt region="gallery" />
+
+Un panneau est lui aussi un module : un bloc de titre qui reçoit le titre `##` du module, et une grille qui répète un jeu de deux blocs, la photo et le texte en dessous. Chaque `:::frame{slot="foto"}` est une fiche, et le `:::frame{slot="pie"}` qu’il contient va au texte de cette fiche. Le fond teinté est un décor du module, une boîte de la taille du module, qui grandit donc avec les rangées et la légende la plus longue. L’accueil des habitants est un troisième module, un encadré dont l’onglet est `joined` : l’onglet et l’encadré forment un seul contour avec un seul fond.
+
+### 3 · Des images à leur taille d’impression
+
+<Excerpt region="art" />
+
+Les six aquarelles font 900 × 600 px déclarées à 400 ppp, soit 57 mm de large, à peu près la largeur d’une colonne de la grille : la grille ne les agrandit jamais. Leur texte alternatif est dans le script parce que les images sont les mêmes dans les deux éditions ; une légende qui changerait avec la langue serait une ligne `::caption` du Markdown.
+
+### 4 · Un seul vert pour les traits et les boîtes
+
+<Excerpt region="palette" />
+
+Les connecteurs, les boîtes de pôle et les titres des panneaux utilisent `green`, une entrée de la palette : une commune qui a une autre couleur change un seul code hexadécimal. La boîte du maire porte la seule couleur chaude de la double page, là où le lecteur regarde en premier.
+
+## Variantes
+
+### Deux colonnes de services
+
+Avec `columns: 2`, les services de chaque pôle vont deux par rangée ; l’arbre ne trace sa barre qu’au-dessus de la première rangée, réservez donc cette variante aux pôles à deux ou quatre services.
+
+```diff
+-  groups: [{ name: 'servicios', kind: 'grid', columns: 3, columnGap: mm(4), rowGap: mm(4),
++  groups: [{ name: 'servicios', kind: 'grid', columns: 2, columnGap: mm(4), rowGap: mm(4),
+```
+
+### Arrondir les angles du tronc
+
+`radius` arrondit les coudes d’un `elbow` et d’un arbre : l’assistant `line()` donne 2,5 mm à chaque connecteur ; avec `radius: mm(0)`, l’organigramme passe à angles droits.
+
+## Erreurs fréquentes
+
+- Un élément de grille forme un bloc à part : le texte d’une fiche photo ne lui appartient que si son `:::frame{slot="pie"}` est écrit à l’intérieur du `:::frame{slot="foto"}` de la fiche.
+- Un connecteur de module qui nomme un bloc de la page ne se dessine que sur les pages qui ont ce bloc ; ailleurs il est omis, et le journal de recomposition indique `connectorDropped`.
+- Un onglet joint se pose sur le bord de l’encadré et prend son fond : donnez à son texte une `color` sombre, car une étiquette blanche sur un encadré clair ne se lit pas.

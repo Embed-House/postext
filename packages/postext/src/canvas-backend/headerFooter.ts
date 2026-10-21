@@ -268,6 +268,20 @@ export function renderPathBlock(ctx: CanvasRenderingContext2D, block: VDTDesignP
   for (const m of block.markers ?? []) {
     const o = pathMarkerOutline(m);
     ctx.beginPath();
+    if (o.kind === 'ring' || o.kind === 'bar') {
+      // A ring or a bar (#1079): stroked solid in the line's width.
+      if (o.kind === 'ring') ctx.arc(o.cx, o.cy, o.r, 0, Math.PI * 2);
+      else {
+        ctx.moveTo(o.points[0].x, o.points[0].y);
+        ctx.lineTo(o.points[1].x, o.points[1].y);
+      }
+      ctx.strokeStyle = m.color;
+      ctx.lineWidth = o.widthPx;
+      ctx.lineCap = 'butt';
+      ctx.setLineDash([]);
+      ctx.stroke();
+      continue;
+    }
     if (o.kind === 'dot') {
       ctx.arc(o.cx, o.cy, o.r, 0, Math.PI * 2);
     } else {

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "29cb39d4faab3b408e850c18040c3f784c95cac02a5e47a7fc9fb473daa8c0d4",
+  "sourceHash": "9ba737e20fbf9524ac7438db79d235d3e623c2c4abd2861a1f070257ed973b9b",
   "engine": {
-    "postext": "1.48.0",
-    "postextPdf": "1.48.0",
+    "postext": "1.48.1",
+    "postextPdf": "1.48.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-20T20:38:59.816Z",
+  "capturedAt": "2026-10-21T03:47:30.926Z",
   "variants": {
     "en": {
       "hash8": "24ab87f5",
       "vdtHash": "fae03d32b06e40bc17dad1fdd761184265e74696",
       "timings": {
-        "importMs": 36972,
-        "fontsMs": 942,
-        "buildMs": 43,
-        "totalMs": 40763,
+        "importMs": 6725,
+        "fontsMs": 828,
+        "buildMs": 38,
+        "totalMs": 9424,
         "builds": 2
       },
       "specimen": {
@@ -38,7 +38,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -567,24 +567,9 @@
             "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 40.8 s to finish (warning at 30 s)"
-          },
-          {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
@@ -593,10 +578,10 @@
       "hash8": "36eafb2e",
       "vdtHash": "91bec0362f1d6d7e1f289c28d9fe106ca096e678",
       "timings": {
-        "importMs": 36975,
-        "fontsMs": 926,
-        "buildMs": 48,
-        "totalMs": 40764,
+        "importMs": 6832,
+        "fontsMs": 823,
+        "buildMs": 38,
+        "totalMs": 9427,
         "builds": 2
       },
       "specimen": {
@@ -617,7 +602,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -1141,24 +1126,9 @@
             "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 106 line, 1 text"
           },
           {
-            "check": "C21",
-            "severity": "warn",
-            "detail": "the pen took 40.8 s to finish (warning at 30 s)"
-          },
-          {
             "check": "C35",
             "severity": "info",
             "detail": "4 paragraphs set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “Ayudamos a limpiar la orilla cuando lo organiza …”, p. 9 −10‰ “Ahora el curso bajo, tranquilo, es un lugar para…”, p. 4 −5‰ “Llueve y nieva en las montañas. Parte del agua b…”, p. 6 −5‰ “El río Aldara mide 94 kilómetros. Nace en la sie…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
@@ -1167,10 +1137,10 @@
       "hash8": "9986a88f",
       "vdtHash": "b5aa30b769fbba04a10ef6eea708937e3559d8d3",
       "timings": {
-        "importMs": 5404,
-        "fontsMs": 968,
-        "buildMs": 33,
-        "totalMs": 9284,
+        "importMs": 3512,
+        "fontsMs": 326,
+        "buildMs": 34,
+        "totalMs": 5611,
         "builds": 2
       },
       "specimen": {
@@ -1191,7 +1161,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -1708,28 +1678,18 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 105 line, 1 text"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "3a6a4059",
-      "vdtHash": "d428e9b499327614d6ece5718a424a060cac9f02",
+      "hash8": "08eafa24",
+      "vdtHash": "a184f481f8f19bd942ca30f6c6901746789866cb",
       "timings": {
-        "importMs": 6965,
-        "fontsMs": 3169,
-        "buildMs": 134,
-        "totalMs": 13505,
+        "importMs": 2553,
+        "fontsMs": 4924,
+        "buildMs": 138,
+        "totalMs": 8964,
         "builds": 1
       },
       "specimen": {
@@ -1750,7 +1710,7 @@
           "ZCOOL KuaiLe"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -1838,7 +1798,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 67866,
+          "bytes": 60848,
           "alt": "第 8 页：人与河流。"
         },
         {
@@ -1849,7 +1809,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 70036,
+          "bytes": 54006,
           "alt": "第 9 页。"
         }
       ],
@@ -1890,18 +1850,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1864328,
+        "bytes": 1864541,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2106737,
+        "bytes": 2106734,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "b082c066a1d76980",
-            "lines": "88f0fd505abd0d3e"
+            "hash": "ac1cccc9bd84b4f5",
+            "lines": "30514f4c049caa56"
           }
         ]
       },
@@ -2266,12 +2226,7 @@
           {
             "check": "C20",
             "severity": "info",
-            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.12 MB: state 1.15 MB"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.10 MB: state 1.1 MB"
           },
           {
             "check": "vdt",
@@ -2285,10 +2240,10 @@
       "hash8": "fb5a9ff2",
       "vdtHash": "337d795aabdf191d67b1b6b317304f3c5b44f89e",
       "timings": {
-        "importMs": 5677,
-        "fontsMs": 813,
-        "buildMs": 142,
-        "totalMs": 9255,
+        "importMs": 4118,
+        "fontsMs": 939,
+        "buildMs": 130,
+        "totalMs": 6657,
         "builds": 1
       },
       "specimen": {
@@ -2309,7 +2264,7 @@
           "Noto Naskh Arabic"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -2830,28 +2785,18 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.19 MB: state 1.2 MB"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "ed01d35d",
-      "vdtHash": "94568057bc9585066e8f5eb37eb5711c6a608a64",
+      "hash8": "5b677eba",
+      "vdtHash": "17c52dad070b64a6fa01af9d62884bfcf175a0fb",
       "timings": {
-        "importMs": 6944,
-        "fontsMs": 3687,
-        "buildMs": 135,
-        "totalMs": 12652,
+        "importMs": 2566,
+        "fontsMs": 4667,
+        "buildMs": 130,
+        "totalMs": 8736,
         "builds": 1
       },
       "specimen": {
@@ -2872,7 +2817,7 @@
           "Zen Maru Gothic"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -2960,7 +2905,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 71470,
+          "bytes": 64244,
           "alt": "8ページ：人びとと川。"
         },
         {
@@ -2971,7 +2916,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 73194,
+          "bytes": 56080,
           "alt": "9ページ。"
         }
       ],
@@ -3012,18 +2957,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1881815,
+        "bytes": 1881552,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2107554,
+        "bytes": 2107551,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "e07eefc7010a7643",
-            "lines": "975b7adb637eb86b"
+            "hash": "94377ce31d60373d",
+            "lines": "22e851f356abae33"
           }
         ],
         "warnings": [
@@ -3393,17 +3338,12 @@
           {
             "check": "C40",
             "severity": "info",
-            "detail": "every element came back to its source: 60 block, 40 frame, 7 label, 97 line, 1 text"
+            "detail": "every element came back to its source: 60 block, 40 frame, 7 label, 95 line, 1 text"
           },
           {
             "check": "C20",
             "severity": "info",
-            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.14 MB: state 1.15 MB"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.12 MB: state 1.15 MB"
           },
           {
             "check": "vdt",
@@ -3417,10 +3357,10 @@
       "hash8": "77ed110d",
       "vdtHash": "8ec86d48414bc40a36359763872e81163075375e",
       "timings": {
-        "importMs": 5514,
-        "fontsMs": 859,
-        "buildMs": 34,
-        "totalMs": 8540,
+        "importMs": 3611,
+        "fontsMs": 245,
+        "buildMs": 33,
+        "totalMs": 5438,
         "builds": 2
       },
       "specimen": {
@@ -3441,7 +3381,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -3968,16 +3908,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ “No médio curso, os agricultores abrem pequenos c…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
@@ -3986,10 +3916,10 @@
       "hash8": "1c2d5099",
       "vdtHash": "14504815c39a41dda92794b93618057079c54ce3",
       "timings": {
-        "importMs": 4877,
-        "fontsMs": 1302,
-        "buildMs": 50,
-        "totalMs": 9756,
+        "importMs": 3921,
+        "fontsMs": 371,
+        "buildMs": 37,
+        "totalMs": 6418,
         "builds": 2
       },
       "specimen": {
@@ -4010,7 +3940,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -4542,16 +4472,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Tiens une éponge mouillée au-dessus d’un plateau…”, p. 8 −10‰ “Les gens se sont toujours installés près des riv…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
@@ -4560,10 +4480,10 @@
       "hash8": "c1765db0",
       "vdtHash": "8a91fd6d3cd0731750545bba60e30c3b71b7e27f",
       "timings": {
-        "importMs": 5253,
-        "fontsMs": 1119,
-        "buildMs": 36,
-        "totalMs": 8320,
+        "importMs": 3912,
+        "fontsMs": 697,
+        "buildMs": 34,
+        "totalMs": 6077,
         "builds": 2
       },
       "specimen": {
@@ -4584,7 +4504,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -5116,16 +5036,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 8 −5‰ “Menschen haben sich schon immer gern an Flüssen …”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }
@@ -5134,10 +5044,10 @@
       "hash8": "f4edc502",
       "vdtHash": "37172b606872ee63c6875fcb61be6a378d3b4a7f",
       "timings": {
-        "importMs": 5392,
-        "fontsMs": 1051,
-        "buildMs": 39,
-        "totalMs": 10328,
+        "importMs": 3481,
+        "fontsMs": 1899,
+        "buildMs": 38,
+        "totalMs": 6968,
         "builds": 2
       },
       "specimen": {
@@ -5158,7 +5068,7 @@
           "Nunito"
         ],
         "pages": 9,
-        "ownLines": 299
+        "ownLines": 298
       },
       "pages": [
         {
@@ -5685,16 +5595,6 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 7 −5‰ “Il pendio è ripido. L’acqua è fredda, limpida e …”, p. 8 −5‰ “Un fiume resta pulito solo se ce ne prendiamo cu…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
           }
         ]
       }

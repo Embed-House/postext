@@ -748,7 +748,13 @@ decoration: {
       <td><code>color</code></td>
       <td><code>ColorValue</code></td>
       <td>el color principal</td>
-      <td>Un color vinculat a la paleta segueix la <code>palette</code> de la plantilla, la del bloc de pàgina i la d'una part, com fan els filets.</td>
+      <td>Un color vinculat a la paleta segueix la <code>palette</code> de la plantilla, la del bloc de pàgina i la d'una part, com fan els filets. Un color amb canal alfa (<code>#rrggbbaa</code>) pinta la línia i les seves marques translúcides, i deixa veure la imatge que hi ha a sota (des de postext 1.49).</td>
+    </tr>
+    <tr>
+      <td><code>opacity</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Com d'opaques són la línia i les seves marques, de <code>0</code> a <code>1</code>, multiplicat per l'alfa del mateix color. Va a part del color, de manera que un color vinculat a la paleta continua vinculat. Una línia amb orla són dos connectors: un d'ample i pàl·lid amb <code>opacity: 0.6</code> sota un altre de discontinu. Des de postext 1.49.</td>
     </tr>
     <tr>
       <td><code>width</code>, <code>dash</code></td>
@@ -758,15 +764,21 @@ decoration: {
     </tr>
     <tr>
       <td><code>startCap</code>, <code>endCap</code></td>
-      <td><code>'none' | 'dot' | 'arrow'</code></td>
+      <td><code>'none' | 'dot' | 'arrow' | 'ring' | 'bar'</code></td>
       <td><code>'none'</code></td>
-      <td>Una marca a <code>from</code> i a cada <code>to</code>: un punt ple centrat a l'extrem, o una punta de fletxa amb la punta a l'extrem.</td>
+      <td>Una marca a <code>from</code> i a cada <code>to</code>: un punt ple centrat a l'extrem, o una punta de fletxa amb la punta a l'extrem. <code>'ring'</code>: un punt buit centrat a l'extrem, traçat amb el gruix de la línia, que arriba fins a la seva vora; <code>'bar'</code>: un traç travessat a l'extrem, del gruix de la línia (tots dos des de postext 1.49).</td>
     </tr>
     <tr>
       <td><code>capSize</code></td>
       <td><code>Dimension</code></td>
       <td>3 × <code>width</code></td>
-      <td>L'amplada d'un punt, o la llargada d'una punta de fletxa.</td>
+      <td>L'amplada d'un punt o d'una anella, la llargada d'una punta de fletxa o d'una barra.</td>
+    </tr>
+    <tr>
+      <td><code>over</code></td>
+      <td><code>boolean</code></td>
+      <td>un connector amb un extrem <code>anchor</code> es pinta sobre els marcs, els altres sota</td>
+      <td>Pinta la línia després de tots els marcs de la pàgina (<code>true</code>) o amb la decoració, sota els marcs (<code>false</code>). Sense valor, un connector amb un extrem <code>anchor</code> es pinta a sobre, de manera que una línia que assenyala dins d'una imatge es veu sobre el marc de la imatge; una línia entre marcs queda a sota.</td>
     </tr>
     <tr>
       <td><code>pin</code></td>
@@ -825,12 +837,6 @@ Cada extrem (`ConnectorEnd`) indica una caixa i un punt d'un dels seus costats:
       <td>cap</td>
       <td>Una àncora de la imatge que conté el marc: l'extrem és aquest punt de la imatge, tenint en compte el retall, la zona segura i l'escala, com el d'un rètol, en lloc d'un punt del costat del marc. <code>at</code> no es llegeix; <code>side</code> diu per on arriba la línia (per defecte, des de l'altre extrem).</td>
     </tr>
-    <tr>
-      <td><code>over</code></td>
-      <td><code>boolean</code></td>
-      <td>un connector amb un extrem <code>anchor</code> es pinta sobre els marcs, els altres sota</td>
-      <td>Pinta la línia després de tots els marcs de la pàgina (<code>true</code>) o amb la decoració, sota els marcs (<code>false</code>). Sense valor, un connector amb un extrem <code>anchor</code> es pinta a sobre, de manera que una línia que assenyala dins d'una imatge es veu sobre el marc de la imatge; una línia entre marcs queda a sota.</td>
-    </tr>
   </tbody>
 </table>
 
@@ -849,7 +855,7 @@ decoration: { elements: [
 ] },
 ```
 
-**Revisions.** Un extrem amb un `to` que no indica res és `frameAnchorUnknown` (a `…/from/to` o `…/to/<k>/to`) i es deixa fora; `[*]` només és vàlid a `to` i en un marc repetit. Un `anchor` que cap imatge del marc no té és `labelAnchorUnknown`, amb l'id del connector. Una paraula fora de les opcions de `routing`, `startCap`, `endCap` o `side`, i un `at` fora de l'interval de 0 a 1, són `unknownConfigValue`.
+**Revisions.** Un extrem amb un `to` que no indica res és `frameAnchorUnknown` (a `…/from/to` o `…/to/<k>/to`) i es deixa fora; `[*]` només és vàlid a `to` i en un marc repetit. Un `anchor` que cap imatge del marc no té és `labelAnchorUnknown`, amb l'id del connector. Una paraula fora de les opcions de `routing`, `startCap`, `endCap` o `side`, i un `at` fora de l'interval de 0 a 1, són `unknownConfigValue`. Un `opacity` que no és un nombre de 0 a 1 també és `unknownConfigValue` (un nombre fora de l'interval s'hi ajusta).
 
 ## Estils de rètol
 
@@ -971,9 +977,9 @@ labelStyles: [
     </tr>
     <tr>
       <td><code>leader</code></td>
-      <td><code>&#123; color?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
+      <td><code>&#123; color?, opacity?, width?, dash?, startCap?, endCap?, capSize?, routing? &#125;</code></td>
       <td>cap</td>
-      <td>L'aspecte de les línies de referència dels rètols d'aquest estil: la línia des de la caixa d'un rètol fins al punt de la seva àncora. Per defecte, el color del rètol, un gruix de <code>0.75pt</code>, <code>endCap: 'dot'</code> al punt, cap <code>startCap</code>, un <code>capSize</code> de tres vegades el gruix i <code>routing</code> <code>'straight'</code> (o <code>'elbow'</code>: surt de la caixa en angle recte i fa un sol gir fins al punt). Un rètol apartat del seu punt (<code>labelAt</code>) amb un estil que té <code>leader</code> en porta una. Des de postext 1.48.</td>
+      <td>L'aspecte de les línies de referència dels rètols d'aquest estil: la línia des de la caixa d'un rètol fins al punt de la seva àncora. Per defecte, el color del rètol, un gruix de <code>0.75pt</code>, <code>endCap: 'dot'</code> al punt, cap <code>startCap</code>, un <code>capSize</code> de tres vegades el gruix i <code>routing</code> <code>'straight'</code> (o <code>'elbow'</code>: surt de la caixa en angle recte i fa un sol gir fins al punt). Un rètol apartat del seu punt (<code>labelAt</code>) amb un estil que té <code>leader</code> en porta una. Des de postext 1.48. <code>startCap</code> i <code>endCap</code> admeten les marques del connector, <code>'ring'</code> i <code>'bar'</code> incloses, i <code>opacity</code> (de 0 a 1) o un color amb canal alfa fan translúcida la línia (des de postext 1.49).</td>
     </tr>
   </tbody>
 </table>

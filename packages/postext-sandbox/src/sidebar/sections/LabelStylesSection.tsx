@@ -153,6 +153,8 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
     { value: 'none', label: labels.leaderCapNone },
     { value: 'dot', label: labels.leaderCapDot },
     { value: 'arrow', label: labels.leaderCapArrow },
+    { value: 'ring', label: labels.connectorCapRing },
+    { value: 'bar', label: labels.connectorCapBar },
   ];
   const dashOptions = [
     { value: 'solid', label: labels.leaderDashSolid },
@@ -445,6 +447,21 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
               onReset={() => setLeader({ color: undefined })}
               fieldId={`labelStyle-${style.id}-leaderColor`}
             />
+            <NumberInput
+              label={labels.connectorOpacity}
+              tooltip={labels.connectorOpacityTooltip}
+              value={Math.round((leader.opacity ?? 1) * 100)}
+              min={0}
+              max={100}
+              step={5}
+              suffix="%"
+              onChange={(v) => {
+                const o = Math.max(0, Math.min(100, v)) / 100;
+                setLeader({ opacity: o >= 1 ? undefined : o });
+              }}
+              isDefault={leaderUnset('opacity')}
+              onReset={() => setLeader({ opacity: undefined })}
+            />
             <DimensionInput
               label={labels.leaderWidth}
               value={leader.width ?? { value: 0.75, unit: 'pt' }}
@@ -468,7 +485,6 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
               label={labels.leaderStartCap}
               value={leader.startCap ?? 'none'}
               options={capOptions}
-              variant="segmented"
               onChange={(v) => setLeader({ startCap: v as LineCap })}
               isDefault={leaderUnset('startCap')}
               onReset={() => setLeader({ startCap: undefined })}
@@ -477,7 +493,6 @@ function LabelStyleCard({ style, paragraphStyles, bodyFamily, bodyWeight, bodyCo
               label={labels.leaderEndCap}
               value={leader.endCap ?? 'dot'}
               options={capOptions}
-              variant="segmented"
               onChange={(v) => setLeader({ endCap: v as LineCap })}
               isDefault={leaderUnset('endCap')}
               onReset={() => setLeader({ endCap: undefined })}
