@@ -41,12 +41,43 @@ on:
 permissions:
   contents: write
 
+# One release at a time: a run waits for the one in progress, and a newer
+# push replaces a run still waiting. Never cancel one in progress: it may be
+# half-way through publishing.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
+  # A run whose commit is no longer the tip of main is stale: a newer push
+  # has its own run, which releases everything up to it. Releasing the old
+  # commit after it would publish older code under a newer patch version and
+  # move npm's `latest` back (1.53.1 after 1.54.0, 2026-10-22).
+  gate:
+    name: Current commit
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'chore: release')"
+    outputs:
+      current: ${{ steps.tip.outputs.current }}
+    steps:
+      - id: tip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tip=$(gh api "repos/${{ github.repository }}/commits/main" --jq .sha)
+          if [ "$tip" = "${{ github.sha }}" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::main is at $tip, not ${{ github.sha }}: the newer run releases it; this one stops."
+          fi
+
   release:
     name: Version & Publish
     runs-on: ubuntu-latest
-    # Skip release commits to avoid infinite loops
-    if: "!contains(github.event.head_commit.message, 'chore: release')"
+    needs: gate
+    # Skip release commits to avoid infinite loops, and stale runs (gate)
+    if: needs.gate.outputs.current == 'true'
     outputs:
       version: ${{ steps.version.outputs.version }}
 
