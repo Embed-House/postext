@@ -1,0 +1,163 @@
+{/* docs/music-en.mdx */}
+
+export const metadata = {
+  title: 'Music notation',
+  sidebarTitle: 'Music notation',
+  description: 'How Postext sets music in a book: notation written as text in ABC, MusicXML, MEI or Humdrum, engraved at the width of the column, broken into systems that run on over columns and pages, numbered music examples as resources, the score style, the outputs, and how a music publisher brings its scores in',
+  lang: 'en',
+  lastUpdated: '2026-10-22',
+  readingTime: '12 min',
+  order: 34,
+  plainSummary: "This page explains how to put music in a Postext book. The music is written as text, in one of the formats musicians and notation programs already use, and Postext draws the staves, notes and words from it. A long piece is cut into lines of music that continue on the next column or page like a paragraph. A music example can also be numbered and captioned like a figure. The look of every score (the size of the staves, the music font, the bar numbers) is set once in the configuration. The page ends with the way a music publisher can work with Postext and the limits that remain.",
+};
+
+# Music notation
+
+**The music is text in the book; its look is a setting.**
+
+A score in Postext is written as notation, not drawn. A fenced block in the chapter holds the music in one of four text formats, and the engine engraves it with [Verovio](https://www.verovio.org), the engraving library of the Music Encoding Initiative. The score is engraved at the width of its column and cut into **systems**, the lines of music a reader follows from left to right. Each system is placed as a block of its own, so a score longer than the room left on a page goes on at the head of the next column, and a score never breaks inside a system. Staff size, music font, bar numbers and spacing come from the [`scoreStyle` section of the configuration](/en/docs/configuration-resources#score-style), so a whole book changes its look by changing one setting.
+
+Music is opt-in: a document with no notation fence lays out as before, and the engraver (about 3.7 MB) is loaded only by books that have music.
+
+## Formats
+
+<table>
+  <thead>
+    <tr>
+      <th>Fence</th>
+      <th>Format</th>
+      <th>Best for</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#96;&#96;&#96;abc</code></td><td>ABC 2.1</td><td>Melodies and one-voice examples, songs with words under the notes. Compact and easy to write by hand. The engraver reads <strong>one voice</strong> of an ABC tune: write parts in one of the other formats.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;musicxml</code></td><td>MusicXML 4.0</td><td>Anything exported from Dorico, Sibelius, Finale or MuseScore. Long, so better kept in a resource file.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;mei</code></td><td>MEI</td><td>Critical and scholarly editions, early music.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;humdrum</code>, <code>&#96;&#96;&#96;kern</code></td><td>Humdrum (kern)</td><td>Chorales and four-part harmony, analysis examples: one tab-separated column per voice, the lowest first.</td></tr>
+  </tbody>
+</table>
+
+A plain <code>&#96;&#96;&#96;xml</code> fence stays a code listing. A notation fence with `{listing}` stays a listing too, to show the source of a tune in a tutorial.
+
+## A score in the text
+
+````md
+The perfect authentic cadence closes on the tonic in the soprano:
+
+```humdrum {alt="Chorale phrase in G major ending on a perfect authentic cadence"}
+**kern	**kern	**kern	**kern
+*clefF4	*clefGv2	*clefG2	*clefG2
+*k[f#]	*k[f#]	*k[f#]	*k[f#]
+*M4/4	*M4/4	*M4/4	*M4/4
+4GG	4B	4d	4b
+4D	4d	4f#	4a
+=	=	=	=
+1GG	1B	1d	1g
+==	==	==	==
+*-	*-	*-	*-
+```
+
+The half cadence stops on the dominant instead.
+````
+
+A melody with words, in ABC:
+
+````md
+```abc
+X:1
+T:Evening hymn
+M:3/4
+L:1/4
+K:F
+c | A2 B | c2 A | G2 F | E2 c | A2 B | c2 A | G2 E | F2 |]
+w: Now the day is o-ver, night is draw-ing nigh, sha-dows of the eve-ning steal a-cross the sky.
+```
+````
+
+The fence takes two attributes:
+
+- `alt="…"`: what the score is, for screen readers, the tagged PDF and the EPUB. Unset, the title and composer written in the notation (ABC `T:` and `C:`, MusicXML `<work-title>` and `<creator type="composer">`) are read out. The title is not printed: give it in the text or a caption.
+- `style="…"`: a named score style of the book (`scoreStyles`), such as one with smaller staves for examples in a box.
+
+A score in the text is not numbered and has no caption, like a display formula. It takes the score style's margins above and below, the system gap between two systems, and the text after it goes back on the baseline grid.
+
+## Numbered music examples
+
+A music example that the text cites ("see Example 3.2") is a resource of kind `score`, set like a figure: numbered, captioned, floated or placed where it stands, and cited with `:ref`.
+
+```json
+{
+  "id": "ex-cadence",
+  "typeId": "example",
+  "kind": "score",
+  "caption": "Perfect authentic cadence in G major",
+  "score": { "format": "musicxml", "source": "<?xml version=\"1.0\"?>…", "styleId": "small" }
+}
+```
+
+```md
+The cadence in :ref{id="ex-cadence"} closes the phrase.
+
+::resource{id="ex-cadence"}
+```
+
+A resource typed `example` is numbered with the built-in **Example** type, in the document's language: Example, Ejemplo, Exemple, Notenbeispiel, Esempio, Exemplo, 谱例, 譜例, مثال. The type is added to a book's [resource types](/en/docs/configuration-resources#resource-types) when a resource uses it; define a type of your own for another name. In a bundle (`preset.json`), the resource may point to a notation file instead of carrying its text:
+
+```json
+{ "id": "ex-cadence", "typeId": "example", "kind": "score", "file": "resources/ex-cadence.musicxml" }
+```
+
+A file ending in `.abc`, `.musicxml`, `.mei` or `.krn` is read as a score whatever the `kind` says. The [command line](/en/docs/command-line) reads the same files from a `--resources` folder as music examples, and the Sandbox's Resources panel creates one with **New › New score** or from a dropped file.
+
+A score resource is kept whole: it floats or is set as one block. A piece longer than a page belongs in a fence, which breaks between systems.
+
+## The look of a score
+
+Every score follows `scoreStyle`; a named style laid over it changes only what it sets:
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: 'Small examples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+- **Staff size**: the height of a five-line staff. School books use 6 to 7 mm, textbooks and methods 5 to 6 mm, examples in the running text 4 to 5 mm.
+- **Music font**: Bravura (the traditional engraved look), Leland (lighter), Petaluma (handwritten), Leipzig and Gootville.
+- **Text font**: lyrics, tempo marks and directions, in the body font unless set. A word wider in this font than in the engraver's Times is set smaller, so syllables never run into each other.
+- **Spacing**, **bar numbers**, **system gap**, **margins** and **ink**.
+- **Systems kept together** (`minSystemsAtBreak`): the fewest systems a score leaves at the foot of a column or carries over. With 2, a single system is never left alone; a score with fewer than four systems moves whole.
+
+Every field, its type and default are in [Configuration › Score style](/en/docs/configuration-resources#score-style). The Sandbox edits them in **Design › Figures & tables › Music scores** and **Score styles**.
+
+## In every output
+
+- **Canvas and HTML**: each system is painted as vector paths and words in the score's ink; the HTML viewer names the score with its alt text.
+- **PDF**: vector drawings, the words in the book's embedded faces. In a tagged PDF each score is a `Figure` with its alt text.
+- **EPUB**: a reflowable EPUB shows the systems as inline SVG as wide as the reading column, read as one image; a fixed-layout EPUB keeps the printed pages.
+- **Word**: an exported document keeps the notation fence as written, like a code listing, so the score comes back when the document is imported again.
+
+## Working with a music publisher
+
+Postext typesets the book around the music; the notation software stays where the music is written.
+
+1. Engrave or correct the music in Dorico, Sibelius, Finale or MuseScore, and export each example as MusicXML (`.musicxml`, uncompressed).
+2. Put the files in the book's resources and type them `example`. Short one-voice examples can be written in ABC straight in the chapter.
+3. Measure the staff size and match the music font of the house style in `scoreStyle`; examples in boxes or margins get a named style.
+4. Lay out the book and check the page breaks. The bars per system follow the column width, the staff size and the spacing.
+
+The [postext-port skill](/en/docs/skill) follows the same steps when it ports a music textbook, a method or a songbook.
+
+## Limits
+
+- Systems are filled to the width of the column: system breaks written in the notation are not kept yet.
+- The ABC reader takes one voice.
+- Compressed MusicXML (`.mxl`) must be unzipped first.
+- A whole edition of a score (an orchestral score, parts, page turns planned bar by bar) is the work of notation software, not of a book typesetter.

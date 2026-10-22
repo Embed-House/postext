@@ -1,0 +1,163 @@
+{/* docs/music-ca.mdx */}
+
+export const metadata = {
+  title: 'Notació musical',
+  sidebarTitle: 'Notació musical',
+  description: "Com compon Postext música dins d'un llibre: notació escrita com a text en ABC, MusicXML, MEI o Humdrum, gravada a l'amplada de la columna i dividida en sistemes que continuen per columnes i pàgines, exemples musicals numerats com a recursos, l'estil de partitura, les sortides i com hi porta les partitures una editorial de música",
+  lang: 'ca',
+  lastUpdated: '2026-10-22',
+  readingTime: '12 min',
+  order: 34,
+  plainSummary: "Aquesta pàgina explica com posar música en un llibre de Postext. La música s'escriu com a text, en un dels formats que ja fan servir els músics i els programes de notació, i Postext en dibuixa els pentagrames, les notes i la lletra. Una peça llarga es talla en línies de música que continuen a la columna o la pàgina següent, com un paràgraf. Un exemple musical també es pot numerar i portar peu, com una figura. L'aspecte de totes les partitures (la mida del pentagrama, la font musical, els números de compàs) es fixa una sola vegada a la configuració. La pàgina acaba amb la manera de treballar d'una editorial de música amb Postext i els límits que queden.",
+};
+
+# Notació musical
+
+**La música és text al llibre; el seu aspecte és un ajust.**
+
+A Postext una partitura s'escriu com a notació, no es dibuixa. Un bloc delimitat del capítol conté la música en un de quatre formats de text, i el motor la grava amb [Verovio](https://www.verovio.org), la biblioteca de gravat de la Music Encoding Initiative. La partitura es grava a l'amplada de la seva columna i es talla en **sistemes**, les línies de música que el lector segueix d'esquerra a dreta. Cada sistema es col·loca com un bloc propi: una partitura més llarga que l'espai que queda en una pàgina continua al començament de la columna següent, i mai no es talla dins d'un sistema. La mida del pentagrama, la font musical, els números de compàs i l'espaiat surten de la [secció `scoreStyle` de la configuració](/ca/docs/configuration-resources#estil-de-partitura), de manera que un llibre sencer canvia d'aspecte canviant un ajust.
+
+La música és opcional: un document sense blocs de notació es compon com abans, i el gravador (uns 3,7 MB) només el carreguen els llibres que tenen música.
+
+## Formats
+
+<table>
+  <thead>
+    <tr>
+      <th>Bloc</th>
+      <th>Format</th>
+      <th>Indicat per a</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#96;&#96;&#96;abc</code></td><td>ABC 2.1</td><td>Melodies i exemples a una veu, cançons amb la lletra sota les notes. Compacte i fàcil d'escriure a mà. El gravador llegeix <strong>una veu</strong> d'una peça en ABC: escriu les parts en un altre dels formats.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;musicxml</code></td><td>MusicXML 4.0</td><td>Qualsevol cosa exportada des de Dorico, Sibelius, Finale o MuseScore. És llarg, així que convé desar-lo en un fitxer de recurs.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;mei</code></td><td>MEI</td><td>Edicions crítiques i acadèmiques, música antiga.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;humdrum</code>, <code>&#96;&#96;&#96;kern</code></td><td>Humdrum (kern)</td><td>Corals i harmonia a quatre veus, exemples d'anàlisi: una columna separada per tabuladors per veu, la més greu primer.</td></tr>
+  </tbody>
+</table>
+
+Un bloc <code>&#96;&#96;&#96;xml</code> continua sent un llistat de codi. Un bloc de notació amb `{listing}` també queda com a llistat, per mostrar el codi d'una peça en un tutorial.
+
+## Una partitura dins del text
+
+````md
+La cadència perfecta tanca en la tònica a la veu superior:
+
+```humdrum {alt="Frase de coral en sol major que acaba en una cadència perfecta"}
+**kern	**kern	**kern	**kern
+*clefF4	*clefGv2	*clefG2	*clefG2
+*k[f#]	*k[f#]	*k[f#]	*k[f#]
+*M4/4	*M4/4	*M4/4	*M4/4
+4GG	4B	4d	4b
+4D	4d	4f#	4a
+=	=	=	=
+1GG	1B	1d	1g
+==	==	==	==
+*-	*-	*-	*-
+```
+
+La semicadència, en canvi, s'atura a la dominant.
+````
+
+Una melodia amb lletra, en ABC:
+
+````md
+```abc
+X:1
+T:Himne del vespre
+M:3/4
+L:1/4
+K:F
+c | A2 B | c2 A | G2 F | E2 c | A2 B | c2 A | G2 E | F2 |]
+w: Ja se'n va la tar-da, ja ve cap a la nit, l'om-bra del cap-ves-pre co-breix tot el cel.
+```
+````
+
+El bloc admet dos atributs:
+
+- `alt="…"`: què és la partitura, per als lectors de pantalla, el PDF etiquetat i l'EPUB. Sense aquest atribut es llegeixen el títol i el compositor escrits a la notació (`T:` i `C:` en ABC; `<work-title>` i `<creator type="composer">` en MusicXML). El títol no s'imprimeix: posa'l al text o en un peu.
+- `style="…"`: un estil de partitura amb nom del llibre (`scoreStyles`), per exemple un de pentagrama més petit per als exemples d'un requadre.
+
+Una partitura dins del text no es numera ni porta peu, com una fórmula destacada. Pren els marges del seu estil a sobre i a sota, l'espai entre sistemes entre dos sistemes, i el text que la segueix torna a la retícula de línies base.
+
+## Exemples musicals numerats
+
+Un exemple musical que el text cita («vegeu l'exemple 3.2») és un recurs de tipus `score` que es compon com una figura: numerat, amb peu, flotant o al seu lloc, i citat amb `:ref`.
+
+```json
+{
+  "id": "ex-cadencia",
+  "typeId": "example",
+  "kind": "score",
+  "caption": "Cadència perfecta en sol major",
+  "score": { "format": "musicxml", "source": "<?xml version=\"1.0\"?>…", "styleId": "petit" }
+}
+```
+
+```md
+La cadència de :ref{id="ex-cadencia"} tanca la frase.
+
+::resource{id="ex-cadencia"}
+```
+
+Un recurs de tipus `example` es numera amb el tipus **Exemple** que porta Postext, en la llengua del document: Example, Ejemplo, Exemple, Notenbeispiel, Esempio, Exemplo, 谱例, 譜例, مثال. El tipus s'afegeix als [tipus de recurs](/ca/docs/configuration-resources#tipus-de-recurs) del llibre quan un recurs el fa servir; defineix-ne un de propi si vols un altre nom. En un paquet (`preset.json`), el recurs pot apuntar a un fitxer de notació en lloc de portar-ne el text:
+
+```json
+{ "id": "ex-cadencia", "typeId": "example", "kind": "score", "file": "resources/ex-cadencia.musicxml" }
+```
+
+Un fitxer acabat en `.abc`, `.musicxml`, `.mei` o `.krn` es llegeix com a partitura digui el que digui `kind`. La [línia d'ordres](/ca/docs/command-line) llegeix aquests mateixos fitxers d'una carpeta `--resources` com a exemples musicals, i el tauler Recursos del Sandbox en crea un amb **Nou › Partitura nova** o a partir d'un fitxer que s'hi deixi anar.
+
+Un recurs de partitura es manté sencer: flota o es col·loca com un sol bloc. Una peça més llarga que una pàgina va en un bloc de notació, que es talla entre sistemes.
+
+## L'aspecte d'una partitura
+
+Totes les partitures segueixen `scoreStyle`; un estil amb nom posat a sobre només canvia el que defineix:
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'petit', name: 'Exemples petits', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+- **Mida del pentagrama**: l'alçada de les cinc línies. Els llibres escolars fan servir de 6 a 7 mm; els llibres de text i els mètodes, de 5 a 6 mm; els exemples dins del text, de 4 a 5 mm.
+- **Font musical**: Bravura (l'aspecte gravat tradicional), Leland (més lleugera), Petaluma (manuscrita), Leipzig i Gootville.
+- **Font del text**: lletra, indicacions de tempo i d'expressió, en la font del text principal si no se'n fixa una altra. Una paraula més ampla en aquesta font que en la Times del gravador es compon més petita, de manera que les síl·labes mai no es trepitgen.
+- **Espaiat**, **números de compàs**, **espai entre sistemes**, **marges** i **tinta**.
+- **Sistemes que van junts** (`minSystemsAtBreak`): el mínim de sistemes que una partitura deixa al peu d'una columna o passa a la següent. Amb 2, un sistema mai no queda sol; una partitura de menys de quatre sistemes passa sencera.
+
+Tots els camps, amb el tipus i el valor per defecte, són a [Configuració › Estil de partitura](/ca/docs/configuration-resources#estil-de-partitura). El Sandbox els edita a **Disseny › Figures i taules › Partitures** i **Estils de partitura**.
+
+## A totes les sortides
+
+- **Canvas i HTML**: cada sistema es pinta com a traçats vectorials i text en la tinta de la partitura; el visor HTML anomena la partitura amb el text alternatiu.
+- **PDF**: dibuixos vectorials, amb el text en les fonts incrustades del llibre. En un PDF etiquetat cada partitura és una `Figure` amb el text alternatiu.
+- **EPUB**: un EPUB adaptable mostra els sistemes com a SVG en línia, tan amples com la columna de lectura, llegits com una sola imatge; un EPUB de maquetació fixa conserva les pàgines impreses.
+- **Word**: un document exportat conserva el bloc de notació tal com està escrit, igual que un llistat de codi, i la partitura torna quan es torna a importar el document.
+
+## Treballar amb una editorial de música
+
+Postext compon el llibre al voltant de la música; el programa de notació continua sent on s'escriu la música.
+
+1. Grava o corregeix la música a Dorico, Sibelius, Finale o MuseScore i exporta cada exemple com a MusicXML (`.musicxml`, sense comprimir).
+2. Posa els fitxers entre els recursos del llibre i dona'ls el tipus `example`. Els exemples curts a una veu es poden escriure en ABC directament al capítol.
+3. Mesura la mida del pentagrama i ajusta la font musical de l'estil de la casa a `scoreStyle`; els exemples de requadres o marges porten un estil amb nom.
+4. Compon el llibre i revisa els salts de pàgina. Els compassos per sistema depenen de l'amplada de la columna, de la mida del pentagrama i de l'espaiat.
+
+L'[habilitat postext-port](/ca/docs/skill) segueix aquests mateixos passos quan adapta un llibre de text de música, un mètode o un cançoner.
+
+## Límits
+
+- Els sistemes s'omplen fins a l'amplada de la columna: encara no es respecten els salts de sistema escrits a la notació.
+- El lector d'ABC pren una sola veu.
+- El MusicXML comprimit (`.mxl`) s'ha de descomprimir abans.
+- L'edició completa d'una partitura (una partitura d'orquestra, les particel·les, els passos de pàgina planificats compàs a compàs) és feina d'un programa de notació, no d'un compositor de llibres.

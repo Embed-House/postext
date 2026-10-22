@@ -952,6 +952,105 @@ Auch die Funktionen der unteren Ebene werden exportiert: `svgFontRequests(svgTex
 **Lizenzen.** Das Einbetten legt Schriftdateien in Bilder, die die App verlassen können (ein HTML-Export, ein EPUB). Es geschieht, wenn ein Bild gezeigt oder exportiert wird, nie in den gespeicherten Ressourcen-Bytes, und `withhold` hält die Familien heraus, deren Lizenz die Weitergabe nicht erlaubt: Der EPUB-Writer hält die mit `redistributable: false` markierten Schnitte zurück, die Sandbox die so markierten eigenen Familien. Seit postext 1.43 kann eine von `withhold` genannte Schrift einen Ersatz haben (`standIn`): Der freie Schnitt wird unter ihrem Namen eingebettet, und der Text im Bild behält die Breite, mit der er gesetzt wurde.
 
 
+## Notenstil
+
+Die Eigenschaft `scoreStyle` (`ScoreStyleConfig`) bestimmt das Aussehen aller Noten: der Notationsblöcke (```` ```abc ````, ```` ```musicxml ````, ```` ```mei ````, ```` ```humdrum ````) und der Ressourcen vom Typ `score`. Ein Notenbeispiel wird in der Breite seiner Spalte gestochen und in Systeme geteilt; jedes System wird als eigener Block gesetzt, sodass ein langes Notenbeispiel über Spalten und Seiten weiterläuft. Formate und Markdown beschreibt [Notensatz](/de/docs/music).
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: 'Small examples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Eigenschaft</th>
+      <th>Typ</th>
+      <th>Standard</th>
+      <th>Beschreibung</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Notationsblöcke als Noten lesen. Aus: Sie sind Codelistings. Dokumente, die vor Konfigurationsversion 20 gespeichert wurden und einen solchen Block enthalten, erhalten <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>staffSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'mm' &#125;</code></td>
+      <td>Höhe der fünf Notenlinien, von der untersten bis zur obersten (Rastralgröße).</td>
+    </tr>
+    <tr>
+      <td><code>musicFont</code></td>
+      <td><code>'Bravura' | 'Leland' | 'Petaluma' | 'Leipzig' | 'Gootville'</code></td>
+      <td><code>'Bravura'</code></td>
+      <td>Die SMuFL-Schrift der Noten, Schlüssel und Zeichen.</td>
+    </tr>
+    <tr>
+      <td><code>textFont</code></td>
+      <td><code>string</code></td>
+      <td>die Schrift des Grundtexts</td>
+      <td>Schrift der Gesangstexte, Tempo- und Vortragsangaben. Ein Wort, das in dieser Schrift breiter ist als in der Times des Notenstechers, wird kleiner gesetzt, damit es in seinen Platz passt.</td>
+    </tr>
+    <tr>
+      <td><code>spacing</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Waagerechter Notenabstand: Über 1 rückt er die Noten auseinander, und ein System fasst weniger Takte.</td>
+    </tr>
+    <tr>
+      <td><code>barNumbers</code></td>
+      <td><code>'none' | 'system' | 'every'</code></td>
+      <td><code>'system'</code></td>
+      <td>Taktzahlen am Anfang jedes Systems, an jedem Takt oder keine.</td>
+    </tr>
+    <tr>
+      <td><code>systemGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 3, unit: 'mm' &#125;</code></td>
+      <td>Abstand zwischen zwei Systemen eines Notenbeispiels.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>Abstand über einem Notenbeispiel im Text.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>Abstand unter einem Notenbeispiel im Text.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>die Farbe des Grundtexts</td>
+      <td>Farbe der Noten und ihres Texts.</td>
+    </tr>
+    <tr>
+      <td><code>minSystemsAtBreak</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Mindestzahl der Systeme, die ein Notenbeispiel am Fuß einer Spalte lässt oder in die nächste mitnimmt. Ein Beispiel mit weniger als doppelt so vielen Systemen wandert als Ganzes.</td>
+    </tr>
+  </tbody>
+</table>
+
+Benannte Notenstile (`scoreStyles`, `NamedScoreStyleConfig[]`) haben dieselben Felder sowie eine `id` und einen optionalen `name`; ein Block wählt einen mit `style="…"`, eine Notenressource mit `score.styleId`. Was ein benannter Stil offenlässt, kommt aus `scoreStyle`.
+
 ## Videostil
 
 Die Eigenschaft `videoStyle` legt fest, wie [Video-Ressourcen](/de/docs/document-format-resources#videos) gedruckt werden – das Abspielzeichen und der QR-Code über dem Posterbild und ob das Posterbild auf das Video verlinkt – und was ihre Player im HTML-Betrachter und in EPUB anbieten.

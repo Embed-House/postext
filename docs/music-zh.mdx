@@ -1,0 +1,163 @@
+{/* docs/music-zh.mdx */}
+
+export const metadata = {
+  title: '乐谱记谱',
+  sidebarTitle: '乐谱记谱',
+  description: 'Postext 如何在书中排乐谱：以 ABC、MusicXML、MEI 或 Humdrum 文本写成的记谱，按栏宽刻制并分成可跨栏跨页延续的谱行；作为资源编号的谱例；乐谱样式；各种输出；以及音乐出版社如何把乐谱带进来',
+  lang: 'zh',
+  lastUpdated: '2026-10-22',
+  readingTime: '12 分钟',
+  order: 34,
+  plainSummary: "本页说明如何在 Postext 的书里放进乐谱。乐谱以文本写成，用的是音乐人和打谱软件早已在用的格式，Postext 据此画出谱表、音符和歌词。长的乐曲会被切成一行行谱，像段落一样在下一栏或下一页接着排。谱例也可以像插图一样编号、加题注。所有乐谱的外观（谱表大小、音乐字体、小节号）在配置里设定一次即可。最后介绍音乐出版社如何用 Postext 工作，以及目前的限制。",
+};
+
+# 乐谱记谱
+
+**乐谱是书里的文本；它的外观是一项设置。**
+
+在 Postext 中，乐谱是写出来的记谱，而不是画出来的图。章节里的一个代码块用四种文本格式之一记下音乐，引擎用 [Verovio](https://www.verovio.org)（Music Encoding Initiative 的刻谱库）把它刻出来。乐谱按所在栏的宽度刻制，并切成若干**谱行**（系统），也就是读者从左到右读的一行行乐谱。每行谱作为单独的块放置：页面剩余空间放不下的乐谱会接到下一栏顶端继续，而且绝不会在一行谱内部断开。谱表大小、音乐字体、小节号和间距来自[配置中的 `scoreStyle` 部分](/zh/docs/configuration-resources#乐谱样式)，改一项设置，整本书的乐谱外观就跟着改变。
+
+乐谱是可选功能：没有记谱代码块的文档排版照旧，刻谱器（约 3.7 MB）只在含有乐谱的书中加载。
+
+## 格式
+
+<table>
+  <thead>
+    <tr>
+      <th>代码块</th>
+      <th>格式</th>
+      <th>适用于</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#96;&#96;&#96;abc</code></td><td>ABC 2.1</td><td>旋律和单声部谱例、音符下配歌词的歌曲。紧凑，便于手写。刻谱器只读取 ABC 曲子的<strong>一个声部</strong>：多声部请用其他格式。</td></tr>
+    <tr><td><code>&#96;&#96;&#96;musicxml</code></td><td>MusicXML 4.0</td><td>从 Dorico、Sibelius、Finale 或 MuseScore 导出的任何乐谱。篇幅较长，宜放在资源文件里。</td></tr>
+    <tr><td><code>&#96;&#96;&#96;mei</code></td><td>MEI</td><td>校勘本和学术版本、早期音乐。</td></tr>
+    <tr><td><code>&#96;&#96;&#96;humdrum</code>、<code>&#96;&#96;&#96;kern</code></td><td>Humdrum (kern)</td><td>众赞歌和四部和声、分析谱例：每个声部一列，用制表符分隔，最低声部在前。</td></tr>
+  </tbody>
+</table>
+
+普通的 <code>&#96;&#96;&#96;xml</code> 代码块仍是代码清单。带 `{listing}` 的记谱代码块也保持为代码清单，便于在教程中展示曲子的源码。
+
+## 正文中的乐谱
+
+````md
+完全正格终止在最高声部落在主音上：
+
+```humdrum {alt="G 大调众赞歌乐句，以完全正格终止结束"}
+**kern	**kern	**kern	**kern
+*clefF4	*clefGv2	*clefG2	*clefG2
+*k[f#]	*k[f#]	*k[f#]	*k[f#]
+*M4/4	*M4/4	*M4/4	*M4/4
+4GG	4B	4d	4b
+4D	4d	4f#	4a
+=	=	=	=
+1GG	1B	1d	1g
+==	==	==	==
+*-	*-	*-	*-
+```
+
+半终止则停在属和弦上。
+````
+
+一段带歌词的旋律，用 ABC 写：
+
+````md
+```abc
+X:1
+T:Evening hymn
+M:3/4
+L:1/4
+K:F
+c | A2 B | c2 A | G2 F | E2 c | A2 B | c2 A | G2 E | F2 |]
+w: Now the day is o-ver, night is draw-ing nigh, sha-dows of the eve-ning steal a-cross the sky.
+```
+````
+
+代码块有两个属性：
+
+- `alt="…"`：乐谱的内容说明，供读屏软件、带标签的 PDF 和 EPUB 使用。不写时读出记谱中写明的标题和作曲者（ABC 的 `T:` 和 `C:`，MusicXML 的 `<work-title>` 和 `<creator type="composer">`）。标题不会印出来：请写在正文或题注中。
+- `style="…"`：书中的命名乐谱样式（`scoreStyles`），例如为框内谱例准备的小号谱表样式。
+
+正文中的乐谱不编号、不带题注，就像行间公式。它上下取样式的边距，两行谱之间取谱行间距，其后的正文回到基线网格。
+
+## 编号谱例
+
+正文引用的谱例（“见谱例 3.2”）是一个 `score` 类资源，像插图一样排：编号、带题注、浮动或就地放置，并用 `:ref` 引用。
+
+```json
+{
+  "id": "ex-cadence",
+  "typeId": "example",
+  "kind": "score",
+  "caption": "G 大调完全正格终止",
+  "score": { "format": "musicxml", "source": "<?xml version=\"1.0\"?>…", "styleId": "small" }
+}
+```
+
+```md
+:ref{id="ex-cadence"} 中的终止结束了这个乐句。
+
+::resource{id="ex-cadence"}
+```
+
+类型为 `example` 的资源按 Postext 自带的**谱例**类型编号，名称随文档语言而定：Example、Ejemplo、Exemple、Notenbeispiel、Esempio、Exemplo、谱例、譜例、مثال。只要有资源用到，这一类型就会加入书的[资源类型](/zh/docs/configuration-resources#资源类型)；想用别的名称就自定义一个类型。在资源包（`preset.json`）中，资源可以指向一个记谱文件，而不必携带全文：
+
+```json
+{ "id": "ex-cadence", "typeId": "example", "kind": "score", "file": "resources/ex-cadence.musicxml" }
+```
+
+以 `.abc`、`.musicxml`、`.mei` 或 `.krn` 结尾的文件一律读作乐谱，不论 `kind` 写的是什么。[命令行](/zh/docs/command-line)会把 `--resources` 文件夹中的这些文件读作谱例；Sandbox 的“资源”面板可以用 **新建 › 新建乐谱** 或拖入文件来创建。
+
+乐谱资源整体保持：浮动或作为一个块放置。超过一页的乐曲应写成记谱代码块，它会在谱行之间断开。
+
+## 乐谱的外观
+
+所有乐谱遵循 `scoreStyle`；叠加其上的命名样式只改变它所设定的部分：
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: '小号谱例', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+- **谱表大小**：五线谱表的高度。学校课本用 6～7 毫米，教材和教程用 5～6 毫米，正文中的谱例用 4～5 毫米。
+- **音乐字体**：Bravura（传统刻版风格）、Leland（较轻）、Petaluma（手写风格）、Leipzig 和 Gootville。
+- **文字字体**：歌词、速度标记和表情记号，未设置时用正文字体。若某个词用这种字体比刻谱器所用的 Times 更宽，就缩小排出，音节绝不会互相叠压。
+- **间距**、**小节号**、**谱行间距**、**边距**和**墨色**。
+- **保持在一起的谱行**（`minSystemsAtBreak`）：乐谱在栏底留下或转到下一栏的最少谱行数。设为 2 时，不会有一行谱孤零零地留下；不足四行的乐谱整体移动。
+
+各字段及其类型和默认值见[配置 › 乐谱样式](/zh/docs/configuration-resources#乐谱样式)。Sandbox 在 **版面设计 › 图与表 › 乐谱** 和 **乐谱样式** 中编辑它们。
+
+## 各种输出
+
+- **Canvas 和 HTML**：每行谱以矢量路径和文字绘出，颜色取乐谱的墨色；HTML 查看器用替代文本为乐谱命名。
+- **PDF**：矢量图形，文字使用书中嵌入的字体。在带标签的 PDF 中，每份乐谱是一个带替代文本的 `Figure`。
+- **EPUB**：可重排 EPUB 把各行谱显示为与阅读栏同宽的内联 SVG，作为一幅图像朗读；固定版式 EPUB 保留印刷页面。
+- **Word**：导出的文档按原样保留记谱代码块，就像代码清单一样，再次导入时乐谱会恢复。
+
+## 与音乐出版社合作
+
+Postext 围绕音乐排书；写谱仍在打谱软件中完成。
+
+1. 在 Dorico、Sibelius、Finale 或 MuseScore 中刻制或校对乐谱，把每个谱例导出为 MusicXML（`.musicxml`，不压缩）。
+2. 把文件放进书的资源，类型设为 `example`。简短的单声部谱例可以直接在章节里用 ABC 写。
+3. 测量谱表大小，在 `scoreStyle` 中对上出版社的音乐字体；框内或页边的谱例用命名样式。
+4. 排版全书并检查分页。每行谱的小节数取决于栏宽、谱表大小和间距。
+
+[postext-port 技能](/zh/docs/skill)在移植音乐教材、教程或歌本时遵循同样的步骤。
+
+## 限制
+
+- 谱行填满整个栏宽：记谱中写明的换行位置目前还不保留。
+- ABC 读取器只读一个声部。
+- 压缩的 MusicXML（`.mxl`）需要先解压。
+- 完整的乐谱版本（管弦乐总谱、分谱、逐小节安排的翻页）属于打谱软件的工作，而不是排书软件的工作。

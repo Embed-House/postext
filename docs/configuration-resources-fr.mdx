@@ -952,6 +952,105 @@ Les fonctions de plus bas niveau sont exportées aussi : `svgFontRequests(svgTe
 **Licences.** L’intégration place des fichiers de police dans des images qui peuvent sortir de l’application (un export HTML, un EPUB). Elle a lieu quand une image est affichée ou exportée, jamais dans les octets enregistrés de la ressource, et `withhold` écarte les familles qu’une licence ne vous permet pas de transmettre : le générateur EPUB retient les polices marquées `redistributable: false`, et le Sandbox les familles personnalisées marquées ainsi. Depuis postext 1.43, une famille que `withhold` désigne peut avoir un remplacement (`standIn`) : la fonte libre est intégrée sous son nom, et le texte de l’image garde la largeur avec laquelle il a été composé.
 
 
+## Style de partition
+
+La propriété `scoreStyle` (`ScoreStyleConfig`) règle l’aspect de toutes les partitions : les blocs de notation (```` ```abc ````, ```` ```musicxml ````, ```` ```mei ````, ```` ```humdrum ````) et les ressources `score`. Une partition est gravée à la largeur de sa colonne et coupée en systèmes ; chaque système est placé comme un bloc à part, si bien qu’une longue partition continue sur plusieurs colonnes et pages. Les formats et le Markdown sont décrits dans [Notation musicale](/fr/docs/music).
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: 'Small examples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Valeur par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Lit les blocs de notation comme des partitions. Désactivé : ce sont des listings de code. Les documents enregistrés avant la version de configuration 20 dont le texte contient un tel bloc reçoivent <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>staffSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'mm' &#125;</code></td>
+      <td>Hauteur de la portée de cinq lignes, de la ligne du bas à celle du haut (la taille de rastral).</td>
+    </tr>
+    <tr>
+      <td><code>musicFont</code></td>
+      <td><code>'Bravura' | 'Leland' | 'Petaluma' | 'Leipzig' | 'Gootville'</code></td>
+      <td><code>'Bravura'</code></td>
+      <td>La police SMuFL des notes, des clés et des signes.</td>
+    </tr>
+    <tr>
+      <td><code>textFont</code></td>
+      <td><code>string</code></td>
+      <td>la police du texte courant</td>
+      <td>Police des paroles, des indications de tempo et d’expression. Un mot plus large dans cette police que dans la Times du graveur est composé plus petit pour tenir dans sa place.</td>
+    </tr>
+    <tr>
+      <td><code>spacing</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Espacement horizontal des notes : au-dessus de 1, il les écarte et chaque système contient moins de mesures.</td>
+    </tr>
+    <tr>
+      <td><code>barNumbers</code></td>
+      <td><code>'none' | 'system' | 'every'</code></td>
+      <td><code>'system'</code></td>
+      <td>Numéros de mesure au début de chaque système, à chaque mesure, ou aucun.</td>
+    </tr>
+    <tr>
+      <td><code>systemGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 3, unit: 'mm' &#125;</code></td>
+      <td>Espace entre deux systèmes d’une même partition.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>Espace au-dessus d’une partition placée dans le texte.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>Espace au-dessous d’une partition placée dans le texte.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>la couleur du texte courant</td>
+      <td>Encre de la notation et de son texte.</td>
+    </tr>
+    <tr>
+      <td><code>minSystemsAtBreak</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Nombre minimal de systèmes qu’une partition laisse en pied de colonne ou reporte à la suivante. Une partition de moins du double de ce nombre passe entière.</td>
+    </tr>
+  </tbody>
+</table>
+
+Les styles de partition nommés (`scoreStyles`, `NamedScoreStyleConfig[]`) prennent les mêmes champs, plus un `id` et un `name` facultatif ; un bloc en choisit un avec `style="…"` et une ressource de partition avec `score.styleId`. Un champ qu’un style nommé laisse vide vient de `scoreStyle`.
+
 ## Style des vidéos
 
 La propriété `videoStyle` règle l’impression des [ressources vidéo](/fr/docs/document-format-resources#vidéos) (la marque de lecture et le code QR sur l’affiche, et le lien éventuel de l’affiche vers la vidéo) et ce que leurs lecteurs proposent dans la visionneuse HTML et en EPUB.
