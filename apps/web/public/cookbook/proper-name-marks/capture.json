@@ -3,27 +3,21 @@
   "slug": "proper-name-marks",
   "sourceHash": "46cabb7a2251ced0f275e8037f1291cc1391aa4297d1413bc89b5eae015356a4",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:51.737Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:03:54.369Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:10:27.062Z",
   "variants": {
     "en": {
-      "hash8": "cfb2246c",
+      "hash8": "75dc46e5",
       "vdtHash": "666b14ae1706626f3a5dda2a0371d7dcbd4dd76e",
       "timings": {
-        "importMs": 695,
-        "fontsMs": 1112,
-        "buildMs": 79,
-        "totalMs": 2566,
+        "importMs": 2292,
+        "fontsMs": 1210,
+        "buildMs": 68,
+        "totalMs": 4706,
         "builds": 1
       },
       "specimen": {
@@ -107,7 +101,7 @@
       },
       "pdf": {
         "file": "proper-name-marks.pdf",
-        "bytes": 170219,
+        "bytes": 170204,
         "pages": 3
       },
       "sandbox": {
@@ -320,17 +314,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "91b8e674",
+      "hash8": "4b320287",
       "vdtHash": "4ef88f23fb888f40f39312aab00daabe9b7c9bf4",
       "timings": {
-        "importMs": 892,
-        "fontsMs": 826,
-        "buildMs": 69,
-        "totalMs": 2815,
+        "importMs": 1569,
+        "fontsMs": 1787,
+        "buildMs": 74,
+        "totalMs": 4209,
         "builds": 1
       },
       "specimen": {
@@ -414,7 +414,7 @@
       },
       "pdf": {
         "file": "proper-name-marks.pdf",
-        "bytes": 170802,
+        "bytes": 170792,
         "pages": 3
       },
       "sandbox": {
@@ -627,7 +627,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

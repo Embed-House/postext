@@ -3,27 +3,21 @@
   "slug": "maghreb-edition-european-digits",
   "sourceHash": "b630f3de1f79ca84adae622794d6fe9d348baba13c6e57f63b1cda4ba6826f07",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.481Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:01:22.663Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:10:00.527Z",
   "variants": {
     "en": {
-      "hash8": "e32d7921",
+      "hash8": "fb5ddef8",
       "vdtHash": "44faa10401503a5e6b446afd42b04c4b1d9ab8f0",
       "timings": {
-        "importMs": 262,
-        "fontsMs": 73,
-        "buildMs": 84,
-        "totalMs": 1041,
+        "importMs": 2928,
+        "fontsMs": 201,
+        "buildMs": 121,
+        "totalMs": 4601,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +115,7 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 65985,
+        "bytes": 66014,
         "pages": 4
       },
       "sandbox": {
@@ -318,6 +312,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale ar-MA, the document's language: en names its resource types otherwise"
@@ -326,13 +325,13 @@
       }
     },
     "es": {
-      "hash8": "5583313e",
+      "hash8": "d6cc45e0",
       "vdtHash": "0a60514befd4a7537abe537fae5be136250e6ca8",
       "timings": {
-        "importMs": 337,
-        "fontsMs": 298,
-        "buildMs": 91,
-        "totalMs": 1394,
+        "importMs": 2798,
+        "fontsMs": 94,
+        "buildMs": 110,
+        "totalMs": 4486,
         "builds": 1
       },
       "specimen": {
@@ -430,7 +429,7 @@
       },
       "pdf": {
         "file": "maghreb-edition-european-digits.pdf",
-        "bytes": 66385,
+        "bytes": 66406,
         "pages": 4
       },
       "sandbox": {
@@ -626,6 +625,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

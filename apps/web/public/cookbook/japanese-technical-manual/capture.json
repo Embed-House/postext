@@ -3,27 +3,21 @@
   "slug": "japanese-technical-manual",
   "sourceHash": "581682393a06e9e3307a9bccbb37d4301b29930d43e8affcdc736cfe065c101b",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:42:47.914Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:00:04.763Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:07:41.554Z",
   "variants": {
     "en": {
-      "hash8": "19211ab0",
+      "hash8": "eac34db4",
       "vdtHash": "9b4fdab31f73c05f0707629400d3f726155a49f2",
       "timings": {
-        "importMs": 665,
-        "fontsMs": 614,
-        "buildMs": 118,
-        "totalMs": 2112,
+        "importMs": 2105,
+        "fontsMs": 1318,
+        "buildMs": 163,
+        "totalMs": 4333,
         "builds": 1
       },
       "specimen": {
@@ -132,7 +126,7 @@
       },
       "pdf": {
         "file": "japanese-technical-manual.pdf",
-        "bytes": 298717,
+        "bytes": 298714,
         "pages": 5
       },
       "sandbox": {
@@ -433,9 +427,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -446,13 +440,13 @@
       }
     },
     "es": {
-      "hash8": "fea4b10e",
+      "hash8": "e0203e80",
       "vdtHash": "21bbc8c7f62c85daf5c9b42a8e86b6aec1d2a29f",
       "timings": {
-        "importMs": 570,
-        "fontsMs": 226,
-        "buildMs": 107,
-        "totalMs": 1737,
+        "importMs": 1734,
+        "fontsMs": 1371,
+        "buildMs": 139,
+        "totalMs": 4365,
         "builds": 1
       },
       "specimen": {
@@ -862,9 +856,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

@@ -3,27 +3,21 @@
   "slug": "katakana-majiri-proclamation",
   "sourceHash": "702e58d1a17703a3608287a4258d0b5fab1ceac26d64393748771013744dc4f8",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:43:56.318Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:01:22.585Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:09:31.844Z",
   "variants": {
     "en": {
-      "hash8": "2d6612db",
+      "hash8": "45a1140f",
       "vdtHash": "37b8f33daff8b0376c1b77cf25b87f45bc3eca1d",
       "timings": {
-        "importMs": 850,
-        "fontsMs": 1120,
-        "buildMs": 60,
-        "totalMs": 2687,
+        "importMs": 2478,
+        "fontsMs": 1991,
+        "buildMs": 64,
+        "totalMs": 5726,
         "builds": 1
       },
       "specimen": {
@@ -173,7 +167,7 @@
       },
       "pdf": {
         "file": "katakana-majiri-proclamation.pdf",
-        "bytes": 341755,
+        "bytes": 341706,
         "pages": 8
       },
       "sandbox": {
@@ -401,17 +395,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "21f0d27b",
+      "hash8": "a9298bf8",
       "vdtHash": "4720d00e789c69898f7917b7933d75af4082d8d5",
       "timings": {
-        "importMs": 869,
-        "fontsMs": 1124,
-        "buildMs": 69,
-        "totalMs": 2723,
+        "importMs": 2500,
+        "fontsMs": 2656,
+        "buildMs": 64,
+        "totalMs": 5890,
         "builds": 1
       },
       "specimen": {
@@ -561,7 +561,7 @@
       },
       "pdf": {
         "file": "katakana-majiri-proclamation.pdf",
-        "bytes": 342219,
+        "bytes": 342159,
         "pages": 8
       },
       "sandbox": {
@@ -789,7 +789,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

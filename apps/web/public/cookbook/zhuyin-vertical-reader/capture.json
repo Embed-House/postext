@@ -3,27 +3,21 @@
   "slug": "zhuyin-vertical-reader",
   "sourceHash": "36db93296e8b089ae5b78c83ead02e3ba989452f898691950987c1f975b8adaa",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:52:28.543Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:06:54.630Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:12:05.178Z",
   "variants": {
     "en": {
-      "hash8": "14f4436c",
+      "hash8": "c9883ff8",
       "vdtHash": "e77bb0f67ca7cb10281ff4162f00c7cdfd9d8835",
       "timings": {
-        "importMs": 346,
-        "fontsMs": 555,
-        "buildMs": 81,
-        "totalMs": 1640,
+        "importMs": 2347,
+        "fontsMs": 1759,
+        "buildMs": 71,
+        "totalMs": 5292,
         "builds": 1
       },
       "specimen": {
@@ -119,7 +113,7 @@
       },
       "pdf": {
         "file": "zhuyin-vertical-reader.pdf",
-        "bytes": 740940,
+        "bytes": 740915,
         "pages": 4
       },
       "sandbox": {
@@ -388,6 +382,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -396,13 +395,13 @@
       }
     },
     "es": {
-      "hash8": "fdef3ae9",
+      "hash8": "cc6eae26",
       "vdtHash": "1d229fff9ab019b5318bfd45fa59eeb6cb610e89",
       "timings": {
-        "importMs": 461,
-        "fontsMs": 433,
-        "buildMs": 62,
-        "totalMs": 1549,
+        "importMs": 2432,
+        "fontsMs": 1763,
+        "buildMs": 86,
+        "totalMs": 5339,
         "builds": 1
       },
       "specimen": {
@@ -498,7 +497,7 @@
       },
       "pdf": {
         "file": "zhuyin-vertical-reader.pdf",
-        "bytes": 741099,
+        "bytes": 741084,
         "pages": 4
       },
       "sandbox": {
@@ -766,6 +765,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",
