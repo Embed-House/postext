@@ -10,6 +10,7 @@ import { isColor, isDimension, resolveEffectiveConfig } from '../configEffective
 import { canonicalSteps, formatPath, getAtPath, leafEntries, parsePath, patchPaths } from '../configPaths.js';
 import { planWrite, stableText } from '../configWrite.js';
 import { bookPagesSummary, dispatchAndWait, whenSettled, type SandboxToolHost } from '../host.js';
+import { readBitmapResolutions } from './designItems.js';
 import { ToolError, type WebMcpTool } from '../modelContext.js';
 
 /** Every top-level key a configuration has: a path outside them is
@@ -271,7 +272,13 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
       }
       const pagesBefore = bookPagesSummary(host, before);
       await dispatchAndWait(host, { type: 'SET_CONFIG', payload: next, history: { merge: false } });
+      // Bitmaps by their file's resolution: the files stored before it was
+      // kept are read, as the Layout section reads them (#631).
+      const bitmapResolutions = next.layout?.bitmapResolution === 'file' && before.config.layout?.bitmapResolution !== 'file'
+        ? await readBitmapResolutions(host)
+        : 0;
       const answer: Record<string, unknown> = {
+        ...(bitmapResolutions > 0 ? { bitmapResolutionsRead: bitmapResolutions } : {}),
         changed: reported,
         ...(followed.length > 0 ? { followed, ...(followedMore > 0 ? { followedMore } : {}) } : {}),
         ...(warnings.length > 0 ? { warnings } : {}),

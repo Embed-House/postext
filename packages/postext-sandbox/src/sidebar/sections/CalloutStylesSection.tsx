@@ -43,7 +43,6 @@ import type {
 import {
   DEFAULT_CALLOUT_STYLES,
   calloutStyleChain,
-  inheritCalloutStyles,
   resolveBodyTextConfig,
   resolveCalloutStylesConfig,
   resolveDesignSlot,
@@ -88,6 +87,7 @@ import { ParagraphSpacingField } from '../settings/ParagraphSpacingField.js';
 import { useBookTexts } from '../../frameStyles/useBookTexts.js';
 import { planRename } from '../../frameStyles/styleMerge.js';
 import { applyStyleRewrite } from '../../frameStyles/applyRewrite.js';
+import { removeCalloutStyle } from '../../frameStyles/styleRemove.js';
 
 const FONT_SIZE_UNITS: DimensionUnit[] = ['pt', 'px', 'em', 'rem'];
 const LINE_HEIGHT_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
@@ -2397,14 +2397,7 @@ export function useCalloutStyleEdits() {
 
   /** A removed style's children (#905) take its look over, and its parent
    *  if it had one, so no box changes. */
-  const removeStyle = (id: string) => {
-    const gone = styles.find((s) => s.id === id);
-    write(styles.filter((s) => s.id !== id).map((s) => {
-      if (!gone || s.extends !== id) return s;
-      const [, child] = inheritCalloutStyles([{ ...gone, id: '__parent' }, { ...s, extends: '__parent' }]);
-      return { ...child!, id: s.id, ...(s.name !== undefined ? { name: s.name } : {}), ...(gone.extends !== undefined ? { extends: gone.extends } : {}) };
-    }));
-  };
+  const removeStyle = (id: string) => write(removeCalloutStyle(styles, id));
   /** The styles `style` may be based on: not itself, nor one based on it
    *  (directly or further down), which would close a loop. */
   const parentsOf = (style: CalloutStyleConfig) => styles

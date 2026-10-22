@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: un agent treballant al Sandbox',
   sidebarTitle: 'WebMCP',
-  description: "Què pot fer un agent d'IA al navegador amb les 41 eines WebMCP del Sandbox (mirar les pàgines, canviar qualsevol paràmetre, editar el text, afegir imatges, taules i fonts, fer les revisions, exportar) i com es crida cadascuna, amb arguments i respostes reals",
+  description: "Què pot fer un agent d'IA al navegador amb les 53 eines WebMCP del Sandbox (mirar les pàgines, canviar qualsevol paràmetre, editar el text, afegir imatges, taules i fonts, fer les revisions, exportar) i com es crida cadascuna, amb arguments i respostes reals",
   lang: 'ca',
   lastUpdated: '2026-10-19',
   readingTime: '13 min',
@@ -23,7 +23,7 @@ el llibre, demana una imatge de la pàgina 12, posa `bodyText.fontSize` a 10,5 p
 veu que el capítol ha passat de 18 a 19 pàgines i ho torna a deixar com estava.
 Fa el que tu fas a ull, i ho fa amb el teu llibre, al teu navegador.
 
-Hi ha 41 eines amb un nom que comença per `sandbox_`, registrades mentre el Sandbox
+Hi ha 53 eines amb un nom que comença per `sandbox_`, registrades mentre el Sandbox
 és a la pantalla, i 8 eines del lloc, `site_*`, a totes les pàgines de
 postext.dev. Aquesta pàgina les ordena segons el que demanaries a un agent i
 dona la crida de cadascuna.
@@ -39,7 +39,7 @@ pàgina les hi troba. A Postext no cal instal·lar ni configurar res.
 WebMCP encara és un esborrany. Chrome l'ofereix com a prova d'origen i darrere
 de l'indicador `chrome://flags/#enable-webmcp-testing`. Les eines depenen de la
 pàgina: a la pàgina d'inici o a la documentació, l'agent té les eines `site_*`;
-quan el Sandbox és a la pantalla, apareixen també les 41 eines `sandbox_*`.
+quan el Sandbox és a la pantalla, apareixen també les 53 eines `sandbox_*`.
 
 ### En qualsevol altre navegador: `window.postextWebMcp`
 
@@ -325,6 +325,8 @@ posició i estén l'estil que es manté (`extends`), de manera que els requadres
 no es mouen; la resposta el llista a `keptForTheirPlace`. Amb
 `keepPlaces: false` es fusiona del tot i els requadres es mouen.
 La resposta dona `undoSteps`: un pas per capítol reescrit i un altre per als estils, que `sandbox_undo` reverteix començant pels estils.
+
+Canviar el nom d'un element amb nom o treure'l canvia més que la seva pròpia entrada, així que aquestes accions tenen eines pròpies que treballen com el tauler Disseny. `sandbox_rename_design_item` dona un altre id a un estil, un aspecte, una plantilla de pàgina, un marc o grup d'una plantilla, o un estil de bafarada, personatge o estil de vinyeta d'un còmic. Tot el que anomena l'element el segueix: els blocs `:::callout` i `::::page`, els noms de buit de les pàgines, els ancoratges de les imatges i les línies `::label`, les taules i partitures que fan servir un estil, i el repartiment. `sandbox_remove_design_item` treu un element com el treu el tauler: els estils basats en un estil de caixa tret en prenen l'aspecte, i els ajustos que feien servir un color de la paleta conserven aquest color, ja sense enllaç a la paleta. `sandbox_language_defaults` llista els valors per al xinès, el japonès o l'àrab de Disseny › Text i els aplica amb `apply: true`. `sandbox_print_profile` puja o treu el perfil ICC propi de la secció Impremta. `sandbox_save_layout_as_template` converteix una pàgina composta ja maquetada en una plantilla de pàgina nova. Posar `layout.bitmapResolution` a `"file"` també llegeix la resolució que desa cada fitxer d'imatge ja present.
 
 ### Editar el text
 

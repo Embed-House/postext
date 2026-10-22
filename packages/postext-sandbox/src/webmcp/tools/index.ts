@@ -4,6 +4,7 @@ import { bookTools } from './book.js';
 import { checkTools } from './checks.js';
 import { comicTools } from './comics.js';
 import { configTools } from './config.js';
+import { designItemTools } from './designItems.js';
 import { editionCheckTools } from './editionChecks.js';
 import { historyTools } from './history.js';
 import { frameStyleTools } from './frameStyles.js';
@@ -26,6 +27,7 @@ export function createSandboxTools(host: SandboxToolHost): WebMcpTool[] {
     ...pageTools(host),
     ...text,
     ...configTools(host),
+    ...designItemTools(host),
     ...historyTools(host),
     ...frameStyleTools(host),
     ...moduleTools(host),

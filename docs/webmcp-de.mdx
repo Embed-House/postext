@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: ein Agent bei der Arbeit in der Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Was ein KI-Agent im Browser mit den 41 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
+  description: 'Was ein KI-Agent im Browser mit den 53 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
   lastUpdated: '2026-10-19',
   readingTime: '12 min',
@@ -24,7 +24,7 @@ Oberfläche: Er liest das Buch, fordert ein Bild von Seite 12 an, setzt
 gewachsen ist, und nimmt die Änderung zurück. Er tut, was Sie mit dem Auge tun,
 und er tut es mit Ihrem Buch, in Ihrem Browser.
 
-Solange die Sandbox auf dem Bildschirm ist, sind 41 Werkzeuge registriert,
+Solange die Sandbox auf dem Bildschirm ist, sind 53 Werkzeuge registriert,
 deren Namen mit `sandbox_` beginnen; dazu kommen auf jeder Seite von
 postext.dev 8 Werkzeuge der Website, `site_*`. Diese Seite ordnet sie nach den
 Aufgaben, die Sie einem Agenten stellen würden, und zeigt für jedes den Aufruf.
@@ -41,7 +41,7 @@ Postext muss nichts installiert oder eingerichtet werden.
 WebMCP ist noch ein Entwurf. Chrome bietet es als Origin Trial an, außerdem hinter
 dem Flag `chrome://flags/#enable-webmcp-testing`. Die Werkzeuge folgen der
 Seite: Auf der Startseite oder in der Dokumentation hat der Agent die
-Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 41
+Werkzeuge `site_*`; sobald die Sandbox auf dem Bildschirm ist, kommen die 53
 Werkzeuge `sandbox_*` hinzu.
 
 ### In jedem anderen Browser: `window.postextWebMcp`
@@ -335,6 +335,8 @@ Kästen bleiben, wo sie sind; die Antwort führt ihn unter `keptForTheirPlace` a
 Mit `keepPlaces: false` geht er ganz im behaltenen Stil auf, und seine Kästen
 verschieben sich.
 Die Antwort nennt `undoSteps`: einen Schritt je umgeschriebenem Kapitel und einen für die Stile; `sandbox_undo` nimmt sie zurück, die Stile zuerst.
+
+Ein benanntes Element umzubenennen oder zu entfernen ändert mehr als seinen eigenen Eintrag. Deshalb haben diese Aktionen eigene Tools, die wie das Design-Panel arbeiten. `sandbox_rename_design_item` gibt einem Stil, einer Optik, einer Seitenvorlage, einem Rahmen oder einer Gruppe einer Vorlage oder einem Sprechblasenstil, einer Figur oder einem Panelstil eines Comics eine neue ID. Alles, was das Element nennt, zieht mit: die Blöcke `:::callout` und `::::page`, die Slot-Namen der Seiten, die Anker der Bilder und die `::label`-Zeilen, die Tabellen und Partituren, die einen Stil verwenden, und die Besetzung. `sandbox_remove_design_item` entfernt ein Element wie das Panel: Stile, die auf einem entfernten Kastenstil beruhen, übernehmen seine Optik, und Einstellungen, die eine Palettenfarbe verwendeten, behalten diese Farbe, ohne Verknüpfung mit der Palette. `sandbox_language_defaults` listet die Vorgaben für Chinesisch, Japanisch oder Arabisch aus Design › Text und wendet sie mit `apply: true` an. `sandbox_print_profile` lädt das eigene ICC-Profil des Abschnitts Druck hoch oder entfernt es. `sandbox_save_layout_as_template` macht aus einer gesetzten komponierten Seite eine neue Seitenvorlage. Wird `layout.bitmapResolution` auf `"file"` gesetzt, wird auch die Auflösung gelesen, die jede vorhandene Bilddatei angibt.
 
 ### Den Text bearbeiten
 
