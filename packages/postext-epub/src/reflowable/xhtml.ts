@@ -401,6 +401,14 @@ class Writer {
         return this.figure(node);
       case 'table':
         return this.table(node);
+      case 'score': {
+        // A music score (#1172): its systems down the column, scaled to its
+        // width, named by the score's alt text.
+        const pre = this.inline(node.pre);
+        if (node.systems.length === 0) return `${pre ? `<div>${pre}</div>\n` : ''}<div class="pt-missing" role="img" aria-label="${xmlAttr(node.alt || '?')}">${xmlText(node.alt)}</div>`;
+        const label = node.alt ? ` aria-label="${xmlAttr(node.alt)}"` : '';
+        return `<div class="pt-score" role="img"${label} style="color:${node.color}">${pre}${node.systems.map(scoreSystemSvg).join('')}</div>`;
+      }
       case 'math': {
         const pre = this.inline(node.pre);
         if (!node.svg) return `${pre ? `<div>${pre}</div>\n` : ''}<p class="pt-math-display"><code>${xmlText(node.tex)}</code></p>`;
@@ -600,7 +608,9 @@ class Writer {
       const img = `<img src="${xmlAttr(src)}" alt="${xmlAttr(node.alt)}"/>`;
       return node.labelsSvg ? `<span class="pt-labelled">${img}${node.labelsSvg}</span>` : img;
     };
-    const body = (node.video
+    const body = (node.score
+      ? `<div class="pt-score" role="img" aria-label="${xmlAttr(node.alt)}" style="color:${node.score.color}">${node.score.systems.map(scoreSystemSvg).join('')}</div>`
+      : node.video
       ? this.videoBody(node.video, href ? relativeHref(this.file.href, href) : undefined, node.alt)
       : href
         ? picture(relativeHref(this.file.href, href))
@@ -757,4 +767,11 @@ ${notes}
 /** A length in ems for a style attribute: at most three decimals. */
 function round2(v: number): string {
   return String(Math.round(v * 1000) / 1000);
+}
+
+/** A score system's SVG as the column's width (#1172): its own size goes,
+ *  its view box keeps the proportions; hidden from assistive technology,
+ *  the score's box being named. */
+function scoreSystemSvg(svg: string): string {
+  return svg.replace(/<svg\b([^>]*?) width="[^"]*" height="[^"]*"/, '<svg$1 width="100%" aria-hidden="true" class="pt-score-system"');
 }
