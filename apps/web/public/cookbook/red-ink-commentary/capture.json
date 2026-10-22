@@ -3,27 +3,21 @@
   "slug": "red-ink-commentary",
   "sourceHash": "f0c7a1f5238fc322b0903f1a526c4599ab6b5163b6970f59b6da6a6ebd63f86b",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:51.925Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:03:54.383Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:48:42.076Z",
   "variants": {
     "en": {
-      "hash8": "9c79b3e6",
+      "hash8": "d3b7cf8e",
       "vdtHash": "7def34376af266dd12ad436268b0a41daca7ad39",
       "timings": {
-        "importMs": 752,
-        "fontsMs": 1239,
-        "buildMs": 66,
-        "totalMs": 2761,
+        "importMs": 3545,
+        "fontsMs": 2984,
+        "buildMs": 63,
+        "totalMs": 7956,
         "builds": 1
       },
       "specimen": {
@@ -149,7 +143,7 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 512461,
+        "bytes": 512690,
         "pages": 6
       },
       "sandbox": {
@@ -369,17 +363,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "649517be",
+      "hash8": "c5518046",
       "vdtHash": "cfe780efe70a07358783d8838a77a783afac2a11",
       "timings": {
-        "importMs": 630,
-        "fontsMs": 880,
-        "buildMs": 76,
-        "totalMs": 2754,
+        "importMs": 2099,
+        "fontsMs": 2253,
+        "buildMs": 89,
+        "totalMs": 5478,
         "builds": 1
       },
       "specimen": {
@@ -505,7 +505,7 @@
       },
       "pdf": {
         "file": "red-ink-commentary.pdf",
-        "bytes": 512545,
+        "bytes": 512770,
         "pages": 6
       },
       "sandbox": {
@@ -725,7 +725,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }
