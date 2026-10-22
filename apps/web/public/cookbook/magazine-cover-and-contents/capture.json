@@ -3,20 +3,20 @@
   "slug": "magazine-cover-and-contents",
   "sourceHash": "e5b136541ab844d334dd0e37d89320b753a8217e4cc9bf4534167965ce01b5e2",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:01:22.620Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:54:50.154Z",
   "variants": {
     "en": {
-      "hash8": "50a1d0da",
+      "hash8": "20764526",
       "vdtHash": "84f25bbc81be7a687b7e53f57517c7eaf5925e7f",
       "timings": {
-        "importMs": 683,
+        "importMs": 688,
         "fontsMs": 71,
-        "buildMs": 524,
-        "totalMs": 2271,
+        "buildMs": 236,
+        "totalMs": 1822,
         "builds": 1
       },
       "specimen": {
@@ -61,7 +61,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 109468,
+          "bytes": 109454,
           "alt": "Opening page 2: Contents. On the cover: the hills below Castellina in Chianti, where our feature is set."
         },
         {
@@ -105,7 +105,7 @@
           "h": 1304,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140424,
+          "bytes": 140436,
           "alt": "Opening page 6: Threshing-Day Bread."
         }
       ],
@@ -448,24 +448,24 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.32 MB (warning at 0.9 MB for 6 pages)"
+            "detail": "the edition's images weigh 1.32 MB (warning at 0.9 MB for 6 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "8bcd526e",
+      "hash8": "432bafe3",
       "vdtHash": "ae8b921db82218cb7709788a12dec74df2bcb44f",
       "timings": {
-        "importMs": 677,
-        "fontsMs": 95,
-        "buildMs": 188,
-        "totalMs": 1837,
+        "importMs": 679,
+        "fontsMs": 71,
+        "buildMs": 131,
+        "totalMs": 1761,
         "builds": 1
       },
       "specimen": {
@@ -510,7 +510,7 @@
           "h": 1304,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 116122,
+          "bytes": 116188,
           "alt": "Página de apertura 2: Sumario. En la portada: las colinas de Castellina in Chianti, escenario del reportaje."
         },
         {
@@ -554,7 +554,7 @@
           "h": 1304,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 148342,
+          "bytes": 148364,
           "alt": "Página de apertura 6: El pan de la trilla."
         }
       ],
@@ -902,7 +902,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.35 MB (warning at 0.9 MB for 6 pages)"
+            "detail": "the edition's images weigh 1.35 MB (warning at 0.9 MB for 6 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C35",
@@ -910,9 +910,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 6 −5‰ “Si no encuentras trigo antiguo, sirve cualquier …”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
