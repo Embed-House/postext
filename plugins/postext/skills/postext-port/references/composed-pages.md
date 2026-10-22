@@ -770,7 +770,12 @@ What the extraction decides, so you know what to check:
   `avoid` zones: `pdf_figures.py symbols book.pdf --page 6 --box x0,y0,x1,y1`
   prints them as fractions of the box, to paste into the resource, and the
   label of a city is then checked against its own dot (a label meant to
-  touch its dot gets `overlap: "allow"`).
+  touch its dot gets `overlap: "allow"`). From skill 1.64 two copies of a
+  label in two colours (a white one printed under a coloured one), or a
+  twin of its letters drawn as paths under it, are the label and its halo:
+  the coloured print is the label's colour, the twin the label style's
+  `halo` (`{color, width}`), out of the picture's cut. Small rotated labels
+  on a shaded ground (degrees on a globe) are no longer read as hidden text.
 - **Geometry.** Area `trim`; frames anchor `below` the frame above them on
   the same card; runs with equal gaps form `stack` groups, boxes of one
   height side by side `row` groups; frames inside a box anchor to its
@@ -791,7 +796,11 @@ What the extraction decides, so you know what to check:
 - **Faces.** The PDF's font names are matched to the PostScript names of
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report
-  lists every match.
+  lists every match. A `--font-map` target must be a family of the
+  `--fonts` files (skill 1.64): `extract` stops and names the near ones
+  (`Woodstamp` → `Wood Stamp`) rather than falling back to another face.
+  `manifest DIR --fonts DIR/fonts` (the project's own folder) lists those
+  files and copies nothing.
   From skill 1.61 the style part is read from every form producers write
   (`Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`, `ArialBold`); a face
   takes the heavier of the file's weight and the one its name or bold flag
@@ -1612,7 +1621,93 @@ resources.append(bitmap(PROJECT, "mapa-europa", "resources/mapa-europa.png", alt
 
 ### 6.5 Photos with captions
 
-The source: three photos in a row, each with a two-line caption under it.
+The source: a box with a paragraph and, under it, three photos in a row,
+each with a two-line caption under it.
+
+**Photos in a box go in the box's fence.** The box lays out its own words,
+then a row of photos and a row of captions, and grows with them; the frames
+under it move down. Nothing hangs from the box and no `growWith` is needed:
+
+```python
+callout_styles.append({"id": "caja-fotos", "columnGap": mm(6), ...})   # columnGap: the step of the source's columns
+paragraph_styles.append({"id": "centred", "textAlign": "center", "fontSize": pt(9), "lineHeight": pt(11.5)})
+resource_types.append({"id": "foto", "numberingTemplate": ""})
+layout["inlineResourceGapInBoxes"] = False
+```
+
+```md
+:::frame{slot="caja-fotos" label="EL RÍO"}
+El río movía los molinos y regaba las huertas del valle.
+
+:::columns{count=3 breaks="2,3"}
+::resource{id="puente"}
+
+::resource{id="molino"}
+
+::resource{id="presa"}
+:::
+
+:::columns{count=3 breaks="2,3"}
+:::paragraphs{style="centred"}
+El puente viejo.
+:::
+
+:::paragraphs{style="centred"}
+El molino.
+:::
+
+:::paragraphs{style="centred"}
+La presa.
+:::
+:::
+:::
+```
+
+- **Why not frames hung from the box.** A box whose words, photos and
+  captions all sit in frames of their own composes nothing: the output
+  draws it, but the Sandbox shows its empty-frame placeholder on it and
+  `composed_check.py` fails it (`emptyFrame`). A photo hung from the box's
+  corner also stays put when a longer edition makes the text run longer,
+  so the text runs under it (`frameCovered` in the `--stress 1.3` run).
+  The fix for both is the same: content in the fence, the box grows. Never
+  move the box's words into a capped frame above the photos to stop the
+  collision; that is what leaves the box empty.
+- **Rows.** `breaks` counts blocks, so `breaks="2,3"` starts columns 2 and
+  3 at the second and third block: one photo (or one caption) per column.
+  The captions are a second group of the same count, so a longer caption
+  never pushes its neighbours' photos. The room above a lone photo or
+  caption is `:::space{lines=…}`. Columns share the box's width equally, so
+  a caption wraps where the column ends, not where the source's did.
+- **Where the caption goes** (decided, #1114, #1186). By default the caption
+  is Markdown in the box that holds the photo, set where it stands, so
+  correcting or translating it is a Markdown edit. Use the resource's own
+  `caption` (and `localized.<lang>.resources`) when the source sets the
+  caption small and attached to the picture, as one figure with it, and
+  when the book numbers its figures ("Figura 3"). The draft does this
+  (`attached_caption`: set at most 92 % of the size of the box's text, no
+  more than 3 mm under the picture, no wider than it plus 2 mm). A small
+  caption beside its picture (`beside_caption`: lines to its left or right,
+  at most 3 mm from its side, level with its top or its foot, no taller
+  than it and a line, set 8 % or half a point smaller than the box's text)
+  is the picture's resource caption too, with `placement: {captionSide:
+  "inside", width, align}` (postext 1.52): `width` is the picture's share of
+  the column it flows in and `align` the picture's side. The engine sets the
+  caption level with the picture's top and `layout.gutterWidth` from it, so
+  a caption the source sets on the picture's foot moves up to its top. For a
+  book pinned to 1.51 or older, take the `captionSide` out (the caption then
+  goes under the picture).
+- **When the photos stay frames.** Photos that cannot flow in the box's
+  text (beside its words, laid over them, with ink past the box, in a row
+  of unlike widths) keep their frames, with their captions as frames hung
+  `below` them and `"growWith": "children"` on the box (postext 1.52): the
+  box grows down to the lowest caption's foot plus its **whole** bottom
+  padding. So that padding is the room the source leaves under the lowest
+  caption, not under the box's text (the draft measures it so; a padding
+  measured under the text made a box 6 mm taller than the source), and
+  `minHeight` keeps the source height. On 1.51 and older, size the box for
+  the longest edition and check it with `--stress 1.3`.
+- **Photos on the page, in no box.** Each photo is a frame with its caption
+  in it, and the row is a `row` group:
 
 ```python
 frames += [
@@ -1622,55 +1717,25 @@ frames += [
     {"name": "foto-3", "width": mm(56)},
 ]
 groups.append({"name": "fotos", "kind": "row", "frames": ["foto-1", "foto-2", "foto-3"], "gap": mm(6)})
-paragraph_styles.append({"id": "pie-foto", "fontSize": pt(9), "lineHeight": pt(11.5), "textAlign": "left"})
-resource_types.append({"id": "foto", "name": "Foto", "numberingTemplate": "", "captionPrefix": "",
-                       "defaultPlacement": {"position": "here"}})
 ```
 
 ```md
 :::frame{slot="foto-1"}
 ::resource{id="mercado"}
 
-:::paragraphs{style="pie-foto"}
+:::paragraphs{style="centred"}
 Un mercado de barrio.
 :::
 :::
 ```
 
-- **Where the caption goes** (decided, #1114). By default the caption is
-  Markdown in a frame (the photo's frame, or a frame of its own hung `below`
-  the photo), so correcting or translating it is a Markdown edit. Use the
-  resource's own `caption` (and `localized.<lang>.resources`) when the
-  source sets the caption small and attached to the picture, as one figure
-  with it, and when the book numbers its figures ("Figura 3"). The draft
-  does this: `split_captions` (`pdf_regions.py`) gives a column of lines
-  under a box's picture to the picture as its resource caption
-  (`attached_caption`: set at most 92 % of the size of the box's text, no
-  more than 3 mm under the picture, no wider than it plus 2 mm), and makes
-  every other caption column a text frame `below` its picture, the box
-  marked `growWith: "children"`. A small caption beside its picture
-  (`beside_caption`: lines to its left or right, at most 3 mm from its
-  side, level with its top or its foot, no taller than it and a line, set
-  at most 92 % of the box text's size) is the picture's resource caption
-  too, with `placement: {captionSide: "inside", width, align}` (postext
-  1.52): the picture's frame widens to hold both, `width` is the picture's
-  share of it and `align` the picture's side. The engine sets the caption
-  level with the picture's top and `layout.gutterWidth` from it, so a
-  caption the source sets on the picture's foot moves up to its top. For a
-  book pinned to 1.51 or older, take the `captionSide` out (the caption then
-  goes under the picture) and narrow the frame back to the picture.
-- A box that holds photos and their captions takes `"growWith": "children"`
-  (postext 1.52): it grows down to the lowest caption's foot and its bottom
-  padding, and the frames under it move down. On 1.51 and older, size the
-  box for the longest edition (`minHeight`) and check it with `--stress
-  1.3`.
 - An unnumbered resource type (`numberingTemplate: ""`) keeps "Photo 1"
   off the page. From 1.38 the type may leave the other fields out (the
   built-in type of the same id, else the id and `{h1}.{n}`, fill them):
   `{"id": "foto", "numberingTemplate": ""}` is enough; write every field
   only for 1.37 and older.
-- A row keeps its frames' widths and grows as tall as the tallest caption
-  needs. Photos of different widths: different frame widths.
+- A row of frames keeps their widths and grows as tall as the tallest
+  caption needs. Photos of different widths: different frame widths.
 - From 1.48 photos of one width on a lattice (three in a row, a wall of six)
   are one frame set repeated by a `grid` group (6.16): the template draws
   `foto` and its `pie` once and each `:::frame{slot="foto"}` of the page is a
