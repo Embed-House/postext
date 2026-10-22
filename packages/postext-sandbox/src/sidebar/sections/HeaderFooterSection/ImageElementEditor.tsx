@@ -364,6 +364,8 @@ export function ImageElementEditor({ raw, resolved, slotKind, siblings = [], fra
         slotKind={slotKind}
         siblings={siblings}
         frames={frames}
+        pin={raw.pin}
+        onPinChange={(pin) => update({ pin })}
         onChange={(placement) => update({ placement })}
       />
       <SelectInput

@@ -1,9 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
-import { CODE_TOKEN_KINDS, DEFAULT_CODE_STYLE, DEFAULT_CODE_TOKENS, dimensionToPx, dimensionsEqual, resolveBodyTextConfig, resolveCodeStyleConfig, resolvePageConfig } from 'postext';
-import type { CodeStyleConfig, CodeTokenKind, CodeTokenStyle, DimensionUnit, InlineCodeStyleConfig } from 'postext';
+import { useSandboxDispatch, useSandboxLabels, useSandboxResources, useSandboxSelector } from '../../context/SandboxContext.js';
+import { CODE_TOKEN_KINDS, DEFAULT_CODE_STYLE, DEFAULT_CODE_TOKENS, dimensionToPx, dimensionsEqual, resolveBodyTextConfig, resolveCalloutStylesConfig, resolveCodeStyleConfig, resolveHeadingsConfig, resolvePageConfig, resolveUnorderedListsConfig } from 'postext';
+import type { CodeStyleConfig, CodeTokenKind, CodeTokenStyle, Dimension, DimensionUnit, InlineCodeStyleConfig } from 'postext';
+import { CalloutLabelFields, CalloutTitleStyleFields } from './CalloutStylesSection.js';
 import type { SandboxLabels } from '../../types/labels.js';
 import {
   CollapsibleSection,
@@ -54,6 +55,9 @@ export const CodeStyleSection = memo(function CodeStyleSection() {
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
   const pageRaw = useSandboxSelector((s) => s.config.page);
   const locale = useSandboxSelector((s) => s.config.locale);
+  const headingsRaw = useSandboxSelector((s) => s.config.headings);
+  const unorderedListsRaw = useSandboxSelector((s) => s.config.unorderedLists);
+  const resources = useSandboxResources();
   const body = resolveBodyTextConfig(bodyTextRaw, locale);
   const cs = resolveCodeStyleConfig(raw, body);
 
@@ -85,6 +89,26 @@ export const CodeStyleSection = memo(function CodeStyleSection() {
   const bodyPx = dimensionToPx(body.fontSize, page.dpi);
   const gridPx = body.lineHeight.unit === 'em' || body.lineHeight.unit === 'rem' ? body.lineHeight.value * bodyPx : dimensionToPx(body.lineHeight, page.dpi, bodyPx);
   const gridPt = Math.round((gridPx * 72 / page.dpi) * 100) / 100;
+
+  // The title row and the label tab of a listing are a box style's
+  // (`codeBoxStyle` in the engine): resolved as one, over the defaults
+  // listings give them, so the fields show what a listing prints.
+  const codePt = (dimensionToPx(cs.fontSize, page.dpi, bodyPx) * 72) / page.dpi;
+  const pt = (v: number): Dimension => ({ value: Math.round(v * 100) / 100, unit: 'pt' });
+  const box = resolveCalloutStylesConfig(
+    [{
+      id: 'code',
+      borderRadius: cs.borderRadius,
+      titleStyle: { fontFamily: cs.fontFamily, fontSize: pt(codePt * 0.9), fontWeight: cs.boldFontWeight, color: cs.color, gap: pt(codePt * 0.4), ...raw?.titleStyle },
+      ...(raw?.label ? { label: { fontFamily: cs.fontFamily, fontSize: pt(codePt), color: cs.color, ...raw.label } } : {}),
+    }],
+    body,
+    resolveHeadingsConfig(headingsRaw),
+    resolveUnorderedListsConfig(unorderedListsRaw, body),
+    locale,
+  )[0]!;
+  const tabHost = { label: raw?.label, titleStyle: raw?.titleStyle };
+  const iconResources = resources.filter((r) => r.kind === 'svg' || r.kind === 'bitmap');
 
   const setToken = (kind: CodeTokenKind, partial: CodeTokenStyle) =>
     update({ tokens: { ...raw?.tokens, [kind]: { ...raw?.tokens?.[kind], ...partial } } });
@@ -153,6 +177,27 @@ export const CodeStyleSection = memo(function CodeStyleSection() {
           tooltip={labels.codeFontSizeTooltip}
           isDefault={dimensionsEqual(cs.fontSize, D.fontSize)}
           onReset={() => resetField('fontSize')}
+        />
+        <NumberInput
+          label={labels.bodyFontWeight}
+          value={cs.fontWeight}
+          onChange={(v) => update({ fontWeight: v })}
+          min={100}
+          max={900}
+          step={10}
+          isDefault={unset('fontWeight')}
+          onReset={() => resetField('fontWeight')}
+        />
+        <NumberInput
+          label={labels.bodyBoldFontWeight}
+          value={cs.boldFontWeight}
+          onChange={(v) => update({ boldFontWeight: v })}
+          min={100}
+          max={900}
+          step={10}
+          tooltip={labels.codeBoldFontWeightTooltip}
+          isDefault={unset('boldFontWeight')}
+          onReset={() => resetField('boldFontWeight')}
         />
         <DimensionInput
           label={labels.codeLineHeight}
@@ -442,6 +487,24 @@ export const CodeStyleSection = memo(function CodeStyleSection() {
         )}
       </CollapsibleSection>
 
+      <CalloutTitleStyleFields
+        style={tabHost}
+        resolved={box}
+        onChange={(partial) => update(partial)}
+        onResetField={(field) => resetField(field)}
+        sectionId="codeStyle"
+        fieldId="code"
+      />
+      <CalloutLabelFields
+        style={tabHost}
+        resolved={box}
+        onChange={(partial) => update(partial)}
+        onResetField={(field) => resetField(field)}
+        sectionId="codeStyle"
+        fieldId="code"
+        iconResources={iconResources}
+      />
+
       <CollapsibleSection title={labels.codeGroupTokens} sectionId="codeStyle.tokens" variant="subsection">
         <SelectInput
           label={labels.codeHighlight}
@@ -532,6 +595,26 @@ export const CodeStyleSection = memo(function CodeStyleSection() {
               onReset={() => resetInline('color')}
               fieldId="code-inline-color"
             />
+            <SelectInput
+              label={labels.codeTokenStyle}
+              value={lookOf(inline)}
+              variant="segmented"
+              stacked
+              options={[
+                { value: 'regular', label: labels.codeTokenRegular },
+                { value: 'bold', label: labels.codeTokenBold },
+                { value: 'italic', label: labels.codeTokenItalic },
+                { value: 'boldItalic', label: labels.codeTokenBoldItalic },
+              ]}
+              onChange={(v) => setInline({ bold: v === 'bold' || v === 'boldItalic', italic: v === 'italic' || v === 'boldItalic' })}
+              isDefault={inlineUnset('bold') && inlineUnset('italic')}
+              onReset={() => {
+                const next = { ...raw?.inline };
+                delete next.bold;
+                delete next.italic;
+                update({ inline: next });
+              }}
+            />
             <ToggleSwitch
               label={labels.codeInlineOtherScripts}
               checked={inline.otherScripts === 'text'}
@@ -568,6 +651,16 @@ export const CodeStyleSection = memo(function CodeStyleSection() {
                   onReset={() => resetInline('paddingX')}
                 />
                 <DimensionInput
+                  label={labels.chipStylePaddingY}
+                  value={inline.paddingY}
+                  onChange={(v) => setInline({ paddingY: v })}
+                  min={0}
+                  step={0.05}
+                  units={SIZE_UNITS}
+                  isDefault={inlineUnset('paddingY')}
+                  onReset={() => resetInline('paddingY')}
+                />
+                <DimensionInput
                   label={labels.calloutStyleBorderRadius}
                   value={inline.borderRadius}
                   onChange={(v) => setInline({ borderRadius: v })}
@@ -576,6 +669,35 @@ export const CodeStyleSection = memo(function CodeStyleSection() {
                   units={SIZE_UNITS}
                   isDefault={inlineUnset('borderRadius')}
                   onReset={() => resetInline('borderRadius')}
+                />
+              </>
+            )}
+            <ToggleSwitch
+              label={labels.calloutStyleBorder}
+              checked={inline.borderColor !== undefined}
+              onChange={(v) => (v ? setInline({ borderColor: inline.color ?? body.color }) : resetInline('borderColor'))}
+              tooltip={labels.codeInlineBorderTooltip}
+              isDefault={inlineUnset('borderColor')}
+              onReset={() => resetInline('borderColor')}
+            />
+            {inline.borderColor && (
+              <>
+                <ColorPicker
+                  label={labels.calloutStyleBorderColor}
+                  value={inline.borderColor}
+                  onChange={(borderColor) => setInline({ borderColor })}
+                  isDefault={false}
+                  fieldId="code-inline-border"
+                />
+                <DimensionInput
+                  label={labels.calloutStyleBorderWidth}
+                  value={inline.borderWidth}
+                  onChange={(v) => setInline({ borderWidth: v })}
+                  min={0}
+                  step={0.25}
+                  units={STROKE_UNITS}
+                  isDefault={inlineUnset('borderWidth')}
+                  onReset={() => resetInline('borderWidth')}
                 />
               </>
             )}

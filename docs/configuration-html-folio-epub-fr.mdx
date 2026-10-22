@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'HTML, Folio et EPUB',
   description: 'Afficher le livre mis en page dans une page web, en faire un livre en 3D avec postext-folio, ou un EPUB 3 à mise en page fixe ou recomposable avec postext-epub',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-22',
   readingTime: '19 min',
   order: 22,
   parent: 'configuration',
@@ -187,6 +187,7 @@ L’exemple ci-dessus est volontairement dépouillé. Les intégrations en produ
 - **Les calques** : superposer un SVG positionné en absolu sur chaque `.pt-page` pour les curseurs, les sélections ou les grilles de ligne de base.
 - **Les liens** : les mots d’un lien Markdown sont enveloppés dans `<a href="…" rel="noopener noreferrer">`, qui prend la couleur du texte et n’est pas souligné ; voir [Format du document › Liens](/fr/docs/document-format-inline#liens). Dans une visionneuse de type éditeur, interceptez les clics sur les `a[href]` qui ne commencent pas par `#` et ouvrez-les dans un nouvel onglet (les ancres de `:ref` renvoient à l’intérieur du document).
 - **Les images à encre unique** : avec `diagramStyle.singleInk` activé, les `<img>` SVG reçoivent un filtre CSS, sauf si vous passez `singleInk: false` pour des URL déjà recolorées ; voir [Encre unique sur le canvas et en HTML](/fr/docs/configuration-resources#encre-unique-sur-le-canvas-et-en-html).
+- **Pages composées et pages de bande dessinée sur une feuille imprimée** : sur une page large comme l'écran et haute comme le défilement, un cadre ancré au pied d'une page composée (`::::page{template}`) se retrouverait au pied du défilement. Passez `composedViewerLeaf: { width, height, margins? }` (le format et les marges de la page imprimée) dans la configuration que vous mettez en page : chaque page composée est alors mise en page sur une page de ce format, avec sa géométrie d'impression, et vous la mettez à l'échelle de l'écran (depuis postext 1.47) ; `comics.viewerLeaf` fait de même pour les pages de bande dessinée, mises à l'échelle à `fitWidth` px (voir [Bande dessinée](/fr/docs/configuration-comics)). Les deux sont destinés aux hôtes : le visualiseur HTML du Sandbox les fixe, et ils ne sont jamais enregistrés avec un document.
 
 Le composant `HtmlPreview` du Sandbox (`packages/postext-sandbox/src/viewport/HtmlPreview/index.tsx`) met tout cela en œuvre sur la même API que ci-dessus et peut servir de référence. Il fait aussi passer chaque construction par un worker de mise en page partagé (voir [Exécuter la mise en page dans un Web Worker](/fr/docs/configuration-programmatic-usage#mise-en-page-dans-un-web-worker)), pour que les modifications en direct et les redimensionnements ne bloquent jamais le thread principal : remplacez l’appel direct `buildDocument(...)` de l’extrait ci-dessus par `layoutWorker.build(...)` quand vous êtes prêt à sortir la mise en page du thread principal.
 

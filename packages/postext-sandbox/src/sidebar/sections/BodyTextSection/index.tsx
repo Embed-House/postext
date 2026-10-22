@@ -380,6 +380,22 @@ export const BodyTextSection = memo(function BodyTextSection() {
           isDefault={bodyText.scriptContext !== false}
           onReset={() => resetField('scriptContext')}
         />
+        {/* The language the text is measured, painted and declared in
+            (#764): the document's by default; the host's keeps the widths
+            of a document stored before configVersion 14. */}
+        <SelectInput
+          label={labels.bodyShapingLanguage}
+          value={bodyText.shapingLanguage ?? 'document'}
+          options={[
+            { value: 'document', label: labels.bodyShapingLanguageDocument },
+            { value: 'host', label: labels.bodyShapingLanguageHost },
+          ]}
+          onChange={(v) => updateBodyText({ shapingLanguage: v as 'document' | 'host' })}
+          tooltip={labels.bodyShapingLanguageTooltip}
+          variant="segmented"
+          isDefault={bodyText.shapingLanguage === undefined}
+          onReset={() => resetField('shapingLanguage')}
+        />
         <ToggleSwitch
           label={labels.bodyRepeatHyphen}
           checked={bodyText.repeatHyphen}

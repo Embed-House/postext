@@ -10,6 +10,7 @@ import {
   useSandboxSelector,
 } from '../context/SandboxContext.js';
 import { Button, ConfirmPopover, EmptyState, IconButton, PanelBody, PanelHeader, cn } from '../ui/index.js';
+import { ToggleSwitch } from '../controls/index.js';
 import type { SandboxLabels } from '../types/index.js';
 import {
   deleteFontFile,
@@ -328,6 +329,14 @@ export function FontsPanel() {
                   />
                   <span id={`font-fallback-help-${family.name}`} className="mt-0.5 block">{labels.customFontsFallbackHelp}</span>
                 </label>
+                <ToggleSwitch
+                  label={labels.customFontsRedistributable}
+                  checked={family.redistributable !== false}
+                  onChange={(v) => updateFamily(family.name, { redistributable: v ? undefined : false })}
+                  tooltip={labels.customFontsRedistributableTooltip}
+                  isDefault={family.redistributable === undefined}
+                  onReset={() => updateFamily(family.name, { redistributable: undefined })}
+                />
                 {family.variants.map((variant, index) => (
                   <VariantRow
                     key={`${variant.fileId}-${index}`}

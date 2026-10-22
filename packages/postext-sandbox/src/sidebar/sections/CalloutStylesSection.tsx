@@ -37,6 +37,8 @@ import type {
   ElementAnchor,
   Resource,
   ResolvedCalloutStyleConfig,
+  ResourceCounterFormat,
+  ResourceCounterReset,
 } from 'postext';
 import {
   DEFAULT_CALLOUT_STYLES,
@@ -81,6 +83,7 @@ import { flowSideLabels, useRightToLeftFlow } from '../settings/flowSides.js';
 import { hasSeveralColumns } from '../settings/multiColumnBook.js';
 import { MULTIPLE_COLUMNS_MAX } from '../settings/multipleColumns.js';
 import { TabStopsField } from '../settings/TabStopsField.js';
+import { counterFormatOptions, resetOnOptions } from '../settings/counterOptions.js';
 import { ParagraphSpacingField } from '../settings/ParagraphSpacingField.js';
 import { useBookTexts } from '../../frameStyles/useBookTexts.js';
 import { planRename } from '../../frameStyles/styleMerge.js';
@@ -122,6 +125,7 @@ function nextStyleId(existing: CalloutStyleConfig[]): string {
 }
 
 /** Sub-objects of a callout style that are edited field by field. */
+type CalloutNumbering = NonNullable<CalloutStyleConfig['numbering']>;
 type Group = 'border' | 'padding' | 'stripe' | 'icon' | 'label' | 'marker' | 'titleStyle' | 'body' | 'lists';
 type GroupConfig<G extends Group> = NonNullable<CalloutStyleConfig[G]>;
 
@@ -544,7 +548,6 @@ export function CalloutStyleCard({
   const labels = useSandboxLabels();
   const rtl = useRightToLeftFlow();
   const stripeSide = flowSideLabels(rtl, labels.calloutStyleStripeSideLeft, labels.calloutStyleStripeSideRight);
-  const labelSide = flowSideLabels(rtl, labels.calloutStyleLabelPositionTopLeft, labels.calloutStyleLabelPositionTopRight);
   const textSide = flowSideLabels(rtl, labels.bodyTextAlignLeft, labels.headingsTextAlignRight);
   const markerSide = flowSideLabels(rtl, labels.headerFooterElementAlignLeft, labels.headerFooterElementAlignRight);
   // Ragged bodies hyphenate too once the body text turns ragged hyphenation on.
@@ -605,47 +608,6 @@ export function CalloutStyleCard({
     else resetGroupField('marker', 'rule');
   };
   const markerRuleUnset = (field: keyof CalloutMarkerRuleConfig) => style.marker?.rule?.[field] === undefined;
-  const label = (partial: Partial<CalloutLabelConfig>) => updateGroup('label', partial);
-  /** `label.icon` / `label.rule` are nested one level deeper, like the
-   *  marker rule: merge there and drop the sub-object when nothing is left. */
-  const updateLabelIcon = (partial: Partial<NonNullable<CalloutLabelConfig['icon']>>) =>
-    label({ icon: { ...style.label?.icon, ...partial } });
-  const resetLabelIconField = (field: keyof NonNullable<CalloutLabelConfig['icon']>) => {
-    const icon = { ...style.label?.icon };
-    delete icon[field];
-    if (Object.keys(icon).length > 0) label({ icon });
-    else resetGroupField('label', 'icon');
-  };
-  const labelIconUnset = (field: keyof NonNullable<CalloutLabelConfig['icon']>) => style.label?.icon?.[field] === undefined;
-  const updateLabelRule = (partial: Partial<NonNullable<CalloutLabelConfig['rule']>>) =>
-    label({ rule: { ...style.label?.rule, ...partial } });
-  const resetLabelRuleField = (field: keyof NonNullable<CalloutLabelConfig['rule']>) => {
-    const rule = { ...style.label?.rule };
-    delete rule[field];
-    if (Object.keys(rule).length > 0) label({ rule });
-    else resetGroupField('label', 'rule');
-  };
-  const labelRuleUnset = (field: keyof NonNullable<CalloutLabelConfig['rule']>) => style.label?.rule?.[field] === undefined;
-  const labelResourceOptions = [
-    { value: '', label: labels.calloutStyleIconResourceNone },
-    ...iconResources.map((r) => ({ value: r.id, label: iconLabel(r) })),
-  ];
-  if (resolved.label?.icon.resourceId && !iconResources.some((r) => r.id === resolved.label?.icon.resourceId)) {
-    labelResourceOptions.push({ value: resolved.label.icon.resourceId, label: resolved.label.icon.resourceId });
-  }
-  const labelBottomSide = flowSideLabels(rtl, labels.calloutStyleLabelPositionBottomLeft, labels.calloutStyleLabelPositionBottomRight);
-  const labelPositionOptions = [
-    { value: 'top-right', label: labelSide.right },
-    { value: 'top-left', label: labelSide.left },
-    { value: 'top-start', label: labels.calloutStyleLabelPositionTopStart },
-    { value: 'top-end', label: labels.calloutStyleLabelPositionTopEnd },
-    // Tabs hanging from the box's foot (#1059).
-    { value: 'bottom-right', label: labelBottomSide.right },
-    { value: 'bottom-left', label: labelBottomSide.left },
-    { value: 'bottom-start', label: labels.calloutStyleLabelPositionBottomStart },
-    { value: 'bottom-end', label: labels.calloutStyleLabelPositionBottomEnd },
-  ];
-  const title = (partial: Partial<CalloutTitleStyleConfig>) => updateGroup('titleStyle', partial);
   const body = (partial: Partial<CalloutBodyStyleConfig>) => updateGroup('body', partial);
   const lists = (partial: Partial<CalloutListStyleConfig>) => updateGroup('lists', partial);
   /** The style's design (#1014). The resolved one shows what a style
@@ -726,10 +688,6 @@ export function CalloutStyleCard({
     { value: 'start', label: labels.sideTextStart },
     { value: 'end', label: labels.sideTextEnd },
     { value: 'top', label: labels.calloutStyleStripeSideTop },
-  ];
-  const transformOptions = [
-    { value: 'none', label: labels.calloutStyleTitleTransformNone },
-    { value: 'uppercase', label: labels.calloutStyleTitleTransformUppercase },
   ];
   const bodyAlignOptions = [
     { value: 'left', label: textSide.left },
@@ -1221,6 +1179,636 @@ export function CalloutStyleCard({
         />
       </CollapsibleSection>
 
+      <CalloutLabelFields style={style} resolved={resolved} onChange={onChange} onResetField={onResetField} sectionId={sectionId} fieldId={fieldId} iconResources={iconResources} />
+
+      <CollapsibleSection
+        title={labels.calloutStyleMarkerGroup}
+        sectionId={`${sectionId}.marker`}
+        variant="subsection"
+      >
+        <IconFields
+          value={resolved.marker}
+          kindLabel={labels.calloutStyleMarkerKind}
+          kindTooltip={labels.calloutStyleMarkerKindTooltip}
+          update={marker}
+          isDefault={(f) => groupUnset('marker', f as keyof CalloutMarkerConfig)}
+          onReset={(f) => resetGroupField('marker', f as keyof CalloutMarkerConfig)}
+          fieldId={`${fieldId}-marker`}
+          iconResources={iconResources}
+        />
+        {resolved.marker.kind !== 'none' && (
+          <>
+            <DimensionInput
+              label={labels.calloutStyleMarkerGap}
+              value={resolved.marker.gap}
+              onChange={(v) => marker({ gap: v })}
+              min={0}
+              step={0.05}
+              units={SPACING_UNITS}
+              tooltip={labels.calloutStyleMarkerGapTooltip}
+              isDefault={groupUnset('marker', 'gap')}
+              onReset={() => resetGroupField('marker', 'gap')}
+            />
+            <ToggleSwitch
+              label={labels.calloutStyleMarkerRule}
+              checked={resolved.marker.rule.enabled}
+              onChange={(v) => updateMarkerRule({ enabled: v })}
+              tooltip={labels.calloutStyleMarkerRuleTooltip}
+              isDefault={markerRuleUnset('enabled')}
+              onReset={() => resetMarkerRuleField('enabled')}
+            />
+            {resolved.marker.rule.enabled && (
+              <>
+                <ColorPicker
+                  label={labels.calloutStyleMarkerRuleColor}
+                  value={resolved.marker.rule.color}
+                  onChange={(v) => updateMarkerRule({ color: v })}
+                  isDefault={markerRuleUnset('color')}
+                  onReset={() => resetMarkerRuleField('color')}
+                  fieldId={`${fieldId}-marker-rule`}
+                />
+                <DimensionInput
+                  label={labels.calloutStyleMarkerRuleWidth}
+                  value={resolved.marker.rule.width}
+                  onChange={(v) => updateMarkerRule({ width: v })}
+                  min={0}
+                  step={0.25}
+                  units={STROKE_UNITS}
+                  isDefault={markerRuleUnset('width')}
+                  onReset={() => resetMarkerRuleField('width')}
+                />
+                <DimensionInput
+                  label={labels.calloutStyleMarkerRuleLength}
+                  value={resolved.marker.rule.length}
+                  onChange={(v) => updateMarkerRule({ length: v })}
+                  min={0}
+                  step={0.5}
+                  units={OFFSET_UNITS}
+                  tooltip={labels.calloutStyleMarkerRuleLengthTooltip}
+                  isDefault={markerRuleUnset('length')}
+                  onReset={() => resetMarkerRuleField('length')}
+                />
+              </>
+            )}
+          </>
+        )}
+      </CollapsibleSection>
+
+      <CalloutTitleStyleFields style={style} resolved={resolved} onChange={onChange} onResetField={onResetField} sectionId={sectionId} fieldId={fieldId} />
+
+      <CalloutNumberingFields style={style} resolved={resolved} onChange={onChange} onResetField={onResetField} sectionId={sectionId} />
+
+      <CollapsibleSection
+        title={labels.calloutStyleDesignGroup}
+        sectionId={`${sectionId}.design`}
+        variant="subsection"
+      >
+        <ToggleSwitch
+          label={labels.calloutStyleDesign}
+          checked={designOn}
+          onChange={(v) => updateDesign({ enabled: v })}
+          tooltip={labels.calloutStyleDesignTooltip}
+          isDefault={unset('design')}
+          onReset={() => onResetField('design')}
+        />
+        {designOn && (
+          <NestedGroup>
+            <p className="px-2 py-1 text-xs" style={{ color: 'var(--slate)' }}>
+              {labels.calloutStyleDesignInfo}
+            </p>
+            <DimensionInput
+              label={labels.calloutStyleDesignMinHeight}
+              value={shownDesign?.minHeight ?? ZERO_PT}
+              onChange={(dim) => updateDesign({ minHeight: dim })}
+              min={0}
+              step={1}
+              tooltip={labels.calloutStyleDesignMinHeightTooltip}
+              isDefault={rawDesign?.minHeight === undefined}
+              onReset={() => updateDesign({ minHeight: undefined })}
+              units={MIN_HEIGHT_UNITS}
+            />
+            <ToggleSwitch
+              label={labels.calloutStyleDesignSetsContent}
+              checked={shownDesign?.setsContent ?? false}
+              onChange={(v) => updateDesign({ setsContent: v })}
+              tooltip={labels.calloutStyleDesignSetsContentTooltip}
+              isDefault={rawDesign?.setsContent === undefined}
+              onReset={() => updateDesign({ setsContent: undefined })}
+            />
+            <SlotEditor
+              slotKey="box"
+              raw={rawDesign?.slot}
+              resolved={shownDesign?.slot ?? resolveDesignSlot(undefined, 'box')}
+              onUpdate={(slot: DesignSlot | undefined) => updateDesign({ enabled: true, slot: slot ?? { elements: [] } })}
+            />
+          </NestedGroup>
+        )}
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={labels.calloutStyleBodyGroup}
+        sectionId={`${sectionId}.body`}
+        variant="subsection"
+      >
+        <p className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>
+          {labels.calloutStyleBodyHint}
+        </p>
+        <FontPicker
+          label={labels.fontLabel}
+          value={resolved.body.fontFamily}
+          onChange={(v) => body({ fontFamily: v })}
+          isDefault={groupUnset('body', 'fontFamily')}
+          onReset={() => resetGroupField('body', 'fontFamily')}
+          searchPlaceholder={labels.bodyFontSearch}
+          noResultsLabel={labels.bodyFontNoResults}
+        />
+        <DimensionInput
+          label={labels.sizeLabel}
+          value={resolved.body.fontSize}
+          onChange={(v) => body({ fontSize: v })}
+          min={1}
+          step={0.5}
+          units={FONT_SIZE_UNITS}
+          isDefault={groupUnset('body', 'fontSize')}
+          onReset={() => resetGroupField('body', 'fontSize')}
+        />
+        <DimensionInput
+          label={labels.bodyLineHeight}
+          value={resolved.body.lineHeight}
+          onChange={(v) => body({ lineHeight: v })}
+          min={0.5}
+          max={5}
+          step={0.1}
+          units={LINE_HEIGHT_UNITS}
+          isDefault={groupUnset('body', 'lineHeight')}
+          onReset={() => resetGroupField('body', 'lineHeight')}
+        />
+        <ColorPicker
+          label={labels.colorLabel}
+          value={resolved.body.color}
+          onChange={(v) => body({ color: v })}
+          isDefault={groupUnset('body', 'color')}
+          onReset={() => resetGroupField('body', 'color')}
+          fieldId={`${fieldId}-body`}
+        />
+        <ColorPicker
+          label={labels.calloutStyleBodyBoldColor}
+          value={resolved.body.boldColor ?? resolved.body.color}
+          onChange={(v) => body({ boldColor: v })}
+          tooltip={labels.calloutStyleBodyBoldColorTooltip}
+          isDefault={groupUnset('body', 'boldColor')}
+          onReset={() => resetGroupField('body', 'boldColor')}
+          fieldId={`${fieldId}-body-bold`}
+        />
+        <ColorPicker
+          label={labels.calloutStyleBodyItalicColor}
+          value={resolved.body.italicColor ?? resolved.body.color}
+          onChange={(v) => body({ italicColor: v })}
+          tooltip={labels.calloutStyleBodyItalicColorTooltip}
+          isDefault={groupUnset('body', 'italicColor')}
+          onReset={() => resetGroupField('body', 'italicColor')}
+          fieldId={`${fieldId}-body-italic`}
+        />
+        <NumberInput
+          label={labels.bodyFontWeight}
+          value={resolved.body.fontWeight}
+          onChange={(v) => body({ fontWeight: v })}
+          min={100}
+          max={900}
+          step={10}
+          tooltip={labels.textStyleFontWeightTooltip}
+          isDefault={groupUnset('body', 'fontWeight')}
+          onReset={() => resetGroupField('body', 'fontWeight')}
+        />
+        <NumberInput
+          label={labels.bodyBoldFontWeight}
+          value={resolved.body.boldFontWeight}
+          onChange={(v) => body({ boldFontWeight: v })}
+          min={100}
+          max={900}
+          step={10}
+          tooltip={labels.textStyleBoldFontWeightTooltip}
+          isDefault={groupUnset('body', 'boldFontWeight')}
+          onReset={() => resetGroupField('body', 'boldFontWeight')}
+        />
+        <ToggleSwitch
+          label={labels.textStyleItalic}
+          checked={resolved.body.italic}
+          onChange={(v) => body({ italic: v })}
+          tooltip={labels.textStyleItalicTooltip}
+          isDefault={groupUnset('body', 'italic')}
+          onReset={() => resetGroupField('body', 'italic')}
+        />
+        <ToggleSwitch
+          label={labels.textStyleSmallCaps}
+          checked={resolved.body.smallCaps}
+          onChange={(v) => body({ smallCaps: v })}
+          tooltip={labels.textStyleSmallCapsTooltip}
+          isDefault={groupUnset('body', 'smallCaps')}
+          onReset={() => resetGroupField('body', 'smallCaps')}
+        />
+        <DimensionInput
+          label={labels.calloutStyleBodyLetterSpacing}
+          value={resolved.body.letterSpacing ?? { value: 0, unit: 'em' }}
+          onChange={(v) => body({ letterSpacing: v })}
+          min={-1}
+          step={0.005}
+          units={TRACKING_UNITS}
+          tooltip={labels.calloutStyleBodyLetterSpacingTooltip}
+          isDefault={groupUnset('body', 'letterSpacing')}
+          onReset={() => resetGroupField('body', 'letterSpacing')}
+        />
+        <SelectInput
+          label={labels.alignmentLabel} tooltip={labels.alignmentHelp}
+          value={resolved.body.textAlign}
+          options={bodyAlignOptions}
+          onChange={(v) => body({ textAlign: v as CalloutBodyStyleConfig['textAlign'] })}
+          isDefault={groupUnset('body', 'textAlign')}
+          onReset={() => resetGroupField('body', 'textAlign')}
+        />
+        {(resolved.body.textAlign === 'justify' || raggedHyphenation) && (
+          <ToggleSwitch
+            label={labels.bodyHyphenation}
+            checked={resolved.body.hyphenation}
+            onChange={(v) => body({ hyphenation: v })}
+            isDefault={groupUnset('body', 'hyphenation')}
+            onReset={() => resetGroupField('body', 'hyphenation')}
+          />
+        )}
+        <ParagraphSpacingField
+          value={resolved.body.paragraphSpacing}
+          line={resolved.body.lineHeight}
+          onChange={(v) => body({ paragraphSpacing: v })}
+          isDefault={groupUnset('body', 'paragraphSpacing')}
+          onReset={() => resetGroupField('body', 'paragraphSpacing')}
+        />
+        <DimensionInput
+          label={labels.bodyFirstLineIndent}
+          value={resolved.body.firstLineIndent}
+          onChange={(v) => body({ firstLineIndent: v })}
+          min={0}
+          step={0.1}
+          units={SPACING_UNITS}
+          isDefault={groupUnset('body', 'firstLineIndent')}
+          onReset={() => resetGroupField('body', 'firstLineIndent')}
+        />
+        <TabStopsField
+          inherits
+          stops={style.body?.tabStops}
+          interval={style.body?.tabInterval}
+          inheritedInterval={bodyTabInterval}
+          onStopsChange={(next) => (next === undefined ? resetGroupField('body', 'tabStops') : body({ tabStops: next }))}
+          onIntervalChange={(next) => (next === undefined ? resetGroupField('body', 'tabInterval') : body({ tabInterval: next }))}
+        />
+      </CollapsibleSection>
+
+      <CollapsibleSection
+        title={labels.calloutStyleListsGroup}
+        sectionId={`${sectionId}.lists`}
+        variant="subsection"
+      >
+        <p className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>
+          {labels.calloutStyleListsHint}
+        </p>
+        <TextInput
+          label={labels.unorderedListsBulletChar}
+          value={resolved.lists.bulletChar}
+          onChange={(v) => lists({ bulletChar: v })}
+          placeholder={labels.unorderedListsBulletCharPlaceholder}
+          tooltip={labels.unorderedListsBulletCharTooltip}
+          widthCh={6}
+          isDefault={groupUnset('lists', 'bulletChar')}
+          onReset={() => resetGroupField('lists', 'bulletChar')}
+        />
+        <DimensionInput
+          label={labels.calloutStyleListsBulletSize}
+          value={resolved.lists.bulletFontSize ?? listDefaults.bulletFontSize}
+          onChange={(v) => lists({ bulletFontSize: v })}
+          min={1}
+          step={0.5}
+          units={FONT_SIZE_UNITS}
+          isDefault={groupUnset('lists', 'bulletFontSize')}
+          onReset={() => resetGroupField('lists', 'bulletFontSize')}
+        />
+        <NumberInput
+          label={labels.calloutStyleListsBulletWeight}
+          value={resolved.lists.bulletFontWeight ?? listDefaults.bulletFontWeight}
+          onChange={(v) => lists({ bulletFontWeight: v })}
+          min={100}
+          max={900}
+          step={10}
+          isDefault={groupUnset('lists', 'bulletFontWeight')}
+          onReset={() => resetGroupField('lists', 'bulletFontWeight')}
+        />
+        <FontPicker
+          label={labels.calloutStyleListsBulletFont}
+          value={resolved.lists.bulletFontFamily ?? listDefaults.bulletFontFamily}
+          onChange={(v) => lists({ bulletFontFamily: v })}
+          tooltip={labels.calloutStyleListsBulletFontTooltip}
+          isDefault={groupUnset('lists', 'bulletFontFamily')}
+          onReset={() => resetGroupField('lists', 'bulletFontFamily')}
+          searchPlaceholder={labels.headingFontSearch}
+          noResultsLabel={labels.headingFontNoResults}
+        />
+        <DimensionInput
+          label={labels.calloutStyleListsMarginTop}
+          tooltip={labels.calloutStyleListsMarginsTooltip}
+          value={resolved.lists.marginTop ?? listDefaults.marginTop}
+          onChange={(v) => lists({ marginTop: v })}
+          min={0}
+          step={0.1}
+          units={SPACING_UNITS}
+          isDefault={groupUnset('lists', 'marginTop')}
+          onReset={() => resetGroupField('lists', 'marginTop')}
+        />
+        <DimensionInput
+          label={labels.calloutStyleListsMarginBottom}
+          tooltip={labels.calloutStyleListsMarginsTooltip}
+          value={resolved.lists.marginBottom ?? listDefaults.marginBottom}
+          onChange={(v) => lists({ marginBottom: v })}
+          min={0}
+          step={0.1}
+          units={SPACING_UNITS}
+          isDefault={groupUnset('lists', 'marginBottom')}
+          onReset={() => resetGroupField('lists', 'marginBottom')}
+        />
+        <ColorPicker
+          label={labels.colorLabel}
+          value={resolved.lists.color}
+          onChange={(v) => lists({ color: v })}
+          isDefault={groupUnset('lists', 'color')}
+          onReset={() => resetGroupField('lists', 'color')}
+          fieldId={`${fieldId}-lists`}
+        />
+        <DimensionInput
+          label={labels.unorderedListsIndent}
+          value={resolved.lists.indent}
+          onChange={(v) => lists({ indent: v })}
+          min={0}
+          step={0.1}
+          units={SPACING_UNITS}
+          tooltip={labels.unorderedListsIndentTooltip}
+          isDefault={groupUnset('lists', 'indent')}
+          onReset={() => resetGroupField('lists', 'indent')}
+        />
+        <DimensionInput
+          label={labels.unorderedListsGap}
+          value={resolved.lists.gap}
+          onChange={(v) => lists({ gap: v })}
+          min={0}
+          step={0.1}
+          units={SPACING_UNITS}
+          tooltip={labels.unorderedListsGapTooltip}
+          isDefault={groupUnset('lists', 'gap')}
+          onReset={() => resetGroupField('lists', 'gap')}
+        />
+        <DimensionInput
+          label={labels.unorderedListsItemSpacing}
+          value={resolved.lists.itemSpacing}
+          onChange={(v) => lists({ itemSpacing: v })}
+          min={0}
+          step={0.1}
+          units={SPACING_UNITS}
+          tooltip={labels.unorderedListsItemSpacingTooltip}
+          isDefault={groupUnset('lists', 'itemSpacing')}
+          onReset={() => resetGroupField('lists', 'itemSpacing')}
+        />
+      </CollapsibleSection>
+    </ItemCard>
+    </SearchScope>
+  );
+}
+
+/** Numbered statements (#530) and the closing mark of a proof: the
+ *  `numbering` group and `endMark`. */
+function CalloutNumberingFields({ style, resolved, onChange, onResetField, sectionId }: {
+  style: CalloutStyleConfig;
+  resolved: ResolvedCalloutStyleConfig;
+  onChange: (partial: Partial<CalloutStyleConfig>) => void;
+  onResetField: (field: keyof CalloutStyleConfig) => void;
+  sectionId: string;
+}) {
+  const labels = useSandboxLabels();
+  const raw = style.numbering;
+  const num = resolved.numbering;
+  const set = (partial: Partial<CalloutNumbering>) => onChange({ numbering: { label: num?.label ?? '', ...raw, ...partial } });
+  const reset = (field: Exclude<keyof CalloutNumbering, 'label'>) => {
+    if (!raw) return;
+    const next = { ...raw };
+    delete next[field];
+    onChange({ numbering: next });
+  };
+  const unset = (field: keyof CalloutNumbering) => raw?.[field] === undefined;
+  return (
+    <CollapsibleSection title={labels.calloutStyleNumberingGroup} sectionId={`${sectionId}.numbering`} variant="subsection">
+      <ToggleSwitch
+        label={labels.calloutStyleNumbering}
+        checked={num !== undefined}
+        onChange={(v) => (v ? onChange({ numbering: { label: style.name ?? style.id } }) : onResetField('numbering'))}
+        tooltip={labels.calloutStyleNumberingTooltip}
+        isDefault={raw === undefined}
+        onReset={() => onResetField('numbering')}
+      />
+      {num && (
+        <NestedGroup>
+          <TextInput
+            label={labels.calloutStyleNumberingLabel}
+            value={num.label}
+            onChange={(v) => set({ label: v })}
+            tooltip={labels.calloutStyleNumberingLabelTooltip}
+            isDefault={false}
+          />
+          <ToggleSwitch
+            label={labels.calloutStyleNumberingNumbered}
+            checked={raw?.counter !== false}
+            onChange={(v) => (v ? reset('counter') : set({ counter: false }))}
+            tooltip={labels.calloutStyleNumberingNumberedTooltip}
+            isDefault={raw?.counter !== false}
+            onReset={() => reset('counter')}
+          />
+          {raw?.counter !== false && (
+            <>
+              <TextInput
+                label={labels.calloutStyleNumberingCounter}
+                value={typeof raw?.counter === 'string' ? raw.counter : ''}
+                onChange={(v) => (v === '' ? reset('counter') : set({ counter: v }))}
+                placeholder={style.id}
+                tooltip={labels.calloutStyleNumberingCounterTooltip}
+                isDefault={unset('counter')}
+                onReset={() => reset('counter')}
+              />
+              <TextInput
+                label={labels.resourceTypeNumberingLabel}
+                value={num.numberingTemplate}
+                onChange={(v) => (v === '' ? reset('numberingTemplate') : set({ numberingTemplate: v }))}
+                tooltip={labels.resourceTypeNumberingTooltip}
+                isDefault={unset('numberingTemplate')}
+                onReset={() => reset('numberingTemplate')}
+              />
+              <SelectInput
+                label={labels.resourceTypeResetCounterLabel}
+                value={num.resetOn}
+                options={resetOnOptions(labels)}
+                onChange={(v) => set({ resetOn: v as ResourceCounterReset })}
+                tooltip={labels.resourceTypeResetCounterTooltip}
+                isDefault={unset('resetOn')}
+                onReset={() => reset('resetOn')}
+              />
+              <SelectInput
+                label={labels.resourceTypeCounterFormatLabel}
+                value={num.counterFormat}
+                options={counterFormatOptions(labels)}
+                onChange={(v) => set({ counterFormat: v as ResourceCounterFormat })}
+                tooltip={labels.resourceTypeCounterFormatTooltip}
+                isDefault={unset('counterFormat')}
+                onReset={() => reset('counterFormat')}
+              />
+            </>
+          )}
+          <SelectInput
+            label={labels.calloutStyleNumberingPlacement}
+            value={num.placement}
+            options={[
+              { value: 'runIn', label: labels.calloutStyleNumberingPlacementRunIn },
+              { value: 'title', label: labels.calloutStyleNumberingPlacementTitle },
+            ]}
+            onChange={(v) => set({ placement: v as 'runIn' | 'title' })}
+            tooltip={labels.calloutStyleNumberingPlacementTooltip}
+            variant="segmented"
+            isDefault={unset('placement')}
+            onReset={() => reset('placement')}
+          />
+          {num.placement === 'runIn' && (
+            <>
+              <ToggleSwitch
+                label={labels.bold}
+                checked={num.bold}
+                onChange={(v) => set({ bold: v })}
+                isDefault={unset('bold')}
+                onReset={() => reset('bold')}
+              />
+              <ToggleSwitch
+                label={labels.italic}
+                checked={num.italic}
+                onChange={(v) => set({ italic: v })}
+                isDefault={unset('italic')}
+                onReset={() => reset('italic')}
+              />
+              <TextInput
+                label={labels.calloutStyleNumberingSuffix}
+                value={num.suffix}
+                onChange={(v) => set({ suffix: v })}
+                tooltip={labels.calloutStyleNumberingSuffixTooltip}
+                isDefault={unset('suffix')}
+                onReset={() => reset('suffix')}
+                widthCh={6}
+              />
+            </>
+          )}
+        </NestedGroup>
+      )}
+      <TextInput
+        label={labels.calloutStyleEndMark}
+        value={resolved.endMark}
+        onChange={(v) => (v === '' ? onResetField('endMark') : onChange({ endMark: v }))}
+        placeholder="∎"
+        tooltip={labels.calloutStyleEndMarkTooltip}
+        isDefault={style.endMark === undefined}
+        onReset={() => onResetField('endMark')}
+        widthCh={6}
+      />
+    </CollapsibleSection>
+  );
+}
+
+/** The fields a label tab and a title row share between box styles and
+ *  code listings (#1170): `codeStyle.label` and `codeStyle.titleStyle`
+ *  are a box style's `label` and `titleStyle`. */
+type TabHost = Pick<CalloutStyleConfig, 'label' | 'titleStyle'>;
+
+interface CalloutGroupFieldsProps {
+  style: TabHost;
+  /** `borderRadius`: the box's, which a joined tab's corners default to. */
+  resolved: Pick<ResolvedCalloutStyleConfig, 'label' | 'titleStyle' | 'borderRadius'>;
+  onChange: (partial: Partial<TabHost>) => void;
+  onResetField: (field: keyof TabHost) => void;
+  sectionId: string;
+  fieldId: string;
+}
+
+/** Merge into a group, drop a field (and the group with its last field),
+ *  and read whether a field is set, as the style card does. */
+function tabHostEdits({ style, onChange, onResetField }: Pick<CalloutGroupFieldsProps, 'style' | 'onChange' | 'onResetField'>) {
+  const updateGroup = <G extends keyof TabHost>(group: G, partial: Partial<NonNullable<TabHost[G]>>) => {
+    const current = (style[group] ?? {}) as NonNullable<TabHost[G]>;
+    onChange({ [group]: { ...current, ...partial } } as Partial<TabHost>);
+  };
+  const resetGroupField = <G extends keyof TabHost>(group: G, field: keyof NonNullable<TabHost[G]>) => {
+    const current = style[group] as NonNullable<TabHost[G]> | undefined;
+    if (!current) return;
+    const next: Partial<NonNullable<TabHost[G]>> = { ...current };
+    delete next[field];
+    if (Object.keys(next).length > 0) onChange({ [group]: next } as Partial<TabHost>);
+    else onResetField(group);
+  };
+  const groupUnset = <G extends keyof TabHost>(group: G, field: keyof NonNullable<TabHost[G]>) => {
+    const current = style[group] as Partial<NonNullable<TabHost[G]>> | undefined;
+    return current === undefined || current[field] === undefined;
+  };
+  return { updateGroup, resetGroupField, groupUnset };
+}
+
+/** The label tab group: on/off, face, colours, corner, joined outline,
+ *  icon and top-edge rule. */
+export function CalloutLabelFields({ style, resolved, onChange, onResetField, sectionId, fieldId, iconResources }: CalloutGroupFieldsProps & { iconResources: Resource[] }) {
+  const labels = useSandboxLabels();
+  const rtl = useRightToLeftFlow();
+  const labelSide = flowSideLabels(rtl, labels.calloutStyleLabelPositionTopLeft, labels.calloutStyleLabelPositionTopRight);
+  const { updateGroup, resetGroupField, groupUnset } = tabHostEdits({ style, onChange, onResetField });
+  const unset = (field: keyof TabHost) => style[field] === undefined;
+  const label = (partial: Partial<CalloutLabelConfig>) => updateGroup('label', partial);
+  /** `label.icon` / `label.rule` are nested one level deeper, like the
+   *  marker rule: merge there and drop the sub-object when nothing is left. */
+  const updateLabelIcon = (partial: Partial<NonNullable<CalloutLabelConfig['icon']>>) =>
+    label({ icon: { ...style.label?.icon, ...partial } });
+  const resetLabelIconField = (field: keyof NonNullable<CalloutLabelConfig['icon']>) => {
+    const icon = { ...style.label?.icon };
+    delete icon[field];
+    if (Object.keys(icon).length > 0) label({ icon });
+    else resetGroupField('label', 'icon');
+  };
+  const labelIconUnset = (field: keyof NonNullable<CalloutLabelConfig['icon']>) => style.label?.icon?.[field] === undefined;
+  const updateLabelRule = (partial: Partial<NonNullable<CalloutLabelConfig['rule']>>) =>
+    label({ rule: { ...style.label?.rule, ...partial } });
+  const resetLabelRuleField = (field: keyof NonNullable<CalloutLabelConfig['rule']>) => {
+    const rule = { ...style.label?.rule };
+    delete rule[field];
+    if (Object.keys(rule).length > 0) label({ rule });
+    else resetGroupField('label', 'rule');
+  };
+  const labelRuleUnset = (field: keyof NonNullable<CalloutLabelConfig['rule']>) => style.label?.rule?.[field] === undefined;
+  const labelResourceOptions = [
+    { value: '', label: labels.calloutStyleIconResourceNone },
+    ...iconResources.map((r) => ({ value: r.id, label: iconLabel(r) })),
+  ];
+  if (resolved.label?.icon.resourceId && !iconResources.some((r) => r.id === resolved.label?.icon.resourceId)) {
+    labelResourceOptions.push({ value: resolved.label.icon.resourceId, label: resolved.label.icon.resourceId });
+  }
+  const labelBottomSide = flowSideLabels(rtl, labels.calloutStyleLabelPositionBottomLeft, labels.calloutStyleLabelPositionBottomRight);
+  const labelPositionOptions = [
+    { value: 'top-right', label: labelSide.right },
+    { value: 'top-left', label: labelSide.left },
+    { value: 'top-start', label: labels.calloutStyleLabelPositionTopStart },
+    { value: 'top-end', label: labels.calloutStyleLabelPositionTopEnd },
+    // Tabs hanging from the box's foot (#1059).
+    { value: 'bottom-right', label: labelBottomSide.right },
+    { value: 'bottom-left', label: labelBottomSide.left },
+    { value: 'bottom-start', label: labels.calloutStyleLabelPositionBottomStart },
+    { value: 'bottom-end', label: labels.calloutStyleLabelPositionBottomEnd },
+  ];
+
+  return (
+    <>
       <CollapsibleSection
         title={labels.calloutStyleLabelGroup}
         sectionId={`${sectionId}.label`}
@@ -1609,80 +2197,23 @@ export function CalloutStyleCard({
           </>
         )}
       </CollapsibleSection>
+    </>
+  );
+}
 
-      <CollapsibleSection
-        title={labels.calloutStyleMarkerGroup}
-        sectionId={`${sectionId}.marker`}
-        variant="subsection"
-      >
-        <IconFields
-          value={resolved.marker}
-          kindLabel={labels.calloutStyleMarkerKind}
-          kindTooltip={labels.calloutStyleMarkerKindTooltip}
-          update={marker}
-          isDefault={(f) => groupUnset('marker', f as keyof CalloutMarkerConfig)}
-          onReset={(f) => resetGroupField('marker', f as keyof CalloutMarkerConfig)}
-          fieldId={`${fieldId}-marker`}
-          iconResources={iconResources}
-        />
-        {resolved.marker.kind !== 'none' && (
-          <>
-            <DimensionInput
-              label={labels.calloutStyleMarkerGap}
-              value={resolved.marker.gap}
-              onChange={(v) => marker({ gap: v })}
-              min={0}
-              step={0.05}
-              units={SPACING_UNITS}
-              tooltip={labels.calloutStyleMarkerGapTooltip}
-              isDefault={groupUnset('marker', 'gap')}
-              onReset={() => resetGroupField('marker', 'gap')}
-            />
-            <ToggleSwitch
-              label={labels.calloutStyleMarkerRule}
-              checked={resolved.marker.rule.enabled}
-              onChange={(v) => updateMarkerRule({ enabled: v })}
-              tooltip={labels.calloutStyleMarkerRuleTooltip}
-              isDefault={markerRuleUnset('enabled')}
-              onReset={() => resetMarkerRuleField('enabled')}
-            />
-            {resolved.marker.rule.enabled && (
-              <>
-                <ColorPicker
-                  label={labels.calloutStyleMarkerRuleColor}
-                  value={resolved.marker.rule.color}
-                  onChange={(v) => updateMarkerRule({ color: v })}
-                  isDefault={markerRuleUnset('color')}
-                  onReset={() => resetMarkerRuleField('color')}
-                  fieldId={`${fieldId}-marker-rule`}
-                />
-                <DimensionInput
-                  label={labels.calloutStyleMarkerRuleWidth}
-                  value={resolved.marker.rule.width}
-                  onChange={(v) => updateMarkerRule({ width: v })}
-                  min={0}
-                  step={0.25}
-                  units={STROKE_UNITS}
-                  isDefault={markerRuleUnset('width')}
-                  onReset={() => resetMarkerRuleField('width')}
-                />
-                <DimensionInput
-                  label={labels.calloutStyleMarkerRuleLength}
-                  value={resolved.marker.rule.length}
-                  onChange={(v) => updateMarkerRule({ length: v })}
-                  min={0}
-                  step={0.5}
-                  units={OFFSET_UNITS}
-                  tooltip={labels.calloutStyleMarkerRuleLengthTooltip}
-                  isDefault={markerRuleUnset('length')}
-                  onReset={() => resetMarkerRuleField('length')}
-                />
-              </>
-            )}
-          </>
-        )}
-      </CollapsibleSection>
+/** The title row group: face, size, weight, colour, case, gap, tracking,
+ *  indent and leading. */
+export function CalloutTitleStyleFields({ style, resolved, onChange, onResetField, sectionId, fieldId }: CalloutGroupFieldsProps) {
+  const labels = useSandboxLabels();
+  const { updateGroup, resetGroupField, groupUnset } = tabHostEdits({ style, onChange, onResetField });
+  const title = (partial: Partial<CalloutTitleStyleConfig>) => updateGroup('titleStyle', partial);
+  const transformOptions = [
+    { value: 'none', label: labels.calloutStyleTitleTransformNone },
+    { value: 'uppercase', label: labels.calloutStyleTitleTransformUppercase },
+  ];
 
+  return (
+    <>
       <CollapsibleSection
         title={labels.calloutStyleTitleGroup}
         sectionId={`${sectionId}.title`}
@@ -1785,325 +2316,7 @@ export function CalloutStyleCard({
           onReset={() => resetGroupField('titleStyle', 'lineHeight')}
         />
       </CollapsibleSection>
-
-      <CollapsibleSection
-        title={labels.calloutStyleDesignGroup}
-        sectionId={`${sectionId}.design`}
-        variant="subsection"
-      >
-        <ToggleSwitch
-          label={labels.calloutStyleDesign}
-          checked={designOn}
-          onChange={(v) => updateDesign({ enabled: v })}
-          tooltip={labels.calloutStyleDesignTooltip}
-          isDefault={unset('design')}
-          onReset={() => onResetField('design')}
-        />
-        {designOn && (
-          <NestedGroup>
-            <p className="px-2 py-1 text-xs" style={{ color: 'var(--slate)' }}>
-              {labels.calloutStyleDesignInfo}
-            </p>
-            <DimensionInput
-              label={labels.calloutStyleDesignMinHeight}
-              value={shownDesign?.minHeight ?? ZERO_PT}
-              onChange={(dim) => updateDesign({ minHeight: dim })}
-              min={0}
-              step={1}
-              tooltip={labels.calloutStyleDesignMinHeightTooltip}
-              isDefault={rawDesign?.minHeight === undefined}
-              onReset={() => updateDesign({ minHeight: undefined })}
-              units={MIN_HEIGHT_UNITS}
-            />
-            <ToggleSwitch
-              label={labels.calloutStyleDesignSetsContent}
-              checked={shownDesign?.setsContent ?? false}
-              onChange={(v) => updateDesign({ setsContent: v })}
-              tooltip={labels.calloutStyleDesignSetsContentTooltip}
-              isDefault={rawDesign?.setsContent === undefined}
-              onReset={() => updateDesign({ setsContent: undefined })}
-            />
-            <SlotEditor
-              slotKey="box"
-              raw={rawDesign?.slot}
-              resolved={shownDesign?.slot ?? resolveDesignSlot(undefined, 'box')}
-              onUpdate={(slot: DesignSlot | undefined) => updateDesign({ enabled: true, slot: slot ?? { elements: [] } })}
-            />
-          </NestedGroup>
-        )}
-      </CollapsibleSection>
-
-      <CollapsibleSection
-        title={labels.calloutStyleBodyGroup}
-        sectionId={`${sectionId}.body`}
-        variant="subsection"
-      >
-        <p className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>
-          {labels.calloutStyleBodyHint}
-        </p>
-        <FontPicker
-          label={labels.fontLabel}
-          value={resolved.body.fontFamily}
-          onChange={(v) => body({ fontFamily: v })}
-          isDefault={groupUnset('body', 'fontFamily')}
-          onReset={() => resetGroupField('body', 'fontFamily')}
-          searchPlaceholder={labels.bodyFontSearch}
-          noResultsLabel={labels.bodyFontNoResults}
-        />
-        <DimensionInput
-          label={labels.sizeLabel}
-          value={resolved.body.fontSize}
-          onChange={(v) => body({ fontSize: v })}
-          min={1}
-          step={0.5}
-          units={FONT_SIZE_UNITS}
-          isDefault={groupUnset('body', 'fontSize')}
-          onReset={() => resetGroupField('body', 'fontSize')}
-        />
-        <DimensionInput
-          label={labels.bodyLineHeight}
-          value={resolved.body.lineHeight}
-          onChange={(v) => body({ lineHeight: v })}
-          min={0.5}
-          max={5}
-          step={0.1}
-          units={LINE_HEIGHT_UNITS}
-          isDefault={groupUnset('body', 'lineHeight')}
-          onReset={() => resetGroupField('body', 'lineHeight')}
-        />
-        <ColorPicker
-          label={labels.colorLabel}
-          value={resolved.body.color}
-          onChange={(v) => body({ color: v })}
-          isDefault={groupUnset('body', 'color')}
-          onReset={() => resetGroupField('body', 'color')}
-          fieldId={`${fieldId}-body`}
-        />
-        <ColorPicker
-          label={labels.calloutStyleBodyBoldColor}
-          value={resolved.body.boldColor ?? resolved.body.color}
-          onChange={(v) => body({ boldColor: v })}
-          tooltip={labels.calloutStyleBodyBoldColorTooltip}
-          isDefault={groupUnset('body', 'boldColor')}
-          onReset={() => resetGroupField('body', 'boldColor')}
-          fieldId={`${fieldId}-body-bold`}
-        />
-        <ColorPicker
-          label={labels.calloutStyleBodyItalicColor}
-          value={resolved.body.italicColor ?? resolved.body.color}
-          onChange={(v) => body({ italicColor: v })}
-          tooltip={labels.calloutStyleBodyItalicColorTooltip}
-          isDefault={groupUnset('body', 'italicColor')}
-          onReset={() => resetGroupField('body', 'italicColor')}
-          fieldId={`${fieldId}-body-italic`}
-        />
-        <NumberInput
-          label={labels.bodyFontWeight}
-          value={resolved.body.fontWeight}
-          onChange={(v) => body({ fontWeight: v })}
-          min={100}
-          max={900}
-          step={10}
-          tooltip={labels.textStyleFontWeightTooltip}
-          isDefault={groupUnset('body', 'fontWeight')}
-          onReset={() => resetGroupField('body', 'fontWeight')}
-        />
-        <NumberInput
-          label={labels.bodyBoldFontWeight}
-          value={resolved.body.boldFontWeight}
-          onChange={(v) => body({ boldFontWeight: v })}
-          min={100}
-          max={900}
-          step={10}
-          tooltip={labels.textStyleBoldFontWeightTooltip}
-          isDefault={groupUnset('body', 'boldFontWeight')}
-          onReset={() => resetGroupField('body', 'boldFontWeight')}
-        />
-        <ToggleSwitch
-          label={labels.textStyleItalic}
-          checked={resolved.body.italic}
-          onChange={(v) => body({ italic: v })}
-          tooltip={labels.textStyleItalicTooltip}
-          isDefault={groupUnset('body', 'italic')}
-          onReset={() => resetGroupField('body', 'italic')}
-        />
-        <ToggleSwitch
-          label={labels.textStyleSmallCaps}
-          checked={resolved.body.smallCaps}
-          onChange={(v) => body({ smallCaps: v })}
-          tooltip={labels.textStyleSmallCapsTooltip}
-          isDefault={groupUnset('body', 'smallCaps')}
-          onReset={() => resetGroupField('body', 'smallCaps')}
-        />
-        <DimensionInput
-          label={labels.calloutStyleBodyLetterSpacing}
-          value={resolved.body.letterSpacing ?? { value: 0, unit: 'em' }}
-          onChange={(v) => body({ letterSpacing: v })}
-          min={-1}
-          step={0.005}
-          units={TRACKING_UNITS}
-          tooltip={labels.calloutStyleBodyLetterSpacingTooltip}
-          isDefault={groupUnset('body', 'letterSpacing')}
-          onReset={() => resetGroupField('body', 'letterSpacing')}
-        />
-        <SelectInput
-          label={labels.alignmentLabel} tooltip={labels.alignmentHelp}
-          value={resolved.body.textAlign}
-          options={bodyAlignOptions}
-          onChange={(v) => body({ textAlign: v as CalloutBodyStyleConfig['textAlign'] })}
-          isDefault={groupUnset('body', 'textAlign')}
-          onReset={() => resetGroupField('body', 'textAlign')}
-        />
-        {(resolved.body.textAlign === 'justify' || raggedHyphenation) && (
-          <ToggleSwitch
-            label={labels.bodyHyphenation}
-            checked={resolved.body.hyphenation}
-            onChange={(v) => body({ hyphenation: v })}
-            isDefault={groupUnset('body', 'hyphenation')}
-            onReset={() => resetGroupField('body', 'hyphenation')}
-          />
-        )}
-        <ParagraphSpacingField
-          value={resolved.body.paragraphSpacing}
-          line={resolved.body.lineHeight}
-          onChange={(v) => body({ paragraphSpacing: v })}
-          isDefault={groupUnset('body', 'paragraphSpacing')}
-          onReset={() => resetGroupField('body', 'paragraphSpacing')}
-        />
-        <DimensionInput
-          label={labels.bodyFirstLineIndent}
-          value={resolved.body.firstLineIndent}
-          onChange={(v) => body({ firstLineIndent: v })}
-          min={0}
-          step={0.1}
-          units={SPACING_UNITS}
-          isDefault={groupUnset('body', 'firstLineIndent')}
-          onReset={() => resetGroupField('body', 'firstLineIndent')}
-        />
-        <TabStopsField
-          inherits
-          stops={style.body?.tabStops}
-          interval={style.body?.tabInterval}
-          inheritedInterval={bodyTabInterval}
-          onStopsChange={(next) => (next === undefined ? resetGroupField('body', 'tabStops') : body({ tabStops: next }))}
-          onIntervalChange={(next) => (next === undefined ? resetGroupField('body', 'tabInterval') : body({ tabInterval: next }))}
-        />
-      </CollapsibleSection>
-
-      <CollapsibleSection
-        title={labels.calloutStyleListsGroup}
-        sectionId={`${sectionId}.lists`}
-        variant="subsection"
-      >
-        <p className="mb-2 text-xs" style={{ color: 'var(--slate)' }}>
-          {labels.calloutStyleListsHint}
-        </p>
-        <TextInput
-          label={labels.unorderedListsBulletChar}
-          value={resolved.lists.bulletChar}
-          onChange={(v) => lists({ bulletChar: v })}
-          placeholder={labels.unorderedListsBulletCharPlaceholder}
-          tooltip={labels.unorderedListsBulletCharTooltip}
-          widthCh={6}
-          isDefault={groupUnset('lists', 'bulletChar')}
-          onReset={() => resetGroupField('lists', 'bulletChar')}
-        />
-        <DimensionInput
-          label={labels.calloutStyleListsBulletSize}
-          value={resolved.lists.bulletFontSize ?? listDefaults.bulletFontSize}
-          onChange={(v) => lists({ bulletFontSize: v })}
-          min={1}
-          step={0.5}
-          units={FONT_SIZE_UNITS}
-          isDefault={groupUnset('lists', 'bulletFontSize')}
-          onReset={() => resetGroupField('lists', 'bulletFontSize')}
-        />
-        <NumberInput
-          label={labels.calloutStyleListsBulletWeight}
-          value={resolved.lists.bulletFontWeight ?? listDefaults.bulletFontWeight}
-          onChange={(v) => lists({ bulletFontWeight: v })}
-          min={100}
-          max={900}
-          step={10}
-          isDefault={groupUnset('lists', 'bulletFontWeight')}
-          onReset={() => resetGroupField('lists', 'bulletFontWeight')}
-        />
-        <FontPicker
-          label={labels.calloutStyleListsBulletFont}
-          value={resolved.lists.bulletFontFamily ?? listDefaults.bulletFontFamily}
-          onChange={(v) => lists({ bulletFontFamily: v })}
-          tooltip={labels.calloutStyleListsBulletFontTooltip}
-          isDefault={groupUnset('lists', 'bulletFontFamily')}
-          onReset={() => resetGroupField('lists', 'bulletFontFamily')}
-          searchPlaceholder={labels.headingFontSearch}
-          noResultsLabel={labels.headingFontNoResults}
-        />
-        <DimensionInput
-          label={labels.calloutStyleListsMarginTop}
-          tooltip={labels.calloutStyleListsMarginsTooltip}
-          value={resolved.lists.marginTop ?? listDefaults.marginTop}
-          onChange={(v) => lists({ marginTop: v })}
-          min={0}
-          step={0.1}
-          units={SPACING_UNITS}
-          isDefault={groupUnset('lists', 'marginTop')}
-          onReset={() => resetGroupField('lists', 'marginTop')}
-        />
-        <DimensionInput
-          label={labels.calloutStyleListsMarginBottom}
-          tooltip={labels.calloutStyleListsMarginsTooltip}
-          value={resolved.lists.marginBottom ?? listDefaults.marginBottom}
-          onChange={(v) => lists({ marginBottom: v })}
-          min={0}
-          step={0.1}
-          units={SPACING_UNITS}
-          isDefault={groupUnset('lists', 'marginBottom')}
-          onReset={() => resetGroupField('lists', 'marginBottom')}
-        />
-        <ColorPicker
-          label={labels.colorLabel}
-          value={resolved.lists.color}
-          onChange={(v) => lists({ color: v })}
-          isDefault={groupUnset('lists', 'color')}
-          onReset={() => resetGroupField('lists', 'color')}
-          fieldId={`${fieldId}-lists`}
-        />
-        <DimensionInput
-          label={labels.unorderedListsIndent}
-          value={resolved.lists.indent}
-          onChange={(v) => lists({ indent: v })}
-          min={0}
-          step={0.1}
-          units={SPACING_UNITS}
-          tooltip={labels.unorderedListsIndentTooltip}
-          isDefault={groupUnset('lists', 'indent')}
-          onReset={() => resetGroupField('lists', 'indent')}
-        />
-        <DimensionInput
-          label={labels.unorderedListsGap}
-          value={resolved.lists.gap}
-          onChange={(v) => lists({ gap: v })}
-          min={0}
-          step={0.1}
-          units={SPACING_UNITS}
-          tooltip={labels.unorderedListsGapTooltip}
-          isDefault={groupUnset('lists', 'gap')}
-          onReset={() => resetGroupField('lists', 'gap')}
-        />
-        <DimensionInput
-          label={labels.unorderedListsItemSpacing}
-          value={resolved.lists.itemSpacing}
-          onChange={(v) => lists({ itemSpacing: v })}
-          min={0}
-          step={0.1}
-          units={SPACING_UNITS}
-          tooltip={labels.unorderedListsItemSpacingTooltip}
-          isDefault={groupUnset('lists', 'itemSpacing')}
-          onReset={() => resetGroupField('lists', 'itemSpacing')}
-        />
-      </CollapsibleSection>
-    </ItemCard>
-    </SearchScope>
+    </>
   );
 }
 

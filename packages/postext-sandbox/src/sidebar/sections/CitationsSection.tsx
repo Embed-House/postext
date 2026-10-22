@@ -9,6 +9,7 @@ import {
   dimensionsEqual,
   ensureCitationEngine,
   processCitations,
+  resolveBodyTextConfig,
   resolveCitationsConfig,
   setCitationEngineLoader,
   type CitationContext,
@@ -131,6 +132,7 @@ export const CitationsSection = memo(function CitationsSection() {
   const dispatch = useSandboxDispatch();
   const labels = useSandboxLabels();
   const raw = useSandboxSelector((s) => s.config.citations);
+  const rawBodyText = useSandboxSelector((s) => s.config.bodyText);
   const docLocale = useSandboxSelector((s) => s.config.locale ?? s.config.bodyText?.hyphenation?.locale);
   const c = resolveCitationsConfig(raw);
   const b = c.bibliography;
@@ -344,6 +346,17 @@ export const CitationsSection = memo(function CitationsSection() {
           tooltip={labels.citationsBibliographyFontSizeTooltip}
           isDefault={dimensionsEqual(b.fontSize, D.bibliography.fontSize)}
           onReset={() => resetBib('fontSize')}
+          units={SIZE_UNITS}
+        />
+        <DimensionInput
+          label={labels.citationsBibliographyLineHeight}
+          value={b.lineHeight ?? resolveBodyTextConfig(rawBodyText).lineHeight}
+          onChange={(dim) => updateBib({ lineHeight: dim })}
+          min={0}
+          step={0.05}
+          tooltip={labels.citationsBibliographyLineHeightTooltip}
+          isDefault={raw?.bibliography?.lineHeight === undefined}
+          onReset={() => resetBib('lineHeight')}
           units={SIZE_UNITS}
         />
         <DimensionInput

@@ -2,7 +2,7 @@
 
 import { useSandboxLabels } from '../../../context/SandboxContext.js';
 import type { AnchorEdge, DesignElement, Dimension, ElementPlacement, HAlign, PageRoleFilter } from 'postext';
-import { DimensionInput, SelectInput } from '../../../controls/index.js';
+import { DimensionInput, SelectInput, ToggleSwitch } from '../../../controls/index.js';
 import { elementKindLabel } from './elementKind.js';
 import { SidePointFields } from './sidePoint.js';
 import type { FrameTarget } from './sizeTo.js';
@@ -42,13 +42,17 @@ interface PlacementFieldsProps {
   /** `impliedAlign` is set when an element-to-element edge suggests a text
    *  alignment (text elements apply it to their `align`). */
   onChange: (placement: ElementPlacement, impliedAlign?: HAlign) => void;
+  /** The element's `pin` (#856), offered while it is anchored to one of
+   *  `frames`: it stays where the template declares the frame. */
+  pin?: boolean;
+  onPinChange?: (pin: true | undefined) => void;
 }
 
 /** Anchor controls shared by the text, rule and box editors: the target
  *  picker (container / page / bleed / sibling element) followed by the
  *  fields that make sense for that target — relative edge and offsets for
  *  element and page-frame anchors, a simple alignment for the container. */
-export function PlacementFields({ placement, slotKind, siblings = [], frames = [], onChange }: PlacementFieldsProps) {
+export function PlacementFields({ placement, slotKind, siblings = [], frames = [], onChange, pin, onPinChange }: PlacementFieldsProps) {
   const labels = useSandboxLabels();
   const anchoredToElement = isElementAnchor(placement);
   const anchoredToFrame = isPageFrameAnchor(placement);
@@ -181,6 +185,16 @@ export function PlacementFields({ placement, slotKind, siblings = [], frames = [
           />
           {atField}
           {offsetFields}
+          {onPinChange && frames.some((f) => f.name === target) && (
+            <ToggleSwitch
+              label={labels.designElementPin}
+              tooltip={labels.designElementPinTooltip}
+              checked={pin === true}
+              onChange={(v) => onPinChange(v ? true : undefined)}
+              isDefault={pin === undefined}
+              onReset={() => onPinChange(undefined)}
+            />
+          )}
         </>
       ) : anchoredToFrame ? (
         <>

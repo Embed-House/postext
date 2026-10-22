@@ -119,6 +119,7 @@ Conversion at `page.dpi` (default 300):
 | `customFonts` | CustomFontFamily[] | — | §20 **do not write in preset.json config** |
 | `htmlViewer` | HtmlViewerConfig | §21 | screen-only; `overrides` = partial config merged for HTML |
 | `canvasViewer` | `{ pageGap?, rowGap? }` | `24` / `24` | §21 Sandbox Canvas page spacing (≥ 1.43); `pageGap: 0` for art across the spine |
+| `composedViewerLeaf` | `{ width, height, margins? }` | — | host only (≥ 1.47): the Sandbox's HTML viewer lays composed pages on this print leaf, as `comics.viewerLeaf` does comic pages; **do not write in preset.json config** |
 | `pdfGeneration` | PdfGenerationConfig | §21 | outlines, tagging, colour space |
 | `print` | PrintConfig | §21 | PDF/X standard, ICC output profile, black (K-only, overprint, rich black), preflight (≥ 1.22) |
 | `contrast` | ContrastConfig | §21 | contrast check of text on its ground (≥ 1.28): `level` AA/AAA, `mode` auto/screen/print/both, `reversedText` sizes, `allow` accepted pairs (>= 1.52); layout ignores it |
@@ -1300,7 +1301,9 @@ codeStyle
 │                  operator punctuation variable meta prompt output; merged per kind onto a quiet default palette;
 │                  palette-linked colours follow colorPalette and :::part palettes
 └─ inline          { fontFamily (= codeStyle.fontFamily), fontSize=0.9em, color?, bold, italic, background?, borderColor?,
-                     borderWidth=0.5pt, borderRadius=0.2em, paddingX (0.2em with a fill, else 0), paddingY=0.1em }
+                     borderWidth=0.5pt, borderRadius=0.2em, paddingX (0.2em with a fill, else 0), paddingY=0.1em,
+                     otherScripts='text' | 'code' (≥ 1.34.1: Arabic, Hebrew, CJK letters in inline code take the
+                     face of the text around it; 'code' only for a code face that has them) }
                    unset = inline code in the body face (as ≤ 1.22). Set = one unbreakable unit, like a chip.
 ```
 - **Built-in tokenizer**: js/ts (jsx, tsx), json, python, bash/sh/zsh, console (prompt lines vs

@@ -23,8 +23,7 @@ import {
   useSandboxSelector,
   useSandboxResources,
 } from '../../context/SandboxContext.js';
-import type { SandboxLabels } from '../../types/labels.js';
-import { arabicNumberFormatOptions, eastAsianNumberFormatOptions } from '../settings/eastAsianOptions.js';
+import { counterFormatOptions, resetOnOptions } from '../settings/counterOptions.js';
 import { CollapsibleSection, DimensionInput, ItemCard, ItemCardListActions, openCard, NumberInput, SelectInput, ToggleSwitch } from '../../controls/index.js';
 import { wrapChoiceOf } from '../settings/textWrap.js';
 import { captionSideOf, captionSideValue } from '../settings/captionSide.js';
@@ -42,30 +41,6 @@ function newTypeId(): string {
     return crypto.randomUUID();
   }
   return `restype-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function counterFormatOptions(labels: SandboxLabels): { value: ResourceCounterFormat; label: string }[] {
-  return [
-    { value: 'decimal', label: labels.counterFormatDecimal },
-    { value: 'roman-lower', label: labels.counterFormatRomanLower },
-    { value: 'roman-upper', label: labels.counterFormatRomanUpper },
-    { value: 'alpha-lower', label: labels.counterFormatAlphaLower },
-    { value: 'alpha-upper', label: labels.counterFormatAlphaUpper },
-    ...eastAsianNumberFormatOptions(labels),
-    ...arabicNumberFormatOptions(labels),
-  ];
-}
-
-function resetOnOptions(labels: SandboxLabels): { value: ResourceCounterReset; label: string }[] {
-  return [
-    { value: 'never', label: labels.resetOnNever },
-    { value: 'h1', label: labels.resetOnH1 },
-    { value: 'h2', label: labels.resetOnH2 },
-    { value: 'h3', label: labels.resetOnH3 },
-    { value: 'h4', label: labels.resetOnH4 },
-    { value: 'h5', label: labels.resetOnH5 },
-    { value: 'h6', label: labels.resetOnH6 },
-  ];
 }
 
 const inputClass = 'min-w-0 flex-1 rounded border bg-transparent px-1.5 py-1 text-xs';

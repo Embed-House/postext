@@ -351,6 +351,18 @@ export function HeadingLevelSection({
         isDefault={resolved.span === 'column'}
         onReset={() => onUpdate(level, { span: 'column' })}
       />
+      {resolved.span === 'page' && (
+        <NestedGroup>
+          <ToggleSwitch
+            label={labels.headingSpanBreak}
+            checked={resolved.spanBreak !== false}
+            onChange={(v) => onUpdate(level, { spanBreak: v })}
+            tooltip={labels.headingSpanBreakTooltip}
+            isDefault={raw?.spanBreak === undefined}
+            onReset={() => onReset(level, 'spanBreak')}
+          />
+        </NestedGroup>
+      )}
       <ToggleSwitch
         label={labels.headingHidden}
         checked={resolved.hidden}
