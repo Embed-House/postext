@@ -17,13 +17,15 @@ export type ComposedPaintItem =
    *  over the frames ({@link decorationUnder}). */
   | { kind: 'decoration' }
   /** The decoration's blocks painted over every frame (#1076: connectors
-   *  into pictures, {@link decorationOver}); last in the order, present
+   *  into pictures; #1189: a module's texts, {@link decorationOver}); last
+   *  in the order, present
    *  only when the decoration has such a block. */
   | { kind: 'over' };
 
-/** Whether a decoration block is painted over the frames (#1076). */
+/** Whether a decoration block is painted over the frames: a connector's
+ *  path (#1076) or a text (#1189) marked `over`. */
 export function paintsOverFrames(block: VDTDesignBlock): boolean {
-  return block.kind === 'path' && block.over === true;
+  return (block.kind === 'path' || block.kind === 'text') && block.over === true;
 }
 
 /** The part of a composed page's decoration painted at layer 0, under

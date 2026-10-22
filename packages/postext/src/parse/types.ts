@@ -187,6 +187,10 @@ export interface ComposedModuleFence extends SourceRange {
   /** A module written inside another module: not laid as a module
    *  (`moduleNested`); its blocks are the outer module's. */
   nested?: true;
+  /** Every attribute of the fence as written (#1189): its own, besides
+   *  `template` and `name`, are read first by `{attr.x}` in the module's
+   *  decoration. */
+  attrs: DirectiveAttrs;
   /** Absolute source range of each attribute's value. */
   attrSources: Record<string, SourceRange>;
 }

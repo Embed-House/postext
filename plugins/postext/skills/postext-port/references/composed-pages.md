@@ -2360,6 +2360,16 @@ para regar
   flow frame (a heading to its `takes` frame), else the page's.
 - With `overflow.continueIn` on the modules group, the first module that
   does not fit and those after it go on whole to the added page.
+- **Texts in a module (#1189).** A module's `text` elements (a number in its
+  tab, a map key, a label on its photo) are painted over the module's frames,
+  so a box frame's fill does not hide them; `"over": false` puts one back
+  under the frames. A page template's texts stay under the frames unless
+  they say `"over": true`. `{attr.x}` and `when` / `unless` in a module's
+  decoration read the `:::module` fence first, then the page fence:
+  `:::module{template="tarjeta" num="3"}` numbers that card alone.
+  `template` and `name` are the module's own and are not read. Before the
+  fix (postext ≤ 1.55) a module text under a filled frame did not show and
+  `{attr.x}` read the page fence only: a small frame stood in for it.
 - **When.** Bands that recur across the book in another order or number, and
   any page whose design is a stack of such bands. `template_dedupe.py` makes
   every band of a draft's page a module and the page template a shell (§3.7);

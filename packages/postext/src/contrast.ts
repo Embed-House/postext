@@ -52,7 +52,7 @@ import { resolveContrastConfig } from './defaults/contrast.js';
 import { findPxSize, parseFontString } from './measure/fontString.js';
 import { dimensionToPx } from './units.js';
 import { taskBoxText } from './taskBox.js';
-import { composedFrameBlockIds, composedPaintOrder, frameMatrix } from './composed/paint.js';
+import { composedFrameBlockIds, composedPaintOrder, frameMatrix, paintsOverFrames } from './composed/paint.js';
 
 export type ContrastMedium = 'screen' | 'print';
 
@@ -711,14 +711,21 @@ export function contrastPairs(doc: VDTDocument, options: ContrastOptions = {}): 
     // read on its frame's own box, else on the decoration under it, else
     // on the paper. The half of a frame read on the facing page of a
     // spread is checked there.
+    // Texts over the frames (#1189) are read on what lies under them
+    // then, frames included.
+    const deco = page.composed?.decoration;
+    const overText = (b: VDTDesignSlot['blocks'][number]): boolean => b.kind === 'text' && paintsOverFrames(b);
     for (const item of composedPaintOrder(page)) {
       if (item.kind === 'decoration') {
-        walkSlot(page.composed?.decoration, false, 'design');
+        walkSlot(deco && deco.blocks.some(overText) ? { ...deco, blocks: deco.blocks.filter((b) => !overText(b)) } : deco, false, 'design');
         continue;
       }
       // Connectors over the frames (#1076) are lines, not a ground, and
       // were walked with the decoration.
-      if (item.kind === 'over') continue;
+      if (item.kind === 'over') {
+        if (deco && deco.blocks.some(overText)) walkSlot({ ...deco, blocks: deco.blocks.filter(overText) }, false, 'design');
+        continue;
+      }
       if (item.facing) continue;
       frameToSheet = frameMatrix(item.frame);
       withStyles([item.frame.styleId], () => {

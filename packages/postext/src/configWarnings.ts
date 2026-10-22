@@ -141,7 +141,7 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectContentInConfigWarnings(config, options),
     ...collectDesignAnchorWarnings(config),
     ...collectDesignPathWarnings(config), ...collectDesignKeyWarnings(config), ...collectBoxShapeWarnings(config),
-    ...collectConnectorWarnings(config), ...collectFenceConditionWarnings(config),
+    ...collectConnectorWarnings(config), ...collectTextOverWarnings(config), ...collectFenceConditionWarnings(config),
   ];
 }
 
@@ -163,6 +163,24 @@ function collectFenceConditionWarnings(config: PostextConfig): ConfigWarning[] {
         if (named && FENCE_CONDITION_SLOTS.has(slot.kind)) continue;
         out.push({ kind: 'unknownConfigValue', path: `${slot.path}.elements[${i}].${key}`, value: typeof v === 'string' ? v : JSON.stringify(v) ?? String(v), used: '' });
       }
+    });
+  }
+  return out;
+}
+
+/** A decoration text's `over` (#1189) that is not a boolean
+ *  (`unknownConfigValue`, read as unset: over the frames in a module
+ *  template, under them in a page template). */
+function collectTextOverWarnings(config: PostextConfig): ConfigWarning[] {
+  const out: ConfigWarning[] = [];
+  const templates = (config as { pageTemplates?: unknown }).pageTemplates;
+  for (const slot of configDesignSlots(config)) {
+    if (slot.kind !== 'decoration') continue;
+    slot.slot.elements.forEach((el, i) => {
+      const e = el as unknown as Record<string, unknown> | null;
+      if (!e || typeof e !== 'object' || e.kind !== 'text' || e.over === undefined || typeof e.over === 'boolean') return;
+      const owner = Array.isArray(templates) ? templates.find((t, k) => slot.owner === `pageTemplates[${k}]` && t) as { role?: unknown } | undefined : undefined;
+      out.push({ kind: 'unknownConfigValue', path: `${slot.path}.elements[${i}].over`, value: String(e.over), used: String(owner?.role === 'module') });
     });
   }
   return out;

@@ -49,7 +49,7 @@ import type { FrameLook, FrameLookEntry, ResolvedFrame, ResolvedFrameGroup, Reso
 import { isModuleTemplate, resolvePageTemplate, type PageTemplateSource } from '../composed/templates.js';
 import { frameElementId } from '../composed/ids.js';
 import { expandRepeats, instanceOf, repeatItemsOf } from '../composed/repeat.js';
-import { moduleOfFrame, nestedChain } from '../composed/modules.js';
+import { moduleFenceAttrs, moduleOfFrame, nestedChain } from '../composed/modules.js';
 import { frameLinePx, frameRuleBlocks } from '../composed/rules.js';
 import { overlapChecks } from '../composed/overlap.js';
 import { growMembers, grownHeight } from '../composed/grow.js';
@@ -688,9 +688,10 @@ export function layoutComposedPage(asked: ComposedPageInput): ComposedPageLayout
     frames,
     log,
     configPath: template.configPath,
-    // The modules laid (#1062), each with its box.
+    // The modules laid (#1062), each with its box and the attributes its
+    // fence writes for its decoration (#1189).
     ...(template.modules && template.modules.length > 0
-      ? { modules: template.modules.map((m) => ({ name: m.name, template: m.template, configPath: m.configPath, ...(cur.moduleRects.has(m.name) ? { rect: { ...cur.moduleRects.get(m.name)! } } : {}) })) }
+      ? { modules: template.modules.map((m) => ({ name: m.name, template: m.template, configPath: m.configPath, ...(cur.moduleRects.has(m.name) ? { rect: { ...cur.moduleRects.get(m.name)! } } : {}), ...moduleFenceAttrs(fence, m.name, input.bodyOffset) })) }
       : {}),
     sourceStart: contentBlocks[input.startIdx]!.sourceStart + input.bodyOffset,
     sourceEnd: contentBlocks[input.endIdx]!.sourceEnd + input.bodyOffset,

@@ -2523,6 +2523,11 @@ export interface VDTDesignTextBlock extends VDTDesignBlockOrigin {
    *  `designTextTruncated` content warning. Absent when every line shows
    *  whole. */
   truncated?: { elementId: string; slot: VDTDesignSlotKind; mode: 'ellipsis-start' | 'ellipsis-end' | 'ellipsis-middle' | 'clip'; text: string };
+  /** A composed page's decoration text painted over the frames (#1189,
+   *  `DesignTextElement.over`; a module's text by default): painted after
+   *  every frame of the page, as an over connector's path (#1076). Absent:
+   *  painted with the slot. */
+  over?: true;
   /** Set vertically on a page or a slot whose text is horizontal
    *  (`DesignTextElement.writingMode: 'vertical-rl'`): the lines are laid
    *  out in the block's own frame, turned a quarter turn clockwise about
@@ -3095,8 +3100,8 @@ export interface VDTComposedPage {
   /** In template order. */
   frames: VDTFrame[];
   /** The template's decoration, laid with the frames' final boxes
-   *  (`buildHeadersAndFooters`); painted at layer 0, its path blocks marked
-   *  `over` after every frame (#1076). */
+   *  (`buildHeadersAndFooters`); painted at layer 0, its path and text
+   *  blocks marked `over` after every frame (#1076, #1189). */
   decoration?: VDTDesignSlot;
   /** What the layout changed (DESIGN §5.5). */
   log: ReflowEvent[];
@@ -3107,8 +3112,18 @@ export interface VDTComposedPage {
    *  module template and its pointer, and the module's box (page px, in
    *  the frame the frames are in) when it was laid here (one that went on
    *  whole has none). `resolvePageTemplate(config, template, { modules })`
-   *  gives the template the page was laid with. */
-  modules?: { name: string; template: string; configPath: string; rect?: { x: number; y: number; width: number; height: number } }[];
+   *  gives the template the page was laid with. `attrs` (#1189): the
+   *  attributes its `:::module` fence writes besides `template` and
+   *  `name`, which `{attr.x}` in the module's decoration reads before the
+   *  page fence's, with each value's source range (absolute offsets). */
+  modules?: {
+    name: string;
+    template: string;
+    configPath: string;
+    rect?: { x: number; y: number; width: number; height: number };
+    attrs?: Record<string, string>;
+    attrSources?: Record<string, { sourceStart: number; sourceEnd: number }>;
+  }[];
   /** The page fence, opening line to closing fence (absolute offsets). */
   sourceStart: number;
   sourceEnd: number;
