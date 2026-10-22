@@ -1,4 +1,4 @@
-import { bitmapInfo, type Resource } from 'postext';
+import { bitmapInfo, scoreFormatOfFile, type Resource } from 'postext';
 import { putBlob } from '../../storage/blobStore.js';
 import { slugifyFilename, uniqueSlug } from './slugify.js';
 import { isValidSvg, svgIntrinsicSize } from './svgIntrinsic.js';
@@ -21,8 +21,18 @@ export async function resourceFromFile(
   existingIds: Set<string>,
   /** The type of a video (#454), asked for only when one is dropped. */
   videoTypeId: () => string = () => 'video',
+  /** The type of a music example (#1172), asked for only when a notation
+   *  file is dropped. */
+  exampleTypeId: () => string = () => 'example',
 ): Promise<Resource | null> {
   const now = Date.now();
+  const scoreFormat = scoreFormatOfFile(file.name);
+  if (scoreFormat) {
+    // A notation file (.abc, .musicxml, .mei, .krn): its text is the score.
+    const id = uniqueSlug(slugifyFilename(file.name), existingIds, 'score');
+    existingIds.add(id);
+    return { id, typeId: exampleTypeId(), kind: 'score', score: { format: scoreFormat, source: await file.text() }, createdAt: now, updatedAt: now };
+  }
   const videoFormat = videoFormatOf(file);
   if (videoFormat) {
     // A self-hosted video: its frame size, length and a first poster.
@@ -112,12 +122,13 @@ export async function uploadFiles(
   typeId: string,
   existingIds: Set<string>,
   videoTypeId?: () => string,
+  exampleTypeId?: () => string,
 ): Promise<UploadFilesResult> {
   const created: Resource[] = [];
   const skipped: string[] = [];
   for (const file of files) {
     try {
-      const resource = await resourceFromFile(file, typeId, existingIds, videoTypeId);
+      const resource = await resourceFromFile(file, typeId, existingIds, videoTypeId, exampleTypeId);
       if (resource) created.push(resource);
       else skipped.push(file.name);
     } catch {

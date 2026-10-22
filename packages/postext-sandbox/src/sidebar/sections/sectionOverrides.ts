@@ -26,6 +26,8 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
       return (config.headingStyles ?? []).length > 0;
     case 'tableStyles':
       return (config.tableStyles ?? []).length > 0;
+    case 'scoreStyles':
+      return (config.scoreStyles ?? []).length > 0;
     case 'frameLooks':
       return (config.frameLooks ?? []).length > 0;
     case 'pageTemplates':
@@ -100,6 +102,7 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
     case 'captionStyle':
     case 'tableStyle':
     case 'diagramStyle':
+    case 'scoreStyle':
     case 'videoStyle':
     case 'htmlViewer':
     case 'canvasViewer':

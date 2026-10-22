@@ -15,7 +15,7 @@ import { ToolError, type WebMcpTool } from '../modelContext.js';
 /** Every top-level key a configuration has: a path outside them is
  *  refused. */
 const CONFIG_KEYS = [
-  'page', 'layout', 'bodyText', 'headings', 'tableStyle', 'tableStyles', 'captionStyle', 'diagramStyle', 'videoStyle',
+  'page', 'layout', 'bodyText', 'headings', 'tableStyle', 'tableStyles', 'captionStyle', 'diagramStyle', 'scoreStyle', 'scoreStyles', 'videoStyle',
   'paragraphStyles', 'calloutStyles', 'chipStyles', 'markStyles', 'parts', 'headingStyles', 'toc', 'index', 'unorderedLists',
   'orderedLists', 'math', 'footnotes', 'crossRefs', 'citations', 'cjk', 'lineNumbers', 'codeStyle', 'header', 'footer',
   'locale', 'direction', 'numerals', 'debug', 'htmlViewer', 'canvasViewer', 'folio', 'comics', 'pdfGeneration', 'print', 'contrast', 'checks',

@@ -1,6 +1,6 @@
 'use client';
 
-import { FileCode, Table as TableIcon, ImageIcon, Plus, ChevronDown, FolderOpen, Search, X, Film, Play } from 'lucide-react';
+import { FileCode, Table as TableIcon, ImageIcon, Plus, ChevronDown, FolderOpen, Search, X, Film, Play, Music } from 'lucide-react';
 import { useDeferredValue, useMemo, useState } from 'react';
 import type { Resource, ResourceKind, ResourceType } from 'postext';
 import { useSandboxLabels } from '../../context/SandboxContext.js';
@@ -52,6 +52,13 @@ function Thumb({ resource }: ThumbProps) {
       </span>
     );
   }
+  if (resource.kind === 'score') {
+    return (
+      <span className="flex items-center justify-center" style={box}>
+        <Music size={16} aria-hidden="true" />
+      </span>
+    );
+  }
   if (resource.kind === 'svg') {
     return (
       <span className="flex items-center justify-center" style={box}>
@@ -70,7 +77,7 @@ interface NewMenuProps {
   onNew: (kind: ResourceKind) => void;
 }
 
-/** "New" dropdown: Upload image / Upload SVG / New table / Add video. */
+/** "New" dropdown: Upload image / Upload SVG / New table / Add video / New score. */
 function NewMenu({ onNew }: NewMenuProps) {
   const labels = useSandboxLabels();
   return (
@@ -85,6 +92,7 @@ function NewMenu({ onNew }: NewMenuProps) {
       <MenuItem icon={<FileCode size={13} />} onClick={() => onNew('svg')}>{labels.resourceUploadSvg}</MenuItem>
       <MenuItem icon={<TableIcon size={13} />} onClick={() => onNew('table')}>{labels.resourceNewTable}</MenuItem>
       <MenuItem icon={<Film size={13} />} onClick={() => onNew('video')}>{labels.resourceNewVideo}</MenuItem>
+      <MenuItem icon={<Music size={13} />} onClick={() => onNew('score')}>{labels.resourceNewScore}</MenuItem>
     </Menu>
   );
 }
