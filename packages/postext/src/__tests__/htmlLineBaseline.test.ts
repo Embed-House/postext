@@ -42,9 +42,19 @@ const config = (lineHeight: number): PostextConfig => ({
 /** The first body line's box: its height, its font size and the
  *  `line-height` it was given (undefined where it has none). */
 function lineBox(html: string): { height: number; size: number; lineHeight?: number } {
-  const m = /<div class="pt-line" data-block="[^"]*" style="[^"]*height:([\d.]+)px;font:[^;]*?([\d.]+)px [^;]*;(?:line-height:([\d.]+)px;)?/.exec(html);
-  if (!m) throw new Error('no line box in the markup');
-  return { height: Number(m[1]), size: Number(m[2]), ...(m[3] !== undefined ? { lineHeight: Number(m[3]) } : {}) };
+  const style = /<div class="pt-line" data-block="[^"]*" style="([^"]*)"/.exec(html)?.[1];
+  if (style === undefined) throw new Error('no line box in the markup');
+  const decl = new Map<string, string>();
+  for (const part of style.split(';')) {
+    const colon = part.indexOf(':');
+    if (colon > 0) decl.set(part.slice(0, colon).trim(), part.slice(colon + 1).trim());
+  }
+  const px = (value: string | undefined) => (value?.endsWith('px') ? Number(value.slice(0, -2)) : undefined);
+  const size = (decl.get('font') ?? '').split(' ').map(px).find((v) => v !== undefined);
+  const height = px(decl.get('height'));
+  if (height === undefined || size === undefined) throw new Error('no line box in the markup');
+  const lineHeight = px(decl.get('line-height'));
+  return { height, size, ...(lineHeight !== undefined ? { lineHeight } : {}) };
 }
 
 const TEXT = 'The quick brown fox jumps over the lazy dog.';
