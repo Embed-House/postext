@@ -2,6 +2,7 @@ import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, TextAlign } from '.
 import { leaderRuleGeometry, lineTextAlign } from '../vdt.js';
 import type { MathRender } from '../math/types.js';
 import { getMathRaster } from '../math/rasterCache.js';
+import { renderScoreSegment } from './scoreRender.js';
 import { renderHeaderFooterSlot } from './headerFooter.js';
 import { renderResourceBlock } from './renderResourceBlock.js';
 import { paintSwatchSegment } from './swatch.js';
@@ -185,6 +186,13 @@ function renderSegments(
       currentFill = '';
       continue;
     }
+    if (seg.kind === 'score') {
+      renderScoreSegment(ctx, seg, x, baseline, style.color);
+      x += seg.width;
+      currentFont = '';
+      currentFill = '';
+      continue;
+    }
     if (seg.kind === 'swatch') {
       paintSwatchSegment(ctx, seg.swatch, x, baseline, seg.width, style.color, seg.rtl === true);
       x += seg.width;
@@ -230,7 +238,7 @@ function renderSegments(
  *  the block's plain text. An orientation mark (`:tcy`, `:upright`,
  *  `:sideways`) keeps its segment apart. */
 function segmentIsStyled(s: VDTLineSegment): boolean {
-  return !!s.bold || !!s.italic || s.kind === 'math' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined
+  return !!s.bold || !!s.italic || s.kind === 'math' || s.kind === 'score' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined
     || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined
     || s.tcy !== undefined || s.orientation !== undefined || s.labelTab !== undefined || s.runs !== undefined || s.sideMarker !== undefined
     // A word with no letter painted in the script of its context (#725).
@@ -284,6 +292,13 @@ function renderComposedSegments(
       renderMathSegment(ctx, seg, x, baseline, style.color);
       x += seg.width;
       // Math painting touches canvas state; force re-set on the next text segment.
+      currentFont = '';
+      currentFill = '';
+      continue;
+    }
+    if (seg.kind === 'score') {
+      renderScoreSegment(ctx, seg, x, baseline, style.color);
+      x += seg.width;
       currentFont = '';
       currentFill = '';
       continue;
@@ -357,7 +372,7 @@ function renderComposedSegments(
 /** Whether a segment of a line of the CJK composer, or of a line down a
  *  vertical page, paints differently from the block's plain text. */
 function composedSegmentIsStyled(s: VDTLineSegment): boolean {
-  return !!s.bold || !!s.italic || s.kind === 'math' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined
+  return !!s.bold || !!s.italic || s.kind === 'math' || s.kind === 'score' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined
     || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined || s.tracking !== undefined
     || s.inkOffset !== undefined || s.hangs !== undefined || s.autospace !== undefined || s.tcy !== undefined || s.orientation !== undefined
     || s.ruby !== undefined || s.kunten !== undefined || s.warichu !== undefined || s.labelTab !== undefined || s.sideMarker !== undefined

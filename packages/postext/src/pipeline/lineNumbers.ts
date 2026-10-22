@@ -158,7 +158,7 @@ function styleCounts(resolved: ResolvedConfig, styleId: string | undefined, fall
 
 /** Blocks whose lines are never counted. */
 function neverCounted(block: VDTBlock): boolean {
-  return block.type === 'heading' || block.type === 'resource' || block.type === 'mathDisplay' || block.type === 'callout'
+  return block.type === 'heading' || block.type === 'resource' || block.type === 'mathDisplay' || block.type === 'score' || block.type === 'callout'
     || block.hidden === true || block.designOverlay !== undefined
     || block.footnoteNote !== undefined || block.tocEntry !== undefined || block.tocPart !== undefined
     || block.indexLevel !== undefined || block.bibEntry !== undefined || block.comic !== undefined;

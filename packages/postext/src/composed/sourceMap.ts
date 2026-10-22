@@ -271,7 +271,7 @@ function glyphAt(block: VDTBlock, line: VDTLine, x: number): { start: number; en
   }
   // A placeholder (reference, swatch, formula): the whole construct, up to
   // the next character's source.
-  if (hit.plainLen === 1 && (seg.refResourceId !== undefined || seg.kind === 'swatch' || seg.kind === 'math' || seg.text.length !== 1)) {
+  if (hit.plainLen === 1 && (seg.refResourceId !== undefined || seg.kind === 'swatch' || seg.kind === 'math' || seg.kind === 'score' || seg.text.length !== 1)) {
     const at = sourceOfPlain(block, plainOf(0));
     if (at === undefined) return undefined;
     const next = sourceOfPlain(block, plainOf(1));

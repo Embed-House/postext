@@ -31,8 +31,10 @@ const CODE_CONTAINER_BASE = 1_500_000_000;
  *  reading, so the parse memo keeps one entry per text. */
 export function codeParseOptions(resolved: ResolvedConfig): ParseOptions | undefined {
   const cs = resolved.codeStyle;
-  if (!cs || (cs.blocks && !cs.indentedCode)) return undefined;
-  return { fences: cs.blocks, indentedCode: cs.indentedCode };
+  // Notation fences are scores (#1172) unless `scoreStyle.enabled` is off.
+  const scores = resolved.scoreStyle?.enabled === false ? { scores: false } : {};
+  if (!cs || (cs.blocks && !cs.indentedCode)) return 'scores' in scores ? scores : undefined;
+  return { fences: cs.blocks, indentedCode: cs.indentedCode, ...scores };
 }
 
 const px = (value: number): Dimension => ({ value, unit: 'px' });

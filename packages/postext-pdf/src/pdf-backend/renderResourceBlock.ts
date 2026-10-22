@@ -228,7 +228,7 @@ function charOf(cp: number): string {
 /** The characters an SVG's text may set: those of its markup outside tags,
  *  entities decoded — more than its text nodes (a `<style>` sheet counts
  *  too), which only asks a sliced face for a file more. */
-function svgCodePoints(svgText: string): Set<number> {
+export function svgCodePoints(svgText: string): Set<number> {
   const text = svgText
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
     .replace(/<[^>]*>/g, ' ')
@@ -247,7 +247,7 @@ function svgCodePoints(svgText: string): Set<number> {
 /** Fonts an SVG's text would need, as font strings the {@link FontCache}
  *  can preload: every named (non-generic) family of each run, so the
  *  resolver can fall through the `font-family` list in order. */
-function collectSvgFontStrings(svgText: string): string[] {
+export function collectSvgFontStrings(svgText: string): string[] {
   const wanted = new Set<string>();
   const probe: VectorFontResolver = (families, weight, italic) => {
     for (const f of families) if (!GENERIC_FAMILIES.has(f.toLowerCase())) wanted.add(svgFontString(f, weight, italic));
@@ -259,7 +259,7 @@ function collectSvgFontStrings(svgText: string): string[] {
 
 /** Resolve SVG font requests against the preloaded cache: the first named
  *  family of the list that loaded wins; generic families never match. */
-function fontResolverFor(fontCache: FontCache): VectorFontResolver {
+export function fontResolverFor(fontCache: FontCache): VectorFontResolver {
   const fonts = new Map<PDFFont, VectorFont>();
   return (families, weight, italic) => {
     for (const f of families) {

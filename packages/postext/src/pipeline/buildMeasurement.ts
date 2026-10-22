@@ -156,6 +156,29 @@ export function runMeasurement(input: MeasurementInput): MeasurementResult {
     return { measured, resourceBlock, ...(tableRows ? { tableRows } : {}), ...(asideHeight !== undefined ? { asideHeight } : {}) };
   }
 
+  // A score system (#1172): one line as tall as the system, never broken.
+  // A measure narrower than the one the score was engraved at (a box, a
+  // side column) scales the system down to fit.
+  if (vdtType === 'score') {
+    const system = rawBlock.score?.system;
+    const natural = system?.widthPx ?? measureMaxWidth;
+    const k = natural > measureMaxWidth && natural > 0 ? measureMaxWidth / natural : 1;
+    const width = natural * k;
+    const height = (system?.heightPx ?? style.lineHeightPx) * k;
+    const measured: MeasuredBlock = {
+      lines: [{
+        text: '',
+        bbox: { x: 0, y: 0, width, height },
+        baseline: height,
+        hyphenated: false,
+        segments: [{ kind: 'score' as const, text: '\uFFFC', width, ...(system ? { scoreSystem: system } : {}) }],
+        isLastLine: true,
+      }],
+      totalHeight: height,
+    };
+    return { measured };
+  }
+
   // Math display block: bypass text layout entirely. Produce a single
   // VDTLine whose bbox is the math render's pixel box, centred later.
   if (vdtType === 'mathDisplay') {

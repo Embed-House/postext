@@ -3,6 +3,7 @@
 import { buildDocumentAsync, BuildCancelledError } from '../pipeline/index.js';
 import type { BuildPassInfo } from '../pipeline/build.js';
 import { initMathEngine, isMathReady } from '../math/index.js';
+import { initMusicEngine, isMusicReady, markdownHasScore } from '../music/index.js';
 import { contentHasMath } from '../parse/inlineSnippet.js';
 import { citationEngine, ensureCitationEngine, mayNeedCitations } from '../citations/registry.js';
 import { createMeasurementCache, evictFontFamilies } from '../measure/index.js';
@@ -227,6 +228,15 @@ async function runBuild(msg: BuildRequest): Promise<void> {
     }
     if (!isMathReady() && contentHasMath(content)) {
       await initMathEngine();
+      if (cancelRequestedFor === msg.id) {
+        post({ kind: 'cancelled', id: msg.id });
+        return;
+      }
+    }
+    // The music engraver (#1172), for a document with a notation fence.
+    // A failed start leaves the scores as placeholders.
+    if (!isMusicReady() && markdownHasScore(content.markdown)) {
+      await initMusicEngine().catch((err: unknown) => console.error(err));
       if (cancelRequestedFor === msg.id) {
         post({ kind: 'cancelled', id: msg.id });
         return;

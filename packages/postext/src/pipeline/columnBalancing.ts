@@ -620,13 +620,14 @@ export function collectColumnGaps(
         } else if (
           i >= 1
           && (
-            (col.blocks[i - 1]!.type === 'mathDisplay' && col.blocks[i - 1]!.containerId === undefined)
+            ((col.blocks[i - 1]!.type === 'mathDisplay' || isLastSystem(col.blocks[i - 1]!)) && col.blocks[i - 1]!.containerId === undefined)
             // …or the last block of a callout box (its children carry the
             // box's container id; the block after it is back in the flow).
             || col.blocks[i - 1]!.containerId !== undefined
           )
           && b.type !== 'heading'
           && b.type !== 'mathDisplay'
+          && b.type !== 'score'
           && !b.id.includes('-cont-')
         ) {
           // The space under a display formula or a box: a whole grid line
@@ -1009,4 +1010,10 @@ export function proposeBalanceLines(
     }
   }
   return { lines, loose, looseBudget, changed };
+}
+
+/** The last system of a score (#1172): like a display formula, the space
+ *  under it may take a balancing grid line. */
+function isLastSystem(b: VDTBlock): boolean {
+  return b.type === 'score' && b.score !== undefined && b.score.index === b.score.count - 1;
 }

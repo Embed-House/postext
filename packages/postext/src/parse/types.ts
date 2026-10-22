@@ -1,4 +1,5 @@
 import type { Dimension } from '../types.js';
+import type { ScoreFormat, ScoreSystem } from '../music/types.js';
 import type { ComicPageSource } from '../comics/types.js';
 import type { FigureLabelNode, SourceRange } from '../composed/types.js';
 
@@ -14,7 +15,11 @@ export type ContentBlockType =
   | 'containerEnd'
   /** A code listing (#624): a ```` ``` ```` or `~~~` fence, or indented
    *  code under `codeStyle.indentedCode` (see {@link CodeBlockInfo}). */
-  | 'code';
+  | 'code'
+  /** A music score (#1172): a ```` ```abc ```` / ```` ```musicxml ```` /
+   *  ```` ```mei ```` / ```` ```humdrum ```` fence (see {@link ScoreBlockInfo}).
+   *  The build expands it into one block per engraved system. */
+  | 'score';
 
 /** Attributes parsed from a `:::name{key="v" other=bare flag}` directive.
  *  Values are kept as strings; directive consumers validate/coerce. A bare
@@ -78,6 +83,25 @@ export interface VerseLineInfo {
  *  block's `text` joins the lines with a line feed, mapped to the source
  *  line end, so the plain text and the source map read the listing as
  *  written. */
+/** A music score (#1172): the notation as written in its fence. */
+export interface ScoreBlockInfo {
+  format: ScoreFormat;
+  /** The notation, the fence's indentation taken off. */
+  source: string;
+  /** The fence's attributes (`{#id style=… alt="…"}`). */
+  attrs: DirectiveAttrs;
+  /** Present once the build has engraved the score: the system this
+   *  block sets, out of `count`. */
+  system?: ScoreSystem;
+  index?: number;
+  count?: number;
+  /** The engraver's message when the notation did not load. */
+  error?: string;
+  /** Read from the notation, for alt text. */
+  title?: string;
+  composer?: string;
+}
+
 export interface CodeBlockInfo {
   /** The first word of the info string (`js`, `python`, `console`),
    *  lower-cased; absent when the fence names none. */
@@ -771,6 +795,10 @@ export interface ParseOptions {
   /** Read indented code (four spaces or a tab after a blank line) as a
    *  code block. Default `false`. */
   indentedCode?: boolean;
+  /** Read a fence in a notation language (```` ```abc ````, ```` ```musicxml ````,
+   *  ```` ```mei ````, ```` ```humdrum ````) as a music score (#1172), not
+   *  a listing. Default `true`; a fence with `{listing}` stays code. */
+  scores?: boolean;
 }
 
 /** What one block of an expanded `:::toc` prints. */
@@ -1005,6 +1033,8 @@ export interface ContentBlock {
   anchorMarks?: AnchorMark[];
   /** For a `code` block (#624): the listing (see {@link CodeBlockInfo}). */
   code?: CodeBlockInfo;
+  /** Present on `score` blocks (#1172). */
+  score?: ScoreBlockInfo;
   /** The inline code spans (`` `x` ``) of a paragraph, a heading, a
    *  quotation or a list item, as source ranges of their text (between the
    *  backticks, absolute offsets into the markdown), in order: a layout

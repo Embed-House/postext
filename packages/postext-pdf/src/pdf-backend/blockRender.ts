@@ -6,6 +6,7 @@ import { parseFontString } from '../fontString.js';
 import { FontCache } from '../fontCache.js';
 import { type PageCtx, alphaOf, alphaStateOp, beginActualTextSpan, cellPieces, counterFlipPx, cjkLineText, readText, compressedMarkSpacingPx, drawLinePx, drawMeasuredTextPx, drawTextPx, colorFromHex, endActualTextSpan, fillRectPx, setTrackingPx, textAdvancePx, type LineTextState, paintInScript } from './primitives.js';
 import { paintChip } from './chip.js';
+import { renderScoreSegment } from './scoreRender.js';
 import { drawTaskBoxPx } from './taskBox.js';
 import { drawRightToLeftRun } from './rtlRun.js';
 import { pickSegmentColor, pickSegmentFont } from './fontHelpers.js';
@@ -303,6 +304,17 @@ function renderSegments(
       x += seg.width;
       continue;
     }
+    if (seg.kind === 'score') {
+      // A score system (#1172): a Figure in the structure tree, with the
+      // score's alt text (each system its own, the first one carrying it).
+      if (elem) {
+        const figure = elem.type === 'Figure' ? elem : elem.child('Figure', { alt: block.score?.alt ?? '' });
+        tagContent(ctx, figure);
+      }
+      renderScoreSegment(ctx, seg, x, baseline, block.color);
+      x += seg.width;
+      continue;
+    }
     if (seg.kind === 'swatch') {
       paintSwatchSegmentPdf(ctx, seg, x, baseline, blockColor, fontCache, blockFont, elem);
       x += seg.width;
@@ -582,7 +594,7 @@ function renderLineText(
  *  the block's plain text, or is linked; an orientation mark (`:tcy`,
  *  `:upright`, `:sideways`) keeps its segment apart. */
 function segmentIsStyled(s: VDTLineSegment): boolean {
-  return s.bold || s.italic || s.runs !== undefined || s.sideMarker !== undefined || s.kind === 'math' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined || s.href !== undefined || s.pageLink !== undefined || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined
+  return s.bold || s.italic || s.runs !== undefined || s.sideMarker !== undefined || s.kind === 'math' || s.kind === 'score' || s.kind === 'swatch' || s.kind === 'chip' || s.refResourceId !== undefined || s.href !== undefined || s.pageLink !== undefined || s.fontString !== undefined || s.color !== undefined || s.baselineShift !== undefined
     || s.tcy !== undefined || s.orientation !== undefined || s.labelTab !== undefined || s.leader !== undefined
     // A word with no letter shaped in the script of its context (#725):
     // its line is painted word by word, each in its script.

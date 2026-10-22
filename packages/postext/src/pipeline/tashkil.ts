@@ -100,7 +100,7 @@ function stripSpan(span: InlineSpan, mask: readonly boolean[] | undefined, from:
  *  text, source map, spans and title breaks. A formula's TeX is left as
  *  it is. */
 export function stripBlockTashkil(block: ContentBlock, mode: Exclude<TashkilMode, 'keep'>): ContentBlock {
-  if (block.type === 'mathDisplay' || block.rawBody !== undefined) return block;
+  if (block.type === 'mathDisplay' || block.type === 'score' || block.rawBody !== undefined) return block;
   const re = stripper(mode);
   if (!re.test(block.text) && !block.spans.some((s) => re.test(s.text))) return block;
   const mask = removalMask(block.text, re);

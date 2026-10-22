@@ -373,7 +373,7 @@ describe('the config sections', () => {
 
 describe('configVersion 15 (#853)', () => {
   it('is the version this engine writes', () => {
-    expect(CONFIG_VERSION).toBe(19);
+    expect(CONFIG_VERSION).toBe(20);
   });
 
   it('reads a configuration stored under 14 as it is, templates and all', () => {

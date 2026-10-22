@@ -61,7 +61,7 @@ import { orientLinesToFrames } from './mirrorFrame.js';
 import { verseMarginTopPx } from './buildBlockKind.js';
 import { verseLinesSettings, versesLineByLine } from './verseLines.js';
 import type { MeasurementCache } from '../measure/index.js';
-import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, resolvedDirection, resolvedLocale, validateConfigCache } from './config.js';
+import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, computeColumnBboxes, resolvedDirection, resolvedLocale, validateConfigCache } from './config.js';
 import { resolveDebugConfig } from '../defaults/debug.js';
 import { defaultFontSet, documentFontFaces, faceRequestKey, fontFallbacks, type FontFaceSetLike } from '../fonts/faces.js';
 import { glyphFallbacks } from '../fonts/glyphFallback.js';
@@ -233,6 +233,7 @@ import {
 import { documentLocale, effectiveResourceTypes } from '../defaults/resourceTypes.js';
 import { resolveCalloutStylesConfig } from '../defaults/calloutStyles.js';
 import { codeBoxStyle, codeParseOptions, wrapCodeBlocks } from './codeBlocks.js';
+import { expandScoreBlocks, scoreInfoOf } from './scoreBlocks.js';
 import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines.js';
 import { pickTableStyle } from '../defaults/tableStyle.js';
 import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout.js';
@@ -926,7 +927,10 @@ function placeDocumentPass(
   const spanEmbeds = wrapPageSpanEmbeds(flowGroups.blocks, content.resources ?? [], effectiveResourceTypes(config, content.resources ?? []));
   // Code listings (#624): each in a box of the code style, which the
   // callout machinery places and splits.
-  const codeBoxes = wrapCodeBlocks(spanEmbeds.blocks, resolved);
+  // Music scores (#1172): each engraved at the width of the flow's first
+  // column, one block per system.
+  const scores = expandScoreBlocks(spanEmbeds.blocks, resolved, computeColumnBboxes(pageMetrics.contentArea, resolved)[0]?.width ?? pageMetrics.contentArea.width);
+  const codeBoxes = wrapCodeBlocks(scores.blocks, resolved);
   const contentBlocks = codeBoxes.blocks;
   // Stories of earlier chapters that jump into a page of this one (#943):
   // appended past the chapter's blocks by the composed pages' layout, with
@@ -3530,6 +3534,9 @@ function placeDocumentPass(
     }
     if (raw.footnoteNote !== undefined) blk.footnoteNote = raw.footnoteNote;
     if (raw.bibEntry !== undefined) blk.bibEntry = raw.bibEntry;
+    // A score's system (#1172): its place in the score, and the alt text on
+    // the first one.
+    if (raw.score) blk.score = scoreInfoOf(raw.score);
     // Metadata for other renditions: the paragraph style the text is set
     // in, the level of an index entry.
     const paragraphStyleId = paragraphStyleIdOf(raw, blk.contentIndex !== undefined ? paragraphContainers.byBlock[blk.contentIndex] : undefined, resolved);
@@ -7773,7 +7780,9 @@ function placeDocumentPass(
       // as the one block postext 1.22 set it in did not.
       (vdtType === 'paragraph' && rawBlock.verse !== undefined && verseSnaps(rawBlock.verse.attrs.style, resolved)
         && (rawBlock.verse.stanza === undefined || rawBlock.verse.stanza.last || versesLineByLine(rawBlock, resolved))) ||
-      vdtType === 'mathDisplay'
+      vdtType === 'mathDisplay' ||
+      // A score's last system: the text after it goes back on the grid.
+      (vdtType === 'score' && (rawBlock.score?.index ?? 0) === (rawBlock.score?.count ?? 1) - 1)
     );
 
     // Place block, splitting across columns/pages if needed.
@@ -7974,6 +7983,10 @@ function placeDocumentPass(
               spacingBefore = top - usedHeight;
             }
           }
+        } else if (vdtType === 'score') {
+          // A score's top margin above its first system, the system gap
+          // above the others (#1172).
+          spacingBefore = Math.max(spacingBefore, style.marginTopPx);
         } else if (rawBlock.verse && partIndex === 0) {
           // A poem: the top margin of the paragraph style its fence names.
           spacingBefore = Math.max(spacingBefore, style.marginTopPx);
@@ -8085,7 +8098,7 @@ function placeDocumentPass(
       // Footnotes the lines cite take room at the column's foot: the whole
       // block fits when its lines and all their notes do, and a split
       // keeps the lines whose notes fit under them.
-      const noteCosts = vdtType === 'mathDisplay' ? undefined : notesPrefixCost(curCol, remainingLines);
+      const noteCosts = vdtType === 'mathDisplay' || vdtType === 'score' ? undefined : notesPrefixCost(curCol, remainingLines);
       let effectiveAvailable = curCol.availableHeight - spacingBefore - (noteCosts ? noteCosts[noteCosts.length - 1]! : 0);
       // A hair of tolerance: room of exactly N lines (grid arithmetic in
       // floats — a column cut by a band cap, a balancing extra line) must
@@ -8099,7 +8112,7 @@ function placeDocumentPass(
       }
       // Math display blocks carry their natural pixel height on the single
       // VDTLine; text blocks use the uniform body lineHeightPx per line.
-      const totalRemainHeight = vdtType === 'mathDisplay'
+      const totalRemainHeight = vdtType === 'mathDisplay' || vdtType === 'score'
         ? (remainingLines[0]?.bbox.height ?? style.lineHeightPx)
         : remainingLines.length * style.lineHeightPx;
 
@@ -8581,6 +8594,9 @@ function placeDocumentPass(
           // Place the single line using its natural height (not the body lineHeight).
           const mathLine = { ...remainingLines[0]!, bbox: { ...remainingLines[0]!.bbox, y: 0 } };
           blk.lines = [mathLine];
+        } else if (vdtType === 'score') {
+          // A system keeps its own height (#1172).
+          blk.lines = [{ ...remainingLines[0]!, bbox: { ...remainingLines[0]!.bbox, y: 0 } }];
         } else {
           blk.lines = shiftLinesDown(resetLinePositions(remainingLines, style.lineHeightPx), lineSpanShift);
         }
@@ -8590,7 +8606,7 @@ function placeDocumentPass(
           blk.sourceStart = remainingLines[0]!.sourceStart ?? rawBlock.sourceStart + bodyOffset;
           blk.sourceEnd = remainingLines[remainingLines.length - 1]!.sourceEnd ?? rawBlock.sourceEnd + bodyOffset;
         }
-        if (vdtType === 'mathDisplay') {
+        if (vdtType === 'mathDisplay' || vdtType === 'score') {
           blk.sourceStart = rawBlock.sourceStart + bodyOffset;
           blk.sourceEnd = rawBlock.sourceEnd + bodyOffset;
         }
@@ -8997,7 +9013,9 @@ function placeDocumentPass(
         blk.titleBreaks = rawBlock.titleBreaks;
         blk.titleLength = rawBlock.text.length;
       }
-      blk.lines = shiftLinesDown(resetLinePositions(remainingLines, style.lineHeightPx), lineSpanShift);
+      blk.lines = vdtType === 'mathDisplay' || vdtType === 'score'
+        ? [{ ...remainingLines[0]!, bbox: { ...remainingLines[0]!.bbox, y: 0 } }]
+        : shiftLinesDown(resetLinePositions(remainingLines, style.lineHeightPx), lineSpanShift);
       blk.dirty = false;
       blk.snappedToGrid = false;
       if (remainingLines.length > 0) {
