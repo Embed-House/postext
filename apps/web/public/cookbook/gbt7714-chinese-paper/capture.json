@@ -3,21 +3,21 @@
   "slug": "gbt7714-chinese-paper",
   "sourceHash": "540fd1702ca5a66f107c7924e25490008150485d9c7849a0a2759f7d484a8598",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.843Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:00:08.108Z",
   "variants": {
     "en": {
-      "hash8": "751d0f03",
+      "hash8": "07bbe0d9",
       "vdtHash": "ceff2471240e5acd6fbbeb34ea122a22d36e0df2",
       "timings": {
-        "importMs": 482,
-        "fontsMs": 574,
-        "buildMs": 139,
-        "totalMs": 1846,
+        "importMs": 2278,
+        "fontsMs": 617,
+        "buildMs": 140,
+        "totalMs": 4220,
         "builds": 1
       },
       "specimen": {
@@ -27,7 +27,7 @@
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "Noto Serif SC",
@@ -90,7 +90,7 @@
       },
       "pdf": {
         "file": "gbt7714-chinese-paper.pdf",
-        "bytes": 164237,
+        "bytes": 164296,
         "pages": 2
       },
       "sandbox": {
@@ -345,19 +345,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b7ee64fe",
+      "hash8": "810c94b8",
       "vdtHash": "5601d7d042f56dda3ee9e1d8e777a0b223ae5f3a",
       "timings": {
-        "importMs": 470,
-        "fontsMs": 319,
-        "buildMs": 136,
-        "totalMs": 1512,
+        "importMs": 2555,
+        "fontsMs": 649,
+        "buildMs": 145,
+        "totalMs": 4566,
         "builds": 1
       },
       "specimen": {
@@ -367,7 +367,7 @@
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "Noto Serif SC",
@@ -430,7 +430,7 @@
       },
       "pdf": {
         "file": "gbt7714-chinese-paper.pdf",
-        "bytes": 164541,
+        "bytes": 164605,
         "pages": 2
       },
       "sandbox": {
@@ -685,7 +685,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

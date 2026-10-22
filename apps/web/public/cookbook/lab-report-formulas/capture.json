@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "lab-report-formulas",
-  "sourceHash": "f862c11a4c79bf70a97df20cae15933f905d4445b73a2eb56ce0923b51dab8e6",
+  "sourceHash": "f63750d4edff1d5f6dc6d1eae59cbab1831e8a62e26441bc94ca68a9258fb4a8",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:01:22.587Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:54:05.728Z",
   "variants": {
     "en": {
-      "hash8": "63199b27",
+      "hash8": "73949186",
       "vdtHash": "f73d8dee10daea49a07ceb13c14898d9693eeeea",
       "timings": {
-        "importMs": 837,
-        "fontsMs": 183,
-        "buildMs": 89,
-        "totalMs": 1994,
+        "importMs": 1396,
+        "fontsMs": 452,
+        "buildMs": 124,
+        "totalMs": 3274,
         "builds": 1
       },
       "specimen": {
@@ -39,7 +39,7 @@
           "Sometype Mono"
         ],
         "pages": 4,
-        "ownLines": 236
+        "ownLines": 237
       },
       "pages": [
         {
@@ -51,7 +51,7 @@
           "file": "p01.webp",
           "strip": "p01.s.webp",
           "bytes": 90044,
-          "alt": "Opening page 1: Acid–base titration: how acidic is vinegar?."
+          "alt": "Opening page 1: Acid–base titration: how acidic is vinegar?"
         },
         {
           "n": 2,
@@ -115,12 +115,12 @@
       },
       "pdf": {
         "file": "lab-report-formulas.pdf",
-        "bytes": 193166,
+        "bytes": 193169,
         "pages": 4
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 36541,
+        "bytes": 36559,
         "folio": "977c8d61",
         "chapters": [
           {
@@ -256,6 +256,7 @@
           "locale",
           "math",
           "math.fontSizeScale",
+          "math.keepWithLeadIn",
           "math.marginBottom",
           "orderedLists",
           "orderedLists.color",
@@ -332,7 +333,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 519,
+        "configLeaves": 520,
         "designElements": 24,
         "directives": [
           ":::callout",
@@ -439,21 +440,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "1aeda061",
+      "hash8": "8f4fcc53",
       "vdtHash": "f41577a6b051f323818c469cd027bc4a16f2409e",
       "timings": {
-        "importMs": 729,
-        "fontsMs": 185,
-        "buildMs": 95,
-        "totalMs": 2374,
+        "importMs": 1592,
+        "fontsMs": 166,
+        "buildMs": 98,
+        "totalMs": 2916,
         "builds": 1
       },
       "specimen": {
@@ -475,7 +476,7 @@
           "Sometype Mono"
         ],
         "pages": 4,
-        "ownLines": 236
+        "ownLines": 237
       },
       "pages": [
         {
@@ -551,12 +552,12 @@
       },
       "pdf": {
         "file": "lab-report-formulas.pdf",
-        "bytes": 203954,
+        "bytes": 203955,
         "pages": 4
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 37833,
+        "bytes": 37851,
         "folio": "977c8d61",
         "chapters": [
           {
@@ -692,6 +693,7 @@
           "locale",
           "math",
           "math.fontSizeScale",
+          "math.keepWithLeadIn",
           "math.marginBottom",
           "orderedLists",
           "orderedLists.color",
@@ -768,7 +770,7 @@
           "tableStyle",
           "unorderedLists"
         ],
-        "configLeaves": 519,
+        "configLeaves": 520,
         "designElements": 24,
         "directives": [
           ":::callout",
@@ -875,9 +877,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

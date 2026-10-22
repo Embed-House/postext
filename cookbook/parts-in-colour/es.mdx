@@ -46,7 +46,7 @@ La apertura de cada especie imprime tres atributos de su título: `status` en el
 
 <Excerpt region="running-heads" />
 
-Con `pages: 'body'`, las cabeceras solo salen en las páginas de texto. Las portadillas son páginas `part` y sus dorsos pintados, páginas `blank`; la cubierta y el índice se abren con un título a todo el ancho de la página, que las convierte en páginas de apertura. La cabecera de la página impar imprime `{partTitle}` en una sola línea, y la pestaña del corte imprime `{partNumber}` sobre una caja cuyo fondo se enlaza a `band`.
+Con `pages: 'body'`, las cabeceras solo salen en las páginas de texto. Las portadillas son páginas `part` y sus dorsos pintados, páginas `blank`; la cubierta y el índice se abren con un título a todo el ancho de la página, que las convierte en páginas de apertura. La cabecera de la página par imprime `{title}`, el título del frontmatter, de modo que el nombre del libro sigue en el Markdown. La de la página impar imprime `{partTitle}` en una sola línea, y la pestaña del corte imprime `{partNumber}` sobre una caja cuyo fondo se enlaza a `band`.
 
 ## Variantes
 

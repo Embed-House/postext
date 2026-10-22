@@ -3,12 +3,12 @@
   "slug": "handwriting-workbook",
   "sourceHash": "171cd22778df098ef0321dcd0549ca99db89a44b20a35c4ba54a08903ffdb0b7",
   "engine": {
-    "postext": "1.46.0",
-    "postextPdf": "1.46.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-21T18:29:43.904Z",
+  "capturedAt": "2026-10-22T20:33:58.658Z",
   "variants": {
     "en": {
       "hash8": "84575611",
@@ -467,13 +467,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
@@ -933,13 +927,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
@@ -1399,23 +1387,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
-      "hash8": "60df2ac5",
+      "hash8": "f963b5f0",
       "vdtHash": "36599b3f63f98d33721a4df5579939ac3c04cbde",
       "timings": {
-        "importMs": 462,
-        "fontsMs": 604,
-        "buildMs": 78,
-        "totalMs": 1733,
+        "importMs": 864,
+        "fontsMs": 774,
+        "buildMs": 101,
+        "totalMs": 2473,
         "builds": 1
       },
       "specimen": {
@@ -1618,7 +1600,7 @@
       },
       "pdf": {
         "file": "handwriting-workbook.pdf",
-        "bytes": 995740,
+        "bytes": 995747,
         "pages": 12
       },
       "sandbox": {
@@ -1866,13 +1848,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
@@ -2330,13 +2306,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
@@ -2780,13 +2750,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
@@ -3246,13 +3210,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "fr": {
@@ -3712,13 +3670,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "de": {
@@ -4178,13 +4130,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "it": {
@@ -4644,13 +4590,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

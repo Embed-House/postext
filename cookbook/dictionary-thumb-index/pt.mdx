@@ -1,6 +1,6 @@
 ---
 title: "Dicionário com índice de dedo que desce"
-summary: "Um laço cria um estilo de título por letra, e o cabeçalho de cada estilo imprime a aba azul-marinho da letra um degrau abaixo no corte, sobre um índice claro."
+summary: "Um laço cria um estilo de título por letra, e o rodapé de cada estilo imprime a aba azul-marinho da letra um degrau abaixo no corte, sobre um índice claro."
 plain: "Quatro páginas de um velho dicionário de marinheiros. Abas com letras descem pela borda externa de cada página, e a aba da letra atual é escura e fica mais baixa à medida que o alfabeto avança."
 description: "Quatro páginas do Sailor’s Word-Book de Smyth em duas colunas, com lemas em azul-marinho, iniciais de quatro linhas e uma aba que desce um degrau a cada letra."
 question: "Como faço para a aba de um dicionário descer pelo corte da frente de uma letra para a seguinte?"
@@ -16,7 +16,7 @@ Quatro páginas de uma nova edição do *Sailor’s Word-Book* do almirante Smyt
 
 ### 1 · Dê a cada letra um estilo de título com a sua aba
 
-O código é [a resposta curta](#a-resposta-curta) lá em cima. `TABS` lista 22 abas, e as letras raras dividem uma (QR, UV, XYZ). Cada aba tem a altura de duas linhas do texto (7,34 mm), de modo que juntas preenchem as 44 linhas da mancha. O laço dá a cada letra um estilo de título cujo `header` acrescenta aos cabeços e ao índice claro a aba azul-marinho daquela letra, um degrau abaixo da anterior ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)). Cada célula é escrita duas vezes, uma por `parity`, e ancorada à borda externa da página, não ao contêiner do próprio cabeçalho. Esse contêiner é a margem superior, da largura da mancha e indo do refile até o texto, enquanto as abas precisam chegar ao corte da frente e descer pelas 44 linhas. Uma página recebe o cabeçalho da última seção que começa nela, por isso a <PageRef page={2}>página 2</PageRef> começa no A e mostra a aba do B.
+O código é [a resposta curta](#a-resposta-curta) lá em cima. `TABS` lista 22 abas, e as letras raras dividem uma (QR, UV, XYZ). Cada aba tem a altura de duas linhas do texto (7,34 mm), de modo que juntas preenchem as 44 linhas da mancha. O `header` do livro imprime em todas as páginas os cabeços e o índice claro. O laço dá a cada letra um estilo de título cujo `footer` acrescenta a aba azul-marinho daquela letra, um degrau abaixo da anterior ([estilos de título](/pt/docs/configuration-styles#estilos-de-título)). O rodapé é pintado depois do cabeçalho, então a aba fica por cima da sua célula clara, e a configuração guarda o índice uma vez só, não uma vez por letra. Cada célula é escrita duas vezes, uma por `parity`, e ancorada à borda externa da página, não ao contêiner do próprio slot. Esse contêiner é uma margem da largura da mancha, enquanto as abas precisam chegar ao corte da frente e descer pelas 44 linhas. Uma página recebe o rodapé da última seção que começa nela, por isso a <PageRef page={2}>página 2</PageRef> começa no A e mostra a aba do B.
 
 ### 2 · Tire os cabeços da primeira página
 
@@ -49,8 +49,8 @@ O estilo do título ocupa a largura da página com uma faixa que reúne a âncor
 Os índices de dedo impressos costumam mostrar só a aba da letra atual; tire `ladder` do cabeçalho e a aba azul-marinho continua descendo do A ao C.
 
 ```diff
--  header: { elements: [...runningHeads, ...ladder,
-+  header: { elements: [...runningHeads,
+-  header: { elements: [...runningHeads, ...ladder] }, // the same on every page
++  header: { elements: [...runningHeads] }, // the same on every page
 ```
 
 ## Erros comuns

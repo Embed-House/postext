@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 019 · Parts in colour from one attribute ═══════════════════════
 // https://postext.dev/en/cookbook/parts-in-colour
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: diffusion models
-// Fonts: Alegreya, Zilla Slab, Barlow Condensed (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Alegreya, Zilla Slab, Barlow Condensed (SIL OFL 1.1) · Needs postext ≥ 1.57.0
 // A pocket field guide to two habitats. Each :::part names its own 'band' colour, and every
 // colour linked to 'band' takes it: the divider and its verso, the tab, the field marks.
 import {
@@ -155,7 +155,7 @@ const tab = (parity, edge) => head(`tab-${parity}`, '{partNumber}', parity,
   { fontSize: pt(9), color: col('paper'), align: 'center', box: { backgroundColor: col('band') } });
 const header = { elements: [
   head('verso-folio', '{pageNumber}', 'even', at('top-left', MARGIN.outer, HEAD.y), folio),
-  head('verso-title', BOOK, 'even', at('top-left', MARGIN.outer + HEAD.gap, HEAD.y)),
+  head('verso-title', '{title}', 'even', at('top-left', MARGIN.outer + HEAD.gap, HEAD.y)),
   head('recto-title', '{partTitle}', 'odd', at('top-right', -(MARGIN.outer + HEAD.gap), HEAD.y)),
   head('recto-folio', '{pageNumber}', 'odd', at('top-right', -MARGIN.outer, HEAD.y), folio),
   tab('even', 'top-left'), tab('odd', 'top-right'), // on the fore-edge, left on a verso

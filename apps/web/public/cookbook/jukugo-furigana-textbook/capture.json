@@ -3,27 +3,21 @@
   "slug": "jukugo-furigana-textbook",
   "sourceHash": "de6112468e8a6623d0ddd331bcec1dc8858df2437ff517a678940af67b89a5ff",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:42:47.952Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:00:04.768Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:33:58.877Z",
   "variants": {
     "en": {
-      "hash8": "cc090f92",
+      "hash8": "810222b5",
       "vdtHash": "6e5e8dd18321bc7f21cc4b6bcaf3aaca338a7d18",
       "timings": {
-        "importMs": 564,
-        "fontsMs": 441,
-        "buildMs": 155,
-        "totalMs": 1845,
+        "importMs": 961,
+        "fontsMs": 249,
+        "buildMs": 94,
+        "totalMs": 1951,
         "builds": 1
       },
       "specimen": {
@@ -105,7 +99,7 @@
       },
       "pdf": {
         "file": "jukugo-furigana-textbook.pdf",
-        "bytes": 128922,
+        "bytes": 128939,
         "pages": 3
       },
       "sandbox": {
@@ -317,6 +311,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -325,13 +324,13 @@
       }
     },
     "es": {
-      "hash8": "401f8e9c",
+      "hash8": "b8979e35",
       "vdtHash": "d3004bd578b580c86a76da9efb73bb7bbab62326",
       "timings": {
-        "importMs": 478,
-        "fontsMs": 367,
-        "buildMs": 104,
-        "totalMs": 1868,
+        "importMs": 1012,
+        "fontsMs": 524,
+        "buildMs": 88,
+        "totalMs": 2429,
         "builds": 1
       },
       "specimen": {
@@ -413,7 +412,7 @@
       },
       "pdf": {
         "file": "jukugo-furigana-textbook.pdf",
-        "bytes": 129046,
+        "bytes": 129059,
         "pages": 3
       },
       "sandbox": {
@@ -624,6 +623,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

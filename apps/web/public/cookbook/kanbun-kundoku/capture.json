@@ -3,27 +3,21 @@
   "slug": "kanbun-kundoku",
   "sourceHash": "ab94b732b7a27c6b50c58696816b4b5853352950fc1abad7cd52c85840e9a170",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:42:47.989Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:00:04.778Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:08:31.207Z",
   "variants": {
     "en": {
-      "hash8": "77492f45",
+      "hash8": "7a7bcbf8",
       "vdtHash": "cea294344d4ba3029b117bd33687c965b41d48c7",
       "timings": {
-        "importMs": 640,
-        "fontsMs": 491,
-        "buildMs": 53,
-        "totalMs": 1858,
+        "importMs": 2453,
+        "fontsMs": 1141,
+        "buildMs": 51,
+        "totalMs": 4685,
         "builds": 1
       },
       "specimen": {
@@ -107,7 +101,7 @@
       },
       "pdf": {
         "file": "kanbun-kundoku.pdf",
-        "bytes": 138218,
+        "bytes": 138253,
         "pages": 3
       },
       "sandbox": {
@@ -307,17 +301,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "66551458",
+      "hash8": "aa941715",
       "vdtHash": "eeffa96ae9ff865139c37006dc7fc4599bc7e1e1",
       "timings": {
-        "importMs": 333,
-        "fontsMs": 439,
-        "buildMs": 50,
-        "totalMs": 1471,
+        "importMs": 2725,
+        "fontsMs": 1147,
+        "buildMs": 52,
+        "totalMs": 5115,
         "builds": 1
       },
       "specimen": {
@@ -401,7 +401,7 @@
       },
       "pdf": {
         "file": "kanbun-kundoku.pdf",
-        "bytes": 138157,
+        "bytes": 138180,
         "pages": 3
       },
       "sandbox": {
@@ -601,7 +601,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -59,8 +59,8 @@
   ],
   "workarounds": [],
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0"
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0"
   },
   "kit": [
     "core",
@@ -90,7 +90,10 @@
       26,
       27,
       32
-    ]
+    ],
+    "expect": {
+      "imageMb": 1.1
+    }
   },
   "credits": {
     "authors": [
@@ -185,7 +188,7 @@
     "content": "MIT"
   },
   "created": "2026-10-04",
-  "updated": "2026-10-10",
+  "updated": "2026-10-22",
   "folio": {
     "paper": {
       "type": "bookWove",

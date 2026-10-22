@@ -74,6 +74,6 @@ Els resultats passen a ser la taula 5.1 i la figura 5.1, amb el compte reiniciat
 
 ## Errors freqüents
 
-- Per defecte, una equació destacada no queda unida a la frase que la presenta, i una frase que acaba en «así que» pot tancar una pàgina amb l'equació ja a la següent; `math.keepWithLeadIn: true` passa aquesta línia a la pàgina següent amb l'equació. Aquí el text de les dues edicions està ajustat perquè l'equació de [OH⁻] tanqui la pàgina 1 sota la seva frase.
+- Per defecte, una equació destacada no queda unida a la frase que la presenta, i una frase que acaba en «así que» pot tancar una pàgina amb l'equació ja a la següent; `math.keepWithLeadIn: true` passa aquesta línia a la pàgina següent amb l'equació. La recepta l'activa, de manera que l'equació de [OH⁻] no se separa de la seva frase encara que canviï el text.
 - Els glifs de TeX són els de MathJax, no els d'Inria Serif, i una equació pesa una mica menys que el text que l'envolta. Deixa les fórmules que van dins d'una frase com a marques `~` i `^`, i reserva TeX per a les línies que el necessiten.
 - Les xifres dels eixos i els seus rètols a la corba són contorns de MathJax, amb els mateixos glifs que les equacions i vectorials al PDF: `tex()` demana a `renderMath` els traçats de cada rètol i els col·loca a l'SVG. Només es poden dibuixar quan `initMathEngine()` ha acabat.

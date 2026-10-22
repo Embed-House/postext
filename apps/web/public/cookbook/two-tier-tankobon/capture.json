@@ -3,27 +3,21 @@
   "slug": "two-tier-tankobon",
   "sourceHash": "e16587d777384d58631dd2a1651c0cdd4f50cbc687f0ed657903854d5d140de4",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:51:20.168Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:05:55.400Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:53:29.494Z",
   "variants": {
     "en": {
-      "hash8": "a4cabdd2",
+      "hash8": "ff212bd8",
       "vdtHash": "67258c9bf6f5c0c1ade6528c963766933df61385",
       "timings": {
-        "importMs": 1489,
-        "fontsMs": 1668,
-        "buildMs": 84,
-        "totalMs": 4412,
+        "importMs": 2846,
+        "fontsMs": 1449,
+        "buildMs": 100,
+        "totalMs": 5547,
         "builds": 1
       },
       "specimen": {
@@ -33,7 +27,7 @@
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "Noto Serif JP",
@@ -100,7 +94,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 92578,
+          "bytes": 92596,
           "alt": "Opening page 215: 尾生の信."
         },
         {
@@ -111,7 +105,7 @@
           "h": 1419,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140286,
+          "bytes": 140306,
           "alt": "Page 216."
         },
         {
@@ -159,7 +153,7 @@
       },
       "pdf": {
         "file": "two-tier-tankobon.pdf",
-        "bytes": 280056,
+        "bytes": 280008,
         "pages": 7
       },
       "sandbox": {
@@ -347,17 +341,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "bcebc868",
+      "hash8": "630e0466",
       "vdtHash": "126571f4ba3eb720413355fd7c18821414d7f297",
       "timings": {
-        "importMs": 1150,
-        "fontsMs": 949,
-        "buildMs": 81,
-        "totalMs": 3136,
+        "importMs": 2068,
+        "fontsMs": 1359,
+        "buildMs": 87,
+        "totalMs": 5132,
         "builds": 1
       },
       "specimen": {
@@ -367,7 +367,7 @@
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "Noto Serif JP",
@@ -434,7 +434,7 @@
           "h": 1419,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 92578,
+          "bytes": 92596,
           "alt": "Página de apertura 215: 尾生の信."
         },
         {
@@ -445,7 +445,7 @@
           "h": 1419,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 140286,
+          "bytes": 140306,
           "alt": "Página 216."
         },
         {
@@ -493,7 +493,7 @@
       },
       "pdf": {
         "file": "two-tier-tankobon.pdf",
-        "bytes": 280191,
+        "bytes": 280139,
         "pages": 7
       },
       "sandbox": {
@@ -681,7 +681,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

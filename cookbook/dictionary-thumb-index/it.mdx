@@ -1,6 +1,6 @@
 ---
 title: "Un dizionario con un indice a unghia che scende"
-summary: "Un ciclo crea uno stile di titolo per lettera; l’intestazione di ognuno stampa l’unghia blu della lettera un passo più giù sul taglio, su un indice chiaro."
+summary: "Un ciclo crea uno stile di titolo per lettera; il piè di pagina di ognuno stampa l’unghia blu della lettera un passo più giù sul taglio, su un indice chiaro."
 plain: "Quattro pagine di un vecchio dizionario per marinai. Le linguette delle lettere scendono lungo il bordo esterno di ogni pagina, e quella della lettera corrente è scura e sta più in basso man mano che l’alfabeto avanza."
 description: "Quattro pagine del Sailor’s Word-Book di Smyth su due colonne, con lemmi blu, capilettera di quattro righe e un’unghia che scende di un passo a ogni lettera."
 question: "Come faccio scendere l’unghia di un dizionario lungo il taglio da una lettera alla successiva?"
@@ -16,7 +16,7 @@ Quattro pagine di una nuova edizione del *Sailor’s Word-Book* dell’ammiragli
 
 ### 1 · Dai a ogni lettera uno stile di titolo con la sua linguetta
 
-Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `TABS` elenca 22 linguette, con le lettere rare che ne condividono una (QR, UV, XYZ). Ogni linguetta è alta due righe di testo (7,34 mm), così insieme riempiono le 44 righe della gabbia. Il ciclo dà a ogni lettera uno stile di titolo il cui `header` aggiunge alle testatine e all’indice chiaro la linguetta blu di quella lettera, un passo più in basso della precedente ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)). Ogni cella è scritta due volte, una per `parity`, e ancorata al bordo esterno della pagina invece che al contenitore dell’intestazione. Quel contenitore è il margine di testa, largo quanto la gabbia e alto dal taglio fino al testo, mentre le linguette devono arrivare al taglio esterno e scendere lungo tutte le 44 righe. Una pagina prende l’intestazione dell’ultima sezione che comincia su di essa, quindi <PageRef page={2}>la pagina 2</PageRef> comincia nella A e mostra la linguetta della B.
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `TABS` elenca 22 linguette, con le lettere rare che ne condividono una (QR, UV, XYZ). Ogni linguetta è alta due righe di testo (7,34 mm), così insieme riempiono le 44 righe della gabbia. L’`header` del libro stampa su ogni pagina le testatine e l’indice chiaro. Il ciclo dà a ogni lettera uno stile di titolo il cui `footer` aggiunge la linguetta blu di quella lettera, un passo più in basso della precedente ([stili dei titoli](/it/docs/configuration-styles#stili-dei-titoli)). Il piè di pagina si dipinge dopo l’intestazione, quindi la linguetta copre la sua cella chiara, e la configurazione contiene l’indice una volta sola invece che una per lettera. Ogni cella è scritta due volte, una per `parity`, e ancorata al bordo esterno della pagina invece che al contenitore del suo slot. Quel contenitore è un margine largo quanto la gabbia, mentre le linguette devono arrivare al taglio esterno e scendere lungo tutte le 44 righe. Una pagina prende il piè di pagina dell’ultima sezione che comincia su di essa, quindi <PageRef page={2}>la pagina 2</PageRef> comincia nella A e mostra la linguetta della B.
 
 ### 2 · Tieni le testatine fuori dalla prima pagina
 
@@ -49,8 +49,8 @@ Lo stile del titolo occupa tutta la pagina con una fascia che contiene l’ancor
 Gli indici a unghia stampati di solito mostrano solo la linguetta della lettera corrente; togli `ladder` dall’intestazione e la linguetta blu scende comunque dalla A alla C.
 
 ```diff
--  header: { elements: [...runningHeads, ...ladder,
-+  header: { elements: [...runningHeads,
+-  header: { elements: [...runningHeads, ...ladder] }, // the same on every page
++  header: { elements: [...runningHeads] }, // the same on every page
 ```
 
 ## Errori frequenti

@@ -3,21 +3,21 @@
   "slug": "vertical-book-with-jiazhu-citations",
   "sourceHash": "d7195096824f8341a6c63d0c1adc22e43bc6edd0169481c7cb712d328b93c2f3",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:05:55.403Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:06:07.674Z",
   "variants": {
     "en": {
-      "hash8": "33364552",
+      "hash8": "a1b2098d",
       "vdtHash": "3968cb918da759615b8e2279e3f304d11d029fbb",
       "timings": {
-        "importMs": 1099,
-        "fontsMs": 1849,
-        "buildMs": 148,
-        "totalMs": 4022,
+        "importMs": 3072,
+        "fontsMs": 1890,
+        "buildMs": 127,
+        "totalMs": 6777,
         "builds": 1
       },
       "specimen": {
@@ -101,7 +101,7 @@
       },
       "pdf": {
         "file": "vertical-book-with-jiazhu-citations.pdf",
-        "bytes": 178828,
+        "bytes": 178833,
         "pages": 3
       },
       "sandbox": {
@@ -295,17 +295,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "9b07efff",
+      "hash8": "4842c614",
       "vdtHash": "5fdae81a492fa9f544a513c13cf8ea92591e5813",
       "timings": {
-        "importMs": 727,
-        "fontsMs": 505,
-        "buildMs": 81,
-        "totalMs": 1943,
+        "importMs": 2942,
+        "fontsMs": 2228,
+        "buildMs": 85,
+        "totalMs": 7031,
         "builds": 1
       },
       "specimen": {
@@ -389,7 +395,7 @@
       },
       "pdf": {
         "file": "vertical-book-with-jiazhu-citations.pdf",
-        "bytes": 178791,
+        "bytes": 178793,
         "pages": 3
       },
       "sandbox": {
@@ -583,7 +589,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

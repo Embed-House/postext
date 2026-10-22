@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 028 · Lab report: formulas, subscripts and a titration curve ═══
 // https://postext.dev/en/cookbook/lab-report-formulas
 // Code: MIT · Text: original (CC BY 4.0) · Figures: drawn in code (CC BY 4.0)
-// Fonts: Inria Serif, Inria Sans, Sometype Mono (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Inria Serif, Inria Sans, Sometype Mono (SIL OFL 1.1) · Needs postext ≥ 1.57.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage, defaultResourceTypes,
   initMathEngine, renderMath, mergeCells,
@@ -180,8 +180,9 @@ const config = () => ({
     maxWordSpacing: 1.5 },
   headings: { fontFamily: SANS, color: col('ink'), levels },
   // A display's marginBottom is a minimum that the 15 pt grid rounds up: at the default
-  // 0.8 em a fraction got a line more air under it than over it.
-  math: { fontSizeScale: MATH_SCALE, marginBottom: em(0.3) },
+  // 0.8 em a fraction got a line more air under it than over it. keepWithLeadIn: a display
+  // takes the line that introduces it to the next page rather than open that page alone.
+  math: { fontSizeScale: MATH_SCALE, marginBottom: em(0.3), keepWithLeadIn: true },
   headingStyles: [report, back],
   unorderedLists: { bulletChar: '–', color: col('phenol'), marginTop: pt(0), marginBottom: pt(0) },
   orderedLists: { fontFamily: SANS, fontWeight: 700, color: col('phenol'), marginTop: pt(0),

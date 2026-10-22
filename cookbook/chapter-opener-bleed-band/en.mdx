@@ -40,7 +40,7 @@ A `:ref` numbers its figure and places it in the first free slot after the parag
 
 <Excerpt region="heads" />
 
-Each header element hangs from a top corner of the page and is filtered by `parity`, so the folio and the tab always sit on the fore-edge. The tab's box hangs from the bleed's corner instead and widens with `BLEED`, so it still bleeds after trimming. `pages: 'body'` keeps all of these off the openers, which get a drop folio from the footer. The verso names the chapter with `{chapterTitle}`, on one line, because the `\\` only breaks the title in the opener. Textbooks usually name the section on the recto. Postext has no placeholder for the section, so the recto head prints the book's `{title}`; these four pages never show it, because both of their rectos are openers.
+Each header element hangs from a top corner of the page and is filtered by `parity`, so the folio and the tab always sit on the fore-edge. The tab's box hangs from the bleed's corner instead and widens with `BLEED`, so it still bleeds after trimming. `pages: 'body'` keeps all of these off the openers, which get a drop folio from the footer. The verso names the chapter with `{chapterTitle}`, on one line, because the `\\` only breaks the title in the opener. Textbooks usually name the section on the recto. The recto head prints it with `{firstMark.h2}`: the first section heading that starts on the page, or the one in force where none does. These four pages never show it, because both of their rectos are openers.
 
 ### 6 · Start the book at chapter 3
 

@@ -3,12 +3,12 @@
   "slug": "children-textbook-pages",
   "sourceHash": "54b5144b4ec95ac95c599ee788343ed96654392d0b407fe73a326ef279e3c5a2",
   "engine": {
-    "postext": "1.48.0",
-    "postextPdf": "1.48.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-21T18:29:32.290Z",
+  "capturedAt": "2026-10-22T20:29:00.710Z",
   "variants": {
     "en": {
       "hash8": "3704107c",
@@ -1678,13 +1678,13 @@
       }
     },
     "zh": {
-      "hash8": "902d143e",
-      "vdtHash": "a184f481f8f19bd942ca30f6c6901746789866cb",
+      "hash8": "4b1d6d07",
+      "vdtHash": "1a08de9f174024b677f7988c1d9858db196e16db",
       "timings": {
-        "importMs": 549,
-        "fontsMs": 342,
-        "buildMs": 96,
-        "totalMs": 1653,
+        "importMs": 803,
+        "fontsMs": 725,
+        "buildMs": 133,
+        "totalMs": 2350,
         "builds": 1
       },
       "specimen": {
@@ -1727,8 +1727,8 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 49498,
-          "alt": "第 2 页：本单元内容。阿尔达拉河从源头流到大海。地图在第六、 七页。"
+          "bytes": 55238,
+          "alt": "第 2 页：本单元内容。阿尔达拉河从源头流到大海。地图在第六、七页。"
         },
         {
           "n": 3,
@@ -1749,8 +1749,8 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 93280,
-          "alt": "第 4 页：河流从哪里来。泉眼。这里的水在地下流了 好几个月。 · 小溪，又陡又急，石子被磨得 很光滑。 · 瀑布。小溪在这里从一级石 头台阶上落下去。"
+          "bytes": 116646,
+          "alt": "第 4 页：河流从哪里来。泉眼。这里的水在地下流了好几个月。 · 小溪，又陡又急，石子被磨得很光滑。 · 瀑布。小溪在这里从一级石头台阶上落 下去。"
         },
         {
           "n": 5,
@@ -1771,7 +1771,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 197648,
+          "bytes": 201978,
           "alt": "第 6 页：从高山到大海。"
         },
         {
@@ -1782,7 +1782,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 151132,
+          "bytes": 158552,
           "alt": "第 7 页。"
         },
         {
@@ -1793,7 +1793,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 60848,
+          "bytes": 67502,
           "alt": "第 8 页：人与河流。"
         },
         {
@@ -1804,7 +1804,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 54006,
+          "bytes": 73018,
           "alt": "第 9 页。"
         }
       ],
@@ -1845,18 +1845,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1864541,
+        "bytes": 1864377,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2106728,
+        "bytes": 2108004,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "ac1cccc9bd84b4f5",
-            "lines": "30514f4c049caa56"
+            "hash": "9200f2c92a97503d",
+            "lines": "67d5816287ed9cd4"
           }
         ]
       },
@@ -2221,7 +2221,12 @@
           {
             "check": "C20",
             "severity": "info",
-            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.10 MB: state 1.1 MB"
+            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.17 MB: state 1.2 MB"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
@@ -2780,13 +2785,13 @@
       }
     },
     "ja": {
-      "hash8": "c1d9ddd7",
-      "vdtHash": "17c52dad070b64a6fa01af9d62884bfcf175a0fb",
+      "hash8": "016d8dc0",
+      "vdtHash": "1110d8168d79da7a6e445b60696bfe60891de700",
       "timings": {
-        "importMs": 300,
-        "fontsMs": 325,
-        "buildMs": 108,
-        "totalMs": 1344,
+        "importMs": 934,
+        "fontsMs": 752,
+        "buildMs": 151,
+        "totalMs": 2541,
         "builds": 1
       },
       "specimen": {
@@ -2829,8 +2834,8 @@
           "h": 1333,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 50266,
-          "alt": "2ページ：この学習で学ぶこと。アルダラ川の、生まれるところから海ま で。地図は六・七ページにあります。"
+          "bytes": 56044,
+          "alt": "2ページ：この学習で学ぶこと。アルダラ川の、生まれるところから海まで。地図 は六・七ページにあります。"
         },
         {
           "n": 3,
@@ -2851,8 +2856,8 @@
           "h": 1333,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 94756,
-          "alt": "4ページ：川が生まれるところ。わき水。この水は、何か月 も土の中を通ってきました。 · 谷川。坂が急で流れが速く、 小石はつるつるです。 · たき。谷川が岩の段から落 ちるところです。"
+          "bytes": 117726,
+          "alt": "4ページ：川が生まれるところ。わき水。この水は、何か月も土の中を 通ってきました。 · 谷川。坂が急で流れが速く、小石はつ るつるです。 · たき。谷川が岩の段から落ちるところ です。"
         },
         {
           "n": 5,
@@ -2873,7 +2878,7 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 202514,
+          "bytes": 203366,
           "alt": "6ページ：山から海へ。"
         },
         {
@@ -2884,7 +2889,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 147910,
+          "bytes": 157544,
           "alt": "7ページ。"
         },
         {
@@ -2895,7 +2900,7 @@
           "h": 1333,
           "file": "p08.webp",
           "strip": "p08.s.webp",
-          "bytes": 64244,
+          "bytes": 70944,
           "alt": "8ページ：人びとと川。"
         },
         {
@@ -2906,7 +2911,7 @@
           "h": 1333,
           "file": "p09.webp",
           "strip": "p09.s.webp",
-          "bytes": 56080,
+          "bytes": 75512,
           "alt": "9ページ。"
         }
       ],
@@ -2947,18 +2952,18 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1881552,
+        "bytes": 1881389,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2107543,
+        "bytes": 2108758,
         "folio": "207b7a99",
         "chapters": [
           {
             "pages": 9,
-            "hash": "94377ce31d60373d",
-            "lines": "22e851f356abae33"
+            "hash": "7b2ae6ec9ac89cba",
+            "lines": "26d74f75167cc22f"
           }
         ],
         "warnings": [
@@ -3333,7 +3338,12 @@
           {
             "check": "C20",
             "severity": "info",
-            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.12 MB: state 1.15 MB"
+            "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.19 MB: state 1.2 MB"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

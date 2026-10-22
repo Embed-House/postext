@@ -3,27 +3,21 @@
   "slug": "chinese-name-index",
   "sourceHash": "dc096587eab46c4a09841cc47b0bedc1ecf55f4c817b6aa426d4988357b4a5ce",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:38:45.340Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:57:00.591Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:59:16.740Z",
   "variants": {
     "en": {
-      "hash8": "3777c457",
+      "hash8": "a45e2bbb",
       "vdtHash": "55e30ab4a45b566f212b97f1c44e655eceec9a0f",
       "timings": {
-        "importMs": 1136,
-        "fontsMs": 1522,
-        "buildMs": 128,
-        "totalMs": 3605,
+        "importMs": 2835,
+        "fontsMs": 1688,
+        "buildMs": 132,
+        "totalMs": 6170,
         "builds": 2
       },
       "specimen": {
@@ -232,7 +226,7 @@
       },
       "pdf": {
         "file": "chinese-name-index.pdf",
-        "bytes": 307079,
+        "bytes": 307077,
         "pages": 8
       },
       "sandbox": {
@@ -481,21 +475,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "f2642524",
+      "hash8": "bee44f98",
       "vdtHash": "b3092498bc15450767349f3a8584a7be5c5922e2",
       "timings": {
-        "importMs": 839,
-        "fontsMs": 1002,
-        "buildMs": 134,
-        "totalMs": 2850,
+        "importMs": 1711,
+        "fontsMs": 1441,
+        "buildMs": 151,
+        "totalMs": 4339,
         "builds": 2
       },
       "specimen": {
@@ -704,7 +698,7 @@
       },
       "pdf": {
         "file": "chinese-name-index.pdf",
-        "bytes": 307296,
+        "bytes": 307303,
         "pages": 8
       },
       "sandbox": {
@@ -953,9 +947,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

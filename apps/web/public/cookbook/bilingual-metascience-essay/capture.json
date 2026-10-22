@@ -3,21 +3,21 @@
   "slug": "bilingual-metascience-essay",
   "sourceHash": "40c19a7d2e9d7356c9c9a530da012ef8ea1f3dc15e67ea9a9873d292f729e4b0",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.704Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:48:41.885Z",
   "variants": {
     "en": {
-      "hash8": "f5dd3bb6",
-      "vdtHash": "e5c62e19f30871186585ad147e30cacb1c3c8d84",
+      "hash8": "e0330b49",
+      "vdtHash": "75a3cbe8f6641e34a567b4cc8ee51534dc4035aa",
       "timings": {
-        "importMs": 659,
-        "fontsMs": 835,
-        "buildMs": 304,
-        "totalMs": 2671,
+        "importMs": 3521,
+        "fontsMs": 407,
+        "buildMs": 470,
+        "totalMs": 5766,
         "builds": 1
       },
       "specimen": {
@@ -94,8 +94,8 @@
           "h": 1333,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 236980,
-          "alt": "Page 6: How Can We Improve the Situation?."
+          "bytes": 235522,
+          "alt": "Page 6: How Can We Improve the Situation?"
         },
         {
           "n": 7,
@@ -105,7 +105,7 @@
           "h": 1333,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 161040,
+          "bytes": 162478,
           "alt": "Page 7: REFERENCES."
         }
       ],
@@ -141,7 +141,7 @@
       },
       "pdf": {
         "file": "bilingual-metascience-essay.pdf",
-        "bytes": 393147,
+        "bytes": 393181,
         "pages": 7
       },
       "sandbox": {
@@ -151,8 +151,8 @@
         "chapters": [
           {
             "pages": 7,
-            "hash": "b13793bfa23b66e1",
-            "lines": "c8810d1c2c99c9ec"
+            "hash": "ce796db642790550",
+            "lines": "8f164d3c0c07d9b2"
           }
         ]
       },
@@ -503,7 +503,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.16 MB (warning at 0.9 MB for 6 pages)"
+            "detail": "the edition's images weigh 1.16 MB (warning at 0.9 MB for 6 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C35",
@@ -518,7 +518,12 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
@@ -608,7 +613,7 @@
           "file": "p06.webp",
           "strip": "p06.s.webp",
           "bytes": 206404,
-          "alt": "Página 6: ¿Cómo podemos mejorar la situación?. Tabla 4. VPP de los resultados de la investigación para varias combinaciones de potencia (￼), razón entre relaciones verdaderas y no verdaderas (￼) y sesgo (￼)."
+          "alt": "Página 6: ¿Cómo podemos mejorar la situación? Tabla 4. VPP de los resultados de la investigación para varias combinaciones de potencia (￼), razón entre relaciones verdaderas y no verdaderas (￼) y sesgo (￼)."
         },
         {
           "n": 7,
@@ -1011,7 +1016,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.26 MB (warning at 0.9 MB for 6 pages)"
+            "detail": "the edition's images weigh 1.26 MB (warning at 0.9 MB for 6 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C26",
@@ -1021,7 +1026,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

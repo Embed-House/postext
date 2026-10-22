@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "catalan-pocket-novella",
-  "sourceHash": "147020a9d895f79da3800a5a8df616c2bc3670fad7ae9eb6357ebd53e8fe2c0b",
+  "sourceHash": "11920604e2daed167f70af55fc69db709491c4538b3aafb42b418483c185e2a9",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:57:00.560Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:05:39.448Z",
   "variants": {
     "en": {
-      "hash8": "cb35be33",
+      "hash8": "55e96bdc",
       "vdtHash": "58f7d3077a4c3a708d7b06576243e2511f7158b0",
       "timings": {
-        "importMs": 388,
-        "fontsMs": 96,
-        "buildMs": 854,
-        "totalMs": 2157,
+        "importMs": 2387,
+        "fontsMs": 225,
+        "buildMs": 176,
+        "totalMs": 4647,
         "builds": 1
       },
       "specimen": {
@@ -167,12 +167,12 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1772779,
+        "bytes": 1772772,
         "pages": 32
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492640,
+        "bytes": 1492638,
         "folio": "8e6f438d",
         "chapters": [
           {
@@ -371,7 +371,7 @@
         "looseLines": {
           "count": 1,
           "share": 0.0018,
-          "worst": 1.8800000000000001
+          "worst": 1.88
         },
         "raggedLines": {
           "count": 0
@@ -383,31 +383,26 @@
         },
         "findings": [
           {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "the edition's images weigh 1.03 MB (warning at 0.9 MB for 8 pages)"
-          },
-          {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 18 −5‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "26cdb057",
+      "hash8": "47697e77",
       "vdtHash": "58f7d3077a4c3a708d7b06576243e2511f7158b0",
       "timings": {
-        "importMs": 289,
-        "fontsMs": 73,
-        "buildMs": 896,
-        "totalMs": 1932,
+        "importMs": 2708,
+        "fontsMs": 199,
+        "buildMs": 251,
+        "totalMs": 4794,
         "builds": 1
       },
       "specimen": {
@@ -557,12 +552,12 @@
       },
       "pdf": {
         "file": "catalan-pocket-novella.pdf",
-        "bytes": 1772779,
+        "bytes": 1772772,
         "pages": 32
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492653,
+        "bytes": 1492651,
         "folio": "8e6f438d",
         "chapters": [
           {
@@ -761,7 +756,7 @@
         "looseLines": {
           "count": 1,
           "share": 0.0018,
-          "worst": 1.8800000000000001
+          "worst": 1.88
         },
         "raggedLines": {
           "count": 0
@@ -773,19 +768,14 @@
         },
         "findings": [
           {
-            "check": "C20",
-            "severity": "warn",
-            "detail": "the edition's images weigh 1.03 MB (warning at 0.9 MB for 8 pages)"
-          },
-          {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 18 −5‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

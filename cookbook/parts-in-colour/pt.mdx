@@ -46,7 +46,7 @@ A abertura de cada espécie imprime três atributos do título: `status` no ante
 
 <Excerpt region="running-heads" />
 
-Com `pages: 'body'`, os cabeços saem só nas páginas de texto. As páginas divisórias são páginas `part` e os versos pintados, páginas `blank`; a capa e o sumário abrem com um título na largura da página, o que faz deles páginas de abertura. O cabeço da página ímpar imprime `{partTitle}` numa linha só, e a aba no corte imprime `{partNumber}` sobre uma caixa cujo fundo fica vinculado a `band`.
+Com `pages: 'body'`, os cabeços saem só nas páginas de texto. As páginas divisórias são páginas `part` e os versos pintados, páginas `blank`; a capa e o sumário abrem com um título na largura da página, o que faz deles páginas de abertura. O cabeço da página par imprime `{title}`, o título do front matter, e assim o nome do livro fica no Markdown. O da página ímpar imprime `{partTitle}` numa linha só, e a aba no corte imprime `{partNumber}` sobre uma caixa cujo fundo fica vinculado a `band`.
 
 ## Variações
 

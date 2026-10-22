@@ -74,6 +74,6 @@ I risultati diventano «Table 5.1» e «Figure 5.1», contati da capo in ogni se
 
 ## Errori frequenti
 
-- Per impostazione predefinita una formula fuori testo non resta unita alla riga che la introduce, quindi una frase introduttiva che finisce con «so» può chiudere una pagina con la sua equazione sulla successiva; `math.keepWithLeadIn: true` sposta quella riga sulla pagina successiva insieme alla formula. Qui il testo di entrambe le edizioni è calibrato perché pagina 1 finisca con l’equazione di [OH⁻] sotto la sua frase.
+- Per impostazione predefinita una formula fuori testo non resta unita alla riga che la introduce, quindi una frase introduttiva che finisce con «so» può chiudere una pagina con la sua equazione sulla successiva; `math.keepWithLeadIn: true` sposta quella riga sulla pagina successiva insieme alla formula. La ricetta lo attiva, così l’equazione di [OH⁻] resta con la sua frase comunque scorra il testo.
 - I glifi del TeX sono quelli di MathJax, non di Inria Serif, quindi un’equazione si legge un po’ più leggera del testo che la circonda. Tieni le formule nelle frasi come segni `~` e `^`, e riserva il TeX alle righe che ne hanno bisogno.
 - Le etichette delle tacche e i titoli degli assi della curva sono contorni di MathJax, quindi usano gli stessi glifi delle equazioni e restano vettoriali nel PDF: `tex()` chiede a `renderMath` i tracciati di ogni etichetta e li colloca nell’SVG. Si possono disegnare solo dopo che `initMathEngine()` si è risolto.

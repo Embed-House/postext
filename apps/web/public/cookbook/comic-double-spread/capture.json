@@ -3,12 +3,12 @@
   "slug": "comic-double-spread",
   "sourceHash": "7759471b219fe195b8d48449fd45822b1839c9c6a5e4b9581b323875decdaaa8",
   "engine": {
-    "postext": "1.42.1",
-    "postextPdf": "1.42.1",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-18T09:23:27.323Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:33:58.221Z",
   "variants": {
     "en": {
       "hash8": "7a1dd599",
@@ -262,6 +262,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -525,6 +530,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -786,6 +796,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -794,13 +809,13 @@
       }
     },
     "zh": {
-      "hash8": "9314acd2",
+      "hash8": "20827072",
       "vdtHash": "a95d6688e5763446c909ea3f306a081d82b8d8fa",
       "timings": {
-        "importMs": 505,
-        "fontsMs": 479,
-        "buildMs": 265,
-        "totalMs": 1977,
+        "importMs": 864,
+        "fontsMs": 606,
+        "buildMs": 335,
+        "totalMs": 2479,
         "builds": 1
       },
       "specimen": {
@@ -866,7 +881,7 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 895108,
+        "bytes": 895125,
         "pages": 2
       },
       "sandbox": {
@@ -1046,6 +1061,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -1313,6 +1333,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1321,13 +1346,13 @@
       }
     },
     "ja": {
-      "hash8": "6f0017db",
+      "hash8": "a23bfc37",
       "vdtHash": "e0fea0a1e39d501e8c605675983a84d3865583a3",
       "timings": {
-        "importMs": 515,
-        "fontsMs": 427,
-        "buildMs": 238,
-        "totalMs": 1856,
+        "importMs": 713,
+        "fontsMs": 403,
+        "buildMs": 278,
+        "totalMs": 2073,
         "builds": 1
       },
       "specimen": {
@@ -1394,7 +1419,7 @@
       },
       "pdf": {
         "file": "comic-double-spread.pdf",
-        "bytes": 895109,
+        "bytes": 895103,
         "pages": 2
       },
       "sandbox": {
@@ -1575,6 +1600,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -1838,6 +1868,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -2097,6 +2132,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -2360,6 +2400,11 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -2619,6 +2664,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",

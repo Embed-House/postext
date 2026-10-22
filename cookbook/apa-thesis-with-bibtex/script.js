@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 087 · A thesis chapter cited in APA 7 ═══════════════════
 // https://postext.dev/en/cookbook/apa-thesis-with-bibtex
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: none
-// Fonts: Literata, Public Sans (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Literata, Public Sans (SIL OFL 1.1) · Needs postext ≥ 1.57.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerCitationEngine,
 } from 'https://esm.sh/postext';

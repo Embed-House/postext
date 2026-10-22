@@ -24,10 +24,10 @@
     "header-paints-over-text",
     "parity-page1-recto"
   ],
-  "explainsWarnings": ["headerFooterUnknownPlaceholder", "headerFooterMetadataMissing"],
+  "explainsWarnings": ["designTextTruncated", "headerFooterUnknownPlaceholder", "headerFooterMetadataMissing"],
   "related": ["walking-guide-thumb-tabs", "book-from-chapters", "chapter-opener-bleed-band"],
   "workarounds": [],
-  "engine": { "postext": "1.25.0" },
+  "engine": { "postext": "1.57.0" },
   "kit": ["core", "fonts", "viewer"],
   "sample": { "locales": ["en", "es"] },
   "capture": {
@@ -73,5 +73,5 @@
   },
   "license": { "code": "MIT", "content": "MIT" },
   "created": "2026-09-25",
-  "updated": "2026-10-10"
+  "updated": "2026-10-22"
 }

@@ -74,6 +74,6 @@ Os resultados passam a ser a tabela 5.1 e a figura 5.1, com a contagem reiniciad
 
 ## Erros comuns
 
-- Por padrão, uma fórmula em destaque não fica presa à linha que a apresenta, de modo que uma frase que termina em “so” pode fechar uma página com a equação já na seguinte; `math.keepWithLeadIn: true` leva essa linha para a página seguinte junto com a fórmula. Aqui o texto das duas edições foi ajustado para que a página 1 termine com a equação de [OH⁻] sob a frase.
+- Por padrão, uma fórmula em destaque não fica presa à linha que a apresenta, de modo que uma frase que termina em “so” pode fechar uma página com a equação já na seguinte; `math.keepWithLeadIn: true` leva essa linha para a página seguinte junto com a fórmula. A receita o ativa, então a equação de [OH⁻] fica com a sua frase qualquer que seja o tamanho do texto.
 - Os glifos do TeX são os do MathJax, não os da Inria Serif, e uma equação fica um pouco mais leve que o texto em volta. Mantenha as fórmulas dentro das frases como marcas `~` e `^`, e reserve o TeX para as linhas que precisam dele.
 - Os rótulos das marcas e os títulos dos eixos da curva são contornos do MathJax, com os mesmos glifos das equações e vetoriais no PDF: `tex()` pede a `renderMath` os traçados de cada rótulo e os põe no SVG. Só podem ser desenhados depois que `initMathEngine()` termina.

@@ -3,21 +3,21 @@
   "slug": "names-and-subjects-indexes",
   "sourceHash": "f5daada8a35ed8f94027ab741984a94098c009f3b5958cd887b78712c01b66d8",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:02:23.840Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:03:30.505Z",
   "variants": {
     "en": {
-      "hash8": "129878ea",
+      "hash8": "44fcf2ce",
       "vdtHash": "f3b9120542cf43acfd574f62a40343c9018fee44",
       "timings": {
-        "importMs": 663,
-        "fontsMs": 26,
-        "buildMs": 171,
-        "totalMs": 1781,
+        "importMs": 2945,
+        "fontsMs": 45,
+        "buildMs": 177,
+        "totalMs": 5139,
         "builds": 1
       },
       "specimen": {
@@ -30,8 +30,8 @@
         "mirror": true,
         "body": {
           "family": "Crimson Pro",
-          "sizePt": 10.600000000000001,
-          "leadingPt": 13.600000000000001
+          "sizePt": 10.6,
+          "leadingPt": 13.6
         },
         "families": [
           "Bodoni Moda",
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 115749,
+        "bytes": 115748,
         "pages": 7
       },
       "sandbox": {
@@ -398,21 +398,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "ba0b467e",
+      "hash8": "f7f7d8fd",
       "vdtHash": "f76220c95da32c4a77284ada4c89083d3ec6062f",
       "timings": {
-        "importMs": 878,
-        "fontsMs": 27,
-        "buildMs": 185,
-        "totalMs": 2014,
+        "importMs": 2453,
+        "fontsMs": 28,
+        "buildMs": 152,
+        "totalMs": 4604,
         "builds": 1
       },
       "specimen": {
@@ -425,8 +425,8 @@
         "mirror": true,
         "body": {
           "family": "Crimson Pro",
-          "sizePt": 10.600000000000001,
-          "leadingPt": 13.600000000000001
+          "sizePt": 10.6,
+          "leadingPt": 13.6
         },
         "families": [
           "Bodoni Moda",
@@ -547,7 +547,7 @@
       },
       "pdf": {
         "file": "names-and-subjects-indexes.pdf",
-        "bytes": 128744,
+        "bytes": 128733,
         "pages": 7
       },
       "sandbox": {
@@ -795,12 +795,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 7 pages)"
+            "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 7 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

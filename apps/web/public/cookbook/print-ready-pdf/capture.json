@@ -3,27 +3,21 @@
   "slug": "print-ready-pdf",
   "sourceHash": "e8d6554bd5a024ccf39dde83b07c4f9f4230031113657e5cef0e92f93c4a1943",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:03.159Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:03:18.189Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:19:58.627Z",
   "variants": {
     "es": {
-      "hash8": "166a8dd3",
+      "hash8": "be652d00",
       "vdtHash": "731346965b7c574a9b7c70d0d12cb2b5299688cd",
       "timings": {
-        "importMs": 635,
-        "fontsMs": 59,
+        "importMs": 2249,
+        "fontsMs": 46,
         "buildMs": 73,
-        "totalMs": 1537,
+        "totalMs": 4761,
         "builds": 1
       },
       "specimen": {
@@ -36,8 +30,8 @@
         "mirror": true,
         "body": {
           "family": "Karla",
-          "sizePt": 9.600000000000001,
-          "leadingPt": 13.600000000000001
+          "sizePt": 9.6,
+          "leadingPt": 13.6
         },
         "families": [
           "Karla",
@@ -359,6 +353,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

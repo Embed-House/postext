@@ -3,27 +3,21 @@
   "slug": "genko-yoshi-manuscript",
   "sourceHash": "a3cf188d450cc4cd995b251c05a8e20280ad1b17cc20a98e1780e5143b289d90",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:42:47.778Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:00:04.740Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:19:58.523Z",
   "variants": {
     "en": {
-      "hash8": "a5f91369",
+      "hash8": "f7de8e96",
       "vdtHash": "977e4b60e9fcbebfb37f7d6a7c39b8680528436f",
       "timings": {
-        "importMs": 1988,
-        "fontsMs": 948,
-        "buildMs": 66,
-        "totalMs": 3970,
+        "importMs": 2921,
+        "fontsMs": 2374,
+        "buildMs": 42,
+        "totalMs": 6534,
         "builds": 1
       },
       "specimen": {
@@ -106,7 +100,7 @@
       },
       "pdf": {
         "file": "genko-yoshi-manuscript.pdf",
-        "bytes": 155887,
+        "bytes": 155865,
         "pages": 3
       },
       "sandbox": {
@@ -277,17 +271,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "c464f7d3",
+      "hash8": "17c3923a",
       "vdtHash": "1c881126e65dfb8031b7b41f177cd6e2f889cde8",
       "timings": {
-        "importMs": 1948,
-        "fontsMs": 969,
-        "buildMs": 64,
-        "totalMs": 3952,
+        "importMs": 2733,
+        "fontsMs": 1249,
+        "buildMs": 56,
+        "totalMs": 5871,
         "builds": 1
       },
       "specimen": {
@@ -370,7 +370,7 @@
       },
       "pdf": {
         "file": "genko-yoshi-manuscript.pdf",
-        "bytes": 155896,
+        "bytes": 155886,
         "pages": 3
       },
       "sandbox": {
@@ -541,7 +541,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

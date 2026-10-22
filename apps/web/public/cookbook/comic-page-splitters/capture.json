@@ -3,12 +3,12 @@
   "slug": "comic-page-splitters",
   "sourceHash": "da3e5f99617a7a95cef79314e9f9d3b4cc163c41eb9cab4af81011a804ea2cdf",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:40:11.369Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:33:58.512Z",
   "variants": {
     "en": {
       "hash8": "31b3abd6",
@@ -300,7 +300,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -595,7 +600,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -890,19 +900,24 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "5ad37a98",
+      "hash8": "21b5cda7",
       "vdtHash": "04e0014d2f4dc72332cf0855440b5697c333b72c",
       "timings": {
-        "importMs": 535,
-        "fontsMs": 457,
-        "buildMs": 472,
-        "totalMs": 2246,
+        "importMs": 687,
+        "fontsMs": 506,
+        "buildMs": 497,
+        "totalMs": 2372,
         "builds": 1
       },
       "specimen": {
@@ -999,7 +1014,7 @@
       },
       "pdf": {
         "file": "comic-page-splitters.pdf",
-        "bytes": 875336,
+        "bytes": 875343,
         "pages": 4
       },
       "sandbox": {
@@ -1186,7 +1201,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -1485,7 +1505,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -1783,7 +1808,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -2078,7 +2108,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -2373,7 +2408,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -2668,7 +2708,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -2963,7 +3008,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }

@@ -3,21 +3,21 @@
   "slug": "ml-paper-theorems-proofs",
   "sourceHash": "c45fe9f6736ce81e06085baeac296750ec581a3c7d1a3629d7a407454e793a5a",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.887Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:54:33.958Z",
   "variants": {
     "en": {
-      "hash8": "fc24e1ac",
-      "vdtHash": "19e8320d3f74f487ded3f754b0e48848187a07fc",
+      "hash8": "747039c1",
+      "vdtHash": "5ba31fc5061a61f5b7fea762c9bdc619ee666eaf",
       "timings": {
-        "importMs": 750,
-        "fontsMs": 304,
-        "buildMs": 302,
-        "totalMs": 2689,
+        "importMs": 791,
+        "fontsMs": 142,
+        "buildMs": 287,
+        "totalMs": 1945,
         "builds": 1
       },
       "specimen": {
@@ -30,7 +30,7 @@
         "mirror": true,
         "body": {
           "family": "Spectral",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.4
         },
         "families": [
@@ -116,8 +116,8 @@
           "h": 1427,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 113210,
-          "alt": "Page 7: 6 Experiments. Table 1. GPT-4 win rates vs. ground truth summaries for out-of-distribution CNN/DailyMail input articles."
+          "bytes": 113142,
+          "alt": "Page 7: 6 Experiments. Table 1. GPT-4 win rates vs. ground truth summaries for out-of-distribution CNN/ DailyMail input articles."
         },
         {
           "n": 8,
@@ -193,7 +193,7 @@
       },
       "pdf": {
         "file": "ml-paper-theorems-proofs.pdf",
-        "bytes": 975851,
+        "bytes": 975882,
         "pages": 10
       },
       "sandbox": {
@@ -203,8 +203,8 @@
         "chapters": [
           {
             "pages": 10,
-            "hash": "d53116de8943c036",
-            "lines": "69606300bc438a34"
+            "hash": "484a1533703e96f1",
+            "lines": "23f40b0a40031390"
           }
         ]
       },
@@ -563,7 +563,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.37 MB (warning at 1.0 MB for 10 pages)"
+            "detail": "the edition's images weigh 1.37 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C35",
@@ -573,7 +573,12 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

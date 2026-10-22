@@ -3,27 +3,21 @@
   "slug": "qasida-diwan-page",
   "sourceHash": "39183ba6b4619bb041e181ee2b080abfdb802df7e8626c4c5312d15f0b8e1f99",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:51.773Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:03:54.375Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:11:08.751Z",
   "variants": {
     "en": {
-      "hash8": "beeae2e3",
+      "hash8": "e545fd09",
       "vdtHash": "a2de36f161921abba6d6b783ec7068c051924234",
       "timings": {
-        "importMs": 625,
-        "fontsMs": 149,
-        "buildMs": 101,
-        "totalMs": 1596,
+        "importMs": 2863,
+        "fontsMs": 172,
+        "buildMs": 97,
+        "totalMs": 4319,
         "builds": 1
       },
       "specimen": {
@@ -122,7 +116,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 81806,
+        "bytes": 81807,
         "pages": 4
       },
       "sandbox": {
@@ -326,17 +320,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "ab32b851",
+      "hash8": "6dc14b6f",
       "vdtHash": "879a6fd736f34628204715cbf24370b7e54ace31",
       "timings": {
-        "importMs": 513,
-        "fontsMs": 117,
-        "buildMs": 141,
-        "totalMs": 1500,
+        "importMs": 2927,
+        "fontsMs": 219,
+        "buildMs": 121,
+        "totalMs": 4484,
         "builds": 1
       },
       "specimen": {
@@ -435,7 +435,7 @@
       },
       "pdf": {
         "file": "qasida-diwan-page.pdf",
-        "bytes": 81995,
+        "bytes": 81994,
         "pages": 4
       },
       "sandbox": {
@@ -639,7 +639,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

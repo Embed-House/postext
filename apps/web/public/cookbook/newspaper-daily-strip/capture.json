@@ -3,12 +3,12 @@
   "slug": "newspaper-daily-strip",
   "sourceHash": "7040f2a1706a1e83c301372c2ece97be97632150bb0e0b5e8ec71539c77219a3",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:40:59.171Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:33:58.915Z",
   "variants": {
     "en": {
       "hash8": "2412970a",
@@ -31,7 +31,7 @@
         "body": {
           "family": "Newsreader",
           "sizePt": 9,
-          "leadingPt": 12.200000000000001
+          "leadingPt": 12.2
         },
         "families": [
           "Archivo Narrow",
@@ -333,7 +333,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
@@ -357,7 +363,7 @@
         "body": {
           "family": "Newsreader",
           "sizePt": 9,
-          "leadingPt": 12.200000000000001
+          "leadingPt": 12.2
         },
         "families": [
           "Archivo Narrow",
@@ -654,12 +660,18 @@
         "looseLines": {
           "count": 1,
           "share": 0.0139,
-          "worst": 2.0100000000000002
+          "worst": 2.01
         },
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
@@ -683,7 +695,7 @@
         "body": {
           "family": "Newsreader",
           "sizePt": 9,
-          "leadingPt": 12.200000000000001
+          "leadingPt": 12.2
         },
         "families": [
           "Archivo Narrow",
@@ -985,17 +997,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "2cfa2fa1",
+      "hash8": "c8ebbcd5",
       "vdtHash": "aa42116175019bf67d19d2dfd06d4d33bf340ea9",
       "timings": {
-        "importMs": 482,
-        "fontsMs": 862,
-        "buildMs": 300,
-        "totalMs": 2408,
+        "importMs": 772,
+        "fontsMs": 1092,
+        "buildMs": 395,
+        "totalMs": 2904,
         "builds": 1
       },
       "specimen": {
@@ -1066,7 +1084,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1013595,
+        "bytes": 1013634,
         "pages": 2
       },
       "sandbox": {
@@ -1312,7 +1330,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
@@ -1633,22 +1657,28 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.8900000000000001
+          "worst": 1.89
         },
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "215cb3ad",
+      "hash8": "820579c4",
       "vdtHash": "e2c852be5d879979d1bca8c565db57588298896a",
       "timings": {
-        "importMs": 569,
-        "fontsMs": 799,
-        "buildMs": 319,
-        "totalMs": 2305,
+        "importMs": 840,
+        "fontsMs": 1011,
+        "buildMs": 422,
+        "totalMs": 3049,
         "builds": 1
       },
       "specimen": {
@@ -1720,7 +1750,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 1004864,
+        "bytes": 1004899,
         "pages": 2
       },
       "sandbox": {
@@ -1967,7 +1997,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
@@ -1991,7 +2027,7 @@
         "body": {
           "family": "Newsreader",
           "sizePt": 9,
-          "leadingPt": 12.200000000000001
+          "leadingPt": 12.2
         },
         "families": [
           "Archivo Narrow",
@@ -2303,18 +2339,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ ““A regra é que a piada tem que cair no quarto qu…”, p. 2 −5‰ “Pip responde: Uma vez. Levei dois dias, e o Otto…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "fr": {
-      "hash8": "43d7f492",
+      "hash8": "5ea6aeb5",
       "vdtHash": "be42959c67b0b16d470858da695522e8056c8a4f",
       "timings": {
-        "importMs": 294,
-        "fontsMs": 436,
-        "buildMs": 416,
-        "totalMs": 1767,
+        "importMs": 714,
+        "fontsMs": 325,
+        "buildMs": 425,
+        "totalMs": 2129,
         "builds": 1
       },
       "specimen": {
@@ -2328,7 +2369,7 @@
         "body": {
           "family": "Newsreader",
           "sizePt": 9,
-          "leadingPt": 12.200000000000001
+          "leadingPt": 12.2
         },
         "families": [
           "Archivo Narrow",
@@ -2385,7 +2426,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 881678,
+        "bytes": 881687,
         "pages": 2
       },
       "sandbox": {
@@ -2640,6 +2681,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "4 paragraphs set a line short with tracking (worst −10‰, the cap): p. 2 −10‰ “À l’été 2016, elle a posté ses six premiers stri…”, p. 2 −10‰ “Cher Pip, as-tu déjà fini un croissant entier ? …”, p. 2 −5‰ “Enfant, Barlow vivait au-dessus de la boulangeri…”, p. 2 −5‰ “Le strip du dimanche fait exception à la règle d…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -2665,7 +2711,7 @@
         "body": {
           "family": "Newsreader",
           "sizePt": 9,
-          "leadingPt": 12.200000000000001
+          "leadingPt": 12.2
         },
         "families": [
           "Archivo Narrow",
@@ -2977,18 +3023,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 2 −5‰ “Ines Barlow zeichnet seit zehn Jahren an jedem W…”, p. 2 −5‰ “„Die Regel ist, dass die Pointe im vierten Bild …”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "it": {
-      "hash8": "a0a90590",
+      "hash8": "71210d06",
       "vdtHash": "e5db6c17de48ff64f84233903cacc7c01a80d0b2",
       "timings": {
-        "importMs": 219,
-        "fontsMs": 154,
-        "buildMs": 386,
-        "totalMs": 1321,
+        "importMs": 814,
+        "fontsMs": 268,
+        "buildMs": 430,
+        "totalMs": 2211,
         "builds": 1
       },
       "specimen": {
@@ -3002,7 +3053,7 @@
         "body": {
           "family": "Newsreader",
           "sizePt": 9,
-          "leadingPt": 12.200000000000001
+          "leadingPt": 12.2
         },
         "families": [
           "Archivo Narrow",
@@ -3059,7 +3110,7 @@
       },
       "pdf": {
         "file": "newspaper-daily-strip.pdf",
-        "bytes": 883637,
+        "bytes": 883621,
         "pages": 2
       },
       "sandbox": {
@@ -3314,6 +3365,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “L’abitudine è nata nel 2019, con l’edizione fran…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }

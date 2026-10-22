@@ -3,21 +3,21 @@
   "slug": "manga-right-to-left",
   "sourceHash": "c24673de657dd621f4e163b4b8e7f68f56c24b4ce91e8a1bb3da357e9960a866",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:41:15.779Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:28:59.992Z",
   "variants": {
     "en": {
-      "hash8": "f9197abc",
+      "hash8": "78b2839d",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 566,
-        "fontsMs": 600,
-        "buildMs": 928,
-        "totalMs": 3187,
+        "importMs": 803,
+        "fontsMs": 1006,
+        "buildMs": 1207,
+        "totalMs": 4421,
         "builds": 2
       },
       "specimen": {
@@ -47,7 +47,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "Page 1."
         },
         {
@@ -58,7 +58,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "Page 2."
         },
         {
@@ -109,7 +109,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1520794,
+        "bytes": 1520801,
         "pages": 4
       },
       "sandbox": {
@@ -254,6 +254,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -267,13 +272,13 @@
       }
     },
     "es": {
-      "hash8": "7c589497",
+      "hash8": "13f507f9",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 575,
-        "fontsMs": 608,
-        "buildMs": 932,
-        "totalMs": 3187,
+        "importMs": 1245,
+        "fontsMs": 1077,
+        "buildMs": 1189,
+        "totalMs": 4740,
         "builds": 2
       },
       "specimen": {
@@ -303,7 +308,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "Página 1."
         },
         {
@@ -314,7 +319,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "Página 2."
         },
         {
@@ -365,7 +370,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522158,
+        "bytes": 1522162,
         "pages": 4
       },
       "sandbox": {
@@ -510,6 +515,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -523,13 +533,13 @@
       }
     },
     "ca": {
-      "hash8": "7481e12c",
+      "hash8": "f1acb5af",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 511,
-        "fontsMs": 530,
-        "buildMs": 939,
-        "totalMs": 3198,
+        "importMs": 1056,
+        "fontsMs": 845,
+        "buildMs": 1160,
+        "totalMs": 4466,
         "builds": 2
       },
       "specimen": {
@@ -559,7 +569,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "Pàgina 1."
         },
         {
@@ -570,7 +580,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "Pàgina 2."
         },
         {
@@ -621,7 +631,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521505,
+        "bytes": 1521513,
         "pages": 4
       },
       "sandbox": {
@@ -766,6 +776,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -779,13 +794,13 @@
       }
     },
     "zh": {
-      "hash8": "18499cf2",
+      "hash8": "975f87c9",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 515,
-        "fontsMs": 536,
-        "buildMs": 928,
-        "totalMs": 3367,
+        "importMs": 1700,
+        "fontsMs": 1451,
+        "buildMs": 1151,
+        "totalMs": 6760,
         "builds": 2
       },
       "specimen": {
@@ -815,7 +830,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "第 1 页。"
         },
         {
@@ -826,7 +841,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "第 2 页。"
         },
         {
@@ -877,7 +892,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1542676,
+        "bytes": 1542693,
         "pages": 4
       },
       "sandbox": {
@@ -1022,6 +1037,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1035,13 +1055,13 @@
       }
     },
     "ar": {
-      "hash8": "f7e8416a",
+      "hash8": "519a469f",
       "vdtHash": "c4f6386f59669ebec0168fbe2ea7e1b804875630",
       "timings": {
-        "importMs": 524,
-        "fontsMs": 541,
-        "buildMs": 927,
-        "totalMs": 3154,
+        "importMs": 1517,
+        "fontsMs": 1038,
+        "buildMs": 1139,
+        "totalMs": 5340,
         "builds": 2
       },
       "specimen": {
@@ -1071,7 +1091,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "الصفحة 1."
         },
         {
@@ -1082,7 +1102,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "الصفحة 2."
         },
         {
@@ -1133,7 +1153,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1528500,
+        "bytes": 1528484,
         "pages": 4
       },
       "sandbox": {
@@ -1278,6 +1298,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1291,13 +1316,13 @@
       }
     },
     "ja": {
-      "hash8": "1f6eebd6",
+      "hash8": "f7f4e23f",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 561,
-        "fontsMs": 592,
-        "buildMs": 944,
-        "totalMs": 3197,
+        "importMs": 1005,
+        "fontsMs": 980,
+        "buildMs": 1152,
+        "totalMs": 4338,
         "builds": 2
       },
       "specimen": {
@@ -1327,7 +1352,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "1ページ。"
         },
         {
@@ -1338,7 +1363,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "2ページ。"
         },
         {
@@ -1389,7 +1414,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1520473,
+        "bytes": 1520484,
         "pages": 4
       },
       "sandbox": {
@@ -1534,6 +1559,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1552,13 +1582,13 @@
       }
     },
     "pt": {
-      "hash8": "fa9fc3d9",
+      "hash8": "474fc003",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 431,
-        "fontsMs": 693,
-        "buildMs": 1003,
-        "totalMs": 3259,
+        "importMs": 856,
+        "fontsMs": 560,
+        "buildMs": 1153,
+        "totalMs": 3833,
         "builds": 2
       },
       "specimen": {
@@ -1588,7 +1618,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "Página 1."
         },
         {
@@ -1599,7 +1629,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "Página 2."
         },
         {
@@ -1650,7 +1680,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521380,
+        "bytes": 1521387,
         "pages": 4
       },
       "sandbox": {
@@ -1795,6 +1825,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1808,13 +1843,13 @@
       }
     },
     "fr": {
-      "hash8": "74ca155e",
+      "hash8": "bd71498c",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 489,
-        "fontsMs": 762,
-        "buildMs": 1000,
-        "totalMs": 3305,
+        "importMs": 1742,
+        "fontsMs": 1396,
+        "buildMs": 1350,
+        "totalMs": 6173,
         "builds": 2
       },
       "specimen": {
@@ -1844,7 +1879,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "Page 1."
         },
         {
@@ -1855,7 +1890,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "Page 2."
         },
         {
@@ -1906,7 +1941,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1522528,
+        "bytes": 1522531,
         "pages": 4
       },
       "sandbox": {
@@ -2051,6 +2086,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -2064,13 +2104,13 @@
       }
     },
     "de": {
-      "hash8": "56462c0c",
+      "hash8": "34f9e15d",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 298,
-        "fontsMs": 652,
-        "buildMs": 1011,
-        "totalMs": 3037,
+        "importMs": 1440,
+        "fontsMs": 1546,
+        "buildMs": 1161,
+        "totalMs": 5719,
         "builds": 2
       },
       "specimen": {
@@ -2100,7 +2140,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "Seite 1."
         },
         {
@@ -2111,7 +2151,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "Seite 2."
         },
         {
@@ -2162,7 +2202,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521538,
+        "bytes": 1521543,
         "pages": 4
       },
       "sandbox": {
@@ -2307,6 +2347,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -2320,13 +2365,13 @@
       }
     },
     "it": {
-      "hash8": "7497c222",
+      "hash8": "47ab9b9b",
       "vdtHash": "8ca35eceacc095b5b8cf682d943afae58bf077f4",
       "timings": {
-        "importMs": 291,
-        "fontsMs": 403,
-        "buildMs": 902,
-        "totalMs": 2628,
+        "importMs": 1507,
+        "fontsMs": 1277,
+        "buildMs": 1081,
+        "totalMs": 5649,
         "builds": 2
       },
       "specimen": {
@@ -2356,7 +2401,7 @@
           "h": 1422,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 175026,
+          "bytes": 174958,
           "alt": "Pagina 1."
         },
         {
@@ -2367,7 +2412,7 @@
           "h": 1422,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 164510,
+          "bytes": 164576,
           "alt": "Pagina 2."
         },
         {
@@ -2418,7 +2463,7 @@
       },
       "pdf": {
         "file": "manga-right-to-left.pdf",
-        "bytes": 1521176,
+        "bytes": 1521182,
         "pages": 4
       },
       "sandbox": {
@@ -2562,6 +2607,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

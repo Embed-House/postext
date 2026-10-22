@@ -74,6 +74,6 @@ The results become Table 5.1 and Figure 5.1, counted afresh in each section.
 
 ## Pitfalls
 
-- By default a display formula does not keep with the line that introduces it, so a lead-in ending in “so” can close a page with its equation on the next; `math.keepWithLeadIn: true` sends that line over with the formula. Here the copy of both editions is fitted to end page 1 with the [OH⁻] equation under its sentence.
+- By default a display formula does not keep with the line that introduces it, so a lead-in ending in “so” can close a page with its equation on the next; `math.keepWithLeadIn: true` sends that line over with the formula. This recipe turns it on, so the [OH⁻] equation keeps its sentence however the copy runs.
 - The TeX glyphs are MathJax's own, not Inria Serif, so an equation reads a little lighter than the text around it. Keep formulas inside sentences as `~` and `^` marks, and reserve TeX for the lines that need it.
 - The curve's tick labels and axis titles are MathJax outlines, so they use the same glyphs as the equations and stay vector in the PDF: `tex()` asks `renderMath` for the paths of each label and places them in the SVG. They can only be drawn once `initMathEngine()` has resolved.

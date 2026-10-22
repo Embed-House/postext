@@ -3,27 +3,21 @@
   "slug": "hiragana-picture-book",
   "sourceHash": "461d3c7bcf14143c8cad2c5cfd5329ddb5201712edcc4c56894aa7940668843e",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:42:47.823Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:00:04.748Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:07:17.280Z",
   "variants": {
     "en": {
-      "hash8": "1f767d0c",
+      "hash8": "aa7bd677",
       "vdtHash": "fb5d123e78834b1bdfac7bb0f5cc332db1f7d1d2",
       "timings": {
-        "importMs": 717,
-        "fontsMs": 1014,
-        "buildMs": 60,
-        "totalMs": 2476,
+        "importMs": 2380,
+        "fontsMs": 645,
+        "buildMs": 44,
+        "totalMs": 4128,
         "builds": 1
       },
       "specimen": {
@@ -33,7 +27,7 @@
         ],
         "dpi": 150,
         "layoutType": "oneAndHalf",
-        "gutterMm": 14.100000000000001,
+        "gutterMm": 14.1,
         "mirror": true,
         "body": {
           "family": "Klee One",
@@ -200,7 +194,7 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1736991,
+        "bytes": 1737028,
         "pages": 10
       },
       "sandbox": {
@@ -382,17 +376,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "b616b500",
+      "hash8": "ffce83fd",
       "vdtHash": "7ffb48a42a88b67dcf41e77e61f2436a8ffef5e7",
       "timings": {
-        "importMs": 910,
-        "fontsMs": 357,
-        "buildMs": 55,
-        "totalMs": 2050,
+        "importMs": 1857,
+        "fontsMs": 627,
+        "buildMs": 60,
+        "totalMs": 3368,
         "builds": 1
       },
       "specimen": {
@@ -402,7 +402,7 @@
         ],
         "dpi": 150,
         "layoutType": "oneAndHalf",
-        "gutterMm": 14.100000000000001,
+        "gutterMm": 14.1,
         "mirror": true,
         "body": {
           "family": "Klee One",
@@ -569,7 +569,7 @@
       },
       "pdf": {
         "file": "hiragana-picture-book.pdf",
-        "bytes": 1736534,
+        "bytes": 1736572,
         "pages": 10
       },
       "sandbox": {
@@ -751,7 +751,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

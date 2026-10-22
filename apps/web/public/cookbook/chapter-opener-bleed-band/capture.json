@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "chapter-opener-bleed-band",
-  "sourceHash": "74e9749f9788df17407a401aedf4f12aab3c714967d8842deb7792a079db5919",
+  "sourceHash": "438772e0e00317b28b61a9e6b1ef6e148415bc9d9c06b5516a798f07964e9f45",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:57:00.583Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:50:18.267Z",
   "variants": {
     "en": {
-      "hash8": "48a51403",
+      "hash8": "64c61b88",
       "vdtHash": "316b52440feddfb7ddee8a61bdade16833851932",
       "timings": {
-        "importMs": 240,
-        "fontsMs": 2,
-        "buildMs": 175,
-        "totalMs": 1108,
+        "importMs": 1877,
+        "fontsMs": 3,
+        "buildMs": 153,
+        "totalMs": 3285,
         "builds": 1
       },
       "specimen": {
@@ -31,7 +31,7 @@
         "body": {
           "family": "Roboto Serif",
           "sizePt": 9.3,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "Archivo",
@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "chapter-opener-bleed-band.postext",
-        "bytes": 34426,
+        "bytes": 34436,
         "folio": "43da5799",
         "chapters": [
           {
@@ -325,16 +325,16 @@
         "looseLines": {
           "count": 1,
           "share": 0.0049,
-          "worst": 2.0100000000000002
+          "worst": 2.01
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -345,13 +345,13 @@
       }
     },
     "es": {
-      "hash8": "4c6c6ae3",
+      "hash8": "0338a3e4",
       "vdtHash": "ed945959b7c55d7df99d5c0058c966120cadbb30",
       "timings": {
-        "importMs": 151,
-        "fontsMs": 2,
-        "buildMs": 89,
-        "totalMs": 900,
+        "importMs": 1916,
+        "fontsMs": 3,
+        "buildMs": 135,
+        "totalMs": 3672,
         "builds": 1
       },
       "specimen": {
@@ -366,7 +366,7 @@
         "body": {
           "family": "Roboto Serif",
           "sizePt": 9.3,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "Archivo",
@@ -450,7 +450,7 @@
       },
       "sandbox": {
         "file": "chapter-opener-bleed-band.postext",
-        "bytes": 34558,
+        "bytes": 34572,
         "folio": "43da5799",
         "chapters": [
           {
@@ -667,9 +667,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

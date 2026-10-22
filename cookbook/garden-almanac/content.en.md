@@ -5,7 +5,7 @@ author: "Redazione dell’Almanacco"
 
 # Marzo {kicker="Almanacco dell’orto · 2027" proverb="Marzo asciutto, aprile bagnato, beato il villan che ha seminato." source="Proverbio contadino"}
 
-A marzo l’orto riparte. Il :ref{id="calendario" text="calendario"} in fondo alla pagina segna l’equinozio, sabato 20 alle 21.25, e la domenica di Pasqua, il 28, che quest’anno coincide con il ritorno dell’ora legale. A Bologna il giorno dura 11 ore e 9 minuti il primo del mese e 12 ore e 42 minuti il 31, un’ora e mezza abbondante in più.
+A marzo l’orto riparte. Il :ref{id="calendario" text="calendario"} a piè di pagina segna l’equinozio, sabato 20 alle ore 21.25, e la domenica di Pasqua, il 28, che quest’anno coincide con il ritorno dell’ora legale. A Bologna il giorno dura 11 ore e 9 minuti il primo del mese e 12 ore e 42 minuti il 31, un’ora e mezza abbondante in più.
 
 Il terreno però resta freddo. Si lavora solo quando una zolla stretta nel pugno si sbriciola invece di impastarsi, e all’aperto si semina soltanto ciò che nasce anche sotto i dieci gradi, come piselli, spinaci, carote, rucola e ravanelli. Pomodori, peperoni e melanzane restano al riparo, perché per germinare vogliono tra i venti e i venticinque gradi. Nelle notti serene la brina è possibile fino all’inizio di aprile: un telo di tessuto non tessuto steso la sera sulle file appena nate le protegge, e si toglie al mattino quando il sole comincia a scaldare.
 

@@ -3,21 +3,21 @@
   "slug": "edited-volume-chapter-bibliographies",
   "sourceHash": "243115501305e95914962430c285ebfb1d8971ddbbe77ed9bd63f1e97853f57d",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:58:17.140Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:59:39.021Z",
   "variants": {
     "en": {
-      "hash8": "67d3cdf8",
+      "hash8": "7f8ad7e7",
       "vdtHash": "58997a2cbc15aa06efcdbdbe1d9c4c5cbbeb8f4f",
       "timings": {
-        "importMs": 1316,
-        "fontsMs": 258,
-        "buildMs": 563,
-        "totalMs": 2910,
+        "importMs": 1445,
+        "fontsMs": 142,
+        "buildMs": 626,
+        "totalMs": 3072,
         "builds": 1
       },
       "specimen": {
@@ -30,7 +30,7 @@
         "mirror": true,
         "body": {
           "family": "Libre Caslon Text",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.8
         },
         "families": [
@@ -193,7 +193,7 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 143170,
+        "bytes": 143172,
         "pages": 10
       },
       "sandbox": {
@@ -504,24 +504,24 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages)"
+            "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "c6fb4db7",
+      "hash8": "3f09fab7",
       "vdtHash": "06dab4d023c24fa868062edd94a3176adb471b90",
       "timings": {
-        "importMs": 1149,
-        "fontsMs": 183,
-        "buildMs": 559,
-        "totalMs": 2790,
+        "importMs": 1583,
+        "fontsMs": 113,
+        "buildMs": 598,
+        "totalMs": 3036,
         "builds": 1
       },
       "specimen": {
@@ -534,7 +534,7 @@
         "mirror": true,
         "body": {
           "family": "Libre Caslon Text",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.8
         },
         "families": [
@@ -697,7 +697,7 @@
       },
       "pdf": {
         "file": "edited-volume-chapter-bibliographies.pdf",
-        "bytes": 156833,
+        "bytes": 156832,
         "pages": 10
       },
       "sandbox": {
@@ -1008,12 +1008,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages)"
+            "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

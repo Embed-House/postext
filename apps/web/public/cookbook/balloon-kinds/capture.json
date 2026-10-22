@@ -3,12 +3,12 @@
   "slug": "balloon-kinds",
   "sourceHash": "7c50ea5f76fb2ee8f5b71ce712f0fe7e6e4a57ece3617da8109bd1099c4f5d91",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:40:00.565Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:28:59.430Z",
   "variants": {
     "en": {
       "hash8": "e2b8c6f3",
@@ -304,6 +304,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 1 −10‰ “Pinned.  The balloon is centred on that point o…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
@@ -592,7 +597,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
@@ -879,17 +890,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "9a4f9b7d",
+      "hash8": "ef9d5eda",
       "vdtHash": "02e5a8ee76524e8a91aa39fea941e73407d85a34",
       "timings": {
-        "importMs": 527,
-        "fontsMs": 534,
-        "buildMs": 529,
-        "totalMs": 2407,
+        "importMs": 1309,
+        "fontsMs": 1124,
+        "buildMs": 680,
+        "totalMs": 3982,
         "builds": 1
       },
       "specimen": {
@@ -960,7 +977,7 @@
       },
       "pdf": {
         "file": "balloon-kinds.pdf",
-        "bytes": 1027247,
+        "bytes": 1027245,
         "pages": 2
       },
       "sandbox": {
@@ -1167,7 +1184,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
@@ -1458,17 +1481,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "17707b7b",
+      "hash8": "5c44fe14",
       "vdtHash": "41518f203a00e43b2c469f8d04c3b5a29b3ece25",
       "timings": {
-        "importMs": 601,
-        "fontsMs": 633,
-        "buildMs": 429,
-        "totalMs": 2300,
+        "importMs": 1743,
+        "fontsMs": 1655,
+        "buildMs": 489,
+        "totalMs": 4671,
         "builds": 1
       },
       "specimen": {
@@ -1511,7 +1540,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 247944,
+          "bytes": 247934,
           "alt": "2ページ。"
         }
       ],
@@ -1748,7 +1777,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
@@ -2035,7 +2070,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "fr": {
@@ -2322,7 +2363,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "de": {
@@ -2609,7 +2656,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "it": {
@@ -2896,7 +2949,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -3,21 +3,21 @@
   "slug": "tang-poems-facing-english",
   "sourceHash": "3d25f78e52b06419a434fb7926fe043a1a74f566dfa63cb0565ece28c0a7f1fc",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:05:55.199Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:19:58.673Z",
   "variants": {
     "en": {
-      "hash8": "e0655ce7",
+      "hash8": "a58e4eec",
       "vdtHash": "15e7223af4029b7119f93bfea6aa701acd417534",
       "timings": {
-        "importMs": 1779,
-        "fontsMs": 684,
-        "buildMs": 118,
-        "totalMs": 3653,
+        "importMs": 2271,
+        "fontsMs": 2401,
+        "buildMs": 122,
+        "totalMs": 6280,
         "builds": 1
       },
       "specimen": {
@@ -195,7 +195,7 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 152547,
+        "bytes": 152589,
         "pages": 10
       },
       "sandbox": {
@@ -436,17 +436,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "370099ab",
+      "hash8": "d9a690dd",
       "vdtHash": "4c379d391176e97074a39ae6eccbd6cb5ca9a74f",
       "timings": {
-        "importMs": 1784,
-        "fontsMs": 927,
-        "buildMs": 105,
-        "totalMs": 3971,
+        "importMs": 3521,
+        "fontsMs": 1257,
+        "buildMs": 126,
+        "totalMs": 6071,
         "builds": 1
       },
       "specimen": {
@@ -624,7 +630,7 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 154517,
+        "bytes": 154570,
         "pages": 10
       },
       "sandbox": {
@@ -867,9 +873,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

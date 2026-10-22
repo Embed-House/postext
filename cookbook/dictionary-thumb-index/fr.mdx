@@ -1,6 +1,6 @@
 ---
 title: "Dictionnaire avec un index à onglets mobile"
-summary: "Une boucle crée un style de titre par lettre ; son en-tête imprime l’onglet bleu marine de la lettre un cran plus bas sur la tranche, sur un index pâle."
+summary: "Une boucle crée un style de titre par lettre ; son pied de page imprime l’onglet bleu marine de la lettre un cran plus bas sur la tranche, sur un index pâle."
 plain: "Quatre pages d’un vieux dictionnaire de marine. Des onglets de lettres descendent le long du bord extérieur de chaque page, et celui de la lettre en cours est foncé et descend à mesure que l’alphabet avance."
 description: "Quatre pages du Sailor’s Word-Book de Smyth sur deux colonnes : mots-vedettes bleu marine, lettrines de quatre lignes et un onglet qui descend à chaque lettre."
 question: "Comment faire descendre l’onglet d’un dictionnaire le long de la tranche d’une lettre à l’autre ?"
@@ -16,7 +16,7 @@ Quatre pages d’une nouvelle édition du *Sailor’s Word-Book* (1867) de l’a
 
 ### 1 · Donner à chaque lettre un style de titre avec son onglet
 
-Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `TABS` liste 22 onglets, les lettres rares en partageant un (QR, UV, XYZ). Chaque onglet a la hauteur de deux lignes de texte (7,34 mm) : ensemble, ils remplissent les 44 lignes de la zone de contenu. La boucle donne à chaque lettre un style de titre dont le `header` ajoute aux titres courants et à l’index pâle l’onglet bleu marine de cette lettre, un cran plus bas que le précédent ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). Chaque cellule est écrite deux fois, une par `parity`, et ancrée au bord extérieur de la page plutôt qu’au conteneur de l’en-tête. Ce conteneur est la marge de tête, aussi large que la zone de contenu et allant du bord de coupe jusqu’au texte, alors que les onglets doivent atteindre la tranche et descendre sur les 44 lignes. Une page prend l’en-tête de la dernière section qui y commence : la <PageRef page={2}>page 2</PageRef> commence donc en A et montre l’onglet de B.
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `TABS` liste 22 onglets, les lettres rares en partageant un (QR, UV, XYZ). Chaque onglet a la hauteur de deux lignes de texte (7,34 mm) : ensemble, ils remplissent les 44 lignes de la zone de contenu. Le `header` du livre imprime sur chaque page les titres courants et l’index pâle. La boucle donne à chaque lettre un style de titre dont le `footer` ajoute l’onglet bleu marine de cette lettre, un cran plus bas que le précédent ([styles de titre](/fr/docs/configuration-styles#styles-de-titre)). Le pied de page est peint après l’en-tête : l’onglet recouvre sa cellule pâle, et la configuration contient l’index une seule fois au lieu d’une fois par lettre. Chaque cellule est écrite deux fois, une par `parity`, et ancrée au bord extérieur de la page plutôt qu’au conteneur de son emplacement. Ce conteneur est une marge aussi large que la zone de contenu, alors que les onglets doivent atteindre la tranche et descendre sur les 44 lignes. Une page prend le pied de page de la dernière section qui y commence : la <PageRef page={2}>page 2</PageRef> commence donc en A et montre l’onglet de B.
 
 ### 2 · Écarter les titres courants de la première page
 
@@ -49,8 +49,8 @@ Le style du titre s’étend sur toute la page avec un bandeau qui contient l’
 Les index à onglets imprimés ne montrent en général que l’onglet de la lettre en cours ; retirez `ladder` de l’en-tête et l’onglet bleu marine descend toujours de A à C.
 
 ```diff
--  header: { elements: [...runningHeads, ...ladder,
-+  header: { elements: [...runningHeads,
+-  header: { elements: [...runningHeads, ...ladder] }, // the same on every page
++  header: { elements: [...runningHeads] }, // the same on every page
 ```
 
 ## Erreurs fréquentes

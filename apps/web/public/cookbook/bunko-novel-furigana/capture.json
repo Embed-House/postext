@@ -3,27 +3,21 @@
   "slug": "bunko-novel-furigana",
   "sourceHash": "b0e2f60391edc9d92a70678450d2f0b0edecc2f1fc8b842939dcd9d9e55b9eb4",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:38:45.115Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:57:00.551Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:53:01.670Z",
   "variants": {
     "en": {
-      "hash8": "67c4d3a3",
+      "hash8": "32df7ccd",
       "vdtHash": "4bc3ba62eaf3420823d9125f756f27f3becbd4c4",
       "timings": {
-        "importMs": 2543,
-        "fontsMs": 2001,
-        "buildMs": 62,
-        "totalMs": 5871,
+        "importMs": 2591,
+        "fontsMs": 1032,
+        "buildMs": 63,
+        "totalMs": 4806,
         "builds": 1
       },
       "specimen": {
@@ -88,7 +82,7 @@
           "h": 1410,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 119256,
+          "bytes": 119340,
           "alt": "Page 四."
         },
         {
@@ -121,7 +115,7 @@
           "h": 1410,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 111446,
+          "bytes": 111466,
           "alt": "Page 七."
         }
       ],
@@ -158,7 +152,7 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 331437,
+        "bytes": 331439,
         "pages": 9
       },
       "sandbox": {
@@ -354,17 +348,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "2317343c",
+      "hash8": "323bbeaa",
       "vdtHash": "7b77b0391d2637313d9067388ea8db7ee6456beb",
       "timings": {
-        "importMs": 2552,
-        "fontsMs": 2090,
-        "buildMs": 65,
-        "totalMs": 6153,
+        "importMs": 1541,
+        "fontsMs": 647,
+        "buildMs": 74,
+        "totalMs": 3133,
         "builds": 1
       },
       "specimen": {
@@ -429,7 +429,7 @@
           "h": 1410,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 119256,
+          "bytes": 119340,
           "alt": "Página 四."
         },
         {
@@ -462,7 +462,7 @@
           "h": 1410,
           "file": "p07.webp",
           "strip": "p07.s.webp",
-          "bytes": 111446,
+          "bytes": 111466,
           "alt": "Página 七."
         }
       ],
@@ -499,7 +499,7 @@
       },
       "pdf": {
         "file": "bunko-novel-furigana.pdf",
-        "bytes": 331570,
+        "bytes": 331576,
         "pages": 9
       },
       "sandbox": {
@@ -695,7 +695,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

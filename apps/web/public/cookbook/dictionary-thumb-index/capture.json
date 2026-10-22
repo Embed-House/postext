@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "dictionary-thumb-index",
-  "sourceHash": "a072dc94bedbc1aa901b2487e6f196f4a527f24eb1c7d0d4cda88e7b97f3ad64",
+  "sourceHash": "b766e828cf4554d1bfb627492669ac0cbcca2a6a4d53a8f7b30daf51fe3e63bd",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:19.996Z",
-  "verified": {
-    "postext": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:58:17.136Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:49:46.969Z",
   "variants": {
     "en": {
-      "hash8": "7372ae6b",
-      "vdtHash": "ec4910cae939ec04dcd8ce1991f8aef0ac998179",
+      "hash8": "1a50c3fd",
+      "vdtHash": "5c53d52eef97738b56c82ca4d989ed1a28f92048",
       "timings": {
-        "importMs": 1411,
+        "importMs": 2319,
         "fontsMs": 3,
-        "buildMs": 443,
-        "totalMs": 3135,
+        "buildMs": 168,
+        "totalMs": 3941,
         "builds": 1
       },
       "specimen": {
@@ -44,7 +39,7 @@
           "Alegreya Sans SC"
         ],
         "pages": 4,
-        "ownLines": 178
+        "ownLines": 180
       },
       "pages": [
         {
@@ -120,13 +115,13 @@
       },
       "sandbox": {
         "file": "dictionary-thumb-index.postext",
-        "bytes": 82524,
+        "bytes": 31269,
         "folio": "444e4865",
         "chapters": [
           {
             "pages": 4,
-            "hash": "f717a83f204fac53",
-            "lines": "b5a16a060876de1c"
+            "hash": "2727262345905133",
+            "lines": "52086dbc7a72a888"
           }
         ]
       },
@@ -169,12 +164,27 @@
           "footer.elements[].placement",
           "header",
           "header.elements",
+          "header.elements[].align",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].lineHeight",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].style",
+          "header.elements[].verticalAlign",
           "headingStyles",
           "headingStyles[].advancedDesign",
           "headingStyles[].advancedDesign.enabled",
           "headingStyles[].advancedDesign.slot",
-          "headingStyles[].header",
-          "headingStyles[].header.elements",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
           "headingStyles[].id",
           "headingStyles[].span",
           "headings",
@@ -226,8 +236,8 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 35142,
-        "designElements": 2505,
+        "configLeaves": 3279,
+        "designElements": 231,
         "directives": [
           ":::paragraphs"
         ],
@@ -298,21 +308,26 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e225e8cc",
-      "vdtHash": "13a180f6e51e9cd84629c845ede7fc885c7b55c1",
+      "hash8": "75139b06",
+      "vdtHash": "d6d5bcea097e756646965108103e17e70b120572",
       "timings": {
-        "importMs": 965,
-        "fontsMs": 5,
-        "buildMs": 534,
-        "totalMs": 2918,
+        "importMs": 1772,
+        "fontsMs": 2,
+        "buildMs": 176,
+        "totalMs": 3138,
         "builds": 1
       },
       "specimen": {
@@ -335,7 +350,7 @@
           "Alegreya Sans SC"
         ],
         "pages": 4,
-        "ownLines": 178
+        "ownLines": 180
       },
       "pages": [
         {
@@ -411,13 +426,13 @@
       },
       "sandbox": {
         "file": "dictionary-thumb-index.postext",
-        "bytes": 83483,
+        "bytes": 32181,
         "folio": "444e4865",
         "chapters": [
           {
             "pages": 4,
-            "hash": "83e5442c4191efda",
-            "lines": "fda7738cb1b19b38"
+            "hash": "bce927688f90c6fa",
+            "lines": "e1eb54521cfd1f3c"
           }
         ]
       },
@@ -460,12 +475,27 @@
           "footer.elements[].placement",
           "header",
           "header.elements",
+          "header.elements[].align",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].lineHeight",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].style",
+          "header.elements[].verticalAlign",
           "headingStyles",
           "headingStyles[].advancedDesign",
           "headingStyles[].advancedDesign.enabled",
           "headingStyles[].advancedDesign.slot",
-          "headingStyles[].header",
-          "headingStyles[].header.elements",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
           "headingStyles[].id",
           "headingStyles[].span",
           "headings",
@@ -517,8 +547,8 @@
           "page",
           "paragraphStyles"
         ],
-        "configLeaves": 35142,
-        "designElements": 2505,
+        "configLeaves": 3279,
+        "designElements": 231,
         "directives": [
           ":::paragraphs"
         ],
@@ -589,9 +619,14 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }

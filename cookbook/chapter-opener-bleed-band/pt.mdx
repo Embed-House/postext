@@ -40,7 +40,7 @@ Um `:ref` numera a figura e a coloca no primeiro espaço livre depois do parágr
 
 <Excerpt region="heads" />
 
-Cada elemento do cabeçalho pende de um canto superior da página e é filtrado por `parity`, por isso o fólio e o marcador ficam sempre na margem externa. A caixa do marcador pende do canto da sangria e se alarga com `BLEED`, para continuar sangrando depois do refile. `pages: 'body'` tira todos esses elementos das aberturas, que recebem um fólio no pé definido no rodapé. O verso nomeia o capítulo com `{chapterTitle}`, numa só linha, porque a `\\` só quebra o título na abertura. Livros didáticos costumam nomear a seção no recto. O Postext não tem marcador de posição para a seção, por isso o cabeço do recto imprime o `{title}` do livro; nestas quatro páginas ele nunca aparece, porque os dois rectos são aberturas.
+Cada elemento do cabeçalho pende de um canto superior da página e é filtrado por `parity`, por isso o fólio e o marcador ficam sempre na margem externa. A caixa do marcador pende do canto da sangria e se alarga com `BLEED`, para continuar sangrando depois do refile. `pages: 'body'` tira todos esses elementos das aberturas, que recebem um fólio no pé definido no rodapé. O verso nomeia o capítulo com `{chapterTitle}`, numa só linha, porque a `\\` só quebra o título na abertura. Livros didáticos costumam nomear a seção no recto. O cabeço do recto a imprime com `{firstMark.h2}`: o primeiro título de seção que começa na página, ou o que está em vigor quando nenhum começa. Nestas quatro páginas ele nunca aparece, porque os dois rectos são aberturas.
 
 ### 6 · Começar o livro no capítulo 3
 

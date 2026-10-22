@@ -3,21 +3,21 @@
   "slug": "sist02-research-paper",
   "sourceHash": "8906c9dcbd6d4cafdf1c8104d3fb56d100a835dfc0b8c6fb0d03bdfb4879b792",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.988Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:03:57.848Z",
   "variants": {
     "en": {
-      "hash8": "eae8677a",
+      "hash8": "858a9a4a",
       "vdtHash": "5952d7e7ba5a11716c051c1d1a377a700c5a5059",
       "timings": {
-        "importMs": 1150,
-        "fontsMs": 1343,
-        "buildMs": 168,
-        "totalMs": 3644,
+        "importMs": 2743,
+        "fontsMs": 2056,
+        "buildMs": 345,
+        "totalMs": 6392,
         "builds": 1
       },
       "specimen": {
@@ -27,7 +27,7 @@
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "Noto Serif JP",
@@ -90,7 +90,7 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226706,
+        "bytes": 226763,
         "pages": 2
       },
       "sandbox": {
@@ -402,19 +402,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "2daa3e28",
+      "hash8": "90fd3acb",
       "vdtHash": "f3218b0fa5e1bb8f0cb8f16daf7a4c60af76d94d",
       "timings": {
-        "importMs": 787,
-        "fontsMs": 879,
-        "buildMs": 157,
-        "totalMs": 2543,
+        "importMs": 3034,
+        "fontsMs": 1832,
+        "buildMs": 168,
+        "totalMs": 6597,
         "builds": 1
       },
       "specimen": {
@@ -424,7 +424,7 @@
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "Noto Serif JP",
@@ -487,7 +487,7 @@
       },
       "pdf": {
         "file": "sist02-research-paper.pdf",
-        "bytes": 226350,
+        "bytes": 226409,
         "pages": 2
       },
       "sandbox": {
@@ -789,7 +789,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

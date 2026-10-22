@@ -3,21 +3,21 @@
   "slug": "vertical-newspaper-tiers",
   "sourceHash": "2a03604479c345e456c68205e3bdae860f4527d2e91a25071b609ee396cbdbe5",
   "engine": {
-    "postext": "1.46.2",
-    "postextPdf": "1.46.2",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-19T15:25:22.385Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:52:43.985Z",
   "variants": {
     "en": {
-      "hash8": "e418d443",
-      "vdtHash": "3cb3f8c2c382b9e5b0a8bbe0b17ead559c365b63",
+      "hash8": "176e7a01",
+      "vdtHash": "cf2f7dea811908e83d27c17d45b0424dd5be5cca",
       "timings": {
-        "importMs": 11818,
-        "fontsMs": 9203,
-        "buildMs": 88,
-        "totalMs": 27258,
+        "importMs": 2024,
+        "fontsMs": 1643,
+        "buildMs": 67,
+        "totalMs": 4585,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 170646,
+          "bytes": 170224,
           "alt": "Page 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -91,17 +91,17 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 378611,
+        "bytes": 378595,
         "pages": 2
       },
       "sandbox": {
         "file": "vertical-newspaper-tiers.postext",
-        "bytes": 22522,
+        "bytes": 22521,
         "folio": "e5cb273f",
         "chapters": [
           {
             "pages": 2,
-            "hash": "fa6c993a74ea7210",
+            "hash": "8f66eda5757c6ad7",
             "lines": "0ab335fd60b3f951"
           }
         ]
@@ -351,24 +351,24 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "74eb9bf9",
-      "vdtHash": "6d18265a591d2a884635d8e297772bfbd0541759",
+      "hash8": "421e00ba",
+      "vdtHash": "fc6d9ffa8989d4767d45e22f380aa76440036d76",
       "timings": {
-        "importMs": 6513,
-        "fontsMs": 6744,
-        "buildMs": 70,
-        "totalMs": 17086,
+        "importMs": 1539,
+        "fontsMs": 1693,
+        "buildMs": 59,
+        "totalMs": 4119,
         "builds": 1
       },
       "specimen": {
@@ -413,7 +413,7 @@
           "h": 1413,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 171010,
+          "bytes": 170412,
           "alt": "Página 二: 湯蟄仙之紀功碑."
         }
       ],
@@ -442,7 +442,7 @@
       },
       "pdf": {
         "file": "vertical-newspaper-tiers.pdf",
-        "bytes": 378760,
+        "bytes": 378740,
         "pages": 2
       },
       "sandbox": {
@@ -452,7 +452,7 @@
         "chapters": [
           {
             "pages": 2,
-            "hash": "475a4c10cad33174",
+            "hash": "97780591b3fcc7f7",
             "lines": "55ff21a9162bfef9"
           }
         ]
@@ -702,12 +702,12 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "garden-almanac",
-  "sourceHash": "1f17dd63c4b56ef866c47d879d45b942fdb84d1d6522a2e4a03b87dfade2c386",
+  "sourceHash": "2549ec213b9c9b5c0d1e324d31e89991f48fdc6337a6e486fafa4abdbdffe15f",
   "engine": {
-    "postext": "1.46.2",
+    "postext": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-19T15:25:22.274Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:51:42.903Z",
   "variants": {
     "en": {
-      "hash8": "d4cc6545",
-      "vdtHash": "0567c4d2fe3faef1770917ff55064ea723d9f2aa",
+      "hash8": "2e327831",
+      "vdtHash": "12f7bb8f16d35502a9c80c5f9136451ade987f30",
       "timings": {
-        "importMs": 11435,
-        "fontsMs": 1613,
-        "buildMs": 123,
-        "totalMs": 17303,
+        "importMs": 1699,
+        "fontsMs": 354,
+        "buildMs": 89,
+        "totalMs": 3350,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116676,
+          "bytes": 116784,
           "alt": "Opening page 27: Marzo. ⁤ domeniche · ⁤ Pasqua e Pasquetta · luna nuova l’8, primo quarto il 15, luna piena il 22, ultimo quarto il 30, sul mese sinodico medio: un giorno prima o dopo è possibile. Per tradizione in crescente si semina ciò che fruttifica sopra terra, in calante…"
         },
         {
@@ -115,13 +115,13 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190152,
+        "bytes": 190040,
         "folio": "49229ae8",
         "chapters": [
           {
             "pages": 4,
-            "hash": "2ae83da4a8907074",
-            "lines": "c189a18cbc3782b6"
+            "hash": "59436dc1963c8f83",
+            "lines": "86d23eff9b386645"
           }
         ]
       },
@@ -393,23 +393,18 @@
         "converged": true,
         "iterationCount": 1,
         "looseLines": {
-          "count": 1,
-          "share": 0.0323,
-          "worst": 1.71
+          "count": 0,
+          "share": 0,
+          "worst": 1.6
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
           {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "1 of 31 justified lines (3.2 %) stretch past 1.6× (worst 1.71×); loosest: p. 1 1.71× “A marzo l’orto riparte. Il calendario in fondo…”"
-          },
-          {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "vdt",
@@ -420,13 +415,13 @@
       }
     },
     "es": {
-      "hash8": "466dbaa2",
-      "vdtHash": "0567c4d2fe3faef1770917ff55064ea723d9f2aa",
+      "hash8": "8fe31c6f",
+      "vdtHash": "12f7bb8f16d35502a9c80c5f9136451ade987f30",
       "timings": {
-        "importMs": 11315,
-        "fontsMs": 1973,
-        "buildMs": 111,
-        "totalMs": 17596,
+        "importMs": 1913,
+        "fontsMs": 202,
+        "buildMs": 102,
+        "totalMs": 3232,
         "builds": 1
       },
       "specimen": {
@@ -460,7 +455,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 116676,
+          "bytes": 116784,
           "alt": "Página de apertura 27: Marzo. ⁤ domeniche · ⁤ Pasqua e Pasquetta · luna nuova l’8, primo quarto il 15, luna piena il 22, ultimo quarto il 30, sul mese sinodico medio: un giorno prima o dopo è possibile. Per tradizione in crescente si semina ciò che fruttifica sopra terra, in c…"
         },
         {
@@ -525,13 +520,13 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190154,
+        "bytes": 190041,
         "folio": "49229ae8",
         "chapters": [
           {
             "pages": 4,
-            "hash": "2ae83da4a8907074",
-            "lines": "c189a18cbc3782b6"
+            "hash": "59436dc1963c8f83",
+            "lines": "86d23eff9b386645"
           }
         ]
       },
@@ -803,23 +798,18 @@
         "converged": true,
         "iterationCount": 1,
         "looseLines": {
-          "count": 1,
-          "share": 0.0323,
-          "worst": 1.71
+          "count": 0,
+          "share": 0,
+          "worst": 1.6
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
           {
-            "check": "C24",
-            "severity": "warn",
-            "detail": "1 of 31 justified lines (3.2 %) stretch past 1.6× (worst 1.71×); loosest: p. 1 1.71× “A marzo l’orto riparte. Il calendario in fondo…”"
-          },
-          {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "vdt",

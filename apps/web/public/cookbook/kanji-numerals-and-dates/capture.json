@@ -3,21 +3,21 @@
   "slug": "kanji-numerals-and-dates",
   "sourceHash": "a43124abb657185a69272856f4a074ce1d34dfe80ba99b467ad46465a0851c46",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.863Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:08:57.240Z",
   "variants": {
     "en": {
-      "hash8": "045d79c2",
+      "hash8": "e75e49f0",
       "vdtHash": "53061b2de6c10bcd2205f7be9f3e4975e589b28c",
       "timings": {
-        "importMs": 1074,
-        "fontsMs": 2264,
-        "buildMs": 97,
-        "totalMs": 4212,
+        "importMs": 2324,
+        "fontsMs": 1749,
+        "buildMs": 85,
+        "totalMs": 5385,
         "builds": 1
       },
       "specimen": {
@@ -116,7 +116,7 @@
       },
       "pdf": {
         "file": "kanji-numerals-and-dates.pdf",
-        "bytes": 172978,
+        "bytes": 172977,
         "pages": 4
       },
       "sandbox": {
@@ -409,19 +409,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "6845788f",
+      "hash8": "ce7edd4d",
       "vdtHash": "7961f07ca2dea68669b6bbb183fba9facfeeebe0",
       "timings": {
-        "importMs": 1137,
-        "fontsMs": 2229,
-        "buildMs": 96,
-        "totalMs": 4256,
+        "importMs": 1991,
+        "fontsMs": 2274,
+        "buildMs": 111,
+        "totalMs": 5586,
         "builds": 1
       },
       "specimen": {
@@ -520,7 +520,7 @@
       },
       "pdf": {
         "file": "kanji-numerals-and-dates.pdf",
-        "bytes": 173091,
+        "bytes": 173097,
         "pages": 4
       },
       "sandbox": {
@@ -803,7 +803,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

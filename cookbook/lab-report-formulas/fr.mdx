@@ -74,6 +74,6 @@ Les résultats deviennent Table 5.1 et Figure 5.1, comptés à nouveau dans chaq
 
 ## Erreurs fréquentes
 
-- Par défaut, une formule hors texte ne reste pas solidaire de la ligne qui l’introduit : une phrase d’introduction finissant par « so » peut clore une page et laisser son équation sur la suivante ; `math.keepWithLeadIn: true` fait passer cette ligne avec la formule. Ici, le texte des deux éditions est calibré pour finir la page 1 sur l’équation de [OH⁻] sous sa phrase.
+- Par défaut, une formule hors texte ne reste pas solidaire de la ligne qui l’introduit : une phrase d’introduction finissant par « so » peut clore une page et laisser son équation sur la suivante ; `math.keepWithLeadIn: true` fait passer cette ligne avec la formule. La recette l’active : l’équation de [OH⁻] reste avec sa phrase quelle que soit la longueur du texte.
 - Les glyphes de TeX sont ceux de MathJax, et non d’Inria Serif : une équation paraît donc un peu plus claire que le texte qui l’entoure. Gardez les formules prises dans des phrases sous forme de marques `~` et `^`, et réservez TeX aux lignes qui en ont besoin.
 - Les étiquettes des graduations et les titres des axes de la courbe sont des contours MathJax : elles utilisent les mêmes glyphes que les équations et restent vectorielles dans le PDF. `tex()` demande à `renderMath` les tracés de chaque étiquette et les place dans le SVG. Elles ne peuvent être dessinées qu’une fois `initMathEngine()` résolu.

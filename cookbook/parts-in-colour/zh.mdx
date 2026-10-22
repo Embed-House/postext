@@ -46,7 +46,7 @@ pageNotes: { "4": "第4页是第I篇篇名页的背面。正文让它留空，pa
 
 <Excerpt region="running-heads" />
 
-设置`pages: 'body'`后，书眉只印在正文页上。篇名页属于`part`页，涂色的背面属于`blank`页；封面和目录都以一个通页宽标题开头，因此算作首页。右页书眉在一行中印出`{partTitle}`，书口处的色标把`{partNumber}`印在一个背景链接到`band`的框上。
+设置`pages: 'body'`后，书眉只印在正文页上。篇名页属于`part`页，涂色的背面属于`blank`页；封面和目录都以一个通页宽标题开头，因此算作首页。左页书眉印出`{title}`，即frontmatter中的标题，书名因此留在 Markdown 里。右页书眉在一行中印出`{partTitle}`，书口处的色标把`{partNumber}`印在一个背景链接到`band`的框上。
 
 ## 变化
 

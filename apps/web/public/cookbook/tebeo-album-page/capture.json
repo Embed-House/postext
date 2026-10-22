@@ -3,12 +3,12 @@
   "slug": "tebeo-album-page",
   "sourceHash": "4fc1e31876d9167d050f0bf5b557783d88ecf8e636729cdd97ca285e048b10dc",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:40:49.235Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:33:59.191Z",
   "variants": {
     "en": {
       "hash8": "08b11acf",
@@ -290,7 +290,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -580,7 +585,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 100 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 100 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -870,12 +880,17 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 101 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 101 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB)"
+            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -886,13 +901,13 @@
       }
     },
     "zh": {
-      "hash8": "85fefebd",
+      "hash8": "e3314a89",
       "vdtHash": "50f3d980fc2b9de7346d2b56fbf3f9cffc139eba",
       "timings": {
-        "importMs": 345,
-        "fontsMs": 882,
-        "buildMs": 503,
-        "totalMs": 2316,
+        "importMs": 496,
+        "fontsMs": 386,
+        "buildMs": 432,
+        "totalMs": 1922,
         "builds": 1
       },
       "specimen": {
@@ -959,7 +974,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1157103,
+        "bytes": 1157106,
         "pages": 2
       },
       "sandbox": {
@@ -1166,7 +1181,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 98 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 98 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -1177,13 +1197,13 @@
       }
     },
     "ar": {
-      "hash8": "88da98f5",
+      "hash8": "c23d9522",
       "vdtHash": "96eb0cd503d6ae90a7b895eec4ff8cb1bbc9eb81",
       "timings": {
-        "importMs": 484,
-        "fontsMs": 446,
-        "buildMs": 437,
-        "totalMs": 2119,
+        "importMs": 513,
+        "fontsMs": 164,
+        "buildMs": 372,
+        "totalMs": 1654,
         "builds": 1
       },
       "specimen": {
@@ -1251,7 +1271,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1132945,
+        "bytes": 1132949,
         "pages": 2
       },
       "sandbox": {
@@ -1460,7 +1480,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 97 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 97 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -1471,13 +1496,13 @@
       }
     },
     "ja": {
-      "hash8": "74af7bf5",
+      "hash8": "1d7bd850",
       "vdtHash": "d99080b560120794a7fae42a57d1aa6aa08b5ec8",
       "timings": {
-        "importMs": 582,
-        "fontsMs": 558,
-        "buildMs": 391,
-        "totalMs": 2151,
+        "importMs": 504,
+        "fontsMs": 343,
+        "buildMs": 350,
+        "totalMs": 1828,
         "builds": 1
       },
       "specimen": {
@@ -1545,7 +1570,7 @@
       },
       "pdf": {
         "file": "tebeo-album-page.pdf",
-        "bytes": 1154247,
+        "bytes": 1154245,
         "pages": 2
       },
       "sandbox": {
@@ -1753,7 +1778,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -2043,7 +2073,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 100 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 100 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -2333,12 +2368,17 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 101 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 101 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB)"
+            "detail": "card.480.webp weighs 35 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -2628,7 +2668,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 99 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -2918,7 +2963,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 100 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 100 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",

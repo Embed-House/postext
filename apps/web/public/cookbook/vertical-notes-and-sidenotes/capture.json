@@ -3,27 +3,21 @@
   "slug": "vertical-notes-and-sidenotes",
   "sourceHash": "17e744a70667837f5876b82adfb411440b9e04ca9d17e7d265cae82592dbc0d5",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:52:28.264Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:06:54.602Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:48:42.117Z",
   "variants": {
     "en": {
-      "hash8": "91754710",
+      "hash8": "09b6ac0a",
       "vdtHash": "1282cfc1c7ae613ee99779b2fdda95956811d982",
       "timings": {
-        "importMs": 1818,
-        "fontsMs": 878,
-        "buildMs": 78,
-        "totalMs": 3798,
+        "importMs": 2240,
+        "fontsMs": 1760,
+        "buildMs": 76,
+        "totalMs": 5553,
         "builds": 1
       },
       "specimen": {
@@ -77,7 +71,7 @@
           "h": 1480,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116970,
+          "bytes": 117120,
           "alt": "Page 三."
         },
         {
@@ -88,7 +82,7 @@
           "h": 1480,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128026,
+          "bytes": 127996,
           "alt": "Page 四."
         }
       ],
@@ -121,7 +115,7 @@
       },
       "pdf": {
         "file": "vertical-notes-and-sidenotes.pdf",
-        "bytes": 245997,
+        "bytes": 245998,
         "pages": 4
       },
       "sandbox": {
@@ -318,17 +312,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "9b379105",
+      "hash8": "3e687b8f",
       "vdtHash": "e929be3f379b1e3428183f5995c1b03e42b58874",
       "timings": {
-        "importMs": 1784,
-        "fontsMs": 822,
-        "buildMs": 67,
-        "totalMs": 3581,
+        "importMs": 2904,
+        "fontsMs": 1714,
+        "buildMs": 63,
+        "totalMs": 6730,
         "builds": 1
       },
       "specimen": {
@@ -382,7 +382,7 @@
           "h": 1480,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 116970,
+          "bytes": 117120,
           "alt": "Página 三."
         },
         {
@@ -393,7 +393,7 @@
           "h": 1480,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 128026,
+          "bytes": 127996,
           "alt": "Página 四."
         }
       ],
@@ -623,7 +623,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 134 · A business section on salmon newsprint ═══════════════
 // https://postext.dev/en/cookbook/business-section-on-salmon
 // Code: MIT · Text: original (CC BY 4.0) · Pictures: generated (CC BY 4.0)
-// Fonts: Source Serif 4, Playfair Display, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.34.0
+// Fonts: Source Serif 4, Playfair Display, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.57.0
 //
 // Eight pages: four of news in five columns, then Business on salmon paper in six.
 // One heading style carries the change; a :::paper run gives Folio the salmon stock.
@@ -167,7 +167,7 @@ const config = () => ({
     avoidWidows: true, avoidOrphans: true },
   headings: { fontFamily: 'Playfair Display', fontWeight: 700, color: col('ink'),
     marginBottom: pt(0), levels: [
-      // A break to the next page, left or right: every page opens with its own flag.
+      // Any next page: every page opens with its own flag.
       { level: 1, span: 'page', breakBefore: { enabled: true, parity: 'any' },
         advancedDesign: { enabled: true, slot: { elements: flagParts } } },
       { level: 2, fontSize: pt(17), lineHeight: pt(19), marginTop: pt(LEAD) },
@@ -181,8 +181,8 @@ const config = () => ({
   ],
   calloutStyles: [banner, story, briefs, teaser, panel, dataBox, ad, pullQuote],
   paragraphStyles: [
-    { id: 'byline', fontFamily: 'Archivo Narrow', fontSize: pt(8.5), textAlign: 'left',
-      firstLineIndent: pt(0), color: col('muted') },
+    { id: 'byline', fontFamily: 'Archivo Narrow', fontSize: pt(8.5), lineHeight: pt(LEAD),
+      textAlign: 'left', firstLineIndent: pt(0), color: col('muted') },
     { id: 'flush', firstLineIndent: pt(0) },
     { id: 'jump', fontFamily: 'Archivo Narrow', fontSize: pt(8.5), textAlign: 'right' },
     { id: 'kicker', ...sans(8.5, 700, { color: col('accent') }), textAlign: 'left',
@@ -282,7 +282,7 @@ function pricesTable(i, rows) { // one sector's share prices, seeded
         fmt(price * (1.05 + rand() * 0.3)), fmt(price * (0.7 + rand() * 0.25))];
     }));
 }
-// The tables of pages 3, 6, 7 and 8: [model, caption, note].
+// Tables: [model, caption, note].
 const TABLES = {
   budget: [table([3, 1.2, 1.2, 1], ['Service, £m', '2026/27', '2027/28', 'Change'],
     [['Adult social care', '412.3', '426.9', '+14.6'], ['Children’s services', '236.8', '241.0',

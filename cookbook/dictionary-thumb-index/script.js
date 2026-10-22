@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 046 · Dictionary with a moving thumb index ═══════════════
 // https://postext.dev/en/cookbook/dictionary-thumb-index
 // Code: MIT · Text: W. H. Smyth, 1867 (PD); Spanish translation CC BY 4.0 · Pictures: code
-// Fonts: Alegreya, Alegreya SC, Alegreya Sans SC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Alegreya, Alegreya SC, Alegreya Sans SC (SIL OFL 1.1) · Needs postext ≥ 1.57.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
@@ -54,14 +54,16 @@ const cell = (id, label, i, parity, width, fill, ink, size) => {
   ];
 };
 const sides = (make) => ['odd', 'even'].flatMap(make);
-// Every page prints the whole index, pale; the section's own letter stands out of it.
+// Every page prints the whole index, pale, in the book's header (hook-up in config()).
 const ladder = sides((p) => TABS.flatMap((label, i) =>
   cell(`index-${i}-${p}`, label, i, p, 5.8, 'tint', 'slate', 7.5)));
+// The section's own tab goes in its footer, which paints after the header: it lies over
+// its pale cell. Elements anchored to 'page' can sit anywhere, whichever slot holds them.
 const letterStyles = () => TABS.flatMap((label, i) => [...label].map((letter) => ({
   id: letter,
-  // '# B {style="B"}' opens the section of B: its pages take this header, and a page
+  // '# B {style="B"}' opens the section of B: its pages take this footer, and a page
   // where A ends and B begins takes B's (gotcha: section-last-wins).
-  header: { elements: [...runningHeads, ...ladder,
+  footer: { elements: [...footer.elements,
     ...sides((p) => cell(`tab-${p}`, label, i, p, 9, 'navy', 'paper', 8.5))] },
 })));
 // #endregion
@@ -146,7 +148,7 @@ const titleStyle = { id: 'title', span: 'page', advancedDesign: titleBand };
 const config = () => ({
   locale: t({ en: 'en-us', es: 'es' }), // the hyphenation patterns of each edition
   colorPalette, footer,
-  header: { elements: [] }, // every page takes the header of its letter's style
+  header: { elements: [...runningHeads, ...ladder] }, // the same on every page
   page: { sizePreset: 'custom', width: mm(150), height: mm(200), dpi: 150,
     backgroundColor: col('paper'),
     margins: { top: mm(TOP), bottom: mm(BOTTOM), left: mm(INNER), right: mm(OUTER),

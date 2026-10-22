@@ -3,21 +3,21 @@
   "slug": "pendulum-lab-video-players",
   "sourceHash": "ec280b7bd0360373234db05d7ef64739ff8309cb606edd4b151cb9557f492f0b",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:03:18.083Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:51:24.187Z",
   "variants": {
     "en": {
-      "hash8": "26fbe6c2",
-      "vdtHash": "94759318a3e45b73760fbb922e9ad52f9d61dc59",
+      "hash8": "6251975e",
+      "vdtHash": "d8323bc086e4138cf4d143856ad04a36ef4222a2",
       "timings": {
-        "importMs": 865,
-        "fontsMs": 115,
-        "buildMs": 194,
-        "totalMs": 2443,
+        "importMs": 2167,
+        "fontsMs": 171,
+        "buildMs": 149,
+        "totalMs": 3492,
         "builds": 2
       },
       "specimen": {
@@ -32,7 +32,7 @@
         "body": {
           "family": "Source Serif 4",
           "sizePt": 9.4,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "Red Hat Display",
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65508,
+          "bytes": 65620,
           "alt": "Page 2: Method. Table 1. Your measurements. · Table 2. Exact periods of a pendulum 1.00 m long."
         }
       ],
@@ -90,16 +90,16 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 83719,
+        "bytes": 83725,
         "pages": 2
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 29799,
+        "bytes": 29854,
         "chapters": [
           {
             "pages": 2,
-            "hash": "4f6b61711b89fe55",
+            "hash": "5d73dde1e70d1aad",
             "lines": "ca12bc33da4974e1"
           }
         ]
@@ -437,6 +437,16 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "small: video file pendulum-small.mp4 left out (it plays from video.url)"
@@ -450,13 +460,13 @@
       }
     },
     "es": {
-      "hash8": "b0cd9db1",
-      "vdtHash": "10cd14ef0d513ace0d097b55baa885993a7f6ac3",
+      "hash8": "a4dfb941",
+      "vdtHash": "308e5f7fb0b6b74bf6f6925ac494ffe658225361",
       "timings": {
-        "importMs": 1234,
-        "fontsMs": 71,
-        "buildMs": 150,
-        "totalMs": 2473,
+        "importMs": 2445,
+        "fontsMs": 105,
+        "buildMs": 213,
+        "totalMs": 4221,
         "builds": 2
       },
       "specimen": {
@@ -471,7 +481,7 @@
         "body": {
           "family": "Source Serif 4",
           "sizePt": 9.4,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "Red Hat Display",
@@ -501,7 +511,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 70142,
+          "bytes": 70306,
           "alt": "Página 2: Procedimiento. Tabla 1. Tus medidas. · Tabla 2. Periodos exactos de un péndulo de 1,00 m."
         }
       ],
@@ -529,16 +539,16 @@
       },
       "pdf": {
         "file": "pendulum-lab-video-players.pdf",
-        "bytes": 85466,
+        "bytes": 85469,
         "pages": 2
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 30287,
+        "bytes": 30301,
         "chapters": [
           {
             "pages": 2,
-            "hash": "c24ee49bd63f5023",
+            "hash": "1d7cb86bf49a130b",
             "lines": "1f37529a69049fd0"
           }
         ]
@@ -884,6 +894,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “La primera corrección a la fórmula de las oscila…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "vdt",
