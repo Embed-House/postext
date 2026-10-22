@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP: an agent at work in the Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'What an AI agent in the browser can do with the Sandbox through its 41 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
+  description: 'What an AI agent in the browser can do with the Sandbox through its 53 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
   lang: 'en',
   lastUpdated: '2026-10-19',
   readingTime: '12 min',
@@ -23,7 +23,7 @@ picture of page 12, sets `bodyText.fontSize` to 10.5 pt, sees that the chapter
 went from 18 to 19 pages, and puts it back. It does what you do by eye, and
 it does it with your book, in your browser.
 
-There are 41 tools whose names start with `sandbox_`, registered while the
+There are 53 tools whose names start with `sandbox_`, registered while the
 Sandbox is on screen, and 8 tools of the site, `site_*`, on every page of
 postext.dev. This page sorts them by what you would ask an agent to do, and
 gives the call for each one.
@@ -39,7 +39,7 @@ finds them there. Nothing has to be installed or set up on the Postext side.
 WebMCP is still a draft. Chrome offers it as an origin trial, and behind the
 flag `chrome://flags/#enable-webmcp-testing`. The tools follow the page: on
 the home page or in the docs the agent has the `site_*` tools; once the
-Sandbox is on screen, the 41 `sandbox_*` tools appear as well.
+Sandbox is on screen, the 53 `sandbox_*` tools appear as well.
 
 ### In any other browser: `window.postextWebMcp`
 
@@ -319,6 +319,8 @@ position and extends the kept style (`extends`), so its boxes stay where they
 are; the answer lists it as `keptForTheirPlace`. `keepPlaces: false` merges it
 away, and its boxes move.
 Its answer gives `undoSteps`: one per chapter rewritten and one for the styles, which `sandbox_undo` takes back, the styles first.
+
+Renaming or removing a named item changes more than its own entry, so these actions have tools of their own that work the way the Design panel does. `sandbox_rename_design_item` gives a style, a look, a page template, a frame or group of a template, or a comics balloon style, cast member or panel style a new id. Everything that names the item follows: `:::callout` fences, `::::page` fences, the slot names of the pages, picture anchors and `::label` lines, the tables and scores that use a style, and the cast. `sandbox_remove_design_item` removes an item the way the panel does: the styles based on a removed box style take its look, and the settings that used a palette colour keep that colour, no longer linked to the palette. `sandbox_language_defaults` lists the Chinese, Japanese or Arabic defaults of Design › Text, and applies them with `apply: true`. `sandbox_print_profile` uploads or removes the custom ICC profile of the Print section. `sandbox_save_layout_as_template` turns a laid composed page into a new page template. Setting `layout.bitmapResolution` to `"file"` also reads the resolution stored in each existing bitmap file.
 
 ### Edit the text
 

@@ -3,7 +3,7 @@
 export const metadata = {
   title: 'WebMCP : un agent au travail dans le Sandbox',
   sidebarTitle: 'WebMCP',
-  description: 'Ce qu’un agent IA dans le navigateur peut faire avec le Sandbox grâce à ses 41 outils WebMCP (regarder les pages, changer n’importe quel réglage, modifier le texte, ajouter images, tableaux et polices, lancer les vérifications, exporter) et comment appeler chacun d’eux, avec de vrais arguments et de vraies réponses',
+  description: 'Ce qu’un agent IA dans le navigateur peut faire avec le Sandbox grâce à ses 53 outils WebMCP (regarder les pages, changer n’importe quel réglage, modifier le texte, ajouter images, tableaux et polices, lancer les vérifications, exporter) et comment appeler chacun d’eux, avec de vrais arguments et de vraies réponses',
   lang: 'fr',
   lastUpdated: '2026-10-19',
   readingTime: '13 min',
@@ -23,7 +23,7 @@ image de la page 12, règle `bodyText.fontSize` sur 10,5 pt, constate que le ch
 est passé de 18 à 19 pages, et revient en arrière. Il fait ce que vous faites à l’œil, et
 il le fait avec votre livre, dans votre navigateur.
 
-Il y a 41 outils dont le nom commence par `sandbox_`, enregistrés tant que le
+Il y a 53 outils dont le nom commence par `sandbox_`, enregistrés tant que le
 Sandbox est à l’écran, et 8 outils du site, `site_*`, sur chaque page de
 postext.dev. Cette page les classe selon ce que vous demanderiez à un agent, et
 donne l’appel de chacun.
@@ -39,7 +39,7 @@ les y trouve. Il n’y a rien à installer ni à configurer du côté de Postext
 WebMCP est encore un brouillon. Chrome le propose en phase d’essai (origin trial) et derrière
 l’option `chrome://flags/#enable-webmcp-testing`. Les outils suivent la page : sur
 la page d’accueil ou dans la documentation, l’agent dispose des outils `site_*` ; dès que le
-Sandbox est à l’écran, les 41 outils `sandbox_*` apparaissent aussi.
+Sandbox est à l’écran, les 53 outils `sandbox_*` apparaissent aussi.
 
 ### Dans tout autre navigateur : `window.postextWebMcp`
 
@@ -320,6 +320,8 @@ le style conservé (`extends`) : ses encadrés restent donc en place, et la
 réponse le liste dans `keptForTheirPlace` ; avec `keepPlaces: false`, il est
 fusionné entièrement et ses encadrés se déplacent.
 La réponse donne `undoSteps` : une étape par chapitre réécrit et une pour les styles, que `sandbox_undo` défait en commençant par les styles.
+
+Renommer ou retirer un élément nommé change plus que sa propre entrée : ces actions ont donc leurs propres outils, qui font comme le panneau Design. `sandbox_rename_design_item` donne un autre id à un style, un aspect, un modèle de page, un cadre ou groupe d'un modèle, ou à un style de bulle, un personnage ou un style de case d'une bande dessinée. Tout ce qui nomme l'élément suit : les blocs `:::callout` et `::::page`, les noms d'emplacement des pages, les ancres des images et les lignes `::label`, les tableaux et partitions qui utilisent un style, et la distribution. `sandbox_remove_design_item` retire un élément comme le panneau : les styles fondés sur un style d'encadré retiré prennent son aspect, et les réglages qui utilisaient une couleur de la palette gardent cette couleur, sans lien avec la palette. `sandbox_language_defaults` liste les valeurs pour le chinois, le japonais ou l'arabe de Design › Texte et les applique avec `apply: true`. `sandbox_print_profile` envoie ou retire le profil ICC propre de la section Impression. `sandbox_save_layout_as_template` fait d'une page composée déjà mise en page un nouveau modèle de page. Mettre `layout.bitmapResolution` à `"file"` lit aussi la résolution enregistrée dans chaque fichier d'image déjà présent.
 
 ### Modifier le texte
 
