@@ -3,33 +3,27 @@
   "slug": "woodblock-leaf",
   "sourceHash": "07a15030b01f02437704bd2f859bc15ea41cbc0b87395348262672824e375e69",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:52:28.404Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:06:54.613Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:19:58.742Z",
   "variants": {
     "en": {
-      "hash8": "6d43a8c5",
+      "hash8": "59fcb146",
       "vdtHash": "91ea12b4e4b739496a275ae667b92b4fef3b7255",
       "timings": {
-        "importMs": 509,
-        "fontsMs": 207,
-        "buildMs": 51,
-        "totalMs": 1425,
+        "importMs": 2561,
+        "fontsMs": 1938,
+        "buildMs": 66,
+        "totalMs": 5834,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
-          120.80000000000001,
-          213.10000000000002
+          120.8,
+          213.1
         ],
         "dpi": 150,
         "layoutType": "single",
@@ -132,7 +126,7 @@
       },
       "pdf": {
         "file": "woodblock-leaf.pdf",
-        "bytes": 209048,
+        "bytes": 209059,
         "pages": 7
       },
       "sandbox": {
@@ -314,6 +308,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
@@ -322,19 +321,19 @@
       }
     },
     "es": {
-      "hash8": "33273f9e",
+      "hash8": "8bb21624",
       "vdtHash": "644b1ce8232fdd9b1350f719fe85772a763d0d2d",
       "timings": {
-        "importMs": 510,
-        "fontsMs": 175,
-        "buildMs": 51,
-        "totalMs": 1430,
+        "importMs": 2850,
+        "fontsMs": 725,
+        "buildMs": 75,
+        "totalMs": 5246,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
-          120.80000000000001,
-          213.10000000000002
+          120.8,
+          213.1
         ],
         "dpi": 150,
         "layoutType": "single",
@@ -437,7 +436,7 @@
       },
       "pdf": {
         "file": "woodblock-leaf.pdf",
-        "bytes": 209318,
+        "bytes": 209335,
         "pages": 7
       },
       "sandbox": {
@@ -618,6 +617,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

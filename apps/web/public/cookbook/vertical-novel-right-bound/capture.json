@@ -3,27 +3,21 @@
   "slug": "vertical-novel-right-bound",
   "sourceHash": "63f14120452459e4e9a896d821a8de3ac61872157dc4b38e3056b9195f1e6dd0",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:52:28.317Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:06:54.604Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:19:58.720Z",
   "variants": {
     "en": {
-      "hash8": "bd1926fe",
+      "hash8": "e0fb2be1",
       "vdtHash": "fc245764e090748c178c898acdf19d8f2cc6b592",
       "timings": {
-        "importMs": 1759,
-        "fontsMs": 1471,
-        "buildMs": 88,
-        "totalMs": 4574,
+        "importMs": 2396,
+        "fontsMs": 3772,
+        "buildMs": 70,
+        "totalMs": 7240,
         "builds": 1
       },
       "specimen": {
@@ -160,7 +154,7 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754811,
+        "bytes": 754879,
         "pages": 11
       },
       "sandbox": {
@@ -370,6 +364,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
@@ -378,13 +377,13 @@
       }
     },
     "es": {
-      "hash8": "af7a504b",
+      "hash8": "091bef9f",
       "vdtHash": "324528048aa4e7301b6ded3c2185f9076c5aacb3",
       "timings": {
-        "importMs": 1768,
-        "fontsMs": 1455,
-        "buildMs": 64,
-        "totalMs": 4531,
+        "importMs": 2848,
+        "fontsMs": 2218,
+        "buildMs": 63,
+        "totalMs": 7142,
         "builds": 1
       },
       "specimen": {
@@ -521,7 +520,7 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754204,
+        "bytes": 754265,
         "pages": 11
       },
       "sandbox": {
@@ -730,6 +729,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

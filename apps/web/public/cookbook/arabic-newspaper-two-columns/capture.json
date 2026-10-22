@@ -3,27 +3,21 @@
   "slug": "arabic-newspaper-two-columns",
   "sourceHash": "077370046368a904e68ef341dbd6fc1a305b49123d756c9bb38d238a8eb5081a",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:35:58.713Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:55:41.407Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:19:58.387Z",
   "variants": {
     "en": {
-      "hash8": "6b5b30ae",
+      "hash8": "0f5fcc12",
       "vdtHash": "57eda6054abf963604d9e51db5f63121091bb9a6",
       "timings": {
-        "importMs": 2651,
-        "fontsMs": 1512,
-        "buildMs": 189,
-        "totalMs": 5385,
+        "importMs": 3690,
+        "fontsMs": 459,
+        "buildMs": 156,
+        "totalMs": 5658,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +31,7 @@
         "mirror": false,
         "body": {
           "family": "Noto Naskh Arabic",
-          "sizePt": 10.700000000000001,
+          "sizePt": 10.7,
           "leadingPt": 16
         },
         "families": [
@@ -97,7 +91,7 @@
       },
       "pdf": {
         "file": "arabic-newspaper-two-columns.pdf",
-        "bytes": 96763,
+        "bytes": 96788,
         "pages": 2
       },
       "sandbox": {
@@ -373,17 +367,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "18b40ccc",
+      "hash8": "f6d95e56",
       "vdtHash": "bfed373063ca5969801b5259a8f0279afb332901",
       "timings": {
-        "importMs": 1513,
-        "fontsMs": 399,
-        "buildMs": 188,
-        "totalMs": 4227,
+        "importMs": 1980,
+        "fontsMs": 1711,
+        "buildMs": 175,
+        "totalMs": 4877,
         "builds": 1
       },
       "specimen": {
@@ -397,7 +397,7 @@
         "mirror": false,
         "body": {
           "family": "Noto Naskh Arabic",
-          "sizePt": 10.700000000000001,
+          "sizePt": 10.7,
           "leadingPt": 16
         },
         "families": [
@@ -457,7 +457,7 @@
       },
       "pdf": {
         "file": "arabic-newspaper-two-columns.pdf",
-        "bytes": 96868,
+        "bytes": 96887,
         "pages": 2
       },
       "sandbox": {
@@ -733,7 +733,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }
