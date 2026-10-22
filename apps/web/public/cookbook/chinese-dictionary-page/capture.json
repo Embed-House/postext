@@ -3,27 +3,21 @@
   "slug": "chinese-dictionary-page",
   "sourceHash": "c138e1c702325704a11ecb487873ac9289bb2d9348684afd7a827c276493067d",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:38:45.319Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T14:57:00.590Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:53:17.616Z",
   "variants": {
     "en": {
-      "hash8": "40ba000e",
+      "hash8": "7edb6ab0",
       "vdtHash": "14d4d8506ffa1837119ab89f2594c754da927bf0",
       "timings": {
-        "importMs": 992,
-        "fontsMs": 1115,
-        "buildMs": 73,
-        "totalMs": 3008,
+        "importMs": 2220,
+        "fontsMs": 1014,
+        "buildMs": 92,
+        "totalMs": 4336,
         "builds": 1
       },
       "specimen": {
@@ -33,7 +27,7 @@
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "Noto Serif TC",
@@ -118,7 +112,7 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 310401,
+        "bytes": 310433,
         "pages": 4
       },
       "sandbox": {
@@ -310,9 +304,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -323,13 +317,13 @@
       }
     },
     "es": {
-      "hash8": "7d8aaea7",
+      "hash8": "568245a2",
       "vdtHash": "1aeac785e2d796b6da3f1c1e1584832851430942",
       "timings": {
-        "importMs": 754,
-        "fontsMs": 709,
-        "buildMs": 69,
-        "totalMs": 2283,
+        "importMs": 2833,
+        "fontsMs": 1283,
+        "buildMs": 95,
+        "totalMs": 4987,
         "builds": 1
       },
       "specimen": {
@@ -339,7 +333,7 @@
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": true,
         "body": {
           "family": "Noto Serif TC",
@@ -424,7 +418,7 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 310382,
+        "bytes": 310427,
         "pages": 4
       },
       "sandbox": {
@@ -616,9 +610,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

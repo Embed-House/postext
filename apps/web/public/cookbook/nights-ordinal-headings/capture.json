@@ -3,27 +3,21 @@
   "slug": "nights-ordinal-headings",
   "sourceHash": "7538c66d79ca587b9c4e72736f0e17790cc1417e85a35ab5865b1e005a06e428",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:45:15.045Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:02:23.916Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:53:36.116Z",
   "variants": {
     "en": {
-      "hash8": "f3e9325a",
+      "hash8": "5e9e937f",
       "vdtHash": "02a53f2f4908a5650b1e6b2ca380f6c93c2d9b4c",
       "timings": {
-        "importMs": 1186,
-        "fontsMs": 572,
-        "buildMs": 212,
-        "totalMs": 4073,
+        "importMs": 2473,
+        "fontsMs": 167,
+        "buildMs": 111,
+        "totalMs": 4034,
         "builds": 1
       },
       "specimen": {
@@ -200,7 +194,7 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 159931,
+        "bytes": 159965,
         "pages": 10
       },
       "sandbox": {
@@ -400,24 +394,24 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
+            "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "c9a7ad10",
+      "hash8": "a68d7323",
       "vdtHash": "dc91c77630dbc968f4aace80653bfed7690aa62c",
       "timings": {
-        "importMs": 1810,
-        "fontsMs": 279,
-        "buildMs": 206,
-        "totalMs": 3064,
+        "importMs": 1722,
+        "fontsMs": 198,
+        "buildMs": 144,
+        "totalMs": 2915,
         "builds": 1
       },
       "specimen": {
@@ -594,7 +588,7 @@
       },
       "pdf": {
         "file": "nights-ordinal-headings.pdf",
-        "bytes": 160669,
+        "bytes": 160702,
         "pages": 10
       },
       "sandbox": {
@@ -794,12 +788,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages)"
+            "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
