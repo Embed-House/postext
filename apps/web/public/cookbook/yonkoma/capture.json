@@ -3,21 +3,21 @@
   "slug": "yonkoma",
   "sourceHash": "6ea4873d9eaba4f680559dec907515ca9dbc90ee2adfb0c3aa2d6c61d9f3f795",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:41:38.013Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:29:00.500Z",
   "variants": {
     "en": {
-      "hash8": "ad981289",
+      "hash8": "a50069cd",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 495,
-        "fontsMs": 481,
-        "buildMs": 287,
-        "totalMs": 2117,
+        "importMs": 719,
+        "fontsMs": 616,
+        "buildMs": 399,
+        "totalMs": 2709,
         "builds": 2
       },
       "specimen": {
@@ -47,7 +47,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "Page 1."
         },
         {
@@ -233,6 +233,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -246,13 +251,13 @@
       }
     },
     "es": {
-      "hash8": "21ef7740",
+      "hash8": "a6b41178",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 501,
-        "fontsMs": 490,
-        "buildMs": 290,
-        "totalMs": 2138,
+        "importMs": 715,
+        "fontsMs": 563,
+        "buildMs": 395,
+        "totalMs": 2683,
         "builds": 2
       },
       "specimen": {
@@ -282,7 +287,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "Página 1."
         },
         {
@@ -468,6 +473,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -481,13 +491,13 @@
       }
     },
     "ca": {
-      "hash8": "ad6dc655",
+      "hash8": "6d1dfb0a",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 489,
-        "fontsMs": 718,
-        "buildMs": 282,
-        "totalMs": 2358,
+        "importMs": 972,
+        "fontsMs": 639,
+        "buildMs": 416,
+        "totalMs": 2989,
         "builds": 2
       },
       "specimen": {
@@ -517,7 +527,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "Pàgina 1."
         },
         {
@@ -703,6 +713,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -716,13 +731,13 @@
       }
     },
     "zh": {
-      "hash8": "2cf527c5",
+      "hash8": "74b994fa",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 476,
-        "fontsMs": 718,
-        "buildMs": 285,
-        "totalMs": 2524,
+        "importMs": 1728,
+        "fontsMs": 1228,
+        "buildMs": 386,
+        "totalMs": 5314,
         "builds": 2
       },
       "specimen": {
@@ -752,7 +767,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "第 1 页。"
         },
         {
@@ -788,7 +803,7 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1337758,
+        "bytes": 1337824,
         "pages": 2
       },
       "sandbox": {
@@ -938,6 +953,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -951,13 +971,13 @@
       }
     },
     "ar": {
-      "hash8": "dfaf383d",
+      "hash8": "436ff39d",
       "vdtHash": "d61540f9adce65e201a2f033d6b41fbdbc3c42aa",
       "timings": {
-        "importMs": 363,
-        "fontsMs": 461,
-        "buildMs": 298,
-        "totalMs": 2327,
+        "importMs": 1652,
+        "fontsMs": 1062,
+        "buildMs": 377,
+        "totalMs": 4330,
         "builds": 2
       },
       "specimen": {
@@ -987,7 +1007,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "الصفحة 1."
         },
         {
@@ -1023,7 +1043,7 @@
       },
       "pdf": {
         "file": "yonkoma.pdf",
-        "bytes": 1327874,
+        "bytes": 1327901,
         "pages": 2
       },
       "sandbox": {
@@ -1173,6 +1193,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1186,13 +1211,13 @@
       }
     },
     "ja": {
-      "hash8": "17ab0d5e",
+      "hash8": "101e6ea4",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 494,
-        "fontsMs": 489,
-        "buildMs": 287,
-        "totalMs": 2132,
+        "importMs": 1638,
+        "fontsMs": 1144,
+        "buildMs": 432,
+        "totalMs": 4216,
         "builds": 2
       },
       "specimen": {
@@ -1222,7 +1247,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "1ページ。"
         },
         {
@@ -1408,6 +1433,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1426,13 +1456,13 @@
       }
     },
     "pt": {
-      "hash8": "e40fd051",
+      "hash8": "aa9915a6",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 332,
-        "fontsMs": 836,
-        "buildMs": 319,
-        "totalMs": 2289,
+        "importMs": 1392,
+        "fontsMs": 906,
+        "buildMs": 344,
+        "totalMs": 3664,
         "builds": 2
       },
       "specimen": {
@@ -1462,7 +1492,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "Página 1."
         },
         {
@@ -1648,6 +1678,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1661,13 +1696,13 @@
       }
     },
     "fr": {
-      "hash8": "a14de6ec",
+      "hash8": "1d29bc8b",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 342,
-        "fontsMs": 635,
-        "buildMs": 308,
-        "totalMs": 2086,
+        "importMs": 1338,
+        "fontsMs": 969,
+        "buildMs": 361,
+        "totalMs": 3613,
         "builds": 2
       },
       "specimen": {
@@ -1697,7 +1732,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "Page 1."
         },
         {
@@ -1883,6 +1918,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1896,13 +1936,13 @@
       }
     },
     "de": {
-      "hash8": "ec5f9ab4",
+      "hash8": "f0bd280f",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 325,
-        "fontsMs": 427,
-        "buildMs": 306,
-        "totalMs": 1926,
+        "importMs": 1340,
+        "fontsMs": 849,
+        "buildMs": 359,
+        "totalMs": 3753,
         "builds": 2
       },
       "specimen": {
@@ -1932,7 +1972,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "Seite 1."
         },
         {
@@ -2118,6 +2158,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -2131,13 +2176,13 @@
       }
     },
     "it": {
-      "hash8": "6a7efeb6",
+      "hash8": "87d5ab15",
       "vdtHash": "41ee8e035d65bb490bdec97899c77aeb70675f16",
       "timings": {
-        "importMs": 315,
-        "fontsMs": 252,
-        "buildMs": 266,
-        "totalMs": 1636,
+        "importMs": 1199,
+        "fontsMs": 779,
+        "buildMs": 353,
+        "totalMs": 3403,
         "builds": 2
       },
       "specimen": {
@@ -2167,7 +2212,7 @@
           "h": 1419,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 160602,
+          "bytes": 160644,
           "alt": "Pagina 1."
         },
         {
@@ -2352,6 +2397,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",
