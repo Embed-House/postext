@@ -198,7 +198,8 @@ if (since) {
   fields = fields.filter((f) => !before.has(`${f.owner}.${f.field}`));
 }
 
-const word = (w) => new RegExp(`(^|[^A-Za-z0-9_])${w.replace(/[$]/g, '\\$')}([^A-Za-z0-9_]|$)`);
+const reEscape = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const word = (w) => new RegExp(`(^|[^A-Za-z0-9_])${reEscape(w)}([^A-Za-z0-9_]|$)`);
 // A field counts as mentioned in a unit that names it together with its owner
 // type or one of the fields that lead to it. Units: a `## ` section of a doc
 // or a skill reference (a page mentions many settings), a whole panel file.
@@ -218,7 +219,7 @@ const units = {
 // In the docs the field must be set as code (`leaf`, `a.leaf`, <code>leaf</code>,
 // or a JSON key "leaf"); the skill writes `key = value` lists, any mention
 // counts; in the panel, a key, a quoted name or a member access.
-const esc = (w) => w.replace(/[$]/g, '\\$');
+const esc = reEscape;
 const asCode = (w) =>
   new RegExp(
     `(\`|<code>|"|[A-Za-z0-9_\\]]\\.)${esc(w)}(\`|</code>|"|\\.|\\[|\\s*[:=(]|\\s*\\|)` +
