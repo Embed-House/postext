@@ -195,6 +195,8 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], fram
         slotKind={slotKind}
         siblings={siblings}
         frames={frames}
+        pin={raw.pin}
+        onPinChange={(pin) => update({ pin })}
         onChange={(placement, impliedAlign) =>
           update({ placement, ...(impliedAlign ? { align: impliedAlign } : {}) })
         }

@@ -18,6 +18,7 @@ import {
   DimensionInput,
   FontPicker,
   NumberInput,
+  SelectInput,
   TextInput,
   ToggleSwitch,
 } from '../../../controls/index.js';
@@ -62,6 +63,7 @@ export const UnorderedListsSection = memo(function UnorderedListsSection() {
   const resetTaskFields = () => {
     if (!raw) return;
     const next = { ...raw };
+    delete next.taskBox;
     delete next.taskCheckboxChar;
     delete next.taskCheckedChar;
     delete next.taskCompletedStrikethrough;
@@ -140,6 +142,7 @@ export const UnorderedListsSection = memo(function UnorderedListsSection() {
   const isMarginBottomDefault = dimensionsEqual(lists.marginBottom, D.marginBottom);
   const isItemSpacingDefault = dimensionsEqual(lists.itemSpacing, D.itemSpacing);
   const isHangingDefault = lists.hangingIndent === D.hangingIndent;
+  const isTaskBoxDefault = raw?.taskBox === undefined;
   const isTaskCheckboxDefault = lists.taskCheckboxChar === D.taskCheckboxChar;
   const isTaskCheckedDefault = lists.taskCheckedChar === D.taskCheckedChar;
   const isTaskStrikeDefault = lists.taskCompletedStrikethrough === D.taskCompletedStrikethrough;
@@ -334,6 +337,7 @@ export const UnorderedListsSection = memo(function UnorderedListsSection() {
         sectionId="unordered-lists-task"
         onReset={resetTaskFields}
         hasOverrides={
+          !isTaskBoxDefault ||
           !isTaskCheckboxDefault ||
           !isTaskCheckedDefault ||
           !isTaskStrikeDefault ||
@@ -342,6 +346,19 @@ export const UnorderedListsSection = memo(function UnorderedListsSection() {
         resetLabel={labels.reset}
         resetConfirmMessage={labels.resetSectionConfirm}
       >
+        <SelectInput
+          label={labels.taskBox}
+          value={lists.taskBox ?? 'drawn'}
+          options={[
+            { value: 'drawn', label: labels.taskBoxDrawn },
+            { value: 'character', label: labels.taskBoxCharacter },
+          ]}
+          onChange={(v) => updateLists({ taskBox: v as 'drawn' | 'character' })}
+          tooltip={labels.taskBoxTooltip}
+          variant="segmented"
+          isDefault={isTaskBoxDefault}
+          onReset={() => resetField('taskBox')}
+        />
         <TextInput
           label={labels.taskCheckboxChar}
           value={lists.taskCheckboxChar}

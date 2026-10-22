@@ -3,18 +3,24 @@
 import { memo } from 'react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { resolveMathConfig, DEFAULT_MATH_CONFIG, dimensionsEqual } from 'postext';
-import type { ColorValue, MathConfig, DimensionUnit } from 'postext';
+import type { ColorValue, MathConfig, DimensionUnit, ResourceCounterFormat, ResourceCounterReset } from 'postext';
 import {
   CollapsibleSection,
   ColorPicker,
   DimensionInput,
+  NestedGroup,
   NumberInput,
+  SelectInput,
+  TextInput,
   ToggleSwitch,
 } from '../../controls/index.js';
+import { counterFormatOptions, resetOnOptions } from '../settings/counterOptions.js';
 
 const MARGIN_UNITS: DimensionUnit[] = ['em', 'pt', 'px'];
 
 const D = DEFAULT_MATH_CONFIG;
+
+type EquationNumberingConfig = NonNullable<MathConfig['equationNumbering']>;
 
 const FALLBACK_COLOR: ColorValue = { model: 'rgb', hex: '#000000' };
 
@@ -48,6 +54,18 @@ export const MathSection = memo(function MathSection() {
       type: 'UPDATE_CONFIG',
       payload: { math: hasKeys ? next : undefined },
     });
+  };
+
+  const eqRaw = raw?.equationNumbering;
+  const eq = math.equationNumbering;
+  const DE = D.equationNumbering;
+  const updateEquations = (partial: Partial<EquationNumberingConfig>) => updateMath({ equationNumbering: { ...eqRaw, ...partial } });
+  const resetEquationField = (field: keyof EquationNumberingConfig) => {
+    if (!eqRaw) return;
+    const next = { ...eqRaw };
+    delete next[field];
+    if (Object.keys(next).length === 0) resetField('equationNumbering');
+    else updateMath({ equationNumbering: next });
   };
 
   const hasOverrides = raw !== undefined && Object.keys(raw).length > 0;
@@ -132,6 +150,54 @@ export const MathSection = memo(function MathSection() {
         isDefault={math.keepWithLeadIn === D.keepWithLeadIn}
         onReset={() => resetField('keepWithLeadIn')}
       />
+      <ToggleSwitch
+        label={labels.mathEquationNumbering}
+        checked={eq.enabled}
+        onChange={(v) => updateEquations({ enabled: v })}
+        tooltip={labels.mathEquationNumberingTooltip}
+        isDefault={eqRaw?.enabled === undefined}
+        onReset={() => resetEquationField('enabled')}
+      />
+      {eq.enabled && (
+        <NestedGroup>
+          <TextInput
+            label={labels.resourceTypeNumberingLabel}
+            value={eq.numberingTemplate}
+            onChange={(v) => updateEquations({ numberingTemplate: v === '' ? undefined : v })}
+            placeholder={DE.numberingTemplate}
+            tooltip={labels.resourceTypeNumberingTooltip}
+            isDefault={eqRaw?.numberingTemplate === undefined}
+            onReset={() => resetEquationField('numberingTemplate')}
+          />
+          <SelectInput
+            label={labels.resourceTypeResetCounterLabel}
+            value={eq.resetOn}
+            options={resetOnOptions(labels)}
+            onChange={(v) => updateEquations({ resetOn: v as ResourceCounterReset })}
+            tooltip={labels.resourceTypeResetCounterTooltip}
+            isDefault={eqRaw?.resetOn === undefined}
+            onReset={() => resetEquationField('resetOn')}
+          />
+          <SelectInput
+            label={labels.resourceTypeCounterFormatLabel}
+            value={eq.counterFormat}
+            options={counterFormatOptions(labels)}
+            onChange={(v) => updateEquations({ counterFormat: v as ResourceCounterFormat })}
+            tooltip={labels.resourceTypeCounterFormatTooltip}
+            isDefault={eqRaw?.counterFormat === undefined}
+            onReset={() => resetEquationField('counterFormat')}
+          />
+          <TextInput
+            label={labels.mathEquationFormat}
+            value={eq.format}
+            onChange={(v) => updateEquations({ format: v === '' ? undefined : v })}
+            placeholder={DE.format}
+            tooltip={labels.mathEquationFormatTooltip}
+            isDefault={eqRaw?.format === undefined}
+            onReset={() => resetEquationField('format')}
+          />
+        </NestedGroup>
+      )}
     </CollapsibleSection>
   );
 });

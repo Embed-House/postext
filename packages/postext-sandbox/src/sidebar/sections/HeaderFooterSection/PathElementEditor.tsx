@@ -158,7 +158,7 @@ export function PathElementEditor({ raw, resolved, slotKind, siblings = [], fram
       <SizeToFields axis="width" value={widthTo} slotKind={slotKind} siblings={siblings} frames={frames} allowNone onChange={(to) => updateSize({ width: to ?? width })} />
       {!heightTo && <DimensionInput label={labels.height} value={height} onChange={(d) => updateSize({ height: d })} min={0} step={1} />}
       <SizeToFields axis="height" value={heightTo} slotKind={slotKind} siblings={siblings} frames={frames} allowNone onChange={(to) => updateSize({ height: to ?? height })} />
-      <PlacementFields placement={resolved.placement} slotKind={slotKind} siblings={siblings} frames={frames} onChange={(placement) => update({ placement })} />
+      <PlacementFields placement={resolved.placement} slotKind={slotKind} siblings={siblings} frames={frames} pin={raw.pin} onPinChange={(pin) => update({ pin })} onChange={(placement) => update({ placement })} />
       <SelectInput
         label={labels.headerFooterElementParity}
         value={raw.parity ?? 'all'}
