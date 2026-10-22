@@ -3,20 +3,20 @@
   "slug": "broadsheet-six-columns",
   "sourceHash": "40da5972450c6a95d05664a35d772dd2092e460e9431cb7565d53b049b26cef7",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:56:20.796Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:52:24.776Z",
   "variants": {
     "en": {
-      "hash8": "5da12b35",
-      "vdtHash": "6b3db9e8c1b78fb5765747ea202eb4c4e2fb5b84",
+      "hash8": "a6f4d729",
+      "vdtHash": "681e9c700e07e377d1c75e609df1343774e56b5a",
       "timings": {
-        "importMs": 426,
-        "fontsMs": 61,
-        "buildMs": 157,
-        "totalMs": 2073,
+        "importMs": 1692,
+        "fontsMs": 192,
+        "buildMs": 90,
+        "totalMs": 3210,
         "builds": 1
       },
       "specimen": {
@@ -32,7 +32,7 @@
         "body": {
           "family": "Newsreader",
           "sizePt": 9,
-          "leadingPt": 12.200000000000001
+          "leadingPt": 12.2
         },
         "families": [
           "Archivo Narrow",
@@ -84,7 +84,7 @@
           "h": 1592,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 153048,
+          "bytes": 155510,
           "alt": "Opening page 4: Arts & Weather. Ledgers and lies. The shipping office of The Tally Clerk. · The next five days in Corrington."
         }
       ],
@@ -116,13 +116,13 @@
       },
       "sandbox": {
         "file": "broadsheet-six-columns.postext",
-        "bytes": 1366212,
+        "bytes": 1366210,
         "folio": "ac94dacf",
         "chapters": [
           {
             "pages": 4,
-            "hash": "05483f787befd7ca",
-            "lines": "a1208e992e35eed3"
+            "hash": "ffb7235d245319e3",
+            "lines": "545cfc816bb29a5b"
           }
         ]
       },
@@ -448,12 +448,17 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “40 closures a year by 2070, as the sea rises”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "vdt",
