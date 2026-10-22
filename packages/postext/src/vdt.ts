@@ -1554,10 +1554,23 @@ export interface VDTResourceVideo {
   qr?: VDTVideoQr;
 }
 
+/** A score resource's systems (#1172), each `width` px wide (its own
+ *  width scaled) at `y` px from the body's top. */
+export interface VDTResourceScore {
+  systems: Array<{ system: ScoreSystem; y: number; width: number; height: number }>;
+  color: string;
+  /** Alt text: the resource's, else the title and composer read from the
+   *  notation. */
+  alt?: string;
+}
+
 export interface ResolvedResourceBlock {
   /** The source resource. */
   resource: Resource;
-  kind: 'bitmap' | 'svg' | 'table' | 'video';
+  kind: 'bitmap' | 'svg' | 'table' | 'video' | 'score';
+  /** Present when `kind === 'score'` (#1172): the engraved systems, stacked
+   *  down `bodyRect` with `gapPx` between two, in `color`. */
+  score?: VDTResourceScore;
   /** Present when `kind === 'video'`: playback and the poster's overlays
    *  (#454). The poster itself is `fileId` / `format`, drawn like a
    *  bitmap. */

@@ -1,3 +1,4 @@
+import type { ScoreFormat } from './music/types.js';
 import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering.js';
 import type { FrameLookEntry, LabelStyle, PageTemplate } from './composed/types.js';
 import type { StoryJump } from './composed/carryTypes.js';
@@ -281,7 +282,7 @@ export interface ResourceType {
 }
 
 /** The concrete payload kind a `Resource` carries. */
-export type ResourceKind = 'bitmap' | 'svg' | 'table' | 'video';
+export type ResourceKind = 'bitmap' | 'svg' | 'table' | 'video' | 'score';
 
 /** Where a video resource plays from (#454): a YouTube or Vimeo page, or a
  *  self-hosted file (an uploaded MP4 or WebM, or one at a web address: a
@@ -641,6 +642,16 @@ export interface Resource {
      *  already or must stay as it is. Default: the document's
      *  `diagramStyle.inlineFonts` (on). */
     inlineFonts?: boolean;
+  };
+  /** Present when `kind === 'score'` (#1172): a music example, engraved
+   *  at the column's width, numbered and captioned like a figure. */
+  score?: {
+    format: ScoreFormat;
+    /** The notation: ABC, MusicXML, MEI or Humdrum text. */
+    source: string;
+    /** Id of a named score style (`PostextConfig.scoreStyles`); unset, the
+     *  document's `scoreStyle`. */
+    styleId?: string;
   };
   /** Present when `kind === 'table'`. */
   table?: {

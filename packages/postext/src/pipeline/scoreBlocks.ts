@@ -5,7 +5,8 @@
 // between systems.
 
 import type { ContentBlock, ScoreBlockInfo } from '../parse/types.js';
-import type { VDTScoreInfo } from '../vdt.js';
+import type { VDTResourceScore, VDTScoreInfo } from '../vdt.js';
+import type { Resource } from '../types.js';
 import type { ResolvedConfig } from '../vdt.js';
 import type { ResolvedScoreStyleConfig } from '../types.js';
 import type { BlockStyle } from './styles.js';
@@ -89,6 +90,34 @@ export function expandScoreBlocks(
     });
   }
   return { blocks: out, expanded: true };
+}
+
+/** A score resource's body (#1172): its systems engraved `widthPx` wide
+ *  and stacked with the style's system gap. */
+export function layoutScoreResource(
+  resource: Resource,
+  resolved: ResolvedConfig,
+  widthPx: number,
+): { width: number; height: number; score: VDTResourceScore } {
+  const score = resource.score!;
+  const style = pickScoreStyle(resolved, score.styleId);
+  const options = scoreRenderOptions(style, resolved);
+  const dpi = resolved.page.dpi;
+  const gap = dimensionToPx(style.systemGap, dpi, dimensionToPx(resolved.bodyText.fontSize, dpi));
+  const render = renderScore(score.source, score.format, Math.max(40, widthPx), options);
+  const systems: VDTResourceScore['systems'] = [];
+  let y = 0;
+  for (const system of render.systems) {
+    if (systems.length > 0) y += gap;
+    systems.push({ system, y, width: system.widthPx, height: system.heightPx });
+    y += system.heightPx;
+  }
+  const alt = resource.altText?.trim() || [render.title, render.composer].filter(Boolean).join(', ');
+  return {
+    width: widthPx,
+    height: systems.length > 0 ? y : placeholderHeight(options),
+    score: { systems, color: style.color.hex, ...(alt ? { alt } : {}) },
+  };
 }
 
 /** Block style of one system: the score's margins above its first system

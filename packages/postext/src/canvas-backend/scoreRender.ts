@@ -2,7 +2,7 @@
 // stroked and its words set, in the block's colour, scaled to the width the
 // line gives the segment.
 
-import type { VDTLineSegment } from '../vdt.js';
+import type { VDTLineSegment, VDTResourceScore } from '../vdt.js';
 import type { ScoreSystem } from '../music/types.js';
 import { buildFontString } from '../measure/font.js';
 import { counterFlipBox } from './mirrorFrame.js';
@@ -20,30 +20,29 @@ function systemPaths(system: ScoreSystem): (Path2D | null)[] {
   return paths;
 }
 
-/** Paint a score segment whose line's baseline is the system's foot. */
-export function renderScoreSegment(
+/** Paint one system with its top-left at (`x`, `top`), `width` px wide. */
+export function paintScoreSystem(
   ctx: CanvasRenderingContext2D,
-  seg: VDTLineSegment,
+  system: ScoreSystem | undefined,
   x: number,
-  baseline: number,
+  top: number,
+  width: number,
   color: string,
 ): void {
-  const system = seg.scoreSystem;
-  const k = system && system.widthPx > 0 ? seg.width / system.widthPx : 1;
+  const k = system && system.widthPx > 0 ? width / system.widthPx : 1;
   const height = (system?.heightPx ?? 0) * k;
-  const top = baseline - height;
   if (!system || system.items.length === 0) {
     // The engraver is loading, or the notation did not load.
     saveContext(ctx);
     ctx.fillStyle = 'rgba(160, 160, 160, 0.15)';
-    ctx.fillRect(x, top, seg.width, height);
+    ctx.fillRect(x, top, width, height);
     restoreContext(ctx);
     return;
   }
   const paths = systemPaths(system);
   // Notation reads left to right in every document: a mirrored frame turns
   // it back (see `mirrorFrame.ts`).
-  counterFlipBox(ctx, x, seg.width, () => {
+  counterFlipBox(ctx, x, width, () => {
     saveContext(ctx);
     ctx.translate(x, top);
     ctx.scale(k, k);
@@ -69,4 +68,24 @@ export function renderScoreSegment(
     }
     restoreContext(ctx);
   });
+}
+
+/** Paint a score segment whose line's baseline is the system's foot. */
+export function renderScoreSegment(
+  ctx: CanvasRenderingContext2D,
+  seg: VDTLineSegment,
+  x: number,
+  baseline: number,
+  color: string,
+): void {
+  const system = seg.scoreSystem;
+  const k = system && system.widthPx > 0 ? seg.width / system.widthPx : 1;
+  paintScoreSystem(ctx, system, x, baseline - (system?.heightPx ?? 0) * k, seg.width, color);
+}
+
+/** Paint a score resource's systems down its body (#1172), scaled to the
+ *  body's width. */
+export function paintScoreBody(ctx: CanvasRenderingContext2D, score: VDTResourceScore, bx: number, by: number, bw: number): void {
+  const k = score.systems[0] && score.systems[0].width > 0 ? bw / score.systems[0].width : 1;
+  for (const s of score.systems) paintScoreSystem(ctx, s.system, bx, by + s.y * k, s.width * k, score.color);
 }

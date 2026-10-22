@@ -3,7 +3,7 @@ import { buildDocument } from '../pipeline/index.js';
 import { renderToHtmlIndexed } from '../html-backend.js';
 import { initMusicEngine } from '../music/index.js';
 import { parseMarkdown } from '../parse/index.js';
-import type { PostextConfig } from '../types.js';
+import type { PostextConfig, Resource } from '../types.js';
 import type { VDTBlock } from '../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
@@ -121,5 +121,34 @@ describe('score fences in configurations written before them', () => {
     expect(migrateConfig<PostextConfig>({}, 19, { content: '```js\nlet a;\n```\n' }).scoreStyle).toBeUndefined();
     expect(migrateConfig<PostextConfig>({ scoreStyle: { enabled: true } }, 19, { content: '```abc\n```' }).scoreStyle).toEqual({ enabled: true });
     expect(migrateConfig<PostextConfig>({}, 20, { content: '```abc\nX:1\n```\n' }).scoreStyle).toBeUndefined();
+  });
+});
+
+describe('score resources', () => {
+  beforeAll(async () => { await initMusicEngine(); }, 60_000);
+
+  const resource: Resource = {
+    id: 'ex-ode',
+    typeId: 'example',
+    kind: 'score',
+    caption: 'The opening of the tune',
+    createdAt: 0,
+    updatedAt: 0,
+    score: { format: 'abc', source: 'X:1\nT:Ode to Joy\nM:4/4\nL:1/4\nK:D\nFFGA|AGFE|DDEF|F3/2E/2E2|\n' },
+  };
+
+  it('numbers a score resource as an example, in the document language', () => {
+    const markdown = '# One\n\nAs :ref{id="ex-ode"} shows:\n\n::resource{id="ex-ode"}\n\nAfter.\n';
+    for (const [locale, prefix] of [['en', 'Example'], ['es', 'Ejemplo'], ['de', 'Notenbeispiel'], ['ja', '譜例']] as const) {
+      const doc = buildDocument({ markdown, resources: [resource] }, { ...CONFIG, locale });
+      const blocks = doc.pages.flatMap((p) => p.columns.flatMap((c) => c.blocks)).concat(doc.pages.flatMap((p) => p.floats ?? []));
+      const rb = blocks.find((b) => b.resourceBlock?.kind === 'score')?.resourceBlock;
+      expect(rb, locale).toBeDefined();
+      expect(rb!.captionPrefix).toBe(prefix);
+      expect(rb!.number).toMatch(/^1[.-]1$/);
+      expect(rb!.score!.systems.length).toBeGreaterThan(0);
+      expect(rb!.score!.alt).toBe('Ode to Joy');
+      expect(rb!.bodyRect.height).toBeGreaterThan(20);
+    }
   });
 });

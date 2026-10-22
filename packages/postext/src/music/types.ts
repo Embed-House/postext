@@ -21,6 +21,12 @@ export function markdownHasScore(markdown: string): boolean {
   return SCORE_FENCE_RE.test(markdown);
 }
 
+/** Whether laying out `content` engraves a score: a notation fence in its
+ *  markdown, or a score resource (#1172). */
+export function contentHasScore(content: { markdown: string; resources?: ReadonlyArray<{ kind: string }> }): boolean {
+  return markdownHasScore(content.markdown) || (content.resources ?? []).some((r) => r.kind === 'score');
+}
+
 /** How a score is engraved: the renderer options `scoreStyle` resolves to. */
 export interface ScoreRenderOptions {
   /** Height of a five-line staff, in px. */

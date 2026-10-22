@@ -74,7 +74,7 @@ export { FOLIO_PAPER_STOCKS, FOLIO_MAX_TILT, DEFAULT_FOLIO_CONFIG, isNewspaperSi
 export type { FolioPaperStock } from './folio.js';
 export { DEFAULT_HEADER_FOOTER_SLOT, DEFAULT_HEADER_SLOT, DEFAULT_FOOTER_SLOT, DEFAULT_TEXT_ELEMENT, DEFAULT_RULE_ELEMENT, resolveHeaderFooterConfig, stripHeaderFooterDefaults } from './headerFooter.js';
 export type { HeaderFooterSlotKind } from './headerFooter.js';
-export { defaultResourceTypes, defaultVideoResourceType, effectiveResourceTypes } from './resourceTypes.js';
+export { defaultResourceTypes, defaultVideoResourceType, defaultExampleResourceType, effectiveResourceTypes } from './resourceTypes.js';
 export { DEFAULT_PARTS_CONFIG, resolvePartsConfig, stripPartsDefaults } from './parts.js';
 export { DEFAULT_HEADING_STYLES, resolveHeadingStylesConfig, stripHeadingStylesDefaults } from './headingStyles.js';
 export { DEFAULT_TOC_CONFIG, resolveTocConfig, stripTocDefaults } from './toc.js';

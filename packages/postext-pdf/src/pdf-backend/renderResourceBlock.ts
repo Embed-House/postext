@@ -27,6 +27,7 @@
  * become clickable link annotations targeting the resource embed's destination.
  */
 
+import { paintScoreBody } from './scoreRender.js';
 import { PDFHexString, popGraphicsState, pushGraphicsState, setFillingColor, type Color, type PDFImage, type PDFDocument, type PDFEmbeddedPage, type PDFFont } from 'pdf-lib';
 import type {
   VDTBlock,
@@ -869,7 +870,7 @@ function captionText(rb: ResolvedResourceBlock): string {
  *  the reader hears a poster that links to a video, not a still. */
 function figureAlt(rb: ResolvedResourceBlock): string {
   const label = `${rb.captionPrefix} ${rb.number}`.trim();
-  const text = rb.resource.altText?.trim() || captionText(rb);
+  const text = rb.resource.altText?.trim() || rb.score?.alt || captionText(rb);
   // Labels drawn as text are read as text, after the picture (#860).
   if (rb.kind !== 'video') return altWithLabels(text || label, undrawnLabels(rb.labels));
   const name = rb.captionPrefix.trim() || 'Video';
@@ -1283,6 +1284,10 @@ export function renderResourceBlock(
     if (rb.labels) paintFigureLabels(ctx, block, rb, bx, by, fontCache, linkColor, linkRegistry, structure);
   } else if (rb.kind === 'table') {
     renderTable(ctx, rb, bx, by, fontCache, images, linkColor, linkRegistry, owner);
+  } else if (rb.kind === 'score') {
+    // A music example (#1172): its systems down the body, vector.
+    tagContent(ctx, owner);
+    paintScoreBody(ctx, rb, bx, by, bw);
   }
 
   // Named destination for inline refs: top-left of the placed block (the

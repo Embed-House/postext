@@ -5,7 +5,7 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, extname, join, relative, resolve, sep } from 'node:path';
-import type { PostextConfig, Resource } from 'postext';
+import type { PostextConfig, Resource, ScoreFormat } from 'postext';
 import {
   bitmapInfo,
   createBundle,
@@ -63,6 +63,15 @@ const MARKDOWN_EXT = new Set(['.md', '.markdown', '.mdx', '.txt']);
 const SKIP_DIRS = new Set(['node_modules', '.git']);
 
 const fileCache = new Map<string, { mtimeMs: number; size: number; bytes: Uint8Array }>();
+
+
+/** Notation files read as music examples (#1172), by extension. */
+const SCORE_FILE_FORMATS: Record<string, ScoreFormat> = {
+  '.abc': 'abc',
+  '.musicxml': 'musicxml',
+  '.mei': 'mei',
+  '.krn': 'humdrum',
+};
 
 /** A file's bytes, read again only when its size or date changed. */
 export function readFileCached(path: string): Uint8Array {
@@ -228,8 +237,18 @@ function looseResources(dir: string): { resources: Resource[]; files: Map<string
   }
   const taken = new Set<string>();
   for (const file of [...tree.keys()].sort(naturalCompare)) {
-    if (!isBitmapFile(file) && !isSvgFile(file)) continue;
     const id = basename(file, extname(file));
+    // A notation file (#1172): a music example, its text the score.
+    const scoreFormat = SCORE_FILE_FORMATS[extname(file).toLowerCase()];
+    if (scoreFormat) {
+      if (taken.has(id)) continue;
+      taken.add(id);
+      const now = Date.now();
+      const source = new TextDecoder().decode(tree.get(file));
+      resources.push({ id, typeId: 'example', kind: 'score', score: { format: scoreFormat, source }, createdAt: now, updatedAt: now });
+      continue;
+    }
+    if (!isBitmapFile(file) && !isSvgFile(file)) continue;
     if (taken.has(id)) continue;
     taken.add(id);
     resources.push(resourceFromSpec({ id, typeId: 'figure', kind: isSvgFile(file) ? 'svg' : 'bitmap', file } as BundleResourceSpec, sizeOf(file), fileId));

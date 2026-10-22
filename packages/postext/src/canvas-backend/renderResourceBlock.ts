@@ -13,6 +13,7 @@
  * surface, so clickability is PDF-only for v1.
  */
 
+import { paintScoreBody } from './scoreRender.js';
 import type { VDTBlock, VDTFigureLabelLayout, VDTLine, ResolvedResourceBlock, RoundedOutline, VDTResourceVideo } from '../vdt.js';
 import { playMarkTriangle, qrModuleRuns } from '../pipeline/videoOverlay.js';
 import { fillFlowText, setVerticalPaint, verticalPaintActive } from './verticalText.js';
@@ -877,6 +878,9 @@ export function renderResourceBlock(
     if (rb.labels) paintFigureLabels(ctx, rb, bx, by);
   } else if (rb.kind === 'table') {
     renderTable(ctx, rb, bx, by, inkHex);
+  } else if (rb.kind === 'score') {
+    if (rb.score && rb.score.systems.length > 0) paintScoreBody(ctx, rb.score, bx, by, bw);
+    else drawPlaceholder(ctx, bx, by, bw, bh, 'Score');
   }
 
   // Caption bar (behind the caption lines), then caption + note lines — all

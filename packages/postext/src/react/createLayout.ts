@@ -3,7 +3,7 @@ import type { PostextContent, PostextConfig } from '../types.js';
 import { buildDocument } from '../pipeline/index.js';
 import { renderToCanvas } from '../canvas-backend/index.js';
 import { initMathEngine, isMathReady } from '../math/index.js';
-import { initMusicEngine, isMusicReady, markdownHasScore } from '../music/index.js';
+import { contentHasScore, initMusicEngine, isMusicReady } from '../music/index.js';
 import { contentHasMath } from '../parse/inlineSnippet.js';
 
 export interface PostextLayoutProps {
@@ -37,7 +37,7 @@ export function createLayout(content: PostextContent, config?: PostextConfig): F
           // A failed start leaves placeholders (and the engine's warning).
           await initMathEngine().catch((err: unknown) => console.error(err));
         }
-        if (!isMusicReady() && markdownHasScore(content.markdown)) {
+        if (!isMusicReady() && contentHasScore(content)) {
           await initMusicEngine().catch((err: unknown) => console.error(err));
         }
         if (cancelled) return;
