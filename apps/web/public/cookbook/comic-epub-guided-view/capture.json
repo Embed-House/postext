@@ -3,12 +3,12 @@
   "slug": "comic-epub-guided-view",
   "sourceHash": "a09c69f139cbc031108a022ed436d4ff6eebaaa95c3bab30d1541cc7dab1e042",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:40:29.846Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:33:58.332Z",
   "variants": {
     "en": {
       "hash8": "70e98044",
@@ -286,7 +286,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
@@ -565,7 +571,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
@@ -844,17 +856,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "fa8b11e1",
+      "hash8": "b7537251",
       "vdtHash": "1ae1a2a01eb6d5de92779490b23522a6747ebf11",
       "timings": {
-        "importMs": 542,
-        "fontsMs": 570,
-        "buildMs": 208,
-        "totalMs": 2245,
+        "importMs": 707,
+        "fontsMs": 557,
+        "buildMs": 265,
+        "totalMs": 2645,
         "builds": 1
       },
       "specimen": {
@@ -936,7 +954,7 @@
       },
       "pdf": {
         "file": "comic-epub-guided-view.pdf",
-        "bytes": 844405,
+        "bytes": 844404,
         "pages": 3
       },
       "sandbox": {
@@ -1124,7 +1142,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
@@ -1407,7 +1431,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
@@ -1689,7 +1719,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
@@ -1968,7 +2004,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "fr": {
@@ -2247,7 +2289,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "de": {
@@ -2526,7 +2574,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "it": {
@@ -2805,7 +2859,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     }
   }
