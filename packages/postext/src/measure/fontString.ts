@@ -226,3 +226,14 @@ export function fontStringFamily(font: string): string | null {
   const m = familyAfterSize(font.trim());
   return m ? firstFamily(m.family) || null : null;
 }
+
+/** `font` with its family list replaced by `family`, its style, weight and
+ *  size kept; null when the string names no size. For asking a measurer
+ *  for the same face in a family it cannot have (see `measuresOwnFace`). */
+export function fontStringWithFamily(font: string, family: string): string | null {
+  const s = font.trim();
+  const m = familyAfterSize(s);
+  if (!m) return null;
+  const at = s.lastIndexOf(m.family);
+  return at < 0 ? null : `${s.slice(0, at)}${family}`;
+}

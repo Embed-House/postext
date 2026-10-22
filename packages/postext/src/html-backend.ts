@@ -44,7 +44,7 @@ import { DEFAULT_CENTRAL_BASELINE, verticalFlowOf } from './vdt.js';
 import type { CjkRegion, ResourceSafeArea } from './types.js';
 import { holdsTurnedMark, segmentOrientation, verticalRuns, type ForcedOrientation, type VerticalRun } from './writingMode.js';
 import { graphemeCount, graphemesOf } from './measure/graphemes.js';
-import { measureSpacedWidth, measureTextWidth, withMeasureLanguage } from './measure/canvas.js';
+import { measureFontBox, measureSpacedWidth, measureTextWidth, measuresOwnFace, withMeasureLanguage } from './measure/canvas.js';
 import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures.js';
 import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces.js';
 import { fontFamilyOf } from './measure/vertical.js';
@@ -1117,12 +1117,28 @@ function pickSegmentFont(
 let shapedText: { lang: string | undefined } | null = null;
 
 /** {@link shapedText} of a document whose root declares `declared`
- *  (undefined: it declares none). */
-function shapedTextOf(declared: string | undefined): { lang: string | undefined } | null {
+ *  (undefined: it declares none) and whose text is set in `font`.
+ *
+ *  Null where the measurer does not have the book's faces
+ *  ({@link measuresOwnFace}): a host that writes the pages away from the
+ *  page they will be read on — the EPUB worker — may hold the faces'
+ *  bytes without having registered them where it measures, and then
+ *  everything measured again as the markup is written is measured in the
+ *  fallback. The pages are written as they were before #770 instead: off
+ *  the places the layout holds, which are the ones the canvas paints. */
+function shapedTextOf(declared: string | undefined, font: string | undefined): { lang: string | undefined } | null {
   const page = typeof document !== 'undefined';
   if (!page && typeof OffscreenCanvas === 'undefined') return null;
+  if (font !== undefined && !measuresOwnFace(font)) return null;
   if (declared !== undefined) return { lang: declared };
   return page ? { lang: undefined } : null;
+}
+
+/** A font string the document's text is set in, for {@link shapedTextOf}:
+ *  its first block's. */
+function documentFontString(doc: VDTDocument): string | undefined {
+  for (const block of doc.blocks) if (block.fontString) return block.fontString;
+  return undefined;
 }
 
 /**
@@ -2137,6 +2153,33 @@ function renderBullet(block: VDTBlock, rootDir: TextDirection = 'ltr'): string {
   return html;
 }
 
+/**
+ * The `line-height` a line box takes so the browser stands its text on the
+ * line's baseline: a box of that height sets its text `(height + ascent −
+ * descent) / 2` from its top, and the engine puts the baseline at
+ * `line.baseline` (`lineBaselineOffset`: 0.8 of the leading), which the
+ * canvas and the PDF paint on.
+ *
+ * Without it a line box keeps `line-height: normal`, which stands the text
+ * on the face's own ascent — the leading's 0.8 only where the two happen to
+ * meet — while everything else the line carries (a highlight band, an
+ * emphasis mark, a formula, a chip, a swatch, a leader) is placed from
+ * `line.baseline`. The two then drift apart as the leading moves away from
+ * the face's natural line: a page set 1.5 em on a face whose ascent is 0.85
+ * em leaves the text a third of an em above its band.
+ *
+ * '' where the measurer gives no face metrics (nothing measures, or the
+ * faces are not loaded where the markup is written): the box keeps
+ * `normal`, as it did up to postext 1.55.
+ */
+function baselineLineHeightDecl(line: VDTLine, fontString: string): string {
+  const box = measureFontBox(fontString);
+  if (!box) return '';
+  const height = 2 * (line.baseline - line.bbox.y) - (box.ascent - box.descent);
+  if (!Number.isFinite(height) || height < 0) return '';
+  return `line-height:${height.toFixed(3)}px;`;
+}
+
 function renderLine(
   line: VDTLine,
   block: VDTBlock,
@@ -2163,6 +2206,8 @@ function renderLine(
     `top:${line.bbox.y}px;` +
     `height:${line.bbox.height}px;` +
     `font:${font};` +
+    // After `font:`, which resets the line height to `normal`.
+    baselineLineHeightDecl(line, block.fontString) +
     `color:${block.color};` +
     strikethroughDecl +
     trackingDecl +
@@ -2724,6 +2769,8 @@ function renderResourceLine(
     `top:${line.bbox.y}px;` +
     `height:${line.bbox.height}px;` +
     `font:${baseFont};` +
+    // After `font:`, which resets the line height to `normal`.
+    baselineLineHeightDecl(line, fonts.normal) +
     `color:${color};` +
     // A tracked line (a table header set with `headerLetterSpacing`) was
     // measured with the tracking in its widths.
@@ -3993,7 +4040,7 @@ export function renderToHtmlIndexed(
   const svgUrl = svgFontInliner(doc, options);
   // The language the pages' text is shaped in, for the words set whole
   // (#770): the declared one, else the writing page's.
-  shapedText = shapedTextOf(docLang);
+  shapedText = shapedTextOf(docLang, documentFontString(doc));
   // A document shaped in its own language sets a tracked ligature with
   // the tracking of each of its letters, as the layout counted it (#770).
   ownShaping = shapedIn !== undefined && shapedText !== null;

@@ -1,6 +1,6 @@
 import { cjkMarkPieces } from './cjkClasses.js';
 import { hasCJK } from './cjk.js';
-import { fontStringFamily } from './fontString.js';
+import { fontStringFamily, fontStringWithFamily } from './fontString.js';
 
 type Context2D = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 
@@ -474,6 +474,87 @@ export function measureInkBox(text: string, font: string): { ascent: number; des
   const descent = m.actualBoundingBoxDescent;
   if (typeof ascent !== 'number' || typeof descent !== 'number' || !Number.isFinite(ascent) || !Number.isFinite(descent)) return null;
   return { ascent, descent };
+}
+
+/** The faces' line boxes, by font string (see {@link measureFontBox}). */
+const fontBoxes = new Map<string, { ascent: number; descent: number } | null>();
+onTextWidthCacheClear(() => fontBoxes.clear());
+
+/** The line box `font` is laid out in, above and below the alphabetic
+ *  baseline (px), or null when the measurer gives no face metrics. These
+ *  are the numbers a browser sets a line box by: text in a box of
+ *  `line-height: L` stands on a baseline `(L + ascent − descent) / 2`
+ *  from the box's top, and `line-height: normal` makes L their sum. */
+export function measureFontBox(font: string): { ascent: number; descent: number } | null {
+  const known = fontBoxes.get(font);
+  if (known !== undefined) return known;
+  const m = metricsOf(' ', font) as Partial<TextMetrics>;
+  const ascent = m.fontBoundingBoxAscent;
+  const descent = m.fontBoundingBoxDescent;
+  const box = typeof ascent === 'number' && typeof descent === 'number'
+    && Number.isFinite(ascent) && Number.isFinite(descent) && ascent + descent > 0
+    ? { ascent, descent }
+    : null;
+  fontBoxes.set(font, box);
+  return box;
+}
+
+/** A family nothing can have: a font string naming it is set in whatever
+ *  the measurer falls back to, which is what a missing family gets. */
+const NO_SUCH_FAMILY = '__postext_no_such_family__';
+/** Letters and figures wide enough that two faces rarely set them alike. */
+const FACE_PROBE = 'Hamburgefonstiv 0123';
+
+/** Whether the measurer has a face of `font`'s own family (by family, by
+ *  weight and by slant), rather than setting it in its fallback: the same
+ *  probe in a family nothing has is measured and its line box read, and
+ *  the face counts as present where either differs.
+ *
+ *  A host may hold a book's faces without having registered them where it
+ *  measures — a worker has none of the page's fonts — and everything it
+ *  measures is then set in the fallback. Text whose places the layout
+ *  already holds is unharmed; text measured again as it is written out is
+ *  not, so the writer asks this before it measures anything of its own.
+ *
+ *  A book set in a generic family (`serif`, `sans-serif`) reads as absent,
+ *  since that is what the fallback is: the writer then keeps to what it
+ *  can place from the layout, which is never wrong, only less exact. */
+export function measuresOwnFace(font: string): boolean {
+  const known = ownFaces.get(font);
+  if (known !== undefined) return known;
+  const present = probeOwnFace(font);
+  ownFaces.set(font, present);
+  return present;
+}
+
+const ownFaces = new Map<string, boolean>();
+let readsFamilies: boolean | undefined;
+onTextWidthCacheClear(() => {
+  ownFaces.clear();
+  readsFamilies = undefined;
+});
+
+/** Whether the measurer answers by the family it is asked for at all: one
+ *  that sets two generic families alike is a stand-in (a test's, a host's
+ *  own) and says nothing about which faces are there, so it is taken at
+ *  its word. */
+function measurerReadsFamilies(): boolean {
+  if (readsFamilies === undefined) {
+    readsFamilies = measureUncachedWidth(FACE_PROBE, '100px serif') !== measureUncachedWidth(FACE_PROBE, '100px monospace');
+  }
+  return readsFamilies;
+}
+
+function probeOwnFace(font: string): boolean {
+  if (!measurerReadsFamilies()) return true;
+  const missing = fontStringWithFamily(font, NO_SUCH_FAMILY);
+  // A string the parser does not read: nothing to tell it from, and the
+  // measurer answers for it as it always did.
+  if (missing === null) return true;
+  const own = measureFontBox(font);
+  const none = measureFontBox(missing);
+  if (own && none && (own.ascent !== none.ascent || own.descent !== none.descent)) return true;
+  return measureUncachedWidth(FACE_PROBE, font) !== measureUncachedWidth(FACE_PROBE, missing);
 }
 
 /** How far the ink of a text reaches above and below the baseline at each
