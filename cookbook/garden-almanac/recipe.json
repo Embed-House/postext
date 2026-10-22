@@ -27,7 +27,7 @@
     { "package": "postext", "note": "page 28 is the chapter's closing page, where a page-wide float moves up to one line under the text (layout.hugClosingFloats, on by default); the copy and the matrix's drawings are sized so that the matrix ends about 10 mm above the bottom margin" }
   ],
   "related": ["atlas-map-sheet", "annual-report-flush-columns", "bistro-menu", "recipe-card"],
-  "engine": { "postext": "1.46.2" },
+  "engine": { "postext": "1.57.0" },
   "kit": ["core", "fonts", "viewer", "images"],
   "sample": { "locales": ["en", "es"] },
   "capture": {
@@ -60,5 +60,5 @@
   },
   "license": { "code": "MIT", "content": "CC-BY-4.0" },
   "created": "2026-09-25",
-  "updated": "2026-10-10"
+  "updated": "2026-10-22"
 }
