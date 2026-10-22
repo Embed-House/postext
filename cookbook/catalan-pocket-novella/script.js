@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 104 · A Catalan novella, hyphenated by the IEC rules ═══════
 // https://postext.dev/en/cookbook/catalan-pocket-novella
 // Code: MIT · Text: N. Oller, El transplantat, 1928 (PD, Viquitexts) · Pictures: diffusion models
-// Fonts: Gentium Book Plus, Cormorant Garamond, Cormorant SC (OFL) · Needs postext ≥ 1.30.0
+// Fonts: Gentium Book Plus, Cormorant Garamond, Cormorant SC (OFL) · Needs postext ≥ 1.57.0
 import {
   buildDocumentWithFonts, renderPageToCanvas, registerResourceImage,
 } from 'https://esm.sh/postext';
