@@ -2519,7 +2519,34 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   reason (listed as `allowed`; `--exceptions FILE` reads another file); an
   invalid entry fails the check, one that matches nothing is a note (6.18).
   `repeatOverflow`, `moduleUnknown`, `moduleAsPage`, `moduleNested` and
-  `moduleNameRejected` fail too.
+  `moduleNameRejected` fail too. When the covered frame is a box (or a
+  frame hung from it) and the covering one is a picture anchored inside
+  that box, the report says so: the box's text runs under the picture as
+  it grows. Put the picture in the box's fence so the box grows round it.
+  Do not split the box's words into a capped frame above the pictures:
+  that leaves the box empty (`emptyFrame`, below).
+- **Empty frames = 0** (`emptyFrame`, skill 1.64): every frame lays out
+  content of its own. The check reads the HTML export: a frame whose only
+  block is its own box (an empty fence, `optional: true` with no fence, or
+  a fence whose words only a `setsContent` design prints) fails, and so
+  does a template frame the HTML does not write (nothing sent to it, no
+  style). These are the frames the Sandbox marks with its empty-frame
+  placeholder («Escribe aquí», «Write here»), which never prints, so no
+  render shows them. Each line names the page, the frame and the Markdown
+  line that fills it. Fix it by writing the box's real content in its
+  fence (words, `::resource`, `:::figure`, rows of pictures and of centred
+  captions in `:::columns{count=3 breaks="2,3"}`, nested `:::callout`
+  panels) and letting the box grow; the frames hung from it for those
+  pieces go (6.5). A frame of ruled lines (`rules`) is meant to be empty. A
+  frame a chain goes on in that the story never reaches is a warning
+  («Continues …» in the Sandbox).
+- **Frames scaled as written = 0** (`frameScaled`, a warning, skill 1.64):
+  every frame the reflow ladder already set below 100 % at the text as
+  written, with frame, page and the text and picture scales. The measure is
+  wrong: widen the frame or its padding to the source's tracked width
+  (`--wrap-slack`), let the box grow, or let the story go on. Shrinking
+  (`fit.minScale`) is the reserve for longer editions, not the fix; the
+  Sandbox hides the scale badges by default (`debug.fitMarks`).
 - **Reading order = source order**: the HTML viewer (`postext html`) writes
   each page's frames in reading order; the script checks they come in the
   order the Markdown sends content to them, and warns when two editions
@@ -2534,7 +2561,9 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   Each page must rearrange (the reflow log) or go on; a `frameOverflow`
   whose proposals carry values is a warning (the next move of whoever fits
   the copy), any other new warning fails. Fix the template (`fit`,
-  `maxHeight`, `next`, `overflow`), never the factor. The script works from
+  `maxHeight`, `next`, `overflow`), never the factor. A box whose text
+  runs under its own pictures in the stress run needs those pictures in
+  its fence (6.5), not its words moved out. The script works from
   the command line's JSON and does not read frame boxes; the Cookbook bench's
   C38 does, and since 1.39 it also fails a frame pushed past any edge of the
   type area (foot, head, left, right) or of the bleed, and on a spread

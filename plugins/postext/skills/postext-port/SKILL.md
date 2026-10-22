@@ -519,6 +519,21 @@ one self-contained executable per system (`postext-macos-arm64`,
 Node, `npx postext-cli` works too. It runs the real engine and reads a project
 folder as the Sandbox does. **Iterate with it in watch mode** (step 7).
 
+**Check the command at the start of every session**, and again before you
+declare a round-2 port (composed pages need 1.48 or later; the checks of
+step 7 read the version):
+
+```bash
+postext --version || echo "postext missing"
+npm i -g postext-cli@latest                                  # when missing or older than npm view postext-cli version
+```
+
+A global npm install lives in one Node version's folder: switching the nvm
+default (`nvm alias default …`) drops it from the `PATH` without a word, and
+a stale executable in `~/.local/bin` keeps answering with an old engine. If
+`postext --version` and `npm view postext-cli version` differ, update before
+reading any check.
+
 The Node tools are optional: `scripts/render.mjs` is the fallback when the
 executable cannot be downloaded. Its `SANDBOX-WARN` lines (the Sandbox's own
 checks) come only with `--repo /path/to/postext`, a Postext checkout with
@@ -901,6 +916,56 @@ frame or record the pair with its reason in the project's
 `composed-check.json` (composed-pages.md §6.18). `compare_pages.py --score
 --check` fails the likeness score while an overlap remains.
 
+**When the stress run puts a box's text under its own pictures, put the
+pictures inside the box.** A picture hung from a box (anchored to its
+corner, laid over its foot) stays where it is when the text runs longer,
+so the text runs under it. The fix is to move the picture (and its
+caption) into the box's fence, as `::resource`, `:::figure` or a
+`:::columns` row, so the box grows and everything under it moves down.
+Never move the box's words out into a capped text frame above the
+pictures: the box is left with no content of its own, the Sandbox shows
+its empty-frame placeholder on it, and a longer edition overflows the
+capped frame instead (composed-pages.md §6.5).
+
+**Review every page side by side before you call a round done.** The
+checks pass on pages a reader sees are wrong: on a 28-page textbook every
+check passed while captions stood beside the wrong photos, a diagram's
+captions had merged into its intro, tab icons floated beside their tabs,
+a box came out 6 mm taller than the source and every list was spaced
+wider. Make the pairs of the whole book at 80 dpi or more and look at
+every pair, not a sample:
+
+```bash
+python3 scripts/compare_pages.py source.pdf /tmp/pages --source-pages 1-28 --render-pages 1-28 --out /tmp/review --dpi 80
+```
+
+On each pair, go through this list and fix what differs (or name it in the
+report):
+
+- **Tabs and icons**: every tab on its box, at its corner, with its icon
+  (`label.icon`) and not a shape left beside it.
+- **Captions**: each caption under or beside the picture it names, in its
+  own style; no caption read into a box's running text, none merged into
+  an intro.
+- **Lists**: the gap before, between and after items as in the source
+  (usually the paragraph gap, not the default 1.5 em).
+- **Boxes**: height, feet and paddings as drawn; a box that grows with its
+  pictures ends where the source's ends, not a padding lower.
+- **Art across edges**: an arrow head past a card, a figure standing over a
+  box's foot, in one piece with nothing left in the ground.
+- **Maps**: the key (symbols beside their names) and the scale bar as art
+  with its numbers, not run-on text in white boxes.
+- **Label colours**: small and rotated labels in the source's colour.
+- **Empty frames**: no box or frame without content (the Sandbox shows a
+  placeholder on each; `composed_check.py` fails on them).
+- **Shrunk text**: no frame set smaller than written (the check warns);
+  fix the measure, do not lower `fit.minScale`.
+
+`compare_pages.py --score` measures likeness in pixels, so it can improve
+while a page reads wrong (a caption beside the wrong photo costs almost
+nothing): use the score to catch regressions, and the review to accept a
+page.
+
 Build the PDF (`postext pdf my-book -o /tmp/my-book.pdf`, or `render.mjs --out`)
 for the print checks and once at the end, not on every iteration.
 
@@ -927,6 +992,8 @@ Fix the config or the Markdown until you reach:
   (no `frameOverflow`, 0 overlaps, reading order = source order, the stress
   test), and the report lists every `overlap: "allow"` frame and recorded
   exception with its reason;
+- with composed pages, every page reviewed side by side against the
+  checklist above;
 - `converged=true`;
 - no warnings;
 - `port_audit.py` at 0 in every attribute, or each gap left named in the

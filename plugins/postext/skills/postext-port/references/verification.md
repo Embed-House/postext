@@ -401,8 +401,8 @@ those lines, or run the script.
   `contentInConfig`, `tocGroupSplit`, template warnings, `unknownConfigKey` and `unknownConfigValue`, and
   on a page whose frames the HTML reads in another order than the Markdown; every other warning prints as
   WARN. `--json-out work/check.json` saves the result and keeps the report and the exit code, and
-  `preset_kit.py pack` refuses while that result failed (SKILL.md §8). It warns when editions read a page differently and lists the scaled
-  frames. `--stress 1.3` repeats each edition with the text 30 % longer (the Cookbook bench's C38): a
+  `preset_kit.py pack` refuses while that result failed (SKILL.md §8). It warns when editions read a page differently and on each
+  frame scaled as written (`frameScaled`). `--stress 1.3` repeats each edition with the text 30 % longer (the Cookbook bench's C38): a
   page must rearrange or go on; a `frameOverflow` with valued proposals warns, any other new warning
   fails (composed-pages.md §7). From postext 1.48 it also fails on `frameCovered` (a frame's lines,
   tab or pictures under an opaque frame painted after it) and `frameOutsideArea` (text past the trim,
@@ -410,7 +410,13 @@ those lines, or run the script.
   fixes, and ends with `overlaps: N`: close a port at 0. An overlap the source prints is `overlap:
   "allow"` on the frame or an entry with its reason in the project's `composed-check.json`
   (composed-pages.md §6.18); `compare_pages.py --score --check` fails the likeness score while one
-  remains.
+  remains. It also fails on frames that lay out nothing of their own (`emptyFrame`: the Sandbox's
+  «Write here» placeholder, which no render shows) and warns on every frame set smaller at the text as
+  written (`frameScaled`: fix the measure, not `fit.minScale`). A missing `postext`, or one older than
+  1.53.0, stops the check (exit 2) or warns, with the fix `npm i -g postext-cli@latest`; global npm
+  packages stay with the Node they were installed for, so after nvm switches its default Node, install
+  it again. Passing the check does not mean the pages are right: review every page side by side
+  (SKILL.md step 7, §3 below).
 - `CONFIG cjkGridClamped`: `cjk.grid` asked for more characters or lines than the margins leave room for.
 - `CONFIG fontFamilyStack`: a `fontFamily` (or any `…FontFamily`) holds a CSS stack (`'EB Garamond',
   Georgia, serif`); the text is set in the first family only (canvas, HTML and PDF embed one face per
@@ -476,6 +482,15 @@ Look at the sheet, then at single pairs:
   numbering;
 - page breaks: aim for the same pages as the source on most pages, and
   within ±1 page per chapter.
+
+Composed pages (textbooks, workbooks, magazines) need **every** page
+looked at, at 80 dpi or more (`--dpi 80`), with SKILL.md step 7's list:
+tabs and their icons, captions beside the right pictures, list spacing,
+box heights and feet, art across a box's or a card's edge, map keys and
+scale bars, label colours, empty frames and shrunk text. Every automatic
+check can pass on a page that reads wrong, and the `--score` likeness can
+improve while a caption moves beside the wrong photo: the score finds
+regressions, the review accepts a page.
 
 ### Attribute by attribute: `port_audit.py`
 
