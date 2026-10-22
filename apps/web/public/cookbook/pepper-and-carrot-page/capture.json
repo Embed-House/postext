@@ -3,21 +3,21 @@
   "slug": "pepper-and-carrot-page",
   "sourceHash": "16221a0473c9bc772dd35e9d758fc4f3111b226d57a43306a2965c5465912f88",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:41:47.395Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:33:59.093Z",
   "variants": {
     "en": {
-      "hash8": "eb802c99",
+      "hash8": "9fd32691",
       "vdtHash": "5b1c728f7fbbd533a4750aa355861202d1b3b50a",
       "timings": {
-        "importMs": 560,
-        "fontsMs": 301,
-        "buildMs": 168,
-        "totalMs": 1725,
+        "importMs": 650,
+        "fontsMs": 375,
+        "buildMs": 188,
+        "totalMs": 1899,
         "builds": 1
       },
       "specimen": {
@@ -99,7 +99,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 688484,
+        "bytes": 688487,
         "pages": 3
       },
       "sandbox": {
@@ -286,17 +286,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "4f585c6d",
+      "hash8": "2edd2441",
       "vdtHash": "a90c36d43fad75d592c989d7768284ce2a715a43",
       "timings": {
-        "importMs": 562,
-        "fontsMs": 335,
-        "buildMs": 190,
-        "totalMs": 1782,
+        "importMs": 1465,
+        "fontsMs": 409,
+        "buildMs": 187,
+        "totalMs": 2734,
         "builds": 1
       },
       "specimen": {
@@ -565,17 +571,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
-      "hash8": "c9273483",
+      "hash8": "45a33e6c",
       "vdtHash": "c1acac32fe32e65510d5ce5e71eafdab2db766f6",
       "timings": {
-        "importMs": 571,
-        "fontsMs": 305,
-        "buildMs": 185,
-        "totalMs": 1752,
+        "importMs": 887,
+        "fontsMs": 337,
+        "buildMs": 169,
+        "totalMs": 2198,
         "builds": 1
       },
       "specimen": {
@@ -657,7 +669,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 688760,
+        "bytes": 688761,
         "pages": 3
       },
       "sandbox": {
@@ -844,17 +856,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "c1abb2ab",
+      "hash8": "f05cdf33",
       "vdtHash": "6d4640c02a77be2578270ee81f7c11cb359284d5",
       "timings": {
-        "importMs": 458,
-        "fontsMs": 846,
-        "buildMs": 151,
-        "totalMs": 2155,
+        "importMs": 526,
+        "fontsMs": 531,
+        "buildMs": 158,
+        "totalMs": 1854,
         "builds": 1
       },
       "specimen": {
@@ -936,7 +954,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 739300,
+        "bytes": 739317,
         "pages": 3
       },
       "sandbox": {
@@ -1124,7 +1142,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
@@ -1407,17 +1431,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "4b3b7e5c",
+      "hash8": "94b6c045",
       "vdtHash": "c6747e7d24ce903aafc04151730f7047754f962a",
       "timings": {
-        "importMs": 555,
-        "fontsMs": 768,
-        "buildMs": 162,
-        "totalMs": 2113,
+        "importMs": 528,
+        "fontsMs": 603,
+        "buildMs": 177,
+        "totalMs": 1923,
         "builds": 1
       },
       "specimen": {
@@ -1500,7 +1530,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 725111,
+        "bytes": 725121,
         "pages": 3
       },
       "sandbox": {
@@ -1689,17 +1719,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
-      "hash8": "8328fb7c",
+      "hash8": "6ed5d698",
       "vdtHash": "760a4756a869fb1c7ad83e264894eebbb35ee21b",
       "timings": {
-        "importMs": 238,
-        "fontsMs": 204,
-        "buildMs": 170,
-        "totalMs": 1319,
+        "importMs": 545,
+        "fontsMs": 211,
+        "buildMs": 168,
+        "totalMs": 1575,
         "builds": 1
       },
       "specimen": {
@@ -1781,7 +1817,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 689884,
+        "bytes": 689883,
         "pages": 3
       },
       "sandbox": {
@@ -1968,17 +2004,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "fr": {
-      "hash8": "ac99d637",
+      "hash8": "e9cb9c87",
       "vdtHash": "c4a08aa43daeb1f98e6ed88884dac59498881180",
       "timings": {
-        "importMs": 287,
-        "fontsMs": 380,
-        "buildMs": 161,
-        "totalMs": 1463,
+        "importMs": 496,
+        "fontsMs": 227,
+        "buildMs": 169,
+        "totalMs": 1557,
         "builds": 1
       },
       "specimen": {
@@ -2060,7 +2102,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 689166,
+        "bytes": 689172,
         "pages": 3
       },
       "sandbox": {
@@ -2247,17 +2289,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "de": {
-      "hash8": "584f7ba6",
+      "hash8": "5d3c1a8f",
       "vdtHash": "dca67c9e01b572700f1f9e6a03379b6a98a361c3",
       "timings": {
-        "importMs": 369,
-        "fontsMs": 269,
+        "importMs": 506,
+        "fontsMs": 223,
         "buildMs": 175,
-        "totalMs": 1432,
+        "totalMs": 1578,
         "builds": 1
       },
       "specimen": {
@@ -2339,7 +2387,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 690402,
+        "bytes": 690405,
         "pages": 3
       },
       "sandbox": {
@@ -2526,17 +2574,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "it": {
-      "hash8": "6bc9bfef",
+      "hash8": "dd395648",
       "vdtHash": "4d0e3d5bf0c16dfcfb7f623cdf51768e616e004d",
       "timings": {
-        "importMs": 173,
-        "fontsMs": 218,
-        "buildMs": 157,
-        "totalMs": 1156,
+        "importMs": 461,
+        "fontsMs": 235,
+        "buildMs": 170,
+        "totalMs": 1521,
         "builds": 1
       },
       "specimen": {
@@ -2618,7 +2672,7 @@
       },
       "pdf": {
         "file": "pepper-and-carrot-page.pdf",
-        "bytes": 687816,
+        "bytes": 687822,
         "pages": 3
       },
       "sandbox": {
@@ -2805,7 +2859,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     }
   }
