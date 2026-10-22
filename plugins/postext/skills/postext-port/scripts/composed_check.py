@@ -41,11 +41,25 @@ the round-2 checks of a ported book, edition by edition.
           engine then skips the pair, and the report lists such frames as a note;
         - a composed page whose frames the HTML writes in another order than
           the Markdown sends content to them (reading order = source order);
+        - emptyFrame: a frame that lays out nothing of its own, where the
+          Sandbox writes «Write here»: a box drawn with an empty fence, with
+          `optional: true` and no fence, or with only the words its design
+          prints (`setsContent`), and a frame nothing is sent to (the HTML
+          does not write it). A box holds its own content in its fence
+          (words, ::resource, :::figure, :::columns rows, nested boxes) and
+          grows with it. A frame of ruled lines (`rules`) is meant empty; a
+          frame a chain goes on in that the story does not reach is a
+          warning («Continues …» in the Sandbox).
+      A frameCovered between a box's text and a picture hung from that box
+      (a frame anchored inside it) says to put the picture in the box's
+      fence so the box grows, not to split the box's words out. The check
       warns when two editions read the frames of one page fence in different
-      orders, lists the reflow log (text or pictures the ladder scaled) and
-      the notes to read edition by edition (slotEmpty, anchorUnlabelled,
-      labelOverlap: two labels that run into each other, 1.39; allow the
-      ones the source prints touching with `overlap: "allow"`, 1.42).
+      orders, on every frame the ladder set below 100 % at the text as
+      written (frameScaled: fix the measure, let the box grow or go on,
+      rather than shrink) and lists the notes to read edition by edition
+      (slotEmpty, anchorUnlabelled, labelOverlap: two labels that run into
+      each other, 1.39; allow the ones the source prints touching with
+      `overlap: "allow"`, 1.42).
       --stress 1.3 lays every edition out again with each paragraph, heading
       and list item 30 % longer (its own words repeated, markup untouched),
       as the Cookbook bench does (C38): a warning the longer text raises
@@ -62,7 +76,10 @@ the round-2 checks of a ported book, edition by edition.
 
 The postext command defaults to `postext`; pass another one with --postext
 (`--postext "npx postext-cli"`, `--postext "bun ~/src/postext/packages/postext-cli/src/main.ts"`).
-Exit code 1 when a check fails, 2 when the command line tool cannot run.
+Exit code 1 when a check fails, 2 when the command line tool cannot run. A
+missing command line, or one older than 1.53.0, is reported with the fix:
+`npm i -g postext-cli@latest` (global npm packages stay with the Node they were
+installed for: after nvm switches its default Node, install it again).
 """
 from __future__ import annotations
 
@@ -315,15 +332,42 @@ def postext_cmd(spec: str | None) -> list[str]:
     return shlex.split(spec) if spec else ["postext"]
 
 
-def detect_version(cmd: list[str]) -> tuple[tuple[int, int, int] | None, str]:
-    """(version, where it was read)."""
+#: The oldest command line whose warnings `check` reads in full (folioMissing, postext 1.53).
+CLI_NEEDS: tuple[int, int, int] = (1, 53, 0)
+#: How to put the command line back. A global npm package lives with one Node: when nvm's default
+#: Node changes, `postext` is gone (or an old one answers) until it is installed again.
+CLI_FIX = ("npm i -g postext-cli@latest (after nvm switches its default Node, install it again: global npm "
+           "packages stay with the Node they were installed for), or the executable of the latest release "
+           "(SKILL.md, Setup)")
+
+
+def cli_version(cmd: list[str]) -> tuple[int, int, int] | None:
+    """The version `<cmd> --version` prints, or None when it does not run."""
     try:
         r = subprocess.run([*cmd, "--version"], capture_output=True, text=True, timeout=60)
-        v = parse_version(r.stdout + r.stderr)
-        if v:
-            return v, " ".join(cmd) + " --version"
+        return parse_version(r.stdout + r.stderr) if r.returncode == 0 else None
     except (OSError, subprocess.TimeoutExpired):
-        pass
+        return None
+
+
+def cli_problem(cmd: list[str], version: tuple[int, int, int] | None,
+                need: tuple[int, int, int] = CLI_NEEDS) -> str | None:
+    """What is wrong with the postext command line for `check`, with the
+    fix; None when it runs and is `need` or later."""
+    name = " ".join(cmd)
+    if version is None:
+        return f"`{name} --version` does not run: the postext command line is missing. Install it: {CLI_FIX}"
+    if version < need:
+        return (f"{name} is postext {vstr(version)}, older than the {vstr(need)} this check reads in full. "
+                f"Update it: {CLI_FIX}")
+    return None
+
+
+def detect_version(cmd: list[str]) -> tuple[tuple[int, int, int] | None, str]:
+    """(version, where it was read)."""
+    v = cli_version(cmd)
+    if v:
+        return v, " ".join(cmd) + " --version"
     pkg = Path.home() / ".cache" / "postext-tools" / "node_modules" / "postext" / "package.json"
     if pkg.is_file():
         try:
@@ -341,7 +385,7 @@ def cmd_round(args) -> int:
     else:
         v, where = detect_version(postext_cmd(args.postext))
     if v is None:
-        print("No Postext found: install the command line (SKILL.md, Setup) or pass --version X.Y.Z.",
+        print(f"No Postext found: install the command line, {CLI_FIX}; or pass --version X.Y.Z.",
               file=sys.stderr)
         return 2
     plan = plan_for(v)
@@ -530,7 +574,7 @@ def page_fences(markdown: str) -> list[dict]:
                 para = False
             elif _LEAF.match(line) or line.startswith(":::"):
                 into.append({"kind": "block", "slot": attrs_of(line).get("slot") if line.startswith("::resource") else None,
-                             "line": i + 1})
+                             "line": i + 1, **({"resource": True} if line.startswith("::resource") else {})})
                 para = False
             elif not para:
                 into.append({"kind": "block", "slot": None, "line": i + 1})
@@ -744,28 +788,205 @@ def expected_order(fence: dict, templates: list[dict]) -> list[str] | None:
     return [x for x in order if x not in empty]
 
 
+def _variant_removed(templates: list[dict], tid: str) -> set[str]:
+    """Frames a recto or verso variant of template `tid` (or of a template
+    it extends) takes out: on one side of the book the page lays none."""
+    out: set[str] = set()
+    seen: set[str] = set()
+    cur: Any = tid
+    while isinstance(cur, str) and cur not in seen:
+        t = _template(templates, cur)
+        if t is None:
+            break
+        seen.add(cur)
+        for patch in (t.get("variants") or {}).values():
+            for f in (patch.get("frames") or []) if isinstance(patch, dict) else []:
+                if isinstance(f, dict) and f.get("remove") and isinstance(f.get("name"), str):
+                    out.add(f["name"])
+        cur = t.get("extends")
+    return out
+
+
+def fence_frames(fence: dict, templates: list[dict]) -> dict[str, dict] | None:
+    """The frames a page fence lays, by the name the engine gives them (a
+    module's frames `<instance>.<frame>`), each with its template entry.
+    The members of a repeating grid are left out (their instances follow
+    the items), and so are the frames a recto or verso variant takes out.
+    None when the template is unknown."""
+    tid = fence.get("template") or ""
+    frames = resolve_frames(templates, tid)
+    if frames is None:
+        return None
+
+    def level(fs: list[dict], tmpl: str, prefix: str) -> dict[str, dict]:
+        members = {m for ms in repeat_sets(template_groups(templates, tmpl)).values() for m in ms}
+        gone = _variant_removed(templates, tmpl)
+        return {prefix + f["name"]: f for f in fs if f["name"] not in members and f["name"] not in gone}
+
+    out = level(frames, tid, "")
+    if any(g.get("modules") is True for g in template_groups(templates, tid)):
+        mods = [it for it in fence["items"] if it.get("kind") == "module"]
+        for inst, it in zip(module_instances(fence["items"]), mods):
+            mt = it.get("template") or ""
+            mframes = resolve_frames(templates, mt) if is_module(templates, mt) else None
+            if mframes is not None:
+                out.update(level(mframes, mt, inst + "."))
+    return out
+
+
+def picture_frames(fence: dict) -> set[str]:
+    """The frames of a page fence the Markdown sends a picture to: the slot
+    of a `::resource` or a `:::figure`, or a slotted container with one
+    inside; a module's by their scoped names (`<instance>.<frame>`)."""
+    out: set[str] = set()
+
+    def walk(items: list[dict], prefix: str) -> None:
+        for it in items:
+            slot = it.get("slot")
+            if slot is None:
+                continue
+            if it.get("resource") or it.get("name") == "figure" or any(
+                    w.get("resource") or w.get("name") == "figure" for w in it.get("within") or []):
+                out.add(prefix + slot)
+
+    walk(fence["items"], "")
+    mods = [it for it in fence["items"] if it.get("kind") == "module"]
+    for inst, it in zip(module_instances(fence["items"]), mods):
+        walk(it.get("items") or [], inst + ".")
+    return out
+
+
+def slot_lines(fence: dict) -> dict[str, int]:
+    """Where the Markdown of a page fence fills each frame (1-based line of
+    the first piece sent to it), a module's frames by their scoped names;
+    a module's frame that nothing names reads at its `:::module` line
+    (`<instance>.`)."""
+    out: dict[str, int] = {}
+
+    def walk(items: list[dict], prefix: str) -> None:
+        for it in items:
+            if it.get("slot") is not None:
+                out.setdefault(prefix + it["slot"], it["line"])
+
+    walk(fence["items"], "")
+    mods = [it for it in fence["items"] if it.get("kind") == "module"]
+    for inst, it in zip(module_instances(fence["items"]), mods):
+        out.setdefault(inst + ".", it["line"])
+        walk(it.get("items") or [], inst + ".")
+    return out
+
+
+def anchor_chain(frames: dict[str, dict], name: str) -> list[str]:
+    """The frames `name` hangs from, nearest first: the frame its
+    placement anchors to (`anchor.to: '#box'`), the one that one anchors
+    to, and on (a module's names scoped as `name` is)."""
+    prefix = name.rsplit(".", 1)[0] + "." if "." in name else ""
+    out: list[str] = []
+    cur = name
+    while len(out) < 16:
+        f = frames.get(cur) or frames.get(re.sub(r"\[\d+\]$", "", cur)) or {}
+        to = ((f.get("placement") or {}).get("anchor") or {}).get("to") if isinstance(f.get("placement"), dict) else None
+        if not isinstance(to, str) or not to.startswith("#"):
+            break
+        cur = prefix + to[1:]
+        if cur in out or cur == name:
+            break
+        out.append(cur)
+    return out
+
+
+def hung_box(frames: dict[str, dict], pictures: set[str], covered: str, coverer: str) -> tuple[str, str] | None:
+    """(box, picture) when one of the two frames of a frameCovered is a
+    picture hung from a box (a frame anchored inside it, with a style) and
+    the other is that box or a frame hung from it too: the box's text runs
+    under the picture as it grows."""
+    for pic, other in ((coverer, covered), (covered, coverer)):
+        if pic not in pictures and re.sub(r"\[\d+\]$", "", pic) not in pictures:
+            continue
+        mine = [other, *anchor_chain(frames, other)]
+        for box in anchor_chain(frames, pic):
+            if box in mine and (frames.get(box) or {}).get("style"):
+                return box, pic
+    return None
+
+
 # --- the HTML side: the order the viewer writes the frames in ---------------
 
+_VOID_TAGS = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+
+
 class _FrameOrder(html.parser.HTMLParser):
+    """The frames of each page, and the ones that compose nothing of their
+    own. A frame (`div.pt-frame`) writes its box first, as a block of the
+    frame's own id (fill, border, tab, the words and icon its style's design
+    prints), then a block per piece of its content (`<id>-c0`, `-c1`…: lines,
+    pictures, tables, nested boxes). A frame with no element and no word
+    outside its own block lays out nothing of its own."""
+
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.pages: list[dict] = []
+        # open elements: (tag, 'frame' | 'own' | None)
+        self.open: list[tuple[str, str | None]] = []
+        self.frame: dict | None = None
+        self.own = 0
+
+    def _content(self) -> None:
+        if self.frame is not None and self.own == 0:
+            self.frame["content"] = True
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        if tag != "div":
-            return
+        self._start(tag, attrs, tag not in _VOID_TAGS)
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self._start(tag, attrs, False)
+
+    def _start(self, tag: str, attrs: list[tuple[str, str | None]], push: bool) -> None:
         a = {k: v or "" for k, v in attrs}
-        classes = a.get("class", "").split()
+        classes = a.get("class", "").split() if tag == "div" else []
+        role: str | None = None
         if "pt-page" in classes:
             self.pages.append({"page": int(a["data-page"]) if a.get("data-page", "").isdigit() else len(self.pages),
-                               "frames": []})
-        elif "pt-frame" in classes and a.get("data-frame-id") and self.pages:
+                               "frames": [], "empty": []})
+        elif "pt-frame" in classes and a.get("data-frame-id") and self.pages and self.frame is None:
             self.pages[-1]["frames"].append({"id": a["data-frame-id"], "facing": a.get("data-facing") == "true"})
+            self.frame = {"id": a["data-frame-id"], "facing": a.get("data-facing") == "true", "content": False}
+            role = "frame"
+        elif self.frame is not None and "pt-block" in classes:
+            # a block is a wrapper (display: contents): what it holds counts, not the block
+            if a.get("data-block-id") == self.frame["id"]:
+                role = "own"
+                self.own += 1
+        else:
+            self._content()
+        if push:
+            self.open.append((tag, role))
+
+    def handle_endtag(self, tag: str) -> None:
+        if not any(t == tag for t, _ in self.open):
+            return
+        while self.open:
+            t, role = self.open.pop()
+            if role == "own":
+                self.own -= 1
+            elif role == "frame" and self.frame is not None:
+                if not self.frame["content"] and not self.frame["facing"] and self.pages:
+                    self.pages[-1]["empty"].append(self.frame["id"])
+                self.frame = None
+            if t == tag:
+                break
+
+    def handle_data(self, data: str) -> None:
+        if data.strip():
+            self._content()
 
 
 def html_frame_order(text: str) -> list[dict]:
-    """Per page of a `postext html` file: `page` (0-based) and `frames`, the
-    frame ids in the order the markup writes them (reading order)."""
+    """Per page of a `postext html` file: `page` (0-based), `frames`, the
+    frame ids in the order the markup writes them (reading order), and
+    `empty`, the ids of the frames (not the facing page's halves) that lay
+    out nothing of their own: no line, picture, table or box of their
+    content, only their own box and what its design prints."""
     p = _FrameOrder()
     p.feed(text)
     p.close()
@@ -785,14 +1006,11 @@ def is_subsequence(seq: list[str], of: list[str]) -> bool:
     return all(any(x == y for y in it) for x in seq)
 
 
-def compare_order(pages: list[dict], fences: list[dict]) -> list[dict]:
-    """Problems between the HTML's frame order and the Markdown's. `fences`
-    lists every page fence of the edition in book order, each with `chapter`,
-    `fence` (its ordinal in the chapter), `line`, `spread` and `order`. A
-    fence owns its page, the recto of a spread and the pages its content
-    continues on (frame ids `cp<n>:<name>~<k>`); the frames of each page must
-    come in the order of its fence."""
-    problems: list[dict] = []
+def _fence_pages(pages: list[dict], fences: list[dict]):
+    """(page, its frames as (split id, id), the index in `fences` of the
+    page fence that lays it, or None) for every page of the HTML with
+    frames. A fence owns its page, the recto of a spread and the pages its
+    content continues on (frame ids `cp<n>:<name>~<k>`)."""
     f = -1
     used = 0
     for page in pages:
@@ -806,10 +1024,26 @@ def compare_order(pages: list[dict], fences: list[dict]) -> list[dict]:
         if not stay:
             nxt = next((j for j in range(f + 1, len(fences)) if fences[j]["fence"] == n), None)
             if nxt is None:
-                problems.append({"kind": "unmatched", "page": page["page"] + 1, "frames": [fid for _, fid in own]})
+                yield page, own, None
                 continue
             f, used = nxt, 0
         used += 1
+        yield page, own, f
+
+
+def compare_order(pages: list[dict], fences: list[dict]) -> list[dict]:
+    """Problems between the HTML's frame order and the Markdown's. `fences`
+    lists every page fence of the edition in book order, each with `chapter`,
+    `fence` (its ordinal in the chapter), `line`, `spread` and `order`. A
+    fence owns its page, the recto of a spread and the pages its content
+    continues on (frame ids `cp<n>:<name>~<k>`); the frames of each page must
+    come in the order of its fence."""
+    problems: list[dict] = []
+    for page, own, f in _fence_pages(pages, fences):
+        if f is None:
+            problems.append({"kind": "unmatched", "page": page["page"] + 1, "frames": [fid for _, fid in own]})
+            continue
+        n = own[0][0][0]
         exp = fences[f]["order"]
         if exp is None:
             continue
@@ -819,6 +1053,68 @@ def compare_order(pages: list[dict], fences: list[dict]) -> list[dict]:
             problems.append({"kind": "order", "page": page["page"] + 1, "chapter": fences[f]["chapter"],
                              "line": fences[f]["line"], "html": got, "markdown": exp})
     return problems
+
+
+EMPTY_HINTS = {
+    "box": "a box lays out its own content: write its words, its pictures (::resource, :::figure), rows of "
+           "pictures and of captions (:::columns{count=3 breaks=\"2,3\"}) and nested :::callout panels in its "
+           "fence, and let it grow with them; the frames hung from it for those pieces go. An empty fence, "
+           "optional: true or only the words its design prints (setsContent) leave it empty",
+    "nothing": "the frame holds nothing and draws nothing: send it its content (slot=\"…\"), or take it out of "
+               "the template (what was placed by it anchors to a frame that holds content, or to a group)",
+    "chain": "the story before it ends sooner: take the frame out of the chain (next / continueIn) unless a "
+             "longer edition fills it",
+}
+
+
+def empty_frames(pages: list[dict], fences: list[dict]) -> list[dict]:
+    """The frames of the composed pages that lay out nothing of their own,
+    as the Sandbox finds them (it writes «Write here» in each, or
+    «Continues …» in a frame a chain goes on in): a frame the HTML writes
+    with no content outside its own box (`html_frame_order`'s `empty`: a
+    box with an empty fence, or with only words its design prints), and a
+    frame of the template the HTML does not write at all (no style, nothing
+    sent to it), on the first page of its fence. A frame of ruled lines
+    (`rules`, an answer space) is meant to be empty and is left out, and so
+    are the pages added by continuation. `how`: `box`, `nothing` or
+    `chain` (a frame a chain goes on in: a warning, the others fail)."""
+    out: list[dict] = []
+    seen: dict[int, set[str]] = {}
+    first: dict[int, int] = {}
+    for page, own, f in _fence_pages(pages, fences):
+        if f is None:
+            continue
+        n = own[0][0][0]
+        first.setdefault(f, page["page"])
+        names = seen.setdefault(f, set())
+        for x in page["frames"]:
+            s = split_frame_id(x["id"])
+            if s and s[0] == n:
+                names.add(s[1])
+        for fid in page.get("empty") or []:
+            s = split_frame_id(fid)
+            if s and s[0] == n and s[2] == 0:
+                out.append(_empty_entry(fences[f], s[1], page["page"], present=True))
+    for f, names in seen.items():
+        for name in fences[f].get("frames") or {}:
+            if name not in names and not any(x.startswith(name + "[") for x in names):
+                out.append(_empty_entry(fences[f], name, first[f], present=False))
+    return [e for e in out if e is not None]
+
+
+def _empty_entry(fence: dict, name: str, page: int, present: bool) -> dict | None:
+    frames = fence.get("frames") or {}
+    d = frames.get(name) or frames.get(re.sub(r"\[\d+\]$", "", name)) or {}
+    if d.get("rules"):
+        return None
+    prefix = name.rsplit(".", 1)[0] + "." if "." in name else ""
+    targets = {prefix + t for t in (chain_next(x) for k, x in frames.items()
+                                    if (k.rsplit(".", 1)[0] + "." if "." in k else "") == prefix) if t}
+    how = "chain" if name in targets else "box" if present and (d.get("style") or not d) else "nothing"
+    lines = fence.get("slotLines") or {}
+    line = lines.get(name) or lines.get(prefix) or fence.get("line")
+    return {"kind": "emptyFrame", "page": page + 1, "chapter": fence.get("chapter"), "line": line,
+            "template": fence.get("template"), "frame": name, "how": how, "hint": EMPTY_HINTS[how]}
 
 
 # --- running the command line tool ------------------------------------------
@@ -966,8 +1262,43 @@ def allowed_frames(templates: list[dict]) -> list[str]:
     return out
 
 
+def hung_picture_hint(box: str, picture: str) -> str:
+    """What to do when a box's text runs under a picture hung from the box."""
+    return (f"the picture frame \"{picture}\" hangs from the box \"{box}\" at a fixed place, and the box's text "
+            f"runs under it as it grows: put the picture in the box's fence (::resource or :::figure after its "
+            f"words, rows of pictures and captions in :::columns) and take the picture's frame out, so the box "
+            f"grows round it. Do not move the box's words into a capped frame above the pictures: the box is "
+            f"left empty (emptyFrame)")
+
+
+_SCALED_HINT = ("fix the measure instead of shrinking: widen the frame or its padding to the source's tracked "
+                "width (pdf_regions.py --wrap-slack), let the box grow, or let the story go on (next, "
+                "continueIn); keep fit.minScale as a reserve for longer editions")
+
+
+def scaled_frames(report: dict) -> list[dict]:
+    """Frames the reflow ladder set below 100 % (`textScaled`, and
+    `imageScaled` for their pictures) in a `postext check --json` report:
+    one entry per page and frame, with `text` and `pictures` scales."""
+    out: dict[tuple, dict] = {}
+    for r in report.get("reflow") or []:
+        for e in r.get("events") or []:
+            kind, scale = e.get("kind"), e.get("scale")
+            if kind not in ("textScaled", "imageScaled") or not isinstance(scale, (int, float)) or scale >= 1:
+                continue
+            key = (r.get("pageLabel"), e.get("frame"))
+            entry = out.setdefault(key, {"page": r.get("pageLabel"), "template": r.get("template"),
+                                         "chapter": r.get("chapter"), "frame": e.get("frame")})
+            entry["text" if kind == "textScaled" else "pictures"] = scale
+    return list(out.values())
+
+
+def _percent(scale: float) -> str:
+    return f"{round(scale * 1000) / 10:g} %"
+
+
 def judge(report: dict, stressed: bool = False, base: dict | None = None,
-          exceptions: list[dict] | None = None, locale: str | None = None) -> dict:
+          exceptions: list[dict] | None = None, locale: str | None = None, frames_of: Any = None) -> dict:
     """Failures, warnings and notes of one `postext check --json` report.
     In a stressed run (`base` = the report of the text as written) a
     frameOverflow whose proposals carry a value is a warning, and any other
@@ -975,7 +1306,13 @@ def judge(report: dict, stressed: bool = False, base: dict | None = None,
     other kind when the text as written did not raise it. frameCovered and
     frameOutsideArea fail unless an entry of `exceptions` records the pair
     (then they are listed under `allowed` with its reason); `overlaps`
-    counts the ones that fail."""
+    counts the ones that fail. `frames_of(warning)` gives the frames of the
+    warning's page fence and the ones that hold a picture (`fence_frames`,
+    `picture_frames`): a frameCovered between a box's text and a picture
+    hung from the box then says to put the picture in the box. Outside a
+    stressed run, a frame set below 100 % as written is a warning
+    (`frameScaled`): the measure is wrong, or the text is longer than the
+    source's."""
     had = {w.get("kind") for w in (base or {}).get("warnings") or []}
     fails, warns, notes, allowed = [], [], [], []
     used: set[int] = set()
@@ -988,7 +1325,14 @@ def judge(report: dict, stressed: bool = False, base: dict | None = None,
                 used.add(ex["_index"])
                 allowed.append({**entry, "reason": ex["reason"]})
             else:
-                fails.append({**entry, "overlap": True, "hint": _OVERLAP_HINT[kind]})
+                hint = _OVERLAP_HINT[kind]
+                data = w.get("data") or {}
+                found = frames_of(w) if frames_of and kind == "frameCovered" else None
+                hung = hung_box(found[0], found[1], str(data.get("frame", "")), str(data.get("coveredBy", ""))) \
+                    if found else None
+                if hung:
+                    hint = hung_picture_hint(*hung)
+                fails.append({**entry, "overlap": True, "hint": hint, **({"hungFrom": hung[0]} if hung else {})})
             continue
         if kind == "labelOverlap" and _with_symbol(w):
             fails.append(entry)
@@ -1003,6 +1347,15 @@ def judge(report: dict, stressed: bool = False, base: dict | None = None,
             fails.append(entry)
         elif not stressed:
             warns.append(entry)  # listed in the report: neither a failure nor a note
+    if not stressed:
+        # the ladder already shrinks the text as written: the copy-fitter's reserve is spent before any
+        # edition runs longer, and the Sandbox badges each such frame
+        for s in scaled_frames(report):
+            what = "; ".join(f"{k} at {_percent(s[k])}" for k in ("text", "pictures") if k in s)
+            warns.append({"kind": "frameScaled", "page": s["page"], "at": s.get("chapter"), "frame": s["frame"],
+                          "message": f"Frame \"{s['frame']}\" of template \"{s['template']}\" is set smaller "
+                                     f"as written: {what}", "hint": _SCALED_HINT,
+                          **{k: s[k] for k in ("text", "pictures") if k in s}})
     scaled = []
     for r in report.get("reflow") or []:
         kinds = {e.get("kind") for e in r.get("events") or []}
@@ -1023,7 +1376,7 @@ def run_cli(cmd: list[str], *args: str) -> subprocess.CompletedProcess:
             out.seek(0)
             return subprocess.CompletedProcess(r.args, r.returncode, out.read(), r.stderr)
     except OSError as e:
-        raise SystemExit(f"cannot run {' '.join(cmd)}: {e}") from e
+        raise SystemExit(f"cannot run {' '.join(cmd)}: {e}. Install the postext command line: {CLI_FIX}") from e
 
 
 def cli_report(cmd: list[str], target: str, locale: str | None, extra: list[str]) -> dict:
@@ -1058,8 +1411,27 @@ def edition_fences(data: dict, read: Any, locale: str | None, templates: list[di
                         "template": fence["template"], "order": expected_order(fence, templates),
                         "spread": template_spread(templates, fence["template"] or "")
                         if any(isinstance(t, dict) and t.get("id") == fence["template"] for t in templates)
-                        else fence["spread"]})
+                        else fence["spread"],
+                        "frames": fence_frames(fence, templates), "pictures": picture_frames(fence),
+                        "slotLines": slot_lines(fence)})
     return out
+
+
+def fence_lookup(fences: list[dict]) -> Any:
+    """`frames_of` for `judge`: a warning's page fence (its `data.fenceIndex`
+    in the chapter its `at` names) -> (its frames, the ones that hold a
+    picture), or None."""
+    def frames_of(w: dict) -> tuple[dict, set] | None:
+        data = w.get("data") or {}
+        n = data.get("fenceIndex")
+        chapter = str(w.get("at") or "").rsplit(":", 1)[0]
+        name = str(data.get("frame", ""))
+        cands = [f for f in fences if f["fence"] == n and f.get("frames")]
+        cands = [f for f in cands if name in f["frames"]] or cands
+        if chapter:
+            cands = [f for f in cands if f["chapter"] == chapter or chapter.endswith("/" + f["chapter"])]
+        return (cands[0]["frames"], cands[0]["pictures"]) if cands else None
+    return frames_of
 
 
 def cross_locale(orders: dict[str, list[dict]]) -> list[dict]:
@@ -1283,8 +1655,14 @@ def cmd_check(args) -> int:
     data, where, read = kit.read_target(args.target)
     if not isinstance(data.get("config"), dict):
         raise SystemExit(f"{where}: not a book manifest")
-    v, _ = detect_version(cmd)
-    if v is not None and v < ROUND2:
+    v = cli_version(cmd)
+    problem = cli_problem(cmd, v)
+    if v is None:
+        print(problem, file=sys.stderr)
+        return 2
+    if problem:
+        print(f"WARN {problem}", file=sys.stderr)
+    if v < ROUND2:
         print(f"postext {vstr(v)}: composed pages need 1.35.0 (round 2). Run `composed_check.py round`.",
               file=sys.stderr)
     extra = ["--offline"] if args.offline else []
@@ -1307,17 +1685,20 @@ def cmd_check(args) -> int:
             templates = ed["config"].get("pageTemplates") or []
             fences = edition_fences(data, read, loc, templates)
             orders[key] = fences
+            frames_of = fence_lookup(fences)
             report = cli_report(cmd, args.target, loc, extra)
-            verdict = judge(report, exceptions=exceptions, locale=loc)
+            verdict = judge(report, exceptions=exceptions, locale=loc, frames_of=frames_of)
             used.update(verdict["exceptionsUsed"])
-            entry: dict[str, Any] = {**verdict, "fences": len(fences), "order": [],
+            entry: dict[str, Any] = {**verdict, "fences": len(fences), "order": [], "empty": [],
                                      "allowedFrames": allowed_frames(templates)}
             if fences and not args.no_html:
                 page_html = cli_html(cmd, args.target, loc, work / f"html-{key}", extra)
                 if page_html is None:
                     entry["order"] = [{"kind": "noHtml"}]
                 else:
-                    entry["order"] = compare_order(html_frame_order(page_html), fences)
+                    pages = html_frame_order(page_html)
+                    entry["order"] = compare_order(pages, fences)
+                    entry["empty"] = empty_frames(pages, fences)
             if args.stress:
                 sdir = work / f"stress-{key}"
                 if sdir.exists():
@@ -1325,10 +1706,12 @@ def cmd_check(args) -> int:
                 sdir.mkdir(parents=True)
                 root, b, a = stretched_copy(args.target, data, read, args.stress, sdir)
                 sreport = cli_report(cmd, str(root), loc, extra)
-                entry["stress"] = {"factor": args.stress, "before": b, "after": a, **judge(sreport, stressed=True, base=report,
-                                                                                          exceptions=exceptions, locale=loc)}
+                entry["stress"] = {"factor": args.stress, "before": b, "after": a,
+                                   **judge(sreport, stressed=True, base=report, exceptions=exceptions, locale=loc,
+                                           frames_of=frames_of)}
                 used.update(entry["stress"]["exceptionsUsed"])
             if verdict["fail"] or any(o["kind"] == "order" for o in entry["order"]) \
+                    or any(e["how"] != "chain" for e in entry["empty"]) \
                     or (args.stress and entry["stress"]["fail"]):
                 failed = True
             result["editions"][key] = entry
@@ -1359,14 +1742,32 @@ def print_check(res: dict) -> None:
         print(f"  FAIL {p}")
     for loc, e in res["editions"].items():
         bad_order = [o for o in e["order"] if o["kind"] == "order"]
+        empty = [x for x in e.get("empty") or [] if x["how"] != "chain"]
         print(f"  [{loc}] {e['fences']} page fence(s): {len(e['fail'])} failing warning(s), "
-              f"{e.get('overlaps', 0)} overlap(s), {len(bad_order)} page(s) out of reading order")
+              f"{e.get('overlaps', 0)} overlap(s), {len(bad_order)} page(s) out of reading order, "
+              f"{len(empty)} empty frame(s)")
         for w in e["fail"]:
             print(f"    FAIL {w['kind']} ({w.get('at') or '?'}, page {w.get('page') or '?'}): {w['message']}")
             if w.get("hint"):
                 print(f"         {w['hint']}")
+        hints: set[str] = set()
+        for x in e.get("empty") or []:
+            label = "FAIL" if x["how"] != "chain" else "WARN"
+            what = {"box": "its box is drawn with nothing of its own in it",
+                    "nothing": "it holds nothing", "chain": "the chain ends before it"}[x["how"]]
+            print(f"    {label} emptyFrame p. {x['page']} ({x['chapter']}:{x['line']}, template {x['template']}): "
+                  f"frame \"{x['frame']}\" lays out no content: {what}; the Sandbox marks it «Write here»"
+                  if x["how"] != "chain" else
+                  f"    {label} emptyFrame p. {x['page']} ({x['chapter']}:{x['line']}, template {x['template']}): "
+                  f"frame \"{x['frame']}\" holds nothing: {what}; the Sandbox marks it «Continues …»")
+            if x["hint"] not in hints:
+                hints.add(x["hint"])
+                print(f"         {x['hint']}")
         for w in e.get("warn") or []:
             print(f"    WARN {w['kind']} ({w.get('at') or '?'}, page {w.get('page') or '?'}): {w['message'][:200]}")
+            if w.get("hint") and w["hint"] not in hints:
+                hints.add(w["hint"])
+                print(f"         {w['hint']}")
         for w in e.get("allowed") or []:
             print(f"    allowed {w['kind']} (page {w.get('page') or '?'}): {w['message'][:120]} [{w['reason']}]")
         if e.get("allowedFrames"):
@@ -1379,8 +1780,6 @@ def print_check(res: dict) -> None:
                 print(f"    NOTE p. {o['page']}: frames {', '.join(o['frames'])} match no page fence of the Markdown")
             elif o["kind"] == "noHtml":
                 print("    NOTE postext html wrote nothing: reading order not checked")
-        for s in e["scaled"]:
-            print(f"    NOTE p. {s['page']} ({s['template']}): {'; '.join(s['lines'] or [])}")
         for n in e["notes"]:
             print(f"    note {n['kind']} (page {n.get('page') or '?'}): {n['message'][:160]}")
         st = e.get("stress")
@@ -1393,6 +1792,8 @@ def print_check(res: dict) -> None:
                 print(f"      WARN {w['kind']} (page {w.get('page') or '?'}): {w['message']}")
             for w in st["fail"]:
                 print(f"      FAIL {w['kind']} (page {w.get('page') or '?'}): {w['message']}")
+                if w.get("hungFrom"):
+                    print(f"           {w['hint']}")
     for u in ex.get("unused") or []:
         print(f"  note exception never met (remove it?): {json.dumps(u, ensure_ascii=False)}")
     if "overlaps" in res:
