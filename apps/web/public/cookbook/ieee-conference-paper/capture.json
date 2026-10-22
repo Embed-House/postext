@@ -3,31 +3,31 @@
   "slug": "ieee-conference-paper",
   "sourceHash": "df4e760161c2f68f2a1d9f1475ed24927e382b5b260fa24f8a10a0672c70c844",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:00:04.754Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:01:34.772Z",
   "variants": {
     "en": {
-      "hash8": "3e78a7cb",
+      "hash8": "8742b97c",
       "vdtHash": "a2bb3d3043b1fe7715d368fea9384d36d5cfcf90",
       "timings": {
-        "importMs": 963,
-        "fontsMs": 36,
-        "buildMs": 328,
-        "totalMs": 2636,
+        "importMs": 3581,
+        "fontsMs": 42,
+        "buildMs": 182,
+        "totalMs": 5518,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
           215.9,
-          279.40000000000003
+          279.4
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": false,
         "body": {
           "family": "STIX Two Text",
@@ -89,7 +89,7 @@
       },
       "pdf": {
         "file": "ieee-conference-paper.pdf",
-        "bytes": 81384,
+        "bytes": 81386,
         "pages": 2
       },
       "sandbox": {
@@ -319,31 +319,31 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "6f5483dc",
+      "hash8": "491e9236",
       "vdtHash": "b1cc021184d53ec26bc70f17dfffeebe62339896",
       "timings": {
-        "importMs": 693,
-        "fontsMs": 31,
-        "buildMs": 208,
-        "totalMs": 1857,
+        "importMs": 3222,
+        "fontsMs": 43,
+        "buildMs": 217,
+        "totalMs": 4816,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
           215.9,
-          279.40000000000003
+          279.4
         ],
         "dpi": 150,
         "layoutType": "double",
-        "gutterMm": 6.300000000000001,
+        "gutterMm": 6.3,
         "mirror": false,
         "body": {
           "family": "STIX Two Text",
@@ -405,7 +405,7 @@
       },
       "pdf": {
         "file": "ieee-conference-paper.pdf",
-        "bytes": 93429,
+        "bytes": 93435,
         "pages": 2
       },
       "sandbox": {
@@ -635,9 +635,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

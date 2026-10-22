@@ -3,21 +3,27 @@
   "slug": "mla-humanities-essay",
   "sourceHash": "75e49d2ab75c6c1468b7a2933f457ccd70c9535e4a1a7940d477305c3b67a4d6",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:02:23.827Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:02:56.829Z",
+  "verified": {
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
+    "chrome": "155.0.8059.85",
+    "at": "2026-10-22T20:03:34.428Z"
+  },
   "variants": {
     "en": {
-      "hash8": "a6a00578",
+      "hash8": "4278c19a",
       "vdtHash": "a9a48bca20e493671256705de8901765d09e0bc4",
       "timings": {
-        "importMs": 1490,
-        "fontsMs": 36,
-        "buildMs": 121,
-        "totalMs": 2586,
+        "importMs": 3504,
+        "fontsMs": 32,
+        "buildMs": 102,
+        "totalMs": 5985,
         "builds": 1
       },
       "specimen": {
@@ -30,7 +36,7 @@
         "mirror": true,
         "body": {
           "family": "Spectral",
-          "sizePt": 10.600000000000001,
+          "sizePt": 10.6,
           "leadingPt": 14.4
         },
         "families": [
@@ -342,21 +348,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "ce6fa01b",
+      "hash8": "ebea32e1",
       "vdtHash": "1bbdbb377ff7e84e8a109c50ae22a472a1689a06",
       "timings": {
-        "importMs": 905,
-        "fontsMs": 41,
-        "buildMs": 110,
-        "totalMs": 2149,
+        "importMs": 3908,
+        "fontsMs": 47,
+        "buildMs": 141,
+        "totalMs": 5785,
         "builds": 1
       },
       "specimen": {
@@ -369,7 +375,7 @@
         "mirror": true,
         "body": {
           "family": "Spectral",
-          "sizePt": 10.600000000000001,
+          "sizePt": 10.6,
           "leadingPt": 14.4
         },
         "families": [
@@ -453,7 +459,7 @@
       },
       "pdf": {
         "file": "mla-humanities-essay.pdf",
-        "bytes": 89435,
+        "bytes": 89437,
         "pages": 4
       },
       "sandbox": {
@@ -681,9 +687,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

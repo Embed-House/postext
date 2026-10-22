@@ -3,21 +3,21 @@
   "slug": "book-from-chapters",
   "sourceHash": "c7c6d4f86b8237d456181aba0576001a55ec60d6df01f33f81daab7323d3134e",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:56:20.752Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:58:41.250Z",
   "variants": {
     "en": {
-      "hash8": "38ea31f1",
+      "hash8": "e0b2984d",
       "vdtHash": "24d82cacdebf87b8ec0b6f2ae99b8598807ffd51",
       "timings": {
-        "importMs": 725,
-        "fontsMs": 136,
-        "buildMs": 159,
-        "totalMs": 1758,
+        "importMs": 2901,
+        "fontsMs": 234,
+        "buildMs": 111,
+        "totalMs": 4413,
         "builds": 1
       },
       "specimen": {
@@ -31,7 +31,7 @@
         "body": {
           "family": "Andada Pro",
           "sizePt": 10.4,
-          "leadingPt": 14.200000000000001
+          "leadingPt": 14.2
         },
         "families": [
           "Andada Pro",
@@ -204,7 +204,7 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 121211,
+        "bytes": 121216,
         "pages": 11
       },
       "sandbox": {
@@ -492,21 +492,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "13b40b3d",
+      "hash8": "5882d264",
       "vdtHash": "035013c15b611e53a364b8e803e9801bd71b5fd0",
       "timings": {
-        "importMs": 736,
-        "fontsMs": 132,
-        "buildMs": 149,
-        "totalMs": 1772,
+        "importMs": 1882,
+        "fontsMs": 300,
+        "buildMs": 114,
+        "totalMs": 3389,
         "builds": 1
       },
       "specimen": {
@@ -520,7 +520,7 @@
         "body": {
           "family": "Andada Pro",
           "sizePt": 10.4,
-          "leadingPt": 14.200000000000001
+          "leadingPt": 14.2
         },
         "families": [
           "Andada Pro",
@@ -693,7 +693,7 @@
       },
       "pdf": {
         "file": "book-from-chapters.pdf",
-        "bytes": 130235,
+        "bytes": 130236,
         "pages": 11
       },
       "sandbox": {
@@ -981,9 +981,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

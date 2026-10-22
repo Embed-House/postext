@@ -3,21 +3,21 @@
   "slug": "history-essay-chicago-notes",
   "sourceHash": "0a025f997df23b6a00281ee0b30c8b7c23e501bbf962cebbec4bbaa0a10004a8",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:00:04.749Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:01:03.411Z",
   "variants": {
     "en": {
-      "hash8": "82363864",
+      "hash8": "65739ae6",
       "vdtHash": "29dc13684bb9eef8be48a4f8f1737f725d48bb80",
       "timings": {
-        "importMs": 858,
-        "fontsMs": 36,
-        "buildMs": 464,
-        "totalMs": 2167,
+        "importMs": 4112,
+        "fontsMs": 37,
+        "buildMs": 588,
+        "totalMs": 6228,
         "builds": 1
       },
       "specimen": {
@@ -114,7 +114,7 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 85235,
+        "bytes": 85234,
         "pages": 4
       },
       "sandbox": {
@@ -330,21 +330,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "c7fb8302",
+      "hash8": "46a6992b",
       "vdtHash": "cdb0858bde029b74174a89d7792780e840664c28",
       "timings": {
-        "importMs": 880,
-        "fontsMs": 31,
-        "buildMs": 480,
-        "totalMs": 2369,
+        "importMs": 3198,
+        "fontsMs": 49,
+        "buildMs": 552,
+        "totalMs": 5634,
         "builds": 1
       },
       "specimen": {
@@ -441,7 +441,7 @@
       },
       "pdf": {
         "file": "history-essay-chicago-notes.pdf",
-        "bytes": 89689,
+        "bytes": 89691,
         "pages": 4
       },
       "sandbox": {
@@ -657,9 +657,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

@@ -3,21 +3,21 @@
   "slug": "thesis-back-matter",
   "sourceHash": "ce78e97fa5a596518244a9dca73e92839fc6a15677c6faad1f90bb77fa0bd785",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:05:55.356Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:05:32.414Z",
   "variants": {
     "en": {
-      "hash8": "6b02529f",
+      "hash8": "95a8c9d3",
       "vdtHash": "3c776aaf555387fd6ecbcef60306ed7898ceae6a",
       "timings": {
-        "importMs": 683,
-        "fontsMs": 33,
-        "buildMs": 115,
-        "totalMs": 1590,
+        "importMs": 3497,
+        "fontsMs": 28,
+        "buildMs": 162,
+        "totalMs": 5136,
         "builds": 1
       },
       "specimen": {
@@ -31,7 +31,7 @@
         "body": {
           "family": "Libertinus Serif",
           "sizePt": 11,
-          "leadingPt": 14.600000000000001
+          "leadingPt": 14.6
         },
         "families": [
           "Libertinus Sans",
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "file": "thesis-back-matter.pdf",
-        "bytes": 115690,
+        "bytes": 115689,
         "pages": 7
       },
       "sandbox": {
@@ -435,9 +435,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

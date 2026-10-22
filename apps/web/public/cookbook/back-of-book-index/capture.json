@@ -3,21 +3,21 @@
   "slug": "back-of-book-index",
   "sourceHash": "b7b8898605143dba081404bdc21c971175ed3ac1447782e148b81012997991d7",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:55:41.419Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:58:14.271Z",
   "variants": {
     "en": {
-      "hash8": "26c72515",
+      "hash8": "372a18ea",
       "vdtHash": "da5e68fa36c4c6b7e032a5279761de653a60c8db",
       "timings": {
-        "importMs": 377,
-        "fontsMs": 63,
-        "buildMs": 47,
-        "totalMs": 1346,
+        "importMs": 2816,
+        "fontsMs": 187,
+        "buildMs": 42,
+        "totalMs": 4549,
         "builds": 2
       },
       "specimen": {
@@ -31,8 +31,8 @@
         "mirror": true,
         "body": {
           "family": "Literata",
-          "sizePt": 9.600000000000001,
-          "leadingPt": 13.600000000000001
+          "sizePt": 9.6,
+          "leadingPt": 13.6
         },
         "families": [
           "Libre Franklin",
@@ -193,7 +193,7 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 189609,
+        "bytes": 189618,
         "pages": 10
       },
       "sandbox": {
@@ -520,7 +520,7 @@
         "looseLines": {
           "count": 2,
           "share": 0.0092,
-          "worst": 2.0300000000000002
+          "worst": 2.03
         },
         "raggedLines": {
           "count": 0
@@ -529,7 +529,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.31 MB (warning at 1.0 MB for 10 pages)"
+            "detail": "the edition's images weigh 1.31 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C26",
@@ -537,21 +537,21 @@
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "6be1fe7d",
+      "hash8": "219af606",
       "vdtHash": "4d5c22c35fa3dac3ab919b3a6b3a77f4b913e343",
       "timings": {
-        "importMs": 263,
-        "fontsMs": 75,
-        "buildMs": 51,
-        "totalMs": 1203,
+        "importMs": 2633,
+        "fontsMs": 292,
+        "buildMs": 47,
+        "totalMs": 4448,
         "builds": 2
       },
       "specimen": {
@@ -565,8 +565,8 @@
         "mirror": true,
         "body": {
           "family": "Literata",
-          "sizePt": 9.600000000000001,
-          "leadingPt": 13.600000000000001
+          "sizePt": 9.6,
+          "leadingPt": 13.6
         },
         "families": [
           "Libre Franklin",
@@ -727,7 +727,7 @@
       },
       "pdf": {
         "file": "back-of-book-index.pdf",
-        "bytes": 193201,
+        "bytes": 193209,
         "pages": 10
       },
       "sandbox": {
@@ -1063,7 +1063,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.30 MB (warning at 1.0 MB for 10 pages)"
+            "detail": "the edition's images weigh 1.30 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C26",
@@ -1071,9 +1071,9 @@
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

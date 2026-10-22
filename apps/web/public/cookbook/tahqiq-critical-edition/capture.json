@@ -3,27 +3,21 @@
   "slug": "tahqiq-critical-edition",
   "sourceHash": "4aa757f91261e8d0ae52907610228405bfc3f2b58e1df7af3a733a954d01c65b",
   "engine": {
-    "postext": "1.30.0",
-    "postextPdf": "1.30.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:51:18.835Z",
-  "verified": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
-    "chrome": "154.0.8037.98",
-    "at": "2026-10-13T15:05:55.196Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:04:38.404Z",
   "variants": {
     "en": {
-      "hash8": "27db9ac0",
+      "hash8": "65de75fd",
       "vdtHash": "3a637db169fc089c87a8f255b7df83665a626cd8",
       "timings": {
-        "importMs": 1371,
-        "fontsMs": 186,
-        "buildMs": 636,
-        "totalMs": 3172,
+        "importMs": 3432,
+        "fontsMs": 141,
+        "buildMs": 372,
+        "totalMs": 5469,
         "builds": 1
       },
       "specimen": {
@@ -210,7 +204,7 @@
       },
       "pdf": {
         "file": "tahqiq-critical-edition.pdf",
-        "bytes": 154799,
+        "bytes": 154797,
         "pages": 11
       },
       "sandbox": {
@@ -447,21 +441,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "9baec435",
+      "hash8": "fcd525c3",
       "vdtHash": "73b127ee59154fe5fc5cd26ed91dd66de7e0d3f2",
       "timings": {
-        "importMs": 1398,
-        "fontsMs": 159,
-        "buildMs": 583,
-        "totalMs": 2940,
+        "importMs": 3361,
+        "fontsMs": 277,
+        "buildMs": 315,
+        "totalMs": 4960,
         "builds": 1
       },
       "specimen": {
@@ -885,9 +879,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

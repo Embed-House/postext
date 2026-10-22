@@ -3,21 +3,21 @@
   "slug": "technical-book-crossref-chapters",
   "sourceHash": "439f5d04345523774fe6378c9b5f8f68b5c2a681ad193efa32fcb5c4848ead50",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:05:55.280Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:05:06.934Z",
   "variants": {
     "en": {
-      "hash8": "b2addf94",
+      "hash8": "d860cc0c",
       "vdtHash": "a449b7d2e4ba8f4b02bcfa60cd68e4083efeca59",
       "timings": {
-        "importMs": 1134,
-        "fontsMs": 107,
-        "buildMs": 125,
-        "totalMs": 2138,
+        "importMs": 3206,
+        "fontsMs": 302,
+        "buildMs": 130,
+        "totalMs": 5175,
         "builds": 1
       },
       "specimen": {
@@ -30,7 +30,7 @@
         "mirror": true,
         "body": {
           "family": "IBM Plex Serif",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.8
         },
         "families": [
@@ -178,7 +178,7 @@
       },
       "pdf": {
         "file": "technical-book-crossref-chapters.pdf",
-        "bytes": 445361,
+        "bytes": 445360,
         "pages": 9
       },
       "sandbox": {
@@ -499,21 +499,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "32a8bab4",
+      "hash8": "cc8f8d20",
       "vdtHash": "aee24474cddffca18082a4c0922c64a838284064",
       "timings": {
-        "importMs": 824,
-        "fontsMs": 232,
-        "buildMs": 131,
-        "totalMs": 1894,
+        "importMs": 2937,
+        "fontsMs": 409,
+        "buildMs": 140,
+        "totalMs": 4760,
         "builds": 1
       },
       "specimen": {
@@ -526,7 +526,7 @@
         "mirror": true,
         "body": {
           "family": "IBM Plex Serif",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.8
         },
         "families": [
@@ -674,7 +674,7 @@
       },
       "pdf": {
         "file": "technical-book-crossref-chapters.pdf",
-        "bytes": 451939,
+        "bytes": 451936,
         "pages": 9
       },
       "sandbox": {
@@ -995,9 +995,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
