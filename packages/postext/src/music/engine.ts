@@ -102,21 +102,42 @@ export function clearMusicCache(): void {
 /** Verovio's staff height at scale 100, in px: 4 staff spaces of 18 px. */
 const STAFF_PX_AT_100 = 72;
 
-const TITLE_RE = /<(?:work-title|movement-title|title)[^>]*>([^<]+)</i;
-const ABC_TITLE_RE = /^T:\s*(.+)$/m;
-const ABC_COMPOSER_RE = /^C:\s*(.+)$/m;
-const COMPOSER_RE = /<(?:creator type="composer"|persName role="composer"|composer)[^>]*>([^<]+)</i;
+/** The value of the first ABC header line `field:` (`T:` title, `C:`
+ *  composer), read line by line. */
+function abcField(source: string, field: string): string | undefined {
+  for (const line of source.split('\n')) {
+    if (line.startsWith(`${field}:`)) {
+      const value = line.slice(field.length + 1).trim();
+      if (value) return value;
+    }
+  }
+  return undefined;
+}
+
+/** The text of the first element whose opening tag starts with one of
+ *  `openings` (`<work-title`, `<creator type="composer"`), found with plain
+ *  string scans. */
+function elementText(source: string, openings: readonly string[]): string | undefined {
+  const lower = source.toLowerCase();
+  for (const opening of openings) {
+    const at = lower.indexOf(opening);
+    if (at < 0) continue;
+    const next = source[at + opening.length];
+    if (next !== '>' && next !== ' ' && next !== '\t' && next !== '\n') continue;
+    const open = source.indexOf('>', at);
+    const close = open < 0 ? -1 : source.indexOf('<', open + 1);
+    if (close < 0) continue;
+    const text = source.slice(open + 1, close).trim();
+    if (text) return text;
+  }
+  return undefined;
+}
 
 function readMetadata(source: string, format: ScoreFormat): { title?: string; composer?: string } {
-  if (format === 'abc') {
-    return {
-      title: ABC_TITLE_RE.exec(source)?.[1]?.trim(),
-      composer: ABC_COMPOSER_RE.exec(source)?.[1]?.trim(),
-    };
-  }
+  if (format === 'abc') return { title: abcField(source, 'T'), composer: abcField(source, 'C') };
   return {
-    title: TITLE_RE.exec(source)?.[1]?.trim(),
-    composer: COMPOSER_RE.exec(source)?.[1]?.trim(),
+    title: elementText(source, ['<work-title', '<movement-title', '<title']),
+    composer: elementText(source, ['<creator type="composer"', '<persname role="composer"', '<composer']),
   };
 }
 

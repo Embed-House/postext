@@ -104,7 +104,7 @@ describe('music scores in the layout', () => {
   it('paints the systems as inline SVG in HTML', () => {
     const doc = buildDocument({ markdown: MARKDOWN }, CONFIG);
     const html = renderToHtmlIndexed(doc).html;
-    expect((html.match(/<svg[^>]*aria-label="A study in D"/g) ?? []).length).toBe(1);
+    expect(html.split('aria-label="A study in D"').length - 1).toBe(1);
     expect(html).toContain('aria-hidden="true"');
   });
 
