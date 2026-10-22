@@ -2,8 +2,8 @@
 // fonts: what the Resources and Fonts panels do, done with the functions
 // the panels call.
 
-import type { CustomFontFamily, CustomFontVariant, PostextConfig, Resource, ResourcePlacement, ResourceType, TableModel } from 'postext';
-import { DEFAULT_COLOR_PALETTE, bitmapInfo, defaultResourceTypes, primaryFontFamily } from 'postext';
+import type { CustomFontFamily, CustomFontVariant, PostextConfig, Resource, ResourcePlacement, ResourceType, ScoreFormat, TableModel } from 'postext';
+import { DEFAULT_COLOR_PALETTE, bitmapInfo, defaultResourceTypes, primaryFontFamily, scoreFormatOfFile } from 'postext';
 import type { SandboxAction, SandboxState } from '../../context/SandboxContext.js';
 import { fontFamilySource, loadFont } from '../../controls/fontLoader.js';
 import { fetchGoogleFonts } from '../../controls/FontPicker.js';
@@ -20,6 +20,7 @@ import {
   svgReplaced,
   svgSourceSaved,
   svgWithInlineFonts,
+  typesWithExample,
   typesWithVideo,
 } from '../../panels/resources/resourceEdits.js';
 import { slugify, uniqueSlug } from '../../panels/resources/slugify.js';
@@ -136,7 +137,7 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
   const listResources: WebMcpTool = {
     name: 'sandbox_list_resources',
     title: 'Sandbox: the book\'s resources',
-    description: 'The pictures, diagrams, tables and videos of the book, which the text places with ::resource{id="…"} and cites with :ref{id="…"}: each one\'s id, kind, type, caption, size and how often the text uses it. With an id: that resource in full — its record (a table\'s cells with their formatting under resource.table.model.rows, which sandbox_save_resource takes back as table.cells; a picture\'s marks; a video\'s source and player), the source of an SVG and what became of the fonts its text names, the texts of a table\'s cells as rows.',
+    description: 'The pictures, diagrams, tables, videos and music examples of the book, which the text places with ::resource{id="…"} and cites with :ref{id="…"}: each one\'s id, kind, type, caption, size and how often the text uses it. With an id: that resource in full — its record (a table\'s cells with their formatting under resource.table.model.rows, which sandbox_save_resource takes back as table.cells; a picture\'s marks; a video\'s source and player), the source of an SVG and what became of the fonts its text names, the texts of a table\'s cells as rows.',
     inputSchema: {
       type: 'object',
       properties: { id: { type: 'string', description: 'Give this resource in full.' } },
@@ -168,6 +169,10 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
           answer.rows = tableRows(resource.table.model);
           answer.tableStyles = (s.config.tableStyles ?? []).map((t) => ({ id: t.id, ...(t.name ? { name: t.name } : {}) }));
         }
+        if (resource.kind === 'score' && resource.score) {
+          // The styles a score can be set in (#1173).
+          answer.scoreStyles = (s.config.scoreStyles ?? []).map((t) => ({ id: t.id, ...(t.name ? { name: t.name } : {}) }));
+        }
         return answer;
       }
       return {
@@ -180,6 +185,7 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
           ...(sizeOf(r) ? { size: sizeOf(r) } : {}),
           ...(r.kind === 'table' && r.table ? { rows: r.table.model.rows.length, columns: r.table.model.rows[0]?.length ?? 0 } : {}),
           ...(r.kind === 'video' && r.video ? { source: r.video.source } : {}),
+          ...(r.kind === 'score' && r.score ? { format: r.score.format, ...(r.score.styleId ? { styleId: r.score.styleId } : {}) } : {}),
           usedInText: uses(r.id),
         })),
       };
@@ -189,7 +195,7 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
   const saveResource: WebMcpTool = {
     name: 'sandbox_save_resource',
     title: 'Sandbox: add or change a resource',
-    description: 'Add a resource to the book or change one, as the Resources panel does. A new resource takes a picture file (PNG, JPEG, WebP, GIF or SVG, by url or base64), the source of an SVG, a table, or a video (a YouTube or Vimeo link, a video file, or the address of one). An existing id changes what is given and keeps the rest: its content (a replaced picture keeps its declared resolution, its print master and its marks; an edited svg source detaches the print master, which was made for the old drawing), its caption, note, alternative text, type and placement, a bitmap\'s resolution, an SVG\'s print master and fonts, a table\'s cells and style, a picture\'s safe area and lettering marks, a video\'s poster, range and player, and its id (newId, which also renames it where the book refers to it). The text places it with ::resource{id="…"}. Answers with the stored record and the pages the book came to.',
+    description: 'Add a resource to the book or change one, as the Resources panel does. A new resource takes a picture file (PNG, JPEG, WebP, GIF or SVG, by url or base64), the source of an SVG, a table, a video (a YouTube or Vimeo link, a video file, or the address of one), or a music score (notation in ABC, MusicXML, MEI or Humdrum). An existing id changes what is given and keeps the rest: its content (a replaced picture keeps its declared resolution, its print master and its marks; an edited svg source detaches the print master, which was made for the old drawing), its caption, note, alternative text, type and placement, a bitmap\'s resolution, an SVG\'s print master and fonts, a table\'s cells and style, a picture\'s safe area and lettering marks, a video\'s poster, range and player, and its id (newId, which also renames it where the book refers to it). The text places it with ::resource{id="…"}. Answers with the stored record and the pages the book came to.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -204,6 +210,17 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
         svg: { type: 'string', description: 'The source of an SVG drawing. On an SVG resource it is an edit of its source.' },
         table: TABLE_SCHEMA,
         video: VIDEO_SCHEMA,
+        score: {
+          type: 'object',
+          description: 'A music example (#1172): its notation, typed (source and format) or read from a file (.abc, .musicxml, .mei, .krn), and the named score style it is set in. A new score gets the Example type unless "type" names another. On a score resource, what is given changes and the rest is kept.',
+          properties: {
+            format: { type: 'string', enum: ['abc', 'musicxml', 'mei', 'humdrum'], description: 'The notation format (read from the file name when a file is given).' },
+            source: { type: 'string', description: 'The notation.' },
+            file: { ...FILE_PARAM, description: 'A notation file whose text becomes the source: where to fetch it (url) or its bytes (base64).' },
+            styleId: { type: ['string', 'null'], description: 'A score style of the book (scoreStyles); null sets it in the document score style.' },
+          },
+          additionalProperties: false,
+        },
         placement: PLACEMENT_SCHEMA,
         resolution: { type: ['number', 'string', 'null'], description: 'A bitmap\'s resolution in pixels per inch, which sets its natural print size: a number (1 to 4800), "file" for the one its file states, or null to leave it to the book\'s layout.bitmapResolution setting.' },
         embedFonts: { type: 'boolean', description: 'An SVG: embed the fonts its text names when the picture is shown or exported, as the book\'s diagramStyle.inlineFonts says (true, the default), or keep its markup as it is (false).' },
@@ -224,13 +241,17 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
       const ids = new Set(s.resources.map((r) => r.id));
       const tableInput = args.table as TableInput | undefined;
       const videoInput = args.video as VideoInput | undefined;
+      const scoreInput = args.score as { format?: ScoreFormat; source?: string; file?: FileInput; styleId?: string | null } | undefined;
       // What replaces the content: a table's members may also only change
       // the table that is there, and a video's the video.
       const tableContent = tableInput !== undefined && (hasTableContent(tableInput) || existing?.kind !== 'table');
-      const contents = [args.image !== undefined, args.svg !== undefined, tableContent, videoInput !== undefined].filter(Boolean).length;
-      if (contents > 1 || (contents === 1 && tableInput !== undefined && !tableContent)) throw new ToolError('Give one content: an image, an svg source, a table or a video.');
+      const contents = [args.image !== undefined, args.svg !== undefined, tableContent, videoInput !== undefined, scoreInput !== undefined].filter(Boolean).length;
+      if (contents > 1 || (contents === 1 && tableInput !== undefined && !tableContent)) throw new ToolError('Give one content: an image, an svg source, a table, a video or a score.');
+      if (existing && scoreInput !== undefined && existing.kind !== 'score') {
+        throw new ToolError(`${JSON.stringify(existing.id)} is a ${existing.kind} resource. A score is a resource of its own: add one with "score" and no id (or a new id).`);
+      }
       if (!existing && contents === 0) {
-        const needs = 'needs an image, an svg source or a table (or "video" for a video)';
+        const needs = 'needs an image, an svg source or a table (or "video" for a video, "score" for a music example)';
         throw new ToolError(args.id !== undefined ? `No resource with id ${JSON.stringify(args.id)} to change; a new one ${needs}. The ids: ${[...ids].join(', ') || 'none'}.` : `A new resource ${needs}.`);
       }
       if (existing && videoInput !== undefined && existing.kind !== 'video') {
@@ -253,11 +274,20 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
           answer.addedType = 'video';
         }
       }
+      if (!existing && scoreInput !== undefined && (args.type === undefined || args.type === 'example')) {
+        // Music examples are numbered in a sequence of their own (#1172).
+        const withExample = typesWithExample(types, s.locale);
+        if (withExample) {
+          types = withExample;
+          actions.push({ type: 'UPDATE_CONFIG', payload: { resourceTypes: withExample }, history: false });
+          answer.addedType = 'example';
+        }
+      }
       if (args.type !== undefined && types.length > 0 && !types.some((t) => t.id === args.type)) {
         throw new ToolError(`No resource type ${JSON.stringify(args.type)}. The types: ${types.map((t) => t.id).join(', ')}.`);
       }
-      const typeFor = (kind: 'table' | 'picture' | 'video'): string => (args.type as string | undefined)
-        ?? (kind === 'video' ? 'video' : kind === 'table' ? types.find((t) => t.id === 'table')?.id : types.find((t) => t.id === 'figure')?.id)
+      const typeFor = (kind: 'table' | 'picture' | 'video' | 'score'): string => (args.type as string | undefined)
+        ?? (kind === 'score' ? 'example' : kind === 'video' ? 'video' : kind === 'table' ? types.find((t) => t.id === 'table')?.id : types.find((t) => t.id === 'figure')?.id)
         ?? types.find((t) => t.id !== 'video')?.id
         ?? types[0]?.id
         ?? (kind === 'table' ? 'table' : 'figure');
@@ -270,7 +300,7 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
       let stale: string | undefined;
       if (existing) base = { ...existing };
       else {
-        const kind = videoInput !== undefined ? 'video' : tableContent ? 'table' : 'picture';
+        const kind = videoInput !== undefined ? 'video' : scoreInput !== undefined ? 'score' : tableContent ? 'table' : 'picture';
         base = { ...newResource(kind === 'picture' ? 'bitmap' : kind, typeFor(kind), ids), createdAt: now };
         // A new table is built from what was handed over, not from the
         // empty grid the panel's "Add table" starts with.
@@ -313,6 +343,25 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
           palette: s.config.colorPalette ?? DEFAULT_COLOR_PALETTE,
         });
         base = defined({ ...base, kind: 'table', table, bitmap: undefined, svg: undefined, video: undefined });
+      } else if (scoreInput !== undefined) {
+        let source = scoreInput.source;
+        let format = scoreInput.format;
+        if (scoreInput.file !== undefined) {
+          const file = await readFileInput(scoreInput.file, signal);
+          source = await file.text();
+          format ??= scoreFormatOfFile(file.name);
+          nameHint = file.name.replace(/\.[^.]+$/, '');
+        }
+        const was = base.score ?? { format: 'abc' as const, source: '' };
+        const score: NonNullable<Resource['score']> = { ...was, ...(format ? { format } : {}), ...(source !== undefined ? { source } : {}) };
+        if (scoreInput.styleId === null) delete score.styleId;
+        else if (scoreInput.styleId !== undefined) {
+          if (!(s.config.scoreStyles ?? []).some((st) => st.id === scoreInput.styleId)) {
+            notes.push(`No score style ${JSON.stringify(scoreInput.styleId)} in the book yet: the score is set in the document score style until one is added.`);
+          }
+          score.styleId = scoreInput.styleId;
+        }
+        base = defined({ ...base, kind: 'score', score });
       } else if (videoInput !== undefined) {
         const edited = await withVideoEdits(base, videoInput, { fresh: !existing, signal });
         if (edited.resource.video?.poster?.fileId !== existing?.video?.poster?.fileId) stale = existing?.video?.poster?.fileId;
@@ -325,7 +374,7 @@ export function resourceTools(host: SandboxToolHost): WebMcpTool[] {
 
       if (!existing) {
         const wanted = slugify((args.id as string | undefined) ?? nameHint) || slugify((args.caption as string | undefined) ?? '');
-        base.id = uniqueSlug(wanted, ids, base.kind === 'table' ? 'table' : base.kind === 'video' ? 'video' : base.kind === 'svg' ? 'svg' : 'image');
+        base.id = uniqueSlug(wanted, ids, base.kind === 'table' ? 'table' : base.kind === 'video' ? 'video' : base.kind === 'score' ? 'score' : base.kind === 'svg' ? 'svg' : 'image');
       }
       if (args.type !== undefined) base.typeId = args.type as string;
       for (const key of ['caption', 'note', 'altText'] as const) {

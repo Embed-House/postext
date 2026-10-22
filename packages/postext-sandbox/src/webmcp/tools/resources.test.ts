@@ -81,6 +81,22 @@ describe('the resource tools', () => {
     expect((await call('sandbox_save_resource', { image: { base64: base64('GIF89a'), fileName: 'clip.mp4' } })).error).toMatch(/"clip\.mp4" is a video file: hand it over as video: \{ file \}/);
   });
 
+  it('keep a music score, typed or read from a file, numbered as an example (#1172)', async () => {
+    const { call, get } = harness();
+    const saved = await call('sandbox_save_resource', { score: { format: 'abc', source: 'X:1\nK:C\nCDEF|\n' }, caption: 'A scale', wait: false });
+    expect(saved).toMatchObject({ ok: true, created: true, addedType: 'example' });
+    const id = get().resources[0]!.id;
+    expect(get().resources[0]).toMatchObject({ kind: 'score', typeId: 'example', caption: 'A scale', score: { format: 'abc', source: 'X:1\nK:C\nCDEF|\n' } });
+    expect(get().config.resourceTypes?.some((t) => t.id === 'example')).toBe(true);
+
+    // A file: its text and its format, the style kept apart.
+    const mei = '<mei xmlns="http://www.music-encoding.org/ns/mei"/>';
+    await call('sandbox_save_resource', { id, score: { file: { base64: base64(mei), fileName: 'cadence.mei' }, styleId: 'small' }, wait: false });
+    expect(get().resources[0]!.score).toEqual({ format: 'mei', source: mei, styleId: 'small' });
+    await call('sandbox_save_resource', { id, score: { styleId: null }, wait: false });
+    expect(get().resources[0]!.score).toEqual({ format: 'mei', source: mei });
+  });
+
   it('merge single fields, and take a placement key back to the type\'s', async () => {
     const { call, get } = harness();
     await call('sandbox_save_resource', { id: 'map', image: png(600, 400, 72), placement: { position: 'top', span: 'page', width: 0.5, rotate: 'cw' }, wait: false });
@@ -200,7 +216,7 @@ describe('the resource tools', () => {
     expect((await call('sandbox_save_resource', { id: 'sizes', table: { cells: [[{ content: 'a', colSpan: 2 }]] } })).error).toMatch(/table\.cells\[0\]\[0\]: a colSpan of 2 runs past the last column/);
     expect((await call('sandbox_save_resource', { id: 'sizes', table: { cells: [[{ text: 'a' }]] } })).error).toMatch(/table\.cells\[0\]\[0\]\.text is not a parameter/);
     expect((await call('sandbox_save_resource', { id: 'logo', table: { style: 'ruled' } })).error).toBe('A table needs "rows", "tsv" or "cells".');
-    expect((await call('sandbox_save_resource', { id: 'sizes', table: { headerRows: 1 }, svg: SVG })).error).toBe('Give one content: an image, an svg source, a table or a video.');
+    expect((await call('sandbox_save_resource', { id: 'sizes', table: { headerRows: 1 }, svg: SVG })).error).toBe('Give one content: an image, an svg source, a table, a video or a score.');
   });
 
   it('rename a resource where the book refers to it', async () => {
