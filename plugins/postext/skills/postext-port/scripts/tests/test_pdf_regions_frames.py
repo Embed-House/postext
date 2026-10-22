@@ -315,10 +315,11 @@ class SingleCaption(unittest.TestCase):
                 pl = pic["placement"]
                 self.assertEqual(pl["captionSide"], "inside")
                 self.assertEqual(pl["align"], "left" if side == "right" else "right")
-                self.assertTrue(0.6 < pl["width"] < 0.9, pl)
-                # the picture's frame holds the caption's room too
-                frame = next(f for f in lib["pageTemplates"][0]["frames"] if f["name"].startswith("picture"))
-                self.assertGreater(frame["width"]["value"], 62)
+                # under the box's words, the picture is set in its text (#1186): its share is of the
+                # box's measure (60 mm of some 150), not of a frame round it
+                self.assertTrue(0.35 < pl["width"] < 0.5, pl)
+                self.assertFalse(any(f["name"].startswith("picture") for f in lib["pageTemplates"][0]["frames"]))
+                self.assertRegex(md, r':::frame\{slot="box"\}\n[^\n]+\n\n::resource\{id="p01-picture-1"\}\n:::')
 
     def test_a_caption_as_large_as_the_box_text_beside_a_picture_stays_text(self):
         tmp, md, lib, _ = extract(self.beside_page("right", "top", size=11))
@@ -327,24 +328,25 @@ class SingleCaption(unittest.TestCase):
         finally:
             tmp.cleanup()
 
-    def test_an_italic_caption_further_down_is_a_frame_after_its_picture(self):
+    def test_an_italic_caption_further_down_flows_after_its_picture_in_the_box(self):
         tmp, md, lib, _ = extract(self.box_page("El río Tajo cerca de Toledo.", 11, "heit", 5.0, False))
         try:
-            self.assertRegex(md, r'::resource\{id="[^"]+" slot="(picture[^"]*)"\}\n\n:::frame\{slot="[^"]+"\}\n'
-                                 r'El río Tajo cerca de Toledo\.\n:::')
-            tpl = lib["pageTemplates"][0]
-            cap = next(f for f in tpl["frames"] if f.get("placement", {}).get("anchor", {}).get("edge") == "below"
-                       and f["placement"]["anchor"].get("to", "").startswith("#picture"))
-            style = next(s for s in lib["calloutStyles"] if s["id"] == cap["style"])
-            self.assertTrue(style["body"].get("italic"))     # set in italic: its style says so, no `*`
-            self.assertIn("bajan por las laderas\n:::", md)
+            # the box lays out its picture and the caption under it (#1186), in a paragraph style of the
+            # caption's own look
+            self.assertRegex(md, r'bajan por las laderas\n\n::resource\{id="p01-picture-1"\}\n\n'
+                                 r':::paragraphs\{style="(caption-1)"\}\nEl río Tajo cerca de Toledo\.\n:::\n:::')
+            style = next(s for s in lib["paragraphStyles"] if s["id"] == "caption-1")
+            self.assertTrue(style.get("italic"))     # set in italic: its style says so, no `*`
+            self.assertEqual(style["textAlign"], "left")
+            self.assertEqual([f["name"] for f in lib["pageTemplates"][0]["frames"]], ["box"])
         finally:
             tmp.cleanup()
 
     def test_a_line_like_the_box_text_stays_in_the_box(self):
         tmp, md, lib, _ = extract(self.box_page("Y el agua sigue su camino hacia el mar.", 11, "helv", 5.0, False))
         try:
-            self.assertRegex(md, r':::frame\{slot="box[^"]*"\}\n[^:]*Y el agua sigue su camino hacia el mar\.')
+            self.assertRegex(md, r':::frame\{slot="box[^"]*"\}\n[^:]*\n\n::resource\{id="[^"]+"\}\n\n'
+                                 r'Y el agua sigue su camino hacia el mar\.\n:::')
         finally:
             tmp.cleanup()
 
