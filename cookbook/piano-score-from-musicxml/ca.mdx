@@ -1,0 +1,61 @@
+---
+title: "Una partitura de piano des de MusicXML en diverses pàgines"
+summary: "Dos minuets per a teclat gravats des de fitxers MusicXML en doble pentagrama, partits entre sistemes perquè cada peça ocupi una doble pàgina."
+plain: "Una petita edició de dos minuets de piano molt coneguts. Ensenya a agafar un fitxer exportat d'un programa de notació i compondre'l com una partitura que continua d'una pàgina a l'altra, a punt per tocar."
+description: "Els dos minuets de Petzold del quadern d'Anna Magdalena Bach, gravats des de MusicXML en doble pentagrama en dues dobles pàgines, amb el codi i un PDF."
+question: "Com componc una partitura de piano d'un fitxer MusicXML al llarg de diverses pàgines?"
+aliases: ["partitura", "partitura de piano", "MusicXML", "doble pentagrama", "sistema de piano", "Minuet en sol", "BWV Anh. 114", "Quadern d'Anna Magdalena Bach", "edició per a intèrprets", "pas de pàgina"]
+---
+
+## Què compondràs
+
+Una edició per a intèrprets dels dos minuets del Quadern d'Anna Magdalena Bach de 1725: el de sol major, que aprèn tot estudiant de piano, i la seva parella en sol menor, avui atribuïts a Christian Petzold. La pàgina fa 230 × 305 mm, la mida d'un àlbum de partitures. Una pàgina senar presenta les peces a dues columnes de Libre Caslon sota un títol de 52 pt en Bodoni. Després cada minuet comença en una pàgina parella i ocupa la doble pàgina en un doble pentagrama de 7 mm, gravat en Bravura des d'un fitxer MusicXML: quatre compassos per sistema, els compassos de l'1 al 16 a l'esquerra i del 17 al 32 a la dreta, de manera que el pianista no passa pàgina dins d'una peça.
+
+## Elaboració
+
+### 1 · Porta la peça en MusicXML
+
+Els dos fitxers d'`assets/` són MusicXML 4.0 sense més, el format que escriuen Dorico, Sibelius, Finale i MuseScore quan exporten una partitura (tria el `.musicxml` sense comprimir, no el `.mxl`). Contenen una part en dos pentagrames, amb les claus, l'armadura, les barres, la direcció de les pliques als compassos a dues veus, els ornaments i les barres de repetició. El nom de la part porta `print-object="no"`: una etiqueta «Piano» impresa empenyeria tots els sistemes cap a la dreta. El títol de `<work-title>` no s'imprimeix, només serveix de descripció de la partitura, així que el Markdown dona a cada peça el seu propi títol.
+
+### 2 · Compon-la en un bloc de codi, no com a recurs
+
+La [resposta curta](#la-resposta-curta) descarrega cada fitxer i l'escriu en un bloc ` ```musicxml `, on el Markdown deixa una línia de marcador. Un bloc es grava a l'amplada de la columna i es talla en sistemes, i cada sistema es col·loca com una línia de paràgraf, de manera que la peça continua a la pàgina següent entre dos sistemes. Un recurs `score` es manté sencer i no podria creuar una pàgina. `minSystemsAtBreak: 2` evita que un sistema quedi sol al peu d'una pàgina o passi sol al capdamunt de la següent.
+
+### 3 · Ajusta el pentagrama a qui toca
+
+El pentagrama fa 7 mm d'alt, el que fa en un àlbum de piano imprès que es llegeix des del faristol. `spacing: 1.7` separa les notes fins que un sistema de 186 mm de mesura conté quatre compassos, així que cada meitat d'un minuet ocupa quatre sistemes. `systemGap: 14 mm` deixa lloc a les línies addicionals entre les dues mans, i amb aquest valor hi caben quatre sistemes sota el títol de la primera pàgina i quatre a la del davant: la doble barra cau al canvi de pàgina del plec.
+
+### 4 · Obre cada peça en pàgina parella
+
+<Excerpt region="openers" />
+
+`breakBefore: { parity: 'even' }` comença cada peça en una pàgina de l'esquerra, i la portada de l'editor fa servir un estil de títol que obre en pàgina senar i sense capçaleres. El número de catàleg i el compositor surten dels atributs del títol i van a les cantonades inferiors de l'obertura, on els imprimeixen les edicions gravades.
+
+### 5 · Posa el nom de la peça a la capçalera de la dreta
+
+<Excerpt region="running-heads" />
+
+La primera pàgina d'una peça ja porta el seu títol, així que les capçaleres queden per a les pàgines següents (`pages: 'body'`). La pàgina senar imprimeix el títol de la peça i el foli a la vora exterior, amb la lletra de rètols a 8 pt.
+
+## Variants
+
+### Fes una edició d'estudi amb un pentagrama més petit
+
+Un pentagrama de 6 mm amb l'espaiat propi del gravador porta set o vuit compassos per sistema, així que cada minuet cap a la seva primera pàgina.
+
+```diff
+-  staffSize: mm(7),
++  staffSize: mm(6),
+-  spacing: 1.7,
++  spacing: 1,
+```
+
+### Numera els exemples breus
+
+Quan la música són exemples breus citats al text, hi encaixa millor un recurs `score` numerat: <RecipeLink slug="conservatory-method-chorales">corals a quatre veus com a exemples numerats</RecipeLink>.
+
+## Errors freqüents
+
+- Els salts de sistema escrits al fitxer (`<print new-system="yes">`) no es conserven: els sistemes omplen l'amplada de la columna, així que ajusta `spacing` i `staffSize` fins que portin els compassos que vols.
+- El gravador no reparteix els compassos entre sistemes, i l'últim sistema es compon a la seva amplada natural: a 6 mm i amb `spacing: 1`, el compàs 32 queda sol en un sistema. Canvia `spacing` fins que l'últim sistema tingui més d'un compàs.
+- Un `.mxl` comprimit és un fitxer zip: descomprimeix-lo, o exporta el format sense comprimir, abans de descarregar-lo.

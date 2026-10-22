@@ -1,0 +1,64 @@
+---
+title: "Exemples musicaux en MEI avec un apparat critique en notes"
+summary: "Des blocs MEI 5 gravés dans le texte sur une portée de 5 mm, les variantes codées en app, lem et rdg, et l’apparat par mesure et par note en bas de page."
+plain: "Un chapitre d’une étude sur la musique médiévale. De courts passages d’un canon anglais du XIIIe siècle sont imprimés en musique dans le texte, et les notes en bas de page relèvent, mesure par mesure, où les éditions anciennes divergent."
+description: "Un chapitre de musicologie sur Sumer is icumen in : exemples MEI gravés dans le texte, variantes gardées dans le codage, apparat en notes de bas de page."
+question: "Comment donner aux exemples musicaux un apparat critique des variantes des sources en notes de bas de page ?"
+aliases: ["apparat critique", "exemples musicaux", "MEI", "Music Encoding Initiative", "variantes", "app lem rdg", "musicologie", "édition critique", "Sumer is icumen in"]
+---
+
+## Ce que vous allez composer
+
+Le chapitre 3 d’une étude sur la manière dont les antiquaires anglais ont lu la musique médiévale : cinq pages de 156 × 234 mm sur *Sumer is icumen in*, la rota de Reading, et sur les éditeurs qui l’ont mise en partition entre 1776 et 1889. Trois passages du canon sont gravés dans le texte, en Leipzig sur une portée de 5 mm, avec la numérotation des mesures de la partition de W. S. Rockstro, et chaque commentaire appelle son apparat en bas de page : « m. 40, n. 2 la ] sol Hw, Bu ». Les notes sont brèves et serrées comme l’est un apparat, la musique occupe la justification du texte, et chaque leçon vient de l’article de Rockstro dans le *Dictionary* de Grove, ce que le chapitre dit dès son deuxième paragraphe.
+
+## Préparation
+
+### 1 · Écrire chaque exemple en MEI, variantes comprises
+
+Les réglages sont dans [la réponse courte](#la-réponse-courte) ci-dessus ; la musique est dans le Markdown, un bloc ```` ```mei ```` par exemple. Là où deux sources divergent, la mesure contient un `<app>` avec la leçon retenue dans `<lem>` et l’autre dans `<rdg source="#Hw #Bu">`. Le graveur imprime le lemme : la mesure 40 de l’<PageRef page={5}>exemple 3.3</PageRef> montre le la, et le sol de Hawkins et Burney reste dans le fichier pour qui ouvre le codage. Donnez à chaque bloc un `alt` dans la langue de la page : c’est ce que lisent de la partition un lecteur d’écran et le PDF balisé.
+
+### 2 · Rattacher l’apparat aux mesures que voit le lecteur
+
+`barNumbers: 'system'` numérote la première mesure de chaque système, et le `<measure n="37">` de chaque bloc fait partir le compte là où commence l’extrait dans l’édition suivie : l’exemple 3.3 s’ouvre donc à 37, et une note qui dit « m. 40 » renvoie à une mesure que le lecteur trouve. L’entrée d’apparat est une note de bas de page ordinaire, appelée depuis le paragraphe qui commente la mesure : lemme, crochet fermant, variante, sigles en italique. Une note ne peut pas être appelée depuis l’intérieur d’une partition ; l’appel se place donc dans la phrase qui nomme la leçon.
+
+### 3 · Dimensionner la musique pour le texte courant
+
+Une portée de 5 mm en Leipzig tient dans une justification de 116 mm avec cinq ou six mesures à 3/2 par système, et les onze mesures de l’exemple 3.3 tiennent en deux systèmes. `textFont` compose les paroles en Crimson Pro, le caractère du texte, et `minSystemsAtBreak: 2` empêche qu’une page se termine sur un seul système d’un exemple dont la suite passe à la page suivante. Le titre de chaque exemple est un intertitre de troisième niveau : il ne reste jamais seul en bas de page sans sa partition.
+
+### 4 · Laisser une page à notes finir court
+
+<Excerpt region="opener" />
+
+L’ouverture descend le texte de 50 mm sous un titre en Cormorant italique. Plus loin, une page dont la ligne suivante entraînerait une longue note s’arrête quelques lignes plus tôt, et `balancing: { maxLinesPerHeading: 1 }` évite que l’équilibrage des colonnes remonte ce blanc au-dessus de l’intertitre suivant, où il passerait pour une rupture dans le raisonnement.
+
+### 5 · Le livre au verso, le chapitre au recto
+
+<Excerpt region="running-heads" />
+
+Les folios en rouge de rubrique sur le bord extérieur, le livre au verso et le chapitre au recto ; `pages: 'body'` les retire de l’ouverture, qui reçoit un folio centré en pied.
+
+## Variantes
+
+### Numéroter toutes les mesures
+
+Un apparat chargé se suit mieux avec un numéro sur chaque mesure.
+
+```diff
+-  barNumbers: 'system', // the apparatus is keyed by bar: number every system
++  barNumbers: 'every',
+```
+
+### Graver les exemples en Bravura
+
+Les têtes de note plus épaisses de Bravura s’accordent à un style de gravure sur cuivre.
+
+```diff
+-  musicFont: 'Leipzig', // lighter than Bravura, close to a 19th-century plate
++  musicFont: 'Bravura',
+```
+
+## Erreurs fréquentes
+
+- MEI 5 écrit l’armure `keysig="1f"` sur `scoreDef` ou `staffDef`. L’attribut `key.sig` de MEI 4 est ignoré sans message, et le bémol disparaît.
+- Donnez à chaque `staffDef` son `lines="5"` : sans lui, notes et clés sont gravées sans portée.
+- Le graveur imprime le `<lem>` d’un `<app>`, pas le `<rdg>`. Une variante que le lecteur doit voir sur la page va dans la note d’apparat ou dans un second exemple.

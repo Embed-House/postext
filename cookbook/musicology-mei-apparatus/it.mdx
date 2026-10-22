@@ -1,0 +1,64 @@
+---
+title: "Esempi musicali in MEI con apparato critico nelle note"
+summary: "Blocchi MEI 5 incisi nel testo su un rigo di 5 mm, varianti codificate con app, lem e rdg, e l’apparato per battuta e nota nelle note a piè di pagina."
+plain: "Un capitolo di uno studio sulla musica medievale. Brevi passi di un canone inglese del Duecento sono stampati come musica nel testo, e le note in fondo a ogni pagina registrano, battuta per battuta, dove le vecchie edizioni non concordano."
+description: "Un capitolo di musicologia su Sumer is icumen in: esempi MEI incisi nel testo, varianti conservate nella codifica e apparato critico nelle note a piè di pagina."
+question: "Come do agli esempi musicali un apparato critico delle varianti delle fonti nelle note a piè di pagina?"
+aliases: ["apparato critico", "esempi musicali", "MEI", "Music Encoding Initiative", "varianti", "app lem rdg", "musicologia", "edizione critica", "Sumer is icumen in"]
+---
+
+## Che cosa comporrai
+
+Il capitolo 3 di uno studio su come gli antiquari inglesi lessero la musica medievale: cinque pagine di 156 × 234 mm su *Sumer is icumen in*, la rota di Reading, e sugli editori che la misero in partitura tra il 1776 e il 1889. Tre passi del canone sono incisi nel testo, in Leipzig su un rigo di 5 mm, con la numerazione delle battute della partitura di W. S. Rockstro, e ogni commento richiama il suo apparato a piè di pagina: «b. 40, n. 2 la ] sol Hw, Bu». Le note sono brevi e fitte come si conviene a un apparato, la musica occupa la giustezza del testo, e ogni lezione viene dall’articolo di Rockstro nel *Dictionary* di Grove, come il capitolo dichiara nel secondo paragrafo.
+
+## Preparazione
+
+### 1 · Scrivi ogni esempio in MEI, con le sue varianti
+
+Le impostazioni sono nella [risposta breve](#la-risposta-breve) qui sopra; la musica sta nel Markdown, un blocco ```` ```mei ```` per esempio. Dove due fonti divergono, la battuta contiene un `<app>` con la lezione accolta in `<lem>` e l’altra in `<rdg source="#Hw #Bu">`. Si incide il lemma: la battuta 40 dell’<PageRef page={5}>esempio 3.3</PageRef> mostra il la, e il sol di Hawkins e Burney resta nel file per chi apre la codifica. Dai a ogni blocco un `alt` nella lingua della pagina: è ciò che leggono della partitura uno screen reader e il PDF con tag.
+
+### 2 · Lega l’apparato alle battute che il lettore vede
+
+`barNumbers: 'system'` numera la prima battuta di ogni sistema, e il `<measure n="37">` di ogni blocco fa partire il conto da dove comincia il brano nell’edizione seguita: l’esempio 3.3 si apre quindi a 37, e una nota che dice «b. 40» rimanda a una battuta che il lettore trova. La voce d’apparato è una normale nota a piè di pagina, richiamata dal paragrafo che commenta la battuta: lemma, parentesi quadra di chiusura, variante, sigle in corsivo. Una nota non si può richiamare dall’interno di una partitura, perciò il richiamo va nella frase che nomina la lezione.
+
+### 3 · Dimensiona la musica per il testo corrente
+
+Un rigo di 5 mm in Leipzig sta in una giustezza di 116 mm con cinque o sei battute di 3/2 per sistema, e le undici battute dell’esempio 3.3 stanno in due sistemi. `textFont` compone il testo cantato in Crimson Pro, il carattere del testo, e `minSystemsAtBreak: 2` impedisce che una pagina finisca con un solo sistema di un esempio il cui resto passa alla pagina seguente. Il titolo di ogni esempio è un titolo di terzo livello, quindi non resta mai in fondo alla pagina senza la sua partitura.
+
+### 4 · Lascia che una pagina con note finisca corta
+
+<Excerpt region="opener" />
+
+L’apertura abbassa il testo di 50 mm sotto un titolo in Cormorant corsivo. Più avanti, una pagina la cui riga seguente si porterebbe dietro una nota lunga finisce qualche riga prima, e `balancing: { maxLinesPerHeading: 1 }` impedisce al bilanciamento delle colonne di spostare quel vuoto sopra il titolo della sezione seguente, dove sembrerebbe una cesura nel ragionamento.
+
+### 5 · Metti il libro sul verso e il capitolo sul recto
+
+<Excerpt region="running-heads" />
+
+I numeri di pagina in rosso di rubrica sul margine esterno, il libro sul verso e il capitolo sul recto; `pages: 'body'` li toglie dall’apertura, che ha un numero di pagina centrato al piede.
+
+## Varianti
+
+### Numera tutte le battute
+
+Un apparato con molte voci per sistema si segue meglio con un numero su ogni battuta.
+
+```diff
+-  barNumbers: 'system', // the apparatus is keyed by bar: number every system
++  barNumbers: 'every',
+```
+
+### Incidi gli esempi in Bravura
+
+Le teste di nota più piene di Bravura si accordano con uno stile da incisione su lastra.
+
+```diff
+-  musicFont: 'Leipzig', // lighter than Bravura, close to a 19th-century plate
++  musicFont: 'Bravura',
+```
+
+## Errori frequenti
+
+- MEI 5 scrive l’armatura come `keysig="1f"` su `scoreDef` o `staffDef`. L’attributo `key.sig` di MEI 4 viene ignorato senza avviso, e il bemolle sparisce.
+- Dai a ogni `staffDef` il suo `lines="5"`: senza, note e chiavi vengono incise senza rigo.
+- Si incide il `<lem>` di un `<app>`, non il `<rdg>`. Una variante che il lettore deve vedere sulla pagina va nella nota d’apparato o in un secondo esempio.

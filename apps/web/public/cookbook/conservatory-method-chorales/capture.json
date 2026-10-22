@@ -1,0 +1,793 @@
+{
+  "schemaVersion": 1,
+  "slug": "conservatory-method-chorales",
+  "sourceHash": "f966022ca3ab5298362ceb9013e14e5f23810de9ab74063f8a4c9989f37b02b1",
+  "engine": {
+    "postext": "1.54.0",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T09:35:51.390Z",
+  "variants": {
+    "en": {
+      "hash8": "892c2a86",
+      "vdtHash": "f23264c307f0f899d26194daae2edb91935b253e",
+      "timings": {
+        "importMs": 756,
+        "fontsMs": 1250,
+        "buildMs": 75,
+        "totalMs": 3993,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 7,
+        "mirror": true,
+        "body": {
+          "family": "Crimson Pro",
+          "sizePt": 10.8,
+          "leadingPt": 14.2
+        },
+        "families": [
+          "Crimson Pro",
+          "Fira Sans Condensed",
+          "Playfair Display"
+        ],
+        "pages": 3,
+        "ownLines": 175
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "61",
+          "role": "opener",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 158004,
+          "alt": "Opening page 61: Cadences. Example 4.1. The five cadences in G major: perfect and imperfect authentic, half, plagal, deceptive."
+        },
+        {
+          "n": 2,
+          "label": "62",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 166958,
+          "alt": "Page 62: Four cadences in one tune. Example 4.2. Nun danket alle Gott, lines 1 and 2: a plagal close, then a perfect cadence · Example 4.3. Nun danket alle Gott, line 3: a half cadence."
+        },
+        {
+          "n": 3,
+          "label": "63",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 68700,
+          "alt": "Page 63: Exercises. Example 4.4. The Old Hundredth: an imperfect authentic cadence, a half cadence and two perfect ones · Example 4.5. The last line of the Old Hundredth, closing first on vi, then on I."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "conservatory-method-chorales.postext",
+        "bytes": 25308,
+        "folio": "f561b8ee",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "ca7833580a9bfffe",
+            "lines": "ce6804fcda9fb7ac"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "defaultResourceTypes",
+          "initMusicEngine",
+          "renderPageToCanvas"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].title",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "captionStyle",
+          "captionStyle.color",
+          "captionStyle.fontFamily",
+          "captionStyle.fontSize",
+          "captionStyle.gap",
+          "captionStyle.labelBold",
+          "captionStyle.labelColor",
+          "captionStyle.note",
+          "captionStyle.note.color",
+          "captionStyle.note.gap",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].pages",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].span",
+          "layout",
+          "layout.gutterWidth",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "orderedLists.numberFormat",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "resourceTypes",
+          "scoreStyle",
+          "scoreStyle.barNumbers",
+          "scoreStyle.color",
+          "scoreStyle.marginBottom",
+          "scoreStyle.marginTop",
+          "scoreStyle.musicFont",
+          "scoreStyle.staffSize",
+          "scoreStyle.textFont",
+          "scoreStyles",
+          "scoreStyles[].barNumbers",
+          "scoreStyles[].id",
+          "scoreStyles[].name",
+          "scoreStyles[].spacing",
+          "scoreStyles[].staffSize",
+          "unorderedLists",
+          "unorderedLists.bulletChar",
+          "unorderedLists.color",
+          "unorderedLists.marginBottom",
+          "unorderedLists.marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles",
+          "resourceTypes",
+          "scoreStyle",
+          "scoreStyles",
+          "unorderedLists"
+        ],
+        "configLeaves": 254,
+        "designElements": 9,
+        "directives": [
+          "::resource",
+          ":::callout",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}",
+          ":ref",
+          "^…^"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Crimson Pro",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Crimson Pro",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Crimson Pro",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Fira Sans Condensed",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Fira Sans Condensed",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Fira Sans Condensed",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Fira Sans Condensed",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playfair Display",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Playfair Display",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "figure-citations",
+          "heading-attributes",
+          "inline-embeds",
+          "localised-labels",
+          "music-notation",
+          "opener-band",
+          "opener-design",
+          "page-role-filters",
+          "paragraph-styles",
+          "resource-types",
+          "score-style",
+          "super-subscripts"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 5,
+        "looseLines": {
+          "count": 1,
+          "share": 0.0095,
+          "worst": 2.41
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “Sing the bass while a classmate plays the upper …”"
+          },
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.0 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageNumbering, headings"
+          }
+        ]
+      }
+    },
+    "es": {
+      "hash8": "f475c2ad",
+      "vdtHash": "52f9a7e5c0fdcb451a6a17aef95ebd0d89b349a4",
+      "timings": {
+        "importMs": 736,
+        "fontsMs": 639,
+        "buildMs": 89,
+        "totalMs": 3749,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 7,
+        "mirror": true,
+        "body": {
+          "family": "Crimson Pro",
+          "sizePt": 10.8,
+          "leadingPt": 14.2
+        },
+        "families": [
+          "Crimson Pro",
+          "Fira Sans Condensed",
+          "Playfair Display"
+        ],
+        "pages": 3,
+        "ownLines": 175
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "61",
+          "role": "opener",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 159754,
+          "alt": "Página de apertura 61: Las cadencias. Ejemplo 4.1. Las cinco cadencias en sol mayor: perfecta, imperfecta, semicadencia, plagal y rota."
+        },
+        {
+          "n": 2,
+          "label": "62",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 158126,
+          "alt": "Página 62: La semicadencia. Ejemplo 4.2. Nun danket alle Gott, versos 1 y 2: un reposo plagal y una cadencia perfecta · Ejemplo 4.3. Nun danket alle Gott, verso 3: una semicadencia."
+        },
+        {
+          "n": 3,
+          "label": "63",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 97912,
+          "alt": "Página 63: Ejercicios. Ejemplo 4.4. El Salmo 134 de Ginebra: una cadencia imperfecta, una semicadencia y dos perfectas · Ejemplo 4.5. El último verso del Salmo 134, que reposa primero en el VI grado y después en el I."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "conservatory-method-chorales.postext",
+        "bytes": 27751,
+        "folio": "f561b8ee",
+        "chapters": [
+          {
+            "pages": 3,
+            "hash": "00a81451ea843057",
+            "lines": "2454b47da944e195"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "defaultResourceTypes",
+          "initMusicEngine",
+          "renderPageToCanvas"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.boldColor",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.italicColor",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].id",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].title",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "calloutStyles[].titleStyle.letterSpacing",
+          "calloutStyles[].titleStyle.textTransform",
+          "captionStyle",
+          "captionStyle.color",
+          "captionStyle.fontFamily",
+          "captionStyle.fontSize",
+          "captionStyle.gap",
+          "captionStyle.labelBold",
+          "captionStyle.labelColor",
+          "captionStyle.note",
+          "captionStyle.note.color",
+          "captionStyle.note.gap",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].letterSpacing",
+          "footer.elements[].pages",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "footer.elements[].textTransform",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].span",
+          "layout",
+          "layout.gutterWidth",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "orderedLists.numberFormat",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "resourceTypes",
+          "scoreStyle",
+          "scoreStyle.barNumbers",
+          "scoreStyle.color",
+          "scoreStyle.marginBottom",
+          "scoreStyle.marginTop",
+          "scoreStyle.musicFont",
+          "scoreStyle.staffSize",
+          "scoreStyle.textFont",
+          "scoreStyles",
+          "scoreStyles[].barNumbers",
+          "scoreStyles[].id",
+          "scoreStyles[].name",
+          "scoreStyles[].spacing",
+          "scoreStyles[].staffSize",
+          "unorderedLists",
+          "unorderedLists.bulletChar",
+          "unorderedLists.color",
+          "unorderedLists.marginBottom",
+          "unorderedLists.marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "captionStyle",
+          "colorPalette",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles",
+          "resourceTypes",
+          "scoreStyle",
+          "scoreStyles",
+          "unorderedLists"
+        ],
+        "configLeaves": 254,
+        "designElements": 9,
+        "directives": [
+          "::resource",
+          ":::callout",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}",
+          ":ref",
+          "^…^"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Crimson Pro",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Crimson Pro",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Crimson Pro",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Fira Sans Condensed",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Fira Sans Condensed",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Fira Sans Condensed",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Fira Sans Condensed",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Playfair Display",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Playfair Display",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-styles",
+          "figure-citations",
+          "heading-attributes",
+          "inline-embeds",
+          "localised-labels",
+          "music-notation",
+          "opener-band",
+          "opener-design",
+          "page-role-filters",
+          "paragraph-styles",
+          "resource-types",
+          "score-style",
+          "super-subscripts"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 4,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.88
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.6 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "continuation carried as the bundle's start: pageNumbering, headings"
+          }
+        ]
+      }
+    }
+  }
+}

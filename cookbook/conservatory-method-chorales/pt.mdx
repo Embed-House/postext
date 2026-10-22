@@ -1,0 +1,72 @@
+---
+title: "Corais numerados num método de harmonia em duas colunas"
+summary: "Corais a quatro vozes escritos em Humdrum **kern viram recursos de partitura do tipo exemplo: numerados Exemplo 4.1, citados com :ref e flutuantes como figuras."
+plain: "Um capítulo sobre cadências de um livro de harmonia de conservatório, em duas colunas. Os cinco exemplos musicais são escritos como texto, gravados como partituras, numerados como figuras e postos perto do parágrafo que os cita."
+description: "Um método de harmonia em duas colunas: cinco corais a quatro vozes em Humdrum, numerados, legendados, citados e flutuantes como figuras, com o código."
+question: "Como numero exemplos musicais a quatro vozes e os faço flutuar como figuras em duas colunas?"
+aliases: ["exemplos musicais", "coral", "harmonia a quatro vozes", "SATB", "Humdrum", "kern", "Exemplo 4.1", "livro de harmonia", "método de conservatório", "cifra de graus", "cadências"]
+---
+
+## O que você vai compor
+
+O capítulo 4 de *Four-Part Harmony*, um método para os primeiros anos de conservatório, numa página de 210 × 280 mm em duas colunas de Crimson Pro. A lição trata das cadências, e os seus cinco exemplos são corais a quatro vozes em duas pautas, com os graus em algarismos romanos sob o baixo: as cinco cadências de sol maior, três versos de *Nun danket alle Gott* e o Salmo 134 de Genebra (o *Old Hundredth*) completo. Cada um leva um número, de Example 4.1 a 4.5 (Ejemplo na edição espanhola), uma legenda na fonte dos rótulos com o rótulo em vinho, e fica no topo ou no pé da coluna que segue o parágrafo que o cita; o salmo inteiro ocupa as duas colunas no topo da página 63. As harmonizações foram escritas para este método e conferidas quanto a quintas e oitavas paralelas, distância entre as vozes e resolução da sensível.
+
+## Preparo
+
+### 1 · Escrever cada coral em Humdrum **kern
+
+<Excerpt region="humdrum" />
+
+O Humdrum escreve as vozes em colunas separadas por tabulações, da mais grave à mais aguda. Cada pauta é uma coluna (*spine*) dividida em duas com `*^`: tenor e baixo na clave de fá, soprano e contralto na de sol, e assim o gravador põe duas vozes por pauta com as hastes separadas (a voz da esquerda para cima, a da direita para baixo). Uma coluna `**harm` depois da pauta do baixo imprime os graus sob ela; `Ib` é a primeira inversão e `Ic`, a quarta e sexta. O script escreve as colunas com espaços e as converte em tabulações, para que nenhum editor estrague o arquivo, e a edição espanhola recebe os graus em maiúsculas (VI, IIb), como os livros de harmonia espanhóis os escrevem.
+
+### 2 · Fazer de cada exemplo um recurso do tipo exemplo
+
+A [resposta curta](#a-resposta-curta) monta os cinco recursos. `typeId: 'example'` usa o tipo Exemplo embutido, que o motor acrescenta aos tipos de recurso do livro quando um recurso o usa, com o nome no idioma do documento (`locale: 'es'` dá Ejemplo) e numerado por capítulo: o primeiro exemplo do capítulo 4 é o 4.1. Um recurso de partitura fica inteiro e flutua como uma figura: `position: 'top'` ou `'bottom'` ocupa o topo ou o pé da próxima coluna com espaço depois da citação, e `span: 'page'` estende o *Old Hundredth* pelas duas colunas. Legendas, créditos e textos alternativos vêm de um segundo arquivo Markdown por edição.
+
+### 3 · Dar aos exemplos de coluna uma pauta menor
+
+<Excerpt region="scores" />
+
+Os dois corais na largura da página seguem o `scoreStyle` do documento, com pautas de 5,4 mm e números de compasso no começo de cada sistema. Os exemplos de coluna escolhem o estilo nomeado `column`: pautas de 4,6 mm, sem números de compasso e espaçamento 0,8, que mantém os cinco compassos do exemplo 4.2 num só sistema em vez de deixar o último sozinho num segundo.
+
+### 4 · Iniciar o gravador antes da composição
+
+<Excerpt region="build" />
+
+`initMusicEngine()` carrega o Verovio, o gravador, a partir do pacote; até ele rodar, cada partitura é diagramada como uma caixa cinza. A `continuation` faz deste o capítulo 4 de um livro mais longo, e assim os exemplos vão de 4.1 a 4.5 e os fólios começam em 61, numa página ímpar.
+
+### 5 · Abrir o capítulo sobre as duas colunas
+
+<Excerpt region="opener" />
+
+A abertura ocupa as duas colunas (`span: 'page'` no título de nível um) e tira o antetítulo e o olho dos atributos do título. `minHeight` rebaixa o texto 46 mm, e as duas colunas começam na mesma linha sob o fio.
+
+## Variações
+
+### Pôr um exemplo sem número no texto
+
+Um bloco de código mantém no texto uma partitura que o texto não cita, como uma fórmula destacada: sem número nem legenda.
+
+```diff
+- ::resource{id="ex-cadences"}
++ ```humdrum {style="column" alt="As cinco cadências em sol maior"}
++ **kern	**harm	**kern
++ …
++ ```
+```
+
+### Chamá-los de exemplos musicais
+
+Defina um tipo seu para outro nome e aponte `typeId` para ele.
+
+```diff
+- resourceTypes: defaultResourceTypes(LANG),
++ resourceTypes: [...defaultResourceTypes(LANG), { id: 'musex', name: 'Exemplo musical',
++   shortLabel: 'Ex. mus.', captionPrefix: 'Exemplo musical', numberingTemplate: '{h1}.{n}',
++   resetOn: 'h1', counterFormat: 'decimal' }],
+```
+
+## Erros comuns
+
+- Um recurso de partitura nunca se divide entre colunas ou páginas. Limite os exemplos flutuantes a poucos compassos e ponha uma peça mais longa num bloco de código, que se divide entre sistemas.
+- O gravador preenche cada sistema até a largura do seu espaço, e o último mantém a largura natural. Quando um exemplo deixa um compasso sozinho num segundo sistema, reduza o `spacing` ou o tamanho de pauta do seu estilo.

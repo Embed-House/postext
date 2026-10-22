@@ -1,0 +1,70 @@
+---
+title: "Un manual de armonía con ejemplos musicales en ABC"
+summary: "Un capítulo sobre las cadencias cuyos ejemplos son bloques ABC en el Markdown, grabados al ancho de la columna; uno de ellos sigue en la página siguiente."
+plain: "Un capítulo de un manual de teoría musical sobre cómo terminan las frases. Los ejemplos se escriben como texto dentro del capítulo y Postext los dibuja como pentagramas; el más largo sigue en la página siguiente."
+description: "Un capítulo de un manual de armonía: ejemplos en ABC escritos en el Markdown y grabados por Verovio, uno partido entre dos páginas, con el código completo."
+question: "¿Cómo pongo ejemplos musicales en el texto de un libro de texto, escritos como notación?"
+aliases: ["ejemplos musicales", "notación ABC", "manual de armonía", "cadencias", "números romanos", "libro de teoría musical", "partitura en el texto", "Verovio"]
+---
+
+## Lo que vas a componer
+
+El capítulo 5 de un curso de armonía al teclado, de 180 × 250 mm en Libre Caslon, sobre las cinco cadencias: perfecta, imperfecta, semicadencia, plagal y rota. Cada cadencia lleva dos párrafos breves y un ejemplo a tres voces con sus números romanos bajo el pentagrama, escrito en ABC dentro del propio Markdown. El capítulo termina con *Greensleeves* en la menor, con un número romano sobre cada compás, y esa melodía no cabe en lo que queda de la página 3: pone allí tres sistemas y los dos últimos en la cabeza de la página 4, partida entre sistemas igual que un párrafo se parte entre líneas. El tamaño del pentagrama, la fuente musical y el espaciado se fijan una sola vez en la configuración, así que los cinco ejemplos y la melodía comparten el mismo aspecto.
+
+## Elaboración
+
+### 1 · Escribe el ejemplo donde lo pide el texto
+
+Un bloque marcado `abc` contiene la notación, y el texto sigue después. `L:1/2` hace de cada acorde sin duración una blanca, `[Bdg]` apila tres notas en una sola voz y una línea `w:` pone una palabra bajo cada acorde, aquí los números romanos. El atributo `alt` es lo que leen un lector de pantalla y el PDF etiquetado en lugar de la imagen.
+
+````md
+```abc {alt="Cadencia perfecta en sol mayor: I, IV, V, I"}
+X:1
+M:4/4
+L:1/2
+K:G
+[Bdg] [ceg] | [Adf] [Bdg] |]
+w: I IV V I
+```
+````
+
+### 2 · Da a cada partitura el aspecto del libro
+
+La [respuesta corta](#la-respuesta-corta) es todo el diseño de la música: un pentagrama de 5,5 mm, el que usan los manuales de armonía para ejemplos que se leen sentado al piano, Bravura junto al texto en Caslon y los números en la letra del texto en lugar de la Times del grabador. `spacing: 1.6` reparte cuatro acordes de blanca por un tercio de la caja, de modo que la progresión se lee acorde a acorde. El mismo ajuste decide cuántos compases de *Greensleeves* caben en un sistema: tres, en una caja de 125 mm.
+
+### 3 · Deja que un ejemplo largo continúe
+
+`minSystemsAtBreak: 2` es lo que mantiene legible *Greensleeves* al pasar la página. La melodía sale en cinco sistemas; tres caben al pie de la página 3, así que dos pasan a la 4, y ninguna página se queda con un sistema suelto. Una partitura de menos de cuatro sistemas pasa entera a la página siguiente, como harían los ejemplos breves de cadencias.
+
+### 4 · Arranca el grabador antes de componer
+
+<Excerpt region="engine" />
+
+Verovio ocupa unos 3,7 MB de WebAssembly, así que el motor solo lo carga cuando se lo pides. Sin `initMusicEngine()` la composición se hace igual y cada partitura es un recuadro gris del tamaño correcto. `renderToPdf` no necesita nada más: el PDF dibuja cada sistema como trazados vectoriales y pone los números en la Caslon incrustada.
+
+### 5 · Abre el capítulo con el título hundido
+
+<Excerpt region="opener" />
+
+La apertura toma el antetítulo del atributo `kicker` del título y reserva 48 mm, lo justo para el título y su filete con el primer ejemplo todavía en la página 1.
+
+## Variantes
+
+### Usa Leland para una página más ligera
+
+Leland, la fuente de MuseScore, tiene plicas más finas y cabezas más pequeñas que Bravura; va bien con un libro compuesto en una letra de texto ligera.
+
+```diff
+-  musicFont: 'Bravura',
++  musicFont: 'Leland',
+```
+
+### Escribe una segunda voz en otro formato
+
+El lector de ABC toma una sola voz. Para un soprano y un bajo en pentagramas distintos, escribe el ejemplo en Humdrum o en MusicXML; <RecipeLink slug="conservatory-method-chorales">el método de conservatorio</RecipeLink> compone así corales a cuatro voces.
+
+## Errores frecuentes
+
+- Escribe la duración de un acorde dentro de los corchetes, `[B2d2g2]`, o ajusta `L:` al valor del acorde: una duración tras el corchete, `[Bdg]2`, se lee como la duración por defecto.
+- El lector de ABC de Verovio da cada sílaba de una línea `w:` a la nota siguiente e ignora `*` y `_`, así que una línea `w:` no puede saltarse notas. Para señalar unos pocos compases, escribe las marcas como cifrados sobre el pentagrama, como hace el ejemplo de *Greensleeves*.
+- Una letra de texto rara vez trae los signos ♯ y ♭: escribe «fa sostenido» en la prosa, o el navegador pondrá el signo con una fuente del sistema.

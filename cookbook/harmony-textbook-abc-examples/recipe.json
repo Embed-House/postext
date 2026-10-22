@@ -1,0 +1,149 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 163,
+  "status": "published",
+  "chapter": "textbooks",
+  "order": 90,
+  "level": 2,
+  "genres": [
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "music-notation",
+      "score-style"
+    ],
+    "also": [
+      "opener-design",
+      "heading-attributes",
+      "running-heads",
+      "mirrored-margins",
+      "page-role-filters",
+      "callout-styles",
+      "paragraph-styles",
+      "color-palette",
+      "widows-orphans-runts",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q189"
+  ],
+  "gotchas": [],
+  "engine": {
+    "postext": "1.54.0",
+    "postextPdf": "1.54.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf"
+  ],
+  "sample": {
+    "locales": [
+      "en",
+      "es"
+    ]
+  },
+  "capture": {
+    "hero": [
+      2,
+      3
+    ],
+    "card": "crop",
+    "focus": {
+      "page": 3,
+      "x": 0,
+      "y": 0.66,
+      "w": 1,
+      "h": 0.34
+    },
+    "pages": "all",
+    "expect": {
+      "pages": [
+        4,
+        4
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [
+      {
+        "what": {
+          "en": "The chapter on cadences and its examples, written for this recipe",
+          "es": "El capítulo sobre las cadencias y sus ejemplos, escritos para esta receta"
+        },
+        "who": "Ignacio Ferro",
+        "license": "CC-BY-4.0"
+      },
+      {
+        "what": {
+          "en": "Greensleeves, English tune of the sixteenth century, in its common modern form",
+          "es": "Greensleeves, canción inglesa del siglo XVI, en su forma moderna habitual"
+        },
+        "who": "Traditional",
+        "source": "https://en.wikipedia.org/wiki/Greensleeves",
+        "license": "PD"
+      }
+    ],
+    "images": [],
+    "fonts": [
+      {
+        "family": "Libre Caslon Text",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Libre Caslon Display",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Libre Franklin",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-22",
+  "updated": "2026-10-22",
+  "related": [
+    "textbook-box-family",
+    "textbook-margin-column"
+  ],
+  "downloads": {
+    "pdf": true
+  },
+  "folio": {
+    "paper": {
+      "type": "coatedMatte",
+      "grammage": 100
+    },
+    "binding": {
+      "type": "paperback",
+      "cover": "case",
+      "coverMaterial": "paper",
+      "coverColor": "#2f5d4f"
+    },
+    "surface": {
+      "type": "plain",
+      "color": "#ececea"
+    },
+    "lighting": {
+      "environment": "studio"
+    }
+  }
+}

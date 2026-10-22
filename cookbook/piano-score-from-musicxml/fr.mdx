@@ -1,0 +1,61 @@
+---
+title: "Une partition de piano depuis MusicXML sur plusieurs pages"
+summary: "Deux menuets pour clavier gravés depuis des fichiers MusicXML sur une double portée, coupés entre les systèmes pour que chaque pièce tienne sur une double page."
+plain: "Une petite édition de deux menuets pour piano très connus. Elle montre comment prendre un fichier exporté d’un logiciel de notation et le composer en partition qui continue d’une page à l’autre, prête à être jouée."
+description: "Les deux menuets de Petzold du cahier d’Anna Magdalena Bach, gravés depuis MusicXML sur double portée, sur deux doubles pages, avec le code complet et un PDF."
+question: "Comment composer une partition de piano issue d'un fichier MusicXML sur plusieurs pages ?"
+aliases: ["partition", "partition de piano", "MusicXML", "double portée", "système de piano", "Menuet en sol", "BWV Anh. 114", "Petit livre d’Anna Magdalena Bach", "édition pour interprètes", "tourne de page"]
+---
+
+## Ce que vous allez composer
+
+Une édition pour interprètes des deux menuets du Petit livre d’Anna Magdalena Bach de 1725 : celui en sol majeur, que tout élève pianiste apprend, et son pendant en sol mineur, attribués aujourd’hui à Christian Petzold. La page mesure 230 × 305 mm, le format d’un album de partitions. Une belle page présente les pièces sur deux colonnes de Libre Caslon sous un titre de 52 pt en Bodoni. Puis chaque menuet commence sur une fausse page et occupe la double page sur une double portée de 7 mm, gravée en Bravura depuis un fichier MusicXML : quatre mesures par système, les mesures 1 à 16 à gauche et 17 à 32 à droite, si bien que le pianiste ne tourne aucune page au milieu d’une pièce.
+
+## Préparation
+
+### 1 · Apporter la pièce en MusicXML
+
+Les deux fichiers d’`assets/` sont du MusicXML 4.0 ordinaire, le format qu’écrivent Dorico, Sibelius, Finale et MuseScore à l’export d’une partition (choisissez le `.musicxml` non compressé, pas le `.mxl`). Ils contiennent une partie sur deux portées, avec les clés, l’armure, les ligatures, la direction des hampes dans les mesures à deux voix, les ornements et les barres de reprise. Le nom de la partie porte `print-object="no"` : une étiquette « Piano » imprimée décalerait chaque système vers la droite. Le titre de `<work-title>` n’est pas imprimé, il sert seulement de description de la partition, si bien que le Markdown donne à chaque pièce son propre titre.
+
+### 2 · La composer dans un bloc de code, pas comme ressource
+
+La [réponse courte](#la-réponse-courte) télécharge chaque fichier et l’écrit dans un bloc ` ```musicxml `, où le Markdown garde une ligne de repère. Un bloc est gravé à la largeur de la colonne et coupé en systèmes, et chaque système se place comme une ligne de paragraphe : la pièce continue sur la page suivante entre deux systèmes. Une ressource `score` reste d’un seul tenant et ne pourrait pas passer d’une page à l’autre. `minSystemsAtBreak: 2` empêche qu’un système reste seul au pied d’une page ou passe seul en tête de la suivante.
+
+### 3 · Dimensionner la portée pour l’interprète
+
+La portée mesure 7 mm de haut, la taille d’un album de piano imprimé qu’on lit sur le pupitre. `spacing: 1.7` écarte les notes jusqu’à ce qu’un système de 186 mm de justification contienne quatre mesures, et chaque moitié d’un menuet prend ainsi quatre systèmes. `systemGap: 14 mm` laisse la place aux lignes supplémentaires entre les deux mains ; avec cet écart, quatre systèmes tiennent sous le titre de la première page et quatre sur la page en regard : la double barre tombe au passage d’une page à l’autre de la double page.
+
+### 4 · Ouvrir chaque pièce sur une fausse page
+
+<Excerpt region="openers" />
+
+`breakBefore: { parity: 'even' }` fait commencer chaque pièce sur une page de gauche, et la page de titre de l’éditeur prend un style de titre qui ouvre sur une belle page, sans titres courants. Le numéro de catalogue et le compositeur viennent des attributs du titre et se placent aux coins inférieurs de l’ouverture, là où les éditions gravées les impriment.
+
+### 5 · Nommer la pièce en tête de la page de droite
+
+<Excerpt region="running-heads" />
+
+La première page d’une pièce porte déjà son titre ; les titres courants sont donc réservés aux pages suivantes (`pages: 'body'`). La belle page imprime le titre de la pièce et le folio au bord extérieur, dans le caractère des étiquettes à 8 pt.
+
+## Variantes
+
+### Faire une édition d’étude sur une portée plus petite
+
+Une portée de 6 mm avec l’espacement propre au graveur porte sept ou huit mesures par système, et chaque menuet tient alors sur sa première page.
+
+```diff
+-  staffSize: mm(7),
++  staffSize: mm(6),
+-  spacing: 1.7,
++  spacing: 1,
+```
+
+### Numéroter les exemples courts
+
+Quand la musique se compose d’exemples courts cités dans le texte, une ressource `score` numérotée convient mieux : <RecipeLink slug="conservatory-method-chorales">des chorals à quatre voix en exemples numérotés</RecipeLink>.
+
+## Erreurs fréquentes
+
+- Les sauts de système écrits dans le fichier (`<print new-system="yes">`) ne sont pas conservés : les systèmes remplissent la largeur de la colonne, réglez donc `spacing` et `staffSize` jusqu’à obtenir le nombre de mesures voulu.
+- Le graveur ne répartit pas les mesures entre les systèmes, et le dernier système est composé à sa largeur naturelle : à 6 mm et avec `spacing: 1`, la mesure 32 reste seule sur un système. Changez `spacing` jusqu’à ce que le dernier système porte plus d’une mesure.
+- Un `.mxl` compressé est une archive zip : décompressez-le, ou exportez le format non compressé, avant de le télécharger.

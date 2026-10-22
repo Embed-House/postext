@@ -1,0 +1,64 @@
+---
+title: "MEI-Notenbeispiele mit kritischem Apparat in den Fußnoten"
+summary: "MEI-5-Blöcke im Text, gestochen auf einem 5-mm-System, Lesarten mit app, lem und rdg kodiert und der Apparat nach Takt und Note in den Fußnoten."
+plain: "Ein Kapitel einer Studie über mittelalterliche Musik. Kurze Abschnitte eines englischen Kanons aus dem 13. Jahrhundert stehen als Noten im Text, und die Fußnoten halten Takt für Takt fest, wo die alten Ausgaben abweichen."
+description: "Ein musikwissenschaftliches Kapitel über Sumer is icumen in: MEI-Beispiele im Text, Lesarten in der Kodierung und der kritische Apparat in Fußnoten."
+question: "Wie gebe ich Notenbeispielen einen kritischen Apparat mit den Lesarten der Quellen in Fußnoten?"
+aliases: ["kritischer Apparat", "Notenbeispiele", "MEI", "Music Encoding Initiative", "Lesarten", "app lem rdg", "Musikwissenschaft", "kritische Ausgabe", "Sumer is icumen in", "critical apparatus"]
+---
+
+## Was Sie setzen
+
+Kapitel 3 einer Studie darüber, wie englische Antiquare mittelalterliche Musik lasen: fünf Seiten im Format 156 × 234 mm über *Sumer is icumen in*, die Rota aus Reading, und über die Herausgeber, die sie zwischen 1776 und 1889 in Partitur setzten. Drei Abschnitte des Kanons stehen im Text, in Leipzig auf einem 5-mm-System gestochen und nach der Taktzählung von W. S. Rockstros Partitur nummeriert, und jede Besprechung verweist auf ihren Apparat am Seitenfuß: „T. 40, N. 2 A ] G Hw, Bu“. Die Fußnoten sind kurz und dicht, wie ein Apparat es ist, die Noten stehen im Satzspiegel des Textes, und jede Lesart stammt aus Rockstros Artikel in Groves *Dictionary*, was das Kapitel im zweiten Absatz sagt.
+
+## Zubereitung
+
+### 1 · Jedes Beispiel als MEI schreiben, mit seinen Lesarten
+
+Die Einstellungen stehen in [der kurzen Antwort](#die-kurze-antwort) oben; die Musik steht im Markdown, ein ```` ```mei ````-Block je Beispiel. Wo zwei Quellen abweichen, enthält der Takt ein `<app>` mit der gewählten Lesart in `<lem>` und der anderen in `<rdg source="#Hw #Bu">`. Gestochen wird das Lemma: Takt 40 von <PageRef page={5}>Beispiel 3.3</PageRef> zeigt das A, und das G von Hawkins und Burney bleibt in der Datei für alle, die die Kodierung öffnen. Geben Sie jedem Block ein `alt` in der Sprache der Seite: Das lesen ein Screenreader und das getaggte PDF für die Partitur vor.
+
+### 2 · Den Apparat an die Takte binden, die man sieht
+
+`barNumbers: 'system'` nummeriert den ersten Takt jedes Systems, und das `<measure n="37">` jedes Blocks beginnt die Zählung dort, wo der Ausschnitt in der zugrunde gelegten Ausgabe beginnt. Beispiel 3.3 öffnet also mit Takt 37, und eine Fußnote mit „T. 40“ zeigt auf einen Takt, den man findet. Der Apparateintrag ist eine gewöhnliche Fußnote, gesetzt in dem Absatz, der den Takt bespricht: Lemma, schließende Klammer, Lesart, Siglen kursiv. Aus einer Partitur heraus lässt sich keine Fußnote setzen; das Zeichen steht deshalb im Satz, der die Lesart nennt.
+
+### 3 · Die Noten für den laufenden Text bemessen
+
+Ein 5-mm-System in Leipzig passt in einen Satzspiegel von 116 mm mit fünf oder sechs Takten im 3/2 je System; die elf Takte von Beispiel 3.3 stehen so in zwei Systemen. `textFont` setzt die Textunterlegung in Crimson Pro, der Schrift des Fließtexts, und `minSystemsAtBreak: 2` verhindert, dass eine Seite mit einem einzelnen System eines Beispiels endet, dessen Rest auf der nächsten Seite steht. Die Überschrift jedes Beispiels ist eine Überschrift dritter Ebene und bleibt deshalb nie ohne ihre Noten am Seitenfuß stehen.
+
+### 4 · Eine Seite mit Fußnoten kürzer enden lassen
+
+<Excerpt region="opener" />
+
+Der Auftakt senkt den Text 50 mm unter einen Titel in Cormorant kursiv ab. Weiter hinten endet eine Seite, deren nächste Zeile eine lange Fußnote mitbrächte, ein paar Zeilen früher, und `balancing: { maxLinesPerHeading: 1 }` verhindert, dass der Spaltenausgleich diese Lücke über die nächste Abschnittsüberschrift schiebt, wo sie wie ein Bruch im Gedankengang wirkte.
+
+### 5 · Das Buch auf die linke Seite, das Kapitel auf die rechte
+
+<Excerpt region="running-heads" />
+
+Die Seitenzahlen in Rubrikenrot am Außenrand, links der Buchtitel, rechts das Kapitel; `pages: 'body'` hält sie vom Auftakt fern, der eine zentrierte Seitenzahl am Fuß bekommt.
+
+## Varianten
+
+### Jeden Takt nummerieren
+
+Ein Apparat mit vielen Einträgen je System lässt sich mit einer Zahl an jedem Takt leichter verfolgen.
+
+```diff
+-  barNumbers: 'system', // the apparatus is keyed by bar: number every system
++  barNumbers: 'every',
+```
+
+### Die Beispiele in Bravura stechen
+
+Die kräftigeren Notenköpfe von Bravura passen zu einem Hausstil im Plattenstich.
+
+```diff
+-  musicFont: 'Leipzig', // lighter than Bravura, close to a 19th-century plate
++  musicFont: 'Bravura',
+```
+
+## Häufige Fehler
+
+- MEI 5 schreibt die Vorzeichnung als `keysig="1f"` an `scoreDef` oder `staffDef`. Das MEI-4-Attribut `key.sig` wird ohne Meldung übergangen, und das b verschwindet.
+- Jedes `staffDef` braucht sein `lines="5"`: Ohne es werden Noten und Schlüssel ohne Notenlinien gestochen.
+- Gestochen wird das `<lem>` eines `<app>`, nicht das `<rdg>`. Eine Lesart, die man auf der Seite sehen soll, gehört in die Apparatnote oder in ein zweites Beispiel.

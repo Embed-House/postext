@@ -1,0 +1,70 @@
+---
+title: "Ein Harmonielehrbuch mit Notenbeispielen in ABC"
+summary: "Ein Kapitel über Kadenzen, dessen Notenbeispiele ABC-Blöcke im Markdown sind, auf Spaltenbreite gestochen; eines davon läuft über zwei Seiten."
+plain: "Ein Kapitel eines Musiktheoriebuchs darüber, wie musikalische Phrasen enden. Die Notenbeispiele stehen als kurze Textzeilen im Kapitel, und Postext zeichnet daraus Notenlinien und Noten; das längste geht auf der nächsten Seite weiter."
+description: "Ein Kapitel eines Harmonielehrbuchs über Kadenzen: ABC-Beispiele im Markdown, von Verovio gestochen, eine Melodie über zwei Seiten, mit dem ganzen Code."
+question: "Wie setze ich Notenbeispiele, in Notenschrift geschrieben, in den Text eines Lehrbuchs?"
+aliases: ["Notenbeispiele", "ABC-Notation", "Harmonielehre", "Kadenzen", "Stufenziffern", "Musiktheoriebuch", "Noten im Text", "Verovio"]
+---
+
+## Was Sie setzen
+
+Kapitel 5 eines Kurses in Harmonielehre am Klavier, 180 × 250 mm in der Libre Caslon, über die fünf Kadenzen: vollkommener und unvollkommener Ganzschluss, Halbschluss, plagaler Schluss und Trugschluss. Jede Kadenz bekommt zwei kurze Absätze und ein dreistimmiges Notenbeispiel mit seinen Stufenziffern unter der Notenzeile, in ABC direkt im Markdown geschrieben. Das Kapitel endet mit *Greensleeves* in a-Moll, über jedem Takt eine Stufenziffer, und diese Melodie ist zu lang für den Platz, der auf Seite 3 bleibt: Sie setzt dort drei Systeme und die letzten zwei oben auf Seite 4, zwischen Systemen umbrochen, so wie ein Absatz zwischen Zeilen umbricht. Größe der Notenzeile, Notenschrift und Abstände werden einmal in der Konfiguration festgelegt, sodass die fünf Beispiele und die Melodie gleich aussehen.
+
+## Zubereitung
+
+### 1 · Das Beispiel dort schreiben, wo der Text es braucht
+
+Ein mit `abc` markierter Block enthält die Noten, und der Text läuft danach weiter. `L:1/2` macht jeden Akkord ohne Längenangabe zur Halben, `[Bdg]` stapelt drei Noten in einer Stimme, und eine `w:`-Zeile setzt ein Wort unter jeden Akkord, hier die Stufenziffern. Das Attribut `alt` ist das, was ein Screenreader und das getaggte PDF anstelle des Bildes sagen.
+
+````md
+```abc {alt="Ganzschluss in G-Dur: I, IV, V, I"}
+X:1
+M:4/4
+L:1/2
+K:G
+[Bdg] [ceg] | [Adf] [Bdg] |]
+w: I IV V I
+```
+````
+
+### 2 · Jeder Partitur das Aussehen des Buchs geben
+
+[Die kurze Antwort](#die-kurze-antwort) ist die ganze Gestaltung der Noten: eine Notenzeile von 5,5 mm, wie Harmonielehrbücher sie für Beispiele verwenden, die am Klavier gelesen werden, die Bravura neben dem Text in der Caslon, und die Ziffern in der Textschrift statt in der Times des Notenstechers. `spacing: 1.6` verteilt vier Akkorde in Halben über ein Drittel der Satzbreite, sodass sich eine Akkordfolge Akkord für Akkord liest. Dieselbe Einstellung entscheidet, wie viele Takte von *Greensleeves* auf ein System passen: drei, bei 125 mm Satzbreite.
+
+### 3 · Ein langes Beispiel weiterlaufen lassen
+
+`minSystemsAtBreak: 2` hält *Greensleeves* über das Umblättern hinweg lesbar. Die Melodie ergibt fünf Systeme; drei passen an den Fuß von Seite 3, also gehen zwei auf Seite 4, und keine Seite bleibt mit einem einzelnen System zurück. Eine Partitur mit weniger als vier Systemen wandert ganz auf die nächste Seite, wie es die kurzen Kadenzbeispiele täten.
+
+### 4 · Den Notenstecher vor dem Build starten
+
+<Excerpt region="engine" />
+
+Verovio umfasst etwa 3,7 MB WebAssembly, deshalb lädt die Engine es nur, wenn Sie danach fragen. Ohne `initMusicEngine()` läuft das Layout trotzdem, und jede Partitur ist ein grauer Kasten in der richtigen Größe. `renderToPdf` braucht nichts weiter: Das PDF zeichnet jedes System als Vektorpfade und setzt die Ziffern in der eingebetteten Caslon.
+
+### 5 · Das Kapitel mit einem abgesenkten Titel eröffnen
+
+<Excerpt region="opener" />
+
+Der Auftakt nimmt seine Dachzeile aus dem Attribut `kicker` der Überschrift und reserviert 48 mm, genug für den Titel und seine Linie, während das erste Beispiel noch auf Seite 1 steht.
+
+## Varianten
+
+### Leland für eine leichtere Seite nehmen
+
+Leland, die Notenschrift von MuseScore, hat dünnere Hälse und kleinere Notenköpfe als Bravura; sie passt zu einem Buch, das in einer leichten Textschrift gesetzt ist.
+
+```diff
+-  musicFont: 'Bravura',
++  musicFont: 'Leland',
+```
+
+### Eine zweite Stimme in einem anderen Format schreiben
+
+Der ABC-Leser nimmt nur eine Stimme. Für Sopran und Bass auf getrennten Notenzeilen schreiben Sie das Beispiel in Humdrum oder MusicXML; <RecipeLink slug="conservatory-method-chorales">die Konservatoriumsschule</RecipeLink> setzt vierstimmige Choräle auf diese Weise.
+
+## Häufige Fehler
+
+- Schreiben Sie die Länge eines Akkords in die Klammern, `[B2d2g2]`, oder stellen Sie `L:` auf den Wert des Akkords: Eine Länge nach der Klammer, `[Bdg]2`, wird als Standardlänge gelesen.
+- Verovios ABC-Leser gibt jede Silbe einer `w:`-Zeile der nächsten Note und ignoriert `*` und `_`, sodass eine `w:`-Zeile keine Noten überspringen kann. Um einige Takte zu kennzeichnen, schreiben Sie die Zeichen als Akkordsymbole über die Notenzeile, wie es das Beispiel mit *Greensleeves* tut.
+- Eine Textschrift hat selten die Zeichen ♯ und ♭: Schreiben Sie „Fis“ in den Fließtext, sonst setzt der Browser das Zeichen aus einer Systemschrift.

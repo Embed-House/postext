@@ -1004,5 +1004,20 @@
       "de": "Videostil",
       "it": "Stile dei video"
     }
+  },
+  "initMusicEngine": {
+    "slug": "music",
+    "heading": {
+      "en": "A score in the text",
+      "es": "Una partitura en el texto",
+      "ca": "Una partitura dins del text",
+      "zh": "正文中的乐谱",
+      "ar": "مدوّنة داخل النص",
+      "ja": "本文中の楽譜",
+      "pt": "Uma partitura no texto",
+      "fr": "Une partition dans le texte",
+      "de": "Noten im Text",
+      "it": "Una partitura nel testo"
+    }
   }
 }

@@ -1,0 +1,72 @@
+---
+title: "Corals numerats en un mètode d'harmonia a dues columnes"
+summary: "Corals a quatre veus escrits en Humdrum **kern passen a recursos de partitura de tipus exemple: numerats, citats amb :ref i flotants com les figures."
+plain: "Un capítol sobre les cadències d'un llibre d'harmonia de conservatori, a dues columnes. Els cinc exemples musicals s'escriuen com a text, es graven com a partitures, es numeren com les figures i van al costat del paràgraf que els cita."
+description: "Un mètode d'harmonia a dues columnes: cinc corals a quatre veus en Humdrum, numerats, amb peu, citats i flotants com les figures, amb el codi complet."
+question: "Com numero exemples musicals a quatre veus i els faig flotar com figures a dues columnes?"
+aliases: ["exemples musicals", "coral", "harmonia a quatre veus", "SATB", "Humdrum", "kern", "Exemple 4.1", "llibre d'harmonia", "mètode de conservatori", "xifratge de graus", "cadències"]
+---
+
+## Què compondràs
+
+El capítol 4 d'*Armonía a cuatro voces*, un mètode per als primers cursos del conservatori, en una pàgina de 210 × 280 mm a dues columnes de Crimson Pro. La lliçó tracta de les cadències, i els seus cinc exemples són corals a quatre veus en dos pentagrames, amb els graus en xifres romanes sota el baix: les cinc cadències de sol major, tres versos de *Nun danket alle Gott* i el Salm 134 de Ginebra sencer. Cadascun porta el seu número, d'Ejemplo 4.1 a 4.5 (Example a l'edició anglesa), un peu en la lletra de rètols amb l'etiqueta en granat, i es col·loca al cap o al peu de la columna que segueix el paràgraf que el cita; el salm sencer ocupa les dues columnes al cap de la pàgina 63. Les harmonitzacions es van escriure per a aquest mètode i es van revisar a la recerca de quintes i octaves paral·leles, distàncies entre veus i resolució de la sensible.
+
+## Elaboració
+
+### 1 · Escriu cada coral en Humdrum **kern
+
+<Excerpt region="humdrum" />
+
+Humdrum escriu les veus en columnes separades per tabuladors, de la més greu a la més aguda. Cada pentagrama és una columna (*spine*) dividida en dues amb `*^`: tenor i baix al pentagrama de fa, soprano i contralt al de sol, de manera que el gravador posa dues veus per pentagrama amb les pliques separades (la veu de l'esquerra cap amunt, la de la dreta cap avall). Una columna `**harm` després del pentagrama del baix hi imprimeix els graus a sota; `Ib` és la primera inversió i `Ic`, la quarta i sexta. El guió escriu les columnes amb espais i les converteix en tabuladors, així cap editor no pot espatllar el fitxer, i l'edició castellana rep els graus en majúscules (VI, IIb), com els escriuen els llibres d'harmonia en castellà.
+
+### 2 · Fes de cada exemple un recurs de tipus exemple
+
+La [resposta curta](#la-resposta-curta) construeix els cinc recursos. `typeId: 'example'` pren el tipus Exemple integrat, que el motor afegeix als tipus de recurs del llibre quan un recurs l'usa, amb el nom en la llengua del document (`locale: 'es'` dona Ejemplo) i numerat per capítol, de manera que el primer exemple del capítol 4 és el 4.1. Un recurs de partitura es manté sencer i flota com una figura: `position: 'top'` o `'bottom'` pren el cap o el peu de la columna següent amb lloc després de la cita, i `span: 'page'` estén el Salm 134 per les dues columnes. Els peus, els crèdits i els textos alternatius surten d'un segon fitxer Markdown per edició.
+
+### 3 · Dona als exemples de columna un pentagrama més petit
+
+<Excerpt region="scores" />
+
+Els dos corals a l'amplada de la pàgina fan servir l'`scoreStyle` del document, amb pentagrames de 5,4 mm i números de compàs al principi de cada sistema. Els exemples de columna trien l'estil amb nom `column`: pentagrames de 4,6 mm, sense números de compàs i espaiat 0,8, que manté els cinc compassos de l'exemple 4.2 en un sol sistema en lloc de deixar l'últim sol en un segon.
+
+### 4 · Engega el gravador abans de compondre
+
+<Excerpt region="build" />
+
+`initMusicEngine()` carrega Verovio, el gravador, des del paquet; fins que s'engega, cada partitura es compon com una capsa grisa. La `continuation` fa d'aquest el capítol 4 d'un llibre més llarg, així que els exemples es numeren del 4.1 al 4.5 i els folis comencen al 61, en pàgina senar.
+
+### 5 · Obre el capítol sobre les dues columnes
+
+<Excerpt region="opener" />
+
+L'obertura ocupa les dues columnes (`span: 'page'` al títol de nivell u) i pren l'avanttítol i l'entradeta dels atributs del títol. `minHeight` enfonsa el text 46 mm, de manera que les dues columnes comencen a la mateixa línia sota el filet.
+
+## Variants
+
+### Posa un exemple sense número al text
+
+Un bloc de codi amb la partitura la deixa al text sense que el text la citi, com una fórmula destacada: sense número ni peu.
+
+```diff
+- ::resource{id="ex-cadences"}
++ ```humdrum {style="column" alt="Les cinc cadències en sol major"}
++ **kern	**harm	**kern
++ …
++ ```
+```
+
+### Anomena'ls exemples musicals
+
+Defineix un tipus propi per a un altre nom i apunta-hi `typeId`.
+
+```diff
+- resourceTypes: defaultResourceTypes(LANG),
++ resourceTypes: [...defaultResourceTypes(LANG), { id: 'musex', name: 'Exemple musical',
++   shortLabel: 'Ex. mus.', captionPrefix: 'Exemple musical', numberingTemplate: '{h1}.{n}',
++   resetOn: 'h1', counterFormat: 'decimal' }],
+```
+
+## Errors freqüents
+
+- Un recurs de partitura no es parteix mai entre columnes ni entre pàgines. Limita els exemples flotants a uns quants compassos i posa les peces més llargues en un bloc de codi, que es parteix entre sistemes.
+- El gravador omple cada sistema fins a l'amplada del seu buit, i l'últim sistema conserva la seva amplada natural. Si un exemple deixa un compàs sol en un segon sistema, abaixa l'`spacing` o la mida de pentagrama del seu estil.

@@ -1,0 +1,72 @@
+---
+title: "Numbered chorale examples in a two-column harmony method"
+summary: "Four-part chorales written in Humdrum **kern become score resources typed example: numbered Example 4.1, cited with :ref and floated like figures."
+plain: "A chapter on cadences from a conservatory harmony book, in two columns. Its five music examples are written as text, drawn as real scores, numbered and captioned like figures, and placed near the paragraph that mentions them."
+description: "A conservatory harmony method in two columns: five four-part chorale examples in Humdrum, numbered, captioned, cited and floated like figures, with the code."
+question: "How do I number four-part music examples and float them like figures in two columns?"
+aliases: ["music examples", "chorale", "four-part harmony", "SATB", "Humdrum", "kern", "Example 4.1", "harmony textbook", "conservatory method", "Roman numeral analysis"]
+---
+
+## What you'll build
+
+Chapter 4 of *Four-Part Harmony*, a method for the first years of the conservatory, on a 210 × 280 mm page in two columns of Crimson Pro. The lesson is on cadences, and its five examples are chorales in four parts on two staves, with Roman numerals under the bass: the five cadences of G major, three lines of *Nun danket alle Gott* and the Old Hundredth complete. Each one is numbered Example 4.1 to 4.5 (Ejemplo in the Spanish edition), captioned in the label face with a claret label, and placed at the head or the foot of the column after the paragraph that cites it; the whole Old Hundredth runs across both columns at the head of page 63. The settings were written for this method and checked for parallel fifths and octaves, spacing and the resolution of the leading tone.
+
+## Method
+
+### 1 · Write each chorale as Humdrum **kern
+
+<Excerpt region="humdrum" />
+
+Humdrum lists the voices as columns, lowest first, separated by tabs. Each staff is one spine split in two with `*^`: tenor and bass on the bass staff, soprano and alto on the treble staff, so the engraver sets two voices per staff with their stems apart (the left voice up, the right voice down). A `**harm` spine after the bass staff prints the Roman numerals under it; `Ib` is a first inversion, `Ic` a six-four. The pen writes the columns with spaces and turns them into tabs, so no editor can break the file, and the Spanish edition gets its degrees in capitals (VI, IIb), as Spanish harmony books write them.
+
+### 2 · Make every example a resource of type example
+
+The [short answer](#the-short-answer) builds the five resources. `typeId: 'example'` takes the built-in Example type, which the engine adds to the book's resource types when a resource uses it, named in the document's language (`locale: 'es'` gives Ejemplo) and numbered per chapter, so the first example of chapter 4 is 4.1. A score resource is kept whole and floats like a figure: `position: 'top'` or `'bottom'` takes the head or foot of the next column with room after the citation, and `span: 'page'` sets the Old Hundredth across both columns. Captions, credits and alt texts come from a second Markdown file per edition.
+
+### 3 · Give the column examples a smaller staff
+
+<Excerpt region="scores" />
+
+The two page-wide chorales use the document's `scoreStyle`, with 5.4 mm staves and bar numbers at the start of each system. The examples in a column pick the named `column` style: 4.6 mm staves, no bar numbers and spacing 0.8, which keeps the five bars of Example 4.2 on one system instead of leaving its last bar alone on a second one.
+
+### 4 · Start the engraver before the build
+
+<Excerpt region="build" />
+
+`initMusicEngine()` loads Verovio, the engraver, from the package; until it runs, a score is laid out as a grey box. The `continuation` makes this chapter 4 of a longer book, so the examples number 4.1 to 4.5 and the folios start at 61 on a recto.
+
+### 5 · Open the chapter across both columns
+
+<Excerpt region="opener" />
+
+The opener takes both columns (`span: 'page'` on the level-one heading) and draws its kicker and deck from the heading's attributes. `minHeight` sinks the text 46 mm, so both columns start on the same line under the rule.
+
+## Variations
+
+### Set an unnumbered example in the text
+
+A fence holds a score that the text does not cite, like a display formula: no number, no caption.
+
+```diff
+- ::resource{id="ex-cadences"}
++ ```humdrum {style="column" alt="The five cadences in G major"}
++ **kern	**harm	**kern
++ …
++ ```
+```
+
+### Call them music examples
+
+Define a type of your own for another name, and point `typeId` at it.
+
+```diff
+- resourceTypes: defaultResourceTypes(LANG),
++ resourceTypes: [...defaultResourceTypes(LANG), { id: 'musex', name: 'Music example',
++   shortLabel: 'Mus. ex.', captionPrefix: 'Music example', numberingTemplate: '{h1}.{n}',
++   resetOn: 'h1', counterFormat: 'decimal' }],
+```
+
+## Pitfalls
+
+- A score resource never breaks across columns or pages. Keep floated examples to a few bars, and put a longer piece in a fence, which breaks between systems.
+- The engraver fills each system to the width of its slot, and the last system keeps its natural width. When an example leaves one bar alone on a second system, lower `spacing` or the staff size of its style.

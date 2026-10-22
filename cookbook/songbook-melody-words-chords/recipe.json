@@ -1,0 +1,209 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 164,
+  "status": "published",
+  "chapter": "publications",
+  "order": 110,
+  "level": 2,
+  "genres": [
+    "poetry",
+    "ephemera"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "music-notation",
+      "score-style"
+    ],
+    "also": [
+      "verse",
+      "opener-design",
+      "heading-attributes",
+      "heading-numbering",
+      "heading-styles",
+      "unnumbered-headings",
+      "covers",
+      "frontmatter",
+      "toc",
+      "running-heads",
+      "page-role-filters",
+      "paragraph-styles",
+      "mirrored-margins",
+      "color-palette",
+      "page-background",
+      "design-elements",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q190"
+  ],
+  "gotchas": [
+    "style-inherits-break"
+  ],
+  "engine": {
+    "postext": "1.54.0",
+    "postextPdf": "1.54.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf"
+  ],
+  "sample": {
+    "locales": [
+      "en",
+      "es"
+    ]
+  },
+  "capture": {
+    "hero": [
+      2,
+      3
+    ],
+    "card": "crop",
+    "focus": {
+      "page": 3,
+      "x": 0,
+      "y": 0.06,
+      "w": 1,
+      "h": 0.46
+    },
+    "pages": "all",
+    "expect": {
+      "pages": [
+        5,
+        6
+      ]
+    }
+  },
+  "downloads": {
+    "pdf": true
+  },
+  "folio": {
+    "paper": {
+      "type": "bookWove",
+      "grammage": 90,
+      "shade": "#fdfbf6"
+    },
+    "binding": {
+      "type": "paperback",
+      "cover": "case",
+      "coverMaterial": "paper",
+      "coverColor": "#8a3324"
+    },
+    "surface": {
+      "type": "walnut"
+    },
+    "lighting": {
+      "environment": "lamp"
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [
+      {
+        "what": {
+          "en": "Amazing Grace: words (1779, five of the six stanzas, in the Olney Hymns spelling)",
+          "es": "Amazing Grace: letra (1779, cinco de las seis estrofas, con la grafía de los Olney Hymns)"
+        },
+        "who": "John Newton",
+        "source": "https://en.wikipedia.org/wiki/Amazing_Grace",
+        "license": "PD"
+      },
+      {
+        "what": {
+          "en": "Amazing Grace: the tune New Britain (Southern Harmony, 1835), melody as in E. O. Excell's setting of 1900, chord symbols added",
+          "es": "Amazing Grace: la melodía New Britain (Southern Harmony, 1835), según la armonización de E. O. Excell de 1900, con cifrados añadidos"
+        },
+        "who": "Traditional American; William Walker; Edwin O. Excell",
+        "source": "https://en.wikipedia.org/wiki/Amazing_Grace",
+        "license": "PD"
+      },
+      {
+        "what": {
+          "en": "Oh My Darling, Clementine: words and tune (Oliver Ditson, Boston, 1884)",
+          "es": "Oh My Darling, Clementine: letra y melodía (Oliver Ditson, Boston, 1884)"
+        },
+        "who": "Percy Montrose",
+        "source": "https://en.wikipedia.org/wiki/Oh_My_Darling,_Clementine",
+        "license": "PD"
+      },
+      {
+        "what": {
+          "en": "Auld Lang Syne: words (1788) and the Scots tune of George Thomson's Select Songs of Scotland (1799)",
+          "es": "Auld Lang Syne: letra (1788) y la melodía escocesa de Select Songs of Scotland de George Thomson (1799)"
+        },
+        "who": "Robert Burns; traditional",
+        "source": "https://en.wikipedia.org/wiki/Auld_Lang_Syne",
+        "license": "PD"
+      },
+      {
+        "what": {
+          "en": "Cumpleaños feliz: the tune of Good Morning to All (Song Stories for the Kindergarten, Chicago, 1893); Spanish words traditional",
+          "es": "Cumpleaños feliz: la melodía de Good Morning to All (Song Stories for the Kindergarten, Chicago, 1893); letra española popular"
+        },
+        "who": "Mildred J. Hill; traditional",
+        "source": "https://en.wikipedia.org/wiki/Happy_Birthday_to_You",
+        "license": "PD"
+      },
+      {
+        "what": {
+          "en": "Martinillo: the French tune of Frère Jacques (18th century) with the traditional Spanish words",
+          "es": "Martinillo: la melodía francesa de Frère Jacques (siglo XVIII) con la letra popular española"
+        },
+        "who": "Traditional",
+        "source": "https://en.wikipedia.org/wiki/Fr%C3%A8re_Jacques",
+        "license": "PD"
+      },
+      {
+        "what": {
+          "en": "La cucaracha: tune, chorus and verse as in the Spanish Wikipedia transcription; two traditional Mexican coplas",
+          "es": "La cucaracha: melodía, estribillo y copla según la transcripción de la Wikipedia en español; dos coplas populares mexicanas"
+        },
+        "who": "Traditional",
+        "source": "https://es.wikipedia.org/wiki/La_cucaracha",
+        "license": "PD"
+      },
+      {
+        "what": {
+          "en": "The preface, the notes on the songs and the chord symbols",
+          "es": "El prólogo, las notas a las canciones y los cifrados"
+        },
+        "who": "Ignacio Ferro",
+        "license": "CC-BY-4.0"
+      }
+    ],
+    "images": [],
+    "fonts": [
+      {
+        "family": "Spectral",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Spectral SC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Fraunces",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-22",
+  "updated": "2026-10-22"
+}

@@ -1,0 +1,60 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 166,
+  "status": "published",
+  "chapter": "figures",
+  "order": 110,
+  "level": 2,
+  "genres": ["textbook"],
+  "outputs": ["canvas"],
+  "features": {
+    "primary": ["score-resources", "float-placement", "figure-citations"],
+    "also": [
+      "music-notation", "score-style", "figure-numbering", "localised-labels", "resource-types",
+      "captions", "credit-notes", "column-layouts", "opener-design", "heading-attributes",
+      "running-heads", "mirrored-margins", "page-role-filters", "callout-styles",
+      "paragraph-styles", "color-palette"
+    ]
+  },
+  "answers": ["Q191", "Q63", "Q64"],
+  "gotchas": ["resource-double-quotes"],
+  "related": [
+    "figures-float-where-cited",
+    "harmony-textbook-abc-examples",
+    "piano-score-from-musicxml"
+  ],
+  "engine": { "postext": "1.54.0" },
+  "kit": ["core", "fonts", "viewer"],
+  "sample": { "locales": ["en", "es"] },
+  "capture": {
+    "hero": [2, 3],
+    "card": "crop",
+    "focus": { "page": 3, "x": 0, "y": 0.04, "w": 1, "h": 0.6 },
+    "pages": "all",
+    "expect": { "pages": [3, 5] }
+  },
+  "folio": {
+    "paper": {"type": "uncoated", "grammage": 100, "shade": "#fdfbf7"},
+    "binding": {"type": "paperback", "cover": "case", "coverMaterial": "paper", "coverColor": "#7a2531"},
+    "surface": {"type": "oak"},
+    "lighting": {"environment": "daylight"}
+  },
+  "credits": {
+    "authors": [{ "name": "Ignacio Ferro", "github": "drnachio" }],
+    "text": [
+      { "what": { "en": "Chapter text and the four-part settings of every example", "es": "El texto del capítulo y las armonizaciones a cuatro voces de todos los ejemplos" }, "who": "Ignacio Ferro", "license": "CC-BY-4.0" },
+      { "what": { "en": "Melody of Nun danket alle Gott (Praxis pietatis melica, 1647), read from the soprano of Bach's setting BWV 386", "es": "Melodía de Nun danket alle Gott (Praxis pietatis melica, 1647), tomada del soprano de la armonización de Bach BWV 386" }, "who": "Johann Crüger", "source": "https://github.com/craigsapp/bach-370-chorales/blob/master/kern/chor032.krn", "license": "PD" },
+      { "what": { "en": "Melody of the Old Hundredth (Psalm 134 in the Genevan Psalter, 1551)", "es": "Melodía del Old Hundredth (Salmo 134 del Salterio de Ginebra, 1551)" }, "who": "Louis Bourgeois (attributed)", "source": "https://en.wikipedia.org/wiki/Old_100th", "license": "PD" }
+    ],
+    "images": [],
+    "fonts": [
+      { "family": "Crimson Pro", "license": "OFL-1.1" },
+      { "family": "Playfair Display", "license": "OFL-1.1" },
+      { "family": "Fira Sans Condensed", "license": "OFL-1.1" }
+    ]
+  },
+  "license": { "code": "MIT", "content": "CC-BY-4.0" },
+  "created": "2026-10-22",
+  "updated": "2026-10-22"
+}

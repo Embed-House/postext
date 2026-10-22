@@ -1,0 +1,70 @@
+---
+title: "A harmony textbook with music examples in ABC"
+summary: "A chapter on cadences whose examples are ABC fences in the Markdown, engraved at the column width, one of them running on over two pages."
+plain: "A chapter of a music theory textbook about how phrases end. The music examples are written as short lines of text in the chapter, and Postext draws them as staves and notes; the longest one continues on the next page like a paragraph."
+description: "A harmony textbook chapter on cadences: ABC examples written in the Markdown, engraved by Verovio, a melody split across pages, with the full Postext code."
+question: "How do I put music examples in the text of a textbook, written as notation?"
+aliases: ["music examples", "ABC notation", "harmony textbook", "cadences", "Roman numerals", "music theory book", "score in the text", "Verovio"]
+---
+
+## What you'll build
+
+Chapter 5 of a keyboard harmony course, 180 × 250 mm in Libre Caslon, on the five cadences: perfect and imperfect authentic, half, plagal and deceptive. Each cadence gets two short paragraphs and an example in three voices with its Roman numerals under the staff, written in ABC right in the Markdown. The chapter ends with *Greensleeves* in A minor, a numeral over every bar, and that melody is too long for the room left on page 3: it sets three systems there and the last two at the head of page 4, broken between systems as a paragraph breaks between lines. Staff size, music font and spacing are set once in the configuration, so the five examples and the melody share one look.
+
+## Method
+
+### 1 · Write the example where the text needs it
+
+A fence tagged `abc` holds the notation, and the text goes on after it. `L:1/2` makes each bare chord a half note, `[Bdg]` stacks three notes in one voice, and a `w:` line puts one word under each chord, here the Roman numerals. The `alt` attribute is what a screen reader and the tagged PDF say instead of the picture.
+
+````md
+```abc {alt="Perfect authentic cadence in G major: I, IV, V, I"}
+X:1
+M:4/4
+L:1/2
+K:G
+[Bdg] [ceg] | [Adf] [Bdg] |]
+w: I IV V I
+```
+````
+
+### 2 · Give every score the book's look
+
+The [short answer](#the-short-answer) is the whole design of the music: a 5.5 mm staff, as harmony books use for examples read at the keyboard, Bravura beside the Caslon text, and the numerals in the text face instead of the engraver's Times. `spacing: 1.6` spreads four half-note chords over a third of the measure, so a progression reads chord by chord. The same setting decides how many bars of *Greensleeves* fit on a system: three, in a 125 mm measure.
+
+### 3 · Let a long example run on
+
+`minSystemsAtBreak: 2` is what keeps *Greensleeves* readable across the turn. The melody comes out as five systems; three fit at the foot of page 3, so two go to page 4, and neither page is left with a single system. A score with fewer than four systems moves whole to the next page, as the short cadence examples would.
+
+### 4 · Start the engraver before the build
+
+<Excerpt region="engine" />
+
+Verovio is about 3.7 MB of WebAssembly, so the engine loads it only when you ask. Without `initMusicEngine()` the layout still runs, and every score is a grey box of the right size. `renderToPdf` needs nothing more: the PDF draws each system as vector paths and sets the numerals in the embedded Caslon.
+
+### 5 · Open the chapter with a sunk title
+
+<Excerpt region="opener" />
+
+The opener takes its kicker from the heading's `kicker` attribute and reserves 48 mm, enough for the title and its rule with the first example still on page 1.
+
+## Variations
+
+### Use Leland for a lighter page
+
+Leland, MuseScore's font, has thinner stems and smaller noteheads than Bravura; it suits a book set in a light text face.
+
+```diff
+-  musicFont: 'Bravura',
++  musicFont: 'Leland',
+```
+
+### Write a second voice in another format
+
+The ABC reader takes one voice. For a soprano and bass on separate staves, write the example in Humdrum or MusicXML; <RecipeLink slug="conservatory-method-chorales">the conservatory method</RecipeLink> sets four-part chorales that way.
+
+## Pitfalls
+
+- Write a chord's length inside the brackets, `[B2d2g2]`, or set `L:` to the chord's value: a length after the bracket, `[Bdg]2`, is read as the default length.
+- Verovio's ABC reader gives each syllable of a `w:` line to the next note and ignores `*` and `_`, so a `w:` line cannot skip notes. To mark a few bars, write the marks as chord symbols over the staff, as the *Greensleeves* example does.
+- A text face rarely has the ♯ and ♭ signs: write "F-sharp" in the prose, or the browser sets the sign from a font of the system.

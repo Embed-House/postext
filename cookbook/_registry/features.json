@@ -24828,5 +24828,413 @@
       }
     },
     "research": []
+  },
+  "music-notation": {
+    "label": {
+      "en": "Music notation",
+      "es": "Notación musical",
+      "ca": "Notació musical",
+      "zh": "乐谱记谱",
+      "ar": "التدوين الموسيقي",
+      "ja": "楽譜の記譜",
+      "pt": "Notação musical",
+      "fr": "Notation musicale",
+      "de": "Notensatz",
+      "it": "Notazione musicale"
+    },
+    "definition": {
+      "en": "Scores written as text in ```abc, ```musicxml, ```mei or ```humdrum fences, engraved by Verovio at the width of the column and cut into systems that run on over columns and pages.",
+      "es": "Partituras escritas como texto en bloques ```abc, ```musicxml, ```mei o ```humdrum, grabadas por Verovio al ancho de la columna y cortadas en sistemas que siguen en la columna o la página siguiente.",
+      "ca": "Partitures escrites com a text en blocs ```abc, ```musicxml, ```mei o ```humdrum, gravades per Verovio a l'amplada de la columna i tallades en sistemes que continuen a la columna o la pàgina següent.",
+      "zh": "以文本写在```abc、```musicxml、```mei或```humdrum代码块中的乐谱，由Verovio按栏宽刻印，并切成一行行谱表系统，可跨栏、跨页接排。",
+      "ar": "مدوّنات موسيقية تُكتب نصًّا داخل كتل ```abc أو ```musicxml أو ```mei أو ```humdrum، يرسمها Verovio بعرض العمود ويقسّمها إلى أنظمة تمتد عبر الأعمدة والصفحات.",
+      "ja": "```abc、```musicxml、```mei、```humdrumのフェンスにテキストで書いた楽譜です。Verovioが段の幅で浄書し、段や次のページへ続く段落（システム）に分けます。",
+      "pt": "Partituras escritas como texto em blocos ```abc, ```musicxml, ```mei ou ```humdrum, gravadas pelo Verovio na largura da coluna e cortadas em sistemas que continuam na coluna ou página seguinte.",
+      "fr": "Des partitions écrites en texte dans des blocs ```abc, ```musicxml, ```mei ou ```humdrum, gravées par Verovio à la largeur de la colonne et coupées en systèmes qui se poursuivent sur la colonne ou la page suivante.",
+      "de": "Noten als Text in ```abc-, ```musicxml-, ```mei- oder ```humdrum-Blöcken, von Verovio in Spaltenbreite gestochen und in Systeme geteilt, die über Spalten und Seiten weiterlaufen.",
+      "it": "Partiture scritte come testo in blocchi ```abc, ```musicxml, ```mei o ```humdrum, incise da Verovio alla larghezza della colonna e divise in sistemi che proseguono nella colonna o nella pagina seguente."
+    },
+    "aliases": {
+      "en": [
+        "score",
+        "sheet music",
+        "music examples",
+        "ABC notation",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "kern",
+        "Verovio",
+        "engraving",
+        "staff"
+      ],
+      "es": [
+        "partitura",
+        "notación musical",
+        "ejemplos musicales",
+        "pentagrama",
+        "ABC",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio",
+        "grabado musical"
+      ],
+      "ca": [
+        "partitura",
+        "notació musical",
+        "exemples musicals",
+        "pentagrama",
+        "ABC",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio"
+      ],
+      "zh": [
+        "乐谱",
+        "五线谱",
+        "谱例",
+        "ABC记谱法",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio",
+        "score"
+      ],
+      "ar": [
+        "مدوّنة موسيقية",
+        "نوتة موسيقية",
+        "أمثلة موسيقية",
+        "المدرج الموسيقي",
+        "ABC",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio"
+      ],
+      "ja": [
+        "楽譜",
+        "五線譜",
+        "譜例",
+        "ABC記譜法",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio",
+        "浄書",
+        "score"
+      ],
+      "pt": [
+        "partitura",
+        "notação musical",
+        "exemplos musicais",
+        "pauta",
+        "ABC",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio"
+      ],
+      "fr": [
+        "partition",
+        "notation musicale",
+        "exemples musicaux",
+        "portée",
+        "ABC",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio",
+        "gravure musicale"
+      ],
+      "de": [
+        "Noten",
+        "Notenbeispiele",
+        "Partitur",
+        "Notensystem",
+        "ABC",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio",
+        "Notenstich"
+      ],
+      "it": [
+        "partitura",
+        "notazione musicale",
+        "esempi musicali",
+        "pentagramma",
+        "ABC",
+        "MusicXML",
+        "MEI",
+        "Humdrum",
+        "Verovio",
+        "incisione musicale"
+      ]
+    },
+    "group": "figures",
+    "docs": {
+      "slug": "music",
+      "heading": {
+        "en": "A score in the text",
+        "es": "Una partitura en el texto",
+        "ca": "Una partitura dins del text",
+        "zh": "正文中的乐谱",
+        "ar": "مدوّنة داخل النص",
+        "ja": "本文中の楽譜",
+        "pt": "Uma partitura no texto",
+        "fr": "Une partition dans le texte",
+        "de": "Noten im Text",
+        "it": "Una partitura nel testo"
+      }
+    },
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^\\s*```(abc|musicxml|mei|humdrum|kern)\\b"
+      ],
+      "api": [
+        "initMusicEngine"
+      ]
+    }
+  },
+  "score-resources": {
+    "label": {
+      "en": "Numbered music examples",
+      "es": "Ejemplos musicales numerados",
+      "ca": "Exemples musicals numerats",
+      "zh": "编号谱例",
+      "ar": "أمثلة موسيقية مرقّمة",
+      "ja": "番号付き譜例",
+      "pt": "Exemplos musicais numerados",
+      "fr": "Exemples musicaux numérotés",
+      "de": "Nummerierte Notenbeispiele",
+      "it": "Esempi musicali numerati"
+    },
+    "definition": {
+      "en": "Resources of kind score typed example: numbered in the document's language (Example 3.2), captioned, cited with :ref and placed or floated like figures; each is kept whole.",
+      "es": "Recursos de tipo score con el tipo example: numerados en la lengua del documento (Ejemplo 3.2), con pie, citados con :ref y colocados o flotantes como las figuras; cada uno se mantiene entero.",
+      "ca": "Recursos de classe score amb el tipus example: numerats en la llengua del document (Exemple 3.2), amb peu, citats amb :ref i col·locats o flotants com les figures; cadascun es manté sencer.",
+      "zh": "kind为score、类型为example的资源：按文档语言编号（谱例3.2），带图注，用:ref引用，像插图一样就地放置或浮动；每个谱例保持完整。",
+      "ar": "موارد من نوع score بالنوع example: تُرقَّم بلغة المستند (مثال 3.2)، ولها تعليق، ويُستشهد بها بـ:ref، وتوضع في مكانها أو تطفو كالأشكال؛ ويبقى كل منها كاملًا.",
+      "ja": "種類（kind）がscoreでタイプがexampleのリソースです。文書の言語で番号を振り（譜例3.2）、キャプションを付け、:refで参照し、図と同じように置くか浮動させます。1つの譜例は分割しません。",
+      "pt": "Recursos do tipo score com o tipo example: numerados na língua do documento (Exemplo 3.2), com legenda, citados com :ref e colocados ou flutuantes como as figuras; cada um fica inteiro.",
+      "fr": "Des ressources de nature score typées example : numérotées dans la langue du document (Exemple 3.2), légendées, citées avec :ref et placées ou flottantes comme les figures ; chacune reste entière.",
+      "de": "Ressourcen der Art score mit dem Typ example: in der Sprache des Dokuments nummeriert (Notenbeispiel 3.2), mit Bildunterschrift, mit :ref zitiert und wie Abbildungen gesetzt oder verschoben; jede bleibt ganz.",
+      "it": "Risorse di tipo score con il tipo example: numerate nella lingua del documento (Esempio 3.2), con didascalia, citate con :ref e collocate o mobili come le figure; ciascuna resta intera."
+    },
+    "aliases": {
+      "en": [
+        "Example 3.2",
+        "music example",
+        "kind: 'score'",
+        "typeId: 'example'",
+        "numbered examples",
+        "floated examples"
+      ],
+      "es": [
+        "Ejemplo 3.2",
+        "ejemplo musical",
+        "kind: 'score'",
+        "ejemplos numerados",
+        "ejemplos flotantes"
+      ],
+      "ca": [
+        "Exemple 3.2",
+        "exemple musical",
+        "kind: 'score'",
+        "exemples numerats"
+      ],
+      "zh": [
+        "谱例3.2",
+        "谱例",
+        "kind: 'score'",
+        "编号谱例",
+        "浮动谱例"
+      ],
+      "ar": [
+        "مثال 3.2",
+        "مثال موسيقي",
+        "kind: 'score'",
+        "أمثلة مرقّمة"
+      ],
+      "ja": [
+        "譜例3.2",
+        "譜例",
+        "kind: 'score'",
+        "番号付きの譜例",
+        "浮動する譜例"
+      ],
+      "pt": [
+        "Exemplo 3.2",
+        "exemplo musical",
+        "kind: 'score'",
+        "exemplos numerados"
+      ],
+      "fr": [
+        "Exemple 3.2",
+        "exemple musical",
+        "kind: 'score'",
+        "exemples numérotés",
+        "exemples flottants"
+      ],
+      "de": [
+        "Notenbeispiel 3.2",
+        "Notenbeispiel",
+        "kind: 'score'",
+        "nummerierte Beispiele"
+      ],
+      "it": [
+        "Esempio 3.2",
+        "esempio musicale",
+        "kind: 'score'",
+        "esempi numerati"
+      ]
+    },
+    "group": "figures",
+    "docs": {
+      "slug": "music",
+      "heading": {
+        "en": "Numbered music examples",
+        "es": "Ejemplos musicales numerados",
+        "ca": "Exemples musicals numerats",
+        "zh": "编号谱例",
+        "ar": "أمثلة موسيقية مرقّمة",
+        "ja": "番号付き譜例",
+        "pt": "Exemplos musicais numerados",
+        "fr": "Exemples musicaux numérotés",
+        "de": "Nummerierte Notenbeispiele",
+        "it": "Esempi musicali numerati"
+      }
+    },
+    "research": []
+  },
+  "score-style": {
+    "label": {
+      "en": "Score style",
+      "es": "Estilo de partitura",
+      "ca": "Estil de partitura",
+      "zh": "乐谱样式",
+      "ar": "نمط المدوّنة الموسيقية",
+      "ja": "楽譜スタイル",
+      "pt": "Estilo de partitura",
+      "fr": "Style de partition",
+      "de": "Notenstil",
+      "it": "Stile di partitura"
+    },
+    "definition": {
+      "en": "scoreStyle and named scoreStyles: staff size, music font, text font, spacing, bar numbers, system gap, margins, ink and how many systems a score keeps together at a break.",
+      "es": "scoreStyle y los estilos con nombre de scoreStyles: tamaño del pentagrama, fuente musical, fuente del texto, espaciado, números de compás, separación entre sistemas, márgenes, tinta y cuántos sistemas se mantienen juntos en un corte.",
+      "ca": "scoreStyle i els estils amb nom de scoreStyles: mida del pentagrama, font musical, font del text, espaiat, números de compàs, separació entre sistemes, marges, tinta i quants sistemes es mantenen junts en un tall.",
+      "zh": "scoreStyle及scoreStyles中的命名样式：谱表大小、音乐字体、文字字体、间距、小节号、系统间距、边距、墨色，以及断开时保留在一起的系统数。",
+      "ar": "scoreStyle والأنماط المسمّاة في scoreStyles: حجم المدرج، والخط الموسيقي، وخط النص، والتباعد، وأرقام المازورات، والمسافة بين الأنظمة، والهوامش، والحبر، وعدد الأنظمة التي تبقى معًا عند الانقطاع.",
+      "ja": "scoreStyleと名前付きのscoreStyles。五線の大きさ、音楽フォント、文字のフォント、間隔、小節番号、段（システム）の間隔、余白、インク、改ページで一緒に保つ段の数を決めます。",
+      "pt": "scoreStyle e os estilos com nome de scoreStyles: tamanho da pauta, fonte musical, fonte do texto, espaçamento, números de compasso, espaço entre sistemas, margens, tinta e quantos sistemas ficam juntos numa quebra.",
+      "fr": "scoreStyle et les styles nommés de scoreStyles : taille de la portée, police musicale, police du texte, espacement, numéros de mesure, écart entre systèmes, marges, encre et nombre de systèmes gardés ensemble à une coupure.",
+      "de": "scoreStyle und benannte scoreStyles: Systemgröße, Notenschrift, Textschrift, Abstand, Taktzahlen, Systemabstand, Ränder, Farbe und wie viele Systeme bei einem Umbruch zusammenbleiben.",
+      "it": "scoreStyle e gli stili con nome di scoreStyles: dimensione del pentagramma, font musicale, font del testo, spaziatura, numeri di battuta, distanza tra sistemi, margini, inchiostro e quanti sistemi restano insieme a un'interruzione."
+    },
+    "aliases": {
+      "en": [
+        "scoreStyle",
+        "scoreStyles",
+        "staff size",
+        "rastral",
+        "music font",
+        "Bravura",
+        "Leland",
+        "Leipzig",
+        "bar numbers"
+      ],
+      "es": [
+        "scoreStyle",
+        "tamaño del pentagrama",
+        "fuente musical",
+        "Bravura",
+        "Leland",
+        "números de compás"
+      ],
+      "ca": [
+        "scoreStyle",
+        "mida del pentagrama",
+        "font musical",
+        "Bravura",
+        "números de compàs"
+      ],
+      "zh": [
+        "scoreStyle",
+        "谱表大小",
+        "音乐字体",
+        "Bravura",
+        "小节号"
+      ],
+      "ar": [
+        "scoreStyle",
+        "حجم المدرج",
+        "الخط الموسيقي",
+        "Bravura",
+        "أرقام المازورات"
+      ],
+      "ja": [
+        "scoreStyle",
+        "五線の大きさ",
+        "音楽フォント",
+        "Bravura",
+        "小節番号"
+      ],
+      "pt": [
+        "scoreStyle",
+        "tamanho da pauta",
+        "fonte musical",
+        "Bravura",
+        "números de compasso"
+      ],
+      "fr": [
+        "scoreStyle",
+        "taille de portée",
+        "police musicale",
+        "Bravura",
+        "numéros de mesure"
+      ],
+      "de": [
+        "scoreStyle",
+        "Systemgröße",
+        "Rastral",
+        "Notenschrift",
+        "Bravura",
+        "Taktzahlen"
+      ],
+      "it": [
+        "scoreStyle",
+        "dimensione del pentagramma",
+        "font musicale",
+        "Bravura",
+        "numeri di battuta"
+      ]
+    },
+    "group": "figures",
+    "docs": {
+      "slug": "configuration-resources",
+      "heading": {
+        "en": "Score style",
+        "es": "Estilo de partitura",
+        "ca": "Estil de partitura",
+        "zh": "乐谱样式",
+        "ar": "نمط المدوّنة الموسيقية",
+        "ja": "楽譜スタイル",
+        "pt": "Estilo de partitura",
+        "fr": "Style de partition",
+        "de": "Notenstil",
+        "it": "Stile di partitura"
+      }
+    },
+    "research": [],
+    "detect": {
+      "config": [
+        "scoreStyle",
+        "scoreStyles"
+      ]
+    }
   }
 }

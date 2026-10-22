@@ -1,0 +1,61 @@
+---
+title: "Una partitura de piano desde MusicXML en varias páginas"
+summary: "Dos minuetos para teclado grabados desde archivos MusicXML en doble pentagrama, partidos entre sistemas para que cada pieza ocupe una doble página."
+plain: "Una pequeña edición de dos minuetos de piano muy conocidos. Enseña a tomar un archivo exportado de un programa de notación y componerlo como una partitura que sigue de una página a otra, lista para tocar."
+description: "Los dos minuetos de Petzold del cuaderno de Anna Magdalena Bach, grabados desde MusicXML en doble pentagrama en dos dobles páginas, con el código y un PDF."
+question: "¿Cómo compongo una partitura de piano de un archivo MusicXML a lo largo de varias páginas?"
+aliases: ["partitura", "partitura de piano", "MusicXML", "doble pentagrama", "sistema de piano", "Minueto en sol", "BWV Anh. 114", "Cuaderno de Anna Magdalena Bach", "edición para intérpretes", "paso de página", "sheet music"]
+---
+
+## Lo que vas a componer
+
+Una edición para intérpretes de los dos minuetos del Cuaderno de Anna Magdalena Bach de 1725: el de sol mayor, que aprende todo estudiante de piano, y su pareja en sol menor, hoy atribuidos a Christian Petzold. La página mide 230 × 305 mm, el tamaño de un álbum de partituras. Una página impar presenta las piezas a dos columnas de Libre Caslon bajo un título de 52 pt en Bodoni. Después cada minueto empieza en una página par y ocupa la doble página en un doble pentagrama de 7 mm, grabado en Bravura desde un archivo MusicXML: cuatro compases por sistema, los compases 1 a 16 a la izquierda y del 17 al 32 a la derecha, así que el pianista no pasa página dentro de una pieza.
+
+## Elaboración
+
+### 1 · Trae la pieza en MusicXML
+
+Los dos archivos de `assets/` son MusicXML 4.0 sin más, el formato que escriben Dorico, Sibelius, Finale y MuseScore al exportar una partitura (elige el `.musicxml` sin comprimir, no el `.mxl`). Contienen una parte en dos pentagramas, con las claves, la armadura, las barras, la dirección de las plicas en los compases a dos voces, los adornos y las barras de repetición. El nombre de la parte lleva `print-object="no"`: una etiqueta «Piano» impresa empujaría todos los sistemas a la derecha. El título de `<work-title>` no se imprime, solo sirve de descripción de la partitura, así que el Markdown da a cada pieza su propio título.
+
+### 2 · Componla en un bloque de código, no como recurso
+
+La [respuesta corta](#la-respuesta-corta) descarga cada archivo y lo escribe en un bloque ` ```musicxml `, donde el Markdown deja una línea de marcador. Un bloque se graba al ancho de la columna y se corta en sistemas, y cada sistema se coloca como una línea de párrafo, de modo que la pieza sigue en la página siguiente entre dos sistemas. Un recurso `score` se mantiene entero y no podría cruzar una página. `minSystemsAtBreak: 2` evita que un sistema quede solo al pie de una página o pase solo a la cabeza de la siguiente.
+
+### 3 · Ajusta el pentagrama a quien toca
+
+El pentagrama mide 7 mm de alto, lo que mide en un álbum de piano impreso que se lee desde el atril. `spacing: 1.7` separa las notas hasta que un sistema de 186 mm de medida contiene cuatro compases, así que cada mitad de un minueto ocupa cuatro sistemas. `systemGap: 14 mm` deja sitio a las líneas adicionales entre las dos manos, y con él caben cuatro sistemas bajo el título de la primera página y cuatro en la de enfrente: la doble barra cae en el cambio de página del pliego.
+
+### 4 · Abre cada pieza en página par
+
+<Excerpt region="openers" />
+
+`breakBefore: { parity: 'even' }` empieza cada pieza en una página de la izquierda, y la portada del editor usa un estilo de título que abre en página impar y sin cabeceras. El número de catálogo y el compositor salen de los atributos del título y van en las esquinas inferiores de la apertura, donde los imprimen las ediciones grabadas.
+
+### 5 · Pon el nombre de la pieza en la cabecera de la derecha
+
+<Excerpt region="running-heads" />
+
+La primera página de una pieza ya lleva su título, así que las cabeceras quedan para las páginas siguientes (`pages: 'body'`). La página impar imprime el título de la pieza y el folio en el borde exterior, con la letra de rótulos a 8 pt.
+
+## Variantes
+
+### Haz una edición de estudio con un pentagrama menor
+
+Un pentagrama de 6 mm con el espaciado propio del grabador lleva siete u ocho compases por sistema, así que cada minueto cabe en su primera página.
+
+```diff
+-  staffSize: mm(7),
++  staffSize: mm(6),
+-  spacing: 1.7,
++  spacing: 1,
+```
+
+### Numera los ejemplos breves
+
+Cuando la música son ejemplos breves citados en el texto, encaja mejor un recurso `score` numerado: <RecipeLink slug="conservatory-method-chorales">corales a cuatro voces como ejemplos numerados</RecipeLink>.
+
+## Errores frecuentes
+
+- Los saltos de sistema escritos en el archivo (`<print new-system="yes">`) no se conservan: los sistemas llenan el ancho de la columna, así que ajusta `spacing` y `staffSize` hasta que lleven los compases que quieres.
+- El grabador no reparte los compases entre sistemas, y el último sistema se compone a su ancho natural: a 6 mm y con `spacing: 1`, el compás 32 queda solo en un sistema. Cambia `spacing` hasta que el último sistema tenga más de un compás.
+- Un `.mxl` comprimido es un archivo zip: descomprímelo, o exporta el formato sin comprimir, antes de descargarlo.
