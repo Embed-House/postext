@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'HTML、3D书本与EPUB',
   description: '把排好的书放进网页，用postext-folio做成3D书本，用postext-epub做成固定版式或流式版式的EPUB 3',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-22',
   readingTime: '12分钟',
   order: 22,
   parent: 'configuration',
@@ -187,6 +187,7 @@ export function PostextHtmlViewer({
 - **叠加层**：在每个`.pt-page`上叠一个绝对定位的SVG，用来显示光标、选区或基线网格。
 - **链接**：Markdown链接中的词被包在`<a href="…" rel="noopener noreferrer">`里，沿用文字颜色，没有下划线；见[文档格式 › 链接](/zh/docs/document-format-inline#链接)。在类似编辑器的查看器中，拦截对不以`#`开头的`a[href]`的点击，在新标签页中打开（`:ref`锚点链接到文档内部）。
 - **单色图片**：打开`diagramStyle.singleInk`后，SVG的`<img>`会加上CSS滤镜；对于已经重新着色的URL，传入`singleInk: false`即可跳过；见[Canvas与HTML中的单色模式](/zh/docs/configuration-resources#canvas与html中的单色模式)。
+- **在印刷版面上排组版页和漫画页**：页面与屏幕同宽、与滚动同高时，固定在组版页（`::::page{template}`）页脚的框会落到滚动区域的底部。在排版所用的配置中传入`composedViewerLeaf: { width, height, margins? }`（印刷页的尺寸和页边距），每个组版页就按该尺寸、以印刷时的几何关系排版，再由你缩放到屏幕上（自postext 1.47起）；`comics.viewerLeaf`对漫画页做同样的事，缩放到`fitWidth`像素（参见[漫画](/zh/docs/configuration-comics)）。两者都供宿主使用：由Sandbox的HTML查看器设置，从不随文档保存。
 
 沙盒的`HtmlPreview`组件（`packages/postext-sandbox/src/viewport/HtmlPreview/index.tsx`）在这里展示的同一套API之上实现了以上全部功能，可以作为参考。它还把每次构建都交给一个共享的排版工作线程（见[在Web Worker中运行排版](/zh/docs/configuration-programmatic-usage#在web-worker中运行排版)），所以实时编辑和调整尺寸都不会阻塞主线程。准备把排版移出主线程时，把上面代码中直接调用的`buildDocument(...)`换成`layoutWorker.build(...)`即可。
 

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'HTML, Folio e EPUB',
   description: 'Como mostrar o livro diagramado numa página web, como livro em 3D com o postext-folio e como EPUB 3 de layout fixo ou refluível com o postext-epub',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-22',
   readingTime: '18 min',
   order: 22,
   parent: 'configuration',
@@ -187,6 +187,7 @@ O exemplo acima é propositalmente simples. Integrações em produção costumam
 - **Sobreposições**: uma camada SVG com posicionamento absoluto sobre cada `.pt-page`, para cursores, seleções ou a grade de linhas de base.
 - **Links**: as palavras de um link Markdown são envolvidas em `<a href="…" rel="noopener noreferrer">`, que assume a cor do texto e não tem sublinhado; veja [Formato do documento › Links](/pt/docs/document-format-inline#links). Em um visualizador que funcione como editor, intercepte os cliques em `a[href]` que não comecem por `#` e abra-os em uma nova aba (as âncoras de `:ref` apontam para dentro do documento).
 - **Imagens em tinta única**: com `diagramStyle.singleInk` ativado, os `<img>` SVG recebem um filtro CSS, a menos que você passe `singleInk: false` para URLs que já foram recoloridas; veja [Tinta única no canvas e no HTML](/pt/docs/configuration-resources#tinta-única-no-canvas-e-no-html).
+- **Páginas compostas e de quadrinhos sobre uma folha impressa**: numa página tão larga quanto a tela e tão alta quanto a rolagem, um quadro ancorado ao pé de uma página composta (`::::page{template}`) ficaria no pé da rolagem. Passe `composedViewerLeaf: { width, height, margins? }` (o tamanho e as margens da página impressa) na configuração que você diagrama: cada página composta é diagramada numa página desse tamanho, com sua geometria de impressão, para você escalá-la para a tela (desde o postext 1.47); `comics.viewerLeaf` faz o mesmo com as páginas de quadrinhos, escaladas para `fitWidth` px (veja [Quadrinhos](/pt/docs/configuration-comics)). Os dois são para hosts: o visualizador HTML do Sandbox os define, e eles nunca são salvos com um documento.
 
 O componente `HtmlPreview` do Sandbox (`packages/postext-sandbox/src/viewport/HtmlPreview/index.tsx`) implementa tudo isso sobre a mesma API mostrada aqui e pode servir de referência. Ele também encaminha cada build por um worker de layout compartilhado (veja [Executar a diagramação em um Web Worker](/pt/docs/configuration-programmatic-usage#executar-a-diagramação-em-um-web-worker)), para que edições ao vivo e redimensionamentos nunca bloqueiem a thread principal. Troque a chamada direta `buildDocument(...)` do trecho acima por `layoutWorker.build(...)` quando quiser tirar o layout da thread principal.
 
