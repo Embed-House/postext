@@ -4058,7 +4058,7 @@
     "scoreStyleSection": "Partitions",
     "scoreStylesSection": "Styles de partition",
     "scoreEnabled": "Les blocs de notation sont des partitions",
-    "scoreEnabledTooltip": "Activé : un bloc ```abc, ```musicxml, ```mei ou ```humdrum est gravé comme une partition. Désactivé : il est composé comme un listing de code. Un bloc avec {listing} reste toujours un listing",
+    "scoreEnabledTooltip": "Activé : un bloc ```abc, ```musicxml, ```mei ou ```humdrum est gravé comme une partition. Désactivé : il est composé comme un listing de code. Un bloc avec '{listing}' reste toujours un listing",
     "scoreStaffSize": "Taille de la portée",
     "scoreStaffSizeTooltip": "Hauteur de la portée de cinq lignes, de la ligne du bas à celle du haut. Manuels et méthodes : 5 à 6 mm ; exemples dans le texte courant : 4 à 5 mm",
     "scoreMusicFont": "Police musicale",

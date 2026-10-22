@@ -4058,7 +4058,7 @@
     "scoreStyleSection": "楽譜",
     "scoreStylesSection": "楽譜スタイル",
     "scoreEnabled": "記譜ブロックを楽譜にする",
-    "scoreEnabledTooltip": "オンにすると、```abc、```musicxml、```mei、```humdrum のブロックを楽譜として浄書します。オフにするとコードリストとして組みます。{listing} を付けたブロックは常にコードリストです。",
+    "scoreEnabledTooltip": "オンにすると、```abc、```musicxml、```mei、```humdrum のブロックを楽譜として浄書します。オフにするとコードリストとして組みます。'{listing}' を付けたブロックは常にコードリストです。",
     "scoreStaffSize": "五線の大きさ",
     "scoreStaffSizeTooltip": "五線の第1線から第5線までの高さ。教科書や教本は5〜6mm、本文中の譜例は4〜5mmが目安です。",
     "scoreMusicFont": "音楽フォント",

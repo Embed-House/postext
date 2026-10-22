@@ -1781,7 +1781,7 @@
     "scoreStyleSection": "Partituras",
     "scoreStylesSection": "Estilos de partitura",
     "scoreEnabled": "Los bloques de notación son partituras",
-    "scoreEnabledTooltip": "Activado, un bloque ```abc, ```musicxml, ```mei o ```humdrum se graba como partitura. Desactivado, se compone como listado de código. Un bloque con {listing} siempre es un listado",
+    "scoreEnabledTooltip": "Activado, un bloque ```abc, ```musicxml, ```mei o ```humdrum se graba como partitura. Desactivado, se compone como listado de código. Un bloque con '{listing}' siempre es un listado",
     "scoreStaffSize": "Tamaño del pentagrama",
     "scoreStaffSizeTooltip": "Altura del pentagrama, de la primera a la quinta línea. Los libros de texto y los métodos usan de 5 a 6 mm; los ejemplos dentro del texto, de 4 a 5 mm",
     "scoreMusicFont": "Fuente musical",

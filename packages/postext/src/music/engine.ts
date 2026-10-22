@@ -1,5 +1,7 @@
 import type { ScoreFormat, ScoreItem, ScoreRender, ScoreRenderOptions, ScoreSystem } from './types.js';
 import { flattenVerovioSvg, itemsToSvg } from './flatten.js';
+import { measureTextWidth } from '../measure/canvas.js';
+import { buildFontString } from '../measure/font.js';
 
 // ---------------------------------------------------------------------------
 // Verovio singleton — lazy init. Verovio (LGPL-3.0) stays its own package,
@@ -15,6 +17,7 @@ interface VerovioToolkit {
   getPageCount(): number;
   renderToSVG(page: number): string;
   getLog(): string;
+  getMEI(options?: Record<string, unknown>): string;
 }
 
 let toolkit: VerovioToolkit | null = null;
@@ -140,6 +143,9 @@ function verovioOptions(widthPx: number, o: ScoreRenderOptions, leftMarginPx = 0
     spacingLinear: 0.25 * o.spacing,
     spacingNonLinear: 0.6,
     mnumInterval: o.barNumbers === 'every' ? 1 : 0,
+    // Room between the words of a lyric line: at the engraver's default
+    // (1.2) the words of a narrow measure touch ("nigh,sha-").
+    lyricWordSpace: 2.5,
     font: o.font,
     svgViewBox: true,
     svgRemoveXlink: true,
@@ -163,16 +169,43 @@ function itemsMinX(items: readonly ScoreItem[]): number {
   return Number.isFinite(min) ? min : 0;
 }
 
+/** The face Verovio measures words in when it spaces the notes. */
+const ENGRAVER_TEXT_FONT = 'Times New Roman';
+
+/**
+ * Words set in `textFont` at the room the engraver gave them: it spaces
+ * lyrics and directions by its own (Times) metrics, so a wider face would
+ * run one syllable into the next. A word wider in `textFont` than in Times
+ * is set that much smaller. Without a measuring context (a bare Node
+ * process) the words are left as they are.
+ */
+function fitWords(items: ScoreItem[], textFont: string): ScoreItem[] {
+  if (textFont === ENGRAVER_TEXT_FONT) return items;
+  try {
+    return items.map((it) => {
+      if (it.type !== 'text') return it;
+      const weight = it.bold ? 'bold' : 'normal';
+      const style = it.italic ? 'italic' : 'normal';
+      const planned = measureTextWidth(it.text, buildFontString(ENGRAVER_TEXT_FONT, 100, weight, style));
+      const actual = measureTextWidth(it.text, buildFontString(textFont, 100, weight, style));
+      if (!(planned > 0) || !(actual > planned * 1.01)) return it;
+      return { ...it, sizePx: it.sizePx * (planned / actual) };
+    });
+  } catch {
+    return items;
+  }
+}
+
 const DEFAULT_TEXT_FONT = 'Times New Roman, serif';
 
 function toSystem(svg: string, o: ScoreRenderOptions, widthPx: number): ScoreSystem | null {
-  const flat = flattenVerovioSvg(svg, widthPx);
+  const flat = flattenVerovioSvg(svg, widthPx, o.barNumbers === 'none' ? { skipClasses: ['mNum'] } : undefined);
   if (!flat) return null;
   const textFont = o.textFont || DEFAULT_TEXT_FONT;
   return {
     widthPx,
     heightPx: flat.heightPx,
-    items: flat.items,
+    items: fitWords(flat.items, textFont),
     svg: itemsToSvg(flat.items, widthPx, flat.heightPx, 'currentColor', textFont),
     textFont,
   };
@@ -204,6 +237,15 @@ export function renderScore(
   const engrave = (leftMarginPx: number): ScoreSystem[] | null => {
     toolkit!.setOptions(verovioOptions(widthPx, options, leftMarginPx));
     if (!toolkit!.loadData(source)) return null;
+    // Bar numbers need numbered measures: ABC and Humdrum import theirs
+    // without `@n`. Numbered in order, and read again as MEI.
+    if (options.barNumbers !== 'none') {
+      const mei = toolkit!.getMEI();
+      if (/<measure\b(?![^>]*\bn=)/.test(mei)) {
+        let n = 0;
+        if (!toolkit!.loadData(mei.replace(/<measure\b(?![^>]*\bn=)/g, () => `<measure n="${++n}"`))) return null;
+      }
+    }
     const systems: ScoreSystem[] = [];
     const pages = toolkit!.getPageCount();
     for (let p = 1; p <= pages; p++) {

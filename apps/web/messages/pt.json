@@ -4055,7 +4055,7 @@
     "scoreStyleSection": "Partituras",
     "scoreStylesSection": "Estilos de partitura",
     "scoreEnabled": "Blocos de notação são partituras",
-    "scoreEnabledTooltip": "Ativado, um bloco ```abc, ```musicxml, ```mei ou ```humdrum é gravado como partitura. Desativado, é composto como listagem de código. Um bloco com {listing} é sempre uma listagem",
+    "scoreEnabledTooltip": "Ativado, um bloco ```abc, ```musicxml, ```mei ou ```humdrum é gravado como partitura. Desativado, é composto como listagem de código. Um bloco com '{listing}' é sempre uma listagem",
     "scoreStaffSize": "Tamanho da pauta",
     "scoreStaffSizeTooltip": "Altura da pauta de cinco linhas, da primeira à quinta linha. Livros didáticos e métodos usam de 5 a 6 mm; exemplos no texto corrido, de 4 a 5 mm",
     "scoreMusicFont": "Fonte musical",

@@ -4059,7 +4059,7 @@
     "scoreStyleSection": "Music scores",
     "scoreStylesSection": "Score styles",
     "scoreEnabled": "Notation fences are scores",
-    "scoreEnabledTooltip": "On, a ```abc, ```musicxml, ```mei or ```humdrum fence is engraved as a music score. Off, it is set as a code listing. A fence with {listing} is always a listing",
+    "scoreEnabledTooltip": "On, a ```abc, ```musicxml, ```mei or ```humdrum fence is engraved as a music score. Off, it is set as a code listing. A fence with '{listing}' is always a listing",
     "scoreStaffSize": "Staff size",
     "scoreStaffSizeTooltip": "Height of a five-line staff, from the bottom line to the top one. Textbooks and methods use 5 to 6 mm; examples in the running text 4 to 5 mm",
     "scoreMusicFont": "Music font",

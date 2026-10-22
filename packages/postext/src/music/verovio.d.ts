@@ -12,5 +12,6 @@ declare module 'verovio/esm' {
     getPageCount(): number;
     renderToSVG(page: number): string;
     getLog(): string;
+    getMEI(options?: Record<string, unknown>): string;
   }
 }

@@ -4059,7 +4059,7 @@
     "scoreStyleSection": "Noten",
     "scoreStylesSection": "Notenstile",
     "scoreEnabled": "Notationsblöcke sind Noten",
-    "scoreEnabledTooltip": "Ist die Option an, wird ein Block ```abc, ```musicxml, ```mei oder ```humdrum als Notensatz gestochen. Ist sie aus, wird er als Codelisting gesetzt. Ein Block mit {listing} bleibt immer ein Listing",
+    "scoreEnabledTooltip": "Ist die Option an, wird ein Block ```abc, ```musicxml, ```mei oder ```humdrum als Notensatz gestochen. Ist sie aus, wird er als Codelisting gesetzt. Ein Block mit '{listing}' bleibt immer ein Listing",
     "scoreStaffSize": "Systemgröße (Rastral)",
     "scoreStaffSizeTooltip": "Höhe der fünf Notenlinien, von der untersten bis zur obersten. Lehrbücher und Schulen nutzen 5 bis 6 mm, Beispiele im Fließtext 4 bis 5 mm",
     "scoreMusicFont": "Notenschrift",

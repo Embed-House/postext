@@ -78,6 +78,17 @@ describe('music engine', () => {
     }
   });
 
+  it('prints bar numbers at each system, on every bar, or not at all', () => {
+    const bars = `X:1\nM:4/4\nL:1/4\nK:C\n${'CDEF|GABc|cBAG|FEDC|'.repeat(3)}]\n`;
+    const words = (barNumbers: ScoreRenderOptions['barNumbers']) =>
+      renderScore(bars, 'abc', 330, { ...OPTS, barNumbers }).systems.map((s) => s.items.filter((i) => i.type === 'text').map((i) => (i as { text: string }).text));
+    const system = words('system');
+    expect(system[0]).toEqual([]);
+    expect(system.slice(1).every((w) => w.length === 1 && /^\d+$/.test(w[0]!))).toBe(true);
+    expect(words('every').flat().length).toBeGreaterThan(system.flat().length);
+    expect(words('none').flat()).toEqual([]);
+  });
+
   it('reports a source that does not load', () => {
     const r = renderScore('<not-music/>', 'mei', 400, OPTS);
     expect(r.systems).toHaveLength(0);

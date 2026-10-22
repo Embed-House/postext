@@ -4058,7 +4058,7 @@
     "scoreStyleSection": "乐谱",
     "scoreStylesSection": "乐谱样式",
     "scoreEnabled": "记谱代码块排为乐谱",
-    "scoreEnabledTooltip": "开启后，```abc、```musicxml、```mei 或 ```humdrum 代码块刻成乐谱。关闭后按代码清单排版。带 {listing} 的代码块始终是代码清单",
+    "scoreEnabledTooltip": "开启后，```abc、```musicxml、```mei 或 ```humdrum 代码块刻成乐谱。关闭后按代码清单排版。带 '{listing}' 的代码块始终是代码清单",
     "scoreStaffSize": "谱表大小",
     "scoreStaffSizeTooltip": "五线谱表从第一线到第五线的高度。教材和教程常用 5～6 毫米，正文中的谱例 4～5 毫米",
     "scoreMusicFont": "音乐字体",

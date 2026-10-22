@@ -4058,7 +4058,7 @@
     "scoreStyleSection": "Partitures",
     "scoreStylesSection": "Estils de partitura",
     "scoreEnabled": "Els blocs de notació són partitures",
-    "scoreEnabledTooltip": "Activat, un bloc ```abc, ```musicxml, ```mei o ```humdrum es grava com a partitura. Desactivat, es compon com a llistat de codi. Un bloc amb {listing} sempre és un llistat",
+    "scoreEnabledTooltip": "Activat, un bloc ```abc, ```musicxml, ```mei o ```humdrum es grava com a partitura. Desactivat, es compon com a llistat de codi. Un bloc amb '{listing}' sempre és un llistat",
     "scoreStaffSize": "Mida del pentagrama",
     "scoreStaffSizeTooltip": "Alçada del pentagrama, de la primera a la cinquena línia. Els llibres de text i els mètodes fan servir de 5 a 6 mm; els exemples dins del text, de 4 a 5 mm",
     "scoreMusicFont": "Font musical",

@@ -137,7 +137,13 @@ function leafRuns(el: El, inherited: number): Array<{ text: string; size: number
  * Returns the items and the slice height, or null when the markup is not
  * Verovio's.
  */
-export function flattenVerovioSvg(svg: string, widthPx: number): { items: ScoreItem[]; heightPx: number } | null {
+export function flattenVerovioSvg(
+  svg: string,
+  widthPx: number,
+  /** Groups left out by class (`mNum`: bar numbers). */
+  options?: { skipClasses?: readonly string[] },
+): { items: ScoreItem[]; heightPx: number } | null {
+  const skip = new Set(options?.skipClasses ?? []);
   const root = parse(svg);
   if (!root) return null;
   const inner = root.children.find((c) => c.name === 'svg') ?? root;
@@ -190,6 +196,7 @@ export function flattenVerovioSvg(svg: string, widthPx: number): { items: ScoreI
     let matrix = parent.matrix;
     if (el.attrs.transform) matrix = multiply(matrix, parseSvgTransform(el.attrs.transform));
     const classes = (el.attrs.class ?? '').split(/\s+/);
+    if (classes.some((c) => skip.has(c))) return;
     const ctx: Ctx = {
       matrix,
       bold: parent.bold || classes.some((c) => BOLD_CLASSES.has(c)),
