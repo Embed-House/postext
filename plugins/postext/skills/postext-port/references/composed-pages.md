@@ -754,16 +754,23 @@ Also decided by the drafting, checked on a real textbook in three languages:
   source line (a picture laid over the box's right side), and the source's own
   tracking (InDesign squeezes a line by a few per cent to fit it) is not in
   another face's widths: a line that just fits breaks one word earlier and
-  the box grows a line. The right padding gives up that much, down to nothing.
-  A source line squeezed by more than that (measure the source's tracked
-  width against the face's advance widths) is a size, not a padding: give
-  that box `fit: { minScale: 0.9 }` and its drawn height as `maxHeight`.
+  the box grows a line. The draft measures it: every line set
+  solid in the book's own face (the advance widths of the `--fonts` file
+  each letter maps to, no tracking), and the right padding gives up what the
+  widest one needs past the measure plus the slack, down to nothing (a free
+  text frame widens by as much). A box whose padding is all given grows a
+  line (its drawn height is a minimum) and the report says so; it does not
+  shrink. No frame gets `fit.minScale` from the draft: `--fit 0.9` writes
+  it on text frames, boxes and tabs as a reserve for longer editions, by
+  request only.
 - **Pills** (a name over a picture: one line, its word in the middle of the
   tinted tab) are centred in the frame with 1.5 mm insets, so a longer word in
   another edition keeps the middle and has the whole width; the frame keeps
-  the pill's height and the ladder sets the word smaller (`fit.minScale`
-  0.8) rather than wrapping inside it. A tab that touches a picture lies
-  over it (`layer: 2`).
+  the pill's height. Its width is the word set solid in the book's face
+  plus `--wrap-slack` and the insets when that is more than the drawn tab
+  (the frame grows on both sides, a note in the report), so the word stays
+  on one line at its size. A tab that touches a picture lies over it
+  (`layer: 2`).
 - **Pictures at the foot of a box** (photos under its paragraph) hang from the
   box's bottom edge (`bottom-left`, a negative offset) with their room as the
   box's bottom padding (less the tab's rise: the frame of a box with a tab is
@@ -2134,8 +2141,15 @@ label_styles.append({"id": "clave", "kind": "legend", "align": "start", "fontSiz
 - **The draft writes it** (`pdf_regions.py extract`, `scripts/legends.py`,
   skill 1.61). Two rows or more of a small symbol (at most 15 × 8 mm) and a
   few words (six at most), the symbols starting within 1 mm of each other
-  at a steady pitch and of two looks or more (a list of one bullet repeated
-  is no key), are a key. A filled rectangle becomes
+  (or centred on one column within 1 mm, each at most 6 mm from its words:
+  a capital's ring and a border line stand centred over each other) at a
+  steady pitch and of two looks or more (a list of one bullet repeated is
+  no key), are a key. A sample of the map's lettering before a row's words
+  (a country's name in small capitals before "Country": one or two words in
+  another size, weight or colour) is its symbol, a glyph icon of its own
+  words, `:icon[SPAIN]{glyph="SPAIN" color="#…" size="0.45"}` (`size` its
+  capitals over the row's; each edition writes its own; set in the row's
+  weight). A filled rectangle becomes
   `:icon[…]{glyph="■" color="#…"}` (the label's face must carry U+25A0, or
   add `font=`), a straight stroked segment `:icon[…]{line="solid|dashed|dotted"
   color="#…"}`, any other drawing (a front's triangle, a semicircle, a
@@ -2150,6 +2164,14 @@ label_styles.append({"id": "clave", "kind": "legend", "align": "start", "fontSiz
   rules (symbol, words; `columnWidths` from the source). The rows keep the
   label's line pitch, not the source's: raise the style's `fontSize` or set
   the rows apart in the Markdown when the source spaces them widely.
+- **Scale bars in the draft.** A straight bar 8 to 120 mm long and at most
+  3 mm high (a ruled line with its ticks, or filled segments) with two
+  numbers or more just under or over it, from `0` upwards left to right
+  (`0`, `400`, `800 km`), and the line with its ratio (`1:48 000 000`)
+  beside them, is a scale bar: on a picture it stays the picture's art (its
+  plate is no box of the page) and its numbers and ratio are the picture's
+  labels at their places along the bar; standing alone it is a picture of
+  its own with the same labels. The report notes each one.
 
 ### 6.15 Cards, tabs and shapes without a picture (1.48)
 

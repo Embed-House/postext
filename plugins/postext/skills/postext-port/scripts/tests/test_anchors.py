@@ -30,6 +30,30 @@ def line(text: str, x0: float, base: float, size: float = 8, width: float | None
 
 
 class Duplicates(unittest.TestCase):
+    def test_a_white_copy_under_a_coloured_label_is_its_halo(self):
+        notes: list[str] = []
+        # the white print comes first (it lies under), at the same size
+        lines = [line("10 °E", 50.0, 80.0, size=4.5, width=5.0, color="#ffffff"),
+                 line("10 °E", 50.05, 80.0, size=4.5, width=5.0, color="#962e34")]
+        groups = anc.merge_lines(lines, notes=notes)
+        self.assertEqual(len(groups), 1)
+        kept = groups[0][0]
+        self.assertEqual(kept["color"], "#962e34")
+        self.assertEqual(kept["halo"]["color"], "#ffffff")
+        styles, ids = anc.label_styles(groups)
+        self.assertEqual(len(styles), 1)
+        self.assertEqual(styles[0]["color"]["hex"], "#962e34")
+        self.assertEqual(styles[0]["halo"]["color"]["hex"], "#ffffff")
+        self.assertTrue(styles[0]["id"].endswith("-halo"))
+        self.assertTrue(any("halo" in n for n in notes))
+
+    def test_a_label_without_a_halo_keeps_its_own_style(self):
+        a = line("Ecuador", 50.0, 80.0, halo={"color": "#ffffff", "width": 0.25})
+        b = line("Trópico", 50.0, 90.0)
+        styles, ids = anc.label_styles([[a], [b]])
+        self.assertEqual(len(styles), 2)
+        self.assertNotEqual(ids[anc.style_key(a)], ids[anc.style_key(b)])
+
     def test_two_grids_one_over_the_other_are_one_label(self):
         notes: list[str] = []
         lines = [line("30°", 50.0, 80.0, size=6, width=4.0), line("30°", 50.2, 80.3, size=8, width=4.0),

@@ -301,7 +301,8 @@ class Fonts:
 
     def __init__(self, font_map: Path | None = None, fonts_dir: Path | None = None):
         self.map = json.loads(font_map.read_text(encoding="utf-8")) if font_map else {}
-        self.table = font_table(fonts_dir) if fonts_dir and fonts_dir.exists() else {}
+        self.dir = fonts_dir if fonts_dir and fonts_dir.exists() else None
+        self.table = font_table(fonts_dir) if self.dir else {}
         self.cache: dict[tuple[str, int], tuple[str, int, bool]] = {}
         self.seen: dict[str, tuple[str, int, bool]] = {}
         #: PDF font name -> spans of an upright face the source slanted (read as italic)
@@ -353,6 +354,38 @@ class Fonts:
         return out
 
 
+def _family_key(name: str) -> str:
+    return re.sub(r"[\s_\-]+", "", name).lower()
+
+
+def font_map_problems(fonts: Fonts) -> list[str]:
+    """A line for each `--font-map` target family that is not one of the
+    families of the `--fonts` files, with the near ones (`Woodstamp` for a
+    file whose family reads `Wood Stamp`): the draft would name a face the
+    book does not ship, and the render falls back to another one. Nothing
+    without a fonts folder."""
+    families = sorted({v[0] for v in fonts.table.values()})
+    if not families:
+        return []
+    import difflib
+
+    keys = {_family_key(f): f for f in families}
+    out = []
+    for prefix in sorted(fonts.map):
+        v = fonts.map[prefix]
+        fam = v if isinstance(v, str) else (v or {}).get("family", "")
+        if fam in families:
+            continue
+        near = [keys[_family_key(fam)]] if _family_key(fam) in keys else []
+        near += [f for f in difflib.get_close_matches(fam, families, n=3, cutoff=0.6) if f not in near]
+        near += [keys[k] for k in difflib.get_close_matches(_family_key(fam), list(keys), n=3, cutoff=0.6)
+                 if keys[k] not in near]
+        out.append(f"--font-map {prefix!r} -> {fam!r}: no such family in --fonts"
+                   + (f"; did you mean {' or '.join(repr(n) for n in near[:3])}?" if near else
+                      f" (families: {', '.join(families)})"))
+    return out
+
+
 def font_warnings(fonts: Fonts) -> list[str]:
     """A loud note when every face came out at one weight although the PDF's
     font names say several: the draft then has no bold, and the fonts
@@ -366,6 +399,73 @@ def font_warnings(fonts: Fonts) -> list[str]:
                 f"{len(fonts.seen)} faces of weights {sorted(named)}: no bold will be marked; "
                 "check --fonts and --font-map"]
     return []
+
+
+class FaceWidths:
+    """The width a line takes set solid in the book's own faces (`--fonts`):
+    the advance widths of its characters in the file of each one's family,
+    weight and slant, at its size. The source's tracking (InDesign squeezes
+    a line by a few per cent to fit it) and a face mapped to a wider one
+    (`--font-map`) are not in the printed width; this is what the line
+    needs. No kerning: a little more than the engine sets."""
+
+    def __init__(self, fonts: Fonts):
+        self.fonts = fonts
+        self.faces: dict[str, Any] = {}
+
+    def _file(self, family: str, weight: int, italic: bool) -> str | None:
+        best = None
+        for fam, w, st, file in self.fonts.table.values():
+            if fam != family:
+                continue
+            score = abs(int(w) - int(weight)) + (0 if (st == "italic") == bool(italic) else 1000)
+            if best is None or score < best[0]:
+                best = (score, file)
+        return best[1] if best else None
+
+    def _face(self, file: str) -> Any:
+        if file not in self.faces:
+            try:
+                from fontTools.ttLib import TTFont  # type: ignore
+
+                ft = TTFont(str(self.fonts.dir / file), lazy=True, fontNumber=0)
+                self.faces[file] = (ft.getBestCmap() or {}, ft["hmtx"], ft["head"].unitsPerEm)
+            except Exception:
+                self.faces[file] = None
+        return self.faces[file]
+
+    def width(self, line: "Line") -> float | None:
+        """mm from the first letter's left edge to the last one's right, set
+        solid; a character the face lacks takes its printed width. None
+        without fonts or when no character is in a known face."""
+        if self.fonts.dir is None:
+            return None
+        ink = [k for k, c in enumerate(line.chars) if c.c.strip()]
+        if not ink:
+            return None
+        total, known = 0.0, False
+        for c in line.chars[ink[0]:ink[-1] + 1]:
+            file = self._file(c.family, c.weight, c.italic) if c.family else None
+            face = self._face(file) if file else None
+            gid = face[0].get(ord(c.c)) if face and len(c.c) == 1 else None
+            if gid is None:
+                total += max(0.0, c.x1 - c.x0)
+                continue
+            total += face[1][gid][0] / face[2] * c.size * PT_MM
+            known = True
+        return total if known else None
+
+
+def wrap_need(lines: list, edge: float, ctx: dict) -> float:
+    """How far (mm) the widest of `lines`, set solid in the book's faces,
+    reaches past `edge` (the measure's right end); 0 when all fit."""
+    widths = ctx.get("face_widths")
+    need = 0.0
+    for l in lines if widths is not None else []:
+        w = widths.width(l)
+        if w is not None:
+            need = max(need, l.x0 + w - edge)
+    return need
 
 
 # ---------------------------------------------------------------------------
@@ -532,10 +632,32 @@ class Renders:
             if got is not None:
                 return got
         d = abs(self.rgb[y0:y1, x0:x1] - self.bare[y0:y1, x0:x1]).sum(axis=2)
-        glyphs = self.ink[y0:y1, x0:x1] < 128
+        glyphs = self.glyph_mask(x0, y0, x1, y1)
         if glyphs.sum() >= 6:
             return float((d[glyphs] > 45).mean()) > 0.5
         return int(d.max()) > 60 if d.size else False
+
+    def glyph_mask(self, x0: int, y0: int, x1: int, y1: int, reach: int = 4):
+        """The text's own pixels in a window of the text-only render: dark
+        (under 128) and darker than the lightest pixel within `reach` round
+        them by 40 or more. A shading the redaction keeps (a globe's blue
+        gradient under its degree labels) is no glyph where it is as dark as
+        the letters' surroundings; on white paper it is the plain `< 128` (letters
+        whose strokes are under twice `reach` wide: 2 mm at the check's 100 dpi)."""
+        np = self.np
+        h, w = self.ink.shape
+        a0, b0, a1, b1 = max(0, x0 - reach), max(0, y0 - reach), min(w, x1 + reach), min(h, y1 + reach)
+        win = self.ink[b0:b1, a0:a1]
+        light = win.copy()
+        for dy in range(-reach, reach + 1):
+            for dx in range(-reach, reach + 1):
+                sh = np.full_like(win, 0)
+                ys, yd = (slice(dy, None), slice(0, -dy or None)) if dy >= 0 else (slice(0, dy), slice(-dy, None))
+                xs, xd = (slice(dx, None), slice(0, -dx or None)) if dx >= 0 else (slice(0, dx), slice(-dx, None))
+                sh[yd, xd] = win[ys, xs]
+                light = np.maximum(light, sh)
+        mask = (win < 128) & (win <= light - 40)
+        return mask[y0 - b0:y1 - b0, x0 - a0:x1 - a0]
 
     def shape_visible(self, bbox_pt: tuple, fill: str | None, stroke: str | None) -> bool:
         """Does the shape's paint show on the printed page?"""
@@ -741,10 +863,13 @@ class Line:
         return self.size * PT_MM
 
     def label_dict(self, mark_ids: dict | None = None, mode: str = "mark") -> dict:
-        return {"text": runs_markdown(self.chars, self.weight, self.italic, mark_ids or {}, mode), "plain": self.plain,
-                "x0": self.x0, "y0": self.y0, "x1": self.x1, "y1": self.y1, "base": self.base,
-                "size": self.size, "family": self.family, "weight": self.weight, "italic": self.italic,
-                "color": self.color, "rotate": self.rotate}
+        out = {"text": runs_markdown(self.chars, self.weight, self.italic, mark_ids or {}, mode), "plain": self.plain,
+               "x0": self.x0, "y0": self.y0, "x1": self.x1, "y1": self.y1, "base": self.base,
+               "size": self.size, "family": self.family, "weight": self.weight, "italic": self.italic,
+               "color": self.color, "rotate": self.rotate}
+        if getattr(self, "halo", None):
+            out["halo"] = self.halo     # an outline the source prints round it (legends.find_halos)
+        return out
 
 
 def read_lines(pdf_path: str | Path, page: fitz.Page, fonts: Fonts, origin: tuple,
@@ -3245,8 +3370,10 @@ def describe_frame(f: Frame, ctx: dict, opts: argparse.Namespace, report: dict) 
         f.style = box_style(f, ctx, report)
     elif f.kind == "tab":
         f.style = tab_style(f.shape, f.lines, ctx)
+        widen_pill(f, ctx, report)
     elif f.kind == "text":
         f.style = text_style(f.lines, centred)
+        f.solid_need = wrap_need(f.lines, f.box[2], ctx)     # the lines set solid in the book's faces
         if centred and getattr(f, "caption_of", None) is not None:
             # a caption centres its lines in its own style: a paragraph style would set them
             # in the running text's face, not the box's
@@ -3282,12 +3409,37 @@ def text_style(lines: list[Line], centred: bool) -> dict:
     return st
 
 
-def give_slack(right: float, inner: float, ctx: dict) -> float:
+def give_slack(right: float, inner: float, ctx: dict, need: float = 0.0) -> float:
     """The right padding of a box or tab with the measure's slack taken off
     (down to nothing): per cent of the text's width, at most 4 mm
-    (`--wrap-slack`)."""
+    (`--wrap-slack`), on top of what the widest line needs set solid in
+    the book's faces (`need`, `wrap_need`)."""
     take = min(4.0, ctx.get("wrap_slack", 0.0) / 100.0 * inner)
+    if need > 0:
+        take += need
     return max(min(right, 0.0), right - take)
+
+
+def widen_pill(f: "Frame", ctx: dict, report: dict) -> None:
+    """A pill (a centred one-line tab, `tab_style`) keeps its word on one
+    line by its width, not by a smaller size: when the word set solid in
+    the book's face, with `--wrap-slack` on top, does not fit between its
+    insets, the frame grows by the difference on both sides (the word stays
+    centred where it was)."""
+    st = f.style or {}
+    if (st.get("body") or {}).get("textAlign") != "center" or len(f.lines) != 1 or f.rotate:
+        return
+    widths = ctx.get("face_widths")
+    w = widths.width(f.lines[0]) if widths is not None else None
+    if w is None:
+        return
+    inset = st["padding"]["left"]["value"] + st["padding"]["right"]["value"]
+    want = w + min(4.0, ctx.get("wrap_slack", 0.0) / 100.0 * w) + inset
+    grow = want - (f.box[2] - f.box[0])
+    if grow > 0.05:
+        f.box = (f.box[0] - grow / 2, f.box[1], f.box[2] + grow / 2, f.box[3])
+        report["notes"].append(f"{f.name}: the pill's word set solid needs {want:.1f} mm; "
+                               f"the frame is {grow:.1f} mm wider than the drawn tab")
 
 
 def tab_style(s: Shape, lines: list[Line], ctx: dict) -> dict:
@@ -3307,7 +3459,7 @@ def tab_style(s: Shape, lines: list[Line], ctx: dict) -> dict:
     if lines:
         inner = s.box[2] - s.box[0] - pad - right
         before = right
-        right = give_slack(right, inner, ctx)
+        right = give_slack(right, inner, ctx, wrap_need(lines, s.box[2] - right, ctx))
         if abs(pad - before) < 1.5 and pad < 6.0:
             # a tab whose words sit between equal insets (centred over its
             # picture): the slack comes off both sides, the words stay centred
@@ -3361,7 +3513,12 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
         # designer set the box, not to where the source's longest line stopped
         wide = gap > left + 10.0 and not getattr(f, "right_free", False)
         right = max(0.0, gap if wide else min(left, gap))
-        right = give_slack(right, max(0.0, bx1 - bx0 - left - right), ctx)
+        need = wrap_need(text or f.lines, bx1 - right, ctx)
+        right = give_slack(right, max(0.0, bx1 - bx0 - left - right), ctx, need)
+        if need > 0 and wrap_need(text or f.lines, bx1 - right, ctx) > 0.05:
+            # no padding left to give: the box grows a line (its drawn height is a minimum)
+            report["notes"].append(f"{f.name}: a line set solid in the book's face is {need:.1f} mm wider than "
+                                   "the source printed it; the right padding is all given, the box may grow a line")
         lead = look["lead"]
         first = min(f.lines, key=lambda l: l.base)
         last = max(f.lines, key=lambda l: l.base)
@@ -3481,6 +3638,7 @@ def cut_picture(pdf_path: str, doc: fitz.Document, pno: int, f: Frame, origin: t
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE, graphics=fitz.PDF_REDACT_LINE_ART_NONE,
                               text=fitz.PDF_REDACT_TEXT_REMOVE)
         remove = list(remove or []) + lgd.key_rects(p)     # a key the label draws (#1144)
+        remove += lgd.halo_rects(f.lines)                   # a label's drawn outline: its style's halo
         holes = []
         under = []
         for s, rect, cols in neighbours or []:
@@ -4615,8 +4773,10 @@ def vector_decoration(pdf_path: str, pno: int, origin: tuple, sh: dict, frames: 
         pts = getattr(f, "pointer_points", None)
         if pts:
             bw, bh = max(f.box[2] - f.box[0], 1e-6), max(f.box[3] - f.box[1], 1e-6)
-            f.pointer_anchors = [{"id": f"pointer-{i}", "x": round((p[0] - f.box[0]) / bw, 4),
-                                  "y": round((p[1] - f.box[1]) / bh, 4)} for i, p in enumerate(pts, 1)]
+            # after the anchors of a key on the picture (`legends.place_legends`), never instead of them
+            kept = [a for a in getattr(f, "pointer_anchors", None) or [] if not a["id"].startswith("pointer-")]
+            f.pointer_anchors = kept + [{"id": f"pointer-{i}", "x": round((p[0] - f.box[0]) / bw, 4),
+                                         "y": round((p[1] - f.box[1]) / bh, 4)} for i, p in enumerate(pts, 1)]
     # the raster ground: what nothing above paints
     left_ids = {id(s) for s in raster_left}
     masks = [(b[0] - 0.6, b[1] - 0.6, b[2] + 0.6, b[3] + 0.6) for b in (claim_of(f) for f in pics_cut)]
@@ -4787,8 +4947,8 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
             width, x = caption_measure(f, frames)
             c["width"] = mmv(width)
             c["placement"] = placement_rel(cap.name, "below", x - cap.box[0], f.box[1] - cap.box[3])
-        if opts.fit and f.kind in ("text", "box"):
-            c["fit"] = {"minScale": opts.fit}
+        if opts.fit and f.kind in ("text", "box", "tab"):
+            c["fit"] = {"minScale": opts.fit}     # only by request: a reserve, never the default answer
         configs[f.name] = c
         out_frames.append(c)
     # a tab (a pill, a title) lies over the picture it touches (a diagram's connectors are one
@@ -4897,7 +5057,8 @@ def text_measure(f: Frame, frames: list[Frame], cards: list[Shape]) -> float:
         return max(longest, min(room, longest * 1.25 + 4))
     if room > longest and longest >= 0.82 * room:
         return round(room, 2)
-    return round(longest * 1.03 + 1.0, 2)
+    # the source's measure and a little room, or more when its lines set solid need it
+    return round((longest + getattr(f, "solid_need", 0.0)) * 1.03 + 1.0, 2)
 
 
 def furniture_decoration(lines: list[Line], pno: int, origin: tuple, ctx: dict, report: dict,
@@ -5129,11 +5290,15 @@ def name_frames_by_role(args: argparse.Namespace, doc: fitz.Document, built: lis
 
 
 def cmd_extract(args: argparse.Namespace) -> int:
+    fonts = Fonts(Path(args.font_map) if args.font_map else None, Path(args.fonts) if args.fonts else None)
+    bad = font_map_problems(fonts)
+    if bad:
+        # a target the book does not ship: the render would fall back to another face
+        raise SystemExit("\n".join(bad))
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     doc = open_pdf(args.source)
     pages = parse_pages(args.pages or f"1-{doc.page_count}", doc.page_count)
-    fonts = Fonts(Path(args.font_map) if args.font_map else None, Path(args.fonts) if args.fonts else None)
     # pass 1: the printed text of every page, the body size and the heading sizes
     caches = {}
     sizes: dict[float, int] = {}
@@ -5169,7 +5334,8 @@ def cmd_extract(args: argparse.Namespace) -> int:
         return min(3, len(head_sizes)) or 1
 
     ctx: dict[str, Any] = {"heading_min": heading_min, "level_of": level_of, "mark_ids": {}, "label_groups": [],
-                           "wrap_slack": args.wrap_slack, "repeated": repeated_looks(caches, pages)}
+                           "wrap_slack": args.wrap_slack, "repeated": repeated_looks(caches, pages),
+                           "face_widths": FaceWidths(fonts)}
     # highlight colours -> mark (or chip) styles
     band_cols: dict[str, list] = {}
     built = []
@@ -5372,15 +5538,31 @@ def cmd_manifest(args: argparse.Namespace) -> int:
     if args.fonts:
         src = Path(args.fonts).resolve()
         dst = root / "fonts"
-        if dst.is_symlink() or dst.exists():
-            if dst.is_symlink():
-                dst.unlink()
-            elif dst.is_dir():
-                shutil.rmtree(dst)
-        dst.mkdir()
-        for f in sorted(src.glob("*")):
-            if f.suffix.lower() in (".ttf", ".otf", ".woff2"):
+        if dst.exists() and dst.resolve() == src:
+            # the project's own folder (or a link to the one named): clearing it
+            # before the copy would leave it empty
+            print(f"--fonts {args.fonts} is {dst} itself: its files are listed, nothing is copied")
+        else:
+            files = [f for f in sorted(src.glob("*")) if f.suffix.lower() in (".ttf", ".otf", ".woff2")]
+            staged = None
+            if dst.exists() and not dst.is_symlink() and src.is_relative_to(dst.resolve()):
+                # a folder inside the one about to be cleared: copy its files aside first
+                import tempfile
+
+                staged = Path(tempfile.mkdtemp(prefix="postext-fonts-"))
+                for f in files:
+                    shutil.copy2(f, staged / f.name)
+                files = [staged / f.name for f in files]
+            if dst.is_symlink() or dst.exists():
+                if dst.is_symlink():
+                    dst.unlink()
+                elif dst.is_dir():
+                    shutil.rmtree(dst)
+            dst.mkdir()
+            for f in files:
                 shutil.copy2(f, dst / f.name)
+            if staged is not None:
+                shutil.rmtree(staged, ignore_errors=True)
         table = font_table(dst)
         fams: dict[str, list] = {}
         for ps, (fam, weight, style, file) in sorted(table.items()):
@@ -5451,7 +5633,11 @@ def main(argv: list[str] | None = None) -> int:
                    help="small words this close to a picture's edge (mm) are its lettering (default 4)")
     p.add_argument("--link-gap", type=float, default=25.0, help="a frame anchors below the frame above when they are this close (mm, default 25)")
     p.add_argument("--margin-band", type=float, default=15.0, help="on a page without cards, text this close to the top or foot is a running head (mm)")
-    p.add_argument("--fit", type=float, help="give text frames and boxes fit.minScale (0.9: the ladder may set the text down to 90 %%)")
+    p.add_argument("--fit", type=float,
+                   help="opt in: give text frames, boxes and tabs fit.minScale, a reserve for longer editions "
+                        "(0.9: the ladder may set the text down to 90 %%). By default no frame shrinks its text: "
+                        "measures take the lines' width set solid in --fonts plus --wrap-slack, pills widen, "
+                        "boxes grow")
     p.add_argument("--wrap-slack", type=float, default=3.0,
                    help="per cent a box's text measure gets beyond its longest source line, at most 4 mm, so that a "
                         "face a little wider than the source's tracked text does not break the lines one word "
