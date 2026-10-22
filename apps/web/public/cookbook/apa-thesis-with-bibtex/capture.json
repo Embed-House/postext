@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "apa-thesis-with-bibtex",
-  "sourceHash": "5934587dfdcebde0ccc9803649eacda3ba934f5f2cf3e1a42468d15430c60918",
+  "sourceHash": "3980087365cc4d2f77982f33071559d8b5327557138c1bed08b5594a1b0211a4",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:55:41.400Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:45:02.058Z",
   "variants": {
     "en": {
-      "hash8": "5d9095f5",
-      "vdtHash": "6eab61fb39e6b5522a202291c766c6154967f043",
+      "hash8": "070c999d",
+      "vdtHash": "ec45071fab5e5ea89c0d27f936819ffde13e3c50",
       "timings": {
-        "importMs": 348,
-        "fontsMs": 31,
-        "buildMs": 275,
-        "totalMs": 1351,
+        "importMs": 15983,
+        "fontsMs": 48,
+        "buildMs": 460,
+        "totalMs": 19977,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 141672,
+          "bytes": 142216,
           "alt": "Page 2: 2.2 Speed and line length."
         },
         {
@@ -99,7 +99,7 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 58327,
+        "bytes": 58383,
         "pages": 3
       },
       "sandbox": {
@@ -109,8 +109,8 @@
         "chapters": [
           {
             "pages": 3,
-            "hash": "85c76493a8d987d5",
-            "lines": "5966a69fbcf378ff"
+            "hash": "f96345b63fb30566",
+            "lines": "00d7f7d7ba539019"
           }
         ]
       },
@@ -287,35 +287,35 @@
         "converged": true,
         "iterationCount": 2,
         "looseLines": {
-          "count": 1,
-          "share": 0.0238,
-          "worst": 2.0100000000000002
+          "count": 0,
+          "share": 0,
+          "worst": 1.9
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
           {
-            "check": "C24",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "1 of 42 justified lines (2.4 %) stretch past 2× (worst 2.0100000000000002×); loosest: p. 2 2.0100000000000002× “Dyson & Haselgrove (2001) measured speed and co…”"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "severity": "info",
+            "detail": "the layout changed since the committed capture"
           }
         ]
       }
     },
     "es": {
-      "hash8": "96bf8cc8",
+      "hash8": "d0dab75a",
       "vdtHash": "6e0a6cba13b65060bc3adb3c867358700bf0acc0",
       "timings": {
-        "importMs": 433,
-        "fontsMs": 32,
-        "buildMs": 278,
-        "totalMs": 1515,
+        "importMs": 7321,
+        "fontsMs": 57,
+        "buildMs": 410,
+        "totalMs": 10399,
         "builds": 1
       },
       "specimen": {
@@ -397,12 +397,12 @@
       },
       "pdf": {
         "file": "apa-thesis-with-bibtex.pdf",
-        "bytes": 59976,
+        "bytes": 59978,
         "pages": 3
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18511,
+        "bytes": 18508,
         "folio": "2af3feac",
         "chapters": [
           {
@@ -594,9 +594,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

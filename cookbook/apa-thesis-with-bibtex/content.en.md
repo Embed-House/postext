@@ -19,7 +19,7 @@ Two meta-analyses later pooled the evidence. @delgado2018 combined 54 studies wi
 
 Speed is the measure readers notice first and researchers trust least. A reader can go faster by understanding less, and a gain in words per minute says nothing of what was retained [@rayner2016]. Studies that control for comprehension tell a more modest story than the claims of speed-reading courses: the eyes move in short jumps, take in a few letters on either side of the fixation, and cannot be trained to take in a whole line at once [@rayner2016].
 
-Line length is the variable typographers have argued about longest. On screen, @dyson2001 measured speed and comprehension at several line lengths and found that the two do not always improve together, which warns against judging a layout by speed alone. Older work on print had already shown that the best length depends on the size of the type and the leading, not on a fixed count of characters [@tinker1963; see also @ibanez2023, sec. 2].
+Line length is the variable typographers have argued about longest. On screen, @dyson2001 measured reading speed and comprehension at several line lengths and found that the two do not always improve together, which warns against judging a layout by speed alone. Older work on print had already shown that the best length depends on the size of the type and the leading, not on a fixed count of characters [@tinker1963; see also @ibanez2023, sec. 2].
 
 ## Attention and the reading brain {#sec-attention}
 
