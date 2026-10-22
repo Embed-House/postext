@@ -118,15 +118,35 @@ const LINE_ONLY_RE = /^[\sMLHVmlhv\d.,eE+-]*$/;
 const BOLD_CLASSES = new Set(['ending', 'fing', 'reh', 'tempo']);
 const ITALIC_CLASSES = new Set(['dir', 'dynam', 'mNum']);
 
-function leafRuns(el: El, inherited: number): Array<{ text: string; size: number; style?: string; weight?: string }> {
+interface Run {
+  text: string;
+  size: number;
+  style?: string;
+  weight?: string;
+  /** Baseline shift from the `<text>` element's, in its units (SVG `dy`
+   *  carries on to the text after it). */
+  rise: number;
+  /** Room before the run (`dx`). */
+  dx: number;
+}
+
+/** The words of a `<text>`, one run per `<tspan>` that holds any, with the
+ *  size, style and baseline shift each is set at: a figure raised or
+ *  lowered beside a chord symbol (V₇, the figures of a figured bass) is a
+ *  smaller run with a `dy` of its own. */
+function leafRuns(el: El, inherited: number, at: { rise: number }): Run[] {
   const size = el.attrs['font-size'] !== undefined ? num(el.attrs['font-size'], inherited) : inherited;
+  const dx = num(el.attrs.dx);
+  at.rise += num(el.attrs.dy);
   const own = el.text.replace(/\s+/g, ' ');
-  const out: Array<{ text: string; size: number; style?: string; weight?: string }> = [];
-  if (own.trim()) out.push({ text: own.trim(), size, style: el.attrs['font-style'], weight: el.attrs['font-weight'] });
+  const out: Run[] = [];
+  if (own.trim()) out.push({ text: own.trim(), size, style: el.attrs['font-style'], weight: el.attrs['font-weight'], rise: at.rise, dx });
+  let first = out.length === 0;
   for (const c of el.children) {
     if (c.name !== 'tspan') continue;
-    for (const r of leafRuns(c, size)) {
-      out.push({ ...r, style: r.style ?? el.attrs['font-style'], weight: r.weight ?? el.attrs['font-weight'] });
+    for (const r of leafRuns(c, size, at)) {
+      out.push({ ...r, style: r.style ?? el.attrs['font-style'], weight: r.weight ?? el.attrs['font-weight'], dx: r.dx + (first ? dx : 0) });
+      first = false;
     }
   }
   return out;
@@ -241,14 +261,18 @@ export function flattenVerovioSvg(
         return;
       }
       case 'text': {
-        const runs = leafRuns(el, num(el.attrs['font-size'], 0));
+        const runs = leafRuns(el, num(el.attrs['font-size'], 0), { rise: 0 }).filter((r) => r.size > 0);
         const text = runs.map((r) => r.text).join('');
-        const size = runs.find((r) => r.size > 0)?.size ?? 0;
+        const size = runs[0]?.size ?? 0;
         if (!text || !(size > 0)) return;
         const [x, y] = [num(el.attrs.x), num(el.attrs.y)];
         const m = ctx.matrix;
         const k = lengthScale(m);
         const anchor = el.attrs['text-anchor'];
+        // Runs of one size on one baseline read as one word; others keep
+        // their sizes and shifts, laid side by side when the engine can
+        // measure them (`layOutRuns`).
+        const plain = runs.every((r) => r.size === size && r.rise === 0 && r.dx === 0);
         items.push({
           type: 'text',
           x: m[0] * x + m[2] * y + m[4],
@@ -258,6 +282,16 @@ export function flattenVerovioSvg(
           bold: ctx.bold || runs.some((r) => r.weight === 'bold'),
           italic: ctx.italic || runs.some((r) => r.style === 'italic'),
           ...(anchor === 'middle' || anchor === 'end' ? { anchor } : {}),
+          ...(plain ? {} : {
+            runs: runs.map((r) => ({
+              text: r.text,
+              sizePx: r.size * k,
+              rise: r.rise * k,
+              dx: r.dx * k,
+              ...(r.weight === 'bold' ? { bold: true } : {}),
+              ...(r.style === 'italic' ? { italic: true } : {}),
+            })),
+          }),
         });
         return;
       }

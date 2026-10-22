@@ -194,6 +194,37 @@ function itemsMinX(items: readonly ScoreItem[]): number {
 const ENGRAVER_TEXT_FONT = 'Times New Roman';
 
 /**
+ * A word of several runs (a chord symbol and its raised figure) as one item
+ * per run, each at its size and baseline, laid side by side by their widths
+ * in `textFont` (about half an em per character where nothing measures).
+ */
+function layOutRuns(items: ScoreItem[], textFont: string): ScoreItem[] {
+  if (!items.some((it) => it.type === 'text' && it.runs)) return items;
+  const widthOf = (text: string, size: number, bold: boolean, italic: boolean): number => {
+    try {
+      const w = measureTextWidth(text, buildFontString(textFont, size, bold ? 'bold' : 'normal', italic ? 'italic' : 'normal'));
+      if (w > 0) return w;
+    } catch {
+      // No measuring context: the estimate below.
+    }
+    return text.length * size * 0.5;
+  };
+  const out: ScoreItem[] = [];
+  for (const it of items) {
+    if (it.type !== 'text' || !it.runs) { out.push(it); continue; }
+    const widths = it.runs.map((r) => r.dx + widthOf(r.text, r.sizePx, r.bold ?? it.bold, r.italic ?? it.italic));
+    const total = widths.reduce((a, b) => a + b, 0);
+    let x = it.anchor === 'middle' ? it.x - total / 2 : it.anchor === 'end' ? it.x - total : it.x;
+    it.runs.forEach((r, i) => {
+      x += r.dx;
+      out.push({ type: 'text', x, y: it.y + r.rise, text: r.text, sizePx: r.sizePx, bold: r.bold ?? it.bold, italic: r.italic ?? it.italic });
+      x += widths[i]! - r.dx;
+    });
+  }
+  return out;
+}
+
+/**
  * Words set in `textFont` at the room the engraver gave them: it spaces
  * lyrics and directions by its own (Times) metrics, so a wider face would
  * run one syllable into the next. A word wider in `textFont` than in Times
@@ -223,11 +254,13 @@ function toSystem(svg: string, o: ScoreRenderOptions, widthPx: number): ScoreSys
   const flat = flattenVerovioSvg(svg, widthPx, o.barNumbers === 'none' ? { skipClasses: ['mNum'] } : undefined);
   if (!flat) return null;
   const textFont = o.textFont || DEFAULT_TEXT_FONT;
+  const items = fitWords(layOutRuns(flat.items, textFont), textFont);
   return {
     widthPx,
     heightPx: flat.heightPx,
-    items: fitWords(flat.items, textFont),
-    svg: itemsToSvg(flat.items, widthPx, flat.heightPx, 'currentColor', textFont),
+    items,
+    // Every backend paints the same words: HTML, PDF and EPUB from this SVG.
+    svg: itemsToSvg(items, widthPx, flat.heightPx, 'currentColor', textFont),
     textFont,
   };
 }

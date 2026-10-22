@@ -89,6 +89,19 @@ describe('music engine', () => {
     expect(words('none').flat()).toEqual([]);
   });
 
+  it('keeps a chord symbol\'s raised figure smaller and on its own baseline (**harm)', () => {
+    const kern = ['**kern\t**harm', '*clefF4\t*', '*M4/4\t*', '4G\tI', '4D\tV7', '4C\tIV', '4G\tI', '==\t==', '*-\t*-'].join('\n');
+    const words = renderScore(kern, 'humdrum', 600, OPTS).systems.flatMap((s) => s.items.filter((i) => i.type === 'text')) as Array<{ text: string; x: number; y: number; sizePx: number }>;
+    const v = words.find((w) => w.text === 'V');
+    const seven = words.find((w) => w.text === '7');
+    expect(v).toBeDefined();
+    expect(seven).toBeDefined();
+    expect(seven!.sizePx).toBeLessThan(v!.sizePx);
+    expect(seven!.y).not.toBeCloseTo(v!.y, 1);
+    expect(seven!.x).toBeGreaterThan(v!.x);
+    expect(words.some((w) => w.text === 'V7')).toBe(false);
+  });
+
   it('reports a source that does not load', () => {
     const r = renderScore('<not-music/>', 'mei', 400, OPTS);
     expect(r.systems).toHaveLength(0);

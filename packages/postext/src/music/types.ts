@@ -77,7 +77,22 @@ export type ScoreItem =
     bold: boolean;
     italic: boolean;
     anchor?: 'middle' | 'end';
+    /** Pieces at their own size and baseline shift (a raised figure beside
+     *  a chord symbol), when the word is not one run. The engine lays them
+     *  side by side into items of their own. */
+    runs?: ScoreTextRun[];
   };
+
+export interface ScoreTextRun {
+  text: string;
+  sizePx: number;
+  /** Baseline shift, px down. */
+  rise: number;
+  /** Room before the run, px. */
+  dx: number;
+  bold?: boolean;
+  italic?: boolean;
+}
 
 /** One system of an engraved score: the slice the layout breaks between. */
 export interface ScoreSystem {
