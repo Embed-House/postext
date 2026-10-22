@@ -3,21 +3,21 @@
   "slug": "clinical-trial-consort-flow",
   "sourceHash": "62186cb77e4de042b9c7591228db074f10c5d3546ca5bb4cdd90bdcc88549641",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.733Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:54:38.844Z",
   "variants": {
     "en": {
-      "hash8": "9a7ed777",
-      "vdtHash": "206f83bff0ca00c15bf4d0f569852973a130a3e5",
+      "hash8": "0ad8f6ec",
+      "vdtHash": "d6ec5891e0461f332517e1e533f444ce61124e44",
       "timings": {
-        "importMs": 529,
-        "fontsMs": 257,
-        "buildMs": 472,
-        "totalMs": 2361,
+        "importMs": 854,
+        "fontsMs": 237,
+        "buildMs": 440,
+        "totalMs": 2412,
         "builds": 1
       },
       "specimen": {
@@ -130,18 +130,18 @@
       },
       "pdf": {
         "file": "clinical-trial-consort-flow.pdf",
-        "bytes": 225542,
+        "bytes": 225568,
         "pages": 8
       },
       "sandbox": {
         "file": "clinical-trial-consort-flow.postext",
-        "bytes": 121968,
+        "bytes": 121969,
         "folio": "a7ebcb67",
         "chapters": [
           {
             "pages": 8,
-            "hash": "ff62be70d97c3a96",
-            "lines": "91633a31a55cc60f"
+            "hash": "2ed30e54ab5617e2",
+            "lines": "bff69ad51c3b7b87"
           }
         ]
       },
@@ -485,7 +485,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.9000000000000001
+          "worst": 1.9
         },
         "raggedLines": {
           "count": 0
@@ -499,7 +499,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 5 pages)"
+            "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 5 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C35",
@@ -509,7 +509,12 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
