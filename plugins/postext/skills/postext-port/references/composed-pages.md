@@ -2474,10 +2474,12 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   In the Sandbox canvas a frame that does not fit is outlined in red with
   the shortfall, a frame the ladder scaled carries an amber «text at 90 %»
   badge, an unknown look a violet one. The scaled badges are information,
-  not faults: for a book handed to editors and translators set
-  `debug.fitMarks: "problems"` (the red and violet marks stay) or
-  `debug.fitMarksMinScale: 0.95` (badges only under 95 %), postext ≥ 1.52.
-  The reader's choice in the canvas rail wins; no output carries the marks.
+  not faults: since #1200 the canvas starts on `debug.fitMarks:
+  "problems"` (the red and violet marks only); a book that wants the
+  badges sets `"all"`, with `debug.fitMarksMinScale: 0.95` for badges only
+  under 95 % (postext ≥ 1.52). Do not write `"problems"` into a preset: it
+  is the default. The reader's choice in the canvas rail wins; no output
+  carries the marks.
 - `frameContinuationLimit` = 0, and `continueTargetMissing` = 0 (1.38: a
   `page:<id>` jump whose later page fence is missing).
 - `contentInConfig` = 0 (and `preset_kit.py lint` clean: it counts page

@@ -3671,7 +3671,7 @@ through `composed_check --stress 1.3`.
 The fit marks of §12 (a frame that does not fit, text or pictures the ladder scaled, an unknown look)
 are split in two groups: problems (`frameOverflow`, `lookUnknown`) and information (the scale badges,
 a scale within what `fit.minScale` allows). `debug.fitMarks: 'all' | 'problems' | 'none'` (default
-`'all'`) is the book's default and `debug.fitMarksMinScale` (default 1) leaves out the badge of a frame
+`'problems'` since #1200, `'all'` before: a book that passes its checks shows no badge) is the book's default and `debug.fitMarksMinScale` (default 1) leaves out the badge of a frame
 set at that scale or larger, text and pictures apart. Both are resolved and stripped with the rest of
 `debug`; neither reaches `ResolvedConfig`, so the VDT is the same, and the Sandbox's `configKeyOf`
 drops them, so a cached layout stays valid. Sandbox: `fitMarksFor` takes `mode` and `minScale`

@@ -189,7 +189,7 @@ Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre d
   </tbody>
 </table>
 
-Sandboxはこのブラウザで選んだ設定を覚えています。まだ選んでいない人のための既定値は本で決められます。<code>debug.fitMarks</code>（<code>"all"</code>、<code>"problems"</code>、<code>"none"</code>）と、その倍率以上で組まれた枠のラベルを省く<code>debug.fitMarksMinScale</code>です（<code>0.95</code>なら95%未満の枠だけに付きます）。これらのマークはキャンバスだけのもので、PDF、HTMLビューア、EPUB、Folioには描かれません。postext 1.52 以降。
+何も設定していない本は<strong>問題のみ</strong>から始まります。倍率のラベルは<strong>すべて</strong>を選ぶと表示されます。 Sandboxはこのブラウザで選んだ設定を覚えています。まだ選んでいない人のための既定値は本で決められます。<code>debug.fitMarks</code>（<code>"all"</code>、<code>"problems"</code>、<code>"none"</code>）と、その倍率以上で組まれた枠のラベルを省く<code>debug.fitMarksMinScale</code>です（<code>0.95</code>なら95%未満の枠だけに付きます）。これらのマークはキャンバスだけのもので、PDF、HTMLビューア、EPUB、Folioには描かれません。postext 1.52 以降。
 
 写真とキャプションを入れたボックス（内側にアンカーした枠、写真ごとに `below` のキャプション）は、翻訳でキャプションが長くなっても自動では伸びず、キャプションがボックスからはみ出して下のものに重なります。テンプレートエディターでボックスの枠を開き、**内側の枠に合わせて伸ばす**を*内側にアンカーされた枠*にします（テンプレートでは `growWith: "children"`）。するとボックスはいちばん下のキャプションの下端と下パディングまで伸び、塗り・罫線・タブが追従し、下の枠は下へずれます。*選んだ枠*なら名前のリストで指定します。対象はボックスの上辺の一点にアンカーされた枠と、それらにアンカーされた枠です。ボックスの下端や中央にアンカーされた枠は含まれず、回転したボックスは伸びません。postext 1.52 以降。
 
