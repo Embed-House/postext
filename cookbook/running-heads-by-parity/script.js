@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 005 · Running heads by parity ═══════════════════════════════
 // https://postext.dev/en/cookbook/running-heads-by-parity
 // Code: MIT · Text: Montaigne, tr. Cotton (PD, Gutenberg #3600); es: new translation (MIT)
-// Fonts: Baskervville, Libre Caslon Display, Alegreya SC (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Baskervville, Libre Caslon Display, Alegreya SC (SIL OFL 1.1) · Needs postext ≥ 1.57.0
 // Pages 29 to 33 of a pocket Montaigne. Versos carry the book's title and rectos the essay's,
 // the folios sit in tabs in the outer margin, and an opener prints only a folio at the foot.
 import { buildDocumentWithFonts, renderPageToCanvas } from 'https://esm.sh/postext';
