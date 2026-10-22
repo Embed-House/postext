@@ -28,7 +28,7 @@
     "figures-float-where-cited"
   ],
   "workarounds": [],
-  "engine": { "postext": "1.25.0" },
+  "engine": { "postext": "1.57.0" },
   "kit": ["core", "fonts", "viewer", "images"],
   "sample": { "locales": ["en", "es"] },
   "capture": {
@@ -55,5 +55,5 @@
   },
   "license": { "code": "MIT", "content": "CC-BY-4.0" },
   "created": "2026-09-25",
-  "updated": "2026-10-11"
+  "updated": "2026-10-22"
 }

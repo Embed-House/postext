@@ -40,7 +40,7 @@ Un `:ref` numera su figura y la coloca en el primer hueco libre a partir del pá
 
 <Excerpt region="heads" />
 
-Cada elemento de la cabecera cuelga de una esquina superior de la página y se filtra por `parity`, de modo que el folio y el uñero quedan siempre en el borde exterior. La caja del uñero cuelga de la esquina del sangrado y se ensancha con `BLEED`, para que siga sangrando después del corte. `pages: 'body'` aparta todos estos elementos de las aperturas, que llevan en su lugar un folio al pie definido en `footer`. La página par lleva el título del capítulo, `{chapterTitle}`, en una sola línea, porque la `\\` solo parte el título en la apertura. Los libros de texto suelen llevar la sección en la impar. Postext no tiene marcador para la sección, así que la cabecera impar lleva el título del libro, `{title}`; en estas cuatro páginas no llega a verse, porque las dos impares son aperturas.
+Cada elemento de la cabecera cuelga de una esquina superior de la página y se filtra por `parity`, de modo que el folio y el uñero quedan siempre en el borde exterior. La caja del uñero cuelga de la esquina del sangrado y se ensancha con `BLEED`, para que siga sangrando después del corte. `pages: 'body'` aparta todos estos elementos de las aperturas, que llevan en su lugar un folio al pie definido en `footer`. La página par lleva el título del capítulo, `{chapterTitle}`, en una sola línea, porque la `\\` solo parte el título en la apertura. Los libros de texto suelen llevar la sección en la impar. La cabecera impar la imprime con `{firstMark.h2}`: el primer título de sección que empieza en la página, o el vigente si no empieza ninguno. En estas cuatro páginas no llega a verse, porque las dos impares son aperturas.
 
 ### 6 · Empieza el libro en el capítulo 3
 

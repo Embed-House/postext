@@ -40,7 +40,7 @@ Un `:ref` numera la seva figura i la col·loca al primer espai lliure a partir d
 
 <Excerpt region="heads" />
 
-Cada element de la capçalera penja d'una cantonada superior de la pàgina i es filtra per `parity`, de manera que el foli i l'osca queden sempre a la vora exterior. La caixa de l'osca penja de la cantonada de la sang i s'eixampla amb `BLEED`, perquè continuï a sang més enllà del tall. `pages: 'body'` aparta tots aquests elements de les obertures, que porten en lloc seu un foli al peu definit a `footer`. La pàgina parella porta el títol del capítol, `{chapterTitle}`, en una sola línia, perquè la `\\` només parteix el títol a l'obertura. Els llibres de text solen portar la secció a la senar. Postext no té marcador per a la secció, així que la capçalera senar porta el títol del llibre, `{title}`; en aquestes quatre pàgines no s'arriba a veure, perquè les dues senars són obertures.
+Cada element de la capçalera penja d'una cantonada superior de la pàgina i es filtra per `parity`, de manera que el foli i l'osca queden sempre a la vora exterior. La caixa de l'osca penja de la cantonada de la sang i s'eixampla amb `BLEED`, perquè continuï a sang més enllà del tall. `pages: 'body'` aparta tots aquests elements de les obertures, que porten en lloc seu un foli al peu definit a `footer`. La pàgina parella porta el títol del capítol, `{chapterTitle}`, en una sola línia, perquè la `\\` només parteix el títol a l'obertura. Els llibres de text solen portar la secció a la senar. La capçalera senar la imprimeix amb `{firstMark.h2}`: el primer títol de secció que comença a la pàgina, o el vigent si no en comença cap. En aquestes quatre pàgines no s'arriba a veure, perquè les dues senars són obertures.
 
 ### 6 · Comença el llibre al capítol 3
 

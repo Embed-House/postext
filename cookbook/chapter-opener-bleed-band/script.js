@@ -1,7 +1,7 @@
 // ═══ Postext Cookbook · Nº 003 · Chapter opener on a full-bleed band ══════════════
 // https://postext.dev/en/cookbook/chapter-opener-bleed-band
 // Code: MIT · Text: original (CC BY 4.0) · Drawings: generated in code (CC BY 4.0)
-// Fonts: Roboto Serif, Archivo, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.25.0
+// Fonts: Roboto Serif, Archivo, Archivo Narrow (SIL OFL 1.1) · Needs postext ≥ 1.57.0
 // Two chapters of a geology textbook. Every level-1 heading becomes a colour band bled off the
 // top of the page, its number standing on the band's foot; a heading style recolours chapter 4.
 import {
@@ -92,9 +92,9 @@ const side = (parity) => { // the fore-edge is a verso's left edge and a recto's
   return [
     { kind: 'text', id: `folio-${parity}`, content: '{pageNumber}', ...folio,
       placement: at('page', OUTER, baseline(9)) },
-    // Textbooks name the chapter on the verso and the section on the recto; there is no
-    // section placeholder, so the recto names the book.
-    { kind: 'text', id: `head-${parity}`, content: s > 0 ? '{chapterTitle}' : '{title}',
+    // Textbooks name the chapter on the verso and the section on the recto: {firstMark.h2}
+    // is the first level-2 heading that starts on the page, or the one in force.
+    { kind: 'text', id: `head-${parity}`, content: s > 0 ? '{chapterTitle}' : '{firstMark.h2}',
       ...label, placement: at('page', OUTER + INSET, baseline(7.5)) },
     { kind: 'box', id: `tab-${parity}`, style: { backgroundColor: col('band') }, // off the trim
       placement: at('bleed', 0, mm(BLEED + TAB.y), tabSize(BLEED + TAB.w)) },
