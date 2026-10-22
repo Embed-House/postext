@@ -12,12 +12,12 @@ import type { SlotKind } from './placementAdapter.js';
 
 const pt = (value: number) => ({ value, unit: 'pt' as const });
 
-function render(slotKey: SlotKind, elements: DesignElement[]): string {
+function render(slotKey: SlotKind, elements: DesignElement[], textOverDefault?: boolean): string {
   const state = { config: {}, resources: [], labels: DEFAULT_LABELS, locale: 'en' };
   const store = { getSnapshot: () => state, subscribe: () => () => {}, dispatch: () => {} };
   return renderToString(
     h(SandboxStoreContext, { value: store as never },
-      h(SlotEditor, { slotKey, raw: { elements }, resolved: resolveDesignSlot({ elements }, 'header'), onUpdate: () => {} })),
+      h(SlotEditor, { slotKey, raw: { elements }, resolved: resolveDesignSlot({ elements }, 'header'), onUpdate: () => {}, ...(textOverDefault !== undefined ? { textOverDefault } : {}) })),
   );
 }
 
@@ -36,6 +36,20 @@ describe('design element controls', () => {
     expect(count(render('heading', [text(), box]))).toBe(2 * one);
     expect(render('header', [text(), box])).not.toContain(DEFAULT_LABELS.headerFooterElementReserve);
     expect(render('part', [box])).not.toContain(DEFAULT_LABELS.headerFooterElementReserve);
+  });
+
+  it('offers a text the switch over the frames on a page template\'s decoration only, with its default (#1189)', () => {
+    const L = DEFAULT_LABELS;
+    expect(render('header', [text()])).not.toContain(L.designTextOver);
+    expect(render('part', [text()])).not.toContain(L.designTextOver);
+    const inModule = render('part', [text()], true);
+    expect(inModule).toContain(L.designTextOver);
+    expect(inModule).toContain(L.designTextOverDefaultOn);
+    expect(render('part', [text()], false)).toContain(L.designTextOverDefaultOff);
+    // Set, the default note goes.
+    const set = render('part', [text({ over: false } as Partial<DesignElement>)], true);
+    expect(set).toContain(L.designTextOver);
+    expect(set).not.toContain(L.designTextOverDefaultOn);
   });
 
   it('offers the decorative switch on image elements, on when the element says so (#213)', () => {

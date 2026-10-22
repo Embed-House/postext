@@ -154,6 +154,8 @@ Everything below ships today in `postext` and its companion packages (`postext-p
 
 - Fixed pages (a textbook spread, a workbook page, a magazine feature) set from page templates (`pageTemplates`): named frames, groups that share their space, a decoration and spreads, defined once in the configuration.
 - In the Markdown a `::::page{template="…"}` fence sends each piece of content to a frame by name; positions and sizes never appear in the text, so a page is edited and translated as Markdown. A longer translation grows its box and pushes the boxes under it.
+- Repeating layouts are declared once: a grid lays one card per item and goes on by whole rows, and `:::module` blocks stack bands of frames down the page, side by side or in rows, nested to any depth. Named frame looks (`frameLooks`) change a card's colours without a new style, and decoration can be drawn only on pages whose fence asks for it (`when` / `unless`).
+- Connectors join frames with vector lines that follow them (straight, elbow, tree), leaders run from a label to a point of the picture and end in a ring or a bar, and path elements draw bars, ribbons and chevrons as vector shapes in every output.
 - A frame that overflows tries, in order, its free space, its group, smaller pictures and smaller text, then continues on another page; what still does not fit is reported with proposals. Words on a map or a diagram are labels written in the Markdown and placed at anchor points of the picture.
 - The Sandbox edits templates and frame styles, checks every edition, and moves text typed into an older configuration back into the Markdown (`moveTextToMarkdown`).
 
@@ -188,10 +190,18 @@ Everything below ships today in `postext` and its companion packages (`postext-p
 - `tableStyle` / `tableStyles` — table typography independent of body text, named variants picked with `table.styleId`, and a rounded outer frame.
 - `captionStyle`, `chipStyles`, `calloutStyles`, `paragraphStyles`, `headingStyles` — every style is a named, reusable object.
 - Color palettes let a whole document re-ink from one place.
+- Design text and chips can be set as dotted letters for a child to trace, and repeated along a line — the tracing copies of a handwriting workbook stay live text.
 
 ### Math
 
 - LaTeX math, inline (`$…$`) and display (`$$…$$`), rendered to crisp SVG via MathJax in every backend, loaded on demand (`await initMathEngine()`). MathJax ships pre-bundled, so it loads the same from a bundler, Node or a CDN.
+
+### Music notation
+
+- Music is written as text in the chapter, in a ` ```abc `, ` ```musicxml `, ` ```mei ` or ` ```humdrum ` fence, and engraved by [Verovio](https://www.verovio.org) at the width of its column. A long score is cut into systems that run on over columns and pages like lines of text, and `scoreStyle.minSystemsAtBreak` never leaves a system alone at a break.
+- Music examples the text cites are `score` resources, numbered, captioned, floated and referenced like figures (*Example 3.2*), from inline notation or a MusicXML file exported from Dorico, Sibelius, Finale or MuseScore.
+- `scoreStyle` and named `scoreStyles` set the staff size, the music font (Bravura, Leland, Petaluma, Leipzig, Gootville), the lyrics font, spacing, bar numbers and ink.
+- Scores are vector paths in the Canvas, HTML and PDF (a tagged `Figure` with its alt text), inline SVG in a reflowable EPUB, and their notation fence in Word. The engraver loads only for books that have music. See [Music notation](https://postext.dev/en/docs/music).
 
 ### Headers & footers
 
@@ -216,19 +226,21 @@ Everything below ships today in `postext` and its companion packages (`postext-p
 ### Sandbox
 
 - A hosted editor at [postext.dev](https://postext.dev/en/sandbox): books of chapters, a Design panel that browses every setting in editorial terms (accessible, keyboard-first), a Resources panel, live Canvas / PDF / Folio (3D) / HTML previews with source ↔ preview sync, an EPUB 3 tab that writes, shows and downloads the book as an e-book, Word import and export, editors for page templates and comic pages, a Checks panel, permalinks to any page, and a phone layout.
+- The Design panel edits every engine setting; `scripts/config-coverage.mjs --check` compares the configuration schema with the panel, the docs and the agent skill.
+- A book holds an edition per language, each with its own title and pagination: the editions rail switches between them, and the side-by-side view shows two editions of the whole book, kept on the same passage of text.
 - Books travel as `.postext` bundles that carry their pagination, so an imported book opens already paginated.
 - The same `.postext` files are created and opened from code with the `postext` package (`createBundle`, `openBundle`, `buildBundle`), so a book moves between the Sandbox, the agent skill and your own program.
 - Showcase bundles — a magazine, literary editions (*Don Quijote*, an annotated *Paradise Lost*), an atlas, an exhibition catalogue, a physics textbook, a column-and-a-half biochemistry manual, the classic Chinese novel *Dream of the Red Chamber* (红楼梦), Natsume Sōseki's *Kokoro* (こころ) set vertically and *One Thousand and One Nights* in Arabic — plus a built-in guide to Postext, itself set as a book in every language of the site: Chinese and Japanese vertical, Arabic right to left.
 
 ### Cookbook
 
-- More than a hundred complete, copy-ready examples at [postext.dev/en/cookbook](https://postext.dev/en/cookbook) (*Recetario* in Spanish): each recipe is a real publication set with Postext — an opener, a book page with running heads, a data table, a print-ready PDF — grouped in chapters and searchable by feature, genre, level and output.
+- More than 160 complete, copy-ready examples at [postext.dev/en/cookbook](https://postext.dev/en/cookbook) (*Recetario* in Spanish): each recipe is a real publication set with Postext — an opener, a book page with running heads, a data table, a songbook page, a print-ready PDF — grouped in chapters and searchable by feature, genre, level and output.
 - Every recipe page shows the captured pages and the whole pen, with Copy, Open in CodePen, an `.html` download and, where it applies, the PDF; a write-up explains the method step by step, with excerpts of the real code, and the pitfalls. The same content is available as Markdown for agents (`/en/cookbook/<slug>.md`, and in `llms.txt`).
 - Recipes live in [`cookbook/`](cookbook/README.md), one folder each (metadata, bilingual write-ups, the pen and its sample text); `pnpm cookbook new | dev | lint | capture` scaffolds, previews, checks and captures them against the released engine, and `pnpm cookbook sandbox` and `pnpm cookbook bench` check the captured books in the Sandbox's own layout and the composed pages under longer text.
 
 ### Website
 
-- [postext.dev](https://postext.dev/) in English, Spanish, Catalan, French, German, Italian, Brazilian Portuguese, Simplified Chinese, Japanese and Arabic, built to WCAG 2.2 AAA, with a Markdown version of every page for agents (`<page>.md`, `llms.txt`) and [WebMCP](https://webmachinelearning.github.io/webmcp/) tools for an agent in the browser: on every page to search, read and open pages, and in the Sandbox to edit the book, change any setting, get any laid-out page as a JPEG and change again.
+- [postext.dev](https://postext.dev/) in English, Spanish, Catalan, French, German, Italian, Brazilian Portuguese, Simplified Chinese, Japanese and Arabic, built to WCAG 2.2 AAA, with a Markdown version of every page for agents (`<page>.md`, `llms.txt`) and [WebMCP](https://webmachinelearning.github.io/webmcp/) tools for an agent in the browser: on every page to search, read and open pages, and in the Sandbox to edit the book, change any setting, do anything the Settings panel does (rename or remove a style with everything that names it, apply a language's defaults, upload an ICC profile, save a laid page as a template), get any laid-out page as a JPEG and change again.
 
 ### Configuration-driven
 
@@ -236,7 +248,7 @@ Everything below ships today in `postext` and its companion packages (`postext-p
 
 ### Agent skill: port existing publications
 
-- **`postext-port`** teaches a coding agent (Claude Code, Codex, Cursor, Gemini CLI, Copilot, …) to turn an existing publication — a PDF, Word, PowerPoint, EPUB, HTML, InDesign (IDML), LaTeX or scanned source — into a Postext project that follows the original layout: measured config manifest, curated chapters, resources and fonts.
+- **`postext-port`** teaches a coding agent (Claude Code, Codex, Cursor, Gemini CLI, Copilot, …) to turn an existing publication — a PDF, Word, PowerPoint, EPUB, HTML, InDesign (IDML), LaTeX or scanned source — into a Postext project that follows the original layout: measured config manifest, curated chapters, resources and fonts. Music textbooks, methods and songbooks bring their examples as MusicXML scores.
 - It bundles verified references (document format, configuration, project format, per-source playbooks, the unusual cases solved in every preset) and scripts: type-role PDF extraction, figure and table cutting, pandoc/IDML converters, font and image tools, a linter, a headless renderer and page-by-page comparison.
 - Install it with `npx skills add drnachio/postext --skill postext-port`, or in Claude Code with `/plugin marketplace add drnachio/postext` + `/plugin install postext@postext`. See [the Skill docs](https://postext.dev/en/docs/skill).
 
@@ -473,12 +485,13 @@ Every milestone of the original roadmap is closed. Postext now typesets full boo
 - [x] The Cookbook, the showcase books and the built-in guide in every language of the site
 - [x] The `postext-port` agent skill
 - [x] The website in ten languages, at WCAG 2.2 AAA
-- [x] Composed pages: page templates with frames filled from the Markdown ([#846](https://github.com/drnachio/postext/issues/846))
+- [x] Composed pages: page templates with frames filled from the Markdown ([#846](https://github.com/drnachio/postext/issues/846)), then modules, repeating grids, connectors and vector shapes ([#1051](https://github.com/drnachio/postext/issues/1051), [#1086](https://github.com/drnachio/postext/issues/1086))
 - [x] Comics, manga and newspaper strips lettered by the engine ([#553](https://github.com/drnachio/postext/issues/553))
 - [x] Print production: ICC profiles, PDF/X and preflight ([#609](https://github.com/drnachio/postext/issues/609))
 - [x] Word import and export ([#599](https://github.com/drnachio/postext/issues/599))
 - [x] The `postext` command line ([#617](https://github.com/drnachio/postext/issues/617)) and WebMCP tools for agents in the browser
 - [x] The Rust line breaker in WebAssembly and a faster whole-book layout ([#779](https://github.com/drnachio/postext/issues/779))
+- [x] Music notation engraved by Verovio: scores in the text and numbered music examples ([#1178](https://github.com/drnachio/postext/issues/1178))
 
 What comes next is driven by the community: open an issue that describes the publication you are trying to set and where Postext falls short.
 

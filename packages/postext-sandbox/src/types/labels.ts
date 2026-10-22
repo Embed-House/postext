@@ -3331,6 +3331,10 @@ export interface SandboxLabels {
   connectorOverTooltip: string;
   connectorOverDefaultOn: string;
   connectorOverDefaultOff: string;
+  designTextOver: string;
+  designTextOverTooltip: string;
+  designTextOverDefaultOn: string;
+  designTextOverDefaultOff: string;
   markStyleBandColor: string;
   markStyleColorTooltip: string;
   markStylePaddingXTooltip: string;

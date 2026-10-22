@@ -78,10 +78,13 @@ interface Props {
   frames?: FrameTarget[];
   /** Placeholders of this slot alone (see `PlaceholderPicker`). */
   extraPlaceholders?: readonly string[];
+  /** On a composed page's decoration (#1189): whether the text paints
+   *  over the frames when `over` is unset. Unset: no switch. */
+  overDefault?: boolean;
   onChange: (next: DesignTextElement) => void;
 }
 
-export function TextElementEditor({ raw, resolved, slotKind, siblings = [], frames = [], extraPlaceholders, onChange }: Props) {
+export function TextElementEditor({ raw, resolved, slotKind, siblings = [], frames = [], extraPlaceholders, overDefault, onChange }: Props) {
   const labels = useSandboxLabels();
   const [showPicker, setShowPicker] = useState(false);
 
@@ -201,6 +204,25 @@ export function TextElementEditor({ raw, resolved, slotKind, siblings = [], fram
           update({ placement, ...(impliedAlign ? { align: impliedAlign } : {}) })
         }
       />
+      {/* Over the frames (#1189): a module's texts by default, so its
+          boxes' fills do not hide them. */}
+      {overDefault !== undefined && (
+        <>
+          <ToggleSwitch
+            label={labels.designTextOver}
+            tooltip={labels.designTextOverTooltip}
+            checked={raw.over ?? overDefault}
+            onChange={(v) => update({ over: v })}
+            isDefault={raw.over === undefined}
+            onReset={() => update({ over: undefined })}
+          />
+          {raw.over === undefined && (
+            <p className="mb-2 text-[0.7rem] text-(--slate)" data-text-over-default="">
+              {overDefault ? labels.designTextOverDefaultOn : labels.designTextOverDefaultOff}
+            </p>
+          )}
+        </>
+      )}
       <SelectInput
         label={labels.headerFooterElementWidth}
         value={widthMode}

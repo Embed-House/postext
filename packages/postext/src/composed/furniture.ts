@@ -38,16 +38,18 @@ const RUNNING_PLACEHOLDER = /\{(?:pageNumber|chapterTitle|chapterTitleAtTop|chap
 /** The furniture elements of a slot that are drawn on a page: text
  *  elements (of a running head, any; of a decoration, those that read a
  *  running placeholder) that the parity, the page-role filter and the page
- *  fence's `when` / `unless` let draw there. `pageNumberIndex` is the index
- *  the parity filter reads (`page.index + pageIndexOffset`). */
+ *  fence's `when` / `unless` let draw there (`own`: the attributes an
+ *  element reads first, a module's fence, #1189). `pageNumberIndex` is the
+ *  index the parity filter reads (`page.index + pageIndexOffset`). */
 export function expectedFurniture(
   elements: readonly ResolvedDesignElement[],
   slot: FurnitureSlot,
   pageNumberIndex: number,
   role: PageRole | undefined,
   attrs: Readonly<Record<string, string>> | undefined,
+  own?: ReadonlyMap<string, Readonly<Record<string, string>>>,
 ): FurnitureElement[] {
-  const dropped = fenceDroppedIds(elements, attrs);
+  const dropped = fenceDroppedIds(elements, attrs, own);
   const out: FurnitureElement[] = [];
   for (const el of elements) {
     if (el.kind !== 'text' || dropped.has(el.id)) continue;

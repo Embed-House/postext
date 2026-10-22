@@ -20,6 +20,7 @@
  *
  * Pure. Run by `resolvePageTemplate` when it is given the page's modules.
  */
+import type { ComposedPageFence } from '../parse/types.js';
 import type { ConnectorEnd, DesignConnectorElement, ElementPlacement } from '../types.js';
 import type { ComposedModuleUse, ResolvedFrame, ResolvedFrameGroup, ResolvedModule, ResolvedPageTemplate } from './types.js';
 
@@ -152,6 +153,10 @@ export function expandModules(
     const nested = nestedOf(use.template);
     const takes: ResolvedModule['takes'] = {};
     for (const f of m.frames) if (f.takes && takes[f.takes] === undefined) takes[f.takes] = scope(f.name);
+    // Where its elements sit in the page's decoration (#1189): the
+    // layout reads their `{attr.x}` from the module's fence first, and
+    // paints its texts over the frames.
+    const at = page.decoration.elements.length + elements.length;
     frames.push(...own);
     groups.push(...ownGroups);
     elements.push(...ownElements);
@@ -170,6 +175,7 @@ export function expandModules(
       ...(m.grow !== undefined ? { grow: m.grow } : {}),
       ...(m.shrink !== undefined ? { shrink: m.shrink } : {}),
       ...(nested !== undefined ? { nested } : {}),
+      ...(ownElements.length > 0 ? { decoration: { start: at, end: at + ownElements.length } } : {}),
     });
   }
   if (modules.length === 0) return page;
@@ -250,4 +256,28 @@ export function moduleUsesOf(list: readonly { name: string; template: string; ne
     out.push({ name: m.name, template: m.template });
   }
   return out.length > 0 ? out : undefined;
+}
+
+/** The attributes the `:::module` fence of instance `name` writes besides
+ *  `template` and `name` (#1189), with each value's source range moved by
+ *  `offset` (the chapter's body offset): what `{attr.x}` in the module's
+ *  decoration reads before the page fence's (`VDTComposedPage.modules[]`).
+ *  Empty when it writes none, so a page whose modules write no attribute
+ *  records the same modules as before. */
+export function moduleFenceAttrs(
+  fence: Pick<ComposedPageFence, 'modules'>,
+  name: string,
+  offset: number,
+): { attrs?: Record<string, string>; attrSources?: Record<string, { sourceStart: number; sourceEnd: number }> } {
+  const m = fence.modules?.find((x) => x.name === name);
+  if (!m) return {};
+  const attrs: Record<string, string> = {};
+  const attrSources: Record<string, { sourceStart: number; sourceEnd: number }> = {};
+  for (const [k, v] of Object.entries(m.attrs ?? {})) {
+    if (k === 'template' || k === 'name') continue;
+    attrs[k] = v;
+    const at = m.attrSources[k];
+    if (at) attrSources[k] = { sourceStart: at.sourceStart + offset, sourceEnd: at.sourceEnd + offset };
+  }
+  return Object.keys(attrs).length > 0 ? { attrs, attrSources } : {};
 }

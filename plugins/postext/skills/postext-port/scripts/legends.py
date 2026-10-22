@@ -7,12 +7,20 @@ drawings.
 
 - `drop_duplicate_lines`: the same text printed twice at one spot (a fake
   bold drawn as two offset copies, a fill and a stroke drawn apart) is one
-  line; an offset copy makes the kept line bold.
+  line; an offset copy makes the kept line bold. Two copies in two colours
+  are a label and its halo (the white one under it).
+- `find_halos`: a label's outline drawn as paths, a twin of its letters in
+  another colour under them, is the label's `halo`, out of the picture's cut.
 - `find_legends`: two rows or more of a small symbol followed by a few words,
-  the symbols aligned (±1 mm) at a steady pitch, of at least two different
-  looks (one bullet repeated is a list, not a key); the words of one look,
-  starting on one edge, each symbol no taller than a line and a half and
-  as far from its words as the others.
+  the symbols aligned (±1 mm, left edges or centres) at a steady pitch, of
+  at least two different looks (one bullet repeated is a list, not a key);
+  the words of one look, starting on one edge, each symbol no taller than a
+  line and a half and as far from its words as the others (or centred on
+  one column). A sample of the map's lettering before the words (a
+  country's name in small capitals) is a symbol too: `:icon{glyph}`.
+- `find_scale_bars`: a bar with its numbers from `0` up and its ratio stays
+  art (of the picture it stands on, or a picture of its own) and its words
+  become that picture's labels.
 - Symbols: a filled rectangle is `:icon{glyph="■" color}`, a stroked
   straight segment `:icon{line=solid|dashed|dotted color}`, any other drawing
   a small SVG resource (one per shape and colour, shared by every key that
@@ -25,6 +33,7 @@ drawings.
 from __future__ import annotations
 
 import hashlib
+import re
 import statistics
 import sys
 from dataclasses import dataclass, field
@@ -40,6 +49,8 @@ MM = 72 / 25.4
 
 #: two copies of a line closer than this on every edge (mm) are one line
 DUPLICATE_MM = 0.3
+#: a halo's width (pt) when the source does not say it: a copy printed under the label
+HALO_PT = 0.4
 #: symbols of one key start within this of each other (mm)
 ALIGN_MM = 1.0
 #: the widest and the tallest a symbol may be (mm), and the farthest its words start after it
@@ -78,9 +89,21 @@ def _area(b: tuple) -> float:
     return max(0.0, b[2] - b[0]) * max(0.0, b[3] - b[1])
 
 
+def _meet(a: tuple, b: tuple) -> tuple:
+    return (max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3]))
+
+
 # ---------------------------------------------------------------------------
 # duplicate lines
 # ---------------------------------------------------------------------------
+
+
+def _light(col: str | None) -> bool:
+    """A paper colour: white or nearly (a halo printed under a label)."""
+    if not col:
+        return False
+    r, g, b = td.hex_rgb(col)
+    return min(r, g, b) >= 0.9
 
 
 def drop_duplicate_lines(lines: list, tol: float = DUPLICATE_MM, notes: list[str] | None = None) -> list:
@@ -88,13 +111,25 @@ def drop_duplicate_lines(lines: list, tol: float = DUPLICATE_MM, notes: list[str
     text with its box within `tol` mm on every edge. A copy set off the
     first (a fake bold, drawn as two offset prints) makes the kept line
     bold; a copy at the very spot (a fill and a stroke drawn apart) is
-    dropped as it is. Order kept."""
+    dropped as it is. Two copies in two colours are a label and its halo:
+    the coloured one (or, both coloured, the one printed last, on top) is
+    the line and its colour, the other its `halo` (`{"color", "width"}`,
+    width in pt), never the line's colour. Order kept."""
     kept: list = []
     for l in lines:
-        twin = next((k for k in kept if not k.rotate and not l.rotate and k.plain == l.plain
+        twin = next((k for k in kept if abs(k.rotate - l.rotate) < 1 and k.plain == l.plain
                      and all(abs(a - b) <= tol for a, b in zip(k.box, l.box))), None)
         if twin is None:
             kept.append(l)
+            continue
+        if td.delta_e(twin.color, l.color) > 10:
+            # the first print lies under the second: a white copy under a coloured one is its halo
+            top, under = (twin, l) if _light(l.color) and not _light(twin.color) else (l, twin)
+            top.halo = {"color": under.color, "width": HALO_PT}
+            kept[kept.index(twin)] = top
+            if notes is not None:
+                notes.append(f"# {top.plain[:40]!r} printed twice, in {top.color} over {under.color}: "
+                             f"the {under.color} copy is its halo")
             continue
         offset = max(abs(a - b) for a, b in zip(twin.box, l.box))
         if offset > 0.03 and twin.weight < 600:
@@ -107,6 +142,88 @@ def drop_duplicate_lines(lines: list, tol: float = DUPLICATE_MM, notes: list[str
     return kept
 
 
+def find_halos(lines: list, drawings: list, origin: tuple, notes: list[str] | None = None) -> None:
+    """A label's outline drawn as paths (a white twin of its glyphs under a
+    globe's red degrees): paths of one colour other than the line's, none of
+    them a rectangle, each inside one of the line's letters (grown by
+    0.4 mm), with the outline pieces of a glyph (five or more on average),
+    and between them over seven letters in ten. The line gets `halo`
+    (`{"color", "width"}`: the paint, and half the stroke round the fill or
+    0.4 pt) and `halo_rects` (page points: each path's extent, for the
+    picture's cut to leave out: the label style draws the halo)."""
+    cands = []
+    for d in drawings:
+        r = d["rect"]
+        if r.width * PT_MM > 20 or r.height * PT_MM > 20 or _rect_like(d):
+            continue
+        fill, stroke = _hex(d.get("fill")), _hex(d.get("color"))
+        if fill and stroke and td.delta_e(fill, stroke) > 3:
+            continue
+        col = fill or stroke
+        if col:
+            cands.append((_box_mm(r, origin), d, col))
+    if not cands:
+        return
+    for l in lines:
+        if getattr(l, "halo", None) or l.size > 14:
+            continue
+        ink = [c for c in l.chars if c.c.strip()]
+        if not ink:
+            continue
+        zone = (l.x0 - 0.8, l.y0 - 0.8, l.x1 + 0.8, l.y1 + 0.8)
+        near = [(b, d, col) for b, d, col in cands if _inside(b, zone, 0.0) and td.delta_e(col, l.color) > 10]
+        best = None
+        for col in sorted({col for _, _, col in near}):
+            # the paths of this colour that each stand in one letter, and the letters they stand in
+            mine, hit = [], set()
+            for b, d, c in near:
+                if c != col:
+                    continue
+                own = [k for k, ch in enumerate(ink) if _inside(b, (ch.x0, ch.y0, ch.x1, ch.y1), 0.4)]
+                if not own:
+                    continue
+                # the letter it covers most, and a fair share of it (a speck of coast is no twin)
+                k = max(own, key=lambda k: _area(_meet(b, (ink[k].x0, ink[k].y0, ink[k].x1, ink[k].y1))))
+                if _area(b) >= 0.1 * _area((ink[k].x0, ink[k].y0, ink[k].x1, ink[k].y1)):
+                    mine.append((b, d))
+                    hit.add(k)
+            if not mine or len(hit) < 0.7 * len(ink) or len(mine) > 2 * len(ink) + 1:
+                continue
+            if sum(len(d.get("items", [])) for _, d in mine) < 5 * len(mine):
+                continue
+            if best is None or len(hit) > best[0]:
+                best = (len(hit), col, mine)
+        if best is None:
+            continue
+        _, col, mine = best
+        widths = [float(d.get("width") or 0) for _, d in mine if d.get("color") is not None]
+        width = round(max(0.2, max(widths) / 2), 2) if widths else HALO_PT
+        l.halo = {"color": col, "width": width}
+        # MuPDF takes a stroked path out only when the rectangle covers it with its miters at
+        # their limit (ten widths) and more: 0.4 pt strokes needed 6 pt
+        pad = 15 * max(widths or [0.0]) + 0.6
+        rects = [(d["rect"].x0 - pad, d["rect"].y0 - pad, d["rect"].x1 + pad, d["rect"].y1 + pad) for _, d in mine]
+        whole = _union(rects)
+        ids = {id(d) for _, d in mine}
+        # one rectangle round the twin (each redaction of a map page is slow), unless other
+        # art lies wholly in it: then one per path
+        if any(id(d) not in ids and _inside(tuple(d["rect"]), whole, 0.0) for d in drawings):
+            l.halo_rects = rects
+        else:
+            l.halo_rects = [whole]
+        if notes is not None:
+            notes.append(f"# {l.plain[:40]!r}: a drawn twin in {col} under the {l.color} text is its halo "
+                         f"({width} pt), out of the picture's cut")
+
+
+def halo_rects(lines: list) -> list:
+    """The rectangles (page points, `fitz.Rect`) of the drawn halos of a
+    picture's labels (`find_halos`), for its cut to leave out."""
+    import fitz
+
+    return [fitz.Rect(r) for l in lines for r in getattr(l, "halo_rects", None) or []]
+
+
 # ---------------------------------------------------------------------------
 # symbols and keys
 # ---------------------------------------------------------------------------
@@ -116,12 +233,16 @@ def drop_duplicate_lines(lines: list, tol: float = DUPLICATE_MM, notes: list[str
 class Symbol:
     box: tuple                      # mm
     drawings: list                  # PyMuPDF drawing dicts
-    kind: str = "path"              # "square" | "line" | "path"
+    kind: str = "path"              # "square" | "line" | "path" | "text"
     color: str | None = None
     line: str = "solid"
+    sample: Any = None              # kind "text": the sample line (a country's name set as on the map)
 
     def signature(self) -> str:
         """The symbol's shape and paint, the same for two copies at other places."""
+        if self.kind == "text":
+            l = self.sample
+            return hashlib.sha1(f"{l.plain}|{l.color}|{l.size:.1f}|{l.weight}".encode()).hexdigest()[:10]
         x0, y0 = self.drawings[0]["rect"][0], self.drawings[0]["rect"][1]
         bits = []
         for d in self.drawings:
@@ -139,7 +260,7 @@ class Symbol:
         return hashlib.sha1(";".join(bits).encode()).hexdigest()[:10]
 
     def look(self) -> tuple:
-        return (self.kind, self.color, self.line, self.signature() if self.kind == "path" else "")
+        return (self.kind, self.color, self.line, self.signature() if self.kind in ("path", "text") else "")
 
 
 @dataclass
@@ -252,12 +373,22 @@ def find_legends(lines: list, drawings: list, origin: tuple) -> list[Legend]:
             taken.add(id(d))
         group.sort(key=lambda bd: bd[1].get("seqno", 0))
         rows.append(Row(classify_symbol([d for _, d in group], origin), l))
-    # keys: rows whose symbols start together, one under another at a steady pitch
+    # a row whose symbol is a sample of the map's own lettering (a country's name
+    # in small capitals before "Country"): a short line in another look just before
+    # the words, on their line
+    used = {id(r.line) for r in rows}
+    for l in sorted((l for l in lines if _short(l) and id(l) not in used), key=lambda l: (l.y0, l.x0)):
+        sample = _text_sample(l, lines, used)
+        if sample is not None:
+            used |= {id(l), id(sample)}
+            rows.append(Row(Symbol(sample.box, [], "text", sample.color, sample=sample), l))
+    # keys: rows whose symbols start together (or stand centred on one column), one
+    # under another at a steady pitch
     legends: list[Legend] = []
     left = sorted(rows, key=lambda r: (r.line.base, r.symbol.box[0]))
     while left:
         seed = left.pop(0)
-        col = [seed] + [r for r in left if abs(r.symbol.box[0] - seed.symbol.box[0]) <= ALIGN_MM]
+        col = [seed] + [r for r in left if _aligned(r.symbol.box, seed.symbol.box)]
         for r in col[1:]:
             left.remove(r)
         col.sort(key=lambda r: r.line.base)
@@ -268,11 +399,43 @@ def find_legends(lines: list, drawings: list, origin: tuple) -> list[Legend]:
     return legends
 
 
+def _aligned(a: tuple, b: tuple) -> bool:
+    """Two symbols in one column of a key: their left edges, or their
+    centres (a ring and a border line centred on one column), within
+    `ALIGN_MM`."""
+    return abs(a[0] - b[0]) <= ALIGN_MM or abs((a[0] + a[2]) / 2 - (b[0] + b[2]) / 2) <= ALIGN_MM
+
+
+def _text_sample(l: Any, lines: list, used: set) -> Any:
+    """The line set just before `l`'s words as a key's sample of the map's
+    lettering (a country's name before "Country"): one or two words, no
+    larger than the words and in another look (size, weight or colour),
+    ending at most `GAP_MAX` before them on their line. None when there is
+    none."""
+    mid, lh = (l.y0 + l.y1) / 2, l.y1 - l.y0
+    best = None
+    for s in lines:
+        if s is l or id(s) in used or s.rotate or not s.plain.strip():
+            continue
+        if len(s.plain.split()) > 2 or len(s.plain) > 20 or s.x1 - s.x0 > SYMBOL_MAX_W:
+            continue
+        if not (s.x1 <= l.x0 + 0.3 and l.x0 - s.x1 <= GAP_MAX):
+            continue
+        if abs((s.y0 + s.y1) / 2 - mid) > max(1.0, 0.5 * lh) or s.size > l.size + 0.25:
+            continue
+        if abs(s.size - l.size) <= 0.5 and s.weight == l.weight and td.delta_e(s.color, l.color) <= 3:
+            continue        # the same look: words of one line, not a sample
+        if best is None or s.x1 > best.x1:
+            best = s
+    return best
+
+
 def _one_key(run: list[Row]) -> bool:
     """The rows read as one key: their words set in one look and starting on
     one edge, each symbol no taller than its row's line and a half, at about
-    the same distance from its words. Names on a map beside a coast or a
-    capital's dot fail it: their looks, edges and gaps differ."""
+    the same distance from its words (or the symbols centred on one column,
+    each at most `GAP_MAX` from its words). Names on a map beside a coast or
+    a capital's dot fail it: their looks, edges and gaps differ."""
     first = run[0].line
     for r in run:
         l = r.line
@@ -283,7 +446,10 @@ def _one_key(run: list[Row]) -> bool:
         if r.symbol.box[3] - r.symbol.box[1] > 1.6 * max(l.y1 - l.y0, 0.5):
             return False
     gaps = [r.line.x0 - r.symbol.box[2] for r in run]
-    return max(gaps) - min(gaps) <= 1.5
+    if max(gaps) - min(gaps) <= 1.5:
+        return True
+    mids = [(r.symbol.box[0] + r.symbol.box[2]) / 2 for r in run]
+    return max(mids) - min(mids) <= ALIGN_MM and max(gaps) <= GAP_MAX
 
 
 def _steady_runs(col: list[Row]) -> list[list[Row]]:
@@ -311,21 +477,150 @@ def _steady_runs(col: list[Row]) -> list[list[Row]]:
 def find_plate(legend: Legend, drawings: list, origin: tuple) -> dict | None:
     """A rectangle drawn round the key (its plate): filled or ruled, its
     corner no more than 8 mm from the key's, at most four times its area."""
+    return _plate_round(legend.box, drawings, origin)
+
+
+def _plate_round(box: tuple, drawings: list, origin: tuple) -> dict | None:
     best = None
     for d in drawings:
         if not _rect_like(d):
             continue
         b = _box_mm(d["rect"], origin)
-        if not _inside(legend.box, b, 0.2) or b == legend.box:
+        if not _inside(box, b, 0.2) or b == box:
             continue
         # the key starts near the plate's corner; the plate may run on past its words
-        lead = max(legend.box[0] - b[0], legend.box[1] - b[1])
-        if lead > 8.0 or _area(b) > 4 * max(_area(legend.box), 1e-6):
+        lead = max(box[0] - b[0], box[1] - b[1])
+        if lead > 8.0 or _area(b) > 4 * max(_area(box), 1e-6):
             continue
         if best is None or _area(b) < _area(best["box"]):
             best = {"box": b, "fill": _hex(d.get("fill")), "stroke": _hex(d.get("color")) if d.get("color") is not None else None,
                     "width": float(d.get("width") or 0)}
     return best
+
+
+# ---------------------------------------------------------------------------
+# scale bars
+# ---------------------------------------------------------------------------
+
+#: a scale bar's number: `0`, `400`, `800 km`, `1,000 mi`
+_SCALE_NUMBER = re.compile(r"^\d[\d\s.,\u00a0\u2009\u202f]*(?:\s*[^\W\d_]{1,5})?$")
+#: a scale's ratio (`1:48 000 000`)
+_SCALE_RATIO = re.compile(r"\b1\s?:\s?\d")
+
+
+@dataclass
+class ScaleBar:
+    bar: tuple                      # mm: the bar and its ticks
+    lines: list                     # its numbers and title
+    plate: dict | None = None       # a rectangle drawn round it (as `find_plate`)
+    host: Any = None                # the picture dict it stands on, if any
+
+    @property
+    def box(self) -> tuple:
+        return _union([self.bar] + [l.box for l in self.lines])
+
+    @property
+    def outer(self) -> tuple:
+        return self.plate["box"] if self.plate else self.box
+
+
+def _number(text: str) -> float | None:
+    t = text.strip()
+    if not _SCALE_NUMBER.match(t):
+        return None
+    digits = re.sub(r"[^\d]", "", re.match(r"[\d\s.,\u00a0\u2009\u202f]*", t).group(0))
+    return float(digits) if digits else None
+
+
+def find_scale_bars(lines: list, drawings: list, origin: tuple) -> list[ScaleBar]:
+    """The scale bars on a page: a straight bar 8 to 120 mm long and at most
+    3 mm high (a stroked rule with its ticks, or filled segments one after
+    another), with two numbers or more set just under or over it, left to
+    right from `0` upwards (`0`, `400`, `800 km`), and the line that gives
+    the ratio (`Scale 1:48 000 000`) next to them."""
+    segs = []
+    for d in drawings:
+        b = _box_mm(d["rect"], origin)
+        w, h = b[2] - b[0], b[3] - b[1]
+        items = d.get("items", [])
+        stroked = d.get("color") is not None and items and all(it[0] == "l" for it in items)
+        filled = d.get("fill") is not None and _rect_like(d)
+        if h <= 3.0 and (stroked or filled) and (w >= 2.0 or (stroked and h >= 0.4 and w <= 0.8)):
+            segs.append(b)
+    # the pieces of one bar: on one row, touching
+    bars: list[tuple] = []
+    for b in sorted(segs, key=lambda b: (b[0], b[1])):
+        for k, u in enumerate(bars):
+            if b[0] <= u[2] + 0.5 and b[2] >= u[0] - 0.5 and b[1] <= u[3] + 0.3 and b[3] >= u[1] - 0.3:
+                bars[k] = _union([u, b])
+                break
+        else:
+            bars.append(b)
+    out: list[ScaleBar] = []
+    taken: set[int] = set()
+    for bar in bars:
+        if not (8.0 <= bar[2] - bar[0] <= 120.0):
+            continue
+        nums = []
+        for l in lines:
+            if l.rotate or id(l) in taken:
+                continue
+            v = _number(l.plain)
+            if v is None:
+                continue
+            below = -0.5 <= l.y0 - bar[3] <= 4.0
+            above = -0.5 <= bar[1] - l.y1 <= 4.0
+            if (below or above) and bar[0] - 4.0 <= (l.x0 + l.x1) / 2 <= bar[2] + 6.0:
+                nums.append((l, v))
+        if len(nums) < 2:
+            continue
+        nums.sort(key=lambda lv: lv[0].x0)
+        values = [v for _, v in nums]
+        if values[0] != 0 or any(b <= a for a, b in zip(values, values[1:])):
+            continue
+        core = _union([bar] + [l.box for l, _ in nums])
+        title = [l for l in lines if id(l) not in taken and not l.rotate and all(l is not n for n, _ in nums)
+                 and _SCALE_RATIO.search(l.plain) and l.x0 <= core[2] and l.x1 >= core[0]
+                 and (0 <= core[1] - l.y1 <= 6.0 or 0 <= l.y0 - core[3] <= 6.0)]
+        sb = ScaleBar(bar, [l for l, _ in nums] + title)
+        sb.plate = _plate_round(sb.box, drawings, origin)
+        if sb.plate is not None:
+            # every word on the plate is the bar's (a unit set apart, a title without a ratio)
+            sb.lines += [l for l in lines if id(l) not in taken and all(l is not k for k in sb.lines)
+                         and not l.rotate and _inside(l.box, sb.plate["box"], 0.2)]
+        taken |= {id(l) for l in sb.lines}
+        out.append(sb)
+    return out
+
+
+def take_scale_bars(lines: list, drawings: list, origin: tuple, pictures: list, cache: dict,
+                    notes: list[str]) -> list[ScaleBar]:
+    """A scale bar stays art (§6.14): on a picture it is the picture's (its
+    plate no box of the page), alone it is a picture of its own; either way
+    its numbers and ratio are the picture's labels at their places along the
+    bar. Stores the bars in `cache["scale_bars"]`."""
+    found = find_scale_bars(lines, drawings, origin)
+    boxes = (cache.get("shapes") or {}).get("boxes", [])
+    for sb in found:
+        outer = sb.outer
+        if sb.plate is not None:
+            for s in [s for s in boxes if all(abs(a - b) <= 0.6 for a, b in zip(s.box, sb.plate["box"]))]:
+                boxes.remove(s)         # the plate is the bar's art, not a box with text
+                s.picture_art = True
+        host = next((p for p in sorted(pictures, key=lambda p: _area(p["box"])) if _inside(outer, p["box"], 1.0)), None)
+        sb.host = host
+        words = " / ".join(l.plain for l in sb.lines)
+        if host is not None:
+            notes.append(f"a scale bar at {[round(v, 1) for v in outer]} ({words}): art of the picture at "
+                         f"{[round(v, 1) for v in host['box']]}, its numbers labels")
+        else:
+            for p in [p for p in pictures if _inside(p["box"], outer, 1.0)]:
+                pictures.remove(p)      # its own pieces, clustered: one picture
+            pictures.append({"box": outer, "images": [], "vector": 1, "scale_bar": True})
+            notes.append(f"a scale bar at {[round(v, 1) for v in outer]} ({words}): a picture of its own, "
+                         "its numbers labels")
+    cache["scale_bars"] = found
+    return found
 
 
 # ---------------------------------------------------------------------------
@@ -337,10 +632,20 @@ def icon_id(sym: Symbol) -> str:
     return f"icon-{sym.signature()}"
 
 
-def icon_markdown(sym: Symbol, alt: str, line_size_mm: float) -> str:
-    """`:icon[alt]{…}` for a symbol."""
+def icon_markdown(sym: Symbol, alt: str, line_size_mm: float, row_size_pt: float | None = None) -> str:
+    """`:icon[alt]{…}` for a symbol. A sample of lettering is a glyph icon
+    of its own words (their alt text too: each edition writes its own), its
+    `size` the sample's capitals over the row's (`row_size_pt`)."""
+    if sym.kind == "text":
+        alt = sym.sample.plain
     a = alt.replace("[", "\\[").replace("]", "\\]")
-    if sym.kind == "square":
+    if sym.kind == "text":
+        attrs = {"glyph": sym.sample.plain, "color": sym.color}
+        if row_size_pt:
+            size = round(min(1.5, max(0.3, 0.75 * sym.sample.size / row_size_pt)) * 20) / 20
+            if abs(size - 0.75) > 0.04:
+                attrs["size"] = f"{size:g}"
+    elif sym.kind == "square":
         attrs = {"glyph": "■", "color": sym.color}
     elif sym.kind == "line":
         attrs = {"line": sym.line, "color": sym.color}
@@ -438,7 +743,7 @@ def legend_style(legend: Legend) -> dict:
 
 
 def row_markdown(row: Row, text_of: Callable[[Any], str]) -> str:
-    return icon_markdown(row.symbol, row.line.plain, row.line.y1 - row.line.y0) + " " + text_of(row.line)
+    return icon_markdown(row.symbol, row.line.plain, row.line.y1 - row.line.y0, row.line.size) + " " + text_of(row.line)
 
 
 def label_block(legend: Legend, at: str, style_id: str, text_of: Callable[[Any], str]) -> str:
@@ -451,7 +756,7 @@ def legend_table(legend: Legend, text_of: Callable[[Any], str]) -> dict:
     """A key standing alone as a table the composed page lays in a frame:
     {box, model, style, notes} as `grid_tables` gives them."""
     look = row_look(legend)
-    rows = [[{"content": icon_markdown(r.symbol, r.line.plain, r.line.y1 - r.line.y0)}, {"content": text_of(r.line)}]
+    rows = [[{"content": icon_markdown(r.symbol, r.line.plain, r.line.y1 - r.line.y0, r.line.size)}, {"content": text_of(r.line)}]
             for r in legend.rows]
     style = {"rules": "none", "borders": False, "bodyFontFamily": look["family"],
              "bodyFontSize": {"value": look["size"], "unit": "pt"}, "bodyColor": {"hex": look["color"], "model": "hex"},
@@ -487,6 +792,7 @@ def take_legends(lines: list, page: Any, origin: tuple, pictures: list, cache: d
     lines = drop_duplicate_lines(lines, notes=notes)
     if "legends" not in cache:
         drawings = page.get_drawings()
+        find_halos(lines, drawings, origin, notes)
         found = find_legends(lines, drawings, origin)
         for lg in found:
             lg.plate = find_plate(lg, drawings, origin)
@@ -507,8 +813,13 @@ def take_legends(lines: list, page: Any, origin: tuple, pictures: list, cache: d
             else:
                 cache.setdefault("tables", []).append(legend_table(lg, text_of))
                 notes.append(f"a key of {len(lg.rows)} rows at {[round(v, 1) for v in outer]}: a table of symbols and words")
-    row_lines = {id(r.line) for lg in cache["legends"] for r in lg.rows}
-    row_text = {(r.line.plain, round(r.line.x0, 1), round(r.line.y0, 1)) for lg in cache["legends"] for r in lg.rows}
+        keyed = {id(r.line) for lg in found for r in lg.rows} | \
+            {id(r.symbol.sample) for lg in found for r in lg.rows if r.symbol.kind == "text"}
+        take_scale_bars([l for l in lines if id(l) not in keyed], drawings, origin, pictures, cache, notes)
+    row_of = [r.line for lg in cache["legends"] for r in lg.rows] + \
+        [r.symbol.sample for lg in cache["legends"] for r in lg.rows if r.symbol.kind == "text"]
+    row_lines = {id(l) for l in row_of}
+    row_text = {(l.plain, round(l.x0, 1), round(l.y0, 1)) for l in row_of}
     return [l for l in lines if id(l) not in row_lines and (l.plain, round(l.x0, 1), round(l.y0, 1)) not in row_text]
 
 

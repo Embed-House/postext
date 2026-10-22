@@ -97,8 +97,9 @@ class HolderCutTest(unittest.TestCase):
         cls.tmp.cleanup()
 
     def pictures(self) -> list[dict]:
-        return sorted((f for f in self.regions[0]["frames"] if f["kind"] in ("picture", "figure")),
-                      key=lambda f: f["box"][1])
+        # (a picture under its box's words is set in the box's text, #1186: `flowed`)
+        return sorted((f for f in self.regions[0]["frames"] + self.regions[0].get("flowed", [])
+                       if f["kind"] in ("picture", "figure")), key=lambda f: f["box"][1])
 
     def file_of(self, frame: dict) -> Path:
         rid = next(k for k in self.res if k.endswith(frame["name"]))
@@ -110,13 +111,17 @@ class HolderCutTest(unittest.TestCase):
             self.assertAlmostEqual(got, want, delta=0.6, msg=pic["box"])
         self.assertEqual(has_colour(self.file_of(pic), RULE), 0)
 
-    def test_a_map_without_a_ground_stays_inside_the_rule(self):
+    def test_a_map_whose_land_runs_past_the_rule_is_cut_whole(self):
+        # no mask hides the land past the rule: its ink goes on past the box, so it is cut whole
+        # (#1191), transparent where the box's tint and rule show, and laid over the box
         pic = self.pictures()[1]
-        half = 1 * 25.4 / 72      # half the 2 pt rule
-        self.assertGreaterEqual(pic["box"][0], 20 + half - 0.05, pic["box"])
-        self.assertLessEqual(pic["box"][2], 190 - half + 0.05, pic["box"])
-        self.assertLessEqual(pic["box"][3], 270 - half + 0.05, pic["box"])
-        self.assertEqual(has_colour(self.file_of(pic), RULE), 0)
+        self.assertLess(pic["box"][0], 20 - 1.0, pic["box"])
+        self.assertGreater(pic["box"][2], 190 + 2.0, pic["box"])
+        # the rule is the box's: none in the cut but the land's anti-aliased edge where it crosses it
+        self.assertLess(has_colour(self.file_of(pic), RULE), 100)
+        with Image.open(self.file_of(pic)) as im:
+            self.assertEqual(im.mode, "RGBA")
+        self.assertEqual(self.pictures()[0]["kind"], "picture")    # the masked map keeps its cut
 
     def test_no_cut_crosses_a_rule(self):
         notes = [n for ns in self.report["notes"].values() for n in ns]

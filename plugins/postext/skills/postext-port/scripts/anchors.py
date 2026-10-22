@@ -59,13 +59,21 @@ PT_MM = 25.4 / 72
 # A label line, as pdf_regions.py measures it (mm from the trim's top-left):
 #   {"text": inline Markdown, "plain": str, "x0", "y0", "x1", "y1", "base",
 #    "size" (pt), "family", "weight", "italic", "color" ("#rrggbb"),
-#    "rotate" (degrees, clockwise)}
+#    "rotate" (degrees, clockwise), and "halo" ({"color", "width"} pt) when
+#    the source prints an outline round it (`legends.find_halos`)}
 # ---------------------------------------------------------------------------
 
 
 def style_key(line: dict) -> tuple:
-    return (line["family"], int(line["weight"]), bool(line["italic"]), round(float(line["size"]) * 2) / 2,
-            line["color"].lower())
+    key = (line["family"], int(line["weight"]), bool(line["italic"]), round(float(line["size"]) * 2) / 2,
+           line["color"].lower())
+    halo = line.get("halo")
+    return key + ((halo["color"].lower(), float(halo["width"])),) if halo else key
+
+
+def _light(col: str) -> bool:
+    r, g, b = td.hex_rgb(col)
+    return min(r, g, b) >= 0.9
 
 
 def _centre(line: dict) -> float:
@@ -80,14 +88,24 @@ def merge_duplicates(lines: list[dict], tol: float = SAME_POINT_MM, notes: list[
     printed twice (two grids of degree figures laid one over the other at
     0.3 mm offsets and in two sizes): keep the larger size and write a
     `# merged` note, not a second anchor. The point is the middle of the
-    line's baseline."""
+    line's baseline. Two copies of one size in two colours are a label and
+    its halo: the coloured one stays with the white (or the other) colour
+    as its `halo`, never as its colour."""
     kept: list[dict] = []
-    for line in sorted(lines, key=lambda l: (-float(l["size"]), round(l["base"], 2), round(l["x0"], 2))):
+    # at one size a coloured copy before a white one: the white copy printed under a label is its halo
+    for line in sorted(lines, key=lambda l: (-float(l["size"]), _light(l["color"]), round(l["base"], 2),
+                                             round(l["x0"], 2))):
         pt = (_centre(line), line["base"])
         twin = next((k for k in kept if k["plain"].strip() == line["plain"].strip()
                      and abs(_centre(k) - pt[0]) <= tol and abs(k["base"] - pt[1]) <= tol), None)
         if twin is None:
             kept.append(line)
+        elif abs(float(twin["size"]) - float(line["size"])) < 0.25 and td.delta_e(twin["color"], line["color"]) > 10:
+            if not twin.get("halo"):
+                twin["halo"] = {"color": line["color"], "width": 0.4}
+            if notes is not None:
+                notes.append(f"# merged {line['plain'].strip()!r}: the {line['color']} copy under the "
+                             f"{twin['color']} one is its halo")
         elif notes is not None:
             notes.append(f"# merged {line['plain'].strip()!r}: a copy at {max(abs(_centre(twin) - pt[0]), abs(twin['base'] - pt[1])):.1f} mm "
                          f"({line['size']} pt) into the {twin['size']} pt one")
@@ -156,7 +174,7 @@ def label_styles(groups: list[list[dict]], delta_e: float = 3.0, prefix: str = "
     reps: list[tuple] = []
     key_to_rep: dict[tuple, tuple] = {}
     for k in sorted(counts, key=lambda k: (-counts[k], k)):
-        rep = next((r for r in reps if r[:4] == k[:4] and td.delta_e(r[4], k[4]) <= delta_e), None)
+        rep = next((r for r in reps if r[:4] == k[:4] and r[5:] == k[5:] and td.delta_e(r[4], k[4]) <= delta_e), None)
         if rep is None:
             reps.append(k)
             rep = k
@@ -165,12 +183,14 @@ def label_styles(groups: list[list[dict]], delta_e: float = 3.0, prefix: str = "
     rep_id: dict[tuple, str] = {}
     styles = []
     for rep in reps:
-        fam, weight, italic, size, col = rep
+        fam, weight, italic, size, col = rep[:5]
         base = f"{prefix}-{td.colour_name(col)}-{str(size).rstrip('0').rstrip('.')}"
         if weight >= 600:
             base += "-bold"
         if italic:
             base += "-italic"
+        if len(rep) > 5:
+            base += "-halo"
         sid, n = base, 2
         while sid in used:
             sid, n = f"{base}-{n}", n + 1
@@ -180,6 +200,8 @@ def label_styles(groups: list[list[dict]], delta_e: float = 3.0, prefix: str = "
                               "fontWeight": weight, "color": {"hex": col, "model": "hex"}}
         if italic:
             st["fontStyle"] = "italic"
+        if len(rep) > 5:
+            st["halo"] = {"color": {"hex": rep[5][0], "model": "hex"}, "width": {"value": rep[5][1], "unit": "pt"}}
         styles.append(st)
     return styles, {k: rep_id[r] for k, r in key_to_rep.items()}
 

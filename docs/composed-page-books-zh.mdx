@@ -189,7 +189,7 @@ Dibuja un río desde su manantial hasta el mar. Escribe en tu dibujo el nombre d
   </tbody>
 </table>
 
-Sandbox会在这个浏览器里记住你的选择。书可以为还没选过的人设定默认值：<code>debug.fitMarks</code>（<code>"all"</code>、<code>"problems"</code>或<code>"none"</code>）和<code>debug.fitMarksMinScale</code>，以这个比例或更大比例排出的框不再显示标签（设为<code>0.95</code>时只标出低于95%的框）。这些标记只属于画布：PDF、HTML查看器、EPUB和Folio都不会画出。自 postext 1.52 起。
+没有设定的书从<strong>仅问题</strong>开始：选择<strong>全部</strong>后才显示比例标签。 Sandbox会在这个浏览器里记住你的选择。书可以为还没选过的人设定默认值：<code>debug.fitMarks</code>（<code>"all"</code>、<code>"problems"</code>或<code>"none"</code>）和<code>debug.fitMarksMinScale</code>，以这个比例或更大比例排出的框不再显示标签（设为<code>0.95</code>时只标出低于95%的框）。这些标记只属于画布：PDF、HTML查看器、EPUB和Folio都不会画出。自 postext 1.52 起。
 
 放着照片和图注的方框（框内锚定的框，每张照片 `below` 一条图注）在译文让图注变长时不会自己增高：图注会跑出方框，压到下面的内容上。在模板编辑器里打开方框的框，把**随内部的框增高**设为*锚定在内部的框*（模板里写作 `growWith: "children"`）。方框随即延伸到最低一条图注的底端再加上下内边距，底色、边框和标签随之变化，下面的框下移。*选定的框*则改用名称列表。算在内的是锚定在方框顶边某一点上的框，以及锚定在这些框上的框；锚定在方框底端或中点的框不算，旋转的方框不会增高。自 postext 1.52 起。
 

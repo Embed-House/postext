@@ -5124,9 +5124,10 @@ export interface DebugConfig {
   pageNegative?: { enabled: boolean };
   warnings?: WarningsToggleConfig;
   /** Which fit marks the Sandbox canvas draws over composed pages by
-   *  default (#1160): `all` (default), `problems` (frames that do not fit,
-   *  looks the config does not have) or `none`. A viewer's own choice in
-   *  the canvas toolbar wins. Never painted in any output. */
+   *  default (#1160): `all` (the scale badges of text and pictures too),
+   *  `problems` (default since #1200: frames that do not fit, looks the
+   *  config does not have) or `none`. A viewer's own choice in the canvas
+   *  toolbar wins. Never painted in any output. */
   fitMarks?: FitMarksMode;
   /** A frame set at this scale or larger shows no scale badge (0.95 hides
    *  95 % and up). Default 1: every scaled frame is marked. */
@@ -6861,6 +6862,12 @@ export interface DesignTextElement {
    *  group or its content moves it (art drawn to the page). Default
    *  `false`: the element moves with the frame. Ignored elsewhere. */
   pin?: boolean;
+  /** On a composed page's decoration (#1189): paint the text over every
+   *  frame of the page instead of with the rest of the decoration, under
+   *  the frames. Default: `true` for a text of a module template (a label
+   *  on the module's box, which its frames would cover), else `false`.
+   *  Ignored elsewhere. */
+  over?: boolean;
   pages?: PageRoleFilter;
   /** Running heads and a page template's decoration (#1087): drawn only on
    *  a composed page whose fence sets this attribute (`::::page{template=…

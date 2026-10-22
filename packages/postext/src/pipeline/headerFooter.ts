@@ -38,6 +38,7 @@ import { dimensionToPx } from '../units.js';
 import { resolveDesignLineHeight, resolveDesignSlot } from '../defaults/headerFooter.js';
 import { repeatInstance, resolvePageTemplate } from '../composed/templates.js';
 import { splitSpreadDecoration } from '../composed/spread.js';
+import type { ResolvedPageTemplate } from '../composed/types.js';
 import { pathInkBox } from '../design/pathBlock.js';
 import { frameOfBlock, framePageRect } from '../composed/paint.js';
 import { figureAnchorPointOnPage } from '../composed/labels.js';
@@ -583,6 +584,49 @@ export interface SlotLayoutExtras {
   /** Filled with the ends connectors set at an anchor no picture of their
    *  frame has (#1057). */
   connectorAnchorUnknown?: { elementId: string; targetId: string; anchor: string; resourceId?: string; known: string[] }[];
+  /** The attributes some elements read before `attrs`, with their source
+   *  ranges, by element id (#1189): a module's elements read its
+   *  `:::module` fence. */
+  elementAttrs?: ReadonlyMap<string, { attrs: Record<string, string>; attrSources: Record<string, { start: number; end: number }> }>;
+  /** Text elements painted over the frames of a composed page (#1189):
+   *  their blocks are marked `over`. */
+  overTexts?: ReadonlySet<string>;
+}
+
+/** A composed page's module elements (#1189): the attributes each reads
+ *  before the page fence's (its `:::module` fence's, as the laid `pages`
+ *  record them), by element id, and the indices of every element of a
+ *  module in the template's decoration. `elements` is the decoration
+ *  resolved (its ids, in the template's order). */
+function moduleDecoration(
+  template: ResolvedPageTemplate,
+  elements: readonly { id: string }[],
+  pages: readonly VDTPage[],
+): { elementAttrs: Map<string, { attrs: Record<string, string>; attrSources: Record<string, { start: number; end: number }> }>; inModule: Set<number> } {
+  const elementAttrs = new Map<string, { attrs: Record<string, string>; attrSources: Record<string, { start: number; end: number }> }>();
+  const inModule = new Set<number>();
+  const laidModules = new Map(pages.flatMap((p) => p.composed?.modules ?? []).filter((m) => m.attrs).map((m) => [m.name, m] as const));
+  for (const m of template.modules ?? []) {
+    if (!m.decoration) continue;
+    const laid = laidModules.get(m.name);
+    for (let i = m.decoration.start; i < m.decoration.end; i++) {
+      inModule.add(i);
+      const id = elements[i]?.id;
+      if (id === undefined || !laid?.attrs) continue;
+      const attrSources: Record<string, { start: number; end: number }> = {};
+      for (const [k, v] of Object.entries(laid.attrSources ?? {})) attrSources[k] = { start: v.sourceStart, end: v.sourceEnd };
+      elementAttrs.set(id, { attrs: laid.attrs, attrSources });
+    }
+  }
+  return { elementAttrs, inModule };
+}
+
+/** What a composed page's decoration means to draw (`folioMissing`,
+ *  #1163), a module's elements reading its fence first (#1189). */
+function decorationFurniture(template: ResolvedPageTemplate, page: VDTPage, at: number, role: PageRole | undefined, pageAttrs: Record<string, string> | undefined) {
+  const elements = resolveDesignSlot(template.decoration, 'header').elements;
+  const { elementAttrs } = moduleDecoration(template, elements, [page]);
+  return expectedFurniture(elements, 'decoration', at, role, pageAttrs, elementAttrs.size > 0 ? new Map([...elementAttrs].map(([id, a]) => [id, a.attrs] as const)) : undefined);
 }
 
 /** `{ configPath }` when there is one. */
@@ -672,6 +716,7 @@ export function layoutSlotToVdt(
   dpi: number,
   extras?: SlotLayoutExtras,
 ): VDTDesignSlot | undefined {
+  const own = extras?.elementAttrs;
   const result = layoutDesignSlot(
     slot,
     {
@@ -680,9 +725,20 @@ export function layoutSlotToVdt(
       ...(extras?.mirrored ? { mirrored: true } : {}),
       ...(extras?.startRight ? { startRight: true } : {}),
       ...(extras?.arabicNumbers ? { arabicNumbers: true } : {}),
+      ...(own && own.size > 0 ? { elementAttrs: new Map([...own].map(([id, a]) => [id, a.attrs] as const)) } : {}),
     },
     pageIndex,
   );
+  /** What element `id` reads (#1189): the slot's extras and placeholders,
+   *  with a module's fence attributes over the page's. */
+  const extrasOf = (id: string): SlotLayoutExtras | undefined => {
+    const a = own?.get(id);
+    return a && extras ? { ...extras, attrs: { ...extras.attrs, ...a.attrs }, attrSources: { ...extras.attrSources, ...a.attrSources } } : extras;
+  };
+  const placeholdersOf = (id: string): DesignPlaceholderContext => {
+    const a = own?.get(id);
+    return a ? { ...placeholders, pageAttrs: { ...placeholders.pageAttrs, ...a.attrs } } : placeholders;
+  };
   if (extras?.connectorDropped) {
     for (const issue of result.issues) if (issue.kind === 'connectorDropped') extras.connectorDropped.push({ elementId: issue.elementId, targetId: issue.targetId });
   }
@@ -699,17 +755,19 @@ export function layoutSlotToVdt(
   if (extras) {
     for (const el of slot.elements) {
       if (el.kind !== 'text') continue;
-      const src = sourceForElement(el.content, extras);
+      const elExtras = extrasOf(el.id)!;
+      const elPlaceholders = placeholdersOf(el.id);
+      const src = sourceForElement(el.content, elExtras);
       if (!src) continue;
       // Inline marks drop their markers from the printed text. The
       // per-character map holds while the mapped value is still printed as
       // written (no markers or escapes of its own); otherwise only the range
       // maps back.
       const keepMap = !el.inlineMarks || src.text === undefined
-        || plainDesignText(resolveDesignText(el.content, placeholders, el.inlineMarks === true)).includes(src.text);
+        || plainDesignText(resolveDesignText(el.content, elPlaceholders, el.inlineMarks === true)).includes(src.text);
       const attr = ATTR_ELEMENT.exec(el.content)?.[1];
-      const mapped = keepMap ? withPrintedTitle(el, src, placeholders) : { start: src.start, end: src.end };
-      sourceByElement.set(el.id, attr !== undefined && extras.attrSources?.[attr] ? { ...mapped, attr } : mapped);
+      const mapped = keepMap ? withPrintedTitle(el, src, elPlaceholders) : { start: src.start, end: src.end };
+      sourceByElement.set(el.id, attr !== undefined && elExtras.attrSources?.[attr] ? { ...mapped, attr } : mapped);
     }
   }
   // The texts cut to fit (#628), flagged on the element's own block (not
@@ -728,7 +786,7 @@ export function layoutSlotToVdt(
   const imageAttrById = new Map<string, string>();
   for (const el of slot.elements) {
     const attr = el.kind === 'image' ? ATTR_ELEMENT.exec(el.resourceId ?? '')?.[1] : undefined;
-    if (attr !== undefined && extras?.attrs?.[attr] !== undefined) imageAttrById.set(el.id, attr);
+    if (attr !== undefined && extrasOf(el.id)?.attrs?.[attr] !== undefined) imageAttrById.set(el.id, attr);
   }
   const blocks = result.primitives.map((prim) => {
     const block = primitiveToBlock(prim);
@@ -752,6 +810,7 @@ export function layoutSlotToVdt(
       }
       if (src.attr !== undefined) block.attr = src.attr;
     }
+    if (block.kind === 'text' && extras?.overTexts?.has(prim.id)) block.over = true;
     return block;
   });
   return {
@@ -1998,7 +2057,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         ...(furniture ? expectedFurniture(headerSlot.elements, 'header', at, role, pageAttrs) : []),
         ...(furniture ? expectedFurniture(footerSlot.elements, 'footer', at, role, pageAttrs) : []),
         ...(page.composed.spread === undefined && template.decoration.elements.some((el) => el.kind === 'text')
-          ? expectedFurniture(resolveDesignSlot(template.decoration, 'header').elements, 'decoration', at, role, pageAttrs)
+          ? decorationFurniture(template, page, at, role, pageAttrs)
           : []),
       ];
       furnitureRecords.push({ pageIndex: page.index, template: page.composed.template, side: recto ? 'recto' : 'verso', expected });
@@ -2128,6 +2187,18 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         if (t !== undefined && named[t] === undefined && (repeatInstance(t) !== undefined || ofModule.has(t))) collapsed.add(t);
       }
       const slot = resolveDesignSlot(template.decoration, 'header');
+      // A module's elements (#1189): their `{attr.x}` and `when` read the
+      // module's fence first, and its texts are painted over the frames
+      // unless they say `over: false` (a page template's texts only when
+      // they say `over: true`).
+      const { elementAttrs, inModule } = moduleDecoration(template, slot.elements, pair ? [pair.left, pair.right] : [page]);
+      const overTexts = new Set<string>();
+      template.decoration.elements.forEach((el, i) => {
+        if (el.kind !== 'text') return;
+        const over = typeof el.over === 'boolean' ? el.over : inModule.has(i);
+        const id = slot.elements[i]?.id;
+        if (over && id !== undefined) overTexts.add(id);
+      });
       const connectorDropped: { elementId: string; targetId: string }[] = [];
       const connectorAnchorUnknown: NonNullable<SlotLayoutExtras['connectorAnchorUnknown']> = [];
       // A connector's end at an anchor of the picture its frame holds
@@ -2159,6 +2230,8 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
         dpi,
         {
           ...sheetExtras, frames: { ...slotFrames, named, declared, ...(absent.size > 0 ? { absent } : {}), anchorPoint }, attrs: page.composed!.attrs, attrSources, connectorDropped, connectorAnchorUnknown,
+          ...(elementAttrs.size > 0 ? { elementAttrs } : {}),
+          ...(overTexts.size > 0 ? { overTexts } : {}),
           // Each element's pointer, from the template that sets it (#857).
           elementPaths: new Map(resolveDesignSlot(template.decoration, 'header').elements.map((el, i) => [el.id, template.decorationPaths[i]!] as const)),
         },

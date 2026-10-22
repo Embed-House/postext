@@ -487,6 +487,10 @@ export interface ResolvedModule extends ComposedModuleUse {
   /** The modules group inside `group` it is laid in (`within`, #1088): the
    *  innermost, when groups lie inside each other (#1095). */
   nested?: string;
+  /** Its decoration elements (#1189): indices `start` to `end - 1` of the
+   *  page's `decoration.elements` (with or without an `id`). Absent when
+   *  the module has none. */
+  decoration?: { start: number; end: number };
 }
 
 export interface ResolvedFrameFit {

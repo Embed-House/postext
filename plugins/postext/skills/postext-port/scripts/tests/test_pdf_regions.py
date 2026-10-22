@@ -710,31 +710,27 @@ class CurationTest(unittest.TestCase):
         st = next(s for s in self.lib["calloutStyles"] if s["id"] == self.frames[note["name"]]["style"])
         self.assertLessEqual(st["padding"]["right"]["value"], st["padding"]["left"]["value"] + 0.01)
 
-    def test_captions_in_columns_are_one_frame_under_each_photo(self):
+    def test_captions_in_columns_flow_in_the_box_with_their_photos(self):
+        # the box lays out its own content (#1186): a row of photos, a row of centred captions
         holder = self.named("box", lambda f: f["box"][1] > 160)[0]
-        caps = self.named("text", lambda f: f["parent"] == holder["name"])
-        self.assertEqual(sorted(c["text"] for c in caps), ["The left photo / of the bridge.", "The right photo / of the mill."])
-        self.assertEqual(holder["text"], "")
-        photos = {p["name"] for p in self.named("picture", lambda f: f["box"][1] > 160)}
-        for c in caps:
-            pl = self.frames[c["name"]]["placement"]
-            self.assertEqual(pl["anchor"]["edge"], "below")
-            self.assertIn(pl["anchor"]["to"][1:], photos)
-            self.assertGreater(self.frames[c["name"]]["layer"], 2)
-        page = self.md.split(f'slot="{holder["name"]}"}}', 1)[1]
-        self.assertTrue(page.startswith("\n:::"), page[:60])       # the box's fence holds nothing
-        style = next(s for s in self.lib["calloutStyles"] if s["id"] == self.frames[caps[0]["name"]]["style"])
-        self.assertEqual(style["body"]["textAlign"], "center")
-        self.assertNotIn('style="centred"', self.md.split(f'slot="{caps[0]["name"]}"', 1)[1].split(":::\n", 1)[0])
+        self.assertEqual(self.named("text", lambda f: f["parent"] == holder["name"]), [])
+        self.assertEqual(self.named("picture", lambda f: f["box"][1] > 160), [])     # no frames of their own
+        fence = self.md.split(f'slot="{holder["name"]}"}}\n', 1)[1].split("\n::::", 1)[0]
+        photos = [r for r in self.res if r.endswith(("picture-3", "picture-4"))]
+        self.assertEqual(len(photos), 2)
+        self.assertIn(':::columns{count=2 breaks="2"}\n'
+                      f'::resource{{id="{photos[0]}"}}\n\n::resource{{id="{photos[1]}"}}\n:::', fence)
+        self.assertRegex(fence, r':::columns\{count=2 breaks="2"[^}]*\}\n:::paragraphs\{style="centred"\}\n'
+                                r'The left photo of the bridge\.\n:::\n\n:::paragraphs\{style="centred"\}\n'
+                                r'The right photo of the mill\.\n:::\n:::')
+        style = next(s for s in self.lib["calloutStyles"] if s["id"] == self.frames[holder["name"]]["style"])
+        self.assertAlmostEqual(style["columnGap"]["value"], 25.0, delta=1.0)    # the photos 90 mm apart
+        self.assertGreaterEqual(style["padding"]["left"]["value"], 2.0)
 
-    def test_a_box_holding_captions_grows_with_them(self):
-        # a longer caption in another edition makes the box taller (postext#1117)
+    def test_a_box_holding_its_photos_needs_no_grow_with(self):
+        # it grows with what it holds as any box with text does; a box with no captions neither
         holder = self.named("box", lambda f: f["box"][1] > 160)[0]
-        self.assertEqual(self.frames[holder["name"]].get("growWith"), "children")
-        # its photos hang from its top, so they and their captions are what it grows with
-        for p in self.named("picture", lambda f: f["box"][1] > 160):
-            self.assertEqual(self.frames[p["name"]]["placement"]["anchor"]["to"], f'#{holder["name"]}')
-        # a box with no captions of its own does not
+        self.assertNotIn("growWith", self.frames[holder["name"]])
         note = self.named("box", lambda f: "short note" in f["text"])[0]
         self.assertNotIn("growWith", self.frames[note["name"]])
 

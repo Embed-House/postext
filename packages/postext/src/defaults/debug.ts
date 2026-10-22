@@ -18,7 +18,9 @@ export const DEFAULT_DEBUG_CONFIG: ResolvedDebugConfig = {
     listAfterHeading: false,
     designIssues: true,
   },
-  fitMarks: 'all',
+  // Scaled text and pictures are no news on a book that passes its
+  // checks (#1200): only what does not fit and unknown looks by default.
+  fitMarks: 'problems',
   fitMarksMinScale: 1,
 };
 

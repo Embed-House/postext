@@ -3664,14 +3664,20 @@ Sandbox: the template editor's Size group has «Grows with the frames inside» (
 anchored inside it, the frames chosen) and, for a list, a checkbox per frame and group (seeded with
 the frames anchored inside it). Fixture: `__tests__/composed/growWith.test.ts`, three photos and their
 captions in a labelled box under a 1.3 text stress; the skill's end-to-end test runs the same page
-through `composed_check --stress 1.3`.
+through `composed_check --stress 1.3`. Decision kept (#1198): the room under the lowest member is the
+box's whole bottom padding, also when the box's declared height leaves less (a box whose padding was
+measured under its text and whose captions sit closer to its foot grows by the difference at the text
+as written). Taking the room the first lay leaves instead would give a box of the same design two rooms,
+one when its members fit and none (captions on the edge) once a longer text makes them run past it; a
+port writes the bottom padding the source leaves under the lowest member when that member, not the
+box's own text, is the lowest content.
 
 ### 14.5 Which fit marks the canvas draws (#1160)
 
 The fit marks of §12 (a frame that does not fit, text or pictures the ladder scaled, an unknown look)
 are split in two groups: problems (`frameOverflow`, `lookUnknown`) and information (the scale badges,
 a scale within what `fit.minScale` allows). `debug.fitMarks: 'all' | 'problems' | 'none'` (default
-`'all'`) is the book's default and `debug.fitMarksMinScale` (default 1) leaves out the badge of a frame
+`'problems'` since #1200, `'all'` before: a book that passes its checks shows no badge) is the book's default and `debug.fitMarksMinScale` (default 1) leaves out the badge of a frame
 set at that scale or larger, text and pictures apart. Both are resolved and stripped with the rest of
 `debug`; neither reaches `ResolvedConfig`, so the VDT is the same, and the Sandbox's `configKeyOf`
 drops them, so a cached layout stays valid. Sandbox: `fitMarksFor` takes `mode` and `minScale`
@@ -3699,3 +3705,42 @@ heads are compared. Each warning names the template, the element, its slot, the 
 `siblings`, with the page fence's source range. Pages are compared within one laid document (a chapter);
 a template used across chapters is judged chapter by chapter. Nothing is drawn differently: the VDT is
 unchanged and the record lives beside the document, not in it.
+
+### 14.7 A module's texts (#1189)
+
+A port found a module's `text` elements not drawn, a literal as well as `{attr.x}`. They were laid (in the
+module's box, `'container'` read as `#<name>`), but the decoration paints under the frames and a module is
+nearly always a box of filled frames, so its labels lay under their fill; and `{attr.x}` read the page
+fence only, never the `:::module` fence. Decisions:
+
+- **Over the frames.** `DesignTextElement.over?: boolean`, as a connector's (§12.26): the text's blocks
+  carry `over: true` (`VDTDesignTextBlock.over`) and `paintsOverFrames` reads text blocks too, so every
+  backend (canvas, HTML, PDF and fixed EPUB through `decorationOver`), the source map and the reading
+  order take them with no change of their own. Default `true` for an element of a module template, `false`
+  for a page template's: a module is a box and its texts label it, while a page template's texts sit on
+  the page and may be meant under a photo. `headerFooter.ts` marks the blocks (`SlotLayoutExtras
+  .overTexts`); a value that is not a boolean is `unknownConfigValue` at `…/over` (`used` the default:
+  `true` in a template whose own `role` is `'module'`).
+- **The module's fence first.** The parser keeps the fence's attributes (`ComposedModuleFence.attrs`);
+  `VDTComposedPage.modules[]` records `attrs` / `attrSources` (absolute) for each module whose fence
+  writes any attribute besides `template` and `name` (those choose the module and name it; `{attr.name}`
+  still reads the page fence). `expandModules` records where each module's elements sit in the page's
+  decoration (`ResolvedModule.decoration`, so elements with no `id` count), and the decoration layout
+  reads, for those elements, the module's attributes over the page's: `{attr.x}` in text and in an
+  image's `resourceId`, `when` / `unless` (`fenceDroppedIds` takes per-element attributes;
+  `LayoutContext.elementAttrs`), the source a bare `{attr.x}` maps back to (the value on the `:::module`
+  line) and `folioMissing`'s expectations. One layout call, so anchors between elements keep working. A
+  module that goes on whole to an added page reads its fence there (the fence travels with the page).
+- **Parity.** A book with no module texts and no module attributes lays out as before: no new key in
+  its VDT, no new paint item. A module text gains `over: true` and moves to the over item; one that a
+  filled frame hid now shows. No `CONFIG_VERSION` bump (as #1076): a text no one could see is the only
+  look that changes. No cookbook recipe uses modules.
+- **Tests.** `__tests__/composed/moduleText.test.ts` (over and under, the paint order, the decoration
+  split, an element with no id, attributes from the module and the page fence with their sources, `when`
+  on a module, a module laid on the next page, modules in rows and grids, HTML and canvas order, the
+  contrast ground, validation); `postext-pdf` `moduleTextOver.test.ts` (filled after the module's picture left to right
+  and right to left, before it with `over: false`).
+- **Contrast.** `contrastPairs` walks a composed page in paint order: over texts are read with the
+  over item, on the frame they lie on (the connectors, lines, are still walked with the decoration).
+- **Not done.** A Sandbox control for a text's `over` (the connector editor has one; a text element's
+  form does not).

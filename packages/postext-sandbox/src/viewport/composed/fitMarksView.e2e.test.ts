@@ -74,8 +74,13 @@ describe('the fit marks setting on a composed page (#1160)', () => {
     const over = build(overIn);
     expect(dinero(over).overflowPx).toBeGreaterThan(0);
 
-    // A reader who never chose follows the book, which shows all.
+    // A reader who never chose follows the book, which shows the
+    // problems only by default (#1200): no scale badge.
     expect(fitMarksChoiceNow()).toBeNull();
+    expect(marksOn(scaled, scaledIn.config).filter((m) => m.endsWith('scaled'))).toEqual([]);
+    expect(marksOn(over, overIn.config)).toContain('dinero overflow');
+
+    setFitMarksChoice('all');
     expect(marksOn(scaled, scaledIn.config)).toContain('dinero scaled');
     expect(marksOn(over, overIn.config)).toContain('dinero overflow');
 
@@ -113,9 +118,10 @@ describe('the fit marks setting on a composed page (#1160)', () => {
   it('leaves out the scale badge of a frame set at debug.fitMarksMinScale or larger', () => {
     const plain = standIn(fixed, words(40));
     const scale = dinero(build(plain)).scale;
-    const at = standIn(fixed, words(40), { fitMarksMinScale: scale });
+    // The badges show when the book asks for every mark.
+    const at = standIn(fixed, words(40), { fitMarks: 'all', fitMarksMinScale: scale });
     expect(marksOn(build(at), at.config)).not.toContain('dinero scaled');
-    const above = standIn(fixed, words(40), { fitMarksMinScale: scale + 0.01 });
+    const above = standIn(fixed, words(40), { fitMarks: 'all', fitMarksMinScale: scale + 0.01 });
     expect(marksOn(build(above), above.config)).toContain('dinero scaled');
   });
 

@@ -364,6 +364,10 @@ export interface LayoutContext {
    *  (`arabicNumbersOf`): a number that opens a text reads as an Arabic
    *  one (`BidiOptions.arabicNumbers`, #665). */
   arabicNumbers?: boolean;
+  /** Attributes some elements read before the page fence's, by element id
+   *  (#1189): a module's elements read its `:::module` fence, for
+   *  `{attr.x}` and `when` / `unless`. */
+  elementAttrs?: ReadonlyMap<string, Readonly<Record<string, string>>>;
 }
 
 export function pageMatchesParity(pageIndex: number, parity: PageParity): boolean {
@@ -1318,20 +1322,28 @@ function layoutConnectorElement(
  *  on it or sized to it (as a frame that takes no room drops what hangs
  *  from it). Other slots (heading, part and box designs) ignore the
  *  condition. The same array when nothing is left out. */
-function drawnOnFence<E extends ResolvedDesignElement>(elements: readonly E[], placeholders: DesignPlaceholderContext): readonly E[] {
+function drawnOnFence<E extends ResolvedDesignElement>(elements: readonly E[], placeholders: DesignPlaceholderContext, own?: ReadonlyMap<string, Readonly<Record<string, string>>>): readonly E[] {
   if (!FENCE_CONDITION_CONTEXTS.has(placeholders.kind)) return elements;
-  const dropped = fenceDroppedIds(elements, placeholders.pageAttrs);
+  const dropped = fenceDroppedIds(elements, placeholders.pageAttrs, own);
   return dropped.size === 0 ? elements : elements.filter((el) => !dropped.has(el.id));
 }
 
 /** The ids of the elements a page fence with `attrs` leaves out (#1087):
  *  those whose `when` it does not set or whose `unless` it does, and every
- *  element placed on one of them or sized to it. Empty when nothing is
- *  left out. */
-export function fenceDroppedIds(elements: readonly ResolvedDesignElement[], attrs: Readonly<Record<string, string>> | undefined): Set<string> {
+ *  element placed on one of them or sized to it. `own` (#1189): the
+ *  attributes an element reads first (a module's fence). Empty when
+ *  nothing is left out. */
+export function fenceDroppedIds(
+  elements: readonly ResolvedDesignElement[],
+  attrs: Readonly<Record<string, string>> | undefined,
+  own?: ReadonlyMap<string, Readonly<Record<string, string>>>,
+): Set<string> {
   const dropped = new Set<string>();
   if (!elements.some((el) => el.when !== undefined || el.unless !== undefined)) return dropped;
-  for (const el of elements) if (!fenceConditionMet(el, attrs)) dropped.add(el.id);
+  for (const el of elements) {
+    const first = own?.get(el.id);
+    if (!fenceConditionMet(el, first ? { ...attrs, ...first } : attrs)) dropped.add(el.id);
+  }
   if (dropped.size === 0) return dropped;
   for (let changed = true; changed; ) {
     changed = false;
@@ -1364,7 +1376,19 @@ export function layoutDesignSlot(
   // Filter by parity and page role first; then let the current part's
   // palette overrides recolour the palette-linked colours.
   const overrides = context.placeholders.partPaletteByPageIndex?.[context.placeholders.page.index];
-  const candidates = drawnOnFence(slot.elements, context.placeholders)
+  // A module's elements (#1189) read its fence's attributes first.
+  const ownPlaceholders = new Map<string, DesignPlaceholderContext>();
+  const placeholdersOf = (el: ResolvedDesignElement): DesignPlaceholderContext => {
+    const own = context.elementAttrs?.get(el.id);
+    if (!own) return context.placeholders;
+    let ctx = ownPlaceholders.get(el.id);
+    if (!ctx) {
+      ctx = { ...context.placeholders, pageAttrs: { ...context.placeholders.pageAttrs, ...own } };
+      ownPlaceholders.set(el.id, ctx);
+    }
+    return ctx;
+  };
+  const candidates = drawnOnFence(slot.elements, context.placeholders, context.elementAttrs)
     .filter((el) => pageMatchesParity(pageIndex, el.parity) && pageMatchesRole(el.pages, context.pageRole))
     .map((el) => (overrides && Object.keys(overrides).length > 0 ? applyPaletteOverrides(el, overrides) : el))
     // Start and end edges read as the physical ones of this page (#936).
@@ -1384,7 +1408,7 @@ export function layoutDesignSlot(
   const textContent = new Map<string, string>();
   for (const el of ordered) {
     if (el.kind === 'text') {
-      const text = resolveDesignText(el.content, context.placeholders, el.inlineMarks === true);
+      const text = resolveDesignText(el.content, placeholdersOf(el), el.inlineMarks === true);
       textContent.set(el.id, el.textTransform === 'uppercase' ? text.toLocaleUpperCase() : text);
     }
   }
@@ -1395,7 +1419,7 @@ export function layoutDesignSlot(
   if (getCjkComposition().region === 'japan') {
     for (const el of ordered) {
       if (el.kind !== 'text') continue;
-      const seams = mirroredTextSeams(el, textContent.get(el.id) ?? '', context.placeholders);
+      const seams = mirroredTextSeams(el, textContent.get(el.id) ?? '', placeholdersOf(el));
       if (seams.length > 0) textSeams.set(el.id, seams);
     }
   }
@@ -1503,7 +1527,7 @@ export function layoutDesignSlot(
         anchorY,
         pinX: anchor.pinX,
         pinY: anchor.pinY,
-      }, fillRef, context.dpi, context.resourceById, resolveDesignResourceId(el.resourceId, context.placeholders), context.frames?.upright === true);
+      }, fillRef, context.dpi, context.resourceById, resolveDesignResourceId(el.resourceId, placeholdersOf(el)), context.frames?.upright === true);
       if (prim) {
         resolvedGeo.set(el.id, prim);
         primsByElement.set(given, [prim]);

@@ -165,7 +165,7 @@ export function viewTools(host: SandboxToolHost): WebMcpTool[] {
         magnification: { type: ['number', 'null'], minimum: 1.5, maximum: 10, description: 'Folio: hold the magnifying glass over the middle of the open spread, magnifying this many times; null puts it away. The glass belongs to the magnify pointer mode, which the viewer is switched to.' },
         toolbarPinned: { type: 'boolean', description: 'Keep the viewer\'s floating toolbar on screen.' },
         printPreview: { type: 'boolean', description: 'Canvas and Folio: the soft proof of the output profile with trim, bleed and safe-zone guides.' },
-        fitMarks: { type: 'string', enum: [...FIT_MARKS_MODES, 'book'], description: 'Canvas: the marks of how composed frames fit — all (scaled text and pictures too), problems (frames that do not fit, unknown looks) or none. Kept as the reader\'s choice in this browser, over the book\'s debug.fitMarks; book forgets the choice and follows the book again. Never drawn in the PDF, HTML, EPUB or Folio.' },
+        fitMarks: { type: 'string', enum: [...FIT_MARKS_MODES, 'book'], description: 'Canvas: the marks of how composed frames fit — all (scaled text and pictures too), problems (frames that do not fit, unknown looks) or none. Kept as the reader\'s choice in this browser, over the book\'s debug.fitMarks (problems unless the book sets another); book forgets the choice and follows the book again. Never drawn in the PDF, HTML, EPUB or Folio.' },
         largeTargets: { type: 'boolean', description: 'Controls at least 44 px, for touch.' },
         guides: {
           type: 'object',

@@ -762,7 +762,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
    *  `<template>[n]`. Recorded on the page's fence unless `nested`. */
   const openModule = (attrs: DirectiveAttrs, attrSources: Record<string, SourceRange>, sourceStart: number, sourceEnd: number, nested: boolean): ComposedModuleFence => {
     const template = attrs.template?.trim() ?? '';
-    if (nested) return { template, name: '', nested: true, attrSources, sourceStart, sourceEnd };
+    if (nested) return { template, name: '', nested: true, attrs, attrSources, sourceStart, sourceEnd };
     const n = (moduleCounts.get(template) ?? 0) + 1;
     moduleCounts.set(template, n);
     const asked = attrs.name?.trim();
@@ -779,7 +779,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       name = `${template}[${k}]`;
     }
     moduleNames.add(name);
-    const module: ComposedModuleFence = { template, name, ...(rejected ? { rejected } : {}), attrSources, sourceStart, sourceEnd };
+    const module: ComposedModuleFence = { template, name, ...(rejected ? { rejected } : {}), attrs, attrSources, sourceStart, sourceEnd };
     if (pageFence) (pageFence.modules ??= []).push(module);
     return module;
   };

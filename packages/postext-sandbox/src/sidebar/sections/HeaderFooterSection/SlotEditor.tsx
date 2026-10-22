@@ -50,6 +50,9 @@ interface SlotEditorProps {
   /** The page template and scope the slot is the decoration of: it can
    *  then hold connectors, picked on the page (#1063). */
   connectorHost?: ConnectorHost;
+  /** A composed page's decoration (#1189): whether its texts paint over
+   *  the frames by default (a module's do). Unset: no such switch. */
+  textOverDefault?: boolean;
 }
 
 function generateId(kind: 'text' | 'rule' | 'box' | 'image' | 'path' | 'connector', used: Set<string>): string {
@@ -58,7 +61,7 @@ function generateId(kind: 'text' | 'rule' | 'box' | 'image' | 'path' | 'connecto
   return `${kind}${i}`;
 }
 
-export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders, configPath, frames, connectorHost }: SlotEditorProps) {
+export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders, configPath, frames, connectorHost, textOverDefault }: SlotEditorProps) {
   const labels = useSandboxLabels();
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
   // Running heads and a page template's decoration read the page fence's
@@ -234,6 +237,7 @@ export function SlotEditor({ slotKey, raw, resolved, onUpdate, extraPlaceholders
                   siblings={siblings}
                   frames={frames as FrameTarget[] | undefined}
                   extraPlaceholders={extraPlaceholders}
+                  overDefault={textOverDefault}
                   onChange={(next) => updateAt(idx, next)}
                 />
               ) : rawEl.kind === 'rule' && resolvedEl?.kind === 'rule' ? (

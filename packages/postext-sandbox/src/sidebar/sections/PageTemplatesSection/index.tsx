@@ -450,6 +450,7 @@ export function TemplateEditor({ id, scope, pages, heights, frame, pageIndex = n
             // each of their instances (#1063).
             frames={templateFrameInputs(resolved)}
             connectorHost={{ templateId: id, scope: effScope }}
+            textOverDefault={isMod}
             raw={decoration}
             extraPlaceholders={['headingNumber']}
             resolved={resolveDesignSlot(decoration, 'part')}

@@ -1940,6 +1940,16 @@ def new_comic_ctx(cfg: dict, resources: list[dict], ids: dict[str, set[str]]) ->
                         for r in resources if isinstance(r, dict)}}
 
 
+def flow_columns_on(cfg: dict, config_version: object) -> bool:
+    """Whether a `:::columns` group in the running text is set (postext 1.25,
+    `layout.flowColumns`, default on): a config stored before configVersion
+    11 is read with it off unless it says so."""
+    v = (cfg.get("layout") or {}).get("flowColumns") if isinstance(cfg.get("layout"), dict) else None
+    if isinstance(v, bool):
+        return v
+    return isinstance(config_version, (int, float)) and not isinstance(config_version, bool) and config_version >= 11
+
+
 def _composed_frames(ctx: dict, template: str | None) -> tuple[list[str] | None, bool | None]:
     """(frame names, spread) of a page template with its extends chain, or
     (None, None) when the edition has no template of that id."""
@@ -2508,8 +2518,14 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                         if pid not in ids["palette"]:
                             rep.warn(where, f"part palette id {pid!r} is not in colorPalette (nothing will be recoloured)")
                 elif fname == "columns":
-                    if not any(s[0] == "callout" for s in stack):
-                        rep.warn(where, ":::columns only works inside a :::callout (ignored here)")
+                    # A box sets its groups; so does a composed page (a :::frame, a :::module or a piece slotted
+                    # to a frame: the frame lays them as a box does). In the running text a group is set from
+                    # postext 1.25 (layout.flowColumns, configVersion 11); a config stored before reads it off.
+                    if not any(s[0] == "callout" for s in stack) and page is None \
+                            and (not comic_ctx.get("flow_columns", True) or (engine is not None and engine < (1, 25, 0))):
+                        rep.warn(where, ":::columns in the running text is ignored with layout.flowColumns off "
+                                        "(configVersion below 11 reads it so): set configVersion 19, or put the "
+                                        "group in a :::callout")
                 elif fname == "paper":
                     if any(s[0] == "callout" for s in stack):
                         rep.warn(where, ":::paper inside a callout is ignored (a stock covers whole pages)")
@@ -3142,6 +3158,7 @@ def main() -> None:
         book_anchors = anchor_ids([(root / c.get("file", "")).read_text(encoding="utf-8")
                                    for c in specs if (root / c.get("file", "")).exists()])
         comic_ctx = new_comic_ctx(cfg, resources, ids)
+        comic_ctx["flow_columns"] = flow_columns_on(cfg, cv)
         for i, c in enumerate(specs):
             p = root / c.get("file", "")
             if not p.exists():

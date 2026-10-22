@@ -2,7 +2,8 @@
  * Which fit marks the canvas draws over composed pages (#1160): every one
  * (`all`), the frames that do not fit and the looks the config does not
  * have (`problems`), or none. The book sets a default (`debug.fitMarks`,
- * with `debug.fitMarksMinScale` for the scale badges); the viewer's own
+ * `problems` unless it says otherwise since #1200, with
+ * `debug.fitMarksMinScale` for the scale badges); the viewer's own
  * choice in the canvas rail wins, and is remembered per browser like the
  * switch of the reflow marks.
  */

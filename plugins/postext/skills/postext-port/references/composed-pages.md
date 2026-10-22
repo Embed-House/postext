@@ -485,11 +485,37 @@ What the extraction decides, so you know what to check:
   top-level bullets: `bulletChar`, `color` (the bullets' most common),
   `indent`, `gap` (from the bullet's advance to the words),
   `bulletFontSize` (em of the item text), `bulletFontWeight` and
-  `itemSpacing` (the room between two items over their leading). Each level's bullet goes to
+  `itemSpacing` (the room between two items over their leading), and
+  `marginTop` / `marginBottom` (the room before the first item and after
+  the last, over the leading; the frame's paragraph gap where the frame
+  shows none, never the default 1.5 em). A line out at the bullet after an
+  item starts the paragraph after the list. Each level's bullet goes to
   `suggested.unorderedLists` (`bulletChar`, `color`, `levels[]` with `bulletChar`,
   `fontSize`, `fontWeight`), which `manifest` writes into the config: keep
   it, since a box whose `lists.bulletChar` differs from the document's
-  replaces every level's bullet with its own.
+  replaces every level's bullet with its own. `suggested.unorderedLists`
+  also takes the book's list margins and item spacing (the medians of the
+  frames'), and `suggested.bodyText.paragraphSpacing` the text frames'
+  paragraph gap.
+- **Paragraph spacing per style** (#1197). Each box, text frame and tab
+  style gets `body.paragraphSpacing` from its own paragraphs: the room one
+  leaves under the one above over their leading, the median to 0.1 mm. A
+  frame of one paragraph or of lines set line under line (a pill, a
+  caption, a map's key) gets `0`, so a gap the document sets elsewhere
+  never reaches it.
+- **A tab's ring** (#1190). Small shapes a tab draws before its words (a
+  ring ◉ of a stroked circle and a dot, no larger than 8 mm a side, wholly
+  left of the first letter) are cut as one SVG in their own colours,
+  `icon-<colour>`, one per look for the whole book (a white ring and a blue
+  one are two), and drawn by the tab: a box's label gets `label.icon`
+  (`resourceId`, `width`, `gap` to the words, `placement: "inside"`, 6.1),
+  a tab that is a frame of its own and a title box of up to three lines
+  get the style's `icon` (`kind: "resource"`, `size`, `width`, `align`),
+  the room before it as the left padding and the room after it as
+  `titleStyle.gap`. The shapes leave the page's decoration, so a tab that
+  moves takes its ring with it, and `report.json` no longer says the icon
+  is not drawn. A shape that cannot be a path (translucent, even-odd with
+  holes) stays decoration.
 - **Shapes.** Large white fills are cards; filled or
   stroked rectangles and rounded rectangles that hold text or pictures are
   boxes; a shape 4–13 mm high holding one line of up to ten words is a tab
@@ -681,18 +707,49 @@ What the extraction decides, so you know what to check:
   an illustrated band, a note on a tower's photo).
 - **Captions in columns** (skill 1.60). Lines of a box that start just under
   one of its pictures (their middle over it), in two columns or more, are
-  captions: each column, line under line, is a text frame of its own, a
-  child of the box hung `below` its picture, centred in its own style when
-  the source centres it, and laid over the box's pictures (a longer
-  translation runs over the next row, not under it). The box keeps the rest
-  of its words; with none, its fence stays empty (it draws its box, 1.49.1).
-  From skill 1.61 a single caption under a single picture is read the same
-  way when it is set unlike the box's text (size, slant or colour) or
-  centred on the picture; its frame comes right after the picture in
-  reading order. A caption set smaller than the box's text, at most 3 mm
-  under its picture and no wider than it, is the picture's own resource
-  `caption` instead, with no frame (Markdown in a frame by
-  default, a resource caption when small and attached to the picture).
+  captions: each column, line under line, is one caption. From skill 1.61
+  a single caption under a single picture is read the same way when it is
+  set unlike the box's text (size, slant or colour) or centred on the
+  picture. A caption set smaller than the box's text, at most 3 mm under
+  its picture and no wider than it, is the picture's own resource
+  `caption` instead (Markdown in the box by default, a resource caption
+  when small and attached to the picture); one beside its picture, set
+  smaller than the box's text (by 8 % or by half a point), is its resource
+  caption with `captionSide: "inside"`.
+- **A box lays out its own content** (#1186). The pictures of a box that
+  stand under or between its paragraphs (no line of its words beside
+  them), their captions and the boxes it nests go into the box's fence
+  where they stood, so the box grows with them and its fence is never
+  empty: each row of pictures is a `:::columns{count=N breaks="2,…"}` of
+  `::resource` / `:::figure` lines (one picture alone: the line itself),
+  each picture centred in its column, and its captions a row of their
+  own under it (`:::paragraphs{style="centred"}` when the source centres
+  them, a `caption-N` paragraph style when they are set unlike the box's
+  text); a picture with no caption or two makes each column its picture
+  and its captions. A nested box is a `:::callout{type="<its style>"}`,
+  its style's `marginTop` the room above it on the source (a row of them
+  side by side: a `:::columns` of callouts, the room on the group's
+  `marginTop`). The room above a row is the source's: a group's
+  `marginTop`, a picture or caption alone a `:::space{lines=…}` in the
+  box's lines, and `suggested.layout.inlineResourceGapInBoxes: false` (which
+  `manifest` writes) takes away the line the engine would add above each
+  picture. The box style's `columnGap` gives the columns the step of
+  the source's pictures, its padding the room round all it holds (2 mm at
+  least where a cut-out's margins reach the rule; nested boxes as far in
+  from the right as the source sets them), and its bottom padding the room
+  under the lowest row or caption, not under the words (#1198: the box
+  grows to that foot plus the whole padding). A box flows all of
+  these or none: one beside its words, laid over them, with ink past the
+  box (below), nested with frames of its own, or a row equal columns
+  cannot set (widths more than 1.35 apart and, for pictures alone, middles
+  unevenly spaced; more than six) keeps them frames, the captions hung `below` their
+  pictures and the box `growWith: "children"`. Frames that lay on a
+  picture that flows (a pill, a plate) hang from the box at the same
+  place. A box with a tab and pictures but no words of its own holds the
+  pictures; a box left with nothing to compose (every word gone to frames
+  of its own) is a border round what it holds and its tab a frame, never
+  an empty `:::frame`; the tab of an inset box on a map is a frame on the
+  picture and its box the picture's art.
 - **Label hygiene** (`anchors.py`, `pdf_regions.py`). The same text printed
   twice at one point (within 0.5 mm: two grids of degree figures laid one
   over the other, in two sizes) is one label, the larger size kept, with a
@@ -713,7 +770,12 @@ What the extraction decides, so you know what to check:
   `avoid` zones: `pdf_figures.py symbols book.pdf --page 6 --box x0,y0,x1,y1`
   prints them as fractions of the box, to paste into the resource, and the
   label of a city is then checked against its own dot (a label meant to
-  touch its dot gets `overlap: "allow"`).
+  touch its dot gets `overlap: "allow"`). From skill 1.64 two copies of a
+  label in two colours (a white one printed under a coloured one), or a
+  twin of its letters drawn as paths under it, are the label and its halo:
+  the coloured print is the label's colour, the twin the label style's
+  `halo` (`{color, width}`), out of the picture's cut. Small rotated labels
+  on a shaded ground (degrees on a globe) are no longer read as hidden text.
 - **Geometry.** Area `trim`; frames anchor `below` the frame above them on
   the same card; runs with equal gaps form `stack` groups, boxes of one
   height side by side `row` groups; frames inside a box anchor to its
@@ -734,7 +796,11 @@ What the extraction decides, so you know what to check:
 - **Faces.** The PDF's font names are matched to the PostScript names of
   the files in `--fonts`; `--font-map` maps the rest (a map's lettering
   face the book does not ship, to the nearest face it does). The report
-  lists every match.
+  lists every match. A `--font-map` target must be a family of the
+  `--fonts` files (skill 1.64): `extract` stops and names the near ones
+  (`Woodstamp` → `Wood Stamp`) rather than falling back to another face.
+  `manifest DIR --fonts DIR/fonts` (the project's own folder) lists those
+  files and copies nothing.
   From skill 1.61 the style part is read from every form producers write
   (`Arial-BoldMT`, `Arial,Bold`, `Helvetica Bold`, `ArialBold`); a face
   takes the heavier of the file's weight and the one its name or bold flag
@@ -754,16 +820,23 @@ Also decided by the drafting, checked on a real textbook in three languages:
   source line (a picture laid over the box's right side), and the source's own
   tracking (InDesign squeezes a line by a few per cent to fit it) is not in
   another face's widths: a line that just fits breaks one word earlier and
-  the box grows a line. The right padding gives up that much, down to nothing.
-  A source line squeezed by more than that (measure the source's tracked
-  width against the face's advance widths) is a size, not a padding: give
-  that box `fit: { minScale: 0.9 }` and its drawn height as `maxHeight`.
+  the box grows a line. The draft measures it: every line set
+  solid in the book's own face (the advance widths of the `--fonts` file
+  each letter maps to, no tracking), and the right padding gives up what the
+  widest one needs past the measure plus the slack, down to nothing (a free
+  text frame widens by as much). A box whose padding is all given grows a
+  line (its drawn height is a minimum) and the report says so; it does not
+  shrink. No frame gets `fit.minScale` from the draft: `--fit 0.9` writes
+  it on text frames, boxes and tabs as a reserve for longer editions, by
+  request only.
 - **Pills** (a name over a picture: one line, its word in the middle of the
   tinted tab) are centred in the frame with 1.5 mm insets, so a longer word in
   another edition keeps the middle and has the whole width; the frame keeps
-  the pill's height and the ladder sets the word smaller (`fit.minScale`
-  0.8) rather than wrapping inside it. A tab that touches a picture lies
-  over it (`layer: 2`).
+  the pill's height. Its width is the word set solid in the book's face
+  plus `--wrap-slack` and the insets when that is more than the drawn tab
+  (the frame grows on both sides, a note in the report), so the word stays
+  on one line at its size. A tab that touches a picture lies over it
+  (`layer: 2`).
 - **Pictures at the foot of a box** (photos under its paragraph) hang from the
   box's bottom edge (`bottom-left`, a negative offset) with their room as the
   box's bottom padding (less the tab's rise: the frame of a box with a tab is
@@ -778,6 +851,18 @@ Also decided by the drafting, checked on a real textbook in three languages:
   carried a strip of the page's colour, which covered the ground when a
   shorter translation moved the picture up. A cut-out with an alpha channel
   (a photo standing over the card's edge) keeps its overhang.
+  Art whose ink really runs on past its box or card (#1191: a timeline's
+  arrow head past the card, a figure's legs below it) is cut whole, never
+  split between a picture and the raster ground: one of its images or
+  coloured shapes lies partly inside the edge and runs more than 1.5 mm past
+  it, where no white shape painted after it masks it (masked overflow keeps
+  the card limit) and, for an image, the strip past the edge is not of one
+  colour (a cut-out's white margin is not ink). The cut is the page with
+  the picture against the page without it: transparent wherever the card,
+  the page's colour, a box's rule or a plate under it shows, trimmed to
+  what it paints; its frame gets `overlap: "allow"` (so does a cut-out with
+  an alpha channel whose ink runs past its box) and stays a frame (it never
+  flows into its box's text).
 - **The ground is checked against the render** (`--raster-ground`): a band or box fill the
   redaction left (MuPDF removes line art only when a rectangle covers the
   whole path, and misses wide strokes under a transform) is painted out with
@@ -791,14 +876,12 @@ Also decided by the drafting, checked on a real textbook in three languages:
 
 What the draft still gets wrong on such a book, and the curation that fixes
 it (each is a template change plus Markdown frames, never text in the
-config): captions set beside a picture rather than under it are still the
-box's text (a frame of their own placed off the picture); a box that holds only a tab and a picture
-draws no tab when empty (the tab is a frame of its own); two sentences side
+config): captions set beside a picture as large as the box's text are
+still the box's text (a frame of their own placed off the picture); two
+sentences side
 by side with a connector between them are one frame each; arrows typed in a
 worked example need a face that has the glyph (a `chipStyles` entry in the
-face that does, not a picture); a tab's ring icon is not drawn (cut the
-ring as a picture resource and set it with `label.icon` and `placement:
-"inside"`, 1.42; 6.1; from 1.48 a glyph icon, `kind: "glyph"`, 6.15); the draft's `box-N` stacks anchor to the frame above,
+face that does, not a picture); the draft's `box-N` stacks anchor to the frame above,
 so a translation that shortens a text moves everything under it up (frames the
 source fixes at the card's foot are held there with the foot-hold stack of
 section 5, not by anchoring them to the card's foot).
@@ -817,15 +900,23 @@ change in the generator:
   when the text runs a little longer: crop the cut's top (and move its
   anchors and the frames anchored to its top by as much).
 - **A box whose words all went to frames of their own** (captions moved out
-  to stand under their pictures) keeps its fence with nothing in it: since
-  postext 1.49.1 an empty fence on a styled frame draws its box and its tab at
-  the frame's size (#1084). Before, it drew nothing, and a port left
-  `:::space{lines=1}` in it. The box reads where its fence lies in the
-  Markdown (postext#1116; before, its tab came last in the HTML, the EPUB and
-  the tagged PDF), and `composed_check.py` expects it there.
+  to stand under their pictures, an intro set as a frame) composes nothing:
+  the output draws its box (postext 1.49.1, #1084), but the Sandbox shows its
+  empty-frame placeholder on it, and an empty fence, `optional: true` with
+  no fence, or a fence holding only the tab's words printed by a `design`
+  do not change that. Put the box's content back in its fence (#1186):
+  its text, its pictures (`::resource`, `:::figure` with labels), rows of
+  pictures and rows of centred captions as `:::columns{count=3 breaks="2,3"}`,
+  nested `:::callout` panels; the box then grows with them and needs no
+  `growWith`. The draft does this (§3.7, "A box lays out
+  its own content") and leaves no fence empty. The box reads where its
+  fence lies in the Markdown (postext#1116; before, its tab came last in the
+  HTML, the EPUB and the tagged PDF), and `composed_check.py` expects it
+  there.
 - **A box whose captions run longer** than it holds (a translation, the
   `--stress 1.3` run): give the box `growWith: "children"` (postext 1.52,
-  #1117; the draft writes it on a box whose captions it splits into frames). Its height reaches at least the foot of the frames anchored to a
+  #1117; the draft writes it only on a box whose captions stay frames, when
+  its pictures cannot flow in its text). Its height reaches at least the foot of the frames anchored to a
   point of its top side and of those anchored to them (a caption `below` its
   photo), plus its bottom padding; its fill, border and tab follow and the
   frames under it move down. A list of names (`"growWith": ["foto-1",
@@ -839,7 +930,7 @@ change in the generator:
 
 Curate after it: name the templates by role (`tema-cajas`), give pictures
 their `altText`, read the notes in `report.json` (a centred tab set at
-`top-left`, a tab's icon not drawn, paragraph spacing inside boxes), and
+`top-left`), and
 compare the overlay with the source where a page reads wrongly. The 28-page
 social-science textbook drafted this way: 25 pages, 335 frames, 26
 templates after the merge, 70 callout styles, 258 labels, no
@@ -1530,7 +1621,93 @@ resources.append(bitmap(PROJECT, "mapa-europa", "resources/mapa-europa.png", alt
 
 ### 6.5 Photos with captions
 
-The source: three photos in a row, each with a two-line caption under it.
+The source: a box with a paragraph and, under it, three photos in a row,
+each with a two-line caption under it.
+
+**Photos in a box go in the box's fence.** The box lays out its own words,
+then a row of photos and a row of captions, and grows with them; the frames
+under it move down. Nothing hangs from the box and no `growWith` is needed:
+
+```python
+callout_styles.append({"id": "caja-fotos", "columnGap": mm(6), ...})   # columnGap: the step of the source's columns
+paragraph_styles.append({"id": "centred", "textAlign": "center", "fontSize": pt(9), "lineHeight": pt(11.5)})
+resource_types.append({"id": "foto", "numberingTemplate": ""})
+layout["inlineResourceGapInBoxes"] = False
+```
+
+```md
+:::frame{slot="caja-fotos" label="EL RÍO"}
+El río movía los molinos y regaba las huertas del valle.
+
+:::columns{count=3 breaks="2,3"}
+::resource{id="puente"}
+
+::resource{id="molino"}
+
+::resource{id="presa"}
+:::
+
+:::columns{count=3 breaks="2,3"}
+:::paragraphs{style="centred"}
+El puente viejo.
+:::
+
+:::paragraphs{style="centred"}
+El molino.
+:::
+
+:::paragraphs{style="centred"}
+La presa.
+:::
+:::
+:::
+```
+
+- **Why not frames hung from the box.** A box whose words, photos and
+  captions all sit in frames of their own composes nothing: the output
+  draws it, but the Sandbox shows its empty-frame placeholder on it and
+  `composed_check.py` fails it (`emptyFrame`). A photo hung from the box's
+  corner also stays put when a longer edition makes the text run longer,
+  so the text runs under it (`frameCovered` in the `--stress 1.3` run).
+  The fix for both is the same: content in the fence, the box grows. Never
+  move the box's words into a capped frame above the photos to stop the
+  collision; that is what leaves the box empty.
+- **Rows.** `breaks` counts blocks, so `breaks="2,3"` starts columns 2 and
+  3 at the second and third block: one photo (or one caption) per column.
+  The captions are a second group of the same count, so a longer caption
+  never pushes its neighbours' photos. The room above a lone photo or
+  caption is `:::space{lines=…}`. Columns share the box's width equally, so
+  a caption wraps where the column ends, not where the source's did.
+- **Where the caption goes** (decided, #1114, #1186). By default the caption
+  is Markdown in the box that holds the photo, set where it stands, so
+  correcting or translating it is a Markdown edit. Use the resource's own
+  `caption` (and `localized.<lang>.resources`) when the source sets the
+  caption small and attached to the picture, as one figure with it, and
+  when the book numbers its figures ("Figura 3"). The draft does this
+  (`attached_caption`: set at most 92 % of the size of the box's text, no
+  more than 3 mm under the picture, no wider than it plus 2 mm). A small
+  caption beside its picture (`beside_caption`: lines to its left or right,
+  at most 3 mm from its side, level with its top or its foot, no taller
+  than it and a line, set 8 % or half a point smaller than the box's text)
+  is the picture's resource caption too, with `placement: {captionSide:
+  "inside", width, align}` (postext 1.52): `width` is the picture's share of
+  the column it flows in and `align` the picture's side. The engine sets the
+  caption level with the picture's top and `layout.gutterWidth` from it, so
+  a caption the source sets on the picture's foot moves up to its top. For a
+  book pinned to 1.51 or older, take the `captionSide` out (the caption then
+  goes under the picture).
+- **When the photos stay frames.** Photos that cannot flow in the box's
+  text (beside its words, laid over them, with ink past the box, in a row
+  of unlike widths) keep their frames, with their captions as frames hung
+  `below` them and `"growWith": "children"` on the box (postext 1.52): the
+  box grows down to the lowest caption's foot plus its **whole** bottom
+  padding. So that padding is the room the source leaves under the lowest
+  caption, not under the box's text (the draft measures it so; a padding
+  measured under the text made a box 6 mm taller than the source), and
+  `minHeight` keeps the source height. On 1.51 and older, size the box for
+  the longest edition and check it with `--stress 1.3`.
+- **Photos on the page, in no box.** Each photo is a frame with its caption
+  in it, and the row is a `row` group:
 
 ```python
 frames += [
@@ -1540,55 +1717,25 @@ frames += [
     {"name": "foto-3", "width": mm(56)},
 ]
 groups.append({"name": "fotos", "kind": "row", "frames": ["foto-1", "foto-2", "foto-3"], "gap": mm(6)})
-paragraph_styles.append({"id": "pie-foto", "fontSize": pt(9), "lineHeight": pt(11.5), "textAlign": "left"})
-resource_types.append({"id": "foto", "name": "Foto", "numberingTemplate": "", "captionPrefix": "",
-                       "defaultPlacement": {"position": "here"}})
 ```
 
 ```md
 :::frame{slot="foto-1"}
 ::resource{id="mercado"}
 
-:::paragraphs{style="pie-foto"}
+:::paragraphs{style="centred"}
 Un mercado de barrio.
 :::
 :::
 ```
 
-- **Where the caption goes** (decided, #1114). By default the caption is
-  Markdown in a frame (the photo's frame, or a frame of its own hung `below`
-  the photo), so correcting or translating it is a Markdown edit. Use the
-  resource's own `caption` (and `localized.<lang>.resources`) when the
-  source sets the caption small and attached to the picture, as one figure
-  with it, and when the book numbers its figures ("Figura 3"). The draft
-  does this: `split_captions` (`pdf_regions.py`) gives a column of lines
-  under a box's picture to the picture as its resource caption
-  (`attached_caption`: set at most 92 % of the size of the box's text, no
-  more than 3 mm under the picture, no wider than it plus 2 mm), and makes
-  every other caption column a text frame `below` its picture, the box
-  marked `growWith: "children"`. A small caption beside its picture
-  (`beside_caption`: lines to its left or right, at most 3 mm from its
-  side, level with its top or its foot, no taller than it and a line, set
-  at most 92 % of the box text's size) is the picture's resource caption
-  too, with `placement: {captionSide: "inside", width, align}` (postext
-  1.52): the picture's frame widens to hold both, `width` is the picture's
-  share of it and `align` the picture's side. The engine sets the caption
-  level with the picture's top and `layout.gutterWidth` from it, so a
-  caption the source sets on the picture's foot moves up to its top. For a
-  book pinned to 1.51 or older, take the `captionSide` out (the caption then
-  goes under the picture) and narrow the frame back to the picture.
-- A box that holds photos and their captions takes `"growWith": "children"`
-  (postext 1.52): it grows down to the lowest caption's foot and its bottom
-  padding, and the frames under it move down. On 1.51 and older, size the
-  box for the longest edition (`minHeight`) and check it with `--stress
-  1.3`.
 - An unnumbered resource type (`numberingTemplate: ""`) keeps "Photo 1"
   off the page. From 1.38 the type may leave the other fields out (the
   built-in type of the same id, else the id and `{h1}.{n}`, fill them):
   `{"id": "foto", "numberingTemplate": ""}` is enough; write every field
   only for 1.37 and older.
-- A row keeps its frames' widths and grows as tall as the tallest caption
-  needs. Photos of different widths: different frame widths.
+- A row of frames keeps their widths and grows as tall as the tallest
+  caption needs. Photos of different widths: different frame widths.
 - From 1.48 photos of one width on a lattice (three in a row, a wall of six)
   are one frame set repeated by a `grid` group (6.16): the template draws
   `foto` and its `pie` once and each `:::frame{slot="foto"}` of the page is a
@@ -2134,8 +2281,15 @@ label_styles.append({"id": "clave", "kind": "legend", "align": "start", "fontSiz
 - **The draft writes it** (`pdf_regions.py extract`, `scripts/legends.py`,
   skill 1.61). Two rows or more of a small symbol (at most 15 × 8 mm) and a
   few words (six at most), the symbols starting within 1 mm of each other
-  at a steady pitch and of two looks or more (a list of one bullet repeated
-  is no key), are a key. A filled rectangle becomes
+  (or centred on one column within 1 mm, each at most 6 mm from its words:
+  a capital's ring and a border line stand centred over each other) at a
+  steady pitch and of two looks or more (a list of one bullet repeated is
+  no key), are a key. A sample of the map's lettering before a row's words
+  (a country's name in small capitals before "Country": one or two words in
+  another size, weight or colour) is its symbol, a glyph icon of its own
+  words, `:icon[SPAIN]{glyph="SPAIN" color="#…" size="0.45"}` (`size` its
+  capitals over the row's; each edition writes its own; set in the row's
+  weight). A filled rectangle becomes
   `:icon[…]{glyph="■" color="#…"}` (the label's face must carry U+25A0, or
   add `font=`), a straight stroked segment `:icon[…]{line="solid|dashed|dotted"
   color="#…"}`, any other drawing (a front's triangle, a semicircle, a
@@ -2150,6 +2304,14 @@ label_styles.append({"id": "clave", "kind": "legend", "align": "start", "fontSiz
   rules (symbol, words; `columnWidths` from the source). The rows keep the
   label's line pitch, not the source's: raise the style's `fontSize` or set
   the rows apart in the Markdown when the source spaces them widely.
+- **Scale bars in the draft.** A straight bar 8 to 120 mm long and at most
+  3 mm high (a ruled line with its ticks, or filled segments) with two
+  numbers or more just under or over it, from `0` upwards left to right
+  (`0`, `400`, `800 km`), and the line with its ratio (`1:48 000 000`)
+  beside them, is a scale bar: on a picture it stays the picture's art (its
+  plate is no box of the page) and its numbers and ratio are the picture's
+  labels at their places along the bar; standing alone it is a picture of
+  its own with the same labels. The report notes each one.
 
 ### 6.15 Cards, tabs and shapes without a picture (1.48)
 
@@ -2360,6 +2522,16 @@ para regar
   flow frame (a heading to its `takes` frame), else the page's.
 - With `overflow.continueIn` on the modules group, the first module that
   does not fit and those after it go on whole to the added page.
+- **Texts in a module (#1189).** A module's `text` elements (a number in its
+  tab, a map key, a label on its photo) are painted over the module's frames,
+  so a box frame's fill does not hide them; `"over": false` puts one back
+  under the frames. A page template's texts stay under the frames unless
+  they say `"over": true`. `{attr.x}` and `when` / `unless` in a module's
+  decoration read the `:::module` fence first, then the page fence:
+  `:::module{template="tarjeta" num="3"}` numbers that card alone.
+  `template` and `name` are the module's own and are not read. Before the
+  fix (postext ≤ 1.55) a module text under a filled frame did not show and
+  `{attr.x}` read the page fence only: a small frame stood in for it.
 - **When.** Bands that recur across the book in another order or number, and
   any page whose design is a stack of such bands. `template_dedupe.py` makes
   every band of a draft's page a module and the page template a shell (§3.7);
@@ -2474,10 +2646,12 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   In the Sandbox canvas a frame that does not fit is outlined in red with
   the shortfall, a frame the ladder scaled carries an amber «text at 90 %»
   badge, an unknown look a violet one. The scaled badges are information,
-  not faults: for a book handed to editors and translators set
-  `debug.fitMarks: "problems"` (the red and violet marks stay) or
-  `debug.fitMarksMinScale: 0.95` (badges only under 95 %), postext ≥ 1.52.
-  The reader's choice in the canvas rail wins; no output carries the marks.
+  not faults: since #1200 the canvas starts on `debug.fitMarks:
+  "problems"` (the red and violet marks only); a book that wants the
+  badges sets `"all"`, with `debug.fitMarksMinScale: 0.95` for badges only
+  under 95 % (postext ≥ 1.52). Do not write `"problems"` into a preset: it
+  is the default. The reader's choice in the canvas rail wins; no output
+  carries the marks.
 - `frameContinuationLimit` = 0, and `continueTargetMissing` = 0 (1.38: a
   `page:<id>` jump whose later page fence is missing).
 - `contentInConfig` = 0 (and `preset_kit.py lint` clean: it counts page
@@ -2519,7 +2693,34 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   reason (listed as `allowed`; `--exceptions FILE` reads another file); an
   invalid entry fails the check, one that matches nothing is a note (6.18).
   `repeatOverflow`, `moduleUnknown`, `moduleAsPage`, `moduleNested` and
-  `moduleNameRejected` fail too.
+  `moduleNameRejected` fail too. When the covered frame is a box (or a
+  frame hung from it) and the covering one is a picture anchored inside
+  that box, the report says so: the box's text runs under the picture as
+  it grows. Put the picture in the box's fence so the box grows round it.
+  Do not split the box's words into a capped frame above the pictures:
+  that leaves the box empty (`emptyFrame`, below).
+- **Empty frames = 0** (`emptyFrame`, skill 1.64): every frame lays out
+  content of its own. The check reads the HTML export: a frame whose only
+  block is its own box (an empty fence, `optional: true` with no fence, or
+  a fence whose words only a `setsContent` design prints) fails, and so
+  does a template frame the HTML does not write (nothing sent to it, no
+  style). These are the frames the Sandbox marks with its empty-frame
+  placeholder («Escribe aquí», «Write here»), which never prints, so no
+  render shows them. Each line names the page, the frame and the Markdown
+  line that fills it. Fix it by writing the box's real content in its
+  fence (words, `::resource`, `:::figure`, rows of pictures and of centred
+  captions in `:::columns{count=3 breaks="2,3"}`, nested `:::callout`
+  panels) and letting the box grow; the frames hung from it for those
+  pieces go (6.5). A frame of ruled lines (`rules`) is meant to be empty. A
+  frame a chain goes on in that the story never reaches is a warning
+  («Continues …» in the Sandbox).
+- **Frames scaled as written = 0** (`frameScaled`, a warning, skill 1.64):
+  every frame the reflow ladder already set below 100 % at the text as
+  written, with frame, page and the text and picture scales. The measure is
+  wrong: widen the frame or its padding to the source's tracked width
+  (`--wrap-slack`), let the box grow, or let the story go on. Shrinking
+  (`fit.minScale`) is the reserve for longer editions, not the fix; the
+  Sandbox hides the scale badges by default (`debug.fitMarks`).
 - **Reading order = source order**: the HTML viewer (`postext html`) writes
   each page's frames in reading order; the script checks they come in the
   order the Markdown sends content to them, and warns when two editions
@@ -2534,7 +2735,9 @@ python3 scripts/composed_check.py check my-book --stress 1.3   # every edition: 
   Each page must rearrange (the reflow log) or go on; a `frameOverflow`
   whose proposals carry values is a warning (the next move of whoever fits
   the copy), any other new warning fails. Fix the template (`fit`,
-  `maxHeight`, `next`, `overflow`), never the factor. The script works from
+  `maxHeight`, `next`, `overflow`), never the factor. A box whose text
+  runs under its own pictures in the stress run needs those pictures in
+  its fence (6.5), not its words moved out. The script works from
   the command line's JSON and does not read frame boxes; the Cookbook bench's
   C38 does, and since 1.39 it also fails a frame pushed past any edge of the
   type area (foot, head, left, right) or of the bleed, and on a spread
