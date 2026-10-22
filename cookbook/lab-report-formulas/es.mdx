@@ -74,6 +74,6 @@ Los resultados pasan a ser la tabla 5.1 y la figura 5.1, con la cuenta reiniciad
 
 ## Errores frecuentes
 
-- Por defecto, una ecuación destacada no queda unida a la frase que la presenta, y una frase que acaba en «así que» puede cerrar una página con la ecuación ya en la siguiente; `math.keepWithLeadIn: true` pasa esa línea a la página siguiente junto con la ecuación. Aquí el texto de las dos ediciones está ajustado para que la ecuación de [OH⁻] cierre la página 1 bajo su frase.
+- Por defecto, una ecuación destacada no queda unida a la frase que la presenta, y una frase que acaba en «así que» puede cerrar una página con la ecuación ya en la siguiente; `math.keepWithLeadIn: true` pasa esa línea a la página siguiente junto con la ecuación. La receta lo activa, de modo que la ecuación de [OH⁻] no se separa de su frase aunque cambie el texto.
 - Los glifos de TeX son los de MathJax, no los de Inria Serif, y una ecuación pesa algo menos que el texto que la rodea. Deja las fórmulas que van dentro de una frase como marcas `~` y `^`, y reserva TeX para las líneas que lo necesitan.
 - Las cifras de los ejes y sus rótulos en la curva son contornos de MathJax, con los mismos glifos que las ecuaciones y vectoriales en el PDF: `tex()` pide a `renderMath` los trazados de cada rótulo y los coloca en el SVG. Solo pueden dibujarse cuando `initMathEngine()` ha terminado.

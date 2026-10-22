@@ -74,6 +74,6 @@ Die Ergebnisse werden zu „Table 5.1“ und „Figure 5.1“, in jedem Abschnit
 
 ## Häufige Fehler
 
-- Standardmäßig bleibt eine abgesetzte Formel nicht bei der Zeile, die sie einleitet, sodass eine auf „so“ endende Einleitung eine Seite beschließen kann, während ihre Gleichung auf der nächsten steht; `math.keepWithLeadIn: true` nimmt diese Zeile mit der Formel hinüber. Hier ist der Text beider Ausgaben so eingepasst, dass Seite 1 mit der Gleichung für [OH⁻] unter ihrem Satz endet.
+- Standardmäßig bleibt eine abgesetzte Formel nicht bei der Zeile, die sie einleitet, sodass eine auf „so“ endende Einleitung eine Seite beschließen kann, während ihre Gleichung auf der nächsten steht; `math.keepWithLeadIn: true` nimmt diese Zeile mit der Formel hinüber. Das Rezept schaltet es ein, damit die Gleichung für [OH⁻] bei ihrem Satz bleibt, wie lang der Text auch wird.
 - Die TeX-Glyphen sind die eigenen von MathJax, nicht die der Inria Serif, deshalb wirkt eine Gleichung etwas leichter als der Text um sie herum. Behalten Sie Formeln innerhalb von Sätzen als Auszeichnungen mit `~` und `^` und reservieren Sie TeX für die Zeilen, die es brauchen.
 - Die Achsenbeschriftungen und Achsentitel der Kurve sind MathJax-Konturen, verwenden also dieselben Glyphen wie die Gleichungen und bleiben im PDF Vektoren: `tex()` fragt `renderMath` nach den Pfaden jeder Beschriftung und platziert sie im SVG. Sie lassen sich erst zeichnen, wenn `initMathEngine()` aufgelöst ist.

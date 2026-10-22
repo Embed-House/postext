@@ -67,7 +67,7 @@
   "workarounds": [
     {
       "package": "postext",
-      "note": "by default a display formula does not keep with its lead-in (math.keepWithLeadIn is off): the copy of both editions is fitted so the [OH−] equation ends page 1 under the sentence that introduces it"
+      "note": "math.keepWithLeadIn is on (it is off by default): a display formula takes the line that introduces it to the next page, so the [OH−] equation never opens page 2 without its sentence"
     },
     {
       "followup": "EF-34",
@@ -76,8 +76,8 @@
     }
   ],
   "engine": {
-    "postext": "1.25.0",
-    "postextPdf": "1.25.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "math": true
   },
   "kit": [
@@ -148,5 +148,5 @@
     "content": "CC-BY-4.0"
   },
   "created": "2026-09-25",
-  "updated": "2026-10-10"
+  "updated": "2026-10-22"
 }
