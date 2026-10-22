@@ -1,6 +1,6 @@
 ---
 title: "Diccionario con índice de pestañas"
-summary: "Un bucle crea un estilo de encabezado por letra, cuya cabecera pone la pestaña azul de su letra un paso más abajo en el corte, sobre un índice pálido."
+summary: "Un bucle crea un estilo de encabezado por letra, cuyo pie pone la pestaña azul de su letra un paso más abajo en el corte, sobre un índice pálido."
 plain: "Cuatro páginas de un antiguo diccionario de marinos. Unas pestañas con letras bajan por el borde exterior, y la de la letra actual va en oscuro y más abajo a medida que avanza el alfabeto."
 description: "Cuatro páginas del Sailor’s Word-Book de Smyth a dos columnas, con los lemas en azul, iniciales de cuatro líneas y una pestaña que baja un paso con cada letra."
 question: "¿Cómo hago que la pestaña de un diccionario baje por el corte delantero de una letra a la siguiente?"
@@ -16,7 +16,7 @@ Cuatro páginas de una nueva edición del *Sailor’s Word-Book* del almirante S
 
 ### 1 · Un estilo de título por letra, cada uno con su pestaña
 
-El código está en [la respuesta corta](#la-respuesta-corta), más arriba. `TABS` enumera 22 pestañas; las letras con pocas voces comparten una (QR, UV, XYZ). Cada pestaña mide dos líneas de texto (7,34 mm), así que entre todas cubren las 44 líneas de la caja. El bucle da a cada letra un estilo de encabezado cuyo `header` suma a las cabeceras y al índice pálido la pestaña azul de esa letra, un paso más abajo que la anterior ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)). Cada celda se escribe dos veces, una por `parity`, y se ancla al borde exterior de la página, no al contenedor propio de la cabecera. Ese contenedor es el margen de cabeza, del ancho de la caja y desde el borde superior de la página hasta el texto, y las pestañas tienen que llegar al corte delantero y bajar por las 44 líneas. Una página toma la cabecera de la última sección que empieza en ella, así que la <PageRef page={2}>página 2</PageRef> empieza en la A y lleva la pestaña de la B.
+El código está en [la respuesta corta](#la-respuesta-corta), más arriba. `TABS` enumera 22 pestañas; las letras con pocas voces comparten una (QR, UV, XYZ). Cada pestaña mide dos líneas de texto (7,34 mm), así que entre todas cubren las 44 líneas de la caja. El `header` del libro imprime en todas las páginas las cabeceras y el índice pálido. El bucle da a cada letra un estilo de encabezado cuyo `footer` añade la pestaña azul de esa letra, un paso más abajo que la anterior ([estilos de encabezado](/es/docs/configuration-styles#estilos-de-encabezado)). El pie se pinta después de la cabecera, así que la pestaña queda encima de su celda pálida, y la configuración guarda el índice una sola vez y no una por letra. Cada celda se escribe dos veces, una por `parity`, y se ancla al borde exterior de la página, no al contenedor propio de su hueco. Ese contenedor es un margen del ancho de la caja, y las pestañas tienen que llegar al corte delantero y bajar por las 44 líneas. Una página toma el pie de la última sección que empieza en ella, así que la <PageRef page={2}>página 2</PageRef> empieza en la A y lleva la pestaña de la B.
 
 ### 2 · Las cabeceras, fuera de la primera página
 
@@ -49,8 +49,8 @@ El estilo del encabezado abarca la página con una banda que reúne el ancla, el
 Los índices de pestañas impresos suelen mostrar solo la de la letra en curso; quita `ladder` de la cabecera y la pestaña azul seguirá bajando de la A a la C.
 
 ```diff
--  header: { elements: [...runningHeads, ...ladder,
-+  header: { elements: [...runningHeads,
+-  header: { elements: [...runningHeads, ...ladder] }, // the same on every page
++  header: { elements: [...runningHeads] }, // the same on every page
 ```
 
 ## Errores frecuentes

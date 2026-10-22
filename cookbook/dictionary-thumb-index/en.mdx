@@ -1,6 +1,6 @@
 ---
 title: "Dictionary with a moving thumb index"
-summary: "A loop makes one heading style per letter, and each style’s header prints that letter’s navy tab one step lower on the fore-edge, over a pale index."
+summary: "A loop makes one heading style per letter, and each style’s footer prints that letter’s navy tab one step lower on the fore-edge, over a pale index."
 plain: "Four pages of an old sailors' dictionary. Letter tabs run down the outer edge of each page, and the tab for the current letter is dark and sits lower as the alphabet goes on."
 description: "Four pages of Smyth’s Sailor’s Word-Book in two columns, with navy headwords, four-line letter heads and a thumb tab that steps down with each letter."
 question: "How do I make a dictionary’s thumb tab step down the fore-edge from one letter to the next?"
@@ -16,7 +16,7 @@ Four pages from a new edition of Admiral Smyth’s *Sailor’s Word-Book* (1867)
 
 ### 1 · Give each letter a heading style with its own tab
 
-The code is [the short answer](#the-short-answer) above. `TABS` lists 22 tabs, with the rare letters sharing one (QR, UV, XYZ). Each tab is two body lines (7.34 mm) deep, so together they fill the 44 lines of the text block. The loop gives each letter a heading style whose `header` adds that letter’s navy tab, one step lower than the last, to the running heads and the pale index ([heading styles](/en/docs/configuration-styles#heading-styles)). Every cell is written twice, once per `parity`, and anchored to the outer edge of the page rather than to the header’s own container. That container is the head margin, as wide as the text block and reaching from the trim down to the text, while the tabs have to reach the fore-edge and run down all 44 lines. A page takes the header of the last section that starts on it, so <PageRef page={2}>page 2</PageRef> begins in A and shows the tab for B.
+The code is [the short answer](#the-short-answer) above. `TABS` lists 22 tabs, with the rare letters sharing one (QR, UV, XYZ). Each tab is two body lines (7.34 mm) deep, so together they fill the 44 lines of the text block. The book’s `header` prints the running heads and the pale index on every page. The loop gives each letter a heading style whose `footer` adds that letter’s navy tab, one step lower than the last ([heading styles](/en/docs/configuration-styles#heading-styles)). The footer paints after the header, so the tab lies over its pale cell, and the configuration holds the index once rather than once per letter. Every cell is written twice, once per `parity`, and anchored to the outer edge of the page rather than to its slot’s own container. That container is a margin as wide as the text block, while the tabs have to reach the fore-edge and run down all 44 lines. A page takes the footer of the last section that starts on it, so <PageRef page={2}>page 2</PageRef> begins in A and shows the tab for B.
 
 ### 2 · Keep the running heads off the first page
 
@@ -49,8 +49,8 @@ The title style spans the page with a band that holds the anchor, the name, a su
 Printed thumb indexes usually show only the current letter’s tab; take `ladder` out of the header and the navy tab still steps down from A to C.
 
 ```diff
--  header: { elements: [...runningHeads, ...ladder,
-+  header: { elements: [...runningHeads,
+-  header: { elements: [...runningHeads, ...ladder] }, // the same on every page
++  header: { elements: [...runningHeads] }, // the same on every page
 ```
 
 ## Pitfalls

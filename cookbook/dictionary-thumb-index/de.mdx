@@ -1,6 +1,6 @@
 ---
 title: "Wörterbuch mit wanderndem Daumenregister"
-summary: "Eine Schleife erzeugt einen Überschriftenstil pro Buchstabe, und die Kopfzeile jedes Stils setzt dessen dunkelblauen Reiter am Außenrand eine Stufe tiefer."
+summary: "Eine Schleife erzeugt einen Überschriftenstil pro Buchstabe, und die Fußzeile jedes Stils setzt dessen dunkelblauen Reiter am Außenrand eine Stufe tiefer."
 plain: "Vier Seiten eines alten Seemannswörterbuchs. Buchstabenreiter laufen am Außenrand jeder Seite hinab, und der Reiter des aktuellen Buchstabens ist dunkel und rückt mit dem Alphabet tiefer."
 description: "Vier Seiten aus Smyths Sailor’s Word-Book, zweispaltig, mit dunkelblauen Stichwörtern, vierzeiligen Initialen und einem Reiter, der Stufe um Stufe sinkt."
 question: "Wie lasse ich den Reiter eines Wörterbuchs am Außenrand von Buchstabe zu Buchstabe tiefer rücken?"
@@ -16,7 +16,7 @@ Vier Seiten aus einer neuen Ausgabe von Admiral Smyths *Sailor’s Word-Book* (1
 
 ### 1 · Jedem Buchstaben ein Überschriftenformat mit eigenem Reiter geben
 
-Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `TABS` führt 22 Reiter, wobei sich seltene Buchstaben einen teilen (QR, UV, XYZ). Jeder Reiter ist zwei Grundtextzeilen (7,34 mm) hoch, zusammen füllen sie also die 44 Zeilen des Satzspiegels. Die Schleife gibt jedem Buchstaben einen Überschriftenstil, dessen `header` den dunkelblauen Reiter dieses Buchstabens, eine Stufe tiefer als den vorigen, zu den Kolumnentiteln und dem blassen Register hinzufügt ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Jede Zelle ist zweimal geschrieben, einmal pro `parity`, und am Außenrand der Seite verankert statt am eigenen Container der Kopfzeile. Dieser Container ist der Kopfsteg, so breit wie der Satzspiegel und von der Beschnittkante bis zum Text reichend, während die Reiter bis an den Außenrand reichen und alle 44 Zeilen hinablaufen müssen. Eine Seite übernimmt die Kopfzeile des letzten Abschnitts, der auf ihr beginnt, sodass <PageRef page={2}>Seite 2</PageRef> mit A beginnt und den Reiter für B zeigt.
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `TABS` führt 22 Reiter, wobei sich seltene Buchstaben einen teilen (QR, UV, XYZ). Jeder Reiter ist zwei Grundtextzeilen (7,34 mm) hoch, zusammen füllen sie also die 44 Zeilen des Satzspiegels. Der `header` des Buchs druckt auf jeder Seite die Kolumnentitel und das blasse Register. Die Schleife gibt jedem Buchstaben einen Überschriftenstil, dessen `footer` den dunkelblauen Reiter dieses Buchstabens hinzufügt, eine Stufe tiefer als den vorigen ([Überschriftenformate](/de/docs/configuration-styles#überschriftenstile)). Die Fußzeile wird nach der Kopfzeile gemalt, deshalb liegt der Reiter über seiner blassen Zelle, und die Konfiguration enthält das Register nur einmal statt einmal pro Buchstabe. Jede Zelle ist zweimal geschrieben, einmal pro `parity`, und am Außenrand der Seite verankert statt am eigenen Container ihres Slots. Dieser Container ist ein Steg so breit wie der Satzspiegel, während die Reiter bis an den Außenrand reichen und alle 44 Zeilen hinablaufen müssen. Eine Seite übernimmt die Fußzeile des letzten Abschnitts, der auf ihr beginnt, sodass <PageRef page={2}>Seite 2</PageRef> mit A beginnt und den Reiter für B zeigt.
 
 ### 2 · Die Kolumnentitel von der ersten Seite fernhalten
 
@@ -49,8 +49,8 @@ Der Titelstil reicht über die ganze Seitenbreite, mit einem Titelband, das Anke
 Gedruckte Daumenregister zeigen meist nur den Reiter des aktuellen Buchstabens; nehmen Sie `ladder` aus der Kopfzeile, und der dunkelblaue Reiter rückt weiterhin von A bis C tiefer.
 
 ```diff
--  header: { elements: [...runningHeads, ...ladder,
-+  header: { elements: [...runningHeads,
+-  header: { elements: [...runningHeads, ...ladder] }, // the same on every page
++  header: { elements: [...runningHeads] }, // the same on every page
 ```
 
 ## Häufige Fehler

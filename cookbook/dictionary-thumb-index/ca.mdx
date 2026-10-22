@@ -1,6 +1,6 @@
 ---
 title: "Diccionari amb índex de pestanyes"
-summary: "Un bucle fa un estil d'encapçalament per lletra, i la capçalera de cadascun posa la pestanya blava de la lletra un pas més avall al tall, sobre l'índex pàl·lid."
+summary: "Un bucle fa un estil d'encapçalament per lletra, i el peu de cadascun posa la pestanya blava de la lletra un pas més avall al tall, sobre l'índex pàl·lid."
 plain: "Quatre pàgines d'un antic diccionari de mariners. Unes pestanyes amb lletres baixen per la vora exterior, i la de la lletra actual va en fosc i més avall a mesura que avança l'alfabet."
 description: "Quatre pàgines del Sailor’s Word-Book de Smyth a dues columnes, amb els lemes en blau, inicials de quatre línies i una pestanya que baixa un pas a cada lletra."
 question: "Com faig que la pestanya d'un diccionari baixi pel tall davanter d'una lletra a la següent?"
@@ -16,7 +16,7 @@ Quatre pàgines d'una nova edició del *Sailor’s Word-Book* de l'almirall Smyt
 
 ### 1 · Un estil d'encapçalament per lletra, cadascun amb la seva pestanya
 
-El codi és a [la resposta curta](#la-resposta-curta), més amunt. `TABS` enumera 22 pestanyes; les lletres amb poques entrades en comparteixen una (QR, UV, XYZ). Cada pestanya fa dues línies de text (7,34 mm), així que entre totes cobreixen les 44 línies de la caixa. El bucle dona a cada lletra un estil d'encapçalament amb un `header` que afegeix a les capçaleres i a l'índex pàl·lid la pestanya blava d'aquella lletra, un pas més avall que l'anterior ([estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). Cada cel·la s'escriu dues vegades, una per `parity`, i s'ancora a la vora exterior de la pàgina, no al contenidor propi de la capçalera. Aquest contenidor és el marge superior, de l'amplada de la caixa i des de la vora superior de la pàgina fins al text, i les pestanyes han d'arribar al tall davanter i baixar per les 44 línies. Una pàgina pren la capçalera de l'última secció que hi comença, així que la <PageRef page={2}>pàgina 2</PageRef> comença a la A i porta la pestanya de la B.
+El codi és a [la resposta curta](#la-resposta-curta), més amunt. `TABS` enumera 22 pestanyes; les lletres amb poques entrades en comparteixen una (QR, UV, XYZ). Cada pestanya fa dues línies de text (7,34 mm), així que entre totes cobreixen les 44 línies de la caixa. El `header` del llibre imprimeix a totes les pàgines les capçaleres i l'índex pàl·lid. El bucle dona a cada lletra un estil d'encapçalament amb un `footer` que afegeix la pestanya blava d'aquella lletra, un pas més avall que l'anterior ([estils d'encapçalament](/ca/docs/configuration-styles#estils-dencapçalament)). El peu es pinta després de la capçalera, de manera que la pestanya queda damunt de la seva cel·la pàl·lida, i la configuració desa l'índex una sola vegada i no una per lletra. Cada cel·la s'escriu dues vegades, una per `parity`, i s'ancora a la vora exterior de la pàgina, no al contenidor propi del seu espai. Aquest contenidor és un marge de l'amplada de la caixa, i les pestanyes han d'arribar al tall davanter i baixar per les 44 línies. Una pàgina pren el peu de l'última secció que hi comença, així que la <PageRef page={2}>pàgina 2</PageRef> comença a la A i porta la pestanya de la B.
 
 ### 2 · Les capçaleres, fora de la primera pàgina
 
@@ -49,8 +49,8 @@ L'estil del títol abasta la pàgina amb una banda que reuneix l'àncora, el nom
 Els índexs de pestanyes impresos solen mostrar només la de la lletra en curs; treu `ladder` de la capçalera i la pestanya blava continuarà baixant de la A a la C.
 
 ```diff
--  header: { elements: [...runningHeads, ...ladder,
-+  header: { elements: [...runningHeads,
+-  header: { elements: [...runningHeads, ...ladder] }, // the same on every page
++  header: { elements: [...runningHeads] }, // the same on every page
 ```
 
 ## Errors freqüents
