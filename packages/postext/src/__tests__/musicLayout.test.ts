@@ -78,6 +78,29 @@ describe('music scores in the layout', () => {
     }
   });
 
+  it('keeps the first and last systems together under minSystemsAtBreak', () => {
+    const runsOf = (m: number, lead: number): number[] => {
+      const md = `# S\n\n${'Text before the score. '.repeat(lead * 8)}\n\n\`\`\`abc\n${TUNE}\n\`\`\`\n\nAfter.\n`;
+      const doc = buildDocument({ markdown: md }, {
+        ...CONFIG,
+        layout: { layoutType: 'single' },
+        scoreStyle: { minSystemsAtBreak: m, staffSize: { value: 9, unit: 'mm' } },
+      });
+      const runs: number[] = [];
+      for (const p of doc.pages) for (const c of p.columns) {
+        const n = c.blocks.filter((b) => b.type === 'score').length;
+        if (n > 0) runs.push(n);
+      }
+      return runs;
+    };
+    // One system left at the foot of the first page, one carried alone to
+    // the last: kept with their neighbours under a minimum of three.
+    expect(runsOf(1, 12)[0]).toBe(1);
+    expect(runsOf(3, 12)[0]).toBeGreaterThanOrEqual(3);
+    expect(runsOf(1, 1).at(-1)).toBe(1);
+    expect(runsOf(3, 1).at(-1)).toBeGreaterThanOrEqual(3);
+  });
+
   it('paints the systems as inline SVG in HTML', () => {
     const doc = buildDocument({ markdown: MARKDOWN }, CONFIG);
     const html = renderToHtmlIndexed(doc).html;

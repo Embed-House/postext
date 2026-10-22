@@ -233,7 +233,7 @@ import {
 import { documentLocale, effectiveResourceTypes } from '../defaults/resourceTypes.js';
 import { resolveCalloutStylesConfig } from '../defaults/calloutStyles.js';
 import { codeBoxStyle, codeParseOptions, wrapCodeBlocks } from './codeBlocks.js';
-import { expandScoreBlocks, scoreInfoOf } from './scoreBlocks.js';
+import { expandScoreBlocks, scoreInfoOf, scoreKeepHeight } from './scoreBlocks.js';
 import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines.js';
 import { pickTableStyle } from '../defaults/tableStyle.js';
 import { DEFAULT_FLOAT_MIN_SCALE } from '../defaults/layout.js';
@@ -8502,6 +8502,19 @@ function placeDocumentPass(
       const shortColumn = shortColumnMoves < 4
         && !uncappedBottoms.has(curCol)
         && curCol.bbox.height < contentArea.height - baselineGrid;
+
+      // A score's first systems, and its last ones, go together
+      // (`scoreStyle.minSystemsAtBreak`, #1173): its first system opens the
+      // next column unless the first few fit here, and the system that
+      // opens its last few takes them all along.
+      if (vdtType === 'score' && curCol.blocks.length > 0) {
+        const keep = scoreKeepHeight(contentBlocks, blockIdx, resolved);
+        if (keep !== undefined && keep > effectiveAvailable + FIT_EPS && keep <= contentArea.height) {
+          pendingSpacing = 0;
+          advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
+          continue;
+        }
+      }
 
       // Block fits in current column (a hair of tolerance: a capped column
       // and the grid lines balancing adds above a block differ by floating

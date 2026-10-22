@@ -123,3 +123,38 @@ export function scoreInfoOf(score: ScoreBlockInfo): VDTScoreInfo {
     : [score.title, score.composer].filter(Boolean).join(', ');
   return { index, count: score.count ?? 1, ...(alt && index === 0 ? { alt } : {}) };
 }
+
+/**
+ * The room the systems kept with the one at `blockIdx` need (#1173): from
+ * the first system, the first `minSystemsAtBreak`; from the one that opens
+ * the last `minSystemsAtBreak`, all of them. Undefined for any other system,
+ * or a score too short to break (fewer than twice the minimum: it moves
+ * whole, the first system keeping them all).
+ */
+export function scoreKeepHeight(
+  blocks: readonly ContentBlock[],
+  blockIdx: number,
+  resolved: ResolvedConfig,
+): number | undefined {
+  const block = blocks[blockIdx];
+  const score = block?.score;
+  if (!block || !score || score.index === undefined || score.count === undefined || score.count < 2) return undefined;
+  const style = scoreStyleOf(block, resolved);
+  const m = style.minSystemsAtBreak;
+  const whole = score.count < 2 * m;
+  let span: number;
+  if (score.index === 0) span = whole ? score.count : Math.min(m, score.count);
+  else if (!whole && score.index === score.count - m) span = m;
+  else return undefined;
+  if (span < 2) return undefined;
+  const dpi = resolved.page.dpi;
+  const fontSizePx = dimensionToPx(resolved.bodyText.fontSize, dpi);
+  const gap = dimensionToPx(style.systemGap, dpi, fontSizePx);
+  let h = 0;
+  for (let k = 0; k < span; k++) {
+    const sys = blocks[blockIdx + k]?.score?.system;
+    if (!sys) return undefined;
+    h += sys.heightPx + (k > 0 ? gap : 0);
+  }
+  return h;
+}
