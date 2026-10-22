@@ -729,13 +729,20 @@ What the extraction decides, so you know what to check:
   and its captions. A nested box is a `:::callout{type="<its style>"}`,
   its style's `marginTop` the room above it on the source (a row of them
   side by side: a `:::columns` of callouts, the room on the group's
-  `marginTop`). The box style's `columnGap` gives the columns the step of
+  `marginTop`). The room above a row is the source's: a group's
+  `marginTop`, a picture or caption alone a `:::space{lines=…}` in the
+  box's lines, and `suggested.layout.inlineResourceGapInBoxes: false` (which
+  `manifest` writes) takes away the line the engine would add above each
+  picture. The box style's `columnGap` gives the columns the step of
   the source's pictures, its padding the room round all it holds (2 mm at
-  least where a cut-out's margins reach the rule). A box flows all of
+  least where a cut-out's margins reach the rule; nested boxes as far in
+  from the right as the source sets them), and its bottom padding the room
+  under the lowest row or caption, not under the words (#1198: the box
+  grows to that foot plus the whole padding). A box flows all of
   these or none: one beside its words, laid over them, with ink past the
   box (below), nested with frames of its own, or a row equal columns
-  cannot set (widths more than 1.35 apart and middles unevenly spaced,
-  more than six) keeps them frames, the captions hung `below` their
+  cannot set (widths more than 1.35 apart and, for pictures alone, middles
+  unevenly spaced; more than six) keeps them frames, the captions hung `below` their
   pictures and the box `growWith: "children"`. Frames that lay on a
   picture that flows (a pill, a plate) hang from the box at the same
   place. A box with a tab and pictures but no words of its own holds the
@@ -844,8 +851,9 @@ Also decided by the drafting, checked on a real textbook in three languages:
   colour (a cut-out's white margin is not ink). The cut is the page with
   the picture against the page without it: transparent wherever the card,
   the page's colour, a box's rule or a plate under it shows, trimmed to
-  what it paints; its frame gets `overlap: "allow"` and stays a frame (it
-  never flows into its box's text).
+  what it paints; its frame gets `overlap: "allow"` (so does a cut-out with
+  an alpha channel whose ink runs past its box) and stays a frame (it never
+  flows into its box's text).
 - **The ground is checked against the render** (`--raster-ground`): a band or box fill the
   redaction left (MuPDF removes line art only when a rectangle covers the
   whole path, and misses wide strokes under a transform) is painted out with

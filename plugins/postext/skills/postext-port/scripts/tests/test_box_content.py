@@ -207,6 +207,20 @@ class BoxContent(unittest.TestCase):
         finally:
             tmp.cleanup()
 
+    def test_rows_equal_columns_can_set(self):
+        import types
+
+        import pdf_regions as pr
+
+        def item(kind, x0, x1):
+            return types.SimpleNamespace(kind=kind, box=(x0, 0.0, x1, 30.0))
+
+        # photos of other widths, their middles evenly spaced: columns set them
+        self.assertTrue(pr.row_regular([item("picture", 0, 40), item("picture", 60, 120), item("picture", 140, 160)]))
+        # a text panel beside a photo, as wide apart: its words would wrap to another width
+        self.assertFalse(pr.row_regular([item("box", 0, 76), item("picture", 77, 137), item("box", 138, 186)]))
+        self.assertFalse(pr.row_regular([item("picture", 0, 60), item("picture", 20, 80)]))     # one over the other
+
     def test_a_box_with_a_tab_and_a_picture_holds_the_picture(self):
         doc = fitz.open()
         page = new_page(doc)

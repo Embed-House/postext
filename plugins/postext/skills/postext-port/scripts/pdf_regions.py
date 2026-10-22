@@ -2841,10 +2841,10 @@ def build_page(pdf_path: str, doc: fitz.Document, pno: int, fonts: Fonts, opts: 
                         # set in its box's text: its share of the column it flows in, not of the frame
                         pl["width"] = round(min(0.95, pic_w / col), 3)
                     f.resource["placement"] = {**(f.resource.get("placement") or {}), **pl}
-            if getattr(f, "flowed", False) and not getattr(f, "caption_side", None) and \
-                    any(f in r["items"] and len(r["items"]) > 1 for r in f.flow_parent.flow):
-                # a row of pictures in a box's text: each in the middle of its column, over its caption
-                f.resource["placement"] = {**(f.resource.get("placement") or {}), "align": "center"}
+            if getattr(f, "flowed", False) and not getattr(f, "caption_side", None):
+                # a row of pictures in a box's text: each in the middle of its column, over its
+                # caption; one alone where it stands in the box's measure
+                f.resource["placement"] = {**(f.resource.get("placement") or {}), "align": flow_align(f)}
             res.append(f.resource)
             frame_of = {id(g.shape): g.name for g in ordered if g.shape is not None}
             laid_over = drawn_over(f, ordered)
@@ -3094,8 +3094,8 @@ def split_captions(frames: list, reach: float = 8.0) -> list:
 def row_regular(items: list) -> bool:
     """Whether equal columns can set a row of frames side by side: none
     over the next, and their widths alike (the widest at most 1.35 times
-    the narrowest) or, three or more, their middles evenly spaced (within
-    a fifth of the step)."""
+    the narrowest) or, three or more pictures, their middles evenly spaced
+    (within a fifth of the step); a row with a box in it needs the widths."""
     if len(items) < 2:
         return True
     # (cut-outs overlap by their white margins; a quarter of the narrower is one over the other)
@@ -3105,6 +3105,8 @@ def row_regular(items: list) -> bool:
     ws = [g.box[2] - g.box[0] for g in items]
     if max(ws) <= 1.35 * min(ws):
         return True
+    if any(g.kind == "box" for g in items):
+        return False        # a box's words wrap to its width: equal columns would rewrap them
     mids = [(g.box[0] + g.box[2]) / 2 for g in items]
     steps = [b - a for a, b in zip(mids, mids[1:])]
     m = statistics.mean(steps)
@@ -3188,6 +3190,23 @@ def flow_in_boxes(frames: list) -> None:
         for h in frames:
             if h.parent in [q for r in rows for q in r if q.kind in ("picture", "figure")] and not getattr(h, "flowed", False):
                 h.parent = c       # what lies on a picture that flows hangs on the box (same place)
+
+
+def flow_align(f: Frame) -> str:
+    """Where a picture set in its box's text stands in its column: in the
+    middle in a row of several; alone, in the middle when its middle is
+    within a tenth of the box's measure of the measure's, else at the side
+    it keeps to."""
+    c = f.flow_parent
+    if any(f in r["items"] and len(r["items"]) > 1 for r in c.flow):
+        return "center"
+    pad = (c.style or {}).get("padding") or {}
+    x0 = c.shape.box[0] + (pad.get("left") or {}).get("value", 0.0)
+    x1 = c.shape.box[2] - (pad.get("right") or {}).get("value", 0.0)
+    mid, w = (f.box[0] + f.box[2]) / 2, max(1.0, x1 - x0)
+    if abs(mid - (x0 + x1) / 2) <= 0.1 * w:
+        return "center"
+    return "right" if x1 - f.box[2] < f.box[0] - x0 else "left"
 
 
 def flow_column(f: Frame) -> float | None:
@@ -3861,6 +3880,10 @@ def box_style(f: Frame, ctx: dict, report: dict) -> dict:
             u = union([q.box for q in items])
             left = min(left, max(2.0, u[0] - bx0))
             right = min(right, max(2.0, bx1 - u[2]))
+            if any(q.kind == "box" for q in items):
+                # nested boxes stand as far in from the right as the source sets them (the words'
+                # slack would run them onto the rule)
+                right = max(right, min(8.0, bx1 - max(q.box[2] for q in items if q.kind == "box")))
             top = min(top, max(2.0, u[1] - by0))
             # equal columns as far apart as the source's: the gap that gives their middles its step
             inner = bx1 - bx0 - left - right
@@ -5452,8 +5475,10 @@ def make_template(tid: str, frames: list[Frame], cards: list[Shape], origin: tup
             c["placement"] = placement_rel(cap.name, "below", x - cap.box[0], f.box[1] - cap.box[3])
         if opts.fit and f.kind in ("text", "box", "tab"):
             c["fit"] = {"minScale": opts.fit}     # only by request: a reserve, never the default answer
-        if getattr(f, "whole", False):
-            c["overlap"] = "allow"      # cut whole past its box and card (#1191): it lies over them
+        if getattr(f, "whole", False) or getattr(f, "past", False):
+            # its ink runs past its box or card (#1191; cut whole, or a cut-out keeping its overhang):
+            # it lies over them
+            c["overlap"] = "allow"
         configs[f.name] = c
         out_frames.append(c)
     # a tab (a pill, a title) lies over the picture it touches (a diagram's connectors are one
@@ -5761,6 +5786,18 @@ def cell_markdown(g: Frame, box: Frame, ctx: dict) -> str:
     return f':::paragraphs{{style="{sid}"}}\n{g.cell_md}\n:::'
 
 
+def space_before(md: str, n: int, gap: float | None, box: Frame) -> list[str]:
+    """A block set in a box's text with the room the source leaves above
+    it: a group of columns says it (`marginTop`); a block alone gets a
+    `:::space` of that many lines of the box's body (the engine's line
+    above an inline resource is off in the draft,
+    `layout.inlineResourceGapInBoxes`)."""
+    lead = (((box.style or {}).get("body") or {}).get("lineHeight") or {}).get("value")
+    if n > 1 or not gap or gap < 0.3 or not lead:
+        return [md]
+    return [f":::space{{lines={round(gap / lead, 2)}}}", md]
+
+
 def flow_blocks(f: Frame, ctx: dict) -> list[tuple]:
     """A box's blocks with what flows in its text (`flow_in_boxes`) put
     where it stood: each row of pictures or nested boxes after the
@@ -5772,12 +5809,15 @@ def flow_blocks(f: Frame, ctx: dict) -> list[tuple]:
         items = [flow_item_markdown(g) for g in row["items"]]
         caps = row["caps"]
         if not caps:
-            mds = [columns_markdown(items, row["gap"])]
+            # (a nested box keeps the room above it as its style's marginTop)
+            boxes = row["items"][0].kind == "box"
+            mds = space_before(columns_markdown(items, row["gap"]), len(items), None if boxes else row["gap"], f)
         else:
             of = {id(g): [c for c in caps if c.caption_of is g] for g in row["items"]}
             if len(items) == 1 or all(len(of[id(g)]) == 1 for g in row["items"]):
-                mds = [columns_markdown(items, row["gap"]),
-                       columns_markdown([cell_markdown(c, f, ctx) for c in caps], row["capgap"])]
+                mds = space_before(columns_markdown(items, row["gap"]), len(items), row["gap"], f)
+                mds += space_before(columns_markdown([cell_markdown(c, f, ctx) for c in caps], row["capgap"]),
+                                    len(caps), row["capgap"], f)
             else:
                 cells: list[str] = []
                 starts: list[int] = []
@@ -6027,6 +6067,10 @@ def cmd_extract(args: argparse.Namespace) -> int:
         library["markStyles" if args.highlights == "mark" else "chipStyles"] = ms
     library["suggested"] = suggested_config(caches, pages, body, head_sizes, level_of, doc)
     ul = unordered_lists(ctx.get("list_levels", {}))
+    if any(getattr(f, "flowed", False) and f.kind in ("picture", "figure") for page in built for f in page["frames"]):
+        # pictures set in boxes' text keep the room the source gives them (`:::space`, a group's
+        # marginTop), not a line of the box's text above each (#1186)
+        library["suggested"]["layout"] = {"inlineResourceGapInBoxes": False}
     text_gaps = (ctx.get("gaps") or {}).get("text") or {}
     box_gaps = (ctx.get("gaps") or {}).get("box") or {}
     para_gap = gap_value(text_gaps.get("para") or [])
@@ -6198,6 +6242,8 @@ def cmd_manifest(args: argparse.Namespace) -> int:
     }
     if sug.get("unorderedLists"):
         config["unorderedLists"] = sug["unorderedLists"]
+    if sug.get("layout"):
+        config["layout"] = sug["layout"]
     for k in ("calloutStyles", "markStyles", "chipStyles", "labelStyles", "paragraphStyles", "frameLooks",
               "tableStyles", "pageTemplates"):
         if library.get(k):

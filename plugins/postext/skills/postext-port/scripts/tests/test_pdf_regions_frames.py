@@ -319,7 +319,9 @@ class SingleCaption(unittest.TestCase):
                 # box's measure (60 mm of some 150), not of a frame round it
                 self.assertTrue(0.35 < pl["width"] < 0.5, pl)
                 self.assertFalse(any(f["name"].startswith("picture") for f in lib["pageTemplates"][0]["frames"]))
-                self.assertRegex(md, r':::frame\{slot="box"\}\n[^\n]+\n\n::resource\{id="p01-picture-1"\}\n:::')
+                # (the room above it as the source leaves it, in the box's lines)
+                self.assertRegex(md, r':::frame\{slot="box"\}\n[^\n]+\n\n:::space\{lines=[\d.]+\}\n\n'
+                                     r'::resource\{id="p01-picture-1"\}\n:::')
 
     def test_a_caption_as_large_as_the_box_text_beside_a_picture_stays_text(self):
         tmp, md, lib, _ = extract(self.beside_page("right", "top", size=11))
@@ -333,8 +335,8 @@ class SingleCaption(unittest.TestCase):
         try:
             # the box lays out its picture and the caption under it (#1186), in a paragraph style of the
             # caption's own look
-            self.assertRegex(md, r'bajan por las laderas\n\n::resource\{id="p01-picture-1"\}\n\n'
-                                 r':::paragraphs\{style="(caption-1)"\}\nEl río Tajo cerca de Toledo\.\n:::\n:::')
+            self.assertRegex(md, r'bajan por las laderas\n\n:::space\{lines=[\d.]+\}\n\n::resource\{id="p01-picture-1"\}\n\n'
+                                 r'(?::::space\{lines=[\d.]+\}\n\n)?:::paragraphs\{style="(caption-1)"\}\nEl río Tajo cerca de Toledo\.\n:::\n:::')
             style = next(s for s in lib["paragraphStyles"] if s["id"] == "caption-1")
             self.assertTrue(style.get("italic"))     # set in italic: its style says so, no `*`
             self.assertEqual(style["textAlign"], "left")
@@ -345,7 +347,7 @@ class SingleCaption(unittest.TestCase):
     def test_a_line_like_the_box_text_stays_in_the_box(self):
         tmp, md, lib, _ = extract(self.box_page("Y el agua sigue su camino hacia el mar.", 11, "helv", 5.0, False))
         try:
-            self.assertRegex(md, r':::frame\{slot="box[^"]*"\}\n[^:]*\n\n::resource\{id="[^"]+"\}\n\n'
+            self.assertRegex(md, r':::frame\{slot="box[^"]*"\}\n[^:]*\n\n:::space\{lines=[\d.]+\}\n\n::resource\{id="[^"]+"\}\n\n'
                                  r'Y el agua sigue su camino hacia el mar\.\n:::')
         finally:
             tmp.cleanup()
