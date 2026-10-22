@@ -1,0 +1,72 @@
+---
+title: "Nummerierte Choralbeispiele in einer Harmonielehre"
+summary: "Vierstimmige Choräle in Humdrum **kern werden Notenressourcen vom Typ example: nummeriert als Notenbeispiel 4.1, mit :ref zitiert und wie Abbildungen platziert."
+plain: "Ein Kapitel über Kadenzen aus einer Harmonielehre fürs Konservatorium, in zwei Spalten. Die fünf Notenbeispiele werden als Text geschrieben, als echte Noten gestochen, wie Abbildungen nummeriert und nahe dem Absatz gesetzt, der sie nennt."
+description: "Eine Harmonielehre in zwei Spalten: fünf vierstimmige Choräle in Humdrum, nummeriert, beschriftet, zitiert und wie Abbildungen platziert, mit dem Code."
+question: "Wie nummeriere ich vierstimmige Notenbeispiele und lasse sie in zwei Spalten wie Abbildungen fließen?"
+aliases: ["Notenbeispiele", "Choral", "vierstimmiger Satz", "SATB", "Humdrum", "kern", "Notenbeispiel 4.1", "Harmonielehre", "Konservatorium", "Stufenbezeichnung", "Kadenzen", "music examples"]
+---
+
+## Was Sie setzen
+
+Kapitel 4 von *Four-Part Harmony*, einer Harmonielehre für die ersten Jahre am Konservatorium, auf einer Seite von 210 × 280 mm in zwei Spalten aus der Crimson Pro. Die Lektion behandelt Kadenzen, und ihre fünf Beispiele sind vierstimmige Choräle auf zwei Systemen mit römischen Stufenziffern unter dem Bass: die fünf Kadenzen in G-Dur, drei Zeilen von *Nun danket alle Gott* und der Genfer Psalm 134 (*Old Hundredth*) vollständig. Jedes trägt eine Nummer von Example 4.1 bis 4.5 (Ejemplo in der spanischen Ausgabe), eine Legende in der Auszeichnungsschrift mit weinrotem Etikett und steht am Kopf oder Fuß der Spalte nach dem Absatz, der es zitiert; der ganze Psalm läuft am Kopf von Seite 63 über beide Spalten. Die Sätze wurden für diese Harmonielehre geschrieben und auf Quint- und Oktavparallelen, Stimmabstände und die Auflösung des Leittons geprüft.
+
+## Zubereitung
+
+### 1 · Jeden Choral in Humdrum **kern schreiben
+
+<Excerpt region="humdrum" />
+
+Humdrum schreibt die Stimmen in Spalten, durch Tabulatoren getrennt, von der tiefsten zur höchsten. Jedes Notensystem ist eine Spalte (*spine*), die `*^` in zwei teilt: Tenor und Bass im Bassschlüssel, Sopran und Alt im Violinschlüssel. So setzt der Notenstecher zwei Stimmen pro System mit getrennten Hälsen (die linke Stimme nach oben, die rechte nach unten). Eine `**harm`-Spalte nach dem Basssystem druckt die Stufen darunter; `Ib` ist die erste Umkehrung, `Ic` der Quartsextakkord. Das Skript schreibt die Spalten mit Leerzeichen und macht Tabulatoren daraus, damit kein Editor die Datei verdirbt, und die spanische Ausgabe erhält ihre Stufen in Großbuchstaben (VI, IIb), wie spanische Harmonielehren sie schreiben.
+
+### 2 · Jedes Beispiel zur Ressource vom Typ example machen
+
+Die [kurze Antwort](#die-kurze-antwort) baut die fünf Ressourcen. `typeId: 'example'` nimmt den eingebauten Typ Notenbeispiel, den die Engine den Ressourcentypen des Buchs hinzufügt, sobald eine Ressource ihn verwendet, benannt in der Sprache des Dokuments (`locale: 'es'` ergibt Ejemplo) und pro Kapitel nummeriert: Das erste Beispiel von Kapitel 4 ist 4.1. Eine Notenressource bleibt ganz und fließt wie eine Abbildung: `position: 'top'` oder `'bottom'` nimmt Kopf oder Fuß der nächsten Spalte mit Platz nach dem Zitat, und `span: 'page'` setzt den *Old Hundredth* über beide Spalten. Legenden, Nachweise und Alternativtexte kommen aus einer zweiten Markdown-Datei pro Ausgabe.
+
+### 3 · Den Spaltenbeispielen ein kleineres System geben
+
+<Excerpt region="scores" />
+
+Die beiden seitenbreiten Choräle folgen dem `scoreStyle` des Dokuments, mit 5,4 mm hohen Systemen und Taktzahlen am Anfang jeder Zeile. Die Beispiele in einer Spalte wählen den benannten Stil `column`: 4,6 mm, keine Taktzahlen und eine Spationierung von 0,8, die die fünf Takte von Beispiel 4.2 in einer Zeile hält, statt den letzten allein in eine zweite zu schicken.
+
+### 4 · Den Notenstecher vor dem Satz starten
+
+<Excerpt region="build" />
+
+`initMusicEngine()` lädt Verovio, den Notenstecher, aus dem Paket; bis er läuft, wird jede Partitur als graue Box gesetzt. Die `continuation` macht dies zu Kapitel 4 eines längeren Buchs, sodass die Beispiele 4.1 bis 4.5 heißen und die Seitenzahlen bei 61 auf einer rechten Seite beginnen.
+
+### 5 · Das Kapitel über beide Spalten öffnen
+
+<Excerpt region="opener" />
+
+Der Auftakt nimmt beide Spalten ein (`span: 'page'` an der Überschrift der ersten Ebene) und holt Dachzeile und Vorspann aus den Attributen der Überschrift. `minHeight` senkt den Text um 46 mm, sodass beide Spalten auf derselben Zeile unter der Linie beginnen.
+
+## Varianten
+
+### Ein Beispiel ohne Nummer in den Text setzen
+
+Ein Codeblock hält eine Partitur im Text, die der Text nicht zitiert, wie eine abgesetzte Formel: ohne Nummer und ohne Legende.
+
+```diff
+- ::resource{id="ex-cadences"}
++ ```humdrum {style="column" alt="Die fünf Kadenzen in G-Dur"}
++ **kern	**harm	**kern
++ …
++ ```
+```
+
+### Sie Musikbeispiele nennen
+
+Legen Sie einen eigenen Typ für einen anderen Namen an und lassen Sie `typeId` darauf zeigen.
+
+```diff
+- resourceTypes: defaultResourceTypes(LANG),
++ resourceTypes: [...defaultResourceTypes(LANG), { id: 'musex', name: 'Musikbeispiel',
++   shortLabel: 'Mb.', captionPrefix: 'Musikbeispiel', numberingTemplate: '{h1}.{n}',
++   resetOn: 'h1', counterFormat: 'decimal' }],
+```
+
+## Häufige Fehler
+
+- Eine Notenressource wird nie zwischen Spalten oder Seiten geteilt. Halten Sie fließende Beispiele auf wenige Takte und setzen Sie ein längeres Stück in einen Codeblock, der zwischen den Zeilen umbricht.
+- Der Notenstecher füllt jede Zeile auf die Breite ihres Platzes, die letzte behält ihre natürliche Breite. Lässt ein Beispiel einen Takt allein in einer zweiten Zeile, senken Sie `spacing` oder die Systemgröße seines Stils.

@@ -1,0 +1,61 @@
+---
+title: "A piano score from MusicXML over several pages"
+summary: "Two keyboard menuets engraved from MusicXML files in a grand staff, broken between systems so each piece runs across a spread, with a score style for players."
+plain: "A short sheet-music edition of two well-known piano minuets. It shows how to take a file exported from notation software and set it as a piano score that continues over pages, laid out so a pianist can play from it."
+description: "Petzold's two menuets from the Anna Magdalena Bach notebook, engraved from MusicXML in a grand staff across two spreads, with the full Postext code and a PDF."
+question: "How do I set a piano score from a MusicXML file over several pages?"
+aliases: ["sheet music", "piano score", "MusicXML", "grand staff", "Minuet in G", "BWV Anh. 114", "Notebook for Anna Magdalena Bach", "performing edition", "page turns", "partitura"]
+---
+
+## What you'll build
+
+A performing edition of the two menuets from the 1725 Notebook for Anna Magdalena Bach, the G major one every piano pupil learns and its G minor companion, now given to Christian Petzold. The page is 230 × 305 mm, the size of a sheet-music album. A recto introduces the pieces in two columns of Libre Caslon under a 52 pt Bodoni title. Then each menuet opens on a verso and runs across the spread in a grand staff of 7 mm, set in Bravura from a MusicXML file: four bars to a system, bars 1–16 on the left page and 17–32 on the right, so the player turns no page inside a piece.
+
+## Method
+
+### 1 · Bring the piece in as MusicXML
+
+The two files in `assets/` are plain MusicXML 4.0, the format Dorico, Sibelius, Finale and MuseScore write when you export a score (choose the uncompressed `.musicxml`, not `.mxl`). They hold one part on two staves, with the clefs, key, beams, stem directions of the two-voice bars, ornaments and repeat barlines. The part name is marked `print-object="no"`: a printed "Piano" label would push every system to the right. The title in `<work-title>` is not printed, only read as the score's description, so the Markdown gives each piece a heading of its own.
+
+### 2 · Set it in a fence, not a resource
+
+The [short answer](#the-short-answer) fetches each file and writes it into a ` ```musicxml ` fence, where the Markdown keeps a placeholder line. A fence is engraved at the width of the column and cut into systems, and each system is placed like a paragraph line, so the piece goes on to the next page between two systems. A `score` resource would be kept whole and could not cross a page. `minSystemsAtBreak: 2` keeps a single system from being left alone at the foot of a page or carried to the head of the next.
+
+### 3 · Size the staff for the player
+
+The staff is 7 mm high, the size of a printed piano album read from the music desk. `spacing: 1.7` widens the notes until a system of the 186 mm measure holds four bars, so each half of a menuet takes four systems. `systemGap: 14 mm` leaves room for the ledger lines between the hands, and with it four systems fill the opening page under the title and four the facing one: the double bar falls at the turn of the spread.
+
+### 4 · Open every piece on a verso
+
+<Excerpt region="openers" />
+
+`breakBefore: { parity: 'even' }` starts each piece on a left-hand page, and the editor's title page uses a heading style that opens on a recto with no running heads. The catalogue number and the composer come from the heading's attributes and sit at the bottom corners of the opener, where engraved editions print them.
+
+### 5 · Name the piece at the head of the right page
+
+<Excerpt region="running-heads" />
+
+The opening page of a piece carries its title, so the running heads are kept to the pages after it (`pages: 'body'`). The recto prints the piece's title and the folio at the outer edge, in the label face at 8 pt.
+
+## Variations
+
+### Set a study edition on a smaller staff
+
+A 6 mm staff at the engraver's own spacing holds seven or eight bars to a system, so each menuet fits on its opening page.
+
+```diff
+-  staffSize: mm(7),
++  staffSize: mm(6),
+-  spacing: 1.7,
++  spacing: 1,
+```
+
+### Number short examples instead
+
+When the music is a set of short examples cited in the text, a numbered `score` resource is the better fit: <RecipeLink slug="conservatory-method-chorales">four-part chorales as numbered examples</RecipeLink>.
+
+## Pitfalls
+
+- System breaks written in the file (`<print new-system="yes">`) are not kept: the systems fill the width of the column, so tune `spacing` and `staffSize` until they hold the bars you want.
+- The engraver does not even out the bars between systems, and the last system is set at its natural width: at 6 mm and `spacing: 1`, bar 32 stands alone on a system of its own. Change `spacing` until the last system holds more than a bar.
+- A compressed `.mxl` file is a zip archive: unzip it, or export the uncompressed format, before you fetch it.

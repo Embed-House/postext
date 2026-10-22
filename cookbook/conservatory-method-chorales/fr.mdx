@@ -1,0 +1,72 @@
+---
+title: "Chorals numérotés dans une méthode d’harmonie"
+summary: "Des chorals à quatre voix écrits en Humdrum **kern deviennent des ressources partition de type exemple : numérotées, citées par :ref, flottantes."
+plain: "Un chapitre sur les cadences d’un traité d’harmonie de conservatoire, en deux colonnes. Ses cinq exemples musicaux sont écrits comme du texte, gravés en partitions, numérotés comme des figures et placés près du paragraphe qui les cite."
+description: "Une méthode d’harmonie en deux colonnes : cinq chorals à quatre voix en Humdrum, numérotés, légendés, cités et flottants comme des figures, avec le code."
+question: "Comment numéroter des exemples à quatre voix et les faire flotter comme des figures sur deux colonnes ?"
+aliases: ["exemples musicaux", "choral", "harmonie à quatre voix", "SATB", "Humdrum", "kern", "Exemple 4.1", "traité d’harmonie", "méthode de conservatoire", "chiffrage des degrés", "cadences"]
+---
+
+## Ce que vous allez composer
+
+Le chapitre 4 de *Four-Part Harmony*, une méthode pour les premières années de conservatoire, sur une page de 210 × 280 mm en deux colonnes de Crimson Pro. La leçon porte sur les cadences, et ses cinq exemples sont des chorals à quatre voix sur deux portées, avec les degrés en chiffres romains sous la basse : les cinq cadences de sol majeur, trois vers de *Nun danket alle Gott* et le psaume 134 de Genève (l’*Old Hundredth*) en entier. Chacun est numéroté de Example 4.1 à 4.5 (Ejemplo dans l’édition espagnole), légendé dans le caractère des étiquettes avec un libellé bordeaux, et placé en tête ou en pied de la colonne qui suit le paragraphe qui le cite ; le psaume entier court sur les deux colonnes en tête de la page 63. Les harmonisations ont été écrites pour cette méthode et vérifiées : quintes et octaves parallèles, écarts entre les voix, résolution de la sensible.
+
+## Préparation
+
+### 1 · Écrire chaque choral en Humdrum **kern
+
+<Excerpt region="humdrum" />
+
+Humdrum écrit les voix en colonnes séparées par des tabulations, de la plus grave à la plus aiguë. Chaque portée est une colonne (*spine*) divisée en deux par `*^` : ténor et basse sur la portée de fa, soprano et alto sur celle de sol, si bien que le graveur met deux voix par portée avec leurs hampes opposées (la voix de gauche vers le haut, celle de droite vers le bas). Une colonne `**harm` après la portée de basse imprime les degrés sous celle-ci ; `Ib` est le premier renversement, `Ic` la quarte et sixte. Le script écrit les colonnes avec des espaces et les change en tabulations : aucun éditeur ne peut casser le fichier, et l’édition espagnole reçoit ses degrés en capitales (VI, IIb), comme les écrivent les traités d’harmonie espagnols.
+
+### 2 · Faire de chaque exemple une ressource de type exemple
+
+La [réponse courte](#la-réponse-courte) construit les cinq ressources. `typeId: 'example'` prend le type Exemple intégré, que le moteur ajoute aux types de ressources du livre quand une ressource l’utilise, nommé dans la langue du document (`locale: 'es'` donne Ejemplo) et numéroté par chapitre : le premier exemple du chapitre 4 est le 4.1. Une ressource partition reste entière et flotte comme une figure : `position: 'top'` ou `'bottom'` prend la tête ou le pied de la prochaine colonne qui a de la place après la citation, et `span: 'page'` étend l’*Old Hundredth* sur les deux colonnes. Légendes, crédits et textes alternatifs viennent d’un second fichier Markdown par édition.
+
+### 3 · Donner aux exemples de colonne une portée plus petite
+
+<Excerpt region="scores" />
+
+Les deux chorals pleine largeur suivent le `scoreStyle` du document, avec des portées de 5,4 mm et des numéros de mesure au début de chaque système. Les exemples de colonne choisissent le style nommé `column` : portées de 4,6 mm, pas de numéros de mesure et un espacement de 0,8, qui garde les cinq mesures de l’exemple 4.2 sur un seul système au lieu de laisser la dernière seule sur un second.
+
+### 4 · Démarrer le graveur avant la composition
+
+<Excerpt region="build" />
+
+`initMusicEngine()` charge Verovio, le graveur, depuis le paquet ; tant qu’il ne tourne pas, chaque partition est mise en page comme une boîte grise. La `continuation` fait de ce chapitre le quatrième d’un livre plus long : les exemples sont numérotés de 4.1 à 4.5 et les folios commencent à 61, sur une belle page.
+
+### 5 · Ouvrir le chapitre sur les deux colonnes
+
+<Excerpt region="opener" />
+
+L’ouverture prend les deux colonnes (`span: 'page'` sur le titre de niveau un) et tire son surtitre et son chapeau des attributs du titre. `minHeight` descend le texte de 46 mm, si bien que les deux colonnes commencent sur la même ligne sous le filet.
+
+## Variantes
+
+### Placer un exemple non numéroté dans le texte
+
+Un bloc de code garde dans le texte une partition que le texte ne cite pas, comme une formule centrée : ni numéro ni légende.
+
+```diff
+- ::resource{id="ex-cadences"}
++ ```humdrum {style="column" alt="Les cinq cadences en sol majeur"}
++ **kern	**harm	**kern
++ …
++ ```
+```
+
+### Les appeler exemples musicaux
+
+Définissez un type à vous pour un autre nom et faites pointer `typeId` dessus.
+
+```diff
+- resourceTypes: defaultResourceTypes(LANG),
++ resourceTypes: [...defaultResourceTypes(LANG), { id: 'musex', name: 'Exemple musical',
++   shortLabel: 'Ex. mus.', captionPrefix: 'Exemple musical', numberingTemplate: '{h1}.{n}',
++   resetOn: 'h1', counterFormat: 'decimal' }],
+```
+
+## Erreurs fréquentes
+
+- Une ressource partition ne se coupe jamais entre deux colonnes ou deux pages. Limitez les exemples flottants à quelques mesures et mettez une pièce plus longue dans un bloc de code, qui se coupe entre les systèmes.
+- Le graveur remplit chaque système jusqu’à la largeur de son emplacement, et le dernier garde sa largeur naturelle. Quand un exemple laisse une mesure seule sur un second système, baissez le `spacing` ou la taille de portée de son style.

@@ -1,0 +1,718 @@
+{
+  "schemaVersion": 1,
+  "slug": "piano-score-from-musicxml",
+  "sourceHash": "65de0b591f857c19e640c7b22bbbdc04d5c1e11ea9ec88110068e8664599b05b",
+  "engine": {
+    "postext": "1.54.0",
+    "postextPdf": "1.54.0",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T09:35:16.440Z",
+  "variants": {
+    "en": {
+      "hash8": "c38bdad1",
+      "vdtHash": "14f7459e081670be6475db6ffd115fde87544936",
+      "timings": {
+        "importMs": 443,
+        "fontsMs": 855,
+        "buildMs": 511,
+        "totalMs": 2724,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          230,
+          305
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Libre Caslon Text",
+          "sizePt": 10,
+          "leadingPt": 14.5
+        },
+        "families": [
+          "Archivo Narrow",
+          "Bodoni Moda",
+          "Libre Caslon Text"
+        ],
+        "pages": 5,
+        "ownLines": 165
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1326,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 116788,
+          "alt": "Opening page 1: Two Menuets."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1326,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 32086,
+          "alt": "Opening page 2: Menuet in G major."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "body",
+          "w": 1000,
+          "h": 1326,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 28626,
+          "alt": "Page 3."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1326,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 31536,
+          "alt": "Opening page 4: Menuet in G minor."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "body",
+          "w": 1000,
+          "h": 1326,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 28910,
+          "alt": "Page 5."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "piano-score-from-musicxml.pdf",
+        "bytes": 185910,
+        "pages": 5
+      },
+      "sandbox": {
+        "file": "piano-score-from-musicxml.postext",
+        "bytes": 19146,
+        "folio": "89f1f81c",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "67b85e2e8ef6dab0",
+            "lines": "1fd35cfa87c9a43c"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "initMusicEngine",
+          "renderPageToCanvas",
+          "renderToPdf"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].breakBefore",
+          "headingStyles[].breakBefore.parity",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headingStyles[].numbered",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].letterSpacing",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "scoreStyle",
+          "scoreStyle.barNumbers",
+          "scoreStyle.color",
+          "scoreStyle.marginBottom",
+          "scoreStyle.marginTop",
+          "scoreStyle.minSystemsAtBreak",
+          "scoreStyle.musicFont",
+          "scoreStyle.spacing",
+          "scoreStyle.staffSize",
+          "scoreStyle.systemGap"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "scoreStyle"
+        ],
+        "configLeaves": 254,
+        "designElements": 12,
+        "directives": [
+          ":::columns",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Archivo Narrow",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 500,
+            "style": "italic"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 500,
+            "style": "normal"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Bodoni Moda",
+            "weight": 500,
+            "style": "normal"
+          },
+          {
+            "family": "Libre Caslon Text",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Libre Caslon Text",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-columns",
+          "code-listings",
+          "heading-attributes",
+          "heading-styles",
+          "music-notation",
+          "opener-design",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "score-style",
+          "section-running-heads",
+          "unnumbered-headings"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.93
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C3",
+            "severity": "warn",
+            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
+          },
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 2.1 % colour, pictures or display type (aim for 25 %+)"
+          }
+        ]
+      }
+    },
+    "es": {
+      "hash8": "730eac7e",
+      "vdtHash": "b2b91fee401cbfe6eceaa8acdf95024957c87bea",
+      "timings": {
+        "importMs": 625,
+        "fontsMs": 694,
+        "buildMs": 422,
+        "totalMs": 2589,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          230,
+          305
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Libre Caslon Text",
+          "sizePt": 10,
+          "leadingPt": 14.5
+        },
+        "families": [
+          "Archivo Narrow",
+          "Bodoni Moda",
+          "Libre Caslon Text"
+        ],
+        "pages": 5,
+        "ownLines": 165
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1326,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 123788,
+          "alt": "Página de apertura 1: Dos minuetos."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1326,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 32562,
+          "alt": "Página de apertura 2: Minueto en sol mayor."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "body",
+          "w": 1000,
+          "h": 1326,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 28686,
+          "alt": "Página 3."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "opener",
+          "w": 1000,
+          "h": 1326,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 32034,
+          "alt": "Página de apertura 4: Minueto en sol menor."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "body",
+          "w": 1000,
+          "h": 1326,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 29058,
+          "alt": "Página 5."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "spread"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "piano-score-from-musicxml.pdf",
+        "bytes": 187941,
+        "pages": 5
+      },
+      "sandbox": {
+        "file": "piano-score-from-musicxml.postext",
+        "bytes": 19353,
+        "folio": "89f1f81c",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "aace70dc97a6c9a6",
+            "lines": "b519c43ddcd1300b"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "initMusicEngine",
+          "renderPageToCanvas",
+          "renderToPdf"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "header.elements[].textTransform",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.minHeight",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].breakBefore",
+          "headingStyles[].breakBefore.parity",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headingStyles[].numbered",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].fontWeight",
+          "headings.levels[].letterSpacing",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].textTransform",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "scoreStyle",
+          "scoreStyle.barNumbers",
+          "scoreStyle.color",
+          "scoreStyle.marginBottom",
+          "scoreStyle.marginTop",
+          "scoreStyle.minSystemsAtBreak",
+          "scoreStyle.musicFont",
+          "scoreStyle.spacing",
+          "scoreStyle.staffSize",
+          "scoreStyle.systemGap"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "scoreStyle"
+        ],
+        "configLeaves": 254,
+        "designElements": 12,
+        "directives": [
+          ":::columns",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Archivo Narrow",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 500,
+            "style": "italic"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 500,
+            "style": "normal"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Archivo Narrow",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Bodoni Moda",
+            "weight": 500,
+            "style": "normal"
+          },
+          {
+            "family": "Libre Caslon Text",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Libre Caslon Text",
+            "weight": 400,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-columns",
+          "code-listings",
+          "heading-attributes",
+          "heading-styles",
+          "music-notation",
+          "opener-design",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "score-style",
+          "section-running-heads",
+          "unnumbered-headings"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.86
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C3",
+            "severity": "warn",
+            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
+          },
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 2.2 % colour, pictures or display type (aim for 25 %+)"
+          }
+        ]
+      }
+    }
+  }
+}

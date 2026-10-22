@@ -1,0 +1,64 @@
+---
+title: "Ejemplos musicales en MEI con aparato crítico en las notas"
+summary: "Bloques MEI 5 grabados en el texto con un pentagrama de 5 mm, variantes codificadas con app, lem y rdg, y el aparato por compás y nota en notas al pie."
+plain: "Un capítulo de un estudio sobre música medieval. Pasajes breves de una rota inglesa del siglo XIII se imprimen como música dentro del texto, y las notas al pie de cada página recogen, compás a compás, dónde discrepan las ediciones antiguas."
+description: "Un capítulo de musicología sobre Sumer is icumen in: ejemplos en MEI grabados en el texto, variantes guardadas en la codificación y el aparato en notas al pie."
+question: "¿Cómo doy a los ejemplos musicales un aparato crítico de variantes de las fuentes en notas al pie?"
+aliases: ["aparato crítico", "ejemplos musicales", "MEI", "Music Encoding Initiative", "variantes", "app lem rdg", "musicología", "edición crítica", "Sumer is icumen in"]
+---
+
+## Lo que vas a componer
+
+El capítulo 3 de un estudio sobre cómo leyeron la música medieval los anticuarios ingleses: cinco páginas de 156 × 234 mm sobre *Sumer is icumen in*, la rota de Reading, y los editores que la pusieron en partitura entre 1776 y 1889. Tres pasajes de la rota van grabados en el texto, en Leipzig y con un pentagrama de 5 mm, con la numeración de compases de la partitura de W. S. Rockstro, y cada comentario cita su aparato al pie de la página: «c. 40, n. 2 la ] sol Hw, Bu». Las notas son breves y densas, como corresponde a un aparato; la música ocupa la medida del texto, y cada lectura procede del artículo de Rockstro en el *Dictionary* de Grove, cosa que el capítulo declara en su segundo párrafo.
+
+## Elaboración
+
+### 1 · Escribe cada ejemplo en MEI, con sus variantes
+
+Los ajustes son [la respuesta corta](#la-respuesta-corta) de arriba; la música va en el Markdown, un bloque ```` ```mei ```` por ejemplo. Donde dos fuentes discrepan, el compás lleva un `<app>` con la lectura adoptada en `<lem>` y la otra en `<rdg source="#Hw #Bu">`. El grabador imprime el lema: el c. 40 del <PageRef page={5}>ejemplo 3.3</PageRef> muestra el la, y el sol de Hawkins y Burney sigue en el archivo para quien abra la codificación. Da a cada bloque un `alt` en el idioma de la página: es lo que leen de la partitura un lector de pantalla y el PDF etiquetado.
+
+### 2 · Ata el aparato a los compases que ve el lector
+
+`barNumbers: 'system'` numera el primer compás de cada sistema, y el `<measure n="37">` de cada bloque arranca la cuenta donde empieza el fragmento en la edición que sigue, así que el ejemplo 3.3 abre en el 37 y una nota que dice «c. 40» remite a un compás que el lector encuentra. La entrada del aparato es una nota al pie corriente, citada desde el párrafo que comenta el compás: lema, corchete de cierre, variante y siglas en cursiva. Una nota no puede citarse desde dentro de una partitura, así que la llamada va en la frase que nombra la lectura.
+
+### 3 · Ajusta la música al texto corrido
+
+Un pentagrama de 5 mm en Leipzig cabe en una medida de 116 mm con cinco o seis compases de 3/2 por sistema, y los once compases del ejemplo 3.3 quedan en dos sistemas. `textFont` compone la letra en Crimson Pro, la letra del texto, y `minSystemsAtBreak: 2` impide que una página acabe con un solo sistema de un ejemplo mientras el resto pasa a la siguiente. El rótulo de cada ejemplo es un título de tercer nivel, de modo que nunca se queda al pie de una página sin su partitura.
+
+### 4 · Deja que una página con notas acabe corta
+
+<Excerpt region="opener" />
+
+La apertura baja el texto 50 mm bajo un título en Cormorant cursiva. Más adelante, una página cuya línea siguiente arrastraría una nota larga acaba unas líneas antes, y `balancing: { maxLinesPerHeading: 1 }` evita que el equilibrado de columnas suba ese hueco encima del título de la sección siguiente, donde parecería un corte en el argumento.
+
+### 5 · Pon el libro en la página par y el capítulo en la impar
+
+<Excerpt region="running-heads" />
+
+Los folios van en rojo de rúbrica en el borde exterior, el libro en la página par y el capítulo en la impar; `pages: 'body'` los quita de la apertura, que lleva un folio centrado al pie.
+
+## Variantes
+
+### Numera todos los compases
+
+Un aparato con muchas entradas por sistema se sigue mejor con un número en cada compás.
+
+```diff
+-  barNumbers: 'system', // the apparatus is keyed by bar: number every system
++  barNumbers: 'every',
+```
+
+### Graba los ejemplos en Bravura
+
+Las cabezas de nota de Bravura, más gruesas, casan con un estilo de grabado en plancha.
+
+```diff
+-  musicFont: 'Leipzig', // lighter than Bravura, close to a 19th-century plate
++  musicFont: 'Bravura',
+```
+
+## Errores frecuentes
+
+- MEI 5 escribe la armadura como `keysig="1f"` en `scoreDef` o `staffDef`. El atributo `key.sig` de MEI 4 se ignora sin aviso, y el bemol desaparece.
+- Pon `lines="5"` en cada `staffDef`: sin él, notas y claves se graban sin pentagrama.
+- El grabador imprime el `<lem>` de un `<app>`, no el `<rdg>`. Una variante que el lector deba ver en la página va en la nota del aparato o en un segundo ejemplo.

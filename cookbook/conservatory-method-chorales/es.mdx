@@ -1,0 +1,72 @@
+---
+title: "Corales numerados en un método de armonía a dos columnas"
+summary: "Corales a cuatro voces escritos en Humdrum **kern pasan a recursos de partitura de tipo ejemplo: numerados, citados con :ref y flotantes como figuras."
+plain: "Un capítulo sobre las cadencias de un libro de armonía de conservatorio, a dos columnas. Sus cinco ejemplos musicales se escriben como texto, se graban como partituras, se numeran como figuras y van junto al párrafo que los cita."
+description: "Un método de armonía a dos columnas: cinco corales a cuatro voces en Humdrum, numerados, con pie, citados y flotantes como figuras, con el código completo."
+question: "¿Cómo numero ejemplos musicales a cuatro voces y los hago flotar como figuras a dos columnas?"
+aliases: ["ejemplos musicales", "coral", "armonía a cuatro voces", "SATB", "Humdrum", "kern", "Ejemplo 4.1", "libro de armonía", "método de conservatorio", "cifrado de grados", "cadencias"]
+---
+
+## Lo que vas a componer
+
+El capítulo 4 de *Armonía a cuatro voces*, un método para los primeros cursos del conservatorio, en una página de 210 × 280 mm a dos columnas de Crimson Pro. La lección trata de las cadencias, y sus cinco ejemplos son corales a cuatro voces en dos pentagramas, con los grados en cifras romanas bajo el bajo: las cinco cadencias de sol mayor, tres versos de *Nun danket alle Gott* y el Salmo 134 de Ginebra completo. Cada uno lleva su número, de Ejemplo 4.1 a 4.5 (Example en la edición inglesa), un pie en la letra de rótulos con la etiqueta en granate, y se coloca en la cabeza o el pie de la columna que sigue al párrafo que lo cita; el salmo entero ocupa las dos columnas en la cabeza de la página 63. Las armonizaciones se escribieron para este método y se revisaron en busca de quintas y octavas paralelas, distancias entre voces y resolución de la sensible.
+
+## Elaboración
+
+### 1 · Escribe cada coral en Humdrum **kern
+
+<Excerpt region="humdrum" />
+
+Humdrum escribe las voces en columnas separadas por tabuladores, de la más grave a la más aguda. Cada pentagrama es una columna (*spine*) dividida en dos con `*^`: tenor y bajo en el pentagrama de fa, soprano y contralto en el de sol, de modo que el grabador pone dos voces por pentagrama con las plicas separadas (la voz de la izquierda hacia arriba, la de la derecha hacia abajo). Una columna `**harm` tras el pentagrama del bajo imprime los grados bajo él; `Ib` es la primera inversión y `Ic`, la cuarta y sexta. El guion escribe las columnas con espacios y las convierte en tabuladores, así ningún editor puede estropear el archivo, y la edición española recibe los grados en mayúsculas (VI, IIb), como los escriben los libros de armonía en español.
+
+### 2 · Haz de cada ejemplo un recurso de tipo ejemplo
+
+La [respuesta corta](#la-respuesta-corta) construye los cinco recursos. `typeId: 'example'` toma el tipo Ejemplo integrado, que el motor añade a los tipos de recurso del libro cuando un recurso lo usa, con el nombre en el idioma del documento (`locale: 'es'` da Ejemplo) y numerado por capítulo, de modo que el primer ejemplo del capítulo 4 es el 4.1. Un recurso de partitura se mantiene entero y flota como una figura: `position: 'top'` o `'bottom'` toma la cabeza o el pie de la siguiente columna con sitio tras la cita, y `span: 'page'` extiende el Salmo 134 por las dos columnas. Los pies, los créditos y los textos alternativos salen de un segundo archivo Markdown por edición.
+
+### 3 · Da a los ejemplos de columna un pentagrama menor
+
+<Excerpt region="scores" />
+
+Los dos corales a lo ancho de la página usan el `scoreStyle` del documento, con pentagramas de 5,4 mm y números de compás al principio de cada sistema. Los ejemplos de columna eligen el estilo con nombre `column`: pentagramas de 4,6 mm, sin números de compás y espaciado 0,8, que mantiene los cinco compases del ejemplo 4.2 en un solo sistema en lugar de dejar el último solo en un segundo.
+
+### 4 · Arranca el grabador antes de componer
+
+<Excerpt region="build" />
+
+`initMusicEngine()` carga Verovio, el grabador, desde el paquete; hasta que arranca, cada partitura se compone como una caja gris. La `continuation` hace de este el capítulo 4 de un libro más largo, así que los ejemplos se numeran del 4.1 al 4.5 y los folios empiezan en el 61, en página impar.
+
+### 5 · Abre el capítulo sobre las dos columnas
+
+<Excerpt region="opener" />
+
+La apertura ocupa las dos columnas (`span: 'page'` en el título de nivel uno) y toma el antetítulo y la entradilla de los atributos del título. `minHeight` hunde el texto 46 mm, de modo que las dos columnas empiezan en la misma línea bajo el filete.
+
+## Variantes
+
+### Pon un ejemplo sin número en el texto
+
+Un bloque de código con la partitura la deja en el texto sin que el texto la cite, como una fórmula destacada: sin número ni pie.
+
+```diff
+- ::resource{id="ex-cadences"}
++ ```humdrum {style="column" alt="Las cinco cadencias en sol mayor"}
++ **kern	**harm	**kern
++ …
++ ```
+```
+
+### Llámalos ejemplos musicales
+
+Define un tipo propio para otro nombre y apunta `typeId` a él.
+
+```diff
+- resourceTypes: defaultResourceTypes(LANG),
++ resourceTypes: [...defaultResourceTypes(LANG), { id: 'musex', name: 'Ejemplo musical',
++   shortLabel: 'Ej. mus.', captionPrefix: 'Ejemplo musical', numberingTemplate: '{h1}.{n}',
++   resetOn: 'h1', counterFormat: 'decimal' }],
+```
+
+## Errores frecuentes
+
+- Un recurso de partitura nunca se parte entre columnas ni entre páginas. Limita los ejemplos flotantes a unos pocos compases y pon las piezas más largas en un bloque de código, que se parte entre sistemas.
+- El grabador llena cada sistema hasta el ancho de su hueco, y el último sistema conserva su ancho natural. Si un ejemplo deja un compás solo en un segundo sistema, baja el `spacing` o el tamaño de pentagrama de su estilo.

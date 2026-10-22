@@ -1,0 +1,61 @@
+---
+title: "Una partitura per pianoforte da MusicXML su più pagine"
+summary: "Due minuetti per tastiera incisi da file MusicXML su doppio pentagramma, spezzati tra un sistema e l’altro perché ogni brano occupi una doppia pagina."
+plain: "Una piccola edizione di due minuetti per pianoforte molto noti. Mostra come prendere un file esportato da un programma di notazione e comporlo come partitura che prosegue da una pagina all’altra, pronta da suonare."
+description: "I due minuetti di Petzold dal quaderno di Anna Magdalena Bach, incisi da MusicXML su doppio pentagramma in due doppie pagine, con il codice completo e un PDF."
+question: "Come compongo una partitura per pianoforte da un file MusicXML su più pagine?"
+aliases: ["spartito", "partitura per pianoforte", "MusicXML", "doppio pentagramma", "accollatura", "Minuetto in sol", "BWV Anh. 114", "Quaderno di Anna Magdalena Bach", "edizione per esecutori", "voltapagina"]
+---
+
+## Che cosa comporrai
+
+Un’edizione per esecutori dei due minuetti del Quaderno di Anna Magdalena Bach del 1725: quello in sol maggiore, che ogni allievo di pianoforte impara, e il suo compagno in sol minore, oggi attribuiti a Christian Petzold. La pagina misura 230 × 305 mm, il formato di un album di spartiti. Una pagina dispari presenta i brani su due colonne di Libre Caslon sotto un titolo di 52 pt in Bodoni. Poi ogni minuetto comincia su una pagina pari e occupa la doppia pagina su un doppio pentagramma di 7 mm, inciso in Bravura da un file MusicXML: quattro battute per sistema, le battute 1–16 a sinistra e 17–32 a destra, così il pianista non gira pagina dentro un brano.
+
+## Preparazione
+
+### 1 · Porta il brano in MusicXML
+
+I due file in `assets/` sono semplice MusicXML 4.0, il formato che Dorico, Sibelius, Finale e MuseScore scrivono quando esporti una partitura (scegli il `.musicxml` non compresso, non il `.mxl`). Contengono una parte su due pentagrammi, con chiavi, armatura, travature, direzione dei gambi nelle battute a due voci, abbellimenti e stanghette di ritornello. Il nome della parte ha `print-object="no"`: un’etichetta «Piano» stampata spingerebbe ogni sistema verso destra. Il titolo in `<work-title>` non si stampa, serve solo da descrizione della partitura, perciò il Markdown dà a ogni brano un titolo proprio.
+
+### 2 · Componilo in un blocco di codice, non come risorsa
+
+La [risposta breve](#la-risposta-breve) scarica ogni file e lo scrive in un blocco ` ```musicxml `, dove il Markdown tiene una riga segnaposto. Un blocco viene inciso alla larghezza della colonna e tagliato in sistemi, e ogni sistema si colloca come una riga di paragrafo: il brano prosegue alla pagina successiva tra due sistemi. Una risorsa `score` resta intera e non potrebbe attraversare una pagina. `minSystemsAtBreak: 2` evita che un sistema resti da solo al piede di una pagina o passi da solo in cima alla successiva.
+
+### 3 · Dimensiona il pentagramma per chi suona
+
+Il pentagramma è alto 7 mm, quanto in un album per pianoforte stampato che si legge dal leggio. `spacing: 1.7` allarga le note finché un sistema di 186 mm di giustezza contiene quattro battute, così ogni metà di un minuetto occupa quattro sistemi. `systemGap: 14 mm` lascia spazio ai tagli addizionali tra le due mani, e con questa distanza stanno quattro sistemi sotto il titolo della prima pagina e quattro su quella a fronte: la doppia stanghetta cade al passaggio da una pagina all’altra della doppia pagina.
+
+### 4 · Apri ogni brano su una pagina pari
+
+<Excerpt region="openers" />
+
+`breakBefore: { parity: 'even' }` fa cominciare ogni brano su una pagina di sinistra, e il frontespizio dell’editore usa uno stile di titolo che apre su pagina dispari senza testatine. Il numero di catalogo e il compositore vengono dagli attributi del titolo e stanno agli angoli inferiori dell’apertura, dove le edizioni incise li stampano.
+
+### 5 · Nomina il brano nella testatina di destra
+
+<Excerpt region="running-heads" />
+
+La prima pagina di un brano porta già il suo titolo, quindi le testatine restano per le pagine seguenti (`pages: 'body'`). La pagina dispari stampa il titolo del brano e il folio sul margine esterno, nel carattere delle etichette a 8 pt.
+
+## Varianti
+
+### Fai un’edizione di studio con un pentagramma più piccolo
+
+Un pentagramma di 6 mm con la spaziatura propria dell’incisore tiene sette o otto battute per sistema, così ogni minuetto sta nella sua prima pagina.
+
+```diff
+-  staffSize: mm(7),
++  staffSize: mm(6),
+-  spacing: 1.7,
++  spacing: 1,
+```
+
+### Numera gli esempi brevi
+
+Quando la musica è fatta di brevi esempi citati nel testo, va meglio una risorsa `score` numerata: <RecipeLink slug="conservatory-method-chorales">corali a quattro voci come esempi numerati</RecipeLink>.
+
+## Errori frequenti
+
+- Gli a capo di sistema scritti nel file (`<print new-system="yes">`) non vengono mantenuti: i sistemi riempiono la larghezza della colonna, quindi regola `spacing` e `staffSize` finché contengono le battute che vuoi.
+- L’incisore non distribuisce le battute tra i sistemi, e l’ultimo sistema si compone alla sua larghezza naturale: a 6 mm e con `spacing: 1`, la battuta 32 resta sola in un sistema. Cambia `spacing` finché l’ultimo sistema ha più di una battuta.
+- Un `.mxl` compresso è un archivio zip: decomprimilo, o esporta il formato non compresso, prima di scaricarlo.

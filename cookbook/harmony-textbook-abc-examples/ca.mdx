@@ -1,0 +1,70 @@
+---
+title: "Un manual d'harmonia amb exemples musicals en ABC"
+summary: "Un capítol sobre les cadències amb exemples en blocs ABC dins del Markdown, gravats a l'amplada de la columna; un d'ells continua a la pàgina següent."
+plain: "Un capítol d'un manual de teoria musical sobre com acaben les frases. Els exemples s'escriuen com a text dins del capítol i Postext els dibuixa com a pentagrames; el més llarg continua a la pàgina següent."
+description: "Un capítol d'un manual d'harmonia: exemples en ABC escrits al Markdown i gravats per Verovio, un partit entre dues pàgines, amb el codi complet."
+question: "Com poso exemples musicals en el text d'un llibre de text, escrits com a notació?"
+aliases: ["exemples musicals", "notació ABC", "manual d'harmonia", "cadències", "xifres romanes", "llibre de teoria musical", "partitura en el text", "Verovio"]
+---
+
+## Què compondràs
+
+El capítol 5 d'un curs d'harmonia al teclat, de 180 × 250 mm en Libre Caslon, sobre les cinc cadències: perfecta, imperfecta, semicadència, plagal i trencada. Cada cadència porta dos paràgrafs breus i un exemple a tres veus amb les seves xifres romanes sota el pentagrama, escrit en ABC dins del mateix Markdown. El capítol acaba amb *Greensleeves* en la menor, amb una xifra romana sobre cada compàs, i aquesta melodia no cap en el que queda de la pàgina 3: hi posa tres sistemes i els dos últims al capdamunt de la pàgina 4, partida entre sistemes igual que un paràgraf es parteix entre línies. La mida del pentagrama, la font musical i l'espaiat es fixen una sola vegada a la configuració, de manera que els cinc exemples i la melodia comparteixen el mateix aspecte.
+
+## Elaboració
+
+### 1 · Escriu l'exemple on el demana el text
+
+Un bloc marcat `abc` conté la notació, i el text continua després. `L:1/2` fa de cada acord sense durada una blanca, `[Bdg]` apila tres notes en una sola veu i una línia `w:` posa una paraula sota cada acord, aquí les xifres romanes. L'atribut `alt` és el que llegeixen un lector de pantalla i el PDF etiquetat en lloc de la imatge.
+
+````md
+```abc {alt="Cadència perfecta en sol major: I, IV, V, I"}
+X:1
+M:4/4
+L:1/2
+K:G
+[Bdg] [ceg] | [Adf] [Bdg] |]
+w: I IV V I
+```
+````
+
+### 2 · Dona a cada partitura l'aspecte del llibre
+
+La [resposta curta](#la-resposta-curta) és tot el disseny de la música: un pentagrama de 5,5 mm, el que fan servir els manuals d'harmonia per a exemples que es llegeixen assegut al piano, Bravura al costat del text en Caslon i les xifres en la lletra del text en lloc de la Times del gravador. `spacing: 1.6` reparteix quatre acords de blanca per un terç de la caixa, de manera que la progressió es llegeix acord per acord. El mateix ajust decideix quants compassos de *Greensleeves* caben en un sistema: tres, en una caixa de 125 mm.
+
+### 3 · Deixa que un exemple llarg continuï
+
+`minSystemsAtBreak: 2` és el que manté llegible *Greensleeves* en passar la pàgina. La melodia surt en cinc sistemes; tres caben al peu de la pàgina 3, així que dos passen a la 4, i cap pàgina no es queda amb un sistema solt. Una partitura de menys de quatre sistemes passa sencera a la pàgina següent, com farien els exemples breus de cadències.
+
+### 4 · Engega el gravador abans de compondre
+
+<Excerpt region="engine" />
+
+Verovio ocupa uns 3,7 MB de WebAssembly, així que el motor només el carrega quan l'hi demanes. Sense `initMusicEngine()` la composició es fa igualment i cada partitura és un recuadre gris de la mida correcta. `renderToPdf` no necessita res més: el PDF dibuixa cada sistema com a traçats vectorials i posa les xifres en la Caslon incrustada.
+
+### 5 · Obre el capítol amb el títol enfonsat
+
+<Excerpt region="opener" />
+
+L'obertura pren l'avanttítol de l'atribut `kicker` del títol i reserva 48 mm, just el que cal per al títol i el seu filet amb el primer exemple encara a la pàgina 1.
+
+## Variants
+
+### Fes servir Leland per a una pàgina més lleugera
+
+Leland, la font de MuseScore, té pals més prims i caps més petits que Bravura; va bé amb un llibre compost en una lletra de text lleugera.
+
+```diff
+-  musicFont: 'Bravura',
++  musicFont: 'Leland',
+```
+
+### Escriu una segona veu en un altre format
+
+El lector d'ABC pren una sola veu. Per a un soprano i un baix en pentagrames diferents, escriu l'exemple en Humdrum o en MusicXML; <RecipeLink slug="conservatory-method-chorales">el mètode de conservatori</RecipeLink> compon així corals a quatre veus.
+
+## Errors freqüents
+
+- Escriu la durada d'un acord dins dels claudàtors, `[B2d2g2]`, o ajusta `L:` al valor de l'acord: una durada després del claudàtor, `[Bdg]2`, es llegeix com la durada per defecte.
+- El lector d'ABC de Verovio dona cada síl·laba d'una línia `w:` a la nota següent i ignora `*` i `_`, així que una línia `w:` no pot saltar-se notes. Per assenyalar uns quants compassos, escriu les marques com a xifrats sobre el pentagrama, com fa l'exemple de *Greensleeves*.
+- Una lletra de text rarament porta els signes ♯ i ♭: escriu «fa sostingut» a la prosa, o el navegador posarà el signe amb una font del sistema.

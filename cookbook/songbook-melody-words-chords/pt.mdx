@@ -1,0 +1,62 @@
+---
+title: "Um cancioneiro com melodia, letra e acordes"
+summary: "Cada canção é um bloco ABC: a melodia, as cifras sobre a pauta e a primeira estrofe sob as notas, gravadas na largura da coluna por um estilo de partitura."
+plain: "Um pequeno cancioneiro para cantar em volta da mesa. Cada canção é escrita como texto simples numa notação musical chamada ABC, e o Postext desenha a pauta, as notas, os acordes de violão e a letra sob as notas."
+description: "Um cancioneiro no Postext: melodias em ABC com cifras e a primeira estrofe sob as notas, gravadas pelo Verovio, as demais estrofes em colunas, com o código."
+question: "Como componho um cancioneiro com a melodia, a letra sob as notas e as cifras dos acordes?"
+aliases: ["cancioneiro", "hinário", "lead sheet", "letra sob as notas", "cifras", "acordes de violão", "notação ABC", "songbook"]
+---
+
+## O que você vai compor
+
+*Songs for the Long Table*, um cancioneiro de bolso em formato A5: uma folha de rosto cor de garança, um recado para quem canta com o sumário, três canções e as notas sobre a origem de cada uma. Cada canção abre sob um número grande cor de garança, um título em Fraunces e uma linha de créditos em versaletes. Abaixo, a melodia corre numa pauta de 5,5 mm em Leland, com os acordes de violão sobre os compassos e a primeira estrofe sob as notas em Spectral, a fonte de texto do livro. As demais estrofes ficam em duas colunas, e quem canta lê direto para baixo a partir do último compasso. *Amazing Grace*, cujos versos longos quebrariam numa coluna, põe as estrofes uma sob a outra, centralizadas. A edição em espanhol é um cancioneiro de aniversário com três canções mais curtas, duas por página.
+
+## Preparo
+
+### 1 · Escreva a canção e defina a partitura uma única vez
+
+O estilo de partitura é [a resposta curta](#a-resposta-curta) acima. No Markdown, cada canção é um bloco ```` ```abc ````: as linhas de cabeçalho dão o compasso, a figura de referência e a tonalidade; o nome de um acorde entre aspas duplas (`"D7"A`) sai impresso sobre a nota que ele antecede; uma linha `w:` sob a música põe uma sílaba sob cada nota, separadas por hifens. Uma melodia com estrofe e refrão são duas linhas de música, cada uma com sua linha `w:`. O tamanho da pauta, a fonte musical, a fonte da letra, os números de compasso e o espaço entre os sistemas vêm de `scoreStyle`, de modo que as três canções combinam e os blocos levam só música.
+
+### 2 · Abra cada canção sob seu número e seus créditos
+
+<Excerpt region="song-head" />
+
+A canção é um título de primeiro nível com um atributo `credit`, e o design dele compõe com isso o número, o título e a linha de créditos. `minHeight` dá a todas as canções a mesma cabeça de 21 mm, e assim as pautas começam na mesma altura em cada página. As canções vêm em sequência, com três linhas de espaço sobre cada título, e uma partitura nunca é cortada antes do segundo sistema (`minSystemsAtBreak: 2`): as canções em inglês ocupam uma página cada, e duas das canções curtas em espanhol dividem uma.
+
+### 3 · Ponha as outras estrofes em duas colunas
+
+<Excerpt region="verse" />
+
+Cada estrofe é um bloco `:::verse`, então os versos quebram onde o poeta os quebrou e o segundo e o quarto entram um eme. Um grupo `:::columns{count=2 gap=4mm}` as coloca lado a lado em 9,4 pt. Conte os caracteres antes: os versos de Burns cabem numa coluna de 55 mm, o metro longo de Newton não, e por isso *Amazing Grace* mantém um único bloco `:::verse` centralizado e deixa que as linhas em branco separem as estrofes.
+
+### 4 · Deixe discretos os elementos fixos
+
+<Excerpt region="heads" />
+
+Os cabeçalhos estão em todas as páginas que as canções alcançam, o título do livro na página par e a canção na ímpar, com o fólio na cor de garança dos números das canções. A folha de rosto e o recado para quem canta os removem com um `header` vazio nos seus estilos de título.
+
+## Variações
+
+### Grave em Bravura
+
+Bravura tem cabeças de nota mais grossas e o aspecto de uma chapa gravada; combina com um hinário composto numa fonte de texto mais escura.
+
+```diff
+-  musicFont: 'Leland', // lighter noteheads than Bravura, close to Spectral's colour
++  musicFont: 'Bravura',
+```
+
+### Numere os compassos
+
+Um coro ensaia pelos números de compasso; imprima um no início de cada sistema.
+
+```diff
+-  barNumbers: 'none', // a table of singers counts verses, not bars
++  barNumbers: 'system',
+```
+
+## Erros comuns
+
+- O leitor ABC do Verovio ignora as marcas de sustentação `_` e `*` de uma linha `w:`: cada nota pega a sílaba seguinte. Sob a segunda nota de uma ligadura de expressão, escreva um espaço não separável (U+00A0) como sílaba própria; ele não imprime nada. Notas unidas por ligadura de valor não levam sílaba.
+- `~` junta duas sílabas sob uma mesma nota (`de~a-trás`), mas o gravador as imprime com um espaço comum, sem o sinal de elisão.
+- Escreva as cifras sem ♭ nem ♯ quando puder: a maioria das fontes de texto não tem esses sinais e a página recorre a uma fonte do sistema. Escolha tonalidades com acordes naturais (G, C, D7, Em) ou escreva “si bemol” no texto.

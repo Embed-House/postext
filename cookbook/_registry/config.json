@@ -584,5 +584,35 @@
       "de": "Inhaltsprüfung (Konfiguration)",
       "it": "Controllo del contenuto (configurazione)"
     }
+  },
+  "scoreStyle": {
+    "slug": "configuration-resources",
+    "heading": {
+      "en": "Score style",
+      "es": "Estilo de partitura",
+      "ca": "Estil de partitura",
+      "zh": "乐谱样式",
+      "ar": "نمط المدوّنة الموسيقية",
+      "ja": "楽譜スタイル",
+      "pt": "Estilo de partitura",
+      "fr": "Style de partition",
+      "de": "Notenstil",
+      "it": "Stile di partitura"
+    }
+  },
+  "scoreStyles": {
+    "slug": "configuration-resources",
+    "heading": {
+      "en": "Score style",
+      "es": "Estilo de partitura",
+      "ca": "Estil de partitura",
+      "zh": "乐谱样式",
+      "ar": "نمط المدوّنة الموسيقية",
+      "ja": "楽譜スタイル",
+      "pt": "Estilo de partitura",
+      "fr": "Style de partition",
+      "de": "Notenstil",
+      "it": "Stile di partitura"
+    }
   }
 }

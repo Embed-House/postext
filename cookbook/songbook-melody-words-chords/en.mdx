@@ -1,0 +1,62 @@
+---
+title: "A songbook with melody, words and chords"
+summary: "Each song is an ABC fence: the melody, chord names over the staff and the first verse under the notes, engraved at the column's width by one score style."
+plain: "A small songbook for singing round a table. Each song is written as plain text in a music notation called ABC, and Postext draws the staff, the notes, the guitar chords and the words under the notes. The other verses follow in two columns."
+description: "A songbook in Postext: melodies in ABC with chord symbols and the first verse under the notes, engraved by Verovio, more verses in columns, with the code."
+question: "How do I set a songbook with the melody, the words under the notes and chord symbols?"
+aliases: ["songbook", "hymnal", "lead sheet", "lyrics under notes", "chord symbols", "ABC notation", "melody with words", "sheet music"]
+---
+
+## What you'll build
+
+*Songs for the Long Table*, a pocket songbook on an A5 trim: a madder title page, a note to the singers with the contents, three songs and the notes on where each one comes from. Every song opens under a large madder number, a Fraunces title and a small-capitals credit line. Below it the melody runs on a 5.5 mm staff in Leland, with the guitar chords over the bars and the first verse under the notes in Spectral, the book's text face. The remaining verses stand in two columns, so a singer reads straight down from the last bar. *Amazing Grace*, whose long lines would turn over in a column, sets its verses one under another, centred. The Spanish edition is a birthday songbook with three shorter songs, two to a page.
+
+## Method
+
+### 1 · Write the song, style the score once
+
+The score style is [the short answer](#the-short-answer) above. In the Markdown each song is an ```` ```abc ```` fence: the header lines give the metre, the note length and the key; a chord name in double quotes (`"D7"A`) prints over the note it stands before; a `w:` line under the music puts one syllable under each note, split with hyphens. A tune with a verse and a chorus is two music lines, each with its own `w:` line. Staff size, music font, the face of the words, the bar numbers and the gap between systems come from `scoreStyle`, so the three songs match and the fences hold nothing but music.
+
+### 2 · Open each song under its number and credit
+
+<Excerpt region="song-head" />
+
+The song is a first-level heading with a `credit` attribute, and its design sets the number, the title and the credit line from it. `minHeight` gives every song the same 21 mm head, so the staves start at the same depth on each page. The songs run on with three lines of space above each title, and a score is never split before its second system (`minSystemsAtBreak: 2`): the English songs fill a page each, and two of the short Spanish songs share one.
+
+### 3 · Set the other verses in two columns
+
+<Excerpt region="verse" />
+
+Each stanza is a `:::verse` block, so its lines break where the poet broke them and the second and fourth lines indent by one em. A `:::columns{count=2 gap=4mm}` group sets them side by side at 9.4 pt. Count the characters first: Burns's lines fit a 55 mm column, Newton's long metre does not, so *Amazing Grace* keeps a single centred `:::verse` block and lets the blank lines part its stanzas.
+
+### 4 · Keep the furniture quiet
+
+<Excerpt region="heads" />
+
+The running heads are on every page the songs reach, the book title on the verso and the song on the recto, with the folio in the madder of the song numbers. The title page and the note to the singers clear them with an empty `header` in their heading styles.
+
+## Variations
+
+### Engrave in Bravura
+
+Bravura has heavier noteheads and the look of an engraved plate; it suits a hymnal set in a darker text face.
+
+```diff
+-  musicFont: 'Leland', // lighter noteheads than Bravura, close to Spectral's colour
++  musicFont: 'Bravura',
+```
+
+### Number the bars
+
+A choir rehearses by bar numbers; print one at the start of every system.
+
+```diff
+-  barNumbers: 'none', // a table of singers counts verses, not bars
++  barNumbers: 'system',
+```
+
+## Pitfalls
+
+- Verovio's ABC reader ignores the `_` and `*` hold marks of a `w:` line: every note takes the next syllable. Under the second note of a slur, write a no-break space (U+00A0) as a syllable of its own; it prints nothing. Tied notes take no syllable.
+- `~` joins two syllables under one note (`de~a-trás`), but the engraver prints them with a plain space, not a tie.
+- Write chord names without ♭ or ♯ when you can: most text faces have no such signs and the page falls back to a system font. Choose keys whose chords are naturals (G, C, D7, Em), or spell B-flat in the prose.

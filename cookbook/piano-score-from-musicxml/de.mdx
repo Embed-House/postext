@@ -1,0 +1,61 @@
+---
+title: "Ein Klaviersatz aus MusicXML über mehrere Seiten"
+summary: "Zwei Menuette für Tasteninstrument, aus MusicXML-Dateien im Klaviersystem gestochen und zwischen Systemen geteilt, sodass jedes Stück eine Doppelseite füllt."
+plain: "Eine kleine Notenausgabe mit zwei bekannten Klaviermenuetten. Sie zeigt, wie eine aus einem Notensatzprogramm exportierte Datei als Klaviernoten gesetzt wird, die über die Seiten weiterlaufen und spielbar sind."
+description: "Petzolds zwei Menuette aus dem Notenbüchlein für Anna Magdalena Bach, aus MusicXML im Klaviersystem über zwei Doppelseiten gestochen, mit Postext-Code und PDF."
+question: "Wie setze ich einen Klaviersatz aus einer MusicXML-Datei über mehrere Seiten?"
+aliases: ["Noten", "Klaviernoten", "MusicXML", "Klaviersystem", "Akkolade", "Menuett in G", "BWV Anh. 114", "Notenbüchlein für Anna Magdalena Bach", "Spielausgabe", "Wendestelle", "sheet music"]
+---
+
+## Was Sie setzen
+
+Eine Spielausgabe der beiden Menuette aus dem Notenbüchlein für Anna Magdalena Bach von 1725: das G-Dur-Menuett, das jeder Klavierschüler lernt, und sein Gegenstück in g-Moll, heute Christian Petzold zugeschrieben. Die Seite misst 230 × 305 mm, das Format eines Notenalbums. Eine rechte Seite stellt die Stücke in zwei Spalten Libre Caslon unter einem 52-pt-Titel in Bodoni vor. Danach beginnt jedes Menuett auf einer linken Seite und läuft über die Doppelseite, in einem Klaviersystem mit 7 mm hohen Notenzeilen, aus einer MusicXML-Datei in Bravura gestochen: vier Takte je System, Takt 1–16 links und 17–32 rechts, sodass innerhalb eines Stücks nicht umgeblättert wird.
+
+## Zubereitung
+
+### 1 · Das Stück als MusicXML holen
+
+Die beiden Dateien in `assets/` sind gewöhnliches MusicXML 4.0, das Format, das Dorico, Sibelius, Finale und MuseScore beim Export schreiben (wählen Sie das unkomprimierte `.musicxml`, nicht `.mxl`). Sie enthalten eine Stimme auf zwei Notenzeilen, mit Schlüsseln, Vorzeichen, Balken, der Halsrichtung in den zweistimmigen Takten, Verzierungen und Wiederholungszeichen. Der Stimmenname trägt `print-object="no"`: ein gedrucktes Etikett „Piano“ würde jedes System nach rechts schieben. Der Titel in `<work-title>` wird nicht gedruckt, er dient nur als Beschreibung der Noten; darum gibt das Markdown jedem Stück eine eigene Überschrift.
+
+### 2 · In einen Codeblock setzen, nicht als Ressource
+
+Die [kurze Antwort](#die-kurze-antwort) lädt jede Datei und schreibt sie in einen ` ```musicxml `-Block, in dem das Markdown eine Platzhalterzeile hält. Ein Block wird in der Breite der Spalte gestochen und in Systeme geteilt, und jedes System wird wie eine Absatzzeile platziert: Das Stück läuft zwischen zwei Systemen auf der nächsten Seite weiter. Eine `score`-Ressource bleibt ganz und könnte keine Seite überqueren. `minSystemsAtBreak: 2` verhindert, dass ein System allein am Fuß einer Seite stehen bleibt oder allein an den Kopf der nächsten wandert.
+
+### 3 · Die Notenzeile für den Spieler bemessen
+
+Die Notenzeile ist 7 mm hoch, so groß wie in einem gedruckten Klavieralbum, das vom Notenpult gelesen wird. `spacing: 1.7` zieht die Noten auseinander, bis ein System auf 186 mm Satzbreite vier Takte enthält; jede Hälfte eines Menuetts braucht damit vier Systeme. `systemGap: 14 mm` lässt Platz für die Hilfslinien zwischen den Händen, und mit diesem Abstand passen vier Systeme unter den Titel der ersten Seite und vier auf die gegenüberliegende: Der Doppelstrich fällt auf den Seitenwechsel der Doppelseite.
+
+### 4 · Jedes Stück auf einer linken Seite eröffnen
+
+<Excerpt region="openers" />
+
+`breakBefore: { parity: 'even' }` lässt jedes Stück auf einer linken Seite beginnen, und die Titelseite des Herausgebers nutzt einen Überschriftenstil, der auf einer rechten Seite ohne Kolumnentitel öffnet. Werkverzeichnisnummer und Komponist kommen aus den Attributen der Überschrift und stehen in den unteren Ecken des Auftakts, wo gestochene Ausgaben sie drucken.
+
+### 5 · Das Stück im Kolumnentitel der rechten Seite nennen
+
+<Excerpt region="running-heads" />
+
+Die erste Seite eines Stücks trägt schon seinen Titel, also bleiben die Kolumnentitel den folgenden Seiten vorbehalten (`pages: 'body'`). Die rechte Seite druckt den Titel des Stücks und die Seitenzahl am Außenrand, in der Auszeichnungsschrift zu 8 pt.
+
+## Varianten
+
+### Eine Studienausgabe mit kleinerer Notenzeile setzen
+
+Eine 6-mm-Notenzeile mit dem eigenen Abstand des Notenstechers fasst sieben oder acht Takte je System, sodass jedes Menuett auf seine erste Seite passt.
+
+```diff
+-  staffSize: mm(7),
++  staffSize: mm(6),
+-  spacing: 1.7,
++  spacing: 1,
+```
+
+### Kurze Beispiele nummerieren
+
+Besteht die Musik aus kurzen Beispielen, die der Text zitiert, passt eine nummerierte `score`-Ressource besser: <RecipeLink slug="conservatory-method-chorales">vierstimmige Choräle als nummerierte Notenbeispiele</RecipeLink>.
+
+## Häufige Fehler
+
+- Systemumbrüche, die in der Datei stehen (`<print new-system="yes">`), bleiben nicht erhalten: Die Systeme füllen die Spaltenbreite, also stellen Sie `spacing` und `staffSize` ein, bis sie die gewünschten Takte enthalten.
+- Der Notenstecher verteilt die Takte nicht gleichmäßig auf die Systeme, und das letzte System wird in seiner natürlichen Breite gesetzt: Bei 6 mm und `spacing: 1` steht Takt 32 allein in einem System. Ändern Sie `spacing`, bis das letzte System mehr als einen Takt enthält.
+- Eine komprimierte `.mxl`-Datei ist ein Zip-Archiv: Entpacken Sie sie oder exportieren Sie das unkomprimierte Format, bevor Sie sie laden.

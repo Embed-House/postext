@@ -1,0 +1,64 @@
+---
+title: "Exemples musicals en MEI amb aparat crític a les notes"
+summary: "Blocs MEI 5 gravats dins del text amb un pentagrama de 5 mm, variants codificades amb app, lem i rdg, i l’aparat per compàs i nota en notes a peu de pàgina."
+plain: "Un capítol d’un estudi sobre música medieval. Passatges breus d’una rota anglesa del segle XIII s’imprimeixen com a música dins del text, i les notes al peu de cada pàgina recullen, compàs a compàs, on discrepen les edicions antigues."
+description: "Un capítol de musicologia sobre Sumer is icumen in: exemples en MEI gravats al text, variants desades a la codificació i l’aparat en notes a peu de pàgina."
+question: "Com dono als exemples musicals un aparat crític de variants de les fonts en notes a peu de pàgina?"
+aliases: ["aparat crític", "exemples musicals", "MEI", "Music Encoding Initiative", "variants", "app lem rdg", "musicologia", "edició crítica", "Sumer is icumen in"]
+---
+
+## Què compondràs
+
+El capítol 3 d’un estudi sobre com van llegir la música medieval els antiquaris anglesos: cinc pàgines de 156 × 234 mm sobre *Sumer is icumen in*, la rota de Reading, i els editors que la van posar en partitura entre 1776 i 1889. Tres passatges de la rota van gravats dins del text, en Leipzig i amb un pentagrama de 5 mm, amb la numeració de compassos de la partitura de W. S. Rockstro, i cada comentari cita el seu aparat al peu de la pàgina: «c. 40, n. 2 la ] sol Hw, Bu». Les notes són breus i denses, com pertoca a un aparat; la música ocupa la mesura del text, i cada lectura prové de l’article de Rockstro al *Dictionary* de Grove, cosa que el capítol declara al segon paràgraf.
+
+## Elaboració
+
+### 1 · Escriu cada exemple en MEI, amb les seves variants
+
+Els ajustos són [la resposta curta](#la-resposta-curta) de dalt; la música va al Markdown, un bloc ```` ```mei ```` per exemple. On dues fonts discrepen, el compàs porta un `<app>` amb la lectura adoptada a `<lem>` i l’altra a `<rdg source="#Hw #Bu">`. El gravador imprimeix el lema: el c. 40 de l’<PageRef page={5}>exemple 3.3</PageRef> mostra el la, i el sol de Hawkins i Burney continua a l’arxiu per a qui obri la codificació. Dona a cada bloc un `alt` en la llengua de la pàgina: és el que llegeixen de la partitura un lector de pantalla i el PDF etiquetat.
+
+### 2 · Lliga l’aparat als compassos que veu el lector
+
+`barNumbers: 'system'` numera el primer compàs de cada sistema, i el `<measure n="37">` de cada bloc comença el compte on comença el fragment a l’edició que segueix, de manera que l’exemple 3.3 obre al 37 i una nota que diu «c. 40» remet a un compàs que el lector troba. L’entrada de l’aparat és una nota a peu de pàgina corrent, citada des del paràgraf que comenta el compàs: lema, claudàtor de tancament, variant i sigles en cursiva. Una nota no es pot citar des de dins d’una partitura, així que la crida va a la frase que anomena la lectura.
+
+### 3 · Ajusta la música al text corregut
+
+Un pentagrama de 5 mm en Leipzig cap en una mesura de 116 mm amb cinc o sis compassos de 3/2 per sistema, i els onze compassos de l’exemple 3.3 queden en dos sistemes. `textFont` compon la lletra en Crimson Pro, la lletra del text, i `minSystemsAtBreak: 2` impedeix que una pàgina acabi amb un sol sistema d’un exemple mentre la resta passa a la següent. El rètol de cada exemple és un títol de tercer nivell, de manera que mai no es queda al peu d’una pàgina sense la seva partitura.
+
+### 4 · Deixa que una pàgina amb notes acabi curta
+
+<Excerpt region="opener" />
+
+L’obertura baixa el text 50 mm sota un títol en Cormorant cursiva. Més endavant, una pàgina la línia següent de la qual arrossegaria una nota llarga acaba unes línies abans, i `balancing: { maxLinesPerHeading: 1 }` evita que l’equilibrat de columnes pugi aquest buit damunt del títol de la secció següent, on semblaria un tall en l’argument.
+
+### 5 · Posa el llibre a la pàgina parella i el capítol a la senar
+
+<Excerpt region="running-heads" />
+
+Els folis van en vermell de rúbrica a la vora exterior, el llibre a la pàgina parella i el capítol a la senar; `pages: 'body'` els treu de l’obertura, que porta un foli centrat al peu.
+
+## Variants
+
+### Numera tots els compassos
+
+Un aparat amb moltes entrades per sistema se segueix millor amb un número a cada compàs.
+
+```diff
+-  barNumbers: 'system', // the apparatus is keyed by bar: number every system
++  barNumbers: 'every',
+```
+
+### Grava els exemples en Bravura
+
+Els caps de nota de Bravura, més gruixuts, lliguen amb un estil de gravat en planxa.
+
+```diff
+-  musicFont: 'Leipzig', // lighter than Bravura, close to a 19th-century plate
++  musicFont: 'Bravura',
+```
+
+## Errors freqüents
+
+- MEI 5 escriu l’armadura com a `keysig="1f"` a `scoreDef` o `staffDef`. L’atribut `key.sig` de MEI 4 s’ignora sense avís, i el bemoll desapareix.
+- Posa `lines="5"` a cada `staffDef`: sense això, notes i claus es graven sense pentagrama.
+- El gravador imprimeix el `<lem>` d’un `<app>`, no el `<rdg>`. Una variant que el lector hagi de veure a la pàgina va a la nota de l’aparat o en un segon exemple.

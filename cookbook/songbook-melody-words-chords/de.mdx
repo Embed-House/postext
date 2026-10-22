@@ -1,0 +1,62 @@
+---
+title: "Ein Liederbuch mit Melodie, Text und Akkorden"
+summary: "Jedes Lied ist ein ABC-Block: die Melodie, Akkordsymbole über den Noten und die erste Strophe darunter, in Spaltenbreite gestochen nach einem Notenstil."
+plain: "Ein kleines Liederbuch zum Singen am Tisch. Jedes Lied steht als einfacher Text in einer Notenschrift namens ABC, und Postext zeichnet die Notenzeile, die Noten, die Gitarrenakkorde und den Text unter den Noten."
+description: "Ein Liederbuch in Postext: Melodien in ABC mit Akkordsymbolen und der ersten Strophe unter den Noten, von Verovio gestochen, Strophen in Spalten, mit Code."
+question: "Wie setze ich ein Liederbuch mit der Melodie, dem Text unter den Noten und Akkordsymbolen?"
+aliases: ["Liederbuch", "Gesangbuch", "Leadsheet", "Text unter den Noten", "Akkordsymbole", "ABC-Notation", "Melodie mit Text", "songbook"]
+---
+
+## Was Sie setzen
+
+*Songs for the Long Table*, ein Liederbuch im Taschenformat A5: eine krapprote Titelseite, ein Wort an die Singenden mit dem Inhaltsverzeichnis, drei Lieder und Anmerkungen dazu, woher jedes stammt. Jedes Lied beginnt unter einer großen krapproten Nummer, einem Titel in der Fraunces und einer Zeile mit den Urhebern in Kapitälchen. Darunter läuft die Melodie auf einer 5,5 mm hohen Notenzeile in Leland, mit den Gitarrenakkorden über den Takten und der ersten Strophe unter den Noten in der Spectral, der Textschrift des Buches. Die übrigen Strophen stehen in zwei Spalten, sodass man vom letzten Takt aus gerade nach unten weiterliest. *Amazing Grace*, dessen lange Verse in einer Spalte umbrechen würden, setzt seine Strophen zentriert untereinander. Die spanische Ausgabe ist ein Geburtstagsliederbuch mit drei kürzeren Liedern, zwei auf einer Seite.
+
+## Zubereitung
+
+### 1 · Das Lied schreiben, den Notenstil einmal festlegen
+
+Der Notenstil steht in [der kurzen Antwort](#die-kurze-antwort) oben. Im Markdown ist jedes Lied ein ```` ```abc ````-Block: Die Kopfzeilen geben Taktart, Grundnotenwert und Tonart an; ein Akkordname in doppelten Anführungszeichen (`"D7"A`) steht über der Note, der er vorangeht; eine `w:`-Zeile unter der Musik setzt eine Silbe unter jede Note, mit Bindestrichen getrennt. Eine Melodie mit Strophe und Refrain besteht aus zwei Musikzeilen, jede mit ihrer eigenen `w:`-Zeile. Größe der Notenzeile, Notenschrift, die Schrift des Textes, die Taktzahlen und der Abstand zwischen den Systemen kommen aus `scoreStyle`. So passen die drei Lieder zusammen, und die Blöcke enthalten nur Musik.
+
+### 2 · Jedes Lied unter seiner Nummer und seinen Urhebern beginnen
+
+<Excerpt region="song-head" />
+
+Das Lied ist eine Überschrift erster Ebene mit einem Attribut `credit`, und ihr Design setzt daraus die Nummer, den Titel und die Urheberzeile. `minHeight` gibt jedem Lied denselben 21 mm hohen Kopf, sodass die Notenzeilen auf jeder Seite in derselben Höhe beginnen. Die Lieder laufen fortlaufend weiter, mit drei Zeilen Abstand über jedem Titel, und ein Notensatz wird nie vor seinem zweiten System umbrochen (`minSystemsAtBreak: 2`): Die englischen Lieder füllen je eine Seite, und zwei der kurzen spanischen Lieder teilen sich eine.
+
+### 3 · Die übrigen Strophen in zwei Spalten setzen
+
+<Excerpt region="verse" />
+
+Jede Strophe ist ein `:::verse`-Block, sodass ihre Zeilen dort umbrechen, wo der Dichter sie umbrochen hat, und die zweite und vierte Zeile um ein Geviert eingezogen sind. Eine Gruppe `:::columns{count=2 gap=4mm}` stellt sie in 9,4 pt nebeneinander. Zählen Sie vorher die Zeichen: Die Verse von Burns passen in eine 55 mm breite Spalte, Newtons Langvers nicht, deshalb behält *Amazing Grace* einen einzigen zentrierten `:::verse`-Block, in dem Leerzeilen die Strophen trennen.
+
+### 4 · Die festen Seitenelemente zurückhaltend halten
+
+<Excerpt region="heads" />
+
+Die Kolumnentitel stehen auf jeder Seite, die die Lieder erreichen, der Buchtitel auf der linken und das Lied auf der rechten Seite, mit der Pagina im Krapprot der Liednummern. Die Titelseite und das Wort an die Singenden entfernen sie mit einem leeren `header` in ihren Überschriftenstilen.
+
+## Varianten
+
+### In Bravura stechen
+
+Bravura hat kräftigere Notenköpfe und wirkt wie von einer gestochenen Platte gedruckt; sie passt zu einem Gesangbuch in einer dunkleren Textschrift.
+
+```diff
+-  musicFont: 'Leland', // lighter noteheads than Bravura, close to Spectral's colour
++  musicFont: 'Bravura',
+```
+
+### Die Takte nummerieren
+
+Ein Chor probt nach Taktzahlen; drucken Sie eine am Anfang jedes Systems.
+
+```diff
+-  barNumbers: 'none', // a table of singers counts verses, not bars
++  barNumbers: 'system',
+```
+
+## Häufige Fehler
+
+- Der ABC-Leser von Verovio übergeht die Haltezeichen `_` und `*` einer `w:`-Zeile: Jede Note nimmt die nächste Silbe. Schreiben Sie unter die zweite Note eines Bogens ein geschütztes Leerzeichen (U+00A0) als eigene Silbe; es druckt nichts. Übergebundene Noten bekommen keine Silbe.
+- `~` verbindet zwei Silben unter einer Note (`de~a-trás`), aber der Notenstecher druckt sie mit einem normalen Leerzeichen, ohne Verbindungsbogen.
+- Schreiben Sie Akkordnamen möglichst ohne ♭ oder ♯: Die meisten Textschriften haben diese Zeichen nicht, und die Seite weicht auf eine Systemschrift aus. Wählen Sie Tonarten, deren Akkorde ohne Vorzeichen auskommen (G, C, D7, Em), oder nennen Sie B-Dur im Fließtext mit Worten.

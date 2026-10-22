@@ -1,0 +1,68 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 167,
+  "status": "published",
+  "chapter": "figures",
+  "order": 120,
+  "level": 2,
+  "genres": ["any"],
+  "outputs": ["canvas", "pdf"],
+  "features": {
+    "primary": ["music-notation", "score-style"],
+    "also": [
+      "opener-design",
+      "heading-attributes",
+      "heading-styles",
+      "running-heads",
+      "mirrored-margins",
+      "page-role-filters",
+      "callout-columns",
+      "paragraph-styles",
+      "color-palette",
+      "pdf-export"
+    ]
+  },
+  "answers": ["Q192"],
+  "gotchas": [],
+  "related": [
+    "harmony-textbook-abc-examples",
+    "conservatory-method-chorales",
+    "songbook-melody-words-chords",
+    "musicology-mei-apparatus"
+  ],
+  "engine": { "postext": "1.54.0", "postextPdf": "1.54.0" },
+  "kit": ["core", "fonts", "viewer", "pdf"],
+  "sample": { "locales": ["en", "es"] },
+  "capture": {
+    "hero": [2, 3],
+    "card": "spread",
+    "pages": "all",
+    "expect": { "pages": [5, 5] }
+  },
+  "downloads": { "pdf": true },
+  "folio": {
+    "paper": { "type": "uncoated", "grammage": 120, "texture": "vellum", "shade": "#fcfbf8" },
+    "binding": { "type": "saddleStitch", "cover": "case", "coverMaterial": "paper", "coverColor": "#2f5a46" },
+    "surface": { "type": "oak" },
+    "lighting": { "environment": "studio" }
+  },
+  "credits": {
+    "authors": [{ "name": "Ignacio Ferro", "github": "drnachio" }],
+    "text": [
+      { "what": { "en": "The introduction and performance notes, written for this edition", "es": "La introducción y las notas de interpretación, escritas para esta edición" }, "who": "Ignacio Ferro", "license": "CC-BY-4.0" }
+    ],
+    "images": [
+      { "what": { "en": "Menuet in G major, BWV Anh. 114: the notes of the Bach-Gesellschaft edition as entered for the Mutopia Project (Mutopia-2017/01/19-75), converted to MusicXML 4.0 and proofread bar by bar for this edition", "es": "Minueto en sol mayor, BWV Anh. 114: las notas de la edición de la Bach-Gesellschaft tal como se introdujeron para el Mutopia Project (Mutopia-2017/01/19-75), convertidas a MusicXML 4.0 y revisadas compás a compás para esta edición" }, "who": "Christian Petzold; Allen Garvin (Mutopia Project)", "source": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=75", "license": "PD", "file": "bwv-anh-114.musicxml" },
+      { "what": { "en": "Menuet in G minor, BWV Anh. 115: the notes of the Bach-Gesellschaft edition as entered for the Mutopia Project (Mutopia-2015/08/21-76), converted to MusicXML 4.0 and proofread bar by bar for this edition", "es": "Minueto en sol menor, BWV Anh. 115: las notas de la edición de la Bach-Gesellschaft tal como se introdujeron para el Mutopia Project (Mutopia-2015/08/21-76), convertidas a MusicXML 4.0 y revisadas compás a compás para esta edición" }, "who": "Christian Petzold; Allen Garvin (Mutopia Project)", "source": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=76", "license": "PD", "file": "bwv-anh-115.musicxml" }
+    ],
+    "fonts": [
+      { "family": "Libre Caslon Text", "license": "OFL-1.1" },
+      { "family": "Bodoni Moda", "license": "OFL-1.1" },
+      { "family": "Archivo Narrow", "license": "OFL-1.1" }
+    ]
+  },
+  "license": { "code": "MIT", "content": "CC-BY-4.0" },
+  "created": "2026-10-22",
+  "updated": "2026-10-22"
+}

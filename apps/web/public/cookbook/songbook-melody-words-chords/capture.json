@@ -1,0 +1,778 @@
+{
+  "schemaVersion": 1,
+  "slug": "songbook-melody-words-chords",
+  "sourceHash": "3c09e8e0feb6881dbc6d5e7f9e9e4b9a15bd4967411df5de03e9918b794b16a1",
+  "engine": {
+    "postext": "1.54.0",
+    "postextPdf": "1.54.0",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T09:35:16.415Z",
+  "variants": {
+    "en": {
+      "hash8": "e517901b",
+      "vdtHash": "f8d2c15c3f79630c4161cdcdd69ccee3434575d1",
+      "timings": {
+        "importMs": 1069,
+        "fontsMs": 1251,
+        "buildMs": 300,
+        "totalMs": 3577,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          148,
+          210
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Spectral",
+          "sizePt": 10.3,
+          "leadingPt": 14
+        },
+        "families": [
+          "Fraunces",
+          "Spectral",
+          "Spectral SC"
+        ],
+        "pages": 6,
+        "ownLines": 164
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1419,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 27298,
+          "alt": "Opening page 1: Songs for the Long Table."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1419,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 79626,
+          "alt": "Opening page 2: To the singers."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "body",
+          "w": 1000,
+          "h": 1419,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 55402,
+          "alt": "Page 3: 1 Amazing Grace."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "body",
+          "w": 1000,
+          "h": 1419,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 63994,
+          "alt": "Page 4: 2 Clementine."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "body",
+          "w": 1000,
+          "h": 1419,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 72026,
+          "alt": "Page 5: 3 Auld Lang Syne."
+        },
+        {
+          "n": 6,
+          "label": "6",
+          "role": "opener",
+          "w": 1000,
+          "h": 1419,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 97026,
+          "alt": "Opening page 6: Notes on the songs."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "songbook-melody-words-chords.pdf",
+        "bytes": 116638,
+        "pages": 6
+      },
+      "sandbox": {
+        "file": "songbook-melody-words-chords.postext",
+        "bytes": 19182,
+        "folio": "4016a62f",
+        "chapters": [
+          {
+            "pages": 6,
+            "hash": "610e44a4e565ad36",
+            "lines": "8f43dfc716747b43"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "initMusicEngine",
+          "renderPageToCanvas",
+          "renderToPdf"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].breakBefore",
+          "headingStyles[].breakBefore.enabled",
+          "headingStyles[].breakBefore.parity",
+          "headingStyles[].fontFamily",
+          "headingStyles[].fontSize",
+          "headingStyles[].fontWeight",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headingStyles[].lineHeight",
+          "headingStyles[].marginBottom",
+          "headingStyles[].numbered",
+          "headingStyles[].span",
+          "headingStyles[].toc",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].letterSpacing",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].numberingTemplate",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].hyphenation",
+          "paragraphStyles[].id",
+          "paragraphStyles[].italic",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginBottom",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "scoreStyle",
+          "scoreStyle.barNumbers",
+          "scoreStyle.color",
+          "scoreStyle.marginBottom",
+          "scoreStyle.marginTop",
+          "scoreStyle.minSystemsAtBreak",
+          "scoreStyle.musicFont",
+          "scoreStyle.spacing",
+          "scoreStyle.staffSize",
+          "scoreStyle.systemGap",
+          "scoreStyle.textFont",
+          "toc",
+          "toc.leader",
+          "toc.leader.char",
+          "toc.leader.gap",
+          "toc.levels",
+          "toc.levels[].fontFamily",
+          "toc.levels[].fontSize",
+          "toc.levels[].level",
+          "toc.levels[].numberColor",
+          "toc.levels[].numberFontFamily",
+          "toc.levels[].numberFontWeight",
+          "toc.levels[].numberGap",
+          "toc.levels[].numberWidth",
+          "toc.pageNumber",
+          "toc.pageNumber.color",
+          "toc.pageNumber.fontFamily",
+          "toc.pageNumber.fontSize",
+          "toc.pageNumber.width"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "scoreStyle",
+          "toc"
+        ],
+        "configLeaves": 300,
+        "designElements": 12,
+        "directives": [
+          ":::toc",
+          ":::verse",
+          ":::columns",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Fraunces",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral SC",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral SC",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Spectral",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral",
+            "weight": 700,
+            "style": "italic"
+          },
+          {
+            "family": "Spectral",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-columns",
+          "code-listings",
+          "heading-attributes",
+          "heading-numbering",
+          "heading-styles",
+          "music-notation",
+          "opener-design",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "score-style",
+          "section-running-heads",
+          "toc",
+          "unnumbered-headings",
+          "verse"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 4,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.9
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    },
+    "es": {
+      "hash8": "e41f37fa",
+      "vdtHash": "48f39c77524d5158b99427ba776913475b9684cc",
+      "timings": {
+        "importMs": 1046,
+        "fontsMs": 635,
+        "buildMs": 335,
+        "totalMs": 3114,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          148,
+          210
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Spectral",
+          "sizePt": 10.3,
+          "leadingPt": 14
+        },
+        "families": [
+          "Fraunces",
+          "Spectral",
+          "Spectral SC"
+        ],
+        "pages": 5,
+        "ownLines": 164
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1419,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 27352,
+          "alt": "Página de apertura 1: Cancionero de la merienda."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "opener",
+          "w": 1000,
+          "h": 1419,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 70936,
+          "alt": "Página de apertura 2: A quien canta."
+        },
+        {
+          "n": 3,
+          "label": "3",
+          "role": "body",
+          "w": 1000,
+          "h": 1419,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 44148,
+          "alt": "Página 3: 1 Cumpleaños feliz."
+        },
+        {
+          "n": 4,
+          "label": "4",
+          "role": "body",
+          "w": 1000,
+          "h": 1419,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 54870,
+          "alt": "Página 4: 3 La cucaracha."
+        },
+        {
+          "n": 5,
+          "label": "5",
+          "role": "opener",
+          "w": 1000,
+          "h": 1419,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 103404,
+          "alt": "Página de apertura 5: Notas a las canciones."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "songbook-melody-words-chords.pdf",
+        "bytes": 110177,
+        "pages": 5
+      },
+      "sandbox": {
+        "file": "songbook-melody-words-chords.postext",
+        "bytes": 15545,
+        "folio": "4016a62f",
+        "chapters": [
+          {
+            "pages": 5,
+            "hash": "05b9c0c4477ff438",
+            "lines": "7d5a2c5a33f04a60"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "initMusicEngine",
+          "renderPageToCanvas",
+          "renderToPdf"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.indentAfterHeading",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "footer",
+          "footer.elements",
+          "header",
+          "header.elements",
+          "header.elements[].color",
+          "header.elements[].content",
+          "header.elements[].fontFamily",
+          "header.elements[].fontSize",
+          "header.elements[].fontWeight",
+          "header.elements[].id",
+          "header.elements[].kind",
+          "header.elements[].letterSpacing",
+          "header.elements[].pages",
+          "header.elements[].parity",
+          "header.elements[].placement",
+          "headingStyles",
+          "headingStyles[].advancedDesign",
+          "headingStyles[].advancedDesign.enabled",
+          "headingStyles[].advancedDesign.slot",
+          "headingStyles[].breakBefore",
+          "headingStyles[].breakBefore.enabled",
+          "headingStyles[].breakBefore.parity",
+          "headingStyles[].fontFamily",
+          "headingStyles[].fontSize",
+          "headingStyles[].fontWeight",
+          "headingStyles[].footer",
+          "headingStyles[].footer.elements",
+          "headingStyles[].header",
+          "headingStyles[].header.elements",
+          "headingStyles[].id",
+          "headingStyles[].lineHeight",
+          "headingStyles[].marginBottom",
+          "headingStyles[].numbered",
+          "headingStyles[].span",
+          "headingStyles[].toc",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].color",
+          "headings.levels[].fontFamily",
+          "headings.levels[].fontSize",
+          "headings.levels[].letterSpacing",
+          "headings.levels[].level",
+          "headings.levels[].lineHeight",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "headings.levels[].numberingTemplate",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.backgroundColor",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].hyphenation",
+          "paragraphStyles[].id",
+          "paragraphStyles[].italic",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginBottom",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign",
+          "scoreStyle",
+          "scoreStyle.barNumbers",
+          "scoreStyle.color",
+          "scoreStyle.marginBottom",
+          "scoreStyle.marginTop",
+          "scoreStyle.minSystemsAtBreak",
+          "scoreStyle.musicFont",
+          "scoreStyle.spacing",
+          "scoreStyle.staffSize",
+          "scoreStyle.systemGap",
+          "scoreStyle.textFont",
+          "toc",
+          "toc.leader",
+          "toc.leader.char",
+          "toc.leader.gap",
+          "toc.levels",
+          "toc.levels[].fontFamily",
+          "toc.levels[].fontSize",
+          "toc.levels[].level",
+          "toc.levels[].numberColor",
+          "toc.levels[].numberFontFamily",
+          "toc.levels[].numberFontWeight",
+          "toc.levels[].numberGap",
+          "toc.levels[].numberWidth",
+          "toc.pageNumber",
+          "toc.pageNumber.color",
+          "toc.pageNumber.fontFamily",
+          "toc.pageNumber.fontSize",
+          "toc.pageNumber.width"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "footer",
+          "header",
+          "headingStyles",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "scoreStyle",
+          "toc"
+        ],
+        "configLeaves": 300,
+        "designElements": 12,
+        "directives": [
+          ":::toc",
+          ":::columns",
+          ":::verse",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}",
+          "~…~"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Fraunces",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral SC",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral SC",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral",
+            "weight": 400,
+            "style": "italic"
+          },
+          {
+            "family": "Spectral",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Spectral",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-columns",
+          "code-listings",
+          "heading-attributes",
+          "heading-numbering",
+          "heading-styles",
+          "music-notation",
+          "opener-design",
+          "page-background",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "score-style",
+          "section-running-heads",
+          "super-subscripts",
+          "toc",
+          "unnumbered-headings",
+          "verse"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 3,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.74
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": []
+      }
+    }
+  }
+}

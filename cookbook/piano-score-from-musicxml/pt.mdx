@@ -1,0 +1,61 @@
+---
+title: "Uma partitura de piano de MusicXML em várias páginas"
+summary: "Dois minuetos para teclado gravados a partir de arquivos MusicXML em pauta dupla, divididos entre sistemas para que cada peça ocupe uma página dupla."
+plain: "Uma pequena edição de dois minuetos de piano muito conhecidos. Mostra como pegar um arquivo exportado de um programa de notação e compô-lo como uma partitura que continua de uma página para outra, pronta para tocar."
+description: "Os dois minuetos de Petzold do caderno de Anna Magdalena Bach, gravados a partir de MusicXML em pauta dupla em duas páginas duplas, com o código e um PDF."
+question: "Como faço uma partitura de piano de um arquivo MusicXML ao longo de várias páginas?"
+aliases: ["partitura", "partitura de piano", "MusicXML", "pauta dupla", "sistema de piano", "Minueto em sol", "BWV Anh. 114", "Caderno de Anna Magdalena Bach", "edição para intérpretes", "virada de página"]
+---
+
+## O que você vai compor
+
+Uma edição para intérpretes dos dois minuetos do Caderno de Anna Magdalena Bach de 1725: o de sol maior, que todo aluno de piano aprende, e seu par em sol menor, hoje atribuídos a Christian Petzold. A página mede 230 × 305 mm, o tamanho de um álbum de partituras. Uma página ímpar apresenta as peças em duas colunas de Libre Caslon sob um título de 52 pt em Bodoni. Depois cada minueto começa numa página par e ocupa a página dupla numa pauta dupla de 7 mm, gravada em Bravura a partir de um arquivo MusicXML: quatro compassos por sistema, os compassos 1 a 16 à esquerda e 17 a 32 à direita, de modo que o pianista não vira a página no meio de uma peça.
+
+## Preparo
+
+### 1 · Trazer a peça em MusicXML
+
+Os dois arquivos em `assets/` são MusicXML 4.0 comum, o formato que Dorico, Sibelius, Finale e MuseScore gravam ao exportar uma partitura (escolha o `.musicxml` sem compressão, não o `.mxl`). Eles têm uma parte em duas pautas, com as claves, a armadura, as barras de colcheia, a direção das hastes nos compassos a duas vozes, os ornamentos e as barras de repetição. O nome da parte leva `print-object="no"`: um rótulo «Piano» impresso empurraria cada sistema para a direita. O título em `<work-title>` não é impresso, serve só de descrição da partitura, então o Markdown dá a cada peça um título próprio.
+
+### 2 · Compor num bloco de código, não como recurso
+
+A [resposta curta](#a-resposta-curta) baixa cada arquivo e o escreve num bloco ` ```musicxml `, onde o Markdown guarda uma linha de marcador. Um bloco é gravado na largura da coluna e cortado em sistemas, e cada sistema é colocado como uma linha de parágrafo: a peça continua na página seguinte entre dois sistemas. Um recurso `score` fica inteiro e não poderia atravessar uma página. `minSystemsAtBreak: 2` impede que um sistema fique sozinho no pé de uma página ou passe sozinho para o alto da seguinte.
+
+### 3 · Dimensionar a pauta para quem toca
+
+A pauta tem 7 mm de altura, o tamanho de um álbum de piano impresso lido na estante. `spacing: 1.7` afasta as notas até que um sistema de 186 mm de medida tenha quatro compassos, e assim cada metade de um minueto ocupa quatro sistemas. `systemGap: 14 mm` deixa espaço para as linhas suplementares entre as mãos, e com ele cabem quatro sistemas sob o título da primeira página e quatro na página em frente: a barra dupla cai na passagem de uma página à outra da página dupla.
+
+### 4 · Abrir cada peça numa página par
+
+<Excerpt region="openers" />
+
+`breakBefore: { parity: 'even' }` faz cada peça começar numa página da esquerda, e a página de rosto do editor usa um estilo de título que abre numa página ímpar, sem cabeços. O número de catálogo e o compositor vêm dos atributos do título e ficam nos cantos inferiores da abertura, onde as edições gravadas os imprimem.
+
+### 5 · Pôr o nome da peça no cabeço da direita
+
+<Excerpt region="running-heads" />
+
+A primeira página de uma peça já leva o seu título, então os cabeços ficam para as páginas seguintes (`pages: 'body'`). A página ímpar imprime o título da peça e o fólio na borda externa, na fonte de rótulos a 8 pt.
+
+## Variações
+
+### Fazer uma edição de estudo com uma pauta menor
+
+Uma pauta de 6 mm com o espaçamento próprio do gravador leva sete ou oito compassos por sistema, e cada minueto cabe na sua primeira página.
+
+```diff
+-  staffSize: mm(7),
++  staffSize: mm(6),
+-  spacing: 1.7,
++  spacing: 1,
+```
+
+### Numerar os exemplos curtos
+
+Quando a música são exemplos curtos citados no texto, um recurso `score` numerado serve melhor: <RecipeLink slug="conservatory-method-chorales">corais a quatro vozes como exemplos numerados</RecipeLink>.
+
+## Erros comuns
+
+- As quebras de sistema escritas no arquivo (`<print new-system="yes">`) não são mantidas: os sistemas preenchem a largura da coluna, então ajuste `spacing` e `staffSize` até que tenham os compassos que você quer.
+- O gravador não distribui os compassos entre os sistemas, e o último sistema é composto na sua largura natural: com 6 mm e `spacing: 1`, o compasso 32 fica sozinho num sistema. Mude `spacing` até que o último sistema tenha mais de um compasso.
+- Um `.mxl` comprimido é um arquivo zip: descompacte-o, ou exporte o formato sem compressão, antes de baixá-lo.

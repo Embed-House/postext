@@ -58,6 +58,7 @@ const DOC_PAGES: Record<string, string> = {
   "arabic-layout": "Arabic-Layout",
   "japanese-layout": "Japanese-Layout",
   comics: "Comics",
+  music: "Music-Notation",
   "composed-pages": "Composed-Pages",
   "composed-pages-figures": "Composed-Pages-Figures-with-Labels",
   contributing: "Contributing",

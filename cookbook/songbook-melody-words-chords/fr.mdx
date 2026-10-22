@@ -1,0 +1,62 @@
+---
+title: "Un recueil de chansons avec mélodie, paroles et accords"
+summary: "Chaque chanson est un bloc ABC : la mélodie, les accords sur la portée et le premier couplet sous les notes, gravés à la largeur de colonne par un style."
+plain: "Un petit recueil pour chanter autour d'une table. Chaque chanson s'écrit en texte dans une notation musicale appelée ABC, et Postext dessine la portée, les notes, les accords de guitare et les paroles sous les notes."
+description: "Un recueil de chansons dans Postext : mélodies en ABC avec accords et premier couplet sous les notes, gravées par Verovio, couplets en colonnes, avec code."
+question: "Comment composer un recueil de chansons avec la mélodie, les paroles sous les notes et les accords ?"
+aliases: ["recueil de chansons", "chansonnier", "recueil de cantiques", "paroles sous les notes", "accords", "grille d'accords", "notation ABC", "songbook"]
+---
+
+## Ce que vous allez composer
+
+*Songs for the Long Table*, un recueil de chansons de poche au format A5 : une page de titre garance, un mot aux chanteurs avec la table des matières, trois chansons et des notes sur l'origine de chacune. Chaque chanson s'ouvre sous un grand numéro garance, un titre en Fraunces et une ligne de crédits en petites capitales. Dessous, la mélodie court sur une portée de 5,5 mm en Leland, avec les accords de guitare au-dessus des mesures et le premier couplet sous les notes en Spectral, le caractère de texte du livre. Les couplets suivants se rangent sur deux colonnes, et le chanteur n'a qu'à descendre depuis la dernière mesure. *Amazing Grace*, dont les longs vers reviendraient à la ligne dans une colonne, pose ses strophes l'une sous l'autre, centrées. L'édition espagnole est un recueil d'anniversaire avec trois chansons plus courtes, deux par page.
+
+## Préparation
+
+### 1 · Écrire la chanson, définir la partition une seule fois
+
+Le style de partition est [la réponse courte](#la-réponse-courte) ci-dessus. Dans le Markdown, chaque chanson est un bloc ```` ```abc ```` : les lignes d'en-tête donnent la mesure, la durée de note de référence et la tonalité ; un nom d'accord entre guillemets doubles (`"D7"A`) s'imprime au-dessus de la note qu'il précède ; une ligne `w:` sous la musique place une syllabe sous chaque note, séparées par des traits d'union. Un air avec couplet et refrain tient en deux lignes de musique, chacune avec sa ligne `w:`. La taille de la portée, la police musicale, le caractère des paroles, les numéros de mesure et l'espace entre les systèmes viennent de `scoreStyle`, si bien que les trois chansons s'accordent et que les blocs ne contiennent que de la musique.
+
+### 2 · Ouvrir chaque chanson sous son numéro et ses crédits
+
+<Excerpt region="song-head" />
+
+La chanson est un titre de premier niveau avec un attribut `credit`, et son design en tire le numéro, le titre et la ligne de crédits. `minHeight` donne à chaque chanson la même tête de 21 mm, de sorte que les portées commencent à la même hauteur sur chaque page. Les chansons s'enchaînent avec trois lignes d'espace au-dessus de chaque titre, et une partition n'est jamais coupée avant son deuxième système (`minSystemsAtBreak: 2`) : les chansons anglaises remplissent chacune une page, et deux des courtes chansons espagnoles en partagent une.
+
+### 3 · Mettre les autres couplets sur deux colonnes
+
+<Excerpt region="verse" />
+
+Chaque strophe est un bloc `:::verse` : ses vers se coupent là où le poète les a coupés, et le deuxième et le quatrième rentrent d'un cadratin. Un groupe `:::columns{count=2 gap=4mm}` les place côte à côte en 9,4 pt. Comptez d'abord les caractères. Les vers de Burns tiennent dans une colonne de 55 mm, le long mètre de Newton non, alors *Amazing Grace* garde un seul bloc `:::verse` centré et laisse les lignes vides séparer ses strophes.
+
+### 4 · Garder les éléments fixes discrets
+
+<Excerpt region="heads" />
+
+Les titres courants figurent sur toutes les pages qu'occupent les chansons, le titre du livre au verso et la chanson au recto, avec le folio dans le garance des numéros de chanson. La page de titre et le mot aux chanteurs les suppriment par un `header` vide dans leurs styles de titre.
+
+## Variantes
+
+### Graver en Bravura
+
+Bravura a des têtes de note plus épaisses et l'allure d'une planche gravée ; elle convient à un recueil de cantiques composé dans un caractère de texte plus sombre.
+
+```diff
+-  musicFont: 'Leland', // lighter noteheads than Bravura, close to Spectral's colour
++  musicFont: 'Bravura',
+```
+
+### Numéroter les mesures
+
+Une chorale répète d'après les numéros de mesure ; imprimez-en un au début de chaque système.
+
+```diff
+-  barNumbers: 'none', // a table of singers counts verses, not bars
++  barNumbers: 'system',
+```
+
+## Erreurs fréquentes
+
+- Le lecteur ABC de Verovio ignore les marques de tenue `_` et `*` d'une ligne `w:` : chaque note prend la syllabe suivante. Sous la deuxième note d'une liaison, écrivez une espace insécable (U+00A0) comme syllabe à part entière ; elle n'imprime rien. Les notes liées par une liaison de prolongation ne prennent pas de syllabe.
+- `~` réunit deux syllabes sous une même note (`de~a-trás`), mais le graveur les imprime avec une espace ordinaire, sans signe de liaison.
+- Écrivez les noms d'accords sans ♭ ni ♯ quand c'est possible : la plupart des caractères de texte n'ont pas ces signes et la page se rabat sur une police système. Choisissez des tonalités dont les accords sont naturels (G, C, D7, Em), ou écrivez « si bémol » dans le texte.

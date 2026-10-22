@@ -1,0 +1,62 @@
+---
+title: "Un cançoner amb melodia, lletra i acords"
+summary: "Cada cançó és un bloc ABC: melodia, xifrats sobre el pentagrama i primera estrofa sota les notes, gravats a l'amplada de columna amb un estil de partitura."
+plain: "Un cançoner petit per a un berenar. Cada cançó s'escriu com a text en una notació musical anomenada ABC, i Postext dibuixa el pentagrama, les notes, els acords de guitarra i la lletra sota les notes."
+description: "Un cançoner a Postext: melodies escrites en ABC amb xifrats i la primera estrofa sota les notes, gravades amb Verovio, cobles en columnes, amb el codi."
+question: "Com componc un cançoner amb la melodia, la lletra sota les notes i els xifrats dels acords?"
+aliases: ["cançoner", "cantoral", "partitura amb lletra", "lletra sota les notes", "xifrats", "acords de guitarra", "notació ABC", "songbook"]
+---
+
+## Què compondràs
+
+El *Cancionero de la merienda*, un quadernet en A5 per a la tarda d'un aniversari: una portada en vermell garança, una nota per a qui canta amb l'índex, tres cançons i, al final, d'on ve cadascuna. Cada cançó s'obre sota un número gran en garança, el títol en Fraunces i una línia de crèdits en versaletes. A sota, la melodia en un pentagrama de 5,5 mm amb la font musical Leland, els acords de guitarra sobre els compassos i la primera estrofa sota les notes en Spectral, la lletra del llibre. Les cobles restants van a dues columnes. Com que les tres cançons són curtes, dues comparteixen pàgina. L'edició anglesa és un cançoner de sobretaula amb tres cançons llargues, una per pàgina.
+
+## Elaboració
+
+### 1 · Escriu la cançó i defineix la partitura una sola vegada
+
+L'estil de partitura és [la resposta curta](#la-resposta-curta) de més amunt. Al Markdown cada cançó és un bloc ```` ```abc ````: les línies de capçalera donen el compàs, la figura de referència i la tonalitat; un acord entre cometes (`"C7"B`) s'imprimeix sobre la nota que el segueix, i una línia `w:` sota la música posa una síl·laba sota cada nota, separades amb guionets. Una cançó amb tornada i cobla són dues línies de música, cadascuna amb la seva `w:`. La mida del pentagrama, la font musical, la lletra de les paraules, els números de compàs i l'espai entre sistemes surten de `scoreStyle`: les tres cançons lliguen i els blocs només porten música.
+
+### 2 · Obre cada cançó amb el seu número i els seus crèdits
+
+<Excerpt region="song-head" />
+
+La cançó és un títol de primer nivell amb un atribut `credit`, i el seu disseny hi compon el número, el títol i la línia de crèdits. `minHeight` dona a totes la mateixa capçalera de 21 mm, de manera que els pentagrames comencen a la mateixa altura. Les cançons van seguides, amb tres línies d'aire sobre cada títol, i una partitura no es talla mai abans del segon sistema (`minSystemsAtBreak: 2`): *Cumpleaños feliz* i *Martinillo* caben a la mateixa pàgina, i *La cucaracha* passa sencera a la següent.
+
+### 3 · Posa les altres cobles a dues columnes
+
+<Excerpt region="verse" />
+
+Cada cobla és un bloc `:::verse`, així que els versos es tallen on els va tallar la tradició i el segon i el quart entren un quadratí. Un grup `:::columns{count=2 gap=4mm}` les posa l'una al costat de l'altra a 9,4 pt. Compta abans els caràcters: els octosíl·labs de *La cucaracha* caben de sobres en una columna de 55 mm; els versos llargs d'*Amazing Grace*, a l'edició anglesa, no, i per això aquesta cançó deixa les estrofes en un sol bloc centrat.
+
+### 4 · Deixa tranquils els elements fixos
+
+<Excerpt region="heads" />
+
+Les capçaleres són a totes les pàgines de cançons: el títol del llibre a la pàgina parell i la cançó a la senar, amb el foli en el garança dels números. La portada i la nota per a qui canta les treuen amb un `header` buit en els seus estils de títol.
+
+## Variants
+
+### Grava en Bravura
+
+Bravura té caps de nota més gruixuts i un aire de planxa gravada; li escau a un cantoral compost en una lletra més fosca.
+
+```diff
+-  musicFont: 'Leland', // lighter noteheads than Bravura, close to Spectral's colour
++  musicFont: 'Bravura',
+```
+
+### Numera els compassos
+
+Un cor assaja per números de compàs; imprimeix-ne un al començament de cada sistema.
+
+```diff
+-  barNumbers: 'none', // a table of singers counts verses, not bars
++  barNumbers: 'system',
+```
+
+## Errors freqüents
+
+- El lector ABC de Verovio no fa cas de les marques `_` i `*` d'una línia `w:`: cada nota pren la síl·laba següent. Sota la segona nota d'una lligadura escriu un espai no separable (U+00A0) com a síl·laba pròpia; no imprimeix res. Les notes lligades per `-` no prenen síl·laba.
+- `~` uneix dues síl·labes sota una mateixa nota (`de~a-trás`), però el gravador les imprimeix amb un espai normal, sense el signe de sinalefa.
+- Escriu els acords sense ♭ ni ♯ quan puguis: la majoria de les lletres de text no tenen aquests signes i la pàgina recorre a una font del sistema. Tria tonalitats amb acords naturals (sol, do, re7, mi menor) o escriu «si bemoll» al text.

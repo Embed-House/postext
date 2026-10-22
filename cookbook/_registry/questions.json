@@ -5266,5 +5266,145 @@
       "it": "Organigrammi e griglie di foto fatti di moduli"
     },
     "theme": "page"
+  },
+  "Q189": {
+    "kind": "how",
+    "text": {
+      "en": "How do I put music examples in the text of a textbook, written as notation?",
+      "es": "¿Cómo pongo ejemplos musicales en el texto de un libro de texto, escritos como notación?",
+      "ca": "Com poso exemples musicals dins del text d'un llibre de text, escrits com a notació?",
+      "zh": "怎样在教科书的正文里放入以记谱文本写成的谱例？",
+      "ar": "كيف أضع أمثلة موسيقية داخل نص كتاب مدرسي، مكتوبةً تدوينًا؟",
+      "ja": "教科書の本文に、記譜のテキストで書いた譜例を入れるには？",
+      "pt": "Como coloco exemplos musicais no texto de um livro didático, escritos como notação?",
+      "fr": "Comment mettre des exemples musicaux dans le texte d'un manuel, écrits en notation ?",
+      "de": "Wie setze ich Notenbeispiele, als Notation geschrieben, in den Text eines Lehrbuchs?",
+      "it": "Come inserisco esempi musicali nel testo di un manuale, scritti come notazione?"
+    },
+    "index": {
+      "en": "Music examples in the running text",
+      "es": "Ejemplos musicales en el texto",
+      "ca": "Exemples musicals dins del text",
+      "zh": "正文中的谱例",
+      "ar": "أمثلة موسيقية داخل النص",
+      "ja": "本文中の譜例",
+      "pt": "Exemplos musicais no texto",
+      "fr": "Exemples musicaux dans le texte",
+      "de": "Notenbeispiele im Fließtext",
+      "it": "Esempi musicali nel testo"
+    },
+    "theme": "textbooks"
+  },
+  "Q190": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set a songbook with the melody, the words under the notes and chord symbols?",
+      "es": "¿Cómo compongo un cancionero con la melodía, la letra bajo las notas y los cifrados de acordes?",
+      "ca": "Com componc un cançoner amb la melodia, la lletra sota les notes i els xifrats d'acords?",
+      "zh": "怎样排一本歌集：旋律、音符下的歌词和和弦记号？",
+      "ar": "كيف أُخرج كتاب أغانٍ فيه اللحن والكلمات تحت النوتات ورموز الكوردات؟",
+      "ja": "旋律と音符の下の歌詞、コードネームの付いた歌集を組むには？",
+      "pt": "Como faço um cancioneiro com a melodia, a letra sob as notas e as cifras dos acordes?",
+      "fr": "Comment composer un recueil de chansons avec la mélodie, les paroles sous les notes et les accords ?",
+      "de": "Wie setze ich ein Liederbuch mit Melodie, Text unter den Noten und Akkordsymbolen?",
+      "it": "Come compongo un canzoniere con la melodia, le parole sotto le note e le sigle degli accordi?"
+    },
+    "index": {
+      "en": "Songbooks: melody, words and chords",
+      "es": "Cancioneros: melodía, letra y acordes",
+      "ca": "Cançoners: melodia, lletra i acords",
+      "zh": "歌集：旋律、歌词与和弦",
+      "ar": "كتب الأغاني: اللحن والكلمات والكوردات",
+      "ja": "歌集：旋律、歌詞、コード",
+      "pt": "Cancioneiros: melodia, letra e acordes",
+      "fr": "Recueils de chansons : mélodie, paroles et accords",
+      "de": "Liederbücher: Melodie, Text und Akkorde",
+      "it": "Canzonieri: melodia, parole e accordi"
+    },
+    "theme": "publications"
+  },
+  "Q191": {
+    "kind": "how",
+    "text": {
+      "en": "How do I number music examples and float them like figures in a two-column book?",
+      "es": "¿Cómo numero los ejemplos musicales y los hago flotar como figuras en un libro a dos columnas?",
+      "ca": "Com numero els exemples musicals i els faig flotar com figures en un llibre a dues columnes?",
+      "zh": "在双栏书里，怎样给谱例编号并让它们像插图一样浮动？",
+      "ar": "كيف أرقّم الأمثلة الموسيقية وأجعلها تطفو كالأشكال في كتاب من عمودين؟",
+      "ja": "2段組みの本で、譜例に番号を振り、図のように浮動させるには？",
+      "pt": "Como numero os exemplos musicais e os faço flutuar como figuras num livro em duas colunas?",
+      "fr": "Comment numéroter les exemples musicaux et les faire flotter comme des figures dans un livre à deux colonnes ?",
+      "de": "Wie nummeriere ich Notenbeispiele und lasse sie in einem zweispaltigen Buch wie Abbildungen fließen?",
+      "it": "Come numero gli esempi musicali e li faccio flottare come figure in un libro a due colonne?"
+    },
+    "index": {
+      "en": "Music examples, numbered and floated",
+      "es": "Ejemplos musicales numerados y flotantes",
+      "ca": "Exemples musicals numerats i flotants",
+      "zh": "编号并浮动的谱例",
+      "ar": "أمثلة موسيقية مرقّمة وعائمة",
+      "ja": "番号付きで浮動する譜例",
+      "pt": "Exemplos musicais numerados e flutuantes",
+      "fr": "Exemples musicaux numérotés et flottants",
+      "de": "Notenbeispiele, nummeriert und verschoben",
+      "it": "Esempi musicali numerati e mobili"
+    },
+    "theme": "figures"
+  },
+  "Q192": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set a piano score from a MusicXML file over several pages?",
+      "es": "¿Cómo compongo una partitura de piano de un archivo MusicXML a lo largo de varias páginas?",
+      "ca": "Com componc una partitura de piano d'un fitxer MusicXML al llarg de diverses pàgines?",
+      "zh": "怎样把MusicXML文件里的钢琴谱排成跨越数页的乐谱？",
+      "ar": "كيف أُخرج مدوّنة بيانو من ملف MusicXML على عدة صفحات؟",
+      "ja": "MusicXMLファイルのピアノ譜を数ページにわたって組むには？",
+      "pt": "Como faço uma partitura de piano de um arquivo MusicXML ao longo de várias páginas?",
+      "fr": "Comment composer une partition de piano issue d'un fichier MusicXML sur plusieurs pages ?",
+      "de": "Wie setze ich einen Klaviersatz aus einer MusicXML-Datei über mehrere Seiten?",
+      "it": "Come compongo una partitura per pianoforte da un file MusicXML su più pagine?"
+    },
+    "index": {
+      "en": "Piano scores from MusicXML",
+      "es": "Partituras de piano desde MusicXML",
+      "ca": "Partitures de piano des de MusicXML",
+      "zh": "来自MusicXML的钢琴谱",
+      "ar": "مدوّنات بيانو من MusicXML",
+      "ja": "MusicXMLから組むピアノ譜",
+      "pt": "Partituras de piano a partir de MusicXML",
+      "fr": "Partitions de piano depuis MusicXML",
+      "de": "Klaviernoten aus MusicXML",
+      "it": "Partiture per pianoforte da MusicXML"
+    },
+    "theme": "figures"
+  },
+  "Q193": {
+    "kind": "how",
+    "text": {
+      "en": "How do I give music examples a critical apparatus of source variants in footnotes?",
+      "es": "¿Cómo doy a los ejemplos musicales un aparato crítico de variantes de las fuentes en notas al pie?",
+      "ca": "Com dono als exemples musicals un aparat crític de variants de les fonts en notes a peu de pàgina?",
+      "zh": "怎样用脚注为谱例加上记录各版本异文的校勘记？",
+      "ar": "كيف أرفق بالأمثلة الموسيقية جهازًا نقديًا لاختلافات المصادر في حواشٍ سفلية؟",
+      "ja": "譜例に、資料ごとの異同を記した校訂注を脚注で付けるには？",
+      "pt": "Como dou aos exemplos musicais um aparato crítico das variantes das fontes em notas de rodapé?",
+      "fr": "Comment donner aux exemples musicaux un apparat critique des variantes des sources en notes de bas de page ?",
+      "de": "Wie gebe ich Notenbeispielen einen kritischen Apparat der Quellenvarianten in Fußnoten?",
+      "it": "Come do agli esempi musicali un apparato critico delle varianti delle fonti in note a piè di pagina?"
+    },
+    "index": {
+      "en": "Critical apparatus for music examples",
+      "es": "Aparato crítico de ejemplos musicales",
+      "ca": "Aparat crític d'exemples musicals",
+      "zh": "谱例的校勘记",
+      "ar": "الجهاز النقدي للأمثلة الموسيقية",
+      "ja": "譜例の校訂注",
+      "pt": "Aparato crítico de exemplos musicais",
+      "fr": "Apparat critique des exemples musicaux",
+      "de": "Kritischer Apparat für Notenbeispiele",
+      "it": "Apparato critico per esempi musicali"
+    },
+    "theme": "boxes"
   }
 }

@@ -1,0 +1,62 @@
+---
+title: "Un canzoniere con melodia, parole e accordi"
+summary: "Ogni canzone è un blocco ABC: la melodia, gli accordi sul pentagramma e la prima strofa sotto le note, incisi alla larghezza di colonna da un unico stile."
+plain: "Un piccolo canzoniere per cantare attorno a una tavola. Ogni canzone si scrive come testo semplice in una notazione musicale chiamata ABC, e Postext disegna il pentagramma, le note, gli accordi per chitarra e le parole sotto le note."
+description: "Un canzoniere in Postext: melodie in ABC con le sigle degli accordi e la prima strofa sotto le note, incise da Verovio, altre strofe in colonne, con il codice."
+question: "Come compongo un canzoniere con la melodia, le parole sotto le note e le sigle degli accordi?"
+aliases: ["canzoniere", "innario", "lead sheet", "parole sotto le note", "sigle degli accordi", "notazione ABC", "melodia con testo", "songbook"]
+---
+
+## Che cosa comporrai
+
+*Songs for the Long Table*, un canzoniere tascabile in formato A5: un frontespizio color robbia, una nota per chi canta con l'indice, tre canzoni e le note sulla provenienza di ciascuna. Ogni canzone si apre sotto un grande numero color robbia, un titolo in Fraunces e una riga di crediti in maiuscoletto. Sotto, la melodia corre su un pentagramma di 5,5 mm in Leland, con gli accordi per chitarra sopra le battute e la prima strofa sotto le note in Spectral, il carattere del testo del libro. Le strofe restanti stanno su due colonne, così chi canta legge dritto verso il basso dall'ultima battuta. *Amazing Grace*, i cui versi lunghi andrebbero a capo in una colonna, mette le strofe una sotto l'altra, centrate. L'edizione spagnola è un canzoniere per un compleanno con tre canzoni più brevi, due per pagina.
+
+## Preparazione
+
+### 1 · Scrivi la canzone, definisci la partitura una volta sola
+
+Lo stile di partitura è [la risposta breve](#la-risposta-breve) qui sopra. Nel Markdown ogni canzone è un blocco ```` ```abc ````: le righe di intestazione danno il tempo, il valore di nota di riferimento e la tonalità; il nome di un accordo tra virgolette doppie (`"D7"A`) si stampa sopra la nota che precede; una riga `w:` sotto la musica mette una sillaba sotto ogni nota, separate da trattini. Un motivo con strofa e ritornello sono due righe di musica, ciascuna con la sua riga `w:`. La dimensione del pentagramma, il font musicale, il carattere delle parole, i numeri di battuta e lo spazio tra i sistemi vengono da `scoreStyle`, quindi le tre canzoni si somigliano e i blocchi contengono solo musica.
+
+### 2 · Apri ogni canzone sotto il suo numero e i suoi crediti
+
+<Excerpt region="song-head" />
+
+La canzone è un titolo di primo livello con un attributo `credit`, e il suo design ne ricava il numero, il titolo e la riga dei crediti. `minHeight` dà a ogni canzone la stessa testa di 21 mm, così i pentagrammi cominciano alla stessa altezza su ogni pagina. Le canzoni si susseguono con tre righe di spazio sopra ogni titolo, e una partitura non si spezza mai prima del suo secondo sistema (`minSystemsAtBreak: 2`): le canzoni inglesi riempiono una pagina ciascuna, e due delle brevi canzoni spagnole ne condividono una.
+
+### 3 · Metti le altre strofe su due colonne
+
+<Excerpt region="verse" />
+
+Ogni strofa è un blocco `:::verse`, perciò i suoi versi vanno a capo dove il poeta li ha spezzati e il secondo e il quarto rientrano di un quadratone. Un gruppo `:::columns{count=2 gap=4mm}` le affianca in corpo 9,4. Conta prima i caratteri: i versi di Burns entrano in una colonna di 55 mm, il metro lungo di Newton no, e per questo *Amazing Grace* tiene un solo blocco `:::verse` centrato e lascia che le righe vuote separino le strofe.
+
+### 4 · Tieni sobri gli elementi fissi
+
+<Excerpt region="heads" />
+
+Le testatine sono su ogni pagina che le canzoni raggiungono, il titolo del libro sulla pagina pari e la canzone sulla dispari, con il numero di pagina nel color robbia dei numeri delle canzoni. Il frontespizio e la nota per chi canta le tolgono con un `header` vuoto nei loro stili di titolo.
+
+## Varianti
+
+### Incidi in Bravura
+
+Bravura ha teste di nota più spesse e l'aspetto di una lastra incisa; si addice a un innario composto in un carattere di testo più scuro.
+
+```diff
+-  musicFont: 'Leland', // lighter noteheads than Bravura, close to Spectral's colour
++  musicFont: 'Bravura',
+```
+
+### Numera le battute
+
+Un coro prova seguendo i numeri di battuta; stampane uno all'inizio di ogni sistema.
+
+```diff
+-  barNumbers: 'none', // a table of singers counts verses, not bars
++  barNumbers: 'system',
+```
+
+## Errori frequenti
+
+- Il lettore ABC di Verovio ignora i segni di prolungamento `_` e `*` di una riga `w:`: ogni nota prende la sillaba successiva. Sotto la seconda nota di una legatura scrivi uno spazio non divisibile (U+00A0) come sillaba a sé; non stampa nulla. Le note unite da una legatura di valore non prendono sillaba.
+- `~` unisce due sillabe sotto una stessa nota (`de~a-trás`), ma l'incisore le stampa con uno spazio normale, senza il segno di sinalefe.
+- Scrivi i nomi degli accordi senza ♭ né ♯ quando puoi: la maggior parte dei caratteri di testo non ha quei segni e la pagina ripiega su un font di sistema. Scegli tonalità con accordi naturali (G, C, D7, Em) o scrivi «si bemolle» nel testo.

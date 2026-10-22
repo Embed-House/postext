@@ -1,0 +1,64 @@
+---
+title: "MEI music examples with a critical apparatus in the notes"
+summary: "MEI 5 fences engraved in the text at a 5 mm staff, variants encoded as app, lem and rdg, and the apparatus keyed by bar and note in footnotes."
+plain: "A chapter of a study of medieval music. Short passages of a 13th-century English round are printed as music in the text, and the notes at the foot of each page record where the old editions disagree, bar by bar."
+description: "A musicology chapter on Sumer is icumen in: MEI examples engraved in the text, source variants kept in the encoding, and the apparatus in footnotes."
+question: "How do I give music examples a critical apparatus of source variants in footnotes?"
+aliases: ["critical apparatus", "music examples", "MEI", "Music Encoding Initiative", "variant readings", "app lem rdg", "musicology", "scholarly edition", "Sumer is icumen in"]
+---
+
+## What you'll build
+
+Chapter 3 of a scholarly study of how English antiquaries read medieval music: five pages at 156 × 234 mm on *Sumer is icumen in*, the Reading rota, and the editors who scored it between 1776 and 1889. Three passages of the round are engraved in the text in Leipzig at a 5 mm staff, numbered in the bar numbers of W. S. Rockstro's score, and each discussion cites its apparatus at the foot of the page: "b. 40, n. 2 A ] G Hw, Bu". The notes are short and dense in the way an apparatus is, the music sits on the measure of the text, and every reading comes from Rockstro's article in Grove's *Dictionary*, which the chapter says in its second paragraph.
+
+## Method
+
+### 1 · Write each example as MEI, variants included
+
+The settings are [the short answer](#the-short-answer) above; the music is in the Markdown, one ```` ```mei ```` fence per example. Where two sources disagree, the measure holds `<app>` with the adopted reading in `<lem>` and the other in `<rdg source="#Hw #Bu">`. The engraver prints the lemma, so bar 40 of <PageRef page={5}>Example 3.3</PageRef> shows the A, and the G of Hawkins and Burney stays in the file for anyone who opens the encoding. Give each fence an `alt` in the page's language: it is what a screen reader and the tagged PDF read for the score.
+
+### 2 · Key the apparatus to the bars the reader sees
+
+`barNumbers: 'system'` numbers the first bar of every system, and each fence's `<measure n="37">` starts the count where the excerpt starts in the edition it follows, so Example 3.3 opens at 37 and a note that says "b. 40" points at a bar the reader can find. The apparatus entry is an ordinary footnote cited from the paragraph that discusses the bar: lemma, closing bracket, variant, sigla in italics. A note cannot be cited from inside a score, so the citation goes on the sentence that names the reading.
+
+### 3 · Size the music for running text
+
+A 5 mm staff in Leipzig sits on a 116 mm measure with five or six bars of 3/2 to a system, which keeps the eleven bars of Example 3.3 to two systems. `textFont` sets the underlay in Crimson Pro, the face of the body, and `minSystemsAtBreak: 2` stops a page from ending with one system of an example while the rest goes on. The example label is a third-level heading, so it never stays at the foot of a page without its score.
+
+### 4 · Let a page with notes end short
+
+<Excerpt region="opener" />
+
+The opener sinks the text 50 mm under a Cormorant italic title. Below it, a page whose next line would bring a long note with it ends a few lines early, and `balancing: { maxLinesPerHeading: 1 }` keeps column balancing from pushing that gap above the next section heading, where it would read as a break in the argument.
+
+### 5 · Put the book on the verso and the chapter on the recto
+
+<Excerpt region="running-heads" />
+
+Folios in the rubric red on the outer edge, the book on the verso and the chapter on the recto; `pages: 'body'` keeps them off the opener, which takes a centred drop folio.
+
+## Variations
+
+### Print every bar number
+
+An apparatus with many entries per system is easier to follow with a number on each bar.
+
+```diff
+-  barNumbers: 'system', // the apparatus is keyed by bar: number every system
++  barNumbers: 'every',
+```
+
+### Set the examples in Bravura
+
+Bravura's heavier noteheads match a plate-engraved house style.
+
+```diff
+-  musicFont: 'Leipzig', // lighter than Bravura, close to a 19th-century plate
++  musicFont: 'Bravura',
+```
+
+## Pitfalls
+
+- MEI 5 writes the key signature as `keysig="1f"` on `scoreDef` or `staffDef`. The MEI 4 attribute `key.sig` is ignored without a message, and the flat disappears.
+- Give every `staffDef` its `lines="5"`: without it the notes and clefs are engraved on no staff at all.
+- The engraver prints the `<lem>` of an `<app>`, not the `<rdg>`. A variant the reader must see on the page belongs in the apparatus note or in a second example.

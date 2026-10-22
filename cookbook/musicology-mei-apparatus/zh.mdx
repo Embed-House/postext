@@ -1,0 +1,64 @@
+---
+title: "MEI谱例与脚注中的校勘记"
+summary: "MEI 5代码块以5毫米谱表刻印在正文中，异文用app、lem和rdg编码，校勘记按小节和音符排在脚注里。"
+plain: "一部中世纪音乐研究著作中的一章。一首十三世纪英国轮唱曲的几个短小段落以乐谱形式印在正文里，每页底部的注释逐小节记下旧版本之间的出入。"
+description: "关于Sumer is icumen in的音乐学章节：正文中刻印的MEI谱例，编码里保存的异文，以及脚注中的校勘记。"
+question: "怎样用脚注为谱例加上记录各版本异文的校勘记？"
+aliases: ["校勘记", "谱例", "MEI", "Music Encoding Initiative", "异文", "app lem rdg", "音乐学", "校勘本", "critical apparatus", "Sumer is icumen in"]
+---
+
+## 成品一览
+
+一部研究英国古物学家如何阅读中世纪音乐的学术著作中的第3章：五页，开本156 × 234毫米，讨论雷丁轮唱曲 *Sumer is icumen in*，以及1776年至1889年间为它编写总谱的各位编者。轮唱曲的三个段落用Leipzig字体、5毫米谱表刻印在正文中，小节号沿用W. S. Rockstro总谱的编号；每段讨论都在页脚引出自己的校勘记：“b. 40, n. 2 A ] G Hw, Bu”。注释简短紧凑，正是校勘记的样子；乐谱占满正文的版心宽度。每条异文都出自Rockstro为Grove《音乐与音乐家辞典》所写的条目，本章在第二段就交代了这一点。
+
+## 做法
+
+### 1 · 把每个谱例写成MEI，异文一并写入
+
+设置见上方的[简短回答](#简短回答)；音乐写在Markdown里，每个谱例一个 ```` ```mei ```` 代码块。两个来源不一致的地方，小节里放一个 `<app>`：采用的读法放在 `<lem>`，另一种放在 `<rdg source="#Hw #Bu">`。刻印的是 `<lem>`，所以<PageRef page={5}>谱例3.3</PageRef>第40小节印的是A，而Hawkins和Burney的G留在文件里，供打开编码的人查看。给每个代码块一个页面语言的 `alt`：屏幕阅读器和带标签的PDF读的就是它。
+
+### 2 · 让校勘记对准读者看到的小节
+
+`barNumbers: 'system'` 在每行谱的第一个小节标号；每个代码块的 `<measure n="37">` 从所依据版本中该段的起点开始计数，所以谱例3.3从37开始，注释里写“b. 40”，读者就能找到那个小节。校勘条目是普通的脚注，从讨论该小节的段落中引出：先写采用的读法，接右方括号，再写异文和斜体的版本代号。乐谱内部无法插入注码，所以注码放在说出这一读法的句子上。
+
+### 3 · 按正文的尺寸安排乐谱
+
+5毫米的Leipzig谱表放在116毫米的版心里，每行容纳五到六个3/2拍的小节，谱例3.3的十一个小节正好排成两行。`textFont` 让歌词用正文字体Crimson Pro排印；`minSystemsAtBreak: 2` 避免一页只留下某个谱例的一行谱而其余转到下一页。每个谱例的标题是三级标题，因此不会脱离乐谱单独留在页底。
+
+### 4 · 允许带注释的页面提前结束
+
+<Excerpt region="opener" />
+
+章首页把正文下沉50毫米，上方是Cormorant斜体标题。后面若某页的下一行会带来一条较长的注释，这一页就提前几行结束；`balancing: { maxLinesPerHeading: 1 }` 防止分栏平衡把这段空白挪到下一节标题的上方，那样会像论述中断了一样。
+
+### 5 · 左页印书名，右页印章名
+
+<Excerpt region="running-heads" />
+
+页码用朱红色印在外侧，左页是书名，右页是章名；`pages: 'body'` 让它们不出现在章首页，章首页在页底居中印页码。
+
+## 变化
+
+### 每个小节都标号
+
+每行谱上有很多校勘条目时，每个小节都有号码更便于查找。
+
+```diff
+-  barNumbers: 'system', // the apparatus is keyed by bar: number every system
++  barNumbers: 'every',
+```
+
+### 改用Bravura刻印谱例
+
+Bravura的符头更粗，适合铜版刻印风格的出版社。
+
+```diff
+-  musicFont: 'Leipzig', // lighter than Bravura, close to a 19th-century plate
++  musicFont: 'Bravura',
+```
+
+## 常见问题
+
+- MEI 5的调号写成 `scoreDef` 或 `staffDef` 上的 `keysig="1f"`。MEI 4的属性 `key.sig` 会被悄悄忽略，降号随之消失。
+- 每个 `staffDef` 都要写 `lines="5"`：没有它，音符和谱号会刻在没有谱线的空白上。
+- 刻印的是 `<app>` 中的 `<lem>`，不是 `<rdg>`。需要读者在页面上看到的异文，应写进校勘注或另立一个谱例。
