@@ -2422,6 +2422,7 @@
     "selectionUp": "Seleziona ciò che lo contiene (Esc)",
     "selectionClear": "Togli la selezione",
     "selectionAnnounce": "Selezionato: __path__",
+    "selectionPropertiesHint": "__key__-clic: le sue proprietà nel pannello Grafica",
     "selectionPage": "Pagina __name__",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "Gruppo di cornici __name__",

@@ -2421,6 +2421,7 @@
     "selectionUp": "تحديد العنصر الذي يحتويه (Esc)",
     "selectionClear": "إلغاء التحديد",
     "selectionAnnounce": "المحدَّد: __path__",
+    "selectionPropertiesHint": "__key__+نقر: خصائصه في لوحة التصميم",
     "selectionPage": "الصفحة __name__",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "مجموعة الإطارات __name__",

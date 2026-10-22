@@ -2,7 +2,7 @@ import { describe, expect, it, beforeAll, beforeEach } from 'vitest';
 import { buildDocument, createMeasurementCache, flowToPage, sourceAt } from 'postext';
 import type { PostextConfig, Resource, VDTBlock, VDTDocument, VDTPage } from 'postext';
 import { atLevel, breadcrumb, breadcrumbText, climb, pickAt, resolveSelection, selectedElement, selectionAtSource, type CrumbLabels, type PageSelection } from './pageSelection.js';
-import { headingInChapters, sectionForConfigPath, selectionTarget } from './selectionTargets.js';
+import { hasDesignTarget, headingInChapters, sectionForConfigPath, selectionTarget } from './selectionTargets.js';
 import { pickedMarkFor } from './pickedOverlay.js';
 import { climbPageSelection, followFrameEditor, frameDragNow, pageSelectionNow, resetPageSelection, selectPageLevel, setPageSelection, syncPageSelection } from './selectionStore.js';
 
@@ -148,6 +148,14 @@ describe('the page selection model (#865)', () => {
     expect(selectionTarget(doc, atLevel(sel, 4), 'design')).toMatchObject({ kind: 'settings', group: 'page', path: '/pageTemplates/0' });
   });
 
+  it('the path says which of its items Alt opens the form of (Content mode)', () => {
+    const sel = pickAt(doc, page.index, at.x, at.y, null)!;
+    // A frame (its properties in the template), its group, the page's
+    // template and the paragraph (its style): a plain click opens their
+    // text, Alt their form.
+    expect([0, 1, 2, 3, 4].map((l) => hasDesignTarget(doc, atLevel(sel, l)))).toEqual([true, true, true, true, true]);
+  });
+
   it('a heading in a frame names itself, and its look is in Headings', () => {
     const h1 = frameBlocks(page, 'titulo').find((b) => b.type === 'heading')!;
     const p = onText(h1);
@@ -215,6 +223,8 @@ describe('the page selection model (#865)', () => {
     expect(selectedElement(sel).level).toBe('resource');
     expect(selectionTarget(doc, sel, 'content')).toEqual({ kind: 'resource', resourceId: 'foto-dinero' });
     expect(selectionTarget(doc, sel, 'design')).toEqual({ kind: 'resource', resourceId: 'foto-dinero' });
+    // Both modes lead to the same place: the path offers nothing on Alt.
+    expect(hasDesignTarget(doc, sel)).toBe(false);
   });
 
   it('the picked element is marked on its page, not on others; a glyph shows as the caret', () => {
@@ -290,7 +300,11 @@ describe('the selection survives a relayout and a locale switch (#865)', () => {
     const second = frameBlocks(page, 'dinero').filter((b) => b.type === 'paragraph')[1]!;
     const p = onText(second);
     const applied: string[] = [];
-    setPageSelection(pickAt(es.doc, page.index, p.x, p.y, null), es.doc, (s) => applied.push(selectedElement(s).level));
+    const modes: (string | undefined)[] = [];
+    setPageSelection(pickAt(es.doc, page.index, p.x, p.y, null), es.doc, (s, _doc, mode) => {
+      applied.push(selectedElement(s).level);
+      modes.push(mode);
+    });
     const en = page8('en');
     const found = syncPageSelection(en.doc)!;
     expect(selectedElement(found).level).toBe('text');
@@ -299,6 +313,9 @@ describe('the selection survives a relayout and a locale switch (#865)', () => {
     expect(selectedElement(pageSelectionNow()!.selection).level).toBe('block');
     selectPageLevel(2);
     expect(applied).toEqual(['block', 'frame']);
+    // Alt on a path item asks for the form, whatever the mode (#864).
+    selectPageLevel(2, 'design');
+    expect(modes).toEqual([undefined, undefined, 'design']);
     climbPageSelection();
     climbPageSelection();
     climbPageSelection();

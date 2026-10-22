@@ -2422,6 +2422,7 @@
     "selectionUp": "Das Umgebende auswählen (Esc)",
     "selectionClear": "Auswahl aufheben",
     "selectionAnnounce": "Ausgewählt: __path__",
+    "selectionPropertiesHint": "__key__-Klick: seine Eigenschaften im Panel „Gestaltung“",
     "selectionPage": "Seite __name__",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "Rahmengruppe __name__",

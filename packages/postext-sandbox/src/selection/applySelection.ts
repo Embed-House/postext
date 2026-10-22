@@ -3,6 +3,10 @@
  * editor selects the element's source, the Design panel opens where its
  * form is edited, the Resources panel opens on its picture, the
  * page-template editor picks its frame.
+ *
+ * Which of the two a selection leads to is the Sandbox's mode (#864), but
+ * the caller may ask for the other one: Alt on a breadcrumb item opens the
+ * element's form without leaving Content mode (`mode` below).
  */
 
 import type { Dispatch } from 'react';
@@ -11,7 +15,7 @@ import type { SandboxAction } from '../context/SandboxContext.js';
 import type { Chapter, ComposedBook } from '../book/types.js';
 import type { PanelId } from '../types/index.js';
 import { toChapterFocus } from '../viewport/CanvasPreview/chapterFocus.js';
-import { editModeNow, selectFrame } from '../editing/editMode.js';
+import { editModeNow, selectFrame, type EditMode } from '../editing/editMode.js';
 import { requestSettingsSection, type SettingsFocus } from '../context/settingsNavigation.js';
 import { saveSectionState, saveSettingsGroup } from '../storage/persistence.js';
 import { showPageTemplatesSection } from '../templates/showSection.js';
@@ -37,8 +41,9 @@ function openPanel(deps: SelectionApplyDeps, panel: PanelId): void {
   if (deps.activePanel() !== panel) deps.dispatch()({ type: 'SET_PANEL', payload: panel });
 }
 
-/** Carry `target` out (from `sel` on `doc`). True when it led somewhere. */
-export function applyTarget(target: SelectionTarget, sel: PageSelection, doc: VDTDocument, deps: SelectionApplyDeps): boolean {
+/** Carry `target` out (from `sel` on `doc`), in `mode` (the mode of the
+ *  moment when it is left out). True when it led somewhere. */
+export function applyTarget(target: SelectionTarget, sel: PageSelection, doc: VDTDocument, deps: SelectionApplyDeps, mode: EditMode = editModeNow()): boolean {
   const dispatch = deps.dispatch();
   switch (target.kind) {
     case 'caret':
@@ -71,7 +76,7 @@ export function applyTarget(target: SelectionTarget, sel: PageSelection, doc: VD
       dispatch({ type: 'SET_ACTIVE_RESOURCE', payload: target.resourceId });
       return true;
     case 'frame': {
-      if (editModeNow() === 'design') {
+      if (mode === 'design') {
         // The template editor (#863) follows the frame picked.
         selectFrame({ pageIndex: sel.pageIndex, frameId: target.frame.id, name: target.frame.name, template: target.template, configPath: target.frame.configPath });
         if (deps.activePanel() !== 'config') dispatch({ type: 'SET_PANEL', payload: 'config' });
@@ -129,7 +134,7 @@ function openSettings(deps: SelectionApplyDeps, group: Parameters<typeof request
 /** What carries a viewer's page selections out, in the mode of the
  *  moment. */
 export function createSelectionApply(deps: SelectionApplyDeps): SelectionApply {
-  return (sel, doc) => {
-    applyTarget(selectionTarget(doc, sel, editModeNow()), sel, doc, deps);
+  return (sel, doc, mode = editModeNow()) => {
+    applyTarget(selectionTarget(doc, sel, mode), sel, doc, deps, mode);
   };
 }

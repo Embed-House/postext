@@ -5,12 +5,11 @@ import { LayoutTemplate, PenLine } from 'lucide-react';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
 import type { PanelId } from '../types/index.js';
 import { SegmentedControl, announce } from '../ui/index.js';
-import { EDIT_MODE_SHORTCUT, editModeNow, isEditModeShortcut, useEditMode, type EditMode } from './editMode.js';
+import { EDIT_MODE_SHORTCUT, editModeNow, isEditModeShortcut, isMacKeyboard, useEditMode, type EditMode } from './editMode.js';
 
 /** How the shortcut reads on this machine: ⌥⇧M on a Mac. */
 export function editModeShortcutText(): string {
-  const mac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
-  return mac ? '⌥⇧M' : EDIT_MODE_SHORTCUT;
+  return isMacKeyboard() ? '⌥⇧M' : EDIT_MODE_SHORTCUT;
 }
 
 /** The side panel that goes with a mode, when the other mode's is open:

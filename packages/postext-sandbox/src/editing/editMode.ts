@@ -106,6 +106,17 @@ export function onEditModeChange(listener: () => void): () => void {
   return subscribe(listener);
 }
 
+/** Whether the keys are read on a Mac: its shortcuts are written with the
+ *  symbols printed on its keyboard (⌥, ⇧). */
+export function isMacKeyboard(): boolean {
+  return typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+}
+
+/** How the Alt key reads on this machine: ⌥ on a Mac. */
+export function altKeyText(): string {
+  return isMacKeyboard() ? '⌥' : 'Alt';
+}
+
 /** The keys that switch modes: Alt+Shift+M (⌥⇧M on a Mac). Read by the
  *  physical key, so every keyboard layout has it where an M is printed
  *  on a QWERTY one. */

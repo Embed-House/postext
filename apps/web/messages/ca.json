@@ -2421,6 +2421,7 @@
     "selectionUp": "Seleccionar el que el conté (Esc)",
     "selectionClear": "Treure la selecció",
     "selectionAnnounce": "Seleccionat: __path__",
+    "selectionPropertiesHint": "__key__-clic: les seves propietats al tauler de Disseny",
     "selectionPage": "Pàgina __name__",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "Grup de marcs __name__",

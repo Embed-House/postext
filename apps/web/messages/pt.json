@@ -2418,6 +2418,7 @@
     "selectionUp": "Selecionar o que o contém (Esc)",
     "selectionClear": "Desfazer a seleção",
     "selectionAnnounce": "Selecionado: __path__",
+    "selectionPropertiesHint": "__key__+clique: suas propriedades no painel Design",
     "selectionPage": "Página __name__",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "Grupo de blocos __name__",

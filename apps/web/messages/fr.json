@@ -2421,6 +2421,7 @@
     "selectionUp": "Sélectionner ce qui le contient (Échap)",
     "selectionClear": "Annuler la sélection",
     "selectionAnnounce": "Sélection : __path__",
+    "selectionPropertiesHint": "__key__-clic : ses propriétés dans le panneau Maquette",
     "selectionPage": "Page __name__",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "Groupe de blocs __name__",

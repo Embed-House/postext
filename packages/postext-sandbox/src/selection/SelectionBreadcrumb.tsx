@@ -5,8 +5,10 @@ import { ArrowUpLeft, X } from 'lucide-react';
 import { useSandboxDispatch, useSandboxDocRef, useSandboxDocSourceRef, useSandboxLabels, useSandboxSelector, useSandboxStateGetter } from '../context/SandboxContext.js';
 import { onFrameEditorEvent } from '../templates/frameEvents.js';
 import { createSelectionApply } from './applySelection.js';
-import { IconButton, announce, cn } from '../ui/index.js';
-import { breadcrumb, breadcrumbText, crumbText, type Crumb } from './pageSelection.js';
+import { IconButton, Tooltip, announce, cn } from '../ui/index.js';
+import { altKeyText, useEditMode } from '../editing/editMode.js';
+import { atLevel, breadcrumb, breadcrumbText, crumbText, type Crumb } from './pageSelection.js';
+import { hasDesignTarget } from './selectionTargets.js';
 import { clearPageSelection, climbPageSelection, followFrameEditor, pageSelectionNow, selectPageLevel, setSelectionChapters, setSelectionTemplates, usePageSelection } from './selectionStore.js';
 import type { SandboxLabels } from '../types/labels.js';
 
@@ -44,6 +46,7 @@ export function SelectionBreadcrumb() {
   const view = useSandboxSelector((s) => s.activeViewport);
   const getState = useSandboxStateGetter();
   const current = usePageSelection();
+  const [mode] = useEditMode();
 
   // The chapters a contents entry's heading is looked for in.
   useEffect(() => {
@@ -100,6 +103,15 @@ export function SelectionBreadcrumb() {
 
   if (!current || !PAGE_VIEWS.has(view)) return null;
   const crumbs = breadcrumb(current.doc, current.selection);
+  // Alt on an item opens the element's form — a frame's properties in its
+  // template, a paragraph's style — without leaving Content mode (#864).
+  // In Design mode a plain click already goes there, so nothing is said.
+  const altOpensForm = (c: Crumb): boolean =>
+    mode === 'content' && c.level !== null && hasDesignTarget(current.doc, atLevel(current.selection, c.level));
+  const crumbTip = (c: Crumb): string =>
+    altOpensForm(c)
+      ? `${crumbName(c, labels)} · ${labels.selectionPropertiesHint.replace('__key__', altKeyText())}`
+      : crumbName(c, labels);
   return (
     <nav
       aria-label={labels.selectionPath}
@@ -111,22 +123,24 @@ export function SelectionBreadcrumb() {
         {crumbs.map((c, i) => (
           <li key={`${c.kind}-${c.level ?? 'p'}-${i}`} className="flex shrink-0 items-center gap-0.5">
             {i > 0 && <span aria-hidden="true" className="text-(--slate)">›</span>}
-            <button
-              type="button"
-              disabled={c.level === null}
-              aria-current={c.current ? 'true' : undefined}
-              aria-label={crumbName(c, labels)}
-              title={crumbName(c, labels)}
-              onClick={() => { if (c.level !== null) selectPageLevel(c.level); }}
-              className={cn(
-                'inline-flex h-7 cursor-pointer items-center rounded px-1.5 whitespace-nowrap transition-colors pt-large:h-11 pt-large:px-2.5',
-                'focus-visible:outline-2 focus-visible:outline-offset-1 outline-(--brand-hover)',
-                'enabled:hover:bg-(--background) disabled:cursor-default',
-                c.current ? 'font-semibold text-(--brand)' : c.inner ? 'text-(--slate) opacity-80' : 'text-(--foreground)',
-              )}
-            >
-              {crumbText(c, labels)}
-            </button>
+            <Tooltip content={crumbTip(c)}>
+              <button
+                type="button"
+                disabled={c.level === null}
+                aria-current={c.current ? 'true' : undefined}
+                aria-label={crumbName(c, labels)}
+                aria-keyshortcuts={altOpensForm(c) ? 'Alt+Enter' : undefined}
+                onClick={(ev) => { if (c.level !== null) selectPageLevel(c.level, ev.altKey ? 'design' : undefined); }}
+                className={cn(
+                  'inline-flex h-7 cursor-pointer items-center rounded px-1.5 whitespace-nowrap transition-colors pt-large:h-11 pt-large:px-2.5',
+                  'focus-visible:outline-2 focus-visible:outline-offset-1 outline-(--brand-hover)',
+                  'enabled:hover:bg-(--background) disabled:cursor-default',
+                  c.current ? 'font-semibold text-(--brand)' : c.inner ? 'text-(--slate) opacity-80' : 'text-(--foreground)',
+                )}
+              >
+                {crumbText(c, labels)}
+              </button>
+            </Tooltip>
           </li>
         ))}
       </ol>
