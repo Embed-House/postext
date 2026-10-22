@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FileCode, Table as TableIcon, ImageOff, Play } from 'lucide-react';
 import type { Resource, ResourceType } from 'postext';
-import { defaultCaptionLabels, inlineSvgFonts } from 'postext';
+import { defaultCaptionLabels, dimensionToPx, initMusicEngine, inlineSvgFonts, pickScoreStyle, renderScore, resolveBodyTextConfig, resolveScoreStyleConfig, resolveScoreStylesConfig } from 'postext';
 import { documentLanguage } from '../../context/documentDirection.js';
 import { useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
 import { getBlob } from '../../storage/blobStore.js';
@@ -254,6 +254,48 @@ const PAPER = '#ffffff';
 const PAPER_INK = '#1f1f1f';
 const PAPER_MUTED = '#5c5c5c';
 
+/** Width the preview engraves a score at, in px. */
+const SCORE_PREVIEW_WIDTH = 480;
+
+/** A score resource's systems (#1172), engraved on the page: the engraver
+ *  is loaded here only when a score is previewed. */
+function ScoreBody({ score }: { score: NonNullable<Resource['score']> }) {
+  const labels = useSandboxLabels();
+  const config = useSandboxSelector((s) => s.config);
+  const [svgs, setSvgs] = useState<string[] | null>(null);
+  useEffect(() => {
+    let live = true;
+    void (async () => {
+      try {
+        await initMusicEngine();
+        const resolved = { scoreStyle: resolveScoreStyleConfig(config.scoreStyle, resolveBodyTextConfig(config.bodyText)), scoreStyles: resolveScoreStylesConfig(config.scoreStyles, config.scoreStyle, resolveBodyTextConfig(config.bodyText)) };
+        const style = pickScoreStyle(resolved, score.styleId);
+        const render = renderScore(score.source, score.format, SCORE_PREVIEW_WIDTH, {
+          staffSizePx: Math.max(4, dimensionToPx(style.staffSize, config.page?.dpi ?? 96)),
+          font: style.musicFont,
+          textFont: style.textFont,
+          spacing: style.spacing,
+          barNumbers: style.barNumbers,
+          systemSpacing: 0,
+        });
+        if (live) setSvgs(render.systems.map((sys) => sys.svg.replace(/<svg\b([^>]*?) width="[^"]*" height="[^"]*"/, '<svg$1 width="100%" style="display:block;height:auto"')));
+      } catch {
+        if (live) setSvgs([]);
+      }
+    })();
+    return () => { live = false; };
+  }, [score.source, score.format, score.styleId, config.scoreStyle, config.scoreStyles, config.bodyText, config.page?.dpi]);
+  if (svgs === null || svgs.length === 0) {
+    return (
+      <div className="flex items-center justify-center rounded text-xs" style={{ height: 80, backgroundColor: 'var(--surface)', color: 'var(--slate)' }}>
+        {svgs === null ? '…' : labels.resourcePreviewNoContent}
+      </div>
+    );
+  }
+  // The engraver's own markup (paths and words, no script): set as is.
+  return <div aria-hidden="true" className="flex flex-col gap-2" style={{ color: PAPER_INK }} dangerouslySetInnerHTML={{ __html: svgs.join('') }} />;
+}
+
 /** Mock embed of a resource (visual payload + caption foot). */
 export function ResourcePreview({ resource, type }: ResourcePreviewProps) {
   const labels = useSandboxLabels();
@@ -269,6 +311,8 @@ export function ResourcePreview({ resource, type }: ResourcePreviewProps) {
         <SvgBody fileId={resource.svg.fileId} altText={alt} />
       ) : resource.kind === 'table' ? (
         <TableBody resource={resource} />
+      ) : resource.kind === 'score' && resource.score ? (
+        <ScoreBody score={resource.score} />
       ) : resource.kind === 'video' && resource.video?.poster ? (
         <VideoBody fileId={resource.video.poster.fileId} altText={alt} />
       ) : (
