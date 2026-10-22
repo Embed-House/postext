@@ -56,9 +56,6 @@ function listOf(config: PostextConfig, list: PlainList | 'calloutStyles'): { id:
   }
 }
 
-const isPlain = (list: DesignList): list is PlainList =>
-  ['paragraphStyles', 'headingStyles', 'chipStyles', 'markStyles', 'tableStyles', 'scoreStyles', 'labelStyles', 'frameLooks'].includes(list);
-
 function listParam(description: string) {
   return { type: 'string', enum: [...LISTS], description } as const;
 }
