@@ -1803,6 +1803,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     selectionUp: t("selectionUp"),
     selectionClear: t("selectionClear"),
     selectionAnnounce: t("selectionAnnounce"),
+    selectionPropertiesHint: t("selectionPropertiesHint"),
     selectionPage: t("selectionPage"),
     selectionGroup: t("selectionGroup"),
     selectionGroupLabel: t("selectionGroupLabel"),

@@ -184,10 +184,13 @@ export function ProjectsPanel() {
               <MenuSeparator />
               <MenuItem icon={<Upload size={13} />} onClick={() => importRef.current?.click()}>{labels.projectImportShort}</MenuItem>
             </Menu>
+            {/* No `accept` filter (#1183): macOS gives `.postext` only a
+                dynamic type, and the picker greys the files out now and
+                then. The import reads the archive and reports a file that
+                is not a book. */}
             <input
               ref={importRef}
               type="file"
-              accept=".postext,application/zip"
               onChange={handleImport}
               className="hidden"
               aria-hidden="true"

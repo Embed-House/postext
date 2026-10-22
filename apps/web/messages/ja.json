@@ -2421,6 +2421,7 @@
     "selectionUp": "外側の要素を選択（Esc）",
     "selectionClear": "選択を解除",
     "selectionAnnounce": "選択：__path__",
+    "selectionPropertiesHint": "__key__+クリック：「デザイン」パネルでプロパティを開く",
     "selectionPage": "__name__ページ",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "枠グループ「__name__」",

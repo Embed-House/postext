@@ -175,6 +175,20 @@ export function selectionTarget(doc: VDTDocument, sel: PageSelection, mode: Edit
   return mode === 'design' ? designTarget(doc, sel, el) : contentTarget(doc, sel, el);
 }
 
+/**
+ * Whether the element a selection picked leads somewhere else in Design
+ * mode than in Content mode: its form, which the breadcrumb then offers on
+ * Alt+click and says so in its tooltip. A frame always does: its text is
+ * the Markdown's, its properties its template's.
+ */
+export function hasDesignTarget(doc: VDTDocument, sel: PageSelection): boolean {
+  const el = selectedElement(sel);
+  const design = designTarget(doc, sel, el);
+  if (design.kind === 'none') return false;
+  if (design.kind === 'frame') return true;
+  return design.kind !== contentTarget(doc, sel, el).kind;
+}
+
 /** The words of a contents row (its title, without the number and the
  *  page number it lists). */
 function tocTitle(block: VDTBlock | undefined): string {

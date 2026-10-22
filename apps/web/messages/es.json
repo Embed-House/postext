@@ -3616,6 +3616,7 @@
     "selectionUp": "Seleccionar lo que lo contiene (Esc)",
     "selectionClear": "Quitar la selección",
     "selectionAnnounce": "Seleccionado: __path__",
+    "selectionPropertiesHint": "__key__-clic: sus propiedades en el panel de Diseño",
     "selectionPage": "Página __name__",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "Grupo de marcos __name__",

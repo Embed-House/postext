@@ -18,6 +18,7 @@
 import { useSyncExternalStore } from 'react';
 import { findElement, sourceAt, type PageTemplate, type SourceMapOptions, type VDTDocument } from 'postext';
 import type { Chapter } from '../book/types.js';
+import type { EditMode } from '../editing/editMode.js';
 import type { FrameEditorEvent } from '../templates/frameEvents.js';
 import { onFrameDragChange, setFrameDrag } from './frameDrag.js';
 
@@ -25,8 +26,10 @@ export { frameDragNow, type FrameDrag } from './frameDrag.js';
 import { climb, climbable, atLevel, elementRectOnSheet, resolveSelection, type ChapterOfPage, type PageSelection } from './pageSelection.js';
 
 /** What carries a selection out (opens the editor or a panel at it): the
- *  viewer that made it. */
-export type SelectionApply = (sel: PageSelection, doc: VDTDocument) => void;
+ *  viewer that made it. `mode` carries it out in a mode that is not the
+ *  one of the moment (Alt on a breadcrumb item: its form, in Content
+ *  mode); the mode now when it is left out. */
+export type SelectionApply = (sel: PageSelection, doc: VDTDocument, mode?: EditMode) => void;
 
 export interface PageSelectionState {
   selection: PageSelection;
@@ -90,13 +93,16 @@ export function climbPageSelection(): boolean {
   return true;
 }
 
-/** Pick another level of the selection's path (a breadcrumb item). */
-export function selectPageLevel(level: number): void {
+/** Pick another level of the selection's path (a breadcrumb item), and
+ *  carry it out: in `mode` when one is given (Alt+click asks for Design,
+ *  the element's form, without leaving Content mode), else in the mode of
+ *  the moment. */
+export function selectPageLevel(level: number, mode?: EditMode): void {
   if (!state) return;
   const next = atLevel(state.selection, level);
   state = { ...state, selection: next };
   emit();
-  apply?.(next, state.doc);
+  apply?.(next, state.doc, mode);
 }
 
 /**

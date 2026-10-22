@@ -2421,6 +2421,7 @@
     "selectionUp": "选择外层元素（Esc）",
     "selectionClear": "取消选择",
     "selectionAnnounce": "已选择：__path__",
+    "selectionPropertiesHint": "__key__+点击：在“版面设计”面板中打开其属性",
     "selectionPage": "第__name__页",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "框组__name__",

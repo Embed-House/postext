@@ -1902,6 +1902,10 @@ export interface SandboxLabels {
   selectionUp: string;
   selectionClear: string;
   selectionAnnounce: string;
+  /** The tooltip of a breadcrumb item whose element has a form: Alt on it
+   *  opens that form without leaving Content mode. `__key__` is the Alt
+   *  key as this machine writes it (⌥ on a Mac). */
+  selectionPropertiesHint: string;
   selectionPage: string;
   selectionGroup: string;
   selectionGroupLabel: string;

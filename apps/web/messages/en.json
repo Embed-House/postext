@@ -2422,6 +2422,7 @@
     "selectionUp": "Select what holds it (Esc)",
     "selectionClear": "Let go of the selection",
     "selectionAnnounce": "Selected: __path__",
+    "selectionPropertiesHint": "__key__-click: its properties in the Design panel",
     "selectionPage": "Page __name__",
     "selectionGroup": "__name__",
     "selectionGroupLabel": "Group of frames __name__",
