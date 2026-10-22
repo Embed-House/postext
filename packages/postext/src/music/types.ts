@@ -21,6 +21,20 @@ export function markdownHasScore(markdown: string): boolean {
   return SCORE_FENCE_RE.test(markdown);
 }
 
+/** Notation files read as music examples, by extension (#1172). */
+export const SCORE_FILE_FORMATS: Readonly<Record<string, ScoreFormat>> = {
+  '.abc': 'abc',
+  '.musicxml': 'musicxml',
+  '.mei': 'mei',
+  '.krn': 'humdrum',
+};
+
+/** The notation format of a file, from its extension. */
+export function scoreFormatOfFile(file: string): ScoreFormat | undefined {
+  const dot = file.lastIndexOf('.');
+  return dot < 0 ? undefined : SCORE_FILE_FORMATS[file.slice(dot).toLowerCase()];
+}
+
 /** Whether laying out `content` engraves a score: a notation fence in its
  *  markdown, or a score resource (#1172). */
 export function contentHasScore(content: { markdown: string; resources?: ReadonlyArray<{ kind: string }> }): boolean {

@@ -561,8 +561,15 @@ export function resourceFromSpec(
   fileIdFor: (file: string) => string = identity,
 ): Resource {
   const now = Date.now();
-  const { file, pdfFile, poster, width, height, resolution, fileResolution, inlineFonts, ...rest } = spec;
-  const base: Resource = { ...rest, createdAt: now, updatedAt: now };
+  const { file, pdfFile, poster, width, height, resolution, fileResolution, inlineFonts, score, ...rest } = spec;
+  // A score spec's notation (#1172): kept when it is whole (the codec has
+  // read a notation file into it by now).
+  const base: Resource = {
+    ...rest,
+    ...(score?.format && typeof score.source === 'string' ? { score: { ...score, format: score.format, source: score.source } } : {}),
+    createdAt: now,
+    updatedAt: now,
+  };
   if (spec.kind === 'video' || (file && isVideoFile(file))) {
     // A video (#454): its own file (self-hosted) and its poster frame.
     const video = { source: 'file' as const, ...(spec.video ?? {}) };

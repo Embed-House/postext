@@ -756,7 +756,7 @@ export type { ConfigDesignSlot, ConfigDesignSlotKind } from './design/slots.js';
 export type { MathRender, MathPath, MathViewBox } from './math/types.js';
 export { initMathEngine, isMathReady, onMathReady, renderMath, placeholderRender, clearMathCache } from './math/index.js';
 export type { ScoreFormat, ScoreItem, ScoreRender, ScoreRenderOptions, ScoreSystem } from './music/types.js';
-export { initMusicEngine, isMusicReady, onMusicReady, renderScore, clearMusicCache, markdownHasScore, contentHasScore, SCORE_LANGUAGES } from './music/index.js';
+export { initMusicEngine, isMusicReady, onMusicReady, renderScore, clearMusicCache, markdownHasScore, contentHasScore, scoreFormatOfFile, SCORE_LANGUAGES, SCORE_FILE_FORMATS } from './music/index.js';
 // The Rust line breaker compiled to WebAssembly (#779): the same breaks as
 // the TypeScript one, faster; started on its own, `initLineBreaker` starts
 // it early.

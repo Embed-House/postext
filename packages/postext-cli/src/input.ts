@@ -5,7 +5,8 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, extname, join, relative, resolve, sep } from 'node:path';
-import type { PostextConfig, Resource, ScoreFormat } from 'postext';
+import type { PostextConfig, Resource } from 'postext';
+import { scoreFormatOfFile } from 'postext';
 import {
   bitmapInfo,
   createBundle,
@@ -65,13 +66,6 @@ const SKIP_DIRS = new Set(['node_modules', '.git']);
 const fileCache = new Map<string, { mtimeMs: number; size: number; bytes: Uint8Array }>();
 
 
-/** Notation files read as music examples (#1172), by extension. */
-const SCORE_FILE_FORMATS: Record<string, ScoreFormat> = {
-  '.abc': 'abc',
-  '.musicxml': 'musicxml',
-  '.mei': 'mei',
-  '.krn': 'humdrum',
-};
 
 /** A file's bytes, read again only when its size or date changed. */
 export function readFileCached(path: string): Uint8Array {
@@ -239,7 +233,7 @@ function looseResources(dir: string): { resources: Resource[]; files: Map<string
   for (const file of [...tree.keys()].sort(naturalCompare)) {
     const id = basename(file, extname(file));
     // A notation file (#1172): a music example, its text the score.
-    const scoreFormat = SCORE_FILE_FORMATS[extname(file).toLowerCase()];
+    const scoreFormat = scoreFormatOfFile(file);
     if (scoreFormat) {
       if (taken.has(id)) continue;
       taken.add(id);

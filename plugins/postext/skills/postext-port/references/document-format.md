@@ -197,6 +197,7 @@ The same triggers also end a running paragraph mid-way (§3.1): a continuation l
 - **Layout:** one line per source line in the code face, in a box (`codeStyle`, configuration.md §12b): never hyphenated or justified, spaces at full width, tabs to the next `tabSize` stop, overlong lines wrapped / shrunk / clipped (`codeOverflow`), numbers in a gutter (not copied), split between lines across columns and pages.
 - **Indented code** (4 spaces / a tab after a blank line) is a listing only under `codeStyle.indentedCode: true`.
 - **Stored presets:** a manifest below `configVersion` 9 whose chapters hold a fence reads them as Markdown (`codeStyle.blocks: false`). Write `"configVersion": 9`.
+- **Notation fences are scores (postext ≥ 1.54):** ```` ```abc ````, ```` ```musicxml ````, ```` ```mei ````, ```` ```humdrum ```` and ```` ```kern ```` are music scores, not listings (§11a). `{listing}` keeps one a listing; ```` ```xml ```` is always code.
 
 ---
 
@@ -763,6 +764,17 @@ $$
 \int_0^{\infty} e^{-x^2}\,dx = \frac{\sqrt{\pi}}{2}
 $$
 ```
+
+---
+
+## 11a. Music scores (postext ≥ 1.54)
+
+- **Fence:** ```` ```abc ```` / ```` ```musicxml ```` / ```` ```mei ```` / ```` ```humdrum ```` (or ```` ```kern ````), the notation as written. Attributes: `alt="…"` (default: title and composer read from the notation), `style="…"` (a `scoreStyles` id).
+- **Layout:** engraved at the column's width and cut into systems; each system is a block, placed whole, so a score runs on over columns and pages. `scoreStyle.minSystemsAtBreak` keeps the first and last systems together. Not numbered, not captioned.
+- **Numbered examples** are `kind: "score"` resources typed `example` (project-format.md, music.md §3), cited with `:ref` and set with `::resource`.
+- **ABC** reads one voice; parts go in MusicXML, MEI or Humdrum. Humdrum keeps its tabs.
+- **Stored presets:** a manifest below `configVersion` 20 whose chapters hold a notation fence reads it as a listing (`scoreStyle.enabled: false`). Write `"configVersion": 20`.
+- Full guide: [music.md](music.md).
 
 ---
 

@@ -4,6 +4,7 @@
 // resources and file payloads; `planBundle` / `resolveBundleFiles` do the
 // reverse. Nothing here touches storage.
 
+import { scoreFormatOfFile } from '../music/types.js';
 import type { CustomFontFamily, PostextConfig, Resource } from '../types.js';
 import { cloneDefaultColorPalette, defaultResourceTypes, stripConfigDefaults } from '../defaults/index.js';
 import {
@@ -235,6 +236,14 @@ export async function readBundle(
           }
         }
         return resourceFromSpec(resolved, size, ids.blob);
+      }
+      if (spec.kind === 'score' || (file && scoreFormatOfFile(file))) {
+        // A music example (#1172): a notation file's text is the score.
+        const bytes = file ? await readFile(file).catch(() => null) : null;
+        if (file && !bytes) onWarning?.(`${spec.id}: score "${file}" not found, ignored`);
+        const source = bytes ? decoder.decode(bytes) : spec.score?.source ?? '';
+        const format = spec.score?.format ?? (file ? scoreFormatOfFile(file) : undefined) ?? 'abc';
+        return resourceFromSpec({ ...spec, kind: 'score', file: undefined, score: { ...spec.score, format, source } }, undefined, ids.blob);
       }
       if (!file) return resourceFromSpec(spec, undefined, ids.blob);
       const mime = mimeForFile(file);
