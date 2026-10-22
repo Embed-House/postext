@@ -3,12 +3,12 @@
   "slug": "splash-inset-broken-border",
   "sourceHash": "9b22e497eebc78be32be50d16334f13cc126d4db4285a6126c8ff35f77ed21d5",
   "engine": {
-    "postext": "1.33.7",
-    "postextPdf": "1.33.7",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:40:39.037Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T20:29:00.259Z",
   "variants": {
     "en": {
       "hash8": "5c52b98a",
@@ -238,7 +238,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
@@ -469,7 +475,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ca": {
@@ -700,17 +712,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "zh": {
-      "hash8": "587d5354",
+      "hash8": "d2c4f85c",
       "vdtHash": "69a714d811223c07ee4617800fe1b6c4129a8924",
       "timings": {
-        "importMs": 518,
-        "fontsMs": 411,
-        "buildMs": 118,
-        "totalMs": 1827,
+        "importMs": 2015,
+        "fontsMs": 1592,
+        "buildMs": 149,
+        "totalMs": 4569,
         "builds": 1
       },
       "specimen": {
@@ -780,7 +798,7 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 791059,
+        "bytes": 791048,
         "pages": 2
       },
       "sandbox": {
@@ -932,7 +950,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ar": {
@@ -1167,17 +1191,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "ja": {
-      "hash8": "2a2e8348",
+      "hash8": "c6904ee2",
       "vdtHash": "a6e280cef897624f349f209d33e1f87e3bbbca57",
       "timings": {
-        "importMs": 529,
-        "fontsMs": 445,
-        "buildMs": 105,
-        "totalMs": 1771,
+        "importMs": 1631,
+        "fontsMs": 687,
+        "buildMs": 128,
+        "totalMs": 3277,
         "builds": 1
       },
       "specimen": {
@@ -1208,7 +1238,7 @@
           "h": 1542,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 264690,
+          "bytes": 264220,
           "alt": "1ページ。"
         },
         {
@@ -1219,7 +1249,7 @@
           "h": 1542,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 223406,
+          "bytes": 224334,
           "alt": "2ページ。"
         }
       ],
@@ -1248,7 +1278,7 @@
       },
       "pdf": {
         "file": "splash-inset-broken-border.pdf",
-        "bytes": 783651,
+        "bytes": 783665,
         "pages": 2
       },
       "sandbox": {
@@ -1401,7 +1431,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "pt": {
@@ -1632,7 +1668,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "fr": {
@@ -1863,7 +1905,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "de": {
@@ -2094,7 +2142,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "it": {
@@ -2325,7 +2379,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     }
   }
