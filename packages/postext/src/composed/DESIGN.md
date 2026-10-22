@@ -3664,7 +3664,13 @@ Sandbox: the template editor's Size group has «Grows with the frames inside» (
 anchored inside it, the frames chosen) and, for a list, a checkbox per frame and group (seeded with
 the frames anchored inside it). Fixture: `__tests__/composed/growWith.test.ts`, three photos and their
 captions in a labelled box under a 1.3 text stress; the skill's end-to-end test runs the same page
-through `composed_check --stress 1.3`.
+through `composed_check --stress 1.3`. Decision kept (#1198): the room under the lowest member is the
+box's whole bottom padding, also when the box's declared height leaves less (a box whose padding was
+measured under its text and whose captions sit closer to its foot grows by the difference at the text
+as written). Taking the room the first lay leaves instead would give a box of the same design two rooms,
+one when its members fit and none (captions on the edge) once a longer text makes them run past it; a
+port writes the bottom padding the source leaves under the lowest member when that member, not the
+box's own text, is the lowest content.
 
 ### 14.5 Which fit marks the canvas draws (#1160)
 
