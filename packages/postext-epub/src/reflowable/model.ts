@@ -195,6 +195,9 @@ export interface FigureNode {
   /** An SVG over the picture that draws those labels the print sets as
    *  text (#955), in the picture's coordinates. */
   labelsSvg?: string;
+  /** A music example (#1172): its systems' SVG, drawn in place of a
+   *  picture. */
+  score?: { systems: string[]; color: string };
 }
 
 export interface TableCellNode {
@@ -303,6 +306,16 @@ export interface CodeNode {
   lines: CodeLineNode[];
 }
 
+/** A music score (#1172): its systems, one SVG each, read as one image. */
+export interface ScoreNode {
+  k: 'score';
+  pre: InlineItem[];
+  alt: string;
+  /** Each system's SVG, in `currentColor`, as wide as the column. */
+  systems: string[];
+  color: string;
+}
+
 export interface MathNode {
   k: 'math';
   pre: InlineItem[];
@@ -378,6 +391,7 @@ export type Node =
   | FigureNode
   | TableNode
   | MathNode
+  | ScoreNode
   | VerseNode
   | StanzaNode
   | CodeNode

@@ -1,3 +1,4 @@
+import type { ScoreFormat } from './music/types.js';
 import type { ArabicNumeralStyle, EastAsianNumeralStyle, NumberFormatStyle, NumeralStyle } from './numbering.js';
 import type { FrameLookEntry, LabelStyle, PageTemplate } from './composed/types.js';
 import type { StoryJump } from './composed/carryTypes.js';
@@ -281,7 +282,7 @@ export interface ResourceType {
 }
 
 /** The concrete payload kind a `Resource` carries. */
-export type ResourceKind = 'bitmap' | 'svg' | 'table' | 'video';
+export type ResourceKind = 'bitmap' | 'svg' | 'table' | 'video' | 'score';
 
 /** Where a video resource plays from (#454): a YouTube or Vimeo page, or a
  *  self-hosted file (an uploaded MP4 or WebM, or one at a web address: a
@@ -641,6 +642,16 @@ export interface Resource {
      *  already or must stay as it is. Default: the document's
      *  `diagramStyle.inlineFonts` (on). */
     inlineFonts?: boolean;
+  };
+  /** Present when `kind === 'score'` (#1172): a music example, engraved
+   *  at the column's width, numbered and captioned like a figure. */
+  score?: {
+    format: ScoreFormat;
+    /** The notation: ABC, MusicXML, MEI or Humdrum text. */
+    source: string;
+    /** Id of a named score style (`PostextConfig.scoreStyles`); unset, the
+     *  document's `scoreStyle`. */
+    styleId?: string;
   };
   /** Present when `kind === 'table'`. */
   table?: {
@@ -2784,6 +2795,70 @@ export interface ResolvedCaptionStyleConfig {
   note: ResolvedCaptionNoteStyleConfig;
   labelNumberGap: string;
   labelSeparator: string;
+}
+
+/** SMuFL music fonts a score can be engraved in (#1173). */
+export type ScoreMusicFont = 'Bravura' | 'Leland' | 'Petaluma' | 'Leipzig' | 'Gootville';
+
+/** Music scores (#1172/#1173): the look of every ```` ```abc ```` /
+ *  ```` ```musicxml ```` / ```` ```mei ```` / ```` ```humdrum ```` score. A
+ *  score is engraved at the width of its column and broken into systems;
+ *  each system is a block the layout places, so a long score runs on over
+ *  columns and pages. */
+export interface ScoreStyleConfig {
+  /** Read notation fences as scores. Default `true`; off, they are code
+   *  listings. */
+  enabled?: boolean;
+  /** Height of a five-line staff (the rastral size). Default 6 mm. */
+  staffSize?: Dimension;
+  /** SMuFL font of the notes, clefs and signs. Default Bravura. */
+  musicFont?: ScoreMusicFont;
+  /** Font of the lyrics, tempo and directions. Defaults to the body text. */
+  textFont?: string;
+  /** Horizontal spacing of the notes: 1 is the engraver's default, more
+   *  spreads them (fewer bars per system). Default 1. */
+  spacing?: number;
+  /** Bar numbers: none, at the start of each system, on every bar.
+   *  Default `'system'`. */
+  barNumbers?: 'none' | 'system' | 'every';
+  /** Space between two systems of a score. Default 3 mm. */
+  systemGap?: Dimension;
+  /** Space above and below a score. Default 6 pt each. */
+  marginTop?: Dimension;
+  marginBottom?: Dimension;
+  /** Ink of the notation. Defaults to the body text colour. */
+  color?: ColorValue;
+  /** Fewest systems a score leaves at the foot of a column when it runs
+   *  on into the next one (and takes to the next). A score with fewer
+   *  systems than twice this moves whole. Default 1. */
+  minSystemsAtBreak?: number;
+}
+
+export interface ResolvedScoreStyleConfig {
+  enabled: boolean;
+  staffSize: Dimension;
+  musicFont: ScoreMusicFont;
+  textFont: string;
+  spacing: number;
+  barNumbers: 'none' | 'system' | 'every';
+  systemGap: Dimension;
+  marginTop: Dimension;
+  marginBottom: Dimension;
+  color: ColorValue;
+  minSystemsAtBreak: number;
+}
+
+/** A named score style (`PostextConfig.scoreStyles`), picked per score by
+ *  the fence's `style` attribute (```` ```abc {style="hymn"} ````); unset
+ *  fields inherit `scoreStyle`. */
+export interface NamedScoreStyleConfig extends Omit<ScoreStyleConfig, 'enabled'> {
+  id: string;
+  name?: string;
+}
+
+export interface ResolvedNamedScoreStyleConfig extends ResolvedScoreStyleConfig {
+  id: string;
+  name: string;
 }
 
 /** Styling for embedded SVG diagrams (`kind: 'svg'` resources). When
@@ -8358,6 +8433,11 @@ export interface PostextConfig {
   captionStyle?: CaptionStyleConfig;
   /** Styling for embedded SVG diagrams (single-ink reproduction). */
   diagramStyle?: DiagramStyleConfig;
+  /** Music scores (notation fences): staff size, music font, spacing (#1173). */
+  scoreStyle?: ScoreStyleConfig;
+  /** Named score styles a score picks with `{style="…"}`; unset fields
+   *  inherit {@link scoreStyle}. */
+  scoreStyles?: NamedScoreStyleConfig[];
   /** How video resources are printed (poster overlays: play mark, QR
    *  code) and played (player options). */
   videoStyle?: VideoStyleConfig;

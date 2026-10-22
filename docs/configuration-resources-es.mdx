@@ -953,6 +953,105 @@ También se exportan las funciones de nivel más bajo: `svgFontRequests(svgText)
 **Licencias.** Incrustar mete archivos de fuente dentro de imágenes que pueden salir de la aplicación (una exportación HTML, un EPUB). Ocurre cuando una imagen se muestra o se exporta, nunca en los bytes guardados del recurso, y `withhold` deja fuera las familias que una licencia no te permite ceder: el escritor de EPUB retiene las variantes marcadas con `redistributable: false`, y el Sandbox las familias personalizadas marcadas así. Desde postext 1.43, una familia que indica `withhold` puede tener sustituta (`standIn`): la cara abierta se incrusta con su nombre y el texto de la imagen conserva el ancho con el que se compuso.
 
 
+## Estilo de partitura
+
+La propiedad `scoreStyle` (`ScoreStyleConfig`) fija el aspecto de todas las partituras: los bloques de notación (```` ```abc ````, ```` ```musicxml ````, ```` ```mei ````, ```` ```humdrum ````) y los recursos `score`. Una partitura se graba al ancho de su columna y se divide en sistemas, y cada sistema se coloca como un bloque propio, así que una partitura larga sigue por columnas y páginas. Los formatos y el Markdown están en [Notación musical](/es/docs/music).
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: 'Small examples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propiedad</th>
+      <th>Tipo</th>
+      <th>Valor por defecto</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Lee los bloques de notación como partituras. Desactivado, son listados de código. Los documentos guardados antes de la versión de configuración 20 cuyo texto tiene uno de esos bloques reciben <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>staffSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'mm' &#125;</code></td>
+      <td>Altura del pentagrama, de la primera a la quinta línea (el tamaño de rastral).</td>
+    </tr>
+    <tr>
+      <td><code>musicFont</code></td>
+      <td><code>'Bravura' | 'Leland' | 'Petaluma' | 'Leipzig' | 'Gootville'</code></td>
+      <td><code>'Bravura'</code></td>
+      <td>La fuente SMuFL de las notas, las claves y los signos.</td>
+    </tr>
+    <tr>
+      <td><code>textFont</code></td>
+      <td><code>string</code></td>
+      <td>la fuente del texto principal</td>
+      <td>Fuente de la letra, las indicaciones de tempo y de expresión. Una palabra más ancha en esta fuente que en la Times del grabador se compone más pequeña para que quepa en su sitio.</td>
+    </tr>
+    <tr>
+      <td><code>spacing</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Espaciado horizontal de las notas: por encima de 1 las separa y cada sistema lleva menos compases.</td>
+    </tr>
+    <tr>
+      <td><code>barNumbers</code></td>
+      <td><code>'none' | 'system' | 'every'</code></td>
+      <td><code>'system'</code></td>
+      <td>Números de compás al comienzo de cada sistema, en todos los compases o en ninguno.</td>
+    </tr>
+    <tr>
+      <td><code>systemGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 3, unit: 'mm' &#125;</code></td>
+      <td>Espacio entre dos sistemas de una partitura.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>Espacio encima de una partitura dentro del texto.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>Espacio debajo de una partitura dentro del texto.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>el color del texto principal</td>
+      <td>Tinta de la notación y de su texto.</td>
+    </tr>
+    <tr>
+      <td><code>minSystemsAtBreak</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Mínimo de sistemas que una partitura deja al pie de una columna o pasa a la siguiente. Una partitura con menos del doble de esta cifra pasa entera.</td>
+    </tr>
+  </tbody>
+</table>
+
+Los estilos de partitura con nombre (`scoreStyles`, `NamedScoreStyleConfig[]`) tienen los mismos campos más un `id` y un `name` opcional; un bloque elige uno con `style="…"` y un recurso de partitura con `score.styleId`. Lo que un estilo con nombre deja sin definir sale de `scoreStyle`.
+
 ## Estilo de vídeo
 
 La propiedad `videoStyle` fija cómo se imprimen los [recursos de vídeo](/es/docs/document-format-resources#vídeos) —la marca de reproducción y el código QR sobre la portada, y si la portada enlaza con el vídeo— y qué ofrecen sus reproductores en el visor HTML y en EPUB.

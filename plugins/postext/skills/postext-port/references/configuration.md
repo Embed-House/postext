@@ -103,6 +103,8 @@ Conversion at `page.dpi` (default 300):
 | `tableStyles` | NamedTableStyleConfig[] | `[]` | §16 per-table via `resource.table.styleId` |
 | `captionStyle` | CaptionStyleConfig | §17 | + per-type overrides |
 | `diagramStyle` | DiagramStyleConfig | `{singleInk:false, inkColor: main-color, inlineFonts:true}` | §18 |
+| `scoreStyle` | ScoreStyleConfig | §18b | music scores (≥ 1.54): staff size, music font, text font, spacing, bar numbers, system gap, margins, ink, keep rule |
+| `scoreStyles` | NamedScoreStyleConfig[] | `[]` | §18b per score via fence `style="…"` or `resource.score.styleId` |
 | `videoStyle` | VideoStyleConfig | §18a | video resources (≥ 1.16): play mark, QR code, poster link, HTML/EPUB player options |
 | `math` | MathConfig | §19 | |
 | `footnotes` | FootnotesConfig | §19a | `[^id]` notes: placement, numbering, type, rule |
@@ -1540,6 +1542,25 @@ SVG to tints of one ink by luminance (spot-colour books) and disables SVG `pdfFi
 masters when on. `inlineFonts` (≥ 1.25) embeds in each SVG the faces its `<text>` names before it
 is shown as an image (canvas, HTML, EPUB, PDF raster fallback), so labels set in the book's fonts;
 a resource opts out with `svg.inlineFonts: false` (`"inlineFonts": false` in preset.json).
+
+## 18b. `scoreStyle` / `scoreStyles` — music scores (postext ≥ 1.54)
+
+How every notation fence and `kind: 'score'` resource is engraved (music.md).
+
+```
+scoreStyle
+├─ enabled = true             notation fences are scores (false: code listings; configVersion < 20 pins false)
+├─ staffSize = 6mm            height of a five-line staff (rastral size)
+├─ musicFont = 'Bravura'      'Bravura'|'Leland'|'Petaluma'|'Leipzig'|'Gootville' (SMuFL)
+├─ textFont = body face       lyrics, tempo, directions
+├─ spacing = 1                horizontal note spacing factor (>1 spreads, fewer bars per system)
+├─ barNumbers = 'system'      'none'|'system'|'every'
+├─ systemGap = 3mm            between two systems of a score
+├─ marginTop = 6pt, marginBottom = 6pt   around a fence score
+├─ color = body text colour   ink of the notation
+└─ minSystemsAtBreak = 1      fewest systems left at a column foot or carried over
+scoreStyles[]  { id, name?, …any field above but enabled }   unset fields inherit scoreStyle
+```
 
 ## 18a. `videoStyle` — VideoStyleConfig (postext ≥ 1.16)
 

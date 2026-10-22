@@ -179,8 +179,8 @@ describe('maths in configurations written before postext 1.5 (EF-75)', () => {
 
   it('writes bundles for today\'s rules, which read back unpinned', async () => {
     const { manifest, bytes } = await createBundle({ name: 'Now', chapters: [{ markdown: CHAPTER }], config: BODY });
-    expect(CONFIG_VERSION).toBe(19);
-    expect(manifest.configVersion).toBe(19);
+    expect(CONFIG_VERSION).toBe(20);
+    expect(manifest.configVersion).toBe(20);
     const again = await openBundle(bytes);
     expect(again.config.math).toBeUndefined();
     // …and a 1.4 bundle, opened and written again, is read back as it was

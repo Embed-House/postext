@@ -20,6 +20,7 @@ import { asciiDigits } from '../arabicNumerals.js';
 import { indentColumn, listDepth, nestListItem } from './listNesting.js';
 import { parseComicFence } from '../comics/page.js';
 import { closesCodeFence, codeFenceOpen } from './codeFence.js';
+import { SCORE_LANGUAGES } from '../music/types.js';
 
 export { parseDirectiveAttrs, spaceDirectiveLines, MAX_SPACE_LINES } from './attrs.js';
 export { codeFenceOpen } from './codeFence.js';
@@ -198,7 +199,8 @@ const _parseMemos = new Map<string, Map<string, { blocks: ContentBlock[]; issues
 function optionsKey(options: ParseOptions | undefined): string {
   const fences = options?.fences !== false;
   const indented = options?.indentedCode === true;
-  return fences && !indented ? '' : `${fences ? 'f' : 'n'}${indented ? 'i' : ''}`;
+  const scores = options?.scores !== false;
+  return fences && !indented && scores ? '' : `${fences ? 'f' : 'n'}${indented ? 'i' : ''}${scores ? '' : 'c'}`;
 }
 
 function parseMemoLookup(markdown: string, options?: ParseOptions): { blocks: ContentBlock[]; issues: ParseIssue[] } {
@@ -416,6 +418,7 @@ function comicTextSource(markdown: string, start: number, end: number): string {
 function parseBlocks(markdown: string, options?: ParseOptions): { blocks: ContentBlock[]; issues: ParseIssue[] } {
   const fences = options?.fences !== false;
   const indentedCode = options?.indentedCode === true;
+  const scores = options?.scores !== false;
   const blocks: ContentBlock[] = [];
   const issues: ParseIssue[] = [];
   const rawLines = markdown.split('\n');
@@ -1093,6 +1096,23 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
     const srcStart = lineOffsets[start]!;
     const srcEnd = closed ? lineEndOffset(end) : lineEndOffset(rawLines.length - 1);
     const code = codeBlock(start + 1, end, cuts, srcStart, srcEnd, { ...info, info: open.info, fence });
+    // A fence in a notation language is a music score (#1172), unless it
+    // asks to stay a listing.
+    const scoreFormat = scores && info.lang !== undefined && closed && info.attrs.listing === undefined
+      ? SCORE_LANGUAGES[info.lang]
+      : undefined;
+    if (scoreFormat) {
+      blocks.push({
+        type: 'score',
+        text: '',
+        spans: [],
+        score: { format: scoreFormat, source: code.code!.lines.join('\n'), attrs: info.attrs },
+        sourceStart: srcStart,
+        sourceEnd: srcEnd,
+        sourceMap: [],
+      });
+      return end + 1;
+    }
     // `slot="…"` among the fence's attributes (#854).
     if (info.attrs.slot !== undefined) {
       const infoAt = rawLines[start]!.indexOf(open.info, open.indent + open.marker.length);

@@ -869,6 +869,15 @@ Cut them as figures, or transcribe the data: a table resource, a callout
 with a list, or a "stats" callout with `:::columns{count=3}`. Detect the
 pages by drawing count (`inventory.py` → `vector_heavy_pages`).
 
+### D14a. Music examples, songbooks and hymnals (postext ≥ 1.54)
+Bring the music in as notation, never as pictures of scores: the
+publisher's MusicXML or MEI exports as `example` resources
+(`resources/ex-2-3.musicxml`), short one-voice examples re-entered in ABC,
+chorales in Humdrum. Unnumbered examples go in the text as fences; numbered
+ones are resources with the source's caption. Measure the staff size and
+match the music font in `scoreStyle`; examples in boxes or margins get a
+smaller named style. Full guide: [music.md](music.md).
+
 ### D14. Pictures you may not reproduce
 Only for third-party pictures the user does not control (their own titles
 keep every picture). Replace them with licensed ones (CC0 or public-domain collections, Wikimedia

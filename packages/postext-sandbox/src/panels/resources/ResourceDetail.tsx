@@ -29,6 +29,7 @@ import { SvgFontsField } from './SvgFontsField.js';
 import { SafeAreaField } from './SafeAreaEditor.js';
 import { applyMarks } from './pictureMarks.js';
 import { VideoEditor } from './VideoEditor.js';
+import { ScoreEditor } from './ScoreEditor.js';
 import { SvgSourceEditor, type SvgSourceCommit } from './SvgSourceEditor.js';
 import { TableEditor, type TableFocusRequest } from './TableEditor/TableEditor.js';
 import { slugify } from './slugify.js';
@@ -592,6 +593,9 @@ export function ResourceDetail({
         {/* Kind-specific controls */}
         {resource.kind === 'video' && (
           <VideoEditor resource={resource} onChange={(partial) => onChange(touch(partial))} />
+        )}
+        {resource.kind === 'score' && (
+          <ScoreEditor key={resource.id} resource={resource} onChange={(partial) => onChange(touch(partial))} />
         )}
         {resource.kind === 'bitmap' && (
           <Field label={labels.resourceImageLabel}>

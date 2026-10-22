@@ -1,0 +1,163 @@
+{/* docs/music-es.mdx */}
+
+export const metadata = {
+  title: 'Notación musical',
+  sidebarTitle: 'Notación musical',
+  description: 'Cómo compone Postext música dentro de un libro: notación escrita como texto en ABC, MusicXML, MEI o Humdrum, grabada al ancho de la columna y dividida en sistemas que siguen por columnas y páginas, ejemplos musicales numerados como recursos, el estilo de partitura, las salidas y cómo trae sus partituras una editorial de música',
+  lang: 'es',
+  lastUpdated: '2026-10-22',
+  readingTime: '12 min',
+  order: 34,
+  plainSummary: "Esta página explica cómo poner música en un libro de Postext. La música se escribe como texto, en uno de los formatos que ya usan los músicos y los programas de notación, y Postext dibuja a partir de él los pentagramas, las notas y la letra. Una pieza larga se corta en líneas de música que siguen en la columna o la página siguiente, como un párrafo. Un ejemplo musical también puede numerarse y llevar pie, como una figura. El aspecto de todas las partituras (el tamaño del pentagrama, la fuente musical, los números de compás) se fija una vez en la configuración. La página termina con la forma de trabajar de una editorial de música con Postext y los límites que quedan.",
+};
+
+# Notación musical
+
+**La música es texto en el libro; su aspecto es un ajuste.**
+
+En Postext una partitura se escribe como notación, no se dibuja. Un bloque delimitado del capítulo contiene la música en uno de cuatro formatos de texto, y el motor la graba con [Verovio](https://www.verovio.org), la biblioteca de grabado de la Music Encoding Initiative. La partitura se graba al ancho de su columna y se corta en **sistemas**, las líneas de música que el lector sigue de izquierda a derecha. Cada sistema se coloca como un bloque propio: una partitura más larga que el sitio que queda en una página continúa al principio de la columna siguiente, y nunca se corta dentro de un sistema. El tamaño del pentagrama, la fuente musical, los números de compás y el espaciado salen de la [sección `scoreStyle` de la configuración](/es/docs/configuration-resources#estilo-de-partitura), así que un libro entero cambia de aspecto cambiando un ajuste.
+
+La música es opcional: un documento sin bloques de notación se compone como antes, y el grabador (unos 3,7 MB) solo lo cargan los libros que tienen música.
+
+## Formatos
+
+<table>
+  <thead>
+    <tr>
+      <th>Bloque</th>
+      <th>Formato</th>
+      <th>Indicado para</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#96;&#96;&#96;abc</code></td><td>ABC 2.1</td><td>Melodías y ejemplos a una voz, canciones con la letra bajo las notas. Compacto y fácil de escribir a mano. El grabador lee <strong>una voz</strong> de una pieza en ABC: escribe las partes en otro de los formatos.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;musicxml</code></td><td>MusicXML 4.0</td><td>Cualquier cosa exportada desde Dorico, Sibelius, Finale o MuseScore. Es largo, así que conviene guardarlo en un archivo de recurso.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;mei</code></td><td>MEI</td><td>Ediciones críticas y académicas, música antigua.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;humdrum</code>, <code>&#96;&#96;&#96;kern</code></td><td>Humdrum (kern)</td><td>Corales y armonía a cuatro voces, ejemplos de análisis: una columna separada por tabuladores por voz, la más grave primero.</td></tr>
+  </tbody>
+</table>
+
+Un bloque <code>&#96;&#96;&#96;xml</code> sigue siendo un listado de código. Un bloque de notación con `{listing}` también queda como listado, para mostrar el código de una pieza en un tutorial.
+
+## Una partitura en el texto
+
+````md
+La cadencia perfecta cierra en la tónica en la voz superior:
+
+```humdrum {alt="Frase de coral en sol mayor que acaba en una cadencia perfecta"}
+**kern	**kern	**kern	**kern
+*clefF4	*clefGv2	*clefG2	*clefG2
+*k[f#]	*k[f#]	*k[f#]	*k[f#]
+*M4/4	*M4/4	*M4/4	*M4/4
+4GG	4B	4d	4b
+4D	4d	4f#	4a
+=	=	=	=
+1GG	1B	1d	1g
+==	==	==	==
+*-	*-	*-	*-
+```
+
+La semicadencia, en cambio, se detiene en la dominante.
+````
+
+Una melodía con letra, en ABC:
+
+````md
+```abc
+X:1
+T:Himno de la tarde
+M:3/4
+L:1/4
+K:F
+c | A2 B | c2 A | G2 F | E2 c | A2 B | c2 A | G2 E | F2 |]
+w: Ya se va la tar-de, lle-ga ya la no-che, la som-bra del dí-a cu-bre el cie-lo en-te-ro.
+```
+````
+
+El bloque admite dos atributos:
+
+- `alt="…"`: qué es la partitura, para los lectores de pantalla, el PDF etiquetado y el EPUB. Sin él se leen el título y el compositor escritos en la notación (`T:` y `C:` en ABC; `<work-title>` y `<creator type="composer">` en MusicXML). El título no se imprime: ponlo en el texto o en un pie.
+- `style="…"`: un estilo de partitura con nombre del libro (`scoreStyles`), por ejemplo uno de pentagrama más pequeño para los ejemplos de un recuadro.
+
+Una partitura en el texto no se numera ni lleva pie, como una fórmula destacada. Toma los márgenes de su estilo encima y debajo, el espacio entre sistemas entre dos de ellos, y el texto que la sigue vuelve a la retícula de líneas base.
+
+## Ejemplos musicales numerados
+
+Un ejemplo musical que el texto cita («véase el ejemplo 3.2») es un recurso de tipo `score` que se compone como una figura: numerado, con pie, flotante o en su sitio, y citado con `:ref`.
+
+```json
+{
+  "id": "ej-cadencia",
+  "typeId": "example",
+  "kind": "score",
+  "caption": "Cadencia perfecta en sol mayor",
+  "score": { "format": "musicxml", "source": "<?xml version=\"1.0\"?>…", "styleId": "pequeno" }
+}
+```
+
+```md
+La cadencia de :ref{id="ej-cadencia"} cierra la frase.
+
+::resource{id="ej-cadencia"}
+```
+
+Un recurso de tipo `example` se numera con el tipo **Ejemplo** que trae Postext, en el idioma del documento: Example, Ejemplo, Exemple, Notenbeispiel, Esempio, Exemplo, 谱例, 譜例, مثال. El tipo se añade a los [tipos de recurso](/es/docs/configuration-resources#tipos-de-recurso) del libro cuando un recurso lo usa; define un tipo propio si quieres otro nombre. En un paquete (`preset.json`) el recurso puede apuntar a un archivo de notación en lugar de llevar su texto:
+
+```json
+{ "id": "ej-cadencia", "typeId": "example", "kind": "score", "file": "resources/ej-cadencia.musicxml" }
+```
+
+Un archivo terminado en `.abc`, `.musicxml`, `.mei` o `.krn` se lee como partitura diga lo que diga `kind`. La [línea de órdenes](/es/docs/command-line) lee esos mismos archivos de una carpeta `--resources` como ejemplos musicales, y el panel Recursos del Sandbox crea uno con **Nuevo › Nueva partitura** o a partir de un archivo que se suelte en él.
+
+Un recurso de partitura se mantiene entero: flota o se coloca como un solo bloque. Una pieza más larga que una página va en un bloque de notación, que se corta entre sistemas.
+
+## El aspecto de una partitura
+
+Todas las partituras siguen `scoreStyle`; un estilo con nombre colocado encima cambia solo lo que define:
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'pequeno', name: 'Ejemplos pequeños', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+- **Tamaño del pentagrama**: la altura de las cinco líneas. Los libros escolares usan de 6 a 7 mm; los libros de texto y los métodos, de 5 a 6 mm; los ejemplos dentro del texto, de 4 a 5 mm.
+- **Fuente musical**: Bravura (el aspecto grabado tradicional), Leland (más ligera), Petaluma (manuscrita), Leipzig y Gootville.
+- **Fuente del texto**: letra, indicaciones de tempo y de expresión, en la fuente del texto principal salvo que se fije otra. Una palabra más ancha en esa fuente que en la Times del grabador se compone más pequeña, de modo que las sílabas nunca se pisan.
+- **Espaciado**, **números de compás**, **espacio entre sistemas**, **márgenes** y **tinta**.
+- **Sistemas que van juntos** (`minSystemsAtBreak`): el mínimo de sistemas que una partitura deja al pie de una columna o pasa a la siguiente. Con 2, un sistema nunca queda solo; una partitura de menos de cuatro sistemas pasa entera.
+
+Todos los campos, con su tipo y su valor por defecto, están en [Configuración › Estilo de partitura](/es/docs/configuration-resources#estilo-de-partitura). El Sandbox los edita en **Diseño › Figuras y tablas › Partituras** y **Estilos de partitura**.
+
+## En todas las salidas
+
+- **Canvas y HTML**: cada sistema se pinta como trazados vectoriales y texto en la tinta de la partitura; el visor HTML nombra la partitura con su texto alternativo.
+- **PDF**: dibujos vectoriales, con el texto en las fuentes incrustadas del libro. En un PDF etiquetado cada partitura es una `Figure` con su texto alternativo.
+- **EPUB**: un EPUB adaptable muestra los sistemas como SVG en línea, tan anchos como la columna de lectura, leídos como una sola imagen; un EPUB de maquetación fija conserva las páginas impresas.
+- **Word**: un documento exportado conserva el bloque de notación tal como está escrito, igual que un listado de código, y la partitura vuelve al importar de nuevo el documento.
+
+## Trabajar con una editorial de música
+
+Postext compone el libro alrededor de la música; el programa de notación sigue siendo donde se escribe la música.
+
+1. Graba o corrige la música en Dorico, Sibelius, Finale o MuseScore y exporta cada ejemplo como MusicXML (`.musicxml`, sin comprimir).
+2. Pon los archivos entre los recursos del libro y dales el tipo `example`. Los ejemplos cortos a una voz se pueden escribir en ABC directamente en el capítulo.
+3. Mide el tamaño del pentagrama y ajusta la fuente musical del estilo de la casa en `scoreStyle`; los ejemplos de recuadros o márgenes llevan un estilo con nombre.
+4. Compón el libro y revisa los saltos de página. Los compases por sistema dependen del ancho de la columna, del tamaño del pentagrama y del espaciado.
+
+La [habilidad postext-port](/es/docs/skill) sigue estos mismos pasos cuando adapta un libro de texto de música, un método o un cancionero.
+
+## Límites
+
+- Los sistemas se llenan hasta el ancho de la columna: aún no se respetan los saltos de sistema escritos en la notación.
+- El lector de ABC toma una sola voz.
+- El MusicXML comprimido (`.mxl`) hay que descomprimirlo antes.
+- La edición completa de una partitura (una partitura de orquesta, las particellas, los pasos de página planificados compás a compás) es trabajo de un programa de notación, no de un compositor de libros.

@@ -1,6 +1,6 @@
 ---
 name: postext-port
-description: Port an existing publication into a Postext project (config manifest + enriched Markdown chapters + resources + fonts) that reproduces the original's layout rules; typically a publisher or author migrating their own titles. Use when the user wants to convert, adapt, migrate, re-typeset or rebuild a book, textbook, magazine, catalogue, report, manual, course or deck in Postext from a PDF, Word (.docx), PowerPoint (.pptx), EPUB, HTML, InDesign (IDML), LaTeX, Markdown, XML or scanned pages, Chinese books set horizontally or vertically, Japanese books (vertical bunko and tankōbon novels, horizontal technical books, Aozora Bunko texts with furigana) and Arabic books set right to left (Modern Standard or classical, vocalised verse included), and comics, manga and newspaper strips re-lettered in each language, and fixed-page textbooks, workbooks and magazines as composed pages (page templates with frames filled from the Markdown); when writing or fixing Postext preset.json/config/chapters; or when asked how to express a source layout (columns, openers, parts, boxes, floats, tables, running heads, comic panels) in Postext.
+description: Port an existing publication into a Postext project (config manifest + enriched Markdown chapters + resources + fonts) that reproduces the original's layout rules; typically a publisher or author migrating their own titles. Use when the user wants to convert, adapt, migrate, re-typeset or rebuild a book, textbook, magazine, catalogue, report, manual, course or deck in Postext from a PDF, Word (.docx), PowerPoint (.pptx), EPUB, HTML, InDesign (IDML), LaTeX, Markdown, XML or scanned pages, Chinese books set horizontally or vertically, Japanese books (vertical bunko and tankōbon novels, horizontal technical books, Aozora Bunko texts with furigana) and Arabic books set right to left (Modern Standard or classical, vocalised verse included), and comics, manga and newspaper strips re-lettered in each language, music textbooks, methods, songbooks and hymnals with their music examples written as notation (ABC, MusicXML, MEI, Humdrum), and fixed-page textbooks, workbooks and magazines as composed pages (page templates with frames filled from the Markdown); when writing or fixing Postext preset.json/config/chapters; or when asked how to express a source layout (columns, openers, parts, boxes, floats, tables, running heads, comic panels) in Postext.
 license: MIT
 metadata:
   homepage: https://postext.dev/en/docs/skill
@@ -496,6 +496,10 @@ Full references (load the one you need):
   warnings, `comic_panels.py`, and porting playbooks (text-free art plus
   translations, lettered scans, generated art, manga, Arabic, newspaper
   strips).
+- [references/music.md](references/music.md): music scores (postext ≥
+  1.54): notation fences (ABC, MusicXML, MEI, Humdrum), numbered music
+  examples as `score` resources, `scoreStyle` mapping (staff size, music
+  font), and porting music textbooks, methods, songbooks and hymnals.
 - [references/verification.md](references/verification.md): lint, headless
   render, page JPEGs, page-by-page comparison, and a symptom → lever table.
 

@@ -111,6 +111,7 @@
     "hyphenation.it": "^0.2.1",
     "hyphenation.nl": "^0.2.1",
     "hyphenation.pt": "^0.2.1",
-    "hypher": "^0.2.5"
+    "hypher": "^0.2.5",
+    "verovio": "^6.3.0"
   }
 }

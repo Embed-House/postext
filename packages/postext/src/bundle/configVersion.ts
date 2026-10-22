@@ -3,7 +3,7 @@
 // the number as `configVersion` (every writer since postext 1.5 sets it);
 // the Sandbox numbers its stored projects the same way.
 
-import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, TableStyleConfig, IndexConfig, UnorderedListsConfig } from '../types.js';
+import type { BodyTextConfig, CjkConfig, CodeStyleConfig, Dimension, DimensionUnit, HeadingBreakBeforeConfig, HeadingsConfig, LayoutConfig, MathConfig, PostextConfig, ScoreStyleConfig, TableStyleConfig, IndexConfig, UnorderedListsConfig } from '../types.js';
 import { DEFAULT_MATH_CONFIG } from '../defaults/math.js';
 import { DEFAULT_MARK_STYLES } from '../defaults/markStyles.js';
 import { avoidOrphansByDefault } from '../defaults/bodyText.js';
@@ -13,6 +13,7 @@ import { dimensionsEqual } from '../defaults/shared.js';
 import { DEFAULT_TEXT_ELEMENT, resolveDesignLineHeight } from '../defaults/headerFooter.js';
 import { DEFAULT_PAGE_CONFIG } from '../defaults/page.js';
 import { dimensionToPx } from '../units.js';
+import { markdownHasScore } from '../music/types.js';
 import { KNOWN_CONTAINERS } from '../parse/blockParser.js';
 import { codeFenceOpen } from '../parse/codeFence.js';
 import { hasCJK } from '../measure/cjk.js';
@@ -239,9 +240,11 @@ import { hasCJK } from '../measure/cjk.js';
  * 1.48 to 1.51 and gets the version-17, version-18 and version-19 pins
  * (which every older one gets too); one stored as 17 was written by a
  * development build and gets the version-18 and version-19 pins; one stored
- * as 18 was written by postext 1.52 and gets the version-19 pin.
+ * as 18 was written by postext 1.52 and gets the version-19 pin; one stored
+ * as 19 was written by postext 1.53 and gets the version-20 pin (which every
+ * older one gets too).
  */
-export const CONFIG_VERSION = 19;
+export const CONFIG_VERSION = 20;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -361,6 +364,9 @@ const MARK_RADIUS_RULES = 18;
 /** The rules that let formatted text break after a slash between two
  *  words (#1164). */
 const SLASH_BREAK_RULES = 19;
+/** The rules that read a fence in a notation language (```` ```abc ````) as
+ *  a music score (#1172). */
+const SCORE_FENCE_RULES = 20;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1705,6 +1711,26 @@ export function pinLegacySlashBreaks<T extends Partial<PostextConfig>>(config: T
   return { ...config, bodyText: { ...bodyText, breakAfterSlashes: false } };
 }
 
+/**
+ * A configuration written for postext 1.53 or earlier, pinned to the way it
+ * read a fence in a notation language — ```` ```abc ````, ```` ```musicxml ````,
+ * ```` ```mei ````, ```` ```humdrum ````, ```` ```kern ```` — as a code
+ * listing (#1172): `scoreStyle.enabled: false`. A configuration that names
+ * the setting already is returned as it is (the same object).
+ */
+export function pinLegacyScoreFences<T extends Partial<PostextConfig>>(config: T): T {
+  const scoreStyle: ScoreStyleConfig = isRecord(config.scoreStyle) ? config.scoreStyle : {};
+  if (scoreStyle.enabled !== undefined) return config;
+  return { ...config, scoreStyle: { ...scoreStyle, enabled: false } };
+}
+
+/** Whether markdown may hold a fence in a notation language. Unknown
+ *  content (undefined) may. */
+function mayHaveScoreFences(content: string | readonly string[] | undefined): boolean {
+  if (content === undefined) return true;
+  return typeof content === 'string' ? markdownHasScore(content) : content.some(markdownHasScore);
+}
+
 /** A highlight mark typed in the text. */
 const MARK_RE = /:mark\[/;
 
@@ -1923,6 +1949,7 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
   // keys only, nothing to pin.
   if (rules < MARK_RADIUS_RULES && mayHaveMarks(content, out)) out = pinLegacyMarkRadius(out);
   if (rules < SLASH_BREAK_RULES) out = pinLegacySlashBreaks(out);
+  if (rules < SCORE_FENCE_RULES && mayHaveScoreFences(content)) out = pinLegacyScoreFences(out);
   return out;
 }
 
@@ -2023,5 +2050,6 @@ export function migrateBundleConfig(
   // keys only, nothing to pin.
   if (rules < MARK_RADIUS_RULES && mayHaveMarks(content, merged)) merged = pinLegacyMarkRadius(merged);
   if (rules < SLASH_BREAK_RULES) merged = pinLegacySlashBreaks(merged);
+  if (rules < SCORE_FENCE_RULES && mayHaveScoreFences(content)) merged = pinLegacyScoreFences(merged);
   return merged;
 }

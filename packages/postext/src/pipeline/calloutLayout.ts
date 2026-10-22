@@ -39,6 +39,7 @@
  * children.
  */
 
+import { scoreInfoOf } from './scoreBlocks.js';
 import { flowTextWidth, lineBaselineOffset, measuringVertically } from '../measure/vertical.js';
 import { getMeasureLanguage, onTextWidthCacheClear, measureLanguageKey } from '../measure/canvas.js';
 import { designLineOf } from '../design/cjkText.js';
@@ -1278,7 +1279,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     // that holds the paragraph's first line, its rise kept clear above.
     const cap = measuredBlock.dropCap && !opensInside ? measuredBlock.dropCap : undefined;
     if (cap && cap.rise > 0.5) st.cursorY += cap.rise;
-    if (exclusions.length > 0 && !opensInside && !(vdtType === 'resource' && resourceBlock) && !(vdtType === 'mathDisplay' && mathDisplayRender)) {
+    if (exclusions.length > 0 && !opensInside && !(vdtType === 'resource' && resourceBlock) && !(vdtType === 'mathDisplay' && mathDisplayRender) && vdtType !== 'score') {
       const lineInsets = exclusionInsets(exclusions, x, width, st.cursorY, kind.style.lineHeightPx);
       if (lineInsets.length > 0) {
         const again = measureContentBlock(raw, blockIdx, width, derivedCtx, { styleOverride, lineInsets });
@@ -1313,7 +1314,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     // Line-level cut of the first / last child (split boxes): the kept
     // run of lines, and whether this child opens after its first line
     // (no bullet then — the head carries it).
-    const isTextRun = !(vdtType === 'resource' && resourceBlock) && !(vdtType === 'mathDisplay' && mathDisplayRender);
+    const isTextRun = !(vdtType === 'resource' && resourceBlock) && !(vdtType === 'mathDisplay' && mathDisplayRender) && vdtType !== 'score';
     const isFirstReal = isFirstRealOf(k);
     const isLastReal = isLastRealOf(k);
     const lineFrom = !isTextRun ? 0 : lineCut ? Math.max(0, lineCut.from) : isFirstReal ? Math.max(0, input.lineFrom ?? 0) : 0;
@@ -1347,6 +1348,14 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
       const mathLine = { ...measured.lines[0]!, bbox: { ...measured.lines[0]!.bbox, y: 0 } };
       blk.lines = [mathLine];
       height = mathLine.bbox.height;
+      blk.sourceStart = raw.sourceStart + ctx.bodyOffset;
+      blk.sourceEnd = raw.sourceEnd + ctx.bodyOffset;
+    } else if (vdtType === 'score') {
+      // A score system in a box (#1172): its own height, never cut.
+      const systemLine = { ...measured.lines[0]!, bbox: { ...measured.lines[0]!.bbox, y: 0 } };
+      blk.lines = [systemLine];
+      height = systemLine.bbox.height;
+      if (raw.score) blk.score = scoreInfoOf(raw.score);
       blk.sourceStart = raw.sourceStart + ctx.bodyOffset;
       blk.sourceEnd = raw.sourceEnd + ctx.bodyOffset;
     } else {
@@ -1643,7 +1652,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   const galleyOf = (stack: readonly GroupItem[]): GalleyItem[] => stack.map((it) => {
     const blk = it.blocks[0]!;
     const heading = it.unit.kind === 'block' && blk.type === 'heading';
-    const cuttable = it.unit.kind === 'block' && !heading && blk.type !== 'resource' && blk.type !== 'mathDisplay' && blk.lines.length > 1 && !blk.mathRender;
+    const cuttable = it.unit.kind === 'block' && !heading && blk.type !== 'resource' && blk.type !== 'mathDisplay' && blk.type !== 'score' && blk.lines.length > 1 && !blk.mathRender;
     return {
       child: it.k,
       lineBase: it.lineBase,

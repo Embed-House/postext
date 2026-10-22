@@ -1,0 +1,163 @@
+{/* docs/music-fr.mdx */}
+
+export const metadata = {
+  title: 'Notation musicale',
+  sidebarTitle: 'Notation musicale',
+  description: 'Comment Postext compose de la musique dans un livre : une notation écrite comme du texte en ABC, MusicXML, MEI ou Humdrum, gravée à la largeur de la colonne et coupée en systèmes qui continuent sur les colonnes et les pages, des exemples musicaux numérotés comme ressources, le style de partition, les sorties, et la façon dont un éditeur de musique apporte ses partitions',
+  lang: 'fr',
+  lastUpdated: '2026-10-22',
+  readingTime: '12 min',
+  order: 34,
+  plainSummary: "Cette page explique comment mettre de la musique dans un livre Postext. La musique s’écrit comme du texte, dans l’un des formats que les musiciens et les logiciels de notation utilisent déjà, et Postext en dessine les portées, les notes et les paroles. Un morceau long est coupé en lignes de musique qui continuent dans la colonne ou la page suivante, comme un paragraphe. Un exemple musical peut aussi être numéroté et légendé comme une figure. L’aspect de toutes les partitions (la taille des portées, la police musicale, les numéros de mesure) se règle une fois dans la configuration. La page se termine par la façon dont un éditeur de musique peut travailler avec Postext et les limites qui restent.",
+};
+
+# Notation musicale
+
+**La musique est du texte dans le livre ; son aspect est un réglage.**
+
+Dans Postext, une partition s’écrit comme une notation, elle ne se dessine pas. Un bloc délimité du chapitre contient la musique dans l’un de quatre formats texte, et le moteur la grave avec [Verovio](https://www.verovio.org), la bibliothèque de gravure de la Music Encoding Initiative. La partition est gravée à la largeur de sa colonne et coupée en **systèmes**, les lignes de musique que le lecteur suit de gauche à droite. Chaque système est placé comme un bloc à part : une partition plus longue que la place restant sur une page continue en tête de la colonne suivante, et elle n’est jamais coupée à l’intérieur d’un système. La taille de la portée, la police musicale, les numéros de mesure et l’espacement viennent de la [section `scoreStyle` de la configuration](/fr/docs/configuration-resources#style-de-partition) : tout un livre change d’aspect en changeant un réglage.
+
+La musique est facultative : un document sans bloc de notation se compose comme avant, et le graveur (environ 3,7 Mo) n’est chargé que par les livres qui contiennent de la musique.
+
+## Formats
+
+<table>
+  <thead>
+    <tr>
+      <th>Bloc</th>
+      <th>Format</th>
+      <th>Idéal pour</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#96;&#96;&#96;abc</code></td><td>ABC 2.1</td><td>Mélodies et exemples à une voix, chansons avec les paroles sous les notes. Compact et facile à écrire à la main. Le graveur lit <strong>une voix</strong> d’un air ABC : écrivez les parties dans l’un des autres formats.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;musicxml</code></td><td>MusicXML 4.0</td><td>Tout ce qui sort de Dorico, Sibelius, Finale ou MuseScore. Long : mieux vaut le garder dans un fichier de ressource.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;mei</code></td><td>MEI</td><td>Éditions critiques et savantes, musique ancienne.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;humdrum</code>, <code>&#96;&#96;&#96;kern</code></td><td>Humdrum (kern)</td><td>Chorals et harmonie à quatre voix, exemples d’analyse : une colonne séparée par des tabulations par voix, la plus grave d’abord.</td></tr>
+  </tbody>
+</table>
+
+Un bloc <code>&#96;&#96;&#96;xml</code> reste un listing de code. Un bloc de notation avec `{listing}` reste aussi un listing, pour montrer la source d’un air dans un tutoriel.
+
+## Une partition dans le texte
+
+````md
+La cadence parfaite conclut sur la tonique à la voix supérieure :
+
+```humdrum {alt="Phrase de choral en sol majeur terminée par une cadence parfaite"}
+**kern	**kern	**kern	**kern
+*clefF4	*clefGv2	*clefG2	*clefG2
+*k[f#]	*k[f#]	*k[f#]	*k[f#]
+*M4/4	*M4/4	*M4/4	*M4/4
+4GG	4B	4d	4b
+4D	4d	4f#	4a
+=	=	=	=
+1GG	1B	1d	1g
+==	==	==	==
+*-	*-	*-	*-
+```
+
+La demi-cadence s’arrête au contraire sur la dominante.
+````
+
+Une mélodie avec paroles, en ABC :
+
+````md
+```abc
+X:1
+T:Hymne du soir
+M:3/4
+L:1/4
+K:F
+c | A2 B | c2 A | G2 F | E2 c | A2 B | c2 A | G2 E | F2 |]
+w: Le jour va fi-nir, la nuit est tout près, l’om-bre du soir cou-vre tout le ciel bleu.
+```
+````
+
+Le bloc accepte deux attributs :
+
+- `alt="…"` : ce qu’est la partition, pour les lecteurs d’écran, le PDF balisé et l’EPUB. Sans lui, on lit le titre et le compositeur écrits dans la notation (`T:` et `C:` en ABC ; `<work-title>` et `<creator type="composer">` en MusicXML). Le titre n’est pas imprimé : donnez-le dans le texte ou dans une légende.
+- `style="…"` : un style de partition nommé du livre (`scoreStyles`), par exemple avec des portées plus petites pour les exemples d’un encadré.
+
+Une partition dans le texte n’est ni numérotée ni légendée, comme une formule centrée. Elle prend les marges de son style au-dessus et au-dessous, l’espace entre systèmes entre deux systèmes, et le texte qui la suit revient sur la grille des lignes de base.
+
+## Exemples musicaux numérotés
+
+Un exemple musical que le texte cite (« voir l’exemple 3.2 ») est une ressource de genre `score`, composée comme une figure : numérotée, légendée, flottante ou placée là où elle se trouve, et citée avec `:ref`.
+
+```json
+{
+  "id": "ex-cadence",
+  "typeId": "example",
+  "kind": "score",
+  "caption": "Cadence parfaite en sol majeur",
+  "score": { "format": "musicxml", "source": "<?xml version=\"1.0\"?>…", "styleId": "petit" }
+}
+```
+
+```md
+La cadence de :ref{id="ex-cadence"} conclut la phrase.
+
+::resource{id="ex-cadence"}
+```
+
+Une ressource de type `example` est numérotée avec le type **Exemple** fourni par Postext, dans la langue du document : Example, Ejemplo, Exemple, Notenbeispiel, Esempio, Exemplo, 谱例, 譜例, مثال. Le type est ajouté aux [types de ressources](/fr/docs/configuration-resources#types-de-ressources) du livre dès qu’une ressource l’utilise ; définissez votre propre type pour un autre nom. Dans un paquet (`preset.json`), la ressource peut pointer vers un fichier de notation au lieu de porter son texte :
+
+```json
+{ "id": "ex-cadence", "typeId": "example", "kind": "score", "file": "resources/ex-cadence.musicxml" }
+```
+
+Un fichier terminé par `.abc`, `.musicxml`, `.mei` ou `.krn` est lu comme une partition quel que soit son `kind`. La [ligne de commande](/fr/docs/command-line) lit ces mêmes fichiers dans un dossier `--resources` comme exemples musicaux, et le panneau Ressources du Sandbox en crée un avec **Nouveau › Nouvelle partition** ou à partir d’un fichier déposé.
+
+Une ressource de partition reste entière : elle flotte ou se place comme un seul bloc. Un morceau plus long qu’une page va dans un bloc de notation, qui se coupe entre les systèmes.
+
+## L’aspect d’une partition
+
+Toutes les partitions suivent `scoreStyle` ; un style nommé posé par-dessus ne change que ce qu’il définit :
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'petit', name: 'Petits exemples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+- **Taille de la portée** : la hauteur des cinq lignes. Les livres scolaires utilisent 6 à 7 mm ; les manuels et les méthodes, 5 à 6 mm ; les exemples dans le texte courant, 4 à 5 mm.
+- **Police musicale** : Bravura (l’aspect gravé traditionnel), Leland (plus légère), Petaluma (manuscrite), Leipzig et Gootville.
+- **Police du texte** : paroles, indications de tempo et d’expression, dans la police du texte courant sauf réglage contraire. Un mot plus large dans cette police que dans la Times du graveur est composé plus petit, si bien que les syllabes ne se chevauchent jamais.
+- **Espacement**, **numéros de mesure**, **espace entre systèmes**, **marges** et **encre**.
+- **Systèmes gardés ensemble** (`minSystemsAtBreak`) : le nombre minimal de systèmes qu’une partition laisse en pied de colonne ou reporte à la suivante. Avec 2, un système n’est jamais laissé seul ; une partition de moins de quatre systèmes passe entière.
+
+Chaque champ, avec son type et sa valeur par défaut, figure dans [Configuration › Style de partition](/fr/docs/configuration-resources#style-de-partition). Le Sandbox les modifie dans **Maquette › Figures et tableaux › Partitions** et **Styles de partition**.
+
+## Dans toutes les sorties
+
+- **Canvas et HTML** : chaque système est peint en tracés vectoriels et en texte dans l’encre de la partition ; la visionneuse HTML nomme la partition par son texte alternatif.
+- **PDF** : des dessins vectoriels, le texte dans les polices incorporées du livre. Dans un PDF balisé, chaque partition est une `Figure` avec son texte alternatif.
+- **EPUB** : un EPUB recomposable montre les systèmes en SVG en ligne, aussi larges que la colonne de lecture et lus comme une seule image ; un EPUB à mise en page fixe garde les pages imprimées.
+- **Word** : un document exporté garde le bloc de notation tel qu’il est écrit, comme un listing de code, et la partition revient quand on importe à nouveau le document.
+
+## Travailler avec un éditeur de musique
+
+Postext compose le livre autour de la musique ; le logiciel de notation reste l’endroit où la musique s’écrit.
+
+1. Gravez ou corrigez la musique dans Dorico, Sibelius, Finale ou MuseScore, et exportez chaque exemple en MusicXML (`.musicxml`, non compressé).
+2. Placez les fichiers parmi les ressources du livre avec le type `example`. Les exemples courts à une voix peuvent s’écrire en ABC directement dans le chapitre.
+3. Mesurez la taille de la portée et retrouvez la police musicale de la maison dans `scoreStyle` ; les exemples des encadrés ou des marges reçoivent un style nommé.
+4. Composez le livre et vérifiez les sauts de page. Le nombre de mesures par système dépend de la largeur de la colonne, de la taille de la portée et de l’espacement.
+
+La [compétence postext-port](/fr/docs/skill) suit ces mêmes étapes quand elle adapte un manuel de musique, une méthode ou un recueil de chants.
+
+## Limites
+
+- Les systèmes sont remplis jusqu’à la largeur de la colonne : les sauts de système écrits dans la notation ne sont pas encore respectés.
+- Le lecteur ABC ne prend qu’une voix.
+- Le MusicXML compressé (`.mxl`) doit d’abord être décompressé.
+- L’édition complète d’une partition (partition d’orchestre, parties séparées, tournes de page prévues mesure par mesure) relève d’un logiciel de notation, pas d’un compositeur de livres.

@@ -1,0 +1,163 @@
+{/* docs/music-de.mdx */}
+
+export const metadata = {
+  title: 'Notensatz',
+  sidebarTitle: 'Notensatz',
+  description: 'Wie Postext Noten in einem Buch setzt: Notation als Text in ABC, MusicXML, MEI oder Humdrum, in der Breite der Spalte gestochen und in Systeme geteilt, die über Spalten und Seiten weiterlaufen, nummerierte Notenbeispiele als Ressourcen, der Notenstil, die Ausgaben und wie ein Musikverlag seine Noten einbringt',
+  lang: 'de',
+  lastUpdated: '2026-10-22',
+  readingTime: '12 min',
+  order: 34,
+  plainSummary: "Diese Seite erklärt, wie Noten in ein Postext-Buch kommen. Die Musik wird als Text geschrieben, in einem der Formate, die Musiker und Notensatzprogramme schon nutzen, und Postext zeichnet daraus Notenlinien, Noten und Gesangstext. Ein langes Stück wird in Notenzeilen geteilt, die wie ein Absatz in der nächsten Spalte oder auf der nächsten Seite weiterlaufen. Ein Notenbeispiel kann auch wie eine Abbildung nummeriert werden und eine Bildunterschrift tragen. Das Aussehen aller Noten (Größe der Notenlinien, Notenschrift, Taktzahlen) wird einmal in der Konfiguration festgelegt. Zum Schluss geht es darum, wie ein Musikverlag mit Postext arbeiten kann, und um die Grenzen, die bleiben.",
+};
+
+# Notensatz
+
+**Die Musik ist Text im Buch; ihr Aussehen ist eine Einstellung.**
+
+In Postext wird ein Notenbeispiel als Notation geschrieben, nicht gezeichnet. Ein umgrenzter Block im Kapitel enthält die Musik in einem von vier Textformaten, und die Engine sticht sie mit [Verovio](https://www.verovio.org), der Stichbibliothek der Music Encoding Initiative. Die Noten werden in der Breite ihrer Spalte gestochen und in **Systeme** geteilt, die Notenzeilen, denen man von links nach rechts folgt. Jedes System wird als eigener Block gesetzt: Ein Notenbeispiel, das länger ist als der Platz auf einer Seite, läuft oben in der nächsten Spalte weiter und wird nie innerhalb eines Systems getrennt. Rastralgröße, Notenschrift, Taktzahlen und Notenabstand kommen aus dem [Abschnitt `scoreStyle` der Konfiguration](/de/docs/configuration-resources#notenstil); ein ganzes Buch ändert sein Aussehen über eine Einstellung.
+
+Noten sind optional: Ein Dokument ohne Notationsblock wird gesetzt wie bisher, und der Notenstecher (etwa 3,7 MB) wird nur von Büchern mit Noten geladen.
+
+## Formate
+
+<table>
+  <thead>
+    <tr>
+      <th>Block</th>
+      <th>Format</th>
+      <th>Geeignet für</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>&#96;&#96;&#96;abc</code></td><td>ABC 2.1</td><td>Melodien und einstimmige Beispiele, Lieder mit Text unter den Noten. Kompakt und leicht von Hand zu schreiben. Der Stecher liest <strong>eine Stimme</strong> eines ABC-Stücks: Mehrstimmiges in einem der anderen Formate schreiben.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;musicxml</code></td><td>MusicXML 4.0</td><td>Alles, was Dorico, Sibelius, Finale oder MuseScore exportieren. Lang, daher besser in einer Ressourcendatei.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;mei</code></td><td>MEI</td><td>Kritische und wissenschaftliche Ausgaben, Alte Musik.</td></tr>
+    <tr><td><code>&#96;&#96;&#96;humdrum</code>, <code>&#96;&#96;&#96;kern</code></td><td>Humdrum (kern)</td><td>Choräle und vierstimmiger Satz, Analysebeispiele: eine tabulatorgetrennte Spalte je Stimme, die tiefste zuerst.</td></tr>
+  </tbody>
+</table>
+
+Ein Block <code>&#96;&#96;&#96;xml</code> bleibt ein Codelisting. Ein Notationsblock mit `{listing}` bleibt ebenfalls ein Listing, etwa um in einer Anleitung den Quelltext eines Stücks zu zeigen.
+
+## Noten im Text
+
+````md
+Der vollkommene Ganzschluss endet mit dem Grundton in der Oberstimme:
+
+```humdrum {alt="Choralphrase in G-Dur mit vollkommenem Ganzschluss"}
+**kern	**kern	**kern	**kern
+*clefF4	*clefGv2	*clefG2	*clefG2
+*k[f#]	*k[f#]	*k[f#]	*k[f#]
+*M4/4	*M4/4	*M4/4	*M4/4
+4GG	4B	4d	4b
+4D	4d	4f#	4a
+=	=	=	=
+1GG	1B	1d	1g
+==	==	==	==
+*-	*-	*-	*-
+```
+
+Der Halbschluss dagegen endet auf der Dominante.
+````
+
+Eine Melodie mit Text, in ABC:
+
+````md
+```abc
+X:1
+T:Abendlied
+M:3/4
+L:1/4
+K:F
+c | A2 B | c2 A | G2 F | E2 c | A2 B | c2 A | G2 E | F2 |]
+w: Nun geht der Tag zu En-de, die Nacht ist nicht mehr weit, die Schat-ten des A-bends le-gen sich ü-ber den Himmel.
+```
+````
+
+Der Block kennt zwei Attribute:
+
+- `alt="…"`: was die Noten zeigen, für Bildschirmleser, das getaggte PDF und das EPUB. Ohne dieses Attribut werden Titel und Komponist aus der Notation gelesen (`T:` und `C:` in ABC, `<work-title>` und `<creator type="composer">` in MusicXML). Der Titel wird nicht gedruckt: Er gehört in den Text oder in eine Bildunterschrift.
+- `style="…"`: ein benannter Notenstil des Buchs (`scoreStyles`), etwa einer mit kleineren Systemen für Beispiele in einem Kasten.
+
+Noten im Text werden weder nummeriert noch beschriftet, wie eine abgesetzte Formel. Sie erhalten die Ränder ihres Stils oben und unten, den Systemabstand zwischen zwei Systemen, und der folgende Text kehrt auf das Grundlinienraster zurück.
+
+## Nummerierte Notenbeispiele
+
+Ein Notenbeispiel, auf das der Text verweist („siehe Notenbeispiel 3.2“), ist eine Ressource der Art `score` und wird wie eine Abbildung gesetzt: nummeriert, beschriftet, verschoben oder an Ort und Stelle, zitiert mit `:ref`.
+
+```json
+{
+  "id": "nb-kadenz",
+  "typeId": "example",
+  "kind": "score",
+  "caption": "Vollkommener Ganzschluss in G-Dur",
+  "score": { "format": "musicxml", "source": "<?xml version=\"1.0\"?>…", "styleId": "klein" }
+}
+```
+
+```md
+Die Kadenz in :ref{id="nb-kadenz"} schließt die Phrase.
+
+::resource{id="nb-kadenz"}
+```
+
+Eine Ressource vom Typ `example` wird mit dem mitgelieferten Typ **Notenbeispiel** nummeriert, in der Sprache des Dokuments: Example, Ejemplo, Exemple, Notenbeispiel, Esempio, Exemplo, 谱例, 譜例, مثال. Der Typ kommt zu den [Ressourcentypen](/de/docs/configuration-resources#ressourcentypen) des Buchs hinzu, sobald eine Ressource ihn nutzt; für einen anderen Namen einen eigenen Typ anlegen. In einem Paket (`preset.json`) kann die Ressource auf eine Notationsdatei verweisen, statt deren Text zu tragen:
+
+```json
+{ "id": "nb-kadenz", "typeId": "example", "kind": "score", "file": "resources/nb-kadenz.musicxml" }
+```
+
+Eine Datei mit der Endung `.abc`, `.musicxml`, `.mei` oder `.krn` wird unabhängig von `kind` als Noten gelesen. Die [Kommandozeile](/de/docs/command-line) liest dieselben Dateien aus einem Ordner `--resources` als Notenbeispiele, und der Bereich Ressourcen der Sandbox legt eines mit **Neu › Neue Noten** oder aus einer abgelegten Datei an.
+
+Eine Notenressource bleibt ganz: Sie wird verschoben oder als ein Block gesetzt. Ein Stück, das länger als eine Seite ist, gehört in einen Notationsblock, der zwischen den Systemen getrennt wird.
+
+## Das Aussehen der Noten
+
+Alle Noten folgen `scoreStyle`; ein darübergelegter benannter Stil ändert nur, was er festlegt:
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'klein', name: 'Kleine Beispiele', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+- **Rastralgröße**: die Höhe der fünf Notenlinien. Schulbücher nutzen 6 bis 7 mm, Lehrbücher und Schulen 5 bis 6 mm, Beispiele im Fließtext 4 bis 5 mm.
+- **Notenschrift**: Bravura (klassischer Notenstich), Leland (leichter), Petaluma (handschriftlich), Leipzig und Gootville.
+- **Textschrift**: Gesangstexte, Tempo- und Vortragsangaben, in der Schrift des Grundtexts, solange keine andere gesetzt ist. Ein Wort, das in dieser Schrift breiter ist als in der Times des Notenstechers, wird kleiner gesetzt, sodass Silben nie ineinanderlaufen.
+- **Notenabstand**, **Taktzahlen**, **Systemabstand**, **Ränder** und **Farbe**.
+- **Zusammengehaltene Systeme** (`minSystemsAtBreak`): die Mindestzahl der Systeme, die ein Notenbeispiel am Fuß einer Spalte lässt oder mitnimmt. Mit 2 bleibt nie ein System allein; ein Beispiel mit weniger als vier Systemen wandert als Ganzes.
+
+Alle Felder mit Typ und Standardwert stehen unter [Konfiguration › Notenstil](/de/docs/configuration-resources#notenstil). Die Sandbox bearbeitet sie unter **Gestaltung › Abbildungen und Tabellen › Noten** und **Notenstile**.
+
+## In allen Ausgaben
+
+- **Canvas und HTML**: Jedes System wird als Vektorpfade und Text in der Notenfarbe gemalt; der HTML-Viewer benennt die Noten mit ihrem Alternativtext.
+- **PDF**: Vektorzeichnungen, der Text in den eingebetteten Schriften des Buchs. Im getaggten PDF ist jedes Notenbeispiel eine `Figure` mit Alternativtext.
+- **EPUB**: Ein umfließendes EPUB zeigt die Systeme als eingebettetes SVG in der Breite der Lesespalte, gelesen als ein Bild; ein EPUB mit festem Layout behält die gedruckten Seiten.
+- **Word**: Ein exportiertes Dokument behält den Notationsblock so, wie er geschrieben ist, wie ein Codelisting, und die Noten kommen beim erneuten Import zurück.
+
+## Mit einem Musikverlag arbeiten
+
+Postext setzt das Buch um die Musik herum; geschrieben wird die Musik weiterhin im Notensatzprogramm.
+
+1. Die Noten in Dorico, Sibelius, Finale oder MuseScore setzen oder korrigieren und jedes Beispiel als MusicXML exportieren (`.musicxml`, unkomprimiert).
+2. Die Dateien zu den Ressourcen des Buchs legen und ihnen den Typ `example` geben. Kurze einstimmige Beispiele lassen sich in ABC direkt ins Kapitel schreiben.
+3. Rastralgröße messen und die Notenschrift des Hausstils in `scoreStyle` einstellen; Beispiele in Kästen oder Marginalien erhalten einen benannten Stil.
+4. Das Buch setzen und die Seitenumbrüche prüfen. Wie viele Takte ein System fasst, hängt von Spaltenbreite, Rastralgröße und Notenabstand ab.
+
+Der [postext-port-Skill](/de/docs/skill) folgt denselben Schritten, wenn er ein Musiklehrbuch, eine Schule oder ein Liederbuch überträgt.
+
+## Grenzen
+
+- Die Systeme werden bis zur Spaltenbreite gefüllt: In der Notation geschriebene Systemumbrüche werden noch nicht übernommen.
+- Der ABC-Leser liest eine Stimme.
+- Komprimiertes MusicXML (`.mxl`) muss vorher entpackt werden.
+- Eine vollständige Notenausgabe (Partitur, Einzelstimmen, taktgenau geplante Wendestellen) ist Sache eines Notensatzprogramms, nicht eines Buchsatzsystems.

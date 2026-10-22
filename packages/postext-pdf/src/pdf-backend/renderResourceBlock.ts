@@ -27,6 +27,7 @@
  * become clickable link annotations targeting the resource embed's destination.
  */
 
+import { paintScoreBody } from './scoreRender.js';
 import { PDFHexString, popGraphicsState, pushGraphicsState, setFillingColor, type Color, type PDFImage, type PDFDocument, type PDFEmbeddedPage, type PDFFont } from 'pdf-lib';
 import type {
   VDTBlock,
@@ -228,7 +229,7 @@ function charOf(cp: number): string {
 /** The characters an SVG's text may set: those of its markup outside tags,
  *  entities decoded — more than its text nodes (a `<style>` sheet counts
  *  too), which only asks a sliced face for a file more. */
-function svgCodePoints(svgText: string): Set<number> {
+export function svgCodePoints(svgText: string): Set<number> {
   const text = svgText
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
     .replace(/<[^>]*>/g, ' ')
@@ -247,7 +248,7 @@ function svgCodePoints(svgText: string): Set<number> {
 /** Fonts an SVG's text would need, as font strings the {@link FontCache}
  *  can preload: every named (non-generic) family of each run, so the
  *  resolver can fall through the `font-family` list in order. */
-function collectSvgFontStrings(svgText: string): string[] {
+export function collectSvgFontStrings(svgText: string): string[] {
   const wanted = new Set<string>();
   const probe: VectorFontResolver = (families, weight, italic) => {
     for (const f of families) if (!GENERIC_FAMILIES.has(f.toLowerCase())) wanted.add(svgFontString(f, weight, italic));
@@ -259,7 +260,7 @@ function collectSvgFontStrings(svgText: string): string[] {
 
 /** Resolve SVG font requests against the preloaded cache: the first named
  *  family of the list that loaded wins; generic families never match. */
-function fontResolverFor(fontCache: FontCache): VectorFontResolver {
+export function fontResolverFor(fontCache: FontCache): VectorFontResolver {
   const fonts = new Map<PDFFont, VectorFont>();
   return (families, weight, italic) => {
     for (const f of families) {
@@ -869,7 +870,7 @@ function captionText(rb: ResolvedResourceBlock): string {
  *  the reader hears a poster that links to a video, not a still. */
 function figureAlt(rb: ResolvedResourceBlock): string {
   const label = `${rb.captionPrefix} ${rb.number}`.trim();
-  const text = rb.resource.altText?.trim() || captionText(rb);
+  const text = rb.resource.altText?.trim() || rb.score?.alt || captionText(rb);
   // Labels drawn as text are read as text, after the picture (#860).
   if (rb.kind !== 'video') return altWithLabels(text || label, undrawnLabels(rb.labels));
   const name = rb.captionPrefix.trim() || 'Video';
@@ -1283,6 +1284,10 @@ export function renderResourceBlock(
     if (rb.labels) paintFigureLabels(ctx, block, rb, bx, by, fontCache, linkColor, linkRegistry, structure);
   } else if (rb.kind === 'table') {
     renderTable(ctx, rb, bx, by, fontCache, images, linkColor, linkRegistry, owner);
+  } else if (rb.kind === 'score') {
+    // A music example (#1172): its systems down the body, vector.
+    tagContent(ctx, owner);
+    paintScoreBody(ctx, rb, bx, by, bw);
   }
 
   // Named destination for inline refs: top-left of the placed block (the

@@ -52,6 +52,8 @@ export type SettingsSectionId =
   | 'tableStyle'
   | 'tableStyles'
   | 'diagramStyle'
+  | 'scoreStyle'
+  | 'scoreStyles'
   | 'labelStyles'
   | 'videoStyle'
   | 'calloutStyles'
@@ -143,6 +145,8 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'tableStyle', group: 'figures', labelKey: 'tableStyleSection', configKeys: ['tableStyle'] },
   { id: 'tableStyles', group: 'figures', labelKey: 'tableStylesSection', configKeys: ['tableStyles'] },
   { id: 'diagramStyle', group: 'figures', labelKey: 'diagramStyleSection', configKeys: ['diagramStyle'] },
+  { id: 'scoreStyle', group: 'figures', labelKey: 'scoreStyleSection', configKeys: ['scoreStyle'] },
+  { id: 'scoreStyles', group: 'figures', labelKey: 'scoreStylesSection', configKeys: ['scoreStyles'] },
   { id: 'videoStyle', group: 'figures', labelKey: 'videoStyleSection', configKeys: ['videoStyle'] },
   // Label styles (#969): the looks of the labels set on a picture.
   { id: 'labelStyles', group: 'figures', labelKey: 'labelStylesSection', configKeys: ['labelStyles'] },

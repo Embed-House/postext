@@ -344,6 +344,9 @@ importers:
       hypher:
         specifier: ^0.2.5
         version: 0.2.5
+      verovio:
+        specifier: ^6.3.0
+        version: 6.3.0
     devDependencies:
       '@postext/typescript-config':
         specifier: workspace:*
@@ -5223,6 +5226,10 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  verovio@6.3.0:
+    resolution: {integrity: sha512-1p6WhP/w3WrAhPVDTNUDH9UVPAZOnHnZVTWxclE8haHccVI/q8c+99vLH6rRgL9MuYaFR9HF4UJD6MyW2CfMwg==}
+    engines: {node: '>= 14.18.0'}
 
   vfile-location@5.0.3:
     resolution: {integrity: sha512-5yXvWDEgqeiYiBe1lbxYF7UMAIm/IcopxMHrMQDq3nvKcjPKIhZklUKL+AE7J7uApI4kwe2snsK+eI6UTj9EHg==}
@@ -10481,6 +10488,8 @@ snapshots:
   validate-npm-package-name@7.0.2: {}
 
   vary@1.1.2: {}
+
+  verovio@6.3.0: {}
 
   vfile-location@5.0.3:
     dependencies:

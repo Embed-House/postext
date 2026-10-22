@@ -31,6 +31,7 @@ import type {
   ListItemNode,
   ListNode,
   MathNode,
+  ScoreNode,
   Node,
   NoteModel,
   ParagraphNode,
@@ -685,6 +686,10 @@ class DocWalker {
       this.math(block, root);
       return;
     }
+    if (block.type === 'score') {
+      this.score(block, root);
+      return;
+    }
     if (isTocRow(block)) {
       // A head row repeated where a cut contents block goes on (#850):
       // the reflowed contents is not cut.
@@ -1233,6 +1238,25 @@ class DocWalker {
     this.record(block, this.topOf(state, node));
   }
 
+  /** The score whose systems the blocks being walked set (#1172). */
+  private openScore: ScoreNode | undefined;
+
+  /** One system of a score (#1172): the first opens a score node, the
+   *  others join it, so the score reads as one image. */
+  private score(block: VDTBlock, root: Container): void {
+    const svg = block.lines[0]?.segments?.find((s) => s.kind === 'score')?.scoreSystem?.svg;
+    const index = block.score?.index ?? 0;
+    if (index > 0 && this.openScore) {
+      if (svg) this.openScore.systems.push(svg);
+      return;
+    }
+    const state = this.enter(block, root);
+    const node: ScoreNode = { k: 'score', pre: this.takePages(), alt: block.score?.alt ?? '', systems: svg ? [svg] : [], color: block.color };
+    this.openScore = node;
+    state.nodes.push(node);
+    this.record(block, this.topOf(state, node));
+  }
+
   private resource(block: VDTBlock, root: Container): void {
     const rb = block.resourceBlock;
     if (!rb) return;
@@ -1306,7 +1330,7 @@ class DocWalker {
     if (this.figures.has(res.id)) return;
     this.figures.add(res.id);
     const caption = lines(rb.captionLines);
-    const alt = (res.altText?.trim() || plainCaption(res.caption) || '').trim();
+    const alt = (res.altText?.trim() || rb.score?.alt || plainCaption(res.caption) || '').trim();
     const node: FigureNode = {
       k: 'figure',
       id: idOf('res-', res.id),
@@ -1317,6 +1341,7 @@ class DocWalker {
       captionAbove,
       note: lines(rb.noteLines),
       ...(rb.video ? { video: rb.video } : {}),
+      ...(rb.score && rb.score.systems.length > 0 ? { score: { systems: rb.score.systems.map((s) => s.system.svg), color: rb.score.color } } : {}),
       ...(this.wraps.has(block.id) ? { wrap: this.wraps.get(block.id)! } : {}),
       // A `:::figure`'s labels (#862): the picture's text, in label order.
       // A forced break in a label (`Pico Albar \\ 2565 m`) reads as a space.

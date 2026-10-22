@@ -953,6 +953,105 @@ The lower-level functions are exported too: `svgFontRequests(svgText)` lists eac
 **Licences.** Inlining puts font files inside pictures that can leave the app (an HTML export, an EPUB). It happens when a picture is shown or exported, never in the stored resource bytes, and `withhold` keeps out the families a licence does not let you hand on: the EPUB writer withholds the faces marked `redistributable: false`, and the Sandbox the custom families marked so. Since postext 1.43 a family `withhold` names can have a stand-in (`standIn`): the open face is embedded under its name, so the picture's text keeps the width it was laid out with.
 
 
+## Score style
+
+The `scoreStyle` property (`ScoreStyleConfig`) sets the look of every music score: the notation fences (```` ```abc ````, ```` ```musicxml ````, ```` ```mei ````, ```` ```humdrum ````) and the `score` resources. A score is engraved at the width of its column and broken into systems, and each system is placed as a block of its own, so a long score runs on over columns and pages. See [Music notation](/en/docs/music) for the formats and the Markdown.
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: 'Small examples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>Read notation fences as scores. Off, they are code listings. Documents stored before configuration version 20 whose text has such a fence are given <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>staffSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'mm' &#125;</code></td>
+      <td>Height of a five-line staff, from the bottom line to the top one (the rastral size).</td>
+    </tr>
+    <tr>
+      <td><code>musicFont</code></td>
+      <td><code>'Bravura' | 'Leland' | 'Petaluma' | 'Leipzig' | 'Gootville'</code></td>
+      <td><code>'Bravura'</code></td>
+      <td>The SMuFL font of the notes, clefs and signs.</td>
+    </tr>
+    <tr>
+      <td><code>textFont</code></td>
+      <td><code>string</code></td>
+      <td>the body text font</td>
+      <td>Font of the lyrics, tempo marks and directions. A word wider in this font than in the engraver's Times is set smaller to fit its room.</td>
+    </tr>
+    <tr>
+      <td><code>spacing</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Horizontal spacing of the notes: above 1 spreads them, so a system holds fewer bars.</td>
+    </tr>
+    <tr>
+      <td><code>barNumbers</code></td>
+      <td><code>'none' | 'system' | 'every'</code></td>
+      <td><code>'system'</code></td>
+      <td>Bar numbers at the start of each system, on every bar, or none.</td>
+    </tr>
+    <tr>
+      <td><code>systemGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 3, unit: 'mm' &#125;</code></td>
+      <td>Space between two systems of a score.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>Space above a score set in the text.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>Space below a score set in the text.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>the body text colour</td>
+      <td>Ink of the notation and its words.</td>
+    </tr>
+    <tr>
+      <td><code>minSystemsAtBreak</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>Fewest systems a score leaves at the foot of a column, or carries to the next one. A score with fewer than twice this number moves whole.</td>
+    </tr>
+  </tbody>
+</table>
+
+Named score styles (`scoreStyles`, `NamedScoreStyleConfig[]`) take the same fields plus an `id` and an optional `name`; a fence picks one with `style="…"` and a score resource with `score.styleId`. A field a named style leaves unset comes from `scoreStyle`.
+
 ## Video style
 
 The `videoStyle` property sets how [video resources](/en/docs/document-format-resources#videos) are printed — the play mark and the QR code over the poster, and whether the poster links to the video — and what their players offer in the HTML viewer and in EPUB.

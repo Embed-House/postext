@@ -3,7 +3,7 @@
 // does whatever else edits a resource the way the panel would.
 
 import type { Resource, ResourceKind, ResourcePlacement, ResourceType, TableModel } from 'postext';
-import { defaultVideoResourceType } from 'postext';
+import { defaultExampleResourceType, defaultVideoResourceType } from 'postext';
 import type { SandboxAction } from '../../context/SandboxContext.js';
 import { getBlob, putBlob } from '../../storage/blobStore.js';
 import type { BitmapUploadResult } from './BitmapUploader.js';
@@ -26,12 +26,24 @@ export function emptyTableModel(): TableModel {
 /** A resource of `kind` with nothing in it yet, under the first free id. */
 export function newResource(kind: ResourceKind, typeId: string, existingIds: Set<string>): Resource {
   const now = Date.now();
-  const base = kind === 'bitmap' ? 'image' : kind === 'svg' ? 'svg' : kind === 'video' ? 'video' : 'table';
+  const base = kind === 'bitmap' ? 'image' : kind === 'svg' ? 'svg' : kind === 'video' ? 'video' : kind === 'score' ? 'score' : 'table';
   const id = uniqueSlug(base, existingIds, base);
   const resource: Resource = { id, typeId, kind, createdAt: now, updatedAt: now };
   if (kind === 'table') resource.table = { model: emptyTableModel() };
   if (kind === 'video') resource.video = { source: 'youtube' };
+  if (kind === 'score') resource.score = { format: 'abc', source: NEW_SCORE_SOURCE };
   return resource;
+}
+
+/** The notation a new score resource starts with (#1172): a scale to
+ *  overwrite. */
+const NEW_SCORE_SOURCE = 'X:1\nM:4/4\nL:1/4\nK:C\nCDEF|GABc|cBAG|FEDC|]\n';
+
+/** The resource types with the built-in Example type (#1172), when `types`
+ *  has none; null when the book has it. */
+export function typesWithExample(types: readonly ResourceType[], locale: string): ResourceType[] | null {
+  if (types.some((t) => t.id === 'example')) return null;
+  return [...types, defaultExampleResourceType(locale)];
 }
 
 /** The resource types with the built-in Video type, when `types` has none:

@@ -50,6 +50,7 @@ import {
   preloadResourceImages,
   type ResourceBytesProvider,
 } from './renderResourceBlock.js';
+import { preloadScoreDrawings } from './scoreRender.js';
 import { anchorDestination, LinkRegistry } from './links.js';
 import { StructTree, tagArtifact, type StructElem } from './tagging.js';
 import { StructureFlow } from './structureFlow.js';
@@ -1034,6 +1035,9 @@ export async function renderToPdf(
   const resourceImages: ResourceImageMap = new Map();
   for (const doc of docs) {
     await preloadResourceImages(pdfDoc, doc, options.resourceBytes, fontCache, fontProvider, resourceImages, options.rasterizeSvg, printMode, printMode ? undefined : settings.colorSpace);
+    // Music scores (#1172): each system a vector drawing, its words' faces
+    // embedded.
+    await preloadScoreDrawings(doc, fontCache);
   }
   options.onProgress?.({ phase: 'prepare', pages: 0, totalPages });
 

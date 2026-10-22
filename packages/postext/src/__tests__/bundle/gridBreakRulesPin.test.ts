@@ -62,7 +62,7 @@ describe('pinLegacyGridBreakRules (#717)', () => {
   });
 
   it('pins every version before 12, none from 12', () => {
-    expect(CONFIG_VERSION).toBe(19);
+    expect(CONFIG_VERSION).toBe(20);
     for (const v of [undefined, 1, 5, 8, 10, 11]) {
       expect(rules(migrateConfig(grid('ja'), v)), String(v)).toEqual(ON);
     }
@@ -73,11 +73,12 @@ describe('pinLegacyGridBreakRules (#717)', () => {
     // (#1164). One stamped 13 takes the language, the mark ends and the
     // slash breaks; one stamped 14 the mark ends and the slash breaks; one
     // stamped 18 the slash breaks alone; one stamped 19 is read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 14)).toEqual({ ...pinLegacySlashBreaks(current), markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 18)).toEqual(pinLegacySlashBreaks(current));
-    expect(migrateConfig(current, 19)).toBe(current);
+    expect(migrateConfig(current, 12)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }], scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }], scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 14)).toEqual({ ...pinLegacySlashBreaks(current), markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }], scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 18)).toEqual({ ...pinLegacySlashBreaks(current), scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 19)).toEqual({ ...current, scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 20)).toBe(current);
   });
 
   it('survives a save: the stripped configuration keeps the rules it was pinned to', () => {
@@ -132,7 +133,7 @@ describe('a bundle keeps the break rules of its grid (#717)', () => {
     expect(rules(opened.config)).toEqual(ON);
     // Written again from what was read: stamped 14, the rules spelled out.
     const again = await createBundle({ name: 'Old', locale: 'ja', markdown: MD, config: opened.config });
-    expect(again.manifest.configVersion).toBe(19);
+    expect(again.manifest.configVersion).toBe(20);
     expect(again.manifest.config!.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     expect(rules((await openBundle(again.bytes)).config)).toEqual(ON);
   });

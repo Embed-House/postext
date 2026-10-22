@@ -6,6 +6,7 @@ import { balancingOnByDefault, stripHeadingsDefaults } from './headings.js';
 import { stripTableStyleDefaults, stripTableStylesDefaults } from './tableStyle.js';
 import { stripCaptionStyleDefaults } from './captionStyle.js';
 import { stripDiagramStyleDefaults } from './diagramStyle.js';
+import { stripScoreStyleDefaults, stripScoreStylesDefaults } from './scoreStyle.js';
 import { stripVideoStyleDefaults } from './videoStyle.js';
 import { stripParagraphStylesDefaults } from './paragraphStyles.js';
 import { stripCalloutStylesDefaults } from './calloutStyles.js';
@@ -46,6 +47,14 @@ export { DEFAULT_COLUMN_BALANCING, DEFAULT_HEADINGS_CONFIG, balancingOnByDefault
 export { resolveTableStyleConfig, stripTableStyleDefaults, resolveTableStylesConfig, stripTableStylesDefaults, pickTableStyle, defaultTableContinuationStrings } from './tableStyle.js';
 export { resolveCaptionStyleConfig, stripCaptionStyleDefaults, mergeCaptionStyle, defaultCaptionLabels } from './captionStyle.js';
 export { DEFAULT_DIAGRAM_STYLE_CONFIG, resolveDiagramStyleConfig, stripDiagramStyleDefaults } from './diagramStyle.js';
+export {
+  DEFAULT_SCORE_STYLE_CONFIG,
+  resolveScoreStyleConfig,
+  resolveScoreStylesConfig,
+  pickScoreStyle,
+  stripScoreStyleDefaults,
+  stripScoreStylesDefaults,
+} from './scoreStyle.js';
 export { DEFAULT_VIDEO_STYLE_CONFIG, DEFAULT_VIDEO_PLAYER_OPTIONS, resolveVideoStyleConfig, resolveVideoPlayerOptions, stripVideoStyleDefaults } from './videoStyle.js';
 export { DEFAULT_PARAGRAPH_STYLES, resolveParagraphStylesConfig, stripParagraphStylesDefaults } from './paragraphStyles.js';
 export { DEFAULT_CALLOUT_STYLES, DEFAULT_CALLOUT_STYLE_STATIC, resolveCalloutStylesConfig, stripCalloutStylesDefaults, inheritCalloutStyles, calloutStyleChain } from './calloutStyles.js';
@@ -65,7 +74,7 @@ export { FOLIO_PAPER_STOCKS, FOLIO_MAX_TILT, DEFAULT_FOLIO_CONFIG, isNewspaperSi
 export type { FolioPaperStock } from './folio.js';
 export { DEFAULT_HEADER_FOOTER_SLOT, DEFAULT_HEADER_SLOT, DEFAULT_FOOTER_SLOT, DEFAULT_TEXT_ELEMENT, DEFAULT_RULE_ELEMENT, resolveHeaderFooterConfig, stripHeaderFooterDefaults } from './headerFooter.js';
 export type { HeaderFooterSlotKind } from './headerFooter.js';
-export { defaultResourceTypes, defaultVideoResourceType, effectiveResourceTypes } from './resourceTypes.js';
+export { defaultResourceTypes, defaultVideoResourceType, defaultExampleResourceType, effectiveResourceTypes } from './resourceTypes.js';
 export { DEFAULT_PARTS_CONFIG, resolvePartsConfig, stripPartsDefaults } from './parts.js';
 export { DEFAULT_HEADING_STYLES, resolveHeadingStylesConfig, stripHeadingStylesDefaults } from './headingStyles.js';
 export { DEFAULT_TOC_CONFIG, resolveTocConfig, stripTocDefaults } from './toc.js';
@@ -148,6 +157,18 @@ export function stripConfigDefaults(config: PostextConfig): PostextConfig {
     result.diagramStyle = strippedDiagramStyle;
   } else {
     delete result.diagramStyle;
+  }
+  const strippedScoreStyle = stripScoreStyleDefaults(config.scoreStyle);
+  if (strippedScoreStyle) {
+    result.scoreStyle = strippedScoreStyle;
+  } else {
+    delete result.scoreStyle;
+  }
+  const strippedScoreStyles = stripScoreStylesDefaults(config.scoreStyles);
+  if (strippedScoreStyles) {
+    result.scoreStyles = strippedScoreStyles;
+  } else {
+    delete result.scoreStyles;
   }
   const strippedVideoStyle = stripVideoStyleDefaults(config.videoStyle);
   if (strippedVideoStyle) {

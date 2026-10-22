@@ -30,8 +30,13 @@ export interface BundleShowcaseMeta {
  *  referenced by `file` (relative to the bundle root); tables keep their
  *  model inline. `width`/`height` are optional — when missing they are read
  *  from the file when the bundle is opened. */
-export type BundleResourceSpec = Omit<Resource, 'createdAt' | 'updatedAt' | 'bitmap' | 'svg'> & {
+export type BundleResourceSpec = Omit<Resource, 'createdAt' | 'updatedAt' | 'bitmap' | 'svg' | 'score'> & {
   file?: string;
+  /** Score resources only (#1172): the notation inline (`format` +
+   *  `source`), or kept in `file` (`.abc`, `.musicxml`, `.mei`, `.krn`),
+   *  whose text becomes `source` (`format` read from the extension when
+   *  unset). */
+  score?: Partial<NonNullable<Resource['score']>>;
   /** SVG resources only: a single-page PDF holding the same figure as
    *  vectors, embedded verbatim by the PDF backend in place of the SVG
    *  (`Resource.svg.pdfFileId`). */

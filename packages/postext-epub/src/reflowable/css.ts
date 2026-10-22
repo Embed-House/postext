@@ -624,6 +624,10 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
 
   // --- maths, chips, swatches, Chinese marks ------------------------------
   out.push(rule('.pt-math-display', ['text-align: center', 'margin: 0.5em 0', 'text-indent: 0', 'overflow-x: auto']));
+  // Music scores (#1172): systems as wide as the column, a little air
+  // between two.
+  out.push(rule('.pt-score', ['margin: 0.75em 0', 'text-indent: 0']));
+  out.push(rule('.pt-score-system', ['display: block', 'width: 100%', 'height: auto', 'margin: 0 0 0.4em']));
   out.push(rule('.pt-math svg', ['display: inline']));
   out.push(rule('.pt-swatch', ['display: inline-block', 'width: 0.8em', 'height: 0.8em', 'border: 1px solid currentColor', 'vertical-align: baseline']));
   out.push(rule('.pt-chip', ['display: inline-block', 'padding: 0 0.3em', 'border-radius: 0.2em', 'text-indent: 0', 'line-height: 1.2']));

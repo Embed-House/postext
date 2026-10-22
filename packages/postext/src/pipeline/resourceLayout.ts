@@ -31,6 +31,7 @@
  * row metrics the full-table layout reports.
  */
 
+import { layoutScoreResource } from './scoreBlocks.js';
 import { bitmapLayoutSize } from '../bitmapResolution.js';
 import { anchorRefLabel, findAnchorTarget, unprefixedId, type AnchorTargets, type CrossRefStrings } from './crossRefs.js';
 import { measuringVertically, withMeasureWritingMode } from '../measure/vertical.js';
@@ -1643,6 +1644,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   let tableRows: TableRowMetrics | undefined;
   let fileId: string | undefined;
   let format: string | undefined;
+  let scoreBody: ReturnType<typeof layoutScoreResource> | undefined;
 
   if (resource.kind === 'bitmap' && resource.bitmap) {
     fileId = resource.bitmap.fileId;
@@ -1673,6 +1675,11 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     const ih = poster?.height ?? resource.video?.height ?? 0;
     bodyWidth = pictureMaxWidth;
     bodyHeight = iw > 0 && ih > 0 ? bodyWidth * (ih / iw) : bodyWidth * (9 / 16);
+  } else if (resource.kind === 'score' && resource.score) {
+    // A music example (#1172): its systems stacked at the column's width.
+    scoreBody = layoutScoreResource(resource, resolved, pictureMaxWidth);
+    bodyWidth = scoreBody.width;
+    bodyHeight = scoreBody.height;
   } else if (resource.kind === 'table' && resource.table) {
     const ts = tableStyle;
     const bodyFontPx = dimensionToPx(ts.bodyFontSize, dpi);
@@ -2045,6 +2052,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
     resource,
     kind: resource.kind,
     ...(video ? { video } : {}),
+    ...(scoreBody ? { score: scoreBody.score } : {}),
     ...(slice ? { slice } : {}),
     number,
     captionPrefix,

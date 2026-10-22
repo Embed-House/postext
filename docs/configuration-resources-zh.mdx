@@ -953,6 +953,105 @@ const canvas = renderPage(doc.pages[0], doc);
 **许可证**。嵌入会把字体文件放进可能离开应用的图片中（HTML导出、EPUB）。嵌入只在图片显示或导出时发生，从不写入存储的资源字节；`withhold`则把许可证不允许转交的字体族挡在外面：EPUB写出器扣下标记为`redistributable: false`的字体，沙盒扣下标记为不可再分发的自定义字体族。自postext 1.43起，被`withhold`指定的字体可以有替代字体（`standIn`）：开放字体的字面以它的名称嵌入，图片中的文字保持排版时的宽度。
 
 
+## 乐谱样式
+
+`scoreStyle` 属性（`ScoreStyleConfig`）决定所有乐谱的外观：记谱代码块（```` ```abc ````、```` ```musicxml ````、```` ```mei ````、```` ```humdrum ````）和 `score` 资源。乐谱按所在栏的宽度刻制并分成若干行谱，每行谱作为单独的块放置，因此长乐谱可以跨栏、跨页延续。格式和 Markdown 写法见[乐谱记谱](/zh/docs/music)。
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: 'Small examples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>把记谱代码块读作乐谱。关闭时它们是代码清单。配置版本 20 之前保存、且正文中有此类代码块的文档取 <code>false</code>。</td>
+    </tr>
+    <tr>
+      <td><code>staffSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'mm' &#125;</code></td>
+      <td>五线谱表从第一线到第五线的高度（谱表规格）。</td>
+    </tr>
+    <tr>
+      <td><code>musicFont</code></td>
+      <td><code>'Bravura' | 'Leland' | 'Petaluma' | 'Leipzig' | 'Gootville'</code></td>
+      <td><code>'Bravura'</code></td>
+      <td>音符、谱号和记号所用的 SMuFL 字体。</td>
+    </tr>
+    <tr>
+      <td><code>textFont</code></td>
+      <td><code>string</code></td>
+      <td>正文字体</td>
+      <td>歌词、速度标记和表情记号的字体。若某个词用此字体比刻谱器所用的 Times 更宽，就缩小排出以放进原位。</td>
+    </tr>
+    <tr>
+      <td><code>spacing</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>音符的水平间距：大于 1 时拉开，每行谱容纳的小节更少。</td>
+    </tr>
+    <tr>
+      <td><code>barNumbers</code></td>
+      <td><code>'none' | 'system' | 'every'</code></td>
+      <td><code>'system'</code></td>
+      <td>在每行谱开头、每个小节印小节号，或都不印。</td>
+    </tr>
+    <tr>
+      <td><code>systemGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 3, unit: 'mm' &#125;</code></td>
+      <td>同一乐谱两行谱之间的间距。</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>正文中乐谱上方的间距。</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>正文中乐谱下方的间距。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>正文颜色</td>
+      <td>记谱及其文字的墨色。</td>
+    </tr>
+    <tr>
+      <td><code>minSystemsAtBreak</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>乐谱在栏底留下或转到下一栏的最少行谱数。行谱少于此数两倍的乐谱整体移动。</td>
+    </tr>
+  </tbody>
+</table>
+
+命名乐谱样式（`scoreStyles`，`NamedScoreStyleConfig[]`）字段相同，另有 `id` 和可选的 `name`；代码块用 `style="…"` 选用，乐谱资源用 `score.styleId` 选用。命名样式未设置的字段取自 `scoreStyle`。
+
 ## 视频样式
 
 `videoStyle`属性设定[视频资源](/zh/docs/document-format-resources#视频)如何印出：封面上的播放标记和二维码，以及封面是否链接到视频；还设定它们的播放器在HTML阅读器和EPUB中提供哪些功能。

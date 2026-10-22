@@ -17,58 +17,68 @@ interface ResourceTypeStrings {
  *  listed here. Add a language by adding a key. A language may also number
  *  its figures its own way (`numberingTemplate`, the house style being
  *  `{h1}.{n}`). */
-const BUILTIN_TYPE_STRINGS: Record<string, { figure: ResourceTypeStrings; table: ResourceTypeStrings; video: ResourceTypeStrings; numberingTemplate?: string }> = {
+const BUILTIN_TYPE_STRINGS: Record<string, { figure: ResourceTypeStrings; table: ResourceTypeStrings; video: ResourceTypeStrings; example: ResourceTypeStrings; numberingTemplate?: string }> = {
   en: {
     figure: { name: 'Figure', namePlural: 'Figures', shortLabel: 'Fig.', captionPrefix: 'Figure' },
     table: { name: 'Table', namePlural: 'Tables', shortLabel: 'Tab.', captionPrefix: 'Table' },
     video: { name: 'Video', namePlural: 'Videos', shortLabel: 'Video', captionPrefix: 'Video' },
+    example: { name: 'Example', namePlural: 'Examples', shortLabel: 'Ex.', captionPrefix: 'Example' },
   },
   es: {
     figure: { name: 'Figura', namePlural: 'Figuras', shortLabel: 'Fig.', captionPrefix: 'Figura' },
     table: { name: 'Tabla', namePlural: 'Tablas', shortLabel: 'Tabla', captionPrefix: 'Tabla' },
     video: { name: 'Vídeo', namePlural: 'Vídeos', shortLabel: 'Vídeo', captionPrefix: 'Vídeo' },
+    example: { name: 'Ejemplo', namePlural: 'Ejemplos', shortLabel: 'Ej.', captionPrefix: 'Ejemplo' },
   },
   fr: {
     figure: { name: 'Figure', namePlural: 'Figures', shortLabel: 'Fig.', captionPrefix: 'Figure' },
     table: { name: 'Tableau', namePlural: 'Tableaux', shortLabel: 'Tabl.', captionPrefix: 'Tableau' },
     video: { name: 'Vidéo', namePlural: 'Vidéos', shortLabel: 'Vidéo', captionPrefix: 'Vidéo' },
+    example: { name: 'Exemple', namePlural: 'Exemples', shortLabel: 'Ex.', captionPrefix: 'Exemple' },
   },
   de: {
     figure: { name: 'Abbildung', namePlural: 'Abbildungen', shortLabel: 'Abb.', captionPrefix: 'Abbildung' },
     table: { name: 'Tabelle', namePlural: 'Tabellen', shortLabel: 'Tab.', captionPrefix: 'Tabelle' },
     video: { name: 'Video', namePlural: 'Videos', shortLabel: 'Video', captionPrefix: 'Video' },
+    example: { name: 'Notenbeispiel', namePlural: 'Notenbeispiele', shortLabel: 'Nb.', captionPrefix: 'Notenbeispiel' },
   },
   it: {
     figure: { name: 'Figura', namePlural: 'Figure', shortLabel: 'Fig.', captionPrefix: 'Figura' },
     table: { name: 'Tabella', namePlural: 'Tabelle', shortLabel: 'Tab.', captionPrefix: 'Tabella' },
     video: { name: 'Video', namePlural: 'Video', shortLabel: 'Video', captionPrefix: 'Video' },
+    example: { name: 'Esempio', namePlural: 'Esempi', shortLabel: 'Es.', captionPrefix: 'Esempio' },
   },
   pt: {
     figure: { name: 'Figura', namePlural: 'Figuras', shortLabel: 'Fig.', captionPrefix: 'Figura' },
     table: { name: 'Tabela', namePlural: 'Tabelas', shortLabel: 'Tab.', captionPrefix: 'Tabela' },
     video: { name: 'Vídeo', namePlural: 'Vídeos', shortLabel: 'Vídeo', captionPrefix: 'Vídeo' },
+    example: { name: 'Exemplo', namePlural: 'Exemplos', shortLabel: 'Ex.', captionPrefix: 'Exemplo' },
   },
   ca: {
     figure: { name: 'Figura', namePlural: 'Figures', shortLabel: 'Fig.', captionPrefix: 'Figura' },
     table: { name: 'Taula', namePlural: 'Taules', shortLabel: 'Taula', captionPrefix: 'Taula' },
     video: { name: 'Vídeo', namePlural: 'Vídeos', shortLabel: 'Vídeo', captionPrefix: 'Vídeo' },
+    example: { name: 'Exemple', namePlural: 'Exemples', shortLabel: 'Ex.', captionPrefix: 'Exemple' },
   },
   nl: {
     figure: { name: 'Figuur', namePlural: 'Figuren', shortLabel: 'Fig.', captionPrefix: 'Figuur' },
     table: { name: 'Tabel', namePlural: 'Tabellen', shortLabel: 'Tab.', captionPrefix: 'Tabel' },
     video: { name: 'Video', namePlural: "Video's", shortLabel: 'Video', captionPrefix: 'Video' },
+    example: { name: 'Voorbeeld', namePlural: 'Voorbeelden', shortLabel: 'Vb.', captionPrefix: 'Voorbeeld' },
   },
   // Chinese numbers figures by chapter with a hyphen: 图1-1, 表2-3.
   'zh-hans': {
     figure: { name: '图', namePlural: '图', shortLabel: '图', captionPrefix: '图' },
     table: { name: '表', namePlural: '表', shortLabel: '表', captionPrefix: '表' },
     video: { name: '视频', namePlural: '视频', shortLabel: '视频', captionPrefix: '视频' },
+    example: { name: '谱例', namePlural: '谱例', shortLabel: '谱例', captionPrefix: '谱例' },
     numberingTemplate: '{h1}-{n}',
   },
   'zh-hant': {
     figure: { name: '圖', namePlural: '圖', shortLabel: '圖', captionPrefix: '圖' },
     table: { name: '表', namePlural: '表', shortLabel: '表', captionPrefix: '表' },
     video: { name: '影片', namePlural: '影片', shortLabel: '影片', captionPrefix: '影片' },
+    example: { name: '譜例', namePlural: '譜例', shortLabel: '譜例', captionPrefix: '譜例' },
     numberingTemplate: '{h1}-{n}',
   },
   // Japanese books name them 図 and 表 and number them by chapter with a
@@ -78,6 +88,7 @@ const BUILTIN_TYPE_STRINGS: Record<string, { figure: ResourceTypeStrings; table:
     figure: { name: '図', namePlural: '図', shortLabel: '図', captionPrefix: '図' },
     table: { name: '表', namePlural: '表', shortLabel: '表', captionPrefix: '表' },
     video: { name: '動画', namePlural: '動画', shortLabel: '動画', captionPrefix: '動画' },
+    example: { name: '譜例', namePlural: '譜例', shortLabel: '譜例', captionPrefix: '譜例' },
     numberingTemplate: '{h1}-{n}',
   },
   // Arabic numbers by chapter with a hyphen too (شكل ٢-٣, «الجدول ١-٢»):
@@ -87,13 +98,14 @@ const BUILTIN_TYPE_STRINGS: Record<string, { figure: ResourceTypeStrings; table:
     figure: { name: 'شكل', namePlural: 'أشكال', shortLabel: 'شكل', captionPrefix: 'شكل' },
     table: { name: 'جدول', namePlural: 'جداول', shortLabel: 'جدول', captionPrefix: 'جدول' },
     video: { name: 'فيديو', namePlural: 'مقاطع الفيديو', shortLabel: 'فيديو', captionPrefix: 'فيديو' },
+    example: { name: 'مثال', namePlural: 'أمثلة', shortLabel: 'مثال', captionPrefix: 'مثال' },
     numberingTemplate: '{h1}-{n}',
   },
 };
 
 /** Resolve a (possibly regional) locale tag like `es-ES` or `pt_BR` to a
  *  strings entry, falling back to English. */
-function stringsForLocale(locale: string): { figure: ResourceTypeStrings; table: ResourceTypeStrings; video: ResourceTypeStrings; numberingTemplate?: string } {
+function stringsForLocale(locale: string): { figure: ResourceTypeStrings; table: ResourceTypeStrings; video: ResourceTypeStrings; example: ResourceTypeStrings; numberingTemplate?: string } {
   return stringsFor(BUILTIN_TYPE_STRINGS, locale);
 }
 
@@ -146,6 +158,21 @@ export function defaultVideoResourceType(locale = 'en'): ResourceType {
   };
 }
 
+/** The built-in `example` type (#1172) in `locale`: music examples, numbered
+ *  like figures in a sequence of their own (Example 2.1, Ejemplo 2.1,
+ *  Notenbeispiel 2.1, 谱例2-1). Not among {@link defaultResourceTypes}:
+ *  a book gets it when it has a resource typed `example`. */
+export function defaultExampleResourceType(locale = 'en'): ResourceType {
+  const s = stringsForLocale(locale);
+  return {
+    id: 'example',
+    ...s.example,
+    numberingTemplate: s.numberingTemplate ?? '{h1}.{n}',
+    resetOn: 'h1',
+    counterFormat: 'decimal',
+  };
+}
+
 /** The resource types a build numbers with: the document's
  *  `resourceTypes`, else the built-in ones. A list saved before videos
  *  existed (#454) has no `video` type: the built-in one is added when a
@@ -157,8 +184,11 @@ export function effectiveResourceTypes(
 ): ResourceType[] {
   const locale = documentLocale(config);
   const types = config?.resourceTypes ? completeResourceTypes(config.resourceTypes, locale) : defaultResourceTypes(locale);
-  if (types.some((t) => t.id === 'video') || !resources.some((r) => r.typeId === 'video')) return types;
-  return [...types, defaultVideoResourceType(locale)];
+  const extra: ResourceType[] = [];
+  if (!types.some((t) => t.id === 'video') && resources.some((r) => r.typeId === 'video')) extra.push(defaultVideoResourceType(locale));
+  // Music examples (#1172) likewise, in any list that lacks the type.
+  if (!types.some((t) => t.id === 'example') && resources.some((r) => r.typeId === 'example')) extra.push(defaultExampleResourceType(locale));
+  return extra.length > 0 ? [...types, ...extra] : types;
 }
 
 const RESET_LEVELS: readonly string[] = ['never', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
@@ -176,7 +206,7 @@ export function isResourceCounterReset(value: unknown): value is ResourceType['r
  *  follows a `name` the type gives before the built-in one. A `resetOn` that names
  *  no level becomes `h1` too (`collectConfigWarnings` reports it). */
 export function completeResourceType(type: Partial<ResourceType> & { id: string }, locale = 'en'): ResourceType {
-  const builtIn = defaultResourceTypes(locale).find((t) => t.id === type.id);
+  const builtIn = [...defaultResourceTypes(locale), defaultExampleResourceType(locale)].find((t) => t.id === type.id);
   const str = (v: unknown): v is string => typeof v === 'string';
   const name = str(type.name) ? type.name : builtIn?.name ?? String(type.id);
   return {

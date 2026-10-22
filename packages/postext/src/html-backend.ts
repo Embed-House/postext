@@ -1167,6 +1167,42 @@ function renderMathSegmentSvg(seg: VDTLineSegment, xPx: number, line: VDTLine, b
   return mathSegmentSvg(seg, xPx, line, block.color);
 }
 
+/** A score system (#1172): its plain SVG, scaled to the segment's width,
+ *  with its foot on the line's baseline. Labelled for assistive technology
+ *  on the first system with the score's alt text; the systems after it are
+ *  hidden from it. */
+function scoreSegmentSvg(seg: VDTLineSegment, xPx: number, line: VDTLine, block: VDTBlock): string {
+  const system = seg.scoreSystem;
+  const k = system && system.widthPx > 0 ? seg.width / system.widthPx : 1;
+  const height = (system?.heightPx ?? 0) * k;
+  const top = line.baseline - line.bbox.y - height;
+  if (!system || !system.svg) {
+    return `<span style="position:absolute;left:${xPx.toFixed(3)}px;top:${top.toFixed(3)}px;width:${seg.width.toFixed(3)}px;height:${height.toFixed(3)}px;background:rgba(160,160,160,0.15);"></span>`;
+  }
+  const label = block.score?.alt ? ` role="img" aria-label="${esc(block.score.alt)}"` : ' aria-hidden="true"';
+  const svg = system.svg.replace(/<svg\b([^>]*?) width="[^"]*" height="[^"]*"/, `<svg$1 width="${seg.width.toFixed(3)}" height="${height.toFixed(3)}"${label} style="color:${block.color};direction:ltr;"`);
+  return `<span style="position:absolute;left:${xPx.toFixed(3)}px;top:${top.toFixed(3)}px;display:inline-block;line-height:0;">${svg}</span>`;
+}
+
+/** A score resource's body (#1172): its systems' SVG stacked down the
+ *  body, scaled to its width, named for assistive technology by the
+ *  score's alt text (else its caption). */
+function renderScoreBodyHtml(rb: ResolvedResourceBlock, bx: number, by: number, bw: number, bh: number): string {
+  const score = rb.score;
+  if (!score || score.systems.length === 0) {
+    return `<div aria-hidden="true" style="position:absolute;left:${bx}px;top:${by}px;width:${bw}px;height:${bh}px;background:rgba(160,160,160,0.15);"></div>`;
+  }
+  const k = score.systems[0]!.width > 0 ? bw / score.systems[0]!.width : 1;
+  const name = score.alt || rb.captionLines.map((l) => l.text).join(' ').replace(/\s+/g, ' ').trim() || `${rb.captionPrefix} ${rb.number}`.trim();
+  const inner = score.systems.map((s) => {
+    const w = s.width * k;
+    const h = s.height * k;
+    const svg = s.system.svg.replace(/<svg\b([^>]*?) width="[^"]*" height="[^"]*"/, `<svg$1 width="${w.toFixed(3)}" height="${h.toFixed(3)}" aria-hidden="true"`);
+    return `<div style="position:absolute;left:0;top:${(s.y * k).toFixed(3)}px;line-height:0;">${svg}</div>`;
+  }).join('');
+  return `<div role="img" aria-label="${esc(name)}" style="position:absolute;left:${bx}px;top:${by}px;width:${bw}px;height:${bh}px;color:${score.color};direction:ltr;">${inner}</div>`;
+}
+
 /** An inline formula of a line, in `color` (a body line's block colour, a
  *  caption's, a note's or a cell's text colour, #541). */
 function mathSegmentSvg(seg: VDTLineSegment, xPx: number, line: VDTLine, color: string): string {
@@ -1583,6 +1619,11 @@ function renderSegments(
       x += seg.width;
       continue;
     }
+    if (seg.kind === 'score') {
+      parts.push(scoreSegmentSvg(seg, x, line, block));
+      x += seg.width;
+      continue;
+    }
     if (seg.kind === 'swatch') {
       parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
       x += seg.width;
@@ -1733,6 +1774,11 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
     parts.push(links.at(segmentHref(seg)));
     if (seg.kind === 'math') {
       parts.push(renderMathSegmentSvg(seg, x, line, block));
+      x += seg.width;
+      continue;
+    }
+    if (seg.kind === 'score') {
+      parts.push(scoreSegmentSvg(seg, x, line, block));
       x += seg.width;
       continue;
     }
@@ -3048,6 +3094,8 @@ function renderResourceBlockHtml(block: VDTBlock, paint: HtmlPaint): string {
     if (rb.labels) parts.push(renderFigureLabelsHtml(rb, bx, by, options));
   } else if (rb.kind === 'table') {
     parts.push(renderResourceTable(rb, bx, by, options));
+  } else if (rb.kind === 'score') {
+    parts.push(renderScoreBodyHtml(rb, bx, by, bw, bh));
   }
 
   // Caption bar (behind the caption lines), like other absolute decorations.

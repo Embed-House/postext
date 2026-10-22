@@ -15,6 +15,8 @@ import type {
   TableRules,
   ResolvedCaptionStyleConfig,
   ResolvedDiagramStyleConfig,
+  ResolvedScoreStyleConfig,
+  ResolvedNamedScoreStyleConfig,
   ResolvedVideoStyleConfig,
   ResolvedVideoPlayerOptions,
   VideoSource,
@@ -56,6 +58,7 @@ import type {
   PageMargins,
 } from './types.js';
 import type { NumeralStyle } from './numbering.js';
+import type { ScoreSystem } from './music/types.js';
 import type { MathRender } from './math/types.js';
 import type { StoryJump } from './composed/carryTypes.js';
 
@@ -110,6 +113,10 @@ export interface ResolvedConfig {
   tableStyles: ResolvedNamedTableStyleConfig[];
   captionStyle: ResolvedCaptionStyleConfig;
   diagramStyle: ResolvedDiagramStyleConfig;
+  /** Music scores (#1173). */
+  scoreStyle: ResolvedScoreStyleConfig;
+  /** Named score styles, each laid over `scoreStyle`. */
+  scoreStyles: ResolvedNamedScoreStyleConfig[];
   videoStyle: ResolvedVideoStyleConfig;
   paragraphStyles: ResolvedParagraphStyleConfig[];
   calloutStyles: ResolvedCalloutStyleConfig[];
@@ -216,7 +223,20 @@ export type VDTBlockType =
   | 'callout'
   /** A line of a code listing (#624): one line per source line, set as
    *  written (see `VDTLine.codeLine`), inside the listing's box. */
-  | 'code';
+  | 'code'
+  /** One engraved system of a music score (#1172): a single line whose
+   *  segment carries the system (`VDTLineSegment.scoreSystem`). */
+  | 'score';
+
+/** A score block's place in its score (#1172). */
+export interface VDTScoreInfo {
+  /** 0-based system number, of `count`. */
+  index: number;
+  count: number;
+  /** Alt text: the fence's `alt`, else the title and composer read from the
+   *  notation. Set on the first system. */
+  alt?: string;
+}
 
 export type TextAlign = 'left' | 'justify' | 'center' | 'right';
 
@@ -341,7 +361,7 @@ export interface VDTInlineIcon {
 }
 
 export interface VDTLineSegment {
-  kind: 'text' | 'space' | 'math' | 'swatch' | 'chip';
+  kind: 'text' | 'space' | 'math' | 'swatch' | 'chip' | 'score';
   text: string;
   width: number;
   bold?: boolean;
@@ -363,6 +383,9 @@ export interface VDTLineSegment {
   mark?: VDTSegmentMark;
   /** Present when `kind === 'math'`. The rendered formula. */
   mathRender?: MathRender;
+  /** Present when `kind === 'score'` (#1172): the engraved system, drawn
+   *  `width` px wide (its own width scaled) in the block's colour. */
+  scoreSystem?: ScoreSystem;
   /** Present when `kind === 'swatch'`: an inline colour swatch (`:swatch{…}`),
    *  a square of `width` px filled with `color` (a hex; absent when the
    *  colour did not resolve — the square is then an empty outline), sitting
@@ -1531,10 +1554,23 @@ export interface VDTResourceVideo {
   qr?: VDTVideoQr;
 }
 
+/** A score resource's systems (#1172), each `width` px wide (its own
+ *  width scaled) at `y` px from the body's top. */
+export interface VDTResourceScore {
+  systems: Array<{ system: ScoreSystem; y: number; width: number; height: number }>;
+  color: string;
+  /** Alt text: the resource's, else the title and composer read from the
+   *  notation. */
+  alt?: string;
+}
+
 export interface ResolvedResourceBlock {
   /** The source resource. */
   resource: Resource;
-  kind: 'bitmap' | 'svg' | 'table' | 'video';
+  kind: 'bitmap' | 'svg' | 'table' | 'video' | 'score';
+  /** Present when `kind === 'score'` (#1172): the engraved systems, stacked
+   *  down `bodyRect` with `gapPx` between two, in `color`. */
+  score?: VDTResourceScore;
   /** Present when `kind === 'video'`: playback and the poster's overlays
    *  (#454). The poster itself is `fileId` / `format`, drawn like a
    *  bitmap. */
@@ -2041,6 +2077,8 @@ export interface VDTBlock {
   strikethroughText?: boolean;
   /** Present on `mathDisplay` blocks. */
   mathRender?: MathRender;
+  /** Present on `score` blocks (#1172): which system of which score. */
+  score?: VDTScoreInfo;
   /** Original TeX source for math spans/blocks — used for warnings and the
    *  disabled-math fallback rendering. */
   tex?: string;

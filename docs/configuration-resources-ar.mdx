@@ -953,6 +953,105 @@ const canvas = renderPage(doc.pages[0], doc);
 **التراخيص.** يضع التضمين ملفات خطوط داخل صور قد تغادر التطبيق (تصدير HTML، ملف EPUB). ويحدث ذلك حين تُعرض الصورة أو تُصدَّر، لا في بايتات المورد المخزَّنة أبدًا، ويُبقي `withhold` خارج الملف العائلات التي لا يسمح ترخيصها بتمريرها إلى غيرك: يحجب كاتب EPUB أشكال الخطوط المعلَّمة بـ`redistributable: false`، ويحجب Sandbox العائلات المخصّصة المعلَّمة كذلك. منذ postext 1.43 يمكن أن يكون لخط يذكره `withhold` بديل (`standIn`): يُضمَّن الشكل المفتوح تحت اسمه، ويحتفظ نص الصورة بالعرض الذي نُضِّد به.
 
 
+## نمط المدوّنة الموسيقية
+
+تحدد الخاصية `scoreStyle` (`ScoreStyleConfig`) مظهر كل المدوّنات الموسيقية: كتل التدوين (```` ```abc ````، ```` ```musicxml ````، ```` ```mei ````، ```` ```humdrum ````) وموارد `score`. تُنقش المدوّنة بعرض عمودها وتُقسَّم إلى أسطر موسيقية، ويوضع كل سطر كتلةً مستقلة، فتمتد المدوّنة الطويلة عبر الأعمدة والصفحات. الصيغ وطريقة الكتابة في Markdown في [التدوين الموسيقي](/ar/docs/music).
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: 'Small examples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>قراءة كتل التدوين مدوّناتٍ موسيقية. عند الإيقاف تكون قوائم شيفرة. المستندات المحفوظة قبل إصدار الإعدادات 20 وفي نصها كتلة كهذه تأخذ <code>false</code>.</td>
+    </tr>
+    <tr>
+      <td><code>staffSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'mm' &#125;</code></td>
+      <td>ارتفاع المدرج ذي الخطوط الخمسة من الخط الأول إلى الخامس.</td>
+    </tr>
+    <tr>
+      <td><code>musicFont</code></td>
+      <td><code>'Bravura' | 'Leland' | 'Petaluma' | 'Leipzig' | 'Gootville'</code></td>
+      <td><code>'Bravura'</code></td>
+      <td>خط SMuFL للنوتات والمفاتيح والعلامات.</td>
+    </tr>
+    <tr>
+      <td><code>textFont</code></td>
+      <td><code>string</code></td>
+      <td>خط النص الأساسي</td>
+      <td>خط كلمات الغناء وعلامات السرعة والأداء. الكلمة الأعرض بهذا الخط منها بخط Times الذي يقيس به الناقش تُصفّ أصغر لتتسع في موضعها.</td>
+    </tr>
+    <tr>
+      <td><code>spacing</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>التباعد الأفقي بين النوتات: فوق ١ يباعدها فيقلّ عدد المازورات في السطر.</td>
+    </tr>
+    <tr>
+      <td><code>barNumbers</code></td>
+      <td><code>'none' | 'system' | 'every'</code></td>
+      <td><code>'system'</code></td>
+      <td>أرقام المازورات في أول كل سطر، أو على كل مازورة، أو بلا أرقام.</td>
+    </tr>
+    <tr>
+      <td><code>systemGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 3, unit: 'mm' &#125;</code></td>
+      <td>المسافة بين سطرين من المدوّنة نفسها.</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>المسافة فوق مدوّنة داخل النص.</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>المسافة تحت مدوّنة داخل النص.</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>لون النص الأساسي</td>
+      <td>حبر التدوين ونصه.</td>
+    </tr>
+    <tr>
+      <td><code>minSystemsAtBreak</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>أقل عدد من الأسطر تتركه المدوّنة أسفل العمود أو تنقله إلى التالي. المدوّنة التي أسطرها أقل من ضعف هذا العدد تنتقل كاملة.</td>
+    </tr>
+  </tbody>
+</table>
+
+أنماط المدوّنات المسمّاة (`scoreStyles`، `NamedScoreStyleConfig[]`) لها الحقول نفسها ومعها `id` و`name` اختياري؛ تختار الكتلة أحدها بـ `style="…"` ومورد المدوّنة بـ `score.styleId`. ما يتركه النمط المسمّى دون تحديد يُؤخذ من `scoreStyle`.
+
 ## نمط الفيديو
 
 تحدّد الخاصية `videoStyle` كيف تُطبع [موارد الفيديو](/ar/docs/document-format-resources#مقاطع-الفيديو)، أي علامة التشغيل ورمز QR فوق الغلاف، وهل يكون الغلاف رابطًا إلى الفيديو، وما تقدّمه مشغّلاتها في عارض HTML وفي EPUB.

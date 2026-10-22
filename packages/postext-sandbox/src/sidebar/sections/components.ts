@@ -28,6 +28,8 @@ import { ChipStylesSection } from './ChipStylesSection.js';
 import { LabelStylesSection } from './LabelStylesSection.js';
 import { MarkStylesSection } from './MarkStylesSection.js';
 import { CodeStyleSection } from './CodeStyleSection.js';
+import { ScoreStyleSection } from './ScoreStyleSection.js';
+import { ScoreStylesSection } from './ScoreStylesSection.js';
 import { DiagramStyleSection } from './DiagramStyleSection.js';
 import { VideoStyleSection } from './VideoStyleSection.js';
 import { ResourceTypesSection } from './ResourceTypesSection.js';
@@ -78,6 +80,8 @@ export const SECTION_COMPONENTS: Record<SettingsSectionId, ComponentType> = {
   'tableStyle': TableStyleSection,
   'tableStyles': TableStylesSection,
   'diagramStyle': DiagramStyleSection,
+  'scoreStyle': ScoreStyleSection,
+  'scoreStyles': ScoreStylesSection,
   'videoStyle': VideoStyleSection,
   'calloutStyles': CalloutStylesSection,
   'frameStyles': FrameStylesSection,

@@ -9,7 +9,7 @@ import { defaultResourceTypes } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../context/SandboxContext.js';
 import { ResourceList } from '../panels/resources/ResourceList.js';
 import { ResourceDetail } from '../panels/resources/ResourceDetail.js';
-import { newResource, renameResource, typesWithVideo } from '../panels/resources/resourceEdits.js';
+import { newResource, renameResource, typesWithExample, typesWithVideo } from '../panels/resources/resourceEdits.js';
 import { uploadFiles } from '../panels/resources/uploadFiles.js';
 
 /** Escape a string for safe inclusion in a RegExp. */
@@ -78,11 +78,18 @@ export function ResourcesPanel({ isDark = true }: ResourcesPanelProps) {
     return 'video';
   };
 
+  // Music examples (#1172) likewise get the built-in Example type.
+  const exampleTypeId = (): string => {
+    const withExample = typesWithExample(types, locale);
+    if (withExample) dispatch({ type: 'UPDATE_CONFIG', payload: { resourceTypes: withExample }, history: false });
+    return 'example';
+  };
+
   const ingestFiles = async (files: File[]) => {
     if (files.length === 0) return;
     const existingIds = new Set(resources.map((r) => r.id));
     const typeId = types[0]?.id ?? '';
-    const { created, skipped } = await uploadFiles(files, typeId, existingIds, videoTypeId);
+    const { created, skipped } = await uploadFiles(files, typeId, existingIds, videoTypeId, exampleTypeId);
     for (const r of created) dispatch({ type: 'UPSERT_RESOURCE', payload: r });
     if (created.length === 1) setSelectedId(created[0].id);
     setUploadNote(
@@ -129,7 +136,7 @@ export function ResourcesPanel({ isDark = true }: ResourcesPanelProps) {
 
   const handleNew = (kind: ResourceKind) => {
     const existingIds = new Set(resources.map((r) => r.id));
-    const typeId = kind === 'video' ? videoTypeId() : (types.find((t) => t.id !== 'video') ?? types[0])?.id ?? '';
+    const typeId = kind === 'video' ? videoTypeId() : kind === 'score' ? exampleTypeId() : (types.find((t) => t.id !== 'video') ?? types[0])?.id ?? '';
     const resource = newResource(kind, typeId, existingIds);
     dispatch({ type: 'UPSERT_RESOURCE', payload: resource });
     setSelectedId(resource.id);

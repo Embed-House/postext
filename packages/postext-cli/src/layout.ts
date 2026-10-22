@@ -8,6 +8,8 @@ import {
   formatWarning,
   glyphFallbacks,
   initMathEngine,
+  initMusicEngine,
+  markdownHasScore,
   parseMarkdownWithIssues,
   type ContentWarning,
   type MeasurementCache,
@@ -84,6 +86,7 @@ export async function layOut(
   const chapters = selectChapters(book, opts);
   const text = chapters.map((c) => c.markdown);
   if (text.some((t) => MATH_RE.test(t))) await reporter.time('math', () => initMathEngine());
+  if (text.some((t) => markdownHasScore(t)) || book.resources.some((r) => r.kind === 'score')) await reporter.time('music', () => initMusicEngine());
   if (!citeprocLoaded && text.some((t) => CITATION_RE.test(t))) {
     await reporter.time('citations', () => import('postext-citeproc/register'));
     citeprocLoaded = true;

@@ -953,6 +953,105 @@ const canvas = renderPage(doc.pages[0], doc);
 **ライセンス**：埋め込みを行うと、アプリの外に出ることのある画像（HTMLの書き出し、EPUB）の中にフォントファイルが入ります。埋め込むのは画像を表示するときか書き出すときだけで、保存されたリソースのバイト列には書き込みません。また`withhold`は、ライセンス上ほかに渡せないファミリーを除きます。EPUBのライターは`redistributable: false`と指定されたフェイスを、Sandboxは再配布不可と指定されたカスタムファミリーを除きます。postext 1.43以降、`withhold`が指すフォントに代替（`standIn`）を指定できます。オープンなフェイスがそのフォントの名前で埋め込まれ、画像内のテキストは組んだときの幅のままです。
 
 
+## 楽譜スタイル
+
+`scoreStyle` プロパティ（`ScoreStyleConfig`）は、すべての楽譜の見た目を決めます。対象は記譜ブロック（```` ```abc ````、```` ```musicxml ````、```` ```mei ````、```` ```humdrum ````）と `score` リソースです。楽譜は段の幅で浄書されて段（システム）に分かれ、各段が独立したブロックとして配置されるので、長い楽譜も段や頁をまたいで続きます。形式と Markdown の書き方は[楽譜](/ja/docs/music)を参照してください。
+
+```ts
+const config: PostextConfig = {
+  scoreStyle: {
+    staffSize: { value: 5.5, unit: 'mm' },
+    musicFont: 'Leland',
+    barNumbers: 'system',
+    minSystemsAtBreak: 2,
+  },
+  scoreStyles: [
+    { id: 'small', name: 'Small examples', staffSize: { value: 4.5, unit: 'mm' }, barNumbers: 'none' },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>enabled</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>記譜ブロックを楽譜として読みます。オフにするとコードリストです。設定バージョン 20 より前に保存され、本文にこうしたブロックがある文書には <code>false</code> が入ります。</td>
+    </tr>
+    <tr>
+      <td><code>staffSize</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'mm' &#125;</code></td>
+      <td>五線の第1線から第5線までの高さ（ラストラル・サイズ）。</td>
+    </tr>
+    <tr>
+      <td><code>musicFont</code></td>
+      <td><code>'Bravura' | 'Leland' | 'Petaluma' | 'Leipzig' | 'Gootville'</code></td>
+      <td><code>'Bravura'</code></td>
+      <td>音符・音部記号・記号の SMuFL フォント。</td>
+    </tr>
+    <tr>
+      <td><code>textFont</code></td>
+      <td><code>string</code></td>
+      <td>本文のフォント</td>
+      <td>歌詞、テンポ表示、発想記号のフォント。浄書エンジンの Times より幅の広い語は、元の幅に収まるよう小さく組まれます。</td>
+    </tr>
+    <tr>
+      <td><code>spacing</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>音符の横の間隔。1より大きいと広がり、1段に入る小節が減ります。</td>
+    </tr>
+    <tr>
+      <td><code>barNumbers</code></td>
+      <td><code>'none' | 'system' | 'every'</code></td>
+      <td><code>'system'</code></td>
+      <td>小節番号を各段の頭に付けるか、全小節に付けるか、付けないか。</td>
+    </tr>
+    <tr>
+      <td><code>systemGap</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 3, unit: 'mm' &#125;</code></td>
+      <td>同じ楽譜の段と段の間隔。</td>
+    </tr>
+    <tr>
+      <td><code>marginTop</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>本文中の楽譜の上の間隔。</td>
+    </tr>
+    <tr>
+      <td><code>marginBottom</code></td>
+      <td><code>Dimension</code></td>
+      <td><code>&#123; value: 6, unit: 'pt' &#125;</code></td>
+      <td>本文中の楽譜の下の間隔。</td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td><code>ColorValue</code></td>
+      <td>本文の色</td>
+      <td>記譜とその文字のインク。</td>
+    </tr>
+    <tr>
+      <td><code>minSystemsAtBreak</code></td>
+      <td><code>number</code></td>
+      <td><code>1</code></td>
+      <td>楽譜が段の下に残す、または次の段へ送る最小の段数。この数の2倍未満の楽譜はまとめて送られます。</td>
+    </tr>
+  </tbody>
+</table>
+
+名前付き楽譜スタイル（`scoreStyles`、`NamedScoreStyleConfig[]`）は同じ項目に加えて `id` と省略可能な `name` を持ちます。ブロックは `style="…"`、楽譜リソースは `score.styleId` で選びます。名前付きスタイルで未設定の項目は `scoreStyle` から引き継ぎます。
+
 ## 動画スタイル
 
 `videoStyle`プロパティは、[動画リソース](/ja/docs/document-format-resources#動画)の印刷のされ方（ポスター画像に重ねる再生マークとQRコード、ポスター画像を動画へのリンクにするかどうか）と、HTMLビューアーとEPUBでプレーヤーが提供する機能を設定します。

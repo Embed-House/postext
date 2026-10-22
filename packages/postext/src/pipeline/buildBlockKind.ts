@@ -1,4 +1,5 @@
 import { flattenTitleBreaks, flattenTitleBreakSpans } from '../parse/inlineFormatting.js';
+import { resolveScoreBlockStyle } from './scoreBlocks.js';
 /**
  * Resolve a parsed markdown block into its placement-ready metadata:
  * style, VDT type, heading/list attributes, and a `contentBlock` that may
@@ -261,6 +262,14 @@ export function resolveBlockKind(
       return {
         style: resolveMathDisplayStyle(resolved),
         vdtType: 'mathDisplay',
+        contentBlock: rawBlock,
+        bulletXOffsetInColumn: 0,
+        strikethroughText: false,
+      };
+    case 'score':
+      return {
+        style: resolveScoreBlockStyle(rawBlock, resolved),
+        vdtType: 'score',
         contentBlock: rawBlock,
         bulletXOffsetInColumn: 0,
         strikethroughText: false,

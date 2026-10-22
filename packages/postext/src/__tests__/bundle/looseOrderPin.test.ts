@@ -55,11 +55,12 @@ describe('pinLegacyLooseOrder (#707)', () => {
     // (#1164). One stamped 13 takes the language, the mark ends and the
     // slash breaks; one stamped 14 the mark ends and the slash breaks; one
     // stamped 18 the slash breaks alone; one stamped 19 is read as it is.
-    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 14)).toEqual({ ...pinLegacySlashBreaks(current), markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }] });
-    expect(migrateConfig(current, 18)).toEqual(pinLegacySlashBreaks(current));
-    expect(migrateConfig(current, 19)).toBe(current);
+    expect(migrateConfig(current, 12)).toEqual({ bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, unorderedLists: { taskBox: 'character' }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }], scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 13)).toEqual({ ...current, bodyText: { shapingLanguage: 'host', breakAfterSlashes: false }, markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }], scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 14)).toEqual({ ...pinLegacySlashBreaks(current), markStyles: [{ id: 'mark', name: 'Mark', borderRadius: { value: 0.2, unit: 'em' } }], scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 18)).toEqual({ ...pinLegacySlashBreaks(current), scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 19)).toEqual({ ...current, scoreStyle: { enabled: false } });
+    expect(migrateConfig(current, 20)).toBe(current);
     expect(resolveAllConfig(current).headings.balancing.maxLinesBeforeLoose).toBe(2);
     // A grid the version-11 pin turns balancing on for is pinned too.
     const grid: PostextConfig = { locale: 'zh-Hans', cjk: { grid: { enabled: true, charsPerLine: 28, linesPerPage: 22 } } };

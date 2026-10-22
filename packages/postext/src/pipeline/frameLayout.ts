@@ -278,7 +278,7 @@ export const splitCalloutFragment = (
 ): CalloutFragment | null => {
   const full = L.peekRange(from, L.end, width, frameId, continuation, mirrored, frame);
   /** Figures, tables and display formulas: never cut, not text lines. */
-  const indivisible = (c: VDTBlock): boolean => c.type === 'resource' || c.type === 'mathDisplay';
+  const indivisible = (c: VDTBlock): boolean => c.type === 'resource' || c.type === 'mathDisplay' || c.type === 'score';
   const unitBottom = (u: CalloutUnit): number => {
     const b = u.kind === 'block' ? u.block.bbox : u.box.result.frame.bbox;
     return b.y + b.height;
