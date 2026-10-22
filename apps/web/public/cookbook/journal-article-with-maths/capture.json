@@ -3,21 +3,21 @@
   "slug": "journal-article-with-maths",
   "sourceHash": "132a163b2c480d367d84f9d50208f0eaefb78bd5b92f9a6678304063da99880e",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.0",
+    "postextPdf": "1.57.0",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.847Z",
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-22T19:54:25.701Z",
   "variants": {
     "en": {
-      "hash8": "427151f9",
-      "vdtHash": "6912b9d1c0c19a0cf3e9a549e2da92a4c8aa4d26",
+      "hash8": "a749515f",
+      "vdtHash": "9802da86e822bb2ee023d5400acacaa72c822280",
       "timings": {
-        "importMs": 662,
-        "fontsMs": 124,
-        "buildMs": 146,
-        "totalMs": 1743,
+        "importMs": 1913,
+        "fontsMs": 226,
+        "buildMs": 188,
+        "totalMs": 3372,
         "builds": 1
       },
       "specimen": {
@@ -32,7 +32,7 @@
         "body": {
           "family": "STIX Two Text",
           "sizePt": 9.5,
-          "leadingPt": 12.600000000000001
+          "leadingPt": 12.6
         },
         "families": [
           "Azeret Mono",
@@ -84,7 +84,7 @@
           "h": 1414,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 105860,
+          "bytes": 105896,
           "alt": "Page 216: AUTHOR CONTRIBUTIONS. Figure 3. The phase plane of the pendulum: one orbit for each amplitude from 30° to 150° in steps of 30°, the 90° orbit of our widest runs in red, and the separatrix of a swing to 180° dashed."
         }
       ],
@@ -116,18 +116,18 @@
       },
       "pdf": {
         "file": "journal-article-with-maths.pdf",
-        "bytes": 285622,
+        "bytes": 285656,
         "pages": 4
       },
       "sandbox": {
         "file": "journal-article-with-maths.postext",
-        "bytes": 45012,
+        "bytes": 45010,
         "folio": "ba291173",
         "chapters": [
           {
             "pages": 4,
-            "hash": "ab33376293d976d8",
-            "lines": "a27e2df178270d01"
+            "hash": "3ce86e4eb26ad8a0",
+            "lines": "a048e991c7190531"
           }
         ]
       },
@@ -450,7 +450,12 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "vdt",
+            "severity": "warn",
+            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
