@@ -392,6 +392,8 @@ export class FontCache {
   private failed = new Set<string>();
   /** One load per actual face, shared by every key that falls back to it. */
   private loads = new Map<string, Promise<LoadedFace | null>>();
+  /** Provider answers asked for ahead of their turn to embed. */
+  private prefetched = new Map<string, Promise<PdfFontAnswer>>();
   /** The faces loaded, in the order they loaded. */
   private faces: LoadedFace[] = [];
   private errors = new Map<string, string>();
@@ -484,7 +486,9 @@ export class FontCache {
     }
     const load = (async (): Promise<LoadedFace | null> => {
       try {
-        const answer = await this.provider(spec.family, spec.weight, spec.style, { codePoints });
+        const prefetched = this.prefetched.get(key);
+        this.prefetched.delete(key);
+        const answer = await (prefetched ?? this.provider(spec.family, spec.weight, spec.style, { codePoints }));
         const { fonts, declarations } = await this.embedAnswer(answer, spec);
         if (fonts.length === 0) throw new Error('the font provider returned no file');
         for (const font of fonts) registerFontFamily(font, spec.family);
@@ -581,8 +585,20 @@ export class FontCache {
       for (const cp of codePoints ?? []) job.codePoints.add(cp);
     }
 
-    await Promise.all(
-      Array.from(jobs.entries()).map(async ([key, { spec, codePoints }]) => {
+    // Every face is asked of the provider at once, but embedded one after
+    // another in the order the pages ask for it: pdf-lib numbers a font's
+    // objects when it is embedded, so embedding the faces as their files
+    // arrive would write the same document with other bytes on the next
+    // run (#1217).
+    for (const [key, { spec, codePoints }] of jobs) {
+      if (this.map.has(key) || this.loads.has(key) || this.prefetched.has(key)) continue;
+      const answer = (async () => this.provider(spec.family, spec.weight, spec.style, { codePoints }))();
+      // A rejection is met when the face takes its turn.
+      answer.catch(() => {});
+      this.prefetched.set(key, answer);
+    }
+    for (const [key, { spec, codePoints }] of jobs) {
+      await (async () => {
         if (this.map.has(key)) {
           // Loaded before (another chapter, a picture's text): a sliced
           // face fetches the files for the characters it lacks.
@@ -611,8 +627,8 @@ export class FontCache {
         }
         this.failed.add(`${spec.family} ${spec.weight}${spec.style === 'italic' ? ' italic' : ''}`);
         this.map.set(key, null);
-      }),
-    );
+      })();
+    }
   }
 
   /** Every face some characters drawn in which none of its files has a
