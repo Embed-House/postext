@@ -132,7 +132,7 @@
       },
       "sandbox": {
         "file": "photos-fill-short-columns.postext",
-        "bytes": 1919826,
+        "bytes": 1924762,
         "folio": "111a3296",
         "pages": 3,
         "chapters": [
@@ -352,6 +352,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.17 MB (warning at 0.9 MB for 5 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -478,7 +483,7 @@
       },
       "sandbox": {
         "file": "photos-fill-short-columns.postext",
-        "bytes": 1919574,
+        "bytes": 1924470,
         "folio": "111a3296",
         "pages": 3,
         "chapters": [
@@ -698,6 +703,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 5 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

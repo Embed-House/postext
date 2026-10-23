@@ -24,7 +24,9 @@ export interface OpenHashBundleDeps {
   /** The bytes at `url`; null when the server has nothing there (404),
    *  so the next candidate is tried. Throws on a network failure. */
   fetchBytes: (url: string) => Promise<ArrayBuffer | null>;
-  importBytes: (bytes: ArrayBuffer, fileName: string, origin: string) => Promise<string>;
+  /** `lang` is the link's language: a book in several languages opens in
+   *  that edition (#1209). */
+  importBytes: (bytes: ArrayBuffer, fileName: string, origin: string, lang: string | null) => Promise<string>;
   /** Origin of the page (`location.origin`): only URLs on it are fetched. */
   pageOrigin: string;
 }
@@ -101,7 +103,7 @@ export function openHashBundle(ref: HashBundleRef, deps: OpenHashBundleDeps): Pr
       }
       if (!bytes) continue;
       try {
-        const projectId = await deps.importBytes(bytes, `${ref.id}.postext`, origin);
+        const projectId = await deps.importBytes(bytes, `${ref.id}.postext`, origin, ref.lang);
         if (!existing) return { projectId, imported: true };
         // The copy goes once the fresh import is open (it is no longer
         // the book on screen); a failure to drop it leaves both.

@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "proper-name-marks.postext",
-        "bytes": 22689,
+        "bytes": 24999,
         "folio": "dd71612a",
         "chapters": [
           {
@@ -314,7 +314,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -413,7 +419,7 @@
       },
       "sandbox": {
         "file": "proper-name-marks.postext",
-        "bytes": 22780,
+        "bytes": 25034,
         "folio": "dd71612a",
         "chapters": [
           {
@@ -621,7 +627,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

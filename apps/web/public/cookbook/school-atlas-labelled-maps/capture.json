@@ -113,7 +113,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 611338,
+        "bytes": 618272,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -377,6 +377,11 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 28 block, 15 frame, 32 label, 62 line, 3 text"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ar"
           }
         ]
       }
@@ -485,7 +490,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 611106,
+        "bytes": 617923,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -749,6 +754,11 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 28 block, 15 frame, 32 label, 62 line, 3 text"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ar"
           }
         ]
       }
@@ -858,7 +868,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 612356,
+        "bytes": 618628,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -1125,6 +1135,11 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 28 block, 15 frame, 28 label, 60 line, 3 text"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, es, en"
           }
         ]
       }

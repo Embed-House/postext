@@ -1,5 +1,6 @@
 {
  "version": 2,
+ "configVersion": 21,
  "id": "pintura-espanola",
  "name": "Pintura española · Spanish Painting",
  "description": "Catálogo de exposición a una columna: ficha y comentario frente a la lámina a página · A single-column exhibition catalogue, entry and commentary facing the full-page plate",
@@ -179,32 +180,98 @@
   ]
  },
  "config": {
-  "locale": "es",
+  "colorPalette": [
+   {
+    "id": "ink",
+    "name": "Tinta",
+    "value": {
+     "hex": "#1c1a19",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "paper",
+    "name": "Papel",
+    "value": {
+     "hex": "#fbf9f4",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "white",
+    "name": "Blanco",
+    "value": {
+     "hex": "#ffffff",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "band",
+    "name": "Color de sección",
+    "value": {
+     "hex": "#3d4a63",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "rule",
+    "name": "Filetes",
+    "value": {
+     "hex": "#c8c2b6",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "muted",
+    "name": "Gris de fichas",
+    "value": {
+     "hex": "#6d675f",
+     "model": "hex"
+    }
+   }
+  ],
+  "resourceTypes": [
+   {
+    "id": "plate",
+    "name": "Cat.",
+    "namePlural": "Cat.",
+    "shortLabel": "cat.",
+    "captionPrefix": "Cat.",
+    "numberingTemplate": "{n}",
+    "resetOn": "never",
+    "counterFormat": "decimal",
+    "defaultPlacement": {
+     "position": "top",
+     "span": "page",
+     "width": 1
+    }
+   }
+  ],
   "page": {
    "sizePreset": "custom",
    "width": {
-    "value": 210.0,
+    "value": 210,
     "unit": "mm"
    },
    "height": {
-    "value": 270.0,
+    "value": 270,
     "unit": "mm"
    },
    "margins": {
     "top": {
-     "value": 24.0,
+     "value": 24,
      "unit": "mm"
     },
     "bottom": {
-     "value": 24.0,
+     "value": 24,
      "unit": "mm"
     },
     "left": {
-     "value": 22.0,
+     "value": 22,
      "unit": "mm"
     },
     "right": {
-     "value": 44.0,
+     "value": 44,
      "unit": "mm"
     },
     "mirror": true
@@ -218,7 +285,8 @@
    }
   },
   "layout": {
-   "layoutType": "single"
+   "layoutType": "single",
+   "floatsUnderOpener": false
   },
   "bodyText": {
    "fontFamily": "EB Garamond",
@@ -260,12 +328,19 @@
    "referenceBold": false,
    "referenceItalic": true,
    "hyphenation": {
-    "enabled": true,
-    "locale": "es"
+    "enabled": true
    },
    "avoidWidows": true,
    "avoidOrphans": true,
-   "optimalLineBreaking": true
+   "optimalLineBreaking": true,
+   "breakAfterDashes": false,
+   "optimalRagged": false,
+   "paragraphContainerSpacing": "add",
+   "breakAfterHyphens": false,
+   "scriptContext": false,
+   "shapingLanguage": "host",
+   "paragraphStylesInBoxes": "document",
+   "breakAfterSlashes": false
   },
   "headings": {
    "fontFamily": "Bodoni Moda",
@@ -319,7 +394,7 @@
           },
           "size": {
            "width": {
-            "value": 144.0,
+            "value": 144,
             "unit": "mm"
            },
            "height": "auto"
@@ -368,7 +443,7 @@
           },
           "size": {
            "width": {
-            "value": 144.0,
+            "value": 144,
             "unit": "mm"
            },
            "height": "auto"
@@ -417,7 +492,7 @@
           },
           "size": {
            "width": {
-            "value": 144.0,
+            "value": 144,
             "unit": "mm"
            },
            "height": "auto"
@@ -461,7 +536,7 @@
           },
           "size": {
            "width": {
-            "value": 144.0,
+            "value": 144,
             "unit": "mm"
            },
            "height": "auto"
@@ -506,7 +581,7 @@
           },
           "size": {
            "width": {
-            "value": 144.0,
+            "value": 144,
             "unit": "mm"
            }
           }
@@ -541,7 +616,7 @@
           },
           "size": {
            "width": {
-            "value": 144.0,
+            "value": 144,
             "unit": "mm"
            },
            "height": "auto"
@@ -577,6 +652,10 @@
           "gap": {
            "value": 1.6,
            "unit": "mm"
+          },
+          "fontSize": {
+           "value": 69.47916666666666,
+           "unit": "pt"
           }
          }
         }
@@ -610,7 +689,13 @@
       "unit": "pt"
      }
     }
-   ]
+   ],
+   "keepWithNextSplit": "fill",
+   "balancing": {
+    "maxLinesBeforeLoose": 4,
+    "stretchAfterWideFloats": "always",
+    "trailingStep": "grid"
+   }
   },
   "headingStyles": [
    {
@@ -626,7 +711,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 270.0,
+      "value": 270,
       "unit": "mm"
      },
      "slot": {
@@ -686,7 +771,7 @@
          },
          "size": {
           "width": {
-           "value": 216.0,
+           "value": 216,
            "unit": "mm"
           },
           "height": {
@@ -707,7 +792,7 @@
          },
          "offset": {
           "x": {
-           "value": 22.0,
+           "value": 22,
            "unit": "mm"
           },
           "y": {
@@ -717,7 +802,7 @@
          },
          "size": {
           "width": {
-           "value": 164.0,
+           "value": 164,
            "unit": "mm"
           },
           "height": "auto"
@@ -766,7 +851,7 @@
          },
          "size": {
           "width": {
-           "value": 164.0,
+           "value": 164,
            "unit": "mm"
           },
           "height": "auto"
@@ -782,7 +867,7 @@
         "italic": false,
         "align": "left",
         "verticalAlign": "middle",
-        "lineHeight": 1.0,
+        "lineHeight": 1,
         "overflow": "wrap",
         "color": {
          "hex": "#ffffff",
@@ -810,7 +895,7 @@
          },
          "size": {
           "width": {
-           "value": 154.0,
+           "value": 154,
            "unit": "mm"
           },
           "height": "auto"
@@ -844,7 +929,7 @@
          },
          "offset": {
           "x": {
-           "value": 22.0,
+           "value": 22,
            "unit": "mm"
           },
           "y": {
@@ -854,7 +939,7 @@
          },
          "size": {
           "width": {
-           "value": 164.0,
+           "value": 164,
            "unit": "mm"
           },
           "height": "auto"
@@ -894,19 +979,19 @@
     },
     "margins": {
      "top": {
-      "value": 190.0,
+      "value": 190,
       "unit": "mm"
      },
      "bottom": {
-      "value": 24.0,
+      "value": 24,
       "unit": "mm"
      },
      "left": {
-      "value": 81.0,
+      "value": 81,
       "unit": "mm"
      },
      "right": {
-      "value": 44.0,
+      "value": 44,
       "unit": "mm"
      }
     }
@@ -924,7 +1009,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 270.0,
+      "value": 270,
       "unit": "mm"
      },
      "slot": {
@@ -984,7 +1069,7 @@
          },
          "size": {
           "width": {
-           "value": 128.0,
+           "value": 128,
            "unit": "mm"
           },
           "height": {
@@ -1015,7 +1100,7 @@
          },
          "size": {
           "width": {
-           "value": 128.0,
+           "value": 128,
            "unit": "mm"
           },
           "height": "auto"
@@ -1059,7 +1144,7 @@
          },
          "size": {
           "width": {
-           "value": 130.0,
+           "value": 130,
            "unit": "mm"
           },
           "height": "auto"
@@ -1103,7 +1188,7 @@
          },
          "size": {
           "width": {
-           "value": 150.0,
+           "value": 150,
            "unit": "mm"
           },
           "height": "auto"
@@ -1179,7 +1264,7 @@
          },
          "size": {
           "width": {
-           "value": 144.0,
+           "value": 144,
            "unit": "mm"
           },
           "height": "auto"
@@ -1224,7 +1309,7 @@
          },
          "size": {
           "width": {
-           "value": 144.0,
+           "value": 144,
            "unit": "mm"
           }
          }
@@ -1259,7 +1344,7 @@
          },
          "size": {
           "width": {
-           "value": 144.0,
+           "value": 144,
            "unit": "mm"
           },
           "height": "auto"
@@ -1295,6 +1380,10 @@
          "gap": {
           "value": 1.6,
           "unit": "mm"
+         },
+         "fontSize": {
+          "value": 69.47916666666666,
+          "unit": "pt"
          }
         }
        }
@@ -1340,7 +1429,7 @@
          },
          "size": {
           "width": {
-           "value": 144.0,
+           "value": 144,
            "unit": "mm"
           },
           "height": "auto"
@@ -1385,7 +1474,7 @@
          },
          "size": {
           "width": {
-           "value": 144.0,
+           "value": 144,
            "unit": "mm"
           }
          }
@@ -1525,7 +1614,7 @@
      "unit": "mm"
     },
     "left": {
-     "value": 22.0,
+     "value": 22,
      "unit": "mm"
     },
     "right": {
@@ -1580,7 +1669,7 @@
        },
        "offset": {
         "x": {
-         "value": 22.0,
+         "value": 22,
          "unit": "mm"
         },
         "y": {
@@ -1590,13 +1679,12 @@
        },
        "size": {
         "width": {
-         "value": 144.0,
+         "value": 144,
          "unit": "mm"
         },
         "height": "auto"
        }
       },
-      "content": "Sección {number}",
       "fontFamily": "IBM Plex Sans Condensed",
       "fontSize": {
        "value": 9,
@@ -1675,7 +1763,7 @@
        },
        "size": {
         "width": {
-         "value": 154.0,
+         "value": 154,
          "unit": "mm"
         },
         "height": "auto"
@@ -1945,11 +2033,11 @@
       },
       "offset": {
        "x": {
-        "value": 44.0,
+        "value": 44,
         "unit": "mm"
        },
        "y": {
-        "value": 13.0,
+        "value": 13,
         "unit": "mm"
        }
       },
@@ -1996,11 +2084,11 @@
       },
       "offset": {
        "x": {
-        "value": -44.0,
+        "value": -44,
         "unit": "mm"
        },
        "y": {
-        "value": 13.0,
+        "value": 13,
         "unit": "mm"
        }
       },
@@ -2050,7 +2138,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": -14.0,
+        "value": -14,
         "unit": "mm"
        }
       },
@@ -2095,7 +2183,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": -14.0,
+        "value": -14,
         "unit": "mm"
        }
       },
@@ -2183,73 +2271,6 @@
     "paletteId": "band"
    }
   },
-  "colorPalette": [
-   {
-    "id": "ink",
-    "name": "Tinta",
-    "value": {
-     "hex": "#1c1a19",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "paper",
-    "name": "Papel",
-    "value": {
-     "hex": "#fbf9f4",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "white",
-    "name": "Blanco",
-    "value": {
-     "hex": "#ffffff",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "band",
-    "name": "Color de sección",
-    "value": {
-     "hex": "#3d4a63",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "rule",
-    "name": "Filetes",
-    "value": {
-     "hex": "#c8c2b6",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "muted",
-    "name": "Gris de fichas",
-    "value": {
-     "hex": "#6d675f",
-     "model": "hex"
-    }
-   }
-  ],
-  "resourceTypes": [
-   {
-    "id": "plate",
-    "name": "Cat.",
-    "namePlural": "Cat.",
-    "shortLabel": "cat.",
-    "captionPrefix": "Cat.",
-    "numberingTemplate": "{n}",
-    "resetOn": "never",
-    "counterFormat": "decimal",
-    "defaultPlacement": {
-     "position": "top",
-     "span": "page",
-     "width": 1
-    }
-   }
-  ],
   "pdfGeneration": {
    "outlines": true
   },
@@ -2270,659 +2291,30 @@
    "lighting": {
     "environment": "studio"
    }
+  },
+  "crossRefs": {
+   "breakLabels": false
   }
  },
  "localized": {
   "es": {
    "config": {
-    "locale": "es",
     "bodyText": {
-     "fontFamily": "EB Garamond",
-     "fontSize": {
-      "value": 11,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 15.5,
-      "unit": "pt"
-     },
-     "textAlign": "justify",
-     "firstLineIndent": {
-      "value": 5,
-      "unit": "mm"
-     },
-     "indentAfterHeading": false,
-     "paragraphSpacing": false,
-     "color": {
-      "hex": "#1c1a19",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1c1a19",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1c1a19",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceColor": {
-      "hex": "#3d4a63",
-      "model": "hex",
-      "paletteId": "band"
-     },
-     "referenceBold": false,
-     "referenceItalic": true,
      "hyphenation": {
-      "enabled": true,
       "locale": "es"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true,
-     "optimalLineBreaking": true
-    },
-    "headings": {
-     "fontFamily": "Bodoni Moda",
-     "color": {
-      "hex": "#1c1a19",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "keepWithNext": true,
-     "levels": [
-      {
-       "level": 1,
-       "fontSize": {
-        "value": 24,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 28,
-        "unit": "pt"
-       },
-       "span": "page",
-       "breakBefore": {
-        "enabled": true,
-        "parity": "even"
-       },
-       "advancedDesign": {
-        "enabled": true,
-        "minHeight": {
-         "value": 74,
-         "unit": "mm"
-        },
-        "slot": {
-         "elements": [
-          {
-           "kind": "text",
-           "id": "catNumber",
-           "placement": {
-            "anchor": {
-             "to": "container",
-             "edge": "top-left"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 4,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{attr.catlabel} {attr.cat}",
-           "fontFamily": "IBM Plex Sans Condensed",
-           "fontSize": {
-            "value": 8.5,
-            "unit": "pt"
-           },
-           "fontWeight": 600,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.2,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#3d4a63",
-            "model": "hex",
-            "paletteId": "band"
-           },
-           "textTransform": "uppercase",
-           "letterSpacing": {
-            "value": 2.2,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "artist",
-           "placement": {
-            "anchor": {
-             "to": "#catNumber",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 2.5,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{partTitle}",
-           "fontFamily": "IBM Plex Sans Condensed",
-           "fontSize": {
-            "value": 9.5,
-            "unit": "pt"
-           },
-           "fontWeight": 500,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.2,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#6d675f",
-            "model": "hex",
-            "paletteId": "muted"
-           },
-           "textTransform": "uppercase",
-           "letterSpacing": {
-            "value": 1.6,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "workTitle",
-           "placement": {
-            "anchor": {
-             "to": "#artist",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 4,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{titleText}",
-           "fontFamily": "Bodoni Moda",
-           "fontSize": {
-            "value": 32,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": true,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.08,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#1c1a19",
-            "model": "hex",
-            "paletteId": "ink"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "tombstone",
-           "placement": {
-            "anchor": {
-             "to": "#workTitle",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 5,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{attr.tombstone}",
-           "fontFamily": "IBM Plex Sans Condensed",
-           "fontSize": {
-            "value": 8.5,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.35,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#6d675f",
-            "model": "hex",
-            "paletteId": "muted"
-           }
-          },
-          {
-           "kind": "rule",
-           "id": "workRule",
-           "direction": "horizontal",
-           "placement": {
-            "anchor": {
-             "to": "#tombstone",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 5,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             }
-            }
-           },
-           "color": {
-            "hex": "#c8c2b6",
-            "model": "hex",
-            "paletteId": "rule"
-           },
-           "thickness": {
-            "value": 0.5,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "lead",
-           "placement": {
-            "anchor": {
-             "to": "#workRule",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 6,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{attr.lead}",
-           "fontFamily": "EB Garamond",
-           "fontSize": {
-            "value": 11.5,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.45,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#1c1a19",
-            "model": "hex",
-            "paletteId": "ink"
-           },
-           "hyphenate": true,
-           "dropCap": {
-            "lines": 3,
-            "fontFamily": "Bodoni Moda",
-            "fontWeight": 400,
-            "color": {
-             "hex": "#3d4a63",
-             "model": "hex",
-             "paletteId": "band"
-            },
-            "gap": {
-             "value": 1.6,
-             "unit": "mm"
-            }
-           }
-          }
-         ]
-        }
-       }
-      },
-      {
-       "level": 2,
-       "fontSize": {
-        "value": 14,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 18,
-        "unit": "pt"
-       },
-       "fontWeight": 400,
-       "italic": true,
-       "color": {
-        "hex": "#3d4a63",
-        "model": "hex",
-        "paletteId": "band"
-       },
-       "marginTop": {
-        "value": 14,
-        "unit": "pt"
-       },
-       "marginBottom": {
-        "value": 4,
-        "unit": "pt"
-       }
-      }
-     ]
+     }
     },
     "parts": {
-     "breakBefore": {
-      "parity": "odd"
-     },
-     "breakAfter": {
-      "enabled": true,
-      "parity": "any"
-     },
-     "margins": {
-      "top": {
-       "value": 128,
-       "unit": "mm"
-      },
-      "bottom": {
-       "value": 28,
-       "unit": "mm"
-      },
-      "left": {
-       "value": 22.0,
-       "unit": "mm"
-      },
-      "right": {
-       "value": 62,
-       "unit": "mm"
-      }
-     },
      "design": {
       "elements": [
        {
-        "kind": "box",
-        "id": "partBg",
-        "placement": {
-         "anchor": {
-          "to": "bleed",
-          "edge": "top-left"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 0,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": "fill",
-          "height": "fill"
-         }
-        },
-        "style": {
-         "backgroundColor": {
-          "hex": "#3d4a63",
-          "model": "hex",
-          "paletteId": "band"
-         },
-         "borderRadius": {
-          "value": 0,
-          "unit": "mm"
-         }
-        }
-       },
-       {
-        "kind": "text",
-        "id": "partLabel",
-        "placement": {
-         "anchor": {
-          "to": "page",
-          "edge": "top-left"
-         },
-         "offset": {
-          "x": {
-           "value": 22.0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 64,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 144.0,
-           "unit": "mm"
-          },
-          "height": "auto"
-         }
-        },
         "content": "Sección {number}",
-        "fontFamily": "IBM Plex Sans Condensed",
-        "fontSize": {
-         "value": 9,
-         "unit": "pt"
-        },
-        "fontWeight": 600,
-        "italic": false,
-        "align": "left",
-        "verticalAlign": "middle",
-        "lineHeight": 1.2,
-        "overflow": "wrap",
-        "color": {
-         "hex": "#ffffff",
-         "model": "hex",
-         "paletteId": "white"
-        },
-        "textTransform": "uppercase",
-        "letterSpacing": {
-         "value": 2.6,
-         "unit": "pt"
-        }
-       },
-       {
-        "kind": "rule",
-        "id": "partRule",
-        "direction": "horizontal",
-        "placement": {
-         "anchor": {
-          "to": "#partLabel",
-          "edge": "below"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 4,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 22,
-           "unit": "mm"
-          }
-         }
-        },
-        "color": {
-         "hex": "#ffffff",
-         "model": "hex",
-         "paletteId": "white"
-        },
-        "thickness": {
-         "value": 0.8,
-         "unit": "pt"
-        }
-       },
-       {
-        "kind": "text",
-        "id": "partTitle",
-        "placement": {
-         "anchor": {
-          "to": "#partRule",
-          "edge": "below"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 6,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 154.0,
-           "unit": "mm"
-          },
-          "height": "auto"
-         }
-        },
-        "content": "{titleText}",
-        "fontFamily": "Bodoni Moda",
-        "fontSize": {
-         "value": 52,
-         "unit": "pt"
-        },
-        "fontWeight": 400,
-        "italic": false,
-        "align": "left",
-        "verticalAlign": "middle",
-        "lineHeight": 1.02,
-        "overflow": "wrap",
-        "color": {
-         "hex": "#ffffff",
-         "model": "hex",
-         "paletteId": "white"
-        }
+        "id": "partLabel"
        }
       ]
-     },
-     "bodyStyle": {
-      "fontFamily": "EB Garamond",
-      "fontSize": {
-       "value": 11,
-       "unit": "pt"
-      },
-      "lineHeight": {
-       "value": 15.5,
-       "unit": "pt"
-      },
-      "color": {
-       "hex": "#ffffff",
-       "model": "hex",
-       "paletteId": "white"
-      },
-      "textAlign": "left",
-      "numberColor": {
-       "hex": "#ffffff",
-       "model": "hex",
-       "paletteId": "white"
-      },
-      "orderedLists": {
-       "numberFormat": "arabic",
-       "separator": "",
-       "gap": {
-        "value": 3,
-        "unit": "mm"
-       },
-       "indent": {
-        "value": 9,
-        "unit": "mm"
-       },
-       "fontFamily": "IBM Plex Sans Condensed",
-       "numberFontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "itemSpacing": {
-        "value": 2,
-        "unit": "pt"
-       }
-      }
      }
     },
-    "resourceTypes": [
-     {
-      "id": "plate",
-      "name": "Cat.",
-      "namePlural": "Cat.",
-      "shortLabel": "cat.",
-      "captionPrefix": "Cat.",
-      "numberingTemplate": "{n}",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "top",
-       "span": "page",
-       "width": 1
-      }
-     }
-    ]
+    "locale": "es"
    },
    "resources": [
     {
@@ -3019,654 +2411,22 @@
   },
   "en": {
    "config": {
-    "locale": "en-us",
     "bodyText": {
-     "fontFamily": "EB Garamond",
-     "fontSize": {
-      "value": 11,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 15.5,
-      "unit": "pt"
-     },
-     "textAlign": "justify",
-     "firstLineIndent": {
-      "value": 5,
-      "unit": "mm"
-     },
-     "indentAfterHeading": false,
-     "paragraphSpacing": false,
-     "color": {
-      "hex": "#1c1a19",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1c1a19",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1c1a19",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceColor": {
-      "hex": "#3d4a63",
-      "model": "hex",
-      "paletteId": "band"
-     },
-     "referenceBold": false,
-     "referenceItalic": true,
      "hyphenation": {
-      "enabled": true,
       "locale": "en-us"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true,
-     "optimalLineBreaking": true
-    },
-    "headings": {
-     "fontFamily": "Bodoni Moda",
-     "color": {
-      "hex": "#1c1a19",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "keepWithNext": true,
-     "levels": [
-      {
-       "level": 1,
-       "fontSize": {
-        "value": 24,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 28,
-        "unit": "pt"
-       },
-       "span": "page",
-       "breakBefore": {
-        "enabled": true,
-        "parity": "even"
-       },
-       "advancedDesign": {
-        "enabled": true,
-        "minHeight": {
-         "value": 74,
-         "unit": "mm"
-        },
-        "slot": {
-         "elements": [
-          {
-           "kind": "text",
-           "id": "catNumber",
-           "placement": {
-            "anchor": {
-             "to": "container",
-             "edge": "top-left"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 4,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{attr.catlabel} {attr.cat}",
-           "fontFamily": "IBM Plex Sans Condensed",
-           "fontSize": {
-            "value": 8.5,
-            "unit": "pt"
-           },
-           "fontWeight": 600,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.2,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#3d4a63",
-            "model": "hex",
-            "paletteId": "band"
-           },
-           "textTransform": "uppercase",
-           "letterSpacing": {
-            "value": 2.2,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "artist",
-           "placement": {
-            "anchor": {
-             "to": "#catNumber",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 2.5,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{partTitle}",
-           "fontFamily": "IBM Plex Sans Condensed",
-           "fontSize": {
-            "value": 9.5,
-            "unit": "pt"
-           },
-           "fontWeight": 500,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.2,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#6d675f",
-            "model": "hex",
-            "paletteId": "muted"
-           },
-           "textTransform": "uppercase",
-           "letterSpacing": {
-            "value": 1.6,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "workTitle",
-           "placement": {
-            "anchor": {
-             "to": "#artist",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 4,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{titleText}",
-           "fontFamily": "Bodoni Moda",
-           "fontSize": {
-            "value": 32,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": true,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.08,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#1c1a19",
-            "model": "hex",
-            "paletteId": "ink"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "tombstone",
-           "placement": {
-            "anchor": {
-             "to": "#workTitle",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 5,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{attr.tombstone}",
-           "fontFamily": "IBM Plex Sans Condensed",
-           "fontSize": {
-            "value": 8.5,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.35,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#6d675f",
-            "model": "hex",
-            "paletteId": "muted"
-           }
-          },
-          {
-           "kind": "rule",
-           "id": "workRule",
-           "direction": "horizontal",
-           "placement": {
-            "anchor": {
-             "to": "#tombstone",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 5,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             }
-            }
-           },
-           "color": {
-            "hex": "#c8c2b6",
-            "model": "hex",
-            "paletteId": "rule"
-           },
-           "thickness": {
-            "value": 0.5,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "lead",
-           "placement": {
-            "anchor": {
-             "to": "#workRule",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 6,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 144.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{attr.lead}",
-           "fontFamily": "EB Garamond",
-           "fontSize": {
-            "value": 11.5,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.45,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#1c1a19",
-            "model": "hex",
-            "paletteId": "ink"
-           },
-           "hyphenate": true,
-           "dropCap": {
-            "lines": 3,
-            "fontFamily": "Bodoni Moda",
-            "fontWeight": 400,
-            "color": {
-             "hex": "#3d4a63",
-             "model": "hex",
-             "paletteId": "band"
-            },
-            "gap": {
-             "value": 1.6,
-             "unit": "mm"
-            }
-           }
-          }
-         ]
-        }
-       }
-      },
-      {
-       "level": 2,
-       "fontSize": {
-        "value": 14,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 18,
-        "unit": "pt"
-       },
-       "fontWeight": 400,
-       "italic": true,
-       "color": {
-        "hex": "#3d4a63",
-        "model": "hex",
-        "paletteId": "band"
-       },
-       "marginTop": {
-        "value": 14,
-        "unit": "pt"
-       },
-       "marginBottom": {
-        "value": 4,
-        "unit": "pt"
-       }
-      }
-     ]
+     }
     },
     "parts": {
-     "breakBefore": {
-      "parity": "odd"
-     },
-     "breakAfter": {
-      "enabled": true,
-      "parity": "any"
-     },
-     "margins": {
-      "top": {
-       "value": 128,
-       "unit": "mm"
-      },
-      "bottom": {
-       "value": 28,
-       "unit": "mm"
-      },
-      "left": {
-       "value": 22.0,
-       "unit": "mm"
-      },
-      "right": {
-       "value": 62,
-       "unit": "mm"
-      }
-     },
      "design": {
       "elements": [
        {
-        "kind": "box",
-        "id": "partBg",
-        "placement": {
-         "anchor": {
-          "to": "bleed",
-          "edge": "top-left"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 0,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": "fill",
-          "height": "fill"
-         }
-        },
-        "style": {
-         "backgroundColor": {
-          "hex": "#3d4a63",
-          "model": "hex",
-          "paletteId": "band"
-         },
-         "borderRadius": {
-          "value": 0,
-          "unit": "mm"
-         }
-        }
-       },
-       {
-        "kind": "text",
-        "id": "partLabel",
-        "placement": {
-         "anchor": {
-          "to": "page",
-          "edge": "top-left"
-         },
-         "offset": {
-          "x": {
-           "value": 22.0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 64,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 144.0,
-           "unit": "mm"
-          },
-          "height": "auto"
-         }
-        },
         "content": "Section {number}",
-        "fontFamily": "IBM Plex Sans Condensed",
-        "fontSize": {
-         "value": 9,
-         "unit": "pt"
-        },
-        "fontWeight": 600,
-        "italic": false,
-        "align": "left",
-        "verticalAlign": "middle",
-        "lineHeight": 1.2,
-        "overflow": "wrap",
-        "color": {
-         "hex": "#ffffff",
-         "model": "hex",
-         "paletteId": "white"
-        },
-        "textTransform": "uppercase",
-        "letterSpacing": {
-         "value": 2.6,
-         "unit": "pt"
-        }
-       },
-       {
-        "kind": "rule",
-        "id": "partRule",
-        "direction": "horizontal",
-        "placement": {
-         "anchor": {
-          "to": "#partLabel",
-          "edge": "below"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 4,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 22,
-           "unit": "mm"
-          }
-         }
-        },
-        "color": {
-         "hex": "#ffffff",
-         "model": "hex",
-         "paletteId": "white"
-        },
-        "thickness": {
-         "value": 0.8,
-         "unit": "pt"
-        }
-       },
-       {
-        "kind": "text",
-        "id": "partTitle",
-        "placement": {
-         "anchor": {
-          "to": "#partRule",
-          "edge": "below"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 6,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 154.0,
-           "unit": "mm"
-          },
-          "height": "auto"
-         }
-        },
-        "content": "{titleText}",
-        "fontFamily": "Bodoni Moda",
-        "fontSize": {
-         "value": 52,
-         "unit": "pt"
-        },
-        "fontWeight": 400,
-        "italic": false,
-        "align": "left",
-        "verticalAlign": "middle",
-        "lineHeight": 1.02,
-        "overflow": "wrap",
-        "color": {
-         "hex": "#ffffff",
-         "model": "hex",
-         "paletteId": "white"
-        }
+        "id": "partLabel"
        }
       ]
-     },
-     "bodyStyle": {
-      "fontFamily": "EB Garamond",
-      "fontSize": {
-       "value": 11,
-       "unit": "pt"
-      },
-      "lineHeight": {
-       "value": 15.5,
-       "unit": "pt"
-      },
-      "color": {
-       "hex": "#ffffff",
-       "model": "hex",
-       "paletteId": "white"
-      },
-      "textAlign": "left",
-      "numberColor": {
-       "hex": "#ffffff",
-       "model": "hex",
-       "paletteId": "white"
-      },
-      "orderedLists": {
-       "numberFormat": "arabic",
-       "separator": "",
-       "gap": {
-        "value": 3,
-        "unit": "mm"
-       },
-       "indent": {
-        "value": 9,
-        "unit": "mm"
-       },
-       "fontFamily": "IBM Plex Sans Condensed",
-       "numberFontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "itemSpacing": {
-        "value": 2,
-        "unit": "pt"
-       }
-      }
      }
     },
-    "resourceTypes": [
-     {
-      "id": "plate",
-      "name": "Cat.",
-      "namePlural": "Cat.",
-      "shortLabel": "cat.",
-      "captionPrefix": "Cat.",
-      "numberingTemplate": "{n}",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "top",
-       "span": "page",
-       "width": 1
-      }
-     }
-    ]
+    "locale": "en-us"
    },
    "resources": [
     {
@@ -3776,7 +2536,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3793,7 +2553,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3810,7 +2570,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3844,7 +2604,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3861,7 +2621,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3878,7 +2638,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3895,7 +2655,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3912,7 +2672,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3929,7 +2689,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3946,7 +2706,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3980,7 +2740,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },
@@ -3997,7 +2757,7 @@
    "placement": {
     "position": "top",
     "span": "page",
-    "width": 1.0,
+    "width": 1,
     "align": "center"
    }
   },

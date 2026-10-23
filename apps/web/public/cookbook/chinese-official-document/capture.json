@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "chinese-official-document.postext",
-        "bytes": 20527,
+        "bytes": 22605,
         "folio": "f2e4b92d",
         "chapters": [
           {
@@ -365,6 +365,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -479,7 +484,7 @@
       },
       "sandbox": {
         "file": "chinese-official-document.postext",
-        "bytes": 20563,
+        "bytes": 22626,
         "folio": "f2e4b92d",
         "chapters": [
           {
@@ -724,6 +729,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

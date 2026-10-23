@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'حزم .postext',
   description: 'فتح ملفات .postext وإخراجها ورسمها وإنشاؤها من الشيفرة، والحزم الثنائية اللغة، وملفات الإصدارات القديمة، والواجهة البرمجية منخفضة المستوى',
   lang: 'ar',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '27 دقيقة',
   order: 23,
   parent: 'configuration',
@@ -70,7 +70,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 
 #### الحزم التي كتبها postext 1.4 أو ما قبله
 
-كل بيان يكتبه `createBundle` أو Sandbox فيه `configVersion: 19`: قواعد الإعدادات التي كُتب لها `config` الخاص به. والبيان الذي يخلو منه كتبه postext 1.4 أو ما قبله، وكان يضبط تسعة عشر أمرًا على نحو مختلف:
+كل بيان يكتبه `createBundle` أو Sandbox فيه `configVersion: 21`: قواعد الإعدادات التي كُتب لها `config` الخاص به. والبيان الذي يخلو منه كتبه postext 1.4 أو ما قبله، وكان يضبط تسعة عشر أمرًا على نحو مختلف:
 
 - **فواصل العناوين** (القواعد 3): حتى 1.4، كان كائن `headings` الذي لا فاصل فيه لـH1 بلا أي فاصل (انظر [التجاوزات حسب المستوى](/ar/docs/configuration-headings#تجاوزات-كل-مستوى)).
 - **حجم الصيغ الرياضية** (القواعد 4): حتى 1.4، كانت الصيغ تخرج أكبر بـ1.131 مرة مما يقوله `fontSizeScale` (انظر [حجم الصيغ](/ar/docs/configuration-lists-math#الصيغ-الرياضية)).
@@ -96,7 +96,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 
 يُكتب التقسيم تحت العنوان (`pinLegacyHeadingSplit`) على شكل `headings.keepWithNextSplit: 'fill'` في كائن `headings` الذي تُبقيه الطبقات ساريًا، إذا كان في أحد الفصول المقروءة عنوان، ولم تحدد الإعدادات قيمة خاصة بها، وأبقت `headings.keepWithNext` مفعَّلًا، ولم تعطّل `bodyText.avoidOrphans`. وتُكتب فواصل الكلمات المركبة (`pinLegacyHyphenBreaks`) على شكل `bodyText.breakAfterHyphens: false` في `bodyText` الساري، إذا وضع أحد الفصول المقروءة واصلة بين حرفين، ولم تكن الإعدادات تضبطه أصلًا ولا تعطّل `optimalLineBreaking`. ويُكتب الفراغ تحت الحاويات (`pinLegacyParagraphContainerSpacing`) على شكل `bodyText.paragraphContainerSpacing: 'add'` في `bodyText` الساري، إذا عرّفت الإعدادات نمط فقرة (في `paragraphStyles` أو في تجاوزات عارض HTML)، وفتح أحد الفصول المقروءة حاوية `:::paragraphs` في سطر مستقل، ولم تكن الإعدادات تضبطه أصلًا. وتُكتب فواصل الشرطات (`pinLegacyDashBreaks`) على شكل `bodyText.breakAfterDashes: false` في `bodyText` الساري، إذا وضع أحد الفصول المقروءة شرطة طويلة أو متوسطة ملتصقة بين كلمتين (قبلها حرف أو رقم أو علامة ترقيم إغلاق، وبعدها حرف أو رقم أو قوس فتح أو علامة اقتباس فتح؛ وتُحتسب علامة الاقتباس التي قبلها إذا سبقها حرف أو رقم أو علامة ترقيم إغلاق أو مسافة غير قابلة للكسر، كما في `"no"—and`، لا في `said "—Hola`؛ وتُحتسب علامة التنسيق داخل السطر الملاصقة للشرطة أو لعلامة الاقتباس، مثل `**` في `**riddles.**—I`، من أي الجانبين)، ولم تكن الإعدادات تضبطه أصلًا. ويُكتب تقسيم الأسطر غير المضبوطة (`pinLegacyRaggedBreaking`) على شكل `bodyText.optimalRagged: false` في `bodyText` الساري، إذا جعلت الإعدادات بعض النص الجاري غير مضبوط (قيمة `textAlign` غير `'justify'` على نص المتن، أو على نمط فقرة، أو متن إطار، أو متن جزء، أو متن نمط قسم (`headingStyles[].bodyStyle`)، أو في تجاوزات عارض HTML)، ولم تكن تضبطه أصلًا، ولا تعطّل `optimalLineBreaking`. ويُكتب الفراغ في الإطارات (`pinLegacyBoxResourceGap`) على شكل `layout.inlineResourceGapInBoxes: false` في `layout` الساري، إذا وُضع مورد في سطر مستقل داخل `:::callout` في الفصول المقروءة، ولم تكن الإعدادات تضبطه أصلًا. ويُكتب قطع الإطار (`pinLegacyBoxChildCut`) على شكل `layout.boxChildSplitMinLines: 1` في `layout` الساري، إذا فتح أحد الفصول المقروءة `:::callout` في سطر مستقل، ولم تكن الإعدادات تضبطه أصلًا. وتُكتب علامات العناوين (`pinLegacyHeadingMarks`) على شكل `headings.inlineMarks: false` في `headings` الذي تُبقيه الطبقات ساريًا، إذا كان في عنوانٍ من الفصول المقروءة علامةٌ (`*` أو `_` أو `^` أو `~` أو `:smallcaps[` أو رابطًا في نصه) ولم تحدد الإعدادات قيمة خاصة بها. أما الحروف الاستهلالية (`pinLegacyDropCapSize`) فيُكتب حجمها في 1.4 صراحةً على شكل `dropCap.fontSize`، أينما كانت: بوحدة تباعد أسطر العنصر إن كان طولًا، وإلا فبوحدة حجم خطه. وتُكتب المساحة تحت سطر النقطتين (`pinLegacyColonListRoom`) على شكل `bodyText.colonListRoom: 'line'` في `bodyText` الساري، إذا جاءت قائمة في الفصول المقروءة بعد سطر ينتهي بنقطتين (ويُسمح بأسطر فارغة بينهما)، ولم تحدد الإعدادات مساحة ولا عطّلت `keepColonWithList`. ويُكتب الفراغ تحت المورد داخل التدفق (`pinLegacyInlineGap`) على شكل `layout.inlineResourceGap: 'above'` في `layout` الذي تُبقيه الطبقات ساريًا، إذا وضع سطرٌ من الفصول المقروءة موردًا (`::resource{id="…"}` وحده في سطره، كما يقرؤه المحلِّل: ذكره في النص الجاري أو في مقطع شيفرة لا يُحتسب) ولم تحدد الإعدادات فراغًا خاصًا بها. ويُثبَّت الحجم على `math` الذي تُبقيه الطبقات ساريًا (إذ يحلّ `math` الخاص بلغةٍ ما محلّ المشترك)، ولا يُثبَّت إلا إذا كان في الفصول المقروءة الرمز `$`: فالحزمة التي لا صيغ فيها تحتفظ بـ`config` كما كُتب. وإذا لم يحدد البيان ولا اللغة `math`، فالساري هو `baseConfig` الخاص بـ`readBundle` (إعدادات القارئ نفسه)، ويُثبَّت هو أيضًا، لأن 1.4 كان ينضّد صيغ الحزمة بذلك الحجم: فالقيمة الأساسية `fontSizeScale: 1.5` تُقرأ 1.5 × 1.1312. أما فواصل العناوين في الإعدادات الأساسية فتؤخذ كما هي.
 
-وهكذا تحتفظ الحزمة القديمة بما أخرجته هذه القواعد، ويُظهر `bundle.config` ما تُخرَج به من فواصل، وحجم صيغ، وفراغات، وعلامات عناوين، وأحجام حروف استهلالية، ومساحة تحت سطر النقطتين، وقطع إطار، وفواصل شرطات، وفواصل كلمات مركبة، وتقسيم للأسطر غير المضبوطة، وتقسيم تحت العنوان، وفراغ تحت الحاويات. أما إصلاحات الإخراج في 1.5 فلا تثبيت لها، وتسري عليها كما تسري على أي كتاب، لذا قد تتحرك صفحة تمسّها (انظر [حجم الصيغ](/ar/docs/configuration-lists-math#الصيغ-الرياضية) للاطلاع على القائمة). ملف `preset.json` المكتوب يدويًا لقواعد اليوم يضبط `"configVersion": 19`؛ ووسم بيان حزمة قديمة بهذه القيمة هو أيضًا الطريقة ذات السطر الواحد لقراءتها بقواعد اليوم (وعندها تفقد الحزمة التي لا إصدار لها تثبيت فواصل العناوين أيضًا).
+وهكذا تحتفظ الحزمة القديمة بما أخرجته هذه القواعد، ويُظهر `bundle.config` ما تُخرَج به من فواصل، وحجم صيغ، وفراغات، وعلامات عناوين، وأحجام حروف استهلالية، ومساحة تحت سطر النقطتين، وقطع إطار، وفواصل شرطات، وفواصل كلمات مركبة، وتقسيم للأسطر غير المضبوطة، وتقسيم تحت العنوان، وفراغ تحت الحاويات. أما إصلاحات الإخراج في 1.5 فلا تثبيت لها، وتسري عليها كما تسري على أي كتاب، لذا قد تتحرك صفحة تمسّها (انظر [حجم الصيغ](/ar/docs/configuration-lists-math#الصيغ-الرياضية) للاطلاع على القائمة). ملف `preset.json` المكتوب يدويًا لقواعد اليوم يضبط `"configVersion": 21`؛ ووسم بيان حزمة قديمة بهذه القيمة هو أيضًا الطريقة ذات السطر الواحد لقراءتها بقواعد اليوم (وعندها تفقد الحزمة التي لا إصدار لها تثبيت فواصل العناوين أيضًا).
 
 والبيان الموسوم `8`، الذي كتبه postext من 1.5 إلى 1.22، يتلقى التثبيتات الأربعة التي في القواعد 9 وحدها، كما يتلقاها كل بيان أقدم: يُكتب تخطيط الشعر (`pinLegacyVerseLayout`) بصفته `bodyText.verse.layout: 'bayt'` على `bodyText` النافذ، حين يضمّ فصل مقروء قصيدة `:::verse` لا يذكر سطر فتحها تخطيطًا وليس في أسطرها فاصل بين الشطرين، ولا تحدّده الإعدادات بعد؛ وتحذف الإزاحات المزدوجة (`pinLegacyPairedIndents`) قيمة `firstLineIndent` من كل نمط فقرة (في `paragraphStyles` أو في تجاوزات عارض HTML) يحدّد أيضًا `hangingIndent` غير صفرية؛ وتُكتب فواصل الأسطر الإجبارية (`pinLegacyHardBreaks`) بصفتها `bodyText.hardLineBreaks: false` على `bodyText` النافذ، حين يختم فصل مقروء سطرًا من فقرة أو اقتباس أو عنصر قائمة بشرطة مائلة عكسية والكتلة مستمرة تحته، أو يضع `\\` متبوعة بمسافة ونص (ما عدا الشيفرة والصيغ داخل السطر، والصيغ المعروضة، والعناوين، وقصائد `:::verse`)، ولا تحدّده الإعدادات بعد؛ وتُكتب كتل الشيفرة (`pinLegacyCodeBlocks`) بصفتها `codeStyle.blocks: false`، حين يفتح فصل مقروء سطر ```` ``` ```` أو `~~~` (من ثلاث علامات أو أكثر، بإزاحة لا تزيد على ثلاث مسافات) ولا تحدّده الإعدادات بعد.
 
@@ -123,6 +123,8 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 البيان الموسوم بـ`15` أو `16` كتبته postext من 1.34 إلى 1.51 (قواعد 16، ‏#1056، تضيف الموصلات إلى زخرفة القالب ولا تثبّت شيئًا). وقواعد 17 (‏#1119) تأخذ الخطَّ والحجم والتباعد بين الأسطر والأوزان واللون التي يتركها نمط الفقرة دون تحديد من نص الإطار الذي يقع فيه، وكانت حتى 1.51 من نص المستند. ويحصل البيان الموسوم بـ`16` أو أقدم على `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) في `bodyText` الساري، إذا صرّح الإعداد المدمج بنمط فقرة ولم يسمِّ هذا الإعداد.
 
 تسمح قواعد 19 (#1164) لسطر النص المنسَّق بأن ينتهي بعد شرطة مائلة بين كلمتين، وتقسم عندها أولًا الكلمة التي لا يتسع لها سطرها، بعد أن كان السطر المنسَّق حتى 1.51 لا ينكسر بعد الشرطة المائلة إلا داخل عنوان ويب. ويتلقى البيان الموسوم بـ`18` أو ما قبله `bodyText.breakAfterSlashes: false` (`pinLegacySlashBreaks`) على `bodyText` النافذ، أيًّا كان ما تحويه فصوله، إذا لم يسمِّ الإعداد هذا الخيار: فقد تقع مثل هذه الشرطة في تعليق على صورة أو خلية جدول أو قائمة مراجع لا تُظهرها الفصول المقروءة.
+
+وقواعد 21 (#1209) تغيّر طريقة تخزين الحزمة المتعددة اللغات لإعدادات كل لغة (انظر [الإعدادات العامة والإعدادات الخاصة بكل لغة](#الإعدادات-العامة-والإعدادات-الخاصة-بكل-لغة)): يُدمج `localized[…].config` فوق `config` المشترك حقلًا حقلًا، بعد أن كان حتى postext 1.57 يستبدل بكل مفتاح من مفاتيحه العليا المفتاحَ المشترك برمّته. ولا تثبيت هنا. والبيان الموسوم بـ`20` أو أقدم يُقرأ بالطريقة القديمة، مفتاحًا مفتاحًا، فتُخرَج كل طبعة كما كانت تُخرَج؛ وحين يُكتب من جديد، تُكتب إعدادات كل لغة على أنها إعدادات خاصة بها وفق القواعد 21.
 
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
@@ -284,13 +286,108 @@ const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, con
 ```
 
 - **`chapters`**: الكتاب بتلك اللغة. تذهب ملفات الفصول إلى مجلد لكل لغة (`chapters/en/01-dusk.md`، `chapters/es/01-anochecer.md`) ويصبح `chapters` في البيان خريطة من اللغة إلى الفصول. اللغة التي لا `chapters` لها تقرأ الفصول الأساسية؛ وإذا لم يكن لأي لغة فصول خاصة بها، تبقى قائمة واحدة.
-- **`config`**: الإعدادات لتلك اللغة. تحلّ كل خاصية من المستوى الأعلى محل الخاصية المشتركة برمّتها حين تُقرأ الحزمة بتلك اللغة، فـ`headings` أعلاه يحلّ محل كائن `headings` كله. والخصائص المُغفلة، أو المساوية للمشتركة، مشتركة ولا تُكتب، فتمرير إعدادات اللغة كاملة يصلح كما يصلح تمرير الخصائص القليلة التي تتغير. والخاصية المضبوطة على قيمها الافتراضية بينما المشترك ليس كذلك (`layout: {}`) يُكتب كما هو، فيعيد ضبط القيمة المشتركة. الخطوط مشتركة: تنضم عائلات `customFonts` الخاصة بلغة ما إلى `fonts` في الحزمة.
+- **`config`**: الإعدادات لتلك اللغة. تحلّ كل خاصية من المستوى الأعلى تمرّرها محل الخاصية المشتركة في تلك اللغة، فـ`headings` أعلاه يحلّ محل كائن `headings` كله. والخصائص المُغفلة، أو المساوية للمشتركة، مشتركة، فتمرير إعدادات اللغة كاملة يصلح كما يصلح تمرير الخصائص القليلة التي تتغير. ولا يخزّن البيان إلا الفرق: يحوي `localized[…].config` الحقول التي تضبطها اللغة على غير ما في `config` المشترك، ويُدمج فوقه حقلًا حقلًا حين تُقرأ الحزمة (انظر [الإعدادات العامة والإعدادات الخاصة بكل لغة](#الإعدادات-العامة-والإعدادات-الخاصة-بكل-لغة)). والخاصية المضبوطة على قيمها الافتراضية بينما المشتركة ليست كذلك (`layout: {}`) تعيد ضبط القيمة المشتركة في تلك اللغة. الخطوط مشتركة: تنضم عائلات `customFonts` الخاصة بلغة ما إلى `fonts` في الحزمة.
 - **`resources`**: صياغة الموارد المشتركة، مطابَقةً بـ`id`: `caption` و`note` و`altText` و`table` في الجدول. والصورة التي فيها كلمات يمكن أن يكون لها عملها الفني الخاص: يذكر `bitmap.fileId` أو `svg.fileId` (و`svg.pdfFileId`) ملفًا آخر في `files`، يُكتب على شكل `resources/es/lantern.svg`. أما الحقول الأخرى، كالنوع أو الموضع، فمشتركة. والمعرّف غير الموجود بين `resources` يُستبعد مع تحذير، والصورة المفقودة للغةٍ ما تُبقي تلك اللغة على الصورة المشتركة، مع تحذير أيضًا.
 - **`name`**، **`description`**: عنوان الكتاب ووصفه بتلك اللغة، ويُكتبان في `localized[…].name` و`description` حين يختلفان عن المشتركَين. يعيدهما `openBundle` بتلك اللغة في `bundle.name` و`bundle.description`، ويعرض Sandbox الطبعة بهذا العنوان عند الاستيراد وفي مكتبته، ويطبعهما `postext info` و`postext check`. ويمكن لمُدخَل في `index.json` لمصدر قوالب أن ينسخهما في `localized` (`localized.ca.name`) لتعرض المكتبة كل طبعة بعنوانها قبل فتحها. واللغة التي لا تذكرهما تحتفظ بـ`name` و`description` الواردين في البيان.
 
 يسرد البيان كل لغة في `locales` (`['en', 'es']`)، ويحتفظ باللغة الأساسية في `locale` ويخزّن البقية تحت `localized`. ويقرأ `openBundle` دون لغةٍ اللغةَ الأساسية.
 
 **أي لغة يحصل عليها القارئ.** يقدّم `openBundle(bytes, { locale })` اللغة المطابقة تمامًا، وإلا فاللغة دون متغيرها الإقليمي (`es-MX` يقرأ `es`)، وإلا فاللغة الأساسية، ويبيّن `bundle.locale` أيّها قدّم. تأتي الفصول والصياغة دائمًا من اللغة نفسها. وتحتفظ اللغة الأساسية بالصياغة المشتركة حتى إن تضمّن `localized` متغيرًا إقليميًا منها: فالحزمة بـ`pt-PT` التي فيها مُدخل `pt-BR` تقرأ التعليقات البرازيلية لـ`pt-BR` وحدها، والتعليقات المشتركة لـ`pt-PT` و`pt`.
+
+### الإعدادات العامة والإعدادات الخاصة بكل لغة
+
+تشترك طبعات الكتاب المتعدد اللغات عادةً في معظم التصميم: الصفحة، والشبكة، وأنماط الإطارات، ولوحة الألوان. وبعض الإعدادات يخصّ لغة واحدة: خطوط كتابتها، وما يتبع اتجاه النص، وصياغة تسمية ما. والحزمة المكتوبة لقواعد الإعدادات 21 (`configVersion: 21`) تفصل بين الاثنين. فـ`config` في البيان يحوي **الإعدادات العامة** التي تقرؤها كل طبعة، و`localized[<lang>].config` يحوي **الإعدادات الخاصة** بتلك اللغة، ولا يضم إلا الحقول التي تضبطها على نحو مختلف. وكل تغيير في إعداد عام يصل إلى كل طبعة لا تضبط الحقل نفسه بنفسها.
+
+تُدمج الإعدادات الخاصة فوق الإعدادات العامة حقلًا حقلًا:
+
+<table>
+  <thead>
+    <tr><th>في الإعدادات الخاصة</th><th>طريقة الدمج</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>كائن (<code>bodyText</code>، <code>page.margins</code>)</td><td>مفتاحًا مفتاحًا، حتى الحقول المفردة. فـ<code>&#123; "bodyText": &#123; "fontFamily": "Amiri" &#125; &#125;</code> يغيّر الخط ويُبقي الحجم العام والتباعد بين الأسطر والمحاذاة.</td></tr>
+    <tr><td>لون (<code>&#123; "hex", "model" &#125;</code>) أو طول (<code>&#123; "value", "unit" &#125;</code>)</td><td>يُستبدل كله.</td></tr>
+    <tr><td>قائمة لمُدخلاتها <code>id</code> (<code>calloutStyles</code>، <code>headingStyles</code>، <code>chipStyles</code>، <code>colorPalette</code>، <code>resourceTypes</code>، وإطارات القالب)</td><td>مُدخلًا مُدخلًا، بمطابقة <code>id</code>. وتُطابَق قائمة <code>levels</code> (العناوين، والقوائم، والمحتويات) بـ<code>level</code>، و<code>customFonts</code> بـ<code>name</code>. والمُدخل الذي تخلو منه القائمة العامة يُضاف بعد مُدخلاتها.</td></tr>
+    <tr><td><code>&#123; "id": "note", "$remove": true &#125;</code></td><td>يحذف المُدخل العام ذا هذا المفتاح، في هذه اللغة وحدها. والقائمة التي يختلف ترتيبها تُكتب حذفًا لكل مُدخلات القائمة العامة تليه قائمة اللغة بترتيبها هي.</td></tr>
+    <tr><td>أي قائمة أخرى (سلسلة خطوط بديلة، مواضع الجدولة)</td><td>تُستبدل كلها.</td></tr>
+    <tr><td><code>null</code></td><td>يحذف القيمة العامة: يقرأ الحقل القيمة الافتراضية للغة، كأن أيًّا من الطبقتين لم تضبطه.</td></tr>
+  </tbody>
+</table>
+
+طبعتان إسبانية وعربية من الكتاب نفسه تشتركان في الصفحة، وفي حجم المتن في التصميم الإسباني، وفي إطار ملاحظة بخلفية رملية. وتضبط الطبعة العربية خطوطها وحجمها، وتنقل شريط الإطار إلى اليمين، وهو الجانب الذي يبدأ منه السطر المكتوب من اليمين إلى اليسار:
+
+```jsonc
+{
+  "version": 2,
+  "configVersion": 21,
+  "id": "el-farol",
+  "name": "El farol",
+  "locale": "es",
+  "locales": ["es", "ar"],
+  "chapters": {
+    "es": [{ "title": "Anochecer", "file": "chapters/es/01-anochecer.md" }],
+    "ar": [{ "title": "الغسق", "file": "chapters/ar/01-al-ghasaq.md" }]
+  },
+
+  // الإعدادات العامة: تقرؤها كل طبعة
+  "config": {
+    "locale": "es",
+    "bodyText": { "fontFamily": "Source Serif 4", "fontSize": { "value": 10, "unit": "pt" }, "textAlign": "justify" },
+    "headings": { "fontFamily": "Source Sans 3" },
+    "calloutStyles": [
+      {
+        "id": "note",
+        "background": { "hex": "#f3ecd9", "model": "hex" },
+        "stripe": { "enabled": true, "side": "left", "color": { "hex": "#b5651d", "model": "hex" } }
+      }
+    ]
+  },
+
+  "localized": {
+    "ar": {
+      "name": "الفانوس",
+      // ما تضبطه الطبعة العربية على نحو مختلف فقط
+      "config": {
+        "locale": "ar",
+        "bodyText": { "fontFamily": "Amiri", "fontSize": { "value": 11, "unit": "pt" } },
+        "headings": { "fontFamily": "Noto Kufi Arabic" },
+        "calloutStyles": [{ "id": "note", "stripe": { "side": "right" } }]
+      }
+    }
+  }
+}
+```
+
+حين يُقرأ الكتاب بالعربية، يُنضَّد المتن بخط Amiri بحجم 11 pt ويبقى مضبوطًا، ويحتفظ إطار الملاحظة بالخلفية العامة وبعرض الشريط ولونه العامَّين، والشريط على اليمين. أما الاتجاه والتجليد والأرقام فمتروكة على *تلقائي*، فتتبع `locale`: من اليمين إلى اليسار، والتجليد على اليمين، والأرقام العربية الهندية. والإعداد الذي يسمّي جانبًا بحسب اتجاه النص لا يحتاج إلى إعدادات خاصة أصلًا: لو كان `"side": "start"` في الإعدادات العامة، لوقع الشريط على اليسار في الإسبانية وعلى اليمين في العربية.
+
+ضع الإعداد في الإعدادات العامة إذا كان على كل طبعة أن تتبع ما يطرأ عليه من تغيير: الصفحة والشبكة، والألوان، وأنماط الإطارات والعناوين، والتباعد. وضعه في الإعدادات الخاصة إذا كان يخص اللغة: خطوط كتابتها، وحجم متنها، وقواعد تقسيم الكلمات وكسر الأسطر، والجانب أو المحاذاة المكتوبان يسارًا أو يمينًا، وصياغة التسميات والترويسات. وأنواع الموارد المدمجة (*Figure*، *Figura*) تأخذ أسماءها وترقيمها من لغة كل طبعة دون إعدادات خاصة.
+
+**الحزم الأقدم.** البيان الموسوم بـ`20` أو أقدم يُقرأ بالقاعدة السابقة: كل مفتاح علوي في `localized[…].config` يحلّ محل المفتاح المشترك كله، فإذا ورد هناك `{ "bodyText": { "fontFamily": "Amiri" } }` أسقط كل حقل آخر من `bodyText` في الإعدادات المشتركة. ويكتب `createBundle` وSandbox دائمًا 21. ولنقل بيان مكتوب يدويًا إلى 21، اكتب إعدادات كل لغة كاملة واحتفظ بالفرق وحده، بالدوال الواردة أدناه.
+
+**من الشيفرة.** تصدّر مكتبة `postext` الدوال التي يستعملها مُرمِّز الحزم وSandbox:
+
+```ts
+import { mergeConfigLayers, diffConfigLayers, leastConfigOverride, commonConfig, overridePaths, stripConfigDefaults } from 'postext';
+import type { ConfigOverride } from 'postext';
+
+const arabic = mergeConfigLayers(general, override);   // ما تُخرَج به الطبعة العربية
+diffConfigLayers(general, arabic);                     // الإعدادات الخاصة من جديد: الحقول المختلفة
+overridePaths(override);
+// => ['locale', 'bodyText.fontFamily', 'bodyText.fontSize', 'headings.fontFamily', 'calloutStyles[id=note].stripe.side']
+
+const shared = commonConfig([spanish, arabic]);        // ما تتفق عليه الطبعتان
+const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
+```
+
+- **`mergeConfigLayers(general, override)`**: الإعدادات التي تُخرَج بها الطبعة، وفق القواعد الواردة في الجدول. لا يتغير أي من المُدخلين؛ ومن دون إعدادات خاصة تعيد `general` نفسه.
+- **`diffConfigLayers(general, own)`**: الإعدادات الخاصة التي تحوّل `general` إلى `own`. والحقل الذي يضبطه `general` ويُغفله `own` يُكتب `null`، والقائمة ذات المفاتيح المرتبة على نحو آخر تُكتب حذفًا تليه القائمة. و`mergeConfigLayers(general, diffConfigLayers(general, own))` يساوي `own`، بصرف النظر عن ترتيب المفاتيح.
+- **`leastConfigOverride(general, own, normalize)`**: الإعدادات الخاصة نفسها دون قيم `null` والحذف التي لا تُحدث فرقًا بعد تشغيل `normalize` (`stripConfigDefaults` مثلًا)، حيث تكون القيمة العامة هي أيضًا القيمة الافتراضية للغة `own`. وهي التي يستعملها كاتب الحزم.
+- **`commonConfig(configs)`**: الحقول التي تضبطها كل الإعدادات على القيمة نفسها، الكائنات حقلًا حقلًا والقوائم ذات المفاتيح مُدخلًا مُدخلًا. وللطبعات التي احتفظت كل منها بإعدادات كاملة، تعطي الإعدادات العامة، ويعطي `diffConfigLayers` الإعدادات الخاصة بكل طبعة.
+- **`overridePaths(override)`**: كل حقل تضبطه الإعدادات الخاصة، على شكل مسار تُسمّى فيه مُدخلات القوائم بمفاتيحها (`headings.levels[level=2].fontSize`). وتُعدّ قيمة `null` والمُدخل المحذوف حقولًا. وهذه هي المسارات التي يسردها `sandbox_get_config` في `ownFields`.
+- **`REMOVE_ENTRY`**: المفتاح `"$remove"`.
+- **`ConfigOverride`**: نوع الإعدادات الخاصة.
+
+يعيد `openBundle` إعدادات `config` المدمجة للطبعة المقدَّمة. ويعيد `readBundle` أيضًا `sharedConfig`، أي الإعدادات العامة مقروءة بالقواعد نفسها وبالخطوط نفسها، للحزمة التي فيها مُدخلات `localized`. ويأخذ `planBundle` الحقل `sharedConfig` في محتواه: فيُكتب منه `config` في البيان، وتُكتب كل طبعة، ومنها الأساسية، إعداداتٍ خاصة في `localized`.
 
 ### مثال حي: إنشاء حزمة
 
@@ -310,8 +407,8 @@ const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, con
 يصدّر `postext/bundle` أيضًا اللبنات التي يقوم عليها `openBundle` و`createBundle`، للمضيفين الذين يخزّنون الحزم أو يقدّمونها بطريقتهم (مجلد غير مضغوط عبر HTTP، أو سجلات في قاعدة بيانات):
 
 - **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**: طبقة الأرشيف. يتسامح الفتح مع مجلد في المستوى الأعلى، ويتجاهل مُدخلات `__MACOSX` والملفات التي يبدأ اسمها بنقطة (dotfiles). وتُرفض المسارات التي تخرج من الحزمة. ويؤرّخ `mtime` الملفات كما يفعل مُدخل `createBundle`.
-- **`readBundle(manifest, readFile, options)`** يقرأ بيانًا مع دالة الاستدعاء `readFile(path)` ويحوّلهما إلى فصول وإعدادات وموارد وصور وخطوط. يضبط `options` اللغة، وطريقة تسمية معرّفات الملفات (`ids`)، والإعدادات الأساسية (`baseConfig`، تحت إعدادات البيان؛ وهي افتراضيًا لوحة الألوان وأنواع الموارد في `bundleBaseConfig` بلغة الحزمة، التي يعيدها `resolveBundleConfigLocale(manifest, locale)`، وعلى المضيف الذي يمرّر `baseConfig` خاصًا به أن يكيّفه مع تلك اللغة؛ وتحت بيان أقدم من `CONFIG_VERSION` تسري التثبيتات التي يقتضيها وسمه أيضًا على مفاتيح الإعدادات الأساسية التي يُبقيها البيان واللغة سارية، ما عدا فواصل العناوين، انظر [الحزم التي كتبها postext 1.4 أو ما قبله](#الحزم-التي-كتبها-postext-14-أو-ما-قبله))، وطريقة قياس المقاسات الأصلية. ويقرأ `readResolution` دقة كل صورة نقطية من ملفها إلى `bitmap.fileResolution`؛ وقيمته الافتراضية true حين تضبط الحزمة `layout.bitmapResolution: 'file'`.
-- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: جانب الكتابة، مقسومًا إلى خطة خالصة (أسماء الملفات والبيان) وجلب البايتات عبر دالتَي الاستدعاء `readBlob` / `readFont`.
+- **`readBundle(manifest, readFile, options)`** يقرأ بيانًا مع دالة الاستدعاء `readFile(path)` ويحوّلهما إلى فصول وإعدادات وموارد وصور وخطوط، وإلى الإعدادات العامة في `sharedConfig` إذا كانت الحزمة متعددة اللغات. يضبط `options` اللغة، وطريقة تسمية معرّفات الملفات (`ids`)، والإعدادات الأساسية (`baseConfig`، تحت إعدادات البيان؛ وهي افتراضيًا لوحة الألوان وأنواع الموارد في `bundleBaseConfig` بلغة الحزمة، التي يعيدها `resolveBundleConfigLocale(manifest, locale)`، وعلى المضيف الذي يمرّر `baseConfig` خاصًا به أن يكيّفه مع تلك اللغة؛ وتحت بيان أقدم من `CONFIG_VERSION` تسري التثبيتات التي يقتضيها وسمه أيضًا على مفاتيح الإعدادات الأساسية التي يُبقيها البيان واللغة سارية، ما عدا فواصل العناوين، انظر [الحزم التي كتبها postext 1.4 أو ما قبله](#الحزم-التي-كتبها-postext-14-أو-ما-قبله))، وطريقة قياس المقاسات الأصلية. ويقرأ `readResolution` دقة كل صورة نقطية من ملفها إلى `bitmap.fileResolution`؛ وقيمته الافتراضية true حين تضبط الحزمة `layout.bitmapResolution: 'file'`.
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: جانب الكتابة، مقسومًا إلى خطة خالصة (أسماء الملفات والبيان) وجلب البايتات عبر دالتَي الاستدعاء `readBlob` / `readFont`. ويكتب `content.sharedConfig` الإعدادات العامة منفصلة عن الطبعة الأساسية (انظر [الإعدادات العامة والإعدادات الخاصة بكل لغة](#الإعدادات-العامة-والإعدادات-الخاصة-بكل-لغة)).
 - **`isBundleManifest(value)`**، ومنتقيات اللغة (`pickChapterSpecs`، `pickLocaleOverrides`، `pickBundleView`، `resolveBundleLocale`، `resolveBundleConfigLocale`)، و`svgSize` / `bitmapSize` / `bitmapInfo` (بكسلات الصورة النقطية والدقة التي يذكرها ملفها)، وأنواع الصيغة (`BundleManifest`، `BundleResourceSpec`، `BundleFontFamilySpec`، …).
 - **`CONFIG_VERSION`، `migrateConfig(config, configVersion, { content })`، `pinLegacyHeadingBreaks(config)`، `pinLegacyMathSize(config)`، `pinLegacyInlineGap(config)`، `pinLegacyBoxResourceGap(config)`، `pinLegacyHeadingMarks(config)`، `pinLegacyDropCapSize(config)`، `pinLegacyColonListRoom(config)`، `pinLegacyBoxChildCut(config)`، `pinLegacyDashBreaks(config)`، `pinLegacyRaggedBreaking(config)`، `pinLegacyHeadingSplit(config)`، `pinLegacyParagraphContainerSpacing(config)`، `pinLegacyHyphenBreaks(config)`، `pinLegacyVerseLayout(config)`، `pinLegacyPairedIndents(config)`، `pinLegacyHardBreaks(config)`، `pinLegacyCodeBlocks(config)`، `pinLegacyVerseTightening(config)`، `pinLegacyDesignOverflow(config)`، `pinLegacyGridBalancing(config)`، `pinLegacyTitleBreaks(config)`، `pinLegacyCircledNumbers(config)`، `pinLegacyDesignText(config)`، `pinLegacyInlineTableSplit(config)`، `pinLegacyFlowColumns(config)`، `pinLegacyOpenerHeadFloats(config)`، `pinLegacyLooseOrder(config)`، `pinLegacyWideFloatStretch(config)`، `pinLegacyTrailingStep(config)`، `pinLegacyIndexGroupSplit(config)`، `pinLegacyGridBreakRules(config)`، `pinLegacyNoteBreaks(config)`، `pinLegacyLatinSpacingEdge(config)`، `pinLegacyInlineCaptionSide(config)`، `pinLegacyRefLabelBreaks(config)`، `pinLegacyBalloonPlacement(config)`، `pinLegacyScriptContext(config)`، `pinLegacyShapingLanguage(config)`، `pinLegacyTaskBox(config)` و`LEGACY_MATH_SIZE`** (0.5 ÷ 0.442): تحوّل إعدادات مخزنة إلى مصطلحات اليوم (انظر [الحزم التي كتبها postext 1.4 أو ما قبله](#الحزم-التي-كتبها-postext-14-أو-ما-قبله)). يطبّقها `readBundle`؛ ويستطيع ذلك أيضًا المضيف الذي يخزّن الإعدادات بطريقته، مرة واحدة لكل نسخة مخزنة.
 

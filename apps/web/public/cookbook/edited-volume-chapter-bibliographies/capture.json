@@ -198,7 +198,7 @@
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17597,
+        "bytes": 27075,
         "folio": "3594c3d3",
         "chapters": [
           {
@@ -500,6 +500,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -692,7 +697,7 @@
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17726,
+        "bytes": 26790,
         "folio": "3594c3d3",
         "chapters": [
           {
@@ -994,6 +999,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

@@ -146,7 +146,7 @@
       },
       "sandbox": {
         "file": "songbook-melody-words-chords.postext",
-        "bytes": 19182,
+        "bytes": 22060,
         "folio": "4016a62f",
         "chapters": [
           {
@@ -398,7 +398,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -522,7 +528,7 @@
       },
       "sandbox": {
         "file": "songbook-melody-words-chords.postext",
-        "bytes": 15545,
+        "bytes": 19104,
         "folio": "4016a62f",
         "chapters": [
           {
@@ -771,7 +777,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

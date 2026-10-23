@@ -173,6 +173,14 @@ export interface CreateBundleInput {
   /** A single-document book (one chapter). Ignored when `chapters` is set. */
   markdown?: string;
   config?: PostextConfig;
+  /** The book's general settings, for a bundle in several languages
+   *  (#1209): written as the shared `config`, and `config` and every
+   *  `localized[…].config` (each then the whole configuration of its
+   *  edition) as an override of the fields that differ, merged over them
+   *  field by field when read (`mergeConfigLayers`). Absent, `config` is
+   *  the shared configuration and each locale's top-level keys go over
+   *  it. */
+  sharedConfig?: PostextConfig;
   /** Resources; a picture names its payload by `bitmap.fileId` /
    *  `svg.fileId` (and `svg.pdfFileId`), looked up in `files`. */
   resources?: Resource[];
@@ -278,6 +286,7 @@ export async function createBundle(input: CreateBundleInput): Promise<CreatedBun
     {
       chapters,
       config: input.config ?? {},
+      ...(input.sharedConfig ? { sharedConfig: input.sharedConfig } : {}),
       resources: input.resources ?? [],
       ...(input.canvasScope ? { canvasScope: input.canvasScope } : {}),
       ...(input.start ? { start: input.start } : {}),

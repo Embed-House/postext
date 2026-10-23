@@ -9,6 +9,8 @@ import { saveBook, saveConfig, savePresetApplied, savePresetId } from '../storag
 import type { BookContent } from '../book/types.js';
 import { hashChapters, hashConfig, hashResources, type DocumentHashSource } from './hash.js';
 import type { AppliedPresetSnapshot, LoadedPreset, PresetApplyParts } from './types.js';
+import { loadPresetGeneral, saveWorkingLayers } from '../storage/persistence.js';
+import { presetSharedConfig, rebaseEdition, type ConfigScope } from '../editions/configLayers.js';
 
 export interface ApplyPresetOptions {
   parts: PresetApplyParts;
@@ -23,6 +25,8 @@ export interface ApplyPresetOptions {
   /** Called right before the state is swapped, inside the same batch of
    *  dispatches (leaving project mode, say). */
   before?: () => void;
+  /** Where the Design panel writes, for a preset in several languages. */
+  scope?: ConfigScope;
 }
 
 /** The snapshot a given apply produces — mirrors the reducer dispatches in
@@ -89,9 +93,15 @@ export async function applyPreset(
     setCustomFonts(loaded.config.customFonts, { newBook: true });
   }
   options.before?.();
+  // A preset in several languages opens on the general settings the reader
+  // gave it, if any, keeping what this edition sets of its own (#1209).
+  const original = presetSharedConfig(loaded);
+  const general = original ? loadPresetGeneral(id) ?? original : null;
+  const config = original && general ? rebaseEdition(original, general, loaded.config) : loaded.config;
   dispatch({ type: 'SET_PRESET', payload: { id, config: loaded.config } });
   if (parts === 'all' || parts === 'config') {
-    dispatch({ type: 'SET_CONFIG', payload: loaded.config });
+    dispatch({ type: 'SET_CONFIG', payload: config });
+    dispatch({ type: 'SET_CONFIG_LAYERS', payload: general ? { shared: general, scope: options.scope ?? 'all' } : null });
   } else if (parts === 'document' && loaded.config.customFonts !== undefined) {
     dispatch({ type: 'UPDATE_CONFIG', payload: { customFonts: loaded.config.customFonts } });
   }
@@ -115,6 +125,7 @@ export async function applyPreset(
   // left behind would read as that book edited.
   if (parts === 'all') {
     saveBook(book!);
-    saveConfig(loaded.config);
+    saveConfig(config);
+    saveWorkingLayers(general ? id : null, general);
   }
 }

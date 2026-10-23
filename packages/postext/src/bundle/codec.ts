@@ -7,6 +7,7 @@
 import { scoreFormatOfFile } from '../music/types.js';
 import type { CustomFontFamily, PostextConfig, Resource } from '../types.js';
 import { cloneDefaultColorPalette, defaultResourceTypes, stripConfigDefaults } from '../defaults/index.js';
+import { leastConfigOverride, type ConfigOverride } from '../defaults/configLayers.js';
 import {
   bitmapInfo,
   bundleStart,
@@ -119,6 +120,12 @@ export interface ReadBundleResult {
    *  something they are for). The layout fixes that no pin holds back apply to it as to any
    *  book. */
   config: PostextConfig;
+  /** The book's general settings (#1209), for a bundle in several
+   *  languages: the base config and the manifest's `config` without the
+   *  locale's override, read under the same rules and with the same
+   *  fonts. An editor keeps it as the layer every edition shares and the
+   *  difference to `config` as this language's own. */
+  sharedConfig?: PostextConfig;
   resources: Resource[];
   /** Resource payloads (pictures and PDF print masters). */
   blobs: BundleBlob[];
@@ -208,7 +215,8 @@ export async function readBundle(
   });
 
   // The file's own resolution, when the pictures are laid out by it.
-  const layoutPolicy = (overrides?.config?.layout ?? manifest.config?.layout ?? options.baseConfig?.layout)?.bitmapResolution;
+  const localeLayout = (overrides?.config as Partial<PostextConfig> | undefined)?.layout;
+  const layoutPolicy = (localeLayout?.bitmapResolution !== undefined ? localeLayout : manifest.config?.layout ?? options.baseConfig?.layout)?.bitmapResolution;
   const readResolution = options.readResolution ?? layoutPolicy === 'file';
 
   const blobs: BundleBlob[] = [];
@@ -320,14 +328,18 @@ export async function readBundle(
   // own base configuration keeps its heading breaks, but its other keys,
   // when no layer replaces them, are the ones the old reader set the book
   // with, so they are pinned with the rest.
-  const baseConfig = migrateBundleConfig(
-    options.baseConfig ?? bundleBaseConfig(resolveBundleConfigLocale(manifest, locale)),
-    [manifest.config ?? {}, overrides?.config ?? {}],
-    manifest.configVersion,
-    { content: chapters.map((c) => c.markdown) },
-  );
+  const readerBase = options.baseConfig ?? bundleBaseConfig(resolveBundleConfigLocale(manifest, locale));
+  const migrateOptions = { content: chapters.map((c) => c.markdown) };
+  const baseConfig = migrateBundleConfig(readerBase, [manifest.config ?? {}, overrides?.config ?? {}], manifest.configVersion, migrateOptions);
   const customFonts = [...(manifest.config?.customFonts ?? []), ...families];
   let config = customFonts.length > 0 ? { ...baseConfig, customFonts } : baseConfig;
+  // A book in several languages: its general settings, the shared layer
+  // alone, read the same way (#1209).
+  let sharedConfig: PostextConfig | undefined;
+  if (manifest.localized && Object.keys(manifest.localized).length > 0) {
+    const shared = overrides?.config ? migrateBundleConfig(readerBase, [manifest.config ?? {}], manifest.configVersion, migrateOptions) : baseConfig;
+    sharedConfig = customFonts.length > 0 ? { ...shared, customFonts } : shared;
+  }
   // An uploaded output profile (`print.customProfile`), named by its path in
   // the bundle.
   const profile = config.print?.customProfile;
@@ -336,6 +348,9 @@ export async function readBundle(
     if (bytes) {
       blobs.push({ fileId: ids.blob(profile.fileId), file: profile.fileId, bytes, mime: 'application/vnd.iccprofile' });
       config = { ...config, print: { ...config.print, customProfile: { ...profile, fileId: ids.blob(profile.fileId) } } };
+      if (sharedConfig?.print?.customProfile?.fileId === profile.fileId) {
+        sharedConfig = { ...sharedConfig, print: { ...sharedConfig.print, customProfile: { ...sharedConfig.print.customProfile, fileId: ids.blob(profile.fileId) } } };
+      }
     } else {
       onWarning?.(`output profile "${profile.fileId}" not found, ignored`);
       const print = { ...config.print };
@@ -349,7 +364,7 @@ export async function readBundle(
   const traced = options.traceContours === false
     ? resources
     : await traceBundleContours(resources, blobs, config, options.decodeContour ? { decode: options.decodeContour } : {});
-  return { manifest, locale: served, chapters, config, resources: traced, blobs, fonts, ...(start ? { start } : {}) };
+  return { manifest, locale: served, chapters, config, ...(sharedConfig ? { sharedConfig } : {}), resources: traced, blobs, fonts, ...(start ? { start } : {}) };
 }
 
 // ---------------------------------------------------------------------------
@@ -373,10 +388,12 @@ export interface BundleLocaleContent {
   /** The locale's own chapters, in book order. Absent: it reads the
    *  shared (primary) chapters. */
   chapters?: readonly { title: string; markdown: string }[];
-  /** Top-level configuration keys for the locale, each replacing the
-   *  shared key wholesale when read; a key equal to the shared one is not
-   *  written. Fonts are shared: the families of `customFonts` join the
-   *  bundle's. */
+  /** The locale's configuration: its top-level keys over the shared
+   *  configuration's (or, with `BundleContent.sharedConfig`, the whole
+   *  configuration of the edition). Written as an override of the fields
+   *  that differ from the shared settings, merged over them field by field
+   *  when read (#1209). Fonts are shared: the families of `customFonts`
+   *  join the bundle's. */
   config?: PostextConfig;
   /** The locale's wording and artwork of the shared resources, merged by
    *  id: `caption`, `note`, `altText`, `table`, and a picture of its own
@@ -391,7 +408,15 @@ export interface BundleLocaleContent {
 
 export interface BundleContent {
   chapters: readonly { title: string; markdown: string }[];
+  /** The primary edition's configuration. */
   config: PostextConfig;
+  /** The book's general settings (#1209), when they are not the primary
+   *  edition's: written as the manifest's `config`, and every edition, the
+   *  primary included (`BundleMeta.locale`), as an override over them
+   *  (`localized[…].config`). `config` and each `localized[…].config` are
+   *  then whole configurations. Absent, the primary's `config` is the
+   *  shared one. */
+  sharedConfig?: PostextConfig;
   resources: readonly Resource[];
   /** Written as the manifest's `view` when it is not the default. */
   canvasScope?: BundleCanvasScope;
@@ -614,7 +639,8 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     files.push({ path: thumbnailPath, fileId: content.thumbnail.fileId, kind: 'blob', owner: 'thumbnail' });
   }
 
-  const configWithoutFonts: Partial<PostextConfig> = { ...stripConfigDefaults(content.config) };
+  const sharedSource = content.sharedConfig ?? content.config;
+  const configWithoutFonts: Partial<PostextConfig> = { ...stripConfigDefaults(sharedSource) };
   delete configWithoutFonts.customFonts;
   // An uploaded output profile travels as a file, named by its path.
   const profile = configWithoutFonts.print?.customProfile;
@@ -664,7 +690,7 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     if (entry.name && entry.name !== meta.name) overrides.name = entry.name;
     if (entry.description && entry.description !== meta.description) overrides.description = entry.description;
     if (entry.config) {
-      const config = localizedConfig(entry.config, configWithoutFonts, content.config);
+      const config = localizedConfig(entry.config, configWithoutFonts, sharedSource, !!content.sharedConfig);
       if (Object.keys(config).length > 0) overrides.config = config;
     }
     const wording: NonNullable<BundleLocaleOverrides['resources']> = [];
@@ -719,6 +745,13 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     localizedSpecs[locale] = overrides;
   }
 
+  // General settings of their own: the primary edition is an override too.
+  if (content.sharedConfig && meta.locale) {
+    const config = localizedConfig(content.config, configWithoutFonts, sharedSource, true);
+    if (Object.keys(config).length > 0) localizedSpecs[meta.locale] = { config, ...localizedSpecs[meta.locale] };
+  }
+  const writesLocalized = Object.keys(localizedSpecs).length > 0;
+
   const manifest: BundleManifestV2 = {
     version: 2,
     configVersion: CONFIG_VERSION,
@@ -734,7 +767,7 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     config: configWithoutFonts as PostextConfig,
     ...(resources.length > 0 ? { resources } : {}),
     ...(fonts.length > 0 ? { fonts } : {}),
-    ...(localized ? { localized: localizedSpecs } : {}),
+    ...(localized || writesLocalized ? { localized: localizedSpecs } : {}),
   };
   return { manifest, files, chapterFiles, ...(Object.keys(localeChapterFiles).length > 0 ? { localeChapterFiles } : {}), warnings };
 }
@@ -751,49 +784,36 @@ function sameJson(a: unknown, b: unknown): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/** The top-level keys of a locale's configuration that differ from the
- *  shared (stripped) configuration, each stripped of its defaults. A key
- *  whose value is all defaults while the shared one is not is written as
- *  given (`layout: {}`), so that it still replaces the shared key.
+/** A locale's configuration as an override of the shared (stripped)
+ *  settings (#1209): the fields it sets differently, `null` for a shared
+ *  value it reads at its default (see `mergeConfigLayers`).
  *
- *  The locale is read as its keys over the shared ones, so the defaults
- *  that depend on the rest of the configuration (the language, the writing
- *  mode, a character grid) are those of that whole, `sharedSource` (the
- *  shared configuration as given) under `own` (#651): a locale that only
- *  sets `headings` on a shared character grid keeps `balancing.enabled:
- *  true`. A shared key the locale leaves out is written for it too when
- *  its own defaults keep a value the shared ones dropped (`index.see.italic:
- *  true` under a Japanese locale). */
-function localizedConfig(own: PostextConfig, shared: Partial<PostextConfig>, sharedSource: PostextConfig): Partial<PostextConfig> {
-  const raw = own as Record<string, unknown>;
-  const base = shared as Record<string, unknown>;
-  const whole: Record<string, unknown> = { ...sharedSource };
-  for (const key of Object.keys(raw)) if (raw[key] !== undefined) whole[key] = raw[key];
-  const stripped = stripConfigDefaults(whole as PostextConfig) as Record<string, unknown>;
-  const out: Record<string, unknown> = {};
-  for (const key of Object.keys(raw)) {
-    if (key === 'customFonts' || raw[key] === undefined) continue;
-    if (sameJson(stripped[key], base[key])) continue;
-    out[key] = stripped[key] ?? raw[key];
+ *  The locale is stripped of its defaults as a whole, so the defaults that
+ *  depend on the rest of the configuration (the language, the writing
+ *  mode, a character grid) are its own: a value the shared settings drop
+ *  as a default of their language is written for a locale whose default
+ *  differs (`index.see.italic: true` under a Japanese locale), and one
+ *  they keep that is the locale's default is not taken out by mistake.
+ *  `own` is the whole edition (`whole`), or its top-level keys over the
+ *  shared ones (#651: a locale that only sets `headings` on a shared
+ *  character grid keeps `balancing.enabled: true`). */
+function localizedConfig(own: PostextConfig, shared: Partial<PostextConfig>, sharedSource: PostextConfig, whole: boolean): ConfigOverride {
+  const merged: Record<string, unknown> = whole ? { ...own } : { ...sharedSource };
+  if (!whole) for (const [key, value] of Object.entries(own)) if (value !== undefined) merged[key] = value;
+  const target = stripConfigDefaults(merged as PostextConfig) as Record<string, unknown>;
+  delete target.customFonts;
+  // The output profile travels once, under the shared name of its file.
+  const profile = (target.print as PostextConfig['print'])?.customProfile;
+  if (profile && profile.fileId === sharedSource.print?.customProfile?.fileId && shared.print?.customProfile) {
+    target.print = { ...(target.print as object), customProfile: shared.print.customProfile };
   }
-  const sharedStripped = stripConfigDefaults(sharedSource) as Record<string, unknown>;
-  for (const key of Object.keys(sharedSource)) {
-    if (key === 'customFonts' || raw[key] !== undefined) continue;
-    if (!heldBy(stripped[key], sharedStripped[key])) out[key] = stripped[key];
-  }
-  return out as Partial<PostextConfig>;
-}
-
-/** Whether everything `value` sets is set the same in `holder` (which may
- *  set more): objects field by field, anything else as a whole. */
-function heldBy(value: unknown, holder: unknown): boolean {
-  if (value === undefined) return true;
-  const fields = (v: unknown): Record<string, unknown> | undefined =>
-    typeof v === 'object' && v !== null && !Array.isArray(v) ? v as Record<string, unknown> : undefined;
-  const a = fields(value);
-  const b = fields(holder);
-  if (a && b) return Object.keys(a).every((key) => heldBy(a[key], b[key]));
-  return sameJson(value, holder);
+  // A `null` the locale reads the same without (the shared value is its
+  // default too) is not written.
+  return leastConfigOverride(shared as PostextConfig, target as PostextConfig, (c) => {
+    const out = stripConfigDefaults(c) as Record<string, unknown>;
+    delete out.customFonts;
+    return out as PostextConfig;
+  });
 }
 
 export interface BundleByteSources {

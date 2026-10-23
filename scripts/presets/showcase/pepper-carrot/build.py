@@ -838,6 +838,7 @@ def main() -> None:
     meta = write_manifest(out, chapters, shared, fonts, cfg, localized)
     write_credits_md(out, credits)
     _common.copy_thumbnail(HERE, out)
+    _common.layer_configs(out)
     _common.write_fingerprint(out)
     if out == OUT:
         # After the right-bound books on the home shelf.

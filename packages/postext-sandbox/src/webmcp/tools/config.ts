@@ -1,6 +1,6 @@
 // The book's design: reading and writing its configuration.
 
-import { collectConfigWarnings, stripConfigDefaults } from 'postext';
+import { collectConfigWarnings, overridePaths, stripConfigDefaults } from 'postext';
 import type { PostextConfig } from 'postext';
 import { SETTINGS_GROUPS, SETTINGS_SECTIONS } from '../../sidebar/sections/registry.js';
 import { tokenize } from '../../sidebar/search/normalize.js';
@@ -12,6 +12,28 @@ import { planWrite, stableText } from '../configWrite.js';
 import { bookPagesSummary, dispatchAndWait, whenSettled, type SandboxToolHost } from '../host.js';
 import { readBitmapResolutions } from './designItems.js';
 import { ToolError, type WebMcpTool } from '../modelContext.js';
+import { editionOverride, generalSettingsFrom, generalSettingsView, ownPathsAt, rebaseEdition, recordSharedConfig, type ConfigScope } from '../../editions/configLayers.js';
+import { getProject } from '../../storage/projects.js';
+import type { SandboxState } from '../../context/SandboxContext.js';
+
+/** The editions of the book on screen that set one of `paths` themselves,
+ *  and so keep their value when the general settings change there. */
+async function editionsKeeping(state: SandboxState, paths: readonly string[]): Promise<string[]> {
+  const layers = state.configLayers;
+  if (!layers) return [];
+  const out: string[] = [];
+  const project = state.projects.find((p) => p.id === state.activeProjectId);
+  const here = project?.locale ?? state.config.locale;
+  if (here && ownPathsAt(editionOverride(layers.shared, state.config), paths).length > 0) out.push(here);
+  if (!state.activeProjectId) return out;
+  const record = await getProject(state.activeProjectId).catch(() => null);
+  const base = record ? recordSharedConfig(record) : null;
+  if (!record?.editions || !base) return out;
+  for (const [tag, e] of Object.entries(record.editions)) {
+    if (tag !== here && ownPathsAt(editionOverride(base, e.config), paths).length > 0) out.push(tag);
+  }
+  return out;
+}
 
 /** Every top-level key a configuration has: a path outside them is
  *  refused. */
@@ -78,16 +100,24 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
       properties: {
         path: { type: 'string', description: 'The setting, or the section, to read.' },
         effective: { type: 'boolean', description: 'Include the value with defaults filled in (default true when a path is given).' },
+        scope: { type: 'string', enum: ['all', 'edition'], description: 'A book in several languages: all reads the general settings every edition reads, edition the edition on screen (its own fields over the general ones). Default: the scope the Design panel is in.' },
       },
       additionalProperties: false,
     },
     annotations: { readOnlyHint: true },
     execute: (args) => {
-      const { config } = store.getSnapshot();
-      const set = stripConfigDefaults(config);
+      const state = store.getSnapshot();
+      const layers = state.configLayers;
+      const scope = (args.scope as ConfigScope | undefined) ?? layers?.scope ?? 'edition';
+      const config = scope === 'all' && layers ? generalSettingsView(layers.shared, state.config) : state.config;
+      const set = scope === 'all' && layers ? layers.shared : stripConfigDefaults(config);
+      // A book in several languages: which settings the edition on screen
+      // sets of its own (#1209).
+      const layered = layers ? { scope, ownFields: overridePaths(editionOverride(layers.shared, state.config)) } : {};
       const asked = ((args.path as string | undefined) ?? '').trim();
       if (asked === '') {
         return {
+          ...layered,
           set,
           sections: CONFIG_KEYS,
           ...(args.effective ? { effective: effectiveConfig() } : {}),
@@ -138,6 +168,7 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
         patch: { type: 'object', description: 'An object merged into the configuration.' },
         replace: { type: 'object', description: 'A whole configuration (or a postext-config.json export) that takes the place of the book\'s. Not with changes or patch.' },
         wait: { type: 'boolean', description: 'Wait for the book to be laid out again and answer with its pages (default true).' },
+        scope: { type: 'string', enum: ['all', 'edition'], description: 'A book in several languages: all writes the general settings every edition reads (an edition that sets the field itself keeps its value, and the answer names it in keptBy); edition writes the edition on screen only, as a value of its own. Default: the scope the Design panel is in. A book in one language has only its own settings.' },
       },
       additionalProperties: false,
     },
@@ -148,11 +179,17 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
       if (changes.length === 0 && !patch && !replace) throw new ToolError('Give "changes" (a list of { path, value }), "patch" (an object to merge in) or "replace" (a whole configuration).');
       if (replace && (changes.length > 0 || patch)) throw new ToolError('"replace" puts a whole configuration in place: give it alone, then change settings in another call.');
       const before = store.getSnapshot();
+      const layers = before.configLayers;
+      const scope = (args.scope as ConfigScope | undefined) ?? layers?.scope ?? 'edition';
+      if (scope === 'all' && !layers) throw new ToolError('This book is in one language: its settings are its own, there are no general settings apart from them. Leave scope out.');
+      // The settings written: the general ones (as the Design panel shows
+      // them beside this edition), or the edition's.
+      const base = scope === 'all' && layers ? generalSettingsView(layers.shared, before.config) : before.config;
       // A book whose configuration the engine cannot resolve can still be
       // mended: its settings are then written as given.
       let effectiveBefore: Record<string, unknown> | null = null;
       try {
-        effectiveBefore = effectiveOf(before.config);
+        effectiveBefore = effectiveOf(base);
       } catch {
         effectiveBefore = null;
       }
@@ -160,7 +197,7 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
         throw new ToolError(`${what}: the engine cannot resolve the configuration with it (${err instanceof Error ? err.message : String(err)}). Nothing was changed.`);
       };
 
-      let next: PostextConfig = before.config;
+      let next: PostextConfig = base;
       let effective = effectiveBefore;
       const paths: string[] = [];
       const notes: string[] = [];
@@ -176,7 +213,7 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
         } catch (err) {
           refuse('The configuration given', err);
         }
-        for (const key of CONFIG_KEYS) if (!same(before.config[key], next[key])) paths.push(key);
+        for (const key of CONFIG_KEYS) if (!same(base[key], next[key])) paths.push(key);
       } else {
         // A patch is its leaves, each written like a change.
         const writes: { path: string; value: unknown; merged?: boolean }[] = [];
@@ -218,7 +255,7 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
       const unique = [...new Set(paths)];
       const changed = unique
         .map((path) => {
-          const entry: Record<string, unknown> = { path, from: getAtPath(before.config, path) ?? null, to: getAtPath(next, path) ?? null };
+          const entry: Record<string, unknown> = { path, from: getAtPath(base, path) ?? null, to: getAtPath(next, path) ?? null };
           if (effectiveBefore && effective) {
             const was = getAtPath(effectiveBefore, path) ?? null;
             const is = getAtPath(effective, path) ?? null;
@@ -265,19 +302,29 @@ export function configTools(host: SandboxToolHost): WebMcpTool[] {
 
       let warnings: unknown[] = [];
       try {
-        const warningsBefore = new Set(collectConfigWarnings(before.config).map((w) => JSON.stringify(w)));
+        const warningsBefore = new Set(collectConfigWarnings(base).map((w) => JSON.stringify(w)));
         warnings = collectConfigWarnings(next).filter((w) => !warningsBefore.has(JSON.stringify(w)));
       } catch {
         warnings = [];
       }
       const pagesBefore = bookPagesSummary(host, before);
-      await dispatchAndWait(host, { type: 'SET_CONFIG', payload: next, history: { merge: false } });
+      let keptBy: string[] = [];
+      if (scope === 'all' && layers) {
+        const shared = generalSettingsFrom(next, before.config);
+        await dispatchAndWait(host, { type: 'SET_CONFIG', payload: rebaseEdition(layers.shared, shared, before.config), shared, history: { merge: false } });
+        // Editions that set a changed field themselves keep their value.
+        keptBy = await editionsKeeping(before, unique);
+      } else {
+        await dispatchAndWait(host, { type: 'SET_CONFIG', payload: next, history: { merge: false } });
+      }
       // Bitmaps by their file's resolution: the files stored before it was
       // kept are read, as the Layout section reads them (#631).
-      const bitmapResolutions = next.layout?.bitmapResolution === 'file' && before.config.layout?.bitmapResolution !== 'file'
+      const bitmapResolutions = next.layout?.bitmapResolution === 'file' && base.layout?.bitmapResolution !== 'file'
         ? await readBitmapResolutions(host)
         : 0;
       const answer: Record<string, unknown> = {
+        ...(layers ? { scope } : {}),
+        ...(keptBy.length > 0 ? { keptBy, keptByNote: `These editions set a changed setting themselves and keep their value; write it with scope "edition" while each is on screen, or drop their own value, to change them too.` } : {}),
         ...(bitmapResolutions > 0 ? { bitmapResolutionsRead: bitmapResolutions } : {}),
         changed: reported,
         ...(followed.length > 0 ? { followed, ...(followedMore > 0 ? { followedMore } : {}) } : {}),

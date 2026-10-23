@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "worksheet-answer-boxes.postext",
-        "bytes": 211353,
+        "bytes": 213760,
         "folio": "8736fae7",
         "chapters": [
           {
@@ -390,6 +390,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -499,7 +504,7 @@
       },
       "sandbox": {
         "file": "worksheet-answer-boxes.postext",
-        "bytes": 212245,
+        "bytes": 214452,
         "folio": "8736fae7",
         "chapters": [
           {
@@ -775,6 +780,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

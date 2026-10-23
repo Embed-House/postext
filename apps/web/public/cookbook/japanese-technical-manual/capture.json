@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41326,
+        "bytes": 44639,
         "folio": "90d2b4f0",
         "chapters": [
           {
@@ -430,6 +430,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering, headings"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -555,7 +560,7 @@
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41385,
+        "bytes": 44640,
         "folio": "90d2b4f0",
         "chapters": [
           {
@@ -854,6 +859,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering, headings"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

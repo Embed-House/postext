@@ -105,7 +105,7 @@
       },
       "sandbox": {
         "file": "genko-yoshi-manuscript.postext",
-        "bytes": 28481,
+        "bytes": 30819,
         "chapters": [
           {
             "pages": 3,
@@ -271,7 +271,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -369,7 +375,7 @@
       },
       "sandbox": {
         "file": "genko-yoshi-manuscript.postext",
-        "bytes": 28509,
+        "bytes": 30840,
         "chapters": [
           {
             "pages": 3,
@@ -535,7 +541,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

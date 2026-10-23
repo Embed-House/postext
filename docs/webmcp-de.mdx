@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Was ein KI-Agent im Browser mit den 53 WebMCP-Werkzeugen der Sandbox tun kann – Seiten ansehen, jede Einstellung ändern, den Text bearbeiten, Bilder, Tabellen und Schriften hinzufügen, die Prüfungen ausführen, exportieren – und wie jedes Werkzeug aufgerufen wird, mit echten Argumenten und Antworten',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '12 min',
   order: 48,
   plainSummary: "Diese Seite ist für alle, die einen KI-Helfer für sich an einem Buch in der Sandbox arbeiten lassen möchten. Solange die Sandbox geöffnet ist, gibt sie dem Helfer eine Reihe von Werkzeugen: um jede Seite anzusehen, die Gestaltung zu ändern, den Text zu bearbeiten, Bilder und Tabellen hinzuzufügen, Probleme zu finden und Dateien zu speichern. Sie bitten mit Ihren eigenen Worten, zum Beispiel „mach die Schrift etwas größer und prüf, ob das Buch noch auf 40 Seiten passt“, und der Helfer setzt die Werkzeuge ein und zeigt Ihnen die Seiten. Alles bleibt in Ihrem Browser. Die Seite erklärt, wie Sie einen Helfer verbinden, was er tun kann und wie jedes Werkzeug aufgerufen wird.",
@@ -317,6 +317,33 @@ ersetzt), und `replace` ersetzt die Konfiguration des Buchs durch eine ganz
 andere, etwa einen Export als `postext-config.json`.
 `sandbox_reset_to_original` mit `part: "config"` stellt die Gestaltung wieder
 her, mit der das Buch begonnen hat.
+
+Ein Buch in mehreren Sprachen hat allgemeine Einstellungen, die jede Ausgabe
+liest, und jede Ausgabe behält die Felder, die sie selbst setzt (siehe
+[Allgemeine Einstellungen und sprachspezifische
+Abweichungen](/de/docs/configuration-bundles#allgemeine-einstellungen-und-sprachspezifische-abweichungen)).
+`sandbox_get_config` und `sandbox_set_config` nehmen `scope` entgegen: `"all"`
+liest oder schreibt die allgemeinen Einstellungen, `"edition"` die angezeigte
+Ausgabe. Fehlt es, gilt der Bereich, auf dem das Bedienfeld Gestaltung steht.
+In einem solchen Buch antwortet `sandbox_get_config` mit `scope` und
+`ownFields`, den Pfaden, die die angezeigte Ausgabe selbst setzt:
+
+```jsonc
+// sandbox_set_config
+{ "scope": "all", "changes": [{ "path": "bodyText.fontSize", "value": "10.5pt" }] }
+```
+
+```json
+{ "ok": true, "scope": "all", "keptBy": ["ar"], "changed": [ … ] }
+```
+
+Ein Schreibvorgang in die allgemeinen Einstellungen erreicht jede Ausgabe, die
+das Feld nicht selbst setzt. `keptBy` nennt die Sprachen, die es setzen und
+ihren Wert behalten. Um auch sie zu ändern, öffnen Sie jede einzeln
+(`sandbox_open_book` mit `language`) und schreiben den Pfad mit
+`scope: "edition"`: Ein Wert, der dem allgemeinen gleicht, ist dann kein
+eigener Wert der Ausgabe mehr. In einem Buch in nur einer Sprache wird
+`scope: "all"` abgewiesen, da alle seine Einstellungen seine eigenen sind.
 
 Auch Schriften sind Einstellungen: `sandbox_list_fonts` mit
 `search: "Garamond"` findet Familien im offenen Katalog, und wenn Sie den Namen in eine

@@ -46,6 +46,7 @@ import type { CaptureManifest, CaptureVariant, SampleLocale, RecipeMeta, Registr
 import { SAMPLE_LOCALES } from "../../src/lib/cookbook/types.ts";
 import { altText, sidesOf, spreadsOf } from "./cards.ts";
 import { compareFindings, detect, pdfPageCount, readBackFindings, runChecks, stressFindings } from "./checks.ts";
+import { editionBooks } from "./editions.ts";
 import type { Finding } from "./checks.ts";
 import type { HarnessBrowser, PageChange, SandboxBundle, SandboxMeta, VariantRun } from "./harness.ts";
 import { launchBrowser, runVariant } from "./harness.ts";
@@ -267,6 +268,47 @@ function sandboxFindings(sandbox: SandboxBundle | null | undefined): Finding[] {
     ...sandbox.warns.map(say("warn")),
     ...[...sandbox.notes, ...sandbox.warnings].map(say("info")),
   ];
+}
+
+/**
+ * The editions' bundles as one book in several languages each (#1209,
+ * editions.ts): `fresh` are the bundles this run wrote, by edition; an
+ * edition the run did not take joins with the book its folder holds, when
+ * that capture is of the same sources. Returns each edition's book and
+ * what the run notes about it.
+ */
+async function bundleBooks(
+  slug: string,
+  meta: RecipeMeta,
+  fresh: Map<SampleLocale, Buffer>,
+  committedOk: boolean,
+): Promise<{ books: Map<SampleLocale, Buffer>; notes: Map<SampleLocale, Finding[]> }> {
+  const bundles = new Map(fresh);
+  if (committedOk) {
+    for (const locale of meta.sample.locales) {
+      const file = path.join(captureDir(slug), locale, sandboxFile(slug));
+      if (!bundles.has(locale) && fs.existsSync(file)) bundles.set(locale, fs.readFileSync(file));
+    }
+  }
+  const { books, notes } = await editionBooks(bundles, meta.sample.locales);
+  const findings = new Map<SampleLocale, Finding[]>();
+  for (const [locale, list] of notes) findings.set(locale, list.map((detail) => ({ check: "sandbox", severity: "info" as const, detail })));
+  return { books, notes: findings };
+}
+
+/** An edition's outputs with its bundle swapped for `book`: the file, the
+ *  `sandbox` entry's size, `hash8` and the notes the book adds. */
+function withBook(slug: string, output: Output, book: Buffer, notes: Finding[], result: CaptureResult): void {
+  const name = sandboxFile(slug);
+  if (!output.files.has(name)) return;
+  output.files.set(name, book);
+  const kept = notes.map(({ check, severity, detail }) => ({ check, severity: severity as "warn" | "info", detail }));
+  result.warns.push(...kept);
+  const v = output.variant;
+  if (!v) return;
+  v.hash8 = hash8(Buffer.concat([...output.files.values()]));
+  if (v.sandbox) v.sandbox = { ...v.sandbox, bytes: book.length };
+  v.diagnostics = { ...v.diagnostics, findings: [...v.diagnostics.findings, ...kept] };
 }
 
 /** The findings that are not failures, as capture.json keeps them. */
@@ -891,6 +933,21 @@ export async function runCapture(opts: CaptureOptions): Promise<CaptureResult[]>
         if (d.result.ok && d.output?.variant) outputs.set(d.variant, d.output);
       }
       const allOk = mine.every((d) => d.result.ok);
+      if (allOk) {
+        // Each edition's bundle becomes the book in every language (#1209).
+        const fresh = new Map<SampleLocale, Buffer>();
+        for (const [locale, output] of outputs) {
+          const bundle = output.files.get(sandboxFile(task.slug));
+          if (bundle) fresh.set(locale, bundle);
+        }
+        const sameSources = !opts.force && task.previous?.sourceHash === task.sourceHash;
+        const { books, notes } = await bundleBooks(task.slug, task.meta, fresh, sameSources);
+        for (const d of mine) {
+          const output = outputs.get(d.variant);
+          const book = books.get(d.variant);
+          if (output && book) withBook(task.slug, output, book, notes.get(d.variant) ?? [], d.result);
+        }
+      }
       if (!allOk) {
         for (const d of mine) d.result.note = d.result.ok ? "not written: another edition failed" : "not written";
       } else if (opts.check || engine.source === "local") {
@@ -1082,6 +1139,15 @@ export async function runSandboxOnly(opts: CaptureOptions): Promise<CaptureResul
       if (!mine.every((d) => d.result.ok)) {
         for (const d of mine) d.result.note = d.result.ok ? "not written: another edition failed" : "not written";
         continue;
+      }
+      // Each edition's bundle becomes the book in every language (#1209).
+      const fresh = new Map<SampleLocale, Buffer>(mine.map((d) => [d.variant, d.bytes!]));
+      const { books, notes } = await bundleBooks(task.slug, task.meta, fresh, true);
+      for (const d of mine) {
+        d.bytes = books.get(d.variant) ?? d.bytes;
+        const added = kept(notes.get(d.variant) ?? []);
+        d.findings = [...d.findings, ...added];
+        d.result.warns.push(...added);
       }
       if (opts.check) {
         for (const d of mine) d.result.note = "check only";

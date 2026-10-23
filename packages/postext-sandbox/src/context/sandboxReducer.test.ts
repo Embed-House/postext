@@ -20,6 +20,7 @@ function baseState(over: Partial<SandboxState> = {}): SandboxState {
     chapterLayouts: {},
     hiddenPresetIds: [],
     config: {},
+    configLayers: null,
     resources: [],
     storeReady: true,
     booting: false,

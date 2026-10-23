@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 957978,
+        "bytes": 966919,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -237,6 +237,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -319,7 +329,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958019,
+        "bytes": 966904,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -468,6 +478,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -550,7 +570,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958022,
+        "bytes": 966918,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -699,6 +719,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, en, es, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -781,7 +811,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 957903,
+        "bytes": 966647,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -930,6 +960,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ca, ar, pt, fr, de, it"
           }
         ]
       }
@@ -1012,7 +1052,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958027,
+        "bytes": 966669,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1161,6 +1201,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ca, zh, pt, fr, de, it"
           }
         ]
       }
@@ -1243,7 +1293,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958195,
+        "bytes": 967073,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1397,6 +1447,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (its bundle is in en, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, es, ca, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -1479,7 +1539,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 957975,
+        "bytes": 966855,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1628,6 +1688,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, ca, zh, ar, fr, de, it"
           }
         ]
       }
@@ -1710,7 +1780,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958169,
+        "bytes": 967005,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1859,6 +1929,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, ca, zh, ar, pt, de, it"
           }
         ]
       }
@@ -1941,7 +2021,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958033,
+        "bytes": 966853,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -2090,6 +2170,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, ca, zh, ar, pt, fr, it"
           }
         ]
       }
@@ -2172,7 +2262,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958189,
+        "bytes": 967061,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -2321,6 +2411,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, ca, zh, ar, pt, fr, de"
           }
         ]
       }

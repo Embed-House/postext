@@ -44,7 +44,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.dirname(HERE))
 import figures  # noqa: E402
-from _common import PRESETS_ROOT, bundle_size, copy_thumbnail, register, write_fingerprint  # noqa: E402
+from _common import PRESETS_ROOT, bundle_size, copy_thumbnail, layer_configs, register, write_fingerprint  # noqa: E402
 from fetch import book_pdf, check, private_dir  # noqa: E402
 
 PRESET_ID = "bioquimica-feduchi"
@@ -404,6 +404,7 @@ def build() -> None:
     write(os.path.join(OUT, "preset.json"), json.dumps(bundle, indent=1, ensure_ascii=False) + "\n")
     write_credits(strings)
     copy_thumbnail(HERE, OUT)
+    layer_configs(OUT)
     write_fingerprint(OUT)
     register(PRESET_ID, meta)
     print(f"wrote {OUT}  ({bundle_size(OUT):.1f} MB, {len(resources)} resources, "

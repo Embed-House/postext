@@ -94,7 +94,7 @@
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23293,
+        "bytes": 25666,
         "folio": "2ea14ffd",
         "chapters": [
           {
@@ -287,6 +287,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -375,7 +380,7 @@
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23316,
+        "bytes": 25666,
         "folio": "2ea14ffd",
         "chapters": [
           {
@@ -568,6 +573,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

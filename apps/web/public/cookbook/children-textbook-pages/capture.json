@@ -182,7 +182,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100362,
+        "bytes": 2122448,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -565,6 +565,26 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “We keep to the paths and leave plants and animal…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, pt, fr, de, it"
           }
         ]
       }
@@ -741,7 +761,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100214,
+        "bytes": 2122122,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1124,6 +1144,26 @@
             "check": "C35",
             "severity": "info",
             "detail": "4 paragraphs set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “Ayudamos a limpiar la orilla cuando lo organiza …”, p. 9 −10‰ “Ahora el curso bajo, tranquilo, es un lugar para…”, p. 4 −5‰ “Llueve y nieva en las montañas. Parte del agua b…”, p. 6 −5‰ “El río Aldara mide 94 kilómetros. Nace en la sie…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, pt, fr, de, it"
           }
         ]
       }
@@ -1300,7 +1340,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100303,
+        "bytes": 2122201,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1673,6 +1713,26 @@
             "check": "C40",
             "severity": "info",
             "detail": "every element came back to its source: 62 block, 40 frame, 6 label, 105 line, 1 text"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, es, en, pt, fr, de, it"
           }
         ]
       }
@@ -1850,7 +1910,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2108004,
+        "bytes": 2112950,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -2222,6 +2282,51 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.17 MB: state 1.2 MB"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, ja"
           }
         ]
       }
@@ -2775,6 +2880,51 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.19 MB: state 1.2 MB"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (the resources differ when read back)"
           }
         ]
       }
@@ -2952,7 +3102,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2108758,
+        "bytes": 2113375,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -3334,6 +3484,51 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.19 MB: state 1.2 MB"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, zh"
           }
         ]
       }
@@ -3510,7 +3705,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100337,
+        "bytes": 2122265,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -3893,6 +4088,26 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ “No médio curso, os agricultores abrem pequenos c…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, es, en, ca, fr, de, it"
           }
         ]
       }
@@ -4069,7 +4284,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2101172,
+        "bytes": 2122751,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -4457,6 +4672,26 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Tiens une éponge mouillée au-dessus d’un plateau…”, p. 8 −10‰ “Les gens se sont toujours installés près des riv…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, es, en, ca, pt, de, it"
           }
         ]
       }
@@ -4633,7 +4868,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100950,
+        "bytes": 2122665,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -5021,6 +5256,26 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 8 −5‰ “Menschen haben sich schon immer gern an Flüssen …”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, es, en, ca, pt, fr, it"
           }
         ]
       }
@@ -5197,7 +5452,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100419,
+        "bytes": 2122274,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -5580,6 +5835,26 @@
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −5‰): p. 7 −5‰ “Il pendio è ripido. L’acqua è fredda, limpida e …”, p. 8 −5‰ “Un fiume resta pulito solo se ce ne prendiamo cu…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, es, en, ca, pt, fr, de"
           }
         ]
       }

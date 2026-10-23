@@ -209,7 +209,7 @@
       },
       "sandbox": {
         "file": "tahqiq-critical-edition.postext",
-        "bytes": 26975,
+        "bytes": 36266,
         "chapters": [
           {
             "pages": 11,
@@ -439,7 +439,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -641,7 +647,7 @@
       },
       "sandbox": {
         "file": "tahqiq-critical-edition.postext",
-        "bytes": 27011,
+        "bytes": 36263,
         "chapters": [
           {
             "pages": 11,
@@ -871,7 +877,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

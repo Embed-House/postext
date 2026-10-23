@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676148,
+        "bytes": 690964,
         "chapters": [
           {
             "pages": 3,
@@ -286,7 +286,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "es": {
@@ -383,7 +389,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676175,
+        "bytes": 690900,
         "chapters": [
           {
             "pages": 3,
@@ -565,7 +571,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ca": {
@@ -662,7 +674,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675928,
+        "bytes": 690676,
         "chapters": [
           {
             "pages": 3,
@@ -844,7 +856,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, en, es, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "zh": {
@@ -941,7 +959,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676154,
+        "bytes": 690743,
         "chapters": [
           {
             "pages": 3,
@@ -1124,7 +1142,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ca, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ar": {
@@ -1222,7 +1246,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676847,
+        "bytes": 691284,
         "chapters": [
           {
             "pages": 3,
@@ -1407,7 +1431,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ca, zh, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ja": {
@@ -1505,7 +1535,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 677112,
+        "bytes": 691459,
         "chapters": [
           {
             "pages": 3,
@@ -1689,7 +1719,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, en, es, ca, zh, ar, pt, fr, de, it"
+          }
+        ]
       }
     },
     "pt": {
@@ -1786,7 +1822,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676121,
+        "bytes": 690821,
         "chapters": [
           {
             "pages": 3,
@@ -1968,7 +2004,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, ca, zh, ar, ja, fr, de, it"
+          }
+        ]
       }
     },
     "fr": {
@@ -2065,7 +2107,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 675981,
+        "bytes": 690708,
         "chapters": [
           {
             "pages": 3,
@@ -2247,7 +2289,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, ca, zh, ar, ja, pt, de, it"
+          }
+        ]
       }
     },
     "de": {
@@ -2344,7 +2392,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676467,
+        "bytes": 691159,
         "chapters": [
           {
             "pages": 3,
@@ -2526,7 +2574,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, ca, zh, ar, ja, pt, fr, it"
+          }
+        ]
       }
     },
     "it": {
@@ -2623,7 +2677,7 @@
       },
       "sandbox": {
         "file": "pepper-and-carrot-page.postext",
-        "bytes": 676092,
+        "bytes": 690884,
         "chapters": [
           {
             "pages": 3,
@@ -2805,7 +2859,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, ca, zh, ar, ja, pt, fr, de"
+          }
+        ]
       }
     }
   }

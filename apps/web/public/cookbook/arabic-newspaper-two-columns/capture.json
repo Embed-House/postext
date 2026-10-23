@@ -96,7 +96,7 @@
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 22509,
+        "bytes": 26867,
         "folio": "7d33b710",
         "chapters": [
           {
@@ -367,7 +367,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -456,7 +462,7 @@
       },
       "sandbox": {
         "file": "arabic-newspaper-two-columns.postext",
-        "bytes": 22554,
+        "bytes": 26864,
         "folio": "7d33b710",
         "chapters": [
           {
@@ -727,7 +733,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

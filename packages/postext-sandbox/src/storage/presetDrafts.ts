@@ -39,6 +39,10 @@ export interface PresetDraftRecord extends ProjectContent {
   /** The preset's own configuration as applied (the Design panel's reset
    *  baseline), stored stripped of defaults. */
   baseConfig?: PostextConfig;
+  /** The general settings of the preset (in several languages, #1209) this
+   *  draft's configuration was last based on: it opens on the ones in force
+   *  now, keeping what it sets of its own. */
+  sharedConfig?: PostextConfig;
   updatedAt: number;
 }
 

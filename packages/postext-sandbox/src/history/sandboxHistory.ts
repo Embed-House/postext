@@ -51,7 +51,12 @@ export const MAX_STEPS = 500;
 export type ConfigHistoryMeta = false | { merge?: boolean };
 
 type TextStep = { kind: 'text'; chapterId: string; at: number };
-type ConfigStep = { kind: 'config'; patch: ConfigPatch; at: number; open: boolean; before: PostextConfig };
+type ConfigStep = {
+  kind: 'config'; patch: ConfigPatch; at: number; open: boolean; before: PostextConfig;
+  /** The general settings before and after, for a write the Design panel
+   *  made for every language (#1209). */
+  shared?: { before: PostextConfig; after: PostextConfig };
+};
 type ResourceStep = { kind: 'resource'; resourceId: string; before: Resource; after: Resource; at: number; open: boolean };
 type Step = TextStep | ConfigStep | ResourceStep;
 
@@ -186,17 +191,20 @@ export function createSandboxHistory(deps: SandboxHistoryDeps): SandboxHistory {
     const s = deps.getState();
     if (meta === false || switching || !s.storeReady || s.booting) return;
     const patch = diffConfig(base, next, action.type === 'UPDATE_CONFIG' ? Object.keys(action.payload) : undefined);
-    if (patch.length === 0) return;
+    const sharedBefore = action.type === 'SET_CONFIG' && action.shared ? s.configLayers?.shared : undefined;
+    const shared = sharedBefore && action.type === 'SET_CONFIG' && action.shared && sharedBefore !== action.shared ? { before: sharedBefore, after: action.shared } : undefined;
+    if (patch.length === 0 && !shared) return;
     const at = now();
     const merge = meta?.merge !== false;
     const top = undoList[undoList.length - 1];
-    if (merge && top?.kind === 'config' && top.open && at - top.at <= COALESCE_MS && patchCovers(top.patch, patch)) {
+    if (merge && top?.kind === 'config' && top.open && at - top.at <= COALESCE_MS && patchCovers(top.patch, patch) && !!top.shared === !!shared) {
       top.patch = carryPatch(top.patch, next);
       top.at = at;
-      if (patchIsEmpty(top.patch)) undoList.pop();
+      if (top.shared && shared) top.shared = { before: top.shared.before, after: shared.after };
+      if (patchIsEmpty(top.patch) && !top.shared) undoList.pop();
       redoList.length = 0;
     } else {
-      push({ kind: 'config', patch, at, open: merge, before: base });
+      push({ kind: 'config', patch, at, open: merge, before: base, ...(shared ? { shared } : {}) });
     }
     notify();
   };
@@ -204,7 +212,8 @@ export function createSandboxHistory(deps: SandboxHistoryDeps): SandboxHistory {
   const runConfig = (step: ConfigStep, dir: 'undo' | 'redo') => {
     const next = applyPatch(currentConfig(), step.patch, dir === 'undo' ? 'before' : 'after');
     setEagerConfig(next);
-    deps.dispatch({ type: 'SET_CONFIG', payload: next, history: false });
+    const shared = step.shared ? (dir === 'undo' ? step.shared.before : step.shared.after) : undefined;
+    deps.dispatch({ type: 'SET_CONFIG', payload: next, history: false, ...(shared ? { shared } : {}) });
   };
 
   // --- resources (#866) --------------------------------------------------

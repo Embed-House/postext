@@ -10,6 +10,8 @@ import { useFieldMatch } from '../sidebar/search/MatchScope.js';
 import { normalizeText } from '../sidebar/search/normalize.js';
 import { FieldIdsContext, ShowingDefaultsContext, useHelpMode, type FieldIds } from './fieldContext.js';
 import { ResetButton } from './ResetButton.js';
+import { FieldLayerContext, LayerChip, LayerDot, fieldLayerOf, layerText } from './fieldLayer.js';
+import { Link2 } from 'lucide-react';
 
 export interface FieldRowProps {
   label: string;
@@ -51,6 +53,8 @@ export const FieldRow = forwardRef<HTMLDivElement, FieldRowProps>(function Field
   const modified = isDefault === false && !showingDefaults;
   const { visible, tokens } = useFieldMatch(haystack, modified);
   const showReset = !isDefault && !!onReset && !showingDefaults;
+  // A book in several languages: whose value this is (#1209).
+  const layerCtx = useContext(FieldLayerContext);
 
   const autoId = useId();
   const ids = useMemo<FieldIds>(() => ({
@@ -68,6 +72,14 @@ export const FieldRow = forwardRef<HTMLDivElement, FieldRowProps>(function Field
   // does not build their controls just to hide them.
   if (!visible) return null;
 
+  const layer = showingDefaults ? null : fieldLayerOf(layerCtx, onReset, isDefault);
+  const layerSays = layerText(layer, labels, layerCtx);
+  // A value of this language's own goes back to the general one; a
+  // general value read here goes to this language's default.
+  const resetButton = layer?.kind === 'own'
+    ? <ResetButton onClick={() => layerCtx!.useGeneral(layer.paths)} label={labels.configLayerUseGeneral} icon={<Link2 size={11} />} />
+    : <ResetButton onClick={onReset!} {...(layer?.kind === 'general' ? { label: labels.configLayerResetHere.replace('__language__', layerCtx!.languageName(layerCtx!.locale)) } : {})} />;
+
   const labelEl = (
     <label
       id={ids.labelId}
@@ -77,14 +89,9 @@ export const FieldRow = forwardRef<HTMLDivElement, FieldRowProps>(function Field
         modified ? 'text-(--foreground)' : 'text-(--slate)',
       )}
     >
-      {modified && (
-        <span
-          aria-hidden="true"
-          className="me-1.5 inline-block h-1.5 w-1.5 -translate-y-px rounded-full bg-(--brand) align-middle"
-        />
-      )}
+      {modified && <LayerDot state={layer} />}
       <HighlightedText text={label} tokens={tokens} />
-      {modified && <span className="sr-only"> ({labels.settingsModifiedField})</span>}
+      {modified && <span className="sr-only"> ({layerSays ?? labels.settingsModifiedField})</span>}
     </label>
   );
 
@@ -130,11 +137,12 @@ export const FieldRow = forwardRef<HTMLDivElement, FieldRowProps>(function Field
             <span className="flex min-w-0 items-center gap-1">
               {labelEl}
               {helpButton}
+              <LayerChip state={layer} />
             </span>
-            {stacked && showReset && <ResetButton onClick={onReset} />}
+            {stacked && showReset && resetButton}
           </div>
           <div className={cn('flex items-center gap-1', stacked ? 'w-full min-w-0' : 'shrink-0 self-end @[260px]:self-auto')}>
-            {!stacked && showReset && <ResetButton onClick={onReset} />}
+            {!stacked && showReset && resetButton}
             {children}
           </div>
         </div>

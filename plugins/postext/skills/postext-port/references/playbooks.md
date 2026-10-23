@@ -988,10 +988,13 @@ A Chinese family is tens of MB and thousands of glyphs; ship it cut to the book.
 
 ### F1. The same book in two languages
 One bundle for every edition, never a preset or a bundle per language. Use
-one shared `config` in the primary language plus `localized.<lang>.config`.
-It replaces whole top-level keys, so restate them: `locale`, `bodyText`
-(hyphenation), `headings` (labels), `headingStyles`, `parts`, `toc`,
-`resourceTypes`, `header`. Add `localized.<lang>.resources` (captions, notes,
+one `config` with the general settings plus `localized.<lang>.config` with
+only what each language sets differently, merged field by field
+(configVersion 21, project-format.md §2): `locale`, the faces and size of its
+script, hyphenation, label words (`headings.levels[level=1].numberingTemplate`,
+a `header` label), a left/right side. Build each edition's whole config and
+write `preset_kit.diff_config_layers(config(primary), config(lang))`. Add
+`localized.<lang>.resources` (captions, notes,
 alt text, tables) and chapters per locale. Parse both sources with the same
 code, anchoring glosses by per-language text fragments. Check every edition:
 `postext check my-book --locale <lang>` per locale.

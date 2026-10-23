@@ -1,6 +1,6 @@
 {
  "version": 2,
- "configVersion": 8,
+ "configVersion": 21,
  "id": "pepper-carrot",
  "name": "Pepper&Carrot · Pepper's Birthday Party",
  "description": "El episodio 8 del cómic de David Revoy en diez idiomas: las viñetas originales sin texto, con los bocadillos y la rotulación que el motor compone a partir de las traducciones oficiales; la edición japonesa se rotula en vertical y, como la árabe, se lee de derecha a izquierda y se abre por la derecha · Episode 8 of David Revoy's webcomic in ten languages: the original text-free panels, with balloons and lettering the engine sets from the official translations; the Japanese edition is lettered vertically and, like the Arabic one, reads right to left and opens from the right",
@@ -174,32 +174,120 @@
   ]
  },
  "config": {
-  "locale": "en",
+  "colorPalette": [
+   {
+    "id": "ink",
+    "name": "Ink",
+    "value": {
+     "hex": "#1d1a17",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "paper",
+    "name": "Paper",
+    "value": {
+     "hex": "#ffffff",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "accent",
+    "name": "Pepper's red",
+    "value": {
+     "hex": "#b4402a",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "muted",
+    "name": "Muted text",
+    "value": {
+     "hex": "#6b625a",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "writing",
+    "name": "Writing on objects",
+    "value": {
+     "hex": "#3b2a1e",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "cream",
+    "name": "Halo of the writing",
+    "value": {
+     "hex": "#fbf3dc",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "night",
+    "name": "Monster balloons",
+    "value": {
+     "hex": "#0f0f0f",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "gilt",
+    "name": "Gilt lettering",
+    "value": {
+     "hex": "#e4cf96",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "plate",
+    "name": "Title plate",
+    "value": {
+     "hex": "#151a20",
+     "model": "hex"
+    }
+   }
+  ],
+  "resourceTypes": [
+   {
+    "id": "art",
+    "captionPrefix": "",
+    "numberingTemplate": "",
+    "resetOn": "never",
+    "counterFormat": "decimal",
+    "defaultPlacement": {
+     "position": "auto",
+     "span": "page",
+     "width": 1,
+     "align": "center"
+    }
+   }
+  ],
   "page": {
    "sizePreset": "custom",
    "width": {
-    "value": 210.0,
+    "value": 210,
     "unit": "mm"
    },
    "height": {
-    "value": 297.0,
+    "value": 297,
     "unit": "mm"
    },
    "margins": {
     "top": {
-     "value": 22.0,
+     "value": 22,
      "unit": "mm"
     },
     "bottom": {
-     "value": 24.0,
+     "value": 24,
      "unit": "mm"
     },
     "left": {
-     "value": 22.0,
+     "value": 22,
      "unit": "mm"
     },
     "right": {
-     "value": 22.0,
+     "value": 22,
      "unit": "mm"
     },
     "mirror": false
@@ -210,7 +298,8 @@
    }
   },
   "layout": {
-   "layoutType": "single"
+   "layoutType": "single",
+   "floatsUnderOpener": false
   },
   "bodyText": {
    "fontFamily": "Comic Neue",
@@ -247,7 +336,11 @@
    "avoidOrphans": true,
    "hyphenation": {
     "enabled": false
-   }
+   },
+   "hardLineBreaks": false,
+   "scriptContext": false,
+   "shapingLanguage": "host",
+   "breakAfterSlashes": false
   },
   "headings": {
    "fontFamily": "Bangers",
@@ -275,7 +368,11 @@
       "unit": "pt"
      }
     }
-   ]
+   ],
+   "balancing": {
+    "maxLinesBeforeLoose": 4,
+    "trailingStep": "grid"
+   }
   },
   "headingStyles": [
    {
@@ -296,7 +393,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 249.0,
+      "value": 249,
       "unit": "mm"
      },
      "slot": {
@@ -321,7 +418,7 @@
          },
          "size": {
           "width": {
-           "value": 210.0,
+           "value": 210,
            "unit": "mm"
           },
           "height": {
@@ -352,7 +449,7 @@
          },
          "size": {
           "width": {
-           "value": 170.0,
+           "value": 170,
            "unit": "mm"
           },
           "height": "auto"
@@ -400,7 +497,7 @@
          },
          "size": {
           "width": {
-           "value": 170.0,
+           "value": 170,
            "unit": "mm"
           },
           "height": "auto"
@@ -445,7 +542,7 @@
          },
          "size": {
           "width": {
-           "value": 170.0,
+           "value": 170,
            "unit": "mm"
           },
           "height": "auto"
@@ -490,7 +587,7 @@
          },
          "size": {
           "width": {
-           "value": 170.0,
+           "value": 170,
            "unit": "mm"
           },
           "height": "auto"
@@ -535,7 +632,7 @@
          },
          "size": {
           "width": {
-           "value": 170.0,
+           "value": 170,
            "unit": "mm"
           },
           "height": "auto"
@@ -612,7 +709,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": -5.0,
+        "value": -5,
         "unit": "mm"
        }
       },
@@ -654,7 +751,7 @@
       "unit": "mm"
      },
      "bottom": {
-      "value": 14.0,
+      "value": 14,
       "unit": "mm"
      },
      "left": {
@@ -699,7 +796,8 @@
     "fontSize": {
      "value": 9,
      "unit": "pt"
-    }
+    },
+    "strictPlacement": false
    },
    "balloonStyles": [
     {
@@ -791,98 +889,6 @@
    ],
    "runningHeads": true
   },
-  "colorPalette": [
-   {
-    "id": "ink",
-    "name": "Ink",
-    "value": {
-     "hex": "#1d1a17",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "paper",
-    "name": "Paper",
-    "value": {
-     "hex": "#ffffff",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "accent",
-    "name": "Pepper's red",
-    "value": {
-     "hex": "#b4402a",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "muted",
-    "name": "Muted text",
-    "value": {
-     "hex": "#6b625a",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "writing",
-    "name": "Writing on objects",
-    "value": {
-     "hex": "#3b2a1e",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "cream",
-    "name": "Halo of the writing",
-    "value": {
-     "hex": "#fbf3dc",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "night",
-    "name": "Monster balloons",
-    "value": {
-     "hex": "#0f0f0f",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "gilt",
-    "name": "Gilt lettering",
-    "value": {
-     "hex": "#e4cf96",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "plate",
-    "name": "Title plate",
-    "value": {
-     "hex": "#151a20",
-     "model": "hex"
-    }
-   }
-  ],
-  "resourceTypes": [
-   {
-    "id": "art",
-    "name": "Artwork",
-    "namePlural": "Artwork",
-    "shortLabel": "Artwork",
-    "captionPrefix": "",
-    "numberingTemplate": "",
-    "resetOn": "never",
-    "counterFormat": "decimal",
-    "defaultPlacement": {
-     "position": "auto",
-     "span": "page",
-     "width": 1,
-     "align": "center"
-    }
-   }
-  ],
   "pdfGeneration": {
    "outlines": true
   },
@@ -911,28 +917,30 @@
   }
  },
  "localized": {
-  "en": {},
-  "es": {
+  "en": {
    "config": {
-    "locale": "es",
     "resourceTypes": [
      {
-      "id": "art",
+      "name": "Artwork",
+      "namePlural": "Artwork",
+      "shortLabel": "Artwork",
+      "id": "art"
+     }
+    ],
+    "locale": "en"
+   }
+  },
+  "es": {
+   "config": {
+    "resourceTypes": [
+     {
       "name": "Ilustración",
       "namePlural": "Ilustraciones",
       "shortLabel": "Ilustración",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
+      "id": "art"
      }
-    ]
+    ],
+    "locale": "es"
    },
    "resources": [
     {
@@ -943,25 +951,15 @@
   },
   "ca": {
    "config": {
-    "locale": "ca",
     "resourceTypes": [
      {
-      "id": "art",
       "name": "Il·lustració",
       "namePlural": "Il·lustracions",
       "shortLabel": "Il·lustració",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
+      "id": "art"
      }
-    ]
+    ],
+    "locale": "ca"
    },
    "resources": [
     {
@@ -972,25 +970,15 @@
   },
   "fr": {
    "config": {
-    "locale": "fr",
     "resourceTypes": [
      {
-      "id": "art",
       "name": "Illustration",
       "namePlural": "Illustrations",
       "shortLabel": "Illustration",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
+      "id": "art"
      }
-    ]
+    ],
+    "locale": "fr"
    },
    "resources": [
     {
@@ -1001,25 +989,15 @@
   },
   "it": {
    "config": {
-    "locale": "it",
     "resourceTypes": [
      {
-      "id": "art",
       "name": "Illustrazione",
       "namePlural": "Illustrazioni",
       "shortLabel": "Illustrazione",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
+      "id": "art"
      }
-    ]
+    ],
+    "locale": "it"
    },
    "resources": [
     {
@@ -1030,25 +1008,15 @@
   },
   "pt-BR": {
    "config": {
-    "locale": "pt-BR",
     "resourceTypes": [
      {
-      "id": "art",
       "name": "Ilustração",
       "namePlural": "Ilustrações",
       "shortLabel": "Ilustração",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
+      "id": "art"
      }
-    ]
+    ],
+    "locale": "pt-BR"
    },
    "resources": [
     {
@@ -1059,25 +1027,15 @@
   },
   "de": {
    "config": {
-    "locale": "de",
     "resourceTypes": [
      {
-      "id": "art",
       "name": "Illustration",
       "namePlural": "Illustrationen",
       "shortLabel": "Illustration",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
+      "id": "art"
      }
-    ]
+    ],
+    "locale": "de"
    },
    "resources": [
     {
@@ -1088,93 +1046,46 @@
   },
   "ja": {
    "config": {
-    "locale": "ja",
+    "resourceTypes": [
+     {
+      "name": "原画",
+      "namePlural": "原画",
+      "shortLabel": "原画",
+      "id": "art"
+     }
+    ],
     "bodyText": {
      "fontFamily": "Noto Sans JP",
-     "fontSize": {
-      "value": 10.5,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 15.5,
-      "unit": "pt"
-     },
-     "textAlign": "left",
-     "firstLineIndent": {
-      "value": 0,
-      "unit": "mm"
-     },
-     "paragraphSpacing": true,
-     "color": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true
+     "hyphenation": null
     },
     "headings": {
-     "fontFamily": "Dela Gothic One",
-     "fontWeight": 400,
-     "color": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "keepWithNext": true,
-     "levels": [
-      {
-       "level": 1,
-       "numberingTemplate": "",
-       "fontSize": {
-        "value": 26,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 30,
-        "unit": "pt"
-       },
-       "marginBottom": {
-        "value": 14,
-        "unit": "pt"
-       }
-      }
-     ]
+     "fontFamily": "Dela Gothic One"
     },
     "headingStyles": [
      {
-      "id": "title",
-      "name": "Title page",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "runningChapter": false,
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "marginBottom": {
-       "value": 0,
-       "unit": "pt"
-      },
       "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 249.0,
-        "unit": "mm"
-       },
        "slot": {
         "elements": [
+         {
+          "id": "series",
+          "$remove": true
+         },
+         {
+          "id": "title",
+          "$remove": true
+         },
+         {
+          "id": "art",
+          "$remove": true
+         },
+         {
+          "id": "credit",
+          "$remove": true
+         },
+         {
+          "id": "site",
+          "$remove": true
+         },
          {
           "kind": "image",
           "id": "cover",
@@ -1195,7 +1106,7 @@
            },
            "size": {
             "width": {
-             "value": 210.0,
+             "value": 210,
              "unit": "mm"
             },
             "height": {
@@ -1500,95 +1411,32 @@
          }
         ]
        }
-      }
+      },
+      "id": "title"
      },
      {
-      "id": "colophon",
-      "name": "Credits",
-      "numbered": false,
-      "toc": false,
-      "breakBefore": {
-       "enabled": true,
-       "parity": "any"
-      },
       "fontFamily": "Dela Gothic One",
-      "fontWeight": 400,
-      "fontSize": {
-       "value": 26,
-       "unit": "pt"
-      },
-      "lineHeight": {
-       "value": 30,
-       "unit": "pt"
-      },
-      "color": {
-       "hex": "#b4402a",
-       "model": "hex",
-       "paletteId": "accent"
-      },
-      "marginBottom": {
-       "value": 14,
-       "unit": "pt"
-      }
+      "id": "colophon"
      }
     ],
-    "comics": {
-     "readingDirection": "auto",
-     "frame": {
-      "margins": {
-       "top": {
-        "value": 8.47,
-        "unit": "mm"
-       },
-       "bottom": {
-        "value": 14.0,
-        "unit": "mm"
-       },
-       "left": {
-        "value": 8.47,
-        "unit": "mm"
-       },
-       "right": {
-        "value": 8.21,
-        "unit": "mm"
-       }
-      }
-     },
-     "gutter": {
-      "horizontal": {
-       "value": 5.42,
-       "unit": "mm"
-      },
-      "vertical": {
-       "value": 2.37,
-       "unit": "mm"
-      }
-     },
-     "panel": {
-      "borderWidth": {
-       "value": 0,
-       "unit": "mm"
-      },
-      "borderStyle": "none"
-     },
-     "panelStyles": [
+    "footer": {
+     "elements": [
       {
-       "id": "rounded",
-       "name": "Rounded",
-       "borderRadius": {
-        "value": 5.8,
-        "unit": "mm"
-       },
-       "borderStyle": "none"
+       "fontFamily": "Noto Sans JP",
+       "id": "folio"
       }
-     ],
-     "lettering": {
-      "fontSize": {
-       "value": 9,
-       "unit": "pt"
-      }
-     },
+     ]
+    },
+    "comics": {
      "balloonStyles": [
+      {
+       "id": "writing",
+       "$remove": true
+      },
+      {
+       "id": "plate",
+       "$remove": true
+      },
       {
        "id": "sfx",
        "fontScale": 3.4,
@@ -1656,99 +1504,12 @@
         "unit": "pt"
        }
       }
-     ],
-     "cast": [
-      {
-       "id": "pepper",
-       "name": "Pepper"
-      },
-      {
-       "id": "carrot",
-       "name": "Carrot"
-      },
-      {
-       "id": "monster",
-       "name": "Monsters of Chaosah",
-       "fill": {
-        "hex": "#0f0f0f",
-        "model": "hex",
-        "paletteId": "night"
-       },
-       "color": {
-        "hex": "#ffffff",
-        "model": "hex",
-        "paletteId": "paper"
-       }
-      }
-     ],
-     "runningHeads": true
-    },
-    "resourceTypes": [
-     {
-      "id": "art",
-      "name": "原画",
-      "namePlural": "原画",
-      "shortLabel": "原画",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
-     }
-    ],
-    "footer": {
-     "elements": [
-      {
-       "kind": "text",
-       "id": "folio",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "bottom"
-        },
-        "offset": {
-         "x": {
-          "value": 0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": -5.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 30,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Noto Sans JP",
-       "fontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "center",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#6b625a",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "pages": "comic"
-      }
      ]
+    },
+    "locale": "ja",
+    "cjk": {
+     "composeDesignText": false,
+     "latinSpacingEdge": "letters"
     }
    },
    "resources": [
@@ -1760,597 +1521,84 @@
   },
   "zh-Hans": {
    "config": {
-    "locale": "zh-Hans",
+    "resourceTypes": [
+     {
+      "name": "原画",
+      "namePlural": "原画",
+      "shortLabel": "原画",
+      "id": "art"
+     }
+    ],
     "bodyText": {
      "fontFamily": "Noto Sans SC",
-     "fontSize": {
-      "value": 10.5,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 15.5,
-      "unit": "pt"
-     },
-     "textAlign": "left",
-     "firstLineIndent": {
-      "value": 0,
-      "unit": "mm"
-     },
-     "paragraphSpacing": true,
-     "color": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true
+     "hyphenation": null
     },
     "headings": {
-     "fontFamily": "ZCOOL KuaiLe",
-     "fontWeight": 400,
-     "color": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "keepWithNext": true,
-     "levels": [
-      {
-       "level": 1,
-       "numberingTemplate": "",
-       "fontSize": {
-        "value": 26,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 30,
-        "unit": "pt"
-       },
-       "marginBottom": {
-        "value": 14,
-        "unit": "pt"
-       }
-      }
-     ]
+     "fontFamily": "ZCOOL KuaiLe"
     },
     "headingStyles": [
      {
-      "id": "title",
-      "name": "Title page",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "runningChapter": false,
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "marginBottom": {
-       "value": 0,
-       "unit": "pt"
-      },
       "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 249.0,
-        "unit": "mm"
-       },
        "slot": {
         "elements": [
          {
-          "kind": "image",
-          "id": "cover",
-          "placement": {
-           "anchor": {
-            "to": "bleed",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 210.0,
-             "unit": "mm"
-            },
-            "height": {
-             "value": 146.05,
-             "unit": "mm"
-            }
-           }
-          },
-          "resourceId": "e08-cover"
-         },
-         {
-          "kind": "text",
-          "id": "series",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 160.05,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "Pepper&Carrot",
           "fontFamily": "ZCOOL KuaiLe",
-          "fontSize": {
-           "value": 18,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#b4402a",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "letterSpacing": {
-           "value": 1.5,
-           "unit": "pt"
-          }
+          "id": "series"
          },
          {
-          "kind": "text",
-          "id": "title",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 173.05,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{titleText}",
           "fontFamily": "ZCOOL KuaiLe",
           "fontSize": {
            "value": 32,
            "unit": "pt"
           },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.12,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1d1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          },
-          "direction": "auto"
+          "id": "title"
          },
          {
-          "kind": "text",
-          "id": "art",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 228.05,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.art}",
           "fontFamily": "Noto Sans SC",
-          "fontSize": {
-           "value": 14,
-           "unit": "pt"
-          },
-          "fontWeight": 700,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1d1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          },
-          "direction": "auto"
+          "id": "art"
          },
          {
-          "kind": "text",
-          "id": "credit",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 239.05,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.credit}",
           "fontFamily": "Noto Sans SC",
-          "fontSize": {
-           "value": 11.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.35,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1d1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          },
-          "direction": "auto"
+          "id": "credit"
          },
          {
-          "kind": "text",
-          "id": "site",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "bottom-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": -16,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "www.peppercarrot.com · CC BY 4.0",
           "fontFamily": "Noto Sans SC",
-          "fontSize": {
-           "value": 9,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#6b625a",
-           "model": "hex",
-           "paletteId": "muted"
-          }
+          "id": "site"
          }
         ]
        }
-      }
+      },
+      "id": "title"
      },
      {
-      "id": "colophon",
-      "name": "Credits",
-      "numbered": false,
-      "toc": false,
-      "breakBefore": {
-       "enabled": true,
-       "parity": "any"
-      },
       "fontFamily": "ZCOOL KuaiLe",
-      "fontWeight": 400,
-      "fontSize": {
-       "value": 26,
-       "unit": "pt"
-      },
-      "lineHeight": {
-       "value": 30,
-       "unit": "pt"
-      },
-      "color": {
-       "hex": "#b4402a",
-       "model": "hex",
-       "paletteId": "accent"
-      },
-      "marginBottom": {
-       "value": 14,
-       "unit": "pt"
-      }
-     }
-    ],
-    "comics": {
-     "readingDirection": "auto",
-     "frame": {
-      "margins": {
-       "top": {
-        "value": 8.47,
-        "unit": "mm"
-       },
-       "bottom": {
-        "value": 14.0,
-        "unit": "mm"
-       },
-       "left": {
-        "value": 8.47,
-        "unit": "mm"
-       },
-       "right": {
-        "value": 8.21,
-        "unit": "mm"
-       }
-      }
-     },
-     "gutter": {
-      "horizontal": {
-       "value": 5.42,
-       "unit": "mm"
-      },
-      "vertical": {
-       "value": 2.37,
-       "unit": "mm"
-      }
-     },
-     "panel": {
-      "borderWidth": {
-       "value": 0,
-       "unit": "mm"
-      },
-      "borderStyle": "none"
-     },
-     "panelStyles": [
-      {
-       "id": "rounded",
-       "name": "Rounded",
-       "borderRadius": {
-        "value": 5.8,
-        "unit": "mm"
-       },
-       "borderStyle": "none"
-      }
-     ],
-     "lettering": {
-      "fontSize": {
-       "value": 9,
-       "unit": "pt"
-      }
-     },
-     "balloonStyles": [
-      {
-       "id": "sfx",
-       "fontScale": 2.1,
-       "bold": false
-      },
-      {
-       "id": "writing",
-       "name": "Writing on objects",
-       "shape": "none",
-       "tail": "none",
-       "fontScale": 0.85,
-       "bold": false,
-       "italic": true,
-       "color": {
-        "hex": "#3b2a1e",
-        "model": "hex",
-        "paletteId": "writing"
-       },
-       "halo": {
-        "value": 1.4,
-        "unit": "pt"
-       },
-       "haloColor": {
-        "hex": "#fbf3dc",
-        "model": "hex",
-        "paletteId": "cream"
-       },
-       "strokeWidth": {
-        "value": 0,
-        "unit": "pt"
-       }
-      },
-      {
-       "id": "plate",
-       "name": "Title on the art",
-       "shape": "none",
-       "tail": "none",
-       "fontFamily": "Noto Sans SC",
-       "fontScale": 0.88,
-       "bold": false,
-       "italic": false,
-       "align": "center",
-       "aspect": 3,
-       "color": {
-        "hex": "#e4cf96",
-        "model": "hex",
-        "paletteId": "gilt"
-       },
-       "halo": {
-        "value": 0.5,
-        "unit": "pt"
-       },
-       "haloColor": {
-        "hex": "#151a20",
-        "model": "hex",
-        "paletteId": "plate"
-       },
-       "letterSpacing": {
-        "value": 0.2,
-        "unit": "pt"
-       }
-      }
-     ],
-     "cast": [
-      {
-       "id": "pepper",
-       "name": "Pepper"
-      },
-      {
-       "id": "carrot",
-       "name": "Carrot"
-      },
-      {
-       "id": "monster",
-       "name": "Monsters of Chaosah",
-       "fill": {
-        "hex": "#0f0f0f",
-        "model": "hex",
-        "paletteId": "night"
-       },
-       "color": {
-        "hex": "#ffffff",
-        "model": "hex",
-        "paletteId": "paper"
-       }
-      }
-     ],
-     "runningHeads": true
-    },
-    "resourceTypes": [
-     {
-      "id": "art",
-      "name": "原画",
-      "namePlural": "原画",
-      "shortLabel": "原画",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
+      "id": "colophon"
      }
     ],
     "footer": {
      "elements": [
       {
-       "kind": "text",
-       "id": "folio",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "bottom"
-        },
-        "offset": {
-         "x": {
-          "value": 0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": -5.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 30,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
        "fontFamily": "Noto Sans SC",
-       "fontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "center",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#6b625a",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "pages": "comic"
+       "id": "folio"
       }
      ]
+    },
+    "comics": {
+     "balloonStyles": [
+      {
+       "fontScale": 2.1,
+       "id": "sfx"
+      },
+      {
+       "fontFamily": "Noto Sans SC",
+       "id": "plate"
+      }
+     ]
+    },
+    "locale": "zh-Hans",
+    "cjk": {
+     "titleMinChars": 1,
+     "composeDesignText": false
     }
    },
    "resources": [
@@ -2362,452 +1610,65 @@
   },
   "ar": {
    "config": {
-    "locale": "ar",
-    "bodyText": {
-     "fontFamily": "Playpen Sans Arabic",
-     "fontSize": {
-      "value": 10.5,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 15.5,
-      "unit": "pt"
-     },
-     "textAlign": "left",
-     "firstLineIndent": {
-      "value": 0,
-      "unit": "mm"
-     },
-     "paragraphSpacing": true,
-     "color": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true
-    },
-    "headings": {
-     "fontFamily": "Lalezar",
-     "fontWeight": 400,
-     "color": {
-      "hex": "#1d1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "keepWithNext": true,
-     "levels": [
-      {
-       "level": 1,
-       "numberingTemplate": "",
-       "fontSize": {
-        "value": 26,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 30,
-        "unit": "pt"
-       },
-       "marginBottom": {
-        "value": 14,
-        "unit": "pt"
-       }
-      }
-     ]
-    },
-    "headingStyles": [
-     {
-      "id": "title",
-      "name": "Title page",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "runningChapter": false,
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "marginBottom": {
-       "value": 0,
-       "unit": "pt"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 249.0,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "image",
-          "id": "cover",
-          "placement": {
-           "anchor": {
-            "to": "bleed",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 210.0,
-             "unit": "mm"
-            },
-            "height": {
-             "value": 146.05,
-             "unit": "mm"
-            }
-           }
-          },
-          "resourceId": "e08-cover"
-         },
-         {
-          "kind": "text",
-          "id": "series",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 160.05,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "Pepper&Carrot",
-          "fontFamily": "Lalezar",
-          "fontSize": {
-           "value": 18,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#b4402a",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "letterSpacing": {
-           "value": 1.5,
-           "unit": "pt"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "title",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 173.05,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{titleText}",
-          "fontFamily": "Lalezar",
-          "fontSize": {
-           "value": 42,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.12,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1d1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          },
-          "direction": "auto"
-         },
-         {
-          "kind": "text",
-          "id": "art",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 228.05,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.art}",
-          "fontFamily": "Playpen Sans Arabic",
-          "fontSize": {
-           "value": 14,
-           "unit": "pt"
-          },
-          "fontWeight": 700,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1d1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          },
-          "direction": "auto"
-         },
-         {
-          "kind": "text",
-          "id": "credit",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 239.05,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.credit}",
-          "fontFamily": "Playpen Sans Arabic",
-          "fontSize": {
-           "value": 11.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.35,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1d1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          },
-          "direction": "auto"
-         },
-         {
-          "kind": "text",
-          "id": "site",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "bottom-left"
-           },
-           "offset": {
-            "x": {
-             "value": 20,
-             "unit": "mm"
-            },
-            "y": {
-             "value": -16,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 170.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "www.peppercarrot.com · CC BY 4.0",
-          "fontFamily": "Playpen Sans Arabic",
-          "fontSize": {
-           "value": 9,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#6b625a",
-           "model": "hex",
-           "paletteId": "muted"
-          }
-         }
-        ]
-       }
-      }
-     },
-     {
-      "id": "colophon",
-      "name": "Credits",
-      "numbered": false,
-      "toc": false,
-      "breakBefore": {
-       "enabled": true,
-       "parity": "any"
-      },
-      "fontFamily": "Lalezar",
-      "fontWeight": 400,
-      "fontSize": {
-       "value": 26,
-       "unit": "pt"
-      },
-      "lineHeight": {
-       "value": 30,
-       "unit": "pt"
-      },
-      "color": {
-       "hex": "#b4402a",
-       "model": "hex",
-       "paletteId": "accent"
-      },
-      "marginBottom": {
-       "value": 14,
-       "unit": "pt"
-      }
-     }
-    ],
     "resourceTypes": [
      {
-      "id": "art",
       "name": "رسم",
       "namePlural": "رسوم",
       "shortLabel": "رسم",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1,
-       "align": "center"
-      }
+      "id": "art"
+     }
+    ],
+    "bodyText": {
+     "fontFamily": "Playpen Sans Arabic",
+     "hyphenation": null
+    },
+    "headings": {
+     "fontFamily": "Lalezar"
+    },
+    "headingStyles": [
+     {
+      "advancedDesign": {
+       "slot": {
+        "elements": [
+         {
+          "fontFamily": "Lalezar",
+          "id": "series"
+         },
+         {
+          "fontFamily": "Lalezar",
+          "id": "title"
+         },
+         {
+          "fontFamily": "Playpen Sans Arabic",
+          "id": "art"
+         },
+         {
+          "fontFamily": "Playpen Sans Arabic",
+          "id": "credit"
+         },
+         {
+          "fontFamily": "Playpen Sans Arabic",
+          "id": "site"
+         }
+        ]
+       }
+      },
+      "id": "title"
+     },
+     {
+      "fontFamily": "Lalezar",
+      "id": "colophon"
      }
     ],
     "footer": {
      "elements": [
       {
-       "kind": "text",
-       "id": "folio",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "bottom"
-        },
-        "offset": {
-         "x": {
-          "value": 0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": -5.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 30,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
        "fontFamily": "Playpen Sans Arabic",
-       "fontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "center",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#6b625a",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "pages": "comic"
+       "id": "folio"
       }
      ]
-    }
+    },
+    "locale": "ar"
    },
    "resources": [
     {
@@ -2944,7 +1805,7 @@
    "avoid": [
     {
      "x": 0.18,
-     "y": 0.0,
+     "y": 0,
      "width": 0.21,
      "height": 0.27
     },
@@ -3184,7 +2045,7 @@
    ],
    "avoid": [
     {
-     "x": 0.0,
+     "x": 0,
      "y": 0.66,
      "width": 0.19,
      "height": 0.34

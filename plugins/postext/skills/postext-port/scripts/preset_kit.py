@@ -112,11 +112,21 @@ from typing import Any
 # 16 and older read with the document's (bodyText.paragraphStylesInBoxes).
 # 18 (1.52) gives a mark style that names no borderRadius square ends; 17 and
 # older keep 0.2em when the text has a :mark.
-# A book ported today is stamped 19 and is shaped in its own language. An
+# 19 (1.53) lets formatted text break after a slash between two words; 20
+# (1.54) reads a fence in a notation language as a music score. 21 (#1209)
+# merges each `localized.<lang>.config` over the shared `config` field by
+# field (objects key by key, lists of entries with an `id` by id, `levels`
+# by level, `null` back to the default, `{id, "$remove": true}` drops an
+# entry); 20 and older replace each top-level key it names whole.
+# A book ported today is stamped 21 and is shaped in its own language. An
 # engine older than 1.23 reads 9 as 8, one older than 1.24 reads 10 as 9,
 # one older than 1.25 reads 11 as 10, one older than 1.28 reads 12 as 11,
 # one older than 1.30 reads 14 as 13, one older than 1.34 reads 15 as 14.
-CONFIG_VERSION = 19
+CONFIG_VERSION = 21
+
+# The rules from which a localized config is an override merged field by
+# field (postext's LOCALE_LAYER_RULES).
+LOCALE_LAYER_RULES = 21
 
 # ---------------------------------------------------------------------------
 # primitives
@@ -767,7 +777,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, {kit_dir!r})  # folder holding preset_kit.py
 from preset_kit import (  # noqa: E402
-    bitmap, box_el, chapters_from_dir, color, font_families, mm, palette, place, pt,
+    bitmap, box_el, chapters_from_dir, color, diff_config_layers, font_families, mm, palette, place, pt,
     rule_el, svg, table, text_el, write_manifest,
 )
 
@@ -846,14 +856,15 @@ def resources() -> list:
 def main() -> None:
     primary = LANGS[0]
     manifest = {{
-        "version": 2, "configVersion": 19, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
+        "version": 2, "configVersion": 21, "id": ID, "name": NAME, "locale": primary, "locales": LANGS,
         "view": {{"canvasScope": "book"}},
         "chapters": {{lang: chapters_from_dir(HERE, lang) for lang in LANGS}},
         "config": config(primary),
         "localized": {{lang: {{**({{"name": TITLES[lang]}} if lang in TITLES else {{}}),
                               **({{"description": DESCRIPTIONS[lang]}} if lang in DESCRIPTIONS else {{}}),
-                              "config": {{k: v for k, v in config(lang).items()
-                                         if k in ("locale", "bodyText", "resourceTypes")}}}}
+                              # General settings in `config`; each language only what it sets
+                              # differently, merged over them field by field (configVersion 21).
+                              "config": diff_config_layers(config(primary), config(lang))}}
                       for lang in LANGS[1:]}},
         "resources": [{{k: v for k, v in r.items() if k != "source"}} for r in resources()],
         "fonts": font_families(HERE),
@@ -1470,12 +1481,132 @@ def metadata_phrases(fields: dict) -> list[str]:
     return out
 
 
+def _is_atom(v: Any) -> bool:
+    """A value merged whole: a colour (`hex`) or a length (`value` + `unit`)."""
+    return isinstance(v, dict) and ("hex" in v or ("value" in v and "unit" in v))
+
+
+def _entry_key(key: str, *lists: list) -> str | None:
+    """The field a list's entries are matched on (`level` for `levels`,
+    `name` for `customFonts`, else `id`), or None for a list replaced whole."""
+    entries = [e for lst in lists for e in lst]
+    if not entries:
+        return None
+    field = "level" if key == "levels" else "name" if key == "customFonts" else "id"
+    ok = all(isinstance(e, dict) and isinstance(e.get(field), (str, int, float)) and not isinstance(e.get(field), bool)
+             for e in entries)
+    return field if ok else None
+
+
+def _merge_layer(base: Any, over: Any, key: str) -> Any:
+    if isinstance(over, list):
+        b = base if isinstance(base, list) else []
+        field = _entry_key(key, b, over)
+        if not field:
+            return over
+        out = list(b)
+        for e in over:
+            at = next((i for i, x in enumerate(out) if x.get(field) == e.get(field)), -1)
+            if e.get("$remove") is True:
+                if at >= 0:
+                    out.pop(at)
+                continue
+            if at == -1:
+                out.append(e)
+            else:
+                out[at] = _merge_layer(out[at], e, "")
+        return out
+    if isinstance(over, dict) and isinstance(base, dict) and not _is_atom(over) and not _is_atom(base):
+        out = dict(base)
+        for k, v in over.items():
+            if v is None:
+                out.pop(k, None)
+            else:
+                out[k] = _merge_layer(base.get(k), v, k)
+        return out
+    return over
+
+
+def merge_config_layers(general: dict, override: dict | None) -> dict:
+    """postext's `mergeConfigLayers`: `override` over `general`, field by
+    field (objects key by key; colours and lengths whole; lists of entries
+    with an `id` by id, `levels` by level, `customFonts` by name, new
+    entries appended, `{id, "$remove": true}` drops one; other lists whole;
+    `null` takes the general value out)."""
+    if not override:
+        return general
+    return _merge_layer(general, override, "")
+
+
+# What `_diff_layer` returns where the two layers agree.
+_DIFF_SAME = object()
+
+
+def _diff_layer(general: Any, own: Any, key: str) -> Any:
+    _missing = _DIFF_SAME
+    if general == own:
+        return _missing
+    if own is None:
+        return None
+    if isinstance(own, list) and isinstance(general, list):
+        field = _entry_key(key, general, own)
+        if field:
+            g_keys = [g[field] for g in general]
+            o_keys = [e[field] for e in own]
+            kept_in_order = [k for k in g_keys if k in o_keys] + [k for k in o_keys if k not in g_keys]
+            if len(set(o_keys)) == len(o_keys) and len(set(g_keys)) == len(g_keys) and kept_in_order == o_keys:
+                out = []
+                for e in own:
+                    g = next((x for x in general if x[field] == e[field]), None)
+                    if g is None:
+                        out.append(e)
+                    else:
+                        d = _diff_layer(g, e, "")
+                        if d is not _missing:
+                            out.append({**d, field: e[field]})
+                out += [{field: k, "$remove": True} for k in g_keys if k not in o_keys]
+                return out if out else _missing
+            return [{field: g[field], "$remove": True} for g in general] + own
+        return own
+    if isinstance(own, dict) and isinstance(general, dict) and not _is_atom(own) and not _is_atom(general):
+        out = {}
+        for k in list(general) + [k for k in own if k not in general]:
+            d = _diff_layer(general.get(k), own.get(k), k) if k in own else (None if general.get(k) is not None else _missing)
+            if d is not _missing:
+                out[k] = d
+        return out if out else _missing
+    return own
+
+
+def diff_config_layers(general: dict, own: dict) -> dict:
+    """postext's `diffConfigLayers`: the override that turns `general` into
+    `own` (configVersion 21): the fields `own` sets differently, `null` for
+    the ones it leaves out, a reordered keyed list as removals then the
+    list. `merge_config_layers(general, diff_config_layers(general, own))`
+    equals `own`. Use it to write `localized.<lang>.config` from each
+    edition's whole config."""
+    d = _diff_layer(general, own, "")
+    return {} if d is _DIFF_SAME else d
+
+
+def edition_config(shared: dict, own: dict | None, config_version: Any) -> dict:
+    """An edition's config as the engine reads it: `own` merged field by
+    field over `shared` under rules 21 or later, each of its top-level keys
+    replacing the shared one whole under older rules."""
+    if not isinstance(own, dict):
+        return shared
+    layered = isinstance(config_version, (int, float)) and not isinstance(config_version, bool) \
+        and config_version >= LOCALE_LAYER_RULES
+    return merge_config_layers(shared, own) if layered else {**shared, **own}
+
+
 def editions(data: dict, read: Any = None) -> list[dict]:
     """The editions of a manifest as the engine opens them: the primary
     locale with the shared `config`, then each other locale with the shared
-    config under its `localized.<lang>.config` (top-level keys replace), and
-    the front matter of the edition's first chapter. A bare config is one
-    edition with no metadata."""
+    config under its `localized.<lang>.config` (merged field by field from
+    configVersion 21, top-level keys replaced before; from 21 the primary
+    edition's own entry applies too), and the front matter of the edition's
+    first chapter. A bare config is one edition with no metadata."""
     is_manifest = isinstance(data.get("config"), dict) and ("chapters" in data or "version" in data)
     if not is_manifest:
         return [{"locale": None, "config": data, "own": set(), "metadata": {}}]
@@ -1497,8 +1628,9 @@ def editions(data: dict, read: Any = None) -> list[dict]:
         return None
     out = []
     for lang in locales:
-        own = _get(loc, lang, "config") if lang is not None and lang != primary else None
-        cfg = {**shared, **own} if isinstance(own, dict) else shared
+        layered = isinstance(data.get("configVersion"), (int, float)) and data["configVersion"] >= LOCALE_LAYER_RULES
+        own = _get(loc, lang, "config") if lang is not None and (lang != primary or layered) else None
+        cfg = edition_config(shared, own, data.get("configVersion"))
         out.append({"locale": lang, "config": cfg, "own": set(own) if isinstance(own, dict) else set(),
                     "metadata": front_matter(first_chapter(lang))})
     return out

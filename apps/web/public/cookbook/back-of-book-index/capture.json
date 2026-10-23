@@ -198,7 +198,7 @@
       },
       "sandbox": {
         "file": "back-of-book-index.postext",
-        "bytes": 29737,
+        "bytes": 41317,
         "folio": "8dec2b23",
         "chapters": [
           {
@@ -535,6 +535,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -727,7 +732,7 @@
       },
       "sandbox": {
         "file": "back-of-book-index.postext",
-        "bytes": 30301,
+        "bytes": 41807,
         "folio": "8dec2b23",
         "chapters": [
           {
@@ -1064,6 +1069,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

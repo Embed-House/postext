@@ -166,7 +166,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 374226,
+        "bytes": 657191,
         "folio": "846eba29",
         "chapters": [
           {
@@ -368,6 +368,16 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, fr, de, it"
           }
         ]
       }
@@ -721,6 +731,26 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it left out (the resources differ when read back)"
           }
         ]
       }
@@ -893,7 +923,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 375689,
+        "bytes": 657789,
         "folio": "846eba29",
         "chapters": [
           {
@@ -1110,6 +1140,16 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, de, it"
           }
         ]
       }
@@ -1282,7 +1322,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 376018,
+        "bytes": 657514,
         "folio": "846eba29",
         "chapters": [
           {
@@ -1494,6 +1534,16 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, fr, it"
           }
         ]
       }
@@ -1666,7 +1716,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 288254,
+        "bytes": 1342332,
         "folio": "846eba29",
         "chapters": [
           {
@@ -1863,6 +1913,16 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt left out (the resources differ when read back)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, fr, de"
           }
         ]
       }

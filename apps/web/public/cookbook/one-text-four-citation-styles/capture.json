@@ -109,7 +109,7 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17189,
+        "bytes": 19303,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
@@ -299,6 +299,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -403,7 +408,7 @@
       },
       "sandbox": {
         "file": "one-text-four-citation-styles.postext",
-        "bytes": 17959,
+        "bytes": 19948,
         "folio": "973c2e27",
         "keep": "first",
         "pages": 1,
@@ -583,6 +588,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

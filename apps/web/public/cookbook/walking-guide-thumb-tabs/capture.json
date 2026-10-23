@@ -151,7 +151,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52384,
+        "bytes": 55889,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -437,6 +437,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -583,7 +588,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52576,
+        "bytes": 55995,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -874,6 +879,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

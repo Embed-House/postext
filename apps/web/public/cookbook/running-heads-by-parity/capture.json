@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "running-heads-by-parity.postext",
-        "bytes": 24124,
+        "bytes": 28237,
         "folio": "95f31ab7",
         "chapters": [
           {
@@ -333,6 +333,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -453,7 +458,7 @@
       },
       "sandbox": {
         "file": "running-heads-by-parity.postext",
-        "bytes": 22523,
+        "bytes": 26777,
         "folio": "95f31ab7",
         "chapters": [
           {
@@ -651,6 +656,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

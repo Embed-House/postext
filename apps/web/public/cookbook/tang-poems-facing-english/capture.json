@@ -200,7 +200,7 @@
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 14903,
+        "bytes": 18793,
         "folio": "e5860b68",
         "chapters": [
           {
@@ -436,7 +436,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -629,7 +635,7 @@
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 15159,
+        "bytes": 18846,
         "folio": "e5860b68",
         "chapters": [
           {
@@ -865,7 +871,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

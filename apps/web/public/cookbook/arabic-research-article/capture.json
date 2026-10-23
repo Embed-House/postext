@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14436,
+        "bytes": 18553,
         "folio": "baed3d35",
         "chapters": [
           {
@@ -405,6 +405,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -530,7 +535,7 @@
       },
       "sandbox": {
         "file": "arabic-research-article.postext",
-        "bytes": 14514,
+        "bytes": 18560,
         "folio": "baed3d35",
         "chapters": [
           {
@@ -804,6 +809,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

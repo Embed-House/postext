@@ -172,7 +172,7 @@
       },
       "sandbox": {
         "file": "haiku-and-tanka.postext",
-        "bytes": 17547,
+        "bytes": 21221,
         "folio": "7e0edbf5",
         "chapters": [
           {
@@ -355,7 +355,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -520,7 +526,7 @@
       },
       "sandbox": {
         "file": "haiku-and-tanka.postext",
-        "bytes": 17542,
+        "bytes": 21216,
         "folio": "7e0edbf5",
         "chapters": [
           {
@@ -703,7 +709,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

@@ -117,7 +117,7 @@
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 26043,
+        "bytes": 30573,
         "folio": "662b056b",
         "chapters": [
           {
@@ -307,6 +307,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -418,7 +423,7 @@
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 26116,
+        "bytes": 30586,
         "folio": "662b056b",
         "chapters": [
           {
@@ -608,6 +613,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

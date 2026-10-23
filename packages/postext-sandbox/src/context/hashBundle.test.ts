@@ -34,7 +34,7 @@ describe('openHashBundle', () => {
     const out = await openHashBundle(ref, d);
     expect(out).toEqual({ projectId: 'project-new', imported: true });
     expect(d.fetchBytes).toHaveBeenCalledWith('/cookbook/magazine-feature-opener/es/magazine-feature-opener.postext');
-    expect(d.importBytes).toHaveBeenCalledWith(expect.any(ArrayBuffer), 'magazine-feature-opener.postext', 'recipe:magazine-feature-opener:es');
+    expect(d.importBytes).toHaveBeenCalledWith(expect.any(ArrayBuffer), 'magazine-feature-opener.postext', 'recipe:magazine-feature-opener:es', 'es');
   });
 
   it('opens the project imported before instead of importing again', async () => {

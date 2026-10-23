@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "org-chart-from-modules.postext",
-        "bytes": 984021,
+        "bytes": 986304,
         "folio": "90508e83",
         "chapters": [
           {
@@ -343,6 +343,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -426,7 +431,7 @@
       },
       "sandbox": {
         "file": "org-chart-from-modules.postext",
-        "bytes": 985215,
+        "bytes": 987378,
         "folio": "90508e83",
         "chapters": [
           {
@@ -680,6 +685,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

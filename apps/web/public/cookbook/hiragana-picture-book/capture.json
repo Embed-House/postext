@@ -199,7 +199,7 @@
       },
       "sandbox": {
         "file": "hiragana-picture-book.postext",
-        "bytes": 1737366,
+        "bytes": 1738468,
         "folio": "ada4348a",
         "chapters": [
           {
@@ -376,7 +376,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -568,7 +574,7 @@
       },
       "sandbox": {
         "file": "hiragana-picture-book.postext",
-        "bytes": 1737429,
+        "bytes": 1738530,
         "folio": "ada4348a",
         "chapters": [
           {
@@ -745,7 +751,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

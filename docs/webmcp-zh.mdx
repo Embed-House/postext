@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: '浏览器里的AI智能体借助沙盒的53个WebMCP工具能做什么：查看页面、修改任何设置、编辑文字、添加图片、表格和字体、运行检查、导出文件，以及每个工具怎样调用，附真实的参数和回答',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '9分钟',
   order: 48,
   plainSummary: "本页写给想让AI助手替自己在沙盒里处理一本书的人。沙盒打开时，会交给助手一套工具，用来查看任意一页、修改设计、编辑文字、添加图片和表格、找出问题和保存文件。你用自己的话提出要求，比如“把字稍微放大一点，再看看书是不是还能排在40页以内”，助手就去使用这些工具，并把页面给你看。一切都留在你的浏览器里。本页说明怎样接入助手、它能做什么，以及每个工具怎样调用。",
@@ -234,6 +234,19 @@ await browser.close();
 每次调用都是沙盒历史中的一步：`sandbox_undo`可以撤回它，就像Cmd/Ctrl+Z撤回在版面设计面板里做的修改一样。
 
 改动较大时，`patch`把一个对象合并进配置（对象合并，`null`删除，列表整个替换），`replace`则用一整份配置取代书的配置，比如导出的`postext-config.json`。`sandbox_reset_to_original`加上`part: "config"`，会恢复这本书最初的设计。
+
+多语言的书有一份每个版本都读取的通用设置，每个版本另外保留自己设置的字段（见[通用设置与各语言覆盖](/zh/docs/configuration-bundles#通用设置与各语言覆盖)）。`sandbox_get_config`和`sandbox_set_config`接受`scope`：`"all"`读写通用设置，`"edition"`读写屏幕上的版本。省略时，沿用版面设计面板当前所在的范围。在这样的书里，`sandbox_get_config`的回答带有`scope`和`ownFields`，后者是屏幕上的版本自行设置的路径：
+
+```jsonc
+// sandbox_set_config
+{ "scope": "all", "changes": [{ "path": "bodyText.fontSize", "value": "10.5pt" }] }
+```
+
+```json
+{ "ok": true, "scope": "all", "keptBy": ["ar"], "changed": [ … ] }
+```
+
+写入通用设置，会作用于所有没有自行设置该字段的版本。`keptBy`列出自行设置了该字段、因而保留自己取值的语言。要连它们一起改，就逐个打开（`sandbox_open_book`加上`language`），以`scope: "edition"`写入该路径：与通用值相同的取值不再属于该版本自己。在只有一种语言的书里，`scope: "all"`会被拒绝，因为它的所有设置都是自己的。
 
 字体也是设置：`sandbox_list_fonts`加上`search: "Garamond"`在开放字体目录中查找字族，把字族名写进某个`fontFamily`设置，字体就会加载。
 

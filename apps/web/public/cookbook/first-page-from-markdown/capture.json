@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193257,
+        "bytes": 207145,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -304,6 +304,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, pt, fr, de, it"
           }
         ]
       }
@@ -388,7 +393,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193536,
+        "bytes": 207321,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -593,6 +598,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, pt, fr, de, it"
           }
         ]
       }
@@ -677,7 +687,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193669,
+        "bytes": 207443,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -892,6 +902,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, fr, de, it"
           }
         ]
       }
@@ -976,7 +991,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193805,
+        "bytes": 207344,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -1181,6 +1196,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, pt, de, it"
           }
         ]
       }
@@ -1265,7 +1285,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 194738,
+        "bytes": 208290,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -1480,6 +1500,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, pt, fr, it"
           }
         ]
       }
@@ -1564,7 +1589,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193174,
+        "bytes": 206923,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -1769,6 +1794,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, pt, fr, de"
           }
         ]
       }

@@ -118,7 +118,7 @@
       },
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
-        "bytes": 507685,
+        "bytes": 511499,
         "folio": "351449da",
         "chapters": [
           {
@@ -385,6 +385,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -497,7 +502,7 @@
       },
       "sandbox": {
         "file": "zhuyin-vertical-reader.postext",
-        "bytes": 507720,
+        "bytes": 511497,
         "folio": "351449da",
         "chapters": [
           {
@@ -764,6 +769,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

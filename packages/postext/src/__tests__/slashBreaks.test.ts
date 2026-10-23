@@ -166,7 +166,7 @@ describe('pinLegacySlashBreaks (#1164)', () => {
   });
 
   it('pins every version before 19, whatever the chapters hold, and none from 19', () => {
-    expect(CONFIG_VERSION).toBe(20);
+    expect(CONFIG_VERSION).toBe(21);
     for (const v of [undefined, 1, 8, 12, 15, 16, 17, 18]) {
       expect(migrateConfig<PostextConfig>({}, v, { content: 'Words.' }).bodyText?.breakAfterSlashes, String(v)).toBe(false);
     }

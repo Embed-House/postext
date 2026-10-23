@@ -87,7 +87,7 @@ describe('paragraph styles inside a box (#1119)', () => {
 
 describe('rules 17: pinLegacyBoxParagraphStyles (#1119)', () => {
   it('comes before the current rule set', () => {
-    expect(CONFIG_VERSION).toBe(20);
+    expect(CONFIG_VERSION).toBe(21);
   });
 
   it('pins a configuration stored under 16 that declares paragraph styles', () => {

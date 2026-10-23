@@ -105,7 +105,7 @@
       },
       "sandbox": {
         "file": "bilingual-arabic-english-report.postext",
-        "bytes": 16243,
+        "bytes": 19122,
         "folio": "3c25eba8",
         "chapters": [
           {
@@ -348,6 +348,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 3 −10‰ “Training. Each workshop runs for five days, and …”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -447,7 +452,7 @@
       },
       "sandbox": {
         "file": "bilingual-arabic-english-report.postext",
-        "bytes": 16581,
+        "bytes": 19385,
         "folio": "3c25eba8",
         "chapters": [
           {
@@ -690,6 +695,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 1 −5‰ “Lo que más nos alegra de estas cifras es que la …”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }
