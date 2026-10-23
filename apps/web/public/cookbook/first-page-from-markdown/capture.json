@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "first-page-from-markdown",
-  "sourceHash": "60e64cfbe3ff1c4f07456ce5178b9dd11ffb281d315b4d245cfda42d83c29e9d",
+  "sourceHash": "9ceba8caab8bdad5891456e35928826669f51d518037e8f8b5fbca8f29be564e",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.810Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:55:01.186Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:35:36.692Z",
   "variants": {
     "en": {
-      "hash8": "00606634",
+      "hash8": "ed307756",
       "vdtHash": "b17bae9c514158d959680bef33b904542824380b",
       "timings": {
-        "importMs": 391,
-        "fontsMs": 39,
-        "buildMs": 95,
-        "totalMs": 1277,
+        "importMs": 241,
+        "fontsMs": 29,
+        "buildMs": 86,
+        "totalMs": 1167,
         "builds": 1
       },
       "specimen": {
@@ -94,7 +89,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193258,
+        "bytes": 193257,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -308,19 +303,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "d9689e3b",
+      "hash8": "99af28f8",
       "vdtHash": "073c3f4bd83fcbf8654dd6065e803279b577b633",
       "timings": {
-        "importMs": 483,
-        "fontsMs": 44,
-        "buildMs": 69,
-        "totalMs": 1407,
+        "importMs": 253,
+        "fontsMs": 22,
+        "buildMs": 58,
+        "totalMs": 998,
         "builds": 1
       },
       "specimen": {
@@ -393,7 +388,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193533,
+        "bytes": 193536,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -597,19 +592,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "4fb3d955",
+      "hash8": "260deb6c",
       "vdtHash": "3c13368de844c4ec267b6db597cabe4e839852d4",
       "timings": {
-        "importMs": 433,
-        "fontsMs": 29,
-        "buildMs": 79,
-        "totalMs": 1295,
+        "importMs": 207,
+        "fontsMs": 22,
+        "buildMs": 78,
+        "totalMs": 1075,
         "builds": 1
       },
       "specimen": {
@@ -682,7 +677,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193666,
+        "bytes": 193669,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -896,19 +891,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "fr": {
-      "hash8": "8ad85b42",
+      "hash8": "8c62df81",
       "vdtHash": "a7553f9a8ab93d9610215087a55df347f7ffb8e4",
       "timings": {
-        "importMs": 275,
-        "fontsMs": 80,
-        "buildMs": 89,
-        "totalMs": 1265,
+        "importMs": 233,
+        "fontsMs": 25,
+        "buildMs": 69,
+        "totalMs": 982,
         "builds": 1
       },
       "specimen": {
@@ -981,7 +976,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193799,
+        "bytes": 193805,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -1176,7 +1171,7 @@
         "looseLines": {
           "count": 1,
           "share": 0.0137,
-          "worst": 1.8900000000000001
+          "worst": 1.89
         },
         "raggedLines": {
           "count": 0
@@ -1185,19 +1180,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "de": {
-      "hash8": "b80490a6",
+      "hash8": "1c33cc6b",
       "vdtHash": "66d663579aeaa41534b7205a9c3f6bb844ea65d8",
       "timings": {
-        "importMs": 404,
-        "fontsMs": 28,
-        "buildMs": 115,
-        "totalMs": 1327,
+        "importMs": 167,
+        "fontsMs": 24,
+        "buildMs": 88,
+        "totalMs": 991,
         "builds": 1
       },
       "specimen": {
@@ -1270,7 +1265,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 194739,
+        "bytes": 194738,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -1484,19 +1479,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "it": {
-      "hash8": "36ccd20f",
+      "hash8": "a56231ba",
       "vdtHash": "67332a687a05f4ff715f4646a7dabba1d495b8a7",
       "timings": {
-        "importMs": 283,
+        "importMs": 173,
         "fontsMs": 22,
-        "buildMs": 92,
-        "totalMs": 1109,
+        "buildMs": 84,
+        "totalMs": 949,
         "builds": 1
       },
       "specimen": {
@@ -1569,7 +1564,7 @@
       },
       "sandbox": {
         "file": "first-page-from-markdown.postext",
-        "bytes": 193176,
+        "bytes": 193174,
         "folio": "579e6f1a",
         "chapters": [
           {
@@ -1773,7 +1768,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

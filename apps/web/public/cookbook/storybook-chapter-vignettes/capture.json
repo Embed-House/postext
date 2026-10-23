@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "storybook-chapter-vignettes",
-  "sourceHash": "acb476664477ce5433b764ce415ec0963fc79795dcd39651bda40d0475356da8",
+  "sourceHash": "512caef8348e7b82a35474af884a5c321592355886b1a47b066fccb944c29194",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:05:55.175Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:39.821Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:42:14.973Z",
   "variants": {
     "en": {
-      "hash8": "14c42f77",
+      "hash8": "1c17504d",
       "vdtHash": "6a2e4e0f46779e5e3dd234f0be0a161beb25d3d3",
       "timings": {
-        "importMs": 872,
+        "importMs": 623,
         "fontsMs": 62,
-        "buildMs": 84,
-        "totalMs": 1976,
+        "buildMs": 59,
+        "totalMs": 2435,
         "builds": 1
       },
       "specimen": {
@@ -130,7 +125,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 820952,
+        "bytes": 820950,
         "folio": "ebfafef3",
         "chapters": [
           {
@@ -333,9 +328,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -346,13 +341,13 @@
       }
     },
     "es": {
-      "hash8": "0b63db05",
+      "hash8": "1e4803aa",
       "vdtHash": "6a2e4e0f46779e5e3dd234f0be0a161beb25d3d3",
       "timings": {
-        "importMs": 777,
-        "fontsMs": 122,
-        "buildMs": 70,
-        "totalMs": 1961,
+        "importMs": 651,
+        "fontsMs": 62,
+        "buildMs": 60,
+        "totalMs": 2437,
         "builds": 1
       },
       "specimen": {
@@ -461,7 +456,7 @@
       },
       "sandbox": {
         "file": "storybook-chapter-vignettes.postext",
-        "bytes": 821002,
+        "bytes": 821006,
         "folio": "ebfafef3",
         "chapters": [
           {
@@ -664,9 +659,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

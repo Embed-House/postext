@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "technical-datasheet",
-  "sourceHash": "3501ccf6fdf5d131d2826dbd23532fd01d6a294c1edfa5e63f891d26466fdfc8",
+  "sourceHash": "b50c548b5c27f009f3f11cb4c254e584a82f4f713b50d139e4d5c32ce42b9bbb",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:48:42.103Z",
+  "capturedAt": "2026-10-23T07:42:15.051Z",
   "variants": {
     "en": {
-      "hash8": "930b03ae",
+      "hash8": "a1f97df6",
       "vdtHash": "7df32176e0a262d80da59a96330d0558ba1d3b8c",
       "timings": {
-        "importMs": 2207,
-        "fontsMs": 301,
-        "buildMs": 140,
-        "totalMs": 3759,
+        "importMs": 311,
+        "fontsMs": 81,
+        "buildMs": 96,
+        "totalMs": 1238,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "technical-datasheet.postext",
-        "bytes": 78264,
+        "bytes": 78261,
         "folio": "ca48c30e",
         "chapters": [
           {
@@ -442,11 +442,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

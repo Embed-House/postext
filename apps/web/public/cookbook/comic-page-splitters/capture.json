@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-page-splitters",
-  "sourceHash": "da3e5f99617a7a95cef79314e9f9d3b4cc163c41eb9cab4af81011a804ea2cdf",
+  "sourceHash": "a28f784a773e0dc08a8c7daf6a9f866461e05665341ad631293bc05f17f0d87e",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:33:58.512Z",
+  "capturedAt": "2026-10-23T07:34:49.094Z",
   "variants": {
     "en": {
-      "hash8": "31b3abd6",
+      "hash8": "4c6cc986",
       "vdtHash": "f727ec43ba9b71a50f56e00a9d9b89f53d4870b9",
       "timings": {
-        "importMs": 559,
-        "fontsMs": 144,
-        "buildMs": 443,
-        "totalMs": 1804,
+        "importMs": 242,
+        "fontsMs": 179,
+        "buildMs": 393,
+        "totalMs": 1621,
         "builds": 1
       },
       "specimen": {
@@ -119,7 +119,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808790,
+        "bytes": 808788,
         "chapters": [
           {
             "pages": 4,
@@ -301,23 +301,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "02ea406d",
+      "hash8": "ed4c62fe",
       "vdtHash": "c75d0046fad73ee2c97d9da83f36f3c826b29f60",
       "timings": {
-        "importMs": 561,
-        "fontsMs": 174,
-        "buildMs": 496,
-        "totalMs": 1923,
+        "importMs": 383,
+        "fontsMs": 89,
+        "buildMs": 437,
+        "totalMs": 1628,
         "builds": 1
       },
       "specimen": {
@@ -601,23 +596,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "ca": {
-      "hash8": "927e6418",
+      "hash8": "bc15ff77",
       "vdtHash": "cc02701ee828ad1613e20a5959288ae02326c3f9",
       "timings": {
-        "importMs": 557,
-        "fontsMs": 159,
-        "buildMs": 460,
-        "totalMs": 1881,
+        "importMs": 263,
+        "fontsMs": 263,
+        "buildMs": 416,
+        "totalMs": 1587,
         "builds": 1
       },
       "specimen": {
@@ -719,7 +709,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808782,
+        "bytes": 808781,
         "chapters": [
           {
             "pages": 4,
@@ -901,23 +891,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "zh": {
-      "hash8": "21b5cda7",
+      "hash8": "36e743c7",
       "vdtHash": "04e0014d2f4dc72332cf0855440b5697c333b72c",
       "timings": {
-        "importMs": 687,
-        "fontsMs": 506,
-        "buildMs": 497,
-        "totalMs": 2372,
+        "importMs": 245,
+        "fontsMs": 246,
+        "buildMs": 348,
+        "totalMs": 1548,
         "builds": 1
       },
       "specimen": {
@@ -1019,7 +1004,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809385,
+        "bytes": 809383,
         "chapters": [
           {
             "pages": 4,
@@ -1202,23 +1187,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "ec94f1a2",
+      "hash8": "b8e16df4",
       "vdtHash": "4d4e64ed4850dbd8ecf021e7bb436db55b3e4450",
       "timings": {
-        "importMs": 524,
-        "fontsMs": 228,
-        "buildMs": 507,
-        "totalMs": 1942,
+        "importMs": 221,
+        "fontsMs": 363,
+        "buildMs": 428,
+        "totalMs": 1624,
         "builds": 1
       },
       "specimen": {
@@ -1321,7 +1301,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809690,
+        "bytes": 809689,
         "chapters": [
           {
             "pages": 4,
@@ -1506,23 +1486,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "ja": {
-      "hash8": "abd228d0",
+      "hash8": "828dc758",
       "vdtHash": "2bf69ef3c3ac10a693f8b95ed3e6f8ed68f69c2d",
       "timings": {
-        "importMs": 544,
-        "fontsMs": 551,
-        "buildMs": 489,
-        "totalMs": 2238,
+        "importMs": 231,
+        "fontsMs": 274,
+        "buildMs": 381,
+        "totalMs": 1481,
         "builds": 1
       },
       "specimen": {
@@ -1625,7 +1600,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809557,
+        "bytes": 809556,
         "chapters": [
           {
             "pages": 4,
@@ -1809,23 +1784,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "6dfd5315",
+      "hash8": "ee910a39",
       "vdtHash": "7a7072cfd5e293567615cce8aac85d5b262ce8b5",
       "timings": {
-        "importMs": 307,
-        "fontsMs": 451,
-        "buildMs": 457,
-        "totalMs": 1827,
+        "importMs": 226,
+        "fontsMs": 102,
+        "buildMs": 406,
+        "totalMs": 1327,
         "builds": 1
       },
       "specimen": {
@@ -2109,23 +2079,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "fr": {
-      "hash8": "333f1ede",
+      "hash8": "868ffdbf",
       "vdtHash": "dc926fc1e22335866e3cad3e26d3b21f8ffeb574",
       "timings": {
-        "importMs": 305,
-        "fontsMs": 154,
-        "buildMs": 443,
-        "totalMs": 1538,
+        "importMs": 229,
+        "fontsMs": 89,
+        "buildMs": 391,
+        "totalMs": 1377,
         "builds": 1
       },
       "specimen": {
@@ -2227,7 +2192,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809095,
+        "bytes": 809094,
         "chapters": [
           {
             "pages": 4,
@@ -2409,23 +2374,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "de": {
-      "hash8": "986d4289",
+      "hash8": "6b7b662e",
       "vdtHash": "e12b38c40b7b5eb081b5ff448fe2958ce0bda5ad",
       "timings": {
-        "importMs": 366,
-        "fontsMs": 93,
-        "buildMs": 405,
-        "totalMs": 1547,
+        "importMs": 200,
+        "fontsMs": 109,
+        "buildMs": 402,
+        "totalMs": 1346,
         "builds": 1
       },
       "specimen": {
@@ -2527,7 +2487,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809178,
+        "bytes": 809177,
         "chapters": [
           {
             "pages": 4,
@@ -2709,23 +2669,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "it": {
-      "hash8": "c37b1fc1",
+      "hash8": "e55905ea",
       "vdtHash": "13d08ad18320f7df5dc74cad8fe93f3df8c665f7",
       "timings": {
-        "importMs": 293,
-        "fontsMs": 93,
-        "buildMs": 392,
-        "totalMs": 1391,
+        "importMs": 202,
+        "fontsMs": 89,
+        "buildMs": 385,
+        "totalMs": 1307,
         "builds": 1
       },
       "specimen": {
@@ -2827,7 +2782,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809045,
+        "bytes": 809044,
         "chapters": [
           {
             "pages": 4,
@@ -3009,11 +2964,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-dictionary-page",
-  "sourceHash": "c138e1c702325704a11ecb487873ac9289bb2d9348684afd7a827c276493067d",
+  "sourceHash": "7e4c7d76de554913f13292155a25b546fa69b4ea15726610f03c600905223964",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:53:17.616Z",
+  "capturedAt": "2026-10-23T07:32:12.462Z",
   "variants": {
     "en": {
-      "hash8": "7edb6ab0",
+      "hash8": "3c28f0de",
       "vdtHash": "14d4d8506ffa1837119ab89f2594c754da927bf0",
       "timings": {
-        "importMs": 2220,
-        "fontsMs": 1014,
-        "buildMs": 92,
-        "totalMs": 4336,
+        "importMs": 246,
+        "fontsMs": 539,
+        "buildMs": 69,
+        "totalMs": 1483,
         "builds": 1
       },
       "specimen": {
@@ -112,12 +112,12 @@
       },
       "pdf": {
         "file": "chinese-dictionary-page.pdf",
-        "bytes": 310433,
+        "bytes": 310447,
         "pages": 4
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 26042,
+        "bytes": 26043,
         "folio": "662b056b",
         "chapters": [
           {
@@ -304,11 +304,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -317,13 +312,13 @@
       }
     },
     "es": {
-      "hash8": "568245a2",
+      "hash8": "8f80e148",
       "vdtHash": "1aeac785e2d796b6da3f1c1e1584832851430942",
       "timings": {
-        "importMs": 2833,
-        "fontsMs": 1283,
-        "buildMs": 95,
-        "totalMs": 4987,
+        "importMs": 323,
+        "fontsMs": 424,
+        "buildMs": 68,
+        "totalMs": 1446,
         "builds": 1
       },
       "specimen": {
@@ -423,7 +418,7 @@
       },
       "sandbox": {
         "file": "chinese-dictionary-page.postext",
-        "bytes": 26115,
+        "bytes": 26116,
         "folio": "662b056b",
         "chapters": [
           {
@@ -609,11 +604,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

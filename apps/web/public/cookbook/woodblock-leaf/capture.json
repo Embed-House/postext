@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "woodblock-leaf",
-  "sourceHash": "07a15030b01f02437704bd2f859bc15ea41cbc0b87395348262672824e375e69",
+  "sourceHash": "e2fd8a6b3e4dbf325ba69545915455c2dba6a00575493dec34d372b52f8400a3",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.742Z",
+  "capturedAt": "2026-10-23T07:43:09.600Z",
   "variants": {
     "en": {
-      "hash8": "59fcb146",
+      "hash8": "29dee23c",
       "vdtHash": "91ea12b4e4b739496a275ae667b92b4fef3b7255",
       "timings": {
-        "importMs": 2561,
-        "fontsMs": 1938,
-        "buildMs": 66,
-        "totalMs": 5834,
+        "importMs": 366,
+        "fontsMs": 287,
+        "buildMs": 52,
+        "totalMs": 1329,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 32956,
+          "bytes": 32962,
           "alt": "Opening page 1: 論語集註."
         },
         {
@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "woodblock-leaf.postext",
-        "bytes": 25763,
+        "bytes": 25765,
         "folio": "64761808",
         "chapters": [
           {
@@ -308,11 +308,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
@@ -321,13 +316,13 @@
       }
     },
     "es": {
-      "hash8": "8bb21624",
+      "hash8": "a8de8ced",
       "vdtHash": "644b1ce8232fdd9b1350f719fe85772a763d0d2d",
       "timings": {
-        "importMs": 2850,
-        "fontsMs": 725,
-        "buildMs": 75,
-        "totalMs": 5246,
+        "importMs": 442,
+        "fontsMs": 158,
+        "buildMs": 55,
+        "totalMs": 1320,
         "builds": 1
       },
       "specimen": {
@@ -359,7 +354,7 @@
           "h": 1764,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 33770,
+          "bytes": 33784,
           "alt": "Página de apertura 1: 論語集註."
         },
         {
@@ -441,7 +436,7 @@
       },
       "sandbox": {
         "file": "woodblock-leaf.postext",
-        "bytes": 25799,
+        "bytes": 25801,
         "folio": "64761808",
         "chapters": [
           {
@@ -617,11 +612,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

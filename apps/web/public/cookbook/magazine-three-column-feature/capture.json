@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-three-column-feature",
-  "sourceHash": "fe7eeb6ff7b338db6e155af0c83105c0bb3546aec2c8c14cf71cb88af85c6119",
+  "sourceHash": "b4fab629c7ecd39c604243e3d56726faf3cd4129b6a3eddf0267b6488d1fb2f3",
   "engine": {
-    "postext": "1.42.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-18T09:23:27.316Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:03:34.363Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:39:08.061Z",
   "variants": {
     "en": {
-      "hash8": "6e36ea26",
+      "hash8": "858a5667",
       "vdtHash": "e99bed70a03a36125954ecc3d8d6aa2a9057ca83",
       "timings": {
-        "importMs": 472,
-        "fontsMs": 80,
-        "buildMs": 83,
-        "totalMs": 1660,
+        "importMs": 298,
+        "fontsMs": 112,
+        "buildMs": 94,
+        "totalMs": 1282,
         "builds": 1
       },
       "specimen": {
@@ -430,7 +425,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",

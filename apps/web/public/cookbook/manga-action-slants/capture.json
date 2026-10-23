@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "manga-action-slants",
-  "sourceHash": "20b94e52f8b40e904843fce099f829ec358f53c6c49a7c16a5ee5601d171731a",
+  "sourceHash": "e784fd726d90366cd8065350ab3ad92040429e6fc034124fccfc36d8386ce9b1",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:28:59.747Z",
+  "capturedAt": "2026-10-23T07:39:08.073Z",
   "variants": {
     "en": {
-      "hash8": "8b5ab842",
+      "hash8": "8c5ba31e",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1542,
-        "fontsMs": 718,
-        "buildMs": 201,
-        "totalMs": 3321,
+        "importMs": 585,
+        "fontsMs": 719,
+        "buildMs": 176,
+        "totalMs": 2219,
         "builds": 2
       },
       "specimen": {
@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 957984,
+        "bytes": 957978,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -229,11 +229,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -247,13 +242,13 @@
       }
     },
     "es": {
-      "hash8": "b4878731",
+      "hash8": "7b47bd73",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1230,
-        "fontsMs": 853,
-        "buildMs": 233,
-        "totalMs": 3106,
+        "importMs": 355,
+        "fontsMs": 437,
+        "buildMs": 168,
+        "totalMs": 1681,
         "builds": 2
       },
       "specimen": {
@@ -324,7 +319,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958029,
+        "bytes": 958019,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -465,11 +460,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -483,13 +473,13 @@
       }
     },
     "ca": {
-      "hash8": "d273f56e",
+      "hash8": "31d04eb3",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1391,
-        "fontsMs": 734,
-        "buildMs": 202,
-        "totalMs": 3194,
+        "importMs": 429,
+        "fontsMs": 630,
+        "buildMs": 176,
+        "totalMs": 2059,
         "builds": 2
       },
       "specimen": {
@@ -560,7 +550,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958038,
+        "bytes": 958022,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -701,11 +691,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -719,13 +704,13 @@
       }
     },
     "zh": {
-      "hash8": "eced0739",
+      "hash8": "765b06d9",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1055,
-        "fontsMs": 975,
-        "buildMs": 206,
-        "totalMs": 3678,
+        "importMs": 424,
+        "fontsMs": 587,
+        "buildMs": 169,
+        "totalMs": 2140,
         "builds": 2
       },
       "specimen": {
@@ -796,7 +781,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 957925,
+        "bytes": 957903,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -937,11 +922,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -955,13 +935,13 @@
       }
     },
     "ar": {
-      "hash8": "76b98c12",
+      "hash8": "da98c71e",
       "vdtHash": "08247c9074426635127f197675bbff6d2e99ae28",
       "timings": {
-        "importMs": 1624,
-        "fontsMs": 842,
-        "buildMs": 213,
-        "totalMs": 3841,
+        "importMs": 279,
+        "fontsMs": 471,
+        "buildMs": 167,
+        "totalMs": 1721,
         "builds": 2
       },
       "specimen": {
@@ -1032,7 +1012,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958032,
+        "bytes": 958027,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1173,11 +1153,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1191,13 +1166,13 @@
       }
     },
     "ja": {
-      "hash8": "0e645db4",
+      "hash8": "dbcba679",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1368,
-        "fontsMs": 729,
-        "buildMs": 194,
-        "totalMs": 3194,
+        "importMs": 580,
+        "fontsMs": 718,
+        "buildMs": 176,
+        "totalMs": 2286,
         "builds": 2
       },
       "specimen": {
@@ -1268,7 +1243,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958199,
+        "bytes": 958195,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1409,11 +1384,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1432,13 +1402,13 @@
       }
     },
     "pt": {
-      "hash8": "7ef26cea",
+      "hash8": "6fbedd58",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1702,
-        "fontsMs": 948,
-        "buildMs": 229,
-        "totalMs": 3738,
+        "importMs": 404,
+        "fontsMs": 710,
+        "buildMs": 166,
+        "totalMs": 2003,
         "builds": 2
       },
       "specimen": {
@@ -1509,7 +1479,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 957995,
+        "bytes": 957975,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1650,11 +1620,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1668,13 +1633,13 @@
       }
     },
     "fr": {
-      "hash8": "e7bb5237",
+      "hash8": "36d23a17",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1263,
-        "fontsMs": 747,
-        "buildMs": 216,
-        "totalMs": 3261,
+        "importMs": 618,
+        "fontsMs": 438,
+        "buildMs": 168,
+        "totalMs": 2018,
         "builds": 2
       },
       "specimen": {
@@ -1745,7 +1710,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958174,
+        "bytes": 958169,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1886,11 +1851,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -1904,13 +1864,13 @@
       }
     },
     "de": {
-      "hash8": "808ca8e0",
+      "hash8": "f39b7909",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1130,
-        "fontsMs": 825,
-        "buildMs": 222,
-        "totalMs": 3177,
+        "importMs": 622,
+        "fontsMs": 439,
+        "buildMs": 166,
+        "totalMs": 1948,
         "builds": 2
       },
       "specimen": {
@@ -1981,7 +1941,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958047,
+        "bytes": 958033,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -2122,11 +2082,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "capture.sandbox keeps build 2 of 2; build 1 left out (another configuration)"
@@ -2140,13 +2095,13 @@
       }
     },
     "it": {
-      "hash8": "6da12c9d",
+      "hash8": "21aeed60",
       "vdtHash": "edf7e181b770ebe984a92cac22158327d3bcec4c",
       "timings": {
-        "importMs": 1241,
-        "fontsMs": 707,
-        "buildMs": 218,
-        "totalMs": 3036,
+        "importMs": 330,
+        "fontsMs": 740,
+        "buildMs": 162,
+        "totalMs": 1961,
         "builds": 2
       },
       "specimen": {
@@ -2217,7 +2172,7 @@
       },
       "sandbox": {
         "file": "manga-action-slants.postext",
-        "bytes": 958202,
+        "bytes": 958189,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -2357,11 +2312,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

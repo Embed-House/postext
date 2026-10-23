@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "qasida-diwan-page",
-  "sourceHash": "39183ba6b4619bb041e181ee2b080abfdb802df7e8626c4c5312d15f0b8e1f99",
+  "sourceHash": "7bfc2ba9be02c55867cbaf6fdd548a8d106cd148833cca1e31ab71af00489f98",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:11:08.751Z",
+  "capturedAt": "2026-10-23T07:40:58.438Z",
   "variants": {
     "en": {
-      "hash8": "e545fd09",
+      "hash8": "07c58c58",
       "vdtHash": "a2de36f161921abba6d6b783ec7068c051924234",
       "timings": {
-        "importMs": 2863,
-        "fontsMs": 172,
+        "importMs": 334,
+        "fontsMs": 252,
         "buildMs": 97,
-        "totalMs": 4319,
+        "totalMs": 1312,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "qasida-diwan-page.postext",
-        "bytes": 29830,
+        "bytes": 29839,
         "chapters": [
           {
             "pages": 4,
@@ -320,23 +320,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "6dc14b6f",
+      "hash8": "b72711f8",
       "vdtHash": "879a6fd736f34628204715cbf24370b7e54ace31",
       "timings": {
-        "importMs": 2927,
-        "fontsMs": 219,
-        "buildMs": 121,
-        "totalMs": 4484,
+        "importMs": 422,
+        "fontsMs": 115,
+        "buildMs": 95,
+        "totalMs": 1345,
         "builds": 1
       },
       "specimen": {
@@ -440,7 +434,7 @@
       },
       "sandbox": {
         "file": "qasida-diwan-page.postext",
-        "bytes": 29885,
+        "bytes": 29894,
         "chapters": [
           {
             "pages": 4,
@@ -639,13 +633,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

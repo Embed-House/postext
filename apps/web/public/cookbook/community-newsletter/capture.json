@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "community-newsletter",
-  "sourceHash": "3deb41f2c823580d7f9ba0332d3b2451b3be609864db6e6d2c628188ed244304",
+  "sourceHash": "0463c8d75c56b3921fcc9a60c98a22a6ea33bbeb627b85c8b007fd0fd497c1ac",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.246Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:54:13.399Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:34:49.148Z",
   "variants": {
     "en": {
-      "hash8": "8047ff4d",
+      "hash8": "0819f72b",
       "vdtHash": "d5f528c1898961589bbd0d00ab128b8154b465c0",
       "timings": {
-        "importMs": 231,
-        "fontsMs": 35,
-        "buildMs": 68,
-        "totalMs": 957,
+        "importMs": 169,
+        "fontsMs": 29,
+        "buildMs": 55,
+        "totalMs": 1730,
         "builds": 1
       },
       "specimen": {
@@ -94,7 +89,7 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81170,
+        "bytes": 81168,
         "folio": "0414c868",
         "chapters": [
           {
@@ -315,17 +310,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "08ac212b",
+      "hash8": "1e46757d",
       "vdtHash": "a62a7faa8305895a7ad2843b3dab7f88b31d12f8",
       "timings": {
-        "importMs": 170,
-        "fontsMs": 27,
-        "buildMs": 59,
-        "totalMs": 989,
+        "importMs": 155,
+        "fontsMs": 22,
+        "buildMs": 52,
+        "totalMs": 892,
         "builds": 1
       },
       "specimen": {
@@ -398,7 +399,7 @@
       },
       "sandbox": {
         "file": "community-newsletter.postext",
-        "bytes": 81779,
+        "bytes": 81778,
         "folio": "0414c868",
         "chapters": [
           {
@@ -619,7 +620,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

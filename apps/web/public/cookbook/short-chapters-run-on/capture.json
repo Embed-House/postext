@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "short-chapters-run-on",
-  "sourceHash": "4215a62f835bd117d137d675164274d39dc7f79a237ea40adaf2e19492ad9db8",
+  "sourceHash": "dd523cceebd320658d6c11d7aee36489ca9523c39fe0b9d844b680770ffa8283",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:04:42.062Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:39.817Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:41:23.098Z",
   "variants": {
     "en": {
-      "hash8": "686485db",
+      "hash8": "d303a0f1",
       "vdtHash": "ab112423bc99922fae874651579bb0aa31ba51f1",
       "timings": {
-        "importMs": 543,
-        "fontsMs": 96,
-        "buildMs": 79,
-        "totalMs": 1396,
+        "importMs": 222,
+        "fontsMs": 33,
+        "buildMs": 68,
+        "totalMs": 3047,
         "builds": 1
       },
       "specimen": {
@@ -35,7 +30,7 @@
         "body": {
           "family": "Tinos",
           "sizePt": 9.5,
-          "leadingPt": 12.600000000000001
+          "leadingPt": 12.6
         },
         "families": [
           "Abril Fatface",
@@ -156,7 +151,7 @@
       },
       "sandbox": {
         "file": "short-chapters-run-on.postext",
-        "bytes": 322270,
+        "bytes": 322271,
         "folio": "badc8643",
         "chapters": [
           {
@@ -351,12 +346,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages)"
+            "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -372,13 +367,13 @@
       }
     },
     "es": {
-      "hash8": "00ba7151",
+      "hash8": "00754fb8",
       "vdtHash": "ab112423bc99922fae874651579bb0aa31ba51f1",
       "timings": {
-        "importMs": 413,
-        "fontsMs": 40,
-        "buildMs": 73,
-        "totalMs": 1338,
+        "importMs": 303,
+        "fontsMs": 35,
+        "buildMs": 67,
+        "totalMs": 2053,
         "builds": 1
       },
       "specimen": {
@@ -392,7 +387,7 @@
         "body": {
           "family": "Tinos",
           "sizePt": 9.5,
-          "leadingPt": 12.600000000000001
+          "leadingPt": 12.6
         },
         "families": [
           "Abril Fatface",
@@ -513,7 +508,7 @@
       },
       "sandbox": {
         "file": "short-chapters-run-on.postext",
-        "bytes": 322282,
+        "bytes": 322284,
         "folio": "badc8643",
         "chapters": [
           {
@@ -708,12 +703,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages)"
+            "detail": "the edition's images weigh 0.98 MB (warning at 0.9 MB for 7 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

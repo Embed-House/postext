@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "paper-swatch-book",
-  "sourceHash": "c230c9e24b8854c3e728a3e2e1e0fc0fe047b5986048f8b059afe226e51a3ebf",
+  "sourceHash": "26993935f33275da04080b6bfdda70937a7eee16da07b27f9099cd30ccd49f6a",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:03:18.040Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:06:42.378Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:39:33.916Z",
   "variants": {
     "en": {
-      "hash8": "580a62b8",
+      "hash8": "15e16e30",
       "vdtHash": "f42700b73e71ba6b2b731760fd001dbfce977673",
       "timings": {
-        "importMs": 1168,
-        "fontsMs": 5,
-        "buildMs": 89,
-        "totalMs": 2409,
+        "importMs": 245,
+        "fontsMs": 3,
+        "buildMs": 59,
+        "totalMs": 966,
         "builds": 1
       },
       "specimen": {
@@ -34,7 +29,7 @@
         "mirror": true,
         "body": {
           "family": "Crimson Pro",
-          "sizePt": 10.200000000000001,
+          "sizePt": 10.2,
           "leadingPt": 13.4
         },
         "families": [
@@ -223,7 +218,7 @@
       },
       "sandbox": {
         "file": "paper-swatch-book.postext",
-        "bytes": 30829,
+        "bytes": 30828,
         "folio": "c0edc776",
         "chapters": [
           {
@@ -440,16 +435,16 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.8900000000000001
+          "worst": 1.89
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

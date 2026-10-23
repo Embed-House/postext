@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "textbook-margin-column",
-  "sourceHash": "db2019aaca18f7ac1335c6b789b6c3d1d99a3bcf74b3d90ae315fa7debaf9585",
+  "sourceHash": "25557c337357f9fbb15a7a7ade544c243b641f143a64951432e56860c86598b5",
   "engine": {
-    "postext": "1.33.7",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:24:20.738Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:14:59.222Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:42:15.061Z",
   "variants": {
     "en": {
-      "hash8": "18d9a4f6",
+      "hash8": "cab0713c",
       "vdtHash": "144f19caf9c2021887d2422770e4b2cc02ae94a8",
       "timings": {
-        "importMs": 807,
-        "fontsMs": 7,
-        "buildMs": 94,
-        "totalMs": 3145,
+        "importMs": 199,
+        "fontsMs": 5,
+        "buildMs": 66,
+        "totalMs": 1937,
         "builds": 1
       },
       "specimen": {
@@ -119,7 +114,7 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29478,
+        "bytes": 29477,
         "folio": "ccdc6a5d",
         "chapters": [
           {
@@ -393,7 +388,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -404,13 +399,13 @@
       }
     },
     "es": {
-      "hash8": "b3bc387b",
+      "hash8": "9d57609f",
       "vdtHash": "78fa29b18b0579cd99543da686a93a8f528b3414",
       "timings": {
-        "importMs": 1479,
+        "importMs": 187,
         "fontsMs": 4,
-        "buildMs": 70,
-        "totalMs": 2540,
+        "buildMs": 69,
+        "totalMs": 1582,
         "builds": 1
       },
       "specimen": {
@@ -508,7 +503,7 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29846,
+        "bytes": 29845,
         "folio": "ccdc6a5d",
         "chapters": [
           {
@@ -782,7 +777,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.79, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           },
           {
             "check": "sandbox",

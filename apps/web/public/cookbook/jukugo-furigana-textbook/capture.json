@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "jukugo-furigana-textbook",
-  "sourceHash": "de6112468e8a6623d0ddd331bcec1dc8858df2437ff517a678940af67b89a5ff",
+  "sourceHash": "2c0e9a3bcce6f76b39457564c03d4b3ccbc0d422b123c72792dd7acbe15b2029",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:33:58.877Z",
+  "capturedAt": "2026-10-23T07:37:57.697Z",
   "variants": {
     "en": {
-      "hash8": "810222b5",
+      "hash8": "10ef3c0c",
       "vdtHash": "6e5e8dd18321bc7f21cc4b6bcaf3aaca338a7d18",
       "timings": {
-        "importMs": 961,
-        "fontsMs": 249,
-        "buildMs": 94,
-        "totalMs": 1951,
+        "importMs": 413,
+        "fontsMs": 177,
+        "buildMs": 71,
+        "totalMs": 1274,
         "builds": 1
       },
       "specimen": {
@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "jukugo-furigana-textbook.postext",
-        "bytes": 22835,
+        "bytes": 22830,
         "folio": "2b1033e5",
         "chapters": [
           {
@@ -311,11 +311,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -324,13 +319,13 @@
       }
     },
     "es": {
-      "hash8": "b8979e35",
+      "hash8": "32d2658a",
       "vdtHash": "d3004bd578b580c86a76da9efb73bb7bbab62326",
       "timings": {
-        "importMs": 1012,
-        "fontsMs": 524,
-        "buildMs": 88,
-        "totalMs": 2429,
+        "importMs": 411,
+        "fontsMs": 171,
+        "buildMs": 67,
+        "totalMs": 1268,
         "builds": 1
       },
       "specimen": {
@@ -417,7 +412,7 @@
       },
       "sandbox": {
         "file": "jukugo-furigana-textbook.postext",
-        "bytes": 22867,
+        "bytes": 22862,
         "folio": "2b1033e5",
         "chapters": [
           {
@@ -623,11 +618,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

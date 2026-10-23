@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "edited-volume-chapter-bibliographies",
-  "sourceHash": "243115501305e95914962430c285ebfb1d8971ddbbe77ed9bd63f1e97853f57d",
+  "sourceHash": "10f06a700a262421122184557b16f51acf18282f649fc2db0d791fbbf767d10c",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:59:39.021Z",
+  "capturedAt": "2026-10-23T07:51:48.423Z",
   "variants": {
     "en": {
-      "hash8": "7f8ad7e7",
+      "hash8": "10cb4c4a",
       "vdtHash": "58997a2cbc15aa06efcdbdbe1d9c4c5cbbeb8f4f",
       "timings": {
-        "importMs": 1445,
-        "fontsMs": 142,
-        "buildMs": 626,
-        "totalMs": 3072,
+        "importMs": 729,
+        "fontsMs": 87,
+        "buildMs": 545,
+        "totalMs": 2275,
         "builds": 1
       },
       "specimen": {
@@ -198,7 +198,7 @@
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17598,
+        "bytes": 17597,
         "folio": "3594c3d3",
         "chapters": [
           {
@@ -497,31 +497,21 @@
         },
         "findings": [
           {
-            "check": "C3",
-            "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
-          },
-          {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "3f09fab7",
+      "hash8": "0b909125",
       "vdtHash": "06dab4d023c24fa868062edd94a3176adb471b90",
       "timings": {
-        "importMs": 1583,
-        "fontsMs": 113,
-        "buildMs": 598,
-        "totalMs": 3036,
+        "importMs": 478,
+        "fontsMs": 85,
+        "buildMs": 563,
+        "totalMs": 2009,
         "builds": 1
       },
       "specimen": {
@@ -702,7 +692,7 @@
       },
       "sandbox": {
         "file": "edited-volume-chapter-bibliographies.postext",
-        "bytes": 17727,
+        "bytes": 17726,
         "folio": "3594c3d3",
         "chapters": [
           {
@@ -1001,19 +991,9 @@
         },
         "findings": [
           {
-            "check": "C3",
-            "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
-          },
-          {
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.21 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

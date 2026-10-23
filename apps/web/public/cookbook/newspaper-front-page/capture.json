@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "newspaper-front-page",
-  "sourceHash": "3be32d110eb6114ae2fb38aa0fcb022f59926438bcf2b53a2f571669f09982d2",
+  "sourceHash": "590e868edc59d98dbeb93e1345d88732d15d68e10f7aa12d9dec9aecd3f8438e",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:02:23.910Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:06:42.350Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:39:33.860Z",
   "variants": {
     "en": {
-      "hash8": "0470a0e4",
+      "hash8": "1ec9ac3d",
       "vdtHash": "82096ab3ca1f22d2840439f11b06ef3d54c1b266",
       "timings": {
-        "importMs": 658,
-        "fontsMs": 148,
-        "buildMs": 132,
-        "totalMs": 2030,
+        "importMs": 165,
+        "fontsMs": 32,
+        "buildMs": 89,
+        "totalMs": 950,
         "builds": 1
       },
       "specimen": {
@@ -36,7 +31,7 @@
         "body": {
           "family": "PT Serif",
           "sizePt": 9.4,
-          "leadingPt": 12.600000000000001
+          "leadingPt": 12.6
         },
         "families": [
           "Grenze Gotisch",
@@ -94,7 +89,7 @@
       },
       "sandbox": {
         "file": "newspaper-front-page.postext",
-        "bytes": 200640,
+        "bytes": 200642,
         "folio": "7d33b710",
         "chapters": [
           {
@@ -392,9 +387,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

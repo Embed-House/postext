@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "vocalised-classical-prose",
-  "sourceHash": "5dccd7f233537a373ba20d0d9c68e77f0cdbf943a51a508945a2c59219aac202",
+  "sourceHash": "128b0456afe1c047cb0df07a959bb1535419bab60ea44d036f3bc33b03577476",
   "engine": {
-    "postext": "1.29.2",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:06:14.185Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:02:55.387Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:43:09.585Z",
   "variants": {
     "en": {
-      "hash8": "6d38e739",
+      "hash8": "924812e0",
       "vdtHash": "3ee5260508696be07c239cd7e0ef72102c7c91fe",
       "timings": {
-        "importMs": 1898,
-        "fontsMs": 274,
-        "buildMs": 151,
-        "totalMs": 3667,
+        "importMs": 235,
+        "fontsMs": 43,
+        "buildMs": 81,
+        "totalMs": 979,
         "builds": 1
       },
       "specimen": {
@@ -119,7 +114,7 @@
       },
       "sandbox": {
         "file": "vocalised-classical-prose.postext",
-        "bytes": 36330,
+        "bytes": 36329,
         "chapters": [
           {
             "pages": 4,
@@ -281,18 +276,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Set in Amiri and Aref Ruqaa (SIL OFL) · Text: al…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "40e28a33",
+      "hash8": "4f36afd3",
       "vdtHash": "60238519a34f1d62bfad9b498caba15c2afaf7a1",
       "timings": {
-        "importMs": 1219,
-        "fontsMs": 177,
-        "buildMs": 182,
-        "totalMs": 2753,
+        "importMs": 338,
+        "fontsMs": 116,
+        "buildMs": 90,
+        "totalMs": 1227,
         "builds": 1
       },
       "specimen": {
@@ -390,7 +390,7 @@
       },
       "sandbox": {
         "file": "vocalised-classical-prose.postext",
-        "bytes": 36380,
+        "bytes": 36379,
         "chapters": [
           {
             "pages": 4,
@@ -542,7 +542,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

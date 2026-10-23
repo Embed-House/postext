@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bundle-round-trip",
-  "sourceHash": "d47378197e41cddef47ca7a3b0ebec9a806847dd82901aa2c847fa4fc58b9b28",
+  "sourceHash": "f517c2c0be4323e05ba6b224d02f2e07c850d01b51486aa756d4c8c16729e04a",
   "engine": {
-    "postext": "1.31.0",
-    "postextPdf": "1.31.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:56:20.807Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:51:44.420Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:32:12.302Z",
   "variants": {
     "en": {
-      "hash8": "324ce67b",
+      "hash8": "93d9fb29",
       "vdtHash": "b0aa93b77f6d01b053c939e7207cf574ad690186",
       "timings": {
-        "importMs": 975,
-        "fontsMs": 82,
-        "buildMs": 83,
-        "totalMs": 1905,
+        "importMs": 631,
+        "fontsMs": 88,
+        "buildMs": 68,
+        "totalMs": 1507,
         "builds": 1
       },
       "specimen": {
@@ -56,7 +50,7 @@
           "h": 2121,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 75210,
+          "bytes": 75226,
           "alt": "Opening page 1: The Tide Mill."
         },
         {
@@ -100,7 +94,7 @@
       },
       "sandbox": {
         "file": "bundle-round-trip.postext",
-        "bytes": 147972,
+        "bytes": 147971,
         "folio": "c651b1f6",
         "chapters": [
           {
@@ -331,21 +325,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "f3ea7407",
+      "hash8": "a5accb19",
       "vdtHash": "7bee556ae135c21c291ff8d7558fb145a375ceef",
       "timings": {
-        "importMs": 398,
-        "fontsMs": 66,
+        "importMs": 646,
+        "fontsMs": 78,
         "buildMs": 64,
-        "totalMs": 1208,
+        "totalMs": 1511,
         "builds": 1
       },
       "specimen": {
@@ -378,7 +372,7 @@
           "h": 2121,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 85442,
+          "bytes": 85432,
           "alt": "Página de apertura 1: El molino de mareas."
         },
         {
@@ -653,9 +647,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

@@ -1,35 +1,29 @@
 {
   "schemaVersion": 1,
   "slug": "certificate-single-page",
-  "sourceHash": "e7349c3e5cb32c3a64c9723517882015626790a0673972e95c41d25afa4f0c12",
+  "sourceHash": "cab86b58ce7a6dbcdae0f6c29ddc6aff9346e86a7dcee02b051b25826e1b6c07",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.728Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:39.798Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:32:12.355Z",
   "variants": {
     "en": {
-      "hash8": "d01deca9",
+      "hash8": "a0fe1ba2",
       "vdtHash": "9e7f834a65281cc1f4bc902a08b908f9f13a1e9b",
       "timings": {
-        "importMs": 655,
-        "fontsMs": 35,
-        "buildMs": 41,
-        "totalMs": 1544,
+        "importMs": 250,
+        "fontsMs": 33,
+        "buildMs": 33,
+        "totalMs": 1449,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
           215.9,
-          279.40000000000003
+          279.4
         ],
         "dpi": 150,
         "layoutType": "single",
@@ -111,7 +105,7 @@
       },
       "sandbox": {
         "file": "certificate-single-page.postext",
-        "bytes": 30273,
+        "bytes": 30274,
         "folio": "a05bb7c0",
         "chapters": [
           {
@@ -256,19 +250,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "92f9a00a",
+      "hash8": "5af19a1f",
       "vdtHash": "f89d7783c5c82acb318507363bd71fa7dfc00a82",
       "timings": {
-        "importMs": 598,
-        "fontsMs": 36,
-        "buildMs": 37,
-        "totalMs": 1554,
+        "importMs": 215,
+        "fontsMs": 30,
+        "buildMs": 33,
+        "totalMs": 907,
         "builds": 1
       },
       "specimen": {
@@ -356,7 +350,7 @@
       },
       "sandbox": {
         "file": "certificate-single-page.postext",
-        "bytes": 28685,
+        "bytes": 28686,
         "folio": "a05bb7c0",
         "chapters": [
           {
@@ -501,7 +495,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

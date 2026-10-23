@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "japanese-technical-manual",
-  "sourceHash": "581682393a06e9e3307a9bccbb37d4301b29930d43e8affcdc736cfe065c101b",
+  "sourceHash": "4058fa04e58e0b5351ca429365d5026418f9ce63ec5bc4d2a275ede476c26660",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:07:41.554Z",
+  "capturedAt": "2026-10-23T07:37:57.690Z",
   "variants": {
     "en": {
-      "hash8": "eac34db4",
+      "hash8": "9f341cd0",
       "vdtHash": "9b4fdab31f73c05f0707629400d3f726155a49f2",
       "timings": {
-        "importMs": 2105,
-        "fontsMs": 1318,
-        "buildMs": 163,
-        "totalMs": 4333,
+        "importMs": 588,
+        "fontsMs": 223,
+        "buildMs": 104,
+        "totalMs": 1582,
         "builds": 1
       },
       "specimen": {
@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41329,
+        "bytes": 41326,
         "folio": "90d2b4f0",
         "chapters": [
           {
@@ -427,11 +427,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering, headings"
@@ -440,13 +435,13 @@
       }
     },
     "es": {
-      "hash8": "e0203e80",
+      "hash8": "aae04081",
       "vdtHash": "21bbc8c7f62c85daf5c9b42a8e86b6aec1d2a29f",
       "timings": {
-        "importMs": 1734,
-        "fontsMs": 1371,
-        "buildMs": 139,
-        "totalMs": 4365,
+        "importMs": 581,
+        "fontsMs": 229,
+        "buildMs": 105,
+        "totalMs": 1584,
         "builds": 1
       },
       "specimen": {
@@ -560,7 +555,7 @@
       },
       "sandbox": {
         "file": "japanese-technical-manual.postext",
-        "bytes": 41388,
+        "bytes": 41385,
         "folio": "90d2b4f0",
         "chapters": [
           {
@@ -855,11 +850,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

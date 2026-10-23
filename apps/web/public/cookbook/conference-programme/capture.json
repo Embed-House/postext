@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "conference-programme",
-  "sourceHash": "2673557f0ddef0e2287e2e25ae03ab0c06900bae23429c4441a5596ed37a48ea",
+  "sourceHash": "59509d32c3a71596967ff7b517f8e1bf0837a543a0a38d80cbac5ba76620844e",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:58:17.122Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.420Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:34:49.151Z",
   "variants": {
     "en": {
-      "hash8": "9b3f919d",
+      "hash8": "a5beabb2",
       "vdtHash": "d1f68a520dcf5124e4cc465f06abe6b97231b935",
       "timings": {
-        "importMs": 812,
-        "fontsMs": 93,
-        "buildMs": 91,
-        "totalMs": 2163,
+        "importMs": 336,
+        "fontsMs": 1483,
+        "buildMs": 80,
+        "totalMs": 2602,
         "builds": 1
       },
       "specimen": {
@@ -146,7 +141,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32738,
+        "bytes": 32737,
         "folio": "1751ca77",
         "chapters": [
           {
@@ -420,21 +415,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "d2a543f6",
+      "hash8": "4f493d82",
       "vdtHash": "d1f68a520dcf5124e4cc465f06abe6b97231b935",
       "timings": {
-        "importMs": 734,
-        "fontsMs": 68,
-        "buildMs": 85,
-        "totalMs": 1671,
+        "importMs": 342,
+        "fontsMs": 1481,
+        "buildMs": 79,
+        "totalMs": 2561,
         "builds": 1
       },
       "specimen": {
@@ -559,7 +554,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32743,
+        "bytes": 32741,
         "folio": "1751ca77",
         "chapters": [
           {
@@ -833,9 +828,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

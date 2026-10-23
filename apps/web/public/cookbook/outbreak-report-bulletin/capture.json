@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "outbreak-report-bulletin",
-  "sourceHash": "72bf751c62cfbb5044c0fe01ad856e4225929df98f4c48d6b339c1867bab817e",
+  "sourceHash": "d2a782ba1dfaeaad70c1d0378922f0535b88e2dfbc1e79a131377bc569d807a3",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:54:24.262Z",
+  "capturedAt": "2026-10-23T07:39:33.911Z",
   "variants": {
     "en": {
       "hash8": "70145e2e",
       "vdtHash": "bc55b8be0b4d1db5f0cc57f06ddc8084aa5fbca2",
       "timings": {
-        "importMs": 1922,
-        "fontsMs": 91,
-        "buildMs": 220,
-        "totalMs": 3168,
+        "importMs": 541,
+        "fontsMs": 68,
+        "buildMs": 181,
+        "totalMs": 3013,
         "builds": 1
       },
       "specimen": {
@@ -458,11 +458,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.07 MB (warning at 0.9 MB for 6 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }

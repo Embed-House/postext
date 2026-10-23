@@ -25,12 +25,13 @@ async function loadComicFonts(faces, text = '') {
     for (const family of Object.keys(faces)) {
       const meta = await fontsourceMeta(family);
       if (!meta) throw new Error(`api.fontsource.org did not describe ${family}: reload to try again`);
-      const weights = meta.weights?.length ? meta.weights : [400, 700];
       const styles = meta.styles?.length ? meta.styles : ['normal'];
       for (const [weight, style] of [[400, 'normal'], [700, 'normal'], [400, 'italic'], [700, 'italic']]) {
-        if ((weights.includes(weight) && styles.includes(style)) || hasFace(family, weight, style)) continue;
-        const w = weights.reduce((a, b) => (Math.abs(b - weight) < Math.abs(a - weight) ? b : a));
         const s = style === 'italic' && styles.includes('italic') ? 'italic' : 'normal';
+        const shipped = await fontsourceWeights(family, s);
+        if ((s === style && shipped.includes(weight)) || hasFace(family, weight, style)) continue;
+        const weights = shipped.length ? shipped : [400, 700];
+        const w = weights.reduce((a, b) => (Math.abs(b - weight) < Math.abs(a - weight) ? b : a));
         for (const { url, range } of await comicFaceFiles(family, w, s, meta, text)) {
           document.fonts.add(new FontFace(family, `url(${url}) format('woff2')`,
             { weight: String(weight), style, unicodeRange: range }));

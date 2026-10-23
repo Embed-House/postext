@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "worksheet-answer-boxes",
-  "sourceHash": "3158a851cbb9772094d762e463088f4f6f8b3ecc02ab8a0d54dcadf60d96b724",
+  "sourceHash": "ba714b89140f1cfafc1764830de8e7ce0b56b3dfaf420e6d48290911c48fe6cd",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.353Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.546Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:43:09.605Z",
   "variants": {
     "en": {
-      "hash8": "ac3d53b0",
+      "hash8": "f385ca3e",
       "vdtHash": "c720126e609fa8973f8b483b4a13138299964fa9",
       "timings": {
-        "importMs": 199,
-        "fontsMs": 44,
-        "buildMs": 53,
-        "totalMs": 948,
+        "importMs": 194,
+        "fontsMs": 97,
+        "buildMs": 57,
+        "totalMs": 951,
         "builds": 1
       },
       "specimen": {
@@ -119,7 +114,7 @@
       },
       "sandbox": {
         "file": "worksheet-answer-boxes.postext",
-        "bytes": 211355,
+        "bytes": 211353,
         "folio": "8736fae7",
         "chapters": [
           {
@@ -390,17 +385,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "9b08b273",
+      "hash8": "078e1c5d",
       "vdtHash": "9fa9701a345dfed3d54118aca1373cc4e41fad61",
       "timings": {
-        "importMs": 214,
-        "fontsMs": 76,
-        "buildMs": 55,
-        "totalMs": 997,
+        "importMs": 188,
+        "fontsMs": 38,
+        "buildMs": 52,
+        "totalMs": 942,
         "builds": 1
       },
       "specimen": {
@@ -498,7 +499,7 @@
       },
       "sandbox": {
         "file": "worksheet-answer-boxes.postext",
-        "bytes": 212247,
+        "bytes": 212245,
         "folio": "8736fae7",
         "chapters": [
           {
@@ -769,7 +770,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

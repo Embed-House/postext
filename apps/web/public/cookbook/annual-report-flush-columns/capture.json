@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "annual-report-flush-columns",
-  "sourceHash": "3bb77d69e88d46a67a1494034e356033b0b5c98764572ee5aeb815e148d2b729",
+  "sourceHash": "f3219f6f019876fd57aef19d101976457a9bc29f5f7153bd7f652af8cef8e50a",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:55:41.393Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:32:35.800Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:30:46.659Z",
   "variants": {
     "en": {
-      "hash8": "e6565844",
+      "hash8": "2355aa8d",
       "vdtHash": "bf67ac6f4df440ac568cb8a476603f3bc7690034",
       "timings": {
-        "importMs": 234,
-        "fontsMs": 29,
-        "buildMs": 131,
-        "totalMs": 1083,
+        "importMs": 375,
+        "fontsMs": 36,
+        "buildMs": 130,
+        "totalMs": 2657,
         "builds": 1
       },
       "specimen": {
@@ -55,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 46896,
+          "bytes": 46926,
           "alt": "Opening page 1: Tidewell Community Energy."
         },
         {
@@ -131,7 +126,7 @@
       },
       "sandbox": {
         "file": "annual-report-flush-columns.postext",
-        "bytes": 88696,
+        "bytes": 88693,
         "folio": "8ef7de69",
         "chapters": [
           {
@@ -428,9 +423,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

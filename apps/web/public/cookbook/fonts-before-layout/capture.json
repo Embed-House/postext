@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "fonts-before-layout",
-  "sourceHash": "f39a7f6ba4fc3881e3656de7b6e51df21a8910e68152d5f327d3c64e9853a986",
+  "sourceHash": "07c9968ec5b865ad232e22566215139d86deca4a578a308c68bbaf79fd741205",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.350Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:55:01.188Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:35:36.722Z",
   "variants": {
     "en": {
-      "hash8": "7f5a7421",
+      "hash8": "50ce2cc8",
       "vdtHash": "0c1ef201c84c95cf7ac8d8dff7a325431f209674",
       "timings": {
-        "importMs": 261,
+        "importMs": 224,
         "fontsMs": 1,
-        "buildMs": 6,
-        "totalMs": 1111,
+        "buildMs": 4,
+        "totalMs": 1024,
         "builds": 3
       },
       "specimen": {
@@ -119,7 +114,7 @@
       },
       "sandbox": {
         "file": "fonts-before-layout.postext",
-        "bytes": 476144,
+        "bytes": 476143,
         "folio": "4b67afad",
         "chapters": [
           {
@@ -350,6 +345,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 4 −5‰ “When the faces arrived, Postext dropped every wi…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

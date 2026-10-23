@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-facing-verse",
-  "sourceHash": "3eb4a2c5f61ccb9c40f83d5cce4c1e6e42fe016716b418206b0ed6600e0af927",
+  "sourceHash": "ef0a35bce01dfe2d0222bd3150745937fe2cb56874cdf60a51a740fed58cab43",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.695Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:39:50.444Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:31:43.246Z",
   "variants": {
     "en": {
-      "hash8": "b5ff0967",
+      "hash8": "07c7b0ef",
       "vdtHash": "5442132a17c4f136038d86759f7cfd49b79a3aa3",
       "timings": {
-        "importMs": 517,
-        "fontsMs": 175,
-        "buildMs": 65,
-        "totalMs": 1525,
+        "importMs": 395,
+        "fontsMs": 30,
+        "buildMs": 53,
+        "totalMs": 1375,
         "builds": 1
       },
       "specimen": {
@@ -130,7 +125,7 @@
       },
       "sandbox": {
         "file": "bilingual-facing-verse.postext",
-        "bytes": 212453,
+        "bytes": 212452,
         "folio": "ee93f084",
         "chapters": [
           {
@@ -339,19 +334,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "aebafac8",
+      "hash8": "87d96f3a",
       "vdtHash": "13aa8fbb11dfe08e87a8ccb6ad4afcbc32fc492e",
       "timings": {
-        "importMs": 1059,
-        "fontsMs": 50,
-        "buildMs": 63,
-        "totalMs": 2198,
+        "importMs": 483,
+        "fontsMs": 34,
+        "buildMs": 64,
+        "totalMs": 1894,
         "builds": 1
       },
       "specimen": {
@@ -669,7 +664,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

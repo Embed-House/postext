@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "nights-ordinal-headings",
-  "sourceHash": "7538c66d79ca587b9c4e72736f0e17790cc1417e85a35ab5865b1e005a06e428",
+  "sourceHash": "7b4473efd710faf0ac47bcdc2668c88157d4cb8731eb5f8ac4dad51d57a71082",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:53:36.116Z",
+  "capturedAt": "2026-10-23T07:39:33.862Z",
   "variants": {
     "en": {
-      "hash8": "5e9e937f",
+      "hash8": "00d1d31e",
       "vdtHash": "02a53f2f4908a5650b1e6b2ca380f6c93c2d9b4c",
       "timings": {
-        "importMs": 2473,
-        "fontsMs": 167,
-        "buildMs": 111,
-        "totalMs": 4034,
+        "importMs": 389,
+        "fontsMs": 192,
+        "buildMs": 107,
+        "totalMs": 1347,
         "builds": 1
       },
       "specimen": {
@@ -199,7 +199,7 @@
       },
       "sandbox": {
         "file": "nights-ordinal-headings.postext",
-        "bytes": 32634,
+        "bytes": 32636,
         "chapters": [
           {
             "pages": 10,
@@ -395,23 +395,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "a68d7323",
+      "hash8": "d1ffc4b4",
       "vdtHash": "dc91c77630dbc968f4aace80653bfed7690aa62c",
       "timings": {
-        "importMs": 1722,
-        "fontsMs": 198,
-        "buildMs": 144,
-        "totalMs": 2915,
+        "importMs": 470,
+        "fontsMs": 160,
+        "buildMs": 105,
+        "totalMs": 1365,
         "builds": 1
       },
       "specimen": {
@@ -593,7 +588,7 @@
       },
       "sandbox": {
         "file": "nights-ordinal-headings.postext",
-        "bytes": 32690,
+        "bytes": 32689,
         "chapters": [
           {
             "pages": 10,
@@ -789,11 +784,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.06 MB (warning at 1.0 MB for 10 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "genko-yoshi-manuscript",
-  "sourceHash": "a3cf188d450cc4cd995b251c05a8e20280ad1b17cc20a98e1780e5143b289d90",
+  "sourceHash": "d81463c685242476b37b9921a204c017d1c8441993fa4111d7a909646463f26a",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.523Z",
+  "capturedAt": "2026-10-23T07:36:51.241Z",
   "variants": {
     "en": {
-      "hash8": "f7de8e96",
+      "hash8": "643c7a1e",
       "vdtHash": "977e4b60e9fcbebfb37f7d6a7c39b8680528436f",
       "timings": {
-        "importMs": 2921,
-        "fontsMs": 2374,
-        "buildMs": 42,
-        "totalMs": 6534,
+        "importMs": 214,
+        "fontsMs": 136,
+        "buildMs": 38,
+        "totalMs": 982,
         "builds": 1
       },
       "specimen": {
@@ -49,7 +49,7 @@
           "h": 870,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 101116,
+          "bytes": 101128,
           "alt": "Opening page 1: 坊っちゃん."
         },
         {
@@ -60,7 +60,7 @@
           "h": 870,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 103588,
+          "bytes": 103602,
           "alt": "Page 2."
         },
         {
@@ -71,7 +71,7 @@
           "h": 870,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62072,
+          "bytes": 62080,
           "alt": "Page 3."
         }
       ],
@@ -271,23 +271,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "17c3923a",
+      "hash8": "09c834c1",
       "vdtHash": "1c881126e65dfb8031b7b41f177cd6e2f889cde8",
       "timings": {
-        "importMs": 2733,
-        "fontsMs": 1249,
-        "buildMs": 56,
-        "totalMs": 5871,
+        "importMs": 221,
+        "fontsMs": 130,
+        "buildMs": 38,
+        "totalMs": 985,
         "builds": 1
       },
       "specimen": {
@@ -319,7 +313,7 @@
           "h": 870,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 101280,
+          "bytes": 101294,
           "alt": "Página de apertura 1: 坊っちゃん."
         },
         {
@@ -330,7 +324,7 @@
           "h": 870,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 103588,
+          "bytes": 103602,
           "alt": "Página 2."
         },
         {
@@ -341,7 +335,7 @@
           "h": 870,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 62072,
+          "bytes": 62080,
           "alt": "Página 3."
         }
       ],
@@ -541,13 +535,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

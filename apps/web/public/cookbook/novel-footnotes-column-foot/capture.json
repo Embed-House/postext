@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "novel-footnotes-column-foot",
-  "sourceHash": "0139068902c757af24068b11f0895cee6dc8b085c3579e11384c63f2945ba942",
+  "sourceHash": "bc821196e254229526ff82a71a1eb98e5fa5c17f4765ca68a342a672f49da315",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:48:42.010Z",
+  "capturedAt": "2026-10-23T07:39:33.872Z",
   "variants": {
     "en": {
-      "hash8": "80a64c9e",
+      "hash8": "90541c65",
       "vdtHash": "4c3ec8000e4cf4a2c9bb61da4aac0508a455884e",
       "timings": {
-        "importMs": 3335,
-        "fontsMs": 36,
-        "buildMs": 25,
-        "totalMs": 4915,
+        "importMs": 294,
+        "fontsMs": 25,
+        "buildMs": 21,
+        "totalMs": 2126,
         "builds": 1
       },
       "specimen": {
@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
-        "bytes": 40306,
+        "bytes": 40305,
         "folio": "5dc5724f",
         "chapters": [
           {
@@ -312,13 +312,13 @@
       }
     },
     "es": {
-      "hash8": "50b8b267",
+      "hash8": "27b2efb3",
       "vdtHash": "11e8daa80867058ec9fa0fb580a9730f915d12c5",
       "timings": {
-        "importMs": 2817,
-        "fontsMs": 27,
-        "buildMs": 50,
-        "totalMs": 5075,
+        "importMs": 272,
+        "fontsMs": 26,
+        "buildMs": 37,
+        "totalMs": 1180,
         "builds": 1
       },
       "specimen": {
@@ -407,7 +407,7 @@
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
-        "bytes": 38430,
+        "bytes": 38428,
         "folio": "5dc5724f",
         "chapters": [
           {

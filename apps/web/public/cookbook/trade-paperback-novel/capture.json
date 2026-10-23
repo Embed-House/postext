@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "trade-paperback-novel",
-  "sourceHash": "4b8acd3f4a83cf976b7f03527595700c3258750000f7376ae738f73b015dd988",
+  "sourceHash": "12b635e31f4ce1e56f931d278f7dcc3089656545698fc7112bad0f80e1c907b9",
   "engine": {
-    "postext": "1.33.7",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.79",
-  "capturedAt": "2026-10-15T13:41:59.581Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:14:59.227Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:42:15.071Z",
   "variants": {
     "en": {
-      "hash8": "9a445b3f",
+      "hash8": "610215ef",
       "vdtHash": "6ac882ad02d8996e2dfea1e69a33f017b078f1bf",
       "timings": {
-        "importMs": 392,
-        "fontsMs": 44,
-        "buildMs": 55,
-        "totalMs": 1210,
+        "importMs": 357,
+        "fontsMs": 33,
+        "buildMs": 74,
+        "totalMs": 1222,
         "builds": 1
       },
       "specimen": {
@@ -367,19 +362,24 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.09 MB (warning at 0.9 MB for 8 pages)"
+            "detail": "the edition's images weigh 1.09 MB (warning at 0.9 MB for 8 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "dc5814dd",
+      "hash8": "4a983e87",
       "vdtHash": "8818e2cc9920dbada3e4c9a2f47c23d59944f27e",
       "timings": {
-        "importMs": 396,
-        "fontsMs": 40,
-        "buildMs": 53,
-        "totalMs": 1230,
+        "importMs": 360,
+        "fontsMs": 34,
+        "buildMs": 75,
+        "totalMs": 1160,
         "builds": 1
       },
       "specimen": {
@@ -529,7 +529,7 @@
       },
       "sandbox": {
         "file": "trade-paperback-novel.postext",
-        "bytes": 372881,
+        "bytes": 372880,
         "folio": "846eba29",
         "chapters": [
           {
@@ -716,17 +716,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     },
     "fr": {
-      "hash8": "b14a10d8",
+      "hash8": "09b08e62",
       "vdtHash": "ce4e91f317d78928e99c9169c489ec55db77247e",
       "timings": {
-        "importMs": 404,
-        "fontsMs": 34,
-        "buildMs": 80,
-        "totalMs": 1231,
+        "importMs": 229,
+        "fontsMs": 33,
+        "buildMs": 84,
+        "totalMs": 991,
         "builds": 1
       },
       "specimen": {
@@ -1088,7 +1094,7 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.14 MB (warning at 0.9 MB for 9 pages)"
+            "detail": "the edition's images weigh 1.14 MB (warning at 0.9 MB for 9 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C24",
@@ -1099,18 +1105,23 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ “Elle remonta le grand escalier, en frôlant un ca…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "de": {
-      "hash8": "e6fe2d0c",
+      "hash8": "0546644b",
       "vdtHash": "3089489a21b47dee9c1c935e3b32e52a02045c50",
       "timings": {
-        "importMs": 274,
-        "fontsMs": 36,
-        "buildMs": 109,
-        "totalMs": 1179,
+        "importMs": 222,
+        "fontsMs": 35,
+        "buildMs": 118,
+        "totalMs": 1133,
         "builds": 1
       },
       "specimen": {
@@ -1472,24 +1483,29 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.29 MB (warning at 0.9 MB for 9 pages)"
+            "detail": "the edition's images weigh 1.29 MB (warning at 0.9 MB for 9 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C35",
             "severity": "info",
             "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 8 −10‰ “Die Baronin von Losnitz, früh verwitwet, lebte m…”, p. 9 −5‰ “Beate nahm Günthers Werbung in ihrer wohlerzogen…”"
+          },
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "it": {
-      "hash8": "72a2e1d8",
+      "hash8": "c0fb3eb3",
       "vdtHash": "1b7a4618a860af8d80ef956be837acfeae356fdb",
       "timings": {
-        "importMs": 166,
-        "fontsMs": 25,
-        "buildMs": 63,
-        "totalMs": 1047,
+        "importMs": 184,
+        "fontsMs": 29,
+        "buildMs": 73,
+        "totalMs": 985,
         "builds": 1
       },
       "specimen": {
@@ -1842,7 +1858,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
+          }
+        ]
       }
     }
   }

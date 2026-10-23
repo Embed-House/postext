@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "zotero-bibtex-nocite",
-  "sourceHash": "3ca5235c94e2c3fe30a163faf5e68592e746a901197d7497a7ad408d32642920",
+  "sourceHash": "e874c03f8a26cdd4508d4b94fd8d817d515d87baafe9a1c9b9d6f4d101631877",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:55.018Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:55:01.049Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:43:09.662Z",
   "variants": {
     "en": {
-      "hash8": "16f72c46",
+      "hash8": "112602d4",
       "vdtHash": "9c12350cd4451185f5f8d2428661609ca85f8a5f",
       "timings": {
-        "importMs": 641,
-        "fontsMs": 6,
-        "buildMs": 534,
-        "totalMs": 2039,
+        "importMs": 322,
+        "fontsMs": 7,
+        "buildMs": 575,
+        "totalMs": 1778,
         "builds": 1
       },
       "specimen": {
@@ -35,7 +30,7 @@
         "mirror": true,
         "body": {
           "family": "Spectral",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.4
         },
         "families": [
@@ -93,7 +88,7 @@
       },
       "sandbox": {
         "file": "zotero-bibtex-nocite.postext",
-        "bytes": 19113,
+        "bytes": 19109,
         "folio": "059452bc",
         "chapters": [
           {
@@ -284,19 +279,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "2916230d",
+      "hash8": "5b89c2ab",
       "vdtHash": "b810b887425fbfad3e8c177b9b65dd79c0f61b1e",
       "timings": {
-        "importMs": 603,
+        "importMs": 254,
         "fontsMs": 6,
-        "buildMs": 547,
-        "totalMs": 1953,
+        "buildMs": 582,
+        "totalMs": 1708,
         "builds": 1
       },
       "specimen": {
@@ -310,7 +305,7 @@
         "mirror": true,
         "body": {
           "family": "Spectral",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.4
         },
         "families": [
@@ -368,7 +363,7 @@
       },
       "sandbox": {
         "file": "zotero-bibtex-nocite.postext",
-        "bytes": 19733,
+        "bytes": 19730,
         "folio": "059452bc",
         "chapters": [
           {
@@ -559,7 +554,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

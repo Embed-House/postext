@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-epub-guided-view",
-  "sourceHash": "a09c69f139cbc031108a022ed436d4ff6eebaaa95c3bab30d1541cc7dab1e042",
+  "sourceHash": "059560b81c6a4d05fc81533d7d61954532d3c80c308a92fcedfa30afd5e5c674",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:33:58.332Z",
+  "capturedAt": "2026-10-23T07:51:48.374Z",
   "variants": {
     "en": {
-      "hash8": "70e98044",
+      "hash8": "ac9516c1",
       "vdtHash": "64c420f4051c59e7c12aca770d7ead2328540ded",
       "timings": {
-        "importMs": 631,
-        "fontsMs": 142,
-        "buildMs": 271,
-        "totalMs": 1693,
+        "importMs": 928,
+        "fontsMs": 285,
+        "buildMs": 276,
+        "totalMs": 2566,
         "builds": 1
       },
       "specimen": {
@@ -286,23 +286,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "5a46903a",
+      "hash8": "86a17f77",
       "vdtHash": "e3390a1020791a0ab7ade1d7db54b176d75fcf9d",
       "timings": {
-        "importMs": 630,
-        "fontsMs": 160,
-        "buildMs": 248,
-        "totalMs": 1714,
+        "importMs": 783,
+        "fontsMs": 453,
+        "buildMs": 299,
+        "totalMs": 2332,
         "builds": 1
       },
       "specimen": {
@@ -389,7 +383,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807144,
+        "bytes": 807147,
         "chapters": [
           {
             "pages": 3,
@@ -571,23 +565,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
-      "hash8": "4736d197",
+      "hash8": "922e70be",
       "vdtHash": "52378a5a6f5c12056b8aa0d4afd146f52762148e",
       "timings": {
-        "importMs": 640,
-        "fontsMs": 170,
+        "importMs": 1080,
+        "fontsMs": 254,
         "buildMs": 259,
-        "totalMs": 1777,
+        "totalMs": 2262,
         "builds": 1
       },
       "specimen": {
@@ -674,7 +662,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806996,
+        "bytes": 806997,
         "chapters": [
           {
             "pages": 3,
@@ -856,23 +844,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
-      "hash8": "b7537251",
+      "hash8": "0d75bbb9",
       "vdtHash": "1ae1a2a01eb6d5de92779490b23522a6747ebf11",
       "timings": {
-        "importMs": 707,
-        "fontsMs": 557,
-        "buildMs": 265,
-        "totalMs": 2645,
+        "importMs": 603,
+        "fontsMs": 538,
+        "buildMs": 236,
+        "totalMs": 3021,
         "builds": 1
       },
       "specimen": {
@@ -1142,23 +1124,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
-      "hash8": "2b428a32",
+      "hash8": "c2100466",
       "vdtHash": "8bf6113f0eff83e357b09713e25ae9e612868aab",
       "timings": {
-        "importMs": 545,
-        "fontsMs": 345,
-        "buildMs": 200,
-        "totalMs": 1750,
+        "importMs": 1048,
+        "fontsMs": 274,
+        "buildMs": 251,
+        "totalMs": 2463,
         "builds": 1
       },
       "specimen": {
@@ -1431,23 +1407,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
-      "hash8": "48d95e30",
+      "hash8": "c7d09a24",
       "vdtHash": "4e664c70bd7729b7c091d697b398a62d48b3803a",
       "timings": {
-        "importMs": 666,
-        "fontsMs": 534,
-        "buildMs": 173,
-        "totalMs": 2380,
+        "importMs": 688,
+        "fontsMs": 807,
+        "buildMs": 245,
+        "totalMs": 3073,
         "builds": 1
       },
       "specimen": {
@@ -1719,23 +1689,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
-      "hash8": "1af4b158",
+      "hash8": "90637fbc",
       "vdtHash": "55f251632ca226235a26fa4dae410d75d1032b48",
       "timings": {
-        "importMs": 255,
-        "fontsMs": 138,
-        "buildMs": 175,
-        "totalMs": 1241,
+        "importMs": 959,
+        "fontsMs": 179,
+        "buildMs": 345,
+        "totalMs": 2108,
         "builds": 1
       },
       "specimen": {
@@ -1822,7 +1786,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807014,
+        "bytes": 807020,
         "chapters": [
           {
             "pages": 3,
@@ -2004,23 +1968,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "fr": {
-      "hash8": "a4064bd5",
+      "hash8": "197ea82d",
       "vdtHash": "2e51b8052fe5711c66cb316c21e348177e49fdd1",
       "timings": {
-        "importMs": 223,
-        "fontsMs": 98,
-        "buildMs": 184,
-        "totalMs": 1123,
+        "importMs": 1027,
+        "fontsMs": 952,
+        "buildMs": 300,
+        "totalMs": 3156,
         "builds": 1
       },
       "specimen": {
@@ -2289,23 +2247,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "de": {
-      "hash8": "eb40303a",
+      "hash8": "35c47cb3",
       "vdtHash": "f09781cbf15f0a0b04bab39cd8e3c66eefa5e0bf",
       "timings": {
-        "importMs": 281,
-        "fontsMs": 109,
-        "buildMs": 180,
-        "totalMs": 1199,
+        "importMs": 1001,
+        "fontsMs": 224,
+        "buildMs": 304,
+        "totalMs": 2371,
         "builds": 1
       },
       "specimen": {
@@ -2574,23 +2526,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "it": {
-      "hash8": "b762d665",
+      "hash8": "9e8ea02c",
       "vdtHash": "3abb4fae7183fc416083851450f907e985f037f3",
       "timings": {
-        "importMs": 210,
-        "fontsMs": 114,
-        "buildMs": 171,
-        "totalMs": 1069,
+        "importMs": 681,
+        "fontsMs": 239,
+        "buildMs": 307,
+        "totalMs": 2114,
         "builds": 1
       },
       "specimen": {
@@ -2677,7 +2623,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807087,
+        "bytes": 807088,
         "chapters": [
           {
             "pages": 3,
@@ -2859,13 +2805,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

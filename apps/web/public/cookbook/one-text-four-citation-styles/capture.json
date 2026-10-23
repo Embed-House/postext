@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "one-text-four-citation-styles",
-  "sourceHash": "539da0a8204ff126c5ad1a9f3a49a59eeeaf2ca360cfcfbfb1abc2b44a4fdf8c",
+  "sourceHash": "6596356e4caf53b338c6594cdf3ed26de544cfe63242424db80f56c8d3e20dbf",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.930Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:53.025Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:39:33.893Z",
   "variants": {
     "en": {
-      "hash8": "34919053",
+      "hash8": "c2c11619",
       "vdtHash": "178a19ff9c1a2e821bb2cb07aae401ab53b81e1c",
       "timings": {
-        "importMs": 672,
+        "importMs": 285,
         "fontsMs": 6,
-        "buildMs": 284,
-        "totalMs": 2731,
+        "buildMs": 271,
+        "totalMs": 1794,
         "builds": 4
       },
       "specimen": {
@@ -293,7 +288,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -309,13 +304,13 @@
       }
     },
     "es": {
-      "hash8": "54462af2",
+      "hash8": "5eb1e100",
       "vdtHash": "b52aefae7a2325712114cbd2adba2a44ecfb222c",
       "timings": {
-        "importMs": 1297,
+        "importMs": 349,
         "fontsMs": 6,
-        "buildMs": 267,
-        "totalMs": 2847,
+        "buildMs": 261,
+        "totalMs": 1741,
         "builds": 4
       },
       "specimen": {
@@ -577,7 +572,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",

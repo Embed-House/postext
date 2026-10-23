@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "thesis-back-matter",
-  "sourceHash": "ce78e97fa5a596518244a9dca73e92839fc6a15677c6faad1f90bb77fa0bd785",
+  "sourceHash": "fc92aaf668069a33596ab99ddf43c60587ff04cf36fce7d5c2a3930ca7f24b66",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:05:32.414Z",
+  "capturedAt": "2026-10-23T07:42:15.066Z",
   "variants": {
     "en": {
-      "hash8": "95a8c9d3",
+      "hash8": "dffbbb28",
       "vdtHash": "3c776aaf555387fd6ecbcef60306ed7898ceae6a",
       "timings": {
-        "importMs": 3497,
-        "fontsMs": 28,
-        "buildMs": 162,
-        "totalMs": 5136,
+        "importMs": 235,
+        "fontsMs": 27,
+        "buildMs": 107,
+        "totalMs": 2127,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1420,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95040,
+          "bytes": 95050,
           "alt": "Opening page 171: 6 Conclusion. Table 6.1. Main results by medium."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1420,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 81946,
+          "bytes": 81942,
           "alt": "Opening page 173: A Interview guide. Table A.1. Timing of an interview session."
         },
         {
@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "thesis-back-matter.postext",
-        "bytes": 20552,
+        "bytes": 20551,
         "folio": "8d599631",
         "chapters": [
           {
@@ -434,11 +434,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

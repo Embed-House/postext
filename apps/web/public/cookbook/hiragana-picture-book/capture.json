@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "hiragana-picture-book",
-  "sourceHash": "461d3c7bcf14143c8cad2c5cfd5329ddb5201712edcc4c56894aa7940668843e",
+  "sourceHash": "00e7861440bac3b1e3a0235411923f10e53ca85943065ac52ffca925d523bb12",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:07:17.280Z",
+  "capturedAt": "2026-10-23T07:36:51.334Z",
   "variants": {
     "en": {
-      "hash8": "aa7bd677",
+      "hash8": "96085fe2",
       "vdtHash": "fb5d123e78834b1bdfac7bb0f5cc332db1f7d1d2",
       "timings": {
-        "importMs": 2380,
-        "fontsMs": 645,
-        "buildMs": 44,
-        "totalMs": 4128,
+        "importMs": 485,
+        "fontsMs": 401,
+        "buildMs": 46,
+        "totalMs": 1560,
         "builds": 1
       },
       "specimen": {
@@ -199,7 +199,7 @@
       },
       "sandbox": {
         "file": "hiragana-picture-book.postext",
-        "bytes": 1736877,
+        "bytes": 1737366,
         "folio": "ada4348a",
         "chapters": [
           {
@@ -376,23 +376,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "ffce83fd",
+      "hash8": "d5516311",
       "vdtHash": "7ffb48a42a88b67dcf41e77e61f2436a8ffef5e7",
       "timings": {
-        "importMs": 1857,
-        "fontsMs": 627,
-        "buildMs": 60,
-        "totalMs": 3368,
+        "importMs": 219,
+        "fontsMs": 196,
+        "buildMs": 45,
+        "totalMs": 1062,
         "builds": 1
       },
       "specimen": {
@@ -574,7 +568,7 @@
       },
       "sandbox": {
         "file": "hiragana-picture-book.postext",
-        "bytes": 1736929,
+        "bytes": 1737429,
         "folio": "ada4348a",
         "chapters": [
           {
@@ -751,13 +745,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

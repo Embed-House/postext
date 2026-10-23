@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "org-chart-from-modules",
-  "sourceHash": "16548a280804dc08918facb0d1dcf854468a66276e417f8c9711982f1ac06e68",
+  "sourceHash": "a3eaa3537a8caf21c8fe1c9014df83b2acc7905e2a1524d688a3e56a6a53d207",
   "engine": {
-    "postext": "1.48.1",
-    "postextPdf": "1.48.1",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-21T18:29:50.836Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:06:42.375Z"
-  },
+  "capturedAt": "2026-10-23T07:39:33.901Z",
   "variants": {
     "en": {
-      "hash8": "c00b7652",
+      "hash8": "fe0fa74d",
       "vdtHash": "d99d144fa1ce5f8f822c1bd8d5b0bb31d0c07336",
       "timings": {
-        "importMs": 646,
-        "fontsMs": 146,
-        "buildMs": 80,
-        "totalMs": 1497,
+        "importMs": 331,
+        "fontsMs": 290,
+        "buildMs": 93,
+        "totalMs": 1353,
         "builds": 1
       },
       "specimen": {
@@ -95,7 +89,7 @@
       },
       "sandbox": {
         "file": "org-chart-from-modules.postext",
-        "bytes": 984022,
+        "bytes": 984021,
         "folio": "90508e83",
         "chapters": [
           {
@@ -354,13 +348,13 @@
       }
     },
     "es": {
-      "hash8": "ab15eb5d",
+      "hash8": "e6bf5f2c",
       "vdtHash": "41b71c1bb38e7ed3f008025114c43907da49beb8",
       "timings": {
-        "importMs": 648,
-        "fontsMs": 147,
-        "buildMs": 80,
-        "totalMs": 1511,
+        "importMs": 306,
+        "fontsMs": 59,
+        "buildMs": 79,
+        "totalMs": 1072,
         "builds": 1
       },
       "specimen": {
@@ -432,7 +426,7 @@
       },
       "sandbox": {
         "file": "org-chart-from-modules.postext",
-        "bytes": 985216,
+        "bytes": 985215,
         "folio": "90508e83",
         "chapters": [
           {

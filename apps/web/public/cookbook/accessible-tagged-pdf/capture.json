@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "accessible-tagged-pdf",
-  "sourceHash": "388f26eb576733c1a78d936d052bae9438ade999fde81a8a67e03af2b8526414",
+  "sourceHash": "be8e697aade44fea0b8e862de7bb96c5e4ca5e607b1e6e8ff6cf42d9e8ee0f83",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.370Z",
+  "capturedAt": "2026-10-23T07:30:46.627Z",
   "variants": {
     "es": {
-      "hash8": "e2ffc099",
+      "hash8": "fabd01dc",
       "vdtHash": "b4d90a107216c3f089ce544b14ad07edef22c525",
       "timings": {
-        "importMs": 3711,
-        "fontsMs": 47,
-        "buildMs": 99,
-        "totalMs": 5386,
+        "importMs": 671,
+        "fontsMs": 28,
+        "buildMs": 87,
+        "totalMs": 2727,
         "builds": 1
       },
       "specimen": {
@@ -62,7 +62,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 150894,
+          "bytes": 150972,
           "alt": "Página de apertura 2: Índice."
         },
         {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "accessible-tagged-pdf.postext",
-        "bytes": 36307,
+        "bytes": 36305,
         "folio": "ccb10a06",
         "chapters": [
           {
@@ -387,13 +387,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

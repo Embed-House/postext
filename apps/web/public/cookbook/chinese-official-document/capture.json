@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-official-document",
-  "sourceHash": "334c8d687cb9808e27e8a2f966c00eee8e4bd4ab4fab5eb0bc7a90fd77dd82c7",
+  "sourceHash": "1c14187715b82d7b7356f0f92056c77597d5f003ef06b9c4b55e5b2b6d25fe59",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.478Z",
+  "capturedAt": "2026-10-23T07:34:49.039Z",
   "variants": {
     "en": {
-      "hash8": "d06f6e79",
+      "hash8": "29f1ff35",
       "vdtHash": "80d8a526f7da634513bcf335a6e1537e7fa4f2f7",
       "timings": {
-        "importMs": 2888,
-        "fontsMs": 3016,
-        "buildMs": 77,
-        "totalMs": 7213,
+        "importMs": 650,
+        "fontsMs": 253,
+        "buildMs": 73,
+        "totalMs": 1667,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "chinese-official-document.postext",
-        "bytes": 20528,
+        "bytes": 20527,
         "folio": "f2e4b92d",
         "chapters": [
           {
@@ -365,23 +365,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "287edb42",
+      "hash8": "1f949267",
       "vdtHash": "2dcc65ad799e08155e5c0b6dd70622f5e28c1808",
       "timings": {
-        "importMs": 4272,
-        "fontsMs": 1213,
-        "buildMs": 93,
-        "totalMs": 6904,
+        "importMs": 644,
+        "fontsMs": 237,
+        "buildMs": 78,
+        "totalMs": 1654,
         "builds": 1
       },
       "specimen": {
@@ -484,7 +479,7 @@
       },
       "sandbox": {
         "file": "chinese-official-document.postext",
-        "bytes": 20565,
+        "bytes": 20563,
         "folio": "f2e4b92d",
         "chapters": [
           {
@@ -729,11 +724,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 15.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

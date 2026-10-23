@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "film-club-video-qr",
-  "sourceHash": "9955c09061c1cd3d45b3e2dffc4925c1a0d92b4fd62dd57838474aa74263b6e3",
+  "sourceHash": "30b0f696ff91a372602de8f34bd0e05bcfe3dbe23e6fbbc881e3fe2dc1941902",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.503Z",
+  "capturedAt": "2026-10-23T07:35:36.685Z",
   "variants": {
     "en": {
-      "hash8": "800a2278",
+      "hash8": "a05db6b1",
       "vdtHash": "630cbf7abaf55b5d4f608ef89bdffd8a81f53da9",
       "timings": {
-        "importMs": 2878,
-        "fontsMs": 1520,
-        "buildMs": 74,
-        "totalMs": 5344,
+        "importMs": 399,
+        "fontsMs": 118,
+        "buildMs": 65,
+        "totalMs": 1305,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 84146,
+          "bytes": 84154,
           "alt": "Opening page 1: Open Movies."
         },
         {
@@ -146,7 +146,7 @@
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 445249,
+        "bytes": 445247,
         "folio": "edbbafa0",
         "chapters": [
           {
@@ -409,23 +409,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "3e336c13",
+      "hash8": "5fe9e1bc",
       "vdtHash": "afb8c4d66816e2f6e82c4c1c381f187fe3503f7c",
       "timings": {
-        "importMs": 3371,
-        "fontsMs": 193,
-        "buildMs": 81,
-        "totalMs": 4898,
+        "importMs": 270,
+        "fontsMs": 287,
+        "buildMs": 71,
+        "totalMs": 1269,
         "builds": 1
       },
       "specimen": {
@@ -458,7 +452,7 @@
           "h": 1424,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 95282,
+          "bytes": 95278,
           "alt": "Página de apertura 1: Películas abiertas."
         },
         {
@@ -554,7 +548,7 @@
       },
       "sandbox": {
         "file": "film-club-video-qr.postext",
-        "bytes": 453428,
+        "bytes": 453366,
         "folio": "edbbafa0",
         "chapters": [
           {
@@ -817,13 +811,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

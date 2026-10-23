@@ -1,33 +1,28 @@
 {
   "schemaVersion": 1,
   "slug": "screenplay-format",
-  "sourceHash": "a767fcbc94911efd89e35743c7040e53d1f171a0508370ab77bc53f61e199eed",
+  "sourceHash": "f5c994d9eaf0ca3314ece6b288efc8e040e02c03f34c843300dac9fa77e07d9e",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.081Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:01:37.233Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:41:23.073Z",
   "variants": {
     "en": {
-      "hash8": "76ef1d22",
+      "hash8": "6e3488d2",
       "vdtHash": "6bfb0c3f14c1e753ba023b6adcad451afd00112f",
       "timings": {
-        "importMs": 233,
-        "fontsMs": 0,
-        "buildMs": 52,
-        "totalMs": 1470,
+        "importMs": 552,
+        "fontsMs": 1,
+        "buildMs": 59,
+        "totalMs": 1429,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
           215.9,
-          279.40000000000003
+          279.4
         ],
         "dpi": 150,
         "layoutType": "single",
@@ -130,7 +125,7 @@
       },
       "sandbox": {
         "file": "screenplay-format.postext",
-        "bytes": 11517,
+        "bytes": 11514,
         "folio": "23a03f17",
         "chapters": [
           {
@@ -297,23 +292,29 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "35237f9d",
+      "hash8": "bd842c47",
       "vdtHash": "f2b5530f9eccb204df4aeaa752c7e1fe9b1c4390",
       "timings": {
-        "importMs": 159,
-        "fontsMs": 1,
-        "buildMs": 48,
-        "totalMs": 896,
+        "importMs": 555,
+        "fontsMs": 0,
+        "buildMs": 53,
+        "totalMs": 1420,
         "builds": 1
       },
       "specimen": {
         "trimMm": [
           215.9,
-          279.40000000000003
+          279.4
         ],
         "dpi": 150,
         "layoutType": "single",
@@ -416,7 +417,7 @@
       },
       "sandbox": {
         "file": "screenplay-format.postext",
-        "bytes": 12060,
+        "bytes": 12059,
         "folio": "23a03f17",
         "chapters": [
           {
@@ -583,7 +584,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "illustrated-timeline-spread",
-  "sourceHash": "0208d51928d7b45981b9523b02fecfd1bed05696f29eec91641a1361f456209f",
+  "sourceHash": "eb6736b46144211b55fc47759a4df01099ceb80fbd1b6ddda2f39a344200f327",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:33:58.845Z",
+  "capturedAt": "2026-10-23T07:36:51.349Z",
   "variants": {
     "en": {
-      "hash8": "2e3f2475",
+      "hash8": "db5e3cfd",
       "vdtHash": "fb3a73b64e2b429f88af05d004d869bbe1ac483a",
       "timings": {
-        "importMs": 782,
-        "fontsMs": 242,
-        "buildMs": 74,
-        "totalMs": 1775,
+        "importMs": 250,
+        "fontsMs": 81,
+        "buildMs": 69,
+        "totalMs": 1044,
         "builds": 1
       },
       "specimen": {
@@ -84,7 +84,7 @@
       },
       "pdf": {
         "file": "illustrated-timeline-spread.pdf",
-        "bytes": 987283,
+        "bytes": 987265,
         "pages": 2
       },
       "sandbox": {
@@ -380,13 +380,13 @@
       }
     },
     "es": {
-      "hash8": "c2230d69",
+      "hash8": "b8f0a028",
       "vdtHash": "e8daf4ae63733680e981ccc1ccde383ae4891c3b",
       "timings": {
-        "importMs": 779,
-        "fontsMs": 245,
-        "buildMs": 72,
-        "totalMs": 1773,
+        "importMs": 405,
+        "fontsMs": 161,
+        "buildMs": 79,
+        "totalMs": 1336,
         "builds": 1
       },
       "specimen": {
@@ -453,7 +453,7 @@
       },
       "pdf": {
         "file": "illustrated-timeline-spread.pdf",
-        "bytes": 988161,
+        "bytes": 988159,
         "pages": 2
       },
       "sandbox": {
@@ -759,13 +759,13 @@
       }
     },
     "ja": {
-      "hash8": "5d83df42",
+      "hash8": "0fe4613d",
       "vdtHash": "c9b661e94c2d2a33ed046a29bb2ac52e3d8b4ca8",
       "timings": {
-        "importMs": 799,
-        "fontsMs": 1059,
-        "buildMs": 80,
-        "totalMs": 2627,
+        "importMs": 238,
+        "fontsMs": 296,
+        "buildMs": 66,
+        "totalMs": 1168,
         "builds": 1
       },
       "specimen": {

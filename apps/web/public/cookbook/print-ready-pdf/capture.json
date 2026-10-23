@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "print-ready-pdf",
-  "sourceHash": "e8d6554bd5a024ccf39dde83b07c4f9f4230031113657e5cef0e92f93c4a1943",
+  "sourceHash": "3f0660a45d6b4e02f0ebc887bc6e4e359a1013a5fe6799c2d95ce4a413c9c710",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.627Z",
+  "capturedAt": "2026-10-23T07:40:37.800Z",
   "variants": {
     "es": {
-      "hash8": "be652d00",
+      "hash8": "2bd485a8",
       "vdtHash": "731346965b7c574a9b7c70d0d12cb2b5299688cd",
       "timings": {
-        "importMs": 2249,
-        "fontsMs": 46,
-        "buildMs": 73,
-        "totalMs": 4761,
+        "importMs": 289,
+        "fontsMs": 37,
+        "buildMs": 51,
+        "totalMs": 1769,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "print-ready-pdf.postext",
-        "bytes": 102291,
+        "bytes": 102289,
         "folio": "2465c19b",
         "chapters": [
           {
@@ -353,11 +353,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "gbt7714-chinese-paper",
-  "sourceHash": "540fd1702ca5a66f107c7924e25490008150485d9c7849a0a2759f7d484a8598",
+  "sourceHash": "c29b6f579812ee75c43f40feb8a685b93bf904e4967354f536622674c988d1f1",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:00:08.108Z",
+  "capturedAt": "2026-10-23T07:51:48.445Z",
   "variants": {
     "en": {
-      "hash8": "07bbe0d9",
+      "hash8": "c573102e",
       "vdtHash": "ceff2471240e5acd6fbbeb34ea122a22d36e0df2",
       "timings": {
-        "importMs": 2278,
-        "fontsMs": 617,
-        "buildMs": 140,
-        "totalMs": 4220,
+        "importMs": 1839,
+        "fontsMs": 315,
+        "buildMs": 166,
+        "totalMs": 3233,
         "builds": 1
       },
       "specimen": {
@@ -95,7 +95,7 @@
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21360,
+        "bytes": 21359,
         "folio": "1668ad62",
         "chapters": [
           {
@@ -341,23 +341,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "810c94b8",
+      "hash8": "2cf26f13",
       "vdtHash": "5601d7d042f56dda3ee9e1d8e777a0b223ae5f3a",
       "timings": {
-        "importMs": 2555,
-        "fontsMs": 649,
-        "buildMs": 145,
-        "totalMs": 4566,
+        "importMs": 859,
+        "fontsMs": 1002,
+        "buildMs": 178,
+        "totalMs": 2867,
         "builds": 1
       },
       "specimen": {
@@ -435,7 +430,7 @@
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21410,
+        "bytes": 21409,
         "folio": "1668ad62",
         "chapters": [
           {
@@ -681,11 +676,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

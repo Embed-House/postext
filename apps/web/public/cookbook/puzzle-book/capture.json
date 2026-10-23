@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "puzzle-book",
-  "sourceHash": "b2714c66c2de29daa0fcabac48dd6fad50ec0a255c4e22762030d559b542d213",
+  "sourceHash": "de022c64edddf6f66f99047b4e70997fda03319d358dc214ad12efd8922026bc",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.022Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.501Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:40:58.432Z",
   "variants": {
     "en": {
-      "hash8": "ef83673c",
+      "hash8": "b8fd2f8d",
       "vdtHash": "7fc9d6b0d819dec89885d5ae89ec48f5a6537d79",
       "timings": {
-        "importMs": 193,
-        "fontsMs": 38,
-        "buildMs": 53,
-        "totalMs": 934,
+        "importMs": 299,
+        "fontsMs": 57,
+        "buildMs": 84,
+        "totalMs": 1151,
         "builds": 1
       },
       "specimen": {
@@ -130,7 +125,7 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23121,
+        "bytes": 23120,
         "folio": "c8e0f46e",
         "chapters": [
           {
@@ -376,17 +371,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "cce4ce11",
+      "hash8": "e57d12cf",
       "vdtHash": "a641d94188496fe2b5955581bc4ed838524e62c1",
       "timings": {
-        "importMs": 278,
-        "fontsMs": 40,
-        "buildMs": 59,
-        "totalMs": 1047,
+        "importMs": 233,
+        "fontsMs": 100,
+        "buildMs": 67,
+        "totalMs": 1051,
         "builds": 1
       },
       "specimen": {
@@ -495,7 +496,7 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23990,
+        "bytes": 23988,
         "folio": "c8e0f46e",
         "chapters": [
           {
@@ -741,7 +742,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "apa-thesis-with-bibtex",
-  "sourceHash": "3980087365cc4d2f77982f33071559d8b5327557138c1bed08b5594a1b0211a4",
+  "sourceHash": "9103bd1d946ba0b6339083e496d7d6cfe57a1ba707c34a4f4cec966a51555886",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:45:02.058Z",
+  "capturedAt": "2026-10-23T07:51:48.341Z",
   "variants": {
     "en": {
       "hash8": "070c999d",
       "vdtHash": "ec45071fab5e5ea89c0d27f936819ffde13e3c50",
       "timings": {
-        "importMs": 15983,
-        "fontsMs": 48,
-        "buildMs": 460,
-        "totalMs": 19977,
+        "importMs": 1089,
+        "fontsMs": 32,
+        "buildMs": 282,
+        "totalMs": 2422,
         "builds": 1
       },
       "specimen": {
@@ -294,28 +294,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "d0dab75a",
       "vdtHash": "6e0a6cba13b65060bc3adb3c867358700bf0acc0",
       "timings": {
-        "importMs": 7321,
-        "fontsMs": 57,
-        "buildMs": 410,
-        "totalMs": 10399,
+        "importMs": 878,
+        "fontsMs": 51,
+        "buildMs": 446,
+        "totalMs": 2161,
         "builds": 1
       },
       "specimen": {
@@ -592,13 +581,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

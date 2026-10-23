@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "five-chapter-openers",
-  "sourceHash": "62073ca205272ae659bcabe45dc15a85554287d863d65b442d80faa77b40eef2",
+  "sourceHash": "d27e0b25a431b4e307aa1d49e020b0ee081e358c7e61a608368c5a7ddc194797",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:59:09.715Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:39.803Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:35:36.708Z",
   "variants": {
     "en": {
-      "hash8": "d582c085",
+      "hash8": "6619c3cc",
       "vdtHash": "9014e810a9d2abb1b961f39c19095bd6d85ff851",
       "timings": {
-        "importMs": 1389,
-        "fontsMs": 2,
-        "buildMs": 113,
-        "totalMs": 2612,
+        "importMs": 183,
+        "fontsMs": 3,
+        "buildMs": 72,
+        "totalMs": 2870,
         "builds": 1
       },
       "specimen": {
@@ -99,7 +94,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 67298,
+          "bytes": 67274,
           "alt": "Opening page 5: Say it out loud."
         },
         {
@@ -157,7 +152,7 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28499,
+        "bytes": 28496,
         "folio": "8cdc51df",
         "chapters": [
           {
@@ -416,21 +411,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "9c58fc88",
+      "hash8": "b5ce1205",
       "vdtHash": "11fa061433c14e9f590b12dcc4d32349775405f4",
       "timings": {
-        "importMs": 1207,
+        "importMs": 164,
         "fontsMs": 2,
-        "buildMs": 217,
-        "totalMs": 3138,
+        "buildMs": 79,
+        "totalMs": 2338,
         "builds": 1
       },
       "specimen": {
@@ -464,7 +459,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 98784,
+          "bytes": 98782,
           "alt": "Página de apertura 1: La voz."
         },
         {
@@ -508,7 +503,7 @@
           "h": 1333,
           "file": "p05.webp",
           "strip": "p05.s.webp",
-          "bytes": 71562,
+          "bytes": 71568,
           "alt": "Página de apertura 5: Salta a la vista."
         },
         {
@@ -825,9 +820,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

@@ -1,13 +1,14 @@
 // ─── Kit · pdf v3 ── the same in every recipe that exports a PDF
 /** The Fontsource files the screen used, as TrueType, with their range and
- *  place: the nearest weight the family ships, upright with no italic;
+ *  place: the nearest weight the family ships in that style, upright with no italic;
  *  latin, then what its letters need (kitSubsetsFor). */
 async function fontsourceProvider(family, weight, style, request) {
   const id = fontsourceId(family);
   const meta = await fontsourceMeta(family);
-  const weights = meta?.weights?.length ? meta.weights : [400, 700];
-  const w = weights.reduce((a, b) => (Math.abs(b - weight) < Math.abs(a - weight) ? b : a));
   const s = style === 'italic' && meta && !meta.styles.includes('italic') ? 'normal' : style;
+  const shipped = meta ? await fontsourceWeights(family, s) : [];
+  const weights = shipped.length ? shipped : [400, 700];
+  const w = weights.reduce((a, b) => (Math.abs(b - weight) < Math.abs(a - weight) ? b : a));
   const text = String.fromCodePoint(...(request?.codePoints ?? []));
   const files = await Promise.all(['latin', ...kitSubsetsFor(text, meta)].map(async (subset, order) => {
     const res = await fetch(`${await fontsourceAt(id)}files/${id}-${subset}-${w}-${s}.woff2`);

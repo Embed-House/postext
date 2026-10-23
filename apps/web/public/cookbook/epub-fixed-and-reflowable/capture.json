@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "epub-fixed-and-reflowable",
-  "sourceHash": "843ca57e79e35a46a8881c372a4c0b480ad5812a32001313177b662683fe9013",
+  "sourceHash": "e6a80e52c31843bd70a27f5345a1aa48cef9dac04d86cb972842d6a0507c9543",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:59:09.671Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:55:01.182Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:51:48.434Z",
   "variants": {
     "en": {
-      "hash8": "80f2e468",
+      "hash8": "030c23eb",
       "vdtHash": "fda08c8e832d042c9b4c5d2350d7a3ce3cf4fc17",
       "timings": {
-        "importMs": 1530,
-        "fontsMs": 88,
-        "buildMs": 108,
-        "totalMs": 2970,
+        "importMs": 683,
+        "fontsMs": 56,
+        "buildMs": 163,
+        "totalMs": 1635,
         "builds": 1
       },
       "specimen": {
@@ -34,7 +29,7 @@
         "mirror": true,
         "body": {
           "family": "Libre Caslon Text",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.5
         },
         "families": [
@@ -145,7 +140,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 21853,
+        "bytes": 21852,
         "chapters": [
           {
             "pages": 2,
@@ -362,26 +357,21 @@
         },
         "findings": [
           {
-            "check": "C3",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "6414402c",
+      "hash8": "9f5b7cb3",
       "vdtHash": "fdf6ad4e0afe6090995fb0d1295cd4afe31a2099",
       "timings": {
-        "importMs": 1432,
-        "fontsMs": 294,
-        "buildMs": 380,
-        "totalMs": 3243,
+        "importMs": 1770,
+        "fontsMs": 99,
+        "buildMs": 149,
+        "totalMs": 2974,
         "builds": 1
       },
       "specimen": {
@@ -394,7 +384,7 @@
         "mirror": true,
         "body": {
           "family": "Libre Caslon Text",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.5
         },
         "families": [
@@ -415,7 +405,7 @@
           "file": "p01.webp",
           "strip": "p01.s.webp",
           "bytes": 14890,
-          "alt": "Página de apertura 1: ¡Adiós, Cordera!."
+          "alt": "Página de apertura 1: ¡Adiós, Cordera!"
         },
         {
           "n": 2,
@@ -505,7 +495,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 26884,
+        "bytes": 26875,
         "chapters": [
           {
             "pages": 2,
@@ -727,19 +717,14 @@
         },
         "findings": [
           {
-            "check": "C3",
-            "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
-          },
-          {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 15 −10‰ “—¡Adiós, Cordera!—vociferó Pinín con la misma fe…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

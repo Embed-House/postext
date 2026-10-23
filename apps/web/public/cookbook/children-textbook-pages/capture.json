@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "children-textbook-pages",
-  "sourceHash": "54b5144b4ec95ac95c599ee788343ed96654392d0b407fe73a326ef279e3c5a2",
+  "sourceHash": "bbd77425da44aa6c41b581891bc022ddd6f692f29b7a098dc08a6d408bdb325f",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:29:00.710Z",
+  "capturedAt": "2026-10-23T07:32:12.370Z",
   "variants": {
     "en": {
-      "hash8": "3704107c",
+      "hash8": "0ca316d5",
       "vdtHash": "fae03d32b06e40bc17dad1fdd761184265e74696",
       "timings": {
-        "importMs": 751,
-        "fontsMs": 169,
-        "buildMs": 32,
-        "totalMs": 1719,
+        "importMs": 375,
+        "fontsMs": 133,
+        "buildMs": 39,
+        "totalMs": 1366,
         "builds": 2
       },
       "specimen": {
@@ -177,12 +177,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1731651,
+        "bytes": 1731663,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100361,
+        "bytes": 2100362,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -570,13 +570,13 @@
       }
     },
     "es": {
-      "hash8": "2b647b49",
+      "hash8": "a342cc5a",
       "vdtHash": "91bec0362f1d6d7e1f289c28d9fe106ca096e678",
       "timings": {
-        "importMs": 754,
-        "fontsMs": 164,
-        "buildMs": 33,
-        "totalMs": 1719,
+        "importMs": 243,
+        "fontsMs": 76,
+        "buildMs": 34,
+        "totalMs": 2496,
         "builds": 2
       },
       "specimen": {
@@ -736,12 +736,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732696,
+        "bytes": 1732700,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100212,
+        "bytes": 2100214,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1129,13 +1129,13 @@
       }
     },
     "ca": {
-      "hash8": "fb4c7a38",
+      "hash8": "6bbae8c1",
       "vdtHash": "b5aa30b769fbba04a10ef6eea708937e3559d8d3",
       "timings": {
-        "importMs": 751,
-        "fontsMs": 166,
-        "buildMs": 32,
-        "totalMs": 1721,
+        "importMs": 379,
+        "fontsMs": 126,
+        "buildMs": 37,
+        "totalMs": 1290,
         "builds": 2
       },
       "specimen": {
@@ -1295,12 +1295,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732363,
+        "bytes": 1732361,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100302,
+        "bytes": 2100303,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -1681,10 +1681,10 @@
       "hash8": "4b1d6d07",
       "vdtHash": "1a08de9f174024b677f7988c1d9858db196e16db",
       "timings": {
-        "importMs": 803,
-        "fontsMs": 725,
-        "buildMs": 133,
-        "totalMs": 2350,
+        "importMs": 418,
+        "fontsMs": 281,
+        "buildMs": 100,
+        "totalMs": 1386,
         "builds": 1
       },
       "specimen": {
@@ -2222,23 +2222,18 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.17 MB: state 1.2 MB"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "ar": {
-      "hash8": "4335b60f",
+      "hash8": "3505ed84",
       "vdtHash": "337d795aabdf191d67b1b6b317304f3c5b44f89e",
       "timings": {
-        "importMs": 601,
-        "fontsMs": 169,
-        "buildMs": 123,
-        "totalMs": 1613,
+        "importMs": 286,
+        "fontsMs": 219,
+        "buildMs": 131,
+        "totalMs": 1284,
         "builds": 1
       },
       "specimen": {
@@ -2404,7 +2399,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2107974,
+        "bytes": 2107975,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -2788,10 +2783,10 @@
       "hash8": "016d8dc0",
       "vdtHash": "1110d8168d79da7a6e445b60696bfe60891de700",
       "timings": {
-        "importMs": 934,
-        "fontsMs": 752,
-        "buildMs": 151,
-        "totalMs": 2541,
+        "importMs": 265,
+        "fontsMs": 345,
+        "buildMs": 115,
+        "totalMs": 1392,
         "builds": 1
       },
       "specimen": {
@@ -3339,23 +3334,18 @@
             "check": "C20",
             "severity": "info",
             "detail": "capture.expect.imageMb states 1.4 MB, and the edition weighs 1.19 MB: state 1.2 MB"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "pt": {
-      "hash8": "bced1da8",
+      "hash8": "fb0a9cb0",
       "vdtHash": "8ec86d48414bc40a36359763872e81163075375e",
       "timings": {
-        "importMs": 373,
-        "fontsMs": 373,
-        "buildMs": 31,
-        "totalMs": 1518,
+        "importMs": 277,
+        "fontsMs": 87,
+        "buildMs": 33,
+        "totalMs": 1297,
         "builds": 2
       },
       "specimen": {
@@ -3515,12 +3505,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1732068,
+        "bytes": 1732075,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100335,
+        "bytes": 2100337,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -3908,13 +3898,13 @@
       }
     },
     "fr": {
-      "hash8": "ec310f2e",
+      "hash8": "6fa30c3d",
       "vdtHash": "14504815c39a41dda92794b93618057079c54ce3",
       "timings": {
-        "importMs": 597,
-        "fontsMs": 125,
-        "buildMs": 34,
-        "totalMs": 1542,
+        "importMs": 325,
+        "fontsMs": 98,
+        "buildMs": 38,
+        "totalMs": 1290,
         "builds": 2
       },
       "specimen": {
@@ -4074,12 +4064,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1733370,
+        "bytes": 1733377,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2101171,
+        "bytes": 2101172,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -4472,13 +4462,13 @@
       }
     },
     "de": {
-      "hash8": "185af102",
+      "hash8": "b1071bc1",
       "vdtHash": "8a91fd6d3cd0731750545bba60e30c3b71b7e27f",
       "timings": {
-        "importMs": 598,
-        "fontsMs": 124,
-        "buildMs": 31,
-        "totalMs": 1458,
+        "importMs": 418,
+        "fontsMs": 85,
+        "buildMs": 34,
+        "totalMs": 1310,
         "builds": 2
       },
       "specimen": {
@@ -4638,12 +4628,12 @@
       },
       "pdf": {
         "file": "children-textbook-pages.pdf",
-        "bytes": 1733978,
+        "bytes": 1733980,
         "pages": 9
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100949,
+        "bytes": 2100950,
         "folio": "207b7a99",
         "chapters": [
           {
@@ -5036,13 +5026,13 @@
       }
     },
     "it": {
-      "hash8": "31d4427a",
+      "hash8": "573c4547",
       "vdtHash": "37172b606872ee63c6875fcb61be6a378d3b4a7f",
       "timings": {
-        "importMs": 472,
-        "fontsMs": 360,
-        "buildMs": 35,
-        "totalMs": 1616,
+        "importMs": 309,
+        "fontsMs": 92,
+        "buildMs": 36,
+        "totalMs": 1308,
         "builds": 2
       },
       "specimen": {
@@ -5207,7 +5197,7 @@
       },
       "sandbox": {
         "file": "children-textbook-pages.postext",
-        "bytes": 2100417,
+        "bytes": 2100419,
         "folio": "207b7a99",
         "chapters": [
           {

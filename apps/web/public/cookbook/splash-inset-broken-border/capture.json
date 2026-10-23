@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "splash-inset-broken-border",
-  "sourceHash": "9b22e497eebc78be32be50d16334f13cc126d4db4285a6126c8ff35f77ed21d5",
+  "sourceHash": "b43e47287a84c0c34d711c6ac1bb4c9b0dbb207fe84d41c810cfb5cbfc046900",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:29:00.259Z",
+  "capturedAt": "2026-10-23T07:41:23.132Z",
   "variants": {
     "en": {
-      "hash8": "5c52b98a",
+      "hash8": "f2fe74ad",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 734,
-        "fontsMs": 152,
-        "buildMs": 102,
-        "totalMs": 1685,
+        "importMs": 223,
+        "fontsMs": 135,
+        "buildMs": 100,
+        "totalMs": 1116,
         "builds": 1
       },
       "specimen": {
@@ -92,7 +92,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766514,
+        "bytes": 766511,
         "chapters": [
           {
             "pages": 2,
@@ -238,23 +238,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "56f10119",
+      "hash8": "185de7a1",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 752,
-        "fontsMs": 170,
-        "buildMs": 102,
-        "totalMs": 1704,
+        "importMs": 238,
+        "fontsMs": 297,
+        "buildMs": 111,
+        "totalMs": 1355,
         "builds": 1
       },
       "specimen": {
@@ -329,7 +323,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766683,
+        "bytes": 766680,
         "chapters": [
           {
             "pages": 2,
@@ -475,23 +469,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
-      "hash8": "b021ab5e",
+      "hash8": "bd43f446",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 748,
-        "fontsMs": 153,
-        "buildMs": 103,
-        "totalMs": 1709,
+        "importMs": 228,
+        "fontsMs": 149,
+        "buildMs": 97,
+        "totalMs": 1125,
         "builds": 1
       },
       "specimen": {
@@ -566,7 +554,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766638,
+        "bytes": 766633,
         "chapters": [
           {
             "pages": 2,
@@ -712,23 +700,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
-      "hash8": "d2c4f85c",
+      "hash8": "89c83b87",
       "vdtHash": "69a714d811223c07ee4617800fe1b6c4129a8924",
       "timings": {
-        "importMs": 2015,
-        "fontsMs": 1592,
-        "buildMs": 149,
-        "totalMs": 4569,
+        "importMs": 216,
+        "fontsMs": 418,
+        "buildMs": 129,
+        "totalMs": 1502,
         "builds": 1
       },
       "specimen": {
@@ -803,7 +785,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766607,
+        "bytes": 766605,
         "chapters": [
           {
             "pages": 2,
@@ -950,23 +932,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
-      "hash8": "490efdd1",
+      "hash8": "3be331d0",
       "vdtHash": "7a907b581ba76903673d89d9523d7dd4926f3c7c",
       "timings": {
-        "importMs": 518,
-        "fontsMs": 240,
-        "buildMs": 100,
-        "totalMs": 1516,
+        "importMs": 480,
+        "fontsMs": 335,
+        "buildMs": 105,
+        "totalMs": 1670,
         "builds": 1
       },
       "specimen": {
@@ -1042,7 +1018,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766737,
+        "bytes": 766738,
         "chapters": [
           {
             "pages": 2,
@@ -1191,23 +1167,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
-      "hash8": "c6904ee2",
+      "hash8": "1e234c2c",
       "vdtHash": "a6e280cef897624f349f209d33e1f87e3bbbca57",
       "timings": {
-        "importMs": 1631,
-        "fontsMs": 687,
-        "buildMs": 128,
-        "totalMs": 3277,
+        "importMs": 477,
+        "fontsMs": 485,
+        "buildMs": 99,
+        "totalMs": 1737,
         "builds": 1
       },
       "specimen": {
@@ -1283,7 +1253,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766867,
+        "bytes": 766887,
         "chapters": [
           {
             "pages": 2,
@@ -1431,23 +1401,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
-      "hash8": "e880e439",
+      "hash8": "b0bec696",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 328,
-        "fontsMs": 359,
-        "buildMs": 102,
-        "totalMs": 1421,
+        "importMs": 230,
+        "fontsMs": 100,
+        "buildMs": 95,
+        "totalMs": 1133,
         "builds": 1
       },
       "specimen": {
@@ -1522,7 +1486,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766587,
+        "bytes": 766584,
         "chapters": [
           {
             "pages": 2,
@@ -1668,23 +1632,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "fr": {
-      "hash8": "625b090f",
+      "hash8": "57e75f22",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 395,
-        "fontsMs": 238,
-        "buildMs": 84,
-        "totalMs": 1349,
+        "importMs": 252,
+        "fontsMs": 298,
+        "buildMs": 117,
+        "totalMs": 1328,
         "builds": 1
       },
       "specimen": {
@@ -1759,7 +1717,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766588,
+        "bytes": 766585,
         "chapters": [
           {
             "pages": 2,
@@ -1905,23 +1863,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "de": {
-      "hash8": "44cd3e61",
+      "hash8": "efd85283",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 475,
-        "fontsMs": 89,
-        "buildMs": 81,
-        "totalMs": 1279,
+        "importMs": 242,
+        "fontsMs": 154,
+        "buildMs": 89,
+        "totalMs": 1197,
         "builds": 1
       },
       "specimen": {
@@ -1996,7 +1948,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766721,
+        "bytes": 766719,
         "chapters": [
           {
             "pages": 2,
@@ -2142,23 +2094,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "it": {
-      "hash8": "26898fe5",
+      "hash8": "ddf34bc0",
       "vdtHash": "d39988f948629b14665e1d027a6153b51f287a63",
       "timings": {
-        "importMs": 337,
-        "fontsMs": 191,
-        "buildMs": 81,
-        "totalMs": 1253,
+        "importMs": 256,
+        "fontsMs": 156,
+        "buildMs": 84,
+        "totalMs": 1269,
         "builds": 1
       },
       "specimen": {
@@ -2233,7 +2179,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766692,
+        "bytes": 766690,
         "chapters": [
           {
             "pages": 2,
@@ -2379,13 +2325,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

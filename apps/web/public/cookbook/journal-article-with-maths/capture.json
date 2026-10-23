@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "journal-article-with-maths",
-  "sourceHash": "132a163b2c480d367d84f9d50208f0eaefb78bd5b92f9a6678304063da99880e",
+  "sourceHash": "26e5cb6dcd226da1bb0a06efc03576cae2db13e4c8125a46fd1d99d817d37441",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:54:25.701Z",
+  "capturedAt": "2026-10-23T07:51:48.462Z",
   "variants": {
     "en": {
       "hash8": "a749515f",
       "vdtHash": "9802da86e822bb2ee023d5400acacaa72c822280",
       "timings": {
-        "importMs": 1913,
-        "fontsMs": 226,
-        "buildMs": 188,
-        "totalMs": 3372,
+        "importMs": 648,
+        "fontsMs": 238,
+        "buildMs": 223,
+        "totalMs": 2053,
         "builds": 1
       },
       "specimen": {
@@ -446,18 +446,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

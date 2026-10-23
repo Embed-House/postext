@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-novel-right-bound",
-  "sourceHash": "63f14120452459e4e9a896d821a8de3ac61872157dc4b38e3056b9195f1e6dd0",
+  "sourceHash": "ea3df8340886e9e2f85b7c2ffa2a5474409cb1bf7c5ca034f6a662e32f11a8b2",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.720Z",
+  "capturedAt": "2026-10-23T07:43:09.570Z",
   "variants": {
     "en": {
-      "hash8": "e0fb2be1",
+      "hash8": "5a7d1520",
       "vdtHash": "fc245764e090748c178c898acdf19d8f2cc6b592",
       "timings": {
-        "importMs": 2396,
-        "fontsMs": 3772,
-        "buildMs": 70,
-        "totalMs": 7240,
+        "importMs": 637,
+        "fontsMs": 427,
+        "buildMs": 51,
+        "totalMs": 1842,
         "builds": 1
       },
       "specimen": {
@@ -154,12 +154,12 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754879,
+        "bytes": 754914,
         "pages": 11
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279898,
+        "bytes": 279896,
         "folio": "02ddac55",
         "chapters": [
           {
@@ -364,11 +364,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
@@ -377,13 +372,13 @@
       }
     },
     "es": {
-      "hash8": "091bef9f",
+      "hash8": "767079fa",
       "vdtHash": "324528048aa4e7301b6ded3c2185f9076c5aacb3",
       "timings": {
-        "importMs": 2848,
-        "fontsMs": 2218,
-        "buildMs": 63,
-        "totalMs": 7142,
+        "importMs": 646,
+        "fontsMs": 420,
+        "buildMs": 51,
+        "totalMs": 1821,
         "builds": 1
       },
       "specimen": {
@@ -525,7 +520,7 @@
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279920,
+        "bytes": 279918,
         "folio": "02ddac55",
         "chapters": [
           {
@@ -729,11 +724,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

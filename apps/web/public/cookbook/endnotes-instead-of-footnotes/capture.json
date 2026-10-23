@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "endnotes-instead-of-footnotes",
-  "sourceHash": "249059699def7895d7e691fcedf421037cbf99d55db79749ba5a67950e9f4ab3",
+  "sourceHash": "5de1daa361a3859ab9d1558a862819083f96c7e79a09d17e931e48f00b7d8060",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:58:17.154Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.480Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:35:36.664Z",
   "variants": {
     "en": {
-      "hash8": "d4d9cf96",
+      "hash8": "ddca616b",
       "vdtHash": "a7753d5706a3721afc29144f567ffae5277b1bc5",
       "timings": {
-        "importMs": 1051,
-        "fontsMs": 182,
-        "buildMs": 106,
-        "totalMs": 2270,
+        "importMs": 393,
+        "fontsMs": 739,
+        "buildMs": 74,
+        "totalMs": 1855,
         "builds": 1
       },
       "specimen": {
@@ -130,7 +125,7 @@
       },
       "sandbox": {
         "file": "endnotes-instead-of-footnotes.postext",
-        "bytes": 78142,
+        "bytes": 78147,
         "folio": "3d3a1e90",
         "chapters": [
           {
@@ -355,9 +350,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

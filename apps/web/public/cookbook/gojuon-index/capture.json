@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "gojuon-index",
-  "sourceHash": "28a5cabf63c6681b39982c0c6338fe33199727b7588d9e2ae80751bb8dc96888",
+  "sourceHash": "9752ce10e122605dac7d1d3fa126855ad25a850e6de6106d58d900ec29815ea8",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:00:39.912Z",
+  "capturedAt": "2026-10-23T07:36:51.246Z",
   "variants": {
     "en": {
-      "hash8": "a54a83e4",
+      "hash8": "7c68ce42",
       "vdtHash": "7556b4a7dc3b73735932746bb03fbec5e5a6e4af",
       "timings": {
-        "importMs": 2922,
-        "fontsMs": 624,
-        "buildMs": 95,
-        "totalMs": 4727,
+        "importMs": 225,
+        "fontsMs": 167,
+        "buildMs": 90,
+        "totalMs": 1039,
         "builds": 1
       },
       "specimen": {
@@ -328,11 +328,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -341,13 +336,13 @@
       }
     },
     "es": {
-      "hash8": "c0393471",
+      "hash8": "ef10c836",
       "vdtHash": "901fcb413553333ee76fc85109634f24cbbf9f0d",
       "timings": {
-        "importMs": 2861,
-        "fontsMs": 1699,
-        "buildMs": 137,
-        "totalMs": 6110,
+        "importMs": 208,
+        "fontsMs": 151,
+        "buildMs": 90,
+        "totalMs": 1028,
         "builds": 1
       },
       "specimen": {
@@ -657,11 +652,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

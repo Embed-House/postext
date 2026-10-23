@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "back-of-book-index",
-  "sourceHash": "b7b8898605143dba081404bdc21c971175ed3ac1447782e148b81012997991d7",
+  "sourceHash": "822943dc48070b1851d174724bcb54a9bf0809c8628bc47578377252c6db65ad",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:58:14.271Z",
+  "capturedAt": "2026-10-23T07:31:43.155Z",
   "variants": {
     "en": {
-      "hash8": "372a18ea",
+      "hash8": "10dc90fc",
       "vdtHash": "da5e68fa36c4c6b7e032a5279761de653a60c8db",
       "timings": {
-        "importMs": 2816,
-        "fontsMs": 187,
-        "buildMs": 42,
-        "totalMs": 4549,
+        "importMs": 608,
+        "fontsMs": 2445,
+        "buildMs": 43,
+        "totalMs": 3949,
         "builds": 2
       },
       "specimen": {
@@ -535,23 +535,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "219af606",
+      "hash8": "237e1157",
       "vdtHash": "4d5c22c35fa3dac3ab919b3a6b3a77f4b913e343",
       "timings": {
-        "importMs": 2633,
-        "fontsMs": 292,
+        "importMs": 603,
+        "fontsMs": 2450,
         "buildMs": 47,
-        "totalMs": 4448,
+        "totalMs": 3987,
         "builds": 2
       },
       "specimen": {
@@ -1069,11 +1064,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 10.3 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

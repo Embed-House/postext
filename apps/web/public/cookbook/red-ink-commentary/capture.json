@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "red-ink-commentary",
-  "sourceHash": "f0c7a1f5238fc322b0903f1a526c4599ab6b5163b6970f59b6da6a6ebd63f86b",
+  "sourceHash": "d09b71e1a94024e02146b41dc4665da01d1cf6f8616cfd657646c6298c3d4cdd",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:48:42.076Z",
+  "capturedAt": "2026-10-23T07:40:58.453Z",
   "variants": {
     "en": {
-      "hash8": "d3b7cf8e",
+      "hash8": "f1f4a3db",
       "vdtHash": "7def34376af266dd12ad436268b0a41daca7ad39",
       "timings": {
-        "importMs": 3545,
-        "fontsMs": 2984,
-        "buildMs": 63,
-        "totalMs": 7956,
+        "importMs": 239,
+        "fontsMs": 341,
+        "buildMs": 64,
+        "totalMs": 1257,
         "builds": 1
       },
       "specimen": {
@@ -106,7 +106,7 @@
           "h": 1413,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 45750,
+          "bytes": 45716,
           "alt": "Page 六."
         }
       ],
@@ -148,7 +148,7 @@
       },
       "sandbox": {
         "file": "red-ink-commentary.postext",
-        "bytes": 37692,
+        "bytes": 37693,
         "folio": "941f3254",
         "chapters": [
           {
@@ -363,23 +363,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "c5518046",
+      "hash8": "3aa45706",
       "vdtHash": "cfe780efe70a07358783d8838a77a783afac2a11",
       "timings": {
-        "importMs": 2099,
-        "fontsMs": 2253,
-        "buildMs": 89,
-        "totalMs": 5478,
+        "importMs": 488,
+        "fontsMs": 270,
+        "buildMs": 57,
+        "totalMs": 1551,
         "builds": 1
       },
       "specimen": {
@@ -468,7 +462,7 @@
           "h": 1413,
           "file": "p06.webp",
           "strip": "p06.s.webp",
-          "bytes": 45966,
+          "bytes": 45976,
           "alt": "Página 六."
         }
       ],
@@ -510,7 +504,7 @@
       },
       "sandbox": {
         "file": "red-ink-commentary.postext",
-        "bytes": 37721,
+        "bytes": 37722,
         "folio": "941f3254",
         "chapters": [
           {
@@ -725,13 +719,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

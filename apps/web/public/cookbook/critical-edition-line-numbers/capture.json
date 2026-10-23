@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "critical-edition-line-numbers",
-  "sourceHash": "375912d103834b932c907f27bb45a7f6f82b16d95966bf556ce276d432dc9990",
+  "sourceHash": "3b3e9951a10a103e84b6b32d324493b408732cb11619f7f429e4762db8dab30d",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:41:19.981Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:54:13.402Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:34:49.168Z",
   "variants": {
     "en": {
-      "hash8": "a8b4e7d6",
+      "hash8": "3d0c3037",
       "vdtHash": "07468e409ef5400855eb4297fb4b8812c1ff05cf",
       "timings": {
-        "importMs": 897,
-        "fontsMs": 22,
-        "buildMs": 132,
-        "totalMs": 2193,
+        "importMs": 296,
+        "fontsMs": 16,
+        "buildMs": 71,
+        "totalMs": 1915,
         "builds": 1
       },
       "specimen": {
@@ -157,7 +152,7 @@
       },
       "sandbox": {
         "file": "critical-edition-line-numbers.postext",
-        "bytes": 107966,
+        "bytes": 107968,
         "folio": "bc0e5eea",
         "chapters": [
           {
@@ -361,7 +356,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "print-and-screen-editions",
-  "sourceHash": "9e43f9ac43025f3650819e4f275dc19602c7ed72798cfcda40687fa457808ea3",
+  "sourceHash": "11292f0341a85bac451ecae98947bd1e6d5d871a55de6ee4c27fe748b00442cf",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:03:18.166Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:08:37.379Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:40:37.792Z",
   "variants": {
     "en": {
-      "hash8": "f566aa45",
+      "hash8": "3a696244",
       "vdtHash": "0de29917992f6a3d0712ef842ef03e73fa9d2003",
       "timings": {
-        "importMs": 508,
-        "fontsMs": 134,
-        "buildMs": 237,
-        "totalMs": 1596,
+        "importMs": 171,
+        "fontsMs": 1553,
+        "buildMs": 121,
+        "totalMs": 2468,
         "builds": 2
       },
       "specimen": {
@@ -120,7 +115,7 @@
       },
       "sandbox": {
         "file": "print-and-screen-editions.postext",
-        "bytes": 186591,
+        "bytes": 186584,
         "folio": "d9a24b31",
         "chapters": [
           {
@@ -350,21 +345,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "0cf22947",
+      "hash8": "29870e4d",
       "vdtHash": "27c8ba1548cf32c347a222481f2240b7f5dc10d0",
       "timings": {
-        "importMs": 358,
-        "fontsMs": 119,
-        "buildMs": 140,
-        "totalMs": 1419,
+        "importMs": 267,
+        "fontsMs": 45,
+        "buildMs": 85,
+        "totalMs": 1013,
         "builds": 2
       },
       "specimen": {
@@ -463,7 +458,7 @@
       },
       "sandbox": {
         "file": "print-and-screen-editions.postext",
-        "bytes": 187296,
+        "bytes": 187298,
         "folio": "d9a24b31",
         "chapters": [
           {
@@ -693,9 +688,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

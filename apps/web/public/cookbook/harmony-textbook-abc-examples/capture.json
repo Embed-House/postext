@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "harmony-textbook-abc-examples",
-  "sourceHash": "2e6db36d03096bdd4c45dab184ee06b0e392a24f736095ee8d9d391af8fc6dd6",
+  "sourceHash": "c60c267842b8147435022727d3f73c5539d9020019ee309641cd71357e2ae292",
   "engine": {
-    "postext": "1.54.0",
-    "postextPdf": "1.54.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T09:34:42.042Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:57:34.870Z"
-  },
+  "capturedAt": "2026-10-23T07:36:51.329Z",
   "variants": {
     "en": {
       "hash8": "75766f03",
       "vdtHash": "ee95d024b288225b637515a7e364cdb146a6949f",
       "timings": {
-        "importMs": 25216,
-        "fontsMs": 964,
-        "buildMs": 15,
-        "totalMs": 27478,
+        "importMs": 269,
+        "fontsMs": 508,
+        "buildMs": 13,
+        "totalMs": 1939,
         "builds": 1
       },
       "specimen": {
@@ -394,11 +388,6 @@
         },
         "findings": [
           {
-            "check": "C3",
-            "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
-          },
-          {
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 0.0 % colour, pictures or display type (aim for 25 %+)"
@@ -410,10 +399,10 @@
       "hash8": "5ed22fda",
       "vdtHash": "eecbf55528efa687506c139d576925f58538204b",
       "timings": {
-        "importMs": 25212,
-        "fontsMs": 864,
-        "buildMs": 15,
-        "totalMs": 27376,
+        "importMs": 490,
+        "fontsMs": 494,
+        "buildMs": 13,
+        "totalMs": 2037,
         "builds": 1
       },
       "specimen": {
@@ -783,11 +772,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "C3",
-            "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
-          },
           {
             "check": "C26",
             "severity": "warn",

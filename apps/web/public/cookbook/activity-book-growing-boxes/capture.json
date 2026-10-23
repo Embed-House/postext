@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "activity-book-growing-boxes",
-  "sourceHash": "3136bd59d067aa7f752777c7dffcfecb12412ccc8fba987fec260750e655bd74",
+  "sourceHash": "88c6c1c915fde5678a5aaf778e5079bb97b7d783de4306fad00305e5d4feecbd",
   "engine": {
-    "postext": "1.39.0",
-    "postextPdf": "1.39.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-17T13:17:08.062Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:32:35.794Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:30:46.632Z",
   "variants": {
     "en": {
-      "hash8": "8302cac1",
+      "hash8": "40d04d22",
       "vdtHash": "ad2b06720783afac829e3a1df04351a0b703cf7e",
       "timings": {
-        "importMs": 627,
-        "fontsMs": 75,
-        "buildMs": 77,
-        "totalMs": 1548,
+        "importMs": 682,
+        "fontsMs": 73,
+        "buildMs": 80,
+        "totalMs": 3715,
         "builds": 1
       },
       "specimen": {
@@ -137,7 +131,7 @@
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 859894,
+        "bytes": 859893,
         "chapters": [
           {
             "pages": 5,
@@ -444,21 +438,21 @@
             "detail": "2 paragraphs set a line short with tracking (worst −10‰, the cap): p. 2 −10‰ “Tom lives in Leeds. The water from his tap comes…”, p. 4 −5‰ “A rain gauge measures how much rain falls in one…”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "80302fc7",
+      "hash8": "723ed209",
       "vdtHash": "a83cce30f04b7a8f06244c55f5dc552d5ef2f49e",
       "timings": {
-        "importMs": 640,
-        "fontsMs": 86,
+        "importMs": 684,
+        "fontsMs": 82,
         "buildMs": 78,
-        "totalMs": 1552,
+        "totalMs": 3712,
         "builds": 1
       },
       "specimen": {
@@ -572,7 +566,7 @@
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 860182,
+        "bytes": 860184,
         "chapters": [
           {
             "pages": 5,
@@ -869,21 +863,21 @@
             "detail": "every element came back to its source: 42 block, 22 frame, 62 line, 5 text"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "fr": {
-      "hash8": "7bf02f18",
+      "hash8": "7046268e",
       "vdtHash": "32750a13c4cb09f7a9e94ef4f659b9ecbefc4a77",
       "timings": {
-        "importMs": 634,
-        "fontsMs": 80,
+        "importMs": 258,
+        "fontsMs": 71,
         "buildMs": 82,
-        "totalMs": 1554,
+        "totalMs": 1109,
         "builds": 1
       },
       "specimen": {
@@ -997,7 +991,7 @@
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 860045,
+        "bytes": 860044,
         "chapters": [
           {
             "pages": 5,
@@ -1304,9 +1298,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 4 −10‰ “Chaque jour à la même heure, regarde de combien …”"
           },
           {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

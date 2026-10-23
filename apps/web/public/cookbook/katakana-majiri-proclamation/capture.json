@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "katakana-majiri-proclamation",
-  "sourceHash": "702e58d1a17703a3608287a4258d0b5fab1ceac26d64393748771013744dc4f8",
+  "sourceHash": "ba0cd9e976a65e90d96e1a7a89e5138491fec4d0b8a65f09a80a0a415839a221",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:09:31.844Z",
+  "capturedAt": "2026-10-23T07:37:57.720Z",
   "variants": {
     "en": {
-      "hash8": "45a1140f",
+      "hash8": "c1f8af1b",
       "vdtHash": "37b8f33daff8b0376c1b77cf25b87f45bc3eca1d",
       "timings": {
-        "importMs": 2478,
-        "fontsMs": 1991,
-        "buildMs": 64,
-        "totalMs": 5726,
+        "importMs": 256,
+        "fontsMs": 655,
+        "buildMs": 57,
+        "totalMs": 1602,
         "builds": 1
       },
       "specimen": {
@@ -395,23 +395,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "a9298bf8",
+      "hash8": "806b17fb",
       "vdtHash": "4720d00e789c69898f7917b7933d75af4082d8d5",
       "timings": {
-        "importMs": 2500,
-        "fontsMs": 2656,
-        "buildMs": 64,
-        "totalMs": 5890,
+        "importMs": 278,
+        "fontsMs": 465,
+        "buildMs": 56,
+        "totalMs": 1570,
         "builds": 1
       },
       "specimen": {
@@ -566,7 +560,7 @@
       },
       "sandbox": {
         "file": "katakana-majiri-proclamation.postext",
-        "bytes": 10004,
+        "bytes": 10005,
         "folio": "d5f2cfd5",
         "chapters": [
           {
@@ -789,13 +783,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

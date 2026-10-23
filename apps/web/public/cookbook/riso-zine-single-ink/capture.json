@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "riso-zine-single-ink",
-  "sourceHash": "221521a17047fb4c4e917934f218fcce8434b615fc085f686e33da256f8f1601",
+  "sourceHash": "54429161a0568830453ed6343d92e8a5530fd6d7f31a02074511796be9f205f6",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.657Z",
+  "capturedAt": "2026-10-23T07:40:58.465Z",
   "variants": {
     "en": {
-      "hash8": "c8e39eea",
+      "hash8": "184d74aa",
       "vdtHash": "3913ca9fad97e41776a3228dcd935007e6a0e3c5",
       "timings": {
-        "importMs": 1583,
-        "fontsMs": 105,
-        "buildMs": 78,
-        "totalMs": 2779,
+        "importMs": 389,
+        "fontsMs": 50,
+        "buildMs": 49,
+        "totalMs": 1313,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1333,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 58462,
+          "bytes": 58456,
           "alt": "Opening page 1: Night Buses."
         },
         {
@@ -372,13 +372,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

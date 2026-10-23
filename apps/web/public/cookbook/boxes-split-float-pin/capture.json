@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "boxes-split-float-pin",
-  "sourceHash": "162885125f440a05e5dc76fa19ceafdcc7be31e1660f64a58a22d3e481e00b5c",
+  "sourceHash": "0581d514808ed923053b1aae48a3323d1f979ac66d881ae519d6790d4d97ab5e",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.029Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.376Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:31:43.272Z",
   "variants": {
     "es": {
-      "hash8": "edd82f79",
+      "hash8": "ebb22685",
       "vdtHash": "731766a34e54522c0cbf634b2c7f9ff4a2b60ec3",
       "timings": {
-        "importMs": 229,
-        "fontsMs": 88,
-        "buildMs": 130,
-        "totalMs": 1120,
+        "importMs": 155,
+        "fontsMs": 3141,
+        "buildMs": 101,
+        "totalMs": 4031,
         "builds": 1
       },
       "specimen": {
@@ -36,7 +31,7 @@
         "body": {
           "family": "Host Grotesk",
           "sizePt": 9.4,
-          "leadingPt": 13.600000000000001
+          "leadingPt": 13.6
         },
         "families": [
           "Commit Mono",
@@ -119,7 +114,7 @@
       },
       "sandbox": {
         "file": "boxes-split-float-pin.postext",
-        "bytes": 34664,
+        "bytes": 34665,
         "folio": "bcf271e0",
         "chapters": [
           {
@@ -390,6 +385,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

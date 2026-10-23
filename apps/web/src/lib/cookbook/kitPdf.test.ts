@@ -7,27 +7,38 @@ import { readKit } from "./sources.ts";
 
 const LORA = { subsets: ["latin", "latin-ext", "math"], weights: [400, 700], styles: ["normal", "italic"] };
 const NOTO = { subsets: ["greek", "latin", "latin-ext", "math"], weights: [400, 700], styles: ["normal"] };
+// The API lists 700 and italic, the package ships no 700 italic file (#1207).
+const CASLON = { subsets: ["latin", "latin-ext"], weights: [400, 700], styles: ["italic", "normal"] };
+/** Each package's latin-italic.css, as far as the kit reads it. */
+const ITALIC_CSS: Record<string, string> = {
+  lora: "@font-face { font-weight: 400; } @font-face { font-weight: 700; }",
+  "libre-caslon-text": "@font-face {\n  font-style: italic;\n  font-weight: 400;\n}",
+};
 const FILES = "https://cdn.jsdelivr.net/npm/@fontsource";
 
 const response = (body: unknown, status = 200) => ({
   ok: status === 200,
   status,
   json: async () => body,
+  text: async () => String(body),
   arrayBuffer: async () => new TextEncoder().encode(String(body)).buffer as ArrayBuffer,
 });
 
 function kit() {
   const blocks = readKit();
-  const meta: Record<string, unknown> = { lora: LORA, "noto-serif": NOTO };
+  const meta: Record<string, unknown> = { lora: LORA, "noto-serif": NOTO, "libre-caslon-text": CASLON };
   const fetch = vi.fn(async (url: string) => {
     const api = /api\.fontsource\.org\/v1\/fonts\/(.+)$/.exec(url);
     if (api) return response(meta[api[1]] ?? {}, meta[api[1]] ? 200 : 404);
+    const css = /@fontsource\/([a-z0-9-]+)@[^/]+\/latin-italic\.css$/.exec(url);
+    if (css) return response(ITALIC_CSS[css[1]] ?? "", ITALIC_CSS[css[1]] ? 200 : 404);
     return response(url);
   });
   const decompressWoff2 = (bytes: Uint8Array) => bytes;
   const run = new Function("fetch", "decompressWoff2", "document", "kitStatus", "kitFail",
-    `${blocks.fonts}\n${blocks.pdf}\nreturn { fontsourceProvider, kitSubsetsFor };`) as (...args: unknown[]) => {
+    `${blocks.fonts}\n${blocks.pdf}\nreturn { fontsourceProvider, fontsourceResolver, kitSubsetsFor };`) as (...args: unknown[]) => {
     fontsourceProvider: (family: string, weight: number, style: string, request?: { codePoints: Set<number> }) => Promise<unknown>;
+    fontsourceResolver: (family: string, weight: number, style: string) => Promise<{ source: string }[] | null>;
     kitSubsetsFor: (text: string, meta?: unknown) => string[];
   };
   return run(fetch, decompressWoff2, {}, () => {}, () => {});
@@ -72,6 +83,14 @@ describe("kit block pdf: fontsourceProvider", () => {
       [`${FILES}/lora@5/files/lora-latin-400-normal.woff2`, "U+0000-00FF", 0],
       [`${FILES}/lora@5/files/lora-latin-ext-400-normal.woff2`, "U+0100-02BA", 1],
     ]);
+  });
+
+  it("embeds the nearest weight the package ships in that style, not a bold italic it lacks (#1207)", async () => {
+    expect(named(await kit().fontsourceProvider("Libre Caslon Text", 700, "italic"))).toBe(`${FILES}/libre-caslon-text@5/files/libre-caslon-text-latin-400-italic.woff2`);
+    expect(named(await kit().fontsourceProvider("Libre Caslon Text", 700, "normal"))).toBe(`${FILES}/libre-caslon-text@5/files/libre-caslon-text-latin-700-normal.woff2`);
+    // The screen asks for no file at all: the browser sets the 400 italic.
+    expect(await kit().fontsourceResolver("Libre Caslon Text", 700, "italic")).toBeNull();
+    expect((await kit().fontsourceResolver("Lora", 700, "italic"))?.[0].source).toBe(`${FILES}/lora@5/files/lora-latin-700-italic.woff2`);
   });
 
   it("names the files a text needs that the family ships", () => {

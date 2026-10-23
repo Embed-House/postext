@@ -9412,6 +9412,9 @@ const setAfterText = new WeakMap<VDTBlock, { resourceId?: string; sourceStart?: 
 /** The `unplaced` warnings of a build (#639): what its last pass left in
  *  its queues. */
 const unplacedByDoc = new WeakMap<VDTDocument, ContentWarning[]>();
+/** The per-document warnings a column-balancing splice merges by page
+ *  into the document it builds (#1203). */
+const SPLICED_WARNING_MAPS = [indexWarnings, joiningSpacingWarnings, dropCapWarningsByDoc, floatShrinkWarningsByDoc, textWrapWarningsByDoc, composedWarningsByDoc, compositionWarningsByDoc];
 
 /** An `afterText` warning for each side box and side float set after the
  *  text (`setAfterText`) on a page whose text columns hold nothing: one a
@@ -9964,6 +9967,15 @@ function* buildDocumentBalanced(
     // missing from it (#639).
     const unplaced = unplacedByDoc.get(next.doc);
     if (unplaced) unplacedByDoc.set(doc, unplaced);
+    // The other per-document warnings follow their pages as `warnings` do;
+    // one with no page is the pass's, as `unplaced` is (#1203).
+    for (const map of SPLICED_WARNING_MAPS) {
+      const merged = [
+        ...(map.get(best.doc) ?? []).filter((w) => w.pageIndex !== undefined && !taken(w.pageIndex)),
+        ...(map.get(next.doc) ?? []).filter((w) => w.pageIndex === undefined || taken(w.pageIndex)),
+      ];
+      if (merged.length > 0) map.set(doc, merged);
+    }
     const pageBest = pageOfContent(best.doc);
     const pageNext = pageOfContent(next.doc);
     const mergeMap = <V,>(a: ReadonlyMap<number, V>, b: ReadonlyMap<number, V>): Map<number, V> => {

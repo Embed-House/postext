@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "stage-play",
-  "sourceHash": "03ec04599a9752a3488424b48cd414b7473958a9ac36e5c28af1c5c0960e3f2b",
+  "sourceHash": "cbe099232beb3f94e021f2cc5ccaf12baada8e377ff32da998ba3ca1a659132c",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:48:46.266Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:12:20.629Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:41:23.173Z",
   "variants": {
     "en": {
-      "hash8": "507755ee",
+      "hash8": "8d1a73c2",
       "vdtHash": "4ad978657d69393da5b14f4fd35f89ee64564f9f",
       "timings": {
-        "importMs": 500,
+        "importMs": 315,
         "fontsMs": 4,
-        "buildMs": 126,
-        "totalMs": 1588,
+        "buildMs": 85,
+        "totalMs": 1201,
         "builds": 1
       },
       "specimen": {
@@ -35,7 +30,7 @@
         "body": {
           "family": "Libre Baskerville",
           "sizePt": 9.4,
-          "leadingPt": 13.600000000000001
+          "leadingPt": 13.6
         },
         "families": [
           "Abril Fatface",
@@ -340,17 +335,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "822b8bba",
+      "hash8": "999fa917",
       "vdtHash": "5fadb1936831a534e369bcee9ac4cb0862f56ac3",
       "timings": {
-        "importMs": 512,
+        "importMs": 320,
         "fontsMs": 5,
-        "buildMs": 97,
-        "totalMs": 1413,
+        "buildMs": 86,
+        "totalMs": 1193,
         "builds": 1
       },
       "specimen": {
@@ -364,7 +365,7 @@
         "body": {
           "family": "Libre Baskerville",
           "sizePt": 9.4,
-          "leadingPt": 13.600000000000001
+          "leadingPt": 13.6
         },
         "families": [
           "Abril Fatface",
@@ -459,7 +460,7 @@
       },
       "sandbox": {
         "file": "stage-play.postext",
-        "bytes": 22537,
+        "bytes": 22536,
         "folio": "059474f1",
         "chapters": [
           {
@@ -671,9 +672,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

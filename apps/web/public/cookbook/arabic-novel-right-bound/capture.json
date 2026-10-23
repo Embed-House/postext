@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "arabic-novel-right-bound",
-  "sourceHash": "6954adcadfe0c11df9b11d92dc53657c171edfd478a23b28eb124f2372dc8158",
+  "sourceHash": "85662d6eb66d551b801b21842d7fa461d43af752630264efb1e5e781e1f77f0f",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:04:34.357Z",
+  "capturedAt": "2026-10-23T07:30:46.674Z",
   "variants": {
     "en": {
-      "hash8": "fce5ec73",
+      "hash8": "072c0659",
       "vdtHash": "384908a02d828591848009d167bdde19f002a016",
       "timings": {
-        "importMs": 4353,
-        "fontsMs": 308,
-        "buildMs": 96,
-        "totalMs": 6312,
+        "importMs": 620,
+        "fontsMs": 90,
+        "buildMs": 94,
+        "totalMs": 1441,
         "builds": 1
       },
       "specimen": {
@@ -158,7 +158,7 @@
       },
       "sandbox": {
         "file": "arabic-novel-right-bound.postext",
-        "bytes": 34588,
+        "bytes": 34587,
         "folio": "217e1225",
         "chapters": [
           {
@@ -355,11 +355,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale ar, the document's language: en names its resource types otherwise"
@@ -373,13 +368,13 @@
       }
     },
     "es": {
-      "hash8": "0d97d772",
+      "hash8": "032e89ec",
       "vdtHash": "21d7b277eaa905c2950b60e5e55080a23fd76db3",
       "timings": {
-        "importMs": 3639,
-        "fontsMs": 536,
-        "buildMs": 146,
-        "totalMs": 5808,
+        "importMs": 408,
+        "fontsMs": 207,
+        "buildMs": 81,
+        "totalMs": 1390,
         "builds": 1
       },
       "specimen": {
@@ -716,11 +711,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

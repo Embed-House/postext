@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "tang-poems-facing-english",
-  "sourceHash": "3d25f78e52b06419a434fb7926fe043a1a74f566dfa63cb0565ece28c0a7f1fc",
+  "sourceHash": "25b52387ae35ae8119d7de3671e686d50ee282b1bd6980192fe43c7583b842d3",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.673Z",
+  "capturedAt": "2026-10-23T07:42:14.996Z",
   "variants": {
     "en": {
-      "hash8": "a58e4eec",
+      "hash8": "ff0739fc",
       "vdtHash": "15e7223af4029b7119f93bfea6aa701acd417534",
       "timings": {
-        "importMs": 2271,
-        "fontsMs": 2401,
-        "buildMs": 122,
-        "totalMs": 6280,
+        "importMs": 627,
+        "fontsMs": 362,
+        "buildMs": 127,
+        "totalMs": 1805,
         "builds": 1
       },
       "specimen": {
@@ -195,12 +195,12 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 152589,
+        "bytes": 152598,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 14904,
+        "bytes": 14903,
         "folio": "e5860b68",
         "chapters": [
           {
@@ -436,23 +436,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "d9a690dd",
+      "hash8": "f83887af",
       "vdtHash": "4c379d391176e97074a39ae6eccbd6cb5ca9a74f",
       "timings": {
-        "importMs": 3521,
-        "fontsMs": 1257,
-        "buildMs": 126,
-        "totalMs": 6071,
+        "importMs": 740,
+        "fontsMs": 438,
+        "buildMs": 100,
+        "totalMs": 1905,
         "builds": 1
       },
       "specimen": {
@@ -630,12 +624,12 @@
       },
       "pdf": {
         "file": "tang-poems-facing-english.pdf",
-        "bytes": 154570,
+        "bytes": 154573,
         "pages": 10
       },
       "sandbox": {
         "file": "tang-poems-facing-english.postext",
-        "bytes": 15161,
+        "bytes": 15159,
         "folio": "e5860b68",
         "chapters": [
           {
@@ -871,13 +865,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

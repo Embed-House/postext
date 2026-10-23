@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "cv-with-sidebar",
-  "sourceHash": "6a8276fe1d5abfbd37de7cf81c4daa9a921ad930fc2db19beab98ec88bb26b1d",
+  "sourceHash": "1f97658b2374e3ec7fede09c28b8200ee2000766291485d2b5243be78caec39c",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.260Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:54:13.404Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:34:49.171Z",
   "variants": {
     "en": {
-      "hash8": "85dc1567",
+      "hash8": "ada20cc8",
       "vdtHash": "92600c27d780bd4fb06c0c104b39322d0186616d",
       "timings": {
-        "importMs": 197,
+        "importMs": 297,
         "fontsMs": 2,
-        "buildMs": 45,
-        "totalMs": 908,
+        "buildMs": 46,
+        "totalMs": 2736,
         "builds": 1
       },
       "specimen": {
@@ -36,7 +31,7 @@
         "body": {
           "family": "Hanken Grotesk",
           "sizePt": 9.3,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "Hanken Grotesk",
@@ -54,7 +49,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 121508,
+          "bytes": 121502,
           "alt": "Page 1: Irene Salcedo."
         }
       ],
@@ -78,7 +73,7 @@
       },
       "sandbox": {
         "file": "cv-with-sidebar.postext",
-        "bytes": 29202,
+        "bytes": 29213,
         "folio": "4fd007fe",
         "chapters": [
           {
@@ -274,17 +269,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "03e0e35f",
+      "hash8": "bce0c714",
       "vdtHash": "44f7eab9b9c0d2daf9dc1441a3c6b92fbccaef08",
       "timings": {
-        "importMs": 282,
+        "importMs": 165,
         "fontsMs": 2,
-        "buildMs": 53,
-        "totalMs": 1112,
+        "buildMs": 45,
+        "totalMs": 861,
         "builds": 1
       },
       "specimen": {
@@ -299,7 +300,7 @@
         "body": {
           "family": "Hanken Grotesk",
           "sizePt": 9.3,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "Hanken Grotesk",
@@ -317,7 +318,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 132832,
+          "bytes": 132756,
           "alt": "Página 1: Irene Salcedo."
         }
       ],
@@ -341,7 +342,7 @@
       },
       "sandbox": {
         "file": "cv-with-sidebar.postext",
-        "bytes": 31522,
+        "bytes": 31512,
         "folio": "4fd007fe",
         "chapters": [
           {
@@ -537,7 +538,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

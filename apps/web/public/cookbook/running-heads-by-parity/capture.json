@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "running-heads-by-parity",
-  "sourceHash": "3f5cba03ec877514f465003241ea9e7049a871c9c747a7fe3a3f587bb0524b23",
+  "sourceHash": "f972a5fc9cda9a337f7e7ef63c7c549476651a1f4d1815f1abbce34bac334f11",
   "engine": {
-    "postext": "1.57.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:50:38.813Z",
+  "capturedAt": "2026-10-23T07:40:58.478Z",
   "variants": {
     "en": {
       "hash8": "1dd3ea0d",
       "vdtHash": "0a2fbac3fa2db1d72b96b5f97a4dd4ddae911a7a",
       "timings": {
-        "importMs": 2907,
-        "fontsMs": 0,
-        "buildMs": 109,
-        "totalMs": 4604,
+        "importMs": 176,
+        "fontsMs": 1,
+        "buildMs": 63,
+        "totalMs": 925,
         "builds": 1
       },
       "specimen": {
@@ -330,11 +330,6 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 5 −5‰ “Quintus Marcius, the Roman legate in the war aga…”"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -346,10 +341,10 @@
       "hash8": "a73061d1",
       "vdtHash": "310a35ec00ee4bf19b1a68ceb30a94c153335b84",
       "timings": {
-        "importMs": 2033,
+        "importMs": 237,
         "fontsMs": 0,
-        "buildMs": 81,
-        "totalMs": 3614,
+        "buildMs": 56,
+        "totalMs": 975,
         "builds": 1
       },
       "specimen": {
@@ -652,11 +647,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

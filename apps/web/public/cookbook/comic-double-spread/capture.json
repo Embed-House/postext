@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "comic-double-spread",
-  "sourceHash": "7759471b219fe195b8d48449fd45822b1839c9c6a5e4b9581b323875decdaaa8",
+  "sourceHash": "ec282feeb666ba8961b8151fa8674919fe599c112eef8ecb57471b6ecb61f425",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:33:58.221Z",
+  "capturedAt": "2026-10-23T07:34:49.053Z",
   "variants": {
     "en": {
-      "hash8": "7a1dd599",
+      "hash8": "36c58f12",
       "vdtHash": "6d1ab509a3fcd3d3cd62c9cb4ec3083deec81511",
       "timings": {
-        "importMs": 479,
-        "fontsMs": 1994,
-        "buildMs": 258,
-        "totalMs": 3395,
+        "importMs": 405,
+        "fontsMs": 139,
+        "buildMs": 240,
+        "totalMs": 1383,
         "builds": 1
       },
       "specimen": {
@@ -264,11 +264,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -277,13 +272,13 @@
       }
     },
     "es": {
-      "hash8": "0df6870e",
+      "hash8": "dcc835e8",
       "vdtHash": "28c0aa1dddebc1a19af91ea4e5df75e8b5dd8a8e",
       "timings": {
-        "importMs": 489,
-        "fontsMs": 2005,
-        "buildMs": 267,
-        "totalMs": 3437,
+        "importMs": 401,
+        "fontsMs": 129,
+        "buildMs": 243,
+        "totalMs": 1417,
         "builds": 1
       },
       "specimen": {
@@ -530,11 +525,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -543,13 +533,13 @@
       }
     },
     "ca": {
-      "hash8": "3b7e27b7",
+      "hash8": "424ca26f",
       "vdtHash": "e051cb0bfac9ed7bda549de1dc7a909fb242d473",
       "timings": {
-        "importMs": 217,
-        "fontsMs": 156,
-        "buildMs": 256,
-        "totalMs": 1235,
+        "importMs": 407,
+        "fontsMs": 119,
+        "buildMs": 228,
+        "totalMs": 1421,
         "builds": 1
       },
       "specimen": {
@@ -620,7 +610,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893509,
+        "bytes": 893508,
         "chapters": [
           {
             "pages": 2,
@@ -796,11 +786,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -809,13 +794,13 @@
       }
     },
     "zh": {
-      "hash8": "20827072",
+      "hash8": "3c96ed72",
       "vdtHash": "a95d6688e5763446c909ea3f306a081d82b8d8fa",
       "timings": {
-        "importMs": 864,
-        "fontsMs": 606,
-        "buildMs": 335,
-        "totalMs": 2479,
+        "importMs": 403,
+        "fontsMs": 264,
+        "buildMs": 253,
+        "totalMs": 1524,
         "builds": 1
       },
       "specimen": {
@@ -1063,11 +1048,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1076,13 +1056,13 @@
       }
     },
     "ar": {
-      "hash8": "00d8e0e3",
+      "hash8": "f98f9841",
       "vdtHash": "62186dc3c174a7a0486ed05494d986ce8953dc58",
       "timings": {
-        "importMs": 508,
-        "fontsMs": 260,
-        "buildMs": 253,
-        "totalMs": 1661,
+        "importMs": 235,
+        "fontsMs": 377,
+        "buildMs": 248,
+        "totalMs": 1455,
         "builds": 1
       },
       "specimen": {
@@ -1333,11 +1313,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1346,13 +1321,13 @@
       }
     },
     "ja": {
-      "hash8": "a23bfc37",
+      "hash8": "08a266e3",
       "vdtHash": "e0fea0a1e39d501e8c605675983a84d3865583a3",
       "timings": {
-        "importMs": 713,
-        "fontsMs": 403,
-        "buildMs": 278,
-        "totalMs": 2073,
+        "importMs": 227,
+        "fontsMs": 209,
+        "buildMs": 222,
+        "totalMs": 1280,
         "builds": 1
       },
       "specimen": {
@@ -1424,7 +1399,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893830,
+        "bytes": 893829,
         "chapters": [
           {
             "pages": 2,
@@ -1602,11 +1577,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1615,13 +1585,13 @@
       }
     },
     "pt": {
-      "hash8": "1e0527f2",
+      "hash8": "3084f540",
       "vdtHash": "c4dea0ea56e8899c4f01360bf573ad13b84489c7",
       "timings": {
-        "importMs": 428,
-        "fontsMs": 304,
-        "buildMs": 298,
-        "totalMs": 1708,
+        "importMs": 229,
+        "fontsMs": 111,
+        "buildMs": 279,
+        "totalMs": 1226,
         "builds": 1
       },
       "specimen": {
@@ -1868,11 +1838,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -1881,13 +1846,13 @@
       }
     },
     "fr": {
-      "hash8": "ac399495",
+      "hash8": "e189e66b",
       "vdtHash": "df1f391aa3734776d7db4e8e04ed68389a29fc34",
       "timings": {
-        "importMs": 424,
-        "fontsMs": 289,
-        "buildMs": 303,
-        "totalMs": 1626,
+        "importMs": 248,
+        "fontsMs": 95,
+        "buildMs": 274,
+        "totalMs": 1233,
         "builds": 1
       },
       "specimen": {
@@ -2134,11 +2099,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -2147,13 +2107,13 @@
       }
     },
     "de": {
-      "hash8": "a0950f98",
+      "hash8": "707fe4b4",
       "vdtHash": "360b8d5cdca9eed7818f6a2ab9512009f98a693c",
       "timings": {
-        "importMs": 253,
-        "fontsMs": 166,
-        "buildMs": 248,
-        "totalMs": 1298,
+        "importMs": 215,
+        "fontsMs": 133,
+        "buildMs": 231,
+        "totalMs": 1175,
         "builds": 1
       },
       "specimen": {
@@ -2224,7 +2184,7 @@
       },
       "sandbox": {
         "file": "comic-double-spread.postext",
-        "bytes": 893442,
+        "bytes": 893445,
         "chapters": [
           {
             "pages": 2,
@@ -2400,11 +2360,6 @@
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -2413,13 +2368,13 @@
       }
     },
     "it": {
-      "hash8": "d4a35a2e",
+      "hash8": "3e221e4d",
       "vdtHash": "48e895d1009176f545a0d9510da1b73baba1e354",
       "timings": {
-        "importMs": 455,
-        "fontsMs": 123,
-        "buildMs": 232,
-        "totalMs": 1525,
+        "importMs": 204,
+        "fontsMs": 95,
+        "buildMs": 229,
+        "totalMs": 1180,
         "builds": 1
       },
       "specimen": {
@@ -2664,11 +2619,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "card.480.webp weighs 46 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",

@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "letters-edition",
-  "sourceHash": "2656475dd1dbe55f4a68e65df34ac6fab87244daf3d0bfad1356bd40ff2c4cce",
+  "sourceHash": "92065f2490d9c4736e5de8bfe944e62d1955cea1ec6e54f2a70cb2bde7d776d9",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:01:22.602Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:39.806Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:37:57.735Z",
   "variants": {
     "en": {
-      "hash8": "fe2fbdd1",
+      "hash8": "d602ac89",
       "vdtHash": "78593deb741abfaf4ae17baef2d92a4d4b0aa817",
       "timings": {
-        "importMs": 817,
-        "fontsMs": 49,
-        "buildMs": 68,
-        "totalMs": 1991,
+        "importMs": 470,
+        "fontsMs": 23,
+        "buildMs": 52,
+        "totalMs": 2736,
         "builds": 1
       },
       "specimen": {
@@ -297,9 +292,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -310,13 +305,13 @@
       }
     },
     "es": {
-      "hash8": "092af1cb",
+      "hash8": "addbe5bb",
       "vdtHash": "78593deb741abfaf4ae17baef2d92a4d4b0aa817",
       "timings": {
-        "importMs": 581,
-        "fontsMs": 40,
-        "buildMs": 56,
-        "totalMs": 1481,
+        "importMs": 194,
+        "fontsMs": 123,
+        "buildMs": 57,
+        "totalMs": 1047,
         "builds": 1
       },
       "specimen": {
@@ -425,7 +420,7 @@
       },
       "sandbox": {
         "file": "letters-edition.postext",
-        "bytes": 212124,
+        "bytes": 212123,
         "folio": "a3ceaa8c",
         "chapters": [
           {
@@ -592,9 +587,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

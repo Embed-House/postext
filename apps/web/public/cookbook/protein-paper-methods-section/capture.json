@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "protein-paper-methods-section",
-  "sourceHash": "ed5ba3a7258a199b06cf9e246e16fcfab46653cfebc940bab2aaccfa623226af",
+  "sourceHash": "ec5595b48db1328f15bdd73cdab38da37af1e944a899d9a984cfbaf038b286bd",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.645Z",
+  "capturedAt": "2026-10-23T07:40:58.428Z",
   "variants": {
     "en": {
-      "hash8": "f43b2e37",
+      "hash8": "f174dd66",
       "vdtHash": "c6a91251811d0b7f32b17d49934df966dc76f9d4",
       "timings": {
-        "importMs": 1821,
-        "fontsMs": 201,
-        "buildMs": 464,
-        "totalMs": 3897,
+        "importMs": 825,
+        "fontsMs": 115,
+        "buildMs": 379,
+        "totalMs": 3728,
         "builds": 1
       },
       "specimen": {
@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "protein-paper-methods-section.postext",
-        "bytes": 77631,
+        "bytes": 77629,
         "folio": "9eaee533",
         "chapters": [
           {

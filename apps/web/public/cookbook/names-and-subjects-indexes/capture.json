@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "names-and-subjects-indexes",
-  "sourceHash": "f5daada8a35ed8f94027ab741984a94098c009f3b5958cd887b78712c01b66d8",
+  "sourceHash": "930578d5b0edbd4b52f77bc1725d7cfdd1aa59132464ae8132b026c9e0d5d7c3",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:03:30.505Z",
+  "capturedAt": "2026-10-23T07:39:33.822Z",
   "variants": {
     "en": {
-      "hash8": "44fcf2ce",
+      "hash8": "19dfb5ef",
       "vdtHash": "f3b9120542cf43acfd574f62a40343c9018fee44",
       "timings": {
-        "importMs": 2945,
-        "fontsMs": 45,
-        "buildMs": 177,
-        "totalMs": 5139,
+        "importMs": 630,
+        "fontsMs": 28,
+        "buildMs": 127,
+        "totalMs": 1582,
         "builds": 1
       },
       "specimen": {
@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 16855,
+        "bytes": 16853,
         "folio": "581a62c9",
         "chapters": [
           {
@@ -396,23 +396,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "f7f7d8fd",
+      "hash8": "5a31cc71",
       "vdtHash": "f76220c95da32c4a77284ada4c89083d3ec6062f",
       "timings": {
-        "importMs": 2453,
-        "fontsMs": 28,
-        "buildMs": 152,
-        "totalMs": 4604,
+        "importMs": 620,
+        "fontsMs": 26,
+        "buildMs": 130,
+        "totalMs": 1586,
         "builds": 1
       },
       "specimen": {
@@ -552,7 +546,7 @@
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 17507,
+        "bytes": 17505,
         "folio": "581a62c9",
         "chapters": [
           {
@@ -796,11 +790,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 7 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
