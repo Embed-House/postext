@@ -193,7 +193,7 @@ describe('openBundle (#1209)', () => {
     const sharedConfig = { bodyText: { fontSize: { value: 12, unit: 'pt' } } } as PostextConfig;
     const { bytes } = await createBundle({
       name: 'Two', locale: 'es', markdown: '# Uno', config: { ...sharedConfig, locale: 'es' } as PostextConfig, sharedConfig,
-      localized: { ar: { markdown: '# واحد', config: { ...sharedConfig, locale: 'ar', bodyText: { fontSize: { value: 12, unit: 'pt' }, fontFamily: 'Amiri' } } as PostextConfig } },
+      localized: { ar: { chapters: [{ markdown: '# واحد' }], config: { ...sharedConfig, locale: 'ar', bodyText: { fontSize: { value: 12, unit: 'pt' }, fontFamily: 'Amiri' } } as PostextConfig } },
     });
     const ar = await openBundle(bytes, { locale: 'ar' });
     expect(ar.config.bodyText?.fontFamily).toBe('Amiri');
