@@ -4113,6 +4113,8 @@ export interface SandboxLabels {
   configScopeEdition: string;
   /** Under the switch in the general scope; `__languages__` lists the editions. */
   configScopeAllHint: string;
+  /** The same with many editions, by their count. */
+  configScopeAllHintMany: string;
   /** Under the switch in the edition scope. */
   configScopeEditionHint: string;
   /** A row's value set for this edition only. */

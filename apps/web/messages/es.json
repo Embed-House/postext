@@ -4561,6 +4561,7 @@
     "configScopeAll": "Todos los idiomas",
     "configScopeEdition": "Solo __language__",
     "configScopeAllHint": "Los cambios llegan a todas las ediciones (__languages__). Una edición que fija un ajuste propio lo conserva.",
+    "configScopeAllHintMany": "Los cambios llegan a las __count__ ediciones. Una edición que fija un ajuste propio lo conserva.",
     "configScopeEditionHint": "Los cambios solo llegan a __language__. Lo que no fija por sí misma sigue los ajustes de todos los idiomas.",
     "configLayerOwn": "Fijado solo para __language__",
     "configLayerGeneral": "Igual en todos los idiomas",

@@ -4561,6 +4561,7 @@
     "configScopeAll": "所有语言",
     "configScopeEdition": "仅 __language__",
     "configScopeAllHint": "更改会作用于每个版本（__languages__）。设有自己取值的版本保留其取值。",
+    "configScopeAllHintMany": "更改会作用于全部 __count__ 个版本。设有自己取值的版本保留其取值。",
     "configScopeEditionHint": "更改只作用于 __language__。此版本未单独设置的项目沿用所有语言的设置。",
     "configLayerOwn": "仅为 __language__ 设置",
     "configLayerGeneral": "所有语言相同",

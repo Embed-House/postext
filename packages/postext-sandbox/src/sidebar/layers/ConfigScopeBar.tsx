@@ -69,7 +69,9 @@ export function ConfigScopeBar() {
       <p id={hintId} className="text-[0.68rem] leading-[1.4] text-(--slate) [text-wrap:pretty]">
         {edition
           ? labels.configScopeEditionHint.replace('__language__', name)
-          : labels.configScopeAllHint.replace('__languages__', all)}
+          : layer.locales.length > 4
+            ? labels.configScopeAllHintMany.replace('__count__', String(layer.locales.length))
+            : labels.configScopeAllHint.replace('__languages__', all)}
       </p>
 
       {edition && ownPaths.length > 0 && (

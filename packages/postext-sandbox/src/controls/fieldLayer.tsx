@@ -86,6 +86,12 @@ export function languageMark(tag: string): string {
   return (tag.split(/[-_]/)[0] ?? tag).toUpperCase();
 }
 
+/** The languages that keep their own value, as the chip shows them: their
+ *  marks up to two, a count beyond (the names are in its label). */
+function keptMarks(tags: readonly string[]): string {
+  return tags.length <= 2 ? tags.map(languageMark).join(' ') : String(tags.length);
+}
+
 /** The dot before a row's label: the general value (filled), this
  *  language's own (the edition colour), the general value read here
  *  (hollow). */
@@ -152,7 +158,7 @@ export function LayerChip({ state }: { state: FieldLayerState | null }) {
           className={cn(chipClass, 'cursor-default gap-0.5 border border-dashed border-(--slate) text-(--slate)')}
         >
           <Languages size={9} aria-hidden="true" />
-          {state.keptBy.map(languageMark).join(' ')}
+          {keptMarks(state.keptBy)}
         </span>
       );
     }
@@ -167,7 +173,7 @@ export function LayerChip({ state }: { state: FieldLayerState | null }) {
             className={cn(chipClass, 'gap-0.5 border border-dashed border-(--slate) text-(--slate) hover:text-(--foreground)')}
           >
             <Languages size={9} aria-hidden="true" />
-            {state.keptBy.map(languageMark).join(' ')}
+            {keptMarks(state.keptBy)}
           </button>
         )}
       >

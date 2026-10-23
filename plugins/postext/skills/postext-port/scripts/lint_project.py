@@ -2524,7 +2524,7 @@ def check_markdown(name: str, text: str, idx: int, ids: dict[str, set[str]], res
                     if not any(s[0] == "callout" for s in stack) and page is None \
                             and (not comic_ctx.get("flow_columns", True) or (engine is not None and engine < (1, 25, 0))):
                         rep.warn(where, ":::columns in the running text is ignored with layout.flowColumns off "
-                                        "(configVersion below 11 reads it so): set configVersion 19, or put the "
+                                        "(configVersion below 11 reads it so): set configVersion 21, or put the "
                                         "group in a :::callout")
                 elif fname == "paper":
                     if any(s[0] == "callout" for s in stack):
@@ -2962,6 +2962,24 @@ def check_design_text(cfg: dict, where: str, marked_attrs: dict[str, tuple[str, 
                              "markers print as written. Set inlineMarks: true on the element")
 
 
+def layered_locales(cv: Any) -> bool:
+    """Whether a localized config is merged field by field (configVersion
+    21 and later) rather than replacing top-level keys whole."""
+    return isinstance(cv, (int, float)) and not isinstance(cv, bool) and cv >= 21
+
+
+def edition_config(shared: dict, own: Any, cv: Any) -> dict:
+    """An edition's config as the engine reads it (preset_kit.edition_config)."""
+    if not isinstance(own, dict):
+        return shared
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import preset_kit  # noqa: PLC0415
+        return preset_kit.edition_config(shared, own, cv)
+    except ImportError:
+        return {**shared, **own}
+
+
 def check_content_in_config(m: dict, root: Path, rep: Report) -> None:
     """Text of the book typed into design text elements (preset_kit.py lint):
     one error per owner that holds some (counted as the engine's
@@ -3039,8 +3057,9 @@ def main() -> None:
                  "leading, weights and colour inside a box taken from the document's body text instead of the box's; "
                  "below 18: a mark style that names no borderRadius rounded at 0.2em when the text has a :mark; "
                  "below 19: formatted text, captions, cells and notes broken after a slash only inside a web "
-                 "address, never between two words such as ACC/AHA); "
-                 "set \"configVersion\": 19 for today's rules")
+                 "address, never between two words such as ACC/AHA; below 20: a ```abc fence read as code, not a "
+                 "score; below 21: each top-level key of a localized config replacing the shared one whole); "
+                 "set \"configVersion\": 21 for today's rules")
     for k in ("id", "name"):
         if not m.get(k):
             rep.error("preset.json", f"{k} is required")
@@ -3130,14 +3149,17 @@ def main() -> None:
     for lang in langs:
         specs = chapters.get(lang) or []
         loc = (m.get("localized") or {}).get(lang, {})
-        cfg = {**shared, **(loc.get("config") or {})}
+        cfg = edition_config(shared, loc.get("config"), cv)
         if loc.get("config"):
             check_config(loc["config"], f"localized.{lang}.config", fonts, rep, partial=True)
             check_folio(loc["config"], f"localized.{lang}.config", resources, rep)
             check_comics_config(loc["config"], f"localized.{lang}.config", rep)
-            for k, v in loc["config"].items():
-                if isinstance(v, dict) and isinstance(shared.get(k), dict) and set(shared[k]) - set(v):
-                    rep.warn(f"localized.{lang}.config.{k}", f"replaces the shared `{k}` wholesale; missing keys {sorted(set(shared[k]) - set(v))[:6]} fall back to defaults")
+            # Before configVersion 21 a localized key replaced the shared one
+            # whole; from 21 it is merged field by field.
+            if not layered_locales(cv):
+                for k, v in loc["config"].items():
+                    if isinstance(v, dict) and isinstance(shared.get(k), dict) and set(shared[k]) - set(v):
+                        rep.warn(f"localized.{lang}.config.{k}", f"replaces the shared `{k}` wholesale (configVersion below 21); missing keys {sorted(set(shared[k]) - set(v))[:6]} fall back to defaults. Set \"configVersion\": 21 to merge it field by field")
         check_line_numbers(cfg, f"config ({lang})", rep)
         check_code_style(cfg, f"config ({lang})", rep)
         check_callout_extends(cfg, f"config ({lang})", rep)

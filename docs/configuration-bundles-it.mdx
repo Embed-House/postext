@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pacchetti .postext',
   description: 'Come aprire, impaginare, disegnare e creare file .postext dal codice; i pacchetti bilingui; i file scritti dalle versioni precedenti; l’API di basso livello',
   lang: 'it',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '29 min',
   order: 23,
   parent: 'configuration',
@@ -70,7 +70,7 @@ Il **`fileId` di un contenuto è il suo percorso dentro il pacchetto**. `resourc
 
 #### Pacchetti scritti da postext 1.4 o precedenti
 
-Ogni manifesto scritto da `createBundle` e dalla Sandbox contiene `configVersion: 19`: le regole di configurazione per cui è stato scritto il suo `config`. Un manifesto senza questo campo è stato scritto da postext 1.4 o da una versione precedente, che impostava diciannove cose in modo diverso:
+Ogni manifesto scritto da `createBundle` e dalla Sandbox contiene `configVersion: 21`: le regole di configurazione per cui è stato scritto il suo `config`. Un manifesto senza questo campo è stato scritto da postext 1.4 o da una versione precedente, che impostava diciannove cose in modo diverso:
 
 - **Interruzioni prima dei titoli** (regole 3): fino alla 1.4, un oggetto `headings` senza interruzione per l’H1 non ne aveva nessuna (vedi [Personalizzazioni per livello](/it/docs/configuration-headings#personalizzazioni-per-livello)).
 - **La dimensione delle formule** (regole 4): fino alla 1.4, le formule risultavano 1,131 volte più grandi di quanto indica `fontSizeScale` (vedi [Dimensione delle formule](/it/docs/configuration-lists-math#matematica)).
@@ -96,7 +96,7 @@ Ogni manifesto scritto da `createBundle` e dalla Sandbox contiene `configVersion
 
 La divisione sotto un titolo (`pinLegacyHeadingSplit`) viene scritta come `headings.keepWithNextSplit: 'fill'` sugli `headings` che i livelli lasciano in vigore, quando un capitolo letto ha un titolo e la configurazione non indica un valore proprio, mantiene attivo `headings.keepWithNext` e non disattiva `bodyText.avoidOrphans`. Gli a capo nelle parole composte (`pinLegacyHyphenBreaks`) vengono scritti come `bodyText.breakAfterHyphens: false` sul `bodyText` in vigore, quando un capitolo letto compone un trattino tra due lettere e la configurazione né lo imposta già né disattiva `optimalLineBreaking`. Lo spazio sotto i contenitori (`pinLegacyParagraphContainerSpacing`) viene scritto come `bodyText.paragraphContainerSpacing: 'add'` sul `bodyText` in vigore, quando la configurazione dichiara uno stile di paragrafo (in `paragraphStyles` o nelle sostituzioni del visualizzatore HTML), un capitolo letto apre un contenitore `:::paragraphs` su una riga a sé e la configurazione non lo imposta già. Gli a capo dopo le lineette (`pinLegacyDashBreaks`) vengono scritti come `bodyText.breakAfterDashes: false` sul `bodyText` in vigore, quando un capitolo letto compone una lineetta lunga o media senza spazi tra due parole (prima una lettera, una cifra o una punteggiatura di chiusura, dopo una lettera, una cifra o una parentesi o virgoletta di apertura; una virgoletta prima della lineetta conta quando prima della virgoletta c’è una lettera, una cifra, una punteggiatura di chiusura o uno spazio indivisibile, come in `"no"—and`, non in `said "—Hola`; un segno in linea che tocca la lineetta o la virgoletta, come il `**` di `**riddles.**—I`, conta su entrambi i lati) e la configurazione non lo imposta già. La divisione in righe in bandiera (`pinLegacyRaggedBreaking`) viene scritta come `bodyText.optimalRagged: false` sul `bodyText` in vigore, quando la configurazione compone in bandiera una parte del testo corrente (un `textAlign` diverso da `'justify'` sul testo corrente, su uno stile di paragrafo, sul corpo di un riquadro, sul corpo di una parte o sul corpo di uno stile di sezione (`headingStyles[].bodyStyle`), oppure nelle sostituzioni del visualizzatore HTML), non lo imposta già e non disattiva `optimalLineBreaking`. La distanza nei riquadri (`pinLegacyBoxResourceGap`) viene scritta come `layout.inlineResourceGapInBoxes: false` sul `layout` in vigore, quando una risorsa è inserita su una riga a sé dentro un `:::callout` dei capitoli letti e la configurazione non lo imposta già. Il taglio dei riquadri (`pinLegacyBoxChildCut`) viene scritto come `layout.boxChildSplitMinLines: 1` sul `layout` in vigore, quando un capitolo letto apre un `:::callout` su una riga a sé e la configurazione non lo imposta già. I segni nei titoli (`pinLegacyHeadingMarks`) vengono scritti come `headings.inlineMarks: false` sugli `headings` che i livelli lasciano in vigore, quando un titolo dei capitoli letti contiene un segno (`*`, `_`, `^`, `~`, `:smallcaps[` o un link nel suo testo) e la configurazione non indica un valore proprio. I capilettera (`pinLegacyDropCapSize`) ricevono la loro dimensione della 1.4 scritta esplicitamente come `dropCap.fontSize`, ovunque si trovino: nell’unità dell’interlinea dell’elemento quando questa è una lunghezza, altrimenti nell’unità del suo corpo. Lo spazio sotto la riga con i due punti (`pinLegacyColonListRoom`) viene scritto come `bodyText.colonListRoom: 'line'` sul `bodyText` in vigore, quando un elenco dei capitoli letti segue una riga che termina con i due punti (righe vuote in mezzo ammesse) e la configurazione né indica uno spazio né disattiva `keepColonWithList`. La distanza in linea (`pinLegacyInlineGap`) viene scritta come `layout.inlineResourceGap: 'above'` sul `layout` che i livelli lasciano in vigore, quando una riga dei capitoli letti inserisce una risorsa (`::resource{id="…"}` da solo sulla sua riga, come lo legge il parser: una menzione nel testo corrente o in un frammento di codice non conta) e la configurazione non indica una distanza propria. La dimensione viene vincolata sul `math` che i livelli lasciano in vigore (il `math` proprio di una lingua sostituisce quello condiviso), e solo quando i capitoli letti contengono un `$`: un pacchetto senza formule conserva il suo `config` come è scritto. Quando né il manifesto né la lingua indicano un `math`, quello in vigore è il `baseConfig` di `readBundle` (quello del lettore), e anch’esso viene vincolato, perché la 1.4 componeva le formule del pacchetto a quella dimensione: un `fontSizeScale: 1.5` di base si legge come 1,5 × 1,1312. Le interruzioni prima dei titoli della base vengono prese così come sono.
 
-Un pacchetto vecchio conserva quindi ciò che queste regole impaginavano, e `bundle.config` mostra le interruzioni, la dimensione delle formule, le distanze, i segni nei titoli, le dimensioni dei capilettera, lo spazio sotto la riga con i due punti, il taglio dei riquadri, gli a capo dopo le lineette, gli a capo nelle parole composte, la divisione in bandiera, la divisione sotto un titolo e lo spazio sotto i contenitori con cui viene impaginato. Le correzioni di impaginazione della 1.5 non hanno vincoli e si applicano a esso come a qualsiasi libro, quindi una pagina che toccano può ancora spostarsi (vedi [Dimensione delle formule](/it/docs/configuration-lists-math#matematica) per l’elenco). Un `preset.json` scritto a mano per le regole attuali imposta `"configVersion": 19`; marcare con questo valore il manifesto di un pacchetto vecchio è anche il modo, in una riga, per leggerlo con le regole attuali (un pacchetto senza versione perde allora anche il vincolo delle interruzioni prima dei titoli).
+Un pacchetto vecchio conserva quindi ciò che queste regole impaginavano, e `bundle.config` mostra le interruzioni, la dimensione delle formule, le distanze, i segni nei titoli, le dimensioni dei capilettera, lo spazio sotto la riga con i due punti, il taglio dei riquadri, gli a capo dopo le lineette, gli a capo nelle parole composte, la divisione in bandiera, la divisione sotto un titolo e lo spazio sotto i contenitori con cui viene impaginato. Le correzioni di impaginazione della 1.5 non hanno vincoli e si applicano a esso come a qualsiasi libro, quindi una pagina che toccano può ancora spostarsi (vedi [Dimensione delle formule](/it/docs/configuration-lists-math#matematica) per l’elenco). Un `preset.json` scritto a mano per le regole attuali imposta `"configVersion": 21`; marcare con questo valore il manifesto di un pacchetto vecchio è anche il modo, in una riga, per leggerlo con le regole attuali (un pacchetto senza versione perde allora anche il vincolo delle interruzioni prima dei titoli).
 
 Un manifesto marcato `8`, scritto da postext dalla 1.5 alla 1.22, riceve solo i quattro vincoli delle regole 9, come del resto ogni manifesto più vecchio: la disposizione dei versi (`pinLegacyVerseLayout`) viene scritta come `bodyText.verse.layout: 'bayt'` sul `bodyText` in vigore, quando un capitolo letto compone una poesia `:::verse` la cui riga di apertura non indica una disposizione e le cui righe non contengono un separatore di emistichi, e la configurazione non lo imposta già; i rientri abbinati (`pinLegacyPairedIndents`) eliminano il `firstLineIndent` di ogni stile di paragrafo (in `paragraphStyles` o nelle sostituzioni del visualizzatore HTML) che imposta anche un `hangingIndent` diverso da zero; gli a capo forzati (`pinLegacyHardBreaks`) vengono scritti come `bodyText.hardLineBreaks: false` sul `bodyText` in vigore, quando un capitolo letto termina con una barra rovesciata una riga di un paragrafo, di una citazione o di una voce di elenco e il blocco prosegue sotto, oppure compone `\\` prima di uno spazio e di altro testo (esclusi codice e formule in linea, formule in evidenza, titoli e poesie `:::verse`), e la configurazione non lo imposta già; e i blocchi di codice (`pinLegacyCodeBlocks`) vengono scritti come `codeStyle.blocks: false`, quando un capitolo letto apre un blocco ```` ``` ```` o `~~~` (tre o più caratteri, con al massimo tre spazi di rientro) e la configurazione non lo imposta già.
 
@@ -123,6 +123,8 @@ Un manifesto marcato `14` è stato scritto da postext dalla 1.30 alla 1.33. Le r
 Un manifesto con `15` o `16` è stato scritto da postext 1.34 a 1.51 (le regole di 16, #1056, aggiungono connettori alla decorazione di un modello e non fissano nulla). Le regole di 17 (#1119) prendono dal testo del riquadro in cui si trova lo stile di paragrafo il carattere, il corpo, l’interlinea, i pesi e il colore che lo stile lascia non impostati, dove fino a 1.51 erano quelli del testo del documento. Un manifesto con `16` o precedente riceve `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) sul `bodyText` in vigore, quando la configurazione unita dichiara uno stile di paragrafo e non nomina l’impostazione.
 
 Le regole di 19 (#1164) lasciano che una riga di testo formattato termini dopo una barra tra due parole, e vi dividono per prima una parola troppo larga per la sua riga, dove fino alla 1.51 una riga formattata andava a capo dopo una barra solo dentro un indirizzo web. Un manifesto con `18` o precedente riceve `bodyText.breakAfterSlashes: false` (`pinLegacySlashBreaks`) sul `bodyText` in vigore, qualunque cosa contengano i suoi capitoli, quando la configurazione non nomina l’impostazione: una barra simile può trovarsi in una didascalia, in una cella o in una bibliografia, che i capitoli letti non mostrano.
+
+Le regole di 21 (#1209) cambiano il modo in cui un pacchetto in più lingue conserva le impostazioni di ciascuna lingua (vedi [Impostazioni generali e impostazioni per lingua](#impostazioni-generali-e-impostazioni-per-lingua)): un `localized[…].config` si unisce al `config` condiviso campo per campo, mentre fino a postext 1.57 ognuna delle sue chiavi di primo livello sostituiva per intero quella condivisa. Non si fissa nulla. Un manifesto con `20` o precedente viene letto alla vecchia maniera, chiave per chiave, così ogni edizione si impagina come prima; quando viene riscritto, le impostazioni di ogni lingua vengono scritte come impostazioni proprie secondo le regole di 21.
 
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
@@ -284,13 +286,107 @@ const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, con
 ```
 
 - **`chapters`**: il libro in quella lingua. I file dei capitoli vanno in una cartella per lingua (`chapters/en/01-dusk.md`, `chapters/es/01-anochecer.md`) e i `chapters` del manifesto diventano una mappa lingua → capitoli. Una lingua senza `chapters` legge quelli principali; quando nessuna lingua ha capitoli propri, restano un unico elenco.
-- **`config`**: la configurazione per quella lingua. Ogni chiave di primo livello sostituisce per intero la chiave condivisa quando il pacchetto viene letto in quella lingua, quindi `headings` qui sopra sostituisce l’intero oggetto `headings`. Le chiavi omesse, o uguali a quelle condivise, sono condivise e non vengono scritte, quindi passare la configurazione completa della lingua funziona come passare le poche chiavi che cambiano. Una chiave impostata ai valori predefiniti mentre quella condivisa non lo è (`layout: {}`) viene scritta così com’è, quindi azzera il valore condiviso. I font sono condivisi: le famiglie dei `customFonts` di una lingua si aggiungono ai `fonts` del pacchetto.
+- **`config`**: la configurazione per quella lingua. Ogni chiave di primo livello che passi sostituisce la chiave condivisa per quella lingua, quindi `headings` qui sopra sostituisce l’intero oggetto `headings`. Le chiavi omesse, o uguali a quelle condivise, sono condivise, quindi passare la configurazione completa della lingua funziona come passare le poche chiavi che cambiano. Il manifesto conserva solo la differenza: `localized[…].config` contiene i campi che la lingua imposta in modo diverso dal `config` condiviso, e alla lettura del pacchetto si unisce a esso campo per campo (vedi [Impostazioni generali e impostazioni per lingua](#impostazioni-generali-e-impostazioni-per-lingua)). Una chiave impostata ai valori predefiniti mentre quella condivisa non lo è (`layout: {}`) azzera il valore condiviso per quella lingua. I font sono condivisi: le famiglie dei `customFonts` di una lingua si aggiungono ai `fonts` del pacchetto.
 - **`resources`**: i testi delle risorse condivise, abbinati per `id`: `caption`, `note`, `altText` e il `table` di una tabella. Un’immagine che contiene parole può avere una grafica propria: `bitmap.fileId` o `svg.fileId` (e `svg.pdfFileId`) indicano un altro contenuto in `files`, scritto come `resources/es/lantern.svg`. Gli altri campi, come il tipo o la collocazione, sono condivisi. Un id che non è tra le `resources` viene lasciato fuori con un avviso, e un’immagine mancante per una lingua lascia quella lingua sull’immagine condivisa, anche in questo caso con un avviso.
 - **`name`**, **`description`**: il titolo e la descrizione del libro in quella lingua, scritti come `localized[…].name` e `description` quando differiscono da quelli condivisi. `openBundle` li restituisce come `bundle.name` e `bundle.description` per quella lingua, la Sandbox elenca l’edizione con quel titolo (all’importazione e nella sua libreria) e `postext info` e `postext check` li stampano. Una voce dell’`index.json` di una sorgente di preset può copiarli in `localized` (`localized.ca.name`), così la libreria mostra ogni edizione con il suo titolo prima di aprirla. Una lingua che non li indica tiene `name` e `description` del manifesto.
 
 Il manifesto elenca ogni lingua in `locales` (`['en', 'es']`), mantiene quella principale come `locale` e conserva le altre sotto `localized`. `openBundle` senza lingua legge la lingua principale.
 
 **Quale lingua riceve chi legge.** `openBundle(bytes, { locale })` serve la lingua esatta, altrimenti la sua lingua di base (`es-MX` legge `es`), altrimenti quella principale, e `bundle.locale` indica quale ha servito. Capitoli e testi provengono sempre dalla stessa lingua. La lingua principale mantiene i testi condivisi anche quando `localized` contiene una sua variante regionale: un pacchetto `pt-PT` con una voce `pt-BR` legge le didascalie brasiliane solo per `pt-BR`, e quelle condivise per `pt-PT` e `pt`.
+
+### Impostazioni generali e impostazioni per lingua
+
+Le edizioni di un libro in più lingue di solito condividono quasi tutta la grafica: la pagina, la griglia, gli stili dei riquadri, la tavolozza. Alcune impostazioni appartengono a una sola lingua: i caratteri della sua scrittura, ciò che dipende dalla direzione del testo, il testo di un’etichetta. Un pacchetto scritto per le regole di configurazione 21 (`configVersion: 21`) tiene separate le due cose. Il `config` del manifesto contiene le **impostazioni generali**, che ogni edizione legge, e `localized[<lang>].config` contiene le **impostazioni proprie** di quella lingua, con i soli campi che imposta in modo diverso. Una modifica a un’impostazione generale arriva a ogni edizione che non imposta da sé lo stesso campo.
+
+Le impostazioni proprie si uniscono a quelle generali campo per campo:
+
+<table>
+  <thead>
+    <tr><th>Nelle impostazioni proprie</th><th>Come si uniscono</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Un oggetto (<code>bodyText</code>, <code>page.margins</code>)</td><td>Chiave per chiave, fino ai singoli campi. <code>&#123; "bodyText": &#123; "fontFamily": "Amiri" &#125; &#125;</code> cambia il carattere e mantiene il corpo, l’interlinea e l’allineamento generali.</td></tr>
+    <tr><td>Un colore (<code>&#123; "hex", "model" &#125;</code>) o una lunghezza (<code>&#123; "value", "unit" &#125;</code>)</td><td>Sostituito per intero.</td></tr>
+    <tr><td>Un elenco le cui voci hanno un <code>id</code> (<code>calloutStyles</code>, <code>headingStyles</code>, <code>chipStyles</code>, <code>colorPalette</code>, <code>resourceTypes</code>, le cornici di un modello)</td><td>Voce per voce, abbinate per <code>id</code>. Un elenco <code>levels</code> (titoli, elenchi, indice) si abbina per <code>level</code>, <code>customFonts</code> per <code>name</code>. Una voce che manca nell’elenco generale viene aggiunta dopo le sue voci.</td></tr>
+    <tr><td><code>&#123; "id": "note", "$remove": true &#125;</code></td><td>Toglie la voce generale con quella chiave, solo per questa lingua. Un elenco in un ordine diverso si scrive come la rimozione di tutte le voci generali seguita dall’elenco della lingua nel suo ordine.</td></tr>
+    <tr><td>Qualsiasi altro elenco (una sequenza di caratteri di riserva, i tabulatori)</td><td>Sostituito per intero.</td></tr>
+    <tr><td><code>null</code></td><td>Toglie il valore generale: il campo prende il valore predefinito della lingua, come se nessuno dei due livelli lo impostasse.</td></tr>
+  </tbody>
+</table>
+
+Un’edizione spagnola e una araba dello stesso libro condividono la pagina, il corpo del testo della grafica spagnola e un riquadro di nota con lo sfondo color sabbia. L’edizione araba imposta caratteri e corpo propri e sposta la striscia del riquadro a destra, il lato da cui comincia una riga da destra a sinistra:
+
+```jsonc
+{
+  "version": 2,
+  "configVersion": 21,
+  "id": "el-farol",
+  "name": "El farol",
+  "locale": "es",
+  "locales": ["es", "ar"],
+  "chapters": {
+    "es": [{ "title": "Anochecer", "file": "chapters/es/01-anochecer.md" }],
+    "ar": [{ "title": "الغسق", "file": "chapters/ar/01-al-ghasaq.md" }]
+  },
+
+  // Impostazioni generali: le legge ogni edizione
+  "config": {
+    "locale": "es",
+    "bodyText": { "fontFamily": "Source Serif 4", "fontSize": { "value": 10, "unit": "pt" }, "textAlign": "justify" },
+    "headings": { "fontFamily": "Source Sans 3" },
+    "calloutStyles": [
+      {
+        "id": "note",
+        "background": { "hex": "#f3ecd9", "model": "hex" },
+        "stripe": { "enabled": true, "side": "left", "color": { "hex": "#b5651d", "model": "hex" } }
+      }
+    ]
+  },
+
+  "localized": {
+    "ar": {
+      "name": "الفانوس",
+      // Solo ciò che l’edizione araba imposta in modo diverso
+      "config": {
+        "locale": "ar",
+        "bodyText": { "fontFamily": "Amiri", "fontSize": { "value": 11, "unit": "pt" } },
+        "headings": { "fontFamily": "Noto Kufi Arabic" },
+        "calloutStyles": [{ "id": "note", "stripe": { "side": "right" } }]
+      }
+    }
+  }
+}
+```
+
+Letto in arabo, il testo è composto in Amiri a 11 pt e resta giustificato, e il riquadro di nota mantiene lo sfondo, la larghezza e il colore della striscia generali, con la striscia a destra. La direzione, la rilegatura e le cifre restano su *Auto*, quindi seguono `locale`: da destra a sinistra, rilegatura a destra, cifre arabo-indiane. Un’impostazione che indica un lato in base alla direzione del testo non ha bisogno di impostazioni proprie: con `"side": "start"` nelle impostazioni generali, la striscia starebbe a sinistra in spagnolo e a destra in arabo.
+
+Metti un’impostazione tra quelle generali quando ogni edizione deve seguirne le modifiche: la pagina e la griglia, i colori, gli stili dei riquadri e dei titoli, le spaziature. Mettila tra le impostazioni proprie quando appartiene alla lingua: i caratteri per la sua scrittura, il corpo del testo, le regole di sillabazione e di divisione delle righe, un lato o un allineamento espresso come sinistra o destra, il testo delle etichette e delle testatine. I tipi di risorsa integrati (*Figura*, *Figure*) prendono nome e numerazione dalla lingua di ogni edizione senza bisogno di impostazioni proprie.
+
+**Pacchetti precedenti.** Un manifesto con `20` o precedente viene letto con la regola di prima: ogni chiave di primo livello di `localized[…].config` sostituisce per intero quella condivisa, quindi lì `{ "bodyText": { "fontFamily": "Amiri" } }` elimina tutti gli altri campi di `bodyText` della configurazione condivisa. `createBundle` e la Sandbox scrivono sempre 21. Per portare a 21 un manifesto scritto a mano, scrivi la configurazione completa di ogni lingua e conserva solo la differenza, con le funzioni qui sotto.
+
+**Dal codice.** Il pacchetto `postext` esporta le funzioni che usano il codec dei pacchetti e la Sandbox:
+
+```ts
+import { mergeConfigLayers, diffConfigLayers, leastConfigOverride, commonConfig, overridePaths, stripConfigDefaults } from 'postext';
+import type { ConfigOverride } from 'postext';
+
+const arabic = mergeConfigLayers(general, override);   // la configurazione con cui si impagina l’edizione araba
+diffConfigLayers(general, arabic);                     // di nuovo le impostazioni proprie: i campi che differiscono
+overridePaths(override);
+// => ['locale', 'bodyText.fontFamily', 'bodyText.fontSize', 'headings.fontFamily', 'calloutStyles[id=note].stripe.side']
+
+const shared = commonConfig([spanish, arabic]);        // ciò su cui le due edizioni concordano
+const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
+```
+
+- **`mergeConfigLayers(general, override)`**: la configurazione con cui si impagina un’edizione, secondo le regole della tabella. Nessuno dei due input viene modificato; senza impostazioni proprie restituisce `general` stesso.
+- **`diffConfigLayers(general, own)`**: le impostazioni proprie che trasformano `general` in `own`. Un campo che `general` imposta e `own` omette viene scritto come `null`, e un elenco con chiave in un altro ordine come rimozioni seguite dall’elenco. `mergeConfigLayers(general, diffConfigLayers(general, own))` è uguale a `own`, a parte l’ordine delle chiavi.
+- **`leastConfigOverride(general, own, normalize)`**: le stesse impostazioni proprie senza i `null` e le rimozioni che non cambiano nulla una volta eseguita `normalize` (per esempio `stripConfigDefaults`), cioè dove il valore generale è anche il predefinito della lingua di `own`. È quella che usa chi scrive il pacchetto.
+- **`commonConfig(configs)`**: i campi che tutte le configurazioni impostano allo stesso valore, gli oggetti campo per campo e gli elenchi con chiave voce per voce. Per edizioni che hanno conservato ciascuna una configurazione intera, dà le impostazioni generali, e `diffConfigLayers` dà le impostazioni proprie di ogni edizione.
+- **`overridePaths(override)`**: ogni campo che le impostazioni proprie impostano, come percorso in cui le voci degli elenchi sono indicate dalla loro chiave (`headings.levels[level=2].fontSize`). Un `null` e una voce rimossa contano come campi. Sono i percorsi che `sandbox_get_config` elenca come `ownFields`.
+- **`REMOVE_ENTRY`** è la chiave `"$remove"`, e **`ConfigOverride`** il tipo delle impostazioni proprie.
+
+`openBundle` restituisce il `config` unito dell’edizione servita. Per un pacchetto con voci `localized`, `readBundle` restituisce anche `sharedConfig`, cioè le impostazioni generali lette con le stesse regole e con gli stessi font. `planBundle` accetta `sharedConfig` nel suo contenuto: il `config` del manifesto viene allora scritto a partire da esso, e ogni edizione, compresa quella principale, come impostazioni proprie in `localized`.
 
 ### Esempio dal vivo: creare un pacchetto
 
@@ -310,8 +406,8 @@ Dato che la Sandbox, la skill per agenti e il pacchetto `postext` leggono e scri
 `postext/bundle` esporta anche i mattoni su cui si basano `openBundle` e `createBundle`, per le applicazioni ospiti che conservano o servono i pacchetti a modo loro (una cartella decompressa servita via HTTP, record in un database):
 
 - **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**: il livello dell’archivio. L’apertura tollera una cartella di primo livello e ignora le voci `__MACOSX` e i file nascosti. I percorsi che escono dal pacchetto vengono rifiutati. `mtime` data i file come fa l’input di `createBundle`.
-- **`readBundle(manifest, readFile, options)`** trasforma un manifesto più una callback `readFile(path)` in capitoli, configurazione, risorse, immagini e font. `options` imposta la lingua, come vengono chiamati gli id dei file (`ids`), la configurazione di base (`baseConfig`, sotto quella del manifesto; per impostazione predefinita la tavolozza e i tipi di risorsa di `bundleBaseConfig` nella lingua del pacchetto, che restituisce `resolveBundleConfigLocale(manifest, locale)`, e un’applicazione ospite che passa il proprio `baseConfig` dovrebbe localizzarlo in quella lingua; sotto un manifesto precedente a `CONFIG_VERSION`, i vincoli richiesti dal suo marchio si applicano anche alle chiavi della base che il manifesto e la lingua lasciano in vigore, tutte tranne le interruzioni prima dei titoli, vedi [Pacchetti scritti da postext 1.4 o precedenti](#pacchetti-scritti-da-postext-14-o-precedenti)) e come vengono misurate le dimensioni intrinseche. `readResolution` legge dal file la risoluzione di ogni bitmap e la mette in `bitmap.fileResolution`; vale true per impostazione predefinita quando il pacchetto imposta `layout.bitmapResolution: 'file'`.
-- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: il lato della scrittura, diviso in un piano puro (nomi dei file e manifesto) e nella risoluzione dei byte tramite le callback `readBlob` / `readFont`.
+- **`readBundle(manifest, readFile, options)`** trasforma un manifesto più una callback `readFile(path)` in capitoli, configurazione, risorse, immagini e font e, per un pacchetto in più lingue, nelle impostazioni generali come `sharedConfig`. `options` imposta la lingua, come vengono chiamati gli id dei file (`ids`), la configurazione di base (`baseConfig`, sotto quella del manifesto; per impostazione predefinita la tavolozza e i tipi di risorsa di `bundleBaseConfig` nella lingua del pacchetto, che restituisce `resolveBundleConfigLocale(manifest, locale)`, e un’applicazione ospite che passa il proprio `baseConfig` dovrebbe localizzarlo in quella lingua; sotto un manifesto precedente a `CONFIG_VERSION`, i vincoli richiesti dal suo marchio si applicano anche alle chiavi della base che il manifesto e la lingua lasciano in vigore, tutte tranne le interruzioni prima dei titoli, vedi [Pacchetti scritti da postext 1.4 o precedenti](#pacchetti-scritti-da-postext-14-o-precedenti)) e come vengono misurate le dimensioni intrinseche. `readResolution` legge dal file la risoluzione di ogni bitmap e la mette in `bitmap.fileResolution`; vale true per impostazione predefinita quando il pacchetto imposta `layout.bitmapResolution: 'file'`.
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: il lato della scrittura, diviso in un piano puro (nomi dei file e manifesto) e nella risoluzione dei byte tramite le callback `readBlob` / `readFont`. `content.sharedConfig` scrive le impostazioni generali separate da quelle dell’edizione principale (vedi [Impostazioni generali e impostazioni per lingua](#impostazioni-generali-e-impostazioni-per-lingua)).
 - **`isBundleManifest(value)`**, i selettori di lingua (`pickChapterSpecs`, `pickLocaleOverrides`, `pickBundleView`, `resolveBundleLocale`, `resolveBundleConfigLocale`), `svgSize` / `bitmapSize` / `bitmapInfo` (i pixel di una bitmap e la risoluzione che il suo file dichiara) e i tipi del formato (`BundleManifest`, `BundleResourceSpec`, `BundleFontFamilySpec`, …).
 - **`CONFIG_VERSION`, `migrateConfig(config, configVersion, { content })`, `pinLegacyHeadingBreaks(config)`, `pinLegacyMathSize(config)`, `pinLegacyInlineGap(config)`, `pinLegacyBoxResourceGap(config)`, `pinLegacyHeadingMarks(config)`, `pinLegacyDropCapSize(config)`, `pinLegacyColonListRoom(config)`, `pinLegacyBoxChildCut(config)`, `pinLegacyDashBreaks(config)`, `pinLegacyRaggedBreaking(config)`, `pinLegacyHeadingSplit(config)`, `pinLegacyParagraphContainerSpacing(config)`, `pinLegacyHyphenBreaks(config)`, `pinLegacyVerseLayout(config)`, `pinLegacyPairedIndents(config)`, `pinLegacyHardBreaks(config)`, `pinLegacyCodeBlocks(config)`, `pinLegacyVerseTightening(config)`, `pinLegacyDesignOverflow(config)`, `pinLegacyGridBalancing(config)`, `pinLegacyTitleBreaks(config)`, `pinLegacyCircledNumbers(config)`, `pinLegacyDesignText(config)`, `pinLegacyInlineTableSplit(config)`, `pinLegacyFlowColumns(config)`, `pinLegacyOpenerHeadFloats(config)`, `pinLegacyLooseOrder(config)`, `pinLegacyWideFloatStretch(config)`, `pinLegacyTrailingStep(config)`, `pinLegacyIndexGroupSplit(config)`, `pinLegacyGridBreakRules(config)`, `pinLegacyNoteBreaks(config)`, `pinLegacyLatinSpacingEdge(config)`, `pinLegacyInlineCaptionSide(config)`, `pinLegacyRefLabelBreaks(config)`, `pinLegacyBalloonPlacement(config)`, `pinLegacyScriptContext(config)`, `pinLegacyShapingLanguage(config)`, `pinLegacyTaskBox(config)` e `LEGACY_MATH_SIZE`** (0,5 ÷ 0,442): esprimono nei termini attuali una configurazione salvata (vedi [Pacchetti scritti da postext 1.4 o precedenti](#pacchetti-scritti-da-postext-14-o-precedenti)). `readBundle` la applica; anche un’applicazione ospite che conserva le configurazioni a modo suo può farlo, una volta per ogni copia salvata.
 

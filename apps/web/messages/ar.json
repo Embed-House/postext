@@ -4561,6 +4561,7 @@
     "configScopeAll": "كل اللغات",
     "configScopeEdition": "__language__ فقط",
     "configScopeAllHint": "تصل التغييرات إلى كل الطبعات (__languages__). والطبعة التي تضبط قيمة خاصة بها تحتفظ بها.",
+    "configScopeAllHintMany": "تصل التغييرات إلى الطبعات كلها (__count__). والطبعة التي تضبط قيمة خاصة بها تحتفظ بها.",
     "configScopeEditionHint": "تصل التغييرات إلى __language__ وحدها. وما لا تضبطه بنفسها يتبع إعدادات كل اللغات.",
     "configLayerOwn": "مضبوط لـ__language__ فقط",
     "configLayerGeneral": "متطابق في كل اللغات",

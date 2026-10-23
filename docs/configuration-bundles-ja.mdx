@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '.postextバンドル',
   description: 'コードから.postextファイルを開き、組み、描画し、作成する方法。多言語のバンドル、古いバージョンが書き出したファイル、低レベルのAPI',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '29分',
   order: 23,
   parent: 'configuration',
@@ -70,7 +70,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 
 #### postext 1.4以前で書き出したバンドル
 
-`createBundle`とSandboxが書き出すマニフェストには、必ず`configVersion: 19`が入っています。これは、その`config`がどの設定規則を前提に書かれたかを示します。これがないマニフェストはpostext 1.4以前で書き出されたもので、次の19点の扱いが現在と異なります。
+`createBundle`とSandboxが書き出すマニフェストには、必ず`configVersion: 21`が入っています。これは、その`config`がどの設定規則を前提に書かれたかを示します。これがないマニフェストはpostext 1.4以前で書き出されたもので、次の19点の扱いが現在と異なります。
 
 - **見出しの改ページ**（規則3）：1.4までは、H1の改ページを指定していない`headings`オブジェクトでは改ページが入りませんでした（[レベルごとの上書き](/ja/docs/configuration-headings#レベルごとの上書き)を参照）。
 - **数式のサイズ**（規則4）：1.4までは、数式が`fontSizeScale`の指定より1.131倍大きく組まれていました（[数式のサイズ](/ja/docs/configuration-lists-math#数式)を参照）。
@@ -96,7 +96,7 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 
 見出しの下での分割（`pinLegacyHeadingSplit`）は、各層を重ねた結果有効になる`headings`に`headings.keepWithNextSplit: 'fill'`として書き込まれます。条件は、読み込んだ章に見出しがあり、設定が独自の値を指定しておらず、`headings.keepWithNext`を有効のままにし、`bodyText.avoidOrphans`を無効にしていないことです。複合語の改行（`pinLegacyHyphenBreaks`）は、有効な`bodyText`に`bodyText.breakAfterHyphens: false`として書き込まれます。条件は、読み込んだ章に2文字の間のハイフンがあり、設定がこの値をすでに設定しておらず、`optimalLineBreaking`も無効にしていないことです。コンテナーの下のアキ（`pinLegacyParagraphContainerSpacing`）は、有効な`bodyText`に`bodyText.paragraphContainerSpacing: 'add'`として書き込まれます。条件は、設定が段落スタイルを（`paragraphStyles`またはHTMLビューアーの上書きで）宣言し、読み込んだ章が単独の行で`:::paragraphs`コンテナーを開き、設定がこの値をすでに設定していないことです。ダッシュでの改行（`pinLegacyDashBreaks`）は、有効な`bodyText`に`bodyText.breakAfterDashes: false`として書き込まれます。条件は、読み込んだ章に語と語の間に前後を詰めて置いたemダッシュやenダッシュがあり（前に文字、数字、閉じる約物があり、後ろに文字、数字、開き括弧や開き引用符があるもの。ダッシュの前の引用符は、その引用符の前に文字、数字、閉じる約物、ノーブレークスペースがあれば数に入ります。`"no"—and`は該当し、`said "—Hola`は該当しません。ダッシュや引用符に接するインラインのマーク、たとえば`**riddles.**—I`の`**`は、どちら側にあっても数に入ります）、設定がこの値をすでに設定していないことです。行末不ぞろいの改行（`pinLegacyRaggedBreaking`）は、有効な`bodyText`に`bodyText.optimalRagged: false`として書き込まれます。条件は、設定が本文のどこかを行末不ぞろいにし（本文、段落スタイル、囲みの本文、部の本文、節のスタイルの本文（`headingStyles[].bodyStyle`）、またはHTMLビューアーの上書きで、`'justify'`以外の`textAlign`を指定する）、この値をすでに設定しておらず、`optimalLineBreaking`も無効にしていないことです。囲みの中のアキ（`pinLegacyBoxResourceGap`）は、有効な`layout`に`layout.inlineResourceGapInBoxes: false`として書き込まれます。条件は、読み込んだ章の`:::callout`の中にリソースが単独の行で埋め込まれ、設定がこの値をすでに設定していないことです。囲みの分割（`pinLegacyBoxChildCut`）は、有効な`layout`に`layout.boxChildSplitMinLines: 1`として書き込まれます。条件は、読み込んだ章が単独の行で`:::callout`を開き、設定がこの値をすでに設定していないことです。見出しのマーク（`pinLegacyHeadingMarks`）は、各層を重ねた結果有効になる`headings`に`headings.inlineMarks: false`として書き込まれます。条件は、読み込んだ章の見出しがマーク（タイトル内の`*`、`_`、`^`、`~`、`:smallcaps[`、またはリンク）を含み、設定が独自の値を指定していないことです。ドロップキャップ（`pinLegacyDropCapSize`）は、どこにあっても1.4のサイズが`dropCap.fontSize`として書き出されます。単位は、要素の行送りが長さで指定されていればその単位、そうでなければフォントサイズの単位です。コロンで終わる行の下の余地（`pinLegacyColonListRoom`）は、有効な`bodyText`に`bodyText.colonListRoom: 'line'`として書き込まれます。条件は、読み込んだ章のリストがコロンで終わる行に続き（間に空行があってもかまいません）、設定が余地を指定しておらず、`keepColonWithList`も無効にしていないことです。インラインのアキ（`pinLegacyInlineGap`）は、各層を重ねた結果有効になる`layout`に`layout.inlineResourceGap: 'above'`として書き込まれます。条件は、読み込んだ章のある行がリソースを埋め込み（パーサーの解釈どおり、`::resource{id="…"}`が単独で行にあるもの。本文中やコードスパンでの言及は数に入りません）、設定が独自のアキを指定していないことです。サイズは、各層を重ねた結果有効になる`math`に固定されます（ロケール独自の`math`は共有のものを置き換えます）。これは読み込んだ章に`$`がある場合に限られ、数式のないバンドルの`config`は書かれたまま残ります。マニフェストもロケールも`math`を指定しない場合、有効なものは`readBundle`の`baseConfig`（読み込む側自身の設定）のもので、これも固定されます。1.4はバンドルの数式をそのサイズで組んでいたからです。基本設定の`fontSizeScale: 1.5`は1.5 × 1.1312として読まれます。基本設定の見出しの改ページはそのまま使われます。
 
-このように古いバンドルはこれらの規則で組まれた結果を保ち、`bundle.config`には、実際に組むときの改ページ、数式のサイズ、アキ、見出しのマーク、ドロップキャップのサイズ、コロンで終わる行の下の余地、囲みの分割、ダッシュでの改行、複合語の改行、行末不ぞろいの改行、見出しの下での分割、コンテナーの下のアキが表示されます。1.5のレイアウトの修正には固定がなく、ほかの本と同じく古いバンドルにも適用されるため、それらが関わるページは動くことがあります（一覧は[数式のサイズ](/ja/docs/configuration-lists-math#数式)を参照）。現在の規則に合わせて手で書く`preset.json`には`"configVersion": 19`を指定します。古いバンドルのマニフェストにこの値を書き込むのも、現在の規則で読み込むための1行で済む方法です（その場合、バージョンのないバンドルは見出しの改ページの固定も失います）。
+このように古いバンドルはこれらの規則で組まれた結果を保ち、`bundle.config`には、実際に組むときの改ページ、数式のサイズ、アキ、見出しのマーク、ドロップキャップのサイズ、コロンで終わる行の下の余地、囲みの分割、ダッシュでの改行、複合語の改行、行末不ぞろいの改行、見出しの下での分割、コンテナーの下のアキが表示されます。1.5のレイアウトの修正には固定がなく、ほかの本と同じく古いバンドルにも適用されるため、それらが関わるページは動くことがあります（一覧は[数式のサイズ](/ja/docs/configuration-lists-math#数式)を参照）。現在の規則に合わせて手で書く`preset.json`には`"configVersion": 21`を指定します。古いバンドルのマニフェストにこの値を書き込むのも、現在の規則で読み込むための1行で済む方法です（その場合、バージョンのないバンドルは見出しの改ページの固定も失います）。
 
 `8`と記されたマニフェスト（postext 1.5〜1.22が書いたもの）は規則9の4つの固定だけを受け、それより古いものも同様に受けます。詩の組み方（`pinLegacyVerseLayout`）は、読んだ章に開始行で組み方を指定せず行に半句の区切りもない`:::verse`の詩があり、設定がまだ決めていなければ、有効な`bodyText`に`bodyText.verse.layout: 'bayt'`として書き込まれます。組になった字下げ（`pinLegacyPairedIndents`）は、0でない`hangingIndent`も決めている段落スタイル（`paragraphStyles`またはHTMLビューアーの上書き設定のもの）すべてから`firstLineIndent`を外します。強制改行（`pinLegacyHardBreaks`）は、読んだ章に、段落・引用・リスト項目の行末がバックスラッシュで終わって次の行に続く箇所か、後ろにスペースと文字が続く`\\`があり（インラインのコードと数式、別行立ての数式、見出し、`:::verse`の詩は除く）、設定がまだ決めていなければ、有効な`bodyText`に`bodyText.hardLineBreaks: false`として書き込まれます。コードフェンス（`pinLegacyCodeBlocks`）は、読んだ章が```` ``` ````か`~~~`のフェンス（3文字以上、行頭からのインデントは3スペースまで）を開き、設定がまだ決めていなければ、`codeStyle.blocks: false`として書き込まれます。
 
@@ -123,6 +123,8 @@ bundle.files;      // Map<path, Uint8Array>: every file of the bundle
 `15`または`16`の付いたマニフェストは postext 1.34〜1.51 が書いたものです（規則16、#1056 はテンプレートの装飾にコネクターを加えるだけで、何も固定しません）。規則17（#1119）では、段落スタイルが指定していない書体・サイズ・行送り・ウェイト・色を、そのスタイルが置かれた囲みの本文から取ります。1.51 までは文書の本文から取っていました。`16`以前のマニフェストは、統合した設定が段落スタイルを宣言し、この設定を書いていなければ、有効な`bodyText`に`bodyText.paragraphStylesInBoxes: 'document'`（`pinLegacyBoxParagraphStyles`）を受け取ります。
 
 規則19（#1164）は、書式付きの文字の行を2つの語のあいだのスラッシュの後で終えることを許し、行に収まらない語もまずそこで分けます。1.51までは、書式付きの行はウェブアドレスの中のスラッシュの後でしか改行しませんでした。`18`以前のマニフェストは、設定がこの項目を指定していなければ、章の内容にかかわらず、有効な`bodyText`に`bodyText.breakAfterSlashes: false`（`pinLegacySlashBreaks`）が書き込まれます。こうしたスラッシュはキャプションや表のセル、参考文献にもあり得て、読み込む章からはわからないためです。
+
+規則21（#1209）は、複数の言語を収めたバンドルが言語ごとの設定を保存する方法を変えます（[共通設定と言語ごとの上書き](#共通設定と言語ごとの上書き)を参照）。`localized[…].config`は共有の`config`の上にフィールド単位でマージされます。postext 1.57までは、そのトップレベルの各キーが共有のキーを丸ごと置き換えていました。固定は何もありません。`20`以前のマニフェストは従来どおりキー単位で読まれるので、各版はこれまでと同じように組まれます。書き出し直すと、各言語の設定は規則21の上書きとして書き込まれます。
 
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
@@ -284,13 +286,107 @@ const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, con
 ```
 
 - **`chapters`**：その言語での本。章のファイルはロケールごとに1つのフォルダーに入り（`chapters/en/01-dusk.md`、`chapters/es/01-anochecer.md`）、マニフェストの`chapters`はロケール → 章のマップになります。`chapters`のないロケールは主言語の章を読みます。独自の章のあるロケールが1つもなければ、章は1つのリストのままです。
-- **`config`**：その言語の設定。そのロケールでバンドルを読むと、トップレベルの各キーが共有のキーを丸ごと置き換えます。上の例の`headings`は`headings`オブジェクト全体を置き換えます。省略したキーや共有のものと同じキーは共有され、書き出されません。そのため、ロケールの設定全体を渡しても、変わる数個のキーだけを渡しても同じように動きます。共有のキーが既定値でないのにロケール側を既定値にしたキー（`layout: {}`）は指定どおり書き出されるので、共有の値をリセットします。フォントは共有です。ロケールの`customFonts`のファミリーはバンドルの`fonts`に加わります。
+- **`config`**：その言語の設定。渡したトップレベルの各キーは、その言語について共有のキーを置き換えます。上の例の`headings`は`headings`オブジェクト全体を置き換えます。省略したキーや共有のものと同じキーは共有されます。そのため、ロケールの設定全体を渡しても、変わる数個のキーだけを渡しても同じように動きます。マニフェストに保存されるのは差分だけです。`localized[…].config`には、その言語が共有の`config`と異なる値にしたフィールドが入り、バンドルを読むときに共有の設定の上へフィールド単位でマージされます（[共通設定と言語ごとの上書き](#共通設定と言語ごとの上書き)を参照）。共有のキーが既定値でないのにロケール側を既定値にしたキー（`layout: {}`）は、その言語について共有の値をリセットします。フォントは共有です。ロケールの`customFonts`のファミリーはバンドルの`fonts`に加わります。
 - **`resources`**：共有のリソースの文言で、`id`で対応づけます。`caption`、`note`、`altText`、表の`table`です。文字を含む画像は、言語ごとに別の画像を用意できます。`bitmap.fileId`や`svg.fileId`（と`svg.pdfFileId`）で`files`内の別のデータ本体を指定すると、`resources/es/lantern.svg`として書き出されます。タイプや配置などほかのフィールドは共有です。`resources`にないidは警告を出して除外し、ロケールの画像が欠けている場合も、警告を出してそのロケールは共有の画像を使います。
 - **`name`**、**`description`**：その言語での書名と説明。共有の値と異なるときに`localized[…].name`と`description`として書き出されます。その言語で読むと`openBundle`はこれを`bundle.name`と`bundle.description`として返し、Sandboxは読み込み時とライブラリーでその版をこの書名で表示し、`postext info`と`postext check`もこれを出力します。プリセット配信元の`index.json`のエントリーに`localized`（`localized.ca.name`）として写しておくと、ライブラリーは開く前から各版をそれぞれの書名で示します。指定のない言語はマニフェストの`name`と`description`を使います。
 
 マニフェストは`locales`にすべての言語を並べ（`['en', 'es']`）、主言語を`locale`に残し、それ以外を`localized`に格納します。ロケールを指定しない`openBundle`は主言語を読みます。
 
 **読み手が得る言語**。`openBundle(bytes, { locale })`は、完全に一致するロケール、なければその基本言語（`es-MX`なら`es`）、それもなければ主言語を返し、どれを返したかを`bundle.locale`が示します。章と文言は常に同じ言語から取られます。`localized`が主言語の地域変種を含んでいても、主言語は共有の文言を保ちます。`pt-BR`の項目のある`pt-PT`のバンドルは、`pt-BR`に対してだけブラジルのキャプションを読み、`pt-PT`と`pt`には共有のキャプションを読みます。
+
+### 共通設定と言語ごとの上書き
+
+複数の言語で出す本の各版は、デザインの大部分を共有するのがふつうです。ページ、グリッド、囲みのスタイル、パレットなどです。一方、その言語にしか関わらない設定もあります。その文字体系の書体、文字の方向に左右されるもの、ラベルの文言です。設定規則21（`configVersion: 21`）で書かれたバンドルは、この2つを分けて持ちます。マニフェストの`config`はすべての版が読む**共通設定**を、`localized[<lang>].config`はその言語の**上書き**を保持し、上書きにはその言語が異なる値にしたフィールドだけが入ります。共通設定を変更すると、同じフィールドを自分で設定していないすべての版に反映されます。
+
+上書きは、共通設定の上にフィールド単位でマージされます。
+
+<table>
+  <thead>
+    <tr><th>上書きの中身</th><th>マージのしかた</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>オブジェクト（<code>bodyText</code>、<code>page.margins</code>）</td><td>キーごとに、個々のフィールドまでマージします。<code>&#123; "bodyText": &#123; "fontFamily": "Amiri" &#125; &#125;</code>は書体だけを変え、共通設定のサイズ、行送り、行のそろえ方はそのまま使います。</td></tr>
+    <tr><td>色（<code>&#123; "hex", "model" &#125;</code>）または長さ（<code>&#123; "value", "unit" &#125;</code>）</td><td>丸ごと置き換えます。</td></tr>
+    <tr><td>項目が<code>id</code>を持つリスト（<code>calloutStyles</code>、<code>headingStyles</code>、<code>chipStyles</code>、<code>colorPalette</code>、<code>resourceTypes</code>、テンプレートの枠）</td><td>項目ごとに、<code>id</code>で対応づけてマージします。<code>levels</code>のリスト（見出し、リスト、目次）は<code>level</code>で、<code>customFonts</code>は<code>name</code>で対応づけます。共通設定のリストにない項目は、その項目群の後ろに加わります。</td></tr>
+    <tr><td><code>&#123; "id": "note", "$remove": true &#125;</code></td><td>そのキーを持つ共通設定の項目を、この言語でだけ取り除きます。順序の異なるリストは、共通設定の項目をすべて取り除いたうえで、その言語のリストを独自の順序で並べる形で書かれます。</td></tr>
+    <tr><td>そのほかのリスト（書体の代替候補、タブ位置）</td><td>丸ごと置き換えます。</td></tr>
+    <tr><td><code>null</code></td><td>共通設定の値を取り除きます。そのフィールドは、どちらの層も設定していない場合と同じく、その言語の既定値になります。</td></tr>
+  </tbody>
+</table>
+
+同じ本のスペイン語版とアラビア語版が、ページ、スペイン語版のデザインの本文サイズ、砂色の背景の注記の囲みを共有する例です。アラビア語版は書体とサイズを独自に設定し、囲みの帯を右に移します。右から左に組む行が始まる側です。
+
+```jsonc
+{
+  "version": 2,
+  "configVersion": 21,
+  "id": "el-farol",
+  "name": "El farol",
+  "locale": "es",
+  "locales": ["es", "ar"],
+  "chapters": {
+    "es": [{ "title": "Anochecer", "file": "chapters/es/01-anochecer.md" }],
+    "ar": [{ "title": "الغسق", "file": "chapters/ar/01-al-ghasaq.md" }]
+  },
+
+  // 共通設定：すべての版が読む
+  "config": {
+    "locale": "es",
+    "bodyText": { "fontFamily": "Source Serif 4", "fontSize": { "value": 10, "unit": "pt" }, "textAlign": "justify" },
+    "headings": { "fontFamily": "Source Sans 3" },
+    "calloutStyles": [
+      {
+        "id": "note",
+        "background": { "hex": "#f3ecd9", "model": "hex" },
+        "stripe": { "enabled": true, "side": "left", "color": { "hex": "#b5651d", "model": "hex" } }
+      }
+    ]
+  },
+
+  "localized": {
+    "ar": {
+      "name": "الفانوس",
+      // アラビア語版が異なる値にするものだけ
+      "config": {
+        "locale": "ar",
+        "bodyText": { "fontFamily": "Amiri", "fontSize": { "value": 11, "unit": "pt" } },
+        "headings": { "fontFamily": "Noto Kufi Arabic" },
+        "calloutStyles": [{ "id": "note", "stripe": { "side": "right" } }]
+      }
+    }
+  }
+}
+```
+
+アラビア語で読むと、本文はAmiriの11 ptで組まれ、両端そろえのままです。注記の囲みは共通設定の背景、帯の幅、帯の色を保ち、帯だけが右に来ます。方向、綴じ、数字は*自動*のままなので`locale`に従い、右から左、右綴じ、アラビア・インド数字になります。文字の方向を基準に側を指定する設定なら、上書きはまったく要りません。共通設定で`"side": "start"`とすれば、帯はスペイン語では左、アラビア語では右に置かれます。
+
+変更をすべての版に反映させたい設定は、共通設定に置きます。ページとグリッド、色、囲みと見出しのスタイル、アキなどです。その言語に属する設定は上書きに置きます。その文字体系の書体、本文サイズ、ハイフネーションと改行の規則、左右で指定した側やそろえ方、ラベルと柱の文言です。組み込みのリソースタイプ（*Figure*、*Figura*）は、上書きがなくても、名前と番号付けを各版の言語から取ります。
+
+**古いバンドル**。`20`以前の値が付いたマニフェストは、以前の規則で読まれます。`localized[…].config`のトップレベルの各キーが共有のキーを丸ごと置き換えるので、そこに`{ "bodyText": { "fontFamily": "Amiri" } }`と書くと、共有の設定の`bodyText`のほかのフィールドはすべて失われます。`createBundle`とSandboxはつねに21を書き出します。手で書いたマニフェストを21に移すには、各言語の設定全体を書き出し、下の関数で差分だけを残します。
+
+**コードから**。`postext`パッケージは、バンドルのコーデックとSandboxが使う関数を公開しています。
+
+```ts
+import { mergeConfigLayers, diffConfigLayers, leastConfigOverride, commonConfig, overridePaths, stripConfigDefaults } from 'postext';
+import type { ConfigOverride } from 'postext';
+
+const arabic = mergeConfigLayers(general, override);   // アラビア語版が組むときの設定
+diffConfigLayers(general, arabic);                     // 逆に上書きを得る：異なるフィールド
+overridePaths(override);
+// => ['locale', 'bodyText.fontFamily', 'bodyText.fontSize', 'headings.fontFamily', 'calloutStyles[id=note].stripe.side']
+
+const shared = commonConfig([spanish, arabic]);        // 2つの版が一致する部分
+const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
+```
+
+- **`mergeConfigLayers(general, override)`**：表の規則に従って、版が組むときに使う設定を返します。どちらの入力も変更しません。上書きがなければ`general`そのものを返します。
+- **`diffConfigLayers(general, own)`**：`general`を`own`に変える上書きを返します。`general`が設定し`own`が省いているフィールドは`null`として、順序の異なるキー付きリストは、取り除く項目に続けてリストを並べる形で書かれます。`mergeConfigLayers(general, diffConfigLayers(general, own))`は、キーの順序を除いて`own`と一致します。
+- **`leastConfigOverride(general, own, normalize)`**：同じ上書きから、`normalize`（たとえば`stripConfigDefaults`）を通した後では差の出ない`null`と削除を除いたものです。共通設定の値が`own`の言語の既定値でもある場合がこれに当たります。バンドルを書き出す側はこれを使います。
+- **`commonConfig(configs)`**：すべての設定が同じ値にしているフィールドを返します。オブジェクトはフィールドごとに、キー付きリストは項目ごとに比べます。各版が設定全体を持っている場合、これで共通設定が得られ、`diffConfigLayers`で各版の上書きが得られます。
+- **`overridePaths(override)`**：上書きが設定するすべてのフィールドを、リストの項目をキーで示したパスとして返します（`headings.levels[level=2].fontSize`）。`null`と取り除いた項目もフィールドとして数えます。`sandbox_get_config`が`ownFields`として返すのはこのパスです。
+- **`REMOVE_ENTRY`**は`"$remove"`キーで、**`ConfigOverride`**は上書きの型です。
+
+`openBundle`は、読み込んだ版のマージ済みの`config`を返します。`localized`の項目を持つバンドルでは、`readBundle`は`sharedConfig`も返します。同じ規則と同じフォントで読んだ共通設定です。`planBundle`は内容の中で`sharedConfig`を受け取ります。その場合、マニフェストの`config`はそこから書かれ、主言語を含むすべての版が`localized`の上書きとして書かれます。
 
 ### ライブサンプル：バンドルを作成する
 
@@ -310,8 +406,8 @@ Sandbox、エージェントスキル、`postext`パッケージはどれも同�
 `postext/bundle`は、`openBundle`と`createBundle`の土台になる部品も公開しています。バンドルを独自の方法で保存したり配信したりするホスト（HTTPで配信する展開済みのディレクトリー、データベースのレコードなど）向けです。
 
 - **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**：アーカイブの層。開くときはトップレベルのフォルダーを許容し、`__MACOSX`の項目とドットファイルを無視します。バンドルの外に出るパスは拒否します。`mtime`は`createBundle`の入力と同じようにファイルの日時を決めます。
-- **`readBundle(manifest, readFile, options)`**：マニフェストと`readFile(path)`コールバックから、章、設定、リソース、画像、フォントを読み込みます。`options`では、ロケール、ファイルidの命名方法（`ids`）、基本設定（`baseConfig`。マニフェストの設定の下に置かれます。既定ではバンドルの言語での`bundleBaseConfig`のパレットとリソースタイプで、その言語は`resolveBundleConfigLocale(manifest, locale)`が返します。独自の`baseConfig`を渡すホストは、それをこの言語にローカライズしてください。`CONFIG_VERSION`より古いマニフェストでは、その記録が求める固定が、マニフェストとロケールが上書きせずに残す基本設定のキーにも適用されます。ただし見出しの改ページは除きます。[postext 1.4以前で書き出したバンドル](#postext-14以前で書き出したバンドル)を参照）、固有のサイズの計測方法を指定します。`readResolution`は各ビットマップの解像度をファイルから読み取り、`bitmap.fileResolution`に入れます。バンドルが`layout.bitmapResolution: 'file'`を指定しているときは、既定でtrueです。
-- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**：書き出し側。純粋な計画（ファイル名とマニフェスト）と、`readBlob` / `readFont`コールバックによるバイト列の解決に分かれています。
+- **`readBundle(manifest, readFile, options)`**：マニフェストと`readFile(path)`コールバックから、章、設定、リソース、画像、フォントを読み込み、複数の言語を収めたバンドルでは共通設定を`sharedConfig`として読み込みます。`options`では、ロケール、ファイルidの命名方法（`ids`）、基本設定（`baseConfig`。マニフェストの設定の下に置かれます。既定ではバンドルの言語での`bundleBaseConfig`のパレットとリソースタイプで、その言語は`resolveBundleConfigLocale(manifest, locale)`が返します。独自の`baseConfig`を渡すホストは、それをこの言語にローカライズしてください。`CONFIG_VERSION`より古いマニフェストでは、その記録が求める固定が、マニフェストとロケールが上書きせずに残す基本設定のキーにも適用されます。ただし見出しの改ページは除きます。[postext 1.4以前で書き出したバンドル](#postext-14以前で書き出したバンドル)を参照）、固有のサイズの計測方法を指定します。`readResolution`は各ビットマップの解像度をファイルから読み取り、`bitmap.fileResolution`に入れます。バンドルが`layout.bitmapResolution: 'file'`を指定しているときは、既定でtrueです。
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**：書き出し側。純粋な計画（ファイル名とマニフェスト）と、`readBlob` / `readFont`コールバックによるバイト列の解決に分かれています。`content.sharedConfig`を渡すと、共通設定を主言語の版とは別に書き出します（[共通設定と言語ごとの上書き](#共通設定と言語ごとの上書き)を参照）。
 - **`isBundleManifest(value)`**、ロケールの選択関数（`pickChapterSpecs`、`pickLocaleOverrides`、`pickBundleView`、`resolveBundleLocale`、`resolveBundleConfigLocale`）、`svgSize` / `bitmapSize` / `bitmapInfo`（ビットマップのピクセル数と、ファイルに記載された解像度）、形式の型（`BundleManifest`、`BundleResourceSpec`、`BundleFontFamilySpec`、…）。
 - **`CONFIG_VERSION`、`migrateConfig(config, configVersion, { content })`、`pinLegacyHeadingBreaks(config)`、`pinLegacyMathSize(config)`、`pinLegacyInlineGap(config)`、`pinLegacyBoxResourceGap(config)`、`pinLegacyHeadingMarks(config)`、`pinLegacyDropCapSize(config)`、`pinLegacyColonListRoom(config)`、`pinLegacyBoxChildCut(config)`、`pinLegacyDashBreaks(config)`、`pinLegacyRaggedBreaking(config)`、`pinLegacyHeadingSplit(config)`、`pinLegacyParagraphContainerSpacing(config)`、`pinLegacyHyphenBreaks(config)`、`pinLegacyVerseLayout(config)`、`pinLegacyPairedIndents(config)`、`pinLegacyHardBreaks(config)`、`pinLegacyCodeBlocks(config)`、`pinLegacyVerseTightening(config)`、`pinLegacyDesignOverflow(config)`、`pinLegacyGridBalancing(config)`、`pinLegacyTitleBreaks(config)`、`pinLegacyCircledNumbers(config)`、`pinLegacyDesignText(config)`、`pinLegacyInlineTableSplit(config)`、`pinLegacyFlowColumns(config)`、`pinLegacyOpenerHeadFloats(config)`、`pinLegacyLooseOrder(config)`、`pinLegacyWideFloatStretch(config)`、`pinLegacyTrailingStep(config)`、`pinLegacyIndexGroupSplit(config)`、`pinLegacyGridBreakRules(config)`、`pinLegacyNoteBreaks(config)`、`pinLegacyLatinSpacingEdge(config)`、`pinLegacyInlineCaptionSide(config)`、`pinLegacyRefLabelBreaks(config)`、`pinLegacyBalloonPlacement(config)`、`pinLegacyScriptContext(config)`、`pinLegacyShapingLanguage(config)`、`pinLegacyTaskBox(config)`、`LEGACY_MATH_SIZE`**（0.5 ÷ 0.442）：保存した設定を現在の規則で表したものにします（[postext 1.4以前で書き出したバンドル](#postext-14以前で書き出したバンドル)を参照）。`readBundle`はこれを適用します。設定を独自の方法で保存するホストも、保存したコピーごとに1回ずつ適用できます。
 
