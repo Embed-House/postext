@@ -15,7 +15,7 @@
     "cookbook": "pnpm --dir apps/web run cookbook"
   },
   "devDependencies": {
-    "turbo": "2.10.12"
+    "turbo": "2.11.10"
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.9",

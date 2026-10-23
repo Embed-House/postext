@@ -6,10 +6,11 @@ import { EMBEDDED_FACES, readEmbedded } from '../assets';
 
 const face = (family: string) => readEmbedded(EMBEDDED_FACES.find((f) => f.family === family && f.weight === 400 && f.style === 'normal')!.path);
 
-// #678. Skia rasterises an SVG at load, at the size the SVG declares, and
-// stretches that bitmap when it is drawn larger: a hairline becomes a grey
+// #678. Skia rasterised an SVG at load, at the size the SVG declares, and
+// stretched that bitmap when it was drawn larger: a hairline became a grey
 // smear. The CLI's SVG images are rasterised again at the size they are
-// drawn at.
+// drawn at. @napi-rs/canvas 1.0.13 draws a plain `loadImage` sharp too
+// (#1211); the first test keeps that in sight.
 
 /** 100 × 50 px, a black hairline down the middle of a white ground. */
 const SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50" viewBox="0 0 100 50"><rect width="100" height="50" fill="#fff"/><rect x="49.75" y="0" width="0.5" height="50" fill="#000"/></svg>';
@@ -24,13 +25,13 @@ function darkest(canvas: Canvas): number {
 }
 
 describe('SVG images on Skia', () => {
-  it('a plain loadImage is a bitmap of the declared size, stretched when drawn larger', async () => {
+  it('a plain loadImage has the declared size and is drawn sharp when drawn larger', async () => {
     const image = await loadImage(Buffer.from(SVG));
     expect([image.width, image.height]).toEqual([100, 50]);
     const canvas = createCanvas(800, 400);
     canvas.getContext('2d').drawImage(image, 0, 0, 800, 400);
-    // Half a pixel of black over a pixel of white, stretched ×8: grey.
-    expect(darkest(canvas)).toBeGreaterThan(90);
+    // Until @napi-rs/canvas 1.0.13, half a pixel of black stretched ×8: grey.
+    expect(darkest(canvas)).toBeLessThan(8);
   });
 
   it('is rasterised at the size it is drawn at', async () => {
@@ -103,11 +104,12 @@ function centre(canvas: Canvas): number[] {
 }
 
 describe('SVG images holding a raster', () => {
-  it('Skia alone leaves the raster out', async () => {
+  it('Skia alone paints the raster since @napi-rs/canvas 1.0.13', async () => {
+    // It left it out, transparent, until then (#771); resvg still draws these.
     const { href } = await variants();
     const canvas = createCanvas(60, 60);
     canvas.getContext('2d').drawImage(await loadImage(Buffer.from(href)), 0, 0, 60, 60);
-    expect(centre(canvas)[3]).toBe(0);
+    expect(centre(canvas)).toEqual([220, 30, 30, 255]);
   });
 
   it('are painted, by href, by xlink:href and through <defs> and <use>', async () => {
