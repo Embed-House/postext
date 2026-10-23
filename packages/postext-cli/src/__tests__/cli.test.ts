@@ -89,6 +89,31 @@ describe('postext cli', () => {
     expect(info.book.name).toBe('Test');
   }, 60_000);
 
+  // #1210: a bundle carries its first page as the cover a file manager shows.
+  it('packs the first page as the cover of a book that names none', async () => {
+    const { loadImage } = await import('@napi-rs/canvas');
+    const dir = book();
+    const coverOf = async (bundle: string, folder: string) => {
+      expect(run(['unpack', bundle, '-o', folder, '-q'], dir).code).toBe(0);
+      const manifest = JSON.parse(readFileSync(join(dir, folder, 'preset.json'), 'utf8'));
+      if (!manifest.thumbnail) return null;
+      const bytes = readFileSync(join(dir, folder, manifest.thumbnail));
+      const image = await loadImage(bytes);
+      return { path: manifest.thumbnail, jpeg: bytes[0] === 0xff && bytes[1] === 0xd8, long: Math.max(image.width, image.height) };
+    };
+    expect(run(['pack', 'ch', '--name', 'Test', '-o', 'b.postext', '-q', '--offline'], dir).code).toBe(0);
+    expect(await coverOf('b.postext', 'u')).toEqual({ path: 'thumbnail.jpg', jpeg: true, long: 1024 });
+    expect(run(['pack', 'ch', '--name', 'Test', '--no-auto-thumbnail', '-o', 'n.postext', '-q'], dir).code).toBe(0);
+    expect(await coverOf('n.postext', 'n')).toBeNull();
+    // A folder whose manifest names none gets one too.
+    expect(run(['pack', 'n', '-o', 'f.postext', '-q', '--offline'], dir).code).toBe(0);
+    expect(await coverOf('f.postext', 'f')).toEqual({ path: 'thumbnail.jpg', jpeg: true, long: 1024 });
+    // A cover the reader gave is kept as it is.
+    writeFileSync(join(dir, 'mine.png'), readFileSync(join(dir, 'u', 'thumbnail.jpg')));
+    expect(run(['pack', 'ch', '--name', 'Test', '--thumbnail', 'mine.png', '-o', 'm.postext', '-q'], dir).code).toBe(0);
+    expect((await coverOf('m.postext', 'm'))?.path).toBe('thumbnail.png');
+  }, 60_000);
+
   it('round-trips the Markdown through Word', () => {
     const dir = book();
     expect(run(['docx', 'ch', '-o', 'b.docx', '-q'], dir).code).toBe(0);

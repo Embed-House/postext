@@ -65,7 +65,7 @@ async function main(argv: string[]): Promise<number> {
   let error: unknown;
   try {
     // Skia and the canvas globals load only for the commands that measure
-    // or paint text (help, pack or unpack start without them).
+    // or paint text (help or unpack start without them).
     const loading = performance.now();
     // The book's fonts only, never the computer's: the same book must break
     // the same way on every machine (and scanning them costs time).

@@ -195,7 +195,7 @@ postext pack 01.md 02.md --name "Notes" --config design.json --resources img/ -o
 postext unpack my-book.postext -o my-book/
 ```
 
-`pack`は本のフォルダーをそのままzipにするか、ばらのMarkdownからバンドルを作ります。同じ入力からはつねに同じバイト列ができるので、バンドルを比べたり、ハッシュを取ったりできます。ばらのMarkdownでは、`--id`、`--description`、`--thumbnail FILE`（表紙の画像）でバンドルのid、説明、サムネイルを設定します。idは既定で名前のスラッグです。フォルダーでは、その`preset.json`の内容がそのまま使われます。`unpack`は、`--force`を付けない限り、空でないフォルダーには書き込みません。
+`pack`は本のフォルダーをそのままzipにするか、ばらのMarkdownからバンドルを作ります。同じ入力からはつねに同じバイト列ができるので、バンドルを比べたり、ハッシュを取ったりできます。ばらのMarkdownでは、`--id`、`--description`、`--thumbnail FILE`（表紙の画像）でバンドルのid、説明、サムネイルを設定します。idは既定で名前のスラッグです。フォルダーでは、その`preset.json`の内容がそのまま使われます。表紙を指定していない本には、最初のページが表紙として入ります（`thumbnail.jpg`、長辺1024 px）。ファイルマネージャーがファイルのアイコンとして表示できる画像です。`--no-auto-thumbnail`で省けます。`unpack`は、`--force`を付けない限り、空でないフォルダーには書き込みません。
 
 ### infoとcheck
 
