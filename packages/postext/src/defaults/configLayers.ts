@@ -249,8 +249,8 @@ export function leastConfigOverride(general: PostextConfig, own: PostextConfig, 
         }
         const keyField = ['id', 'level', 'name'].find((k) => k in entry);
         prune(entry);
-        // An entry left with its key alone changes nothing when it merges
-        // into a general one; an entry the general list lacks is added.
+        // An entry that says nothing more than its key: kept when it adds
+        // the entry to the list.
         if (keyField && Object.keys(entry).length === 1) {
           node.splice(i, 1);
           if (!reads()) node.splice(i, 0, entry);

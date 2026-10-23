@@ -100,7 +100,37 @@ export function editionOverride(shared: PostextConfig, edition: PostextConfig): 
  *  own fields kept, everything else read from the new general settings. */
 export function rebaseEdition(before: PostextConfig, after: PostextConfig, edition: PostextConfig): PostextConfig {
   if (before === after) return edition;
-  return editionFrom(after, editionOverride(before, edition), languageOf(edition));
+  return editionFrom(after, withoutOrphans(editionOverride(before, edition), before, after), languageOf(edition));
+}
+
+/** `override` without its changes to list entries the general settings
+ *  had (`before`) and no longer have (`after`): the entry went for every
+ *  language, and what an edition changed of it would be left without the
+ *  rest of it. */
+function withoutOrphans(override: ConfigOverride, before: unknown, after: unknown): ConfigOverride {
+  const walk = (o: unknown, b: unknown, a: unknown, key: string): unknown => {
+    if (Array.isArray(o)) {
+      const field = key === 'levels' ? 'level' : key === 'customFonts' ? 'name' : 'id';
+      if (!o.every((e) => isPlainObject(e) && e[field] !== undefined)) return o;
+      const find = (list: unknown, k: unknown) => (Array.isArray(list) ? list.find((x) => isPlainObject(x) && x[field] === k) : undefined);
+      const out = o.flatMap((e) => {
+        const entry = e as Json;
+        if (entry[REMOVE_ENTRY] === true) return [entry];
+        const was = find(b, entry[field]);
+        const is = find(a, entry[field]);
+        if (was !== undefined && is === undefined) return [];
+        return was !== undefined ? [walk(entry, was, is, '') as Json] : [entry];
+      });
+      return out;
+    }
+    if (isPlainObject(o) && !('hex' in o) && !('value' in o && 'unit' in o)) {
+      const out: Json = {};
+      for (const [k, v] of Object.entries(o)) out[k] = walk(v, isPlainObject(b) ? b[k] : undefined, isPlainObject(a) ? a[k] : undefined, k);
+      return out;
+    }
+    return o;
+  };
+  return walk(override, before, after, '') as ConfigOverride;
 }
 
 /** The edition with its own value at each of `paths` given back: those

@@ -32,6 +32,9 @@ export interface FieldLayerValue {
   promote: (paths: readonly string[]) => void;
   /** Edition `locale` reads the general settings at `paths` again. */
   useGeneralIn: (locale: string, paths: readonly string[]) => void;
+  /** Whether {@link useGeneralIn} can change edition `locale` from here
+   *  (the one on screen, or one a project keeps aside). */
+  canChange: (locale: string) => boolean;
 }
 
 export const FieldLayerContext = createContext<FieldLayerValue | null>(null);
@@ -139,6 +142,20 @@ export function LayerChip({ state }: { state: FieldLayerState | null }) {
   }
   if (state.kind === 'shared' && state.keptBy.length > 0) {
     const names = state.keptBy.map(ctx.languageName);
+    const changeable = state.keptBy.filter(ctx.canChange);
+    if (changeable.length === 0) {
+      return (
+        <span
+          role="img"
+          aria-label={labels.configLayerKeptBy.replace('__languages__', names.join(', '))}
+          title={labels.configLayerKeptBy.replace('__languages__', names.join(', '))}
+          className={cn(chipClass, 'cursor-default gap-0.5 border border-dashed border-(--slate) text-(--slate)')}
+        >
+          <Languages size={9} aria-hidden="true" />
+          {state.keptBy.map(languageMark).join(' ')}
+        </span>
+      );
+    }
     return (
       <Menu
         label={labels.configLayerKeptBy.replace('__languages__', names.join(', '))}
@@ -154,15 +171,15 @@ export function LayerChip({ state }: { state: FieldLayerState | null }) {
           </button>
         )}
       >
-        {state.keptBy.map((l) => (
+        {changeable.map((l) => (
           <MenuItem key={l} icon={<Link2 size={12} />} onClick={() => ctx.useGeneralIn(l, state.paths)}>
             {labels.configLayerApplyIn.replace('__language__', ctx.languageName(l))}
           </MenuItem>
         ))}
-        {state.keptBy.length > 1 && (
+        {changeable.length > 1 && (
           <>
             <MenuSeparator />
-            <MenuItem icon={<Link2 size={12} />} onClick={() => { for (const l of state.keptBy) ctx.useGeneralIn(l, state.paths); }}>
+            <MenuItem icon={<Link2 size={12} />} onClick={() => { for (const l of changeable) ctx.useGeneralIn(l, state.paths); }}>
               {labels.configLayerApplyInAll}
             </MenuItem>
           </>
