@@ -17,8 +17,10 @@ import type { InlineSpan } from './types.js';
 import { injectPlaceholderSpans } from './injectSpans.js';
 import { parseInlineFormatting, restoreEscapes } from './inlineFormatting.js';
 
-/** Stands for a citation in the plain text until it is formatted. */
-export const CITATION_PLACEHOLDER = '';
+/** Stands for a citation in the plain text until it is formatted. Not
+ *  `TAB_PLACEHOLDER` (U+E1A8): a citation read as a tab dropped the space
+ *  before it and lost its place in the source map (#1215). */
+export const CITATION_PLACEHOLDER = '\uE1A9';
 
 /** A citation as the parser read it. */
 export interface CitationMeta {

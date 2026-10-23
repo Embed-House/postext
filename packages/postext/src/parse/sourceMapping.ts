@@ -1,9 +1,10 @@
 import type { InlineSpan } from './types.js';
 import { MATH_PLACEHOLDER } from './inlineMath.js';
-import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, FOOTNOTE_PLACEHOLDER, MARK_OPENER, REF_PLACEHOLDER, SMALLCAPS_OPENER, SWATCH_PLACEHOLDER, TAB_PLACEHOLDER, readMarkAt } from './inlineFormatting.js';
+import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, FOOTNOTE_PLACEHOLDER, MARK_OPENER, REF_PLACEHOLDER, SMALLCAPS_OPENER, SWATCH_PLACEHOLDER, TAB_PLACEHOLDER, extractInlineRefs, readMarkAt } from './inlineFormatting.js';
 import { sliceSpan } from './links.js';
 import { orientationOpenerAt } from './orientationMarks.js';
 import { annotationSourceSkips } from './annotations.js';
+import { CITATION_PLACEHOLDER, extractInlineCitations } from './citations.js';
 
 /** A `:smallcaps[` at `r` that the parser took as markup: its closing `]`
  *  comes later on the same line (an unclosed one stays literal text). */
@@ -20,10 +21,11 @@ function isSmallCapsOpenerAt(markdown: string, r: number, end: number): boolean 
 
 /** The markup of the highlight marks (`:mark[`, and `]{…}` after the
  *  text, #888) of `[from, end)`, which prints nothing: `[start, end)`
- *  source offsets in order. */
-function markSourceSkips(markdown: string, from: number, end: number): Array<[number, number]> {
+ *  source offsets in order. One in inline code (`code`) is text. */
+function markSourceSkips(markdown: string, from: number, end: number, code: Array<[number, number]>): Array<[number, number]> {
   const out: Array<[number, number]> = [];
   for (let at = markdown.indexOf(MARK_OPENER, from); at >= 0 && at < end; at = markdown.indexOf(MARK_OPENER, at + 1)) {
+    if (code.some(([s, e]) => at >= s && at < e)) continue;
     const read = readMarkAt(markdown.slice(0, end), at);
     if (!read) continue;
     const close = at + MARK_OPENER.length + read.inner.length;
@@ -59,14 +61,27 @@ export function computeSourceMap(
   // The markup of Chinese annotations (`:ruby[`, `]{rt="…"}`, a compact
   // ruby's `|hóng|lóu}`) prints nothing: plain characters never match
   // inside it (#193–#195).
+  // Inline code spans, which the parser protects: a mark written inside
+  // one (`` `:smallcaps[…]` ``, `` `:tcy[…]` ``) is text, its opener
+  // printed (#1215).
+  const code = roleCodeSpans(markdown, blockSrcStart, blockSrcEnd);
+  let ci = 0;
   const annotationSkips = annotationSourceSkips(markdown, blockSrcStart, blockSrcEnd);
-  const markSkips = markdown.includes(MARK_OPENER) ? markSourceSkips(markdown, blockSrcStart, blockSrcEnd) : [];
+  const markSkips = markdown.includes(MARK_OPENER) ? markSourceSkips(markdown, blockSrcStart, blockSrcEnd, code) : [];
   const skips = markSkips.length > 0 ? [...annotationSkips, ...markSkips].sort((a, b) => a[0] - b[0]) : annotationSkips;
   let si = 0;
-  // Inline code spans, which the parser protects: an orientation mark
-  // written inside one (`` `:tcy[…]` ``) is text, its opener printed.
-  const code = orientationCodeSpans(markdown, blockSrcStart, blockSrcEnd);
-  let ci = 0;
+  // The citations of the block (#1215), read as the parser reads them:
+  // each placeholder stands for the next one at or after the cursor.
+  const citations = plainText.includes(CITATION_PLACEHOLDER)
+    ? extractInlineCitations(markdown.slice(blockSrcStart, blockSrcEnd), blockSrcStart).citations
+    : [];
+  let cti = 0;
+  // So are its references, whose cross-reference forms (`@sec:id`,
+  // `[@fig:id]`) have no `:ref{` to look for.
+  const refs = plainText.includes(REF_PLACEHOLDER)
+    ? extractInlineRefs(markdown.slice(blockSrcStart, blockSrcEnd), blockSrcStart).refs
+    : [];
+  let rfi = 0;
   for (let p = 0; p < plainText.length; p++) {
     const ch = plainText[p]!;
     // Math placeholder: the plain char represents `$...$` in the markdown.
@@ -92,8 +107,18 @@ export function computeSourceMap(
     // Ref placeholder: the plain char represents `:ref{…}` in the markdown.
     // Advance to the leading `:`, map to it, then skip past the closing `}`
     // so subsequent plain chars keep aligning with the source.
-    // LaTeX's `\ref{…}` / `\eqref{…}` (#530) stand for one too.
+    // LaTeX's `\ref{…}` / `\eqref{…}` (#530) and the cross-references
+    // (`@sec:id`, `[@fig:id]`) stand for one too: the next reference of
+    // the block at or after the cursor (#1215).
     if (ch === REF_PLACEHOLDER) {
+      while (rfi < refs.length && refs[rfi]!.sourceStart < r) rfi++;
+      const ref = refs[rfi];
+      if (ref) {
+        rfi++;
+        map[p] = ref.sourceStart;
+        r = ref.sourceEnd;
+        continue;
+      }
       while (r < blockSrcEnd && !refOpenerAt(markdown, r)) r++;
       if (r >= blockSrcEnd) {
         map[p] = blockSrcEnd;
@@ -104,6 +129,20 @@ export function computeSourceMap(
       while (j < blockSrcEnd && markdown[j] !== '}') j++;
       if (j < blockSrcEnd) j++; // consume the closing `}`
       r = j;
+      continue;
+    }
+    // Citation placeholder: the plain char represents `[@key]`, `@key`
+    // or `[-@key]` (#1215). Map to its first character, skip past it.
+    if (ch === CITATION_PLACEHOLDER) {
+      while (cti < citations.length && citations[cti]!.sourceStart < r) cti++;
+      const cite = citations[cti];
+      if (!cite) {
+        map[p] = blockSrcEnd;
+        continue;
+      }
+      cti++;
+      map[p] = cite.sourceStart;
+      r = cite.sourceEnd;
       continue;
     }
     // Footnote placeholder: the plain char represents `[^id]`. Map to the
@@ -235,16 +274,16 @@ export function computeSourceMap(
         continue;
       }
       const rc = markdown[r]!;
+      while (ci < code.length && code[ci]![1] <= r) ci++;
+      const inCode = ci < code.length && r >= code[ci]![0];
       // The opener of a `:smallcaps[…]` run has no plain character: skip
-      // it whole, so its letters never match the text inside.
-      if (rc === ':' && isSmallCapsOpenerAt(markdown, r, blockSrcEnd)) {
+      // it whole, so its letters never match the text inside. Not in
+      // inline code, where it is printed.
+      if (rc === ':' && !inCode && isSmallCapsOpenerAt(markdown, r, blockSrcEnd)) {
         r += SMALLCAPS_OPENER.length;
         continue;
       }
-      // So has the opener of `:tcy[…]`, `:upright[…]`, `:sideways[…]`,
-      // outside inline code.
-      while (ci < code.length && code[ci]![1] <= r) ci++;
-      const inCode = ci < code.length && r >= code[ci]![0];
+      // So has the opener of `:tcy[…]`, `:upright[…]`, `:sideways[…]`.
       const orientationOpener = rc === ':' && !inCode ? orientationOpenerAt(markdown, r, blockSrcEnd) : 0;
       if (orientationOpener > 0) {
         r += orientationOpener;
@@ -264,12 +303,12 @@ export function computeSourceMap(
   return map;
 }
 
-/** The inline code spans (`` `…` ``) of `[from, end)` that may hold an
- *  orientation mark, as `[start, end)` source offsets in order; none when
+/** The inline code spans (`` `…` ``) of `[from, end)` that may hold a
+ *  mark (`:name[`), as `[start, end)` source offsets in order; none when
  *  the block has no such mark. */
-function orientationCodeSpans(markdown: string, from: number, end: number): Array<[number, number]> {
+function roleCodeSpans(markdown: string, from: number, end: number): Array<[number, number]> {
   const slice = markdown.slice(from, end);
-  if (!slice.includes('`') || !/:(?:tcy|upright|sideways)\[/.test(slice)) return [];
+  if (!slice.includes('`') || !/:[A-Za-z]+\[/.test(slice)) return [];
   const out: Array<[number, number]> = [];
   const re = /(?<!\\)`[^`\n]+?`/g;
   let m: RegExpExecArray | null;

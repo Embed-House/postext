@@ -131,18 +131,25 @@ export function injectMathSpans(spans: InlineSpan[], maths: MathMeta[]): InlineS
   }));
 }
 
-/** Overwrite `sourceMap[i]` entries corresponding to math placeholders with
- *  the math span's absolute sourceStart. Keeps click-to-focus accurate for
- *  formulas even though the placeholder char has no direct source match. */
-export function fixMathSourceMap(text: string, spans: InlineSpan[], sourceMap: number[]): void {
+/** Align each math placeholder's `sourceMap[i]` entry with its formula.
+ *  Where the map already points at the formula's opening `$`, the map is
+ *  right and the span's `sourceStart`/`sourceEnd` take it: those were read
+ *  from the line after its references, chips and citations had shrunk to
+ *  one character, and drift after each one (#1215). Otherwise the entry
+ *  takes the span's `sourceStart`. */
+export function fixMathSourceMap(markdown: string, text: string, spans: InlineSpan[], sourceMap: number[]): void {
   if (sourceMap.length === 0) return;
   // Walk spans in order, tracking plain-text position. Each math span
-  // contributes exactly one placeholder char whose sourceMap entry we
-  // overwrite with its span's sourceStart.
+  // contributes exactly one placeholder char.
   let p = 0;
   for (const span of spans) {
     if (span.math && p < sourceMap.length) {
-      sourceMap[p] = span.math.sourceStart;
+      const at = sourceMap[p]!;
+      if (markdown[at] === '$') {
+        if (at !== span.math.sourceStart) span.math = { ...span.math, sourceStart: at, sourceEnd: at + span.math.sourceEnd - span.math.sourceStart };
+      } else {
+        sourceMap[p] = span.math.sourceStart;
+      }
     }
     p += span.text.length;
     if (p > text.length) break;
