@@ -3,20 +3,20 @@
   "slug": "side-heads-hanging-numbers",
   "sourceHash": "46593bac13fb9c3e2992a245ec8a78e5b671012f3dc09233d3153abb0b8b7006",
   "engine": {
-    "postext": "1.57.1",
+    "postext": "1.58.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-23T07:41:23.109Z",
+  "capturedAt": "2026-10-23T17:36:11.811Z",
   "variants": {
     "en": {
-      "hash8": "687d6d84",
-      "vdtHash": "f3ab73aa5cf443c13c929b7a62488b7f4893a321",
+      "hash8": "bcb38708",
+      "vdtHash": "be97d96132d9f794682a9b642202b77080cda483",
       "timings": {
-        "importMs": 305,
+        "importMs": 742,
         "fontsMs": 4,
-        "buildMs": 59,
-        "totalMs": 2747,
+        "buildMs": 66,
+        "totalMs": 1698,
         "builds": 1
       },
       "specimen": {
@@ -50,7 +50,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 88546,
+          "bytes": 88614,
           "alt": "Opening page 1: Competition brief."
         },
         {
@@ -61,7 +61,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 129580,
+          "bytes": 129596,
           "alt": "Page 2: 2 The site. Figure 1. The plot, 1:2000. Market hall and weighbridge hut in grey; six tamarisks along the north edge. Red arrows: possible entrances; grey arrow: service."
         },
         {
@@ -72,7 +72,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 73892,
+          "bytes": 73870,
           "alt": "Page 3: 3.2 Staff areas. Figure 2. Quay front, 1:300. In red, the four frames at the east end, where the reinforcement has corroded. · Table 1. Schedule of net floor areas."
         },
         {
@@ -131,7 +131,7 @@
         "chapters": [
           {
             "pages": 5,
-            "hash": "da773caac3be8f70",
+            "hash": "0b49deadc30d25cd",
             "lines": "7f576375078af4a3"
           }
         ]
@@ -362,9 +362,14 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           },
           {
             "check": "sandbox",
@@ -375,13 +380,13 @@
       }
     },
     "es": {
-      "hash8": "bd6e0d2f",
-      "vdtHash": "05cd015399770ed6b13ddb7974d9e7a3f9663b69",
+      "hash8": "797bd4bc",
+      "vdtHash": "635ba35e522e49be434a3e1dd1c2a239463c2143",
       "timings": {
-        "importMs": 441,
+        "importMs": 788,
         "fontsMs": 4,
-        "buildMs": 67,
-        "totalMs": 1259,
+        "buildMs": 64,
+        "totalMs": 1676,
         "builds": 1
       },
       "specimen": {
@@ -415,7 +420,7 @@
           "h": 1414,
           "file": "p01.webp",
           "strip": "p01.s.webp",
-          "bytes": 93446,
+          "bytes": 93344,
           "alt": "Página de apertura 1: Bases del concurso."
         },
         {
@@ -426,7 +431,7 @@
           "h": 1414,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 134262,
+          "bytes": 134268,
           "alt": "Página 2: 2 El emplazamiento. Figura 1. La parcela, 1:2000. Lonja y caseta de básculas, en gris; seis tamarindos en el borde norte. Flechas rojas: accesos posibles; flecha gris: servicio."
         },
         {
@@ -437,7 +442,7 @@
           "h": 1414,
           "file": "p03.webp",
           "strip": "p03.s.webp",
-          "bytes": 77410,
+          "bytes": 77124,
           "alt": "Página 3: 3.2 Áreas internas. Figura 2. Fachada al muelle, 1:300. En rojo, los cuatro pórticos del extremo este, con las armaduras corroídas. · Tabla 1. Programa de superficies útiles por zonas."
         },
         {
@@ -496,7 +501,7 @@
         "chapters": [
           {
             "pages": 5,
-            "hash": "5710235c90e472ec",
+            "hash": "062aef6e9dcf5580",
             "lines": "99bd51e4abbbf8c4"
           }
         ]
@@ -727,9 +732,14 @@
         },
         "findings": [
           {
-            "check": "chrome",
+            "check": "vdt",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "the layout changed with the same sources (engine or font regression?)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           },
           {
             "check": "sandbox",

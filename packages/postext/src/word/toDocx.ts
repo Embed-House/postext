@@ -71,7 +71,7 @@ type ExBlock =
   | { kind: 'list'; text: string; depth: number; ordered: boolean; number: number; role: Role; run: number };
 
 const HEADING_RE = /^(#{1,6})\s+(.+)$/;
-const FENCE_RE = /^:::\s*([a-z][a-z0-9-]*)\s*(?:\{([^}]*)\})?\s*$/;
+const FENCE_RE = /^:::\s*([a-z][a-z0-9-]*)(?:\s*\{([^}]*)\})?\s*$/;
 const CLOSE_RE = /^:::\s*$/;
 const CONTAINERS = new Set(['callout', 'paragraphs', 'part', 'columns', 'paper']);
 const RAW_BODY = new Set(['references', 'verse', 'page', 'strip']);

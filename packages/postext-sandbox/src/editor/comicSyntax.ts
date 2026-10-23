@@ -14,9 +14,9 @@ import { inFencedCode } from './codeFences.js';
  */
 
 /** `:::page` / `:::strip`, optional attributes (trimmed line). */
-const COMIC_FENCE_RE = /^:::\s*(page|strip)\s*(?:\{([^}]*)\})?\s*$/;
+const COMIC_FENCE_RE = /^:::\s*(page|strip)(?:\s*\{([^}]*)\})?\s*$/;
 /** `::panel`, optional attributes, alone on its line (trimmed). */
-const PANEL_RE = /^::panel\s*(?:\{([^}]*)\})?\s*$/;
+const PANEL_RE = /^::panel(?:\s*\{([^}]*)\})?\s*$/;
 const CLOSE_RE = /^\s*:::\s*$/;
 /** `key`, an optional `{attrs}`, then the colon (ASCII or fullwidth). */
 const SCRIPT_LINE_RE = /^([\p{L}\p{N}_.-]+)([ \t]*)(?:(\{)([^}\n]*)(\}))?[ \t]*([:：])/u;

@@ -34,7 +34,7 @@ const CONTAINER_CLOSE_RE = /^:::\s*$/;
 /** A composed page's opening fence (#854): four or more colons, `page`,
  *  its attributes (`::::page{template="…"}`). Three colons stay a comic
  *  page (`:::page{split}`). */
-const PAGE_FENCE_RE = /^(:{4,})\s*page\s*(?:\{([^}]*)\})?\s*$/;
+const PAGE_FENCE_RE = /^(:{4,})\s*page(?:\s*\{([^}]*)\})?\s*$/;
 /** A bare fence of four or more colons: it closes the composed page opened
  *  with as many (#854). */
 const LONG_CLOSE_RE = /^(:{4,})\s*$/;
@@ -911,7 +911,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
     const close = closingBracket(body, open);
     if (close < 0) return undefined;
     const rest = body.slice(close + 1);
-    const attrsMatch = /^\s*(?:\{([^}]*)\})?\s*$/.exec(rest);
+    const attrsMatch = /^(?:\s*\{([^}]*)\})?\s*$/.exec(rest);
     if (!attrsMatch) return undefined;
     const lineStart = lineOffsets[k]!;
     const blob = attrsMatch[1] ?? '';

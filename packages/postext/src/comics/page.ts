@@ -24,7 +24,7 @@ import type { ComicPageSource, ComicPanelSource, ComicSourceRange } from './type
 /** `:::page` / `:::strip` with an optional attribute block. */
 const COMIC_FENCE_RE = /^:::\s*(page|strip)(?:\s*\{([^}]*)\})?\s*$/;
 /** `::panel` with an optional attribute block, alone on its line. */
-const PANEL_RE = /^::panel\s*(?:\{([^}]*)\})?\s*$/;
+const PANEL_RE = /^::panel(?:\s*\{([^}]*)\})?\s*$/;
 /** The bare `:::` that closes the page. */
 const CLOSE_RE = /^:::\s*$/;
 

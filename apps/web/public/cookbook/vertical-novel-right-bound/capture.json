@@ -3,12 +3,12 @@
   "slug": "vertical-novel-right-bound",
   "sourceHash": "ea3df8340886e9e2f85b7c2ffa2a5474409cb1bf7c5ca034f6a662e32f11a8b2",
   "engine": {
-    "postext": "1.57.1",
-    "postextPdf": "1.57.1",
+    "postext": "1.58.0",
+    "postextPdf": "1.58.0",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-23T07:43:09.570Z",
+  "capturedAt": "2026-10-23T17:36:11.836Z",
   "variants": {
     "en": {
       "hash8": "5a7d1520",
@@ -159,7 +159,7 @@
       },
       "sandbox": {
         "file": "vertical-novel-right-bound.postext",
-        "bytes": 279896,
+        "bytes": 279895,
         "folio": "02ddac55",
         "chapters": [
           {
@@ -372,18 +372,23 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "book in several languages: es left out (its bundle is in zh-Hant, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es left out (its bundle is in zh-Hant, as another edition's)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "767079fa",
+      "hash8": "9a272daa",
       "vdtHash": "324528048aa4e7301b6ded3c2185f9076c5aacb3",
       "timings": {
-        "importMs": 646,
-        "fontsMs": 420,
-        "buildMs": 51,
-        "totalMs": 1821,
+        "importMs": 779,
+        "fontsMs": 715,
+        "buildMs": 60,
+        "totalMs": 2270,
         "builds": 1
       },
       "specimen": {
@@ -520,7 +525,7 @@
       },
       "pdf": {
         "file": "vertical-novel-right-bound.pdf",
-        "bytes": 754265,
+        "bytes": 754305,
         "pages": 11
       },
       "sandbox": {
@@ -733,6 +738,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: es names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (its bundle is in zh-Hant, as another edition's)"
           },
           {
             "check": "sandbox",

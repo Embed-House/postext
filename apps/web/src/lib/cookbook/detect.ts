@@ -26,7 +26,7 @@ export const KNOWN_DIRECTIVES: readonly string[] = ["pagebreak", "numbering", "c
 export const KNOWN_CONTAINERS: readonly string[] = ["callout", "paragraphs", "part", "columns", "paper", "frame", "module"];
 
 /** The engine's fence line: `:::name` with an optional `{attrs}` block. */
-const DIRECTIVE_LINE = /^:::\s*([a-z][a-z0-9-]*)\s*(?:\{([^}]*)\})?\s*$/;
+const DIRECTIVE_LINE = /^:::\s*([a-z][a-z0-9-]*)(?:\s*\{([^}]*)\})?\s*$/;
 /** The only form the parser accepts for an inline resource embed. */
 export const RESOURCE_EMBED = /^::resource\s*\{id="([^"]+)"\}\s*$/;
 /** The embed sent to a slot of a composed page (#854): `id` and `slot`

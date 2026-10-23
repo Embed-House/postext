@@ -32,7 +32,7 @@ export interface TemplateFence {
   attrs: string[];
 }
 
-const PAGE_FENCE_RE = /^(\s{0,3})(:{4,})\s*page\s*(?:\{([^}]*)\})?\s*$/;
+const PAGE_FENCE_RE = /^(\s{0,3})(:{4,})\s*page(?:\s*\{([^}]*)\})?\s*$/;
 const CODE_FENCE_RE = /^\s{0,3}(`{3,}|~{3,})/;
 const TEMPLATE_ATTR_RE = /(^|\s)template\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'}]+))/;
 const SPREAD_ATTR_RE = /(^|\s)spread(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'}]+)))?(?=\s|$)/;

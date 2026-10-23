@@ -101,4 +101,19 @@ describe('a span: page heading that opens mid-page (#539)', () => {
     expect(second!.pageIndex).toBeGreaterThan(first!.pageIndex);
     expect(doc.pages[second!.pageIndex]!.columns[second!.columnIndex]!.band ?? 0).toBe(0);
   });
+
+  it('moves on when the headings under it roll it back out of the band it opened (#1219)', () => {
+    // The band under the cut holds the heading and a few lines, not the
+    // heading with the run of headings kept with it: kept with next, the
+    // run goes on to the band's next column, where the heading was set at
+    // the band's head again and rolled back again, without end.
+    const words = SENTENCE.repeat(60).split(' ').slice(0, 640).join(' ');
+    const subheads = ['## Tuesday the long title of the event here', '', '## Tuesday the long title of the event here', '', '## Tuesday the long title of the event here', ''];
+    const md = ['# The first article {style="article"}', '', words, '', '# The second article {style="article"}', '', ...subheads, filler(3)].join('\n');
+    const doc = buildDocument({ markdown: md }, { ...config(article({ spanBreak: false })), headings: { balancing: { trailing: false } } }, createMeasurementCache());
+    const [first, second, ...run] = headings(doc);
+    expect(second!.pageIndex).toBeGreaterThan(first!.pageIndex);
+    expect(doc.pages[second!.pageIndex]!.columns[second!.columnIndex]!.band ?? 0).toBe(0);
+    for (const h of run) expect(h.pageIndex).toBe(second!.pageIndex);
+  });
 });

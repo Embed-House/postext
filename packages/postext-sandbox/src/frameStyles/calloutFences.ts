@@ -24,7 +24,7 @@ export interface CalloutFence {
 }
 
 // As the engine's DIRECTIVE_RE reads a trimmed line.
-const CALLOUT_FENCE_RE = /^\s*:::\s*callout\s*(?:\{([^}]*)\})?\s*$/;
+const CALLOUT_FENCE_RE = /^\s*:::\s*callout(?:\s*\{([^}]*)\})?\s*$/;
 const CODE_FENCE_RE = /^\s{0,3}(`{3,}|~{3,})/;
 // `=` or the fullwidth `＝` a Chinese input method types, as the engine.
 const TYPE_ATTR_RE = /(^|\s)type\s*[=＝]\s*(?:"([^"]*)"|'([^']*)'|([^\s"'}]+))/;
