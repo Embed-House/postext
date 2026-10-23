@@ -1,4 +1,5 @@
-import type { PostextConfig } from 'postext';
+import { commonConfig, type PostextConfig } from 'postext';
+import { initialSharedConfig } from '../editions/configLayers.js';
 import { createPostextGuideConfig } from '../context/guideConfig.js';
 import { buildDefaultResources, defaultResourcesSignature } from '../defaultResources/index.js';
 import { coverThumbnailSvg } from '../defaultResources/cover.js';
@@ -130,6 +131,20 @@ export function createPostextGuidePreset(opts: BuiltinPresetOptions): PresetProv
     }
     return fingerprintValue;
   };
+  // A host config is the design of the host's own language: the Chinese,
+  // Arabic and Japanese editions keep their own, set for their script.
+  const configOf = (lang: GuideLang): PostextConfig => {
+    const ownDesign = lang === 'zh-Hans' || lang === 'ar' || lang === 'ja';
+    return opts.configOverride && !ownDesign ? opts.configOverride : createPostextGuideConfig(lang);
+  };
+  // The guide's general settings (#1209): the design its editions in the
+  // Latin script share. The Chinese, Japanese and Arabic editions are set
+  // for their scripts: what they set differently is their own.
+  let shared: PostextConfig | null = null;
+  const guideShared = (): PostextConfig => {
+    shared ??= commonConfig(BUILTIN_PRESET_LOCALES.filter((l) => l !== 'zh-Hans' && l !== 'ja' && l !== 'ar').map((l) => initialSharedConfig(configOf(guideLang(l)))));
+    return shared;
+  };
   return {
     summary,
     fingerprint,
@@ -140,13 +155,10 @@ export function createPostextGuidePreset(opts: BuiltinPresetOptions): PresetProv
       // ES / CA / EN / ع / 简 / 日 / PT buttons switch the language; any other text is used as is.
       const custom = opts.markdownOverride !== undefined && !GUIDE_SAMPLE_DOCUMENTS.includes(opts.markdownOverride);
       const markdown = custom ? opts.markdownOverride! : GUIDE_MARKDOWN[lang];
-      // A host config is the design of the host's own language: the Chinese,
-      // Arabic and Japanese editions keep their own, set for their script.
-      const ownDesign = lang === 'zh-Hans' || lang === 'ar' || lang === 'ja';
-      const config = opts.configOverride && !ownDesign ? opts.configOverride : createPostextGuideConfig(lang);
+      const config = configOf(lang);
       const resources = await buildDefaultResources(lang);
       const { chapters } = sampleBook(markdown, () => generateId('chapter'), opts.name);
-      return { summary, locale: lang, chapters, config, resources, blobs: [], fonts: [], canvasScope: 'book' };
+      return { summary, locale: lang, chapters, config, sharedConfig: guideShared(), resources, blobs: [], fonts: [], canvasScope: 'book' };
     },
   };
 }

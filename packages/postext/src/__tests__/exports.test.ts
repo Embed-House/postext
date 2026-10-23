@@ -448,6 +448,7 @@ describe("package exports", () => {
       "applyHtmlViewerOverrides",
       "mergeConfigLayers",
       "diffConfigLayers",
+      "leastConfigOverride",
       "commonConfig",
       "overridePaths",
       "sameConfig",

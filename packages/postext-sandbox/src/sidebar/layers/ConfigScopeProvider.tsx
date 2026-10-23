@@ -63,8 +63,12 @@ export function ConfigScopeProvider({ children }: { children: ReactNode }) {
   const projectId = useSandboxSelector((s) => s.activeProjectId);
   const projects = useSandboxSelector((s) => s.projects);
   const summary = projects.find((p) => p.id === projectId);
-  const locale = summary?.locale ?? config.locale ?? '';
-  const locales = useMemo(() => summary?.locales ?? (locale ? [locale] : []), [summary?.locales, locale]);
+  // A preset in several languages: the edition it opened in, and its list.
+  const applied = useSandboxSelector((s) => (s.activeProjectId === null ? s.presetApplied : null));
+  const presetLocales = useSandboxSelector((s) => s.presetSummaries.find((p) => p.id === s.activePresetId)?.locales);
+  const locale = summary?.locale ?? (applied?.locale || undefined) ?? config.locale ?? '';
+  const knownLocales = summary ? summary.locales : presetLocales;
+  const locales = useMemo(() => knownLocales ?? (locale ? [locale] : []), [knownLocales, locale]);
   const [asideRev, setAsideRev] = useState(0);
   const aside = useAsideOverrides(projectId, !!layers, locale, (summary?.editionsRev ?? 0) + asideRev);
   const [shadowed, setShadowed] = useState<ShadowedWrite | null>(null);

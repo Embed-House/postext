@@ -225,3 +225,45 @@ export function overridePaths(override: ConfigOverride | undefined | null): stri
   walk(override ?? {}, '', '');
   return out;
 }
+
+/** The override that turns `general` into `own` with nothing a reader
+ *  would not miss: a `null` (or a removed list entry) that `normalize`
+ *  makes no difference for — the general value is the default of `own`'s
+ *  language too, which normalizing `own` (stripping its defaults) took
+ *  out — is left out. `own` is taken as `normalize` gives it. */
+export function leastConfigOverride(general: PostextConfig, own: PostextConfig, normalize: (c: PostextConfig) => PostextConfig): ConfigOverride {
+  const target = normalize(own);
+  const override = diffConfigLayers(general, target);
+  const reads = () => sameConfig(normalize(mergeConfigLayers(general, override)), target);
+  const prune = (node: Json | unknown[]): void => {
+    if (Array.isArray(node)) {
+      for (let i = node.length - 1; i >= 0; i--) {
+        const entry = node[i];
+        if (!isPlainObject(entry)) continue;
+        if (entry[REMOVE_ENTRY] === true) {
+          node.splice(i, 1);
+          if (!reads()) node.splice(i, 0, entry);
+          continue;
+        }
+        const keyField = ['id', 'level', 'name'].find((k) => k in entry);
+        prune(entry);
+        if (keyField && Object.keys(entry).length === 1) node.splice(i, 1);
+      }
+      return;
+    }
+    for (const [key, value] of Object.entries(node)) {
+      if (value === null) {
+        delete node[key];
+        if (!reads()) node[key] = null;
+      } else if (Array.isArray(value)) {
+        prune(value);
+        if (value.length === 0) delete node[key];
+      } else if (isPlainObject(value) && !isAtom(value)) {
+        prune(value);
+        if (Object.keys(value).length === 0) delete node[key];
+      }
+    }
+  };
+  prune(override);
+  return override;
+}

@@ -13,6 +13,8 @@
  * #968); its pictures are stored and decoded for the side-by-side view.
  */
 
+import { loadPresetGeneral } from '../storage/persistence.js';
+import { presetSharedConfig, rebaseEdition } from './configLayers.js';
 import type { LayoutService } from '../worker/LayoutService.js';
 import { declareEditionFonts, ensureConfigFontsLoaded } from '../controls/fontLoader.js';
 import { ensureResourceImages } from '../controls/resourceImages.js';
@@ -199,11 +201,13 @@ export async function loadPresetEdition(
   if (summary) {
     const draft = await getPresetDraft(summary.key).catch(() => null);
     if (draft) {
+      // On the general settings in force now (#1209).
+      const general = draft.sharedConfig ? loadPresetGeneral(provider.summary.id) ?? draft.sharedConfig : null;
       return {
         source: {
           locale: draft.locale || locale,
           chapters: draft.chapters,
-          config: draft.config,
+          config: general && draft.sharedConfig ? rebaseEdition(draft.sharedConfig, general, draft.config) : draft.config,
           resources: draft.resources,
           ...(draft.start ? { start: draft.start } : {}),
         },
@@ -211,11 +215,13 @@ export async function loadPresetEdition(
     }
   }
   const loaded = await provider.load(locale);
+  const original = presetSharedConfig(loaded);
+  const general = original ? loadPresetGeneral(provider.summary.id) : null;
   return {
     source: {
       locale: loaded.locale,
       chapters: loaded.chapters,
-      config: loaded.config,
+      config: original && general ? rebaseEdition(original, general, loaded.config) : loaded.config,
       resources: loaded.resources,
       ...(loaded.layouts ? { layouts: loaded.layouts } : {}),
       ...(loaded.start ? { start: loaded.start } : {}),

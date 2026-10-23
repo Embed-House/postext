@@ -6,7 +6,7 @@
 // difference between the two, worked out when they are needed.
 
 import type { PostextConfig, ConfigOverride } from 'postext';
-import { defaultResourceTypes, diffConfigLayers, mergeConfigLayers, overridePaths, sameConfig, stripConfigDefaults, REMOVE_ENTRY } from 'postext';
+import { defaultResourceTypes, diffConfigLayers, leastConfigOverride, mergeConfigLayers, overridePaths, sameConfig, stripConfigDefaults, REMOVE_ENTRY } from 'postext';
 
 /** Where the Design panel writes: the general settings, or the edition on
  *  screen alone. */
@@ -93,22 +93,7 @@ function editionFrom(shared: PostextConfig, override: ConfigOverride, locale: st
  *  value is its default too, which stripping took out of the stored
  *  edition) is left out, so only real differences show as its own. */
 export function editionOverride(shared: PostextConfig, edition: PostextConfig): ConfigOverride {
-  const target = stripConfigDefaults(withoutBuiltInWording(edition, languageOf(edition)));
-  const override = diffConfigLayers(shared, target);
-  const reads = (o: ConfigOverride) => sameConfig(stripConfigDefaults(mergeConfigLayers(shared, o)), target);
-  const prune = (node: Record<string, unknown>): void => {
-    for (const [key, value] of Object.entries(node)) {
-      if (value === null) {
-        delete node[key];
-        if (!reads(override)) node[key] = null;
-      } else if (typeof value === 'object' && !Array.isArray(value)) {
-        prune(value as Record<string, unknown>);
-        if (Object.keys(value as object).length === 0) delete node[key];
-      }
-    }
-  };
-  prune(override);
-  return override;
+  return leastConfigOverride(shared, withoutBuiltInWording(edition, languageOf(edition)), stripConfigDefaults);
 }
 
 /** `edition` after the general settings went from `before` to `after`: its
@@ -179,6 +164,14 @@ export function removePaths(override: ConfigOverride, paths: readonly string[]):
     return node;
   };
   return (walk(override, '', '') as ConfigOverride | undefined) ?? {};
+}
+
+/** The general settings a preset in several languages ships (its bundle's
+ *  shared configuration, or the built-in guide's), as the Sandbox keeps
+ *  them; null for a preset in one language. */
+export function presetSharedConfig(loaded: { sharedConfig?: PostextConfig; summary: { locales?: readonly string[] } }): PostextConfig | null {
+  if (!loaded.sharedConfig || (loaded.summary.locales?.length ?? 0) < 2) return null;
+  return initialSharedConfig(loaded.sharedConfig);
 }
 
 /** What {@link recordSharedConfig} reads of a stored book. */

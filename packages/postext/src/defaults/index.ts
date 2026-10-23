@@ -66,7 +66,7 @@ export { DEFAULT_MATH_CONFIG, resolveMathConfig, stripMathDefaults } from './mat
 export { DEFAULT_DEBUG_CONFIG, FIT_MARKS_MODES, resolveDebugConfig, stripDebugDefaults } from './debug.js';
 export { DEFAULT_CANVAS_VIEWER_CONFIG, CANVAS_VIEWER_MAX_GAP, resolveCanvasViewerConfig, stripCanvasViewerDefaults } from './canvasViewer.js';
 export { DEFAULT_HTML_VIEWER_CONFIG, resolveHtmlViewerConfig, stripHtmlViewerDefaults, mergeConfigOverrides, applyHtmlViewerOverrides } from './htmlViewer.js';
-export { mergeConfigLayers, diffConfigLayers, commonConfig, overridePaths, sameConfig, REMOVE_ENTRY, type ConfigOverride } from './configLayers.js';
+export { mergeConfigLayers, diffConfigLayers, leastConfigOverride, commonConfig, overridePaths, sameConfig, REMOVE_ENTRY, type ConfigOverride } from './configLayers.js';
 export { DEFAULT_PDF_GENERATION_CONFIG, resolvePdfGenerationConfig, stripPdfGenerationDefaults } from './pdfGeneration.js';
 export { DEFAULT_PRINT_CONFIG, DEFAULT_PRINT_BLACK_CONFIG, DEFAULT_PRINT_PREFLIGHT_CONFIG, DEFAULT_RICH_BLACK, resolvePrintConfig, resolvePrintBlackConfig, resolvePrintPreflightConfig, stripPrintDefaults, profileInkLimit } from './print.js';
 export { DEFAULT_CHECKS_CONFIG, DEFAULT_CONTENT_IN_CONFIG_CHECK, resolveChecksConfig, resolveContentInConfigCheck, stripChecksDefaults } from './checks.js';

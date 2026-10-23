@@ -7,7 +7,7 @@
 import { scoreFormatOfFile } from '../music/types.js';
 import type { CustomFontFamily, PostextConfig, Resource } from '../types.js';
 import { cloneDefaultColorPalette, defaultResourceTypes, stripConfigDefaults } from '../defaults/index.js';
-import { diffConfigLayers, mergeConfigLayers, sameConfig, type ConfigOverride } from '../defaults/configLayers.js';
+import { leastConfigOverride, type ConfigOverride } from '../defaults/configLayers.js';
 import {
   bitmapInfo,
   bundleStart,
@@ -807,23 +807,13 @@ function localizedConfig(own: PostextConfig, shared: Partial<PostextConfig>, sha
   if (profile && profile.fileId === sharedSource.print?.customProfile?.fileId && shared.print?.customProfile) {
     target.print = { ...(target.print as object), customProfile: shared.print.customProfile };
   }
-  const override = diffConfigLayers(shared as PostextConfig, target as PostextConfig);
   // A `null` the locale reads the same without (the shared value is its
   // default too) is not written.
-  const reads = (o: ConfigOverride) => sameConfig(stripConfigDefaults(mergeConfigLayers(shared as PostextConfig, o)), target);
-  const prune = (node: Record<string, unknown>): void => {
-    for (const [key, value] of Object.entries(node)) {
-      if (value === null) {
-        delete node[key];
-        if (!reads(override)) node[key] = null;
-      } else if (typeof value === 'object' && !Array.isArray(value)) {
-        prune(value as Record<string, unknown>);
-        if (Object.keys(value as object).length === 0) delete node[key];
-      }
-    }
-  };
-  prune(override);
-  return override;
+  return leastConfigOverride(shared as PostextConfig, target as PostextConfig, (c) => {
+    const out = stripConfigDefaults(c) as Record<string, unknown>;
+    delete out.customFonts;
+    return out as PostextConfig;
+  });
 }
 
 export interface BundleByteSources {
