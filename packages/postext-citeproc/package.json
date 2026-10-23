@@ -1,6 +1,6 @@
 {
   "name": "postext-citeproc",
-  "version": "1.57.1",
+  "version": "1.57.2",
   "description": "Citation formatting for Postext: CSL styles (APA, Chicago, MLA, IEEE, Vancouver, ISO 690, GB/T 7714, OSCOLA…) through citeproc-js, CSL locales and a BibTeX reader.",
   "type": "module",
   "license": "MIT",
@@ -61,11 +61,11 @@
   },
   "devDependencies": {
     "@postext/typescript-config": "workspace:*",
-    "@types/node": "^26.5.0",
-    "eslint": "^9.39.4",
+    "@types/node": "^26.6.5",
+    "eslint": "^10.13.0",
     "postext": "workspace:*",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.0",
-    "vitest": "^5.0.0"
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5"
   }
 }

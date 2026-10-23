@@ -276,7 +276,7 @@ Lo stesso input dà sempre gli stessi byte, quindi due pacchetti si possono conf
 anche tramite il loro hash. Per il Markdown sparso, `--id`, `--description` e `--thumbnail FILE`
 (un’immagine di copertina) impostano l’id, la descrizione e la miniatura del pacchetto; l’id è
 per impostazione predefinita uno slug del nome. Una cartella mantiene ciò che dice il suo
-`preset.json`. `unpack` si rifiuta di scrivere in una cartella non vuota a meno che
+`preset.json`. Un libro che non indica una copertina riceve come copertina la sua prima pagina (`thumbnail.jpg`, 1024 px sul lato lungo), l’immagine che un gestore di file può mostrare per il file; `--no-auto-thumbnail` la omette. `unpack` si rifiuta di scrivere in una cartella non vuota a meno che
 non venga indicato `--force`.
 
 ### info e check

@@ -287,7 +287,7 @@ paquet a partir de Markdown solt. La mateixa entrada dona sempre els mateixos
 bytes, de manera que es poden comparar paquets o calcular-ne el hash. Per al
 Markdown solt, `--id`, `--description` i `--thumbnail FILE` (una imatge de
 coberta) fixen l'id, la descripció i la miniatura del paquet; per defecte l'id
-és un slug del nom. Una carpeta conserva el que diu el seu `preset.json`.
+és un slug del nom. Una carpeta conserva el que diu el seu `preset.json`. Un llibre que no indica coberta rep la primera pàgina com a coberta (`thumbnail.jpg`, 1024 px al costat llarg), la imatge que un gestor de fitxers pot mostrar per al fitxer; `--no-auto-thumbnail` l'omet.
 `unpack` es nega a escriure en una carpeta que no sigui buida, tret que hi
 afegeixis `--force`.
 

@@ -144,8 +144,10 @@ export const COMMANDS: CommandSpec[] = [
       { name: 'config', kind: 'string', arg: 'FILE', help: 'Configuration JSON whose styles the import maps to' },
       { name: 'name', kind: 'string', arg: 'TEXT', help: 'Book title (default: the document title)' },
       { name: 'report', kind: 'boolean', help: 'Print the quality report of the document' },
+      { name: 'auto-thumbnail', kind: 'boolean', help: 'With a .postext output: paint the first page as the cover (default on)' },
     ],
     examples: ['postext import-docx manuscript.docx -o manuscript/', 'postext import-docx manuscript.docx -o manuscript.postext --locale es'],
+    canvas: true,
     run: () => import('./commands/importDocx'),
   },
   {
@@ -157,9 +159,11 @@ export const COMMANDS: CommandSpec[] = [
       OUT,
       { name: 'id', kind: 'string', arg: 'ID', help: 'Bundle id (default: a slug of the name)' },
       { name: 'description', kind: 'string', arg: 'TEXT', help: 'Bundle description' },
-      { name: 'thumbnail', kind: 'string', arg: 'FILE', help: 'Cover picture' },
+      { name: 'thumbnail', kind: 'string', arg: 'FILE', help: 'Cover picture (default: the first page, painted)' },
+      { name: 'auto-thumbnail', kind: 'boolean', help: 'Paint the first page as the cover when the book has none (default on; --no-auto-thumbnail leaves it out)' },
     ],
     examples: ['postext pack my-book/ -o my-book.postext', 'postext pack 01.md 02.md --name "Notes" --config config.json --resources img/'],
+    canvas: true,
     run: () => import('./commands/pack'),
   },
   {

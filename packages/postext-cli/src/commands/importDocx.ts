@@ -7,6 +7,7 @@ import { CliError, UsageError } from '../args';
 import type { CommandContext } from '../context';
 import { deepMerge } from '../input';
 import { byteLength, writeOut } from '../io';
+import { firstPageCover } from '../outputs/cover';
 import { style } from '../log';
 import { readTemplate } from '../outputs/docx';
 
@@ -88,7 +89,7 @@ export default async function importDocx(ctx: CommandContext): Promise<void> {
   const files = new Map<string, Uint8Array>();
   const resources = importedResources(result, files);
   const name = opts.string('name') ?? doc.title?.trim() ?? basename(file, extname(file));
-  const created = await createBundle({
+  const create = (thumbnail?: { data: Uint8Array; mime: string }) => createBundle({
     name,
     locale,
     chapters: result.chapters,
@@ -96,11 +97,18 @@ export default async function importDocx(ctx: CommandContext): Promise<void> {
     resources,
     files,
     mtime: new Date(1980, 0, 1),
+    ...(thumbnail ? { thumbnail } : {}),
   });
+  let created = await create();
   for (const w of created.warnings) reporter.warn({ kind: 'bundle', severity: 'warning', message: w });
   const out = opts.string('out') ?? basename(file, extname(file));
   reporter.data.chapters = result.chapters.length;
   if (/\.postext$/i.test(out)) {
+    // The bundle's cover: its first page (#1210).
+    if (opts.flag('auto-thumbnail') !== false) {
+      const cover = await firstPageCover(ctx, created.bytes);
+      if (cover) created = await create(cover);
+    }
     await writeOut(out, created.bytes);
     reporter.output({ kind: 'postext', path: out, bytes: byteLength(created.bytes) });
   } else {

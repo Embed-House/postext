@@ -15,6 +15,8 @@
 // handed to the engine is resvg's raster at the size the SVG declares; a
 // draw at a larger size is given a canvas holding resvg's raster at that
 // size (an `Image` decodes its `src` a tick later, too late for the draw).
+// @napi-rs/canvas 1.0.13 draws such rasters, and plain SVGs sharp at any
+// size, itself (#1211); both paths stay, the pixels proven by the tests.
 // resvg is the native addon (@resvg/resvg-js, embedded as Skia's is, #788):
 // the release of the WebAssembly build it replaces, the same pixels, about
 // five times faster on artwork cut from PDFs (the 40 such figures of a

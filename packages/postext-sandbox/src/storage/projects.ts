@@ -27,6 +27,9 @@ export interface ProjectThumbnail {
   fileId: string;
   /** Media type of the stored bytes (`image/jpeg`, `image/svg+xml`…). */
   mime: string;
+  /** Taken automatically from the first page (small, for the Books rows):
+   *  an export paints a larger one in its place when it can (#1210). */
+  generated?: boolean;
 }
 
 /** One edition of a project imported from a bundle in several languages

@@ -65,6 +65,7 @@ import { getPresetDraft } from '../storage/presetDrafts.js';
 import { getPresetCover } from '../storage/presetCovers.js';
 import { coverTargetKey, sessionCoverAttempts, thumbnailIfMissing } from '../covers/autoCover.js';
 import { initialSharedConfig, recordSharedConfig } from '../editions/configLayers.js';
+import { bundleCoverImage } from '../covers/renderCover.js';
 
 export interface ProjectActionDeps {
   dispatch: Dispatch<SandboxAction>;
@@ -164,7 +165,8 @@ async function copyThumbnail(from: ProjectThumbnail | undefined, projectId: stri
   if (!from) return undefined;
   const rec = await getBlob(from.fileId).catch(() => null);
   if (!rec) return undefined;
-  return (await storeThumbnail(projectId, rec.bytes, rec.contentType)) ?? undefined;
+  const stored = await storeThumbnail(projectId, rec.bytes, rec.contentType);
+  return stored ? { ...stored, ...(from.generated ? { generated: true } : {}) } : undefined;
 }
 
 /** A showcase preset's cover picture, fetched from its source and copied
@@ -190,7 +192,9 @@ async function presetThumbnailBytes(summary: PresetSummary, locale?: string): Pr
 async function adoptPresetThumbnail(summary: PresetSummary, projectId: string, locale?: string): Promise<ProjectThumbnail | undefined> {
   const fetched = await presetThumbnailBytes(summary, locale);
   if (!fetched) return undefined;
-  return (await storeThumbnail(projectId, fetched.bytes, fetched.mime)) ?? undefined;
+  const stored = await storeThumbnail(projectId, fetched.bytes, fetched.mime);
+  // A preset that ships no cover hands over the one taken from its page.
+  return stored ? { ...stored, ...(summary.thumbnailUrl ? {} : { generated: true }) } : undefined;
 }
 
 /** Take a preset's in-memory content and give the project its own copies of
@@ -317,6 +321,8 @@ async function localizedOf(record: ProjectRecord): Promise<BundleContent['locali
 /** File id a preset's cover picture is handed to the bundle builder under
  *  while an export is being assembled (never stored). */
 const PRESET_THUMBNAIL_ID = 'preset-thumbnail';
+/** Id the cover painted for an export goes to the bundle under. */
+const BUNDLE_COVER_ID = 'bundle-cover';
 
 export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
   const { dispatch } = deps;
@@ -725,9 +731,17 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
           locale: active?.locale ?? preset?.locale ?? cur.locale,
         };
         // The cover: the project's own, or the preset's (shipped, or taken
-        // from its first page) for an edited preset on screen.
+        // from its first page) for an edited preset on screen. One taken
+        // from the first page is sized for the Books rows: the bundle gets
+        // its first page painted now at a file manager's icon size (#1210).
         let thumbnail = active?.thumbnail;
-        if (!active && preset) {
+        const chosen = active ? !!thumbnail && !thumbnail.generated : !!preset?.thumbnailUrl;
+        const painted = chosen ? null : await bundleCoverImage(cur.chapters[0]);
+        if (painted) {
+          const fromIdb = readBlob;
+          readBlob = async (fileId) => (fileId === BUNDLE_COVER_ID ? painted.bytes : fromIdb(fileId));
+          thumbnail = { fileId: BUNDLE_COVER_ID, mime: painted.mime };
+        } else if (!active && preset) {
           const cover = await presetThumbnailBytes(preset, cur.presetApplied?.presetId === preset.id ? cur.presetApplied.locale : undefined);
           if (cover) {
             const fromIdb = readBlob;
@@ -784,8 +798,9 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
     deps.withGcSuspended(async () => {
       const current = await getProject(id).catch(() => null);
       if (!current || current.thumbnail) return false;
-      const stored = await storeThumbnail(id, bytes, mime);
-      if (!stored) return false;
+      const taken = await storeThumbnail(id, bytes, mime);
+      if (!taken) return false;
+      const stored: ProjectThumbnail = { ...taken, generated: true };
       const updated = await updateProject(id, (existing) => thumbnailIfMissing(existing, stored)).catch(() => null);
       if (!updated || updated.thumbnail?.fileId !== stored.fileId) return false;
       dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(updated) });

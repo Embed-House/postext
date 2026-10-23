@@ -28,7 +28,7 @@
 /** The harfbuzzjs release whose `harfbuzz.wasm` this binding is written
  *  for, and fetched from a CDN when no copy sits beside the module. A test
  *  keeps it equal to the installed package. */
-export const HARFBUZZ_VERSION = '1.6.2';
+export const HARFBUZZ_VERSION = '1.6.3';
 
 /** Where the binary can come from: its URL, or its bytes. */
 export type HarfBuzzWasmSource = string | URL | ArrayBuffer | ArrayBufferView;

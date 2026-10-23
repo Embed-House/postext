@@ -7,70 +7,19 @@
 // page decoded.
 
 import { useEffect, type MutableRefObject } from 'react';
-import { renderPageToCanvas } from 'postext';
-import type { VDTDocument, VDTPage } from 'postext';
 import { useSandboxCoverSaver, useSandboxStateGetter } from '../context/SandboxContext.js';
 import { missingConfigFontSpecs } from '../controls/fontLoader.js';
 import { coverTargetKey, coverToCapture, sessionCoverAttempts as attempted } from './autoCover.js';
+import { renderCoverImage, showFirstChapterDoc, type FirstChapterDoc } from './renderCover.js';
 
-/** Width of a cover picture, in pixels (a Books row shows it at 36 px;
- *  a bundle's `thumbnail.jpg` is read elsewhere at a larger size). */
-export const COVER_WIDTH = 240;
+export { COVER_WIDTH, renderCoverImage, type FirstChapterDoc } from './renderCover.js';
+
 /** Paints of a page still missing pictures before the cover is taken
  *  anyway (a picture that never decodes must not block it for good). */
 const MAX_MISSING_IMAGE_TRIES = 3;
 
-/** The first chapter's document as last laid out by the canvas, with the
- *  text it was built from (to tell it still is the book on screen). */
-export interface FirstChapterDoc {
-  chapterId: string;
-  markdown: string;
-  doc: VDTDocument;
-}
-
 // Tries that met pictures not decoded yet, by `coverTargetKey`.
 const missingTries = new Map<string, number>();
-
-/** Paint `page` into a JPEG `width` pixels wide, `COVER_WIDTH` by default
- *  (on white: a page without a paper colour is transparent); `trimmed`
- *  leaves out the cut-line margin a layout with crop marks has around the
- *  page. `missing` when a picture of the page has not been decoded yet,
- *  unless `allowMissing` (placeholders then). */
-export async function renderCoverImage(
-  page: VDTPage,
-  doc: VDTDocument,
-  allowMissing = false,
-  { width = COVER_WIDTH, trimmed = false }: { width?: number; trimmed?: boolean } = {},
-): Promise<{ bytes: ArrayBuffer; mime: string } | 'missing' | null> {
-  const off = trimmed && doc.trimOffset > 0 ? doc.trimOffset : 0;
-  const pageW = page.width - 2 * off;
-  const pageH = page.height - 2 * off;
-  if (typeof document === 'undefined' || pageW <= 0 || pageH <= 0) return null;
-  // Painted at twice the size and scaled down: small text anti-aliases
-  // better than when drawn at the final size.
-  const big = document.createElement('canvas');
-  const scale = (width * 2) / pageW;
-  let missing = false;
-  renderPageToCanvas(page, doc, big, {
-    scale,
-    onWarning: (w) => { if (w.kind === 'missingImage') missing = true; },
-  });
-  if (missing && !allowMissing) return 'missing';
-  const out = document.createElement('canvas');
-  out.width = width;
-  out.height = Math.max(1, Math.round((pageH / pageW) * width));
-  const ctx = out.getContext('2d');
-  if (!ctx) return null;
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, out.width, out.height);
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(big, off * scale, off * scale, pageW * scale, pageH * scale, 0, 0, out.width, out.height);
-  big.width = 1;
-  big.height = 1;
-  const blob = await new Promise<Blob | null>((resolve) => out.toBlob(resolve, 'image/jpeg', 0.85));
-  if (!blob) return null;
-  return { bytes: await blob.arrayBuffer(), mime: blob.type || 'image/jpeg' };
-}
 
 type IdleWindow = Window & {
   requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
@@ -92,6 +41,9 @@ function whenIdle(fn: () => void): () => void {
 export function useAutoCover(firstChapterDocRef: MutableRefObject<FirstChapterDoc | null>, paintVersion: string): void {
   const getState = useSandboxStateGetter();
   const saveCover = useSandboxCoverSaver();
+
+  // An export paints the bundle's cover from this layout (renderCover.ts).
+  useEffect(() => showFirstChapterDoc(firstChapterDocRef), [firstChapterDocRef]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
