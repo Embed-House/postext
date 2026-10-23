@@ -4002,6 +4002,7 @@ export function buildSandboxLabels(t: SandboxTranslator): SandboxLabels {
     configScopeAll: t("configScopeAll"),
     configScopeEdition: t("configScopeEdition"),
     configScopeAllHint: t("configScopeAllHint"),
+    configScopeAllHintMany: t("configScopeAllHintMany"),
     configScopeEditionHint: t("configScopeEditionHint"),
     configLayerOwn: t("configLayerOwn"),
     configLayerGeneral: t("configLayerGeneral"),

@@ -4562,6 +4562,7 @@
     "configScopeAll": "Alle Sprachen",
     "configScopeEdition": "Nur __language__",
     "configScopeAllHint": "Änderungen gelten für jede Ausgabe (__languages__). Eine Ausgabe mit eigenem Wert behält ihn.",
+    "configScopeAllHintMany": "Änderungen gelten für alle __count__ Ausgaben. Eine Ausgabe mit eigenem Wert behält ihn.",
     "configScopeEditionHint": "Änderungen gelten nur für __language__. Was sie nicht selbst festlegt, folgt den Einstellungen für alle Sprachen.",
     "configLayerOwn": "Nur für __language__ festgelegt",
     "configLayerGeneral": "In allen Sprachen gleich",

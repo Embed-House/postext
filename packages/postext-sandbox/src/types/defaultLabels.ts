@@ -4012,6 +4012,7 @@ export const DEFAULT_LABELS: SandboxLabels = {
   configScopeAll: 'All languages',
   configScopeEdition: '__language__ only',
   configScopeAllHint: 'Changes reach every edition (__languages__). An edition that sets a field of its own keeps it.',
+  configScopeAllHintMany: 'Changes reach all __count__ editions. An edition that sets a field of its own keeps it.',
   configScopeEditionHint: 'Changes reach only __language__. Fields it does not set itself follow the settings for all languages.',
   configLayerOwn: 'Set for __language__ only',
   configLayerGeneral: 'Same in all languages',
