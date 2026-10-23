@@ -17,6 +17,7 @@ import { markdownHasScore } from '../music/types.js';
 import { KNOWN_CONTAINERS } from '../parse/blockParser.js';
 import { codeFenceOpen } from '../parse/codeFence.js';
 import { hasCJK } from '../measure/cjk.js';
+import { mergeConfigLayers, type ConfigOverride } from '../defaults/configLayers.js';
 
 /**
  * The configuration rules this engine writes: 19 since #1164 (18 from #1149, 17 from #1119, 16 from #1056, 15 from #853, 14 from
@@ -217,6 +218,13 @@ import { hasCJK } from '../measure/cjk.js';
  *   (`bodyText.breakAfterSlashes`), and a word wider than its line is
  *   divided after a slash first, where up to 1.51 the rich breaker broke
  *   after a slash only inside a web address ({@link pinLegacySlashBreaks}).
+ * - 20 (#1172): a fence in a notation language (```` ```abc ````) is a
+ *   music score ({@link pinLegacyScoreFences}).
+ * - 21 (#1209): a bundle's `localized[…].config` is an override merged
+ *   over the shared `config` field by field ({@link mergeConfigLayers}),
+ *   where up to 1.57 each of its top-level keys replaced the shared one
+ *   whole. Nothing to pin: a bundle stamped 20 or less is read the old
+ *   way.
  *
  * A configuration stored without a version was written for postext 1.4 or
  * earlier. One stored under 3 to 7 was written by a 1.5 prerelease, and
@@ -242,9 +250,10 @@ import { hasCJK } from '../measure/cjk.js';
  * development build and gets the version-18 and version-19 pins; one stored
  * as 18 was written by postext 1.52 and gets the version-19 pin; one stored
  * as 19 was written by postext 1.53 and gets the version-20 pin (which every
- * older one gets too).
+ * older one gets too); one stored as 20 or less has its locale layer read
+ * key by key.
  */
-export const CONFIG_VERSION = 20;
+export const CONFIG_VERSION = 21;
 
 /** The rules that merge a partial heading break onto its level's. */
 const HEADING_BREAK_RULES = 3;
@@ -367,6 +376,9 @@ const SLASH_BREAK_RULES = 19;
 /** The rules that read a fence in a notation language (```` ```abc ````) as
  *  a music score (#1172). */
 const SCORE_FENCE_RULES = 20;
+/** The rules that merge a bundle's locale configuration over the shared one
+ *  field by field (#1209). */
+export const LOCALE_LAYER_RULES = 21;
 
 /** Up to 1.4 a drop cap with no `fontSize` was as tall as the line boxes it
  *  spans divided by this, the share of a letter's size its capitals take. */
@@ -1956,7 +1968,10 @@ export function migrateConfig<T extends Partial<PostextConfig>>(
 /**
  * A bundle's configuration in today's terms: `base` (the reader's own)
  * under the manifest's `config` and the locale's overrides, both stored
- * under `configVersion`. Top-level keys replace one another wholesale, so
+ * under `configVersion`. The manifest's top-level keys replace the base's
+ * whole; the locale's override is merged over them field by field
+ * ({@link mergeConfigLayers}) when the bundle was written for rules 21 or
+ * later, and replaces them key by key when it is older. So
  * the heading breaks are pinned layer by layer (the base's are taken as
  * they are) and the maths size once, on the `math` the layers leave in
  * force — the size 1.4 set this bundle's formulas at, whichever layer
@@ -2003,9 +2018,10 @@ export function migrateBundleConfig(
 ): PostextConfig {
   const rules = rulesOf(configVersion);
   let merged: PostextConfig = { ...base };
-  for (const layer of layers) {
-    Object.assign(merged, rules < HEADING_BREAK_RULES ? pinLegacyHeadingBreaks(layer) : layer);
-  }
+  layers.forEach((layer, i) => {
+    if (i > 0 && rules >= LOCALE_LAYER_RULES) merged = mergeConfigLayers(merged, layer as ConfigOverride);
+    else Object.assign(merged, rules < HEADING_BREAK_RULES ? pinLegacyHeadingBreaks(layer) : layer);
+  });
   const content = rules < CONFIG_VERSION ? readContent(options.content) : undefined;
   if (rules < MATH_SIZE_RULES && mayHaveMaths(content)) merged = pinLegacyMathSize(merged);
   if (rules < INLINE_GAP_RULES && mayEmbedResources(content)) merged = pinLegacyInlineGap(merged);

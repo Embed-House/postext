@@ -82,7 +82,8 @@ describe('a locale of a bundle is stripped as the whole it is read as (#651)', (
       localized: { 'zh-Hans': { config: chinese } },
     });
     expect(manifest.config!.headings).toEqual({ fontFamily: 'EB Garamond' });
-    expect(manifest.localized!['zh-Hans']!.config!.headings).toEqual({ fontFamily: 'EB Garamond', balancing: { enabled: true } });
+    // Field by field (#1209): only what the shared settings drop.
+    expect(manifest.localized!['zh-Hans']!.config!.headings).toEqual({ balancing: { enabled: true } });
     const opened = resolveAllConfig(await read(bytes, 'zh-Hans')).headings;
     expect(opened.balancing).toEqual(resolveAllConfig({ ...shared, ...chinese }).headings.balancing);
     expect(opened.balancing.enabled).toBe(true);
@@ -106,7 +107,8 @@ describe('a locale of a bundle is stripped as the whole it is read as (#651)', (
       name: 'Two', locale: 'zh-Hans', markdown: '# 题', config: shared,
       localized: { en: { config: english } },
     });
-    expect(full.manifest.localized!.en!.config).toEqual({ locale: 'en', cjk: { grid: { enabled: false } }, headings: { fontFamily: 'Noto Serif SC' } });
+    // The grid off is the English default: the shared `cjk` is taken out.
+    expect(full.manifest.localized!.en!.config).toEqual({ locale: 'en', cjk: null });
     const opened = resolveAllConfig((await openBundle(full.bytes, { locale: 'en' })).config);
     expect(opened.headings.balancing).toEqual(resolveAllConfig(english).headings.balancing);
     expect(opened.index.see.italic).toBe(true);

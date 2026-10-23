@@ -62,7 +62,7 @@ describe('pinLegacyGridBreakRules (#717)', () => {
   });
 
   it('pins every version before 12, none from 12', () => {
-    expect(CONFIG_VERSION).toBe(20);
+    expect(CONFIG_VERSION).toBe(21);
     for (const v of [undefined, 1, 5, 8, 10, 11]) {
       expect(rules(migrateConfig(grid('ja'), v)), String(v)).toEqual(ON);
     }
@@ -133,7 +133,7 @@ describe('a bundle keeps the break rules of its grid (#717)', () => {
     expect(rules(opened.config)).toEqual(ON);
     // Written again from what was read: stamped 14, the rules spelled out.
     const again = await createBundle({ name: 'Old', locale: 'ja', markdown: MD, config: opened.config });
-    expect(again.manifest.configVersion).toBe(20);
+    expect(again.manifest.configVersion).toBe(21);
     expect(again.manifest.config!.bodyText).toEqual({ ...ON, scriptContext: false, shapingLanguage: 'host', breakAfterSlashes: false });
     expect(rules((await openBundle(again.bytes)).config)).toEqual(ON);
   });
@@ -156,7 +156,7 @@ describe('a bundle keeps the break rules of its grid (#717)', () => {
     const japanese: PostextConfig = { locale: 'ja', cjk: { grid: GRID } };
     const added = await createBundle({ name: 'Two', locale: 'en', markdown: '# T', config: shared, localized: { ja: { config: japanese } } });
     expect(added.manifest.config!.bodyText).toEqual({ fontFamily: 'Georgia' });
-    expect(added.manifest.localized!.ja!.config!.bodyText).toEqual({ fontFamily: 'Georgia', ...ON });
+    expect(added.manifest.localized!.ja!.config!.bodyText).toEqual(ON);
     expect(rules((await openBundle(added.bytes, { locale: 'ja' })).config)).toEqual(rules({ ...shared, ...japanese }));
     expect(rules((await openBundle(added.bytes, { locale: 'ja' })).config)).toEqual(ON);
     // Shared: a grid whose `false` restates the default. The English
