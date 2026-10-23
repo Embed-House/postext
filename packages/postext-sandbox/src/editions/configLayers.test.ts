@@ -76,3 +76,12 @@ describe('setting paths', () => {
     expect(removePaths(o, ['bodyText'])).toEqual({ calloutStyles: o.calloutStyles });
   });
 });
+
+describe('a list entry the general settings drop', () => {
+  it('goes from every edition, with what an edition changed of it', () => {
+    const before = { calloutStyles: [{ id: 'note', background: hex('#eeeeee'), name: 'Note' }, { id: 'tip' }] } as PostextConfig;
+    const after = { calloutStyles: [{ id: 'tip' }] } as PostextConfig;
+    const edition = { locale: 'es', calloutStyles: [{ id: 'note', background: hex('#dddddd'), name: 'Note' }, { id: 'tip' }, { id: 'mine', background: hex('#123456') }, { id: 'bare' }] } as PostextConfig;
+    expect(rebaseEdition(before, after, edition).calloutStyles).toEqual([{ id: 'tip' }, { id: 'mine', background: hex('#123456') }, { id: 'bare' }]);
+  });
+});

@@ -6,7 +6,11 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode } from 'react';
 import { diffConfigLayers, overridePaths, sameConfig, type ConfigOverride, type PostextConfig } from 'postext';
-import { useSandboxSelector, useSandboxStore, type SandboxAction } from '../../context/SandboxContext.js';
+import { useSandboxPresetProvider, useSandboxSelector, useSandboxStore, type SandboxAction } from '../../context/SandboxContext.js';
+import { loadPresetEdition } from '../../editions/editionStore.js';
+import { BUILTIN_PRESET_ID } from '../../presets/builtin.js';
+import type { PresetProvider } from '../../presets/types.js';
+import type { PresetDraftSummary } from '../../storage/presetDrafts.js';
 import { ScopedDispatchContext, StateViewContext, capturedInto, scopedView } from '../../context/configScope.js';
 import { FieldLayerContext, type FieldLayerValue } from '../../controls/fieldLayer.js';
 import { editionOverride, generalSettingsFrom, generalSettingsView, ownPathsAt, promoteFields, rebaseEdition, recordSharedConfig, withoutOwnFields } from '../../editions/configLayers.js';
@@ -32,17 +36,26 @@ export function useConfigScope(): ConfigScopeValue {
   return useContext(ConfigScopeContext);
 }
 
-/** The other editions' own fields, read from the project's record; again
- *  when the record's editions move. */
-function useAsideOverrides(projectId: string | null, active: boolean, locale: string, rev: number): Record<string, ConfigOverride> {
+/** The other editions' own fields, read from the project's record (again
+ *  when the record's editions move), or for the built-in guide from its
+ *  editions as they open (drafts included); a showcase sample's other
+ *  editions would have to be downloaded, so they are not read. */
+function useAsideOverrides(projectId: string | null, active: boolean, locale: string, rev: number, guide: { provider: PresetProvider; locales: readonly string[]; shared: PostextConfig | null; drafts: readonly PresetDraftSummary[] } | null): Record<string, ConfigOverride> {
   const [overrides, setOverrides] = useState<Record<string, ConfigOverride>>({});
   useEffect(() => {
-    if (!active || !projectId) {
+    if (!active || (!projectId && !guide)) {
       setOverrides({});
       return;
     }
     let live = true;
-    void getProject(projectId).then((record) => {
+    if (!projectId && guide?.shared) {
+      const shared = guide.shared;
+      void Promise.all(guide.locales.filter((l) => l !== locale).map(async (l) => [l, editionOverride(shared, (await loadPresetEdition(guide.provider, l, guide.drafts)).source.config)] as const))
+        .then((entries) => { if (live) setOverrides(Object.fromEntries(entries)); })
+        .catch(() => undefined);
+      return () => { live = false; };
+    }
+    void getProject(projectId!).then((record) => {
       if (!live || !record?.editions) return;
       const base = recordSharedConfig(record);
       if (!base) return;
@@ -70,7 +83,19 @@ export function ConfigScopeProvider({ children }: { children: ReactNode }) {
   const knownLocales = summary ? summary.locales : presetLocales;
   const locales = useMemo(() => knownLocales ?? (locale ? [locale] : []), [knownLocales, locale]);
   const [asideRev, setAsideRev] = useState(0);
-  const aside = useAsideOverrides(projectId, !!layers, locale, (summary?.editionsRev ?? 0) + asideRev);
+  const presetProvider = useSandboxPresetProvider();
+  const presetId = useSandboxSelector((s) => s.activePresetId);
+  const drafts = useSandboxSelector((s) => s.presetDrafts);
+  const guideProvider = !projectId && presetId === BUILTIN_PRESET_ID ? presetProvider(presetId) : undefined;
+  // The guide's general settings as they stand when the others were read:
+  // after a save (the drafts move), not at every keystroke.
+  const guideShared = layers?.shared ?? null;
+  const guide = useMemo(
+    () => (guideProvider && layers ? { provider: guideProvider, locales, shared: guideShared, drafts } : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [guideProvider, locales, drafts, !!layers],
+  );
+  const aside = useAsideOverrides(projectId, !!layers, locale, (summary?.editionsRev ?? 0) + asideRev, guide);
   const [shadowed, setShadowed] = useState<ShadowedWrite | null>(null);
 
   const own = useMemo(() => (layers ? editionOverride(layers.shared, config) : {}), [layers, config]);
@@ -135,6 +160,7 @@ export function ConfigScopeProvider({ children }: { children: ReactNode }) {
         const shared = promoteFields(l.shared, s.config, paths);
         setEdition(rebaseEdition(l.shared, shared, s.config), shared);
       },
+      canChange: (tag) => tag === locale || projectId !== null,
       useGeneralIn: (tag, paths) => {
         const s = store.getSnapshot();
         if (tag === locale) {

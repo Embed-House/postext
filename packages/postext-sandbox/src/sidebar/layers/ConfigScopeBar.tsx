@@ -122,11 +122,13 @@ export function ConfigScopeBar() {
         <div role="status" className="flex flex-col gap-1 rounded-md border border-dashed border-(--slate) px-2 py-1.5 text-[0.68rem] leading-[1.4] text-(--foreground)">
           <span>{labels.configLayerShadowed.replace('__languages__', shadowed.keptBy.map(layer.languageName).join(', '))}</span>
           <span className="flex flex-wrap items-center gap-1">
-            <Button size="xs" variant="ghost" icon={<Link2 size={12} />} onClick={() => { for (const l of shadowed.keptBy) layer.useGeneralIn(l, shadowed.paths); dismissShadowed(); }}>
-              {shadowed.keptBy.length === 1
-                ? labels.configLayerApplyIn.replace('__language__', layer.languageName(shadowed.keptBy[0]!))
-                : labels.configLayerApplyInAll}
-            </Button>
+            {shadowed.keptBy.some(layer.canChange) && (
+              <Button size="xs" variant="ghost" icon={<Link2 size={12} />} onClick={() => { for (const l of shadowed.keptBy.filter(layer.canChange)) layer.useGeneralIn(l, shadowed.paths); dismissShadowed(); }}>
+                {shadowed.keptBy.filter(layer.canChange).length === 1
+                  ? labels.configLayerApplyIn.replace('__language__', layer.languageName(shadowed.keptBy.find(layer.canChange)!))
+                  : labels.configLayerApplyInAll}
+              </Button>
+            )}
             <Button size="xs" variant="ghost" onClick={dismissShadowed}>{labels.configLayerKeep}</Button>
           </span>
         </div>
