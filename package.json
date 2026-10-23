@@ -18,7 +18,7 @@
     "turbo": "2.11.10"
   },
   "dependencies": {
-    "@chenglou/pretext": "^0.0.9",
+    "@chenglou/pretext": "^1.0.0",
     "mathjax-full": "^3.2.2"
   }
 }
