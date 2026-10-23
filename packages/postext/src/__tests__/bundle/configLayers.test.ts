@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { commonConfig, diffConfigLayers, mergeConfigLayers, overridePaths, sameConfig } from '../../defaults/configLayers.js';
 import { migrateBundleConfig } from '../../bundle/configVersion.js';
 import { planBundle, readBundle } from '../../bundle/codec.js';
+import { createBundle, openBundle } from '../../bundle/api.js';
 import type { PostextConfig } from '../../types.js';
 
 // #1209: a book's configuration as general settings plus, per language, an
@@ -135,5 +136,21 @@ describe('locale layer in a bundle', () => {
     const readEs = await readBundle(manifest, read, { locale: 'es', baseConfig: {} as PostextConfig, traceContours: false });
     expect(readEs.config.locale).toBe('es');
     expect(readEs.config.bodyText?.fontFamily).toBe('Lora');
+  });
+
+  it('createBundle writes sharedConfig as the general settings', async () => {
+    const sharedConfig = { bodyText: { fontFamily: 'Lora', fontSize: pt(12) } } as PostextConfig;
+    const en = mergeConfigLayers(sharedConfig, { locale: 'en' });
+    const ja = mergeConfigLayers(sharedConfig, { locale: 'ja', bodyText: { fontFamily: 'Noto Serif JP' } });
+    const created = await createBundle({
+      name: 'Book', locale: 'en', chapters: [{ markdown: '# One\n\nText.' }], config: en, sharedConfig,
+      localized: { ja: { chapters: [{ markdown: '# 一\n\n本文。' }], config: ja } },
+    });
+    expect(created.manifest.config).toEqual({ bodyText: { fontFamily: 'Lora', fontSize: pt(12) } });
+    expect(created.manifest.localized?.en?.config).toEqual({ locale: 'en' });
+    expect(created.manifest.localized?.ja?.config).toEqual({ locale: 'ja', bodyText: { fontFamily: 'Noto Serif JP' } });
+    const opened = await openBundle(created.bytes, { locale: 'ja' });
+    expect(opened.config.bodyText?.fontFamily).toBe('Noto Serif JP');
+    expect(opened.config.bodyText?.fontSize).toEqual(pt(12));
   });
 });
