@@ -15,7 +15,7 @@ import type { PresetFontFamilySpec } from './types.js';
 // Loaded through a dynamic import (the package has no Node typings).
 const BUNDLE = '../../../../apps/web/public/presets/hongloumeng/';
 const manifest = ((await import(/* @vite-ignore */ new URL(`${BUNDLE}preset.json`, import.meta.url).href)) as {
-  default: { view?: { canvasScope?: 'book' | 'chapter' }; config: PostextConfig; localized: Record<string, { config?: PostextConfig }>; fonts: PresetFontFamilySpec[]; chapters: Record<string, { file: string }[]> };
+  default: { view?: { canvasScope?: 'book' | 'chapter' }; config: PostextConfig; localized: Record<string, { config?: Partial<PostextConfig> }>; fonts: PresetFontFamilySpec[]; chapters: Record<string, { file: string }[]> };
 }).default;
 
 /** The text of every chapter file of an edition. */
