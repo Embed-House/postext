@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "justification-lab",
-  "sourceHash": "8d044909ecfb5a247304cb5ab698d698d1b4f201adf37ba0b58bcc2a3f76bec8",
+  "sourceHash": "0c100ace6aaf438bc5220f4818f005b99392090816912a1fe5a1dc64351c6233",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.854Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:56:53.345Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:37:57.703Z",
   "variants": {
     "en": {
-      "hash8": "6aa82565",
+      "hash8": "93322995",
       "vdtHash": "44e250c7cea9a957a0d8f249b5b3bfb6a354802c",
       "timings": {
-        "importMs": 443,
+        "importMs": 336,
         "fontsMs": 2,
-        "buildMs": 28,
-        "totalMs": 1433,
+        "buildMs": 24,
+        "totalMs": 1601,
         "builds": 2
       },
       "specimen": {
@@ -105,7 +100,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 34477,
+        "bytes": 34476,
         "folio": "aab16fb5",
         "chapters": [
           {
@@ -355,19 +350,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "8bbbca83",
+      "hash8": "02c7ca99",
       "vdtHash": "a23b6ba3bc41d28d7528646e0414754fe8f2d48a",
       "timings": {
-        "importMs": 440,
+        "importMs": 338,
         "fontsMs": 2,
-        "buildMs": 48,
-        "totalMs": 1277,
+        "buildMs": 43,
+        "totalMs": 1626,
         "builds": 2
       },
       "specimen": {
@@ -451,7 +446,7 @@
       },
       "sandbox": {
         "file": "justification-lab.postext",
-        "bytes": 35443,
+        "bytes": 35442,
         "folio": "aab16fb5",
         "chapters": [
           {
@@ -676,7 +671,7 @@
         "looseLines": {
           "count": 2,
           "share": 0.0172,
-          "worst": 2.3000000000000003
+          "worst": 2.3
         },
         "raggedLines": {
           "count": 1
@@ -700,7 +695,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

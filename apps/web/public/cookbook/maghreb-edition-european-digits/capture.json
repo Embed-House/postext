@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "maghreb-edition-european-digits",
-  "sourceHash": "b630f3de1f79ca84adae622794d6fe9d348baba13c6e57f63b1cda4ba6826f07",
+  "sourceHash": "9ea416aa0d4fe98a74e25440dd4780c7c28ea70e667cde811a720cdaacdad2d3",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:10:00.527Z",
+  "capturedAt": "2026-10-23T07:39:08.068Z",
   "variants": {
     "en": {
-      "hash8": "fb5ddef8",
+      "hash8": "a9f641a5",
       "vdtHash": "44faa10401503a5e6b446afd42b04c4b1d9ab8f0",
       "timings": {
-        "importMs": 2928,
-        "fontsMs": 201,
-        "buildMs": 121,
-        "totalMs": 4601,
+        "importMs": 441,
+        "fontsMs": 99,
+        "buildMs": 82,
+        "totalMs": 1232,
         "builds": 1
       },
       "specimen": {
@@ -312,11 +312,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale ar-MA, the document's language: en names its resource types otherwise"
@@ -325,13 +320,13 @@
       }
     },
     "es": {
-      "hash8": "d6cc45e0",
+      "hash8": "249d282c",
       "vdtHash": "0a60514befd4a7537abe537fae5be136250e6ca8",
       "timings": {
-        "importMs": 2798,
-        "fontsMs": 94,
-        "buildMs": 110,
-        "totalMs": 4486,
+        "importMs": 287,
+        "fontsMs": 65,
+        "buildMs": 75,
+        "totalMs": 1055,
         "builds": 1
       },
       "specimen": {
@@ -625,11 +620,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

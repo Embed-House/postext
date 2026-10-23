@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "lab-report-formulas",
-  "sourceHash": "f63750d4edff1d5f6dc6d1eae59cbab1831e8a62e26441bc94ca68a9258fb4a8",
+  "sourceHash": "0d7ec9d1a9f57cf26a6db03bc35a73ec6b0f5fb6a60fd5ddc05f5a7dbba9515b",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:54:05.728Z",
+  "capturedAt": "2026-10-23T07:51:48.465Z",
   "variants": {
     "en": {
       "hash8": "73949186",
       "vdtHash": "f73d8dee10daea49a07ceb13c14898d9693eeeea",
       "timings": {
-        "importMs": 1396,
-        "fontsMs": 452,
-        "buildMs": 124,
-        "totalMs": 3274,
+        "importMs": 504,
+        "fontsMs": 162,
+        "buildMs": 139,
+        "totalMs": 1813,
         "builds": 1
       },
       "specimen": {
@@ -438,23 +438,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "8f4fcc53",
       "vdtHash": "f41577a6b051f323818c469cd027bc4a16f2409e",
       "timings": {
-        "importMs": 1592,
-        "fontsMs": 166,
-        "buildMs": 98,
-        "totalMs": 2916,
+        "importMs": 609,
+        "fontsMs": 281,
+        "buildMs": 116,
+        "totalMs": 3511,
         "builds": 1
       },
       "specimen": {
@@ -875,13 +869,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

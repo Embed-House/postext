@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "photos-fill-short-columns",
-  "sourceHash": "6b89e33bd3d240effa8a929ed18fe3778986aaa6644c6725a06a7f475793cf24",
+  "sourceHash": "fe35af3b78be386b602209edcad6c88c3aab23bed12791436201d894445ffd0c",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.593Z",
+  "capturedAt": "2026-10-23T07:40:37.759Z",
   "variants": {
     "en": {
-      "hash8": "d034bf29",
+      "hash8": "d689d105",
       "vdtHash": "a426a320fdd0f037549985fcd24be667cf7d280f",
       "timings": {
-        "importMs": 1821,
-        "fontsMs": 220,
-        "buildMs": 77,
-        "totalMs": 3453,
+        "importMs": 230,
+        "fontsMs": 105,
+        "buildMs": 71,
+        "totalMs": 1091,
         "builds": 2
       },
       "specimen": {
@@ -132,7 +132,7 @@
       },
       "sandbox": {
         "file": "photos-fill-short-columns.postext",
-        "bytes": 1919827,
+        "bytes": 1919826,
         "folio": "111a3296",
         "pages": 3,
         "chapters": [
@@ -352,23 +352,18 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.17 MB (warning at 0.9 MB for 5 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "f18539c4",
+      "hash8": "64ab7bc8",
       "vdtHash": "b97a0aefe68ac2040ec3ad56f79861ff6580b56f",
       "timings": {
-        "importMs": 2099,
-        "fontsMs": 227,
-        "buildMs": 92,
-        "totalMs": 3993,
+        "importMs": 245,
+        "fontsMs": 94,
+        "buildMs": 68,
+        "totalMs": 1278,
         "builds": 2
       },
       "specimen": {
@@ -483,7 +478,7 @@
       },
       "sandbox": {
         "file": "photos-fill-short-columns.postext",
-        "bytes": 1919575,
+        "bytes": 1919574,
         "folio": "111a3296",
         "pages": 3,
         "chapters": [
@@ -703,11 +698,6 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 5 pages; capture.expect.imageMb states the figure of a book of paintings)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

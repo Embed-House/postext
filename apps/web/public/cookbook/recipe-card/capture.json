@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "recipe-card",
-  "sourceHash": "819ba35a3b659929168170abfa52c49dc2e80506c1930491796d9139ebc38220",
+  "sourceHash": "c1c12c6b9a49f03cc6e5fc10990e525f0910d5577008be7f3685a203aac775c7",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.039Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.509Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:40:58.448Z",
   "variants": {
     "en": {
-      "hash8": "33ca0a9d",
+      "hash8": "3aad53d2",
       "vdtHash": "ef1f268d7ade4cde3407841a6c4fb658f7cd8662",
       "timings": {
-        "importMs": 198,
-        "fontsMs": 22,
-        "buildMs": 43,
-        "totalMs": 924,
+        "importMs": 196,
+        "fontsMs": 29,
+        "buildMs": 51,
+        "totalMs": 1794,
         "builds": 1
       },
       "specimen": {
@@ -89,7 +84,7 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 416868,
+        "bytes": 416867,
         "folio": "3a99731f",
         "chapters": [
           {
@@ -325,6 +320,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -333,13 +333,13 @@
       }
     },
     "es": {
-      "hash8": "324464ee",
+      "hash8": "fa77d3be",
       "vdtHash": "fa49903c822ded99b5276d5336af3f1d820472bb",
       "timings": {
-        "importMs": 202,
-        "fontsMs": 26,
-        "buildMs": 47,
-        "totalMs": 920,
+        "importMs": 253,
+        "fontsMs": 30,
+        "buildMs": 53,
+        "totalMs": 2277,
         "builds": 1
       },
       "specimen": {
@@ -407,7 +407,7 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 417191,
+        "bytes": 417190,
         "folio": "3a99731f",
         "chapters": [
           {
@@ -642,6 +642,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

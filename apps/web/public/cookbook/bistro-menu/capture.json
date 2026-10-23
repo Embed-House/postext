@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "bistro-menu",
-  "sourceHash": "f6209c519056d3309e7d81e0eb2f1f240560aa4b8e35306a91356e533173ad7d",
+  "sourceHash": "3eefddb33659f58eaf824d43b579288a9bbe20b8801e991afccee045dd069b71",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.012Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.364Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:31:43.255Z",
   "variants": {
     "en": {
-      "hash8": "4ab05b99",
+      "hash8": "9e785368",
       "vdtHash": "006ad9e905a6d78d3dea4d05c500815703794116",
       "timings": {
-        "importMs": 307,
-        "fontsMs": 46,
-        "buildMs": 48,
-        "totalMs": 1066,
+        "importMs": 161,
+        "fontsMs": 2539,
+        "buildMs": 47,
+        "totalMs": 3365,
         "builds": 1
       },
       "specimen": {
@@ -93,7 +88,7 @@
       },
       "sandbox": {
         "file": "bistro-menu.postext",
-        "bytes": 25547,
+        "bytes": 25548,
         "folio": "bda6e41d",
         "chapters": [
           {
@@ -288,17 +283,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "9159631b",
+      "hash8": "3d412381",
       "vdtHash": "d5f60de0e53f5cd6ee29178611c26a9a557f506b",
       "timings": {
-        "importMs": 306,
-        "fontsMs": 55,
-        "buildMs": 48,
-        "totalMs": 1042,
+        "importMs": 156,
+        "fontsMs": 30,
+        "buildMs": 44,
+        "totalMs": 847,
         "builds": 1
       },
       "specimen": {
@@ -370,7 +371,7 @@
       },
       "sandbox": {
         "file": "bistro-menu.postext",
-        "bytes": 26068,
+        "bytes": 26069,
         "folio": "bda6e41d",
         "chapters": [
           {
@@ -565,7 +566,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

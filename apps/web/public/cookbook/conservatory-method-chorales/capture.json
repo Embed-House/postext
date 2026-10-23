@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "conservatory-method-chorales",
-  "sourceHash": "f966022ca3ab5298362ceb9013e14e5f23810de9ab74063f8a4c9989f37b02b1",
+  "sourceHash": "972b23911ce4e830c92292a91982d6a8a93b08769d11a5d45fce1be6549262d8",
   "engine": {
-    "postext": "1.54.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T09:35:51.390Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:54:13.401Z"
-  },
+  "capturedAt": "2026-10-23T07:34:49.159Z",
   "variants": {
     "en": {
       "hash8": "892c2a86",
       "vdtHash": "f23264c307f0f899d26194daae2edb91935b253e",
       "timings": {
-        "importMs": 756,
-        "fontsMs": 1250,
-        "buildMs": 75,
-        "totalMs": 3993,
+        "importMs": 327,
+        "fontsMs": 579,
+        "buildMs": 46,
+        "totalMs": 4224,
         "builds": 1
       },
       "specimen": {
@@ -413,10 +408,10 @@
       "hash8": "f475c2ad",
       "vdtHash": "52f9a7e5c0fdcb451a6a17aef95ebd0d89b349a4",
       "timings": {
-        "importMs": 736,
-        "fontsMs": 639,
-        "buildMs": 89,
-        "totalMs": 3749,
+        "importMs": 333,
+        "fontsMs": 644,
+        "buildMs": 43,
+        "totalMs": 4217,
         "builds": 1
       },
       "specimen": {

@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "magazine-feature-opener",
-  "sourceHash": "882d5972a4fc1920cffed0b2192601ca098c046a56bf78d59199733a418f09bf",
+  "sourceHash": "d675ac581ab905d1fc9c39c8b9e1983a4a7104dad31922df0f76fe06494b00e3",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:01:22.640Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:39.811Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:39:08.042Z",
   "variants": {
     "en": {
-      "hash8": "e8f0b86e",
+      "hash8": "6b9a36b4",
       "vdtHash": "d0437403437ef3e1894f5651371c8d1027c48e10",
       "timings": {
-        "importMs": 651,
-        "fontsMs": 61,
-        "buildMs": 261,
-        "totalMs": 1838,
+        "importMs": 512,
+        "fontsMs": 55,
+        "buildMs": 113,
+        "totalMs": 1464,
         "builds": 1
       },
       "specimen": {
@@ -35,7 +30,7 @@
         "mirror": true,
         "body": {
           "family": "Literata",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.4
         },
         "families": [
@@ -66,7 +61,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 237130,
+          "bytes": 237178,
           "alt": "Page 58: A thermometer with a lid."
         },
         {
@@ -401,7 +396,7 @@
         "looseLines": {
           "count": 1,
           "share": 0.007,
-          "worst": 2.0100000000000002
+          "worst": 2.01
         },
         "raggedLines": {
           "count": 0
@@ -418,9 +413,9 @@
             "detail": "3 paragraphs set a line short with tracking (worst −5‰): p. 1 −5‰ “The notebook lives in a biscuit tin on the kitch…”, p. 2 −5‰ “The reason lies in an odd habit of water. Most l…”, p. 2 −5‰ “For the first fifty years of the record, the lak…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -431,13 +426,13 @@
       }
     },
     "es": {
-      "hash8": "5b88ff0f",
+      "hash8": "31f5ff3b",
       "vdtHash": "a9a909ac6b6ecc143981e5d669f5f9e02f29a767",
       "timings": {
-        "importMs": 877,
-        "fontsMs": 105,
-        "buildMs": 166,
-        "totalMs": 2188,
+        "importMs": 218,
+        "fontsMs": 41,
+        "buildMs": 110,
+        "totalMs": 1050,
         "builds": 1
       },
       "specimen": {
@@ -451,7 +446,7 @@
         "mirror": true,
         "body": {
           "family": "Literata",
-          "sizePt": 9.600000000000001,
+          "sizePt": 9.6,
           "leadingPt": 13.4
         },
         "families": [
@@ -482,7 +477,7 @@
           "h": 1320,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 235178,
+          "bytes": 235136,
           "alt": "Página 58: Un termómetro con tapa."
         },
         {
@@ -536,7 +531,7 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768138,
+        "bytes": 768137,
         "folio": "da2eb3c6",
         "chapters": [
           {
@@ -826,9 +821,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

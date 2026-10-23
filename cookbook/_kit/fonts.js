@@ -1,24 +1,21 @@
 // ─── Kit · fonts v3 ── the same in every recipe · postext.dev/cookbook
-// Postext loads the faces a config asks for before layout (prepareFonts,
-// buildDocumentWithFonts) and asks the kit for the files: Fontsource's, the
-// files the PDF embeds too.
+// Postext loads the faces a config asks for before layout and asks the kit
+// for Fontsource's files, the ones the PDF embeds too.
 
-/** The options of buildDocumentWithFonts / prepareFonts / withLoadedFonts:
- *  the Fontsource resolver, and the faces of FONTS loaded with the ones the
- *  config names. FONTS = { 'Family Name': ['400', '400i', '700'] }. */
+/** buildDocumentWithFonts' options: the resolver, and FONTS' faces loaded
+ *  with the config's. FONTS = { 'Family Name': ['400', '400i', '700'] }. */
 function kitFonts(FONTS = {}) {
   const faces = Object.entries(FONTS).flatMap(([family, specs]) => specs.map((spec) =>
     ({ family, weight: parseInt(spec, 10), style: spec.endsWith('i') ? 'italic' : 'normal' })));
   return { resolve: fontsourceResolver, faces };
 }
 
-/** A face's Fontsource files, in a fixed order: latin, then latin-ext and greek
- *  when `text` needs them and the family ships them (kitSubsetsFor), each with
- *  its unicode-range. Null for a weight or slant Fontsource does not ship. */
+/** A face's files with their ranges: latin, then latin-ext and greek when
+ *  `text` needs them (kitSubsetsFor). Null for a face Fontsource lacks. */
 async function fontsourceResolver(family, weight, style, { text = '' } = {}) {
   const id = fontsourceId(family);
   const meta = await fontsourceMeta(family);
-  if (meta && !(meta.weights.includes(weight) && meta.styles.includes(style))) return null;
+  if (meta && !(await fontsourceWeights(family, style)).includes(weight)) return null;
   kitStatus('Loading fonts…');
   const at = await fontsourceAt(id);
   return ['latin', ...kitSubsetsFor(text, meta)].map((subset) => ({
@@ -27,8 +24,7 @@ async function fontsourceResolver(family, weight, style, { text = '' } = {}) {
   }));
 }
 
-/** The unicode-range of each Fontsource file the kit loads (a function: the
- *  kit is inlined after the pen's code, which runs before a const would be set). */
+/** Each file's unicode-range (a function: the kit runs after the pen's code). */
 function kitRanges() {
   return {
     latin: 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,'
@@ -39,13 +35,9 @@ function kitRanges() {
   };
 }
 
-/** For the cjk, arabic and comics blocks, which add their own files: the
- *  faces of `faces` = { 'Family Name': ['400', '400i', '700'] }. `text` is the sample:
- *  č ł † α χ also load latin-ext and greek files (kitSubsetsFor). With
- *  `optional`, a face Fontsource does not ship is skipped instead of failing.
- *  The files are added once all have loaded, in the order asked (latin, then
- *  latin-ext, then greek), whatever order they arrive in: the last one added
- *  wins a character two files hold. Resolves to the number of faces added. */
+/** For the cjk, arabic and comics blocks: loads `faces` (as FONTS) for the
+ *  sample `text`; `optional` skips a face Fontsource lacks. Files are added in
+ *  the order asked, the last winning a shared character. Resolves to the count. */
 async function loadFonts(faces, text = '', { optional = false } = {}) {
   kitStatus('Loading fonts…');
   const ranges = kitRanges();
@@ -58,7 +50,7 @@ async function loadFonts(faces, text = '', { optional = false } = {}) {
     const meta = optional || /[^\0-ÿ]/u.test(text) ? await fontsourceMeta(family) : null;
     const subsets = ['latin', ...kitSubsetsFor(text, meta)];
     for (const [weight, style] of todo) {
-      if (optional && !(meta?.weights.includes(weight) && meta.styles.includes(style))) continue;
+      if (optional && !(meta && (await fontsourceWeights(family, style)).includes(weight))) continue;
       for (const subset of subsets) {
         const url = `${await at}files/${id}-${subset}-${weight}-${style}.woff2`;
         const face = new FontFace(family, `url(${url}) format('woff2')`,
@@ -73,8 +65,7 @@ async function loadFonts(faces, text = '', { optional = false } = {}) {
   return ready.filter((face) => face && document.fonts.add(face)).length;
 }
 
-/** A loaded FontFace covers this family, weight and style (fonts.check() would
- *  also say yes for families nobody declared). */
+/** A loaded FontFace covers this face (fonts.check() says yes to any family). */
 function hasFace(family, weight, style) {
   for (const face of document.fonts) {
     if (face.status !== 'loaded' || face.style !== style) continue;
@@ -101,12 +92,18 @@ function fontsourceAt(id, u = `https://cdn.jsdelivr.net/npm/@fontsource/${id}@`)
 }
 
 /** The family's Fontsource metadata (weights, styles, subsets), or null. */
-function fontsourceMeta(family) {
-  fontsourceMeta.cache ??= new Map();
-  const id = fontsourceId(family);
-  if (!fontsourceMeta.cache.has(id)) {
-    fontsourceMeta.cache.set(id, fetch(`https://api.fontsource.org/v1/fonts/${id}`)
-      .then((res) => (res.ok ? res.json() : null), () => null));
-  }
-  return fontsourceMeta.cache.get(id);
+function fontsourceMeta(family, id = fontsourceId(family)) {
+  return (fontsourceMeta.c ??= {})[id] ??= fetch(`https://api.fontsource.org/v1/fonts/${id}`)
+    .then((res) => (res.ok ? res.json() : null), () => null);
+}
+
+/** The weights the package ships in `style`: the API pairs none (no Libre
+ *  Caslon 700 italic file), so italics are read from latin-italic.css. */
+function fontsourceWeights(family, style, id = fontsourceId(family)) {
+  return (fontsourceWeights.c ??= {})[id + style] ??= fontsourceMeta(family).then(async (m) => {
+    if (!m?.styles.includes(style)) return m ? [] : [400, 700];
+    const css = style === 'italic' ? await fetch(`${await fontsourceAt(id)}latin-italic.css`).then((r) => (r.ok ? r.text() : ''), () => '') : '';
+    const w = [...css.matchAll(/weight: (\d+)/g)].map((x) => +x[1]);
+    return w.length ? w : m.weights;
+  });
 }

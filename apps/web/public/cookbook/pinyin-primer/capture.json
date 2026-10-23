@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "pinyin-primer",
-  "sourceHash": "75ebd0cefdb209e2ca7328d29b8e9c77d5483aab4319aeb14ff8d16792477108",
+  "sourceHash": "5a27e0e3dd49b7e2f2c728f6355c1d3d62bb70da5b33d6d4f31ceda6fc4688cc",
   "engine": {
-    "postext": "1.29.2",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T07:01:35.555Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:59:05.554Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:40:37.781Z",
   "variants": {
     "en": {
-      "hash8": "25e0c9bf",
+      "hash8": "cd269ecc",
       "vdtHash": "ee9ec130030daadd0fe4e88625c9cbd18e373e31",
       "timings": {
-        "importMs": 204,
-        "fontsMs": 115,
-        "buildMs": 66,
-        "totalMs": 1075,
+        "importMs": 164,
+        "fontsMs": 93,
+        "buildMs": 73,
+        "totalMs": 943,
         "builds": 1
       },
       "specimen": {
@@ -115,7 +110,7 @@
       },
       "sandbox": {
         "file": "pinyin-primer.postext",
-        "bytes": 205883,
+        "bytes": 205882,
         "folio": "4f4bf2f0",
         "chapters": [
           {
@@ -317,6 +312,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-HK, the document's language: en names its resource types otherwise"
@@ -330,13 +330,13 @@
       }
     },
     "es": {
-      "hash8": "d3849c40",
+      "hash8": "9a17ad84",
       "vdtHash": "16d5d6c68d0b5cfc6d7a35df17e43eb18eb2a117",
       "timings": {
-        "importMs": 441,
-        "fontsMs": 309,
-        "buildMs": 77,
-        "totalMs": 1481,
+        "importMs": 190,
+        "fontsMs": 89,
+        "buildMs": 74,
+        "totalMs": 960,
         "builds": 1
       },
       "specimen": {
@@ -631,6 +631,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

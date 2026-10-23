@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "living-newspaper-video-loops",
-  "sourceHash": "7d3bc214eb2f6825376e2010dea7974621d5e06ea9432c69e66ca3f9bfa65c22",
+  "sourceHash": "eb7999285c2960ce89c3f4de428f4d765ccc62e5f11ff4b407a46e71762baa96",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:01:22.617Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:59:33.217Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:37:57.748Z",
   "variants": {
     "en": {
-      "hash8": "80690335",
+      "hash8": "f21882d0",
       "vdtHash": "55df0867067f0eac2a8403a3cd3f0b107edd0e54",
       "timings": {
-        "importMs": 452,
-        "fontsMs": 69,
-        "buildMs": 398,
-        "totalMs": 2238,
+        "importMs": 197,
+        "fontsMs": 26,
+        "buildMs": 202,
+        "totalMs": 1077,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +32,7 @@
         "body": {
           "family": "Libre Caslon Text",
           "sizePt": 8.8,
-          "leadingPt": 11.600000000000001
+          "leadingPt": 11.6
         },
         "families": [
           "Courier Prime",
@@ -89,7 +84,7 @@
           "h": 1536,
           "file": "p04.webp",
           "strip": "p04.s.webp",
-          "bytes": 270472,
+          "bytes": 270494,
           "alt": "Opening page 4: Sport. This week’s fixtures · Wexcombe v. St Austell · Fifty miles: the first five · Tom Rundle at Gannet Park, before the penalty he saved."
         }
       ],
@@ -121,7 +116,7 @@
       },
       "sandbox": {
         "file": "living-newspaper-video-loops.postext",
-        "bytes": 297032,
+        "bytes": 296911,
         "folio": "0b15553b",
         "chapters": [
           {
@@ -433,14 +428,9 @@
         },
         "findings": [
           {
-            "check": "C3",
-            "severity": "warn",
-            "detail": "HTTP 404: https://cdn.jsdelivr.net/npm/@fontsource/libre-caslon-text@5.3.0/files/libre-caslon-text-latin-700-italic.woff2"
-          },
-          {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.19 MB (warning at 0.9 MB for 4 pages)"
+            "detail": "the edition's images weigh 1.19 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C35",
@@ -448,9 +438,9 @@
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “The fish was sold to Messrs Kitto of the Strand …”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

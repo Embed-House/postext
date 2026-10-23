@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "haiku-and-tanka",
-  "sourceHash": "45e647a2e893725b0d5fde5cbaca857146f8faf5a29bf001b141c2894463abe9",
+  "sourceHash": "7722c1910efd52624b593ced711390486dfe5af66fc0174684d7ac2c2e4d3088",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:06:49.291Z",
+  "capturedAt": "2026-10-23T07:36:51.252Z",
   "variants": {
     "en": {
-      "hash8": "68ddf290",
+      "hash8": "19425a1b",
       "vdtHash": "351aa50ad42f719591ada45f71b4b1a8ff2d4369",
       "timings": {
-        "importMs": 2793,
-        "fontsMs": 1172,
-        "buildMs": 66,
-        "totalMs": 5179,
+        "importMs": 214,
+        "fontsMs": 187,
+        "buildMs": 59,
+        "totalMs": 1044,
         "builds": 1
       },
       "specimen": {
@@ -60,7 +60,7 @@
           "h": 1480,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65636,
+          "bytes": 65646,
           "alt": "Page 二: 旅立."
         },
         {
@@ -172,7 +172,7 @@
       },
       "sandbox": {
         "file": "haiku-and-tanka.postext",
-        "bytes": 17544,
+        "bytes": 17547,
         "folio": "7e0edbf5",
         "chapters": [
           {
@@ -355,23 +355,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "2e390e98",
+      "hash8": "45062160",
       "vdtHash": "a5d3308460805ad0d7f0cc310898046450ac8fc0",
       "timings": {
-        "importMs": 2422,
-        "fontsMs": 1108,
-        "buildMs": 70,
-        "totalMs": 4719,
+        "importMs": 200,
+        "fontsMs": 166,
+        "buildMs": 58,
+        "totalMs": 1021,
         "builds": 1
       },
       "specimen": {
@@ -414,7 +408,7 @@
           "h": 1480,
           "file": "p02.webp",
           "strip": "p02.s.webp",
-          "bytes": 65636,
+          "bytes": 65646,
           "alt": "Página 二: 旅立."
         },
         {
@@ -526,7 +520,7 @@
       },
       "sandbox": {
         "file": "haiku-and-tanka.postext",
-        "bytes": 17540,
+        "bytes": 17542,
         "folio": "7e0edbf5",
         "chapters": [
           {
@@ -709,13 +703,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-book-with-jiazhu-citations",
-  "sourceHash": "d7195096824f8341a6c63d0c1adc22e43bc6edd0169481c7cb712d328b93c2f3",
+  "sourceHash": "bacf9c450f8b0f23f119ed8f8096bea516f5b86201ff76305f77e20daa7c053a",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:06:07.674Z",
+  "capturedAt": "2026-10-23T07:42:15.105Z",
   "variants": {
     "en": {
-      "hash8": "a1b2098d",
+      "hash8": "80a89a05",
       "vdtHash": "3968cb918da759615b8e2279e3f304d11d029fbb",
       "timings": {
-        "importMs": 3072,
-        "fontsMs": 1890,
-        "buildMs": 127,
-        "totalMs": 6777,
+        "importMs": 375,
+        "fontsMs": 445,
+        "buildMs": 82,
+        "totalMs": 1530,
         "builds": 1
       },
       "specimen": {
@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "vertical-book-with-jiazhu-citations.postext",
-        "bytes": 19885,
+        "bytes": 19883,
         "folio": "3a3c9a0c",
         "chapters": [
           {
@@ -295,23 +295,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
-      "hash8": "4842c614",
+      "hash8": "23be6834",
       "vdtHash": "5fdae81a492fa9f544a513c13cf8ea92591e5813",
       "timings": {
-        "importMs": 2942,
-        "fontsMs": 2228,
-        "buildMs": 85,
-        "totalMs": 7031,
+        "importMs": 325,
+        "fontsMs": 235,
+        "buildMs": 79,
+        "totalMs": 1234,
         "builds": 1
       },
       "specimen": {
@@ -395,12 +389,12 @@
       },
       "pdf": {
         "file": "vertical-book-with-jiazhu-citations.pdf",
-        "bytes": 178793,
+        "bytes": 178800,
         "pages": 3
       },
       "sandbox": {
         "file": "vertical-book-with-jiazhu-citations.postext",
-        "bytes": 19939,
+        "bytes": 19936,
         "folio": "3a3c9a0c",
         "chapters": [
           {
@@ -589,13 +583,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

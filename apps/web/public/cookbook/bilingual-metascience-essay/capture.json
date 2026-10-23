@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "bilingual-metascience-essay",
-  "sourceHash": "40c19a7d2e9d7356c9c9a530da012ef8ea1f3dc15e67ea9a9873d292f729e4b0",
+  "sourceHash": "d6992c5d7b76d8ba98c67dd64d55e7ba4ec87f5f917914cf333f323520d4244e",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:48:41.885Z",
+  "capturedAt": "2026-10-23T07:51:48.355Z",
   "variants": {
     "en": {
       "hash8": "e0330b49",
       "vdtHash": "75a3cbe8f6641e34a567b4cc8ee51534dc4035aa",
       "timings": {
-        "importMs": 3521,
-        "fontsMs": 407,
-        "buildMs": 470,
-        "totalMs": 5766,
+        "importMs": 876,
+        "fontsMs": 2150,
+        "buildMs": 385,
+        "totalMs": 4154,
         "builds": 1
       },
       "specimen": {
@@ -514,28 +514,18 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e2d0ae15",
+      "hash8": "e09ea6e0",
       "vdtHash": "e98ec382113fd2f776867edf43342fecd5d46fe1",
       "timings": {
-        "importMs": 827,
-        "fontsMs": 494,
-        "buildMs": 283,
-        "totalMs": 2402,
+        "importMs": 875,
+        "fontsMs": 248,
+        "buildMs": 328,
+        "totalMs": 2272,
         "builds": 1
       },
       "specimen": {
@@ -1022,11 +1012,6 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

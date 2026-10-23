@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "product-manual-warnings",
-  "sourceHash": "595e6b96ec877be4edc1e223aaef249942db9a3e1764c3f605fde56a71543649",
+  "sourceHash": "e165da1b437a2509e1ecc32bebe560635219708c1def4590ff09cb7136ab64d8",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.962Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.495Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:40:37.802Z",
   "variants": {
     "en": {
-      "hash8": "283df676",
+      "hash8": "3c7f47ad",
       "vdtHash": "bfc240c842f1489d7062f7bdada09dd386ecb87a",
       "timings": {
-        "importMs": 627,
-        "fontsMs": 93,
-        "buildMs": 99,
-        "totalMs": 2052,
+        "importMs": 169,
+        "fontsMs": 789,
+        "buildMs": 87,
+        "totalMs": 1712,
         "builds": 1
       },
       "specimen": {
@@ -156,7 +151,7 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 35976,
+        "bytes": 35973,
         "folio": "6d89ead9",
         "chapters": [
           {
@@ -504,19 +499,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "b3faaed6",
+      "hash8": "c1bd3163",
       "vdtHash": "bfc240c842f1489d7062f7bdada09dd386ecb87a",
       "timings": {
-        "importMs": 777,
-        "fontsMs": 388,
-        "buildMs": 106,
-        "totalMs": 2311,
+        "importMs": 188,
+        "fontsMs": 39,
+        "buildMs": 92,
+        "totalMs": 985,
         "builds": 1
       },
       "specimen": {
@@ -651,7 +646,7 @@
       },
       "sandbox": {
         "file": "product-manual-warnings.postext",
-        "bytes": 35998,
+        "bytes": 35997,
         "folio": "6d89ead9",
         "chapters": [
           {
@@ -999,7 +994,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

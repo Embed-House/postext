@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "musicology-mei-apparatus",
-  "sourceHash": "5c828d8d682f8a4eae9dde157a3d3401026f4e13277dcbfe89cf174b44b19578",
+  "sourceHash": "1add0b07566ad0bf756443f575cc80269b49cc30215ae0da9d818e9e8449cfb7",
   "engine": {
-    "postext": "1.54.0",
-    "postextPdf": "1.54.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T09:35:16.424Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:48:41.989Z"
-  },
+  "capturedAt": "2026-10-23T07:39:08.167Z",
   "variants": {
     "en": {
       "hash8": "cd2d6301",
       "vdtHash": "9c5d08d43024ea72a99d7f40916b2d1c672b98ab",
       "timings": {
-        "importMs": 1064,
-        "fontsMs": 1070,
-        "buildMs": 24,
-        "totalMs": 3417,
+        "importMs": 340,
+        "fontsMs": 503,
+        "buildMs": 17,
+        "totalMs": 1907,
         "builds": 1
       },
       "specimen": {
@@ -384,10 +378,10 @@
       "hash8": "8847e03f",
       "vdtHash": "31fe047bfe8a672e01d4109ad5dbba2badd99ce8",
       "timings": {
-        "importMs": 475,
-        "fontsMs": 697,
-        "buildMs": 19,
-        "totalMs": 3049,
+        "importMs": 358,
+        "fontsMs": 747,
+        "buildMs": 13,
+        "totalMs": 1953,
         "builds": 1
       },
       "specimen": {

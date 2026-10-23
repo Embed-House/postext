@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "din-business-letter",
-  "sourceHash": "147061df974bf2cde12deaa3e3925e1859b1a8fd304335aaf99f224b0b1e16d7",
+  "sourceHash": "b1acd25f8c062affa9ad8c06011e17dc4f9a8a7ac5744463ef90d62df6089922",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.795Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:55:01.180Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:35:36.657Z",
   "variants": {
     "en": {
-      "hash8": "6c4c2606",
+      "hash8": "f2c1e207",
       "vdtHash": "e6a91d14ff93ca6e65ab010486f2693a92c7666f",
       "timings": {
-        "importMs": 753,
-        "fontsMs": 32,
-        "buildMs": 68,
-        "totalMs": 1590,
+        "importMs": 669,
+        "fontsMs": 28,
+        "buildMs": 71,
+        "totalMs": 2672,
         "builds": 1
       },
       "specimen": {
@@ -100,7 +94,7 @@
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23294,
+        "bytes": 23293,
         "folio": "2ea14ffd",
         "chapters": [
           {
@@ -292,19 +286,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "fc25ab36",
+      "hash8": "93ec5413",
       "vdtHash": "e6a91d14ff93ca6e65ab010486f2693a92c7666f",
       "timings": {
-        "importMs": 638,
-        "fontsMs": 32,
-        "buildMs": 67,
-        "totalMs": 1747,
+        "importMs": 654,
+        "fontsMs": 27,
+        "buildMs": 71,
+        "totalMs": 2659,
         "builds": 1
       },
       "specimen": {
@@ -381,7 +375,7 @@
       },
       "sandbox": {
         "file": "din-business-letter.postext",
-        "bytes": 23317,
+        "bytes": 23316,
         "folio": "2ea14ffd",
         "chapters": [
           {
@@ -573,7 +567,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

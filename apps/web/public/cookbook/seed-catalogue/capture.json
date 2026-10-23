@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "seed-catalogue",
-  "sourceHash": "0c34cc0715c6cd9cb0f265b2ef45c35d2a6dae7844c110a0c5f276238214c214",
+  "sourceHash": "443f623502987a6e5e6a173c1a99c7793616bba38dbd9d29b6090424438dee13",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.091Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.523Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:41:23.086Z",
   "variants": {
     "en": {
-      "hash8": "ecc61b33",
+      "hash8": "18c58ef7",
       "vdtHash": "3ccd93ebb4a4b6a4aa9815376b23d2df3d4bbc03",
       "timings": {
-        "importMs": 182,
-        "fontsMs": 53,
-        "buildMs": 68,
-        "totalMs": 945,
+        "importMs": 477,
+        "fontsMs": 529,
+        "buildMs": 66,
+        "totalMs": 1856,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +115,7 @@
       },
       "sandbox": {
         "file": "seed-catalogue.postext",
-        "bytes": 713567,
+        "bytes": 713566,
         "folio": "d45f6f65",
         "chapters": [
           {
@@ -391,7 +386,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

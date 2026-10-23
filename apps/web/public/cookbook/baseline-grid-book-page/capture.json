@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "baseline-grid-book-page",
-  "sourceHash": "54a87fb1e854e9af0e886b8fda79d2935870561fd86b2bb2e92373eac7754c20",
+  "sourceHash": "e69d1960b4f57225dce108f38812d4b5f12e2fd5366e17bf760df454810e7d26",
   "engine": {
-    "postext": "1.46.2",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-19T15:25:22.337Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:39:50.427Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:31:43.224Z",
   "variants": {
     "en": {
-      "hash8": "c259867a",
+      "hash8": "f80f5337",
       "vdtHash": "f55297049f1e5f9ea49a89f52e109267aee3fbe3",
       "timings": {
-        "importMs": 11338,
-        "fontsMs": 5,
-        "buildMs": 102,
-        "totalMs": 17113,
+        "importMs": 218,
+        "fontsMs": 3,
+        "buildMs": 82,
+        "totalMs": 2751,
         "builds": 1
       },
       "specimen": {
@@ -105,7 +100,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43191,
+        "bytes": 43190,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -326,7 +321,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -337,13 +332,13 @@
       }
     },
     "es": {
-      "hash8": "85d1ecaa",
+      "hash8": "5bf75026",
       "vdtHash": "18cb678cde83a6862dc2b5d160a0456d970249e3",
       "timings": {
-        "importMs": 7594,
-        "fontsMs": 10,
-        "buildMs": 106,
-        "totalMs": 16816,
+        "importMs": 189,
+        "fontsMs": 3,
+        "buildMs": 76,
+        "totalMs": 1797,
         "builds": 1
       },
       "specimen": {
@@ -638,7 +633,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -649,13 +644,13 @@
       }
     },
     "pt": {
-      "hash8": "648b5c8c",
+      "hash8": "c87178c4",
       "vdtHash": "2acdd6b557c1c08659556959a5561aab4bda1812",
       "timings": {
-        "importMs": 10130,
-        "fontsMs": 5,
-        "buildMs": 98,
-        "totalMs": 15214,
+        "importMs": 171,
+        "fontsMs": 3,
+        "buildMs": 71,
+        "totalMs": 1135,
         "builds": 1
       },
       "specimen": {
@@ -739,7 +734,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 42994,
+        "bytes": 42993,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -950,7 +945,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -961,13 +956,13 @@
       }
     },
     "fr": {
-      "hash8": "8d2538b8",
+      "hash8": "6e42f75e",
       "vdtHash": "b24b689c34e1d1c30909531fb94be60796f23188",
       "timings": {
-        "importMs": 10008,
+        "importMs": 446,
         "fontsMs": 4,
-        "buildMs": 96,
-        "totalMs": 15289,
+        "buildMs": 80,
+        "totalMs": 1350,
         "builds": 1
       },
       "specimen": {
@@ -1051,7 +1046,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43003,
+        "bytes": 43002,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -1272,12 +1267,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -1288,13 +1278,13 @@
       }
     },
     "de": {
-      "hash8": "39ed8d7d",
+      "hash8": "eee2c072",
       "vdtHash": "49cb48b979a884c8b97affd133e774a9ead74d64",
       "timings": {
-        "importMs": 8596,
-        "fontsMs": 4,
-        "buildMs": 123,
-        "totalMs": 18929,
+        "importMs": 451,
+        "fontsMs": 3,
+        "buildMs": 88,
+        "totalMs": 1303,
         "builds": 1
       },
       "specimen": {
@@ -1378,7 +1368,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43453,
+        "bytes": 43452,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -1599,7 +1589,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",
@@ -1610,13 +1600,13 @@
       }
     },
     "it": {
-      "hash8": "ebec6eed",
+      "hash8": "b4041242",
       "vdtHash": "cc050837b4128f5b234c89b533b97ae4c550b877",
       "timings": {
-        "importMs": 10779,
-        "fontsMs": 5,
-        "buildMs": 141,
-        "totalMs": 18388,
+        "importMs": 460,
+        "fontsMs": 4,
+        "buildMs": 90,
+        "totalMs": 1302,
         "builds": 1
       },
       "specimen": {
@@ -1700,7 +1690,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43618,
+        "bytes": 43617,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -1911,7 +1901,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 155.0.8059.79: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           },
           {
             "check": "sandbox",

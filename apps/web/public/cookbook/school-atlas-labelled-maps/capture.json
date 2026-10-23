@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "school-atlas-labelled-maps",
-  "sourceHash": "cc3130150863c127cb322c03b43f434c3c69ec42008a63016e09f69fd242de85",
+  "sourceHash": "350d129be34119ff248a7b91e4ebd02724142e9bdb48012655120d37eedf31b0",
   "engine": {
-    "postext": "1.49.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-21T05:22:09.309Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:12:20.608Z"
-  },
+  "capturedAt": "2026-10-23T07:41:23.059Z",
   "variants": {
     "en": {
-      "hash8": "4945a3cf",
+      "hash8": "b078673b",
       "vdtHash": "52a3713b1470b7aab64e037595d6c5d10e8311b1",
       "timings": {
-        "importMs": 6089,
-        "fontsMs": 355,
-        "buildMs": 124,
-        "totalMs": 7979,
+        "importMs": 590,
+        "fontsMs": 137,
+        "buildMs": 99,
+        "totalMs": 1505,
         "builds": 1
       },
       "specimen": {
@@ -118,7 +113,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 611339,
+        "bytes": 611338,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -387,13 +382,13 @@
       }
     },
     "es": {
-      "hash8": "30cd1322",
+      "hash8": "fbe0ddfc",
       "vdtHash": "687e606264bcaff2840dbbb5a8b8ae9852f74096",
       "timings": {
-        "importMs": 6187,
-        "fontsMs": 353,
-        "buildMs": 134,
-        "totalMs": 7972,
+        "importMs": 587,
+        "fontsMs": 140,
+        "buildMs": 100,
+        "totalMs": 1504,
         "builds": 1
       },
       "specimen": {
@@ -490,7 +485,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 611107,
+        "bytes": 611106,
         "folio": "a6af2fd7",
         "chapters": [
           {
@@ -759,13 +754,13 @@
       }
     },
     "ar": {
-      "hash8": "17a51b01",
+      "hash8": "545df663",
       "vdtHash": "2e3bf119aa11cf455b28d20e20227f850999b038",
       "timings": {
-        "importMs": 2491,
-        "fontsMs": 576,
-        "buildMs": 98,
-        "totalMs": 4701,
+        "importMs": 594,
+        "fontsMs": 133,
+        "buildMs": 95,
+        "totalMs": 1509,
         "builds": 1
       },
       "specimen": {
@@ -863,7 +858,7 @@
       },
       "sandbox": {
         "file": "school-atlas-labelled-maps.postext",
-        "bytes": 612357,
+        "bytes": 612356,
         "folio": "a6af2fd7",
         "chapters": [
           {

@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "research-poster",
-  "sourceHash": "3183b946dd09cfcefffb0e425094f240955cc916cc9c5b9d9a15e15b5cafd99a",
+  "sourceHash": "cc03a6f79c01e6f4c148f9fb416a0b912e8ad516b9b9f81db4952d8c7bc02cd6",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:52.057Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:10:17.542Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:40:58.460Z",
   "variants": {
     "en": {
-      "hash8": "65078a8e",
+      "hash8": "3126e5ca",
       "vdtHash": "152bbae97cbf2ff3c7d0228699c51b639930e246",
       "timings": {
-        "importMs": 217,
-        "fontsMs": 34,
-        "buildMs": 72,
-        "totalMs": 1103,
+        "importMs": 492,
+        "fontsMs": 35,
+        "buildMs": 63,
+        "totalMs": 1563,
         "builds": 1
       },
       "specimen": {
@@ -79,7 +74,7 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94055,
+        "bytes": 94053,
         "folio": "7c6d9248",
         "chapters": [
           {
@@ -308,17 +303,23 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     },
     "es": {
-      "hash8": "819894df",
+      "hash8": "3d832f04",
       "vdtHash": "565a8c265171499f754da27b53b2f58943f172da",
       "timings": {
-        "importMs": 209,
-        "fontsMs": 28,
-        "buildMs": 64,
-        "totalMs": 975,
+        "importMs": 314,
+        "fontsMs": 76,
+        "buildMs": 65,
+        "totalMs": 1146,
         "builds": 1
       },
       "specimen": {
@@ -376,7 +377,7 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94815,
+        "bytes": 94813,
         "folio": "7c6d9248",
         "chapters": [
           {
@@ -605,7 +606,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          }
+        ]
       }
     }
   }

@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "web-worker-live-editor",
-  "sourceHash": "002c496f8994aeced54329ac9b240b3205c98cb7b6e2ea7248e15bf95d3e7523",
+  "sourceHash": "322320e7c34352826f733d10a0eb214388240777e8638effc6afe9cd5065eade",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:06:54.607Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:17:16.290Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:51:48.488Z",
   "variants": {
     "en": {
-      "hash8": "de9838e2",
+      "hash8": "78e09beb",
       "vdtHash": "e003e73311d4ccebd7d9a4512d26acf8fa8c4d47",
       "timings": {
-        "importMs": 2191,
-        "fontsMs": 1776,
-        "buildMs": 170,
-        "totalMs": 5069,
+        "importMs": 930,
+        "fontsMs": 30624,
+        "buildMs": 111,
+        "totalMs": 32340,
         "builds": 1
       },
       "specimen": {
@@ -130,7 +125,7 @@
       },
       "sandbox": {
         "file": "web-worker-live-editor.postext",
-        "bytes": 218777,
+        "bytes": 218767,
         "folio": "ddaa1eeb",
         "chapters": [
           {
@@ -320,14 +315,19 @@
             "detail": "a worker recipe: captured without request interception (hosts checked, network not cached)"
           },
           {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 32.3 s to finish (warning at 30 s)"
+          },
+          {
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 9 −5‰ ““The experiment!” cried Filby, who was getting b…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

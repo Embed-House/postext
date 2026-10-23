@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "songbook-melody-words-chords",
-  "sourceHash": "3c09e8e0feb6881dbc6d5e7f9e9e4b9a15bd4967411df5de03e9918b794b16a1",
+  "sourceHash": "4bdcce4a6c3314192c290803d596d5c56ff01ed9913e05b77352aaa5e160a791",
   "engine": {
-    "postext": "1.54.0",
-    "postextPdf": "1.54.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T09:35:16.415Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:12:20.614Z"
-  },
+  "capturedAt": "2026-10-23T07:41:23.122Z",
   "variants": {
     "en": {
       "hash8": "e517901b",
       "vdtHash": "f8d2c15c3f79630c4161cdcdd69ccee3434575d1",
       "timings": {
-        "importMs": 1069,
-        "fontsMs": 1251,
-        "buildMs": 300,
-        "totalMs": 3577,
+        "importMs": 280,
+        "fontsMs": 581,
+        "buildMs": 212,
+        "totalMs": 1854,
         "builds": 1
       },
       "specimen": {
@@ -411,10 +405,10 @@
       "hash8": "e41f37fa",
       "vdtHash": "48f39c77524d5158b99427ba776913475b9684cc",
       "timings": {
-        "importMs": 1046,
-        "fontsMs": 635,
-        "buildMs": 335,
-        "totalMs": 3114,
+        "importMs": 242,
+        "fontsMs": 502,
+        "buildMs": 175,
+        "totalMs": 1623,
         "builds": 1
       },
       "specimen": {

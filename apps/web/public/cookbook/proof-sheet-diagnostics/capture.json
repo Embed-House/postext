@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "proof-sheet-diagnostics",
-  "sourceHash": "54ba7ba8c79a07b80ecc8893ada75a5844990c6842dfe036285919847271e81e",
+  "sourceHash": "7b3fa8ad38997ace3e8aa4cde47c405688e2bff3586fc9ff78f6b7b652489b2e",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.974Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:08:37.381Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:40:37.811Z",
   "variants": {
     "en": {
-      "hash8": "daa993f6",
+      "hash8": "7bbef6a1",
       "vdtHash": "bbf2e803033cdc865c0c79a1eb80c5e70690e8c0",
       "timings": {
-        "importMs": 1112,
-        "fontsMs": 99,
-        "buildMs": 10,
-        "totalMs": 2282,
+        "importMs": 194,
+        "fontsMs": 31,
+        "buildMs": 8,
+        "totalMs": 1465,
         "builds": 2
       },
       "specimen": {
@@ -94,7 +89,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 103049,
+        "bytes": 103118,
         "folio": "3db66766",
         "chapters": [
           {
@@ -361,19 +356,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "4bd5cfa4",
+      "hash8": "c7bb65fe",
       "vdtHash": "7865a446137e4ba693e2346a1c2dd66092f97a16",
       "timings": {
-        "importMs": 724,
-        "fontsMs": 256,
+        "importMs": 162,
+        "fontsMs": 33,
         "buildMs": 10,
-        "totalMs": 2559,
+        "totalMs": 973,
         "builds": 2
       },
       "specimen": {
@@ -446,7 +441,7 @@
       },
       "sandbox": {
         "file": "proof-sheet-diagnostics.postext",
-        "bytes": 104059,
+        "bytes": 104158,
         "folio": "3db66766",
         "chapters": [
           {
@@ -713,7 +708,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

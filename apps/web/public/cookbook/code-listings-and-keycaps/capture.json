@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "code-listings-and-keycaps",
-  "sourceHash": "133379e68c11f41bfd82b16599504970a7d7f34b06d08a0bb98f5546c1de3dd3",
+  "sourceHash": "08fcc54404582f689673fc7ac46707b7d234fe28d7d0d52f8266802dbd18937b",
   "engine": {
-    "postext": "1.29.1",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-12T13:19:51.149Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:41:12.405Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:34:49.047Z",
   "variants": {
     "en": {
-      "hash8": "b3085fe5",
+      "hash8": "5660f3d7",
       "vdtHash": "8b3311fe4bda801d997d19193889d8a025dee896",
       "timings": {
-        "importMs": 207,
-        "fontsMs": 49,
-        "buildMs": 85,
-        "totalMs": 1002,
+        "importMs": 333,
+        "fontsMs": 2244,
+        "buildMs": 89,
+        "totalMs": 3322,
         "builds": 1
       },
       "specimen": {
@@ -105,7 +100,7 @@
       },
       "sandbox": {
         "file": "code-listings-and-keycaps.postext",
-        "bytes": 24520,
+        "bytes": 24518,
         "folio": "e7298095",
         "chapters": [
           {
@@ -402,6 +397,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -410,13 +410,13 @@
       }
     },
     "es": {
-      "hash8": "ae1b425b",
+      "hash8": "8c8b1dd2",
       "vdtHash": "f61d6e1ac7d69bfb6a85cc1f21905dd10cfc0c68",
       "timings": {
-        "importMs": 171,
-        "fontsMs": 35,
-        "buildMs": 96,
-        "totalMs": 893,
+        "importMs": 338,
+        "fontsMs": 2241,
+        "buildMs": 89,
+        "totalMs": 3299,
         "builds": 1
       },
       "specimen": {
@@ -500,7 +500,7 @@
       },
       "sandbox": {
         "file": "code-listings-and-keycaps.postext",
-        "bytes": 24869,
+        "bytes": 24867,
         "folio": "e7298095",
         "chapters": [
           {
@@ -790,12 +790,17 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.3800000000000001
+          "worst": 1.38
         },
         "raggedLines": {
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

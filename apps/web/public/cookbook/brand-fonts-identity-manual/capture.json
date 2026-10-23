@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "brand-fonts-identity-manual",
-  "sourceHash": "ecabae7cbb213556ffcce1a210a9359e37644ba325ff2a2dcc751d2c8a6451e5",
+  "sourceHash": "0749c36060670e53ce07ec5530c94c4dbe384f550542e3771388d011e03bcb66",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.403Z",
+  "capturedAt": "2026-10-23T07:31:43.274Z",
   "variants": {
     "en": {
-      "hash8": "e1df98a8",
+      "hash8": "1f637961",
       "vdtHash": "7652cc7706c7245b2d0bb848c7e717c4b21838a8",
       "timings": {
-        "importMs": 1710,
-        "fontsMs": 186,
-        "buildMs": 111,
-        "totalMs": 3506,
+        "importMs": 224,
+        "fontsMs": 54,
+        "buildMs": 76,
+        "totalMs": 959,
         "builds": 1
       },
       "specimen": {
@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "brand-fonts-identity-manual.postext",
-        "bytes": 106330,
+        "bytes": 106329,
         "folio": "17625bac",
         "chapters": [
           {
@@ -376,11 +376,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

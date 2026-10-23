@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "catalogue-facing-plates",
-  "sourceHash": "188f64d00b05169b4242b41015979e2ed4d016f3023cad3a7f32666b307828df",
+  "sourceHash": "c9d6a82c73b59b6cc25f94a33a77a4dac9c7ff307571a1715856638b3bb01e0f",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:57:00.575Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:51:44.427Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:32:12.348Z",
   "variants": {
     "en": {
-      "hash8": "ad2b947c",
+      "hash8": "b7c7b08b",
       "vdtHash": "4dd5392768204ac0ca124f36dc7bf6e5abf40800",
       "timings": {
-        "importMs": 241,
-        "fontsMs": 57,
-        "buildMs": 75,
-        "totalMs": 994,
+        "importMs": 285,
+        "fontsMs": 2093,
+        "buildMs": 56,
+        "totalMs": 3086,
         "builds": 1
       },
       "specimen": {
@@ -172,7 +167,7 @@
       },
       "sandbox": {
         "file": "catalogue-facing-plates.postext",
-        "bytes": 1603556,
+        "bytes": 1603557,
         "folio": "2f38e47f",
         "chapters": [
           {
@@ -421,12 +416,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 8 pages)"
+            "detail": "the edition's images weigh 1.18 MB (warning at 0.9 MB for 8 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

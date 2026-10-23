@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "exam-paper",
-  "sourceHash": "7158accf23851203772017aa697919cfb559d7b4db0b65378c6aaa50ae59f87d",
+  "sourceHash": "b04d84c243bf82c4445f93c2529a4cffc943b6a509fd339ed5e2076dba5d3e91",
   "engine": {
-    "postext": "1.57.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:48:41.862Z",
+  "capturedAt": "2026-10-23T07:35:36.668Z",
   "variants": {
     "en": {
       "hash8": "538834d2",
       "vdtHash": "86a0f8cf81837044cbbf2088ba0c46dbce14ece6",
       "timings": {
-        "importMs": 4587,
-        "fontsMs": 397,
-        "buildMs": 117,
-        "totalMs": 7173,
+        "importMs": 187,
+        "fontsMs": 701,
+        "buildMs": 63,
+        "totalMs": 1615,
         "builds": 1
       },
       "specimen": {
@@ -436,28 +436,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "79985206",
       "vdtHash": "0b60470705e3d44631b6228d77a2112201ec443b",
       "timings": {
-        "importMs": 2855,
-        "fontsMs": 208,
-        "buildMs": 91,
-        "totalMs": 4476,
+        "importMs": 176,
+        "fontsMs": 31,
+        "buildMs": 60,
+        "totalMs": 918,
         "builds": 1
       },
       "specimen": {
@@ -877,18 +866,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

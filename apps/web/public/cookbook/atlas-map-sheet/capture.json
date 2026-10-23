@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "atlas-map-sheet",
-  "sourceHash": "9ff0e0467ae4ffdbc57393c9b524b0dd1eeb036cbb670dee9190cf91aae96b6f",
+  "sourceHash": "0f2fe35571adc8b5e130e18f79e879d2e57d641a904e2a72847c7a34032e01e6",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.683Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:32:35.881Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:30:46.682Z",
   "variants": {
     "en": {
-      "hash8": "86a9e13e",
+      "hash8": "da6aae7b",
       "vdtHash": "f72f19ab5bbd43934956780cd70f644ab365a901",
       "timings": {
-        "importMs": 858,
-        "fontsMs": 925,
-        "buildMs": 90,
-        "totalMs": 2789,
+        "importMs": 159,
+        "fontsMs": 792,
+        "buildMs": 77,
+        "totalMs": 1938,
         "builds": 1
       },
       "specimen": {
@@ -368,19 +363,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "53904836",
+      "hash8": "66b996ad",
       "vdtHash": "5ba6ab722b92c3720a9778169d45ee9a8d8a558b",
       "timings": {
-        "importMs": 919,
-        "fontsMs": 920,
-        "buildMs": 76,
-        "totalMs": 2977,
+        "importMs": 172,
+        "fontsMs": 795,
+        "buildMs": 61,
+        "totalMs": 1696,
         "builds": 1
       },
       "specimen": {
@@ -727,7 +722,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

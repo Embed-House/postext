@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "chinese-novel-horizontal",
-  "sourceHash": "ff28079b4ac8413b57dd01fea30e1653d747ca6b1240eb7e1236993071691329",
+  "sourceHash": "f2cc3a9623ef685cb2866b58483f737d57b642e49d05f5bae96d99eee08c1228",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:06:17.035Z",
+  "capturedAt": "2026-10-23T07:32:12.483Z",
   "variants": {
     "en": {
       "hash8": "76a79225",
       "vdtHash": "608e031e1bb1719ed4463a33ca71342e90ecc42e",
       "timings": {
-        "importMs": 4349,
-        "fontsMs": 915,
-        "buildMs": 78,
-        "totalMs": 7015,
+        "importMs": 292,
+        "fontsMs": 242,
+        "buildMs": 71,
+        "totalMs": 1231,
         "builds": 1
       },
       "specimen": {
@@ -359,11 +359,6 @@
         },
         "findings": [
           {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
-          {
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hans, the document's language: en names its resource types otherwise"
@@ -380,10 +375,10 @@
       "hash8": "1493a741",
       "vdtHash": "27f3916327caf4aff3f8eb8cd7ea1329b7162b13",
       "timings": {
-        "importMs": 2393,
-        "fontsMs": 1328,
-        "buildMs": 95,
-        "totalMs": 5331,
+        "importMs": 192,
+        "fontsMs": 218,
+        "buildMs": 73,
+        "totalMs": 1070,
         "builds": 1
       },
       "specimen": {
@@ -724,11 +719,6 @@
           "count": 0
         },
         "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          },
           {
             "check": "sandbox",
             "severity": "info",

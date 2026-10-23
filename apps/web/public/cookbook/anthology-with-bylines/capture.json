@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "anthology-with-bylines",
-  "sourceHash": "cd8fbe80a9ab5bbfa56853ec52d261ed97d86e2e74186e37201140832a59673e",
+  "sourceHash": "b4561f54cc7ccf9e32793b6625a45fe7ba27ad254d38b7032882e0b826514606",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:55:41.396Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:32:35.801Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:30:46.662Z",
   "variants": {
     "en": {
-      "hash8": "b3e99e0d",
+      "hash8": "9bf69fce",
       "vdtHash": "c026c2e4b5cc2fefc426f039013e6b82dde107f4",
       "timings": {
-        "importMs": 290,
-        "fontsMs": 37,
-        "buildMs": 76,
-        "totalMs": 1086,
+        "importMs": 240,
+        "fontsMs": 23,
+        "buildMs": 64,
+        "totalMs": 2304,
         "builds": 1
       },
       "specimen": {
@@ -182,7 +177,7 @@
       },
       "sandbox": {
         "file": "anthology-with-bylines.postext",
-        "bytes": 243468,
+        "bytes": 243467,
         "folio": "6cdad6f3",
         "chapters": [
           {
@@ -427,17 +422,17 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 9 pages)"
+            "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 9 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "C24",
             "severity": "warn",
-            "detail": "3 of 118 justified lines (2.5 %) stretch past 1.6× (worst 1.67×); loosest: p. 8 1.67× “turesque, but of certain jolly humours—of the h…”, p. 5 1.6400000000000001× “tifully derived “from idle people who roved abo…”, p. 6 1.6400000000000001× “to our desolate kingdoms. If you are ready to l…”"
+            "detail": "3 of 118 justified lines (2.5 %) stretch past 1.6× (worst 1.67×); loosest: p. 8 1.67× “turesque, but of certain jolly humours—of the h…”, p. 5 1.64× “tifully derived “from idle people who roved abo…”, p. 6 1.64× “to our desolate kingdoms. If you are ready to l…”"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "reading-primer-syllables",
-  "sourceHash": "7332222661d49dcd7c027f66813b676c58eb0db812193dc87f8f15b65a237208",
+  "sourceHash": "ed73d08a2058af095f8940a4b697636e25671429bbedb2b48edd8fac8851ffdd",
   "engine": {
-    "postext": "1.30.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T10:47:51.858Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T20:00:49.395Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:40:58.443Z",
   "variants": {
     "en": {
-      "hash8": "f430416e",
+      "hash8": "b465936f",
       "vdtHash": "d64ad253cc972508a2cda095bea75275aa5e933e",
       "timings": {
-        "importMs": 447,
-        "fontsMs": 96,
-        "buildMs": 73,
-        "totalMs": 1401,
+        "importMs": 441,
+        "fontsMs": 52,
+        "buildMs": 52,
+        "totalMs": 1191,
         "builds": 1
       },
       "specimen": {
@@ -104,7 +99,7 @@
       },
       "sandbox": {
         "file": "reading-primer-syllables.postext",
-        "bytes": 311491,
+        "bytes": 311496,
         "folio": "6010a127",
         "chapters": [
           {
@@ -343,6 +338,11 @@
         },
         "findings": [
           {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
@@ -351,13 +351,13 @@
       }
     },
     "es": {
-      "hash8": "7f477025",
+      "hash8": "6a2f9c11",
       "vdtHash": "66ba035a8233a3b20ccb92b453cbf4e7145a9f4c",
       "timings": {
-        "importMs": 487,
-        "fontsMs": 60,
-        "buildMs": 66,
-        "totalMs": 1379,
+        "importMs": 221,
+        "fontsMs": 221,
+        "buildMs": 60,
+        "totalMs": 1138,
         "builds": 1
       },
       "specimen": {
@@ -440,7 +440,7 @@
       },
       "sandbox": {
         "file": "reading-primer-syllables.postext",
-        "bytes": 284665,
+        "bytes": 284657,
         "folio": "6010a127",
         "chapters": [
           {
@@ -678,6 +678,11 @@
           "count": 0
         },
         "findings": [
+          {
+            "check": "chrome",
+            "severity": "warn",
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
           {
             "check": "sandbox",
             "severity": "info",

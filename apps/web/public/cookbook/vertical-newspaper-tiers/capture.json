@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "vertical-newspaper-tiers",
-  "sourceHash": "2a03604479c345e456c68205e3bdae860f4527d2e91a25071b609ee396cbdbe5",
+  "sourceHash": "2e77c9d936667d2c68af62d545078ad02f49680de686a63283e73dbec82a3cde",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:52:43.985Z",
+  "capturedAt": "2026-10-23T07:43:09.546Z",
   "variants": {
     "en": {
       "hash8": "176e7a01",
       "vdtHash": "cf2f7dea811908e83d27c17d45b0424dd5be5cca",
       "timings": {
-        "importMs": 2024,
-        "fontsMs": 1643,
-        "buildMs": 67,
-        "totalMs": 4585,
+        "importMs": 627,
+        "fontsMs": 601,
+        "buildMs": 53,
+        "totalMs": 1926,
         "builds": 1
       },
       "specimen": {
@@ -347,28 +347,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "421e00ba",
       "vdtHash": "fc6d9ffa8989d4767d45e22f380aa76440036d76",
       "timings": {
-        "importMs": 1539,
-        "fontsMs": 1693,
-        "buildMs": 59,
-        "totalMs": 4119,
+        "importMs": 623,
+        "fontsMs": 599,
+        "buildMs": 53,
+        "totalMs": 1929,
         "builds": 1
       },
       "specimen": {
@@ -698,18 +687,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
-          }
-        ]
+        "findings": []
       }
     }
   }

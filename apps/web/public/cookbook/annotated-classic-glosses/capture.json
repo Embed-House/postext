@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "annotated-classic-glosses",
-  "sourceHash": "8846f14e522191630d908f59affe029a706b4a63e32f0673789aa256b0b39259",
+  "sourceHash": "621db3d5f785f1c3d6dda37f6bd4b00588329d11c9a7e8002c6b3f638f8c7f6e",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T14:55:41.387Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:32:35.799Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:30:46.654Z",
   "variants": {
     "en": {
-      "hash8": "da77729b",
+      "hash8": "e49bbaba",
       "vdtHash": "21e93e766392625747416e728c8115b81fd94dff",
       "timings": {
-        "importMs": 246,
+        "importMs": 372,
         "fontsMs": 28,
-        "buildMs": 91,
-        "totalMs": 1036,
+        "buildMs": 68,
+        "totalMs": 1541,
         "builds": 1
       },
       "specimen": {
@@ -105,7 +100,7 @@
       },
       "sandbox": {
         "file": "annotated-classic-glosses.postext",
-        "bytes": 319056,
+        "bytes": 319055,
         "folio": "923d57f4",
         "chapters": [
           {
@@ -304,7 +299,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.8800000000000001
+          "worst": 1.88
         },
         "raggedLines": {
           "count": 0
@@ -313,17 +308,17 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.webp weighs 93 KB (aim for ≤ 90 KB)"
+            "detail": "card.webp weighs 93 KB (aim for ≤ 90 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "card.480.webp weighs 36 KB (aim for ≤ 35 KB)"
+            "detail": "card.480.webp weighs 36 KB (aim for ≤ 35 KB; capture.expect.cardKb states the figure of a painted card)"
           },
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           },
           {
             "check": "sandbox",

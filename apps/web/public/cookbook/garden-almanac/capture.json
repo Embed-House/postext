@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "garden-almanac",
-  "sourceHash": "2549ec213b9c9b5c0d1e324d31e89991f48fdc6337a6e486fafa4abdbdffe15f",
+  "sourceHash": "c4c4996b1d263a659cfa33e5287fb9add9259f81730815b75b211e0b96bc7978",
   "engine": {
-    "postext": "1.57.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T19:51:42.903Z",
+  "capturedAt": "2026-10-23T07:36:51.236Z",
   "variants": {
     "en": {
       "hash8": "2e327831",
       "vdtHash": "12f7bb8f16d35502a9c80c5f9136451ade987f30",
       "timings": {
-        "importMs": 1699,
-        "fontsMs": 354,
-        "buildMs": 89,
-        "totalMs": 3350,
+        "importMs": 555,
+        "fontsMs": 850,
+        "buildMs": 80,
+        "totalMs": 2203,
         "builds": 1
       },
       "specimen": {
@@ -400,28 +400,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     },
     "es": {
       "hash8": "8fe31c6f",
       "vdtHash": "12f7bb8f16d35502a9c80c5f9136451ade987f30",
       "timings": {
-        "importMs": 1913,
-        "fontsMs": 202,
-        "buildMs": 102,
-        "totalMs": 3232,
+        "importMs": 542,
+        "fontsMs": 866,
+        "buildMs": 80,
+        "totalMs": 2204,
         "builds": 1
       },
       "specimen": {
@@ -805,18 +794,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
-          },
-          {
-            "check": "vdt",
-            "severity": "info",
-            "detail": "the layout changed since the committed capture"
-          }
-        ]
+        "findings": []
       }
     }
   }

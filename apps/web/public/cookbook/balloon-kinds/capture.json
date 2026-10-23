@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "balloon-kinds",
-  "sourceHash": "7c50ea5f76fb2ee8f5b71ce712f0fe7e6e4a57ece3617da8109bd1099c4f5d91",
+  "sourceHash": "4282cf554706ad177a0ba4f2bedc7346435e36440b19d05778bdb74cba3c5044",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:28:59.430Z",
+  "capturedAt": "2026-10-23T07:31:43.177Z",
   "variants": {
     "en": {
-      "hash8": "e2b8c6f3",
+      "hash8": "b06ad690",
       "vdtHash": "741e9ba1b4cbefe7456e18ce8a09307b09fc17cb",
       "timings": {
-        "importMs": 943,
-        "fontsMs": 176,
-        "buildMs": 761,
-        "totalMs": 2546,
+        "importMs": 618,
+        "fontsMs": 1221,
+        "buildMs": 621,
+        "totalMs": 3160,
         "builds": 1
       },
       "specimen": {
@@ -93,7 +93,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954664,
+        "bytes": 954663,
         "chapters": [
           {
             "pages": 2,
@@ -304,23 +304,18 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 1 −10‰ “Pinned.  The balloon is centred on that point o…”"
-          },
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "67bf6670",
+      "hash8": "a1003e73",
       "vdtHash": "7e8ad8cefc2dbcf233e8d2ef02662fe7c05cc0ac",
       "timings": {
-        "importMs": 950,
-        "fontsMs": 211,
-        "buildMs": 693,
-        "totalMs": 2535,
+        "importMs": 227,
+        "fontsMs": 139,
+        "buildMs": 595,
+        "totalMs": 1556,
         "builds": 1
       },
       "specimen": {
@@ -597,23 +592,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ca": {
-      "hash8": "9ce6c50f",
+      "hash8": "92af8aaa",
       "vdtHash": "09fd22eaefd8eb692bf193bebcd0d01a123efebb",
       "timings": {
-        "importMs": 942,
-        "fontsMs": 197,
-        "buildMs": 708,
-        "totalMs": 2521,
+        "importMs": 317,
+        "fontsMs": 324,
+        "buildMs": 628,
+        "totalMs": 1879,
         "builds": 1
       },
       "specimen": {
@@ -890,23 +879,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "zh": {
-      "hash8": "ef9d5eda",
+      "hash8": "7f943388",
       "vdtHash": "02e5a8ee76524e8a91aa39fea941e73407d85a34",
       "timings": {
-        "importMs": 1309,
-        "fontsMs": 1124,
-        "buildMs": 680,
-        "totalMs": 3982,
+        "importMs": 299,
+        "fontsMs": 409,
+        "buildMs": 533,
+        "totalMs": 1881,
         "builds": 1
       },
       "specimen": {
@@ -982,7 +965,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955340,
+        "bytes": 955339,
         "chapters": [
           {
             "pages": 2,
@@ -1184,23 +1167,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ar": {
-      "hash8": "35ff6353",
+      "hash8": "e61d2393",
       "vdtHash": "a870ac09f3f2185d37a16e9f3092e5324fa5dc32",
       "timings": {
-        "importMs": 598,
-        "fontsMs": 284,
-        "buildMs": 670,
-        "totalMs": 2236,
+        "importMs": 355,
+        "fontsMs": 123,
+        "buildMs": 631,
+        "totalMs": 1742,
         "builds": 1
       },
       "specimen": {
@@ -1277,7 +1254,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955317,
+        "bytes": 955315,
         "chapters": [
           {
             "pages": 2,
@@ -1481,23 +1458,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "ja": {
-      "hash8": "5c44fe14",
+      "hash8": "f65e3397",
       "vdtHash": "41518f203a00e43b2c469f8d04c3b5a29b3ece25",
       "timings": {
-        "importMs": 1743,
-        "fontsMs": 1655,
-        "buildMs": 489,
-        "totalMs": 4671,
+        "importMs": 239,
+        "fontsMs": 396,
+        "buildMs": 434,
+        "totalMs": 1813,
         "builds": 1
       },
       "specimen": {
@@ -1574,7 +1545,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955319,
+        "bytes": 955288,
         "chapters": [
           {
             "pages": 2,
@@ -1777,23 +1748,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "pt": {
-      "hash8": "de6876cc",
+      "hash8": "b854ba9a",
       "vdtHash": "ff3577f055a081d8454805278da37a8ca13309b1",
       "timings": {
-        "importMs": 472,
-        "fontsMs": 301,
-        "buildMs": 687,
-        "totalMs": 2184,
+        "importMs": 371,
+        "fontsMs": 155,
+        "buildMs": 662,
+        "totalMs": 1856,
         "builds": 1
       },
       "specimen": {
@@ -1869,7 +1834,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954908,
+        "bytes": 954907,
         "chapters": [
           {
             "pages": 2,
@@ -2070,23 +2035,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "fr": {
-      "hash8": "985081fa",
+      "hash8": "27adf536",
       "vdtHash": "30e4c8274b6afd5580d3ec1e7f53e5178acb6691",
       "timings": {
-        "importMs": 477,
-        "fontsMs": 319,
-        "buildMs": 672,
-        "totalMs": 2121,
+        "importMs": 261,
+        "fontsMs": 128,
+        "buildMs": 617,
+        "totalMs": 1765,
         "builds": 1
       },
       "specimen": {
@@ -2162,7 +2121,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955176,
+        "bytes": 955175,
         "chapters": [
           {
             "pages": 2,
@@ -2363,23 +2322,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "de": {
-      "hash8": "cf880857",
+      "hash8": "d493a806",
       "vdtHash": "2be0737335ab3fc13d039c6e33613bbaf5b5d53a",
       "timings": {
-        "importMs": 269,
-        "fontsMs": 157,
-        "buildMs": 580,
-        "totalMs": 1958,
+        "importMs": 225,
+        "fontsMs": 308,
+        "buildMs": 578,
+        "totalMs": 1690,
         "builds": 1
       },
       "specimen": {
@@ -2455,7 +2408,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 955150,
+        "bytes": 955149,
         "chapters": [
           {
             "pages": 2,
@@ -2656,23 +2609,17 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     },
     "it": {
-      "hash8": "e6896232",
+      "hash8": "9ab7714a",
       "vdtHash": "3d507e955e2df396355fedccf254c66e38fcf3aa",
       "timings": {
-        "importMs": 202,
-        "fontsMs": 93,
-        "buildMs": 788,
-        "totalMs": 1734,
+        "importMs": 250,
+        "fontsMs": 154,
+        "buildMs": 813,
+        "totalMs": 1848,
         "builds": 1
       },
       "specimen": {
@@ -2748,7 +2695,7 @@
       },
       "sandbox": {
         "file": "balloon-kinds.postext",
-        "bytes": 954948,
+        "bytes": 954941,
         "chapters": [
           {
             "pages": 2,
@@ -2949,13 +2896,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.79: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

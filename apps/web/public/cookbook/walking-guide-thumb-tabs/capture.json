@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "walking-guide-thumb-tabs",
-  "sourceHash": "09dae0a3218986420270fb407c8b96565a5c9414aa7cb81bcb568291f5ecd036",
+  "sourceHash": "4e1ba93a37b2d23c84fb79ce5ace37eb7982b558df99e50d6def958bdb6f6b8c",
   "engine": {
-    "postext": "1.34.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:55.002Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:39.822Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:43:09.592Z",
   "variants": {
     "en": {
-      "hash8": "701841c4",
+      "hash8": "8a9f9441",
       "vdtHash": "c010ed3feb0418e4b90b7c1452b0a5ed8382b016",
       "timings": {
-        "importMs": 856,
-        "fontsMs": 23,
-        "buildMs": 60,
-        "totalMs": 2305,
+        "importMs": 337,
+        "fontsMs": 22,
+        "buildMs": 56,
+        "totalMs": 1306,
         "builds": 1
       },
       "specimen": {
@@ -35,7 +30,7 @@
         "body": {
           "family": "Albert Sans",
           "sizePt": 9.4,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "Albert Sans",
@@ -156,7 +151,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52386,
+        "bytes": 52384,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -441,19 +436,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "e66b241a",
+      "hash8": "b287cfe7",
       "vdtHash": "a815c1872f39b5d214ccc846aab8b7ab7cc5016f",
       "timings": {
-        "importMs": 554,
-        "fontsMs": 23,
-        "buildMs": 64,
-        "totalMs": 1744,
+        "importMs": 208,
+        "fontsMs": 21,
+        "buildMs": 52,
+        "totalMs": 951,
         "builds": 1
       },
       "specimen": {
@@ -467,7 +462,7 @@
         "body": {
           "family": "Albert Sans",
           "sizePt": 9.4,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "Albert Sans",
@@ -588,7 +583,7 @@
       },
       "sandbox": {
         "file": "walking-guide-thumb-tabs.postext",
-        "bytes": 52577,
+        "bytes": 52576,
         "folio": "98b88fc8",
         "chapters": [
           {
@@ -873,12 +868,12 @@
           {
             "check": "C20",
             "severity": "warn",
-            "detail": "the edition's images weigh 0.90 MB (warning at 0.9 MB for 7 pages)"
+            "detail": "the edition's images weigh 0.90 MB (warning at 0.9 MB for 7 pages; capture.expect.imageMb states the figure of a book of paintings)"
           },
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }

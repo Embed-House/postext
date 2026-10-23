@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "pdf-with-embedded-fonts",
-  "sourceHash": "8530fa0936b38d289ddfed0ef0c4ba9fcada4ece151c2eb8592aed30b01849aa",
+  "sourceHash": "110aa011bd7066f9b236a81831f413245c7593aecd5f3bab5f4e6d7fc21ff11b",
   "engine": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
   "chrome": "155.0.8059.85",
-  "capturedAt": "2026-10-22T20:19:58.566Z",
+  "capturedAt": "2026-10-23T07:39:33.937Z",
   "variants": {
     "en": {
-      "hash8": "f91a5cdb",
+      "hash8": "2944d30a",
       "vdtHash": "6614b01a37d0ff6a777bd67b097f1a4e32a7cf36",
       "timings": {
-        "importMs": 1852,
-        "fontsMs": 158,
-        "buildMs": 70,
-        "totalMs": 4229,
+        "importMs": 240,
+        "fontsMs": 60,
+        "buildMs": 54,
+        "totalMs": 1160,
         "builds": 1
       },
       "specimen": {
@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "pdf-with-embedded-fonts.postext",
-        "bytes": 30453,
+        "bytes": 30451,
         "folio": "885e614d",
         "chapters": [
           {
@@ -328,13 +328,7 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": [
-          {
-            "check": "chrome",
-            "severity": "warn",
-            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
-          }
-        ]
+        "findings": []
       }
     }
   }

@@ -1,27 +1,22 @@
 {
   "schemaVersion": 1,
   "slug": "section-heads-field-manual",
-  "sourceHash": "5db84f7d139fac5cf197878a20a589a8fdf43d079a93d2dc110775ee7aaf1509",
+  "sourceHash": "5309583d25f78e8491ed2433691ec6af90ceae951e25eb826073457971b45bbb",
   "engine": {
-    "postext": "1.31.0",
+    "postext": "1.57.1",
     "source": "npm"
   },
-  "chrome": "154.0.8037.98",
-  "capturedAt": "2026-10-13T15:04:42.046Z",
-  "verified": {
-    "postext": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:52:39.815Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:41:23.081Z",
   "variants": {
     "en": {
-      "hash8": "59cd194a",
+      "hash8": "00c2643d",
       "vdtHash": "d4bdd8df407020ad381dadc37004fdc31437106e",
       "timings": {
-        "importMs": 494,
+        "importMs": 572,
         "fontsMs": 5,
-        "buildMs": 94,
-        "totalMs": 1375,
+        "buildMs": 89,
+        "totalMs": 1372,
         "builds": 1
       },
       "specimen": {
@@ -36,7 +31,7 @@
         "body": {
           "family": "IBM Plex Serif",
           "sizePt": 9.4,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "IBM Plex Mono",
@@ -105,7 +100,7 @@
       },
       "sandbox": {
         "file": "section-heads-field-manual.postext",
-        "bytes": 31225,
+        "bytes": 31224,
         "folio": "0260efa6",
         "chapters": [
           {
@@ -342,21 +337,21 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "282ce119",
+      "hash8": "08a179c8",
       "vdtHash": "cb42f1692eacdaa1bf7c25d093febd21f717d3d5",
       "timings": {
-        "importMs": 597,
+        "importMs": 478,
         "fontsMs": 4,
-        "buildMs": 70,
-        "totalMs": 1507,
+        "buildMs": 61,
+        "totalMs": 1366,
         "builds": 1
       },
       "specimen": {
@@ -371,7 +366,7 @@
         "body": {
           "family": "IBM Plex Serif",
           "sizePt": 9.4,
-          "leadingPt": 13.200000000000001
+          "leadingPt": 13.2
         },
         "families": [
           "IBM Plex Mono",
@@ -440,7 +435,7 @@
       },
       "sandbox": {
         "file": "section-heads-field-manual.postext",
-        "bytes": 31491,
+        "bytes": 31493,
         "folio": "0260efa6",
         "chapters": [
           {
@@ -677,9 +672,9 @@
         },
         "findings": [
           {
-            "check": "vdt",
+            "check": "chrome",
             "severity": "warn",
-            "detail": "the layout changed with the same sources (engine or font regression?)"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
           }
         ]
       }

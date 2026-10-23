@@ -1,29 +1,23 @@
 {
   "schemaVersion": 1,
   "slug": "legal-opinion-oscola",
-  "sourceHash": "1c4a6c1f3296723042cd0391fc7e0a4e9e7d9e45b625460f7697bfaeb0788edc",
+  "sourceHash": "95c8f3d9a83a201b3ad49707851fcb458431c80dbd4f6bcd1a032d1f32697f23",
   "engine": {
-    "postext": "1.34.0",
-    "postextPdf": "1.34.0",
+    "postext": "1.57.1",
+    "postextPdf": "1.57.1",
     "source": "npm"
   },
-  "chrome": "155.0.8059.82",
-  "capturedAt": "2026-10-16T13:50:54.868Z",
-  "verified": {
-    "postext": "1.57.0",
-    "postextPdf": "1.57.0",
-    "chrome": "155.0.8059.85",
-    "at": "2026-10-22T19:50:37.000Z"
-  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-23T07:37:57.730Z",
   "variants": {
     "en": {
-      "hash8": "c9421087",
+      "hash8": "f064b7f3",
       "vdtHash": "befe6b0e5fca16cba211cfd372710d730d74c63a",
       "timings": {
-        "importMs": 1984,
-        "fontsMs": 33,
-        "buildMs": 132,
-        "totalMs": 3223,
+        "importMs": 437,
+        "fontsMs": 32,
+        "buildMs": 108,
+        "totalMs": 2859,
         "builds": 1
       },
       "specimen": {
@@ -37,7 +31,7 @@
         "body": {
           "family": "Libre Baskerville",
           "sizePt": 9.4,
-          "leadingPt": 13.600000000000001
+          "leadingPt": 13.6
         },
         "families": [
           "Libre Baskerville",
@@ -126,7 +120,7 @@
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 23057,
+        "bytes": 23055,
         "folio": "223edec1",
         "chapters": [
           {
@@ -342,7 +336,7 @@
         "looseLines": {
           "count": 0,
           "share": 0,
-          "worst": 1.6400000000000001
+          "worst": 1.64
         },
         "raggedLines": {
           "count": 0
@@ -351,19 +345,19 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
     },
     "es": {
-      "hash8": "66c6fd24",
+      "hash8": "91f84c90",
       "vdtHash": "1411220aaa1cd2cebf6c32ef4c490c732961644b",
       "timings": {
-        "importMs": 974,
-        "fontsMs": 35,
-        "buildMs": 241,
-        "totalMs": 2188,
+        "importMs": 485,
+        "fontsMs": 30,
+        "buildMs": 120,
+        "totalMs": 2758,
         "builds": 1
       },
       "specimen": {
@@ -377,7 +371,7 @@
         "body": {
           "family": "Libre Baskerville",
           "sizePt": 9.4,
-          "leadingPt": 13.600000000000001
+          "leadingPt": 13.6
         },
         "families": [
           "Libre Baskerville",
@@ -466,7 +460,7 @@
       },
       "sandbox": {
         "file": "legal-opinion-oscola.postext",
-        "bytes": 23039,
+        "bytes": 23037,
         "folio": "223edec1",
         "chapters": [
           {
@@ -701,7 +695,7 @@
           {
             "check": "chrome",
             "severity": "warn",
-            "detail": "Chrome 155.0.8059.82, the committed capture used 154.0.8037.98: pixels may differ"
+            "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
           }
         ]
       }
