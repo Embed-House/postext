@@ -90,6 +90,15 @@ describe('leastConfigOverride', () => {
     expect(sameConfig(mergeConfigLayers(shared, override), own)).toBe(true);
   });
 
+  it('keeps an empty list inside an entry the general list lacks, and leaves the edition as it was', () => {
+    const shared = { headingStyles: [{ id: 'front' }] } as unknown as PostextConfig;
+    const own = { headingStyles: [{ id: 'cover', header: { elements: [] } }, { id: 'front' }] } as unknown as PostextConfig;
+    const before = JSON.stringify(own);
+    const override = leastConfigOverride(shared, own, identity);
+    expect(JSON.stringify(own)).toBe(before);
+    expect(sameConfig(mergeConfigLayers(shared, override), own)).toBe(true);
+  });
+
   it('keeps an added entry that carries its key alone', () => {
     const shared = { calloutStyles: [{ id: 'note', padding: pt(6) }] } as PostextConfig;
     const own = { calloutStyles: [{ id: 'note', padding: pt(6) }, { id: 'plain' }] } as PostextConfig;
