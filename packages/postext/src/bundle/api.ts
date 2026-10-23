@@ -29,6 +29,10 @@ export interface PostextBundle {
    *  `config` and the locale's overrides, with `customFonts` naming the
    *  bundle's own font files. */
   config: PostextConfig;
+  /** A bundle in several languages: its general settings (#1209), read
+   *  under the same rules as `config`; the difference is this language's
+   *  own. */
+  sharedConfig?: PostextConfig;
   resources: Resource[];
   /** The bundle's font files, one per family variant. */
   fonts: BundleFontFile[];
@@ -84,6 +88,7 @@ export async function openBundle(
     ...(manifest.locales ? { locales: manifest.locales } : {}),
     chapters: read.chapters.map((c, i) => ({ ...c, title: c.title || chapterTitle(c.markdown, i + 1) })),
     config: read.config,
+    ...(read.sharedConfig ? { sharedConfig: read.sharedConfig } : {}),
     resources: read.resources,
     fonts: read.fonts,
     files: zip.files,

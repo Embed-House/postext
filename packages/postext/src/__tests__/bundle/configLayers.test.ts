@@ -186,3 +186,19 @@ describe('locale layer in a bundle', () => {
     expect(opened.config.bodyText?.fontSize).toEqual(pt(12));
   });
 });
+
+describe('openBundle (#1209)', () => {
+  it('answers with the general settings of a bundle in several languages', async () => {
+    const { createBundle, openBundle } = await import('../../bundle/api.js');
+    const sharedConfig = { bodyText: { fontSize: { value: 12, unit: 'pt' } } } as PostextConfig;
+    const { bytes } = await createBundle({
+      name: 'Two', locale: 'es', markdown: '# Uno', config: { ...sharedConfig, locale: 'es' } as PostextConfig, sharedConfig,
+      localized: { ar: { markdown: '# واحد', config: { ...sharedConfig, locale: 'ar', bodyText: { fontSize: { value: 12, unit: 'pt' }, fontFamily: 'Amiri' } } as PostextConfig } },
+    });
+    const ar = await openBundle(bytes, { locale: 'ar' });
+    expect(ar.config.bodyText?.fontFamily).toBe('Amiri');
+    expect(ar.sharedConfig?.bodyText).toEqual({ fontSize: { value: 12, unit: 'pt' } });
+    const single = await openBundle((await createBundle({ name: 'One', markdown: '# One' })).bytes);
+    expect(single.sharedConfig).toBeUndefined();
+  });
+});
