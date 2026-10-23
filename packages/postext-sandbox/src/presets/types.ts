@@ -107,6 +107,9 @@ export interface LoadedPreset {
   /** Chapters in book order, with fresh ids. */
   chapters: Chapter[];
   config: PostextConfig;
+  /** The general settings of a bundle in several languages (#1209), read
+   *  under the same rules as `config`. */
+  sharedConfig?: PostextConfig;
   resources: Resource[];
   blobs: LoadedPresetBlob[];
   fonts: LoadedPresetFont[];

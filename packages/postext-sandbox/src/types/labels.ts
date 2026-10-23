@@ -4105,6 +4105,42 @@ export interface SandboxLabels {
   tocGroupsMark: string;
   tocGroupsMarkTooltip: string;
   settingsModifiedField: string;
+  /** Name of the Design panel's scope switch (#1209). */
+  configScopeLabel: string;
+  /** Scope option: changes go to the book's general settings. */
+  configScopeAll: string;
+  /** Scope option: changes go to the edition on screen; `__language__` is its name. */
+  configScopeEdition: string;
+  /** Under the switch in the general scope; `__languages__` lists the editions. */
+  configScopeAllHint: string;
+  /** Under the switch in the edition scope. */
+  configScopeEditionHint: string;
+  /** A row's value set for this edition only. */
+  configLayerOwn: string;
+  /** A row's value that is the same in every language. */
+  configLayerGeneral: string;
+  /** A general value some editions override; `__languages__` names them. */
+  configLayerKeptBy: string;
+  /** Appended to a layer chip's name: it opens a menu. */
+  configLayerActions: string;
+  /** Drop this edition's own value: back to the general one. */
+  configLayerUseGeneral: string;
+  /** Make this edition's value the general one. */
+  configLayerPromote: string;
+  /** Drop another edition's own value at this setting. */
+  configLayerApplyIn: string;
+  /** Drop every edition's own value at this setting. */
+  configLayerApplyInAll: string;
+  /** Reset of a general value in the edition scope. */
+  configLayerResetHere: string;
+  /** How many settings the edition on screen sets of its own. */
+  configLayerOwnCount: string;
+  /** Drop every own value of the edition on screen. */
+  configLayerUseGeneralAll: string;
+  /** Notice after a general change some editions do not follow. */
+  configLayerShadowed: string;
+  /** Dismiss that notice, keeping their values. */
+  configLayerKeep: string;
   fieldHelp: string;
   decreaseValue: string;
   increaseValue: string;

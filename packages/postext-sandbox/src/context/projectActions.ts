@@ -64,6 +64,7 @@ import { bundleContentLocales, sameLocaleTag } from '../presets/locale.js';
 import { getPresetDraft } from '../storage/presetDrafts.js';
 import { getPresetCover } from '../storage/presetCovers.js';
 import { coverTargetKey, sessionCoverAttempts, thumbnailIfMissing } from '../covers/autoCover.js';
+import { initialSharedConfig, recordSharedConfig } from '../editions/configLayers.js';
 
 export interface ProjectActionDeps {
   dispatch: Dispatch<SandboxAction>;
@@ -348,8 +349,16 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
     // provider's font effect and would otherwise measure with fallbacks.
     // They are the record's, not an edit of the last book's.
     if (fontsChange) setCustomFonts(config.customFonts, { newBook: true });
+    const before = deps.getState();
     dispatch({ type: 'SET_ACTIVE_PROJECT', payload: { id: record.id, sourcePresetId: record.sourcePresetId } });
-    if (wantsConfig) dispatch({ type: 'SET_CONFIG', payload: config });
+    if (wantsConfig) {
+      dispatch({ type: 'SET_CONFIG', payload: config });
+      // A book in several languages: its general settings, and the scope
+      // the reader was editing in when they only switched editions.
+      const shared = recordSharedConfig(record);
+      const scope = before.activeProjectId === record.id && before.configLayers ? before.configLayers.scope : 'all';
+      dispatch({ type: 'SET_CONFIG_LAYERS', payload: shared ? { shared, scope } : null });
+    }
     else if (parts === 'document' && config.customFonts !== undefined) {
       dispatch({ type: 'UPDATE_CONFIG', payload: { customFonts: config.customFonts } });
     }
@@ -592,6 +601,9 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         record.editions = edition.editions;
         record.editionLocales = edition.editionLocales;
         record.editionsRev = Date.now();
+        // The general settings the bundle keeps, the language aside, which
+        // is every edition's own (#1209).
+        if (loaded.sharedConfig) record.sharedConfig = initialSharedConfig(loaded.sharedConfig);
         // What the bundle calls each edition (#968).
         const titles = editionTitlesOf(opened.manifest, edition.editionLocales);
         if (titles) record.editionTitles = titles;
@@ -631,7 +643,10 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       if (s.activeProjectId === id) await deps.flushWorkingSave();
       const record = await getProject(id);
       if (!record) throw new Error('Project not found');
-      const made = withNewEdition(record, locale, { ids: generateChapterId, fallbackLocale: s.locale });
+      // The book gets general settings with its second language: the ones
+      // of the edition it is copied from, its language aside (#1209).
+      const layered = record.sharedConfig || record.editions ? record : { ...record, sharedConfig: initialSharedConfig(record.config) };
+      const made = withNewEdition(layered, locale, { ids: generateChapterId, fallbackLocale: s.locale });
       if (!made) return false;
       const { record: added, applied } = made;
       // The new edition takes the screen; the one it was copied from goes
@@ -695,7 +710,8 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         const config = withDefaultResourceTypes(record.config, s.locale);
         const layouts = await storedCurrentLayouts(record.chapters, config, record.resources, {}, record.start);
         const localized = await localizedOf(record);
-        content = { ...record, config, layouts, ...(localized ? { localized } : {}) };
+        const sharedConfig = localized ? recordSharedConfig(record) : null;
+        content = { ...record, config, layouts, ...(localized ? { localized } : {}), ...(sharedConfig ? { sharedConfig } : {}) };
       } else {
         await deps.flushWorkingSave();
         const cur = deps.getState();
@@ -722,6 +738,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         // The other editions of a project in several languages go along.
         const record = active ? await getProject(active.id).catch(() => null) : null;
         const localized = record ? await localizedOf(record) : undefined;
+        const sharedConfig = localized && record ? recordSharedConfig(record) : null;
         if (localized && meta.locale === undefined) meta = { ...meta, locale: record!.locale };
         content = {
           ...bookOfState(cur),
@@ -730,6 +747,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
           layouts: deps.currentLayouts(),
           ...(thumbnail ? { thumbnail } : {}),
           ...(localized ? { localized } : {}),
+          ...(sharedConfig ? { sharedConfig } : {}),
         };
       }
 

@@ -166,6 +166,9 @@ html {
   --gilt: #e1ab2c;
   --gilt-hover: #edbf4a;
   --accent-blue: #9bb0ff;
+  /* Values one edition of a book sets for itself (Sandbox Design panel,
+     #1209): the accent that is not the brand in this theme. */
+  --edition: var(--accent-blue);
   --vermilion: #ff977e;
   --slate: #aeb3be;
   --rule: #2c313c;
@@ -295,6 +298,7 @@ html {
   --gilt: #694400;
   --gilt-hover: #553700;
   --accent-blue: #223cbc;
+  --edition: var(--gilt);
   --vermilion: #92210c;
   --slate: #484c55;
   --rule: #e2ded4;
