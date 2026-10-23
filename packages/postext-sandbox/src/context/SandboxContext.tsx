@@ -1687,7 +1687,8 @@ export function SandboxProvider({
         })),
         removeProject: (id) => projectActions.remove(id, { offScreen: true }),
         fetchBytes: fetchBundleBytes,
-        importBytes: (bytes, name, origin) => projectActions.importBundleBytes(bytes, name, { origin }),
+        // A recipe published in several languages opens in the link's.
+        importBytes: (bytes, name, origin, lang) => projectActions.importBundleBytes(bytes, name, { origin, ...(lang ? { locale: lang } : {}) }),
         pageOrigin: window.location.origin,
       });
       writeViewHash({ project: opened.projectId });
