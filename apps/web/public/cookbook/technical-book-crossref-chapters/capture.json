@@ -9,6 +9,12 @@
   },
   "chrome": "155.0.8059.85",
   "capturedAt": "2026-10-23T07:42:15.040Z",
+  "verified": {
+    "postext": "1.58.0",
+    "postextPdf": "1.58.0",
+    "chrome": "155.0.8059.85",
+    "at": "2026-10-23T17:35:04.451Z"
+  },
   "variants": {
     "en": {
       "hash8": "aa7f4cf7",
