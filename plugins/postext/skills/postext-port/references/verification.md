@@ -133,7 +133,8 @@ postext docx my-book -o /tmp/my-book.docx            # Word for an editor; impor
   `true`, `{"value":11,"unit":"pt"}`), otherwise as text. Try a value with it, then write the one you keep into
   `build_preset.py`.
 - `--config FILE` is deep-merged over the book's config (a bare config or a whole `preset.json`). It differs from
-  `localized.<lang>.config`, which replaces each top-level key it names.
+  `localized.<lang>.config`, which is merged field by field with lists keyed by `id` (configVersion 21) and replaces
+  each top-level key it names below 21.
 - `--font-dir DIR` (repeatable) is searched before the faces compiled into the executable, the cache
   (`--cache-dir`, `POSTEXT_CACHE_DIR`, default `~/.cache/postext`) and Google Fonts / Fontsource: licensed faces
   kept outside the bundle.
@@ -440,8 +441,9 @@ those lines, or run the script.
   headings, drop-cap sizes, room under a colon line, box cuts, breaks at dashes, breaks at
   compounds' hyphens, ragged breaking, split under a heading, space under paragraph containers;
   below 18, mark styles with no `borderRadius` rounded at 0.2em when the text has a `:mark`; below 19,
-  formatted text broken after a slash only inside a web address).
-  Set `"configVersion": 19` and check the pages again when the config is meant for today's rules.
+  formatted text broken after a slash only inside a web address; below 20, a notation fence read as code; below 21,
+  each `localized.<lang>.config` replacing the shared top-level keys it names).
+  Set `"configVersion": 21` and check the pages again when the config is meant for today's rules.
 - Run each language (`--lang`).
 
 ## 3. Compare with the source, page by page
@@ -616,6 +618,12 @@ await run('sandbox_export', { format: 'pdf', scope: 'book', deliver: 'data' }); 
   or `{ ok: false, error }`; misspelt arguments are refused with the right names.
 - Trying a design value: `sandbox_set_config { changes: [{ path: 'bodyText.fontSize', value: '10.5pt' }] }`, look,
   then `sandbox_undo`. Copy the setting that works into `build_preset.py`: the Sandbox copy is not the source.
+- A book in several languages: `sandbox_get_config` and `sandbox_set_config` take `scope: 'all'` (the general
+  settings every edition reads) or `scope: 'edition'` (the edition on screen; open another with `sandbox_open_book
+  { language }`). Left out, it is the Design panel's scope. `get_config` answers `ownFields`, the paths the edition
+  sets itself; `set_config` with `scope: 'all'` answers `keptBy`, the languages that set the field themselves and
+  keep their value. Try a page, grid or style value with `'all'`, a face or a left/right side with `'edition'`, and
+  copy it into `config` or `localized.<lang>.config` of `build_preset.py` to match (project-format.md §2).
 - A fresh browser profile has empty storage: the import makes a new project there, and nothing reaches the user's
   own browser.
 - `sandbox_import_word` (`dryRun: true` first) runs the Word import of sources.md § Word in the Sandbox.

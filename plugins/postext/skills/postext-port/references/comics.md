@@ -580,9 +580,11 @@ sfx{plate at="77.3% 14.4%" rotate=-11 skew=-8}: Incantations\
 - Speaker ids are the same in every language (`maya`, not `Maya`/`Maite`);
   the character's localized name goes in `cast[].name` through
   `localized.<lang>.config` when it differs.
-- `localized.<lang>.config.comics` replaces the whole `comics` section for
-  that language: repeat the shared keys (gutters, styles, cast) and change
-  only the lettering face, size or `writingMode`.
+- `localized.<lang>.config.comics` is merged over the shared `comics` field
+  by field (configVersion 21): give only the lettering face, size or
+  `writingMode`, and `cast` entries by `id` with their `name`. Below 21 it
+  replaced the whole `comics` section, so the shared keys (gutters, styles,
+  cast) had to be repeated.
 - Japanese and Traditional Chinese balloons are set vertically by default;
   Simplified Chinese horizontally. A Japanese edition of a Western comic:
   `lettering.writingMode: 'horizontal'` when the source's balloons are

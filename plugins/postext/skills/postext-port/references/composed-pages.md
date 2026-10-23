@@ -2858,7 +2858,9 @@ Then:
   in the same order, the same slot names and the same anchors in every
   edition, so frame ids (`cp<n>:<frame>`) and label ids line up.
 - `localized.<lang>.config` only for what the language changes (locale,
-  labels, hyphenation, faces); templates and the library are shared. A
+  labels, hyphenation, faces), merged over the general `config` field by
+  field (configVersion 21, project-format.md §2); templates and the library
+  are shared. A
   template that must differ in one language (a box made wider for German)
   is a sign the template is too tight: raise `maxHeight` or the ladder's
   limits for all.
