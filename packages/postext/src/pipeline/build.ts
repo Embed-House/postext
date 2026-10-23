@@ -3851,6 +3851,9 @@ function placeDocumentPass(
     else sideObstacles.set(side, marks);
     sideObstacleColumn.set(blk, side);
   };
+  /** The band (`page:band`) a keep-with-next rollback last took each
+   *  heading out of, by content index. */
+  const headingLeftBand = new Map<number, string>();
   /**
    * A `span: 'page'` heading with `spanBreak: false` (#539) opens where the
    * text reaches: the band the flow is in closes level under its text (a
@@ -3867,6 +3870,9 @@ function placeDocumentPass(
     const page = doc.pages[cursor.pageIndex]!;
     if (page.partInfo || page.comic || page.composed || currentColumn(doc, cursor).kind === 'span') return false;
     const band = currentBand(page, cursor);
+    // A keep-with-next rollback took the heading out of this band already
+    // (#1219): set at the band's head again, it would be rolled back again.
+    if (headingLeftBand.get(blockIdx) === `${page.index}:${band}`) return false;
     const cols = bandColumns(page, band);
     if (cols.length === 0) return false;
     if (!cols.some((c) => c.blocks.length > 0)) {
@@ -3917,6 +3923,7 @@ function placeDocumentPass(
   const rollbackHeadings = (col: VDTColumn): VDTBlock[] => {
     const popped = rollbackTrailingBlocks(col, doc.blocks, (b) => isFreeHeading(b) && !holdsHeadFloat(col, b));
     for (const p of popped) {
+      if (p.contentIndex !== undefined) headingLeftBand.set(p.contentIndex, `${cursor.pageIndex}:${col.band ?? 0}`);
       const side = sideObstacleColumn.get(p);
       if (!side) continue;
       sideObstacleColumn.delete(p);
