@@ -93,7 +93,7 @@ import { createSandboxHistory, setActiveHistory, type ConfigHistoryMeta, type Sa
 import { installHistoryKeys } from '../history/historyKeys.js';
 import { presetCoverKey, type CoverTarget } from '../covers/autoCover.js';
 import { bytesToDataUrl, listPresetCovers, putPresetCoverIfMissing } from '../storage/presetCovers.js';
-import { rebaseEdition, rebaseEditions, recordSharedConfig, type ConfigLayers, type ConfigScope } from '../editions/configLayers.js';
+import { presetSharedConfig, rebaseEdition, rebaseEditions, recordSharedConfig, type ConfigLayers, type ConfigScope } from '../editions/configLayers.js';
 import { ScopedDispatchContext, StateViewContext } from './configScope.js';
 import {
   BUILTIN_PRESET_ID,
@@ -1610,8 +1610,14 @@ export function SandboxProvider({
     const choice = choosePresetOpen({ summary: provider.summary, requested: locale, current, viewer: s.locale, drafts: draftsRef.current });
     return switchBookRef.current(async () => {
       if (choice.draft) {
-        const draft = await getPresetDraft(choice.draft.key);
+        let draft = await getPresetDraft(choice.draft.key);
         if (draft) {
+          // A draft saved before general settings existed (#1209): it was
+          // based on the preset's own, which its edition reads.
+          if (!draft.sharedConfig && (provider.summary.locales?.length ?? 0) > 1) {
+            const original = await provider.load(draft.locale || choice.locale || s.locale).then(presetSharedConfig).catch(() => null);
+            if (original) draft = { ...draft, sharedConfig: original };
+          }
           applyDraft(draft);
           return true;
         }
