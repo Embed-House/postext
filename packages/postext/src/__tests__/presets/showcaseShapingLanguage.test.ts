@@ -6,7 +6,8 @@
    below `configVersion` 14 (8, or nothing at all), so the engine's own
    migration writes `bodyText.shapingLanguage: 'host'` on the body text
    every one of its editions is laid out with. None is to be stamped again
-   without being laid out again: the stamp is what keeps it. */
+   without being laid out again: the stamp is what keeps it, or, in a bundle
+   stamped today (#1209), the value written out in its configuration. */
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -34,10 +35,11 @@ describe('#770: the showcase bundles are shaped in the language of the host, as 
     expect(ids.flatMap((id) => editionsOf(manifestOf(id))).length).toBeGreaterThanOrEqual(ids.length);
   });
 
-  it.each(ids)('%s: stamped before 14, and every edition reads with the host\'s language', (id) => {
+  it.each(ids)('%s: stamped before 14 or written out, and every edition reads with the host\'s language', (id) => {
     const manifest = manifestOf(id);
     const stamp = manifest.configVersion;
-    expect(stamp === undefined || (typeof stamp === 'number' && stamp < 14), `${id} is stamped ${String(stamp)}`).toBe(true);
+    const pinned = stamp === undefined || (typeof stamp === 'number' && stamp < 14);
+    expect(pinned || stamp === CONFIG_VERSION, `${id} is stamped ${String(stamp)}`).toBe(true);
     expect(CONFIG_VERSION).toBeGreaterThanOrEqual(14);
     const editions = editionsOf(manifest);
     expect(editions.length).toBeGreaterThan(0);
@@ -49,7 +51,9 @@ describe('#770: the showcase bundles are shaped in the language of the host, as 
       expect(resolved.bodyText.shapingLanguage, `${id} ${locale}`).toBe('host');
       expect(shapingLanguageOf(resolved), `${id} ${locale}`).toBeUndefined();
       // The same manifest under today's stamp would be shaped in its own
-      // language: the stamp is what keeps it.
+      // language: the stamp is what keeps it (a bundle stamped today writes
+      // the value out, checked above).
+      if (!pinned) continue;
       const restamped = migrateBundleConfig({}, [manifest.config ?? {}, overrides?.config ?? {}], CONFIG_VERSION);
       expect(shapingLanguageOf(resolveAllConfig({ ...restamped, locale: restamped.locale ?? locale })), `${id} ${locale}`).not.toBeUndefined();
     }

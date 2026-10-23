@@ -233,7 +233,9 @@ export function overridePaths(override: ConfigOverride | undefined | null): stri
  *  out — is left out. `own` is taken as `normalize` gives it. */
 export function leastConfigOverride(general: PostextConfig, own: PostextConfig, normalize: (c: PostextConfig) => PostextConfig): ConfigOverride {
   const target = normalize(own);
-  const override = diffConfigLayers(general, target);
+  // A copy: the diff hands back `own`'s own objects, and pruning them in
+  // place would change the edition it is checked against.
+  const override = structuredClone(diffConfigLayers(general, target));
   const reads = () => sameConfig(normalize(mergeConfigLayers(general, override)), target);
   const prune = (node: Json | unknown[]): void => {
     if (Array.isArray(node)) {
@@ -262,10 +264,20 @@ export function leastConfigOverride(general: PostextConfig, own: PostextConfig, 
         if (!reads()) node[key] = null;
       } else if (Array.isArray(value)) {
         prune(value);
-        if (value.length === 0) delete node[key];
+        if (value.length === 0) {
+          delete node[key];
+          if (!reads()) node[key] = value;
+        }
       } else if (isPlainObject(value) && !isAtom(value)) {
         prune(value);
-        if (Object.keys(value).length === 0) delete node[key];
+        // An empty object (or list) merged into a general one changes
+        // nothing, but inside an entry added whole it is a value of its
+        // own (a heading style's `header: { elements: [] }`, no running
+        // head on its pages).
+        if (Object.keys(value).length === 0) {
+          delete node[key];
+          if (!reads()) node[key] = value;
+        }
       }
     }
   };

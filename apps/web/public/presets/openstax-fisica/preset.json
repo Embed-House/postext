@@ -1,5 +1,6 @@
 {
  "version": 2,
+ "configVersion": 21,
  "id": "openstax-fisica",
  "name": "Física universitaria · Physics (OpenStax)",
  "description": "Libro de texto a columna y media con ejemplos resueltos, comprobaciones, tablas y fórmulas · A column-and-a-half textbook with worked examples, checks, tables and formulas",
@@ -76,32 +77,132 @@
   ]
  },
  "config": {
-  "locale": "es",
+  "colorPalette": [
+   {
+    "id": "ink",
+    "name": "Tinta",
+    "value": {
+     "hex": "#1f2328",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "paper",
+    "name": "Papel",
+    "value": {
+     "hex": "#ffffff",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "white",
+    "name": "Blanco",
+    "value": {
+     "hex": "#ffffff",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "band",
+    "name": "Azul del libro",
+    "value": {
+     "hex": "#005a8c",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "accent",
+    "name": "Naranja de ejemplos",
+    "value": {
+     "hex": "#d9822b",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "tint",
+    "name": "Fondo de recuadros",
+    "value": {
+     "hex": "#e8f1f7",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "grey",
+    "name": "Fondo de comprobaciones",
+    "value": {
+     "hex": "#f3f4f6",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "rule",
+    "name": "Filetes",
+    "value": {
+     "hex": "#c9ced3",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "muted",
+    "name": "Gris de notas",
+    "value": {
+     "hex": "#5f6b74",
+     "model": "hex"
+    }
+   }
+  ],
+  "resourceTypes": [
+   {
+    "id": "figure",
+    "shortLabel": "fig.",
+    "numberingTemplate": "{h1}.{n}",
+    "resetOn": "h1",
+    "counterFormat": "decimal",
+    "defaultPlacement": {
+     "position": "auto",
+     "span": "column",
+     "width": 1
+    }
+   },
+   {
+    "id": "table",
+    "numberingTemplate": "{h1}.{n}",
+    "resetOn": "h1",
+    "counterFormat": "decimal",
+    "defaultPlacement": {
+     "position": "auto",
+     "span": "column"
+    },
+    "captionStyle": {
+     "position": "above"
+    }
+   }
+  ],
   "page": {
    "sizePreset": "custom",
    "width": {
-    "value": 210.0,
+    "value": 210,
     "unit": "mm"
    },
    "height": {
-    "value": 275.0,
+    "value": 275,
     "unit": "mm"
    },
    "margins": {
     "top": {
-     "value": 24.0,
+     "value": 24,
      "unit": "mm"
     },
     "bottom": {
-     "value": 22.0,
+     "value": 22,
      "unit": "mm"
     },
     "left": {
-     "value": 20.0,
+     "value": 20,
      "unit": "mm"
     },
     "right": {
-     "value": 16.0,
+     "value": 16,
      "unit": "mm"
     },
     "mirror": true
@@ -117,12 +218,14 @@
   "layout": {
    "layoutType": "oneAndHalf",
    "gutterWidth": {
-    "value": 7.0,
+    "value": 7,
     "unit": "mm"
    },
-   "sideColumnPercent": 30.0,
+   "sideColumnPercent": 30,
    "sideColumnRole": "floats",
-   "sideColumnSide": "outer"
+   "sideColumnSide": "outer",
+   "boxChildSplitMinLines": 1,
+   "floatsUnderOpener": false
   },
   "bodyText": {
    "fontFamily": "Source Serif 4",
@@ -164,12 +267,19 @@
    "referenceBold": false,
    "referenceItalic": false,
    "hyphenation": {
-    "enabled": true,
-    "locale": "es"
+    "enabled": true
    },
    "avoidWidows": true,
    "avoidOrphans": true,
-   "optimalLineBreaking": true
+   "optimalLineBreaking": true,
+   "colonListRoom": "line",
+   "optimalRagged": false,
+   "paragraphContainerSpacing": "add",
+   "breakAfterHyphens": false,
+   "scriptContext": false,
+   "shapingLanguage": "host",
+   "paragraphStylesInBoxes": "document",
+   "breakAfterSlashes": false
   },
   "headings": {
    "fontFamily": "Source Sans 3",
@@ -263,7 +373,7 @@
           },
           "size": {
            "width": {
-            "value": 174.0,
+            "value": 174,
             "unit": "mm"
            },
            "height": "auto"
@@ -401,7 +511,13 @@
       "unit": "pt"
      }
     }
-   ]
+   ],
+   "keepWithNextSplit": "fill",
+   "balancing": {
+    "maxLinesBeforeLoose": 4,
+    "stretchAfterWideFloats": "always",
+    "trailingStep": "grid"
+   }
   },
   "headingStyles": [
    {
@@ -417,7 +533,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 275.0,
+      "value": 275,
       "unit": "mm"
      },
      "slot": {
@@ -481,7 +597,7 @@
            "unit": "mm"
           },
           "height": {
-           "value": 160.0,
+           "value": 160,
            "unit": "mm"
           }
          }
@@ -498,17 +614,17 @@
          },
          "offset": {
           "x": {
-           "value": 20.0,
+           "value": 20,
            "unit": "mm"
           },
           "y": {
-           "value": 170.0,
+           "value": 170,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -557,7 +673,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -573,7 +689,7 @@
         "italic": false,
         "align": "left",
         "verticalAlign": "middle",
-        "lineHeight": 1.0,
+        "lineHeight": 1,
         "overflow": "wrap",
         "color": {
          "hex": "#ffffff",
@@ -601,7 +717,7 @@
          },
          "size": {
           "width": {
-           "value": 164.0,
+           "value": 164,
            "unit": "mm"
           },
           "height": "auto"
@@ -635,7 +751,7 @@
          },
          "offset": {
           "x": {
-           "value": 20.0,
+           "value": 20,
            "unit": "mm"
           },
           "y": {
@@ -645,7 +761,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -688,19 +804,19 @@
     },
     "margins": {
      "top": {
-      "value": 195.0,
+      "value": 195,
       "unit": "mm"
      },
      "bottom": {
-      "value": 22.0,
+      "value": 22,
       "unit": "mm"
      },
      "left": {
-      "value": 109.0,
+      "value": 109,
       "unit": "mm"
      },
      "right": {
-      "value": 16.0,
+      "value": 16,
       "unit": "mm"
      }
     }
@@ -718,7 +834,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 275.0,
+      "value": 275,
       "unit": "mm"
      },
      "slot": {
@@ -768,7 +884,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -778,7 +894,7 @@
          },
          "size": {
           "width": {
-           "value": 150.0,
+           "value": 150,
            "unit": "mm"
           },
           "height": "auto"
@@ -827,7 +943,7 @@
          },
          "size": {
           "width": {
-           "value": 150.0,
+           "value": 150,
            "unit": "mm"
           },
           "height": "auto"
@@ -843,7 +959,7 @@
         "italic": false,
         "align": "left",
         "verticalAlign": "middle",
-        "lineHeight": 1.0,
+        "lineHeight": 1,
         "overflow": "wrap",
         "color": {
          "hex": "#ffffff",
@@ -871,7 +987,7 @@
          },
          "size": {
           "width": {
-           "value": 150.0,
+           "value": 150,
            "unit": "mm"
           },
           "height": "auto"
@@ -951,7 +1067,7 @@
          },
          "size": {
           "width": {
-           "value": 150.0,
+           "value": 150,
            "unit": "mm"
           },
           "height": "auto"
@@ -985,7 +1101,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -995,7 +1111,7 @@
          },
          "size": {
           "width": {
-           "value": 150.0,
+           "value": 150,
            "unit": "mm"
           },
           "height": "auto"
@@ -1029,7 +1145,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -1039,7 +1155,7 @@
          },
          "size": {
           "width": {
-           "value": 150.0,
+           "value": 150,
            "unit": "mm"
           },
           "height": "auto"
@@ -1157,7 +1273,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1299,7 +1415,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1377,7 +1493,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 154.0,
+      "value": 154,
       "unit": "mm"
      },
      "slot": {
@@ -1402,11 +1518,11 @@
          },
          "size": {
           "width": {
-           "value": 216.0,
+           "value": 216,
            "unit": "mm"
           },
           "height": {
-           "value": 123.0,
+           "value": 123,
            "unit": "mm"
           }
          }
@@ -1427,7 +1543,7 @@
            "unit": "mm"
           },
           "y": {
-           "value": 120.0,
+           "value": 120,
            "unit": "mm"
           }
          },
@@ -1461,17 +1577,17 @@
          },
          "offset": {
           "x": {
-           "value": 20.0,
+           "value": 20,
            "unit": "mm"
           },
           "y": {
-           "value": 129.0,
+           "value": 129,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1520,7 +1636,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1564,7 +1680,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1604,7 +1720,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 139.0,
+      "value": 139,
       "unit": "mm"
      },
      "slot": {
@@ -1629,11 +1745,11 @@
          },
          "size": {
           "width": {
-           "value": 216.0,
+           "value": 216,
            "unit": "mm"
           },
           "height": {
-           "value": 108.0,
+           "value": 108,
            "unit": "mm"
           }
          }
@@ -1654,7 +1770,7 @@
            "unit": "mm"
           },
           "y": {
-           "value": 105.0,
+           "value": 105,
            "unit": "mm"
           }
          },
@@ -1688,17 +1804,17 @@
          },
          "offset": {
           "x": {
-           "value": 20.0,
+           "value": 20,
            "unit": "mm"
           },
           "y": {
-           "value": 114.0,
+           "value": 114,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1747,7 +1863,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1791,7 +1907,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1856,7 +1972,7 @@
          },
          "size": {
           "width": {
-           "value": 216.0,
+           "value": 216,
            "unit": "mm"
           },
           "height": {
@@ -1915,7 +2031,7 @@
          },
          "offset": {
           "x": {
-           "value": 20.0,
+           "value": 20,
            "unit": "mm"
           },
           "y": {
@@ -1925,7 +2041,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -1974,7 +2090,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -2018,7 +2134,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -2083,7 +2199,7 @@
          },
          "size": {
           "width": {
-           "value": 216.0,
+           "value": 216,
            "unit": "mm"
           },
           "height": {
@@ -2142,7 +2258,7 @@
          },
          "offset": {
           "x": {
-           "value": 20.0,
+           "value": 20,
            "unit": "mm"
           },
           "y": {
@@ -2152,7 +2268,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -2201,7 +2317,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -2245,7 +2361,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": "auto"
@@ -3030,7 +3146,7 @@
        },
        "offset": {
         "x": {
-         "value": 20.0,
+         "value": 20,
          "unit": "mm"
         },
         "y": {
@@ -3040,7 +3156,7 @@
        },
        "size": {
         "width": {
-         "value": 174.0,
+         "value": 174,
          "unit": "mm"
         },
         "height": "auto"
@@ -3079,11 +3195,11 @@
       },
       "offset": {
        "x": {
-        "value": 16.0,
+        "value": 16,
         "unit": "mm"
        },
        "y": {
-        "value": 14.0,
+        "value": 14,
         "unit": "mm"
        }
       },
@@ -3122,11 +3238,11 @@
       },
       "offset": {
        "x": {
-        "value": 25.0,
+        "value": 25,
         "unit": "mm"
        },
        "y": {
-        "value": 14.0,
+        "value": 14,
         "unit": "mm"
        }
       },
@@ -3168,11 +3284,11 @@
       },
       "offset": {
        "x": {
-        "value": -25.0,
+        "value": -25,
         "unit": "mm"
        },
        "y": {
-        "value": 14.0,
+        "value": 14,
         "unit": "mm"
        }
       },
@@ -3184,7 +3300,6 @@
        "height": "auto"
       }
      },
-     "content": "Física universitaria · Volumen 1",
      "fontFamily": "Source Sans 3",
      "fontSize": {
       "value": 8,
@@ -3214,11 +3329,11 @@
       },
       "offset": {
        "x": {
-        "value": -16.0,
+        "value": -16,
         "unit": "mm"
        },
        "y": {
-        "value": 14.0,
+        "value": 14,
         "unit": "mm"
        }
       },
@@ -3265,7 +3380,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": -13.0,
+        "value": -13,
         "unit": "mm"
        }
       },
@@ -3300,7 +3415,7 @@
   },
   "math": {
    "enabled": true,
-   "fontSizeScale": 1.0,
+   "fontSizeScale": 1.1312217194570136,
    "marginTop": {
     "value": 6,
     "unit": "pt"
@@ -3412,114 +3527,6 @@
     "paletteId": "band"
    }
   },
-  "colorPalette": [
-   {
-    "id": "ink",
-    "name": "Tinta",
-    "value": {
-     "hex": "#1f2328",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "paper",
-    "name": "Papel",
-    "value": {
-     "hex": "#ffffff",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "white",
-    "name": "Blanco",
-    "value": {
-     "hex": "#ffffff",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "band",
-    "name": "Azul del libro",
-    "value": {
-     "hex": "#005a8c",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "accent",
-    "name": "Naranja de ejemplos",
-    "value": {
-     "hex": "#d9822b",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "tint",
-    "name": "Fondo de recuadros",
-    "value": {
-     "hex": "#e8f1f7",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "grey",
-    "name": "Fondo de comprobaciones",
-    "value": {
-     "hex": "#f3f4f6",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "rule",
-    "name": "Filetes",
-    "value": {
-     "hex": "#c9ced3",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "muted",
-    "name": "Gris de notas",
-    "value": {
-     "hex": "#5f6b74",
-     "model": "hex"
-    }
-   }
-  ],
-  "resourceTypes": [
-   {
-    "id": "figure",
-    "name": "Figura",
-    "namePlural": "Figuras",
-    "shortLabel": "fig.",
-    "captionPrefix": "Figura",
-    "numberingTemplate": "{h1}.{n}",
-    "resetOn": "h1",
-    "counterFormat": "decimal",
-    "defaultPlacement": {
-     "position": "auto",
-     "span": "column",
-     "width": 1
-    }
-   },
-   {
-    "id": "table",
-    "name": "Tabla",
-    "namePlural": "Tablas",
-    "shortLabel": "tabla",
-    "captionPrefix": "Tabla",
-    "numberingTemplate": "{h1}.{n}",
-    "resetOn": "h1",
-    "counterFormat": "decimal",
-    "defaultPlacement": {
-     "position": "auto",
-     "span": "column"
-    },
-    "captionStyle": {
-     "position": "above"
-    }
-   }
-  ],
   "pdfGeneration": {
    "outlines": true
   },
@@ -3553,275 +3560,43 @@
      "Physics · Chapters 1 and 2: What is Physics?"
     ]
    }
+  },
+  "crossRefs": {
+   "breakLabels": false
   }
  },
  "localized": {
   "es": {
    "config": {
-    "locale": "es",
-    "bodyText": {
-     "fontFamily": "Source Serif 4",
-     "fontSize": {
-      "value": 10.2,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 14.2,
-      "unit": "pt"
-     },
-     "textAlign": "justify",
-     "firstLineIndent": {
-      "value": 0,
-      "unit": "mm"
-     },
-     "indentAfterHeading": false,
-     "paragraphSpacing": true,
-     "color": {
-      "hex": "#1f2328",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1f2328",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1f2328",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceColor": {
-      "hex": "#005a8c",
-      "model": "hex",
-      "paletteId": "band"
-     },
-     "referenceBold": false,
-     "referenceItalic": false,
-     "hyphenation": {
-      "enabled": true,
-      "locale": "es"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true,
-     "optimalLineBreaking": true
-    },
-    "header": {
-     "elements": [
-      {
-       "kind": "text",
-       "id": "folioEven",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-left"
-        },
-        "offset": {
-         "x": {
-          "value": 16.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 14.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": "auto",
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Source Sans 3",
-       "fontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "left",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#1f2328",
-        "model": "hex",
-        "paletteId": "ink"
-       },
-       "parity": "even",
-       "pages": "body"
-      },
-      {
-       "kind": "text",
-       "id": "chapterEven",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-left"
-        },
-        "offset": {
-         "x": {
-          "value": 25.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 14.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 130,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "{chapterTitle}",
-       "fontFamily": "Source Sans 3",
-       "fontSize": {
-        "value": 8,
-        "unit": "pt"
-       },
-       "fontWeight": 400,
-       "italic": false,
-       "align": "left",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#5f6b74",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "parity": "even",
-       "pages": "body"
-      },
-      {
-       "kind": "text",
-       "id": "bookOdd",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-right"
-        },
-        "offset": {
-         "x": {
-          "value": -25.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 14.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 130,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "Física universitaria · Volumen 1",
-       "fontFamily": "Source Sans 3",
-       "fontSize": {
-        "value": 8,
-        "unit": "pt"
-       },
-       "fontWeight": 400,
-       "italic": false,
-       "align": "right",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#5f6b74",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "parity": "odd",
-       "pages": "body"
-      },
-      {
-       "kind": "text",
-       "id": "folioOdd",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-right"
-        },
-        "offset": {
-         "x": {
-          "value": -16.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 14.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": "auto",
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Source Sans 3",
-       "fontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "right",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#1f2328",
-        "model": "hex",
-        "paletteId": "ink"
-       },
-       "parity": "odd",
-       "pages": "body"
-      }
-     ]
-    },
     "resourceTypes": [
      {
-      "id": "figure",
       "name": "Figura",
       "namePlural": "Figuras",
-      "shortLabel": "fig.",
       "captionPrefix": "Figura",
-      "numberingTemplate": "{h1}.{n}",
-      "resetOn": "h1",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "column",
-       "width": 1
-      }
+      "id": "figure"
      },
      {
-      "id": "table",
       "name": "Tabla",
       "namePlural": "Tablas",
       "shortLabel": "tabla",
       "captionPrefix": "Tabla",
-      "numberingTemplate": "{h1}.{n}",
-      "resetOn": "h1",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "column"
-      },
-      "captionStyle": {
-       "position": "above"
-      }
+      "id": "table"
      }
-    ]
+    ],
+    "bodyText": {
+     "hyphenation": {
+      "locale": "es"
+     }
+    },
+    "header": {
+     "elements": [
+      {
+       "content": "Física universitaria · Volumen 1",
+       "id": "bookOdd"
+      }
+     ]
+    },
+    "locale": "es"
    },
    "resources": [
     {
@@ -3834,270 +3609,36 @@
   },
   "en": {
    "config": {
-    "locale": "en-us",
-    "bodyText": {
-     "fontFamily": "Source Serif 4",
-     "fontSize": {
-      "value": 10.2,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 14.2,
-      "unit": "pt"
-     },
-     "textAlign": "justify",
-     "firstLineIndent": {
-      "value": 0,
-      "unit": "mm"
-     },
-     "indentAfterHeading": false,
-     "paragraphSpacing": true,
-     "color": {
-      "hex": "#1f2328",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1f2328",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1f2328",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceColor": {
-      "hex": "#005a8c",
-      "model": "hex",
-      "paletteId": "band"
-     },
-     "referenceBold": false,
-     "referenceItalic": false,
-     "hyphenation": {
-      "enabled": true,
-      "locale": "en-us"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true,
-     "optimalLineBreaking": true
-    },
-    "header": {
-     "elements": [
-      {
-       "kind": "text",
-       "id": "folioEven",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-left"
-        },
-        "offset": {
-         "x": {
-          "value": 16.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 14.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": "auto",
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Source Sans 3",
-       "fontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "left",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#1f2328",
-        "model": "hex",
-        "paletteId": "ink"
-       },
-       "parity": "even",
-       "pages": "body"
-      },
-      {
-       "kind": "text",
-       "id": "chapterEven",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-left"
-        },
-        "offset": {
-         "x": {
-          "value": 25.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 14.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 130,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "{chapterTitle}",
-       "fontFamily": "Source Sans 3",
-       "fontSize": {
-        "value": 8,
-        "unit": "pt"
-       },
-       "fontWeight": 400,
-       "italic": false,
-       "align": "left",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#5f6b74",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "parity": "even",
-       "pages": "body"
-      },
-      {
-       "kind": "text",
-       "id": "bookOdd",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-right"
-        },
-        "offset": {
-         "x": {
-          "value": -25.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 14.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 130,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "Physics · Chapters 1 and 2: What is Physics?",
-       "fontFamily": "Source Sans 3",
-       "fontSize": {
-        "value": 8,
-        "unit": "pt"
-       },
-       "fontWeight": 400,
-       "italic": false,
-       "align": "right",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#5f6b74",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "parity": "odd",
-       "pages": "body"
-      },
-      {
-       "kind": "text",
-       "id": "folioOdd",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-right"
-        },
-        "offset": {
-         "x": {
-          "value": -16.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 14.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": "auto",
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Source Sans 3",
-       "fontSize": {
-        "value": 9,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "right",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#1f2328",
-        "model": "hex",
-        "paletteId": "ink"
-       },
-       "parity": "odd",
-       "pages": "body"
-      }
-     ]
-    },
     "resourceTypes": [
      {
-      "id": "figure",
       "name": "Figure",
       "namePlural": "Figures",
-      "shortLabel": "fig.",
       "captionPrefix": "Figure",
-      "numberingTemplate": "{h1}.{n}",
-      "resetOn": "h1",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "column",
-       "width": 1
-      }
+      "id": "figure"
      },
      {
-      "id": "table",
       "name": "Table",
       "namePlural": "Tables",
       "shortLabel": "table",
       "captionPrefix": "Table",
-      "numberingTemplate": "{h1}.{n}",
-      "resetOn": "h1",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "column"
-      },
-      "captionStyle": {
-       "position": "above"
-      }
+      "id": "table"
      }
-    ]
+    ],
+    "bodyText": {
+     "hyphenation": {
+      "locale": "en-us"
+     },
+     "breakAfterDashes": false
+    },
+    "header": {
+     "elements": [
+      {
+       "content": "Physics · Chapters 1 and 2: What is Physics?",
+       "id": "bookOdd"
+      }
+     ]
+    },
+    "locale": "en-us"
    },
    "resources": [
     {

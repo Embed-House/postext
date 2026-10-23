@@ -25,7 +25,7 @@ import editorial as ed  # noqa: E402
 import gutenberg as g  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from _common import build_spines as build_spines_of, spine_thickness_mm  # noqa: E402
+from _common import build_spines as build_spines_of, layer_configs, spine_thickness_mm  # noqa: E402
 
 # Phrases the design repeats that are form, not content: the title, the
 # author or a brand line in a running head (#849, `contentInConfig`).
@@ -1135,6 +1135,7 @@ def main() -> None:
         shutil.copyfile(thumb, os.path.join(OUT, "thumbnail.jpg"))
     else:
         print("note: no thumbnail.jpg next to build.py (render the cover page and drop it there)", file=sys.stderr)
+    layer_configs(OUT)
     write_fingerprint()
     register(entry)
     size = sum(os.path.getsize(os.path.join(dp, f)) for dp, _, fs in os.walk(OUT) for f in fs)

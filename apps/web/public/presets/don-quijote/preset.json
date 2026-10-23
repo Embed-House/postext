@@ -1,5 +1,6 @@
 {
  "version": 2,
+ "configVersion": 21,
  "id": "don-quijote",
  "name": "Don Quijote · Gustave Doré",
  "description": "Edición literaria a columna y media con glosas al margen y láminas de Doré · A column-and-a-half literary edition with margin glosses and Doré's plates",
@@ -179,32 +180,100 @@
   ]
  },
  "config": {
-  "locale": "es",
+  "colorPalette": [
+   {
+    "id": "ink",
+    "name": "Tinta",
+    "value": {
+     "hex": "#1f1a17",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "accent",
+    "name": "Rojo de rúbricas",
+    "value": {
+     "hex": "#7f2a26",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "cream",
+    "name": "Crema de portadillas",
+    "value": {
+     "hex": "#f5f0e6",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "rule",
+    "name": "Filetes",
+    "value": {
+     "hex": "#a59a8b",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "muted",
+    "name": "Gris de notas",
+    "value": {
+     "hex": "#6b625a",
+     "model": "hex"
+    }
+   }
+  ],
+  "resourceTypes": [
+   {
+    "id": "figure",
+    "numberingTemplate": "{n}",
+    "resetOn": "never",
+    "counterFormat": "roman-upper",
+    "defaultPlacement": {
+     "position": "auto",
+     "span": "page",
+     "width": 1
+    }
+   },
+   {
+    "id": "ornament",
+    "shortLabel": "",
+    "captionPrefix": "",
+    "numberingTemplate": "{n}",
+    "resetOn": "never",
+    "counterFormat": "decimal",
+    "defaultPlacement": {
+     "position": "here",
+     "span": "column",
+     "width": 0.8,
+     "align": "center"
+    }
+   }
+  ],
   "page": {
    "sizePreset": "custom",
    "width": {
-    "value": 155.0,
+    "value": 155,
     "unit": "mm"
    },
    "height": {
-    "value": 235.0,
+    "value": 235,
     "unit": "mm"
    },
    "margins": {
     "top": {
-     "value": 22.0,
+     "value": 22,
      "unit": "mm"
     },
     "bottom": {
-     "value": 20.0,
+     "value": 20,
      "unit": "mm"
     },
     "left": {
-     "value": 18.0,
+     "value": 18,
      "unit": "mm"
     },
     "right": {
-     "value": 15.0,
+     "value": 15,
      "unit": "mm"
     },
     "mirror": true
@@ -220,12 +289,16 @@
   "layout": {
    "layoutType": "oneAndHalf",
    "gutterWidth": {
-    "value": 6.0,
+    "value": 6,
     "unit": "mm"
    },
-   "sideColumnPercent": 26.0,
+   "sideColumnPercent": 26,
    "sideColumnRole": "floats",
-   "sideColumnSide": "outer"
+   "sideColumnSide": "outer",
+   "inlineResourceGap": "above",
+   "boxChildSplitMinLines": 1,
+   "floatsUnderOpener": false,
+   "inlineCaptionSide": false
   },
   "bodyText": {
    "fontFamily": "Alegreya",
@@ -267,12 +340,19 @@
    "referenceBold": false,
    "referenceItalic": true,
    "hyphenation": {
-    "enabled": true,
-    "locale": "es"
+    "enabled": true
    },
    "avoidWidows": true,
    "avoidOrphans": true,
-   "optimalLineBreaking": true
+   "optimalLineBreaking": true,
+   "breakAfterDashes": false,
+   "optimalRagged": false,
+   "paragraphContainerSpacing": "add",
+   "breakAfterHyphens": false,
+   "scriptContext": false,
+   "shapingLanguage": "host",
+   "paragraphStylesInBoxes": "document",
+   "breakAfterSlashes": false
   },
   "headings": {
    "fontFamily": "Playfair Display",
@@ -327,13 +407,12 @@
           },
           "size": {
            "width": {
-            "value": 122.0,
+            "value": 122,
             "unit": "mm"
            },
            "height": "auto"
           }
          },
-         "content": "Capítulo {number}",
          "fontFamily": "Alegreya SC",
          "fontSize": {
           "value": 11,
@@ -375,7 +454,7 @@
           },
           "size": {
            "width": {
-            "value": 122.0,
+            "value": 122,
             "unit": "mm"
            },
            "height": "auto"
@@ -410,7 +489,7 @@
           },
           "offset": {
            "x": {
-            "value": 52.0,
+            "value": 52,
             "unit": "mm"
            },
            "y": {
@@ -445,7 +524,7 @@
           },
           "offset": {
            "x": {
-            "value": -52.0,
+            "value": -52,
             "unit": "mm"
            },
            "y": {
@@ -491,6 +570,10 @@
           "gap": {
            "value": 1.5,
            "unit": "mm"
+          },
+          "fontSize": {
+           "value": 58.31875000000001,
+           "unit": "pt"
           }
          }
         }
@@ -518,12 +601,17 @@
       "unit": "pt"
      }
     }
-   ]
+   ],
+   "keepWithNextSplit": "fill",
+   "balancing": {
+    "maxLinesBeforeLoose": 4,
+    "stretchAfterWideFloats": "always",
+    "trailingStep": "grid"
+   }
   },
   "headingStyles": [
    {
     "id": "poema",
-    "name": "Capítulo en verso",
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
@@ -552,13 +640,12 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
          }
         },
-        "content": "Capítulo {number}",
         "fontFamily": "Alegreya SC",
         "fontSize": {
          "value": 11,
@@ -600,7 +687,7 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
@@ -635,7 +722,7 @@
          },
          "offset": {
           "x": {
-           "value": 52.0,
+           "value": 52,
            "unit": "mm"
           },
           "y": {
@@ -677,7 +764,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 235.0,
+      "value": 235,
       "unit": "mm"
      },
      "slot": {
@@ -727,17 +814,17 @@
          },
          "offset": {
           "x": {
-           "value": 18.0,
+           "value": 18,
            "unit": "mm"
           },
           "y": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": {
@@ -758,7 +845,7 @@
          },
          "offset": {
           "x": {
-           "value": 18.0,
+           "value": 18,
            "unit": "mm"
           },
           "y": {
@@ -768,7 +855,7 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
@@ -812,7 +899,7 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
@@ -856,7 +943,7 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
@@ -900,7 +987,7 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
@@ -938,19 +1025,19 @@
     },
     "margins": {
      "top": {
-      "value": 165.0,
+      "value": 165,
       "unit": "mm"
      },
      "bottom": {
-      "value": 20.0,
+      "value": 20,
       "unit": "mm"
      },
      "left": {
-      "value": 68.0,
+      "value": 68,
       "unit": "mm"
      },
      "right": {
-      "value": 15.0,
+      "value": 15,
       "unit": "mm"
      }
     }
@@ -968,7 +1055,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 235.0,
+      "value": 235,
       "unit": "mm"
      },
      "slot": {
@@ -1028,7 +1115,7 @@
          },
          "size": {
           "width": {
-           "value": 92.0,
+           "value": 92,
            "unit": "mm"
           },
           "height": {
@@ -1059,7 +1146,7 @@
          },
          "size": {
           "width": {
-           "value": 100.0,
+           "value": 100,
            "unit": "mm"
           },
           "height": "auto"
@@ -1094,7 +1181,7 @@
          },
          "offset": {
           "x": {
-           "value": 41.0,
+           "value": 41,
            "unit": "mm"
           },
           "y": {
@@ -1129,7 +1216,7 @@
          },
          "offset": {
           "x": {
-           "value": -41.0,
+           "value": -41,
            "unit": "mm"
           },
           "y": {
@@ -1139,7 +1226,7 @@
          },
          "size": {
           "width": {
-           "value": 100.0,
+           "value": 100,
            "unit": "mm"
           },
           "height": "auto"
@@ -1177,13 +1264,13 @@
            "unit": "mm"
           },
           "y": {
-           "value": -24.0,
+           "value": -24,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 100.0,
+           "value": 100,
            "unit": "mm"
           },
           "height": "auto"
@@ -1261,7 +1348,7 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
@@ -1296,7 +1383,7 @@
          },
          "offset": {
           "x": {
-           "value": 52.0,
+           "value": 52,
            "unit": "mm"
           },
           "y": {
@@ -1377,6 +1464,10 @@
          "gap": {
           "value": 1.5,
           "unit": "mm"
+         },
+         "fontSize": {
+          "value": 58.31875000000001,
+          "unit": "pt"
          }
         }
        }
@@ -1422,7 +1513,7 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
@@ -1457,7 +1548,7 @@
          },
          "offset": {
           "x": {
-           "value": 52.0,
+           "value": 52,
            "unit": "mm"
           },
           "y": {
@@ -1551,10 +1642,6 @@
     },
     "textAlign": "left",
     "hyphenation": false,
-    "firstLineIndent": {
-     "value": 0,
-     "unit": "mm"
-    },
     "hangingIndent": {
      "value": 4,
      "unit": "mm"
@@ -1790,13 +1877,12 @@
        },
        "size": {
         "width": {
-         "value": 122.0,
+         "value": 122,
          "unit": "mm"
         },
         "height": "auto"
        }
       },
-      "content": "Parte {numberRoman}",
       "fontFamily": "Alegreya SC",
       "fontSize": {
        "value": 11,
@@ -1838,7 +1924,7 @@
        },
        "size": {
         "width": {
-         "value": 122.0,
+         "value": 122,
          "unit": "mm"
         },
         "height": "auto"
@@ -1873,7 +1959,7 @@
        },
        "offset": {
         "x": {
-         "value": 52.0,
+         "value": 52,
          "unit": "mm"
         },
         "y": {
@@ -2051,7 +2137,7 @@
         },
         "size": {
          "width": {
-          "value": 122.0,
+          "value": 122,
           "unit": "mm"
          },
          "height": "auto"
@@ -2099,7 +2185,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": 12.0,
+        "value": 12,
         "unit": "mm"
        }
       },
@@ -2145,7 +2231,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": 12.0,
+        "value": 12,
         "unit": "mm"
        }
       },
@@ -2195,7 +2281,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": -11.0,
+        "value": -11,
         "unit": "mm"
        }
       },
@@ -2240,7 +2326,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": -11.0,
+        "value": -11,
         "unit": "mm"
        }
       },
@@ -2328,81 +2414,6 @@
     "paletteId": "accent"
    }
   },
-  "colorPalette": [
-   {
-    "id": "ink",
-    "name": "Tinta",
-    "value": {
-     "hex": "#1f1a17",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "accent",
-    "name": "Rojo de rúbricas",
-    "value": {
-     "hex": "#7f2a26",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "cream",
-    "name": "Crema de portadillas",
-    "value": {
-     "hex": "#f5f0e6",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "rule",
-    "name": "Filetes",
-    "value": {
-     "hex": "#a59a8b",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "muted",
-    "name": "Gris de notas",
-    "value": {
-     "hex": "#6b625a",
-     "model": "hex"
-    }
-   }
-  ],
-  "resourceTypes": [
-   {
-    "id": "figure",
-    "name": "Lámina",
-    "namePlural": "Láminas",
-    "shortLabel": "lámina",
-    "captionPrefix": "Lámina",
-    "numberingTemplate": "{n}",
-    "resetOn": "never",
-    "counterFormat": "roman-upper",
-    "defaultPlacement": {
-     "position": "auto",
-     "span": "page",
-     "width": 1
-    }
-   },
-   {
-    "id": "ornament",
-    "name": "Viñeta",
-    "namePlural": "Viñetas",
-    "shortLabel": "",
-    "captionPrefix": "",
-    "numberingTemplate": "{n}",
-    "resetOn": "never",
-    "counterFormat": "decimal",
-    "defaultPlacement": {
-     "position": "here",
-     "span": "column",
-     "width": 0.8,
-     "align": "center"
-    }
-   }
-  ],
   "pdfGeneration": {
    "outlines": true
   },
@@ -2431,1541 +2442,80 @@
      "Miguel de Cervantes"
     ]
    }
+  },
+  "tableStyle": {
+   "splitInline": false
+  },
+  "crossRefs": {
+   "breakLabels": false
   }
  },
  "localized": {
   "es": {
    "config": {
-    "locale": "es",
+    "resourceTypes": [
+     {
+      "name": "Lámina",
+      "namePlural": "Láminas",
+      "shortLabel": "lámina",
+      "captionPrefix": "Lámina",
+      "id": "figure"
+     },
+     {
+      "name": "Viñeta",
+      "namePlural": "Viñetas",
+      "id": "ornament"
+     }
+    ],
     "bodyText": {
-     "fontFamily": "Alegreya",
-     "fontSize": {
-      "value": 10.5,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 14,
-      "unit": "pt"
-     },
-     "textAlign": "justify",
-     "firstLineIndent": {
-      "value": 5,
-      "unit": "mm"
-     },
-     "indentAfterHeading": false,
-     "paragraphSpacing": false,
-     "color": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceColor": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceBold": false,
-     "referenceItalic": true,
      "hyphenation": {
-      "enabled": true,
       "locale": "es"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true,
-     "optimalLineBreaking": true
+     }
     },
     "headings": {
-     "fontFamily": "Playfair Display",
-     "color": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "keepWithNext": true,
      "levels": [
       {
-       "level": 1,
-       "numberingTemplate": "{1:I}",
-       "fontSize": {
-        "value": 16,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 20,
-        "unit": "pt"
-       },
-       "span": "page",
-       "breakBefore": {
-        "enabled": true,
-        "parity": "odd"
-       },
        "advancedDesign": {
-        "enabled": true,
-        "minHeight": {
-         "value": 52,
-         "unit": "mm"
-        },
         "slot": {
          "elements": [
           {
-           "kind": "text",
-           "id": "chapterLabel",
-           "placement": {
-            "anchor": {
-             "to": "container",
-             "edge": "top-left"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 2,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 122.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
            "content": "Capítulo {number}",
-           "fontFamily": "Alegreya SC",
-           "fontSize": {
-            "value": 11,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": false,
-           "align": "center",
-           "verticalAlign": "middle",
-           "lineHeight": 1.2,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#7f2a26",
-            "model": "hex",
-            "paletteId": "accent"
-           },
-           "letterSpacing": {
-            "value": 1.2,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "chapterTitle",
-           "placement": {
-            "anchor": {
-             "to": "#chapterLabel",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 3,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 122.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{titleText}",
-           "fontFamily": "Playfair Display",
-           "fontSize": {
-            "value": 15,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": true,
-           "align": "center",
-           "verticalAlign": "middle",
-           "lineHeight": 1.25,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#1f1a17",
-            "model": "hex",
-            "paletteId": "ink"
-           }
-          },
-          {
-           "kind": "rule",
-           "id": "chapterRule",
-           "direction": "horizontal",
-           "placement": {
-            "anchor": {
-             "to": "#chapterTitle",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 52.0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 4,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 18,
-              "unit": "mm"
-             }
-            }
-           },
-           "color": {
-            "hex": "#7f2a26",
-            "model": "hex",
-            "paletteId": "accent"
-           },
-           "thickness": {
-            "value": 0.6,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "lead",
-           "placement": {
-            "anchor": {
-             "to": "#chapterRule",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": -52.0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 5,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 85.84,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{attr.lead}",
-           "fontFamily": "Alegreya",
-           "fontSize": {
-            "value": 10.5,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.333,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#1f1a17",
-            "model": "hex",
-            "paletteId": "ink"
-           },
-           "hyphenate": true,
-           "dropCap": {
-            "lines": 3,
-            "fontFamily": "Playfair Display",
-            "fontWeight": 400,
-            "color": {
-             "hex": "#7f2a26",
-             "model": "hex",
-             "paletteId": "accent"
-            },
-            "gap": {
-             "value": 1.5,
-             "unit": "mm"
-            }
-           }
+           "id": "chapterLabel"
           }
          ]
         }
-       }
-      },
-      {
-       "level": 2,
-       "fontSize": {
-        "value": 12,
-        "unit": "pt"
        },
-       "lineHeight": {
-        "value": 15,
-        "unit": "pt"
-       },
-       "italic": true,
-       "marginTop": {
-        "value": 14,
-        "unit": "pt"
-       },
-       "marginBottom": {
-        "value": 6,
-        "unit": "pt"
-       }
+       "level": 1
       }
      ]
     },
     "headingStyles": [
      {
-      "id": "poema",
-      "name": "Capítulo en verso",
       "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 34,
-        "unit": "mm"
-       },
        "slot": {
         "elements": [
          {
-          "kind": "text",
-          "id": "chapterLabel",
-          "placement": {
-           "anchor": {
-            "to": "container",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 2,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
           "content": "Capítulo {number}",
-          "fontFamily": "Alegreya SC",
-          "fontSize": {
-           "value": 11,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "letterSpacing": {
-           "value": 1.2,
-           "unit": "pt"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "chapterTitle",
-          "placement": {
-           "anchor": {
-            "to": "#chapterLabel",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 3,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{titleText}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 15,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.25,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "rule",
-          "id": "chapterRule",
-          "direction": "horizontal",
-          "placement": {
-           "anchor": {
-            "to": "#chapterTitle",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 52.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 18,
-             "unit": "mm"
-            }
-           }
-          },
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "thickness": {
-           "value": 0.6,
-           "unit": "pt"
-          }
-         }
-        ]
-       }
-      }
-     },
-     {
-      "id": "portada",
-      "name": "Portada",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 235.0,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "box",
-          "id": "coverBg",
-          "placement": {
-           "anchor": {
-            "to": "bleed",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": "fill",
-            "height": "fill"
-           }
-          },
-          "style": {
-           "backgroundColor": {
-            "hex": "#f5f0e6",
-            "model": "hex",
-            "paletteId": "cream"
-           },
-           "borderRadius": {
-            "value": 0,
-            "unit": "mm"
-           }
-          }
-         },
-         {
-          "kind": "image",
-          "id": "coverPlate",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 18.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 16.0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": {
-             "value": 150.2,
-             "unit": "mm"
-            }
-           }
-          },
-          "resourceId": "x-enchantment"
-         },
-         {
-          "kind": "text",
-          "id": "coverTitle",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 18.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 173.2,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{title}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 21,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.12,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "coverAuthor",
-          "placement": {
-           "anchor": {
-            "to": "#coverTitle",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{author}",
-          "fontFamily": "Alegreya SC",
-          "fontSize": {
-           "value": 12,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "coverEdition",
-          "placement": {
-           "anchor": {
-            "to": "#coverAuthor",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.edition}",
-          "fontFamily": "Alegreya",
-          "fontSize": {
-           "value": 8.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#6b625a",
-           "model": "hex",
-           "paletteId": "muted"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "coverIllustrator",
-          "placement": {
-           "anchor": {
-            "to": "#coverEdition",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 1,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.illustrator}",
-          "fontFamily": "Alegreya",
-          "fontSize": {
-           "value": 8.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#6b625a",
-           "model": "hex",
-           "paletteId": "muted"
-          }
+          "id": "chapterLabel"
          }
         ]
        }
       },
-      "header": {
-       "elements": []
-      },
-      "footer": {
-       "elements": []
-      },
-      "layout": {
-       "layoutType": "single"
-      },
-      "margins": {
-       "top": {
-        "value": 165.0,
-        "unit": "mm"
-       },
-       "bottom": {
-        "value": 20.0,
-        "unit": "mm"
-       },
-       "left": {
-        "value": 68.0,
-        "unit": "mm"
-       },
-       "right": {
-        "value": 15.0,
-        "unit": "mm"
-       }
-      }
-     },
-     {
-      "id": "contraportada",
-      "name": "Contraportada",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "breakBefore": {
-       "enabled": true,
-       "parity": "even"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 235.0,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "box",
-          "id": "backBg",
-          "placement": {
-           "anchor": {
-            "to": "bleed",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": "fill",
-            "height": "fill"
-           }
-          },
-          "style": {
-           "backgroundColor": {
-            "hex": "#f5f0e6",
-            "model": "hex",
-            "paletteId": "cream"
-           },
-           "borderRadius": {
-            "value": 0,
-            "unit": "mm"
-           }
-          }
-         },
-         {
-          "kind": "image",
-          "id": "backPlate",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 40,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 92.0,
-             "unit": "mm"
-            },
-            "height": {
-             "value": 69.3,
-             "unit": "mm"
-            }
-           }
-          },
-          "resourceId": "x-back-vignette"
-         },
-         {
-          "kind": "text",
-          "id": "backQuote",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 121.3,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 100.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.quote}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 12,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.35,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "rule",
-          "id": "backRule",
-          "direction": "horizontal",
-          "placement": {
-           "anchor": {
-            "to": "#backQuote",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 41.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 7,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 18,
-             "unit": "mm"
-            }
-           }
-          },
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "thickness": {
-           "value": 0.6,
-           "unit": "pt"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "backBlurb",
-          "placement": {
-           "anchor": {
-            "to": "#backRule",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": -41.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 7,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 100.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.blurb}",
-          "fontFamily": "Alegreya",
-          "fontSize": {
-           "value": 9.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.4,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#6b625a",
-           "model": "hex",
-           "paletteId": "muted"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "backImprint",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "bottom"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": -24.0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 100.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "Postext · postext.dev",
-          "fontFamily": "Alegreya SC",
-          "fontSize": {
-           "value": 9,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "letterSpacing": {
-           "value": 1,
-           "unit": "pt"
-          }
-         }
-        ]
-       }
-      },
-      "header": {
-       "elements": []
-      },
-      "footer": {
-       "elements": []
-      },
-      "layout": {
-       "layoutType": "single"
-      }
-     },
-     {
-      "id": "preliminar",
-      "name": "Preliminar",
-      "numbered": false,
-      "span": "page",
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 52,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "text",
-          "id": "frontTitle",
-          "placement": {
-           "anchor": {
-            "to": "container",
-            "edge": "top"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 6,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{titleText}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 20,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "rule",
-          "id": "frontRule",
-          "direction": "horizontal",
-          "placement": {
-           "anchor": {
-            "to": "#frontTitle",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 52.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 18,
-             "unit": "mm"
-            }
-           }
-          },
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "thickness": {
-           "value": 0.6,
-           "unit": "pt"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "lead",
-          "placement": {
-           "anchor": {
-            "to": "container",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 30,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 85.84,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.lead}",
-          "fontFamily": "Alegreya",
-          "fontSize": {
-           "value": 10.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "left",
-          "verticalAlign": "middle",
-          "lineHeight": 1.333,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          },
-          "hyphenate": true,
-          "dropCap": {
-           "lines": 3,
-           "fontFamily": "Playfair Display",
-           "fontWeight": 400,
-           "color": {
-            "hex": "#7f2a26",
-            "model": "hex",
-            "paletteId": "accent"
-           },
-           "gap": {
-            "value": 1.5,
-            "unit": "mm"
-           }
-          }
-         }
-        ]
-       }
-      }
-     },
-     {
-      "id": "indice",
-      "name": "Índice",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 32,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "text",
-          "id": "frontTitle",
-          "placement": {
-           "anchor": {
-            "to": "container",
-            "edge": "top"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 6,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{titleText}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 20,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "rule",
-          "id": "frontRule",
-          "direction": "horizontal",
-          "placement": {
-           "anchor": {
-            "to": "#frontTitle",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 52.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 18,
-             "unit": "mm"
-            }
-           }
-          },
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "thickness": {
-           "value": 0.6,
-           "unit": "pt"
-          }
-         }
-        ]
-       }
-      },
-      "layout": {
-       "layoutType": "single"
-      }
+      "name": "Capítulo en verso",
+      "id": "poema"
      }
     ],
     "parts": {
-     "breakBefore": {
-      "parity": "odd"
-     },
-     "breakAfter": {
-      "enabled": true,
-      "parity": "odd"
-     },
-     "margins": {
-      "top": {
-       "value": 112,
-       "unit": "mm"
-      },
-      "bottom": {
-       "value": 24,
-       "unit": "mm"
-      },
-      "left": {
-       "value": 34,
-       "unit": "mm"
-      },
-      "right": {
-       "value": 34,
-       "unit": "mm"
-      }
-     },
      "design": {
       "elements": [
        {
-        "kind": "box",
-        "id": "partBg",
-        "placement": {
-         "anchor": {
-          "to": "bleed",
-          "edge": "top-left"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 0,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": "fill",
-          "height": "fill"
-         }
-        },
-        "style": {
-         "backgroundColor": {
-          "hex": "#f5f0e6",
-          "model": "hex",
-          "paletteId": "cream"
-         },
-         "borderRadius": {
-          "value": 0,
-          "unit": "mm"
-         }
-        }
-       },
-       {
-        "kind": "text",
-        "id": "partLabel",
-        "placement": {
-         "anchor": {
-          "to": "page",
-          "edge": "top"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 62,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 122.0,
-           "unit": "mm"
-          },
-          "height": "auto"
-         }
-        },
         "content": "Parte {numberRoman}",
-        "fontFamily": "Alegreya SC",
-        "fontSize": {
-         "value": 11,
-         "unit": "pt"
-        },
-        "fontWeight": 400,
-        "italic": false,
-        "align": "center",
-        "verticalAlign": "middle",
-        "lineHeight": 1.2,
-        "overflow": "wrap",
-        "color": {
-         "hex": "#7f2a26",
-         "model": "hex",
-         "paletteId": "accent"
-        },
-        "letterSpacing": {
-         "value": 1.5,
-         "unit": "pt"
-        }
-       },
-       {
-        "kind": "text",
-        "id": "partTitle",
-        "placement": {
-         "anchor": {
-          "to": "#partLabel",
-          "edge": "below"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 5,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 122.0,
-           "unit": "mm"
-          },
-          "height": "auto"
-         }
-        },
-        "content": "{titleText}",
-        "fontFamily": "Playfair Display",
-        "fontSize": {
-         "value": 30,
-         "unit": "pt"
-        },
-        "fontWeight": 400,
-        "italic": false,
-        "align": "center",
-        "verticalAlign": "middle",
-        "lineHeight": 1.1,
-        "overflow": "wrap",
-        "color": {
-         "hex": "#1f1a17",
-         "model": "hex",
-         "paletteId": "ink"
-        }
-       },
-       {
-        "kind": "rule",
-        "id": "partRule",
-        "direction": "horizontal",
-        "placement": {
-         "anchor": {
-          "to": "#partTitle",
-          "edge": "below"
-         },
-         "offset": {
-          "x": {
-           "value": 52.0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 6,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 18,
-           "unit": "mm"
-          }
-         }
-        },
-        "color": {
-         "hex": "#7f2a26",
-         "model": "hex",
-         "paletteId": "accent"
-        },
-        "thickness": {
-         "value": 0.6,
-         "unit": "pt"
-        }
+        "id": "partLabel"
        }
       ]
-     },
-     "bodyStyle": {
-      "fontFamily": "Alegreya",
-      "fontSize": {
-       "value": 9.5,
-       "unit": "pt"
-      },
-      "lineHeight": {
-       "value": 14,
-       "unit": "pt"
-      },
-      "color": {
-       "hex": "#1f1a17",
-       "model": "hex",
-       "paletteId": "ink"
-      },
-      "textAlign": "left",
-      "numberColor": {
-       "hex": "#7f2a26",
-       "model": "hex",
-       "paletteId": "accent"
-      },
-      "orderedLists": {
-       "numberFormat": "upper-roman",
-       "separator": ".",
-       "gap": {
-        "value": 2.5,
-        "unit": "mm"
-       },
-       "indent": {
-        "value": 9,
-        "unit": "mm"
-       },
-       "fontFamily": "Alegreya SC",
-       "itemSpacing": {
-        "value": 2,
-        "unit": "pt"
-       }
-      }
      }
     },
-    "resourceTypes": [
-     {
-      "id": "figure",
-      "name": "Lámina",
-      "namePlural": "Láminas",
-      "shortLabel": "lámina",
-      "captionPrefix": "Lámina",
-      "numberingTemplate": "{n}",
-      "resetOn": "never",
-      "counterFormat": "roman-upper",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1
-      }
-     },
-     {
-      "id": "ornament",
-      "name": "Viñeta",
-      "namePlural": "Viñetas",
-      "shortLabel": "",
-      "captionPrefix": "",
-      "numberingTemplate": "{n}",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "here",
-       "span": "column",
-       "width": 0.8,
-       "align": "center"
-      }
-     }
-    ]
+    "locale": "es"
    },
    "resources": [
     {
@@ -4140,1536 +2690,69 @@
   },
   "en": {
    "config": {
-    "locale": "en-us",
+    "resourceTypes": [
+     {
+      "name": "Plate",
+      "namePlural": "Plates",
+      "shortLabel": "plate",
+      "captionPrefix": "Plate",
+      "id": "figure"
+     },
+     {
+      "name": "Vignette",
+      "namePlural": "Vignettes",
+      "id": "ornament"
+     }
+    ],
     "bodyText": {
-     "fontFamily": "Alegreya",
-     "fontSize": {
-      "value": 10.5,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 14,
-      "unit": "pt"
-     },
-     "textAlign": "justify",
-     "firstLineIndent": {
-      "value": 5,
-      "unit": "mm"
-     },
-     "indentAfterHeading": false,
-     "paragraphSpacing": false,
-     "color": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceColor": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceBold": false,
-     "referenceItalic": true,
      "hyphenation": {
-      "enabled": true,
       "locale": "en-us"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true,
-     "optimalLineBreaking": true
+     }
     },
     "headings": {
-     "fontFamily": "Playfair Display",
-     "color": {
-      "hex": "#1f1a17",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "keepWithNext": true,
      "levels": [
       {
-       "level": 1,
-       "numberingTemplate": "{1:I}",
-       "fontSize": {
-        "value": 16,
-        "unit": "pt"
-       },
-       "lineHeight": {
-        "value": 20,
-        "unit": "pt"
-       },
-       "span": "page",
-       "breakBefore": {
-        "enabled": true,
-        "parity": "odd"
-       },
        "advancedDesign": {
-        "enabled": true,
-        "minHeight": {
-         "value": 52,
-         "unit": "mm"
-        },
         "slot": {
          "elements": [
           {
-           "kind": "text",
-           "id": "chapterLabel",
-           "placement": {
-            "anchor": {
-             "to": "container",
-             "edge": "top-left"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 2,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 122.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
            "content": "Chapter {number}",
-           "fontFamily": "Alegreya SC",
-           "fontSize": {
-            "value": 11,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": false,
-           "align": "center",
-           "verticalAlign": "middle",
-           "lineHeight": 1.2,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#7f2a26",
-            "model": "hex",
-            "paletteId": "accent"
-           },
-           "letterSpacing": {
-            "value": 1.2,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "chapterTitle",
-           "placement": {
-            "anchor": {
-             "to": "#chapterLabel",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 3,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 122.0,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{titleText}",
-           "fontFamily": "Playfair Display",
-           "fontSize": {
-            "value": 15,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": true,
-           "align": "center",
-           "verticalAlign": "middle",
-           "lineHeight": 1.25,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#1f1a17",
-            "model": "hex",
-            "paletteId": "ink"
-           }
-          },
-          {
-           "kind": "rule",
-           "id": "chapterRule",
-           "direction": "horizontal",
-           "placement": {
-            "anchor": {
-             "to": "#chapterTitle",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": 52.0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 4,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 18,
-              "unit": "mm"
-             }
-            }
-           },
-           "color": {
-            "hex": "#7f2a26",
-            "model": "hex",
-            "paletteId": "accent"
-           },
-           "thickness": {
-            "value": 0.6,
-            "unit": "pt"
-           }
-          },
-          {
-           "kind": "text",
-           "id": "lead",
-           "placement": {
-            "anchor": {
-             "to": "#chapterRule",
-             "edge": "below"
-            },
-            "offset": {
-             "x": {
-              "value": -52.0,
-              "unit": "mm"
-             },
-             "y": {
-              "value": 5,
-              "unit": "mm"
-             }
-            },
-            "size": {
-             "width": {
-              "value": 85.84,
-              "unit": "mm"
-             },
-             "height": "auto"
-            }
-           },
-           "content": "{attr.lead}",
-           "fontFamily": "Alegreya",
-           "fontSize": {
-            "value": 10.5,
-            "unit": "pt"
-           },
-           "fontWeight": 400,
-           "italic": false,
-           "align": "left",
-           "verticalAlign": "middle",
-           "lineHeight": 1.333,
-           "overflow": "wrap",
-           "color": {
-            "hex": "#1f1a17",
-            "model": "hex",
-            "paletteId": "ink"
-           },
-           "hyphenate": true,
-           "dropCap": {
-            "lines": 3,
-            "fontFamily": "Playfair Display",
-            "fontWeight": 400,
-            "color": {
-             "hex": "#7f2a26",
-             "model": "hex",
-             "paletteId": "accent"
-            },
-            "gap": {
-             "value": 1.5,
-             "unit": "mm"
-            }
-           }
+           "id": "chapterLabel"
           }
          ]
         }
-       }
-      },
-      {
-       "level": 2,
-       "fontSize": {
-        "value": 12,
-        "unit": "pt"
        },
-       "lineHeight": {
-        "value": 15,
-        "unit": "pt"
-       },
-       "italic": true,
-       "marginTop": {
-        "value": 14,
-        "unit": "pt"
-       },
-       "marginBottom": {
-        "value": 6,
-        "unit": "pt"
-       }
+       "level": 1
       }
      ]
     },
     "headingStyles": [
      {
-      "id": "poema",
-      "name": "Chapter opening in verse",
       "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 34,
-        "unit": "mm"
-       },
        "slot": {
         "elements": [
          {
-          "kind": "text",
-          "id": "chapterLabel",
-          "placement": {
-           "anchor": {
-            "to": "container",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 2,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
           "content": "Chapter {number}",
-          "fontFamily": "Alegreya SC",
-          "fontSize": {
-           "value": 11,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "letterSpacing": {
-           "value": 1.2,
-           "unit": "pt"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "chapterTitle",
-          "placement": {
-           "anchor": {
-            "to": "#chapterLabel",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 3,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{titleText}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 15,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.25,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "rule",
-          "id": "chapterRule",
-          "direction": "horizontal",
-          "placement": {
-           "anchor": {
-            "to": "#chapterTitle",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 52.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 18,
-             "unit": "mm"
-            }
-           }
-          },
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "thickness": {
-           "value": 0.6,
-           "unit": "pt"
-          }
-         }
-        ]
-       }
-      }
-     },
-     {
-      "id": "portada",
-      "name": "Portada",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 235.0,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "box",
-          "id": "coverBg",
-          "placement": {
-           "anchor": {
-            "to": "bleed",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": "fill",
-            "height": "fill"
-           }
-          },
-          "style": {
-           "backgroundColor": {
-            "hex": "#f5f0e6",
-            "model": "hex",
-            "paletteId": "cream"
-           },
-           "borderRadius": {
-            "value": 0,
-            "unit": "mm"
-           }
-          }
-         },
-         {
-          "kind": "image",
-          "id": "coverPlate",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 18.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 16.0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": {
-             "value": 150.2,
-             "unit": "mm"
-            }
-           }
-          },
-          "resourceId": "x-enchantment"
-         },
-         {
-          "kind": "text",
-          "id": "coverTitle",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 18.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 173.2,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{title}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 21,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.12,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "coverAuthor",
-          "placement": {
-           "anchor": {
-            "to": "#coverTitle",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{author}",
-          "fontFamily": "Alegreya SC",
-          "fontSize": {
-           "value": 12,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "coverEdition",
-          "placement": {
-           "anchor": {
-            "to": "#coverAuthor",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.edition}",
-          "fontFamily": "Alegreya",
-          "fontSize": {
-           "value": 8.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#6b625a",
-           "model": "hex",
-           "paletteId": "muted"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "coverIllustrator",
-          "placement": {
-           "anchor": {
-            "to": "#coverEdition",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 1,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.illustrator}",
-          "fontFamily": "Alegreya",
-          "fontSize": {
-           "value": 8.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#6b625a",
-           "model": "hex",
-           "paletteId": "muted"
-          }
+          "id": "chapterLabel"
          }
         ]
        }
       },
-      "header": {
-       "elements": []
-      },
-      "footer": {
-       "elements": []
-      },
-      "layout": {
-       "layoutType": "single"
-      },
-      "margins": {
-       "top": {
-        "value": 165.0,
-        "unit": "mm"
-       },
-       "bottom": {
-        "value": 20.0,
-        "unit": "mm"
-       },
-       "left": {
-        "value": 68.0,
-        "unit": "mm"
-       },
-       "right": {
-        "value": 15.0,
-        "unit": "mm"
-       }
-      }
-     },
-     {
-      "id": "contraportada",
-      "name": "Contraportada",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "breakBefore": {
-       "enabled": true,
-       "parity": "even"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 235.0,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "box",
-          "id": "backBg",
-          "placement": {
-           "anchor": {
-            "to": "bleed",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": "fill",
-            "height": "fill"
-           }
-          },
-          "style": {
-           "backgroundColor": {
-            "hex": "#f5f0e6",
-            "model": "hex",
-            "paletteId": "cream"
-           },
-           "borderRadius": {
-            "value": 0,
-            "unit": "mm"
-           }
-          }
-         },
-         {
-          "kind": "image",
-          "id": "backPlate",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 40,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 92.0,
-             "unit": "mm"
-            },
-            "height": {
-             "value": 69.3,
-             "unit": "mm"
-            }
-           }
-          },
-          "resourceId": "x-back-vignette"
-         },
-         {
-          "kind": "text",
-          "id": "backQuote",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "top"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 121.3,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 100.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.quote}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 12,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.35,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "rule",
-          "id": "backRule",
-          "direction": "horizontal",
-          "placement": {
-           "anchor": {
-            "to": "#backQuote",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 41.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 7,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 18,
-             "unit": "mm"
-            }
-           }
-          },
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "thickness": {
-           "value": 0.6,
-           "unit": "pt"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "backBlurb",
-          "placement": {
-           "anchor": {
-            "to": "#backRule",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": -41.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 7,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 100.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.blurb}",
-          "fontFamily": "Alegreya",
-          "fontSize": {
-           "value": 9.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.4,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#6b625a",
-           "model": "hex",
-           "paletteId": "muted"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "backImprint",
-          "placement": {
-           "anchor": {
-            "to": "page",
-            "edge": "bottom"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": -24.0,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 100.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "Postext · postext.dev",
-          "fontFamily": "Alegreya SC",
-          "fontSize": {
-           "value": 9,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "letterSpacing": {
-           "value": 1,
-           "unit": "pt"
-          }
-         }
-        ]
-       }
-      },
-      "header": {
-       "elements": []
-      },
-      "footer": {
-       "elements": []
-      },
-      "layout": {
-       "layoutType": "single"
-      }
-     },
-     {
-      "id": "preliminar",
-      "name": "Preliminar",
-      "numbered": false,
-      "span": "page",
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 52,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "text",
-          "id": "frontTitle",
-          "placement": {
-           "anchor": {
-            "to": "container",
-            "edge": "top"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 6,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{titleText}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 20,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": true,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "rule",
-          "id": "frontRule",
-          "direction": "horizontal",
-          "placement": {
-           "anchor": {
-            "to": "#frontTitle",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 52.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 18,
-             "unit": "mm"
-            }
-           }
-          },
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "thickness": {
-           "value": 0.6,
-           "unit": "pt"
-          }
-         },
-         {
-          "kind": "text",
-          "id": "lead",
-          "placement": {
-           "anchor": {
-            "to": "container",
-            "edge": "top-left"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 30,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 85.84,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{attr.lead}",
-          "fontFamily": "Alegreya",
-          "fontSize": {
-           "value": 10.5,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "left",
-          "verticalAlign": "middle",
-          "lineHeight": 1.333,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          },
-          "hyphenate": true,
-          "dropCap": {
-           "lines": 3,
-           "fontFamily": "Playfair Display",
-           "fontWeight": 400,
-           "color": {
-            "hex": "#7f2a26",
-            "model": "hex",
-            "paletteId": "accent"
-           },
-           "gap": {
-            "value": 1.5,
-            "unit": "mm"
-           }
-          }
-         }
-        ]
-       }
-      }
-     },
-     {
-      "id": "indice",
-      "name": "Índice",
-      "numbered": false,
-      "toc": false,
-      "span": "page",
-      "breakBefore": {
-       "enabled": true,
-       "parity": "odd"
-      },
-      "advancedDesign": {
-       "enabled": true,
-       "minHeight": {
-        "value": 32,
-        "unit": "mm"
-       },
-       "slot": {
-        "elements": [
-         {
-          "kind": "text",
-          "id": "frontTitle",
-          "placement": {
-           "anchor": {
-            "to": "container",
-            "edge": "top"
-           },
-           "offset": {
-            "x": {
-             "value": 0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 6,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 122.0,
-             "unit": "mm"
-            },
-            "height": "auto"
-           }
-          },
-          "content": "{titleText}",
-          "fontFamily": "Playfair Display",
-          "fontSize": {
-           "value": 20,
-           "unit": "pt"
-          },
-          "fontWeight": 400,
-          "italic": false,
-          "align": "center",
-          "verticalAlign": "middle",
-          "lineHeight": 1.2,
-          "overflow": "wrap",
-          "color": {
-           "hex": "#1f1a17",
-           "model": "hex",
-           "paletteId": "ink"
-          }
-         },
-         {
-          "kind": "rule",
-          "id": "frontRule",
-          "direction": "horizontal",
-          "placement": {
-           "anchor": {
-            "to": "#frontTitle",
-            "edge": "below"
-           },
-           "offset": {
-            "x": {
-             "value": 52.0,
-             "unit": "mm"
-            },
-            "y": {
-             "value": 4,
-             "unit": "mm"
-            }
-           },
-           "size": {
-            "width": {
-             "value": 18,
-             "unit": "mm"
-            }
-           }
-          },
-          "color": {
-           "hex": "#7f2a26",
-           "model": "hex",
-           "paletteId": "accent"
-          },
-          "thickness": {
-           "value": 0.6,
-           "unit": "pt"
-          }
-         }
-        ]
-       }
-      },
-      "layout": {
-       "layoutType": "single"
-      }
+      "name": "Chapter opening in verse",
+      "id": "poema"
      }
     ],
     "parts": {
-     "breakBefore": {
-      "parity": "odd"
-     },
-     "breakAfter": {
-      "enabled": true,
-      "parity": "odd"
-     },
-     "margins": {
-      "top": {
-       "value": 112,
-       "unit": "mm"
-      },
-      "bottom": {
-       "value": 24,
-       "unit": "mm"
-      },
-      "left": {
-       "value": 34,
-       "unit": "mm"
-      },
-      "right": {
-       "value": 34,
-       "unit": "mm"
-      }
-     },
      "design": {
       "elements": [
        {
-        "kind": "box",
-        "id": "partBg",
-        "placement": {
-         "anchor": {
-          "to": "bleed",
-          "edge": "top-left"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 0,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": "fill",
-          "height": "fill"
-         }
-        },
-        "style": {
-         "backgroundColor": {
-          "hex": "#f5f0e6",
-          "model": "hex",
-          "paletteId": "cream"
-         },
-         "borderRadius": {
-          "value": 0,
-          "unit": "mm"
-         }
-        }
-       },
-       {
-        "kind": "text",
-        "id": "partLabel",
-        "placement": {
-         "anchor": {
-          "to": "page",
-          "edge": "top"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 62,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 122.0,
-           "unit": "mm"
-          },
-          "height": "auto"
-         }
-        },
         "content": "Part {numberRoman}",
-        "fontFamily": "Alegreya SC",
-        "fontSize": {
-         "value": 11,
-         "unit": "pt"
-        },
-        "fontWeight": 400,
-        "italic": false,
-        "align": "center",
-        "verticalAlign": "middle",
-        "lineHeight": 1.2,
-        "overflow": "wrap",
-        "color": {
-         "hex": "#7f2a26",
-         "model": "hex",
-         "paletteId": "accent"
-        },
-        "letterSpacing": {
-         "value": 1.5,
-         "unit": "pt"
-        }
-       },
-       {
-        "kind": "text",
-        "id": "partTitle",
-        "placement": {
-         "anchor": {
-          "to": "#partLabel",
-          "edge": "below"
-         },
-         "offset": {
-          "x": {
-           "value": 0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 5,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 122.0,
-           "unit": "mm"
-          },
-          "height": "auto"
-         }
-        },
-        "content": "{titleText}",
-        "fontFamily": "Playfair Display",
-        "fontSize": {
-         "value": 30,
-         "unit": "pt"
-        },
-        "fontWeight": 400,
-        "italic": false,
-        "align": "center",
-        "verticalAlign": "middle",
-        "lineHeight": 1.1,
-        "overflow": "wrap",
-        "color": {
-         "hex": "#1f1a17",
-         "model": "hex",
-         "paletteId": "ink"
-        }
-       },
-       {
-        "kind": "rule",
-        "id": "partRule",
-        "direction": "horizontal",
-        "placement": {
-         "anchor": {
-          "to": "#partTitle",
-          "edge": "below"
-         },
-         "offset": {
-          "x": {
-           "value": 52.0,
-           "unit": "mm"
-          },
-          "y": {
-           "value": 6,
-           "unit": "mm"
-          }
-         },
-         "size": {
-          "width": {
-           "value": 18,
-           "unit": "mm"
-          }
-         }
-        },
-        "color": {
-         "hex": "#7f2a26",
-         "model": "hex",
-         "paletteId": "accent"
-        },
-        "thickness": {
-         "value": 0.6,
-         "unit": "pt"
-        }
+        "id": "partLabel"
        }
       ]
-     },
-     "bodyStyle": {
-      "fontFamily": "Alegreya",
-      "fontSize": {
-       "value": 9.5,
-       "unit": "pt"
-      },
-      "lineHeight": {
-       "value": 14,
-       "unit": "pt"
-      },
-      "color": {
-       "hex": "#1f1a17",
-       "model": "hex",
-       "paletteId": "ink"
-      },
-      "textAlign": "left",
-      "numberColor": {
-       "hex": "#7f2a26",
-       "model": "hex",
-       "paletteId": "accent"
-      },
-      "orderedLists": {
-       "numberFormat": "upper-roman",
-       "separator": ".",
-       "gap": {
-        "value": 2.5,
-        "unit": "mm"
-       },
-       "indent": {
-        "value": 9,
-        "unit": "mm"
-       },
-       "fontFamily": "Alegreya SC",
-       "itemSpacing": {
-        "value": 2,
-        "unit": "pt"
-       }
-      }
      }
     },
-    "resourceTypes": [
-     {
-      "id": "figure",
-      "name": "Plate",
-      "namePlural": "Plates",
-      "shortLabel": "plate",
-      "captionPrefix": "Plate",
-      "numberingTemplate": "{n}",
-      "resetOn": "never",
-      "counterFormat": "roman-upper",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1
-      }
-     },
-     {
-      "id": "ornament",
-      "name": "Vignette",
-      "namePlural": "Vignettes",
-      "shortLabel": "",
-      "captionPrefix": "",
-      "numberingTemplate": "{n}",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "here",
-       "span": "column",
-       "width": 0.8,
-       "align": "center"
-      }
-     }
-    ]
+    "locale": "en-us"
    },
    "resources": [
     {

@@ -11,6 +11,7 @@ import fontkit from '../../../../postext-pdf/node_modules/@pdf-lib/fontkit/dist/
 import { buildDocument } from '../../pipeline/index.js';
 import { contentOutline } from '../../pipeline/continuation.js';
 import { readBundle } from '../../bundle/codec.js';
+import { mergeConfigLayers } from '../../defaults/configLayers.js';
 import { extractFrontmatter } from '../../frontmatter.js';
 import type { VDTDocument } from '../../index.js';
 
@@ -66,9 +67,9 @@ function bodyLines(doc: VDTDocument, page: number): string[] {
   return doc.pages[page]!.columns.flatMap((c) => c.blocks.flatMap((b) => b.lines.map((l) => l.text)));
 }
 
-/** Each edition's config as the Sandbox opens it: the edition's top-level
- *  keys replace the base ones. */
-const configOf = (lang: string): any => ({ ...manifest.config, ...(manifest.localized[lang]?.config ?? {}) });
+/** Each edition's config as the Sandbox opens it: the edition's override
+ *  over the general settings, field by field (#1209). */
+const configOf = (lang: string): any => mergeConfigLayers(manifest.config, manifest.localized[lang]?.config);
 
 /** The chapter (回) a chapter file holds, `null` for the front and back matter. */
 const chapterNumber = (file: string): number | null => {
@@ -310,10 +311,9 @@ describe('hongloumeng bundle', () => {
     for (const lang of ['zh-Hans', 'en']) {
       const c = configOf(lang);
       expect(c.layout.writingMode ?? 'horizontal-tb', lang).toBe('horizontal-tb');
-      // Each edition restates every key of the base config, so the grid and
-      // the writing mode stay the Traditional edition's.
-      expect(c.cjk, lang).toEqual({});
-      for (const k of Object.keys(manifest.config)) expect(c[k], `${lang} ${k}`).toBeDefined();
+      // The general settings are the Traditional edition's: each other
+      // edition takes the grid out.
+      expect(c.cjk?.grid, lang).toBeUndefined();
     }
   });
 

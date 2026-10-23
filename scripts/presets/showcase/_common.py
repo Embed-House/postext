@@ -179,6 +179,22 @@ def copy_licences(source_fonts_dir: str, out_dir: str, folders: dict[str, str]) 
 # --- bundle bookkeeping -----------------------------------------------------------
 
 
+def layer_configs(out: str, general: str | None = None) -> None:
+    """Rewrite `out/preset.json` of a bundle in several languages as general
+    settings plus a field-level override per language, under today's rules
+    (`scripts/presets/layer-configs.mjs`, #1209). The builders write each
+    language's configuration as top-level keys that replace the shared
+    ones; the script reads every edition through the engine (legacy pins
+    included) and fails when one would read another configuration. Needs
+    the engine built (`pnpm --filter postext build`). `general` names the
+    edition whose whole configuration is the general settings; by default
+    they are what the editions set alike."""
+    import subprocess
+
+    extra = ["--general", general] if general else []
+    subprocess.run(["node", os.path.join(REPO, "scripts", "presets", "layer-configs.mjs"), out, *extra], check=True)
+
+
 def write_fingerprint(out: str) -> None:
     """A static `fingerprint.json` (sha1 of every bundle file) so the sandbox
     can tell a rebuilt bundle from the one it loaded."""

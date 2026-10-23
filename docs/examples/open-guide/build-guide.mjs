@@ -14,12 +14,16 @@
 import { writeFile } from 'node:fs/promises';
 import { registerHooks } from 'node:module';
 
-// The sources use extensionless relative imports (bundler resolution), and
-// the dists do too: retry them with a file extension or `/index`.
+// The sources name their relative imports `.js` (the file is `.ts`), some
+// still leave the extension out, as some dists do: retry them as `.ts`, with
+// a file extension or `/index`.
 registerHooks({
   resolve(specifier, context, next) {
     try { return next(specifier, context); } catch (err) {
       if (!specifier.startsWith('.')) throw err;
+      if (specifier.endsWith('.js')) {
+        try { return next(`${specifier.slice(0, -3)}.ts`, context); } catch { /* next */ }
+      }
       for (const suffix of ['.ts', '.js', '/index.ts', '/index.js']) {
         try { return next(specifier + suffix, context); } catch { /* next */ }
       }
@@ -35,7 +39,8 @@ const { DEFAULT_MARKDOWN_EN, DEFAULT_MARKDOWN_ES } = await load('defaultMarkdown
 const { sampleBook } = await load('book/chapterOps.ts');
 const { buildDefaultResources, SVG_FIGURES, figureBlobId, guideVideoPosters } = await load('defaultResources/index.ts');
 const { coverThumbnailSvg } = await load('defaultResources/cover.ts');
-const { createBundle, zipBundle } = await import(new URL('../../../packages/postext/dist/bundle/index.js', import.meta.url).href);
+const { createBundle, zipBundle, readBundle } = await import(new URL('../../../packages/postext/dist/bundle/index.js', import.meta.url).href);
+const { layerManifest } = await import(new URL('../../../scripts/presets/layer-configs.mjs', import.meta.url).href);
 
 const LOCALES = ['en', 'es'];
 const MARKDOWN = { en: DEFAULT_MARKDOWN_EN, es: DEFAULT_MARKDOWN_ES };
@@ -132,8 +137,10 @@ for (const locale of LOCALES) {
 
 // ---------------------------------------------------------------------------
 // Merge them into one bilingual bundle: English is the base; Spanish brings
-// its chapters, the config keys that differ, and the wording and artwork of
-// each resource.
+// its chapters and the wording and artwork of each resource. The
+// configuration is written as general settings plus what each language sets
+// otherwise, field by field (#1209), so that each edition reads what its
+// own bundle reads.
 
 const en = built.en;
 const es = built.es;
@@ -153,11 +160,6 @@ for (const [path, bytes] of Object.entries(en.files)) {
 
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const sameBytes = (a, b) => a && b && a.length === b.length && a.every((v, i) => v === b[i]);
-
-const configOverrides = {};
-for (const key of new Set([...Object.keys(en.manifest.config ?? {}), ...Object.keys(es.manifest.config ?? {})])) {
-  if (!same(en.manifest.config?.[key], es.manifest.config?.[key])) configOverrides[key] = es.manifest.config?.[key];
-}
 
 const WORDING = ['caption', 'note', 'altText', 'table', 'video'];
 const resourceOverrides = [];
@@ -179,7 +181,7 @@ for (const spec of es.manifest.resources ?? []) {
   if (Object.keys(override).length > 1) resourceOverrides.push(override);
 }
 
-const manifest = {
+const merged = {
   ...en.manifest,
   name: 'The Postext guide · Guía de Postext',
   locale: 'en',
@@ -187,8 +189,15 @@ const manifest = {
   license: 'MIT',
   credits: 'Postext · fonts: Fraunces, Lora, Geist, Geist Mono, Bricolage Grotesque (SIL Open Font License)',
   chapters: chaptersByLocale,
-  localized: { es: { config: configOverrides, resources: resourceOverrides } },
+  localized: { es: { resources: resourceOverrides } },
 };
+const readFrom = (set) => async (path) => {
+  if (!(path in set)) throw new Error(`${path}: not in the bundle`);
+  return set[path];
+};
+const editions = {};
+for (const locale of LOCALES) editions[locale] = (await readBundle(built[locale].manifest, readFrom(built[locale].files), { locale, traceContours: false })).config;
+const { manifest } = await layerManifest(merged, readFrom(files), { editions });
 files['preset.json'] = new TextEncoder().encode(JSON.stringify(manifest, null, 2));
 
 const bytes = zipBundle(files);
@@ -199,5 +208,5 @@ await writeFile(out, bytes);
 const fontCount = fonts.families.reduce((n, f) => n + f.variants.length, 0);
 console.log(`${out.pathname}: ${(bytes.length / 1024).toFixed(0)} KB · ${Object.keys(files).length} files`
   + ` · ${chaptersByLocale.en.length}+${chaptersByLocale.es.length} chapters · ${fontCount} font files`
-  + ` · ${en.manifest.resources.length} resources · ${Object.keys(configOverrides).length} localized config keys`
+  + ` · ${en.manifest.resources.length} resources · ${LOCALES.map((l) => `${l} ${Object.keys(manifest.localized[l]?.config ?? {}).length}`).join(', ')} config keys of their own`
   + ` · ${resourceOverrides.length} localized resources`);
