@@ -384,7 +384,8 @@ const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
 - **`leastConfigOverride(general, own, normalize)`**：同じ上書きから、`normalize`（たとえば`stripConfigDefaults`）を通した後では差の出ない`null`と削除を除いたものです。共通設定の値が`own`の言語の既定値でもある場合がこれに当たります。バンドルを書き出す側はこれを使います。
 - **`commonConfig(configs)`**：すべての設定が同じ値にしているフィールドを返します。オブジェクトはフィールドごとに、キー付きリストは項目ごとに比べます。各版が設定全体を持っている場合、これで共通設定が得られ、`diffConfigLayers`で各版の上書きが得られます。
 - **`overridePaths(override)`**：上書きが設定するすべてのフィールドを、リストの項目をキーで示したパスとして返します（`headings.levels[level=2].fontSize`）。`null`と取り除いた項目もフィールドとして数えます。`sandbox_get_config`が`ownFields`として返すのはこのパスです。
-- **`REMOVE_ENTRY`**は`"$remove"`キーで、**`ConfigOverride`**は上書きの型です。
+- **`REMOVE_ENTRY`**：`"$remove"`キー。
+- **`ConfigOverride`**：上書きの型。
 
 `openBundle`は、読み込んだ版のマージ済みの`config`を返します。`localized`の項目を持つバンドルでは、`readBundle`は`sharedConfig`も返します。同じ規則と同じフォントで読んだ共通設定です。`planBundle`は内容の中で`sharedConfig`を受け取ります。その場合、マニフェストの`config`はそこから書かれ、主言語を含むすべての版が`localized`の上書きとして書かれます。
 

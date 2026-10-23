@@ -384,7 +384,8 @@ const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
 - **`leastConfigOverride(general, own, normalize)`**：同样的覆盖，但去掉那些在`normalize`（例如`stripConfigDefaults`）处理之后不起作用的`null`和移除项，即通用值恰好也是`own`所属语言默认值的情况。文件包写出程序使用的就是它。
 - **`commonConfig(configs)`**：所有配置都设为相同值的字段，对象逐字段比较，带键列表逐条比较。对于各自保存了完整配置的几个版本，它给出通用设置，再由`diffConfigLayers`给出每个版本的覆盖。
 - **`overridePaths(override)`**：覆盖设置的每个字段，以路径表示，列表条目用其键命名（`headings.levels[level=2].fontSize`）。`null`和被移除的条目也算字段。`sandbox_get_config`列为`ownFields`的就是这些路径。
-- **`REMOVE_ENTRY`**是`"$remove"`键，**`ConfigOverride`**是覆盖的类型。
+- **`REMOVE_ENTRY`**：`"$remove"`键。
+- **`ConfigOverride`**：覆盖的类型。
 
 `openBundle`返回所提供版本合并后的`config`。对于带有`localized`项的文件包，`readBundle`还返回`sharedConfig`，即按同样规则、用同样字体读取的通用设置。`planBundle`在其内容中接受`sharedConfig`：此时清单的`config`由它写出，每个版本（包括主要版本）都作为覆盖写入`localized`。
 

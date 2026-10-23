@@ -11,7 +11,7 @@
 import { createElement as h } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import type { PostextConfig, Resource } from 'postext';
+import { mergeConfigLayers, type ConfigOverride, type PostextConfig, type Resource } from 'postext';
 import { SandboxStoreContext } from '../../context/SandboxContext.js';
 import { createDefaultConfig } from '../../context/defaultConfig.js';
 import { createPostextGuideConfig } from '../../context/guideConfig.js';
@@ -38,7 +38,7 @@ const presetIndex = await load<{ presets: Array<{ dir: string }> }>(`${PRESETS}i
 const presets = await Promise.all(
   presetIndex.presets.map(async ({ dir }) => ({
     dir,
-    preset: await load<{ config?: PostextConfig; resources?: Resource[] }>(`${PRESETS}${dir}/preset.json`),
+    preset: await load<{ config?: PostextConfig; resources?: Resource[]; locale?: string; configVersion?: number; localized?: Record<string, { config?: ConfigOverride }> }>(`${PRESETS}${dir}/preset.json`),
   })),
 );
 
@@ -77,7 +77,10 @@ export function books(): Book[] {
     resources: [],
   });
   for (const { dir, preset } of presets) {
-    if (preset.config) out.push({ name: dir, config: preset.config, resources: preset.resources ?? [] });
+    // A bundle in several languages keeps general settings plus each
+    // language's own (#1209): the primary edition is both.
+    const own = (preset.configVersion ?? 0) >= 21 && preset.locale ? preset.localized?.[preset.locale]?.config : undefined;
+    if (preset.config) out.push({ name: dir, config: own ? mergeConfigLayers(preset.config, own) : preset.config, resources: preset.resources ?? [] });
   }
   return out;
 }

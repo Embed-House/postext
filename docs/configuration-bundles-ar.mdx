@@ -384,7 +384,8 @@ const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
 - **`leastConfigOverride(general, own, normalize)`**: الإعدادات الخاصة نفسها دون قيم `null` والحذف التي لا تُحدث فرقًا بعد تشغيل `normalize` (`stripConfigDefaults` مثلًا)، حيث تكون القيمة العامة هي أيضًا القيمة الافتراضية للغة `own`. وهي التي يستعملها كاتب الحزم.
 - **`commonConfig(configs)`**: الحقول التي تضبطها كل الإعدادات على القيمة نفسها، الكائنات حقلًا حقلًا والقوائم ذات المفاتيح مُدخلًا مُدخلًا. وللطبعات التي احتفظت كل منها بإعدادات كاملة، تعطي الإعدادات العامة، ويعطي `diffConfigLayers` الإعدادات الخاصة بكل طبعة.
 - **`overridePaths(override)`**: كل حقل تضبطه الإعدادات الخاصة، على شكل مسار تُسمّى فيه مُدخلات القوائم بمفاتيحها (`headings.levels[level=2].fontSize`). وتُعدّ قيمة `null` والمُدخل المحذوف حقولًا. وهذه هي المسارات التي يسردها `sandbox_get_config` في `ownFields`.
-- **`REMOVE_ENTRY`** هو المفتاح `"$remove"`، و**`ConfigOverride`** نوع الإعدادات الخاصة.
+- **`REMOVE_ENTRY`**: المفتاح `"$remove"`.
+- **`ConfigOverride`**: نوع الإعدادات الخاصة.
 
 يعيد `openBundle` إعدادات `config` المدمجة للطبعة المقدَّمة. ويعيد `readBundle` أيضًا `sharedConfig`، أي الإعدادات العامة مقروءة بالقواعد نفسها وبالخطوط نفسها، للحزمة التي فيها مُدخلات `localized`. ويأخذ `planBundle` الحقل `sharedConfig` في محتواه: فيُكتب منه `config` في البيان، وتُكتب كل طبعة، ومنها الأساسية، إعداداتٍ خاصة في `localized`.
 
