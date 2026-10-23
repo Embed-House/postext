@@ -147,7 +147,7 @@
       },
       "sandbox": {
         "file": "bulaq-framed-page.postext",
-        "bytes": 26379,
+        "bytes": 30982,
         "chapters": [
           {
             "pages": 6,
@@ -372,7 +372,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -512,7 +518,7 @@
       },
       "sandbox": {
         "file": "bulaq-framed-page.postext",
-        "bytes": 26406,
+        "bytes": 30969,
         "chapters": [
           {
             "pages": 6,
@@ -737,7 +743,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

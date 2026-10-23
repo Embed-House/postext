@@ -158,7 +158,7 @@
       },
       "sandbox": {
         "file": "two-tier-tankobon.postext",
-        "bytes": 23489,
+        "bytes": 30386,
         "folio": "95c7420e",
         "chapters": [
           {
@@ -341,7 +341,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -492,7 +498,7 @@
       },
       "sandbox": {
         "file": "two-tier-tankobon.postext",
-        "bytes": 23511,
+        "bytes": 30390,
         "folio": "95c7420e",
         "chapters": [
           {
@@ -675,7 +681,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

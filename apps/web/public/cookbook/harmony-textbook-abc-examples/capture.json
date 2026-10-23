@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "harmony-textbook-abc-examples.postext",
-        "bytes": 12680,
+        "bytes": 15798,
         "folio": "d719dace",
         "chapters": [
           {
@@ -391,6 +391,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 0.0 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -505,7 +510,7 @@
       },
       "sandbox": {
         "file": "harmony-textbook-abc-examples.postext",
-        "bytes": 12830,
+        "bytes": 15766,
         "folio": "d719dace",
         "chapters": [
           {
@@ -776,6 +781,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 0.0 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

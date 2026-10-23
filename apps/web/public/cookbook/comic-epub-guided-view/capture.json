@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806960,
+        "bytes": 818427,
         "chapters": [
           {
             "pages": 3,
@@ -286,7 +286,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "es": {
@@ -383,7 +389,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807147,
+        "bytes": 818589,
         "chapters": [
           {
             "pages": 3,
@@ -565,7 +571,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ca": {
@@ -662,7 +674,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 806997,
+        "bytes": 818452,
         "chapters": [
           {
             "pages": 3,
@@ -844,7 +856,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, en, es, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "zh": {
@@ -941,7 +959,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807366,
+        "bytes": 818582,
         "chapters": [
           {
             "pages": 3,
@@ -1124,7 +1142,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ca, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ar": {
@@ -1222,7 +1246,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807687,
+        "bytes": 818814,
         "chapters": [
           {
             "pages": 3,
@@ -1407,7 +1431,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ca, zh, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ja": {
@@ -1505,7 +1535,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807697,
+        "bytes": 818839,
         "chapters": [
           {
             "pages": 3,
@@ -1689,7 +1719,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, en, es, ca, zh, ar, pt, fr, de, it"
+          }
+        ]
       }
     },
     "pt": {
@@ -1786,7 +1822,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807020,
+        "bytes": 818439,
         "chapters": [
           {
             "pages": 3,
@@ -1968,7 +2004,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, ca, zh, ar, ja, fr, de, it"
+          }
+        ]
       }
     },
     "fr": {
@@ -2065,7 +2107,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807053,
+        "bytes": 818451,
         "chapters": [
           {
             "pages": 3,
@@ -2247,7 +2289,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, ca, zh, ar, ja, pt, de, it"
+          }
+        ]
       }
     },
     "de": {
@@ -2344,7 +2392,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807094,
+        "bytes": 818438,
         "chapters": [
           {
             "pages": 3,
@@ -2526,7 +2574,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, ca, zh, ar, ja, pt, fr, it"
+          }
+        ]
       }
     },
     "it": {
@@ -2623,7 +2677,7 @@
       },
       "sandbox": {
         "file": "comic-epub-guided-view.postext",
-        "bytes": 807088,
+        "bytes": 818520,
         "chapters": [
           {
             "pages": 3,
@@ -2805,7 +2859,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, ca, zh, ar, ja, pt, fr, de"
+          }
+        ]
       }
     }
   }

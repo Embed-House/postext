@@ -92,7 +92,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766511,
+        "bytes": 777995,
         "chapters": [
           {
             "pages": 2,
@@ -238,7 +238,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "es": {
@@ -323,7 +329,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766680,
+        "bytes": 778090,
         "chapters": [
           {
             "pages": 2,
@@ -469,7 +475,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ca": {
@@ -554,7 +566,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766633,
+        "bytes": 778038,
         "chapters": [
           {
             "pages": 2,
@@ -700,7 +712,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, en, es, zh, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "zh": {
@@ -785,7 +803,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766605,
+        "bytes": 777879,
         "chapters": [
           {
             "pages": 2,
@@ -932,7 +950,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ca, ar, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ar": {
@@ -1018,7 +1042,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766738,
+        "bytes": 777899,
         "chapters": [
           {
             "pages": 2,
@@ -1167,7 +1191,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ca, zh, ja, pt, fr, de, it"
+          }
+        ]
       }
     },
     "ja": {
@@ -1253,7 +1283,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766887,
+        "bytes": 778060,
         "chapters": [
           {
             "pages": 2,
@@ -1401,7 +1431,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, en, es, ca, zh, ar, pt, fr, de, it"
+          }
+        ]
       }
     },
     "pt": {
@@ -1486,7 +1522,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766584,
+        "bytes": 778015,
         "chapters": [
           {
             "pages": 2,
@@ -1632,7 +1668,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, ca, zh, ar, ja, fr, de, it"
+          }
+        ]
       }
     },
     "fr": {
@@ -1717,7 +1759,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766585,
+        "bytes": 777977,
         "chapters": [
           {
             "pages": 2,
@@ -1863,7 +1905,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, ca, zh, ar, ja, pt, de, it"
+          }
+        ]
       }
     },
     "de": {
@@ -1948,7 +1996,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766719,
+        "bytes": 778068,
         "chapters": [
           {
             "pages": 2,
@@ -2094,7 +2142,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, ca, zh, ar, ja, pt, fr, it"
+          }
+        ]
       }
     },
     "it": {
@@ -2179,7 +2233,7 @@
       },
       "sandbox": {
         "file": "splash-inset-broken-border.postext",
-        "bytes": 766690,
+        "bytes": 778051,
         "chapters": [
           {
             "pages": 2,
@@ -2325,7 +2379,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, ca, zh, ar, ja, pt, fr, de"
+          }
+        ]
       }
     }
   }

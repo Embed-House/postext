@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "live-palette-retint.postext",
-        "bytes": 30984,
+        "bytes": 33570,
         "folio": "de4718c0",
         "chapters": [
           {
@@ -339,6 +339,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -422,7 +427,7 @@
       },
       "sandbox": {
         "file": "live-palette-retint.postext",
-        "bytes": 31485,
+        "bytes": 33934,
         "folio": "de4718c0",
         "chapters": [
           {
@@ -673,6 +678,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

@@ -152,7 +152,7 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28496,
+        "bytes": 33281,
         "folio": "8cdc51df",
         "chapters": [
           {
@@ -414,6 +414,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -561,7 +566,7 @@
       },
       "sandbox": {
         "file": "five-chapter-openers.postext",
-        "bytes": 28154,
+        "bytes": 32839,
         "folio": "8cdc51df",
         "chapters": [
           {
@@ -823,6 +828,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

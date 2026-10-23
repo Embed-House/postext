@@ -146,7 +146,7 @@
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 124002,
+        "bytes": 221945,
         "folio": "a418809e",
         "chapters": [
           {
@@ -514,6 +514,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -654,7 +659,7 @@
       },
       "sandbox": {
         "file": "bilingual-metascience-essay.postext",
-        "bytes": 126720,
+        "bytes": 223912,
         "folio": "a418809e",
         "chapters": [
           {
@@ -1012,6 +1017,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 24.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

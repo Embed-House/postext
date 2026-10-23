@@ -172,7 +172,7 @@
       },
       "sandbox": {
         "file": "katakana-majiri-proclamation.postext",
-        "bytes": 9969,
+        "bytes": 13698,
         "folio": "d5f2cfd5",
         "chapters": [
           {
@@ -395,7 +395,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -560,7 +566,7 @@
       },
       "sandbox": {
         "file": "katakana-majiri-proclamation.postext",
-        "bytes": 10005,
+        "bytes": 13699,
         "folio": "d5f2cfd5",
         "chapters": [
           {
@@ -783,7 +789,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

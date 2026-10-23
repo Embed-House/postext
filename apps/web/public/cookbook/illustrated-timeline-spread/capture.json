@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 977455,
+        "bytes": 983856,
         "folio": "c666e036",
         "chapters": [
           {
@@ -375,6 +375,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ja"
           }
         ]
       }
@@ -458,7 +463,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 977868,
+        "bytes": 984103,
         "folio": "c666e036",
         "chapters": [
           {
@@ -754,6 +759,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ja"
           }
         ]
       }
@@ -837,7 +847,7 @@
       },
       "sandbox": {
         "file": "illustrated-timeline-spread.postext",
-        "bytes": 976034,
+        "bytes": 981821,
         "folio": "c666e036",
         "chapters": [
           {
@@ -1126,6 +1136,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, es, en"
           }
         ]
       }

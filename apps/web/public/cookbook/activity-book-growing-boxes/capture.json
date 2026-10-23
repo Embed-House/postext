@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 859893,
+        "bytes": 865678,
         "chapters": [
           {
             "pages": 5,
@@ -441,6 +441,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, fr"
           }
         ]
       }
@@ -566,7 +571,7 @@
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 860184,
+        "bytes": 865799,
         "chapters": [
           {
             "pages": 5,
@@ -866,6 +871,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, fr"
           }
         ]
       }
@@ -991,7 +1001,7 @@
       },
       "sandbox": {
         "file": "activity-book-growing-boxes.postext",
-        "bytes": 860044,
+        "bytes": 865507,
         "chapters": [
           {
             "pages": 5,
@@ -1301,6 +1311,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es"
           }
         ]
       }

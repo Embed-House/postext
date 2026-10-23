@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "vertical-book-with-jiazhu-citations.postext",
-        "bytes": 19883,
+        "bytes": 22621,
         "folio": "3a3c9a0c",
         "chapters": [
           {
@@ -295,7 +295,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -394,7 +400,7 @@
       },
       "sandbox": {
         "file": "vertical-book-with-jiazhu-citations.postext",
-        "bytes": 19936,
+        "bytes": 22620,
         "folio": "3a3c9a0c",
         "chapters": [
           {
@@ -583,7 +589,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

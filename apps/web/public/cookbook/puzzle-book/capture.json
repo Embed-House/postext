@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23120,
+        "bytes": 26699,
         "folio": "c8e0f46e",
         "chapters": [
           {
@@ -376,6 +376,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -496,7 +501,7 @@
       },
       "sandbox": {
         "file": "puzzle-book.postext",
-        "bytes": 23988,
+        "bytes": 27556,
         "folio": "c8e0f46e",
         "chapters": [
           {
@@ -747,6 +752,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

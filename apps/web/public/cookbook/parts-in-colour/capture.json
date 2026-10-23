@@ -192,7 +192,7 @@
       },
       "sandbox": {
         "file": "parts-in-colour.postext",
-        "bytes": 843866,
+        "bytes": 846944,
         "folio": "a033cff5",
         "chapters": [
           {
@@ -489,7 +489,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -675,7 +681,7 @@
       },
       "sandbox": {
         "file": "parts-in-colour.postext",
-        "bytes": 843759,
+        "bytes": 846796,
         "folio": "a033cff5",
         "chapters": [
           {
@@ -972,7 +978,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

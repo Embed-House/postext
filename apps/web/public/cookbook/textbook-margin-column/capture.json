@@ -114,7 +114,7 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29477,
+        "bytes": 34808,
         "folio": "ccdc6a5d",
         "chapters": [
           {
@@ -394,6 +394,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering, headings"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -503,7 +508,7 @@
       },
       "sandbox": {
         "file": "textbook-margin-column.postext",
-        "bytes": 29845,
+        "bytes": 34868,
         "folio": "ccdc6a5d",
         "chapters": [
           {
@@ -783,6 +788,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering, headings"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

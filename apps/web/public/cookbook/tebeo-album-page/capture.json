@@ -89,7 +89,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115583,
+        "bytes": 1131273,
         "chapters": [
           {
             "pages": 2,
@@ -296,6 +296,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, zh, ar, ja, pt, fr, de, it"
           }
         ]
       }
@@ -379,7 +384,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116067,
+        "bytes": 1131728,
         "chapters": [
           {
             "pages": 2,
@@ -586,6 +591,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, zh, ar, ja, pt, fr, de, it"
           }
         ]
       }
@@ -669,7 +679,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116268,
+        "bytes": 1131907,
         "chapters": [
           {
             "pages": 2,
@@ -881,6 +891,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, es, en, zh, ar, ja, pt, fr, de, it"
           }
         ]
       }
@@ -964,7 +979,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115436,
+        "bytes": 1130849,
         "chapters": [
           {
             "pages": 2,
@@ -1172,6 +1187,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, es, en, ca, ar, ja, pt, fr, de, it"
           }
         ]
       }
@@ -1256,7 +1276,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115492,
+        "bytes": 1130877,
         "chapters": [
           {
             "pages": 2,
@@ -1466,6 +1486,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, es, en, ca, zh, ja, pt, fr, de, it"
           }
         ]
       }
@@ -1550,7 +1575,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116353,
+        "bytes": 1131595,
         "chapters": [
           {
             "pages": 2,
@@ -1759,6 +1784,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, es, en, ca, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -1842,7 +1872,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116000,
+        "bytes": 1131647,
         "chapters": [
           {
             "pages": 2,
@@ -2049,6 +2079,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, es, en, ca, zh, ar, ja, fr, de, it"
           }
         ]
       }
@@ -2132,7 +2167,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1116325,
+        "bytes": 1131878,
         "chapters": [
           {
             "pages": 2,
@@ -2344,6 +2379,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, es, en, ca, zh, ar, ja, pt, de, it"
           }
         ]
       }
@@ -2427,7 +2467,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115721,
+        "bytes": 1131342,
         "chapters": [
           {
             "pages": 2,
@@ -2634,6 +2674,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, es, en, ca, zh, ar, ja, pt, fr, it"
           }
         ]
       }
@@ -2717,7 +2762,7 @@
       },
       "sandbox": {
         "file": "tebeo-album-page.postext",
-        "bytes": 1115873,
+        "bytes": 1131508,
         "chapters": [
           {
             "pages": 2,
@@ -2924,6 +2969,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, es, en, ca, zh, ar, ja, pt, fr, de"
           }
         ]
       }

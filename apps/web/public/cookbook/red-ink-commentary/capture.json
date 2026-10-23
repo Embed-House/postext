@@ -148,7 +148,7 @@
       },
       "sandbox": {
         "file": "red-ink-commentary.postext",
-        "bytes": 37693,
+        "bytes": 45411,
         "folio": "941f3254",
         "chapters": [
           {
@@ -363,7 +363,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -504,7 +510,7 @@
       },
       "sandbox": {
         "file": "red-ink-commentary.postext",
-        "bytes": 37722,
+        "bytes": 45410,
         "folio": "941f3254",
         "chapters": [
           {
@@ -719,7 +725,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

@@ -172,7 +172,7 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492638,
+        "bytes": 1511019,
         "folio": "8e6f438d",
         "chapters": [
           {
@@ -386,6 +386,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 18 −5‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -552,7 +557,7 @@
       },
       "sandbox": {
         "file": "catalan-pocket-novella.postext",
-        "bytes": 1492651,
+        "bytes": 1511016,
         "folio": "8e6f438d",
         "chapters": [
           {
@@ -766,6 +771,11 @@
             "check": "C35",
             "severity": "info",
             "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 18 −5‰ “Els sorolls arribaven esmorteïts al cor d’en Dan…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

@@ -131,7 +131,7 @@
       },
       "sandbox": {
         "file": "piano-score-from-musicxml.postext",
-        "bytes": 19146,
+        "bytes": 25485,
         "folio": "89f1f81c",
         "chapters": [
           {
@@ -353,6 +353,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 2.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -478,7 +483,7 @@
       },
       "sandbox": {
         "file": "piano-score-from-musicxml.postext",
-        "bytes": 19353,
+        "bytes": 25532,
         "folio": "89f1f81c",
         "chapters": [
           {
@@ -700,6 +705,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 2.2 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

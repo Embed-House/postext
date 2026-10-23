@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "stage-play.postext",
-        "bytes": 22442,
+        "bytes": 25928,
         "folio": "059474f1",
         "chapters": [
           {
@@ -340,6 +340,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -460,7 +465,7 @@
       },
       "sandbox": {
         "file": "stage-play.postext",
-        "bytes": 22536,
+        "bytes": 25895,
         "folio": "059474f1",
         "chapters": [
           {
@@ -675,6 +680,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

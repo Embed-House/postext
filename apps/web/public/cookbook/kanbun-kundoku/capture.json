@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "kanbun-kundoku.postext",
-        "bytes": 15782,
+        "bytes": 17546,
         "folio": "bdf12d3d",
         "chapters": [
           {
@@ -301,7 +301,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -400,7 +406,7 @@
       },
       "sandbox": {
         "file": "kanbun-kundoku.postext",
-        "bytes": 15834,
+        "bytes": 17579,
         "folio": "bdf12d3d",
         "chapters": [
           {
@@ -595,7 +601,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

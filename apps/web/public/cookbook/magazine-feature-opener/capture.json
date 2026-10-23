@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768158,
+        "bytes": 774224,
         "folio": "da2eb3c6",
         "chapters": [
           {
@@ -421,6 +421,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -531,7 +536,7 @@
       },
       "sandbox": {
         "file": "magazine-feature-opener.postext",
-        "bytes": 768137,
+        "bytes": 774099,
         "folio": "da2eb3c6",
         "chapters": [
           {
@@ -829,6 +834,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

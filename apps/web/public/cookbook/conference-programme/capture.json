@@ -141,7 +141,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32737,
+        "bytes": 36447,
         "folio": "1751ca77",
         "chapters": [
           {
@@ -418,6 +418,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -554,7 +559,7 @@
       },
       "sandbox": {
         "file": "conference-programme.postext",
-        "bytes": 32741,
+        "bytes": 36452,
         "folio": "1751ca77",
         "chapters": [
           {
@@ -831,6 +836,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 512806,
+        "bytes": 517349,
         "folio": "415ce2a3",
         "chapters": [
           {
@@ -364,6 +364,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -474,7 +479,7 @@
       },
       "sandbox": {
         "file": "atlas-map-sheet.postext",
-        "bytes": 513256,
+        "bytes": 517512,
         "folio": "415ce2a3",
         "chapters": [
           {
@@ -723,6 +728,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

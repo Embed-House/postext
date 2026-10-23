@@ -94,7 +94,7 @@
       },
       "sandbox": {
         "file": "ieee-conference-paper.postext",
-        "bytes": 29479,
+        "bytes": 35231,
         "folio": "9f7fbdf3",
         "chapters": [
           {
@@ -317,7 +317,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -404,7 +410,7 @@
       },
       "sandbox": {
         "file": "ieee-conference-paper.postext",
-        "bytes": 29965,
+        "bytes": 35327,
         "folio": "9f7fbdf3",
         "chapters": [
           {
@@ -627,7 +633,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }
