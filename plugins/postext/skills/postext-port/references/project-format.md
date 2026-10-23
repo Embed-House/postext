@@ -26,7 +26,8 @@ my-book/
 ```jsonc
 {
   "version": 2,                        // 2 = book with chapters (1 = single "markdown" file, legacy)
-  "configVersion": 19,                 // the config rules `config` is written for (postext ≥ 1.5). Without it the
+  "configVersion": 21,                 // the config rules `config` is written for (postext ≥ 1.5). Below 21 each
+                                       // localized config replaces the shared top-level keys it names (§2). Without it the
                                        // bundle reads as 1.4: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
                                        // layout.inlineResourceGap 'above' when a chapter embeds a ::resource,
                                        // layout.inlineResourceGapInBoxes false when one sits inside a :::callout,
@@ -64,7 +65,8 @@ my-book/
 
   "localized": {                       // per-language overrides (§2)
     "en": {
-      "config": { "locale": "en-us", "resourceTypes": [ … ], "headings": { …whole object… } },
+      // Only what this language sets differently, merged over `config` field by field (§2)
+      "config": { "locale": "en-us", "headings": { "levels": [{ "level": 1, "numberingTemplate": "Chapter {1}" }] } },
       "resources": [ { "id": "sky", "caption": "A clear evening sky.", "altText": "…" } ],
       "view": { "canvasScope": "chapter" },  // optional: how this edition opens, over the shared `view`
       "start": { "pageIndexOffset": 58 }     // optional: where this edition starts, in place of the shared `start`
@@ -104,17 +106,63 @@ only drops the print master). It does **not** check `kind`, `typeId` against
   editions, never the same one; a reader asking for `zh-TW` or `zh-HK` gets
   `zh-Hant`, one asking for `zh` or `zh-CN` gets `zh-Hans` (postext ≥ 1.9).
   Permalinks take the same tags (`#preset=my-book&lang=zh-Hant`).
-- `localized.<lang>.config` is **shallow**: each top-level key it names
-  replaces the shared one wholesale (merge order: built-in defaults ← `config`
-  ← `localized.<lang>.config`). A localized `headings` must carry the whole
-  `headings` object. Typically restate per language: `locale`, `bodyText`
-  (hyphenation locale), `headings` (labels such as "Capítulo {1}"),
-  `headingStyles`, `parts`, `toc`, `resourceTypes` (Figura/Figure), `header`
-  (a running-head label such as "Capítulo"/"Chapter"; the titles come from
-  placeholders). A localized config translates labels, never the book's
-  text: that is in `chapters.<lang>` and `localized.<lang>.resources`
-  (SKILL.md, "Content in the Markdown"). Every edition lives in this one
-  manifest; never ship a preset per language.
+- **General settings and overrides** (`configVersion` 21, postext after
+  1.57). `config` holds the general settings every edition reads;
+  `localized.<lang>.config` is that language's override, with only the
+  fields it sets differently, merged over `config` field by field (merge
+  order: built-in defaults ← `config` ← the override):
+  - objects key by key, down to single fields:
+    `{ "bodyText": { "fontFamily": "Amiri" } }` changes the face and keeps
+    the general size, leading and alignment;
+  - a colour (`hex`) or a length (`value` + `unit`) is one value, replaced
+    whole;
+  - lists of entries with an `id` (`calloutStyles`, `headingStyles`,
+    `chipStyles`, `colorPalette`, `resourceTypes`, a template's frames,
+    `comics.cast`) entry by entry on `id`; `levels` lists (headings, lists,
+    `toc`) on `level`; `customFonts` on `name`. An entry the general list
+    lacks is added after its entries.
+    `[{ "id": "note", "stripe": { "side": "right" } }]` moves one box's
+    stripe and keeps its background;
+  - `{ "id": "note", "$remove": true }` takes a general entry out for that
+    language; a list in another order is written as the removal of every
+    general entry, then the language's list;
+  - any other list (a fallback stack, tab stops) is replaced whole;
+  - `null` takes the general value out: the field reads the language's
+    default.
+- **General or override.** General: everything every edition should follow
+  when it changes: page, margins, grid, columns, colours and palette, box,
+  heading, chip and table styles, spacing, the layout of running heads,
+  composed-page templates. Override: what belongs to the language:
+  `locale`, the faces of its script and their size, hyphenation and
+  line-breaking rules, the words of labels (`numberingTemplate`
+  "Capítulo {1}", a running-head label such as "Capítulo"/"Chapter"; the
+  titles come from placeholders), a side or alignment written as left or
+  right. Write sides and alignments relative to the text direction in the
+  general settings (`stripe.side: 'start'`, `textAlign: 'start'`) and leave
+  `direction`, `page.binding` and `numerals` at auto: an Arabic edition then
+  needs no override for them. The built-in resource types (Figura/Figure)
+  follow each edition's `locale` without an override; give `resourceTypes`
+  entries by `id` only to change their wording. A localized config
+  translates labels, never the book's text: that is in `chapters.<lang>`
+  and `localized.<lang>.resources` (SKILL.md, "Content in the Markdown").
+  Every edition lives in this one manifest; never ship a preset per
+  language.
+- **Writing the overrides.** Build each edition's whole config in
+  `build_preset.py` and write the difference:
+  `"config": config(primary)` and `localized[lang]["config"] =
+  preset_kit.diff_config_layers(config(primary), config(lang))` (the
+  scaffold does this). `preset_kit.merge_config_layers(general, override)`
+  shows what an edition reads. From code, the `postext` package has
+  `mergeConfigLayers`, `diffConfigLayers`, `commonConfig` (what several
+  whole configs agree on: the general settings of editions that each kept
+  their own) and `overridePaths`.
+- **Older rules.** Under `configVersion` 20 or less, and in postext 1.57 or
+  earlier whatever the stamp, each top-level key of
+  `localized.<lang>.config` replaces the shared one whole, so a localized
+  `headings` had to carry the whole object and `lint_project.py` warns
+  about keys that drop shared fields. Moving such a bundle to 21 keeps it
+  correct (a restated whole object merges to itself), but rewrite the
+  overrides as differences so a general change reaches every edition.
 - `localized.<lang>.resources[]`: `{id, caption?, note?, altText?, table?, file?, pdfFile?, width?, height?, poster?, video?, resolution?, fileResolution?}`
   merged into the resource with the same id, field by field. `table` replaces the whole table
   (model and styleId) and `video` the whole video object; `poster` + `video` (≥ 1.17) give a language its own
@@ -423,7 +471,7 @@ One-shot JPEGs from `render.mjs` are the fallback for the loop, and with
 `--repo <checkout>` its `SANDBOX-WARN` lines a milestone check (verification.md §2);
 `--png` rasterises the PDF instead and needs poppler.
 
-It mirrors the sandbox loader (defaults ← config ← localized config; chapters
+It mirrors the sandbox loader (defaults ← config ← localized config, merged field by field from configVersion 21; chapters
 joined like the book view). A manifest without `configVersion` is read as the
 Sandbox reads it, with the 1.4 rules pinned (§1), and a `NOTE` line names the
 rules it kept. It reports `PARSE` issues (unclosed math/fences),
@@ -484,7 +532,9 @@ const { bytes: out, warnings } = await createBundle({
 - `createBundle` also takes `id`, `description`, `markdown` (a one-chapter book), `thumbnail: { data, mime }`,
   `canvasScope: 'book'`, `start` (§2), and `localized: { en: { name?, description?, chapters?, config?, resources?,
   start? } }` for more editions: `chapters`, `config` and `resources` above are then the `locale` edition
-  (required). A localized `config` keeps only the top-level keys that differ; `resources` carry the wording
+  (required). Each top-level key of a localized `config` you pass replaces the shared one for that language, and
+  the manifest stores the difference as an override (configVersion 21, §2); `planBundle` (`postext/bundle`) takes
+  `sharedConfig` to write general settings apart from the primary edition. `resources` carry the wording
   (`caption`, `note`, `altText`, `table`) and the artwork with words (`bitmap.fileId` / `svg.fileId`) by `id`.
 - `buildBundle(bundle, { config, metadata, onChapter, layoutCache })`: `config` lays out with another config,
   `metadata` fills `{title}`/`{author}` (front matter wins), `layoutCache: createBundleLayoutCache()` reused across

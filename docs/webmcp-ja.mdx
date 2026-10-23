@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'ブラウザーで動くAIエージェントが53のWebMCPツールでSandboxに対してできること（ページを見る、どの設定でも変える、本文を編集する、画像・表・フォントを加える、検査する、書き出す）と、実際の引数と応答で示す各ツールの呼び出し方',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '13分',
   order: 48,
   plainSummary: "このページは、Sandboxでの本の作業をAIアシスタントに任せたい人のためのものです。Sandboxを開いている間、アシスタントには、ページを見る、デザインを変える、本文を直す、画像や表を加える、問題を見つける、ファイルを保存するための道具が渡されます。たとえば「本文を少し大きくして、本が40ページに収まるか確かめて」と普段の言葉で頼むと、アシスタントが道具を使い、そのページを見せてくれます。作業はすべてお使いのブラウザーの中で行われます。このページでは、アシスタントのつなぎ方、アシスタントにできること、各ツールの呼び出し方を説明します。",
@@ -234,6 +234,19 @@ await browser.close();
 呼び出しはどれもSandboxの履歴の1手になります。デザインパネルでの変更をCmd/Ctrl+Zで取り消すのと同じく、`sandbox_undo`で取り消せます。
 
 大きな変更には、設定にオブジェクトをマージする`patch`（オブジェクトはマージされ、`null`は取り除き、リストは丸ごと置き換わります）と、本の設定を丸ごと別の設定に置き換える`replace`があります。後者には、たとえば書き出した`postext-config.json`を渡せます。`sandbox_reset_to_original`に`part: "config"`を渡すと、本の最初のデザインに戻ります。
+
+複数の言語で書かれた本には、すべての版が読む共通設定があり、各版は自分で設定したフィールドを保ちます（[共通設定と言語ごとの上書き](/ja/docs/configuration-bundles#共通設定と言語ごとの上書き)を参照）。`sandbox_get_config`と`sandbox_set_config`は`scope`を受け取ります。`"all"`は共通設定を、`"edition"`は画面に出ている版を読み書きします。省略すると、デザインパネルで選ばれている範囲になります。そのような本では、`sandbox_get_config`は`scope`と`ownFields`を返します。`ownFields`は、画面の版が自分で設定しているフィールドのパスです。
+
+```jsonc
+// sandbox_set_config
+{ "scope": "all", "changes": [{ "path": "bodyText.fontSize", "value": "10.5pt" }] }
+```
+
+```json
+{ "ok": true, "scope": "all", "keptBy": ["ar"], "changed": [ … ] }
+```
+
+共通設定への書き込みは、そのフィールドを自分で設定していないすべての版に反映されます。`keptBy`は自分で設定している言語を示し、それらの言語は自分の値を保ちます。そちらも変えるには、各言語を開き（`language`を渡した`sandbox_open_book`）、`scope: "edition"`でそのパスを書き込みます。共通設定と同じ値を書くと、その版独自の値ではなくなります。言語が1つの本では、設定はすべてその本自身のものなので、`scope: "all"`は受け付けられません。
 
 フォントも設定です。`sandbox_list_fonts`に`search: "Garamond"`を渡すと公開カタログからファミリーを探し、その名前を`fontFamily`の設定に書き込むとフォントが読み込まれます。
 

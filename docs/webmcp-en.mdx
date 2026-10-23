@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'What an AI agent in the browser can do with the Sandbox through its 53 WebMCP tools — look at the pages, change any setting, edit the text, add pictures, tables and fonts, run the checks, export — and how to call each one, with real arguments and answers',
   lang: 'en',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '12 min',
   order: 48,
   plainSummary: "This page is for people who want an AI helper to work on a book in the Sandbox for them. While the Sandbox is open, it gives the helper a set of tools: to look at any page, change the design, edit the text, add pictures and tables, find problems and save files. You ask in your own words, for example \"make the text a little larger and check the book still fits in 40 pages\", and the helper uses the tools and shows you the pages. Everything stays in your browser. The page explains how to connect a helper, what it can do and how each tool is called.",
@@ -303,6 +303,31 @@ merge, `null` removes, lists are replaced whole) and `replace` puts a whole
 configuration in place of the book's, such as a `postext-config.json` export.
 `sandbox_reset_to_original` with `part: "config"` puts back the design the
 book started from.
+
+A book in several languages has general settings that every edition reads, and
+each edition keeps the fields it sets itself (see [General settings and
+per-language overrides](/en/docs/configuration-bundles#general-settings-and-per-language-overrides)).
+`sandbox_get_config` and `sandbox_set_config` take `scope`: `"all"` reads or
+writes the general settings, `"edition"` the edition on screen. Left out, it
+is the scope the Design panel is in. In such a book `sandbox_get_config`
+answers with `scope` and `ownFields`, the paths the edition on screen sets
+itself:
+
+```jsonc
+// sandbox_set_config
+{ "scope": "all", "changes": [{ "path": "bodyText.fontSize", "value": "10.5pt" }] }
+```
+
+```json
+{ "ok": true, "scope": "all", "keptBy": ["ar"], "changed": [ … ] }
+```
+
+A write to the general settings reaches every edition that does not set the
+field itself. `keptBy` names the languages that do, and keep their value. To
+change them too, open each one (`sandbox_open_book` with `language`) and write
+the path with `scope: "edition"`: a value equal to the general one stops being
+the edition's own. In a book in one language `scope: "all"` is refused, since
+all its settings are its own.
 
 Fonts are settings too: `sandbox_list_fonts` with `search: "Garamond"` finds
 families in the open catalogue, and writing the name into a `fontFamily`

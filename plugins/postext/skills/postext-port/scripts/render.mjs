@@ -173,7 +173,10 @@ for (const r of manifest.resources ?? []) {
   if (r.kind === 'bitmap') need(r.width && r.height, `bitmap ${r.id}: declare width/height`);
   if (r.kind === 'table') need(Array.isArray(r.table?.model?.rows), `table ${r.id}: table.model.rows missing`);
 }
-const cfgTypes = overrides.config?.resourceTypes ?? manifest.config?.resourceTypes;
+// From configVersion 21 a language's resourceTypes merge by id with the shared ones.
+const cfgTypes = (manifest.configVersion ?? 0) >= 21 && overrides.config?.resourceTypes
+  ? [...(manifest.config?.resourceTypes ?? []), ...overrides.config.resourceTypes.filter((t) => t.$remove !== true)]
+  : overrides.config?.resourceTypes ?? manifest.config?.resourceTypes;
 const typeIds = new Set((cfgTypes ?? [{ id: 'figure' }, { id: 'table' }]).map((t) => t.id));
 for (const r of manifest.resources ?? []) if (r.typeId) need(typeIds.has(r.typeId), `resource ${r.id}: typeId "${r.typeId}" not in resourceTypes`);
 for (const f of manifest.fonts ?? []) for (const v of f.variants) need(existsSync(join(BUNDLE, v.file)), `missing font ${v.file}`);
@@ -294,7 +297,13 @@ const resources = (manifest.resources ?? []).map((spec) => {
 });
 
 // ---- config: defaults <- config <- localized config -----------------------------
-let config = { colorPalette: postext.cloneDefaultColorPalette(), resourceTypes: postext.defaultResourceTypes(lang), ...(manifest.config ?? {}), ...(overrides.config ?? {}) };
+// From configVersion 21 the language's config is an override merged over the
+// shared one field by field (`mergeConfigLayers`, postext after 1.57); older
+// manifests, or an engine without it, replace each top-level key whole.
+const sharedConfig = { colorPalette: postext.cloneDefaultColorPalette(), resourceTypes: postext.defaultResourceTypes(lang), ...(manifest.config ?? {}) };
+let config = (manifest.configVersion ?? 0) >= 21 && typeof postext.mergeConfigLayers === 'function'
+  ? postext.mergeConfigLayers(sharedConfig, overrides.config ?? {})
+  : { ...sharedConfig, ...(overrides.config ?? {}) };
 // Read like the Sandbox reads a bundle (`readBundle`): a manifest written for
 // older config rules than this engine's (no `configVersion`: postext 1.4 or
 // earlier) keeps the rules it was laid out with: heading breaks, formula

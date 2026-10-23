@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '.postext bundles',
   description: 'How to open, lay out, render and create .postext files from code; bilingual bundles; files written by older versions; and the low-level API',
   lang: 'en',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '27 min',
   order: 23,
   parent: 'configuration',
@@ -70,7 +70,7 @@ A payload's **`fileId` is its path inside the bundle**. `resource.svg.fileId`, `
 
 #### Bundles written by postext 1.4 or earlier
 
-Every manifest that `createBundle` or the Sandbox writes carries `configVersion: 19`, which names the configuration rules its `config` was written for. A manifest without it was written by postext 1.4 or earlier, which set nineteen things differently:
+Every manifest that `createBundle` or the Sandbox writes carries `configVersion: 21`, which names the configuration rules its `config` was written for. A manifest without it was written by postext 1.4 or earlier, which set nineteen things differently:
 
 - **Heading breaks** (rules 3): up to 1.4, a `headings` object with no H1 break had none (see [Per-level overrides](/en/docs/configuration-headings#per-level-overrides)).
 - **The maths size** (rules 4): up to 1.4, formulas came out 1.131 times larger than `fontSizeScale` says (see [Formula size](/en/docs/configuration-lists-math#math)).
@@ -96,7 +96,7 @@ Every manifest that `createBundle` or the Sandbox writes carries `configVersion:
 
 The split under a heading (`pinLegacyHeadingSplit`) is written as `headings.keepWithNextSplit: 'fill'` on the `headings` the layers leave in force, when a chapter read has a heading and the configuration names no value of its own, keeps `headings.keepWithNext` on and does not turn `bodyText.avoidOrphans` off. The compound breaks (`pinLegacyHyphenBreaks`) are written as `bodyText.breakAfterHyphens: false` on the `bodyText` in force, when a chapter read sets a hyphen between two letters and the configuration neither sets it already nor turns `optimalLineBreaking` off. The space under containers (`pinLegacyParagraphContainerSpacing`) is written as `bodyText.paragraphContainerSpacing: 'add'` on the `bodyText` in force, when the configuration declares a paragraph style (in `paragraphStyles` or the HTML viewer's overrides), a chapter read opens a `:::paragraphs` container on a line of its own, and the configuration does not set it already. The dash breaks (`pinLegacyDashBreaks`) are written as `bodyText.breakAfterDashes: false` on the `bodyText` in force, when a chapter read sets an em or en dash closed between words (a letter, a digit or closing punctuation before it, a letter, a digit or an opening bracket or quote after it; a quotation mark before it counts when a letter, a digit, closing punctuation or a no-break space stands before the quote, as in `"no"—and`, not in `said "—Hola`; an inline mark touching the dash or the quote, such as the `**` of `**riddles.**—I`, counts on either side) and the configuration does not set it already. The ragged breaking (`pinLegacyRaggedBreaking`) is written as `bodyText.optimalRagged: false` on the `bodyText` in force, when the configuration sets some running text ragged (a `textAlign` other than `'justify'` on the body text, a paragraph style, a box body, the body of a part or the body of a section style (`headingStyles[].bodyStyle`), or in the HTML viewer's overrides), does not set it already and does not turn `optimalLineBreaking` off. The gap in boxes (`pinLegacyBoxResourceGap`) is written as `layout.inlineResourceGapInBoxes: false` on the `layout` in force, when a resource is embedded on its own line inside a `:::callout` of the chapters read and the configuration does not set it already. The box cut (`pinLegacyBoxChildCut`) is written as `layout.boxChildSplitMinLines: 1` on the `layout` in force, when a chapter read opens a `:::callout` on a line of its own and the configuration does not set it already. The heading marks (`pinLegacyHeadingMarks`) are written as `headings.inlineMarks: false` on the `headings` the layers leave in force, when a heading of the chapters read carries a mark (`*`, `_`, `^`, `~`, `:smallcaps[` or a link in its title) and the configuration names no value of its own. The drop caps (`pinLegacyDropCapSize`) get their 1.4 size written out as `dropCap.fontSize`, wherever they sit: in the unit of the element's leading when that is a length, else in the unit of its font size. The colon-line room (`pinLegacyColonListRoom`) is written as `bodyText.colonListRoom: 'line'` on the `bodyText` in force, when a list of the chapters read follows a line ending in a colon (blank lines between them allowed) and the configuration neither names a room nor turns `keepColonWithList` off. The inline gap (`pinLegacyInlineGap`) is written as `layout.inlineResourceGap: 'above'` on the `layout` the layers leave in force, when a line of the chapters read embeds a resource (`::resource{id="…"}` alone on its line, as the parser reads it: a mention in running text or in a code span does not count) and the configuration names no gap of its own. The size is pinned on the `math` the layers leave in force (a locale's own `math` replaces the shared one), and only when the chapters read have a `$`: a bundle without maths keeps its `config` as written. When neither the manifest nor the locale names a `math`, the one in force is `readBundle`'s `baseConfig` (the reader's own), and it is pinned too, since 1.4 set the bundle's formulas at that size: a base `fontSizeScale: 1.5` reads as 1.5 × 1.1312. The base's heading breaks are taken as they are.
 
-An old bundle therefore keeps what these rules laid out, and `bundle.config` shows the breaks, the maths size, the gaps, the heading marks, the drop-cap sizes, the colon-line room, the box cut, the dash breaks, the compound breaks, the ragged breaking, the split under a heading and the space under containers it is laid out with. The layout fixes of 1.5 have no pin and apply to it as to any book, so a page they touch can still move (see [Formula size](/en/docs/configuration-lists-math#math) for the list). A `preset.json` written by hand for today's rules sets `"configVersion": 19`; stamping an old bundle's manifest with it is also the one-line way to read it with today's rules (an unversioned bundle then loses its heading-break pin too).
+An old bundle therefore keeps what these rules laid out, and `bundle.config` shows the breaks, the maths size, the gaps, the heading marks, the drop-cap sizes, the colon-line room, the box cut, the dash breaks, the compound breaks, the ragged breaking, the split under a heading and the space under containers it is laid out with. The layout fixes of 1.5 have no pin and apply to it as to any book, so a page they touch can still move (see [Formula size](/en/docs/configuration-lists-math#math) for the list). A `preset.json` written by hand for today's rules sets `"configVersion": 21`; stamping an old bundle's manifest with it is also the one-line way to read it with today's rules (an unversioned bundle then loses its heading-break pin too).
 
 A manifest stamped `8`, written by postext 1.5 to 1.22, gets the four pins of rules 9 alone, as every older one does too: the verse layout (`pinLegacyVerseLayout`) is written as `bodyText.verse.layout: 'bayt'` on the `bodyText` in force, when a chapter read sets a `:::verse` poem whose fence names no layout and whose lines carry no hemistich separator and the configuration does not set it already; the paired indents (`pinLegacyPairedIndents`) drop the `firstLineIndent` of every paragraph style (in `paragraphStyles` or the HTML viewer's overrides) that also sets a non-zero `hangingIndent`; the forced line breaks (`pinLegacyHardBreaks`) are written as `bodyText.hardLineBreaks: false` on the `bodyText` in force, when a chapter read ends a line of a paragraph, a quotation or a list item with a backslash and the block goes on below it, or sets `\\` before a space and more text (inline code and maths, display formulas, headings and `:::verse` poems aside), and the configuration does not set it already; and the code fences (`pinLegacyCodeBlocks`) are written as `codeStyle.blocks: false`, when a chapter read opens a ```` ``` ```` or `~~~` fence (three or more, up to three spaces in) and the configuration does not set it already.
 
@@ -123,6 +123,8 @@ A manifest stamped `14` was written by postext 1.30 to 1.33. The rules of 15 (po
 A manifest stamped `15` or `16` was written by postext 1.34 to 1.51 (the rules of 16, #1056, add connectors to a template's decoration and pin nothing). The rules of 17 (#1119) set the face, size, leading, weights and colour a paragraph style leaves unset in the body of the box it sits in, where up to 1.51 they were the document's body text. A manifest stamped `16` or older gets `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) on the `bodyText` in force, when the merged configuration declares a paragraph style and does not name the setting.
 
 The rules of 19 (#1164) let a line of formatted text end after a slash between two words, and divide a word too wide for its line there first, where up to 1.51 a line of formatted text broke after a slash only inside a web address. A manifest stamped `18` or older gets `bodyText.breakAfterSlashes: false` (`pinLegacySlashBreaks`) on the `bodyText` in force, whatever its chapters hold, when the configuration does not name the setting: such a slash may stand in a caption, a table cell or a bibliography, which the chapters read do not show.
+
+The rules of 21 (#1209) change how a bundle in several languages stores the settings of each language (see [General settings and per-language overrides](#general-settings-and-per-language-overrides)): a `localized[…].config` is merged over the shared `config` field by field, where up to postext 1.57 each of its top-level keys replaced the shared one whole. Nothing is pinned. A manifest stamped `20` or older is read the old way, key by key, so each edition lays out as it did; when it is written again, each language's settings are written as an override under 21.
 
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
@@ -284,13 +286,107 @@ const es = await openBundle(bytes, { locale: 'es' });   // Spanish chapters, con
 ```
 
 - **`chapters`**: the book in that language. The chapter files go into one folder per locale (`chapters/en/01-dusk.md`, `chapters/es/01-anochecer.md`) and the manifest's `chapters` becomes a locale → chapters map. A locale without `chapters` reads the primary ones; when no locale has chapters of its own, they stay a single list.
-- **`config`**: the configuration for that language. Each top-level key replaces the shared key wholesale when the bundle is read in the locale, so `headings` above replaces the whole `headings` object. Keys left out, or equal to the shared ones, are shared and not written, so passing the locale's full configuration works as well as passing the few keys that change. A key set to its defaults while the shared one is not (`layout: {}`) is written as given, so it resets the shared value. Fonts are shared: the families of a locale's `customFonts` join the bundle's `fonts`.
+- **`config`**: the configuration for that language. Each top-level key you pass replaces the shared key for that language, so `headings` above replaces the whole `headings` object. Keys left out, or equal to the shared ones, are shared, so passing the locale's full configuration works as well as passing the few keys that change. The manifest stores only the difference: `localized[…].config` holds the fields the language sets differently from the shared `config`, and is merged over it field by field when the bundle is read (see [General settings and per-language overrides](#general-settings-and-per-language-overrides)). A key set to its defaults while the shared one is not (`layout: {}`) resets the shared value for that language. Fonts are shared: the families of a locale's `customFonts` join the bundle's `fonts`.
 - **`resources`**: the wording of the shared resources, matched by `id`: `caption`, `note`, `altText` and a table's `table`. A picture with words in it can have its own artwork: `bitmap.fileId` or `svg.fileId` (and `svg.pdfFileId`) name another payload in `files`, written as `resources/es/lantern.svg`. Other fields, such as the type or the placement, are shared. An id that is not among `resources` is left out with a warning, and a missing locale picture leaves the locale on the shared one, also with a warning.
 - **`name`**, **`description`**: the book's title and description in that language, written as `localized[…].name` and `description` when they differ from the shared ones. `openBundle` returns them as `bundle.name` and `bundle.description` for that locale, the Sandbox lists the edition under that title (on import and in its library), and `postext info` and `postext check` print them. An `index.json` entry of a preset source may copy them under `localized` (`localized.ca.name`) so the library names each edition before it is opened. A locale without them keeps the manifest's `name` and `description`.
 
 The manifest lists every language in `locales` (`['en', 'es']`), keeps the primary one as `locale` and stores the rest under `localized`. `openBundle` without a locale reads the primary language.
 
 **Which language a reader gets.** `openBundle(bytes, { locale })` serves the exact locale, else its base language (`es-MX` reads `es`), else the primary one, and `bundle.locale` says which it served. Chapters and wording always come from the same language. The primary language keeps the shared wording even when `localized` carries a regional variant of it: a `pt-PT` bundle with a `pt-BR` entry reads the Brazilian captions for `pt-BR` only, and the shared ones for `pt-PT` and `pt`.
+
+### General settings and per-language overrides
+
+The editions of a book in several languages usually share most of the design: the page, the grid, the box styles, the palette. A few settings belong to one language: the typefaces of its script, what depends on the direction of the text, the wording of a label. A bundle written for configuration rules 21 (`configVersion: 21`) keeps the two apart. The manifest's `config` holds the **general settings**, which every edition reads, and `localized[<lang>].config` holds that language's **override**, with only the fields it sets differently. A change to a general setting reaches every edition that does not set the same field itself.
+
+An override is merged over the general settings field by field:
+
+<table>
+  <thead>
+    <tr><th>In the override</th><th>How it merges</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>An object (<code>bodyText</code>, <code>page.margins</code>)</td><td>Key by key, down to single fields. <code>&#123; "bodyText": &#123; "fontFamily": "Amiri" &#125; &#125;</code> changes the face and keeps the general size, leading and alignment.</td></tr>
+    <tr><td>A colour (<code>&#123; "hex", "model" &#125;</code>) or a length (<code>&#123; "value", "unit" &#125;</code>)</td><td>Replaced whole.</td></tr>
+    <tr><td>A list whose entries have an <code>id</code> (<code>calloutStyles</code>, <code>headingStyles</code>, <code>chipStyles</code>, <code>colorPalette</code>, <code>resourceTypes</code>, the frames of a template)</td><td>Entry by entry, matched on <code>id</code>. A <code>levels</code> list (headings, lists, the contents) is matched on <code>level</code>, <code>customFonts</code> on <code>name</code>. An entry the general list lacks is added after its entries.</td></tr>
+    <tr><td><code>&#123; "id": "note", "$remove": true &#125;</code></td><td>Takes the general entry with that key out, for this language only. A list in a different order is written as the removal of every general entry followed by the language's list in its own order.</td></tr>
+    <tr><td>Any other list (a fallback stack of faces, tab stops)</td><td>Replaced whole.</td></tr>
+    <tr><td><code>null</code></td><td>Takes the general value out: the field reads the language's default, as if neither layer set it.</td></tr>
+  </tbody>
+</table>
+
+A Spanish and Arabic edition of the same book share the page, the body size of the Spanish design and a note box with a sand background. The Arabic edition sets its own typefaces and size, and moves the box's stripe to the right, the side a right-to-left line starts on:
+
+```jsonc
+{
+  "version": 2,
+  "configVersion": 21,
+  "id": "el-farol",
+  "name": "El farol",
+  "locale": "es",
+  "locales": ["es", "ar"],
+  "chapters": {
+    "es": [{ "title": "Anochecer", "file": "chapters/es/01-anochecer.md" }],
+    "ar": [{ "title": "الغسق", "file": "chapters/ar/01-al-ghasaq.md" }]
+  },
+
+  // General settings: every edition reads them
+  "config": {
+    "locale": "es",
+    "bodyText": { "fontFamily": "Source Serif 4", "fontSize": { "value": 10, "unit": "pt" }, "textAlign": "justify" },
+    "headings": { "fontFamily": "Source Sans 3" },
+    "calloutStyles": [
+      {
+        "id": "note",
+        "background": { "hex": "#f3ecd9", "model": "hex" },
+        "stripe": { "enabled": true, "side": "left", "color": { "hex": "#b5651d", "model": "hex" } }
+      }
+    ]
+  },
+
+  "localized": {
+    "ar": {
+      "name": "الفانوس",
+      // Only what the Arabic edition sets differently
+      "config": {
+        "locale": "ar",
+        "bodyText": { "fontFamily": "Amiri", "fontSize": { "value": 11, "unit": "pt" } },
+        "headings": { "fontFamily": "Noto Kufi Arabic" },
+        "calloutStyles": [{ "id": "note", "stripe": { "side": "right" } }]
+      }
+    }
+  }
+}
+```
+
+Read in Arabic, the body is set in Amiri at 11 pt and stays justified, and the note box keeps the general background, stripe width and stripe colour, with the stripe on the right. The direction, the binding and the digits are left at *Auto*, so they follow `locale`: right to left, bound on the right, Arabic-Indic digits. A setting that names a side by the direction of the text needs no override at all: with `"side": "start"` in the general settings, the stripe would sit on the left in Spanish and on the right in Arabic.
+
+Put a setting in the general settings when every edition should follow a change to it: the page and the grid, the colours, the box and heading styles, the spacing. Put it in an override when it belongs to the language: typefaces for its script, its body size, hyphenation and line-breaking rules, a side or alignment written as left or right, the wording of labels and running heads. The built-in resource types (*Figure*, *Figura*) take their names and numbering from each edition's language without an override.
+
+**Older bundles.** A manifest stamped `20` or older is read with the earlier rule: each top-level key of `localized[…].config` replaces the shared one whole, so `{ "bodyText": { "fontFamily": "Amiri" } }` there drops every other `bodyText` field of the shared configuration. `createBundle` and the Sandbox always write 21. To move a hand-written manifest to 21, write each language's full configuration and keep only the difference, with the functions below.
+
+**From code.** The `postext` package exports the functions the bundle codec and the Sandbox use:
+
+```ts
+import { mergeConfigLayers, diffConfigLayers, leastConfigOverride, commonConfig, overridePaths, stripConfigDefaults } from 'postext';
+import type { ConfigOverride } from 'postext';
+
+const arabic = mergeConfigLayers(general, override);   // what the Arabic edition lays out with
+diffConfigLayers(general, arabic);                     // the override back: the fields that differ
+overridePaths(override);
+// => ['locale', 'bodyText.fontFamily', 'bodyText.fontSize', 'headings.fontFamily', 'calloutStyles[id=note].stripe.side']
+
+const shared = commonConfig([spanish, arabic]);        // what the two editions agree on
+const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
+```
+
+- **`mergeConfigLayers(general, override)`**: the configuration an edition lays out with, by the rules in the table. Neither input is changed; with no override it returns `general` itself.
+- **`diffConfigLayers(general, own)`**: the override that turns `general` into `own`. A field `general` sets and `own` leaves out is written as `null`, and a keyed list in another order as removals followed by the list. `mergeConfigLayers(general, diffConfigLayers(general, own))` equals `own`, key order aside.
+- **`leastConfigOverride(general, own, normalize)`**: the same override without the `null`s and removals that make no difference once `normalize` has run (`stripConfigDefaults`, for instance), where the general value is also the default of `own`'s language. The bundle writer uses it.
+- **`commonConfig(configs)`**: the fields every configuration sets to the same value, objects field by field and keyed lists entry by entry. For editions that each kept a whole configuration, it gives the general settings, and `diffConfigLayers` gives each edition's override.
+- **`overridePaths(override)`**: every field an override sets, as a path with list entries named by their key (`headings.levels[level=2].fontSize`). A `null` and a removed entry count as fields. These are the paths `sandbox_get_config` lists as `ownFields`.
+- **`REMOVE_ENTRY`** is the `"$remove"` key, and **`ConfigOverride`** the type of an override.
+
+`openBundle` returns the served edition's merged `config`. `readBundle` also returns `sharedConfig`, the general settings read under the same rules and with the same fonts, for a bundle with `localized` entries. `planBundle` takes `sharedConfig` in its content: the manifest's `config` is then written from it, and every edition, the primary one included, as an override in `localized`.
 
 ### Live example: create a bundle
 
@@ -310,8 +406,8 @@ Because the Sandbox, the agent skill and the `postext` package all read and writ
 `postext/bundle` also exports the building blocks behind `openBundle` and `createBundle`, for hosts that store or serve bundles their own way (an unzipped directory over HTTP, records in a database):
 
 - **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**: the archive layer. Opening tolerates a top-level folder and ignores `__MACOSX` entries and dotfiles. Paths that escape the bundle are refused. `mtime` dates the files as `createBundle`'s input does.
-- **`readBundle(manifest, readFile, options)`** reads a manifest plus a `readFile(path)` callback into chapters, config, resources, pictures and fonts. `options` sets the locale, how file ids are named (`ids`), the base configuration (`baseConfig`, under the manifest's; by default the palette and the resource types of `bundleBaseConfig` in the bundle's language, which `resolveBundleConfigLocale(manifest, locale)` returns, and a host that passes its own `baseConfig` should localise it to that language; under a manifest older than `CONFIG_VERSION`, the pins its stamp calls for also apply to the keys of the base that the manifest and the locale leave in force, all but the heading breaks, see [Bundles written by postext 1.4 or earlier](#bundles-written-by-postext-14-or-earlier)) and how intrinsic sizes are measured. `readResolution` reads each bitmap's resolution from its file into `bitmap.fileResolution`; it defaults to true when the bundle sets `layout.bitmapResolution: 'file'`.
-- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: the writing side, split into a pure plan (file names and manifest) and resolving the bytes through `readBlob` / `readFont` callbacks.
+- **`readBundle(manifest, readFile, options)`** reads a manifest plus a `readFile(path)` callback into chapters, config, resources, pictures and fonts, and, for a bundle in several languages, the general settings as `sharedConfig`. `options` sets the locale, how file ids are named (`ids`), the base configuration (`baseConfig`, under the manifest's; by default the palette and the resource types of `bundleBaseConfig` in the bundle's language, which `resolveBundleConfigLocale(manifest, locale)` returns, and a host that passes its own `baseConfig` should localise it to that language; under a manifest older than `CONFIG_VERSION`, the pins its stamp calls for also apply to the keys of the base that the manifest and the locale leave in force, all but the heading breaks, see [Bundles written by postext 1.4 or earlier](#bundles-written-by-postext-14-or-earlier)) and how intrinsic sizes are measured. `readResolution` reads each bitmap's resolution from its file into `bitmap.fileResolution`; it defaults to true when the bundle sets `layout.bitmapResolution: 'file'`.
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: the writing side, split into a pure plan (file names and manifest) and resolving the bytes through `readBlob` / `readFont` callbacks. `content.sharedConfig` writes the general settings apart from the primary edition (see [General settings and per-language overrides](#general-settings-and-per-language-overrides)).
 - **`isBundleManifest(value)`**, the locale pickers (`pickChapterSpecs`, `pickLocaleOverrides`, `pickBundleView`, `resolveBundleLocale`, `resolveBundleConfigLocale`), `svgSize` / `bitmapSize` / `bitmapInfo` (a bitmap's pixels and the resolution its file states), and the format types (`BundleManifest`, `BundleResourceSpec`, `BundleFontFamilySpec`, …).
 - **`CONFIG_VERSION`, `migrateConfig(config, configVersion, { content })`, `pinLegacyHeadingBreaks(config)`, `pinLegacyMathSize(config)`, `pinLegacyInlineGap(config)`, `pinLegacyBoxResourceGap(config)`, `pinLegacyHeadingMarks(config)`, `pinLegacyDropCapSize(config)`, `pinLegacyColonListRoom(config)`, `pinLegacyBoxChildCut(config)`, `pinLegacyDashBreaks(config)`, `pinLegacyRaggedBreaking(config)`, `pinLegacyHeadingSplit(config)`, `pinLegacyParagraphContainerSpacing(config)`, `pinLegacyHyphenBreaks(config)`, `pinLegacyVerseLayout(config)`, `pinLegacyPairedIndents(config)`, `pinLegacyHardBreaks(config)`, `pinLegacyCodeBlocks(config)`, `pinLegacyVerseTightening(config)`, `pinLegacyDesignOverflow(config)`, `pinLegacyGridBalancing(config)`, `pinLegacyTitleBreaks(config)`, `pinLegacyCircledNumbers(config)`, `pinLegacyDesignText(config)`, `pinLegacyInlineTableSplit(config)`, `pinLegacyFlowColumns(config)`, `pinLegacyOpenerHeadFloats(config)`, `pinLegacyLooseOrder(config)`, `pinLegacyWideFloatStretch(config)`, `pinLegacyTrailingStep(config)`, `pinLegacyIndexGroupSplit(config)`, `pinLegacyGridBreakRules(config)`, `pinLegacyNoteBreaks(config)`, `pinLegacyLatinSpacingEdge(config)`, `pinLegacyInlineCaptionSide(config)`, `pinLegacyRefLabelBreaks(config)`, `pinLegacyBalloonPlacement(config)`, `pinLegacyScriptContext(config)`, `pinLegacyShapingLanguage(config)`, `pinLegacyTaskBox(config)` and `LEGACY_MATH_SIZE`** (0.5 ÷ 0.442): a stored configuration in today's terms (see [Bundles written by postext 1.4 or earlier](#bundles-written-by-postext-14-or-earlier)). `readBundle` applies it; a host that stores configurations its own way can too, once per stored copy.
 

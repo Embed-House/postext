@@ -1123,7 +1123,11 @@ delivered file before handing it over.
   the source's line ends into the paragraphs.
 - **Translation is translating Markdown.** One bundle, one design: chapters
   per locale (`chapters.<lang>`), `localized.<lang>.resources` for captions,
-  alt text, tables and live-text SVGs, `localized.<lang>.config` only for
-  what the language changes (locale, labels, hyphenation, faces). Run
-  `postext check` for every locale. The same extraction code for every
-  source edition.
+  alt text, tables and live-text SVGs. The design is two layers
+  (`configVersion` 21): `config` holds the general settings every edition
+  reads, and `localized.<lang>.config` only the fields that language sets
+  differently (locale, faces for its script and their size, hyphenation,
+  labels, a side written as left or right), merged over `config` field by
+  field. A change to the page, the grid, the colours or a style then
+  reaches every edition (project-format.md §2). Run `postext check` for
+  every locale. The same extraction code for every source edition.
