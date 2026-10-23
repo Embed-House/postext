@@ -59,13 +59,13 @@
   },
   "devDependencies": {
     "@postext/typescript-config": "workspace:*",
-    "@types/node": "^26.5.0",
-    "eslint": "^9.39.4",
-    "harfbuzzjs": "1.6.2",
+    "@types/node": "^26.6.5",
+    "eslint": "^10.13.0",
+    "harfbuzzjs": "1.6.3",
     "postext": "workspace:*",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.0",
-    "vitest": "^5.0.0",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5",
     "wawoff2": "^2.0.1"
   }
 }

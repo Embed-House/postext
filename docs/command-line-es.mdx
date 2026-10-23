@@ -278,7 +278,7 @@ postext unpack my-book.postext -o my-book/
 suelto. La misma entrada da siempre los mismos bytes, así que se pueden comparar paquetes o calcular
 su hash. Con Markdown suelto, `--id`, `--description` y `--thumbnail FILE` (una
 imagen de cubierta) fijan el id, la descripción y la miniatura del paquete; por defecto, el id
-es el nombre convertido en slug. Una carpeta conserva lo que diga su `preset.json`. `unpack` no escribe en una carpeta que no esté vacía, salvo que se indique `--force`.
+es el nombre convertido en slug. Una carpeta conserva lo que diga su `preset.json`. Un libro que no indica cubierta recibe su primera página como tal (`thumbnail.jpg`, 1024 px en su lado largo), la imagen que un gestor de archivos puede mostrar para el fichero; `--no-auto-thumbnail` la omite. `unpack` no escribe en una carpeta que no esté vacía, salvo que se indique `--force`.
 
 ### info y check
 

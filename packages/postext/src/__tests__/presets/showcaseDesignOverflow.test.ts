@@ -3,11 +3,13 @@
 /* #628: the showcase bundles (apps/web/public/presets) lay out as they did
    before heading and part design texts wrapped by default: read through
    the engine's own migration, every heading and part design text resolves
-   to the overflow 1.23 gave it. */
+   to the overflow 1.23 gave it. A bundle stamped today (#1209) carries that
+   overflow written out in its configuration. */
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { migrateConfig } from '../../bundle/configVersion.js';
+import { migrateBundleConfig } from '../../bundle/configVersion.js';
+import { pickLocaleOverrides } from '../../bundle/manifest.js';
 import { resolveAllConfig } from '../../pipeline/config.js';
 import type { PostextConfig, ResolvedDesignSlot } from '../../types.js';
 
@@ -35,10 +37,13 @@ describe('#628: the showcase bundles lay out as they did', () => {
   // either rule, so the layout cannot change; the pin writes the ellipsis
   // on any that does not.
   it.each(ids)('%s: every heading and part design text resolves to its 1.23 overflow', (id) => {
-    const manifest = JSON.parse(readFileSync(join(PRESETS, id, 'preset.json'), 'utf8')) as { config: PostextConfig; configVersion?: number; localized?: Record<string, { config?: PostextConfig }> };
-    const layers = [manifest.config, ...Object.values(manifest.localized ?? {}).map((l) => l.config).filter((c): c is PostextConfig => c !== undefined)];
-    for (const layer of layers) {
-      const migrated = migrateConfig(layer, manifest.configVersion);
+    const manifest = JSON.parse(readFileSync(join(PRESETS, id, 'preset.json'), 'utf8')) as { config: PostextConfig; configVersion?: number; locale?: string; locales?: string[]; localized?: Record<string, { config?: PostextConfig }> };
+    // Every edition: the general settings and its language's override, read
+    // as the reader merges them under the manifest's stamp.
+    const locales = [...new Set([...(manifest.locale ? [manifest.locale] : []), ...(manifest.locales ?? []), ...Object.keys(manifest.localized ?? {})])];
+    for (const locale of locales.length > 0 ? locales : ['en']) {
+      const overrides = pickLocaleOverrides(manifest as never, locale);
+      const migrated = migrateBundleConfig({}, [manifest.config, overrides?.config ?? {}], manifest.configVersion);
       const resolved = resolveAllConfig(migrated);
       const slots: [string, ResolvedDesignSlot][] = [
         ...resolved.headings.levels.map((l, i): [string, ResolvedDesignSlot] => [`headings.levels[${i}]`, l.advancedDesign.slot]),
@@ -46,7 +51,10 @@ describe('#628: the showcase bundles lay out as they did', () => {
         ['parts.design', resolved.parts.design],
         ['parts.versoDesign', resolved.parts.versoDesign],
       ];
-      const written = designTexts(layer, 'config').map(([, e]) => e);
+      // What the manifest writes, merged by the same rule with no pin
+      // (rules 20 pin nothing; 21 merges the language field by field).
+      const unpinned = migrateBundleConfig({}, [manifest.config, overrides?.config ?? {}], (manifest.configVersion ?? 0) >= 21 ? manifest.configVersion : 20);
+      const written = designTexts(unpinned, 'config').map(([, e]) => e);
       for (const [where, s] of slots) {
         for (const el of s.elements) {
           if (el.kind !== 'text') continue;

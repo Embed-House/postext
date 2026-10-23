@@ -1817,6 +1817,10 @@ def main() -> None:
     meta = write_manifest(out, chapters, shared, wording, fonts, configs)
     write_credits_md(out, pictures)
     _common.copy_thumbnail(HERE, out)
+    # The three editions are designs of their own (vertical, horizontal,
+    # English) and share little: the general settings are the vertical
+    # edition's, and the other two state what they set otherwise.
+    _common.layer_configs(out, general="zh-Hant")
     _common.write_fingerprint(out)
     if out == OUT:
         # The shelf opens the zh-Hant edition, a right-bound book: its cover

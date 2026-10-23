@@ -142,6 +142,8 @@ export async function parseBundle(
     locale: read.locale,
     chapters,
     config,
+    // A book in several languages: its general settings (#1209).
+    ...(read.sharedConfig ? { sharedConfig: read.sharedConfig } : {}),
     resources,
     blobs: read.blobs.map(({ fileId, bytes, mime }) => ({ fileId, bytes, mime })),
     fonts: read.fonts.map(({ fileId, fileName, format, bytes }) => ({ fileId, fileName, format, buffer: bytes })),
@@ -182,6 +184,9 @@ export interface BundleContent {
    *  tag, written as the manifest's `locales`, a chapter map and
    *  `localized` (`BundleMeta.locale` then names the language of the rest). */
   localized?: Record<string, BundleEdition>;
+  /** The book's general settings (#1209), with `localized`: the manifest's
+   *  `config`, every edition written as the fields it sets of its own. */
+  sharedConfig?: PostextConfig;
 }
 
 /** An edition of a book in several languages beside the primary one. */
@@ -244,6 +249,7 @@ export function planBundle(meta: BundleMeta, content: BundleContent): BundlePlan
     ...(content.canvasScope ? { canvasScope: content.canvasScope } : {}),
     ...(content.start ? { start: content.start } : {}),
     ...(content.thumbnail ? { thumbnail: content.thumbnail } : {}),
+    ...(content.sharedConfig && content.localized && Object.keys(content.localized).length > 0 ? { sharedConfig: content.sharedConfig } : {}),
     ...(content.localized && Object.keys(content.localized).length > 0
       ? { localized: Object.fromEntries(Object.entries(content.localized).map(([locale, e]) => [locale, {
           chapters: e.chapters.map((c) => ({ title: c.title, markdown: c.markdown })),

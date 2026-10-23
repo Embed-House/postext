@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '.postext文件包',
   description: '怎样用代码打开、排版、渲染和创建.postext文件，怎样制作双语文件包，旧版本写出的文件怎样读取，以及底层API',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '20分钟',
   order: 23,
   parent: 'configuration',
@@ -70,7 +70,7 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
 
 #### postext 1.4及更早版本写出的文件包
 
-`createBundle`和沙盒写出的每份清单都带有`configVersion: 19`，表示其`config`是按哪一版配置规则写的。没有这个字段的清单出自postext 1.4或更早版本，当时有十九处设定与现在不同：
+`createBundle`和沙盒写出的每份清单都带有`configVersion: 21`，表示其`config`是按哪一版配置规则写的。没有这个字段的清单出自postext 1.4或更早版本，当时有十九处设定与现在不同：
 
 - **标题分页**（规则3）：1.4及以前，`headings`对象若没有给H1设置分页，H1就不分页（见[按级别覆盖](/zh/docs/configuration-headings#按级别覆盖)）。
 - **公式字号**（规则4）：1.4及以前，公式排出的大小是`fontSizeScale`所规定的1.131倍（见[公式字号](/zh/docs/configuration-lists-math#数学公式)）。
@@ -96,7 +96,7 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
 
 标题下方的切分（`pinLegacyHeadingSplit`）写成`headings.keepWithNextSplit: 'fill'`，加在各层叠加后生效的`headings`上，条件是：读取的某一章有标题，配置本身没有给出值，`headings.keepWithNext`保持开启，且没有关闭`bodyText.avoidOrphans`。复合词断行（`pinLegacyHyphenBreaks`）写成`bodyText.breakAfterHyphens: false`，加在生效的`bodyText`上，条件是：读取的某一章在两个字母之间用了连字符，且配置既没有设置该项，也没有关闭`optimalLineBreaking`。容器下方的间距（`pinLegacyParagraphContainerSpacing`）写成`bodyText.paragraphContainerSpacing: 'add'`，加在生效的`bodyText`上，条件是：配置声明了段落样式（在`paragraphStyles`或HTML阅读器的覆盖项中），读取的某一章在单独一行打开了`:::paragraphs`容器，且配置没有设置该项。破折号断行（`pinLegacyDashBreaks`）写成`bodyText.breakAfterDashes: false`，加在生效的`bodyText`上，条件是：读取的某一章在两词之间不留空格地使用了长破折号或短破折号（前面是字母、数字或闭合标点，后面是字母、数字或开括号、开引号；前面是引号时，只要引号前是字母、数字、闭合标点或不间断空格也算，如`"no"—and`，而`said "—Hola`不算；紧贴破折号或引号的行内标记，如`**riddles.**—I`中的`**`，在哪一侧都算），且配置没有设置该项。齐左断行（`pinLegacyRaggedBreaking`）写成`bodyText.optimalRagged: false`，加在生效的`bodyText`上，条件是：配置把某些正文设为齐左（正文、段落样式、框体、篇的正文或章节样式的正文（`headingStyles[].bodyStyle`）的`textAlign`不是`'justify'`，或在HTML阅读器的覆盖项中如此设置），没有设置该项，也没有关闭`optimalLineBreaking`。框内间距（`pinLegacyBoxResourceGap`）写成`layout.inlineResourceGapInBoxes: false`，加在生效的`layout`上，条件是：读取的章节中，某个`:::callout`内有单独一行嵌入的资源，且配置没有设置该项。框的切分（`pinLegacyBoxChildCut`）写成`layout.boxChildSplitMinLines: 1`，加在生效的`layout`上，条件是：读取的某一章在单独一行打开了`:::callout`，且配置没有设置该项。标题标记（`pinLegacyHeadingMarks`）写成`headings.inlineMarks: false`，加在各层叠加后生效的`headings`上，条件是：读取的章节中某个标题带有标记（标题中有`*`、`_`、`^`、`~`、`:smallcaps[`或链接），且配置本身没有给出值。首字下沉（`pinLegacyDropCapSize`）不论位于何处，都把1.4时的大小写成`dropCap.fontSize`：元素的行距是长度时用行距的单位，否则用其字号的单位。冒号行下方的空间（`pinLegacyColonListRoom`）写成`bodyText.colonListRoom: 'line'`，加在生效的`bodyText`上，条件是：读取的章节中有列表紧跟在以冒号结尾的行之后（中间允许有空行），且配置既没有指定空间，也没有关闭`keepColonWithList`。行内间距（`pinLegacyInlineGap`）写成`layout.inlineResourceGap: 'above'`，加在各层叠加后生效的`layout`上，条件是：读取的章节中有一行嵌入了资源（按解析器的读法，`::resource{id="…"}`单独占一行；正文或代码片段中提及不算），且配置本身没有给出间距。公式字号固定在各层叠加后生效的`math`上（某种语言自己的`math`会取代共享的那个），而且只在读取的章节中有`$`时才这样做：没有公式的文件包保持其`config`原样。若清单和语言都没有给出`math`，生效的就是`readBundle`的`baseConfig`（读取方自己的配置），它也会被固定，因为1.4就是按这个字号排文件包里的公式的：基础配置的`fontSizeScale: 1.5`读出来是1.5 × 1.1312。基础配置的标题分页保持原样。
 
-因此，旧文件包会保留这些规则排出的效果，`bundle.config`会显示排版时所用的分页、公式字号、各项间距、标题标记、首字下沉大小、冒号行下方空间、框的切分、破折号断行、复合词断行、齐左断行、标题下方的切分和容器下方的间距。1.5的版面修正没有对应的固定值，对它和对其他书一样生效，所以受影响的页面仍可能有变化（清单见[公式字号](/zh/docs/configuration-lists-math#数学公式)）。为现行规则手写的`preset.json`应设置`"configVersion": 19`；给旧文件包的清单加上这个标记，也是用现行规则读取它的一行做法（此时没有版本号的文件包也会失去标题分页的固定值）。
+因此，旧文件包会保留这些规则排出的效果，`bundle.config`会显示排版时所用的分页、公式字号、各项间距、标题标记、首字下沉大小、冒号行下方空间、框的切分、破折号断行、复合词断行、齐左断行、标题下方的切分和容器下方的间距。1.5的版面修正没有对应的固定值，对它和对其他书一样生效，所以受影响的页面仍可能有变化（清单见[公式字号](/zh/docs/configuration-lists-math#数学公式)）。为现行规则手写的`preset.json`应设置`"configVersion": 21`；给旧文件包的清单加上这个标记，也是用现行规则读取它的一行做法（此时没有版本号的文件包也会失去标题分页的固定值）。
 
 标为`8`的清单（由postext 1.5至1.22写出）只得到规则9的四项固定，更早的清单也会得到：诗的排法（`pinLegacyVerseLayout`）写成生效的`bodyText`上的`bodyText.verse.layout: 'bayt'`，条件是读取的章节中有开始标记未指定排法、各行不带半句分隔符的`:::verse`诗，且配置尚未设置该项；成对的缩进（`pinLegacyPairedIndents`）去掉同时设置了非零`hangingIndent`的每个段落样式（在`paragraphStyles`或HTML阅读器的覆盖设置中）的`firstLineIndent`；强制换行（`pinLegacyHardBreaks`）写成生效的`bodyText`上的`bodyText.hardLineBreaks: false`，条件是读取的章节中有段落、引文或列表项的某行以反斜杠结尾且该块在下一行继续，或有后跟空格和其他文字的`\\`（行内代码和公式、独立公式、标题和`:::verse`诗除外），且配置尚未设置该项；代码围栏（`pinLegacyCodeBlocks`）写成`codeStyle.blocks: false`，条件是读取的章节中打开了```` ``` ````或`~~~`围栏（三个或更多字符，最多缩进三个空格），且配置尚未设置该项。
 
@@ -123,6 +123,8 @@ bundle.files;      // Map<path, Uint8Array>：文件包中的所有文件
 标为`15`或`16`的清单由 postext 1.34 至 1.51 写出（规则16，#1056，为模板的装饰加入连接线，不固定任何旧行为）。规则17（#1119）让段落样式未设置的字体、字号、行距、字重和颜色取自它所在框的正文，而到 1.51 为止取自文档正文。标为`16`或更早的清单，在合并后的配置声明了段落样式且未写明该设置时，会在生效的`bodyText`上得到`bodyText.paragraphStylesInBoxes: 'document'`（`pinLegacyBoxParagraphStyles`）。
 
 规则19（#1164）允许带格式的文字在两个词之间的斜杠后断行，放不进一行的词也先从这里拆开；1.51及以前，带格式的行只在网址里的斜杠后断开。标为`18`或更早的清单，如果配置没有写这项设置，无论章节内容如何，都会在生效的`bodyText`上得到`bodyText.breakAfterSlashes: false`（`pinLegacySlashBreaks`）：这样的斜杠可能出现在图注、表格单元格或参考文献里，而读取的章节看不到这些。
+
+规则21（#1209）改变了多语言文件包保存各语言设置的方式（见[通用设置与各语言覆盖](#通用设置与各语言覆盖)）：`localized[…].config`逐字段合并到共享的`config`之上；到postext 1.57为止，它的每个顶层键都整体取代共享的同名键。这一规则不固定任何旧行为。标为`20`或更早的清单仍按旧方式逐键读取，每个版本的排版保持不变；再次写出时，各语言的设置按规则21写成覆盖。
 
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
@@ -284,13 +286,108 @@ const es = await openBundle(bytes, { locale: 'es' });   // 西班牙语的章节
 ```
 
 - **`chapters`**：该语言的书。章节文件按语言分文件夹存放（`chapters/en/01-dusk.md`、`chapters/es/01-anochecer.md`），清单的`chapters`变成语言 → 章节的映射。没有`chapters`的语言读取主要语言的章节；如果没有任何语言有自己的章节，它们就仍是单一列表。
-- **`config`**：该语言的配置。以该语言读取文件包时，每个顶层键整体取代共享的同名键，所以上例中的`headings`会取代整个`headings`对象。省略的键或与共享值相同的键视为共享，不会写出，因此传入该语言的完整配置和只传入少数改动的键效果一样。如果某个键设为默认值而共享的键不是（`layout: {}`），就照原样写出，从而把共享值重置。字体是共享的：某种语言`customFonts`中的字体族会并入文件包的`fonts`。
+- **`config`**：该语言的配置。传入的每个顶层键在该语言中取代共享的同名键，所以上例中的`headings`会取代整个`headings`对象。省略的键或与共享值相同的键视为共享，因此传入该语言的完整配置和只传入少数改动的键效果一样。清单只保存差异：`localized[…].config`只包含该语言与共享`config`不同的字段，读取文件包时逐字段合并到共享配置之上（见[通用设置与各语言覆盖](#通用设置与各语言覆盖)）。如果某个键设为默认值而共享的键不是（`layout: {}`），就会在该语言中重置共享值。字体是共享的：某种语言`customFonts`中的字体族会并入文件包的`fonts`。
 - **`resources`**：共享资源的文字，按`id`对应：`caption`、`note`、`altText`以及表格的`table`。含有文字的图片可以有自己的图稿：`bitmap.fileId`或`svg.fileId`（以及`svg.pdfFileId`）指向`files`中的另一个数据文件，写为`resources/es/lantern.svg`。其他字段，如类型或位置，都是共享的。不在`resources`中的id会被略去并给出警告；缺少某种语言的图片时，该语言沿用共享的图片，同样给出警告。
 - **`name`**、**`description`**：该语言版本的书名和简介，与共享的不同时写为`localized[…].name`和`description`。以该语言读取时，`openBundle`把它们作为`bundle.name`和`bundle.description`返回；沙盒在导入时和书库中以这个书名列出该版本；`postext info`和`postext check`也会打印它们。预设源`index.json`中的条目可以把它们复制到`localized`（`localized.ca.name`），书库在打开之前就能用各版本自己的书名列出它们。没有给出的语言沿用清单的`name`和`description`。
 
 清单在`locales`中列出所有语言（`['en', 'es']`），把主要语言保存为`locale`，其余的保存在`localized`下。不指定语言时，`openBundle`读取主要语言。
 
 **读者得到哪种语言**。`openBundle(bytes, { locale })`先提供完全匹配的语言，其次是其基础语言（`es-MX`读取`es`），最后是主要语言，`bundle.locale`说明实际提供的是哪一种。章节和文字总是来自同一种语言。即使`localized`带有主要语言的某个地区变体，主要语言也保留共享的文字：一个`pt-PT`文件包带有`pt-BR`项时，只有`pt-BR`读到巴西葡萄牙语的题注，`pt-PT`和`pt`读到的都是共享题注。
+
+### 通用设置与各语言覆盖
+
+一本书的多种语言版本，设计通常大部分相同：版面、网格、框样式、调色板。只有少数设置属于某一种语言：适合其文字的字体、取决于文字方向的设置、标签的措辞。按配置规则21写出的文件包（`configVersion: 21`）把两者分开存放。清单的`config`保存**通用设置**，每个版本都读取它；`localized[<lang>].config`保存该语言的**覆盖**，只包含它与通用设置不同的字段。改动一项通用设置，会作用于所有没有自行设置同一字段的版本。
+
+覆盖逐字段合并到通用设置之上：
+
+<table>
+  <thead>
+    <tr><th>覆盖中的内容</th><th>合并方式</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>对象（<code>bodyText</code>、<code>page.margins</code>）</td><td>逐键合并，直到单个字段。<code>&#123; "bodyText": &#123; "fontFamily": "Amiri" &#125; &#125;</code>只换字体，保留通用设置的字号、行距和对齐方式。</td></tr>
+    <tr><td>颜色（<code>&#123; "hex", "model" &#125;</code>）或长度（<code>&#123; "value", "unit" &#125;</code>）</td><td>整体取代。</td></tr>
+    <tr><td>条目带有<code>id</code>的列表（<code>calloutStyles</code>、<code>headingStyles</code>、<code>chipStyles</code>、<code>colorPalette</code>、<code>resourceTypes</code>、模板的框）</td><td>按<code>id</code>对应，逐条合并。<code>levels</code>列表（标题、列表、目录）按<code>level</code>对应，<code>customFonts</code>按<code>name</code>对应。通用列表中没有的条目添加在其条目之后。</td></tr>
+    <tr><td><code>&#123; "id": "note", "$remove": true &#125;</code></td><td>去掉通用列表中带有该键的条目，只对这种语言生效。顺序不同的列表写成：先移除所有通用条目，再按该语言自己的顺序列出它的列表。</td></tr>
+    <tr><td>其他列表（字体的后备栈、制表位）</td><td>整体取代。</td></tr>
+    <tr><td><code>null</code></td><td>去掉通用值：该字段读取这种语言的默认值，如同两层都没有设置它。</td></tr>
+  </tbody>
+</table>
+
+同一本书的西班牙语版和阿拉伯语版共用版面、西班牙语设计的正文字号，以及一个沙色底的注释框。阿拉伯语版设置自己的字体和字号，并把框的色条移到右侧，即从右向左的行开始的一侧：
+
+```jsonc
+{
+  "version": 2,
+  "configVersion": 21,
+  "id": "el-farol",
+  "name": "El farol",
+  "locale": "es",
+  "locales": ["es", "ar"],
+  "chapters": {
+    "es": [{ "title": "Anochecer", "file": "chapters/es/01-anochecer.md" }],
+    "ar": [{ "title": "الغسق", "file": "chapters/ar/01-al-ghasaq.md" }]
+  },
+
+  // 通用设置：每个版本都读取
+  "config": {
+    "locale": "es",
+    "bodyText": { "fontFamily": "Source Serif 4", "fontSize": { "value": 10, "unit": "pt" }, "textAlign": "justify" },
+    "headings": { "fontFamily": "Source Sans 3" },
+    "calloutStyles": [
+      {
+        "id": "note",
+        "background": { "hex": "#f3ecd9", "model": "hex" },
+        "stripe": { "enabled": true, "side": "left", "color": { "hex": "#b5651d", "model": "hex" } }
+      }
+    ]
+  },
+
+  "localized": {
+    "ar": {
+      "name": "الفانوس",
+      // 只写阿拉伯语版与通用设置不同的部分
+      "config": {
+        "locale": "ar",
+        "bodyText": { "fontFamily": "Amiri", "fontSize": { "value": 11, "unit": "pt" } },
+        "headings": { "fontFamily": "Noto Kufi Arabic" },
+        "calloutStyles": [{ "id": "note", "stripe": { "side": "right" } }]
+      }
+    }
+  }
+}
+```
+
+以阿拉伯语读取时，正文用Amiri排成11 pt，仍然两端对齐；注释框保留通用的底色、色条宽度和色条颜色，色条在右侧。文字方向、装订和数字都保持*自动*，因此跟随`locale`：从右向左、右侧装订、阿拉伯-印度数字。按文字方向指定一侧的设置根本不需要覆盖：通用设置中写`"side": "start"`，色条在西班牙语中位于左侧，在阿拉伯语中位于右侧。
+
+希望每个版本都跟随改动的设置，放进通用设置：版面和网格、颜色、框样式和标题样式、间距。属于语言本身的设置，放进覆盖：适合其文字的字体、正文字号、断词和断行规则、以左或右表示的一侧或对齐方式、标签和书眉的措辞。内置资源类型（*Figure*、*Figura*）的名称和编号无需覆盖，自动取自各版本的语言。
+
+**旧文件包**。标为`20`或更早的清单按以前的规则读取：`localized[…].config`的每个顶层键整体取代共享的同名键，所以那里的`{ "bodyText": { "fontFamily": "Amiri" } }`会丢掉共享配置中`bodyText`的其他所有字段。`createBundle`和沙盒总是写出21。要把手写的清单改为21，先写出每种语言的完整配置，再用下面的函数只保留差异。
+
+**在代码中**。`postext`包导出了文件包编解码器和沙盒所用的函数：
+
+```ts
+import { mergeConfigLayers, diffConfigLayers, leastConfigOverride, commonConfig, overridePaths, stripConfigDefaults } from 'postext';
+import type { ConfigOverride } from 'postext';
+
+const arabic = mergeConfigLayers(general, override);   // 阿拉伯语版排版所用的配置
+diffConfigLayers(general, arabic);                     // 反推出覆盖：不同的字段
+overridePaths(override);
+// => ['locale', 'bodyText.fontFamily', 'bodyText.fontSize', 'headings.fontFamily', 'calloutStyles[id=note].stripe.side']
+
+const shared = commonConfig([spanish, arabic]);        // 两个版本一致的部分
+const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
+```
+
+- **`mergeConfigLayers(general, override)`**：按上表的规则得出某个版本排版所用的配置。两个输入都不会被修改；没有覆盖时直接返回`general`本身。
+- **`diffConfigLayers(general, own)`**：把`general`变成`own`的覆盖。`general`设置了而`own`没有的字段写为`null`，顺序不同的带键列表写成先移除、再列出列表。`mergeConfigLayers(general, diffConfigLayers(general, own))`等于`own`，键的顺序除外。
+- **`leastConfigOverride(general, own, normalize)`**：同样的覆盖，但去掉那些在`normalize`（例如`stripConfigDefaults`）处理之后不起作用的`null`和移除项，即通用值恰好也是`own`所属语言默认值的情况。文件包写出程序使用的就是它。
+- **`commonConfig(configs)`**：所有配置都设为相同值的字段，对象逐字段比较，带键列表逐条比较。对于各自保存了完整配置的几个版本，它给出通用设置，再由`diffConfigLayers`给出每个版本的覆盖。
+- **`overridePaths(override)`**：覆盖设置的每个字段，以路径表示，列表条目用其键命名（`headings.levels[level=2].fontSize`）。`null`和被移除的条目也算字段。`sandbox_get_config`列为`ownFields`的就是这些路径。
+- **`REMOVE_ENTRY`**：`"$remove"`键。
+- **`ConfigOverride`**：覆盖的类型。
+
+`openBundle`返回所提供版本合并后的`config`。对于带有`localized`项的文件包，`readBundle`还返回`sharedConfig`，即按同样规则、用同样字体读取的通用设置。`planBundle`在其内容中接受`sharedConfig`：此时清单的`config`由它写出，每个版本（包括主要版本）都作为覆盖写入`localized`。
 
 ### 在线示例：创建文件包
 
@@ -310,8 +407,8 @@ const es = await openBundle(bytes, { locale: 'es' });   // 西班牙语的章节
 `postext/bundle`还导出了`openBundle`和`createBundle`背后的构建模块，供以自己的方式存储或提供文件包的宿主使用（例如通过HTTP提供的解压目录、数据库中的记录）：
 
 - **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**：压缩包层。打开时允许有一个顶层文件夹，并忽略`__MACOSX`条目和点文件。会拒绝逃出文件包范围的路径。`mtime`给文件标注日期的方式与`createBundle`的同名输入相同。
-- <strong>`readBundle(manifest, readFile, options)`</strong>根据清单和一个`readFile(path)`回调读出章节、配置、资源、图片和字体。`options`设置语言、文件id的命名方式（`ids`）、基础配置（`baseConfig`，位于清单配置之下；默认是文件包语言下`bundleBaseConfig`的调色板和资源类型，该语言由`resolveBundleConfigLocale(manifest, locale)`返回，传入自己的`baseConfig`的宿主应把它本地化为该语言；清单早于`CONFIG_VERSION`时，其版本号要求的固定值也作用于基础配置中清单和语言没有覆盖、仍然生效的键，标题分页除外，见[postext 1.4及更早版本写出的文件包](#postext-14及更早版本写出的文件包)），以及固有尺寸的测量方式。`readResolution`从文件读取每张位图的分辨率，写入`bitmap.fileResolution`；文件包设了`layout.bitmapResolution: 'file'`时默认为true。
-- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**：写出的一侧，分为一个纯粹的计划（文件名和清单）和通过`readBlob` / `readFont`回调解析字节两步。
+- <strong>`readBundle(manifest, readFile, options)`</strong>根据清单和一个`readFile(path)`回调读出章节、配置、资源、图片和字体；对于多语言文件包，还把通用设置读作`sharedConfig`。`options`设置语言、文件id的命名方式（`ids`）、基础配置（`baseConfig`，位于清单配置之下；默认是文件包语言下`bundleBaseConfig`的调色板和资源类型，该语言由`resolveBundleConfigLocale(manifest, locale)`返回，传入自己的`baseConfig`的宿主应把它本地化为该语言；清单早于`CONFIG_VERSION`时，其版本号要求的固定值也作用于基础配置中清单和语言没有覆盖、仍然生效的键，标题分页除外，见[postext 1.4及更早版本写出的文件包](#postext-14及更早版本写出的文件包)），以及固有尺寸的测量方式。`readResolution`从文件读取每张位图的分辨率，写入`bitmap.fileResolution`；文件包设了`layout.bitmapResolution: 'file'`时默认为true。
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**：写出的一侧，分为一个纯粹的计划（文件名和清单）和通过`readBlob` / `readFont`回调解析字节两步。`content.sharedConfig`把通用设置与主要版本分开写出（见[通用设置与各语言覆盖](#通用设置与各语言覆盖)）。
 - **`isBundleManifest(value)`**、语言选择函数（`pickChapterSpecs`、`pickLocaleOverrides`、`pickBundleView`、`resolveBundleLocale`、`resolveBundleConfigLocale`）、`svgSize` / `bitmapSize` / `bitmapInfo`（位图的像素及其文件标明的分辨率），以及格式类型（`BundleManifest`、`BundleResourceSpec`、`BundleFontFamilySpec`……）。
 - **`CONFIG_VERSION`、`migrateConfig(config, configVersion, { content })`、`pinLegacyHeadingBreaks(config)`、`pinLegacyMathSize(config)`、`pinLegacyInlineGap(config)`、`pinLegacyBoxResourceGap(config)`、`pinLegacyHeadingMarks(config)`、`pinLegacyDropCapSize(config)`、`pinLegacyColonListRoom(config)`、`pinLegacyBoxChildCut(config)`、`pinLegacyDashBreaks(config)`、`pinLegacyRaggedBreaking(config)`、`pinLegacyHeadingSplit(config)`、`pinLegacyParagraphContainerSpacing(config)`、`pinLegacyHyphenBreaks(config)`、`pinLegacyVerseLayout(config)`、`pinLegacyPairedIndents(config)`、`pinLegacyHardBreaks(config)`、`pinLegacyCodeBlocks(config)`、`pinLegacyVerseTightening(config)`、`pinLegacyDesignOverflow(config)`、`pinLegacyGridBalancing(config)`、`pinLegacyTitleBreaks(config)`、`pinLegacyCircledNumbers(config)`、`pinLegacyDesignText(config)`、`pinLegacyInlineTableSplit(config)`、`pinLegacyFlowColumns(config)`、`pinLegacyOpenerHeadFloats(config)`、`pinLegacyLooseOrder(config)`、`pinLegacyWideFloatStretch(config)`、`pinLegacyTrailingStep(config)`、`pinLegacyIndexGroupSplit(config)`、`pinLegacyGridBreakRules(config)`、`pinLegacyNoteBreaks(config)`、`pinLegacyLatinSpacingEdge(config)`、`pinLegacyInlineCaptionSide(config)`、`pinLegacyRefLabelBreaks(config)`、`pinLegacyBalloonPlacement(config)`、`pinLegacyScriptContext(config)`、`pinLegacyShapingLanguage(config)`、`pinLegacyTaskBox(config)`和`LEGACY_MATH_SIZE`**（0.5 ÷ 0.442）：把存储的配置转换为现行规则的表述（见[postext 1.4及更早版本写出的文件包](#postext-14及更早版本写出的文件包)）。`readBundle`会应用它们；以自己的方式存储配置的宿主也可以使用，每份存储的副本用一次。
 

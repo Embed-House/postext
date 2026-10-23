@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190040,
+        "bytes": 191898,
         "folio": "49229ae8",
         "chapters": [
           {
@@ -400,7 +400,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -509,7 +515,7 @@
       },
       "sandbox": {
         "file": "garden-almanac.postext",
-        "bytes": 190041,
+        "bytes": 191895,
         "folio": "49229ae8",
         "chapters": [
           {
@@ -794,7 +800,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

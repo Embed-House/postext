@@ -195,7 +195,7 @@ postext pack 01.md 02.md --name "Notes" --config design.json --resources img/ -o
 postext unpack my-book.postext -o my-book/
 ```
 
-`pack`把图书文件夹原样压缩，或者用零散的Markdown构建一个文件包。同样的输入总是生成逐字节相同的文件，所以可以比较文件包，或计算它的哈希。对于零散的Markdown，`--id`、`--description`和`--thumbnail FILE`（一张封面图片）设置文件包的id、描述和缩略图；id默认由名称生成slug。文件夹保留它的`preset.json`所写的内容。`unpack`拒绝写入非空的文件夹，除非给出`--force`。
+`pack`把图书文件夹原样压缩，或者用零散的Markdown构建一个文件包。同样的输入总是生成逐字节相同的文件，所以可以比较文件包，或计算它的哈希。对于零散的Markdown，`--id`、`--description`和`--thumbnail FILE`（一张封面图片）设置文件包的id、描述和缩略图；id默认由名称生成slug。文件夹保留它的`preset.json`所写的内容。没有指定封面的图书会以第一页作为封面（`thumbnail.jpg`，长边1024 px），文件管理器可以把它显示为文件的图标；`--no-auto-thumbnail`不生成它。`unpack`拒绝写入非空的文件夹，除非给出`--force`。
 
 ### info和check
 

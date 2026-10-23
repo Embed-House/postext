@@ -31,14 +31,14 @@ import {
   type ViewHash,
   type ViewHashBook,
 } from '../storage/viewHash.js';
-import { loadConfig, loadStoredConfig, loadBook, loadViewport, loadSidebarPercent, loadPanel, loadPresetApplied, loadPresetId, loadProjectId, loadHiddenPresetIds, loadViewerLocale, loadEpubLayout, saveConfig, saveBook, saveViewport, saveSidebarPercent, savePanel, savePresetApplied, savePresetId, saveProjectId, saveHiddenPresetIds, saveViewerLocale, saveEpubLayout } from '../storage/persistence.js';
+import { loadConfig, loadStoredConfig, loadBook, loadViewport, loadSidebarPercent, loadPanel, loadPresetApplied, loadPresetId, loadProjectId, loadHiddenPresetIds, loadViewerLocale, loadEpubLayout, saveConfig, saveBook, saveViewport, saveSidebarPercent, savePanel, savePresetApplied, savePresetId, saveProjectId, saveHiddenPresetIds, saveViewerLocale, saveEpubLayout, loadPresetGeneral, savePresetGeneral, loadWorkingLayers, saveWorkingLayers } from '../storage/persistence.js';
 import { defaultEpubLayout } from '../epub/defaultLayout.js';
 import { loadResources, saveResource, deleteResource } from '../storage/resources.js';
 import { customFontsSignature, setCustomFonts } from '../controls/fontLoader.js';
 import { pruneFontFiles } from '../storage/fontStorage.js';
 import { pruneBlobs } from '../storage/blobStore.js';
 import { keepMigrationSnapshots } from '../migrate/textMigration.js';
-import { allEditionChapters, collectProjectFileIds, generateChapterId, listProjects, referencedFileIds, toSummary, updateProject } from '../storage/projects.js';
+import { allEditionChapters, collectProjectFileIds, generateChapterId, listProjects, referencedFileIds, toSummary, updateProject, type ProjectPatch } from '../storage/projects.js';
 import {
   decideDraftSave,
   deletePresetDraft,
@@ -93,6 +93,8 @@ import { createSandboxHistory, setActiveHistory, type ConfigHistoryMeta, type Sa
 import { installHistoryKeys } from '../history/historyKeys.js';
 import { presetCoverKey, type CoverTarget } from '../covers/autoCover.js';
 import { bytesToDataUrl, listPresetCovers, putPresetCoverIfMissing } from '../storage/presetCovers.js';
+import { presetSharedConfig, rebaseEdition, rebaseEditions, recordSharedConfig, type ConfigLayers, type ConfigScope } from '../editions/configLayers.js';
+import { ScopedDispatchContext, StateViewContext } from './configScope.js';
 import {
   BUILTIN_PRESET_ID,
   GUIDE_SAMPLE_DOCUMENTS,
@@ -207,7 +209,13 @@ export interface SandboxState {
   chapterLayouts: Record<string, ChapterLayout>;
   /** Preset ids the user hid from the Projects panel (never the built-in). */
   hiddenPresetIds: string[];
+  /** The configuration of the edition on screen: what it lays out with. */
   config: PostextConfig;
+  /** A book in several languages (#1209): its general settings, which
+   *  every edition reads unless it sets a field of its own, and whether
+   *  the Design panel writes to them or to the edition on screen alone.
+   *  Null for a book in one language. */
+  configLayers: ConfigLayers | null;
   /** User-managed resources (images, SVGs, tables). Loaded asynchronously on
    *  init from IndexedDB (NOT localStorage) and persisted via an effect. */
   resources: Resource[];
@@ -311,7 +319,14 @@ export type SandboxAction =
   /** `history` says how the write enters the undo history (#899):
    *  `false` not at all (a book opened), `{ merge: false }` as a step of
    *  its own (a frame dropped, a tool call). */
-  | { type: 'SET_CONFIG'; payload: PostextConfig; history?: ConfigHistoryMeta }
+  | { type: 'SET_CONFIG'; payload: PostextConfig; history?: ConfigHistoryMeta;
+      /** The general settings that go with it (a write the Design panel
+       *  made for every language, or its undo). */
+      shared?: PostextConfig }
+  /** The general settings of the book on screen (null: one language). */
+  | { type: 'SET_CONFIG_LAYERS'; payload: ConfigLayers | null }
+  /** Where the Design panel writes (#1209). */
+  | { type: 'SET_CONFIG_SCOPE'; payload: ConfigScope }
   | { type: 'UPDATE_CONFIG'; payload: Partial<PostextConfig>; history?: ConfigHistoryMeta }
   | { type: 'TOGGLE_PANEL'; payload: PanelId }
   | { type: 'SET_PANEL'; payload: PanelId | null }
@@ -530,7 +545,15 @@ export function sandboxReducer(state: SandboxState, action: SandboxAction): Sand
       return next.length === state.hiddenPresetIds.length ? state : { ...state, hiddenPresetIds: next };
     }
     case 'SET_CONFIG':
-      return { ...state, config: action.payload };
+      return {
+        ...state,
+        config: action.payload,
+        ...(action.shared && state.configLayers ? { configLayers: { ...state.configLayers, shared: action.shared } } : {}),
+      };
+    case 'SET_CONFIG_LAYERS':
+      return { ...state, configLayers: action.payload };
+    case 'SET_CONFIG_SCOPE':
+      return !state.configLayers || state.configLayers.scope === action.payload ? state : { ...state, configLayers: { ...state.configLayers, scope: action.payload } };
     case 'UPDATE_CONFIG':
       return { ...state, config: { ...state.config, ...action.payload } };
     case 'TOGGLE_PANEL':
@@ -705,7 +728,7 @@ export function sandboxReducer(state: SandboxState, action: SandboxAction): Sand
       return { ...state, presetUpdatedAt: action.payload };
     case 'SET_ACTIVE_PROJECT': {
       if (action.payload.id === null) {
-        return state.activeProjectId === null ? state : { ...state, activeProjectId: null };
+        return state.activeProjectId === null ? state : { ...state, activeProjectId: null, configLayers: null };
       }
       // A project's baseline is the preset it came from (Reset restores it);
       // preset bookkeeping — applied snapshot, staleness, notices — is preset
@@ -826,8 +849,10 @@ function useStore(): SandboxStore {
 
 export function useSandbox(): SandboxContextValue {
   const store = useStore();
-  const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
-  return { state, dispatch: store.dispatch, docRef: store.docRef };
+  const view = useContext(StateViewContext);
+  const scoped = useContext(ScopedDispatchContext);
+  const raw = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
+  return { state: view ? view(raw) : raw, dispatch: scoped ?? store.dispatch, docRef: store.docRef };
 }
 
 /** The whole store, for code that reads and acts outside React's render
@@ -838,7 +863,8 @@ export function useSandboxStore(): SandboxStore {
 
 /** Stable dispatch reference — never triggers a re-render on state changes. */
 export function useSandboxDispatch(): Dispatch<SandboxAction> {
-  return useStore().dispatch;
+  const store = useStore();
+  return useContext(ScopedDispatchContext) ?? store.dispatch;
 }
 
 /** Subscribe to a slice of state; component re-renders only when the selected
@@ -848,6 +874,10 @@ export function useSandboxSelector<T>(
   isEqual: (a: T, b: T) => boolean = Object.is,
 ): T {
   const store = useStore();
+  // Inside the Design panel, the layer it edits (#1209).
+  const view = useContext(StateViewContext);
+  const viewRef = useRef(view);
+  viewRef.current = view;
   const selectorRef = useRef(selector);
   selectorRef.current = selector;
   const isEqualRef = useRef(isEqual);
@@ -857,7 +887,8 @@ export function useSandboxSelector<T>(
   const lastResultRef = useRef<T>(undefined as T);
 
   const getSnapshot = () => {
-    const s = store.getSnapshot();
+    const raw = store.getSnapshot();
+    const s = viewRef.current ? viewRef.current(raw) : raw;
     // Re-select when the state changed, and also when the selector did: a
     // component re-rendering with a new argument (another chapter's plan)
     // must not get the value the subscription check computed for the old
@@ -1345,6 +1376,7 @@ export function SandboxProvider({
       chapterLayouts: {},
       hiddenPresetIds: loadHiddenPresetIds(),
       config,
+      configLayers: null,
       resources: [],
       storeReady: false,
       booting,
@@ -1472,7 +1504,11 @@ export function SandboxProvider({
     // Any preset still loading would land over it.
     presetLoadSeqRef.current++;
     const loc = stateRef.current.locale;
-    const config = withDefaultResourceTypes(draft.config, loc);
+    // A preset in several languages: the draft opens on the general
+    // settings in force now, keeping what it sets of its own (#1209).
+    const general = draft.sharedConfig ? loadPresetGeneral(draft.presetId) ?? draft.sharedConfig : null;
+    const scope = stateRef.current.configLayers?.scope ?? 'all';
+    const config = withDefaultResourceTypes(general && draft.sharedConfig ? rebaseEdition(draft.sharedConfig, general, draft.config) : draft.config, loc);
     setCustomFonts(config.customFonts, { newBook: true });
     const book: BookContent = {
       chapters: draft.chapters,
@@ -1483,6 +1519,7 @@ export function SandboxProvider({
     dispatch({ type: 'SET_ACTIVE_PROJECT', payload: { id: null } });
     dispatch({ type: 'SET_PRESET', payload: { id: draft.presetId, config: draft.baseConfig ? withDefaultResourceTypes(draft.baseConfig, loc) : undefined } });
     dispatch({ type: 'SET_CONFIG', payload: config });
+    dispatch({ type: 'SET_CONFIG_LAYERS', payload: general ? { shared: general, scope } : null });
     dispatch({ type: 'SET_RESOURCES', payload: draft.resources });
     dispatch({ type: 'SET_BOOK', payload: book });
     dispatch({ type: 'SET_PRESET_APPLIED', payload: draft.snapshot });
@@ -1535,6 +1572,7 @@ export function SandboxProvider({
       await applyPreset(loaded, dispatch, {
         parts,
         fingerprint,
+        scope: stateRef.current.configLayers?.scope ?? 'all',
         current: { chapters, config, resources },
         before: () => {
           if (opts.leaveProject && stateRef.current.activeProjectId !== null) {
@@ -1572,8 +1610,14 @@ export function SandboxProvider({
     const choice = choosePresetOpen({ summary: provider.summary, requested: locale, current, viewer: s.locale, drafts: draftsRef.current });
     return switchBookRef.current(async () => {
       if (choice.draft) {
-        const draft = await getPresetDraft(choice.draft.key);
+        let draft = await getPresetDraft(choice.draft.key);
         if (draft) {
+          // A draft saved before general settings existed (#1209): it was
+          // based on the preset's own, which its edition reads.
+          if (!draft.sharedConfig && (provider.summary.locales?.length ?? 0) > 1) {
+            const original = await provider.load(draft.locale || choice.locale || s.locale).then(presetSharedConfig).catch(() => null);
+            if (original) draft = { ...draft, sharedConfig: original };
+          }
           applyDraft(draft);
           return true;
         }
@@ -1649,7 +1693,8 @@ export function SandboxProvider({
         })),
         removeProject: (id) => projectActions.remove(id, { offScreen: true }),
         fetchBytes: fetchBundleBytes,
-        importBytes: (bytes, name, origin) => projectActions.importBundleBytes(bytes, name, { origin }),
+        // A recipe published in several languages opens in the link's.
+        importBytes: (bytes, name, origin, lang) => projectActions.importBundleBytes(bytes, name, { origin, ...(lang ? { locale: lang } : {}) }),
         pageOrigin: window.location.origin,
       });
       writeViewHash({ project: opened.projectId });
@@ -1694,6 +1739,13 @@ export function SandboxProvider({
         if (cancelled) return;
         presetProvidersRef.current = providers;
         dispatch({ type: 'SET_PROJECT_LIST', payload: projects.map(toSummary) });
+        // The project the visit resumes, in several languages: its general
+        // settings (#1209), which the working copy does not keep.
+        const resumed = projects.find((p) => p.id === stateRef.current.activeProjectId);
+        const resumedShared = resumed ? recordSharedConfig(resumed) : null;
+        const resumedPreset = !resumed && !stateRef.current.activeProjectId && stateRef.current.presetApplied ? loadWorkingLayers(stateRef.current.presetApplied.presetId) : null;
+        const resumedLayers = resumedShared ?? resumedPreset;
+        if (resumedLayers && !stateRef.current.configLayers) dispatch({ type: 'SET_CONFIG_LAYERS', payload: { shared: resumedLayers, scope: 'all' } });
         setDraftSummaries(drafts.map(toDraftSummary));
         projectsLoadedRef.current = true;
         // Layout records of chapters no book holds any more are dropped.
@@ -2023,20 +2075,39 @@ export function SandboxProvider({
     const s = stateRef.current;
     saveBook(bookOf(s));
     saveConfig(s.config);
+    saveWorkingLayers(s.activeProjectId ? null : s.presetApplied?.presetId ?? null, s.activeProjectId ? null : s.configLayers?.shared ?? null);
     const resources = resourcesOverride ?? (s.storeReady ? s.resources : null);
     if (!resources) return;
     if (s.activeProjectId) {
-      await updateProject(s.activeProjectId, {
-        chapters: s.chapters,
-        activeChapterId: s.activeChapterId,
-        canvasScope: s.canvasScope,
-        // `undefined` clears a start the record held for another book.
-        start: s.bookStart,
-        config: stripConfigDefaults(s.config),
-        resources,
+      const layers = s.configLayers;
+      await updateProject(s.activeProjectId, (existing) => {
+        const patch: ProjectPatch = {
+          chapters: s.chapters,
+          activeChapterId: s.activeChapterId,
+          canvasScope: s.canvasScope,
+          // `undefined` clears a start the record held for another book.
+          start: s.bookStart,
+          config: stripConfigDefaults(s.config),
+          resources,
+        };
+        // General settings changed (#1209): the editions kept aside read
+        // them too, each keeping the fields it sets itself.
+        const before = recordSharedConfig(existing);
+        if (layers && before && existing.editions) {
+          const editions = rebaseEditions(before, layers.shared, existing.editions);
+          patch.sharedConfig = layers.shared;
+          if (editions !== existing.editions) {
+            patch.editions = editions;
+            patch.editionsRev = Date.now();
+          }
+        }
+        return patch;
       }).catch(() => undefined);
       return;
     }
+    // The general settings of a preset in several languages: every edition
+    // opens on them (#1209).
+    if (s.configLayers && s.presetApplied) savePresetGeneral(s.presetApplied.presetId, s.configLayers.shared);
     const decision = decideDraftSave({
       activeProjectId: s.activeProjectId,
       activePresetId: s.activePresetId,
@@ -2052,6 +2123,7 @@ export function SandboxProvider({
         locale: s.presetApplied.locale ?? '',
         snapshot: s.presetApplied,
         ...(s.presetConfig ? { baseConfig: s.presetConfig } : {}),
+        ...(s.configLayers ? { sharedConfig: s.configLayers.shared } : {}),
         chapters: s.chapters,
         activeChapterId: s.activeChapterId,
         ...(s.canvasScope === 'book' ? { canvasScope: s.canvasScope } : {}),
@@ -2410,6 +2482,8 @@ export function SandboxProvider({
         return;
       }
       const activeId = stateRef.current.activePresetId;
+      // The preset's own design back: its general settings too (#1209).
+      if (parts === 'all' || parts === 'config') savePresetGeneral(activeId, null);
       // The whole preset back: the original replaces the draft.
       if (parts === 'all') {
         const s = stateRef.current;

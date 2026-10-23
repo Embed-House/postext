@@ -14,8 +14,10 @@ right (§22 lists the differences).
 - Resolution order: palette flattening → bodyText (with `locale`) → headings →
   lists (inherit bodyText) → page → layout → tables → captions → diagrams →
   paragraphStyles → calloutStyles (inherit bodyText/headings/lists) → chips →
-  math → header/footer → parts → headingStyles → toc. In a bilingual project,
-  `localized.<lang>.config` replaces whole top-level keys before this runs.
+  math → header/footer → parts → headingStyles → toc. In a project in several
+  languages, `localized.<lang>.config` is merged over `config` field by field
+  before this runs (configVersion 21; below 21 it replaces whole top-level
+  keys; project-format.md §2).
 - Baseline grid pitch = `bodyText.fontSize × bodyText.lineHeight` (em) or the
   absolute `lineHeight`. Everything snaps to it.
 
@@ -1453,8 +1455,9 @@ Gotchas
   en, es, fr, de, it, pt, ca, nl, Chinese (Simplified and Traditional), Japanese and Arabic, English otherwise). Chinese, Japanese
   and Arabic number `{h1}-{n}` (图1-1, 図1-1, شكل ٢-٣). Chinese: 图/圖 and 表, numbered
   `{h1}-{n}` (图1-1), continued tables （续）/（續）. Older engines used English. Still declare
-  `resourceTypes` explicitly in a preset (and translate per locale via
-  `localized.<lang>.config.resourceTypes` in preset.json).
+  `resourceTypes` explicitly in a preset (and change a language's wording with
+  `localized.<lang>.config.resourceTypes` entries by `id`, e.g.
+  `[{ "id": "figure", "captionPrefix": "Figure" }]`, configVersion 21).
 - Numbering follows first `:ref` in reading order; `{h1}` is the chapter number (continues across chapters in book mode).
 - Pair `{h1}.{n}` with `resetOn:'h1'`.
 - Only referenced resources are numbered (`:ref` or `::resource`, in first-reference order, any placement). An image
@@ -2322,12 +2325,13 @@ text typed into its elements is content like any other design text.
   config: PostextConfig,                          // WITHOUT customFonts
   resources: [ Resource minus createdAt/updatedAt/bitmap/svg, plus file?, pdfFile?, inlineFonts?, width?, height?, resolution?, fileResolution?, note? ],
   fonts: [ { name, variants: [{ weight, style, file: "fonts/X.woff2" }], redistributable?, fallback? (≥ 1.42) } ],
-  localized?: { "<locale>": { config?: Partial<PostextConfig> (top-level keys REPLACED wholesale),
+  localized?: { "<locale>": { config?: ConfigOverride (configVersion ≥ 21: merged over `config` field by field, keyed
+                                lists by id / level, $remove drops an entry, null = default; ≤ 20: top-level keys REPLACED wholesale),
                               resources?: [{ id, caption?, note?, altText?, table?, file?, pdfFile?, width?, height?, poster?, video?, resolution?, fileResolution? }],
                               view?: { canvasScope?: 'book'|'chapter' },        // the edition's view over `view` (≥ 1.9.2)
                               start?: { … } } } }                               // the edition's own start, in place of `start`
 ```
-`configVersion: 15` (postext ≥ 1.34) says `config` is written for today's rules (`preset_kit.write_manifest` sets it).
+`configVersion: 21` says `config` and the `localized` overrides are written for today's rules (`preset_kit.write_manifest` sets it).
 Rule 15 marks a config that may hold `pageTemplates` / `labelStyles` and pins nothing, so a manifest stamped 14
 (postext 1.30 to 1.33) loads unchanged. Without a number the bundle reads as postext 1.4 wrote it: H1 breaks pinned, maths × 1.1312 when a chapter has `$`,
 `layout.inlineResourceGap: 'above'` when a chapter embeds a `::resource`, `layout.inlineResourceGapInBoxes: false`

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Paquetes .postext',
   description: 'Cómo abrir, maquetar, renderizar y crear archivos .postext desde el código; los paquetes bilingües; los archivos escritos por versiones anteriores, y la API de bajo nivel.',
   lang: 'es',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '30 min',
   order: 23,
   parent: 'configuration',
@@ -70,7 +70,7 @@ El **`fileId` de cada archivo es su ruta dentro del paquete**. `resource.svg.fil
 
 #### Paquetes escritos por postext 1.4 o anterior
 
-Todos los manifiestos que escriben `createBundle` y el Sandbox llevan `configVersion: 19`, que indica las reglas de configuración para las que se escribió su `config`. Un manifiesto sin este campo lo escribió postext 1.4 o anterior, que resolvía diecinueve cosas de otra manera:
+Todos los manifiestos que escriben `createBundle` y el Sandbox llevan `configVersion: 21`, que indica las reglas de configuración para las que se escribió su `config`. Un manifiesto sin este campo lo escribió postext 1.4 o anterior, que resolvía diecinueve cosas de otra manera:
 
 - **Los saltos de encabezado** (reglas 3): hasta la 1.4, un objeto `headings` sin salto para el H1 no tenía ninguno (véase [Configuración por nivel](/es/docs/configuration-headings#configuración-por-nivel)).
 - **El tamaño de las fórmulas** (reglas 4): hasta la 1.4, las fórmulas salían 1,131 veces más grandes de lo que indica `fontSizeScale` (véase [Tamaño de las fórmulas](/es/docs/configuration-lists-math#matemáticas)).
@@ -96,7 +96,7 @@ Todos los manifiestos que escriben `createBundle` y el Sandbox llevan `configVer
 
 La división bajo un encabezado (`pinLegacyHeadingSplit`) se escribe como `headings.keepWithNextSplit: 'fill'` en el `headings` que dejan en vigor las capas, cuando algún capítulo leído tiene un encabezado y la configuración no indica un valor propio, mantiene activado `headings.keepWithNext` y no desactiva `bodyText.avoidOrphans`. Los cortes tras el guion de un compuesto (`pinLegacyHyphenBreaks`) se escriben como `bodyText.breakAfterHyphens: false` en el `bodyText` en vigor, cuando un capítulo leído tiene un guion entre dos letras y la configuración ni lo fija ya ni desactiva `optimalLineBreaking`. El espacio bajo los contenedores (`pinLegacyParagraphContainerSpacing`) se escribe como `bodyText.paragraphContainerSpacing: 'add'` en el `bodyText` en vigor, cuando la configuración declara algún estilo de párrafo (en `paragraphStyles` o en los ajustes propios del visor HTML), un capítulo leído abre un contenedor `:::paragraphs` en una línea propia y la configuración no lo fija ya. Los cortes tras una raya (`pinLegacyDashBreaks`) se escriben como `bodyText.breakAfterDashes: false` en el `bodyText` en vigor, cuando un capítulo leído tiene una raya o una semirraya pegada a dos palabras (con una letra, una cifra o un signo de cierre delante, y una letra, una cifra o un signo de apertura detrás; unas comillas delante de la raya cuentan si las precede una letra, una cifra, un signo de cierre o un espacio de no separación, como en `«no»—y`, pero no en `dijo "—Hola`; una marca en línea pegada a la raya o a las comillas, como los `**` de `**I.**—Que`, cuenta a cualquiera de los dos lados) y la configuración no lo fija ya. La composición del texto en bandera (`pinLegacyRaggedBreaking`) se escribe como `bodyText.optimalRagged: false` en el `bodyText` en vigor, cuando la configuración pone en bandera algún texto corrido (un `textAlign` distinto de `'justify'` en el texto base, en un estilo de párrafo, en el contenido de un recuadro, en el texto de una parte o en el de un estilo de sección (`headingStyles[].bodyStyle`), o en los ajustes propios del visor HTML), no lo fija ya y no desactiva `optimalLineBreaking`. El espacio en los recuadros (`pinLegacyBoxResourceGap`) se escribe como `layout.inlineResourceGapInBoxes: false` en el `layout` en vigor, cuando, en los capítulos leídos, se inserta un recurso en su propia línea dentro de un `:::callout` y la configuración no lo fija ya. El corte de los recuadros (`pinLegacyBoxChildCut`) se escribe como `layout.boxChildSplitMinLines: 1` en el `layout` en vigor, cuando un capítulo leído abre un `:::callout` en una línea propia y la configuración no lo fija ya. Las marcas de los encabezados (`pinLegacyHeadingMarks`) se escriben como `headings.inlineMarks: false` en el `headings` que dejan en vigor las capas, cuando algún encabezado de los capítulos leídos tiene una marca (`*`, `_`, `^`, `~`, `:smallcaps[` o un enlace en su título) y la configuración no indica un valor propio. A las capitulares (`pinLegacyDropCapSize`) se les escribe explícitamente su tamaño de la 1.4 como `dropCap.fontSize`, estén donde estén: en la unidad del interlineado del elemento, si es una longitud, y si no, en la unidad de su cuerpo. El sitio bajo los dos puntos (`pinLegacyColonListRoom`) se escribe como `bodyText.colonListRoom: 'line'` en el `bodyText` en vigor, cuando una lista de los capítulos leídos sigue a una línea que termina en dos puntos (aunque haya líneas en blanco entre ellas) y la configuración ni indica un sitio ni desactiva `keepColonWithList`. El espacio de las figuras en línea (`pinLegacyInlineGap`) se escribe como `layout.inlineResourceGap: 'above'` en el `layout` que dejan en vigor las capas, cuando una línea de los capítulos leídos inserta un recurso (`::resource{id="…"}` solo en su línea, tal como lo lee el analizador: una mención en el texto corrido o en un código en línea no cuenta) y la configuración no indica un espacio propio. El tamaño se fija en el `math` que dejan en vigor las capas (el `math` propio de un idioma sustituye al compartido), y solo si los capítulos leídos contienen algún `$`: un paquete sin fórmulas conserva su `config` tal como se escribió. Si ni el manifiesto ni el idioma indican un `math`, el que queda en vigor es el de la `baseConfig` de `readBundle` (la del lector), y también se fija, porque la 1.4 componía las fórmulas del paquete a ese tamaño: una base con `fontSizeScale: 1.5` se lee como 1,5 × 1,1312. Los saltos de encabezado de la base se toman tal como vienen.
 
-Así, un paquete antiguo conserva lo que maquetaban estas reglas, y `bundle.config` muestra con qué saltos, tamaño de las fórmulas, espacios, marcas de los encabezados, tamaño de las capitulares, sitio bajo los dos puntos, corte de los recuadros, cortes tras una raya, cortes tras el guion de un compuesto, composición del texto en bandera, división bajo un encabezado y espacio bajo los contenedores se maqueta. Las correcciones de maquetación de la 1.5 no tienen fijación y se le aplican como a cualquier otro libro, así que una página afectada por ellas todavía puede cambiar (la lista está en [Tamaño de las fórmulas](/es/docs/configuration-lists-math#matemáticas)). Un `preset.json` escrito a mano para las reglas actuales lleva `"configVersion": 19`; poner esta marca en el manifiesto de un paquete antiguo es también la forma de leerlo, con una sola línea, con las reglas actuales (un paquete sin versión pierde entonces también la fijación de sus saltos de encabezado).
+Así, un paquete antiguo conserva lo que maquetaban estas reglas, y `bundle.config` muestra con qué saltos, tamaño de las fórmulas, espacios, marcas de los encabezados, tamaño de las capitulares, sitio bajo los dos puntos, corte de los recuadros, cortes tras una raya, cortes tras el guion de un compuesto, composición del texto en bandera, división bajo un encabezado y espacio bajo los contenedores se maqueta. Las correcciones de maquetación de la 1.5 no tienen fijación y se le aplican como a cualquier otro libro, así que una página afectada por ellas todavía puede cambiar (la lista está en [Tamaño de las fórmulas](/es/docs/configuration-lists-math#matemáticas)). Un `preset.json` escrito a mano para las reglas actuales lleva `"configVersion": 21`; poner esta marca en el manifiesto de un paquete antiguo es también la forma de leerlo, con una sola línea, con las reglas actuales (un paquete sin versión pierde entonces también la fijación de sus saltos de encabezado).
 
 A un manifiesto marcado con `8`, escrito por postext 1.5 a 1.22, solo se le aplican las cuatro fijaciones de las reglas 9, que también reciben todos los anteriores. La composición del verso (`pinLegacyVerseLayout`) se escribe como `bodyText.verse.layout: 'bayt'` en el `bodyText` en vigor, cuando un capítulo leído contiene un poema `:::verse` cuya línea de apertura no indica composición y cuyas líneas no tienen separador de hemistiquios, y la configuración no lo fija ya. Las sangrías emparejadas (`pinLegacyPairedIndents`) eliminan la `firstLineIndent` de todos los estilos de párrafo (en `paragraphStyles` o en los ajustes propios del visor HTML) que también fijan una `hangingIndent` distinta de cero. Los saltos de línea forzados (`pinLegacyHardBreaks`) se escriben como `bodyText.hardLineBreaks: false` en el `bodyText` en vigor, cuando un capítulo leído termina con una barra invertida una línea de un párrafo, de una cita o de un elemento de lista y el bloque continúa debajo, o pone `\\` delante de un espacio y de más texto (sin contar el código en línea y las fórmulas, las fórmulas en bloque, los encabezados y los poemas `:::verse`), y la configuración no lo fija ya. Y los bloques de código (`pinLegacyCodeBlocks`) se escriben como `codeStyle.blocks: false`, cuando un capítulo leído abre un delimitador ```` ``` ```` o `~~~` (de tres o más caracteres, con hasta tres espacios delante) y la configuración no lo fija ya.
 
@@ -123,6 +123,8 @@ Un manifiesto marcado con `14` lo escribió postext 1.30 a 1.33. Las reglas 15 (
 Un manifiesto con `15` o `16` lo escribió postext 1.34 a 1.51 (las reglas de 16, #1056, añaden conectores a la decoración de una plantilla y no fijan nada). Las reglas de 17 (#1119) toman del texto del recuadro donde está el estilo de párrafo la fuente, el tamaño, el interlineado, los pesos y el color que el estilo deja sin fijar, donde hasta 1.51 eran los del texto del documento. Un manifiesto con `16` o anterior recibe `bodyText.paragraphStylesInBoxes: 'document'` (`pinLegacyBoxParagraphStyles`) en el `bodyText` vigente, cuando la configuración combinada declara un estilo de párrafo y no nombra el ajuste.
 
 Las reglas de 19 (#1164) dejan que una línea de texto con formato termine tras una barra entre dos palabras, y dividen ahí primero una palabra que no cabe en su línea, donde hasta 1.51 una línea con formato solo cortaba tras una barra dentro de una dirección web. Un manifiesto con `18` o anterior recibe `bodyText.breakAfterSlashes: false` (`pinLegacySlashBreaks`) en el `bodyText` vigente, tengan lo que tengan sus capítulos, cuando la configuración no nombra el ajuste: esa barra puede estar en un pie, en una celda o en una bibliografía, que los capítulos leídos no muestran.
+
+Las reglas de 21 (#1209) cambian cómo guarda un paquete en varios idiomas los ajustes de cada uno (véase [Ajustes generales y ajustes propios de cada idioma](#ajustes-generales-y-ajustes-propios-de-cada-idioma)): un `localized[…].config` se combina campo a campo con el `config` compartido, donde hasta postext 1.57 cada una de sus claves de primer nivel sustituía entera a la compartida. No se fija nada. Un manifiesto con `20` o anterior se lee como antes, clave a clave, de modo que cada edición se maqueta igual que entonces; cuando se vuelve a escribir, los ajustes de cada idioma se guardan como ajustes propios según las reglas de 21.
 
 ```ts
 import { CONFIG_VERSION, migrateConfig } from 'postext/bundle';
@@ -284,13 +286,107 @@ const en = await openBundle(bytes, { locale: 'en' });   // capítulos, configura
 ```
 
 - **`chapters`**: el libro en ese idioma. Los archivos de capítulo van a una carpeta por idioma (`chapters/es/01-anochecer.md`, `chapters/en/01-dusk.md`), y el campo `chapters` del manifiesto pasa a ser un mapa idioma → capítulos. Un idioma sin `chapters` lee los principales; si ningún idioma tiene capítulos propios, siguen siendo una sola lista.
-- **`config`**: la configuración de ese idioma. Cuando el paquete se lee en ese idioma, cada clave de primer nivel sustituye por completo a la compartida, así que `headings`, en el ejemplo, sustituye el objeto `headings` entero. Las claves que faltan, o que son iguales a las compartidas, se comparten y no se escriben, de modo que pasar la configuración completa del idioma funciona igual que pasar solo las pocas claves que cambian. Una clave con sus valores predeterminados cuando la compartida no los tiene (`layout: {}`) se escribe tal cual, así que restablece el valor compartido. Las fuentes se comparten: las familias del `customFonts` de un idioma se añaden al `fonts` del paquete.
+- **`config`**: la configuración de ese idioma. Cada clave de primer nivel que pasas sustituye a la compartida en ese idioma, así que `headings`, en el ejemplo, sustituye el objeto `headings` entero. Las claves que faltan, o que son iguales a las compartidas, se comparten, de modo que pasar la configuración completa del idioma funciona igual que pasar solo las pocas claves que cambian. El manifiesto guarda solo la diferencia: `localized[…].config` contiene los campos que el idioma fija de otro modo que el `config` compartido, y se combina con él campo a campo al leer el paquete (véase [Ajustes generales y ajustes propios de cada idioma](#ajustes-generales-y-ajustes-propios-de-cada-idioma)). Una clave con sus valores predeterminados cuando la compartida no los tiene (`layout: {}`) restablece el valor compartido en ese idioma. Las fuentes se comparten: las familias del `customFonts` de un idioma se añaden al `fonts` del paquete.
 - **`resources`**: los textos de los recursos compartidos, emparejados por `id`: `caption`, `note`, `altText` y el `table` de una tabla. Una imagen con palabras puede tener su propio dibujo: `bitmap.fileId` o `svg.fileId` (y `svg.pdfFileId`) remiten a otros datos de `files`, que se escriben como `resources/en/farol.svg`. Los demás campos, como el tipo o la colocación, se comparten. Un id que no está entre los `resources` se deja fuera con un aviso, y si falta la imagen de un idioma, ese idioma usa la compartida, también con un aviso.
 - **`name`**, **`description`**: el título y la descripción del libro en ese idioma, que se escriben como `localized[…].name` y `description` cuando no coinciden con los compartidos. `openBundle` los devuelve como `bundle.name` y `bundle.description` en ese idioma, el Sandbox muestra la edición con ese título (al importarla y en su biblioteca), y `postext info` y `postext check` los imprimen. Una entrada del `index.json` de un origen de presets puede copiarlos en `localized` (`localized.ca.name`) para que la biblioteca muestre el nombre de cada edición antes de abrirla. Un idioma sin ellos conserva el `name` y la `description` del manifiesto.
 
 El manifiesto enumera todos los idiomas en `locales` (`['es', 'en']`), conserva el principal como `locale` y guarda el resto en `localized`. `openBundle` sin idioma lee el principal.
 
 **Qué idioma recibe el lector.** `openBundle(bytes, { locale })` sirve el idioma exacto; si no lo hay, su idioma base (`es-MX` lee `es`), y si tampoco, el principal; `bundle.locale` indica cuál ha servido. Los capítulos y los textos siempre proceden del mismo idioma. El idioma principal conserva los textos compartidos aunque `localized` incluya una variante regional suya: un paquete `pt-PT` con una entrada `pt-BR` lee los pies brasileños solo para `pt-BR`, y los compartidos para `pt-PT` y `pt`.
+
+### Ajustes generales y ajustes propios de cada idioma
+
+Las ediciones de un libro en varios idiomas suelen compartir casi todo el diseño: la página, la retícula, los estilos de recuadro, la paleta. Unos pocos ajustes son de un idioma: los tipos de letra de su escritura, lo que depende de la dirección del texto, el texto de una etiqueta. Un paquete escrito para las reglas de configuración 21 (`configVersion: 21`) los guarda por separado. El `config` del manifiesto contiene los **ajustes generales**, que leen todas las ediciones, y `localized[<idioma>].config` contiene los **ajustes propios** de ese idioma, solo con los campos que fija de otro modo. Un cambio en un ajuste general llega a todas las ediciones que no fijan ese mismo campo por su cuenta.
+
+Los ajustes propios se combinan con los generales campo a campo:
+
+<table>
+  <thead>
+    <tr><th>En los ajustes propios</th><th>Cómo se combina</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Un objeto (<code>bodyText</code>, <code>page.margins</code>)</td><td>Clave a clave, hasta llegar a cada campo. <code>&#123; "bodyText": &#123; "fontFamily": "Amiri" &#125; &#125;</code> cambia el tipo de letra y conserva el cuerpo, el interlineado y la alineación generales.</td></tr>
+    <tr><td>Un color (<code>&#123; "hex", "model" &#125;</code>) o una medida (<code>&#123; "value", "unit" &#125;</code>)</td><td>Se sustituye entero.</td></tr>
+    <tr><td>Una lista cuyas entradas tienen <code>id</code> (<code>calloutStyles</code>, <code>headingStyles</code>, <code>chipStyles</code>, <code>colorPalette</code>, <code>resourceTypes</code>, los marcos de una plantilla)</td><td>Entrada a entrada, emparejadas por <code>id</code>. Una lista <code>levels</code> (encabezados, listas, el índice de contenidos) se empareja por <code>level</code>, y <code>customFonts</code>, por <code>name</code>. Una entrada que no está en la lista general se añade después de las suyas.</td></tr>
+    <tr><td><code>&#123; "id": "note", "$remove": true &#125;</code></td><td>Quita la entrada general con esa clave, solo en este idioma. Una lista en otro orden se escribe como la retirada de todas las entradas generales seguida de la lista del idioma en su propio orden.</td></tr>
+    <tr><td>Cualquier otra lista (una pila de tipos de letra de reserva, las tabulaciones)</td><td>Se sustituye entera.</td></tr>
+    <tr><td><code>null</code></td><td>Quita el valor general: el campo toma el valor predeterminado del idioma, como si ninguna de las dos capas lo fijara.</td></tr>
+  </tbody>
+</table>
+
+Una edición española y otra árabe del mismo libro comparten la página, el cuerpo de texto del diseño español y un recuadro de nota con fondo arena. La edición árabe fija sus propios tipos de letra y su cuerpo, y pasa el filete del recuadro a la derecha, el lado por el que empieza una línea de derecha a izquierda:
+
+```jsonc
+{
+  "version": 2,
+  "configVersion": 21,
+  "id": "el-farol",
+  "name": "El farol",
+  "locale": "es",
+  "locales": ["es", "ar"],
+  "chapters": {
+    "es": [{ "title": "Anochecer", "file": "chapters/es/01-anochecer.md" }],
+    "ar": [{ "title": "الغسق", "file": "chapters/ar/01-al-ghasaq.md" }]
+  },
+
+  // Ajustes generales: los leen todas las ediciones
+  "config": {
+    "locale": "es",
+    "bodyText": { "fontFamily": "Source Serif 4", "fontSize": { "value": 10, "unit": "pt" }, "textAlign": "justify" },
+    "headings": { "fontFamily": "Source Sans 3" },
+    "calloutStyles": [
+      {
+        "id": "note",
+        "background": { "hex": "#f3ecd9", "model": "hex" },
+        "stripe": { "enabled": true, "side": "left", "color": { "hex": "#b5651d", "model": "hex" } }
+      }
+    ]
+  },
+
+  "localized": {
+    "ar": {
+      "name": "الفانوس",
+      // Solo lo que la edición árabe fija de otro modo
+      "config": {
+        "locale": "ar",
+        "bodyText": { "fontFamily": "Amiri", "fontSize": { "value": 11, "unit": "pt" } },
+        "headings": { "fontFamily": "Noto Kufi Arabic" },
+        "calloutStyles": [{ "id": "note", "stripe": { "side": "right" } }]
+      }
+    }
+  }
+}
+```
+
+Leído en árabe, el texto se compone en Amiri a 11 pt y sigue justificado, y el recuadro de nota conserva el fondo, el grosor y el color generales del filete, con el filete a la derecha. La dirección, la encuadernación y las cifras se quedan en *Automático*, así que siguen a `locale`: de derecha a izquierda, encuadernado por la derecha, con cifras arábigo-índicas. Un ajuste que nombra un lado según la dirección del texto no necesita ajuste propio: con `"side": "start"` en los ajustes generales, el filete iría a la izquierda en español y a la derecha en árabe.
+
+Pon un ajuste entre los generales cuando todas las ediciones deban seguir sus cambios: la página y la retícula, los colores, los estilos de recuadro y de encabezado, los espacios. Hazlo propio de un idioma cuando le pertenece: los tipos de letra de su escritura, su cuerpo de texto, las reglas de división y de corte de línea, un lado o una alineación escritos como izquierda o derecha, el texto de las etiquetas y de los titulillos. Los tipos de recurso incorporados (*Figure*, *Figura*) toman el nombre y la numeración del idioma de cada edición sin necesidad de ajustes propios.
+
+**Paquetes anteriores.** Un manifiesto con `20` o anterior se lee con la regla de antes: cada clave de primer nivel de `localized[…].config` sustituye entera a la compartida, así que `{ "bodyText": { "fontFamily": "Amiri" } }` en ese lugar descarta todos los demás campos de `bodyText` de la configuración compartida. `createBundle` y el Sandbox escriben siempre 21. Para pasar a 21 un manifiesto escrito a mano, escribe la configuración completa de cada idioma y quédate solo con la diferencia, con las funciones que siguen.
+
+**Desde código.** El paquete `postext` exporta las funciones que usan el códec de paquetes y el Sandbox:
+
+```ts
+import { mergeConfigLayers, diffConfigLayers, leastConfigOverride, commonConfig, overridePaths, stripConfigDefaults } from 'postext';
+import type { ConfigOverride } from 'postext';
+
+const arabic = mergeConfigLayers(general, override);   // la configuración con la que se maqueta la edición árabe
+diffConfigLayers(general, arabic);                     // de vuelta a los ajustes propios: los campos que difieren
+overridePaths(override);
+// => ['locale', 'bodyText.fontFamily', 'bodyText.fontSize', 'headings.fontFamily', 'calloutStyles[id=note].stripe.side']
+
+const shared = commonConfig([spanish, arabic]);        // aquello en lo que coinciden las dos ediciones
+const own = leastConfigOverride(shared, arabic, stripConfigDefaults);
+```
+
+- **`mergeConfigLayers(general, override)`**: la configuración con la que se maqueta una edición, según las reglas de la tabla. No modifica ninguna de las dos entradas; sin ajustes propios, devuelve el propio `general`.
+- **`diffConfigLayers(general, own)`**: los ajustes propios que convierten `general` en `own`. Un campo que `general` fija y `own` omite se escribe como `null`, y una lista con clave en otro orden, como retiradas seguidas de la lista. `mergeConfigLayers(general, diffConfigLayers(general, own))` es igual a `own`, salvo el orden de las claves.
+- **`leastConfigOverride(general, own, normalize)`**: los mismos ajustes propios sin los `null` ni las retiradas que no cambian nada una vez aplicado `normalize` (por ejemplo, `stripConfigDefaults`), cuando el valor general es también el predeterminado del idioma de `own`. Es la que usa el escritor de paquetes.
+- **`commonConfig(configs)`**: los campos que todas las configuraciones fijan con el mismo valor, los objetos campo a campo y las listas con clave entrada a entrada. Para ediciones que guardaron cada una una configuración completa, da los ajustes generales, y `diffConfigLayers` da los ajustes propios de cada edición.
+- **`overridePaths(override)`**: cada campo que fijan unos ajustes propios, como una ruta en la que las entradas de lista se nombran por su clave (`headings.levels[level=2].fontSize`). Un `null` y una entrada retirada cuentan como campos. Son las rutas que `sandbox_get_config` enumera como `ownFields`.
+- **`REMOVE_ENTRY`** es la clave `"$remove"`, y **`ConfigOverride`**, el tipo de unos ajustes propios.
+
+`openBundle` devuelve el `config` combinado de la edición servida. `readBundle` devuelve además `sharedConfig`, los ajustes generales leídos con las mismas reglas y las mismas fuentes, en un paquete con entradas `localized`. `planBundle` acepta `sharedConfig` en su contenido: entonces el `config` del manifiesto se escribe a partir de él, y cada edición, la principal incluida, como ajustes propios en `localized`.
 
 ### Ejemplo en vivo: crear un paquete
 
@@ -310,8 +406,8 @@ Como el Sandbox, el skill para agentes y el paquete `postext` leen y escriben el
 `postext/bundle` también exporta las piezas con las que se construyen `openBundle` y `createBundle`, para las aplicaciones que guardan o sirven los paquetes a su manera (un directorio descomprimido servido por HTTP, registros en una base de datos):
 
 - **`openBundleZip(bytes)` / `zipBundle(files, { mtime })`**: la capa del zip. Al abrir, admite una carpeta de primer nivel e ignora las entradas `__MACOSX` y los archivos ocultos. Se rechazan las rutas que salen del paquete. `mtime` pone fecha a los archivos igual que el dato del mismo nombre de `createBundle`.
-- **`readBundle(manifest, readFile, options)`** lee un manifiesto, con una función `readFile(ruta)`, y obtiene los capítulos, la configuración, los recursos, las imágenes y las fuentes. `options` fija el idioma, cómo se nombran los ids de archivo (`ids`), la configuración base (`baseConfig`, por debajo de la del manifiesto) y cómo se miden los tamaños intrínsecos. Por defecto, la configuración base contiene la paleta y los tipos de recurso de `bundleBaseConfig` en el idioma del paquete, el que devuelve `resolveBundleConfigLocale(manifest, locale)`; quien pase su propia `baseConfig` debe traducirla a ese idioma. Con un manifiesto anterior a `CONFIG_VERSION`, las fijaciones que pide su marca se aplican también a las claves de la base que el manifiesto y el idioma dejan en vigor, todas salvo los saltos de encabezado (véase [Paquetes escritos por postext 1.4 o anterior](#paquetes-escritos-por-postext-14-o-anterior)). `readResolution` lee del archivo la resolución de cada mapa de bits y la guarda en `bitmap.fileResolution`; por defecto es true cuando el paquete fija `layout.bitmapResolution: 'file'`.
-- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: la parte de escritura, dividida en un plan puro (nombres de archivo y manifiesto) y en la obtención de los bytes mediante las funciones `readBlob` / `readFont`.
+- **`readBundle(manifest, readFile, options)`** lee un manifiesto, con una función `readFile(ruta)`, y obtiene los capítulos, la configuración, los recursos, las imágenes y las fuentes y, en un paquete en varios idiomas, los ajustes generales como `sharedConfig`. `options` fija el idioma, cómo se nombran los ids de archivo (`ids`), la configuración base (`baseConfig`, por debajo de la del manifiesto) y cómo se miden los tamaños intrínsecos. Por defecto, la configuración base contiene la paleta y los tipos de recurso de `bundleBaseConfig` en el idioma del paquete, el que devuelve `resolveBundleConfigLocale(manifest, locale)`; quien pase su propia `baseConfig` debe traducirla a ese idioma. Con un manifiesto anterior a `CONFIG_VERSION`, las fijaciones que pide su marca se aplican también a las claves de la base que el manifiesto y el idioma dejan en vigor, todas salvo los saltos de encabezado (véase [Paquetes escritos por postext 1.4 o anterior](#paquetes-escritos-por-postext-14-o-anterior)). `readResolution` lee del archivo la resolución de cada mapa de bits y la guarda en `bitmap.fileResolution`; por defecto es true cuando el paquete fija `layout.bitmapResolution: 'file'`.
+- **`planBundle(meta, content)` / `resolveBundleFiles(plan, sources)`**: la parte de escritura, dividida en un plan puro (nombres de archivo y manifiesto) y en la obtención de los bytes mediante las funciones `readBlob` / `readFont`. `content.sharedConfig` escribe los ajustes generales aparte de la edición principal (véase [Ajustes generales y ajustes propios de cada idioma](#ajustes-generales-y-ajustes-propios-de-cada-idioma)).
 - **`isBundleManifest(value)`**, las funciones que eligen idioma (`pickChapterSpecs`, `pickLocaleOverrides`, `pickBundleView`, `resolveBundleLocale`, `resolveBundleConfigLocale`), `svgSize` / `bitmapSize` / `bitmapInfo` (los píxeles de un mapa de bits y la resolución que indica su archivo) y los tipos del formato (`BundleManifest`, `BundleResourceSpec`, `BundleFontFamilySpec`, …).
 - **`CONFIG_VERSION`, `migrateConfig(config, configVersion, { content })`, `pinLegacyHeadingBreaks(config)`, `pinLegacyMathSize(config)`, `pinLegacyInlineGap(config)`, `pinLegacyBoxResourceGap(config)`, `pinLegacyHeadingMarks(config)`, `pinLegacyDropCapSize(config)`, `pinLegacyColonListRoom(config)`, `pinLegacyBoxChildCut(config)`, `pinLegacyDashBreaks(config)`, `pinLegacyRaggedBreaking(config)`, `pinLegacyHeadingSplit(config)`, `pinLegacyParagraphContainerSpacing(config)`, `pinLegacyHyphenBreaks(config)`, `pinLegacyVerseLayout(config)`, `pinLegacyPairedIndents(config)`, `pinLegacyHardBreaks(config)`, `pinLegacyCodeBlocks(config)`, `pinLegacyVerseTightening(config)`, `pinLegacyDesignOverflow(config)`, `pinLegacyGridBalancing(config)`, `pinLegacyTitleBreaks(config)`, `pinLegacyCircledNumbers(config)`, `pinLegacyDesignText(config)`, `pinLegacyInlineTableSplit(config)`, `pinLegacyFlowColumns(config)`, `pinLegacyOpenerHeadFloats(config)`, `pinLegacyLooseOrder(config)`, `pinLegacyWideFloatStretch(config)`, `pinLegacyTrailingStep(config)`, `pinLegacyIndexGroupSplit(config)`, `pinLegacyGridBreakRules(config)`, `pinLegacyNoteBreaks(config)`, `pinLegacyLatinSpacingEdge(config)`, `pinLegacyInlineCaptionSide(config)`, `pinLegacyRefLabelBreaks(config)`, `pinLegacyBalloonPlacement(config)`, `pinLegacyScriptContext(config)`, `pinLegacyShapingLanguage(config)`, `pinLegacyTaskBox(config)` y `LEGACY_MATH_SIZE`** (0,5 ÷ 0,442): convierten una configuración guardada a los términos actuales (véase [Paquetes escritos por postext 1.4 o anterior](#paquetes-escritos-por-postext-14-o-anterior)). `readBundle` aplica esta conversión; una aplicación que guarda las configuraciones a su manera también puede hacerlo, una vez por cada copia guardada.
 

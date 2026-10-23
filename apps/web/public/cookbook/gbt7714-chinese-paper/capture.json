@@ -95,7 +95,7 @@
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21359,
+        "bytes": 25843,
         "folio": "1668ad62",
         "chapters": [
           {
@@ -341,6 +341,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -430,7 +435,7 @@
       },
       "sandbox": {
         "file": "gbt7714-chinese-paper.postext",
-        "bytes": 21409,
+        "bytes": 25851,
         "folio": "1668ad62",
         "chapters": [
           {
@@ -676,6 +681,11 @@
             "check": "C26",
             "severity": "warn",
             "detail": "the hero is 19.1 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

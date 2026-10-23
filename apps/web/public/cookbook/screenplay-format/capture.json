@@ -125,7 +125,7 @@
       },
       "sandbox": {
         "file": "screenplay-format.postext",
-        "bytes": 11514,
+        "bytes": 14352,
         "folio": "23a03f17",
         "chapters": [
           {
@@ -297,6 +297,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -417,7 +422,7 @@
       },
       "sandbox": {
         "file": "screenplay-format.postext",
-        "bytes": 12059,
+        "bytes": 14676,
         "folio": "23a03f17",
         "chapters": [
           {
@@ -589,6 +594,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

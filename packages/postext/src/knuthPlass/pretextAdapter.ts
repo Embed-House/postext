@@ -72,6 +72,9 @@ function twoLettersAround(segments: readonly string[], kinds: readonly string[],
 
 export function pretextSegmentsToItems(
   prepared: PreparedTextWithSegments,
+  /** Width of the hyphen a soft-hyphen break prints, in the text's font
+   *  (pretext 1.0 keeps its own, which may be U+2010's, to itself). */
+  hyphenWidth: number,
   normalSpaceWidth: number,
   maxStretchRatio: number,
   minShrinkRatio: number,
@@ -102,11 +105,7 @@ export function pretextSegmentsToItems(
   geminateDotWidth: number | ((piece: string) => number) = 0,
 ): KPItem[] {
   const items: KPItem[] = [];
-  const segments = prepared.segments;
-  const widths = (prepared as unknown as { widths: number[] }).widths;
-  const kinds = (prepared as unknown as { kinds: string[] }).kinds;
-  const discretionaryHyphenWidth =
-    (prepared as unknown as { discretionaryHyphenWidth: number }).discretionaryHyphenWidth;
+  const { segments, widths, kinds } = prepared;
 
   const stretchPerSpace = normalSpaceWidth * (maxStretchRatio - 1);
   const shrinkPerSpace = normalSpaceWidth * (1 - minShrinkRatio);
@@ -142,7 +141,6 @@ export function pretextSegmentsToItems(
         break;
       }
       case 'space':
-      case 'glue':
         items.push({
           type: 'glue',
           width: w,
@@ -154,7 +152,7 @@ export function pretextSegmentsToItems(
       case 'soft-hyphen':
         items.push({
           type: 'penalty',
-          width: discretionaryHyphenWidth - (i > 0 && endsInsideGeminate(segments[i - 1]!) ? dotRoomOf(geminateDotWidth, segments[i - 1]!) : 0),
+          width: hyphenWidth - (i > 0 && endsInsideGeminate(segments[i - 1]!) ? dotRoomOf(geminateDotWidth, segments[i - 1]!) : 0),
           penalty: HYPHEN_PENALTY,
           flagged: true,
           sourceIndex: i,
@@ -212,6 +210,8 @@ export function reconstructPretextLines(
   items: KPItem[],
   breaks: number[],
   prepared: PreparedTextWithSegments,
+  /** See `pretextSegmentsToItems`. */
+  hyphenWidth: number,
   lineHeightPx: number,
   lineWidthFn: (lineIndex: number) => number,
   lineIndentFn: (lineIndex: number) => number,
@@ -226,10 +226,7 @@ export function reconstructPretextLines(
   /** See `pretextSegmentsToItems`. */
   geminateDotWidth: number | ((piece: string) => number) = 0,
 ): VDTLine[] {
-  const segments = prepared.segments;
-  const widths = (prepared as unknown as { widths: number[] }).widths;
-  const discretionaryHyphenWidth =
-    (prepared as unknown as { discretionaryHyphenWidth: number }).discretionaryHyphenWidth;
+  const { segments, widths } = prepared;
 
   const lines: VDTLine[] = [];
   let lineStart = 0; // item index where current line content starts
@@ -292,7 +289,7 @@ export function reconstructPretextLines(
         lineSegments[lastIdx] = {
           kind: 'text',
           text,
-          width: last.width + discretionaryHyphenWidth - (endsInsideGeminate(last.text) ? dotRoomOf(geminateDotWidth, last.text) : 0),
+          width: last.width + hyphenWidth - (endsInsideGeminate(last.text) ? dotRoomOf(geminateDotWidth, last.text) : 0),
         };
         textParts[textParts.length - 1] = text;
       }

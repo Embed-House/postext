@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18653,
+        "bytes": 22564,
         "folio": "2af3feac",
         "chapters": [
           {
@@ -294,7 +294,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -391,7 +397,7 @@
       },
       "sandbox": {
         "file": "apa-thesis-with-bibtex.postext",
-        "bytes": 18508,
+        "bytes": 22179,
         "folio": "2af3feac",
         "chapters": [
           {
@@ -581,7 +587,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

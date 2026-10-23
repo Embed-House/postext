@@ -4,7 +4,7 @@
    styles and balloon styles the bundle has, and whose faces carry every
    variant the editions ask of them. */
 import { describe, expect, it } from 'vitest';
-import { parseComicFence, parseMarkdown, type PostextConfig, type Resource } from 'postext';
+import { mergeConfigLayers, parseComicFence, parseMarkdown, type PostextConfig, type Resource } from 'postext';
 import { pickBundleView, type BundleManifest } from 'postext/bundle';
 import { computeWarnings } from '../warnings/compute.js';
 import { hasLatinEmphasis, missingUsedVariants } from '../controls/fontLoader.js';
@@ -28,7 +28,8 @@ const manifest = ((await import(/* @vite-ignore */ new URL(`${BUNDLE}preset.json
 
 const EDITIONS = ['en', 'es', 'ca', 'fr', 'it', 'pt-BR', 'de', 'ja', 'zh-Hans', 'ar'];
 
-const configOf = (locale: string): PostextConfig => ({ ...manifest.config, ...(manifest.localized[locale]?.config ?? {}) });
+// Each edition: its override over the general settings, field by field (#1209).
+const configOf = (locale: string): PostextConfig => mergeConfigLayers(manifest.config, manifest.localized[locale]?.config);
 
 const chapters = (locale: string): Promise<{ file: string; md: string }[]> => Promise.all(manifest.chapters[locale]!.map(async ({ file }) => ({
   file,

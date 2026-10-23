@@ -140,7 +140,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 21852,
+        "bytes": 33224,
         "chapters": [
           {
             "pages": 2,
@@ -360,6 +360,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -495,7 +500,7 @@
       },
       "sandbox": {
         "file": "epub-fixed-and-reflowable.postext",
-        "bytes": 26875,
+        "bytes": 34862,
         "chapters": [
           {
             "pages": 2,
@@ -725,6 +730,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

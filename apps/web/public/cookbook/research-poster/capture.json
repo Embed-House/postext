@@ -74,7 +74,7 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94053,
+        "bytes": 158965,
         "folio": "7c6d9248",
         "chapters": [
           {
@@ -308,6 +308,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -377,7 +382,7 @@
       },
       "sandbox": {
         "file": "research-poster.postext",
-        "bytes": 94813,
+        "bytes": 159505,
         "folio": "7c6d9248",
         "chapters": [
           {
@@ -611,6 +616,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

@@ -84,7 +84,7 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 416867,
+        "bytes": 419196,
         "folio": "3a99731f",
         "chapters": [
           {
@@ -328,6 +328,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -407,7 +412,7 @@
       },
       "sandbox": {
         "file": "recipe-card.postext",
-        "bytes": 417190,
+        "bytes": 419450,
         "folio": "3a99731f",
         "chapters": [
           {
@@ -651,6 +656,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

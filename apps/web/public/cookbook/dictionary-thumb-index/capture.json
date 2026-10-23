@@ -115,7 +115,7 @@
       },
       "sandbox": {
         "file": "dictionary-thumb-index.postext",
-        "bytes": 31269,
+        "bytes": 38600,
         "folio": "444e4865",
         "chapters": [
           {
@@ -306,7 +306,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -415,7 +421,7 @@
       },
       "sandbox": {
         "file": "dictionary-thumb-index.postext",
-        "bytes": 32181,
+        "bytes": 39088,
         "folio": "444e4865",
         "chapters": [
           {
@@ -606,7 +612,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

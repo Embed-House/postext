@@ -560,3 +560,54 @@ export function importMarkdownFile(file: File): Promise<string> {
     reader.readAsText(file);
   });
 }
+
+const PRESET_GENERAL_PREFIX = 'postext-sandbox-preset-general:';
+
+/** The general settings the reader gave a preset in several languages
+ *  (#1209), by preset id: every edition of it opens on them, keeping what
+ *  it sets of its own. Null while the preset's own are in force. */
+export function loadPresetGeneral(presetId: string): PostextConfig | null {
+  try {
+    const raw = getStorage()?.getItem(PRESET_GENERAL_PREFIX + presetId);
+    return raw ? (JSON.parse(raw) as PostextConfig) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function savePresetGeneral(presetId: string, shared: PostextConfig | null): void {
+  const storage = getStorage();
+  if (!storage) return;
+  try {
+    if (shared) storage.setItem(PRESET_GENERAL_PREFIX + presetId, JSON.stringify(shared));
+    else storage.removeItem(PRESET_GENERAL_PREFIX + presetId);
+  } catch (err) {
+    console.warn('[postext-sandbox] could not persist the general settings', err);
+  }
+}
+
+const WORKING_LAYERS_KEY = 'postext-sandbox-working-layers';
+
+/** The general settings of the preset on screen, beside the working
+ *  configuration, so the next visit resumes it with them (#1209). */
+export function saveWorkingLayers(presetId: string | null, shared: PostextConfig | null): void {
+  const storage = getStorage();
+  if (!storage) return;
+  try {
+    if (presetId && shared) storage.setItem(WORKING_LAYERS_KEY, JSON.stringify({ presetId, shared }));
+    else storage.removeItem(WORKING_LAYERS_KEY);
+  } catch {
+    // The preset opened again brings them back.
+  }
+}
+
+export function loadWorkingLayers(presetId: string): PostextConfig | null {
+  try {
+    const raw = getStorage()?.getItem(WORKING_LAYERS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { presetId?: string; shared?: PostextConfig };
+    return parsed.presetId === presetId && parsed.shared ? parsed.shared : null;
+  } catch {
+    return null;
+  }
+}

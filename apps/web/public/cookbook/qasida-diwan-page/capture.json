@@ -121,7 +121,7 @@
       },
       "sandbox": {
         "file": "qasida-diwan-page.postext",
-        "bytes": 29839,
+        "bytes": 33942,
         "chapters": [
           {
             "pages": 4,
@@ -320,7 +320,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -434,7 +440,7 @@
       },
       "sandbox": {
         "file": "qasida-diwan-page.postext",
-        "bytes": 29894,
+        "bytes": 33941,
         "chapters": [
           {
             "pages": 4,
@@ -633,7 +639,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

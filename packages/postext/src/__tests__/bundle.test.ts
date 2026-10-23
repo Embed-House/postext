@@ -178,9 +178,9 @@ describe('createBundle', () => {
             { markdown: '# Anochecer\n\nEl farol colgaba junto a la puerta. ::resource{id=fig-map}\n' },
             { title: 'Noche', markdown: '# Noche\n\nNadie lo movió.\n' },
           ],
-          // Top-level keys replace the shared ones; `layout: {}` goes back
-          // to the default two columns; `bodyText` repeats the shared
-          // value and is not written.
+          // Top-level keys over the shared ones; `layout: {}` goes back to
+          // the default two columns (`null`, #1209); `bodyText` repeats the
+          // shared value and is not written.
           config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] }, layout: {}, bodyText: { fontFamily: 'House Serif' } },
           resources: [
             { id: 'fig-map', caption: 'Un mapa.', svg: { fileId: 'map-es', width: 200, height: 100 } },
@@ -199,7 +199,7 @@ describe('createBundle', () => {
     });
     expect(manifest.localized).toEqual({
       es: {
-        config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] }, layout: {} },
+        config: { headings: { levels: [{ level: 1, numberingTemplate: 'Capítulo {1}' }] }, layout: null },
         resources: [
           { id: 'fig-map', caption: 'Un mapa.', file: 'resources/es/fig-map.svg', width: 200, height: 100 },
           { id: 'tbl', caption: 'Horas de luz.', table: { model: { rows: [[{ content: 'Anochecer' }, { content: '19:40' }]] } } },
@@ -217,7 +217,7 @@ describe('createBundle', () => {
     expect(es.locales).toEqual(['en', 'es']);
     expect(es.chapters.map((c) => c.title)).toEqual(['Anochecer', 'Noche']);
     expect(es.config.headings?.levels?.[0]?.numberingTemplate).toBe('Capítulo {1}');
-    expect(es.config.layout).toEqual({});
+    expect(es.config.layout).toBeUndefined();
     const esMap = es.resources.find((r) => r.id === 'fig-map')!;
     expect(esMap.caption).toBe('Un mapa.');
     expect(new TextDecoder().decode(es.files.get(esMap.svg!.fileId))).toBe(SVG_ES);
@@ -310,7 +310,7 @@ describe('createBundle', () => {
     const gb = await openBundle(mapped.bytes, { locale: 'en-GB' });
     expect(gb.locale).toBe('en-GB');
     expect(gb.chapters.map((c) => c.title)).toEqual(['Colour']);
-    expect(gb.config.layout).toEqual({});
+    expect(gb.config.layout).toBeUndefined();
     expect(gb.resources[0]!.caption).toBe('A map (GB).');
   });
 
@@ -730,7 +730,7 @@ describe('bundles written by postext 1.4 or earlier', () => {
 
   it('stamps every manifest it writes with the configuration rules', async () => {
     const { manifest } = await sample();
-    expect(CONFIG_VERSION).toBe(20);
+    expect(CONFIG_VERSION).toBe(21);
     expect(manifest.configVersion).toBe(CONFIG_VERSION);
   });
 

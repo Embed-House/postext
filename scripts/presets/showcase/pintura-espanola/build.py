@@ -34,7 +34,7 @@ import editorial as ed  # noqa: E402
 import wiki  # noqa: E402
 from _common import (  # noqa: E402
     PRESETS_ROOT, at, attr_value, box_el, bundle_size, copy_licences, copy_thumbnail, image_el, instance_font,
-    make_palette, mm, pt, register, rule_el, text_el, write_fingerprint, build_spines, spine_thickness_mm,
+    layer_configs, make_palette, mm, pt, register, rule_el, text_el, write_fingerprint, build_spines, spine_thickness_mm,
 )
 
 SOURCE = os.path.join(HERE, "source")
@@ -683,6 +683,7 @@ def main() -> None:
     cover = plates[COVER_WORK]
     meta = write_manifest(chapters, resources, wording, fonts, COVER_WORK, cover["aspect"], plates[BACK_WORK]["aspect"])
     copy_thumbnail(HERE, OUT)
+    layer_configs(OUT)
     write_fingerprint(OUT)
     register(PRESET_ID, meta)
     print(f"wrote {OUT}  ({bundle_size(OUT):.1f} MB, {len(resources)} plates, {sum(len(v) for v in chapters.values())} chapter files)")

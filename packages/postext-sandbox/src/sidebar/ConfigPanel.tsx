@@ -40,6 +40,8 @@ import { PreviewHighlightProvider } from './settings/previewHighlight.js';
 import { OpenSettingsGroupContext, onSettingsGroupRequest, onSettingsSectionRequest, onSettingsSwitchesRequest, pendingSettingsGroup, reportSettingsChangedOnly, takeSettingsFocus, takeSettingsSection } from '../context/settingsNavigation.js';
 import { focusSettingsEntry } from './settingsFocus.js';
 import { SECTION_COMPONENTS } from './sections/components.js';
+import { ConfigScopeProvider } from './layers/ConfigScopeProvider.js';
+import { ConfigScopeBar } from './layers/ConfigScopeBar.js';
 
 /** The Design panel. Three views share one header and search box:
  *  - overview: a summary of the book and the list of setting groups;
@@ -48,6 +50,16 @@ import { SECTION_COMPONENTS } from './sections/components.js';
  *    a hit (see `search/sectionIndex.ts`) mount one after the other, best
  *    group first, and filter their rows in place under the group's name. */
 export function ConfigPanel() {
+  // A book in several languages: the sections read and write the layer in
+  // scope (#1209).
+  return (
+    <ConfigScopeProvider>
+      <ConfigPanelBody />
+    </ConfigScopeProvider>
+  );
+}
+
+function ConfigPanelBody() {
   const dispatch = useSandboxDispatch();
   const labels = useSandboxLabels();
   const config = useSandboxSelector((s) => s.config);
@@ -219,6 +231,8 @@ export function ConfigPanel() {
           </>
         }
       />
+
+      <ConfigScopeBar />
 
       <div className="flex shrink-0 items-center gap-2 border-b border-(--rule) px-3 py-2">
         <SearchInput value={query} onChange={setQuery} />

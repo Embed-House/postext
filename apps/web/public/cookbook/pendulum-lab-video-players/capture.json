@@ -95,7 +95,7 @@
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 29854,
+        "bytes": 33025,
         "chapters": [
           {
             "pages": 2,
@@ -445,6 +445,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "large: video file pendulum-large.mp4 left out (it plays from video.url)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -534,7 +539,7 @@
       },
       "sandbox": {
         "file": "pendulum-lab-video-players.postext",
-        "bytes": 30301,
+        "bytes": 33380,
         "chapters": [
           {
             "pages": 2,
@@ -894,6 +899,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "large: video file pendulum-large.mp4 left out (it plays from video.url)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

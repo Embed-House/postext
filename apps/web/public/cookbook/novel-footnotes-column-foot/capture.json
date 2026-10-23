@@ -106,7 +106,7 @@
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
-        "bytes": 40305,
+        "bytes": 46133,
         "folio": "5dc5724f",
         "chapters": [
           {
@@ -308,7 +308,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -407,7 +413,7 @@
       },
       "sandbox": {
         "file": "novel-footnotes-column-foot.postext",
-        "bytes": 38428,
+        "bytes": 44491,
         "folio": "5dc5724f",
         "chapters": [
           {
@@ -609,7 +615,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

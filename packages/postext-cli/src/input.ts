@@ -396,24 +396,9 @@ export async function loadBook(inputs: readonly string[], opts: Options, reporte
       throw new CliError(`${inputs.join(' ')}: ${err.message}`);
     });
     for (const w of opened.warnings) warn(w);
-    book = {
-      kind,
-      name: opened.name,
-      id: opened.id,
-      ...(opened.description ? { description: opened.description } : {}),
-      locale: opened.locale,
-      ...(opened.locales ? { locales: opened.locales } : {}),
-      // Loose Markdown: warnings name the files given, not the bundle's paths.
-      chapters: opened.chapters.map((c, i) => ({ title: c.title, file: kind === 'markdown' ? looseFiles[i] ?? c.file : c.file, markdown: c.markdown })),
-      config: opened.config,
-      resources: opened.resources,
-      fonts: opened.fonts,
-      files: opened.files,
-      manifest: opened.manifest,
-      ...(opened.thumbnail ? { thumbnail: opened.thumbnail } : {}),
-      ...(opened.start ? { start: opened.start } : {}),
-      watchPaths,
-    };
+    book = bookOfBundle(opened, kind, watchPaths);
+    // Loose Markdown: warnings name the files given, not the bundle's paths.
+    if (kind === 'markdown') book.chapters = book.chapters.map((c, i) => ({ ...c, file: looseFiles[i] ?? c.file }));
   }
   // --config over a book's own settings (loose Markdown has it already).
   const configPath = opts.string('config');
@@ -439,3 +424,30 @@ export function parseChapterList(spec: string, count: number): number[] {
   return [...out].sort((x, y) => x - y);
 }
 
+/** The book a bundle's bytes hold, as written (no --config or --set): what
+ *  a command that just packed it paints its cover from. */
+export async function loadBundleBytes(bytes: Uint8Array, opts: Options): Promise<Book> {
+  const locale = opts.string('locale');
+  const opened = await openBundle(bytes, locale ? { locale } : {});
+  return bookOfBundle(opened, 'bundle', []);
+}
+
+function bookOfBundle(opened: Awaited<ReturnType<typeof openBundle>>, kind: InputKind, watchPaths: string[]): Book {
+  return {
+    kind,
+    name: opened.name,
+    id: opened.id,
+    ...(opened.description ? { description: opened.description } : {}),
+    locale: opened.locale,
+    ...(opened.locales ? { locales: opened.locales } : {}),
+    chapters: opened.chapters.map((c) => ({ title: c.title, file: c.file, markdown: c.markdown })),
+    config: opened.config,
+    resources: opened.resources,
+    fonts: opened.fonts,
+    files: opened.files,
+    manifest: opened.manifest,
+    ...(opened.thumbnail ? { thumbnail: opened.thumbnail } : {}),
+    ...(opened.start ? { start: opened.start } : {}),
+    watchPaths,
+  };
+}

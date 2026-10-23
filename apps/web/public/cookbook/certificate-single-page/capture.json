@@ -105,7 +105,7 @@
       },
       "sandbox": {
         "file": "certificate-single-page.postext",
-        "bytes": 30274,
+        "bytes": 40209,
         "folio": "a05bb7c0",
         "chapters": [
           {
@@ -251,6 +251,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -350,7 +355,7 @@
       },
       "sandbox": {
         "file": "certificate-single-page.postext",
-        "bytes": 28686,
+        "bytes": 38517,
         "folio": "a05bb7c0",
         "chapters": [
           {
@@ -496,6 +501,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 155.0.8059.82: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

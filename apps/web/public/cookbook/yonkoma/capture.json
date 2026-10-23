@@ -88,7 +88,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263397,
+        "bytes": 1273131,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -241,6 +241,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -323,7 +333,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263542,
+        "bytes": 1273227,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -476,6 +486,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -558,7 +578,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263535,
+        "bytes": 1273238,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -711,6 +731,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, en, es, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -793,7 +823,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263615,
+        "bytes": 1273115,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -946,6 +976,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ca, ar, pt, fr, de, it"
           }
         ]
       }
@@ -1028,7 +1068,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263719,
+        "bytes": 1273128,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1181,6 +1221,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ca, zh, pt, fr, de, it"
           }
         ]
       }
@@ -1263,7 +1313,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263618,
+        "bytes": 1273307,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1421,6 +1471,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (its bundle is in en, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, es, ca, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -1503,7 +1563,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263783,
+        "bytes": 1273429,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1656,6 +1716,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, ca, zh, ar, fr, de, it"
           }
         ]
       }
@@ -1738,7 +1808,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263534,
+        "bytes": 1273166,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -1891,6 +1961,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, ca, zh, ar, pt, de, it"
           }
         ]
       }
@@ -1973,7 +2053,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263476,
+        "bytes": 1273082,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -2126,6 +2206,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, ca, zh, ar, pt, fr, it"
           }
         ]
       }
@@ -2208,7 +2298,7 @@
       },
       "sandbox": {
         "file": "yonkoma.postext",
-        "bytes": 1263583,
+        "bytes": 1273299,
         "folio": "80b0969c",
         "keep": "last",
         "pages": 1,
@@ -2361,6 +2451,16 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja left out (its bundle is in en-us, as another edition's)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, ca, zh, ar, pt, fr, de"
           }
         ]
       }

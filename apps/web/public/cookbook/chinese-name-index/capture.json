@@ -231,7 +231,7 @@
       },
       "sandbox": {
         "file": "chinese-name-index.postext",
-        "bytes": 21712,
+        "bytes": 28135,
         "folio": "8948df8d",
         "pages": 8,
         "chapters": [
@@ -473,7 +473,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -697,7 +703,7 @@
       },
       "sandbox": {
         "file": "chinese-name-index.postext",
-        "bytes": 21733,
+        "bytes": 28128,
         "folio": "8948df8d",
         "pages": 8,
         "chapters": [
@@ -939,7 +945,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 16853,
+        "bytes": 23714,
         "folio": "581a62c9",
         "chapters": [
           {
@@ -396,7 +396,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -546,7 +552,7 @@
       },
       "sandbox": {
         "file": "names-and-subjects-indexes.postext",
-        "bytes": 17505,
+        "bytes": 24074,
         "folio": "581a62c9",
         "chapters": [
           {
@@ -790,6 +796,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 7 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

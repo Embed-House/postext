@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 36559,
+        "bytes": 58572,
         "folio": "977c8d61",
         "chapters": [
           {
@@ -438,7 +438,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -551,7 +557,7 @@
       },
       "sandbox": {
         "file": "lab-report-formulas.postext",
-        "bytes": 37851,
+        "bytes": 59131,
         "folio": "977c8d61",
         "chapters": [
           {
@@ -869,7 +875,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

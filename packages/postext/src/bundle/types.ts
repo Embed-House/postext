@@ -4,6 +4,7 @@
 // codec lives in `manifest.ts`, `codec.ts` and `zip.ts`.
 
 import type { CustomFontFormat, LayoutContinuation, PostextConfig, Resource } from '../types.js';
+import type { ConfigOverride } from '../defaults/configLayers.js';
 
 /** Optional showcase metadata a manifest may carry: everything a picker can
  *  show beyond name and description. All fields are purely descriptive. */
@@ -93,8 +94,9 @@ export interface BundleChapterSpec {
 }
 
 /** What a bilingual bundle changes per locale on top of its shared `config`
- *  and `resources`: top-level config keys replaced wholesale for that
- *  locale, and the wording of resources — caption, note, alt text, a
+ *  and `resources`: the configuration fields that locale sets differently
+ *  (an override merged field by field, #1209; under `configVersion` 20 or
+ *  less, top-level keys replaced wholesale), and the wording of resources — caption, note, alt text, a
  *  table's cells — merged by id. A resource whose artwork carries words may
  *  also name its own `file` for the locale, and a video its own `poster`
  *  and `video` (the cut in that language, at its own address, #478). */
@@ -106,7 +108,14 @@ export interface BundleLocaleOverrides {
   /** The edition's description, in place of the manifest's
    *  `description`. */
   description?: string;
-  config?: Partial<PostextConfig>;
+  /** The fields this language sets differently from the shared `config`,
+   *  merged over it field by field (`mergeConfigLayers`): objects key by
+   *  key, lists of entries with an `id` (styles, palette, resource types)
+   *  entry by entry, `levels` by `level`; `null` puts a shared value back
+   *  to this language's default and `{ id, $remove: true }` drops a
+   *  shared list entry. Under `configVersion` 20 or less each top-level
+   *  key replaces the shared one whole. */
+  config?: ConfigOverride;
   /** How this language's edition opens, over the manifest's `view` (a
    *  vertical edition read whole, its translation a chapter at a time). */
   view?: BundleViewSpec;

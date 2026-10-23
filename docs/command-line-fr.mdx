@@ -288,7 +288,7 @@ un paquet peut donc être comparé ou haché. Pour des fichiers Markdown isolés
 `--id`, `--description` et `--thumbnail FILE` (une image de couverture)
 fixent l’identifiant, la description et la vignette du paquet ; l’identifiant
 est par défaut une version simplifiée du nom (un slug). Un dossier garde ce
-qu’indique son `preset.json`. `unpack` refuse d’écrire dans un
+qu’indique son `preset.json`. Un livre qui n’indique aucune couverture reçoit sa première page comme couverture (`thumbnail.jpg`, 1024 px sur le grand côté), l’image qu’un gestionnaire de fichiers peut afficher pour le fichier ; `--no-auto-thumbnail` l’omet. `unpack` refuse d’écrire dans un
 dossier qui n’est pas vide, sauf avec `--force`.
 
 ### info et check

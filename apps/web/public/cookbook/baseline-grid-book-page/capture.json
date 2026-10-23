@@ -100,7 +100,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43190,
+        "bytes": 65613,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -327,6 +327,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, pt, fr, de, it"
           }
         ]
       }
@@ -422,7 +427,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43988,
+        "bytes": 66274,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -639,6 +644,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, pt, fr, de, it"
           }
         ]
       }
@@ -734,7 +744,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 42993,
+        "bytes": 65195,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -951,6 +961,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, fr, de, it"
           }
         ]
       }
@@ -1046,7 +1061,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43002,
+        "bytes": 64877,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -1273,6 +1288,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, pt, de, it"
           }
         ]
       }
@@ -1368,7 +1388,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43452,
+        "bytes": 65421,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -1595,6 +1615,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, pt, fr, it"
           }
         ]
       }
@@ -1690,7 +1715,7 @@
       },
       "sandbox": {
         "file": "baseline-grid-book-page.postext",
-        "bytes": 43617,
+        "bytes": 65770,
         "folio": "e8c31713",
         "chapters": [
           {
@@ -1907,6 +1932,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, pt, fr, de"
           }
         ]
       }

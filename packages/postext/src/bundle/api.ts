@@ -29,6 +29,10 @@ export interface PostextBundle {
    *  `config` and the locale's overrides, with `customFonts` naming the
    *  bundle's own font files. */
   config: PostextConfig;
+  /** A bundle in several languages: its general settings (#1209), read
+   *  under the same rules as `config`; the difference is this language's
+   *  own. */
+  sharedConfig?: PostextConfig;
   resources: Resource[];
   /** The bundle's font files, one per family variant. */
   fonts: BundleFontFile[];
@@ -84,6 +88,7 @@ export async function openBundle(
     ...(manifest.locales ? { locales: manifest.locales } : {}),
     chapters: read.chapters.map((c, i) => ({ ...c, title: c.title || chapterTitle(c.markdown, i + 1) })),
     config: read.config,
+    ...(read.sharedConfig ? { sharedConfig: read.sharedConfig } : {}),
     resources: read.resources,
     fonts: read.fonts,
     files: zip.files,
@@ -173,6 +178,14 @@ export interface CreateBundleInput {
   /** A single-document book (one chapter). Ignored when `chapters` is set. */
   markdown?: string;
   config?: PostextConfig;
+  /** The book's general settings, for a bundle in several languages
+   *  (#1209): written as the shared `config`, and `config` and every
+   *  `localized[…].config` (each then the whole configuration of its
+   *  edition) as an override of the fields that differ, merged over them
+   *  field by field when read (`mergeConfigLayers`). Absent, `config` is
+   *  the shared configuration and each locale's top-level keys go over
+   *  it. */
+  sharedConfig?: PostextConfig;
   /** Resources; a picture names its payload by `bitmap.fileId` /
    *  `svg.fileId` (and `svg.pdfFileId`), looked up in `files`. */
   resources?: Resource[];
@@ -278,6 +291,7 @@ export async function createBundle(input: CreateBundleInput): Promise<CreatedBun
     {
       chapters,
       config: input.config ?? {},
+      ...(input.sharedConfig ? { sharedConfig: input.sharedConfig } : {}),
       resources: input.resources ?? [],
       ...(input.canvasScope ? { canvasScope: input.canvasScope } : {}),
       ...(input.start ? { start: input.start } : {}),

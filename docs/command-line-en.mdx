@@ -275,7 +275,7 @@ postext unpack my-book.postext -o my-book/
 The same input always gives the same bytes, so a bundle can be compared or
 hashed. For loose Markdown, `--id`, `--description` and `--thumbnail FILE` (a
 cover picture) set the bundle's id, description and thumbnail; the id is a slug
-of the name by default. A folder keeps what its `preset.json` says. `unpack` refuses to write into a folder that is not empty unless
+of the name by default. A folder keeps what its `preset.json` says. A book that names no cover gets its first page as one (`thumbnail.jpg`, 1024 px on its long side), the picture a file manager can show for the file; `--no-auto-thumbnail` leaves it out. `unpack` refuses to write into a folder that is not empty unless
 `--force` is given.
 
 ### info and check

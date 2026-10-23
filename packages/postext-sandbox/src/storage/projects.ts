@@ -27,6 +27,9 @@ export interface ProjectThumbnail {
   fileId: string;
   /** Media type of the stored bytes (`image/jpeg`, `image/svg+xml`…). */
   mime: string;
+  /** Taken automatically from the first page (small, for the Books rows):
+   *  an export paints a larger one in its place when it can (#1210). */
+  generated?: boolean;
 }
 
 /** One edition of a project imported from a bundle in several languages
@@ -71,6 +74,12 @@ export interface ProjectRecord extends ProjectContent {
   /** Every edition's tag, in the bundle's order, the record's own
    *  included. Present with `editions`. */
   editionLocales?: string[];
+  /** The book's general settings (#1209): what every edition reads unless
+   *  it sets a field of its own. Each edition's `config` is still whole
+   *  (what it lays out with); its own fields are the difference. Absent on
+   *  a book in one language, and on one stored before the general settings
+   *  existed (its primary edition's then stand in). */
+  sharedConfig?: PostextConfig;
   /** When the set of other editions last changed (an import, a switch):
    *  the checks and the side-by-side view lay an edition out again when it
    *  moves, not at every autosave. */

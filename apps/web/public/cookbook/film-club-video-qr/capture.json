@@ -409,7 +409,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es left out (the resources differ when read back)"
+          }
+        ]
       }
     },
     "es": {
@@ -811,7 +817,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (the resources differ when read back)"
+          }
+        ]
       }
     }
   }

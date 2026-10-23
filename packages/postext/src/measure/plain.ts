@@ -3,6 +3,7 @@ import {
   layoutNextLine,
   type PreparedTextWithSegments,
   type LayoutCursor,
+  type LayoutLine,
 } from '@chenglou/pretext';
 import type { VDTLine, VDTLineSegment } from '../vdt.js';
 import { createBoundingBox } from '../vdt.js';
@@ -105,6 +106,9 @@ function measuresWordsWhole(text: string): boolean {
   return getMeasureLanguage() !== undefined && !measuringVertically() && WORD_CUT_RE.test(text);
 }
 
+/** The unit squares of `isUnitSquare` (`cjkClasses.ts`). */
+const UNIT_SQUARE_RE = /[\u3371-\u337A\u3380-\u33DF\u33FF]/;
+
 const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 const FIGURE_SPACE = '\u2007';
 /** The no-break spaces pretext glues its neighbours to (EF-66). */
@@ -177,7 +181,7 @@ function extractSegments(
 ): { segments: VDTLineSegment[]; hyphenated: boolean } {
   const result: VDTLineSegment[] = [];
   let hyphenated = false;
-  const kinds = (prepared as unknown as { kinds: string[] }).kinds;
+  const kinds = prepared.kinds;
   // A word wider than the line is cut between graphemes: the line then
   // starts or ends inside a segment, and holds only that part of it.
   const last = end.graphemeIndex > 0 ? end.segmentIndex : end.segmentIndex - 1;
@@ -258,13 +262,33 @@ function findLastTextSegmentIndex(segments: VDTLineSegment[]): number {
   return -1;
 }
 
-function getHyphenWidth(prepared: PreparedTextWithSegments, font: string): number {
-  // Use discretionaryHyphenWidth from pretext internals
-  const core = prepared as unknown as { discretionaryHyphenWidth?: number };
-  if (core.discretionaryHyphenWidth && core.discretionaryHyphenWidth > 0) {
-    return core.discretionaryHyphenWidth;
-  }
+/** The hyphen a soft-hyphen break prints (`withLineEndHyphen`), in the
+ *  text's font. Up to pretext 0.0.9 the engine read the same width out of
+ *  its handle; 1.0 keeps it to itself, and may measure U+2010 there. */
+function getHyphenWidth(font: string): number {
   return measureTextWidth('-', font);
+}
+
+/**
+ * A line pretext ends before a word whose first piece ends inside a Catalan
+ * `l·l` (`il·` | `lusió`), taken through that piece when it fits with its
+ * hyphen printed in the dot's place (`il-`). Pretext 1.0 fits the dot and
+ * the hyphen both (0.0.9 fitted neither), so it would not end the line
+ * there (#1213). The line comes back as pretext gives a soft-hyphen break:
+ * its text and width with the dot and the hyphen; the loop gives the dot
+ * back.
+ */
+function throughGeminate(prepared: PreparedTextWithSegments, line: LayoutLine, maxWidth: number, font: string): LayoutLine {
+  const { segments, kinds, widths } = prepared;
+  const i = line.end.segmentIndex;
+  if (line.end.graphemeIndex !== 0 || kinds[i] !== 'text' || kinds[i + 1] !== 'soft-hyphen' || kinds[i - 1] !== 'space') return line;
+  const piece = segments[i]!;
+  if (!endsInsideGeminate(piece)) return line;
+  let spaces = 0;
+  for (let j = i - 1; j >= line.start.segmentIndex && kinds[j] === 'space'; j--) spaces += widths[j]!;
+  const width = line.width + spaces + widths[i]! + getHyphenWidth(font);
+  if (width - geminateDotRoom(piece, font) > maxWidth) return line;
+  return { ...line, text: line.text + piece + '-', width, end: { segmentIndex: i + 2, graphemeIndex: 0 } };
 }
 
 /**
@@ -346,6 +370,12 @@ export function measureBlock(
   // A row of dashes alone in a Chinese or Japanese document goes there
   // too (#680): the composer draws it as one rule.
   if ((hasCJK(text) && (hasCJKRun(text) || composesAsCjk(text) || markCuts(text, 'words').length > 0)) || (measuringVertically() && holdsVerticalCell(text, getMeasureUprightDigits(), getMeasureRegion())) || (text.length > 1 && composesDashRow(text, options?.cjkComposition))) {
+    return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
+  }
+  // A unit square (㎡ ㎏, `isUnitSquare`) stays with its number, as the
+  // word-by-word breaker keeps it; pretext 1.0 breaks before one as Chrome
+  // does (#1213).
+  if (UNIT_SQUARE_RE.test(text)) {
     return measureRichBlock([{ text, bold: false, italic: false }], font, font, font, font, maxWidthPx, lineHeightPx, options);
   }
   // A paragraph set right to left, or holding right-to-left text: the
@@ -450,7 +480,8 @@ export function measureBlock(
     // leaves compounds whole, whose one break it is.
     const hardHyphens = ragged || options.breakAfterHyphens === true || keepCompounds;
     const dotWidth = geminateDotWidth(text, font);
-    const items = pretextSegmentsToItems(prepared, spaceWidth, maxStretchRatio, minShrinkRatio, options.breakAfterDashes === true, hardHyphens, ragged || keepCompounds ? 1 : 2, dotWidth);
+    const hyphenWidth = getHyphenWidth(font);
+    const items = pretextSegmentsToItems(prepared, hyphenWidth, spaceWidth, maxStretchRatio, minShrinkRatio, options.breakAfterDashes === true, hardHyphens, ragged || keepCompounds ? 1 : 2, dotWidth);
     const lineWidthFn = lineWidthFunction(maxWidthPx, options);
     const lineIndentFn = indentOf;
     const runtPenalty = options.runtPenalty ?? 0;
@@ -475,7 +506,7 @@ export function measureBlock(
     });
     if (breaks.length > 0) {
       const kpLines = reconstructPretextLines(
-        items, breaks, prepared, lineHeightPx,
+        items, breaks, prepared, hyphenWidth, lineHeightPx,
         lineWidthFn, lineIndentFn, normalSpaceWidth, textAlign,
         trackingPerChar, lineBaselineOffset(lineHeightPx, font), dotWidth,
       );
@@ -506,8 +537,9 @@ export function measureBlock(
     const lineIndent = indentOf(lineIndex);
     const lineMaxWidth = lineWidthAt(maxWidthPx, options, lineIndex);
 
-    const line = layoutNextLine(prepared, cursor, lineMaxWidth);
-    if (line === null) break;
+    const next = layoutNextLine(prepared, lineMaxWidth, cursor);
+    if (next === null) break;
+    const line = throughGeminate(prepared, next, lineMaxWidth, font);
 
     const nextCursor = line.end;
 
@@ -522,7 +554,7 @@ export function measureBlock(
         segments[lastTextIdx] = {
           kind: 'text',
           text: withLineEndHyphen(lastSeg.text),
-          width: lastSeg.width + getHyphenWidth(prepared, font)
+          width: lastSeg.width + getHyphenWidth(font)
             - (endsInsideGeminate(lastSeg.text) ? (geminateRoom = geminateDotRoom(lastSeg.text, font)) : 0),
         };
       }

@@ -311,6 +311,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: en names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es left out (its bundle is in zh-Hant, as another edition's)"
           }
         ]
       }
@@ -616,6 +621,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "bundle locale zh-Hant, the document's language: es names its resource types otherwise"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (its bundle is in zh-Hant, as another edition's)"
           }
         ]
       }

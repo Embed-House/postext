@@ -157,7 +157,7 @@
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28177,
+        "bytes": 34174,
         "folio": "c397d9a7",
         "chapters": [
           {
@@ -348,7 +348,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -498,7 +504,7 @@
       },
       "sandbox": {
         "file": "bunko-novel-furigana.postext",
-        "bytes": 28217,
+        "bytes": 34178,
         "folio": "c397d9a7",
         "chapters": [
           {
@@ -689,7 +695,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

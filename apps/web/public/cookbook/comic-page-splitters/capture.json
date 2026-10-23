@@ -119,7 +119,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808788,
+        "bytes": 823995,
         "chapters": [
           {
             "pages": 4,
@@ -301,6 +301,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, zh, ar, ja, pt, fr, de, it"
           }
         ]
       }
@@ -414,7 +419,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808907,
+        "bytes": 824066,
         "chapters": [
           {
             "pages": 4,
@@ -596,6 +601,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, zh, ar, ja, pt, fr, de, it"
           }
         ]
       }
@@ -709,7 +719,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808781,
+        "bytes": 823941,
         "chapters": [
           {
             "pages": 4,
@@ -891,6 +901,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, en, es, zh, ar, ja, pt, fr, de, it"
           }
         ]
       }
@@ -1004,7 +1019,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809383,
+        "bytes": 824258,
         "chapters": [
           {
             "pages": 4,
@@ -1187,6 +1202,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ca, ar, ja, pt, fr, de, it"
           }
         ]
       }
@@ -1301,7 +1321,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809689,
+        "bytes": 824437,
         "chapters": [
           {
             "pages": 4,
@@ -1486,6 +1506,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ca, zh, ja, pt, fr, de, it"
           }
         ]
       }
@@ -1600,7 +1625,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809556,
+        "bytes": 824288,
         "chapters": [
           {
             "pages": 4,
@@ -1784,6 +1809,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.91 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, en, es, ca, zh, ar, pt, fr, de, it"
           }
         ]
       }
@@ -1897,7 +1927,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 808919,
+        "bytes": 824033,
         "chapters": [
           {
             "pages": 4,
@@ -2079,6 +2109,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.92 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, ca, zh, ar, ja, fr, de, it"
           }
         ]
       }
@@ -2192,7 +2227,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809094,
+        "bytes": 824194,
         "chapters": [
           {
             "pages": 4,
@@ -2374,6 +2409,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, ca, zh, ar, ja, pt, de, it"
           }
         ]
       }
@@ -2487,7 +2527,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809177,
+        "bytes": 824177,
         "chapters": [
           {
             "pages": 4,
@@ -2669,6 +2709,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, ca, zh, ar, ja, pt, fr, it"
           }
         ]
       }
@@ -2782,7 +2827,7 @@
       },
       "sandbox": {
         "file": "comic-page-splitters.postext",
-        "bytes": 809044,
+        "bytes": 824168,
         "chapters": [
           {
             "pages": 4,
@@ -2964,6 +3009,11 @@
             "check": "C20",
             "severity": "warn",
             "detail": "the edition's images weigh 0.93 MB (warning at 0.9 MB for 4 pages; capture.expect.imageMb states the figure of a book of paintings)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, ca, zh, ar, ja, pt, fr, de"
           }
         ]
       }

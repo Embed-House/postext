@@ -94,7 +94,7 @@
       },
       "sandbox": {
         "file": "bundle-round-trip.postext",
-        "bytes": 147971,
+        "bytes": 149739,
         "folio": "c651b1f6",
         "chapters": [
           {
@@ -328,6 +328,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -416,7 +421,7 @@
       },
       "sandbox": {
         "file": "bundle-round-trip.postext",
-        "bytes": 149819,
+        "bytes": 151445,
         "folio": "c651b1f6",
         "chapters": [
           {
@@ -650,6 +655,11 @@
             "check": "chrome",
             "severity": "warn",
             "detail": "Chrome 155.0.8059.85, the committed capture used 154.0.8037.98: pixels may differ"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

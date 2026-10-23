@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15428,
+        "bytes": 18358,
         "folio": "3266640a",
         "chapters": [
           {
@@ -331,6 +331,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -429,7 +434,7 @@
       },
       "sandbox": {
         "file": "gojuon-index.postext",
-        "bytes": 15504,
+        "bytes": 18393,
         "folio": "3266640a",
         "chapters": [
           {
@@ -656,6 +661,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

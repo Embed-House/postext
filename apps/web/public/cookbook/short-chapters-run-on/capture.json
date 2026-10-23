@@ -362,6 +362,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: headings"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es left out (its bundle is in pt, as another edition's)"
           }
         ]
       }
@@ -719,6 +724,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: headings"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en left out (its bundle is in pt, as another edition's)"
           }
         ]
       }

@@ -120,7 +120,7 @@
       },
       "sandbox": {
         "file": "romaji-nikki.postext",
-        "bytes": 10956,
+        "bytes": 15200,
         "folio": "fe908f7a",
         "chapters": [
           {
@@ -314,7 +314,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -427,7 +433,7 @@
       },
       "sandbox": {
         "file": "romaji-nikki.postext",
-        "bytes": 11038,
+        "bytes": 15196,
         "folio": "fe908f7a",
         "chapters": [
           {
@@ -621,7 +627,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }

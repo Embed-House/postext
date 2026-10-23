@@ -275,7 +275,7 @@ postext unpack my-book.postext -o my-book/
 Dieselbe Eingabe ergibt immer dieselben Bytes, sodass sich ein Paket vergleichen oder
 hashen lässt. Bei losen Markdown-Dateien setzen `--id`, `--description` und `--thumbnail FILE`
 (ein Titelbild) die ID, die Beschreibung und das Vorschaubild des Pakets; die ID ist
-standardmäßig ein Slug des Namens. Ein Ordner behält, was seine `preset.json` angibt. `unpack` weigert sich, in einen Ordner zu schreiben, der nicht leer ist, es sei denn,
+standardmäßig ein Slug des Namens. Ein Ordner behält, was seine `preset.json` angibt. Ein Buch, das kein Titelbild angibt, erhält seine erste Seite als Titelbild (`thumbnail.jpg`, 1024 px an der langen Seite), das Bild, das ein Dateimanager für die Datei anzeigen kann; `--no-auto-thumbnail` lässt es weg. `unpack` weigert sich, in einen Ordner zu schreiben, der nicht leer ist, es sei denn,
 `--force` ist angegeben.
 
 ### info und check

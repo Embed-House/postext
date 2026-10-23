@@ -104,7 +104,7 @@
       },
       "sandbox": {
         "file": "jukugo-furigana-textbook.postext",
-        "bytes": 22830,
+        "bytes": 25769,
         "folio": "2b1033e5",
         "chapters": [
           {
@@ -314,6 +314,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
           }
         ]
       }
@@ -412,7 +417,7 @@
       },
       "sandbox": {
         "file": "jukugo-furigana-textbook.postext",
-        "bytes": 22862,
+        "bytes": 25761,
         "folio": "2b1033e5",
         "chapters": [
           {
@@ -622,6 +627,11 @@
             "check": "sandbox",
             "severity": "info",
             "detail": "continuation carried as the bundle's start: pageIndexOffset, pageNumbering"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
           }
         ]
       }

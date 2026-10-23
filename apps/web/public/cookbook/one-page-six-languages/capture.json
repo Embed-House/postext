@@ -92,7 +92,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794342,
+        "bytes": 799729,
         "pages": 1,
         "chapters": [
           {
@@ -245,7 +245,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ja, zh, ar"
+          }
+        ]
       }
     },
     "es": {
@@ -330,7 +336,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794530,
+        "bytes": 799843,
         "pages": 1,
         "chapters": [
           {
@@ -483,7 +489,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ja, zh, ar"
+          }
+        ]
       }
     },
     "zh": {
@@ -569,7 +581,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794692,
+        "bytes": 799860,
         "pages": 1,
         "chapters": [
           {
@@ -728,7 +740,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ja, ar"
+          }
+        ]
       }
     },
     "ar": {
@@ -815,7 +833,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794954,
+        "bytes": 800053,
         "pages": 1,
         "chapters": [
           {
@@ -976,7 +994,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ja, zh"
+          }
+        ]
       }
     },
     "ja": {
@@ -1063,7 +1087,7 @@
       },
       "sandbox": {
         "file": "one-page-six-languages.postext",
-        "bytes": 794957,
+        "bytes": 800064,
         "pages": 1,
         "chapters": [
           {
@@ -1223,7 +1247,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, en, es, zh, ar"
+          }
+        ]
       }
     }
   }

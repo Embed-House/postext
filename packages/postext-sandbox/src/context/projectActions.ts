@@ -64,6 +64,8 @@ import { bundleContentLocales, sameLocaleTag } from '../presets/locale.js';
 import { getPresetDraft } from '../storage/presetDrafts.js';
 import { getPresetCover } from '../storage/presetCovers.js';
 import { coverTargetKey, sessionCoverAttempts, thumbnailIfMissing } from '../covers/autoCover.js';
+import { initialSharedConfig, recordSharedConfig } from '../editions/configLayers.js';
+import { bundleCoverImage } from '../covers/renderCover.js';
 
 export interface ProjectActionDeps {
   dispatch: Dispatch<SandboxAction>;
@@ -163,7 +165,8 @@ async function copyThumbnail(from: ProjectThumbnail | undefined, projectId: stri
   if (!from) return undefined;
   const rec = await getBlob(from.fileId).catch(() => null);
   if (!rec) return undefined;
-  return (await storeThumbnail(projectId, rec.bytes, rec.contentType)) ?? undefined;
+  const stored = await storeThumbnail(projectId, rec.bytes, rec.contentType);
+  return stored ? { ...stored, ...(from.generated ? { generated: true } : {}) } : undefined;
 }
 
 /** A showcase preset's cover picture, fetched from its source and copied
@@ -189,7 +192,9 @@ async function presetThumbnailBytes(summary: PresetSummary, locale?: string): Pr
 async function adoptPresetThumbnail(summary: PresetSummary, projectId: string, locale?: string): Promise<ProjectThumbnail | undefined> {
   const fetched = await presetThumbnailBytes(summary, locale);
   if (!fetched) return undefined;
-  return (await storeThumbnail(projectId, fetched.bytes, fetched.mime)) ?? undefined;
+  const stored = await storeThumbnail(projectId, fetched.bytes, fetched.mime);
+  // A preset that ships no cover hands over the one taken from its page.
+  return stored ? { ...stored, ...(summary.thumbnailUrl ? {} : { generated: true }) } : undefined;
 }
 
 /** Take a preset's in-memory content and give the project its own copies of
@@ -316,6 +321,8 @@ async function localizedOf(record: ProjectRecord): Promise<BundleContent['locali
 /** File id a preset's cover picture is handed to the bundle builder under
  *  while an export is being assembled (never stored). */
 const PRESET_THUMBNAIL_ID = 'preset-thumbnail';
+/** Id the cover painted for an export goes to the bundle under. */
+const BUNDLE_COVER_ID = 'bundle-cover';
 
 export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
   const { dispatch } = deps;
@@ -348,8 +355,16 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
     // provider's font effect and would otherwise measure with fallbacks.
     // They are the record's, not an edit of the last book's.
     if (fontsChange) setCustomFonts(config.customFonts, { newBook: true });
+    const before = deps.getState();
     dispatch({ type: 'SET_ACTIVE_PROJECT', payload: { id: record.id, sourcePresetId: record.sourcePresetId } });
-    if (wantsConfig) dispatch({ type: 'SET_CONFIG', payload: config });
+    if (wantsConfig) {
+      dispatch({ type: 'SET_CONFIG', payload: config });
+      // A book in several languages: its general settings, and the scope
+      // the reader was editing in when they only switched editions.
+      const shared = recordSharedConfig(record);
+      const scope = before.activeProjectId === record.id && before.configLayers ? before.configLayers.scope : 'all';
+      dispatch({ type: 'SET_CONFIG_LAYERS', payload: shared ? { shared, scope } : null });
+    }
     else if (parts === 'document' && config.customFonts !== undefined) {
       dispatch({ type: 'UPDATE_CONFIG', payload: { customFonts: config.customFonts } });
     }
@@ -592,6 +607,9 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         record.editions = edition.editions;
         record.editionLocales = edition.editionLocales;
         record.editionsRev = Date.now();
+        // The general settings the bundle keeps, the language aside, which
+        // is every edition's own (#1209).
+        if (loaded.sharedConfig) record.sharedConfig = initialSharedConfig(loaded.sharedConfig);
         // What the bundle calls each edition (#968).
         const titles = editionTitlesOf(opened.manifest, edition.editionLocales);
         if (titles) record.editionTitles = titles;
@@ -631,7 +649,10 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
       if (s.activeProjectId === id) await deps.flushWorkingSave();
       const record = await getProject(id);
       if (!record) throw new Error('Project not found');
-      const made = withNewEdition(record, locale, { ids: generateChapterId, fallbackLocale: s.locale });
+      // The book gets general settings with its second language: the ones
+      // of the edition it is copied from, its language aside (#1209).
+      const layered = record.sharedConfig || record.editions ? record : { ...record, sharedConfig: initialSharedConfig(record.config) };
+      const made = withNewEdition(layered, locale, { ids: generateChapterId, fallbackLocale: s.locale });
       if (!made) return false;
       const { record: added, applied } = made;
       // The new edition takes the screen; the one it was copied from goes
@@ -695,7 +716,8 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         const config = withDefaultResourceTypes(record.config, s.locale);
         const layouts = await storedCurrentLayouts(record.chapters, config, record.resources, {}, record.start);
         const localized = await localizedOf(record);
-        content = { ...record, config, layouts, ...(localized ? { localized } : {}) };
+        const sharedConfig = localized ? recordSharedConfig(record) : null;
+        content = { ...record, config, layouts, ...(localized ? { localized } : {}), ...(sharedConfig ? { sharedConfig } : {}) };
       } else {
         await deps.flushWorkingSave();
         const cur = deps.getState();
@@ -709,9 +731,17 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
           locale: active?.locale ?? preset?.locale ?? cur.locale,
         };
         // The cover: the project's own, or the preset's (shipped, or taken
-        // from its first page) for an edited preset on screen.
+        // from its first page) for an edited preset on screen. One taken
+        // from the first page is sized for the Books rows: the bundle gets
+        // its first page painted now at a file manager's icon size (#1210).
         let thumbnail = active?.thumbnail;
-        if (!active && preset) {
+        const chosen = active ? !!thumbnail && !thumbnail.generated : !!preset?.thumbnailUrl;
+        const painted = chosen ? null : await bundleCoverImage(cur.chapters[0]);
+        if (painted) {
+          const fromIdb = readBlob;
+          readBlob = async (fileId) => (fileId === BUNDLE_COVER_ID ? painted.bytes : fromIdb(fileId));
+          thumbnail = { fileId: BUNDLE_COVER_ID, mime: painted.mime };
+        } else if (!active && preset) {
           const cover = await presetThumbnailBytes(preset, cur.presetApplied?.presetId === preset.id ? cur.presetApplied.locale : undefined);
           if (cover) {
             const fromIdb = readBlob;
@@ -722,6 +752,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
         // The other editions of a project in several languages go along.
         const record = active ? await getProject(active.id).catch(() => null) : null;
         const localized = record ? await localizedOf(record) : undefined;
+        const sharedConfig = localized && record ? recordSharedConfig(record) : null;
         if (localized && meta.locale === undefined) meta = { ...meta, locale: record!.locale };
         content = {
           ...bookOfState(cur),
@@ -730,6 +761,7 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
           layouts: deps.currentLayouts(),
           ...(thumbnail ? { thumbnail } : {}),
           ...(localized ? { localized } : {}),
+          ...(sharedConfig ? { sharedConfig } : {}),
         };
       }
 
@@ -766,8 +798,9 @@ export function createProjectActions(deps: ProjectActionDeps): ProjectActions {
     deps.withGcSuspended(async () => {
       const current = await getProject(id).catch(() => null);
       if (!current || current.thumbnail) return false;
-      const stored = await storeThumbnail(id, bytes, mime);
-      if (!stored) return false;
+      const taken = await storeThumbnail(id, bytes, mime);
+      if (!taken) return false;
+      const stored: ProjectThumbnail = { ...taken, generated: true };
       const updated = await updateProject(id, (existing) => thumbnailIfMissing(existing, stored)).catch(() => null);
       if (!updated || updated.thumbnail?.fileId !== stored.fileId) return false;
       dispatch({ type: 'UPSERT_PROJECT_SUMMARY', payload: toSummary(updated) });

@@ -183,7 +183,7 @@
       },
       "sandbox": {
         "file": "technical-book-crossref-chapters.postext",
-        "bytes": 66996,
+        "bytes": 107148,
         "folio": "e5e8575d",
         "chapters": [
           {
@@ -497,7 +497,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
       }
     },
     "es": {
@@ -673,7 +679,7 @@
       },
       "sandbox": {
         "file": "technical-book-crossref-chapters.postext",
-        "bytes": 68276,
+        "bytes": 108042,
         "folio": "e5e8575d",
         "chapters": [
           {
@@ -987,7 +993,13 @@
         "raggedLines": {
           "count": 0
         },
-        "findings": []
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
       }
     }
   }
