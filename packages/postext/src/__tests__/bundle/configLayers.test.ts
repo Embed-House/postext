@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { commonConfig, diffConfigLayers, mergeConfigLayers, overridePaths, sameConfig } from '../../defaults/configLayers.js';
+import { commonConfig, diffConfigLayers, leastConfigOverride, mergeConfigLayers, overridePaths, sameConfig } from '../../defaults/configLayers.js';
 import { migrateBundleConfig } from '../../bundle/configVersion.js';
 import { planBundle, readBundle } from '../../bundle/codec.js';
 import type { PostextConfig } from '../../types.js';
@@ -77,6 +77,29 @@ describe('diffConfigLayers', () => {
     const own = mergeConfigLayers(general, { calloutStyles: [{ id: 'note', padding: pt(9) }] });
     expect(diffConfigLayers(general, own)).toEqual({ calloutStyles: [{ id: 'note', padding: pt(9) }] });
     expect(overridePaths(diffConfigLayers(general, own))).toEqual(['calloutStyles[id=note].padding']);
+  });
+});
+
+describe('leastConfigOverride', () => {
+  const identity = (c: PostextConfig) => c;
+
+  it('keeps an empty object inside an entry the general list lacks', () => {
+    const shared = { headingStyles: [{ id: 'front', header: { elements: [] } }] } as unknown as PostextConfig;
+    const own = { headingStyles: [{ id: 'cover', header: {}, footer: {} }, { id: 'front', header: { elements: [] } }] } as unknown as PostextConfig;
+    const override = leastConfigOverride(shared, own, identity);
+    expect(sameConfig(mergeConfigLayers(shared, override), own)).toBe(true);
+  });
+
+  it('keeps an added entry that carries its key alone', () => {
+    const shared = { calloutStyles: [{ id: 'note', padding: pt(6) }] } as PostextConfig;
+    const own = { calloutStyles: [{ id: 'note', padding: pt(6) }, { id: 'plain' }] } as PostextConfig;
+    const override = leastConfigOverride(shared, own, identity);
+    expect(override).toEqual({ calloutStyles: [{ id: 'plain' }] });
+  });
+
+  it('leaves out what merges to nothing', () => {
+    const shared = { bodyText: { fontFamily: 'Lora' } } as PostextConfig;
+    expect(leastConfigOverride(shared, shared, identity)).toEqual({});
   });
 });
 

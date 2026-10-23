@@ -247,7 +247,12 @@ export function leastConfigOverride(general: PostextConfig, own: PostextConfig, 
         }
         const keyField = ['id', 'level', 'name'].find((k) => k in entry);
         prune(entry);
-        if (keyField && Object.keys(entry).length === 1) node.splice(i, 1);
+        // An entry left with its key alone changes nothing when it merges
+        // into a general one; an entry the general list lacks is added.
+        if (keyField && Object.keys(entry).length === 1) {
+          node.splice(i, 1);
+          if (!reads()) node.splice(i, 0, entry);
+        }
       }
       return;
     }
@@ -260,7 +265,13 @@ export function leastConfigOverride(general: PostextConfig, own: PostextConfig, 
         if (value.length === 0) delete node[key];
       } else if (isPlainObject(value) && !isAtom(value)) {
         prune(value);
-        if (Object.keys(value).length === 0) delete node[key];
+        // An empty object merged into a general one changes nothing, but
+        // inside an entry added whole it is a value of its own (a heading
+        // style's `header: {}`, no running head on its pages).
+        if (Object.keys(value).length === 0) {
+          delete node[key];
+          if (!reads()) node[key] = value;
+        }
       }
     }
   };
