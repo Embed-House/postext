@@ -2,7 +2,7 @@
    Sandbox opens it: the Checks panel has nothing to say about its design. */
 import { describe, expect, it } from 'vitest';
 import type { PlacedDesignElement } from 'postext';
-import { dimensionToPx, parseMarkdown, type Dimension, type PostextConfig } from 'postext';
+import { dimensionToPx, mergeConfigLayers, parseMarkdown, type Dimension, type PostextConfig } from 'postext';
 import { computeWarnings } from '../warnings/compute.js';
 import { buildHtmlConfigOverride } from '../viewport/HtmlPreview/configOverride.js';
 import { hasLatinEmphasis, missingUsedVariants } from '../controls/fontLoader.js';
@@ -23,7 +23,8 @@ const chaptersOf = (lang: string): Promise<string[]> => Promise.all(manifest.cha
   ((await import(/* @vite-ignore */ `${new URL(`${BUNDLE}${file}`, import.meta.url).href}?raw`)) as { default: string }).default));
 
 /** An edition's config: its top-level keys replace the base ones. */
-const configOf = (lang: string): PostextConfig => ({ ...manifest.config, ...(manifest.localized[lang]?.config ?? {}) });
+// Each edition: its override over the general settings, field by field (#1209).
+const configOf = (lang: string): PostextConfig => mergeConfigLayers(manifest.config, manifest.localized[lang]?.config);
 
 const CHAPTER_ONE: Record<string, string> = {
   // The vertical edition: the plate on its own page before the opener.

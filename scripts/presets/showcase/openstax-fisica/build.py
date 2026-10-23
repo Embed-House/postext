@@ -29,7 +29,7 @@ import cnxml  # noqa: E402
 import editorial as ed  # noqa: E402
 from _common import (  # noqa: E402
     PRESETS_ROOT, at, attr_value, box_el, bundle_size, copy_licences, copy_thumbnail, image_el, instance_font,
-    make_palette, mm, pt, register, rule_el, text_el, write_fingerprint, build_spines, spine_thickness_mm,
+    layer_configs, make_palette, mm, pt, register, rule_el, text_el, write_fingerprint, build_spines, spine_thickness_mm,
 )
 from fetch import BOOKS, chapters_of  # noqa: E402
 
@@ -606,6 +606,7 @@ def main() -> None:
     write_credits_md(chapters)
     meta = write_manifest(chapter_specs, resources, wording, fonts, chapters, images)
     copy_thumbnail(HERE, OUT)
+    layer_configs(OUT)
     write_fingerprint(OUT)
     register(PRESET_ID, meta)
     print(f"wrote {OUT}  ({bundle_size(OUT):.1f} MB, {len(resources)} resources, {sum(len(v) for v in chapter_specs.values())} chapter files)")

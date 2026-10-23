@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import fontkit from '../../../../postext-pdf/node_modules/@pdf-lib/fontkit/dist/fontkit.es.js';
 import { buildDocument } from '../../pipeline/index.js';
+import { mergeConfigLayers } from '../../defaults/configLayers.js';
 import type { PostextConfig, Resource, VDTDocument } from '../../index.js';
 
 const BUNDLE = join(__dirname, '../../../../../apps/web/public/presets/deep-sky');
@@ -57,7 +58,8 @@ function resources(lang: string): Resource[] {
 }
 
 function configFor(lang: string, over: Record<string, unknown> = {}): PostextConfig {
-  const cfg = { ...manifest.config, ...manifest.localized[lang].config } as Record<string, unknown>;
+  // The language's override over the general settings, field by field (#1209).
+  const cfg = mergeConfigLayers(manifest.config, manifest.localized[lang].config) as Record<string, unknown>;
   return { ...cfg, ...over } as PostextConfig;
 }
 

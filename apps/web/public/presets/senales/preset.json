@@ -1,5 +1,6 @@
 {
  "version": 2,
+ "configVersion": 21,
  "id": "senales",
  "name": "Señales 2020 · Signals 2020",
  "description": "Revista de la Agencia Europea de Medio Ambiente a dos columnas con aperturas fotográficas, recuadros, citas y paneles de datos · A two-column EEA magazine with photo openers, boxes, pull quotes and data panels",
@@ -139,32 +140,124 @@
   ]
  },
  "config": {
-  "locale": "es",
+  "colorPalette": [
+   {
+    "id": "ink",
+    "name": "Tinta",
+    "value": {
+     "hex": "#1c1f22",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "paper",
+    "name": "Papel",
+    "value": {
+     "hex": "#ffffff",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "white",
+    "name": "Blanco",
+    "value": {
+     "hex": "#ffffff",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "band",
+    "name": "Color de la revista",
+    "value": {
+     "hex": "#1f6f8b",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "tint",
+    "name": "Fondo de recuadros",
+    "value": {
+     "hex": "#e8f0f3",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "grey",
+    "name": "Fondo de datos",
+    "value": {
+     "hex": "#f2f1ed",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "rule",
+    "name": "Filetes",
+    "value": {
+     "hex": "#cfd4d8",
+     "model": "hex"
+    }
+   },
+   {
+    "id": "muted",
+    "name": "Gris de notas",
+    "value": {
+     "hex": "#676c72",
+     "model": "hex"
+    }
+   }
+  ],
+  "resourceTypes": [
+   {
+    "id": "photo",
+    "captionPrefix": "",
+    "numberingTemplate": "",
+    "resetOn": "never",
+    "counterFormat": "decimal",
+    "defaultPlacement": {
+     "position": "auto",
+     "span": "page",
+     "width": 1
+    }
+   },
+   {
+    "id": "table",
+    "numberingTemplate": "{n}",
+    "resetOn": "never",
+    "counterFormat": "decimal",
+    "defaultPlacement": {
+     "position": "here",
+     "span": "page"
+    },
+    "captionStyle": {
+     "position": "above"
+    }
+   }
+  ],
   "page": {
    "sizePreset": "custom",
    "width": {
-    "value": 168.0,
+    "value": 168,
     "unit": "mm"
    },
    "height": {
-    "value": 237.0,
+    "value": 237,
     "unit": "mm"
    },
    "margins": {
     "top": {
-     "value": 22.0,
+     "value": 22,
      "unit": "mm"
     },
     "bottom": {
-     "value": 20.0,
+     "value": 20,
      "unit": "mm"
     },
     "left": {
-     "value": 16.0,
+     "value": 16,
      "unit": "mm"
     },
     "right": {
-     "value": 14.0,
+     "value": 14,
      "unit": "mm"
     },
     "mirror": true
@@ -180,9 +273,13 @@
   "layout": {
    "layoutType": "double",
    "gutterWidth": {
-    "value": 6.0,
+    "value": 6,
     "unit": "mm"
-   }
+   },
+   "inlineResourceGap": "above",
+   "boxChildSplitMinLines": 1,
+   "flowColumns": false,
+   "floatsUnderOpener": false
   },
   "bodyText": {
    "fontFamily": "Open Sans",
@@ -224,12 +321,19 @@
    "referenceBold": false,
    "referenceItalic": true,
    "hyphenation": {
-    "enabled": true,
-    "locale": "es"
+    "enabled": true
    },
    "avoidWidows": true,
    "avoidOrphans": true,
-   "optimalLineBreaking": true
+   "optimalLineBreaking": true,
+   "colonListRoom": "line",
+   "optimalRagged": false,
+   "paragraphContainerSpacing": "add",
+   "breakAfterHyphens": false,
+   "scriptContext": false,
+   "shapingLanguage": "host",
+   "paragraphStylesInBoxes": "document",
+   "breakAfterSlashes": false
   },
   "headings": {
    "fontFamily": "Outfit",
@@ -322,7 +426,7 @@
           },
           "size": {
            "width": {
-            "value": 138.0,
+            "value": 138,
             "unit": "mm"
            },
            "height": "auto"
@@ -411,7 +515,13 @@
       "unit": "pt"
      }
     }
-   ]
+   ],
+   "keepWithNextSplit": "fill",
+   "balancing": {
+    "maxLinesBeforeLoose": 4,
+    "stretchAfterWideFloats": "always",
+    "trailingStep": "grid"
+   }
   },
   "headingStyles": [
    {
@@ -427,7 +537,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 237.0,
+      "value": 237,
       "unit": "mm"
      },
      "slot": {
@@ -491,7 +601,7 @@
            "unit": "mm"
           },
           "height": {
-           "value": 152.0,
+           "value": 152,
            "unit": "mm"
           }
          }
@@ -512,7 +622,7 @@
            "unit": "mm"
           },
           "y": {
-           "value": 149.0,
+           "value": 149,
            "unit": "mm"
           }
          },
@@ -546,17 +656,17 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
-           "value": 160.0,
+           "value": 160,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -605,7 +715,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -621,7 +731,7 @@
         "italic": false,
         "align": "left",
         "verticalAlign": "middle",
-        "lineHeight": 1.0,
+        "lineHeight": 1,
         "overflow": "wrap",
         "color": {
          "hex": "#ffffff",
@@ -649,7 +759,7 @@
          },
          "size": {
           "width": {
-           "value": 118.0,
+           "value": 118,
            "unit": "mm"
           },
           "height": "auto"
@@ -683,7 +793,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -693,7 +803,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -736,19 +846,19 @@
     },
     "margins": {
      "top": {
-      "value": 159.0,
+      "value": 159,
       "unit": "mm"
      },
      "bottom": {
-      "value": 20.0,
+      "value": 20,
       "unit": "mm"
      },
      "left": {
-      "value": 74.0,
+      "value": 74,
       "unit": "mm"
      },
      "right": {
-      "value": 14.0,
+      "value": 14,
       "unit": "mm"
      }
     }
@@ -766,7 +876,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 237.0,
+      "value": 237,
       "unit": "mm"
      },
      "slot": {
@@ -830,7 +940,7 @@
            "unit": "mm"
           },
           "height": {
-           "value": 128.0,
+           "value": 128,
            "unit": "mm"
           }
          }
@@ -847,17 +957,17 @@
          },
          "offset": {
           "x": {
-           "value": 14.0,
+           "value": 14,
            "unit": "mm"
           },
           "y": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -873,7 +983,7 @@
         "italic": false,
         "align": "left",
         "verticalAlign": "middle",
-        "lineHeight": 1.0,
+        "lineHeight": 1,
         "overflow": "wrap",
         "color": {
          "hex": "#ffffff",
@@ -901,7 +1011,7 @@
          },
          "size": {
           "width": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           },
           "height": "auto"
@@ -935,7 +1045,7 @@
          },
          "offset": {
           "x": {
-           "value": 14.0,
+           "value": 14,
            "unit": "mm"
           },
           "y": {
@@ -945,7 +1055,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -984,7 +1094,7 @@
          },
          "offset": {
           "x": {
-           "value": 14.0,
+           "value": 14,
            "unit": "mm"
           },
           "y": {
@@ -994,7 +1104,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1107,7 +1217,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1249,7 +1359,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1350,7 +1460,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
@@ -1408,7 +1518,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -1418,7 +1528,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1467,7 +1577,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1511,7 +1621,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1577,7 +1687,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
@@ -1635,7 +1745,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -1645,7 +1755,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1694,7 +1804,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1738,7 +1848,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1804,7 +1914,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
@@ -1862,7 +1972,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -1872,7 +1982,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1921,7 +2031,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -1965,7 +2075,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2031,7 +2141,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
@@ -2089,7 +2199,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -2099,7 +2209,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2148,7 +2258,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2192,7 +2302,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2258,7 +2368,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
@@ -2316,7 +2426,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -2326,7 +2436,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2375,7 +2485,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2419,7 +2529,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2460,7 +2570,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 137.0,
+      "value": 137,
       "unit": "mm"
      },
      "slot": {
@@ -2485,11 +2595,11 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
-           "value": 98.0,
+           "value": 98,
            "unit": "mm"
           }
          }
@@ -2510,7 +2620,7 @@
            "unit": "mm"
           },
           "y": {
-           "value": 95.0,
+           "value": 95,
            "unit": "mm"
           }
          },
@@ -2543,17 +2653,17 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
-           "value": 104.0,
+           "value": 104,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2602,7 +2712,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2646,7 +2756,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2687,7 +2797,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 155.0,
+      "value": 155,
       "unit": "mm"
      },
      "slot": {
@@ -2712,11 +2822,11 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
-           "value": 116.0,
+           "value": 116,
            "unit": "mm"
           }
          }
@@ -2737,7 +2847,7 @@
            "unit": "mm"
           },
           "y": {
-           "value": 113.0,
+           "value": 113,
            "unit": "mm"
           }
          },
@@ -2770,17 +2880,17 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2829,7 +2939,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2873,7 +2983,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -2939,7 +3049,7 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
@@ -2997,7 +3107,7 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
@@ -3007,7 +3117,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -3056,7 +3166,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -3100,7 +3210,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -3141,7 +3251,7 @@
     "advancedDesign": {
      "enabled": true,
      "minHeight": {
-      "value": 155.0,
+      "value": 155,
       "unit": "mm"
      },
      "slot": {
@@ -3166,11 +3276,11 @@
          },
          "size": {
           "width": {
-           "value": 174.0,
+           "value": 174,
            "unit": "mm"
           },
           "height": {
-           "value": 116.0,
+           "value": 116,
            "unit": "mm"
           }
          }
@@ -3191,7 +3301,7 @@
            "unit": "mm"
           },
           "y": {
-           "value": 113.0,
+           "value": 113,
            "unit": "mm"
           }
          },
@@ -3224,17 +3334,17 @@
          },
          "offset": {
           "x": {
-           "value": 16.0,
+           "value": 16,
            "unit": "mm"
           },
           "y": {
-           "value": 122.0,
+           "value": 122,
            "unit": "mm"
           }
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -3283,7 +3393,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -3327,7 +3437,7 @@
          },
          "size": {
           "width": {
-           "value": 138.0,
+           "value": 138,
            "unit": "mm"
           },
           "height": "auto"
@@ -4115,7 +4225,7 @@
        },
        "offset": {
         "x": {
-         "value": 16.0,
+         "value": 16,
          "unit": "mm"
         },
         "y": {
@@ -4125,7 +4235,7 @@
        },
        "size": {
         "width": {
-         "value": 138.0,
+         "value": 138,
          "unit": "mm"
         },
         "height": "auto"
@@ -4164,11 +4274,11 @@
       },
       "offset": {
        "x": {
-        "value": 14.0,
+        "value": 14,
         "unit": "mm"
        },
        "y": {
-        "value": 12.0,
+        "value": 12,
         "unit": "mm"
        }
       },
@@ -4207,11 +4317,11 @@
       },
       "offset": {
        "x": {
-        "value": 22.0,
+        "value": 22,
         "unit": "mm"
        },
        "y": {
-        "value": 12.0,
+        "value": 12,
         "unit": "mm"
        }
       },
@@ -4258,11 +4368,11 @@
       },
       "offset": {
        "x": {
-        "value": -22.0,
+        "value": -22,
         "unit": "mm"
        },
        "y": {
-        "value": 12.0,
+        "value": 12,
         "unit": "mm"
        }
       },
@@ -4274,7 +4384,6 @@
        "height": "auto"
       }
      },
-     "content": "Señales 2020 · Hacia una contaminación cero en Europa",
      "fontFamily": "Outfit",
      "fontSize": {
       "value": 7.5,
@@ -4309,11 +4418,11 @@
       },
       "offset": {
        "x": {
-        "value": -14.0,
+        "value": -14,
         "unit": "mm"
        },
        "y": {
-        "value": 12.0,
+        "value": 12,
         "unit": "mm"
        }
       },
@@ -4360,7 +4469,7 @@
         "unit": "mm"
        },
        "y": {
-        "value": -12.0,
+        "value": -12,
         "unit": "mm"
        }
       },
@@ -4478,7 +4587,8 @@
     "value": 1.8,
     "unit": "mm"
    },
-   "rules": "horizontal"
+   "rules": "horizontal",
+   "splitInline": false
   },
   "unorderedLists": {
    "bulletChar": "•",
@@ -4495,106 +4605,6 @@
     "paletteId": "band"
    }
   },
-  "colorPalette": [
-   {
-    "id": "ink",
-    "name": "Tinta",
-    "value": {
-     "hex": "#1c1f22",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "paper",
-    "name": "Papel",
-    "value": {
-     "hex": "#ffffff",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "white",
-    "name": "Blanco",
-    "value": {
-     "hex": "#ffffff",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "band",
-    "name": "Color de la revista",
-    "value": {
-     "hex": "#1f6f8b",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "tint",
-    "name": "Fondo de recuadros",
-    "value": {
-     "hex": "#e8f0f3",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "grey",
-    "name": "Fondo de datos",
-    "value": {
-     "hex": "#f2f1ed",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "rule",
-    "name": "Filetes",
-    "value": {
-     "hex": "#cfd4d8",
-     "model": "hex"
-    }
-   },
-   {
-    "id": "muted",
-    "name": "Gris de notas",
-    "value": {
-     "hex": "#676c72",
-     "model": "hex"
-    }
-   }
-  ],
-  "resourceTypes": [
-   {
-    "id": "photo",
-    "name": "Foto",
-    "namePlural": "Fotos",
-    "shortLabel": "foto",
-    "captionPrefix": "",
-    "numberingTemplate": "",
-    "resetOn": "never",
-    "counterFormat": "decimal",
-    "defaultPlacement": {
-     "position": "auto",
-     "span": "page",
-     "width": 1
-    }
-   },
-   {
-    "id": "table",
-    "name": "Tabla",
-    "namePlural": "Tablas",
-    "shortLabel": "tabla",
-    "captionPrefix": "Tabla",
-    "numberingTemplate": "{n}",
-    "resetOn": "never",
-    "counterFormat": "decimal",
-    "defaultPlacement": {
-     "position": "here",
-     "span": "page"
-    },
-    "captionStyle": {
-     "position": "above"
-    }
-   }
-  ],
   "pdfGeneration": {
    "outlines": true
   },
@@ -4633,280 +4643,35 @@
  "localized": {
   "es": {
    "config": {
-    "locale": "es",
-    "bodyText": {
-     "fontFamily": "Open Sans",
-     "fontSize": {
-      "value": 9.3,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 13.2,
-      "unit": "pt"
-     },
-     "textAlign": "left",
-     "firstLineIndent": {
-      "value": 0,
-      "unit": "mm"
-     },
-     "indentAfterHeading": false,
-     "paragraphSpacing": true,
-     "color": {
-      "hex": "#1c1f22",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1c1f22",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1c1f22",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceColor": {
-      "hex": "#1f6f8b",
-      "model": "hex",
-      "paletteId": "band"
-     },
-     "referenceBold": false,
-     "referenceItalic": true,
-     "hyphenation": {
-      "enabled": true,
-      "locale": "es"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true,
-     "optimalLineBreaking": true
-    },
-    "header": {
-     "elements": [
-      {
-       "kind": "text",
-       "id": "folioEven",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-left"
-        },
-        "offset": {
-         "x": {
-          "value": 14.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 12.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": "auto",
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Outfit",
-       "fontSize": {
-        "value": 8.5,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "left",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#1c1f22",
-        "model": "hex",
-        "paletteId": "ink"
-       },
-       "parity": "even",
-       "pages": "body"
-      },
-      {
-       "kind": "text",
-       "id": "chapterEven",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-left"
-        },
-        "offset": {
-         "x": {
-          "value": 22.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 12.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 110,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "{chapterTitle}",
-       "fontFamily": "Outfit",
-       "fontSize": {
-        "value": 7.5,
-        "unit": "pt"
-       },
-       "fontWeight": 500,
-       "italic": false,
-       "align": "left",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#676c72",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "parity": "even",
-       "pages": "body",
-       "textTransform": "uppercase",
-       "letterSpacing": {
-        "value": 1.2,
-        "unit": "pt"
-       }
-      },
-      {
-       "kind": "text",
-       "id": "titleOdd",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-right"
-        },
-        "offset": {
-         "x": {
-          "value": -22.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 12.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 120,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "Señales 2020 · Hacia una contaminación cero en Europa",
-       "fontFamily": "Outfit",
-       "fontSize": {
-        "value": 7.5,
-        "unit": "pt"
-       },
-       "fontWeight": 500,
-       "italic": false,
-       "align": "right",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#676c72",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "parity": "odd",
-       "pages": "body",
-       "textTransform": "uppercase",
-       "letterSpacing": {
-        "value": 1.2,
-        "unit": "pt"
-       }
-      },
-      {
-       "kind": "text",
-       "id": "folioOdd",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-right"
-        },
-        "offset": {
-         "x": {
-          "value": -14.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 12.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": "auto",
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Outfit",
-       "fontSize": {
-        "value": 8.5,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "right",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#1c1f22",
-        "model": "hex",
-        "paletteId": "ink"
-       },
-       "parity": "odd",
-       "pages": "body"
-      }
-     ]
-    },
     "resourceTypes": [
      {
-      "id": "photo",
       "name": "Foto",
       "namePlural": "Fotos",
       "shortLabel": "foto",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1
-      }
+      "id": "photo"
      },
      {
-      "id": "table",
       "name": "Tabla",
       "namePlural": "Tablas",
       "shortLabel": "tabla",
       "captionPrefix": "Tabla",
-      "numberingTemplate": "{n}",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "here",
-       "span": "page"
-      },
-      "captionStyle": {
-       "position": "above"
-      }
+      "id": "table"
      }
-    ]
+    ],
+    "bodyText": {
+     "hyphenation": {
+      "locale": "es"
+     }
+    },
+    "header": {
+     "elements": [
+      {
+       "content": "Señales 2020 · Hacia una contaminación cero en Europa",
+       "id": "titleOdd"
+      }
+     ]
+    },
+    "locale": "es"
    },
    "resources": [
     {
@@ -5124,280 +4889,35 @@
   },
   "en": {
    "config": {
-    "locale": "en-us",
-    "bodyText": {
-     "fontFamily": "Open Sans",
-     "fontSize": {
-      "value": 9.3,
-      "unit": "pt"
-     },
-     "lineHeight": {
-      "value": 13.2,
-      "unit": "pt"
-     },
-     "textAlign": "left",
-     "firstLineIndent": {
-      "value": 0,
-      "unit": "mm"
-     },
-     "indentAfterHeading": false,
-     "paragraphSpacing": true,
-     "color": {
-      "hex": "#1c1f22",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "boldColor": {
-      "hex": "#1c1f22",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "italicColor": {
-      "hex": "#1c1f22",
-      "model": "hex",
-      "paletteId": "ink"
-     },
-     "referenceColor": {
-      "hex": "#1f6f8b",
-      "model": "hex",
-      "paletteId": "band"
-     },
-     "referenceBold": false,
-     "referenceItalic": true,
-     "hyphenation": {
-      "enabled": true,
-      "locale": "en-us"
-     },
-     "avoidWidows": true,
-     "avoidOrphans": true,
-     "optimalLineBreaking": true
-    },
-    "header": {
-     "elements": [
-      {
-       "kind": "text",
-       "id": "folioEven",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-left"
-        },
-        "offset": {
-         "x": {
-          "value": 14.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 12.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": "auto",
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Outfit",
-       "fontSize": {
-        "value": 8.5,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "left",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#1c1f22",
-        "model": "hex",
-        "paletteId": "ink"
-       },
-       "parity": "even",
-       "pages": "body"
-      },
-      {
-       "kind": "text",
-       "id": "chapterEven",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-left"
-        },
-        "offset": {
-         "x": {
-          "value": 22.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 12.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 110,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "{chapterTitle}",
-       "fontFamily": "Outfit",
-       "fontSize": {
-        "value": 7.5,
-        "unit": "pt"
-       },
-       "fontWeight": 500,
-       "italic": false,
-       "align": "left",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#676c72",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "parity": "even",
-       "pages": "body",
-       "textTransform": "uppercase",
-       "letterSpacing": {
-        "value": 1.2,
-        "unit": "pt"
-       }
-      },
-      {
-       "kind": "text",
-       "id": "titleOdd",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-right"
-        },
-        "offset": {
-         "x": {
-          "value": -22.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 12.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": {
-          "value": 120,
-          "unit": "mm"
-         },
-         "height": "auto"
-        }
-       },
-       "content": "Signals 2020 · Towards zero pollution in Europe",
-       "fontFamily": "Outfit",
-       "fontSize": {
-        "value": 7.5,
-        "unit": "pt"
-       },
-       "fontWeight": 500,
-       "italic": false,
-       "align": "right",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#676c72",
-        "model": "hex",
-        "paletteId": "muted"
-       },
-       "parity": "odd",
-       "pages": "body",
-       "textTransform": "uppercase",
-       "letterSpacing": {
-        "value": 1.2,
-        "unit": "pt"
-       }
-      },
-      {
-       "kind": "text",
-       "id": "folioOdd",
-       "placement": {
-        "anchor": {
-         "to": "page",
-         "edge": "top-right"
-        },
-        "offset": {
-         "x": {
-          "value": -14.0,
-          "unit": "mm"
-         },
-         "y": {
-          "value": 12.0,
-          "unit": "mm"
-         }
-        },
-        "size": {
-         "width": "auto",
-         "height": "auto"
-        }
-       },
-       "content": "{pageNumber}",
-       "fontFamily": "Outfit",
-       "fontSize": {
-        "value": 8.5,
-        "unit": "pt"
-       },
-       "fontWeight": 700,
-       "italic": false,
-       "align": "right",
-       "verticalAlign": "middle",
-       "lineHeight": 1.2,
-       "overflow": "ellipsis-end",
-       "color": {
-        "hex": "#1c1f22",
-        "model": "hex",
-        "paletteId": "ink"
-       },
-       "parity": "odd",
-       "pages": "body"
-      }
-     ]
-    },
     "resourceTypes": [
      {
-      "id": "photo",
       "name": "Photo",
       "namePlural": "Photos",
       "shortLabel": "photo",
-      "captionPrefix": "",
-      "numberingTemplate": "",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "auto",
-       "span": "page",
-       "width": 1
-      }
+      "id": "photo"
      },
      {
-      "id": "table",
       "name": "Table",
       "namePlural": "Tables",
       "shortLabel": "table",
       "captionPrefix": "Table",
-      "numberingTemplate": "{n}",
-      "resetOn": "never",
-      "counterFormat": "decimal",
-      "defaultPlacement": {
-       "position": "here",
-       "span": "page"
-      },
-      "captionStyle": {
-       "position": "above"
-      }
+      "id": "table"
      }
-    ]
+    ],
+    "bodyText": {
+     "hyphenation": {
+      "locale": "en-us"
+     }
+    },
+    "header": {
+     "elements": [
+      {
+       "content": "Signals 2020 · Towards zero pollution in Europe",
+       "id": "titleOdd"
+      }
+     ]
+    },
+    "locale": "en-us"
    },
    "resources": [
     {
