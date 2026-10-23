@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Bedienfelder Gestaltung und Prüfungen',
   description: 'Gruppen, Seiten, Suche und Übersicht des Bedienfelds Gestaltung und die laufenden Warnungen des Bedienfelds Prüfungen, nach Art gruppiert',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '37 min',
   order: 39,
   parent: 'sandbox',
@@ -31,6 +31,14 @@ Ein formularbasierter Editor für `PostextConfig` mit mehr als fünfhundert Feld
 - Ein Link **Weiter** unten öffnet die nächste Gruppe.
 - Beim Öffnen einer Gruppe wandert der Fokus zur Seitenüberschrift und bei der Rückkehr zurück auf die Zeile der Gruppe.
 - Die geöffnete Gruppe wird zwischen Sitzungen gespeichert.
+
+**Bücher in mehreren Sprachen.** In einem Buch mit mehr als einer Sprache zeigt ein Schalter oben im Bedienfeld, wohin Änderungen gehen: **Alle Sprachen** oder **Nur *Sprache***, die angezeigte Sprache. Die Ausgaben teilen allgemeine Einstellungen, und jede behält die Einstellungen, die sie selbst setzt (siehe [Allgemeine Einstellungen und sprachspezifische Abweichungen](/de/docs/configuration-bundles#allgemeine-einstellungen-und-sprachspezifische-abweichungen)).
+
+- **Alle Sprachen** schreibt die allgemeinen Einstellungen. Eine Änderung erreicht jede Ausgabe, die dieses Feld nicht selbst setzt. Setzen es einige, nennt ein Hinweis sie und bietet *Auch in* (dieser Sprache) *den allgemeinen Wert verwenden*, *In allen den allgemeinen Wert verwenden* und *Ihren behalten* an.
+- **Nur *Sprache*** schreibt einen eigenen Wert dieser Ausgabe, den die anderen Sprachen nicht sehen. Unter dem Schalter öffnet *N Einstellungen nur für* (die Sprache) *festgelegt* die Liste dieser Einstellungen, nach Abschnitten gruppiert, jede Gruppe mit einer Schaltfläche, die ihr die allgemeinen Werte zurückgibt; **Allgemeine Werte verwenden** tut das für alle.
+- **Jede Zeile** zeigt, wessen Wert sie anzeigt. Ein Punkt in der Farbe der Ausgabe und ein Sprachkürzel kennzeichnen einen Wert, der nur für diese Sprache festgelegt ist; das Menü des Kürzels bietet *Wert für alle Sprachen verwenden*, das ihn verwirft, und *Diesen Wert für alle Sprachen übernehmen*, das ihn zum allgemeinen Wert macht. Ein hohler Punkt kennzeichnet den allgemeinen Wert, wie diese Ausgabe ihn liest. Unter **Alle Sprachen** trägt eine Zeile, deren Feld einige Sprachen selbst setzen, deren Kürzel (*Eigener Wert in* …), mit *Auch in* (dieser Sprache) *den allgemeinen Wert verwenden*.
+- Namen und Nummerierung der eingebauten Ressourcentypen (*Abbildung*, *Figura*) bleiben Sache jeder Sprache und gehören nicht zu den allgemeinen Einstellungen.
+- Ein Beispielbuch in mehreren Sprachen speichert seine allgemeinen Einstellungen ebenfalls in Ihrem Browser, sodass eine Änderung unter **Alle Sprachen** in jeder Sprache des Beispiels erhalten bleibt.
 
 Die Gruppen in der Reihenfolge des Durchblätterns:
 

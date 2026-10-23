@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '智能体、嵌入与预设',
   description: 'AI智能体可用的WebMCP工具；怎样把PostextSandbox组件嵌入你自己的应用，它有哪些属性、需要哪些CSS；以及预设文件包的格式',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '9分钟',
   order: 43,
   parent: 'sandbox',
@@ -22,7 +22,7 @@ export const metadata = {
 这些工具是为设计者凭眼睛反复调整的过程设计的：改一点，看看页面，再改。
 
 - **看**——`sandbox_get_state`、`sandbox_render_page`、`sandbox_inspect_pages`、`sandbox_inspect_point`、`sandbox_inspect_comic`、`sandbox_get_warnings`：这本书及其章节和页码范围，以及界面上的情况（选区、提示、等待回答的询问）；任意一页按指定宽度输出的JPEG、PNG或WebP，或裁出一部分细看，需要时带印刷预览；同一页的数据（各个块和行、每栏排了多满、哪些是松散行或以断词结尾）；页面上某一点是什么（对应的源文本行、链接及其去向、表格的单元格）；漫画页的分格和对白框；以及“检查”在任意一章或整本书里发现的问题，不论屏幕上是哪一章、哪个查看器。
-- **改**——`sandbox_set_config`、`sandbox_get_config`、`sandbox_find_setting`、`sandbox_rename_design_item`、`sandbox_remove_design_item`、`sandbox_language_defaults`、`sandbox_print_profile`、`sandbox_save_layout_as_template`、`sandbox_edit_text`、`sandbox_write_text`、`sandbox_read_text`、`sandbox_search_text`、`sandbox_select_text`、`sandbox_undo_text`、`sandbox_manage_chapters`、`sandbox_save_resource`、`sandbox_save_font`、`sandbox_edit_comic`、`sandbox_import_word`：按路径修改任何设置（`bodyText.fontSize`、`page.margins.top`、`headings.levels[level=2].fontSize`、`header.elements[id=titleOdd].italic`）；用精确的查找替换修改文字，并可撤销；管理章节、图片、SVG图、视频、带格式的表格、字体，以及漫画的分格和对白框；导入Word文档并映射其样式。每次修改都会回报各项修改前后的值和每一章的页数；修改设置时还会回报引擎最终解析出的值，以及随之改变的其他设置；引擎无法解析的值会被拒绝，什么也不改。
+- **改**——`sandbox_set_config`、`sandbox_get_config`、`sandbox_find_setting`、`sandbox_rename_design_item`、`sandbox_remove_design_item`、`sandbox_language_defaults`、`sandbox_print_profile`、`sandbox_save_layout_as_template`、`sandbox_edit_text`、`sandbox_write_text`、`sandbox_read_text`、`sandbox_search_text`、`sandbox_select_text`、`sandbox_undo_text`、`sandbox_manage_chapters`、`sandbox_save_resource`、`sandbox_save_font`、`sandbox_edit_comic`、`sandbox_import_word`：按路径修改任何设置（`bodyText.fontSize`、`page.margins.top`、`headings.levels[level=2].fontSize`、`header.elements[id=titleOdd].italic`）；用精确的查找替换修改文字，并可撤销；管理章节、图片、SVG图、视频、带格式的表格、字体，以及漫画的分格和对白框；导入Word文档并映射其样式。每次修改都会回报各项修改前后的值和每一章的页数；修改设置时还会回报引擎最终解析出的值，以及随之改变的其他设置；引擎无法解析的值会被拒绝，什么也不改。在多语言的书里，`scope`指明一项设置是在所有语言的通用设置中读写，还是只在屏幕上的版本中读写。
 - **显示**——`sandbox_set_view`、`sandbox_go_to_page`、`sandbox_run_viewer`：查看器标签页、侧栏、单章或整本书、缩放、适应方式和跨页显示、阅读字号、印刷预览、画在页面上的参考线、Folio的放大镜，以及屏幕上显示哪一页（按页码、按一段文字、按锚点或按EPUB目录的条目）；重新生成PDF或EPUB、打印、播放页面上的视频。
 - **保存**——`sandbox_list_books`、`sandbox_open_book`、`sandbox_save_book`、`sandbox_import_book`、`sandbox_export`、`sandbox_word_templates`、`sandbox_answer`：列出示例书和你的项目（带封面）；导入`.postext`文件；把这本书（或一本没有打开的书）导出为PDF、EPUB、`.postext`、Word、Markdown，或把设置导出为JSON；管理Word导入用的模板；回答沙盒提出的询问。
 
@@ -222,7 +222,7 @@ function App() {
   "description": "Two-column journal article",       // 可选
   "locale": "en",                                     // 可选
   "default": true,                                    // 可选
-  "configVersion": 15,                                // 可选：`config`所遵循的配置规则版本
+  "configVersion": 21,                                // 可选：`config`所遵循的配置规则版本
   // 与索引条目相同的可选展示字段：
   // "locales", "openLocale", "thumbnail", "license", "credits", "tags"
 
@@ -276,10 +276,10 @@ function App() {
 说明：
 
 - `preset.json`中的`id`必须与`index.json`条目一致；预设加载后，清单中的`description`、`locale`和`default`会覆盖索引中的值，展示字段`locales`、`openLocale`、`license`、`credits`和`tags`也是如此。`openLocale`是`locales`中的一项，指链接或点击没有指定语言时书打开所用的语言（首页的书架也链接到它）：原作的语言与读者的语言不同时，就要设置它。《紅樓夢》示例设为`zh-Hant`，这样讲英语的读者不会一律打开它的英译本。不设置时由界面语言决定。选择器把`locales`（或`locale`）中的每种语言和许可证显示为标签，把出处信息显示在描述下方，并用`thumbnail`（相对于预设目录的一张小页面图）代替该行的勾选标记列；从预设复制出的书（**建立我的副本**）把它保留为封面。`apps/web/public/presets/`下的公开示例预设用到了所有字段，并附有一个`CREDITS.md`，写明每段文字和每张图片的许可证和来源。
-- `configVersion`（可选）指明`config`和`localized`中各配置所遵循的配置规则。所有写出清单的程序都把它设为引擎的`CONFIG_VERSION`，当前版本为15。没有它的清单是postext 1.4或更早版本写出的，其标题分页、公式字号、行内图周围的间距（正文中和框中）、标题标记、首字下沉、冒号行下方空间、框断开、破折号和复合词连字符处的断行、齐左排的文字、标题下拆分以及段落容器下方的间距，都按1.4的排法读取（见[持久化](/zh/docs/sandbox-books-saving#持久化)下的*postext 1.4及更早版本保存的标题分页*、*postext 1.5之前保存的公式字号*、*postext 1.5之前保存的行内图*、*postext 1.5之前保存的框内行内图*、*postext 1.5之前保存的标题标记和首字下沉*、*postext 1.5之前保存的冒号后列表*、*postext 1.5之前保存的框断开*、*postext 1.5之前保存的破折号和不齐行文字*、*postext 1.5之前保存的复合词*、*postext 1.5之前保存的标题下拆分*和*postext 1.5之前保存的段落容器*）；标记为3到7的清单（1.5的预发布版）只固定其后各版规则带来的变化：为3时，固定公式字号、行内间距、规则6的五项、规则7的两项和规则8的三项；为4时，固定行内间距以及规则6、7、8的各项；为5时，固定规则6、7、8的各项；为6时，固定规则7和8的各项；为7时，只固定规则8的各项。标记为8到14的清单由postext 1.5至1.33写出，会得到其标记之后各版规则的固定措施，列在[postext 1.4及更早版本写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)中。手写清单并按现行规则排版时，把它设为15。
+- `configVersion`（可选）指明`config`和`localized`中各配置所遵循的配置规则。所有写出清单的程序都把它设为引擎的`CONFIG_VERSION`，当前版本为21。没有它的清单是postext 1.4或更早版本写出的，其标题分页、公式字号、行内图周围的间距（正文中和框中）、标题标记、首字下沉、冒号行下方空间、框断开、破折号和复合词连字符处的断行、齐左排的文字、标题下拆分以及段落容器下方的间距，都按1.4的排法读取（见[持久化](/zh/docs/sandbox-books-saving#持久化)下的*postext 1.4及更早版本保存的标题分页*、*postext 1.5之前保存的公式字号*、*postext 1.5之前保存的行内图*、*postext 1.5之前保存的框内行内图*、*postext 1.5之前保存的标题标记和首字下沉*、*postext 1.5之前保存的冒号后列表*、*postext 1.5之前保存的框断开*、*postext 1.5之前保存的破折号和不齐行文字*、*postext 1.5之前保存的复合词*、*postext 1.5之前保存的标题下拆分*和*postext 1.5之前保存的段落容器*）；标记为3到7的清单（1.5的预发布版）只固定其后各版规则带来的变化：为3时，固定公式字号、行内间距、规则6的五项、规则7的两项和规则8的三项；为4时，固定行内间距以及规则6、7、8的各项；为5时，固定规则6、7、8的各项；为6时，固定规则7和8的各项；为7时，只固定规则8的各项。标记为8到20的清单由postext 1.5至1.57写出，会得到其标记之后各版规则的固定措施，列在[postext 1.4及更早版本写出的文件包](/zh/docs/configuration-bundles#postext-14及更早版本写出的文件包)中；标记为20或更低的清单逐键读取每个`localized`配置，其顶层键整体替换共用的同名键。手写清单并按现行规则排版时，把它设为21。
 - `view`（可选）说明沙盒如何打开文件包：`{ "canvasScope": "book" }`在Canvas上排出整本书（见[书与章](/zh/docs/sandbox-books-saving#书与章)）；省略时，Canvas一次显示一章。导出的书如果设置了它，会一并带上。超过200章的书无论文件包怎么要求，都一次打开一章。
 - `start`（可选）说明文件包只含一本更长的书的一部分时，这本书从哪里开始：`{ "pageIndexOffset": 57, "pageNumbering": { "startAt": 58 }, "headings": { "h1": 3 } }`让它从第58页（偶数页）、第4章开始。它就是第一章的`continuation`（`buildDocument`）；沙盒从这里开始排整本书，把书存为项目时随书保存，导出时再写回去。没有面板可以编辑它。`localized`的条目可以为自己的版本带一个`start`。
-- `localized`（可选）存放双语文件包的各语言覆盖项：`{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`。沙盒按哪种语言选取章，就应用哪种语言的覆盖项：它们叠加在共用的`config`之上（顶层键整体替换，通常是换成题注前缀已译好的`resourceTypes`），也叠加在共用的`resources`之上（题注、附注、替代文字和表格单元格按id合并）；没有条目的语言沿用共用的文字。条目还可以带自己的`view`，在该版本中覆盖共用的`view`：《紅樓夢》的各个中文版本以整本书打开，而Joly的英译本整本绘制要慢得多，所以一次打开一章（`"en": { "view": { "canvasScope": "chapter" } }`）。
+- `localized`（可选）存放双语文件包的各语言覆盖项：`{ "es": { "config": { … }, "resources": [ { "id": "fig-1", "caption": "…", "note": "…", "altText": "…" } ] } }`。沙盒按哪种语言选取章，就应用哪种语言的覆盖项：它们叠加在共用的`config`之上（该语言设置得不同的字段，在`configVersion` 21下逐字段合并，见[通用设置与各语言覆盖](/zh/docs/configuration-bundles#通用设置与各语言覆盖)），也叠加在共用的`resources`之上（题注、附注、替代文字和表格单元格按id合并）；没有条目的语言沿用共用的文字。条目还可以带自己的`view`，在该版本中覆盖共用的`view`：《紅樓夢》的各个中文版本以整本书打开，而Joly的英译本整本绘制要慢得多，所以一次打开一章（`"en": { "view": { "canvasScope": "chapter" } }`）。
 - `chapters`（版本2）是按书中顺序排列的`{ title, file }`列表，或语言→列表的映射；`markdown`（版本1）是一个文件名或语言→文件的映射。两种情况下，沙盒都选取与所请求语言匹配的条目（先是完全相同的标签，不区分大小写；然后是相同语言和相同文字，所以`zh-TW`先读`zh-Hant`再读`zh-Hans`；然后是相同语言的另一种文字，所以`zh-TW`读者打开以不带地区的`zh`为键的文件包时会得到中文；然后是预设自身的`locale`，最后是第一个条目），并且只读取该语言的章文件。章的`title`为空时，取自文件中的第一个一级标题。沙盒总是写出版本2。
 - 对于`svg`和`bitmap`资源，`width`/`height`是可选的：缺少时，加载时从文件中读取。位图还可以带`resolution`（自然印刷尺寸下的ppi）和`fileResolution`（文件标明的分辨率，配置设了`layout.bitmapResolution: 'file'`时在加载时读取）。
 - `pdfFile`（仅限svg资源）指向一个单页PDF，其中以矢量形式包含同一幅图，通常是SVG所源自的Illustrator原稿或PDF导出文件。PDF导出时原样嵌入这一页（字体、渐变和色彩空间都完整保留），而不用SVG；Canvas和HTML预览仍使用SVG。在单色模式下它会被忽略，因为该模式的重新着色只处理SVG标记；文件缺失时只会丢掉母版，不会丢掉图。在资源详情中编辑SVG源代码会解除母版（母版是为原来的源代码制作的），从此PDF导出跟随编辑后的SVG；恢复原版（书库面板中的**恢复原版…**）即可找回母版。没有母版的SVG，如果不超出PDF后端支持的子集（基本形状、路径、编组、`use`、裁剪路径、纯色填充和描边、不透明度，以及用文档能加载的字体排出的`text`/`tspan`文字，先找自定义字体，再找Google托管的字体族），就作为矢量路径输出，否则以600 dpi栅格化。

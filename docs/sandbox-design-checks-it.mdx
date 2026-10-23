@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Pannelli Grafica e Verifiche',
   description: 'Il pannello Grafica, con i gruppi di impostazioni, le loro pagine, la ricerca e la panoramica; il pannello Verifiche, con gli avvisi che si aggiornano mentre lavori, raggruppati per tipo',
   lang: 'it',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '42 min',
   order: 39,
   parent: 'sandbox',
@@ -31,6 +31,14 @@ Un editor di `PostextConfig` fatto di moduli, con più di cinquecento campi.
 - Un link **Avanti** in fondo apre il gruppo successivo.
 - Quando apri un gruppo, il focus passa al titolo della pagina; quando torni alla panoramica, il focus torna sulla riga del gruppo.
 - La Sandbox ricorda il gruppo aperto da una sessione all’altra.
+
+**Libri in più lingue.** In un libro con più di una lingua, un selettore in cima al pannello indica dove vanno le modifiche: **Tutte le lingue** o **Solo *lingua***, la lingua a schermo. Le edizioni condividono le impostazioni generali, e ciascuna conserva quelle che imposta da sé (vedi [Impostazioni generali e impostazioni per lingua](/it/docs/configuration-bundles#impostazioni-generali-e-impostazioni-per-lingua)).
+
+- **Tutte le lingue** scrive le impostazioni generali. Una modifica arriva a ogni edizione che non imposta da sé quel campo. Se alcune lo fanno, un avviso le nomina e propone *Usa il valore generale anche in* (quella lingua), oppure *in tutte*, e *Mantieni il loro*.
+- **Solo *lingua*** scrive un valore proprio di quell’edizione, che le altre lingue non vedono. Sotto il selettore, *N impostazioni fissate solo per* (la lingua) apre l’elenco di quelle impostazioni, raggruppate per sezione, ogni gruppo con un pulsante che gli restituisce i valori generali; **Usa i valori generali** lo fa per tutte.
+- **Ogni riga** indica di chi è il valore che mostra. Un punto nel colore dell’edizione e un’etichetta di lingua segnalano un valore fissato solo per quella lingua; il menu dell’etichetta offre *Usa il valore di tutte le lingue*, che lo elimina, e *Applica questo valore a tutte le lingue*, che lo rende il valore generale. Un punto vuoto segnala il valore generale, letto in questa edizione. Con **Tutte le lingue**, una riga il cui campo è impostato da alcune lingue per conto proprio porta le loro etichette (*Valore proprio in* …), con *Usa il valore generale anche in* (quella lingua).
+- I nomi e la numerazione dei tipi di risorsa integrati (*Figura*, *Figure*) restano di ciascuna lingua e non fanno parte delle impostazioni generali.
+- Anche un libro di esempio in più lingue conserva le sue impostazioni generali nel browser, quindi una modifica fatta con **Tutte le lingue** resta in ogni lingua dell’esempio.
 
 I gruppi, nell’ordine di navigazione:
 

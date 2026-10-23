@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'WebMCP',
   description: 'Ce qu’un agent IA dans le navigateur peut faire avec le Sandbox grâce à ses 53 outils WebMCP (regarder les pages, changer n’importe quel réglage, modifier le texte, ajouter images, tableaux et polices, lancer les vérifications, exporter) et comment appeler chacun d’eux, avec de vrais arguments et de vraies réponses',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-23',
   readingTime: '13 min',
   order: 48,
   plainSummary: "Cette page s’adresse aux personnes qui veulent qu’un assistant d’intelligence artificielle travaille pour elles sur un livre dans le Sandbox. Tant que le Sandbox est ouvert, il donne à l’assistant une série d’outils : regarder n’importe quelle page, changer la maquette, modifier le texte, ajouter des images et des tableaux, trouver les problèmes et enregistrer des fichiers. Vous demandez avec vos propres mots, par exemple « grossissez un peu le texte et vérifiez que le livre tient toujours en 40 pages », et l’assistant utilise les outils et vous montre les pages. Tout reste dans votre navigateur. La page explique comment connecter un assistant, ce qu’il peut faire et comment chaque outil s’appelle.",
@@ -303,6 +303,31 @@ fusionnent, `null` supprime, les listes sont remplacées en entier) et `replace`
 configuration complète à la place de celle du livre, par exemple un export `postext-config.json`.
 `sandbox_reset_to_original` avec `part: "config"` rétablit la maquette dont le
 livre est parti.
+
+Un livre en plusieurs langues a des réglages généraux, que lit chaque édition, et
+chaque édition garde les champs qu’elle fixe elle-même (voir [Réglages généraux et
+surcharges par langue](/fr/docs/configuration-bundles#réglages-généraux-et-surcharges-par-langue)).
+`sandbox_get_config` et `sandbox_set_config` acceptent `scope` : `"all"` lit ou
+écrit les réglages généraux, `"edition"` l’édition à l’écran. Sans lui, c’est la
+portée dans laquelle se trouve le panneau Maquette. Dans un tel livre,
+`sandbox_get_config` répond avec `scope` et `ownFields`, les chemins que l’édition
+à l’écran fixe elle-même :
+
+```jsonc
+// sandbox_set_config
+{ "scope": "all", "changes": [{ "path": "bodyText.fontSize", "value": "10.5pt" }] }
+```
+
+```json
+{ "ok": true, "scope": "all", "keptBy": ["ar"], "changed": [ … ] }
+```
+
+Une écriture dans les réglages généraux s’applique à toutes les éditions qui ne fixent
+pas elles-mêmes le champ. `keptBy` nomme les langues qui le fixent et gardent leur
+valeur. Pour les modifier aussi, ouvrez chacune d’elles (`sandbox_open_book` avec
+`language`) et écrivez le chemin avec `scope: "edition"` : une valeur égale à la valeur
+générale cesse d’être propre à l’édition. Dans un livre en une seule langue,
+`scope: "all"` est refusé, puisque tous ses réglages lui sont propres.
 
 Les polices sont aussi des réglages : `sandbox_list_fonts` avec `search: "Garamond"` trouve
 des familles dans le catalogue ouvert, et écrire le nom dans un réglage `fontFamily`
