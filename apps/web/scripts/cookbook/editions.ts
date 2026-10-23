@@ -163,7 +163,8 @@ async function writeBook(editions: Edition[]): Promise<Buffer> {
       }
     }
     const resources = e.resources.map(({ createdAt: _c, updatedAt: _u, ...r }) => r as Resource);
-    return { config: renamed(e.config, rename), resources: renamed(resources, rename) };
+    // Copies: the edition's own stay as read, to compare the book with.
+    return { config: structuredClone(renamed(e.config, rename)), resources: structuredClone(renamed(resources, rename)) };
   });
   const withoutLocale = own.map(({ config }) => {
     const copy = { ...config } as Record<string, unknown>;
