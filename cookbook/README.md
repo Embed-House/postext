@@ -973,6 +973,21 @@ Sandbox its document without its controls. The run lists each of these as a `san
 bundle carry a fixed date, so the same input always gives the same bytes. A bundle that
 cannot be written (a resource whose file the pen never registered) fails the edition.
 
+**A recipe in several languages is one book.** Once every edition has its bundle, the
+capture puts them together with the working tree's engine (`scripts/cookbook/editions.ts`,
+#1209): the settings every edition shares, `locale` aside, become the book's general settings
+(`createBundle`'s `sharedConfig`, the engine's `commonConfig`), and each edition keeps only the
+fields it sets otherwise, merged over them field by field when read. Each edition's folder
+gets that book with its own language first, so `#recipe=<slug>&lang=<lang>` opens it in
+`<lang>` and the Sandbox's Design panel offers "All languages" or that language alone. Every
+edition of the book is read back and compared with the bundle the pen wrote for it
+(chapters, configuration without its defaults, resources by the bytes of their files, start,
+title); one that differs stays out of the book and the run notes it. That happens to an
+edition whose resources differ in more than their wording or artwork (a map whose labels
+are mirrored for Arabic), and to editions whose bundles name the same language (the English
+and Spanish pages of a novel set in Arabic both write `ar`): of those, the edition whose page
+is in that language stays. A book of one edition is the pen's bundle as written.
+
 **A bundle carries one configuration.** A capture whose `capture.doc` lists several builds
 chained with `continuation` (the articles of one publication) makes a book of them, a chapter
 per build, and the Sandbox lays every chapter out with the book's configuration. Builds set
