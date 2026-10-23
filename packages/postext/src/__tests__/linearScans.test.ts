@@ -4,6 +4,7 @@ import { quoteFamily } from '../measure/font.js';
 import { directiveAttrRanges, replaceTitleBreaks } from '../parse/inlineFormatting.js';
 import { texLabelMatches } from '../parse/equationLabels.js';
 import { extractFrontmatter } from '../frontmatter.js';
+import { parseComicFence } from '../comics/index.js';
 
 // The scans that replace regular expressions CodeQL found slow on long
 // runs (#808) read what the expressions read: checked against them on
@@ -105,6 +106,29 @@ describe('inline directive scans', () => {
     expect(directiveAttrRanges(':ref{'.repeat(40_000), ['ref'], ['chip'])).toEqual([]);
     expect(directiveAttrRanges(':chip['.repeat(40_000), ['ref'], ['chip'])).toEqual([]);
     expect(texLabelMatches(`\\label{${' '.repeat(200_000)}`)).toEqual([]);
+    expect(performance.now() - t).toBeLessThan(1000);
+  });
+});
+
+describe('directive lines', () => {
+  // `::panel\s*(?:{…})?\s*$` let both runs share the spaces (#1220): the
+  // leading run now belongs to the attribute group.
+  const alphabet = ['::panel', ' ', '\t', '{', '}', 'a', '=', '"', 'x'];
+
+  it('read the lines the old expression read', () => {
+    const before = /^::panel\s*(?:\{([^}]*)\})?\s*$/;
+    const after = /^::panel(?:\s*\{([^}]*)\})?\s*$/;
+    for (let r = 0; r < ROUNDS; r++) {
+      const s = `::panel${text(alphabet, 12)}`;
+      expect(after.exec(s)?.slice(), JSON.stringify(s)).toEqual(before.exec(s)?.slice());
+    }
+  });
+
+  it('read a panel line with a long space run at once', () => {
+    const t = performance.now();
+    const source = parseComicFence(`:::page\n::panel${'\t'.repeat(100_000)}x\n::panel  {shape=round}\t\n:::`, 0)!.source;
+    expect(source.panels).toHaveLength(1);
+    expect(source.panels[0]!.attrs).toEqual({ shape: 'round' });
     expect(performance.now() - t).toBeLessThan(1000);
   });
 });

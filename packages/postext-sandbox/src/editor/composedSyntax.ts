@@ -15,11 +15,11 @@ import { inFencedCode } from './codeFences.js';
  */
 
 /** `::::page`, optional attributes (trimmed line). */
-const PAGE_FENCE_RE = /^(:{4,})\s*page\s*(?:\{([^}]*)\})?\s*$/;
+const PAGE_FENCE_RE = /^(:{4,})\s*page(?:\s*\{([^}]*)\})?\s*$/;
 /** A bare run of four or more colons: a composed page's closing fence. */
 const PAGE_CLOSE_RE = /^:{4,}\s*$/;
 /** `:::frame` / `:::figure`, optional attributes. */
-const FRAME_FENCE_RE = /^:::\s*(frame|figure)\s*(?:\{([^}]*)\})?\s*$/;
+const FRAME_FENCE_RE = /^:::\s*(frame|figure)(?:\s*\{([^}]*)\})?\s*$/;
 /** `::label[`, the start of a figure label. */
 const LABEL_RE = /^::label\[/;
 /** A code fence's opening line: its `slot=` is marked too. */
