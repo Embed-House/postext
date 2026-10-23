@@ -398,7 +398,7 @@ function joinedLines(
   markdown: string,
   mapping: { text: string; spans: ContentBlock['spans']; sourceMap: number[] },
 ): { text: string; spans: ContentBlock['spans']; sourceMap: number[] } {
-  fixMathSourceMap(mapping.text, mapping.spans, mapping.sourceMap);
+  fixMathSourceMap(markdown, mapping.text, mapping.spans, mapping.sourceMap);
   return joinEastAsianLines(markdown, mapping.text, mapping.spans, mapping.sourceMap) ?? mapping;
 }
 
@@ -1558,7 +1558,7 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
         refExtract.refs,
       ), chipExtract.chips);
       const mapping = withChipSources(markdown, buildBlockMapping(markdown, srcStart, srcEnd, rawSpans));
-      fixMathSourceMap(mapping.text, mapping.spans, mapping.sourceMap);
+      fixMathSourceMap(markdown, mapping.text, mapping.spans, mapping.sourceMap);
       const titleBreaks = titleBreakIndices(mapping.text);
       blocks.push({
         type: 'heading',
