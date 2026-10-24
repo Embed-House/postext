@@ -1,0 +1,57 @@
+---
+title: "Cuentas en columna como las escribe cada país"
+summary: "Una ficha de cálculo cuyas cuentas son líneas - 864 : 4 del Markdown, cifra a cifra en casillas, con la división como la hacen las escuelas de cada país."
+plain: "Una página de cuentas para niños de nueve años en español, inglés, francés y alemán. Cada país escribe la división a su manera y la ficha lo sigue; un interruptor muestra la copia del profesor con todas las respuestas."
+description: "Una ficha de cálculo en Postext: cálculo mental en tres columnas, sumas, restas y multiplicaciones en columna, la división de cada país y la copia del profesor."
+question: "¿Cómo compongo la división tal como la escriben las escuelas de cada país?"
+aliases: ["cuentas en columna", "división larga", "división con caja", "casita", "cálculo mental", "ficha de cálculo", "edición del profesor", "solucionario", "potence", "schriftliches Rechnen"]
+pageNotes: { "1": "La ficha del alumno: una banda naranja con la pastilla Unidad 3 y el título Las cuatro operaciones, renglones para el nombre y la fecha, nueve cálculos mentales en tres columnas con una casilla cada uno, y tres sumas, restas y multiplicaciones compuestas cifra a cifra con una fila de casillas para el resultado.", "2": "Las divisiones con el divisor en una caja a la derecha del dividendo y casillas debajo para el cociente, y un problema en cuadrícula." }
+---
+
+## Lo que vas a componer
+
+La unidad 3 de un cuaderno de cálculo de 4.º de Primaria, *Las cuatro operaciones*, en cuatro ediciones. Una fila de cálculo mental en tres columnas; sumas, restas y multiplicaciones escritas con una cifra por casilla y una fila de casillas para el resultado; divisiones y un problema en cuadrícula. En la división se separan las ediciones: la española y la francesa ponen el divisor en una caja a la derecha del dividendo y el cociente debajo; la inglesa lo deja fuera del signo ⟌, la «casita», con el cociente encima; la alemana escribe `864 : 4 =` en una línea con sitio debajo para los pasos, y sus productos con un punto. La coma o el punto decimal del cálculo mental sigue también al idioma. Un interruptor sobre las páginas convierte la ficha del alumno en la copia del profesor, con cada respuesta en naranja en su casilla.
+
+## Elaboración
+
+### 1 · Escribe las cuentas como líneas del Markdown
+
+<Excerpt region="answer" />
+
+Un `:::exercise{type="arithmetic"}` lleva una operación por elemento de lista, `- 864 : 4`, con los signos que escribe su país (`:`, `÷`, `×`, `·`). El motor calcula el resultado, el cociente y el resto, y el estilo decide cómo se dibuja la cuenta: casillas de 7,2 mm y `arithmetic.division` elegida por edición con `t()`. La fila de cálculo mental es un ejercicio de huecos corriente cuya lista va en un grupo `:::columns{count=3}`, cada `[[70]]` una casilla del mismo ancho que las demás.
+
+### 2 · Encabeza la ficha
+
+<Excerpt region="head" />
+
+El título de nivel 1 de la unidad dibuja la banda naranja, la pastilla y el título, y los campos de nombre y fecha a partir de sus atributos (`nombre="Nombre" fecha="Fecha"`), así que cada edición los rotula en su idioma.
+
+### 3 · Cambia entre la ficha del alumno y la copia del profesor
+
+<Excerpt region="live" />
+
+`exercises.edition: 'teacher'` imprime cada respuesta en su sitio con el color de `answers.color`, aquí el de acento: las casillas del cálculo mental, las cifras de cada resultado, el cociente y el resto, la respuesta modelo del problema. El formulario sobre las páginas cambia la configuración en su sitio y vuelve a componer; las fuentes ya están cargadas, así que basta con `buildDocument`. La captura compone antes las dos fichas, de modo que las páginas publicadas muestran la del alumno y luego la del profesor.
+
+## Variantes
+
+### Pon las soluciones boca abajo al pie
+
+Una costumbre de los cuadernos de pasatiempos: la clave de cada ejercicio, girada 180° debajo de él.
+
+```diff
+-  exercises: { edition: 'student' }, // the switch above the pages sets 'teacher'
++  exercises: { edition: 'student', solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+### Divide con la casita en todas las ediciones
+
+Las escuelas japonesas y chinas también usan la casita ⟌; un idioma que no aparece en la lista toma la suya propia.
+
+```diff
+-    division: t({ es: 'potence', fr: 'potence', de: 'inline', en: 'bracket' }) },
++    division: 'bracket' },
+```
+
+## Errores frecuentes
+
+- Las operaciones son de números enteros: una cuenta con decimales como `12,5 + 3,75` no se lee y se imprime tal cual. Deja los decimales en los huecos del cálculo mental, donde la respuesta es texto.

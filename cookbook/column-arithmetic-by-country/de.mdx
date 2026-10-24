@@ -1,0 +1,57 @@
+---
+title: "Schriftliches Rechnen, wie jedes Land es schreibt"
+summary: "Ein Rechenblatt, dessen Aufgaben Zeilen wie - 864 ÷ 4 im Markdown sind, Ziffer für Ziffer in Kästchen gesetzt, die schriftliche Division nach Art jedes Landes."
+plain: "Eine Seite Rechenaufgaben für Neunjährige auf Spanisch, Englisch, Französisch und Deutsch. Jedes Land schreibt die Division auf seine Art, und das Blatt folgt ihm; ein Schalter zeigt die Lehrerfassung mit allen Lösungen."
+description: "Ein Rechenblatt in Postext: Kopfrechnen in drei Spalten, schriftliche Addition, Subtraktion und Multiplikation, Division nach Landesart und Lehrerfassung."
+question: "Wie setze ich die schriftliche Division so, wie die Schulen jedes Landes sie schreiben?"
+aliases: ["schriftliches Rechnen", "schriftliche Division", "schriftliche Rechenverfahren", "Rechenblatt", "Arbeitsblatt Mathematik", "Kopfrechnen", "Lehrerausgabe", "Lösungsblatt", "long division", "potence", "cuentas"]
+pageNotes: { "1": "Das Schülerblatt: ein orangefarbenes Band mit einem abgerundeten Feld Einheit 3 und dem Titel Die vier Grundrechenarten, Linien für Name und Datum, neun Kopfrechenaufgaben in drei Spalten mit je einem leeren Kästchen, dann je drei Additionen, Subtraktionen und Multiplikationen, Ziffer für Ziffer gesetzt, mit einer Kästchenreihe für das Ergebnis.", "2": "Die Divisionen in einer Zeile, 864 : 4 =, mit Platz darunter für die Rechenschritte, und eine Sachaufgabe auf kariertem Papier." }
+---
+
+## Was Sie setzen
+
+Einheit 3 eines Rechenhefts für die vierte Klasse, *Die vier Grundrechenarten*, in vier Ausgaben. Zuerst eine Reihe Kopfrechenaufgaben in drei Spalten, dann Additionen, Subtraktionen und Multiplikationen, eine Ziffer pro Kästchen, mit einer Kästchenreihe für das Ergebnis, zuletzt schriftliche Divisionen und eine Sachaufgabe auf kariertem Papier. Bei der Division gehen die Ausgaben auseinander: Das englische Blatt stellt den Divisor vor die Klammer ⟌ und den Quotienten darüber; das spanische und das französische setzen den Divisor in einen Winkel rechts neben den Dividenden und den Quotienten darunter; das deutsche schreibt `864 : 4 =` in eine Zeile, mit Platz für die Rechenschritte darunter, und seine Produkte mit dem Malpunkt. Auch das Dezimalkomma oder der Dezimalpunkt beim Kopfrechnen richtet sich nach der Sprache. Ein Schalter über den Seiten macht aus dem Schülerblatt die Lehrerfassung, in der jede Lösung orange in ihrem Kästchen steht.
+
+## Zubereitung
+
+### 1 · Die Aufgaben als Zeilen im Markdown schreiben
+
+<Excerpt region="answer" />
+
+Ein `:::exercise{type="arithmetic"}` nimmt eine Rechnung pro Listenpunkt, `- 864 ÷ 4`, mit den Zeichen, die ihr Land schreibt (`÷`, `:`, `×`, `·`). Die Engine rechnet Ergebnis, Quotient und Rest aus, und der Stil bestimmt, wie die Aufgabe gezeichnet wird: Kästchen von 7,2 mm und eine `arithmetic.division`, die mit `t()` je Ausgabe gewählt wird. Eine Kopfrechenreihe ist eine gewöhnliche Lückenaufgabe, deren Liste in einer Gruppe `:::columns{count=3}` steht; jedes `[[70]]` wird zu einem Kästchen, so breit wie die anderen.
+
+### 2 · Den Kopf des Blatts setzen
+
+<Excerpt region="head" />
+
+Die Überschrift der Ebene 1 zeichnet das orangefarbene Band, das Feld und den Titel, dazu die Felder für Name und Datum aus ihren Attributen (`nombre="Name" fecha="Date"`). So beschriftet jede Ausgabe sie in ihrer Sprache.
+
+### 3 · Zwischen Schülerblatt und Lehrerfassung wechseln
+
+<Excerpt region="live" />
+
+`exercises.edition: 'teacher'` druckt jede Lösung an ihren Platz, in der Farbe aus `answers.color`, hier der Akzentfarbe: die Kästchen beim Kopfrechnen, die Ziffern jedes Ergebnisses, Quotient und Rest, die Musterlösung der Sachaufgabe. Das Formular über den Seiten ändert die Konfiguration an Ort und Stelle und setzt neu; die Schriften sind schon geladen, also genügt das einfache `buildDocument`. Für die Seitenbilder werden vorher beide Blätter gesetzt, deshalb zeigen die veröffentlichten Seiten erst das Schülerblatt und dann die Lehrerfassung.
+
+## Varianten
+
+### Die Lösungen kopfüber an den Fuß stellen
+
+Eine Gewohnheit aus Rätselheften: die Lösung jeder Aufgabe, um 180° gedreht, direkt darunter.
+
+```diff
+-  exercises: { edition: 'student' }, // the switch above the pages sets 'teacher'
++  exercises: { edition: 'student', solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+### In jeder Ausgabe mit der Klammer dividieren
+
+Auch Schulen in Japan und China schreiben die Division mit der Klammer; eine Sprache, die Sie nicht aufführen, behält ihre eigene Voreinstellung.
+
+```diff
+-    division: t({ es: 'potence', fr: 'potence', de: 'inline', en: 'bracket' }) },
++    division: 'bracket' },
+```
+
+## Häufige Fehler
+
+- Rechnungen nehmen nur ganze Zahlen: Eine Aufgabe mit Dezimalzahlen wie `12,5 + 3,75` wird nicht gelesen und so gedruckt, wie sie dasteht. Lassen Sie Dezimalzahlen in den Lücken beim Kopfrechnen, wo die Lösung Text ist.

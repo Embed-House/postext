@@ -1,0 +1,57 @@
+---
+title: "Operazioni in colonna come le scrive ogni paese"
+summary: "Una scheda di calcolo le cui operazioni sono righe - 864 ÷ 4 del Markdown, cifra per cifra nei quadretti, e la divisione come la fanno le scuole di ogni paese."
+plain: "Una pagina di conti per bambini di nove anni in spagnolo, inglese, francese e tedesco. Ogni paese scrive la divisione a modo suo e la scheda lo segue; un interruttore mostra la copia dell’insegnante con tutte le risposte."
+description: "Una scheda di calcolo in Postext: calcolo a mente su tre colonne, addizioni, sottrazioni e moltiplicazioni in colonna, la divisione di ogni paese, le soluzioni."
+question: "Come compongo la divisione in colonna come la scrivono le scuole di ogni paese?"
+aliases: ["operazioni in colonna", "divisione in colonna", "calcolo in colonna", "calcolo a mente", "scheda di matematica", "guida per l’insegnante", "soluzioni", "long division", "potence", "schriftliches Rechnen", "cuentas"]
+pageNotes: { "1": "La scheda dell’alunno: una fascia arancione con la pillola Unit 3 e il titolo The four operations, righe per il nome e la data, nove calcoli a mente in tre colonne con un riquadro vuoto ciascuno, poi tre addizioni, tre sottrazioni e tre moltiplicazioni composte cifra per cifra, con una fila di quadretti per il risultato.", "2": "Le divisioni sotto la parentesi ⟌, con i quadretti sopra il dividendo per il quoziente, e un problema su carta a quadretti." }
+---
+
+## Che cosa comporrai
+
+L’unità 3 di un quaderno di calcolo di quarta elementare, *Le quattro operazioni*, in quattro edizioni. Una fila di calcoli a mente in tre colonne, poi addizioni, sottrazioni e moltiplicazioni in colonna, una cifra per quadretto e una fila di quadretti per il risultato, infine le divisioni e un problema su carta a quadretti. È nella divisione che le edizioni si separano: la scheda inglese mette il divisore fuori dalla parentesi ⟌ e il quoziente sopra; quella spagnola e quella francese mettono il divisore in una L a destra del dividendo e il quoziente sotto, come si fa anche nelle scuole italiane; quella tedesca scrive `864 : 4 =` su una riga, con lo spazio sotto per i passaggi, e i prodotti con un punto. Anche la virgola o il punto decimale del calcolo a mente segue la lingua. Un interruttore sopra le pagine trasforma la scheda dell’alunno nella copia dell’insegnante, con ogni risposta stampata in arancione nel suo quadretto.
+
+## Preparazione
+
+### 1 · Scrivi le operazioni come righe del Markdown
+
+<Excerpt region="answer" />
+
+Un `:::exercise{type="arithmetic"}` prende un’operazione per voce di elenco, `- 864 ÷ 4`, con i segni che usa il suo paese (`÷`, `:`, `×`, `·`). Il motore calcola il risultato, il quoziente e il resto, e lo stile decide come si disegna l’operazione: quadretti di 7,2 mm e una `arithmetic.division` scelta per edizione con `t()`. Una fila di calcoli a mente è un normale esercizio a completamento la cui lista sta in un gruppo `:::columns{count=3}`, e ogni `[[70]]` è un riquadro largo quanto gli altri.
+
+### 2 · Componi l’intestazione della scheda
+
+<Excerpt region="head" />
+
+Il titolo di livello 1 dell’unità disegna la fascia arancione, la pillola e il titolo, e i campi per il nome e la data a partire dai suoi attributi (`nombre="Name" fecha="Date"`), così ogni edizione li etichetta nella sua lingua.
+
+### 3 · Passa dalla scheda dell’alunno alla copia dell’insegnante
+
+<Excerpt region="live" />
+
+`exercises.edition: 'teacher'` stampa ogni risposta al suo posto nel colore indicato da `answers.color`, qui quello d’accento: i riquadri dei calcoli a mente, le cifre di ogni risultato, il quoziente e il resto, la risposta modello del problema. Il modulo sopra le pagine modifica la configurazione sul posto e ricompone; i font sono già caricati, quindi basta il semplice `buildDocument`. La cattura compone prima entrambe le schede, perciò le pagine pubblicate mostrano quella dell’alunno e poi quella dell’insegnante.
+
+## Varianti
+
+### Metti le soluzioni capovolte a piè di pagina
+
+Un’abitudine dei libri di giochi: la chiave di ogni esercizio, ruotata di 180° sotto l’esercizio stesso.
+
+```diff
+-  exercises: { edition: 'student' }, // the switch above the pages sets 'teacher'
++  exercises: { edition: 'student', solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+### Dividi sotto la parentesi in tutte le edizioni
+
+Anche le scuole giapponesi e cinesi usano la parentesi; una lingua che non elenchi tiene la propria impostazione predefinita.
+
+```diff
+-    division: t({ es: 'potence', fr: 'potence', de: 'inline', en: 'bracket' }) },
++    division: 'bracket' },
+```
+
+## Errori frequenti
+
+- Le operazioni accettano solo numeri interi: un’operazione con decimali come `12,5 + 3,75` non viene letta e si stampa così com’è scritta. Lascia i decimali negli spazi dei calcoli a mente, dove la risposta è testo.

@@ -3501,5 +3501,84 @@
       }
     },
     "fixedIn": "1.46.0"
+  },
+  "decimal-column-arithmetic": {
+    "label": {
+      "en": "Decimals in column arithmetic",
+      "es": "Decimales en las cuentas en columna",
+      "ca": "Decimals a les operacions en columna",
+      "fr": "Décimaux dans les opérations posées",
+      "de": "Dezimalzahlen im schriftlichen Rechnen",
+      "it": "Decimali nelle operazioni in colonna",
+      "pt": "Decimais nas contas armadas",
+      "zh": "竖式中的小数",
+      "ja": "筆算の小数",
+      "ar": "الكسور العشرية في العمليات العمودية"
+    },
+    "aliases": {
+      "en": [
+        "decimal sums",
+        "decimal point in columns",
+        "money sums"
+      ],
+      "es": [
+        "cuentas con decimales",
+        "coma decimal en columna"
+      ],
+      "ca": [
+        "operacions amb decimals"
+      ],
+      "fr": [
+        "opérations avec virgule",
+        "nombres décimaux posés"
+      ],
+      "de": [
+        "Kommazahlen schriftlich",
+        "Dezimalrechnen"
+      ],
+      "it": [
+        "operazioni con la virgola"
+      ],
+      "pt": [
+        "contas com vírgula",
+        "decimais armados"
+      ],
+      "zh": [
+        "小数竖式"
+      ],
+      "ja": [
+        "小数の筆算"
+      ],
+      "ar": [
+        "عمليات بالكسور العشرية"
+      ]
+    },
+    "explanation": {
+      "en": "An arithmetic exercise reads whole numbers only: an operation with a decimal comma or point (12,5 + 3,75) is not read and prints as written, so a sum of money cannot be set in columns with its decimal places lined up. Workaround: keep decimals in a gaps exercise ([[0,75]]), where the answer is text, or work in cents.",
+      "es": "Un ejercicio de operaciones solo lee números enteros: una cuenta con coma o punto decimal (12,5 + 3,75) no se lee y se imprime tal cual, así que una suma de dinero no se puede poner en columna con los decimales alineados. Solución provisional: deja los decimales en un ejercicio de huecos ([[0,75]]), donde la respuesta es texto, o trabaja en céntimos.",
+      "ca": "Un exercici d'operacions només llegeix nombres enters: una operació amb coma o punt decimal (12,5 + 3,75) no es llegeix i s'imprimeix tal com és, així que una suma de diners no es pot posar en columna amb els decimals alineats. Solució provisional: deixa els decimals en un exercici de buits ([[0,75]]) o treballa en cèntims.",
+      "fr": "Un exercice d'opérations ne lit que des nombres entiers : une opération avec une virgule ou un point décimal (12,5 + 3,75) n'est pas lue et s'imprime telle quelle, si bien qu'une somme d'argent ne se pose pas en colonnes, virgules alignées. Contournement : gardez les décimaux dans un texte à trous ([[0,75]]) ou comptez en centimes.",
+      "de": "Eine Rechenübung liest nur ganze Zahlen: eine Rechnung mit Dezimalkomma oder -punkt (12,5 + 3,75) wird nicht gelesen und so gedruckt, wie sie dasteht, eine Geldsumme lässt sich also nicht mit untereinanderstehenden Kommas setzen. Umweg: Dezimalzahlen in einer Lückenübung ([[0,75]]) lassen oder in Cent rechnen.",
+      "it": "Un esercizio di operazioni legge solo numeri interi: un'operazione con virgola o punto decimale (12,5 + 3,75) non viene letta e si stampa così com'è, quindi una somma di denaro non si mette in colonna con le virgole allineate. Soluzione provvisoria: tieni i decimali in un esercizio di completamento ([[0,75]]) o lavora in centesimi.",
+      "pt": "Um exercício de contas só lê números inteiros: uma conta com vírgula ou ponto decimal (12,5 + 3,75) não é lida e sai como está, então uma soma de dinheiro não pode ser armada com as vírgulas alinhadas. Alternativa: deixe os decimais num exercício de lacunas ([[0,75]]) ou trabalhe em centavos.",
+      "zh": "计算题只读整数：带小数点的算式（12.5 + 3.75）读不出来，按原样印出，所以钱数的竖式无法对齐小数点。变通办法：把小数放在填空题里（[[0.75]]），或换算成分来计算。",
+      "ja": "計算問題は整数しか読みません。小数点のある式（12.5 + 3.75）は読まれず書いたまま印刷されるので、金額の筆算で小数点をそろえられません。回避策：小数は穴埋め問題（[[0.75]]）に置くか、銭や円未満を整数にして計算します。",
+      "ar": "يقرأ تمرين العمليات الأعداد الصحيحة فقط: عملية فيها فاصلة عشرية (12,5 + 3,75) لا تُقرأ وتُطبع كما كُتبت، فلا يمكن وضع مبلغ مالي في عمود مع محاذاة الفواصل. الحل المؤقت: اترك الكسور العشرية في تمرين فراغات ([[0,75]]) أو احسب بالقروش."
+    },
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Operations in columns",
+        "es": "Operaciones en vertical",
+        "ca": "Operacions en vertical",
+        "fr": "Opérations posées",
+        "de": "Schriftliches Rechnen",
+        "it": "Operazioni in colonna",
+        "pt": "Contas armadas",
+        "zh": "竖式计算",
+        "ja": "筆算",
+        "ar": "العمليات العمودية"
+      }
+    }
   }
 }

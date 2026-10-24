@@ -1,0 +1,107 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 170,
+  "status": "draft",
+  "chapter": "textbooks",
+  "order": 120,
+  "level": 3,
+  "genres": [
+    "workbook",
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf",
+    "live"
+  ],
+  "features": {
+    "primary": [
+      "exercise-arithmetic",
+      "teacher-edition",
+      "exercise-styles"
+    ],
+    "also": [
+      "exercises",
+      "exercise-gaps",
+      "exercise-open",
+      "opener-design",
+      "heading-attributes",
+      "color-palette",
+      "hyphenation-languages",
+      "canvas-rendering",
+      "pdf-export",
+      "paragraph-styles"
+    ]
+  },
+  "answers": [
+    "Q198",
+    "Q197"
+  ],
+  "gotchas": [],
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf"
+  ],
+  "sample": {
+    "locales": [
+      "es",
+      "en",
+      "fr",
+      "de"
+    ]
+  },
+  "capture": {
+    "hero": 1,
+    "card": "page",
+    "doc": [
+      0,
+      1
+    ],
+    "sandbox": "first",
+    "expect": {
+      "pages": [
+        4,
+        4
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [],
+    "fonts": [
+      {
+        "family": "Fira Sans",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Lexend",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-24",
+  "updated": "2026-10-24",
+  "downloads": {
+    "pdf": true
+  },
+  "gaps": [
+    "decimal-column-arithmetic"
+  ]
+}
