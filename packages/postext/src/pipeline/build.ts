@@ -3717,6 +3717,17 @@ function placeDocumentPass(
       && !(lvl.advancedDesign.enabled && lvl.advancedDesign.slot.elements.length > 0)
       && !headingIsHidden(raw, lvl);
   };
+  /** Whether a heading is measured across the content area: a `span:
+   *  'page'` level (or style) that prints, painted by the default opener or
+   *  by a design of its own, which lays out across the page as well. At the
+   *  column width a designed opener's title broke into more lines than the
+   *  design paints, and those lines set its band: taller than the same
+   *  heading without a design, so that it no longer fitted under the text
+   *  of a page the plain one opens on (#1224). */
+  const measuredAcrossPage = (raw: ContentBlock): boolean => {
+    const lvl = headingLevels.forBlock(raw);
+    return lvl?.span === 'page' && !headingIsHidden(raw, lvl);
+  };
   /** Page-spanning heading placed in `headingCol`, reserving `h` px from the
    *  top of the page: the same vertical band is reserved in every other
    *  column of the page, so body text under the opener band starts below it
@@ -3920,7 +3931,7 @@ function placeDocumentPass(
     // opener paints it) or its design's band, with its margins.
     const width = page.contentArea.width;
     const measureCtx = partPlan.byBlock[blockIdx] ? partMeasureCtx : sectionMeasureCtx(sectionPlan.byBlock[blockIdx]);
-    const measured = measureContentBlock(rawBlock, blockIdx, opensDefaultOpener(rawBlock) ? width : cols[0]!.bbox.width, measureCtx);
+    const measured = measureContentBlock(rawBlock, blockIdx, measuredAcrossPage(rawBlock) ? width : cols[0]!.bbox.width, measureCtx);
     if (!measured) return false;
     const style = measured.kind.style;
     let height = measured.measured.totalHeight;
@@ -7402,11 +7413,11 @@ function placeDocumentPass(
       && knownOutcome === undefined
       && (looseGained.get(budget.group) ?? 0) >= budget.need;
     const tryLoose = looseLines !== undefined && !budgetMet && knownOutcome !== null;
-    // A page-span heading without a design of its own is painted by the
-    // default opener across the content area: measured at that width, its
-    // band holds the title as it is painted (EF-100). A designed opener
-    // keeps the column-width measure: its design sets the band.
-    const measureWidth = rawBlock.type === 'heading' && opensDefaultOpener(rawBlock)
+    // A page-span heading is painted across the content area, by the
+    // default opener or by its design: measured at that width, its band
+    // holds the title as it is painted (EF-100), and a design sets it no
+    // taller than the lines it paints (#1224).
+    const measureWidth = rawBlock.type === 'heading' && measuredAcrossPage(rawBlock)
       ? doc.pages[cursor.pageIndex]!.contentArea.width
       : col.bbox.width;
     // A resource on a vertical page stands upright, its frame at most as
@@ -7874,8 +7885,8 @@ function placeDocumentPass(
      *  layout with text in both columns, a styled section with its own
      *  margins — is broken again there: its placed lines stay, the rest is
      *  broken for the new column. Not the loose paragraphs balancing runs
-     *  long (placed whole where they were measured), nor a heading the
-     *  default opener paints across the page. */
+     *  long (placed whole where they were measured), nor a page-span
+     *  heading, painted across the page. */
     let brokenForWidth = measureWidth;
     let laterWidths: { fromLine: number; columnWidth: number }[] = [];
     /** Text wrap (#627): the lines of the block set short beside what text
@@ -7883,7 +7894,7 @@ function placeDocumentPass(
     let wrapInsets: LineInsetStep[] = [];
     const wrapsBeside = canSplit && runsBesideWrap(rawBlock);
     const rebreaksForColumn = !tryLoose && rawBlock.toc === undefined && rawBlock.index === undefined
-      && (canSplit || (vdtType === 'heading' && !opensDefaultOpener(rawBlock)));
+      && (canSplit || (vdtType === 'heading' && !measuredAcrossPage(rawBlock)));
     /** Measure the block again for the columns it is set in (see
      *  `laterWidths`), with `extra` options. */
     const measureForColumns = (extra: MeasureContentBlockOptions) =>

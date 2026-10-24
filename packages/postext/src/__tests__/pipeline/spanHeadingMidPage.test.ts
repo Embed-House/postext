@@ -128,4 +128,32 @@ describe('a span: page heading that opens mid-page (#539)', () => {
       expect(sub!.pageIndex).toBe(title!.pageIndex);
     }
   });
+
+  it('opens with a design wherever it opens without one (#1224)', () => {
+    // The title breaks at the column width, not at the page width it is
+    // painted across. Measured at the column width, the designed heading
+    // took a band of two lines where the plain one takes one: it no longer
+    // fitted under the text and opened the next page, a page later.
+    const design: HeadingStyleConfig['advancedDesign'] = {
+      enabled: true,
+      slot: { elements: [{ kind: 'text', id: 't', content: '{titleText}', fontSize: pt(16),
+        placement: { anchor: { to: 'container', edge: 'top-left' }, size: { width: 'fill' } } }] },
+    };
+    const taller: number[] = [];
+    const moved: number[] = [];
+    for (const n of [12, 40, 78, 79, 80, 85, 86]) {
+      const md = [
+        '# The first article {style="article"}', '', filler(n), '',
+        '# The second article, with a title far too long for one line of a column, which the width of the page across both columns holds {style="article"}', '', filler(9),
+      ].join('\n');
+      const [plain, designed] = [undefined, design].map((advancedDesign) =>
+        buildDocument({ markdown: md }, config(article({ spanBreak: false, ...(advancedDesign ? { advancedDesign } : {}) })), createMeasurementCache()));
+      const [, a] = headings(plain!);
+      const [, b] = headings(designed!);
+      if (Math.abs(b!.bbox.height - a!.bbox.height) > 0.5) taller.push(n);
+      if (b!.pageIndex !== a!.pageIndex || designed!.pages.length !== plain!.pages.length) moved.push(n);
+    }
+    expect(taller).toEqual([]);
+    expect(moved).toEqual([]);
+  });
 });
