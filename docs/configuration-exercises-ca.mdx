@@ -188,7 +188,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>segons la llengua</td><td>Les dues respostes: <code>['V', 'F']</code> en català, castellà, francès, italià i portuguès; T F en anglès; R F en alemany; √ × en xinès; ○ × en japonès; ✓ ✗ en àrab.</td></tr>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>segons la llengua</td><td>Les dues respostes: <code>['V', 'F']</code> en català, castellà, francès, italià i portuguès; T F en anglès; R F en alemany; √ × en xinès; ○ × en japonès; صح خطأ en àrab.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: cada lletra amb una casella per marcar, al final de la línia. <code>'bracket'</code>: un sol buit per escriure-hi la resposta.</td></tr>
   </tbody>
 </table>
@@ -216,7 +216,7 @@ const config: PostextConfig = {
 
 ### Banc de paraules
 
-`bank` defineix la caixa de paraules que s'imprimeix sota l'enunciat d'un exercici de buits amb `bank` o <code>::bank[…]</code>, i a tots els exercicis de classificar.
+`bank` defineix la caixa de paraules d'un exercici de buits amb `bank` o <code>::bank[…]</code>, i de tots els exercicis de classificar. La caixa va on és escrita la línia `::bank`; sense línia, sota l'enunciat.
 
 <table>
   <thead>
@@ -272,11 +272,11 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>El costat d'una casella.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>la del text</td><td>La família de les lletres i les xifres.</td></tr>
-    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>Encara no s'utilitza: les lletres es componen a 0,58 del costat de la casella.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 del costat de la casella</td><td>La mida de les lletres i les xifres; un em és el del text.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el del text</td><td>El color de les lletres i les xifres.</td></tr>
     <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>un gris mitjà</td><td>Les línies de les caselles.</td></tr>
     <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>El seu gruix.</td></tr>
-    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Encara no s'utilitza: uns mots encreuats només imprimeixen les caselles de les seves paraules.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>L'emplenament de les caselles dels mots encreuats que no ocupa cap paraula. Sense, la graella només imprimeix les caselles de les paraules.</td></tr>
     <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Compon en majúscules les lletres de les sopes de lletres i dels mots encreuats, amb les regles de majúscules de la llengua del document.</td></tr>
   </tbody>
 </table>
@@ -342,8 +342,6 @@ const config: PostextConfig = {
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>El que representa la icona, per als lectors de pantalla i el PDF etiquetat.</td></tr>
   </tbody>
 </table>
-
-Aquesta versió només imprimeix el `glyph` d'una icona, amb la lletra i el color del text que l'envolta; `fontFamily`, `color`, `resourceId` i `alt` encara no s'utilitzen.
 
 ### Respostes
 

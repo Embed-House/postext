@@ -113,7 +113,7 @@ Segna V se l’affermazione è vera, F se è falsa.
 :::
 ```
 
-Ogni affermazione è numerata e termina con le due risposte in fondo alla riga, ciascuna con la sua casella: V □ F □. Un elemento segnato è vero. Le lettere dipendono dalla lingua: V/F in italiano, spagnolo, catalano, francese e portoghese, T/F in inglese, R/F in tedesco, √/× in cinese, ○/× in giapponese, ✓/✗ in arabo. Uno stile può stampare invece un solo spazio in cui scrivere la risposta (`trueFalse.look: 'bracket'`).
+Ogni affermazione è numerata e termina con le due risposte in fondo alla riga, ciascuna con la sua casella: V □ F □. Un elemento segnato è vero. Le lettere dipendono dalla lingua: V/F in italiano, spagnolo, catalano, francese e portoghese, T/F in inglese, R/F in tedesco, √/× in cinese, ○/× in giapponese, صح/خطأ in arabo. Uno stile può stampare invece un solo spazio in cui scrivere la risposta (`trueFalse.look: 'bracket'`).
 
 ### Completamento e riquadro di parole
 
@@ -136,7 +136,7 @@ Completa le frasi con le parole del riquadro.
 - `[[andò]]{width=6}`: uno spazio largo sei em.
 - `\|` è una barra letterale dentro una risposta, e `\[[` una coppia di parentesi quadre letterale.
 
-Tutti gli spazi di un esercizio sono larghi quanto la risposta più lunga più 1,5 em, così la lunghezza di una riga non suggerisce la risposta (`blank.width` cambia questa regola). `bank` stampa le risposte in un riquadro di parole incorniciato, in ordine sparso, sotto la consegna; `::bank[pietre | nuvole]` vi aggiunge parole di disturbo (e da solo chiede già il riquadro). `[[…]]` si legge soltanto dentro un esercizio: altrove nel libro due parentesi quadre restano come sono scritte.
+Tutti gli spazi di un esercizio sono larghi quanto la risposta più lunga più 1,5 em, così la lunghezza di una riga non suggerisce la risposta (`blank.width` cambia questa regola). `bank` stampa le risposte in un riquadro di parole incorniciato, in ordine sparso, sotto la consegna. Una riga `::bank[pietre | nuvole]` mette il riquadro nel punto in cui è scritta e vi aggiunge le sue parole come parole di disturbo; da sola chiede già il riquadro. `[[…]]` si legge soltanto dentro un esercizio: altrove nel libro due parentesi quadre restano come sono scritte.
 
 Un esercizio che comincia direttamente con il testo, senza consegna, fa entrare il suo numero nel primo paragrafo:
 
@@ -279,7 +279,7 @@ Esegui in colonna.
 :::
 ```
 
-Ogni operazione si compone in caselle, come la scrive un alunno: le cifre in colonna, il segno a sinistra, una linea e le caselle vuote per il risultato, fino a quattro operazioni per riga. I segni riconosciuti sono `+`, `-`, `−`, `×`, `x`, `*`, `÷`, `:` e `/`, con numeri interi. La divisione segue l’uso scolastico della lingua del documento, e `arithmetic.division` ne sceglie un altro:
+Ogni operazione si compone in caselle, come la scrive un alunno: le cifre in colonna, il segno a sinistra, una linea e le caselle vuote per il risultato, fino a quattro operazioni per riga. In una pagina da destra a sinistra ogni operazione conserva le cifre da sinistra a destra, e le operazioni si susseguono da destra a sinistra. I segni riconosciuti sono `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` e `/`, con numeri interi. La divisione segue l’uso scolastico della lingua del documento, e `arithmetic.division` ne sceglie un altro:
 
 - `bracket`: il divisore a sinistra, il dividendo sotto una parentesi, il quoziente sopra. Libri inglesi, cinesi, giapponesi e arabi.
 - `potence`: il dividendo a sinistra, il divisore a destra dentro una L, il quoziente sotto il divisore, il resto in fondo. È la divisione in colonna dei libri italiani, spagnoli, catalani, francesi e portoghesi.
@@ -287,13 +287,13 @@ Ogni operazione si compone in caselle, come la scrive un alunno: le cifre in col
 
 ### Un primo elemento svolto
 
-`example` stampa il primo elemento già risolto, nel colore delle risposte: il primo spazio completato, l’opzione giusta della prima domanda cerchiata, la prima coppia collegata, la prima frase scritta per intero. A schermo quell’elemento non viene chiesto.
+`example` stampa il primo elemento già risolto, nel colore delle risposte: il primo spazio completato, l’opzione giusta della prima domanda cerchiata, la prima coppia collegata, la prima frase scritta per intero. A schermo quell’elemento non viene chiesto, e la sua risposta resta fuori dal riquadro di parole.
 
 ## Numeri, rimandi e difficoltà
 
 Gli esercizi si numerano 1, 2, 3 in ogni capitolo. Il resto lo decide lo stile: un numero semplice in grassetto seguito da un punto (il valore predefinito) oppure dentro un cerchio, un quadrato o un quadrato arrotondato (`number.shape`), una parola davanti («Esercizio 3» con `number.label: true`, nella lingua del documento), le cifre (`number.format`, per esempio i numerali cinesi 一、二、), un modello che aggiunge il capitolo (`'{h1}.{n}'`) e il punto in cui il conteggio riparte (`number.resetOn`: a ogni capitolo, a ogni sezione o mai). Gli stili che indicano lo stesso `number.counter` condividono un unico conteggio, e un libro lo porta avanti da un capitolo all’altro.
 
-`n=12` su un blocco dà a quell’esercizio il numero 12, e i successivi proseguono da 13. `#id` rende l’esercizio un bersaglio di `:ref`, che ne stampa il titolo, o la pagina se non ha titolo. `level` e `icon` si stampano dopo il numero: i segni di difficoltà e le icone di attività definite dallo stile.
+`n=12` su un blocco dà a quell’esercizio il numero 12, e i successivi proseguono da 13. `#id` rende l’esercizio un bersaglio di `:ref`, che ne stampa il nome, «Esercizio 3» (la parola di `number.label` se lo stile ne fissa una, altrimenti quella della lingua del documento). `style=number` stampa 3, `style=title` il `title` del blocco (o il nome se non ce l’ha) e `style=page` la pagina. Un rimando raggiunge anche gli esercizi di altri capitoli del libro. `level` e `icon` si stampano dopo il numero: i segni di difficoltà e le icone di attività definite dallo stile.
 
 ## Soluzioni
 

@@ -188,7 +188,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>según el idioma</td><td>Las dos respuestas: <code>['V', 'F']</code> en español, catalán, francés, italiano y portugués; T F en inglés; R F en alemán; √ × en chino; ○ × en japonés; ✓ ✗ en árabe.</td></tr>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>según el idioma</td><td>Las dos respuestas: <code>['V', 'F']</code> en español, catalán, francés, italiano y portugués; T F en inglés; R F en alemán; √ × en chino; ○ × en japonés; صح خطأ en árabe.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: cada letra con una casilla para marcar, al final de la línea. <code>'bracket'</code>: un solo hueco en el que escribir la respuesta.</td></tr>
   </tbody>
 </table>
@@ -216,7 +216,7 @@ const config: PostextConfig = {
 
 ### Banco de palabras
 
-`bank` fija el recuadro de palabras que se imprime bajo el enunciado de un ejercicio de huecos con `bank` o <code>::bank[…]</code>, y de todo ejercicio de clasificar.
+`bank` fija el recuadro de palabras de un ejercicio de huecos con `bank` o <code>::bank[…]</code>, y de todo ejercicio de clasificar. El recuadro va donde está escrita la línea `::bank`; sin ella, bajo el enunciado.
 
 <table>
   <thead>
@@ -272,11 +272,11 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>El lado de una casilla.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>la del texto</td><td>La familia de las letras y las cifras.</td></tr>
-    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>Todavía no se usa: las letras se componen a 0,58 veces el lado de la casilla.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 del lado de la casilla</td><td>El tamaño de letras y cifras; un em es el del texto.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el del texto</td><td>El color de las letras y las cifras.</td></tr>
     <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>un gris medio</td><td>Los filetes de las casillas.</td></tr>
     <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>Su grosor.</td></tr>
-    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Todavía no se usa: un crucigrama solo imprime las casillas de sus palabras.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>El relleno de las casillas del crucigrama que no ocupa ninguna palabra. Sin él, la cuadrícula solo imprime las casillas de sus palabras.</td></tr>
     <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Compone en mayúsculas las letras de las sopas de letras y los crucigramas, con las reglas de mayúsculas del idioma del documento.</td></tr>
   </tbody>
 </table>
@@ -342,8 +342,6 @@ const config: PostextConfig = {
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>Lo que representa el icono, para los lectores de pantalla y el PDF etiquetado.</td></tr>
   </tbody>
 </table>
-
-Esta versión imprime solo el `glyph` de un icono, con la letra y el color del texto que lo rodea; `fontFamily`, `color`, `resourceId` y `alt` todavía no se usan.
 
 ### Respuestas
 

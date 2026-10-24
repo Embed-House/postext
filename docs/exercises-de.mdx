@@ -113,7 +113,7 @@ Richtig oder falsch? Kreuze an.
 :::
 ```
 
-Jede Aussage wird nummeriert und endet mit den beiden Antworten am Zeilenende, jede mit einem Kästchen: R □ F □. Ein angekreuzter Eintrag ist richtig. Die Buchstaben folgen der Sprache: R/F im Deutschen, T/F im Englischen, V/F im Spanischen, Katalanischen, Französischen, Italienischen und Portugiesischen, √/× im Chinesischen, ○/× im Japanischen, ✓/✗ im Arabischen. Ein Stil kann stattdessen eine einzige Lücke drucken, in die die Antwort geschrieben wird (`trueFalse.look: 'bracket'`).
+Jede Aussage wird nummeriert und endet mit den beiden Antworten am Zeilenende, jede mit einem Kästchen: R □ F □. Ein angekreuzter Eintrag ist richtig. Die Buchstaben folgen der Sprache: R/F im Deutschen, T/F im Englischen, V/F im Spanischen, Katalanischen, Französischen, Italienischen und Portugiesischen, √/× im Chinesischen, ○/× im Japanischen, صح/خطأ im Arabischen. Ein Stil kann stattdessen eine einzige Lücke drucken, in die die Antwort geschrieben wird (`trueFalse.look: 'bracket'`).
 
 ### Lückentexte und Wortspeicher
 
@@ -136,7 +136,7 @@ Setze die Wörter aus dem Kasten ein.
 - `[[ging]]{width=6}`: eine Lücke von sechs Geviert Breite.
 - `\|` ist ein wörtlicher senkrechter Strich in einer Lösung, `\[[` ein wörtliches Paar eckiger Klammern.
 
-Alle Lücken einer Übung sind so breit wie ihre längste Lösung plus 1,5 em, damit die Länge einer Linie die Lösung nicht verrät (`blank.width` ändert das). `bank` druckt die Lösungen gemischt in einem umrahmten Wortspeicher unter der Arbeitsanweisung; `::bank[Steine | Wind]` fügt Ablenker hinzu (und verlangt den Wortspeicher schon für sich). `[[…]]` wird nur innerhalb einer Übung gelesen: Doppelte eckige Klammern an anderer Stelle im Buch bleiben, wie sie sind.
+Alle Lücken einer Übung sind so breit wie ihre längste Lösung plus 1,5 em, damit die Länge einer Linie die Lösung nicht verrät (`blank.width` ändert das). `bank` druckt die Lösungen gemischt in einem umrahmten Wortspeicher unter der Arbeitsanweisung. Eine Zeile `::bank[Steine | Wind]` setzt den Wortspeicher an die Stelle, an der sie steht, und fügt ihre Wörter als Ablenker hinzu; die Zeile allein verlangt den Wortspeicher schon. `[[…]]` wird nur innerhalb einer Übung gelesen: Doppelte eckige Klammern an anderer Stelle im Buch bleiben, wie sie sind.
 
 Beginnt eine Übung mit ihrem Text statt mit einer Arbeitsanweisung, läuft die Nummer in den ersten Absatz ein:
 
@@ -274,12 +274,12 @@ Rechne schriftlich.
 
 - 345 + 278
 - 902 − 456
-- 124 × 3
+- 124 · 3
 - 864 : 4
 :::
 ```
 
-Jede Rechnung wird in Kästchen gesetzt, so wie ein Kind sie schreibt: die Ziffern in Spalten, das Rechenzeichen links, ein Strich und leere Kästchen für das Ergebnis, bis zu vier Rechnungen in einer Reihe. Gelesen werden die Zeichen `+`, `-`, `−`, `×`, `x`, `*`, `÷`, `:` und `/` mit ganzen Zahlen; der Malpunkt `·` gehört nicht dazu, ein Mal wird als × gedruckt. Die schriftliche Division folgt der Schulkonvention der Dokumentsprache, und `arithmetic.division` wählt eine andere:
+Jede Rechnung wird in Kästchen gesetzt, so wie ein Kind sie schreibt: die Ziffern in Spalten, das Rechenzeichen links, ein Strich und leere Kästchen für das Ergebnis, bis zu vier Rechnungen in einer Reihe. Auf einer Seite von rechts nach links behält jede Rechnung ihre Ziffern von links nach rechts, und die Rechnungen folgen von rechts nach links aufeinander. Gelesen werden die Zeichen `+`, `-`, `−`, `×`, `x`, `*`, der Malpunkt `·` (auch `⋅`), `÷`, `:` und `/` mit ganzen Zahlen; ein Mal wird als × gedruckt. Die schriftliche Division folgt der Schulkonvention der Dokumentsprache, und `arithmetic.division` wählt eine andere:
 
 - `bracket`: der Divisor links, der Dividend unter einem Bogen, der Quotient darüber. Englische, chinesische, japanische und arabische Bücher.
 - `potence`: der Dividend links, der Divisor rechts unter einem L-Winkel, der Quotient unter dem Divisor, der Rest unten. Spanische, katalanische, französische, italienische und portugiesische Bücher.
@@ -287,13 +287,13 @@ Jede Rechnung wird in Kästchen gesetzt, so wie ein Kind sie schreibt: die Ziffe
 
 ### Ein gelöstes Beispiel zuerst
 
-`example` druckt den ersten Eintrag gelöst, in der Farbe der Lösungen: die erste Lücke ausgefüllt, die richtige Antwort der ersten Frage eingekreist, das erste Paar verbunden, der erste Satz ausgeschrieben. Am Bildschirm wird dieser Eintrag nicht abgefragt.
+`example` druckt den ersten Eintrag gelöst, in der Farbe der Lösungen: die erste Lücke ausgefüllt, die richtige Antwort der ersten Frage eingekreist, das erste Paar verbunden, der erste Satz ausgeschrieben. Am Bildschirm wird dieser Eintrag nicht abgefragt, und seine Lösung fehlt im Wortspeicher.
 
 ## Nummern, Verweise und Schwierigkeit
 
 Übungen werden in jedem Kapitel mit 1, 2, 3 nummeriert. Alles Weitere legt der Stil fest: eine freistehende fette Nummer mit Punkt (Standard) oder eine Nummer in einem Kreis, einem Quadrat oder einem abgerundeten Quadrat (`number.shape`), ein Wort davor („Übung 3“ mit `number.label: true`, in der Dokumentsprache), die Ziffern (`number.format`, etwa chinesisch 一、二、), eine Vorlage mit der Kapitelnummer (`'{h1}.{n}'`) und wo die Zählung neu beginnt (`number.resetOn`: in jedem Kapitel, in jedem Abschnitt oder nie). Stile mit demselben `number.counter` teilen eine Zählung, die ein Buch von Kapitel zu Kapitel weiterführt.
 
-`n=12` an einem Block gibt dieser Übung die Nummer 12, die folgenden zählen ab 13 weiter. `#id` macht die Übung zum Ziel eines `:ref`, der ihren Titel druckt oder, wenn sie keinen hat, ihre Seite. `level` und `icon` stehen nach der Nummer: die Schwierigkeitszeichen und die Arbeitsform-Symbole, die der Stil festlegt.
+`n=12` an einem Block gibt dieser Übung die Nummer 12, die folgenden zählen ab 13 weiter. `#id` macht die Übung zum Ziel eines `:ref`, der ihren Namen druckt, „Übung 3“ (das Wort aus `number.label`, wenn der Stil eines festlegt, sonst das der Dokumentsprache). `style=number` druckt 3, `style=title` den `title` des Blocks (ohne Titel den Namen) und `style=page` ihre Seite. Ein Verweis erreicht auch Übungen in anderen Kapiteln des Buchs. `level` und `icon` stehen nach der Nummer: die Schwierigkeitszeichen und die Arbeitsform-Symbole, die der Stil festlegt.
 
 ## Lösungen
 

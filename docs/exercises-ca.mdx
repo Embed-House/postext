@@ -113,7 +113,7 @@ Vertader o fals?
 :::
 ```
 
-Cada afirmació va numerada i acaba amb les dues respostes al final de la línia, cadascuna amb una casella: V □ F □. Un element marcat és vertader. Les lletres depenen de la llengua: V/F en català, castellà, francès, italià i portuguès, T/F en anglès, R/F en alemany, √/× en xinès, ○/× en japonès i ✓/✗ en àrab. Un estil pot imprimir en lloc de les caselles un sol buit per escriure-hi la resposta (`trueFalse.look: 'bracket'`).
+Cada afirmació va numerada i acaba amb les dues respostes al final de la línia, cadascuna amb una casella: V □ F □. Un element marcat és vertader. Les lletres depenen de la llengua: V/F en català, castellà, francès, italià i portuguès, T/F en anglès, R/F en alemany, √/× en xinès, ○/× en japonès i صح/خطأ en àrab. Un estil pot imprimir en lloc de les caselles un sol buit per escriure-hi la resposta (`trueFalse.look: 'bracket'`).
 
 ### Buits i banc de paraules
 
@@ -136,7 +136,7 @@ Completa les frases amb les paraules del requadre.
 - `[[vaig]]{width=6}`: un buit de sis em d'amplada.
 - `\|` és una barra literal dins d'una resposta, i `\[[`, dos claudàtors literals.
 
-Tots els buits d'un exercici fan l'amplada de la resposta més llarga més 1,5 em, perquè la llargada de la línia no delati la resposta (`blank.width` ho canvia). `bank` imprimeix les respostes barrejades en un banc de paraules emmarcat, sota l'enunciat; `::bank[pedres | vent]` hi afegeix paraules que no van a cap buit (i ja demana el banc per si sol). `[[…]]` només es llegeix dins d'un exercici: dos claudàtors en qualsevol altre lloc del llibre es queden tal com s'han escrit.
+Tots els buits d'un exercici fan l'amplada de la resposta més llarga més 1,5 em, perquè la llargada de la línia no delati la resposta (`blank.width` ho canvia). `bank` imprimeix les respostes barrejades en un banc de paraules emmarcat, sota l'enunciat. Una línia `::bank[pedres | vent]` col·loca el banc allà on és escrita i hi afegeix les seves paraules, que no van a cap buit; la línia sola ja demana el banc. `[[…]]` només es llegeix dins d'un exercici: dos claudàtors en qualsevol altre lloc del llibre es queden tal com s'han escrit.
 
 Un exercici que comença directament amb el text, sense enunciat, posa el número al principi del primer paràgraf:
 
@@ -279,7 +279,7 @@ Calcula.
 :::
 ```
 
-Cada operació es compon en caselles, tal com l'escriu un alumne: les xifres en columnes, el signe a l'esquerra, una ratlla i caselles buides per al resultat, amb un màxim de quatre operacions per fila. Els signes que es llegeixen són `+`, `-`, `−`, `×`, `x`, `*`, `÷`, `:` i `/`, sempre amb nombres enters. La divisió segueix la convenció escolar de la llengua del document, i `arithmetic.division` en tria una altra:
+Cada operació es compon en caselles, tal com l'escriu un alumne: les xifres en columnes, el signe a l'esquerra, una ratlla i caselles buides per al resultat, amb un màxim de quatre operacions per fila. En una pàgina de dreta a esquerra, cada operació conserva les xifres d'esquerra a dreta i les operacions se succeeixen de dreta a esquerra. Els signes que es llegeixen són `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` i `/`, sempre amb nombres enters. La divisió segueix la convenció escolar de la llengua del document, i `arithmetic.division` en tria una altra:
 
 - `potence`: el dividend a l'esquerra, el divisor a la dreta dins d'un angle en forma de L, el quocient sota el divisor i el residu a baix de tot. Llibres en català, castellà, francès, italià i portuguès.
 - `bracket`: el divisor a l'esquerra, el dividend sota una clau i el quocient a sobre. Llibres en anglès, xinès, japonès i àrab.
@@ -287,13 +287,13 @@ Cada operació es compon en caselles, tal com l'escriu un alumne: les xifres en 
 
 ### Un primer exemple resolt
 
-`example` imprimeix resolt el primer element, en el color de les respostes: el primer buit omplert, l'opció correcta de la primera pregunta encerclada, la primera parella unida, la primera frase escrita. En pantalla, aquest element no es pregunta.
+`example` imprimeix resolt el primer element, en el color de les respostes: el primer buit omplert, l'opció correcta de la primera pregunta encerclada, la primera parella unida, la primera frase escrita. En pantalla, aquest element no es pregunta, i la seva resposta no entra al banc de paraules.
 
 ## Numeració, referències i dificultat
 
 Els exercicis es numeren 1, 2, 3 dins de cada capítol. La resta depèn de l'estil: un número sol en negreta seguit de punt (per defecte) o dins d'un cercle, un quadrat o un quadrat arrodonit (`number.shape`), una paraula al davant («Exercici 3» amb `number.label: true`, en la llengua del document), el sistema de numerals (`number.format`, per exemple els xinesos 一、二、), una plantilla que hi afegeix el capítol (`'{h1}.{n}'`) i el punt on el compte torna a començar (`number.resetOn`: a cada capítol, a cada secció o mai). Els estils que tenen el mateix `number.counter` comparteixen el compte, i un llibre el continua d'un capítol a l'altre.
 
-`n=12` en un bloc dona el número 12 a aquell exercici, i els següents continuen pel 13. `#id` fa que l'exercici es pugui citar amb `:ref`, que n'imprimeix el títol o, si no en té, la pàgina. `level` i `icon` s'imprimeixen després del número: són les marques de dificultat i les icones d'activitat que defineix l'estil.
+`n=12` en un bloc dona el número 12 a aquell exercici, i els següents continuen pel 13. `#id` fa que l'exercici es pugui citar amb `:ref`, que n'imprimeix el nom, «Exercici 3» (la paraula de `number.label` si l'estil la defineix; si no, la de la llengua del document). `style=number` imprimeix 3, `style=title` el `title` del bloc (o el nom si no en té) i `style=page` la pàgina. La referència arriba també als exercicis d'altres capítols del llibre. `level` i `icon` s'imprimeixen després del número: són les marques de dificultat i les icones d'activitat que defineix l'estil.
 
 ## Solucions
 

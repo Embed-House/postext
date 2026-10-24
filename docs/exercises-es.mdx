@@ -113,7 +113,7 @@ Indica si es verdadero o falso.
 :::
 ```
 
-Cada afirmación lleva un número y termina con las dos respuestas al final de la línea, cada una con su casilla: V □ F □. Un elemento marcado es verdadero. Las letras dependen del idioma: V/F en español, catalán, francés, italiano y portugués, T/F en inglés, R/F en alemán, √/× en chino, ○/× en japonés y ✓/✗ en árabe. Un estilo puede imprimir en su lugar un único hueco en el que escribir la respuesta (`trueFalse.look: 'bracket'`).
+Cada afirmación lleva un número y termina con las dos respuestas al final de la línea, cada una con su casilla: V □ F □. Un elemento marcado es verdadero. Las letras dependen del idioma: V/F en español, catalán, francés, italiano y portugués, T/F en inglés, R/F en alemán, √/× en chino, ○/× en japonés y صح/خطأ en árabe. Un estilo puede imprimir en su lugar un único hueco en el que escribir la respuesta (`trueFalse.look: 'bracket'`).
 
 ### Huecos y banco de palabras
 
@@ -136,7 +136,7 @@ Completa las frases con las palabras del recuadro.
 - `[[fue]]{width=6}`: un hueco de seis em de ancho.
 - `\|` es una barra literal dentro de una respuesta, y `\[[` una pareja literal de corchetes.
 
-Todos los huecos de un ejercicio miden lo que su respuesta más larga más 1,5 em, para que la longitud de la línea no delate la respuesta (`blank.width` lo cambia). `bank` imprime las respuestas desordenadas en un banco de palabras con marco, debajo del enunciado; `::bank[piedras | viento]` le añade distractores (y pide el banco por sí solo). `[[…]]` solo se interpreta dentro de un ejercicio: dos corchetes en cualquier otro lugar del libro quedan tal como están escritos.
+Todos los huecos de un ejercicio miden lo que su respuesta más larga más 1,5 em, para que la longitud de la línea no delate la respuesta (`blank.width` lo cambia). `bank` imprime las respuestas desordenadas en un banco de palabras con marco, debajo del enunciado. Una línea `::bank[piedras | viento]` coloca el banco donde está escrita y le añade sus palabras como distractores; la línea sola ya pide el banco. `[[…]]` solo se interpreta dentro de un ejercicio: dos corchetes en cualquier otro lugar del libro quedan tal como están escritos.
 
 Un ejercicio que empieza con su texto, sin enunciado, lleva el número al principio del primer párrafo:
 
@@ -279,7 +279,7 @@ Calcula.
 :::
 ```
 
-Cada operación se compone en casillas, como la escribe un alumno: las cifras en columnas, el signo a la izquierda, una raya y casillas vacías para el resultado, con hasta cuatro operaciones por fila. Se leen los signos `+`, `-`, `−`, `×`, `x`, `*`, `÷`, `:` y `/`, con números enteros. La división sigue la costumbre escolar del idioma del documento, y `arithmetic.division` elige otra:
+Cada operación se compone en casillas, como la escribe un alumno: las cifras en columnas, el signo a la izquierda, una raya y casillas vacías para el resultado, con hasta cuatro operaciones por fila. En una página de derecha a izquierda cada operación conserva sus cifras de izquierda a derecha, y las operaciones se suceden de derecha a izquierda. Se leen los signos `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` y `/`, con números enteros. La división sigue la costumbre escolar del idioma del documento, y `arithmetic.division` elige otra:
 
 - `potence`: el dividendo a la izquierda y el divisor a la derecha dentro de la «casita» en forma de L, el cociente debajo del divisor y el resto abajo, bajo las restas. Es la división de los libros en español, catalán, francés, italiano y portugués.
 - `bracket`: el divisor a la izquierda, el dividendo bajo un corchete y el cociente encima. Libros en inglés, chino, japonés y árabe.
@@ -287,13 +287,13 @@ Cada operación se compone en casillas, como la escribe un alumno: las cifras en
 
 ### Un primer elemento resuelto
 
-`example` imprime resuelto el primer elemento, en el color de las respuestas: el primer hueco escrito, la opción correcta de la primera pregunta rodeada, la primera pareja unida, la primera frase copiada. En pantalla ese elemento no se pregunta.
+`example` imprime resuelto el primer elemento, en el color de las respuestas: el primer hueco escrito, la opción correcta de la primera pregunta rodeada, la primera pareja unida, la primera frase copiada. En pantalla ese elemento no se pregunta, y su respuesta no entra en el banco de palabras.
 
 ## Numeración, referencias y dificultad
 
 Los ejercicios se numeran 1, 2, 3 en cada capítulo. El resto lo decide el estilo: un número suelto, en negrita y seguido de punto (por defecto), o dentro de un círculo, un cuadrado o un cuadrado redondeado (`number.shape`); una palabra delante («Ejercicio 3» con `number.label: true`, en el idioma del documento); el sistema de numeración (`number.format`, por ejemplo los números chinos 一、二、); una plantilla que añade el capítulo (`'{h1}.{n}'`), y dónde vuelve a empezar la cuenta (`number.resetOn`: en cada capítulo, en cada sección o nunca). Los estilos que nombran el mismo `number.counter` comparten la cuenta, y un libro la lleva de un capítulo al siguiente.
 
-`n=12` en un contenedor da a ese ejercicio el número 12, y los siguientes continúan desde el 13. `#id` convierte el ejercicio en destino de `:ref`, que imprime su título o, si no tiene, su página. `level` e `icon` se imprimen detrás del número: las marcas de dificultad y los iconos de actividad que define el estilo.
+`n=12` en un contenedor da a ese ejercicio el número 12, y los siguientes continúan desde el 13. `#id` convierte el ejercicio en destino de `:ref`, que imprime su nombre, «Ejercicio 3» (la palabra de `number.label` si el estilo la fija; si no, la del idioma del documento). `style=number` imprime 3, `style=title` el `title` del contenedor (o el nombre si no lo tiene) y `style=page` su página. La referencia alcanza también los ejercicios de otros capítulos del libro. `level` e `icon` se imprimen detrás del número: las marcas de dificultad y los iconos de actividad que define el estilo.
 
 ## Soluciones
 

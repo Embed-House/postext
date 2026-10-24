@@ -188,7 +188,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>conforme a língua</td><td>As duas respostas: <code>['V', 'F']</code> em português, espanhol, catalão, francês e italiano; T F em inglês; R F em alemão; √ × em chinês; ○ × em japonês; ✓ ✗ em árabe.</td></tr>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>conforme a língua</td><td>As duas respostas: <code>['V', 'F']</code> em português, espanhol, catalão, francês e italiano; T F em inglês; R F em alemão; √ × em chinês; ○ × em japonês; صح خطأ em árabe.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: cada letra com um quadradinho para marcar, no fim da linha. <code>'bracket'</code>: um só espaço para escrever a resposta.</td></tr>
   </tbody>
 </table>
@@ -216,7 +216,7 @@ const config: PostextConfig = {
 
 ### Banco de palavras
 
-`bank` define o quadro de palavras impresso sob o enunciado de um exercício de lacunas com `bank` ou <code>::bank[…]</code>, e de todo exercício de classificar.
+`bank` define o quadro de palavras de um exercício de lacunas com `bank` ou <code>::bank[…]</code>, e de todo exercício de classificar. O quadro fica onde a linha `::bank` está escrita; sem ela, sob o enunciado.
 
 <table>
   <thead>
@@ -272,11 +272,11 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>O lado de uma casa.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>a do texto</td><td>A família das letras e dos algarismos.</td></tr>
-    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>Ainda não é usado: as letras são compostas a 0,58 do lado da casa.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 do lado da casa</td><td>O tamanho das letras e dos algarismos; um em é o do texto.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>a do texto</td><td>A cor das letras e dos algarismos.</td></tr>
     <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>um cinza médio</td><td>Os fios das casas.</td></tr>
     <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>A espessura desses fios.</td></tr>
-    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Ainda não é usado: uma cruzada só imprime as casas das suas palavras.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>O preenchimento das casas da cruzada que nenhuma palavra ocupa. Sem ele, a grade só imprime as casas das suas palavras.</td></tr>
     <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Compõe as letras dos caça-palavras e das cruzadas em maiúsculas, com as regras de caixa da língua do documento.</td></tr>
   </tbody>
 </table>
@@ -342,8 +342,6 @@ const config: PostextConfig = {
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>O que o ícone representa, para os leitores de tela e o PDF marcado.</td></tr>
   </tbody>
 </table>
-
-Esta versão imprime só o `glyph` de um ícone, na fonte e na cor do texto em volta; `fontFamily`, `color`, `resourceId` e `alt` ainda não são usados.
 
 ### Respostas
 

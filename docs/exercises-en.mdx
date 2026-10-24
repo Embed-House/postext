@@ -113,7 +113,7 @@ True or false?
 :::
 ```
 
-Each statement is numbered and ends with the two answers at the end of the line, each with a box: T □ F □. A ticked item is true. The letters follow the language: T/F in English, V/F in Spanish, Catalan, French, Italian and Portuguese, R/F in German, √/× in Chinese, ○/× in Japanese, ✓/✗ in Arabic. A style can print one blank to write the answer on instead (`trueFalse.look: 'bracket'`).
+Each statement is numbered and ends with the two answers at the end of the line, each with a box: T □ F □. A ticked item is true. The letters follow the language: T/F in English, V/F in Spanish, Catalan, French, Italian and Portuguese, R/F in German, √/× in Chinese, ○/× in Japanese, صح/خطأ in Arabic. A style can print one blank to write the answer on instead (`trueFalse.look: 'bracket'`).
 
 ### Gaps and word banks
 
@@ -136,7 +136,7 @@ Complete the sentences with the words in the box.
 - `[[went]]{width=6}`: a blank six ems wide.
 - `\|` is a literal bar inside an answer, and `\[[` a literal pair of brackets.
 
-Every blank of an exercise is as wide as its longest answer plus 1.5 em, so the length of a line does not give its answer away (`blank.width` changes it). `bank` prints the answers in a framed word bank, shuffled, under the instruction; `::bank[stones | wind]` adds distractors to it (and asks for the bank by itself). `[[…]]` is read only inside an exercise: two brackets anywhere else in a book stay as written.
+Every blank of an exercise is as wide as its longest answer plus 1.5 em, so the length of a line does not give its answer away (`blank.width` changes it). `bank` prints the answers in a framed word bank, shuffled, under the instruction. A `::bank[stones | wind]` line puts the bank where it is written and adds its words as distractors; the line alone asks for the bank. `[[…]]` is read only inside an exercise: two brackets anywhere else in a book stay as written.
 
 An exercise that opens with its text instead of an instruction runs its number into the first paragraph:
 
@@ -279,7 +279,7 @@ Work out.
 :::
 ```
 
-Each operation is set in cells, as a pupil writes it: the digits in columns, the sign on the left, a rule, and empty cells for the result, up to four operations to a row. The signs read are `+`, `-`, `−`, `×`, `x`, `*`, `÷`, `:` and `/`, with whole numbers. Long division follows the school convention of the document language, and `arithmetic.division` picks another:
+Each operation is set in cells, as a pupil writes it: the digits in columns, the sign on the left, a rule, and empty cells for the result, up to four operations to a row. On a right-to-left page each operation keeps its digits left to right, and the operations follow one another from right to left. The signs read are `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` and `/`, with whole numbers. Long division follows the school convention of the document language, and `arithmetic.division` picks another:
 
 - `bracket`: the divisor on the left, the dividend under a bracket, the quotient above it. English, Chinese, Japanese and Arabic books.
 - `potence`: the dividend on the left, the divisor on the right under an L, the quotient under the divisor, the remainder at the foot. Spanish, Catalan, French, Italian and Portuguese books.
@@ -287,13 +287,13 @@ Each operation is set in cells, as a pupil writes it: the digits in columns, the
 
 ### A first item answered
 
-`example` prints the first item solved, in the answers' colour: the first blank filled, the first question's right option ringed, the first pair joined, the first sentence written out. That item is not asked on screen.
+`example` prints the first item solved, in the answers' colour: the first blank filled, the first question's right option ringed, the first pair joined, the first sentence written out. That item is not asked on screen, and its answer is left out of the word bank.
 
 ## Numbers, references and difficulty
 
 Exercises are numbered 1, 2, 3 in each chapter. The style decides the rest: a number set bare and bold with a full stop (the default) or in a disc, a square or a rounded square (`number.shape`), a word before it ("Exercise 3" with `number.label: true`, in the document's language), the numerals (`number.format`, such as Chinese 一、二、), a template that adds the chapter (`'{h1}.{n}'`), and where the count starts again (`number.resetOn`: each chapter, each section or never). Styles that name the same `number.counter` share one count, and a book carries it from chapter to chapter.
 
-`n=12` on a fence gives that exercise the number 12, and the next ones go on from 13. `#id` makes the exercise a target of `:ref`, which prints its title, or its page when it has none. `level` and `icon` print after the number: the difficulty marks and the activity icons the style defines.
+`n=12` on a fence gives that exercise the number 12, and the next ones go on from 13. `#id` makes the exercise a target of `:ref`, which prints its name, "Exercise 3" (the style's `number.label` word when it sets one, else the document language's word). `style=number` prints 3, `style=title` the fence's `title` (the name when it has none) and `style=page` its page. A reference reaches exercises in other chapters of the book too. `level` and `icon` print after the number: the difficulty marks and the activity icons the style defines.
 
 ## Solutions
 

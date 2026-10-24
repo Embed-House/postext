@@ -188,7 +188,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>secondo la lingua</td><td>Le due risposte: <code>['V', 'F']</code> in italiano, spagnolo, catalano, francese e portoghese; T F in inglese; R F in tedesco; √ × in cinese; ○ × in giapponese; ✓ ✗ in arabo.</td></tr>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>secondo la lingua</td><td>Le due risposte: <code>['V', 'F']</code> in italiano, spagnolo, catalano, francese e portoghese; T F in inglese; R F in tedesco; √ × in cinese; ○ × in giapponese; صح خطأ in arabo.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: ogni lettera con una casella da barrare, in fondo alla riga. <code>'bracket'</code>: un solo spazio in cui scrivere la risposta.</td></tr>
   </tbody>
 </table>
@@ -216,7 +216,7 @@ const config: PostextConfig = {
 
 ### Riquadro di parole
 
-`bank` imposta il riquadro di parole stampato sotto la consegna di un completamento con <code>bank</code> o <code>::bank[…]</code>, e di ogni esercizio di classificazione.
+`bank` imposta il riquadro di parole di un completamento con <code>bank</code> o <code>::bank[…]</code>, e di ogni esercizio di classificazione. Il riquadro sta dove è scritta la riga `::bank`, altrimenti sotto la consegna.
 
 <table>
   <thead>
@@ -272,11 +272,11 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>Il lato di una casella.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>quella del testo</td><td>La famiglia di lettere e cifre.</td></tr>
-    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>Non ancora usato: le lettere si compongono a 0,58 del lato della casella.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 del lato della casella</td><td>La dimensione di lettere e cifre; un em è quello del testo.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>quello del testo</td><td>Il colore di lettere e cifre.</td></tr>
     <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>un grigio medio</td><td>I filetti delle caselle.</td></tr>
     <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>Il loro spessore.</td></tr>
-    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Non ancora usato: un cruciverba stampa solo le caselle delle sue parole.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Il riempimento delle caselle del cruciverba che nessuna parola occupa. Se non è impostato, lo schema stampa solo le caselle delle sue parole.</td></tr>
     <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Compone in maiuscolo le lettere di cerca parole e cruciverba, secondo le regole delle maiuscole della lingua del documento.</td></tr>
   </tbody>
 </table>
@@ -342,8 +342,6 @@ const config: PostextConfig = {
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>Che cosa rappresenta l’icona, per gli screen reader e il PDF taggato.</td></tr>
   </tbody>
 </table>
-
-Questa versione stampa solo il `glyph` di un’icona, nel carattere e nel colore del testo circostante; `fontFamily`, `color`, `resourceId` e `alt` non sono ancora usati.
 
 ### Risposte
 

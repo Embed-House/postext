@@ -188,7 +188,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>selon la langue</td><td>Les deux réponses : <code>['V', 'F']</code> en français, en espagnol, en catalan, en italien et en portugais ; T F en anglais ; R F en allemand ; √ × en chinois ; ○ × en japonais ; ✓ ✗ en arabe.</td></tr>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>selon la langue</td><td>Les deux réponses : <code>['V', 'F']</code> en français, en espagnol, en catalan, en italien et en portugais ; T F en anglais ; R F en allemand ; √ × en chinois ; ○ × en japonais ; صح خطأ en arabe.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code> : chaque lettre suivie d’une case à cocher, en bout de ligne. <code>'bracket'</code> : un seul espace où écrire la réponse.</td></tr>
   </tbody>
 </table>
@@ -216,7 +216,7 @@ const config: PostextConfig = {
 
 ### Banque de mots
 
-`bank` règle la boîte de mots imprimée sous la consigne d’un exercice à trous avec `bank` ou <code>::bank[…]</code>, et de tout exercice de classement.
+`bank` règle la boîte de mots d’un exercice à trous avec `bank` ou <code>::bank[…]</code>, et de tout exercice de classement. La boîte se place là où est écrite la ligne `::bank`, sinon sous la consigne.
 
 <table>
   <thead>
@@ -272,11 +272,11 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>Le côté d’une case.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>celle du texte</td><td>La famille des lettres et des chiffres.</td></tr>
-    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>Pas encore utilisé : les lettres sont composées à 0,58 du côté de la case.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 du côté de la case</td><td>La taille des lettres et des chiffres, un em étant celui du texte.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>celle du texte</td><td>La couleur des lettres et des chiffres.</td></tr>
     <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>un gris moyen</td><td>Les filets des cases.</td></tr>
     <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>Leur épaisseur.</td></tr>
-    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Pas encore utilisé : une grille de mots croisés n’imprime que les cases de ses mots.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Le fond des cases de la grille de mots croisés qu’aucun mot n’occupe. Sans lui, la grille n’imprime que les cases de ses mots.</td></tr>
     <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Composer en capitales les lettres des mots mêlés et des mots croisés, selon les règles de casse de la langue du document.</td></tr>
   </tbody>
 </table>
@@ -342,8 +342,6 @@ const config: PostextConfig = {
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>Ce que représente l’icône, pour les lecteurs d’écran et le PDF balisé.</td></tr>
   </tbody>
 </table>
-
-Cette version n’imprime que le `glyph` d’une icône, dans le caractère et la couleur du texte qui l’entoure ; `fontFamily`, `color`, `resourceId` et `alt` ne sont pas encore utilisés.
 
 ### Réponses
 

@@ -440,8 +440,8 @@ An exercise is content: its instruction, questions, options, answers and worked 
 | `type` | Markdown | Prints |
 |---|---|---|
 | `choice` | `- [x] right` / `- [ ] wrong`; several questions = ordered list of stems, each with its task list indented under it | options a) b) c) (labels by language: A. zh, ア ja, أ) ar), one a line; `columns=3` side by side; `select=one\|many` (more than one `[x]` = many) |
-| `truefalse` | `- [x] true statement` / `- [ ] false one` | numbered statements, `T □ F □` at the line end (V/F, R/F, √/×, ○/×, ✓/✗ by language) |
-| `gaps` | `[[water]]`, `[[colour \| color]]` (accepted answers), `[[go \| (goes)]]` (inline choice, the bracketed one right), `[[went]]{width=6}` (6 em), `\|` literal bar | a blank as wide as the exercise's longest answer + 1.5 em; inline choice `(go / goes)`; `bank` or `::bank[sun \| rain]` (distractors) prints a shuffled word bank under the instruction |
+| `truefalse` | `- [x] true statement` / `- [ ] false one` | numbered statements, `T □ F □` at the line end (V/F, R/F, √/×, ○/×, صح/خطأ by language) |
+| `gaps` | `[[water]]`, `[[colour \| color]]` (accepted answers), `[[go \| (goes)]]` (inline choice, the bracketed one right), `[[went]]{width=6}` (6 em), `\|` literal bar | a blank as wide as the exercise's longest answer + 1.5 em; inline choice `(go / goes)`; `bank` prints a shuffled word bank under the instruction; a `::bank[sun \| rain]` line puts it where the line stands and adds distractors; an `example` exercise's model answer is left out of it |
 | `match` | `- Bee -> Hive` (`→` too); `- -> Den` a distractor; `shuffle=false` | two columns, the right shuffled, dots to join (`match.look: 'letters'`: right column lettered, a blank per left item) |
 | `order` | the list in the right order; `shuffle=false` | shuffled items, a box each for the number |
 | `scramble` | `- She / goes / to school` (split at ` / `, else spaces) | pieces shuffled with slashes, a ruled line under each |
@@ -450,10 +450,10 @@ An exercise is content: its instruction, questions, options, answers and worked 
 | `open` | instruction (+ optional list of questions); `lines=N`; `area=lines\|dots\|grid\|seyes\|tianzige\|box\|none`; model answer in `:::solution` | ruled space (3 lines default) under the instruction or under each list item |
 | `wordsearch` | `- WORD` per line; `size=N`, `directions="across down diagonal backwards"` (default across down diagonal), `hidden` (no list) | letter grid + word list; unplaceable word → `exerciseWordUnplaced` |
 | `crossword` | `- WORD: clue` | numbered grid + Across/Down clue lists (in the document language) |
-| `arithmetic` | `- 345 + 278` (`+ - − × x * ÷ : /`, whole numbers; Arabic-Indic digits read) | cells in columns, up to 4 a row; division `bracket` (en zh ja ar), `potence` (es ca fr it pt), `inline` (de) |
+| `arithmetic` | `- 345 + 278` (`+ - − × x * · ⋅ ÷ : /`, whole numbers; Arabic-Indic digits read) | cells in columns, up to 4 a row (right to left on an RTL page, each operation's digits still left to right); division `bracket` (en zh ja ar), `potence` (es ca fr it pt), `inline` (de) |
 
 - **Numbering:** per style counter, reset each chapter by default (`number.resetOn`), carried across chapters. `n=12` fixes a number (the next go on from 13). `level=2` prints ●●○; `icon="pair"` prints a glyph the style defines; `title="…"` prints bold after the number. `example` prints the first item answered (answers' colour) and does not ask it.
-- **`#id`** makes it a `:ref` target; the reference prints the exercise's title, or its page when it has none (not "Exercise 3"): write the number in the text when the source says "see exercise 3" and the number is fixed with `n`.
+- **`#id`** makes it a `:ref` target: `:ref{id=…}` prints its name, "Exercise 3" (the style's `number.label` word, else the language's), `style=number` "3", `style=title` the fence's `title` (else the name), `style=page` its page; across chapters too. Never type "exercise 3" in the text.
 - **Solutions** (config `exercises.solutions.placement`, a style's `solutions` over it): `none` (default), `after`, `inverted` (box turned 180°), `chapterEnd` (before the next `#`, under the localized heading), `directive` (where a single line `:::solutions` stands; `title="…"`; `:::solutions{scope="book"}` prints every chapter's key and solutions, chapter by chapter, from the book outline). `exercises.edition: 'teacher'` overprints every answer in place.
 - **Warnings:** `exerciseUnknownType`, `exerciseUnknownStyle`, `exerciseNoAnswer`, `exerciseUnreadItem`, `exerciseWordUnplaced`, `exerciseNested`, `solutionOutside`.
 - `[[…]]` is read only inside `:::exercise`; elsewhere it stays literal.

@@ -113,7 +113,7 @@ Vrai ou faux ?
 :::
 ```
 
-Chaque affirmation est numérotée et se termine, en bout de ligne, par les deux réponses suivies chacune d’une case : V □ F □. Un item coché est vrai. Les lettres suivent la langue : V/F en français, en espagnol, en catalan, en italien et en portugais, T/F en anglais, R/F en allemand, √/× en chinois, ○/× en japonais, ✓/✗ en arabe. Un style peut imprimer à la place un seul blanc où écrire la réponse (`trueFalse.look: 'bracket'`).
+Chaque affirmation est numérotée et se termine, en bout de ligne, par les deux réponses suivies chacune d’une case : V □ F □. Un item coché est vrai. Les lettres suivent la langue : V/F en français, en espagnol, en catalan, en italien et en portugais, T/F en anglais, R/F en allemand, √/× en chinois, ○/× en japonais, صح/خطأ en arabe. Un style peut imprimer à la place un seul blanc où écrire la réponse (`trueFalse.look: 'bracket'`).
 
 ### Textes à trous et banques de mots
 
@@ -136,7 +136,7 @@ Complète les phrases avec les mots de la boîte.
 - `[[allait]]{width=6}` : un trou large de six em.
 - `\|` est une barre littérale dans une réponse, et `\[[` une paire de crochets littérale.
 
-Tous les trous d’un exercice ont la largeur de sa plus longue réponse plus 1,5 em : la longueur d’une ligne ne trahit donc pas sa réponse (`blank.width` change ce comportement). `bank` imprime les réponses mélangées dans une banque de mots encadrée, sous la consigne ; `::bank[cailloux | vent]` y ajoute des intrus (et demande la banque à lui seul). `[[…]]` n’est lu que dans un exercice : ailleurs dans le livre, deux crochets restent tels qu’ils sont écrits.
+Tous les trous d’un exercice ont la largeur de sa plus longue réponse plus 1,5 em : la longueur d’une ligne ne trahit donc pas sa réponse (`blank.width` change ce comportement). `bank` imprime les réponses mélangées dans une banque de mots encadrée, sous la consigne. Une ligne `::bank[cailloux | vent]` place la banque là où elle est écrite et y ajoute ses mots comme intrus ; la ligne seule demande déjà la banque. `[[…]]` n’est lu que dans un exercice : ailleurs dans le livre, deux crochets restent tels qu’ils sont écrits.
 
 Un exercice qui commence par son texte plutôt que par une consigne fait entrer son numéro dans le premier paragraphe :
 
@@ -279,7 +279,7 @@ Pose et calcule.
 :::
 ```
 
-Chaque opération est posée en cases, comme l’écrit un élève : les chiffres en colonnes, le signe à gauche, un trait et des cases vides pour le résultat, jusqu’à quatre opérations par rangée. Les signes reconnus sont `+`, `-`, `−`, `×`, `x`, `*`, `÷`, `:` et `/`, entre nombres entiers. La division posée suit l’usage scolaire de la langue du document, et `arithmetic.division` en choisit un autre :
+Chaque opération est posée en cases, comme l’écrit un élève : les chiffres en colonnes, le signe à gauche, un trait et des cases vides pour le résultat, jusqu’à quatre opérations par rangée. Sur une page de droite à gauche, chaque opération garde ses chiffres de gauche à droite et les opérations se suivent de droite à gauche. Les signes reconnus sont `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` et `/`, entre nombres entiers. La division posée suit l’usage scolaire de la langue du document, et `arithmetic.division` en choisit un autre :
 
 - `bracket` : le diviseur à gauche, le dividende sous un crochet, le quotient au-dessus. Livres en anglais, en chinois, en japonais et en arabe.
 - `potence` : le dividende à gauche, le diviseur à droite sous la potence, le quotient sous le diviseur, le reste en bas. Livres en français, en espagnol, en catalan, en italien et en portugais.
@@ -287,13 +287,13 @@ Chaque opération est posée en cases, comme l’écrit un élève : les chiffre
 
 ### Un premier item résolu
 
-`example` imprime le premier item résolu, dans la couleur des réponses : le premier trou rempli, la bonne proposition de la première question entourée, la première paire reliée, la première phrase réécrite. À l’écran, cet item n’est pas demandé.
+`example` imprime le premier item résolu, dans la couleur des réponses : le premier trou rempli, la bonne proposition de la première question entourée, la première paire reliée, la première phrase réécrite. À l’écran, cet item n’est pas demandé, et sa réponse ne figure pas dans la banque de mots.
 
 ## Numéros, renvois et difficulté
 
 Les exercices sont numérotés 1, 2, 3 dans chaque chapitre. Le style règle le reste : un numéro nu en gras suivi d’un point (par défaut) ou placé dans un disque, un carré ou un carré arrondi (`number.shape`), un mot devant lui (« Exercice 3 » avec `number.label: true`, dans la langue du document), les chiffres (`number.format`, par exemple les numéros chinois 一、二、), un modèle qui ajoute le numéro du chapitre (`'{h1}.{n}'`), et le niveau où le compte repart (`number.resetOn` : chaque chapitre, chaque section ou jamais). Les styles qui nomment le même `number.counter` partagent un même compte, et un livre le poursuit d’un chapitre à l’autre.
 
-`n=12` sur un délimiteur donne à cet exercice le numéro 12, et les suivants continuent à 13. `#id` fait de l’exercice une cible de `:ref`, qui imprime son titre, ou sa page s’il n’en a pas. `level` et `icon` s’impriment après le numéro : les marques de difficulté et les icônes d’activité que le style définit.
+`n=12` sur un délimiteur donne à cet exercice le numéro 12, et les suivants continuent à 13. `#id` fait de l’exercice une cible de `:ref`, qui imprime son nom, « Exercice 3 » (le mot de `number.label` si le style en fixe un, sinon celui de la langue du document). `style=number` imprime 3, `style=title` le `title` du délimiteur (ou le nom s’il n’en a pas) et `style=page` sa page. Un renvoi atteint aussi les exercices des autres chapitres du livre. `level` et `icon` s’impriment après le numéro : les marques de difficulté et les icônes d’activité que le style définit.
 
 ## Solutions
 

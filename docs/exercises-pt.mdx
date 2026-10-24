@@ -113,7 +113,7 @@ Marque V para verdadeiro e F para falso.
 :::
 ```
 
-Cada afirmação é numerada e termina com as duas respostas no fim da linha, cada uma com um quadradinho: V □ F □. Um item marcado é verdadeiro. As letras seguem a língua: V/F em português, espanhol, catalão, francês e italiano, T/F em inglês, R/F em alemão, √/× em chinês, ○/× em japonês, ✓/✗ em árabe. Um estilo pode imprimir, em vez disso, uma só lacuna para escrever a resposta (`trueFalse.look: 'bracket'`).
+Cada afirmação é numerada e termina com as duas respostas no fim da linha, cada uma com um quadradinho: V □ F □. Um item marcado é verdadeiro. As letras seguem a língua: V/F em português, espanhol, catalão, francês e italiano, T/F em inglês, R/F em alemão, √/× em chinês, ○/× em japonês, صح/خطأ em árabe. Um estilo pode imprimir, em vez disso, uma só lacuna para escrever a resposta (`trueFalse.look: 'bracket'`).
 
 ### Lacunas e banco de palavras
 
@@ -136,7 +136,7 @@ Complete as frases com as palavras do quadro.
 - `[[foi]]{width=6}`: uma lacuna de seis ems de largura.
 - `\|` é uma barra literal dentro de uma resposta, e `\[[` um par literal de colchetes.
 
-Todas as lacunas de um exercício têm a largura da resposta mais longa mais 1,5 em; assim, o comprimento de uma linha não entrega a resposta (`blank.width` muda isso). `bank` imprime as respostas embaralhadas num banco de palavras com moldura, sob o enunciado; `::bank[pedras | vento]` acrescenta palavras que não entram em nenhuma lacuna (e já pede o banco sozinho). `[[…]]` só é lido dentro de um exercício: dois colchetes em qualquer outro lugar do livro ficam como foram escritos.
+Todas as lacunas de um exercício têm a largura da resposta mais longa mais 1,5 em; assim, o comprimento de uma linha não entrega a resposta (`blank.width` muda isso). `bank` imprime as respostas embaralhadas num banco de palavras com moldura, sob o enunciado. Uma linha `::bank[pedras | vento]` coloca o banco onde está escrita e acrescenta as suas palavras, que não entram em nenhuma lacuna; sozinha, a linha já pede o banco. `[[…]]` só é lido dentro de um exercício: dois colchetes em qualquer outro lugar do livro ficam como foram escritos.
 
 Um exercício que começa pelo texto, sem enunciado, põe o número no começo do primeiro parágrafo:
 
@@ -279,7 +279,7 @@ Arme e efetue.
 :::
 ```
 
-Cada operação é montada em casas, como o aluno a escreve: os algarismos em colunas, o sinal à esquerda, um traço e casas vazias para o resultado, com até quatro operações por fileira. Os sinais lidos são `+`, `-`, `−`, `×`, `x`, `*`, `÷`, `:` e `/`, com números inteiros. A conta de dividir segue o costume escolar da língua do documento, e `arithmetic.division` escolhe outro:
+Cada operação é montada em casas, como o aluno a escreve: os algarismos em colunas, o sinal à esquerda, um traço e casas vazias para o resultado, com até quatro operações por fileira. Numa página da direita para a esquerda, cada operação mantém os algarismos da esquerda para a direita, e as operações se sucedem da direita para a esquerda. Os sinais lidos são `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` e `/`, com números inteiros. A conta de dividir segue o costume escolar da língua do documento, e `arithmetic.division` escolhe outro:
 
 - `bracket`: o divisor à esquerda, o dividendo sob uma chave, o quociente em cima dela. Livros em inglês, chinês, japonês e árabe.
 - `potence`: o dividendo à esquerda, o divisor à direita dentro da chave em L, o quociente sob o divisor e o resto embaixo, como no método da chave. Livros em português, espanhol, catalão, francês e italiano.
@@ -287,13 +287,13 @@ Cada operação é montada em casas, como o aluno a escreve: os algarismos em co
 
 ### O primeiro item como modelo
 
-`example` imprime o primeiro item resolvido, na cor das respostas: a primeira lacuna preenchida, a alternativa certa da primeira pergunta circulada, o primeiro par ligado, a primeira frase escrita. Esse item não é perguntado na tela.
+`example` imprime o primeiro item resolvido, na cor das respostas: a primeira lacuna preenchida, a alternativa certa da primeira pergunta circulada, o primeiro par ligado, a primeira frase escrita. Esse item não é perguntado na tela, e a resposta dele fica fora do banco de palavras.
 
 ## Números, referências e dificuldade
 
 Os exercícios são numerados 1, 2, 3 em cada capítulo. O estilo decide o resto: um número solto, em negrito e com ponto (o padrão), ou dentro de um círculo, de um quadrado ou de um quadrado arredondado (`number.shape`), uma palavra antes dele ("Exercício 3" com `number.label: true`, na língua do documento), os algarismos (`number.format`, como os chineses 一、二、), um modelo que acrescenta o capítulo (`'{h1}.{n}'`) e onde a contagem recomeça (`number.resetOn`: em cada capítulo, em cada seção ou nunca). Os estilos que indicam o mesmo `number.counter` dividem uma só contagem, e o livro a leva de um capítulo para o outro.
 
-`n=12` num delimitador dá a esse exercício o número 12, e os seguintes continuam a partir do 13. `#id` faz do exercício um alvo de `:ref`, que imprime o título dele ou, se não houver título, a página. `level` e `icon` saem depois do número: as marcas de dificuldade e os ícones de atividade que o estilo define.
+`n=12` num delimitador dá a esse exercício o número 12, e os seguintes continuam a partir do 13. `#id` faz do exercício um alvo de `:ref`, que imprime o nome dele, “Exercício 3” (a palavra de `number.label`, se o estilo definir uma; senão, a da língua do documento). `style=number` imprime 3, `style=title` o `title` do delimitador (ou o nome, se não houver) e `style=page` a página. A referência alcança também exercícios de outros capítulos do livro. `level` e `icon` saem depois do número: as marcas de dificuldade e os ícones de atividade que o estilo define.
 
 ## Soluções
 

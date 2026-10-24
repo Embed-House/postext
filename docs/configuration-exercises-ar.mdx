@@ -188,7 +188,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>بحسب اللغة</td><td>الإجابتان: <code>['✓', '✗']</code> في العربية؛ وT F في الإنجليزية؛ وV F في الإسبانية والكتالونية والفرنسية والإيطالية والبرتغالية؛ وR F في الألمانية؛ و√ × في الصينية؛ و○ × في اليابانية.</td></tr>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>بحسب اللغة</td><td>الإجابتان: <code>['صح', 'خطأ']</code> في العربية؛ وT F في الإنجليزية؛ وV F في الإسبانية والكتالونية والفرنسية والإيطالية والبرتغالية؛ وR F في الألمانية؛ و√ × في الصينية؛ و○ × في اليابانية.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: لكل علامة مربع للتأشير، في آخر السطر. <code>'bracket'</code>: فراغ واحد تُكتب فيه الإجابة.</td></tr>
   </tbody>
 </table>
@@ -216,7 +216,7 @@ const config: PostextConfig = {
 
 ### بنك الكلمات
 
-تضبط `bank` إطار الكلمات الذي يُطبع تحت تعليمة تمرين الفراغات حين تكون فيه <code>bank</code> أو <code>::bank[…]</code>، وتحت تعليمة كل تمرين تصنيف.
+تضبط `bank` إطار الكلمات في تمرين الفراغات الذي فيه <code>bank</code> أو <code>::bank[…]</code>، وفي كل تمرين تصنيف. ويُطبع الإطار حيث كُتب السطر `::bank`، وإلا فتحت التعليمة.
 
 <table>
   <thead>
@@ -272,11 +272,11 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>ضلع الخانة.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>خط النص</td><td>عائلة خط الحروف والأرقام.</td></tr>
-    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>لا يُستعمل بعد: تُصفّ الحروف بحجم 0.58 من ضلع الخانة.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0.58 من ضلع الخانة</td><td>حجم الحروف والأرقام، والـem هو em النص.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>لون النص</td><td>لون الحروف والأرقام.</td></tr>
     <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>رمادي متوسط</td><td>خطوط الخانات.</td></tr>
     <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>سماكتها.</td></tr>
-    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>لا يُستعمل بعد: لا تطبع الكلمات المتقاطعة إلا خانات كلماتها.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>تعبئة خانات شبكة الكلمات المتقاطعة التي لا تشغلها كلمة. ومن دونها لا تُطبع إلا خانات الكلمات.</td></tr>
     <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>تُكتب حروف البحث عن الكلمات والكلمات المتقاطعة كبيرة، بقواعد الحالة في لغة المستند. ولا أثر لها في الحروف العربية.</td></tr>
   </tbody>
 </table>
@@ -342,8 +342,6 @@ const config: PostextConfig = {
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>ما تدل عليه الأيقونة، لقارئات الشاشة وملف PDF الموسوم.</td></tr>
   </tbody>
 </table>
-
-هذا الإصدار يطبع `glyph` الأيقونة وحده، بخط النص المحيط ولونه؛ ولا تُستعمل `fontFamily` و`color` و`resourceId` و`alt` بعد.
 
 ### الإجابات
 

@@ -188,7 +188,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>nach Sprache</td><td>Die beiden Antworten: <code>['R', 'F']</code> im Deutschen; T F im Englischen; V F im Spanischen, Katalanischen, Französischen, Italienischen und Portugiesischen; √ × im Chinesischen; ○ × im Japanischen; ✓ ✗ im Arabischen.</td></tr>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>nach Sprache</td><td>Die beiden Antworten: <code>['R', 'F']</code> im Deutschen; T F im Englischen; V F im Spanischen, Katalanischen, Französischen, Italienischen und Portugiesischen; √ × im Chinesischen; ○ × im Japanischen; صح خطأ im Arabischen.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: jede Antwort mit einem Kästchen zum Ankreuzen, am Zeilenende. <code>'bracket'</code>: eine einzige Lücke, in die die Antwort geschrieben wird.</td></tr>
   </tbody>
 </table>
@@ -216,7 +216,7 @@ const config: PostextConfig = {
 
 ### Wortspeicher
 
-`bank` legt den Kasten mit Wörtern fest, der unter der Arbeitsanweisung eines Lückentexts mit `bank` oder <code>::bank[…]</code> steht, und bei jeder Sortierübung.
+`bank` legt den Kasten mit Wörtern eines Lückentexts mit `bank` oder <code>::bank[…]</code> und jeder Sortierübung fest. Der Kasten steht dort, wo die Zeile `::bank` geschrieben ist, sonst unter der Arbeitsanweisung.
 
 <table>
   <thead>
@@ -272,11 +272,11 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>Die Seitenlänge eines Felds.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>die des Texts</td><td>Die Schriftfamilie der Buchstaben und Ziffern.</td></tr>
-    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>Noch nicht verwendet: Die Buchstaben stehen in 0,58 der Seitenlänge des Felds.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 der Seitenlänge des Felds</td><td>Die Größe der Buchstaben und Ziffern, ein em ist das des Texts.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>die des Texts</td><td>Die Farbe der Buchstaben und Ziffern.</td></tr>
     <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>ein mittleres Grau</td><td>Die Linien der Felder.</td></tr>
     <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>Ihre Stärke.</td></tr>
-    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Noch nicht verwendet: Ein Kreuzworträtsel druckt nur die Felder seiner Wörter.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Die Füllung der Felder im Kreuzworträtsel, die kein Wort belegt. Ohne sie druckt das Gitter nur die Felder seiner Wörter.</td></tr>
     <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Die Buchstaben von Wortsuchrätseln und Kreuzworträtseln in Großbuchstaben setzen, nach den Regeln der Dokumentsprache.</td></tr>
   </tbody>
 </table>
@@ -342,8 +342,6 @@ const config: PostextConfig = {
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>Wofür das Symbol steht, für Bildschirmleser und das getaggte PDF.</td></tr>
   </tbody>
 </table>
-
-Diese Version druckt nur das `glyph` eines Symbols, in Schrift und Farbe des umgebenden Texts; `fontFamily`, `color`, `resourceId` und `alt` werden noch nicht verwendet.
 
 ### Antworten
 
