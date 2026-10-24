@@ -27,6 +27,14 @@ function roundedRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w:
  * colour when the chip style sets none. Shared by the body-text and
  * resource-block painters.
  */
+/** The dash pattern of a chip's underline (#1227): dots one stroke wide
+ *  with round caps, two strokes apart; dashes three strokes long. */
+export function chipUnderlineDash(kind: 'solid' | 'dotted' | 'dashed', width: number): number[] | undefined {
+  if (kind === 'dotted') return [0.01, width * 2.2];
+  if (kind === 'dashed') return [width * 3, width * 2];
+  return undefined;
+}
+
 export function paintChip(
   ctx: CanvasRenderingContext2D,
   chip: VDTChip,
@@ -43,12 +51,31 @@ export function paintChip(
     ctx.fillStyle = chip.background;
     ctx.fill();
   }
-  if (chip.borderColor && chip.borderWidth > 0) {
+  if (chip.underline && chip.borderColor && chip.borderWidth > 0) {
+    // A blank to write on (#1227): a line under the box only.
+    const y = top + h - chip.borderWidth / 2;
+    ctx.beginPath();
+    ctx.moveTo(bx, y);
+    ctx.lineTo(bx + chip.boxWidth, y);
+    ctx.strokeStyle = chip.borderColor;
+    ctx.lineWidth = chip.borderWidth;
+    const dash = chipUnderlineDash(chip.underline, chip.borderWidth);
+    if (dash) {
+      ctx.setLineDash(dash);
+      if (chip.underline === 'dotted') ctx.lineCap = 'round';
+    }
+    ctx.stroke();
+  } else if (chip.borderColor && chip.borderWidth > 0) {
     const half = chip.borderWidth / 2;
     roundedRectPath(ctx, bx + half, top + half, chip.boxWidth - chip.borderWidth, h - chip.borderWidth, Math.max(0, chip.borderRadius - half));
     ctx.strokeStyle = chip.borderColor;
     ctx.lineWidth = chip.borderWidth;
     ctx.stroke();
+  }
+  // A blank's answer is laid out, never painted (#1227).
+  if (chip.blank) {
+    restoreContext(ctx);
+    return;
   }
   ctx.textBaseline = 'alphabetic';
   let tx = bx + chip.borderWidth + chip.paddingX;

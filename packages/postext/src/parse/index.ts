@@ -1,5 +1,7 @@
 export type {
   ContentBlockType,
+  ExerciseGap,
+  ExerciseHit,
   DirectiveName,
   DirectiveAttrs,
   VerseInfo,

@@ -308,6 +308,15 @@ export interface VDTChip {
   /** Letters painted as dots to trace, in the runs' colour (the chip
    *  style's `dotted`). Absent = filled. */
   dotted?: VDTTextDots;
+  /** The outline is a line under the box, `borderWidth` thick (#1227):
+   *  drawn from the box's left to its right at its bottom edge. */
+  underline?: 'solid' | 'dotted' | 'dashed';
+  /** The runs are laid out but not painted, copied or read (#1227): an
+   *  exercise's blank; `blankLabel` is what it reads as. */
+  blank?: true;
+  blankLabel?: string;
+  /** The exercise slot the chip stands for (#1230). */
+  exercise?: import('./parse/types.js').ExerciseHit;
   /** The order in which renderers advance through `runs` from the box's
    *  start (indices into it), when it is not 0, 1, … n − 1: as
    *  {@link VDTLine.order}, the visual order of the runs (UAX #9 L2 on
@@ -4211,6 +4220,9 @@ export type SvgPictureFontWarning = SvgFontUnavailableWarning | SvgFontsTooLarge
 export type RenderWarning = MissingImageWarning | SvgPictureFontWarning;
 
 export interface VDTDocument {
+  /** The exercises laid out (#1230): what each asks and answers, for the
+   *  digital outputs. Absent when the document has none. */
+  exercises?: import('./exercises/record.js').ExerciseRecord[];
   pages: VDTPage[];
   blocks: VDTBlock[];
   /** `'right'` when the book is bound on its right edge (`page.binding`):

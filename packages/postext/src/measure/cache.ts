@@ -65,7 +65,12 @@ function buildPlainCacheKey(
  *  box decide its measure, so they join the key. */
 function chipCacheKey(chip: NonNullable<InlineSpan['chip']>): string {
   const words = chip.spans.map((s) => `${s.text}~${s.bold}~${s.italic}~${s.script ?? ''}${s.smallCaps ? '~sc' : ''}${s.textFace ? '~tf' : ''}`).join('~');
-  return `|chip:${words}|${chip.box ? JSON.stringify(chip.box) : ''}${chip.joinNext ? '|jn' : ''}`;
+  // An exercise's blank (#1227): its width text, that it is a blank and
+  // the slot it answers ride on the measured chip.
+  const exercise = chip.widthText !== undefined || chip.blank || chip.exercise
+    ? `|ex:${chip.widthText ?? ''}${chip.blank ? `~b~${chip.blankLabel ?? ''}` : ''}${chip.exercise ? `~${chip.exercise.ex}:${chip.exercise.slot}` : ''}`
+    : '';
+  return `|chip:${words}|${chip.box ? JSON.stringify(chip.box) : ''}${chip.joinNext ? '|jn' : ''}${exercise}`;
 }
 
 /** A formula is one placeholder char in the span text too: its TeX decides

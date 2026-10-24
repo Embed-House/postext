@@ -42,6 +42,7 @@
     { "name": "topic: typography", "color": "fef2c0", "description": "Line breaking, hyphenation, justification, spacing, ligatures" },
     { "name": "topic: pagination", "color": "fef2c0", "description": "Page and column breaks, floats, column balancing, keep rules" },
     { "name": "topic: math", "color": "fef2c0", "description": "Formulas, equations and theorem-like statements" },
+    { "name": "topic: exercises", "color": "fef2c0", "description": "Exercises and activities: choice, matching, gaps, puzzles, solutions and self-grading" },
     { "name": "topic: music", "color": "fef2c0", "description": "Music notation: scores, music examples, chords and lyrics" },
     { "name": "topic: tables", "color": "fef2c0", "description": "Tables and table styles" },
     { "name": "topic: figures", "color": "fef2c0", "description": "Pictures, SVG, captions, resources and their numbering" },

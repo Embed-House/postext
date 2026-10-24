@@ -1,5 +1,6 @@
 import type { InlineSpan } from './types.js';
 import { MATH_PLACEHOLDER } from './inlineMath.js';
+import { GAP_PLACEHOLDER, gapCloseAt } from './exerciseGaps.js';
 import { BREAK_PLACEHOLDER, CHIP_PLACEHOLDER, FOOTNOTE_PLACEHOLDER, MARK_OPENER, REF_PLACEHOLDER, SMALLCAPS_OPENER, SWATCH_PLACEHOLDER, TAB_PLACEHOLDER, extractInlineRefs, readMarkAt } from './inlineFormatting.js';
 import { sliceSpan } from './links.js';
 import { orientationOpenerAt } from './orientationMarks.js';
@@ -178,6 +179,24 @@ export function computeSourceMap(
       }
       while (j < blockSrcEnd && markdown[j] !== '}') j++;
       if (j < blockSrcEnd) j++; // consume the closing `}`
+      r = j;
+      continue;
+    }
+    // An exercise's answer (`[[…]]`, #1225): map to its `[[` and skip past
+    // the `]]` and the attribute braces right after it, when present.
+    if (ch === GAP_PLACEHOLDER) {
+      while (r < blockSrcEnd && !markdown.startsWith('[[', r)) r++;
+      if (r >= blockSrcEnd) {
+        map[p] = blockSrcEnd;
+        continue;
+      }
+      map[p] = r;
+      const close = gapCloseAt(markdown, r + 2);
+      let j = close < 0 ? blockSrcEnd : close + 2;
+      if (markdown[j] === '{') {
+        const stop = markdown.indexOf('}', j);
+        if (stop >= 0 && stop < blockSrcEnd && !markdown.slice(j, stop).includes('\n')) j = stop + 1;
+      }
       r = j;
       continue;
     }

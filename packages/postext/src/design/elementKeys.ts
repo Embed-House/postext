@@ -72,7 +72,7 @@ export const CONFIG_KEYS = {
   footer: true, locale: true, direction: true, numerals: true, debug: true, htmlViewer: true, canvasViewer: true,
   folio: true, comics: true, pageTemplates: true, labelStyles: true, frameLooks: true, composedViewerLeaf: true,
   pdfGeneration: true, print: true, contrast: true, checks: true, colorPalette: true, customFonts: true,
-  resourceTypes: true,
+  resourceTypes: true, exerciseStyles: true, exercises: true,
 } satisfies Record<keyof PostextConfig, true>;
 
 const ELEMENT_KEYS: Record<string, Record<string, true>> = {

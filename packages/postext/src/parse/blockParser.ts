@@ -12,6 +12,7 @@ import { parseAttrBlobStrict, parseDirectiveAttrs, scanDirectiveAttrs } from './
 import { extractInlineMath, fixMathSourceMap, injectMathSpans } from './inlineMath.js';
 import { BREAK_PLACEHOLDER, TITLE_BREAK_RE, extractInlineChips, extractInlineFootnotes, extractInlineRefs, injectFootnoteSpans, extractInlineSwatches, injectChipSpans, injectRefSpans, injectSwatchSpans, parseInlineFormatting, protectCodeSpans, replaceBodyBreaks, BODY_BREAK_MARK, bodyBreakSpans, titleBreakIndices, trimSpans, extractInlineTabs, injectTabSpans } from './inlineFormatting.js';
 import { buildBlockMapping } from './sourceMapping.js';
+import { extractExerciseGaps, injectGapSpans, settleGapPlaceholders } from './exerciseGaps.js';
 import { labelElementId } from '../composed/ids.js';
 import { extractInlineCitations, injectCitationSpans } from './citations.js';
 import { attachIndexMarks, extractIndexMarks, remapParseOffsets } from './indexMarks.js';
@@ -51,10 +52,10 @@ const LABEL_AT_PERCENT_RE = /^\s*(-?\d+(?:\.\d+)?)\s*%\s+(-?\d+(?:\.\d+)?)\s*%\s
 const HEMISTICH_WIKI_RE = /\s\\\\\s/;
 /** Set of directive names recognized today. Unknown names fall through to
  *  paragraph-parsing and downstream warnings flag them. */
-export const KNOWN_DIRECTIVES: ReadonlySet<DirectiveName> = new Set(['pagebreak', 'numbering', 'columnbreak', 'space', 'toc', 'index', 'bibliography', 'references', 'verse', 'page', 'strip', 'figure']);
+export const KNOWN_DIRECTIVES: ReadonlySet<DirectiveName> = new Set(['pagebreak', 'numbering', 'columnbreak', 'space', 'toc', 'index', 'bibliography', 'references', 'verse', 'page', 'strip', 'figure', 'solutions']);
 /** The directives that are one line, with no body and no closing fence
  *  (a bare `:::` after one is a stray fence, #1125). */
-const ONE_LINE_DIRECTIVES: ReadonlySet<DirectiveName> = new Set(['pagebreak', 'numbering', 'columnbreak', 'space', 'toc', 'index', 'bibliography']);
+const ONE_LINE_DIRECTIVES: ReadonlySet<DirectiveName> = new Set(['pagebreak', 'numbering', 'columnbreak', 'space', 'toc', 'index', 'bibliography', 'solutions']);
 /** Trailing `{key="value" …}` attribute block on a heading line, e.g.
  *  `# Title {author="I. Zango"}`. The braces must be balanced (no nested
  *  braces) and be the last thing on the line, after a space — or right
@@ -79,7 +80,7 @@ function headingAttrTokens(blob: string, spaced: boolean): ReturnType<typeof par
 }
 /** Set of fenced-container names recognized today. A `:::name` line whose
  *  name is a known container opens a block that runs until a bare `:::`. */
-export const KNOWN_CONTAINERS: ReadonlySet<ContainerName> = new Set(['callout', 'paragraphs', 'part', 'columns', 'paper', 'frame', 'module']);
+export const KNOWN_CONTAINERS: ReadonlySet<ContainerName> = new Set(['callout', 'paragraphs', 'part', 'columns', 'paper', 'frame', 'module', 'exercise', 'solution', 'hint']);
 
 /** Absolute source range of each attribute value of a blob that starts at
  *  `blobStart` (a flag: its key). A repeated key keeps the last, as
@@ -128,6 +129,9 @@ function isFenceLine(trimmed: string): boolean {
 /** A footnote definition: `[^id]:` opening a paragraph. */
 const FOOTNOTE_DEF_RE = /^\[\^([\p{L}\p{N}_.:-]+)\]:[ \t]*/u;
 const TASK_ITEM_RE = /^(\s*)([-*+])\s+\[([ xX])\]\s+(.*)$/;
+/** An exercise's word bank (#1225): `::bank`, `::bank[sun | rain]`, with
+ *  optional attributes. Read only inside a `:::exercise`. */
+const BANK_LINE_RE = /^::bank(?:\[(.*)\])?(?:\{([^}]*)\})?\s*$/;
 /** An ordered list item: its number in European, Arabic-Indic (١.) or
  *  Persian (۱.) digits — what an Arabic or Persian keyboard types — then
  *  `.` or `)`. */
@@ -438,6 +442,17 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
   const lineEndOffset = (k: number): number =>
     lineOffsets[k]! + rawLines[k]!.length;
 
+  /** Whether the text read now is an exercise's own (#1225): its nearest
+   *  exercise-family container is the exercise, not a solution or hint. */
+  const inExerciseText = (): boolean => {
+    for (let k = containerStack.length - 1; k >= 0; k--) {
+      const name = containerStack[k]!.name;
+      if (name === 'exercise') return true;
+      if (name === 'solution' || name === 'hint') return false;
+    }
+    return false;
+  };
+
   /** The spans, plain text and source map of a run of inline Markdown
    *  (`raw`, whose source runs from `srcStart` to `srcEnd`): chips,
    *  footnote markers, references, citations, swatches, maths and the
@@ -448,6 +463,10 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
    *  the reading with `report`. With `icons` the inline symbols
    *  (`:icon[…]{…}`, #1058) are read: a figure label's text. */
   const inlineRun = (raw: string, srcStart: number, srcEnd: number, hardBreaks = false, report = true, icons = false): { text: string; spans: ContentBlock['spans']; sourceMap: number[] } => {
+    // The answers of an exercise (`[[…]]`, #1225), read first so their
+    // words are shielded from the later passes.
+    const gapExtract = inExerciseText() ? extractExerciseGaps(protectCodeSpans(raw), srcStart) : undefined;
+    if (gapExtract) raw = gapExtract.cleaned;
     const chipExtract = extractInlineChips(protectCodeSpans(raw), srcStart);
     const fnExtract = extractInlineFootnotes(chipExtract.cleaned, srcStart);
     const refExtract = extractInlineRefs(fnExtract.cleaned, srcStart);
@@ -464,7 +483,8 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
       injectMathSpans(injectTabSpans(formatted, tabExtract.tabs), mathExtract.maths), swExtract.swatches), citeExtract.citations),
       refExtract.refs,
     ), fnExtract.markers), chipExtract.chips);
-    return withChipSources(markdown, joinedLines(markdown, buildBlockMapping(markdown, srcStart, srcEnd, rawSpans)));
+    const spans = gapExtract && gapExtract.gaps.length > 0 ? injectGapSpans(rawSpans, gapExtract.gaps) : rawSpans;
+    return settleGapPlaceholders(withChipSources(markdown, joinedLines(markdown, buildBlockMapping(markdown, srcStart, srcEnd, spans))));
   };
 
   /**
@@ -1425,6 +1445,28 @@ function parseBlocks(markdown: string, options?: ParseOptions): { blocks: Conten
     // A figure with labels (#854): `:::figure{resource=…}` … `:::`.
     if (refsMatch && refsMatch[1] === 'figure') {
       i = parseFigure(i, refsMatch[2] ?? '');
+      continue;
+    }
+
+    // An exercise's word bank (#1225): `::bank[sun | rain]{…}`.
+    const bankMatch = inExerciseText() ? trimmed.match(BANK_LINE_RE) : null;
+    if (bankMatch) {
+      const srcStart = lineOffsets[i]!;
+      const srcEnd = lineEndOffset(i);
+      const words = bankMatch[1] ?? '';
+      const wordsAt = srcStart + line.indexOf('::bank') + 7;
+      const run = words ? inlineRun(words, wordsAt, wordsAt + words.length, false, false) : { text: '', spans: [], sourceMap: [] };
+      blocks.push({
+        type: 'directive',
+        text: run.text,
+        spans: run.spans,
+        directiveName: 'bank',
+        directiveAttrs: parseDirectiveAttrs(bankMatch[2] ?? ''),
+        sourceStart: srcStart,
+        sourceEnd: srcEnd,
+        sourceMap: run.sourceMap,
+      });
+      i++;
       continue;
     }
 

@@ -43,6 +43,8 @@ function resolveChipStyleConfig(partial: ChipStyleConfig): ResolvedChipStyleConf
     italic: partial.italic ?? d.italic,
     gap: partial.gap ?? d.gap,
     ...(partial.dotted ? { dotted: partial.dotted } : {}),
+    ...(partial.underline ? { underline: partial.underline } : {}),
+    ...(partial.minWidth ? { minWidth: partial.minWidth } : {}),
   };
 }
 

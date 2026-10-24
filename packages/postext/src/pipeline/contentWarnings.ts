@@ -247,7 +247,8 @@ export function collectContentWarnings(
           out.push({ kind: 'unknownResourceId', resourceId: span.ref.resourceId, usage: 'ref', ...abs(range) });
         }
       }
-      const style = span.chip?.style;
+      // An exercise's answer (`[[…]]`, #1225) is a chip the engine styles.
+      const style = span.chip?.gap ? undefined : span.chip?.style;
       if (style !== undefined && !chipStyles.has(style)) {
         out.push({ kind: 'unknownChipStyle', style, ...abs(inlineRange(body, at, b.sourceEnd)) });
       }

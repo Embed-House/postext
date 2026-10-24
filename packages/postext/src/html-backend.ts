@@ -2027,16 +2027,29 @@ function renderChip(
 ): string {
   const bx = x + chip.marginLeft;
   const parts: string[] = [];
+  const boxGeometry = `position:absolute;left:${bx.toFixed(3)}px;top:${(baselineOffset - chip.ascent).toFixed(3)}px;` +
+    `width:${chip.boxWidth.toFixed(3)}px;height:${(chip.ascent + chip.descent).toFixed(3)}px;box-sizing:border-box;`;
   if (chip.background || (chip.borderColor && chip.borderWidth > 0)) {
+    // An underline (#1227) is the box's bottom border alone.
+    const border = chip.borderColor && chip.borderWidth > 0
+      ? `${chip.underline ? 'border-bottom' : 'border'}:${chip.borderWidth.toFixed(3)}px ${chip.underline && chip.underline !== 'solid' ? chip.underline : 'solid'} ${chip.borderColor};`
+      : '';
     parts.push(
-      `<span aria-hidden="true" style="position:absolute;left:${bx.toFixed(3)}px;top:${(baselineOffset - chip.ascent).toFixed(3)}px;` +
-      `width:${chip.boxWidth.toFixed(3)}px;height:${(chip.ascent + chip.descent).toFixed(3)}px;box-sizing:border-box;` +
+      `<span aria-hidden="true" style="${boxGeometry}` +
       (chip.background ? `background:${chip.background};` : '') +
-      (chip.borderColor && chip.borderWidth > 0 ? `border:${chip.borderWidth.toFixed(3)}px solid ${chip.borderColor};` : '') +
-      (chip.borderRadius > 0 ? `border-radius:${chip.borderRadius.toFixed(3)}px;` : '') +
+      border +
+      (chip.borderRadius > 0 && !chip.underline ? `border-radius:${chip.borderRadius.toFixed(3)}px;` : '') +
       `"></span>`,
     );
   }
+  // Where an exercise is answered (#1230): a box the digital outputs find
+  // by its slot. A blank reads as what it is; its answer is not written.
+  if (chip.exercise || chip.blank) {
+    const data = chip.exercise ? ` data-pt-ex="${chip.exercise.ex}" data-pt-slot="${esc(chip.exercise.slot)}"` : '';
+    const label = chip.blank ? ` role="img" aria-label="${esc(chip.blankLabel ?? 'blank')}"` : '';
+    parts.push(`<span class="pt-ex-slot${chip.blank ? ' pt-ex-blank' : ''}"${data}${label} style="${boxGeometry}"></span>`);
+  }
+  if (chip.blank) return parts.join('');
   let tx = bx + chip.borderWidth + chip.paddingX;
   // The runs in the chip's paint order (`VDTChip.order`); a right-to-left
   // run's box reads right to left.

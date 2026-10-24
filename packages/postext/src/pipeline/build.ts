@@ -61,6 +61,7 @@ import { orientLinesToFrames } from './mirrorFrame.js';
 import { verseMarginTopPx } from './buildBlockKind.js';
 import { verseLinesSettings, versesLineByLine } from './verseLines.js';
 import type { MeasurementCache } from '../measure/index.js';
+import { expandDocumentExercises, needsExerciseExpansion, withExerciseStyles } from '../exercises/build.js';
 import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, computeColumnBboxes, resolvedDirection, resolvedLocale, validateConfigCache } from './config.js';
 import { resolveDebugConfig } from '../defaults/debug.js';
 import { defaultFontSet, documentFontFaces, faceRequestKey, fontFallbacks, type FontFaceSetLike } from '../fonts/faces.js';
@@ -641,7 +642,9 @@ function placeDocumentPass(
    *  band above (a page-span box, a top float band) or a caption below has
    *  shortened it, so what does not fit it may still fit a full column. */
   const shortSideColumn = (page: VDTPage, col: VDTColumn): boolean => col.bbox.height < page.contentArea.height - 0.5;
-  const resolved = resolveAllConfig(config);
+  // Rebound once the content is read when it holds exercises (#1227): the
+  // config then also carries their chip and paragraph styles.
+  let resolved = resolveAllConfig(config);
   // Bitmaps sized by the document's `layout.bitmapResolution` carry it as
   // their own `resolution` from here on (#631); under the default policy
   // the content is untouched.
@@ -860,7 +863,23 @@ function placeDocumentPass(
   // The citations of resource captions and notes (#529), formatted with
   // the text's.
   const captionCitations = citationsApplied && citationsApplied.captions.size > 0 ? citationsApplied.captions : undefined;
-  const footnoteSplit = splitFootnoteDefinitions(citationsApplied?.blocks ?? parsedBody);
+  // Exercises (#1227): each set as a box of ordinary blocks, its solutions
+  // where the book prints them.
+  const exerciseExpansion = needsExerciseExpansion(citationsApplied?.blocks ?? parsedBody)
+    ? expandDocumentExercises(
+      citationsApplied?.blocks ?? parsedBody,
+      resolved,
+      config,
+      resolvedLocale(resolved),
+      computeColumnBboxes(pageMetrics.contentArea, resolved)[0]?.width ?? pageMetrics.contentArea.width,
+      continuation,
+    )
+    : undefined;
+  if (exerciseExpansion) {
+    resolved = withExerciseStyles(resolved, config, resolvedLocale(resolved));
+    doc.exercises = exerciseExpansion.records;
+  }
+  const footnoteSplit = splitFootnoteDefinitions(exerciseExpansion?.blocks ?? citationsApplied?.blocks ?? parsedBody);
   const footnoteDefs = footnoteSplit.defs;
   // Numbered by page or column (`numbering: 'page'`), a note takes the
   // number the previous build gave it where it landed; the first build
@@ -1002,6 +1021,8 @@ function placeDocumentPass(
   const syntheticBoxes = [
     ...(spanEmbeds.wrapped ? [spanEmbedStyle(bodyStyle.lineHeightPx, resolved.layout.inlineResourceGap !== 'above')] : []),
     ...(codeBoxes.wrapped ? [codeBoxStyle(resolved)] : []),
+    // The boxes exercises are set in (#1227).
+    ...(exerciseExpansion?.wrapped ? exerciseExpansion.boxes : []),
     // The frameless box of a composed page's story (#855).
     ...(composedWrap.wrapped || comicText.wrapped ? [frameBoxStyle(Math.max(resolved.bodyText.avoidOrphans ? resolved.bodyText.orphanMinLines : 1, resolved.bodyText.avoidWidows ? resolved.bodyText.widowMinLines : 1))] : []),
     // The boxes of main-flow groups: sub-columns a body line apart in the
@@ -1020,7 +1041,7 @@ function placeDocumentPass(
     : resolved.calloutStyles;
   // A box nested in another looks its style up in the configuration it is
   // laid out with: the listings' box among them.
-  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped || comicText.wrapped ? { ...resolved, calloutStyles } : resolved;
+  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped || comicText.wrapped || exerciseExpansion?.wrapped ? { ...resolved, calloutStyles } : resolved;
   const blockquoteStyle = resolveBlockquoteStyle(resolved);
   const listLevelIndentsPx = computeLevelIndentsPx(resolved, bodyStyle.fontSizePx);
   const orderedMetrics = computeOrderedListRunMetrics(contentBlocks, resolved, bodyStyle.fontSizePx);
