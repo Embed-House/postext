@@ -297,7 +297,7 @@ Earlier passes shield their content from later ones. Math is extracted before em
 
 **Close:** a bare `:::` line closes the **innermost** open container. A stray `:::` with nothing open is a literal paragraph.
 
-**Known containers:** `callout`, `paragraphs`, `part`, `columns`, `paper`, `frame`, `module` and, inside a `:::figure`, `label` (composed pages, §12.2; the last two from 1.48).
+**Known containers:** `callout`, `paragraphs`, `part`, `columns`, `paper`, `frame`, `module` and, inside a `:::figure`, `label` (composed pages, §12.2; the last two from 1.48); `exercise`, with `solution` and `hint` inside it (§7.6).
 
 **Unknown names** such as `:::note`, `:::figure` or `:::aside` are **not** containers (`:::verse` is a raw-body block, §12, not a container either). The fence line becomes paragraph text, the content parses normally, and the closing `:::` becomes a literal paragraph too. The sandbox raises `unknownDirective`.
 
@@ -331,10 +331,10 @@ Earlier passes shield their content from later ones. Math is extracted before em
 :::
 
 :::callout{type="card"}
-The statement of the exercise.
+A worked example.
 
-:::callout{type="answer"}
-Answer box.
+:::callout{type="result"}
+Its result.
 :::
 :::
 ```
@@ -425,6 +425,64 @@ de damas tan bien servido
 :::paper{type=coatedGloss grammage=130}
 ## Plates
 ::resource{id="plate-1"}
+:::
+```
+
+### 7.6 `:::exercise` (exercises, solutions, hints)
+
+An exercise is content: its instruction, questions, options, answers and worked solution are in the Markdown; its form (number badge, option labels, blank look, writing areas, where solutions go) is an `exerciseStyles` entry (configuration.md §13c). It replaces the old "box style + nested answer callout" recipe: the engine prints the pupil's version, builds the answer key and places the solutions. Full guide: docs `exercises-en.mdx`.
+
+- **Fence:** `:::exercise{type style title #id n level icon example columns select shuffle bank lines area mark size directions hidden}` … `:::`. All optional.
+- **Instruction:** the leading paragraphs up to the first list, `[[…]]`, `::bank` or nested fence; set in the style's instruction type after the number. An exercise whose first paragraph holds a gap has no instruction: the number runs into that paragraph.
+- **Inside:** `:::solution` … `:::` (worked or model solution, any Markdown; never printed in the exercise, goes where the solutions go); `:::hint` … `:::` (screen editions only, never printed). Both outside an exercise print nothing (`solutionOutside`). An exercise inside another is reported (`exerciseNested`).
+- **`type`** (inferred when absent: task list → `choice`, `->` pairs → `match`, `[[…]]` → `gaps`, else `open`; aliases `mcq`, `tf`, `cloze`, `matching`, `sorting`, `essay`…):
+
+| `type` | Markdown | Prints |
+|---|---|---|
+| `choice` | `- [x] right` / `- [ ] wrong`; several questions = ordered list of stems, each with its task list indented under it | options a) b) c) (labels by language: A. zh, ア ja, أ) ar), one a line; `columns=3` side by side; `select=one\|many` (more than one `[x]` = many) |
+| `truefalse` | `- [x] true statement` / `- [ ] false one` | numbered statements, `T □ F □` at the line end (V/F, R/F, √/×, ○/×, ✓/✗ by language) |
+| `gaps` | `[[water]]`, `[[colour \| color]]` (accepted answers), `[[go \| (goes)]]` (inline choice, the bracketed one right), `[[went]]{width=6}` (6 em), `\|` literal bar | a blank as wide as the exercise's longest answer + 1.5 em; inline choice `(go / goes)`; `bank` or `::bank[sun \| rain]` (distractors) prints a shuffled word bank under the instruction |
+| `match` | `- Bee -> Hive` (`→` too); `- -> Den` a distractor; `shuffle=false` | two columns, the right shuffled, dots to join (`match.look: 'letters'`: right column lettered, a blank per left item) |
+| `order` | the list in the right order; `shuffle=false` | shuffled items, a box each for the number |
+| `scramble` | `- She / goes / to school` (split at ` / `, else spaces) | pieces shuffled with slashes, a ruled line under each |
+| `sort` | `- Mammals: dog, whale, bat` (`,` `;` `、` `，` `،`) | a word bank of all items, a column per category (≤ 4) with ruled lines |
+| `mark` | text with `[[word]]` to mark; `mark=circle\|box\|underline\|highlight`, per word `[[w]]{mark=underline}` | the text as is; answers ring/box/underline/highlight the words |
+| `open` | instruction (+ optional list of questions); `lines=N`; `area=lines\|dots\|grid\|seyes\|tianzige\|box\|none`; model answer in `:::solution` | ruled space (3 lines default) under the instruction or under each list item |
+| `wordsearch` | `- WORD` per line; `size=N`, `directions="across down diagonal backwards"` (default across down diagonal), `hidden` (no list) | letter grid + word list; unplaceable word → `exerciseWordUnplaced` |
+| `crossword` | `- WORD: clue` | numbered grid + Across/Down clue lists (in the document language) |
+| `arithmetic` | `- 345 + 278` (`+ - − × x * ÷ : /`, whole numbers; Arabic-Indic digits read) | cells in columns, up to 4 a row; division `bracket` (en zh ja ar), `potence` (es ca fr it pt), `inline` (de) |
+
+- **Numbering:** per style counter, reset each chapter by default (`number.resetOn`), carried across chapters. `n=12` fixes a number (the next go on from 13). `level=2` prints ●●○; `icon="pair"` prints a glyph the style defines; `title="…"` prints bold after the number. `example` prints the first item answered (answers' colour) and does not ask it.
+- **`#id`** makes it a `:ref` target; the reference prints the exercise's title, or its page when it has none (not "Exercise 3"): write the number in the text when the source says "see exercise 3" and the number is fixed with `n`.
+- **Solutions** (config `exercises.solutions.placement`, a style's `solutions` over it): `none` (default), `after`, `inverted` (box turned 180°), `chapterEnd` (before the next `#`, under the localized heading), `directive` (where a single line `:::solutions` stands; `title="…"`; `:::solutions{scope="book"}` prints every chapter's key and solutions, chapter by chapter, from the book outline). `exercises.edition: 'teacher'` overprints every answer in place.
+- **Warnings:** `exerciseUnknownType`, `exerciseUnknownStyle`, `exerciseNoAnswer`, `exerciseUnreadItem`, `exerciseWordUnplaced`, `exerciseNested`, `solutionOutside`.
+- `[[…]]` is read only inside `:::exercise`; elsewhere it stays literal.
+
+```md
+:::exercise{bank}
+Complete the sentences with the words in the box.
+
+1. The roots take in [[water]] from the soil.
+2. The leaves make the plant's [[food]].
+
+::bank[stones | wind]
+:::
+
+:::exercise{columns=3 level=1}
+Choose the right answer.
+
+1. The roots of a plant take in
+   - [x] water
+   - [ ] light
+   - [ ] seeds
+:::
+
+:::exercise{type=open lines=4}
+Why do plants need light?
+
+:::solution
+They use light to make their food.
+:::
 :::
 ```
 
@@ -780,7 +838,7 @@ $$
 
 ## 12. Single-line directives `:::name{attrs}`
 
-Known directives: `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index`, `bibliography` (§10.7); the raw-body blocks `:::references`, `:::verse`, `:::page` and `:::strip` (comics, below); `:::figure` (postext 1.34, §12.2). They must be alone on their line (same fence regex as §7).
+Known directives: `pagebreak`, `numbering`, `columnbreak`, `space`, `toc`, `index`, `bibliography` (§10.7), `solutions` (§7.6); the raw-body blocks `:::references`, `:::verse`, `:::page` and `:::strip` (comics, below); `:::figure` (postext 1.34, §12.2). They must be alone on their line (same fence regex as §7).
 
 | Directive | Attributes | Effect |
 |---|---|---|
@@ -1071,7 +1129,8 @@ styles, malformed embeds and ragged table grids itself, in `doc.contentWarnings`
 | Block quotation | `> …` (single block), or `:::paragraphs{style="quote"}` for multiple paragraphs. |
 | Bulleted/numbered list | One line per item. 2 spaces per nesting level. Type the real numbers. Letter or roman item labels are set by the config `numberFormat`, not the source. |
 | List item with several paragraphs | Not possible. Merge into one line, or follow the item with a plain paragraph. |
-| Sidebar / box / "Key points" / exercise | `:::callout{type="…" title="…" label="…"}`. Two columns inside use `:::columns`. Answer boxes use a nested callout. |
+| Sidebar / box / "Key points" | `:::callout{type="…" title="…" label="…"}`. Two columns inside use `:::columns`. |
+| Exercise, activity, test question (choice, true/false, gaps, matching, ordering, word search, crossword, operations, open answer) | `:::exercise{type=…}` with the answers in the Markdown (§7.6): `- [x]`, `[[answer]]`, `A -> B`; the worked answer in `:::solution`. Its look is an `exerciseStyles` entry (configuration.md §13c), its frame a callout style named by the style's `box`. Solutions placement and the teacher's edition are `exercises` settings. Never an answer box drawn as a nested callout or blank lines typed as `____`. |
 | Column bands in the running text (briefs in three columns, a poster's columns across a two-column page, a bilingual poem side by side) | `:::columns{count=3 span="page" rule}` … `:::` in the text (≥ 1.25); `breaks` + the default `flow="parallel"` for side-by-side streams that must stay level across pages. No frameless box needed. |
 | Figure / photo / diagram | A resource plus `:ref{id="…"}` in the sentence that first cites it (auto float). For an unnumbered ornament or a fixed spot: `placement.position:"here"` plus `::resource{id="…"}` on its own line. |
 | Table | A table resource (`TableModel` JSON). Cite it with `:ref`. Inline `$…$` works in cells (postext ≥ 1.19); display maths does not. Text the source aligned with tab stops (a menu, a cast list, marks at the margin, a form) is not a table: paragraphs with tab stops (rows above). |
