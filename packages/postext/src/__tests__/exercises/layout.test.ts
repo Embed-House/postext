@@ -74,4 +74,12 @@ describe('exercises laid out (#1227)', () => {
     expect(icons[1]).toMatchObject({ kind: 'glyph', alt: 'Speak', glyph: '*', color: '#2b7a3d' });
     expect(icons[1]!.fontString).toContain('Icons');
   });
+
+  it('writes a true/false answer in a bracket: full width in Chinese', () => {
+    const md = ':::exercise{type=truefalse}\n判断。\n\n- [x] 云是小水滴。\n:::\n';
+    const zh = build(md, { ...base, locale: 'zh-Hans', exerciseStyles: [{ id: 'a', trueFalse: { look: 'bracket' } }] });
+    expect(zh.blocks.map(textOf).join('\n')).toContain('（[___]）');
+    const pt = build(md.replace('判断。', 'V ou F.'), { ...base, locale: 'pt-BR', exerciseStyles: [{ id: 'a', trueFalse: { look: 'bracket' } }] });
+    expect(pt.blocks.map(textOf).join('\n')).toContain('([___])');
+  });
 });
