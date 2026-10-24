@@ -13,6 +13,20 @@ import type { DesignPathElement, DesignTextElement, PostextConfig } from '../../
 
 // What the exercises programme left (#1244).
 
+/** `html` with every `<tag …>…</tag>` element taken out (any letter case). */
+function withoutElements(html: string, tag: string): string {
+  const lower = html.toLowerCase();
+  let out = '';
+  let at = 0;
+  for (let open = lower.indexOf(`<${tag}`, at); open >= 0; open = lower.indexOf(`<${tag}`, at)) {
+    const close = lower.indexOf(`</${tag}>`, open);
+    if (close < 0) break;
+    out += html.slice(at, open);
+    at = close + tag.length + 3;
+  }
+  return out + html.slice(at);
+}
+
 class StubCtx {
   font = '';
   measureText(s: string): { width: number } {
@@ -57,7 +71,7 @@ describe('a reading over a blank', () => {
   });
 
   it('writes the reading in the HTML page, the blank still unanswered', () => {
-    const html = renderToHtml(build(md, config({ locale: 'zh-Hans' }))).replace(/<script[\s\S]*?<\/script>/g, '');
+    const html = withoutElements(renderToHtml(build(md, config({ locale: 'zh-Hans' }))), 'script');
     expect(html).toContain('>chūn</span>');
     expect(html).toContain('>tiān</span>');
     expect(html).not.toContain('>春<');
