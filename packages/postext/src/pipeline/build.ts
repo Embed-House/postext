@@ -3889,6 +3889,9 @@ function placeDocumentPass(
   /** The band (`page:band`) a keep-with-next rollback last took each
    *  heading out of, by content index. */
   const headingLeftBand = new Map<number, string>();
+  /** The band (`page:band`) each page-span heading opened under the text
+   *  of its page was set at the head of (#1238), by content index. */
+  const spanHeadingOpenedHere = new Map<number, string>();
   /**
    * A `span: 'page'` heading with `spanBreak: false` (#539) opens where the
    * text reaches: the band the flow is in closes level under its text (a
@@ -3949,6 +3952,7 @@ function placeDocumentPass(
     if (top + height + style.marginBottomPx + minLines * bodyStyle.lineHeightPx > bandBottom + 0.01) return false;
     if (capHere) uncapBand(cols, uncappedBottoms);
     if (!closeBandAt(page, cols, cutY, top, cursor)) return false;
+    spanHeadingOpenedHere.set(blockIdx, `${page.index}:${currentBand(page, cursor)}`);
     pendingSpacing = 0;
     return true;
   };
@@ -4324,6 +4328,19 @@ function placeDocumentPass(
     let n = 0;
     for (let j = col.blocks.length - 1; j >= 0 && isFreeHeading(col.blocks[j]!) && !holdsHeadFloat(col, col.blocks[j]!); j--) n++;
     return n;
+  };
+  /** Whether a block moving on whole may take the `run` headings closing
+   *  `col` along. A run that is all the column holds would open the next
+   *  column just as it opens this one, and is rolled back no further —
+   *  unless it opens a band a page-span heading cut under the text of the
+   *  page (`spanBreak: false`, #1238): rolled back, that heading opens the
+   *  next page instead (`headingLeftBand`), with the block it is kept with. */
+  const headingRunMayLeave = (col: VDTColumn, run: number): boolean => {
+    if (run <= 0) return false;
+    if (run < col.blocks.length) return true;
+    const head = col.blocks[0]!;
+    return head.contentIndex !== undefined
+      && spanHeadingOpenedHere.get(head.contentIndex) === `${cursor.pageIndex}:${col.band ?? 0}`;
   };
 
   /**
@@ -5864,7 +5881,7 @@ function placeDocumentPass(
             else break;
           }
           pendingSpacing = 0;
-          if (part === 0 && resolved.headings.keepWithNext && run > 0 && run < curCol.blocks.length) {
+          if (part === 0 && resolved.headings.keepWithNext && headingRunMayLeave(curCol, run)) {
             const rolledBack = rollbackHeadings(curCol);
             advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
             return (rolledBack[0]!.contentIndex ?? startIdx - rolledBack.length) - 1;
@@ -6238,7 +6255,7 @@ function placeDocumentPass(
     const spacingBefore = Math.max(pendingSpacing, floatGapPx);
     if (col.blocks.length > 0 && height > col.availableHeight - spacingBefore + FIT_EPS) {
       const run = trailingHeadingRun(col);
-      if (run > 0 && run < col.blocks.length) {
+      if (headingRunMayLeave(col, run)) {
         const rolled = rollbackHeadings(col);
         pendingSpacing = 0;
         advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onAtomicNewPage(height));
@@ -8451,7 +8468,7 @@ function placeDocumentPass(
           if (partIndex === 0 && curCol.blocks.length > 0) {
             // Moving on whole must not strand a heading closing the column.
             const headingRun = trailingHeadingRun(curCol);
-            if (resolved.headings.keepWithNext && headingRun > 0 && headingRun < curCol.blocks.length) {
+            if (resolved.headings.keepWithNext && headingRunMayLeave(curCol, headingRun)) {
               const rolledBack = rollbackHeadings(curCol);
               if (rolledBack.length > 0) {
                 blockIdx = (rolledBack[0]!.contentIndex ?? blockIdx - rolledBack.length) - 1;
@@ -9018,7 +9035,7 @@ function placeDocumentPass(
         // Only a short column (under a float, a page-span box) lets the run
         // move on to a taller one.
         const headingRun = trailingHeadingRun(curCol);
-        const runFillsColumn = headingRun > 0 && headingRun === curCol.blocks.length;
+        const runFillsColumn = headingRun > 0 && !headingRunMayLeave(curCol, headingRun);
         const strands = partIndex === 0 && vdtType !== 'heading'
           && headingRun > 0 && !runFillsColumn;
         const pullsRun = vdtType === 'heading' && (!runFillsColumn || shortColumn);

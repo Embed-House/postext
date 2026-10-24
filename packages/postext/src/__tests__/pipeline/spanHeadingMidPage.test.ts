@@ -128,4 +128,28 @@ describe('a span: page heading that opens mid-page (#539)', () => {
       expect(sub!.pageIndex).toBe(title!.pageIndex);
     }
   });
+
+  it('moves on with the box kept with it when the box does not fit the band under it (#1238)', () => {
+    // The band under the cut holds the heading and the widow minimum of
+    // body lines, not the box that follows it: the box moved on whole
+    // (or, splittable, with too few lines for a cut) and left the heading
+    // alone at the page foot, the only block of the band's first column.
+    const sentence = 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore. ';
+    const box = Array.from({ length: 8 }, (_, i) => `**Group ${i}**\\\nMondays at 10, parish hall`).join('\n\n');
+    const style: HeadingStyleConfig = { id: 'a', breakBefore: { enabled: false }, span: 'page', spanBreak: false };
+    const strayed: string[] = [];
+    for (const keepTogether of [true, false]) {
+      for (const fill of [21, 28, 35, 36, 67]) {
+        const md = [
+          '# First {style="a"}', '', Array.from({ length: fill }, () => sentence.repeat(2)).join('\n\n'), '',
+          '# Second {style="a"}', '', ':::callout{type="k" title="Every week"}', box, ':::',
+        ].join('\n');
+        const doc = buildDocument({ markdown: md }, { headingStyles: [style], calloutStyles: [{ id: 'k', keepTogether }] }, createMeasurementCache());
+        const [, second] = headings(doc);
+        const frame = doc.blocks.find((b) => b.type === 'callout')!;
+        if (second!.pageIndex !== frame.pageIndex) strayed.push(`${keepTogether ? 'whole' : 'split'} ${fill}`);
+      }
+    }
+    expect(strayed).toEqual([]);
+  });
 });
