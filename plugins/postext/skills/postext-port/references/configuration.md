@@ -1397,7 +1397,7 @@ ExerciseStyleConfig {
           fontSize? (em of the text; else 0.58 of the cell), blocked? (a crossword's empty cells) },
   arithmetic: { division=lang ('bracket' en zh ja ar; 'potence' es ca fr it pt; 'inline' de), columns=4 },
   level: { glyph='●', empty='○', max=3, color=main },
-  icons: { [id]: { resourceId? | glyph + fontFamily?, color?, alt?, size?=0.75 } }  (inline symbols after the number, size in ems),
+  icons: { [id]: { resourceId? | glyph + fontFamily?, color?, alt?, size?=0.75 } }  (inline symbols after the number, size in ems; beside a shaped number they take its height and band),
   answers: { color=#d6246e, fontFamily?, italic=false }  (teacher's edition, example items, key marks),
   solutions?: ExerciseSolutionsConfig (over the book's, for this style's exercises),
   digital: { correctColor=#1e8e3e, wrongColor=#c5221f }

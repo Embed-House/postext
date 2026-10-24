@@ -52,7 +52,7 @@ export function paintInlineIcon(ctx: CanvasRenderingContext2D, icon: VDTInlineIc
     ctx.fillStyle = icon.color ?? ink;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
-    fillContextText(ctx, icon.glyph, box.x, baseline);
+    fillContextText(ctx, icon.glyph, box.x, box.baseline);
   } else if (icon.kind === 'line') {
     ctx.strokeStyle = icon.color ?? ink;
     ctx.lineWidth = icon.strokePx ?? 1;

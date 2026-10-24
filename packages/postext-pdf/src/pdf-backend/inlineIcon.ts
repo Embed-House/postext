@@ -47,7 +47,7 @@ export function paintSwatchSegmentPdf(
   if (icon.kind === 'glyph' && icon.glyph && icon.fontString) {
     const font = fontCache.get(icon.fontString) ?? fallbackFont;
     const size = parseFontString(icon.fontString)?.sizePx ?? box.height;
-    drawTextPx(ctx, icon.glyph, box.x, baseline, font, size, color, undefined, '');
+    drawTextPx(ctx, icon.glyph, box.x, box.baseline, font, size, color, undefined, '');
     return;
   }
   const { scale, pageHeightPt } = ctx;
