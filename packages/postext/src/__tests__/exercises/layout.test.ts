@@ -57,4 +57,21 @@ describe('exercises laid out (#1227)', () => {
     const texts = doc.blocks.filter((b) => b.type !== 'callout').map(textOf);
     expect(texts.join('\n')).toMatchSnapshot();
   });
+
+  it('sets activity icons as inline symbols: a picture of the book, or a glyph in its face and colour', () => {
+    const cfg: PostextConfig = {
+      ...base,
+      exerciseStyles: [{ id: 'a', icons: {
+        write: { resourceId: 'pencil', alt: 'Write', size: 1 },
+        oral: { glyph: '*', fontFamily: 'Icons', color: { hex: '#2b7a3d', model: 'hex' }, alt: 'Speak' },
+      } }],
+    };
+    const resources = [{ id: 'pencil', typeId: 'figure', kind: 'svg' as const, createdAt: 0, updatedAt: 0, svg: { fileId: 'pencil.svg', width: 24, height: 24 } }];
+    const doc = buildDocument({ markdown: ':::exercise{icon="write oral"}\nFill [[in]].\n:::\n', resources }, cfg, createMeasurementCache());
+    const icons = doc.blocks.flatMap((b) => b.lines.flatMap((l) => (l.segments ?? []).flatMap((s) => (s.swatch?.icon ? [s.swatch.icon] : []))));
+    expect(icons).toHaveLength(2);
+    expect(icons[0]).toMatchObject({ kind: 'resource', alt: 'Write', fileId: 'pencil.svg', svg: true });
+    expect(icons[1]).toMatchObject({ kind: 'glyph', alt: 'Speak', glyph: '*', color: '#2b7a3d' });
+    expect(icons[1]!.fontString).toContain('Icons');
+  });
 });

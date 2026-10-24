@@ -7,8 +7,8 @@
  * a record of what it asks and answers for the digital outputs (#1230).
  */
 
-import type { ContentBlock, DirectiveAttrs, ExerciseGap, InlineSpan } from '../parse/index.js';
-import { CHIP_PLACEHOLDER } from '../parse/inlineFormatting.js';
+import type { ContentBlock, DirectiveAttrs, ExerciseGap, InlineIcon, InlineSpan } from '../parse/index.js';
+import { CHIP_PLACEHOLDER, SWATCH_PLACEHOLDER } from '../parse/inlineFormatting.js';
 import type { CalloutStyleConfig, ChipStyleConfig, DigitSystem, HeadingCounters, OutlineEntry, ParagraphStyleConfig } from '../types.js';
 import type { ExerciseSettings, ResolvedExerciseStyle, ResolvedExercisesConfig } from '../defaults/exercises.js';
 import { pickExerciseStyle, solutionsOf } from '../defaults/exercises.js';
@@ -479,9 +479,18 @@ class Emitter {
       const marks = this.style.level.glyph.repeat(level) + this.style.level.empty.repeat(this.style.level.max - level);
       lead.push(chipRun(this.ids.level, textRun(marks, this.at), this.at));
     }
+    // Activity icons are inline symbols (#1058): a picture of the book or a
+    // glyph in its own face, in its own colour, read as their `alt`.
     for (const name of (ex.attrs.icon ?? '').split(/\s+/).filter(Boolean)) {
       const icon = this.style.icons[name];
-      if (icon?.glyph) lead.push(chipRun(this.ids.icon, textRun(icon.glyph, this.at), this.at));
+      if (!icon || (!icon.resourceId && !icon.glyph)) continue;
+      const symbol: InlineIcon = {
+        alt: icon.alt ?? '',
+        ...(icon.resourceId ? { resource: icon.resourceId } : { glyph: icon.glyph!, ...(icon.fontFamily ? { font: icon.fontFamily } : {}) }),
+        ...(icon.size !== undefined && icon.size > 0 ? { size: icon.size } : {}),
+      };
+      const color = icon.color?.paletteId ?? icon.color?.hex ?? '';
+      lead.push(textRun(SWATCH_PLACEHOLDER, this.at, { swatch: { color, icon: symbol } }));
     }
     if (ex.attrs.title) lead.push(textRun(ex.attrs.title, this.at, { bold: true }));
     const first = ex.instruction[0];

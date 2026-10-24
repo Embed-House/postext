@@ -4330,6 +4330,9 @@ export interface ExerciseIcon {
   color?: ColorValue;
   /** What it stands for, read aloud and in the tagged PDF. */
   alt?: string;
+  /** Its height in ems of the instruction. Default the height of a
+   *  capital (`0.75`). */
+  size?: number;
 }
 
 /** How answers print where they are shown: a teacher's edition and the
