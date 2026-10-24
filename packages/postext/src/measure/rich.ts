@@ -28,7 +28,7 @@ import { cjkJoinBreaks, hasCJK } from './cjk.js';
 import { composeCjkParagraph, cjkWordBreaks, composesAsCjk, composesDashRow, spanMarks, type CjkWordBreaks } from './cjkCompose.js';
 import { getCjkComposition } from './cjkPunctuation.js';
 import { graphemeCount, graphemesOf } from './graphemes.js';
-import { CENTRAL, readingBaseline, sideMarkerRun } from './cjkAnnotate.js';
+import { CENTRAL, sideMarkerRun } from './cjkAnnotate.js';
 import { fontEm, getMeasureRegion, getMeasureUprightDigits, getMeasureWritingMode, lineBaselineOffset, mayHoldVerticalCell, measuringVertically, verticalTextWidth, withMeasureWritingMode } from './vertical.js';
 import { latinReader, uprightDigitCandidates } from '../writingMode.js';
 import { sliceSpan } from '../parse/links.js';
@@ -751,7 +751,17 @@ export function chipToken(
       ...(box?.dotted ? { dotted: box.dotted } : {}),
       ...(box?.underline ? { underline: box.underline } : {}),
       ...(chip.blank ? { blank: true as const, ...(chip.blankLabel ? { blankLabel: chip.blankLabel } : {}) } : {}),
-      ...(readings.length > 0 ? { readings: readings.map(({ width, ...r }) => (void width, { ...r, dx: r.dx + borderWidth + paddingX })) } : {}),
+      // Across the line, each reading's em box clears the chip's own box
+      // (its padding and border too, which a boxed blank has a lot of): over
+      // it, or under it, and right of a vertical line, as the box is turned.
+      ...(readings.length > 0 ? {
+        readings: readings.map(({ width, under, ...r }) => {
+          void width;
+          const rtEm = sizePx / 2;
+          const axis = under ? descent + READING_GAP_EM * sizePx + rtEm / 2 : -(ascent + READING_GAP_EM * sizePx + rtEm / 2);
+          return { ...r, dx: r.dx + borderWidth + paddingX, dy: axis + CENTRAL * rtEm };
+        }),
+      } : {}),
       ...(chip.exercise ? { exercise: chip.exercise } : {}),
       ...(chip.joinNext ? { joinNext: true } : {}),
       // The words' source (#857), while the runs read as written.
@@ -761,14 +771,18 @@ export function chipToken(
   };
 }
 
+/** The room between a chip's box and its readings, in ems of the chip. */
+const READING_GAP_EM = 0.06;
+
 /** The readings of a chip's ruby words (`VDTChip.readings`, #1244), at
- *  half the chip's size, from where its text starts: a group ruby's over
+ *  half the chip's size, from where its text starts (their place across
+ *  the line is set once the box is): a group ruby's over
  *  its whole base, a per-character one over its character; readings that
  *  would touch are set a quarter of their em apart and centred, as a row,
  *  over the text (`textWidth`) — a blank hides its characters, so the
  *  pinyin of 看拼音写词语 reads as a word. */
-function chipReadings(runs: VDTChipRun[], rubies: (InlineSpan['ruby'] | undefined)[], font: string, sizePx: number, textWidth: number): Array<VDTAnnotationRun & { width: number }> {
-  const out: Array<VDTAnnotationRun & { width: number }> = [];
+function chipReadings(runs: VDTChipRun[], rubies: (InlineSpan['ruby'] | undefined)[], font: string, sizePx: number, textWidth: number): Array<VDTAnnotationRun & { width: number; under: boolean }> {
+  const out: Array<VDTAnnotationRun & { width: number; under: boolean }> = [];
   let x = 0;
   for (let i = 0; i < runs.length; ) {
     const ruby = rubies[i];
@@ -779,7 +793,7 @@ function chipReadings(runs: VDTChipRun[], rubies: (InlineSpan['ruby'] | undefine
     while (ruby?.group && j < runs.length && rubies[j]?.id === ruby.id) w += runs[j++]!.width;
     if (ruby && ruby.text) {
       const rt = measureTextWidth(ruby.text, font);
-      out.push({ text: ruby.text, dx: x + (w - rt) / 2, dy: readingBaseline(ruby.text, font, ruby.position === 'under' ? 'under' : 'over', sizePx), fontString: font, width: rt });
+      out.push({ text: ruby.text, dx: x + (w - rt) / 2, dy: 0, fontString: font, width: rt, under: ruby.position === 'under' });
     }
     x += w;
     i = j;

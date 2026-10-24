@@ -5,6 +5,7 @@ import { renderToHtml } from '../../html-backend.js';
 import { parseMarkdown } from '../../parse/index.js';
 import { readExercises, readOperation } from '../../exercises/model.js';
 import { gridBox } from '../../exercises/grids.js';
+import { CENTRAL } from '../../measure/cjkAnnotate.js';
 import { areaElements } from '../../exercises/designs.js';
 import { exerciseSettingsOf } from '../../defaults/exercises.js';
 import { expandExercises } from '../../exercises/expand.js';
@@ -67,6 +68,21 @@ describe('a reading over a blank', () => {
       const left = readings[0]!.dx;
       const right = blank.boxWidth - (readings[1]!.dx + 4 * 7);
       expect(Math.abs(left - right)).toBeLessThan(0.01);
+    }
+  });
+
+  it('sets the reading beside a boxed blank, clear of its padding, on a vertical page too', () => {
+    const vmd = ':::exercise\n□に漢字を書きましょう。\n\n[[{春|はる}]]\n:::\n';
+    for (const writingMode of ['horizontal-tb', 'vertical-rl'] as const) {
+      const doc = build(vmd, config({ locale: 'ja', layout: { layoutType: 'single', writingMode }, exerciseStyles: [{ id: 'k', blank: { look: 'box', width: 'answer' } }] }));
+      const blank = chips(doc).find((c) => c.styleId.includes('blank'))!;
+      const r = blank.readings![0]!;
+      const rtEm = Number(/([\d.]+)px/.exec(r.fontString)![1]);
+      // The reading's em box (its axis ± half its em) lies past the box's
+      // top, right of a vertical line.
+      const axis = r.dy - CENTRAL * rtEm;
+      expect(axis + rtEm / 2).toBeLessThanOrEqual(-blank.ascent);
+      expect(axis + rtEm / 2).toBeGreaterThan(-blank.ascent - rtEm / 2);
     }
   });
 
