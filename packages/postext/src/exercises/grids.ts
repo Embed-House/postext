@@ -446,9 +446,29 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   const cell = dimPt(style.grid.cell, input.bodySizePt) * 0.8;
   const ops = ex.operations.map((op, k) => layOperation(op, style.arithmetic.division, k + 1));
   const gapCols = 2;
-  const perRow = Math.max(1, Math.min(style.arithmetic.columns, Math.floor((input.measurePt / cell + gapCols) / (Math.max(1, ...ops.map((o) => o.cols)) + gapCols))));
+  const columns = style.arithmetic.columns;
+  const room = Math.max(1, Math.floor(input.measurePt / cell + gapCols));
+  // Rows of operations in slots of one width, so they line up in columns;
+  // when one is much wider than the rest (a German `638 : 3 = 212 R 2`),
+  // rows packed by each one's own width when that sets fewer rows.
   const colW = Math.max(1, ...ops.map((o) => o.cols)) + gapCols;
-  const w = Math.min(input.measurePt, perRow * colW * cell);
+  const perRow = Math.max(1, Math.min(columns, Math.floor(room / colW)));
+  const packed: number[][] = [];
+  let used = room;
+  ops.forEach((o, k) => {
+    if (used + o.cols + gapCols > room || packed[packed.length - 1]!.length >= columns) { packed.push([]); used = 0; }
+    packed[packed.length - 1]!.push(k);
+    used += o.cols + gapCols;
+  });
+  const uniform = Array.from({ length: Math.ceil(ops.length / perRow) }, (_, i) => ops.map((_, k) => k).slice(i * perRow, i * perRow + perRow));
+  const rowList = packed.length < uniform.length ? packed : uniform;
+  const offsets: number[] = [];
+  for (const row of rowList) {
+    let x = 0;
+    for (const k of row) { offsets[k] = x; x += rowList === uniform ? colW : ops[k]!.cols + gapCols; }
+  }
+  const widthCells = Math.max(1, ...ops.map((o, k) => offsets[k]! + o.cols));
+  const w = Math.min(input.measurePt, widthCells * cell);
   // Numbers read left to right on a right-to-left page too: the engine
   // mirrors a design there, so each operation is drawn mirrored in its own
   // box first (the operations follow one another right to left).
@@ -462,12 +482,12 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   const slots: ExerciseSlot[] = [];
   const fontColor = style.grid.color ? { color: style.grid.color } : {};
   const font = style.grid.fontFamily ?? input.font ? { fontFamily: (style.grid.fontFamily ?? input.font)! } : {};
-  for (let i = 0; i < ops.length; i += perRow) {
-    const row = ops.slice(i, i + perRow);
+  for (const ks of rowList) {
+    const row = ks.map((k) => ops[k]!);
     const rows = Math.max(...row.map((o) => o.rows));
     row.forEach((o, j) => {
-      const k = i + j;
-      const ox = j * colW * cell;
+      const k = ks[j]!;
+      const ox = offsets[k]! * cell;
       mirrorAt = ox;
       mirrorW = o.cols * cell;
       for (const c of o.cells) {
@@ -495,7 +515,7 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   els.unshift(pathElement('answers', boxesD, w, y, style.grid.rule, ruleW * 0.5, { dash: [{ value: ruleW, unit: 'pt' }, { value: ruleW * 1.5, unit: 'pt' }] }));
   els.push(pathElement('rules', rulesD, w, y, style.grid.color ?? BLACK, ruleW));
   const box = drawnBox(input.id, els, y, 4, 4) as GridBox;
-  box.info = { kind: 'arithmetic', rows: Math.round(y / cell), cols: perRow * colW, cellPt: cell, xPt: 0, yPt: 0 };
+  box.info = { kind: 'arithmetic', rows: Math.round(y / cell), cols: widthCells, cellPt: cell, xPt: 0, yPt: 0 };
   box.slots = slots;
   box.key = ex.operations.map((op) => `${op.a} ${op.sign ?? OP_SIGN[op.op]} ${op.b} = ${op.result}${op.remainder ? ` (${op.remainder})` : ''}`);
   return box;
