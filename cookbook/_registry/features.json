@@ -25451,12 +25451,12 @@
         "en": "Exercise styles",
         "es": "Estilos de ejercicio",
         "ca": "Estils d'exercici",
-        "fr": "Styles d'exercice",
+        "fr": "Styles d’exercice",
         "de": "Übungsstile",
-        "it": "Stili di esercizio",
+        "it": "Stili degli esercizi",
         "pt": "Estilos de exercício",
         "zh": "练习样式",
-        "ja": "練習問題のスタイル",
+        "ja": "練習問題スタイル",
         "ar": "أنماط التمارين"
       }
     },
@@ -25556,15 +25556,15 @@
       "slug": "exercises",
       "heading": {
         "en": "Choice and true or false",
-        "es": "Elección y verdadero o falso",
-        "ca": "Elecció i vertader o fals",
-        "fr": "Choix et vrai ou faux",
+        "es": "Opción múltiple y verdadero o falso",
+        "ca": "Opció múltiple i vertader o fals",
+        "fr": "Choix multiple et vrai ou faux",
         "de": "Auswahl und richtig oder falsch",
-        "it": "Scelta e vero o falso",
-        "pt": "Escolha e verdadeiro ou falso",
+        "it": "Scelta multipla e vero o falso",
+        "pt": "Múltipla escolha e verdadeiro ou falso",
         "zh": "选择题与判断题",
         "ja": "選択問題と正誤問題",
-        "ar": "الاختيار والصواب والخطأ"
+        "ar": "الاختيار من متعدد وصح أو خطأ"
       }
     },
     "since": "1.59.0",
@@ -25669,15 +25669,15 @@
       "slug": "exercises",
       "heading": {
         "en": "Gaps and word banks",
-        "es": "Huecos y bancos de palabras",
-        "ca": "Buits i bancs de paraules",
+        "es": "Huecos y banco de palabras",
+        "ca": "Buits i banc de paraules",
         "fr": "Textes à trous et banques de mots",
-        "de": "Lücken und Wortspeicher",
-        "it": "Spazi vuoti e banche di parole",
-        "pt": "Lacunas e bancos de palavras",
-        "zh": "填空与词库",
+        "de": "Lückentexte und Wortspeicher",
+        "it": "Completamento e riquadro di parole",
+        "pt": "Lacunas e banco de palavras",
+        "zh": "填空题与词库",
         "ja": "穴埋めと語群",
-        "ar": "الفراغات وبنوك الكلمات"
+        "ar": "ملء الفراغات وبنك الكلمات"
       }
     },
     "since": "1.59.0",
@@ -25779,14 +25779,14 @@
       "slug": "exercises",
       "heading": {
         "en": "Matching and sorting",
-        "es": "Unir y clasificar",
-        "ca": "Unir i classificar",
+        "es": "Relacionar y clasificar",
+        "ca": "Relacionar i classificar",
         "fr": "Relier et classer",
-        "de": "Zuordnen und sortieren",
-        "it": "Collegare e classificare",
-        "pt": "Ligar e classificar",
-        "zh": "连线与分类",
-        "ja": "線結びと分類",
+        "de": "Zuordnen und Sortieren",
+        "it": "Collegamento e classificazione",
+        "pt": "Ligar colunas e classificar",
+        "zh": "连线题与分类题",
+        "ja": "線で結ぶ問題と分類",
         "ar": "التوصيل والتصنيف"
       }
     },
@@ -25883,15 +25883,15 @@
       "slug": "exercises",
       "heading": {
         "en": "Ordering",
-        "es": "Ordenar",
-        "ca": "Ordenar",
-        "fr": "Remettre dans l'ordre",
+        "es": "Ordenación",
+        "ca": "Ordenació",
+        "fr": "Remise en ordre",
         "de": "Ordnen",
         "it": "Riordinare",
-        "pt": "Ordenar",
+        "pt": "Ordenação",
         "zh": "排序",
         "ja": "並べ替え",
-        "ar": "الترتيب"
+        "ar": "إعادة الترتيب"
       }
     },
     "since": "1.59.0",
@@ -25985,12 +25985,12 @@
         "en": "Marking words",
         "es": "Marcar palabras",
         "ca": "Marcar paraules",
-        "fr": "Marquer des mots",
+        "fr": "Repérer des mots",
         "de": "Wörter markieren",
-        "it": "Segnare parole",
+        "it": "Parole da segnare",
         "pt": "Marcar palavras",
-        "zh": "圈画词语",
-        "ja": "語に印をつける",
+        "zh": "圈画题",
+        "ja": "印を付ける",
         "ar": "تعليم الكلمات"
       }
     },
@@ -26095,13 +26095,13 @@
       "slug": "exercises",
       "heading": {
         "en": "Open questions and writing areas",
-        "es": "Preguntas abiertas y zonas de escritura",
-        "ca": "Preguntes obertes i zones d'escriptura",
-        "fr": "Questions ouvertes et zones d'écriture",
+        "es": "Preguntas abiertas y espacio para escribir",
+        "ca": "Preguntes obertes i espai per escriure",
+        "fr": "Questions ouvertes et zones d’écriture",
         "de": "Offene Fragen und Schreibflächen",
-        "it": "Domande aperte e spazi di scrittura",
+        "it": "Domande aperte e spazi per scrivere",
         "pt": "Perguntas abertas e áreas de escrita",
-        "zh": "开放题与书写区",
+        "zh": "问答题与书写区",
         "ja": "記述問題と解答欄",
         "ar": "الأسئلة المفتوحة ومساحات الكتابة"
       }
@@ -26196,11 +26196,11 @@
         "es": "Sopas de letras y crucigramas",
         "ca": "Sopes de lletres i mots encreuats",
         "fr": "Mots mêlés et mots croisés",
-        "de": "Suchsel und Kreuzworträtsel",
-        "it": "Crucipuzzle e cruciverba",
+        "de": "Wortsuchrätsel und Kreuzworträtsel",
+        "it": "Cerca parole e cruciverba",
         "pt": "Caça-palavras e palavras cruzadas",
         "zh": "找词游戏与填字游戏",
-        "ja": "単語探しとクロスワード",
+        "ja": "言葉さがしとクロスワード",
         "ar": "البحث عن الكلمات والكلمات المتقاطعة"
       }
     },
@@ -26291,8 +26291,8 @@
       "slug": "exercises",
       "heading": {
         "en": "Operations in columns",
-        "es": "Operaciones en columna",
-        "ca": "Operacions en columna",
+        "es": "Operaciones en vertical",
+        "ca": "Operacions en vertical",
         "fr": "Opérations posées",
         "de": "Schriftliches Rechnen",
         "it": "Operazioni in colonna",
@@ -26390,11 +26390,11 @@
         "en": "Solutions",
         "es": "Soluciones",
         "ca": "Solucions",
-        "fr": "Corrigés",
+        "fr": "Solutions",
         "de": "Lösungen",
         "it": "Soluzioni",
-        "pt": "Gabarito",
-        "zh": "答案",
+        "pt": "Soluções",
+        "zh": "答案与解答",
         "ja": "解答",
         "ar": "الحلول"
       }
@@ -26488,13 +26488,13 @@
       "heading": {
         "en": "Teacher's edition",
         "es": "Edición del profesor",
-        "ca": "Edició del professor",
+        "ca": "Edició del professorat",
         "fr": "Livre du professeur",
         "de": "Lehrerausgabe",
-        "it": "Guida per l'insegnante",
-        "pt": "Livro do professor",
+        "it": "Edizione per l’insegnante",
+        "pt": "Edição do professor",
         "zh": "教师用书",
-        "ja": "教師用指導書",
+        "ja": "教師用の赤刷り版",
         "ar": "طبعة المعلم"
       }
     },
@@ -26584,7 +26584,7 @@
         "de": "Übungen in HTML und EPUB",
         "it": "Esercizi in HTML ed EPUB",
         "pt": "Exercícios em HTML e EPUB",
-        "zh": "HTML 与 EPUB 中的练习",
+        "zh": "HTML与EPUB中的练习",
         "ja": "HTML と EPUB の練習問題",
         "ar": "التمارين في HTML وEPUB"
       }
