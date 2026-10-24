@@ -3662,7 +3662,7 @@ function exerciseBoxHtml(block: VDTBlock, options: HtmlPaint): string {
   const box = own !== undefined ? boxes.get(own) : undefined;
   if (!box) return '';
   const { x, y, width, height } = block.bbox;
-  const part = block.callout.part !== undefined ? ` data-pt-part="${block.callout.part}"${block.callout.continued ? ' data-pt-continued' : ''}` : '';
+  const part = block.callout.part !== undefined ? ` data-pt-part="${block.callout.part}"${block.callout.continued ? ' data-pt-continued=""' : ''}` : '';
   return `<div class="pt-ex-box" data-pt-box="${own}" data-pt-ex="${box.ex}"${box.outer ? ` data-pt-exercise="${box.ex}"` : ''}${part} ` +
     `style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;pointer-events:none;"></div>`;
 }

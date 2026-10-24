@@ -71,6 +71,10 @@ export interface ExerciseData extends ExerciseDigital {
   pxPerPt: number;
   /** The body text's size, page pixels: the size of the exercise bar. */
   bodyPx: number;
+  /** The boxes stand in the text's flow (a reflowable book) rather than
+   *  on a positioned page: the bar and the solution follow the box, sized
+   *  in ems of its text. */
+  flow?: boolean;
   exercises: ExerciseRecord[];
 }
 
@@ -89,12 +93,15 @@ export function exerciseDataOf(doc: {
   return { ...digital, pxPerPt, bodyPx: dimensionToPx(doc.config.bodyText.fontSize, doc.config.page.dpi), exercises: records };
 }
 
-/** `data` as the text of a `<script type="application/json">`: no `</`
- *  that would close the element early, no line separators a reader might
+/** `data` as the text of a `<script type="application/json">`, in HTML
+ *  or XHTML: no `<` that would close the element early, no `&` an XML
+ *  parser would read as a reference, no line separators a reader might
  *  trip on. */
 export function exerciseDataJson(data: ExerciseData): string {
   return JSON.stringify(data)
     .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029');
 }

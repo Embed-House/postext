@@ -235,6 +235,8 @@ function exerciseRuntime(): Runtime {
     '.pt-ex-dot{fill:transparent;stroke:transparent;cursor:pointer;pointer-events:all;}' +
     '.pt-ex-dot.pt-ex-pending{stroke:#1a5fb4;stroke-width:2;}' +
     '.pt-ex-dot:focus{outline:none;stroke:#1a5fb4;stroke-width:2;}' +
+    '.pt-ex-bar.pt-ex-flow{position:static;justify-content:flex-start;margin-top:.6em;font-size:.8em;}' +
+    '.pt-ex-panel.pt-ex-flow{position:static;margin-top:.5em;box-shadow:none;font-size:.9em;}' +
     '.pt-ex-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}';
 
   function addStyle(root: any): () => void {
@@ -253,7 +255,7 @@ function exerciseRuntime(): Runtime {
     const doc: Document = root.nodeType === 9 ? root : root.ownerDocument;
     const cleanups: Array<() => void> = [];
     cleanups.push(addStyle(root));
-    const scopes: Array<{ scope: any; data: ExerciseData }> = [];
+    const scopes: Array<{ scope: any; data: ExerciseData; key?: string }> = [];
     if (opts.data) {
       scopes.push({ scope: root, data: opts.data });
     } else {
@@ -263,7 +265,10 @@ function exerciseRuntime(): Runtime {
         try { data = JSON.parse(scripts[i].textContent || ''); } catch (e) { void e; data = null; }
         if (!data || !data.exercises) continue;
         const holder = scripts[i].parentNode;
-        scopes.push({ scope: holder && holder !== root && holder.nodeType === 1 ? holder : root, data });
+        // The output may say what the answers are kept under (an EPUB:
+        // the book, so an exercise split over two page files is one).
+        const key = scripts[i].getAttribute('data-storage-key');
+        scopes.push({ scope: holder && holder !== root && holder.nodeType === 1 ? holder : root, data, ...(key ? { key } : {}) });
       }
     }
     const base = opts.storageKey || ('pt-ex:' + (typeof location !== 'undefined' ? location.pathname : ''));
@@ -272,7 +277,8 @@ function exerciseRuntime(): Runtime {
       if (data.interactive === false) continue;
       // Several documents on one page (a book's chapters): each keeps its
       // answers apart, as their exercise ids may meet.
-      const scopeKey = base + (scopes.length > 1 ? ':' + k : '');
+      const own = scopes[k]!.key;
+      const scopeKey = opts.storageKey ? base + (scopes.length > 1 ? ':' + k : '') : own || base + (scopes.length > 1 ? ':' + k : '');
       for (let j = 0; j < data.exercises.length; j++) setUp(scopes[k]!.scope, data, data.exercises[j]!, scopeKey, opts, doc, cleanups);
       const scope = scopes[k]!.scope;
       cleanups.push(() => {
@@ -290,10 +296,12 @@ function exerciseRuntime(): Runtime {
     };
   }
 
-  /** The text of the line an element stands on, for its accessible name. */
+  /** The text of the line an element stands on (a paragraph or a list
+   *  item in a reflowable book), for its accessible name. */
   function lineText(el: any): string {
-    let line = el;
-    while (line && !(line.classList && line.classList.contains('pt-line'))) line = line.parentNode;
+    let line = el.parentNode;
+    while (line && line.nodeType === 1 && !line.classList.contains('pt-line') && !/^(p|li|td|th|dd|dt)$/i.test(line.localName || '')) line = line.parentNode;
+    if (line && line.nodeType !== 1) line = null;
     const text = String((line || el).textContent || '').replace(/\s+/g, ' ').trim();
     return text.length > 80 ? text.slice(0, 79) + '\u2026' : text;
   }
@@ -341,6 +349,11 @@ function exerciseRuntime(): Runtime {
     const state: any = { v: saved.v || {}, checked: !!saved.checked, revealed: false };
     const ppt = data.pxPerPt || 1;
     const body = data.bodyPx || 16;
+    const flow = data.flow === true;
+    // The answer key written for a reader with no script: the bar's own
+    // takes its place.
+    const statics = scope.querySelectorAll('.pt-ex-static[data-pt-ex="' + id + '"]');
+    for (let i = 0; i < statics.length; i++) setAttr(statics[i], 'hidden', 'hidden');
     // The font of the exercise's text, for what is written on its areas.
     const firstLine = scope.querySelector('.pt-line');
     const textFont = firstLine && firstLine.style ? firstLine.style.fontFamily : '';
@@ -398,7 +411,11 @@ function exerciseRuntime(): Runtime {
       setAttr(target, 'role', null);
       setAttr(target, 'aria-label', null);
       addClass(target, 'pt-ex-ui');
-      const input = own(el('input', 'pt-ex-input pt-ex-ui', target));
+      // A blank may bring its input (a reflowable book's, typed into with
+      // no script): it is used as it is.
+      const given = target.querySelector('input');
+      const input = given || own(el('input', 'pt-ex-input pt-ex-ui', target));
+      if (given) addClass(given, 'pt-ex-ui');
       input.setAttribute('type', 'text');
       input.setAttribute('autocomplete', 'off');
       input.setAttribute('spellcheck', 'false');
@@ -878,10 +895,10 @@ function exerciseRuntime(): Runtime {
     let solutionBtn: any = null;
     let hintBtn: any = null;
     if (outer) {
-      const bar = own(el('div', 'pt-ex-bar pt-ex-ui', outer));
+      const bar = own(el('div', 'pt-ex-bar pt-ex-ui' + (flow ? ' pt-ex-flow' : ''), outer));
       bar.setAttribute('role', 'group');
       bar.setAttribute('aria-label', exName);
-      bar.style.fontSize = px(Math.max(body * 0.62, 9));
+      if (!flow) bar.style.fontSize = px(Math.max(body * 0.62, 9));
       colours(bar);
       const button = (text: string, fn: () => void): any => {
         const b = el('button', '', bar);
@@ -897,10 +914,10 @@ function exerciseRuntime(): Runtime {
       if (!instant) button(words.check || 'Check', () => { state.checked = true; persistNow(); feedback(); });
       solutionBtn = button(words.showSolution || 'Show solution', () => reveal(!state.revealed));
       button(words.reset || 'Try again', reset);
-      panel = el('div', 'pt-ex-panel pt-ex-ui', outer);
+      panel = el('div', 'pt-ex-panel pt-ex-ui' + (flow ? ' pt-ex-flow' : ''), outer);
       own(panel);
       panel.hidden = true;
-      panel.style.fontSize = px(Math.max(body * 0.72, 10));
+      if (!flow) panel.style.fontSize = px(Math.max(body * 0.72, 10));
       colours(panel);
     }
     void hintBtn;

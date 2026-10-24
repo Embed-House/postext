@@ -877,8 +877,9 @@ function placeDocumentPass(
     : undefined;
   if (exerciseExpansion) {
     resolved = withExerciseStyles(resolved);
-    // The document carries the config it was laid out with: the reflowable
-    // EPUB reads the exercise styles from it.
+    // The document's config names the exercises' chip and paragraph
+    // styles too: an output that styles its text from the config (a
+    // reflowable EPUB, #1231) finds them there.
     doc.config = resolved;
     doc.exercises = exerciseExpansion.records;
     doc.exerciseDigital = exerciseDigitalOf(exerciseSettingsFor(resolved));
