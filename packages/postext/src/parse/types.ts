@@ -125,13 +125,21 @@ export interface CodeBlockInfo {
 
 /** Recognized directive names. Unknown names are not parsed as directives —
  *  they fall through to the paragraph branch and surface via warnings. */
-export type DirectiveName = 'pagebreak' | 'numbering' | 'columnbreak' | 'space' | 'toc' | 'index' | 'bibliography' | 'references' | 'verse' | 'page' | 'strip' | 'figure';
+export type DirectiveName = 'pagebreak' | 'numbering' | 'columnbreak' | 'space' | 'toc' | 'index' | 'bibliography' | 'references' | 'verse' | 'page' | 'strip' | 'figure'
+  /** Where an exercise's solutions print (#1229): `:::solutions{scope=…}`. */
+  | 'solutions'
+  /** An exercise's word bank (#1225): a `::bank[sun | rain]` line inside a
+   *  `:::exercise`; its words are added to the bank as distractors. */
+  | 'bank';
 
 /** Recognized fenced-container names. A container opens with a
  *  `:::name{attrs}` line and closes with a bare `:::` line; the blocks in
  *  between are parsed as usual and bracketed by a `containerStart` /
  *  `containerEnd` marker pair sharing a `containerId`. */
 export type ContainerName = 'callout' | 'paragraphs' | 'part' | 'columns' | 'paper' | 'frame'
+  /** An exercise (#1225): `:::exercise{type=…}` … `:::` (see
+   *  `exercises/model.ts`), with its `:::solution` and `:::hint` inside. */
+  | 'exercise' | 'solution' | 'hint'
   /** A module of a composed page (#1062): `:::module{template="…"
    *  name="…"}` … `:::` inside a page fence (see {@link ComposedModuleFence}). */
   | 'module'
@@ -425,6 +433,22 @@ export interface InlineSpan {
     style?: string;
     spans: InlineSpan[];
     box?: ChipBox;
+    /** The box is as wide as this text would be in the chip's face, when
+     *  that is wider than its own text (#1227): a blank as wide as the
+     *  exercise's longest answer, so none gives its own away. */
+    widthText?: string;
+    /** The chip's text is laid out but not painted, copied or read (#1227):
+     *  a blank holding its answer, sized by it. Read as {@link blankLabel}. */
+    blank?: true;
+    /** What a blank is read as (`'blank'`, `'hueco'`). */
+    blankLabel?: string;
+    /** Where an exercise answers (#1230): the exercise's id and the slot the
+     *  chip stands for (`g3`, `q1o2`, `tf2t`…), for the digital outputs. */
+    exercise?: ExerciseHit;
+    /** Present when the chip is an answer written into an exercise's text
+     *  (`[[…]]`, #1225): what it asks. Its `spans` are the first right
+     *  answer. */
+    gap?: ExerciseGap;
     /** A piece of inline code that goes on after a space of its own
      *  (`codeSpace`, #845): on one line the two pieces are one box. */
     joinNext?: boolean;
@@ -689,6 +713,28 @@ export interface SwatchShape {
   gap?: Dimension;
 }
 
+/** An element of an exercise the digital outputs answer through (#1230):
+ *  the exercise's id and the slot's key. */
+export interface ExerciseHit {
+  ex: number;
+  slot: string;
+}
+
+/** An answer written into an exercise's text (`[[…]]`, #1225): accepted
+ *  answers (`[[colour | color]]`) or an inline choice (`[[go | (goes)]]`,
+ *  `choice`, the options in parentheses right). */
+export interface ExerciseGap {
+  /** Each option's inline Markdown, parentheses of a right one taken off. */
+  options: InlineSpan[][];
+  /** Each option's plain text. */
+  texts: string[];
+  /** The right options' indexes: every option when not a choice. */
+  correct: number[];
+  choice: boolean;
+  /** The attributes right after the gap (`[[went]]{width=6}`). */
+  attrs?: DirectiveAttrs;
+}
+
 /** A {@link SwatchShape} resolved for one swatch: lengths in px, the
  *  outline colour as hex. Only the fields the swatch sets. */
 export interface SwatchBox {
@@ -729,6 +775,10 @@ export interface ChipBox {
   gapPx: number;
   /** Letters painted as dots to trace (the style's `dotted`), px. */
   dotted?: { spacingPx: number; sizePx: number };
+  /** The outline drawn as a line under the text (the style's `underline`). */
+  underline?: 'solid' | 'dotted' | 'dashed';
+  /** The narrowest the box is (the style's `minWidth`), px. */
+  minWidthPx?: number;
 }
 
 /** Convenience discriminants for inline span iteration. */

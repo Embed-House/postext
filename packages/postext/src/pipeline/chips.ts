@@ -49,6 +49,8 @@ export function resolveChipBox(style: ResolvedChipStyleConfig, dpi: number, base
     ...(style.paddingBottom ? { paddingBottomPx: px(style.paddingBottom) } : {}),
     gapPx: px(style.gap),
     ...(style.dotted ? { dotted: resolveTextDots(style.dotted, dpi, fontSizePx) } : {}),
+    ...(style.underline ? { underline: style.underline } : {}),
+    ...(style.minWidth ? { minWidthPx: px(style.minWidth) } : {}),
   };
 }
 

@@ -32,6 +32,8 @@ import { DEFAULT_MARK_STYLES } from '../defaults/markStyles.js';
 import { DEFAULT_PARAGRAPH_STYLES } from '../defaults/paragraphStyles.js';
 import { DEFAULT_HEADING_STYLES } from '../defaults/headingStyles.js';
 import { resolveAllConfig } from './config.js';
+import { needsExerciseExpansion } from '../exercises/build.js';
+import { exerciseContentWarnings } from '../exercises/warnings.js';
 import { codeParseOptions } from './codeBlocks.js';
 import { planHeadingSections, sectionWritingMode } from './headingStyles.js';
 import { comicSourceWarnings } from '../comics/warnings.js';
@@ -247,7 +249,8 @@ export function collectContentWarnings(
           out.push({ kind: 'unknownResourceId', resourceId: span.ref.resourceId, usage: 'ref', ...abs(range) });
         }
       }
-      const style = span.chip?.style;
+      // An exercise's answer (`[[…]]`, #1225) is a chip the engine styles.
+      const style = span.chip?.gap ? undefined : span.chip?.style;
       if (style !== undefined && !chipStyles.has(style)) {
         out.push({ kind: 'unknownChipStyle', style, ...abs(inlineRange(body, at, b.sourceEnd)) });
       }
@@ -501,6 +504,9 @@ export function collectContentWarnings(
     }
   }
 
+  // Exercises (#1225): what their fences and items say that the engine
+  // cannot read.
+  if (needsExerciseExpansion(blocks)) out.push(...exerciseContentWarnings(blocks, config).map((w) => ({ ...w, sourceStart: w.sourceStart + offset, sourceEnd: w.sourceEnd + offset })));
   // Citations (#268): keys no reference defines, data that cannot be read.
   const metadata = fm.metadata as Record<string, unknown>;
   if (needsCitationContext(blocks, metadata)) {
@@ -965,6 +971,27 @@ export function formatWarning(w: LayoutWarning | ContentWarning | ConfigWarning 
       break;
     case 'unknownCalloutType':
       text = `Unknown callout type "${w.type}" — the box takes the first callout style`;
+      break;
+    case 'exerciseUnknownType':
+      text = `Unknown exercise type "${w.type}" — the exercise takes the kind its content tells`;
+      break;
+    case 'exerciseUnknownStyle':
+      text = `Unknown exercise style "${w.style}" — the exercise takes the first exercise style`;
+      break;
+    case 'exerciseNoAnswer':
+      text = `A ${w.exerciseKind} exercise has no right answer to check — tick an option with [x], or write the answers as [[…]]`;
+      break;
+    case 'exerciseUnreadItem':
+      text = `An item the exercise cannot read is set as written: "${w.text}"`;
+      break;
+    case 'exerciseNested':
+      text = 'An exercise inside another exercise is set as part of the outer one';
+      break;
+    case 'exerciseWordUnplaced':
+      text = `"${w.word}" does not fit the grid and is left out — a crossword word needs a letter in common with another`;
+      break;
+    case 'solutionOutside':
+      text = 'A :::solution or :::hint outside an exercise prints nothing';
       break;
     case 'templateUnknown':
       text = w.template === ''

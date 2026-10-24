@@ -1,4 +1,4 @@
-import { popGraphicsState, pushGraphicsState } from 'pdf-lib';
+import { concatTransformationMatrix, popGraphicsState, pushGraphicsState } from 'pdf-lib';
 import { isJapaneseLanguage, joinsLetters, leaderRuleGeometry, lineTextAlign, markerRuns, markerSetText, segmentOrientation } from 'postext';
 import type { Color, PDFFont } from 'pdf-lib';
 import type { VDTBlock, VDTDropCap, VDTLine, VDTLineSegment, MathRender } from 'postext';
@@ -862,6 +862,29 @@ export function renderBlock(
   resourceCtx?: ResourceRenderContext,
 ): void {
   if (block.hidden) return;
+  // A box printed upside down (#1229): drawn turned about its centre, a
+  // point (x, y) of the page landing at (2cx − x, 2cy − y).
+  if (block.turn) {
+    const { scale, pageHeightPt } = ctx;
+    ctx.page.pushOperators(pushGraphicsState(), concatTransformationMatrix(-1, 0, 0, -1, 2 * block.turn.cx * scale, 2 * (pageHeightPt - block.turn.cy * scale)));
+    try {
+      renderBlockUpright(ctx, block, columnWidth, columnX, fontCache, resourceCtx);
+    } finally {
+      ctx.page.pushOperators(popGraphicsState());
+    }
+    return;
+  }
+  renderBlockUpright(ctx, block, columnWidth, columnX, fontCache, resourceCtx);
+}
+
+function renderBlockUpright(
+  ctx: PageCtx,
+  block: VDTBlock,
+  columnWidth: number,
+  columnX: number,
+  fontCache: FontCache,
+  resourceCtx?: ResourceRenderContext,
+): void {
   const structure = resourceCtx?.structure;
   const linkRegistry = resourceCtx?.linkRegistry;
   // The head row of a cut contents block repeated at the top of the column

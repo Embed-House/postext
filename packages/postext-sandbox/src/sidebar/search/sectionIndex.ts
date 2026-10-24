@@ -18,6 +18,7 @@ import {
   DEFAULT_BODY_TEXT_CONFIG,
   DEFAULT_CALLOUT_STYLES,
   DEFAULT_CHIP_STYLES,
+  DEFAULT_EXERCISE_STYLES,
   DEFAULT_MARK_STYLES,
   DEFAULT_FOOTER_SLOT,
   DEFAULT_HEADER_SLOT,
@@ -27,6 +28,7 @@ import {
   DEFAULT_TOC_CONFIG,
   defaultComicFont,
   defaultComicSfxFont,
+  exerciseWords,
 } from 'postext';
 import type { SandboxLabels } from '../../types/labels.js';
 import {
@@ -62,6 +64,7 @@ const DEFAULT_SLICES: Partial<Record<keyof PostextConfig, unknown>> = {
   calloutStyles: DEFAULT_CALLOUT_STYLES,
   chipStyles: DEFAULT_CHIP_STYLES,
   markStyles: DEFAULT_MARK_STYLES,
+  exerciseStyles: DEFAULT_EXERCISE_STYLES,
   paragraphStyles: DEFAULT_PARAGRAPH_STYLES,
   headingStyles: DEFAULT_HEADING_STYLES,
   toc: DEFAULT_TOC_CONFIG,
@@ -75,6 +78,9 @@ const DEFAULT_SLICES: Partial<Record<keyof PostextConfig, unknown>> = {
 /** The faces the comics sections show while unset: they follow the
  *  document language. */
 const COMIC_DEFAULT_FONTS = ['en', 'ja', 'zh-Hans', 'zh-Hant', 'ar'].flatMap((l) => [defaultComicFont(l), defaultComicSfxFont(l)]);
+
+/** The languages the exercise words are written in. */
+const EXERCISE_LANGUAGES = ['en', 'es', 'ca', 'fr', 'de', 'it', 'pt', 'zh', 'ja', 'ar'];
 
 /** A query word with a digit (a level number, a size, a colour's
  *  components) is not indexed: it never rules a section out. */
@@ -151,6 +157,16 @@ function sourceWords(
     case 'outputProfiles':
       // The profile picker names each catalogue profile, and an uploaded one.
       return [...OUTPUT_PROFILES.map((p) => p.name), ...(config.print?.customProfile ? [config.print.customProfile.name] : [])];
+    case 'boxStyles':
+      // A picker of the book's box styles (exercise boxes, #1226).
+      return (config.calloutStyles ?? DEFAULT_CALLOUT_STYLES).flatMap((s) => [s.id, s.name ?? '']);
+    case 'exerciseWords':
+      // The words exercises print in the document language (the default
+      // label, true/false and the solutions heading), in every language.
+      return EXERCISE_LANGUAGES.flatMap((l) => {
+        const w = exerciseWords(l);
+        return [w.exercise, w.solutions, ...w.trueFalse];
+      });
   }
 }
 

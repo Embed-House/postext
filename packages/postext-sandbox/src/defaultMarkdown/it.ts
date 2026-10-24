@@ -588,7 +588,7 @@ L’editor tiene d’occhio anche il libro. Il suo menu dei capitoli elenca ogni
 
 ## Configurazione
 
-Il pannello **Grafica** modifica l’intera configurazione (più di cinquecento campi) per gruppi: pagina e colonne, sistema di scrittura, colori, tipografia, titoli e indice, elenchi, figure e tabelle, riquadri, fumetti, intestazioni e piè di pagina, parti, esportazione, Folio (il libro in 3D) e impostazioni avanzate. Una casella di ricerca trova qualsiasi opzione per nome, e il filtro **Modificate** mostra ciò che differisce dai valori predefiniti. Ogni campo e ogni sezione si possono reimpostare singolarmente, e la configurazione si può esportare e importare come file.
+Il pannello **Grafica** modifica l’intera configurazione (più di cinquecento campi) per gruppi: pagina e colonne, sistema di scrittura, colori, tipografia, titoli e indice, elenchi, figure e tabelle, riquadri, esercizi, fumetti, intestazioni e piè di pagina, parti, esportazione, Folio (il libro in 3D) e impostazioni avanzate. Una casella di ricerca trova qualsiasi opzione per nome, e il filtro **Modificate** mostra ciò che differisce dai valori predefiniti. Ogni campo e ogni sezione si possono reimpostare singolarmente, e la configurazione si può esportare e importare come file.
 
 ## Le cinque viste
 

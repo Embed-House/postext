@@ -15,7 +15,7 @@ import {
   pageComics,
   renderToHtmlIndexed,
 } from 'postext';
-import type { VDTDocument, VDTPage } from 'postext';
+import type { ExerciseData, VDTDocument, VDTPage } from 'postext';
 import type {
   EpubItem,
   EpubLandmark,
@@ -29,6 +29,7 @@ import { defaultAccessibility } from '../shared/accessibility.js';
 import { fontAssets, imageAssets, pageProgressionOf, remoteVideoItems, videoAssets } from '../shared/assets.js';
 import { decodeEntities, escapeAttr, escapeXml, htmlToXhtml, xhtmlDocument, xmlId } from '../shared/xml.js';
 import { videoScriptItem, VIDEO_SCRIPT_HREF, withVideoScript } from '../shared/videoScript.js';
+import { exerciseDataScript, exerciseScriptItem, EXERCISE_SCRIPT_HREF, staticKeyHtml, withExerciseScript } from '../shared/exerciseScript.js';
 import { navStrings } from '../package/strings.js';
 import { fontUses, missingFaces, type FontUse } from './fontUse.js';
 import { contentsRows, headingTitle, nestOutline, pageHeadings, partTitle, type OutlineEntry } from './outline.js';
@@ -62,6 +63,32 @@ interface PagePlan {
   lang: string;
   /** The page's comic markup (`page.comic`), as the renderer gave it. */
   comicHtml?: string;
+  /** The exercises the page shows (#1231), and what their answers are
+   *  kept under. */
+  exercises?: { data: ExerciseData; storageKey: string };
+}
+
+/** The outer box of an exercise as the renderer marks it (#1230): its id,
+ *  whether another part follows, and its geometry. */
+const EXERCISE_BOX_RE = /<div class="pt-ex-box" data-pt-box="(\d+)" data-pt-ex="\1" data-pt-exercise="\1"(?: data-pt-part="\d+")?( data-pt-continued="")? style="position:absolute;left:([-\d.e]+)px;top:([-\d.e]+)px;width:([-\d.e]+)px;height:([-\d.e]+)px;[^"]*"><\/div>/g;
+
+/** The exercises on a page's markup (#1231): their records, and the answer
+ *  key of each under its box's last part for a reader with no script. */
+function pageExercises(html: string, data: ExerciseData | undefined): { html: string; data?: ExerciseData } {
+  if (!data || !html.includes('data-pt-ex=')) return { html };
+  const ids = new Set([...html.matchAll(/data-pt-ex="(\d+)"/g)].map((m) => Number(m[1])));
+  const records = data.exercises.filter((r) => ids.has(r.id));
+  if (records.length === 0) return { html };
+  const byId = new Map(records.map((r) => [r.id, r]));
+  const size = num(data.bodyPx * 0.7);
+  const out = html.replace(EXERCISE_BOX_RE, (box: string, id: string, continued: string | undefined, x: string, y: string, w: string, h: string) => {
+    const record = byId.get(Number(id));
+    if (!record || continued) return box;
+    const top = num(Number(y) + Number(h));
+    return box + staticKeyHtml(record, data.words.showSolution,
+      ` style="position:absolute;left:${x}px;top:${top}px;width:${w}px;z-index:2;font:400 ${size}px/1.3 sans-serif;background:#fff;"`);
+  });
+  return { html: out, data: { ...data, exercises: records } };
 }
 
 /** The book language of a document: its configured locale, else the
@@ -156,7 +183,9 @@ export async function buildFixedPublication(docs: EpubSource, options: RenderToE
   const plans: PagePlan[] = [];
   const fileOfId = new Map<string, string>();
   let bookIndex = 0;
-  for (const doc of docs) {
+  // What a reader's answers are kept under: the book, and the document.
+  const bookKey = `pt-ex:${metadata.identifier ?? `${metadata.title}:${metadata.language}`}`;
+  for (const [docIndex, doc] of docs.entries()) {
     const lang = docLanguage(doc, metadata.language);
     // Videos (#454): a self-hosted file plays in the reader's player; a
     // YouTube or Vimeo one is its poster linked to the video (an EPUB may
@@ -196,7 +225,13 @@ export async function buildFixedPublication(docs: EpubSource, options: RenderToE
       const ids = [pageId, ...[...html.matchAll(/\sid="([^"]*)"/g)].map((m) => xmlId(decodeEntities(m[1]!)))];
       for (const id of ids) if (!fileOfId.has(id)) fileOfId.set(id, file);
       const comicHtml = rendered.pages[i]?.comicHtml;
-      plans.push({ doc, page, bookIndex, file, html, ids, outline, lang, ...(comicHtml ? { comicHtml } : {}) });
+      const ex = pageExercises(html, rendered.exercises);
+      html = ex.html;
+      plans.push({
+        doc, page, bookIndex, file, html, ids, outline, lang,
+        ...(comicHtml ? { comicHtml } : {}),
+        ...(ex.data ? { exercises: { data: ex.data, storageKey: `${bookKey}:${docIndex}` } } : {}),
+      });
       bookIndex++;
     }
     signal?.throwIfAborted();
@@ -221,6 +256,7 @@ export async function buildFixedPublication(docs: EpubSource, options: RenderToE
   const uses: FontUse[] = [];
   let describedImages = true;
   let scripted = false;
+  let exercisesScripted = false;
   for (const [n, plan] of plans.entries()) {
     const { doc, page, file } = plan;
     const geo = pageGeometry(doc, page);
@@ -254,8 +290,10 @@ export async function buildFixedPublication(docs: EpubSource, options: RenderToE
       magnify = htmlToXhtml(raw, { ids, hoistStyle: (s) => styles.push(s) });
     }
     const label = page.pageLabel || String(plan.bookIndex + 1);
-    // A page with videos to coordinate links the playback script (#507).
-    const xhtml = withVideoScript(xhtmlDocument({
+    // A page with videos to coordinate links the playback script (#507);
+    // one with exercises, the exercise script and their records (#1231).
+    const exerciseData = plan.exercises ? exerciseDataScript(plan.exercises.data, plan.exercises.storageKey) : '';
+    const xhtml = withExerciseScript(withVideoScript(xhtmlDocument({
       lang: plan.lang,
       dir: directionOf(plan.lang),
       title: `${metadata.title} (${label})`,
@@ -264,9 +302,10 @@ export async function buildFixedPublication(docs: EpubSource, options: RenderToE
         `<link rel="stylesheet" type="text/css" href="../${STYLESHEET_HREF}"/>\n` +
         (styles.length ? `<style>${escapeXml(styles.join('\n'))}</style>\n` : ''),
       bodyAttrs: ` style="width:${geo.width}px;height:${geo.height}px;${bg}"`,
-      body: `<div class="pt-page" id="${escapeAttr(plan.ids[0]!)}" dir="${pageDir(doc)}" style="${pageStyle}">${body}</div>${magnify}`,
-    }), `../${VIDEO_SCRIPT_HREF}`);
-    if (xhtml.includes('<script')) scripted = true;
+      body: `<div class="pt-page" id="${escapeAttr(plan.ids[0]!)}" dir="${pageDir(doc)}" style="${pageStyle}">${body}${exerciseData}</div>${magnify}`,
+    }), `../${VIDEO_SCRIPT_HREF}`), `../${EXERCISE_SCRIPT_HREF}`);
+    if (xhtml.includes(`${VIDEO_SCRIPT_HREF}"`)) scripted = true;
+    if (exerciseData) exercisesScripted = true;
     const id = file.replace(/\.xhtml$/, '');
     pageItems.push({ id, href: `${PAGES_DIR}${file}`, mediaType: 'application/xhtml+xml', data: xhtml });
     // A left-bound book's first page is a recto on the right; a right-bound
@@ -333,6 +372,7 @@ export async function buildFixedPublication(docs: EpubSource, options: RenderToE
   items.push({ id: 'style', href: STYLESHEET_HREF, mediaType: 'text/css', data: css });
   items.push(...fonts.items, ...imageItems, ...pageItems);
   if (scripted) items.push(videoScriptItem());
+  if (exercisesScripted) items.push(exerciseScriptItem());
   const toc = nestOutline(outline, PAGES_DIR);
   const hasImages = imageItems.length > 0 || options.cover !== undefined;
   return {

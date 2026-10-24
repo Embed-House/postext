@@ -28,8 +28,9 @@ export const OUTPUT = join(SRC, 'sidebar/search/sectionSearchIndex.generated.ts'
 const EXCLUDED_DIRS = ['controls/', 'ui/', 'context/', 'storage/', 'types/', 'sidebar/search/', 'hooks/', 'worker/'];
 
 /** What makes a section's rows show words that are not labels (units, the
- *  colour or font shown, resource names) — the search index adds those at
- *  run time from the config and the resources. */
+ *  colour or font shown, resource names, the box styles a picker offers, the
+ *  words exercises print) — the search index adds those at run time from
+ *  the config and the resources. */
 const SOURCES = {
   color: /<ColorPicker\b/,
   dimension: /<Dimension(?:Input|Control)\b/,
@@ -37,6 +38,8 @@ const SOURCES = {
   resources: /\buseSandboxResources\(|\bs\.resources\b/,
   citationStyles: /\bSTYLE_CATALOG\b/,
   outputProfiles: /\bOUTPUT_PROFILES\b/,
+  boxStyles: /\bboxStyleOptions\(/,
+  exerciseWords: /\bexerciseWords\(|\bresolveExercisesConfig\(/,
 };
 
 function labelKeys() {
@@ -124,7 +127,7 @@ export function buildIndexSource() {
     "import type { SandboxLabels } from '../../types/labels.js';",
     "import type { SettingsSectionId } from '../sections/registry.js';",
     '',
-    "export type SearchWordSource = 'color' | 'dimension' | 'font' | 'resources' | 'citationStyles' | 'outputProfiles';",
+    "export type SearchWordSource = 'color' | 'dimension' | 'font' | 'resources' | 'citationStyles' | 'outputProfiles' | 'boxStyles' | 'exerciseWords';",
     '',
     'export interface SectionSearchKeys {',
     '  keys: readonly (keyof SandboxLabels)[];',

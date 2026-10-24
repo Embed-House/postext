@@ -664,7 +664,8 @@ and marker. Boxes taller than a column split anyway. Set `snapToGrid: false` for
 
 ### C5. Nested boxes
 A `:::callout` inside a callout is its own box, at the parent's inner width.
-Use it for a video box inside a feature, or an answer inside an exercise.
+Use it for a video box inside a feature. An exercise's answer is not a
+nested box: write it in the `:::exercise` (C7).
 
 ### C6. Worksheets: exercises of one shape, words in the Markdown
 Workbooks repeat a few shapes (a word to trace on a ruling, a sentence to
@@ -704,7 +705,85 @@ The lesson stays a heading (`##` under the book's `#`), the exercise is not
 one: never use `###`/`####` with attributes such as `{w="owl" model="owl"}`
 as design slots. The text a reader reads (the word, the box title) lives in
 the chapter; attributes carry only ids (pictures, patterns). Recipe Nº 161
-(handwriting workbook) is the worked example.
+(handwriting workbook) is the worked example. Exercises that ask and answer
+(choice, gaps, matching…) are `:::exercise` fences instead (C7).
+
+### C7. Textbook and workbook exercises: `:::exercise`
+Activities, review questions, tests and drills are `:::exercise` fences
+(document-format.md §7.6), not boxes with answer boxes inside. The engine
+prints the pupil's version from the answers written in the Markdown, builds
+the key and places the solutions, and the HTML and EPUB editions make the
+same exercises answerable.
+
+1. **Read the source's conventions** before writing a line: how exercises
+   are numbered (bold `1.`, a number in a disc or square, "Activity 3",
+   一、二、, restarting per unit or running through the book), how options
+   are labelled (a) b), A. B., ア イ, أ ب) and ticked (a box, a ring, the
+   label circled, a bracket （　） after the stem), how a blank looks (line,
+   dots, box, its width), what the writing space is (ruled lines, squares,
+   Seyès, 田字格, an empty frame), difficulty marks and activity icons, and
+   where the answers are (none, after each exercise, upside down at the
+   foot, at the end of the unit or the book, a teacher's edition in red).
+2. **Pick the kind of each exercise** from what the pupil does: tick or
+   ring an option `choice`; T/F `truefalse`; fill in `gaps` (word bank:
+   `bank` or `::bank[distractors]`; "circle the right form" is an inline
+   choice `[[go | (goes)]]`); join with lines `match`; number the steps
+   `order`; unscramble words `scramble`; put words in columns `sort`;
+   circle/underline words in a text `mark`; write an answer `open`; word
+   search, crossword, column operations. A source exercise that mixes two
+   kinds becomes two fences, or an `open` one when nothing is graded.
+3. **Write the answers in the Markdown**: `- [x]`, `[[answer | variant]]`,
+   `Left -> Right`, the right order, `- Category: a, b`, `- WORD: clue`,
+   `- 345 + 278`. A worked or model answer goes in `:::solution`; a hint in
+   `:::hint`. Take the answers from the source's key or teacher's book;
+   when the source has none, solve the exercise and say so in the report.
+   Keep printed numbers with `n=` only when the book's numbering is not a
+   plain count (gaps, a number repeated in a later unit).
+4. **Mimic the look with `exerciseStyles`** (configuration.md §13c): the
+   number's `shape`, `background`, `color`, `fontFamily` and `label`; the
+   instruction's family and colour; `options.labels`/`suffix`/`marker`/
+   `layout`/`bracket`; `blank.look`/`width`/`color`; `area.kind`/`lines`;
+   `trueFalse.labels` only when the book's letters differ from the
+   language default; `level` glyphs; `icons` glyphs; `answers.color` for
+   the teacher's red; `box` naming a `calloutStyles` entry when the
+   exercises sit in a tinted or ruled frame. One style per look (activity,
+   review, test), never one per kind or per page.
+5. **Place the solutions** with `exercises.solutions.placement` (`after`,
+   `inverted`, `chapterEnd`, `directive` + `:::solutions` or
+   `:::solutions{scope="book"}` in a final chapter); a teacher's edition is
+   the same chapters with `exercises.edition: 'teacher'` (a second edition
+   of the bundle, not a copy of the text). A screen edition that should
+   hide them sets `htmlViewer.overrides.exercises`.
+
+Content/form rule: every word a pupil reads (instruction, question,
+options, the words of a bank, clues, the solution) stays in the chapter;
+the config holds only form. Never type `______` for a blank, `☐` for a box
+or `a)` for a label, never draw answer lines with `:::space` inside a
+callout, and never print solutions by hand in a callout: the engine sets
+all of them from the exercise.
+
+```md
+:::exercise{type=truefalse level=1 icon="pair"}
+True or false?
+
+- [x] The Sun is a star.
+- [ ] The Moon gives its own light.
+:::
+```
+
+```js
+exerciseStyles: [{ id: 'activity', box: 'activity-frame',
+  number: { shape: 'disc', background: { hex: '#e2631b', model: 'hex' } },
+  instruction: { fontFamily: 'Source Sans 3' }, options: { marker: 'circle' },
+  blank: { look: 'dots' }, icons: { pair: { glyph: '👥' } } }],
+exercises: { solutions: { placement: 'chapterEnd' } },
+```
+
+Check the pages for: blanks wide enough for a pupil's hand (raise
+`blank.minWidth`), exercises split across a page (a framed style's callout
+`keepTogether`), word searches or crosswords that could not place a word
+(`exerciseWordUnplaced`), and the key at the chapter end matching the
+source's.
 
 ---
 

@@ -42,6 +42,13 @@ export type WarningKind =
   | 'strayFence'
   | 'unknownParagraphStyle'
   | 'unknownCalloutType'
+  | 'exerciseUnknownType'
+  | 'exerciseUnknownStyle'
+  | 'exerciseNoAnswer'
+  | 'exerciseUnreadItem'
+  | 'exerciseNested'
+  | 'exerciseWordUnplaced'
+  | 'solutionOutside'
   | 'columnsFlowUnknown'
   | 'templateUnknown'
   | 'slotUnknown'
@@ -269,6 +276,17 @@ export type WarningPayload =
   /** A `:::callout{type="…"}` container names a type that is not in
    *  `config.calloutStyles`. */
   | { kind: 'unknownCalloutType'; type: string }
+  /** Exercises (#1225): a `type` or `style` no kind or exercise style
+   *  has, a graded exercise with no right answer, an item its kind cannot
+   *  read, an exercise inside another, a word a grid could not place, a
+   *  `:::solution` or `:::hint` outside an exercise. */
+  | { kind: 'exerciseUnknownType'; type: string }
+  | { kind: 'exerciseUnknownStyle'; style: string }
+  | { kind: 'exerciseNoAnswer'; exerciseKind: string }
+  | { kind: 'exerciseUnreadItem'; text: string }
+  | { kind: 'exerciseNested' }
+  | { kind: 'exerciseWordUnplaced'; word: string }
+  | { kind: 'solutionOutside' }
   /** `:::columns{flow=…}` names neither `snake` nor `parallel` (#634): the
    *  group takes the default. */
   | { kind: 'columnsFlowUnknown'; value: string }

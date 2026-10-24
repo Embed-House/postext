@@ -1,0 +1,388 @@
+{/* docs/exercises-en.mdx */}
+
+export const metadata = {
+  title: 'Exercises',
+  sidebarTitle: 'Exercises',
+  description: 'How Postext sets the exercises of a textbook or a workbook: the :::exercise fence, its twelve kinds from multiple choice to long division, answers written in the Markdown, numbering, solutions after the exercise, upside down, at the end of the chapter or of the book, the teacher\'s edition, the checks, and exercises answered on screen in HTML and EPUB',
+  lang: 'en',
+  lastUpdated: '2026-10-24',
+  readingTime: '16 min',
+  order: 36,
+  plainSummary: "This page explains how to write exercises in a Postext book: questions with options to choose, true or false statements, sentences with blanks, pairs to join, words to find in a grid, sums to work out and more. You write each exercise and its answers in the text of the chapter, and Postext prints it in the right form: the number, the options, the lines to fill in. The answers can be printed after the exercise, upside down, at the end of the chapter or not at all, and the same text can give a teacher's edition with every answer filled in. On screen, in the HTML viewer and in EPUB books, readers can answer the exercises and check them.",
+};
+
+# Exercises
+
+**The questions and their answers are in the Markdown; how they print is an exercise style.**
+
+An exercise is a block of the chapter written between `:::exercise` and `:::`. Inside it go the instruction, the questions, the options, the blanks and their answers, and a worked solution when there is one. Postext reads the answers from the text, prints the exercise for the pupil (blank lines, empty boxes, shuffled items), builds the answer key, and puts the solutions where the book wants them. The number badge, the option labels, the look of a blank and the ruling of a writing area come from [`exerciseStyles`](/en/docs/configuration-exercises#exercise-styles); where the solutions go and which edition is printed come from [`exercises`](/en/docs/configuration-exercises#book-settings). The same Markdown therefore gives the pupil's book, the teacher's book and an interactive edition on screen.
+
+An exercise is set as a box of ordinary paragraphs, chips and drawings, so it is placed, split between columns and pages, tagged in an accessible PDF and painted in every output as any box is. A book with no `:::exercise` lays out as before.
+
+## The fence
+
+```md
+:::exercise
+Choose the right answer.
+
+- [ ] Madrid
+- [x] Lisbon
+- [ ] Rome
+:::
+```
+
+The paragraphs at the head of the exercise, up to its first list, blank or bank, are the **instruction**. They are set in the style's instruction type (bold by default) after the exercise number. Everything after them is the body: what the exercise asks.
+
+The fence takes these attributes:
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>What it does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>type</code></td><td>The kind of exercise (below). It can be left out when the content says it: a task list is <code>choice</code>, a list of <code>-&gt;</code> pairs is <code>match</code>, a text with <code>[[…]]</code> is <code>gaps</code>, anything else is <code>open</code>. A few other spellings are read too (<code>mcq</code>, <code>tf</code>, <code>cloze</code>, <code>matching</code>…).</td></tr>
+    <tr><td><code>style</code></td><td>The id of an exercise style. Absent, or unknown, the first style of <code>exerciseStyles</code>.</td></tr>
+    <tr><td><code>title</code></td><td>A title printed in bold after the number.</td></tr>
+    <tr><td><code>#id</code></td><td>An anchor, as on a box: <code>:::exercise&#123;#volcanoes&#125;</code>.</td></tr>
+    <tr><td><code>n</code></td><td>A fixed number, to keep the numbering of a printed edition. The next exercises count on from it.</td></tr>
+    <tr><td><code>level</code></td><td>Difficulty from 1 up to the style's maximum (3 by default), printed as marks after the number: <code>level=2</code> prints ●●○.</td></tr>
+    <tr><td><code>icon</code></td><td>The ids of activity icons the style defines, separated by spaces: <code>icon="pencil pair"</code>.</td></tr>
+    <tr><td><code>example</code></td><td>The first item is printed answered, as a model, and is not asked.</td></tr>
+    <tr><td><code>columns</code></td><td>Choice: the options side by side, that many to a row.</td></tr>
+    <tr><td><code>select</code></td><td>Choice: <code>one</code> or <code>many</code>, how many options the reader may tick on screen. More than one <code>[x]</code> already means <code>many</code>.</td></tr>
+    <tr><td><code>shuffle=false</code></td><td>Match and order: print the items in the written order instead of shuffling them.</td></tr>
+    <tr><td><code>bank</code></td><td>Gaps: print the answers as a word bank.</td></tr>
+    <tr><td><code>lines</code>, <code>area</code></td><td>Open: how many lines to write on, and the ruling of the space.</td></tr>
+    <tr><td><code>mark</code></td><td>Mark: how the answer marks a word: <code>circle</code> (the default), <code>box</code>, <code>underline</code> or <code>highlight</code>.</td></tr>
+    <tr><td><code>size</code>, <code>directions</code>, <code>hidden</code></td><td>Word search: the grid's side, the directions the words run in, and no word list under the grid.</td></tr>
+  </tbody>
+</table>
+
+Two fences go inside an exercise. `:::solution` … `:::` holds a worked or model solution in any Markdown; it never prints inside the exercise and goes where the [solutions](#solutions) go. `:::hint` … `:::` holds a hint the screen editions offer on demand; print leaves it out.
+
+## Kinds of exercise
+
+Shuffles are seeded: an exercise is shuffled the same way in the canvas, the PDF, the HTML viewer, the EPUB and the answer key. Change `exercises.seed` to print another version of a test.
+
+### Choice and true or false
+
+#### Choice
+
+A task list, the right options ticked:
+
+```md
+:::exercise
+Which planet is closest to the Sun?
+
+- [ ] Venus
+- [x] Mercury
+- [ ] Mars
+:::
+```
+
+The options print one to a line, labelled a), b), c), the turnover lines hung under the text. Several questions in one exercise are an ordered list whose items are the stems, each with its task list indented under it; the stems are numbered 1., 2. and their options set under them:
+
+```md
+:::exercise{columns=3}
+Choose the right answer.
+
+1. The roots of a plant take in
+   - [x] water
+   - [ ] light
+   - [ ] seeds
+2. Leaves make food from
+   - [ ] soil
+   - [ ] wind
+   - [x] sunlight
+:::
+```
+
+`columns=3` sets the options three to a row. The labels and their suffix follow the document language: a) in English and the Romance languages, A. in Chinese, ア イ ウ in Japanese, أ) ب) ج) in Arabic. A style can add a box or a ring to tick before each option (`options.marker`), or, as Chinese and Japanese tests do, a bracket （　） after the stem to write the letter in (`options.bracket`).
+
+#### True or false
+
+```md
+:::exercise{type=truefalse}
+True or false?
+
+- [x] The Sun is a star.
+- [ ] The Moon is a planet.
+:::
+```
+
+Each statement is numbered and ends with the two answers at the end of the line, each with a box: T □ F □. A ticked item is true. The letters follow the language: T/F in English, V/F in Spanish, Catalan, French, Italian and Portuguese, R/F in German, √/× in Chinese, ○/× in Japanese, صح/خطأ in Arabic. A style can print one blank to write the answer on instead (`trueFalse.look: 'bracket'`).
+
+### Gaps and word banks
+
+`[[answer]]` is a blank, printed as a line to write on:
+
+```md
+:::exercise{bank}
+Complete the sentences with the words in the box.
+
+1. The roots take in [[water]] from the soil.
+2. The leaves make the plant's [[food]].
+3. Flowers attract [[insects | bees]].
+
+::bank[stones | wind]
+:::
+```
+
+- `[[colour | color]]`: a blank with several accepted answers. The first is the one the key prints.
+- `[[go | (goes) | going]]`: an **inline choice**. The options print in the line, `(go / goes / going)`, and the one in parentheses is right: the reader circles it.
+- `[[went]]{width=6}`: a blank six ems wide.
+- `\|` is a literal bar inside an answer, and `\[[` a literal pair of brackets.
+
+Every blank of an exercise is as wide as its longest answer plus 1.5 em, so the length of a line does not give its answer away (`blank.width` changes it). `bank` prints the answers in a framed word bank, shuffled, under the instruction. A `::bank[stones | wind]` line puts the bank where it is written and adds its words as distractors; the line alone asks for the bank. `[[…]]` is read only inside an exercise: two brackets anywhere else in a book stay as written.
+
+An exercise that opens with its text instead of an instruction runs its number into the first paragraph:
+
+```md
+:::exercise
+Seven days make a [[week]], and twelve months make a [[year]].
+:::
+```
+
+### Matching and sorting
+
+#### Match
+
+Pairs written with `->` (or `→`):
+
+```md
+:::exercise
+Match each animal with its home.
+
+- Bee -> Hive
+- Bird -> Nest
+- Spider -> Web
+- Rabbit -> Burrow
+- -> Den
+:::
+```
+
+The left column prints in the written order and the right column shuffled, with a dot beside each item to join with a line. `- -> Den` adds an item to the right column that matches nothing. With `match.look: 'letters'` the right column is lettered and each left item gets a bracket for the letter. `shuffle=false` keeps the right column as written.
+
+#### Sort
+
+```md
+:::exercise{type=sort}
+Sort the foods by the part of the plant they come from.
+
+- Root: carrot, radish
+- Leaf: lettuce, spinach
+- Fruit: tomato, apple
+:::
+```
+
+All the items go into a word bank, shuffled, and each category gets a column (up to four) with its name and ruled lines under it. Items may be separated by commas, semicolons, `、`, `，` or `،`.
+
+### Ordering
+
+#### Order
+
+```md
+:::exercise{type=order}
+Put the stages in order.
+
+1. The seed germinates.
+2. The stem grows.
+3. The flowers open.
+4. The fruit appears.
+:::
+```
+
+The list is written in the right order and printed shuffled, each item with a box for its number.
+
+#### Scramble
+
+```md
+:::exercise{type=scramble}
+Put the words in order to make sentences.
+
+- Plants / need / water
+- The Sun / gives / light
+:::
+```
+
+Each sentence is cut at its slashes (at its spaces when it has none), its pieces printed shuffled with slashes between them, and a line under it to write the sentence on.
+
+### Marking words
+
+```md
+:::exercise{type=mark}
+Circle the verbs: The girl [[waters]] the plants and the Sun [[warms]] them.
+:::
+```
+
+The text prints as it is; the words in `[[…]]` are the ones to mark. In the answers they are ringed, or boxed, underlined or highlighted with `mark=box|underline|highlight` on the fence, or one word at a time with `[[waters]]{mark=underline}`.
+
+### Open questions and writing areas
+
+```md
+:::exercise{type=open lines=4}
+Why do plants need light?
+
+:::solution
+They use light to make their food.
+:::
+:::
+```
+
+Ruled lines to write on follow the instruction: three by default, `lines=4` here. When the body is a list, each item gets its own lines. `area` changes the ruling: `lines`, `dots`, `grid` (squared paper), `seyes` (French school ruling), `tianzige` (田字格, the squares Chinese pupils write characters in), `box` (an empty frame, for a drawing) or `none`. The `:::solution` is the model answer, printed with the solutions and written on the lines in a teacher's edition.
+
+### Word searches and crosswords
+
+#### Word search
+
+```md
+:::exercise{type=wordsearch size=10 directions="across down diagonal backwards"}
+Find these words.
+
+- ROOT
+- STEM
+- LEAF
+- FLOWER
+:::
+```
+
+The words are placed in a grid of letters and the list is printed under it (`hidden` leaves the list out). The grid grows to fit the longest word; `size` sets its side. `directions` takes `across`, `down`, `diagonal` and `backwards`; the default is across, down and diagonal. Letters are set in capitals unless the style says otherwise. A word that cannot be placed is reported.
+
+#### Crossword
+
+```md
+:::exercise{type=crossword}
+Solve the crossword.
+
+- ROOT: The part under the ground
+- LEAF: The green part that makes food
+- FLOWER: It attracts bees
+- STEM: It holds the plant up
+:::
+```
+
+Each entry is a word and its clue. The engine builds the grid, numbers the first cell of each word and prints the clues under it in two lists headed in the document's language (Across and Down, Horizontales y Verticales, ヨコのカギ・タテのカギ).
+
+### Operations in columns
+
+```md
+:::exercise{type=arithmetic}
+Work out.
+
+- 345 + 278
+- 902 − 456
+- 124 × 3
+- 864 ÷ 4
+:::
+```
+
+Each operation is set in cells, as a pupil writes it: the digits in columns, the sign on the left, a rule, and empty cells for the result, up to four operations to a row. On a right-to-left page each operation keeps its digits left to right, and the operations follow one another from right to left. The signs read are `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` and `/`, with whole numbers. Long division follows the school convention of the document language, and `arithmetic.division` picks another:
+
+- `bracket`: the divisor on the left, the dividend under a bracket, the quotient above it. English, Chinese, Japanese and Arabic books.
+- `potence`: the dividend on the left, the divisor on the right under an L, the quotient under the divisor, the remainder at the foot. Spanish, Catalan, French, Italian and Portuguese books.
+- `inline`: `864 : 4 =` and the cells of the quotient on the same line, the steps written under it. German books.
+
+### A first item answered
+
+`example` prints the first item solved, in the answers' colour: the first blank filled, the first question's right option ringed, the first pair joined, the first sentence written out. That item is not asked on screen, and its answer is left out of the word bank.
+
+## Numbers, references and difficulty
+
+Exercises are numbered 1, 2, 3 in each chapter. The style decides the rest: a number set bare and bold with a full stop (the default) or in a disc, a square or a rounded square (`number.shape`), a word before it ("Exercise 3" with `number.label: true`, in the document's language), the numerals (`number.format`, such as Chinese 一、二、), a template that adds the chapter (`'{h1}.{n}'`), and where the count starts again (`number.resetOn`: each chapter, each section or never). Styles that name the same `number.counter` share one count, and a book carries it from chapter to chapter.
+
+`n=12` on a fence gives that exercise the number 12, and the next ones go on from 13. `#id` makes the exercise a target of `:ref`, which prints its name, "Exercise 3" (the style's `number.label` word when it sets one, else the document language's word). `style=number` prints 3, `style=title` the fence's `title` (the name when it has none) and `style=page` its page. A reference reaches exercises in other chapters of the book too. `level` and `icon` print after the number: the difficulty marks and the activity icons the style defines.
+
+## Solutions
+
+### The answer key
+
+Every graded exercise has a key made from its answers: the right option (`b) Mercury`), the blanks in order (`1 water · 2 food · 3 insects`), T or F per statement, the pairs, the order, the sentences, the words of a crossword with their numbers, the results of the operations. With the `full` layout (the default) the key is followed by the exercise's `:::solution`. An open exercise has no key: its model answer is the solution.
+
+### Where the solutions print
+
+`exercises.solutions.placement` decides, for the whole book; a style can change it for its own exercises.
+
+<table>
+  <thead>
+    <tr>
+      <th>Placement</th>
+      <th>What prints</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>none</code></td><td>No solutions in print (the default). The screen editions still have them.</td></tr>
+    <tr><td><code>after</code></td><td>The solution right after its exercise, in smaller type.</td></tr>
+    <tr><td><code>inverted</code></td><td>The same box turned upside down, as puzzle books and children's magazines print it.</td></tr>
+    <tr><td><code>chapterEnd</code></td><td>Every solution of the chapter at its end, under a heading in the document language (Solutions, Soluciones, Lösungen, 参考答案…), each one after its exercise number.</td></tr>
+    <tr><td><code>directive</code></td><td>Only where the chapter writes <code>:::solutions</code>.</td></tr>
+  </tbody>
+</table>
+
+With `directive`, a `:::solutions` line prints the solutions of the exercises before it that have not been printed yet; `title="…"` changes its heading. `:::solutions{scope="book"}`, in a chapter of its own at the end, prints the key and the solutions of every exercise of the book, chapter by chapter:
+
+```md
+# Answers
+
+:::solutions{scope="book"}
+```
+
+### Teacher's edition
+
+```json
+{ "exercises": { "edition": "teacher" } }
+```
+
+prints every answer in its slot, in the answers' colour (a magenta red unless the style sets `answers.color`): the blanks filled, the right options ringed or their boxes filled, the T or F box filled, the matching lines drawn, the numbers in the order boxes, the sentences and the sorted words on their lines, the model answer of an open question on its lines, the words of the crossword and the results of the operations in their cells.
+
+## Checks
+
+The Sandbox's **Checks** panel and `collectContentWarnings` report what the engine cannot read:
+
+- `exerciseUnknownType`: a `type` that is not one of the twelve.
+- `exerciseUnknownStyle`: a `style` that names no exercise style (the first style is used).
+- `exerciseNoAnswer`: a graded exercise with nothing to grade: a question without a ticked option, gaps without `[[…]]`, a match without pairs.
+- `exerciseUnreadItem`: a list item its kind cannot read, such as a match item without `->` or an operation that is not two whole numbers and a sign.
+- `exerciseWordUnplaced`: a word a word search or a crossword could not place.
+- `exerciseNested`: an exercise inside another.
+- `solutionOutside`: a `:::solution` or `:::hint` outside an exercise. It prints nothing.
+
+## Exercises in HTML and EPUB
+
+In the HTML viewer and in EPUB books the exercises can be answered. The reader types in the blanks and clicks options, statements, dots to join and the cells of a grid, then checks the answers, shows the solution or starts again. Right and wrong answers are shown with a colour and a mark (`digital.correctColor`, `digital.wrongColor`), and are announced to screen readers. The answers are kept in the browser, per book, so a reader finds them again on the next visit (`exercises.digital.persist`). `exercises.digital.check: 'instant'` checks each answer as it is given; `exercises.digital.interactive: false` leaves the pages as printed. The answer key is always in an EPUB, whatever the print placement, so a reading system that runs no scripts still has the answers.
+
+The screen can give exercises a form of their own through `htmlViewer.overrides`, merged over the book's configuration before the HTML viewer lays out. Print keeps its own:
+
+```ts
+const config: PostextConfig = {
+  exercises: { solutions: { placement: 'chapterEnd' } },
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [
+        { id: 'exercise', blank: { minWidth: { value: 6, unit: 'em' } }, area: { kind: 'none' } },
+      ],
+    },
+  },
+};
+```
+
+## Exercise styles
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Source Sans 3' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots' },
+    },
+  ],
+};
+```
+
+Every field of a style, its type and default are in [Configuration › Exercises](/en/docs/configuration-exercises). A style takes its frame from a [callout style](/en/docs/configuration-callouts) (`box`), so an exercise can sit in a tinted box with a stripe like any other box of the book. The [postext-port skill](/en/docs/skill) follows the same steps when it ports the exercises of a textbook or a workbook.

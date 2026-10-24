@@ -2385,6 +2385,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
     iconFormat,
     markerFileId,
     markerFormat,
+    ...(attrs.turn === '180' ? { turned: true as const } : {}),
   };
 
   return {

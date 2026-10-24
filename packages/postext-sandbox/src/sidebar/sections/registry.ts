@@ -15,6 +15,7 @@ export type SettingsGroupId =
   | 'lists'
   | 'figures'
   | 'callouts'
+  | 'exercises'
   | 'comics'
   | 'running'
   | 'parts'
@@ -59,6 +60,8 @@ export type SettingsSectionId =
   | 'calloutStyles'
   | 'frameStyles'
   | 'frameLooks'
+  | 'exerciseStyles'
+  | 'exercises'
   | 'comicsPanels'
   | 'comicsPanelStyles'
   | 'comicsLettering'
@@ -92,7 +95,8 @@ export interface SettingsSectionEntry {
 
 /** Browsing order: the page first, then the writing system (the direction
  *  of the lines decides page progression, margins and column order), then
- *  the text on the page from the body out (comic pages after the boxes),
+ *  the text on the page from the body out (exercises and comic pages
+ *  after the boxes),
  *  then what repeats on every page, then output. */
 export const SETTINGS_GROUPS: readonly SettingsGroup[] = [
   { id: 'page', labelKey: 'settingsGroupPage', descriptionKey: 'settingsGroupPageDescription' },
@@ -103,6 +107,7 @@ export const SETTINGS_GROUPS: readonly SettingsGroup[] = [
   { id: 'lists', labelKey: 'settingsGroupLists', descriptionKey: 'settingsGroupListsDescription' },
   { id: 'figures', labelKey: 'settingsGroupFigures', descriptionKey: 'settingsGroupFiguresDescription' },
   { id: 'callouts', labelKey: 'settingsGroupCallouts', descriptionKey: 'settingsGroupCalloutsDescription' },
+  { id: 'exercises', labelKey: 'settingsGroupExercises', descriptionKey: 'settingsGroupExercisesDescription' },
   { id: 'comics', labelKey: 'settingsGroupComics', descriptionKey: 'settingsGroupComicsDescription' },
   { id: 'running', labelKey: 'settingsGroupRunning', descriptionKey: 'settingsGroupRunningDescription' },
   { id: 'parts', labelKey: 'settingsGroupParts', descriptionKey: 'settingsGroupPartsDescription' },
@@ -155,6 +160,10 @@ export const SETTINGS_SECTIONS: readonly SettingsSectionEntry[] = [
   { id: 'frameStyles', group: 'callouts', labelKey: 'frameStylesSection', configKeys: ['calloutStyles'] },
   // Named frame looks (#1089): colours a :::frame piece wears with look="…".
   { id: 'frameLooks', group: 'callouts', labelKey: 'frameLooksSection', configKeys: ['frameLooks'] },
+  // Exercises (#1226): the styles a `:::exercise` fence picks, and the
+  // book's settings (edition, solutions, the digital outputs).
+  { id: 'exerciseStyles', group: 'exercises', labelKey: 'exerciseStylesSection', configKeys: ['exerciseStyles'] },
+  { id: 'exercises', group: 'exercises', labelKey: 'exercisesSection', configKeys: ['exercises'] },
   // Comic pages (`:::page`): every section edits a part of `comics` (see
   // `sectionHasOverrides`).
   { id: 'comicsPanels', group: 'comics', labelKey: 'comicsPanelsSection', configKeys: ['comics'] },

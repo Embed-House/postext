@@ -203,8 +203,18 @@ function rawOf(seg: VDTLineSegment, ctx: InlineContext): string | undefined {
       : `<span class="pt-swatch" role="img" aria-label="?"${shape ? ` style="${shape.slice(1)}"` : ''}></span>`;
   }
   if (seg.chip) {
+    // A chip an exercise is answered on (#1231) says where for the
+    // exercise script; a blank holds an input, never its answer.
+    const ex = seg.chip.exercise;
+    const data = ex ? ` data-pt-ex="${ex.ex}" data-pt-slot="${xmlAttr(ex.slot)}"` : '';
+    const cls = `pt-chip pt-chip-${idOf('', seg.chip.styleId)}${ex ? ' pt-ex-slot' : ''}`;
+    if (seg.chip.blank) {
+      const width = round(seg.chip.boxWidth / ctx.basePx);
+      return `<span class="${cls} pt-ex-blank"${data} style="width:${width}em">` +
+        `<input type="text" class="pt-ex-input" autocomplete="off" aria-label="${xmlAttr(seg.chip.blankLabel ?? 'blank')}"/></span>`;
+    }
     const runs = seg.chip.runs.map((r) => wrapFormat(xmlText(r.text), formatOf(r))).join('');
-    return `<span class="pt-chip pt-chip-${idOf('', seg.chip.styleId)}">${runs}</span>`;
+    return `<span class="${cls}"${data}>${runs}</span>`;
   }
   if (seg.kunten) {
     // Kanbun marks (#430), set inline as JIS X 4051 sets the 返り点 after

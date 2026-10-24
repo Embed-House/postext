@@ -22,6 +22,7 @@ const CONFIGURATION_PAGES = [
   "configuration-resources",
   "configuration-styles",
   "configuration-callouts",
+  "configuration-exercises",
   "configuration-comics",
   "configuration-composed-pages",
   "configuration-fonts-colors-viewers",
@@ -67,6 +68,7 @@ describe("docs table of contents", () => {
       "japanese-layout",
       "comics",
       "music",
+      "exercises",
       "composed-pages",
       ...CHAPTER_PAGES["composed-pages"]!,
       "contributing",
@@ -109,25 +111,26 @@ describe("docs table of contents", () => {
     }
   });
 
-  it("numbers the pages 1 to 48 and gives Part II the Configuration reference, the craft pages, Comics, Music notation and Composed pages, and Part III the Sandbox, the two guides, the skill, the command line and WebMCP", () => {
+  it("numbers the pages 1 to 50 and gives Part II the Configuration reference, the craft pages, Comics, Music notation, Exercises and Composed pages, and Part III the Sandbox, the two guides, the skill, the command line and WebMCP", () => {
     expect(docs.map((d) => d.locales.en!.order)).toEqual(docs.map((_, i) => i + 1));
     expect(order("configuration")).toBe(4);
     expect(CONFIGURATION_PAGES.map((slug) => order(slug))).toEqual(CONFIGURATION_PAGES.map((_, i) => 5 + i));
-    expect([order("justification"), order("document-format")]).toEqual([24, 25]);
-    expect(order("comics")).toBe(33);
-    expect(order("music")).toBe(34);
-    expect(order("composed-pages")).toBe(35);
+    expect([order("justification"), order("document-format")]).toEqual([25, 26]);
+    expect(order("comics")).toBe(34);
+    expect(order("music")).toBe(35);
+    expect(order("exercises")).toBe(36);
+    expect(order("composed-pages")).toBe(37);
     for (const slug of ["introduction", "architecture", ...CHAPTER_PAGES.architecture!]) {
       expect(docPart(order(slug)!).key, slug).toBe("foundations");
     }
-    for (const slug of ["configuration", ...CONFIGURATION_PAGES, "justification", "document-format", ...CHAPTER_PAGES["document-format"]!, "chinese-layout", "arabic-layout", "japanese-layout", "comics", "music", "composed-pages", ...CHAPTER_PAGES["composed-pages"]!]) {
+    for (const slug of ["configuration", ...CONFIGURATION_PAGES, "justification", "document-format", ...CHAPTER_PAGES["document-format"]!, "chinese-layout", "arabic-layout", "japanese-layout", "comics", "music", "exercises", "composed-pages", ...CHAPTER_PAGES["composed-pages"]!]) {
       expect(docPart(order(slug)!).key, slug).toBe("craft");
     }
     for (const slug of ["contributing", "sandbox", ...CHAPTER_PAGES.sandbox!, ...GUIDE_PAGES, "skill", "command-line", "webmcp"]) {
       expect(docPart(order(slug)!).key, slug).toBe("practice");
     }
-    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([37, 38, 46, 47, 48]);
-    expect(GUIDE_PAGES.map((slug) => order(slug))).toEqual([44, 45]);
+    expect([order("contributing"), order("sandbox"), order("skill"), order("command-line"), order("webmcp")]).toEqual([39, 40, 48, 49, 50]);
+    expect(GUIDE_PAGES.map((slug) => order(slug))).toEqual([46, 47]);
   });
 
   it("sets the pages of the Configuration reference under its entry page, in every language", () => {
@@ -159,14 +162,14 @@ describe("docs table of contents", () => {
     expect(es).toContain("2 idiomas-y-escrituras");
   });
 
-  it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics", "composed-pages"])("gives every heading of the %s page its own title", (slug) => {
+  it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics", "exercises", "composed-pages"])("gives every heading of the %s page its own title", (slug) => {
     for (const locale of LOCALES) {
       const texts = extractToc(getDocSource(slug, locale)!.source).map((t) => t.text);
       expect(texts.filter((t, i) => texts.indexOf(t) !== i), locale).toEqual([]);
     }
   });
 
-  it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics", "composed-pages"])("keeps Markdown markers literal in the %s page's code spans", (slug) => {
+  it.each(["chinese-layout", "arabic-layout", "japanese-layout", "comics", "exercises", "composed-pages"])("keeps Markdown markers literal in the %s page's code spans", (slug) => {
     // MDX reads Markdown inside JSX, so <code>*…*</code> prints an italic
     // "…", and the docs pipeline drops JavaScript expressions (blockJS), so
     // <code>{'*…*'}</code> prints nothing. A character reference stays
@@ -208,7 +211,7 @@ describe("docs table of contents", () => {
 
 /** The pages the single Configuration page was split into (#655, #884):
  *  a page added after the split holds none of its old headings. */
-const SPLIT_PAGES = CONFIGURATION_PAGES.filter((slug) => slug !== "configuration-composed-pages");
+const SPLIT_PAGES = CONFIGURATION_PAGES.filter((slug) => slug !== "configuration-composed-pages" && slug !== "configuration-exercises");
 
 describe("the Configuration reference, split into pages (#655)", () => {
   const ids = (slug: string, locale: string) => pageIds(getDocSource(slug, locale)!.source);

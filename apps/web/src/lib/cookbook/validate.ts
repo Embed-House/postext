@@ -1007,7 +1007,7 @@ export interface RegistryValidationOptions {
 
 const FEATURE_GROUPS = [
   "page", "text", "fonts", "languages", "headings", "furniture", "boxes", "figures", "tables", "math",
-  "structure", "colour", "pdf", "html", "integration", "comics",
+  "structure", "colour", "pdf", "html", "integration", "comics", "exercises",
 ];
 const SEMVER = /^\d+\.\d+\.\d+$/;
 

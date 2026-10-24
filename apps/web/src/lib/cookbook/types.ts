@@ -381,7 +381,7 @@ export interface Taxonomy {
 
 export type FeatureGroup =
   | "page" | "text" | "fonts" | "languages" | "headings" | "furniture" | "boxes" | "figures"
-  | "tables" | "math" | "structure" | "colour" | "pdf" | "html" | "integration" | "comics";
+  | "tables" | "math" | "structure" | "colour" | "pdf" | "html" | "integration" | "comics" | "exercises";
 
 export interface Feature {
   label: Localized;

@@ -174,6 +174,13 @@ function paletteTableStyle<T extends TableStyleConfig>(ts: T, palette: ColorPale
  *  link (as they always have); every other palette-linked colour — the
  *  design slots, `bodyText.referenceColor`, callout labels… — takes the
  *  value and keeps the link (see `relinkPaletteColors`). */
+/** `node` with every palette-linked colour set to the palette's: for the
+ *  styles a build adds after the configuration is resolved (the boxes an
+ *  exercise is set in), whose defaults link to `main-color`. */
+export function relinkToPalette<T>(node: T, palette: ColorPaletteEntry[] | undefined): T {
+  return palette && palette.length > 0 ? relinkPaletteColors(node, paletteById(palette)) : node;
+}
+
 export function applyPaletteToResolvedConfig(
   resolved: ResolvedConfig,
   palette: ColorPaletteEntry[] | undefined,

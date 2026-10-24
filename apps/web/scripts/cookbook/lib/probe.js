@@ -1127,6 +1127,8 @@ export function facts({ select = 'last', hero = [] } = {}) {
         if (figureBody && line.startsWith('::label[')) { directives.add('label'); return; }
         // A figure's own words (#935): ::alt, ::caption and ::note stand beside its labels.
         if (figureBody && /^::(alt|caption|note)\[/.test(line)) return;
+        // An exercise's word bank (#1225).
+        if (line.startsWith('::bank[')) { directives.add('bank'); return; }
         badFences.push({ chapter, line: i + 1, text: line.slice(0, 80), name: /^::([\w-]*)/.exec(line)?.[1] ?? '' });
       }
     });
@@ -1175,7 +1177,8 @@ export function facts({ select = 'last', hero = [] } = {}) {
       }
       if (span.chip) {
         inline.add('chip');
-        if (span.chip.style !== undefined && !styleIds.chip.has(span.chip.style)) {
+        // An exercise's `[[…]]` is a gap the engine sets with chip styles of its own.
+        if (span.chip.style !== undefined && !span.chip.gap && !styleIds.chip.has(span.chip.style)) {
           unknownStyles.push({ what: 'chip style', id: span.chip.style, at: at(block) });
         }
       }

@@ -453,6 +453,18 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>Zeichnet die Buchstaben des Chips als Punktreihen zum Nachspuren, wie <a href="/de/docs/configuration-headers-footers#inline-auszeichnungen-und-konturen"><code>dotted</code></a> bei einem Gestaltungstext, mit em-Längen relativ zum Chiptext. Ohne Hintergrund, Umrisslinie und Innenabstand ist der Chip ein gepunktetes Wort in der Zeile: <code>:chip[gato]&#123;style="dots"&#125;</code>.</td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>Zeichnet die Umrisslinie nur als Linie unter dem Text, <code>borderWidth</code> stark in <code>borderColor</code>, statt rund um das Kästchen: eine Lücke zum Hineinschreiben. Nicht gesetzt: die ganze Umrisslinie.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>Die kleinste Breite des Kästchens, Umrisslinie und Innenabstand eingeschlossen; ein kürzerer Text wird darin zentriert. Lücken in Übungen und die Kästchen zum Ankreuzen nutzen sie. Nicht gesetzt: so breit wie der Text.</td>
+    </tr>
   </tbody>
 </table>
 

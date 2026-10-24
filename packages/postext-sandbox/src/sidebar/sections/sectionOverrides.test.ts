@@ -24,6 +24,12 @@ describe('sectionHasOverrides', () => {
     expect(sectionHasOverrides({ ...base, headingStyles: [{ id: 'preface' }] }, 'headingStyles')).toBe(true);
     expect(sectionHasOverrides({ ...base, toc: { leader: { enabled: false } } }, 'toc')).toBe(true);
   });
+  it('counts the exercise styles by presence and the exercise settings by their fields (#1226)', () => {
+    expect(sectionHasOverrides(base, 'exerciseStyles')).toBe(false);
+    expect(sectionHasOverrides({ ...base, exerciseStyles: [{ id: 'exercise' }] }, 'exerciseStyles')).toBe(true);
+    expect(sectionHasOverrides({ ...base, exercises: {} }, 'exercises')).toBe(false);
+    expect(sectionHasOverrides({ ...base, exercises: { edition: 'teacher' } }, 'exercises')).toBe(true);
+  });
   it('counts the label styles by presence, an empty list as none (#969)', () => {
     expect(sectionHasOverrides(base, 'labelStyles')).toBe(false);
     expect(sectionHasOverrides({ ...base, labelStyles: [] }, 'labelStyles')).toBe(false);

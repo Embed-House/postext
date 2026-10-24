@@ -303,6 +303,13 @@ export function counterStyleOf(raw: string | undefined, locale?: string): Counte
   return templateStyle(key, locale);
 }
 
+/** Whether `raw` names a style {@link counterStyleOf} knows (rather than
+ *  one it counts in decimal for want of another). */
+export function isCounterStyle(raw: string): boolean {
+  const key = raw.trim();
+  return parseSpelledStyle(key) !== undefined || Object.prototype.hasOwnProperty.call(STYLE_ALIASES, key) || parseNumberFormat(key) !== undefined;
+}
+
 /** A counter value in a template style; spelled-out styles use the
  *  document language `locale`, decimal ones the document's `digits`. */
 export function formatCounter(n: number, style: CounterStyle, locale?: string, digits?: DigitSystem): string {

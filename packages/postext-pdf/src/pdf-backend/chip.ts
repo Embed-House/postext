@@ -25,6 +25,8 @@ export function paintChip(
 ): void {
   if (elem) tagArtifact(ctx, { type: 'Layout' });
   drawChipBoxPx(ctx, chip, xPx, baselinePx);
+  // A blank's answer is laid out, never painted (#1227): the box alone.
+  if (chip.blank) return;
   tagContent(ctx, elem);
   paintChipRuns(ctx, chip, xPx, baselinePx, fontCache, fallbackFont, fallbackSize, colorFor);
 }

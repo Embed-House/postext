@@ -1,0 +1,472 @@
+{/* docs/configuration-exercises-en.mdx */}
+
+export const metadata = {
+  title: 'Configuration: exercises',
+  sidebarTitle: 'Exercise settings',
+  description: 'Exercise styles (exerciseStyles) and the book\'s exercise settings (exercises): number badges, instruction type, option labels and markers, blanks, true/false answers, matching, word banks, writing areas, grids, long division, difficulty marks, icons, the answers\' colour, where solutions print, the teacher\'s edition and the screen editions',
+  lang: 'en',
+  lastUpdated: '2026-10-24',
+  readingTime: '12 min',
+  order: 17,
+  parent: 'configuration',
+  plainSummary: "This page lists every setting for the look of exercises. An exercise style decides how the number is printed, how the options are labelled, what a blank to fill in looks like, how the lines to write on are ruled and how grids and sums are drawn. The book settings decide where the solutions are printed and whether the book is the pupil's edition or the teacher's. They also decide how readers answer the exercises on screen. The Exercises page explains how to write the exercises themselves.",
+};
+
+# Configuration: exercises
+
+
+## Exercise styles
+
+The `exerciseStyles` property declares the named styles an exercise picks with `:::exercise{style="…"}`. A style is the form of a family of exercises; the questions and the answers stay in the Markdown (see [Exercises](/en/docs/exercises)). One style, `exercise`, ships by default, so the fence works with no configuration; declaring `exerciseStyles` replaces it, and the first style declared is the one an exercise without `style` takes. Every field is optional, and the defaults follow the document language where schools differ: option labels, true/false letters, the long division layout, the words printed.
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      box: 'activity-frame',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Source Sans 3' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots', width: 'answer' },
+      area: { kind: 'grid', lines: 4 },
+      level: { glyph: '★', empty: '☆' },
+      icons: { pair: { glyph: '👥' } },
+    },
+    { id: 'quiz', extends: 'activity', options: { layout: 'row', columns: 4 } },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>—</td><td>Identifier selected by <code>:::exercise&#123;style="…"&#125;</code>. An unknown id falls back to the first style and is reported (<code>exerciseUnknownStyle</code>).</td></tr>
+    <tr><td><code>name</code></td><td><code>string</code></td><td><code>id</code></td><td>Human-readable name (editor UI only).</td></tr>
+    <tr><td><code>extends</code></td><td><code>string</code></td><td>—</td><td>The id of a style this one is based on. Each group (<code>number</code>, <code>options</code>, <code>blank</code>…) is merged field by field, <code>icons</code> by id.</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>—</td><td>A <a href="/en/docs/configuration-callouts#callout-styles"><code>calloutStyles</code></a> id for the exercise's frame: background, border, stripe, padding, placement, splitting. Unset, the exercise is set in the running text with no frame and is kept together on one page.</td></tr>
+    <tr><td><code>number</code></td><td><code>object</code></td><td>—</td><td>How the number prints. See <a href="#number">Number</a>.</td></tr>
+    <tr><td><code>instruction</code></td><td><code>object</code></td><td>—</td><td>The type of the instruction. See <a href="#instruction">Instruction</a>.</td></tr>
+    <tr><td><code>options</code></td><td><code>object</code></td><td>—</td><td>The options of a choice question. See <a href="#options">Options</a>.</td></tr>
+    <tr><td><code>blank</code></td><td><code>object</code></td><td>—</td><td>How a <code>[[…]]</code> prints. See <a href="#blanks">Blanks</a>.</td></tr>
+    <tr><td><code>trueFalse</code></td><td><code>object</code></td><td>—</td><td>The answers of a true/false statement. See <a href="#true-or-false">True or false</a>.</td></tr>
+    <tr><td><code>match</code></td><td><code>object</code></td><td>—</td><td>Two columns to join. See <a href="#match">Match</a>.</td></tr>
+    <tr><td><code>bank</code></td><td><code>object</code></td><td>—</td><td>The word bank. See <a href="#word-bank">Word bank</a>.</td></tr>
+    <tr><td><code>area</code></td><td><code>object</code></td><td>—</td><td>Writing areas. See <a href="#writing-area">Writing area</a>.</td></tr>
+    <tr><td><code>grid</code></td><td><code>object</code></td><td>—</td><td>The cells of word searches, crosswords and operations. See <a href="#grids">Grids</a>.</td></tr>
+    <tr><td><code>arithmetic</code></td><td><code>object</code></td><td>—</td><td>Operations in columns. See <a href="#arithmetic">Arithmetic</a>.</td></tr>
+    <tr><td><code>level</code></td><td><code>object</code></td><td>—</td><td>Difficulty marks. See <a href="#difficulty">Difficulty</a>.</td></tr>
+    <tr><td><code>icons</code></td><td><code>Record&lt;string, ExerciseIcon&gt;</code></td><td><code>&#123;&#125;</code></td><td>Activity icons by id, named by a fence's <code>icon</code>. See <a href="#icons">Icons</a>.</td></tr>
+    <tr><td><code>answers</code></td><td><code>object</code></td><td>—</td><td>How answers print in a teacher's edition, in a model item and in the solutions. See <a href="#answers">Answers</a>.</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>The book's <a href="#solutions"><code>exercises.solutions</code></a> for this style's exercises: only the fields set here change.</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>Colours of the screen editions. See <a href="#screen-colours">Screen colours</a>.</td></tr>
+    <tr><td><code>marginTop</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>Room above an exercise without a <code>box</code>.</td></tr>
+    <tr><td><code>marginBottom</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>Room below an exercise without a <code>box</code>.</td></tr>
+    <tr><td><code>itemSpacing</code></td><td><code>Dimension</code></td><td><code>0.25em</code></td><td>Room between two items: options, questions, statements, pairs.</td></tr>
+  </tbody>
+</table>
+
+### Number
+
+`number` sets the exercise number. A bare number is bold, in the main colour, with a full stop after it; a shaped one is a white figure in a disc, a square or a rounded square of the main colour, with nothing after it.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>show</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Print the number. The count goes on either way.</td></tr>
+    <tr><td><code>label</code></td><td><code>boolean | string</code></td><td><code>false</code></td><td>A word before the number: <code>true</code> takes the document language's word (Exercise, Ejercicio, Exercice, Übung, 练习, 練習, تمرين…), a string is the word itself (<code>'Activity'</code>).</td></tr>
+    <tr><td><code>shape</code></td><td><code>'none' | 'disc' | 'square' | 'rounded'</code></td><td><code>'none'</code></td><td>The shape the number is set in.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>white on a shape, else the main colour</td><td>The number's colour.</td></tr>
+    <tr><td><code>background</code></td><td><code>ColorValue</code></td><td>the main colour</td><td>The shape's fill.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>the text around it</td><td>The number's family.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>The number's size, an em being the instruction's.</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td><code>700</code></td><td>600 or more sets it bold.</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>'.'</code>, none on a shape</td><td>Printed after a bare number and its label: <code>'.'</code>, <code>')'</code>, <code>'、'</code>.</td></tr>
+    <tr><td><code>template</code></td><td><code>string</code></td><td><code>'&#123;n&#125;'</code></td><td>What the number reads: <code>&#123;n&#125;</code> the exercise's count, <code>&#123;h1&#125;</code> and <code>&#123;h2&#125;</code> the chapter's and the section's numbers (<code>'&#123;h1&#125;.&#123;n&#125;'</code> prints 3.4).</td></tr>
+    <tr><td><code>resetOn</code></td><td><code>'never' | 'h1' … 'h6'</code></td><td><code>'h1'</code></td><td>The heading level that starts the count again; <code>'never'</code> counts through the book.</td></tr>
+    <tr><td><code>counter</code></td><td><code>string</code></td><td><code>'exercise'</code></td><td>The counter the style advances. Styles naming one counter share it; a style with a counter of its own (<code>'review'</code>) numbers its exercises apart.</td></tr>
+    <tr><td><code>format</code></td><td><code>ResourceCounterFormat</code></td><td><code>'decimal'</code></td><td>The numerals of <code>&#123;n&#125;</code>, as a resource counter has them: <code>'roman-upper'</code>, <code>'alpha-lower'</code>, <code>'simp-chinese-informal'</code> (一, 二), <code>'circled-decimal'</code> (①, ②), <code>'arabic-indic'</code>…</td></tr>
+  </tbody>
+</table>
+
+### Instruction
+
+`instruction` sets the leading paragraphs of the exercise. Unset fields take the body text's.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Set the instruction in bold.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Set it in italic.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>the text's</td><td>Its colour, bold runs included.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>the text's</td><td>Its family: a sans-serif instruction over a serif text is common in school books.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>the text's</td><td>Its size.</td></tr>
+  </tbody>
+</table>
+
+### Options
+
+`options` sets the options of a choice question (<code>- [ ] …</code>).
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>ResourceCounterFormat | 'none'</code></td><td>by language</td><td>How the options are counted: <code>'alpha-lower'</code> (a, b, c), <code>'alpha-upper'</code> in Chinese (A, B, C), <code>'katakana'</code> in Japanese (ア, イ, ウ), <code>'abjad'</code> in Arabic (أ, ب, ج). Also <code>'decimal'</code>, <code>'katakana-iroha'</code>, <code>'circled-decimal'</code>… <code>'none'</code> prints no label.</td></tr>
+    <tr><td><code>prefix</code></td><td><code>string</code></td><td><code>''</code></td><td>Before the label: <code>'('</code> for (a).</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>')'</code>; <code>'.'</code> in Chinese, none in Japanese</td><td>After the label.</td></tr>
+    <tr><td><code>marker</code></td><td><code>'none' | 'box' | 'circle'</code></td><td><code>'none'</code></td><td>A box or a ring before each option, to tick. With <code>'none'</code> the reader rings the label.</td></tr>
+    <tr><td><code>layout</code></td><td><code>'stack' | 'row'</code></td><td><code>'stack'</code></td><td><code>'stack'</code>: one option a line, its turnover lines hung under its text. <code>'row'</code>: the options side by side. A fence's <code>columns=n</code> sets them in rows too.</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td>all of them</td><td>Options to a row in the <code>'row'</code> layout (up to 6).</td></tr>
+    <tr><td><code>shuffle</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Print the options in a shuffled order, the same in every output and in the key.</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>The options' indent from the text's edge, for a question without a stem.</td></tr>
+    <tr><td><code>bracket</code></td><td><code>boolean</code></td><td><code>false</code></td><td>A bracket <code>（　）</code> at the end of each question's stem to write the letter in, as Chinese and Japanese tests print it. A teacher's edition writes the letter in it.</td></tr>
+  </tbody>
+</table>
+
+### Blanks
+
+`blank` sets how a `[[…]]` prints in the pupil's text: room the size of the answer with a line, dots or a box, the answer itself not painted.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'line' | 'dots' | 'box' | 'none'</code></td><td><code>'line'</code></td><td>A line to write on, a dotted line, a box, or empty room.</td></tr>
+    <tr><td><code>width</code></td><td><code>'answer' | 'longest' | Dimension</code></td><td><code>'longest'</code></td><td><code>'longest'</code>: every blank of the exercise as wide as its longest answer, so no blank gives its answer away. <code>'answer'</code>: each as wide as its own answer. A length: that width for all. A gap's <code>&#123;width=N&#125;</code> wins over it.</td></tr>
+    <tr><td><code>extra</code></td><td><code>Dimension</code></td><td><code>1.5em</code></td><td>Room added to the answer's width, in whole ems.</td></tr>
+    <tr><td><code>minWidth</code></td><td><code>Dimension</code></td><td><code>3em</code></td><td>The narrowest blank.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>black</td><td>The colour of the line, the dots or the box. Set, it also colours the boxes and rings to tick and the frames of the bank's words, which are otherwise in the main colour.</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>The line's weight.</td></tr>
+  </tbody>
+</table>
+
+### True or false
+
+`trueFalse` sets the answers at the end of a statement.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>by language</td><td>The two answers: <code>['T', 'F']</code> in English; V F in Spanish, Catalan, French, Italian and Portuguese; R F in German; √ × in Chinese; ○ × in Japanese; صح خطأ in Arabic.</td></tr>
+    <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: each label with a box to tick, at the end of the line. <code>'bracket'</code>: one blank to write the answer in.</td></tr>
+  </tbody>
+</table>
+
+### Match
+
+`match` sets an exercise of pairs.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'dots' | 'letters'</code></td><td><code>'dots'</code></td><td><code>'dots'</code>: two columns with a dot by each item, to join with a line. <code>'letters'</code>: the right column lettered, a blank by each left item for the letter.</td></tr>
+    <tr><td><code>gap</code></td><td><code>Dimension</code></td><td><code>4em</code></td><td>Room between the two columns.</td></tr>
+    <tr><td><code>dotSize</code></td><td><code>Dimension</code></td><td><code>0.35em</code></td><td>The dots' diameter.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>the main colour</td><td>The dots, and the word bank's frame.</td></tr>
+  </tbody>
+</table>
+
+### Word bank
+
+`bank` sets the box of words of a gaps exercise with `bank` or <code>::bank[…]</code>, and of every sort exercise. The box stands where a `::bank` line is written, else under the instruction.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>a frame in the match colour</td><td>A <code>calloutStyles</code> id for the bank's box.</td></tr>
+    <tr><td><code>order</code></td><td><code>'shuffle' | 'alpha' | 'written'</code></td><td><code>'shuffle'</code></td><td>The words shuffled (seeded), in alphabetical order in the document language, or as written.</td></tr>
+    <tr><td><code>separator</code></td><td><code>string</code></td><td>an em space</td><td>Between two words. Each word is set in a chip with a thin frame.</td></tr>
+  </tbody>
+</table>
+
+### Writing area
+
+`area` sets the space under an open question, under a scrambled sentence and in the columns of a sort exercise.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>kind</code></td><td><code>'lines' | 'dots' | 'grid' | 'seyes' | 'tianzige' | 'box' | 'none'</code></td><td><code>'lines'</code></td><td>Ruled lines, a row of dots, squared paper, French Seyès ruling, 田字格 squares, an empty frame, or blank room. A fence's <code>area</code> overrides it.</td></tr>
+    <tr><td><code>lines</code></td><td><code>number</code></td><td><code>3</code></td><td>How many lines tall. A fence's <code>lines</code> overrides it.</td></tr>
+    <tr><td><code>spacing</code></td><td><code>Dimension</code></td><td>1.35 times the text's line height (1.2 for grids)</td><td>The distance between two lines.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>a light grey</td><td>The ruling's colour.</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.5pt</code></td><td>The ruling's weight.</td></tr>
+  </tbody>
+</table>
+
+### Grids
+
+`grid` sets the cells of word searches, crosswords and operations in columns.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>A cell's side.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>the text's</td><td>The letters' and digits' family.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0.58 of the cell's side</td><td>The size of the letters and digits, an em being the text's.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>the text's</td><td>The letters' and digits' colour.</td></tr>
+    <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>a mid grey</td><td>The cells' rules.</td></tr>
+    <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>Their weight.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>The fill of the crossword's cells that no word takes. Unset, the grid prints only the cells of its words.</td></tr>
+    <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Set the letters of word searches and crosswords in capitals, in the document language's case rules.</td></tr>
+  </tbody>
+</table>
+
+### Arithmetic
+
+`arithmetic` sets operations in columns.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>by language</td><td>Long division. <code>'bracket'</code>: the divisor left of the dividend, a bracket over it, the quotient on top (English, Chinese, Japanese, Arabic, and any language without its own). <code>'potence'</code>: the divisor right of the dividend under an L, the quotient under the divisor (Spanish, Catalan, French, Italian, Portuguese). <code>'inline'</code>: <code>864 : 4 =</code> with the quotient on the line and the steps under it (German).</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>Operations to a row, fewer when the column is too narrow.</td></tr>
+  </tbody>
+</table>
+
+### Difficulty
+
+`level` sets the marks a fence's `level` prints after the number, in a smaller size.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td><code>'●'</code></td><td>A level reached: <code>'★'</code>, <code>'■'</code>.</td></tr>
+    <tr><td><code>empty</code></td><td><code>string</code></td><td><code>'○'</code></td><td>A level not reached; <code>''</code> prints none.</td></tr>
+    <tr><td><code>max</code></td><td><code>number</code></td><td><code>3</code></td><td>The highest level: <code>level=2</code> with <code>max: 3</code> prints ●●○.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>the main colour</td><td>The marks' colour.</td></tr>
+  </tbody>
+</table>
+
+### Icons
+
+`icons` maps an id to an activity icon (oral, written, pair work, listening, calculator), printed after the number when a fence names it: `icon="pair"`.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td>—</td><td>A character to print: <code>'✎'</code>, <code>'🎧'</code>, a glyph of an icon font.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>—</td><td>The family of an icon font.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>The icon's colour.</td></tr>
+    <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>A bitmap or SVG resource printed as the icon, in place of a glyph.</td></tr>
+    <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>What the icon stands for, for screen readers and the tagged PDF.</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>The icon's height in ems of the instruction: the height of a capital by default.</td></tr>
+  </tbody>
+</table>
+
+An icon prints as an inline symbol after the number: the picture of `resourceId` when it names one, else the `glyph` set in `fontFamily`, in `color` (the text's when unset). It stands on the instruction's baseline, `size` ems tall, and its `alt` is read in its place.
+
+### Answers
+
+`answers` sets the answers wherever they show: a teacher's edition, the model item of an `example` exercise, rings and filled boxes, lines drawn between pairs, letters and digits in grids.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td><code>#d6246e</code>, a magenta red</td><td>The answers' colour, as a teacher's book overprints them.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>the text's</td><td>A face for the answers: a handwriting face is common.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Set answers in blanks in italic.</td></tr>
+  </tbody>
+</table>
+
+### Screen colours
+
+`digital` sets how the HTML viewer and EPUB books show a checked answer.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>correctColor</code></td><td><code>ColorValue</code></td><td>a green (<code>#1e8e3e</code>)</td><td>A right answer.</td></tr>
+    <tr><td><code>wrongColor</code></td><td><code>ColorValue</code></td><td>a red (<code>#c5221f</code>)</td><td>A wrong answer.</td></tr>
+  </tbody>
+</table>
+
+## Book settings
+
+The `exercises` property holds the settings of the whole book: the edition, where solutions print, the seed of every shuffle and the screen editions. A book that sets neither `exercises` nor `exerciseStyles` lays out and hashes as before.
+
+```ts
+const config: PostextConfig = {
+  exercises: {
+    edition: 'student',
+    solutions: { placement: 'chapterEnd', layout: 'key' },
+    seed: 3,
+    digital: { check: 'instant' },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>edition</code></td><td><code>'student' | 'teacher'</code></td><td><code>'student'</code></td><td><code>'teacher'</code> prints every answer in its slot in the <code>answers</code> colour: a teacher's book from the pupil's text.</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>Where and how the solutions print. See <a href="#solutions">Solutions</a>.</td></tr>
+    <tr><td><code>seed</code></td><td><code>number</code></td><td><code>1</code></td><td>What every shuffle is drawn from: options, right columns, order items, scrambled words, banks, word-search fillers. Change it for another version of a test; print, screen and key stay in agreement.</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>The HTML viewer and EPUB books. See <a href="#screen-editions">Screen editions</a>.</td></tr>
+  </tbody>
+</table>
+
+### Solutions
+
+`exercises.solutions`, and a style's `solutions` over it for that style's exercises.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>placement</code></td><td><code>'none' | 'after' | 'inverted' | 'chapterEnd' | 'directive'</code></td><td><code>'none'</code></td><td><code>'none'</code>: no solutions in print. <code>'after'</code>: after each exercise, in smaller type. <code>'inverted'</code>: after each exercise, turned upside down. <code>'chapterEnd'</code>: at the end of the chapter, under <code>heading</code>. <code>'directive'</code>: where a <code>:::solutions</code> line stands.</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>a frameless box in smaller type</td><td>A <code>calloutStyles</code> id for a solution's box, and for the list of a chapter's solutions.</td></tr>
+    <tr><td><code>heading</code></td><td><code>string</code></td><td>the document language's word</td><td>The heading of the solutions at the end of a chapter: Solutions, Soluciones, Solucions, Corrigés, Lösungen, Soluzioni, Gabarito, 参考答案, 解答, الحلول. A <code>:::solutions&#123;title="…"&#125;</code> line sets its own.</td></tr>
+    <tr><td><code>layout</code></td><td><code>'key' | 'full'</code></td><td><code>'full'</code></td><td><code>'key'</code>: the answers alone (1 b · 2 water). <code>'full'</code>: the key, then the exercise's <code>:::solution</code>.</td></tr>
+  </tbody>
+</table>
+
+### Screen editions
+
+`exercises.digital` sets how exercises behave in the HTML viewer and in EPUB books.
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>interactive</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Exercises the reader can answer. <code>false</code> shows them as printed.</td></tr>
+    <tr><td><code>persist</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Keep the reader's answers in the browser, per book.</td></tr>
+    <tr><td><code>check</code></td><td><code>'button' | 'instant'</code></td><td><code>'button'</code></td><td><code>'button'</code>: answers are checked when the reader asks. <code>'instant'</code>: each answer is checked as it is given.</td></tr>
+  </tbody>
+</table>
+
+The screen can have its own exercise settings: `htmlViewer.overrides` takes `exercises` and `exerciseStyles` too, merged over the book's before the HTML viewer lays out, so print keeps its solutions at the end of the chapter while the screen hides them, or the screen drops the writing areas a reader has no use for.
+
+```ts
+const config: PostextConfig = {
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [{ id: 'exercise', area: { kind: 'none' }, blank: { minWidth: { value: 6, unit: 'em' } } }],
+    },
+  },
+};
+```

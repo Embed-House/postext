@@ -698,12 +698,19 @@ export function chipToken(
     box?.direction,
   );
   const textWidth = (asPainted ? directed.runs : runs).reduce((sum, r) => sum + r.width, 0);
-  const paddingX = box?.paddingXPx ?? 0;
+  const ownPaddingX = box?.paddingXPx ?? 0;
   const paddingY = box?.paddingYPx ?? 0;
   // A style may pad the top and the bottom apart (EF-172).
   const paddingTop = box?.paddingTopPx ?? paddingY;
   const paddingBottom = box?.paddingBottomPx ?? paddingY;
   const borderWidth = box?.borderWidthPx ?? 0;
+  // A box as wide as another text (an exercise's longest answer) or a
+  // least width (#1227) widens its padding evenly: the text stays centred.
+  const widthTextPx = chip.widthText
+    ? measureTextWidth(chip.widthText, withFace(pickSpanFont(span.bold || !!box?.bold, span.italic || !!box?.italic, normalFont, boldFont, italicFont, boldItalicFont), box?.fontFamily, sizePx))
+    : 0;
+  const inner = Math.max(textWidth, widthTextPx, (box?.minWidthPx ?? 0) - (ownPaddingX + borderWidth) * 2);
+  const paddingX = ownPaddingX + (inner - textWidth) / 2;
   const boxWidth = textWidth + (paddingX + borderWidth) * 2;
   const ascent = sizePx * CHIP_ASCENT_RATIO + paddingTop + borderWidth;
   const descent = sizePx * CHIP_DESCENT_RATIO + paddingBottom + borderWidth;
@@ -730,6 +737,9 @@ export function chipToken(
       ...(box?.borderColor ? { borderColor: box.borderColor } : {}),
       ...(box?.color ? { color: box.color } : {}),
       ...(box?.dotted ? { dotted: box.dotted } : {}),
+      ...(box?.underline ? { underline: box.underline } : {}),
+      ...(chip.blank ? { blank: true as const, ...(chip.blankLabel ? { blankLabel: chip.blankLabel } : {}) } : {}),
+      ...(chip.exercise ? { exercise: chip.exercise } : {}),
       ...(chip.joinNext ? { joinNext: true } : {}),
       // The words' source (#857), while the runs read as written.
       ...(chip.sourceOffsets && directed.runs.reduce((n, r) => n + r.text.length, 0) === chip.sourceOffsets.length ? { sourceOffsets: chip.sourceOffsets } : {}),

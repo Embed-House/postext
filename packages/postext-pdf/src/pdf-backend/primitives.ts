@@ -37,6 +37,7 @@ import {
   setGraphicsState,
   setCharacterSpacing,
   setLineCap,
+  setDashPattern,
   LineCapStyle,
 } from 'pdf-lib';
 import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors.js';
@@ -1692,7 +1693,26 @@ export function drawChipBoxPx(ctx: PageCtx, chip: VDTChip, xPx: number, baseline
   if (chip.background) {
     fillOutlinePx(ctx, { x, y, width: chip.boxWidth, height: h, radii: [r, r, r, r] }, colorFromHex(chip.background, ctx.colorSpace));
   }
-  if (chip.borderColor && chip.borderWidth > 0) {
+  if (chip.underline && chip.borderColor && chip.borderWidth > 0) {
+    // A blank to write on (#1227): a line under the box only.
+    const { scale, pageHeightPt } = ctx;
+    const w = chip.borderWidth;
+    const ly = pageHeightPt - (y + h - w / 2) * scale;
+    const color = colorFromHex(chip.borderColor, ctx.colorSpace);
+    const dash = chip.underline === 'dotted' ? [0.01 * scale, w * 2.2 * scale] : chip.underline === 'dashed' ? [w * 3 * scale, w * 2 * scale] : undefined;
+    ctx.page.pushOperators(
+      pushGraphicsState(),
+      ...opt(alphaStateOp(ctx, 1, alphaOf(color))),
+      setStrokingColor(color),
+      setLineWidth(Math.max(0.01, w * scale)),
+      ...(dash ? [setDashPattern(dash, 0)] : []),
+      ...(chip.underline === 'dotted' ? [setLineCap(LineCapStyle.Round)] : []),
+      moveTo(x * scale, ly),
+      lineTo((x + chip.boxWidth) * scale, ly),
+      stroke(),
+      popGraphicsState(),
+    );
+  } else if (chip.borderColor && chip.borderWidth > 0) {
     const half = chip.borderWidth / 2;
     const ri = Math.max(0, r - half);
     strokeOutlinePx(

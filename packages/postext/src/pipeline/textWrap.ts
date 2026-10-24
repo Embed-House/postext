@@ -99,7 +99,7 @@ export function runsBesideWrap(block: ContentBlock): boolean {
 export function transparentToWrap(block: ContentBlock): boolean {
   if (block.type === 'containerStart' || block.type === 'containerEnd') {
     const name = block.containerName;
-    return name !== 'callout' && name !== 'part' && name !== 'paper' && name !== 'composedPage';
+    return name !== 'callout' && name !== 'part' && name !== 'paper' && name !== 'composedPage' && name !== 'exercise' && name !== 'solution' && name !== 'hint';
   }
   return block.type === 'directive' && block.directiveName === 'numbering';
 }

@@ -1,0 +1,472 @@
+{/* docs/configuration-exercises-fr.mdx */}
+
+export const metadata = {
+  title: 'Configuration : exercices',
+  sidebarTitle: 'Réglages des exercices',
+  description: 'Les styles d’exercice (exerciseStyles) et les réglages d’exercices du livre (exercises) : pastilles de numéro, caractère de la consigne, lettres et cases des propositions, trous, réponses vrai/faux, exercices à relier, banques de mots, zones d’écriture, grilles, division posée, marques de difficulté, icônes, couleur des réponses, emplacement des solutions, livre du professeur et éditions à l’écran',
+  lang: 'fr',
+  lastUpdated: '2026-10-24',
+  readingTime: '13 min',
+  order: 17,
+  parent: 'configuration',
+  plainSummary: "Cette page liste tous les réglages de l’aspect des exercices. Un style d’exercice décide comment s’imprime le numéro, comment les propositions sont désignées, à quoi ressemble un trou à compléter, quelle réglure ont les lignes où écrire et comment se dessinent les grilles et les opérations posées. Les réglages du livre décident où s’impriment les solutions et si le livre est l’édition de l’élève ou celle du professeur. Ils décident aussi comment le lecteur répond aux exercices à l’écran. La page Exercices explique comment écrire les exercices eux-mêmes.",
+};
+
+# Configuration : exercices
+
+
+## Styles d’exercice
+
+La propriété `exerciseStyles` déclare les styles nommés qu’un exercice choisit avec `:::exercise{style="…"}`. Un style est la forme d’une famille d’exercices ; les questions et les réponses restent dans le Markdown (voir [Exercices](/fr/docs/exercises)). Un style, `exercise`, est fourni par défaut : le délimiteur fonctionne donc sans aucune configuration. Déclarer `exerciseStyles` le remplace, et le premier style déclaré est celui que prend un exercice sans `style`. Tous les champs sont facultatifs, et les valeurs par défaut suivent la langue du document là où les usages scolaires diffèrent : lettres des propositions, lettres vrai/faux, disposition de la division posée, mots imprimés.
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activite',
+      box: 'cadre-activite',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Source Sans 3' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots', width: 'answer' },
+      area: { kind: 'seyes', lines: 4 },
+      level: { glyph: '★', empty: '☆' },
+      icons: { binome: { glyph: '👥' } },
+    },
+    { id: 'qcm', extends: 'activite', options: { layout: 'row', columns: 4 } },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>—</td><td>Identifiant choisi par <code>:::exercise&#123;style="…"&#125;</code>. Un identifiant inconnu se replie sur le premier style et est signalé (<code>exerciseUnknownStyle</code>).</td></tr>
+    <tr><td><code>name</code></td><td><code>string</code></td><td><code>id</code></td><td>Nom lisible (interface de l’éditeur seulement).</td></tr>
+    <tr><td><code>extends</code></td><td><code>string</code></td><td>—</td><td>L’identifiant du style sur lequel celui-ci se base. Chaque groupe (<code>number</code>, <code>options</code>, <code>blank</code>…) est fusionné champ par champ, <code>icons</code> identifiant par identifiant.</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>—</td><td>Un identifiant de <a href="/fr/docs/configuration-callouts#styles-dencadré"><code>calloutStyles</code></a> pour le cadre de l’exercice : fond, bordure, bande, marge intérieure, placement, coupure. Sans lui, l’exercice est composé dans le texte courant, sans cadre, et reste entier sur une page.</td></tr>
+    <tr><td><code>number</code></td><td><code>object</code></td><td>—</td><td>L’impression du numéro. Voir <a href="#numéro">Numéro</a>.</td></tr>
+    <tr><td><code>instruction</code></td><td><code>object</code></td><td>—</td><td>Le caractère de la consigne. Voir <a href="#consigne">Consigne</a>.</td></tr>
+    <tr><td><code>options</code></td><td><code>object</code></td><td>—</td><td>Les propositions d’une question à choix. Voir <a href="#propositions">Propositions</a>.</td></tr>
+    <tr><td><code>blank</code></td><td><code>object</code></td><td>—</td><td>L’impression d’un <code>[[…]]</code>. Voir <a href="#trous">Trous</a>.</td></tr>
+    <tr><td><code>trueFalse</code></td><td><code>object</code></td><td>—</td><td>Les réponses d’une affirmation vrai/faux. Voir <a href="#vrai-ou-faux">Vrai ou faux</a>.</td></tr>
+    <tr><td><code>match</code></td><td><code>object</code></td><td>—</td><td>Deux colonnes à relier. Voir <a href="#relier">Relier</a>.</td></tr>
+    <tr><td><code>bank</code></td><td><code>object</code></td><td>—</td><td>La banque de mots. Voir <a href="#banque-de-mots">Banque de mots</a>.</td></tr>
+    <tr><td><code>area</code></td><td><code>object</code></td><td>—</td><td>Les zones d’écriture. Voir <a href="#zone-décriture">Zone d’écriture</a>.</td></tr>
+    <tr><td><code>grid</code></td><td><code>object</code></td><td>—</td><td>Les cases des mots mêlés, des mots croisés et des opérations. Voir <a href="#grilles">Grilles</a>.</td></tr>
+    <tr><td><code>arithmetic</code></td><td><code>object</code></td><td>—</td><td>Les opérations posées. Voir <a href="#calcul-posé">Calcul posé</a>.</td></tr>
+    <tr><td><code>level</code></td><td><code>object</code></td><td>—</td><td>Les marques de difficulté. Voir <a href="#difficulté">Difficulté</a>.</td></tr>
+    <tr><td><code>icons</code></td><td><code>Record&lt;string, ExerciseIcon&gt;</code></td><td><code>&#123;&#125;</code></td><td>Les icônes d’activité par identifiant, nommées par l’attribut <code>icon</code> d’un délimiteur. Voir <a href="#icônes">Icônes</a>.</td></tr>
+    <tr><td><code>answers</code></td><td><code>object</code></td><td>—</td><td>L’impression des réponses dans un livre du professeur, dans un item modèle et dans les solutions. Voir <a href="#réponses">Réponses</a>.</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>Les <a href="#solutions"><code>exercises.solutions</code></a> du livre pour les exercices de ce style : seuls les champs fixés ici changent.</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>Les couleurs des éditions à l’écran. Voir <a href="#couleurs-à-lécran">Couleurs à l’écran</a>.</td></tr>
+    <tr><td><code>marginTop</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>Espace au-dessus d’un exercice sans <code>box</code>.</td></tr>
+    <tr><td><code>marginBottom</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>Espace au-dessous d’un exercice sans <code>box</code>.</td></tr>
+    <tr><td><code>itemSpacing</code></td><td><code>Dimension</code></td><td><code>0.25em</code></td><td>Espace entre deux items : propositions, questions, affirmations, paires.</td></tr>
+  </tbody>
+</table>
+
+### Numéro
+
+`number` règle le numéro de l’exercice. Un numéro nu est en gras, dans la couleur principale, suivi d’un point ; un numéro dans une forme est un chiffre blanc dans un disque, un carré ou un carré arrondi de la couleur principale, sans rien après.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>show</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Imprimer le numéro. Le compte avance dans tous les cas.</td></tr>
+    <tr><td><code>label</code></td><td><code>boolean | string</code></td><td><code>false</code></td><td>Un mot devant le numéro : <code>true</code> prend le mot de la langue du document (Exercice, Exercise, Ejercicio, Übung, 练习, 練習, تمرين…), une chaîne est le mot lui-même (<code>'Activité'</code>).</td></tr>
+    <tr><td><code>shape</code></td><td><code>'none' | 'disc' | 'square' | 'rounded'</code></td><td><code>'none'</code></td><td>La forme dans laquelle le numéro est composé.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>blanc sur une forme, sinon la couleur principale</td><td>La couleur du numéro.</td></tr>
+    <tr><td><code>background</code></td><td><code>ColorValue</code></td><td>la couleur principale</td><td>Le remplissage de la forme.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>celle du texte environnant</td><td>La famille du numéro.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>Le corps du numéro, l’em étant celui de la consigne.</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td><code>700</code></td><td>À partir de 600, le numéro est en gras.</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>'.'</code>, rien sur une forme</td><td>Imprimé après un numéro nu et son mot : <code>'.'</code>, <code>')'</code>, <code>'、'</code>.</td></tr>
+    <tr><td><code>template</code></td><td><code>string</code></td><td><code>'&#123;n&#125;'</code></td><td>Ce que dit le numéro : <code>&#123;n&#125;</code> le compte de l’exercice, <code>&#123;h1&#125;</code> et <code>&#123;h2&#125;</code> les numéros du chapitre et de la section (<code>'&#123;h1&#125;.&#123;n&#125;'</code> imprime 3.4).</td></tr>
+    <tr><td><code>resetOn</code></td><td><code>'never' | 'h1' … 'h6'</code></td><td><code>'h1'</code></td><td>Le niveau de titre qui fait repartir le compte ; <code>'never'</code> compte sur tout le livre.</td></tr>
+    <tr><td><code>counter</code></td><td><code>string</code></td><td><code>'exercise'</code></td><td>Le compteur que le style fait avancer. Les styles qui nomment un même compteur le partagent ; un style doté de son propre compteur (<code>'revision'</code>) numérote ses exercices à part.</td></tr>
+    <tr><td><code>format</code></td><td><code>ResourceCounterFormat</code></td><td><code>'decimal'</code></td><td>Les chiffres de <code>&#123;n&#125;</code>, comme pour un compteur de ressources : <code>'roman-upper'</code>, <code>'alpha-lower'</code>, <code>'simp-chinese-informal'</code> (一, 二), <code>'circled-decimal'</code> (①, ②), <code>'arabic-indic'</code>…</td></tr>
+  </tbody>
+</table>
+
+### Consigne
+
+`instruction` règle les paragraphes qui ouvrent l’exercice. Les champs non définis prennent la valeur du texte courant.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Composer la consigne en gras.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>La composer en italique.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>celle du texte</td><td>Sa couleur, passages en gras compris.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>celle du texte</td><td>Sa famille : une consigne en linéale sur un texte à empattements est courante dans les manuels scolaires.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>celle du texte</td><td>Son corps.</td></tr>
+  </tbody>
+</table>
+
+### Propositions
+
+`options` règle les propositions d’une question à choix (<code>- [ ] …</code>).
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>ResourceCounterFormat | 'none'</code></td><td>selon la langue</td><td>La façon de désigner les propositions : <code>'alpha-lower'</code> (a, b, c), <code>'alpha-upper'</code> en chinois (A, B, C), <code>'katakana'</code> en japonais (ア, イ, ウ), <code>'abjad'</code> en arabe (أ, ب, ج). Aussi <code>'decimal'</code>, <code>'katakana-iroha'</code>, <code>'circled-decimal'</code>… <code>'none'</code> n’imprime aucune lettre.</td></tr>
+    <tr><td><code>prefix</code></td><td><code>string</code></td><td><code>''</code></td><td>Avant la lettre : <code>'('</code> pour (a).</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>')'</code> ; <code>'.'</code> en chinois, rien en japonais</td><td>Après la lettre.</td></tr>
+    <tr><td><code>marker</code></td><td><code>'none' | 'box' | 'circle'</code></td><td><code>'none'</code></td><td>Une case ou un rond à cocher devant chaque proposition. Avec <code>'none'</code>, le lecteur entoure la lettre.</td></tr>
+    <tr><td><code>layout</code></td><td><code>'stack' | 'row'</code></td><td><code>'stack'</code></td><td><code>'stack'</code> : une proposition par ligne, ses lignes suivantes alignées sous son texte. <code>'row'</code> : les propositions côte à côte. L’attribut <code>columns=n</code> d’un délimiteur les met aussi en rangées.</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td>toutes</td><td>Propositions par rangée dans la disposition <code>'row'</code> (6 au plus).</td></tr>
+    <tr><td><code>shuffle</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Imprimer les propositions mélangées, dans le même ordre dans toutes les sorties et dans le corrigé.</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>Le retrait des propositions depuis le bord du texte, pour une question sans énoncé.</td></tr>
+    <tr><td><code>bracket</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Des parenthèses <code>（　）</code> à la fin de l’énoncé de chaque question pour y écrire la lettre, comme dans les contrôles chinois et japonais. Un livre du professeur y écrit la lettre.</td></tr>
+  </tbody>
+</table>
+
+### Trous
+
+`blank` règle l’impression d’un `[[…]]` dans le texte de l’élève : un espace à la taille de la réponse, avec une ligne, des pointillés ou une case, la réponse elle-même n’étant pas peinte.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'line' | 'dots' | 'box' | 'none'</code></td><td><code>'line'</code></td><td>Une ligne où écrire, une ligne de points, une case ou un espace vide.</td></tr>
+    <tr><td><code>width</code></td><td><code>'answer' | 'longest' | Dimension</code></td><td><code>'longest'</code></td><td><code>'longest'</code> : tous les trous de l’exercice ont la largeur de sa plus longue réponse, et aucun trou ne trahit sa réponse. <code>'answer'</code> : chacun a la largeur de sa propre réponse. Une longueur : cette largeur pour tous. Le <code>&#123;width=N&#125;</code> d’un trou l’emporte.</td></tr>
+    <tr><td><code>extra</code></td><td><code>Dimension</code></td><td><code>1.5em</code></td><td>Espace ajouté à la largeur de la réponse, en em entiers.</td></tr>
+    <tr><td><code>minWidth</code></td><td><code>Dimension</code></td><td><code>3em</code></td><td>La largeur minimale d’un trou.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>noir</td><td>La couleur de la ligne, des points ou de la case. Quand elle est définie, elle colore aussi les cases et les ronds à cocher et les cadres des mots de la banque, qui sont sinon dans la couleur principale.</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>L’épaisseur de la ligne.</td></tr>
+  </tbody>
+</table>
+
+### Vrai ou faux
+
+`trueFalse` règle les réponses en fin d’affirmation.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>selon la langue</td><td>Les deux réponses : <code>['V', 'F']</code> en français, en espagnol, en catalan, en italien et en portugais ; T F en anglais ; R F en allemand ; √ × en chinois ; ○ × en japonais ; صح خطأ en arabe.</td></tr>
+    <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code> : chaque lettre suivie d’une case à cocher, en bout de ligne. <code>'bracket'</code> : un seul espace où écrire la réponse.</td></tr>
+  </tbody>
+</table>
+
+### Relier
+
+`match` règle un exercice de paires.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'dots' | 'letters'</code></td><td><code>'dots'</code></td><td><code>'dots'</code> : deux colonnes avec un point à côté de chaque élément, à relier par un trait. <code>'letters'</code> : la colonne de droite reçoit des lettres et chaque élément de gauche un espace pour la lettre.</td></tr>
+    <tr><td><code>gap</code></td><td><code>Dimension</code></td><td><code>4em</code></td><td>L’espace entre les deux colonnes.</td></tr>
+    <tr><td><code>dotSize</code></td><td><code>Dimension</code></td><td><code>0.35em</code></td><td>Le diamètre des points.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>la couleur principale</td><td>Les points, et le cadre de la banque de mots.</td></tr>
+  </tbody>
+</table>
+
+### Banque de mots
+
+`bank` règle la boîte de mots d’un exercice à trous avec `bank` ou <code>::bank[…]</code>, et de tout exercice de classement. La boîte se place là où est écrite la ligne `::bank`, sinon sous la consigne.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>un cadre dans la couleur de <code>match</code></td><td>Un identifiant de <code>calloutStyles</code> pour la boîte de la banque.</td></tr>
+    <tr><td><code>order</code></td><td><code>'shuffle' | 'alpha' | 'written'</code></td><td><code>'shuffle'</code></td><td>Les mots mélangés (à partir de la graine), dans l’ordre alphabétique de la langue du document ou dans l’ordre écrit.</td></tr>
+    <tr><td><code>separator</code></td><td><code>string</code></td><td>une espace cadratin</td><td>Entre deux mots. Chaque mot est composé dans une pastille au cadre fin.</td></tr>
+  </tbody>
+</table>
+
+### Zone d’écriture
+
+`area` règle l’espace sous une question à réponse libre, sous une phrase en désordre et dans les colonnes d’un exercice de classement.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>kind</code></td><td><code>'lines' | 'dots' | 'grid' | 'seyes' | 'tianzige' | 'box' | 'none'</code></td><td><code>'lines'</code></td><td>Des lignes, une rangée de points, du papier quadrillé, la réglure Seyès des cahiers français, des carrés 田字格, un cadre vide ou un espace blanc. L’attribut <code>area</code> d’un délimiteur l’emporte.</td></tr>
+    <tr><td><code>lines</code></td><td><code>number</code></td><td><code>3</code></td><td>La hauteur en lignes. L’attribut <code>lines</code> d’un délimiteur l’emporte.</td></tr>
+    <tr><td><code>spacing</code></td><td><code>Dimension</code></td><td>1,35 fois l’interligne du texte (1,2 pour les grilles)</td><td>La distance entre deux lignes.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>un gris clair</td><td>La couleur de la réglure.</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.5pt</code></td><td>L’épaisseur de la réglure.</td></tr>
+  </tbody>
+</table>
+
+### Grilles
+
+`grid` règle les cases des mots mêlés, des mots croisés et des opérations posées.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>Le côté d’une case.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>celle du texte</td><td>La famille des lettres et des chiffres.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 du côté de la case</td><td>La taille des lettres et des chiffres, un em étant celui du texte.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>celle du texte</td><td>La couleur des lettres et des chiffres.</td></tr>
+    <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>un gris moyen</td><td>Les filets des cases.</td></tr>
+    <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>Leur épaisseur.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Le fond des cases de la grille de mots croisés qu’aucun mot n’occupe. Sans lui, la grille n’imprime que les cases de ses mots.</td></tr>
+    <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Composer en capitales les lettres des mots mêlés et des mots croisés, selon les règles de casse de la langue du document.</td></tr>
+  </tbody>
+</table>
+
+### Calcul posé
+
+`arithmetic` règle les opérations posées.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>selon la langue</td><td>La division posée. <code>'bracket'</code> : le diviseur à gauche du dividende, un crochet au-dessus de celui-ci, le quotient en haut (anglais, chinois, japonais, arabe, et toute langue sans usage propre). <code>'potence'</code> : le diviseur à droite du dividende sous la potence, le quotient sous le diviseur (français, espagnol, catalan, italien, portugais). <code>'inline'</code> : <code>864 : 4 =</code> avec le quotient sur la ligne et les étapes en dessous (allemand).</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>Opérations par rangée, moins quand la colonne est trop étroite.</td></tr>
+  </tbody>
+</table>
+
+### Difficulté
+
+`level` règle les marques que l’attribut `level` d’un délimiteur imprime après le numéro, en plus petit corps.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td><code>'●'</code></td><td>Un niveau atteint : <code>'★'</code>, <code>'■'</code>.</td></tr>
+    <tr><td><code>empty</code></td><td><code>string</code></td><td><code>'○'</code></td><td>Un niveau non atteint ; <code>''</code> n’en imprime aucun.</td></tr>
+    <tr><td><code>max</code></td><td><code>number</code></td><td><code>3</code></td><td>Le niveau le plus haut : <code>level=2</code> avec <code>max: 3</code> imprime ●●○.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>la couleur principale</td><td>La couleur des marques.</td></tr>
+  </tbody>
+</table>
+
+### Icônes
+
+`icons` associe un identifiant à une icône d’activité (oral, écrit, travail en binôme, écoute, calculatrice), imprimée après le numéro quand un délimiteur la nomme : `icon="binome"`.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td>—</td><td>Un caractère à imprimer : <code>'✎'</code>, <code>'🎧'</code>, un glyphe d’une police d’icônes.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>—</td><td>La famille d’une police d’icônes.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>La couleur de l’icône.</td></tr>
+    <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>Une ressource bitmap ou SVG pour l’icône.</td></tr>
+    <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>Ce que représente l’icône, pour les lecteurs d’écran et le PDF balisé.</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>La hauteur de l’icône en em de la consigne : par défaut, celle d’une capitale.</td></tr>
+  </tbody>
+</table>
+
+Une icône s’imprime comme un symbole en ligne après le numéro : l’image de `resourceId` si elle en nomme une, sinon le `glyph` dans `fontFamily` et en `color` (celle du texte par défaut). Elle repose sur la ligne de base de la consigne, haute de `size` em, et son `alt` est lu à sa place.
+
+### Réponses
+
+`answers` règle les réponses partout où elles apparaissent : livre du professeur, item modèle d’un exercice avec `example`, ronds et cases noircies, traits entre les paires, lettres et chiffres dans les grilles.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td><code>#d6246e</code>, un rouge magenta</td><td>La couleur des réponses, en surimpression comme dans un livre du professeur.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>celle du texte</td><td>Un caractère pour les réponses : une écriture manuscrite est courante.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Composer en italique les réponses écrites dans les trous.</td></tr>
+  </tbody>
+</table>
+
+### Couleurs à l’écran
+
+`digital` règle l’affichage d’une réponse vérifiée dans la visionneuse HTML et les livres EPUB.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>correctColor</code></td><td><code>ColorValue</code></td><td>un vert (<code>#1e8e3e</code>)</td><td>Une bonne réponse.</td></tr>
+    <tr><td><code>wrongColor</code></td><td><code>ColorValue</code></td><td>un rouge (<code>#c5221f</code>)</td><td>Une mauvaise réponse.</td></tr>
+  </tbody>
+</table>
+
+## Réglages du livre
+
+La propriété `exercises` contient les réglages de tout le livre : l’édition, l’emplacement des solutions, la graine de tous les mélanges et les éditions à l’écran. Un livre qui ne fixe ni `exercises` ni `exerciseStyles` se met en page et se hache comme avant.
+
+```ts
+const config: PostextConfig = {
+  exercises: {
+    edition: 'student',
+    solutions: { placement: 'chapterEnd', layout: 'key' },
+    seed: 3,
+    digital: { check: 'instant' },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>edition</code></td><td><code>'student' | 'teacher'</code></td><td><code>'student'</code></td><td><code>'teacher'</code> imprime chaque réponse à sa place, dans la couleur de <code>answers</code> : un livre du professeur tiré du texte de l’élève.</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>Où et comment s’impriment les solutions. Voir <a href="#solutions">Solutions</a>.</td></tr>
+    <tr><td><code>seed</code></td><td><code>number</code></td><td><code>1</code></td><td>La graine de tous les mélanges : propositions, colonnes de droite, items à ordonner, mots en désordre, banques, lettres de remplissage des mots mêlés. Changez-la pour obtenir un autre sujet d’un contrôle ; l’imprimé, l’écran et le corrigé restent d’accord.</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>La visionneuse HTML et les livres EPUB. Voir <a href="#éditions-à-lécran">Éditions à l’écran</a>.</td></tr>
+  </tbody>
+</table>
+
+### Solutions
+
+`exercises.solutions`, et le `solutions` d’un style par-dessus pour les exercices de ce style.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>placement</code></td><td><code>'none' | 'after' | 'inverted' | 'chapterEnd' | 'directive'</code></td><td><code>'none'</code></td><td><code>'none'</code> : aucune solution à l’impression. <code>'after'</code> : après chaque exercice, en plus petit corps. <code>'inverted'</code> : après chaque exercice, tête-bêche. <code>'chapterEnd'</code> : en fin de chapitre, sous <code>heading</code>. <code>'directive'</code> : là où se trouve une ligne <code>:::solutions</code>.</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>un encadré sans cadre, en plus petit corps</td><td>Un identifiant de <code>calloutStyles</code> pour l’encadré d’une solution et pour la liste des solutions d’un chapitre.</td></tr>
+    <tr><td><code>heading</code></td><td><code>string</code></td><td>le mot de la langue du document</td><td>Le titre des solutions en fin de chapitre : Corrigés, Solutions, Soluciones, Solucions, Lösungen, Soluzioni, Gabarito, 参考答案, 解答, الحلول. Une ligne <code>:::solutions&#123;title="…"&#125;</code> fixe le sien.</td></tr>
+    <tr><td><code>layout</code></td><td><code>'key' | 'full'</code></td><td><code>'full'</code></td><td><code>'key'</code> : les réponses seules (1 b · 2 eau). <code>'full'</code> : le corrigé, puis la <code>:::solution</code> de l’exercice.</td></tr>
+  </tbody>
+</table>
+
+### Éditions à l’écran
+
+`exercises.digital` règle le comportement des exercices dans la visionneuse HTML et dans les livres EPUB.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propriété</th>
+      <th>Type</th>
+      <th>Par défaut</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>interactive</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Des exercices auxquels le lecteur peut répondre. <code>false</code> les montre tels qu’imprimés.</td></tr>
+    <tr><td><code>persist</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Conserver les réponses du lecteur dans le navigateur, livre par livre.</td></tr>
+    <tr><td><code>check</code></td><td><code>'button' | 'instant'</code></td><td><code>'button'</code></td><td><code>'button'</code> : les réponses sont vérifiées quand le lecteur le demande. <code>'instant'</code> : chaque réponse est vérifiée dès qu’elle est donnée.</td></tr>
+  </tbody>
+</table>
+
+L’écran peut avoir ses propres réglages d’exercices : `htmlViewer.overrides` accepte aussi `exercises` et `exerciseStyles`, fusionnés avec ceux du livre avant la mise en page de la visionneuse HTML. L’imprimé peut ainsi garder ses solutions en fin de chapitre pendant que l’écran les cache, ou l’écran peut supprimer les zones d’écriture dont un lecteur n’a que faire.
+
+```ts
+const config: PostextConfig = {
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [{ id: 'exercise', area: { kind: 'none' }, blank: { minWidth: { value: 6, unit: 'em' } } }],
+    },
+  },
+};
+```

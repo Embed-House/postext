@@ -1,6 +1,6 @@
 ---
 name: postext-port
-description: Port an existing publication into a Postext project (config manifest + enriched Markdown chapters + resources + fonts) that reproduces the original's layout rules; typically a publisher or author migrating their own titles. Use when the user wants to convert, adapt, migrate, re-typeset or rebuild a book, textbook, magazine, catalogue, report, manual, course or deck in Postext from a PDF, Word (.docx), PowerPoint (.pptx), EPUB, HTML, InDesign (IDML), LaTeX, Markdown, XML or scanned pages, Chinese books set horizontally or vertically, Japanese books (vertical bunko and tankōbon novels, horizontal technical books, Aozora Bunko texts with furigana) and Arabic books set right to left (Modern Standard or classical, vocalised verse included), and comics, manga and newspaper strips re-lettered in each language, music textbooks, methods, songbooks and hymnals with their music examples written as notation (ABC, MusicXML, MEI, Humdrum), and fixed-page textbooks, workbooks and magazines as composed pages (page templates with frames filled from the Markdown); when writing or fixing Postext preset.json/config/chapters; or when asked how to express a source layout (columns, openers, parts, boxes, floats, tables, running heads, comic panels) in Postext.
+description: Port an existing publication into a Postext project (config manifest + enriched Markdown chapters + resources + fonts) that reproduces the original's layout rules; typically a publisher or author migrating their own titles. Use when the user wants to convert, adapt, migrate, re-typeset or rebuild a book, textbook, magazine, catalogue, report, manual, course or deck in Postext from a PDF, Word (.docx), PowerPoint (.pptx), EPUB, HTML, InDesign (IDML), LaTeX, Markdown, XML or scanned pages, Chinese books set horizontally or vertically, Japanese books (vertical bunko and tankōbon novels, horizontal technical books, Aozora Bunko texts with furigana) and Arabic books set right to left (Modern Standard or classical, vocalised verse included), and comics, manga and newspaper strips re-lettered in each language, music textbooks, methods, songbooks and hymnals with their music examples written as notation (ABC, MusicXML, MEI, Humdrum), textbook and workbook exercises (choice, true/false, gaps, matching, ordering, word searches, crosswords, column operations) with their answers, solutions and teacher's edition, and fixed-page textbooks, workbooks and magazines as composed pages (page templates with frames filled from the Markdown); when writing or fixing Postext preset.json/config/chapters; or when asked how to express a source layout (columns, openers, parts, boxes, floats, tables, running heads, comic panels) in Postext.
 license: MIT
 metadata:
   homepage: https://postext.dev/en/docs/skill
@@ -73,9 +73,12 @@ in the config, and its bundle broke the Sandbox's import.
   picture id that goes with the heading, not for the text a reader reads.
 - **Styles describe a shape, the Markdown says what fills it.** Elements of
   the same shape share one style whatever their words: every practice row,
-  card, exercise, badge or fact panel of one look is one `calloutStyles`
-  entry, and each instance is a `:::callout{type="id"}` whose content is its
-  text. When the shape must place that text precisely (a word set on a
+  card, badge or fact panel of one look is one `calloutStyles` entry, and
+  each instance is a `:::callout{type="id"}` whose content is its text. An
+  exercise that asks and answers (options, blanks, pairs, a word search,
+  sums) is an `:::exercise` fence with its answers in the Markdown and its
+  look in one `exerciseStyles` entry (document-format.md §7.6,
+  playbooks.md C7). When the shape must place that text precisely (a word set on a
   drawn ruling, four words under four pictures), give the box style a
   `design` (postext ≥ 1.45) whose texts print the box content with
   `{boxText}` (all of it) and `{boxText.<n>}` (the n-th paragraph or list
@@ -264,9 +267,11 @@ Postext Markdown is **not CommonMark**. These habits break a port:
   since configVersion 6); an italic run in an italic heading comes out upright.
 - The containers are `:::callout`, `:::paragraphs`, `:::part`, `:::columns`
   (in a box, or in the running text from postext 1.25), `:::paper` (a run of
-  pages on another paper stock, for the Folio viewer) and, on composed pages,
-  `:::frame`. The directives are `:::pagebreak`, `:::numbering`,
-  `:::columnbreak`, `:::space`, `:::toc`, `:::index` and `:::bibliography`.
+  pages on another paper stock, for the Folio viewer), `:::exercise` (with
+  `:::solution` and `:::hint` inside; `[[answer]]` blanks are read only
+  there) and, on composed pages, `:::frame`. The directives are
+  `:::pagebreak`, `:::numbering`, `:::columnbreak`, `:::space`, `:::toc`,
+  `:::index`, `:::bibliography` and `:::solutions`.
   The fenced raw-body blocks are `:::references` and `:::verse` (a poem: line by
   line as written, or a classical Arabic poem, one bayt a line split at
   `||`), plus inline index marks
@@ -474,7 +479,8 @@ Full references (load the one you need):
 - [references/playbooks.md](references/playbooks.md): the unusual cases
   already solved (parts with palettes, openers, verse, line numbers, glosses,
   footnotes, back-of-book indexes, tab stops for menus, cast lists and forms,
-  floated/split/nested boxes, print masters, live-text figures, cell
+  floated/split/nested boxes, textbook and workbook exercises with their
+  solutions, print masters, live-text figures, cell
   pictures, rotated tables, translated editions, Chinese books set
   horizontally and vertically, CJK fonts, Japanese books (horizontal, and
   vertical bunko or tankōbon) and Japanese fonts, Arabic books (modern and

@@ -1,4 +1,5 @@
 import type { DigitSystem, PostextConfig, ResolvedHeadingLevelConfig } from '../types.js';
+import { resolveExerciseStylesConfig, resolveExercisesConfig } from '../defaults/exercises.js';
 import { columnCountUsed, layoutColumnCount, MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN } from '../defaults/layout.js';
 
 export { columnCountUsed, layoutColumnCount, MULTIPLE_COLUMNS_MAX, MULTIPLE_COLUMNS_MIN };
@@ -196,6 +197,11 @@ function resolveAllConfigUncached(rawConfig?: PostextConfig): ResolvedConfig {
     ...(config?.checks ? { checks: resolveChecksConfig(config.checks) } : {}),
     // Not used by layout either: the Folio 3D viewer reads it.
     ...(config?.folio ? { folio: resolveFolioConfig(config.folio, page.sizePreset) } : {}),
+    // Exercise styles and settings (#1226): only a config that sets them
+    // carries them; the defaults come from `exerciseSettingsFor`.
+    ...(config?.exerciseStyles || config?.exercises
+      ? { exerciseSettings: { styles: resolveExerciseStylesConfig(config.exerciseStyles, documentLocale, config.colorPalette), exercises: resolveExercisesConfig(config.exercises, documentLocale) } }
+      : {}),
     // Line numbers (#621): only a config that sets the section carries
     // it, so a document without them resolves (and hashes) as before.
     ...(config?.lineNumbers ? { lineNumbers: resolveLineNumbersConfig(config.lineNumbers, bodyText) } : {}),

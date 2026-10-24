@@ -99,6 +99,8 @@ Conversion at `page.dpi` (default 300):
 | `calloutStyles` | CalloutStyleConfig[] | `[{id:'note',name:'Note'}]` | §12 `:::callout{type=…}` — declaring replaces the default list |
 | `chipStyles` | ChipStyleConfig[] | `[{id:'chip',name:'Chip'}]` | §13 inline `:chip[…]{style=…}` |
 | `markStyles` | MarkStyleConfig[] | `[{id:'mark'}]` (pale yellow) | §13b inline `:mark[…]{style=…}`, postext ≥ 1.34.1 |
+| `exerciseStyles` | ExerciseStyleConfig[] | `[{id:'exercise'}]` | §13c `:::exercise{style=…}` — declaring replaces the default list |
+| `exercises` | ExercisesConfig | — | §13c edition (student/teacher), solutions placement, shuffle seed, screen editions |
 | `codeStyle` | CodeStyleConfig | §12b | code listings (```` ``` ```` / `~~~` fences, postext ≥ 1.23): face, box, tab width, long lines, line numbers, token colours, inline code |
 | `resourceTypes` | ResourceType[] | Figure + Table + Video in the document language (a list without `video` still numbers video resources with the built-in one; `locale`, else the hyphenation locale; English for other languages) | §15 numbering, caption prefix, default placement |
 | `tableStyle` | TableStyleConfig | §16 | document table style |
@@ -1330,7 +1332,9 @@ Inline `:chip[text]{style="id"}` (word banks, keys, tags). Chip without style �
   paddingTop?/paddingBottom? (= paddingY; top larger than bottom, e.g. 0.2em/0.05em, centres a capital in a round chip),
   fontFamily?/fontSize?/color? (= surrounding text; fontSize em = surrounding), bold=false, italic=false, gap=0.25em,
   dotted?: { spacing = 0.1em, size = 0.05em } (≥ 1.46: the chip's letters as dots to trace; with no fill, no outline
-  and no padding a chip is a dotted word in the line, :chip[gato]{style="dots"}) }
+  and no padding a chip is a dotted word in the line, :chip[gato]{style="dots"}),
+  underline?: 'solid'|'dotted'|'dashed' (the outline as a line under the text only, borderWidth in borderColor: a
+  blank to write on), minWidth?: Dimension (narrowest box, outline and padding included; the text is centred) }
 ```
 
 ---------------------------------------------------------------------------------
@@ -1355,6 +1359,62 @@ Port rule: one style per distinct highlight colour of the source, the highlight'
 Limits: a heading drawn by a design (an opener) prints the words without the band, and so does the HTML viewer on a
 vertical page. An engine older than the release that ships `:mark` prints `:mark[…]` literally (check `postext
 --version`).
+
+---------------------------------------------------------------------------------
+
+## 13c. `exerciseStyles[]` and `exercises` — exercises
+
+`:::exercise{style="id"}` (document-format.md §7.6) picks a style; none or an unknown id (`exerciseUnknownStyle`)
+→ the first. One style, `exercise`, ships by default; declaring `exerciseStyles` replaces it. `extends` merges
+each group field by field (`icons` by id). Defaults marked *lang* follow the document language.
+```
+ExerciseStyleConfig {
+  id (REQUIRED), name?, extends?,
+  box?: calloutStyles id (frame: fill, border, stripe, padding, splitting); unset = frameless, kept together,
+  marginTop=1em, marginBottom=1em (frameless only), itemSpacing=0.25em,
+  number: { show=true, label=false (true = lang word "Exercise"/"Ejercicio"/"练习"…, or a string),
+            shape='none'|'disc'|'square'|'rounded', color? (white on a shape, else main), background=main,
+            fontFamily?, fontSize=1em, fontWeight=700, suffix='.' (none on a shape), template='{n}' ({h1} {h2}),
+            resetOn='h1' ('never'|'h1'…'h6'), counter='exercise' (styles sharing it share the count),
+            format='decimal' (any ResourceCounterFormat: 'simp-chinese-informal' 一二, 'circled-decimal' ①…) },
+  instruction: { bold=true, italic?, color?, fontFamily?, fontSize? },
+  options: { labels=lang ('alpha-lower'; zh 'alpha-upper', ja 'katakana', ar 'abjad'; or 'none'), prefix='',
+             suffix=lang (')'; zh '.', ja ''), marker='none'|'box'|'circle', layout='stack'|'row',
+             columns? (row layout, ≤ 6), shuffle=false, indent=1em,
+             bracket=false (（　） after each stem for the letter: zh/ja tests) },
+  blank: { look='line'|'dots'|'box'|'none', width='longest'|'answer'|Dimension, extra=1.5em, minWidth=3em,
+           color? (black; set, it also colours tick boxes/rings and bank word frames), weight=0.6pt },
+  trueFalse: { labels=lang ([T,F] en; V F es ca fr it pt; R F de; √ × zh; ○ × ja; صح خطأ ar),
+               look='boxes'|'bracket' (one blank) },
+  match: { look='dots'|'letters', gap=4em, dotSize=0.35em, color=main (dots + bank frame) },
+  bank: { box?: calloutStyles id, order='shuffle'|'alpha'|'written', separator=em space },
+  area: { kind='lines'|'dots'|'grid'|'seyes'|'tianzige'|'box'|'none', lines=3, spacing? (1.35 × line height),
+          color=#b8b8b8, weight=0.5pt },
+  grid: { cell=1.6em, fontFamily?, color?, rule=#8a8a8a, ruleWidth=0.6pt, uppercase=true,
+          fontSize? (em of the text; else 0.58 of the cell), blocked? (a crossword's empty cells) },
+  arithmetic: { division=lang ('bracket' en zh ja ar; 'potence' es ca fr it pt; 'inline' de), columns=4 },
+  level: { glyph='●', empty='○', max=3, color=main },
+  icons: { [id]: { resourceId? | glyph + fontFamily?, color?, alt?, size?=0.75 } }  (inline symbols after the number, size in ems),
+  answers: { color=#d6246e, fontFamily?, italic=false }  (teacher's edition, example items, key marks),
+  solutions?: ExerciseSolutionsConfig (over the book's, for this style's exercises),
+  digital: { correctColor=#1e8e3e, wrongColor=#c5221f }
+}
+ExercisesConfig (config.exercises) {
+  edition='student'|'teacher' (teacher: every answer printed in its slot in answers.color),
+  solutions: { placement='none'|'after'|'inverted'|'chapterEnd'|'directive', box?: calloutStyles id,
+               heading=lang ("Solutions", "Soluciones", "参考答案"…), layout='full'|'key' },
+  seed=1 (every shuffle; change it for another version of a test),
+  digital: { interactive=true, persist=true (answers kept in the browser), check='button'|'instant' }
+}
+```
+The HTML viewer and EPUB make exercises answerable (type, click, Check / Show solution / start again); the key is
+always in an EPUB. A screen-only form goes in `htmlViewer.overrides` (it takes `exercises` and `exerciseStyles`):
+`htmlViewer: { overrides: { exercises: { solutions: { placement: 'none' } }, exerciseStyles: [{ id: 'exercise',
+area: { kind: 'none' } }] } }` — print keeps its own.
+
+Port rule: one exercise style per look of the source's exercises (numbered disc + sans instruction for activities,
+a plain bold number for review questions), never one per exercise kind or per page; the questions, options and
+answers stay in the chapters (playbooks.md C7).
 
 ---------------------------------------------------------------------------------
 

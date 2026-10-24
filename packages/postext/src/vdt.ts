@@ -119,6 +119,9 @@ export interface ResolvedConfig {
   scoreStyles: ResolvedNamedScoreStyleConfig[];
   videoStyle: ResolvedVideoStyleConfig;
   paragraphStyles: ResolvedParagraphStyleConfig[];
+  /** Exercise styles and settings, resolved (#1226): set only when the
+   *  config names `exerciseStyles` or `exercises`. */
+  exerciseSettings?: import('./defaults/exercises.js').ExerciseSettings;
   calloutStyles: ResolvedCalloutStyleConfig[];
   /** Named chip styles (`:chip[…]{style="…"}`). */
   chipStyles: ResolvedChipStyleConfig[];
@@ -308,6 +311,15 @@ export interface VDTChip {
   /** Letters painted as dots to trace, in the runs' colour (the chip
    *  style's `dotted`). Absent = filled. */
   dotted?: VDTTextDots;
+  /** The outline is a line under the box, `borderWidth` thick (#1227):
+   *  drawn from the box's left to its right at its bottom edge. */
+  underline?: 'solid' | 'dotted' | 'dashed';
+  /** The runs are laid out but not painted, copied or read (#1227): an
+   *  exercise's blank; `blankLabel` is what it reads as. */
+  blank?: true;
+  blankLabel?: string;
+  /** The exercise slot the chip stands for (#1230). */
+  exercise?: import('./parse/types.js').ExerciseHit;
   /** The order in which renderers advance through `runs` from the box's
    *  start (indices into it), when it is not 0, 1, … n − 1: as
    *  {@link VDTLine.order}, the visual order of the runs (UAX #9 L2 on
@@ -2094,6 +2106,10 @@ export interface VDTBlock {
    *  `advancedDesign.enabled` and (for `span: 'column'`) at least one
    *  element. Renderers render this instead of `lines` when present. */
   designOverlay?: VDTDesignSlot;
+  /** Painted turned half round (180°) about this point of the page (#1229):
+   *  the frame and the content of a box whose fence says `turn="180"` (an
+   *  answer printed upside down). */
+  turn?: { cx: number; cy: number };
   /** Present on `type === 'callout'` frame blocks: the resolved callout
    *  geometry. The frame has no text lines of its own — its decoration
    *  (background, stripe, icon, title) is carried on `designOverlay`, and
@@ -2157,6 +2173,9 @@ export interface ResolvedCalloutBlock {
   part?: number;
   /** On a split callout: `true` while another fragment follows this one. */
   continued?: boolean;
+  /** The fence asks the box to be printed upside down (`turn="180"`,
+   *  #1229): an answer turned for the reader to turn the book round. */
+  turned?: true;
 }
 
 /** The column-balancing levers (`headings.balancing`), in the order they
@@ -3586,6 +3605,25 @@ export type ContentWarning = ContentWarningBase & (
    *  takes the first one. Not raised while `calloutStyles` is unset or
    *  empty (every type is then the built-in plain box). */
   | { kind: 'unknownCalloutType'; type: string }
+  /** `:::exercise{type}` names no kind of exercise (#1225): the exercise
+   *  takes the kind its content tells. */
+  | { kind: 'exerciseUnknownType'; type: string }
+  /** `:::exercise{style}` names no exercise style: it takes the first. Not
+   *  raised while `exerciseStyles` is unset. */
+  | { kind: 'exerciseUnknownStyle'; style: string }
+  /** A graded exercise with nothing right to check (a choice with no
+   *  ticked option, gaps with no `[[…]]`…): `exerciseKind` is its kind. */
+  | { kind: 'exerciseNoAnswer'; exerciseKind: string }
+  /** An item of an exercise its kind cannot read (a match item with no
+   *  `->`, a sort item with no `:`…): it is set as written. */
+  | { kind: 'exerciseUnreadItem'; text: string }
+  /** An exercise inside another: its blocks are the outer one's. */
+  | { kind: 'exerciseNested' }
+  /** A word a crossword or a word search could not place: it is left out
+   *  of the grid (a crossword needs a letter shared with another word). */
+  | { kind: 'exerciseWordUnplaced'; word: string }
+  /** A `:::solution` or `:::hint` outside an exercise: it prints nothing. */
+  | { kind: 'solutionOutside' }
   /** `:::columns{flow=…}` names neither `'snake'` nor `'parallel'` (#634):
    *  the group takes the default (`'parallel'` with `breaks`, `'snake'`
    *  without). */
@@ -4211,6 +4249,13 @@ export type SvgPictureFontWarning = SvgFontUnavailableWarning | SvgFontsTooLarge
 export type RenderWarning = MissingImageWarning | SvgPictureFontWarning;
 
 export interface VDTDocument {
+  /** The exercises laid out (#1230): what each asks and answers, for the
+   *  digital outputs. Absent when the document has none. */
+  exercises?: import('./exercises/record.js').ExerciseRecord[];
+  /** What the digital outputs need beside the records (#1230): the words
+   *  of the exercise bar, checking and keeping, each style's colours. Set
+   *  with `exercises`. */
+  exerciseDigital?: import('./exercises/digital.js').ExerciseDigital;
   pages: VDTPage[];
   blocks: VDTBlock[];
   /** `'right'` when the book is bound on its right edge (`page.binding`):

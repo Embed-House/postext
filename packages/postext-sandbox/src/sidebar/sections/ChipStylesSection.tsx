@@ -2,10 +2,10 @@
 
 import { memo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import type { ChipStyleConfig, DimensionUnit, ResolvedBodyTextConfig, ResolvedChipStyleConfig } from 'postext';
+import type { ChipStyleConfig, ChipUnderline, DimensionUnit, ResolvedBodyTextConfig, ResolvedChipStyleConfig } from 'postext';
 import { DEFAULT_CHIP_STYLES, resolveBodyTextConfig, resolveChipStylesConfig } from 'postext';
 import { useSandboxDispatch, useSandboxLabels, useSandboxSelector } from '../../context/SandboxContext.js';
-import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput, FontPicker, ToggleSwitch } from '../../controls/index.js';
+import { CollapsibleSection, ItemCard, ItemCardListActions, moveCardState, openCard, ColorPicker, DimensionInput, FontPicker, SelectInput, ToggleSwitch } from '../../controls/index.js';
 import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
 import { FieldRow } from '../../controls/FieldRow.js';
 import { SearchScope } from '../search/SearchScope.js';
@@ -277,6 +277,31 @@ function ChipStyleCard({ style, resolved, bodyText, otherIds, stored, onChange, 
           tooltip={labels.chipStyleGapTooltip}
           isDefault={unset('gap')}
           onReset={() => onResetField('gap')}
+        />
+        <SelectInput
+          label={labels.chipStyleUnderline}
+          value={resolved.underline ?? 'none'}
+          options={[
+            { value: 'none', label: labels.chipStyleUnderlineNone },
+            { value: 'solid', label: labels.chipStyleUnderlineSolid },
+            { value: 'dotted', label: labels.chipStyleUnderlineDotted },
+            { value: 'dashed', label: labels.chipStyleUnderlineDashed },
+          ]}
+          onChange={(v) => (v === 'none' ? onResetField('underline') : onChange({ underline: v as ChipUnderline }))}
+          tooltip={labels.chipStyleUnderlineTooltip}
+          isDefault={unset('underline')}
+          onReset={() => onResetField('underline')}
+        />
+        <DimensionInput
+          label={labels.chipStyleMinWidth}
+          value={resolved.minWidth ?? { value: 0, unit: 'em' }}
+          onChange={(v) => onChange({ minWidth: v })}
+          min={0}
+          step={0.5}
+          units={BOX_UNITS}
+          tooltip={labels.chipStyleMinWidthTooltip}
+          isDefault={unset('minWidth')}
+          onReset={() => onResetField('minWidth')}
         />
       </CollapsibleSection>
     </ItemCard>

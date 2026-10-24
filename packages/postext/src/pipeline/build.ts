@@ -61,6 +61,9 @@ import { orientLinesToFrames } from './mirrorFrame.js';
 import { verseMarginTopPx } from './buildBlockKind.js';
 import { verseLinesSettings, versesLineByLine } from './verseLines.js';
 import type { MeasurementCache } from '../measure/index.js';
+import { exerciseOutline, exerciseSettingsFor, expandDocumentExercises, markTurnedBoxes, nameExerciseAnchors, needsExerciseExpansion, withExerciseStyles } from '../exercises/build.js';
+import { hasExercises } from '../exercises/model.js';
+import { exerciseDigitalOf } from '../exercises/digital.js';
 import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, computeColumnBboxes, resolvedDirection, resolvedLocale, validateConfigCache } from './config.js';
 import { resolveDebugConfig } from '../defaults/debug.js';
 import { defaultFontSet, documentFontFaces, faceRequestKey, fontFallbacks, type FontFaceSetLike } from '../fonts/faces.js';
@@ -106,7 +109,7 @@ import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '.
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline.js';
 import { expandTocDirectives, tocBlockStamps } from './toc.js';
 import { expandIndexDirectives, locateIndexMarks } from './indexDirective.js';
-import type { ResolvedHeadingStyleConfig } from '../types.js';
+import type { LayoutContinuation, OutlineEntry, ResolvedHeadingStyleConfig } from '../types.js';
 import { resolveBodyStyle, resolveBlockquoteStyle, resolveParagraphStyle, type BlockStyle } from './styles.js';
 import {
   computeLevelIndentsPx,
@@ -232,6 +235,7 @@ import {
 } from './resourceNumbering.js';
 import { documentLocale, effectiveResourceTypes } from '../defaults/resourceTypes.js';
 import { resolveCalloutStylesConfig } from '../defaults/calloutStyles.js';
+import { relinkToPalette } from '../defaults/shared.js';
 import { codeBoxStyle, codeParseOptions, wrapCodeBlocks } from './codeBlocks.js';
 import { expandScoreBlocks, scoreInfoOf, scoreKeepHeight } from './scoreBlocks.js';
 import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines.js';
@@ -641,7 +645,9 @@ function placeDocumentPass(
    *  band above (a page-span box, a top float band) or a caption below has
    *  shortened it, so what does not fit it may still fit a full column. */
   const shortSideColumn = (page: VDTPage, col: VDTColumn): boolean => col.bbox.height < page.contentArea.height - 0.5;
-  const resolved = resolveAllConfig(config);
+  // Rebound once the content is read when it holds exercises (#1227): the
+  // config then also carries their chip and paragraph styles.
+  let resolved = resolveAllConfig(config);
   // Bitmaps sized by the document's `layout.bitmapResolution` carry it as
   // their own `resolution` from here on (#631); under the default policy
   // the content is untouched.
@@ -860,7 +866,27 @@ function placeDocumentPass(
   // The citations of resource captions and notes (#529), formatted with
   // the text's.
   const captionCitations = citationsApplied && citationsApplied.captions.size > 0 ? citationsApplied.captions : undefined;
-  const footnoteSplit = splitFootnoteDefinitions(citationsApplied?.blocks ?? parsedBody);
+  // Exercises (#1227): each set as a box of ordinary blocks, its solutions
+  // where the book prints them.
+  const exerciseExpansion = needsExerciseExpansion(citationsApplied?.blocks ?? parsedBody)
+    ? expandDocumentExercises(
+      citationsApplied?.blocks ?? parsedBody,
+      resolved,
+      computeColumnBboxes(pageMetrics.contentArea, resolved)[0]?.width ?? pageMetrics.contentArea.width,
+      continuation,
+      content.outline,
+    )
+    : undefined;
+  if (exerciseExpansion) {
+    resolved = withExerciseStyles(resolved);
+    // The document's config names the exercises' chip and paragraph
+    // styles too: an output that styles its text from the config (a
+    // reflowable EPUB, #1231) finds them there.
+    doc.config = resolved;
+    doc.exercises = exerciseExpansion.records;
+    doc.exerciseDigital = exerciseDigitalOf(exerciseSettingsFor(resolved));
+  }
+  const footnoteSplit = splitFootnoteDefinitions(exerciseExpansion?.blocks ?? citationsApplied?.blocks ?? parsedBody);
   const footnoteDefs = footnoteSplit.defs;
   // Numbered by page or column (`numbering: 'page'`), a note takes the
   // number the previous build gave it where it landed; the first build
@@ -893,7 +919,10 @@ function placeDocumentPass(
   const resourceIds = new Set((content.resources ?? []).map((r) => r.id));
   const anchorRefs = hasAnchorRefs(parsedBlocks, resourceIds);
   const outline = content.outline
-    ?? (hasTocDirective(parsedBlocks) || hasIndexDirective(parsedBlocks) || anchorRefs ? computeOutline(parsedBlocks, resolved, headingStart, continuation?.statementCounters) : undefined);
+    ?? (hasTocDirective(parsedBlocks) || hasIndexDirective(parsedBlocks) || anchorRefs
+      // A reference to an exercise prints its name (#1225).
+      ? nameExerciseAnchors(computeOutline(parsedBlocks, resolved, headingStart, continuation?.statementCounters), exerciseExpansion?.records ?? [])
+      : undefined);
   // A story carried in from another chapter (#943) may refer to anchors too.
   const carriedRefs = continuation?.jumps?.some((j) => j.outline) === true;
   const anchorRefContext: AnchorRefContext | undefined = anchorRefs || carriedRefs
@@ -1002,6 +1031,8 @@ function placeDocumentPass(
   const syntheticBoxes = [
     ...(spanEmbeds.wrapped ? [spanEmbedStyle(bodyStyle.lineHeightPx, resolved.layout.inlineResourceGap !== 'above')] : []),
     ...(codeBoxes.wrapped ? [codeBoxStyle(resolved)] : []),
+    // The boxes exercises are set in (#1227).
+    ...(exerciseExpansion?.wrapped ? exerciseExpansion.boxes : []),
     // The frameless box of a composed page's story (#855).
     ...(composedWrap.wrapped || comicText.wrapped ? [frameBoxStyle(Math.max(resolved.bodyText.avoidOrphans ? resolved.bodyText.orphanMinLines : 1, resolved.bodyText.avoidWidows ? resolved.bodyText.widowMinLines : 1))] : []),
     // The boxes of main-flow groups: sub-columns a body line apart in the
@@ -1015,12 +1046,16 @@ function placeDocumentPass(
       )
       : []),
   ];
+  const exerciseBoxIds = new Set(exerciseExpansion?.wrapped ? exerciseExpansion.boxes.map((b) => b.id) : []);
   const calloutStyles = syntheticBoxes.length > 0
-    ? [...resolved.calloutStyles, ...resolveCalloutStylesConfig(syntheticBoxes, resolved.bodyText, resolved.headings, resolved.unorderedLists, config?.locale)]
+    ? [...resolved.calloutStyles, ...resolveCalloutStylesConfig(syntheticBoxes, resolved.bodyText, resolved.headings, resolved.unorderedLists, config?.locale)
+      // The exercise boxes' defaults (a solutions title, a bank's frame)
+      // link to `main-color`: set them to the document's palette.
+      .map((s) => (exerciseBoxIds.has(s.id) ? relinkToPalette(s, config?.colorPalette) : s))]
     : resolved.calloutStyles;
   // A box nested in another looks its style up in the configuration it is
   // laid out with: the listings' box among them.
-  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped || comicText.wrapped ? { ...resolved, calloutStyles } : resolved;
+  const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped || comicText.wrapped || exerciseExpansion?.wrapped ? { ...resolved, calloutStyles } : resolved;
   const blockquoteStyle = resolveBlockquoteStyle(resolved);
   const listLevelIndentsPx = computeLevelIndentsPx(resolved, bodyStyle.fontSizePx);
   const orderedMetrics = computeOrderedListRunMetrics(contentBlocks, resolved, bodyStyle.fontSizePx);
@@ -9329,6 +9364,9 @@ export function* buildDocumentGen(
   if (fontSet) syncFontSet(fontSet);
   validateConfigCache(config);
   const doc = yield* buildDocumentRounds(content, config, cache, options);
+  // Boxes printed upside down (#1229): their blocks learn the point they
+  // turn about.
+  markTurnedBoxes(doc);
   // References and markup the source names wrongly: read from the source
   // once, located on the pages of the finished layout. Kept apart from
   // `doc.warnings`, whose entries keep their postext 1.4 shape.
@@ -9628,10 +9666,10 @@ function* buildDocumentRounds(
     const pageRefs = (): boolean => {
       if (!hasAnchorRefs(parsed, new Set((content.resources ?? []).map((r) => r.id)))) return false;
       const resolved = resolveAllConfig(config);
-      return printsAnchorPages(parsed, anchorTargetsOf(computeOutline(parsed, resolved, content.continuation?.headings, content.continuation?.statementCounters)), resolved.crossRefs.defaultStyle);
+      return printsAnchorPages(parsed, anchorTargetsOf(ownOutline(parsed, resolved, content.continuation)), resolved.crossRefs.defaultStyle);
     };
     if (hasTocDirective(parsed) || hasIndexDirective(parsed) || pageRefs()) {
-      let outline = computeOutline(parsed, resolveAllConfig(config), content.continuation?.headings, content.continuation?.statementCounters);
+      let outline = ownOutline(parsed, resolveAllConfig(config), content.continuation);
       let doc = withIndexMarks(yield* buildDocumentNumbered({ ...content, outline }, config, cache, options, 0, citing), content);
       for (let round = 0; round < MAX_TOC_ROUNDS; round++) {
         const after = outlineFromDoc(doc, outline);
@@ -9643,6 +9681,13 @@ function* buildDocumentRounds(
     }
   }
   return withIndexMarks(yield* buildDocumentNumbered(content, config, cache, options, 0, citing), content);
+}
+
+/** A document's own outline, its exercises' anchors named as a reference
+ *  prints them ("Exercise 3", #1225). */
+function ownOutline(parsed: readonly ContentBlock[], resolved: ResolvedConfig, continuation: LayoutContinuation | undefined): OutlineEntry[] {
+  const outline = computeOutline(parsed, resolved, continuation?.headings, continuation?.statementCounters);
+  return hasExercises(parsed) ? nameExerciseAnchors(outline, exerciseOutline(parsed, resolved, continuation).records) : outline;
 }
 
 /** The number each note's marker prints in `doc` (its first marker). */

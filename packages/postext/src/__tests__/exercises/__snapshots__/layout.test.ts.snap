@@ -1,0 +1,92 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`exercises laid out (#1227) > prints the solutions at the end of the chapter and a teacher edition 1`] = `
+"One
+[1.] Pick.
+[a)]	a
+[b)]	b
+[2.] Fill [in].
+1.	b) b
+2.	in
+	It is in.
+Two
+Text."
+`;
+
+exports[`exercises laid out (#1227) > sets a gaps exercise with its number and blanks 1`] = `
+"Plants
+[1.] Complete the sentences.
+The roots take in [___].
+The leaves make [___]."
+`;
+
+exports[`exercises laid out (#1227) > sets choice, true/false, match, order 1`] = `
+[
+  [
+    "choice",
+    "1",
+    "b) Lisbon",
+  ],
+  [
+    "truefalse",
+    "2",
+    "1 T · 2 F",
+  ],
+  [
+    "match",
+    "3",
+    "Bee – Hive · Bird – Nest · Spider – Web",
+  ],
+  [
+    "order",
+    "4",
+    "2 · 3 · 1",
+  ],
+  [
+    "open",
+    "5",
+    "",
+  ],
+  [
+    "wordsearch",
+    "6",
+    "SUN · MOON · STAR",
+  ],
+  [
+    "crossword",
+    "7",
+    "Across: 1 MOON, 3 SUN · Down: 2 NEST",
+  ],
+  [
+    "arithmetic",
+    "8",
+    "345 + 278 = 623 · 864 ÷ 4 = 216",
+  ],
+]
+`;
+
+exports[`exercises laid out (#1227) > sets choice, true/false, match, order 2`] = `
+"Unit
+[1.] Choose.
+[a)]	Madrid
+[b)]	Lisbon
+[c)]	Rome
+[2.] True or false?
+1.	The Sun is a star.	T [ ] F [ ]
+2.	The Moon is a planet.	T [ ] F [ ]
+[3.] Join.
+[4.] Order.
+[___]	Water
+[___]	Grow
+[___]	Plant
+[5.] Why?
+[6.] Find.
+SUN MOON STAR
+[7.] Solve.
+Across
+1	It orbits the Earth
+3	Our star
+Down
+2	A home for birds
+[8.] Work out."
+`;

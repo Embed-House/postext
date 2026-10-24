@@ -1,0 +1,388 @@
+{/* docs/exercises-ca.mdx */}
+
+export const metadata = {
+  title: 'Exercicis',
+  sidebarTitle: 'Exercicis',
+  description: "Com compon Postext els exercicis d'un llibre de text o d'un quadern d'activitats: el bloc :::exercise i els seus dotze tipus, de l'opció múltiple a la divisió, les respostes escrites al Markdown, la numeració, les solucions després de l'exercici, capgirades, al final del capítol o al final del llibre, l'edició del professorat, les comprovacions i els exercicis que es responen en pantalla en HTML i EPUB",
+  lang: 'ca',
+  lastUpdated: '2026-10-24',
+  readingTime: '16 min',
+  order: 36,
+  plainSummary: "Aquesta pàgina explica com s'escriuen exercicis en un llibre de Postext: preguntes amb opcions per triar, afirmacions vertaderes o falses, frases amb buits, parelles per relacionar, paraules per trobar en una sopa de lletres, operacions per resoldre i més. Cada exercici i les seves respostes s'escriuen al text del capítol, i Postext l'imprimeix amb la forma que li toca: el número, les opcions, les línies per omplir. Les respostes es poden imprimir després de l'exercici, capgirades, al final del capítol o no imprimir-les gens, i el mateix text dona una edició del professorat amb totes les respostes posades. En pantalla, al visor HTML i als llibres EPUB, els lectors poden respondre els exercicis i comprovar-los.",
+};
+
+# Exercicis
+
+**Les preguntes i les respostes són al Markdown; com s'imprimeixen ho decideix un estil d'exercici.**
+
+Un exercici és un bloc del capítol escrit entre `:::exercise` i `:::`. A dins hi ha l'enunciat, les preguntes, les opcions, els buits amb les seves respostes i, si n'hi ha, una solució desenvolupada. Postext llegeix les respostes del text, imprimeix l'exercici per a l'alumne (línies en blanc, caselles buides, elements barrejats), en construeix la clau de respostes i col·loca les solucions on el llibre les vol. El número, les etiquetes de les opcions, l'aspecte d'un buit i la pauta d'un espai per escriure surten d'[`exerciseStyles`](/ca/docs/configuration-exercises#estils-dexercici); on van les solucions i quina edició s'imprimeix ho decideix [`exercises`](/ca/docs/configuration-exercises#paràmetres-del-llibre). Per això un mateix Markdown dona el llibre de l'alumne, el del professorat i una edició interactiva en pantalla.
+
+Un exercici es compon com un requadre de paràgrafs corrents, xips i dibuixos. Es col·loca, es parteix entre columnes i pàgines, s'etiqueta en un PDF accessible i es pinta a totes les sortides igual que qualsevol altre requadre. Un llibre sense cap `:::exercise` es compon com abans.
+
+## El bloc
+
+```md
+:::exercise
+Encercla la capital de Portugal.
+
+- [ ] Madrid
+- [x] Lisboa
+- [ ] Roma
+:::
+```
+
+Els paràgrafs del començament de l'exercici, fins a la primera llista, el primer buit o el primer banc de paraules, són l'**enunciat**. Es componen amb la lletra d'enunciat de l'estil (negreta per defecte) després del número de l'exercici. El que ve a continuació és el cos, és a dir, el que l'exercici demana.
+
+El bloc accepta aquests atributs:
+
+<table>
+  <thead>
+    <tr>
+      <th>Atribut</th>
+      <th>Què fa</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>type</code></td><td>El tipus d'exercici (vegeu més avall). Es pot ometre quan el contingut ja ho indica: una llista de tasques és <code>choice</code>, una llista de parelles amb <code>-&gt;</code> és <code>match</code>, un text amb <code>[[…]]</code> és <code>gaps</code> i qualsevol altra cosa és <code>open</code>. També s'accepten algunes altres grafies (<code>mcq</code>, <code>tf</code>, <code>cloze</code>, <code>matching</code>…).</td></tr>
+    <tr><td><code>style</code></td><td>L'id d'un estil d'exercici. Si no hi és o no existeix, s'aplica el primer estil d'<code>exerciseStyles</code>.</td></tr>
+    <tr><td><code>title</code></td><td>Un títol que s'imprimeix en negreta després del número.</td></tr>
+    <tr><td><code>#id</code></td><td>Una àncora, com en un requadre: <code>:::exercise&#123;#volcans&#125;</code>.</td></tr>
+    <tr><td><code>n</code></td><td>Un número fix, per conservar la numeració d'una edició impresa. Els exercicis següents continuen comptant a partir d'aquest.</td></tr>
+    <tr><td><code>level</code></td><td>La dificultat, de 1 fins al màxim de l'estil (3 per defecte), impresa com a marques després del número: <code>level=2</code> imprimeix ●●○.</td></tr>
+    <tr><td><code>icon</code></td><td>Els id de les icones d'activitat que defineix l'estil, separats per espais: <code>icon="pencil pair"</code>.</td></tr>
+    <tr><td><code>example</code></td><td>El primer element s'imprimeix resolt, com a model, i no es pregunta.</td></tr>
+    <tr><td><code>columns</code></td><td>Opció múltiple: les opcions una al costat de l'altra, tantes per fila com indica el número.</td></tr>
+    <tr><td><code>select</code></td><td>Opció múltiple: <code>one</code> o <code>many</code>, quantes opcions pot marcar el lector en pantalla. Més d'un <code>[x]</code> ja vol dir <code>many</code>.</td></tr>
+    <tr><td><code>shuffle=false</code></td><td>Relacionar i ordenar: els elements s'imprimeixen en l'ordre escrit, sense barrejar-los.</td></tr>
+    <tr><td><code>bank</code></td><td>Buits: les respostes s'imprimeixen en un banc de paraules.</td></tr>
+    <tr><td><code>lines</code>, <code>area</code></td><td>Resposta oberta: quantes línies hi ha per escriure i quina pauta té l'espai.</td></tr>
+    <tr><td><code>mark</code></td><td>Marcar: com es marca una paraula a la resposta: <code>circle</code> (per defecte), <code>box</code>, <code>underline</code> o <code>highlight</code>.</td></tr>
+    <tr><td><code>size</code>, <code>directions</code>, <code>hidden</code></td><td>Sopa de lletres: el costat de la graella, les direccions en què van les paraules, i la graella sense la llista de paraules a sota.</td></tr>
+  </tbody>
+</table>
+
+Dins d'un exercici hi poden anar dos blocs més. `:::solution` … `:::` conté una solució desenvolupada o una resposta model, en qualsevol Markdown; no s'imprimeix mai dins de l'exercici i va allà on van les [solucions](#solucions). `:::hint` … `:::` conté una pista que les edicions en pantalla ofereixen quan el lector la demana; a la impressió no hi surt.
+
+## Tipus d'exercici
+
+Les barreges parteixen d'una llavor: un exercici es barreja de la mateixa manera al canvas, al PDF, al visor HTML, a l'EPUB i a la clau de respostes. Si canvies `exercises.seed`, s'imprimeix una altra versió d'un examen.
+
+### Opció múltiple i vertader o fals
+
+#### Opció múltiple
+
+Una llista de tasques amb les opcions correctes marcades:
+
+```md
+:::exercise
+Quin és el planeta més proper al Sol?
+
+- [ ] Venus
+- [x] Mercuri
+- [ ] Mart
+:::
+```
+
+Les opcions s'imprimeixen una per línia, amb les etiquetes a), b), c), i quan una opció ocupa més d'una línia, la resta queda alineada sota el text. Per posar diverses preguntes en un sol exercici es fa una llista numerada: cada element és una pregunta, amb la seva llista de tasques sagnada a sota. Les preguntes es numeren 1., 2. i les opcions es componen sota cadascuna:
+
+```md
+:::exercise{columns=3}
+Encercla la resposta correcta.
+
+1. Les arrels de la planta absorbeixen
+   - [x] aigua
+   - [ ] llum
+   - [ ] llavors
+2. Les fulles fabriquen l'aliment amb
+   - [ ] la terra
+   - [ ] el vent
+   - [x] la llum del sol
+:::
+```
+
+`columns=3` posa les opcions de tres en tres per fila. Les etiquetes i el signe que les segueix depenen de la llengua del document: a) en català, en anglès i en les altres llengües romàniques, A. en xinès, ア イ ウ en japonès, أ) ب) ج) en àrab. Un estil pot afegir davant de cada opció una casella o un cercle per marcar (`options.marker`) o, com als exàmens xinesos i japonesos, un parèntesi （　） després de la pregunta per escriure-hi la lletra (`options.bracket`).
+
+#### Vertader o fals
+
+```md
+:::exercise{type=truefalse}
+Vertader o fals?
+
+- [x] El Sol és una estrella.
+- [ ] La Lluna és un planeta.
+:::
+```
+
+Cada afirmació va numerada i acaba amb les dues respostes al final de la línia, cadascuna amb una casella: V □ F □. Un element marcat és vertader. Les lletres depenen de la llengua: V/F en català, castellà, francès, italià i portuguès, T/F en anglès, R/F en alemany, √/× en xinès, ○/× en japonès i صح/خطأ en àrab. Un estil pot imprimir en lloc de les caselles un sol buit per escriure-hi la resposta (`trueFalse.look: 'bracket'`).
+
+### Buits i banc de paraules
+
+`[[resposta]]` és un buit, que s'imprimeix com una línia per escriure-hi:
+
+```md
+:::exercise{bank}
+Completa les frases amb les paraules del requadre.
+
+1. Les arrels absorbeixen [[aigua]] de la terra.
+2. Les fulles fabriquen l'[[aliment]] de la planta.
+3. Les flors atrauen [[insectes | abelles]].
+
+::bank[pedres | vent]
+:::
+```
+
+- `[[nou | 9]]`: un buit que accepta diverses respostes. La primera és la que imprimeix la clau.
+- `[[canto | (canta) | cantem]]`: una **tria dins de la línia**. Les opcions s'imprimeixen enmig del text, `(canto / canta / cantem)`, i la que va entre parèntesis és la correcta: el lector l'encercla.
+- `[[vaig]]{width=6}`: un buit de sis em d'amplada.
+- `\|` és una barra literal dins d'una resposta, i `\[[`, dos claudàtors literals.
+
+Tots els buits d'un exercici fan l'amplada de la resposta més llarga més 1,5 em, perquè la llargada de la línia no delati la resposta (`blank.width` ho canvia). `bank` imprimeix les respostes barrejades en un banc de paraules emmarcat, sota l'enunciat. Una línia `::bank[pedres | vent]` col·loca el banc allà on és escrita i hi afegeix les seves paraules, que no van a cap buit; la línia sola ja demana el banc. `[[…]]` només es llegeix dins d'un exercici: dos claudàtors en qualsevol altre lloc del llibre es queden tal com s'han escrit.
+
+Un exercici que comença directament amb el text, sense enunciat, posa el número al principi del primer paràgraf:
+
+```md
+:::exercise
+Set dies fan una [[setmana]], i dotze mesos fan un [[any]].
+:::
+```
+
+### Relacionar i classificar
+
+#### Relacionar
+
+Parelles escrites amb `->` (o `→`):
+
+```md
+:::exercise
+Relaciona cada animal amb el lloc on viu.
+
+- Abella -> Rusc
+- Ocell -> Niu
+- Aranya -> Teranyina
+- Conill -> Cau
+- -> Estable
+:::
+```
+
+La columna de l'esquerra s'imprimeix en l'ordre escrit i la de la dreta barrejada, amb un punt al costat de cada element per unir-los amb una línia. `- -> Estable` afegeix a la columna de la dreta un element que no fa parella amb cap altre. Amb `match.look: 'letters'` la columna de la dreta porta lletres i cada element de l'esquerra té un parèntesi per escriure-hi la lletra. `shuffle=false` deixa la columna de la dreta tal com s'ha escrit.
+
+#### Classificar
+
+```md
+:::exercise{type=sort}
+Classifica els aliments segons la part de la planta d'on surten.
+
+- Arrel: pastanaga, rave
+- Fulla: enciam, espinacs
+- Fruit: tomàquet, poma
+:::
+```
+
+Tots els elements van barrejats a un banc de paraules, i cada categoria té una columna (fins a quatre) amb el nom a dalt i línies pautades a sota. Els elements es poden separar amb comes, punts i comes, `、`, `，` o `،`.
+
+### Ordenació
+
+#### Ordenar
+
+```md
+:::exercise{type=order}
+Ordena les etapes.
+
+1. La llavor germina.
+2. La tija creix.
+3. S'obren les flors.
+4. Apareix el fruit.
+:::
+```
+
+La llista s'escriu en l'ordre correcte i s'imprimeix barrejada, cada element amb una casella per al seu número.
+
+#### Frases desordenades
+
+```md
+:::exercise{type=scramble}
+Ordena les paraules per formar frases.
+
+- Les plantes / necessiten / aigua
+- El Sol / dona / llum
+:::
+```
+
+Cada frase es talla per les barres (o pels espais, si no en té), els trossos s'imprimeixen barrejats amb barres entre ells, i a sota hi ha una línia per escriure-hi la frase.
+
+### Marcar paraules
+
+```md
+:::exercise{type=mark}
+Encercla els verbs: La nena [[rega]] les plantes i el Sol les [[escalfa]].
+:::
+```
+
+El text s'imprimeix tal com és; les paraules entre `[[…]]` són les que cal marcar. A les respostes surten encerclades, o bé emmarcades, subratllades o ressaltades amb `mark=box|underline|highlight` al bloc, o paraula per paraula amb `[[rega]]{mark=underline}`.
+
+### Preguntes obertes i espai per escriure
+
+```md
+:::exercise{type=open lines=4}
+Per què necessiten llum les plantes?
+
+:::solution
+La fan servir per fabricar el seu aliment.
+:::
+:::
+```
+
+Després de l'enunciat hi ha línies pautades per escriure: tres per defecte, quatre en aquest cas amb `lines=4`. Si el cos és una llista, cada element té les seves línies. `area` canvia la pauta: `lines`, `dots`, `grid` (paper quadriculat), `seyes` (la pauta escolar francesa), `tianzige` (田字格, els quadrats on els alumnes xinesos escriuen els caràcters), `box` (un marc buit, per fer-hi un dibuix) o `none`. El `:::solution` és la resposta model: s'imprimeix amb les solucions i, en una edició del professorat, s'escriu sobre les línies.
+
+### Sopes de lletres i mots encreuats
+
+#### Sopa de lletres
+
+```md
+:::exercise{type=wordsearch size=10 directions="across down diagonal backwards"}
+Troba aquestes paraules.
+
+- ARREL
+- TIJA
+- FULLA
+- FLOR
+:::
+```
+
+Les paraules es col·loquen en una graella de lletres i la llista s'imprimeix a sota (`hidden` la treu). La graella creix fins que hi cap la paraula més llarga; `size` en fixa el costat. `directions` accepta `across`, `down`, `diagonal` i `backwards`; per defecte, les paraules van en horitzontal, en vertical i en diagonal. Les lletres es componen en majúscules si l'estil no diu el contrari. Si una paraula no es pot col·locar, surt un avís.
+
+#### Mots encreuats
+
+```md
+:::exercise{type=crossword}
+Resol els mots encreuats.
+
+- ARREL: La part que és sota terra
+- FULLA: La part verda que fabrica l'aliment
+- FLOR: Atreu les abelles
+- TIJA: Aguanta la planta dreta
+:::
+```
+
+Cada entrada és una paraula i la seva definició. El motor construeix la graella, numera la primera casella de cada paraula i imprimeix les definicions a sota en dues llistes encapçalades en la llengua del document (Horitzontals i Verticals en català, Across i Down en anglès, ヨコのカギ i タテのカギ en japonès).
+
+### Operacions en vertical
+
+```md
+:::exercise{type=arithmetic}
+Calcula.
+
+- 345 + 278
+- 902 − 456
+- 124 × 3
+- 864 : 4
+:::
+```
+
+Cada operació es compon en caselles, tal com l'escriu un alumne: les xifres en columnes, el signe a l'esquerra, una ratlla i caselles buides per al resultat, amb un màxim de quatre operacions per fila. En una pàgina de dreta a esquerra, cada operació conserva les xifres d'esquerra a dreta i les operacions se succeeixen de dreta a esquerra. Els signes que es llegeixen són `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` i `/`, sempre amb nombres enters. La divisió segueix la convenció escolar de la llengua del document, i `arithmetic.division` en tria una altra:
+
+- `potence`: el dividend a l'esquerra, el divisor a la dreta dins d'un angle en forma de L, el quocient sota el divisor i el residu a baix de tot. Llibres en català, castellà, francès, italià i portuguès.
+- `bracket`: el divisor a l'esquerra, el dividend sota una clau i el quocient a sobre. Llibres en anglès, xinès, japonès i àrab.
+- `inline`: `864 : 4 =` i les caselles del quocient a la mateixa línia, amb els passos a sota. Llibres en alemany.
+
+### Un primer exemple resolt
+
+`example` imprimeix resolt el primer element, en el color de les respostes: el primer buit omplert, l'opció correcta de la primera pregunta encerclada, la primera parella unida, la primera frase escrita. En pantalla, aquest element no es pregunta, i la seva resposta no entra al banc de paraules.
+
+## Numeració, referències i dificultat
+
+Els exercicis es numeren 1, 2, 3 dins de cada capítol. La resta depèn de l'estil: un número sol en negreta seguit de punt (per defecte) o dins d'un cercle, un quadrat o un quadrat arrodonit (`number.shape`), una paraula al davant («Exercici 3» amb `number.label: true`, en la llengua del document), el sistema de numerals (`number.format`, per exemple els xinesos 一、二、), una plantilla que hi afegeix el capítol (`'{h1}.{n}'`) i el punt on el compte torna a començar (`number.resetOn`: a cada capítol, a cada secció o mai). Els estils que tenen el mateix `number.counter` comparteixen el compte, i un llibre el continua d'un capítol a l'altre.
+
+`n=12` en un bloc dona el número 12 a aquell exercici, i els següents continuen pel 13. `#id` fa que l'exercici es pugui citar amb `:ref`, que n'imprimeix el nom, «Exercici 3» (la paraula de `number.label` si l'estil la defineix; si no, la de la llengua del document). `style=number` imprimeix 3, `style=title` el `title` del bloc (o el nom si no en té) i `style=page` la pàgina. La referència arriba també als exercicis d'altres capítols del llibre. `level` i `icon` s'imprimeixen després del número: són les marques de dificultat i les icones d'activitat que defineix l'estil.
+
+## Solucions
+
+### La clau de respostes
+
+Cada exercici de resposta tancada té una clau feta amb les seves respostes: l'opció correcta (`b) Mercuri`), els buits per ordre (`1 aigua · 2 aliment · 3 insectes`), V o F per a cada afirmació, les parelles, l'ordre, les frases, les paraules dels mots encreuats amb els seus números i els resultats de les operacions. Amb el format `full` (el per defecte), després de la clau ve el `:::solution` de l'exercici. Un exercici de resposta oberta no té clau: la seva solució és la resposta model.
+
+### On s'imprimeixen les solucions
+
+Ho decideix `exercises.solutions.placement` per a tot el llibre, i un estil ho pot canviar per als seus exercicis.
+
+<table>
+  <thead>
+    <tr>
+      <th>Ubicació</th>
+      <th>Què s'imprimeix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>none</code></td><td>Cap solució impresa (per defecte). Les edicions en pantalla sí que les tenen.</td></tr>
+    <tr><td><code>after</code></td><td>La solució just després del seu exercici, amb un cos de lletra més petit.</td></tr>
+    <tr><td><code>inverted</code></td><td>El mateix requadre, capgirat, com fan els llibres de passatemps i les revistes infantils.</td></tr>
+    <tr><td><code>chapterEnd</code></td><td>Totes les solucions del capítol al final, sota un títol en la llengua del document (Solucions, Solutions, Soluciones, Lösungen, 参考答案…), cadascuna després del número del seu exercici.</td></tr>
+    <tr><td><code>directive</code></td><td>Només allà on el capítol escriu <code>:::solutions</code>.</td></tr>
+  </tbody>
+</table>
+
+Amb `directive`, una línia `:::solutions` imprimeix les solucions dels exercicis anteriors que encara no s'han imprès; `title="…"` en canvia el títol. `:::solutions{scope="book"}`, en un capítol propi al final del llibre, imprimeix la clau i les solucions de tots els exercicis, capítol per capítol:
+
+```md
+# Respostes
+
+:::solutions{scope="book"}
+```
+
+### Edició del professorat
+
+```json
+{ "exercises": { "edition": "teacher" } }
+```
+
+Amb aquest ajust, cada resposta s'imprimeix al seu lloc en el color de les respostes (un vermell magenta si l'estil no fixa `answers.color`): els buits omplerts, les opcions correctes encerclades o amb la casella plena, la casella V o F plena, les línies de les parelles dibuixades, els números a les caselles d'ordenar, les frases i les paraules classificades sobre les seves línies, la resposta model d'una pregunta oberta sobre les línies, i les paraules dels mots encreuats i els resultats de les operacions a les seves caselles.
+
+## Comprovacions
+
+El tauler **Revisió** del Sandbox i `collectContentWarnings` informen del que el motor no pot llegir:
+
+- `exerciseUnknownType`: un `type` que no és cap dels dotze.
+- `exerciseUnknownStyle`: un `style` que no correspon a cap estil d'exercici (s'aplica el primer estil).
+- `exerciseNoAnswer`: un exercici de resposta tancada sense res per corregir: una pregunta sense cap opció marcada, buits sense `[[…]]`, un exercici de relacionar sense parelles.
+- `exerciseUnreadItem`: un element de llista que el tipus de l'exercici no sap llegir, com un element de relacionar sense `->` o una operació que no consta de dos nombres enters i un signe.
+- `exerciseWordUnplaced`: una paraula que no s'ha pogut col·locar en una sopa de lletres o en uns mots encreuats.
+- `exerciseNested`: un exercici dins d'un altre.
+- `solutionOutside`: un `:::solution` o un `:::hint` fora d'un exercici. No imprimeix res.
+
+## Exercicis en HTML i EPUB
+
+Al visor HTML i als llibres EPUB els exercicis es poden respondre. El lector escriu als buits i fa clic a les opcions, a les afirmacions, als punts per unir i a les caselles d'una graella; després pot comprovar les respostes, veure la solució o tornar a començar. Les respostes correctes i les incorrectes es mostren amb un color i una marca (`digital.correctColor`, `digital.wrongColor`) i s'anuncien als lectors de pantalla. Les respostes es desen al navegador, per a cada llibre, i el lector les retroba a la visita següent (`exercises.digital.persist`). Amb `exercises.digital.check: 'instant'` cada resposta es comprova tan bon punt s'escriu; amb `exercises.digital.interactive: false` les pàgines queden com les impreses. Un EPUB porta sempre la clau de respostes, sigui quina sigui la ubicació de les solucions a la impressió, perquè un sistema de lectura que no executa scripts també tingui les respostes.
+
+La pantalla pot donar als exercicis una forma pròpia amb `htmlViewer.overrides`, que es fusiona amb la configuració del llibre abans que el visor HTML faci la maquetació. La impressió conserva la seva:
+
+```ts
+const config: PostextConfig = {
+  exercises: { solutions: { placement: 'chapterEnd' } },
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [
+        { id: 'exercise', blank: { minWidth: { value: 6, unit: 'em' } }, area: { kind: 'none' } },
+      ],
+    },
+  },
+};
+```
+
+## Estils d'exercici
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Source Sans 3' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots' },
+    },
+  ],
+};
+```
+
+Tots els camps d'un estil, amb el tipus i el valor per defecte, són a [Configuració › Exercicis](/ca/docs/configuration-exercises). Un estil pren el marc d'un [estil de requadre](/ca/docs/configuration-callouts) (`box`), de manera que un exercici pot anar dins d'una caixa amb fons de color i una franja com qualsevol altre requadre del llibre. La [skill postext-port](/ca/docs/skill) segueix aquests mateixos passos quan porta a Postext els exercicis d'un llibre de text o d'un quadern d'activitats.

@@ -12,6 +12,8 @@ import {
   resolveChecksConfig,
   resolveContrastConfig,
   resolveDebugConfig,
+  resolveExerciseStylesConfig,
+  resolveExercisesConfig,
   resolveFolioConfig,
   resolveCanvasViewerConfig,
   resolveHtmlViewerConfig,
@@ -28,7 +30,8 @@ const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 /** `config` as the engine resolves it for a book read in `locale`, with
  *  the sections the engine only resolves when a book sets them (print,
  *  the PDF, the Folio, line numbers, code, comics, the contrast check,
- *  the checks of the configuration, page templates and label styles)
+ *  the checks of the configuration, page templates, label styles and the
+ *  exercise settings)
  *  and the ones the Sandbox reads itself (the guides, the HTML reader).
  *  Throws when the engine cannot resolve the configuration. */
 export function resolveEffectiveConfig(config: PostextConfig, locale: string, resources: readonly Resource[] = []): Record<string, unknown> {
@@ -36,8 +39,13 @@ export function resolveEffectiveConfig(config: PostextConfig, locale: string, re
   // running heads, in a millisecond or two.
   const resolved = buildDocument({ markdown: '' }, withHyphenationLocale(config, locale)).config;
   const documentLocale = resolved.locale ?? resolved.bodyText.hyphenation.tag ?? resolved.bodyText.hyphenation.locale;
+  // The engine's own resolution of the exercise settings (only once the
+  // book sets them) is no setting: `exerciseStyles` and `exercises` below
+  // are.
+  const { exerciseSettings: _resolvedExercises, ...rest } = resolved;
+  void _resolvedExercises;
   return {
-    ...(resolved as unknown as Record<string, unknown>),
+    ...(rest as unknown as Record<string, unknown>),
     direction: resolved.direction ?? 'ltr',
     numerals: resolved.numerals ?? 'latn',
     colorPalette: resolved.colorPalette ?? cloneDefaultColorPalette(),
@@ -57,8 +65,21 @@ export function resolveEffectiveConfig(config: PostextConfig, locale: string, re
     pageTemplates: resolved.pageTemplates ?? [],
     labelStyles: resolved.labelStyles ?? [],
     frameLooks: resolved.frameLooks ?? [],
+    // Exercises (#1226): resolved apart from the layout, in the document
+    // language; the words the engine prints are no setting.
+    exerciseStyles: resolveExerciseStylesConfig(config.exerciseStyles, documentLocale, resolved.colorPalette),
+    exercises: exerciseSettings(config, documentLocale),
     ...(config.customFonts ? { customFonts: config.customFonts } : {}),
   };
+}
+
+/** The book's exercise settings as the engine reads them, without the
+ *  words and language the resolution carries along. */
+function exerciseSettings(config: PostextConfig, locale: string | undefined): Record<string, unknown> {
+  const settings: Partial<ReturnType<typeof resolveExercisesConfig>> = { ...resolveExercisesConfig(config.exercises, locale) };
+  delete settings.words;
+  delete settings.language;
+  return settings;
 }
 
 const UNITS = ['cm', 'mm', 'in', 'pt', 'px', 'em', 'rem'] as const;

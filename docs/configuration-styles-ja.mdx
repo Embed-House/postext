@@ -453,6 +453,18 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>チップの文字を、なぞるための点の列として描きます。デザインのテキストの<a href="/ja/docs/configuration-headers-footers#インラインの書式記号と輪郭線"><code>dotted</code></a>と同じで、em単位の長さはチップのテキストに対する値です。背景、枠線、パディングがなければ、チップは行の中の点で描いた語になります。例：<code>:chip[gato]&#123;style="dots"&#125;</code></td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>枠線をボックスの周りではなく、テキストの下の線だけで描きます。太さは<code>borderWidth</code>、色は<code>borderColor</code>です。書き込む空欄になります。未設定のときは枠線全体を描きます。</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>枠線と内側余白を含めたボックスの最小の幅です。テキストが短ければ、その中央に置かれます。練習問題の空欄や、印を付ける四角に使われます。未設定のときはテキストの幅になります。</td>
+    </tr>
   </tbody>
 </table>
 

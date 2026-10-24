@@ -360,6 +360,7 @@ export function outlineKey(entries: readonly OutlineEntry[] | undefined): string
     e.anchorId ?? '',
     e.anchorSource ?? '',
     e.numberLabel ?? '',
+    e.exercise ? JSON.stringify(e.exercise) : '',
   ].join('|')).join('\n');
 }
 

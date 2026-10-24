@@ -5406,5 +5406,341 @@
       "it": "Apparato critico per esempi musicali"
     },
     "theme": "boxes"
+  },
+  "Q194": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set a workbook page of activities: numbers in discs, a word bank, true or false, join with a line?",
+      "es": "¿Cómo compongo una página de cuaderno de actividades: números en círculos, banco de palabras, verdadero o falso, une con flechas?",
+      "ca": "Com componc una pàgina de quadern d'activitats: números en cercles, banc de paraules, vertader o fals, uneix amb fletxes?",
+      "fr": "Comment composer une page de cahier d'activités : numéros en pastille, banque de mots, vrai ou faux, relie ?",
+      "de": "Wie setze ich eine Arbeitsheftseite: Nummern im Kreis, Wortspeicher, richtig oder falsch, verbinde?",
+      "it": "Come compongo una pagina di eserciziario: numeri nei cerchi, banca di parole, vero o falso, collega?",
+      "pt": "Como componho uma página de caderno de atividades: números em círculos, banco de palavras, verdadeiro ou falso, ligue?",
+      "zh": "怎样排一页练习册：圆圈题号、词库、判断题、连线题？",
+      "ja": "丸数字、語群、正誤問題、線結びのあるワークブックのページはどう組む？",
+      "ar": "كيف أصفّ صفحة كراسة أنشطة: أرقام في دوائر وبنك كلمات وصواب وخطأ وصِل؟"
+    },
+    "index": {
+      "en": "Workbook activities",
+      "es": "Cuaderno de actividades",
+      "ca": "Quadern d'activitats",
+      "fr": "Cahier d'activités",
+      "de": "Arbeitsheft, Aufgaben im",
+      "it": "Eserciziario",
+      "pt": "Caderno de atividades",
+      "zh": "练习册",
+      "ja": "ワークブック",
+      "ar": "كراسة الأنشطة"
+    },
+    "theme": "textbooks"
+  },
+  "Q195": {
+    "kind": "how",
+    "text": {
+      "en": "How do I print the answers upside down at the foot of an exercise?",
+      "es": "¿Cómo imprimo las soluciones boca abajo al pie de un ejercicio?",
+      "ca": "Com imprimeixo les solucions cap per avall al peu d'un exercici?",
+      "fr": "Comment imprimer les réponses à l'envers au pied d'un exercice ?",
+      "de": "Wie drucke ich die Lösungen auf dem Kopf unter eine Übung?",
+      "it": "Come stampo le soluzioni capovolte in fondo a un esercizio?",
+      "pt": "Como imprimo as respostas de cabeça para baixo no pé de um exercício?",
+      "zh": "怎样把答案倒印在题目下方？",
+      "ja": "答えを問題の下に逆さまに印刷するには？",
+      "ar": "كيف أطبع الإجابات مقلوبة أسفل التمرين؟"
+    },
+    "index": {
+      "en": "Answers upside down",
+      "es": "Soluciones boca abajo",
+      "ca": "Solucions cap per avall",
+      "fr": "Réponses à l'envers",
+      "de": "Lösungen auf dem Kopf",
+      "it": "Soluzioni capovolte",
+      "pt": "Respostas de cabeça para baixo",
+      "zh": "倒印答案",
+      "ja": "逆さまの答え",
+      "ar": "إجابات مقلوبة"
+    },
+    "theme": "textbooks"
+  },
+  "Q196": {
+    "kind": "how",
+    "text": {
+      "en": "How do I make a word search or a crossword from a list of words?",
+      "es": "¿Cómo hago una sopa de letras o un crucigrama a partir de una lista de palabras?",
+      "ca": "Com faig una sopa de lletres o uns mots encreuats a partir d'una llista de paraules?",
+      "fr": "Comment faire des mots mêlés ou des mots croisés à partir d'une liste de mots ?",
+      "de": "Wie mache ich aus einer Wortliste ein Suchsel oder ein Kreuzworträtsel?",
+      "it": "Come faccio un crucipuzzle o un cruciverba da un elenco di parole?",
+      "pt": "Como faço um caça-palavras ou palavras cruzadas a partir de uma lista de palavras?",
+      "zh": "怎样用一组词语生成找词游戏或填字游戏？",
+      "ja": "語のリストから単語探しやクロスワードを作るには？",
+      "ar": "كيف أصنع شبكة بحث عن كلمات أو كلمات متقاطعة من قائمة كلمات؟"
+    },
+    "index": {
+      "en": "Word searches and crosswords",
+      "es": "Sopas de letras y crucigramas",
+      "ca": "Sopes de lletres i mots encreuats",
+      "fr": "Mots mêlés et mots croisés",
+      "de": "Suchsel und Kreuzworträtsel",
+      "it": "Crucipuzzle e cruciverba",
+      "pt": "Caça-palavras e palavras cruzadas",
+      "zh": "找词与填字游戏",
+      "ja": "単語探しとクロスワード",
+      "ar": "البحث عن الكلمات والكلمات المتقاطعة"
+    },
+    "theme": "textbooks"
+  },
+  "Q197": {
+    "kind": "how",
+    "text": {
+      "en": "How do I make a teacher's edition with the answers printed in their places from the pupil's book?",
+      "es": "¿Cómo saco la edición del profesor, con las respuestas impresas en su sitio, del mismo libro del alumno?",
+      "ca": "Com faig l'edició del professor, amb les respostes al seu lloc, a partir del llibre de l'alumne?",
+      "fr": "Comment tirer le livre du professeur, réponses imprimées à leur place, du livre de l'élève ?",
+      "de": "Wie erzeuge ich aus dem Schülerbuch die Lehrerausgabe mit den Lösungen an ihrer Stelle?",
+      "it": "Come ricavo la guida per l'insegnante, con le risposte al loro posto, dal libro dell'alunno?",
+      "pt": "Como faço o livro do professor, com as respostas impressas no lugar, a partir do livro do aluno?",
+      "zh": "怎样由学生用书生成答案印在原位的教师用书？",
+      "ja": "生徒用から、答えを欄に刷り込んだ教師用を作るには？",
+      "ar": "كيف أُخرج طبعة المعلم بالإجابات في مواضعها من كتاب التلميذ؟"
+    },
+    "index": {
+      "en": "Teacher's edition",
+      "es": "Edición del profesor",
+      "ca": "Edició del professor",
+      "fr": "Livre du professeur",
+      "de": "Lehrerausgabe",
+      "it": "Guida per l'insegnante",
+      "pt": "Livro do professor",
+      "zh": "教师用书",
+      "ja": "教師用",
+      "ar": "طبعة المعلم"
+    },
+    "theme": "textbooks"
+  },
+  "Q198": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set long division the way each country's schools write it?",
+      "es": "¿Cómo compongo la división larga tal como la escriben las escuelas de cada país?",
+      "ca": "Com componc la divisió llarga tal com l'escriuen les escoles de cada país?",
+      "fr": "Comment composer la division posée comme l'écrivent les écoles de chaque pays ?",
+      "de": "Wie setze ich die schriftliche Division so, wie die Schulen jedes Landes sie schreiben?",
+      "it": "Come compongo la divisione in colonna come la scrivono le scuole di ogni paese?",
+      "pt": "Como componho a divisão longa do jeito que as escolas de cada país a escrevem?",
+      "zh": "怎样按各国学校的写法排长除法竖式？",
+      "ja": "わり算の筆算を国ごとの学校の書き方で組むには？",
+      "ar": "كيف أصفّ القسمة الطويلة كما تكتبها مدارس كل بلد؟"
+    },
+    "index": {
+      "en": "Long division by country",
+      "es": "División larga según el país",
+      "ca": "Divisió llarga segons el país",
+      "fr": "Division posée selon le pays",
+      "de": "Schriftliche Division nach Land",
+      "it": "Divisione in colonna per paese",
+      "pt": "Divisão longa por país",
+      "zh": "各国长除法",
+      "ja": "国ごとのわり算の筆算",
+      "ar": "القسمة الطويلة حسب البلد"
+    },
+    "theme": "textbooks"
+  },
+  "Q199": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set Chinese test questions: a （　） bracket after the stem and A. B. C. D. options in a row?",
+      "es": "¿Cómo compongo preguntas de examen chino: un paréntesis （　） tras el enunciado y las opciones A. B. C. D. en una fila?",
+      "ca": "Com componc preguntes d'examen xinès: un parèntesi （　） després de l'enunciat i les opcions A. B. C. D. en una fila?",
+      "fr": "Comment composer des questions d'examen chinois : des parenthèses （　） après l'énoncé et les options A. B. C. D. sur une ligne ?",
+      "de": "Wie setze ich chinesische Prüfungsfragen: eine Klammer （　） nach der Frage und die Antworten A. B. C. D. in einer Reihe?",
+      "it": "Come compongo domande d'esame cinesi: una parentesi （　） dopo la domanda e le opzioni A. B. C. D. in fila?",
+      "pt": "Como componho questões de prova chinesas: parênteses （　） após o enunciado e as alternativas A. B. C. D. em linha?",
+      "zh": "怎样排中文选择题：题干后的（　）括号和一行排开的 A. B. C. D. 选项？",
+      "ja": "中国語の選択問題（問の後の（　）と一行に並ぶ A. B. C. D.）はどう組む？",
+      "ar": "كيف أصفّ أسئلة اختبار صينية: قوسان （　） بعد السؤال والخيارات A. B. C. D. في صف؟"
+    },
+    "index": {
+      "en": "Chinese multiple choice",
+      "es": "Opción múltiple china",
+      "ca": "Opció múltiple xinesa",
+      "fr": "QCM chinois",
+      "de": "Chinesische Auswahlaufgaben",
+      "it": "Scelta multipla cinese",
+      "pt": "Múltipla escolha chinesa",
+      "zh": "中文选择题",
+      "ja": "中国語の選択問題",
+      "ar": "الاختيار من متعدد الصيني"
+    },
+    "theme": "textbooks"
+  },
+  "Q200": {
+    "kind": "how",
+    "text": {
+      "en": "How do I give an open question French Seyès ruling, squared paper or 田字格 squares to write in?",
+      "es": "¿Cómo doy a una pregunta abierta pauta Seyès francesa, cuadrícula o cuadros 田字格 para escribir?",
+      "ca": "Com dono a una pregunta oberta pauta Seyès, quadrícula o quadres 田字格 per escriure?",
+      "fr": "Comment donner à une question ouverte une réglure Seyès, un quadrillage ou des cases 田字格 ?",
+      "de": "Wie gebe ich einer offenen Frage Seyès-Lineatur, Kästchen oder 田字格-Felder zum Schreiben?",
+      "it": "Come do a una domanda aperta la rigatura Seyès, i quadretti o le caselle 田字格 per scrivere?",
+      "pt": "Como dou a uma pergunta aberta pauta Seyès, quadriculado ou quadros 田字格 para escrever?",
+      "zh": "怎样给开放题配上法国 Seyès 格线、方格或田字格书写区？",
+      "ja": "記述問題の解答欄をセイエス罫、方眼、田字格にするには？",
+      "ar": "كيف أعطي سؤالًا مفتوحًا تسطير Seyès أو ورق مربعات أو مربعات 田字格 للكتابة؟"
+    },
+    "index": {
+      "en": "Writing areas",
+      "es": "Zonas de escritura",
+      "ca": "Zones d'escriptura",
+      "fr": "Zones d'écriture",
+      "de": "Schreibflächen",
+      "it": "Spazi di scrittura",
+      "pt": "Áreas de escrita",
+      "zh": "书写区",
+      "ja": "解答欄",
+      "ar": "مساحات الكتابة"
+    },
+    "theme": "textbooks"
+  },
+  "Q201": {
+    "kind": "how",
+    "text": {
+      "en": "How do I make fill-in-the-blank sentences whose blanks do not give away the length of the answer?",
+      "es": "¿Cómo hago frases para completar cuyos huecos no delaten la longitud de la respuesta?",
+      "ca": "Com faig frases per completar amb buits que no delatin la llargada de la resposta?",
+      "fr": "Comment faire un texte à trous dont les blancs ne trahissent pas la longueur de la réponse ?",
+      "de": "Wie mache ich einen Lückentext, dessen Lücken die Länge der Antwort nicht verraten?",
+      "it": "Come faccio frasi da completare i cui spazi non rivelino la lunghezza della risposta?",
+      "pt": "Como faço frases para completar cujas lacunas não entreguem o tamanho da resposta?",
+      "zh": "怎样做填空题，让空格长度不泄露答案？",
+      "ja": "答えの長さがわからない穴埋め問題を作るには？",
+      "ar": "كيف أصنع جملًا للإكمال لا تكشف فراغاتها طول الإجابة؟"
+    },
+    "index": {
+      "en": "Blanks of even width",
+      "es": "Huecos del mismo ancho",
+      "ca": "Buits de la mateixa amplada",
+      "fr": "Blancs de même largeur",
+      "de": "Gleich breite Lücken",
+      "it": "Spazi della stessa larghezza",
+      "pt": "Lacunas da mesma largura",
+      "zh": "等宽空格",
+      "ja": "同じ幅の空欄",
+      "ar": "فراغات بعرض واحد"
+    },
+    "theme": "textbooks"
+  },
+  "Q202": {
+    "kind": "how",
+    "text": {
+      "en": "How do I collect the solutions of every exercise at the end of the chapter?",
+      "es": "¿Cómo reúno las soluciones de todos los ejercicios al final del capítulo?",
+      "ca": "Com reuneixo les solucions de tots els exercicis al final del capítol?",
+      "fr": "Comment regrouper les corrigés de tous les exercices en fin de chapitre ?",
+      "de": "Wie sammle ich die Lösungen aller Übungen am Kapitelende?",
+      "it": "Come raccolgo le soluzioni di tutti gli esercizi a fine capitolo?",
+      "pt": "Como junto o gabarito de todos os exercícios no fim do capítulo?",
+      "zh": "怎样把各题答案集中印在章末？",
+      "ja": "すべての問題の解答を章末にまとめるには？",
+      "ar": "كيف أجمع حلول كل التمارين في آخر الفصل؟"
+    },
+    "index": {
+      "en": "Solutions at the chapter's end",
+      "es": "Soluciones al final del capítulo",
+      "ca": "Solucions al final del capítol",
+      "fr": "Corrigés en fin de chapitre",
+      "de": "Lösungen am Kapitelende",
+      "it": "Soluzioni a fine capitolo",
+      "pt": "Gabarito no fim do capítulo",
+      "zh": "章末答案",
+      "ja": "章末の解答",
+      "ar": "الحلول في آخر الفصل"
+    },
+    "theme": "textbooks"
+  },
+  "Q203": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set the same worksheet the way each country's school books set their exercises?",
+      "es": "¿Cómo compongo la misma ficha tal como los libros escolares de cada país componen sus ejercicios?",
+      "ca": "Com componc la mateixa fitxa tal com els llibres escolars de cada país componen els exercicis?",
+      "fr": "Comment composer la même fiche comme les manuels de chaque pays composent leurs exercices ?",
+      "de": "Wie setze ich dasselbe Arbeitsblatt so, wie die Schulbücher jedes Landes ihre Aufgaben setzen?",
+      "it": "Come compongo la stessa scheda come i libri scolastici di ogni paese compongono gli esercizi?",
+      "pt": "Como componho a mesma ficha do jeito que os livros didáticos de cada país compõem os exercícios?",
+      "zh": "怎样把同一张练习纸按各国教科书的习题版式来排？",
+      "ja": "同じプリントを、国ごとの教科書の問題の組み方で組むには？",
+      "ar": "كيف أصفّ ورقة العمل نفسها كما تصفّ الكتب المدرسية في كل بلد تمارينها؟"
+    },
+    "index": {
+      "en": "Exercises by country",
+      "es": "Ejercicios según el país",
+      "ca": "Exercicis segons el país",
+      "fr": "Exercices selon le pays",
+      "de": "Aufgaben nach Land",
+      "it": "Esercizi per paese",
+      "pt": "Exercícios por país",
+      "zh": "各国习题版式",
+      "ja": "国ごとの問題の組み方",
+      "ar": "التمارين حسب البلد"
+    },
+    "theme": "textbooks"
+  },
+  "Q204": {
+    "kind": "how",
+    "text": {
+      "en": "How do I put activity icons (write, speak, work in pairs) beside an exercise's number?",
+      "es": "¿Cómo pongo iconos de actividad (escribe, habla, en pareja) junto al número de un ejercicio?",
+      "ca": "Com poso icones d'activitat (escriu, parla, en parella) al costat del número d'un exercici?",
+      "fr": "Comment mettre des pictogrammes (écris, parle, à deux) à côté du numéro d'un exercice ?",
+      "de": "Wie setze ich Symbole (schreiben, sprechen, Partnerarbeit) neben die Nummer einer Übung?",
+      "it": "Come metto le icone di attività (scrivi, parla, in coppia) accanto al numero di un esercizio?",
+      "pt": "Como coloco ícones de atividade (escreva, fale, em dupla) ao lado do número de um exercício?",
+      "zh": "怎样在题号旁加上活动图标（写、说、同桌合作）？",
+      "ja": "問題番号の横に活動アイコン（書く、話す、ペア）を置くには？",
+      "ar": "كيف أضع أيقونات النشاط (اكتب، تحدّث، مع زميل) بجانب رقم التمرين؟"
+    },
+    "index": {
+      "en": "Activity icons",
+      "es": "Iconos de actividad",
+      "ca": "Icones d'activitat",
+      "fr": "Pictogrammes d'activité",
+      "de": "Aufgabensymbole",
+      "it": "Icone di attività",
+      "pt": "Ícones de atividade",
+      "zh": "活动图标",
+      "ja": "活動アイコン",
+      "ar": "أيقونات النشاط"
+    },
+    "theme": "textbooks"
+  },
+  "Q205": {
+    "kind": "how",
+    "text": {
+      "en": "How do I let readers answer and check the exercises in the HTML or EPUB edition?",
+      "es": "¿Cómo dejo que el lector conteste y compruebe los ejercicios en la edición HTML o EPUB?",
+      "ca": "Com deixo que el lector respongui i comprovi els exercicis a l'edició HTML o EPUB?",
+      "fr": "Comment permettre au lecteur de répondre aux exercices et de les vérifier en HTML ou en EPUB ?",
+      "de": "Wie können Leser die Übungen in der HTML- oder EPUB-Ausgabe lösen und prüfen?",
+      "it": "Come faccio rispondere e verificare gli esercizi al lettore nell'edizione HTML o EPUB?",
+      "pt": "Como deixo o leitor responder e conferir os exercícios na edição HTML ou EPUB?",
+      "zh": "怎样让读者在 HTML 或 EPUB 版中作答并检查练习？",
+      "ja": "HTML や EPUB 版で、読者が問題に答えて答え合わせできるようにするには？",
+      "ar": "كيف أتيح للقارئ حل التمارين والتحقق منها في نسخة HTML أو EPUB؟"
+    },
+    "index": {
+      "en": "Interactive exercises",
+      "es": "Ejercicios interactivos",
+      "ca": "Exercicis interactius",
+      "fr": "Exercices interactifs",
+      "de": "Interaktive Übungen",
+      "it": "Esercizi interattivi",
+      "pt": "Exercícios interativos",
+      "zh": "交互练习",
+      "ja": "インタラクティブな問題",
+      "ar": "تمارين تفاعلية"
+    },
+    "theme": "output"
   }
 }

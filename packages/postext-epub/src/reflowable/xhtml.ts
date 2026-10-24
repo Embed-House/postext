@@ -1,8 +1,9 @@
 // The semantic model to EPUB 3 XHTML content documents: one per chapter
 // (or part opener), with its footnotes after the text.
 
-import { bidiClassOf, comicPanelSvg, isHlsMimeType, mediaFragment, TASK_BOX_SIDE_EM, taskBoxSvgBody, taskBoxText, type VDTResourceVideo } from 'postext';
+import { bidiClassOf, comicPanelSvg, isHlsMimeType, mediaFragment, TASK_BOX_SIDE_EM, taskBoxSvgBody, taskBoxText, type ExerciseData, type ExerciseRecord, type VDTResourceVideo } from 'postext';
 import type {
+  CalloutNode,
   ComicNode,
   FileModel,
   InlineItem,
@@ -19,6 +20,7 @@ import type {
   WrapFloat,
 } from './model.js';
 import { bridgeLinks, formatKey, idOf, linkKey, wrapFormat, xmlAttr, xmlText } from './inline.js';
+import { exerciseDataScript, staticKeyHtml } from '../shared/exerciseScript.js';
 
 /** Style id of a code listing's box (`postext` `CODE_BOX_STYLE_ID`). */
 const CODE_BOX_STYLE = '__postext-code';
@@ -40,6 +42,9 @@ export interface SerializeContext {
   stylesheet: string;
   /** Accessible name of a note's link back to its marker. */
   backLabel(lang: string): string;
+  /** What a reader's answers to the exercises are kept under (#1231):
+   *  the book's. Default: each document's path. */
+  exerciseKey?: string;
 }
 
 /** `to` (relative to the package document) seen from `from`'s folder. */
@@ -121,6 +126,9 @@ export function bidiLevels(items: readonly InlineItem[], base: number): number[]
 class Writer {
   private svgCount = 0;
   private comicCount = 0;
+  /** The exercises written so far (#1231): their records, for the
+   *  exercise script. */
+  exercises: { data: ExerciseData; records: ExerciseRecord[] } | null = null;
   /** The direction the inline content written now is set in: the
    *  document's, or a block's that differs from it. */
   private dir: 'ltr' | 'rtl';
@@ -378,6 +386,9 @@ class Writer {
         if (node.styleId && FLOW_COLUMNS_STYLES.has(node.styleId)) {
           return `<div class="pt-columns">\n${this.nodes(node.children)}\n</div>`;
         }
+        // An exercise (#1231): a group named by its number, with its key
+        // for a reader with no script; a drawn box, its picture.
+        if (node.exercise) return this.exercise(node, node.exercise);
         const title = node.title ? `<p class="pt-callout-title">${xmlText(node.title)}</p>\n` : '';
         // A frame of a composed page (#862): a block of the page's section
         // (the page's own text, not an aside), with its style's box.
@@ -596,6 +607,25 @@ class Writer {
     return { cls: `pt-wrap pt-wrap-${wrap.side}`, style: ` style="width:${wrap.width}%;${margin}"` };
   }
 
+  /** An exercise's box (#1231). The outer box: a group named by the
+   *  exercise's number, marked for the exercise script, which reads its
+   *  record from the document's data block, with the answer key in a
+   *  `<details>` for a reader with no script. A drawn box (a writing area,
+   *  a grid): its picture, in a box the script lays its controls over. */
+  private exercise(node: CalloutNode, ex: NonNullable<CalloutNode['exercise']>): string {
+    if (ex.drawn) {
+      const { svg, width, height } = ex.drawn;
+      return `<div class="pt-ex-box pt-ex-drawn" data-pt-box="${ex.box}" data-pt-ex="${ex.id}" style="width:${round2(width)}px;height:${round2(height)}px">${svg}</div>`;
+    }
+    const record = ex.record!;
+    const data = ex.data!;
+    this.exercises ??= { data, records: [] };
+    if (!this.exercises.records.includes(record)) this.exercises.records.push(record);
+    const title = node.title ? `<p class="pt-callout-title">${xmlText(node.title)}</p>\n` : '';
+    const key = staticKeyHtml(record, data.words.showSolution);
+    return `<div${this.classAttr(['pt-callout', node.styleId && idOf('pt-callout-', node.styleId), 'pt-exercise', 'pt-ex-box'])} role="group" aria-label="${xmlAttr(`${data.words.exercise} ${record.number}`)}" data-pt-box="${ex.box}" data-pt-ex="${ex.id}" data-pt-exercise="${ex.id}">\n${title}${this.nodes(node.children)}\n${key ? `${key}\n` : ''}</div>`;
+  }
+
   private figure(node: Extract<Node, { k: 'figure' }>): string {
     const href = node.fileId ? this.ctx.imageHref(node.fileId) : undefined;
     // A `:::figure`'s labels (#862): a list right after the picture, in
@@ -742,6 +772,9 @@ export function writeContentDocument(file: FileModel, ctx: SerializeContext): st
   const w = new Writer(ctx, file);
   const body = w.nodes(file.nodes);
   const notes = w.notes();
+  const exercises = w.exercises
+    ? `${exerciseDataScript({ ...w.exercises.data, exercises: w.exercises.records }, `${ctx.exerciseKey ?? 'pt-ex'}:${file.href}`)}\n`
+    : '';
   const lang = xmlAttr(file.lang);
   const dir = file.dir ? ` dir="${file.dir}"` : '';
   const title = xmlText(file.title || ctx.bookTitle);
@@ -759,7 +792,7 @@ ${[ctx.stylesheet, ...(file.stylesheets ?? [])].map((href) => `<link rel="styles
 ${body}
 </section>
 ${notes}
-</body>
+${exercises}</body>
 </html>
 `;
 }

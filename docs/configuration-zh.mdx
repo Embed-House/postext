@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Postext配置',
   sidebarTitle: '配置',
-  description: '什么是Postext配置，以及参考的十九个页面各讲哪一组设置',
+  description: '什么是Postext配置，以及参考的二十个页面各讲哪一组设置',
   lang: 'zh',
   lastUpdated: '2026-10-19',
   readingTime: '3分钟',
   order: 4,
-  plainSummary: "本页是参考的入口，这份参考列出控制页面外观的所有设置。所有选择都放在一组设置里：页面大小、栏数、字体、字号、标题、框、颜色等等。每项设置都有合理的默认值，你只需写出想改的那几项。整份参考分为十九个页面。本页的列表链接到每一节，可以直接跳到需要的部分。",
+  plainSummary: "本页是参考的入口，这份参考列出控制页面外观的所有设置。所有选择都放在一组设置里：页面大小、栏数、字体、字号、标题、框、颜色等等。每项设置都有合理的默认值，你只需写出想改的那几项。整份参考分为二十个页面。本页的列表链接到每一节，可以直接跳到需要的部分。",
 };
 
 # 配置
@@ -33,7 +33,7 @@ const document = buildDocument(content, {
 
 ## 内容一览
 
-这份参考分为十九个页面。下面每一组是一个页面，后面列出它包含的各节。
+这份参考分为二十个页面。下面每一组是一个页面，后面列出它包含的各节。
 
 **[页面与版式](/zh/docs/configuration-page-layout)**
 
@@ -102,6 +102,10 @@ const document = buildDocument(content, {
 **[标注框](/zh/docs/configuration-callouts)**
 
 - [标注框样式](/zh/docs/configuration-callouts#标注框样式)：供`:::callout`容器使用的带框注释、提示和学习目标。
+
+**[练习设置](/zh/docs/configuration-exercises)**
+
+- [练习样式](/zh/docs/configuration-exercises#练习样式)：`exerciseStyles`，即`:::exercise`块的题号样子、题目要求的字体、选项序号、填空处、书写区、方格、除法竖式和答案颜色。[全书设置](/zh/docs/configuration-exercises#全书设置)：`exercises`，即教师用书、答案印在哪里、打乱顺序的随机种子和屏幕版本。指南见[练习](/zh/docs/exercises)。
 
 **[漫画设置](/zh/docs/configuration-comics)**
 

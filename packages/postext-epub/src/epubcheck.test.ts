@@ -11,7 +11,7 @@ import path from 'node:path';
 import { renderToEpub } from './index.js';
 import type { RenderToEpubOptions } from './types.js';
 import { page8Book, page8Bytes } from './__tests__/page8.js';
-import { AMIRI, LORA, MP4, PNG, arabicSampleBook, booktabsSampleBook, wrapSampleBook, comicSampleBook, composedSpreadSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook, videoSampleBook, japaneseSampleBook } from './__tests__/sampleBook.js';
+import { AMIRI, LORA, MP4, PNG, arabicSampleBook, booktabsSampleBook, wrapSampleBook, comicSampleBook, composedSpreadSampleBook, exerciseSampleBook, sampleBook, stripCaptionSampleBook, stripSpreadSampleBook, videoSampleBook, japaneseSampleBook } from './__tests__/sampleBook.js';
 
 const available = process.env.EPUBCHECK === '1' && spawnSync('epubcheck', ['--version'], { encoding: 'utf8' }).status === 0;
 
@@ -111,6 +111,9 @@ const samples: { name: string; options: RenderToEpubOptions; book?: () => Return
   // A spread template across two facing pages (#861).
   { name: 'composed-spread-fixed', options: base('fixed'), book: composedSpreadSampleBook },
   { name: 'composed-spread-reflowable', options: base('reflowable'), book: composedSpreadSampleBook },
+  // Exercises of every kind (#1231): their records, the script, the key.
+  { name: 'exercises-fixed', options: base('fixed'), book: exerciseSampleBook },
+  { name: 'exercises-reflowable', options: base('reflowable'), book: exerciseSampleBook },
 ];
 
 describe.skipIf(!available)('EPUBCheck', () => {

@@ -11,6 +11,7 @@ import { stripVideoStyleDefaults } from './videoStyle.js';
 import { stripParagraphStylesDefaults } from './paragraphStyles.js';
 import { stripCalloutStylesDefaults } from './calloutStyles.js';
 import { stripChipStylesDefaults } from './chipStyles.js';
+import { stripExerciseStylesDefaults, stripExercisesDefaults } from './exercises.js';
 import { stripMarkStylesDefaults } from './markStyles.js';
 import { stripUnorderedListsDefaults } from './unorderedLists.js';
 import { stripOrderedListsDefaults } from './orderedLists.js';
@@ -59,6 +60,8 @@ export { DEFAULT_VIDEO_STYLE_CONFIG, DEFAULT_VIDEO_PLAYER_OPTIONS, resolveVideoS
 export { DEFAULT_PARAGRAPH_STYLES, resolveParagraphStylesConfig, stripParagraphStylesDefaults } from './paragraphStyles.js';
 export { DEFAULT_CALLOUT_STYLES, DEFAULT_CALLOUT_STYLE_STATIC, resolveCalloutStylesConfig, stripCalloutStylesDefaults, inheritCalloutStyles, calloutStyleChain } from './calloutStyles.js';
 export { DEFAULT_CHIP_STYLES, DEFAULT_CHIP_STYLE_STATIC, resolveChipStylesConfig, stripChipStylesDefaults, pickChipStyle } from './chipStyles.js';
+export { DEFAULT_EXERCISE_STYLES, exerciseWords, resolveExerciseStylesConfig, resolveExercisesConfig, stripExerciseStylesDefaults, stripExercisesDefaults } from './exercises.js';
+export type { ExerciseWords, ResolvedExerciseStyle, ResolvedExerciseNumber, ResolvedExercisesConfig } from './exercises.js';
 export { DEFAULT_MARK_STYLES, DEFAULT_MARK_STYLE_STATIC, resolveMarkStylesConfig, stripMarkStylesDefaults, pickMarkStyle } from './markStyles.js';
 export { DEFAULT_UNORDERED_LISTS_STATIC, resolveUnorderedListsConfig, stripUnorderedListsDefaults } from './unorderedLists.js';
 export { DEFAULT_ORDERED_LISTS_STATIC, resolveOrderedListsConfig, stripOrderedListsDefaults } from './orderedLists.js';
@@ -194,6 +197,18 @@ export function stripConfigDefaults(config: PostextConfig): PostextConfig {
     result.chipStyles = strippedChipStyles;
   } else {
     delete result.chipStyles;
+  }
+  const strippedExerciseStyles = stripExerciseStylesDefaults(config.exerciseStyles);
+  if (strippedExerciseStyles) {
+    result.exerciseStyles = strippedExerciseStyles;
+  } else {
+    delete result.exerciseStyles;
+  }
+  const strippedExercises = stripExercisesDefaults(config.exercises, documentLocale);
+  if (strippedExercises) {
+    result.exercises = strippedExercises;
+  } else {
+    delete result.exercises;
   }
   const strippedMarkStyles = stripMarkStylesDefaults(config.markStyles);
   if (strippedMarkStyles) {

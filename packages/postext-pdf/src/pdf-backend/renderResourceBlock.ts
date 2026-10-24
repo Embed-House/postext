@@ -31,6 +31,7 @@ import { paintScoreBody } from './scoreRender.js';
 import { PDFHexString, popGraphicsState, pushGraphicsState, setFillingColor, type Color, type PDFImage, type PDFDocument, type PDFEmbeddedPage, type PDFFont } from 'pdf-lib';
 import type {
   VDTBlock,
+  VDTInlineIcon,
   VDTLine,
   VDTDocument,
   ResolvedResourceBlock,
@@ -416,6 +417,7 @@ export async function preloadResourceImages(
   for (const block of blocks) for (const b of block.designOverlay?.blocks ?? []) if (b.kind === 'image' && b.tint) tintedIds.add(b.fileId);
   // A tinted inline symbol (#1058).
   for (const block of blocks) for (const icon of resourceBlockIcons(block.resourceBlock)) if (icon.fileId && icon.color) tintedIds.add(icon.fileId);
+  for (const block of blocks) for (const icon of lineIcons(block)) if (icon.fileId && icon.color) tintedIds.add(icon.fileId);
   for (const page of doc.pages) {
     for (const slot of [page.header, page.footer, page.openerBand, page.composed?.decoration]) {
       for (const b of slot?.blocks ?? []) if (b.kind === 'image' && b.tint) tintedIds.add(b.fileId);
@@ -565,6 +567,8 @@ export async function preloadResourceImages(
     // The pictures of inline symbols in its caption, notes, labels and
     // cells (#1058).
     for (const icon of resourceBlockIcons(rb)) if (icon.fileId) await embed(icon.fileId, icon.svg ? 'svg' : icon.format);
+    // And of its own lines: an exercise's activity icons (#1226).
+    for (const icon of lineIcons(block)) if (icon.fileId) await embed(icon.fileId, icon.svg ? 'svg' : icon.format);
     // Callout icons and markers (`kind: 'resource'`) draw through the same map.
     const iconFileId = block.callout?.iconFileId;
     if (iconFileId) await embed(iconFileId, block.callout?.iconFormat);
@@ -586,6 +590,13 @@ export async function preloadResourceImages(
     // The pictures of a comic page's panels.
     for (const art of comicArts(page)) await embed(art.fileId, art.format);
   }
+  return out;
+}
+
+/** The inline symbols of a block's own lines that draw a picture. */
+function lineIcons(block: VDTBlock): VDTInlineIcon[] {
+  const out: VDTInlineIcon[] = [];
+  for (const line of block.lines ?? []) for (const seg of line.segments ?? []) if (seg.swatch?.icon?.fileId) out.push(seg.swatch.icon);
   return out;
 }
 

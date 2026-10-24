@@ -6,6 +6,7 @@
 import {
   DEFAULT_CALLOUT_STYLES,
   DEFAULT_CHIP_STYLES,
+  DEFAULT_EXERCISE_STYLES,
   DEFAULT_MARK_STYLES,
   parseIccProfile,
   resolveComicsConfig,
@@ -38,12 +39,12 @@ import { CHAPTER_PARAM, WAIT_PARAM, layoutAnswer } from './book.js';
 /** The named lists of the design an item is renamed or removed in. */
 const LISTS = [
   'calloutStyles', 'labelStyles', 'tableStyles', 'scoreStyles', 'paragraphStyles', 'headingStyles', 'chipStyles', 'markStyles',
-  'frameLooks', 'colorPalette', 'pageTemplates', 'templateFrames', 'comics.balloonStyles', 'comics.panelStyles', 'comics.cast',
+  'frameLooks', 'colorPalette', 'pageTemplates', 'templateFrames', 'comics.balloonStyles', 'comics.panelStyles', 'comics.cast', 'exerciseStyles',
 ] as const;
 type DesignList = (typeof LISTS)[number];
 
 /** Lists kept in the configuration as a plain array of `{ id }` items. */
-type PlainList = 'paragraphStyles' | 'headingStyles' | 'chipStyles' | 'markStyles' | 'tableStyles' | 'scoreStyles' | 'labelStyles' | 'frameLooks';
+type PlainList = 'paragraphStyles' | 'headingStyles' | 'chipStyles' | 'markStyles' | 'tableStyles' | 'scoreStyles' | 'labelStyles' | 'frameLooks' | 'exerciseStyles';
 
 /** A list as the panel shows it: what the book stores, or the design's
  *  own list when it stores none. */
@@ -52,6 +53,7 @@ function listOf(config: PostextConfig, list: PlainList | 'calloutStyles'): { id:
     case 'calloutStyles': return config.calloutStyles ?? DEFAULT_CALLOUT_STYLES;
     case 'chipStyles': return config.chipStyles ?? DEFAULT_CHIP_STYLES;
     case 'markStyles': return config.markStyles ?? DEFAULT_MARK_STYLES;
+    case 'exerciseStyles': return config.exerciseStyles ?? DEFAULT_EXERCISE_STYLES;
     default: return (config[list] as { id: string }[] | undefined) ?? [];
   }
 }
@@ -87,7 +89,7 @@ export function designItemTools(host: SandboxToolHost): WebMcpTool[] {
   const rename: WebMcpTool = {
     name: 'sandbox_rename_design_item',
     title: 'Sandbox: rename a style, template or frame with its uses',
-    description: 'Give a named item of the design another id, and everything that names it the new one, as the Settings panel does: calloutStyles (the :::callout{type} fences, template frames and styles based on it), labelStyles (picture anchors and ::label lines), tableStyles and scoreStyles (the table and score resources that use it), frameLooks (the pieces that name the look), pageTemplates (the ::::page fences; a module: its :::module blocks), templateFrames (a frame or group of template: the slot names of the pages, and the editions a local book keeps aside), comics.balloonStyles (the cast members who speak in it); paragraphStyles, headingStyles, chipStyles, markStyles, comics.panelStyles and comics.cast rename the item only. Through sandbox_set_config the uses would be left naming an item that is gone. The new id is made safe the way the panel makes it (lowercase letters, digits, _ and -). Answers what was rewritten and undoSteps (sandbox_undo that many times takes it back).',
+    description: 'Give a named item of the design another id, and everything that names it the new one, as the Settings panel does: calloutStyles (the :::callout{type} fences, template frames and styles based on it), labelStyles (picture anchors and ::label lines), tableStyles and scoreStyles (the table and score resources that use it), frameLooks (the pieces that name the look), pageTemplates (the ::::page fences; a module: its :::module blocks), templateFrames (a frame or group of template: the slot names of the pages, and the editions a local book keeps aside), comics.balloonStyles (the cast members who speak in it); exerciseStyles (the styles based on it); paragraphStyles, headingStyles, chipStyles, markStyles, comics.panelStyles and comics.cast rename the item only. Through sandbox_set_config the uses would be left naming an item that is gone. The new id is made safe the way the panel makes it (lowercase letters, digits, _ and -). Answers what was rewritten and undoSteps (sandbox_undo that many times takes it back).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -185,7 +187,9 @@ export function designItemTools(host: SandboxToolHost): WebMcpTool[] {
           const done = applyLabelStyleRename(store.dispatch, config.labelStyles ?? [], from, to, { chapters, resources: s.resources, activeChapterId: s.activeChapterId });
           answer = { renamed: from, to, anchorsRewritten: done.anchors, labelLinesRewritten: done.lines, undoSteps: done.chapters + done.resources + 1 };
         } else {
-          const renamed = styles.map((i) => (i.id === from ? { ...i, id: to } : i));
+          const renamed = styles.map((i) => (i.id === from ? { ...i, id: to } : i))
+            // An exercise style based on it names it by its new id.
+            .map((i) => (list === 'exerciseStyles' && (i as { extends?: string }).extends === from ? { ...i, extends: to } : i));
           let steps = 0;
           let uses = 0;
           if (list === 'frameLooks') {
@@ -215,7 +219,7 @@ export function designItemTools(host: SandboxToolHost): WebMcpTool[] {
   const remove: WebMcpTool = {
     name: 'sandbox_remove_design_item',
     title: 'Sandbox: remove a style or palette colour as the panel does',
-    description: 'Take an item out of a named list of the design, with what the Settings panel does to its uses: a callout style\'s children take its look over (and its parent, if it had one), so no box changes; a palette colour\'s settings keep the colour it gave them, no longer linked to the palette; a comics balloon style leaves the cast members who spoke in it with the default balloon. The other lists (labelStyles, tableStyles, scoreStyles, paragraphStyles, headingStyles, chipStyles, markStyles, frameLooks, comics.panelStyles, comics.cast) lose the item only: what names it falls back as the panel says. Page templates, frames and groups are removed with sandbox_set_config (a null value). One step for sandbox_undo.',
+    description: 'Take an item out of a named list of the design, with what the Settings panel does to its uses: a callout style\'s children take its look over (and its parent, if it had one), so no box changes; a palette colour\'s settings keep the colour it gave them, no longer linked to the palette; a comics balloon style leaves the cast members who spoke in it with the default balloon. The other lists (labelStyles, tableStyles, scoreStyles, paragraphStyles, headingStyles, chipStyles, markStyles, frameLooks, exerciseStyles, comics.panelStyles, comics.cast) lose the item only: what names it falls back as the panel says. Page templates, frames and groups are removed with sandbox_set_config (a null value). One step for sandbox_undo.',
     inputSchema: {
       type: 'object',
       properties: {
