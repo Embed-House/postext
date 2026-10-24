@@ -14,6 +14,7 @@ import { dimensionToPx } from '../units.js';
 import { computeBaselineGrid, resolvedDirection, resolvedLocale } from '../pipeline/config.js';
 import { exerciseChipStyles, exerciseParagraphStyles } from './styles.js';
 import { expandExercises, numberExercises, type ExerciseExpansion } from './expand.js';
+import type { ExerciseRecord } from './record.js';
 import { hasExercises, readExercises } from './model.js';
 
 const withStyles = new WeakMap<ResolvedConfig, ResolvedConfig>();
@@ -137,7 +138,13 @@ export function exerciseCountersAfter(blocks: readonly ContentBlock[], resolved:
  *  key and worked solution, under the chapter it is in, for a
  *  `:::solutions{scope="book"}` in another chapter. */
 export function exerciseOutlineEntries(blocks: readonly ContentBlock[], resolved: ResolvedConfig, before: LayoutContinuation | undefined): OutlineEntry[] {
-  if (!hasExercises(blocks)) return [];
+  return exerciseOutline(blocks, resolved, before).entries;
+}
+
+/** {@link exerciseOutlineEntries}, and what a reference to each exercise
+ *  with an `{#id}` prints ("Exercise 3"), by id. */
+export function exerciseOutline(blocks: readonly ContentBlock[], resolved: ResolvedConfig, before: LayoutContinuation | undefined): { entries: OutlineEntry[]; records: ExerciseRecord[] } {
+  if (!hasExercises(blocks)) return { entries: [], records: [] };
   const expansion = expandDocumentExercises(blocks, resolved, 400, before);
   const titles = new Map<number, string>();
   let chapter = '';
@@ -145,7 +152,7 @@ export function exerciseOutlineEntries(blocks: readonly ContentBlock[], resolved
     if (b.type === 'heading' && b.level === 1) chapter = b.text;
     if (b.type === 'containerStart' && b.containerName === 'exercise' && b.containerId !== undefined) titles.set(b.containerId, chapter);
   }
-  return expansion.records.map((r): OutlineEntry => ({
+  const entries = expansion.records.map((r): OutlineEntry => ({
     kind: 'exercise',
     level: 0,
     title: r.number,
@@ -154,6 +161,19 @@ export function exerciseOutlineEntries(blocks: readonly ContentBlock[], resolved
     listed: false,
     exercise: { key: r.key, ...(r.solution ? { solution: r.solution } : {}), chapter: titles.get(r.id) ?? '' },
   }));
+  return { entries, records: expansion.records };
+}
+
+/** The outline with the anchor of each exercise that has an `{#id}`
+ *  numbered as a numbered box's is: a reference prints "Exercise 3", with
+ *  `style=number` its number, with `style=title` its title. */
+export function nameExerciseAnchors(outline: OutlineEntry[], records: readonly ExerciseRecord[]): OutlineEntry[] {
+  const byAnchor = new Map(records.filter((r) => r.anchor && r.anchorText).map((r) => [r.anchor!, r]));
+  if (byAnchor.size === 0) return outline;
+  return outline.map((e) => {
+    const r = e.kind === 'anchor' && e.anchorId !== undefined ? byAnchor.get(e.anchorId) : undefined;
+    return r ? { ...e, number: r.number, numbered: true, numberLabel: r.anchorText!, title: r.title ?? '' } : e;
+  });
 }
 
 /** Whether the blocks print the book's solutions (`:::solutions{scope="book"}`). */

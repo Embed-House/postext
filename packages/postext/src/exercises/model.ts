@@ -72,7 +72,7 @@ const ascii = (s: string): string => s
   .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
   .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
 
-const OPERATION_RE = /^\s*(\d+)\s*([+\-−×xX*÷:/])\s*(\d+)\s*(?:=\s*)?$/u;
+const OPERATION_RE = /^\s*(\d+)\s*([+\-−×xX*·⋅÷:/])\s*(\d+)\s*(?:=\s*)?$/u;
 
 /** An operation item (`345 + 278`), its result worked out: whole numbers. */
 export function readOperation(text: string, block: number): ExerciseOperation | undefined {

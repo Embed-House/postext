@@ -68,6 +68,10 @@ export interface ExerciseExpansion {
 
 const SPACE = ' ';
 
+/** Where a `::bank` line stands among an exercise's body, until the bank
+ *  (which holds the answers the body sets) is made. */
+const BANK_SLOT: ContentBlock = { type: 'directive', text: '', spans: [], sourceMap: [], sourceStart: 0, sourceEnd: 0, directiveName: 'bank' };
+
 /** A chip span holding `run`. */
 function chipSpan(style: string, run: Run, extra: Partial<NonNullable<InlineSpan['chip']>> = {}): InlineSpan {
   return { text: CHIP_PLACEHOLDER, bold: false, italic: false, chip: { style, spans: run.spans.length > 0 ? run.spans : [{ text: run.text, bold: false, italic: false }], ...extra } };
@@ -393,7 +397,42 @@ class Emitter {
       head = [];
     }
     const wantsBank = (this.ex.attrs.bank !== undefined && this.ex.attrs.bank !== 'false') || this.ex.banks.length > 0 || this.ex.kind === 'sort';
-    return [outer.start, ...head, ...(wantsBank ? this.bank() : []), ...body, outer.end];
+    // The bank stands where its `::bank` line is written, else under the
+    // instruction.
+    const bank = wantsBank ? this.bank() : [];
+    const at = body.indexOf(BANK_SLOT);
+    if (at >= 0) body.splice(at, 1, ...bank);
+    const out = [outer.start, ...head, ...(at >= 0 ? [] : bank), ...body, outer.end];
+    this.carryMarks(out);
+    return out;
+  }
+
+  /** What the exercise's own name is in a reference: "Exercise 3". */
+  anchorText(): string {
+    return `${this.style.number.label || this.book.words.exercise} ${this.number}`.trim();
+  }
+
+  /** The anchors and index marks of the blocks the expansion set anew (the
+   *  instruction, the items) go on the first paragraph of the exercise. */
+  private carryMarks(out: ContentBlock[]): void {
+    // Marks a passed-through block still carries are where they were.
+    const present = new Set<string>();
+    for (const b of out) {
+      for (const m of b.anchorMarks ?? []) present.add(`a${m.anchorId}@${m.sourceStart}`);
+      for (const m of b.indexMarks ?? []) present.add(`i${m.sourceStart}`);
+    }
+    const anchors: NonNullable<ContentBlock['anchorMarks']> = [];
+    const index: NonNullable<ContentBlock['indexMarks']> = [];
+    for (let k = this.ex.start + 1; k < this.ex.end; k++) {
+      const b = this.blocks[k]!;
+      for (const m of b.anchorMarks ?? []) if (!present.has(`a${m.anchorId}@${m.sourceStart}`)) anchors.push(m);
+      for (const m of b.indexMarks ?? []) if (!present.has(`i${m.sourceStart}`)) index.push(m);
+    }
+    if (anchors.length === 0 && index.length === 0) return;
+    const host = out.find((b) => b.type === 'paragraph' || b.type === 'listItem');
+    if (!host) return;
+    const i = out.indexOf(host);
+    out[i] = { ...host, anchorMarks: [...anchors, ...(host.anchorMarks ?? [])], ...(index.length > 0 ? { indexMarks: [...index, ...(host.indexMarks ?? [])] } : {}) };
   }
 
   /** The number, level marks, icons, title and instruction. */
@@ -482,6 +521,8 @@ class Emitter {
     // (never indented); not inside a container the author opened.
     let text: ContentBlock[] = [];
     let depth = 0;
+    const bankAt = ex.banks[0];
+    let bankPlaced = false;
     const flush = (): void => {
       if (text.length === 0) return;
       const g = this.open('paragraphs', { style: this.ids.text });
@@ -490,6 +531,11 @@ class Emitter {
     };
     for (const k of ex.body) {
       if (done.has(k)) continue;
+      if (bankAt !== undefined && !bankPlaced && k > bankAt) {
+        flush();
+        out.push(BANK_SLOT);
+        bankPlaced = true;
+      }
       const group = groupStart.get(k);
       if (group) {
         flush();
@@ -510,6 +556,7 @@ class Emitter {
       }
     }
     flush();
+    if (bankAt !== undefined && !bankPlaced) out.push(BANK_SLOT);
     if (ex.kind === 'open' && lists.length === 0) out.push(...this.area(this.openLines(), 't1', this.openAnswer(0), this.openArea()));
     if (ex.kind === 'gaps' || ex.kind === 'choice' || ex.kind === 'mark') this.keyOfGaps();
     return out;
@@ -606,7 +653,8 @@ class Emitter {
     const slot = `g${n}`;
     const shown = this.answered(n === 1);
     if (!(this.example && n === 1 && !this.teacher)) this.slots.push({ key: slot, kind: 'gap', accept: gap.texts.filter((_, k) => gap.correct.includes(k)) });
-    this.bankWords.push(textRun(answer.text, at));
+    // The model item's answer is already written: the bank leaves it out.
+    if (!(this.example && n === 1)) this.bankWords.push(textRun(answer.text, at));
     // `[[went]]{width=6}`: a blank six ems wide.
     const ems = parseFloat(gap.attrs?.width ?? '');
     const run = chipRun(shown ? this.ids.blankAnswer : this.ids.blank, words, at, {
@@ -671,7 +719,7 @@ class Emitter {
     }
     // The answers of a gaps exercise are known only once the body is set.
     if (words.length === 0 && this.ex.kind !== 'sort') {
-      for (const g of this.ex.gaps) if (!g.gap.choice) words.push(textRun(g.gap.texts[g.gap.correct[0] ?? 0] ?? '', this.at));
+      for (const g of this.ex.gaps) if (!g.gap.choice && !(this.example && g.n === 1)) words.push(textRun(g.gap.texts[g.gap.correct[0] ?? 0] ?? '', this.at));
     }
     const order = this.style.bank.order === 'written'
       ? words.map((_, k) => k)
@@ -985,6 +1033,8 @@ class Emitter {
       ...(this.ex.attrs.id ? { anchor: this.ex.attrs.id } : {}),
       ...(this.ex.attrs.mark ? { mark: this.ex.attrs.mark } : {}),
       ...(this.grids.length > 0 ? { grids: this.grids } : {}),
+      ...(this.ex.attrs.id ? { anchorText: this.anchorText() } : {}),
+      ...(this.ex.attrs.title ? { title: this.ex.attrs.title } : {}),
     };
   }
 }

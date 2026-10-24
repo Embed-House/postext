@@ -15,7 +15,7 @@ import type { HeadingCounters, LayoutContinuation, OutlineEntry, PartState, Post
 import { computeHeadingContext, computeResourceNumberingState } from './resourceNumbering.js';
 import { planParts } from './parts.js';
 import { resolveAllConfig } from './config.js';
-import { exerciseCounterEntries, exerciseCountersAfter, exerciseOutlineEntries, hasBookSolutions } from '../exercises/build.js';
+import { exerciseCounterEntries, exerciseCountersAfter, exerciseOutline, hasBookSolutions, nameExerciseAnchors } from '../exercises/build.js';
 import { codeParseOptions } from './codeBlocks.js';
 import { headingIsNumbered } from './headingStyles.js';
 import { computeOutline, hasIndexDirective, hasTocDirective } from './outline.js';
@@ -128,8 +128,9 @@ export function contentOutline(
   const resolved = resolveAllConfig(config);
   const blocks = parseMarkdownMemo(body, codeParseOptions(resolved));
   return {
-    // An exercise's key joins the outline, for the book's solutions (#1229).
-    outline: [...computeOutline(blocks, resolved, before?.headings, before?.statementCounters), ...exerciseOutlineEntries(blocks, resolved, before)],
+    // An exercise's key joins the outline, for the book's solutions (#1229),
+    // and a reference to an exercise prints its name ("Exercise 3").
+    outline: withExercises(computeOutline(blocks, resolved, before?.headings, before?.statementCounters), exerciseOutline(blocks, resolved, before)),
     hasToc: hasTocDirective(blocks),
     hasIndex: hasIndexDirective(blocks) || hasBookSolutions(blocks),
     // A reference naming no resource may name an anchor of the book (#262).
@@ -169,4 +170,11 @@ export function laterPageIdsOf(ids: readonly (readonly string[])[]): Record<stri
     for (const id of ids[i]!) running.set(id, i);
   }
   return out;
+}
+
+/** The outline with the exercises' entries after it and the anchors of
+ *  exercises titled by their names. */
+function withExercises(outline: OutlineEntry[], exercises: ReturnType<typeof exerciseOutline>): OutlineEntry[] {
+  if (exercises.entries.length === 0) return outline;
+  return [...nameExerciseAnchors(outline, exercises.records), ...exercises.entries];
 }

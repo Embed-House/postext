@@ -61,7 +61,8 @@ import { orientLinesToFrames } from './mirrorFrame.js';
 import { verseMarginTopPx } from './buildBlockKind.js';
 import { verseLinesSettings, versesLineByLine } from './verseLines.js';
 import type { MeasurementCache } from '../measure/index.js';
-import { exerciseSettingsFor, expandDocumentExercises, markTurnedBoxes, needsExerciseExpansion, withExerciseStyles } from '../exercises/build.js';
+import { exerciseOutline, exerciseSettingsFor, expandDocumentExercises, markTurnedBoxes, nameExerciseAnchors, needsExerciseExpansion, withExerciseStyles } from '../exercises/build.js';
+import { hasExercises } from '../exercises/model.js';
 import { exerciseDigitalOf } from '../exercises/digital.js';
 import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, computeColumnBboxes, resolvedDirection, resolvedLocale, validateConfigCache } from './config.js';
 import { resolveDebugConfig } from '../defaults/debug.js';
@@ -108,7 +109,7 @@ import { configKeyOf, layoutComposedPageMemo, type ComposedMemoContext } from '.
 import { anchorOutline, computeOutline, hasIndexDirective, hasTocDirective, headingNumberingOptions, headingTemplatesOf, outlineFromDoc, sameOutline } from './outline.js';
 import { expandTocDirectives, tocBlockStamps } from './toc.js';
 import { expandIndexDirectives, locateIndexMarks } from './indexDirective.js';
-import type { ResolvedHeadingStyleConfig } from '../types.js';
+import type { LayoutContinuation, OutlineEntry, ResolvedHeadingStyleConfig } from '../types.js';
 import { resolveBodyStyle, resolveBlockquoteStyle, resolveParagraphStyle, type BlockStyle } from './styles.js';
 import {
   computeLevelIndentsPx,
@@ -917,7 +918,10 @@ function placeDocumentPass(
   const resourceIds = new Set((content.resources ?? []).map((r) => r.id));
   const anchorRefs = hasAnchorRefs(parsedBlocks, resourceIds);
   const outline = content.outline
-    ?? (hasTocDirective(parsedBlocks) || hasIndexDirective(parsedBlocks) || anchorRefs ? computeOutline(parsedBlocks, resolved, headingStart, continuation?.statementCounters) : undefined);
+    ?? (hasTocDirective(parsedBlocks) || hasIndexDirective(parsedBlocks) || anchorRefs
+      // A reference to an exercise prints its name (#1225).
+      ? nameExerciseAnchors(computeOutline(parsedBlocks, resolved, headingStart, continuation?.statementCounters), exerciseExpansion?.records ?? [])
+      : undefined);
   // A story carried in from another chapter (#943) may refer to anchors too.
   const carriedRefs = continuation?.jumps?.some((j) => j.outline) === true;
   const anchorRefContext: AnchorRefContext | undefined = anchorRefs || carriedRefs
@@ -9657,10 +9661,10 @@ function* buildDocumentRounds(
     const pageRefs = (): boolean => {
       if (!hasAnchorRefs(parsed, new Set((content.resources ?? []).map((r) => r.id)))) return false;
       const resolved = resolveAllConfig(config);
-      return printsAnchorPages(parsed, anchorTargetsOf(computeOutline(parsed, resolved, content.continuation?.headings, content.continuation?.statementCounters)), resolved.crossRefs.defaultStyle);
+      return printsAnchorPages(parsed, anchorTargetsOf(ownOutline(parsed, resolved, content.continuation)), resolved.crossRefs.defaultStyle);
     };
     if (hasTocDirective(parsed) || hasIndexDirective(parsed) || pageRefs()) {
-      let outline = computeOutline(parsed, resolveAllConfig(config), content.continuation?.headings, content.continuation?.statementCounters);
+      let outline = ownOutline(parsed, resolveAllConfig(config), content.continuation);
       let doc = withIndexMarks(yield* buildDocumentNumbered({ ...content, outline }, config, cache, options, 0, citing), content);
       for (let round = 0; round < MAX_TOC_ROUNDS; round++) {
         const after = outlineFromDoc(doc, outline);
@@ -9672,6 +9676,13 @@ function* buildDocumentRounds(
     }
   }
   return withIndexMarks(yield* buildDocumentNumbered(content, config, cache, options, 0, citing), content);
+}
+
+/** A document's own outline, its exercises' anchors named as a reference
+ *  prints them ("Exercise 3", #1225). */
+function ownOutline(parsed: readonly ContentBlock[], resolved: ResolvedConfig, continuation: LayoutContinuation | undefined): OutlineEntry[] {
+  const outline = computeOutline(parsed, resolved, continuation?.headings, continuation?.statementCounters);
+  return hasExercises(parsed) ? nameExerciseAnchors(outline, exerciseOutline(parsed, resolved, continuation).records) : outline;
 }
 
 /** The number each note's marker prints in `doc` (its first marker). */

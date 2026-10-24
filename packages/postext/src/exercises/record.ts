@@ -88,6 +88,10 @@ export interface ExerciseRecord {
   hints?: string[];
   /** The fence's `{#id}`. */
   anchor?: string;
+  /** What a reference to it prints ("Exercise 3"). */
+  anchorText?: string;
+  /** The fence's `title`. */
+  title?: string;
   /** A mark exercise's `mark` (`circle`, `underline`…). */
   mark?: string;
   grids?: ExerciseGridInfo[];

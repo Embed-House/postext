@@ -17,6 +17,12 @@ import { runOf, type Run } from './text.js';
 import { dimPt } from './expand.js';
 
 const r = (n: number): string => String(Math.round(n * 100) / 100);
+
+/** The size of a grid's letters: the style's `grid.fontSize` (an `em` of
+ *  the text), else `share` of the cell. */
+function letterSize(style: ResolvedExerciseStyle, bodySizePt: number, cell: number, share: number): number {
+  return style.grid.fontSize ? dimPt(style.grid.fontSize, bodySizePt) : cell * share;
+}
 const BLACK: ColorValue = { hex: '#000000', model: 'hex' };
 
 export interface GridBoxInput {
@@ -203,7 +209,7 @@ function wordSearchBox(input: GridBoxInput): GridBox {
   const font = style.grid.fontFamily ?? input.font ? { fontFamily: (style.grid.fontFamily ?? input.font)! } : {};
   const color = style.grid.color ? { color: style.grid.color } : {};
   for (let rr = 0; rr < size; rr++) for (let c = 0; c < size; c++) {
-    els.push(textElement(`c${rr}_${c}`, grid[rr]![c]!, c * cell, rr * cell, cell, cell, cell * 0.58, { ...font, ...color }));
+    els.push(textElement(`c${rr}_${c}`, grid[rr]![c]!, c * cell, rr * cell, cell, cell, letterSize(style, input.bodySizePt, cell, 0.58), { ...font, ...color }));
   }
   const box = drawnBox(input.id, els, w, 4, 6) as GridBox;
   box.info = { kind: 'wordsearch', rows: size, cols: size, cellPt: cell, xPt: 0, yPt: 0 };
@@ -331,6 +337,16 @@ function crosswordBox(input: GridBoxInput): GridBox {
     const x = (c - minC) * cell; const y = (rr - minR) * cell;
     boxes += `M${r(x)} ${r(y)}H${r(x + cell)}V${r(y + cell)}H${r(x)}Z`;
   }
+  // The cells no word takes, filled when the style says so (`grid.blocked`).
+  if (style.grid.blocked) {
+    let blocked = '';
+    for (let rr = minR; rr <= maxR; rr++) for (let c = minC; c <= maxC; c++) {
+      if (cells.has(key(rr, c))) continue;
+      const x = (c - minC) * cell; const y = (rr - minR) * cell;
+      blocked += `M${r(x)} ${r(y)}H${r(x + cell)}V${r(y + cell)}H${r(x)}Z`;
+    }
+    if (blocked) els.push(pathElement('blocked', blocked, w, h, style.grid.blocked, 0.1, { fill: style.grid.blocked }));
+  }
   els.push(pathElement('cells', boxes, w, h, style.grid.rule ?? BLACK, dimPt(style.grid.ruleWidth, input.bodySizePt), { fill: { hex: '#ffffff', model: 'hex' } }));
   for (const [k, n] of numbers) {
     const [rr, c] = k.split(',').map(Number) as [number, number];
@@ -341,7 +357,7 @@ function crosswordBox(input: GridBoxInput): GridBox {
     const [rr, c] = k.split(',').map(Number) as [number, number];
     slots.push({ key: `c${rr - minR}_${c - minC}`, kind: 'cell', accept: [letter], cell: [rr - minR, c - minC] });
     if (input.teacher) {
-      els.push(textElement(`a${rr}_${c}`, letter, (c - minC) * cell, (rr - minR) * cell + cell * 0.08, cell, cell * 0.92, cell * 0.56, { color: style.answers.color, ...(style.answers.fontFamily ?? input.font ? { fontFamily: (style.answers.fontFamily ?? input.font)! } : {}) }));
+      els.push(textElement(`a${rr}_${c}`, letter, (c - minC) * cell, (rr - minR) * cell + cell * 0.08, cell, cell * 0.92, letterSize(style, input.bodySizePt, cell, 0.56), { color: style.answers.color, ...(style.answers.fontFamily ?? input.font ? { fontFamily: (style.answers.fontFamily ?? input.font)! } : {}) }));
     }
   }
   const box = drawnBox(input.id, els, h, 4, 6) as GridBox;
@@ -454,7 +470,7 @@ function arithmeticBox(input: GridBoxInput): GridBox {
           if (c.slot) slots.push({ key: c.slot, kind: 'cell', accept: [c.text], cell: [Math.round(yy / cell), Math.round(x / cell)] });
           if (!input.teacher) continue;
         }
-        els.push(textElement(`d${k}_${c.r}_${c.c}`, c.text, input.rtl ? X(x) - cell : x, yy, cell, cell, cell * 0.7, c.answer ? { color: style.answers.color, ...(style.answers.fontFamily ?? input.font ? { fontFamily: (style.answers.fontFamily ?? input.font)! } : {}) } : { ...font, ...fontColor }));
+        els.push(textElement(`d${k}_${c.r}_${c.c}`, c.text, input.rtl ? X(x) - cell : x, yy, cell, cell, letterSize(style, input.bodySizePt, cell, 0.7), c.answer ? { color: style.answers.color, ...(style.answers.fontFamily ?? input.font ? { fontFamily: (style.answers.fontFamily ?? input.font)! } : {}) } : { ...font, ...fontColor }));
       }
       for (const [rr, c0, c1] of o.rules) rulesD += `M${r(X(ox + c0 * cell))} ${r(y + rr * cell)}H${r(X(ox + c1 * cell))}`;
       if (o.extra?.startsWith('bracket:')) {
