@@ -73,6 +73,9 @@ const ascii = (s: string): string => s
   .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
 
 const OPERATION_RE = /^\s*(\d+)\s*([+\-−×xX*·⋅÷:/])\s*(\d+)\s*(?:=\s*)?$/u;
+/** The sign an operation prints, from the one written: a German `216 · 4`
+ *  keeps its dot, a `864 : 4` its colon; ASCII stand-ins become the signs. */
+const PRINTED_SIGN: Record<string, string> = { '-': '−', x: '×', X: '×', '*': '×', '⋅': '·', '/': '÷' };
 
 /** An operation item (`345 + 278`), its result worked out: whole numbers. */
 export function readOperation(text: string, block: number): ExerciseOperation | undefined {
@@ -99,6 +102,7 @@ export function readOperation(text: string, block: number): ExerciseOperation | 
     a: digitsLike(a, raw),
     b: digitsLike(b, raw),
     op,
+    sign: PRINTED_SIGN[sign] ?? sign,
     result: digitsLike(result.toString(), raw),
     ...(remainder !== undefined && remainder !== 0n ? { remainder: digitsLike(remainder.toString(), raw) } : {}),
   };

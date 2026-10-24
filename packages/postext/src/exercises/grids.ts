@@ -397,7 +397,7 @@ function layOperation(op: ExerciseOperation, division: 'bracket' | 'potence' | '
   if (op.op !== '÷') {
     const width = Math.max(a.length, b.length + 1, res.length) + 1;
     a.forEach((d, j) => cells.push({ r: 0, c: width - a.length + j, text: d }));
-    cells.push({ r: 1, c: 0, text: OP_SIGN[op.op] });
+    cells.push({ r: 1, c: 0, text: op.sign ?? OP_SIGN[op.op] });
     b.forEach((d, j) => cells.push({ r: 1, c: width - b.length + j, text: d }));
     rules.push([2, 0, width]);
     res.forEach((d, j) => cells.push({ r: 2, c: width - res.length + j, text: d, answer: true, slot: `a${k}_${j}` }));
@@ -429,7 +429,7 @@ function layOperation(op: ExerciseOperation, division: 'bracket' | 'potence' | '
     return { cells, rules, rows, cols, extra: `potence:${left}` };
   }
   // `864 : 4 = 216`, the steps under it.
-  const line = [...a, ':', ...b, '='];
+  const line = [...a, op.sign ?? ':', ...b, '='];
   line.forEach((d, j) => cells.push({ r: 0, c: j, text: d }));
   q.forEach((d, j) => cells.push({ r: 0, c: line.length + j, text: d, answer: true, slot: `a${k}_${j}` }));
   const cols = line.length + q.length + (rem.length > 0 ? rem.length + 2 : 0);
@@ -497,7 +497,7 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   const box = drawnBox(input.id, els, y, 4, 4) as GridBox;
   box.info = { kind: 'arithmetic', rows: Math.round(y / cell), cols: perRow * colW, cellPt: cell, xPt: 0, yPt: 0 };
   box.slots = slots;
-  box.key = ex.operations.map((op) => `${op.a} ${OP_SIGN[op.op]} ${op.b} = ${op.result}${op.remainder ? ` (${op.remainder})` : ''}`);
+  box.key = ex.operations.map((op) => `${op.a} ${op.sign ?? OP_SIGN[op.op]} ${op.b} = ${op.result}${op.remainder ? ` (${op.remainder})` : ''}`);
   return box;
 }
 

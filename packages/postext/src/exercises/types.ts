@@ -71,6 +71,8 @@ export interface ExerciseOperation {
   a: string;
   b: string;
   op: '+' | '-' | '×' | '÷';
+  /** The sign as the operation prints it (`×` or `·`, `÷` or `:`). */
+  sign?: string;
   /** The result in the digits written; a division's quotient. */
   result: string;
   /** A division's remainder, when not zero. */

@@ -44,6 +44,10 @@ describe('the exercise model (#1225)', () => {
     expect(readOperation('865 ÷ 4', 0)).toMatchObject({ op: '÷', result: '216', remainder: '1' });
     expect(readOperation('٣٤ × ٢', 0)).toMatchObject({ a: '٣٤', result: '٦٨' });
     expect(readOperation('7 ÷ 0', 0)).toBeUndefined();
+    // The sign prints as written: a German dot, a colon; ASCII stand-ins as signs.
+    expect(readOperation('216 · 4', 0)).toMatchObject({ op: '×', sign: '·', result: '864' });
+    expect(readOperation('864 : 4', 0)).toMatchObject({ op: '÷', sign: ':', result: '216' });
+    expect(readOperation('12 * 3', 0)).toMatchObject({ op: '×', sign: '×' });
   });
 
   it('reports what it cannot read', () => {
