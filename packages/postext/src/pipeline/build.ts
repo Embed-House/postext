@@ -167,7 +167,7 @@ import {
   prevNonMarkerBlock,
   rollbackTrailingBlocks,
 } from './buildHelpers.js';
-import { measureContentBlock, type BlockMeasureContext, type DropCapNote, type MeasureContentBlockOptions, type MeasuredContentBlock } from './measureContentBlock.js';
+import { measureContentBlock, wordSpacingProfile, type BlockMeasureContext, type DropCapNote, type MeasureContentBlockOptions, type MeasuredContentBlock } from './measureContentBlock.js';
 import { containerStyle, paragraphStyleIdOf, planParagraphContainers } from './paragraphContainers.js';
 import {
   appendChapterEndNotes,
@@ -509,6 +509,11 @@ function chapterNumbersOfContent(
  * looseness counts from that optimum, so such a paragraph asks it for one
  * line less (EF-129: asked for one more, it could only match the target by
  * falling back to its optimum, unchecked).
+ *
+ * With `headings.balancing.fillShortColumns` (#1236) `extraLines` may be
+ * -1: the paragraph is set a line short, its tracking rungs taken in the
+ * other direction (tighter letters), and the outcome recorded as negative
+ * tracking.
  */
 function measureLooseParagraph(
   rawBlock: Parameters<typeof measureContentBlock>[0],
@@ -544,25 +549,33 @@ function measureLooseParagraph(
   const onGrid = ctx.resolved.cjk.grid.enabled && composesAsCjk(rawBlock.text);
   const ladder = trackingLadder.length > 1 && (onGrid || mostlyJoiningScript(rawBlock.text)) ? trackingLadder.slice(0, 1) : trackingLadder;
   const gridCap = onGrid ? { gridTrackingEm: ctx.resolved.headings.balancing.maxTracking / 1000 } : {};
-  const maxWordSpacing = ctx.resolved.bodyText.maxWordSpacing + 1e-9;
+  // With `fillShortColumns` (#1236) the limit is the one the runt fix
+  // keeps (EF-65): no justified line looser than `maxWordSpacing` or than
+  // the paragraph's own loosest one, and no more lines set ragged past 3x
+  // than it had. A narrow column of long words often passes the absolute
+  // limit in every setting of a paragraph, the breaker's own included.
+  const natural = ctx.resolved.headings.balancing.fillShortColumns ? wordSpacingProfile(base.measured.lines) : undefined;
+  const maxWordSpacing = Math.max(ctx.resolved.bodyText.maxWordSpacing, natural?.loosest ?? 0) + 1e-9;
   // A CJK line spread past its tracking cap (`cjkLoose`) is past the
   // limit too.
-  const withinLimit = (lines: readonly VDTLine[]): boolean =>
-    lines.every((l) => l.isLastLine || ((l.justifiedSpaceRatio === undefined || l.justifiedSpaceRatio <= maxWordSpacing) && !l.cjkLoose));
+  const withinLimit = (lines: readonly VDTLine[]): boolean => natural
+    ? lines.every((l) => !l.cjkLoose) && ((p) => p.loosest <= maxWordSpacing && p.ragged <= natural.ragged)(wordSpacingProfile(lines))
+    : lines.every((l) => l.isLastLine || ((l.justifiedSpaceRatio === undefined || l.justifiedSpaceRatio <= maxWordSpacing) && !l.cjkLoose));
   const gains = (loose: MeasuredContentBlock | null): loose is MeasuredContentBlock =>
     loose !== null
     && loose.measured.lines.length === target
     && !loose.measured.lastLineRunt
     && withinLimit(loose.measured.lines);
+  const sign = extraLines < 0 ? -1 : 1;
   for (const tracking of ladder) {
     const loose = measureContentBlock(rawBlock, blockIdx, columnWidth, ctx, {
       styleOverride,
       looseness,
-      trackingEm: tracking > 0 ? tracking / 1000 : undefined,
+      trackingEm: tracking > 0 ? (sign * tracking) / 1000 : undefined,
       ...gridCap,
     });
     if (gains(loose)) {
-      looseOutcome.set(blockIdx, tracking);
+      looseOutcome.set(blockIdx, sign * tracking);
       return loose;
     }
   }
@@ -3725,6 +3738,17 @@ function placeDocumentPass(
       && !(lvl.advancedDesign.enabled && lvl.advancedDesign.slot.elements.length > 0)
       && !headingIsHidden(raw, lvl);
   };
+  /** Whether a heading is measured across the content area: a `span:
+   *  'page'` level (or style) that prints, painted by the default opener or
+   *  by a design of its own, which lays out across the page as well. At the
+   *  column width a designed opener's title broke into more lines than the
+   *  design paints, and those lines set its band: taller than the same
+   *  heading without a design, so that it no longer fitted under the text
+   *  of a page the plain one opens on (#1224). */
+  const measuredAcrossPage = (raw: ContentBlock): boolean => {
+    const lvl = headingLevels.forBlock(raw);
+    return lvl?.span === 'page' && !headingIsHidden(raw, lvl);
+  };
   /** Page-spanning heading placed in `headingCol`, reserving `h` px from the
    *  top of the page: the same vertical band is reserved in every other
    *  column of the page, so body text under the opener band starts below it
@@ -3897,6 +3921,9 @@ function placeDocumentPass(
   /** The band (`page:band`) a keep-with-next rollback last took each
    *  heading out of, by content index. */
   const headingLeftBand = new Map<number, string>();
+  /** The band (`page:band`) each page-span heading opened under the text
+   *  of its page was set at the head of (#1238), by content index. */
+  const spanHeadingOpenedHere = new Map<number, string>();
   /**
    * A `span: 'page'` heading with `spanBreak: false` (#539) opens where the
    * text reaches: the band the flow is in closes level under its text (a
@@ -3928,7 +3955,7 @@ function placeDocumentPass(
     // opener paints it) or its design's band, with its margins.
     const width = page.contentArea.width;
     const measureCtx = partPlan.byBlock[blockIdx] ? partMeasureCtx : sectionMeasureCtx(sectionPlan.byBlock[blockIdx]);
-    const measured = measureContentBlock(rawBlock, blockIdx, opensDefaultOpener(rawBlock) ? width : cols[0]!.bbox.width, measureCtx);
+    const measured = measureContentBlock(rawBlock, blockIdx, measuredAcrossPage(rawBlock) ? width : cols[0]!.bbox.width, measureCtx);
     if (!measured) return false;
     const style = measured.kind.style;
     let height = measured.measured.totalHeight;
@@ -3957,6 +3984,7 @@ function placeDocumentPass(
     if (top + height + style.marginBottomPx + minLines * bodyStyle.lineHeightPx > bandBottom + 0.01) return false;
     if (capHere) uncapBand(cols, uncappedBottoms);
     if (!closeBandAt(page, cols, cutY, top, cursor)) return false;
+    spanHeadingOpenedHere.set(blockIdx, `${page.index}:${currentBand(page, cursor)}`);
     pendingSpacing = 0;
     return true;
   };
@@ -4332,6 +4360,19 @@ function placeDocumentPass(
     let n = 0;
     for (let j = col.blocks.length - 1; j >= 0 && isFreeHeading(col.blocks[j]!) && !holdsHeadFloat(col, col.blocks[j]!); j--) n++;
     return n;
+  };
+  /** Whether a block moving on whole may take the `run` headings closing
+   *  `col` along. A run that is all the column holds would open the next
+   *  column just as it opens this one, and is rolled back no further —
+   *  unless it opens a band a page-span heading cut under the text of the
+   *  page (`spanBreak: false`, #1238): rolled back, that heading opens the
+   *  next page instead (`headingLeftBand`), with the block it is kept with. */
+  const headingRunMayLeave = (col: VDTColumn, run: number): boolean => {
+    if (run <= 0) return false;
+    if (run < col.blocks.length) return true;
+    const head = col.blocks[0]!;
+    return head.contentIndex !== undefined
+      && spanHeadingOpenedHere.get(head.contentIndex) === `${cursor.pageIndex}:${col.band ?? 0}`;
   };
 
   /**
@@ -5872,7 +5913,7 @@ function placeDocumentPass(
             else break;
           }
           pendingSpacing = 0;
-          if (part === 0 && resolved.headings.keepWithNext && run > 0 && run < curCol.blocks.length) {
+          if (part === 0 && resolved.headings.keepWithNext && headingRunMayLeave(curCol, run)) {
             const rolledBack = rollbackHeadings(curCol);
             advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
             return (rolledBack[0]!.contentIndex ?? startIdx - rolledBack.length) - 1;
@@ -6246,7 +6287,7 @@ function placeDocumentPass(
     const spacingBefore = Math.max(pendingSpacing, floatGapPx);
     if (col.blocks.length > 0 && height > col.availableHeight - spacingBefore + FIT_EPS) {
       const run = trailingHeadingRun(col);
-      if (run > 0 && run < col.blocks.length) {
+      if (headingRunMayLeave(col, run)) {
         const rolled = rollbackHeadings(col);
         pendingSpacing = 0;
         advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onAtomicNewPage(height));
@@ -7410,11 +7451,11 @@ function placeDocumentPass(
       && knownOutcome === undefined
       && (looseGained.get(budget.group) ?? 0) >= budget.need;
     const tryLoose = looseLines !== undefined && !budgetMet && knownOutcome !== null;
-    // A page-span heading without a design of its own is painted by the
-    // default opener across the content area: measured at that width, its
-    // band holds the title as it is painted (EF-100). A designed opener
-    // keeps the column-width measure: its design sets the band.
-    const measureWidth = rawBlock.type === 'heading' && opensDefaultOpener(rawBlock)
+    // A page-span heading is painted across the content area, by the
+    // default opener or by its design: measured at that width, its band
+    // holds the title as it is painted (EF-100), and a design sets it no
+    // taller than the lines it paints (#1224).
+    const measureWidth = rawBlock.type === 'heading' && measuredAcrossPage(rawBlock)
       ? doc.pages[cursor.pageIndex]!.contentArea.width
       : col.bbox.width;
     // A resource on a vertical page stands upright, its frame at most as
@@ -7882,8 +7923,8 @@ function placeDocumentPass(
      *  layout with text in both columns, a styled section with its own
      *  margins — is broken again there: its placed lines stay, the rest is
      *  broken for the new column. Not the loose paragraphs balancing runs
-     *  long (placed whole where they were measured), nor a heading the
-     *  default opener paints across the page. */
+     *  long (placed whole where they were measured), nor a page-span
+     *  heading, painted across the page. */
     let brokenForWidth = measureWidth;
     let laterWidths: { fromLine: number; columnWidth: number }[] = [];
     /** Text wrap (#627): the lines of the block set short beside what text
@@ -7891,7 +7932,7 @@ function placeDocumentPass(
     let wrapInsets: LineInsetStep[] = [];
     const wrapsBeside = canSplit && runsBesideWrap(rawBlock);
     const rebreaksForColumn = !tryLoose && rawBlock.toc === undefined && rawBlock.index === undefined
-      && (canSplit || (vdtType === 'heading' && !opensDefaultOpener(rawBlock)));
+      && (canSplit || (vdtType === 'heading' && !measuredAcrossPage(rawBlock)));
     /** Measure the block again for the columns it is set in (see
      *  `laterWidths`), with `extra` options. */
     const measureForColumns = (extra: MeasureContentBlockOptions) =>
@@ -8459,7 +8500,7 @@ function placeDocumentPass(
           if (partIndex === 0 && curCol.blocks.length > 0) {
             // Moving on whole must not strand a heading closing the column.
             const headingRun = trailingHeadingRun(curCol);
-            if (resolved.headings.keepWithNext && headingRun > 0 && headingRun < curCol.blocks.length) {
+            if (resolved.headings.keepWithNext && headingRunMayLeave(curCol, headingRun)) {
               const rolledBack = rollbackHeadings(curCol);
               if (rolledBack.length > 0) {
                 blockIdx = (rolledBack[0]!.contentIndex ?? blockIdx - rolledBack.length) - 1;
@@ -9026,7 +9067,7 @@ function placeDocumentPass(
         // Only a short column (under a float, a page-span box) lets the run
         // move on to a taller one.
         const headingRun = trailingHeadingRun(curCol);
-        const runFillsColumn = headingRun > 0 && headingRun === curCol.blocks.length;
+        const runFillsColumn = headingRun > 0 && !headingRunMayLeave(curCol, headingRun);
         const strands = partIndex === 0 && vdtType !== 'heading'
           && headingRun > 0 && !runFillsColumn;
         const pullsRun = vdtType === 'heading' && (!runFillsColumn || shortColumn);
@@ -9911,6 +9952,9 @@ function* buildDocumentBalanced(
     stable: boolean;
     failedLoose: Set<number>;
     failedLines: Set<number>;
+    /** Paragraphs set a line short (`fillShortColumns`, #1236) that lost
+     *  no line or bought nothing. */
+    failedTight: Set<number>;
   }
 
   /** Levers accepted so far, over every segment (keyed by content index /
@@ -9933,6 +9977,7 @@ function* buildDocumentBalanced(
         stable: score === 0,
         failedLoose: old?.failedLoose ?? new Set<number>(),
         failedLines: old?.failedLines ?? new Set<number>(),
+        failedTight: old?.failedTight ?? new Set<number>(),
       };
     });
   };
@@ -10099,7 +10144,7 @@ function* buildDocumentBalanced(
     const looseFirst = balancing.maxLinesBeforeLoose < balancing.maxLinesPerHeading;
     const blacklist = (cands: ReadonlySet<number> | null): boolean => {
       let hit = false;
-      for (const k of newLoose) if (!cands || cands.has(k)) { s.failedLoose.add(k); hit = true; }
+      for (const k of newLoose) if (!cands || cands.has(k)) { failLoose(s, k); hit = true; }
       if (hit && looseFirst) return true;
       for (const k of newLines) if (!cands || cands.has(k)) { s.failedLines.add(k); hit = true; }
       return hit;
@@ -10111,6 +10156,14 @@ function* buildDocumentBalanced(
     return blacklist(null);
   };
 
+  /** The paragraphs the current proposal sets a line short (#1236): their
+   *  failures go to the segment's `failedTight`, the others' to
+   *  `failedLoose`. */
+  let tightKeys: ReadonlySet<number> = new Set<number>();
+  const failLoose = (s: Segment, k: number): void => {
+    (tightKeys.has(k) ? s.failedTight : s.failedLoose).add(k);
+  };
+
   let balancingPasses = 0;
   function* balance(): Generator<void, void, void> {
     while (balancingPasses < MAX_BALANCING_PASSES_PER_DOCUMENT) {
@@ -10120,9 +10173,11 @@ function* buildDocumentBalanced(
       const owner = keyOwners(gaps);
       const failedLoose = new Set<number>();
       const failedLines = new Set<number>();
+      const failedTight = new Set<number>();
       for (const s of segments) {
         for (const k of s.failedLoose) failedLoose.add(k);
         for (const k of s.failedLines) failedLines.add(k);
+        for (const k of s.failedTight) failedTight.add(k);
       }
       const proposal = proposeBalanceLines(best.doc, best.forcedBreakPages, applied, {
         maxLinesPerHeading: balancing.maxLinesPerHeading,
@@ -10138,6 +10193,7 @@ function* buildDocumentBalanced(
         optimalLineBreaking: best.doc.config.bodyText.optimalLineBreaking,
         failedLoose,
         failedLines,
+        ...(balancing.fillShortColumns ? { fillShortColumns: true, failedTight } : {}),
         closingBox: balancing.closingBox,
         ...(onGrid && balancing.gridLines === 'off' ? { gridLines: false } : {}),
       });
@@ -10166,6 +10222,7 @@ function* buildDocumentBalanced(
         }
         newLoose.push(k);
       }
+      tightKeys = new Set(newLoose.filter((k) => proposal.loose.get(k)! < 0));
       const trying = new Set<number>([...newLines, ...newLoose].map((k) => owner.get(k)!));
       if (trying.size === 0) {
         // No stretch point can absorb the remaining gaps — stable.
@@ -10205,7 +10262,7 @@ function* buildDocumentBalanced(
         // Candidates the pass never tried (their column's budget was met
         // first) stay eligible for a later proposal.
         const looseFailed = keysLoose.filter((k) => next.looseOutcome.get(k) === null);
-        for (const k of looseFailed) s.failedLoose.add(k);
+        for (const k of looseFailed) failLoose(s, k);
         const looseWon = keysLoose.filter((k) => typeof next.looseOutcome.get(k) === 'number');
         // A box closing its column that moves down onto the column's last
         // grid slot (or level with the column beside it) closes less than a
@@ -10239,9 +10296,9 @@ function* buildDocumentBalanced(
           const boxes = keysLines.filter((k) => boxKeys.has(k));
           if (boxes.length > 0 && !boxesOnly) {
             for (const k of keysLines) if (!boxKeys.has(k)) s.failedLines.add(k);
-            for (const k of keysLoose) s.failedLoose.add(k);
+            for (const k of keysLoose) failLoose(s, k);
           } else if (looseFailed.length > 0 || looseWon.length > 0) {
-            for (const k of looseWon) s.failedLoose.add(k);
+            for (const k of looseWon) failLoose(s, k);
           } else {
             s.done = true;
           }

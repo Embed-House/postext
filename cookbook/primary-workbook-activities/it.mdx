@@ -1,0 +1,57 @@
+---
+title: "Unità di un quaderno operativo per la primaria"
+summary: "Un’unità di scienze di quattro pagine con undici attività :::exercise nel Markdown, stampate da un solo stile: cerchi numerati, banca di parole, punti da unire."
+plain: "Un quaderno operativo per bambini di otto anni sugli animali vertebrati. Le domande e le loro risposte sono scritte nel testo; uno stile decide come appare ogni attività sulla pagina."
+description: "Un quaderno operativo di scienze in Postext: numeri nei cerchi, banca di parole, vero o falso, collega con una linea, cerchia, ordina, crucipuzzle e quadretti."
+question: "Come compongo una pagina di quaderno operativo: numeri nei cerchi, banca di parole, vero o falso, collega?"
+aliases: ["quaderno operativo", "quaderno di attività", "eserciziario", "scheda didattica", "banca di parole", "collega con una linea", "vero o falso", "crucipuzzle", "cerca parole", "completa", "icone delle consegne", "workbook", "cuaderno de actividades"]
+pageNotes: { "1": "L’apertura dell’unità: una fascia verde con la pillola bianca Unit 5 e il titolo Animals with backbones, un dipinto di uno stagno con una rana, un martin pescatore, una trota, una tartaruga e un coniglio, un breve testo, un riquadro Remember con una striscia gialla e l’attività 1: una banca di parole dal bordo tratteggiato sopra quattro frasi con spazi da riempire.", "3": "Le attività 6 e 7: cinque fasi dipinte della vita di una rana, in ordine sparso, sopra cinque frasi con una casella per il numero, e un crucipuzzle di dieci per dieci con filetti verdi e le sue sei parole sotto." }
+---
+
+## Che cosa comporrai
+
+L’unità 5 di un quaderno operativo di scienze per la classe terza, in A4: *Animals with backbones*, gli animali vertebrati. L’apertura mette l’unità in una fascia verde sopra il dipinto di uno stagno; seguono undici attività, ciascuna con il numero in un cerchio verde e un’icona a forma di matita, di fumetto o di coppia. Una banca di parole in un riquadro colorato dal bordo tratteggiato, frasi da segnare con T o F, animali da collegare con una linea al loro gruppo, parole da cerchiare in una frase e in un breve testo, le fasi della rana da numerare, un crucipuzzle, animali da classificare, una domanda aperta sulle righe e un’altra sui quadretti. Un’edizione spagnola stampa la stessa unità come la compongono le scuole di quel paese, con V e F e *une con flechas*. La illustrano tre dipinti generati con un modello di diffusione.
+
+## Preparazione
+
+### 1 · Scrivi le attività nel Markdown e dai loro uno stile una volta sola
+
+<Excerpt region="answer" />
+
+Ogni attività è un blocco `:::exercise`. Quello che legge l’alunno e quello che conta come giusto stanno nel testo: `[[hair]]` è uno spazio la cui risposta è *hair*, `- [x]` un’affermazione vera, `- Dolphin -> Mammal` una coppia, `[[pelo | (plumas)]]` una scelta con la parola giusta tra parentesi. Lo stile contiene solo l’aspetto, così le undici attività condividono `actividad` e un secondo stile, `cuadricula`, che lo estende con `extends` per sostituire le righe con i quadretti. Il motore le numera, mescola con un seme la colonna destra delle coppie e gli elementi da ordinare, rende ogni spazio largo quanto la risposta più lunga perché nessuno sveli la propria, e stampa T e F in inglese, V e F in spagnolo, senza una parola nella configurazione.
+
+### 2 · Dai alle attività le loro icone
+
+<Excerpt region="icons" />
+
+Un’icona di `exerciseStyles[].icons` nomina un’immagine del libro, e `:::exercise{icon="oral pareja"}` mette le immagini dopo il numero, nell’ordine in cui sono scritte; la sintesi vocale le legge tramite il loro `alt`. Sono segni piatti disegnati nel codice su un cerchio del colore dell’unità, quindi restano nitidi nel PDF e cambiano con la palette. Un quaderno operativo stampa anche una matita accanto alle attività da scrivere; le icone del parlare e della coppia segnano l’ultima, che non ha uno spazio per scrivere (`area="none"`).
+
+### 3 · Apri l’unità con una fascia e un dipinto
+
+<Excerpt region="opener" />
+
+Il titolo di livello 1 dell’unità disegna la fascia, la pillola del numero e il titolo a partire dai suoi attributi (`unidad="Unit 5" pic="charca"`), e sotto la fascia il dipinto a 176 × 75 mm. Le immagini dentro le attività usano un tipo di risorsa senza didascalia né numero (`dibujo`), come le stampa un quaderno. Il testo si legge facilmente a quell’età: Atkinson Hyperlegible Next in corpo 12 su 17 pt, senza sillabazione, a bandiera.
+
+## Varianti
+
+### Stampa le soluzioni per l’insegnante
+
+Lo stesso Markdown dà la copia dell’insegnante: tutti gli spazi riempiti, le caselle vere segnate e le parole giuste cerchiate in magenta.
+
+```diff
+   exerciseStyles: [actividad, cuadricula],
++  exercises: { edition: 'teacher' },
+```
+
+### Numera le attività nei quadrati
+
+Un quadrato arrotondato del colore dell’unità si legge come lo stile di un altro editore.
+
+```diff
+-  number: { shape: 'disc', background: col('unit'), color: col('paper'),
++  number: { shape: 'rounded', background: col('unit'), color: col('paper'),
+```
+
+## Errori frequenti
+
+- Le parole da cerchiare in un testo continuo tengono un po’ d’aria su ogni lato per il cerchio, quindi una parola subito prima di una virgola o di un punto ne resta un po’ staccata.

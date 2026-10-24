@@ -16,7 +16,7 @@ import { counterStyleOf, formatCounter } from '../numbering.js';
 import { readExercises, containerEndOf } from './model.js';
 import type { ExerciseIssue, ExerciseModel } from './types.js';
 import { EMPTY_RUN, joinRuns, runOf, sliceRun, textRun, trimRun, blockOfRun, type Run } from './text.js';
-import { exerciseBoxStyles, exerciseChipStyles, exerciseParagraphStyles, exerciseStyleIds, type ExerciseStyleIds } from './styles.js';
+import { exerciseBoxStyles, exerciseChipStyles, exerciseParagraphStyles, exerciseStyleIds, shapedNumberBand, type ExerciseStyleIds } from './styles.js';
 import { areaElements, drawnBox, type AreaKind } from './designs.js';
 import { seededRandom, shuffledOrder } from './shuffle.js';
 import { gridBox, type GridBox } from './grids.js';
@@ -398,6 +398,14 @@ class Emitter {
     return Math.max(1, this.ctx.measurePt - (box ? this.ctx.boxInsets?.get(box) ?? 0 : 0));
   }
 
+  /** The band of the shaped number in ems of the instruction, whose size
+   *  the number's em and the icons' sizes are read against. */
+  private numberBand(): { height: number; drop: number } {
+    const ins = this.style.instruction.fontSize;
+    const textPt = ins ? dimPt(ins, this.ctx.bodySizePt) : this.ctx.bodySizePt;
+    return shapedNumberBand(dimPt(this.style.number.fontSize, textPt) / Math.max(0.01, textPt));
+  }
+
   private get dpiFree(): { size: number; line: number; measure: number } {
     return { size: this.ctx.bodySizePt, line: this.ctx.lineHeightPt, measure: this.measure };
   }
@@ -497,14 +505,20 @@ class Emitter {
       lead.push(chipRun(this.ids.level, textRun(marks, this.at), this.at));
     }
     // Activity icons are inline symbols (#1058): a picture of the book or a
-    // glyph in its own face, in its own colour, read as their `alt`.
+    // glyph in its own face, in its own colour, read as their `alt`. Beside
+    // a shaped number they share its band (#1248): as tall as the shape
+    // unless they give their own size, centred on it either way.
+    const band = n.show && this.number && n.shape !== 'none' ? this.numberBand() : undefined;
     for (const name of (ex.attrs.icon ?? '').split(/\s+/).filter(Boolean)) {
       const icon = this.style.icons[name];
       if (!icon || (!icon.resourceId && !icon.glyph)) continue;
+      const size = icon.size !== undefined && icon.size > 0 ? icon.size : band?.height;
+      const drop = band ? band.drop - (band.height - (size ?? band.height)) / 2 : 0;
       const symbol: InlineIcon = {
         alt: icon.alt ?? '',
         ...(icon.resourceId ? { resource: icon.resourceId } : { glyph: icon.glyph!, ...(icon.fontFamily ? { font: icon.fontFamily } : {}) }),
-        ...(icon.size !== undefined && icon.size > 0 ? { size: icon.size } : {}),
+        ...(size !== undefined ? { size: round3(size) } : {}),
+        ...(drop > 0 ? { drop: round3(drop) } : {}),
       };
       const color = icon.color?.paletteId ?? icon.color?.hex ?? '';
       lead.push(textRun(SWATCH_PLACEHOLDER, this.at, { swatch: { color, icon: symbol } }));
@@ -1122,6 +1136,11 @@ class Emitter {
       ...(this.ex.attrs.title ? { title: this.ex.attrs.title } : {}),
     };
   }
+}
+
+/** `v` to three decimals: a stable cache key. */
+function round3(v: number): number {
+  return Math.round(v * 1000) / 1000;
 }
 
 /** A length in points, `em` read against `sizePt`. */

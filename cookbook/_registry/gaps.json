@@ -3501,5 +3501,172 @@
       }
     },
     "fixedIn": "1.46.0"
+  },
+  "decimal-column-arithmetic": {
+    "label": {
+      "en": "Decimals in column arithmetic",
+      "es": "Decimales en las cuentas en columna",
+      "ca": "Decimals a les operacions en columna",
+      "fr": "Décimaux dans les opérations posées",
+      "de": "Dezimalzahlen im schriftlichen Rechnen",
+      "it": "Decimali nelle operazioni in colonna",
+      "pt": "Decimais nas contas armadas",
+      "zh": "竖式中的小数",
+      "ja": "筆算の小数",
+      "ar": "الكسور العشرية في العمليات العمودية"
+    },
+    "aliases": {
+      "en": [
+        "decimal sums",
+        "decimal point in columns",
+        "money sums"
+      ],
+      "es": [
+        "cuentas con decimales",
+        "coma decimal en columna"
+      ],
+      "ca": [
+        "operacions amb decimals"
+      ],
+      "fr": [
+        "opérations avec virgule",
+        "nombres décimaux posés"
+      ],
+      "de": [
+        "Kommazahlen schriftlich",
+        "Dezimalrechnen"
+      ],
+      "it": [
+        "operazioni con la virgola"
+      ],
+      "pt": [
+        "contas com vírgula",
+        "decimais armados"
+      ],
+      "zh": [
+        "小数竖式"
+      ],
+      "ja": [
+        "小数の筆算"
+      ],
+      "ar": [
+        "عمليات بالكسور العشرية"
+      ]
+    },
+    "explanation": {
+      "en": "An arithmetic exercise reads whole numbers only: an operation with a decimal comma or point (12,5 + 3,75) is not read and prints as written, so a sum of money cannot be set in columns with its decimal places lined up. Workaround: keep decimals in a gaps exercise ([[0,75]]), where the answer is text, or work in cents.",
+      "es": "Un ejercicio de operaciones solo lee números enteros: una cuenta con coma o punto decimal (12,5 + 3,75) no se lee y se imprime tal cual, así que una suma de dinero no se puede poner en columna con los decimales alineados. Solución provisional: deja los decimales en un ejercicio de huecos ([[0,75]]), donde la respuesta es texto, o trabaja en céntimos.",
+      "ca": "Un exercici d'operacions només llegeix nombres enters: una operació amb coma o punt decimal (12,5 + 3,75) no es llegeix i s'imprimeix tal com és, així que una suma de diners no es pot posar en columna amb els decimals alineats. Solució provisional: deixa els decimals en un exercici de buits ([[0,75]]) o treballa en cèntims.",
+      "fr": "Un exercice d'opérations ne lit que des nombres entiers : une opération avec une virgule ou un point décimal (12,5 + 3,75) n'est pas lue et s'imprime telle quelle, si bien qu'une somme d'argent ne se pose pas en colonnes, virgules alignées. Contournement : gardez les décimaux dans un texte à trous ([[0,75]]) ou comptez en centimes.",
+      "de": "Eine Rechenübung liest nur ganze Zahlen: eine Rechnung mit Dezimalkomma oder -punkt (12,5 + 3,75) wird nicht gelesen und so gedruckt, wie sie dasteht, eine Geldsumme lässt sich also nicht mit untereinanderstehenden Kommas setzen. Umweg: Dezimalzahlen in einer Lückenübung ([[0,75]]) lassen oder in Cent rechnen.",
+      "it": "Un esercizio di operazioni legge solo numeri interi: un'operazione con virgola o punto decimale (12,5 + 3,75) non viene letta e si stampa così com'è, quindi una somma di denaro non si mette in colonna con le virgole allineate. Soluzione provvisoria: tieni i decimali in un esercizio di completamento ([[0,75]]) o lavora in centesimi.",
+      "pt": "Um exercício de contas só lê números inteiros: uma conta com vírgula ou ponto decimal (12,5 + 3,75) não é lida e sai como está, então uma soma de dinheiro não pode ser armada com as vírgulas alinhadas. Alternativa: deixe os decimais num exercício de lacunas ([[0,75]]) ou trabalhe em centavos.",
+      "zh": "计算题只读整数：带小数点的算式（12.5 + 3.75）读不出来，按原样印出，所以钱数的竖式无法对齐小数点。变通办法：把小数放在填空题里（[[0.75]]），或换算成分来计算。",
+      "ja": "計算問題は整数しか読みません。小数点のある式（12.5 + 3.75）は読まれず書いたまま印刷されるので、金額の筆算で小数点をそろえられません。回避策：小数は穴埋め問題（[[0.75]]）に置くか、銭や円未満を整数にして計算します。",
+      "ar": "يقرأ تمرين العمليات الأعداد الصحيحة فقط: عملية فيها فاصلة عشرية (12,5 + 3,75) لا تُقرأ وتُطبع كما كُتبت، فلا يمكن وضع مبلغ مالي في عمود مع محاذاة الفواصل. الحل المؤقت: اترك الكسور العشرية في تمرين فراغات ([[0,75]]) أو احسب بالقروش."
+    },
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Operations in columns",
+        "es": "Operaciones en vertical",
+        "ca": "Operacions en vertical",
+        "fr": "Opérations posées",
+        "de": "Schriftliches Rechnen",
+        "it": "Operazioni in colonna",
+        "pt": "Contas armadas",
+        "zh": "竖式计算",
+        "ja": "筆算",
+        "ar": "العمليات العمودية"
+      }
+    }
+  },
+  "readings-over-blanks": {
+    "label": {
+      "en": "A reading over a blank",
+      "es": "Una lectura sobre un hueco",
+      "ca": "Una lectura sobre un buit",
+      "zh": "空格上方的拼音",
+      "ar": "قراءة فوق فراغ",
+      "ja": "空欄の上の読みがな",
+      "pt": "Uma leitura sobre uma lacuna",
+      "fr": "Une lecture au-dessus d'un blanc",
+      "de": "Eine Lesung über einer Lücke",
+      "it": "Una lettura sopra uno spazio vuoto"
+    },
+    "aliases": {
+      "en": [
+        "pinyin over boxes",
+        "furigana over blanks",
+        "write the characters",
+        "看拼音写词语"
+      ],
+      "es": [
+        "pinyin sobre casillas",
+        "furigana sobre huecos",
+        "escribe los caracteres"
+      ],
+      "ca": [
+        "pinyin sobre caselles",
+        "furigana sobre buits"
+      ],
+      "zh": [
+        "看拼音写词语",
+        "拼音田字格",
+        "注音填字"
+      ],
+      "ar": [
+        "قراءة فوق الفراغ",
+        "بينيين فوق المربعات"
+      ],
+      "ja": [
+        "漢字の書き取り",
+        "読みがな付きの□",
+        "書き取り"
+      ],
+      "pt": [
+        "pinyin sobre quadrados",
+        "furigana sobre lacunas"
+      ],
+      "fr": [
+        "pinyin au-dessus des cases",
+        "furigana sur des blancs"
+      ],
+      "de": [
+        "Pinyin über Kästchen",
+        "Furigana über Lücken"
+      ],
+      "it": [
+        "pinyin sopra le caselle",
+        "furigana sopra gli spazi"
+      ]
+    },
+    "explanation": {
+      "en": "A ruby inside a [[gap]] is part of the answer and is hidden with it, and an open question's 田字格 area takes the whole measure, so a 看拼音写词语 or 漢字の書き取り exercise cannot print the reading over the squares a word is written in. The workaround sets each reading on a line of its own and the blank as a box under it, four to a row in a :::columns group.",
+      "es": "Un ruby dentro de un [[hueco]] forma parte de la respuesta y se oculta con ella, y la zona de 田字格 de una pregunta abierta ocupa toda la medida, así que un ejercicio de 看拼音写词语 o de 漢字の書き取り no puede imprimir la lectura sobre las casillas donde se escribe la palabra. La solución provisional pone cada lectura en su propia línea y el hueco como una caja debajo, cuatro por fila en un grupo :::columns.",
+      "ca": "Un ruby dins d'un [[buit]] forma part de la resposta i s'amaga amb ella, i la zona de 田字格 d'una pregunta oberta ocupa tota la mesura, de manera que un exercici de 看拼音写词语 o de 漢字の書き取り no pot imprimir la lectura sobre les caselles on s'escriu la paraula. La solució provisional posa cada lectura en una línia pròpia i el buit com una caixa a sota, quatre per fila en un grup :::columns.",
+      "zh": "[[空格]]里的注音属于答案，会和答案一起隐去；简答题的田字格又占满整行，所以“看拼音写词语”或日文的“漢字の書き取り”无法把拼音印在写字的方格上方。变通做法是让每个拼音单占一行，下面放一个方框作为空格，用 :::columns 一行排四组。",
+      "ar": "الروبي داخل [[فراغ]] جزء من الإجابة فيُخفى معها، ومساحة 田字格 في السؤال المفتوح تملأ عرض السطر كله، فلا يستطيع تمرين 看拼音写词语 أو 漢字の書き取り أن يطبع القراءة فوق المربعات التي تُكتب فيها الكلمة. والحل المؤقت أن توضع كل قراءة في سطر وحدها والفراغ مربعًا تحتها، أربعة في كل صف داخل مجموعة :::columns.",
+      "ja": "[[空欄]] の中のルビは答えの一部なので答えと一緒に隠れ、記述問題の田字格は行の幅いっぱいを使う。そのため看拼音写词语や漢字の書き取りで、字を書くマスの上に読みを印刷できない。回避策として、読みを一行に置き、その下に空欄を箱として置いて、:::columns で一行に四組並べる。",
+      "pt": "Um ruby dentro de uma [[lacuna]] faz parte da resposta e some com ela, e a área de 田字格 de uma questão aberta ocupa toda a medida, então um exercício de 看拼音写词语 ou de 漢字の書き取り não consegue imprimir a leitura sobre os quadrados onde a palavra é escrita. A solução provisória põe cada leitura numa linha própria e a lacuna como uma caixa embaixo, quatro por linha num grupo :::columns.",
+      "fr": "Un ruby dans un [[blanc]] fait partie de la réponse et disparaît avec elle, et la zone de 田字格 d'une question ouverte occupe toute la justification : un exercice 看拼音写词语 ou 漢字の書き取り ne peut donc pas imprimer la lecture au-dessus des cases où s'écrit le mot. Le contournement met chaque lecture sur sa propre ligne et le blanc en case dessous, quatre par rangée dans un groupe :::columns.",
+      "de": "Ein Ruby in einer [[Lücke]] gehört zur Antwort und wird mit ihr ausgeblendet, und das 田字格-Feld einer offenen Frage nimmt die ganze Satzbreite ein. Eine Übung 看拼音写词语 oder 漢字の書き取り kann die Lesung deshalb nicht über die Kästchen drucken, in die das Wort geschrieben wird. Der Behelf setzt jede Lesung in eine eigene Zeile und die Lücke als Kasten darunter, vier je Reihe in einer :::columns-Gruppe.",
+      "it": "Un ruby dentro uno [[spazio]] fa parte della risposta e si nasconde con essa, e l'area di 田字格 di una domanda aperta occupa tutta la giustezza, quindi un esercizio 看拼音写词语 o 漢字の書き取り non può stampare la lettura sopra le caselle in cui si scrive la parola. La soluzione provvisoria mette ogni lettura su una riga propria e lo spazio come una casella sotto, quattro per fila in un gruppo :::columns."
+    },
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Gaps and word banks",
+        "es": "Huecos y banco de palabras",
+        "ca": "Buits i banc de paraules",
+        "fr": "Textes à trous et banques de mots",
+        "de": "Lückentexte und Wortspeicher",
+        "it": "Completamento e riquadro di parole",
+        "pt": "Lacunas e banco de palavras",
+        "zh": "填空题与词库",
+        "ja": "穴埋めと語群",
+        "ar": "ملء الفراغات وبنك الكلمات"
+      }
+    }
   }
 }

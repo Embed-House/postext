@@ -1,0 +1,54 @@
+---
+title: "Eine Rätselseite mit Lösungen auf dem Kopf"
+summary: "Die Rätselseite eines Kindermagazins: Kreuzworträtsel, Suchsel, Rätselfrage, eine Geschichte zum Ordnen und mehr auf Karten, die Lösungen auf dem Kopf."
+plain: "Die Rätselseite eines Kindermagazins über das Meer. Jedes Rätsel steht auf einer eigenen Karte, die Lösungen sind darunter auf dem Kopf gedruckt, und zum Nachsehen drehen die Kinder das Heft um."
+description: "Eine Rätselseite in Postext: Kreuzworträtsel und Suchsel aus Wortlisten, eine Rätselfrage und eine Geschichte zum Ordnen, alle Lösungen auf dem Kopf."
+question: "Wie mache ich aus einer Wortliste ein Kreuzworträtsel und ein Suchsel mit Lösungen auf dem Kopf?"
+aliases: ["Rätselseite", "Kreuzworträtsel", "Suchsel", "Buchstabensalat", "Wortsuchrätsel", "Rätsel", "Lösungen auf dem Kopf", "umgedrehte Lösungen", "Kindermagazin", "Mitmachseite", "puzzle page", "crossword", "word search"]
+pageNotes: { "1": "Die erste Seite: Ein farbenfrohes Gemälde eines Korallenriffs mit einer Schildkröte, einem Kraken, einem Clownfisch, einem Kugelfisch und einem Seepferdchen füllt den oberen Teil der Seite bis in den Anschnitt, mit einem korallroten Etikett PUZZLE PAGE, dem Titel Reef Puzzles in großen weißen Buchstaben und einem Vorspann in einem dunklen Kasten; darunter zwei cremefarbene Karten: ein nummeriertes Kreuzworträtsel mit den Fragen waagerecht und senkrecht und ein Suchsel mit neun mal neun Feldern und seiner Wortliste, beide mit den Lösungen auf dem Kopf am Fuß.", "2": "Die zweite Seite: Karten mit einer Rätselfrage mit drei Antworten zum Einkreisen, einer Geschichte zum Ordnen mit einer gemalten Babyschildkröte und fünf Kästchen, einem Satz mit vertauschten Wörtern und einer Linie zum Aufschreiben und einer Zuordnungsaufgabe mit Punkten, jede mit den Lösungen auf dem Kopf." }
+---
+
+## Was Sie setzen
+
+Die Rätselseite von *Splash!*, einem Kindermagazin über das Meer, auf zwei Seiten in A4 mit zwei Spalten. Ein Gemälde des Riffs füllt den oberen Teil der ersten Seite, der Titel steht über dem offenen Wasser. Darunter steht jedes Rätsel auf einer cremefarbenen Karte mit einer korallroten Nummer: ein Kreuzworträtsel aus sechs Meerestieren und ihren Fragen, ein Suchsel, das acht Wörter waagerecht, senkrecht, diagonal und rückwärts versteckt, eine Rätselfrage mit drei Antworten zum Einkreisen, das Leben einer Schildkröte zum Ordnen, ein Satz mit vertauschten Wörtern und Tierkinder, die mit ihrem Namen verbunden werden. Unter jedem Rätsel, auf seiner Karte, stehen die Lösungen in kleiner grauer Schrift auf dem Kopf, so wie Rätselhefte sie schon immer versteckt haben.
+
+## Zubereitung
+
+### 1 · Jedes Rätsel auf eine Karte setzen, die Lösungen gedreht
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Das `box` des Übungsstils nennt einen Kastenstil, deshalb steht jedes Rätsel auf einer Karte, mit seiner Nummer in einem Kreis und seinem Titel als erster Zeile der Aufgabenstellung. `placement: 'inverted'` setzt die Lösungen hinter jedes Rätsel in einen um 180° gedrehten Kasten innerhalb der Karte, sodass Rätsel und Lösung nie auf verschiedene Seiten fallen; die Raster und die Schreiblinie bleiben im Innenabstand der Karte.
+
+### 2 · Die Raster von der Engine bauen lassen
+
+Das Markdown enthält nur die Wörter: `- OCTOPUS: Eight arms and three hearts` für das Kreuzworträtsel, `- SHELL` für das Suchsel. Die Engine legt das Kreuzworträtsel so an, dass jedes Wort ein anderes kreuzt, und nummeriert die Anfänge in Leserichtung. Die Suchwörter versteckt sie in den Richtungen, die der Block nennt (`directions="across down diagonal backwards"`), und füllt den Rest mit den Buchstaben derselben Wörter. Beide Raster hängen an einem festen Startwert, sie sehen also bei jedem Lauf und in jeder Ausgabe gleich aus, und die spanische Ausgabe baut ihr eigenes Raster aus ihren eigenen Wörtern.
+
+### 3 · Ein Riff über beide Spalten
+
+<Excerpt region="opener" />
+
+Der Auftakt läuft über beide Spalten (`span: 'page'`), deshalb beginnen die Rätsel in jeder Spalte unter dem Gemälde. Das Bild ist auf die Proportionen des Bands zugeschnitten und an der Seite verankert, so läuft es oben und an den Seiten in den Anschnitt. Der Vorspann steht in einem dunklen Kasten, damit er sich über dem Wasser lesen lässt.
+
+## Varianten
+
+### Die Wortliste ausblenden
+
+Ein schwereres Suchsel druckt nur das Raster: Fügen Sie dem Block `hidden` hinzu.
+
+```diff
+-:::exercise{type=wordsearch size=9 directions="across down diagonal backwards"}
++:::exercise{type=wordsearch size=9 directions="across down diagonal backwards" hidden}
+```
+
+### Die Lösungen am Ende des Hefts drucken
+
+`chapterEnd` sammelt alle Lösungen am Ende, statt jede einzeln zu drehen.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'turned' },
++  solutions: { placement: 'chapterEnd' },
+```
+
+## Häufige Fehler
+
+- Ein Wort des Kreuzworträtsels, das kein anderes kreuzt, fällt weg und wird als `exerciseWordUnplaced` gemeldet. Wählen Sie Wörter mit gemeinsamen Buchstaben, oder ergänzen Sie eines, das zwei Gruppen verbindet.
+- Eine Rätselkarte bleibt zusammen, deshalb rückt ein hohes Kreuzworträtsel in die nächste Spalte, wenn es nicht passt. Prüfen Sie die spanische Ausgabe, deren Wörter länger sind.

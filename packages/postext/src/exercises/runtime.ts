@@ -73,8 +73,15 @@ function exerciseRuntime(): Runtime {
     s = s.replace(/[\u0660-\u0669]/g, (c) => String(c.charCodeAt(0) - 0x0660));
     s = s.replace(/[\u06F0-\u06F9]/g, (c) => String(c.charCodeAt(0) - 0x06F0));
     s = s.replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g, '\'').replace(/[\u201C\u201D\u00AB\u00BB\u201E]/g, '"');
-    s = s.replace(/\s+/g, ' ').replace(/^[\s\u00A1\u00BF]+/, '').replace(/[\s.,;:!?\u3002\uFF0E\u3001\uFF01\uFF1F\u2026\u061F\u060C]+$/, '');
-    return s.toLowerCase();
+    s = s.split(/\s+/).join(' ');
+    // Opening and final punctuation, trimmed one character at a time.
+    const lead = ' \u00A1\u00BF';
+    const tail = ' .,;:!?\u3002\uFF0E\u3001\uFF01\uFF1F\u2026\u061F\u060C';
+    let a = 0;
+    let b = s.length;
+    while (a < b && lead.indexOf(s.charAt(a)) >= 0) a++;
+    while (b > a && tail.indexOf(s.charAt(b - 1)) >= 0) b--;
+    return s.slice(a, b).toLowerCase();
   }
 
   function same(a: string, accept: string[] | undefined): boolean {
@@ -219,11 +226,12 @@ function exerciseRuntime(): Runtime {
     '.pt-ex-mark{position:absolute;right:-.55em;top:-.6em;font:700 .62em/1 system-ui,sans-serif;padding:.12em .2em;border-radius:999px;color:#fff;pointer-events:none;z-index:2;}' +
     '.pt-ex-mark.pt-ex-ok{background:var(--pt-ex-right,#1e8e3e);}' +
     '.pt-ex-mark.pt-ex-no{background:var(--pt-ex-wrong,#c5221f);}' +
-    '.pt-ex-bar{position:absolute;right:0;top:100%;margin-top:.2em;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:.35em;font:400 1em/1.2 system-ui,sans-serif;z-index:3;}' +
+    '.pt-ex-bar{position:absolute;right:0;top:100%;margin-top:.2em;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:.35em;font:400 1em/1.2 system-ui,sans-serif;color:#1d1d1f;z-index:3;}' +
     '.pt-ex-bar button{font:inherit;margin:0;padding:.18em .6em;border:1px solid rgba(0,0,0,.35);border-radius:999px;background:#fff;color:#1d1d1f;cursor:pointer;}' +
     '.pt-ex-bar button:hover{background:#f1f1f3;}' +
     '.pt-ex-bar button:focus-visible{outline:2px solid #1a5fb4;outline-offset:2px;}' +
-    '.pt-ex-score{padding:0 .3em;font-weight:600;}' +
+    '.pt-ex-score{padding:.18em .5em;font-weight:600;border-radius:999px;background:rgba(255,255,255,.9);}' +
+    '.pt-ex-score:empty{display:none;}' +
     '.pt-ex-panel{position:absolute;left:0;right:0;top:100%;margin-top:2.1em;padding:.6em .8em;background:#fff;color:#1d1d1f;border:1px solid rgba(0,0,0,.2);border-radius:.4em;box-shadow:0 .3em 1em rgba(0,0,0,.15);font:400 1em/1.35 system-ui,sans-serif;z-index:4;}' +
     '.pt-ex-panel p{margin:.2em 0;}' +
     '.pt-ex-panel .pt-ex-key{font-weight:600;color:var(--pt-ex-answer,#d6246e);}' +
@@ -242,7 +250,11 @@ function exerciseRuntime(): Runtime {
 
   function addStyle(root: any): () => void {
     const doc: Document = root.nodeType === 9 ? root : root.ownerDocument;
-    const host: any = root.nodeType === 11 ? root : doc.head || doc.documentElement;
+    // An element in a shadow tree (the Sandbox's HTML tab draws its pages
+    // in one, #1249) takes the rules in that tree: the document's head
+    // doesn't reach it.
+    const top: any = root.nodeType === 1 && typeof root.getRootNode === 'function' ? root.getRootNode() : root;
+    const host: any = top.nodeType === 11 ? top : doc.head || doc.documentElement;
     if (!host || (host.querySelector && host.querySelector('style.pt-ex-style'))) return () => undefined;
     const style = doc.createElement('style');
     style.setAttribute('class', 'pt-ex-style');

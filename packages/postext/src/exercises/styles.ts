@@ -7,6 +7,7 @@
 
 import type { CalloutStyleConfig, ChipStyleConfig, Dimension, ParagraphStyleConfig, TabStop } from '../types.js';
 import type { ResolvedExerciseStyle } from '../defaults/exercises.js';
+import { CHIP_ASCENT_RATIO, CHIP_DESCENT_RATIO } from '../measure/rich.js';
 
 export const EX_PREFIX = '__postext-ex';
 
@@ -57,6 +58,21 @@ export function labelRoomEm(style: ResolvedExerciseStyle): number {
   return Math.max(1.5, 1.1 + affix) + (style.options.marker === 'none' ? 0 : 1.6);
 }
 
+/** A shaped number's padding over and under its digits, in ems of the
+ *  number. */
+const NUMBER_PAD_TOP = 0.16;
+const NUMBER_PAD_BOTTOM = 0.08;
+
+/** The band a shaped number's box takes on its line, in ems of the text
+ *  around it (`fontEm`: the number's size in those ems): how tall it is and
+ *  how far it reaches below the baseline (#1248). The activity icons beside
+ *  it share it. */
+export function shapedNumberBand(fontEm: number): { height: number; drop: number } {
+  const above = fontEm * (CHIP_ASCENT_RATIO + NUMBER_PAD_TOP);
+  const drop = fontEm * (CHIP_DESCENT_RATIO + NUMBER_PAD_BOTTOM);
+  return { height: above + drop, drop };
+}
+
 /** The chip styles of an exercise style. */
 export function exerciseChipStyles(style: ResolvedExerciseStyle): ChipStyleConfig[] {
   const ids = exerciseStyleIds(style);
@@ -80,8 +96,8 @@ export function exerciseChipStyles(style: ResolvedExerciseStyle): ChipStyleConfi
       borderWidth: PT(0),
       borderRadius: EM(n.shape === 'disc' ? 1 : n.shape === 'rounded' ? 0.25 : 0),
       paddingX: EM(shaped ? 0.3 : 0),
-      paddingTop: EM(shaped ? 0.16 : 0),
-      paddingBottom: EM(shaped ? 0.08 : 0),
+      paddingTop: EM(shaped ? NUMBER_PAD_TOP : 0),
+      paddingBottom: EM(shaped ? NUMBER_PAD_BOTTOM : 0),
       ...(shaped ? { minWidth: EM(1.25) } : {}),
       ...(n.fontFamily ? { fontFamily: n.fontFamily } : {}),
       fontSize: n.fontSize,

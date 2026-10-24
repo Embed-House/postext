@@ -1544,8 +1544,10 @@ function renderSegments(
   rootLang?: string,
   /** What a copy puts after the line (see {@link lineEndText}). */
   end = '',
+  /** Where the line's inline pictures come from (#1249). */
+  paint?: HtmlPaint,
 ): string {
-  if (line.cjkComposed) return renderComposedSegments(line, block, targets, rootDir, end);
+  if (line.cjkComposed) return renderComposedSegments(line, block, targets, rootDir, end, paint);
   // The tracking after the last glyph is advance, not ink: centring and
   // right alignment leave it out (EF-153), as the canvas does.
   const tracking = (block.letterSpacing ?? 0) + (line.letterSpacing ?? 0);
@@ -1646,7 +1648,7 @@ function renderSegments(
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, paint, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -1700,7 +1702,7 @@ function orderedOffsets(segs: readonly VDTLineSegment[], order: readonly number[
 /** {@link renderSegments} for a line of the CJK composer: hung marks and
  *  Han–Latin spaces kept out of the justification, each segment with its
  *  own tracking, ink offset and scale, warichu notes and ruby readings. */
-function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: ReadonlySet<string>, rootDir: TextDirection = 'ltr', end = ''): string {
+function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: ReadonlySet<string>, rootDir: TextDirection = 'ltr', end = '', paint?: HtmlPaint): string {
   // The tracking after the last glyph is advance, not ink: centring and
   // right alignment leave it out (EF-153), as the canvas does.
   const lineTracking = (block.letterSpacing ?? 0) + (line.letterSpacing ?? 0);
@@ -1804,7 +1806,7 @@ function renderComposedSegments(line: VDTLine, block: VDTBlock, targets?: Readon
       continue;
     }
     if (seg.kind === 'swatch') {
-      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
+      parts.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, paint, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -2211,6 +2213,8 @@ function renderLine(
   /** Markup set at the start of the line's box, before its text (a drop
    *  cap, #623). */
   lead = '',
+  /** Where the line's inline pictures come from (#1249). */
+  paint?: HtmlPaint,
 ): string {
   const font = quoteFontString(block.fontString);
   const strikethroughDecl = block.strikethroughText ? 'text-decoration:line-through;' : '';
@@ -2232,7 +2236,7 @@ function renderLine(
     strikethroughDecl +
     trackingDecl +
     (lineCjkDecl(line) ? cjkTextDecl(tracking !== 0) : '') +
-    `">${lineHighlightsHtml(line)}${lead}${renderSegments(line, block, targets, rootDir, rootLang, lineEndText(line, next))}</div>`
+    `">${lineHighlightsHtml(line)}${lead}${renderSegments(line, block, targets, rootDir, rootLang, lineEndText(line, next), paint)}</div>`
   );
 }
 
@@ -2437,7 +2441,7 @@ function verticalWordSegments(line: VDTLine, block: VDTBlock, v: VerticalHtml, t
 /** A body line of a vertical page: its text segments down an upright box,
  *  its formulas, swatches and chips sideways where the canvas paints them
  *  (see the section comment). */
-function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, targets?: ReadonlySet<string>, next?: VDTLine): string {
+function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, targets?: ReadonlySet<string>, next?: VDTLine, paint?: HtmlPaint): string {
   const lineTracking = (block.letterSpacing ?? 0) + (line.letterSpacing ?? 0);
   const trailing = lineTrailingTracking(line, lineTracking);
   const lineIndent = line.bbox.x - block.bbox.x;
@@ -2482,7 +2486,7 @@ function renderVerticalLine(line: VDTLine, block: VDTBlock, v: VerticalHtml, tar
       continue;
     }
     if (seg.kind === 'swatch') {
-      sideways.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, undefined, seg.rtl === true));
+      sideways.push(renderSwatchSegment(seg.swatch, x, line.baseline - line.bbox.y, seg.width, block.color, paint, seg.rtl === true));
       x += seg.width;
       continue;
     }
@@ -3104,7 +3108,7 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
         id: label.id ?? '', fontString: layout.fontString, boldFontString: layout.boldFontString, italicFontString: layout.italicFontString,
         boldItalicFontString: layout.boldItalicFontString, color: layout.color, textAlign: 'left', bbox: layout.box,
       } as unknown as VDTBlock;
-      layout.lines.forEach((line, i) => inner.push(renderVerticalLine(line, host, v, options.linkTargets, layout.lines[i + 1])));
+      layout.lines.forEach((line, i) => inner.push(renderVerticalLine(line, host, v, options.linkTargets, layout.lines[i + 1], options)));
     } else {
       layout.lines.forEach((line, i) => {
         inner.push(renderResourceLine(line, fonts, layout.color, rb.linkColor, layout.color, options.linkTargets, options.dir, options.rootLang, lineEndText(line, layout.lines[i + 1]) || (i + 1 < layout.lines.length ? ' ' : ''), options));
@@ -3571,7 +3575,7 @@ function renderBlockInner(block: VDTBlock, options: HtmlPaint): string {
   block.lines.forEach((line, i) => {
     const next = block.lines[i + 1];
     const lead = i === 0 && block.dropCap && !v ? dropCapHtml(block.dropCap, line, quoteFontString(block.fontString), (block.letterSpacing ?? 0) + (line.letterSpacing ?? 0)) : '';
-    parts.push(v ? renderVerticalLine(line, block, v, options.linkTargets, next) : renderLine(line, block, options.linkTargets, options.dir, options.rootLang, next, lead));
+    parts.push(v ? renderVerticalLine(line, block, v, options.linkTargets, next, options) : renderLine(line, block, options.linkTargets, options.dir, options.rootLang, next, lead, options));
   });
   return parts.join('');
 }
@@ -3596,7 +3600,7 @@ function renderStripCaptionHtml(block: VDTBlock, options: HtmlPaint): string {
   const lines = block.lines.slice(caption.firstLine, caption.firstLine + caption.lineCount);
   lines.forEach((line, i) => {
     const next = lines[i + 1];
-    parts.push(v ? renderVerticalLine(line, block, v, options.linkTargets, next) : renderLine(line, block, options.linkTargets, options.dir, options.rootLang, next));
+    parts.push(v ? renderVerticalLine(line, block, v, options.linkTargets, next, options) : renderLine(line, block, options.linkTargets, options.dir, options.rootLang, next, '', options));
   });
   return parts.join('');
 }

@@ -1,0 +1,63 @@
+---
+title: "Una scheda in dieci tradizioni scolastiche"
+summary: "Gli stessi sette blocchi :::exercise in dieci lingue, ogni edizione stampata con uno stile di esercizio che segue i libri di scuola del suo paese."
+plain: "Una scheda di scienze e matematica di due pagine sul ciclo dell’acqua, fatta dieci volte. Le domande sono le stesse; i numeri, le caselle, le righe e la divisione hanno l’aspetto dei libri di scuola di ogni paese."
+description: "Una scheda in Postext in dieci modi: caselle V/F, rigatura Seyès, R/F e 864 : 4 =, la potence, la ⟌ inglese, le parentesi del 选择题, ア イ ウ e l’arabo."
+question: "Come compongo la stessa scheda come i libri di scuola di ogni paese compongono i loro esercizi?"
+aliases: ["scheda", "scheda didattica", "ficha", "fiche", "Arbeitsblatt", "练习单", "プリント", "ورقة عمل", "divisione in colonna", "rigatura Seyès", "田字格", "vero o falso", "completamento"]
+pageNotes: { "1": "La prima pagina della scheda: una fascia blu con il titolo, righe per il nome e la data, un breve testo, un esercizio a scelta multipla, affermazioni vero o falso e un testo da completare sotto un elenco di parole.", "2": "La seconda pagina: parole da collegare al loro significato con dei puntini, parole da cerchiare nelle frasi, una divisione e una moltiplicazione in colonna nei quadretti e una domanda aperta con le righe per scrivere." }
+---
+
+## Che cosa comporrai
+
+La scheda 7 di un corso di scienze e matematica di classe quarta, *Il viaggio dell’acqua*, in dieci edizioni. Le domande sono le stesse in tutte le lingue: scegliere una risposta, segnare vero o falso, completare con le parole di un elenco, collegare le parole al loro significato, cerchiare una parola, dividere l’acqua di una cisterna, spiegare perché va risparmiata. Ogni edizione le stampa come fanno le sue scuole. Le schede spagnola e catalana mettono il numero in un cerchio, fanno segnare V o F e dividono con il divisore in una L a destra del dividendo. La francese usa quadrati, *cases à cocher*, spazi a puntini e carta Seyès per la risposta. La tedesca scrive *R* e *F*, *Lückentext* e `864 : 4 =` su una riga, con il punto per la moltiplicazione. La brasiliana chiede V o F tra parentesi. L’inglese divide sotto la parentesi ⟌. La cinese numera le sezioni 一、二、, mette （　） dopo ogni consegna con A. B. C. in fila, chiede √ o × e finisce con 看拼音，写词语 nei quadretti 田字格. La giapponese propone ア イ ウ e ○ ×, l’araba va da destra a sinistra con أ ب ج e صح o خطأ.
+
+## Preparazione
+
+### 1 · Metti ogni tradizione in una tabella
+
+<Excerpt region="answer" />
+
+Tutte le edizioni hanno lo stesso Markdown: sette blocchi `:::exercise` con le risposte nel testo (`- [x]`, `[[vapore]]`, `- Evaporazione -> L'acqua diventa vapore`, `- 864 : 4`). Ciò che cambia da un paese all’altro è la forma, quindi sta in questa tabella e in nessun altro posto: la figura e le cifre del numero, le lettere delle opzioni e se l’alunno barra una casella o cerchia una lettera, l’aspetto del vero o falso, quello degli spazi da completare, l’area di scrittura e la disposizione della divisione in colonna. Il catalano prende la riga dello spagnolo così com’è.
+
+### 2 · Stendi la tradizione sopra lo stile della casa
+
+<Excerpt region="style" />
+
+Un solo stile di esercizio, `ficha`, porta ciò che le dieci schede hanno in comune (il blu dei numeri, i filetti grigi, lo spazio tra gli esercizi), e la riga dell’edizione ci si stende sopra. Ciò che la riga non dice viene dalla lingua: T F, V F, R F, √ ×, ○ × e صح خطأ sono parole del motore stesso, come a) b) c), A. B. C., ア イ ウ e أ ب ج, perciò nessuna edizione le scrive.
+
+### 3 · Dai a ogni scrittura i suoi font
+
+<Excerpt region="faces" />
+
+Le edizioni in alfabeto latino condividono Nunito e Baloo 2. La scheda cinese compone il testo in Song e le consegne in Hei; quella giapponese il testo in Klee One, un carattere da libro di testo, e le consegne in un bastoni giapponese (gothic); quella araba usa Noto Naskh Arabic. Il peso più nero di Klee One è il 600, quindi l’edizione giapponese mette il suo grassetto a 600 (`boldFontWeight`): un 700 lo disegnerebbe il browser e la cattura fallirebbe.
+
+### 4 · Apri la scheda con le righe per il nome
+
+<Excerpt region="head" />
+
+Il titolo di livello 1 disegna la fascia, il corso preso dal frontmatter e il titolo, più due campi con una riga le cui parole vengono dagli attributi del titolo (`nombre="Nome" fecha="Data"`). Così la scheda tedesca dice *Datum* e quella giapponese 名前 senza una stringa nel codice.
+
+## Varianti
+
+### Stampa la copia dell’insegnante
+
+Ogni risposta va al suo posto in magenta: le parentesi, le caselle, gli spazi e il quoziente.
+
+```diff
+   exerciseStyles: [ficha],
++  exercises: { edition: 'teacher' },
+```
+
+### Raccogli le soluzioni in fondo alla scheda
+
+`placement: 'after'` mette la chiave di ogni esercizio sotto di esso; `'inverted'` la capovolge, come nelle pagine di enigmistica.
+
+```diff
++  exercises: { solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+## Errori frequenti
+
+- Un font senza peso 700 rende sintetico il grassetto dei numeri delle consegne. Dai a quel font di testo un `boldFontWeight` con un peso che possiede.
+- Il ○ delle consegne giapponesi e il √ di quelle cinesi esistono solo nei font CJK: mettili in una frase del testo CJK, non in un’etichetta latina.

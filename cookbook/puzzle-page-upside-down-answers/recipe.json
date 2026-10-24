@@ -1,0 +1,126 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 174,
+  "status": "published",
+  "chapter": "textbooks",
+  "order": 240,
+  "level": 2,
+  "genres": [
+    "magazine",
+    "workbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "exercise-puzzles",
+      "exercise-solutions",
+      "exercise-styles"
+    ],
+    "also": [
+      "exercises",
+      "exercise-choice",
+      "exercise-match",
+      "exercise-order",
+      "exercise-open",
+      "callout-styles",
+      "multiple-columns",
+      "opener-design",
+      "heading-attributes",
+      "design-images",
+      "resources",
+      "color-palette",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q196",
+    "Q195"
+  ],
+  "gotchas": [],
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images"
+  ],
+  "sample": {
+    "locales": [
+      "en",
+      "es"
+    ]
+  },
+  "capture": {
+    "hero": 1,
+    "card": "page",
+    "pages": "all",
+    "expect": {
+      "pages": [
+        2,
+        2
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [
+      {
+        "what": {
+          "en": "A coral reef with a smiling sea turtle, an octopus, a clownfish, a pufferfish and a seahorse under sunbeams.",
+          "es": "Un arrecife de coral con una tortuga marina sonriente, un pulpo, un pez payaso, un pez globo y un caballito de mar bajo los rayos del sol."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "reef-1600x792.jpg"
+      },
+      {
+        "what": {
+          "en": "A baby sea turtle hatching from its egg on the sand.",
+          "es": "Una cría de tortuga marina sale del huevo en la arena."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "hatchling-600.jpg"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Baloo 2",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Nunito",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Fredoka",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-24",
+  "updated": "2026-10-24",
+  "related": [
+    "japanese-drill-upside-down-answers",
+    "activity-book-growing-boxes",
+    "worksheet-answer-boxes"
+  ]
+}

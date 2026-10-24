@@ -5,6 +5,20 @@ import type { ReadEpubResult, RenderToEpubOptions } from './types.js';
 import { exerciseSampleBook, layOutBook, sampleBook } from './__tests__/sampleBook.js';
 import { EXERCISE_SCRIPT_HREF } from './shared/exerciseScript.js';
 
+/** `html` with every `<tag …>…</tag>` element taken out (any letter case). */
+function withoutElements(html: string, tag: string): string {
+  const lower = html.toLowerCase();
+  let out = '';
+  let at = 0;
+  for (let open = lower.indexOf(`<${tag}`, at); open >= 0; open = lower.indexOf(`<${tag}`, at)) {
+    const close = lower.indexOf(`</${tag}>`, open);
+    if (close < 0) break;
+    out += html.slice(at, open);
+    at = close + tag.length + 3;
+  }
+  return out + html.slice(at);
+}
+
 // Exercises in both renditions (#1231): the documents that hold them carry
 // their records and link the exercise script; the answers never show in
 // the text; the key is there for a reader with no script.
@@ -44,7 +58,7 @@ describe.each(['fixed', 'reflowable'] as const)('exercises in a %s EPUB', (layou
       }
       // The answers are in the data block and the key only: a blank
       // holds no text (the word bank lists its words, as it prints them).
-      const page = xhtml.replace(/<script[\s\S]*?<\/script>/g, '').replace(/<details[\s\S]*?<\/details>/g, '');
+      const page = withoutElements(withoutElements(xhtml, 'script'), 'details');
       expect(page).not.toMatch(/pt-ex-blank"[^>]*>[^<]/);
       expect(page).not.toContain('Plants need water');
     }

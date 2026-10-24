@@ -1,0 +1,51 @@
+---
+title: "Ejercicios japoneses con las soluciones del revés"
+summary: "Dos páginas de una serie de ejercicios japonesa, la de cuentas en horizontal y la de kanji en columnas, con las soluciones del revés bajo cada ejercicio."
+plain: "Un cuaderno escolar japonés: cuentas, casillas y opciones en una página, y kanji y lecturas en otra, de arriba abajo. Bajo cada ejercicio van sus soluciones del revés, para que el niño gire el cuaderno y las compruebe."
+description: "Una ドリル japonesa en Postext: ひっ算, casillas □, opciones ア イ ウ y ○× en horizontal, una página de 国語 en vertical y las soluciones giradas 180° bajo cada ejercicio."
+question: "¿Cómo imprimo las soluciones del revés bajo cada ejercicio de un cuaderno japonés?"
+aliases: ["ドリル", "計算ドリル", "漢字ドリル", "cuaderno de ejercicios japonés", "soluciones del revés", "soluciones boca abajo", "こたえ", "ひっ算", "書き取り", "escritura vertical", "tategaki", "○×"]
+pageNotes: { "1": "La página de cuentas: una franja azul pálido con esquinas redondeadas, una etiqueta amarilla さんすう 12, el título 3けたのたし算とひき算 y un tanuki pintado con un lápiz; una línea para el nombre y una casilla para la nota; el ejercicio 1, cuatro operaciones en vertical con casillas punteadas para las cifras; el ejercicio 2, seis cuentas con una casilla detrás de cada una; el ejercicio 3, dos preguntas con ア イ ウ en fila; bajo cada ejercicio, sus soluciones en letra gris pequeña, del revés.", "3": "La página de kanji, compuesta en vertical y encuadernada por la derecha: la misma franja azul baja ahora por el borde derecho, con el título 春のことば en columna y el zorro pintado al pie; lecturas con una casilla alta al lado, palabras subrayadas cuya lectura se escribe entre paréntesis, opciones entre paréntesis de ancho completo y las soluciones de cada ejercicio del revés al pie de su columna." }
+---
+
+## Lo que vas a componer
+
+Dos páginas de una serie de ejercicios de tercero en formato B5. La de cuentas va en horizontal: una franja azul pálido con la etiqueta de la asignatura, el título y un tanuki de mascota, una línea para el nombre y una casilla para la nota, y luego ひっ算 con una casilla por cifra del resultado, casillas tras seis cuentas, opciones ア イ ウ en fila, afirmaciones ○× con un paréntesis al final de la línea y dos problemas con líneas para escribir las operaciones. La de kanji se compone como se imprime un cuaderno de 国語, de arriba abajo y de derecha a izquierda: lecturas con una casilla para el kanji, palabras subrayadas cuya lectura va entre paréntesis, opciones que rodear y un significado que elegir. Bajo cada ejercicio, sus soluciones van del revés en letra gris pequeña. El niño ve dónde están, no las lee de un vistazo y gira el cuaderno para comprobarlas.
+
+## Elaboración
+
+### 1 · Gira las soluciones de cada ejercicio
+
+El código está en [la respuesta corta](#la-respuesta-corta). `placement: 'inverted'` pone las soluciones tras cada ejercicio en un recuadro girado 180°, y ese recuadro va dentro del recuadro del propio ejercicio, así que un salto de página nunca los separa. Las soluciones salen del ejercicio: las operaciones con su resultado, el katakana de la opción correcta, ○ y ×, las palabras de los huecos. El estilo de recuadro de las soluciones, `kotae`, solo pone la letra pequeña y gris.
+
+### 2 · Una franja para la página horizontal y para la vertical
+
+<Excerpt region="header" />
+
+Un diseño de título en una página vertical se coloca a lo largo de su columna: la x baja por la página y la y avanza hacia la izquierda. La franja anclada `top-left` con todo el ancho queda arriba en la página de cuentas y a lo largo del borde derecho en la de kanji; la mascota anclada `top-right` cae en el extremo de la franja en las dos. El diseño no nombra ninguna dirección.
+
+### 3 · Dos cuadernos con un solo texto
+
+<Excerpt region="two-books" />
+
+La configuración es una función, así que cada composición recibe su propio objeto, y entre una y otra solo cambia `writingMode`. En vertical, el cuaderno de 国語 se encuaderna por la derecha él solo; `showBook` pone cada cuaderno a su lado del lomo. El texto va en Klee One, una letra de libro de texto, y las etiquetas en Zen Maru Gothic; las dos cargan su puntuación vertical para los paréntesis de la página de kanji.
+
+## Variantes
+
+### Reúne las soluciones al final
+
+Un cuaderno con solucionario aparte deja las soluciones fuera de las páginas: `chapterEnd` las pone tras el último ejercicio.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'kotae' },
++  solutions: { placement: 'chapterEnd', box: 'kotae' },
+```
+
+### Compón una página de pasatiempos
+
+<RecipeLink slug="puzzle-page-upside-down-answers">La página de pasatiempos</RecipeLink> gira sus soluciones del mismo modo, en tarjetas a dos columnas.
+
+## Errores frecuentes
+
+- Una lectura todavía no puede ir sobre un hueco: un ruby dentro de `[[…]]` forma parte de la respuesta oculta. El ejercicio de 漢字の書き取り pone cada lectura en su propia línea y la casilla detrás, tres por fila en un grupo `:::columns`; en la página vertical la lectura queda al lado de la casilla, como el furigana.
+- Klee One solo tiene los pesos 400 y 600: `boldFontWeight: 600` deja todas las negritas en un corte que existe, también los números de los apartados y de los ejercicios.

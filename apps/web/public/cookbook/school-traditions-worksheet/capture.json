@@ -1,0 +1,3145 @@
+{
+  "schemaVersion": 1,
+  "slug": "school-traditions-worksheet",
+  "sourceHash": "8a6f1c7a6bbcd235a908ec1afae83029e6beb1d2061a2a67cfa6928c12298901",
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-24T15:50:13.717Z",
+  "variants": {
+    "en": {
+      "hash8": "89d140be",
+      "vdtHash": "21de764d0ec1044cb64b569bfdf163efc8221542",
+      "timings": {
+        "importMs": 26078,
+        "fontsMs": 2146,
+        "buildMs": 154,
+        "totalMs": 32990,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Baloo 2",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 50830,
+          "alt": "Opening page 1: Water on the move."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 41370,
+          "alt": "Page 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 28087,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 28836,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "5cafd84ff911ab67",
+            "lines": "3c83242e91edb968"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].number.suffix",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 192,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C21",
+            "severity": "warn",
+            "detail": "the pen took 33.0 s to finish (warning at 30 s)"
+          },
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.6 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, fr, de, it, pt, zh, ja, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es, ca, fr, de, it, pt, zh, ja, ar"
+          }
+        ]
+      }
+    },
+    "es": {
+      "hash8": "7b9aac57",
+      "vdtHash": "647f826ed80b01b819ed53e6b21e93c1005ba5d4",
+      "timings": {
+        "importMs": 11319,
+        "fontsMs": 5523,
+        "buildMs": 98,
+        "totalMs": 22475,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Baloo 2",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 54290,
+          "alt": "Página de apertura 1: El agua, de viaje."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 46414,
+          "alt": "Página 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 29815,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 29136,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "11c56c080101dd34",
+            "lines": "9043da3bcb8592eb"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 191,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 10
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 2 −10‰ “ El depósito de agua del colegio tiene 864 litr…”"
+          },
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.3 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, fr, de, it, pt, zh, ja, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en, ca, fr, de, it, pt, zh, ja, ar"
+          }
+        ]
+      }
+    },
+    "ca": {
+      "hash8": "33231c84",
+      "vdtHash": "1a8e40a56cbe3bbf9c80bad9280b4869ec5ac96b",
+      "timings": {
+        "importMs": 16285,
+        "fontsMs": 223,
+        "buildMs": 92,
+        "totalMs": 21147,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Baloo 2",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 52540,
+          "alt": "Pàgina d'obertura 1: L'aigua, de viatge."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 45492,
+          "alt": "Pàgina 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 29786,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 29017,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "f09c9a902cbd5062",
+            "lines": "b5b53830cc59da08"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 191,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.4 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, en, es, fr, de, it, pt, zh, ja, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ca, en, es, fr, de, it, pt, zh, ja, ar"
+          }
+        ]
+      }
+    },
+    "zh": {
+      "hash8": "8e853bba",
+      "vdtHash": "e7eeb832db7aaa5229ef4788c3cfb369906e6ce0",
+      "timings": {
+        "importMs": 6391,
+        "fontsMs": 8088,
+        "buildMs": 15,
+        "totalMs": 18882,
+        "builds": 2
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Noto Serif SC",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Noto Sans SC",
+          "Noto Serif SC"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 54344,
+          "alt": "章首页，第 1 页：水的旅行。"
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 30050,
+          "alt": "第 2 页。"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 80735,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 30048,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "b2db4bb48c6d77a4",
+            "lines": "28fd5359282601db"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.lines",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].instruction.fontFamily",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.format",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].number.suffix",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.bracket",
+          "exerciseStyles[].options.labels",
+          "exerciseStyles[].options.layout",
+          "exerciseStyles[].options.suffix",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 198,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Noto Sans SC",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Serif SC",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Serif SC",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "cjk-line-breaking",
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 6.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ca, fr, de, it, pt, ja, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: zh, en, es, ca, fr, de, it, pt, ja, ar"
+          }
+        ]
+      }
+    },
+    "ar": {
+      "hash8": "e5a17811",
+      "vdtHash": "97275d11f80066d2a6c266f14a047b1a62b55c21",
+      "timings": {
+        "importMs": 6024,
+        "fontsMs": 2218,
+        "buildMs": 94,
+        "totalMs": 15800,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Noto Naskh Arabic",
+          "sizePt": 13.5,
+          "leadingPt": 22
+        },
+        "families": [
+          "Baloo Bhaijaan 2",
+          "Noto Naskh Arabic"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "١",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 49252,
+          "alt": "صفحة الافتتاح ١: دورة الماء."
+        },
+        {
+          "n": 2,
+          "label": "٢",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 37306,
+          "alt": "الصفحة ٢."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "binding": "right",
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 45739,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 27519,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "ded436507b302a56",
+            "lines": "58c8fbd1aa19d973"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].options.prefix",
+          "exerciseStyles[].options.suffix",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 193,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo Bhaijaan 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Naskh Arabic",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Naskh Arabic",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "document-digits",
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "right-binding",
+          "text-direction"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 6.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ca, fr, de, it, pt, zh, ja"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ar, en, es, ca, fr, de, it, pt, zh, ja"
+          }
+        ]
+      }
+    },
+    "ja": {
+      "hash8": "1f58e2d6",
+      "vdtHash": "78f5abd0d4a13ccebaed1725bdf53a2bdf681ad3",
+      "timings": {
+        "importMs": 8717,
+        "fontsMs": 7446,
+        "buildMs": 16,
+        "totalMs": 19033,
+        "builds": 2
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Klee One",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Klee One",
+          "Noto Sans JP"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 64538,
+          "alt": "章扉、1ページ：水のたび。"
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 32542,
+          "alt": "2ページ。"
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 94217,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 31933,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "575926a12408f70b",
+            "lines": "c74523dcf0483e62"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].instruction.fontFamily",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.bracket",
+          "exerciseStyles[].options.labels",
+          "exerciseStyles[].options.layout",
+          "exerciseStyles[].options.suffix",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 195,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Klee One",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Klee One",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Sans JP",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Sans JP",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "cjk-line-breaking",
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 6.7 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, en, es, ca, fr, de, it, pt, zh, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: ja, en, es, ca, fr, de, it, pt, zh, ar"
+          }
+        ]
+      }
+    },
+    "pt": {
+      "hash8": "99ddcc4e",
+      "vdtHash": "4cb857244acd62ebcc84cf4878728e4a905bc66e",
+      "timings": {
+        "importMs": 13012,
+        "fontsMs": 621,
+        "buildMs": 89,
+        "totalMs": 17408,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Baloo 2",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 51770,
+          "alt": "Página de abertura 1: A viagem da água."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 42870,
+          "alt": "Página 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 27529,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 28785,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "796fb6e8d01a914a",
+            "lines": "67f86bd4a7f5f3e0"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].number.suffix",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 192,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.4 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, ca, fr, de, it, zh, ja, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: pt, en, es, ca, fr, de, it, zh, ja, ar"
+          }
+        ]
+      }
+    },
+    "fr": {
+      "hash8": "2ae8e56d",
+      "vdtHash": "484b7705c4cdf2e7f5b3f4a48deeacb2ff9aef5a",
+      "timings": {
+        "importMs": 16473,
+        "fontsMs": 229,
+        "buildMs": 90,
+        "totalMs": 20777,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Baloo 2",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 57314,
+          "alt": "Page d’ouverture 1 : Le voyage de l'eau."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 48988,
+          "alt": "Page 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 30610,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 29611,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "0ac6d7f88a1b5eb4",
+            "lines": "74db4aebcb48ce89"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 191,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.5 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, ca, de, it, pt, zh, ja, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: fr, en, es, ca, de, it, pt, zh, ja, ar"
+          }
+        ]
+      }
+    },
+    "de": {
+      "hash8": "bb9e3304",
+      "vdtHash": "01a4a180202fe32e0ee687695ad6e672b7bc40b4",
+      "timings": {
+        "importMs": 10100,
+        "fontsMs": 3386,
+        "buildMs": 115,
+        "totalMs": 19664,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Baloo 2",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 63880,
+          "alt": "Kapitelauftakt, Seite 1: Das Wasser auf Reisen."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 47902,
+          "alt": "Seite 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 30599,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 30718,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "e97382570e0e9669",
+            "lines": "04785653094c5aa7"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 191,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.9 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, ca, fr, it, pt, zh, ja, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: de, en, es, ca, fr, it, pt, zh, ja, ar"
+          }
+        ]
+      }
+    },
+    "it": {
+      "hash8": "60ce0ae6",
+      "vdtHash": "2291a918e36dc0a3478a90d4b36d7e90eafb1587",
+      "timings": {
+        "importMs": 11750,
+        "fontsMs": 1752,
+        "buildMs": 102,
+        "totalMs": 19579,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          297
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 12,
+          "leadingPt": 18
+        },
+        "families": [
+          "Baloo 2",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 154
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1414,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 56554,
+          "alt": "Pagina d’apertura 1: Il viaggio dell'acqua."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1414,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 46156,
+          "alt": "Pagina 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "crop"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "pdf": {
+        "file": "school-traditions-worksheet.pdf",
+        "bytes": 29297,
+        "pages": 2
+      },
+      "sandbox": {
+        "file": "school-traditions-worksheet.postext",
+        "bytes": 29713,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "43e56fd483c56f10",
+            "lines": "4c661188722749b2"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidRunts",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.boldFontWeight",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.optimalLineBreaking",
+          "bodyText.paragraphSpacing",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].area.spacing",
+          "exerciseStyles[].area.weight",
+          "exerciseStyles[].arithmetic",
+          "exerciseStyles[].arithmetic.division",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].blank.weight",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.color",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].itemSpacing",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].match.gap",
+          "exerciseStyles[].match.look",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.color",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.fontWeight",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].trueFalse",
+          "exerciseStyles[].trueFalse.look",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].marginTop",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontFamily",
+          "orderedLists.fontWeight",
+          "orderedLists.marginBottom",
+          "orderedLists.marginTop",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop"
+        ],
+        "configSections": [
+          "bodyText",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 191,
+        "designElements": 8,
+        "directives": [
+          ":::exercise",
+          ":::solution",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 0,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "exercise-arithmetic",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts"
+        ],
+        "suggestedLevel": 2
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 10
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −10‰, the cap): p. 2 −10‰ “ La cisterna della scuola contiene 864 litri d'…”"
+          },
+          {
+            "check": "C26",
+            "severity": "warn",
+            "detail": "the hero is 7.6 % colour, pictures or display type (aim for 25 %+)"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, ca, fr, de, pt, zh, ja, ar"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: it, en, es, ca, fr, de, pt, zh, ja, ar"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'オーファン、ウィドウ、段末そろえ',
   description: '段の区切りをまたいで行やブロックを離さない規則と、すべての段の終わりをそろえる調整手段',
   lang: 'ja',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '22分',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ export const metadata = {
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>そのトラッキングの上限。1文字あたり、emの1000分の1を単位とします（10 = 0.01 em）。</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>ウィドウ・オーファンの規則で1行短く残った段を、その段自身の段落で埋めます。行末なりゆきの段落も1行長く組めるようになり、両端揃えの段落はどの行も <code>bodyText.maxWordSpacing</code> またはその段落でもっとも広い行より広く組みません。どの段落も1行増やせないときは、1つを1行短く組み、次の段との分割にその行を引き受けさせます。短い段が減る場合にだけ採用されます。</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

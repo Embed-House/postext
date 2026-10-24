@@ -1,0 +1,51 @@
+---
+title: "Un cuaderno de ejercicios árabe, de derecha a izquierda"
+summary: "Un cuaderno árabe de primaria de derecha a izquierda: opciones أ ب ج, columnas para unir, palabras en recuadro, صح o خطأ y cifras arábigo-índicas."
+plain: "Páginas de un cuaderno árabe infantil sobre un huerto escolar: elegir la respuesta, unir columnas, completar huecos, marcar verdadero o falso, ordenar palabras y buscarlas en una sopa de letras."
+description: "Un cuaderno árabe de primaria en Postext: ejercicios de derecha a izquierda, unir columnas, sopa de letras y cifras del Máshrek y del Magreb."
+question: "¿Cómo compongo un cuaderno árabe de derecha a izquierda, con columnas para unir y cifras arábigo-índicas?"
+aliases: ["cuaderno de ejercicios árabe", "كراسة تمارين", "تمارين", "اختر الإجابة الصحيحة", "صل بين العمودين", "أكمل الفراغ", "sopa de letras en árabe", "ejercicios de derecha a izquierda", "cifras arábigo-índicas", "cifras del Magreb"]
+pageNotes: { "1": "La página de apertura, impar, a la izquierda del lomo: una acuarela de un huerto escolar con palmeras, una fuente, limoneros, una niña que riega y un niño con una maceta de hierbabuena llega al borde superior; debajo, una pestaña terracota الوحدة الثالثة y el título في الحديقة, colocados desde la derecha; una línea de puntos para el nombre, la clase y la fecha; el ejercicio ١, tres preguntas con las opciones أ) ب) ج) de tres en tres.", "2": "El ejercicio ٢, dos columnas que se unen con puntos, las palabras a la derecha y sus parejas a la izquierda; el ejercicio ٣, un recuadro de palabras color arena sobre un párrafo con huecos punteados; el ejercicio ٤, cuatro afirmaciones con las casillas صح y خطأ al final de la línea, a la izquierda." }
+---
+
+## Lo que vas a componer
+
+Una unidad de un cuaderno de árabe de segundo en una página de 17 × 24 cm, sobre un huerto escolar. Abre con una franja de acuarela, la pestaña y el título de la unidad y una línea de puntos para el nombre, la clase y la fecha. Luego vienen los ejercicios que imprime un libro de primaria árabe: elegir la respuesta correcta, con أ) ب) ج) de tres en tres; unir las dos columnas; completar los huecos con un recuadro de palabras; marcar صح o خطأ; ordenar las palabras y escribir la frase en la línea; buscar siete palabras del huerto en una sopa de letras. Las soluciones cierran la unidad. El mismo texto se compone dos veces: la edición del Máshrek numera todo con cifras arábigo-índicas, ١ ٢ ٣, y la del Magreb con cifras europeas. Las dos se leen desde la derecha y se encuadernan por la derecha.
+
+## Elaboración
+
+### 1 · No nombres ningún lado
+
+El código está en [la respuesta corta](#la-respuesta-corta). `locale: 'ar'` pone el texto de derecha a izquierda, encuaderna el libro por la derecha y elige las cifras; el estilo de ejercicio toma de la lengua las letras abjad de las opciones y صح y خطأ para el verdadero o falso. Las columnas para unir, el recuadro de palabras, la sopa de letras y las líneas de escritura se dibujan como diseños de recuadro, que una página de derecha a izquierda refleja: la primera columna queda a la derecha, una palabra en horizontal en la sopa se lee de derecha a izquierda y los puntos de unir se miran en el centro.
+
+### 2 · La apertura del huerto
+
+<Excerpt region="opener" />
+
+La pintura se ancla a la página y conserva su sitio; la pestaña y el título se colocan en el flujo de la página, donde `left` es el comienzo de la línea, así que quedan a la derecha sin coordenadas propias. Los folios, como las cabeceras, son físicos y nombran cada lado.
+
+### 3 · Dos ediciones, dos juegos de cifras
+
+<Excerpt region="editions" />
+
+La configuración es una función, así que cada composición recibe su propio objeto, y la segunda solo cambia la lengua. `ar-MA` escribe con cifras europeas los números de los ejercicios, de los apartados, de las soluciones y de los folios, y deja todo lo demás como estaba: la dirección, la encuadernación, las letras abjad y las palabras de las soluciones.
+
+## Variantes
+
+### Imprime el libro del profesor
+
+Las respuestas se imprimen entonces en su sitio, con el color de `answers`: los puntos unidos, las palabras en sus huecos, las casillas correctas rellenas y las palabras rodeadas en la sopa.
+
+```diff
+-const exercises = { solutions: { placement: 'directive' } };
++const exercises = { edition: 'teacher', solutions: { placement: 'none' } };
+```
+
+### Escribe los ejercicios en chino
+
+<RecipeLink slug="chinese-exercise-book">El cuaderno de ejercicios chino</RecipeLink> compone los mismos tipos de ejercicio con sus propios paréntesis y numerales.
+
+## Errores frecuentes
+
+- La mayoría de las letras árabes no tienen ✓ ni ✗: las palabras de verdadero o falso son صح y خطأ, y el enunciado pide una marca en la casilla.
+- La sopa de letras rellena las casillas vacías con letras de sus propias palabras, en su forma aislada. Elige palabras de letras variadas o la cuadrícula se llenará de ة.

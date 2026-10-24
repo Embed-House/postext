@@ -1,0 +1,51 @@
+---
+title: "Un cahier d’exercices arabe, de droite à gauche"
+summary: "Un cahier d’arabe du primaire composé de droite à gauche : choix أ ب ج, colonnes à relier, banque de mots, cases صح ou خطأ, mots mêlés et chiffres orientaux."
+plain: "Les pages d’un cahier d’arabe pour enfants sur un jardin d’école : choisir la réponse, relier les colonnes, compléter avec une boîte de mots, cocher vrai ou faux, remettre des mots en ordre, trouver des mots dans une grille."
+description: "Un cahier d’arabe du primaire dans Postext : exercices de droite à gauche, points à relier en miroir, mots mêlés et chiffres du Machrek et du Maghreb."
+question: "Comment composer un cahier d’arabe de droite à gauche, avec colonnes à relier et chiffres orientaux ?"
+aliases: ["cahier d’exercices arabe", "كراسة تمارين", "تمارين", "اختر الإجابة الصحيحة", "صل بين العمودين", "أكمل الفراغ", "mots mêlés en arabe", "exercices de droite à gauche", "chiffres arabes orientaux", "chiffres du Maghreb"]
+pageNotes: { "1": "La page d’ouverture, un recto à gauche du dos : une aquarelle d’un jardin d’école avec des palmiers dattiers, une fontaine, des citronniers, une fille qui arrose des plantes et un garçon qui porte un pot de menthe monte jusqu’au bord supérieur ; dessous, un onglet terre cuite الوحدة الثالثة et le titre في الحديقة, posés depuis la droite ; une ligne pointillée pour le nom, une pour la classe, une pour la date ; l’exercice ١, trois questions avec les options أ) ب) ج) par trois sur une ligne.", "2": "L’exercice ٢, deux colonnes reliées par des points, les mots à droite et leurs paires à gauche ; l’exercice ٣, une banque de mots dans un cadre couleur sable au-dessus d’un paragraphe à trous pointillés ; l’exercice ٤, quatre affirmations, chacune avec les cases صح et خطأ au bout gauche de la ligne." }
+---
+
+## Ce que vous allez composer
+
+Une unité d’un cahier d’arabe de CE1 sur une page de 17 × 24 cm, autour d’un jardin d’école. Elle s’ouvre sur un bandeau d’aquarelle, avec l’onglet et le titre de l’unité et une ligne pointillée pour le nom, la classe et la date. Suivent les exercices qu’imprime un manuel arabe du primaire : choisir la bonne réponse, avec أ) ب) ج) par trois sur une ligne ; relier les deux colonnes ; compléter les trous à partir d’une banque de mots ; cocher صح ou خطأ ; remettre les mots en ordre et écrire la phrase sur la ligne ; trouver sept mots du jardin dans une grille de lettres. Les solutions ferment l’unité. Le même texte est composé deux fois : l’édition du Machrek numérote tout en chiffres arabes orientaux, ١ ٢ ٣, et celle du Maghreb en chiffres européens. Les deux se lisent depuis la droite et sont reliées à droite.
+
+## Préparation
+
+### 1 · Ne nommer aucun côté
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `locale: 'ar'` compose le texte de droite à gauche, relie le livre à droite et choisit les chiffres. Le style d’exercice prend dans la langue les lettres abjad des options, et صح et خطأ pour le vrai ou faux. Les colonnes à relier, la banque de mots, les mots mêlés et les lignes d’écriture sont dessinés comme des maquettes d’encadré, qu’une page de droite à gauche met en miroir : la première colonne se place à droite, un mot lu en travers de la grille va de droite à gauche, et les points à relier se font face au milieu.
+
+### 2 · L’ouverture du jardin
+
+<Excerpt region="opener" />
+
+La peinture est ancrée à la page et garde sa place. L’onglet et le titre sont posés dans le flux de la page, où `left` est le début de la ligne : ils se placent donc à droite sans coordonnée propre. Les folios restent physiques, comme les titres courants, et nomment chaque côté.
+
+### 3 · Deux éditions, deux jeux de chiffres
+
+<Excerpt region="editions" />
+
+La configuration est une fonction : chaque composition reçoit donc son propre objet, et la seconde ne change que la locale. `ar-MA` écrit en chiffres européens les numéros des exercices, les items, le corrigé et les folios, et laisse tout le reste en l’état : la direction, la reliure, les lettres abjad et les mots du corrigé.
+
+## Variantes
+
+### Imprimer le livre du maître
+
+Les réponses s’impriment alors à leur place, dans la couleur de `answers` : les points reliés, les mots dans leurs trous, les bonnes cases remplies et les mots entourés dans la grille.
+
+```diff
+-const exercises = { solutions: { placement: 'directive' } };
++const exercises = { edition: 'teacher', solutions: { placement: 'none' } };
+```
+
+### Écrire les exercices en chinois
+
+<RecipeLink slug="chinese-exercise-book">Le cahier d’exercices chinois</RecipeLink> compose les mêmes types d’exercice avec ses propres parenthèses et ses chiffres chinois.
+
+## Erreurs fréquentes
+
+- La plupart des polices arabes n’ont ni ✓ ni ✗ : le vrai et le faux s’écrivent صح et خطأ, et la consigne demande une marque dans la case.
+- Les mots mêlés remplissent leurs cases vides avec les lettres de leurs propres mots, sous leur forme isolée. Choisissez des mots aux lettres variées, sinon la grille se remplit de ة.

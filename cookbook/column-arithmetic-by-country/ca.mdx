@@ -1,0 +1,57 @@
+---
+title: "Comptes en columna com els escriu cada país"
+summary: "Una fitxa de càlcul amb els comptes escrits com a línies - 864 : 4 del Markdown, xifra a xifra en caselles, i la divisió com la fan les escoles de cada país."
+plain: "Una pàgina de comptes per a infants de nou anys en castellà, anglès, francès i alemany. Cada país escriu la divisió a la seva manera i la fitxa ho segueix; un interruptor mostra la còpia del mestre amb totes les respostes."
+description: "Una fitxa de càlcul a Postext: càlcul mental en tres columnes, sumes, restes i multiplicacions en columna, la divisió de cada país i la còpia del mestre."
+question: "Com compon la divisió tal com l’escriuen les escoles de cada país?"
+aliases: ["comptes en columna", "operacions en columna", "divisió llarga", "divisió amb caixa", "caseta", "càlcul mental", "fitxa de càlcul", "edició del mestre", "solucionari", "potence", "schriftliches Rechnen"]
+pageNotes: { "1": "La fitxa de l’alumne: una banda taronja amb la píndola Unidad 3 i el títol Las cuatro operaciones, ratlles per al nom i la data, nou càlculs mentals en tres columnes amb una casella cadascun, i tres sumes, restes i multiplicacions compostes xifra a xifra amb una fila de caselles per al resultat.", "2": "Les divisions amb el divisor en una caixa a la dreta del dividend i caselles a sota per al quocient, i un problema en quadrícula." }
+---
+
+## Què compondràs
+
+La unitat 3 d’un quadern de càlcul de quart de primària, *Les quatre operacions*, en quatre edicions. Una fila de càlcul mental en tres columnes; sumes, restes i multiplicacions escrites amb una xifra per casella i una fila de caselles per al resultat; divisions i un problema en quadrícula. A la divisió les edicions se separen: la castellana i la francesa posen el divisor en una caixa a la dreta del dividend i el quocient a sota; l’anglesa el deixa fora del signe ⟌, la «caseta», amb el quocient a sobre; l’alemanya escriu `864 : 4 =` en una línia amb lloc a sota per als passos, i els productes amb un punt. La coma o el punt decimal del càlcul mental també segueix la llengua. Un interruptor sobre les pàgines converteix la fitxa de l’alumne en la còpia del mestre, amb cada resposta en taronja a la seva casella.
+
+## Elaboració
+
+### 1 · Escriu els comptes com a línies del Markdown
+
+<Excerpt region="answer" />
+
+Un `:::exercise{type="arithmetic"}` porta una operació per element de llista, `- 864 : 4`, amb els signes que escriu el seu país (`:`, `÷`, `×`, `·`). El motor calcula el resultat, el quocient i la resta, i l’estil decideix com es dibuixa el compte: caselles de 7,2 mm i `arithmetic.division` triada per edició amb `t()`. La fila de càlcul mental és un exercici de buits corrent amb la llista dins d’un grup `:::columns{count=3}`, i cada `[[70]]` és una casella de la mateixa amplada que les altres.
+
+### 2 · Encapçala la fitxa
+
+<Excerpt region="head" />
+
+El títol de nivell 1 de la unitat dibuixa la banda taronja, la píndola i el títol, i també els camps de nom i data a partir dels seus atributs (`nombre="Nombre" fecha="Fecha"`), de manera que cada edició els retola en la seva llengua.
+
+### 3 · Canvia entre la fitxa de l’alumne i la còpia del mestre
+
+<Excerpt region="live" />
+
+`exercises.edition: 'teacher'` imprimeix cada resposta al seu lloc amb el color de `answers.color`, aquí el d’accent: les caselles del càlcul mental, les xifres de cada resultat, el quocient i la resta, la resposta model del problema. El formulari sobre les pàgines canvia la configuració al seu lloc i torna a compondre; les fonts ja estan carregades, així que n’hi ha prou amb `buildDocument`. La captura compon abans les dues fitxes, de manera que les pàgines publicades mostren la de l’alumne i després la del mestre.
+
+## Variants
+
+### Posa les solucions de cap per avall al peu
+
+Un costum dels quaderns de passatemps: la clau de cada exercici, girada 180° a sota seu.
+
+```diff
+-  exercises: { edition: 'student' }, // the switch above the pages sets 'teacher'
++  exercises: { edition: 'student', solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+### Divideix amb la caseta a totes les edicions
+
+Les escoles japoneses i xineses també fan servir la caseta ⟌; una llengua que no és a la llista pren la seva pròpia.
+
+```diff
+-    division: t({ es: 'potence', fr: 'potence', de: 'inline', en: 'bracket' }) },
++    division: 'bracket' },
+```
+
+## Errors freqüents
+
+- Les operacions són de nombres enters: un compte amb decimals com `12,5 + 3,75` no es llegeix i s’imprimeix tal com està escrit. Deixa els decimals als buits del càlcul mental, on la resposta és text.

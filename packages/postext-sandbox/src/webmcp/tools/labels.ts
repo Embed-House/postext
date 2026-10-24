@@ -82,7 +82,7 @@ export function labelTools(host: SandboxToolHost): WebMcpTool[] {
         },
         alt: { type: 'string', description: 'icon: what a reader hears for the symbol (default empty: read as nothing).' },
         color: { type: 'string', description: 'icon: its colour, a hex or a palette id.' },
-        size: { type: 'number', description: 'icon: its height in ems (default 0.75, the cap height).' },
+        size: { type: 'number', description: 'icon: its height in ems (default 0.75, the cap height; beside a shaped number, the shape\'s height).' },
         position: { type: 'string', enum: ['start', 'end'], description: 'icon: before the label\'s words (default, a key\'s row) or after them.' },
         template: { type: 'string', description: 'pointer: the page template id.' },
         from: { type: 'string', description: 'pointer: the frame the line leaves (a note).' },

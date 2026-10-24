@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/build.js';
 import { createMeasurementCache } from '../../measure/index.js';
+import { inlineIconBox } from '../../measure/inlineIcon.js';
 import type { VDTBlock, VDTDocument } from '../../vdt.js';
 import type { PostextConfig } from '../../types.js';
 
@@ -73,6 +74,38 @@ describe('exercises laid out (#1227)', () => {
     expect(icons[0]).toMatchObject({ kind: 'resource', alt: 'Write', fileId: 'pencil.svg', svg: true });
     expect(icons[1]).toMatchObject({ kind: 'glyph', alt: 'Speak', glyph: '*', color: '#2b7a3d' });
     expect(icons[1]!.fontString).toContain('Icons');
+  });
+
+  it('sets activity icons on the band of a shaped number (#1248)', () => {
+    const cfg: PostextConfig = {
+      ...base,
+      exerciseStyles: [{ id: 'a', number: { shape: 'disc', fontSize: { value: 1.05, unit: 'em' } }, icons: {
+        write: { resourceId: 'pencil', alt: 'Write' },
+        oral: { resourceId: 'pencil', alt: 'Speak', size: 0.8 },
+      } }],
+    };
+    const resources = [{ id: 'pencil', typeId: 'figure', kind: 'svg' as const, createdAt: 0, updatedAt: 0, svg: { fileId: 'pencil.svg', width: 24, height: 24 } }];
+    const doc = buildDocument({ markdown: ':::exercise{icon="write oral"}\nFill [[in]].\n:::\n', resources }, cfg, createMeasurementCache());
+    const segs = doc.blocks.flatMap((b) => b.lines.flatMap((l) => l.segments ?? []));
+    const disc = segs.find((s) => s.chip && !s.chip.blank)!.chip!;
+    const [write, oral] = segs.flatMap((s) => (s.swatch?.icon ? [s.swatch.icon] : []));
+    // Without a size of its own: the disc's height, its top and its bottom.
+    expect(write!.heightPx).toBeCloseTo(disc.ascent + disc.descent, 1);
+    expect(write!.dropPx).toBeCloseTo(disc.descent, 1);
+    expect(inlineIconBox(write!, 0, 100).y).toBeCloseTo(100 - disc.ascent, 1);
+    // With its own size: centred on the disc.
+    const box = inlineIconBox(oral!, 0, 100);
+    expect(box.y + box.height / 2).toBeCloseTo(100 + (disc.descent - disc.ascent) / 2, 1);
+    expect(oral!.heightPx).toBeLessThan(write!.heightPx);
+  });
+
+  it('keeps an icon on the baseline beside a bare number', () => {
+    const cfg: PostextConfig = { ...base, exerciseStyles: [{ id: 'a', icons: { write: { resourceId: 'pencil', alt: 'Write' } } }] };
+    const resources = [{ id: 'pencil', typeId: 'figure', kind: 'svg' as const, createdAt: 0, updatedAt: 0, svg: { fileId: 'pencil.svg', width: 24, height: 24 } }];
+    const doc = buildDocument({ markdown: ':::exercise{icon="write"}\nFill [[in]].\n:::\n', resources }, cfg, createMeasurementCache());
+    const icon = doc.blocks.flatMap((b) => b.lines.flatMap((l) => (l.segments ?? []).flatMap((s) => (s.swatch?.icon ? [s.swatch.icon] : []))))[0]!;
+    expect(icon.dropPx).toBeUndefined();
+    expect(inlineIconBox(icon, 0, 100)).toMatchObject({ baseline: 100, y: 100 - icon.heightPx });
   });
 
   it('writes a true/false answer in a bracket: full width in Chinese', () => {

@@ -1,0 +1,57 @@
+---
+title: "Un quadern d’exercicis xinès, de l’alumne i del mestre"
+summary: "Un 练习册 de llengua i matemàtiques: apartats 一、二、, parèntesis （　）, 田字格 i comptes en vertical, compost dos cops amb un sol text, per a l’alumne i el mestre."
+plain: "Un quadern d’exercicis de primària xinès: dues unitats de llengua i de matemàtiques. El mateix text dona l’exemplar de l’alumne, amb buits i solucions al final, i el del mestre, amb cada resposta en vermell al seu lloc."
+description: "Un 练习册 xinès a Postext: apartats 一、二、, parèntesis （　）, 判断题, 连线, 田字格 i 竖式, amb l’edició del mestre treta del text de l’alumne."
+question: "Com componc preguntes xineses amb un （　） després de l’enunciat i les opcions A. B. C. D. en fila?"
+aliases: ["练习册", "quadern d’exercicis xinès", "llibre del mestre", "solucionari", "edició del mestre", "选择题", "判断题", "填空题", "连线", "田字格", "竖式", "口算", "参考答案"]
+pageNotes: { "1": "La primera pàgina de la unitat de llengua: una aquarel·la d’un poble a la primavera, amb salzes, orenetes i dos infants en un camí entre arrossars, arriba a la vora superior; a sota, una pestanya verda 语文, el títol 第一单元　春天来了 i un filet verd; una línia per a la classe, el nom i la nota; després l’apartat 一, pinyin sobre vuit caselles per escriure, l’apartat 二, tres lectures per encerclar, i l’apartat 三, dues preguntes d’opció múltiple amb A. B. C. D. en fila i un （　） buit després de cada enunciat.", "5": "La mateixa pàgina al llibre del mestre: les vuit paraules escrites en vermell amb lletra Kai dins de les caselles, les lectures correctes encerclades en vermell, la B i la C escrites als parèntesis i les opcions correctes encerclades." }
+---
+
+## Què compondràs
+
+Dues unitats d’un 练习册 de segon de primària en format 16开: una de llengua, 春天来了, i una altra de matemàtiques sobre sumes i restes fins a cent. Cada una obre amb una franja d’aquarel·la, una pestanya amb l’assignatura i una línia per a la classe, el nom i la nota, i continua amb els apartats que imprimeix un quadern xinès: 看拼音写词语, lectures per encerclar, 选择题 amb un （　） després de l’enunciat i A. B. C. D. en fila, 判断题 amb un parèntesi al final de la línia, buits, 连线 entre classificadors i coses, una frase per escriure en 田字格, 口算 en quatre columnes, 竖式 amb una casella per xifra i un problema. Els punts van a cada enunciat, tal com els llegeix l’alumne. El mateix Markdown es compon dos cops: el llibre de l’alumne, amb el 参考答案 al final de cada unitat, i el del mestre, amb cada resposta escrita en vermell, amb lletra Kai, al seu lloc.
+
+## Elaboració
+
+### 1 · Un estil per a tots els apartats
+
+El codi és a [la resposta curta](#la-resposta-curta). Els apartats es compten amb numerals xinesos seguits d’un 、 d’amplada completa, així que després del número no hi va cap espai; l’enunciat va en lletra Hei sense negreta, perquè els punts entre parèntesis es llegeixin com a part seva. `options.bracket` escriu el （　） després de cada enunciat, i al llibre del mestre la lletra correcta hi va a dins. Els dos estils petits amplien el principal: `pinyin` dibuixa cada buit com una caixa tan ampla com la seva paraula i `kuohao` no dibuixa res, perquè el parèntesi de 在（　）里填 ja és al text.
+
+### 2 · El llibre de l’alumne i el del mestre amb un sol text
+
+<Excerpt region="editions" />
+
+La configuració és una funció, així que cada composició rep el seu propi objecte i el paquet del Sandbox desa el de l’alumne. `edition: 'teacher'` escriu les respostes amb el color i la lletra d’`answers`: les paraules a les seves caselles, les lletres als seus parèntesis, √ i × als 判断题, les xifres a les caselles del 竖式 i la frase model amb un caràcter per quadre. El llibre de l’alumne porta les solucions on hi ha la línia `:::solutions`, al final de cada unitat; el del mestre no les necessita.
+
+### 3 · L’obertura d’unitat amb la seva pintura
+
+<Excerpt region="opener" />
+
+La pintura s’ancora a la pàgina, així que arriba a la vora superior tant a la pàgina senar com a la parella; la pestanya i el títol es col·loquen des de l’inici de la caixa de text, sota el peu de la pintura. Les dues unitats comparteixen el disseny i només canvien els seus atributs de títol, `kicker` i `pic`.
+
+### 4 · Folis al peu
+
+<Excerpt region="furniture" />
+
+Els quaderns xinesos porten el foli al peu. El títol de la sèrie surt de la capçalera YAML del Markdown (`{title}`), i el de la unitat, del seu títol (`{chapterTitle}`).
+
+## Variants
+
+### Imprimeix les solucions al final del capítol
+
+Sense línies `:::solutions`, `chapterEnd` reuneix les solucions de cada unitat abans del títol de nivell 1 següent.
+
+```diff
+-  solutions: { placement: edition === 'teacher' ? 'none' : 'directive' } });
++  solutions: { placement: edition === 'teacher' ? 'none' : 'chapterEnd' } });
+```
+
+### Posa el pinyin sobre els caràcters
+
+<RecipeLink slug="pinyin-primer">La cartilla amb pinyin</RecipeLink> posa el pinyin sobre els seus caràcters com a ruby, cosa que un buit encara no admet.
+
+## Errors freqüents
+
+- Una lectura encara no pot anar sobre un buit: un ruby dins de `[[…]]` forma part de la resposta oculta, i una zona de 田字格 ocupa tota l’amplada de la línia. L’apartat 看拼音写词语 posa cada síl·laba a la seva pròpia línia i la caixa a sota, quatre per fila en un grup `:::columns`.
+- La lletra Kai només compon les respostes, així que carrega únicament els caràcters dels buits i de les respostes model; si compon algun caràcter més, cal afegir-lo a aquest text.

@@ -1,0 +1,57 @@
+---
+title: "Unidad de un cuaderno de actividades de Primaria"
+summary: "Una unidad de cuaderno de Ciencias con once actividades :::exercise que imprime un solo estilo: números en círculos, banco y puntos para unir."
+plain: "Un cuaderno de actividades de 3.º de Primaria sobre los animales vertebrados. Las preguntas y sus respuestas están escritas en el texto; un estilo decide cómo se ve cada actividad en la página."
+description: "Cuaderno de Ciencias de Primaria en Postext: números en círculos, banco de palabras, verdadero o falso, une con flechas, rodea, sopa de letras y cuadrícula."
+question: "¿Cómo compongo una página de cuaderno: números en círculos, banco de palabras, V/F, une con flechas?"
+aliases: ["cuaderno de actividades", "ficha", "actividades", "banco de palabras", "une con flechas", "verdadero o falso", "sopa de letras", "rodea", "completa", "iconos de actividad"]
+pageNotes: { "1": "La apertura de la unidad: una banda verde con la pastilla blanca Unidad 5 y el título Los animales vertebrados, una ilustración de una charca con una rana, un martín pescador, una trucha, una tortuga y un conejo, un texto breve, un recuadro Recuerda con filete amarillo y la actividad 1: un banco de palabras con borde discontinuo sobre cuatro frases con huecos.", "3": "Las actividades 6 y 7: cinco fases de la vida de una rana pintadas en desorden sobre cinco frases con una casilla para el número, y una sopa de letras de diez por diez con filetes verdes y sus seis palabras debajo." }
+---
+
+## Lo que vas a componer
+
+La unidad 5 de un cuaderno de Ciencias de la Naturaleza de 3.º de Primaria, en A4: *Los animales vertebrados*. La apertura pone la unidad en una banda verde sobre una ilustración de una charca; después vienen once actividades, cada una con su número en un círculo verde y un icono de lápiz, de bocadillo o de pareja. Un banco de palabras en un recuadro tintado de borde discontinuo, frases con V y F, animales que unir con flechas a su grupo, palabras que rodear en una frase y en un texto, fases de la rana que numerar, una sopa de letras, animales que clasificar, una pregunta abierta con renglones y otra en cuadrícula. La edición inglesa imprime la misma unidad como la componen sus escuelas, con T y F y *join with a line*. Tres ilustraciones generadas con un modelo de difusión la acompañan.
+
+## Elaboración
+
+### 1 · Escribe las actividades en el Markdown y dales estilo una vez
+
+<Excerpt region="answer" />
+
+Cada actividad es una valla `:::exercise`. Lo que lee el alumno y lo que cuenta como correcto están en el texto: `[[pelo]]` es un hueco cuya respuesta es *pelo*, `- [x]` una afirmación verdadera, `- Delfín -> Mamífero` una pareja, `[[pelo | (plumas)]]` una elección cuya palabra correcta va entre paréntesis. El estilo solo guarda el aspecto, así que las once actividades comparten `actividad` y un segundo estilo, `cuadricula`, que la amplía con `extends` para cambiar los renglones por cuadrícula. El motor las numera, baraja con una semilla la columna derecha de las parejas y las frases que ordenar, hace los huecos tan anchos como la respuesta más larga para que ninguno se delate e imprime V y F en español y T y F en inglés sin una palabra en la configuración.
+
+### 2 · Pon los iconos de actividad
+
+<Excerpt region="icons" />
+
+Un icono de `exerciseStyles[].icons` nombra una imagen del libro, y `:::exercise{icon="oral pareja"}` pone las imágenes tras el número, en el orden escrito, y las lee en voz alta por su `alt`. Son signos planos dibujados en código sobre un círculo del color de la unidad, así que siguen nítidos en el PDF y cambian con la paleta. El lápiz acompaña a las actividades de escribir; los iconos de hablar y de pareja marcan la última, que no tiene zona de escritura (`area="none"`).
+
+### 3 · Abre la unidad con una banda y una ilustración
+
+<Excerpt region="opener" />
+
+El título de nivel 1 de la unidad dibuja la banda, la pastilla del número y el título a partir de sus atributos (`unidad="Unidad 5" pic="charca"`), y la ilustración bajo la banda a 176 × 75 mm. Las imágenes de dentro de las actividades usan un tipo de recurso sin pie ni número (`dibujo`), como las imprime un cuaderno. El texto se lee con facilidad a esa edad: Atkinson Hyperlegible Next de 12 pt sobre 17 pt, sin separación silábica y en bandera.
+
+## Variantes
+
+### Imprime las soluciones para el profesor
+
+El mismo Markdown da la copia del profesor: los huecos rellenos, las casillas verdaderas marcadas y las palabras correctas rodeadas en magenta.
+
+```diff
+   exerciseStyles: [actividad, cuadricula],
++  exercises: { edition: 'teacher' },
+```
+
+### Numera las actividades en cuadrados
+
+Un cuadrado redondeado del color de la unidad se lee como el estilo de otra editorial.
+
+```diff
+-  number: { shape: 'disc', background: col('unit'), color: col('paper'),
++  number: { shape: 'rounded', background: col('unit'), color: col('paper'),
+```
+
+## Errores frecuentes
+
+- Las palabras que se rodean en un texto corrido guardan un poco de aire a cada lado para el círculo, así que una palabra justo antes de una coma o un punto queda algo separada de él.

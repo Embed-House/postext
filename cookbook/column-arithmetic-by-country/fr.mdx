@@ -1,0 +1,57 @@
+---
+title: "Opérations posées comme les écrit chaque pays"
+summary: "Une fiche de calcul où chaque opération est une ligne - 864 ÷ 4 du Markdown, posée chiffre par chiffre en cases, la division à la manière de chaque pays."
+plain: "Une page de calcul pour des enfants de neuf ans, en espagnol, en anglais, en français et en allemand. Chaque pays pose la division à sa façon et la fiche suit ; un interrupteur affiche la version de l’enseignant avec toutes les réponses."
+description: "Une fiche de calcul dans Postext : calcul mental sur trois colonnes, additions, soustractions et multiplications posées, division posée selon le pays, corrigé."
+question: "Comment composer la division posée comme l’écrivent les écoles de chaque pays ?"
+aliases: ["opérations posées", "division posée", "potence", "calcul posé", "fiche de calcul", "calcul mental", "corrigé", "livre du maître", "long division", "schriftliches Rechnen", "cuentas"]
+pageNotes: { "1": "La fiche de l’élève : un bandeau orange avec une pastille Unité 3 et le titre Les quatre opérations, des lignes pour le prénom et la date, neuf calculs mentaux sur trois colonnes avec une case vide chacun, puis trois additions, trois soustractions et trois multiplications posées chiffre par chiffre, avec une rangée de cases pour le résultat.", "2": "Les divisions posées avec la potence, le diviseur à droite du dividende et des cases dessous pour le quotient, et un problème sur papier quadrillé." }
+---
+
+## Ce que vous allez composer
+
+L’unité 3 d’un cahier de calcul de CM1, *Les quatre opérations*, en quatre éditions. Une rangée de calcul mental sur trois colonnes, puis des additions, des soustractions et des multiplications posées, un chiffre par case, avec une rangée de cases pour le résultat, enfin des divisions et un problème sur papier quadrillé. C’est à la division que les éditions se séparent : la fiche anglaise met le diviseur à l’extérieur du crochet ⟌ et le quotient au-dessus ; l’espagnole et la française placent le diviseur dans une potence à droite du dividende et le quotient dessous ; l’allemande écrit `864 : 4 =` sur une ligne, avec de la place dessous pour les calculs intermédiaires, et note ses produits avec un point. La virgule ou le point décimal du calcul mental suit aussi la langue. Un interrupteur au-dessus des pages change la fiche de l’élève en version de l’enseignant, chaque réponse imprimée en orange dans sa case.
+
+## Préparation
+
+### 1 · Écrire les opérations comme des lignes du Markdown
+
+<Excerpt region="answer" />
+
+Un `:::exercise{type="arithmetic"}` prend une opération par élément de liste, `- 864 ÷ 4`, avec les signes qu’écrit son pays (`÷`, `:`, `×`, `·`). Le moteur calcule le résultat, le quotient et le reste, et le style décide du dessin de l’opération : des cases de 7,2 mm, et une `arithmetic.division` choisie pour chaque édition avec `t()`. Une rangée de calcul mental est un exercice à trous ordinaire dont la liste se trouve dans un groupe `:::columns{count=3}`, chaque `[[70]]` donnant une case de la même largeur que les autres.
+
+### 2 · Composer l’en-tête de la fiche
+
+<Excerpt region="head" />
+
+Le titre de niveau 1 de l’unité dessine le bandeau orange, la pastille et le titre, ainsi que les champs du prénom et de la date à partir de ses attributs (`nombre="Name" fecha="Date"`) : chaque édition les intitule donc dans sa langue.
+
+### 3 · Passer de la fiche de l’élève à la version de l’enseignant
+
+<Excerpt region="live" />
+
+`exercises.edition: 'teacher'` imprime chaque réponse à sa place, dans la couleur que donne `answers.color`, ici celle d’accent : les cases du calcul mental, les chiffres de chaque résultat, le quotient et le reste, la réponse modèle du problème. Le formulaire au-dessus des pages modifie la configuration sur place et relance la composition ; les polices sont déjà chargées, si bien que `buildDocument` suffit. La capture compose d’abord les deux fiches, et les pages publiées montrent la fiche de l’élève, puis celle de l’enseignant.
+
+## Variantes
+
+### Mettre les solutions à l’envers en pied de page
+
+Une habitude des cahiers de jeux : le corrigé de chaque exercice, retourné à 180° sous l’exercice.
+
+```diff
+-  exercises: { edition: 'student' }, // the switch above the pages sets 'teacher'
++  exercises: { edition: 'student', solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+### Poser la division sous le crochet dans toutes les éditions
+
+Les écoles japonaises et chinoises utilisent aussi le crochet ; une langue que vous ne nommez pas garde sa propre disposition.
+
+```diff
+-    division: t({ es: 'potence', fr: 'potence', de: 'inline', en: 'bracket' }) },
++    division: 'bracket' },
+```
+
+## Erreurs fréquentes
+
+- Les opérations portent sur des nombres entiers : une opération avec des décimales comme `12,5 + 3,75` n’est pas lue et s’imprime telle qu’elle est écrite. Gardez les nombres décimaux dans les trous du calcul mental, où la réponse est du texte.

@@ -1,6 +1,7 @@
 /**
  * Inline symbols (`:icon[alt]{…}`, #1058, DESIGN §12.5): the size of the
- * box each kind takes on a line. The box stands on the baseline; its
+ * box each kind takes on a line. The box stands on the baseline (or reaches
+ * `drop` ems below it, #1248); its
  * height is the text's capital height (0.75 em, as a swatch's side) unless
  * `size` gives it in ems. A picture keeps its proportions, a glyph is set
  * at the size whose capitals are that high and takes its advance, and a
@@ -28,7 +29,8 @@ export function measureInlineIcon(icon: InlineIcon, color: string, font: string)
   const em = fontEm(font);
   const heightPx = Math.max(1, (icon.size ?? ICON_CAP_EM) * em);
   const tint = /^#[0-9a-f]{6}(?:[0-9a-f]{2})?$/i.test(color) ? color : undefined;
-  const base = { alt: icon.alt, heightPx, ...(tint ? { color: tint } : {}) };
+  const dropPx = icon.drop !== undefined && icon.drop > 0 ? icon.drop * em : 0;
+  const base = { alt: icon.alt, heightPx, ...(dropPx > 0 ? { dropPx } : {}), ...(tint ? { color: tint } : {}) };
   if (icon.resource !== undefined) {
     const p = icon.picture;
     return {
@@ -80,9 +82,11 @@ export function resourceBlockIcons(rb: ResolvedResourceBlock | undefined): VDTIn
 }
 
 /** Where a symbol is drawn on its segment: its box from the segment's left
- *  edge `x` and the line's `baseline`, and, for a line sample, the stroke's
+ *  edge `x` and the line's `baseline`, the baseline a glyph is set on (the
+ *  line's, lowered by the icon's drop), and, for a line sample, the stroke's
  *  ends at half height. */
-export function inlineIconBox(icon: VDTInlineIcon, x: number, baseline: number): { x: number; y: number; width: number; height: number; strokeY: number } {
+export function inlineIconBox(icon: VDTInlineIcon, x: number, baseline: number): { x: number; y: number; width: number; height: number; strokeY: number; baseline: number } {
   const left = x + (icon.insetPx ?? 0);
-  return { x: left, y: baseline - icon.heightPx, width: icon.widthPx, height: icon.heightPx, strokeY: baseline - icon.heightPx / 2 };
+  const bottom = baseline + (icon.dropPx ?? 0);
+  return { x: left, y: bottom - icon.heightPx, width: icon.widthPx, height: icon.heightPx, strokeY: bottom - icon.heightPx / 2, baseline: bottom };
 }

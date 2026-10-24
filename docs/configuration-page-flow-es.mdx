@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Viudas, huérfanas y equilibrado',
   description: 'Las reglas que mantienen juntas las líneas y los bloques cuando cambian de columna, y los recursos con los que el motor consigue que todas las columnas terminen a la misma altura.',
   lang: 'es',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '24 min',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ Estos ajustes van en `headings.balancing`.
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>Límite de ese espaciado entre letras, en milésimas de em por carácter (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Llena con sus propios párrafos una columna que las reglas de viudas y huérfanas dejaron una línea corta: también los párrafos en bandera pueden ocupar una línea más, uno justificado no puede abrir ninguna línea más que <code>bodyText.maxWordSpacing</code> ni que su propia línea más abierta, y si ninguno gana la línea, uno se compone con una línea menos para que el corte siguiente la recoja. Solo se conserva si las páginas acaban con menos columnas cortas.</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

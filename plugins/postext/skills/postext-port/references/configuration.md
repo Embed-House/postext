@@ -692,7 +692,7 @@ enabled true | maxLinesPerHeading 4 | maxLinesBeforeLoose 2 (≥ 1.28) | stretch
 stretchAfterDisplays true (≥ 1.28) | stretchAfterFloats true | maxLinesAfterFloat 1
 stretchAfterWideFloats 'flush' ('flush' | 'always', ≥ 1.28) | trailingStep 'lines' ('lines' | 'grid', ≥ 1.28)
 looseParagraphs true | maxLooseParagraphs 2
-trackParagraphs true | maxTracking 10 (‰ em) | trailing true | beforeSpan true
+trackParagraphs true | maxTracking 10 (‰ em) | fillShortColumns false (#1236) | trailing true | beforeSpan true
 closingBox 'first'  ('first' | 'last' | 'off') | gridLines 'allow' ('allow' | 'off', ≥ 1.25)
 ```
 `enabled` is off by default in vertical text and on a character grid (`cjk.grid.enabled`, ≥ 1.25);
@@ -703,7 +703,10 @@ Levers in order: box closing a short column pushed to the foot → extra grid li
 margins) → under top floats (under a float over several columns, ≥ 1.28, the columns under it move
 down together, or one alone only when the line ends it flush: `stretchAfterWideFloats: 'always'` is
 the 1.27 lever, which could lower one head and still leave its column short) → loose paragraphs
-(TeX looseness +1, within `bodyText.maxWordSpacing`, optional ≤ maxTracking positive tracking)
+(TeX looseness +1, within `bodyText.maxWordSpacing`, optional ≤ maxTracking positive tracking;
+with `fillShortColumns: true`, #1236, ragged paragraphs too, no line looser than the limit or the
+paragraph's own loosest line, and when none gains its line one paragraph set a line short, kept
+only when its pages end with fewer short columns)
 → the headings' further lines up to `maxLinesPerHeading`, only when the loose paragraphs have
 nothing left to give (≥ 1.28; up to 1.27 a heading took all its lines first, which opened four
 lines above the one heading of a page: do not lower `maxLinesPerHeading` against that any more,
@@ -1396,7 +1399,7 @@ ExerciseStyleConfig {
                 partialProducts=true (≥ 1.60: a row per non-zero digit of a 2+ digit multiplier),
                 working=lang (≥ 1.60: 'remainders' es ca it, one row a division step; 'products' elsewhere, two) },
   level: { glyph='●', empty='○', max=3, color=main },
-  icons: { [id]: { resourceId? | glyph + fontFamily?, color?, alt?, size?=0.75 } }  (inline symbols after the number, size in ems),
+  icons: { [id]: { resourceId? | glyph + fontFamily?, color?, alt?, size?=0.75 } }  (inline symbols after the number, size in ems; beside a shaped number they take its height and band),
   answers: { color=#d6246e, fontFamily?, italic=false }  (teacher's edition, example items, key marks),
   solutions?: ExerciseSolutionsConfig (over the book's, for this style's exercises),
   digital: { correctColor=#1e8e3e, wrongColor=#c5221f }

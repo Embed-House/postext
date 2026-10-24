@@ -1,0 +1,57 @@
+---
+title: "Eine Einheit aus einem Arbeitsheft für die Grundschule"
+summary: "Eine vierseitige Sachunterricht-Einheit mit elf :::exercise-Aufgaben, gesetzt in einem einzigen Stil: Nummernkreise, Wörterkasten, Punkte zum Verbinden."
+plain: "Ein Arbeitsheft für Achtjährige über Wirbeltiere. Die Fragen und ihre Antworten stehen im Text; ein Stil legt fest, wie jede Aufgabe auf der Seite aussieht."
+description: "Ein Arbeitsheft für den Sachunterricht in Postext: Nummernkreise, Wörterkasten, richtig oder falsch, verbinden, einkreisen, ordnen, Suchsel und Karopapier."
+question: "Wie setze ich eine Arbeitsheftseite mit Nummernkreisen, Wörterkasten, richtig oder falsch und Verbinden?"
+aliases: ["Arbeitsheft", "Arbeitsblatt", "Übungsheft", "Wörterkasten", "Wortspeicher", "verbinden", "richtig oder falsch", "Suchsel", "Buchstabengitter", "Lückentext", "Aufgabensymbole", "workbook", "cuaderno de actividades"]
+pageNotes: { "1": "Die Auftaktseite der Einheit: ein grünes Band mit einem weißen Feld Unit 5 und dem Titel Animals with backbones, ein Gemälde eines Teichs mit Frosch, Eisvogel, Forelle, Schildkröte und Kaninchen, ein kurzer Text, ein Kasten Remember mit gelbem Streifen und Aufgabe 1: ein gestrichelter Wörterkasten über vier Sätzen mit Lücken.", "3": "Die Aufgaben 6 und 7: fünf gemalte Stadien aus dem Leben eines Froschs in vertauschter Reihenfolge über fünf Sätzen mit je einem Kästchen für die Zahl, und ein Suchsel aus zehn mal zehn Feldern mit grünen Linien, darunter seine sechs Wörter." }
+---
+
+## Was Sie setzen
+
+Einheit 5 eines Arbeitshefts für den Sachunterricht der 3. Klasse, in A4: *Animals with backbones*, die Wirbeltiere. Die Auftaktseite setzt die Einheit in ein grünes Band über einem Gemälde eines Teichs; danach folgen elf Aufgaben, jede mit ihrer Nummer in einem grünen Kreis und einem Symbol für Schreiben, Sprechen oder Partnerarbeit. Ein Wörterkasten in einem getönten, gestrichelten Rahmen, Sätze zum Ankreuzen mit T oder F, Tiere, die man mit einer Linie ihrer Gruppe zuordnet, Wörter zum Einkreisen in einem Satz und in einem kurzen Text, die Stadien des Froschs zum Nummerieren, ein Suchsel, Tiere zum Sortieren, eine offene Frage auf Linien und eine weitere auf Karopapier. Eine spanische Ausgabe druckt dieselbe Einheit so, wie die Schulen dort sie setzen, mit V und F und *une con flechas*. Drei Gemälde, mit einem Diffusionsmodell erzeugt, illustrieren sie.
+
+## Zubereitung
+
+### 1 · Die Aufgaben im Markdown schreiben und einmal gestalten
+
+<Excerpt region="answer" />
+
+Jede Aufgabe ist ein Block `:::exercise`. Was das Kind liest und was als richtig gilt, steht im Text: `[[hair]]` ist eine Lücke mit der Antwort *hair*, `- [x]` eine wahre Aussage, `- Dolphin -> Mammal` ein Paar, `[[pelo | (plumas)]]` eine Auswahl, deren richtiges Wort in Klammern steht. Der Stil enthält nur das Aussehen: Die elf Aufgaben teilen sich `actividad`, und ein zweiter Stil, `cuadricula`, erweitert ihn mit `extends` und tauscht die Linien gegen Karopapier. Die Engine nummeriert die Aufgaben, mischt die rechte Spalte der Paare und die zu ordnenden Einträge mit einem Startwert, macht jede Lücke so breit wie die längste Antwort, damit keine ihre Lösung verrät, und druckt T und F auf Englisch, V und F auf Spanisch, ohne ein Wort in der Konfiguration.
+
+### 2 · Den Aufgaben ihre Symbole geben
+
+<Excerpt region="icons" />
+
+Ein Symbol in `exerciseStyles[].icons` verweist auf ein Bild des Buchs, und `:::exercise{icon="oral pareja"}` setzt die Bilder in der geschriebenen Reihenfolge hinter die Nummer; vorgelesen werden sie über ihren `alt`-Text. Es sind flache Zeichen, im Code auf einen Kreis in der Farbe der Einheit gezeichnet, deshalb bleiben sie im PDF scharf und ändern sich mit der Palette. Ein Arbeitsheft druckt außerdem einen Bleistift neben die Aufgaben zum Schreiben; die Symbole für Sprechen und Partnerarbeit kennzeichnen die letzte Aufgabe, die keinen Schreibbereich hat (`area="none"`).
+
+### 3 · Die Einheit mit einem Band und einem Gemälde eröffnen
+
+<Excerpt region="opener" />
+
+Die Überschrift der Ebene 1 zeichnet aus ihren Attributen (`unidad="Unit 5" pic="charca"`) das Band, das Feld mit der Nummer und den Titel, unter dem Band das Gemälde in 176 × 75 mm. Die Bilder in den Aufgaben verwenden einen Ressourcentyp ohne Bildunterschrift und ohne Nummer (`dibujo`), wie es Arbeitshefte drucken. Der Text liest sich für Kinder leicht: Atkinson Hyperlegible Next in 12 pt auf 17 pt, ohne Silbentrennung, im Flattersatz.
+
+## Varianten
+
+### Die Lösungen für die Lehrkraft drucken
+
+Aus demselben Markdown entsteht das Lehrerheft: alle Lücken ausgefüllt, die wahren Kästchen angekreuzt und die richtigen Wörter magentafarben eingekreist.
+
+```diff
+   exerciseStyles: [actividad, cuadricula],
++  exercises: { edition: 'teacher' },
+```
+
+### Die Aufgaben in Quadraten nummerieren
+
+Ein abgerundetes Quadrat in der Farbe der Einheit wirkt wie der Hausstil eines anderen Verlags.
+
+```diff
+-  number: { shape: 'disc', background: col('unit'), color: col('paper'),
++  number: { shape: 'rounded', background: col('unit'), color: col('paper'),
+```
+
+## Häufige Fehler
+
+- Wörter zum Einkreisen in einem Fließtext behalten auf jeder Seite etwas Raum für den Kreis, deshalb steht ein Wort direkt vor einem Komma oder Punkt ein wenig davon ab.

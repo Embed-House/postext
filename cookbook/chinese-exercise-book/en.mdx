@@ -1,0 +1,57 @@
+---
+title: "A Chinese exercise book, pupil's and teacher's"
+summary: "A 练习册 in Chinese and maths: sections 一、二、, （　） brackets, 田字格 and sums in columns, built twice from one text, for the pupil and the teacher."
+plain: "A Chinese primary-school exercise book: two units of language and maths questions. The same text makes the pupil's copy, with blanks and an answer key at the end, and the teacher's copy, with every answer written in red where it goes."
+description: "A Chinese 练习册 in Postext: 一、二、 sections, （　） brackets, 判断题, 连线, 田字格 and 竖式, with a teacher's edition built from the pupil's text."
+question: "How do I set Chinese test questions with a （　） bracket after the stem and A. B. C. D. options in a row?"
+aliases: ["练习册", "Chinese workbook", "Chinese exercise book", "teacher's edition", "answer key", "选择题", "判断题", "填空题", "连线", "田字格", "竖式", "口算", "参考答案"]
+pageNotes: { "1": "The opening page of the language unit: a watercolour of a village in spring, with willows, swallows and two children on a path between rice fields, runs to the top edge; under it a green 语文 tab, the title 第一单元　春天来了 and a green rule; a line for class, name and score; then section 一, pinyin over eight write-in boxes, section 二, three inline choices of a reading, and section 三, two multiple-choice questions with A. B. C. D. in a row and an empty （　） after each stem.", "5": "The same page in the teacher's book: the eight words written in red Kai in their boxes, the right readings ringed in red, B and C written in the brackets and the right options ringed." }
+---
+
+## What you'll build
+
+Two units of a second-year 练习册 on a 16开 page: a language unit, 春天来了, and a maths unit on sums up to 100. Each opens on a watercolour band, a subject tab and a line for class, name and score, then runs through the sections a Chinese workbook prints: 看拼音写词语, readings to ring, 选择题 with a （　） after the stem and A. B. C. D. in a row, 判断题 with a bracket at the end of the line, gaps, 连线 between measure words and things, a sentence to write on 田字格, 口算 in four columns, 竖式 with a box for each digit and a word problem. The points sit in each instruction, as the pupil reads them. The same Markdown is laid out twice: the pupil's book, with 参考答案 at the end of each unit, and the teacher's book, with every answer written in red Kai in its place.
+
+## Method
+
+### 1 · One style for every section
+
+The code is [the short answer](#the-short-answer) above. Sections are counted in Chinese numerals with a full-width 、 after them, so no word space follows the number; the instruction is set in the Hei face, unbolded, so the points in brackets read as part of it. `options.bracket` writes the （　） after each stem, and the right letter goes into it in the teacher's book. The two small styles extend the main one: `pinyin` draws each blank as a box as wide as its word, `kuohao` draws nothing, because the bracket of 在（　）里填 is in the text.
+
+### 2 · The pupil's book and the teacher's from one text
+
+<Excerpt region="editions" />
+
+The configuration is a function, so each build gets its own object and the Sandbox bundle keeps the pupil's one. `edition: 'teacher'` writes the answers in the colour and face of `answers`: the words in their boxes, the letters in their brackets, √ and × in the 判断题, the digits in the 竖式 cells, the model sentence one character to a square. The pupil's book keeps the key for the `:::solutions` line at the end of each unit; the teacher's book needs none.
+
+### 3 · A unit opener with its painting
+
+<Excerpt region="opener" />
+
+The painting is anchored to the page, so it runs to the top edge on a recto and on a verso alike; the subject tab and the title are placed from the top of the text block, below the painting's foot. Both units share the design and differ in their heading attributes, `kicker` and `pic`.
+
+### 4 · Folios at the foot
+
+<Excerpt region="furniture" />
+
+Chinese workbooks put the folio at the foot. The series title comes from the Markdown front matter (`{title}`), the unit's from its heading (`{chapterTitle}`).
+
+## Variations
+
+### Print the key at the end of the chapter
+
+Without `:::solutions` lines, `chapterEnd` collects each unit's key before the next level-1 heading.
+
+```diff
+-  solutions: { placement: edition === 'teacher' ? 'none' : 'directive' } });
++  solutions: { placement: edition === 'teacher' ? 'none' : 'chapterEnd' } });
+```
+
+### Write the readings beside the blanks
+
+<RecipeLink slug="pinyin-primer">The pinyin primer</RecipeLink> sets pinyin over its characters as ruby, which a blank cannot hold yet.
+
+## Pitfalls
+
+- A reading cannot stand over a blank yet: a ruby inside `[[…]]` is part of the hidden answer, and a 田字格 area takes the whole measure. The 看拼音写词语 section sets each syllable on its own line and the box under it, four to a row in a `:::columns` group.
+- The Kai face sets only the answers, so it loads the characters of the gaps and the model answers alone; a character it sets anywhere else must be added to that text.

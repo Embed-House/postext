@@ -1,0 +1,57 @@
+---
+title: "Um caderno de exercícios chinês, do aluno e do professor"
+summary: "Um 练习册 de língua e matemática: seções 一、二、, parênteses （　）, 田字格 e contas armadas, composto duas vezes a partir de um texto, para o aluno e o professor."
+plain: "Um caderno de exercícios de escola primária chinesa: duas unidades de língua e de matemática. O mesmo texto gera a cópia do aluno, com lacunas e gabarito no fim, e a do professor, com cada resposta escrita em vermelho no lugar dela."
+description: "Um 练习册 chinês no Postext: seções 一、二、, parênteses （　）, 判断题, 连线, 田字格 e 竖式, com o livro do professor tirado do texto do aluno."
+question: "Como componho questões chinesas com um （　） depois do enunciado e as opções A. B. C. D. em linha?"
+aliases: ["练习册", "caderno de exercícios chinês", "livro do professor", "manual do professor", "gabarito", "选择题", "判断题", "填空题", "连线", "田字格", "竖式", "口算", "参考答案"]
+pageNotes: { "1": "A página de abertura da unidade de língua: uma aquarela de uma aldeia na primavera, com salgueiros, andorinhas e duas crianças num caminho entre arrozais, vai até a borda superior; abaixo, uma aba verde 语文, o título 第一单元　春天来了 e um fio verde; uma linha para turma, nome e nota; depois a seção 一, pinyin sobre oito quadrinhos para escrever, a seção 二, três leituras para escolher na frase, e a seção 三, duas questões de múltipla escolha com A. B. C. D. em linha e um （　） vazio depois de cada enunciado.", "5": "A mesma página no livro do professor: as oito palavras escritas em Kai vermelha nos quadrinhos, as leituras certas circuladas em vermelho, B e C escritas nos parênteses e as opções certas circuladas." }
+---
+
+## O que você vai compor
+
+Duas unidades de um 练习册 do segundo ano no formato 16开: uma de língua, 春天来了, e uma de matemática sobre adição e subtração até 100. Cada uma abre com uma faixa em aquarela, uma aba com a matéria e uma linha para turma, nome e nota, e segue pelas seções que um caderno chinês imprime: 看拼音写词语, leituras para circular, 选择题 com um （　） depois do enunciado e A. B. C. D. em linha, 判断题 com um parêntese no fim da linha, lacunas, 连线 entre classificadores e coisas, uma frase para escrever em 田字格, 口算 em quatro colunas, 竖式 com um quadrinho por algarismo e um problema. Os pontos de cada questão ficam no enunciado, onde o aluno os lê. O mesmo Markdown é composto duas vezes: o livro do aluno, com o 参考答案 no fim de cada unidade, e o do professor, com cada resposta escrita em Kai vermelha no seu lugar.
+
+## Preparo
+
+### 1 · Um estilo para todas as seções
+
+O código é [a resposta curta](#a-resposta-curta) logo acima. As seções são contadas com numerais chineses seguidos de um 、 de largura inteira, então nenhum espaço vem depois do número; o enunciado é composto na Hei, sem negrito, para que os pontos entre parênteses sejam lidos como parte dele. `options.bracket` escreve o （　） depois de cada enunciado, e no livro do professor a letra certa entra nele. Os dois estilos pequenos estendem o principal: `pinyin` desenha cada lacuna como um quadrinho da largura da palavra, `kuohao` não desenha nada, porque o parêntese de 在（　）里填 está no texto.
+
+### 2 · O livro do aluno e o do professor a partir de um texto
+
+<Excerpt region="editions" />
+
+A configuração é uma função, então cada composição recebe o próprio objeto e o pacote do Sandbox guarda o do aluno. `edition: 'teacher'` escreve as respostas na cor e na fonte de `answers`: as palavras nos quadrinhos, as letras nos parênteses, √ e × nos 判断题, os algarismos nas casas do 竖式, a frase modelo com um caractere por quadrado. O livro do aluno guarda o gabarito para a linha `:::solutions` no fim de cada unidade; o do professor não precisa dele.
+
+### 3 · Uma abertura de unidade com a sua pintura
+
+<Excerpt region="opener" />
+
+A pintura fica ancorada à página, então chega à borda superior tanto numa página ímpar quanto numa par; a aba e o título são posicionados a partir do topo da mancha de texto, abaixo do pé da pintura. As duas unidades compartilham o design e só mudam nos atributos do título, `kicker` e `pic`.
+
+### 4 · Fólios no pé
+
+<Excerpt region="furniture" />
+
+Os cadernos chineses põem o fólio no pé. O título da série vem do front matter do Markdown (`{title}`), e o da unidade, do seu título (`{chapterTitle}`).
+
+## Variações
+
+### Imprima o gabarito no fim do capítulo
+
+Sem linhas `:::solutions`, `chapterEnd` reúne o gabarito de cada unidade antes do próximo título de nível 1.
+
+```diff
+-  solutions: { placement: edition === 'teacher' ? 'none' : 'directive' } });
++  solutions: { placement: edition === 'teacher' ? 'none' : 'chapterEnd' } });
+```
+
+### Escreva as leituras ao lado das lacunas
+
+<RecipeLink slug="pinyin-primer">A cartilha com pinyin</RecipeLink> põe o pinyin sobre os caracteres como ruby, algo que uma lacuna ainda não comporta.
+
+## Erros comuns
+
+- Uma leitura ainda não pode ficar sobre uma lacuna: um ruby dentro de `[[…]]` faz parte da resposta oculta, e uma área de 田字格 ocupa toda a medida. A seção 看拼音写词语 põe cada sílaba numa linha própria e o quadrinho embaixo, quatro por fileira num grupo `:::columns`.
+- A fonte Kai compõe só as respostas, então carrega apenas os caracteres das lacunas e das respostas modelo; um caractere que ela componha em outro lugar precisa ser acrescentado a esse texto.

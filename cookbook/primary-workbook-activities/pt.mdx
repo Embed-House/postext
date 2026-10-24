@@ -1,0 +1,57 @@
+---
+title: "Unidade de um caderno de atividades do fundamental"
+summary: "Uma unidade de Ciências de quatro páginas com onze atividades :::exercise, impressas por um só estilo: círculos numerados, banco de palavras, pontos para ligar."
+plain: "Um caderno de atividades para crianças de oito anos sobre os animais vertebrados. As perguntas e as respostas estão escritas no texto; um estilo decide como cada atividade aparece na página."
+description: "Caderno escolar de Ciências no Postext: números em círculos, banco de palavras, verdadeiro ou falso, ligue, circule, ordene, caça-palavras e quadriculado."
+question: "Como componho uma página de caderno de atividades: números em círculos, banco de palavras, V ou F, ligue?"
+aliases: ["caderno de atividades", "apostila", "folha de atividades", "banco de palavras", "ligue as colunas", "verdadeiro ou falso", "caça-palavras", "complete", "circule", "ícones de atividade", "workbook", "cuaderno de actividades"]
+pageNotes: { "1": "A abertura da unidade: uma faixa verde com a pílula branca Unit 5 e o título Animals with backbones, uma pintura de uma lagoa com uma rã, um martim-pescador, uma truta, uma tartaruga e um coelho, um texto curto, um boxe Remember com uma faixa amarela e a atividade 1: um banco de palavras com borda tracejada sobre quatro frases com lacunas.", "3": "As atividades 6 e 7: cinco fases da vida de uma rã pintadas fora de ordem sobre cinco frases, cada uma com um quadradinho para o número, e um caça-palavras de dez por dez com fios verdes e as suas seis palavras embaixo." }
+---
+
+## O que você vai compor
+
+A unidade 5 de um caderno de atividades de Ciências do 3.º ano, em A4: *Animals with backbones*, os animais vertebrados. A abertura põe a unidade numa faixa verde sobre a pintura de uma lagoa; depois vêm onze atividades, cada uma com o número num círculo verde e um ícone de lápis, de balão de fala ou de dupla. Um banco de palavras num boxe colorido de borda tracejada, frases para marcar com T ou F, animais para ligar ao seu grupo com um traço, palavras para circular numa frase e num texto curto, fases da rã para numerar, um caça-palavras, animais para classificar, uma pergunta aberta com linhas para escrever e outra em quadriculado. Uma edição espanhola imprime a mesma unidade como as escolas de lá a compõem, com V e F e *une con flechas*. Três pinturas geradas com um modelo de difusão a ilustram.
+
+## Preparo
+
+### 1 · Escreva as atividades no Markdown e dê estilo a elas uma vez só
+
+<Excerpt region="answer" />
+
+Cada atividade é um bloco `:::exercise`. O que o aluno lê e o que conta como certo estão no texto: `[[hair]]` é uma lacuna cuja resposta é *hair*, `- [x]` uma afirmação verdadeira, `- Dolphin -> Mammal` um par, `[[pelo | (plumas)]]` uma escolha cuja palavra certa vem entre parênteses. O estilo guarda só a aparência, então as onze atividades compartilham `actividad` e um segundo estilo, `cuadricula`, que o amplia com `extends` para trocar as linhas pelo quadriculado. O motor numera as atividades, embaralha com uma semente a coluna da direita dos pares e os itens a ordenar, deixa cada lacuna da largura da resposta mais longa para que nenhuma entregue a sua e imprime T e F em inglês e V e F em espanhol sem uma palavra na configuração.
+
+### 2 · Dê às atividades os seus ícones
+
+<Excerpt region="icons" />
+
+Um ícone de `exerciseStyles[].icons` nomeia uma imagem do livro, e `:::exercise{icon="oral pareja"}` põe as imagens depois do número, na ordem em que foram escritas; o leitor de tela as lê pelo seu `alt`. São sinais chapados desenhados em código sobre um círculo da cor da unidade, então ficam nítidos no PDF e mudam com a paleta. Um caderno de atividades também imprime um lápis ao lado das atividades de escrever; os ícones de falar e de dupla marcam a última, que não tem área de escrita (`area="none"`).
+
+### 3 · Abra a unidade com uma faixa e uma pintura
+
+<Excerpt region="opener" />
+
+O título de nível 1 da unidade desenha a faixa, a pílula do número e o título a partir dos seus atributos (`unidad="Unit 5" pic="charca"`), e a pintura sob a faixa em 176 × 75 mm. As imagens dentro das atividades usam um tipo de recurso sem legenda e sem número (`dibujo`), do jeito que um caderno as imprime. O texto é fácil de ler para crianças: Atkinson Hyperlegible Next em 12 pt sobre 17 pt, sem hifenização, alinhado à esquerda.
+
+## Variações
+
+### Imprima as respostas para o professor
+
+O mesmo Markdown gera o livro do professor: todas as lacunas preenchidas, os quadradinhos verdadeiros marcados e as palavras certas circuladas em magenta.
+
+```diff
+   exerciseStyles: [actividad, cuadricula],
++  exercises: { edition: 'teacher' },
+```
+
+### Numere as atividades em quadrados
+
+Um quadrado arredondado da cor da unidade lembra o padrão gráfico de outra editora.
+
+```diff
+-  number: { shape: 'disc', background: col('unit'), color: col('paper'),
++  number: { shape: 'rounded', background: col('unit'), color: col('paper'),
+```
+
+## Erros comuns
+
+- As palavras para circular num texto corrido guardam um pouco de espaço de cada lado para o círculo, então uma palavra logo antes de uma vírgula ou de um ponto fica um pouco afastada dele.
