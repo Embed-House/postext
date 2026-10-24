@@ -180,4 +180,33 @@ describe('a span: page heading that opens mid-page (#539)', () => {
     }
     expect(strayed).toEqual([]);
   });
+
+  it('takes a heading that opens a short column of its band along with the box that moves on', () => {
+    // The band under the cut is short: the text before ends in its first
+    // column, the next heading opens the second one alone, and the
+    // keep-together box after it moves on to the next page. A run of
+    // headings that is all its column holds stayed behind, orphaned — a
+    // hidden heading too, which takes no room: its bookmark, contents entry
+    // and running head pointed to the page before its box.
+    const sentence = 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore. ';
+    const box = Array.from({ length: 8 }, (_, i) => `**Group ${i}**\\\nMondays at 10, parish hall`).join('\n\n');
+    const style: HeadingStyleConfig = { id: 'a', breakBefore: { enabled: false }, span: 'page', spanBreak: false };
+    const strayed: string[] = [];
+    for (const hidden of [true, false]) {
+      for (const fill of [21, 28, 67]) {
+        const md = [
+          '# First {style="a"}', '', Array.from({ length: fill }, () => sentence.repeat(2)).join('\n\n'), '',
+          '# Second {style="a"}', '', sentence, '', '# News {style="n"}', '', ':::callout{type="k" title="Every week"}', box, ':::',
+        ].join('\n');
+        const doc = buildDocument({ markdown: md }, {
+          headingStyles: [style, { id: 'n', breakBefore: { enabled: false }, hidden }],
+          calloutStyles: [{ id: 'k', keepTogether: true }],
+        }, createMeasurementCache());
+        const [, , news] = headings(doc);
+        const frame = doc.blocks.find((b) => b.type === 'callout')!;
+        if (news!.pageIndex !== frame.pageIndex || news!.columnIndex !== frame.columnIndex) strayed.push(`${hidden ? 'hidden' : 'shown'} ${fill}`);
+      }
+    }
+    expect(strayed).toEqual([]);
+  });
 });

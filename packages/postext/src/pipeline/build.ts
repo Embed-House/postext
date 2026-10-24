@@ -4358,13 +4358,26 @@ function placeDocumentPass(
    *  column just as it opens this one, and is rolled back no further —
    *  unless it opens a band a page-span heading cut under the text of the
    *  page (`spanBreak: false`, #1238): rolled back, that heading opens the
-   *  next page instead (`headingLeftBand`), with the block it is kept with. */
-  const headingRunMayLeave = (col: VDTColumn, run: number): boolean => {
+   *  next page instead (`headingLeftBand`), with the block it is kept with.
+   *  Nor when `shortColumn` says the block leaves a short column (the band
+   *  under a page-span heading or box, a column cut by a float) for a
+   *  taller one: a run of in-column headings opening it moves on too. A
+   *  hidden heading is the usual case — it takes no room, and left alone in
+   *  such a column it sent its bookmark, contents entry and running head to
+   *  the page before the box. */
+  const headingRunMayLeave = (col: VDTColumn, run: number, shortColumn = false): boolean => {
     if (run <= 0) return false;
     if (run < col.blocks.length) return true;
+    if (shortColumn && !col.blocks.some((b) => headingSpansPage(b))) return true;
     const head = col.blocks[0]!;
     return head.contentIndex !== undefined
       && spanHeadingOpenedHere.get(head.contentIndex) === `${cursor.pageIndex}:${col.band ?? 0}`;
+  };
+  /** Whether heading block `b` is a `span: 'page'` one: it opens its band
+   *  wherever it is set, and moving it on would only open the next one. */
+  const headingSpansPage = (b: VDTBlock): boolean => {
+    const raw = b.contentIndex !== undefined ? contentBlocks[b.contentIndex] : undefined;
+    return raw !== undefined && headingLevels.forBlock(raw)?.span === 'page';
   };
 
   /**
@@ -5896,16 +5909,17 @@ function placeDocumentPass(
           // …otherwise it moves whole to the next column. Keep-with-next: a
           // run of headings at the column's tail travels with the box.
           // Skipped when the column holds nothing else (rolling back again
-          // would loop) — the headings stay, orphaned. Only the head of a
-          // box can roll headings back: a continuation always lands in a
-          // fresh column.
+          // would loop) — the headings stay, orphaned — unless the column is
+          // a short one (`headingRunMayLeave`). Only the head of a box can
+          // roll headings back: a continuation always lands in a fresh
+          // column.
           let run = 0;
           for (let j = curCol.blocks.length - 1; j >= 0; j--) {
             if (isFreeHeading(curCol.blocks[j]!)) run++;
             else break;
           }
           pendingSpacing = 0;
-          if (part === 0 && resolved.headings.keepWithNext && headingRunMayLeave(curCol, run)) {
+          if (part === 0 && resolved.headings.keepWithNext && headingRunMayLeave(curCol, run, shortColumn)) {
             const rolledBack = rollbackHeadings(curCol);
             advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
             return (rolledBack[0]!.contentIndex ?? startIdx - rolledBack.length) - 1;
