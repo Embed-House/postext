@@ -177,7 +177,7 @@ function docWith(...blocks: VDTDesignPathBlock[]): VDTDocument {
 describe('path block in HTML (#1055)', () => {
   it('is an inline svg placed on its box, hidden from assistive technology', () => {
     const html = renderToHtml(docWith(filled(), dashed(), marked()));
-    expect(html).toContain('<svg class="pt-path" aria-hidden="true" focusable="false" width="40" height="30" style="position:absolute;left:10px;top:10px;width:40px;height:30px;overflow:visible;">');
+    expect(html).toContain('<svg aria-hidden="true" focusable="false" width="40" height="30" style="position:absolute;left:10px;top:10px;width:40px;height:30px;overflow:visible;">');
     expect(html).toContain('<path d="M0 30L20 0L40 30Z" fill="#336699" fill-rule="evenodd"/>');
     expect(html).toContain('<path d="M1 1L101 1" fill="none" stroke="#cc0000" stroke-width="2" stroke-dasharray="6 3" stroke-linecap="round" stroke-linejoin="bevel"/>');
     // The dot and the arrow, filled in their colours.
