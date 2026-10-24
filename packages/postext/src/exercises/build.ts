@@ -11,7 +11,7 @@ import { exerciseSettingsOf, type ExerciseSettings } from '../defaults/exercises
 import { resolveChipStylesConfig } from '../defaults/chipStyles.js';
 import { resolveParagraphStylesConfig } from '../defaults/paragraphStyles.js';
 import { dimensionToPx } from '../units.js';
-import { computeBaselineGrid, resolvedLocale } from '../pipeline/config.js';
+import { computeBaselineGrid, resolvedDirection, resolvedLocale } from '../pipeline/config.js';
 import { exerciseChipStyles, exerciseParagraphStyles } from './styles.js';
 import { expandExercises, numberExercises, type ExerciseExpansion } from './expand.js';
 import { hasExercises, readExercises } from './model.js';
@@ -91,6 +91,7 @@ export function expandDocumentExercises(
     lineHeightPt: toPt(computeBaselineGrid(resolved)),
     measurePt: toPt(measurePx),
     bodyFont: resolved.bodyText.fontFamily,
+    ...(resolvedDirection(resolved) === 'rtl' ? { rtl: true } : {}),
     boxIds: new Set(resolved.calloutStyles.map((s) => s.id)),
   });
 }

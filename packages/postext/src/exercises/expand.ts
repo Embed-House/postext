@@ -42,6 +42,8 @@ export interface ExpandContext {
   bodySizePt: number;
   lineHeightPt: number;
   measurePt: number;
+  /** A right-to-left document (its designs are mirrored). */
+  rtl?: boolean;
   /** The text's font family: drawn letters (grids, matching) use it. */
   bodyFont?: string;
   /** Ids of the configured box styles (a style's `box` must name one). */
@@ -886,6 +888,7 @@ class Emitter {
       kind: ex.kind as 'wordsearch' | 'crossword' | 'arithmetic', id: `${this.ids.frame}-grid-${ex.ordinal}`, style: this.style, exercise: ex,
       blocks: this.blocks, seed: this.book.seed, teacher: this.teacher, bodySizePt: this.ctx.bodySizePt, lineHeightPt: this.ctx.lineHeightPt, measurePt: this.ctx.measurePt,
       words: { across: this.book.words.across, down: this.book.words.down },
+      ...(this.ctx.rtl ? { rtl: true } : {}),
       ...(this.ctx.bodyFont ? { font: this.ctx.bodyFont } : {}),
     });
     const out = this.drawnGrid(box);

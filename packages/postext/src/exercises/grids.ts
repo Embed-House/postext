@@ -36,6 +36,8 @@ export interface GridBoxInput {
   right?: string[];
   links?: number[];
   labels?: string[];
+  /** A right-to-left page: the engine mirrors the drawing. */
+  rtl?: boolean;
   /** The text's font family, for the letters drawn. */
   font?: string;
   /** The words of the document language (a crossword's clue headings). */
@@ -423,6 +425,13 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   const gapCols = 2;
   const perRow = Math.max(1, Math.min(style.arithmetic.columns, Math.floor((input.measurePt / cell + gapCols) / (Math.max(1, ...ops.map((o) => o.cols)) + gapCols))));
   const colW = Math.max(1, ...ops.map((o) => o.cols)) + gapCols;
+  const w = Math.min(input.measurePt, perRow * colW * cell);
+  // Numbers read left to right on a right-to-left page too: the engine
+  // mirrors a design there, so each operation is drawn mirrored in its own
+  // box first (the operations follow one another right to left).
+  let mirrorAt = 0;
+  let mirrorW = 0;
+  const X = (x: number): number => (input.rtl ? mirrorAt + mirrorW - (x - mirrorAt) : x);
   const els: DesignElement[] = [];
   let rulesD = '';
   let boxesD = '';
@@ -436,28 +445,29 @@ function arithmeticBox(input: GridBoxInput): GridBox {
     row.forEach((o, j) => {
       const k = i + j;
       const ox = j * colW * cell;
+      mirrorAt = ox;
+      mirrorW = o.cols * cell;
       for (const c of o.cells) {
         const x = ox + c.c * cell; const yy = y + c.r * cell;
         if (c.answer) {
-          boxesD += `M${r(x)} ${r(yy)}H${r(x + cell)}V${r(yy + cell)}H${r(x)}Z`;
+          boxesD += `M${r(X(x))} ${r(yy)}H${r(X(x + cell))}V${r(yy + cell)}H${r(X(x))}Z`;
           if (c.slot) slots.push({ key: c.slot, kind: 'cell', accept: [c.text], cell: [Math.round(yy / cell), Math.round(x / cell)] });
           if (!input.teacher) continue;
         }
-        els.push(textElement(`d${k}_${c.r}_${c.c}`, c.text, x, yy, cell, cell, cell * 0.7, c.answer ? { color: style.answers.color, ...(style.answers.fontFamily ?? input.font ? { fontFamily: (style.answers.fontFamily ?? input.font)! } : {}) } : { ...font, ...fontColor }));
+        els.push(textElement(`d${k}_${c.r}_${c.c}`, c.text, input.rtl ? X(x) - cell : x, yy, cell, cell, cell * 0.7, c.answer ? { color: style.answers.color, ...(style.answers.fontFamily ?? input.font ? { fontFamily: (style.answers.fontFamily ?? input.font)! } : {}) } : { ...font, ...fontColor }));
       }
-      for (const [rr, c0, c1] of o.rules) rulesD += `M${r(ox + c0 * cell)} ${r(y + rr * cell)}H${r(ox + c1 * cell)}`;
+      for (const [rr, c0, c1] of o.rules) rulesD += `M${r(X(ox + c0 * cell))} ${r(y + rr * cell)}H${r(X(ox + c1 * cell))}`;
       if (o.extra?.startsWith('bracket:')) {
         const lead = Number(o.extra.slice(8));
-        rulesD += `M${r(ox + lead * cell)} ${r(y + cell)}Q${r(ox + (lead + 0.3) * cell)} ${r(y + 1.5 * cell)} ${r(ox + lead * cell)} ${r(y + 2 * cell)}`;
+        rulesD += `M${r(X(ox + lead * cell))} ${r(y + cell)}Q${r(X(ox + (lead + 0.3) * cell))} ${r(y + 1.5 * cell)} ${r(X(ox + lead * cell))} ${r(y + 2 * cell)}`;
       }
       if (o.extra?.startsWith('potence:')) {
         const left = Number(o.extra.slice(8));
-        rulesD += `M${r(ox + (left + 0.5) * cell)} ${r(y)}V${r(y + 2 * cell)}`;
+        rulesD += `M${r(X(ox + (left + 0.5) * cell))} ${r(y)}V${r(y + 2 * cell)}`;
       }
     });
     y += (rows + 1) * cell;
   }
-  const w = Math.min(input.measurePt, perRow * colW * cell);
   const ruleW = dimPt(style.grid.ruleWidth, input.bodySizePt) * 1.4;
   els.unshift(pathElement('answers', boxesD, w, y, style.grid.rule, ruleW * 0.5, { dash: [{ value: ruleW, unit: 'pt' }, { value: ruleW * 1.5, unit: 'pt' }] }));
   els.push(pathElement('rules', rulesD, w, y, style.grid.color ?? BLACK, ruleW));

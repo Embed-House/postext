@@ -66,7 +66,7 @@ const WORDS: Record<string, ExerciseWords> = {
   pt: { exercise: 'Exercício', trueFalse: ['V', 'F'], solutions: 'Gabarito', check: 'Verificar', showSolution: 'Ver a resposta', hideSolution: 'Ocultar a resposta', reset: 'Recomeçar', correct: 'Correto!', wrong: 'Quase lá', hint: 'Dica', blank: 'lacuna', score: '{right} de {total} certas', across: 'Horizontais', down: 'Verticais' },
   zh: { exercise: '练习', trueFalse: ['√', '×'], solutions: '参考答案', check: '检查', showSolution: '查看答案', hideSolution: '隐藏答案', reset: '重做', correct: '正确！', wrong: '再想想', hint: '提示', blank: '空', score: '答对 {right}/{total}', across: '横向', down: '纵向' },
   ja: { exercise: '練習', trueFalse: ['○', '×'], solutions: '解答', check: '答え合わせ', showSolution: '解答を見る', hideSolution: '解答を隠す', reset: 'やり直す', correct: '正解！', wrong: 'もう一度', hint: 'ヒント', blank: '空欄', score: '{total}問中{right}問正解', across: 'ヨコのカギ', down: 'タテのカギ' },
-  ar: { exercise: 'تمرين', trueFalse: ['✓', '✗'], solutions: 'الحلول', check: 'تحقّق', showSolution: 'اعرض الحل', hideSolution: 'أخفِ الحل', reset: 'أعد المحاولة', correct: 'صحيح!', wrong: 'ليس تمامًا', hint: 'تلميح', blank: 'فراغ', score: '{right} من {total}', across: 'أفقيًا', down: 'عموديًا' },
+  ar: { exercise: 'تمرين', trueFalse: ['صح', 'خطأ'], solutions: 'الحلول', check: 'تحقّق', showSolution: 'اعرض الحل', hideSolution: 'أخفِ الحل', reset: 'أعد المحاولة', correct: 'صحيح!', wrong: 'ليس تمامًا', hint: 'تلميح', blank: 'فراغ', score: '{right} من {total}', across: 'أفقيًا', down: 'عموديًا' },
 };
 
 /** The primary language subtag of a locale, lower-cased. */
