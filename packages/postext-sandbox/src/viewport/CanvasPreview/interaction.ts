@@ -506,8 +506,9 @@ export function attachPageInteraction(target: HTMLElement, opts: PageInteraction
   let touchTap = false;
 
   // A video player in the HTML preview (#454) keeps its own pointer: its
-  // controls play, scrub and go full screen.
-  const onPlayer = (ev: Event): boolean => !!(ev.target as Element | null)?.closest?.('.pt-video');
+  // controls play, scrub and go full screen. So do the controls of an
+  // exercise (#1230): its inputs, options, dots and bar.
+  const onPlayer = (ev: Event): boolean => !!(ev.target as Element | null)?.closest?.('.pt-video, .pt-ex-ui');
 
   target.addEventListener('pointerdown', (ev) => {
     if (!on() || onPlayer(ev)) return;

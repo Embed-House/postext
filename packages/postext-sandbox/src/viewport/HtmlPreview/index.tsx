@@ -11,6 +11,7 @@ import {
   resolveColorValue,
   resolveLayoutConfig,
   coordinateVideoPlayback,
+  attachExercises,
   watchFonts,
   onFontsChanged,
 } from 'postext';
@@ -168,6 +169,12 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
   const [docVersion, setDocVersion] = useState(0);
   /** The pages run right to left (see `onScrollBoundsChange`). */
   const rtlRef = useRef(false);
+  // The exercises' controls (#1230), laid again after every render, and
+  // what their answers are kept under: the book (a project, else the
+  // preset shown) and the chapter laid out.
+  const detachExercisesRef = useRef<(() => void) | null>(null);
+  const exerciseKeyRef = useRef('');
+  exerciseKeyRef.current = `postext-sandbox:${state.activeProjectId ?? `preset:${state.activePresetId ?? ''}`}:${wholeBook ? 'book' : activeChapterId ?? ''}`;
 
   // Latest-value refs so the stable ResizeObserver / font-loader callbacks
   // don't capture stale values via closure.
@@ -196,6 +203,8 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
   useEffect(() => {
     const shadow = shadowRef.current;
     if (!shadow) return;
+    detachExercisesRef.current?.();
+    detachExercisesRef.current = null;
     shadow.innerHTML = '';
     const style = document.createElement('style');
     style.textContent = SHADOW_CSS;
@@ -247,6 +256,8 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
       linkObserver.disconnect();
       scroll.removeEventListener('click', onLinkClick);
       stopVideoCoordination();
+      detachExercisesRef.current?.();
+      detachExercisesRef.current = null;
       scrollHostRef.current = null;
       contentHostRef.current = null;
       lastRenderRef.current = null;
@@ -672,6 +683,14 @@ function HtmlPreview({ fontScale, columnMode, onGeneratingChange, onScrollBounds
 
       // Videos streamed over HLS get their player (#476).
       attachHlsPlayers(scroll);
+
+      // Exercises (#1230): answerable, checked and kept per book and
+      // chapter. A patch keeps the script element of the first render, so
+      // the data comes from this render.
+      detachExercisesRef.current?.();
+      detachExercisesRef.current = indexed.exercises
+        ? attachExercises(scroll, { data: indexed.exercises, storageKey: exerciseKeyRef.current })
+        : null;
 
       docRef.current = doc;
       builtSourceRef.current = currentSource;
