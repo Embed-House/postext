@@ -989,6 +989,7 @@ class Emitter {
       blocks: this.blocks, seed: this.book.seed, teacher: this.teacher, bodySizePt: this.ctx.bodySizePt, lineHeightPt: this.ctx.lineHeightPt, measurePt: this.measure,
       words: { across: this.book.words.across, down: this.book.words.down, comma: this.book.language === 'ar' ? '\u060C ' : this.book.language === 'zh' || this.book.language === 'ja' ? '\u3001' : ', ' },
       num: (n) => this.num(n),
+      ...(this.ctx.digits ? { digits: this.ctx.digits } : {}),
       ...(this.ctx.rtl ? { rtl: true } : {}),
       ...(this.ctx.bodyFont ? { font: this.ctx.bodyFont } : {}),
     });

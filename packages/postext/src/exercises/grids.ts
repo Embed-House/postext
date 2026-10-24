@@ -6,7 +6,8 @@
  */
 
 import type { ContentBlock } from '../parse/index.js';
-import type { CalloutStyleConfig, ColorValue, DesignElement } from '../types.js';
+import type { CalloutStyleConfig, ColorValue, DesignElement, DigitSystem } from '../types.js';
+import { withDigits } from '../arabicNumerals.js';
 import type { ResolvedExerciseStyle } from '../defaults/exercises.js';
 import { graphemesOf } from '../measure/graphemes.js';
 import { drawnBox, pathElement, textElement } from './designs.js';
@@ -49,6 +50,8 @@ export interface GridBoxInput {
   /** The words of the document language (a crossword's clue headings),
    *  and what separates two entries of a list (`, `, `، `, `、`). */
   words?: { across: string; down: string; comma?: string };
+  /** The document's digits, when they are not the European ones. */
+  digits?: DigitSystem;
   /** A number in the document's digits (a crossword's cells and clues). */
   num?: (n: number) => string;
 }
@@ -444,7 +447,11 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   const ex = input.exercise!;
   const { style } = input;
   const cell = dimPt(style.grid.cell, input.bodySizePt) * 0.8;
-  const ops = ex.operations.map((op, k) => layOperation(op, style.arithmetic.division, k + 1));
+  // Written in European digits in a book that prints others, an operation
+  // takes the book's (`numerals`).
+  const D = (t: string): string => withDigits(t, input.digits);
+  const written = ex.operations.map((op) => ({ ...op, a: D(op.a), b: D(op.b), result: D(op.result), ...(op.remainder ? { remainder: D(op.remainder) } : {}) }));
+  const ops = written.map((op, k) => layOperation(op, style.arithmetic.division, k + 1));
   const gapCols = 2;
   const columns = style.arithmetic.columns;
   const room = Math.max(1, Math.floor(input.measurePt / cell + gapCols));
@@ -517,7 +524,7 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   const box = drawnBox(input.id, els, y, 4, 4) as GridBox;
   box.info = { kind: 'arithmetic', rows: Math.round(y / cell), cols: widthCells, cellPt: cell, xPt: 0, yPt: 0 };
   box.slots = slots;
-  box.key = ex.operations.map((op) => `${op.a} ${op.sign ?? OP_SIGN[op.op]} ${op.b} = ${op.result}${op.remainder ? ` (${op.remainder})` : ''}`);
+  box.key = written.map((op) => `${op.a} ${op.sign ?? OP_SIGN[op.op]} ${op.b} = ${op.result}${op.remainder ? ` (${op.remainder})` : ''}`);
   return box;
 }
 
