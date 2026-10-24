@@ -120,6 +120,13 @@ function iconFor(kind: WarningPayload['kind']) {
     case 'labelOverflow':
     case 'labelOverlap':
     case 'unknownCalloutType':
+    case 'exerciseUnknownType':
+    case 'exerciseUnknownStyle':
+    case 'exerciseNoAnswer':
+    case 'exerciseUnreadItem':
+    case 'exerciseNested':
+    case 'exerciseWordUnplaced':
+    case 'solutionOutside':
     case 'figureWordsShared':
     case 'unknownChipStyle':
     case 'unknownMarkStyle':
@@ -307,6 +314,20 @@ export function titleFor(payload: WarningPayload, labels: SandboxLabels): string
       return labels.warningsUnknownParagraphStyleTitle;
     case 'unknownCalloutType':
       return labels.warningsUnknownCalloutTypeTitle;
+    case 'exerciseUnknownType':
+      return labels.warningsExerciseUnknownTypeTitle;
+    case 'exerciseUnknownStyle':
+      return labels.warningsExerciseUnknownStyleTitle;
+    case 'exerciseNoAnswer':
+      return labels.warningsExerciseNoAnswerTitle;
+    case 'exerciseUnreadItem':
+      return labels.warningsExerciseUnreadItemTitle;
+    case 'exerciseNested':
+      return labels.warningsExerciseNestedTitle;
+    case 'exerciseWordUnplaced':
+      return labels.warningsExerciseWordUnplacedTitle;
+    case 'solutionOutside':
+      return labels.warningsSolutionOutsideTitle;
     case 'columnsFlowUnknown':
       return labels.warningsColumnsFlowUnknownTitle;
     case 'templateUnknown':
@@ -689,6 +710,20 @@ export function detailFor(payload: WarningPayload, labels: SandboxLabels, locale
       return `:::paragraphs{style="${payload.style}"} — ${labels.warningsUnknownParagraphStyleDetail}`;
     case 'unknownCalloutType':
       return `:::callout{type="${payload.type}"} — ${labels.warningsUnknownCalloutTypeDetail}`;
+    case 'exerciseUnknownType':
+      return `:::exercise{type="${payload.type}"} — ${labels.warningsExerciseUnknownTypeDetail}`;
+    case 'exerciseUnknownStyle':
+      return `:::exercise{style="${payload.style}"} — ${labels.warningsExerciseUnknownStyleDetail}`;
+    case 'exerciseNoAnswer':
+      return `:::exercise{type="${payload.exerciseKind}"} — ${labels.warningsExerciseNoAnswerDetail}`;
+    case 'exerciseUnreadItem':
+      return `${clip(payload.text, 60)} — ${labels.warningsExerciseUnreadItemDetail}`;
+    case 'exerciseNested':
+      return labels.warningsExerciseNestedDetail;
+    case 'exerciseWordUnplaced':
+      return `${payload.word} — ${labels.warningsExerciseWordUnplacedDetail}`;
+    case 'solutionOutside':
+      return labels.warningsSolutionOutsideDetail;
     case 'columnsFlowUnknown':
       return `:::columns{flow="${payload.value}"} — ${labels.warningsColumnsFlowUnknownDetail}`;
     case 'templateUnknown':

@@ -12,7 +12,7 @@
 // to exactly what the book resolved to before is the one the setting is
 // then written into.
 
-import { DEFAULT_CALLOUT_STYLES, DEFAULT_CHIP_STYLES, DEFAULT_MARK_STYLES } from 'postext';
+import { DEFAULT_CALLOUT_STYLES, DEFAULT_CHIP_STYLES, DEFAULT_EXERCISE_STYLES, DEFAULT_MARK_STYLES } from 'postext';
 import type { PostextConfig } from 'postext';
 import { coerceSetting, isWholeValue } from './configEffective.js';
 import { canonicalSteps, formatPath, getAtSteps, leafEntries, parsePath, setAtSteps, type Step } from './configPaths.js';
@@ -46,6 +46,7 @@ const DESIGNED_LISTS: Record<string, unknown> = {
   calloutStyles: DEFAULT_CALLOUT_STYLES,
   chipStyles: DEFAULT_CHIP_STYLES,
   markStyles: DEFAULT_MARK_STYLES,
+  exerciseStyles: DEFAULT_EXERCISE_STYLES,
 };
 
 /** The settings that differ between two resolved configurations, by
@@ -137,6 +138,14 @@ export function planWrite(
     const byPosition = 'index' in follows && Array.isArray(resolvedThere) && resolvedThere.length > 0;
     if (!isWholeValue(resolvedThere) && !byPosition) options.push({ value: 'key' in follows ? {} : [], seeds: false });
     if (DESIGNED_LISTS[at] !== undefined) options.push({ value: clone(DESIGNED_LISTS[at]), seeds: true });
+    // An item of such a list, as the design has it (the built-in exercise
+    // style keeps its name, which the engine would read off its id).
+    const item = prefix[prefix.length - 1]!;
+    const designed = DESIGNED_LISTS[formatPath(prefix.slice(0, -1))];
+    if ('where' in item && Array.isArray(designed)) {
+      const own = (designed as Record<string, unknown>[]).find((d) => String(d[item.where]) === item.value);
+      if (own) options.push({ value: clone(own), seeds: true });
+    }
     if (resolvedThere !== undefined) options.push({ value: clone(resolvedThere), seeds: true });
     let best: { config: PostextConfig; seeds: boolean; off: number } | null = null;
     for (const option of options) {

@@ -588,7 +588,7 @@ L’éditeur garde aussi un œil sur le livre. Son menu de chapitres liste chaqu
 
 ## Configuration
 
-Le panneau **Maquette** édite toute la configuration (plus de cinq cents champs) par groupes : page et colonnes, système d’écriture, couleurs, typographie, titres et table des matières, listes, figures et tableaux, encadrés, bande dessinée, en-têtes et pieds de page, parties, export, Folio (le livre en 3D) et réglages avancés. Un champ de recherche trouve n’importe quelle option par son nom, et le filtre **Modifiés** montre ce qui diffère des valeurs par défaut. Chaque champ et chaque section se réinitialisent séparément, et la configuration peut être exportée et importée sous forme de fichier.
+Le panneau **Maquette** édite toute la configuration (plus de cinq cents champs) par groupes : page et colonnes, système d’écriture, couleurs, typographie, titres et table des matières, listes, figures et tableaux, encadrés, exercices, bande dessinée, en-têtes et pieds de page, parties, export, Folio (le livre en 3D) et réglages avancés. Un champ de recherche trouve n’importe quelle option par son nom, et le filtre **Modifiés** montre ce qui diffère des valeurs par défaut. Chaque champ et chaque section se réinitialisent séparément, et la configuration peut être exportée et importée sous forme de fichier.
 
 ## Les cinq vues
 

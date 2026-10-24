@@ -53,6 +53,13 @@ describe('a setting written into a book that stores none of its own', () => {
     expect(getAtPath(resolved, 'calloutStyles[id=note].name')).toBe('Note');
   });
 
+  it('keeps the name of the built-in exercise style, and its other settings to the language (#1226)', () => {
+    const { next, resolved } = write({}, 'exerciseStyles[id=exercise].number.shape', 'disc');
+    expect(next.exerciseStyles).toEqual([{ id: 'exercise', name: 'Exercise', number: { shape: 'disc' } }]);
+    expect(getAtPath(resolved, 'exerciseStyles[id=exercise].name')).toBe('Exercise');
+    expect(write({}, 'exercises.digital.check', 'instant').next).toEqual({ exercises: { digital: { check: 'instant' } } });
+  });
+
   it('starts a list told apart by position from the resolved one', () => {
     const before = resolve({});
     const { resolved } = write({}, 'cjk.bookTitleBrackets[1].open', '<');

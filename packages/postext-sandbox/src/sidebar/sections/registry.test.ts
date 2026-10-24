@@ -6,8 +6,8 @@ describe('settings registry', () => {
   it('lists every section exactly once', () => {
     const ids = SETTINGS_SECTIONS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).toHaveLength(51);
-    expect(SETTINGS_GROUPS).toHaveLength(14);
+    expect(ids).toHaveLength(53);
+    expect(SETTINGS_GROUPS).toHaveLength(15);
   });
   it('puts the writing system right after the page, with its two sections', () => {
     expect(SETTINGS_GROUPS.map((g) => g.id).slice(0, 3)).toEqual(['page', 'writing', 'colors']);
@@ -38,11 +38,16 @@ describe('settings registry', () => {
     expect(ids.indexOf('folio')).toBe(ids.indexOf('output') + 1);
     expect(SETTINGS_SECTIONS.find((s) => s.id === 'folio')?.configKeys).toEqual(['folio']);
   });
-  it('gives comic pages a group of their own, after the boxes, every section editing comics', () => {
+  it('gives comic pages a group of their own, after the boxes and the exercises, every section editing comics', () => {
     const ids = SETTINGS_GROUPS.map((g) => g.id);
-    expect(ids.indexOf('comics')).toBe(ids.indexOf('callouts') + 1);
+    expect(ids.indexOf('comics')).toBe(ids.indexOf('exercises') + 1);
     expect(sectionsInGroup('comics').map((s) => s.id)).toEqual(['comicsPanels', 'comicsPanelStyles', 'comicsLettering', 'comicsBalloonStyles', 'comicsCast']);
     for (const s of sectionsInGroup('comics')) expect(s.configKeys).toEqual(['comics']);
+  });
+  it('gives the exercises a group of their own, right after the boxes (#1226)', () => {
+    const ids = SETTINGS_GROUPS.map((g) => g.id);
+    expect(ids.indexOf('exercises')).toBe(ids.indexOf('callouts') + 1);
+    expect(sectionsInGroup('exercises').map((s) => [s.id, s.configKeys])).toEqual([['exerciseStyles', ['exerciseStyles']], ['exercises', ['exercises']]]);
   });
   it('validates group ids', () => {
     expect(isSettingsGroupId('text')).toBe(true);

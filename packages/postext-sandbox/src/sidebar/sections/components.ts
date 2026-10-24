@@ -51,6 +51,8 @@ import { PageTemplatesSection } from './PageTemplatesSection/index.js';
 import { ModulesSection } from './ModulesSection/index.js';
 import { FrameStylesSection } from './FrameStylesSection/index.js';
 import { FrameLooksSection } from './FrameLooksSection.js';
+import { ExerciseStylesSection } from './ExerciseStylesSection.js';
+import { ExercisesSection } from './ExercisesSection.js';
 
 /** Section id → component. Kept apart from the registry so the registry
  *  stays a pure data module. */
@@ -86,6 +88,8 @@ export const SECTION_COMPONENTS: Record<SettingsSectionId, ComponentType> = {
   'calloutStyles': CalloutStylesSection,
   'frameStyles': FrameStylesSection,
   'frameLooks': FrameLooksSection,
+  'exerciseStyles': ExerciseStylesSection,
+  'exercises': ExercisesSection,
   'chipStyles': ChipStylesSection,
   'markStyles': MarkStylesSection,
   'labelStyles': LabelStylesSection,

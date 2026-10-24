@@ -46,6 +46,8 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
       return config.chipStyles !== undefined;
     case 'markStyles':
       return config.markStyles !== undefined;
+    case 'exerciseStyles':
+      return config.exerciseStyles !== undefined;
     case 'labelStyles':
       return (config.labelStyles ?? []).length > 0;
     case 'comicsPanels': {
@@ -107,7 +109,8 @@ export function sectionHasOverrides(config: PostextConfig, section: SettingsSect
     case 'htmlViewer':
     case 'canvasViewer':
     case 'folio':
-    case 'pdfGeneration': {
+    case 'pdfGeneration':
+    case 'exercises': {
       const entry = SETTINGS_SECTIONS.find((s) => s.id === section) as SettingsSectionEntry;
       return entry.configKeys.some((k) => hasKeys(config[k]));
     }
