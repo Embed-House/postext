@@ -68,6 +68,7 @@ import { outputProfileInfo } from './color/catalogue.js';
 import { CODE_OVERFLOWS, CODE_TOKEN_KINDS } from './defaults/codeStyle.js';
 import { closestKey } from './util/closestKey.js';
 import { isResourceCounterReset } from './defaults/resourceTypes.js';
+import { exerciseConfigWarnings } from './exercises/configWarnings.js';
 import { calloutStyleChain, labelIconKind, labelIconScale } from './defaults/calloutStyles.js';
 import { opacityWarning, validatePageTemplates } from './composed/validate.js';
 import { LINE_NUMBERS_ALIGNS, LINE_NUMBERS_COUNTS, LINE_NUMBERS_MULTI_COLUMN, LINE_NUMBERS_POSITIONS, LINE_NUMBERS_RESTARTS } from './defaults/lineNumbers.js';
@@ -129,7 +130,9 @@ function percentText(n: number): string {
  * - box shapes (#1059): corner and side keys a box does not have, a label
  *   tab's `position` outside its choices, a joined tab with an `offset`;
  * - a design element's `when` / `unless` that names no attribute, or that
- *   a heading, part or box design would ignore (#1087).
+ *   a heading, part or box design would ignore (#1087);
+ * - the exercise styles and settings (#1226): keys they do not have, words
+ *   outside their choices, numbering styles the engine does not know.
  * Pure.
  */
 export function collectConfigWarnings(config: PostextConfig | undefined, options: ConfigWarningOptions = {}): ConfigWarning[] {
@@ -142,6 +145,7 @@ export function collectConfigWarnings(config: PostextConfig | undefined, options
     ...collectDesignAnchorWarnings(config),
     ...collectDesignPathWarnings(config), ...collectDesignKeyWarnings(config), ...collectBoxShapeWarnings(config),
     ...collectConnectorWarnings(config), ...collectTextOverWarnings(config), ...collectFenceConditionWarnings(config),
+    ...exerciseConfigWarnings(config),
   ];
 }
 

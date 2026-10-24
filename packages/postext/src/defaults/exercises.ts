@@ -310,3 +310,31 @@ export function stripExerciseStylesDefaults(styles: ExerciseStyleConfig[] | unde
   if (styles.length === 1 && styles[0]!.id === 'exercise' && Object.keys(styles[0]!).every((k) => k === 'id' || k === 'name')) return undefined;
   return styles;
 }
+
+/** `exercises` for storage: the fields at their defaults dropped (the
+ *  solutions heading when it is the word of `locale`), `undefined` when
+ *  none is left. */
+export function stripExercisesDefaults(config: ExercisesConfig | undefined, locale?: string): ExercisesConfig | undefined {
+  if (!config) return undefined;
+  const out: ExercisesConfig = {};
+  if (config.edition !== undefined && config.edition !== 'student') out.edition = config.edition;
+  if (config.seed !== undefined && config.seed !== 1) out.seed = config.seed;
+  const s = config.solutions;
+  if (s) {
+    const solutions: ExerciseSolutionsConfig = {};
+    if (s.placement !== undefined && s.placement !== 'none') solutions.placement = s.placement;
+    if (s.box !== undefined) solutions.box = s.box;
+    if (s.heading !== undefined && s.heading !== exerciseWords(locale).solutions) solutions.heading = s.heading;
+    if (s.layout !== undefined && s.layout !== 'full') solutions.layout = s.layout;
+    if (Object.keys(solutions).length > 0) out.solutions = solutions;
+  }
+  const d = config.digital;
+  if (d) {
+    const digital: NonNullable<ExercisesConfig['digital']> = {};
+    if (d.interactive !== undefined && d.interactive !== true) digital.interactive = d.interactive;
+    if (d.persist !== undefined && d.persist !== true) digital.persist = d.persist;
+    if (d.check !== undefined && d.check !== 'button') digital.check = d.check;
+    if (Object.keys(digital).length > 0) out.digital = digital;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
