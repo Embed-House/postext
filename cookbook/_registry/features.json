@@ -25236,5 +25236,1368 @@
         "scoreStyles"
       ]
     }
+  },
+  "exercises": {
+    "label": {
+      "en": "Exercises",
+      "es": "Ejercicios",
+      "ca": "Exercicis",
+      "fr": "Exercices",
+      "de": "Übungen",
+      "it": "Esercizi",
+      "pt": "Exercícios",
+      "zh": "练习",
+      "ja": "練習問題",
+      "ar": "التمارين"
+    },
+    "definition": {
+      "en": "The :::exercise fence: an activity whose instruction, items and answers are in the Markdown, numbered and laid out as an exercise style says, the same in print and on screen.",
+      "es": "La valla :::exercise: una actividad cuyo enunciado, preguntas y respuestas están en el Markdown, numerada y compuesta como dice un estilo de ejercicio, igual en papel y en pantalla.",
+      "ca": "La tanca :::exercise: una activitat amb l'enunciat, les preguntes i les respostes al Markdown, numerada i composta com diu un estil d'exercici, igual en paper i en pantalla.",
+      "fr": "La clôture :::exercise : une activité dont la consigne, les questions et les réponses sont dans le Markdown, numérotée et composée selon un style d'exercice, à l'identique sur papier et à l'écran.",
+      "de": "Der Zaun :::exercise: eine Aufgabe, deren Arbeitsanweisung, Fragen und Lösungen im Markdown stehen, nummeriert und so gesetzt, wie ein Übungsstil es vorgibt, auf Papier wie am Bildschirm.",
+      "it": "Il recinto :::exercise: un'attività con consegna, domande e risposte nel Markdown, numerata e impaginata come dice uno stile di esercizio, uguale su carta e a schermo.",
+      "pt": "A cerca :::exercise: uma atividade cujo enunciado, itens e respostas estão no Markdown, numerada e composta como manda um estilo de exercício, igual no papel e na tela.",
+      "zh": ":::exercise 围栏：题干、小题和答案都写在 Markdown 中的练习，按练习样式编号和排版，纸面与屏幕一致。",
+      "ja": ":::exercise フェンス。指示文、設問、答えを Markdown に書き、練習問題のスタイルに従って番号を付けて組む。紙でも画面でも同じ。",
+      "ar": "سياج :::exercise: نشاط تُكتب تعليمته وبنوده وإجاباته في Markdown، ويُرقَّم ويُصفّ كما يقول نمط التمرين، على الورق وعلى الشاشة."
+    },
+    "aliases": {
+      "en": [
+        "exercise",
+        ":::exercise",
+        "activity",
+        "worksheet",
+        "workbook",
+        "drill"
+      ],
+      "es": [
+        "ejercicio",
+        "actividad",
+        "ficha",
+        "cuaderno de actividades",
+        "enunciado"
+      ],
+      "ca": [
+        "exercici",
+        "activitat",
+        "fitxa",
+        "quadern d'activitats"
+      ],
+      "fr": [
+        "exercice",
+        "activité",
+        "fiche",
+        "cahier d'activités",
+        "consigne"
+      ],
+      "de": [
+        "Übung",
+        "Aufgabe",
+        "Arbeitsblatt",
+        "Arbeitsheft",
+        "Arbeitsanweisung"
+      ],
+      "it": [
+        "esercizio",
+        "attività",
+        "scheda",
+        "eserciziario",
+        "consegna"
+      ],
+      "pt": [
+        "exercício",
+        "atividade",
+        "ficha",
+        "caderno de atividades",
+        "enunciado"
+      ],
+      "zh": [
+        "练习",
+        "习题",
+        "练习册",
+        "作业"
+      ],
+      "ja": [
+        "練習問題",
+        "ドリル",
+        "ワークシート",
+        "設問"
+      ],
+      "ar": [
+        "تمرين",
+        "نشاط",
+        "ورقة عمل",
+        "كراسة التمارين"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Exercises",
+        "es": "Ejercicios",
+        "ca": "Exercicis",
+        "fr": "Exercices",
+        "de": "Übungen",
+        "it": "Esercizi",
+        "pt": "Exercícios",
+        "zh": "练习",
+        "ja": "練習問題",
+        "ar": "التمارين"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^:::exercise\\b"
+      ]
+    }
+  },
+  "exercise-styles": {
+    "label": {
+      "en": "Exercise styles",
+      "es": "Estilos de ejercicio",
+      "ca": "Estils d'exercici",
+      "fr": "Styles d'exercice",
+      "de": "Übungsstile",
+      "it": "Stili di esercizio",
+      "pt": "Estilos de exercício",
+      "zh": "练习样式",
+      "ja": "練習問題のスタイル",
+      "ar": "أنماط التمارين"
+    },
+    "definition": {
+      "en": "exerciseStyles: how a family of exercises prints — the number (disc, square, label), the instruction, option labels, blanks, true/false boxes, dots to join, the word bank, writing areas, grids, activity icons and difficulty marks.",
+      "es": "exerciseStyles: cómo se imprime una familia de ejercicios: el número (disco, cuadrado, rótulo), el enunciado, las letras de las opciones, los huecos, las casillas de V/F, los puntos para unir, el banco de palabras, las zonas de escritura, las cuadrículas, los iconos de actividad y la dificultad.",
+      "ca": "exerciseStyles: com s'imprimeix una família d'exercicis: el número (disc, quadrat, rètol), l'enunciat, les lletres de les opcions, els buits, les caselles de V/F, els punts per unir, el banc de paraules, les zones d'escriptura, les quadrícules, les icones d'activitat i la dificultat.",
+      "fr": "exerciseStyles : la mise en page d'une famille d'exercices : le numéro (pastille, carré, intitulé), la consigne, les lettres des options, les blancs, les cases vrai/faux, les points à relier, la banque de mots, les zones d'écriture, les grilles, les pictogrammes d'activité et la difficulté.",
+      "de": "exerciseStyles: wie eine Familie von Übungen gedruckt wird: die Nummer (Kreis, Quadrat, Bezeichnung), die Arbeitsanweisung, die Buchstaben der Antworten, die Lücken, die R/F-Kästchen, die Punkte zum Verbinden, der Wortspeicher, die Schreibflächen, die Raster, die Symbole und der Schwierigkeitsgrad.",
+      "it": "exerciseStyles: come si stampa una famiglia di esercizi: il numero (cerchio, quadrato, etichetta), la consegna, le lettere delle opzioni, gli spazi vuoti, le caselle V/F, i punti da collegare, la banca di parole, gli spazi di scrittura, le griglie, le icone di attività e la difficoltà.",
+      "pt": "exerciseStyles: como se imprime uma família de exercícios: o número (círculo, quadrado, rótulo), o enunciado, as letras das alternativas, as lacunas, as caixas de V/F, os pontos para ligar, o banco de palavras, as áreas de escrita, as grades, os ícones de atividade e a dificuldade.",
+      "zh": "exerciseStyles：一类练习的印刷形式，包括题号（圆、方框、标签）、题干、选项字母、空格、判断框、连线圆点、词库、书写区、格子、活动图标与难度标记。",
+      "ja": "exerciseStyles。練習問題の組み方を決める。番号（丸、四角、見出し語）、指示文、選択肢の記号、空欄、正誤の欄、線結びの点、語群、解答欄、マス目、活動アイコン、難易度。",
+      "ar": "exerciseStyles: كيف تُطبع فئة من التمارين: الرقم (دائرة، مربع، عنوان)، والتعليمة، وحروف الخيارات، والفراغات، ومربعات الصواب والخطأ، ونقاط التوصيل، وبنك الكلمات، ومساحات الكتابة، والشبكات، وأيقونات النشاط، ومستوى الصعوبة."
+    },
+    "aliases": {
+      "en": [
+        "exerciseStyles",
+        "number in a disc",
+        "activity icons",
+        "option labels",
+        "answer lines"
+      ],
+      "es": [
+        "exerciseStyles",
+        "número en un círculo",
+        "iconos de actividad",
+        "letras de las opciones",
+        "líneas de respuesta"
+      ],
+      "ca": [
+        "exerciseStyles",
+        "número en un cercle",
+        "icones d'activitat",
+        "línies de resposta"
+      ],
+      "fr": [
+        "exerciseStyles",
+        "numéro dans une pastille",
+        "pictogrammes",
+        "lignes de réponse"
+      ],
+      "de": [
+        "exerciseStyles",
+        "Nummer im Kreis",
+        "Symbole",
+        "Antwortlinien"
+      ],
+      "it": [
+        "exerciseStyles",
+        "numero nel cerchio",
+        "icone di attività",
+        "righe di risposta"
+      ],
+      "pt": [
+        "exerciseStyles",
+        "número no círculo",
+        "ícones de atividade",
+        "linhas de resposta"
+      ],
+      "zh": [
+        "exerciseStyles",
+        "题号",
+        "活动图标",
+        "答题线"
+      ],
+      "ja": [
+        "exerciseStyles",
+        "番号",
+        "アイコン",
+        "解答欄"
+      ],
+      "ar": [
+        "exerciseStyles",
+        "رقم في دائرة",
+        "أيقونات النشاط",
+        "سطور الإجابة"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Exercise styles",
+        "es": "Estilos de ejercicio",
+        "ca": "Estils d'exercici",
+        "fr": "Styles d'exercice",
+        "de": "Übungsstile",
+        "it": "Stili di esercizio",
+        "pt": "Estilos de exercício",
+        "zh": "练习样式",
+        "ja": "練習問題のスタイル",
+        "ar": "أنماط التمارين"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "config": [
+        "exerciseStyles"
+      ]
+    }
+  },
+  "exercise-choice": {
+    "label": {
+      "en": "Choice and true or false",
+      "es": "Elección y verdadero o falso",
+      "ca": "Elecció i vertader o fals",
+      "fr": "Choix et vrai ou faux",
+      "de": "Auswahl und richtig oder falsch",
+      "it": "Scelta e vero o falso",
+      "pt": "Escolha e verdadeiro ou falso",
+      "zh": "选择题与判断题",
+      "ja": "選択問題と正誤問題",
+      "ar": "الاختيار والصواب والخطأ"
+    },
+    "definition": {
+      "en": "Multiple choice from a task list (- [x] right, - [ ] wrong), lettered a) b) c), A. B. C., ア イ ウ or أ ب ج, with a box, a ring or a bracket to answer in; true/false statements with the language's own V F, R F, √ × or ○ ×.",
+      "es": "Opción múltiple a partir de una lista de tareas (- [x] correcta, - [ ] incorrecta), con letras a) b) c), A. B. C., ア イ ウ o أ ب ج y una casilla, un círculo o un paréntesis para contestar; afirmaciones de verdadero o falso con las letras del idioma: V F, R F, √ × u ○ ×.",
+      "ca": "Opció múltiple a partir d'una llista de tasques (- [x] correcta, - [ ] incorrecta), amb lletres a) b) c), A. B. C., ア イ ウ o أ ب ج i una casella, un cercle o un parèntesi per respondre; afirmacions de vertader o fals amb les lletres de la llengua.",
+      "fr": "QCM à partir d'une liste de tâches (- [x] juste, - [ ] faux), avec a) b) c), A. B. C., ア イ ウ ou أ ب ج et une case, un rond ou des parenthèses pour répondre ; affirmations vrai/faux avec les lettres de la langue : V F, R F, √ × ou ○ ×.",
+      "de": "Auswahlaufgaben aus einer Aufgabenliste (- [x] richtig, - [ ] falsch), mit a) b) c), A. B. C., ア イ ウ oder أ ب ج und einem Kästchen, Kreis oder einer Klammer zum Ankreuzen; Richtig-Falsch-Aussagen mit den Buchstaben der Sprache: R F, V F, √ × oder ○ ×.",
+      "it": "Scelta multipla da un elenco di attività (- [x] giusta, - [ ] sbagliata), con a) b) c), A. B. C., ア イ ウ o أ ب ج e una casella, un cerchio o una parentesi per rispondere; affermazioni vero o falso con le lettere della lingua.",
+      "pt": "Múltipla escolha a partir de uma lista de tarefas (- [x] certa, - [ ] errada), com a) b) c), A. B. C., ア イ ウ ou أ ب ج e uma caixa, um círculo ou parênteses para responder; afirmações de verdadeiro ou falso com as letras do idioma.",
+      "zh": "由任务列表（- [x] 正确，- [ ] 错误）生成选择题，选项标 a) b) c)、A. B. C.、ア イ ウ 或 أ ب ج，配方框、圆圈或括号作答；判断题用该语言的标记：V F、R F、√ ×、○ ×。",
+      "ja": "タスクリスト（- [x] 正解、- [ ] 不正解）から選択問題を作る。選択肢は a) b) c)、A. B. C.、ア イ ウ、أ ب ج で、四角、丸、括弧で答える。正誤問題は言語ごとの記号（○ ×、√ ×、V F）。",
+      "ar": "الاختيار من متعدد من قائمة مهام (- [x] صحيح، - [ ] خطأ)، بحروف a) b) c) أو A. B. C. أو ア イ ウ أو أ ب ج ومربع أو دائرة أو قوسين للإجابة؛ وعبارات الصواب والخطأ بعلامات اللغة."
+    },
+    "aliases": {
+      "en": [
+        "multiple choice",
+        "true or false",
+        "T/F",
+        "quiz",
+        "tick the box"
+      ],
+      "es": [
+        "opción múltiple",
+        "verdadero o falso",
+        "V/F",
+        "test",
+        "marca la casilla"
+      ],
+      "ca": [
+        "opció múltiple",
+        "vertader o fals",
+        "V/F",
+        "test"
+      ],
+      "fr": [
+        "QCM",
+        "vrai ou faux",
+        "coche la bonne réponse"
+      ],
+      "de": [
+        "Multiple Choice",
+        "richtig oder falsch",
+        "Ankreuzaufgabe"
+      ],
+      "it": [
+        "scelta multipla",
+        "vero o falso",
+        "quiz"
+      ],
+      "pt": [
+        "múltipla escolha",
+        "verdadeiro ou falso",
+        "assinale"
+      ],
+      "zh": [
+        "选择题",
+        "判断题",
+        "单选",
+        "多选"
+      ],
+      "ja": [
+        "選択問題",
+        "正誤問題",
+        "○×問題"
+      ],
+      "ar": [
+        "اختيار من متعدد",
+        "صواب وخطأ",
+        "اختبار"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Choice and true or false",
+        "es": "Elección y verdadero o falso",
+        "ca": "Elecció i vertader o fals",
+        "fr": "Choix et vrai ou faux",
+        "de": "Auswahl und richtig oder falsch",
+        "it": "Scelta e vero o falso",
+        "pt": "Escolha e verdadeiro ou falso",
+        "zh": "选择题与判断题",
+        "ja": "選択問題と正誤問題",
+        "ar": "الاختيار والصواب والخطأ"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^:::exercise\\{[^}]*type=\"?(?:choice|truefalse)\\b"
+      ],
+      "config": [
+        "exerciseStyles[].options",
+        "exerciseStyles[].trueFalse"
+      ]
+    }
+  },
+  "exercise-gaps": {
+    "label": {
+      "en": "Gaps and word banks",
+      "es": "Huecos y bancos de palabras",
+      "ca": "Buits i bancs de paraules",
+      "fr": "Textes à trous et banques de mots",
+      "de": "Lücken und Wortspeicher",
+      "it": "Spazi vuoti e banche di parole",
+      "pt": "Lacunas e bancos de palavras",
+      "zh": "填空与词库",
+      "ja": "穴埋めと語群",
+      "ar": "الفراغات وبنوك الكلمات"
+    },
+    "definition": {
+      "en": "[[answer]] blanks printed as a line, dots or a box as wide as the longest answer, [[a | (b)]] inline choices to circle, and ::bank[…] word banks that collect the answers and add distractors.",
+      "es": "Huecos [[respuesta]] impresos como una línea, puntos o una caja tan ancha como la respuesta más larga, elecciones [[a | (b)]] para rodear en la línea y bancos de palabras ::bank[…] que reúnen las respuestas y añaden distractores.",
+      "ca": "Buits [[resposta]] impresos com una línia, punts o una caixa tan ampla com la resposta més llarga, eleccions [[a | (b)]] per encerclar i bancs de paraules ::bank[…] que reuneixen les respostes i hi afegeixen distractors.",
+      "fr": "Blancs [[réponse]] imprimés en ligne, en pointillés ou en case aussi large que la plus longue réponse, choix [[a | (b)]] à entourer dans la phrase et banques de mots ::bank[…] qui réunissent les réponses et ajoutent des intrus.",
+      "de": "Lücken [[Antwort]] als Linie, Punkte oder Kästchen so breit wie die längste Antwort, Auswahl im Satz [[a | (b)]] zum Einkreisen und Wortspeicher ::bank[…], die die Antworten sammeln und Ablenker hinzufügen.",
+      "it": "Spazi [[risposta]] stampati come linea, puntini o casella larga quanto la risposta più lunga, scelte [[a | (b)]] da cerchiare nella frase e banche di parole ::bank[…] che raccolgono le risposte e aggiungono distrattori.",
+      "pt": "Lacunas [[resposta]] impressas como linha, pontilhado ou caixa tão larga quanto a resposta mais longa, escolhas [[a | (b)]] para circular na frase e bancos de palavras ::bank[…] que juntam as respostas e acrescentam distratores.",
+      "zh": "[[答案]] 空格印成横线、虚线或与最长答案同宽的方框；[[a | (b)]] 行内选择供圈选；::bank[…] 词库汇集答案并加入干扰项。",
+      "ja": "[[答え]] の空欄を線、点線、いちばん長い答えの幅の枠で印刷する。[[a | (b)]] は文中で丸をつける選択、::bank[…] は答えを集め、まぎらわしい語を加えた語群。",
+      "ar": "فراغات [[الإجابة]] تُطبع خطًا أو نقاطًا أو مربعًا بعرض أطول إجابة، واختيارات [[أ | (ب)]] داخل الجملة لوضع دائرة عليها، وبنوك كلمات ::bank[…] تجمع الإجابات وتضيف كلمات مشتِّتة."
+    },
+    "aliases": {
+      "en": [
+        "fill in the blanks",
+        "cloze",
+        "word bank",
+        "gap fill",
+        "circle the correct word"
+      ],
+      "es": [
+        "completa",
+        "rellena los huecos",
+        "banco de palabras",
+        "rodea la palabra correcta",
+        "huecos"
+      ],
+      "ca": [
+        "completa",
+        "omple els buits",
+        "banc de paraules",
+        "encercla"
+      ],
+      "fr": [
+        "texte à trous",
+        "complète",
+        "banque de mots",
+        "entoure le bon mot"
+      ],
+      "de": [
+        "Lückentext",
+        "ergänze",
+        "Wortspeicher",
+        "Wörterkasten"
+      ],
+      "it": [
+        "completa",
+        "riempi gli spazi",
+        "banca di parole",
+        "cerchia"
+      ],
+      "pt": [
+        "complete as lacunas",
+        "banco de palavras",
+        "circule a palavra correta"
+      ],
+      "zh": [
+        "填空",
+        "选词填空",
+        "词库"
+      ],
+      "ja": [
+        "穴埋め",
+        "語群",
+        "かっこに入る語"
+      ],
+      "ar": [
+        "أكمل الفراغ",
+        "بنك الكلمات",
+        "املأ الفراغات"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Gaps and word banks",
+        "es": "Huecos y bancos de palabras",
+        "ca": "Buits i bancs de paraules",
+        "fr": "Textes à trous et banques de mots",
+        "de": "Lücken und Wortspeicher",
+        "it": "Spazi vuoti e banche di parole",
+        "pt": "Lacunas e bancos de palavras",
+        "zh": "填空与词库",
+        "ja": "穴埋めと語群",
+        "ar": "الفراغات وبنوك الكلمات"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "\\[\\[[^\\]]+\\]\\]",
+        "^::bank\\["
+      ],
+      "config": [
+        "exerciseStyles[].blank",
+        "exerciseStyles[].bank"
+      ]
+    }
+  },
+  "exercise-match": {
+    "label": {
+      "en": "Matching and sorting",
+      "es": "Unir y clasificar",
+      "ca": "Unir i classificar",
+      "fr": "Relier et classer",
+      "de": "Zuordnen und sortieren",
+      "it": "Collegare e classificare",
+      "pt": "Ligar e classificar",
+      "zh": "连线与分类",
+      "ja": "線結びと分類",
+      "ar": "التوصيل والتصنيف"
+    },
+    "definition": {
+      "en": "- A -> B pairs printed as two shuffled columns with dots to join (or letters to write), and sort exercises whose - Category: items lists become a word bank over a table of categories.",
+      "es": "Pares - A -> B impresos en dos columnas barajadas con puntos para unir con flechas (o letras que escribir), y ejercicios de clasificar cuyas listas - Categoría: elementos se convierten en un banco de palabras sobre una tabla de categorías.",
+      "ca": "Parells - A -> B impresos en dues columnes barrejades amb punts per unir (o lletres per escriure), i exercicis de classificar en què les llistes - Categoria: elements es converteixen en un banc de paraules sobre una taula.",
+      "fr": "Paires - A -> B imprimées en deux colonnes mélangées avec des points à relier (ou des lettres à écrire), et exercices de classement dont les listes - Catégorie : éléments deviennent une banque de mots au-dessus d'un tableau.",
+      "de": "Paare - A -> B als zwei gemischte Spalten mit Punkten zum Verbinden (oder Buchstaben zum Eintragen) und Sortieraufgaben, deren Listen - Kategorie: Wörter zu einem Wortspeicher über einer Tabelle werden.",
+      "it": "Coppie - A -> B stampate in due colonne mescolate con punti da collegare (o lettere da scrivere), ed esercizi di classificazione le cui liste - Categoria: elementi diventano una banca di parole sopra una tabella.",
+      "pt": "Pares - A -> B impressos em duas colunas embaralhadas com pontos para ligar (ou letras para escrever), e exercícios de classificar cujas listas - Categoria: itens viram um banco de palavras sobre uma tabela.",
+      "zh": "- A -> B 配对印成两列打乱的连线题（圆点或填字母）；分类题把 - 类别：词语 列表变成词库和分类表。",
+      "ja": "- A -> B の組を、点を線で結ぶ（または記号を書く）二列にばらして印刷する。分類問題は - 分類: 語 のリストを語群と表にする。",
+      "ar": "أزواج - أ -> ب تُطبع عمودين مخلوطين بنقاط للتوصيل (أو حروف تُكتب)، وتمارين تصنيف تصبح فيها قوائم - الفئة: العناصر بنك كلمات فوق جدول للفئات."
+    },
+    "aliases": {
+      "en": [
+        "match",
+        "join with a line",
+        "draw lines",
+        "sort",
+        "classify"
+      ],
+      "es": [
+        "une con flechas",
+        "relaciona",
+        "clasifica",
+        "empareja"
+      ],
+      "ca": [
+        "uneix amb fletxes",
+        "relaciona",
+        "classifica"
+      ],
+      "fr": [
+        "relie",
+        "associe",
+        "classe",
+        "trie"
+      ],
+      "de": [
+        "verbinde",
+        "ordne zu",
+        "sortiere"
+      ],
+      "it": [
+        "collega",
+        "abbina",
+        "classifica"
+      ],
+      "pt": [
+        "ligue",
+        "relacione",
+        "classifique"
+      ],
+      "zh": [
+        "连线",
+        "配对",
+        "分类"
+      ],
+      "ja": [
+        "線で結ぶ",
+        "組み合わせ",
+        "分類"
+      ],
+      "ar": [
+        "صل",
+        "طابق",
+        "صنّف"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Matching and sorting",
+        "es": "Unir y clasificar",
+        "ca": "Unir i classificar",
+        "fr": "Relier et classer",
+        "de": "Zuordnen und sortieren",
+        "it": "Collegare e classificare",
+        "pt": "Ligar e classificar",
+        "zh": "连线与分类",
+        "ja": "線結びと分類",
+        "ar": "التوصيل والتصنيف"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^\\s*[-*] .+ (?:->|→) ",
+        "^:::exercise\\{[^}]*type=\"?(?:match|sort)\\b"
+      ],
+      "config": [
+        "exerciseStyles[].match"
+      ]
+    }
+  },
+  "exercise-order": {
+    "label": {
+      "en": "Ordering",
+      "es": "Ordenar",
+      "ca": "Ordenar",
+      "fr": "Remettre dans l'ordre",
+      "de": "Ordnen",
+      "it": "Riordinare",
+      "pt": "Ordenar",
+      "zh": "排序",
+      "ja": "並べ替え",
+      "ar": "الترتيب"
+    },
+    "definition": {
+      "en": "Order exercises (a numbered list written in the right order, printed shuffled with a box for each number) and scrambled sentences (words split at slashes, shuffled over a line to write the sentence).",
+      "es": "Ejercicios de ordenar (una lista numerada escrita en el orden correcto, impresa barajada con una casilla para cada número) y frases desordenadas (palabras separadas por barras, barajadas sobre una línea para escribir la frase).",
+      "ca": "Exercicis d'ordenar (una llista numerada en l'ordre correcte, impresa barrejada amb una casella per a cada número) i frases desordenades (paraules separades per barres, barrejades sobre una línia).",
+      "fr": "Remise en ordre (une liste numérotée écrite dans le bon ordre, imprimée mélangée avec une case pour chaque numéro) et phrases en désordre (mots séparés par des barres obliques, mélangés au-dessus d'une ligne).",
+      "de": "Ordnungsaufgaben (eine nummerierte Liste in der richtigen Reihenfolge, gemischt gedruckt mit einem Kästchen für jede Zahl) und Satzpuzzles (Wörter an Schrägstrichen getrennt, gemischt über einer Schreiblinie).",
+      "it": "Esercizi di riordino (un elenco numerato nell'ordine giusto, stampato mescolato con una casella per ogni numero) e frasi in disordine (parole separate da barre, mescolate sopra una riga).",
+      "pt": "Exercícios de ordenar (uma lista numerada na ordem certa, impressa embaralhada com uma caixa para cada número) e frases embaralhadas (palavras separadas por barras, sobre uma linha para escrever).",
+      "zh": "排序题（按正确顺序写的编号列表，打乱印出并配填号方框）和连词成句（以斜线分隔的词打乱排列，下方留一行书写）。",
+      "ja": "並べ替え問題（正しい順に書いた番号付きリストを、ばらして番号欄を付けて印刷）と、語順の並べ替え（スラッシュで区切った語をばらし、下に書く線）。",
+      "ar": "تمارين الترتيب (قائمة مرقمة مكتوبة بالترتيب الصحيح تُطبع مخلوطة مع مربع لكل رقم) والجمل المبعثرة (كلمات تفصلها شرطات مائلة تُخلط فوق سطر للكتابة)."
+    },
+    "aliases": {
+      "en": [
+        "put in order",
+        "sequence",
+        "number the sentences",
+        "scrambled sentence"
+      ],
+      "es": [
+        "ordena",
+        "numera las frases",
+        "frases desordenadas"
+      ],
+      "ca": [
+        "ordena",
+        "numera les frases",
+        "frases desordenades"
+      ],
+      "fr": [
+        "remets dans l'ordre",
+        "numérote",
+        "phrase en désordre"
+      ],
+      "de": [
+        "ordne",
+        "nummeriere",
+        "Satzpuzzle"
+      ],
+      "it": [
+        "riordina",
+        "numera le frasi",
+        "frase in disordine"
+      ],
+      "pt": [
+        "ordene",
+        "numere as frases",
+        "frase embaralhada"
+      ],
+      "zh": [
+        "排序",
+        "连词成句"
+      ],
+      "ja": [
+        "並べ替え",
+        "順番"
+      ],
+      "ar": [
+        "رتّب",
+        "رقّم الجمل",
+        "جملة مبعثرة"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Ordering",
+        "es": "Ordenar",
+        "ca": "Ordenar",
+        "fr": "Remettre dans l'ordre",
+        "de": "Ordnen",
+        "it": "Riordinare",
+        "pt": "Ordenar",
+        "zh": "排序",
+        "ja": "並べ替え",
+        "ar": "الترتيب"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^:::exercise\\{[^}]*type=\"?(?:order|scramble)\\b"
+      ]
+    }
+  },
+  "exercise-mark": {
+    "label": {
+      "en": "Marking words",
+      "es": "Marcar palabras",
+      "ca": "Marcar paraules",
+      "fr": "Marquer des mots",
+      "de": "Wörter markieren",
+      "it": "Segnare parole",
+      "pt": "Marcar palavras",
+      "zh": "圈画词语",
+      "ja": "語に印をつける",
+      "ar": "تعليم الكلمات"
+    },
+    "definition": {
+      "en": "Mark exercises: a running text whose [[words]] the pupil circles, underlines or boxes; the answers ring them in a teacher's edition, each word with its own way if it says so.",
+      "es": "Ejercicios de marcar: un texto corrido cuyas [[palabras]] el alumno rodea, subraya o recuadra; las soluciones las rodean en la edición del profesor, cada palabra a su manera si lo indica.",
+      "ca": "Exercicis de marcar: un text seguit les [[paraules]] del qual l'alumne encercla, subratlla o emmarca; l'edició del professor les marca.",
+      "fr": "Exercices de repérage : un texte suivi dont l'élève entoure, souligne ou encadre les [[mots]] ; le livre du professeur les marque.",
+      "de": "Markieraufgaben: ein fortlaufender Text, dessen [[Wörter]] das Kind einkreist, unterstreicht oder einrahmt; die Lehrerausgabe markiert sie.",
+      "it": "Esercizi di individuazione: un testo continuo di cui l'alunno cerchia, sottolinea o riquadra le [[parole]]; la guida per l'insegnante le segna.",
+      "pt": "Exercícios de marcar: um texto corrido cujas [[palavras]] o aluno circula, sublinha ou enquadra; o livro do professor as marca.",
+      "zh": "圈画题：学生在一段连续文字中圈出、画线或框出 [[词语]]；教师用书标出答案。",
+      "ja": "印をつける問題。続いた文章の中の [[語]] に丸、下線、枠をつける。教師用では答えに印が入る。",
+      "ar": "تمارين التعليم: نص متصل يضع التلميذ دائرة أو خطًا أو إطارًا حول [[كلماته]] المطلوبة، وتُعلَّم في طبعة المعلم."
+    },
+    "aliases": {
+      "en": [
+        "circle",
+        "underline",
+        "highlight the words"
+      ],
+      "es": [
+        "rodea",
+        "subraya",
+        "tacha",
+        "marca las palabras"
+      ],
+      "ca": [
+        "encercla",
+        "subratlla",
+        "marca"
+      ],
+      "fr": [
+        "entoure",
+        "souligne",
+        "barre"
+      ],
+      "de": [
+        "kreise ein",
+        "unterstreiche",
+        "markiere"
+      ],
+      "it": [
+        "cerchia",
+        "sottolinea",
+        "evidenzia"
+      ],
+      "pt": [
+        "circule",
+        "sublinhe",
+        "marque"
+      ],
+      "zh": [
+        "圈出",
+        "画线",
+        "标出"
+      ],
+      "ja": [
+        "丸で囲む",
+        "下線を引く"
+      ],
+      "ar": [
+        "ضع دائرة",
+        "ضع خطًا تحت"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Marking words",
+        "es": "Marcar palabras",
+        "ca": "Marcar paraules",
+        "fr": "Marquer des mots",
+        "de": "Wörter markieren",
+        "it": "Segnare parole",
+        "pt": "Marcar palavras",
+        "zh": "圈画词语",
+        "ja": "語に印をつける",
+        "ar": "تعليم الكلمات"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^:::exercise\\{[^}]*type=\"?(?:mark)\\b"
+      ]
+    }
+  },
+  "exercise-open": {
+    "label": {
+      "en": "Open questions and writing areas",
+      "es": "Preguntas abiertas y zonas de escritura",
+      "ca": "Preguntes obertes i zones d'escriptura",
+      "fr": "Questions ouvertes et zones d'écriture",
+      "de": "Offene Fragen und Schreibflächen",
+      "it": "Domande aperte e spazi di scrittura",
+      "pt": "Perguntas abertas e áreas de escrita",
+      "zh": "开放题与书写区",
+      "ja": "記述問題と解答欄",
+      "ar": "الأسئلة المفتوحة ومساحات الكتابة"
+    },
+    "definition": {
+      "en": "Open questions with a writing area under them: ruled lines, dots, squared paper, French Seyès ruling, 田字格 squares or an empty box, as many lines as the fence asks; the model answer prints in a teacher's edition.",
+      "es": "Preguntas abiertas con una zona de escritura debajo: renglones, puntos, cuadrícula, pauta Seyès francesa, cuadros 田字格 o una caja vacía, con las líneas que pida la valla; la respuesta modelo se imprime en la edición del profesor.",
+      "ca": "Preguntes obertes amb una zona d'escriptura a sota: línies, punts, quadrícula, pauta Seyès, quadres 田字格 o una caixa buida; la resposta model s'imprimeix a l'edició del professor.",
+      "fr": "Questions ouvertes avec une zone d'écriture : lignes, pointillés, quadrillage, réglure Seyès, cases 田字格 ou cadre vide, autant de lignes que la clôture en demande ; la réponse type s'imprime dans le livre du professeur.",
+      "de": "Offene Fragen mit einer Schreibfläche darunter: Linien, Punkte, Kästchen, französische Seyès-Lineatur, 田字格-Felder oder ein leerer Kasten; die Musterlösung steht in der Lehrerausgabe.",
+      "it": "Domande aperte con uno spazio di scrittura sotto: righe, puntini, quadretti, rigatura Seyès, caselle 田字格 o un riquadro vuoto; la risposta modello si stampa nella guida per l'insegnante.",
+      "pt": "Perguntas abertas com uma área de escrita embaixo: linhas, pontos, quadriculado, pauta Seyès, quadros 田字格 ou uma caixa vazia; a resposta modelo sai no livro do professor.",
+      "zh": "开放题，下方留书写区：横线、点线、方格、法国 Seyès 格线、田字格或空框，行数按围栏所写；参考答案印在教师用书中。",
+      "ja": "記述問題と、その下の解答欄。罫線、点線、方眼、フランスのセイエス罫、田字格、空の枠。行数はフェンスで指定し、模範解答は教師用に印刷される。",
+      "ar": "أسئلة مفتوحة تحتها مساحة للكتابة: سطور أو نقاط أو مربعات أو تسطير Seyès أو مربعات 田字格 أو إطار فارغ؛ وتُطبع الإجابة النموذجية في طبعة المعلم."
+    },
+    "aliases": {
+      "en": [
+        "open question",
+        "writing lines",
+        "squared paper",
+        "Seyès",
+        "tianzige",
+        "answer box"
+      ],
+      "es": [
+        "pregunta abierta",
+        "renglones",
+        "cuadrícula",
+        "pauta",
+        "contesta"
+      ],
+      "ca": [
+        "pregunta oberta",
+        "línies",
+        "quadrícula",
+        "pauta"
+      ],
+      "fr": [
+        "question ouverte",
+        "lignes d'écriture",
+        "Seyès",
+        "grands carreaux"
+      ],
+      "de": [
+        "offene Frage",
+        "Schreiblinien",
+        "Kästchenpapier",
+        "Lineatur"
+      ],
+      "it": [
+        "domanda aperta",
+        "righe",
+        "quadretti"
+      ],
+      "pt": [
+        "pergunta aberta",
+        "linhas",
+        "quadriculado",
+        "pauta"
+      ],
+      "zh": [
+        "简答题",
+        "书写线",
+        "方格",
+        "田字格"
+      ],
+      "ja": [
+        "記述問題",
+        "罫線",
+        "方眼",
+        "マス目"
+      ],
+      "ar": [
+        "سؤال مفتوح",
+        "سطور الكتابة",
+        "ورق مربعات"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Open questions and writing areas",
+        "es": "Preguntas abiertas y zonas de escritura",
+        "ca": "Preguntes obertes i zones d'escriptura",
+        "fr": "Questions ouvertes et zones d'écriture",
+        "de": "Offene Fragen und Schreibflächen",
+        "it": "Domande aperte e spazi di scrittura",
+        "pt": "Perguntas abertas e áreas de escrita",
+        "zh": "开放题与书写区",
+        "ja": "記述問題と解答欄",
+        "ar": "الأسئلة المفتوحة ومساحات الكتابة"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^:::exercise\\{[^}]*type=\"?(?:open)\\b"
+      ],
+      "config": [
+        "exerciseStyles[].area"
+      ]
+    }
+  },
+  "exercise-puzzles": {
+    "label": {
+      "en": "Word searches and crosswords",
+      "es": "Sopas de letras y crucigramas",
+      "ca": "Sopes de lletres i mots encreuats",
+      "fr": "Mots mêlés et mots croisés",
+      "de": "Suchsel und Kreuzworträtsel",
+      "it": "Crucipuzzle e cruciverba",
+      "pt": "Caça-palavras e palavras cruzadas",
+      "zh": "找词游戏与填字游戏",
+      "ja": "単語探しとクロスワード",
+      "ar": "البحث عن الكلمات والكلمات المتقاطعة"
+    },
+    "definition": {
+      "en": "Word searches and crosswords built from a list of words (and clues): the engine places the words with a seed, fills the grid, numbers the crossword and prints its clue lists in the document's language.",
+      "es": "Sopas de letras y crucigramas a partir de una lista de palabras (y pistas): el motor coloca las palabras con una semilla, rellena la cuadrícula, numera el crucigrama e imprime sus definiciones en el idioma del documento.",
+      "ca": "Sopes de lletres i mots encreuats a partir d'una llista de paraules (i pistes): el motor col·loca les paraules amb una llavor, omple la graella i numera els mots encreuats.",
+      "fr": "Mots mêlés et mots croisés construits à partir d'une liste de mots (et de définitions) : le moteur place les mots selon une graine, remplit la grille et numérote les mots croisés.",
+      "de": "Suchsel und Kreuzworträtsel aus einer Wortliste (mit Hinweisen): die Engine setzt die Wörter mit einem Seed, füllt das Raster und nummeriert das Kreuzworträtsel.",
+      "it": "Crucipuzzle e cruciverba da un elenco di parole (e definizioni): il motore colloca le parole con un seme, riempie la griglia e numera il cruciverba.",
+      "pt": "Caça-palavras e palavras cruzadas a partir de uma lista de palavras (e dicas): o motor posiciona as palavras com uma semente, preenche a grade e numera as cruzadas.",
+      "zh": "由词语列表（及提示）生成找词游戏和填字游戏：引擎按种子放置词语、填满格子、为填字编号并印出提示。",
+      "ja": "語のリスト（とヒント）から単語探しとクロスワードを作る。シードで語を配置し、マスを埋め、番号とカギを印刷する。",
+      "ar": "شبكات البحث عن الكلمات والكلمات المتقاطعة من قائمة كلمات (وتلميحات): يضع المحرك الكلمات ببذرة ويملأ الشبكة ويرقّم الكلمات المتقاطعة."
+    },
+    "aliases": {
+      "en": [
+        "word search",
+        "wordsearch",
+        "crossword",
+        "puzzle grid"
+      ],
+      "es": [
+        "sopa de letras",
+        "crucigrama",
+        "pasatiempos"
+      ],
+      "ca": [
+        "sopa de lletres",
+        "mots encreuats"
+      ],
+      "fr": [
+        "mots mêlés",
+        "mots croisés"
+      ],
+      "de": [
+        "Suchsel",
+        "Buchstabensalat",
+        "Kreuzworträtsel"
+      ],
+      "it": [
+        "crucipuzzle",
+        "cruciverba"
+      ],
+      "pt": [
+        "caça-palavras",
+        "palavras cruzadas"
+      ],
+      "zh": [
+        "找词游戏",
+        "填字游戏"
+      ],
+      "ja": [
+        "単語探し",
+        "クロスワード"
+      ],
+      "ar": [
+        "البحث عن الكلمات",
+        "الكلمات المتقاطعة"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Word searches and crosswords",
+        "es": "Sopas de letras y crucigramas",
+        "ca": "Sopes de lletres i mots encreuats",
+        "fr": "Mots mêlés et mots croisés",
+        "de": "Suchsel und Kreuzworträtsel",
+        "it": "Crucipuzzle e cruciverba",
+        "pt": "Caça-palavras e palavras cruzadas",
+        "zh": "找词游戏与填字游戏",
+        "ja": "単語探しとクロスワード",
+        "ar": "البحث عن الكلمات والكلمات المتقاطعة"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^:::exercise\\{[^}]*type=\"?(?:wordsearch|crossword)\\b"
+      ]
+    }
+  },
+  "exercise-arithmetic": {
+    "label": {
+      "en": "Operations in columns",
+      "es": "Operaciones en columna",
+      "ca": "Operacions en columna",
+      "fr": "Opérations posées",
+      "de": "Schriftliches Rechnen",
+      "it": "Operazioni in colonna",
+      "pt": "Contas armadas",
+      "zh": "竖式计算",
+      "ja": "筆算",
+      "ar": "العمليات العمودية"
+    },
+    "definition": {
+      "en": "Operations in columns (+ − ×) with a cell for each digit, and long division set the way the language's schools set it: the bracket ⟌, the potence of Spain, France and Italy, or Germany's 864 : 4 = in a row.",
+      "es": "Operaciones en columna (+ − ×) con una casilla para cada cifra, y la división larga tal como la escriben las escuelas de cada idioma: la galera inglesa ⟌, la de cajita de España, Francia e Italia o la alemana 864 : 4 = en línea.",
+      "ca": "Operacions en columna (+ − ×) amb una casella per a cada xifra, i la divisió llarga com l'escriuen les escoles de cada llengua: la ⟌ anglesa, la de caixeta o l'alemanya 864 : 4 = en línia.",
+      "fr": "Opérations posées (+ − ×) avec une case par chiffre, et division posée comme l'écrivent les écoles de chaque langue : le crochet ⟌ anglais, la potence française ou le 864 : 4 = allemand en ligne.",
+      "de": "Schriftliches Rechnen (+ − ×) mit einem Kästchen für jede Ziffer und die schriftliche Division, wie die Schulen der Sprache sie setzen: der englische Bogen ⟌, die romanische Potence oder 864 : 4 = in einer Zeile.",
+      "it": "Operazioni in colonna (+ − ×) con una casella per ogni cifra, e la divisione in colonna come la scrivono le scuole di ogni lingua: la parentesi ⟌ inglese, lo schema italiano a L o il 864 : 4 = tedesco in riga.",
+      "pt": "Contas armadas (+ − ×) com uma casa para cada algarismo, e a divisão longa como as escolas de cada idioma a escrevem: a chave ⟌ inglesa, o método da chave ibérico ou o 864 : 4 = alemão em linha.",
+      "zh": "竖式计算（+ − ×），每位数字一个格；长除法按各语言学校的写法：英式 ⟌、西欧的直角式，或德式 864 : 4 = 横写。",
+      "ja": "筆算（+ − ×）を一桁一マスで組む。わり算は各言語の学校の書き方に従う。英語圏の ⟌、ヨーロッパ南部のかぎ形、ドイツの 864 : 4 = の横書き。",
+      "ar": "العمليات العمودية (+ − ×) بخانة لكل رقم، والقسمة الطويلة كما تكتبها مدارس كل لغة: القوس ⟌ أو طريقة الزاوية أو 864 : 4 = على سطر."
+    },
+    "aliases": {
+      "en": [
+        "column addition",
+        "long division",
+        "written calculation",
+        "sums"
+      ],
+      "es": [
+        "cuentas",
+        "operaciones en columna",
+        "división larga",
+        "galera"
+      ],
+      "ca": [
+        "operacions en columna",
+        "divisió llarga"
+      ],
+      "fr": [
+        "opérations posées",
+        "division posée",
+        "potence"
+      ],
+      "de": [
+        "schriftliches Rechnen",
+        "schriftliche Division",
+        "Rechenpäckchen"
+      ],
+      "it": [
+        "operazioni in colonna",
+        "divisione in colonna"
+      ],
+      "pt": [
+        "contas armadas",
+        "divisão longa",
+        "algoritmo da divisão"
+      ],
+      "zh": [
+        "竖式",
+        "长除法"
+      ],
+      "ja": [
+        "筆算",
+        "わり算の筆算"
+      ],
+      "ar": [
+        "القسمة الطويلة",
+        "العمليات العمودية"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Operations in columns",
+        "es": "Operaciones en columna",
+        "ca": "Operacions en columna",
+        "fr": "Opérations posées",
+        "de": "Schriftliches Rechnen",
+        "it": "Operazioni in colonna",
+        "pt": "Contas armadas",
+        "zh": "竖式计算",
+        "ja": "筆算",
+        "ar": "العمليات العمودية"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^:::exercise\\{[^}]*type=\"?(?:arithmetic)\\b"
+      ],
+      "config": [
+        "exerciseStyles[].arithmetic"
+      ]
+    }
+  },
+  "exercise-solutions": {
+    "label": {
+      "en": "Solutions",
+      "es": "Soluciones",
+      "ca": "Solucions",
+      "fr": "Corrigés",
+      "de": "Lösungen",
+      "it": "Soluzioni",
+      "pt": "Gabarito",
+      "zh": "答案",
+      "ja": "解答",
+      "ar": "الحلول"
+    },
+    "definition": {
+      "en": "Where the answers print: none, after each exercise, upside down at its foot, at the end of the chapter, or where a :::solutions line stands; a key made from the answers and the :::solution of each exercise.",
+      "es": "Dónde se imprimen las soluciones: en ningún sitio, tras cada ejercicio, boca abajo a su pie, al final del capítulo o donde haya una línea :::solutions; una clave hecha con las respuestas y la :::solution de cada ejercicio.",
+      "ca": "On s'imprimeixen les solucions: enlloc, després de cada exercici, cap per avall al peu, al final del capítol o on hi ha una línia :::solutions.",
+      "fr": "Où s'impriment les corrigés : nulle part, après chaque exercice, à l'envers à son pied, en fin de chapitre ou là où se trouve une ligne :::solutions.",
+      "de": "Wo die Lösungen gedruckt werden: nirgends, nach jeder Übung, auf dem Kopf an ihrem Fuß, am Kapitelende oder dort, wo eine Zeile :::solutions steht.",
+      "it": "Dove si stampano le soluzioni: da nessuna parte, dopo ogni esercizio, capovolte in fondo, a fine capitolo o dove c'è una riga :::solutions.",
+      "pt": "Onde sai o gabarito: em lugar nenhum, depois de cada exercício, de cabeça para baixo no pé, no fim do capítulo ou onde houver uma linha :::solutions.",
+      "zh": "答案印在何处：不印、每题之后、题脚倒印、章末，或 :::solutions 所在处；答案键由各题答案与 :::solution 生成。",
+      "ja": "解答をどこに印刷するか。なし、各問の後、問の下に逆さま、章末、:::solutions の行の位置。",
+      "ar": "أين تُطبع الحلول: لا مكان، بعد كل تمرين، مقلوبة في أسفله، في آخر الفصل، أو حيث يوجد سطر :::solutions."
+    },
+    "aliases": {
+      "en": [
+        "answer key",
+        "answers upside down",
+        "solutions at the end"
+      ],
+      "es": [
+        "solucionario",
+        "soluciones al revés",
+        "soluciones al final"
+      ],
+      "ca": [
+        "solucionari",
+        "solucions"
+      ],
+      "fr": [
+        "corrigés",
+        "réponses à l'envers"
+      ],
+      "de": [
+        "Lösungen",
+        "Lösungsschlüssel",
+        "auf dem Kopf"
+      ],
+      "it": [
+        "soluzioni",
+        "chiavi"
+      ],
+      "pt": [
+        "gabarito",
+        "respostas"
+      ],
+      "zh": [
+        "参考答案",
+        "答案"
+      ],
+      "ja": [
+        "解答",
+        "答え"
+      ],
+      "ar": [
+        "الحلول",
+        "مفتاح الإجابات"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Solutions",
+        "es": "Soluciones",
+        "ca": "Solucions",
+        "fr": "Corrigés",
+        "de": "Lösungen",
+        "it": "Soluzioni",
+        "pt": "Gabarito",
+        "zh": "答案",
+        "ja": "解答",
+        "ar": "الحلول"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "markdown": [
+        "^:::solutions?\\b"
+      ],
+      "config": [
+        "exercises.solutions",
+        "exerciseStyles[].solutions"
+      ]
+    }
+  },
+  "teacher-edition": {
+    "label": {
+      "en": "Teacher's edition",
+      "es": "Edición del profesor",
+      "ca": "Edició del professor",
+      "fr": "Livre du professeur",
+      "de": "Lehrerausgabe",
+      "it": "Guida per l'insegnante",
+      "pt": "Livro do professor",
+      "zh": "教师用书",
+      "ja": "教師用指導書",
+      "ar": "طبعة المعلم"
+    },
+    "definition": {
+      "en": "exercises.edition: 'teacher' prints every answer in its own slot in a second colour, rings the right options and draws the matching lines: the teacher's book from the pupil's text.",
+      "es": "exercises.edition: 'teacher' imprime cada respuesta en su sitio en un segundo color, rodea las opciones correctas y traza las líneas de unir: el libro del profesor a partir del texto del alumno.",
+      "ca": "exercises.edition: 'teacher' imprimeix cada resposta al seu lloc en un segon color i encercla les opcions correctes: el llibre del professor a partir del text de l'alumne.",
+      "fr": "exercises.edition : 'teacher' imprime chaque réponse à sa place dans une seconde couleur et entoure les bonnes options : le livre du professeur à partir du texte de l'élève.",
+      "de": "exercises.edition: 'teacher' druckt jede Antwort an ihrer Stelle in einer zweiten Farbe und kreist die richtigen Antworten ein: die Lehrerausgabe aus dem Schülertext.",
+      "it": "exercises.edition: 'teacher' stampa ogni risposta al suo posto in un secondo colore e cerchia le opzioni giuste: la guida per l'insegnante dal testo dell'alunno.",
+      "pt": "exercises.edition: 'teacher' imprime cada resposta no seu lugar numa segunda cor e circula as alternativas certas: o livro do professor a partir do texto do aluno.",
+      "zh": "exercises.edition: 'teacher' 把每个答案以第二种颜色印在原位，圈出正确选项：由学生用书生成教师用书。",
+      "ja": "exercises.edition: 'teacher' で、すべての答えを第二色で欄の中に印刷し、正しい選択肢に丸をつける。生徒用から教師用を作る。",
+      "ar": "exercises.edition: 'teacher' تطبع كل إجابة في موضعها بلون ثانٍ وتضع دائرة على الخيارات الصحيحة: طبعة المعلم من نص التلميذ."
+    },
+    "aliases": {
+      "en": [
+        "teacher's book",
+        "answers in red",
+        "student edition"
+      ],
+      "es": [
+        "libro del profesor",
+        "guía didáctica",
+        "respuestas en rojo"
+      ],
+      "ca": [
+        "llibre del professor",
+        "respostes en vermell"
+      ],
+      "fr": [
+        "livre du maître",
+        "livre du professeur",
+        "réponses en rouge"
+      ],
+      "de": [
+        "Lehrerausgabe",
+        "Lösungsheft",
+        "Lehrerband"
+      ],
+      "it": [
+        "guida per l'insegnante",
+        "copia docente"
+      ],
+      "pt": [
+        "livro do professor",
+        "respostas em vermelho"
+      ],
+      "zh": [
+        "教师用书",
+        "红字答案"
+      ],
+      "ja": [
+        "教師用",
+        "赤刷り"
+      ],
+      "ar": [
+        "دليل المعلم",
+        "طبعة المعلم"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Teacher's edition",
+        "es": "Edición del profesor",
+        "ca": "Edició del professor",
+        "fr": "Livre du professeur",
+        "de": "Lehrerausgabe",
+        "it": "Guida per l'insegnante",
+        "pt": "Livro do professor",
+        "zh": "教师用书",
+        "ja": "教師用指導書",
+        "ar": "طبعة المعلم"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "config": [
+        "exercises.edition"
+      ]
+    }
+  },
+  "exercise-digital": {
+    "label": {
+      "en": "Interactive exercises",
+      "es": "Ejercicios interactivos",
+      "ca": "Exercicis interactius",
+      "fr": "Exercices interactifs",
+      "de": "Interaktive Übungen",
+      "it": "Esercizi interattivi",
+      "pt": "Exercícios interativos",
+      "zh": "交互练习",
+      "ja": "インタラクティブな練習問題",
+      "ar": "تمارين تفاعلية"
+    },
+    "definition": {
+      "en": "The same exercises answerable in the HTML and EPUB outputs: inputs over the blanks, options and dots to click, a Check and Show solution bar, the answers kept in the browser.",
+      "es": "Los mismos ejercicios se pueden contestar en las salidas HTML y EPUB: campos sobre los huecos, opciones y puntos para pulsar, una barra de Comprobar y Ver la solución, y las respuestas guardadas en el navegador.",
+      "ca": "Els mateixos exercicis es poden respondre en HTML i EPUB: camps sobre els buits, opcions i punts per prémer i una barra de Comprova i Mostra la solució.",
+      "fr": "Les mêmes exercices se font en HTML et en EPUB : champs sur les blancs, options et points cliquables, une barre Vérifier et Voir la solution.",
+      "de": "Dieselben Übungen in HTML und EPUB lösbar: Eingabefelder über den Lücken, anklickbare Antworten und Punkte, eine Leiste mit Prüfen und Lösung zeigen.",
+      "it": "Gli stessi esercizi si risolvono in HTML ed EPUB: campi sugli spazi, opzioni e punti cliccabili, una barra Verifica e Mostra la soluzione.",
+      "pt": "Os mesmos exercícios respondidos no HTML e no EPUB: campos sobre as lacunas, alternativas e pontos clicáveis, uma barra Verificar e Ver a resposta.",
+      "zh": "同样的练习可在 HTML 和 EPUB 中作答：空格上的输入框、可点击的选项与圆点、检查与查看答案按钮。",
+      "ja": "同じ練習問題を HTML と EPUB で解ける。空欄の入力欄、選択肢と点のクリック、答え合わせと解答表示のボタン。",
+      "ar": "التمارين نفسها قابلة للحل في HTML وEPUB: حقول فوق الفراغات، وخيارات ونقاط قابلة للنقر، وشريط للتحقق وعرض الحل."
+    },
+    "aliases": {
+      "en": [
+        "interactive exercises",
+        "self-check",
+        "quiz in HTML"
+      ],
+      "es": [
+        "ejercicios interactivos",
+        "autocorrección"
+      ],
+      "ca": [
+        "exercicis interactius"
+      ],
+      "fr": [
+        "exercices interactifs",
+        "autocorrection"
+      ],
+      "de": [
+        "interaktive Übungen",
+        "Selbstkontrolle"
+      ],
+      "it": [
+        "esercizi interattivi",
+        "autocorrezione"
+      ],
+      "pt": [
+        "exercícios interativos",
+        "autocorreção"
+      ],
+      "zh": [
+        "交互练习",
+        "自动批改"
+      ],
+      "ja": [
+        "インタラクティブな問題",
+        "自動採点"
+      ],
+      "ar": [
+        "تمارين تفاعلية",
+        "تصحيح ذاتي"
+      ]
+    },
+    "group": "exercises",
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Exercises in HTML and EPUB",
+        "es": "Ejercicios en HTML y EPUB",
+        "ca": "Exercicis en HTML i EPUB",
+        "fr": "Exercices en HTML et EPUB",
+        "de": "Übungen in HTML und EPUB",
+        "it": "Esercizi in HTML ed EPUB",
+        "pt": "Exercícios em HTML e EPUB",
+        "zh": "HTML 与 EPUB 中的练习",
+        "ja": "HTML と EPUB の練習問題",
+        "ar": "التمارين في HTML وEPUB"
+      }
+    },
+    "since": "1.59.0",
+    "research": [],
+    "detect": {
+      "api": [
+        "attachExercises"
+      ],
+      "config": [
+        "exercises.digital"
+      ]
+    }
   }
 }
