@@ -118,7 +118,7 @@ const config: PostextConfig = {
   </thead>
   <tbody>
     <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Composer la consigne en gras.</td></tr>
-    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>La composer en italique.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>La composer en italique. Le numéro de l’exercice reste en romain.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>celle du texte</td><td>Sa couleur, passages en gras compris.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>celle du texte</td><td>Sa famille : une consigne en linéale sur un texte à empattements est courante dans les manuels scolaires.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>celle du texte</td><td>Son corps.</td></tr>
@@ -176,7 +176,7 @@ const config: PostextConfig = {
 
 ### Vrai ou faux
 
-`trueFalse` règle les réponses en fin d’affirmation.
+`trueFalse` règle les réponses d’une affirmation, à la fin ou devant elle.
 
 <table>
   <thead>
@@ -190,6 +190,7 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>selon la langue</td><td>Les deux réponses : <code>['V', 'F']</code> en français, en espagnol, en catalan, en italien et en portugais ; T F en anglais ; R F en allemand ; √ × en chinois ; ○ × en japonais ; صح خطأ en arabe.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code> : chaque lettre suivie d’une case à cocher, en bout de ligne. <code>'bracket'</code> : un seul espace où écrire la réponse.</td></tr>
+    <tr><td><code>place</code></td><td><code>'end' | 'start'</code></td><td><code>'end'</code></td><td>Où se placent les cases ou la parenthèse : <code>'end'</code>, en fin de ligne ; <code>'start'</code>, avant l’affirmation, comme l’impriment les manuels brésiliens <code>( ) frase</code>.</td></tr>
   </tbody>
 </table>
 
@@ -270,7 +271,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>Le côté d’une case.</td></tr>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>Le côté d’une case. Les cases des opérations posées en font 0,8.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>celle du texte</td><td>La famille des lettres et des chiffres.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 du côté de la case</td><td>La taille des lettres et des chiffres, un em étant celui du texte.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>celle du texte</td><td>La couleur des lettres et des chiffres.</td></tr>
@@ -297,6 +298,8 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>selon la langue</td><td>La division posée. <code>'bracket'</code> : le diviseur à gauche du dividende, un crochet au-dessus de celui-ci, le quotient en haut (anglais, chinois, japonais, arabe, et toute langue sans usage propre). <code>'potence'</code> : le diviseur à droite du dividende sous la potence, le quotient sous le diviseur (français, espagnol, catalan, italien, portugais). <code>'inline'</code> : <code>864 : 4 =</code> avec le quotient sur la ligne et les étapes en dessous (allemand).</td></tr>
     <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>Opérations par rangée, moins quand la colonne est trop étroite.</td></tr>
+    <tr><td><code>partialProducts</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Une multiplication par un nombre de deux chiffres ou plus imprime une ligne par produit partiel, une pour chaque chiffre non nul du multiplicateur, chacune décalée d’un rang vers la gauche, puis le résultat sous un second trait. <code>false</code> ne laisse que le résultat.</td></tr>
+    <tr><td><code>working</code></td><td><code>'products' | 'remainders'</code></td><td>selon la langue</td><td>Les lignes laissées sous une division posée pour les calculs. <code>'products'</code> : le produit de chaque étape et ce qui reste, deux lignes par étape. <code>'remainders'</code> : seulement ce qui reste, la soustraction faite de tête, une ligne par étape (espagnol, catalan et italien). Une étape dont le chiffre du quotient est 0 ne prend pas de ligne.</td></tr>
   </tbody>
 </table>
 

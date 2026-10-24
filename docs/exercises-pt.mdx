@@ -134,6 +134,7 @@ Complete as frases com as palavras do quadro.
 - `[[quilo | quilograma]]`: uma lacuna com várias respostas aceitas. O gabarito imprime a primeira.
 - `[[fui | (foi) | foram]]`: uma **escolha na linha**. As opções saem no meio da frase, `(fui / foi / foram)`, e a que está entre parênteses é a certa: o leitor a circula.
 - `[[foi]]{width=6}`: uma lacuna de seis ems de largura.
+- `[[{春天|chūn tiān}]]`: um ruby numa lacuna imprime a leitura sobre a lacuna, também no livro do aluno, que escreve os caracteres sob o pinyin (看拼音写词语) ou o kana (漢字の書き取り).
 - `\|` é uma barra literal dentro de uma resposta, e `\[[` um par literal de colchetes.
 
 Todas as lacunas de um exercício têm a largura da resposta mais longa mais 1,5 em; assim, o comprimento de uma linha não entrega a resposta (`blank.width` muda isso). `bank` imprime as respostas embaralhadas num banco de palavras com moldura, sob o enunciado. Uma linha `::bank[pedras | vento]` coloca o banco onde está escrita e acrescenta as suas palavras, que não entram em nenhuma lacuna; sozinha, a linha já pede o banco. `[[…]]` só é lido dentro de um exercício: dois colchetes em qualquer outro lugar do livro ficam como foram escritos.
@@ -234,6 +235,8 @@ Elas usam a luz para produzir o próprio alimento.
 
 Linhas pautadas para escrever vêm depois do enunciado: três por padrão, quatro aqui com `lines=4`. Quando o corpo é uma lista, cada item ganha suas próprias linhas. `area` muda o pautado: `lines`, `dots`, `grid` (papel quadriculado), `seyes` (o pautado escolar francês), `tianzige` (田字格, os quadrados em que os alunos chineses escrevem os caracteres), `box` (uma moldura vazia, para um desenho) ou `none`. O `:::solution` é a resposta-modelo, impressa com as soluções e escrita sobre as linhas numa edição do professor.
 
+`cells` dá aos quadradinhos (`grid` ou `tianzige`, papel quadriculado quando o estilo pauta linhas) esse número de casas: `cells=4`. Vários números põem grupos lado a lado, a um quadradinho de distância, um por palavra, que passam para a linha seguinte no fim da linha: `cells="2 2 3"`. A edição do professor escreve a resposta modelo um caractere por quadradinho, grupo após grupo.
+
 ### Caça-palavras e palavras cruzadas
 
 #### Caça-palavras
@@ -279,11 +282,13 @@ Arme e efetue.
 :::
 ```
 
-Cada operação é montada em casas, como o aluno a escreve: os algarismos em colunas, o sinal à esquerda, um traço e casas vazias para o resultado, com até quatro operações por fileira. Numa página da direita para a esquerda, cada operação mantém os algarismos da esquerda para a direita, e as operações se sucedem da direita para a esquerda. Os sinais lidos são `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` e `/`, com números inteiros. A conta de dividir segue o costume escolar da língua do documento, e `arithmetic.division` escolhe outro:
+Cada operação é montada em casas, como o aluno a escreve: os algarismos em colunas, o sinal à esquerda, um traço e casas vazias para o resultado, com até quatro operações por fileira. Numa página da direita para a esquerda, cada operação mantém os algarismos da esquerda para a direita, e as operações se sucedem da direita para a esquerda. Os sinais lidos são `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` e `/`, com números inteiros ou decimais (`12,5 + 3,75`): numa adição ou subtração as vírgulas ficam uma sob a outra, e uma divisão por um decimal não é lida. A conta de dividir segue o costume escolar da língua do documento, e `arithmetic.division` escolhe outro:
 
 - `bracket`: o divisor à esquerda, o dividendo sob uma chave, o quociente em cima dela. Livros em inglês, chinês, japonês e árabe.
 - `potence`: o dividendo à esquerda, o divisor à direita dentro da chave em L, o quociente sob o divisor e o resto embaixo, como no método da chave. Livros em português, espanhol, catalão, francês e italiano.
 - `inline`: `864 : 4 =` e as casas do quociente na mesma linha, com as etapas escritas embaixo. Livros em alemão.
+
+Uma multiplicação por um número de dois ou mais algarismos imprime uma linha para cada produto parcial, cada uma uma casa mais à esquerda, e o resultado sob um segundo traço (`arithmetic.partialProducts: false` deixa só o resultado). Sob uma divisão o estilo deixa linhas para os cálculos: o produto de cada passo e o que sobra, ou só o que sobra quando a subtração é feita de cabeça, como nos livros espanhóis, catalães e italianos (`arithmetic.working`).
 
 ### O primeiro item como modelo
 
@@ -351,7 +356,7 @@ O painel **Verificações** do Sandbox e `collectContentWarnings` informam o que
 
 ## Exercícios em HTML e EPUB
 
-No visualizador HTML e nos livros EPUB, os exercícios podem ser respondidos. O leitor digita nas lacunas e clica em alternativas, afirmações, pontos para ligar e casas de uma grade; depois confere as respostas, mostra a solução ou recomeça. As respostas certas e erradas aparecem com uma cor e uma marca (`digital.correctColor`, `digital.wrongColor`) e são anunciadas aos leitores de tela. As respostas ficam guardadas no navegador, por livro, e o leitor as encontra de novo na próxima visita (`exercises.digital.persist`). `exercises.digital.check: 'instant'` confere cada resposta assim que ela é dada; `exercises.digital.interactive: false` deixa as páginas como no impresso. O gabarito sempre vai no EPUB, seja qual for a posição escolhida para o impresso; assim, um sistema de leitura que não executa scripts também tem as respostas.
+No visualizador HTML e nos livros EPUB, os exercícios podem ser respondidos. O leitor digita nas lacunas e clica em alternativas, afirmações, pontos para ligar e casas de uma grade; depois confere as respostas, mostra a solução ou recomeça. As respostas certas e erradas aparecem com uma cor e uma marca (`digital.correctColor`, `digital.wrongColor`) e são anunciadas aos leitores de tela. As respostas ficam guardadas no navegador, por livro, e o leitor as encontra de novo na próxima visita (`exercises.digital.persist`). `exercises.digital.check: 'instant'` confere cada resposta assim que ela é dada; `exercises.digital.interactive: false` deixa as páginas como no impresso. O gabarito sempre vai no EPUB, seja qual for a posição escolhida para o impresso; assim, um sistema de leitura que não executa scripts também tem as respostas. No EPUB refluível, as grades e as áreas de escrita crescem com o texto do leitor, e numa página da direita para a esquerda as casas a responder seguem a grade espelhada.
 
 A tela pode dar aos exercícios uma forma própria com `htmlViewer.overrides`, que é mesclado sobre a configuração do livro antes de o visualizador HTML diagramar. O impresso mantém a sua:
 

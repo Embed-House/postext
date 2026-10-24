@@ -118,7 +118,7 @@ const config: PostextConfig = {
   </thead>
   <tbody>
     <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>把题目要求排成粗体。</td></tr>
-    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>排成斜体。</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>排成斜体。习题编号仍为正体。</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>正文的颜色</td><td>它的颜色，包括其中的粗体文字。</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>正文的字体</td><td>它的字体族：正文用宋体、题目要求用黑体，是课本里常见的搭配。</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>正文的字号</td><td>它的字号。</td></tr>
@@ -176,7 +176,7 @@ const config: PostextConfig = {
 
 ### 判断
 
-`trueFalse`设定判断句末尾的答案。
+`trueFalse`设定判断句的答案，放在句末或句前。
 
 <table>
   <thead>
@@ -190,6 +190,7 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>随语言而定</td><td>两个答案：中文为√ ×；英文为<code>['T', 'F']</code>；西班牙文、加泰罗尼亚文、法文、意大利文和葡萄牙文为V F；德文为R F；日文为○ ×；阿拉伯文为صح خطأ。</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>：每个符号带一个供勾选的方框，排在行末。<code>'bracket'</code>：只留一个空，让学生写答案。</td></tr>
+    <tr><td><code>place</code></td><td><code>'end' | 'start'</code></td><td><code>'end'</code></td><td>方框或括号的位置：<code>'end'</code>在行末；<code>'start'</code>在判断句前面，如巴西课本的 <code>( ) frase</code>。</td></tr>
   </tbody>
 </table>
 
@@ -270,7 +271,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>格子的边长。</td></tr>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>格子的边长。竖式的格子是它的0.8倍。</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>正文的字体</td><td>字母、汉字和数字的字体族。</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>格子边长的0.58</td><td>格中文字和数字的大小，em以正文为准。</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>正文的颜色</td><td>字母、汉字和数字的颜色。</td></tr>
@@ -297,6 +298,8 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>随语言而定</td><td>除法竖式。<code>'bracket'</code>：除数在被除数左边，被除数上面是“厂”字形的除号，商写在最上方（中文、英文、日文、阿拉伯文，以及没有自己排法的语言）。<code>'potence'</code>：除数在被除数右边的L形线下，商写在除数下面（西班牙文、加泰罗尼亚文、法文、意大利文、葡萄牙文）。<code>'inline'</code>：<code>864 : 4 =</code>，商写在同一行，计算步骤写在下面（德文）。</td></tr>
     <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>每行的算式数，栏太窄时减少。</td></tr>
+    <tr><td><code>partialProducts</code></td><td><code>boolean</code></td><td><code>true</code></td><td>乘数是两位及以上时，乘数每个不为零的数位各写一行部分积，每行向左错一位，第二条横线下写积。<code>false</code>只留积。</td></tr>
+    <tr><td><code>working</code></td><td><code>'products' | 'remainders'</code></td><td>随语言而定</td><td>除法竖式下面留给计算过程的行。<code>'products'</code>：每一步的积和余下的数，每步两行。<code>'remainders'</code>：只写余下的数，减法心算，每步一行（西班牙语、加泰罗尼亚语、意大利语）。商的某一位是0的那一步不占行。</td></tr>
   </tbody>
 </table>
 

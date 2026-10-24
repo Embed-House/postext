@@ -134,6 +134,7 @@ Completa las frases con las palabras del recuadro.
 - `[[vídeo | video]]`: un hueco con varias respuestas válidas. La clave imprime la primera.
 - `[[voy | (va) | vamos]]`: una **elección en línea**. Las opciones se imprimen dentro de la línea, `(voy / va / vamos)`, y la que va entre paréntesis es la correcta: el lector la rodea.
 - `[[fue]]{width=6}`: un hueco de seis em de ancho.
+- `[[{春天|chūn tiān}]]`: un ruby dentro de un hueco imprime su lectura sobre el hueco, también en el libro del alumno, que escribe los caracteres bajo su pinyin (看拼音写词语) o su kana (漢字の書き取り).
 - `\|` es una barra literal dentro de una respuesta, y `\[[` una pareja literal de corchetes.
 
 Todos los huecos de un ejercicio miden lo que su respuesta más larga más 1,5 em, para que la longitud de la línea no delate la respuesta (`blank.width` lo cambia). `bank` imprime las respuestas desordenadas en un banco de palabras con marco, debajo del enunciado. Una línea `::bank[piedras | viento]` coloca el banco donde está escrita y le añade sus palabras como distractores; la línea sola ya pide el banco. `[[…]]` solo se interpreta dentro de un ejercicio: dos corchetes en cualquier otro lugar del libro quedan tal como están escritos.
@@ -234,6 +235,8 @@ Porque la usan para fabricar su alimento.
 
 Después del enunciado vienen líneas pautadas para escribir: tres por defecto, cuatro aquí con `lines=4`. Si el cuerpo es una lista, cada elemento tiene sus propias líneas. `area` cambia el pautado: `lines` (renglones), `dots` (puntos), `grid` (cuadrícula), `seyes` (la pauta escolar francesa), `tianzige` (田字格, los cuadros en los que los alumnos chinos escriben los caracteres), `box` (un marco vacío, para un dibujo) o `none`. El `:::solution` es la respuesta modelo: se imprime con las soluciones y, en la edición del profesor, aparece escrita sobre las líneas.
 
+`cells` da a los cuadros (`grid` o `tianzige`, cuadrícula cuando el estilo raya líneas) ese número de casillas: `cells=4`. Varios números ponen grupos uno al lado de otro, a un cuadro de distancia, uno por palabra, que pasan a la línea siguiente al llegar al final: `cells="2 2 3"`. La edición del profesor escribe la respuesta modelo un carácter por cuadro, grupo tras grupo.
+
 ### Sopas de letras y crucigramas
 
 #### Sopa de letras
@@ -279,11 +282,13 @@ Calcula.
 :::
 ```
 
-Cada operación se compone en casillas, como la escribe un alumno: las cifras en columnas, el signo a la izquierda, una raya y casillas vacías para el resultado, con hasta cuatro operaciones por fila. En una página de derecha a izquierda cada operación conserva sus cifras de izquierda a derecha, y las operaciones se suceden de derecha a izquierda. Se leen los signos `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` y `/`, con números enteros. La división sigue la costumbre escolar del idioma del documento, y `arithmetic.division` elige otra:
+Cada operación se compone en casillas, como la escribe un alumno: las cifras en columnas, el signo a la izquierda, una raya y casillas vacías para el resultado, con hasta cuatro operaciones por fila. En una página de derecha a izquierda cada operación conserva sus cifras de izquierda a derecha, y las operaciones se suceden de derecha a izquierda. Se leen los signos `+`, `-`, `−`, `×`, `x`, `*`, `·`, `⋅`, `÷`, `:` y `/`, con números enteros o decimales (`12,5 + 3,75`): en una suma o una resta las comas quedan una debajo de otra, y una división entre un decimal no se lee. La división sigue la costumbre escolar del idioma del documento, y `arithmetic.division` elige otra:
 
 - `potence`: el dividendo a la izquierda y el divisor a la derecha dentro de la «casita» en forma de L, el cociente debajo del divisor y el resto abajo, bajo las restas. Es la división de los libros en español, catalán, francés, italiano y portugués.
 - `bracket`: el divisor a la izquierda, el dividendo bajo un corchete y el cociente encima. Libros en inglés, chino, japonés y árabe.
 - `inline`: `864 : 4 =` y las casillas del cociente en la misma línea, con los pasos debajo. Libros en alemán.
+
+Una multiplicación por un número de dos o más cifras imprime una fila por cada producto parcial, cada una un lugar más a la izquierda, y el resultado bajo una segunda raya (`arithmetic.partialProducts: false` deja solo el resultado). Bajo una división el estilo deja filas para los cálculos: el producto de cada paso y lo que queda, o solo lo que queda cuando la resta se hace de cabeza, como se escribe en los libros españoles, catalanes e italianos (`arithmetic.working`).
 
 ### Un primer elemento resuelto
 
@@ -351,7 +356,7 @@ El panel **Revisión** del Sandbox y `collectContentWarnings` avisan de lo que e
 
 ## Ejercicios en HTML y EPUB
 
-En el visor HTML y en los libros EPUB los ejercicios se pueden responder. El lector escribe en los huecos y pulsa opciones, afirmaciones, puntos que unir y casillas de una cuadrícula; después comprueba las respuestas, ve la solución o vuelve a empezar. Las respuestas correctas y las incorrectas se señalan con un color y una marca (`digital.correctColor`, `digital.wrongColor`) y se anuncian a los lectores de pantalla. Las respuestas se guardan en el navegador, por libro, y el lector las encuentra en su siguiente visita (`exercises.digital.persist`). Con `exercises.digital.check: 'instant'` cada respuesta se corrige en cuanto se da; con `exercises.digital.interactive: false` las páginas quedan como en papel. La clave de respuestas siempre va dentro del EPUB, sea cual sea la colocación en papel, para que un sistema de lectura que no ejecuta scripts tenga también las respuestas.
+En el visor HTML y en los libros EPUB los ejercicios se pueden responder. El lector escribe en los huecos y pulsa opciones, afirmaciones, puntos que unir y casillas de una cuadrícula; después comprueba las respuestas, ve la solución o vuelve a empezar. Las respuestas correctas y las incorrectas se señalan con un color y una marca (`digital.correctColor`, `digital.wrongColor`) y se anuncian a los lectores de pantalla. Las respuestas se guardan en el navegador, por libro, y el lector las encuentra en su siguiente visita (`exercises.digital.persist`). Con `exercises.digital.check: 'instant'` cada respuesta se corrige en cuanto se da; con `exercises.digital.interactive: false` las páginas quedan como en papel. La clave de respuestas siempre va dentro del EPUB, sea cual sea la colocación en papel, para que un sistema de lectura que no ejecuta scripts tenga también las respuestas. En un EPUB de maquetación fluida las cuadrículas y las zonas de escritura crecen con el texto del lector, y en una página de derecha a izquierda las casillas que se responden siguen la cuadrícula reflejada.
 
 La pantalla puede dar a los ejercicios una forma propia mediante `htmlViewer.overrides`, que se combina con la configuración del libro antes de que el visor HTML maquete. El papel conserva la suya:
 

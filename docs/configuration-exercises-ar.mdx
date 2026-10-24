@@ -118,7 +118,7 @@ const config: PostextConfig = {
   </thead>
   <tbody>
     <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>تُصفّ التعليمة بالعريض.</td></tr>
-    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>تُصفّ بالمائل.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>تُصفّ بالمائل. ويبقى رقم التمرين قائمًا.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>لون النص</td><td>لونها، ومعه المقاطع العريضة.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>خط النص</td><td>عائلة خطها: تعليمة بخط كوفي أو بخط بلا زوائد فوق نص بخط النسخ شائعة في الكتب المدرسية.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>حجم النص</td><td>حجمها.</td></tr>
@@ -176,7 +176,7 @@ const config: PostextConfig = {
 
 ### صح أو خطأ
 
-تضبط `trueFalse` الإجابتين في آخر العبارة.
+تضبط `trueFalse` الإجابتين في آخر العبارة أو قبلها.
 
 <table>
   <thead>
@@ -190,6 +190,7 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>بحسب اللغة</td><td>الإجابتان: <code>['صح', 'خطأ']</code> في العربية؛ وT F في الإنجليزية؛ وV F في الإسبانية والكتالونية والفرنسية والإيطالية والبرتغالية؛ وR F في الألمانية؛ و√ × في الصينية؛ و○ × في اليابانية.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: لكل علامة مربع للتأشير، في آخر السطر. <code>'bracket'</code>: فراغ واحد تُكتب فيه الإجابة.</td></tr>
+    <tr><td><code>place</code></td><td><code>'end' | 'start'</code></td><td><code>'end'</code></td><td>موضع المربعات أو القوسين: <code>'end'</code> في آخر السطر، و<code>'start'</code> قبل العبارة كما تطبعها الكتب البرازيلية <code>( ) frase</code>.</td></tr>
   </tbody>
 </table>
 
@@ -270,7 +271,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>ضلع الخانة.</td></tr>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>ضلع الخانة. وخانات العمليات العمودية 0.8 منه.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>خط النص</td><td>عائلة خط الحروف والأرقام.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0.58 من ضلع الخانة</td><td>حجم الحروف والأرقام، والـem هو em النص.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>لون النص</td><td>لون الحروف والأرقام.</td></tr>
@@ -297,6 +298,8 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>بحسب اللغة</td><td>القسمة المطوّلة. <code>'bracket'</code>: المقسوم عليه على يسار المقسوم، وفوق المقسوم قوس، وخارج القسمة في الأعلى (العربية والإنجليزية والصينية واليابانية، وكل لغة ليس لها عرف خاص). <code>'potence'</code>: المقسوم عليه على يمين المقسوم تحت زاوية على شكل L، وخارج القسمة تحت المقسوم عليه (الإسبانية والكتالونية والفرنسية والإيطالية والبرتغالية). <code>'inline'</code>: <code>864 : 4 =</code> وخارج القسمة في السطر والخطوات تحته (الألمانية).</td></tr>
     <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>عدد العمليات في الصف، وأقل منه حين يضيق العمود.</td></tr>
+    <tr><td><code>partialProducts</code></td><td><code>boolean</code></td><td><code>true</code></td><td>الضرب في عدد من رقمين أو أكثر يطبع سطرًا لكل ناتج جزئي، سطرًا لكل رقم غير الصفر من المضروب فيه، كل سطر منزلةً إلى اليسار، ثم الناتج تحت خط ثانٍ. <code>false</code> يترك الناتج وحده.</td></tr>
+    <tr><td><code>working</code></td><td><code>'products' | 'remainders'</code></td><td>بحسب اللغة</td><td>الأسطر المتروكة تحت القسمة المطوّلة لخطواتها. <code>'products'</code>: ناتج كل خطوة وما يتبقى، سطران لكل خطوة. <code>'remainders'</code>: ما يتبقى فقط مع الطرح ذهنيًّا، سطر لكل خطوة (الإسبانية والكتالونية والإيطالية). الخطوة التي رقم خارج القسمة فيها 0 لا تأخذ سطرًا.</td></tr>
   </tbody>
 </table>
 
