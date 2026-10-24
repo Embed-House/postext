@@ -2188,7 +2188,8 @@ export interface ResolvedCalloutBlock {
  *  - `afterDisplay` — a grid line under a display formula or a box;
  *  - `afterFloat` — a grid line under a float band heading the column;
  *  - `looseParagraph` — a paragraph re-broken a line long (plus tracking
- *    when word spacing alone could not gain the line). */
+ *    when word spacing alone could not gain the line), or with
+ *    `fillShortColumns` (#1236) a line short. */
 export type BalanceLever = 'trailingCallout' | 'flexFigure' | 'heading' | 'listEnd' | 'afterDisplay' | 'afterFloat' | 'looseParagraph';
 
 /** Column balancing on a character grid (`VDTDocument.gridBalancing`,
@@ -2214,14 +2215,16 @@ export interface VDTBalancing {
    *  `0` when only `looseParagraph` fired — that paragraph grows by its
    *  extra lines instead. */
   spaceAbove: number;
-  /** `looseParagraph`: lines the paragraph gained. */
+  /** `looseParagraph`: lines the paragraph gained (-1 when
+   *  `headings.balancing.fillShortColumns` set it a line short, #1236). */
   extraLines?: number;
   /** `flexFigure`: px the picture was set taller, cropped within its safe
    *  area (`Resource.safeArea`); `spaceAbove` is then `0`. */
   bodyGrowth?: number;
   /** `looseParagraph`: tracking that gained the line, in thousandths of an
-   *  em (`0` when word spacing alone did); the block's `letterSpacing` is
-   *  the same value in px. */
+   *  em (`0` when word spacing alone did; negative, tighter, for a
+   *  paragraph set a line short); the block's `letterSpacing` is the same
+   *  value in px. */
   tracking?: number;
 }
 

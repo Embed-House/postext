@@ -1,0 +1,142 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 169,
+  "status": "published",
+  "chapter": "textbooks",
+  "order": 110,
+  "level": 2,
+  "genres": [
+    "workbook",
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "exercise-styles",
+      "exercise-arithmetic",
+      "exercise-choice"
+    ],
+    "also": [
+      "exercises",
+      "exercise-gaps",
+      "exercise-match",
+      "exercise-open",
+      "opener-design",
+      "heading-attributes",
+      "color-palette",
+      "cjk-fonts",
+      "arabic-fonts",
+      "right-binding",
+      "text-direction",
+      "hyphenation-languages",
+      "canvas-rendering",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q203",
+    "Q198",
+    "Q199"
+  ],
+  "gotchas": [],
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "cjk",
+    "arabic"
+  ],
+  "sample": {
+    "locales": [
+      "en",
+      "es",
+      "ca",
+      "fr",
+      "de",
+      "it",
+      "pt",
+      "zh",
+      "ja",
+      "ar"
+    ]
+  },
+  "capture": {
+    "hero": 1,
+    "card": "crop",
+    "focus": {
+      "page": 1,
+      "x": 0,
+      "y": 0,
+      "w": 1,
+      "h": 0.52
+    },
+    "expect": {
+      "pages": [
+        2,
+        2
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [],
+    "fonts": [
+      {
+        "family": "Nunito",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Baloo 2",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Serif SC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Sans SC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Klee One",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Sans JP",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Naskh Arabic",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Baloo Bhaijaan 2",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-24",
+  "updated": "2026-10-24",
+  "downloads": {
+    "pdf": true
+  }
+}

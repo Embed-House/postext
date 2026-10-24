@@ -1,0 +1,51 @@
+---
+title: "Un cahier japonais aux corrigés imprimés à l’envers"
+summary: "Deux pages d’une série de cahiers d’exercices japonais, le calcul à l’horizontale et les kanji en colonnes, chaque exercice suivi de son corrigé à l’envers."
+plain: "Un cahier d’école japonais : opérations, cases, choix et vrai ou faux sur une page, kanji et lectures de haut en bas sur une autre. Sous chaque exercice, le corrigé est imprimé à l’envers ; l’enfant retourne le cahier pour vérifier."
+description: "Une ドリル japonaise dans Postext : ひっ算, cases □, choix ア イ ウ et ○× à l’horizontale, une page de 国語 à la verticale, corrigés tournés de 180° sous chaque exercice."
+question: "Comment imprimer le corrigé à l’envers sous chaque exercice d’un cahier japonais ?"
+aliases: ["ドリル", "計算ドリル", "漢字ドリル", "cahier d’exercices japonais", "corrigés à l’envers", "réponses à l’envers", "solutions inversées", "こたえ", "ひっ算", "書き取り", "écriture verticale", "tategaki", "○×"]
+pageNotes: { "1": "La page de calcul : une bande bleu pâle aux coins arrondis avec une pastille jaune さんすう 12, le titre 3けたのたし算とひき算 et un tanuki peint qui tient un crayon ; une ligne pour le nom et une case pour la note ; l’exercice 1, quatre opérations posées avec des cases en pointillés pour les chiffres ; l’exercice 2, six calculs suivis chacun d’une case ; l’exercice 3, deux questions avec ア イ ウ sur une ligne ; sous chaque exercice, son corrigé en petits caractères gris, à l’envers.", "3": "La page de kanji, composée à la verticale et reliée à droite : la même bande bleu pâle descend maintenant le long du bord droit, avec le titre 春のことば en colonne et le renard peint à son pied ; des lectures avec une haute case à côté de chacune, des lectures à écrire entre parenthèses à côté de kanji soulignés, des choix entre parenthèses pleine chasse, et le corrigé de chaque exercice à l’envers au pied de sa colonne." }
+---
+
+## Ce que vous allez composer
+
+Deux pages d’une série de cahiers d’exercices de CE2, au format B5. La page de calcul se lit à l’horizontale : une bande bleu pâle avec la pastille de la matière, le titre et un tanuki en mascotte, une ligne pour le nom et une case pour la note, puis des ひっ算 (opérations posées) avec une case pour chaque chiffre du résultat, des cases à remplir après six calculs, des choix ア イ ウ sur une ligne, des affirmations ○× avec une parenthèse en fin de ligne et deux problèmes avec des lignes pour poser le calcul. La page de kanji est composée comme on imprime un cahier de 国語, de haut en bas et de droite à gauche : des lectures avec une case pour le kanji, des mots soulignés dont la lecture va entre parenthèses, des choix à entourer et un sens à trouver. Sous chaque exercice, le corrigé est imprimé à l’envers en petits caractères gris. L’enfant voit où il se trouve, ne peut pas le lire d’un coup d’œil et retourne le cahier pour vérifier.
+
+## Préparation
+
+### 1 · Retourner le corrigé de chaque exercice
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. `placement: 'inverted'` place le corrigé après chaque exercice dans un encadré tourné de 180°, et cet encadré se loge dans celui de l’exercice : un saut de page ne sépare donc jamais les deux. Le corrigé est tiré de l’exercice : les opérations avec leur résultat, le katakana de la bonne réponse, ○ et ×, les mots des trous. Le style d’encadré du corrigé, `kotae`, se contente de composer le texte en petit et en gris.
+
+### 2 · Une bande pour une page horizontale et une page verticale
+
+<Excerpt region="header" />
+
+Sur une page verticale, une maquette de titre se pose le long de sa colonne : x descend la page et y va vers la gauche. La bande ancrée en `top-left` sur toute la largeur se tient en haut de la page de calcul et le long du bord droit de la page de kanji ; la mascotte ancrée en `top-right` se place au bout de la bande sur les deux pages. Rien dans la maquette ne nomme une direction.
+
+### 3 · Deux cahiers pour un seul texte
+
+<Excerpt region="two-books" />
+
+La configuration est une fonction : chaque composition reçoit son propre objet, et seul `writingMode` change entre les deux. Composé à la verticale, le cahier de 国語 se relie à droite de lui-même ; `showBook` place chaque cahier de son côté du dos. Le texte est composé en Klee One, un caractère de manuel scolaire, et les étiquettes en Zen Maru Gothic ; les deux chargent leur ponctuation verticale pour les parenthèses de la page de kanji.
+
+## Variantes
+
+### Regrouper les corrigés à la fin
+
+Un cahier vendu avec un livret de corrigés garde les réponses hors des pages : `chapterEnd` les liste après le dernier exercice.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'kotae' },
++  solutions: { placement: 'chapterEnd', box: 'kotae' },
+```
+
+### Composer une page de jeux
+
+<RecipeLink slug="puzzle-page-upside-down-answers">La page de jeux</RecipeLink> retourne ses solutions de la même façon, sur des cartes en deux colonnes.
+
+## Erreurs fréquentes
+
+- Une lecture ne peut pas encore se placer au-dessus d’un blanc : un ruby dans `[[…]]` fait partie de la réponse cachée. L’exercice 漢字の書き取り met chaque lecture sur sa propre ligne et la case juste après, trois par rangée dans un groupe `:::columns` ; sur la page verticale, la lecture se tient à côté de la case, comme des furigana.
+- Klee One n’existe qu’en 400 et 600 : `boldFontWeight: 600` garde chaque passage en gras dans une graisse qui existe, numéros des questions et des exercices compris.

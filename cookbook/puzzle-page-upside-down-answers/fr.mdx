@@ -1,0 +1,54 @@
+---
+title: "Une page de jeux avec les solutions à l’envers"
+summary: "La page de jeux d’un magazine pour enfants : mots croisés, mots mêlés, devinette et histoire à remettre en ordre, sur des cartes aux solutions à l’envers."
+plain: "La page de jeux d’un magazine pour enfants consacré à la mer. Chaque jeu a sa carte, et ses solutions sont imprimées à l’envers dessous : les lecteurs retournent le magazine pour vérifier."
+description: "Une page de jeux dans Postext : mots croisés et mots mêlés construits à partir de listes de mots, devinette, histoire à remettre en ordre, solutions à l’envers."
+question: "Comment faire des mots croisés et des mots mêlés à partir d’une liste de mots, avec les solutions à l’envers ?"
+aliases: ["page de jeux", "mots croisés", "mots mêlés", "mots cachés", "devinette", "solutions à l’envers", "solutions inversées", "magazine pour enfants", "page d’activités", "puzzle page", "crossword", "word search"]
+pageNotes: { "1": "La première page : une peinture colorée d’un récif de corail avec une tortue, une pieuvre, un poisson-clown, un poisson-globe et un hippocampe remplit le haut de la page jusqu’au fond perdu, avec un badge corail PUZZLE PAGE, le titre Reef Puzzles en grandes lettres blanches et un chapeau dans un encadré sombre ; dessous, deux cartes crème : des mots croisés numérotés avec leurs définitions horizontales et verticales, et une grille de mots mêlés de neuf sur neuf avec sa liste de mots, chacune avec ses solutions à l’envers en pied.", "2": "La deuxième page : des cartes pour une devinette à trois réponses à entourer, une histoire à remettre dans l’ordre avec un bébé tortue peint et cinq cases, une phrase en désordre avec une ligne pour l’écrire et un jeu à relier avec des points, chacune avec ses solutions à l’envers." }
+---
+
+## Ce que vous allez composer
+
+La page de jeux de *Splash!*, un magazine pour enfants consacré à la mer, sur deux pages au format A4 en deux colonnes. Une peinture du récif remplit le haut de la première page, et le titre se pose sur l’eau libre. Dessous, chaque jeu occupe une carte crème avec un numéro corail : des mots croisés construits avec six animaux marins et leurs définitions, une grille de mots mêlés qui cache huit mots à l’horizontale, à la verticale, en diagonale et à rebours, une devinette avec trois réponses à entourer, la vie d’une tortue à remettre dans l’ordre, une phrase en désordre à reconstituer et des bébés animaux à relier à leur nom. Sous chaque jeu, dans sa carte, les solutions sont imprimées à l’envers en petits caractères gris, comme les magazines de jeux les ont toujours cachées.
+
+## Préparation
+
+### 1 · Chaque jeu sur sa carte, ses solutions retournées
+
+Le code est dans [la réponse courte](#la-réponse-courte) plus haut. Le `box` du style d’exercice nomme un style d’encadré : chaque jeu est donc composé sur une carte, avec son numéro dans une pastille et son titre en première ligne de la consigne. `placement: 'inverted'` place les solutions après chaque jeu dans un encadré tourné de 180°, à l’intérieur de la carte, si bien que le jeu et ses solutions ne tombent jamais sur deux pages différentes ; les grilles et la ligne d’écriture restent dans la marge intérieure de la carte.
+
+### 2 · Laissez le moteur construire les grilles
+
+Le Markdown ne contient que les mots : `- OCTOPUS: Eight arms and three hearts` pour les mots croisés, `- SHELL` pour les mots mêlés. Le moteur dispose les mots croisés de sorte que chaque mot en croise un autre et numérote les débuts dans l’ordre de lecture. Il cache les mots de la grille de mots mêlés dans les directions que nomme la directive (`directions="across down diagonal backwards"`) et remplit le reste avec les lettres de ces mêmes mots. Les deux grilles partent d’une graine fixe : elles sont identiques à chaque composition et dans chaque sortie, et l’édition espagnole construit sa propre grille à partir de ses propres mots.
+
+### 3 · Un récif sur les deux colonnes
+
+<Excerpt region="opener" />
+
+L’ouverture s’étend sur les deux colonnes (`span: 'page'`) : les jeux commencent donc sous la peinture dans chaque colonne. L’image est recadrée aux proportions du bandeau et ancrée à la page, si bien qu’elle part en fond perdu en haut et sur les côtés ; le chapeau est dans un encadré sombre pour rester lisible sur l’eau.
+
+## Variantes
+
+### Masquez la liste de mots
+
+Une grille de mots mêlés plus difficile n’imprime que la grille : ajoutez `hidden` à la directive.
+
+```diff
+-:::exercise{type=wordsearch size=9 directions="across down diagonal backwards"}
++:::exercise{type=wordsearch size=9 directions="across down diagonal backwards" hidden}
+```
+
+### Imprimez les solutions à la fin du magazine
+
+`chapterEnd` rassemble toutes les solutions à la fin au lieu de retourner chacune d’elles.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'turned' },
++  solutions: { placement: 'chapterEnd' },
+```
+
+## Erreurs fréquentes
+
+- Un mot des mots croisés qui ne croise aucun autre mot est laissé de côté et signalé par `exerciseWordUnplaced`. Choisissez des mots qui partagent des lettres, ou ajoutez-en un qui relie deux groupes.
+- Une carte de jeu reste d’un seul tenant : des mots croisés trop hauts passent donc à la colonne suivante quand ils ne tiennent pas. Vérifiez l’édition espagnole, dont les mots sont plus longs.

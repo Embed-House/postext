@@ -1,0 +1,51 @@
+---
+title: "Esercizi giapponesi con le soluzioni capovolte"
+summary: "Due pagine di una serie di quaderni di esercizi giapponesi, l’aritmetica in orizzontale e i kanji in colonna, con le soluzioni capovolte sotto ogni esercizio."
+plain: "Un quaderno di esercizi giapponese: calcoli, caselle, scelte e vero o falso su una pagina, kanji e letture dall’alto in basso su un’altra. Sotto ogni esercizio le soluzioni sono capovolte: il bambino gira il quaderno per controllare."
+description: "Un ドリル giapponese in Postext: ひっ算, caselle □, scelte ア イ ウ e ○× in orizzontale, una pagina di 国語 in verticale, soluzioni ruotate di 180° sotto ogni esercizio."
+question: "Come stampo le soluzioni capovolte sotto ogni esercizio di un quaderno giapponese?"
+aliases: ["ドリル", "計算ドリル", "漢字ドリル", "quaderno di esercizi giapponese", "soluzioni capovolte", "soluzioni a testa in giù", "こたえ", "ひっ算", "書き取り", "scrittura verticale", "tategaki", "○×"]
+pageNotes: { "1": "La pagina di aritmetica: una fascia azzurro chiaro con gli angoli arrotondati, un’etichetta gialla さんすう 12, il titolo 3けたのたし算とひき算 e un tanuki dipinto con una matita; una riga per il nome e una casella per il punteggio; l’esercizio 1, quattro operazioni in colonna con caselle a puntini per le cifre; l’esercizio 2, sei calcoli con una casella dopo ciascuno; l’esercizio 3, due domande con ア イ ウ in fila; sotto ogni esercizio le sue soluzioni in caratteri piccoli e grigi, capovolte.", "3": "La pagina dei kanji, composta in verticale e rilegata a destra: la stessa fascia azzurra ora scende lungo il bordo destro, con il titolo 春のことば in colonna e la volpe dipinta ai suoi piedi; letture con una casella alta accanto a ciascuna, letture da scrivere tra parentesi accanto a kanji sottolineati, scelte tra parentesi a tutta larghezza e le soluzioni di ogni esercizio capovolte ai piedi della loro colonna." }
+---
+
+## Che cosa comporrai
+
+Due pagine di una serie di quaderni di esercizi per la terza elementare, in formato B5. La pagina di aritmetica corre in orizzontale: una fascia azzurro chiaro con l’etichetta della materia, il titolo e un tanuki come mascotte, una riga per il nome e una casella per il punteggio, poi le ひっ算 (operazioni in colonna) con una casella per ogni cifra del risultato, caselle dopo sei calcoli, scelte ア イ ウ in fila, affermazioni ○× con una parentesi a fine riga e due problemi con le righe per scrivere i calcoli. La pagina dei kanji è composta come si stampa un quaderno di 国語, dall’alto in basso e da destra a sinistra: letture con una casella per il kanji, parole sottolineate di cui si scrive la lettura tra parentesi, risposte da cerchiare e un significato da scegliere. Sotto ogni esercizio le soluzioni sono stampate capovolte, in caratteri piccoli e grigi. Il bambino vede dove sono, non le legge con uno sguardo e gira il quaderno per controllare.
+
+## Preparazione
+
+### 1 · Capovolgi le soluzioni di ogni esercizio
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. `placement: 'inverted'` mette le soluzioni dopo ogni esercizio in un riquadro ruotato di 180°, e quel riquadro sta dentro il riquadro dell’esercizio stesso, così un salto di pagina non li separa mai. Le soluzioni nascono dall’esercizio: le operazioni con il risultato, il katakana della risposta giusta, ○ e ×, le parole delle lacune. Lo stile di riquadro delle soluzioni, `kotae`, si limita a comporre il testo piccolo e grigio.
+
+### 2 · Una fascia per la pagina orizzontale e per quella verticale
+
+<Excerpt region="header" />
+
+Su una pagina verticale, il design di un titolo si dispone lungo la sua colonna: la x scende lungo la pagina e la y va verso sinistra. La fascia ancorata a `top-left` a tutta larghezza sta in cima alla pagina di aritmetica e lungo il bordo destro di quella dei kanji; la mascotte ancorata a `top-right` cade all’altro capo della fascia in entrambe. Nessun elemento del design nomina una direzione.
+
+### 3 · Due quaderni da un solo testo
+
+<Excerpt region="two-books" />
+
+La configurazione è una funzione, quindi ogni composizione riceve il suo oggetto, e tra le due cambia solo `writingMode`. In verticale il quaderno di 国語 si rilega a destra da solo; `showBook` mette ogni quaderno dal suo lato del dorso. Il testo è composto in Klee One, un carattere da libro di scuola, e le etichette in Zen Maru Gothic; entrambi caricano la loro punteggiatura verticale per le parentesi della pagina dei kanji.
+
+## Varianti
+
+### Raccogli le soluzioni alla fine
+
+Un quaderno con il libretto delle soluzioni a parte tiene le risposte fuori dalle pagine: `chapterEnd` le elenca dopo l’ultimo esercizio.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'kotae' },
++  solutions: { placement: 'chapterEnd', box: 'kotae' },
+```
+
+### Componi una pagina di giochi
+
+<RecipeLink slug="puzzle-page-upside-down-answers">La pagina di giochi</RecipeLink> capovolge le soluzioni allo stesso modo, su schede a due colonne.
+
+## Errori frequenti
+
+- Una lettura non può ancora stare sopra uno spazio vuoto: un ruby dentro `[[…]]` fa parte della risposta nascosta. L’esercizio 漢字の書き取り mette ogni lettura su una riga a sé e la casella subito dopo, tre per fila in un gruppo `:::columns`; nella pagina verticale la lettura sta accanto alla casella, come i furigana.
+- Klee One ha solo i pesi 400 e 600: `boldFontWeight: 600` tiene ogni grassetto in un taglio che esiste, compresi i numeri delle domande e degli esercizi.

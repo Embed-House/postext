@@ -1,0 +1,57 @@
+---
+title: "Ein chinesisches Übungsheft für Kinder und Lehrkraft"
+summary: "Ein 练习册 für Chinesisch und Mathe: Abschnitte 一、二、, Klammern （　）, 田字格 und schriftliches Rechnen, zweimal aus einem Text gesetzt, für Kinder und Lehrkraft."
+plain: "Ein Übungsheft aus einer chinesischen Grundschule: zwei Einheiten zu Sprache und Mathe. Derselbe Text ergibt das Heft der Kinder mit Lücken und Lösungen am Ende und die Lehrerausgabe, in der jede Antwort rot an ihrer Stelle steht."
+description: "Ein chinesisches 练习册 in Postext: Abschnitte 一、二、, Klammern （　）, 判断题, 连线, 田字格 und 竖式, dazu eine Lehrerausgabe aus dem Text des Schülerhefts."
+question: "Wie setze ich chinesische Testfragen mit einer （　） nach dem Aufgabentext und A. B. C. D. in einer Reihe?"
+aliases: ["练习册", "chinesisches Übungsheft", "chinesisches Arbeitsheft", "Lehrerausgabe", "Lehrerband", "Lösungsheft", "选择题", "判断题", "填空题", "连线", "田字格", "竖式", "口算", "参考答案"]
+pageNotes: { "1": "Die Auftaktseite der Spracheinheit: Ein Aquarell eines Dorfs im Frühling mit Weiden, Schwalben und zwei Kindern auf einem Weg zwischen Reisfeldern reicht bis an den oberen Rand; darunter ein grüner Reiter 语文, der Titel 第一单元　春天来了 und eine grüne Linie; eine Zeile für Klasse, Name und Punktzahl; dann Abschnitt 一 mit Pinyin über acht Kästchen zum Hineinschreiben, Abschnitt 二 mit drei Lesungen zur Auswahl im Satz und Abschnitt 三 mit zwei Auswahlfragen, A. B. C. D. in einer Reihe und einer leeren （　） nach jedem Aufgabentext.", "5": "Dieselbe Seite in der Lehrerausgabe: die acht Wörter in roter Kai in ihren Kästchen, die richtigen Lesungen rot eingekreist, B und C in den Klammern und die richtigen Antworten eingekreist." }
+---
+
+## Was Sie setzen
+
+Zwei Einheiten eines 练习册 für die zweite Klasse im Format 16开: eine Spracheinheit, 春天来了, und eine Mathe-Einheit zum Plus- und Minusrechnen bis 100. Jede beginnt mit einem Aquarellband, einem Fachreiter und einer Zeile für Klasse, Name und Punktzahl. Danach folgen die Abschnitte, die ein chinesisches Übungsheft druckt: 看拼音写词语, Lesungen zum Einkreisen, 选择题 mit einer （　） nach dem Aufgabentext und A. B. C. D. in einer Reihe, 判断题 mit einer Klammer am Zeilenende, Lückensätze, 连线 zwischen Zählwörtern und Dingen, ein Satz zum Schreiben in 田字格, 口算 in vier Spalten, 竖式 mit einem Kästchen je Ziffer und eine Textaufgabe. Die Punkte stehen in jeder Arbeitsanweisung, dort, wo die Kinder sie lesen. Dasselbe Markdown wird zweimal gesetzt: als Schülerheft mit dem 参考答案 am Ende jeder Einheit und als Lehrerausgabe, in der jede Antwort in roter Kai an ihrer Stelle steht.
+
+## Zubereitung
+
+### 1 · Ein Stil für alle Abschnitte
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). Die Abschnitte werden mit chinesischen Zahlzeichen gezählt, gefolgt von einem 、 in voller Breite, also steht hinter der Zahl kein Wortzwischenraum. Die Arbeitsanweisung steht in der Hei, nicht fett, damit man die Punkte in Klammern als Teil von ihr liest. `options.bracket` schreibt die （　） hinter jeden Aufgabentext, und in der Lehrerausgabe kommt der richtige Buchstabe hinein. Die beiden kleinen Stile erweitern den Hauptstil: `pinyin` zeichnet jede Lücke als Kästchen, so breit wie ihr Wort, `kuohao` zeichnet nichts, weil die Klammer von 在（　）里填 im Text steht.
+
+### 2 · Schülerheft und Lehrerausgabe aus einem Text
+
+<Excerpt region="editions" />
+
+Die Konfiguration ist eine Funktion, also bekommt jeder Build sein eigenes Objekt, und das Sandbox-Bundle behält das des Schülerhefts. `edition: 'teacher'` schreibt die Antworten in Farbe und Schrift von `answers`: die Wörter in ihre Kästchen, die Buchstaben in ihre Klammern, √ und × in die 判断题, die Ziffern in die Kästchen der 竖式, den Mustersatz mit einem Zeichen pro Feld. Das Schülerheft druckt die Lösungen dort, wo am Ende jeder Einheit die Zeile `:::solutions` steht; die Lehrerausgabe braucht sie nicht.
+
+### 3 · Ein Auftakt für jede Einheit, mit seinem Bild
+
+<Excerpt region="opener" />
+
+Das Bild ist an der Seite verankert und reicht deshalb auf einer rechten wie auf einer linken Seite bis an den oberen Rand. Fachreiter und Titel werden von der Oberkante des Satzspiegels aus platziert, unter dem Fuß des Bilds. Beide Einheiten teilen sich die Gestaltung und unterscheiden sich nur in den Attributen ihrer Überschrift, `kicker` und `pic`.
+
+### 4 · Seitenzahlen im Fuß
+
+<Excerpt region="furniture" />
+
+Chinesische Übungshefte setzen die Seitenzahl in den Fuß. Der Reihentitel kommt aus dem Front Matter des Markdowns (`{title}`), der Titel der Einheit aus ihrer Überschrift (`{chapterTitle}`).
+
+## Varianten
+
+### Die Lösungen am Kapitelende drucken
+
+Ohne `:::solutions`-Zeilen sammelt `chapterEnd` die Lösungen jeder Einheit vor der nächsten Überschrift der Ebene 1.
+
+```diff
+-  solutions: { placement: edition === 'teacher' ? 'none' : 'directive' } });
++  solutions: { placement: edition === 'teacher' ? 'none' : 'chapterEnd' } });
+```
+
+### Die Lesungen neben die Lücken schreiben
+
+<RecipeLink slug="pinyin-primer">Die Pinyin-Fibel</RecipeLink> setzt das Pinyin als Ruby über ihre Zeichen; eine Lücke kann das noch nicht tragen.
+
+## Häufige Fehler
+
+- Eine Lesung kann noch nicht über einer Lücke stehen: Ein Ruby in `[[…]]` gehört zur verborgenen Antwort, und eine 田字格-Fläche nimmt die ganze Satzbreite ein. Der Abschnitt 看拼音写词语 setzt jede Silbe in eine eigene Zeile und das Kästchen darunter, vier pro Reihe in einer `:::columns`-Gruppe.
+- Die Kai setzt nur die Antworten und lädt deshalb nur die Zeichen der Lücken und der Musterantworten. Setzt sie anderswo ein weiteres Zeichen, muss es in diesen Text aufgenommen werden.

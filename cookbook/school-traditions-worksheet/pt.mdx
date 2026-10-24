@@ -1,0 +1,63 @@
+---
+title: "Uma folha de atividades em dez tradições escolares"
+summary: "Os mesmos sete blocos :::exercise em dez idiomas, cada edição impressa com um estilo de exercício que segue os livros didáticos do seu país."
+plain: "Uma folha de atividades de Ciências e Matemática, de duas páginas, sobre o ciclo da água, feita dez vezes. As perguntas são as mesmas; os números, os quadradinhos, as linhas e a conta de dividir seguem os livros de cada país."
+description: "Uma folha de atividades no Postext de dez jeitos: V/F, pauta Seyès, R/F e 864 : 4 =, o método da chave, o ⟌ inglês, os parênteses do 选择题, ア イ ウ e o árabe."
+question: "Como faço a mesma folha de atividades do jeito que os livros didáticos de cada país montam os exercícios?"
+aliases: ["folha de atividades", "atividade", "ficha", "fiche", "Arbeitsblatt", "练习单", "プリント", "ورقة عمل", "método da chave", "conta de dividir", "pauta Seyès", "田字格", "verdadeiro ou falso", "lacunas"]
+pageNotes: { "1": "A primeira página da folha: uma faixa azul com o título, linhas para o nome e a data, um texto curto, um exercício de múltipla escolha, afirmações de verdadeiro ou falso e um texto com lacunas embaixo de um banco de palavras.", "2": "A segunda página: palavras para ligar ao seu significado pelos pontinhos, palavras para circular em frases, uma divisão e uma multiplicação armadas em quadradinhos e uma pergunta aberta com linhas para escrever." }
+---
+
+## O que você vai compor
+
+A atividade 7 de um curso de Ciências e Matemática do 4º ano, *A viagem da água*, em dez edições. As perguntas são as mesmas em todos os idiomas: escolher uma resposta, marcar verdadeiro ou falso, completar as lacunas com um banco de palavras, ligar as palavras ao seu significado, circular uma palavra, dividir a água de uma caixa-d’água e explicar por que economizá-la. Cada edição as imprime como fazem as suas escolas. As folhas espanhola e catalã põem o número num círculo, pedem para marcar V ou F e armam a divisão com o divisor num L à direita do dividendo, como no método da chave. A francesa usa quadrados, *cases à cocher*, lacunas pontilhadas e papel Seyès para a resposta. A alemã escreve *R* e *F*, *Lückentext* e `864 : 4 =` numa linha só, com um ponto na multiplicação. A brasileira pede V ou F entre parênteses. A inglesa divide sob a chave ⟌. A chinesa numera as seções 一、二、, põe （　） depois de cada enunciado com A. B. C. em linha, pede √ ou × e termina com 看拼音，写词语 em quadrados 田字格. A japonesa oferece ア イ ウ e ○ ×, e a árabe corre da direita para a esquerda com أ ب ج e صح ou خطأ.
+
+## Preparo
+
+### 1 · Ponha cada tradição numa tabela
+
+<Excerpt region="answer" />
+
+Todas as edições têm o mesmo Markdown: sete blocos `:::exercise` com as respostas no texto (`- [x]`, `[[vapor]]`, `- Evaporação -> A água vira vapor`, `- 864 ÷ 4`). O que muda de um país para outro é a forma, então ela fica nesta tabela e em nenhum outro lugar: o formato e os algarismos do número, as letras das alternativas e se o aluno marca um quadradinho ou circula uma letra, o aspecto do verdadeiro ou falso, o das lacunas, a área de escrita e a montagem da conta de dividir. O catalão usa a linha do espanhol sem mudar nada.
+
+### 2 · Ponha a tradição sobre o estilo da casa
+
+<Excerpt region="style" />
+
+Um único estilo de exercício, `ficha`, leva o que as dez folhas têm em comum (o azul dos números, os fios cinza, o espaço entre os exercícios), e a linha da edição se espalha por cima dele. O que a linha não diz vem do idioma: T F, V F, R F, √ ×, ○ × e صح خطأ são palavras do próprio motor, assim como a) b) c), A. B. C., ア イ ウ e أ ب ج, e por isso nenhuma edição as escreve.
+
+### 3 · Dê a cada escrita as suas fontes
+
+<Excerpt region="faces" />
+
+As edições em alfabeto latino dividem Nunito e Baloo 2. A folha chinesa compõe o texto em Song e os enunciados em Hei; a japonesa, o texto em Klee One, uma letra de livro didático, e os enunciados numa gótica; a árabe usa Noto Naskh Arabic. O peso mais forte da Klee One é 600, por isso a edição japonesa põe o negrito em 600 (`boldFontWeight`): um 700 seria desenhado pelo navegador e a captura falharia.
+
+### 4 · Abra a folha com linhas para o nome
+
+<Excerpt region="head" />
+
+O título de nível 1 desenha a faixa, o curso tirado do frontmatter e o título, além de dois campos com linha cujas palavras vêm dos atributos do título (`nombre="Nome" fecha="Data"`). Assim a folha alemã diz *Datum* e a japonesa 名前, sem nenhuma string no código.
+
+## Variações
+
+### Imprima o livro do professor
+
+Cada resposta vai para o seu lugar em magenta: os parênteses, os quadradinhos, as lacunas e o quociente.
+
+```diff
+   exerciseStyles: [ficha],
++  exercises: { edition: 'teacher' },
+```
+
+### Junte as respostas no pé da folha
+
+`placement: 'after'` põe o gabarito de cada exercício embaixo dele; `'inverted'` o vira de cabeça para baixo, como nas páginas de passatempos.
+
+```diff
++  exercises: { solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+## Erros comuns
+
+- Uma fonte sem o peso 700 deixa sintético o negrito dos números dos enunciados. Dê a essa fonte de texto um `boldFontWeight` com um peso que ela tenha.
+- O ○ dos enunciados japoneses e o √ dos chineses só existem nas fontes CJK: coloque-os numa frase do texto CJK, não num rótulo latino.

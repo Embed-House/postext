@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Vedove, orfane e bilanciamento',
   description: 'Le regole che tengono unite righe e blocchi a cavallo di un’interruzione di colonna, e le leve che fanno finire ogni colonna alla stessa altezza',
   lang: 'it',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '24 min',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ Queste impostazioni stanno in `headings.balancing`.
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>Limite superiore di quel tracking, in millesimi di em per carattere (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Riempie con i propri paragrafi una colonna che le regole su vedove e orfane hanno lasciato corta di una riga: anche i paragrafi a bandiera possono allungarsi di una riga, uno giustificato non spazia nessuna riga più di <code>bodyText.maxWordSpacing</code> né più della propria riga più larga, e se nessuno guadagna la riga, uno viene composto con una riga in meno perché l’interruzione successiva la riprenda. Si mantiene solo se le pagine finiscono con meno colonne corte.</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

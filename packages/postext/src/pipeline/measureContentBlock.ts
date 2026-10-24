@@ -910,7 +910,7 @@ function headingJidori(style: BlockStyle, block: ContentBlock): number | undefin
  *  the ones that stay justified, as a multiple of the normal space
  *  (`VDTLine.justifiedSpaceRatio`; 0 when none is), and how many stretch
  *  past `LINE_MAX_SPACE_RATIO`, which `raggedLooseLines` sets ragged. */
-function wordSpacingProfile(lines: readonly VDTLine[]): { loosest: number; ragged: number } {
+export function wordSpacingProfile(lines: readonly VDTLine[]): { loosest: number; ragged: number } {
   let loosest = 0;
   let ragged = 0;
   for (const line of lines) {

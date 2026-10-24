@@ -1,0 +1,54 @@
+---
+title: "Una pàgina de passatemps amb les solucions del revés"
+summary: "La pàgina de passatemps d’una revista infantil: mots encreuats, sopa de lletres, endevinalla i història per ordenar, en targetes amb les solucions del revés."
+plain: "La pàgina de passatemps d’una revista infantil sobre el mar. Cada passatemps va en la seva targeta, amb les solucions impreses del revés a sota, perquè els lectors girin la revista i les comprovin."
+description: "Una pàgina de passatemps a Postext: mots encreuats i sopa de lletres fets amb llistes de paraules, endevinalla i història per ordenar, solucions del revés."
+question: "Com faig uns mots encreuats i una sopa de lletres amb una llista de paraules i les solucions del revés?"
+aliases: ["passatemps", "mots encreuats", "sopa de lletres", "endevinalla", "solucions del revés", "solucions cap per avall", "revista infantil", "pàgina d’activitats", "pasatiempos", "crucigrama", "puzzle page", "word search"]
+pageNotes: { "1": "La primera pàgina: una pintura acolorida d’un escull de corall amb una tortuga, un pop, un peix pallasso, un peix globus i un cavallet de mar omple la part de dalt fins a la sang, amb una etiqueta corall PASATIEMPOS, el títol Pasatiempos del arrecife en grans lletres blanques i una entradeta en una caixa fosca; a sota, dues targetes crema: uns mots encreuats numerats amb les pistes horitzontals i verticals i una sopa de lletres de nou per nou amb la llista de paraules, cadascuna amb les solucions del revés al peu.", "2": "La segona pàgina: targetes amb una endevinalla de tres opcions per encerclar, una història per ordenar amb una tortugueta pintada i cinc caselles, una dada remenada amb una línia per escriure-la i un exercici d’unir amb punts, totes amb les solucions del revés." }
+---
+
+## Què compondràs
+
+La pàgina de passatemps de *¡Chapuzón!*, una revista infantil sobre el mar, en dues pàgines de mida A4 a dues columnes. Una pintura de l’escull omple la part de dalt de la primera pàgina, amb el títol sobre l’aigua oberta. A sota, cada passatemps va en una targeta crema amb el número en corall: uns mots encreuats fets amb sis animals marins i les seves pistes, una sopa de lletres que amaga vuit paraules en horitzontal, en vertical, en diagonal i del revés, una endevinalla amb tres opcions per encerclar, la vida d’una tortuga per ordenar, una dada remenada i cries d’animals per unir amb el seu nom. Sota cada passatemps, dins la seva targeta, les solucions van del revés en lletra grisa petita, com les han amagat sempre les revistes de passatemps.
+
+## Elaboració
+
+### 1 · Cada passatemps en la seva targeta, amb les solucions girades
+
+El codi és [la resposta curta](#la-resposta-curta) de més amunt. El `box` de l’estil d’exercici anomena un estil de requadre, així que cada passatemps va en una targeta, amb el número en un cercle i el títol com a primera línia de l’enunciat. `placement: 'inverted'` posa les solucions després de cada passatemps en un requadre girat 180°, dins la targeta, de manera que el passatemps i les solucions mai no cauen en pàgines diferents; les quadrícules i la línia d’escriptura queden dins del marge interior de la targeta.
+
+### 2 · Deixa que el motor construeixi les quadrícules
+
+El Markdown només porta les paraules: `- PULPO: Ocho brazos y tres corazones` per als mots encreuats i `- CONCHA` per a la sopa de lletres. El motor col·loca els mots encreuats de manera que cada paraula es creui amb una altra i numera els inicis en ordre de lectura. Les paraules de la sopa, les amaga en les direccions que demana l’obertura (`directions="across down diagonal backwards"`) i omple la resta amb lletres de les mateixes paraules. Totes dues fan servir una llavor, així que la quadrícula és la mateixa en cada composició i en cada sortida, i l’edició anglesa construeix la seva amb les seves pròpies paraules.
+
+### 3 · Un escull a l’ample de les dues columnes
+
+<Excerpt region="opener" />
+
+L’obertura ocupa les dues columnes (`span: 'page'`), així que els passatemps comencen sota la pintura a cada columna. La imatge està retallada a la proporció de la franja i ancorada a la pàgina, de manera que surt a sang per dalt i pels costats; l’entradeta va en una caixa fosca perquè es llegeixi sobre l’aigua.
+
+## Variants
+
+### Amaga la llista de paraules
+
+Una sopa de lletres més difícil imprimeix només la quadrícula: afegeix `hidden` a l’obertura.
+
+```diff
+-:::exercise{type=wordsearch size=9 directions="across down diagonal backwards"}
++:::exercise{type=wordsearch size=9 directions="across down diagonal backwards" hidden}
+```
+
+### Imprimeix les solucions al final de la revista
+
+`chapterEnd` reuneix totes les solucions al final en lloc de girar-les una per una.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'turned' },
++  solutions: { placement: 'chapterEnd' },
+```
+
+## Errors freqüents
+
+- Una paraula dels mots encreuats que no es creua amb cap altra queda fora i s’avisa amb `exerciseWordUnplaced`. Tria paraules que comparteixin lletres o afegeix-ne una que uneixi dos grups.
+- Una targeta de passatemps es manté sencera, així que uns mots encreuats alts passen a la columna següent si no hi caben: revisa l’edició espanyola, de paraules més llargues.

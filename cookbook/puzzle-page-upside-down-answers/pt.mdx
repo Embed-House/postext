@@ -1,0 +1,54 @@
+---
+title: "Uma página de passatempos com as respostas invertidas"
+summary: "A página de passatempos de uma revista infantil: palavras cruzadas, caça-palavras, adivinha e história para ordenar, em cartões com as respostas invertidas."
+plain: "A página de passatempos de uma revista infantil sobre o mar. Cada passatempo fica no seu cartão, com as respostas impressas de cabeça para baixo embaixo, e o leitor vira a revista para conferir."
+description: "Uma página de passatempos no Postext: palavras cruzadas e caça-palavras feitos com listas de palavras, adivinha e história para ordenar, respostas invertidas."
+question: "Como faço palavras cruzadas e caça-palavras com uma lista de palavras e as respostas de cabeça para baixo?"
+aliases: ["passatempos", "página de passatempos", "palavras cruzadas", "cruzadinha", "caça-palavras", "adivinha", "charada", "respostas de cabeça para baixo", "respostas invertidas", "revista infantil", "página de atividades", "puzzle page", "crossword", "word search"]
+pageNotes: { "1": "A primeira página: uma pintura colorida de um recife de coral com uma tartaruga, um polvo, um peixe-palhaço, um baiacu e um cavalo-marinho preenche o alto da página até a sangria, com uma etiqueta coral PUZZLE PAGE, o título Reef Puzzles em grandes letras brancas e uma linha fina numa caixa escura; embaixo, dois cartões creme: palavras cruzadas numeradas com as dicas horizontais e verticais e um caça-palavras de nove por nove com a lista de palavras, cada um com as respostas de cabeça para baixo no pé.", "2": "A segunda página: cartões com uma adivinha de três opções para circular, uma história para ordenar com uma tartaruguinha pintada e cinco quadradinhos, uma frase embaralhada com uma linha para escrevê-la e um jogo de ligar com pontos, todos com as respostas de cabeça para baixo." }
+---
+
+## O que você vai compor
+
+A página de passatempos da *Splash!*, uma revista infantil sobre o mar, em duas páginas de tamanho A4 com duas colunas. Uma pintura do recife preenche o alto da primeira página, com o título sobre a água aberta. Embaixo, cada passatempo fica num cartão creme com um número coral: palavras cruzadas montadas com seis animais marinhos e suas dicas, um caça-palavras que esconde oito palavras na horizontal, na vertical, na diagonal e de trás para a frente, uma adivinha com três opções para circular, a vida de uma tartaruga para pôr em ordem, uma frase embaralhada para desvendar e filhotes de animais para ligar ao nome. Embaixo de cada passatempo, dentro do cartão, as respostas vêm de cabeça para baixo em letra cinza pequena, do jeito que as revistas de passatempos sempre as esconderam.
+
+## Preparo
+
+### 1 · Cada passatempo num cartão, com as respostas viradas
+
+O código é [a resposta curta](#a-resposta-curta) logo acima. O `box` do estilo de exercício nomeia um estilo de boxe, então cada passatempo vai num cartão, com o número num círculo e o título como primeira linha do enunciado. `placement: 'inverted'` põe as respostas depois de cada passatempo num boxe girado 180°, dentro do cartão, então passatempo e respostas nunca caem em páginas diferentes; as grades e a linha de escrita ficam dentro do espaçamento interno do cartão.
+
+### 2 · Deixe o motor montar as grades
+
+O Markdown traz só as palavras: `- OCTOPUS: Eight arms and three hearts` para as palavras cruzadas, `- SHELL` para o caça-palavras. O motor monta as palavras cruzadas com cada palavra cruzando outra e numera os inícios na ordem de leitura. No caça-palavras, esconde as palavras nas direções que a diretiva indica (`directions="across down diagonal backwards"`) e preenche o resto com letras das mesmas palavras. As duas grades usam uma semente fixa, então saem iguais em cada composição e em cada saída, e a edição espanhola monta a sua grade com as suas próprias palavras.
+
+### 3 · Um recife na largura das duas colunas
+
+<Excerpt region="opener" />
+
+A abertura ocupa as duas colunas (`span: 'page'`), então os passatempos começam embaixo da pintura em cada coluna. A imagem é recortada na proporção da faixa e ancorada à página, de modo que sangra no alto e nas laterais; a linha fina fica numa caixa escura para ser lida sobre a água.
+
+## Variações
+
+### Esconda a lista de palavras
+
+Um caça-palavras mais difícil imprime só a grade: acrescente `hidden` à diretiva.
+
+```diff
+-:::exercise{type=wordsearch size=9 directions="across down diagonal backwards"}
++:::exercise{type=wordsearch size=9 directions="across down diagonal backwards" hidden}
+```
+
+### Imprima as respostas no fim da revista
+
+`chapterEnd` reúne todas as respostas no fim em vez de virar cada uma.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'turned' },
++  solutions: { placement: 'chapterEnd' },
+```
+
+## Erros comuns
+
+- Uma palavra das palavras cruzadas que não cruza com nenhuma outra fica de fora e gera o aviso `exerciseWordUnplaced`. Escolha palavras que tenham letras em comum ou acrescente uma que ligue dois grupos.
+- O cartão de um passatempo fica inteiro, então palavras cruzadas altas passam para a coluna seguinte quando não cabem: confira a edição espanhola, de palavras mais longas.

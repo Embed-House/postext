@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Witwen, Waisen und Spaltenausgleich',
   description: 'Die Regeln, die Zeilen und Blöcke über einen Spaltenumbruch hinweg zusammenhalten, und die Hebel, mit denen jede Spalte auf gleicher Höhe endet',
   lang: 'de',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '21 min',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ Diese Einstellungen stehen unter `headings.balancing`.
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>Obergrenze dieser Laufweite, in Tausendstel eines Gevierts pro Zeichen (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Füllt eine Spalte, die die Regeln gegen Hurenkinder und Schusterjungen eine Zeile zu kurz gelassen haben, mit ihren eigenen Absätzen: Auch Absätze im Flattersatz dürfen eine Zeile länger laufen, ein Absatz im Blocksatz sperrt keine Zeile weiter als <code>bodyText.maxWordSpacing</code> oder als seine eigene weiteste Zeile, und gewinnt keiner die Zeile, wird einer eine Zeile kürzer gesetzt, damit der Umbruch danach sie aufnimmt. Bleibt nur, wenn die Seiten danach weniger kurze Spalten haben.</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

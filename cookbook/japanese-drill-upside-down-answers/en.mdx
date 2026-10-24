@@ -1,0 +1,51 @@
+---
+title: "A Japanese drill with the answers upside down"
+summary: "Two pages of a Japanese drill series, arithmetic across and kanji in columns, each exercise followed by its answers printed upside down."
+plain: "A Japanese school drill book: sums, number boxes, choices and true-or-false on one page, kanji and readings on another, set top to bottom. Under every exercise its answers are printed upside down, so a child turns the book to check."
+description: "A Japanese ドリル in Postext: ひっ算, □ boxes, ア イ ウ choices and ○× set across, a 国語 page set vertically, answers turned 180° under each exercise."
+question: "How do I print the answers upside down under each exercise of a Japanese drill?"
+aliases: ["ドリル", "計算ドリル", "漢字ドリル", "Japanese drill", "answers upside down", "inverted answers", "こたえ", "ひっ算", "書き取り", "縦書き", "tategaki", "○×"]
+pageNotes: { "1": "The arithmetic page: a pale blue rounded band with a yellow さんすう 12 badge, the title 3けたのたし算とひき算 and a painted tanuki holding a pencil; a name line and a score box; exercise 1, four operations in columns with dotted boxes for the digits; exercise 2, six sums with a box after each; exercise 3, two questions with ア イ ウ in a row; under each exercise its answers in small grey type, upside down.", "3": "The kanji page set vertically and bound on the right: the same pale blue band now runs down the right edge, the title 春のことば in columns and the painted fox at its foot; readings with a tall box beside each, readings to write in brackets beside lined kanji, choices in full-width brackets, each exercise's answers upside down at the foot of its column." }
+---
+
+## What you'll build
+
+Two pages from a third-year drill series on B5. The arithmetic page runs across: a pale blue band with the subject badge, the title and a tanuki mascot, a name line and a score box, then ひっ算 with a box for each digit of the answer, number boxes after six sums, ア イ ウ choices in a row, ○× statements with a bracket at the end of the line and two word problems with lines to write the working on. The kanji page is set the way a 国語 drill is printed, top to bottom and right to left: readings with a box for the kanji, lined words whose reading goes in brackets, choices to ring and a meaning to pick. Under every exercise, its answers are printed upside down in small grey type. A child sees where they are, cannot read them at a glance, and turns the book round to check.
+
+## Method
+
+### 1 · Turn each exercise's key upside down
+
+The code is [the short answer](#the-short-answer) above. `placement: 'inverted'` sets the key after each exercise in a box turned 180°, and the box goes inside the exercise's own box, so a page break never parts the two. The key is made from the exercise: the operations with their results, the katakana of the right option, ○ and ×, the words of the gaps. The answers box style, `kotae`, only sets the type small and grey.
+
+### 2 · One band for a page across and a page down
+
+<Excerpt region="header" />
+
+A heading design on a vertical page is laid along its column: x runs down the page and y runs to the left. The band anchored `top-left` with the full width stands at the top of the arithmetic page and down the right edge of the kanji page; the mascot anchored `top-right` sits at the band's far end on both. Nothing in the design names a direction.
+
+### 3 · Two drills from one text
+
+<Excerpt region="two-books" />
+
+The configuration is a function, so each build gets its own object, and only `writingMode` changes between the two. Set vertically, the 国語 drill binds on the right by itself; `showBook` lays each drill out on its own side of the spine. The text is set in Klee One, a textbook face, and the labels in Zen Maru Gothic; both load their vertical punctuation for the brackets of the kanji page.
+
+## Variations
+
+### Collect the answers at the end
+
+A drill printed with a separate answer booklet keeps the key out of the pages: `chapterEnd` lists it after the last exercise.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'kotae' },
++  solutions: { placement: 'chapterEnd', box: 'kotae' },
+```
+
+### Print a puzzle page
+
+<RecipeLink slug="puzzle-page-upside-down-answers">The puzzle page</RecipeLink> turns its answers the same way, on cards in two columns.
+
+## Pitfalls
+
+- A reading cannot stand over a blank yet: a ruby inside `[[…]]` is part of the hidden answer. The 漢字の書き取り exercise sets each reading on its own line and the box after it, three to a row in a `:::columns` group; on the vertical page the reading stands beside the box, as furigana do.
+- Klee One ships 400 and 600 only: `boldFontWeight: 600` keeps every bold run in a cut that exists, the item numbers and the exercise numbers included.

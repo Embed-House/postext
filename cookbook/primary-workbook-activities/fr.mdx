@@ -1,0 +1,57 @@
+---
+title: "Une unité de cahier d’activités pour l’école primaire"
+summary: "Une unité de sciences de quatre pages, onze activités en blocs :::exercise et un seul style pour les imprimer : pastilles, banque de mots, points à relier."
+plain: "Un cahier d’activités pour des enfants de huit ans sur les animaux vertébrés. Les questions et leurs réponses sont écrites dans le texte ; un seul style décide de l’aspect de chaque activité sur la page."
+description: "Un cahier de sciences pour le primaire dans Postext : numéros en pastilles, banque de mots, vrai ou faux, relier, entourer, ranger, mots mêlés et quadrillage."
+question: "Comment composer une page de cahier d’activités : numéros en pastilles, banque de mots, vrai ou faux, relier ?"
+aliases: ["cahier d’activités", "cahier d’exercices", "fichier d’exercices", "fiche d’exercices", "banque de mots", "relier par un trait", "vrai ou faux", "mots mêlés", "texte à trous", "entourer", "pictogrammes de consigne", "workbook", "cuaderno de actividades"]
+pageNotes: { "1": "L’ouverture de l’unité : un bandeau vert avec une pastille blanche Unit 5 et le titre Animals with backbones, une peinture d’une mare avec une grenouille, un martin-pêcheur, une truite, une tortue et un lapin, un court texte, un encadré Remember à bande jaune et l’activité 1 : une banque de mots en tirets au-dessus de quatre phrases à trous.", "3": "Les activités 6 et 7 : cinq étapes peintes de la vie d’une grenouille, dans le désordre, au-dessus de cinq phrases qui ont chacune une case pour le numéro, et une grille de mots mêlés de dix sur dix aux filets verts, avec ses six mots en dessous." }
+---
+
+## Ce que vous allez composer
+
+L’unité 5 d’un cahier d’activités de sciences de CE2, au format A4 : *Animals with backbones*, les animaux vertébrés. L’ouverture pose l’unité dans un bandeau vert au-dessus d’une peinture de mare ; viennent ensuite onze activités, chacune avec son numéro dans une pastille verte et un pictogramme de crayon, de bulle ou de binôme. Une banque de mots dans un encadré teinté à bord tireté, des phrases à cocher T ou F, des animaux à relier à leur groupe par un trait, des mots à entourer dans une phrase puis dans un court texte, les étapes de la vie d’une grenouille à numéroter, des mots mêlés, des animaux à classer, une question ouverte sur des lignes et une autre sur quadrillage. Une édition espagnole imprime la même unité comme la composent les écoles d’Espagne, avec V et F et *une con flechas*. Trois peintures générées avec un modèle de diffusion l’illustrent.
+
+## Préparation
+
+### 1 · Écrire les activités dans le Markdown, leur donner un style une seule fois
+
+<Excerpt region="answer" />
+
+Chaque activité est un bloc `:::exercise`. Ce que lit l’élève et ce qui compte comme juste se trouvent dans le texte : `[[hair]]` est un trou dont la réponse est *hair*, `- [x]` une affirmation vraie, `- Dolphin -> Mammal` une paire, `[[pelo | (plumas)]]` un choix dont le bon mot est entre parenthèses. Le style ne porte que l’aspect : les onze activités partagent `actividad`, et un second style, `cuadricula`, le reprend par `extends` pour remplacer les lignes par du quadrillage. Le moteur les numérote, mélange avec une graine la colonne de droite des paires et les éléments à remettre dans l’ordre, donne à chaque trou la largeur de la réponse la plus longue pour qu’aucun ne trahisse la sienne, et imprime T et F en anglais, V et F en espagnol, sans un mot dans la configuration.
+
+### 2 · Donner aux activités leurs pictogrammes
+
+<Excerpt region="icons" />
+
+Un pictogramme de `exerciseStyles[].icons` désigne une image du livre, et `:::exercise{icon="oral pareja"}` place les images après le numéro, dans l’ordre où elles sont écrites ; la synthèse vocale les lit par leur `alt`. Ce sont des signes en aplat dessinés dans le code sur une pastille de la couleur de l’unité : ils restent nets dans le PDF et changent avec la palette. Un cahier d’activités imprime aussi un crayon à côté des activités où l’on écrit ; les pictogrammes de parole et de binôme signalent la dernière, qui n’a pas de zone d’écriture (`area="none"`).
+
+### 3 · Ouvrir l’unité sur un bandeau et une peinture
+
+<Excerpt region="opener" />
+
+Le titre de niveau 1 de l’unité dessine le bandeau, la pastille du numéro et le titre à partir de ses attributs (`unidad="Unit 5" pic="charca"`), puis la peinture sous le bandeau, en 176 × 75 mm. Les images des activités utilisent un type de ressource sans légende ni numéro (`dibujo`), comme dans un cahier imprimé. Le texte se lit sans peine à cet âge : Atkinson Hyperlegible Next en 12 pt sur 17 pt, sans césure, en drapeau.
+
+## Variantes
+
+### Imprimer les réponses pour l’enseignant
+
+Le même Markdown donne le livre du maître : tous les trous remplis, les cases vraies cochées et les bons mots entourés en magenta.
+
+```diff
+   exerciseStyles: [actividad, cuadricula],
++  exercises: { edition: 'teacher' },
+```
+
+### Numéroter les activités dans des carrés
+
+Un carré arrondi de la couleur de l’unité donne le style maison d’un autre éditeur.
+
+```diff
+-  number: { shape: 'disc', background: col('unit'), color: col('paper'),
++  number: { shape: 'rounded', background: col('unit'), color: col('paper'),
+```
+
+## Erreurs fréquentes
+
+- Les mots à entourer dans un texte suivi gardent un peu d’espace de chaque côté pour le cercle : un mot placé juste avant une virgule ou un point s’en détache légèrement.

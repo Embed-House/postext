@@ -1,0 +1,57 @@
+---
+title: "Contas armadas do jeito de cada país"
+summary: "Uma folha de exercícios cujas contas são linhas - 864 ÷ 4 do Markdown, algarismo por algarismo em quadradinhos, com a divisão armada como em cada país."
+plain: "Uma página de contas para crianças de nove anos em espanhol, inglês, francês e alemão. Cada país arma a divisão do seu jeito e a folha acompanha; um botão mostra a cópia do professor com todas as respostas."
+description: "Uma folha de matemática no Postext: cálculo mental em três colunas, contas armadas de somar, subtrair e multiplicar, a divisão de cada país e o gabarito."
+question: "Como componho a divisão do jeito que as escolas de cada país a armam?"
+aliases: ["conta armada", "contas armadas", "método da chave", "divisão longa", "cálculo mental", "folha de exercícios", "livro do professor", "gabarito", "long division", "potence", "schriftliches Rechnen"]
+pageNotes: { "1": "A folha do aluno: uma faixa laranja com a pílula Unit 3 e o título The four operations, linhas para o nome e a data, nove cálculos mentais em três colunas com um quadradinho vazio cada, e três contas de somar, três de subtrair e três de multiplicar compostas algarismo por algarismo, com uma fileira de quadradinhos para o resultado.", "2": "As divisões sob o colchete ⟌, com quadradinhos sobre o dividendo para o quociente, e um problema em papel quadriculado." }
+---
+
+## O que você vai compor
+
+A unidade 3 de um caderno de cálculo do 4º ano, *As quatro operações*, em quatro edições. Uma fileira de cálculo mental em três colunas, depois contas armadas de somar, subtrair e multiplicar, um algarismo por quadradinho e uma fileira de quadradinhos para o resultado, e por fim divisões e um problema em papel quadriculado. É na divisão que as edições se separam: a folha inglesa põe o divisor do lado de fora do colchete ⟌ e o quociente em cima; a espanhola e a francesa põem o divisor numa chave à direita do dividendo e o quociente embaixo, como no método da chave das escolas brasileiras; a alemã escreve `864 : 4 =` numa linha, com espaço embaixo para as contas, e os produtos com um ponto. A vírgula ou o ponto decimal do cálculo mental também segue o idioma. Um botão acima das páginas transforma a folha do aluno na cópia do professor, com cada resposta impressa em laranja no seu quadradinho.
+
+## Preparo
+
+### 1 · Escreva as contas como linhas do Markdown
+
+<Excerpt region="answer" />
+
+Um `:::exercise{type="arithmetic"}` recebe uma operação por item de lista, `- 864 ÷ 4`, com os sinais que o seu país escreve (`÷`, `:`, `×`, `·`). O motor calcula o resultado, o quociente e o resto, e o estilo decide como a conta é desenhada: quadradinhos de 7,2 mm e uma `arithmetic.division` escolhida por edição com `t()`. Uma fileira de cálculo mental é um exercício de lacunas comum cuja lista fica num grupo `:::columns{count=3}`, e cada `[[70]]` vira um quadradinho da mesma largura que os outros.
+
+### 2 · Monte o cabeçalho da folha
+
+<Excerpt region="head" />
+
+O título de nível 1 da unidade desenha a faixa laranja, a pílula e o título, e também os campos de nome e data a partir dos seus atributos (`nombre="Name" fecha="Date"`), então cada edição os rotula no próprio idioma.
+
+### 3 · Alterne entre a folha do aluno e a cópia do professor
+
+<Excerpt region="live" />
+
+`exercises.edition: 'teacher'` imprime cada resposta no seu lugar com a cor de `answers.color`, aqui a de destaque: os quadradinhos do cálculo mental, os algarismos de cada resultado, o quociente e o resto, a resposta modelo do problema. O formulário acima das páginas altera a configuração ali mesmo e compõe de novo; as fontes já estão carregadas, então basta o `buildDocument` simples. A captura compõe antes as duas folhas, por isso as páginas publicadas mostram a do aluno e depois a do professor.
+
+## Variações
+
+### Ponha as respostas de cabeça para baixo no pé
+
+Um costume das revistas de passatempos: o gabarito de cada exercício, girado 180° logo abaixo dele.
+
+```diff
+-  exercises: { edition: 'student' }, // the switch above the pages sets 'teacher'
++  exercises: { edition: 'student', solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+### Divida sob o colchete em todas as edições
+
+As escolas japonesas e chinesas também usam o colchete; um idioma que você não lista fica com a disposição que já é a dele.
+
+```diff
+-    division: t({ es: 'potence', fr: 'potence', de: 'inline', en: 'bracket' }) },
++    division: 'bracket' },
+```
+
+## Erros comuns
+
+- As operações só aceitam números inteiros: uma conta com decimais como `12,5 + 3,75` não é lida e sai impressa como está escrita. Deixe os decimais nas lacunas do cálculo mental, onde a resposta é texto.

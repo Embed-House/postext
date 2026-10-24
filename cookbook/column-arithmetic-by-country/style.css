@@ -1,0 +1,11 @@
+/* The edition switch above the desk: two pills in the sheet's orange. */
+#controls {
+  display: flex; justify-content: center; gap: 8px; padding: 14px 16px; background: #16181d;
+  font: 600 14px/1.2 Lexend, system-ui, sans-serif;
+}
+#controls label {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px;
+  border-radius: 22px; color: #f4f1ea; border: 1px solid #5f6670; cursor: pointer;
+}
+#controls label:has(input:checked) { background: #c4511c; border-color: #c4511c; }
+#controls input { accent-color: #fff; }

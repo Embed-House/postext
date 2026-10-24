@@ -47,4 +47,13 @@ describe('headings.balancing defaults', () => {
     expect(stripHeadingsDefaults({ balancing: { stretchAfterDisplays: true } })).toBeUndefined();
     expect(stripHeadingsDefaults({ balancing: { stretchAfterDisplays: false } })).toEqual({ balancing: { stretchAfterDisplays: false } });
   });
+
+  it('fillShortColumns (fill a column the break rules left short) is off by default (#1236)', () => {
+    expect(DEFAULT_COLUMN_BALANCING.fillShortColumns).toBe(false);
+    expect(resolveHeadingsConfig().balancing.fillShortColumns).toBe(false);
+    expect(resolveHeadingsConfig({ balancing: { trailing: false } }).balancing.fillShortColumns).toBe(false);
+    expect(resolveHeadingsConfig({ balancing: { fillShortColumns: true } }).balancing.fillShortColumns).toBe(true);
+    expect(stripHeadingsDefaults({ balancing: { fillShortColumns: false } })).toBeUndefined();
+    expect(stripHeadingsDefaults({ balancing: { fillShortColumns: true } })).toEqual({ balancing: { fillShortColumns: true } });
+  });
 });

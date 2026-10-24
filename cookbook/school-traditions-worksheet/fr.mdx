@@ -1,0 +1,63 @@
+---
+title: "Une fiche d’exercices en dix traditions scolaires"
+summary: "Les sept mêmes blocs :::exercise en dix langues, chaque édition mise en page par un style d’exercice fidèle aux manuels scolaires de son pays."
+plain: "Une fiche de sciences et de maths de deux pages sur le cycle de l’eau, faite dix fois. Les questions sont les mêmes ; les numéros, les cases, les lignes d’écriture et la division ressemblent à ceux des manuels de chaque pays."
+description: "Une fiche dans Postext de dix façons : cases V/F, réglure Seyès, R/F et 864 : 4 =, la potence, le crochet ⟌, les parenthèses du 选择题, ア イ ウ et l’arabe."
+question: "Comment composer la même fiche comme les manuels de chaque pays composent leurs exercices ?"
+aliases: ["fiche d’exercices", "fiche", "ficha", "Arbeitsblatt", "练习单", "プリント", "ورقة عمل", "division posée", "potence", "réglure Seyès", "田字格", "vrai ou faux", "cases à cocher"]
+pageNotes: { "1": "La première page de la fiche : un bandeau bleu avec le titre, des lignes pour le prénom et la date, un court texte, un exercice à choix multiple, des affirmations vrai ou faux et un texte à trous sous une liste de mots.", "2": "La deuxième page : des mots à relier à leur définition par des points, des mots à entourer dans des phrases, une division et une multiplication posées dans des cases, et une question ouverte avec des lignes pour écrire." }
+---
+
+## Ce que vous allez composer
+
+La fiche 7 d’un cours de sciences et de mathématiques de CM1, *Le voyage de l’eau*, en dix éditions. Les questions sont les mêmes dans toutes les langues : choisir une réponse, cocher vrai ou faux, compléter un texte à trous avec une liste de mots, relier des mots à leur définition, entourer un mot, partager l’eau d’une citerne, expliquer pourquoi il faut l’économiser. Chaque édition les imprime comme le font ses écoles. Les fiches espagnole et catalane mettent le numéro dans un disque, font cocher V ou F et posent la division avec le diviseur dans un L à droite du dividende. La française met ses numéros dans des carrés et utilise des cases à cocher, des pointillés pour les trous et une réglure Seyès pour la réponse. L’allemande écrit *R* et *F*, *Lückentext* et `864 : 4 =` sur une ligne, avec un point pour la multiplication. La brésilienne demande V ou F entre parenthèses. L’anglaise divise sous le crochet ⟌. La chinoise numérote ses parties 一、二、, place （　） après chaque énoncé avec A. B. C. sur une ligne, demande √ ou × et finit par 看拼音，写词语 dans des cases 田字格. La japonaise propose ア イ ウ et ○ ×, et l’arabe se lit de droite à gauche avec أ ب ج et صح ou خطأ.
+
+## Préparation
+
+### 1 · Mettre chaque tradition dans un tableau
+
+<Excerpt region="answer" />
+
+Toutes les éditions ont le même Markdown : sept blocs `:::exercise` dont les réponses sont dans le texte (`- [x]`, `[[vapeur]]`, `- Évaporation -> L'eau devient vapeur`, `- 864 : 4`). Ce qui change d’un pays à l’autre, c’est la forme, et elle vit dans ce tableau et nulle part ailleurs : la forme et les chiffres du numéro, les lettres des options et le geste de l’élève (cocher une case ou entourer une lettre), l’aspect du vrai ou faux, celui des trous, la zone d’écriture et la disposition de la division. Le catalan reprend telle quelle la ligne de l’espagnol.
+
+### 2 · Poser la tradition sur le style de la maison
+
+<Excerpt region="style" />
+
+Un seul style d’exercice, `ficha`, porte ce que les dix fiches ont en commun (le bleu des numéros, les filets gris, l’espace entre les exercices), et la ligne de l’édition se pose par-dessus. Ce que la ligne ne précise pas vient de la langue : T F, V F, R F, √ ×, ○ × et صح خطأ sont des mots du moteur lui-même, comme a) b) c), A. B. C., ア イ ウ et أ ب ج, si bien qu’aucune édition ne les écrit.
+
+### 3 · Donner à chaque écriture ses polices
+
+<Excerpt region="faces" />
+
+Les éditions en alphabet latin partagent Nunito et Baloo 2. La fiche chinoise compose le texte en Song et les consignes en Hei ; la japonaise compose le texte en Klee One, une police de manuel scolaire, et les consignes dans une gothique ; l’arabe utilise Noto Naskh Arabic. La graisse la plus forte de Klee One est 600, donc l’édition japonaise règle son gras à 600 (`boldFontWeight`) : un 700 serait dessiné par le navigateur et ferait échouer la capture.
+
+### 4 · Mettre en tête de la fiche des lignes pour le nom
+
+<Excerpt region="head" />
+
+Le titre de niveau 1 dessine le bandeau, le cours tiré du frontmatter et le titre, ainsi que deux champs sur une ligne dont les mots viennent des attributs du titre (`nombre="Prénom" fecha="Date"`). La fiche allemande dit donc *Datum* et la japonaise 名前 sans une seule chaîne dans le code.
+
+## Variantes
+
+### Imprimer l’exemplaire du maître
+
+Chaque réponse va à sa place en magenta : les parenthèses, les cases, les trous et le quotient.
+
+```diff
+   exerciseStyles: [ficha],
++  exercises: { edition: 'teacher' },
+```
+
+### Regrouper les réponses en bas de la fiche
+
+`placement: 'after'` place le corrigé de chaque exercice sous celui-ci ; `'inverted'` le retourne tête en bas, comme dans les pages de jeux.
+
+```diff
++  exercises: { solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+## Erreurs fréquentes
+
+- Une police sans graisse 700 donne aux numéros des énoncés un gras synthétique. Donnez à une telle police de texte un `boldFontWeight` avec une graisse qu’elle possède.
+- Le ○ des consignes japonaises et le √ des consignes chinoises n’existent que dans les polices CJK : placez-les dans une phrase du texte CJK, pas dans une étiquette latine.
