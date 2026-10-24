@@ -4353,6 +4353,10 @@ function placeDocumentPass(
     for (let j = col.blocks.length - 1; j >= 0 && isFreeHeading(col.blocks[j]!) && !holdsHeadFloat(col, col.blocks[j]!); j--) n++;
     return n;
   };
+  /** Times each keep-together box left a short column holding only the
+   *  headings it rolled back, by content index: the count `shortColumnMoves`
+   *  bounds, kept across the rollback that sets the headings again. */
+  const calloutShortMoves = new Map<number, number>();
   /** Whether a block moving on whole may take the `run` headings closing
    *  `col` along. A run that is all the column holds would open the next
    *  column just as it opens this one, and is rolled back no further —
@@ -5858,7 +5862,7 @@ function placeDocumentPass(
     let part = 0;
     let frameId = firstFrameId;
     /** Times the box left an EMPTY short column (see below) — bounded. */
-    let shortColumnMoves = 0;
+    let shortColumnMoves = calloutShortMoves.get(startIdx) ?? 0;
     for (;;) {
       // A box (or the rest of a split one) that opens a band applies the
       // band's cap before it measures its room, as a paragraph does: sized
@@ -5910,17 +5914,19 @@ function placeDocumentPass(
           // run of headings at the column's tail travels with the box.
           // Skipped when the column holds nothing else (rolling back again
           // would loop) — the headings stay, orphaned — unless the column is
-          // a short one (`headingRunMayLeave`). Only the head of a box can
-          // roll headings back: a continuation always lands in a fresh
-          // column.
+          // a short one a band cap did not cut (`headingRunMayLeave`); such a
+          // move counts against the box's `shortColumnMoves`. Only the head
+          // of a box can roll headings back: a continuation always lands in
+          // a fresh column.
           let run = 0;
           for (let j = curCol.blocks.length - 1; j >= 0; j--) {
             if (isFreeHeading(curCol.blocks[j]!)) run++;
             else break;
           }
           pendingSpacing = 0;
-          if (part === 0 && resolved.headings.keepWithNext && headingRunMayLeave(curCol, run, shortColumn)) {
+          if (part === 0 && resolved.headings.keepWithNext && headingRunMayLeave(curCol, run, shortColumn && !uncappedBottoms.has(curCol))) {
             const rolledBack = rollbackHeadings(curCol);
+            if (run === curCol.blocks.length + rolledBack.length) calloutShortMoves.set(startIdx, shortColumnMoves + 1);
             advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
             return (rolledBack[0]!.contentIndex ?? startIdx - rolledBack.length) - 1;
           }
