@@ -44,6 +44,8 @@ export interface ExpandContext {
   measurePt: number;
   /** A right-to-left document (its designs are mirrored). */
   rtl?: boolean;
+  /** A vertical page (縦組み): items are numbered ①, ②. */
+  vertical?: boolean;
   /** The text's font family: drawn letters (grids, matching) use it. */
   bodyFont?: string;
   /** Ids of the configured box styles (a style's `box` must name one). */
@@ -266,7 +268,7 @@ function bookSolutions(entries: readonly OutlineEntry[], style: ResolvedExercise
     }
     const lines = [ex.key, ...(sol.layout === 'full' ? ex.solution ?? [] : [])].filter(Boolean);
     lines.forEach((line, k) => {
-      const lead = k === 0 ? textRun(`${e.number}${style.number.suffix || '.'}`, at, { bold: true }) : EMPTY_RUN;
+      const lead = k === 0 ? textRun(`${e.number}${style.number.suffix || '.'}`, at, { bold: style.number.fontWeight >= 600 }) : EMPTY_RUN;
       out.push(blockOfRun('paragraph', joinRuns(lead, tabRun(at), textRun(line, at)), { sourceStart: at, sourceEnd: at }));
     });
   }
@@ -335,6 +337,19 @@ class Emitter {
     return formatCounter(n, counterStyleOf('decimal', this.ctx.locale), this.ctx.locale, this.ctx.digits);
   }
 
+  /** An item's label: `1.`; on a vertical page a circled number (`①`),
+   *  which stands upright in the column where a Latin full stop would not
+   *  (#1244). */
+  private item(n: number): string {
+    return this.ctx.vertical ? formatCounter(n, 'circled-decimal', this.ctx.locale) : `${this.num(n)}.`;
+  }
+
+  /** Item and solution numbers are bold when the exercise number is (its
+   *  `number.fontWeight`): a face with no bold cut sets both regular. */
+  private get numberBold(): boolean {
+    return this.style.number.fontWeight >= 600;
+  }
+
   private label(k: number): string {
     return optionLabel(this.style, k, this.ctx.locale, this.ctx.digits);
   }
@@ -389,12 +404,13 @@ class Emitter {
 
   /** A writing area of `lines` lines, the answers written in a teacher's
    *  edition. */
-  private area(lines: number, slot: string, answers?: string[], kind?: AreaKind, widthPt?: number, shown = false): ContentBlock[] {
+  private area(lines: number, slot: string, answers?: string[], kind?: AreaKind, widthPt?: number, shown = false, cells?: number[]): ContentBlock[] {
     const a = this.style.area;
     const k = kind ?? a.kind;
     const spacing = a.spacing ? dimPt(a.spacing, this.dpiFree.size) : this.dpiFree.line * (k === 'grid' || k === 'tianzige' ? 1.2 : 1.35);
     const { elements, heightPt } = areaElements({
       kind: k, lines, spacingPt: spacing, widthPt: widthPt ?? this.dpiFree.measure, color: a.color, weightPt: dimPt(a.weight, this.dpiFree.size),
+      ...(cells && cells.length > 0 ? { cells } : {}),
       ...((this.teacher || shown) && answers ? { answers, answerColor: this.style.answers.color, answerSizePt: this.dpiFree.size * 0.95, ...(this.style.answers.fontFamily ?? this.ctx.bodyFont ? { answerFont: this.style.answers.fontFamily ?? this.ctx.bodyFont } : {}) } : {}),
     });
     const id = `${this.ids.frame}-area-${this.ex.ordinal}-${slot}`;
@@ -472,7 +488,8 @@ class Emitter {
     const tight = /[\u3001\u3002\uFF0C\uFF0E\uFF1A]$/u.test(n.suffix);
     if (n.show && this.number) {
       const text = `${n.label ? `${n.label} ` : ''}${this.number}${n.suffix}`;
-      lead.push(chipRun(this.ids.number, textRun(text, this.at), this.at));
+      // A number stands upright under an italic instruction (#1244).
+      lead.push(chipRun(this.ids.number, textRun(text, this.at), this.at, { upright: true }));
     }
     const level = ex.attrs.level !== undefined ? Math.max(0, Math.min(this.style.level.max, parseInt(ex.attrs.level, 10) || 0)) : 0;
     if (level > 0) {
@@ -593,12 +610,12 @@ class Emitter {
       out.push(set);
       // An open question: lines under each item of the list.
       if (ex.kind === 'open' && b.type === 'listItem' && (b.depth ?? 1) <= 1) {
-        out.push(...this.area(this.openLines(), `t${lists.indexOf(k) + 1}`, this.openAnswer(lists.indexOf(k)), this.openArea()));
+        out.push(...this.area(this.openLines(), `t${lists.indexOf(k) + 1}`, this.openAnswer(lists.indexOf(k)), this.openArea(), undefined, false, this.openCells()));
       }
     }
     flush();
     if (bankAt !== undefined && !bankPlaced) out.push(BANK_SLOT);
-    if (ex.kind === 'open' && lists.length === 0) out.push(...this.area(this.openLines(), 't1', this.openAnswer(0), this.openArea()));
+    if (ex.kind === 'open' && lists.length === 0) out.push(...this.area(this.openLines(), 't1', this.openAnswer(0), this.openArea(), undefined, false, this.openCells()));
     if (ex.kind === 'gaps' || ex.kind === 'choice' || ex.kind === 'mark') this.keyOfGaps();
     return out;
   }
@@ -607,7 +624,16 @@ class Emitter {
    *  style's. */
   private openArea(): AreaKind | undefined {
     const k = this.ex.attrs.area?.trim();
-    return k === 'lines' || k === 'dots' || k === 'grid' || k === 'seyes' || k === 'tianzige' || k === 'box' || k === 'none' ? k : undefined;
+    if (k === 'lines' || k === 'dots' || k === 'grid' || k === 'seyes' || k === 'tianzige' || k === 'box' || k === 'none') return k;
+    // Cells asked of an area of lines: squares.
+    return this.openCells() && this.style.area.kind !== 'grid' && this.style.area.kind !== 'tianzige' ? 'grid' : undefined;
+  }
+
+  /** The squares an open question's area is sized to (`cells=4`), or set
+   *  in groups side by side (`cells="2 2 3"`, a word's 田字格 each). */
+  private openCells(): number[] | undefined {
+    const cells = (this.ex.attrs.cells ?? '').split(/[\s,]+/).map((n) => parseInt(n, 10)).filter((n) => Number.isFinite(n) && n > 0);
+    return cells.length > 0 ? cells : undefined;
   }
 
   private openLines(): number {
@@ -835,7 +861,7 @@ class Emitter {
       const stem = this.passThrough(this.blocks[q.stem]!, q.stem);
       const at = stem.sourceStart;
       const n = this.ex.questions.filter((x) => x.stem !== undefined).indexOf(q) + 1;
-      blocks.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(`${this.num(n)}.`, at, { bold: true }), tabRun(at), runOf(stem))]));
+      blocks.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(this.item(n), at, { bold: this.numberBold }), tabRun(at), runOf(stem))]));
     }
     const optionStyle = q.stem !== undefined ? this.ids.optionUnder : this.ids.option;
     // `columns=3` on the fence, or a row layout: the options side by side.
@@ -860,20 +886,25 @@ class Emitter {
       const at = this.blocks[opt.block]!.sourceStart;
       const slot = `tf${k + 1}`;
       this.slots.push({ key: slot, kind: 'truefalse', correct: [opt.correct ? 1 : 2] });
-      const parts: Run[] = [textRun(`${this.num(k + 1)}.`, at), tabRun(at), this.optionText(opt.block), tabRun(at)];
+      const marks: Run[] = [];
       if (this.style.trueFalse.look === 'bracket') {
-        // One bracket at the line's end to write the answer in: full width
-        // in Chinese and Japanese, `（　）`.
+        // One bracket to write the answer in: full width in Chinese and
+        // Japanese, `（　）`.
         const wide = this.book.language === 'zh' || this.book.language === 'ja';
         const answer = textRun(opt.correct ? t : f, at);
         const shown = this.answered(k === 0);
-        parts.push(textRun(wide ? '\uFF08' : '(', at), chipRun(shown ? this.ids.answer : this.ids.icon, answer, at, {
+        marks.push(textRun(wide ? '\uFF08' : '(', at), chipRun(shown ? this.ids.answer : this.ids.icon, answer, at, {
           widthText: `${t.length > f.length ? t : f}\u2003`, ...(shown ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(slot, k === 0),
         }), textRun(wide ? '\uFF09' : ')', at));
       } else {
-        parts.push(textRun(`${t}\u00A0`, at), chipRun(this.answered(k === 0) && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, this.hit(`${slot}t`, k === 0)));
-        parts.push(textRun(`\u2003${f}\u00A0`, at), chipRun(this.answered(k === 0) && !opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, this.hit(`${slot}f`, k === 0)));
+        marks.push(textRun(`${t}\u00A0`, at), chipRun(this.answered(k === 0) && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, this.hit(`${slot}t`, k === 0)));
+        marks.push(textRun(`\u2003${f}\u00A0`, at), chipRun(this.answered(k === 0) && !opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, this.hit(`${slot}f`, k === 0)));
       }
+      // Before the statement (`place: 'start'`, a Brazilian `( ) frase`),
+      // else flush with the line's end.
+      const parts: Run[] = this.style.trueFalse.place === 'start'
+        ? [textRun(this.item(k + 1), at), tabRun(at), ...marks, textRun(SPACE, at), this.optionText(opt.block)]
+        : [textRun(this.item(k + 1), at), tabRun(at), this.optionText(opt.block), tabRun(at), ...marks];
       runs.push(joinRuns(...parts));
       this.key.push(textRun(`${this.num(k + 1)} ${opt.correct ? t : f}`, this.at));
     });
@@ -915,7 +946,7 @@ class Emitter {
       const p = lefts[i];
       if (p) {
         const pos = posOf.get(pairs.indexOf(p))!;
-        parts.push(textRun(`${this.num(i + 1)}. `, this.at), this.gapsOf(p.left), textRun(' ', this.at));
+        parts.push(textRun(`${this.item(i + 1)} `, this.at), this.gapsOf(p.left), textRun(' ', this.at));
         parts.push(chipRun(this.answered(i === 0) ? this.ids.blankAnswer : this.ids.blank, textRun(this.bareLabel(pos) || this.num(pos + 1), this.at), this.at, {
           widthText: '\u2003\u2003', ...(this.answered(i === 0) ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(`p${i + 1}`, i === 0),
         }));
@@ -953,7 +984,7 @@ class Emitter {
       const at = this.blocks[s.block]!.sourceStart;
       const order = shuffledOrder(s.pieces.length, seededRandom(this.book.seed, this.ex.ordinal, 'scramble', k));
       const words = order.flatMap((j, pos) => (pos > 0 ? [textRun(' / ', at), s.pieces[j]!] : [s.pieces[j]!]));
-      out.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(`${this.num(k + 1)}.`, at), tabRun(at), ...words)]));
+      out.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(this.item(k + 1), at), tabRun(at), ...words)]));
       const sentence = s.pieces.map((p) => plain(p)).join(' ');
       out.push(...this.area(1, `sc${k + 1}`, [sentence], this.style.area.kind === 'none' ? 'lines' : this.style.area.kind, undefined, this.example && k === 0));
       this.key.push(textRun(`${this.num(k + 1)} ${sentence}`, at));
@@ -1015,7 +1046,7 @@ class Emitter {
   solutionBlocks(listed: boolean): ContentBlock[] {
     if (this.key.length === 0) this.exerciseBlocks();
     const sol = solutionsOf(this.style, this.book);
-    const lead = listed && this.number ? [textRun(`${this.number}${this.style.number.suffix || '.'}`, this.at, { bold: true }), tabRun(this.at)] : [];
+    const lead = listed && this.number ? [textRun(`${this.number}${this.style.number.suffix || '.'}`, this.at, { bold: this.numberBold }), tabRun(this.at)] : [];
     const keyRun = this.key.length > 0 ? joinRuns(...this.key.flatMap((r, k) => (k > 0 ? [textRun(this.sep, this.at), r] : [r]))) : EMPTY_RUN;
     const out: ContentBlock[] = [];
     const worked: ContentBlock[] = [];

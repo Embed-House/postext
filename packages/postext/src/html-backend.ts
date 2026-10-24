@@ -48,7 +48,7 @@ import { measureFontBox, measureSpacedWidth, measureTextWidth, measuresOwnFace, 
 import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures.js';
 import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces.js';
 import { fontFamilyOf } from './measure/vertical.js';
-import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations.js';
+import { chipReadingsHtml, lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations.js';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay.js';
 import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url.js';
 import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTSwatch, VDTTextDots } from './vdt.js';
@@ -2054,6 +2054,8 @@ function renderChip(
     const label = chip.blank ? ` role="img" aria-label="${esc(chip.blankLabel ?? 'blank')}"` : '';
     parts.push(`<span class="pt-ex-slot${chip.blank ? ' pt-ex-blank' : ''}"${data}${label} style="${boxGeometry}"></span>`);
   }
+  // The readings of its ruby words, over a blank too (#1244).
+  if (chip.readings && chip.runs[0]) parts.push(chipReadingsHtml(chip.readings, bx, inkFor(chip.runs[0]), quoteFontString));
   if (chip.blank) return parts.join('');
   let tx = bx + chip.borderWidth + chip.paddingX;
   // The runs in the chip's paint order (`VDTChip.order`); a right-to-left

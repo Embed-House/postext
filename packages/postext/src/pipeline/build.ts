@@ -1053,6 +1053,14 @@ function placeDocumentPass(
       // link to `main-color`: set them to the document's palette.
       .map((s) => (exerciseBoxIds.has(s.id) ? relinkToPalette(s, config?.colorPalette) : s))]
     : resolved.calloutStyles;
+  // The exercises' frames, banks and solutions boxes are named in the
+  // document's config too, as their chips are: an output that styles its
+  // boxes from it (a reflowable EPUB) finds them (#1244). Drawn boxes are
+  // pictures there.
+  if (exerciseExpansion?.wrapped) {
+    const own = calloutStyles.filter((s) => exerciseBoxIds.has(s.id) && !s.design?.enabled);
+    if (own.length > 0) doc.config = { ...doc.config, calloutStyles: [...doc.config.calloutStyles, ...own] };
+  }
   // A box nested in another looks its style up in the configuration it is
   // laid out with: the listings' box among them.
   const calloutResolved: ResolvedConfig = codeBoxes.wrapped || flowGroups.wrapped || composedWrap.wrapped || comicText.wrapped || exerciseExpansion?.wrapped ? { ...resolved, calloutStyles } : resolved;

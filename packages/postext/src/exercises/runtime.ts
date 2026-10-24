@@ -232,6 +232,7 @@ function exerciseRuntime(): Runtime {
     '.pt-ex-menu button:hover,.pt-ex-menu button:focus{background:#eef2fb;}' +
     '.pt-ex-tag{position:absolute;left:50%;top:100%;transform:translate(-50%,.1em);font:600 .55em/1 system-ui,sans-serif;white-space:nowrap;padding:.1em .3em;border-radius:.3em;background:#eef2fb;color:#1d1d1f;pointer-events:none;}' +
     '.pt-ex-svg{position:absolute;left:0;top:0;overflow:visible;}' +
+    '.pt-ex-layer{position:absolute;left:0;top:0;transform-origin:0 0;}' +
     '.pt-ex-dot{fill:transparent;stroke:transparent;cursor:pointer;pointer-events:all;}' +
     '.pt-ex-dot.pt-ex-pending{stroke:#1a5fb4;stroke-width:2;}' +
     '.pt-ex-dot:focus{outline:none;stroke:#1a5fb4;stroke-width:2;}' +
@@ -357,6 +358,35 @@ function exerciseRuntime(): Runtime {
     // The font of the exercise's text, for what is written on its areas.
     const firstLine = scope.querySelector('.pt-line');
     const textFont = firstLine && firstLine.style ? firstLine.style.fontFamily : '';
+    // A drawn box of a reflowable book is set in ems (#1244): its controls
+    // go on a layer of the size it prints (`data-pt-w`, `data-pt-h`),
+    // scaled to the box as the reader sizes the text.
+    if (flow) {
+      for (const b in boxEls) {
+        const box = boxEls[b];
+        const w = parseFloat(box.getAttribute('data-pt-w') || '');
+        const h = parseFloat(box.getAttribute('data-pt-h') || '');
+        if (!(w > 0) || !(h > 0)) continue;
+        const layer = own(el('div', 'pt-ex-layer', box));
+        layer.style.width = px(w);
+        layer.style.height = px(h);
+        const fit = (): void => {
+          const k = box.clientWidth / w;
+          layer.style.transform = k > 0 && Math.abs(k - 1) > 0.001 ? 'scale(' + k + ')' : '';
+        };
+        fit();
+        const view: any = doc.defaultView;
+        if (view && view.ResizeObserver) {
+          const ro = new view.ResizeObserver(fit);
+          ro.observe(box);
+          cleanups.push(() => ro.disconnect());
+        } else if (view) {
+          view.addEventListener('resize', fit);
+          cleanups.push(() => view.removeEventListener('resize', fit));
+        }
+        boxEls[b] = layer;
+      }
+    }
 
     function el(tag: string, cls: string, parent?: any): any {
       const e = doc.createElement(tag);
@@ -647,7 +677,9 @@ function exerciseRuntime(): Runtime {
       const c = slot.cell ? slot.cell[1] : 0;
       const size = grid.cellPt * ppt;
       const f = own(el('span', 'pt-ex-field pt-ex-ui', box));
-      f.style.left = px((grid.xPt + c * grid.cellPt) * ppt);
+      // A right-to-left page's grid is mirrored: its columns count from the
+      // box's right edge.
+      f.style[grid.rtl ? 'right' : 'left'] = px((grid.xPt + c * grid.cellPt) * ppt);
       f.style.top = px((grid.yPt + r * grid.cellPt) * ppt);
       f.style.width = px(size);
       f.style.height = px(size);
@@ -689,8 +721,9 @@ function exerciseRuntime(): Runtime {
       const s = own(svg('svg', { class: 'pt-ex-svg pt-ex-ui', width: w, height: h, viewBox: '0 0 ' + w + ' ' + h }, box));
       const lines = svg('g', {}, s);
       const marks = svg('g', {}, s);
-      const lx = grid.dotsPt[0] * ppt;
-      const rx = grid.dotsPt[1] * ppt;
+      // Mirrored on a right-to-left page: the left items stand on the right.
+      const lx = grid.rtl ? w - grid.dotsPt[0] * ppt : grid.dotsPt[0] * ppt;
+      const rx = grid.rtl ? w - grid.dotsPt[1] * ppt : grid.dotsPt[1] * ppt;
       const rows: number[] = grid.rowsPt.map((y: number) => y * ppt);
       const radius = Math.max(body * 0.55, 6);
       let pendingLeft = -1;
@@ -745,7 +778,7 @@ function exerciseRuntime(): Runtime {
             if (mark) { marks.removeChild(mark); mark = null; }
             if (line) line.setAttribute('stroke', ok === null ? (state.revealed ? look.answer : 'currentColor') : ok ? look.correct : look.wrong);
             if (ok === null) return;
-            mark = svg('text', { x: lx + radius * 2.2, y: rows[li]! - body * 0.25, 'font-size': body * 0.8, 'font-weight': 700, fill: ok ? look.correct : look.wrong, 'text-anchor': 'middle', 'aria-hidden': 'true' }, marks);
+            mark = svg('text', { x: lx + radius * (grid.rtl ? -2.2 : 2.2), y: rows[li]! - body * 0.25, 'font-size': body * 0.8, 'font-weight': 700, fill: ok ? look.correct : look.wrong, 'text-anchor': 'middle', 'aria-hidden': 'true' }, marks);
             mark.textContent = ok ? '\u2713' : '\u2717';
           },
         });
@@ -757,11 +790,13 @@ function exerciseRuntime(): Runtime {
       const w = parseFloat(box.style.width) || 0;
       const h = parseFloat(box.style.height) || 0;
       const cellPx = grid.cellPt * ppt;
-      const x0 = grid.xPt * ppt;
       const y0 = grid.yPt * ppt;
+      // Where column `c` (a fraction in it) stands: from the box's right edge
+      // on a right-to-left page, whose grid is mirrored.
+      const colX = (c: number): number => (grid.rtl ? w - grid.xPt * ppt - c * cellPx : grid.xPt * ppt + c * cellPx);
       const s = own(svg('svg', { class: 'pt-ex-svg pt-ex-ui', width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, role: 'group', 'aria-label': exName }, box));
       const paintG = svg('g', {}, s);
-      const hit = svg('rect', { x: x0, y: y0, width: grid.cols * cellPx, height: grid.rows * cellPx, fill: 'transparent', style: 'cursor:pointer;pointer-events:all' }, s);
+      const hit = svg('rect', { x: Math.min(colX(0), colX(grid.cols)), y: y0, width: grid.cols * cellPx, height: grid.rows * cellPx, fill: 'transparent', style: 'cursor:pointer;pointer-events:all' }, s);
       let start: [number, number] | null = null;
       let startMark: any = null;
       const capsule = (sel: string, color: string): any => {
@@ -769,7 +804,7 @@ function exerciseRuntime(): Runtime {
         const a = ends[0]!.split(',').map(Number);
         const b = ends[1]!.split(',').map(Number);
         return svg('line', {
-          x1: x0 + (a[1]! + 0.5) * cellPx, y1: y0 + (a[0]! + 0.5) * cellPx, x2: x0 + (b[1]! + 0.5) * cellPx, y2: y0 + (b[0]! + 0.5) * cellPx,
+          x1: colX(a[1]! + 0.5), y1: y0 + (a[0]! + 0.5) * cellPx, x2: colX(b[1]! + 0.5), y2: y0 + (b[0]! + 0.5) * cellPx,
           stroke: color, 'stroke-opacity': 0.75, 'stroke-width': cellPx * 0.78, 'stroke-linecap': 'round', fill: 'none', 'pointer-events': 'none',
         }, paintG);
       };
@@ -778,12 +813,12 @@ function exerciseRuntime(): Runtime {
         const r = hit.getBoundingClientRect();
         const sx = r.width / (grid.cols * cellPx) || 1;
         const sy = r.height / (grid.rows * cellPx) || 1;
-        const c = Math.floor((e.clientX - r.left) / sx / cellPx);
+        const c = Math.floor((grid.rtl ? r.right - e.clientX : e.clientX - r.left) / sx / cellPx);
         const rr = Math.floor((e.clientY - r.top) / sy / cellPx);
         if (rr < 0 || c < 0 || rr >= grid.rows || c >= grid.cols) return;
         if (!start) {
           start = [rr, c];
-          startMark = svg('circle', { cx: x0 + (c + 0.5) * cellPx, cy: y0 + (rr + 0.5) * cellPx, r: cellPx * 0.39, fill: 'none', stroke: '#1a5fb4', 'stroke-width': 2, 'pointer-events': 'none' }, s);
+          startMark = svg('circle', { cx: colX(c + 0.5), cy: y0 + (rr + 0.5) * cellPx, r: cellPx * 0.39, fill: 'none', stroke: '#1a5fb4', 'stroke-width': 2, 'pointer-events': 'none' }, s);
           return;
         }
         const dr = rr - start[0];
@@ -822,7 +857,7 @@ function exerciseRuntime(): Runtime {
           painted.push(capsule(list[i]!, state.revealed ? look.answer : ok === null ? '#9ec5ff' : ok ? look.correct : look.wrong));
           if (ok !== null) {
             const ends = list[i]!.split('-')[1]!.split(',').map(Number);
-            const t = svg('text', { x: x0 + (ends[1]! + 1) * cellPx, y: y0 + ends[0]! * cellPx + cellPx * 0.3, 'font-size': cellPx * 0.5, 'font-weight': 700, fill: ok ? look.correct : look.wrong, 'aria-hidden': 'true' }, paintG);
+            const t = svg('text', { x: colX(ends[1]! + 1), ...(grid.rtl ? { 'text-anchor': 'end' } : {}), y: y0 + ends[0]! * cellPx + cellPx * 0.3, 'font-size': cellPx * 0.5, 'font-weight': 700, fill: ok ? look.correct : look.wrong, 'aria-hidden': 'true' }, paintG);
             t.textContent = ok ? '\u2713' : '\u2717';
             painted.push(t);
           }

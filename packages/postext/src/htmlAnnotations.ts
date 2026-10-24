@@ -142,6 +142,13 @@ export function rubyHtml(ruby: VDTRuby, x: number, color: string, quote: FontQuo
   return `${RT_OPEN}${ruby.runs.map((r) => runHtml(r, x, ruby.color ?? color, quote, false)).join('')}</rt>`;
 }
 
+/** The readings of a chip's ruby words (`VDTChip.readings`, #1244), from
+ *  the chip box's left edge `x`: read by assistive technology, as a blank
+ *  is read by its label. */
+export function chipReadingsHtml(runs: readonly VDTAnnotationRun[], x: number, color: string, quote: FontQuoter): string {
+  return runs.map((r) => runHtml(r, x, color, quote, false)).join('');
+}
+
 /** The annotation a ruby base belongs to, when the layout names it
  *  (`VDTRuby.id`, #422): the bases of one jukugo reading share it and
  *  go in one `<ruby>`. Without it, every base is a `<ruby>` of its own. */

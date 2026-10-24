@@ -208,13 +208,16 @@ function rawOf(seg: VDTLineSegment, ctx: InlineContext): string | undefined {
     const ex = seg.chip.exercise;
     const data = ex ? ` data-pt-ex="${ex.ex}" data-pt-slot="${xmlAttr(ex.slot)}"` : '';
     const cls = `pt-chip pt-chip-${idOf('', seg.chip.styleId)}${ex ? ' pt-ex-slot' : ''}`;
+    // The readings of its ruby words (#1244): the chip is their base.
+    const readings = seg.chip.readings?.map((r) => r.text).join(' ');
+    const withReadings = (html: string): string => (readings ? `<ruby>${html}<rt>${xmlText(readings)}</rt></ruby>` : html);
     if (seg.chip.blank) {
       const width = round(seg.chip.boxWidth / ctx.basePx);
-      return `<span class="${cls} pt-ex-blank"${data} style="width:${width}em">` +
-        `<input type="text" class="pt-ex-input" autocomplete="off" aria-label="${xmlAttr(seg.chip.blankLabel ?? 'blank')}"/></span>`;
+      return withReadings(`<span class="${cls} pt-ex-blank"${data} style="width:${width}em">` +
+        `<input type="text" class="pt-ex-input" autocomplete="off" aria-label="${xmlAttr(seg.chip.blankLabel ?? 'blank')}"/></span>`);
     }
     const runs = seg.chip.runs.map((r) => wrapFormat(xmlText(r.text), formatOf(r))).join('');
-    return `<span class="${cls}"${data}>${runs}</span>`;
+    return withReadings(`<span class="${cls}"${data}>${runs}</span>`);
   }
   if (seg.kunten) {
     // Kanbun marks (#430), set inline as JIS X 4051 sets the 返り点 after

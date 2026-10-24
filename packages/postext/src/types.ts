@@ -4239,6 +4239,10 @@ export interface ExerciseTrueFalseStyle {
   /** `'boxes'`: a box beside each label at the line's end; `'bracket'`:
    *  one bracket to write the answer in. Default `'boxes'`. */
   look?: 'boxes' | 'bracket';
+  /** Where the boxes or the bracket stand: `'end'`, flush with the line's
+   *  end; `'start'`, before the statement, as a Brazilian `( ) frase`
+   *  (#1244). Default `'end'`. */
+  place?: 'end' | 'start';
 }
 
 /** How a match exercise prints (`exerciseStyles[].match`). */
@@ -4307,6 +4311,18 @@ export interface ExerciseArithmeticStyle {
   division?: 'bracket' | 'potence' | 'inline';
   /** Operations to a row. Default `4`. */
   columns?: number;
+  /** A multiplication by a number of two digits or more prints a row for
+   *  each partial product (one per digit of the multiplier that is not
+   *  zero, each a place further left) and a rule over the result (#1244).
+   *  Default `true`. */
+  partialProducts?: boolean;
+  /** What a long division's working rows hold, and so how many it keeps:
+   *  `'products'`, the product of each step and what is left (two rows a
+   *  step); `'remainders'`, what is left only, the subtraction done in the
+   *  head (one row a step, as Spain, Catalonia and Italy write it). A step
+   *  whose quotient digit is 0 takes no row. Default `'remainders'` in
+   *  Spanish, Catalan and Italian, `'products'` elsewhere (#1244). */
+  working?: 'products' | 'remainders';
 }
 
 /** Difficulty marks (`exerciseStyles[].level`): `level=2` prints ●●○. */

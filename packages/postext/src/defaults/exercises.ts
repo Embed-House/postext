@@ -131,14 +131,16 @@ export interface ExerciseSettings {
 export const DEFAULT_EXERCISE_STYLES: ExerciseStyleConfig[] = [{ id: 'exercise', name: 'Exercise' }];
 
 /** Labels, suffixes and the division layout each language prints. */
-function languageDefaults(lang: string): { labels: ResolvedExerciseStyle['options']['labels']; suffix: string; division: ResolvedExerciseStyle['arithmetic']['division'] } {
+function languageDefaults(lang: string): { labels: ResolvedExerciseStyle['options']['labels']; suffix: string; division: ResolvedExerciseStyle['arithmetic']['division']; working: ResolvedExerciseStyle['arithmetic']['working'] } {
   switch (lang) {
-    case 'zh': return { labels: 'alpha-upper', suffix: '.', division: 'bracket' };
-    case 'ja': return { labels: 'katakana', suffix: '', division: 'bracket' };
-    case 'ar': return { labels: 'abjad', suffix: ')', division: 'bracket' };
-    case 'es': case 'ca': case 'fr': case 'it': case 'pt': return { labels: 'alpha-lower', suffix: ')', division: 'potence' };
-    case 'de': return { labels: 'alpha-lower', suffix: ')', division: 'inline' };
-    default: return { labels: 'alpha-lower', suffix: ')', division: 'bracket' };
+    case 'zh': return { labels: 'alpha-upper', suffix: '.', division: 'bracket', working: 'products' };
+    case 'ja': return { labels: 'katakana', suffix: '', division: 'bracket', working: 'products' };
+    case 'ar': return { labels: 'abjad', suffix: ')', division: 'bracket', working: 'products' };
+    // Spain, Catalonia and Italy write a division's remainders only.
+    case 'es': case 'ca': case 'it': return { labels: 'alpha-lower', suffix: ')', division: 'potence', working: 'remainders' };
+    case 'fr': case 'pt': return { labels: 'alpha-lower', suffix: ')', division: 'potence', working: 'products' };
+    case 'de': return { labels: 'alpha-lower', suffix: ')', division: 'inline', working: 'products' };
+    default: return { labels: 'alpha-lower', suffix: ')', division: 'bracket', working: 'products' };
   }
 }
 
@@ -210,7 +212,7 @@ function resolveStyle(s: ExerciseStyleConfig, lang: string, words: ExerciseWords
       ...(s.blank?.color ? { color: s.blank.color } : {}),
       weight: s.blank?.weight ?? PT(0.6),
     },
-    trueFalse: { labels: s.trueFalse?.labels ?? words.trueFalse, look: s.trueFalse?.look ?? 'boxes' },
+    trueFalse: { labels: s.trueFalse?.labels ?? words.trueFalse, look: s.trueFalse?.look ?? 'boxes', place: s.trueFalse?.place === 'start' ? 'start' : 'end' },
     match: { look: s.match?.look ?? 'dots', gap: s.match?.gap ?? EM(4), dotSize: s.match?.dotSize ?? EM(0.35), color: s.match?.color ?? mainColor },
     bank: { ...(s.bank?.box ? { box: s.bank.box } : {}), order: s.bank?.order ?? 'shuffle', separator: s.bank?.separator ?? '\u2003' },
     area: { kind: s.area?.kind ?? 'lines', lines: s.area?.lines ?? 3, ...(s.area?.spacing ? { spacing: s.area.spacing } : {}), color: s.area?.color ?? HEX('#b8b8b8'), weight: s.area?.weight ?? PT(0.5) },
@@ -224,7 +226,12 @@ function resolveStyle(s: ExerciseStyleConfig, lang: string, words: ExerciseWords
       ...(s.grid?.blocked ? { blocked: s.grid.blocked } : {}),
       uppercase: s.grid?.uppercase ?? true,
     },
-    arithmetic: { division: s.arithmetic?.division ?? L.division, columns: Math.max(1, Math.floor(s.arithmetic?.columns ?? 4)) },
+    arithmetic: {
+      division: s.arithmetic?.division ?? L.division,
+      columns: Math.max(1, Math.floor(s.arithmetic?.columns ?? 4)),
+      partialProducts: s.arithmetic?.partialProducts ?? true,
+      working: s.arithmetic?.working ?? L.working,
+    },
     level: { glyph: s.level?.glyph ?? '●', empty: s.level?.empty ?? '○', max: Math.max(1, Math.floor(s.level?.max ?? 3)), color: s.level?.color ?? mainColor },
     icons: s.icons ?? {},
     answers: { ...(s.answers ?? {}), color: s.answers?.color ?? HEX('#d6246e') },

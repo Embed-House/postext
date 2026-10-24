@@ -125,7 +125,7 @@ function matchBox(input: GridBoxInput): GridBox {
     els.push(pathElement('links', d, w, height, style.answers.color, 1.1));
   }
   const box = drawnBox(input.id, els, height) as GridBox;
-  box.info = { kind: 'match', rows, cols: 2, cellPt: 0, xPt: lx, yPt: 0, rowsPt: tops.map((t, i) => t + rowH[i]! / 2), dotsPt: [lx, rx] };
+  box.info = { kind: 'match', rows, cols: 2, cellPt: 0, xPt: lx, yPt: 0, rowsPt: tops.map((t, i) => t + rowH[i]! / 2), dotsPt: [lx, rx], ...(input.rtl ? { rtl: true as const } : {}) };
   return box;
 }
 
@@ -218,7 +218,7 @@ function wordSearchBox(input: GridBoxInput): GridBox {
     els.push(textElement(`c${rr}_${c}`, grid[rr]![c]!, c * cell, rr * cell, cell, cell, letterSize(style, input.bodySizePt, cell, 0.58), { ...font, ...color }));
   }
   const box = drawnBox(input.id, els, w, 4, 6) as GridBox;
-  box.info = { kind: 'wordsearch', rows: size, cols: size, cellPt: cell, xPt: 0, yPt: 0 };
+  box.info = { kind: 'wordsearch', rows: size, cols: size, cellPt: cell, xPt: 0, yPt: 0, ...(input.rtl ? { rtl: true as const } : {}) };
   box.slots = placed.map((p) => {
     const n = words[p.word]!.length - 1;
     const a = `${p.r},${p.c}`;
@@ -367,7 +367,7 @@ function crosswordBox(input: GridBoxInput): GridBox {
     }
   }
   const box = drawnBox(input.id, els, h, 4, 6) as GridBox;
-  box.info = { kind: 'crossword', rows, cols, cellPt: cell, xPt: 0, yPt: 0 };
+  box.info = { kind: 'crossword', rows, cols, cellPt: cell, xPt: 0, yPt: 0, ...(input.rtl ? { rtl: true as const } : {}) };
   box.slots = slots;
   const num = input.num ?? String;
   const clue = (p: Placement): { label: string; clue?: Run } => ({ label: num(numbers.get(key(p.r, p.c))!), ...(ex.entries[p.word]!.clue ? { clue: ex.entries[p.word]!.clue } : {}) });
@@ -391,21 +391,87 @@ interface OpLayout { cells: Array<{ r: number; c: number; text: string; answer?:
 
 const OP_SIGN: Record<ExerciseOperation['op'], string> = { '+': '+', '-': '−', '×': '×', '÷': '÷' };
 
-/** One operation set in cells: rows of digits right-aligned, the sign at
- *  the left, rules under the operands, the answer's cells. */
-function layOperation(op: ExerciseOperation, division: 'bracket' | 'potence' | 'inline', k: number): OpLayout {
+/** A decimal mark (`,` `.` `٫`). */
+const isMark = (g: string): boolean => g === ',' || g === '.' || g === '\u066B';
+
+/** The digits of a number before and after its decimal mark. */
+function splitAtMark(n: string[]): { int: string[]; frac: string[]; mark?: string } {
+  const at = n.findIndex(isMark);
+  return at < 0 ? { int: n, frac: [] } : { int: n.slice(0, at), frac: n.slice(at + 1), mark: n[at]! };
+}
+
+/** The partial products of `a × b` (#1244): one per digit of `b` that is
+ *  not zero, from its last, with how many places it stands left. */
+function partialProducts(a: string[], b: string[]): Array<{ digits: string[]; shift: number }> {
+  const toAscii = (g: string): string => { const c = g.charCodeAt(0); return c >= 0x0660 && c <= 0x0669 ? String(c - 0x0660) : c >= 0x06f0 && c <= 0x06f9 ? String(c - 0x06f0) : g; };
+  const like = (t: string): string[] => graphemesOf(t).map((d) => (/[٠-٩]/.test(a.join('')) ? String.fromCharCode(0x0660 + Number(d)) : /[۰-۹]/.test(a.join('')) ? String.fromCharCode(0x06f0 + Number(d)) : d));
+  const x = BigInt(a.filter((g) => !isMark(g)).map(toAscii).join('') || '0');
+  const ds = b.filter((g) => !isMark(g)).map(toAscii);
+  const out: Array<{ digits: string[]; shift: number }> = [];
+  for (let p = 0; p < ds.length; p++) {
+    const d = BigInt(ds[ds.length - 1 - p]!);
+    if (d === 0n) continue;
+    out.push({ digits: like((x * d).toString()), shift: p });
+  }
+  return out;
+}
+
+/** The layout choices of an operation. */
+interface OpOptions {
+  division: 'bracket' | 'potence' | 'inline';
+  partialProducts: boolean;
+  working: 'products' | 'remainders';
+}
+
+/** One operation set in cells: rows of digits right-aligned (an addition's
+ *  and a subtraction's decimal marks one under the other), the sign at the
+ *  left, rules under the operands, a multiplication's partial products,
+ *  the answer's cells. */
+function layOperation(op: ExerciseOperation, opts: OpOptions, k: number): OpLayout {
   const cells: OpLayout['cells'] = [];
   const rules: OpLayout['rules'] = [];
   const a = graphemesOf(op.a); const b = graphemesOf(op.b); const res = graphemesOf(op.result);
-  if (op.op !== '÷') {
-    const width = Math.max(a.length, b.length + 1, res.length) + 1;
+  if (op.op === '×') {
+    const parts = opts.partialProducts ? partialProducts(a, b) : [];
+    const partial = parts.length > 1 ? parts : [];
+    const width = Math.max(a.length, b.length + 1, res.length, ...partial.map((p) => p.digits.length + p.shift)) + 1;
     a.forEach((d, j) => cells.push({ r: 0, c: width - a.length + j, text: d }));
     cells.push({ r: 1, c: 0, text: op.sign ?? OP_SIGN[op.op] });
     b.forEach((d, j) => cells.push({ r: 1, c: width - b.length + j, text: d }));
     rules.push([2, 0, width]);
-    res.forEach((d, j) => cells.push({ r: 2, c: width - res.length + j, text: d, answer: true, slot: `a${k}_${j}` }));
+    partial.forEach((p, i) => p.digits.forEach((d, j) => cells.push({ r: 2 + i, c: width - p.shift - p.digits.length + j, text: d, answer: true, slot: `a${k}_p${i + 1}_${j}` })));
+    const at = 2 + partial.length;
+    if (partial.length > 0) rules.push([at, 0, width]);
+    res.forEach((d, j) => cells.push({ r: at, c: width - res.length + j, text: d, answer: true, slot: `a${k}_${j}` }));
+    return { cells, rules, rows: at + 1, cols: width };
+  }
+  if (op.op !== '÷') {
+    // Lined up on the decimal mark: the integer digits end in one column,
+    // the mark (when any number has one) in the next.
+    const nums = [splitAtMark(a), splitAtMark(b), splitAtMark(res)];
+    const frac = Math.max(...nums.map((n) => n.frac.length));
+    const intW = Math.max(nums[0]!.int.length, nums[1]!.int.length + 1, nums[2]!.int.length);
+    const width = intW + 1 + (frac > 0 ? 1 + frac : 0);
+    const place = (n: { int: string[]; frac: string[]; mark?: string }, row: number, answer: boolean): void => {
+      const digits = [...n.int, ...(n.mark ? [n.mark, ...n.frac] : [])];
+      digits.forEach((d, j) => {
+        const c = j < n.int.length ? intW - n.int.length + 1 + j : intW + 1 + (j - n.int.length);
+        cells.push({ r: row, c, text: d, ...(answer ? { answer: true, slot: `a${k}_${j}` } : {}) });
+      });
+    };
+    place(nums[0]!, 0, false);
+    cells.push({ r: 1, c: 0, text: op.sign ?? OP_SIGN[op.op] });
+    place(nums[1]!, 1, false);
+    rules.push([2, 0, width]);
+    place(nums[2]!, 2, true);
     return { cells, rules, rows: 3, cols: width };
   }
+  // The working rows under a long division: a step for each digit of the
+  // quotient that is not zero, its product and what is left, or what is
+  // left only (#1244).
+  const steps = res.filter((g) => !isMark(g) && !/^[0٠۰]$/.test(g)).length;
+  const working = Math.max(1, steps * (opts.working === 'remainders' ? 1 : 2));
+  const division = opts.division;
   const q = res;
   const rem = op.remainder ? graphemesOf(op.remainder) : [];
   if (division === 'bracket') {
@@ -416,8 +482,7 @@ function layOperation(op: ExerciseOperation, division: 'bracket' | 'potence' | '
     b.forEach((d, j) => cells.push({ r: 1, c: j, text: d }));
     a.forEach((d, j) => cells.push({ r: 1, c: lead + j, text: d }));
     rules.push([1, lead, cols]);
-    const rows = 2 + Math.max(2, q.length * 2);
-    return { cells, rules, rows, cols, extra: `bracket:${lead}`, ...(rem.length > 0 ? {} : {}) };
+    return { cells, rules, rows: 2 + working, cols, extra: `bracket:${lead}` };
   }
   if (division === 'potence') {
     // The divisor right of the dividend under an L, the quotient under it.
@@ -427,7 +492,7 @@ function layOperation(op: ExerciseOperation, division: 'bracket' | 'potence' | '
     b.forEach((d, j) => cells.push({ r: 0, c: left + 1 + j, text: d }));
     rules.push([1, left + 0.5, cols]);
     q.forEach((d, j) => cells.push({ r: 1, c: left + 1 + j, text: d, answer: true, slot: `a${k}_${j}` }));
-    const rows = 1 + Math.max(2, q.length * 2);
+    const rows = 1 + working;
     rem.forEach((d, j) => cells.push({ r: rows - 1, c: left - rem.length + j, text: d, answer: true, slot: `a${k}_r${j}` }));
     return { cells, rules, rows, cols, extra: `potence:${left}` };
   }
@@ -440,7 +505,7 @@ function layOperation(op: ExerciseOperation, division: 'bracket' | 'potence' | '
     cells.push({ r: 0, c: line.length + q.length + 1, text: 'R' });
     rem.forEach((d, j) => cells.push({ r: 0, c: line.length + q.length + 2 + j, text: d, answer: true, slot: `a${k}_r${j}` }));
   }
-  return { cells, rules, rows: 1 + Math.max(2, q.length * 2), cols };
+  return { cells, rules, rows: 1 + working, cols };
 }
 
 function arithmeticBox(input: GridBoxInput): GridBox {
@@ -451,7 +516,7 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   // takes the book's (`numerals`).
   const D = (t: string): string => withDigits(t, input.digits);
   const written = ex.operations.map((op) => ({ ...op, a: D(op.a), b: D(op.b), result: D(op.result), ...(op.remainder ? { remainder: D(op.remainder) } : {}) }));
-  const ops = written.map((op, k) => layOperation(op, style.arithmetic.division, k + 1));
+  const ops = written.map((op, k) => layOperation(op, style.arithmetic, k + 1));
   const gapCols = 2;
   const columns = style.arithmetic.columns;
   const room = Math.max(1, Math.floor(input.measurePt / cell + gapCols));
@@ -501,7 +566,10 @@ function arithmeticBox(input: GridBoxInput): GridBox {
         const x = ox + c.c * cell; const yy = y + c.r * cell;
         if (c.answer) {
           boxesD += `M${r(X(x))} ${r(yy)}H${r(X(x + cell))}V${r(yy + cell)}H${r(X(x))}Z`;
-          if (c.slot) slots.push({ key: c.slot, kind: 'cell', accept: [c.text], cell: [Math.round(yy / cell), Math.round(x / cell)] });
+          // A cell's column in the flow's direction: on a right-to-left page,
+          // counted from the right, where its operation (drawn mirrored in
+          // its own box first) is painted.
+          if (c.slot) slots.push({ key: c.slot, kind: 'cell', accept: [c.text], cell: [Math.round(yy / cell), input.rtl ? offsets[k]! + o.cols - c.c - 1 : Math.round(x / cell)] });
           if (!input.teacher) continue;
         }
         els.push(textElement(`d${k}_${c.r}_${c.c}`, c.text, input.rtl ? X(x) - cell : x, yy, cell, cell, letterSize(style, input.bodySizePt, cell, 0.7), c.answer ? { color: style.answers.color, ...(style.answers.fontFamily ?? input.font ? { fontFamily: (style.answers.fontFamily ?? input.font)! } : {}) } : { ...font, ...fontColor }));
@@ -522,7 +590,7 @@ function arithmeticBox(input: GridBoxInput): GridBox {
   els.unshift(pathElement('answers', boxesD, w, y, style.grid.rule, ruleW * 0.5, { dash: [{ value: ruleW, unit: 'pt' }, { value: ruleW * 1.5, unit: 'pt' }] }));
   els.push(pathElement('rules', rulesD, w, y, style.grid.color ?? BLACK, ruleW));
   const box = drawnBox(input.id, els, y, 4, 4) as GridBox;
-  box.info = { kind: 'arithmetic', rows: Math.round(y / cell), cols: widthCells, cellPt: cell, xPt: 0, yPt: 0 };
+  box.info = { kind: 'arithmetic', rows: Math.round(y / cell), cols: widthCells, cellPt: cell, xPt: 0, yPt: 0, ...(input.rtl ? { rtl: true as const } : {}) };
   box.slots = slots;
   box.key = written.map((op) => `${op.a} ${op.sign ?? OP_SIGN[op.op]} ${op.b} = ${op.result}${op.remainder ? ` (${op.remainder})` : ''}`);
   return box;

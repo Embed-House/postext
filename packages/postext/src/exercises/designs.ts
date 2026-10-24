@@ -80,6 +80,27 @@ export interface AreaSpec {
   answerColor?: ColorValue;
   answerSizePt?: number;
   answerFont?: string;
+  /** Squares (`grid`, `tianzige`) in groups of so many cells, side by side
+   *  a square apart and wrapping at the measure (`cells="2 2 3"`, #1244):
+   *  a word's squares each, `lines` rows tall. One number sizes the area to
+   *  that many cells. Absent: the whole measure. */
+  cells?: number[];
+}
+
+/** Where the groups of an area's squares stand (see {@link AreaSpec.cells}):
+ *  each one's first cell, column and row of cells, a cell and the rows of
+ *  a group apart. */
+function cellGroups(cells: number[], cols: number, lines: number): { at: Array<{ c: number; r: number; n: number }>; rows: number } {
+  const at: Array<{ c: number; r: number; n: number }> = [];
+  let c = 0;
+  let r = 0;
+  for (const n0 of cells) {
+    const n = Math.max(1, Math.min(cols, Math.floor(n0)));
+    if (c > 0 && c + n > cols) { c = 0; r += lines + 0.5; }
+    at.push({ c, r, n });
+    c += n + 1;
+  }
+  return { at, rows: r + lines };
 }
 
 /** The elements and height of a writing area. */
@@ -98,17 +119,21 @@ export function areaElements(a: AreaSpec): { elements: DesignElement[]; heightPt
     }
     case 'grid': case 'tianzige': {
       const cols = Math.max(1, Math.floor(w / sp));
-      const gw = cols * sp;
+      // The groups of squares (`cells`), else one as wide as the measure.
+      const groups = a.cells && a.cells.length > 0 ? cellGroups(a.cells, cols, n) : { at: [{ c: 0, r: 0, n: cols }], rows: n };
+      h = groups.rows * sp;
+      const gw = Math.max(...groups.at.map((g) => (g.c + g.n) * sp));
       let d = '';
-      for (let i = 0; i <= n; i++) d += `M0 ${r(i * sp)}H${r(gw)}`;
-      for (let j = 0; j <= cols; j++) d += `M${r(j * sp)} 0V${r(h)}`;
-      els.push(pathElement('area', d, gw, h, a.color, a.weightPt));
-      if (a.kind === 'tianzige') {
-        let x = '';
-        for (let i = 0; i < n; i++) x += `M0 ${r((i + 0.5) * sp)}H${r(gw)}`;
-        for (let j = 0; j < cols; j++) x += `M${r((j + 0.5) * sp)} 0V${r(h)}`;
-        els.push(pathElement('cross', x, gw, h, a.color, a.weightPt * 0.6, { dash: [PT(a.weightPt * 3), PT(a.weightPt * 3)] }));
+      let x = '';
+      for (const g of groups.at) {
+        const x0 = g.c * sp; const y0 = g.r * sp; const x1 = (g.c + g.n) * sp; const y1 = (g.r + n) * sp;
+        for (let i = 0; i <= n; i++) d += `M${r(x0)} ${r(y0 + i * sp)}H${r(x1)}`;
+        for (let j = 0; j <= g.n; j++) d += `M${r(x0 + j * sp)} ${r(y0)}V${r(y1)}`;
+        for (let i = 0; i < n; i++) x += `M${r(x0)} ${r(y0 + (i + 0.5) * sp)}H${r(x1)}`;
+        for (let j = 0; j < g.n; j++) x += `M${r(x0 + (j + 0.5) * sp)} ${r(y0)}V${r(y1)}`;
       }
+      els.push(pathElement('area', d, gw, h, a.color, a.weightPt));
+      if (a.kind === 'tianzige') els.push(pathElement('cross', x, gw, h, a.color, a.weightPt * 0.6, { dash: [PT(a.weightPt * 3), PT(a.weightPt * 3)] }));
       break;
     }
     case 'seyes': {
@@ -135,12 +160,15 @@ export function areaElements(a: AreaSpec): { elements: DesignElement[]; heightPt
   }
   if (a.answers && a.answerColor && (a.kind === 'grid' || a.kind === 'tianzige')) {
     // On squares a model answer is written a character to a square, row
-    // after row, as a pupil writes on 田字格 or squared paper.
+    // after row (group after group), as a pupil writes on 田字格 or
+    // squared paper.
     const cols = Math.max(1, Math.floor(w / sp));
-    const chars = graphemesOf(a.answers.join(''));
-    chars.slice(0, cols * n).forEach((ch, k) => {
+    const groups = a.cells && a.cells.length > 0 ? cellGroups(a.cells, cols, n).at : [{ c: 0, r: 0, n: cols }];
+    const squares = groups.flatMap((g) => Array.from({ length: g.n * n }, (_, k) => ({ x: (g.c + (k % g.n)) * sp, y: (g.r + Math.floor(k / g.n)) * sp })));
+    const chars = graphemesOf(a.answers.join('')).filter((ch) => !(a.cells && ch.trim() === ''));
+    chars.slice(0, squares.length).forEach((ch, k) => {
       if (ch.trim() === '') return;
-      els.push(textElement(`answer${k}`, ch, (k % cols) * sp, Math.floor(k / cols) * sp, sp, sp, sp * 0.62, {
+      els.push(textElement(`answer${k}`, ch, squares[k]!.x, squares[k]!.y, sp, sp, sp * 0.62, {
         color: a.answerColor, overflow: 'clip', ...(a.answerFont ? { fontFamily: a.answerFont } : {}),
       }));
     });

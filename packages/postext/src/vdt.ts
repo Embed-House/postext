@@ -318,6 +318,11 @@ export interface VDTChip {
    *  exercise's blank; `blankLabel` is what it reads as. */
   blank?: true;
   blankLabel?: string;
+  /** The readings of the chip's ruby words (#1244), placed from the box's
+   *  left edge (`dx`) and the line's baseline (`dy`), in the surrounding
+   *  text colour: painted on a blank too, so a pupil writes the characters
+   *  of 看拼音写词语 under their pinyin. */
+  readings?: VDTAnnotationRun[];
   /** The exercise slot the chip stands for (#1230). */
   exercise?: import('./parse/types.js').ExerciseHit;
   /** The order in which renderers advance through `runs` from the box's

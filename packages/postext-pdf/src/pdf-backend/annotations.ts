@@ -202,6 +202,21 @@ function paintRuns(
   }
 }
 
+/** Paint the readings of a chip's ruby words (`VDTChip.readings`, #1244)
+ *  from the chip box's left edge `x`, as real text: a pupil reads them over
+ *  a blank. */
+export function paintChipReadings(
+  ctx: PageCtx,
+  runs: readonly VDTAnnotationRun[],
+  x: number,
+  baseline: number,
+  textColor: TextColor,
+  fontCache: FontCache,
+  fallback: PDFFont,
+): void {
+  paintRuns(ctx, runs, x, baseline, textColor, fontCache, fallback);
+}
+
 /**
  * Paint a ruby base's reading from the base's `x`. In a tagged render,
  * `ruby` is the base's `Ruby` element: the reading goes in its `RT`.

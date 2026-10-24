@@ -159,7 +159,7 @@ export interface CalloutNode {
     box: number;
     record?: ExerciseRecord;
     data?: ExerciseData;
-    drawn?: { svg: string; width: number; height: number };
+    drawn?: { svg: string; width: number; height: number; em: number };
   };
 }
 
