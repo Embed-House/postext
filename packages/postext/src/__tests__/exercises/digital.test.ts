@@ -6,7 +6,7 @@ import type { VDTDocument } from '../../vdt.js';
 import type { PostextConfig } from '../../types.js';
 import type { ExerciseData } from '../../exercises/digital.js';
 import type { ExerciseSlot } from '../../exercises/record.js';
-import { checkExerciseSlot, exerciseSolutionValue, EXERCISE_SCRIPT, isGradedSlot, normalizeAnswer } from '../../exercises/runtime.js';
+import { attachExercises, checkExerciseSlot, exerciseSolutionValue, EXERCISE_SCRIPT, isGradedSlot, normalizeAnswer } from '../../exercises/runtime.js';
 
 /** `html` with every `<tag …>…</tag>` element taken out (any letter case). */
 function withoutElements(html: string, tag: string): string {
@@ -75,6 +75,14 @@ describe('exercises in the HTML output (#1230)', () => {
     const page = withoutElements(html, 'script');
     expect(page).not.toContain('water');
     expect(page).toContain('data-pt-slot="g1"');
+  });
+
+  it('paints an activity icon from its picture, not as an empty outline (#1249)', () => {
+    const cfg: PostextConfig = { ...base, exerciseStyles: [{ id: 'a', icons: { write: { resourceId: 'pencil', alt: 'Write' } } }] };
+    const resources = [{ id: 'pencil', typeId: 'figure', kind: 'svg' as const, createdAt: 0, updatedAt: 0, svg: { fileId: 'pencil.svg', width: 24, height: 24 } }];
+    const doc = buildDocument({ markdown: ':::exercise{icon="write"}\nFill [[in]].\n:::\n', resources }, cfg, createMeasurementCache());
+    const html = renderToHtml(doc, { resourceImageUrl: (fileId) => `blob:${fileId}` });
+    expect(html).toContain('<img src="blob:pencil.svg" alt="Write"');
   });
 
   it('gives a patching host the data, and leaves a document without exercises alone', () => {
@@ -175,5 +183,17 @@ describe('the exercise script (#1230)', () => {
     };
     new Function('document', 'location', 'window', EXERCISE_SCRIPT)(fakeDocument, { pathname: '/book.html' }, {});
     expect(head.appended).toHaveLength(1);
+  });
+
+  it('writes its stylesheet into the shadow tree of the element it is given (#1249)', () => {
+    const holder = () => ({ appended: [] as unknown[], querySelector: () => null, appendChild(e: unknown) { this.appended.push(e); } });
+    const head = holder();
+    const shadow = { nodeType: 11, ...holder() };
+    const ownerDocument = { nodeType: 9, head, createElement: () => ({ setAttribute: () => undefined, textContent: '' }) };
+    const scroll = { nodeType: 1, ownerDocument, getRootNode: () => shadow, querySelectorAll: () => [] };
+    const detach = attachExercises(scroll as unknown as Element, { data: { exercises: [] } as unknown as ExerciseData });
+    expect(shadow.appended).toHaveLength(1);
+    expect(head.appended).toHaveLength(0);
+    detach();
   });
 });
