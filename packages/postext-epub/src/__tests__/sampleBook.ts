@@ -400,3 +400,28 @@ export function composedSpreadSampleBook(): VDTDocument[] {
     } as PostextConfig,
   });
 }
+
+/** Exercises of every kind (#1231): a word bank and blanks, choice, true
+ *  or false, an inline choice, a match, an order, a scramble, a sort, a
+ *  mark, an open question with its solution, a word search, a crossword
+ *  and operations in columns. */
+export const EXERCISE_CHAPTER = [
+  '# Plants', '',
+  ':::exercise{bank}', 'Complete the sentences.', '', '1. The roots take in [[water]].', '2. The leaves make [[food]] & sugar.', '', '::bank[stones]', ':::', '',
+  ':::exercise', 'Choose.', '', '1. Which part is under the ground?', '   - [ ] The stem', '   - [x] The root', '2. What do leaves need?', '   - [x] Light', '   - [ ] Noise', ':::', '',
+  ':::exercise{type=truefalse}', 'True or false?', '', '- [x] Plants are alive.', '- [ ] Roots make food.', ':::', '',
+  ':::exercise', 'Circle: plants [[grows | (grow)]] towards the light.', ':::', '',
+  ':::exercise', 'Join.', '', '- Bee -> Hive', '- Bird -> Nest', '- Spider -> Web', ':::', '',
+  ':::exercise{type=order}', 'Order.', '', '1. The seed sprouts.', '2. The stem grows.', '3. Flowers open.', ':::', '',
+  ':::exercise{type=scramble}', 'Put the words in order.', '', '- Plants / need / water', ':::', '',
+  ':::exercise{type=sort}', 'Sort.', '', '- Root: carrot, radish', '- Leaf: lettuce, spinach', ':::', '',
+  ':::exercise{type=mark mark=circle}', 'Circle the verbs: the girl [[waters]] the plants.', ':::', '',
+  ':::exercise{type=open lines=2}', 'Why do plants need light?', '', ':::solution', 'To make their food.', ':::', ':::', '',
+  ':::exercise{type=wordsearch}', 'Find the words.', '', '- ROOT', '- LEAF', '- STEM', ':::', '',
+  ':::exercise{type=crossword}', 'Solve.', '', '- SUN: Our star', '- NEST: A home for birds', '- STEM: It holds the plant up', ':::', '',
+  ':::exercise{type=arithmetic}', 'Work out.', '', '- 345 + 278', '- 864 ÷ 4', ':::',
+].join('\n');
+
+export function exerciseSampleBook(): VDTDocument[] {
+  return layOutBook([EXERCISE_CHAPTER], { layout: { layoutType: 'single' } });
+}

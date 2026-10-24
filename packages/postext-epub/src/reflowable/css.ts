@@ -635,7 +635,8 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
     const cPx = c.fontSize ? px(c.fontSize) : bodyPx;
     out.push(rule(`.${idOf('pt-chip-', c.id)}`, [
       c.backgroundEnabled && color(c.background, 'background-color'),
-      px(c.borderWidth) > 0 && `border: ${round(px(c.borderWidth) * (96 / dpi))}px solid ${c.borderColor.hex}`,
+      // A blank to write on (#1227) is underlined, not boxed.
+      px(c.borderWidth) > 0 && `${c.underline ? 'border-bottom' : 'border'}: ${round(px(c.borderWidth) * (96 / dpi))}px ${c.underline ?? 'solid'} ${c.borderColor.hex}`,
       px(c.borderRadius) > 0 && `border-radius: ${round(px(c.borderRadius, cPx) / cPx)}em`,
       `padding: ${round(px(c.paddingY, cPx) / cPx)}em ${round(px(c.paddingX, cPx) / cPx)}em`,
       c.fontFamily && fam(c.fontFamily),
@@ -645,6 +646,16 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
       c.italic && 'font-style: italic',
     ]));
   }
+  // Exercises (#1231): a blank holds its input, a drawn box its picture
+  // (and, the script running, the controls laid over it); the answer key
+  // for a reader with no script follows the exercise.
+  out.push(rule('.pt-ex-slot', ['position: relative']));
+  out.push(rule('.pt-ex-blank', ['height: 1.2em', 'vertical-align: -0.25em']));
+  out.push(rule('.pt-ex-blank > input', ['box-sizing: border-box', 'width: 100%', 'height: 100%', 'margin: 0', 'padding: 0', 'border: 0', 'background: transparent', 'color: inherit', 'font: inherit', 'text-align: center']));
+  out.push(rule('.pt-ex-drawn', ['position: relative', 'margin: 0.4em 0', 'text-indent: 0']));
+  out.push(rule('.pt-ex-drawn > svg', ['display: block', 'overflow: visible']));
+  out.push(rule('.pt-ex-static', ['margin: 0.6em 0 0', 'font-size: 0.9em', 'text-indent: 0']));
+  out.push(rule('.pt-ex-static > summary', ['cursor: pointer']));
   out.push(rule('.pt-sc', ['font-variant: small-caps']));
   out.push(rule('.pt-dots', ['font-style: normal', 'text-emphasis: filled dot', '-epub-text-emphasis-style: filled dot', '-webkit-text-emphasis-style: filled dot', 'text-emphasis-position: under right', '-webkit-text-emphasis-position: under right']));
   // Other shapes and sides (the Japanese sesame over the text, #428),

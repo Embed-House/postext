@@ -3,7 +3,7 @@
 // kept as inline items, links as targets resolved once every chapter has
 // been walked (a cross-reference may point at a later chapter).
 
-import type { VDTComicPanel, VDTResourceVideo } from 'postext';
+import type { ExerciseData, ExerciseRecord, VDTComicPanel, VDTResourceVideo } from 'postext';
 
 /** Where a link goes, resolved to `file#id` by the registry. */
 export type LinkTarget =
@@ -150,6 +150,17 @@ export interface CalloutNode {
    *  in a reflowable page needs that extent, or a reader sizes it to the
    *  page. */
   frameMode?: { mode: 'vertical-rl' | 'horizontal-tb'; em: number };
+  /** A box of an exercise (#1231), by its own container id (`box`) and
+   *  its exercise's (`id`): the outer box carries the exercise's record
+   *  and the data of the exercise script; a drawn box (a writing area, a
+   *  grid), the picture its design paints. */
+  exercise?: {
+    id: number;
+    box: number;
+    record?: ExerciseRecord;
+    data?: ExerciseData;
+    drawn?: { svg: string; width: number; height: number };
+  };
 }
 
 /** A composed page (`::::page{template}`, #862): a section holding its

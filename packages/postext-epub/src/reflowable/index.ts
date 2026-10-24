@@ -20,6 +20,7 @@ import type {
 } from '../types.js';
 import { fontAssets, imageAssets, pageProgressionOf, remoteVideoItems, videoAssets } from '../shared/assets.js';
 import { videoScriptItem, VIDEO_SCRIPT_HREF, withVideoScript } from '../shared/videoScript.js';
+import { exerciseScriptItem, EXERCISE_SCRIPT_HREF, withExerciseScript } from '../shared/exerciseScript.js';
 import { bookStylesheet, stylesheetOverrides, withPalette } from './css.js';
 import { xmlAttr, xmlText } from './inline.js';
 import type { FileModel, HeadingEntry } from './model.js';
@@ -224,20 +225,27 @@ export async function buildReflowablePublication(docs: EpubSource, options: Rend
     videoHref: (fileId: string) => videos.hrefOf(fileId),
     stylesheet: STYLESHEET_HREF,
     backLabel,
+    exerciseKey: `pt-ex:${metadata.identifier ?? `${metadata.title}:${metadata.language}`}`,
   };
   let maths = book.maths;
   let scripted = false;
+  let exercisesScripted = false;
   book.files.forEach((file, i) => {
     signal?.throwIfAborted();
-    // A chapter with videos to coordinate links the playback script (#507).
-    const xhtml = withVideoScript(writeContentDocument(file, ctx), relativeHref(file.href, VIDEO_SCRIPT_HREF));
+    // A chapter with videos to coordinate links the playback script (#507);
+    // one with exercises, the exercise script (#1231).
+    const videoSrc = relativeHref(file.href, VIDEO_SCRIPT_HREF);
+    const exerciseSrc = relativeHref(file.href, EXERCISE_SCRIPT_HREF);
+    const xhtml = withExerciseScript(withVideoScript(writeContentDocument(file, ctx), videoSrc), exerciseSrc);
     if (xhtml.includes('role="math"')) maths = true;
-    if (xhtml.includes('<script')) scripted = true;
+    if (xhtml.includes(`src="${videoSrc}"`)) scripted = true;
+    if (xhtml.includes(`src="${exerciseSrc}"`)) exercisesScripted = true;
     items.push({ id: file.itemId, href: file.href, mediaType: 'application/xhtml+xml', data: xhtml });
     spine.push({ idref: file.itemId });
     onProgress?.({ phase: 'documents', done: i + 1, total: book.files.length });
   });
   if (scripted) items.push(videoScriptItem());
+  if (exercisesScripted) items.push(exerciseScriptItem());
 
   // Navigation.
   const toc = navTree(book.headings);

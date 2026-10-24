@@ -17,8 +17,8 @@
 //   - a part (a divider page, or `partMarks` without one) opens a
 //     document of its own and the chapter goes on in a new one.
 
-import type { ResolvedConfig, VDTBlock, VDTComicPage, VDTDocument, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from 'postext';
-import { canonicalLocaleTag, comicBalloonKind, labelPlainText, comicBalloonText, comicSpeakerName, composedPaintOrder, composedReadingOrder, dimensionToPx, framePageRect, isComicSpreadPartner, joinComicSpread, pickTableStyle, primaryFontFamily } from 'postext';
+import type { ExerciseData, ExerciseRecord, ResolvedConfig, VDTBlock, VDTComicPage, VDTDocument, VDTFrame, VDTLine, VDTLineSegment, VDTPage } from 'postext';
+import { exerciseDataOf, canonicalLocaleTag, comicBalloonKind, labelPlainText, comicBalloonText, comicSpeakerName, composedPaintOrder, composedReadingOrder, dimensionToPx, framePageRect, isComicSpreadPartner, joinComicSpread, pickTableStyle, primaryFontFamily } from 'postext';
 import type {
   CalloutNode,
   ComicNode,
@@ -48,6 +48,7 @@ import type {
   WrapFloat,
 } from './model.js';
 import { figureLabelsOverlay } from './labels.js';
+import { CSS_PX_PER_PT, drawnBoxSvg } from './exercises.js';
 import { appendLine, appendLines, fontPx, idOf, mathSvg, plainText, xmlText, type InlineContext, type TextSink } from './inline.js';
 
 /** Where an id landed: its content document and element id. */
@@ -245,6 +246,10 @@ class DocWalker {
   /** The frames of the composed pages read so far (#862), by the id of
    *  the box each frame's blocks open with. */
   private readonly frameBoxes = new Map<string, VDTFrame>();
+  /** The exercises' data for the exercise script (#1231), in the flow's
+   *  units, and their boxes by their own container id. */
+  private readonly exerciseData?: ExerciseData;
+  private readonly exerciseBoxes = new Map<number, { record: ExerciseRecord; outer: boolean }>();
 
   constructor(
     private readonly book: BookModel,
@@ -282,6 +287,17 @@ class DocWalker {
             width: Math.round(((ex.width - ex.gap) / col.bbox.width) * 1000) / 10,
             gap: Math.round((ex.gap / col.bbox.width) * 1000) / 10,
           });
+        }
+      }
+    }
+    const exercises = exerciseDataOf(doc);
+    if (exercises) {
+      // Grids are drawn at their printed size in CSS pixels.
+      this.exerciseData = { ...exercises, flow: true, pxPerPt: CSS_PX_PER_PT, bodyPx: dimensionToPx(doc.config.bodyText.fontSize, 96) };
+      for (const r of exercises.exercises) {
+        this.exerciseBoxes.set(r.id, { record: r, outer: true });
+        for (const box of [...r.slots.map((sl) => sl.box), ...(r.grids ?? []).map((g) => g.box)]) {
+          if (box !== undefined && !this.exerciseBoxes.has(box)) this.exerciseBoxes.set(box, { record: r, outer: false });
         }
       }
     }
@@ -759,6 +775,19 @@ class DocWalker {
       }
     } else if (block.callout?.styleId) {
       own.styleId = block.callout.styleId;
+    }
+    // A box of an exercise (#1231): the outer one carries the record, a
+    // drawn one its picture (its design's texts are no title).
+    const ownId = path.length > 0 ? path[path.length - 1]! : cid;
+    const exercise = this.exerciseBoxes.get(ownId);
+    if (exercise && this.exerciseData && own.exercise === undefined) {
+      own.exercise = exercise.outer
+        ? { id: exercise.record.id, box: ownId, record: exercise.record, data: this.exerciseData }
+        : { id: exercise.record.id, box: ownId, drawn: drawnBoxSvg(block, this.config.page.dpi) };
+    }
+    if (own.exercise?.drawn) {
+      this.lastContainer = undefined;
+      return;
     }
     const wrap = this.wraps.get(block.id);
     if (wrap && own.wrap === undefined) {
