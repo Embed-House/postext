@@ -1,0 +1,51 @@
+---
+title: "Exercicis japonesos amb les solucions del revés"
+summary: "Dues pàgines d’una sèrie d’exercicis japonesa, la de comptes en horitzontal i la de kanji en columnes, amb les solucions del revés sota cada exercici."
+plain: "Un quadern escolar japonès: comptes, caselles i opcions en una pàgina, i kanji i lectures en una altra, de dalt a baix. Sota cada exercici hi ha les solucions del revés, perquè l’infant giri el quadern i les comprovi."
+description: "Una ドリル japonesa a Postext: ひっ算, caselles □, opcions ア イ ウ i ○× en horitzontal, una pàgina de 国語 en vertical i les solucions girades 180° sota cada exercici."
+question: "Com imprimeixo les solucions del revés sota cada exercici d’un quadern japonès?"
+aliases: ["ドリル", "計算ドリル", "漢字ドリル", "quadern d’exercicis japonès", "solucions del revés", "solucions cap per avall", "こたえ", "ひっ算", "書き取り", "escriptura vertical", "tategaki", "○×"]
+pageNotes: { "1": "La pàgina de comptes: una franja blau pàl·lid amb les cantonades arrodonides, una etiqueta groga さんすう 12, el títol 3けたのたし算とひき算 i un tanuki pintat amb un llapis; una línia per al nom i una casella per a la nota; l’exercici 1, quatre operacions en vertical amb caselles puntejades per a les xifres; l’exercici 2, sis comptes amb una casella darrere de cadascun; l’exercici 3, dues preguntes amb ア イ ウ en fila; sota cada exercici, les seves solucions en lletra grisa petita, del revés.", "3": "La pàgina de kanji, composta en vertical i enquadernada per la dreta: la mateixa franja blava baixa ara per la vora dreta, amb el títol 春のことば en columna i la guineu pintada al peu; lectures amb una casella alta al costat, paraules subratllades la lectura de les quals s’escriu entre parèntesis, opcions entre parèntesis d’amplada completa i les solucions de cada exercici del revés al peu de la seva columna." }
+---
+
+## Què compondràs
+
+Dues pàgines d’una sèrie d’exercicis de tercer en format B5. La de comptes va en horitzontal: una franja blau pàl·lid amb l’etiqueta de l’assignatura, el títol i un tanuki de mascota, una línia per al nom i una casella per a la nota, i després ひっ算 amb una casella per a cada xifra del resultat, caselles darrere de sis comptes, opcions ア イ ウ en fila, afirmacions ○× amb un parèntesi al final de la línia i dos problemes amb línies per escriure-hi les operacions. La de kanji es compon com s’imprimeix un quadern de 国語, de dalt a baix i de dreta a esquerra: lectures amb una casella per al kanji, paraules subratllades la lectura de les quals va entre parèntesis, opcions per encerclar i un significat per triar. Sota cada exercici, les solucions van del revés en lletra grisa petita. L’infant veu on són, no les llegeix d’una ullada i gira el quadern per comprovar-les.
+
+## Elaboració
+
+### 1 · Gira les solucions de cada exercici
+
+El codi és a [la resposta curta](#la-resposta-curta). `placement: 'inverted'` posa les solucions després de cada exercici en un requadre girat 180°, i aquest requadre va dins del requadre del mateix exercici, així que un salt de pàgina no els separa mai. Les solucions surten de l’exercici: les operacions amb el resultat, el katakana de l’opció correcta, ○ i ×, les paraules dels buits. L’estil de requadre de les solucions, `kotae`, només posa la lletra petita i grisa.
+
+### 2 · Una franja per a la pàgina horitzontal i per a la vertical
+
+<Excerpt region="header" />
+
+Un disseny de títol en una pàgina vertical es col·loca al llarg de la seva columna: la x baixa per la pàgina i la y avança cap a l’esquerra. La franja ancorada `top-left` amb tota l’amplada queda a dalt a la pàgina de comptes i al llarg de la vora dreta a la de kanji; la mascota ancorada `top-right` cau a l’extrem de la franja a totes dues. El disseny no anomena cap direcció.
+
+### 3 · Dos quaderns amb un sol text
+
+<Excerpt region="two-books" />
+
+La configuració és una funció, així que cada composició rep el seu propi objecte, i entre l’una i l’altra només canvia `writingMode`. En vertical, el quadern de 国語 s’enquaderna per la dreta tot sol; `showBook` posa cada quadern al seu costat del llom. El text va en Klee One, una lletra de llibre de text, i les etiquetes en Zen Maru Gothic; totes dues carreguen la seva puntuació vertical per als parèntesis de la pàgina de kanji.
+
+## Variants
+
+### Reuneix les solucions al final
+
+Un quadern amb el solucionari a part deixa les solucions fora de les pàgines: `chapterEnd` les posa després de l’últim exercici.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'kotae' },
++  solutions: { placement: 'chapterEnd', box: 'kotae' },
+```
+
+### Compon una pàgina de passatemps
+
+<RecipeLink slug="puzzle-page-upside-down-answers">La pàgina de passatemps</RecipeLink> gira les seves solucions de la mateixa manera, en targetes a dues columnes.
+
+## Errors freqüents
+
+- Una lectura encara no pot anar sobre un buit: un ruby dins de `[[…]]` forma part de la resposta amagada. L’exercici de 漢字の書き取り posa cada lectura en una línia pròpia i la casella darrere, tres per fila en un grup `:::columns`; a la pàgina vertical la lectura queda al costat de la casella, com el furigana.
+- Klee One només té els pesos 400 i 600: `boldFontWeight: 600` deixa totes les negretes en un tall que existeix, també els números dels apartats i dels exercicis.

@@ -3580,5 +3580,93 @@
         "ar": "العمليات العمودية"
       }
     }
+  },
+  "readings-over-blanks": {
+    "label": {
+      "en": "A reading over a blank",
+      "es": "Una lectura sobre un hueco",
+      "ca": "Una lectura sobre un buit",
+      "zh": "空格上方的拼音",
+      "ar": "قراءة فوق فراغ",
+      "ja": "空欄の上の読みがな",
+      "pt": "Uma leitura sobre uma lacuna",
+      "fr": "Une lecture au-dessus d'un blanc",
+      "de": "Eine Lesung über einer Lücke",
+      "it": "Una lettura sopra uno spazio vuoto"
+    },
+    "aliases": {
+      "en": [
+        "pinyin over boxes",
+        "furigana over blanks",
+        "write the characters",
+        "看拼音写词语"
+      ],
+      "es": [
+        "pinyin sobre casillas",
+        "furigana sobre huecos",
+        "escribe los caracteres"
+      ],
+      "ca": [
+        "pinyin sobre caselles",
+        "furigana sobre buits"
+      ],
+      "zh": [
+        "看拼音写词语",
+        "拼音田字格",
+        "注音填字"
+      ],
+      "ar": [
+        "قراءة فوق الفراغ",
+        "بينيين فوق المربعات"
+      ],
+      "ja": [
+        "漢字の書き取り",
+        "読みがな付きの□",
+        "書き取り"
+      ],
+      "pt": [
+        "pinyin sobre quadrados",
+        "furigana sobre lacunas"
+      ],
+      "fr": [
+        "pinyin au-dessus des cases",
+        "furigana sur des blancs"
+      ],
+      "de": [
+        "Pinyin über Kästchen",
+        "Furigana über Lücken"
+      ],
+      "it": [
+        "pinyin sopra le caselle",
+        "furigana sopra gli spazi"
+      ]
+    },
+    "explanation": {
+      "en": "A ruby inside a [[gap]] is part of the answer and is hidden with it, and an open question's 田字格 area takes the whole measure, so a 看拼音写词语 or 漢字の書き取り exercise cannot print the reading over the squares a word is written in. The workaround sets each reading on a line of its own and the blank as a box under it, four to a row in a :::columns group.",
+      "es": "Un ruby dentro de un [[hueco]] forma parte de la respuesta y se oculta con ella, y la zona de 田字格 de una pregunta abierta ocupa toda la medida, así que un ejercicio de 看拼音写词语 o de 漢字の書き取り no puede imprimir la lectura sobre las casillas donde se escribe la palabra. La solución provisional pone cada lectura en su propia línea y el hueco como una caja debajo, cuatro por fila en un grupo :::columns.",
+      "ca": "Un ruby dins d'un [[buit]] forma part de la resposta i s'amaga amb ella, i la zona de 田字格 d'una pregunta oberta ocupa tota la mesura, de manera que un exercici de 看拼音写词语 o de 漢字の書き取り no pot imprimir la lectura sobre les caselles on s'escriu la paraula. La solució provisional posa cada lectura en una línia pròpia i el buit com una caixa a sota, quatre per fila en un grup :::columns.",
+      "zh": "[[空格]]里的注音属于答案，会和答案一起隐去；简答题的田字格又占满整行，所以“看拼音写词语”或日文的“漢字の書き取り”无法把拼音印在写字的方格上方。变通做法是让每个拼音单占一行，下面放一个方框作为空格，用 :::columns 一行排四组。",
+      "ar": "الروبي داخل [[فراغ]] جزء من الإجابة فيُخفى معها، ومساحة 田字格 في السؤال المفتوح تملأ عرض السطر كله، فلا يستطيع تمرين 看拼音写词语 أو 漢字の書き取り أن يطبع القراءة فوق المربعات التي تُكتب فيها الكلمة. والحل المؤقت أن توضع كل قراءة في سطر وحدها والفراغ مربعًا تحتها، أربعة في كل صف داخل مجموعة :::columns.",
+      "ja": "[[空欄]] の中のルビは答えの一部なので答えと一緒に隠れ、記述問題の田字格は行の幅いっぱいを使う。そのため看拼音写词语や漢字の書き取りで、字を書くマスの上に読みを印刷できない。回避策として、読みを一行に置き、その下に空欄を箱として置いて、:::columns で一行に四組並べる。",
+      "pt": "Um ruby dentro de uma [[lacuna]] faz parte da resposta e some com ela, e a área de 田字格 de uma questão aberta ocupa toda a medida, então um exercício de 看拼音写词语 ou de 漢字の書き取り não consegue imprimir a leitura sobre os quadrados onde a palavra é escrita. A solução provisória põe cada leitura numa linha própria e a lacuna como uma caixa embaixo, quatro por linha num grupo :::columns.",
+      "fr": "Un ruby dans un [[blanc]] fait partie de la réponse et disparaît avec elle, et la zone de 田字格 d'une question ouverte occupe toute la justification : un exercice 看拼音写词语 ou 漢字の書き取り ne peut donc pas imprimer la lecture au-dessus des cases où s'écrit le mot. Le contournement met chaque lecture sur sa propre ligne et le blanc en case dessous, quatre par rangée dans un groupe :::columns.",
+      "de": "Ein Ruby in einer [[Lücke]] gehört zur Antwort und wird mit ihr ausgeblendet, und das 田字格-Feld einer offenen Frage nimmt die ganze Satzbreite ein. Eine Übung 看拼音写词语 oder 漢字の書き取り kann die Lesung deshalb nicht über die Kästchen drucken, in die das Wort geschrieben wird. Der Behelf setzt jede Lesung in eine eigene Zeile und die Lücke als Kasten darunter, vier je Reihe in einer :::columns-Gruppe.",
+      "it": "Un ruby dentro uno [[spazio]] fa parte della risposta e si nasconde con essa, e l'area di 田字格 di una domanda aperta occupa tutta la giustezza, quindi un esercizio 看拼音写词语 o 漢字の書き取り non può stampare la lettura sopra le caselle in cui si scrive la parola. La soluzione provvisoria mette ogni lettura su una riga propria e lo spazio come una casella sotto, quattro per fila in un gruppo :::columns."
+    },
+    "docs": {
+      "slug": "exercises",
+      "heading": {
+        "en": "Gaps and word banks",
+        "es": "Huecos y bancos de palabras",
+        "ca": "Buits i bancs de paraules",
+        "fr": "Textes à trous et banques de mots",
+        "de": "Lücken und Wortspeicher",
+        "it": "Spazi vuoti e banche di parole",
+        "pt": "Lacunas e bancos de palavras",
+        "zh": "填空与词库",
+        "ja": "穴埋めと語群",
+        "ar": "الفراغات وبنوك الكلمات"
+      }
+    }
   }
 }

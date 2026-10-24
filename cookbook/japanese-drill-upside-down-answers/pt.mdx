@@ -1,0 +1,51 @@
+---
+title: "Exercícios japoneses com as respostas de cabeça para baixo"
+summary: "Duas páginas de uma coleção japonesa de cadernos escolares, contas na horizontal e kanji em colunas, com as respostas de cabeça para baixo sob cada exercício."
+plain: "Um caderno escolar japonês: contas, quadradinhos, alternativas e certo ou errado numa página, kanji e leituras de cima para baixo na outra. Sob cada exercício vêm as respostas de cabeça para baixo; a criança vira o caderno para conferir."
+description: "Uma ドリル japonesa no Postext: ひっ算, quadradinhos □, opções ア イ ウ e ○× na horizontal, uma página de 国語 na vertical, respostas giradas 180° sob cada exercício."
+question: "Como imprimo as respostas de cabeça para baixo sob cada exercício de um caderno japonês?"
+aliases: ["ドリル", "計算ドリル", "漢字ドリル", "caderno de exercícios japonês", "respostas de cabeça para baixo", "respostas invertidas", "gabarito invertido", "こたえ", "ひっ算", "書き取り", "escrita vertical", "tategaki", "○×"]
+pageNotes: { "1": "A página de contas: uma faixa azul-clara de cantos arredondados, uma etiqueta amarela さんすう 12, o título 3けたのたし算とひき算 e um tanuki pintado segurando um lápis; uma linha para o nome e um quadro para a nota; o exercício 1, quatro contas armadas com quadradinhos pontilhados para os algarismos; o exercício 2, seis contas com um quadradinho depois de cada uma; o exercício 3, duas perguntas com ア イ ウ em fila; sob cada exercício, as respostas em letra cinza pequena, de cabeça para baixo.", "3": "A página de kanji, composta na vertical e encadernada pela direita: a mesma faixa azul-clara agora desce pela borda direita, com o título 春のことば em coluna e a raposa pintada ao pé; leituras com um quadradinho alto ao lado de cada uma, leituras a escrever entre parênteses ao lado de kanji sublinhados, alternativas entre parênteses de largura cheia e as respostas de cada exercício de cabeça para baixo ao pé da sua coluna." }
+---
+
+## O que você vai compor
+
+Duas páginas de uma coleção de cadernos de atividades do 3.º ano, em formato B5. A página de contas corre na horizontal: uma faixa azul-clara com a etiqueta da matéria, o título e um tanuki como mascote, uma linha para o nome e um quadro para a nota, depois ひっ算 (contas armadas) com um quadradinho para cada algarismo do resultado, quadradinhos depois de seis contas, alternativas ア イ ウ em fila, afirmações ○× com um parêntese no fim da linha e dois problemas com linhas para escrever a conta. A página de kanji é composta como se imprime um caderno de 国語, de cima para baixo e da direita para a esquerda: leituras com um quadradinho para o kanji, palavras sublinhadas cuja leitura vai entre parênteses, alternativas para circular e um significado para escolher. Embaixo de cada exercício, as respostas vêm de cabeça para baixo em letra cinza pequena. A criança vê onde elas estão, não consegue lê-las de relance e vira o caderno para conferir.
+
+## Preparo
+
+### 1 · Vire as respostas de cada exercício
+
+O código está na [resposta curta](#a-resposta-curta) lá em cima. `placement: 'inverted'` põe as respostas depois de cada exercício num boxe girado 180°, e esse boxe fica dentro do boxe do próprio exercício, então uma quebra de página nunca separa os dois. As respostas saem do exercício: as operações com o resultado, o katakana da alternativa certa, ○ e ×, as palavras das lacunas. O estilo de boxe das respostas, `kotae`, só deixa a letra pequena e cinza.
+
+### 2 · Uma faixa para a página horizontal e para a vertical
+
+<Excerpt region="header" />
+
+Numa página vertical, o design de um título se estende ao longo da sua coluna: o x desce pela página e o y avança para a esquerda. A faixa ancorada em `top-left` com a largura toda fica no alto da página de contas e ao longo da borda direita da página de kanji; o mascote ancorado em `top-right` fica na outra ponta da faixa nas duas. Nada no design nomeia uma direção.
+
+### 3 · Dois cadernos com um só texto
+
+<Excerpt region="two-books" />
+
+A configuração é uma função, então cada composição recebe o seu próprio objeto, e entre uma e outra só muda `writingMode`. Na vertical, o caderno de 国語 se encaderna pela direita sozinho; `showBook` põe cada caderno do seu lado da lombada. O texto vai em Klee One, uma letra de livro didático, e as etiquetas em Zen Maru Gothic; as duas carregam a sua pontuação vertical para os parênteses da página de kanji.
+
+## Variações
+
+### Junte as respostas no final
+
+Um caderno com gabarito à parte deixa as respostas fora das páginas: `chapterEnd` as lista depois do último exercício.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'kotae' },
++  solutions: { placement: 'chapterEnd', box: 'kotae' },
+```
+
+### Componha uma página de passatempos
+
+<RecipeLink slug="puzzle-page-upside-down-answers">A página de passatempos</RecipeLink> vira as respostas do mesmo jeito, em cartões de duas colunas.
+
+## Erros comuns
+
+- Uma leitura ainda não pode ficar sobre uma lacuna: um ruby dentro de `[[…]]` faz parte da resposta escondida. O exercício de 漢字の書き取り põe cada leitura numa linha própria e o quadradinho depois dela, três por fileira num grupo `:::columns`; na página vertical, a leitura fica ao lado do quadradinho, como o furigana.
+- A Klee One só tem os pesos 400 e 600: `boldFontWeight: 600` mantém todo negrito num corte que existe, inclusive os números dos itens e dos exercícios.

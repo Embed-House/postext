@@ -1,0 +1,54 @@
+---
+title: "Una página de pasatiempos con las soluciones del revés"
+summary: "La página de pasatiempos de una revista infantil: crucigrama, sopa de letras, adivinanza, historia que ordenar y más, en tarjetas con las soluciones del revés."
+plain: "La página de pasatiempos de una revista infantil sobre el mar. Cada pasatiempo va en su tarjeta, con las soluciones impresas del revés debajo, para que los lectores giren la revista y las comprueben."
+description: "Una página de pasatiempos en Postext: crucigrama y sopa de letras hechos con listas de palabras, adivinanza e historia que ordenar, soluciones del revés."
+question: "¿Cómo hago un crucigrama y una sopa de letras con una lista de palabras y las soluciones del revés?"
+aliases: ["pasatiempos", "crucigrama", "sopa de letras", "adivinanza", "soluciones del revés", "soluciones boca abajo", "revista infantil", "página de actividades", "puzzle page", "word search"]
+pageNotes: { "1": "La primera página: una pintura colorida de un arrecife de coral con una tortuga, un pulpo, un pez payaso, un pez globo y un caballito de mar llena la parte de arriba hasta el sangrado, con una etiqueta coral PASATIEMPOS, el título Pasatiempos del arrecife en grandes letras blancas y una entradilla en una caja oscura; debajo, dos tarjetas crema: un crucigrama numerado con sus pistas horizontales y verticales y una sopa de letras de nueve por nueve con su lista de palabras, cada una con las soluciones del revés al pie.", "2": "La segunda página: tarjetas con una adivinanza de tres opciones que rodear, una historia que ordenar con una tortuguita pintada y cinco casillas, un dato revuelto con una línea para escribirlo y un ejercicio de unir con puntos, todos con sus soluciones del revés." }
+---
+
+## Lo que vas a componer
+
+La página de pasatiempos de *¡Chapuzón!*, una revista infantil sobre el mar, en dos páginas de tamaño A4 a dos columnas. Una pintura del arrecife llena la parte de arriba de la primera página, con el título sobre el agua despejada. Debajo, cada pasatiempo va en una tarjeta crema con su número en coral: un crucigrama hecho con seis animales marinos y sus pistas, una sopa de letras que esconde ocho palabras en horizontal, en vertical, en diagonal y del revés, una adivinanza con tres opciones que rodear, la vida de una tortuga que ordenar, un dato revuelto y crías de animales que unir con su nombre. Bajo cada pasatiempo, dentro de su tarjeta, las soluciones van del revés en letra gris pequeña, como las han escondido siempre las revistas de pasatiempos.
+
+## Elaboración
+
+### 1 · Cada pasatiempo en su tarjeta, con las soluciones giradas
+
+El código está en [la respuesta corta](#la-respuesta-corta). El `box` del estilo de ejercicio nombra un estilo de recuadro, así que cada pasatiempo va en una tarjeta, con su número en un círculo y su título como primera línea del enunciado. `placement: 'inverted'` pone las soluciones tras cada pasatiempo en un recuadro girado 180°, dentro de la tarjeta, así que nunca caen en páginas distintas; las cuadrículas y la línea de escritura quedan dentro del relleno de la tarjeta.
+
+### 2 · Deja que el motor construya las cuadrículas
+
+El Markdown solo lleva las palabras: `- PULPO: Ocho brazos y tres corazones` para el crucigrama y `- CONCHA` para la sopa de letras. El motor coloca el crucigrama con cada palabra cruzada con otra y numera los comienzos en orden de lectura, y esconde las palabras de la sopa en las direcciones que pide la apertura (`directions="across down diagonal backwards"`), rellenando el resto con letras de las mismas palabras. Las dos usan una semilla, así que la cuadrícula es la misma en cada composición y en cada salida, y la edición inglesa construye la suya con sus propias palabras.
+
+### 3 · Un arrecife a lo ancho de las dos columnas
+
+<Excerpt region="opener" />
+
+La apertura ocupa las dos columnas (`span: 'page'`), así que los pasatiempos empiezan bajo la pintura en cada columna. La imagen está recortada a la proporción de la franja y anclada a la página, de modo que sangra por arriba y por los lados; la entradilla va en una caja oscura para que se lea sobre el agua.
+
+## Variantes
+
+### Oculta la lista de palabras
+
+Una sopa de letras más difícil imprime solo la cuadrícula: añade `hidden` a la apertura.
+
+```diff
+-:::exercise{type=wordsearch size=9 directions="across down diagonal backwards"}
++:::exercise{type=wordsearch size=9 directions="across down diagonal backwards" hidden}
+```
+
+### Imprime las soluciones al final de la revista
+
+`chapterEnd` reúne todas las soluciones al final en vez de girar cada una.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'turned' },
++  solutions: { placement: 'chapterEnd' },
+```
+
+## Errores frecuentes
+
+- Una palabra del crucigrama que no se cruza con ninguna otra se queda fuera y se avisa con `exerciseWordUnplaced`. Elige palabras que compartan letras o añade una que una dos grupos.
+- Una tarjeta de pasatiempo se mantiene entera, así que un crucigrama alto pasa a la columna siguiente si no cabe: revisa la edición española, de palabras más largas.

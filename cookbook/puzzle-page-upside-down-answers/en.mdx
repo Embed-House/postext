@@ -1,0 +1,54 @@
+---
+title: "A puzzle page with the answers upside down"
+summary: "A children's magazine puzzle page: crossword, word search, riddle, story to order, matching and a mixed-up fact on cards, each with its answers upside down."
+plain: "The puzzle page of a children's magazine about the sea. Each puzzle sits on its own card, and its answers are printed upside down underneath, so readers turn the magazine round to check."
+description: "A magazine puzzle page in Postext: a crossword and a word search built from word lists, a riddle, a story to order, all with answers upside down."
+question: "How do I make a crossword and a word search from a list of words, with the answers upside down?"
+aliases: ["puzzle page", "crossword", "word search", "wordsearch", "riddle", "answers upside down", "inverted answers", "children's magazine", "activity page", "pasatiempos"]
+pageNotes: { "1": "The first page: a bright painting of a coral reef with a turtle, an octopus, a clownfish, a pufferfish and a seahorse fills the top of the page to the bleed, with a coral PUZZLE PAGE badge, the title Reef Puzzles in big white letters and a dark standfirst box; below, two cream cards: a numbered crossword with its Across and Down clues, and a nine-by-nine word search with its word list, each with its answers upside down at the foot.", "2": "The second page: cards for a riddle with three ringed options, a story to order with a painted hatchling turtle and five boxes, a mixed-up fact with a line to write it on, and a matching puzzle with dots, each with its answers upside down." }
+---
+
+## What you'll build
+
+The puzzle page of *Splash!*, a children's magazine about the sea, on two A4-sized pages in two columns. A reef painting fills the top of the first page with the title over its open water. Below it, each puzzle sits on a cream card with a coral number: a crossword built from six sea creatures and their clues, a word search that hides eight words across, down, diagonally and backwards, a riddle with three options to ring, a turtle's life to put in order, a mixed-up fact to unscramble and baby animals to join with their names. Under every puzzle, inside its card, the answers are printed upside down in small grey type, the way puzzle magazines have always kept them out of sight.
+
+## Method
+
+### 1 · Every puzzle on a card, its answers turned
+
+The code is [the short answer](#the-short-answer) above. The exercise style's `box` names a box style, so every puzzle is set on a card, its number in a disc and its title as the first line of its instruction. `placement: 'inverted'` sets the key after each puzzle in a box turned 180°, inside the card, so the two never fall on different pages; the grids and the writing line stay inside the card's padding.
+
+### 2 · Let the engine build the grids
+
+The Markdown holds only the words: `- OCTOPUS: Eight arms and three hearts` for the crossword, `- SHELL` for the word search. The engine lays the crossword with every word crossing another and numbers the starts in reading order, and hides the search words in the directions the fence names (`directions="across down diagonal backwards"`), filling the rest with the words' own letters. Both are seeded, so the grid is the same on every run, in every output, and the Spanish edition builds its own grid from its own words.
+
+### 3 · A reef across both columns
+
+<Excerpt region="opener" />
+
+The opener spans both columns (`span: 'page'`), so the puzzles start under the painting in each column. The picture is cut to the band's proportions and anchored to the page, so it bleeds at the top and the sides; the standfirst sits in a dark box so it reads over the water.
+
+## Variations
+
+### Hide the word list
+
+A harder word search prints only the grid: add `hidden` to the fence.
+
+```diff
+-:::exercise{type=wordsearch size=9 directions="across down diagonal backwards"}
++:::exercise{type=wordsearch size=9 directions="across down diagonal backwards" hidden}
+```
+
+### Print the answers at the end of the magazine
+
+`chapterEnd` collects every key at the end instead of turning each one.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'turned' },
++  solutions: { placement: 'chapterEnd' },
+```
+
+## Pitfalls
+
+- A crossword word that crosses no other is left out and reported as `exerciseWordUnplaced`. Choose words that share letters, or add one that links two groups.
+- A puzzle card is kept together, so a tall crossword moves to the next column when it does not fit: check the Spanish edition, whose words are longer.

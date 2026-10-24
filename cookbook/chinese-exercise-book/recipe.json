@@ -1,0 +1,144 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 171,
+  "status": "draft",
+  "chapter": "textbooks",
+  "order": 210,
+  "level": 2,
+  "genres": [
+    "workbook",
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "exercise-styles",
+      "teacher-edition",
+      "exercise-choice"
+    ],
+    "also": [
+      "exercises",
+      "exercise-gaps",
+      "exercise-match",
+      "exercise-open",
+      "exercise-arithmetic",
+      "exercise-solutions",
+      "chinese-numerals",
+      "cjk-fonts",
+      "character-grid",
+      "emphasis-marks",
+      "chips",
+      "multiple-columns",
+      "opener-design",
+      "heading-attributes",
+      "design-images",
+      "color-palette",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q199",
+    "Q197",
+    "Q200",
+    "Q198"
+  ],
+  "gotchas": [
+    "cjk-fonts-slices"
+  ],
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images",
+    "cjk"
+  ],
+  "sample": {
+    "locales": [
+      "zh"
+    ]
+  },
+  "capture": {
+    "hero": 1,
+    "card": "page",
+    "pages": "all",
+    "doc": [
+      "first",
+      "last"
+    ],
+    "timeoutMs": 120000,
+    "sandbox": "first",
+    "expect": {
+      "pages": [
+        8,
+        8
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [
+      {
+        "what": {
+          "en": "A Chinese village in early spring: willows, swallows, peach blossom and two children on a path between rice fields.",
+          "es": "Un pueblo chino a comienzos de la primavera: sauces, golondrinas, flor de melocotonero y dos niños en un camino entre arrozales."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "spring-1600.jpg"
+      },
+      {
+        "what": {
+          "en": "Two children count oranges, apples and pears at a grandmother's fruit stall, a cat on a stool beside them.",
+          "es": "Dos niños cuentan naranjas, manzanas y peras en el puesto de fruta de una abuela, con un gato en un taburete."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "market-1600.jpg"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Noto Serif SC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Noto Sans SC",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "LXGW WenKai TC",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-24",
+  "updated": "2026-10-24",
+  "related": [
+    "handwriting-workbook",
+    "pinyin-primer",
+    "arabic-workbook-rtl",
+    "japanese-drill-upside-down-answers"
+  ],
+  "gaps": [
+    "readings-over-blanks"
+  ]
+}

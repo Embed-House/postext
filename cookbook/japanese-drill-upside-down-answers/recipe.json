@@ -1,0 +1,139 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 172,
+  "status": "draft",
+  "chapter": "textbooks",
+  "order": 220,
+  "level": 2,
+  "genres": [
+    "workbook",
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "exercise-solutions",
+      "exercise-styles",
+      "vertical-writing"
+    ],
+    "also": [
+      "exercises",
+      "exercise-arithmetic",
+      "exercise-gaps",
+      "exercise-choice",
+      "exercise-open",
+      "kana-scripts",
+      "cjk-fonts",
+      "sideline",
+      "right-binding",
+      "chips",
+      "multiple-columns",
+      "opener-design",
+      "heading-attributes",
+      "design-images",
+      "design-anchoring",
+      "color-palette",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q195",
+    "Q207",
+    "Q198"
+  ],
+  "gotchas": [
+    "cjk-fonts-slices",
+    "ja-locale-tag"
+  ],
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images",
+    "cjk"
+  ],
+  "sample": {
+    "locales": [
+      "ja"
+    ]
+  },
+  "capture": {
+    "hero": 1,
+    "card": "page",
+    "pages": "all",
+    "doc": [
+      "first",
+      "last"
+    ],
+    "timeoutMs": 120000,
+    "sandbox": "first",
+    "expect": {
+      "pages": [
+        4,
+        4
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [
+      {
+        "what": {
+          "en": "A young tanuki in a yellow school hat holding a big pencil.",
+          "es": "Un tanuki pequeño con gorra escolar amarilla y un lápiz enorme."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "tanuki-600.jpg"
+      },
+      {
+        "what": {
+          "en": "A fox cub in a red scarf reading a book.",
+          "es": "Un zorrito con bufanda roja que lee un libro."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "kitsune-600.jpg"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Klee One",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Zen Maru Gothic",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-24",
+  "updated": "2026-10-24",
+  "related": [
+    "chinese-exercise-book",
+    "puzzle-page-upside-down-answers",
+    "jukugo-furigana-textbook"
+  ],
+  "gaps": [
+    "readings-over-blanks"
+  ]
+}

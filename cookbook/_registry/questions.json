@@ -5742,5 +5742,61 @@
       "ar": "تمارين تفاعلية"
     },
     "theme": "output"
+  },
+  "Q206": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set an Arabic workbook right to left: matching columns, a word bank, a word search and Arabic-Indic digits?",
+      "es": "¿Cómo compongo un cuaderno de ejercicios árabe de derecha a izquierda: columnas para unir, un recuadro de palabras, una sopa de letras y cifras arábigo-índicas?",
+      "ca": "Com componc un quadern d'exercicis àrab de dreta a esquerra: columnes per unir, un requadre de paraules, una sopa de lletres i xifres aràbigues orientals?",
+      "fr": "Comment composer un cahier d'exercices arabe de droite à gauche : colonnes à relier, banque de mots, mots mêlés et chiffres indo-arabes ?",
+      "de": "Wie setze ich ein arabisches Arbeitsheft von rechts nach links: Spalten zum Verbinden, Wortkasten, Suchsel und ostarabische Ziffern?",
+      "it": "Come compongo un quaderno di esercizi arabo da destra a sinistra: colonne da collegare, riquadro di parole, crucipuzzle e cifre arabo-indiane?",
+      "pt": "Como componho um caderno de exercícios árabe da direita para a esquerda: colunas para ligar, banco de palavras, caça-palavras e algarismos arábico-índicos?",
+      "zh": "怎样从右到左排阿拉伯语练习册：连线两栏、词语框、找字游戏和阿拉伯-印度数字？",
+      "ja": "アラビア語の練習帳を右から左に組むには？（線つなぎ、語群、ワードサーチ、アラビア・インド数字）",
+      "ar": "كيف أصفّ كراسة تمارين عربية من اليمين إلى اليسار: عمودان للتوصيل وصندوق كلمات وشبكة كلمات وأرقام هندية؟"
+    },
+    "index": {
+      "en": "Arabic workbook, right to left",
+      "es": "Cuaderno árabe, de derecha a izquierda",
+      "ca": "Quadern àrab, de dreta a esquerra",
+      "fr": "Cahier arabe, de droite à gauche",
+      "de": "Arabisches Arbeitsheft, von rechts nach links",
+      "it": "Quaderno arabo, da destra a sinistra",
+      "pt": "Caderno árabe, da direita para a esquerda",
+      "zh": "阿拉伯语练习册（从右到左）",
+      "ja": "アラビア語の練習帳（右から左）",
+      "ar": "كراسة تمارين عربية من اليمين إلى اليسار"
+    },
+    "theme": "textbooks"
+  },
+  "Q207": {
+    "kind": "how",
+    "text": {
+      "en": "How do I set a Japanese drill page in vertical columns with the same exercise design as the horizontal one?",
+      "es": "¿Cómo compongo una página de ejercicios japonesa en columnas verticales con el mismo diseño que la horizontal?",
+      "ca": "Com componc una pàgina d'exercicis japonesa en columnes verticals amb el mateix disseny que l'horitzontal?",
+      "fr": "Comment composer une page d'exercices japonaise en colonnes verticales avec la même maquette que la page horizontale ?",
+      "de": "Wie setze ich eine japanische Übungsseite in senkrechten Spalten mit derselben Gestaltung wie die waagerechte?",
+      "it": "Come compongo una pagina di esercizi giapponese in colonne verticali con lo stesso progetto di quella orizzontale?",
+      "pt": "Como componho uma página de exercícios japonesa em colunas verticais com o mesmo projeto da horizontal?",
+      "zh": "怎样用与横排页相同的设计排一页竖排的日语练习？",
+      "ja": "横組みと同じデザインで、縦組みのドリルのページを組むには？",
+      "ar": "كيف أصفّ صفحة تدريبات يابانية في أعمدة عمودية بالتصميم نفسه للصفحة الأفقية؟"
+    },
+    "index": {
+      "en": "Japanese drill, vertical",
+      "es": "Ejercicios japoneses en vertical",
+      "ca": "Exercicis japonesos en vertical",
+      "fr": "Exercices japonais verticaux",
+      "de": "Japanische Übungen, senkrecht",
+      "it": "Esercizi giapponesi in verticale",
+      "pt": "Exercícios japoneses na vertical",
+      "zh": "竖排日语练习",
+      "ja": "縦組みのドリル",
+      "ar": "تدريبات يابانية عمودية"
+    },
+    "theme": "textbooks"
   }
 }

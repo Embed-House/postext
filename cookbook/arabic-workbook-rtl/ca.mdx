@@ -1,0 +1,51 @@
+---
+title: "Un quadern d’exercicis àrab, de dreta a esquerra"
+summary: "Un quadern àrab de primària de dreta a esquerra: opcions أ ب ج, columnes per unir, paraules en un requadre, صح o خطأ i xifres arabicoíndiques."
+plain: "Pàgines d’un quadern àrab per a infants sobre un hort escolar: triar la resposta, unir columnes, omplir buits, marcar vertader o fals, ordenar paraules i trobar-les en una sopa de lletres."
+description: "Un quadern àrab de primària amb Postext: exercicis de dreta a esquerra, columnes per unir, sopa de lletres i xifres del Màixriq i del Magrib."
+question: "Com componc un quadern àrab de dreta a esquerra, amb columnes per unir i xifres arabicoíndiques?"
+aliases: ["quadern d’exercicis àrab", "كراسة تمارين", "تمارين", "اختر الإجابة الصحيحة", "صل بين العمودين", "أكمل الفراغ", "sopa de lletres en àrab", "exercicis de dreta a esquerra", "xifres arabicoíndiques", "xifres del Magrib"]
+pageNotes: { "1": "La pàgina d’obertura, senar, a l’esquerra del llom: una aquarel·la d’un hort escolar amb palmeres, una font, llimoners, una nena que rega i un nen amb un test de menta arriba a la vora superior; a sota, una pestanya terracota الوحدة الثالثة i el títol في الحديقة, col·locats des de la dreta; una línia de punts per al nom, la classe i la data; l’exercici ١, tres preguntes amb les opcions أ) ب) ج) de tres en tres.", "2": "L’exercici ٢, dues columnes que s’uneixen amb punts, les paraules a la dreta i les seves parelles a l’esquerra; l’exercici ٣, un requadre de paraules color sorra sobre un paràgraf amb buits puntejats; l’exercici ٤, quatre afirmacions amb les caselles صح i خطأ al final de la línia, a l’esquerra." }
+---
+
+## Què compondràs
+
+Una unitat d’un quadern d’àrab de segon en una pàgina de 17 × 24 cm, sobre un hort escolar. S’obre amb una franja d’aquarel·la, la pestanya i el títol de la unitat i una línia de punts per al nom, la classe i la data. Després venen els exercicis que imprimeix un llibre de primària àrab: triar la resposta correcta, amb أ) ب) ج) de tres en tres; unir les dues columnes; omplir els buits amb un requadre de paraules; marcar صح o خطأ; ordenar les paraules i escriure la frase a la línia; trobar set paraules de l’hort en una sopa de lletres. Les solucions tanquen la unitat. El mateix text es compon dues vegades: l’edició del Màixriq ho numera tot amb xifres arabicoíndiques, ١ ٢ ٣, i la del Magrib amb xifres europees. Totes dues es llegeixen des de la dreta i s’enquadernen per la dreta.
+
+## Elaboració
+
+### 1 · No anomenis cap costat
+
+El codi és a [la resposta curta](#la-resposta-curta). `locale: 'ar'` posa el text de dreta a esquerra, enquaderna el llibre per la dreta i tria les xifres; l’estil d’exercici pren de la llengua les lletres abjad de les opcions i صح i خطأ per al vertader o fals. Les columnes per unir, el requadre de paraules, la sopa de lletres i les línies d’escriptura es dibuixen com a dissenys de requadre, que una pàgina de dreta a esquerra reflecteix: la primera columna queda a la dreta, una paraula horitzontal de la sopa es llegeix de dreta a esquerra i els punts d’unir es miren al centre.
+
+### 2 · L’obertura de l’hort
+
+<Excerpt region="opener" />
+
+La pintura s’ancora a la pàgina i conserva el seu lloc. La pestanya i el títol es col·loquen en el flux de la pàgina, on `left` és el començament de la línia, de manera que queden a la dreta sense coordenades pròpies. Els folis, com les capçaleres, són físics i anomenen cada costat.
+
+### 3 · Dues edicions, dos jocs de xifres
+
+<Excerpt region="editions" />
+
+La configuració és una funció, així que cada composició rep el seu propi objecte, i la segona només canvia la llengua. `ar-MA` escriu amb xifres europees els números dels exercicis, dels apartats, de les solucions i dels folis, i deixa tota la resta com era: la direcció, l’enquadernació, les lletres abjad i les paraules de les solucions.
+
+## Variants
+
+### Imprimeix el llibre del professor
+
+Les respostes s’imprimeixen llavors al seu lloc, amb el color d’`answers`: els punts units, les paraules als seus buits, les caselles correctes plenes i les paraules encerclades a la sopa.
+
+```diff
+-const exercises = { solutions: { placement: 'directive' } };
++const exercises = { edition: 'teacher', solutions: { placement: 'none' } };
+```
+
+### Escriu els exercicis en xinès
+
+<RecipeLink slug="chinese-exercise-book">El quadern d’exercicis xinès</RecipeLink> compon els mateixos tipus d’exercici amb els seus propis parèntesis i numerals.
+
+## Errors freqüents
+
+- La majoria de les lletres àrabs no tenen ✓ ni ✗: les paraules de vertader o fals són صح i خطأ, i l’enunciat demana una marca a la casella.
+- La sopa de lletres omple les caselles buides amb lletres de les seves pròpies paraules, en la forma aïllada. Tria paraules de lletres variades o la quadrícula s’omplirà de ة.
