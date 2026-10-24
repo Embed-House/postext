@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildDocument } from '../../pipeline/index.js';
 import { createMeasurementCache } from '../../measure/index.js';
-import type { PostextConfig, HeadingStyleConfig } from '../../types.js';
+import type { PostextConfig, HeadingStyleConfig, Resource } from '../../types.js';
 import type { VDTBlock, VDTDocument, VDTPage } from '../../vdt.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
@@ -179,5 +179,84 @@ describe('a span: page heading that opens mid-page (#539)', () => {
       }
     }
     expect(strayed).toEqual([]);
+  });
+
+  it('takes a heading that opens a short column of its band along with the box that moves on', () => {
+    // The band under the cut is short: the text before ends in its first
+    // column, the next heading opens the second one alone, and the
+    // keep-together box after it moves on to the next page. A run of
+    // headings that is all its column holds stayed behind, orphaned — a
+    // hidden heading too, which takes no room: its bookmark, contents entry
+    // and running head pointed to the page before its box.
+    const sentence = 'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore. ';
+    const box = Array.from({ length: 8 }, (_, i) => `**Group ${i}**\\\nMondays at 10, parish hall`).join('\n\n');
+    const style: HeadingStyleConfig = { id: 'a', breakBefore: { enabled: false }, span: 'page', spanBreak: false };
+    const strayed: string[] = [];
+    for (const hidden of [true, false]) {
+      for (const fill of [21, 28, 67]) {
+        const md = [
+          '# First {style="a"}', '', Array.from({ length: fill }, () => sentence.repeat(2)).join('\n\n'), '',
+          '# Second {style="a"}', '', sentence, '', '# News {style="n"}', '', ':::callout{type="k" title="Every week"}', box, ':::',
+        ].join('\n');
+        const doc = buildDocument({ markdown: md }, {
+          headingStyles: [style, { id: 'n', breakBefore: { enabled: false }, hidden }],
+          calloutStyles: [{ id: 'k', keepTogether: true }],
+        }, createMeasurementCache());
+        const [, , news] = headings(doc);
+        const frame = doc.blocks.find((b) => b.type === 'callout')!;
+        if (news!.pageIndex !== frame.pageIndex || news!.columnIndex !== frame.columnIndex) strayed.push(`${hidden ? 'hidden' : 'shown'} ${fill}`);
+      }
+    }
+    expect(strayed).toEqual([]);
+  });
+
+  // A heading opening a short column alone and the box after it, taller
+  // than any column, in a two-column page (review of #1246).
+  const groupBox = Array.from({ length: 22 }, (_, i) => `**Group ${i}**\\\nMondays at 10, parish hall`).join('\n\n');
+  const newsConfig: PostextConfig = {
+    layout: { layoutType: 'double' },
+    headingStyles: [{ id: 'n', breakBefore: { enabled: false } }],
+    calloutStyles: [{ id: 'k', keepTogether: true }],
+  };
+
+  it('still stops a box after four short columns when the heading before it moves along', () => {
+    // Three page-wide figures head every page, so every column is short:
+    // the box leaves four of them and is set (#1246 review). Rolling the
+    // heading back must not start the count over each time, sending both
+    // on past every figure. In two columns the band caps already stop it;
+    // in one, only the count does.
+    const figure = (id: string): Resource => ({
+      id, typeId: 'figure', kind: 'bitmap', caption: `Figure ${id}.`, createdAt: 0, updatedAt: 0,
+      bitmap: { fileId: `${id}.png`, format: 'png', width: 1600, height: 500 },
+      placement: { position: 'top', span: 'page' },
+    });
+    const figures = Array.from({ length: 40 }, (_, i) => figure(`f${i}`));
+    const md = [
+      `Intro ${figures.map((f) => `:ref{id="${f.id}"}`).join(' ')} text.`, '',
+      '# News {style="n"}', '', ':::callout{type="k" title="Every week"}', groupBox, ':::',
+    ].join('\n');
+    const landed: Record<string, number> = {};
+    for (const layoutType of ['double', 'single'] as const) {
+      const doc = buildDocument({ markdown: md, resources: figures }, { ...newsConfig, layout: { layoutType } }, createMeasurementCache());
+      landed[layoutType] = doc.blocks.find((b) => b.type === 'callout')!.pageIndex;
+    }
+    expect(landed).toEqual({ double: 4, single: 7 });
+  });
+
+  it('leaves a heading in a column a band cap cut short', () => {
+    // The box leaves the last column of the band and caps it: that column
+    // is short on purpose, and the heading in it gains nothing by moving
+    // on, as the heading and the box are taller than a full column — it
+    // would open the next page alone, the box in the column after it.
+    const md = [
+      'Intro line.', '', ...Array.from({ length: 3 }, () => ['Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore.', '']).flat(),
+      '# News[^n] {style="n"}', '', ':::callout{type="k" title="Every week"}', groupBox, ':::', '', '[^n]: A note.',
+    ].join('\n');
+    const doc = buildDocument({ markdown: md }, newsConfig, createMeasurementCache());
+    const [news] = headings(doc);
+    const frame = doc.blocks.find((b) => b.type === 'callout')!;
+    expect(doc.pages).toHaveLength(2);
+    expect(news!.pageIndex).toBe(0);
+    expect([frame.pageIndex, frame.columnIndex]).toEqual([1, 0]);
   });
 });
