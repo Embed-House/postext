@@ -74,7 +74,10 @@ describe('the grids (#1228)', () => {
   it('lays a crossword with every word crossing another and numbers its starts', () => {
     const b = box(':::exercise{type=crossword}\nSolve.\n\n- RAIZ: a\n- HOJA: b\n- FLOR: c\n- FRUTO: d\n- TALLO: e\n:::\n');
     expect(b.unplaced).toEqual([]);
-    expect(b.key!.length).toBe(5);
+    // The key in words, across then down: every entry once.
+    const key = b.key!.join(' ');
+    expect(key).toMatch(/^Across: .* Down: /);
+    for (const w of ['RAIZ', 'HOJA', 'FLOR', 'FRUTO', 'TALLO']) expect(key.split(w).length).toBe(2);
     expect(b.slots!.every((s) => s.kind === 'cell' && s.accept![0]!.length === 1)).toBe(true);
   });
 

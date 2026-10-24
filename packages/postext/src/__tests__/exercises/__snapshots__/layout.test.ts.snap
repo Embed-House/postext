@@ -55,7 +55,7 @@ exports[`exercises laid out (#1227) > sets choice, true/false, match, order 1`] 
   [
     "crossword",
     "7",
-    "1→ MOON · 3→ SUN · 2↓ NEST",
+    "Across: 1 MOON, 3 SUN · Down: 2 NEST",
   ],
   [
     "arithmetic",

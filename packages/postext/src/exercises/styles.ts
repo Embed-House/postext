@@ -181,7 +181,9 @@ export function exerciseParagraphStyles(style: ResolvedExerciseStyle): Paragraph
     { id: ids.statement, firstLineIndent: EM(0), hangingIndent: EM(1.8), tabStops: [{ position: EM(1.8) }, { position: 'end', align: 'end' }], spaceBetween: item, marginTop: item, marginBottom: item },
     // A pair of a match exercise lettered: its letter bracket at the end.
     { id: ids.pairs, firstLineIndent: EM(0), tabStops: [{ position: '50%' }], spaceBetween: item, marginTop: item, marginBottom: item },
-    { id: ids.key, firstLineIndent: EM(0), hangingIndent: EM(1.8), tabStops: [{ position: EM(1.8) }], spaceBetween: EM(0.15) },
+    // A key's number, then its answers at the first stop past it (`一、`
+    // and `12.` are wider than 1.8 em).
+    { id: ids.key, firstLineIndent: EM(0), hangingIndent: EM(1.8), tabStops: [{ position: EM(1.8) }, { position: EM(2.6) }, { position: EM(3.4) }], spaceBetween: EM(0.15) },
     // The exercise's own paragraphs (its text, its bank), never indented.
     { id: ids.text, firstLineIndent: EM(0), spaceBetween: item, marginTop: item, marginBottom: item },
   ];

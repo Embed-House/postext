@@ -46,8 +46,11 @@ export interface GridBoxInput {
   rtl?: boolean;
   /** The text's font family, for the letters drawn. */
   font?: string;
-  /** The words of the document language (a crossword's clue headings). */
-  words?: { across: string; down: string };
+  /** The words of the document language (a crossword's clue headings),
+   *  and what separates two entries of a list (`, `, `، `, `、`). */
+  words?: { across: string; down: string; comma?: string };
+  /** A number in the document's digits (a crossword's cells and clues). */
+  num?: (n: number) => string;
 }
 
 export type GridBox = CalloutStyleConfig & {
@@ -350,7 +353,7 @@ function crosswordBox(input: GridBoxInput): GridBox {
   els.push(pathElement('cells', boxes, w, h, style.grid.rule ?? BLACK, dimPt(style.grid.ruleWidth, input.bodySizePt), { fill: { hex: '#ffffff', model: 'hex' } }));
   for (const [k, n] of numbers) {
     const [rr, c] = k.split(',').map(Number) as [number, number];
-    els.push(textElement(`n${n}`, String(n), (c - minC) * cell + cell * 0.06, (rr - minR) * cell + cell * 0.02, cell * 0.6, cell * 0.36, cell * 0.28, { align: 'start', verticalAlign: 'top', ...(input.font ? { fontFamily: input.font } : {}) }));
+    els.push(textElement(`n${n}`, (input.num ?? String)(n), (c - minC) * cell + cell * 0.06, (rr - minR) * cell + cell * 0.02, cell * 0.6, cell * 0.36, cell * 0.28, { align: 'start', verticalAlign: 'top', ...(input.font ? { fontFamily: input.font } : {}) }));
   }
   const slots: ExerciseSlot[] = [];
   for (const [k, letter] of cells) {
@@ -363,14 +366,18 @@ function crosswordBox(input: GridBoxInput): GridBox {
   const box = drawnBox(input.id, els, h, 4, 6) as GridBox;
   box.info = { kind: 'crossword', rows, cols, cellPt: cell, xPt: 0, yPt: 0 };
   box.slots = slots;
-  const clue = (p: Placement): { label: string; clue?: Run } => ({ label: `${numbers.get(key(p.r, p.c))}`, ...(ex.entries[p.word]!.clue ? { clue: ex.entries[p.word]!.clue } : {}) });
+  const num = input.num ?? String;
+  const clue = (p: Placement): { label: string; clue?: Run } => ({ label: num(numbers.get(key(p.r, p.c))!), ...(ex.entries[p.word]!.clue ? { clue: ex.entries[p.word]!.clue } : {}) });
   const across = placed.filter((p) => p.across).sort((a, b) => numbers.get(key(a.r, a.c))! - numbers.get(key(b.r, b.c))!);
   const down = placed.filter((p) => !p.across).sort((a, b) => numbers.get(key(a.r, a.c))! - numbers.get(key(b.r, b.c))!);
   box.clues = [
     ...(across.length > 0 ? [{ label: input.words?.across ?? 'Across', heading: true }, ...across.map(clue)] : []),
     ...(down.length > 0 ? [{ label: input.words?.down ?? 'Down', heading: true }, ...down.map(clue)] : []),
   ];
-  box.key = [...across, ...down].map((p) => `${numbers.get(key(p.r, p.c))}${p.across ? '\u2192' : '\u2193'} ${ex.entries[p.word]!.word}`);
+  // The key in the language's words, not arrows: many text faces (Naskh,
+  // Mincho cuts, school faces) have no → ↓.
+  const keyOf = (label: string, list: Placement[]): string[] => (list.length > 0 ? [`${label}: ${list.map((p) => `${num(numbers.get(key(p.r, p.c))!)} ${ex.entries[p.word]!.word}`).join(input.words?.comma ?? ', ')}`] : []);
+  box.key = [...keyOf(input.words?.across ?? 'Across', across), ...keyOf(input.words?.down ?? 'Down', down)];
   box.unplaced = unplaced.map((k) => ex.entries[k]!.word);
   return box;
 }

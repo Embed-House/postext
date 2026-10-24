@@ -49,14 +49,18 @@ export function gapCloseAt(text: string, from: number): number {
   return -1;
 }
 
-/** The options of a gap's text, split at each `|` no backslash escapes. */
+/** The options of a gap's text, split at each `|` no backslash escapes
+ *  and no `{…}` holds (a ruby, `[[{春天|chūn tiān}]]`, is one answer). */
 function splitOptions(inner: string): string[] {
   const out: string[] = [];
   let cur = '';
+  let braces = 0;
   for (let k = 0; k < inner.length; k++) {
     const c = inner[k]!;
     if (c === '\\' && inner[k + 1] === '|') { cur += '|'; k++; continue; }
-    if (c === '|') { out.push(cur.trim()); cur = ''; continue; }
+    if (c === '{') braces++;
+    else if (c === '}' && braces > 0) braces--;
+    else if (c === '|' && braces === 0) { out.push(cur.trim()); cur = ''; continue; }
     cur += c;
   }
   out.push(cur.trim());

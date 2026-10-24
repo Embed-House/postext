@@ -10,6 +10,7 @@ import type { ResolvedConfig, VDTBlock, VDTDocument } from '../vdt.js';
 import { exerciseSettingsOf, type ExerciseSettings } from '../defaults/exercises.js';
 import { resolveChipStylesConfig } from '../defaults/chipStyles.js';
 import { resolveParagraphStylesConfig } from '../defaults/paragraphStyles.js';
+import { relinkToPalette } from '../defaults/shared.js';
 import { dimensionToPx } from '../units.js';
 import { computeBaselineGrid, resolvedDirection, resolvedLocale } from '../pipeline/config.js';
 import { exerciseChipStyles, exerciseParagraphStyles } from './styles.js';
@@ -31,7 +32,8 @@ export function withExerciseStyles(resolved: ResolvedConfig): ResolvedConfig {
   const hit = withStyles.get(resolved);
   if (hit) return hit;
   const settings = exerciseSettingsFor(resolved);
-  const chips = resolveChipStylesConfig(settings.styles.flatMap(exerciseChipStyles));
+  // Their defaults link to `main-color`: set them to the document's palette.
+  const chips = relinkToPalette(resolveChipStylesConfig(settings.styles.flatMap(exerciseChipStyles)), resolved.colorPalette);
   const paragraphs = resolveParagraphStylesConfig(settings.styles.flatMap(exerciseParagraphStyles), resolved.bodyText);
   const out: ResolvedConfig = {
     ...resolved,

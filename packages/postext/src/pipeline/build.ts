@@ -235,6 +235,7 @@ import {
 } from './resourceNumbering.js';
 import { documentLocale, effectiveResourceTypes } from '../defaults/resourceTypes.js';
 import { resolveCalloutStylesConfig } from '../defaults/calloutStyles.js';
+import { relinkToPalette } from '../defaults/shared.js';
 import { codeBoxStyle, codeParseOptions, wrapCodeBlocks } from './codeBlocks.js';
 import { expandScoreBlocks, scoreInfoOf, scoreKeepHeight } from './scoreBlocks.js';
 import { buildCodeLineNumbers, codeOverflowWarnings } from './codeLines.js';
@@ -1045,8 +1046,12 @@ function placeDocumentPass(
       )
       : []),
   ];
+  const exerciseBoxIds = new Set(exerciseExpansion?.wrapped ? exerciseExpansion.boxes.map((b) => b.id) : []);
   const calloutStyles = syntheticBoxes.length > 0
-    ? [...resolved.calloutStyles, ...resolveCalloutStylesConfig(syntheticBoxes, resolved.bodyText, resolved.headings, resolved.unorderedLists, config?.locale)]
+    ? [...resolved.calloutStyles, ...resolveCalloutStylesConfig(syntheticBoxes, resolved.bodyText, resolved.headings, resolved.unorderedLists, config?.locale)
+      // The exercise boxes' defaults (a solutions title, a bank's frame)
+      // link to `main-color`: set them to the document's palette.
+      .map((s) => (exerciseBoxIds.has(s.id) ? relinkToPalette(s, config?.colorPalette) : s))]
     : resolved.calloutStyles;
   // A box nested in another looks its style up in the configuration it is
   // laid out with: the listings' box among them.

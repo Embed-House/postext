@@ -282,6 +282,9 @@ class Emitter {
   private bankWords: Run[] = [];
   /** The number, marks, icons and title, before the instruction. */
   private leadRun: Run | undefined;
+  /** Whether the lead ends in a number whose suffix is a full-width mark
+   *  (`一、`, `１．`): what follows it takes no word space. */
+  private leadTight = false;
   /** Words a grid could not place. */
   readonly unplaced: string[] = [];
   private readonly random: () => number;
@@ -313,6 +316,17 @@ class Emitter {
    *  `example` exercise (it is not asked). */
   private hit(slot: string, first: boolean): { exercise?: { ex: number; slot: string } } {
     return this.example && first && !this.teacher ? {} : { exercise: { ex: this.ex.id, slot } };
+  }
+
+  /** Between two answers of a key: a middle dot, but `؛` in Arabic, where
+   *  a dot beside Arabic-Indic digits reads as a zero (`٠`). */
+  private get sep(): string {
+    return this.book.language === 'ar' ? '\u061B ' : ' · ';
+  }
+
+  /** An item's number in the document's digits (`١`, `۱`, `1`). */
+  private num(n: number): string {
+    return formatCounter(n, counterStyleOf('decimal', this.ctx.locale), this.ctx.locale, this.ctx.digits);
   }
 
   private label(k: number): string {
@@ -392,7 +406,7 @@ class Emitter {
     const firstAt = body[0]?.type === 'containerStart' && body[0].containerAttrs?.style === this.ids.text ? 1 : 0;
     if (this.ex.instruction.length === 0 && this.leadRun && body[firstAt]?.type === 'paragraph') {
       const first = body[firstAt]!;
-      const run = joinRuns(this.leadRun, textRun(SPACE, this.at), runOf(first));
+      const run = joinRuns(this.leadRun, textRun(this.leadTight ? '' : SPACE, this.at), runOf(first));
       body[firstAt] = { ...first, text: run.text, spans: run.spans, sourceMap: run.sourceMap };
       head = [];
     }
@@ -440,6 +454,8 @@ class Emitter {
     const ex = this.ex;
     const n = this.style.number;
     const lead: Run[] = [];
+    // A full-width suffix carries its own room: `一、看拼音`, not `一、 看拼音`.
+    const tight = /[\u3001\u3002\uFF0C\uFF0E\uFF1A]$/u.test(n.suffix);
     if (n.show && this.number) {
       const text = `${n.label ? `${n.label} ` : ''}${this.number}${n.suffix}`;
       lead.push(chipRun(this.ids.number, textRun(text, this.at), this.at));
@@ -457,13 +473,15 @@ class Emitter {
     const first = ex.instruction[0];
     const rest = ex.instruction.slice(1);
     const runs: Run[] = [];
-    const leadRun = joinRuns(...lead.flatMap((r, k) => (k > 0 ? [textRun(SPACE, this.at), r] : [r])));
+    const numbered = n.show && !!this.number;
+    const leadRun = joinRuns(...lead.flatMap((r, k) => (k > 0 ? [textRun(k === 1 && numbered && tight ? '' : SPACE, this.at), r] : [r])));
     this.leadRun = leadRun.text ? leadRun : undefined;
+    this.leadTight = numbered && tight && lead.length === 1;
     const bold = this.style.instruction.bold;
     const styled = (r: Run): Run => (bold ? { ...r, spans: r.spans.map((s) => (s.chip ? s : { ...s, bold: true })) } : r);
     if (first !== undefined) {
       const body = styled(this.gapsOf(runOf(this.blocks[first]!)));
-      runs.push(leadRun.text ? joinRuns(leadRun, textRun(SPACE, this.at), body) : body);
+      runs.push(leadRun.text ? joinRuns(leadRun, textRun(this.leadTight ? '' : SPACE, this.at), body) : body);
     } else if (leadRun.text) {
       runs.push(leadRun);
     }
@@ -667,14 +685,19 @@ class Emitter {
   }
 
   private choiceRun(gap: ExerciseGap, n: number, at: number): Run {
-    const parts: Run[] = [textRun('(', at)];
+    // Chinese and Japanese print the choice in full-width brackets, the
+    // options an ideographic space (`（zhǒng　zhòng）`) or a middle dot
+    // (`（ちりました・のぼりました）`) apart.
+    const lang = this.book.language;
+    const wide = lang === 'zh' || lang === 'ja';
+    const parts: Run[] = [textRun(wide ? '\uFF08' : '(', at)];
     gap.options.forEach((opt, k) => {
-      if (k > 0) parts.push(textRun(' / ', at));
+      if (k > 0) parts.push(textRun(lang === 'zh' ? '\u3000' : lang === 'ja' ? '\u30FB' : ' / ', at));
       const right = gap.correct.includes(k);
       const words: Run = { text: gap.texts[k] ?? '', spans: opt.length > 0 ? opt : [{ text: gap.texts[k] || '\u00A0', bold: false, italic: false }], sourceMap: [] };
       parts.push(chipRun(this.answered(n === 1) && right ? this.ids.choiceRing : this.ids.choice, words, at, this.hit(`g${n}o${k + 1}`, n === 1)));
     });
-    parts.push(textRun(')', at));
+    parts.push(textRun(wide ? '\uFF09' : ')', at));
     this.slots.push({ key: `g${n}`, kind: 'choice', options: gap.options.length, correct: gap.correct.map((k) => k + 1), multiple: false });
     return joinRuns(...parts);
   }
@@ -693,7 +716,7 @@ class Emitter {
   private keyOfGaps(): void {
     for (const g of this.ex.gaps) {
       const answer = g.gap.correct.map((k) => g.gap.texts[k] ?? '').filter(Boolean)[0] ?? '';
-      if (answer) this.key.push(textRun(this.ex.gaps.length > 1 ? `${g.n} ${answer}` : answer, this.at));
+      if (answer) this.key.push(textRun(this.ex.gaps.length > 1 ? `${this.num(g.n)} ${answer}` : answer, this.at));
     }
   }
 
@@ -780,7 +803,7 @@ class Emitter {
       const right = order.findIndex((k) => q.options[k]!.correct);
       this.key.push(joinRuns(textRun(`${this.label(right)} `, this.at), this.optionText(q.options[order[right]!]!.block)));
     } else {
-      this.key.push(textRun(`${this.ex.questions.length > 1 ? `${qi + 1} ` : ''}${rightLabels.join(', ')}`, this.at));
+      this.key.push(textRun(`${this.ex.questions.length > 1 ? `${this.num(qi + 1)} ` : ''}${rightLabels.join(', ')}`, this.at));
     }
     // The stem's bracket to write the letter in (Chinese and Japanese tests).
     const blocks: ContentBlock[] = [];
@@ -789,7 +812,7 @@ class Emitter {
       const stem = this.passThrough(this.blocks[q.stem]!, q.stem);
       const at = stem.sourceStart;
       const n = this.ex.questions.filter((x) => x.stem !== undefined).indexOf(q) + 1;
-      blocks.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(`${n}.`, at, { bold: true }), tabRun(at), runOf(stem))]));
+      blocks.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(`${this.num(n)}.`, at, { bold: true }), tabRun(at), runOf(stem))]));
     }
     const optionStyle = q.stem !== undefined ? this.ids.optionUnder : this.ids.option;
     // `columns=3` on the fence, or a row layout: the options side by side.
@@ -814,18 +837,22 @@ class Emitter {
       const at = this.blocks[opt.block]!.sourceStart;
       const slot = `tf${k + 1}`;
       this.slots.push({ key: slot, kind: 'truefalse', correct: [opt.correct ? 1 : 2] });
-      const parts: Run[] = [textRun(`${k + 1}.`, at), tabRun(at), this.optionText(opt.block), tabRun(at)];
+      const parts: Run[] = [textRun(`${this.num(k + 1)}.`, at), tabRun(at), this.optionText(opt.block), tabRun(at)];
       if (this.style.trueFalse.look === 'bracket') {
+        // One bracket at the line's end to write the answer in: full width
+        // in Chinese and Japanese, `（　）`.
+        const wide = this.book.language === 'zh' || this.book.language === 'ja';
         const answer = textRun(opt.correct ? t : f, at);
-        parts.push(chipRun(this.answered(k === 0) ? this.ids.blankAnswer : this.ids.blank, answer, at, {
-          widthText: `${t.length > f.length ? t : f}\u2003\u2003`, ...(this.answered(k === 0) ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(slot, k === 0),
-        }));
+        const shown = this.answered(k === 0);
+        parts.push(textRun(wide ? '\uFF08' : '(', at), chipRun(shown ? this.ids.answer : this.ids.icon, answer, at, {
+          widthText: `${t.length > f.length ? t : f}\u2003`, ...(shown ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(slot, k === 0),
+        }), textRun(wide ? '\uFF09' : ')', at));
       } else {
         parts.push(textRun(`${t}\u00A0`, at), chipRun(this.answered(k === 0) && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, this.hit(`${slot}t`, k === 0)));
         parts.push(textRun(`\u2003${f}\u00A0`, at), chipRun(this.answered(k === 0) && !opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, this.hit(`${slot}f`, k === 0)));
       }
       runs.push(joinRuns(...parts));
-      this.key.push(textRun(`${k + 1} ${opt.correct ? t : f}`, this.at));
+      this.key.push(textRun(`${this.num(k + 1)} ${opt.correct ? t : f}`, this.at));
     });
     return this.paragraphs(this.ids.statement, runs);
   }
@@ -847,7 +874,7 @@ class Emitter {
       this.slots.push({ key: `p${i + 1}`, kind: 'pair', correct: [pos + 1], ...(label ? { accept: [label] } : {}) });
       this.key.push(this.style.match.look === 'dots'
         ? joinRuns(this.gapsOf(p.left), textRun(' \u2013 ', this.at), this.gapsOf(p.right))
-        : textRun(`${i + 1} ${this.bareLabel(pos) || String(pos + 1)}`, this.at));
+        : textRun(`${this.num(i + 1)} ${this.bareLabel(pos) || this.num(pos + 1)}`, this.at));
     });
     if (this.style.match.look === 'dots') {
       return this.drawnGrid(gridBox({
@@ -865,14 +892,14 @@ class Emitter {
       const p = lefts[i];
       if (p) {
         const pos = posOf.get(pairs.indexOf(p))!;
-        parts.push(textRun(`${i + 1}. `, this.at), this.gapsOf(p.left), textRun(' ', this.at));
-        parts.push(chipRun(this.answered(i === 0) ? this.ids.blankAnswer : this.ids.blank, textRun(this.bareLabel(pos) || String(pos + 1), this.at), this.at, {
+        parts.push(textRun(`${this.num(i + 1)}. `, this.at), this.gapsOf(p.left), textRun(' ', this.at));
+        parts.push(chipRun(this.answered(i === 0) ? this.ids.blankAnswer : this.ids.blank, textRun(this.bareLabel(pos) || this.num(pos + 1), this.at), this.at, {
           widthText: '\u2003\u2003', ...(this.answered(i === 0) ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(`p${i + 1}`, i === 0),
         }));
       }
       parts.push(tabRun(this.at));
       const k = order[i];
-      if (k !== undefined) parts.push(textRun(`${this.label(i) || String(i + 1)} `, this.at), this.gapsOf(rights[k]!));
+      if (k !== undefined) parts.push(textRun(`${this.label(i) || this.num(i + 1)} `, this.at), this.gapsOf(rights[k]!));
       runs.push(joinRuns(...parts));
     }
     return this.paragraphs(this.ids.pairs, runs);
@@ -884,16 +911,16 @@ class Emitter {
     const runs = order.map((k, pos) => {
       const at = this.blocks[seq[k]!]!.sourceStart;
       const slot = `o${pos + 1}`;
-      this.slots.push({ key: slot, kind: 'rank', accept: [String(k + 1)] });
+      this.slots.push({ key: slot, kind: 'rank', accept: [String(k + 1), this.num(k + 1)].filter((v, j, a) => a.indexOf(v) === j) });
       return joinRuns(
-        chipRun(this.answered(k === 0) ? this.ids.rankAnswer : this.ids.rank, textRun(String(k + 1), at), at, {
+        chipRun(this.answered(k === 0) ? this.ids.rankAnswer : this.ids.rank, textRun(this.num(k + 1), at), at, {
           ...(this.answered(k === 0) ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(slot, k === 0),
         }),
         tabRun(at),
         this.optionText(seq[k]!),
       );
     });
-    this.key.push(textRun(order.map((k) => String(k + 1)).join(' · '), this.at));
+    this.key.push(textRun(order.map((k) => this.num(k + 1)).join(this.sep), this.at));
     return this.paragraphs(this.ids.item, runs);
   }
 
@@ -903,10 +930,10 @@ class Emitter {
       const at = this.blocks[s.block]!.sourceStart;
       const order = shuffledOrder(s.pieces.length, seededRandom(this.book.seed, this.ex.ordinal, 'scramble', k));
       const words = order.flatMap((j, pos) => (pos > 0 ? [textRun(' / ', at), s.pieces[j]!] : [s.pieces[j]!]));
-      out.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(`${k + 1}.`, at), tabRun(at), ...words)]));
+      out.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(`${this.num(k + 1)}.`, at), tabRun(at), ...words)]));
       const sentence = s.pieces.map((p) => plain(p)).join(' ');
       out.push(...this.area(1, `sc${k + 1}`, [sentence], this.style.area.kind === 'none' ? 'lines' : this.style.area.kind, undefined, this.example && k === 0));
-      this.key.push(textRun(`${k + 1} ${sentence}`, at));
+      this.key.push(textRun(`${this.num(k + 1)} ${sentence}`, at));
     });
     return out;
   }
@@ -937,7 +964,8 @@ class Emitter {
     const box = gridBox({
       kind: ex.kind as 'wordsearch' | 'crossword' | 'arithmetic', id: `${this.ids.frame}-grid-${ex.ordinal}`, style: this.style, exercise: ex,
       blocks: this.blocks, seed: this.book.seed, teacher: this.teacher, bodySizePt: this.ctx.bodySizePt, lineHeightPt: this.ctx.lineHeightPt, measurePt: this.ctx.measurePt,
-      words: { across: this.book.words.across, down: this.book.words.down },
+      words: { across: this.book.words.across, down: this.book.words.down, comma: this.book.language === 'ar' ? '\u060C ' : this.book.language === 'zh' || this.book.language === 'ja' ? '\u3001' : ', ' },
+      num: (n) => this.num(n),
       ...(this.ctx.rtl ? { rtl: true } : {}),
       ...(this.ctx.bodyFont ? { font: this.ctx.bodyFont } : {}),
     });
@@ -964,12 +992,14 @@ class Emitter {
     if (this.key.length === 0) this.exerciseBlocks();
     const sol = solutionsOf(this.style, this.book);
     const lead = listed && this.number ? [textRun(`${this.number}${this.style.number.suffix || '.'}`, this.at, { bold: true }), tabRun(this.at)] : [];
-    const keyRun = this.key.length > 0 ? joinRuns(...this.key.flatMap((r, k) => (k > 0 ? [textRun(' · ', this.at), r] : [r]))) : EMPTY_RUN;
+    const keyRun = this.key.length > 0 ? joinRuns(...this.key.flatMap((r, k) => (k > 0 ? [textRun(this.sep, this.at), r] : [r]))) : EMPTY_RUN;
     const out: ContentBlock[] = [];
     const worked: ContentBlock[] = [];
     if (sol.layout === 'full') {
       for (const s of this.ex.solutions) for (let j = s.start + 1; j < s.end; j++) worked.push(this.blocks[j]!);
     }
+    // Nothing to print (an open question with no model answer): no entry.
+    if (!keyRun.text && worked.length === 0) return [];
     // A worked solution's first paragraph goes on the number's line when
     // there is no key (an open question).
     if (!keyRun.text && worked[0]?.type === 'paragraph') {
