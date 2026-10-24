@@ -355,6 +355,9 @@ export interface VDTInlineIcon {
   heightPx: number;
   /** From the segment's left edge to the box's; absent = 0. */
   insetPx?: number;
+  /** How far the box reaches below the line's baseline (#1248); absent = 0:
+   *  it stands on the baseline. A glyph's own baseline drops with it. */
+  dropPx?: number;
   /** Resolved colour (hex): a glyph's or a line's ink, a picture's tint.
    *  Absent: the text's colour (a picture keeps its own). */
   color?: string;

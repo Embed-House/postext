@@ -186,7 +186,9 @@ function rawOf(seg: VDTLineSegment, ctx: InlineContext): string | undefined {
     // reflowable book does not carry the pictures of symbols).
     const icon = seg.swatch.icon;
     const name = icon.alt ? `role="img" aria-label="${xmlAttr(icon.alt)}"` : 'aria-hidden="true"';
-    const color = icon.color ? `color:${xmlAttr(icon.color)};` : '';
+    // A glyph that reaches below the baseline (#1248) is lowered as much.
+    const drop = icon.dropPx ? `vertical-align:-${round(icon.dropPx / Math.max(1, ctx.basePx))}em;` : '';
+    const color = (icon.color ? `color:${xmlAttr(icon.color)};` : '') + drop;
     if (icon.kind === 'glyph' && icon.glyph) return `<span class="pt-icon" ${name}${color ? ` style="${color}"` : ''}>${xmlText(icon.glyph)}</span>`;
     if (icon.kind === 'line') {
       // Styled in place: the book's stylesheet stays what it was.

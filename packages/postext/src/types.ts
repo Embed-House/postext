@@ -4331,7 +4331,8 @@ export interface ExerciseIcon {
   /** What it stands for, read aloud and in the tagged PDF. */
   alt?: string;
   /** Its height in ems of the instruction. Default the height of a
-   *  capital (`0.75`). */
+   *  capital (`0.75`); beside a shaped number, the shape's height. An icon
+   *  beside a shaped number sits on its band, centred on it (#1248). */
   size?: number;
 }
 

@@ -331,6 +331,10 @@ export interface InlineIcon {
    *  a capital (0.75 em, as a swatch's side). A glyph is set at the size
    *  whose capitals are that high. */
   size?: number;
+  /** How far the box reaches below the baseline, in ems of the text around
+   *  it; default 0 (it stands on the baseline). Set by the pipeline for an
+   *  exercise icon beside a shaped number (#1248), which shares its band. */
+  drop?: number;
   /** Set by the pipeline for a `resource` icon: the picture to draw and
    *  its width over its height. Absent when the resource is unknown. */
   picture?: { fileId: string; format?: string; svg: boolean; aspect: number };
