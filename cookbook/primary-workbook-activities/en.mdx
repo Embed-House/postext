@@ -1,0 +1,57 @@
+---
+title: "Primary workbook unit of activities"
+summary: "A four-page science workbook unit whose eleven activities are :::exercise fences in the Markdown, printed by one exercise style: discs, bank, dots to join."
+plain: "A school activity book for eight-year-olds about animals with backbones. The questions and their answers are written in the text; one style decides how every activity looks on the page."
+description: "A primary science workbook in Postext: numbered activity discs, a word bank, true or false, join with a line, circle, order, a wordsearch and squared paper."
+question: "How do I set a workbook page of activities: numbers in discs, a word bank, true or false, join with a line?"
+aliases: ["activity book", "workbook", "cuaderno de actividades", "worksheet", "word bank", "join with a line", "true or false", "wordsearch", "fill in the blanks", "activity icons"]
+pageNotes: { "1": "The unit opener: a green band with a white Unit 5 pill and the title Animals with backbones, a painting of a pond with a frog, a kingfisher, a trout, a turtle and a rabbit, a short text, a Remember box with a yellow stripe and activity 1: a dashed word bank over four sentences with blank lines.", "3": "Activities 6 and 7: five painted stages of a frog's life in a jumbled order over five sentences with a box for each number, and a ten-by-ten wordsearch in green rules with its six words under it." }
+---
+
+## What you'll build
+
+Unit 5 of a science activity book for Year 3, on A4: *Animals with backbones*. The opener sets the unit in a green band over a painting of a pond; after it come eleven activities, each with its number in a green disc and a pencil, speech or pair icon. A word bank in a dashed tinted box, sentences with T and F to tick, animals to join to their groups with a line, words to circle in a sentence and in a short text, frog stages to number, a wordsearch, animals to sort, an open question on lines and another on squared paper. A Spanish edition prints the same unit as its own schools set it, with V and F and *une con flechas*. Three paintings, generated with a diffusion model, illustrate it.
+
+## Method
+
+### 1 · Write the activities in the Markdown, style them once
+
+<Excerpt region="answer" />
+
+Each activity is an `:::exercise` fence. What the pupil reads and what counts as right are in the text: `[[hair]]` is a blank whose answer is *hair*, `- [x]` a true statement, `- Dolphin -> Mammal` a pair, `[[pelo | (plumas)]]` a choice whose right word is in brackets. The style holds only the look, so the eleven activities share one `actividad` and a second, `cuadricula`, that `extends` it to swap the lines for squared paper. The engine numbers them, shuffles the right column of the pairs and the order items with a seed, makes the blanks as wide as the longest answer so none gives itself away, and prints T and F in English and V and F in Spanish without a word in the config.
+
+### 2 · Give the activities their icons
+
+<Excerpt region="icons" />
+
+An icon in `exerciseStyles[].icons` names a picture of the book, and `:::exercise{icon="oral pareja"}` puts the pictures after the number, in the order written, read aloud by their `alt`. These are flat signs drawn in code on a disc of the unit colour, so they stay sharp in the PDF and change with the palette. A workbook also prints a pencil beside activities to write; the speaking and pair icons mark the last one, which has no writing area (`area="none"`).
+
+### 3 · Open the unit with a band and a painting
+
+<Excerpt region="opener" />
+
+The unit's level-1 heading draws the band, the number pill and the title from its attributes (`unidad="Unit 5" pic="charca"`), and the painting under the band at 176 × 75 mm. The pictures inside activities use a resource type with no caption and no number (`dibujo`), as a workbook prints them. The text reads easily for young readers: Atkinson Hyperlegible Next at 12 pt on 17 pt, no hyphenation, ragged right.
+
+## Variations
+
+### Print the answers for the teacher
+
+The same Markdown makes the teacher's copy: every blank filled in, the true boxes ticked and the right words ringed in magenta.
+
+```diff
+   exerciseStyles: [actividad, cuadricula],
++  exercises: { edition: 'teacher' },
+```
+
+### Number the activities in squares
+
+A rounded square in the unit colour reads as another publisher's house style.
+
+```diff
+-  number: { shape: 'disc', background: col('unit'), color: col('paper'),
++  number: { shape: 'rounded', background: col('unit'), color: col('paper'),
+```
+
+## Pitfalls
+
+- The words to circle in a running text keep a little room on each side for the ring, so a word right before a comma or a full stop stands slightly apart from it.
