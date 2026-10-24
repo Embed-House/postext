@@ -116,4 +116,16 @@ describe('a span: page heading that opens mid-page (#539)', () => {
     expect(doc.pages[second!.pageIndex]!.columns[second!.columnIndex]!.band ?? 0).toBe(0);
     for (const h of run) expect(h.pageIndex).toBe(second!.pageIndex);
   });
+
+  it('moves on when the heading right under it does not fit the band (#1222)', () => {
+    const md = 'Lorem ipsum dolor sit amet.\n\n# Title {style="termine"}\n\n## Sub\n\nLorem ipsum\n';
+    for (const height of [77, 80, 85, 90]) {
+      const doc = buildDocument({ markdown: md }, {
+        page: { height: mm(height) },
+        headingStyles: [{ id: 'termine', breakBefore: { enabled: false }, span: 'page', spanBreak: false }],
+      }, createMeasurementCache());
+      const [title, sub] = headings(doc);
+      expect(sub!.pageIndex).toBe(title!.pageIndex);
+    }
+  });
 });
