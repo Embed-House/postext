@@ -9003,8 +9003,12 @@ function placeDocumentPass(
 
       // Empty column with less than a line of room (a band cap cutting right
       // under a float band, a column swallowed by reservations): nothing can
-      // go here — move on. The next column, or a fresh page, has room.
-      if (curCol.availableHeight < style.lineHeightPx - 0.01 && totalRemainHeight > curCol.availableHeight + 0.01) {
+      // go here — move on. The next column, or a fresh page, has room —
+      // unless the page's whole content area is shorter than a line (#1222):
+      // no column ever has, and the block is set here, as one taller than
+      // the page.
+      if (curCol.availableHeight < style.lineHeightPx - 0.01 && totalRemainHeight > curCol.availableHeight + 0.01
+        && contentArea.height >= style.lineHeightPx - 0.01) {
         pendingSpacing = 0;
         advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx, onNewPage);
         continue;
