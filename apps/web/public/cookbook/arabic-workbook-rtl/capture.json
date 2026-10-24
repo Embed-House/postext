@@ -1,0 +1,449 @@
+{
+  "schemaVersion": 1,
+  "slug": "arabic-workbook-rtl",
+  "sourceHash": "199b9182653e0b5481ed2e3c863b17cd1c5d7b692344ec6a493a9b7063fcafb5",
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-24T15:50:14.815Z",
+  "variants": {
+    "ar": {
+      "hash8": "cd08e1dc",
+      "vdtHash": "b4ab12fd1b010cece6bfbcf30c9c72c9dde5e744",
+      "timings": {
+        "importMs": 10469,
+        "fontsMs": 1198,
+        "buildMs": 126,
+        "totalMs": 21548,
+        "builds": 2
+      },
+      "specimen": {
+        "trimMm": [
+          170,
+          240
+        ],
+        "dpi": 150,
+        "layoutType": "single",
+        "mirror": true,
+        "body": {
+          "family": "Noto Naskh Arabic",
+          "sizePt": 13,
+          "leadingPt": 22
+        },
+        "families": [
+          "Baloo Bhaijaan 2",
+          "Noto Naskh Arabic"
+        ],
+        "pages": 8,
+        "ownLines": 149
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "١",
+          "role": "opener",
+          "w": 1000,
+          "h": 1412,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 89624,
+          "alt": "صفحة الافتتاح ١: في الحديقة."
+        },
+        {
+          "n": 2,
+          "label": "٢",
+          "role": "body",
+          "w": 1000,
+          "h": 1412,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 46064,
+          "alt": "الصفحة ٢."
+        },
+        {
+          "n": 3,
+          "label": "٣",
+          "role": "body",
+          "w": 1000,
+          "h": 1412,
+          "file": "p03.webp",
+          "strip": "p03.s.webp",
+          "bytes": 41602,
+          "alt": "الصفحة ٣."
+        },
+        {
+          "n": 4,
+          "label": "٤",
+          "role": "body",
+          "w": 1000,
+          "h": 1412,
+          "file": "p04.webp",
+          "strip": "p04.s.webp",
+          "bytes": 14342,
+          "alt": "الصفحة ٤."
+        },
+        {
+          "n": 5,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1412,
+          "file": "p05.webp",
+          "strip": "p05.s.webp",
+          "bytes": 89776,
+          "alt": "صفحة الافتتاح 1: في الحديقة."
+        },
+        {
+          "n": 6,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1412,
+          "file": "p06.webp",
+          "strip": "p06.s.webp",
+          "bytes": 46284,
+          "alt": "الصفحة 2."
+        },
+        {
+          "n": 7,
+          "label": "3",
+          "role": "body",
+          "w": 1000,
+          "h": 1412,
+          "file": "p07.webp",
+          "strip": "p07.s.webp",
+          "bytes": 42322,
+          "alt": "الصفحة 3."
+        },
+        {
+          "n": 8,
+          "label": "4",
+          "role": "body",
+          "w": 1000,
+          "h": 1412,
+          "file": "p08.webp",
+          "strip": "p08.s.webp",
+          "bytes": 14750,
+          "alt": "الصفحة 4."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          null
+        ],
+        [
+          null,
+          4
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          7,
+          null
+        ]
+      ],
+      "binding": "right",
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "arabic-workbook-rtl.postext",
+        "bytes": 178912,
+        "keep": "first",
+        "pages": 4,
+        "chapters": [
+          {
+            "pages": 4,
+            "hash": "190992637e193e17",
+            "lines": "998958e79d343e99"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocument",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf",
+          "withLoadedFonts"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.avoidOrphans",
+          "bodyText.avoidWidows",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].body",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].body.textAlign",
+          "calloutStyles[].border",
+          "calloutStyles[].border.color",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].border.style",
+          "calloutStyles[].border.width",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].keepTogether",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].stripe",
+          "calloutStyles[].stripe.color",
+          "calloutStyles[].stripe.enabled",
+          "calloutStyles[].stripe.side",
+          "calloutStyles[].stripe.width",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "chipStyles",
+          "chipStyles[].backgroundEnabled",
+          "chipStyles[].borderColor",
+          "chipStyles[].borderWidth",
+          "chipStyles[].id",
+          "chipStyles[].minWidth",
+          "chipStyles[].paddingX",
+          "chipStyles[].paddingY",
+          "chipStyles[].underline",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].answers",
+          "exerciseStyles[].answers.color",
+          "exerciseStyles[].answers.fontFamily",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].bank",
+          "exerciseStyles[].bank.box",
+          "exerciseStyles[].bank.order",
+          "exerciseStyles[].blank",
+          "exerciseStyles[].blank.color",
+          "exerciseStyles[].blank.look",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].grid.uppercase",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.color",
+          "exerciseStyles[].instruction.fontFamily",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.layout",
+          "exerciseStyles[].solutions",
+          "exerciseStyles[].solutions.box",
+          "exercises",
+          "exercises.solutions",
+          "exercises.solutions.placement",
+          "footer",
+          "footer.elements",
+          "footer.elements[].align",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].fontWeight",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "layout",
+          "layout.layoutType",
+          "locale",
+          "orderedLists",
+          "orderedLists.color",
+          "orderedLists.fontWeight",
+          "orderedLists.numberFormat",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginBottom",
+          "paragraphStyles[].marginTop",
+          "paragraphStyles[].textAlign"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "chipStyles",
+          "colorPalette",
+          "exerciseStyles",
+          "exercises",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "orderedLists",
+          "page",
+          "paragraphStyles"
+        ],
+        "configLeaves": 236,
+        "designElements": 7,
+        "directives": [
+          ":::paragraphs",
+          ":::exercise",
+          ":::solutions"
+        ],
+        "inline": [
+          "{attrs}",
+          ":chip"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 1,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo Bhaijaan 2",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Baloo Bhaijaan 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Naskh Arabic",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Noto Naskh Arabic",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-splitting",
+          "chips",
+          "column-balancing",
+          "document-digits",
+          "exercise-choice",
+          "exercise-gaps",
+          "exercise-match",
+          "exercise-open",
+          "exercise-order",
+          "exercise-puzzles",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "opener-design",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resources",
+          "right-binding",
+          "text-direction"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 1.32
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "capture.sandbox keeps build 1 of 2: the bundle is that document alone"
+          }
+        ]
+      }
+    }
+  }
+}

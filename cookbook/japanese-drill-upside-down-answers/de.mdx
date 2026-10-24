@@ -1,0 +1,51 @@
+---
+title: "Japanisches Übungsheft mit Lösungen auf dem Kopf"
+summary: "Zwei Seiten einer japanischen Übungsheftreihe, Rechnen waagerecht und Kanji in Spalten, unter jeder Aufgabe ihre Lösungen auf dem Kopf."
+plain: "Ein japanisches Übungsheft: Rechnungen, Kästchen, Auswahl und richtig oder falsch auf einer Seite, Kanji und Lesungen senkrecht auf einer anderen. Unter jeder Aufgabe stehen die Lösungen kopfüber; das Kind dreht das Heft zum Nachsehen."
+description: "Eine japanische ドリル in Postext: ひっ算, □-Kästchen, Auswahl ア イ ウ und ○× waagerecht, eine 国語-Seite senkrecht, Lösungen um 180° gedreht unter jeder Aufgabe."
+question: "Wie drucke ich die Lösungen kopfüber unter jede Aufgabe eines japanischen Übungshefts?"
+aliases: ["ドリル", "計算ドリル", "漢字ドリル", "japanisches Übungsheft", "Lösungen auf dem Kopf", "kopfstehende Lösungen", "umgedrehte Lösungen", "こたえ", "ひっ算", "書き取り", "senkrechter Satz", "tategaki", "○×"]
+pageNotes: { "1": "Die Rechenseite: ein hellblaues Band mit runden Ecken, ein gelbes Etikett さんすう 12, der Titel 3けたのたし算とひき算 und ein gemalter Tanuki mit einem Bleistift; eine Linie für den Namen und ein Kästchen für die Punkte; Aufgabe 1, vier schriftliche Rechnungen mit gepunkteten Kästchen für die Ziffern; Aufgabe 2, sechs Rechnungen mit je einem Kästchen dahinter; Aufgabe 3, zwei Fragen mit ア イ ウ in einer Reihe; unter jeder Aufgabe ihre Lösungen in kleiner grauer Schrift, auf dem Kopf.", "3": "Die Kanji-Seite, senkrecht gesetzt und rechts gebunden: Dasselbe hellblaue Band läuft jetzt am rechten Rand hinab, mit dem Titel 春のことば in Spalten und dem gemalten Fuchs an seinem Fuß; Lesungen mit einem hohen Kästchen daneben, Lesungen zum Eintragen in Klammern neben unterstrichenen Kanji, Auswahl in Klammern voller Breite und die Lösungen jeder Aufgabe kopfüber am Fuß ihrer Spalte." }
+---
+
+## Was Sie setzen
+
+Zwei Seiten aus einer Übungsheftreihe für die dritte Klasse im Format B5. Die Rechenseite läuft waagerecht: ein hellblaues Band mit dem Fachetikett, dem Titel und einem Tanuki als Maskottchen, eine Linie für den Namen und ein Kästchen für die Punkte, danach ひっ算 (schriftliches Rechnen) mit einem Kästchen für jede Ziffer des Ergebnisses, Zahlenkästchen hinter sechs Rechnungen, Auswahlantworten ア イ ウ in einer Reihe, ○×-Aussagen mit einer Klammer am Zeilenende und zwei Textaufgaben mit Linien für den Rechenweg. Die Kanji-Seite ist so gesetzt, wie ein 国語-Heft gedruckt wird, von oben nach unten und von rechts nach links: Lesungen mit einem Kästchen für das Kanji, unterstrichene Wörter, deren Lesung in Klammern kommt, Antworten zum Einkreisen und eine Bedeutung zum Auswählen. Unter jeder Aufgabe stehen ihre Lösungen kopfüber in kleiner grauer Schrift. Das Kind sieht, wo sie stehen, kann sie nicht auf einen Blick lesen und dreht das Heft zum Nachsehen.
+
+## Zubereitung
+
+### 1 · Die Lösungen jeder Aufgabe umdrehen
+
+Der Code steht oben in [der kurzen Antwort](#die-kurze-antwort). `placement: 'inverted'` setzt die Lösungen hinter jede Aufgabe in einen um 180° gedrehten Kasten, und dieser Kasten liegt im Kasten der Aufgabe selbst, sodass ein Seitenumbruch die beiden nie trennt. Die Lösungen entstehen aus der Aufgabe: die Rechnungen mit ihren Ergebnissen, das Katakana der richtigen Antwort, ○ und ×, die Wörter der Lücken. Der Kastenstil der Lösungen, `kotae`, setzt die Schrift nur klein und grau.
+
+### 2 · Ein Band für eine waagerechte und eine senkrechte Seite
+
+<Excerpt region="header" />
+
+Auf einer senkrechten Seite liegt die Gestaltung einer Überschrift entlang ihrer Spalte: x läuft die Seite hinab, y nach links. Das Band, an `top-left` verankert und so breit wie die Spalte, steht auf der Rechenseite oben und auf der Kanji-Seite am rechten Rand; das Maskottchen, an `top-right` verankert, sitzt auf beiden Seiten am anderen Ende des Bands. Keine Angabe in der Gestaltung nennt eine Richtung.
+
+### 3 · Zwei Hefte aus einem Text
+
+<Excerpt region="two-books" />
+
+Die Konfiguration ist eine Funktion, also bekommt jeder Satzlauf sein eigenes Objekt, und zwischen beiden ändert sich nur `writingMode`. Senkrecht gesetzt, bindet das 国語-Heft von selbst rechts; `showBook` legt jedes Heft auf seine Seite des Rückens. Der Text steht in Klee One, einer Schulbuchschrift, die Etiketten in Zen Maru Gothic; beide laden ihre senkrechte Zeichensetzung für die Klammern der Kanji-Seite.
+
+## Varianten
+
+### Die Lösungen am Ende sammeln
+
+Ein Heft mit eigenem Lösungsheft hält die Lösungen aus den Seiten heraus: `chapterEnd` führt sie nach der letzten Aufgabe auf.
+
+```diff
+-  solutions: { placement: 'inverted', box: 'kotae' },
++  solutions: { placement: 'chapterEnd', box: 'kotae' },
+```
+
+### Eine Rätselseite setzen
+
+<RecipeLink slug="puzzle-page-upside-down-answers">Die Rätselseite</RecipeLink> dreht ihre Lösungen genauso um, auf Karten in zwei Spalten.
+
+## Häufige Fehler
+
+- Eine Lesung kann noch nicht über einer Lücke stehen: Ein Ruby in `[[…]]` gehört zur versteckten Antwort. Die Aufgabe 漢字の書き取り setzt jede Lesung in eine eigene Zeile und das Kästchen dahinter, drei pro Reihe in einer `:::columns`-Gruppe; auf der senkrechten Seite steht die Lesung neben dem Kästchen, wie Furigana.
+- Klee One gibt es nur in 400 und 600: `boldFontWeight: 600` hält jeden fetten Abschnitt in einem Schnitt, den es gibt, auch die Nummern der Fragen und der Aufgaben.

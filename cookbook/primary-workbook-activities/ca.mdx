@@ -1,0 +1,57 @@
+---
+title: "Unitat d’un quadern d’activitats de primària"
+summary: "Una unitat de quadern de Ciències amb onze activitats :::exercise que imprimeix un sol estil: números en cercles, banc de paraules i punts per unir."
+plain: "Un quadern d’activitats de 3r de primària sobre els animals vertebrats. Les preguntes i les seves respostes són escrites al text; un estil decideix com es veu cada activitat a la pàgina."
+description: "Quadern de Ciències de primària a Postext: números en cercles, banc de paraules, vertader o fals, uneix amb fletxes, encercla, sopa de lletres i quadrícula."
+question: "Com componc una pàgina de quadern: números en cercles, banc de paraules, V/F, uneix amb fletxes?"
+aliases: ["quadern d’activitats", "fitxa", "activitats", "banc de paraules", "uneix amb fletxes", "vertader o fals", "sopa de lletres", "encercla", "completa", "icones d’activitat", "cuaderno de actividades", "workbook"]
+pageNotes: { "1": "L’obertura de la unitat: una banda verda amb la píndola blanca Unidad 5 i el títol Los animales vertebrados, una il·lustració d’una bassa amb una granota, un blauet, una truita, una tortuga i un conill, un text breu, un requadre Recuerda amb un filet groc i l’activitat 1: un banc de paraules amb vora discontínua sobre quatre frases amb buits.", "3": "Les activitats 6 i 7: cinc fases de la vida d’una granota pintades en desordre sobre cinc frases amb una casella per al número, i una sopa de lletres de deu per deu amb filets verds i les seves sis paraules a sota." }
+---
+
+## Què compondràs
+
+La unitat 5 d’un quadern de Ciències de la Naturalesa de 3r de primària, en A4: *Los animales vertebrados*. L’obertura situa la unitat en una banda verda sobre una il·lustració d’una bassa; després venen onze activitats, cadascuna amb el número en un cercle verd i una icona de llapis, de bafarada o de parella. Un banc de paraules en un requadre tintat amb vora discontínua, frases amb V i F, animals per unir amb fletxes al seu grup, paraules per encerclar en una frase i en un text, fases de la granota per numerar, una sopa de lletres, animals per classificar, una pregunta oberta amb ratlles i una altra en quadrícula. L’edició anglesa imprimeix la mateixa unitat com la componen les seves escoles, amb T i F i *join with a line*. L’acompanyen tres il·lustracions generades amb un model de difusió.
+
+## Elaboració
+
+### 1 · Escriu les activitats al Markdown i dona’ls estil una sola vegada
+
+<Excerpt region="answer" />
+
+Cada activitat és una tanca `:::exercise`. El que llegeix l’alumne i el que compta com a correcte són al text: `[[pelo]]` és un buit la resposta del qual és *pelo*, `- [x]` una afirmació vertadera, `- Delfín -> Mamífero` una parella, `[[pelo | (plumas)]]` una tria amb la paraula correcta entre parèntesis. L’estil només guarda l’aspecte, així que les onze activitats comparteixen `actividad` i un segon estil, `cuadricula`, que l’amplia amb `extends` per canviar les ratlles per quadrícula. El motor les numera, barreja amb una llavor la columna dreta de les parelles i les frases per ordenar, fa els buits tan amples com la resposta més llarga perquè cap no es delati i imprimeix V i F en castellà i T i F en anglès sense una paraula a la configuració.
+
+### 2 · Posa les icones d’activitat
+
+<Excerpt region="icons" />
+
+Una icona del camp `exerciseStyles[].icons` anomena una imatge del llibre, i `:::exercise{icon="oral pareja"}` posa les imatges després del número, en l’ordre escrit, i les llegeix en veu alta pel seu `alt`. Són signes plans dibuixats en codi sobre un cercle del color de la unitat, així que es mantenen nítids al PDF i canvien amb la paleta. El llapis acompanya les activitats d’escriure; les icones de parlar i de parella marquen l’última, que no té zona d’escriptura (`area="none"`).
+
+### 3 · Obre la unitat amb una banda i una il·lustració
+
+<Excerpt region="opener" />
+
+El títol de nivell 1 de la unitat dibuixa la banda, la píndola del número i el títol a partir dels seus atributs (`unidad="Unidad 5" pic="charca"`), i la il·lustració sota la banda a 176 × 75 mm. Les imatges de dins de les activitats fan servir un tipus de recurs sense peu ni número (`dibujo`), com les imprimeix un quadern. El text es llegeix amb facilitat a aquesta edat: Atkinson Hyperlegible Next de 12 pt sobre 17 pt, sense partició de mots i en bandera.
+
+## Variants
+
+### Imprimeix les solucions per al mestre
+
+El mateix Markdown dona la còpia del mestre: els buits plens, les caselles vertaderes marcades i les paraules correctes encerclades en magenta.
+
+```diff
+   exerciseStyles: [actividad, cuadricula],
++  exercises: { edition: 'teacher' },
+```
+
+### Numera les activitats en quadrats
+
+Un quadrat arrodonit del color de la unitat es llegeix com l’estil d’una altra editorial.
+
+```diff
+-  number: { shape: 'disc', background: col('unit'), color: col('paper'),
++  number: { shape: 'rounded', background: col('unit'), color: col('paper'),
+```
+
+## Errors freqüents
+
+- Les paraules que s’encerclen en un text seguit guarden una mica d’aire a cada costat per al cercle, així que una paraula just abans d’una coma o d’un punt en queda una mica separada.

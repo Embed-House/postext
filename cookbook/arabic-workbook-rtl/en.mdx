@@ -1,0 +1,51 @@
+---
+title: "An Arabic workbook, right to left"
+summary: "A primary Arabic workbook unit set right to left: choices with أ ب ج, matching columns, a word bank, صح or خطأ boxes, a word search and Arabic-Indic digits."
+plain: "Pages of a children's Arabic workbook about a school garden: pick the answer, join the columns, fill gaps from a box of words, mark right or wrong, order words, find words in a grid."
+description: "An Arabic primary workbook in Postext: exercises set right to left, mirrored matching dots, a word bank, a word search, and Mashriq and Maghreb digits."
+question: "How do I set an Arabic workbook right to left, with matching columns, a word search and Arabic-Indic digits?"
+aliases: ["Arabic workbook", "كراسة تمارين", "تمارين", "اختر الإجابة الصحيحة", "صل بين العمودين", "أكمل الفراغ", "word search in Arabic", "right to left exercises", "Arabic-Indic digits", "Maghreb digits"]
+pageNotes: { "1": "The opening page, a recto on the left of the spine: a watercolour of a school garden with date palms, a fountain, lemon trees, a girl watering plants and a boy carrying a pot of mint runs to the top edge; under it a terracotta tab الوحدة الثالثة and the title في الحديقة, set from the right; a dotted line each for name, class and date; exercise ١, three questions with أ) ب) ج) options three to a row.", "2": "Exercise ٢, two columns joined by dots, the words on the right and their matches on the left; exercise ٣, a word bank in a sand-coloured box above a paragraph with dotted blanks; exercise ٤, four statements, each with صح and خطأ boxes at the left end of the line." }
+---
+
+## What you'll build
+
+A unit of a second-year Arabic workbook on a 17 × 24 cm page, about a school garden. A watercolour band opens it, with the unit's tab and title and a dotted line each for name, class and date. Then come the exercises an Arab primary book prints: choose the right answer, with أ) ب) ج) three to a row; join the two columns; fill the gaps from a word bank; mark صح or خطأ; put the words in order and write the sentence on the line; find seven garden words in a grid of letters. The solutions close the unit. The same text is set twice: the Mashriq edition numbers everything in Arabic-Indic digits, ١ ٢ ٣, and the Maghreb edition in European ones. Both read from the right and bind on the right.
+
+## Method
+
+### 1 · Name no side
+
+The code is [the short answer](#the-short-answer) above. `locale: 'ar'` sets the text right to left, binds the book on the right and picks the digits; the exercise style takes the abjad letters for the options and صح and خطأ for true or false from the language. The matching columns, the word bank, the word search and the writing lines are drawn as box designs, which a right-to-left page mirrors: the first column stands on the right, a word read across the grid runs from right to left, and the dots of the match face each other in the middle.
+
+### 2 · The garden opener
+
+<Excerpt region="opener" />
+
+The painting is anchored to the page and keeps its place; the tab and the title are laid in the flow of the page, where `left` is the start of the line, so they stand on the right without a coordinate of their own. The folios stay physical, as running heads do, and name each side.
+
+### 3 · Two editions, two sets of digits
+
+<Excerpt region="editions" />
+
+The configuration is a function, so each build gets its own object, and the second one only changes the locale. `ar-MA` writes the exercise numbers, the items, the key and the folios in European digits and leaves everything else as it was: the direction, the binding, the abjad letters and the words of the key.
+
+## Variations
+
+### Print the teacher's book
+
+The answers then print in their places, in the colour of `answers`: the dots joined, the words in their blanks, the right boxes filled and the words ringed in the grid.
+
+```diff
+-const exercises = { solutions: { placement: 'directive' } };
++const exercises = { edition: 'teacher', solutions: { placement: 'none' } };
+```
+
+### Write the exercises in Chinese
+
+<RecipeLink slug="chinese-exercise-book">The Chinese exercise book</RecipeLink> sets the same kinds of exercise with its own brackets and numerals.
+
+## Pitfalls
+
+- Most Arabic faces have no ✓ or ✗: the true or false words are صح and خطأ, and the instruction asks for a mark in the box.
+- The word search fills its empty cells with the letters of its own words, in their isolated forms. Choose words whose letters vary, or the grid fills with ة.

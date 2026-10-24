@@ -8,6 +8,20 @@ import type { ExerciseData } from '../../exercises/digital.js';
 import type { ExerciseSlot } from '../../exercises/record.js';
 import { checkExerciseSlot, exerciseSolutionValue, EXERCISE_SCRIPT, isGradedSlot, normalizeAnswer } from '../../exercises/runtime.js';
 
+/** `html` with every `<tag …>…</tag>` element taken out (any letter case). */
+function withoutElements(html: string, tag: string): string {
+  const lower = html.toLowerCase();
+  let out = '';
+  let at = 0;
+  for (let open = lower.indexOf(`<${tag}`, at); open >= 0; open = lower.indexOf(`<${tag}`, at)) {
+    const close = lower.indexOf(`</${tag}>`, open);
+    if (close < 0) break;
+    out += html.slice(at, open);
+    at = close + tag.length + 3;
+  }
+  return out + html.slice(at);
+}
+
 class StubCtx {
   font = '';
   measureText(s: string): { width: number } {
@@ -29,9 +43,11 @@ const base: PostextConfig = {
 const build = (md: string, cfg: PostextConfig = base): VDTDocument => buildDocument({ markdown: md }, cfg, createMeasurementCache());
 
 const dataOf = (html: string): ExerciseData => {
-  const m = /<script type="application\/json" class="pt-exercises">([\s\S]*?)<\/script>/.exec(html);
-  expect(m).not.toBeNull();
-  return JSON.parse(m![1]!) as ExerciseData;
+  const marker = '<script type="application/json" class="pt-exercises">';
+  const start = html.indexOf(marker);
+  expect(start).toBeGreaterThanOrEqual(0);
+  const end = html.indexOf('</script>', start);
+  return JSON.parse(html.slice(start + marker.length, end)) as ExerciseData;
 };
 
 describe('exercises in the HTML output (#1230)', () => {
@@ -56,7 +72,7 @@ describe('exercises in the HTML output (#1230)', () => {
     expect(html).toContain(`data-pt-box="${grid.box}" data-pt-ex="${data.exercises[1]!.id}" style="position:absolute;`);
     expect(html.match(/class="pt-exercises"/g)).toHaveLength(1);
     // The answers are in the JSON only, never in the page's text.
-    const page = html.replace(/<script[\s\S]*?<\/script>/g, '');
+    const page = withoutElements(html, 'script');
     expect(page).not.toContain('water');
     expect(page).toContain('data-pt-slot="g1"');
   });

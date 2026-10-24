@@ -1,0 +1,57 @@
+---
+title: "Column arithmetic as each country writes it"
+summary: "A maths worksheet whose sums are - 864 ÷ 4 lines in the Markdown, set digit by digit in squares, long division as each country's schools lay it out."
+plain: "A page of sums for nine-year-olds in Spanish, English, French and German. Each country writes long division its own way, and the sheet follows it; a switch shows the teacher's copy with every answer filled in."
+description: "A Postext maths worksheet: mental sums in three columns, column addition, subtraction and multiplication, long division by country, and a teacher's copy."
+question: "How do I set long division the way each country's schools write it?"
+aliases: ["column arithmetic", "long division", "bus stop method", "potence", "schriftliches Rechnen", "cuentas", "maths worksheet", "teacher's edition", "answer key", "mental maths"]
+pageNotes: { "1": "The pupil's sheet: an orange band with a Unit 3 pill and the title The four operations, lines for a name and a date, nine mental sums in three columns with an empty box each, and three additions, subtractions and multiplications set digit by digit with a row of squares for the answer.", "2": "Long division under the bracket, with squares over the dividend for the quotient, and a word problem on squared paper." }
+---
+
+## What you'll build
+
+Unit 3 of a Year 4 calculation book, *The four operations*, in four editions. A row of mental sums in three columns, then additions, subtractions and multiplications written one digit to a square with a row of squares for the answer, then long division and a word problem on squared paper. The division is where the editions part: the English sheet sets the divisor outside the ⟌ bracket with the quotient on top; the Spanish and French ones put the divisor in an L to the right of the dividend and the quotient under it; the German one writes `864 : 4 =` on one line with room for the working below, and its products with a dot. The decimal comma or point of the mental sums follows the language too. A switch above the pages turns the pupil's sheet into the teacher's copy, every answer printed in orange in its square.
+
+## Method
+
+### 1 · Write the sums as lines of the Markdown
+
+<Excerpt region="answer" />
+
+An `:::exercise{type="arithmetic"}` takes one operation per list item, `- 864 ÷ 4`, in the signs its country writes (`÷`, `:`, `×`, `·`). The engine works out the answer, the quotient and the remainder, and the style decides how the sum is drawn: squares of 7.2 mm, and `arithmetic.division` picked per edition with `t()`. A mental-arithmetic row is an ordinary gaps exercise whose list sits in a `:::columns{count=3}` group, each `[[70]]` a box as wide as the others.
+
+### 2 · Head the sheet
+
+<Excerpt region="head" />
+
+The unit's level-1 heading draws the orange band, the pill and the title, and the name and date fields from its attributes (`nombre="Name" fecha="Date"`), so every edition labels them in its own language.
+
+### 3 · Switch between the pupil's sheet and the teacher's copy
+
+<Excerpt region="live" />
+
+`exercises.edition: 'teacher'` prints every answer in its slot in the colour `answers.color` gives, here the accent: the boxes of the mental sums, the digits of each result, the quotient and remainder, the model answer of the word problem. The form above the pages edits the config in place and builds again; the fonts are already loaded, so the plain `buildDocument` is enough. The capture builds both sheets first, so the published pages show the pupil's sheet and then the teacher's.
+
+## Variations
+
+### Put the answers upside down at the foot
+
+A puzzle-book habit: each exercise's key, turned 180° under it.
+
+```diff
+-  exercises: { edition: 'student' }, // the switch above the pages sets 'teacher'
++  exercises: { edition: 'student', solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+### Divide under the bracket in every edition
+
+Japanese and Chinese schools also use the bracket; the default for a language you do not list is its own.
+
+```diff
+-    division: t({ es: 'potence', fr: 'potence', de: 'inline', en: 'bracket' }) },
++    division: 'bracket' },
+```
+
+## Pitfalls
+
+- Operations take whole numbers: a sum with decimals such as `12,5 + 3,75` is not read and prints as written. Keep decimals in the mental-arithmetic gaps, where the answer is text.

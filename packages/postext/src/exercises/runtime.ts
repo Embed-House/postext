@@ -73,8 +73,15 @@ function exerciseRuntime(): Runtime {
     s = s.replace(/[\u0660-\u0669]/g, (c) => String(c.charCodeAt(0) - 0x0660));
     s = s.replace(/[\u06F0-\u06F9]/g, (c) => String(c.charCodeAt(0) - 0x06F0));
     s = s.replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g, '\'').replace(/[\u201C\u201D\u00AB\u00BB\u201E]/g, '"');
-    s = s.replace(/\s+/g, ' ').replace(/^[\s\u00A1\u00BF]+/, '').replace(/[\s.,;:!?\u3002\uFF0E\u3001\uFF01\uFF1F\u2026\u061F\u060C]+$/, '');
-    return s.toLowerCase();
+    s = s.split(/\s+/).join(' ');
+    // Opening and final punctuation, trimmed one character at a time.
+    const lead = ' \u00A1\u00BF';
+    const tail = ' .,;:!?\u3002\uFF0E\u3001\uFF01\uFF1F\u2026\u061F\u060C';
+    let a = 0;
+    let b = s.length;
+    while (a < b && lead.indexOf(s.charAt(a)) >= 0) a++;
+    while (b > a && tail.indexOf(s.charAt(b - 1)) >= 0) b--;
+    return s.slice(a, b).toLowerCase();
   }
 
   function same(a: string, accept: string[] | undefined): boolean {

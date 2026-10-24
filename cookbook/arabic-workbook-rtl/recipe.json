@@ -1,0 +1,129 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 173,
+  "status": "published",
+  "chapter": "textbooks",
+  "order": 230,
+  "level": 2,
+  "genres": [
+    "workbook",
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "exercises",
+      "text-direction",
+      "document-digits"
+    ],
+    "also": [
+      "exercise-styles",
+      "exercise-choice",
+      "exercise-gaps",
+      "exercise-match",
+      "exercise-order",
+      "exercise-puzzles",
+      "exercise-solutions",
+      "arabic-fonts",
+      "arabic-numerals",
+      "right-binding",
+      "chips",
+      "callout-styles",
+      "opener-design",
+      "heading-attributes",
+      "design-images",
+      "color-palette",
+      "pdf-export"
+    ]
+  },
+  "answers": [
+    "Q206",
+    "Q194",
+    "Q196"
+  ],
+  "gotchas": [
+    "arabic-locale-tag",
+    "arabic-fonts-subset"
+  ],
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "images",
+    "arabic",
+    "book"
+  ],
+  "sample": {
+    "locales": [
+      "ar"
+    ]
+  },
+  "capture": {
+    "hero": 1,
+    "card": "page",
+    "pages": "all",
+    "doc": [
+      "first",
+      "last"
+    ],
+    "timeoutMs": 120000,
+    "sandbox": "first",
+    "expect": {
+      "pages": [
+        8,
+        8
+      ]
+    }
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Ignacio Ferro",
+        "github": "drnachio"
+      }
+    ],
+    "text": [],
+    "images": [
+      {
+        "what": {
+          "en": "A school garden in an Arab town: date palms, a fountain, lemon trees, a girl watering plants and a boy carrying a pot of mint.",
+          "es": "Un huerto escolar en una ciudad árabe: palmeras, una fuente, limoneros, una niña que riega las plantas y un niño con una maceta de hierbabuena."
+        },
+        "who": "Generated With Diffusion Models",
+        "license": "original",
+        "file": "garden-1600.jpg"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Noto Naskh Arabic",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Baloo Bhaijaan 2",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "CC-BY-4.0"
+  },
+  "created": "2026-10-24",
+  "updated": "2026-10-24",
+  "related": [
+    "handwriting-workbook",
+    "maghreb-edition-european-digits",
+    "chinese-exercise-book",
+    "school-atlas-labelled-maps"
+  ]
+}

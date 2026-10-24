@@ -25,7 +25,9 @@ const mm = (value: number) => ({ value, unit: 'mm' as const });
 
 /** The Cookbook's repro (dictionary-thumb-index): a 150 × 200 mm page in two
  *  columns, a level-1 heading set at `size` whose design prints
- *  `{titleText}` at 20 pt across the band. */
+ *  `{titleText}` at 20 pt across the band. A page-span heading's own lines
+ *  break at the page width, as the band is painted (#1224): it takes about
+ *  twice the size of a column heading to break the same way. */
 function configFor(span: 'page' | 'column', size: number, designed = true): PostextConfig {
   return {
     page: { width: mm(150), height: mm(200) },
@@ -61,8 +63,8 @@ describe('{titleText} of a heading that wraps in its column (EF-162)', () => {
   const markdown = '# The Sailor’s Word-Book\n\nText.';
 
   it('keeps a word broken at its own hyphen whole in an opener band', () => {
-    const doc = buildDocument({ markdown }, configFor('page', 40));
-    // The heading's hidden lines wrap at the column width, one word a line.
+    const doc = buildDocument({ markdown }, configFor('page', 80));
+    // The heading's hidden lines wrap, one word a line.
     expect(heading(doc).lines.map((l) => l.text.trim())).toEqual(['The', 'Sailor’s', 'Word-', 'Book']);
     // Up to postext 1.4 the band printed 'The Sailor’s Word- Book'.
     expect(titleLines(bandOf(doc))).toEqual(['The Sailor’s Word-Book']);
@@ -77,7 +79,7 @@ describe('{titleText} of a heading that wraps in its column (EF-162)', () => {
   });
 
   it('does the same on the rich path, where the hyphen line is flagged hardHyphen', () => {
-    const doc = buildDocument({ markdown: '# The *Sailor’s* Word-Book\n\nText.' }, configFor('page', 40));
+    const doc = buildDocument({ markdown: '# The *Sailor’s* Word-Book\n\nText.' }, configFor('page', 80));
     const hyphenLine = heading(doc).lines.find((l) => l.text.trim() === 'Word-');
     expect(hyphenLine?.hardHyphen).toBe(true);
     expect(titleLines(bandOf(doc))).toEqual(['The Sailor’s Word-Book']);
@@ -166,9 +168,10 @@ describe('a title glued by a no-break space wider than its column (EF-162 review
 
   it('keeps the no-break space where the column parted the group', () => {
     for (const span of ['page', 'column'] as const) {
-      const doc = build(`# ${title}`, glued(span, 40));
-      // 'Capítulo XVIII:' is wider than the column at 40 pt: the heading
-      // parts it at its no-break space and leaves the space out.
+      const doc = build(`# ${title}`, glued(span, span === 'page' ? 80 : 40));
+      // 'Capítulo XVIII:' is wider than the column at 40 pt (the page at
+      // 80 pt): the heading parts it at its no-break space and leaves the
+      // space out.
       expect(heading(doc).lines.slice(0, 2).map((l) => l.text)).toEqual(['Capítulo', 'XVIII:']);
       // The review's probe printed '[CapítuloXVIII: …]' in both.
       expect(titleLines(bandOf(doc))).toEqual([`[${title}]`]);
@@ -177,7 +180,7 @@ describe('a title glued by a no-break space wider than its column (EF-162 review
   });
 
   it('does the same on the rich path, where the next line opens on the space', () => {
-    const doc = build(`# *Capítulo*${NBSP}XVIII: la vuelta a casa`, glued('page', 40));
+    const doc = build(`# *Capítulo*${NBSP}XVIII: la vuelta a casa`, glued('page', 80));
     const lines = heading(doc).lines;
     // The italic run and the one glued to it part where they meet, and the
     // second line opens on the no-break space. Its plain range starts
@@ -190,8 +193,8 @@ describe('a title glued by a no-break space wider than its column (EF-162 review
   });
 
   it('joins short glued titles and numbers the same way', () => {
-    expect(titleLines(bandOf(build(`# Chapter${NBSP}One`, glued('page', 40))))).toEqual([`[Chapter${NBSP}One]`]);
-    const doc = build(`# Los 300${NBSP}000`, glued('page', 60));
+    expect(titleLines(bandOf(build(`# Chapter${NBSP}One`, glued('page', 80))))).toEqual([`[Chapter${NBSP}One]`]);
+    const doc = build(`# Los 300${NBSP}000`, glued('page', 100));
     expect(heading(doc).lines.map((l) => l.text)).toEqual(['Los', '300', '000']);
     expect(titleLines(bandOf(doc))).toEqual([`[Los 300${NBSP}000]`]);
     expect(runningHead(doc)).toEqual([`[Los 300${NBSP}000]`]);

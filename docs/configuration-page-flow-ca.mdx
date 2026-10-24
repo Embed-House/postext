@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Vídues, òrfenes i equilibratge',
   description: 'Les regles que mantenen juntes les línies i els blocs quan una columna s’acaba, i les palanques que fan que totes les columnes acabin a la mateixa altura',
   lang: 'ca',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '24 min',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ Aquests paràmetres van a `headings.balancing`.
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>Límit d'aquest tracking, en mil·lèsimes d'em per caràcter (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Omple amb els seus propis paràgrafs una columna que les regles de vídues i orfes han deixat una línia curta: també els paràgrafs en bandera poden ocupar una línia més, un de justificat no pot obrir cap línia més que <code>bodyText.maxWordSpacing</code> ni que la seva pròpia línia més oberta, i si cap no guanya la línia, se'n compon un amb una línia menys perquè el tall següent la reculli. Només es conserva si les pàgines acaben amb menys columnes curtes.</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

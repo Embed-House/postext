@@ -1,0 +1,57 @@
+---
+title: "Un quaderno di esercizi cinese, per alunno e insegnante"
+summary: "Un 练习册 di cinese e matematica: sezioni 一、二、, parentesi （　）, 田字格 e operazioni in colonna, composto due volte da un solo testo, per l’alunno e l’insegnante."
+plain: "Un quaderno di esercizi di una primaria cinese: due unità di lingua e di matematica. Lo stesso testo dà la copia dell’alunno, con spazi vuoti e soluzioni in fondo, e quella dell’insegnante, con ogni risposta in rosso al suo posto."
+description: "Un 练习册 cinese in Postext: sezioni 一、二、, parentesi （　）, 判断题, 连线, 田字格 e 竖式, con la copia dell’insegnante ricavata dal testo dell’alunno."
+question: "Come compongo domande cinesi con una （　） dopo il testo e le opzioni A. B. C. D. in fila?"
+aliases: ["练习册", "quaderno di esercizi cinese", "guida per l’insegnante", "copia dell’insegnante", "soluzioni", "选择题", "判断题", "填空题", "连线", "田字格", "竖式", "口算", "参考答案"]
+pageNotes: { "1": "La pagina d’apertura dell’unità di lingua: un acquerello di un villaggio in primavera, con salici, rondini e due bambini su un sentiero tra le risaie, arriva al bordo superiore; sotto, una linguetta verde 语文, il titolo 第一单元　春天来了 e un filetto verde; una riga per classe, nome e punteggio; poi la sezione 一, pinyin sopra otto caselle da scrivere, la sezione 二, tre letture da scegliere nella frase, e la sezione 三, due domande a scelta multipla con A. B. C. D. in fila e una （　） vuota dopo ogni testo.", "5": "La stessa pagina nella copia dell’insegnante: le otto parole scritte in Kai rosso nelle loro caselle, le letture giuste cerchiate in rosso, B e C scritte nelle parentesi e le opzioni giuste cerchiate." }
+---
+
+## Che cosa comporrai
+
+Due unità di un 练习册 di seconda elementare in formato 16开: un’unità di lingua, 春天来了, e una di matematica su addizioni e sottrazioni entro il 100. Ognuna si apre con una fascia ad acquerello, una linguetta con la materia e una riga per classe, nome e punteggio, poi passa per le sezioni che stampa un quaderno cinese: 看拼音写词语, letture da cerchiare, 选择题 con una （　） dopo il testo e A. B. C. D. in fila, 判断题 con una parentesi a fine riga, frasi da completare, 连线 tra classificatori e oggetti, una frase da scrivere nei 田字格, 口算 su quattro colonne, 竖式 con una casella per cifra e un problema. I punti stanno in ogni consegna, dove li legge l’alunno. Lo stesso Markdown si compone due volte: il libro dell’alunno, con il 参考答案 alla fine di ogni unità, e quello dell’insegnante, con ogni risposta scritta in Kai rosso al suo posto.
+
+## Preparazione
+
+### 1 · Un solo stile per tutte le sezioni
+
+Il codice è nella [risposta breve](#la-risposta-breve) qui sopra. Le sezioni si contano con numerali cinesi seguiti da un 、 a larghezza piena, quindi dopo il numero non c’è spazio; la consegna è in Hei senza grassetto, così i punti tra parentesi si leggono come parte di essa. `options.bracket` scrive la （　） dopo ogni testo, e nel libro dell’insegnante la lettera giusta ci va dentro. I due stili piccoli estendono quello principale: `pinyin` disegna ogni spazio vuoto come una casella larga quanto la sua parola, `kuohao` non disegna nulla, perché la parentesi di 在（　）里填 è già nel testo.
+
+### 2 · Il libro dell’alunno e quello dell’insegnante da un solo testo
+
+<Excerpt region="editions" />
+
+La configurazione è una funzione, quindi ogni composizione riceve il suo oggetto e il pacchetto del Sandbox conserva quello dell’alunno. `edition: 'teacher'` scrive le risposte nel colore e nel carattere di `answers`: le parole nelle loro caselle, le lettere nelle loro parentesi, √ e × nei 判断题, le cifre nelle caselle dei 竖式, la frase modello con un carattere per quadretto. Il libro dell’alunno tiene le soluzioni per la riga `:::solutions` alla fine di ogni unità; quello dell’insegnante non ne ha bisogno.
+
+### 3 · Un’apertura di unità con il suo dipinto
+
+<Excerpt region="opener" />
+
+Il dipinto è ancorato alla pagina, quindi arriva al bordo superiore sia su un recto sia su un verso; la linguetta e il titolo si collocano dall’alto della gabbia di testo, sotto il piede del dipinto. Le due unità condividono il progetto grafico e cambiano solo negli attributi del titolo, `kicker` e `pic`.
+
+### 4 · Numeri di pagina al piede
+
+<Excerpt region="furniture" />
+
+I quaderni cinesi mettono il numero di pagina al piede. Il titolo della collana viene dal front matter del Markdown (`{title}`), quello dell’unità dal suo titolo (`{chapterTitle}`).
+
+## Varianti
+
+### Stampa le soluzioni a fine capitolo
+
+Senza righe `:::solutions`, `chapterEnd` raccoglie le soluzioni di ogni unità prima del titolo di livello 1 successivo.
+
+```diff
+-  solutions: { placement: edition === 'teacher' ? 'none' : 'directive' } });
++  solutions: { placement: edition === 'teacher' ? 'none' : 'chapterEnd' } });
+```
+
+### Scrivi le letture accanto agli spazi vuoti
+
+<RecipeLink slug="pinyin-primer">L’abbecedario in pinyin</RecipeLink> mette il pinyin sopra i suoi caratteri come ruby, cosa che uno spazio vuoto non può ancora contenere.
+
+## Errori frequenti
+
+- Una lettura non può ancora stare sopra uno spazio vuoto: un ruby dentro `[[…]]` fa parte della risposta nascosta, e un’area di 田字格 occupa tutta la giustezza. La sezione 看拼音写词语 mette ogni sillaba su una riga sua e la casella sotto, quattro per fila in un gruppo `:::columns`.
+- Il carattere Kai compone solo le risposte, quindi carica soltanto i caratteri degli spazi vuoti e delle risposte modello; se compone un carattere altrove, va aggiunto a quel testo.

@@ -1,0 +1,706 @@
+{
+  "schemaVersion": 1,
+  "slug": "puzzle-page-upside-down-answers",
+  "sourceHash": "d3b573b7b44c84e13d7d0d45aac3182fb6d9e02cd71b27277831c9866e1ab85b",
+  "engine": {
+    "postext": "1.59.0",
+    "postextPdf": "1.59.0",
+    "source": "npm"
+  },
+  "chrome": "155.0.8059.85",
+  "capturedAt": "2026-10-24T15:50:15.386Z",
+  "variants": {
+    "en": {
+      "hash8": "face85ae",
+      "vdtHash": "22aa169a15a6d5931adae9b098de77643fc8a297",
+      "timings": {
+        "importMs": 10446,
+        "fontsMs": 245,
+        "buildMs": 71,
+        "totalMs": 18903,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 7,
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 10.5,
+          "leadingPt": 15
+        },
+        "families": [
+          "Baloo 2",
+          "Fredoka",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 129
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 146564,
+          "alt": "Opening page 1: Reef Puzzles."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 58262,
+          "alt": "Page 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "puzzle-page-upside-down-answers.postext",
+        "bytes": 329514,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "e54ad79d12b09617",
+            "lines": "466bc8d2cc023f9c"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].border",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].keepTogether",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].title",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].answers",
+          "exerciseStyles[].answers.color",
+          "exerciseStyles[].answers.fontFamily",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].box",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.fontFamily",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.labels",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].solutions",
+          "exerciseStyles[].solutions.box",
+          "exerciseStyles[].solutions.placement",
+          "footer",
+          "footer.elements",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].span",
+          "layout",
+          "layout.gutterWidth",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 201,
+        "designElements": 5,
+        "directives": [
+          ":::exercise",
+          "::resource",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 2,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Baloo 2",
+            "weight": 800,
+            "style": "normal"
+          },
+          {
+            "family": "Fredoka",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Fredoka",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-splitting",
+          "column-balancing",
+          "exercise-choice",
+          "exercise-match",
+          "exercise-open",
+          "exercise-order",
+          "exercise-puzzles",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "inline-embeds",
+          "opener-band",
+          "opener-design",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "runtFixes": {
+          "count": 1,
+          "tracked": 1,
+          "worst": 5
+        },
+        "findings": [
+          {
+            "check": "C35",
+            "severity": "info",
+            "detail": "1 paragraph set a line short with tracking (worst −5‰): p. 2 −5‰ “Whale – calf · Seal – pup · Turtle – hatchling ·…”"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: en, es"
+          }
+        ]
+      }
+    },
+    "es": {
+      "hash8": "e721a2eb",
+      "vdtHash": "493cf14653c6b18fbcd9c2b1754696f787baced7",
+      "timings": {
+        "importMs": 6894,
+        "fontsMs": 436,
+        "buildMs": 85,
+        "totalMs": 10311,
+        "builds": 1
+      },
+      "specimen": {
+        "trimMm": [
+          210,
+          280
+        ],
+        "dpi": 150,
+        "layoutType": "double",
+        "gutterMm": 7,
+        "mirror": true,
+        "body": {
+          "family": "Nunito",
+          "sizePt": 10.5,
+          "leadingPt": 15
+        },
+        "families": [
+          "Baloo 2",
+          "Fredoka",
+          "Nunito"
+        ],
+        "pages": 2,
+        "ownLines": 129
+      },
+      "pages": [
+        {
+          "n": 1,
+          "label": "1",
+          "role": "opener",
+          "w": 1000,
+          "h": 1333,
+          "file": "p01.webp",
+          "strip": "p01.s.webp",
+          "bytes": 149834,
+          "alt": "Página de apertura 1: Pasatiem pos del arrecife."
+        },
+        {
+          "n": 2,
+          "label": "2",
+          "role": "body",
+          "w": 1000,
+          "h": 1333,
+          "file": "p02.webp",
+          "strip": "p02.s.webp",
+          "bytes": 64076,
+          "alt": "Página 2."
+        }
+      ],
+      "spreads": [
+        [
+          null,
+          0
+        ],
+        [
+          1,
+          null
+        ]
+      ],
+      "card": {
+        "file": "card.webp",
+        "file480": "card.480.webp",
+        "w": 960,
+        "h": 720,
+        "mode": "page"
+      },
+      "og": {
+        "file": "og.jpg",
+        "w": 580,
+        "h": 622
+      },
+      "sandbox": {
+        "file": "puzzle-page-upside-down-answers.postext",
+        "bytes": 330303,
+        "chapters": [
+          {
+            "pages": 2,
+            "hash": "6e05bcb69b381848",
+            "lines": "221bdb1e456f8b60"
+          }
+        ]
+      },
+      "detected": {
+        "apis": [
+          "buildDocumentWithFonts",
+          "decompressWoff2",
+          "registerResourceImage",
+          "renderPageToCanvas",
+          "renderToPdf"
+        ],
+        "configKeys": [
+          "bodyText",
+          "bodyText.boldColor",
+          "bodyText.color",
+          "bodyText.firstLineIndent",
+          "bodyText.fontFamily",
+          "bodyText.fontSize",
+          "bodyText.hyphenation",
+          "bodyText.hyphenation.enabled",
+          "bodyText.italicColor",
+          "bodyText.lineHeight",
+          "bodyText.referenceColor",
+          "bodyText.textAlign",
+          "calloutStyles",
+          "calloutStyles[].background",
+          "calloutStyles[].backgroundEnabled",
+          "calloutStyles[].body",
+          "calloutStyles[].body.color",
+          "calloutStyles[].body.firstLineIndent",
+          "calloutStyles[].body.fontFamily",
+          "calloutStyles[].body.fontSize",
+          "calloutStyles[].body.lineHeight",
+          "calloutStyles[].border",
+          "calloutStyles[].border.enabled",
+          "calloutStyles[].borderRadius",
+          "calloutStyles[].id",
+          "calloutStyles[].keepTogether",
+          "calloutStyles[].marginBottom",
+          "calloutStyles[].marginTop",
+          "calloutStyles[].padding",
+          "calloutStyles[].padding.bottom",
+          "calloutStyles[].padding.left",
+          "calloutStyles[].padding.right",
+          "calloutStyles[].padding.top",
+          "calloutStyles[].title",
+          "calloutStyles[].titleStyle",
+          "calloutStyles[].titleStyle.color",
+          "calloutStyles[].titleStyle.fontFamily",
+          "calloutStyles[].titleStyle.fontSize",
+          "calloutStyles[].titleStyle.fontWeight",
+          "colorPalette",
+          "colorPalette[].id",
+          "colorPalette[].name",
+          "colorPalette[].value",
+          "exerciseStyles",
+          "exerciseStyles[].answers",
+          "exerciseStyles[].answers.color",
+          "exerciseStyles[].answers.fontFamily",
+          "exerciseStyles[].area",
+          "exerciseStyles[].area.color",
+          "exerciseStyles[].area.kind",
+          "exerciseStyles[].box",
+          "exerciseStyles[].grid",
+          "exerciseStyles[].grid.cell",
+          "exerciseStyles[].grid.fontFamily",
+          "exerciseStyles[].grid.rule",
+          "exerciseStyles[].id",
+          "exerciseStyles[].instruction",
+          "exerciseStyles[].instruction.bold",
+          "exerciseStyles[].instruction.fontFamily",
+          "exerciseStyles[].marginBottom",
+          "exerciseStyles[].marginTop",
+          "exerciseStyles[].match",
+          "exerciseStyles[].match.color",
+          "exerciseStyles[].number",
+          "exerciseStyles[].number.background",
+          "exerciseStyles[].number.fontFamily",
+          "exerciseStyles[].number.shape",
+          "exerciseStyles[].options",
+          "exerciseStyles[].options.labels",
+          "exerciseStyles[].options.marker",
+          "exerciseStyles[].solutions",
+          "exerciseStyles[].solutions.box",
+          "exerciseStyles[].solutions.placement",
+          "footer",
+          "footer.elements",
+          "footer.elements[].color",
+          "footer.elements[].content",
+          "footer.elements[].fontFamily",
+          "footer.elements[].fontSize",
+          "footer.elements[].id",
+          "footer.elements[].kind",
+          "footer.elements[].pages",
+          "footer.elements[].parity",
+          "footer.elements[].placement",
+          "header",
+          "header.elements",
+          "headings",
+          "headings.balancing",
+          "headings.balancing.enabled",
+          "headings.color",
+          "headings.fontFamily",
+          "headings.fontWeight",
+          "headings.levels",
+          "headings.levels[].advancedDesign",
+          "headings.levels[].breakBefore",
+          "headings.levels[].fontSize",
+          "headings.levels[].level",
+          "headings.levels[].marginBottom",
+          "headings.levels[].span",
+          "layout",
+          "layout.gutterWidth",
+          "layout.layoutType",
+          "locale",
+          "page",
+          "page.dpi",
+          "page.height",
+          "page.margins",
+          "page.margins.bottom",
+          "page.margins.left",
+          "page.margins.mirror",
+          "page.margins.right",
+          "page.margins.top",
+          "page.sizePreset",
+          "page.width",
+          "paragraphStyles",
+          "paragraphStyles[].color",
+          "paragraphStyles[].firstLineIndent",
+          "paragraphStyles[].fontFamily",
+          "paragraphStyles[].fontSize",
+          "paragraphStyles[].id",
+          "paragraphStyles[].lineHeight",
+          "paragraphStyles[].marginTop",
+          "resourceTypes",
+          "resourceTypes[].captionPrefix",
+          "resourceTypes[].counterFormat",
+          "resourceTypes[].defaultPlacement",
+          "resourceTypes[].defaultPlacement.position",
+          "resourceTypes[].id",
+          "resourceTypes[].name",
+          "resourceTypes[].numberingTemplate",
+          "resourceTypes[].resetOn",
+          "resourceTypes[].shortLabel"
+        ],
+        "configSections": [
+          "bodyText",
+          "calloutStyles",
+          "colorPalette",
+          "exerciseStyles",
+          "footer",
+          "header",
+          "headings",
+          "layout",
+          "locale",
+          "page",
+          "paragraphStyles",
+          "resourceTypes"
+        ],
+        "configLeaves": 201,
+        "designElements": 5,
+        "directives": [
+          ":::exercise",
+          "::resource",
+          ":::paragraphs"
+        ],
+        "inline": [
+          "{attrs}"
+        ],
+        "resources": {
+          "svg": 0,
+          "bitmap": 2,
+          "table": 0
+        },
+        "fonts": [
+          {
+            "family": "Baloo 2",
+            "weight": 700,
+            "style": "normal"
+          },
+          {
+            "family": "Baloo 2",
+            "weight": 800,
+            "style": "normal"
+          },
+          {
+            "family": "Fredoka",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Fredoka",
+            "weight": 600,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 400,
+            "style": "normal"
+          },
+          {
+            "family": "Nunito",
+            "weight": 700,
+            "style": "normal"
+          }
+        ],
+        "features": [
+          "callout-splitting",
+          "column-balancing",
+          "exercise-choice",
+          "exercise-match",
+          "exercise-open",
+          "exercise-order",
+          "exercise-puzzles",
+          "exercise-solutions",
+          "exercise-styles",
+          "exercises",
+          "heading-attributes",
+          "inline-embeds",
+          "opener-band",
+          "opener-design",
+          "page-role-filters",
+          "paragraph-styles",
+          "pdf-export",
+          "pdf-fonts",
+          "resource-types",
+          "resources"
+        ],
+        "suggestedLevel": 3
+      },
+      "diagnostics": {
+        "converged": true,
+        "iterationCount": 1,
+        "looseLines": {
+          "count": 0,
+          "share": 0,
+          "worst": 0
+        },
+        "raggedLines": {
+          "count": 0
+        },
+        "findings": [
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          },
+          {
+            "check": "sandbox",
+            "severity": "info",
+            "detail": "book in several languages: es, en"
+          }
+        ]
+      }
+    }
+  }
+}

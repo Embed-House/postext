@@ -5007,6 +5007,33 @@ export interface ColumnBalancingConfig {
   /** Maximum tracking for a loose paragraph, in thousandths of an em (the
    *  InDesign unit: 10 = 0.01 em per character). Default 10. */
   maxTracking?: number;
+  /** Fill a column the break rules left short with its own paragraphs
+   *  (#1236). A column that flows on often ends a line short of its foot
+   *  because the paragraph at the break would leave fewer than
+   *  `bodyText.widowMinLines` lines at its foot or `orphanMinLines` at the
+   *  head of the next column. The loose lever (`looseParagraphs`) closes
+   *  such a gap in justified text only, and only within an absolute
+   *  `bodyText.maxWordSpacing` that a narrow column of long words often
+   *  passes in every setting of the paragraph. With this on, the column's
+   *  paragraphs are tried as a compositor tries them:
+   *  - ragged paragraphs (`textAlign: 'left'` or `'right'`, set with
+   *    `bodyText.optimalRagged`) may run a line long too, within
+   *    `maxLooseParagraphs` and `maxTracking` as justified ones;
+   *  - a justified paragraph run long may not set a line looser than
+   *    `maxWordSpacing` or than its own loosest line, whichever is looser,
+   *    nor more lines past three times the space (set ragged) than it
+   *    had: never worse than the paragraph as the breaker set it;
+   *  - when no paragraph of the column gains its line, one is set a line
+   *    shorter (TeX \looseness=-1, within `bodyText.minWordSpacing`, and
+   *    with the same gate on its loosest line), so the split after it
+   *    takes a line more and still keeps the widow and orphan minimums.
+   *    That moves text across the column break, so it is kept only when
+   *    the pages it re-flows end with fewer short columns than before.
+   *  A paragraph whose new setting ends on a runt is refused, and when no
+   *  candidate works the column stays as it was. Needs `looseParagraphs`
+   *  and `bodyText.optimalLineBreaking`. Default false: the layout of
+   *  every stored document stays as it is. */
+  fillShortColumns?: boolean;
   /** Balance the closing band of a chapter / the document: when the flow
    *  ends before the page is full and its columns are uneven, they are cut
    *  level (via a band cap) so the last columns end at the same height, the
@@ -5124,6 +5151,7 @@ export interface ResolvedHeadingsConfig {
     maxLooseParagraphs: number;
     trackParagraphs: boolean;
     maxTracking: number;
+    fillShortColumns: boolean;
     trailing: boolean;
     trailingStep: TrailingStep;
     beforeSpan: boolean;

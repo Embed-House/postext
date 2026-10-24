@@ -123,9 +123,10 @@ export function exerciseChipStyles(style: ResolvedExerciseStyle): ChipStyleConfi
       italic: style.answers.italic ?? false,
     },
     // The options of an inline choice: the right one ringed where answers
-    // show; both keep one geometry so the line does not move.
-    { id: ids.choice, backgroundEnabled: false, borderWidth: EM(0), borderRadius: EM(0.6), paddingX: EM(0.14), paddingY: EM(0.1), gap: EM(0) },
-    { id: ids.choiceRing, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.06), borderRadius: EM(0.6), paddingX: EM(0.08), paddingY: EM(0.04), gap: EM(0) },
+    // show; both keep one geometry so the line does not move, and take
+    // little room beside the words around them (a ring hugs its word).
+    { id: ids.choice, backgroundEnabled: false, borderWidth: EM(0), borderRadius: EM(0.6), paddingX: EM(0.08), paddingY: EM(0.1), gap: EM(0) },
+    { id: ids.choiceRing, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.06), borderRadius: EM(0.6), paddingX: EM(0.02), paddingY: EM(0.04), gap: EM(0) },
     tick,
     // The box an item's number is written in (order).
     { ...tick, id: ids.rank, fontSize: EM(1), borderWidth: PT(0.8), borderRadius: EM(0.12), minWidth: EM(1.3), paddingTop: EM(0.1), paddingBottom: EM(0.04) },
@@ -136,12 +137,12 @@ export function exerciseChipStyles(style: ResolvedExerciseStyle): ChipStyleConfi
     // An answer written in a teacher's edition (an order's rank…).
     { id: ids.answer, backgroundEnabled: false, borderWidth: PT(0), paddingX: EM(0), paddingY: EM(0), color: answer, ...(style.answers.fontFamily ? { fontFamily: style.answers.fontFamily } : {}), gap: EM(0.25) },
     // A word to mark: plain in the pupil's edition, ringed in the answers.
-    { id: ids.mark, backgroundEnabled: false, borderWidth: EM(0), borderRadius: EM(0.6), paddingX: EM(0.16), paddingY: EM(0.08), gap: EM(0) },
-    { id: ids.markOn, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.06), borderRadius: EM(0.6), paddingX: EM(0.1), paddingY: EM(0.02), gap: EM(0) },
+    { id: ids.mark, backgroundEnabled: false, borderWidth: EM(0), borderRadius: EM(0.6), paddingX: EM(0.08), paddingY: EM(0.08), gap: EM(0) },
+    { id: ids.markOn, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.06), borderRadius: EM(0.6), paddingX: EM(0.02), paddingY: EM(0.02), gap: EM(0) },
     // The other ways a marked word shows (`mark=box|underline|highlight`).
-    { id: `${ids.markOn}-box`, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.06), borderRadius: EM(0.08), paddingX: EM(0.1), paddingY: EM(0.02), gap: EM(0) },
-    { id: `${ids.markOn}-underline`, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.08), underline: 'solid', paddingX: EM(0.16), paddingY: EM(0.04), gap: EM(0) },
-    { id: `${ids.markOn}-highlight`, backgroundEnabled: true, background: { hex: '#ffe58a', model: 'hex' }, borderWidth: EM(0), borderRadius: EM(0.15), paddingX: EM(0.16), paddingY: EM(0.08), gap: EM(0) },
+    { id: `${ids.markOn}-box`, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.06), borderRadius: EM(0.08), paddingX: EM(0.02), paddingY: EM(0.02), gap: EM(0) },
+    { id: `${ids.markOn}-underline`, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.08), underline: 'solid', paddingX: EM(0), paddingY: EM(0), gap: EM(0) },
+    { id: `${ids.markOn}-highlight`, backgroundEnabled: true, background: { hex: '#ffe58a', model: 'hex' }, borderWidth: EM(0), borderRadius: EM(0.15), paddingX: EM(0.08), paddingY: EM(0.08), gap: EM(0) },
   ];
 }
 
