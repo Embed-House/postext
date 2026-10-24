@@ -367,7 +367,7 @@ class Emitter {
     });
     const id = `${this.ids.frame}-area-${this.ex.ordinal}-${slot}`;
     const blocks = this.drawn(drawnBox(id, elements, heightPt));
-    this.slots.push({ key: slot, kind: 'text', accept: answers?.filter((s) => s !== '') ?? [], box: blocks[0]!.containerId! });
+    this.slots.push({ key: slot, kind: 'text', accept: answers?.filter((s) => s !== '') ?? [], box: blocks[0]!.containerId!, linePt: spacing });
     return blocks;
   }
 
@@ -794,7 +794,9 @@ class Emitter {
     order.forEach((k, pos) => posOf.set(k, pos));
     lefts.forEach((p, i) => {
       const pos = posOf.get(pairs.indexOf(p))!;
-      this.slots.push({ key: `p${i + 1}`, kind: 'pair', correct: [pos + 1] });
+      // Written as the right item's label (the letters look).
+      const label = this.style.match.look === 'dots' ? undefined : this.bareLabel(pos);
+      this.slots.push({ key: `p${i + 1}`, kind: 'pair', correct: [pos + 1], ...(label ? { accept: [label] } : {}) });
       this.key.push(this.style.match.look === 'dots'
         ? joinRuns(this.gapsOf(p.left), textRun(' \u2013 ', this.at), this.gapsOf(p.right))
         : textRun(`${i + 1} ${this.bareLabel(pos) || String(pos + 1)}`, this.at));
@@ -981,6 +983,7 @@ class Emitter {
       ...(sol.length > 0 ? { solution: sol } : {}),
       ...(hints.length > 0 ? { hints } : {}),
       ...(this.ex.attrs.id ? { anchor: this.ex.attrs.id } : {}),
+      ...(this.ex.attrs.mark ? { mark: this.ex.attrs.mark } : {}),
       ...(this.grids.length > 0 ? { grids: this.grids } : {}),
     };
   }

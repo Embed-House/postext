@@ -61,7 +61,8 @@ import { orientLinesToFrames } from './mirrorFrame.js';
 import { verseMarginTopPx } from './buildBlockKind.js';
 import { verseLinesSettings, versesLineByLine } from './verseLines.js';
 import type { MeasurementCache } from '../measure/index.js';
-import { expandDocumentExercises, markTurnedBoxes, needsExerciseExpansion, withExerciseStyles } from '../exercises/build.js';
+import { exerciseSettingsFor, expandDocumentExercises, markTurnedBoxes, needsExerciseExpansion, withExerciseStyles } from '../exercises/build.js';
+import { exerciseDigitalOf } from '../exercises/digital.js';
 import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, computeColumnBboxes, resolvedDirection, resolvedLocale, validateConfigCache } from './config.js';
 import { resolveDebugConfig } from '../defaults/debug.js';
 import { defaultFontSet, documentFontFaces, faceRequestKey, fontFallbacks, type FontFaceSetLike } from '../fonts/faces.js';
@@ -876,7 +877,11 @@ function placeDocumentPass(
     : undefined;
   if (exerciseExpansion) {
     resolved = withExerciseStyles(resolved);
+    // The document carries the config it was laid out with: the reflowable
+    // EPUB reads the exercise styles from it.
+    doc.config = resolved;
     doc.exercises = exerciseExpansion.records;
+    doc.exerciseDigital = exerciseDigitalOf(exerciseSettingsFor(resolved));
   }
   const footnoteSplit = splitFootnoteDefinitions(exerciseExpansion?.blocks ?? citationsApplied?.blocks ?? parsedBody);
   const footnoteDefs = footnoteSplit.defs;

@@ -4252,6 +4252,10 @@ export interface VDTDocument {
   /** The exercises laid out (#1230): what each asks and answers, for the
    *  digital outputs. Absent when the document has none. */
   exercises?: import('./exercises/record.js').ExerciseRecord[];
+  /** What the digital outputs need beside the records (#1230): the words
+   *  of the exercise bar, checking and keeping, each style's colours. Set
+   *  with `exercises`. */
+  exerciseDigital?: import('./exercises/digital.js').ExerciseDigital;
   pages: VDTPage[];
   blocks: VDTBlock[];
   /** `'right'` when the book is bound on its right edge (`page.binding`):

@@ -62,6 +62,7 @@ import { altWithLabels } from './composed/labelText.js';
 import { figureLabelLeaderPaths, figureLabelMatrix, undrawnLabels, unmirrorLabelLayout } from './composed/labels.js';
 import { comicFramePaintOrder, composedFrameBlockIds, composedPaintOrder, composedReadingOrder, composedSheetClip, composedSheetClipOnSheet, decorationOver, decorationUnder, frameClips, frameContentRect, frameMatrix } from './composed/paint.js';
 import { taskBoxSvgBody, taskBoxText } from './taskBox.js';
+import { exerciseDataJson, exerciseDataOf, type ExerciseData } from './exercises/digital.js';
 
 /**
  * Declarations of every box of CJK text measured with no punctuation
@@ -308,6 +309,10 @@ interface HtmlPaint extends RenderHtmlOptions {
   /** `comics.cast`: the names a comic page's speakers are announced
    *  under. */
   comicCast?: readonly ComicCastMember[];
+  /** The boxes of the document's exercises (#1230), by their own container
+   *  id: the exercise each belongs to, and whether it is the exercise's
+   *  outer box (else a drawn area or grid). */
+  exerciseBoxes?: ReadonlyMap<number, { ex: number; outer: boolean }>;
 }
 
 /** A direction of text, as a `dir` attribute names it. */
@@ -3628,8 +3633,38 @@ function renderBlock(block: VDTBlock, options: HtmlPaint, extra = ''): string {
     `<div class="pt-block" data-block-id="${esc(block.id)}" style="${style}">` +
     note +
     (block.comic && block.stripCaption && !block.hidden ? renderStripBlockHtml(block, options, extra) : renderBlockInner(block, options) + extra) +
+    exerciseBoxHtml(block, options) +
     `</div>`
   );
+}
+
+/** The boxes of the document's exercises by their own container id (see
+ *  {@link HtmlPaint.exerciseBoxes}); `undefined` when it has none. */
+function exerciseBoxesOf(data: ExerciseData | undefined): Map<number, { ex: number; outer: boolean }> | undefined {
+  if (!data) return undefined;
+  const out = new Map<number, { ex: number; outer: boolean }>();
+  for (const r of data.exercises) {
+    out.set(r.id, { ex: r.id, outer: true });
+    for (const s of r.slots) if (s.box !== undefined && !out.has(s.box)) out.set(s.box, { ex: r.id, outer: false });
+    for (const g of r.grids ?? []) if (!out.has(g.box)) out.set(g.box, { ex: r.id, outer: false });
+  }
+  return out;
+}
+
+/** Where an exercise's box lies (#1230): an empty element over a callout
+ *  frame of an exercise — its outer box, a writing area, a grid — that the
+ *  exercise script finds by `data-pt-box` and lays its inputs, lines and
+ *  bar in. Not on a vertical page, whose flow is turned. */
+function exerciseBoxHtml(block: VDTBlock, options: HtmlPaint): string {
+  const boxes = options.exerciseBoxes;
+  if (!boxes || block.type !== 'callout' || !block.callout || block.hidden || options.vertical) return '';
+  const own = block.calloutPath && block.calloutPath.length > 0 ? block.calloutPath[block.calloutPath.length - 1]! : block.containerId;
+  const box = own !== undefined ? boxes.get(own) : undefined;
+  if (!box) return '';
+  const { x, y, width, height } = block.bbox;
+  const part = block.callout.part !== undefined ? ` data-pt-part="${block.callout.part}"${block.callout.continued ? ' data-pt-continued' : ''}` : '';
+  return `<div class="pt-ex-box" data-pt-box="${own}" data-pt-ex="${box.ex}"${box.outer ? ` data-pt-exercise="${box.ex}"` : ''}${part} ` +
+    `style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;pointer-events:none;"></div>`;
 }
 
 /** An empty element with an id at a point of the page: the target of an
@@ -3968,6 +4003,11 @@ export interface HtmlRenderIndex {
   html: string;
   mode: 'single' | 'multi';
   pages: HtmlRenderIndexPage[];
+  /** The document's exercises for the exercise script (#1230), as `html`
+   *  writes them in its `<script class="pt-exercises">`: a host that
+   *  patches the pages instead of setting `html` hands them to
+   *  `attachExercises` itself. Absent when it has none. */
+  exercises?: ExerciseData;
 }
 
 /**
@@ -4041,7 +4081,12 @@ export function renderToHtmlIndexed(
   const reported = new Set<string>();
   const linkTargets = anchoredResourceIds(doc);
   for (const id of options.refTargets ?? []) linkTargets.add(id);
-  const anchorPaint: Pick<HtmlPaint, 'anchors' | 'pageIndexOffset' | 'dir' | 'lang' | 'rootLang' | 'comicCast'> = {
+  // The exercises (#1230): their boxes are marked on the pages, their
+  // records written once for the exercise script.
+  const exercises = exerciseDataOf(doc);
+  const exerciseBoxes = exerciseBoxesOf(exercises);
+  const anchorPaint: Pick<HtmlPaint, 'anchors' | 'pageIndexOffset' | 'dir' | 'lang' | 'rootLang' | 'comicCast' | 'exerciseBoxes'> = {
+    ...(exerciseBoxes ? { exerciseBoxes } : {}),
     ...(doc.config.comics?.cast.length ? { comicCast: doc.config.comics.cast } : {}),
     ...(doc.anchors ? { anchors: doc.anchors } : {}),
     pageIndexOffset: doc.pageIndexOffset ?? 0,
@@ -4102,9 +4147,10 @@ export function renderToHtmlIndexed(
   const html =
     `<div class="pt-doc"${docLang !== undefined ? ` lang="${docLang}"` : ''}${rtl ? ' dir="rtl"' : ''} data-mode="${esc(mode)}" style="${esc(reset + docStyle)}">` +
     pageHtmlParts.join('') +
+    (exercises ? `<script type="application/json" class="pt-exercises">${exerciseDataJson(exercises)}</script>` : '') +
     `</div>`;
 
-  return { html, mode, pages: indexedPages };
+  return { html, mode, pages: indexedPages, ...(exercises ? { exercises } : {}) };
 }
 
 export function renderToHtml(doc: VDTDocument, options: RenderHtmlOptions = {}): string {

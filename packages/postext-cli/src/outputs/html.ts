@@ -3,7 +3,7 @@
 // fonts as data URIs) or a folder (index.html beside assets/).
 
 import { join } from 'node:path';
-import { anchoredResourceIds, applySingleInkToSvg, formatWarning, HTML_TEXT_RESET, renderToHtml, type RenderHtmlOptions } from 'postext';
+import { anchoredResourceIds, applySingleInkToSvg, EXERCISE_SCRIPT, exerciseDataOf, formatWarning, HTML_TEXT_RESET, renderToHtml, type RenderHtmlOptions } from 'postext';
 import { diagramInkHex, mimeForFile } from 'postext/bundle';
 import { UsageError, type Options } from '../args';
 import type { Face, FontSet } from '../fonts';
@@ -93,6 +93,11 @@ export async function writeHtml(book: Book, layout: Layout, fonts: FontSet, opts
     onWarning: (w) => reporter.warn({ kind: `html.${w.kind}`, severity: 'warning', message: formatWarning(w) }),
   };
   const body = reporter.time('html', () => layout.docs.map((d) => renderToHtml(d, options)).join('\n'));
+  // Exercises (#1230): the script that makes them answerable, checks
+  // them and keeps the answers in the browser, under the file's path.
+  const exercises = layout.docs.some((d) => exerciseDataOf(d) !== undefined)
+    ? `<script>${EXERCISE_SCRIPT.replace(/<\/(script)/gi, '<\\/$1')}</script>`
+    : '';
   const lang = book.config.locale ?? book.locale;
   // The pages are the print layout, in page pixels (page.dpi, 300 by
   // default): shown at 96 dpi, as a browser sizes a printed inch.
@@ -121,6 +126,7 @@ export async function writeHtml(book: Book, layout: Layout, fonts: FontSet, opts
     '<main class="postext-book">',
     body,
     '</main>',
+    ...(exercises ? [exercises] : []),
     '</body>',
     '</html>',
     '',

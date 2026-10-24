@@ -24,7 +24,8 @@ export type ExerciseSlotKind =
    *  no slot). */
   | 'mark'
   /** A left item of a match: `correct` is the 1-based printed position of
-   *  its partner in the right column. */
+   *  its partner in the right column; in the letters look, `accept` its
+   *  printed label. */
   | 'pair'
   /** An item to number (order): `accept` is its rank. */
   | 'rank'
@@ -50,6 +51,8 @@ export interface ExerciseSlot {
   box?: number;
   /** A cell's place in its grid: row and column from 0. */
   cell?: [number, number];
+  /** A writing area's line spacing, points. */
+  linePt?: number;
 }
 
 /** A grid's geometry, for the digital outputs to place its cells. */
@@ -85,5 +88,7 @@ export interface ExerciseRecord {
   hints?: string[];
   /** The fence's `{#id}`. */
   anchor?: string;
+  /** A mark exercise's `mark` (`circle`, `underline`…). */
+  mark?: string;
   grids?: ExerciseGridInfo[];
 }
