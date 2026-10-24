@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Widows, orphans and balancing',
   description: 'The rules that keep lines and blocks together across a column break, and the levers that make every column end level',
   lang: 'en',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '22 min',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ These settings live under `headings.balancing`.
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>Upper limit for that tracking, in thousandths of an em per character (10 = 0.01 em).</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Fill a column the widow and orphan rules left a line short with its own paragraphs: ragged paragraphs may run a line long too, a justified one may set no line looser than <code>bodyText.maxWordSpacing</code> or than its own loosest line, and when none gains the line, one is set a line shorter so the split after it takes the line. Kept only when the pages end with fewer short columns.</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

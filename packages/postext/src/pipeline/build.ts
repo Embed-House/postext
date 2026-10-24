@@ -167,7 +167,7 @@ import {
   prevNonMarkerBlock,
   rollbackTrailingBlocks,
 } from './buildHelpers.js';
-import { measureContentBlock, type BlockMeasureContext, type DropCapNote, type MeasureContentBlockOptions, type MeasuredContentBlock } from './measureContentBlock.js';
+import { measureContentBlock, wordSpacingProfile, type BlockMeasureContext, type DropCapNote, type MeasureContentBlockOptions, type MeasuredContentBlock } from './measureContentBlock.js';
 import { containerStyle, paragraphStyleIdOf, planParagraphContainers } from './paragraphContainers.js';
 import {
   appendChapterEndNotes,
@@ -509,6 +509,11 @@ function chapterNumbersOfContent(
  * looseness counts from that optimum, so such a paragraph asks it for one
  * line less (EF-129: asked for one more, it could only match the target by
  * falling back to its optimum, unchecked).
+ *
+ * With `headings.balancing.fillShortColumns` (#1236) `extraLines` may be
+ * -1: the paragraph is set a line short, its tracking rungs taken in the
+ * other direction (tighter letters), and the outcome recorded as negative
+ * tracking.
  */
 function measureLooseParagraph(
   rawBlock: Parameters<typeof measureContentBlock>[0],
@@ -544,25 +549,33 @@ function measureLooseParagraph(
   const onGrid = ctx.resolved.cjk.grid.enabled && composesAsCjk(rawBlock.text);
   const ladder = trackingLadder.length > 1 && (onGrid || mostlyJoiningScript(rawBlock.text)) ? trackingLadder.slice(0, 1) : trackingLadder;
   const gridCap = onGrid ? { gridTrackingEm: ctx.resolved.headings.balancing.maxTracking / 1000 } : {};
-  const maxWordSpacing = ctx.resolved.bodyText.maxWordSpacing + 1e-9;
+  // With `fillShortColumns` (#1236) the limit is the one the runt fix
+  // keeps (EF-65): no justified line looser than `maxWordSpacing` or than
+  // the paragraph's own loosest one, and no more lines set ragged past 3x
+  // than it had. A narrow column of long words often passes the absolute
+  // limit in every setting of a paragraph, the breaker's own included.
+  const natural = ctx.resolved.headings.balancing.fillShortColumns ? wordSpacingProfile(base.measured.lines) : undefined;
+  const maxWordSpacing = Math.max(ctx.resolved.bodyText.maxWordSpacing, natural?.loosest ?? 0) + 1e-9;
   // A CJK line spread past its tracking cap (`cjkLoose`) is past the
   // limit too.
-  const withinLimit = (lines: readonly VDTLine[]): boolean =>
-    lines.every((l) => l.isLastLine || ((l.justifiedSpaceRatio === undefined || l.justifiedSpaceRatio <= maxWordSpacing) && !l.cjkLoose));
+  const withinLimit = (lines: readonly VDTLine[]): boolean => natural
+    ? lines.every((l) => !l.cjkLoose) && ((p) => p.loosest <= maxWordSpacing && p.ragged <= natural.ragged)(wordSpacingProfile(lines))
+    : lines.every((l) => l.isLastLine || ((l.justifiedSpaceRatio === undefined || l.justifiedSpaceRatio <= maxWordSpacing) && !l.cjkLoose));
   const gains = (loose: MeasuredContentBlock | null): loose is MeasuredContentBlock =>
     loose !== null
     && loose.measured.lines.length === target
     && !loose.measured.lastLineRunt
     && withinLimit(loose.measured.lines);
+  const sign = extraLines < 0 ? -1 : 1;
   for (const tracking of ladder) {
     const loose = measureContentBlock(rawBlock, blockIdx, columnWidth, ctx, {
       styleOverride,
       looseness,
-      trackingEm: tracking > 0 ? tracking / 1000 : undefined,
+      trackingEm: tracking > 0 ? (sign * tracking) / 1000 : undefined,
       ...gridCap,
     });
     if (gains(loose)) {
-      looseOutcome.set(blockIdx, tracking);
+      looseOutcome.set(blockIdx, sign * tracking);
       return loose;
     }
   }
@@ -9914,6 +9927,9 @@ function* buildDocumentBalanced(
     stable: boolean;
     failedLoose: Set<number>;
     failedLines: Set<number>;
+    /** Paragraphs set a line short (`fillShortColumns`, #1236) that lost
+     *  no line or bought nothing. */
+    failedTight: Set<number>;
   }
 
   /** Levers accepted so far, over every segment (keyed by content index /
@@ -9936,6 +9952,7 @@ function* buildDocumentBalanced(
         stable: score === 0,
         failedLoose: old?.failedLoose ?? new Set<number>(),
         failedLines: old?.failedLines ?? new Set<number>(),
+        failedTight: old?.failedTight ?? new Set<number>(),
       };
     });
   };
@@ -10102,7 +10119,7 @@ function* buildDocumentBalanced(
     const looseFirst = balancing.maxLinesBeforeLoose < balancing.maxLinesPerHeading;
     const blacklist = (cands: ReadonlySet<number> | null): boolean => {
       let hit = false;
-      for (const k of newLoose) if (!cands || cands.has(k)) { s.failedLoose.add(k); hit = true; }
+      for (const k of newLoose) if (!cands || cands.has(k)) { failLoose(s, k); hit = true; }
       if (hit && looseFirst) return true;
       for (const k of newLines) if (!cands || cands.has(k)) { s.failedLines.add(k); hit = true; }
       return hit;
@@ -10114,6 +10131,14 @@ function* buildDocumentBalanced(
     return blacklist(null);
   };
 
+  /** The paragraphs the current proposal sets a line short (#1236): their
+   *  failures go to the segment's `failedTight`, the others' to
+   *  `failedLoose`. */
+  let tightKeys: ReadonlySet<number> = new Set<number>();
+  const failLoose = (s: Segment, k: number): void => {
+    (tightKeys.has(k) ? s.failedTight : s.failedLoose).add(k);
+  };
+
   let balancingPasses = 0;
   function* balance(): Generator<void, void, void> {
     while (balancingPasses < MAX_BALANCING_PASSES_PER_DOCUMENT) {
@@ -10123,9 +10148,11 @@ function* buildDocumentBalanced(
       const owner = keyOwners(gaps);
       const failedLoose = new Set<number>();
       const failedLines = new Set<number>();
+      const failedTight = new Set<number>();
       for (const s of segments) {
         for (const k of s.failedLoose) failedLoose.add(k);
         for (const k of s.failedLines) failedLines.add(k);
+        for (const k of s.failedTight) failedTight.add(k);
       }
       const proposal = proposeBalanceLines(best.doc, best.forcedBreakPages, applied, {
         maxLinesPerHeading: balancing.maxLinesPerHeading,
@@ -10141,6 +10168,7 @@ function* buildDocumentBalanced(
         optimalLineBreaking: best.doc.config.bodyText.optimalLineBreaking,
         failedLoose,
         failedLines,
+        ...(balancing.fillShortColumns ? { fillShortColumns: true, failedTight } : {}),
         closingBox: balancing.closingBox,
         ...(onGrid && balancing.gridLines === 'off' ? { gridLines: false } : {}),
       });
@@ -10169,6 +10197,7 @@ function* buildDocumentBalanced(
         }
         newLoose.push(k);
       }
+      tightKeys = new Set(newLoose.filter((k) => proposal.loose.get(k)! < 0));
       const trying = new Set<number>([...newLines, ...newLoose].map((k) => owner.get(k)!));
       if (trying.size === 0) {
         // No stretch point can absorb the remaining gaps — stable.
@@ -10208,7 +10237,7 @@ function* buildDocumentBalanced(
         // Candidates the pass never tried (their column's budget was met
         // first) stay eligible for a later proposal.
         const looseFailed = keysLoose.filter((k) => next.looseOutcome.get(k) === null);
-        for (const k of looseFailed) s.failedLoose.add(k);
+        for (const k of looseFailed) failLoose(s, k);
         const looseWon = keysLoose.filter((k) => typeof next.looseOutcome.get(k) === 'number');
         // A box closing its column that moves down onto the column's last
         // grid slot (or level with the column beside it) closes less than a
@@ -10242,9 +10271,9 @@ function* buildDocumentBalanced(
           const boxes = keysLines.filter((k) => boxKeys.has(k));
           if (boxes.length > 0 && !boxesOnly) {
             for (const k of keysLines) if (!boxKeys.has(k)) s.failedLines.add(k);
-            for (const k of keysLoose) s.failedLoose.add(k);
+            for (const k of keysLoose) failLoose(s, k);
           } else if (looseFailed.length > 0 || looseWon.length > 0) {
-            for (const k of looseWon) s.failedLoose.add(k);
+            for (const k of looseWon) failLoose(s, k);
           } else {
             s.done = true;
           }

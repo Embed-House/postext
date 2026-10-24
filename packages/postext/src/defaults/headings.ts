@@ -55,6 +55,7 @@ export const DEFAULT_COLUMN_BALANCING = {
   maxLooseParagraphs: 2,
   trackParagraphs: true,
   maxTracking: 10,
+  fillShortColumns: false,
   trailing: true,
   trailingStep: 'lines' as TrailingStep,
   beforeSpan: true,
@@ -165,6 +166,8 @@ export function resolveHeadingsConfig(partial?: HeadingsConfig): ResolvedHeading
           partial.balancing.trackParagraphs ?? DEFAULT_COLUMN_BALANCING.trackParagraphs,
         maxTracking:
           partial.balancing.maxTracking ?? DEFAULT_COLUMN_BALANCING.maxTracking,
+        fillShortColumns:
+          partial.balancing.fillShortColumns ?? DEFAULT_COLUMN_BALANCING.fillShortColumns,
         trailing:
           partial.balancing.trailing ?? DEFAULT_COLUMN_BALANCING.trailing,
         // Any other value reads as the default.
@@ -430,6 +433,13 @@ export function stripHeadingsDefaults(
       && headings.balancing.maxTracking !== DEFAULT_COLUMN_BALANCING.maxTracking
     ) {
       b.maxTracking = headings.balancing.maxTracking;
+      hasBOverride = true;
+    }
+    if (
+      headings.balancing.fillShortColumns !== undefined
+      && headings.balancing.fillShortColumns !== DEFAULT_COLUMN_BALANCING.fillShortColumns
+    ) {
+      b.fillShortColumns = headings.balancing.fillShortColumns;
       hasBOverride = true;
     }
     if (

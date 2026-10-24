@@ -306,7 +306,9 @@ function wideFloatOver(page: VDTPage, col: VDTColumn): { key: string; under: num
  * points are the first block of a column that starts under a float band (a
  * whole block, not a continuation, and not a callout). Loose-paragraph
  * candidates are justified paragraphs wholly contained in the column (never
- * split parts — loosening those would reshuffle lines across columns).
+ * split parts — loosening those would reshuffle lines across columns); with
+ * `headings.balancing.fillShortColumns` (#1236) ragged ones too, when
+ * Knuth–Plass breaks them (`bodyText.optimalRagged`).
  */
 export function collectColumnGaps(
   doc: VDTDocument,
@@ -362,6 +364,11 @@ export function collectColumnGaps(
   // `headings.balancing.closingBox: 'off'` (EF-105): no box closing a
   // column is ever moved down, so none is a candidate.
   const boxLever = (doc.config?.headings?.balancing?.closingBox ?? 'first') !== 'off';
+  // `headings.balancing.fillShortColumns` (#1236): a ragged paragraph may
+  // run a line long too, when the breaker can set it so (Knuth–Plass on
+  // ragged text; line by line it would only come back as it was).
+  const raggedLoose = doc.config?.headings?.balancing?.fillShortColumns === true
+    && doc.config?.bodyText?.optimalRagged !== false;
 
   const gaps: ColumnGap[] = [];
   for (let p = 0; p <= lastContentPage; p++) {
@@ -644,7 +651,7 @@ export function collectColumnGaps(
 
         if (
           b.type === 'paragraph'
-          && b.textAlign === 'justify'
+          && (b.textAlign === 'justify' || (raggedLoose && (b.textAlign === 'left' || b.textAlign === 'right')))
           && b.lines.length >= 2
           && partCount.get(b.contentIndex) === 1
         ) {
@@ -676,7 +683,8 @@ export function totalGapLines(
 export interface BalanceState {
   /** Extra spacing grid lines per content index (headings + list ends). */
   lines: ReadonlyMap<number, number>;
-  /** Loose paragraphs: contentIndex → extra lines (always 1). */
+  /** Loose paragraphs: contentIndex → extra lines (1, or -1 for a
+   *  paragraph `fillShortColumns` sets a line short). */
   loose: ReadonlyMap<number, number>;
 }
 
@@ -703,6 +711,13 @@ export interface BalanceProposalOptions {
   optimalLineBreaking: boolean;
   /** Loose candidates that failed to gain a line in a previous attempt. */
   failedLoose: ReadonlySet<number>;
+  /** `headings.balancing.fillShortColumns` (#1236): when the column's loose
+   *  candidates have nothing left to give, offer one of them a line short
+   *  (looseness -1). Off when omitted. */
+  fillShortColumns?: boolean;
+  /** Candidates set a line short in a previous attempt that lost their
+   *  line, or did not shorten the column's gap. */
+  failedTight?: ReadonlySet<number>;
   /** Spacing candidates (headings, list ends, after-float points) that may
    *  not take more lines than already applied: a pass that gave them more
    *  moved content across a column break (see {@link firstDivergentColumn})
@@ -773,7 +788,8 @@ export interface LooseBudget {
 export interface BalanceProposal {
   /** Extra spacing grid lines per content index (cumulative across passes). */
   lines: Map<number, number>;
-  /** Loose paragraphs per content index (cumulative across passes). */
+  /** Loose paragraphs per content index (cumulative across passes): the
+   *  lines each runs long, -1 for one set a line short. */
   loose: Map<number, number>;
   /** Budget of the loose candidates newly offered by this proposal. */
   looseBudget: Map<number, LooseBudget>;
@@ -806,7 +822,11 @@ export interface BalanceProposal {
  *     longest first (most glue = least visible loosening), with a shared
  *     budget: the pass stops loosening once the column has gained what it
  *     needs, capped at `maxLooseParagraphs` (cumulative across passes).
- *     Candidates that already failed to gain a line are skipped;
+ *     Candidates that already failed to gain a line are skipped. With
+ *     `fillShortColumns` (#1236), once no candidate is left to run long,
+ *     every candidate the column has not set short yet is offered a line
+ *     short instead (budget one): the split after it takes the line the
+ *     widow and orphan rules held back, plus the one it gave up;
  *  5. headings again, up to `maxLinesPerHeading` (#707), only when a gap is
  *     left and step 4 has nothing more to offer this column.
  */
@@ -993,6 +1013,23 @@ export function proposeBalanceLines(
           .sort((a, b) => b.lineCount - a.lineCount || a.order - b.order);
         for (const pick of picks) {
           loose.set(pick.contentIndex, 1);
+          looseBudget.set(pick.contentIndex, budget);
+          changed = true;
+          looseOffered = true;
+        }
+      }
+      // Nothing left to run long (#1236): one paragraph a line short. It
+      // pulls the next block's lines up from the column after, which a
+      // split refused for the widow or orphan minimum may now take; the
+      // driver keeps it only when the pages it re-flows end fuller. One
+      // per column, and never a paragraph already run long or short.
+      if (!looseOffered && options.fillShortColumns && !columnLoose.some((c) => loose.get(c.contentIndex) === -1)) {
+        const budget: LooseBudget = { group: gap.pageIndex * 1024 + gap.columnIndex, need: 1 };
+        const picks = columnLoose
+          .filter((c) => !loose.has(c.contentIndex) && !options.failedTight?.has(c.contentIndex))
+          .sort((a, b) => b.lineCount - a.lineCount || a.order - b.order);
+        for (const pick of picks) {
+          loose.set(pick.contentIndex, -1);
           looseBudget.set(pick.contentIndex, budget);
           changed = true;
           looseOffered = true;
