@@ -340,8 +340,11 @@ const config: PostextConfig = {
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>لون الأيقونة.</td></tr>
     <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>مورد صورة نقطية أو SVG للأيقونة.</td></tr>
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>ما تدل عليه الأيقونة، لقارئات الشاشة وملف PDF الموسوم.</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>ارتفاع الأيقونة بوحدة em من التعليمة: افتراضيًا ارتفاع الحرف الكبير.</td></tr>
   </tbody>
 </table>
+
+تُطبع الأيقونة رمزًا داخل السطر بعد الرقم: صورة `resourceId` إن سمّت واحدة، وإلا فـ`glyph` بخط `fontFamily` وبلون `color` (لون النص إن لم يُحدَّد). تقف على خط أساس التعليمة بارتفاع `size` em، ويُقرأ `alt` في موضعها.
 
 ### الإجابات
 

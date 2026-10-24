@@ -340,8 +340,11 @@ const config: PostextConfig = {
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>Die Farbe des Symbols.</td></tr>
     <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>Eine Bitmap- oder SVG-Ressource für das Symbol.</td></tr>
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>Wofür das Symbol steht, für Bildschirmleser und das getaggte PDF.</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>Die Höhe des Symbols in em der Arbeitsanweisung: standardmäßig die eines Großbuchstabens.</td></tr>
   </tbody>
 </table>
+
+Ein Symbol wird als Inline-Symbol nach der Nummer gedruckt: das Bild von `resourceId`, wenn es eines nennt, sonst das `glyph` in `fontFamily` und in `color` (sonst in der Textfarbe). Es steht auf der Grundlinie der Arbeitsanweisung, ist `size` em hoch, und sein `alt` wird an seiner Stelle gelesen.
 
 ### Antworten
 

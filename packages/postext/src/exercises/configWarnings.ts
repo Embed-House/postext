@@ -56,7 +56,7 @@ const GRID_KEYS = {
 } satisfies Record<keyof ExerciseGridStyle, true>;
 const ARITHMETIC_KEYS = { division: true, columns: true } satisfies Record<keyof ExerciseArithmeticStyle, true>;
 const LEVEL_KEYS = { glyph: true, empty: true, max: true, color: true } satisfies Record<keyof ExerciseLevelStyle, true>;
-const ICON_KEYS = { resourceId: true, glyph: true, fontFamily: true, color: true, alt: true } satisfies Record<keyof ExerciseIcon, true>;
+const ICON_KEYS = { resourceId: true, glyph: true, fontFamily: true, color: true, alt: true, size: true } satisfies Record<keyof ExerciseIcon, true>;
 const ANSWERS_KEYS = { color: true, fontFamily: true, italic: true } satisfies Record<keyof ExerciseAnswersStyle, true>;
 const SOLUTIONS_KEYS = { placement: true, box: true, heading: true, layout: true } satisfies Record<keyof ExerciseSolutionsConfig, true>;
 const DIGITAL_KEYS = { correctColor: true, wrongColor: true } satisfies Record<keyof ExerciseDigitalStyle, true>;

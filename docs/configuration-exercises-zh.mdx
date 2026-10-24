@@ -340,8 +340,11 @@ const config: PostextConfig = {
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>图标的颜色。</td></tr>
     <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>用作图标的位图或SVG资源。</td></tr>
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>图标的含义，供读屏软件和带标签的PDF使用。</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>图标高度，以题干的 em 计；默认为一个大写字母的高度。</td></tr>
   </tbody>
 </table>
+
+图标作为行内符号印在题号之后：若`resourceId`指定了资源，就印该图片，否则用`fontFamily`和`color`（未设时用正文颜色）印`glyph`。图标立在题干的基线上，高`size`个 em，屏幕阅读器在原处读出它的`alt`。
 
 ### 答案
 

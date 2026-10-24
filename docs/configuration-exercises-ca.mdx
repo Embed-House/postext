@@ -340,8 +340,11 @@ const config: PostextConfig = {
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>El color de la icona.</td></tr>
     <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>Un recurs de mapa de bits o SVG per a la icona.</td></tr>
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>El que representa la icona, per als lectors de pantalla i el PDF etiquetat.</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>L'alçada de la icona en em de l'enunciat: per defecte, la d'una majúscula.</td></tr>
   </tbody>
 </table>
+
+Una icona s'imprimeix com un símbol en línia després del número: la imatge de `resourceId` si n'anomena una, i si no el `glyph` en `fontFamily` i en `color` (el del text si no s'indica). Recolza en la línia de base de l'enunciat, fa `size` em d'alçada i el seu `alt` es llegeix al seu lloc.
 
 ### Respostes
 

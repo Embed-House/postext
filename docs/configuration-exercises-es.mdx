@@ -340,8 +340,11 @@ const config: PostextConfig = {
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>El color del icono.</td></tr>
     <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>Un recurso de mapa de bits o SVG para el icono.</td></tr>
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>Lo que representa el icono, para los lectores de pantalla y el PDF etiquetado.</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>La altura del icono en em del enunciado: por defecto, la de una mayúscula.</td></tr>
   </tbody>
 </table>
+
+Un icono se imprime como un símbolo en línea tras el número: la imagen de `resourceId` si nombra una, y si no el `glyph` en `fontFamily` y en `color` (el del texto si no se indica). Se apoya en la línea de base del enunciado, mide `size` em de alto y su `alt` se lee en su lugar.
 
 ### Respuestas
 

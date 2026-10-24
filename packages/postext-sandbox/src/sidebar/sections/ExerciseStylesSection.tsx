@@ -658,6 +658,7 @@ function IconsFields({ icons, bodyText, iconResources, fieldId, onChange }: Icon
               />
             )}
             <ColorPicker label={labels.colorLabel} value={icon.color ?? bodyText.color} onChange={(v) => setIcon(id, { color: v })} fieldId={`${fieldId}-icon-${id}-color`} isDefault={unsetIcon('color')} onReset={() => resetIcon(id, 'color')} />
+            <NumberInput label={labels.sizeLabel} value={icon.size ?? 0.75} onChange={(v) => setIcon(id, { size: v })} min={0.3} max={3} step={0.05} suffix="em" isDefault={unsetIcon('size')} onReset={() => resetIcon(id, 'size')} />
             <TextInput label={labels.exerciseStyleIconAlt} value={icon.alt ?? ''} onChange={(v) => (v === '' ? resetIcon(id, 'alt') : setIcon(id, { alt: v }))} tooltip={labels.exerciseStyleIconAltTooltip} isDefault={unsetIcon('alt')} onReset={() => resetIcon(id, 'alt')} />
           </div>
         );

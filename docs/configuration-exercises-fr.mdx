@@ -340,8 +340,11 @@ const config: PostextConfig = {
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>La couleur de l’icône.</td></tr>
     <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>Une ressource bitmap ou SVG pour l’icône.</td></tr>
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>Ce que représente l’icône, pour les lecteurs d’écran et le PDF balisé.</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>La hauteur de l’icône en em de la consigne : par défaut, celle d’une capitale.</td></tr>
   </tbody>
 </table>
+
+Une icône s’imprime comme un symbole en ligne après le numéro : l’image de `resourceId` si elle en nomme une, sinon le `glyph` dans `fontFamily` et en `color` (celle du texte par défaut). Elle repose sur la ligne de base de la consigne, haute de `size` em, et son `alt` est lu à sa place.
 
 ### Réponses
 

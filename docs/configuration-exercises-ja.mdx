@@ -340,8 +340,11 @@ const config: PostextConfig = {
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>アイコンの色です。</td></tr>
     <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>アイコンにするビットマップまたはSVGのリソースです。</td></tr>
     <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>スクリーンリーダーとタグ付きPDFのための、アイコンの意味です。</td></tr>
+    <tr><td><code>size</code></td><td><code>number</code></td><td><code>0.75</code></td><td>アイコンの高さ（指示文の em 単位）。既定は大文字の高さです。</td></tr>
   </tbody>
 </table>
+
+アイコンは番号の後にインラインの記号として印刷されます。`resourceId`があればその画像、なければ`fontFamily`と`color`（未指定なら本文の色）で`glyph`を組みます。指示文のベースラインに立ち、高さは`size` em で、その位置で`alt`が読み上げられます。
 
 ### 答えの表示
 
