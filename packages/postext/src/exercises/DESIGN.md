@@ -249,6 +249,6 @@ printed answered and not asked), `shuffle=false` (match, order), `bank` (gaps). 
 - On a vertical page items are numbered ①; item and solution numbers are bold when `number.fontWeight`
   is; an open question's instruction is its first paragraph.
 - Grids on a right-to-left page record `rtl` and count their cells from the right, as painted. The
-  HTML viewer paints such a page as a mirrored flow: its design paths stay mirrored (`svg.pt-path`)
+  HTML viewer paints such a page as a mirrored flow: an exercise's drawn paths stay mirrored (`svg.pt-path`)
   and the exercise controls turn back about their own centres. A reflowable EPUB's drawn boxes are
   set in ems; the script lays its controls on a layer of the printed size scaled to the box.
