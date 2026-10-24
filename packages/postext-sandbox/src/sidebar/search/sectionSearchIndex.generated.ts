@@ -6925,7 +6925,7 @@ export const SECTION_SEARCH_KEYS: Record<SettingsSectionId, SectionSearchKeys> =
   },
   'exerciseStyles': {
     sources: ['boxStyles', 'color', 'dimension', 'exerciseWords', 'font', 'resources'],
-    literals: [],
+    literals: ["em"],
     keys: [
       'bold',
       'boldHelp',
