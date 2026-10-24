@@ -3595,6 +3595,25 @@ export type ContentWarning = ContentWarningBase & (
    *  takes the first one. Not raised while `calloutStyles` is unset or
    *  empty (every type is then the built-in plain box). */
   | { kind: 'unknownCalloutType'; type: string }
+  /** `:::exercise{type}` names no kind of exercise (#1225): the exercise
+   *  takes the kind its content tells. */
+  | { kind: 'exerciseUnknownType'; type: string }
+  /** `:::exercise{style}` names no exercise style: it takes the first. Not
+   *  raised while `exerciseStyles` is unset. */
+  | { kind: 'exerciseUnknownStyle'; style: string }
+  /** A graded exercise with nothing right to check (a choice with no
+   *  ticked option, gaps with no `[[…]]`…): `exerciseKind` is its kind. */
+  | { kind: 'exerciseNoAnswer'; exerciseKind: string }
+  /** An item of an exercise its kind cannot read (a match item with no
+   *  `->`, a sort item with no `:`…): it is set as written. */
+  | { kind: 'exerciseUnreadItem'; text: string }
+  /** An exercise inside another: its blocks are the outer one's. */
+  | { kind: 'exerciseNested' }
+  /** A word a crossword or a word search could not place: it is left out
+   *  of the grid (a crossword needs a letter shared with another word). */
+  | { kind: 'exerciseWordUnplaced'; word: string }
+  /** A `:::solution` or `:::hint` outside an exercise: it prints nothing. */
+  | { kind: 'solutionOutside' }
   /** `:::columns{flow=…}` names neither `'snake'` nor `'parallel'` (#634):
    *  the group takes the default (`'parallel'` with `breaks`, `'snake'`
    *  without). */
