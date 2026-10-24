@@ -61,7 +61,7 @@ import { orientLinesToFrames } from './mirrorFrame.js';
 import { verseMarginTopPx } from './buildBlockKind.js';
 import { verseLinesSettings, versesLineByLine } from './verseLines.js';
 import type { MeasurementCache } from '../measure/index.js';
-import { expandDocumentExercises, needsExerciseExpansion, withExerciseStyles } from '../exercises/build.js';
+import { expandDocumentExercises, markTurnedBoxes, needsExerciseExpansion, withExerciseStyles } from '../exercises/build.js';
 import { arabicNumbersOf, resolveAllConfig, computeBaselineGrid, computeColumnBboxes, resolvedDirection, resolvedLocale, validateConfigCache } from './config.js';
 import { resolveDebugConfig } from '../defaults/debug.js';
 import { defaultFontSet, documentFontFaces, faceRequestKey, fontFallbacks, type FontFaceSetLike } from '../fonts/faces.js';
@@ -869,14 +869,13 @@ function placeDocumentPass(
     ? expandDocumentExercises(
       citationsApplied?.blocks ?? parsedBody,
       resolved,
-      config,
-      resolvedLocale(resolved),
       computeColumnBboxes(pageMetrics.contentArea, resolved)[0]?.width ?? pageMetrics.contentArea.width,
       continuation,
+      content.outline,
     )
     : undefined;
   if (exerciseExpansion) {
-    resolved = withExerciseStyles(resolved, config, resolvedLocale(resolved));
+    resolved = withExerciseStyles(resolved);
     doc.exercises = exerciseExpansion.records;
   }
   const footnoteSplit = splitFootnoteDefinitions(exerciseExpansion?.blocks ?? citationsApplied?.blocks ?? parsedBody);
@@ -9350,6 +9349,9 @@ export function* buildDocumentGen(
   if (fontSet) syncFontSet(fontSet);
   validateConfigCache(config);
   const doc = yield* buildDocumentRounds(content, config, cache, options);
+  // Boxes printed upside down (#1229): their blocks learn the point they
+  // turn about.
+  markTurnedBoxes(doc);
   // References and markup the source names wrongly: read from the source
   // once, located on the pages of the finished layout. Kept apart from
   // `doc.warnings`, whose entries keep their postext 1.4 shape.

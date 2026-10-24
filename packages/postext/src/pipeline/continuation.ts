@@ -15,6 +15,7 @@ import type { HeadingCounters, LayoutContinuation, OutlineEntry, PartState, Post
 import { computeHeadingContext, computeResourceNumberingState } from './resourceNumbering.js';
 import { planParts } from './parts.js';
 import { resolveAllConfig } from './config.js';
+import { exerciseCounterEntries, exerciseCountersAfter, exerciseOutlineEntries, hasBookSolutions } from '../exercises/build.js';
 import { codeParseOptions } from './codeBlocks.js';
 import { headingIsNumbered } from './headingStyles.js';
 import { computeOutline, hasIndexDirective, hasTocDirective } from './outline.js';
@@ -71,10 +72,15 @@ export function continuationAfter(
     footnoteNumber = Math.max(footnoteNumber, lastFootnoteNumber(numbering));
   }
   // Labelled equations and counted boxes number on through the book (#530).
-  const statementCounters = numberStatements(blocks, resolved, {
-    ...(before?.headings ? { headings: before.headings } : {}),
-    ...(before?.statementCounters ? { counters: before.statementCounters } : {}),
-  }).counters;
+  // Exercises number on through the book too (#1227), their counters
+  // carried among the statements'.
+  const statementCounters = {
+    ...numberStatements(blocks, resolved, {
+      ...(before?.headings ? { headings: before.headings } : {}),
+      ...(before?.statementCounters ? { counters: before.statementCounters } : {}),
+    }).counters,
+    ...exerciseCounterEntries(exerciseCountersAfter(blocks, resolved, before), headings),
+  };
   // Lines of verse counted through the book (#621); a count of every line
   // is the layout's (`VDTDocument.lastLineNumber`), and the inherited
   // number is handed on as it was.
@@ -122,9 +128,10 @@ export function contentOutline(
   const resolved = resolveAllConfig(config);
   const blocks = parseMarkdownMemo(body, codeParseOptions(resolved));
   return {
-    outline: computeOutline(blocks, resolved, before?.headings, before?.statementCounters),
+    // An exercise's key joins the outline, for the book's solutions (#1229).
+    outline: [...computeOutline(blocks, resolved, before?.headings, before?.statementCounters), ...exerciseOutlineEntries(blocks, resolved, before)],
     hasToc: hasTocDirective(blocks),
-    hasIndex: hasIndexDirective(blocks),
+    hasIndex: hasIndexDirective(blocks) || hasBookSolutions(blocks),
     // A reference naming no resource may name an anchor of the book (#262).
     hasRefs: hasAnchorRefs(blocks, new Set((content.resources ?? []).map((r) => r.id))),
   };

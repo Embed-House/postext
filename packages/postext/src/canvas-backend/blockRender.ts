@@ -739,6 +739,30 @@ export function renderBlock(
   inkHex: string | null = null,
 ): void {
   if (block.hidden) return;
+  // A box printed upside down (#1229): painted turned about its centre.
+  if (block.turn) {
+    const { cx, cy } = block.turn;
+    saveContext(ctx);
+    ctx.translate(cx, cy);
+    ctx.rotate(Math.PI);
+    ctx.translate(-cx, -cy);
+    try {
+      renderBlockUpright(ctx, block, columnWidth, columnX, inkHex);
+    } finally {
+      restoreContext(ctx);
+    }
+    return;
+  }
+  renderBlockUpright(ctx, block, columnWidth, columnX, inkHex);
+}
+
+function renderBlockUpright(
+  ctx: CanvasRenderingContext2D,
+  block: VDTBlock,
+  columnWidth: number,
+  columnX: number,
+  inkHex: string | null,
+): void {
   if (block.designOverlay) {
     renderHeaderFooterSlot(ctx, block.designOverlay, inkHex);
     return;

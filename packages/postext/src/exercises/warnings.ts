@@ -8,7 +8,8 @@
 import type { ContentBlock } from '../parse/index.js';
 import type { PostextConfig } from '../types.js';
 import type { ContentWarning } from '../vdt.js';
-import { exerciseSettingsOf } from '../defaults/exercises.js';
+import { resolveAllConfig } from '../pipeline/config.js';
+import { exerciseSettingsFor } from './build.js';
 import { readExercises } from './model.js';
 import { gridBox } from './grids.js';
 
@@ -32,7 +33,7 @@ export function exerciseContentWarnings(blocks: readonly ContentBlock[], config:
       case 'exerciseWordUnplaced': out.push({ kind: 'exerciseWordUnplaced', word: i.detail ?? '', ...at(i) }); break;
     }
   }
-  const settings = exerciseSettingsOf(config, config?.locale);
+  const settings = exerciseSettingsFor(resolveAllConfig(config));
   const styles = new Set((config?.exerciseStyles ?? []).map((s) => s.id));
   for (const ex of exercises) {
     if (config?.exerciseStyles && ex.attrs.style !== undefined && !styles.has(ex.attrs.style)) {

@@ -798,11 +798,15 @@ export interface OutlineIndexMark {
  *  unknown) or from a laid-out document (page labels known); consumed by
  *  `:::toc` and `:::index`. */
 export interface OutlineEntry {
+  /** `kind: 'exercise'` (#1229): an exercise's key and worked solution, and
+   *  the title of the chapter it is in, for `:::solutions{scope="book"}`;
+   *  `number` is the exercise's. */
+  exercise?: { key: string; solution?: string[]; chapter: string };
   /** `'indexMark'`: an index mark (`:index…`), listed by `:::index`, never
    *  by `:::toc` (`listed` is false). `'anchor'`: an anchor set in the text
    *  (`:anchor{#id}`, `[text]{#id}`, `:::callout{#id}`), a target of
    *  cross-references only (#261). */
-  kind: 'heading' | 'part' | 'indexMark' | 'anchor';
+  kind: 'heading' | 'part' | 'indexMark' | 'anchor' | 'exercise';
   /** Heading level (1–6); `0` for a part. */
   level: number;
   /** Title as plain text (forced title breaks flattened to spaces). */

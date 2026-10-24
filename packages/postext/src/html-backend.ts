@@ -3619,8 +3619,13 @@ function renderBlock(block: VDTBlock, options: HtmlPaint, extra = ''): string {
   const note = block.footnoteNote !== undefined && !block.hidden
     ? zeroSizeAnchor(footnoteElementId(block.footnoteNote), block.bbox.x, block.bbox.y)
     : '';
+  // A box printed upside down (#1229): a positioned layer at the page's
+  // origin, turned about the box's centre.
+  const style = block.turn
+    ? `position:absolute;left:0;top:0;width:0;height:0;transform-origin:${block.turn.cx.toFixed(3)}px ${block.turn.cy.toFixed(3)}px;transform:rotate(180deg);`
+    : 'display:contents;';
   return (
-    `<div class="pt-block" data-block-id="${esc(block.id)}" style="display:contents;">` +
+    `<div class="pt-block" data-block-id="${esc(block.id)}" style="${style}">` +
     note +
     (block.comic && block.stripCaption && !block.hidden ? renderStripBlockHtml(block, options, extra) : renderBlockInner(block, options) + extra) +
     `</div>`

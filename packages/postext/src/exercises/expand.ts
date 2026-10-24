@@ -8,8 +8,8 @@
  */
 
 import type { ContentBlock, DirectiveAttrs, ExerciseGap, InlineSpan } from '../parse/index.js';
-import { CHIP_PLACEHOLDER, TAB_PLACEHOLDER } from '../parse/inlineFormatting.js';
-import type { CalloutStyleConfig, ChipStyleConfig, DigitSystem, HeadingCounters, ParagraphStyleConfig } from '../types.js';
+import { CHIP_PLACEHOLDER } from '../parse/inlineFormatting.js';
+import type { CalloutStyleConfig, ChipStyleConfig, DigitSystem, HeadingCounters, OutlineEntry, ParagraphStyleConfig } from '../types.js';
 import type { ExerciseSettings, ResolvedExerciseStyle, ResolvedExercisesConfig } from '../defaults/exercises.js';
 import { pickExerciseStyle, solutionsOf } from '../defaults/exercises.js';
 import { counterStyleOf, formatCounter } from '../numbering.js';
@@ -46,6 +46,9 @@ export interface ExpandContext {
   bodyFont?: string;
   /** Ids of the configured box styles (a style's `box` must name one). */
   boxIds: ReadonlySet<string>;
+  /** The book's outline, whose `exercise` entries a
+   *  `:::solutions{scope="book"}` prints (#1229). */
+  outline?: readonly OutlineEntry[];
 }
 
 export interface ExerciseExpansion {
@@ -73,7 +76,9 @@ function chipRun(style: string, run: Run, at: number, extra: Partial<NonNullable
   return { text: CHIP_PLACEHOLDER, spans: [chipSpan(style, run, extra)], sourceMap: [at] };
 }
 
-const tabRun = (at: number): Run => ({ text: TAB_PLACEHOLDER, spans: [{ text: TAB_PLACEHOLDER, bold: false, italic: false, tab: {} }], sourceMap: [at] });
+/** A tab to the paragraph style's next stop: a tab span holds `'\t'` once
+ *  mapped, as the parser leaves it. */
+const tabRun = (at: number): Run => ({ text: '\t', spans: [{ text: '\t', bold: false, italic: false, tab: {} }], sourceMap: [at] });
 
 function marker(type: 'containerStart' | 'containerEnd', name: ContentBlock['containerName'], id: number, at: number, attrs?: DirectiveAttrs): ContentBlock {
   return {
@@ -85,7 +90,7 @@ function marker(type: 'containerStart' | 'containerEnd', name: ContentBlock['con
 /** The plain text of a run, its chips' words included. */
 function plain(run: Run | InlineSpan[]): string {
   const spans = Array.isArray(run) ? run : run.spans;
-  return spans.map((s) => (s.chip ? plain(s.chip.spans) : s.text === TAB_PLACEHOLDER ? ' ' : s.text)).join('');
+  return spans.map((s) => (s.chip ? plain(s.chip.spans) : s.tab ? ' ' : s.text)).join('');
 }
 
 /** An option's label (`a)`, `ア`, `أ)`), `''` for none. */
@@ -96,7 +101,7 @@ function optionLabel(style: ResolvedExerciseStyle, k: number, locale?: string, d
 
 /** The exercise numbers of a document, each exercise's own counter reset
  *  by the heading level its style names. */
-function numberExercises(blocks: readonly ContentBlock[], exercises: ExerciseModel[], ctx: ExpandContext): { numbers: Map<number, string>; counters: Record<string, number> } {
+export function numberExercises(blocks: readonly ContentBlock[], exercises: ExerciseModel[], ctx: ExpandContext): { numbers: Map<number, string>; counters: Record<string, number> } {
   const counters: Record<string, number> = { ...(ctx.counters ?? {}) };
   const heads = [0, ctx.headings?.h1 ?? 0, ctx.headings?.h2 ?? 0];
   const resetAt = new Map<string, number>();
@@ -190,7 +195,16 @@ export function expandExercises(blocks: readonly ContentBlock[], ctx: ExpandCont
     }
     if (b.type === 'directive' && b.directiveName === 'solutions') {
       const heading = b.directiveAttrs?.title ?? (pending[0] ? solutionsOf(pending[0].style, book).heading : book.solutions.heading);
-      flushPending(b.sourceStart, heading || undefined, out.blocks);
+      // The whole book's, from its outline (every chapter's exercises).
+      const entries = b.directiveAttrs?.scope === 'book' ? ctx.outline?.filter((e) => e.kind === 'exercise' && e.exercise) ?? [] : [];
+      if (entries.length > 0) {
+        const style = ctx.settings.styles[0]!;
+        usedStyles.add(style.id);
+        out.blocks.push(...bookSolutions(entries, style, book, heading || undefined, b.sourceStart, newId, ctx));
+        pending = [];
+      } else {
+        flushPending(b.sourceStart, heading || undefined, out.blocks);
+      }
       continue;
     }
     // A solution or hint outside an exercise prints nothing.
@@ -217,6 +231,34 @@ export function expandExercises(blocks: readonly ContentBlock[], ctx: ExpandCont
     out.boxes.push(...exerciseBoxStyles(ctx.settings.styles[0], undefined, ctx.bodySizePt));
   }
   out.boxes.push(...extraBoxes);
+  return out;
+}
+
+/** The solutions of the whole book (`:::solutions{scope="book"}`): each
+ *  chapter's title, then each exercise's number, key and worked solution,
+ *  as the outline carries them (plain text). */
+function bookSolutions(entries: readonly OutlineEntry[], style: ResolvedExerciseStyle, book: ResolvedExercisesConfig, heading: string | undefined, at: number, newId: () => number, ctx: ExpandContext): ContentBlock[] {
+  const ids = exerciseStyleIds(style);
+  const sol = solutionsOf(style, book);
+  const boxId = sol.box && ctx.boxIds.has(sol.box) ? sol.box : ids.solutionList;
+  const box = newId();
+  const out: ContentBlock[] = [marker('containerStart', 'callout', box, at, { type: boxId, ...(heading ? { title: heading } : {}) })];
+  const group = newId();
+  out.push(marker('containerStart', 'paragraphs', group, at, { style: ids.key }));
+  let chapter: string | undefined;
+  for (const e of entries) {
+    const ex = e.exercise!;
+    if (ex.chapter !== chapter) {
+      chapter = ex.chapter;
+      if (chapter) out.push(blockOfRun('paragraph', textRun(chapter, at, { bold: true }), { sourceStart: at, sourceEnd: at }));
+    }
+    const lines = [ex.key, ...(sol.layout === 'full' ? ex.solution ?? [] : [])].filter(Boolean);
+    lines.forEach((line, k) => {
+      const lead = k === 0 ? textRun(`${e.number}${style.number.suffix || '.'}`, at, { bold: true }) : EMPTY_RUN;
+      out.push(blockOfRun('paragraph', joinRuns(lead, tabRun(at), textRun(line, at)), { sourceStart: at, sourceEnd: at }));
+    });
+  }
+  out.push(marker('containerEnd', 'paragraphs', group, at), marker('containerEnd', 'callout', box, at));
   return out;
 }
 
@@ -536,7 +578,7 @@ class Emitter {
     // Room past the answer: em spaces as many as `extra` holds ems.
     const extra = '\u2003'.repeat(Math.max(0, Math.round(dimPt(this.style.blank.extra, this.ctx.bodySizePt) / this.ctx.bodySizePt)));
     const widthText = width === 'longest' ? this.longestAnswer() + extra : width === 'answer' ? answer.text + extra : undefined;
-    const words = answer.spans.length > 0 ? answer : textRun(answer.text || '\u2002', at);
+    const words = answer.spans.length > 0 ? answer : textRun(answer.text || '\u00A0', at);
     const slot = `g${n}`;
     this.slots.push({ key: slot, kind: 'gap', accept: gap.texts.filter((_, k) => gap.correct.includes(k)) });
     this.bankWords.push(textRun(answer.text, at));
@@ -554,7 +596,7 @@ class Emitter {
     gap.options.forEach((opt, k) => {
       if (k > 0) parts.push(textRun(' / ', at));
       const right = gap.correct.includes(k);
-      const words: Run = { text: gap.texts[k] ?? '', spans: opt.length > 0 ? opt : [{ text: gap.texts[k] || '\u2002', bold: false, italic: false }], sourceMap: [] };
+      const words: Run = { text: gap.texts[k] ?? '', spans: opt.length > 0 ? opt : [{ text: gap.texts[k] || '\u00A0', bold: false, italic: false }], sourceMap: [] };
       parts.push(chipRun(this.teacher && right ? this.ids.choiceRing : this.ids.choice, words, at, { exercise: { ex: this.ex.id, slot: `g${n}o${k + 1}` } }));
     });
     parts.push(textRun(')', at));
@@ -635,7 +677,7 @@ class Emitter {
       const parts: Run[] = [];
       const slot = { exercise: { ex: this.ex.id, slot: `${group}o${pos + 1}` } };
       if (o.marker !== 'none') {
-        parts.push(chipRun(this.teacher && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u2002', at), at, slot));
+        parts.push(chipRun(this.teacher && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, slot));
         parts.push(textRun(SPACE, at));
       }
       if (label) {
@@ -647,7 +689,14 @@ class Emitter {
       return joinRuns(...parts);
     });
     const rightLabels = order.flatMap((k, pos) => (q.options[k]!.correct ? [this.bareLabel(pos) || plain(this.optionText(q.options[k]!.block))] : []));
-    this.key.push(textRun(`${this.ex.questions.length > 1 ? `${qi + 1} ` : ''}${rightLabels.join(', ')}`, this.at));
+    // One question: its right option's label and words; several: the labels.
+    const single = this.ex.questions.length === 1 && rightLabels.length === 1 && o.labels !== 'none';
+    if (single) {
+      const right = order.findIndex((k) => q.options[k]!.correct);
+      this.key.push(joinRuns(textRun(`${this.label(right)} `, this.at), this.optionText(q.options[order[right]!]!.block)));
+    } else {
+      this.key.push(textRun(`${this.ex.questions.length > 1 ? `${qi + 1} ` : ''}${rightLabels.join(', ')}`, this.at));
+    }
     // The stem's bracket to write the letter in (Chinese and Japanese tests).
     const blocks: ContentBlock[] = [];
     // The stem, numbered as the questions are counted.
@@ -686,8 +735,8 @@ class Emitter {
           widthText: `${t.length > f.length ? t : f}\u2003\u2003`, ...(this.teacher ? {} : { blank: true as const, blankLabel: this.book.words.blank }), exercise: { ex: this.ex.id, slot },
         }));
       } else {
-        parts.push(textRun(`${t}\u2009`, at), chipRun(this.teacher && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u2002', at), at, { exercise: { ex: this.ex.id, slot: `${slot}t` } }));
-        parts.push(textRun(`\u2003${f}\u2009`, at), chipRun(this.teacher && !opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u2002', at), at, { exercise: { ex: this.ex.id, slot: `${slot}f` } }));
+        parts.push(textRun(`${t}\u00A0`, at), chipRun(this.teacher && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, { exercise: { ex: this.ex.id, slot: `${slot}t` } }));
+        parts.push(textRun(`\u2003${f}\u00A0`, at), chipRun(this.teacher && !opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, { exercise: { ex: this.ex.id, slot: `${slot}f` } }));
       }
       runs.push(joinRuns(...parts));
       this.key.push(textRun(`${k + 1} ${opt.correct ? t : f}`, this.at));

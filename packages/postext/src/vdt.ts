@@ -119,6 +119,9 @@ export interface ResolvedConfig {
   scoreStyles: ResolvedNamedScoreStyleConfig[];
   videoStyle: ResolvedVideoStyleConfig;
   paragraphStyles: ResolvedParagraphStyleConfig[];
+  /** Exercise styles and settings, resolved (#1226): set only when the
+   *  config names `exerciseStyles` or `exercises`. */
+  exerciseSettings?: import('./defaults/exercises.js').ExerciseSettings;
   calloutStyles: ResolvedCalloutStyleConfig[];
   /** Named chip styles (`:chip[…]{style="…"}`). */
   chipStyles: ResolvedChipStyleConfig[];
@@ -2103,6 +2106,10 @@ export interface VDTBlock {
    *  `advancedDesign.enabled` and (for `span: 'column'`) at least one
    *  element. Renderers render this instead of `lines` when present. */
   designOverlay?: VDTDesignSlot;
+  /** Painted turned half round (180°) about this point of the page (#1229):
+   *  the frame and the content of a box whose fence says `turn="180"` (an
+   *  answer printed upside down). */
+  turn?: { cx: number; cy: number };
   /** Present on `type === 'callout'` frame blocks: the resolved callout
    *  geometry. The frame has no text lines of its own — its decoration
    *  (background, stripe, icon, title) is carried on `designOverlay`, and
@@ -2166,6 +2173,9 @@ export interface ResolvedCalloutBlock {
   part?: number;
   /** On a split callout: `true` while another fragment follows this one. */
   continued?: boolean;
+  /** The fence asks the box to be printed upside down (`turn="180"`,
+   *  #1229): an answer turned for the reader to turn the book round. */
+  turned?: true;
 }
 
 /** The column-balancing levers (`headings.balancing`), in the order they

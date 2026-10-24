@@ -5,25 +5,31 @@
  */
 
 import type { ContentBlock } from '../parse/index.js';
-import type { LayoutContinuation, PostextConfig } from '../types.js';
-import type { ResolvedConfig } from '../vdt.js';
-import { exerciseSettingsOf } from '../defaults/exercises.js';
+import type { LayoutContinuation, OutlineEntry } from '../types.js';
+import type { ResolvedConfig, VDTBlock, VDTDocument } from '../vdt.js';
+import { exerciseSettingsOf, type ExerciseSettings } from '../defaults/exercises.js';
 import { resolveChipStylesConfig } from '../defaults/chipStyles.js';
 import { resolveParagraphStylesConfig } from '../defaults/paragraphStyles.js';
 import { dimensionToPx } from '../units.js';
-import { computeBaselineGrid } from '../pipeline/config.js';
+import { computeBaselineGrid, resolvedLocale } from '../pipeline/config.js';
 import { exerciseChipStyles, exerciseParagraphStyles } from './styles.js';
-import { expandExercises, type ExerciseExpansion } from './expand.js';
-import { hasExercises } from './model.js';
+import { expandExercises, numberExercises, type ExerciseExpansion } from './expand.js';
+import { hasExercises, readExercises } from './model.js';
 
 const withStyles = new WeakMap<ResolvedConfig, ResolvedConfig>();
 
+/** The exercise settings a resolved config reads: its own, else the
+ *  defaults in the document language. */
+export function exerciseSettingsFor(resolved: ResolvedConfig): ExerciseSettings {
+  return resolved.exerciseSettings ?? exerciseSettingsOf(undefined, resolvedLocale(resolved));
+}
+
 /** `resolved` with the chip and paragraph styles of every exercise style
  *  among its own (after them, so no fence's fallback finds them first). */
-export function withExerciseStyles(resolved: ResolvedConfig, config: PostextConfig | undefined, locale: string | undefined): ResolvedConfig {
+export function withExerciseStyles(resolved: ResolvedConfig): ResolvedConfig {
   const hit = withStyles.get(resolved);
   if (hit) return hit;
-  const settings = exerciseSettingsOf(config, locale);
+  const settings = exerciseSettingsFor(resolved);
   const chips = resolveChipStylesConfig(settings.styles.flatMap(exerciseChipStyles));
   const paragraphs = resolveParagraphStylesConfig(settings.styles.flatMap(exerciseParagraphStyles), resolved.bodyText);
   const out: ResolvedConfig = {
@@ -66,18 +72,19 @@ export function needsExerciseExpansion(blocks: readonly ContentBlock[]): boolean
 export function expandDocumentExercises(
   blocks: readonly ContentBlock[],
   resolved: ResolvedConfig,
-  config: PostextConfig | undefined,
-  locale: string | undefined,
   measurePx: number,
   continuation: LayoutContinuation | undefined,
+  outline?: readonly OutlineEntry[],
 ): ExerciseExpansion {
+  const locale = resolvedLocale(resolved);
   const dpi = resolved.page.dpi;
   const toPt = (px: number): number => (px * 72) / dpi;
   const bodyPx = dimensionToPx(resolved.bodyText.fontSize, dpi);
   return expandExercises(blocks, {
-    settings: exerciseSettingsOf(config, locale),
+    settings: exerciseSettingsFor(resolved),
     ...(locale ? { locale } : {}),
     ...(resolved.numerals ? { digits: resolved.numerals } : {}),
+    ...(outline ? { outline } : {}),
     ...(continuation?.headings ? { headings: continuation.headings } : {}),
     counters: exerciseCountersOf(continuation),
     bodySizePt: toPt(bodyPx),
@@ -86,4 +93,69 @@ export function expandDocumentExercises(
     bodyFont: resolved.bodyText.fontFamily,
     boxIds: new Set(resolved.calloutStyles.map((s) => s.id)),
   });
+}
+
+/** Stamp `turn` on the frame and the content of every box printed upside
+ *  down (`turn="180"`): the frame's centre on its page. */
+export function markTurnedBoxes(doc: VDTDocument): void {
+  const lists: VDTBlock[][] = [doc.blocks, ...doc.pages.map((p) => p.floats ?? [])];
+  for (const list of lists) {
+    for (const frame of list) {
+      if (frame.type !== 'callout' || !frame.callout?.turned) continue;
+      const turn = { cx: frame.bbox.x + frame.bbox.width / 2, cy: frame.bbox.y + frame.bbox.height / 2 };
+      const own = frame.calloutPath ? frame.calloutPath[frame.calloutPath.length - 1] : frame.containerId;
+      for (const b of list) {
+        if (b.pageIndex !== frame.pageIndex) continue;
+        const inside = b === frame || (frame.calloutPath ? b.calloutPath?.includes(own!) : b.containerId === own);
+        if (inside) b.turn = turn;
+      }
+    }
+  }
+}
+
+/** The exercise counters after `blocks`, numbered on from `before` (a
+ *  book's earlier chapters), for the next chapter's continuation. */
+export function exerciseCountersAfter(blocks: readonly ContentBlock[], resolved: ResolvedConfig, before: LayoutContinuation | undefined): Record<string, number> {
+  const counters = exerciseCountersOf(before);
+  const { exercises } = readExercises(blocks);
+  if (exercises.length === 0) return counters;
+  const locale = resolvedLocale(resolved);
+  return numberExercises(blocks, exercises, {
+    settings: exerciseSettingsFor(resolved),
+    ...(locale ? { locale } : {}),
+    ...(before?.headings ? { headings: before.headings } : {}),
+    counters,
+    bodySizePt: 0,
+    lineHeightPt: 0,
+    measurePt: 0,
+    boxIds: new Set(),
+  }).counters;
+}
+
+/** The outline entries of a document's exercises (#1229): each one's number,
+ *  key and worked solution, under the chapter it is in, for a
+ *  `:::solutions{scope="book"}` in another chapter. */
+export function exerciseOutlineEntries(blocks: readonly ContentBlock[], resolved: ResolvedConfig, before: LayoutContinuation | undefined): OutlineEntry[] {
+  if (!hasExercises(blocks)) return [];
+  const expansion = expandDocumentExercises(blocks, resolved, 400, before);
+  const titles = new Map<number, string>();
+  let chapter = '';
+  for (const b of blocks) {
+    if (b.type === 'heading' && b.level === 1) chapter = b.text;
+    if (b.type === 'containerStart' && b.containerName === 'exercise' && b.containerId !== undefined) titles.set(b.containerId, chapter);
+  }
+  return expansion.records.map((r): OutlineEntry => ({
+    kind: 'exercise',
+    level: 0,
+    title: r.number,
+    number: r.number,
+    numbered: false,
+    listed: false,
+    exercise: { key: r.key, ...(r.solution ? { solution: r.solution } : {}), chapter: titles.get(r.id) ?? '' },
+  }));
+}
+
+/** Whether the blocks print the book's solutions (`:::solutions{scope="book"}`). */
+export function hasBookSolutions(blocks: readonly ContentBlock[]): boolean {
+  return blocks.some((b) => b.type === 'directive' && b.directiveName === 'solutions' && b.directiveAttrs?.scope === 'book');
 }
