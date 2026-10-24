@@ -3657,15 +3657,15 @@
       "slug": "exercises",
       "heading": {
         "en": "Gaps and word banks",
-        "es": "Huecos y bancos de palabras",
-        "ca": "Buits i bancs de paraules",
+        "es": "Huecos y banco de palabras",
+        "ca": "Buits i banc de paraules",
         "fr": "Textes à trous et banques de mots",
-        "de": "Lücken und Wortspeicher",
-        "it": "Spazi vuoti e banche di parole",
-        "pt": "Lacunas e bancos de palavras",
-        "zh": "填空与词库",
+        "de": "Lückentexte und Wortspeicher",
+        "it": "Completamento e riquadro di parole",
+        "pt": "Lacunas e banco de palavras",
+        "zh": "填空题与词库",
         "ja": "穴埋めと語群",
-        "ar": "الفراغات وبنوك الكلمات"
+        "ar": "ملء الفراغات وبنك الكلمات"
       }
     }
   }
