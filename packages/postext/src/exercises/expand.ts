@@ -875,8 +875,8 @@ class Emitter {
     });
     out.push(cols.end);
     // The words to sort: which category each answers.
-    let w = 0;
-    for (const c of cats) for (const _ of c.items) { w++; this.slots.push({ key: `s${w}`, kind: 'category', accept: [plain(c.name)] }); }
+    // The bank's word `s<n>` is the n-th item counted through the categories.
+    cats.flatMap((c) => c.items.map(() => plain(c.name))).forEach((name, k) => this.slots.push({ key: `s${k + 1}`, kind: 'category', accept: [name] }));
     return out;
   }
 
