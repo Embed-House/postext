@@ -1,0 +1,63 @@
+---
+title: "One worksheet in ten school traditions"
+summary: "The same seven :::exercise fences in ten languages, each edition printed by an exercise style set the way that country's school books set exercises."
+plain: "A two-page science and maths worksheet about the water cycle, made ten times. The questions are the same; the numbers, the answer boxes, the lines to write on and the long division look the way each country's schoolbooks print them."
+description: "A worksheet in Postext set ten ways: V/F boxes, Seyès ruling, R/F and 864 : 4 =, the potence, the ⟌ bracket, 选择题 brackets, ア イ ウ and an Arabic edition."
+question: "How do I set the same worksheet the way each country's school books set their exercises?"
+aliases: ["worksheet", "ficha", "fiche", "Arbeitsblatt", "练习单", "プリント", "ورقة عمل", "long division", "potence", "Seyès", "tianzige", "true or false"]
+pageNotes: { "1": "The first page of the worksheet: a blue band with the title, lines for a name and a date, a short text, a multiple-choice exercise, true or false statements, and a gap-fill text under a word bank.", "2": "The second page: words to join to their meanings with dots, words to circle in sentences, a long division and a multiplication set in squares, and an open question with lines to write on." }
+---
+
+## What you'll build
+
+Worksheet 7 of a Year 4 science and maths course, *Water on the move*, in ten editions. The questions are the same in every language: choose an answer, tick true or false, fill the gaps from a word bank, join words to their meanings, circle a word, divide the water in a tank, explain why to save it. Each edition prints them as its schools do. The Spanish and Catalan sheets put the number in a disc, tick V or F and divide with the divisor in an L to the right of the dividend. The French one uses squares, *cases à cocher*, dotted blanks and Seyès paper for the answer. The German one writes *R* and *F*, *Lückentext* and `864 : 4 =` on one line, the multiplication with a dot. The Brazilian one asks for V or F in brackets. The English one divides under the ⟌ bracket. The Chinese sheet numbers its sections 一、二、, puts （　） after each stem with A. B. C. in a row, asks for √ or × and ends with 看拼音，写词语 on 田字格 squares. The Japanese one offers ア イ ウ and ○ ×, the Arabic one runs right to left with أ ب ج and صح or خطأ.
+
+## Method
+
+### 1 · Put each tradition in a table
+
+<Excerpt region="answer" />
+
+Every edition has the same Markdown: seven `:::exercise` fences whose answers are in the text (`- [x]`, `[[vapour]]`, `- Evaporation -> Water turns into vapour`, `- 864 ÷ 4`). What a country's books do differently is form, so it lives in this table and nowhere else: the number's shape and numerals, the option labels and whether the pupil ticks a box or rings a letter, the true/false look, the blank's look, the writing area and the layout of long division. Catalan takes the Spanish row as it is.
+
+### 2 · Lay the tradition over the house style
+
+<Excerpt region="style" />
+
+One exercise style, `ficha`, carries what all ten sheets share (the blue of the numbers, the grey rules, the room between exercises), and the edition's row is spread over it. What the row leaves out comes from the language: T F, V F, R F, √ ×, ○ × and صح خطأ are the engine's own words, as are a) b) c), A. B. C., ア イ ウ and أ ب ج, so no edition writes them.
+
+### 3 · Give each script its faces
+
+<Excerpt region="faces" />
+
+The Latin editions share Nunito and Baloo 2. The Chinese sheet sets its text in Song and its instructions in Hei; the Japanese one sets the text in Klee One, a textbook face, and the instructions in a gothic; the Arabic one uses Noto Naskh Arabic. Klee One's heaviest cut is 600, so the Japanese edition sets its bold at 600 (`boldFontWeight`): a 700 would be drawn by the browser and fail the capture.
+
+### 4 · Head the sheet with lines for a name
+
+<Excerpt region="head" />
+
+The level-1 heading draws the band, the course from the frontmatter and the title, and two ruled fields whose words come from the heading's attributes (`nombre="Name" fecha="Date"`), so the German sheet says *Datum* and the Japanese one 名前 without a string in the code.
+
+## Variations
+
+### Print the teacher's copy
+
+Every answer goes into its slot in magenta: the brackets, the boxes, the blanks and the quotient.
+
+```diff
+   exerciseStyles: [ficha],
++  exercises: { edition: 'teacher' },
+```
+
+### Collect the answers at the foot of the sheet
+
+`placement: 'after'` sets each exercise's key under it; `'inverted'` turns it upside down, as puzzle pages do.
+
+```diff
++  exercises: { solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+## Pitfalls
+
+- A face without a 700 cut makes the bold of the stems' numbers a synthesized one. Give such a text face `boldFontWeight` with a weight it ships.
+- The ○ of the Japanese instructions and the √ of the Chinese ones are only in the CJK faces: set them in a sentence of the CJK text, not in a Latin label.

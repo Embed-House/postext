@@ -1,0 +1,63 @@
+---
+title: "Una fitxa en deu tradicions escolars"
+summary: "Les mateixes set tanques :::exercise en deu llengües, cada edició impresa amb un estil d’exercici que segueix els llibres escolars del seu país."
+plain: "Una fitxa de Ciències i Matemàtiques de dues pàgines sobre el cicle de l’aigua, feta deu vegades. Les preguntes són les mateixes; els números, les caselles, les ratlles i la divisió es veuen com als llibres de cada país."
+description: "Una fitxa a Postext de deu maneres: V/F, pauta Seyès, R/F i 864 : 4 =, la divisió amb caixa, la caseta ⟌, els parèntesis del 选择题, ア イ ウ i l’àrab."
+question: "Com componc la mateixa fitxa tal com els llibres escolars de cada país componen els seus exercicis?"
+aliases: ["fitxa", "full d’exercicis", "ficha", "fiche", "Arbeitsblatt", "练习单", "プリント", "ورقة عمل", "divisió llarga", "pauta Seyès", "田字格", "vertader o fals"]
+pageNotes: { "1": "La primera pàgina de la fitxa: una banda blava amb el títol, ratlles per al nom i la data, un text breu, un exercici de triar la resposta, afirmacions de vertader o fals i un text amb buits sota un banc de paraules.", "2": "La segona pàgina: paraules per unir amb el seu significat amb punts, paraules per encerclar en frases, una divisió i una multiplicació en caselles i una pregunta oberta amb ratlles." }
+---
+
+## Què compondràs
+
+La fitxa 7 d’un curs de Ciències i Matemàtiques de 4t de Primària, *L’aigua, de viatge*, en deu edicions. Les preguntes són les mateixes en totes les llengües: triar una resposta, marcar vertader o fals, completar amb un banc de paraules, unir paraules amb el seu significat, encerclar una paraula, repartir l’aigua d’un dipòsit i explicar per què cal estalviar-la. Cada edició les imprimeix com ho fan les seves escoles. Les fitxes catalana i castellana posen el número dins d’un cercle, marquen V o F i divideixen amb el divisor en una caixa a la dreta del dividend. La francesa fa servir quadrats, *cases à cocher*, buits de punts i paper Seyès per a la resposta. L’alemanya escriu *R* i *F*, *Lückentext* i `864 : 4 =` en una línia, amb la multiplicació amb punt. La brasilera demana V o F entre parèntesis. L’anglesa divideix sota la caseta ⟌. La xinesa numera les seccions 一、二、, posa （　） després de cada enunciat amb A. B. C. en fila, demana √ o × i acaba amb 看拼音，写词语 en quadres 田字格. La japonesa ofereix ア イ ウ i ○ ×, i l’àrab va de dreta a esquerra amb أ ب ج i صح o خطأ.
+
+## Elaboració
+
+### 1 · Posa cada tradició en una taula
+
+<Excerpt region="answer" />
+
+Totes les edicions tenen el mateix Markdown: set tanques `:::exercise` amb les respostes al text (`- [x]`, `[[vapor]]`, `- Evaporació -> L'aigua es converteix en vapor`, `- 864 : 4`). El que canvia d’un país a l’altre és la forma, i per això viu en aquesta taula i enlloc més: la figura i les xifres del número, les lletres de les opcions i si l’alumne marca una casella o encercla una lletra, l’aspecte del vertader o fals, el dels buits, la zona d’escriptura i la disposició de la divisió. El català pren la fila del castellà tal com és.
+
+### 2 · Posa la tradició sobre l’estil de la casa
+
+<Excerpt region="style" />
+
+Un sol estil d’exercici, `ficha`, porta el que comparteixen les deu fitxes (el blau dels números, els filets grisos, l’aire entre exercicis), i la fila de l’edició s’hi estén al damunt. El que la fila no diu ve de la llengua: T F, V F, R F, √ ×, ○ × i صح خطأ són paraules del mateix motor, igual que a) b) c), A. B. C., ア イ ウ i أ ب ج, de manera que cap edició les escriu.
+
+### 3 · Dona a cada escriptura les seves fonts
+
+<Excerpt region="faces" />
+
+Les edicions llatines comparteixen Nunito i Baloo 2. La fitxa xinesa compon el text en Song i els enunciats en Hei; la japonesa, el text en Klee One, una lletra de llibre de text, i els enunciats en una gòtica; l’àrab fa servir Noto Naskh Arabic. El tall més gruixut de Klee One és el 600, així que l’edició japonesa posa la negreta a 600 (`boldFontWeight`): un 700 el dibuixaria el navegador i la captura fallaria.
+
+### 4 · Encapçala la fitxa amb ratlles per al nom
+
+<Excerpt region="head" />
+
+El títol de nivell 1 dibuixa la banda, el curs pres del frontmatter i el títol, i dos camps amb ratlla les paraules dels quals surten dels atributs del títol (`nombre="Nom" fecha="Data"`). Per això la fitxa alemanya diu *Datum* i la japonesa 名前 sense cap cadena al codi.
+
+## Variants
+
+### Imprimeix la còpia del mestre
+
+Cada resposta va al seu lloc en magenta: els parèntesis, les caselles, els buits i el quocient.
+
+```diff
+   exerciseStyles: [ficha],
++  exercises: { edition: 'teacher' },
+```
+
+### Aplega les solucions al peu de la fitxa
+
+`placement: 'after'` posa la clau de cada exercici a sota seu; `'inverted'` la gira de cap per avall, com a les pàgines de passatemps.
+
+```diff
++  exercises: { solutions: { placement: 'inverted', layout: 'key' } },
+```
+
+## Errors freqüents
+
+- Una font sense tall 700 fa sintètica la negreta dels números dels enunciats. Dona a aquesta font de text un `boldFontWeight` amb un pes que tingui.
+- El ○ dels enunciats japonesos i el √ dels xinesos només són a les fonts CJK: posa’ls en una frase del text CJK, no en una etiqueta llatina.
