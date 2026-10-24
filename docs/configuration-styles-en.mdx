@@ -453,6 +453,18 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>Paint the chip's letters as rows of dots to trace, as a design text's <a href="/en/docs/configuration-headers-footers#inline-marks-and-outlines"><code>dotted</code></a> does, its em lengths relative to the chip text. With no fill, no outline and no padding the chip is a dotted word in the line: <code>:chip[gato]&#123;style="dots"&#125;</code>.</td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>Draw the outline as a line under the text only, <code>borderWidth</code> thick in <code>borderColor</code>, instead of round the box: a blank to write on. Unset: the whole outline.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>The narrowest the box is, outline and padding included; a shorter text is centred in it. Exercise blanks and the boxes to tick use it. Unset: as wide as the text.</td>
+    </tr>
   </tbody>
 </table>
 

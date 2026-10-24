@@ -453,6 +453,18 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>يرسم حروف الشارة صفوفًا من النقاط للتتبّع، كما يفعل <a href="/ar/docs/configuration-headers-footers#العلامات-داخل-السطر-والخطوط-المحيطية"><code>dotted</code></a> في نص التصميم، وتُحسب أطوال em فيه نسبةً إلى نص الشارة. ومن دون خلفية ولا حدّ ولا حشوة داخلية تصير الشارة كلمة منقّطة داخل السطر: <code>:chip[gato]&#123;style="dots"&#125;</code>.</td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>يرسم الخط المحيط خطًّا تحت النص وحده، بسماكة <code>borderWidth</code> ولون <code>borderColor</code>، بدل أن يحيط بالمربع: فراغ يُكتب عليه. وإن لم يُحدَّد رُسم الخط المحيط كله.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>أصغر عرض للمربع، بالخط المحيط والحشوة الداخلية؛ والنص الأقصر منه يتوسّطه. تستعمله فراغات التمارين ومربعات التأشير. وإن لم يُحدَّد كان المربع بعرض النص.</td>
+    </tr>
   </tbody>
 </table>
 

@@ -1,0 +1,390 @@
+{/* docs/exercises-zh.mdx */}
+
+export const metadata = {
+  title: '练习',
+  sidebarTitle: '练习',
+  description: 'Postext怎样排教科书和练习册里的练习：:::exercise块，从选择题到竖式除法的十二种题型，写在Markdown里的答案，题号，紧跟在题后、倒印、放在章末或书末的答案，教师用书，检查项，以及在HTML和EPUB中可以直接作答的练习',
+  lang: 'zh',
+  lastUpdated: '2026-10-24',
+  readingTime: '16分钟',
+  order: 36,
+  plainSummary: "本页说明怎样在Postext的书里写练习：选择题、判断题、填空题、连线题、找词游戏、竖式计算等等。每道题和它的答案都写在章节正文里，Postext按题型把它印出来，包括题号、选项和供学生书写的横线。答案可以紧跟在题后、倒过来印、集中放在章末，也可以不印；同一份文字还能生成每道题都填好答案的教师用书。在HTML阅读器和EPUB电子书里，读者可以直接在屏幕上作答并核对答案。",
+};
+
+# 练习
+
+**题目和答案写在Markdown里；印出来是什么样子，由练习样式决定。**
+
+一道练习是章节中写在`:::exercise`和`:::`之间的一个块。块里写题目要求、各个小题、选项、填空和它们的答案，有解题过程时也写在里面。Postext从文字中读出答案，给学生印出题目（空着的横线、空的方框、打乱顺序的项目），生成答案表，再把答案放到书中指定的位置。题号的样子、选项的序号、填空处的样子和书写区的格线来自[`exerciseStyles`](/zh/docs/configuration-exercises#练习样式)；答案放在哪里、印哪一种版本来自[`exercises`](/zh/docs/configuration-exercises#全书设置)。因此，同一份Markdown可以生成学生用书、教师用书和屏幕上的互动版本。
+
+练习排成一个由普通段落、行内标签和绘制图形组成的框，所以它的放置、跨栏跨页的拆分、在无障碍PDF中的标签以及在各种输出中的绘制，都和其他框一样。没有`:::exercise`的书，排版结果与以前相同。
+
+## 练习块
+
+```md
+:::exercise
+中国的首都是哪座城市？
+
+- [ ] 上海
+- [x] 北京
+- [ ] 广州
+:::
+```
+
+练习开头的段落，直到第一个列表、填空或词库为止，是**题目要求**。它排在题号之后，用样式中题目要求的字体（默认粗体）。其后的内容是题目本身。
+
+块的起始行接受以下属性：
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>作用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>type</code></td><td>题型（见下文）。内容已经表明题型时可以省略：任务列表是<code>choice</code>，由<code>-&gt;</code>连成的配对列表是<code>match</code>，含<code>[[…]]</code>的文字是<code>gaps</code>，其余都是<code>open</code>。也接受其他几种写法（<code>mcq</code>、<code>tf</code>、<code>cloze</code>、<code>matching</code>等）。</td></tr>
+    <tr><td><code>style</code></td><td>练习样式的id。不写或写了不存在的id时，用<code>exerciseStyles</code>中的第一种样式。</td></tr>
+    <tr><td><code>title</code></td><td>印在题号后面的粗体标题。</td></tr>
+    <tr><td><code>#id</code></td><td>锚点，与框的写法相同：<code>:::exercise&#123;#volcanoes&#125;</code>。</td></tr>
+    <tr><td><code>n</code></td><td>固定的题号，用来保持某个印刷版本的编号。后面的练习从它往下数。</td></tr>
+    <tr><td><code>level</code></td><td>难度，从1到样式规定的最大值（默认为3），以记号的形式印在题号之后：<code>level=2</code>印出●●○。</td></tr>
+    <tr><td><code>icon</code></td><td>样式中定义的活动图标的id，用空格分隔：<code>icon="pencil pair"</code>。</td></tr>
+    <tr><td><code>example</code></td><td>第一小题作为示范印出答案，不再要求作答。</td></tr>
+    <tr><td><code>columns</code></td><td>选择题：选项并排，每行排这么多个。</td></tr>
+    <tr><td><code>select</code></td><td>选择题：<code>one</code>或<code>many</code>，即读者在屏幕上可以勾选几个选项。写了不止一个<code>[x]</code>时已经视为<code>many</code>。</td></tr>
+    <tr><td><code>shuffle=false</code></td><td>连线题和排序题：按书写顺序印出各项，不打乱。</td></tr>
+    <tr><td><code>bank</code></td><td>填空题：把答案印成一个词库。</td></tr>
+    <tr><td><code>lines</code>、<code>area</code></td><td>问答题：留几行书写，以及书写区的格线。</td></tr>
+    <tr><td><code>mark</code></td><td>圈画题：答案用什么方式标出词语：<code>circle</code>（默认，圈出）、<code>box</code>、<code>underline</code>或<code>highlight</code>。</td></tr>
+    <tr><td><code>size</code>、<code>directions</code>、<code>hidden</code></td><td>找词游戏：方阵的边长、词语排列的方向，以及不在方阵下面印词表。</td></tr>
+  </tbody>
+</table>
+
+练习里还可以放两种块。`:::solution`……`:::`写解题过程或参考答案，可以用任何Markdown；它从不印在练习里面，而是放到[答案](#答案与解答)所在的位置。`:::hint`……`:::`写提示，屏幕版本在读者需要时显示，印刷版不印。
+
+## 题型
+
+打乱顺序用的是固定的随机种子：同一道练习在Canvas、PDF、HTML阅读器、EPUB和答案表中的顺序都一样。修改`exercises.seed`，就能印出同一份试卷的另一个版本。
+
+### 选择题与判断题
+
+#### 选择题
+
+一个任务列表，勾上正确的选项：
+
+```md
+:::exercise
+离太阳最近的行星是哪一颗？
+
+- [ ] 金星
+- [x] 水星
+- [ ] 火星
+:::
+```
+
+选项每行一个，标为A. B. C.，转行的文字悬挂在选项文字下面。一道练习有几个小题时，写成有序列表，每一项是一个题干，题干下面缩进写它的任务列表；题干编号为1.、2.，选项排在题干下面：
+
+```md
+:::exercise{columns=3}
+选择正确的答案。
+
+1. 植物的根从土壤里吸收
+   - [x] 水分
+   - [ ] 阳光
+   - [ ] 种子
+2. 叶子利用什么制造养料？
+   - [ ] 土壤
+   - [ ] 风
+   - [x] 阳光
+:::
+```
+
+`columns=3`让选项每行排三个。序号和它后面的符号随文档语言而定：中文为A.，英文和罗曼语族语言为a)，日文为ア イ ウ，阿拉伯文为أ) ب) ج)。样式可以在每个选项前加一个供勾选的方框或圆圈（`options.marker`），也可以像中文和日文试卷那样，在题干末尾加一对括号（　），让学生把字母填进去（`options.bracket`）。
+
+#### 判断题
+
+```md
+:::exercise{type=truefalse}
+判断对错。
+
+- [x] 太阳是一颗恒星。
+- [ ] 月亮是一颗行星。
+:::
+```
+
+每个句子都编号，行末印两个答案，各带一个方框：√ □ × □。勾选的项为正确。两个符号随语言而定：中文为√/×，英文为T/F，西班牙文、加泰罗尼亚文、法文、意大利文和葡萄牙文为V/F，德文为R/F，日文为○/×，阿拉伯文为✓/✗。样式也可以改为在句末只留一个空，让学生写“√”或“×”（`trueFalse.look: 'bracket'`）。
+
+### 填空题与词库
+
+`[[答案]]`是一个空，印成一条供书写的横线：
+
+```md
+:::exercise{bank}
+选词填空。
+
+1. 植物的根从土壤里吸收[[水分]]。
+2. 叶子为植物制造[[养料]]。
+3. 花朵吸引[[昆虫 | 蜜蜂]]来传粉。
+
+::bank[石头 | 风]
+:::
+```
+
+- `[[马铃薯 | 土豆]]`：一个空接受几种答案。答案表印第一种。
+- `[[的 | (地) | 得]]`：**行内选择**。选项印在句中，写作`(的 / 地 / 得)`，括号里的那个是正确的，读者把它圈出来。
+- `[[秋天]]{width=6}`：宽六个em的空。
+- `\|`是答案中的竖线本身，`\[[`是两个方括号本身。
+
+一道练习中的每个空都和最长的答案一样宽，再加1.5 em，这样横线的长短不会泄露答案（用`blank.width`修改）。`bank`把答案打乱后印在题目要求下面的词库框里；`::bank[石头 | 风]`往词库里添加干扰项（单独写它也会生成词库）。`[[…]]`只在练习里才被识别：书中其他地方的两个方括号照原样保留。
+
+开头直接是题目文字、没有题目要求的练习，题号接在第一段的开头：
+
+```md
+:::exercise
+一个星期有[[七]]天，一年有[[十二]]个月。
+:::
+```
+
+### 连线题与分类题
+
+#### 连线题
+
+用`->`（或`→`）写成的配对：
+
+```md
+:::exercise
+把动物和它的家连起来。
+
+- 蜜蜂 -> 蜂巢
+- 小鸟 -> 鸟窝
+- 蜘蛛 -> 蛛网
+- 兔子 -> 洞穴
+- -> 鱼缸
+:::
+```
+
+左栏按书写顺序印出，右栏打乱顺序，每一项旁边有一个圆点，供学生连线。`- -> 鱼缸`往右栏添加一个不与任何项配对的项。设`match.look: 'letters'`时，右栏各项标上字母，左栏每一项旁边留一个填字母的空。`shuffle=false`让右栏保持书写顺序。
+
+#### 分类题
+
+```md
+:::exercise{type=sort}
+按食用的部分给下面的蔬菜和水果分类。
+
+- 根：胡萝卜、萝卜
+- 叶：生菜、菠菜
+- 果实：西红柿、苹果
+:::
+```
+
+所有的项打乱后放进一个词库，每个类别占一栏（最多四栏），栏头是类别名，下面是书写横线。各项之间可以用逗号、分号、`、`、`，`或`،`分隔。
+
+### 排序
+
+#### 排序题
+
+```md
+:::exercise{type=order}
+按植物生长的先后排一排。
+
+1. 种子发芽了。
+2. 茎长高了。
+3. 花开了。
+4. 结出了果实。
+:::
+```
+
+列表按正确的顺序书写，印出时打乱，每一项带一个填序号的方框。
+
+#### 连词成句
+
+```md
+:::exercise{type=scramble}
+连词成句。
+
+- 植物 / 需要 / 水
+- 太阳 / 给我们 / 光和热
+:::
+```
+
+每个句子在斜线处切开（没有斜线时在空格处切开），打乱后印出，各块之间用斜线隔开，下面留一条横线写整句。中文句子词与词之间没有空格，所以要用斜线切分。
+
+### 圈画题
+
+```md
+:::exercise{type=mark}
+圈出表示动作的词：小女孩[[浇]]花，太阳[[照]]着花朵。
+:::
+```
+
+文字照原样印出；`[[…]]`中的词是要标出的词。答案中这些词被圈出；在起始行写`mark=box|underline|highlight`，就改为加框、加下划线或加底色；也可以逐个词设定，例如`[[浇]]{mark=underline}`。
+
+### 问答题与书写区
+
+```md
+:::exercise{type=open lines=4}
+植物为什么需要阳光？
+
+:::solution
+植物要靠阳光制造养料。
+:::
+:::
+```
+
+题目要求后面是供书写的横线：默认三行，这里用`lines=4`。正文是列表时，每一项各有自己的横线。`area`改变格线：`lines`（横线）、`dots`（点线）、`grid`（方格纸）、`seyes`（法国学校的Seyès格线）、`tianzige`（田字格，小学生写汉字用的格子）、`box`（空框，供画图）或`none`。`:::solution`是参考答案，印在答案中，在教师用书里写在横线上。
+
+### 找词游戏与填字游戏
+
+#### 找词游戏
+
+```md
+:::exercise{type=wordsearch size=6 directions="across down"}
+在方阵中找出下面的词语。
+
+- 春天
+- 小草
+- 花朵
+- 燕子
+:::
+```
+
+词语排进一个字的方阵，词表印在方阵下面（`hidden`不印词表）。方阵会放大到能容下最长的词；`size`设定它的边长。`directions`接受`across`、`down`、`diagonal`和`backwards`；默认是横向、纵向和斜向。拉丁字母默认排成大写，除非样式另有规定；汉字不受影响。放不进去的词会被报告。
+
+#### 填字游戏
+
+```md
+:::exercise{type=crossword}
+根据提示填成语。
+
+- 一心一意：做事专心，没有别的念头
+- 心想事成：心里想的事都能办到
+- 意气风发：精神振奋，气概豪迈
+- 风和日丽：风很柔和，阳光明媚
+:::
+```
+
+每一条是一个词和它的提示，冒号可以用`:`或`：`。引擎排出方格，在每个词的第一格标上编号，把提示印在方格下面，分成两组，组名用文档语言（中文为“横向”和“纵向”，英文为Across和Down，日文为ヨコのカギ和タテのカギ）。
+
+### 竖式计算
+
+```md
+:::exercise{type=arithmetic}
+用竖式计算。
+
+- 345 + 278
+- 902 − 456
+- 124 × 3
+- 864 ÷ 4
+:::
+```
+
+每道算式按学生书写的样子排在格子里：数字按位对齐，运算符号在左边，下面一条横线，横线下是填写得数的空格，每行最多四道。识别的符号有`+`、`-`、`−`、`×`、`x`、`*`、`÷`、`:`和`/`，数都是整数。除法竖式按文档语言所在地区的学校习惯排，`arithmetic.division`可以换成另一种：
+
+- `bracket`：除数在左，被除数在“厂”字形的除号下面，商写在上方。中文、英文、日文和阿拉伯文书籍用这种。
+- `potence`：被除数在左，除数在右边的L形线下，商写在除数下面，余数在最下面。西班牙文、加泰罗尼亚文、法文、意大利文和葡萄牙文书籍用这种。
+- `inline`：`864 : 4 =`和商的格子排在同一行，计算步骤写在下面。德文书籍用这种。
+
+### 第一题作示范
+
+`example`把第一小题作为已解答的示范印出，用答案的颜色：第一个空已填好，第一题的正确选项已圈出，第一对已连线，第一个句子已写好。屏幕上不要求作答这一题。
+
+## 编号、引用与难度
+
+练习在每一章里编为1、2、3。其余由样式决定：题号可以是带句点的粗体数字（默认），也可以放在圆形、方形或圆角方形里（`number.shape`）；题号前可以加一个词（设`number.label: true`时，用文档语言的词，中文印作“练习 3.”）；数字的写法（`number.format`）；加上章号的模板（`'{h1}.{n}'`）；以及从哪里重新计数（`number.resetOn`：每章、每节或从不）。中文试卷常见的大题号“一、二、”写作`number: { format: 'simp-chinese-informal', suffix: '、' }`。`number.counter`相同的样式共用一个计数，全书从一章延续到下一章。
+
+起始行写`n=12`时，这道练习的题号为12，后面的练习从13接着数。`#id`让练习成为`:ref`的目标，引用处印出它的标题，没有标题时印页码。`level`和`icon`印在题号后面，分别是样式规定的难度记号和活动图标。
+
+## 答案与解答
+
+### 答案表
+
+每道需要评分的练习都有一份由答案生成的答案表：正确的选项（`B. 水星`），按顺序列出的空（`1 水分 · 2 养料 · 3 昆虫`），每个句子的√或×，配对，顺序，句子，填字游戏的词及其编号，各道算式的得数。在`full`版式（默认）中，答案表后面接着这道练习的`:::solution`。问答题没有答案表：它的参考答案就是解答。
+
+### 答案印在哪里
+
+由`exercises.solutions.placement`为全书决定；样式可以为自己的练习另设。
+
+<table>
+  <thead>
+    <tr>
+      <th>位置</th>
+      <th>印出的内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>none</code></td><td>印刷版不印答案（默认）。屏幕版本仍然有答案。</td></tr>
+    <tr><td><code>after</code></td><td>答案紧跟在对应的练习后面，字号较小。</td></tr>
+    <tr><td><code>inverted</code></td><td>同样的框，倒过来印，就像谜题书和儿童杂志那样。</td></tr>
+    <tr><td><code>chapterEnd</code></td><td>本章所有答案集中在章末，标题用文档语言（中文为“参考答案”，英文为Solutions，德文为Lösungen……），每条答案前印出练习的题号。</td></tr>
+    <tr><td><code>directive</code></td><td>只印在章节写了<code>:::solutions</code>的地方。</td></tr>
+  </tbody>
+</table>
+
+用`directive`时，一行`:::solutions`印出它前面尚未印过的各道练习的答案；`title="…"`改变它的标题。`:::solutions{scope="book"}`放在书末单独的一章里，按章印出全书每道练习的答案表和解答：
+
+```md
+# 参考答案
+
+:::solutions{scope="book"}
+```
+
+### 教师用书
+
+```json
+{ "exercises": { "edition": "teacher" } }
+```
+
+把每个答案印在它的位置上，用答案的颜色（品红，除非样式设了`answers.color`）：空已填好，正确的选项已圈出或方框已涂满，判断题的√或×方框已涂满，连线已画好，排序框里写好了序号，句子和分好类的词写在横线上，问答题的参考答案写在横线上，填字游戏的词和算式的得数写在格子里。
+
+## 检查
+
+沙盒的**检查**面板和`collectContentWarnings`会报告引擎读不懂的地方：
+
+- `exerciseUnknownType`：`type`不是十二种题型之一。
+- `exerciseUnknownStyle`：`style`没有对应的练习样式（改用第一种样式）。
+- `exerciseNoAnswer`：需要评分的练习没有可评的答案：选择题没有勾选的选项，填空题没有`[[…]]`，连线题没有配对。
+- `exerciseUnreadItem`：列表中有一项读不出，例如连线题的一项没有`->`，或者一道算式不是两个整数加一个运算符号。
+- `exerciseWordUnplaced`：找词游戏或填字游戏有放不进去的词。
+- `exerciseNested`：练习里套了另一道练习。
+- `solutionOutside`：`:::solution`或`:::hint`写在练习外面。它什么也不印。
+
+## HTML与EPUB中的练习
+
+在HTML阅读器和EPUB电子书中，练习可以直接作答。读者在空里输入，点击选项、句子、要连线的圆点和方格中的格子，然后核对答案、查看解答或重做。答对和答错用颜色和记号表示（`digital.correctColor`、`digital.wrongColor`），读屏软件也会读出结果。答案按书保存在浏览器中，读者下次打开时还在（`exercises.digital.persist`）。设`exercises.digital.check: 'instant'`时，每填一个答案就立即核对；设`exercises.digital.interactive: false`时，页面与印刷版相同。不论印刷版把答案放在哪里，EPUB里总带有答案表，所以不运行脚本的阅读系统也能看到答案。
+
+屏幕版本可以通过`htmlViewer.overrides`给练习另设样子：它在HTML阅读器排版之前合并到书的配置上，印刷版保持不变：
+
+```ts
+const config: PostextConfig = {
+  exercises: { solutions: { placement: 'chapterEnd' } },
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [
+        { id: 'exercise', blank: { minWidth: { value: 6, unit: 'em' } }, area: { kind: 'none' } },
+      ],
+    },
+  },
+};
+```
+
+## 练习样式
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      number: { format: 'simp-chinese-informal', suffix: '、' },
+      instruction: { fontFamily: 'Noto Sans SC' },
+      options: { bracket: true },
+      trueFalse: { look: 'bracket' },
+      blank: { look: 'dots' },
+      area: { kind: 'tianzige' },
+    },
+  ],
+};
+```
+
+这种样式把题号排成“一、二、”，题目要求用黑体，选择题在题干末尾留括号，判断题在句末留一个空，填空处是点线，书写区是田字格。样式的每个字段、它的类型和默认值见[配置 › 练习](/zh/docs/configuration-exercises)。样式的框取自一种[标注框样式](/zh/docs/configuration-callouts)（`box`），所以练习可以像书中其他框一样，放在带底色和色条的框里。[智能体技能](/zh/docs/skill)移植教科书或练习册中的练习时，也按同样的步骤处理。

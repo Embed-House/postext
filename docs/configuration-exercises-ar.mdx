@@ -1,0 +1,471 @@
+{/* docs/configuration-exercises-ar.mdx */}
+
+export const metadata = {
+  title: 'الإعدادات: التمارين',
+  sidebarTitle: 'إعدادات التمارين',
+  description: 'أنماط التمارين (exerciseStyles) وإعدادات التمارين في الكتاب (exercises): شارات الأرقام، وخط التعليمة، وتسميات الخيارات وعلامات التأشير، والفراغات، وإجابات صح أو خطأ، والتوصيل، وبنوك الكلمات، ومساحات الكتابة، والشبكات، والقسمة المطوّلة، وعلامات الصعوبة، والأيقونات، ولون الإجابات، وموضع طباعة الحلول، وطبعة المعلم، وطبعات الشاشة',
+  lang: 'ar',
+  lastUpdated: '2026-10-24',
+  readingTime: '12 دقيقة',
+  order: 17,
+  parent: 'configuration',
+  plainSummary: "تسرد هذه الصفحة كل إعدادات مظهر التمارين. يحدد نمط التمرين كيف يُطبع الرقم، وكيف تُسمّى الخيارات، وما شكل الفراغ الذي يُملأ، وكيف تُسطَّر الأسطر التي يُكتب عليها، وكيف تُرسم الشبكات والعمليات الحسابية. وتحدد إعدادات الكتاب أين تُطبع الحلول، وهل الكتاب طبعة التلميذ أم طبعة المعلم. وتحدد أيضًا كيف يجيب القراء عن التمارين على الشاشة. أما طريقة كتابة التمارين نفسها فتشرحها صفحة التمارين.",
+};
+
+# الإعدادات: التمارين
+
+
+## أنماط التمارين
+
+تعرّف الخاصية `exerciseStyles` الأنماط المسمّاة التي يختارها التمرين بـ`:::exercise{style="…"}`. النمط شكلُ عائلة من التمارين؛ أما الأسئلة والإجابات فتبقى في Markdown (انظر [التمارين](/ar/docs/exercises)). يأتي افتراضيًا نمط واحد هو `exercise`، فتعمل الحاوية دون أي إعداد؛ وتعريف `exerciseStyles` يستبدله، وأول نمط مُعرَّف هو الذي يأخذه التمرين الذي لا `style` له. كل الحقول اختيارية، والقيم الافتراضية تتبع لغة المستند حيث تختلف المدارس: تسميات الخيارات، وعلامتا صح وخطأ، وطريقة كتابة القسمة المطوّلة، والكلمات المطبوعة.
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      box: 'activity-frame',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Noto Kufi Arabic' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots', width: 'answer' },
+      area: { kind: 'grid', lines: 4 },
+      level: { glyph: '★', empty: '☆' },
+      icons: { pair: { glyph: '👥' } },
+    },
+    { id: 'quiz', extends: 'activity', options: { layout: 'row', columns: 4 } },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>—</td><td>المعرّف الذي يختاره <code>:::exercise&#123;style="…"&#125;</code>. والمعرّف غير المعروف يعود إلى أول نمط ويُبلَّغ عنه (<code>exerciseUnknownStyle</code>).</td></tr>
+    <tr><td><code>name</code></td><td><code>string</code></td><td><code>id</code></td><td>اسم مقروء للبشر (لواجهة المحرّر فقط).</td></tr>
+    <tr><td><code>extends</code></td><td><code>string</code></td><td>—</td><td>معرّف النمط الذي يُبنى عليه هذا النمط. تُدمج كل مجموعة (<code>number</code>، <code>options</code>، <code>blank</code>…) حقلًا حقلًا، و<code>icons</code> معرّفًا معرّفًا.</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>—</td><td>معرّف في <a href="/ar/docs/configuration-callouts#أنماط-الإطارات"><code>calloutStyles</code></a> لإطار التمرين: الخلفية والحدّ والشريط والحشوة الداخلية والموضع والانقسام. وإن لم يُحدَّد صُفّ التمرين في النص الجاري بلا إطار، وبقي كاملًا في صفحة واحدة.</td></tr>
+    <tr><td><code>number</code></td><td><code>object</code></td><td>—</td><td>كيف يُطبع الرقم. انظر <a href="#الرقم">الرقم</a>.</td></tr>
+    <tr><td><code>instruction</code></td><td><code>object</code></td><td>—</td><td>خط التعليمة. انظر <a href="#التعليمة">التعليمة</a>.</td></tr>
+    <tr><td><code>options</code></td><td><code>object</code></td><td>—</td><td>خيارات سؤال الاختيار. انظر <a href="#الخيارات">الخيارات</a>.</td></tr>
+    <tr><td><code>blank</code></td><td><code>object</code></td><td>—</td><td>كيف يُطبع <code>[[…]]</code>. انظر <a href="#الفراغات">الفراغات</a>.</td></tr>
+    <tr><td><code>trueFalse</code></td><td><code>object</code></td><td>—</td><td>إجابتا عبارة صح أو خطأ. انظر <a href="#صح-أو-خطأ">صح أو خطأ</a>.</td></tr>
+    <tr><td><code>match</code></td><td><code>object</code></td><td>—</td><td>عمودان يُوصل بينهما. انظر <a href="#التوصيل">التوصيل</a>.</td></tr>
+    <tr><td><code>bank</code></td><td><code>object</code></td><td>—</td><td>بنك الكلمات. انظر <a href="#بنك-الكلمات">بنك الكلمات</a>.</td></tr>
+    <tr><td><code>area</code></td><td><code>object</code></td><td>—</td><td>مساحات الكتابة. انظر <a href="#مساحة-الكتابة">مساحة الكتابة</a>.</td></tr>
+    <tr><td><code>grid</code></td><td><code>object</code></td><td>—</td><td>خانات البحث عن الكلمات والكلمات المتقاطعة والعمليات. انظر <a href="#الشبكات">الشبكات</a>.</td></tr>
+    <tr><td><code>arithmetic</code></td><td><code>object</code></td><td>—</td><td>العمليات في أعمدة. انظر <a href="#العمليات-الحسابية">العمليات الحسابية</a>.</td></tr>
+    <tr><td><code>level</code></td><td><code>object</code></td><td>—</td><td>علامات الصعوبة. انظر <a href="#الصعوبة">الصعوبة</a>.</td></tr>
+    <tr><td><code>icons</code></td><td><code>Record&lt;string, ExerciseIcon&gt;</code></td><td><code>&#123;&#125;</code></td><td>أيقونات النشاط بمعرّفاتها، تسمّيها <code>icon</code> في الحاوية. انظر <a href="#الأيقونات">الأيقونات</a>.</td></tr>
+    <tr><td><code>answers</code></td><td><code>object</code></td><td>—</td><td>كيف تُطبع الإجابات في طبعة المعلم وفي البند النموذجي وفي الحلول. انظر <a href="#الإجابات">الإجابات</a>.</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td><a href="#الحلول"><code>exercises.solutions</code></a> الخاصة بالكتاب، لتمارين هذا النمط: لا يتغير إلا ما يُحدَّد هنا من حقول.</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>ألوان طبعات الشاشة. انظر <a href="#ألوان-الشاشة">ألوان الشاشة</a>.</td></tr>
+    <tr><td><code>marginTop</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>المساحة فوق التمرين الذي لا <code>box</code> له.</td></tr>
+    <tr><td><code>marginBottom</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>المساحة تحت التمرين الذي لا <code>box</code> له.</td></tr>
+    <tr><td><code>itemSpacing</code></td><td><code>Dimension</code></td><td><code>0.25em</code></td><td>المساحة بين بندين: الخيارات والأسئلة والعبارات والأزواج.</td></tr>
+  </tbody>
+</table>
+
+### الرقم
+
+تضبط `number` رقم التمرين. الرقم المجرد عريض، باللون الرئيسي، تليه نقطة؛ والرقم داخل شكل أبيض في قرص أو مربع أو مربع مستدير الزوايا باللون الرئيسي، ولا يليه شيء.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>show</code></td><td><code>boolean</code></td><td><code>true</code></td><td>يطبع الرقم. ويستمر العدّ في الحالتين.</td></tr>
+    <tr><td><code>label</code></td><td><code>boolean | string</code></td><td><code>false</code></td><td>كلمة قبل الرقم: <code>true</code> تأخذ كلمة لغة المستند (تمرين، Exercise، Ejercicio، Exercice، Übung، 练习، 練習…)، والنص هو الكلمة نفسها (<code>'نشاط'</code>).</td></tr>
+    <tr><td><code>shape</code></td><td><code>'none' | 'disc' | 'square' | 'rounded'</code></td><td><code>'none'</code></td><td>الشكل الذي يُصفّ فيه الرقم.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>الأبيض داخل الشكل، وإلا اللون الرئيسي</td><td>لون الرقم.</td></tr>
+    <tr><td><code>background</code></td><td><code>ColorValue</code></td><td>اللون الرئيسي</td><td>تعبئة الشكل.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>النص المحيط</td><td>عائلة خط الرقم.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>حجم الرقم، والـem هنا em التعليمة.</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td><code>700</code></td><td>القيمة 600 فأكثر تجعله عريضًا.</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>'.'</code>، ولا شيء مع الشكل</td><td>ما يُطبع بعد الرقم المجرد وكلمته: <code>'.'</code>، <code>')'</code>، <code>'、'</code>.</td></tr>
+    <tr><td><code>template</code></td><td><code>string</code></td><td><code>'&#123;n&#125;'</code></td><td>ما يُكتب في الرقم: <code>&#123;n&#125;</code> عدد التمرين، و<code>&#123;h1&#125;</code> و<code>&#123;h2&#125;</code> رقما الفصل والقسم (<code>'&#123;h1&#125;.&#123;n&#125;'</code> تطبع 3.4).</td></tr>
+    <tr><td><code>resetOn</code></td><td><code>'never' | 'h1' … 'h6'</code></td><td><code>'h1'</code></td><td>مستوى العنوان الذي يبدأ عنده العدّ من جديد؛ و<code>'never'</code> تعدّ عبر الكتاب كله.</td></tr>
+    <tr><td><code>counter</code></td><td><code>string</code></td><td><code>'exercise'</code></td><td>العدّاد الذي يزيده النمط. الأنماط التي تسمّي عدّادًا واحدًا تتشاركه؛ والنمط الذي له عدّاد خاص (<code>'review'</code>) يرقّم تمارينه على حدة.</td></tr>
+    <tr><td><code>format</code></td><td><code>ResourceCounterFormat</code></td><td><code>'decimal'</code></td><td>أرقام <code>&#123;n&#125;</code>، كما في عدّاد الموارد: <code>'arabic-indic'</code> (١، ٢)، و<code>'roman-upper'</code>، و<code>'alpha-lower'</code>، و<code>'simp-chinese-informal'</code> (一، 二)، و<code>'circled-decimal'</code> (①، ②)…</td></tr>
+  </tbody>
+</table>
+
+### التعليمة
+
+تضبط `instruction` الفقرات التي يبدأ بها التمرين. والحقول غير المحددة تأخذ قيم النص الأساسي.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>تُصفّ التعليمة بالعريض.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>تُصفّ بالمائل.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>لون النص</td><td>لونها، ومعه المقاطع العريضة.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>خط النص</td><td>عائلة خطها: تعليمة بخط كوفي أو بخط بلا زوائد فوق نص بخط النسخ شائعة في الكتب المدرسية.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>حجم النص</td><td>حجمها.</td></tr>
+  </tbody>
+</table>
+
+### الخيارات
+
+تضبط `options` خيارات سؤال الاختيار (<code>- [ ] …</code>).
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>ResourceCounterFormat | 'none'</code></td><td>بحسب اللغة</td><td>كيف تُعَدّ الخيارات: <code>'abjad'</code> في العربية (أ، ب، ج)، و<code>'alpha-lower'</code> (a، b، c)، و<code>'alpha-upper'</code> في الصينية (A، B، C)، و<code>'katakana'</code> في اليابانية (ア، イ، ウ). وأيضًا <code>'decimal'</code>، و<code>'katakana-iroha'</code>، و<code>'circled-decimal'</code>… و<code>'none'</code> لا تطبع تسمية.</td></tr>
+    <tr><td><code>prefix</code></td><td><code>string</code></td><td><code>''</code></td><td>قبل التسمية: <code>'('</code> لكتابة (أ).</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>')'</code>؛ و<code>'.'</code> في الصينية، ولا شيء في اليابانية</td><td>بعد التسمية.</td></tr>
+    <tr><td><code>marker</code></td><td><code>'none' | 'box' | 'circle'</code></td><td><code>'none'</code></td><td>مربع أو دائرة قبل كل خيار، للتأشير. ومع <code>'none'</code> يضع القارئ دائرة حول التسمية.</td></tr>
+    <tr><td><code>layout</code></td><td><code>'stack' | 'row'</code></td><td><code>'stack'</code></td><td><code>'stack'</code>: خيار في كل سطر، وأسطره التالية معلّقة تحت نصه. <code>'row'</code>: الخيارات متجاورة. و<code>columns=n</code> في الحاوية تصفّها صفوفًا أيضًا.</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td>كلها</td><td>عدد الخيارات في الصف مع التخطيط <code>'row'</code> (حتى 6).</td></tr>
+    <tr><td><code>shuffle</code></td><td><code>boolean</code></td><td><code>false</code></td><td>تُطبع الخيارات بترتيب مخلوط، هو نفسه في كل المخرجات وفي المفتاح.</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>إزاحة الخيارات عن حافة النص، في السؤال الذي لا رأس له.</td></tr>
+    <tr><td><code>bracket</code></td><td><code>boolean</code></td><td><code>false</code></td><td>قوسان <code>（　）</code> في آخر رأس كل سؤال يُكتب فيهما الحرف، كما تطبعهما الاختبارات الصينية واليابانية. وتكتب طبعة المعلم الحرف فيهما.</td></tr>
+  </tbody>
+</table>
+
+### الفراغات
+
+تضبط `blank` كيف يُطبع <code>[[…]]</code> في نص التلميذ: مساحة بقدر الإجابة عليها خط أو نقاط أو مربع، ولا تُرسم الإجابة نفسها.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'line' | 'dots' | 'box' | 'none'</code></td><td><code>'line'</code></td><td>خط يُكتب عليه، أو خط منقّط، أو مربع، أو مساحة فارغة.</td></tr>
+    <tr><td><code>width</code></td><td><code>'answer' | 'longest' | Dimension</code></td><td><code>'longest'</code></td><td><code>'longest'</code>: كل فراغات التمرين بعرض أطول إجاباته، فلا يكشف فراغ إجابته. <code>'answer'</code>: كل فراغ بعرض إجابته. والطول: هذا العرض للجميع. و<code>&#123;width=N&#125;</code> في الفراغ مقدَّمة عليه.</td></tr>
+    <tr><td><code>extra</code></td><td><code>Dimension</code></td><td><code>1.5em</code></td><td>مساحة تُضاف إلى عرض الإجابة، بوحدات em كاملة.</td></tr>
+    <tr><td><code>minWidth</code></td><td><code>Dimension</code></td><td><code>3em</code></td><td>أضيق فراغ.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>الأسود</td><td>لون الخط أو النقاط أو المربع. وإن حُدِّد لوّن أيضًا مربعات التأشير ودوائره وأطر كلمات البنك، وهي باللون الرئيسي إن لم يُحدَّد.</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>سماكة الخط.</td></tr>
+  </tbody>
+</table>
+
+### صح أو خطأ
+
+تضبط `trueFalse` الإجابتين في آخر العبارة.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>بحسب اللغة</td><td>الإجابتان: <code>['✓', '✗']</code> في العربية؛ وT F في الإنجليزية؛ وV F في الإسبانية والكتالونية والفرنسية والإيطالية والبرتغالية؛ وR F في الألمانية؛ و√ × في الصينية؛ و○ × في اليابانية.</td></tr>
+    <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: لكل علامة مربع للتأشير، في آخر السطر. <code>'bracket'</code>: فراغ واحد تُكتب فيه الإجابة.</td></tr>
+  </tbody>
+</table>
+
+### التوصيل
+
+تضبط `match` تمرين الأزواج.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'dots' | 'letters'</code></td><td><code>'dots'</code></td><td><code>'dots'</code>: عمودان بجانب كل بند فيهما نقطة، يُوصل بينها بخط. <code>'letters'</code>: بنود العمود الثاني بحروف، وبجانب كل بند في العمود الأول فراغ للحرف.</td></tr>
+    <tr><td><code>gap</code></td><td><code>Dimension</code></td><td><code>4em</code></td><td>المسافة بين العمودين.</td></tr>
+    <tr><td><code>dotSize</code></td><td><code>Dimension</code></td><td><code>0.35em</code></td><td>قطر النقاط.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>اللون الرئيسي</td><td>النقاط، وإطار بنك الكلمات.</td></tr>
+  </tbody>
+</table>
+
+### بنك الكلمات
+
+تضبط `bank` إطار الكلمات الذي يُطبع تحت تعليمة تمرين الفراغات حين تكون فيه <code>bank</code> أو <code>::bank[…]</code>، وتحت تعليمة كل تمرين تصنيف.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>إطار بلون التوصيل</td><td>معرّف في <code>calloutStyles</code> لإطار البنك.</td></tr>
+    <tr><td><code>order</code></td><td><code>'shuffle' | 'alpha' | 'written'</code></td><td><code>'shuffle'</code></td><td>الكلمات مخلوطة (ببذرة)، أو بالترتيب الألفبائي للغة المستند، أو كما كُتبت.</td></tr>
+    <tr><td><code>separator</code></td><td><code>string</code></td><td>مسافة em</td><td>ما بين كلمتين. وتُصفّ كل كلمة في شارة بإطار رفيع.</td></tr>
+  </tbody>
+</table>
+
+### مساحة الكتابة
+
+تضبط `area` المساحة تحت السؤال المفتوح، وتحت الجملة المبعثرة، وفي أعمدة تمرين التصنيف.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>kind</code></td><td><code>'lines' | 'dots' | 'grid' | 'seyes' | 'tianzige' | 'box' | 'none'</code></td><td><code>'lines'</code></td><td>أسطر، أو صف من النقاط، أو ورق مربعات، أو تسطير Seyès الفرنسي، أو مربعات 田字格، أو إطار فارغ، أو مساحة خالية. و<code>area</code> في الحاوية مقدَّمة عليها.</td></tr>
+    <tr><td><code>lines</code></td><td><code>number</code></td><td><code>3</code></td><td>الارتفاع بعدد الأسطر. و<code>lines</code> في الحاوية مقدَّمة عليها.</td></tr>
+    <tr><td><code>spacing</code></td><td><code>Dimension</code></td><td>1.35 من ارتفاع سطر النص (1.2 للشبكات)</td><td>المسافة بين سطرين.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>رمادي فاتح</td><td>لون التسطير.</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.5pt</code></td><td>سماكة التسطير.</td></tr>
+  </tbody>
+</table>
+
+### الشبكات
+
+تضبط `grid` خانات البحث عن الكلمات والكلمات المتقاطعة والعمليات في أعمدة.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>ضلع الخانة.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>خط النص</td><td>عائلة خط الحروف والأرقام.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>لا يُستعمل بعد: تُصفّ الحروف بحجم 0.58 من ضلع الخانة.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>لون النص</td><td>لون الحروف والأرقام.</td></tr>
+    <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>رمادي متوسط</td><td>خطوط الخانات.</td></tr>
+    <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>سماكتها.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>لا يُستعمل بعد: لا تطبع الكلمات المتقاطعة إلا خانات كلماتها.</td></tr>
+    <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>تُكتب حروف البحث عن الكلمات والكلمات المتقاطعة كبيرة، بقواعد الحالة في لغة المستند. ولا أثر لها في الحروف العربية.</td></tr>
+  </tbody>
+</table>
+
+### العمليات الحسابية
+
+تضبط `arithmetic` العمليات في أعمدة.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>بحسب اللغة</td><td>القسمة المطوّلة. <code>'bracket'</code>: المقسوم عليه على يسار المقسوم، وفوق المقسوم قوس، وخارج القسمة في الأعلى (العربية والإنجليزية والصينية واليابانية، وكل لغة ليس لها عرف خاص). <code>'potence'</code>: المقسوم عليه على يمين المقسوم تحت زاوية على شكل L، وخارج القسمة تحت المقسوم عليه (الإسبانية والكتالونية والفرنسية والإيطالية والبرتغالية). <code>'inline'</code>: <code>864 : 4 =</code> وخارج القسمة في السطر والخطوات تحته (الألمانية).</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>عدد العمليات في الصف، وأقل منه حين يضيق العمود.</td></tr>
+  </tbody>
+</table>
+
+### الصعوبة
+
+تضبط `level` العلامات التي تطبعها <code>level</code> في الحاوية بعد الرقم، بحجم أصغر.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td><code>'●'</code></td><td>مستوى بُلغ: <code>'★'</code>، <code>'■'</code>.</td></tr>
+    <tr><td><code>empty</code></td><td><code>string</code></td><td><code>'○'</code></td><td>مستوى لم يُبلغ؛ و<code>''</code> لا تطبع شيئًا.</td></tr>
+    <tr><td><code>max</code></td><td><code>number</code></td><td><code>3</code></td><td>أعلى مستوى: <code>level=2</code> مع <code>max: 3</code> تطبع ●●○.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>اللون الرئيسي</td><td>لون العلامات.</td></tr>
+  </tbody>
+</table>
+
+### الأيقونات
+
+تربط `icons` معرّفًا بأيقونة نشاط (شفهي، كتابي، عمل في ثنائيات، استماع، آلة حاسبة)، تُطبع بعد الرقم حين تسمّيها الحاوية: <code>icon="pair"</code>.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td>—</td><td>محرف يُطبع: <code>'✎'</code>، <code>'🎧'</code>، أو رسم من خط أيقونات.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>—</td><td>عائلة خط الأيقونات.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>لون الأيقونة.</td></tr>
+    <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>مورد صورة نقطية أو SVG للأيقونة.</td></tr>
+    <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>ما تدل عليه الأيقونة، لقارئات الشاشة وملف PDF الموسوم.</td></tr>
+  </tbody>
+</table>
+
+هذا الإصدار يطبع `glyph` الأيقونة وحده، بخط النص المحيط ولونه؛ ولا تُستعمل `fontFamily` و`color` و`resourceId` و`alt` بعد.
+
+### الإجابات
+
+تضبط `answers` الإجابات حيثما ظهرت: في طبعة المعلم، وفي البند النموذجي لتمرين `example`، والدوائر والمربعات الممتلئة، والخطوط المرسومة بين الأزواج، والحروف والأرقام في الشبكات.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td><code>#d6246e</code>، أحمر أرجواني</td><td>لون الإجابات، كما يطبعها كتاب المعلم فوق النص.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>خط النص</td><td>خط للإجابات: خط يشبه الكتابة باليد شائع.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>تُصفّ الإجابات داخل الفراغات بالمائل.</td></tr>
+  </tbody>
+</table>
+
+### ألوان الشاشة
+
+تضبط `digital` كيف يعرض عارض HTML وكتب EPUB الإجابة بعد فحصها.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>correctColor</code></td><td><code>ColorValue</code></td><td>أخضر (<code>#1e8e3e</code>)</td><td>الإجابة الصحيحة.</td></tr>
+    <tr><td><code>wrongColor</code></td><td><code>ColorValue</code></td><td>أحمر (<code>#c5221f</code>)</td><td>الإجابة الخاطئة.</td></tr>
+  </tbody>
+</table>
+
+## إعدادات الكتاب
+
+تحمل الخاصية `exercises` إعدادات الكتاب كله: الطبعة، وموضع طباعة الحلول، والبذرة التي يُخلط منها كل شيء، وطبعات الشاشة. والكتاب الذي لا يحدد `exercises` ولا `exerciseStyles` يُصفّ ويُحسب بصمته كما كان.
+
+```ts
+const config: PostextConfig = {
+  exercises: {
+    edition: 'student',
+    solutions: { placement: 'chapterEnd', layout: 'key' },
+    seed: 3,
+    digital: { check: 'instant' },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>edition</code></td><td><code>'student' | 'teacher'</code></td><td><code>'student'</code></td><td><code>'teacher'</code> تطبع كل إجابة في موضعها بلون <code>answers</code>: كتاب المعلم من نص التلميذ.</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>أين تُطبع الحلول وكيف. انظر <a href="#الحلول">الحلول</a>.</td></tr>
+    <tr><td><code>seed</code></td><td><code>number</code></td><td><code>1</code></td><td>ما يُستمد منه كل خلط: الخيارات، والأعمدة الثانية، وبنود الترتيب، والكلمات المبعثرة، والبنوك، وحروف الحشو في البحث عن الكلمات. غيّرها لنسخة أخرى من الاختبار؛ وتبقى الطباعة والشاشة والمفتاح متطابقة.</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>عارض HTML وكتب EPUB. انظر <a href="#الطبعات-على-الشاشة">الطبعات على الشاشة</a>.</td></tr>
+  </tbody>
+</table>
+
+### الحلول
+
+`exercises.solutions`، وفوقها `solutions` في النمط لتمارين ذلك النمط.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>placement</code></td><td><code>'none' | 'after' | 'inverted' | 'chapterEnd' | 'directive'</code></td><td><code>'none'</code></td><td><code>'none'</code>: لا حلول في الطباعة. <code>'after'</code>: بعد كل تمرين، بخط أصغر. <code>'inverted'</code>: بعد كل تمرين، مقلوبة رأسًا على عقب. <code>'chapterEnd'</code>: في آخر الفصل، تحت <code>heading</code>. <code>'directive'</code>: حيث يوجد سطر <code>:::solutions</code>.</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>إطار بلا حدود بخط أصغر</td><td>معرّف في <code>calloutStyles</code> لإطار الحل، ولقائمة حلول الفصل.</td></tr>
+    <tr><td><code>heading</code></td><td><code>string</code></td><td>كلمة لغة المستند</td><td>عنوان الحلول في آخر الفصل: الحلول، Solutions، Soluciones، Solucions، Corrigés، Lösungen، Soluzioni، Gabarito، 参考答案، 解答. وسطر <code>:::solutions&#123;title="…"&#125;</code> يحدد عنوانه بنفسه.</td></tr>
+    <tr><td><code>layout</code></td><td><code>'key' | 'full'</code></td><td><code>'full'</code></td><td><code>'key'</code>: الإجابات وحدها (1 ب · 2 الماء). <code>'full'</code>: المفتاح، ثم <code>:::solution</code> الخاص بالتمرين.</td></tr>
+  </tbody>
+</table>
+
+### الطبعات على الشاشة
+
+تضبط `exercises.digital` سلوك التمارين في عارض HTML وكتب EPUB.
+
+<table>
+  <thead>
+    <tr>
+      <th>الخاصية</th>
+      <th>النوع</th>
+      <th>القيمة الافتراضية</th>
+      <th>الوصف</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>interactive</code></td><td><code>boolean</code></td><td><code>true</code></td><td>تمارين يجيب عنها القارئ. و<code>false</code> تعرضها كما طُبعت.</td></tr>
+    <tr><td><code>persist</code></td><td><code>boolean</code></td><td><code>true</code></td><td>تُحفظ إجابات القارئ في المتصفح، لكل كتاب على حدة.</td></tr>
+    <tr><td><code>check</code></td><td><code>'button' | 'instant'</code></td><td><code>'button'</code></td><td><code>'button'</code>: تُفحص الإجابات حين يطلب القارئ ذلك. <code>'instant'</code>: تُفحص كل إجابة لحظة كتابتها.</td></tr>
+  </tbody>
+</table>
+
+ويمكن أن تكون للشاشة إعدادات تمارين خاصة بها: تأخذ `htmlViewer.overrides` أيضًا `exercises` و`exerciseStyles`، وتُدمجان فوق إعدادات الكتاب قبل أن يصفّ عارض HTML صفحاته. فتحتفظ الطباعة بحلولها في آخر الفصل وتخفيها الشاشة، أو تحذف الشاشة مساحات الكتابة التي لا حاجة للقارئ بها.
+
+```ts
+const config: PostextConfig = {
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [{ id: 'exercise', area: { kind: 'none' }, blank: { minWidth: { value: 6, unit: 'em' } } }],
+    },
+  },
+};
+```

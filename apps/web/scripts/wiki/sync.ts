@@ -41,6 +41,7 @@ const DOC_PAGES: Record<string, string> = {
   "configuration-resources": "Configuration-Resources",
   "configuration-styles": "Configuration-Styles",
   "configuration-callouts": "Configuration-Callout-Boxes",
+  "configuration-exercises": "Configuration-Exercises",
   "configuration-comics": "Configuration-Comics",
   "configuration-composed-pages": "Configuration-Composed-Pages",
   "configuration-fonts-colors-viewers": "Configuration-Fonts-Colors-and-Viewers",
@@ -59,6 +60,7 @@ const DOC_PAGES: Record<string, string> = {
   "japanese-layout": "Japanese-Layout",
   comics: "Comics",
   music: "Music-Notation",
+  exercises: "Exercises",
   "composed-pages": "Composed-Pages",
   "composed-pages-figures": "Composed-Pages-Figures-with-Labels",
   contributing: "Contributing",
@@ -95,6 +97,7 @@ const CONFIGURATION_PAGES: { slug: string; title: string }[] = [
   { slug: "configuration-resources", title: "Configuration: resources, tables, captions, diagrams and videos" },
   { slug: "configuration-styles", title: "Configuration: paragraph, chip, code and heading styles, parts" },
   { slug: "configuration-callouts", title: "Configuration: callout boxes" },
+  { slug: "configuration-exercises", title: "Configuration: exercises" },
   { slug: "configuration-comics", title: "Configuration: comics" },
   { slug: "configuration-composed-pages", title: "Configuration: composed pages" },
   {

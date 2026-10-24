@@ -1,0 +1,471 @@
+{/* docs/configuration-exercises-zh.mdx */}
+
+export const metadata = {
+  title: '配置：练习',
+  sidebarTitle: '练习设置',
+  description: '练习样式（exerciseStyles）和全书的练习设置（exercises）：题号的样子、题目要求的字体、选项的序号和勾选记号、填空处、判断题的答案、连线、词库、书写区、方格、竖式除法、难度记号、图标、答案的颜色、答案印在哪里、教师用书和屏幕版本',
+  lang: 'zh',
+  lastUpdated: '2026-10-24',
+  readingTime: '12分钟',
+  order: 17,
+  parent: 'configuration',
+  plainSummary: "本页列出控制练习外观的所有设置。练习样式决定题号怎样印、选项怎样标序号、待填的空是什么样子、书写区画什么格线，以及方格和竖式怎样画。全书设置决定答案印在哪里，以及这本书是学生用书还是教师用书。全书设置还决定读者怎样在屏幕上作答。练习本身怎样写，见“练习”一页。",
+};
+
+# 配置：练习
+
+
+## 练习样式
+
+`exerciseStyles`属性声明一组具名样式，练习用`:::exercise{style="…"}`选用。一种样式是一类练习的形式；题目和答案仍然写在Markdown里（见[练习](/zh/docs/exercises)）。默认自带一种样式`exercise`，所以不做任何配置也能使用这个块；一旦声明`exerciseStyles`，就会替换它，声明的第一种样式就是没写`style`的练习所用的样式。所有字段都是可选的；在各国学校习惯不同的地方，默认值随文档语言而定：选项的序号、判断题的两个符号、除法竖式的排法、印出的文字。
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      box: 'activity-frame',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Noto Sans SC' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots', width: 'answer' },
+      area: { kind: 'tianzige', lines: 4 },
+      level: { glyph: '★', empty: '☆' },
+      icons: { pair: { glyph: '👥' } },
+    },
+    { id: 'quiz', extends: 'activity', options: { layout: 'row', columns: 4 } },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>—</td><td>由<code>:::exercise&#123;style="…"&#125;</code>选用的标识符。未知的id改用第一种样式，并会被报告（<code>exerciseUnknownStyle</code>）。</td></tr>
+    <tr><td><code>name</code></td><td><code>string</code></td><td><code>id</code></td><td>便于阅读的名称（仅用于编辑器界面）。</td></tr>
+    <tr><td><code>extends</code></td><td><code>string</code></td><td>—</td><td>作为基础的另一种样式的id。各组设置（<code>number</code>、<code>options</code>、<code>blank</code>……）逐个字段合并，<code>icons</code>按id合并。</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>—</td><td>练习外框所用的<a href="/zh/docs/configuration-callouts#标注框样式"><code>calloutStyles</code></a>中的id：底色、边框、色条、内边距、放置、拆分。未设置时，练习排在正文里，不加框，并保持在同一页上。</td></tr>
+    <tr><td><code>number</code></td><td><code>object</code></td><td>—</td><td>题号怎样印。见<a href="#编号">编号</a>。</td></tr>
+    <tr><td><code>instruction</code></td><td><code>object</code></td><td>—</td><td>题目要求的字体。见<a href="#题目要求">题目要求</a>。</td></tr>
+    <tr><td><code>options</code></td><td><code>object</code></td><td>—</td><td>选择题的选项。见<a href="#选项">选项</a>。</td></tr>
+    <tr><td><code>blank</code></td><td><code>object</code></td><td>—</td><td><code>[[…]]</code>怎样印。见<a href="#填空处">填空处</a>。</td></tr>
+    <tr><td><code>trueFalse</code></td><td><code>object</code></td><td>—</td><td>判断题的答案。见<a href="#判断">判断</a>。</td></tr>
+    <tr><td><code>match</code></td><td><code>object</code></td><td>—</td><td>要连线的两栏。见<a href="#连线">连线</a>。</td></tr>
+    <tr><td><code>bank</code></td><td><code>object</code></td><td>—</td><td>词库。见<a href="#词库">词库</a>。</td></tr>
+    <tr><td><code>area</code></td><td><code>object</code></td><td>—</td><td>书写区。见<a href="#书写区">书写区</a>。</td></tr>
+    <tr><td><code>grid</code></td><td><code>object</code></td><td>—</td><td>找词游戏、填字游戏和竖式的格子。见<a href="#方格">方格</a>。</td></tr>
+    <tr><td><code>arithmetic</code></td><td><code>object</code></td><td>—</td><td>竖式计算。见<a href="#竖式">竖式</a>。</td></tr>
+    <tr><td><code>level</code></td><td><code>object</code></td><td>—</td><td>难度记号。见<a href="#难度">难度</a>。</td></tr>
+    <tr><td><code>icons</code></td><td><code>Record&lt;string, ExerciseIcon&gt;</code></td><td><code>&#123;&#125;</code></td><td>按id列出的活动图标，由起始行的<code>icon</code>指定。见<a href="#图标">图标</a>。</td></tr>
+    <tr><td><code>answers</code></td><td><code>object</code></td><td>—</td><td>答案在教师用书、示范题和解答中怎样印。见<a href="#答案">答案</a>。</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>用于本样式练习的全书<a href="#参考答案"><code>exercises.solutions</code></a>：只改这里设了的字段。</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>屏幕版本的颜色。见<a href="#屏幕上的颜色">屏幕上的颜色</a>。</td></tr>
+    <tr><td><code>marginTop</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>没有<code>box</code>的练习上方的空白。</td></tr>
+    <tr><td><code>marginBottom</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>没有<code>box</code>的练习下方的空白。</td></tr>
+    <tr><td><code>itemSpacing</code></td><td><code>Dimension</code></td><td><code>0.25em</code></td><td>两个项之间的空白：选项、小题、判断句、配对。</td></tr>
+  </tbody>
+</table>
+
+### 编号
+
+`number`设定练习的题号。不带形状的题号用粗体、主色，后面跟一个句点；带形状的题号是主色的圆形、方形或圆角方形里的白色数字，后面不加符号。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>show</code></td><td><code>boolean</code></td><td><code>true</code></td><td>是否印出题号。不印时照样计数。</td></tr>
+    <tr><td><code>label</code></td><td><code>boolean | string</code></td><td><code>false</code></td><td>题号前的词：<code>true</code>取文档语言的词（中文为“练习”，英文为Exercise，西班牙文为Ejercicio，德文为Übung，日文为“練習”，阿拉伯文为تمرين……），字符串就是这个词本身（<code>'活动'</code>）。</td></tr>
+    <tr><td><code>shape</code></td><td><code>'none' | 'disc' | 'square' | 'rounded'</code></td><td><code>'none'</code></td><td>题号所在的形状。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>有形状时为白色，否则为主色</td><td>题号的颜色。</td></tr>
+    <tr><td><code>background</code></td><td><code>ColorValue</code></td><td>主色</td><td>形状的填色。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>周围文字的字体</td><td>题号的字体族。</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>题号的字号，em以题目要求的字号为准。</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td><code>700</code></td><td>600及以上排成粗体。</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>'.'</code>，有形状时不加</td><td>印在不带形状的题号及其前面的词之后：<code>'.'</code>、<code>')'</code>、<code>'、'</code>。</td></tr>
+    <tr><td><code>template</code></td><td><code>string</code></td><td><code>'&#123;n&#125;'</code></td><td>题号的内容：<code>&#123;n&#125;</code>是练习的计数，<code>&#123;h1&#125;</code>和<code>&#123;h2&#125;</code>是章和节的编号（<code>'&#123;h1&#125;.&#123;n&#125;'</code>印出3.4）。</td></tr>
+    <tr><td><code>resetOn</code></td><td><code>'never' | 'h1' … 'h6'</code></td><td><code>'h1'</code></td><td>在哪一级标题处重新计数；<code>'never'</code>表示全书连续计数。</td></tr>
+    <tr><td><code>counter</code></td><td><code>string</code></td><td><code>'exercise'</code></td><td>本样式推进的计数器。指定同一个计数器的样式共用它；有自己计数器的样式（<code>'review'</code>）单独给它的练习编号。</td></tr>
+    <tr><td><code>format</code></td><td><code>ResourceCounterFormat</code></td><td><code>'decimal'</code></td><td><code>&#123;n&#125;</code>的数字写法，与资源计数器相同：<code>'roman-upper'</code>、<code>'alpha-lower'</code>、<code>'simp-chinese-informal'</code>（一、二）、<code>'circled-decimal'</code>（①、②）、<code>'arabic-indic'</code>……中文试卷的大题号“一、二、”用<code>'simp-chinese-informal'</code>加上<code>suffix: '、'</code>。</td></tr>
+  </tbody>
+</table>
+
+### 题目要求
+
+`instruction`设定练习开头的段落。未设置的字段取正文的设置。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>把题目要求排成粗体。</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>排成斜体。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>正文的颜色</td><td>它的颜色，包括其中的粗体文字。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>正文的字体</td><td>它的字体族：正文用宋体、题目要求用黑体，是课本里常见的搭配。</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>正文的字号</td><td>它的字号。</td></tr>
+  </tbody>
+</table>
+
+### 选项
+
+`options`设定选择题（<code>- [ ] …</code>）的选项。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>ResourceCounterFormat | 'none'</code></td><td>随语言而定</td><td>选项怎样编序号：中文用<code>'alpha-upper'</code>（A、B、C），英文等语言用<code>'alpha-lower'</code>（a、b、c），日文用<code>'katakana'</code>（ア、イ、ウ），阿拉伯文用<code>'abjad'</code>（أ、ب、ج）。也可以用<code>'decimal'</code>、<code>'katakana-iroha'</code>、<code>'circled-decimal'</code>……<code>'none'</code>不印序号。</td></tr>
+    <tr><td><code>prefix</code></td><td><code>string</code></td><td><code>''</code></td><td>印在序号前：<code>'('</code>得到(a)。</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td>中文为<code>'.'</code>；其他语言为<code>')'</code>，日文不加</td><td>印在序号后。</td></tr>
+    <tr><td><code>marker</code></td><td><code>'none' | 'box' | 'circle'</code></td><td><code>'none'</code></td><td>每个选项前供勾选的方框或圆圈。设为<code>'none'</code>时，读者圈出序号。</td></tr>
+    <tr><td><code>layout</code></td><td><code>'stack' | 'row'</code></td><td><code>'stack'</code></td><td><code>'stack'</code>：每行一个选项，转行的文字悬挂在选项文字下面。<code>'row'</code>：选项并排。起始行的<code>columns=n</code>也会让选项按行排。</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td>全部</td><td><code>'row'</code>版式中每行的选项数（最多6个）。</td></tr>
+    <tr><td><code>shuffle</code></td><td><code>boolean</code></td><td><code>false</code></td><td>打乱选项的顺序，各种输出和答案表中的顺序都一样。</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>没有题干的题目中，选项距文字边缘的缩进。</td></tr>
+    <tr><td><code>bracket</code></td><td><code>boolean</code></td><td><code>false</code></td><td>在每个小题题干的末尾加一对括号<code>（　）</code>，让学生填写字母，中文和日文试卷就是这样印的。教师用书把字母写在括号里。</td></tr>
+  </tbody>
+</table>
+
+### 填空处
+
+`blank`设定学生用书中`[[…]]`怎样印：留出与答案一样大的位置，画一条横线、一行点或一个方框，答案本身不印。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'line' | 'dots' | 'box' | 'none'</code></td><td><code>'line'</code></td><td>供书写的横线、点线、方框，或者只留空白。</td></tr>
+    <tr><td><code>width</code></td><td><code>'answer' | 'longest' | Dimension</code></td><td><code>'longest'</code></td><td><code>'longest'</code>：本练习的每个空都和最长的答案一样宽，任何一个空都不会泄露答案。<code>'answer'</code>：每个空和自己的答案一样宽。一个长度：所有空都用这个宽度。空自身的<code>&#123;width=N&#125;</code>优先于它。</td></tr>
+    <tr><td><code>extra</code></td><td><code>Dimension</code></td><td><code>1.5em</code></td><td>在答案宽度上增加的空白，以整em计。</td></tr>
+    <tr><td><code>minWidth</code></td><td><code>Dimension</code></td><td><code>3em</code></td><td>最窄的空的宽度。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>黑色</td><td>横线、点或方框的颜色。设置后，它也用于供勾选的方框和圆圈，以及词库中各词的框，这些在未设置时用主色。</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>横线的粗细。</td></tr>
+  </tbody>
+</table>
+
+### 判断
+
+`trueFalse`设定判断句末尾的答案。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>随语言而定</td><td>两个答案：中文为√ ×；英文为<code>['T', 'F']</code>；西班牙文、加泰罗尼亚文、法文、意大利文和葡萄牙文为V F；德文为R F；日文为○ ×；阿拉伯文为✓ ✗。</td></tr>
+    <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>：每个符号带一个供勾选的方框，排在行末。<code>'bracket'</code>：只留一个空，让学生写答案。</td></tr>
+  </tbody>
+</table>
+
+### 连线
+
+`match`设定配对练习。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'dots' | 'letters'</code></td><td><code>'dots'</code></td><td><code>'dots'</code>：两栏，每一项旁边有一个圆点，供连线。<code>'letters'</code>：右栏标上字母，左栏每一项旁边留一个填字母的空。</td></tr>
+    <tr><td><code>gap</code></td><td><code>Dimension</code></td><td><code>4em</code></td><td>两栏之间的距离。</td></tr>
+    <tr><td><code>dotSize</code></td><td><code>Dimension</code></td><td><code>0.35em</code></td><td>圆点的直径。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>主色</td><td>圆点的颜色，也是词库框的颜色。</td></tr>
+  </tbody>
+</table>
+
+### 词库
+
+`bank`设定词库框：带`bank`或<code>::bank[…]</code>的填空题，以及所有分类题，都在题目要求下面印出这个框。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>连线颜色的边框</td><td>词库框所用的<code>calloutStyles</code>中的id。</td></tr>
+    <tr><td><code>order</code></td><td><code>'shuffle' | 'alpha' | 'written'</code></td><td><code>'shuffle'</code></td><td>词语打乱顺序（用固定的随机种子）、按文档语言的字母顺序排列，或按书写顺序。</td></tr>
+    <tr><td><code>separator</code></td><td><code>string</code></td><td>一个全角空格</td><td>两个词之间的分隔。每个词排在一个带细边框的行内标签里。</td></tr>
+  </tbody>
+</table>
+
+### 书写区
+
+`area`设定问答题下面、连词成句的句子下面和分类题各栏里的书写空间。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>kind</code></td><td><code>'lines' | 'dots' | 'grid' | 'seyes' | 'tianzige' | 'box' | 'none'</code></td><td><code>'lines'</code></td><td>横线、一行行的点、方格纸、法国的Seyès格线、田字格、空框，或者空白。起始行的<code>area</code>优先于它。</td></tr>
+    <tr><td><code>lines</code></td><td><code>number</code></td><td><code>3</code></td><td>有几行高。起始行的<code>lines</code>优先于它。</td></tr>
+    <tr><td><code>spacing</code></td><td><code>Dimension</code></td><td>正文行高的1.35倍（方格为1.2倍）</td><td>两行之间的距离。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>浅灰色</td><td>格线的颜色。</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.5pt</code></td><td>格线的粗细。</td></tr>
+  </tbody>
+</table>
+
+### 方格
+
+`grid`设定找词游戏、填字游戏和竖式的格子。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>格子的边长。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>正文的字体</td><td>字母、汉字和数字的字体族。</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>尚未使用：字的大小为格子边长的0.58。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>正文的颜色</td><td>字母、汉字和数字的颜色。</td></tr>
+    <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>中灰色</td><td>格子线的颜色。</td></tr>
+    <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>格子线的粗细。</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>尚未使用：填字游戏只印出各个词的格子。</td></tr>
+    <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>按文档语言的大小写规则，把找词游戏和填字游戏中的字母排成大写。汉字不受影响。</td></tr>
+  </tbody>
+</table>
+
+### 竖式
+
+`arithmetic`设定竖式计算。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>随语言而定</td><td>除法竖式。<code>'bracket'</code>：除数在被除数左边，被除数上面是“厂”字形的除号，商写在最上方（中文、英文、日文、阿拉伯文，以及没有自己排法的语言）。<code>'potence'</code>：除数在被除数右边的L形线下，商写在除数下面（西班牙文、加泰罗尼亚文、法文、意大利文、葡萄牙文）。<code>'inline'</code>：<code>864 : 4 =</code>，商写在同一行，计算步骤写在下面（德文）。</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>每行的算式数，栏太窄时减少。</td></tr>
+  </tbody>
+</table>
+
+### 难度
+
+`level`设定起始行的`level`在题号后印出的记号，字号较小。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td><code>'●'</code></td><td>达到的级别：<code>'★'</code>、<code>'■'</code>。</td></tr>
+    <tr><td><code>empty</code></td><td><code>string</code></td><td><code>'○'</code></td><td>未达到的级别；<code>''</code>表示不印。</td></tr>
+    <tr><td><code>max</code></td><td><code>number</code></td><td><code>3</code></td><td>最高级别：<code>level=2</code>配合<code>max: 3</code>印出●●○。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>主色</td><td>记号的颜色。</td></tr>
+  </tbody>
+</table>
+
+### 图标
+
+`icons`把id对应到一个活动图标（口头、书面、同桌合作、听力、计算器），起始行写了它时印在题号后面：`icon="pair"`。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td>—</td><td>要印的字符：<code>'✎'</code>、<code>'🎧'</code>，或图标字体中的一个字形。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>—</td><td>图标字体的字体族。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>图标的颜色。</td></tr>
+    <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>用作图标的位图或SVG资源。</td></tr>
+    <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>图标的含义，供读屏软件和带标签的PDF使用。</td></tr>
+  </tbody>
+</table>
+
+当前版本只印图标的`glyph`，用周围文字的字体和颜色；`fontFamily`、`color`、`resourceId`和`alt`尚未使用。
+
+### 答案
+
+`answers`设定答案出现时的样子：教师用书、`example`练习中的示范题、圈和涂满的方框、配对之间画的线、格子里的字母和数字。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td><code>#d6246e</code>，品红</td><td>答案的颜色，就像教师用书套印的那样。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>正文的字体</td><td>答案的字体：常用手写体。</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>把空里的答案排成斜体。</td></tr>
+  </tbody>
+</table>
+
+### 屏幕上的颜色
+
+`digital`设定HTML阅读器和EPUB电子书怎样显示核对过的答案。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>correctColor</code></td><td><code>ColorValue</code></td><td>绿色（<code>#1e8e3e</code>）</td><td>答对的答案。</td></tr>
+    <tr><td><code>wrongColor</code></td><td><code>ColorValue</code></td><td>红色（<code>#c5221f</code>）</td><td>答错的答案。</td></tr>
+  </tbody>
+</table>
+
+## 全书设置
+
+`exercises`属性保存整本书的设置：版本、答案印在哪里、所有打乱顺序所用的随机种子，以及屏幕版本。既没有设`exercises`也没有设`exerciseStyles`的书，排版结果和哈希值都与以前相同。
+
+```ts
+const config: PostextConfig = {
+  exercises: {
+    edition: 'student',
+    solutions: { placement: 'chapterEnd', layout: 'key' },
+    seed: 3,
+    digital: { check: 'instant' },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>edition</code></td><td><code>'student' | 'teacher'</code></td><td><code>'student'</code></td><td><code>'teacher'</code>用<code>answers</code>的颜色把每个答案印在它的位置上：由学生用书的文字得到教师用书。</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>答案印在哪里、怎样印。见<a href="#参考答案">参考答案</a>。</td></tr>
+    <tr><td><code>seed</code></td><td><code>number</code></td><td><code>1</code></td><td>所有打乱顺序的依据：选项、右栏、排序项、连词成句的词块、词库、找词方阵中的填充字。修改它可以得到同一份试卷的另一个版本；印刷版、屏幕版和答案表始终一致。</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>HTML阅读器和EPUB电子书。见<a href="#屏幕版本">屏幕版本</a>。</td></tr>
+  </tbody>
+</table>
+
+### 参考答案
+
+`exercises.solutions`，以及样式中对本样式练习生效的`solutions`。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>placement</code></td><td><code>'none' | 'after' | 'inverted' | 'chapterEnd' | 'directive'</code></td><td><code>'none'</code></td><td><code>'none'</code>：印刷版不印答案。<code>'after'</code>：印在每道练习后面，字号较小。<code>'inverted'</code>：印在每道练习后面，倒过来印。<code>'chapterEnd'</code>：印在章末，放在<code>heading</code>下面。<code>'directive'</code>：印在<code>:::solutions</code>那一行所在的位置。</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>小字号的无框框</td><td>答案框所用的<code>calloutStyles</code>中的id，也用于一章答案的列表。</td></tr>
+    <tr><td><code>heading</code></td><td><code>string</code></td><td>文档语言的词</td><td>章末答案的标题：中文为“参考答案”，其他语言为Solutions、Soluciones、Solucions、Corrigés、Lösungen、Soluzioni、Gabarito、解答、الحلول。<code>:::solutions&#123;title="…"&#125;</code>一行可以另设标题。</td></tr>
+    <tr><td><code>layout</code></td><td><code>'key' | 'full'</code></td><td><code>'full'</code></td><td><code>'key'</code>：只印答案（1 B · 2 水分）。<code>'full'</code>：先印答案，再印这道练习的<code>:::solution</code>。</td></tr>
+  </tbody>
+</table>
+
+### 屏幕版本
+
+`exercises.digital`设定练习在HTML阅读器和EPUB电子书中的行为。
+
+<table>
+  <thead>
+    <tr>
+      <th>属性</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>interactive</code></td><td><code>boolean</code></td><td><code>true</code></td><td>读者可以作答的练习。<code>false</code>按印刷版的样子显示。</td></tr>
+    <tr><td><code>persist</code></td><td><code>boolean</code></td><td><code>true</code></td><td>把读者的答案按书保存在浏览器中。</td></tr>
+    <tr><td><code>check</code></td><td><code>'button' | 'instant'</code></td><td><code>'button'</code></td><td><code>'button'</code>：读者要求时才核对答案。<code>'instant'</code>：每填一个答案就立即核对。</td></tr>
+  </tbody>
+</table>
+
+屏幕版本可以有自己的练习设置：`htmlViewer.overrides`也接受`exercises`和`exerciseStyles`，在HTML阅读器排版之前合并到书的设置上。这样，印刷版可以把答案放在章末，屏幕上则隐藏答案；屏幕版也可以去掉读者用不上的书写区。
+
+```ts
+const config: PostextConfig = {
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [{ id: 'exercise', area: { kind: 'none' }, blank: { minWidth: { value: 6, unit: 'em' } } }],
+    },
+  },
+};
+```

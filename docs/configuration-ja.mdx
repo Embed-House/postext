@@ -3,12 +3,12 @@
 export const metadata = {
   title: 'Postextの設定',
   sidebarTitle: '設定',
-  description: 'Postextの設定のしくみと、19ページに分かれたリファレンスのどこで各設定を説明しているかの案内',
+  description: 'Postextの設定のしくみと、20ページに分かれたリファレンスのどこで各設定を説明しているかの案内',
   lang: 'ja',
   lastUpdated: '2026-10-19',
   readingTime: '5分',
   order: 4,
-  plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは19のページに分かれています。このページの一覧にはすべての節へのリンクがあるので、必要なところへ直接移動してください。",
+  plainSummary: "このページは、ページの見た目を決めるすべての設定を載せたリファレンスの入口です。ページの大きさ、段の数、フォント、文字の大きさ、見出し、囲み、色など、すべての選択は1つの設定のまとまりに入っています。どの設定にも最初から無理のない値が入っているので、書くのは変えたいものだけです。リファレンスは20のページに分かれています。このページの一覧にはすべての節へのリンクがあるので、必要なところへ直接移動してください。",
 };
 
 # 設定
@@ -33,7 +33,7 @@ const document = buildDocument(content, {
 
 ## 内容一覧
 
-このリファレンスは19のページに分かれています。以下の各グループが1つのページで、その下にそのページの節を挙げます。
+このリファレンスは20のページに分かれています。以下の各グループが1つのページで、その下にそのページの節を挙げます。
 
 **[ページとレイアウト](/ja/docs/configuration-page-layout)**
 
@@ -102,6 +102,10 @@ const document = buildDocument(content, {
 **[囲み](/ja/docs/configuration-callouts)**
 
 - [囲みスタイル](/ja/docs/configuration-callouts#囲みスタイル)：`:::callout`コンテナー用の、枠で囲んだ注記、ヒント、学習目標。
+
+**[練習問題の設定](/ja/docs/configuration-exercises)**
+
+- [練習問題スタイル](/ja/docs/configuration-exercises#練習問題スタイル)：`exerciseStyles`。`:::exercise`ブロックの番号のバッジ、指示文の書式、選択肢の記号、空欄、書き込み欄、マス目、わり算の筆算、答えの色。[本全体の設定](/ja/docs/configuration-exercises#本全体の設定)：`exercises`。教師用の版、解答を印刷する場所、並べ替えの乱数の種、画面の版。ガイドは[練習問題](/ja/docs/exercises)です。
 
 **[漫画の設定](/ja/docs/configuration-comics)**
 

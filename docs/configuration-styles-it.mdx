@@ -453,6 +453,18 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>Disegna le lettere del chip come file di puntini da ripassare, come fa <a href="/it/docs/configuration-headers-footers#segni-in-linea-e-contorni"><code>dotted</code></a> in un testo di progetto grafico, con le lunghezze in em relative al testo del chip. Senza sfondo, contorno né spaziatura interna, il chip è una parola a puntini nella riga: <code>:chip[gato]&#123;style="dots"&#125;</code>.</td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>Disegna il contorno come una sola linea sotto il testo, spessa <code>borderWidth</code> e del colore <code>borderColor</code>, invece che intorno alla casella: uno spazio su cui scrivere. Se non è impostato, si disegna il contorno intero.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>La larghezza minima della casella, contorno e spaziatura interna compresi; un testo più corto vi viene centrato. La usano gli spazi da completare degli esercizi e le caselle da barrare. Se non è impostata, la casella è larga quanto il testo.</td>
+    </tr>
   </tbody>
 </table>
 

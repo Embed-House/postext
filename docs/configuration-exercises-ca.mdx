@@ -1,0 +1,471 @@
+{/* docs/configuration-exercises-ca.mdx */}
+
+export const metadata = {
+  title: 'Configuració: exercicis',
+  sidebarTitle: "Paràmetres d'exercicis",
+  description: "Els estils d'exercici (exerciseStyles) i els paràmetres d'exercicis del llibre (exercises): el número, la lletra de l'enunciat, les etiquetes i les caselles de les opcions, els buits, les respostes de vertader o fals, les parelles per relacionar, els bancs de paraules, els espais per escriure, les graelles, la divisió, les marques de dificultat, les icones, el color de les respostes, on s'imprimeixen les solucions, l'edició del professorat i les edicions en pantalla",
+  lang: 'ca',
+  lastUpdated: '2026-10-24',
+  readingTime: '12 min',
+  order: 17,
+  parent: 'configuration',
+  plainSummary: "Aquesta pàgina recull tots els paràmetres de l'aspecte dels exercicis. Un estil d'exercici decideix com s'imprimeix el número, com s'etiqueten les opcions, quin aspecte té un buit per omplir, quina pauta tenen les línies per escriure i com es dibuixen les graelles i les operacions. Els paràmetres del llibre decideixen on s'imprimeixen les solucions i si el llibre és l'edició de l'alumne o la del professorat. També decideixen com responen els lectors els exercicis en pantalla. La pàgina Exercicis explica com s'escriuen els exercicis.",
+};
+
+# Configuració: exercicis
+
+
+## Estils d'exercici
+
+La propietat `exerciseStyles` declara els estils amb nom que un exercici tria amb `:::exercise{style="…"}`. Un estil és la forma d'una família d'exercicis; les preguntes i les respostes es queden al Markdown (vegeu [Exercicis](/ca/docs/exercises)). Per defecte s'inclou un estil, `exercise`, de manera que el bloc funciona sense cap configuració; si declares `exerciseStyles`, el substitueixes, i el primer estil declarat és el que pren un exercici sense `style`. Tots els camps són opcionals, i els valors per defecte segueixen la llengua del document allà on les escoles fan les coses de manera diferent: les etiquetes de les opcions, les lletres de vertader o fals, la manera de disposar la divisió i les paraules que s'imprimeixen.
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      box: 'activity-frame',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Source Sans 3' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots', width: 'answer' },
+      area: { kind: 'grid', lines: 4 },
+      level: { glyph: '★', empty: '☆' },
+      icons: { pair: { glyph: '👥' } },
+    },
+    { id: 'quiz', extends: 'activity', options: { layout: 'row', columns: 4 } },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>—</td><td>Identificador que tria <code>:::exercise&#123;style="…"&#125;</code>. Un id desconegut fa servir el primer estil i genera un avís (<code>exerciseUnknownStyle</code>).</td></tr>
+    <tr><td><code>name</code></td><td><code>string</code></td><td><code>id</code></td><td>Nom llegible (només per a la interfície de l'editor).</td></tr>
+    <tr><td><code>extends</code></td><td><code>string</code></td><td>—</td><td>L'id de l'estil en què es basa aquest. Cada grup (<code>number</code>, <code>options</code>, <code>blank</code>…) es fusiona camp per camp, i <code>icons</code>, per id.</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>—</td><td>Un id de <a href="/ca/docs/configuration-callouts#estils-de-requadre"><code>calloutStyles</code></a> per al marc de l'exercici: fons, vora, franja, marges interiors, col·locació i partició. Si no s'indica, l'exercici es compon dins del text corregut, sense marc, i es manté sencer en una sola pàgina.</td></tr>
+    <tr><td><code>number</code></td><td><code>object</code></td><td>—</td><td>Com s'imprimeix el número. Vegeu <a href="#número">Número</a>.</td></tr>
+    <tr><td><code>instruction</code></td><td><code>object</code></td><td>—</td><td>La lletra de l'enunciat. Vegeu <a href="#enunciat">Enunciat</a>.</td></tr>
+    <tr><td><code>options</code></td><td><code>object</code></td><td>—</td><td>Les opcions d'una pregunta d'opció múltiple. Vegeu <a href="#opcions">Opcions</a>.</td></tr>
+    <tr><td><code>blank</code></td><td><code>object</code></td><td>—</td><td>Com s'imprimeix un <code>[[…]]</code>. Vegeu <a href="#buits">Buits</a>.</td></tr>
+    <tr><td><code>trueFalse</code></td><td><code>object</code></td><td>—</td><td>Les respostes d'una afirmació de vertader o fals. Vegeu <a href="#vertader-o-fals">Vertader o fals</a>.</td></tr>
+    <tr><td><code>match</code></td><td><code>object</code></td><td>—</td><td>Dues columnes per relacionar. Vegeu <a href="#relacionar">Relacionar</a>.</td></tr>
+    <tr><td><code>bank</code></td><td><code>object</code></td><td>—</td><td>El banc de paraules. Vegeu <a href="#banc-de-paraules">Banc de paraules</a>.</td></tr>
+    <tr><td><code>area</code></td><td><code>object</code></td><td>—</td><td>Els espais per escriure. Vegeu <a href="#espai-per-escriure">Espai per escriure</a>.</td></tr>
+    <tr><td><code>grid</code></td><td><code>object</code></td><td>—</td><td>Les caselles de les sopes de lletres, els mots encreuats i les operacions. Vegeu <a href="#graelles">Graelles</a>.</td></tr>
+    <tr><td><code>arithmetic</code></td><td><code>object</code></td><td>—</td><td>Les operacions en columna. Vegeu <a href="#operacions">Operacions</a>.</td></tr>
+    <tr><td><code>level</code></td><td><code>object</code></td><td>—</td><td>Les marques de dificultat. Vegeu <a href="#dificultat">Dificultat</a>.</td></tr>
+    <tr><td><code>icons</code></td><td><code>Record&lt;string, ExerciseIcon&gt;</code></td><td><code>&#123;&#125;</code></td><td>Icones d'activitat per id, que un bloc anomena amb <code>icon</code>. Vegeu <a href="#icones">Icones</a>.</td></tr>
+    <tr><td><code>answers</code></td><td><code>object</code></td><td>—</td><td>Com s'imprimeixen les respostes en una edició del professorat, en un element model i a les solucions. Vegeu <a href="#respostes">Respostes</a>.</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>Les <a href="#solucions"><code>exercises.solutions</code></a> del llibre per als exercicis d'aquest estil: només canvien els camps que s'hi indiquen.</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>Els colors de les edicions en pantalla. Vegeu <a href="#colors-a-la-pantalla">Colors a la pantalla</a>.</td></tr>
+    <tr><td><code>marginTop</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>Espai per sobre d'un exercici sense <code>box</code>.</td></tr>
+    <tr><td><code>marginBottom</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>Espai per sota d'un exercici sense <code>box</code>.</td></tr>
+    <tr><td><code>itemSpacing</code></td><td><code>Dimension</code></td><td><code>0.25em</code></td><td>Espai entre dos elements: opcions, preguntes, afirmacions, parelles.</td></tr>
+  </tbody>
+</table>
+
+### Número
+
+`number` defineix el número de l'exercici. Un número sol va en negreta, en el color principal, seguit d'un punt; un número dins d'una forma és una xifra blanca sobre un cercle, un quadrat o un quadrat arrodonit del color principal, sense res al darrere.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>show</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Imprimeix el número. El compte avança igualment.</td></tr>
+    <tr><td><code>label</code></td><td><code>boolean | string</code></td><td><code>false</code></td><td>Una paraula davant del número: <code>true</code> pren la paraula de la llengua del document (Exercici, Exercise, Ejercicio, Exercice, Übung, 练习, 練習, تمرين…); una cadena és la paraula mateixa (<code>'Activitat'</code>).</td></tr>
+    <tr><td><code>shape</code></td><td><code>'none' | 'disc' | 'square' | 'rounded'</code></td><td><code>'none'</code></td><td>La forma on va el número.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>blanc sobre una forma; si no, el color principal</td><td>El color del número.</td></tr>
+    <tr><td><code>background</code></td><td><code>ColorValue</code></td><td>el color principal</td><td>El fons de la forma.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>la del text que l'envolta</td><td>La família del número.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>La mida del número; un em és el de l'enunciat.</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td><code>700</code></td><td>A partir de 600 es compon en negreta.</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>'.'</code>; cap sobre una forma</td><td>El que s'imprimeix després d'un número sol i de la seva paraula: <code>'.'</code>, <code>')'</code>, <code>'、'</code>.</td></tr>
+    <tr><td><code>template</code></td><td><code>string</code></td><td><code>'&#123;n&#125;'</code></td><td>El text del número: <code>&#123;n&#125;</code> és el compte de l'exercici, i <code>&#123;h1&#125;</code> i <code>&#123;h2&#125;</code>, els números del capítol i de la secció (<code>'&#123;h1&#125;.&#123;n&#125;'</code> imprimeix 3.4).</td></tr>
+    <tr><td><code>resetOn</code></td><td><code>'never' | 'h1' … 'h6'</code></td><td><code>'h1'</code></td><td>El nivell d'encapçalament que fa tornar a començar el compte; <code>'never'</code> compta per tot el llibre.</td></tr>
+    <tr><td><code>counter</code></td><td><code>string</code></td><td><code>'exercise'</code></td><td>El comptador que fa avançar l'estil. Els estils que anomenen el mateix comptador el comparteixen; un estil amb un comptador propi (<code>'review'</code>) numera els seus exercicis a part.</td></tr>
+    <tr><td><code>format</code></td><td><code>ResourceCounterFormat</code></td><td><code>'decimal'</code></td><td>Els numerals de <code>&#123;n&#125;</code>, com en un comptador de recursos: <code>'roman-upper'</code>, <code>'alpha-lower'</code>, <code>'simp-chinese-informal'</code> (一, 二), <code>'circled-decimal'</code> (①, ②), <code>'arabic-indic'</code>…</td></tr>
+  </tbody>
+</table>
+
+### Enunciat
+
+`instruction` defineix els paràgrafs inicials de l'exercici. Els camps sense valor prenen el del text.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Compon l'enunciat en negreta.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>El compon en cursiva.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el del text</td><td>El color, també el dels trossos en negreta.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>la del text</td><td>La família: als llibres de text és habitual un enunciat de pal sec sobre un text amb gràcies.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>la del text</td><td>La mida.</td></tr>
+  </tbody>
+</table>
+
+### Opcions
+
+`options` defineix les opcions d'una pregunta d'opció múltiple (<code>- [ ] …</code>).
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>ResourceCounterFormat | 'none'</code></td><td>segons la llengua</td><td>Com es compten les opcions: <code>'alpha-lower'</code> (a, b, c), <code>'alpha-upper'</code> en xinès (A, B, C), <code>'katakana'</code> en japonès (ア, イ, ウ), <code>'abjad'</code> en àrab (أ, ب, ج). També <code>'decimal'</code>, <code>'katakana-iroha'</code>, <code>'circled-decimal'</code>… Amb <code>'none'</code> no s'imprimeix cap etiqueta.</td></tr>
+    <tr><td><code>prefix</code></td><td><code>string</code></td><td><code>''</code></td><td>Davant de l'etiqueta: <code>'('</code> per a (a).</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>')'</code>; <code>'.'</code> en xinès, cap en japonès</td><td>Després de l'etiqueta.</td></tr>
+    <tr><td><code>marker</code></td><td><code>'none' | 'box' | 'circle'</code></td><td><code>'none'</code></td><td>Una casella o un cercle davant de cada opció, per marcar. Amb <code>'none'</code> el lector encercla l'etiqueta.</td></tr>
+    <tr><td><code>layout</code></td><td><code>'stack' | 'row'</code></td><td><code>'stack'</code></td><td><code>'stack'</code>: una opció per línia, amb les línies que continuen alineades sota el seu text. <code>'row'</code>: les opcions una al costat de l'altra. El <code>columns=n</code> d'un bloc també les posa en files.</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td>totes</td><td>Opcions per fila amb la disposició <code>'row'</code> (fins a 6).</td></tr>
+    <tr><td><code>shuffle</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Imprimeix les opcions barrejades, en el mateix ordre a totes les sortides i a la clau.</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>El sagnat de les opcions respecte a la vora del text, per a una pregunta sense enunciat propi.</td></tr>
+    <tr><td><code>bracket</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Un parèntesi <code>（　）</code> al final de cada pregunta per escriure-hi la lletra, com als exàmens xinesos i japonesos. Una edició del professorat hi escriu la lletra.</td></tr>
+  </tbody>
+</table>
+
+### Buits
+
+`blank` defineix com s'imprimeix un `[[…]]` al text de l'alumne: un espai de la mida de la resposta amb una línia, punts o una caixa, sense pintar la resposta.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'line' | 'dots' | 'box' | 'none'</code></td><td><code>'line'</code></td><td>Una línia per escriure-hi, una línia de punts, una caixa o un espai buit.</td></tr>
+    <tr><td><code>width</code></td><td><code>'answer' | 'longest' | Dimension</code></td><td><code>'longest'</code></td><td><code>'longest'</code>: tots els buits de l'exercici fan l'amplada de la resposta més llarga, perquè cap buit no delati la resposta. <code>'answer'</code>: cada buit fa l'amplada de la seva resposta. Una longitud: aquesta amplada per a tots. El <code>&#123;width=N&#125;</code> d'un buit té prioritat.</td></tr>
+    <tr><td><code>extra</code></td><td><code>Dimension</code></td><td><code>1.5em</code></td><td>Espai que s'afegeix a l'amplada de la resposta, en em sencers.</td></tr>
+    <tr><td><code>minWidth</code></td><td><code>Dimension</code></td><td><code>3em</code></td><td>L'amplada mínima d'un buit.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>negre</td><td>El color de la línia, dels punts o de la caixa. Si s'indica, també pinta les caselles i els cercles per marcar i els marcs de les paraules del banc, que, si no, van en el color principal.</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>El gruix de la línia.</td></tr>
+  </tbody>
+</table>
+
+### Vertader o fals
+
+`trueFalse` defineix les respostes del final d'una afirmació.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>segons la llengua</td><td>Les dues respostes: <code>['V', 'F']</code> en català, castellà, francès, italià i portuguès; T F en anglès; R F en alemany; √ × en xinès; ○ × en japonès; ✓ ✗ en àrab.</td></tr>
+    <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: cada lletra amb una casella per marcar, al final de la línia. <code>'bracket'</code>: un sol buit per escriure-hi la resposta.</td></tr>
+  </tbody>
+</table>
+
+### Relacionar
+
+`match` defineix un exercici de parelles.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'dots' | 'letters'</code></td><td><code>'dots'</code></td><td><code>'dots'</code>: dues columnes amb un punt al costat de cada element, per unir-los amb una línia. <code>'letters'</code>: la columna de la dreta amb lletres, i un buit al costat de cada element de l'esquerra per escriure-hi la lletra.</td></tr>
+    <tr><td><code>gap</code></td><td><code>Dimension</code></td><td><code>4em</code></td><td>Espai entre les dues columnes.</td></tr>
+    <tr><td><code>dotSize</code></td><td><code>Dimension</code></td><td><code>0.35em</code></td><td>El diàmetre dels punts.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el color principal</td><td>Els punts i el marc del banc de paraules.</td></tr>
+  </tbody>
+</table>
+
+### Banc de paraules
+
+`bank` defineix la caixa de paraules que s'imprimeix sota l'enunciat d'un exercici de buits amb `bank` o <code>::bank[…]</code>, i a tots els exercicis de classificar.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>un marc del color de <code>match</code></td><td>Un id de <code>calloutStyles</code> per a la caixa del banc.</td></tr>
+    <tr><td><code>order</code></td><td><code>'shuffle' | 'alpha' | 'written'</code></td><td><code>'shuffle'</code></td><td>Les paraules barrejades (amb llavor), en ordre alfabètic segons la llengua del document, o tal com s'han escrit.</td></tr>
+    <tr><td><code>separator</code></td><td><code>string</code></td><td>un espai d'em</td><td>Entre dues paraules. Cada paraula es compon en un xip amb un marc fi.</td></tr>
+  </tbody>
+</table>
+
+### Espai per escriure
+
+`area` defineix l'espai que hi ha sota una pregunta oberta, sota una frase desordenada i a les columnes d'un exercici de classificar.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>kind</code></td><td><code>'lines' | 'dots' | 'grid' | 'seyes' | 'tianzige' | 'box' | 'none'</code></td><td><code>'lines'</code></td><td>Línies pautades, una filera de punts, paper quadriculat, la pauta Seyès francesa, quadrats 田字格, un marc buit o espai en blanc. L'<code>area</code> d'un bloc té prioritat.</td></tr>
+    <tr><td><code>lines</code></td><td><code>number</code></td><td><code>3</code></td><td>Quantes línies d'alçada. Les <code>lines</code> d'un bloc tenen prioritat.</td></tr>
+    <tr><td><code>spacing</code></td><td><code>Dimension</code></td><td>1,35 vegades l'interlineat del text (1,2 per a les quadrícules)</td><td>La distància entre dues línies.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>un gris clar</td><td>El color de la pauta.</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.5pt</code></td><td>El gruix de la pauta.</td></tr>
+  </tbody>
+</table>
+
+### Graelles
+
+`grid` defineix les caselles de les sopes de lletres, els mots encreuats i les operacions en columna.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>El costat d'una casella.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>la del text</td><td>La família de les lletres i les xifres.</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>Encara no s'utilitza: les lletres es componen a 0,58 del costat de la casella.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el del text</td><td>El color de les lletres i les xifres.</td></tr>
+    <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>un gris mitjà</td><td>Les línies de les caselles.</td></tr>
+    <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>El seu gruix.</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>Encara no s'utilitza: uns mots encreuats només imprimeixen les caselles de les seves paraules.</td></tr>
+    <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Compon en majúscules les lletres de les sopes de lletres i dels mots encreuats, amb les regles de majúscules de la llengua del document.</td></tr>
+  </tbody>
+</table>
+
+### Operacions
+
+`arithmetic` defineix les operacions en columna.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>segons la llengua</td><td>La divisió. <code>'potence'</code>: el divisor a la dreta del dividend, dins d'un angle en forma de L, i el quocient sota el divisor (català, castellà, francès, italià, portuguès). <code>'bracket'</code>: el divisor a l'esquerra del dividend, una clau per sobre del dividend i el quocient a dalt (anglès, xinès, japonès, àrab i qualsevol llengua sense una disposició pròpia). <code>'inline'</code>: <code>864 : 4 =</code> amb el quocient a la mateixa línia i els passos a sota (alemany).</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>Operacions per fila, menys si la columna és massa estreta.</td></tr>
+  </tbody>
+</table>
+
+### Dificultat
+
+`level` defineix les marques que el <code>level</code> d'un bloc imprimeix després del número, en una mida més petita.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td><code>'●'</code></td><td>Un nivell assolit: <code>'★'</code>, <code>'■'</code>.</td></tr>
+    <tr><td><code>empty</code></td><td><code>string</code></td><td><code>'○'</code></td><td>Un nivell no assolit; amb <code>''</code> no se n'imprimeix cap.</td></tr>
+    <tr><td><code>max</code></td><td><code>number</code></td><td><code>3</code></td><td>El nivell més alt: <code>level=2</code> amb <code>max: 3</code> imprimeix ●●○.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el color principal</td><td>El color de les marques.</td></tr>
+  </tbody>
+</table>
+
+### Icones
+
+`icons` associa un id a una icona d'activitat (oral, escrita, en parella, d'escoltar, amb calculadora), que s'imprimeix després del número quan un bloc l'anomena: `icon="pair"`.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td>—</td><td>Un caràcter per imprimir: <code>'✎'</code>, <code>'🎧'</code>, un glif d'una font d'icones.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>—</td><td>La família d'una font d'icones.</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>El color de la icona.</td></tr>
+    <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>Un recurs de mapa de bits o SVG per a la icona.</td></tr>
+    <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>El que representa la icona, per als lectors de pantalla i el PDF etiquetat.</td></tr>
+  </tbody>
+</table>
+
+Aquesta versió només imprimeix el `glyph` d'una icona, amb la lletra i el color del text que l'envolta; `fontFamily`, `color`, `resourceId` i `alt` encara no s'utilitzen.
+
+### Respostes
+
+`answers` defineix les respostes allà on es mostren: una edició del professorat, l'element model d'un exercici amb `example`, els cercles i les caselles plenes, les línies entre parelles, les lletres i les xifres de les graelles.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td><code>#d6246e</code>, un vermell magenta</td><td>El color de les respostes, com les sobreimprimeix un llibre del professorat.</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>la del text</td><td>Una lletra per a les respostes: sovint és una lletra manuscrita.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Compon en cursiva les respostes dels buits.</td></tr>
+  </tbody>
+</table>
+
+### Colors a la pantalla
+
+`digital` defineix com mostren una resposta comprovada el visor HTML i els llibres EPUB.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>correctColor</code></td><td><code>ColorValue</code></td><td>un verd (<code>#1e8e3e</code>)</td><td>Una resposta correcta.</td></tr>
+    <tr><td><code>wrongColor</code></td><td><code>ColorValue</code></td><td>un vermell (<code>#c5221f</code>)</td><td>Una resposta incorrecta.</td></tr>
+  </tbody>
+</table>
+
+## Paràmetres del llibre
+
+La propietat `exercises` conté els paràmetres de tot el llibre: l'edició, on s'imprimeixen les solucions, la llavor de totes les barreges i les edicions en pantalla. Un llibre que no fixa ni `exercises` ni `exerciseStyles` es compon i dona el mateix hash que abans.
+
+```ts
+const config: PostextConfig = {
+  exercises: {
+    edition: 'student',
+    solutions: { placement: 'chapterEnd', layout: 'key' },
+    seed: 3,
+    digital: { check: 'instant' },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>edition</code></td><td><code>'student' | 'teacher'</code></td><td><code>'student'</code></td><td><code>'teacher'</code> imprimeix cada resposta al seu lloc en el color d'<code>answers</code>: un llibre del professorat a partir del text de l'alumne.</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>On i com s'imprimeixen les solucions. Vegeu <a href="#solucions">Solucions</a>.</td></tr>
+    <tr><td><code>seed</code></td><td><code>number</code></td><td><code>1</code></td><td>La llavor de totes les barreges: opcions, columnes de la dreta, elements per ordenar, paraules desordenades, bancs, lletres de farciment de les sopes de lletres. Canvia-la per obtenir una altra versió d'un examen; la impressió, la pantalla i la clau continuen coincidint.</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>El visor HTML i els llibres EPUB. Vegeu <a href="#edicions-en-pantalla">Edicions en pantalla</a>.</td></tr>
+  </tbody>
+</table>
+
+### Solucions
+
+`exercises.solutions` val per a tot el llibre; el `solutions` d'un estil hi canvia el que calgui per als exercicis d'aquell estil.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>placement</code></td><td><code>'none' | 'after' | 'inverted' | 'chapterEnd' | 'directive'</code></td><td><code>'none'</code></td><td><code>'none'</code>: cap solució impresa. <code>'after'</code>: després de cada exercici, amb un cos més petit. <code>'inverted'</code>: després de cada exercici, capgirada. <code>'chapterEnd'</code>: al final del capítol, sota <code>heading</code>. <code>'directive'</code>: allà on hi ha una línia <code>:::solutions</code>.</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>un requadre sense marc amb un cos més petit</td><td>Un id de <code>calloutStyles</code> per al requadre d'una solució i per a la llista de solucions d'un capítol.</td></tr>
+    <tr><td><code>heading</code></td><td><code>string</code></td><td>la paraula de la llengua del document</td><td>El títol de les solucions al final d'un capítol: Solucions, Solutions, Soluciones, Corrigés, Lösungen, Soluzioni, Gabarito, 参考答案, 解答, الحلول. Una línia <code>:::solutions&#123;title="…"&#125;</code> en fixa un de propi.</td></tr>
+    <tr><td><code>layout</code></td><td><code>'key' | 'full'</code></td><td><code>'full'</code></td><td><code>'key'</code>: només les respostes (1 b · 2 aigua). <code>'full'</code>: la clau i, a continuació, el <code>:::solution</code> de l'exercici.</td></tr>
+  </tbody>
+</table>
+
+### Edicions en pantalla
+
+`exercises.digital` defineix com es comporten els exercicis al visor HTML i als llibres EPUB.
+
+<table>
+  <thead>
+    <tr>
+      <th>Propietat</th>
+      <th>Tipus</th>
+      <th>Per defecte</th>
+      <th>Descripció</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>interactive</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Exercicis que el lector pot respondre. Amb <code>false</code> es mostren com els impresos.</td></tr>
+    <tr><td><code>persist</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Desa les respostes del lector al navegador, per a cada llibre.</td></tr>
+    <tr><td><code>check</code></td><td><code>'button' | 'instant'</code></td><td><code>'button'</code></td><td><code>'button'</code>: les respostes es comproven quan el lector ho demana. <code>'instant'</code>: cada resposta es comprova en el moment d'escriure-la.</td></tr>
+  </tbody>
+</table>
+
+La pantalla pot tenir uns paràmetres d'exercicis propis: `htmlViewer.overrides` també accepta `exercises` i `exerciseStyles`, que es fusionen amb els del llibre abans que el visor HTML faci la maquetació. Així, la impressió pot mantenir les solucions al final del capítol mentre la pantalla les amaga, o la pantalla pot prescindir dels espais per escriure, que en pantalla no fan cap servei.
+
+```ts
+const config: PostextConfig = {
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [{ id: 'exercise', area: { kind: 'none' }, blank: { minWidth: { value: 6, unit: 'em' } } }],
+    },
+  },
+};
+```

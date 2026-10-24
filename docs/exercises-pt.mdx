@@ -1,0 +1,388 @@
+{/* docs/exercises-pt.mdx */}
+
+export const metadata = {
+  title: 'Exercícios',
+  sidebarTitle: 'Exercícios',
+  description: 'Como o Postext compõe os exercícios de um livro didático ou de um caderno de atividades: o delimitador :::exercise, seus doze tipos, da múltipla escolha à conta de dividir, as respostas escritas no Markdown, a numeração, as soluções depois do exercício, de cabeça para baixo, no fim do capítulo ou do livro, a edição do professor, as verificações e os exercícios respondidos na tela em HTML e EPUB',
+  lang: 'pt',
+  lastUpdated: '2026-10-24',
+  readingTime: '16 min',
+  order: 36,
+  plainSummary: "Esta página explica como escrever exercícios num livro do Postext: perguntas com alternativas, afirmações de verdadeiro ou falso, frases com lacunas, colunas para ligar, palavras para encontrar numa grade, contas para resolver e mais. Você escreve cada exercício e as respostas dele no texto do capítulo, e o Postext o imprime na forma certa, com o número, as alternativas e as linhas para preencher. As respostas podem sair logo depois do exercício, de cabeça para baixo, no fim do capítulo ou em lugar nenhum. O mesmo texto também dá uma edição do professor com todas as respostas preenchidas. Na tela, no visualizador HTML e nos livros EPUB, o leitor pode responder aos exercícios e conferir as respostas.",
+};
+
+# Exercícios
+
+**As perguntas e as respostas ficam no Markdown; o jeito de imprimi-las é um estilo de exercício.**
+
+Um exercício é um bloco do capítulo escrito entre `:::exercise` e `:::`. Dentro dele vão o enunciado, as perguntas, as alternativas, as lacunas com as respostas e, quando houver, uma resolução comentada. O Postext lê as respostas no texto, imprime o exercício para o aluno (linhas em branco, quadradinhos vazios, itens embaralhados), monta o gabarito e coloca as soluções onde o livro pede. O selo do número, os rótulos das alternativas, a aparência de uma lacuna e o pautado de uma área de escrita vêm de [`exerciseStyles`](/pt/docs/configuration-exercises#estilos-de-exercício); o lugar das soluções e a edição impressa vêm de [`exercises`](/pt/docs/configuration-exercises#ajustes-do-livro). Assim, o mesmo Markdown dá o livro do aluno, o livro do professor e uma edição interativa na tela.
+
+Um exercício é composto como um boxe de parágrafos comuns, chips e desenhos; por isso, ele é posicionado, dividido entre colunas e páginas, marcado num PDF acessível e pintado em todas as saídas como qualquer boxe. Um livro sem `:::exercise` é diagramado como antes.
+
+## O delimitador
+
+```md
+:::exercise
+Assinale a resposta certa.
+
+- [ ] Rio de Janeiro
+- [x] Brasília
+- [ ] São Paulo
+:::
+```
+
+Os parágrafos do início do exercício, até a primeira lista, lacuna ou banco de palavras, formam o **enunciado**. Eles são compostos com a tipografia de enunciado do estilo (negrito, por padrão) depois do número do exercício. O que vem depois é o corpo: aquilo que o exercício pede.
+
+O delimitador aceita estes atributos:
+
+<table>
+  <thead>
+    <tr>
+      <th>Atributo</th>
+      <th>O que faz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>type</code></td><td>O tipo de exercício (veja abaixo). Pode ser omitido quando o conteúdo já o indica: uma lista de tarefas é <code>choice</code>, uma lista de pares com <code>-&gt;</code> é <code>match</code>, um texto com <code>[[…]]</code> é <code>gaps</code> e qualquer outra coisa é <code>open</code>. Algumas outras grafias também são lidas (<code>mcq</code>, <code>tf</code>, <code>cloze</code>, <code>matching</code>…).</td></tr>
+    <tr><td><code>style</code></td><td>O id de um estilo de exercício. Ausente ou desconhecido, vale o primeiro estilo de <code>exerciseStyles</code>.</td></tr>
+    <tr><td><code>title</code></td><td>Um título impresso em negrito depois do número.</td></tr>
+    <tr><td><code>#id</code></td><td>Uma âncora, como num boxe: <code>:::exercise&#123;#vulcoes&#125;</code>.</td></tr>
+    <tr><td><code>n</code></td><td>Um número fixo, para manter a numeração de uma edição impressa. Os exercícios seguintes continuam a contagem a partir dele.</td></tr>
+    <tr><td><code>level</code></td><td>Dificuldade de 1 até o máximo do estilo (3, por padrão), impressa como marcas depois do número: <code>level=2</code> imprime ●●○.</td></tr>
+    <tr><td><code>icon</code></td><td>Os ids dos ícones de atividade definidos pelo estilo, separados por espaços: <code>icon="pencil pair"</code>.</td></tr>
+    <tr><td><code>example</code></td><td>O primeiro item sai respondido, como modelo, e não é perguntado.</td></tr>
+    <tr><td><code>columns</code></td><td>Múltipla escolha: as alternativas lado a lado, essa quantidade por fileira.</td></tr>
+    <tr><td><code>select</code></td><td>Múltipla escolha: <code>one</code> ou <code>many</code>, quantas alternativas o leitor pode marcar na tela. Mais de um <code>[x]</code> já equivale a <code>many</code>.</td></tr>
+    <tr><td><code>shuffle=false</code></td><td>Ligar colunas e ordenar: imprime os itens na ordem em que foram escritos, sem embaralhar.</td></tr>
+    <tr><td><code>bank</code></td><td>Lacunas: imprime as respostas num banco de palavras.</td></tr>
+    <tr><td><code>lines</code>, <code>area</code></td><td>Resposta aberta: quantas linhas há para escrever e o pautado do espaço.</td></tr>
+    <tr><td><code>mark</code></td><td>Marcar: como a resposta marca uma palavra: <code>circle</code> (o padrão), <code>box</code>, <code>underline</code> ou <code>highlight</code>.</td></tr>
+    <tr><td><code>size</code>, <code>directions</code>, <code>hidden</code></td><td>Caça-palavras: o lado da grade, as direções em que as palavras correm e a grade sem a lista de palavras embaixo.</td></tr>
+  </tbody>
+</table>
+
+Dois delimitadores vão dentro de um exercício. `:::solution` … `:::` guarda uma resolução ou uma resposta-modelo em qualquer Markdown; ela nunca sai dentro do exercício e vai para onde vão as [soluções](#soluções). `:::hint` … `:::` guarda uma dica que as edições de tela mostram quando o leitor pede; o impresso a deixa de fora.
+
+## Tipos de exercício
+
+Os embaralhamentos partem de uma semente: um exercício sai embaralhado do mesmo jeito no canvas, no PDF, no visualizador HTML, no EPUB e no gabarito. Mude `exercises.seed` para imprimir outra versão de uma prova.
+
+### Múltipla escolha e verdadeiro ou falso
+
+#### Múltipla escolha
+
+Uma lista de tarefas, com as alternativas certas marcadas:
+
+```md
+:::exercise
+Qual é o planeta mais próximo do Sol?
+
+- [ ] Vênus
+- [x] Mercúrio
+- [ ] Marte
+:::
+```
+
+As alternativas saem uma por linha, com os rótulos a), b), c), e as linhas que quebram ficam recuadas sob o texto. Várias perguntas num só exercício formam uma lista numerada cujos itens são os enunciados, cada um com sua lista de tarefas recuada embaixo; os enunciados são numerados 1., 2. e as alternativas ficam sob eles:
+
+```md
+:::exercise{columns=3}
+Assinale a resposta certa.
+
+1. As raízes da planta absorvem
+   - [x] água
+   - [ ] luz
+   - [ ] sementes
+2. As folhas produzem alimento a partir da
+   - [ ] terra
+   - [ ] chuva
+   - [x] luz do Sol
+:::
+```
+
+`columns=3` põe as alternativas em fileiras de três. Os rótulos e o sinal depois deles seguem a língua do documento: a) em português, nas outras línguas românicas e em inglês, A. em chinês, ア イ ウ em japonês, أ) ب) ج) em árabe. Um estilo pode pôr um quadradinho ou um círculo para marcar antes de cada alternativa (`options.marker`) ou, como nas provas chinesas e japonesas, parênteses （　） no fim do enunciado para escrever a letra (`options.bracket`).
+
+#### Verdadeiro ou falso
+
+```md
+:::exercise{type=truefalse}
+Marque V para verdadeiro e F para falso.
+
+- [x] O Sol é uma estrela.
+- [ ] A Lua é um planeta.
+:::
+```
+
+Cada afirmação é numerada e termina com as duas respostas no fim da linha, cada uma com um quadradinho: V □ F □. Um item marcado é verdadeiro. As letras seguem a língua: V/F em português, espanhol, catalão, francês e italiano, T/F em inglês, R/F em alemão, √/× em chinês, ○/× em japonês, ✓/✗ em árabe. Um estilo pode imprimir, em vez disso, uma só lacuna para escrever a resposta (`trueFalse.look: 'bracket'`).
+
+### Lacunas e banco de palavras
+
+`[[resposta]]` é uma lacuna, impressa como uma linha para escrever:
+
+```md
+:::exercise{bank}
+Complete as frases com as palavras do quadro.
+
+1. As raízes absorvem [[água]] do solo.
+2. As folhas produzem o [[alimento]] da planta.
+3. As flores atraem [[insetos | abelhas]].
+
+::bank[pedras | vento]
+:::
+```
+
+- `[[quilo | quilograma]]`: uma lacuna com várias respostas aceitas. O gabarito imprime a primeira.
+- `[[fui | (foi) | foram]]`: uma **escolha na linha**. As opções saem no meio da frase, `(fui / foi / foram)`, e a que está entre parênteses é a certa: o leitor a circula.
+- `[[foi]]{width=6}`: uma lacuna de seis ems de largura.
+- `\|` é uma barra literal dentro de uma resposta, e `\[[` um par literal de colchetes.
+
+Todas as lacunas de um exercício têm a largura da resposta mais longa mais 1,5 em; assim, o comprimento de uma linha não entrega a resposta (`blank.width` muda isso). `bank` imprime as respostas embaralhadas num banco de palavras com moldura, sob o enunciado; `::bank[pedras | vento]` acrescenta palavras que não entram em nenhuma lacuna (e já pede o banco sozinho). `[[…]]` só é lido dentro de um exercício: dois colchetes em qualquer outro lugar do livro ficam como foram escritos.
+
+Um exercício que começa pelo texto, sem enunciado, põe o número no começo do primeiro parágrafo:
+
+```md
+:::exercise
+Uma semana tem sete [[dias]], e um ano tem doze [[meses]].
+:::
+```
+
+### Ligar colunas e classificar
+
+#### Ligar colunas
+
+Pares escritos com `->` (ou `→`):
+
+```md
+:::exercise
+Ligue cada animal à sua casa.
+
+- Abelha -> Colmeia
+- Passarinho -> Ninho
+- Aranha -> Teia
+- Coelho -> Toca
+- -> Formigueiro
+:::
+```
+
+A coluna da esquerda sai na ordem escrita e a da direita embaralhada, com um ponto ao lado de cada item para ligar com um traço. `- -> Formigueiro` acrescenta à coluna da direita um item que não corresponde a nenhum outro. Com `match.look: 'letters'`, a coluna da direita recebe letras e cada item da esquerda ganha parênteses para escrever a letra. `shuffle=false` mantém a coluna da direita como foi escrita.
+
+#### Classificar
+
+```md
+:::exercise{type=sort}
+Classifique os alimentos pela parte da planta de onde vêm.
+
+- Raiz: cenoura, mandioca
+- Folha: alface, couve
+- Fruto: tomate, banana
+:::
+```
+
+Todos os itens vão embaralhados para um banco de palavras, e cada categoria ganha uma coluna (até quatro) com o nome dela e linhas pautadas embaixo. Os itens podem ser separados por vírgulas, pontos e vírgulas, `、`, `，` ou `،`.
+
+### Ordenação
+
+#### Ordenar
+
+```md
+:::exercise{type=order}
+Numere as etapas na ordem em que acontecem.
+
+1. A semente germina.
+2. O caule cresce.
+3. As flores se abrem.
+4. Os frutos aparecem.
+:::
+```
+
+A lista é escrita na ordem certa e impressa embaralhada, cada item com um quadradinho para o número.
+
+#### Frases embaralhadas
+
+```md
+:::exercise{type=scramble}
+Organize as palavras e forme frases.
+
+- As plantas / precisam de / água
+- O Sol / dá / luz e calor
+:::
+```
+
+Cada frase é cortada nas barras (ou nos espaços, quando não tem barras), e os pedaços saem embaralhados, separados por barras, com uma linha embaixo para escrever a frase.
+
+### Marcar palavras
+
+```md
+:::exercise{type=mark}
+Circule os verbos: A menina [[rega]] as plantas e o Sol as [[aquece]].
+:::
+```
+
+O texto sai como está; as palavras entre `[[…]]` são as que devem ser marcadas. Nas respostas elas aparecem circuladas, ou então dentro de um quadro, sublinhadas ou destacadas com `mark=box|underline|highlight` no delimitador, ou palavra por palavra com `[[rega]]{mark=underline}`.
+
+### Perguntas abertas e áreas de escrita
+
+```md
+:::exercise{type=open lines=4}
+Por que as plantas precisam de luz?
+
+:::solution
+Elas usam a luz para produzir o próprio alimento.
+:::
+:::
+```
+
+Linhas pautadas para escrever vêm depois do enunciado: três por padrão, quatro aqui com `lines=4`. Quando o corpo é uma lista, cada item ganha suas próprias linhas. `area` muda o pautado: `lines`, `dots`, `grid` (papel quadriculado), `seyes` (o pautado escolar francês), `tianzige` (田字格, os quadrados em que os alunos chineses escrevem os caracteres), `box` (uma moldura vazia, para um desenho) ou `none`. O `:::solution` é a resposta-modelo, impressa com as soluções e escrita sobre as linhas numa edição do professor.
+
+### Caça-palavras e palavras cruzadas
+
+#### Caça-palavras
+
+```md
+:::exercise{type=wordsearch size=10 directions="across down diagonal backwards"}
+Encontre estas palavras no caça-palavras.
+
+- RAIZ
+- CAULE
+- FOLHA
+- FLOR
+:::
+```
+
+As palavras são colocadas numa grade de letras e a lista sai embaixo dela (`hidden` tira a lista). A grade cresce até caber a palavra mais longa; `size` define o lado. `directions` aceita `across`, `down`, `diagonal` e `backwards`; o padrão é na horizontal, na vertical e na diagonal. As letras saem em maiúsculas, a menos que o estilo diga outra coisa. Uma palavra que não cabe na grade é avisada.
+
+#### Palavras cruzadas
+
+```md
+:::exercise{type=crossword}
+Resolva as palavras cruzadas.
+
+- RAIZ: Parte que fica debaixo da terra
+- FOLHA: Parte verde que produz o alimento
+- FLOR: Atrai as abelhas
+- CAULE: Sustenta a planta
+:::
+```
+
+Cada entrada é uma palavra e sua dica. O motor monta a grade, numera a primeira casa de cada palavra e imprime as dicas embaixo em duas listas com títulos na língua do documento (Horizontais e Verticais em português, Across e Down em inglês, ヨコのカギ・タテのカギ em japonês).
+
+### Contas armadas
+
+```md
+:::exercise{type=arithmetic}
+Arme e efetue.
+
+- 345 + 278
+- 902 − 456
+- 124 × 3
+- 864 ÷ 4
+:::
+```
+
+Cada operação é montada em casas, como o aluno a escreve: os algarismos em colunas, o sinal à esquerda, um traço e casas vazias para o resultado, com até quatro operações por fileira. Os sinais lidos são `+`, `-`, `−`, `×`, `x`, `*`, `÷`, `:` e `/`, com números inteiros. A conta de dividir segue o costume escolar da língua do documento, e `arithmetic.division` escolhe outro:
+
+- `bracket`: o divisor à esquerda, o dividendo sob uma chave, o quociente em cima dela. Livros em inglês, chinês, japonês e árabe.
+- `potence`: o dividendo à esquerda, o divisor à direita dentro da chave em L, o quociente sob o divisor e o resto embaixo, como no método da chave. Livros em português, espanhol, catalão, francês e italiano.
+- `inline`: `864 : 4 =` e as casas do quociente na mesma linha, com as etapas escritas embaixo. Livros em alemão.
+
+### O primeiro item como modelo
+
+`example` imprime o primeiro item resolvido, na cor das respostas: a primeira lacuna preenchida, a alternativa certa da primeira pergunta circulada, o primeiro par ligado, a primeira frase escrita. Esse item não é perguntado na tela.
+
+## Números, referências e dificuldade
+
+Os exercícios são numerados 1, 2, 3 em cada capítulo. O estilo decide o resto: um número solto, em negrito e com ponto (o padrão), ou dentro de um círculo, de um quadrado ou de um quadrado arredondado (`number.shape`), uma palavra antes dele ("Exercício 3" com `number.label: true`, na língua do documento), os algarismos (`number.format`, como os chineses 一、二、), um modelo que acrescenta o capítulo (`'{h1}.{n}'`) e onde a contagem recomeça (`number.resetOn`: em cada capítulo, em cada seção ou nunca). Os estilos que indicam o mesmo `number.counter` dividem uma só contagem, e o livro a leva de um capítulo para o outro.
+
+`n=12` num delimitador dá a esse exercício o número 12, e os seguintes continuam a partir do 13. `#id` faz do exercício um alvo de `:ref`, que imprime o título dele ou, se não houver título, a página. `level` e `icon` saem depois do número: as marcas de dificuldade e os ícones de atividade que o estilo define.
+
+## Soluções
+
+### O gabarito
+
+Todo exercício com resposta fechada tem um gabarito feito com as respostas dele: a alternativa certa (`b) Brasília`), as lacunas em ordem (`1 água · 2 alimento · 3 insetos`), V ou F para cada afirmação, os pares, a ordem, as frases, as palavras de uma cruzada com os números delas, os resultados das contas. Com a disposição `full` (a padrão), o gabarito vem seguido do `:::solution` do exercício. Um exercício de resposta aberta não tem gabarito: a resposta-modelo é a solução.
+
+### Onde as soluções são impressas
+
+`exercises.solutions.placement` decide para o livro inteiro; um estilo pode mudar isso para os seus próprios exercícios.
+
+<table>
+  <thead>
+    <tr>
+      <th>Posição</th>
+      <th>O que é impresso</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>none</code></td><td>Nenhuma solução no impresso (o padrão). As edições de tela continuam com elas.</td></tr>
+    <tr><td><code>after</code></td><td>A solução logo depois do exercício, em corpo menor.</td></tr>
+    <tr><td><code>inverted</code></td><td>O mesmo boxe de cabeça para baixo, como fazem as revistas de passatempos e as revistinhas infantis.</td></tr>
+    <tr><td><code>chapterEnd</code></td><td>Todas as soluções do capítulo no fim dele, sob um título na língua do documento (Gabarito, Solutions, Soluciones, Lösungen, 参考答案…), cada uma depois do número do seu exercício.</td></tr>
+    <tr><td><code>directive</code></td><td>Só onde o capítulo escreve <code>:::solutions</code>.</td></tr>
+  </tbody>
+</table>
+
+Com `directive`, uma linha `:::solutions` imprime as soluções dos exercícios anteriores a ela que ainda não foram impressas; `title="…"` muda o título. `:::solutions{scope="book"}`, num capítulo próprio no fim, imprime o gabarito e as soluções de todos os exercícios do livro, capítulo por capítulo:
+
+```md
+# Respostas
+
+:::solutions{scope="book"}
+```
+
+### Edição do professor
+
+```json
+{ "exercises": { "edition": "teacher" } }
+```
+
+imprime cada resposta no seu lugar, na cor das respostas (um vermelho magenta, a não ser que o estilo defina `answers.color`): as lacunas preenchidas, as alternativas certas circuladas ou com o quadradinho preenchido, o quadradinho de V ou F preenchido, os traços que ligam os pares, os números nos quadradinhos de ordenar, as frases e as palavras classificadas sobre as linhas, a resposta-modelo de uma pergunta aberta sobre as linhas dela, as palavras da cruzada e os resultados das contas nas casas.
+
+## Verificações
+
+O painel **Verificações** do Sandbox e `collectContentWarnings` informam o que o motor não consegue ler:
+
+- `exerciseUnknownType`: um `type` que não é nenhum dos doze.
+- `exerciseUnknownStyle`: um `style` que não corresponde a nenhum estilo de exercício (é usado o primeiro estilo).
+- `exerciseNoAnswer`: um exercício de resposta fechada sem nada para corrigir: uma pergunta sem alternativa marcada, lacunas sem `[[…]]`, um ligar colunas sem pares.
+- `exerciseUnreadItem`: um item de lista que o tipo do exercício não consegue ler, como um item de ligar colunas sem `->` ou uma operação que não tem dois números inteiros e um sinal.
+- `exerciseWordUnplaced`: uma palavra que um caça-palavras ou uma cruzada não conseguiu colocar.
+- `exerciseNested`: um exercício dentro de outro.
+- `solutionOutside`: um `:::solution` ou um `:::hint` fora de um exercício. Não imprime nada.
+
+## Exercícios em HTML e EPUB
+
+No visualizador HTML e nos livros EPUB, os exercícios podem ser respondidos. O leitor digita nas lacunas e clica em alternativas, afirmações, pontos para ligar e casas de uma grade; depois confere as respostas, mostra a solução ou recomeça. As respostas certas e erradas aparecem com uma cor e uma marca (`digital.correctColor`, `digital.wrongColor`) e são anunciadas aos leitores de tela. As respostas ficam guardadas no navegador, por livro, e o leitor as encontra de novo na próxima visita (`exercises.digital.persist`). `exercises.digital.check: 'instant'` confere cada resposta assim que ela é dada; `exercises.digital.interactive: false` deixa as páginas como no impresso. O gabarito sempre vai no EPUB, seja qual for a posição escolhida para o impresso; assim, um sistema de leitura que não executa scripts também tem as respostas.
+
+A tela pode dar aos exercícios uma forma própria com `htmlViewer.overrides`, que é mesclado sobre a configuração do livro antes de o visualizador HTML diagramar. O impresso mantém a sua:
+
+```ts
+const config: PostextConfig = {
+  exercises: { solutions: { placement: 'chapterEnd' } },
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [
+        { id: 'exercise', blank: { minWidth: { value: 6, unit: 'em' } }, area: { kind: 'none' } },
+      ],
+    },
+  },
+};
+```
+
+## Estilos de exercício
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Source Sans 3' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots' },
+    },
+  ],
+};
+```
+
+Todos os campos de um estilo, com tipo e valor padrão, estão em [Configuração › Exercícios](/pt/docs/configuration-exercises). Um estilo toma a moldura de um [estilo de boxe](/pt/docs/configuration-callouts) (`box`); por isso, um exercício pode ficar num boxe com fundo colorido e faixa como qualquer outro boxe do livro. A [skill postext-port](/pt/docs/skill) segue os mesmos passos quando porta os exercícios de um livro didático ou de um caderno de atividades.

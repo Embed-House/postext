@@ -453,6 +453,18 @@ Pulsa :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>Pinta las letras del chip como hileras de puntos para repasar, igual que el <a href="/es/docs/configuration-headers-footers#marcas-en-línea-y-contornos"><code>dotted</code></a> de un texto de diseño, con sus longitudes en em relativas al texto del chip. Sin fondo, sin contorno y sin márgenes interiores, el chip es una palabra punteada dentro de la línea: <code>:chip[gato]&#123;style="dots"&#125;</code>.</td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>Dibuja el contorno solo como una línea bajo el texto, de <code>borderWidth</code> de grosor y en <code>borderColor</code>, en lugar de alrededor de la caja: un hueco para escribir. Sin fijar: el contorno completo.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>El ancho mínimo de la caja, contorno y márgenes interiores incluidos; un texto más corto se centra en ella. La usan los huecos de los ejercicios y las casillas para marcar. Sin fijar: tan ancha como el texto.</td>
+    </tr>
   </tbody>
 </table>
 

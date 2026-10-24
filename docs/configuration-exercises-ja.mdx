@@ -1,0 +1,471 @@
+{/* docs/configuration-exercises-ja.mdx */}
+
+export const metadata = {
+  title: '設定：練習問題',
+  sidebarTitle: '練習問題の設定',
+  description: '練習問題スタイル（exerciseStyles）と本全体の練習問題の設定（exercises）：番号のバッジ、指示文の書式、選択肢の記号と印、空欄、正誤の答え、線で結ぶ問題、語群、書き込み欄、マス目、わり算の筆算、難易度の印、アイコン、答えの色、解答を印刷する場所、教師用の版、画面の版',
+  lang: 'ja',
+  lastUpdated: '2026-10-24',
+  readingTime: '12分',
+  order: 17,
+  parent: 'configuration',
+  plainSummary: "このページでは、練習問題の見た目を決めるすべての設定を挙げます。練習問題スタイルでは、番号の印刷のしかた、選択肢の記号、書き込む空欄の見た目、書き込み欄の罫、マス目と筆算の描き方を決めます。本全体の設定では、解答を印刷する場所と、児童・生徒用の版にするか教師用の版にするかを決めます。読者が画面で問題に答えるときの動きもここで決めます。練習問題そのものの書き方は「練習問題」のページで説明しています。",
+};
+
+# 設定：練習問題
+
+
+## 練習問題スタイル
+
+`exerciseStyles`プロパティは、練習問題が`:::exercise{style="…"}`で選ぶ名前付きスタイルを宣言します。スタイルは練習問題のまとまりの形を決めるもので、問いと答えはMarkdownに残ります（[練習問題](/ja/docs/exercises)を参照）。既定では`exercise`というスタイルが1つ用意されているので、何も設定しなくてもブロックは使えます。`exerciseStyles`を宣言するとこのスタイルは置き換えられ、`style`を指定しない練習問題には最初に宣言したスタイルが適用されます。項目はすべて省略でき、選択肢の記号、正誤の記号、わり算の筆算の書き方、印刷する語など、学校の慣習が国によって違うところは文書の言語に合わせた既定値になります。
+
+```ts
+const config: PostextConfig = {
+  exerciseStyles: [
+    {
+      id: 'activity',
+      box: 'activity-frame',
+      number: { shape: 'disc', background: { hex: '#2a5ea8', model: 'hex' } },
+      instruction: { fontFamily: 'Noto Sans JP' },
+      options: { marker: 'circle' },
+      blank: { look: 'dots', width: 'answer' },
+      area: { kind: 'grid', lines: 4 },
+      level: { glyph: '★', empty: '☆' },
+      icons: { pair: { glyph: '👥' } },
+    },
+    { id: 'quiz', extends: 'activity', options: { layout: 'row', columns: 4 } },
+  ],
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>—</td><td><code>:::exercise&#123;style="…"&#125;</code>で選ぶ識別子です。未知のidは最初のスタイルになり、報告されます（<code>exerciseUnknownStyle</code>）。</td></tr>
+    <tr><td><code>name</code></td><td><code>string</code></td><td><code>id</code></td><td>人が読むための名前です（エディターのUIでのみ使います）。</td></tr>
+    <tr><td><code>extends</code></td><td><code>string</code></td><td>—</td><td>このスタイルが元にする別のスタイルのidです。各グループ（<code>number</code>、<code>options</code>、<code>blank</code>など）は項目ごとに、<code>icons</code>はidごとにマージされます。</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>—</td><td>練習問題の枠にする<a href="/ja/docs/configuration-callouts#囲みスタイル"><code>calloutStyles</code></a>のidです。背景、枠線、帯、内側余白、配置、分割はこの囲みスタイルに従います。未設定のときは、練習問題は枠なしで本文の流れの中に組まれ、1ページにまとめて置かれます。</td></tr>
+    <tr><td><code>number</code></td><td><code>object</code></td><td>—</td><td>番号の印刷のしかたです。<a href="#番号">番号</a>を参照してください。</td></tr>
+    <tr><td><code>instruction</code></td><td><code>object</code></td><td>—</td><td>指示文の書式です。<a href="#指示文">指示文</a>を参照してください。</td></tr>
+    <tr><td><code>options</code></td><td><code>object</code></td><td>—</td><td>選択問題の選択肢です。<a href="#選択肢">選択肢</a>を参照してください。</td></tr>
+    <tr><td><code>blank</code></td><td><code>object</code></td><td>—</td><td><code>[[…]]</code>の印刷のしかたです。<a href="#空欄">空欄</a>を参照してください。</td></tr>
+    <tr><td><code>trueFalse</code></td><td><code>object</code></td><td>—</td><td>正誤問題の答えです。<a href="#正誤">正誤</a>を参照してください。</td></tr>
+    <tr><td><code>match</code></td><td><code>object</code></td><td>—</td><td>線で結ぶ2つの列です。<a href="#線で結ぶ問題">線で結ぶ問題</a>を参照してください。</td></tr>
+    <tr><td><code>bank</code></td><td><code>object</code></td><td>—</td><td>語群です。<a href="#語群">語群</a>を参照してください。</td></tr>
+    <tr><td><code>area</code></td><td><code>object</code></td><td>—</td><td>書き込み欄です。<a href="#書き込み欄">書き込み欄</a>を参照してください。</td></tr>
+    <tr><td><code>grid</code></td><td><code>object</code></td><td>—</td><td>言葉さがし、クロスワード、筆算のマスです。<a href="#マス目">マス目</a>を参照してください。</td></tr>
+    <tr><td><code>arithmetic</code></td><td><code>object</code></td><td>—</td><td>筆算です。<a href="#筆算">筆算</a>を参照してください。</td></tr>
+    <tr><td><code>level</code></td><td><code>object</code></td><td>—</td><td>難易度の印です。<a href="#難易度">難易度</a>を参照してください。</td></tr>
+    <tr><td><code>icons</code></td><td><code>Record&lt;string, ExerciseIcon&gt;</code></td><td><code>&#123;&#125;</code></td><td>idごとの活動アイコンで、ブロックの<code>icon</code>で指定します。<a href="#アイコン">アイコン</a>を参照してください。</td></tr>
+    <tr><td><code>answers</code></td><td><code>object</code></td><td>—</td><td>教師用の版、例として答えた項目、解答での答えの印刷のしかたです。<a href="#答えの表示">答えの表示</a>を参照してください。</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>このスタイルの練習問題に適用する、本全体の<a href="#解答"><code>exercises.solutions</code></a>です。ここで設定した項目だけが変わります。</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>画面の版の色です。<a href="#画面の色">画面の色</a>を参照してください。</td></tr>
+    <tr><td><code>marginTop</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td><code>box</code>のない練習問題の上のアキです。</td></tr>
+    <tr><td><code>marginBottom</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td><code>box</code>のない練習問題の下のアキです。</td></tr>
+    <tr><td><code>itemSpacing</code></td><td><code>Dimension</code></td><td><code>0.25em</code></td><td>選択肢、問い、正誤の文、組など、2つの項目の間のアキです。</td></tr>
+  </tbody>
+</table>
+
+### 番号
+
+`number`は練習問題の番号を設定します。形のない番号はメインカラーの太字で、後にピリオドが付きます。形のある番号は、メインカラーの円、四角、角丸の四角の中に白抜きで置かれ、後には何も付きません。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>show</code></td><td><code>boolean</code></td><td><code>true</code></td><td>番号を印刷します。印刷しなくても番号は数えられます。</td></tr>
+    <tr><td><code>label</code></td><td><code>boolean | string</code></td><td><code>false</code></td><td>番号の前に置く語です。<code>true</code>なら文書の言語の語（練習、Exercise、Ejercicio、Exercice、Übung、练习、تمرين など）、文字列ならその語そのもの（<code>'問題'</code>）です。</td></tr>
+    <tr><td><code>shape</code></td><td><code>'none' | 'disc' | 'square' | 'rounded'</code></td><td><code>'none'</code></td><td>番号を囲む形です。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>形があれば白、なければメインカラー</td><td>番号の色です。</td></tr>
+    <tr><td><code>background</code></td><td><code>ColorValue</code></td><td>メインカラー</td><td>形の塗りです。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>周囲のテキスト</td><td>番号のフォントファミリーです。</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>番号のサイズです。emは指示文に対する値です。</td></tr>
+    <tr><td><code>fontWeight</code></td><td><code>number</code></td><td><code>700</code></td><td>600以上で太字になります。</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>'.'</code>、形があればなし</td><td>形のない番号とその語の後に印刷する文字です：<code>'.'</code>、<code>')'</code>、<code>'、'</code>。</td></tr>
+    <tr><td><code>template</code></td><td><code>string</code></td><td><code>'&#123;n&#125;'</code></td><td>番号の中身です。<code>&#123;n&#125;</code>は練習問題の番号、<code>&#123;h1&#125;</code>と<code>&#123;h2&#125;</code>は章と節の番号です（<code>'&#123;h1&#125;.&#123;n&#125;'</code>なら3.4と印刷されます）。</td></tr>
+    <tr><td><code>resetOn</code></td><td><code>'never' | 'h1' … 'h6'</code></td><td><code>'h1'</code></td><td>番号を振り直す見出しのレベルです。<code>'never'</code>なら本全体で通し番号になります。</td></tr>
+    <tr><td><code>counter</code></td><td><code>string</code></td><td><code>'exercise'</code></td><td>スタイルが進めるカウンターです。同じカウンターを指定したスタイルは番号を共有し、独自のカウンター（<code>'review'</code>）を持つスタイルは自分の練習問題を別に数えます。</td></tr>
+    <tr><td><code>format</code></td><td><code>ResourceCounterFormat</code></td><td><code>'decimal'</code></td><td><code>&#123;n&#125;</code>の数字の種類で、リソースのカウンターと同じ値をとります：<code>'roman-upper'</code>、<code>'alpha-lower'</code>、<code>'simp-chinese-informal'</code>（一、二）、<code>'circled-decimal'</code>（①、②）、<code>'arabic-indic'</code>など。</td></tr>
+  </tbody>
+</table>
+
+### 指示文
+
+`instruction`は練習問題の先頭の段落を設定します。未設定の項目は本文のものを使います。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>指示文を太字にします。</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>イタリックにします。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>本文の色</td><td>指示文の色で、太字の部分にも適用されます。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>本文のフォント</td><td>指示文のフォントファミリーです。明朝の本文にゴシックの指示文を組むのは、教科書でよく見る組み方です。</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>本文のサイズ</td><td>指示文のサイズです。</td></tr>
+  </tbody>
+</table>
+
+### 選択肢
+
+`options`は選択問題（<code>- [ ] …</code>）の選択肢を設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>ResourceCounterFormat | 'none'</code></td><td>言語による</td><td>選択肢の数え方です：<code>'alpha-lower'</code>（a、b、c）、中国語では<code>'alpha-upper'</code>（A、B、C）、日本語では<code>'katakana'</code>（ア、イ、ウ）、アラビア語では<code>'abjad'</code>（أ、ب、ج）。ほかに<code>'decimal'</code>、<code>'katakana-iroha'</code>、<code>'circled-decimal'</code>なども使えます。<code>'none'</code>なら記号を印刷しません。</td></tr>
+    <tr><td><code>prefix</code></td><td><code>string</code></td><td><code>''</code></td><td>記号の前に置く文字です。(a)にするなら<code>'('</code>です。</td></tr>
+    <tr><td><code>suffix</code></td><td><code>string</code></td><td><code>')'</code>。中国語では<code>'.'</code>、日本語ではなし</td><td>記号の後に置く文字です。</td></tr>
+    <tr><td><code>marker</code></td><td><code>'none' | 'box' | 'circle'</code></td><td><code>'none'</code></td><td>選択肢の前に置く、印を付けるための四角または丸です。<code>'none'</code>のときは、読者は記号を○で囲みます。</td></tr>
+    <tr><td><code>layout</code></td><td><code>'stack' | 'row'</code></td><td><code>'stack'</code></td><td><code>'stack'</code>は1行に1つの選択肢を置き、折り返した行を本文の頭にそろえて下げます。<code>'row'</code>は選択肢を横に並べます。ブロックの<code>columns=n</code>でも横に並びます。</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td>すべて</td><td><code>'row'</code>レイアウトで1行に置く選択肢の数です（6まで）。</td></tr>
+    <tr><td><code>shuffle</code></td><td><code>boolean</code></td><td><code>false</code></td><td>選択肢を並べ替えて印刷します。順番はどの出力でも、略解でも同じです。</td></tr>
+    <tr><td><code>indent</code></td><td><code>Dimension</code></td><td><code>1em</code></td><td>問いのない選択肢の、本文の端からの字下げです。</td></tr>
+    <tr><td><code>bracket</code></td><td><code>boolean</code></td><td><code>false</code></td><td>日本や中国のテストのように、各問いの末尾に記号を書き込む括弧<code>（　）</code>を置きます。教師用の版ではこの中に記号が書き込まれます。</td></tr>
+  </tbody>
+</table>
+
+### 空欄
+
+`blank`は、児童・生徒用の本文での`[[…]]`の印刷のしかたを設定します。答えの大きさのスペースに線、点線、四角のいずれかを描き、答えそのものは描きません。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'line' | 'dots' | 'box' | 'none'</code></td><td><code>'line'</code></td><td>書き込む線、点線、四角、何もないスペースのいずれかです。</td></tr>
+    <tr><td><code>width</code></td><td><code>'answer' | 'longest' | Dimension</code></td><td><code>'longest'</code></td><td><code>'longest'</code>は練習問題のすべての空欄をいちばん長い答えの幅にそろえるので、空欄の長さから答えが分かりません。<code>'answer'</code>は各空欄をその答えの幅にします。長さを指定すると、すべての空欄がその幅になります。空欄に付けた<code>&#123;width=N&#125;</code>はこの設定より優先されます。</td></tr>
+    <tr><td><code>extra</code></td><td><code>Dimension</code></td><td><code>1.5em</code></td><td>答えの幅に足すスペースで、全角単位です。</td></tr>
+    <tr><td><code>minWidth</code></td><td><code>Dimension</code></td><td><code>3em</code></td><td>空欄の最小の幅です。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>黒</td><td>線、点線、四角の色です。設定すると、印を付ける四角と丸、語群の語の枠もこの色になります（未設定ならメインカラーです）。</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>線の太さです。</td></tr>
+  </tbody>
+</table>
+
+### 正誤
+
+`trueFalse`は正誤問題の文の末尾に置く答えを設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>言語による</td><td>2つの答えです。日本語では ○ ×、英語では<code>['T', 'F']</code>、スペイン語、カタルーニャ語、フランス語、イタリア語、ポルトガル語では V F、ドイツ語では R F、中国語では √ ×、アラビア語では ✓ ✗ です。</td></tr>
+    <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>は行末に、それぞれの記号と印を付ける四角を並べます。<code>'bracket'</code>は答えを書き込む空欄を1つ置きます。</td></tr>
+  </tbody>
+</table>
+
+### 線で結ぶ問題
+
+`match`は組を作る練習問題を設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>look</code></td><td><code>'dots' | 'letters'</code></td><td><code>'dots'</code></td><td><code>'dots'</code>は2つの列の各項目の横に点を置き、線で結ばせます。<code>'letters'</code>は右の列に記号を付け、左の各項目の横に記号を書き込む空欄を置きます。</td></tr>
+    <tr><td><code>gap</code></td><td><code>Dimension</code></td><td><code>4em</code></td><td>2つの列の間のアキです。</td></tr>
+    <tr><td><code>dotSize</code></td><td><code>Dimension</code></td><td><code>0.35em</code></td><td>点の直径です。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>メインカラー</td><td>点と語群の枠の色です。</td></tr>
+  </tbody>
+</table>
+
+### 語群
+
+`bank`は、`bank`または<code>::bank[…]</code>を付けた穴埋めと、すべての分類問題で、指示文の下に印刷する語の囲みを設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>box</code></td><td><code>string</code></td><td><code>match</code>の色の枠</td><td>語群の囲みにする<code>calloutStyles</code>のidです。</td></tr>
+    <tr><td><code>order</code></td><td><code>'shuffle' | 'alpha' | 'written'</code></td><td><code>'shuffle'</code></td><td>語を並べ替える（乱数の種による）か、文書の言語の辞書順に並べるか、書いた順のままにするかです。</td></tr>
+    <tr><td><code>separator</code></td><td><code>string</code></td><td>全角スペース</td><td>2つの語の間に置く文字です。各語は細い枠のチップに組まれます。</td></tr>
+  </tbody>
+</table>
+
+### 書き込み欄
+
+`area`は、記述問題の下、語順の並べ替えの文の下、分類問題の列の中に置く書き込み欄を設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>kind</code></td><td><code>'lines' | 'dots' | 'grid' | 'seyes' | 'tianzige' | 'box' | 'none'</code></td><td><code>'lines'</code></td><td>罫線、点の列、方眼、フランスのセイエス罫、田字格のマス、空の枠、何もないスペースのいずれかです。ブロックの<code>area</code>はこの設定より優先されます。</td></tr>
+    <tr><td><code>lines</code></td><td><code>number</code></td><td><code>3</code></td><td>書き込み欄の行数です。ブロックの<code>lines</code>はこの設定より優先されます。</td></tr>
+    <tr><td><code>spacing</code></td><td><code>Dimension</code></td><td>本文の行送りの1.35倍（マス目では1.2倍）</td><td>2本の線の間隔です。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>薄いグレー</td><td>罫の色です。</td></tr>
+    <tr><td><code>weight</code></td><td><code>Dimension</code></td><td><code>0.5pt</code></td><td>罫の太さです。</td></tr>
+  </tbody>
+</table>
+
+### マス目
+
+`grid`は、言葉さがし、クロスワード、筆算のマスを設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>マスの一辺です。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>本文のフォント</td><td>文字と数字のフォントファミリーです。</td></tr>
+    <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>—</td><td>まだ使われていません。文字はマスの一辺の0.58倍で組まれます。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>本文の色</td><td>文字と数字の色です。</td></tr>
+    <tr><td><code>rule</code></td><td><code>ColorValue</code></td><td>中間のグレー</td><td>マスの罫の色です。</td></tr>
+    <tr><td><code>ruleWidth</code></td><td><code>Dimension</code></td><td><code>0.6pt</code></td><td>マスの罫の太さです。</td></tr>
+    <tr><td><code>blocked</code></td><td><code>ColorValue</code></td><td>—</td><td>まだ使われていません。クロスワードは語のあるマスだけを印刷します。</td></tr>
+    <tr><td><code>uppercase</code></td><td><code>boolean</code></td><td><code>true</code></td><td>言葉さがしとクロスワードの文字を、文書の言語の規則で大文字にします。かなと漢字には影響しません。</td></tr>
+  </tbody>
+</table>
+
+### 筆算
+
+`arithmetic`は筆算を設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>言語による</td><td>わり算の筆算の書き方です。<code>'bracket'</code>は、わる数をわられる数の左に、厂の形の線をわられる数の上にかけ、商をいちばん上に書きます（日本語、英語、中国語、アラビア語、独自の書き方を持たない言語）。<code>'potence'</code>は、わる数をわられる数の右の L 字の下に、商をわる数の下に書きます（スペイン語、カタルーニャ語、フランス語、イタリア語、ポルトガル語）。<code>'inline'</code>は<code>864 : 4 =</code>と書いて商を同じ行に置き、途中の計算をその下に書きます（ドイツ語）。</td></tr>
+    <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>1行に並べる計算の数です。段が狭ければ減らします。</td></tr>
+  </tbody>
+</table>
+
+### 難易度
+
+`level`は、ブロックの`level`が番号の後に小さめのサイズで印刷する印を設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td><code>'●'</code></td><td>達したレベルの印です：<code>'★'</code>、<code>'■'</code>。</td></tr>
+    <tr><td><code>empty</code></td><td><code>string</code></td><td><code>'○'</code></td><td>達していないレベルの印です。<code>''</code>なら何も印刷しません。</td></tr>
+    <tr><td><code>max</code></td><td><code>number</code></td><td><code>3</code></td><td>いちばん高いレベルです。<code>max: 3</code>で<code>level=2</code>なら ●●○ と印刷されます。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>メインカラー</td><td>印の色です。</td></tr>
+  </tbody>
+</table>
+
+### アイコン
+
+`icons`は、idを活動アイコン（話す、書く、ペアで取り組む、聞く、電卓を使う）に対応させます。ブロックが`icon="pair"`のように指定すると、番号の後に印刷されます。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>glyph</code></td><td><code>string</code></td><td>—</td><td>印刷する文字です：<code>'✎'</code>、<code>'🎧'</code>、アイコンフォントのグリフ。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>—</td><td>アイコンフォントのファミリーです。</td></tr>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>—</td><td>アイコンの色です。</td></tr>
+    <tr><td><code>resourceId</code></td><td><code>string</code></td><td>—</td><td>アイコンにするビットマップまたはSVGのリソースです。</td></tr>
+    <tr><td><code>alt</code></td><td><code>string</code></td><td>—</td><td>スクリーンリーダーとタグ付きPDFのための、アイコンの意味です。</td></tr>
+  </tbody>
+</table>
+
+この版で印刷されるのはアイコンの`glyph`だけで、周囲のテキストの書体と色で組まれます。`fontFamily`、`color`、`resourceId`、`alt`はまだ使われていません。
+
+### 答えの表示
+
+`answers`は、答えが現れるすべての場所での答えの見た目を設定します。教師用の版、`example`の練習問題で例として答えた項目、○の囲みと塗った四角、組を結ぶ線、マスの中の文字と数字です。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>color</code></td><td><code>ColorValue</code></td><td><code>#d6246e</code>（赤紫）</td><td>答えの色で、教師用の本の朱書きにあたります。</td></tr>
+    <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>本文のフォント</td><td>答えのフォントです。手書き風の書体がよく使われます。</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>空欄の答えをイタリックにします。</td></tr>
+  </tbody>
+</table>
+
+### 画面の色
+
+`digital`は、HTMLビューアーとEPUBの本で答え合わせをした答えの見せ方を設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>correctColor</code></td><td><code>ColorValue</code></td><td>緑（<code>#1e8e3e</code>）</td><td>正しい答えの色です。</td></tr>
+    <tr><td><code>wrongColor</code></td><td><code>ColorValue</code></td><td>赤（<code>#c5221f</code>）</td><td>まちがった答えの色です。</td></tr>
+  </tbody>
+</table>
+
+## 本全体の設定
+
+`exercises`プロパティには本全体の設定が入ります。版、解答を印刷する場所、すべての並べ替えの乱数の種、画面の版です。`exercises`も`exerciseStyles`も設定しない本は、これまでどおりにレイアウトされ、ハッシュも変わりません。
+
+```ts
+const config: PostextConfig = {
+  exercises: {
+    edition: 'student',
+    solutions: { placement: 'chapterEnd', layout: 'key' },
+    seed: 3,
+    digital: { check: 'instant' },
+  },
+};
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>edition</code></td><td><code>'student' | 'teacher'</code></td><td><code>'student'</code></td><td><code>'teacher'</code>にすると、すべての答えをそれぞれの場所に<code>answers</code>の色で印刷します。児童・生徒用の本文から教師用の本ができます。</td></tr>
+    <tr><td><code>solutions</code></td><td><code>ExerciseSolutionsConfig</code></td><td>—</td><td>解答を印刷する場所と形です。<a href="#解答">解答</a>を参照してください。</td></tr>
+    <tr><td><code>seed</code></td><td><code>number</code></td><td><code>1</code></td><td>すべての並べ替えの元になる値です。選択肢、右の列、順序の項目、語順の語句、語群、言葉さがしの埋め草の文字に使われます。テストの別の版を作るときに変えます。印刷、画面、略解の順番は一致したままです。</td></tr>
+    <tr><td><code>digital</code></td><td><code>object</code></td><td>—</td><td>HTMLビューアーとEPUBの本の設定です。<a href="#画面での練習問題">画面での練習問題</a>を参照してください。</td></tr>
+  </tbody>
+</table>
+
+### 解答
+
+`exercises.solutions`と、そのスタイルの練習問題についてこれに重ねるスタイルの`solutions`です。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>placement</code></td><td><code>'none' | 'after' | 'inverted' | 'chapterEnd' | 'directive'</code></td><td><code>'none'</code></td><td><code>'none'</code>：解答を印刷しません。<code>'after'</code>：各練習問題の後に小さい文字で印刷します。<code>'inverted'</code>：各練習問題の後に上下逆さまにして印刷します。<code>'chapterEnd'</code>：章末に<code>heading</code>の見出しの下に印刷します。<code>'directive'</code>：<code>:::solutions</code>の行のある場所に印刷します。</td></tr>
+    <tr><td><code>box</code></td><td><code>string</code></td><td>小さい文字の枠のない囲み</td><td>解答の囲みと、章の解答の一覧に使う<code>calloutStyles</code>のidです。</td></tr>
+    <tr><td><code>heading</code></td><td><code>string</code></td><td>文書の言語の語</td><td>章末の解答の見出しです：解答、Solutions、Soluciones、Solucions、Corrigés、Lösungen、Soluzioni、Gabarito、参考答案、الحلول。<code>:::solutions&#123;title="…"&#125;</code>の行では、その行の見出しが使われます。</td></tr>
+    <tr><td><code>layout</code></td><td><code>'key' | 'full'</code></td><td><code>'full'</code></td><td><code>'key'</code>：答えだけを印刷します（1 イ · 2 水）。<code>'full'</code>：略解の後に練習問題の<code>:::solution</code>を印刷します。</td></tr>
+  </tbody>
+</table>
+
+### 画面での練習問題
+
+`exercises.digital`は、HTMLビューアーとEPUBの本での練習問題の動きを設定します。
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>型</th>
+      <th>既定値</th>
+      <th>説明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>interactive</code></td><td><code>boolean</code></td><td><code>true</code></td><td>読者が答えられる練習問題にします。<code>false</code>なら印刷と同じ形で見せます。</td></tr>
+    <tr><td><code>persist</code></td><td><code>boolean</code></td><td><code>true</code></td><td>読者の答えを本ごとにブラウザーに保存します。</td></tr>
+    <tr><td><code>check</code></td><td><code>'button' | 'instant'</code></td><td><code>'button'</code></td><td><code>'button'</code>：読者が求めたときに答え合わせをします。<code>'instant'</code>：答えるたびに答え合わせをします。</td></tr>
+  </tbody>
+</table>
+
+画面には独自の練習問題の設定を与えられます。`htmlViewer.overrides`は`exercises`と`exerciseStyles`も受け付け、HTMLビューアーがレイアウトする前に本の設定の上にマージします。こうして、印刷では解答を章末に置いたまま画面では隠したり、画面では使わない書き込み欄を外したりできます。
+
+```ts
+const config: PostextConfig = {
+  htmlViewer: {
+    overrides: {
+      exercises: { solutions: { placement: 'none' } },
+      exerciseStyles: [{ id: 'exercise', area: { kind: 'none' }, blank: { minWidth: { value: 6, unit: 'em' } } }],
+    },
+  },
+};
+```

@@ -453,6 +453,18 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>Peint les lettres de la pastille en rangées de points à repasser, comme le <a href="/fr/docs/configuration-headers-footers#marques-en-ligne-et-contours"><code>dotted</code></a> d’un texte de maquette, ses longueurs en em rapportées au texte de la pastille. Sans fond, sans contour ni marge intérieure, la pastille devient un mot en pointillés dans la ligne : <code>:chip[gato]&#123;style="dots"&#125;</code>.</td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>Trace le contour en un simple trait sous le texte, de l’épaisseur <code>borderWidth</code> et de la couleur <code>borderColor</code>, au lieu d’en faire le tour : une ligne où écrire. Non défini : le contour complet.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>La largeur minimale de la boîte, contour et marge intérieure compris ; un texte plus court y est centré. Les trous des exercices et les cases à cocher s’en servent. Non défini : la largeur du texte.</td>
+    </tr>
   </tbody>
 </table>
 

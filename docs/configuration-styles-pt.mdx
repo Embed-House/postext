@@ -453,6 +453,18 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>Pinta as letras do chip como fileiras de pontos para cobrir, como faz o <a href="/pt/docs/configuration-headers-footers#marcas-em-linha-e-contornos"><code>dotted</code></a> de um texto de design, com os comprimentos em em relativos ao texto do chip. Sem fundo, sem contorno e sem espaçamento interno, o chip vira uma palavra pontilhada na linha: <code>:chip[gato]&#123;style="dots"&#125;</code>.</td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>Desenha o contorno só como uma linha sob o texto, com a espessura de <code>borderWidth</code> e a cor de <code>borderColor</code>, em vez de em volta da caixa: uma lacuna para escrever. Sem definir, o contorno inteiro.</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>A largura mínima da caixa, incluindo contorno e espaçamento interno; um texto mais curto fica centralizado nela. As lacunas dos exercícios e os quadradinhos para marcar a usam. Sem definir, a caixa tem a largura do texto.</td>
+    </tr>
   </tbody>
 </table>
 

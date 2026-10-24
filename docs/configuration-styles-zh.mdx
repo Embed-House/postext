@@ -453,6 +453,18 @@ Press :chip[Ctrl]{style="key"} + :chip[C]{style="key"}.
       <td>—</td>
       <td>把行内标签的字母画成一串串圆点供描写，与设计文本的<a href="/zh/docs/configuration-headers-footers#行内标记与描边"><code>dotted</code></a>相同，其中以em表示的长度相对于行内标签的文字。没有背景、轮廓和内边距时，行内标签就是行中一个由圆点组成的词，例如：<code>:chip[gato]&#123;style="dots"&#125;</code>。</td>
     </tr>
+    <tr>
+      <td><code>underline</code></td>
+      <td><code>'solid' | 'dotted' | 'dashed'</code></td>
+      <td>—</td>
+      <td>只在文字下面画一条线，粗细为<code>borderWidth</code>，颜色为<code>borderColor</code>，而不是围着框画一圈轮廓：用作供书写的空。未设置时画完整的轮廓。</td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>Dimension</code></td>
+      <td>—</td>
+      <td>框的最小宽度，包括轮廓和内边距；较短的文字在框中居中。练习的填空处和供勾选的方框都用它。未设置时与文字一样宽。</td>
+    </tr>
   </tbody>
 </table>
 
