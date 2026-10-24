@@ -2322,13 +2322,15 @@ export function CalloutTitleStyleFields({ style, resolved, onChange, onResetFiel
 
 /** The callout styles of the book and how to edit them: what the Box
  *  styles section and the frame-style library (#873) both write. A rename
- *  also renames the style in every `:::callout` fence and template frame
- *  that names it. */
+ *  also renames the style in every `:::callout` fence, template frame and
+ *  exercise style that names it. */
 export function useCalloutStyleEdits() {
   const dispatch = useSandboxDispatch();
   const labels = useSandboxLabels();
   const raw = useSandboxSelector((s) => s.config.calloutStyles);
   const pageTemplates = useSandboxSelector((s) => s.config.pageTemplates);
+  const exerciseStyles = useSandboxSelector((s) => s.config.exerciseStyles);
+  const exercises = useSandboxSelector((s) => s.config.exercises);
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
   const headingsRaw = useSandboxSelector((s) => s.config.headings);
   const unorderedListsRaw = useSandboxSelector((s) => s.config.unorderedLists);
@@ -2391,7 +2393,8 @@ export function useCalloutStyleEdits() {
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
     moveCardState('calloutStyles', id, nextId);
-    const plan = planRename({ calloutStyles: raw, pageTemplates }, styles, chapters, id, nextId);
+    // The exercises' boxes that name it are renamed too (#1244).
+    const plan = planRename({ calloutStyles: raw, pageTemplates, exerciseStyles, exercises }, styles, chapters, id, nextId);
     applyStyleRewrite(dispatch, { calloutStyles: raw, pageTemplates }, plan, labels.frameStylesRenamed.replace('__from__', id).replace('__to__', nextId), activeChapterId);
   };
 

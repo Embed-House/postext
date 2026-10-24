@@ -38,6 +38,9 @@ export function applyStyleRewrite(
   }
   const payload: Partial<PostextConfig> = { calloutStyles: plan.calloutStyles.length > 0 ? plan.calloutStyles : undefined };
   if (plan.pageTemplates !== config.pageTemplates) payload.pageTemplates = plan.pageTemplates;
+  // The boxes the exercises name (#1244), in the same step.
+  if ('exerciseStyles' in plan) payload.exerciseStyles = plan.exerciseStyles;
+  if ('exercises' in plan) payload.exercises = plan.exercises;
   dispatch({ type: 'UPDATE_CONFIG', payload, history: { merge: false } });
   return { message, chapters: plan.chapters.map((c) => c.chapterId), steps: plan.chapters.length + 1 };
 }

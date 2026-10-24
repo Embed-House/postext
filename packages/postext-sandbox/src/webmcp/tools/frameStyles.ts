@@ -102,7 +102,7 @@ export function frameStyleTools(host: SandboxToolHost): WebMcpTool[] {
       if (groups.length === 0) return { merged: [], styles: lib.styles.length, note: 'No suggestion to take.' };
       const before = { calloutStyles: s.config.calloutStyles, pageTemplates: s.config.pageTemplates };
       const places = args.lookOnly === true && args.keepPlaces !== false ? placesToKeep(groups, lib, bookCompareOptions(s.config)) : undefined;
-      const plan = planMerges(before, lib.styles, chapters, groups, places);
+      const plan = planMerges({ ...before, exerciseStyles: s.config.exerciseStyles, exercises: s.config.exercises }, lib.styles, chapters, groups, places);
       const record = applyStyleRewrite(store.dispatch, before, plan, '', s.activeChapterId);
       return {
         merged: plan.from,

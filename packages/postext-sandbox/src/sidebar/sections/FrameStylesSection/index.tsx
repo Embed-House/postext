@@ -108,7 +108,7 @@ export const FrameStylesSection = memo(function FrameStylesSection() {
   const merge = (list: readonly MergeSuggestion[]) => {
     if (list.length === 0) return;
     const before = { calloutStyles: config.calloutStyles, pageTemplates: config.pageTemplates };
-    const plan = planMerges(before, library.styles, chapters, list, placesOf(list));
+    const plan = planMerges({ ...before, exerciseStyles: config.exerciseStyles, exercises: config.exercises }, library.styles, chapters, list, placesOf(list));
     const merged = plan.from.length;
     const message = list.length === 1
       ? labels.frameStylesMerged.replace('__count__', String(merged)).replace('__name__', styleName(byId.get(list[0]!.keep), list[0]!.keep))

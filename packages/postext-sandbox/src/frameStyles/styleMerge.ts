@@ -11,7 +11,8 @@
  * the undo history: ./applyRewrite.
  */
 
-import { calloutStyleChain, inheritCalloutStyles, type CalloutStyleConfig, type FrameConfig, type PageTemplate, type PageTemplatePatch, type PostextConfig, type ResolvedCalloutStyleConfig } from 'postext';
+import { calloutStyleChain, inheritCalloutStyles, type CalloutStyleConfig, type ExerciseStyleConfig, type ExercisesConfig, type FrameConfig, type PageTemplate, type PageTemplatePatch, type PostextConfig, type ResolvedCalloutStyleConfig } from 'postext';
+import { reboxExercises } from './exerciseRefs.js';
 import { applyTextChanges, changesApply, type TextChange } from '../book/textChanges.js';
 import { retypeCalloutChanges } from './calloutFences.js';
 import { differingGroups, POSITION_FIELDS, type CompareOptions } from './styleCompare.js';
@@ -47,6 +48,19 @@ export interface StyleRewritePlan {
   /** Styles kept for the place of their boxes (#905), based on the kept
    *  style: their fences are not rewritten. */
   stays: string[];
+  /** The exercise settings with the boxes they name rewritten (#1244);
+   *  absent when none names a style renamed or merged away. */
+  exerciseStyles?: ExerciseStyleConfig[] | undefined;
+  exercises?: ExercisesConfig | undefined;
+}
+
+/** The exercise settings of `plan` when `renames` changes any. */
+function exerciseRewrites(config: Pick<PostextConfig, 'exerciseStyles' | 'exercises'>, renames: ReadonlyMap<string, string>): Pick<StyleRewritePlan, 'exerciseStyles' | 'exercises'> {
+  const next = reboxExercises(config, renames);
+  return {
+    ...(next.exerciseStyles !== config.exerciseStyles ? { exerciseStyles: next.exerciseStyles } : {}),
+    ...(next.exercises !== config.exercises ? { exercises: next.exercises } : {}),
+  };
 }
 
 function retypeFrames(frames: FrameConfig[] | undefined, renames: ReadonlyMap<string, string>, found: (frame: string, style: string) => void): FrameConfig[] | undefined {
@@ -134,7 +148,7 @@ export function placesToKeep(
  *  merged away: it stays with only its place, based on the kept style
  *  (#905), so its boxes keep the look of the kept one and do not move. */
 export function planMerges(
-  config: Pick<PostextConfig, 'calloutStyles' | 'pageTemplates'>,
+  config: Pick<PostextConfig, 'calloutStyles' | 'pageTemplates' | 'exerciseStyles' | 'exercises'>,
   styles: readonly CalloutStyleConfig[],
   chapters: readonly UsageChapter[],
   groups: readonly MergeGroup[],
@@ -190,12 +204,13 @@ export function planMerges(
     frames,
     fenceCount: rewrites.reduce((n, c) => n + c.changes.length, 0),
     stays: [...thin.keys()],
+    ...exerciseRewrites(config, renames),
   };
 }
 
 /** What merging `merge` into `keep` changes in the book. */
 export function planMerge(
-  config: Pick<PostextConfig, 'calloutStyles' | 'pageTemplates'>,
+  config: Pick<PostextConfig, 'calloutStyles' | 'pageTemplates' | 'exerciseStyles' | 'exercises'>,
   styles: readonly CalloutStyleConfig[],
   chapters: readonly UsageChapter[],
   keep: string,
@@ -207,7 +222,7 @@ export function planMerge(
 /** What renaming style `from` to `to` changes in the book (the style
  *  keeps its place). */
 export function planRename(
-  config: Pick<PostextConfig, 'calloutStyles' | 'pageTemplates'>,
+  config: Pick<PostextConfig, 'calloutStyles' | 'pageTemplates' | 'exerciseStyles' | 'exercises'>,
   styles: readonly CalloutStyleConfig[],
   chapters: readonly UsageChapter[],
   from: string,
@@ -229,6 +244,7 @@ export function planRename(
     frames,
     fenceCount: rewrites.reduce((n, c) => n + c.changes.length, 0),
     stays: [],
+    ...exerciseRewrites(config, renames),
   };
 }
 

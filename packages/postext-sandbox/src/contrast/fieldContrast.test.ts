@@ -12,7 +12,7 @@ import type { WarningPayload } from '../warnings/types.js';
 import { configKeyOf } from '../book/layoutKeys.js';
 import { contrastSnapshot, publishContrast } from './contrastStore.js';
 import { contrastDetail, contrastTitle } from './contrastText.js';
-import { counterpartsFor, measureField, normalizeHex, ratioText } from './fieldContrast.js';
+import { counterpartsFor, counterpartsOn, measureField, normalizeHex, ratioText } from './fieldContrast.js';
 
 // #748: the contrast check in the Sandbox. The Checks panel lists the
 // pairs that do not read; a colour field shows the ratio its colour has
@@ -106,6 +106,16 @@ describe('contrast beside a colour field', () => {
     expect(counterpartsFor('#123456', pairs)).toEqual([]);
     expect(normalizeHex('#ABCDEFFF')).toBe('#abcdef');
     expect(normalizeHex('#abcdef80')).toBe('#abcdef80');
+  });
+
+  it('measures a colour on a ground of its own against that ground only (#1244)', () => {
+    // White is the paper here: on a disc of its own a white number is read
+    // against the disc, not against the texts set on the paper.
+    const on = counterpartsOn('#ffffff', '#295AA3', pairs, 11, 'AA');
+    expect(on).toEqual([{ role: 'text', other: '#295aa3', sizePt: 11, large: false, required: 4.5, count: 0 }]);
+    expect(ratioText(measureField('#ffffff', on, snapshot)!.worst.ratio)).toBe('6.8');
+    // The pairs the pages set, when they have one.
+    expect(counterpartsOn(OCHRE, '#FFFFFF', pairs, 9, 'AA')).toEqual(counterpartsFor(OCHRE, pairs));
   });
 
   it('measures the field against them, worst first', () => {
