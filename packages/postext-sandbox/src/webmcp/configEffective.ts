@@ -39,8 +39,13 @@ export function resolveEffectiveConfig(config: PostextConfig, locale: string, re
   // running heads, in a millisecond or two.
   const resolved = buildDocument({ markdown: '' }, withHyphenationLocale(config, locale)).config;
   const documentLocale = resolved.locale ?? resolved.bodyText.hyphenation.tag ?? resolved.bodyText.hyphenation.locale;
+  // The engine's own resolution of the exercise settings (only once the
+  // book sets them) is no setting: `exerciseStyles` and `exercises` below
+  // are.
+  const { exerciseSettings: _resolvedExercises, ...rest } = resolved;
+  void _resolvedExercises;
   return {
-    ...(resolved as unknown as Record<string, unknown>),
+    ...(rest as unknown as Record<string, unknown>),
     direction: resolved.direction ?? 'ltr',
     numerals: resolved.numerals ?? 'latn',
     colorPalette: resolved.colorPalette ?? cloneDefaultColorPalette(),
