@@ -4,6 +4,7 @@ import { paintRunInDirection, runPaintOrder } from './runDirection.js';
 import { letterSpacingOf, restoreContext, saveContext, setLetterSpacing } from './contextState.js';
 import { fillContextText } from './contextText.js';
 import { fillTextDots } from './textDots.js';
+import { paintChipReadings } from './annotations.js';
 
 /** Trace a rounded rect (radius already clamped to half the box). */
 function roundedRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
@@ -72,6 +73,8 @@ export function paintChip(
     ctx.lineWidth = chip.borderWidth;
     ctx.stroke();
   }
+  // The readings of its ruby words, over a blank too (#1244).
+  if (chip.readings && chip.runs[0]) paintChipReadings(ctx, chip.readings, bx, baseline, inkFor(chip.runs[0]));
   // A blank's answer is laid out, never painted (#1227).
   if (chip.blank) {
     restoreContext(ctx);

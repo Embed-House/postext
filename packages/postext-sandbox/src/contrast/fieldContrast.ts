@@ -103,6 +103,15 @@ export function counterpartsFor(hex: string | undefined, pairs: readonly Contras
   return indexOf(pairs).get(normalizeHex(hex)) ?? [];
 }
 
+/** The counterparts of a text colour painted on `ground` alone (#1244): a
+ *  number's colour on its disc, not every text on a paper of the same
+ *  colour. With none on the pages yet, the ground itself at `sizePt`. */
+export function counterpartsOn(hex: string | undefined, ground: string, pairs: readonly ContrastPair[], sizePt: number, level: ContrastLevel): Counterpart[] {
+  const on = normalizeHex(ground);
+  const found = counterpartsFor(hex, pairs).filter((c) => c.role === 'text' && normalizeHex(c.other) === on);
+  return found.length > 0 ? found : [{ role: 'text', other: on, sizePt, large: false, required: contrastThreshold(level, false), count: 0 }];
+}
+
 /** The ratios of `hex` against its counterparts, in the renditions the
  *  snapshot checks; null when it has none. */
 export function measureField(hex: string, counterparts: readonly Counterpart[], snapshot: Pick<ContrastSnapshot, 'level' | 'media' | 'print'>): FieldContrast | null {

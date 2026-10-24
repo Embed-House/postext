@@ -118,7 +118,7 @@ const config: PostextConfig = {
   </thead>
   <tbody>
     <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Die Arbeitsanweisung fett setzen.</td></tr>
-    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Sie kursiv setzen.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Sie kursiv setzen. Die Nummer der Übung bleibt aufrecht.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>die des Texts</td><td>Ihre Farbe, fette Passagen eingeschlossen.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>die des Texts</td><td>Ihre Schriftfamilie: In Schulbüchern steht die Arbeitsanweisung oft in einer serifenlosen Schrift über einem Text mit Serifen.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>die des Texts</td><td>Ihre Größe.</td></tr>
@@ -176,7 +176,7 @@ const config: PostextConfig = {
 
 ### Richtig oder falsch
 
-`trueFalse` legt die Antworten am Ende einer Aussage fest.
+`trueFalse` legt die Antworten einer Aussage fest, an ihrem Ende oder davor.
 
 <table>
   <thead>
@@ -190,6 +190,7 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>nach Sprache</td><td>Die beiden Antworten: <code>['R', 'F']</code> im Deutschen; T F im Englischen; V F im Spanischen, Katalanischen, Französischen, Italienischen und Portugiesischen; √ × im Chinesischen; ○ × im Japanischen; صح خطأ im Arabischen.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: jede Antwort mit einem Kästchen zum Ankreuzen, am Zeilenende. <code>'bracket'</code>: eine einzige Lücke, in die die Antwort geschrieben wird.</td></tr>
+    <tr><td><code>place</code></td><td><code>'end' | 'start'</code></td><td><code>'end'</code></td><td>Wo die Kästchen oder die Klammer stehen: <code>'end'</code> am Zeilenende, <code>'start'</code> vor der Aussage, wie brasilianische Schulbücher <code>( ) frase</code> drucken.</td></tr>
   </tbody>
 </table>
 
@@ -270,7 +271,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>Die Seitenlänge eines Felds.</td></tr>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>Die Seitenlänge eines Felds. Die Kästchen schriftlicher Rechnungen sind 0,8 davon.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>die des Texts</td><td>Die Schriftfamilie der Buchstaben und Ziffern.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 der Seitenlänge des Felds</td><td>Die Größe der Buchstaben und Ziffern, ein em ist das des Texts.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>die des Texts</td><td>Die Farbe der Buchstaben und Ziffern.</td></tr>
@@ -297,6 +298,8 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>nach Sprache</td><td>Schriftliche Division. <code>'bracket'</code>: der Divisor links vom Dividenden, darüber ein Bogen, der Quotient obenauf (Englisch, Chinesisch, Japanisch, Arabisch und jede Sprache ohne eigene Form). <code>'potence'</code>: der Divisor rechts vom Dividenden unter einem L-Winkel, der Quotient unter dem Divisor (Spanisch, Katalanisch, Französisch, Italienisch, Portugiesisch). <code>'inline'</code>: <code>864 : 4 =</code> mit dem Quotienten in der Zeile und den Zwischenschritten darunter (Deutsch).</td></tr>
     <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>Rechnungen je Reihe, weniger, wenn die Spalte zu schmal ist.</td></tr>
+    <tr><td><code>partialProducts</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Eine Multiplikation mit einer mehrstelligen Zahl druckt eine Zeile je Teilprodukt, eine für jede Ziffer des Multiplikators außer der Null, jede eine Stelle weiter links, darunter unter einem zweiten Strich das Ergebnis. <code>false</code> lässt nur das Ergebnis.</td></tr>
+    <tr><td><code>working</code></td><td><code>'products' | 'remainders'</code></td><td>nach Sprache</td><td>Die Zeilen, die unter einer schriftlichen Division für den Rechenweg frei bleiben. <code>'products'</code>: das Produkt jedes Schritts und der Rest, zwei Zeilen je Schritt. <code>'remainders'</code>: nur der Rest, im Kopf subtrahiert, eine Zeile je Schritt (Spanisch, Katalanisch und Italienisch). Ein Schritt mit der Quotientenziffer 0 nimmt keine Zeile.</td></tr>
   </tbody>
 </table>
 

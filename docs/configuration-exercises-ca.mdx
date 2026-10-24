@@ -118,7 +118,7 @@ const config: PostextConfig = {
   </thead>
   <tbody>
     <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Compon l'enunciat en negreta.</td></tr>
-    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>El compon en cursiva.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>El compon en cursiva. El número de l'exercici queda en rodona.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el del text</td><td>El color, també el dels trossos en negreta.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>la del text</td><td>La família: als llibres de text és habitual un enunciat de pal sec sobre un text amb gràcies.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>la del text</td><td>La mida.</td></tr>
@@ -176,7 +176,7 @@ const config: PostextConfig = {
 
 ### Vertader o fals
 
-`trueFalse` defineix les respostes del final d'una afirmació.
+`trueFalse` defineix les respostes d'una afirmació, al final o al davant.
 
 <table>
   <thead>
@@ -190,6 +190,7 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>segons la llengua</td><td>Les dues respostes: <code>['V', 'F']</code> en català, castellà, francès, italià i portuguès; T F en anglès; R F en alemany; √ × en xinès; ○ × en japonès; صح خطأ en àrab.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: cada lletra amb una casella per marcar, al final de la línia. <code>'bracket'</code>: un sol buit per escriure-hi la resposta.</td></tr>
+    <tr><td><code>place</code></td><td><code>'end' | 'start'</code></td><td><code>'end'</code></td><td>On van les caselles o el parèntesi: <code>'end'</code>, al final de la línia; <code>'start'</code>, abans de l'afirmació, com imprimeixen els llibres brasilers <code>( ) frase</code>.</td></tr>
   </tbody>
 </table>
 
@@ -270,7 +271,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>El costat d'una casella.</td></tr>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>El costat d'una casella. Les caselles de les operacions en columna en fan 0,8.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>la del text</td><td>La família de les lletres i les xifres.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0,58 del costat de la casella</td><td>La mida de les lletres i les xifres; un em és el del text.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>el del text</td><td>El color de les lletres i les xifres.</td></tr>
@@ -297,6 +298,8 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>segons la llengua</td><td>La divisió. <code>'potence'</code>: el divisor a la dreta del dividend, dins d'un angle en forma de L, i el quocient sota el divisor (català, castellà, francès, italià, portuguès). <code>'bracket'</code>: el divisor a l'esquerra del dividend, una clau per sobre del dividend i el quocient a dalt (anglès, xinès, japonès, àrab i qualsevol llengua sense una disposició pròpia). <code>'inline'</code>: <code>864 : 4 =</code> amb el quocient a la mateixa línia i els passos a sota (alemany).</td></tr>
     <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>Operacions per fila, menys si la columna és massa estreta.</td></tr>
+    <tr><td><code>partialProducts</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Una multiplicació per un nombre de dues xifres o més imprimeix una fila per cada producte parcial, un per cada xifra del multiplicador que no és zero i cadascun un lloc més a l'esquerra, i el resultat sota una segona ratlla. <code>false</code> deixa només el resultat.</td></tr>
+    <tr><td><code>working</code></td><td><code>'products' | 'remainders'</code></td><td>segons la llengua</td><td>Les files que es deixen sota una divisió per als càlculs. <code>'products'</code>: el producte de cada pas i el que queda, dues files per pas. <code>'remainders'</code>: només el que queda, la resta feta de cap, una fila per pas (català, castellà i italià). Un pas amb la xifra del quocient 0 no ocupa cap fila.</td></tr>
   </tbody>
 </table>
 

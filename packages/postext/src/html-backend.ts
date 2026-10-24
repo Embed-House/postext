@@ -48,7 +48,7 @@ import { measureFontBox, measureSpacedWidth, measureTextWidth, measuresOwnFace, 
 import { trackedLigaturePieces, type LigaturePiece } from './measure/trackedLigatures.js';
 import { cellsOf, lineWordSegmentsInOrder, sameSetWidth, type SetLine } from './wordPieces.js';
 import { fontFamilyOf } from './measure/vertical.js';
-import { lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations.js';
+import { chipReadingsHtml, lineHighlightsHtml, lineMarksHtml, rubyHtml, verticalLineMarksHtml, warichuHtml, sideMarkerHtml, RT_OPEN, RUBY_OPEN, rubyGroupOf, kuntenHtml, verticalKuntenTateHtml } from './htmlAnnotations.js';
 import { playMarkTriangle, qrModuleRuns } from './pipeline/videoOverlay.js';
 import { isHlsMimeType, mediaFragment, videoElementAttributes, videoEmbedAllow } from './video/url.js';
 import type { VDTDesignTextRun, VDTInlineIcon, VDTResourceVideo, VDTSwatch, VDTTextDots } from './vdt.js';
@@ -2056,6 +2056,8 @@ function renderChip(
     const label = chip.blank ? ` role="img" aria-label="${esc(chip.blankLabel ?? 'blank')}"` : '';
     parts.push(`<span class="pt-ex-slot${chip.blank ? ' pt-ex-blank' : ''}"${data}${label} style="${boxGeometry}"></span>`);
   }
+  // The readings of its ruby words, over a blank too (#1244).
+  if (chip.readings && chip.runs[0]) parts.push(chipReadingsHtml(chip.readings, bx, inkFor(chip.runs[0]), quoteFontString));
   if (chip.blank) return parts.join('');
   let tx = bx + chip.borderWidth + chip.paddingX;
   // The runs in the chip's paint order (`VDTChip.order`); a right-to-left
@@ -3072,7 +3074,7 @@ function renderFigureLabelsHtml(rb: ResolvedResourceBlock, bx: number, by: numbe
   const n2 = (v: number): string => String(+v.toFixed(4));
   // Their leaders first (#1057), under every label: vector lines hidden
   // from assistive technology, as design paths are.
-  const parts: string[] = figureLabelLeaderPaths(rb, bx, by).map(renderDesignPathBlock);
+  const parts: string[] = figureLabelLeaderPaths(rb, bx, by).map((p) => renderDesignPathBlock(p));
   for (const label of rb.labels ?? []) {
     let layout = label.layout;
     if (!layout) continue;
@@ -3456,7 +3458,7 @@ function renderDesignRuleBlock(block: VDTDesignRuleBlock): string {
  *  box like a rule, its outline and markers drawn in the box's own
  *  coordinates (ink past the box, a mitre, still shows). Decoration:
  *  hidden from assistive technology. */
-function renderDesignPathBlock(block: VDTDesignPathBlock): string {
+function renderDesignPathBlock(block: VDTDesignPathBlock, mirrored = false): string {
   const { x, y, width, height } = block.bbox;
   const parts: string[] = [];
   const stroke = block.stroke && block.stroke.widthPx > 0 ? block.stroke : undefined;
@@ -3474,7 +3476,7 @@ function renderDesignPathBlock(block: VDTDesignPathBlock): string {
   for (const m of block.markers ?? []) parts.push(markerSvgElement(m, x, y, esc));
   if (parts.length === 0) return '';
   return (
-    `<svg aria-hidden="true" focusable="false" width="${width}" height="${height}" ` +
+    `<svg${mirrored ? ' class="pt-path"' : ''} aria-hidden="true" focusable="false" width="${width}" height="${height}" ` +
     `style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;overflow:visible;">` +
     parts.join('') +
     `</svg>`
@@ -3544,23 +3546,26 @@ function renderDesignImageBlock(block: VDTDesignImageBlock, options?: HtmlPaint)
   );
 }
 
-function renderDesignBlock(block: VDTDesignBlock, options?: HtmlPaint): string {
+function renderDesignBlock(block: VDTDesignBlock, options?: HtmlPaint, mirroredPaths = false): string {
   if (block.kind === 'text') return renderDesignTextBlock(block, options);
   if (block.kind === 'rule') return renderDesignRuleBlock(block);
   if (block.kind === 'image') return renderDesignImageBlock(block, options);
-  if (block.kind === 'path') return renderDesignPathBlock(block);
+  if (block.kind === 'path') return renderDesignPathBlock(block, mirroredPaths);
   return renderDesignBoxBlock(block);
 }
 
-function renderDesignSlot(slot: VDTDesignSlot, options?: HtmlPaint): string {
+function renderDesignSlot(slot: VDTDesignSlot, options?: HtmlPaint, mirroredPaths = false): string {
   const parts: string[] = [];
-  for (const block of slot.blocks) parts.push(renderDesignBlock(block, options));
+  for (const block of slot.blocks) parts.push(renderDesignBlock(block, options, mirroredPaths));
   return parts.join('');
 }
 
 function renderBlockInner(block: VDTBlock, options: HtmlPaint): string {
   if (block.hidden) return '';
-  if (block.designOverlay) return renderDesignSlot(block.designOverlay, options);
+  // An exercise's drawn box (a grid, an operation, a writing area) keeps
+  // its paths mirrored with a mirrored flow, as the canvas and the PDF
+  // paint it (#1244).
+  if (block.designOverlay) return renderDesignSlot(block.designOverlay, options, !!block.callout?.styleId?.startsWith('__postext-ex'));
   // Resource embeds carry their own measured geometry (image/table + caption);
   // the block's single placeholder line renders nothing useful.
   if (block.resourceBlock) return renderResourceBlockHtml(block, options);
@@ -3965,12 +3970,14 @@ function renderComicPageHtml(page: VDTPage, comic: VDTComicPage, k: number, opti
  *  stretched dash, a turned design picture) keeps it and stays mirrored. */
 const MIRRORED_FLOW_STYLE =
   '<style>.pt-flow-mirrored [style*="white-space:pre"],.pt-flow-mirrored img,' +
-  '.pt-flow-mirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}' +
+  // An exercise's drawing is geometry, mirrored with the flow as the canvas
+  // and the PDF mirror it (#1244): a crossword's cells, an operation's rules.
+  '.pt-flow-mirrored svg:not(.pt-char-grid):not(.pt-path),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}' +
   // A box reflected back about its body (a vertical label, #955) or a
   // vertical frame of the page placed by a matrix that includes the mirror
   // (#960): what is in it is not mirrored, so nothing is turned back.
   '.pt-flow-mirrored .pt-unmirrored [style*="white-space:pre"],.pt-flow-mirrored .pt-unmirrored img,' +
-  '.pt-flow-mirrored .pt-unmirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-unmirrored .pt-video{transform:none;}</style>';
+  '.pt-flow-mirrored .pt-unmirrored svg:not(.pt-char-grid):not(.pt-path),.pt-flow-mirrored .pt-unmirrored .pt-video{transform:none;}</style>';
 
 /** The character grid (稿纸) as one SVG path over the page, under the
  *  text (see `cjkGridCells`). */

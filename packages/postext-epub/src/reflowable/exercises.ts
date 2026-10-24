@@ -2,8 +2,9 @@
 // group with its records for the exercise script; its drawn boxes — a
 // writing area, a word search, a crossword, operations in columns, the
 // two columns of a match — are the picture its design draws, as an inline
-// SVG at the size it prints (CSS pixels for the points of the page), with
-// the box the script lays its inputs, lines and capsules over.
+// SVG at the size it prints (CSS pixels for the points of the page) set in
+// ems, so it grows with the reader's text, with the box the script lays its
+// inputs, lines and capsules over.
 
 import type { VDTBlock, VDTDesignBlock } from 'postext';
 import { pathSvgData } from 'postext';
@@ -14,8 +15,11 @@ export const CSS_PX_PER_PT = 96 / 72;
 
 const n = (v: number): string => String(Math.round(v * 100) / 100);
 
-/** The picture a drawn box's design paints, its size in CSS pixels. */
-export function drawnBoxSvg(block: VDTBlock, dpi: number): { svg: string; width: number; height: number } {
+/** The picture a drawn box's design paints, its size in CSS pixels, and
+ *  its width in ems of the text (`bodyCssPx`, the text's size in CSS
+ *  pixels): the box is set that wide, so a reader's larger text draws it
+ *  larger (#1244). */
+export function drawnBoxSvg(block: VDTBlock, dpi: number, bodyCssPx = 16): { svg: string; width: number; height: number; em: number } {
   const { x: ox, y: oy, width: bw, height: bh } = block.bbox;
   const scale = 96 / (dpi || 96);
   const parts: string[] = [];
@@ -46,5 +50,5 @@ export function drawnBoxSvg(block: VDTBlock, dpi: number): { svg: string; width:
   const width = bw * scale;
   const height = bh * scale;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" class="pt-ex-drawing" width="${n(width)}" height="${n(height)}" viewBox="0 0 ${n(bw)} ${n(bh)}">${parts.join('')}</svg>`;
-  return { svg, width, height };
+  return { svg, width, height, em: Math.round((width / Math.max(1, bodyCssPx)) * 1000) / 1000 };
 }

@@ -744,7 +744,10 @@ same exercises answerable.
    instruction's family and colour; `options.labels`/`suffix`/`marker`/
    `layout`/`bracket`; `blank.look`/`width`/`color`; `area.kind`/`lines`;
    `trueFalse.labels` only when the book's letters differ from the
-   language default; `level` glyphs; `icons` glyphs; `answers.color` for
+   language default, `trueFalse.place: 'start'` when the boxes or the
+   bracket open the statement; `arithmetic.working` and
+   `partialProducts` for the room the source leaves under a sum (≥ 1.60);
+   `level` glyphs; `icons` glyphs; `answers.color` for
    the teacher's red; `box` naming a `calloutStyles` entry when the
    exercises sit in a tinted or ruled frame. One style per look (activity,
    review, test), never one per kind or per page.

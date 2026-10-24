@@ -62,7 +62,7 @@ export interface ExerciseGridInfo {
   rows: number;
   cols: number;
   /** A cell's side over the box's width (the grid starts at the box's top
-   *  left, in the flow's direction). */
+   *  left, in the flow's direction: its top right on a right-to-left page). */
   cellPt: number;
   /** The grid's left and top inside its box, points. */
   xPt: number;
@@ -71,6 +71,10 @@ export interface ExerciseGridInfo {
    *  left and right dots' x. */
   rowsPt?: number[];
   dotsPt?: [number, number];
+  /** A right-to-left page, which paints the grid mirrored (#1244): `xPt`,
+   *  the dots' x and the cells' columns are counted from the box's right
+   *  edge. */
+  rtl?: true;
 }
 
 export interface ExerciseRecord {

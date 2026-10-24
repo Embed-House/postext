@@ -9,6 +9,7 @@ import { calloutStyleChain, inheritCalloutStyles } from 'postext';
 import { DEFAULT_LABELS } from '../types/defaultLabels.js';
 import { groupsText, suggestionText } from '../sidebar/sections/FrameStylesSection/text.js';
 import { styleUsage } from './styleUsage.js';
+import { planExerciseStyleRename } from './exerciseRefs.js';
 import { frameDress, inheritedStyle, previewConfig, previewMarkdown } from './stylePreview.js';
 
 const mm = (value: number) => ({ value, unit: 'mm' as const });
@@ -432,5 +433,48 @@ describe('kinds of box: one shape in several tints (#976)', () => {
 
   it('a book with no stored styles has no kinds', () => {
     expect(frameStyleLibrary({}, []).kinds).toEqual([]);
+  });
+});
+
+describe('what the exercises name (#1244)', () => {
+  const styles: CalloutStyleConfig[] = [{ id: 'card' }, { id: 'tray' }, { id: 'key' }];
+  const config: PostextConfig = {
+    calloutStyles: styles,
+    exerciseStyles: [
+      { id: 'drill', box: 'card', bank: { box: 'tray', order: 'alpha' }, solutions: { box: 'key', placement: 'after' } },
+      { id: 'plain' },
+    ],
+    exercises: { solutions: { placement: 'chapterEnd', box: 'key' } },
+  };
+
+  it('a box style renamed is renamed in the exercise styles and the book\'s solutions', () => {
+    const plan = planRename(config, styles, [], 'key', 'answers');
+    expect(plan.exerciseStyles![0]).toEqual({ id: 'drill', box: 'card', bank: { box: 'tray', order: 'alpha' }, solutions: { box: 'answers', placement: 'after' } });
+    expect(plan.exerciseStyles![1]).toBe(config.exerciseStyles![1]);
+    expect(plan.exercises).toEqual({ solutions: { placement: 'chapterEnd', box: 'answers' } });
+    const card = planRename(config, styles, [], 'card', 'frame');
+    expect(card.exerciseStyles![0]!.box).toBe('frame');
+    expect('exercises' in card).toBe(false);
+    // A style no exercise names leaves them alone.
+    const none = planRename({ ...config, calloutStyles: [...styles, { id: 'other' }] }, [...styles, { id: 'other' }], [], 'other', 'else');
+    expect('exerciseStyles' in none || 'exercises' in none).toBe(false);
+  });
+
+  it('a box style merged away is named by the kept one', () => {
+    const plan = planMerge(config, styles, [], 'card', ['tray']);
+    expect(plan.exerciseStyles![0]!.bank).toEqual({ box: 'card', order: 'alpha' });
+  });
+
+  it('an exercise style renamed is renamed in every fence that names it, and in the styles based on it', () => {
+    const chapters = [
+      { id: 'a', markdown: ':::exercise{style=drill type=gaps}\nFill [[in]].\n:::\n\n```md\n:::exercise{style=drill}\n```\n\n:::exercise{style="plain"}\nx\n:::' },
+      { id: 'b', markdown: ':::exercise\nNo style.\n:::' },
+    ];
+    const plan = planExerciseStyleRename([...config.exerciseStyles!, { id: 'drill-2', extends: 'drill' }], chapters, 'drill', 'practice');
+    expect(plan.exerciseStyles.map((s) => [s.id, s.extends])).toEqual([['practice', undefined], ['plain', undefined], ['drill-2', 'practice']]);
+    expect(plan.fenceCount).toBe(1);
+    expect(plan.chapters.map((c) => c.chapterId)).toEqual(['a']);
+    expect(applyTextChanges(chapters[0]!.markdown, plan.chapters[0]!.changes)).toContain(':::exercise{style=practice type=gaps}');
+    expect(applyTextChanges(chapters[0]!.markdown, plan.chapters[0]!.changes)).toContain('```md\n:::exercise{style=drill}\n```');
   });
 });

@@ -134,6 +134,7 @@ Setze die Wörter aus dem Kasten ein.
 - `[[Fotografie | Photographie]]`: eine Lücke mit mehreren richtigen Lösungen. Der Lösungsschlüssel druckt die erste.
 - `[[geht | (gehen) | gehst]]`: eine **Auswahl im Satz**. Die Möglichkeiten stehen in der Zeile, `(geht / gehen / gehst)`, und die eingeklammerte ist richtig: Sie wird eingekreist.
 - `[[ging]]{width=6}`: eine Lücke von sechs Geviert Breite.
+- `[[{春天|chūn tiān}]]`: Ein Ruby in einer Lücke druckt seine Lesung über die Lücke, auch im Schülerbuch, und die Schüler schreiben die Zeichen unter ihr Pinyin (看拼音写词语) oder ihr Kana (漢字の書き取り).
 - `\|` ist ein wörtlicher senkrechter Strich in einer Lösung, `\[[` ein wörtliches Paar eckiger Klammern.
 
 Alle Lücken einer Übung sind so breit wie ihre längste Lösung plus 1,5 em, damit die Länge einer Linie die Lösung nicht verrät (`blank.width` ändert das). `bank` druckt die Lösungen gemischt in einem umrahmten Wortspeicher unter der Arbeitsanweisung. Eine Zeile `::bank[Steine | Wind]` setzt den Wortspeicher an die Stelle, an der sie steht, und fügt ihre Wörter als Ablenker hinzu; die Zeile allein verlangt den Wortspeicher schon. `[[…]]` wird nur innerhalb einer Übung gelesen: Doppelte eckige Klammern an anderer Stelle im Buch bleiben, wie sie sind.
@@ -234,6 +235,8 @@ Mit dem Licht stellen sie ihre Nahrung her.
 
 Auf die Arbeitsanweisung folgen Schreiblinien: standardmäßig drei, hier mit `lines=4` vier. Ist der Hauptteil eine Liste, erhält jeder Eintrag eigene Linien. `area` ändert die Lineatur: `lines`, `dots`, `grid` (kariert), `seyes` (die französische Schullineatur), `tianzige` (田字格, die Kästchen, in die chinesische Kinder Schriftzeichen schreiben), `box` (ein leerer Rahmen für eine Zeichnung) oder `none`. Die `:::solution` ist die Musterlösung; sie steht bei den Lösungen und in einer Lehrerausgabe auf den Linien.
 
+`cells` gibt den Kästchen (`grid` oder `tianzige`, Kästchenpapier, wenn der Stil Linien zieht) so viele Felder: `cells=4`. Mehrere Zahlen setzen Gruppen nebeneinander, ein Kästchen Abstand, eine je Wort, die am Zeilenende umbrechen: `cells="2 2 3"`. Die Lehrerausgabe schreibt die Musterlösung ein Zeichen je Kästchen, Gruppe für Gruppe.
+
 ### Wortsuchrätsel und Kreuzworträtsel
 
 #### Wortsuchrätsel
@@ -279,11 +282,13 @@ Rechne schriftlich.
 :::
 ```
 
-Jede Rechnung wird in Kästchen gesetzt, so wie ein Kind sie schreibt: die Ziffern in Spalten, das Rechenzeichen links, ein Strich und leere Kästchen für das Ergebnis, bis zu vier Rechnungen in einer Reihe. Auf einer Seite von rechts nach links behält jede Rechnung ihre Ziffern von links nach rechts, und die Rechnungen folgen von rechts nach links aufeinander. Gelesen werden die Zeichen `+`, `-`, `−`, `×`, `x`, `*`, der Malpunkt `·` (auch `⋅`), `÷`, `:` und `/` mit ganzen Zahlen; ein Mal wird als × gedruckt. Die schriftliche Division folgt der Schulkonvention der Dokumentsprache, und `arithmetic.division` wählt eine andere:
+Jede Rechnung wird in Kästchen gesetzt, so wie ein Kind sie schreibt: die Ziffern in Spalten, das Rechenzeichen links, ein Strich und leere Kästchen für das Ergebnis, bis zu vier Rechnungen in einer Reihe. Auf einer Seite von rechts nach links behält jede Rechnung ihre Ziffern von links nach rechts, und die Rechnungen folgen von rechts nach links aufeinander. Gelesen werden die Zeichen `+`, `-`, `−`, `×`, `x`, `*`, der Malpunkt `·` (auch `⋅`), `÷`, `:` und `/` mit ganzen Zahlen oder Dezimalzahlen (`12,5 + 3,75`; bei Addition und Subtraktion stehen die Kommas untereinander, eine Division durch eine Dezimalzahl wird nicht gelesen); ein Mal wird als × gedruckt. Die schriftliche Division folgt der Schulkonvention der Dokumentsprache, und `arithmetic.division` wählt eine andere:
 
 - `bracket`: der Divisor links, der Dividend unter einem Bogen, der Quotient darüber. Englische, chinesische, japanische und arabische Bücher.
 - `potence`: der Dividend links, der Divisor rechts unter einem L-Winkel, der Quotient unter dem Divisor, der Rest unten. Spanische, katalanische, französische, italienische und portugiesische Bücher.
 - `inline`: `864 : 4 =` und die Kästchen des Quotienten in derselben Zeile, die Zwischenschritte darunter. Deutsche Bücher.
+
+Eine Multiplikation mit einer mehrstelligen Zahl druckt eine Zeile je Teilprodukt, jede eine Stelle weiter links, und darunter unter einem zweiten Strich das Ergebnis (`arithmetic.partialProducts: false` lässt nur das Ergebnis). Unter einer schriftlichen Division hält der Stil Zeilen für den Rechenweg frei: das Produkt jedes Schritts und den Rest oder nur den Rest, wenn im Kopf subtrahiert wird, wie spanische, katalanische und italienische Bücher es schreiben (`arithmetic.working`).
 
 ### Ein gelöstes Beispiel zuerst
 
@@ -351,7 +356,7 @@ Das Bedienfeld **Prüfungen** der Sandbox und `collectContentWarnings` melden, w
 
 ## Übungen in HTML und EPUB
 
-Im HTML-Betrachter und in EPUB-Büchern lassen sich die Übungen lösen. Man tippt in die Lücken und klickt auf Antworten, Aussagen, Verbindungspunkte und Gitterfelder, prüft dann die Antworten, lässt sich die Lösung zeigen oder beginnt neu. Richtige und falsche Antworten werden mit einer Farbe und einem Zeichen angezeigt (`digital.correctColor`, `digital.wrongColor`) und Bildschirmlesern angesagt. Die Antworten bleiben im Browser gespeichert, je Buch, und sind beim nächsten Besuch wieder da (`exercises.digital.persist`). Mit `exercises.digital.check: 'instant'` wird jede Antwort geprüft, sobald sie gegeben ist; `exercises.digital.interactive: false` zeigt die Seiten wie gedruckt. Der Lösungsschlüssel ist in einem EPUB immer enthalten, unabhängig von der Platzierung im Druck, sodass auch ein Lesesystem ohne Skripte die Lösungen hat.
+Im HTML-Betrachter und in EPUB-Büchern lassen sich die Übungen lösen. Man tippt in die Lücken und klickt auf Antworten, Aussagen, Verbindungspunkte und Gitterfelder, prüft dann die Antworten, lässt sich die Lösung zeigen oder beginnt neu. Richtige und falsche Antworten werden mit einer Farbe und einem Zeichen angezeigt (`digital.correctColor`, `digital.wrongColor`) und Bildschirmlesern angesagt. Die Antworten bleiben im Browser gespeichert, je Buch, und sind beim nächsten Besuch wieder da (`exercises.digital.persist`). Mit `exercises.digital.check: 'instant'` wird jede Antwort geprüft, sobald sie gegeben ist; `exercises.digital.interactive: false` zeigt die Seiten wie gedruckt. Der Lösungsschlüssel ist in einem EPUB immer enthalten, unabhängig von der Platzierung im Druck, sodass auch ein Lesesystem ohne Skripte die Lösungen hat. In einem umfließenden EPUB wachsen Raster und Schreibflächen mit der Schrift des Lesers, und auf einer Seite von rechts nach links folgen die Felder zum Ausfüllen dem gespiegelten Raster.
 
 Der Bildschirm kann den Übungen über `htmlViewer.overrides` eine eigene Form geben; diese Einstellungen werden über die Konfiguration des Buchs gelegt, bevor der HTML-Betrachter setzt. Der Druck behält seine:
 

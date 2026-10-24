@@ -63,38 +63,75 @@ function inferredKind(blocks: readonly ContentBlock[], body: number[], gaps: num
 /** The digits of `n` in the script `like` is written in (Arabic-Indic and
  *  Persian digits kept). */
 function digitsLike(n: string, like: string): string {
+  // The Arabic decimal separator (`١٢٫٥`) as written.
+  if (like.includes('\u066B')) n = n.replace(/[.,]/g, '\u066B');
   if (/[٠-٩]/.test(like)) return n.replace(/[0-9]/g, (d) => String.fromCharCode(0x0660 + Number(d)));
   if (/[۰-۹]/.test(like)) return n.replace(/[0-9]/g, (d) => String.fromCharCode(0x06f0 + Number(d)));
   return n;
 }
 
 const ascii = (s: string): string => s
+  .replace(/\u066B/g, ',')
   .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
   .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
 
-const OPERATION_RE = /^\s*(\d+)\s*([+\-−×xX*·⋅÷:/])\s*(\d+)\s*(?:=\s*)?$/u;
+const OPERATION_RE = /^\s*(\d+(?:[.,]\d+)?)\s*([+\-−×xX*·⋅÷:/])\s*(\d+(?:[.,]\d+)?)\s*(?:=\s*)?$/u;
 /** The sign an operation prints, from the one written: a German `216 · 4`
  *  keeps its dot, a `864 : 4` its colon; ASCII stand-ins become the signs. */
 const PRINTED_SIGN: Record<string, string> = { '-': '−', x: '×', X: '×', '*': '×', '⋅': '·', '/': '÷' };
 
-/** An operation item (`345 + 278`), its result worked out: whole numbers. */
+/** A number written with a decimal comma or point (`12,5`), as an integer
+ *  and its count of decimals. */
+function decimalOf(n: string): { m: bigint; f: number } {
+  const at = n.search(/[.,]/);
+  return at < 0 ? { m: BigInt(n), f: 0 } : { m: BigInt(n.slice(0, at) + n.slice(at + 1)), f: n.length - at - 1 };
+}
+
+/** `m` × 10^−`f` written with `sep` (`3,75`). */
+function decimalText(m: bigint, f: number, sep: string): string {
+  const neg = m < 0n;
+  const digits = (neg ? -m : m).toString().padStart(f + 1, '0');
+  const text = f > 0 ? `${digits.slice(0, digits.length - f)}${sep}${digits.slice(digits.length - f)}` : digits;
+  return neg ? `-${text}` : text;
+}
+
+/** An operation item (`345 + 278`, `12,5 + 3,75`), its result worked out:
+ *  whole numbers and decimals (#1244), the result in the decimal mark
+ *  written. A division by a decimal is not read; a decimal dividend's
+ *  quotient goes on up to two more decimals while there is a remainder. */
 export function readOperation(text: string, block: number): ExerciseOperation | undefined {
   const m = OPERATION_RE.exec(ascii(text));
   if (!m) return undefined;
   const [a, b] = [m[1]!, m[3]!];
   const sign = m[2]!;
   const op: ExerciseOperation['op'] = sign === '+' ? '+' : sign === '-' || sign === '−' ? '-' : sign === '÷' || sign === ':' || sign === '/' ? '÷' : '×';
-  const x = BigInt(a);
-  const y = BigInt(b);
-  let result: bigint;
-  let remainder: bigint | undefined;
-  if (op === '+') result = x + y;
-  else if (op === '-') result = x - y;
-  else if (op === '×') result = x * y;
-  else {
-    if (y === 0n) return undefined;
-    result = x / y;
-    remainder = x % y;
+  // `1,5 : 3` reads `:` as the sign, not a decimal mark.
+  const sep = /,/.test(a + b) ? ',' : '.';
+  const x = decimalOf(a);
+  const y = decimalOf(b);
+  let result: string;
+  let remainder: string | undefined;
+  if (op === '+' || op === '-') {
+    const f = Math.max(x.f, y.f);
+    const xs = x.m * 10n ** BigInt(f - x.f);
+    const ys = y.m * 10n ** BigInt(f - y.f);
+    result = decimalText(op === '+' ? xs + ys : xs - ys, f, sep);
+  } else if (op === '×') {
+    result = decimalText(x.m * y.m, x.f + y.f, sep);
+  } else {
+    if (y.m === 0n || y.f > 0) return undefined;
+    let f = x.f;
+    let dividend = x.m;
+    let q = dividend / y.m;
+    let r = dividend % y.m;
+    while (x.f > 0 && r !== 0n && f < x.f + 2) {
+      f++;
+      dividend *= 10n;
+      q = dividend / y.m;
+      r = dividend % y.m;
+    }
+    result = decimalText(q, f, sep);
+    if (r !== 0n) remainder = decimalText(r, f, sep);
   }
   const raw = text.trim();
   return {
@@ -103,8 +140,8 @@ export function readOperation(text: string, block: number): ExerciseOperation | 
     b: digitsLike(b, raw),
     op,
     sign: PRINTED_SIGN[sign] ?? sign,
-    result: digitsLike(result.toString(), raw),
-    ...(remainder !== undefined && remainder !== 0n ? { remainder: digitsLike(remainder.toString(), raw) } : {}),
+    result: digitsLike(result, raw),
+    ...(remainder !== undefined ? { remainder: digitsLike(remainder, raw) } : {}),
   };
 }
 
@@ -180,6 +217,10 @@ function readExercise(blocks: readonly ContentBlock[], start: number, end: numbe
     issues.push({ kind: 'exerciseUnknownType', exercise: id, detail: attrs.type, sourceStart: open.sourceStart, sourceEnd: open.sourceEnd });
   }
   const kind = written ?? inferredKind(blocks, body, gaps.length);
+  // An open question's instruction is its first paragraph (#1244): what
+  // follows it (a line of pinyin to write out, a text to answer on) is the
+  // exercise's own text, not more instruction.
+  if (kind === 'open' && instruction.length > 1) body.unshift(...instruction.splice(1));
   const model: ExerciseModel = {
     id, ordinal, kind, attrs, start, end, instruction, body, items: new Set(), solutions, hints, banks, gaps,
     questions: [], pairs: [], sequence: [], sentences: [], categories: [], entries: [], operations: [],

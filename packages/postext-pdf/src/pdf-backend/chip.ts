@@ -5,6 +5,7 @@ import type { FontCache } from '../fontCache.js';
 import { type PageCtx, drawChipBoxPx, drawTextDotsPx, drawTextPx, invisibleText } from './primitives.js';
 import { tagArtifact, tagContent, type StructElem } from './tagging.js';
 import { drawRightToLeftRun } from './rtlRun.js';
+import { paintChipReadings } from './annotations.js';
 
 /**
  * Inline chip (`:chip[…]`): the box, flagged as a layout artifact in a
@@ -25,6 +26,11 @@ export function paintChip(
 ): void {
   if (elem) tagArtifact(ctx, { type: 'Layout' });
   drawChipBoxPx(ctx, chip, xPx, baselinePx);
+  // The readings of its ruby words, over a blank too (#1244).
+  if (chip.readings && chip.runs[0]) {
+    tagContent(ctx, elem);
+    paintChipReadings(ctx, chip.readings, xPx + chip.marginLeft, baselinePx, colorFor(chip.runs[0]), fontCache, fallbackFont);
+  }
   // A blank's answer is laid out, never painted (#1227): the box alone.
   if (chip.blank) return;
   tagContent(ctx, elem);

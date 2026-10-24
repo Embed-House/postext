@@ -170,6 +170,7 @@ function addLinesFonts(lines: readonly VDTLine[] | undefined, faces: FaceSet, ou
       // A chip may set its own family; its runs carry their faces.
       if (seg.chip) {
         for (const run of seg.chip.runs) if (run.text) add(out, run.fontString, run.text);
+        for (const run of seg.chip.readings ?? []) if (run.text) add(out, run.fontString, run.text);
         continue;
       }
       // A warichu note paints its rows; a ruby base its reading too.

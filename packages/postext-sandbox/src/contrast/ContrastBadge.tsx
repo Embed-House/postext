@@ -7,7 +7,7 @@ import { cn } from '../ui/cn.js';
 import { Tooltip } from '../ui/tooltip.js';
 import { fill } from '../print/fillTokens.js';
 import { useContrastSnapshot } from './contrastStore.js';
-import { counterpartsFor, measureField, ratioText, type Counterpart, type FieldContrast, type FieldMeasure } from './fieldContrast.js';
+import { counterpartsFor, counterpartsOn, measureField, ratioText, type Counterpart, type FieldContrast, type FieldMeasure } from './fieldContrast.js';
 
 /** How long a field keeps the colours it was set with after its own
  *  colour changed and no laid-out page shows the new one yet. */
@@ -17,9 +17,16 @@ const STICKY_MS = 5000;
  *  with, or null when the pages use it neither as text nor as a ground.
  *  While the colour is being edited the last known counterparts stand in
  *  until the layout shows the new colour. */
-export function useFieldContrast(hex: string): FieldContrast | null {
+export function useFieldContrast(hex: string, ground?: { hex: string; sizePt: number }): FieldContrast | null {
   const snapshot = useContrastSnapshot();
-  const found = useMemo(() => counterpartsFor(hex, snapshot.pairs), [hex, snapshot.pairs]);
+  // A colour set on a ground of its own (a number's disc) is measured
+  // against that ground only (#1244).
+  const groundHex = ground?.hex;
+  const groundSize = ground?.sizePt ?? 10;
+  const found = useMemo(
+    () => (groundHex ? counterpartsOn(hex, groundHex, snapshot.pairs, groundSize, snapshot.level) : counterpartsFor(hex, snapshot.pairs)),
+    [hex, groundHex, groundSize, snapshot.pairs, snapshot.level],
+  );
   const [sticky, setSticky] = useState<Counterpart[] | null>(null);
   useEffect(() => {
     if (found.length > 0) setSticky(found);

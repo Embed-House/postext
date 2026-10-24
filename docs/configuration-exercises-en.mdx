@@ -118,7 +118,7 @@ const config: PostextConfig = {
   </thead>
   <tbody>
     <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>Set the instruction in bold.</td></tr>
-    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Set it in italic.</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>Set it in italic. An exercise's number stays upright.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>the text's</td><td>Its colour, bold runs included.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>the text's</td><td>Its family: a sans-serif instruction over a serif text is common in school books.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>the text's</td><td>Its size.</td></tr>
@@ -176,7 +176,7 @@ const config: PostextConfig = {
 
 ### True or false
 
-`trueFalse` sets the answers at the end of a statement.
+`trueFalse` sets the answers of a statement, at its end or before it.
 
 <table>
   <thead>
@@ -190,6 +190,7 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>by language</td><td>The two answers: <code>['T', 'F']</code> in English; V F in Spanish, Catalan, French, Italian and Portuguese; R F in German; √ × in Chinese; ○ × in Japanese; صح خطأ in Arabic.</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>: each label with a box to tick, at the end of the line. <code>'bracket'</code>: one blank to write the answer in.</td></tr>
+    <tr><td><code>place</code></td><td><code>'end' | 'start'</code></td><td><code>'end'</code></td><td>Where the boxes or the bracket stand: <code>'end'</code>, flush with the end of the line; <code>'start'</code>, before the statement, as Brazilian books print <code>( ) frase</code>.</td></tr>
   </tbody>
 </table>
 
@@ -270,7 +271,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>A cell's side.</td></tr>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>A cell's side. The cells of operations in columns are 0.8 of it.</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>the text's</td><td>The letters' and digits' family.</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>0.58 of the cell's side</td><td>The size of the letters and digits, an em being the text's.</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>the text's</td><td>The letters' and digits' colour.</td></tr>
@@ -297,6 +298,8 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>by language</td><td>Long division. <code>'bracket'</code>: the divisor left of the dividend, a bracket over it, the quotient on top (English, Chinese, Japanese, Arabic, and any language without its own). <code>'potence'</code>: the divisor right of the dividend under an L, the quotient under the divisor (Spanish, Catalan, French, Italian, Portuguese). <code>'inline'</code>: <code>864 : 4 =</code> with the quotient on the line and the steps under it (German).</td></tr>
     <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>Operations to a row, fewer when the column is too narrow.</td></tr>
+    <tr><td><code>partialProducts</code></td><td><code>boolean</code></td><td><code>true</code></td><td>A multiplication by a number of two digits or more prints a row for each partial product, one for each digit of the multiplier that is not zero and each a place further left, then the result under a second rule. <code>false</code> leaves only the result.</td></tr>
+    <tr><td><code>working</code></td><td><code>'products' | 'remainders'</code></td><td>by language</td><td>The rows kept under a long division for the working. <code>'products'</code>: the product of each step and what is left, two rows a step. <code>'remainders'</code>: what is left only, the subtraction done in the head, one row a step (Spanish, Catalan and Italian). A step whose quotient digit is 0 takes no row.</td></tr>
   </tbody>
 </table>
 

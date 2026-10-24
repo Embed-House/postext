@@ -37,6 +37,7 @@ import {
   exerciseWords,
   resolveBodyTextConfig,
   resolveColorValue,
+  dimensionToPx,
   resolveExerciseStylesConfig,
   resolveExercisesConfig,
 } from 'postext';
@@ -58,6 +59,8 @@ import {
 import { FieldRow } from '../../controls/FieldRow.js';
 import { Button, ConfirmPopover, IconButton } from '../../ui/index.js';
 import { SearchScope } from '../search/SearchScope.js';
+import { useBookTexts } from '../../frameStyles/useBookTexts.js';
+import { applyExerciseStyleRename, planExerciseStyleRename } from '../../frameStyles/exerciseRefs.js';
 import { counterFormatOptions, resetOnOptions } from '../settings/counterOptions.js';
 import { SolutionsFields, boxStyleOptions, exerciseLocaleOf } from './exerciseFields.js';
 
@@ -283,6 +286,8 @@ function ExerciseStyleCard(props: ExerciseStyleCardProps) {
           value={n.color ?? (n.shape === 'none' ? mainColor : WHITE)}
           onChange={(v) => number({ color: v })}
           tooltip={labels.exerciseStyleNumberColorTooltip}
+          // A shaped number is read against its shape, not the paper (#1244).
+          {...(n.shape !== 'none' ? { contrastGround: { hex: n.background.hex, sizePt: dimensionToPx(bodyText.fontSize, 72) * (n.fontSize.unit === 'em' ? n.fontSize.value : 1) } } : {})}
           fieldId={`${fieldId}-number-color`}
           {...row('number', 'color')}
         />
@@ -427,6 +432,17 @@ function ExerciseStyleCard(props: ExerciseStyleCardProps) {
           variant="segmented"
           {...row('trueFalse', 'look')}
         />
+        <SelectInput
+          label={labels.exerciseStyleTrueFalsePlace}
+          value={resolved.trueFalse.place}
+          options={[
+            { value: 'end', label: labels.exerciseStyleTrueFalsePlaceEnd },
+            { value: 'start', label: labels.exerciseStyleTrueFalsePlaceStart },
+          ]}
+          onChange={(v) => trueFalse({ place: v as ExerciseTrueFalseStyle['place'] })}
+          variant="segmented"
+          {...row('trueFalse', 'place')}
+        />
       </CollapsibleSection>
 
       <CollapsibleSection title={labels.exerciseStyleMatchGroup} sectionId={`${sectionId}.match`} variant="subsection">
@@ -523,6 +539,18 @@ function ExerciseStyleCard(props: ExerciseStyleCardProps) {
           {...row('arithmetic', 'division')}
         />
         <NumberInput label={labels.exerciseStyleArithmeticColumns} value={resolved.arithmetic.columns} onChange={(v) => arithmetic({ columns: v })} min={1} max={8} step={1} {...row('arithmetic', 'columns')} />
+        <ToggleSwitch label={labels.exerciseStyleArithmeticPartialProducts} checked={resolved.arithmetic.partialProducts} onChange={(v) => arithmetic({ partialProducts: v })} tooltip={labels.exerciseStyleArithmeticPartialProductsTooltip} {...row('arithmetic', 'partialProducts')} />
+        <SelectInput
+          label={labels.exerciseStyleArithmeticWorking}
+          value={resolved.arithmetic.working}
+          options={[
+            { value: 'products', label: labels.exerciseStyleArithmeticWorkingProducts },
+            { value: 'remainders', label: labels.exerciseStyleArithmeticWorkingRemainders },
+          ]}
+          onChange={(v) => arithmetic({ working: v as ExerciseArithmeticStyle['working'] })}
+          tooltip={labels.exerciseStyleArithmeticWorkingTooltip}
+          {...row('arithmetic', 'working')}
+        />
       </CollapsibleSection>
 
       <CollapsibleSection title={labels.exerciseStyleLevelGroup} sectionId={`${sectionId}.level`} variant="subsection">
@@ -728,6 +756,8 @@ export const ExerciseStylesSection = memo(function ExerciseStylesSection() {
   const bodyTextRaw = useSandboxSelector((s) => s.config.bodyText);
   const locale = useSandboxSelector(exerciseLocaleOf);
   const resources = useSandboxResources();
+  const chapters = useBookTexts();
+  const activeChapterId = useSandboxSelector((s) => s.activeChapterId);
   const iconResources = resources.filter((r) => r.kind === 'svg' || r.kind === 'bitmap');
   const bodyText = resolveBodyTextConfig(bodyTextRaw);
   const styles: ExerciseStyleConfig[] = raw ?? DEFAULT_EXERCISE_STYLES;
@@ -772,14 +802,12 @@ export const ExerciseStylesSection = memo(function ExerciseStylesSection() {
     );
   };
 
-  /** A style based on the renamed one names it by its new id. */
+  /** A style based on the renamed one names it by its new id, and so does
+   *  every `:::exercise{style}` fence of the book (#1244). */
   const renameStyle = (id: string, nextId: string) => {
     if (styles.some((s) => s.id === nextId)) return;
     moveCardState('exerciseStyles', id, nextId);
-    write(styles.map((s) => {
-      const next = s.id === id ? { ...s, id: nextId } : s;
-      return next.extends === id ? { ...next, extends: nextId } : next;
-    }));
+    applyExerciseStyleRename(dispatch, planExerciseStyleRename(styles, chapters, id, nextId), activeChapterId);
   };
 
   /** A style based on the removed one takes its parent instead (or none). */

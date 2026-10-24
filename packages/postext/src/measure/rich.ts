@@ -642,12 +642,20 @@ export function chipToken(
   // drops further when a superscript is stacked over it).
   const runScripts: ('sup' | 'sub' | undefined)[] = [];
   const runBaseFonts: string[] = [];
+  // The ruby of each run's span, for its reading (#1244).
+  const runRubies: (InlineSpan['ruby'] | undefined)[] = [];
+  // An upright chip (an exercise's number, #1244) takes the slant off the
+  // text's faces too.
+  const face = (bold: boolean, italic: boolean): string => {
+    const f = pickSpanFont(bold, italic, normalFont, boldFont, italicFont, boldItalicFont);
+    return chip.upright ? uprightFace(f) : f;
+  };
   for (const s of chip.spans) {
     if (s.text.length === 0) continue;
     const bold = s.bold || span.bold || !!box?.bold;
-    const italic = s.italic || span.italic || !!box?.italic;
+    const italic = !chip.upright && (s.italic || span.italic || !!box?.italic);
     // A word the chip's face has no letters for keeps the text's (#845).
-    const base = withFace(pickSpanFont(bold, italic, normalFont, boldFont, italicFont, boldItalicFont), s.textFace ? undefined : box?.fontFamily, sizePx);
+    const base = withFace(face(bold, italic), s.textFace ? undefined : box?.fontFamily, sizePx);
     let font = base;
     let baselineShift: number | undefined;
     if (s.script) {
@@ -673,6 +681,7 @@ export function chipToken(
       });
       runScripts.push(smallCaps ? undefined : s.script);
       runBaseFonts.push(base);
+      runRubies.push(s.ruby);
     }
   }
   // A subscript and a superscript that touch are stacked (EF-80).
@@ -707,9 +716,12 @@ export function chipToken(
   // A box as wide as another text (an exercise's longest answer) or a
   // least width (#1227) widens its padding evenly: the text stays centred.
   const widthTextPx = chip.widthText
-    ? measureTextWidth(chip.widthText, withFace(pickSpanFont(span.bold || !!box?.bold, span.italic || !!box?.italic, normalFont, boldFont, italicFont, boldItalicFont), box?.fontFamily, sizePx))
+    ? measureTextWidth(chip.widthText, withFace(face(span.bold || !!box?.bold, !chip.upright && (span.italic || !!box?.italic)), box?.fontFamily, sizePx))
     : 0;
-  const inner = Math.max(textWidth, widthTextPx, (box?.minWidthPx ?? 0) - (ownPaddingX + borderWidth) * 2);
+  // The readings of its ruby words, which the box is at least as wide as.
+  const readings = chipReadings(runs, runRubies, withFace(normalFont, box?.fontFamily, sizePx / 2), sizePx, textWidth);
+  const readingsWidth = readings.length > 0 ? Math.max(...readings.map((r) => r.dx + r.width)) - Math.min(...readings.map((r) => r.dx)) : 0;
+  const inner = Math.max(textWidth, widthTextPx, readingsWidth, (box?.minWidthPx ?? 0) - (ownPaddingX + borderWidth) * 2);
   const paddingX = ownPaddingX + (inner - textWidth) / 2;
   const boxWidth = textWidth + (paddingX + borderWidth) * 2;
   const ascent = sizePx * CHIP_ASCENT_RATIO + paddingTop + borderWidth;
@@ -739,6 +751,17 @@ export function chipToken(
       ...(box?.dotted ? { dotted: box.dotted } : {}),
       ...(box?.underline ? { underline: box.underline } : {}),
       ...(chip.blank ? { blank: true as const, ...(chip.blankLabel ? { blankLabel: chip.blankLabel } : {}) } : {}),
+      // Across the line, each reading's em box clears the chip's own box
+      // (its padding and border too, which a boxed blank has a lot of): over
+      // it, or under it, and right of a vertical line, as the box is turned.
+      ...(readings.length > 0 ? {
+        readings: readings.map(({ width, under, ...r }) => {
+          void width;
+          const rtEm = sizePx / 2;
+          const axis = under ? descent + READING_GAP_EM * sizePx + rtEm / 2 : -(ascent + READING_GAP_EM * sizePx + rtEm / 2);
+          return { ...r, dx: r.dx + borderWidth + paddingX, dy: axis + CENTRAL * rtEm };
+        }),
+      } : {}),
       ...(chip.exercise ? { exercise: chip.exercise } : {}),
       ...(chip.joinNext ? { joinNext: true } : {}),
       // The words' source (#857), while the runs read as written.
@@ -746,6 +769,47 @@ export function chipToken(
     },
     chipGap: box?.gapPx ?? 0,
   };
+}
+
+/** The room between a chip's box and its readings, in ems of the chip. */
+const READING_GAP_EM = 0.06;
+
+/** The readings of a chip's ruby words (`VDTChip.readings`, #1244), at
+ *  half the chip's size, from where its text starts (their place across
+ *  the line is set once the box is): a group ruby's over
+ *  its whole base, a per-character one over its character; readings that
+ *  would touch are set a quarter of their em apart and centred, as a row,
+ *  over the text (`textWidth`) — a blank hides its characters, so the
+ *  pinyin of 看拼音写词语 reads as a word. */
+function chipReadings(runs: VDTChipRun[], rubies: (InlineSpan['ruby'] | undefined)[], font: string, sizePx: number, textWidth: number): Array<VDTAnnotationRun & { width: number; under: boolean }> {
+  const out: Array<VDTAnnotationRun & { width: number; under: boolean }> = [];
+  let x = 0;
+  for (let i = 0; i < runs.length; ) {
+    const ruby = rubies[i];
+    let j = i + 1;
+    let w = runs[i]!.width;
+    // A group ruby's characters (or one written over several runs) share
+    // one reading.
+    while (ruby?.group && j < runs.length && rubies[j]?.id === ruby.id) w += runs[j++]!.width;
+    if (ruby && ruby.text) {
+      const rt = measureTextWidth(ruby.text, font);
+      out.push({ text: ruby.text, dx: x + (w - rt) / 2, dy: 0, fontString: font, width: rt, under: ruby.position === 'under' });
+    }
+    x += w;
+    i = j;
+  }
+  if (out.length < 2) return out;
+  const apart = (sizePx / 2) * 0.25;
+  let moved = false;
+  for (let k = 1; k < out.length; k++) {
+    const least = out[k - 1]!.dx + out[k - 1]!.width + apart;
+    if (out[k]!.dx < least) { out[k]!.dx = least; moved = true; }
+  }
+  if (moved) {
+    const shift = (textWidth - (out[out.length - 1]!.dx + out[out.length - 1]!.width - out[0]!.dx)) / 2 - out[0]!.dx;
+    for (const r of out) r.dx += shift;
+  }
+  return out;
 }
 
 const LEADING_NO_BREAK_RE = new RegExp(`^[${NO_BREAK_SPACES}]+`);

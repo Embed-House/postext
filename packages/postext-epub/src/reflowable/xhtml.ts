@@ -614,8 +614,11 @@ class Writer {
    *  a grid): its picture, in a box the script lays its controls over. */
   private exercise(node: CalloutNode, ex: NonNullable<CalloutNode['exercise']>): string {
     if (ex.drawn) {
-      const { svg, width, height } = ex.drawn;
-      return `<div class="pt-ex-box pt-ex-drawn" data-pt-box="${ex.box}" data-pt-ex="${ex.id}" style="width:${round2(width)}px;height:${round2(height)}px">${svg}</div>`;
+      // As wide as it prints in ems of the text, its height from the
+      // picture's: the script lays its controls over its size in pixels
+      // (`data-pt-w`, `data-pt-h`), scaled to the box (#1244).
+      const { svg, width, height, em } = ex.drawn;
+      return `<div class="pt-ex-box pt-ex-drawn" data-pt-box="${ex.box}" data-pt-ex="${ex.id}" data-pt-w="${round2(width)}" data-pt-h="${round2(height)}" style="width:${em}em">${svg}</div>`;
     }
     const record = ex.record!;
     const data = ex.data!;

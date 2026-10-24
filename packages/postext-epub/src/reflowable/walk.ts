@@ -783,7 +783,7 @@ class DocWalker {
     if (exercise && this.exerciseData && own.exercise === undefined) {
       own.exercise = exercise.outer
         ? { id: exercise.record.id, box: ownId, record: exercise.record, data: this.exerciseData }
-        : { id: exercise.record.id, box: ownId, drawn: drawnBoxSvg(block, this.config.page.dpi) };
+        : { id: exercise.record.id, box: ownId, drawn: drawnBoxSvg(block, this.config.page.dpi, dimensionToPx(this.config.bodyText.fontSize, 96)) };
     }
     if (own.exercise?.drawn) {
       this.lastContainer = undefined;

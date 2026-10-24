@@ -20,6 +20,7 @@ import { unlinkPaletteRefs } from '../../context/paletteUtils.js';
 import { fetchGoogleFonts } from '../../controls/FontPicker.js';
 import { applyStyleRewrite } from '../../frameStyles/applyRewrite.js';
 import { planRename } from '../../frameStyles/styleMerge.js';
+import { applyExerciseStyleRename, planExerciseStyleRename } from '../../frameStyles/exerciseRefs.js';
 import { removeCalloutStyle } from '../../frameStyles/styleRemove.js';
 import { applyLabelStyleRename } from '../../labelStyles/applyRename.js';
 import { applyFileResolutions, readFileResolutions } from '../../panels/resources/fileResolutions.js';
@@ -89,7 +90,7 @@ export function designItemTools(host: SandboxToolHost): WebMcpTool[] {
   const rename: WebMcpTool = {
     name: 'sandbox_rename_design_item',
     title: 'Sandbox: rename a style, template or frame with its uses',
-    description: 'Give a named item of the design another id, and everything that names it the new one, as the Settings panel does: calloutStyles (the :::callout{type} fences, template frames and styles based on it), labelStyles (picture anchors and ::label lines), tableStyles and scoreStyles (the table and score resources that use it), frameLooks (the pieces that name the look), pageTemplates (the ::::page fences; a module: its :::module blocks), templateFrames (a frame or group of template: the slot names of the pages, and the editions a local book keeps aside), comics.balloonStyles (the cast members who speak in it); exerciseStyles (the styles based on it); paragraphStyles, headingStyles, chipStyles, markStyles, comics.panelStyles and comics.cast rename the item only. Through sandbox_set_config the uses would be left naming an item that is gone. The new id is made safe the way the panel makes it (lowercase letters, digits, _ and -). Answers what was rewritten and undoSteps (sandbox_undo that many times takes it back).',
+    description: 'Give a named item of the design another id, and everything that names it the new one, as the Settings panel does: calloutStyles (the :::callout{type} fences, template frames, styles based on it and the box, bank.box and solutions.box of the exercise styles), labelStyles (picture anchors and ::label lines), tableStyles and scoreStyles (the table and score resources that use it), frameLooks (the pieces that name the look), pageTemplates (the ::::page fences; a module: its :::module blocks), templateFrames (a frame or group of template: the slot names of the pages, and the editions a local book keeps aside), comics.balloonStyles (the cast members who speak in it); exerciseStyles (the :::exercise{style} fences and the styles based on it); paragraphStyles, headingStyles, chipStyles, markStyles, comics.panelStyles and comics.cast rename the item only. Through sandbox_set_config the uses would be left naming an item that is gone. The new id is made safe the way the panel makes it (lowercase letters, digits, _ and -). Answers what was rewritten and undoSteps (sandbox_undo that many times takes it back).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -180,16 +181,19 @@ export function designItemTools(host: SandboxToolHost): WebMcpTool[] {
         const to = slugifyStyleId(String(args.to ?? ''));
         taken(styles.map((i) => i.id), to);
         if (list === 'calloutStyles') {
-          const plan = planRename({ calloutStyles: config.calloutStyles, pageTemplates: config.pageTemplates }, styles as NonNullable<PostextConfig['calloutStyles']>, chapters, from, to);
+          const plan = planRename({ calloutStyles: config.calloutStyles, pageTemplates: config.pageTemplates, exerciseStyles: config.exerciseStyles, exercises: config.exercises }, styles as NonNullable<PostextConfig['calloutStyles']>, chapters, from, to);
           const record = applyStyleRewrite(store.dispatch, { calloutStyles: config.calloutStyles, pageTemplates: config.pageTemplates }, plan, `${from} → ${to}`, s.activeChapterId);
-          answer = { renamed: from, to, fencesRewritten: plan.fenceCount, framesRewritten: plan.frames.length, undoSteps: record.steps };
+          answer = { renamed: from, to, fencesRewritten: plan.fenceCount, framesRewritten: plan.frames.length, ...('exerciseStyles' in plan || 'exercises' in plan ? { exerciseBoxesRewritten: true } : {}), undoSteps: record.steps };
+        } else if (list === 'exerciseStyles') {
+          // Every `:::exercise{style}` fence that names it (#1244).
+          const plan = planExerciseStyleRename(styles as NonNullable<PostextConfig['exerciseStyles']>, chapters, from, to);
+          const steps = applyExerciseStyleRename(store.dispatch, plan, s.activeChapterId);
+          answer = { renamed: from, to, fencesRewritten: plan.fenceCount, undoSteps: steps };
         } else if (list === 'labelStyles') {
           const done = applyLabelStyleRename(store.dispatch, config.labelStyles ?? [], from, to, { chapters, resources: s.resources, activeChapterId: s.activeChapterId });
           answer = { renamed: from, to, anchorsRewritten: done.anchors, labelLinesRewritten: done.lines, undoSteps: done.chapters + done.resources + 1 };
         } else {
-          const renamed = styles.map((i) => (i.id === from ? { ...i, id: to } : i))
-            // An exercise style based on it names it by its new id.
-            .map((i) => (list === 'exerciseStyles' && (i as { extends?: string }).extends === from ? { ...i, extends: to } : i));
+          const renamed = styles.map((i) => (i.id === from ? { ...i, id: to } : i));
           let steps = 0;
           let uses = 0;
           if (list === 'frameLooks') {

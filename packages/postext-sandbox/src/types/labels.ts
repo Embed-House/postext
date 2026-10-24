@@ -3292,6 +3292,9 @@ export interface SandboxLabels {
   exerciseStyleTrueFalseLook: string;
   exerciseStyleTrueFalseLookBoxes: string;
   exerciseStyleTrueFalseLookBracket: string;
+  exerciseStyleTrueFalsePlace: string;
+  exerciseStyleTrueFalsePlaceEnd: string;
+  exerciseStyleTrueFalsePlaceStart: string;
   exerciseStyleMatchGroup: string;
   exerciseStyleMatchLook: string;
   exerciseStyleMatchLookDots: string;
@@ -3331,6 +3334,12 @@ export interface SandboxLabels {
   exerciseStyleArithmeticDivisionInline: string;
   exerciseStyleArithmeticDivisionTooltip: string;
   exerciseStyleArithmeticColumns: string;
+  exerciseStyleArithmeticPartialProducts: string;
+  exerciseStyleArithmeticPartialProductsTooltip: string;
+  exerciseStyleArithmeticWorking: string;
+  exerciseStyleArithmeticWorkingProducts: string;
+  exerciseStyleArithmeticWorkingRemainders: string;
+  exerciseStyleArithmeticWorkingTooltip: string;
   exerciseStyleLevelGroup: string;
   exerciseStyleLevelGlyph: string;
   exerciseStyleLevelGlyphTooltip: string;

@@ -2,7 +2,8 @@
  * The `:::callout{type=…}` fences of a chapter (#873), read straight off
  * the Markdown so the frame-style library can count the boxes of every
  * style in every chapter, laid out or not, and rewrite the style a fence
- * names when two styles are merged or one is renamed.
+ * names when two styles are merged or one is renamed. The `:::exercise
+ * {style=…}` fences likewise, for a renamed exercise style (#1244).
  */
 
 import type { TextChange } from '../book/textChanges.js';
@@ -24,13 +25,35 @@ export interface CalloutFence {
 }
 
 // As the engine's DIRECTIVE_RE reads a trimmed line.
-const CALLOUT_FENCE_RE = /^\s*:::\s*callout(?:\s*\{([^}]*)\})?\s*$/;
+const fenceRe = (name: string): RegExp => new RegExp(`^\\s*:::\\s*${name}(?:\\s*\\{([^}]*)\\})?\\s*$`);
+const CALLOUT_FENCE_RE = fenceRe('callout');
+const EXERCISE_FENCE_RE = fenceRe('exercise');
 const CODE_FENCE_RE = /^\s{0,3}(`{3,}|~{3,})/;
 // `=` or the fullwidth `＝` a Chinese input method types, as the engine.
-const TYPE_ATTR_RE = /(^|\s)type\s*[=＝]\s*(?:"([^"]*)"|'([^']*)'|([^\s"'}]+))/;
+const attrRe = (name: string): RegExp => new RegExp(`(^|\\s)${name}\\s*[=＝]\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'}]+))`);
+const TYPE_ATTR_RE = attrRe('type');
+const STYLE_ATTR_RE = attrRe('style');
 
 /** Every `:::callout` fence of `markdown`, outside code blocks. */
 export function calloutFences(markdown: string): CalloutFence[] {
+  return directiveFences(markdown, CALLOUT_FENCE_RE, TYPE_ATTR_RE);
+}
+
+/** Every `:::exercise` fence of `markdown`, outside code blocks, with the
+ *  exercise style it names (`style`, read into `type`, #1244). */
+export function exerciseFences(markdown: string): CalloutFence[] {
+  return directiveFences(markdown, EXERCISE_FENCE_RE, STYLE_ATTR_RE);
+}
+
+/** The changes that make every `:::exercise` fence of `markdown` naming a
+ *  key of `renames` as its style name its value instead (#1244). */
+export function restyleExerciseChanges(markdown: string, renames: ReadonlyMap<string, string>): TextChange[] {
+  return exerciseFences(markdown)
+    .filter((f) => !f.missing && renames.has(f.type))
+    .map((f) => ({ from: f.valueFrom, to: f.valueTo, insert: renames.get(f.type)!, expect: markdown.slice(f.valueFrom, f.valueTo) }));
+}
+
+function directiveFences(markdown: string, opening: RegExp, attr: RegExp): CalloutFence[] {
   const out: CalloutFence[] = [];
   let offset = 0;
   let code: string | null = null;
@@ -47,10 +70,10 @@ export function calloutFences(markdown: string): CalloutFence[] {
       continue;
     }
     if (code !== null) continue;
-    const m = CALLOUT_FENCE_RE.exec(line);
+    const m = opening.exec(line);
     if (!m) continue;
     const blob = m[1];
-    const t = blob !== undefined ? TYPE_ATTR_RE.exec(blob) : null;
+    const t = blob !== undefined ? attr.exec(blob) : null;
     if (!t) {
       const at = start + line.trimEnd().length;
       out.push({ fenceStart: start, line: n, type: '', valueFrom: at, valueTo: at, missing: true });

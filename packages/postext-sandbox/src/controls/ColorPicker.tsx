@@ -25,13 +25,17 @@ interface ColorPickerProps {
   /** Render only the value button + swatch (no row, no label) — for hosts
    *  that lay out their own row, like the palette entry list. */
   hideLabel?: boolean;
+  /** The ground the colour is painted on, when it has one of its own (a
+   *  number on its disc): the contrast badge measures it there alone, at
+   *  `sizePt` (#1244). */
+  contrastGround?: { hex: string; sizePt: number };
 }
 
 const CHECKER = `repeating-conic-gradient(#808080 0% 25%, #c0c0c0 0% 50%) 0 0 / 6px 6px`;
 
 const DEFAULT_COLOR: ColorValue = { hex: 'transparent', model: 'hex' };
 
-export function ColorPicker({ label, value: rawValue, onChange, tooltip, isDefault, onReset, fieldId: _fieldId, disablePalette, hideLabel }: ColorPickerProps) {
+export function ColorPicker({ label, value: rawValue, onChange, tooltip, isDefault, onReset, fieldId: _fieldId, disablePalette, hideLabel, contrastGround }: ColorPickerProps) {
   const { state } = useSandbox();
   const palette = disablePalette ? undefined : state.config.colorPalette;
   const unlinkLabel = state.labels.colorPaletteUnlink;
@@ -90,7 +94,7 @@ export function ColorPicker({ label, value: rawValue, onChange, tooltip, isDefau
   const alpha = hexAlpha(swatchHex);
   const hex6 = hexWithoutAlpha(swatchHex);
   // The colour's contrast with what the book sets it with (#748).
-  const contrast = useFieldContrast(swatchHex);
+  const contrast = useFieldContrast(swatchHex, contrastGround);
   const contrastId = useId();
 
   const controls = (

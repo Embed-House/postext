@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { EXERCISE_SCRIPT, type ExerciseData } from 'postext';
 import { renderToEpub, readEpub } from './index.js';
 import type { ReadEpubResult, RenderToEpubOptions } from './types.js';
-import { exerciseSampleBook, sampleBook } from './__tests__/sampleBook.js';
+import { exerciseSampleBook, layOutBook, sampleBook } from './__tests__/sampleBook.js';
 import { EXERCISE_SCRIPT_HREF } from './shared/exerciseScript.js';
 
 /** `html` with every `<tag …>…</tag>` element taken out (any letter case). */
@@ -81,10 +81,26 @@ describe('exercises in a reflowable EPUB', () => {
     const book = readEpub(await renderToEpub(exerciseSampleBook(), options('reflowable')));
     const xhtml = book.spine.map((s) => text(book, s.path)).find((t) => t.includes('class="pt-exercises"'))!;
     expect(xhtml).toMatch(/<span class="pt-chip [^"]* pt-ex-slot pt-ex-blank" data-pt-ex="\d+" data-pt-slot="g1" style="width:[\d.]+em"><input type="text" class="pt-ex-input"/);
-    expect(xhtml).toMatch(/<div class="pt-ex-box pt-ex-drawn" data-pt-box="\d+" data-pt-ex="\d+" style="width:[\d.]+px;height:[\d.]+px"><svg /);
+    // A grid set in ems of the text, so a reader's larger text draws it
+    // larger (#1244); the script lays its controls over its printed size.
+    expect(xhtml).toMatch(/<div class="pt-ex-box pt-ex-drawn" data-pt-box="\d+" data-pt-ex="\d+" data-pt-w="[\d.]+" data-pt-h="[\d.]+" style="width:[\d.]+em"><svg /);
     // The flow's units: grids at their printed size in CSS pixels.
     const { data } = dataOf(xhtml);
     expect(data.flow).toBe(true);
     expect(data.pxPerPt).toBeCloseTo(96 / 72);
+  });
+
+  it('styles the boxes an exercise is set in: its frame, a word bank, a solution (#1244)', async () => {
+    const book = readEpub(await renderToEpub(exerciseSampleBook(), options('reflowable')));
+    const css = [...book.files.keys()].filter((p) => p.endsWith('.css')).map((p) => text(book, p)).join('\n');
+    expect(css).toMatch(/aside\.pt-callout-__postext-ex-exercise-bank, div\.pt-exercise\.pt-callout-__postext-ex-exercise-bank \{[^}]*border: [\d.]+px solid/);
+    expect(css).toContain('div.pt-exercise.pt-callout-__postext-ex-exercise-frame');
+  });
+
+  it('sets a reading over a blank as the blank\'s ruby (#1244)', async () => {
+    const docs = layOutBook([':::exercise\n看拼音写词语。\n\n[[{春天|chūn tiān}]]\n:::\n'], { locale: 'zh-Hans', layout: { layoutType: 'single' } });
+    const book = readEpub(await renderToEpub(docs, { ...options('reflowable'), metadata: { ...options('reflowable').metadata, language: 'zh-Hans' } }));
+    const xhtml = book.spine.map((s) => text(book, s.path)).find((t) => t.includes('class="pt-exercises"'))!;
+    expect(xhtml).toMatch(/<ruby><span class="pt-chip [^"]* pt-ex-blank"[^>]*><input [^>]*\/><\/span><rt>chūn tiān<\/rt><\/ruby>/);
   });
 });

@@ -95,6 +95,7 @@ export function expandDocumentExercises(
     measurePt: toPt(measurePx),
     bodyFont: resolved.bodyText.fontFamily,
     ...(resolvedDirection(resolved) === 'rtl' ? { rtl: true } : {}),
+    ...(resolved.layout.writingMode === 'vertical-rl' ? { vertical: true } : {}),
     boxIds: new Set(resolved.calloutStyles.map((s) => s.id)),
     boxInsets: new Map(resolved.calloutStyles.map((s) => {
       const px = (d: Parameters<typeof dimensionToPx>[0]): number => dimensionToPx(d, dpi, bodyPx);

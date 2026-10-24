@@ -182,6 +182,12 @@ function paintRuns(ctx: Ctx, runs: readonly VDTAnnotationRun[], x: number, basel
   restoreContext(ctx);
 }
 
+/** Paint the readings of a chip's ruby words (`VDTChip.readings`, #1244);
+ *  `x` is the chip box's left edge. */
+export function paintChipReadings(ctx: Ctx, runs: readonly VDTAnnotationRun[], x: number, baseline: number, color: string): void {
+  paintRuns(ctx, runs, x, baseline, color, 'text');
+}
+
 /** Paint a ruby base's reading; `x` is where the base's segment starts. */
 export function paintRuby(ctx: Ctx, ruby: VDTRuby, x: number, baseline: number, textColor: string): void {
   paintRuns(ctx, ruby.runs, x, baseline, ruby.color ?? textColor, 'text');

@@ -118,7 +118,7 @@ const config: PostextConfig = {
   </thead>
   <tbody>
     <tr><td><code>bold</code></td><td><code>boolean</code></td><td><code>true</code></td><td>指示文を太字にします。</td></tr>
-    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>イタリックにします。</td></tr>
+    <tr><td><code>italic</code></td><td><code>boolean</code></td><td><code>false</code></td><td>イタリックにします。問題番号は正体のままです。</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>本文の色</td><td>指示文の色で、太字の部分にも適用されます。</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>本文のフォント</td><td>指示文のフォントファミリーです。明朝の本文にゴシックの指示文を組むのは、教科書でよく見る組み方です。</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>本文のサイズ</td><td>指示文のサイズです。</td></tr>
@@ -176,7 +176,7 @@ const config: PostextConfig = {
 
 ### 正誤
 
-`trueFalse`は正誤問題の文の末尾に置く答えを設定します。
+`trueFalse`は正誤問題の文の末尾、または文の前に置く答えを設定します。
 
 <table>
   <thead>
@@ -190,6 +190,7 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>labels</code></td><td><code>[string, string]</code></td><td>言語による</td><td>2つの答えです。日本語では ○ ×、英語では<code>['T', 'F']</code>、スペイン語、カタルーニャ語、フランス語、イタリア語、ポルトガル語では V F、ドイツ語では R F、中国語では √ ×、アラビア語では صح خطأ です。</td></tr>
     <tr><td><code>look</code></td><td><code>'boxes' | 'bracket'</code></td><td><code>'boxes'</code></td><td><code>'boxes'</code>は行末に、それぞれの記号と印を付ける四角を並べます。<code>'bracket'</code>は答えを書き込む空欄を1つ置きます。</td></tr>
+    <tr><td><code>place</code></td><td><code>'end' | 'start'</code></td><td><code>'end'</code></td><td>四角やかっこの位置です。<code>'end'</code>は行末、<code>'start'</code>は文の前で、ブラジルの教科書の <code>( ) frase</code> の形です。</td></tr>
   </tbody>
 </table>
 
@@ -270,7 +271,7 @@ const config: PostextConfig = {
     </tr>
   </thead>
   <tbody>
-    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>マスの一辺です。</td></tr>
+    <tr><td><code>cell</code></td><td><code>Dimension</code></td><td><code>1.6em</code></td><td>マスの一辺です。筆算のますはその0.8倍です。</td></tr>
     <tr><td><code>fontFamily</code></td><td><code>string</code></td><td>本文のフォント</td><td>文字と数字のフォントファミリーです。</td></tr>
     <tr><td><code>fontSize</code></td><td><code>Dimension</code></td><td>マスの一辺の0.58倍</td><td>文字と数字の大きさです。emは本文の文字サイズです。</td></tr>
     <tr><td><code>color</code></td><td><code>ColorValue</code></td><td>本文の色</td><td>文字と数字の色です。</td></tr>
@@ -297,6 +298,8 @@ const config: PostextConfig = {
   <tbody>
     <tr><td><code>division</code></td><td><code>'bracket' | 'potence' | 'inline'</code></td><td>言語による</td><td>わり算の筆算の書き方です。<code>'bracket'</code>は、わる数をわられる数の左に、厂の形の線をわられる数の上にかけ、商をいちばん上に書きます（日本語、英語、中国語、アラビア語、独自の書き方を持たない言語）。<code>'potence'</code>は、わる数をわられる数の右の L 字の下に、商をわる数の下に書きます（スペイン語、カタルーニャ語、フランス語、イタリア語、ポルトガル語）。<code>'inline'</code>は<code>864 : 4 =</code>と書いて商を同じ行に置き、途中の計算をその下に書きます（ドイツ語）。</td></tr>
     <tr><td><code>columns</code></td><td><code>number</code></td><td><code>4</code></td><td>1行に並べる計算の数です。段が狭ければ減らします。</td></tr>
+    <tr><td><code>partialProducts</code></td><td><code>boolean</code></td><td><code>true</code></td><td>かける数が2けた以上のかけ算は、0でない位ごとに部分積を1行ずつ、1けたずつ左にずらして書き、2本目の線の下に答えを書きます。<code>false</code>は答えだけにします。</td></tr>
+    <tr><td><code>working</code></td><td><code>'products' | 'remainders'</code></td><td>言語による</td><td>わり算の筆算の下に途中の式のためにあける行です。<code>'products'</code>は各段の積とひいた残りで1段2行、<code>'remainders'</code>はひき算を暗算して残りだけを書き1段1行です（スペイン語・カタルーニャ語・イタリア語）。商のその位が0の段は行をとりません。</td></tr>
   </tbody>
 </table>
 

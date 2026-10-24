@@ -477,10 +477,14 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
     out.push(rule('div.pt-frame.pt-callout', ['padding: 0.75em 1em', 'page-break-inside: avoid']));
   }
   const frameStyles = new Set(options.composed?.frameStyles ?? []);
+  // The boxes an exercise is set in (#1244): its own frameless one, or the
+  // box style its exercise style names. An exercise is a `div` group.
+  const exerciseFrames = new Set((config.exerciseSettings?.styles ?? []).flatMap((st) => (st.box ? [st.box] : [])));
   for (const s of config.calloutStyles) {
     const cls = idOf('pt-callout-', s.id);
     // The box's selector, and the frames' set in its style (#862).
     const sels = frameStyles.has(s.id) ? [`aside.${cls}`, `div.pt-frame.${cls}`] : [`aside.${cls}`];
+    if (exerciseFrames.has(s.id) || s.id.startsWith('__postext-ex')) sels.push(`div.pt-exercise.${cls}`);
     const sel = sels.join(', ');
     const under = (rest: string) => sels.map((x) => `${x} ${rest}`).join(', ');
     const bPx = px(s.body.fontSize);
@@ -652,8 +656,8 @@ export function bookStylesheet(config: ResolvedConfig, fontFaces: string, option
   out.push(rule('.pt-ex-slot', ['position: relative']));
   out.push(rule('.pt-ex-blank', ['height: 1.2em', 'vertical-align: -0.25em']));
   out.push(rule('.pt-ex-blank > input', ['box-sizing: border-box', 'width: 100%', 'height: 100%', 'margin: 0', 'padding: 0', 'border: 0', 'background: transparent', 'color: inherit', 'font: inherit', 'text-align: center']));
-  out.push(rule('.pt-ex-drawn', ['position: relative', 'margin: 0.4em 0', 'text-indent: 0']));
-  out.push(rule('.pt-ex-drawn > svg', ['display: block', 'overflow: visible']));
+  out.push(rule('.pt-ex-drawn', ['position: relative', 'margin: 0.4em 0', 'text-indent: 0', 'max-width: 100%']));
+  out.push(rule('.pt-ex-drawn > svg', ['display: block', 'overflow: visible', 'width: 100%', 'height: auto']));
   out.push(rule('.pt-ex-static', ['margin: 0.6em 0 0', 'font-size: 0.9em', 'text-indent: 0']));
   out.push(rule('.pt-ex-static > summary', ['cursor: pointer']));
   out.push(rule('.pt-sc', ['font-variant: small-caps']));

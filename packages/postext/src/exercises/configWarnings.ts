@@ -47,14 +47,14 @@ const OPTIONS_KEYS = {
   labels: true, prefix: true, suffix: true, marker: true, layout: true, columns: true, shuffle: true, indent: true, bracket: true,
 } satisfies Record<keyof ExerciseOptionsStyle, true>;
 const BLANK_KEYS = { look: true, width: true, extra: true, minWidth: true, color: true, weight: true } satisfies Record<keyof ExerciseBlankStyle, true>;
-const TRUE_FALSE_KEYS = { labels: true, look: true } satisfies Record<keyof ExerciseTrueFalseStyle, true>;
+const TRUE_FALSE_KEYS = { labels: true, look: true, place: true } satisfies Record<keyof ExerciseTrueFalseStyle, true>;
 const MATCH_KEYS = { look: true, gap: true, dotSize: true, color: true } satisfies Record<keyof ExerciseMatchStyle, true>;
 const BANK_KEYS = { box: true, order: true, separator: true } satisfies Record<keyof ExerciseBankStyle, true>;
 const AREA_KEYS = { kind: true, lines: true, spacing: true, color: true, weight: true } satisfies Record<keyof ExerciseAreaStyle, true>;
 const GRID_KEYS = {
   cell: true, fontFamily: true, fontSize: true, color: true, rule: true, ruleWidth: true, blocked: true, uppercase: true,
 } satisfies Record<keyof ExerciseGridStyle, true>;
-const ARITHMETIC_KEYS = { division: true, columns: true } satisfies Record<keyof ExerciseArithmeticStyle, true>;
+const ARITHMETIC_KEYS = { division: true, columns: true, partialProducts: true, working: true } satisfies Record<keyof ExerciseArithmeticStyle, true>;
 const LEVEL_KEYS = { glyph: true, empty: true, max: true, color: true } satisfies Record<keyof ExerciseLevelStyle, true>;
 const ICON_KEYS = { resourceId: true, glyph: true, fontFamily: true, color: true, alt: true, size: true } satisfies Record<keyof ExerciseIcon, true>;
 const ANSWERS_KEYS = { color: true, fontFamily: true, italic: true } satisfies Record<keyof ExerciseAnswersStyle, true>;
@@ -71,10 +71,12 @@ const CHOICES = {
   blankLook: [['line', 'dots', 'box', 'none'], 'line'],
   blankWidth: [['answer', 'longest'], 'longest'],
   trueFalseLook: [['boxes', 'bracket'], 'boxes'],
+  trueFalsePlace: [['end', 'start'], 'end'],
   matchLook: [['dots', 'letters'], 'dots'],
   order: [['shuffle', 'alpha', 'written'], 'shuffle'],
   area: [['lines', 'dots', 'grid', 'seyes', 'tianzige', 'box', 'none'], 'lines'],
   division: [['bracket', 'potence', 'inline'], 'bracket'],
+  working: [['products', 'remainders'], 'products'],
   placement: [['none', 'after', 'inverted', 'chapterEnd', 'directive'], 'none'],
   solutionsLayout: [['key', 'full'], 'full'],
   edition: [['student', 'teacher'], 'student'],
@@ -148,6 +150,7 @@ export function exerciseConfigWarnings(config: Pick<PostextConfig, 'exerciseStyl
       if (trueFalse) {
         keys(trueFalse, TRUE_FALSE_KEYS, `${at}.trueFalse`);
         choice(trueFalse.look, CHOICES.trueFalseLook, `${at}.trueFalse.look`);
+        choice(trueFalse.place, CHOICES.trueFalsePlace, `${at}.trueFalse.place`);
       }
       const match = record(s.match);
       if (match) {
@@ -169,6 +172,7 @@ export function exerciseConfigWarnings(config: Pick<PostextConfig, 'exerciseStyl
       if (arithmetic) {
         keys(arithmetic, ARITHMETIC_KEYS, `${at}.arithmetic`);
         choice(arithmetic.division, CHOICES.division, `${at}.arithmetic.division`);
+        choice(arithmetic.working, CHOICES.working, `${at}.arithmetic.working`);
       }
       keys(s.level, LEVEL_KEYS, `${at}.level`);
       const icons = record(s.icons);
