@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Veuves, orphelines et équilibrage',
   description: 'Les règles qui gardent ensemble les lignes et les blocs de part et d’autre d’un saut de colonne, et les leviers qui font finir chaque colonne au même niveau',
   lang: 'fr',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '25 min',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ Ces réglages se trouvent sous `headings.balancing`.
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>Limite supérieure de cette approche, en millièmes d’em par caractère (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Remplit avec ses propres paragraphes une colonne que les règles des veuves et des orphelines ont laissée courte d’une ligne : les paragraphes en drapeau peuvent eux aussi gagner une ligne, un paragraphe justifié n’espace aucune ligne plus que <code>bodyText.maxWordSpacing</code> ni plus que sa propre ligne la plus lâche, et si aucun ne gagne la ligne, l’un d’eux est composé une ligne plus court pour que la coupure suivante la reprenne. Gardé seulement si les pages finissent avec moins de colonnes courtes.</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'الأسطر الأرامل واليتيمة والموازنة',
   description: 'القواعد التي تُبقي الأسطر والكتل معًا عند فاصل العمود، والأدوات التي تجعل كل الأعمدة تنتهي عند المستوى نفسه',
   lang: 'ar',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '22 دقيقة',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ export const metadata = {
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>الحد الأعلى لذلك التوسيع، بأجزاء الألف من em لكل حرف (10 = 0.01 em).</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>يملأ العمود الذي تركته قاعدتا الأرملة واليتيمة قصيرًا بسطر، بفقراته هو: الفقرات غير المضبوطة الحافة تستطيع هي أيضًا أن تطول سطرًا، والفقرة المضبوطة لا تُباعد أي سطر أكثر من <code>bodyText.maxWordSpacing</code> ولا أكثر من أوسع سطر فيها، وإن لم تكسب أي فقرة السطر تُصفّ إحداها أقصر بسطر ليأخذه الانقسام الذي يليها. لا يُبقى عليه إلا إذا انتهت الصفحات بأعمدة قصيرة أقل.</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

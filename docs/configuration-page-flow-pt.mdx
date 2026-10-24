@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: 'Viúvas, órfãs e equilíbrio',
   description: 'As regras que mantêm linhas e blocos juntos numa quebra de coluna, e as alavancas que fazem todas as colunas terminarem na mesma altura',
   lang: 'pt',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '23 min',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ Esses ajustes ficam em `headings.balancing`.
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>Limite superior desse tracking, em milésimos de eme por caractere (10 = 0,01 em).</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>Preenche com os próprios parágrafos uma coluna que as regras de viúvas e órfãs deixaram uma linha curta: parágrafos não justificados também podem ganhar uma linha, um justificado não abre nenhuma linha mais que <code>bodyText.maxWordSpacing</code> nem mais que sua própria linha mais aberta, e quando nenhum ganha a linha, um é composto com uma linha a menos para que a quebra seguinte a receba. Só é mantido se as páginas terminam com menos colunas curtas.</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>

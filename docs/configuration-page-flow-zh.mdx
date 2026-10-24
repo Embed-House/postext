@@ -5,7 +5,7 @@ export const metadata = {
   sidebarTitle: '孤行与各栏齐底',
   description: '换栏时不让行和块被拆散的规则，以及让各栏底部平齐的各种调整手段',
   lang: 'zh',
-  lastUpdated: '2026-10-19',
+  lastUpdated: '2026-10-24',
   readingTime: '15分钟',
   order: 10,
   parent: 'configuration',
@@ -281,6 +281,12 @@ export const metadata = {
       <td><code>number</code></td>
       <td><code>10</code></td>
       <td>该字距的上限，单位是每个字符千分之一em（10 = 0.01 em）。</td>
+    </tr>
+    <tr>
+      <td><code>fillShortColumns</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>用本栏自己的段落填满被孤行、寡行规则留短一行的栏：不齐右的段落也可以多排一行；两端对齐的段落每一行的字间距都不超过 <code>bodyText.maxWordSpacing</code> 或该段原本最松的一行；若没有段落能多排一行，就把其中一段少排一行，让其后的断栏接住这一行。只有当页面的短栏因此变少时才保留。</td>
     </tr>
     <tr>
       <td><code>trailing</code></td>
