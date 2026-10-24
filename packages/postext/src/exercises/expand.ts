@@ -48,6 +48,9 @@ export interface ExpandContext {
   bodyFont?: string;
   /** Ids of the configured box styles (a style's `box` must name one). */
   boxIds: ReadonlySet<string>;
+  /** The room a box style takes across (its side padding and border),
+   *  points, by id: what an exercise set on that box has less to draw on. */
+  boxInsets?: ReadonlyMap<string, number>;
   /** The book's outline, whose `exercise` entries a
    *  `:::solutions{scope="book"}` prints (#1229). */
   outline?: readonly OutlineEntry[];
@@ -186,12 +189,15 @@ export function expandExercises(blocks: readonly ContentBlock[], ctx: ExpandCont
       usedStyles.add(style.id);
       const number = numbers.get(ex.id) ?? '';
       const e = emitter(ex, style, number);
-      out.blocks.push(...e.exerciseBlocks());
+      const set = e.exerciseBlocks();
       out.records.push(e.record());
       for (const word of e.unplaced) issues.push({ kind: 'exerciseWordUnplaced', exercise: ex.id, detail: word, sourceStart: ex.sourceStart, sourceEnd: ex.sourceEnd });
       const placement = solutionsOf(style, book).placement;
-      if (placement === 'after' || placement === 'inverted') out.blocks.push(...e.solutionBox(placement === 'inverted'));
+      // The solution right after the exercise goes inside its box, before
+      // the box closes: a page break never parts them.
+      if (placement === 'after' || placement === 'inverted') set.splice(set.length - 1, 0, ...e.solutionBox(placement === 'inverted'));
       else if (placement === 'chapterEnd' || placement === 'directive') pending.push({ ex, style, number, e });
+      out.blocks.push(...set);
       i = ex.end;
       continue;
     }
@@ -369,8 +375,16 @@ class Emitter {
     return blocks;
   }
 
+  /** The room across inside the exercise's box: the column, less the
+   *  padding and border of the style's `box` (a card's areas and grids
+   *  stay inside it). */
+  private get measure(): number {
+    const box = this.style.box && this.ctx.boxIds.has(this.style.box) ? this.style.box : undefined;
+    return Math.max(1, this.ctx.measurePt - (box ? this.ctx.boxInsets?.get(box) ?? 0 : 0));
+  }
+
   private get dpiFree(): { size: number; line: number; measure: number } {
-    return { size: this.ctx.bodySizePt, line: this.ctx.lineHeightPt, measure: this.ctx.measurePt };
+    return { size: this.ctx.bodySizePt, line: this.ctx.lineHeightPt, measure: this.measure };
   }
 
   /** A writing area of `lines` lines, the answers written in a teacher's
@@ -881,7 +895,7 @@ class Emitter {
         kind: 'match', id: `${this.ids.frame}-match-${this.ex.ordinal}`, style: this.style,
         left: lefts.map((p) => plain(this.gapsOf(p.left))), right: order.map((k) => plain(this.gapsOf(rights[k]!))),
         links: this.teacher ? lefts.map((p) => posOf.get(pairs.indexOf(p))!) : this.example && lefts[0] ? [posOf.get(pairs.indexOf(lefts[0]))!] : undefined,
-        bodySizePt: this.ctx.bodySizePt, lineHeightPt: this.ctx.lineHeightPt, measurePt: this.ctx.measurePt, labels: order.map((_, pos) => this.label(pos)),
+        bodySizePt: this.ctx.bodySizePt, lineHeightPt: this.ctx.lineHeightPt, measurePt: this.measure, labels: order.map((_, pos) => this.label(pos)),
         ...(this.ctx.bodyFont ? { font: this.ctx.bodyFont } : {}),
       }));
     }
@@ -945,7 +959,7 @@ class Emitter {
     const count = Math.min(cats.length, 4);
     const cols = this.open('columns', { count: String(count) });
     // A sub-column's width: the gap between two is a line of text.
-    const colWidth = (this.ctx.measurePt - (count - 1) * this.ctx.lineHeightPt) / count;
+    const colWidth = (this.measure - (count - 1) * this.ctx.lineHeightPt) / count;
     out.push(cols.start);
     cats.forEach((c, ci) => {
       out.push(...this.paragraphs(this.ids.instruction, [{ ...c.name, spans: c.name.spans.map((s) => ({ ...s, bold: true })) }]));
@@ -963,7 +977,7 @@ class Emitter {
     const ex = this.ex;
     const box = gridBox({
       kind: ex.kind as 'wordsearch' | 'crossword' | 'arithmetic', id: `${this.ids.frame}-grid-${ex.ordinal}`, style: this.style, exercise: ex,
-      blocks: this.blocks, seed: this.book.seed, teacher: this.teacher, bodySizePt: this.ctx.bodySizePt, lineHeightPt: this.ctx.lineHeightPt, measurePt: this.ctx.measurePt,
+      blocks: this.blocks, seed: this.book.seed, teacher: this.teacher, bodySizePt: this.ctx.bodySizePt, lineHeightPt: this.ctx.lineHeightPt, measurePt: this.measure,
       words: { across: this.book.words.across, down: this.book.words.down, comma: this.book.language === 'ar' ? '\u060C ' : this.book.language === 'zh' || this.book.language === 'ja' ? '\u3001' : ', ' },
       num: (n) => this.num(n),
       ...(this.ctx.rtl ? { rtl: true } : {}),

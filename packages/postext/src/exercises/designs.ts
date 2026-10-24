@@ -8,6 +8,7 @@
  */
 
 import type { CalloutStyleConfig, ColorValue, DesignElement, DesignPathElement, DesignTextElement, Dimension } from '../types.js';
+import { graphemesOf } from '../measure/graphemes.js';
 
 const PT = (value: number): Dimension => ({ value: Math.round(value * 1000) / 1000, unit: 'pt' });
 const ZERO = PT(0);
@@ -132,7 +133,18 @@ export function areaElements(a: AreaSpec): { elements: DesignElement[]; heightPt
     case 'none':
       break;
   }
-  if (a.answers && a.answerColor) {
+  if (a.answers && a.answerColor && (a.kind === 'grid' || a.kind === 'tianzige')) {
+    // On squares a model answer is written a character to a square, row
+    // after row, as a pupil writes on 田字格 or squared paper.
+    const cols = Math.max(1, Math.floor(w / sp));
+    const chars = graphemesOf(a.answers.join(''));
+    chars.slice(0, cols * n).forEach((ch, k) => {
+      if (ch.trim() === '') return;
+      els.push(textElement(`answer${k}`, ch, (k % cols) * sp, Math.floor(k / cols) * sp, sp, sp, sp * 0.62, {
+        color: a.answerColor, overflow: 'clip', ...(a.answerFont ? { fontFamily: a.answerFont } : {}),
+      }));
+    });
+  } else if (a.answers && a.answerColor) {
     const size = a.answerSizePt ?? sp * 0.6;
     a.answers.slice(0, n).forEach((text, i) => {
       if (!text) return;

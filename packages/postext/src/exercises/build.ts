@@ -96,6 +96,12 @@ export function expandDocumentExercises(
     bodyFont: resolved.bodyText.fontFamily,
     ...(resolvedDirection(resolved) === 'rtl' ? { rtl: true } : {}),
     boxIds: new Set(resolved.calloutStyles.map((s) => s.id)),
+    boxInsets: new Map(resolved.calloutStyles.map((s) => {
+      const px = (d: Parameters<typeof dimensionToPx>[0]): number => dimensionToPx(d, dpi, bodyPx);
+      const border = s.border.enabled ? 2 * px(s.border.width) : 0;
+      const stripe = s.stripe?.enabled && (s.stripe.side === 'left' || s.stripe.side === 'right') ? px(s.stripe.width) : 0;
+      return [s.id, toPt(px(s.padding.left) + px(s.padding.right) + border + stripe)];
+    })),
   });
 }
 
