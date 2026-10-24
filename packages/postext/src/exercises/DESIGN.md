@@ -233,3 +233,22 @@ printed answered and not asked), `shuffle=false` (match, order), `bank` (gaps). 
 - Numbering: per style counter (`number.counter`), reset by `number.resetOn`, carried between
   chapters in `LayoutContinuation.statementCounters` under `exercise:<counter>`.
 - Records (`record.ts`, `VDTDocument.exercises`): slots per item for the digital outputs.
+
+### 7.1 Follow-ups (#1244)
+
+- A ruby in a blank keeps its reading: `VDTChip.readings` (runs from the box's left edge, a quarter
+  of the reading's em apart and centred over the box when they would touch), painted by the canvas,
+  PDF and HTML painters over a blank too; the reflowable EPUB sets the blank as the base of a
+  `<ruby>`. A number chip carries `upright`, so an italic instruction leaves it unslanted.
+- `trueFalse.place: 'start'`, `arithmetic.partialProducts` and `arithmetic.working` (`'remainders'`
+  in Spanish, Catalan and Italian: one working row a division step; a step whose quotient digit is 0
+  takes none). Operations read decimals: added and subtracted on the decimal mark, multiplied
+  right-aligned, a decimal dividend's quotient carried two more places while there is a remainder;
+  a decimal divisor is not read.
+- `cells` on an open question sizes its squares, or sets groups of them side by side.
+- On a vertical page items are numbered ①; item and solution numbers are bold when `number.fontWeight`
+  is; an open question's instruction is its first paragraph.
+- Grids on a right-to-left page record `rtl` and count their cells from the right, as painted. The
+  HTML viewer paints such a page as a mirrored flow: its design paths stay mirrored (`svg.pt-path`)
+  and the exercise controls turn back about their own centres. A reflowable EPUB's drawn boxes are
+  set in ems; the script lays its controls on a layer of the printed size scaled to the box.

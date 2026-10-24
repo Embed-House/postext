@@ -241,6 +241,9 @@ function exerciseRuntime(): Runtime {
     '.pt-ex-tag{position:absolute;left:50%;top:100%;transform:translate(-50%,.1em);font:600 .55em/1 system-ui,sans-serif;white-space:nowrap;padding:.1em .3em;border-radius:.3em;background:#eef2fb;color:#1d1d1f;pointer-events:none;}' +
     '.pt-ex-svg{position:absolute;left:0;top:0;overflow:visible;}' +
     '.pt-ex-layer{position:absolute;left:0;top:0;transform-origin:0 0;}' +
+    // The controls of a mirrored flow (a right-to-left page of the HTML
+    // viewer) turn back about their own centres, as its text does (#1244).
+    '.pt-flow-mirrored .pt-ex-ui:not(svg){transform:scaleX(-1);}' +
     '.pt-ex-dot{fill:transparent;stroke:transparent;cursor:pointer;pointer-events:all;}' +
     '.pt-ex-dot.pt-ex-pending{stroke:#1a5fb4;stroke-width:2;}' +
     '.pt-ex-dot:focus{outline:none;stroke:#1a5fb4;stroke-width:2;}' +
@@ -363,6 +366,8 @@ function exerciseRuntime(): Runtime {
     const ppt = data.pxPerPt || 1;
     const body = data.bodyPx || 16;
     const flow = data.flow === true;
+    // A right-to-left page the HTML viewer paints as a mirrored flow (#1244).
+    const mirroredFlow = !!(outers[0] || found[0] || { closest: () => null }).closest('.pt-flow-mirrored');
     // The answer key written for a reader with no script: the bar's own
     // takes its place.
     const statics = scope.querySelectorAll('.pt-ex-static[data-pt-ex="' + id + '"]');
@@ -690,8 +695,9 @@ function exerciseRuntime(): Runtime {
       const size = grid.cellPt * ppt;
       const f = own(el('span', 'pt-ex-field pt-ex-ui', box));
       // A right-to-left page's grid is mirrored: its columns count from the
-      // box's right edge.
-      f.style[grid.rtl ? 'right' : 'left'] = px((grid.xPt + c * grid.cellPt) * ppt);
+      // box's right edge. In a flow the page mirrors as a whole (the HTML
+      // viewer's), the flow's left is that edge already.
+      f.style[grid.rtl && !mirroredFlow ? 'right' : 'left'] = px((grid.xPt + c * grid.cellPt) * ppt);
       f.style.top = px((grid.yPt + r * grid.cellPt) * ppt);
       f.style.width = px(size);
       f.style.height = px(size);

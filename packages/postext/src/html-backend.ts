@@ -3476,7 +3476,7 @@ function renderDesignPathBlock(block: VDTDesignPathBlock): string {
   for (const m of block.markers ?? []) parts.push(markerSvgElement(m, x, y, esc));
   if (parts.length === 0) return '';
   return (
-    `<svg aria-hidden="true" focusable="false" width="${width}" height="${height}" ` +
+    `<svg class="pt-path" aria-hidden="true" focusable="false" width="${width}" height="${height}" ` +
     `style="position:absolute;left:${x}px;top:${y}px;width:${width}px;height:${height}px;overflow:visible;">` +
     parts.join('') +
     `</svg>`
@@ -3967,12 +3967,14 @@ function renderComicPageHtml(page: VDTPage, comic: VDTComicPage, k: number, opti
  *  stretched dash, a turned design picture) keeps it and stays mirrored. */
 const MIRRORED_FLOW_STYLE =
   '<style>.pt-flow-mirrored [style*="white-space:pre"],.pt-flow-mirrored img,' +
-  '.pt-flow-mirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}' +
+  // A design's drawing is geometry, mirrored with the flow as the canvas
+  // and the PDF mirror it (#1244): a crossword's cells, a box's ornament.
+  '.pt-flow-mirrored svg:not(.pt-char-grid):not(.pt-path),.pt-flow-mirrored .pt-video{transform:scaleX(-1);}' +
   // A box reflected back about its body (a vertical label, #955) or a
   // vertical frame of the page placed by a matrix that includes the mirror
   // (#960): what is in it is not mirrored, so nothing is turned back.
   '.pt-flow-mirrored .pt-unmirrored [style*="white-space:pre"],.pt-flow-mirrored .pt-unmirrored img,' +
-  '.pt-flow-mirrored .pt-unmirrored svg:not(.pt-char-grid),.pt-flow-mirrored .pt-unmirrored .pt-video{transform:none;}</style>';
+  '.pt-flow-mirrored .pt-unmirrored svg:not(.pt-char-grid):not(.pt-path),.pt-flow-mirrored .pt-unmirrored .pt-video{transform:none;}</style>';
 
 /** The character grid (稿纸) as one SVG path over the page, under the
  *  text (see `cjkGridCells`). */
