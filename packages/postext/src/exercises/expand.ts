@@ -266,6 +266,8 @@ function bookSolutions(entries: readonly OutlineEntry[], style: ResolvedExercise
 class Emitter {
   readonly ids: ExerciseStyleIds;
   readonly teacher: boolean;
+  /** `example`: the first item is printed answered, as a model. */
+  readonly example: boolean;
   readonly at: number;
   readonly slots: ExerciseSlot[] = [];
   readonly grids: ExerciseGridInfo[] = [];
@@ -290,8 +292,21 @@ class Emitter {
   ) {
     this.ids = exerciseStyleIds(style);
     this.teacher = book.edition === 'teacher';
+    this.example = ex.attrs.example !== undefined && ex.attrs.example !== 'false';
     this.at = ex.sourceStart;
     this.random = seededRandom(book.seed, ex.ordinal, ex.kind);
+  }
+
+  /** Whether an item prints its answer: in a teacher's edition, and the
+   *  first item of an `example` exercise. */
+  private answered(first: boolean): boolean {
+    return this.teacher || (this.example && first);
+  }
+
+  /** The exercise slot of an item, none for the model item of an
+   *  `example` exercise (it is not asked). */
+  private hit(slot: string, first: boolean): { exercise?: { ex: number; slot: string } } {
+    return this.example && first && !this.teacher ? {} : { exercise: { ex: this.ex.id, slot } };
   }
 
   private label(k: number): string {
@@ -340,13 +355,13 @@ class Emitter {
 
   /** A writing area of `lines` lines, the answers written in a teacher's
    *  edition. */
-  private area(lines: number, slot: string, answers?: string[], kind?: AreaKind, widthPt?: number): ContentBlock[] {
+  private area(lines: number, slot: string, answers?: string[], kind?: AreaKind, widthPt?: number, shown = false): ContentBlock[] {
     const a = this.style.area;
     const k = kind ?? a.kind;
     const spacing = a.spacing ? dimPt(a.spacing, this.dpiFree.size) : this.dpiFree.line * (k === 'grid' || k === 'tianzige' ? 1.2 : 1.35);
     const { elements, heightPt } = areaElements({
       kind: k, lines, spacingPt: spacing, widthPt: widthPt ?? this.dpiFree.measure, color: a.color, weightPt: dimPt(a.weight, this.dpiFree.size),
-      ...(this.teacher && answers ? { answers, answerColor: this.style.answers.color, answerSizePt: this.dpiFree.size * 0.95, ...(this.style.answers.fontFamily ?? this.ctx.bodyFont ? { answerFont: this.style.answers.fontFamily ?? this.ctx.bodyFont } : {}) } : {}),
+      ...((this.teacher || shown) && answers ? { answers, answerColor: this.style.answers.color, answerSizePt: this.dpiFree.size * 0.95, ...(this.style.answers.fontFamily ?? this.ctx.bodyFont ? { answerFont: this.style.answers.fontFamily ?? this.ctx.bodyFont } : {}) } : {}),
     });
     const id = `${this.ids.frame}-area-${this.ex.ordinal}-${slot}`;
     const blocks = this.drawn(drawnBox(id, elements, heightPt));
@@ -489,13 +504,20 @@ class Emitter {
       out.push(set);
       // An open question: lines under each item of the list.
       if (ex.kind === 'open' && b.type === 'listItem' && (b.depth ?? 1) <= 1) {
-        out.push(...this.area(this.openLines(), `t${lists.indexOf(k) + 1}`, this.openAnswer(lists.indexOf(k))));
+        out.push(...this.area(this.openLines(), `t${lists.indexOf(k) + 1}`, this.openAnswer(lists.indexOf(k)), this.openArea()));
       }
     }
     flush();
-    if (ex.kind === 'open' && lists.length === 0) out.push(...this.area(this.openLines(), 't1', this.openAnswer(0)));
+    if (ex.kind === 'open' && lists.length === 0) out.push(...this.area(this.openLines(), 't1', this.openAnswer(0), this.openArea()));
     if (ex.kind === 'gaps' || ex.kind === 'choice' || ex.kind === 'mark') this.keyOfGaps();
     return out;
+  }
+
+  /** The writing area an open question asks for (`area=grid`), else the
+   *  style's. */
+  private openArea(): AreaKind | undefined {
+    const k = this.ex.attrs.area?.trim();
+    return k === 'lines' || k === 'dots' || k === 'grid' || k === 'seyes' || k === 'tianzige' || k === 'box' || k === 'none' ? k : undefined;
   }
 
   private openLines(): number {
@@ -580,12 +602,15 @@ class Emitter {
     const widthText = width === 'longest' ? this.longestAnswer() + extra : width === 'answer' ? answer.text + extra : undefined;
     const words = answer.spans.length > 0 ? answer : textRun(answer.text || '\u00A0', at);
     const slot = `g${n}`;
-    this.slots.push({ key: slot, kind: 'gap', accept: gap.texts.filter((_, k) => gap.correct.includes(k)) });
+    const shown = this.answered(n === 1);
+    if (!(this.example && n === 1 && !this.teacher)) this.slots.push({ key: slot, kind: 'gap', accept: gap.texts.filter((_, k) => gap.correct.includes(k)) });
     this.bankWords.push(textRun(answer.text, at));
-    const run = chipRun(this.teacher ? this.ids.blankAnswer : this.ids.blank, words, at, {
-      ...(widthText ? { widthText } : {}),
-      ...(this.teacher ? {} : { blank: true as const, blankLabel: this.book.words.blank }),
-      exercise: { ex: this.ex.id, slot },
+    // `[[went]]{width=6}`: a blank six ems wide.
+    const ems = parseFloat(gap.attrs?.width ?? '');
+    const run = chipRun(shown ? this.ids.blankAnswer : this.ids.blank, words, at, {
+      ...(Number.isFinite(ems) && ems > 0 ? { widthText: '\u2003'.repeat(Math.round(ems)) } : widthText ? { widthText } : {}),
+      ...(shown ? {} : { blank: true as const, blankLabel: this.book.words.blank }),
+      ...this.hit(slot, n === 1),
     });
     run.spans[0] = { ...run.spans[0]!, bold, italic };
     return run;
@@ -597,7 +622,7 @@ class Emitter {
       if (k > 0) parts.push(textRun(' / ', at));
       const right = gap.correct.includes(k);
       const words: Run = { text: gap.texts[k] ?? '', spans: opt.length > 0 ? opt : [{ text: gap.texts[k] || '\u00A0', bold: false, italic: false }], sourceMap: [] };
-      parts.push(chipRun(this.teacher && right ? this.ids.choiceRing : this.ids.choice, words, at, { exercise: { ex: this.ex.id, slot: `g${n}o${k + 1}` } }));
+      parts.push(chipRun(this.answered(n === 1) && right ? this.ids.choiceRing : this.ids.choice, words, at, this.hit(`g${n}o${k + 1}`, n === 1)));
     });
     parts.push(textRun(')', at));
     this.slots.push({ key: `g${n}`, kind: 'choice', options: gap.options.length, correct: gap.correct.map((k) => k + 1), multiple: false });
@@ -607,7 +632,12 @@ class Emitter {
   private markRun(gap: ExerciseGap, n: number, at: number): Run {
     const words: Run = { text: gap.texts[0] ?? '', spans: gap.options[0] ?? [], sourceMap: [] };
     this.slots.push({ key: `m${n}`, kind: 'mark', correct: [1] });
-    return chipRun(this.teacher ? this.ids.markOn : this.ids.mark, words.spans.length > 0 ? words : textRun(words.text, at), at, { exercise: { ex: this.ex.id, slot: `m${n}` } });
+    // How the answer shows the word: a ring (the default), a box, a line
+    // under it, a highlight; per word (`[[riega]]{mark=underline}`) or for
+    // the exercise.
+    const look = (gap.attrs?.mark ?? this.ex.attrs.mark ?? 'circle').trim();
+    const on = look === 'box' || look === 'underline' || look === 'highlight' ? `${this.ids.markOn}-${look}` : this.ids.markOn;
+    return chipRun(this.answered(n === 1) ? on : this.ids.mark, words.spans.length > 0 ? words : textRun(words.text, at), at, this.hit(`m${n}`, n === 1));
   }
 
   private keyOfGaps(): void {
@@ -670,21 +700,26 @@ class Emitter {
     const order = o.shuffle ? shuffledOrder(q.options.length, seededRandom(this.book.seed, this.ex.ordinal, 'q', qi), false) : q.options.map((_, k) => k);
     const group = `q${qi + 1}`;
     this.slots.push({ key: group, kind: 'choice', options: q.options.length, correct: order.flatMap((k, pos) => (q.options[k]!.correct ? [pos + 1] : [])), multiple: q.multiple });
+    // Side by side (`columns=n` or a row layout), a label and its words are
+    // a space apart: the tabs go between the options.
+    const asked = parseInt(this.ex.attrs.columns ?? '', 10);
+    const inRows = (Number.isFinite(asked) && asked > 0) || o.layout === 'row';
     const items: Run[] = order.map((k, pos) => {
       const opt = q.options[k]!;
       const at = this.blocks[opt.block]!.sourceStart;
       const label = this.label(pos);
       const parts: Run[] = [];
-      const slot = { exercise: { ex: this.ex.id, slot: `${group}o${pos + 1}` } };
+      const slot = this.hit(`${group}o${pos + 1}`, qi === 0);
+      const shown = this.answered(qi === 0);
       if (o.marker !== 'none') {
-        parts.push(chipRun(this.teacher && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, slot));
+        parts.push(chipRun(shown && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, slot));
         parts.push(textRun(SPACE, at));
       }
       if (label) {
         const labelRun = textRun(label, at);
-        parts.push(o.marker === 'none' ? chipRun(this.teacher && opt.correct ? this.ids.choiceRing : this.ids.choice, labelRun, at, slot) : labelRun);
+        parts.push(o.marker === 'none' ? chipRun(shown && opt.correct ? this.ids.choiceRing : this.ids.choice, labelRun, at, slot) : labelRun);
       }
-      if (parts.length > 0) parts.push(tabRun(at));
+      if (parts.length > 0) parts.push(inRows ? textRun('\u00A0', at) : tabRun(at));
       parts.push(this.optionText(opt.block));
       return joinRuns(...parts);
     });
@@ -707,13 +742,14 @@ class Emitter {
       blocks.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(`${n}.`, at, { bold: true }), tabRun(at), runOf(stem))]));
     }
     const optionStyle = q.stem !== undefined ? this.ids.optionUnder : this.ids.option;
-    if (o.layout === 'row') {
-      const per = o.columns ?? items.length;
+    // `columns=3` on the fence, or a row layout: the options side by side.
+    if (inRows) {
+      const per = Math.max(1, Math.min(6, Number.isFinite(asked) && asked > 0 ? asked : o.columns ?? items.length));
       const rows: Run[] = [];
       for (let k = 0; k < items.length; k += per) {
         rows.push(joinRuns(...items.slice(k, k + per).flatMap((r, j) => (j > 0 ? [tabRun(this.at), r] : [r]))));
       }
-      blocks.push(...this.paragraphs(this.ids.row, rows));
+      blocks.push(...this.paragraphs(`${this.ids.row}-${Math.min(6, per)}`, rows));
     } else {
       blocks.push(...this.paragraphs(optionStyle, items));
     }
@@ -731,12 +767,12 @@ class Emitter {
       const parts: Run[] = [textRun(`${k + 1}.`, at), tabRun(at), this.optionText(opt.block), tabRun(at)];
       if (this.style.trueFalse.look === 'bracket') {
         const answer = textRun(opt.correct ? t : f, at);
-        parts.push(chipRun(this.teacher ? this.ids.blankAnswer : this.ids.blank, answer, at, {
-          widthText: `${t.length > f.length ? t : f}\u2003\u2003`, ...(this.teacher ? {} : { blank: true as const, blankLabel: this.book.words.blank }), exercise: { ex: this.ex.id, slot },
+        parts.push(chipRun(this.answered(k === 0) ? this.ids.blankAnswer : this.ids.blank, answer, at, {
+          widthText: `${t.length > f.length ? t : f}\u2003\u2003`, ...(this.answered(k === 0) ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(slot, k === 0),
         }));
       } else {
-        parts.push(textRun(`${t}\u00A0`, at), chipRun(this.teacher && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, { exercise: { ex: this.ex.id, slot: `${slot}t` } }));
-        parts.push(textRun(`\u2003${f}\u00A0`, at), chipRun(this.teacher && !opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, { exercise: { ex: this.ex.id, slot: `${slot}f` } }));
+        parts.push(textRun(`${t}\u00A0`, at), chipRun(this.answered(k === 0) && opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, this.hit(`${slot}t`, k === 0)));
+        parts.push(textRun(`\u2003${f}\u00A0`, at), chipRun(this.answered(k === 0) && !opt.correct ? this.ids.tickOn : this.ids.tick, textRun('\u00A0', at), at, this.hit(`${slot}f`, k === 0)));
       }
       runs.push(joinRuns(...parts));
       this.key.push(textRun(`${k + 1} ${opt.correct ? t : f}`, this.at));
@@ -765,7 +801,7 @@ class Emitter {
       return this.drawnGrid(gridBox({
         kind: 'match', id: `${this.ids.frame}-match-${this.ex.ordinal}`, style: this.style,
         left: lefts.map((p) => plain(this.gapsOf(p.left))), right: order.map((k) => plain(this.gapsOf(rights[k]!))),
-        links: this.teacher ? lefts.map((p) => posOf.get(pairs.indexOf(p))!) : undefined,
+        links: this.teacher ? lefts.map((p) => posOf.get(pairs.indexOf(p))!) : this.example && lefts[0] ? [posOf.get(pairs.indexOf(lefts[0]))!] : undefined,
         bodySizePt: this.ctx.bodySizePt, lineHeightPt: this.ctx.lineHeightPt, measurePt: this.ctx.measurePt, labels: order.map((_, pos) => this.label(pos)),
         ...(this.ctx.bodyFont ? { font: this.ctx.bodyFont } : {}),
       }));
@@ -778,8 +814,8 @@ class Emitter {
       if (p) {
         const pos = posOf.get(pairs.indexOf(p))!;
         parts.push(textRun(`${i + 1}. `, this.at), this.gapsOf(p.left), textRun(' ', this.at));
-        parts.push(chipRun(this.teacher ? this.ids.blankAnswer : this.ids.blank, textRun(this.label(pos) || String(pos + 1), this.at), this.at, {
-          widthText: '\u2003\u2003', ...(this.teacher ? {} : { blank: true as const, blankLabel: this.book.words.blank }), exercise: { ex: this.ex.id, slot: `p${i + 1}` },
+        parts.push(chipRun(this.answered(i === 0) ? this.ids.blankAnswer : this.ids.blank, textRun(this.bareLabel(pos) || String(pos + 1), this.at), this.at, {
+          widthText: '\u2003\u2003', ...(this.answered(i === 0) ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(`p${i + 1}`, i === 0),
         }));
       }
       parts.push(tabRun(this.at));
@@ -798,8 +834,8 @@ class Emitter {
       const slot = `o${pos + 1}`;
       this.slots.push({ key: slot, kind: 'rank', accept: [String(k + 1)] });
       return joinRuns(
-        chipRun(this.teacher ? this.ids.rankAnswer : this.ids.rank, textRun(String(k + 1), at), at, {
-          ...(this.teacher ? {} : { blank: true as const, blankLabel: this.book.words.blank }), exercise: { ex: this.ex.id, slot },
+        chipRun(this.answered(k === 0) ? this.ids.rankAnswer : this.ids.rank, textRun(String(k + 1), at), at, {
+          ...(this.answered(k === 0) ? {} : { blank: true as const, blankLabel: this.book.words.blank }), ...this.hit(slot, k === 0),
         }),
         tabRun(at),
         this.optionText(seq[k]!),
@@ -817,7 +853,7 @@ class Emitter {
       const words = order.flatMap((j, pos) => (pos > 0 ? [textRun(' / ', at), s.pieces[j]!] : [s.pieces[j]!]));
       out.push(...this.paragraphs(this.ids.item, [joinRuns(textRun(`${k + 1}.`, at), tabRun(at), ...words)]));
       const sentence = s.pieces.map((p) => plain(p)).join(' ');
-      out.push(...this.area(1, `sc${k + 1}`, [sentence], this.style.area.kind === 'none' ? 'lines' : this.style.area.kind));
+      out.push(...this.area(1, `sc${k + 1}`, [sentence], this.style.area.kind === 'none' ? 'lines' : this.style.area.kind, undefined, this.example && k === 0));
       this.key.push(textRun(`${k + 1} ${sentence}`, at));
     });
     return out;

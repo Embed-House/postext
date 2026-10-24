@@ -200,6 +200,36 @@ buttons) default to the document language, as resource-type names do.
 
 ## 6. Checks
 
-`exerciseTypeMissing`, `exerciseUnknownType`, `exerciseNoAnswer` (a graded exercise with no right
-answer), `exerciseUnknownStyle`, `exerciseGridTooSmall` (a word that does not fit), `solutionOutside`
-(a `:::solution` outside an exercise).
+Content warnings (`collectContentWarnings`): `exerciseUnknownType`, `exerciseUnknownStyle`,
+`exerciseNoAnswer`, `exerciseUnreadItem`, `exerciseNested`, `exerciseWordUnplaced` (a word a
+crossword or word search could not place), `solutionOutside`.
+
+## 7. What the engine built (#1225–#1229)
+
+Fence attributes read: `type`, `style`, `title`, `n`, `#id`, `level`, `icon`, `columns` (choice
+options n to a row), `select="one|many"`, `lines` and `area` (open), `size` and `directions`
+(`across down diagonal backwards`, wordsearch), `hidden` (wordsearch: no word list), `mark`
+(`circle|box|underline|highlight`, also per word `[[w]]{mark=…}`), `example` (the first item
+printed answered and not asked), `shuffle=false` (match, order), `bank` (gaps). A gap takes
+`{width=N}` (N ems). `:::solutions{scope="chapter"|"book" title="…"}`.
+
+- Expansion (`expand.ts`): the exercise's outer box keeps the fence's container id; drawn parts
+  are nested boxes with a design (`designs.ts` areas, `grids.ts` match/wordsearch/crossword/
+  arithmetic). Text parts are `:::paragraphs` groups in synthetic paragraph styles (`styles.ts`:
+  instruction, text, option, option-under, row-1…6, item, statement, pairs, key) with chips in
+  synthetic chip styles (number, level, icon, blank, blank-answer, choice, choice-ring, tick,
+  tick-on, rank, rank-answer, word, answer, mark, mark-on[-box|-underline|-highlight]).
+  `withExerciseStyles(resolved)` adds the chip and paragraph styles of every exercise style to
+  the resolved config of a document that has exercises; `ResolvedConfig.exerciseSettings` holds
+  the resolved styles and book settings when the config sets them.
+- Chips gained `underline` and `minWidth` (styles) and `widthText`, `blank`, `blankLabel`,
+  `exercise` (spans): a blank is laid out with its answer and not painted.
+- Solutions: `after` and `inverted` print a box after the exercise (`turn="180"` on the fence of
+  the synthetic box; `VDTBlock.turn` set by `markTurnedBoxes`, painted rotated by the canvas,
+  PDF and HTML painters); `chapterEnd` lists them before the next `#` heading under
+  `solutions.heading`; `directive` keeps them for the next `:::solutions`; `scope="book"` prints
+  the `exercise` entries of the book's outline (`contentOutline` adds them and reports
+  `hasIndex` for such a chapter, so hosts pass the outline).
+- Numbering: per style counter (`number.counter`), reset by `number.resetOn`, carried between
+  chapters in `LayoutContinuation.statementCounters` under `exercise:<counter>`.
+- Records (`record.ts`, `VDTDocument.exercises`): slots per item for the digital outputs.

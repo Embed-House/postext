@@ -138,6 +138,10 @@ export function exerciseChipStyles(style: ResolvedExerciseStyle): ChipStyleConfi
     // A word to mark: plain in the pupil's edition, ringed in the answers.
     { id: ids.mark, backgroundEnabled: false, borderWidth: EM(0), borderRadius: EM(0.6), paddingX: EM(0.16), paddingY: EM(0.08), gap: EM(0) },
     { id: ids.markOn, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.06), borderRadius: EM(0.6), paddingX: EM(0.1), paddingY: EM(0.02), gap: EM(0) },
+    // The other ways a marked word shows (`mark=box|underline|highlight`).
+    { id: `${ids.markOn}-box`, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.06), borderRadius: EM(0.08), paddingX: EM(0.1), paddingY: EM(0.02), gap: EM(0) },
+    { id: `${ids.markOn}-underline`, backgroundEnabled: false, borderColor: answer, borderWidth: EM(0.08), underline: 'solid', paddingX: EM(0.16), paddingY: EM(0.04), gap: EM(0) },
+    { id: `${ids.markOn}-highlight`, backgroundEnabled: true, background: { hex: '#ffe58a', model: 'hex' }, borderWidth: EM(0), borderRadius: EM(0.15), paddingX: EM(0.16), paddingY: EM(0.08), gap: EM(0) },
   ];
 }
 
@@ -166,6 +170,12 @@ export function exerciseParagraphStyles(style: ResolvedExerciseStyle): Paragraph
     // The options of a question with a stem, under the stem's text.
     { id: ids.optionUnder, indent: EM(1.8), firstLineIndent: EM(0), hangingIndent: EM(room), tabStops: room > 0 ? [{ position: EM(room) }] : [], spaceBetween: item, marginTop: item, marginBottom: EM(0.5) },
     { id: ids.row, indent, firstLineIndent: EM(0), tabStops: rowStops, tabInterval: EM(8), spaceBetween: item, marginTop: item, marginBottom: item },
+    // Options side by side, n to a row (`columns=n`): a stop at each n-th.
+    ...[1, 2, 3, 4, 5, 6].map((n): ParagraphStyleConfig => ({
+      id: `${ids.row}-${n}`, indent, firstLineIndent: EM(0),
+      tabStops: Array.from({ length: n - 1 }, (_, k) => ({ position: `${Math.round(((k + 1) * 1000) / n) / 10}%` as const })),
+      spaceBetween: item, marginTop: item, marginBottom: item,
+    })),
     { id: ids.item, firstLineIndent: EM(0), hangingIndent: EM(1.8), tabStops: [{ position: EM(1.8) }], spaceBetween: item, marginTop: item, marginBottom: item },
     // A true/false statement: its boxes flush with the end of the line.
     { id: ids.statement, firstLineIndent: EM(0), hangingIndent: EM(1.8), tabStops: [{ position: EM(1.8) }, { position: 'end', align: 'end' }], spaceBetween: item, marginTop: item, marginBottom: item },

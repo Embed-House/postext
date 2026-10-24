@@ -12,7 +12,7 @@ import { graphemesOf } from '../measure/graphemes.js';
 import { drawnBox, pathElement, textElement } from './designs.js';
 import type { ExerciseModel, ExerciseOperation } from './types.js';
 import type { ExerciseGridInfo, ExerciseSlot } from './record.js';
-import { seededRandom } from './shuffle.js';
+import { seededRandom, shuffledOrder } from './shuffle.js';
 import { runOf, type Run } from './text.js';
 import { dimPt } from './expand.js';
 
@@ -222,15 +222,13 @@ function wordSearchBox(input: GridBoxInput): GridBox {
 
 interface Placement { word: number; r: number; c: number; across: boolean }
 
-function crosswordBox(input: GridBoxInput): GridBox {
-  const ex = input.exercise!;
-  const { style } = input;
-  const words = ex.entries.map((e) => lettersOf(e.word, style.grid.uppercase));
-  const random = seededRandom(input.seed ?? 1, ex.ordinal, 'crossword');
+/** Lay the words in `order`, each across a word already laid where a letter
+ *  is shared and no letter touches another word's side or ends. Two
+ *  rounds: a word that found no place may find one once others are down. */
+function layCrossword(words: string[][], order: number[], random: () => number): { cells: Map<string, string>; placed: Placement[]; unplaced: number[]; area: number } {
   const cells = new Map<string, string>();
   const key = (rr: number, c: number): string => `${rr},${c}`;
   const placed: Placement[] = [];
-  const order = words.map((_, k) => k).sort((a, b) => words[b]!.length - words[a]!.length || a - b);
   const canPlace = (w: string[], r0: number, c0: number, across: boolean): number => {
     let crossings = 0;
     const dr = across ? 0 : 1; const dc = across ? 1 : 0;
@@ -241,6 +239,8 @@ function crosswordBox(input: GridBoxInput): GridBox {
       const at = cells.get(key(rr, c));
       if (at !== undefined) {
         if (at !== w[j]) return -1;
+        // A crossing, never a run along a word set the same way.
+        if (placed.some((p) => p.across === across && (across ? p.r === rr && c >= p.c && c < p.c + words[p.word]!.length : p.c === c && rr >= p.r && rr < p.r + words[p.word]!.length))) return -1;
         crossings++;
         continue;
       }
@@ -254,7 +254,6 @@ function crosswordBox(input: GridBoxInput): GridBox {
     for (let j = 0; j < w.length; j++) cells.set(key(r0 + (across ? 0 : j), c0 + (across ? j : 0)), w[j]!);
     placed.push({ word: k, r: r0, c: c0, across });
   };
-  const unplaced: number[] = [];
   if (order.length > 0) put(order[0]!, 0, 0, true);
   let rest = order.slice(1);
   for (let pass = 0; pass < 2; pass++) {
@@ -280,7 +279,31 @@ function crosswordBox(input: GridBoxInput): GridBox {
     }
     rest = left;
   }
-  unplaced.push(...rest);
+  let minR = Infinity; let minC = Infinity; let maxR = -Infinity; let maxC = -Infinity;
+  for (const k of cells.keys()) {
+    const [rr, c] = k.split(',').map(Number) as [number, number];
+    minR = Math.min(minR, rr); maxR = Math.max(maxR, rr); minC = Math.min(minC, c); maxC = Math.max(maxC, c);
+  }
+  const area = Number.isFinite(minR) ? (maxR - minR + 1) * (maxC - minC + 1) : 0;
+  return { cells, placed, unplaced: rest, area };
+}
+
+function crosswordBox(input: GridBoxInput): GridBox {
+  const ex = input.exercise!;
+  const { style } = input;
+  const words = ex.entries.map((e) => lettersOf(e.word, style.grid.uppercase));
+  const random = seededRandom(input.seed ?? 1, ex.ordinal, 'crossword');
+  const key = (rr: number, c: number): string => `${rr},${c}`;
+  // The longest words first, then a few other orders drawn from the seed:
+  // the grid that places the most words wins, then the smallest.
+  const byLength = words.map((_, k) => k).sort((a, b) => words[b]!.length - words[a]!.length || a - b);
+  let best = layCrossword(words, byLength, random);
+  for (let t = 0; t < 24 && best.unplaced.length > 0; t++) {
+    const order = [byLength[0]!, ...shuffledOrder(words.length - 1, random, false).map((k) => byLength[k + 1]!)];
+    const tried = layCrossword(words, order, random);
+    if (tried.unplaced.length < best.unplaced.length || (tried.unplaced.length === best.unplaced.length && tried.area < best.area)) best = tried;
+  }
+  const { cells, placed, unplaced } = best;
   // The grid's extent, and the numbers of the cells a word starts in, in
   // reading order.
   let minR = Infinity; let minC = Infinity; let maxR = -Infinity; let maxC = -Infinity;
