@@ -25,6 +25,7 @@ import type { Locale } from "@/lib/cookbook/types";
 import { SITE_NAME, SITE_URL, buildMetadata, localizedUrl } from "@/lib/seo";
 import { htmlLang } from "@/i18n/locales";
 import { PlainSummary } from "@/components/brand/PlainSummary";
+import { RecipeSandboxTarget } from "@/components/landing/SandboxCta";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -237,6 +238,7 @@ export default async function RecipePage({ params }: { params: Params }) {
         </div>
 
         <RecipeActionBar data={data} />
+        {data.sandbox && <RecipeSandboxTarget href={data.sandbox.href} />}
         <Toaster />
       </main>
     </>
