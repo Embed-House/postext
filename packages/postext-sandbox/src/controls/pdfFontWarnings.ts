@@ -2,12 +2,12 @@ import type { PdfFontWarning } from 'postext-pdf';
 
 /** The font warnings of the last PDF the PDF tab generated (issue #196):
  *  characters a face lacks, a variable font set at its default weight, a
- *  large CFF face embedded whole. The Checks panel lists them until the
+ *  large CFF face embedded whole, the figure features a face lacks (#1237). The Checks panel lists them until the
  *  next generation replaces them; once the book they came from is edited
  *  they are marked as from an earlier PDF, and another book drops them. A
  *  font fallback is left out: the provider's italic-to-upright stand-in is
  *  routine in the Sandbox. */
-export type PdfFontCheck = Extract<PdfFontWarning, { kind: 'missingGlyph' | 'variableFontDefaultInstance' | 'cffEmbeddedWhole' }>;
+export type PdfFontCheck = Extract<PdfFontWarning, { kind: 'missingGlyph' | 'variableFontDefaultInstance' | 'cffEmbeddedWhole' | 'fontFeaturesMissing' }>;
 
 /** The parts of the Sandbox state a PDF is generated from, as far as the
  *  font checks need them. */
@@ -50,7 +50,7 @@ const listeners = new Set<() => void>();
 
 /** Whether a PDF warning is one the Checks panel lists. */
 export function isPdfFontCheck(warning: { kind: string }): warning is PdfFontCheck {
-  return warning.kind === 'missingGlyph' || warning.kind === 'variableFontDefaultInstance' || warning.kind === 'cffEmbeddedWhole';
+  return warning.kind === 'missingGlyph' || warning.kind === 'variableFontDefaultInstance' || warning.kind === 'cffEmbeddedWhole' || warning.kind === 'fontFeaturesMissing';
 }
 
 /** The font warnings of the last PDF generated. */

@@ -13,6 +13,7 @@ export type {
   PdfMissingGlyphWarning,
   PdfVariableFontWarning,
   PdfCffEmbeddedWholeWarning,
+  PdfFontFeaturesWarning,
   PdfComplexShapingWarning,
   PdfPrintWarning,
   ResourceBytesProvider,

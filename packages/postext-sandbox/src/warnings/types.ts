@@ -160,6 +160,7 @@ export type WarningKind =
   | 'missingGlyph'
   | 'variableFontDefaultInstance'
   | 'cffEmbeddedWhole'
+  | 'fontFeaturesMissing'
   | 'comicSplitSyntax'
   | 'comicSplitOverflow'
   | 'comicPanelCount'
@@ -663,6 +664,11 @@ export type WarningPayload =
   | { kind: 'variableFontDefaultInstance'; family: string; weight: number; style: 'normal' | 'italic'; defaultWeight: number; stale?: true }
   /** The last PDF generated embedded a CFF (.otf) face over 2 MB whole. */
   | { kind: 'cffEmbeddedWhole'; family: string; weight: number; style: 'normal' | 'italic'; bytes: number; stale?: true }
+  /** The last PDF generated asked a face for OpenType figure features its
+   *  files do not have (`onum`, `lnum`, `tnum`, `pnum`, by a style's
+   *  `figureStyle`, #1237): that text keeps the font's own figures.
+   *  `family` is the family the style names. */
+  | { kind: 'fontFeaturesMissing'; family: string; weight: number; style: 'normal' | 'italic'; features: string[]; stale?: true }
   /** A comic page's `split` the grammar cannot read whole; `message` (from
    *  the engine, in English) says what is wrong. */
   | { kind: 'comicSplitSyntax'; message: string }

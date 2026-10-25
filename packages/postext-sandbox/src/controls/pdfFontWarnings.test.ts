@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { onPdfFontChecksChange, pdfFontChecksFor, pdfFontChecksSource, setPdfFontChecks, type PdfFontCheck, type PdfFontCheckState } from './pdfFontWarnings.js';
+import { isPdfFontCheck, onPdfFontChecksChange, pdfFontChecksFor, pdfFontChecksSource, setPdfFontChecks, type PdfFontCheck, type PdfFontCheckState } from './pdfFontWarnings.js';
 import { computeWarnings } from '../warnings/compute.js';
 
 // Issue #196 review: the Checks panel kept the last PDF's font warnings
@@ -80,5 +80,15 @@ describe('the last PDF\'s font checks', () => {
       characters: ['紅', '樓'],
       stale: true,
     });
+  });
+});
+
+// #1237: a face that lacks the figure features a style asks for is one of
+// the checks; a font fallback still is not.
+describe('the PDF warnings the Checks panel lists', () => {
+  it('takes a face missing figure features', () => {
+    expect(isPdfFontCheck({ kind: 'fontFeaturesMissing' })).toBe(true);
+    expect(isPdfFontCheck({ kind: 'cffEmbeddedWhole' })).toBe(true);
+    expect(isPdfFontCheck({ kind: 'fontFallback' })).toBe(false);
   });
 });

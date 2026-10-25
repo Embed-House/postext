@@ -1262,7 +1262,8 @@ export function computeWarnings(params: {
   /** Chapter titles by id (for `chapterFrontmatterIgnored`). */
   chapterTitles?: ReadonlyMap<string, string>;
   /** The font warnings of the last PDF generated (see `pdfFontChecksFor`):
-   *  `missingGlyph`, `variableFontDefaultInstance`, `cffEmbeddedWhole`. */
+   *  `missingGlyph`, `variableFontDefaultInstance`, `cffEmbeddedWhole`,
+   *  `fontFeaturesMissing`. */
   pdfFontChecks?: readonly PdfFontCheck[];
   /** The book has changed since that PDF: its warnings are marked so. */
   pdfFontChecksStale?: boolean;
@@ -1414,7 +1415,9 @@ export function pdfFontWarnings(checks: readonly PdfFontCheck[], stale = false):
       ? { kind: 'missingGlyph', ...face, characters: [...check.characters] }
       : check.kind === 'variableFontDefaultInstance'
         ? { kind: 'variableFontDefaultInstance', ...face, defaultWeight: check.defaultWeight }
-        : { kind: 'cffEmbeddedWhole', ...face, bytes: check.bytes };
+        : check.kind === 'cffEmbeddedWhole'
+          ? { kind: 'cffEmbeddedWhole', ...face, bytes: check.bytes }
+          : { kind: 'fontFeaturesMissing', ...face, features: [...check.features] };
     out.push({ id, payload });
   }
   return out;
