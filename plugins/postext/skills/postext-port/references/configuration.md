@@ -1420,10 +1420,13 @@ ExercisesConfig (config.exercises) {
   digital: { interactive=true, persist=true (answers kept in the browser), check='button'|'instant' }
 }
 ```
-The HTML viewer and EPUB make exercises answerable (type, click, Check / Show solution / start again); the key is
-always in an EPUB. A screen-only form goes in `htmlViewer.overrides` (it takes `exercises` and `exerciseStyles`):
-`htmlViewer: { overrides: { exercises: { solutions: { placement: 'none' } }, exerciseStyles: [{ id: 'exercise',
-area: { kind: 'none' } }] } }` — print keeps its own.
+The HTML viewer and EPUB make exercises answerable (type, click or drag, Check / Show solution / start again; the
+bar shows only the buttons that apply, none for an exercise with nothing to answer); the key is always in an EPUB.
+Every word of a `mark` text is markable on screen (wrong ones count). A fence's `area=none` (a talking exercise)
+leaves nothing to type on screen; a style's `area.kind: 'none'` is an unruled area still typed in. A screen-only
+form goes in `htmlViewer.overrides` (it takes `exercises` and `exerciseStyles`): `htmlViewer: { overrides: {
+exercises: { solutions: { placement: 'none' } }, exerciseStyles: [{ id: 'exercise', area: { kind: 'none' } }] } }`
+— print keeps its own.
 
 Port rule: one exercise style per look of the source's exercises (numbered disc + sans instruction for activities,
 a plain bold number for review questions), never one per exercise kind or per page; the questions, options and
