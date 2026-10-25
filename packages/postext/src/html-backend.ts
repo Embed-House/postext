@@ -3630,7 +3630,7 @@ function renderStripBlockHtml(block: VDTBlock, options: HtmlPaint, comic: string
  */
 function renderBlock(block: VDTBlock, options: HtmlPaint, extra = ''): string {
   // A note is where its markers link to (#264).
-  const note = block.footnoteNote !== undefined && !block.hidden
+  const note = block.footnoteNote !== undefined && block.footnoteContinuation === undefined && !block.hidden
     ? zeroSizeAnchor(footnoteElementId(block.footnoteNote), block.bbox.x, block.bbox.y)
     : '';
   // A box printed upside down (#1229): a positioned layer at the page's

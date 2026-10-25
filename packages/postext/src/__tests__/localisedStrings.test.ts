@@ -3,6 +3,9 @@ import { defaultResourceTypes } from '../defaults/resourceTypes.js';
 import { defaultTableContinuationStrings, resolveTableStyleConfig } from '../defaults/tableStyle.js';
 import { resolveBodyTextConfig } from '../defaults/bodyText.js';
 import { buildDocument } from '../pipeline/index.js';
+import { defaultBibliographyTitle } from '../pipeline/citations.js';
+import { defaultCrossRefStrings } from '../pipeline/crossRefs.js';
+import { exerciseWords } from '../defaults/exercises.js';
 import type { PostextConfig, Resource } from '../types.js';
 
 // Deterministic text measurement stub (no DOM in the node test env).
@@ -28,6 +31,7 @@ const EXPECTED: Record<string, [string, string, string, string, string, string, 
   pt: ['Figura', 'Figuras', 'Fig.', 'Figura', 'Tabela', 'Tabelas', 'Tab.', 'Tabela'],
   ca: ['Figura', 'Figures', 'Fig.', 'Figura', 'Taula', 'Taules', 'Taula', 'Taula'],
   nl: ['Figuur', 'Figuren', 'Fig.', 'Figuur', 'Tabel', 'Tabellen', 'Tab.', 'Tabel'],
+  tr: ['Şekil', 'Şekiller', 'Şek.', 'Şekil', 'Tablo', 'Tablolar', 'Tab.', 'Tablo'],
 };
 
 const CONTINUATION: Record<string, [string, string]> = {
@@ -39,6 +43,7 @@ const CONTINUATION: Record<string, [string, string]> = {
   pt: ['(cont.)', 'Continua'],
   ca: ['(cont.)', 'Continua'],
   nl: ['(vervolg)', 'Wordt vervolgd'],
+  tr: ['(devamı)', 'Devam ediyor'],
 };
 
 describe('built-in strings in every bundled language', () => {
@@ -67,6 +72,17 @@ describe('built-in strings in every bundled language', () => {
     expect(defaultTableContinuationStrings('nl-BE').continuesMarker).toBe('Wordt vervolgd');
     expect(defaultTableContinuationStrings('fr_CA').continuedSuffix).toBe('(suite)');
     expect(defaultTableContinuationStrings('sv').continuesMarker).toBe('Continued');
+  });
+
+  it('Turkish: the other tables, for tr and its regional tags', () => {
+    for (const tag of ['tr', 'tr-TR', 'tr_TR']) {
+      expect(defaultResourceTypes(tag)[2]!.namePlural, tag).toBe('Videolar');
+      expect(defaultBibliographyTitle(tag), tag).toBe('Kaynakça');
+      expect(defaultCrossRefStrings(tag), tag).toEqual({ chapter: 'Bölüm\u00A0{n}', section: 'Kısım\u00A0{n}', page: 's.\u00A0{n}' });
+      expect(exerciseWords(tag).exercise, tag).toBe('Alıştırma');
+    }
+    expect(exerciseWords('tr').trueFalse).toEqual(['D', 'Y']);
+    expect(exerciseWords('tr').score).toBe('{right} / {total} doğru');
   });
 
   it('table continuation strings follow the document locale when unset', () => {
@@ -106,6 +122,8 @@ describe('buildDocument localises the built-in resource types', () => {
     expect(refLabel({ locale: 'de' })).toBe('Abbildung 1');
     expect(refLabel({ locale: 'nl' }, 'See :ref{id="fig-a"}.')).toBe('Fig. 1');
     expect(refLabel({ locale: 'pt-BR' })).toBe('Figura 1');
+    expect(refLabel({ locale: 'tr' })).toBe('Şekil 1');
+    expect(refLabel({ locale: 'tr' }, 'See :ref{id="fig-a"}.')).toBe('Şek. 1');
   });
 
   it('else from the hyphenation locale, like the table continuation strings', () => {

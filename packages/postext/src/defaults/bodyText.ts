@@ -352,6 +352,8 @@ export function resolveBodyTextConfig(partial?: BodyTextConfig, documentLocale?:
     // Present only for the host's language (#764): a document shaped in
     // its own, the default since postext 1.30 (#770), resolves as before.
     ...(partial.shapingLanguage === 'host' ? { shapingLanguage: 'host' as const } : {}),
+    ...(partial.scriptFonts && Object.keys(partial.scriptFonts).length > 0 ? { scriptFonts: { ...partial.scriptFonts } } : {}),
+    ...(partial.turkishLigatures === 'keep' ? { turkishLigatures: 'keep' as const } : {}),
     // Absent unless set, so a document without tab stops resolves as before (#622).
     ...(Array.isArray(partial.tabStops) ? { tabStops: partial.tabStops } : {}),
     ...(partial.tabInterval ? { tabInterval: partial.tabInterval } : {}),
@@ -562,6 +564,14 @@ export function stripBodyTextDefaults(
   // language the document was laid out in.
   if (bodyText.shapingLanguage === 'host' || bodyText.shapingLanguage === 'document') {
     result.shapingLanguage = bodyText.shapingLanguage;
+    hasOverride = true;
+  }
+  if (bodyText.scriptFonts && Object.keys(bodyText.scriptFonts).length > 0) {
+    result.scriptFonts = bodyText.scriptFonts;
+    hasOverride = true;
+  }
+  if (bodyText.turkishLigatures === 'keep') {
+    result.turkishLigatures = 'keep';
     hasOverride = true;
   }
   if (Array.isArray(bodyText.tabStops)) {

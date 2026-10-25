@@ -32,6 +32,7 @@ import { joinsWithNext } from '../bidi.js';
 import { dimensionToPx } from '../units.js';
 import { isMarkerBlock } from './buildHelpers.js';
 import { uppercasePreservingLength } from './buildBlockKind.js';
+import { resolvedLocale } from './config.js';
 
 /** `containerAttrs` key of a composed page's story box (`FRAME_ATTR` of
  *  `composed/wrap.ts`). */
@@ -313,12 +314,12 @@ function cutSpans(spans: readonly InlineSpan[], start: number, end: number): Inl
 
 /** `spans` with the range `[0, end)` of their joined text in small capitals
  *  or capitals (a lead-in). */
-function leadInSpans(spans: readonly InlineSpan[], end: number, smallCaps: boolean, uppercase: boolean): InlineSpan[] {
+function leadInSpans(spans: readonly InlineSpan[], end: number, smallCaps: boolean, uppercase: boolean, locale: string): InlineSpan[] {
   const out: InlineSpan[] = [];
   let at = 0;
   const mark = (s: InlineSpan): InlineSpan => ({
     ...s,
-    ...(uppercase ? { text: uppercasePreservingLength(s.text) } : {}),
+    ...(uppercase ? { text: uppercasePreservingLength(s.text, locale) } : {}),
     ...(smallCaps ? { smallCaps: true } : {}),
   });
   for (const s of spans) {
@@ -460,8 +461,8 @@ export function prepareDropCap(
       const end = wordsEnd(stripped.text, n);
       stripped = {
         ...stripped,
-        ...(leadIn.uppercase ? { text: uppercasePreservingLength(stripped.text.slice(0, end)) + stripped.text.slice(end) } : {}),
-        spans: leadInSpans(stripped.spans, end, leadIn.smallCaps, leadIn.uppercase),
+        ...(leadIn.uppercase ? { text: uppercasePreservingLength(stripped.text.slice(0, end), resolvedLocale(resolved)) + stripped.text.slice(end) } : {}),
+        spans: leadInSpans(stripped.spans, end, leadIn.smallCaps, leadIn.uppercase, resolvedLocale(resolved)),
       };
     }
   }

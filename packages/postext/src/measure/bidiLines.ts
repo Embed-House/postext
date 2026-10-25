@@ -29,6 +29,8 @@
 import type { VDTLine, VDTLineSegment } from '../vdt.js';
 import { lineLevels, visualOrder, type BidiParagraph } from '../bidi.js';
 import { insideJoiningWord } from './joining.js';
+import { getMeasureLanguage } from './canvas.js';
+import { getCaseLocale, upperCaseFor } from '../textCase.js';
 import { lineInsetsAt, lineMeasure, type LineInsetStep, type LineWidthStep } from './types.js';
 
 let measureDirection: 'ltr' | 'rtl' = 'ltr';
@@ -93,7 +95,7 @@ function alignLine(segments: readonly VDTLineSegment[], text: string, from: numb
 }
 
 function sameChar(printed: string, source: string): boolean {
-  return printed === source || printed === source.toUpperCase();
+  return printed === source || printed === source.toUpperCase() || printed === upperCaseFor(source, getMeasureLanguage() || getCaseLocale());
 }
 
 /** Whether a segment is set as a whole (a formula, a swatch, a chip, a

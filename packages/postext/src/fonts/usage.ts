@@ -60,6 +60,7 @@ export function configFontFamilies(config: PostextConfig, markdown?: FontContent
   const ordered = resolveOrderedListsConfig(config.orderedLists, body);
   const families = new Set<string>();
   families.add(body.fontFamily);
+  for (const family of Object.values(config.bodyText?.scriptFonts ?? {})) if (family) families.add(family);
   families.add(headings.fontFamily);
   for (const level of headings.levels) families.add(level.fontFamily);
   families.add(lists.fontFamily);

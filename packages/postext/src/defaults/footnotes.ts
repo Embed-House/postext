@@ -23,6 +23,9 @@ export const DEFAULT_FOOTNOTES_CONFIG: ResolvedFootnotesConfig = {
   },
 };
 
+const DEFAULT_SPLIT_MIN_LINES = 2;
+const CONTINUATION_RULE_WIDTH = 1;
+
 const NUMBERINGS: ReadonlySet<string> = new Set(['chapter', 'document', 'page', 'column', 'spread']);
 const PLACEMENTS: ReadonlySet<string> = new Set(['column', 'chapterEnd', 'spread']);
 
@@ -168,6 +171,26 @@ export function resolveFootnotesConfig(
       lineWidth: sep?.lineWidth ?? d.separator.lineWidth,
       ...(sep?.color ? { color: sep.color } : {}),
     },
+    ...(p.split === true ? splitOf(p, sep) : {}),
+  };
+}
+
+function splitOf(
+  p: FootnotesConfig,
+  sep: FootnotesConfig['separator'],
+): Pick<ResolvedFootnotesConfig, 'split' | 'splitMinLines' | 'continuationRule'> {
+  const rule = p.continuationRule;
+  const width = rule?.width;
+  const color = rule?.color ?? sep?.color;
+  return {
+    split: true,
+    splitMinLines: Number.isInteger(p.splitMinLines) && p.splitMinLines! >= 1 ? p.splitMinLines! : DEFAULT_SPLIT_MIN_LINES,
+    continuationRule: {
+      enabled: rule?.enabled ?? true,
+      width: typeof width === 'number' && Number.isFinite(width) ? Math.min(1, Math.max(0, width)) : CONTINUATION_RULE_WIDTH,
+      lineWidth: rule?.lineWidth ?? sep?.lineWidth ?? DEFAULT_FOOTNOTES_CONFIG.separator.lineWidth,
+      ...(color ? { color } : {}),
+    },
   };
 }
 
@@ -215,6 +238,17 @@ export function stripFootnotesDefaults(
     if (sep.lineWidth && !dimensionsEqual(sep.lineWidth, d.separator.lineWidth)) s.lineWidth = sep.lineWidth;
     if (sep.color && !(d.separator.color && colorsEqual(sep.color, d.separator.color))) s.color = sep.color;
     if (Object.keys(s).length > 0) result.separator = s;
+  }
+  if (footnotes.split === true) result.split = true;
+  if (footnotes.splitMinLines !== undefined && footnotes.splitMinLines !== DEFAULT_SPLIT_MIN_LINES) result.splitMinLines = footnotes.splitMinLines;
+  const rule = footnotes.continuationRule;
+  if (rule) {
+    const r: NonNullable<FootnotesConfig['continuationRule']> = {};
+    if (rule.enabled !== undefined && rule.enabled !== true) r.enabled = rule.enabled;
+    if (rule.width !== undefined && rule.width !== CONTINUATION_RULE_WIDTH) r.width = rule.width;
+    if (rule.lineWidth && !dimensionsEqual(rule.lineWidth, sep?.lineWidth ?? d.separator.lineWidth)) r.lineWidth = rule.lineWidth;
+    if (rule.color) r.color = rule.color;
+    if (Object.keys(r).length > 0) result.continuationRule = r;
   }
   return Object.keys(result).length > 0 ? result : undefined;
 }

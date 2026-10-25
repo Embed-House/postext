@@ -950,7 +950,7 @@ function renderBlockUpright(
   const capLead = cap ? dropCapLead(cap, elem) : undefined;
   if (cap) renderDropCap(ctx, cap, fontCache, capLead?.elem ?? elem);
   // A note is where its markers link to.
-  if (block.footnoteNote !== undefined && linkRegistry) {
+  if (block.footnoteNote !== undefined && block.footnoteContinuation === undefined && linkRegistry) {
     // The top left of the note's box on the sheet.
     const [left, , , top] = rectOfBlock(ctx, block);
     linkRegistry.addDestination(footnoteDestination(linkRegistry, block.footnoteNote), ctx.page, left, top);

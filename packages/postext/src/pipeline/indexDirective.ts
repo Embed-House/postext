@@ -106,6 +106,7 @@ const LABELS: Record<string, IndexLabels> = {
   fr: { see: 'Voir', seeAlso: 'Voir aussi', symbols: 'Symboles' },
   it: { see: 'Vedi', seeAlso: 'Vedi anche', symbols: 'Simboli' },
   de: { see: 'Siehe', seeAlso: 'Siehe auch', symbols: 'Symbole' },
+  tr: { see: 'Bk.', seeAlso: 'Ayrıca bk.', symbols: 'Simgeler', numbers: 'Sayılar' },
   'zh-hans': { see: '见', seeAlso: '另见', symbols: '符号', numbers: '数字', refPunctuation: CHINESE_REF_PUNCTUATION },
   'zh-hant': { see: '見', seeAlso: '另見', symbols: '符號', numbers: '數字', refPunctuation: CHINESE_REF_PUNCTUATION },
   // The arrow is the see reference of Japanese indexes; a see-also ends in

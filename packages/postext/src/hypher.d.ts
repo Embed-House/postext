@@ -46,3 +46,7 @@ declare module 'hyphenation.nl' {
   const language: import('hypher').HyphenationLanguage;
   export default language;
 }
+declare module 'hyphenation.tr' {
+  const language: import('hypher').HyphenationLanguage;
+  export default language;
+}

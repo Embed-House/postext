@@ -46,6 +46,14 @@ interface FootnotesConfig {
     lineWidth?: Dimension;    // Rule thickness.
     color?: ColorValue;       // The note colour when unset.
   };
+  split?: boolean;            // Cut a note that does not fit at a line and run it on to the next column.
+  splitMinLines?: number;     // Lines of a cut note kept under its citing line.
+  continuationRule?: {        // The rule over a note run on from the column before.
+    enabled?: boolean;
+    width?: number;
+    lineWidth?: Dimension;
+    color?: ColorValue;
+  };
 }
 ```
 
@@ -197,6 +205,24 @@ interface FootnotesConfig {
       <td>note colour</td>
       <td>Colour of the rule.</td>
     </tr>
+    <tr>
+      <td><code>split</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td><code>placement: 'column'</code> only. A note that does not fit under the line citing it is cut at a line: when the column has room for <code>splitMinLines</code> of its lines, the citing line closes the column's text, the first lines of the note fill the column's foot and the rest opens the notes of the next column in reading order, before that column's own notes, and runs on to as many columns as it needs. The note's number stands on its first part only, and <code>'page'</code> / <code>'column'</code> numbering does not count the parts that run on. Off, a note is never cut.</td>
+    </tr>
+    <tr>
+      <td><code>splitMinLines</code></td>
+      <td><code>number</code></td>
+      <td><code>2</code></td>
+      <td>With <code>split</code>: the fewest lines of a note left under its citing line. When fewer fit, the line goes to the next column with its note, as without <code>split</code>.</td>
+    </tr>
+    <tr>
+      <td><code>continuationRule</code></td>
+      <td><code>{ enabled, width, lineWidth, color }</code></td>
+      <td><code>{ enabled: true, width: 1 }</code>, <code>separator</code>'s thickness and colour</td>
+      <td>With <code>split</code>: the rule over a column whose notes open with a part run on from the column before, the full measure by default.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -217,7 +243,7 @@ How the notes are laid out at the column foot:
 - **Several notes** in one column stack in citation order under one rule. A note cited again later keeps its number and is not set again.
 - **Bottom floats.** A figure that takes the foot of a column after its notes were set goes above them; notes set after the figure go above it.
 - **Boxes.** A note cited inside a callout (inline, floated or fixed) goes to the foot of the column where the text after the box goes on, usually the same column. A box that closes the document leaves its notes at the foot of the column the text ended in.
-- **Limits.** A note is never split: one taller than a column overflows it. Markers in captions, table cells and headings are not read (they print as written).
+- **Limits.** A note is never split unless `split` is on: one taller than a column overflows it. With `split`, the parts are `VDTBlock`s that share the note's `footnoteNote`, the parts after the first carrying `footnoteContinuation` (1, 2…), and a part run on keeps the line breaks of the column the note started in. Markers in captions, table cells and headings are not read (they print as written).
 - **Output.** Canvas, HTML and PDF paint the notes, the markers (a superscript number) and the rule. In the PDF each marker links to its note, and a tagged PDF sets each note as a `Note` element with a unique `/ID` listed in the structure tree's `/IDTree` (PDF/UA-1). The notes are `VDTBlock`s with `footnoteNote` set, in `page.floats`; the rules are in `page.footnoteAreas`.
 - **Warnings.** `undefinedFootnote` (a marker with no definition: the number prints over an empty note) and `unusedFootnote` (a definition no marker cites: it is not set).
 

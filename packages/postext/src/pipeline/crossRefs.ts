@@ -9,6 +9,7 @@
 import type { ContentBlock, InlineSpan, RefCase } from '../parse/index.js';
 import type { OutlineEntry } from '../types.js';
 import { stringsFor } from '../locale.js';
+import { lowerCaseFor, upperCaseFor } from '../textCase.js';
 
 const NBSP = ' ';
 
@@ -110,6 +111,7 @@ const CROSS_REF_STRINGS: Readonly<Record<string, CrossRefStrings>> = {
   pt: { chapter: `capítulo${NBSP}{n}`, section: `seção${NBSP}{n}`, page: `p.${NBSP}{n}` },
   ca: { chapter: `capítol${NBSP}{n}`, section: `secció${NBSP}{n}`, page: `p.${NBSP}{n}` },
   nl: { chapter: `hoofdstuk${NBSP}{n}`, section: `paragraaf${NBSP}{n}`, page: `p.${NBSP}{n}` },
+  tr: { chapter: `Bölüm${NBSP}{n}`, section: `Kısım${NBSP}{n}`, page: `s.${NBSP}{n}` },
   'zh-hans': { chapter: '第{n}章', section: '第{n}节', page: '第{n}页' },
   'zh-hant': { chapter: '第{n}章', section: '第{n}節', page: '第{n}頁' },
   // 「第3章」, 「2.3節」 (a dotted section number takes no 第: 第2.3節 reads
@@ -138,40 +140,40 @@ function bareNumber(number: string): string {
   return number.slice(0, end).trim();
 }
 
-function applyCase(text: string, refCase: RefCase | undefined): string {
+function applyCase(text: string, refCase: RefCase | undefined, locale: unknown): string {
   if (refCase === undefined || text.length === 0) return text;
   switch (refCase) {
     case 'lower':
-      return text.toLocaleLowerCase();
+      return lowerCaseFor(text, locale);
     case 'upper':
-      return text.toLocaleUpperCase();
+      return upperCaseFor(text, locale);
     case 'capitalize': {
       const first = [...text][0]!;
-      return first.toLocaleUpperCase() + text.slice(first.length);
+      return upperCaseFor(first, locale) + text.slice(first.length);
     }
   }
 }
 
 /** A template with its words in `refCase` and `{n}` replaced. */
-function fill(template: string, n: string, refCase: RefCase | undefined): string {
+function fill(template: string, n: string, refCase: RefCase | undefined, locale: unknown): string {
   const at = template.indexOf('{n}');
-  if (at < 0) return applyCase(template, refCase);
-  const before = applyCase(template.slice(0, at), refCase);
+  if (at < 0) return applyCase(template, refCase, locale);
+  const before = applyCase(template.slice(0, at), refCase, locale);
   const after = template.slice(at + 3);
   // `capitalize` reaches the words after the number when none come before.
-  return `${before}${n}${before.trim().length > 0 ? after : applyCase(after, refCase)}`;
+  return `${before}${n}${before.trim().length > 0 ? after : applyCase(after, refCase, locale)}`;
 }
 
 /** Whether a heading number already holds the words of the template it
  *  would be set in: a space ("Chapter 3"), or the template's words around
  *  `{n}` ("第三章" against "第{n}章", "Capítulo 2" against "capítulo {n}"). */
-function numberIsWorded(number: string, template: string): boolean {
+function numberIsWorded(number: string, template: string, locale: unknown): boolean {
   if (/\s/u.test(number)) return true;
   const at = template.indexOf('{n}');
   if (at < 0) return false;
-  const before = template.slice(0, at).trim().toLocaleLowerCase();
-  const after = template.slice(at + 3).trim().toLocaleLowerCase();
-  const n = number.toLocaleLowerCase();
+  const before = lowerCaseFor(template.slice(0, at).trim(), locale);
+  const after = lowerCaseFor(template.slice(at + 3).trim(), locale);
+  const n = lowerCaseFor(number, locale);
   return (before.length > 0 && n.startsWith(before)) || (after.length > 0 && n.endsWith(after));
 }
 
@@ -203,6 +205,7 @@ export function anchorRefLabel(
   ref: NonNullable<InlineSpan['ref']>,
   target: AnchorTarget,
   strings: CrossRefStrings,
+  locale?: unknown,
 ): RefLabel {
   if (ref.text !== undefined && ref.text.length > 0) return words(ref.text);
   const page = target.pageLabel !== undefined && target.pageLabel.length > 0 ? target.pageLabel : UNKNOWN_PAGE;
@@ -212,25 +215,25 @@ export function anchorRefLabel(
   if (target.numberLabel !== undefined) {
     switch (ref.style ?? strings.defaultStyle) {
       case 'page':
-        return whole(fill(strings.page, page, ref.case));
+        return whole(fill(strings.page, page, ref.case, locale));
       case 'pageNumber':
         return whole(page);
       case 'number':
         return whole(target.number);
       case 'title':
-        return title.length > 0 ? words(title) : whole(applyCase(target.numberLabel, ref.case));
+        return title.length > 0 ? words(title) : whole(applyCase(target.numberLabel, ref.case, locale));
       default:
-        return whole(applyCase(target.numberLabel, ref.case));
+        return whole(applyCase(target.numberLabel, ref.case, locale));
     }
   }
   const number = bareNumber(target.number);
   switch (ref.style ?? strings.defaultStyle) {
     case 'page':
-      return whole(fill(strings.page, page, ref.case));
+      return whole(fill(strings.page, page, ref.case, locale));
     case 'pageNumber':
       return whole(page);
     case 'title':
-      return title.length > 0 ? words(title) : whole(fill(strings.page, page, ref.case));
+      return title.length > 0 ? words(title) : whole(fill(strings.page, page, ref.case, locale));
     case 'number':
       return number.length > 0 ? whole(number) : title.length > 0 ? words(title) : whole(page);
     default: {
@@ -238,9 +241,9 @@ export function anchorRefLabel(
         const template = target.level === 1 ? strings.chapter : strings.section;
         // A number its template already words ("Chapter 3", "第三章")
         // prints as is.
-        return whole(numberIsWorded(number, template) ? number : fill(template, number, ref.case));
+        return whole(numberIsWorded(number, template, locale) ? number : fill(template, number, ref.case, locale));
       }
-      return title.length > 0 ? words(title) : whole(fill(strings.page, page, ref.case));
+      return title.length > 0 ? words(title) : whole(fill(strings.page, page, ref.case, locale));
     }
   }
 }

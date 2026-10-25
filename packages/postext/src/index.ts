@@ -676,6 +676,7 @@ export { TASK_BOX_SIDE_EM, TASK_BOX_TICK, taskBoxSize, taskBoxTick, taskBoxText,
 // mark a renderer sets it beside (`VDTLineSegment.scriptContext`).
 export { scriptContextUntracked, scriptMark, withScriptMark } from './measure/script.js';
 export { setMeasureLanguage, getMeasureLanguage, withMeasureLanguage } from './measure/canvas.js';
+export { breakLigatures, hasBreakableLigature, ligatureBreaksOf, ligatureParts, ZWNJ } from './measure/ligatureBreaks.js';
 export type { ScriptContext } from './measure/script.js';
 export type { VerticalGlyph, VerticalOrientationKind, VerticalRun, UaxVerticalOrientation, UprightDigits, ForcedOrientation } from './writingMode.js';
 export {

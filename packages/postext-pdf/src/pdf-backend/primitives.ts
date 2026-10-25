@@ -42,7 +42,7 @@ import {
 } from 'pdf-lib';
 import { colorAlpha, hexToRgb, rgbToCmyk, rgbToGrayscale } from '../colors.js';
 import { isPrintMode, modeKey, overPaper, type ColorMode } from '../print/colorMode.js';
-import { graphemesOf, joinsLetters, scriptContextUntracked, textDots, type VDTTextDots, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type SwatchGeometry, type VDTChip } from 'postext';
+import { graphemesOf, hasBreakableLigature, ligatureParts, joinsLetters, scriptContextUntracked, textDots, type VDTTextDots, type CjkRegion, type ForcedOrientation, type RoundedOutline, type ScriptContext, type SwatchGeometry, type VDTChip } from 'postext';
 import type { PageTagger } from './tagging.js';
 import type { ResourceImageMap } from './renderResourceBlock.js';
 import { fallbackPieces, isDefaultIgnorable, isSpaceCharacter, type FallbackFace, type TextPiece } from './fallbackSpaces.js';
@@ -1060,7 +1060,38 @@ function shownRun(font: PDFFont, text: string): ShownRun | undefined {
  *  each run in the file of the face that has it), and after every letter
  *  a ligature joins in a document shaped in its own language
  *  ({@link letterTrackingTj}); and how many glyphs it shows. */
+let ligatureBreaks = false;
+
+function brokenPieces(pieces: readonly { text: string; width: number }[], font: PDFFont, sizePx: number, trackingPx: number): { text: string; width: number }[] {
+  return withLigatureBreaks(false, () => pieces.flatMap((piece) => {
+    const parts = hasBreakableLigature(piece.text) ? ligatureParts(piece.text) : [piece.text];
+    if (parts.length === 1) return [piece];
+    let left = piece.width;
+    return parts.map((part, i) => {
+      const width = i === parts.length - 1 ? left : textAdvancePx(font, part, sizePx, trackingPx).advance;
+      left -= width;
+      return { text: part, width };
+    });
+  }));
+}
+
+export function withLigatureBreaks<T>(on: boolean, fn: () => T): T {
+  const previous = ligatureBreaks;
+  ligatureBreaks = on;
+  try {
+    return fn();
+  } finally {
+    ligatureBreaks = previous;
+  }
+}
+
 export function textAdvancePx(font: PDFFont, text: string, sizePx: number, trackingPx = 0): { advance: number; glyphs: number } {
+  if (ligatureBreaks && hasBreakableLigature(text)) {
+    return withLigatureBreaks(false, () => ligatureParts(text).reduce((sum, part) => {
+      const one = textAdvancePx(font, part, sizePx, trackingPx);
+      return { advance: sum.advance + one.advance, glyphs: sum.glyphs + one.glyphs };
+    }, { advance: 0, glyphs: 0 }));
+  }
   let advance = 0;
   let glyphs = 0;
   // Letters of ligatures beyond each one's first.
@@ -1310,6 +1341,10 @@ export function drawTextPx(
   direction?: 'ltr' | 'rtl',
 ): void {
   if (!text) return;
+  if (ligatureBreaks && !ctx.vertical && hasBreakableLigature(text)) {
+    const pieces = brokenPieces([{ text, width: textAdvancePx(font, text, sizePx, ctx.trackingPx ?? 0).advance }], font, sizePx, ctx.trackingPx ?? 0);
+    if (drawMeasuredTextPx(ctx, pieces, xPx, baselinePx, font, sizePx, color, ctx.trackingPx ?? 0, actualText ?? text)) return;
+  }
   outline ??= ctx.textOutline;
   if (ctx.vertical) {
     verticalPainter?.(ctx, text, xPx, baselinePx, font, sizePx, color, outline, actualText, orient);
@@ -1391,6 +1426,10 @@ export function drawMeasuredTextPx(
   trackingPx = 0,
   actualText?: string,
 ): boolean {
+  if (ligatureBreaks && pieces.some((p) => hasBreakableLigature(p.text))) {
+    actualText ??= pieces.map((p) => p.text).join('');
+    pieces = brokenPieces(pieces, font, sizePx, trackingPx);
+  }
   if (ctx.vertical) {
     // Down the column each piece starts where the layout put it, in one
     // span that reads as the line.

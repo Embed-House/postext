@@ -375,6 +375,7 @@ export interface InlineSpan {
    *  not the chip's: the Arabic, Hebrew or CJK characters of inline code
    *  (#845), which code faces do not carry. Set by the pipeline. */
   textFace?: boolean;
+  scriptFace?: string;
   /** A space inside inline code set in the code face (#845), between two
    *  pieces of it: the line may break there, but the space neither
    *  stretches nor shrinks, and on one line the pieces around it are one

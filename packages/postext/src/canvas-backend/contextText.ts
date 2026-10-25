@@ -48,6 +48,8 @@
  * mirrored page and is called from here like the context.
  */
 
+import { paintLigatureText } from '../measure/ligatureBreaks.js';
+
 /** A character past Latin-1: a string that holds one is two bytes a
  *  character to the browser. */
 const WIDE_RE = /[^\u0000-ÿ]/;
@@ -69,6 +71,7 @@ type TextContext = Pick<CanvasRenderingContext2D, 'fillText' | 'strokeText' | 'm
  * the string all the same.
  */
 export function handedText(ctx: object, text: string): string {
+  text = paintLigatureText(text);
   const wide = WIDE_RE.test(text);
   if ('wordSpacing' in ctx) (ctx as { wordSpacing: string }).wordSpacing = wide ? WIDE_SPACING : NARROW_SPACING;
   if (wide) return text;

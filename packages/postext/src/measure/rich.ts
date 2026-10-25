@@ -4,6 +4,7 @@ import type { TabStopAlign } from '../types.js';
 import type { VDTAnnotationRun, VDTChip, VDTChipRun, VDTLine, VDTLineSegment, VDTSegmentMarks, VDTSwatch } from '../vdt.js';
 import { measureInlineIcon } from './inlineIcon.js';
 import { uprightArabicSpans, uprightFace } from '../uprightArabic.js';
+import { inFamily, scriptFontSpans } from './scriptFonts.js';
 import { createBoundingBox } from '../vdt.js';
 import type { MathRender } from '../math/types.js';
 import type { InlineSpan, SwatchBox } from '../parse/index.js';
@@ -16,6 +17,7 @@ import {
 import { SOFT_HYPHEN } from './types.js';
 import { lineStartAt, lineWidthAt, lineWidthFunction, markInsetLines, uniformMeasureFrom, type MeasuredBlock, type MeasureBlockOptions } from './types.js';
 import { cleanSoftHyphens, getMeasureLanguage, measureTextWidth, normalSpaceWidthFor, setMeasureLanguage, withMeasureLanguage } from './canvas.js';
+import { getCaseLocale, upperCaseFor } from '../textCase.js';
 import { spanShapingLanguage } from './spanLanguage.js';
 import { isRuntLastLine } from './runts.js';
 import { hasOverfullLine } from './plain.js';
@@ -502,7 +504,7 @@ export function smallCapsFont(font: string): string {
 /** A lowercase letter with a one-unit capital (`ß` and the like, whose
  *  capital is longer, stay as they are so the text keeps its length). */
 function smallCapsLowered(ch: string): string | undefined {
-  const up = ch.toUpperCase();
+  const up = upperCaseFor(ch, getMeasureLanguage() || getCaseLocale());
   return up !== ch && up.length === 1 ? up : undefined;
 }
 
@@ -1601,10 +1603,11 @@ function tokenizeSpans(
   // slanted style (`uprightArabic.ts`).
   const faceOf = (span: InlineSpan): string => {
     const face = pickSpanFont(span.bold, span.italic, normalFont, boldFont, italicFont, boldItalicFont);
-    return span.upright ? uprightFace(face) : face;
+    const own = span.scriptFace ? inFamily(face, span.scriptFace) : face;
+    return span.upright ? uprightFace(own) : own;
   };
   const scriptFieldsOf = (span: InlineSpan): Pick<RichToken, 'script' | 'scriptFont' | 'baselineShift' | 'faceFont'> => {
-    if (!span.script) return span.upright ? { faceFont: faceOf(span) } : {};
+    if (!span.script) return span.upright || span.scriptFace ? { faceFont: faceOf(span) } : {};
     const m = scriptMetrics(faceOf(span), span.script);
     return { script: span.script, scriptFont: m.font, baselineShift: m.baselineShift };
   };
@@ -2224,6 +2227,7 @@ function measureRichText(
   if (measuringVertically()) spans = sidewaysNumberSpans(spans, getMeasureUprightDigits(), getMeasureRegion());
   // Arabic letters are never slanted (#376, `uprightArabic.ts`).
   spans = uprightArabicSpans(spans, italicFont, boldItalicFont, normalFont, boldFont);
+  spans = scriptFontSpans(spans, normalFont);
   // Chinese, Japanese or Korean text: its own composer, which breaks
   // between characters under the document's line-break rules and spreads
   // justified lines between them — also text with no two CJK letters in a

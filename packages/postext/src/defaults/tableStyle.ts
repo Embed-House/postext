@@ -67,6 +67,7 @@ const CONTINUATION_STRINGS: Record<string, { continuedSuffix: string; continuesM
   pt: { continuedSuffix: '(cont.)', continuesMarker: 'Continua' },
   ca: { continuedSuffix: '(cont.)', continuesMarker: 'Continua' },
   nl: { continuedSuffix: '(vervolg)', continuesMarker: 'Wordt vervolgd' },
+  tr: { continuedSuffix: '(devamı)', continuesMarker: 'Devam ediyor' },
   'zh-hans': { continuedSuffix: '（续）', continuesMarker: '接下页' },
   'zh-hant': { continuedSuffix: '（續）', continuesMarker: '接下頁' },
   // 「表1-2（続き）」 on the slice that continues a table, 「次ページへ続く」

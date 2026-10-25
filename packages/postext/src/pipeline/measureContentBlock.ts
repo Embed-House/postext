@@ -21,6 +21,7 @@ import {
   stampSourceRanges,
 } from './buildHelpers.js';
 import { resolveBlockKind, uppercasePreservingLength, type BlockKind, type BlockKindContext } from './buildBlockKind.js';
+import { resolvedLocale } from './config.js';
 import { runMeasurement } from './buildMeasurement.js';
 import { linkSegments } from '../measure/links.js';
 import { kashidaMeasureOptions } from '../measure/kashida.js';
@@ -39,6 +40,9 @@ import { flushEndMark } from './statementNumbering.js';
 import { LINE_MAX_SPACE_RATIO } from './raggedLines.js';
 import { dimensionToPx } from '../units.js';
 import { joiningScriptIn, mostlyJoiningScript } from '../measure/joining.js';
+import { needsScriptFonts } from '../measure/scriptFonts.js';
+import { getMeasureLigatureBreaks } from '../measure/canvas.js';
+import { hasBreakableLigature } from '../measure/ligatureBreaks.js';
 import { getMeasureDirection, mirrorLineSpans, shiftLineX } from '../measure/bidiLines.js';
 import { startEndAsLeftRight } from '../defaults/shared.js';
 import { prepareTabs } from './tabs.js';
@@ -256,12 +260,13 @@ function resolveInlineSpans(block: ContentBlock, style: BlockStyle, ctx: BlockMe
       labelNumberGap: resolved.captionStyle.labelNumberGap,
       ...(ctx.anchorRefs ? { anchors: ctx.anchorRefs } : {}),
       breakLabels: resolved.crossRefs.breakLabels,
+      locale: resolvedLocale(resolved),
     });
     contentBlock = {
       ...contentBlock,
       // A paragraph style in capitals sets the labels so too (EF-173).
       spans: style.uppercase
-        ? spans.map((s) => (s.ref ? { ...s, text: uppercasePreservingLength(s.text) } : s))
+        ? spans.map((s) => (s.ref ? { ...s, text: uppercasePreservingLength(s.text, resolvedLocale(resolved)) } : s))
         : spans,
     };
   }
@@ -488,7 +493,9 @@ export function measureContentBlock(
     || s.emphasisMark || s.properName !== undefined || s.bookTitle || s.ruby || s.warichu || s.inserted || s.sideline || s.kunten
     // An inline `:rtl[…]` / `:ltr[…]` isolate is read on the spans.
     || s.direction !== undefined
-    || (vertical && (s.combineUpright || s.orientation)));
+    || (vertical && (s.combineUpright || s.orientation)))
+    || needsScriptFonts(contentBlock.text)
+    || (getMeasureLigatureBreaks() && hasBreakableLigature(contentBlock.text));
 
   // List items reserve horizontal space for indent + bullet + gap.
   const {

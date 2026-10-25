@@ -283,11 +283,12 @@
               "pt",
               "fr",
               "de",
-              "it"
+              "it",
+              "tr"
             ]
           },
           "minItems": 1,
-          "maxItems": 10,
+          "maxItems": 11,
           "uniqueItems": true
         }
       }

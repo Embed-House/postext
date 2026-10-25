@@ -1,0 +1,117 @@
+{
+  "$schema": "../recipe.schema.json",
+  "schemaVersion": 1,
+  "number": 175,
+  "status": "draft",
+  "chapter": "structure",
+  "order": 240,
+  "level": 3,
+  "genres": [
+    "textbook"
+  ],
+  "outputs": [
+    "canvas",
+    "pdf"
+  ],
+  "features": {
+    "primary": [
+      "footnotes",
+      "roman-front-matter",
+      "running-heads"
+    ],
+    "also": [
+      "text-direction",
+      "arabic-fonts",
+      "heading-styles",
+      "heading-attributes",
+      "page-role-filters",
+      "paragraph-styles",
+      "color-palette",
+      "pdf-export",
+      "pdf-fonts"
+    ]
+  },
+  "answers": [
+    "Q128"
+  ],
+  "gotchas": [
+    "arabic-fonts-subset",
+    "numbering-next-page"
+  ],
+  "engine": {
+    "postext": "1.60.0",
+    "postextPdf": "1.60.0"
+  },
+  "kit": [
+    "core",
+    "fonts",
+    "viewer",
+    "pdf",
+    "arabic",
+    "book"
+  ],
+  "sample": {
+    "locales": [
+      "tr"
+    ]
+  },
+  "capture": {
+    "hero": [
+      8,
+      9
+    ],
+    "card": "spread",
+    "pages": "all"
+  },
+  "credits": {
+    "authors": [
+      {
+        "name": "Postext Cookbook"
+      }
+    ],
+    "text": [
+      {
+        "what": {
+          "en": "The preface, the three chapters, the notes, the bibliography and the imprint, written for this recipe in Turkish",
+          "es": "El prefacio, los tres capítulos, las notas, la bibliografía y la página de créditos, escritos en turco para esta receta"
+        },
+        "who": "Postext Cookbook",
+        "license": "original"
+      },
+      {
+        "what": {
+          "en": "Verses of the Qurʾān and well-known ḥadīths, in Arabic",
+          "es": "Aleyas del Corán y hadices conocidos, en árabe"
+        },
+        "who": "Kur'ân-ı Kerîm, Kütüb-i Sitte",
+        "license": "PD"
+      }
+    ],
+    "images": [],
+    "fonts": [
+      {
+        "family": "Libertinus Serif",
+        "license": "OFL-1.1"
+      },
+      {
+        "family": "Amiri",
+        "license": "OFL-1.1"
+      }
+    ]
+  },
+  "license": {
+    "code": "MIT",
+    "content": "MIT"
+  },
+  "created": "2026-10-25",
+  "updated": "2026-10-25",
+  "related": [
+    "tahqiq-critical-edition",
+    "front-matter-roman-to-arabic",
+    "running-heads-by-parity",
+    "trade-paperback-novel"
+  ],
+  "downloads": {
+    "pdf": true
+  }
+}

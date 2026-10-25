@@ -88,6 +88,8 @@ matchHyphenationLocale('sv');    // undefined: hyphenated with 'en-us', with a c
 
 Words shorter than 5 letters are never hyphenated, except in Catalan, where 4 are enough (`ca-sa`). A break leaves at least 2 letters before it, and after it 3 in English and French (`read-ing`), 4 in Portuguese (`ca-misa`) and 2 in the other languages (`pa-red`, `Ta-fel`). In English, French and Italian an apostrophe does not count as a letter for these minimums (no `is-n't`), and in French and Italian the consonants before an elision stay with their word: `dell’ac-qua`, never `del-l’acqua`.
 
+In Turkish (`'tr'`) a word is syllabified as if its apostrophe were not there (`Ah-me-t’in`), but it is never broken at the apostrophe, with or without a hyphen. TDK allows `Edirne’` · `nin`, yet a line ending in ’ reads as a closing quotation mark. An abbreviation in capitals is kept whole with its suffix (`NATO’dan`, `TÜBİTAK`).
+
 ### Words kept whole
 
 A dictionary divides a name as it divides any word: `Al-ice`, `Áms-ter-dam`, `You-Tu-be`. Three settings keep words whole, and all three default to what the dictionary does.

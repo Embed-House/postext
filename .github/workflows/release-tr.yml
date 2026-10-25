@@ -1,0 +1,54 @@
+name: Release (Turkish fork)
+
+on:
+  push:
+    tags: ['v*-tr.*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-tr-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, test and publish the executables
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+
+      - name: Install pdftotext
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: Set postext-cli version
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          node -e "const f='packages/postext-cli/package.json';const fs=require('fs');const p=JSON.parse(fs.readFileSync(f));p.version='$VERSION';fs.writeFileSync(f,JSON.stringify(p,null,2)+'\\n')"
+
+      - run: pnpm turbo run build --filter=postext --filter=postext-pdf --filter=postext-folio --filter=postext-citeproc --filter=postext-epub --filter=postext-cli
+      - run: pnpm turbo run test --filter=postext --filter=postext-pdf --filter=postext-folio --filter=postext-citeproc --filter=postext-epub --filter=postext-cli
+
+      - name: Build the command-line executables
+        run: pnpm --filter postext-cli build:bin
+
+      - name: Check SHA256SUMS
+        working-directory: packages/postext-cli/bin
+        run: sha256sum -c SHA256SUMS
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cd packages/postext-cli/bin
+          NOTES="Command-line executables of postext $VERSION (Turkish fork). See readme.txt."
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" postext-* SHA256SUMS readme.txt --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" postext-* SHA256SUMS readme.txt --title "postext $VERSION" --notes "$NOTES" --verify-tag
+          fi

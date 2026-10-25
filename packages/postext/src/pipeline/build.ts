@@ -72,7 +72,10 @@ import { syncFontSet } from '../fonts/fontSet.js';
 import { asciiDigits } from '../arabicNumerals.js';
 import { getMeasureArabicNumbers, getMeasureDirection, setMeasureArabicNumbers, setMeasureDirection, shiftLineX } from '../measure/bidiLines.js';
 import { getMeasureScriptContext, hanMarksOfLocale, scriptContextOfLocale, setMeasureScriptContext } from '../measure/script.js';
-import { getMeasureLanguage, setMeasureLanguage } from '../measure/canvas.js';
+import { getMeasureScriptFonts, setMeasureScriptFonts } from '../measure/scriptFonts.js';
+import { getMeasureLanguage, getMeasureLigatureBreaks, setMeasureLanguage, setMeasureLigatureBreaks } from '../measure/canvas.js';
+import { ligatureBreaksOf } from '../measure/ligatureBreaks.js';
+import { getCaseLocale, setCaseLocale } from '../textCase.js';
 import { shapingLanguageOf } from '../locale.js';
 import {
   createHeadingLevelResolver,
@@ -617,14 +620,20 @@ export function buildDocumentPass(
   const direction = getMeasureDirection();
   const arabicNumbers = getMeasureArabicNumbers();
   const scriptContext = getMeasureScriptContext();
+  const scriptFonts = getMeasureScriptFonts();
+  const ligatureBreaks = getMeasureLigatureBreaks();
   const language = getMeasureLanguage();
+  const caseLocale = getCaseLocale();
   const slashBreaks = getSlashBreaks();
   try {
     return placeDocumentPass(content, config, cache, options, hints);
   } finally {
     setSlashBreaks(slashBreaks);
     setMeasureLanguage(language);
+    setCaseLocale(caseLocale);
     setMeasureScriptContext(scriptContext);
+    setMeasureScriptFonts(scriptFonts);
+    setMeasureLigatureBreaks(ligatureBreaks);
     setMeasureArabicNumbers(arabicNumbers);
     setCjkLineBreak(lineBreak);
     setCjkComposition(composition);
@@ -723,6 +732,9 @@ function placeDocumentPass(
   // #770); in the host's for a configuration that asks for it, as up to
   // postext 1.28.
   setMeasureLanguage(shapingLanguageOf(resolved));
+  setCaseLocale(resolvedLocale(resolved));
+  setMeasureScriptFonts(resolved.bodyText.scriptFonts);
+  setMeasureLigatureBreaks(ligatureBreaksOf(resolved));
   // A Chinese or Japanese document sets its doubled ellipsis and dash as
   // Han text wherever they are cited.
   setMeasureScriptContext({
@@ -3218,19 +3230,45 @@ function placeDocumentPass(
     Math.max(1, measureNote(id, width)?.measured.lines.length ?? 1) * noteStyle.lineHeightPx;
   /** The notes of a column: ids in order, and the room reserved for them,
    *  one slot per reservation (page coordinates). */
-  const columnNotesOf = new Map<VDTColumn, { ids: string[]; slots: { top: number; height: number; ids: string[] }[] }>();
+  type NoteCut = { from: number; to: number; width: number; part: number };
+  const columnNotesOf = new Map<VDTColumn, { ids: string[]; slots: { top: number; height: number; ids: string[] }[]; cuts?: Map<string, NoteCut> }>();
   const columnOfNotes = new Map<VDTColumn, VDTPage>();
   /** Height `ids` (not yet set) add to `col`'s foot: the separator zone
    *  when the column has no note yet, the notes and the gaps between. */
-  const notesCost = (col: VDTColumn, ids: readonly string[]): number => {
+  const notesCost = (col: VDTColumn, ids: readonly string[], cuts?: ReadonlyMap<string, NoteCut>): number => {
     if (ids.length === 0) return 0;
     const first = !columnNotesOf.has(col);
     let h = first ? noteHeadPx : 0;
     ids.forEach((id, i) => {
       if (!first || i > 0) h += noteGapPx;
-      h += noteHeight(id, col.bbox.width);
+      const cut = cuts?.get(id);
+      h += cut ? (cut.to - cut.from) * noteStyle.lineHeightPx : noteHeight(id, col.bbox.width);
     });
     return h;
+  };
+  const splitNotes = columnNotes && !spreadNotes && resolved.footnotes.split === true;
+  const splitMinLines = resolved.footnotes.splitMinLines ?? 1;
+  const noteCarry: { id: string; from: number; width: number; part: number }[] = [];
+  let carryFrom: VDTColumn | undefined;
+  const noteLineCount = (id: string, width: number): number => Math.max(1, measureNote(id, width)?.measured.lines.length ?? 1);
+  const minNotesCost = (col: VDTColumn, ids: readonly string[]): number => {
+    const full = notesCost(col, ids);
+    if (ids.length === 0) return full;
+    const lead = ids.slice(0, -1);
+    const sep = lead.length === 0 && !columnNotesOf.has(col) ? noteHeadPx : noteGapPx;
+    const last = Math.min(noteHeight(ids[ids.length - 1]!, col.bbox.width), splitMinLines * noteStyle.lineHeightPx);
+    return Math.min(full, notesCost(col, lead) + sep + last);
+  };
+  const splitNoteCosts = (full: number[], min: number[], room: number, lineHeightPx: number): number[] => {
+    let k = 0;
+    while (k + 1 < full.length && (k + 1) * lineHeightPx + full[k + 1]! <= room + 0.01) k++;
+    const next = k + 1;
+    if (next >= full.length || full[next]! <= full[next - 1]! || min[next]! >= full[next]! || next * lineHeightPx + min[next]! > room + 0.01) return full;
+    return full.map((c, i) => (i < next ? c : i === next ? min[next]! : Infinity));
+  };
+  const underCutOf = (col: VDTColumn): number => {
+    const capped = uncappedBottoms.get(col);
+    return capped === undefined ? 0 : Math.max(0, capped - (col.bbox.y + col.bbox.height));
   };
   /** Sidenotes cited on the even page of a spread, waiting for its odd
    *  page (`spreadDeferredPage`, a page index) or the first page after it
@@ -3287,7 +3325,7 @@ function placeDocumentPass(
   /** `cost[k]`: the notes the first `k` of `lines` cite for the first time
    *  (after the pending ones) would add to `col`'s foot. Undefined when
    *  there are none. */
-  const notesPrefixCost = (col: VDTColumn, lines: readonly VDTLine[]): number[] | undefined => {
+  const notesPrefixCost = (col: VDTColumn, lines: readonly VDTLine[], split = false): number[] | undefined => {
     if (!columnNotes) return undefined;
     collectPendingNotes();
     const page = cursor.pageIndex;
@@ -3297,6 +3335,8 @@ function placeDocumentPass(
     const ids: string[] = [...pendingNotes];
     let any = ids.length > 0 || waiting.length > 0;
     const even = opensSpread(page);
+    if (splitNotes) settleCarry(doc.pages[page]!, col);
+    const blocked = splitNotes && noteCarry.length > 0 && carryFrom === col;
     // In a column a band cap cut, the notes are set under the cut, at the
     // column's true foot (`reserveNotes`): they cost the lines above the
     // cut only what reaches over it (#673). Charged whole, a paragraph
@@ -3305,7 +3345,11 @@ function placeDocumentPass(
     // with the note.
     const cappedBottom = uncappedBottoms.get(col);
     const underCut = cappedBottom === undefined ? 0 : Math.max(0, cappedBottom - (col.bbox.y + col.bbox.height));
-    const costOf = (): number => Math.max(0, notesCost(col, [...waiting, ...(even ? splitSpreadNotes(page, col, ids).here : ids)]) - underCut);
+    const costOf = (): number => {
+      const list = [...waiting, ...(even ? splitSpreadNotes(page, col, ids).here : ids)];
+      if (blocked && list.length > 0) return Infinity;
+      return Math.max(0, (split ? minNotesCost(col, list) : notesCost(col, list)) - underCut);
+    };
     const cost = [costOf()];
     for (const line of lines) {
       for (const seg of line.segments ?? []) {
@@ -3322,6 +3366,11 @@ function placeDocumentPass(
   const reserveCitedNotes = (placed: VDTBlock): void => {
     if (!columnNotes || placed.pageIndex < 0) return;
     collectPendingNotes();
+    if (splitNotes) {
+      const at = doc.pages[placed.pageIndex];
+      const atCol = at?.columns[placed.columnIndex];
+      if (at && atCol) settleCarry(at, atCol);
+    }
     const waiting = deferredFor(placed.pageIndex);
     const cited = footnoteIdsOfLines(placed.lines).filter((id) => !placedNotes.has(id) && !pendingNotes.includes(id) && !spreadDeferred.includes(id));
     if (cited.length === 0 && pendingNotes.length === 0 && waiting.length === 0) return;
@@ -3338,11 +3387,11 @@ function placeDocumentPass(
       if (here.length > 0) reserveNotes(page, col, here, anchor);
       return;
     }
-    if (ids.length > 0) reserveNotes(page, col, ids, anchor);
+    if (ids.length > 0) (splitNotes ? reserveOrCarry : reserveNotes)(page, col, ids, anchor);
   };
   /** Reserve `ids` at `col`'s foot. */
-  const reserveNotes = (page: VDTPage, col: VDTColumn, ids: string[], anchor: number): void => {
-    const h = notesCost(col, ids);
+  const reserveNotes = (page: VDTPage, col: VDTColumn, ids: string[], anchor: number, cuts?: ReadonlyMap<string, NoteCut>): void => {
+    const h = notesCost(col, ids, cuts);
     let bottom: number;
     const capped = uncappedBottoms.get(col);
     if (capped !== undefined) {
@@ -3367,10 +3416,84 @@ function placeDocumentPass(
       columnNotesOf.set(col, entry);
       columnOfNotes.set(col, page);
     }
-    entry.ids.push(...ids);
+    entry.ids.push(...ids.filter((id) => !cuts?.get(id)?.part));
     entry.slots.push({ top: bottom - h, height: h, ids });
+    if (cuts) for (const [id, cut] of cuts) (entry.cuts ??= new Map()).set(id, cut);
     for (const id of ids) placedNotes.add(id);
-    for (const id of ids) noteAnchor.set(id, anchor);
+    for (const id of ids) if (!noteAnchor.has(id)) noteAnchor.set(id, anchor);
+  };
+  const carryAhead = (ids: readonly string[], width: number, anchor: number): void => {
+    for (const id of ids) {
+      noteCarry.push({ id, from: 0, width, part: 0 });
+      placedNotes.add(id);
+      if (!noteAnchor.has(id)) noteAnchor.set(id, anchor);
+    }
+  };
+  const reserveSplitNotes = (page: VDTPage, col: VDTColumn, ids: string[], anchor: number): void => {
+    const room = col.availableHeight + underCutOf(col);
+    const first = !columnNotesOf.has(col);
+    let h = first ? noteHeadPx : 0;
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i]!;
+      const gap = !first || i > 0 ? noteGapPx : 0;
+      const full = noteHeight(id, col.bbox.width);
+      if (h + gap + full <= room + 0.01) {
+        h += gap + full;
+        continue;
+      }
+      const fit = Math.floor((room - h - gap + 0.01) / noteStyle.lineHeightPx);
+      if (fit < splitMinLines) break;
+      reserveNotes(page, col, ids.slice(0, i + 1), anchor, new Map([[id, { from: 0, to: fit, width: col.bbox.width, part: 0 }]]));
+      noteCarry.push({ id, from: fit, width: col.bbox.width, part: 1 });
+      carryAhead(ids.slice(i + 1), col.bbox.width, anchor);
+      carryFrom = col;
+      return;
+    }
+    reserveNotes(page, col, ids, anchor);
+  };
+  const settleCarry = (page: VDTPage, col: VDTColumn): void => {
+    if (noteCarry.length === 0 || col === carryFrom) return;
+    carryFrom = col;
+    const room = col.availableHeight + underCutOf(col);
+    const first = !columnNotesOf.has(col);
+    const fresh = first && col.blocks.length === 0 && col.bbox.height >= contentArea.height - 0.5;
+    let h = first ? noteHeadPx : 0;
+    const ids: string[] = [];
+    const cuts = new Map<string, NoteCut>();
+    while (noteCarry.length > 0) {
+      const c = noteCarry[0]!;
+      const width = c.from === 0 ? col.bbox.width : c.width;
+      const rest = noteLineCount(c.id, width) - c.from;
+      const gap = !first || ids.length > 0 ? noteGapPx : 0;
+      let fit = Math.min(rest, Math.floor((room - h - gap + 0.01) / noteStyle.lineHeightPx));
+      if (fit < Math.min(rest, splitMinLines)) {
+        if (ids.length > 0 || !fresh) break;
+        fit = rest;
+      }
+      ids.push(c.id);
+      cuts.set(c.id, { from: c.from, to: c.from + fit, width, part: c.part });
+      h += gap + fit * noteStyle.lineHeightPx;
+      if (fit < rest) {
+        noteCarry[0] = { ...c, from: c.from + fit, width, part: c.part + 1 };
+        break;
+      }
+      noteCarry.shift();
+    }
+    if (ids.length > 0) reserveNotes(page, col, ids, 0, cuts);
+  };
+  const reserveOrCarry = (page: VDTPage, col: VDTColumn, ids: string[], anchor: number): void => {
+    settleCarry(page, col);
+    if (noteCarry.length > 0 && carryFrom === col) carryAhead(ids, col.bbox.width, anchor);
+    else reserveSplitNotes(page, col, ids, anchor);
+  };
+  const flushNoteCarry = (): void => {
+    for (let guard = 0; noteCarry.length > 0 && guard < 10000; guard++) {
+      const page = doc.pages[cursor.pageIndex];
+      const col = page?.columns[cursor.columnIndex];
+      if (!page || !col) return;
+      settleCarry(page, col);
+      if (noteCarry.length > 0) advanceToNextColumn(doc, cursor, geomResolved, contentArea, pageWidthPx, pageHeightPx);
+    }
   };
   /** Notes still pending when the flow ends (a box closes the document):
    *  the foot of the column the flow ended in takes them. */
@@ -3378,10 +3501,12 @@ function placeDocumentPass(
     if (!columnNotes) return;
     collectPendingNotes();
     reserveLeftoverSidenotes();
-    if (pendingNotes.length === 0) return;
-    const page = doc.pages[cursor.pageIndex];
-    const col = page?.columns[cursor.columnIndex];
-    if (page && col) reserveNotes(page, col, pendingNotes.splice(0), contentBlocks.length - 1);
+    if (pendingNotes.length > 0) {
+      const page = doc.pages[cursor.pageIndex];
+      const col = page?.columns[cursor.columnIndex];
+      if (page && col) (splitNotes ? reserveOrCarry : reserveNotes)(page, col, pendingNotes.splice(0), contentBlocks.length - 1);
+    }
+    flushNoteCarry();
   };
   /** Sidenotes still waiting when the flow ends on the even page of a
    *  spread: they stay on it (JLReq §4.2.6), at the foot of the column the
@@ -3475,13 +3600,15 @@ function placeDocumentPass(
       regions.forEach((region, r) => {
         let y = region.top;
         if (r === 0) {
-          const sep = resolved.footnotes.separator;
-          const rule = sep.enabled && sep.width > 0 && noteRulePx > 0
+          const continued = (entry.cuts?.get(region.ids[0]!)?.part ?? 0) > 0;
+          const sep = continued ? resolved.footnotes.continuationRule ?? resolved.footnotes.separator : resolved.footnotes.separator;
+          const rulePx = continued ? dimensionToPx(sep.lineWidth, dpi) : noteRulePx;
+          const rule = sep.enabled && sep.width > 0 && rulePx > 0
             ? {
                 x,
-                y: y + noteSpaceAbovePx + noteRulePx / 2,
+                y: y + noteSpaceAbovePx + rulePx / 2,
                 width: width * sep.width,
-                lineWidthPx: noteRulePx,
+                lineWidthPx: rulePx,
                 color: sep.color?.hex ?? noteStyle.color,
               }
             : undefined;
@@ -3495,15 +3622,16 @@ function placeDocumentPass(
         }
         region.ids.forEach((id, i) => {
           if (r > 0 || i > 0) y += noteGapPx;
-          const m = measureNote(id, width);
+          const cut = entry.cuts?.get(id);
+          const m = measureNote(id, cut?.width ?? width);
           if (!m) return;
-          const blk = createVDTBlock(`fn-${id}`, 'paragraph', noteStyle.fontString, noteStyle.color, noteStyle.textAlign);
+          const blk = createVDTBlock(cut?.part ? `fn-${id}-cont-${cut.part}` : `fn-${id}`, 'paragraph', noteStyle.fontString, noteStyle.color, noteStyle.textAlign);
           applyStyleAttrs(blk, noteStyle);
           // The tracking the note was measured with (a runt taken up by
           // setting it one line shorter, #662): painted with it too.
           if (m.letterSpacingPx !== undefined) blk.letterSpacing = m.letterSpacingPx;
           if (m.runtTracking !== undefined) blk.runtFix = { tracking: m.runtTracking };
-          blk.lines = resetLinePositions(raggedLooseLines(m.measured.lines, noteStyle.textAlign), noteStyle.lineHeightPx).map((line) => ({
+          blk.lines = resetLinePositions(raggedLooseLines(m.measured.lines, noteStyle.textAlign).slice(cut?.from ?? 0, cut?.to), noteStyle.lineHeightPx).map((line) => ({
             ...line,
             bbox: createBoundingBox(line.bbox.x + x, line.bbox.y + y, line.bbox.width, line.bbox.height),
             ...(line.measure ? { measure: { ...line.measure, x: line.measure.x + x } } : {}),
@@ -3515,6 +3643,7 @@ function placeDocumentPass(
           blk.columnIndex = col.index;
           blk.contentIndex = noteAnchor.get(id) ?? 0;
           blk.footnoteNote = id;
+          if (cut?.part) blk.footnoteContinuation = cut.part;
           if (m.contentBlock.direction !== undefined && m.contentBlock.direction !== resolvedDirection(resolved)) blk.direction = m.contentBlock.direction;
           blk.dirty = false;
           blk.snappedToGrid = false;
@@ -3563,6 +3692,7 @@ function placeDocumentPass(
     if (
       page && !page.partInfo && !page.comic && !page.composed && cursor.columnIndex === 0
       && !pageHasContent(page) && !(page.floats && page.floats.length > 0)
+      && !(splitNotes && page.columns.some((c) => columnNotesOf.has(c)))
     ) {
       const fresh = createPageWithColumns(page.index, geomResolved, contentArea, pageWidthPx, pageHeightPx, pageIndexOffset);
       if (page.blankForParity) fresh.blankForParity = true;
@@ -4553,6 +4683,7 @@ function placeDocumentPass(
         ...(flow.rtl ? { direction: 'rtl' as const } : {}),
         ...(flow.mirrored ? { mirrored: true } : {}),
         ...(arabicNumbersOf(resolved) ? { arabicNumbers: true } : {}),
+        locale: resolvedLocale(resolved),
       }),
     },
   };
@@ -7981,6 +8112,7 @@ function placeDocumentPass(
     while (remainingLines.length > 0) {
       enterBand(blockIdx, partIndex);
       const curCol = currentColumn(doc, cursor);
+      if (splitNotes) settleCarry(doc.pages[cursor.pageIndex]!, curCol);
       // A wrapped float at the head or foot of this column (#627): running
       // text takes its band back to run beside it.
       if (wrapsBeside) openFloatWraps(curCol);
@@ -8209,7 +8341,10 @@ function placeDocumentPass(
       // Footnotes the lines cite take room at the column's foot: the whole
       // block fits when its lines and all their notes do, and a split
       // keeps the lines whose notes fit under them.
-      const noteCosts = vdtType === 'mathDisplay' || vdtType === 'score' ? undefined : notesPrefixCost(curCol, remainingLines);
+      const fullNoteCosts = vdtType === 'mathDisplay' || vdtType === 'score' ? undefined : notesPrefixCost(curCol, remainingLines);
+      const noteCosts = splitNotes && fullNoteCosts
+        ? splitNoteCosts(fullNoteCosts, notesPrefixCost(curCol, remainingLines, true)!, curCol.availableHeight - spacingBefore, style.lineHeightPx)
+        : fullNoteCosts;
       let effectiveAvailable = curCol.availableHeight - spacingBefore - (noteCosts ? noteCosts[noteCosts.length - 1]! : 0);
       // A hair of tolerance: room of exactly N lines (grid arithmetic in
       // floats — a column cut by a band cap, a balancing extra line) must

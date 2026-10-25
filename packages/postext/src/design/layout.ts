@@ -35,6 +35,7 @@ import { resolveDesignLineHeight } from '../defaults/headerFooter.js';
 import { createBoundingBox, pictureTraits, type BoundingBox, type VDTDesignBoxStyle, type VDTPathCommand, type VDTPathMarker, type VDTPathStroke } from '../vdt.js';
 import { mapPath, parseSvgPathCached, pathViewBox } from './svgPath.js';
 import { buildFontString } from '../measure/index.js';
+import { upperCaseFor } from '../textCase.js';
 import { graphemeCount } from '../measure/graphemes.js';
 import { joiningScriptIn } from '../measure/joining.js';
 import { parseInlineSnippetSpans } from '../parse/inlineSnippet.js';
@@ -364,6 +365,7 @@ export interface LayoutContext {
    *  (`arabicNumbersOf`): a number that opens a text reads as an Arabic
    *  one (`BidiOptions.arabicNumbers`, #665). */
   arabicNumbers?: boolean;
+  locale?: string;
   /** Attributes some elements read before the page fence's, by element id
    *  (#1189): a module's elements read its `:::module` fence, for
    *  `{attr.x}` and `when` / `unless`. */
@@ -977,13 +979,13 @@ const MIRRORED_PLACEHOLDER_RE = /\{(?:titleText|chapterTitle|chapterTitleAtTop|p
  * hold there (a template whose marks span the placeholder) is left out.
  * Empty when the text holds no 、 or ・.
  */
-function mirroredTextSeams(el: ResolvedDesignTextElement, printed: string, placeholders: DesignPlaceholderContext): number[] {
+function mirroredTextSeams(el: ResolvedDesignTextElement, printed: string, placeholders: DesignPlaceholderContext, locale: string | undefined): number[] {
   if (!printed.includes('、') && !printed.includes('・')) return [];
   const upper = el.textTransform === 'uppercase';
   const print = (template: string): string => {
     const resolved = resolveDesignText(template, placeholders, el.inlineMarks === true);
     const plain = el.inlineMarks ? plainDesignText(resolved, placeholders.heading?.chipStyles !== undefined) : resolved;
-    return upper ? plain.toLocaleUpperCase() : plain;
+    return upper ? upperCaseFor(plain, locale) : plain;
   };
   let whole: string | undefined;
   const out = new Set<number>();
@@ -1406,10 +1408,11 @@ export function layoutDesignSlot(
   // `\n` escape of the template and of attribute values turned into a
   // newline before any case transform (which would make it `\N`).
   const textContent = new Map<string, string>();
+  const caseLocale = context.locale ?? context.placeholders.heading?.locale;
   for (const el of ordered) {
     if (el.kind === 'text') {
       const text = resolveDesignText(el.content, placeholdersOf(el), el.inlineMarks === true);
-      textContent.set(el.id, el.textTransform === 'uppercase' ? text.toLocaleUpperCase() : text);
+      textContent.set(el.id, el.textTransform === 'uppercase' ? upperCaseFor(text, caseLocale) : text);
     }
   }
   // Where a number the layout wrote meets a text mirrored from the
@@ -1419,7 +1422,7 @@ export function layoutDesignSlot(
   if (getCjkComposition().region === 'japan') {
     for (const el of ordered) {
       if (el.kind !== 'text') continue;
-      const seams = mirroredTextSeams(el, textContent.get(el.id) ?? '', placeholdersOf(el));
+      const seams = mirroredTextSeams(el, textContent.get(el.id) ?? '', placeholdersOf(el), caseLocale);
       if (seams.length > 0) textSeams.set(el.id, seams);
     }
   }

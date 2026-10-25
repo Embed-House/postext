@@ -66,6 +66,12 @@ const BUILTIN_TYPE_STRINGS: Record<string, { figure: ResourceTypeStrings; table:
     video: { name: 'Video', namePlural: "Video's", shortLabel: 'Video', captionPrefix: 'Video' },
     example: { name: 'Voorbeeld', namePlural: 'Voorbeelden', shortLabel: 'Vb.', captionPrefix: 'Voorbeeld' },
   },
+  tr: {
+    figure: { name: 'Şekil', namePlural: 'Şekiller', shortLabel: 'Şek.', captionPrefix: 'Şekil' },
+    table: { name: 'Tablo', namePlural: 'Tablolar', shortLabel: 'Tab.', captionPrefix: 'Tablo' },
+    video: { name: 'Video', namePlural: 'Videolar', shortLabel: 'Video', captionPrefix: 'Video' },
+    example: { name: 'Örnek', namePlural: 'Örnekler', shortLabel: 'Ör.', captionPrefix: 'Örnek' },
+  },
   // Chinese numbers figures by chapter with a hyphen: 图1-1, 表2-3.
   'zh-hans': {
     figure: { name: '图', namePlural: '图', shortLabel: '图', captionPrefix: '图' },

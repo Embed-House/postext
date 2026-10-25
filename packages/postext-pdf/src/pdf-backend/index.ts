@@ -11,7 +11,7 @@ import { authoredCmykColors, loadOutputProfile, outputProfileInfo, parseIccProfi
 import { createPrintColorMode, type ColorMode, type PrintColorMode } from '../print/colorMode.js';
 import { runPagePrintPass } from '../print/printPass.js';
 import { writePdfX } from '../print/pdfx.js';
-import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, decorationOver, decorationUnder, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache.js';
+import { type ComposedPaintPart, canonicalLocaleTag, cjkGridCells, comicBlockOnSheet, columnClipRect, comicFramePaintOrder, comicHoldsText, comicPaintsUnderText, composedFrameBlockIds, composedPaintOrder, composedSheetClip, computePageTextExtent, decorationOver, decorationUnder, dimensionToPx, frameClips, frameContentRect, frameMatrix, pageColumnRule, shapingLanguageOf, verticalFlowOf, composedSheetClipOnSheet, ligatureBreaksOf } from 'postext';import { FontCache, withBareFiles, type FontFallback, type FontFileIssue, type FontMissingGlyphs, type PdfFontAnswer, type PdfFontFile, type PdfFontFileDeclaration, type PdfFontProvider, type PdfFontRequest } from '../fontCache.js';
 import {
   type PageCtx,
   type PdfMatrix,
@@ -25,6 +25,7 @@ import {
   quarterTurnMatrix,
   mirrorMatrix,
   whiteColor,
+  withLigatureBreaks,
 } from './primitives.js';
 // Register the painters of vertical and of complex-script text with the
 // primitives.
@@ -398,7 +399,7 @@ function openerTextElem(page: VDTPage, structure: StructureFlow): () => StructEl
  *  any other. */
 function renderPage(...args: Parameters<typeof paintPage>): void {
   const config = args[2].config;
-  withDocumentLanguage(shapingLanguageOf(config), languageTag(config), () => paintPage(...args));
+  withLigatureBreaks(ligatureBreaksOf(config), () => withDocumentLanguage(shapingLanguageOf(config), languageTag(config), () => paintPage(...args)));
 }
 
 function paintPage(

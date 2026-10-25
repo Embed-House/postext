@@ -1,6 +1,7 @@
 import { cjkMarkPieces } from './cjkClasses.js';
 import { hasCJK } from './cjk.js';
 import { fontStringFamily, fontStringWithFamily } from './fontString.js';
+import { breakLigatures } from './ligatureBreaks.js';
 
 type Context2D = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 
@@ -36,6 +37,11 @@ interface Measurer {
 const HOST_LANGUAGE = 'inherit';
 /** The language set by {@link setMeasureLanguage}; undefined: the host's. */
 let _language: string | undefined;
+let _ligatureBreaks = false;
+
+function cachesKey(): string {
+  return `${_language ?? HOST_LANGUAGE}${_ligatureBreaks ? '\u0001zwnj' : ''}`;
+}
 
 /** Give `ctx` the language measured in, where the context has one. */
 function applyLanguage(ctx: object, language: string | undefined): void {
@@ -116,6 +122,7 @@ export function canvasText(text: string): string {
  *  context set right to left, as a right-to-left word is painted (its
  *  brackets mirrored). */
 function metricsOf(text: string, font: string, rtl = false, spacingPx = 0): TextMetrics {
+  if (_ligatureBreaks) text = breakLigatures(text);
   let measurer: Measurer;
   let handed = text;
   if (_language === undefined) {
@@ -212,7 +219,21 @@ _cachesByLanguage.set(HOST_LANGUAGE, C);
 export function setMeasureLanguage(language: string | undefined): void {
   if (language === _language) return;
   _language = language;
-  const key = language ?? HOST_LANGUAGE;
+  selectCaches();
+}
+
+export function setMeasureLigatureBreaks(on: boolean): void {
+  if (on === _ligatureBreaks) return;
+  _ligatureBreaks = on;
+  selectCaches();
+}
+
+export function getMeasureLigatureBreaks(): boolean {
+  return _ligatureBreaks;
+}
+
+function selectCaches(): void {
+  const key = cachesKey();
   let caches = _cachesByLanguage.get(key);
   if (!caches) {
     caches = newCaches();
@@ -242,7 +263,7 @@ export function withMeasureLanguage<T>(language: string | undefined, fn: () => T
 /** The part of a measurement cache key the language decides: empty for
  *  the host's, so those keys are unchanged. */
 export function measureLanguageKey(): string {
-  return _language === undefined ? '' : `lg${_language}\x00`;
+  return `${_language === undefined ? '' : `lg${_language}\x00`}${_ligatureBreaks ? 'zw\x00' : ''}`;
 }
 
 // Word-level width cache. Text measurement is the engine's hottest call:
@@ -435,7 +456,7 @@ export function evictTextWidths(families: Iterable<string> | null): void {
   if (set === null) {
     // Every language's widths: the one measured in keeps its place.
     C = newCaches();
-    _cachesByLanguage = new Map([[_language ?? HOST_LANGUAGE, C]]);
+    _cachesByLanguage = new Map([[cachesKey(), C]]);
   } else {
     for (const caches of _cachesByLanguage.values()) {
       caches.widthEntries -= dropFamilies(caches.width, set);

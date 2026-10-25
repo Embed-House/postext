@@ -16,6 +16,8 @@ import type { ListBulletStyle, ListItemResolved, OrderedListMetrics } from './li
 import type { HeadingLevelResolver } from './headingStyles.js';
 import { lengthAttr } from './verse.js';
 import { verseLinesSettings, versesLineByLine } from './verseLines.js';
+import { resolvedLocale } from './config.js';
+import { upperCaseFor } from '../textCase.js';
 import {
   resolveOrderedListItemStyle,
   resolveUnorderedListItemStyle,
@@ -110,11 +112,11 @@ export function withHeadingFirstLineIndentAttr(style: BlockStyle, value: string 
  *  whose upper-case form is not exactly one code unit (`ß` → `SS`, ligatures)
  *  so the result has the same length as the input and per-character source
  *  maps remain valid. */
-export function uppercasePreservingLength(text: string): string {
+export function uppercasePreservingLength(text: string, locale?: unknown): string {
   let out = '';
   for (let i = 0; i < text.length; i++) {
     const ch = text[i]!;
-    const up = ch.toLocaleUpperCase();
+    const up = upperCaseFor(ch, locale);
     out += up.length === 1 ? up : ch;
   }
   return out;
@@ -122,12 +124,12 @@ export function uppercasePreservingLength(text: string): string {
 
 /** A span in capitals for a paragraph style's `textTransform`, the words
  *  of a chip included; maths as it is. */
-function uppercaseSpan(span: InlineSpan): InlineSpan {
+function uppercaseSpan(span: InlineSpan, locale: string): InlineSpan {
   if (span.math) return span;
   return {
     ...span,
-    text: uppercasePreservingLength(span.text),
-    ...(span.chip ? { chip: { ...span.chip, spans: span.chip.spans.map(uppercaseSpan) } } : {}),
+    text: uppercasePreservingLength(span.text, locale),
+    ...(span.chip ? { chip: { ...span.chip, spans: span.chip.spans.map((s) => uppercaseSpan(s, locale)) } } : {}),
   };
 }
 
@@ -181,8 +183,8 @@ export function resolveBlockKind(
       if (levelCfg?.textTransform === 'uppercase') {
         contentBlock = {
           ...contentBlock,
-          text: uppercasePreservingLength(contentBlock.text),
-          spans: contentBlock.spans.map((s) => (s.math ? s : { ...s, text: uppercasePreservingLength(s.text) })),
+          text: uppercasePreservingLength(contentBlock.text, resolvedLocale(resolved)),
+          spans: contentBlock.spans.map((s) => (s.math ? s : { ...s, text: uppercasePreservingLength(s.text, resolvedLocale(resolved)) })),
         };
       }
       // Forced title breaks render as spaces in the column; opener designs
@@ -321,8 +323,8 @@ export function resolveBlockKind(
       const contentBlock: ContentBlock = style.uppercase
         ? {
             ...rawBlock,
-            text: uppercasePreservingLength(rawBlock.text),
-            spans: rawBlock.spans.map(uppercaseSpan),
+            text: uppercasePreservingLength(rawBlock.text, resolvedLocale(resolved)),
+            spans: rawBlock.spans.map((s) => uppercaseSpan(s, resolvedLocale(resolved))),
           }
         : rawBlock;
       return {

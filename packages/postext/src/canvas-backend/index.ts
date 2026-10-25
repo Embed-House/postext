@@ -9,6 +9,7 @@ import { renderBlock } from './blockRender.js';
 import { renderHeaderFooterSlot } from './headerFooter.js';
 import { documentInkHex } from '../svg/singleInk.js';
 import { shapingLanguageOf } from '../locale.js';
+import { ligatureBreaksOf, setPaintLigatureBreaks } from '../measure/ligatureBreaks.js';
 import { setSegmentLanguages } from './wordRuns.js';
 import { setMissingImageSink, setTintUnflagged } from './renderResourceBlock.js';
 import { setVerticalPaint } from './verticalText.js';
@@ -174,6 +175,7 @@ function paintContext(
   const lang = langOf(doc.config);
   if (lang !== undefined && 'lang' in ctx) (ctx as CanvasRenderingContext2D & { lang: string }).lang = lang;
   setSegmentLanguages(doc.config.bodyText?.shapingLanguage !== 'host');
+  setPaintLigatureBreaks(ligatureBreaksOf(doc.config));
   // The bitmap is a whole number of pixels; the page rarely is. Drawing at
   // `scale` would leave the last column (and row) of pixels only partly
   // covered — a light hairline at the edge of a dark or coloured page — so

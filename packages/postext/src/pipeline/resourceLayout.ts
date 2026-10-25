@@ -93,6 +93,8 @@ import { resolveBodyStyle } from './styles.js';
 import { FIT_EPS } from './placement.js';
 import { captionInsideShare } from './captionInside.js';
 import { uppercasePreservingLength } from './buildBlockKind.js';
+import { resolvedLocale } from './config.js';
+import { lowerCaseFor, upperCaseFor } from '../textCase.js';
 import { lineTrailingTracking } from '../lineInk.js';
 import type { ResourceNumberingMap } from './resourceNumbering.js';
 import { resolveCitationSpans, type CaptionCitations } from './citations.js';
@@ -318,6 +320,7 @@ export function resolveRefLabel(
   /** Between the label and the number (`captionStyle.labelNumberGap`); a
    *  type's own caption style may set another. */
   labelNumberGap: string = NBSP,
+  locale?: unknown,
 ): string {
   if (ref.text !== undefined && ref.text.length > 0) return ref.text;
   const entry = resourceNumbering[ref.resourceId];
@@ -329,10 +332,10 @@ export function resolveRefLabel(
   const type = typeId !== undefined ? resourceTypes.find((t) => t.id === typeId) : undefined;
   const gap = typeof type?.captionStyle?.labelNumberGap === 'string' ? type.captionStyle.labelNumberGap : labelNumberGap;
   if (ref.style === 'full') {
-    return labelWithNumber(applyRefCase(type?.name ?? type?.shortLabel ?? '', ref.case), number, gap);
+    return labelWithNumber(applyRefCase(type?.name ?? type?.shortLabel ?? '', ref.case, locale), number, gap);
   }
   // default: short label + number (e.g. "Fig. 1.7")
-  return labelWithNumber(applyRefCase(type?.shortLabel ?? type?.name ?? '', ref.case), number, gap);
+  return labelWithNumber(applyRefCase(type?.shortLabel ?? type?.name ?? '', ref.case, locale), number, gap);
 }
 
 /** "Fig. 1.7": a type's label and a number, glued by a no-break space (or
@@ -362,16 +365,16 @@ function captionLabelText(captionPrefix: string, number: string, cs?: Pick<Resol
 /** Apply a `:ref{case=…}` transform to the label part of a computed
  *  reference (`Fig.` / `Figure`). The number is never touched — the caller
  *  joins it afterwards — and `text=` overrides bypass this entirely. */
-function applyRefCase(label: string, refCase: RefCase | undefined): string {
+function applyRefCase(label: string, refCase: RefCase | undefined, locale: unknown): string {
   if (refCase === undefined || label.length === 0) return label;
   switch (refCase) {
     case 'lower':
-      return label.toLocaleLowerCase();
+      return lowerCaseFor(label, locale);
     case 'upper':
-      return label.toLocaleUpperCase();
+      return upperCaseFor(label, locale);
     case 'capitalize': {
       const first = [...label][0]!;
-      return first.toLocaleUpperCase() + label.slice(first.length);
+      return upperCaseFor(first, locale) + label.slice(first.length);
     }
   }
 }
@@ -404,6 +407,7 @@ export function resolveRefSpans(
      *  between two of them is marked `ref.breakable`, and a line may break
      *  there (`refLabelPieces`). */
     breakLabels?: boolean;
+    locale?: string;
   },
 ): InlineSpan[] {
   if (!spans.some((s) => s.ref)) return spans;
@@ -417,7 +421,7 @@ export function resolveRefSpans(
       const bare = unprefixedId(ref.resourceId);
       if (target && refStyle?.anchors) {
         ref = { ...ref, resourceId: target.id, anchor: true, ...(target.pageIndex !== undefined ? { pageIndex: target.pageIndex } : {}) };
-        label = anchorRefLabel(ref, target, refStyle.anchors.strings);
+        label = anchorRefLabel(ref, target, refStyle.anchors.strings, refStyle.locale);
       } else if (bare !== undefined && isResource(bare)) {
         ref = { ...ref, resourceId: bare };
       }
@@ -425,7 +429,7 @@ export function resolveRefSpans(
     // A reference to a resource is words only under a `text` override: its
     // own label carries a number ("Fig. 1.7").
     label ??= {
-      text: resolveRefLabel(ref, resourceNumbering, resourceTypes, resources, refStyle?.labelNumberGap),
+      text: resolveRefLabel(ref, resourceNumbering, resourceTypes, resources, refStyle?.labelNumberGap, refStyle?.locale),
       words: ref.text !== undefined && ref.text.length > 0,
     };
     // Spans resolved twice (a block measured again) are marked afresh.
@@ -1069,7 +1073,7 @@ function layoutTable(
   resourceNumbering: ResourceNumberingMap,
   resourceTypes: ResourceType[],
   resources: Resource[],
-  refStyle: { bold: boolean; italic: boolean; labelNumberGap?: string; breakLabels?: boolean },
+  refStyle: { bold: boolean; italic: boolean; labelNumberGap?: string; breakLabels?: boolean; locale?: string },
   selection?: readonly number[],
   /** The table's own direction (`Resource.table.direction`), when it
    *  opposes its frame's: its cells are measured in it, its first column
@@ -1097,7 +1101,7 @@ function layoutTableIn(
   resourceNumbering: ResourceNumberingMap,
   resourceTypes: ResourceType[],
   resources: Resource[],
-  refStyle: { bold: boolean; italic: boolean; labelNumberGap?: string; breakLabels?: boolean },
+  refStyle: { bold: boolean; italic: boolean; labelNumberGap?: string; breakLabels?: boolean; locale?: string },
   selection: readonly number[] | undefined,
   opposite: boolean,
 ): { layout: VDTResourceTableLayout; height: number; metrics?: TableRowMetrics } {
@@ -1173,7 +1177,7 @@ function layoutTableIn(
         fontSizePxOf(set.fontString), set.lineHeightPx, style.math,
       );
       const spans = annotatedSpans(resolveCellChips(resolveSwatchSpans(resolveRefSpans(
-        set.uppercase ? parsed.map((s) => (s.ref || s.math ? s : { ...s, text: uppercasePreservingLength(s.text) })) : parsed,
+        set.uppercase ? parsed.map((s) => (s.ref || s.math ? s : { ...s, text: uppercasePreservingLength(s.text, refStyle.locale) })) : parsed,
         resourceNumbering,
         resourceTypes,
         resources,
@@ -1425,7 +1429,7 @@ function layoutCaptionTextIn(input: CaptionTextInput): CaptionTextLayout {
   const lineHeightRatio = bodyStyle.lineHeightPx / bodyStyle.fontSizePx;
   const normalWeight = resolved.bodyText.fontWeight.toString();
   const boldWeight = resolved.bodyText.boldFontWeight.toString();
-  const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels };
+  const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels, locale: resolvedLocale(resolved) };
   const cs: ResolvedCaptionStyleConfig = mergeCaptionStyle(
     resolved.captionStyle,
     resourceType?.captionStyle,
@@ -1535,7 +1539,7 @@ export interface LabelLinesInput {
 export function layoutLabelLines(input: LabelLinesInput): VDTLine[] {
   return withSnippetCache(input.cache, () => {
     const { resolved, fontPx, lineHeightPx } = input;
-    const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels };
+    const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels, locale: resolvedLocale(resolved) };
     const spans = annotatedSpans(resolveChipSpans(resolveSwatchSpans(resolveRefSpans(
       snippetMathSpans(input.spans, fontPx, lineHeightPx, resolved.math),
       input.resourceNumbering ?? {},
@@ -1617,7 +1621,7 @@ function layoutResourceBlockIn(input: ResourceLayoutInput): ResourceBlockLayout 
   // previous heights exactly when the size is left at the body default).
   const lineHeightRatio = bodyStyle.lineHeightPx / bodyStyle.fontSizePx;
   // Inline `:ref` emphasis (bold/italic), applied to refs in captions + cells.
-  const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels };
+  const refStyle = { bold: resolved.bodyText.referenceBold, italic: resolved.bodyText.referenceItalic, labelNumberGap: resolved.captionStyle.labelNumberGap, breakLabels: resolved.crossRefs.breakLabels, locale: resolvedLocale(resolved) };
 
   // A caption beside the picture inside its slot (`placement.captionSide:
   // 'inside'`, #1106): the picture takes its share of the slot on its

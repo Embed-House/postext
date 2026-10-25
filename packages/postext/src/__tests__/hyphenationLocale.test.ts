@@ -42,8 +42,8 @@ afterEach(() => {
 });
 
 describe('hyphenation locale tags (BCP 47)', () => {
-  it('bundles eight languages', () => {
-    expect([...HYPHENATION_LOCALES]).toEqual(['en-us', 'es', 'fr', 'de', 'it', 'pt', 'ca', 'nl']);
+  it('bundles nine languages', () => {
+    expect([...HYPHENATION_LOCALES]).toEqual(['en-us', 'es', 'fr', 'de', 'it', 'pt', 'ca', 'nl', 'tr']);
   });
 
   it('region, script and variant subtags pick the language\'s patterns', () => {

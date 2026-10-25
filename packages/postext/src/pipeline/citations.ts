@@ -39,7 +39,7 @@ const WARICHU_ID_BASE = 1_000_000;
 const BIBLIOGRAPHY_TITLES: Readonly<Record<string, string>> = {
   en: 'References', es: 'Referencias', fr: 'Références', de: 'Literatur', it: 'Bibliografia', pt: 'Referências',
   ca: 'Referències', nl: 'Literatuur', 'zh-hans': '参考文献', 'zh-hant': '參考文獻', ja: '参考文献',
-  ar: 'المراجع',
+  ar: 'المراجع', tr: 'Kaynakça',
 };
 
 /** The title a bibliography takes in a document language. */

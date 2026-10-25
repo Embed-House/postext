@@ -47,6 +47,7 @@ import { dimensionToPx } from '../units.js';
 import { resolveColorValue } from '../defaults/shared.js';
 import { layoutLabelLines } from '../pipeline/resourceLayout.js';
 import { uppercasePreservingLength } from '../pipeline/buildBlockKind.js';
+import { resolvedLocale } from '../pipeline/config.js';
 import { firstStrongDirection } from '../design/bidiText.js';
 import { withIconAlts } from './labelText.js';
 import { BREAK_PLACEHOLDER, SWATCH_PLACEHOLDER } from '../parse/inlineFormatting.js';
@@ -207,9 +208,9 @@ export interface FigureLabelContext {
   cache?: MeasurementCache;
 }
 
-const upperSpans = (spans: readonly InlineSpan[]): InlineSpan[] =>
-  spans.map((s) => (s.text ? { ...s, text: uppercasePreservingLength(s.text) } : s)).map((s) =>
-    s.chip ? { ...s, chip: { ...s.chip, spans: s.chip.spans.map((c) => ({ ...c, text: uppercasePreservingLength(c.text) })) } } : s);
+const upperSpans = (spans: readonly InlineSpan[], locale: string): InlineSpan[] =>
+  spans.map((s) => (s.text ? { ...s, text: uppercasePreservingLength(s.text, locale) } : s)).map((s) =>
+    s.chip ? { ...s, chip: { ...s.chip, spans: s.chip.spans.map((c) => ({ ...c, text: uppercasePreservingLength(c.text, locale) })) } } : s);
 
 const moveLine = (line: VDTLine, dx: number, dy: number): VDTLine => ({
   ...line,
@@ -286,7 +287,7 @@ export function layOutLabel(
   place: { x: number; y: number; widthPx?: number; align?: ResourceAnchor['align']; verticalAlign?: ResourceAnchor['verticalAlign']; rotate?: number; vertical?: boolean },
   ctx: FigureLabelContext,
 ): VDTFigureLabelLayout | undefined {
-  const text = withForcedBreaks(look.uppercase ? upperSpans(spans) : [...spans]);
+  const text = withForcedBreaks(look.uppercase ? upperSpans(spans, resolvedLocale(ctx.resolved)) : [...spans]);
   const plain = spanText(text);
   if (plain.trim().length === 0) return undefined;
   // Vertical writing (#902): measured as a vertical page's flow is, in the

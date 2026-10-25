@@ -1916,6 +1916,7 @@ export interface VDTBlock {
   /** Set on the paragraph a footnote is set as (at a column foot, or after
    *  the chapter's last block): the note's id. */
   footnoteNote?: string;
+  footnoteContinuation?: number;
   /** A bibliography entry (#269): the key of the work it lists. */
   bibEntry?: string;
   /** The paragraph style (`paragraphStyles[].id`) the block's text is set

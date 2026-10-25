@@ -1395,7 +1395,8 @@ export type HyphenationLocale =
   | 'it'
   | 'pt'
   | 'ca'
-  | 'nl';
+  | 'nl'
+  | 'tr';
 
 /**
  * A BCP 47 language tag: one of the bundled {@link HyphenationLocale} ids,
@@ -1759,6 +1760,8 @@ export interface BodyTextConfig {
    *  (Chrome before 136, Firefox and Safari where it is missing) is given
    *  no language and keeps the forms it always measured. */
   shapingLanguage?: 'document' | 'host';
+  scriptFonts?: { arab?: string; hebr?: string };
+  turkishLigatures?: 'break' | 'keep';
   /** Tab stops of every paragraph, list item and quotation (#622): where a
    *  tab (`:tab`, or a tab character in the text) sends the words after
    *  it. A paragraph style or a callout body that sets its own replaces
@@ -2457,6 +2460,8 @@ export interface ResolvedBodyTextConfig {
   /** Present only when the host's (see
    *  {@link BodyTextConfig.shapingLanguage}). */
   shapingLanguage?: 'host';
+  scriptFonts?: { arab?: string; hebr?: string };
+  turkishLigatures?: 'keep';
   /** Absent when unset (see {@link BodyTextConfig.tabStops}). */
   tabStops?: TabStop[];
   /** Absent when unset (see {@link BodyTextConfig.tabInterval}). */
@@ -6116,6 +6121,9 @@ export interface FootnotesConfig {
   /** Space between the rule and the first note. Default `0.4em`. */
   spaceBelowRule?: Dimension;
   separator?: FootnoteSeparatorConfig;
+  split?: boolean;
+  splitMinLines?: number;
+  continuationRule?: FootnoteSeparatorConfig;
 }
 
 export interface ResolvedFootnotesConfig {
@@ -6147,6 +6155,9 @@ export interface ResolvedFootnotesConfig {
   spaceAbove: Dimension;
   spaceBelowRule: Dimension;
   separator: ResolvedFootnoteSeparatorConfig;
+  split?: true;
+  splitMinLines?: number;
+  continuationRule?: ResolvedFootnoteSeparatorConfig;
 }
 
 /** The conventions CJK text follows. Chinese, after the regions clreq

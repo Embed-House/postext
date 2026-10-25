@@ -32,6 +32,7 @@ import { computeChapterTitles, computeChapterTitlesAtTop, computeChapterNumbers,
 import { parsePartNumber, parsePartPalette, partMarkPages } from './parts.js';
 import { composedLeafConfig, computePageMetrics, onComposedLeaf, sheetRectToFlow } from './buildHelpers.js';
 import { arabicNumbersOf, resolvedLocale } from './config.js';
+import { upperCaseFor } from '../textCase.js';
 import { classifyPages } from './pageRoles.js';
 import { computeSectionStyles, createHeadingLevelResolver, headingIsHidden, type HeadingLevelResolver } from './headingStyles.js';
 import { dimensionToPx } from '../units.js';
@@ -526,7 +527,7 @@ export function layoutBoxDesign(
   band: { x: number; y: number; width: number; height: number },
   dpi: number,
   metadata: DocumentMetadata,
-  extras: Pick<SlotLayoutExtras, 'resourceById' | 'direction' | 'mirrored' | 'arabicNumbers'>,
+  extras: Pick<SlotLayoutExtras, 'resourceById' | 'direction' | 'mirrored' | 'arabicNumbers' | 'locale'>,
 ): VDTDesignBlock[] {
   const heading: HeadingPlaceholderInfo = { titleText: info.titleText, formattedNumber: '', attrs: { ...info.attrs }, boxText: info.boxText };
   const slot = layoutSlotToVdt(design.slot, band, 0, headingPlaceholders(heading, metadata, 0), dpi, {
@@ -549,6 +550,7 @@ export interface SlotLayoutExtras {
   startRight?: boolean;
   /** See `LayoutContext.arabicNumbers` (#665). */
   arabicNumbers?: boolean;
+  locale?: string;
   pageRole?: PageRole;
   /** Resources by id, for `kind: 'image'` elements. */
   resourceById?: ReadonlyMap<string, Resource>;
@@ -673,6 +675,7 @@ function withPrintedTitle(
   el: ResolvedDesignTextElement,
   src: { start: number; end: number; text?: string; sourceMap?: number[] },
   placeholders: DesignPlaceholderContext,
+  locale: string | undefined,
 ): { start: number; end: number; text?: string; sourceMap?: number[]; prefixLen?: number } {
   const at = el.content.indexOf('{titleText}');
   const map = src.sourceMap;
@@ -683,10 +686,10 @@ function withPrintedTitle(
   const print = (template: string): string => {
     const resolved = resolveDesignText(template, placeholders, el.inlineMarks === true);
     const plain = el.inlineMarks ? plainDesignText(resolved) : resolved;
-    return upper ? plain.toLocaleUpperCase() : plain;
+    return upper ? upperCaseFor(plain, locale) : plain;
   };
   const text = print(el.content);
-  const title = upper ? src.text.toLocaleUpperCase() : src.text;
+  const title = upper ? upperCaseFor(src.text, locale) : src.text;
   if (text === title) return title === src.text ? src : { ...src, text };
   const prefixLen = print(el.content.slice(0, at)).length;
   if (title.length !== src.text.length || text.slice(prefixLen, prefixLen + title.length) !== title) return src;
@@ -725,6 +728,7 @@ export function layoutSlotToVdt(
       ...(extras?.mirrored ? { mirrored: true } : {}),
       ...(extras?.startRight ? { startRight: true } : {}),
       ...(extras?.arabicNumbers ? { arabicNumbers: true } : {}),
+      ...(extras?.locale ? { locale: extras.locale } : {}),
       ...(own && own.size > 0 ? { elementAttrs: new Map([...own].map(([id, a]) => [id, a.attrs] as const)) } : {}),
     },
     pageIndex,
@@ -766,7 +770,7 @@ export function layoutSlotToVdt(
       const keepMap = !el.inlineMarks || src.text === undefined
         || plainDesignText(resolveDesignText(el.content, elPlaceholders, el.inlineMarks === true)).includes(src.text);
       const attr = ATTR_ELEMENT.exec(el.content)?.[1];
-      const mapped = keepMap ? withPrintedTitle(el, src, elPlaceholders) : { start: src.start, end: src.end };
+      const mapped = keepMap ? withPrintedTitle(el, src, elPlaceholders, extras.locale ?? elPlaceholders.heading?.locale) : { start: src.start, end: src.end };
       sourceByElement.set(el.id, attr !== undefined && elExtras.attrSources?.[attr] ? { ...mapped, attr } : mapped);
     }
   }
@@ -1646,6 +1650,7 @@ function layoutHeadersAndFooters(doc: VDTDocument, resourceById: ReadonlyMap<str
       ...(resolved.direction === 'rtl' ? { direction: 'rtl' as const } : {}),
       ...(pageIsMirrored(page) ? { mirrored: true } : {}),
       ...(arabicNumbersOf(resolved) ? { arabicNumbers: true } : {}),
+      locale,
     };
     // Running heads and folios stay on the sheet: the physical content
     // area and trim box. `anchor.to: 'outer'` is the outer margin, on the

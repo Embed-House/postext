@@ -7,6 +7,7 @@ import it from 'hyphenation.it';
 import pt from 'hyphenation.pt';
 import ca from 'hyphenation.ca';
 import nl from 'hyphenation.nl';
+import tr from 'hyphenation.tr';
 import type { HyphenationLocale, LocaleTag } from './types.js';
 import { hyphenationLocaleFor } from './locale.js';
 import { joiningScriptIn } from './measure/joining.js';
@@ -38,6 +39,7 @@ const PATTERNS: Record<HyphenationLocale, HyphenationLanguage> = {
   // package ships three.
   'ca': { ...ca, leftmin: 2, rightmin: 2, exceptions: CATALAN_EXCEPTIONS },
   'nl': nl,
+  'tr': { ...tr, leftmin: 2, rightmin: 2 },
 };
 
 const instances = new Map<HyphenationLocale, Hypher>();
@@ -124,7 +126,7 @@ export function hyphenateByDictionary(text: string, locale?: LocaleTag): string 
     if (hyphenated === undefined) {
       // A word of a joining script (an Arabic word quoted in an English
       // book) is never divided: its letters connect (`measure/joining.ts`).
-      hyphenated = joiningScriptIn(word) ? word : loc === 'ca' ? hyphenateCatalan(hyphenator, word) : hyphenator.hyphenateText(word);
+      hyphenated = joiningScriptIn(word) ? word : loc === 'ca' ? hyphenateCatalan(hyphenator, word) : loc === 'tr' ? hyphenateTurkish(hyphenator, word) : hyphenator.hyphenateText(word);
       if (APOSTROPHE_LOCALES.has(loc) && APOSTROPHE_RE.test(word)) {
         hyphenated = withoutApostropheBreaks(word, hyphenated, PATTERNS[loc].leftmin, PATTERNS[loc].rightmin, ELISION_LOCALES.has(loc));
       }
@@ -424,6 +426,65 @@ function hyphenateCatalan(hyphenator: Hypher, word: string): string {
       out += (hiatus || apostrophe ? '' : SOFT_HYPHEN) + next;
     }
     return out;
+  });
+}
+
+const TURKISH_WORD_RE = /[\p{L}\p{M}\u00AD]+(?:['\u2019][\p{L}\p{M}\u00AD]+)*/gu;
+// hypher lowers `İ` to `i` + U+0307 and `I` to `i`; the patterns know neither.
+const TURKISH_LETTER_MAP: ReadonlyMap<string, string> = new Map([
+  ['İ', 'i'], ['I', 'ı'],
+  ['ḥ', 'h'], ['Ḥ', 'H'], ['ḫ', 'h'], ['Ḫ', 'H'], ['ẖ', 'h'],
+  ['ṣ', 's'], ['Ṣ', 'S'], ['ṭ', 't'], ['Ṭ', 'T'], ['ẕ', 'z'], ['Ẕ', 'Z'],
+  ['ḳ', 'k'], ['Ḳ', 'K'], ['ġ', 'g'], ['Ġ', 'G'], ['ḍ', 'd'], ['Ḍ', 'D'],
+  ['ẓ', 'z'], ['Ẓ', 'Z'], ['ṯ', 's'], ['Ṯ', 'S'], ['ṅ', 'n'], ['Ṅ', 'N'],
+  ['ā', 'a'], ['Ā', 'A'], ['ī', 'i'], ['Ī', 'I'], ['ū', 'u'], ['Ū', 'U'],
+]);
+const TURKISH_TRANSPARENT_RE = /[\u02BE\u02BF]/;
+const COMBINING_MARK_RE = /\p{M}/u;
+
+const isAbbreviation = (stem: string): boolean =>
+  stem.replace(TURKISH_TRANSPARENT_RE, '').length >= 2 && stem === stem.toLocaleUpperCase('tr') && stem !== stem.toLocaleLowerCase('tr');
+
+function hyphenateTurkish(hyphenator: Hypher, word: string): string {
+  return word.replace(TURKISH_WORD_RE, (run) => {
+    if (run.includes(SOFT_HYPHEN)) return run;
+    let mapped = '';
+    const at: number[] = [];
+    let letters = 0;
+    for (let i = 0; i < run.length; i++) {
+      const ch = run[i]!;
+      if (APOSTROPHE_RE.test(ch)) continue;
+      at.push(i);
+      if (TURKISH_TRANSPARENT_RE.test(ch)) {
+        // ʿayn and hamza read as a consonant (`Kurʾân` as `kurhân`), never counted as a letter.
+        mapped += 'h';
+      } else {
+        mapped += TURKISH_LETTER_MAP.get(ch) ?? ch;
+        letters++;
+      }
+    }
+    if (letters < MIN_WORD_LENGTH || isAbbreviation(run.split(APOSTROPHE_RE)[0]!)) return run;
+    const { leftmin, rightmin } = PATTERNS.tr;
+    let out = '';
+    let from = 0;
+    let m = 0;
+    let before = 0;
+    for (const part of hyphenator.hyphenate(mapped)) {
+      const k = at[m]!;
+      // Never at the apostrophe, though TDK allows `Edirne’` | `nin`: a line ending in ’ reads as a closing quote.
+      if (m > 0 && before >= leftmin && letters - before >= rightmin
+        && !APOSTROPHE_RE.test(run[k - 1]!)
+        && !TURKISH_TRANSPARENT_RE.test(run[k - 1]!) && !TURKISH_TRANSPARENT_RE.test(run[k]!)
+        && !COMBINING_MARK_RE.test(run[k]!)) {
+        out += run.slice(from, k) + SOFT_HYPHEN;
+        from = k;
+      }
+      for (let i = m; i < m + part.length; i++) {
+        if (!TURKISH_TRANSPARENT_RE.test(run[at[i]!]!)) before++;
+      }
+      m += part.length;
+    }
+    return out + run.slice(from);
   });
 }
 

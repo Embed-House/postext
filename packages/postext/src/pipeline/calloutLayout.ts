@@ -84,7 +84,7 @@ import { uppercasePreservingLength } from './buildBlockKind.js';
 import { headingIsHidden, headingStyleOf } from './headingStyles.js';
 import { tocBlockStamps } from './toc.js';
 import { directDesignTextBlock } from '../design/bidiText.js';
-import { arabicNumbersOf } from './config.js';
+import { arabicNumbersOf, resolvedLocale } from './config.js';
 import { containerStyle, paragraphStyleIdOf, restyleContainerFor, type ParagraphContainerPlan } from './paragraphContainers.js';
 import { joiningScriptIn } from '../measure/joining.js';
 import { getMeasureArabicNumbers, getMeasureDirection, shiftLineX } from '../measure/bidiLines.js';
@@ -860,7 +860,7 @@ export function layoutCallout(input: CalloutLayoutInput): CalloutLayoutResult {
   const suffix = repeatedTitle ? style.continuedSuffix.trim() : '';
   const shownTitle = suffix.length > 0 ? `${rawTitle}${suffixJoiner(suffix)}${suffix}` : rawTitle;
   const titleText = style.titleStyle.textTransform === 'uppercase'
-    ? uppercasePreservingLength(shownTitle)
+    ? uppercasePreservingLength(shownTitle, resolvedLocale(input.resolved))
     : shownTitle;
   const titleFontPx = dimensionToPx(style.titleStyle.fontSize, dpi, em);
   const titleFont = buildFontString(

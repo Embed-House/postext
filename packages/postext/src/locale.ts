@@ -2,7 +2,7 @@ import type { CjkRegion, DigitSystem, HyphenationLocale, LocaleTag, NumeralsSett
 
 /** The languages whose hyphenation patterns ship with the engine. */
 export const HYPHENATION_LOCALES: readonly HyphenationLocale[] = Object.freeze([
-  'en-us', 'es', 'fr', 'de', 'it', 'pt', 'ca', 'nl',
+  'en-us', 'es', 'fr', 'de', 'it', 'pt', 'ca', 'nl', 'tr',
 ] as const);
 
 const BUNDLED = new Set<string>(HYPHENATION_LOCALES);
@@ -274,6 +274,7 @@ export const DOCUMENT_LANGUAGES: readonly DocumentLanguage[] = Object.freeze([
   { tag: 'pt', name: 'Português' },
   { tag: 'ca', name: 'Català' },
   { tag: 'nl', name: 'Nederlands' },
+  { tag: 'tr', name: 'Türkçe' },
   { tag: 'zh-Hans', name: '中文（简体）' },
   { tag: 'zh-Hant', name: '中文（繁體）' },
   { tag: 'zh-Hant-HK', name: '中文（香港）' },
