@@ -272,6 +272,8 @@ function exerciseRuntime(): Runtime {
     '.pt-ex-drag{touch-action:none;user-select:none;-webkit-user-select:none;}' +
     // The word is painted under its slot: a veil fades it.
     '.pt-ex-sorted{background:rgba(255,255,255,.62);border-radius:.25em;}' +
+    // A chip set in a flow holds its own text, which a veil would not cover.
+    '.pt-ex-faded{opacity:.42;}' +
     '.pt-ex-col{position:absolute;left:0;top:0;width:100%;height:100%;box-sizing:border-box;padding:0 .2em;color:var(--pt-ex-text,#1d1d1f);border-radius:.2em;}' +
     '.pt-ex-placed{display:table;cursor:grab;white-space:nowrap;}' +
     '.pt-ex-placed.pt-ex-right{color:var(--pt-ex-right,#1e8e3e);}' +
@@ -362,8 +364,11 @@ function exerciseRuntime(): Runtime {
     return text.length > 80 ? text.slice(0, 79) + '\u2026' : text;
   }
 
-  /** The text a chip shows: the runs right after its slot, inside its box. */
+  /** The text a chip shows: the runs right after its slot, inside its box;
+   *  in a flow (a reflowable book), the chip's own text (#1263). */
   function chipText(el: any): string {
+    const own = String(el.textContent || '').replace(/\s+/g, ' ').trim();
+    if (own) return own;
     const right = parseFloat(el.style.left || '0') + parseFloat(el.style.width || '0');
     let text = '';
     let n = el.nextSibling;
@@ -808,7 +813,7 @@ function exerciseRuntime(): Runtime {
         paint(v: ExerciseValue) {
           const at = typeof v === 'string' ? categories.indexOf(v) : -1;
           // Sorted: the word stands in its column, and fades in the bank.
-          t.classList.toggle('pt-ex-sorted', at >= 0 && columnWidgets.length > 0);
+          t.classList.toggle(flow ? 'pt-ex-faded' : 'pt-ex-sorted', at >= 0 && columnWidgets.length > 0);
           t.setAttribute('aria-label', (word || lineText(t)) + (at >= 0 ? ', ' + categories[at] : ''));
           refreshColumns();
         },
